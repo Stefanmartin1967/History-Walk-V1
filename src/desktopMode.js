@@ -1,3 +1,4 @@
+import L from 'leaflet';
 import { getZonesData } from './circuit-actions.js';
 import { applyFilters } from './data.js';
 import { toggleSelectionMode, clearCircuit } from './circuit.js';

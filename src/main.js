@@ -1,4 +1,5 @@
 // main.js
+import 'leaflet/dist/leaflet.css';
 import { initDB, getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { APP_VERSION, state } from './state.js';
 import { initMap, map, refreshMapMarkers, fitMapToContent } from './map.js';
