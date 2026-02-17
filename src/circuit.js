@@ -73,9 +73,38 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
         return;
     }
 
-    // 3. Mise à jour de l'interface
-    // On ne touche plus aux POIs ("On ne s'occupe pas du statut visité")
+    // 3. Mise à jour des POIs (Si marqué comme FAIT)
+    if (isVisited) {
+        const circuit = officialCircuit || localCircuit;
+        if (circuit && circuit.poiIds && circuit.poiIds.length > 0) {
+            const updates = [];
+            circuit.poiIds.forEach(id => {
+                const feature = state.loadedFeatures.find(f => getPoiId(f) === id);
+                if (feature) {
+                    if (!feature.properties.userData) feature.properties.userData = {};
+                    // Mise à jour Mémoire
+                    feature.properties.userData.vu = true;
+                    // Préparation DB
+                    updates.push({
+                        poiId: id,
+                        data: feature.properties.userData
+                    });
+                }
+            });
 
+            if (updates.length > 0) {
+                try {
+                    await batchSavePoiData(state.currentMapId, updates);
+                    // Force refresh des marqueurs sur la carte (pour passer en vert)
+                    import('./data.js').then(({ applyFilters }) => applyFilters());
+                } catch (e) {
+                    console.error("Erreur mise à jour POIs du circuit:", e);
+                }
+            }
+        }
+    }
+
+    // 4. Mise à jour de l'interface
     // Si c'est le circuit actif affiché sur la carte, on doit redessiner la ligne (couleur change)
     if (state.activeCircuitId === circuitId) {
         notifyCircuitChanged();
