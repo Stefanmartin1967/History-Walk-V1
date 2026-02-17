@@ -92,56 +92,69 @@ function getRank(percent) {
 export async function showStatisticsModal() {
     const stats = calculateStats();
 
+    // OPTIMISATION UI : Layout plus compact, Horizontal, et Coloré
     const html = `
-        <div style="display:flex; flex-direction:column; gap:20px; text-align:center;">
+        <div style="display:flex; flex-direction:column; gap:12px; text-align:center;">
 
-            <!-- RANK BADGE -->
-            <div style="background: ${stats.rank.color}20; padding: 20px; border-radius: 16px; border: 2px solid ${stats.rank.color};">
-                <div style="color: ${stats.rank.color}; margin-bottom: 10px;">
-                    <i data-lucide="${stats.rank.icon}" style="width:48px; height:48px;"></i>
+            <!-- RANK BADGE (Horizontal & Compact) -->
+            <div style="background: ${stats.rank.color}15; padding: 12px 16px; border-radius: 12px; border: 1px solid ${stats.rank.color}; display: flex; align-items: center; gap: 16px; text-align: left;">
+                <div style="color: ${stats.rank.color}; background: #fff; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <i data-lucide="${stats.rank.icon}" style="width:28px; height:28px;"></i>
                 </div>
-                <div style="font-size: 20px; font-weight: 800; color: var(--ink); text-transform: uppercase; letter-spacing: 1px;">
-                    ${stats.rank.title}
-                </div>
-                <div style="font-size: 14px; color: var(--ink-soft); margin-top: 5px;">
-                    ${stats.poiPercent}% de l'île explorée
+                <div style="flex-grow: 1;">
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--ink-soft); letter-spacing: 0.5px; margin-bottom: 2px;">Votre Rang</div>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--ink); line-height: 1.2;">
+                        ${stats.rank.title}
+                    </div>
+                    <div style="font-size: 13px; color: var(--ink-soft); margin-top: 2px;">
+                        ${stats.poiPercent}% de l'île explorée
+                    </div>
                 </div>
             </div>
 
-            <!-- GRID STATS -->
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <!-- GRID STATS (3 Columns for better space usage) -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px;">
                 <!-- POIS -->
-                <div style="background:var(--surface-muted); padding:15px; border-radius:12px;">
-                    <div style="color:var(--brand); margin-bottom:5px;">
-                        <i data-lucide="map-pin" style="width:24px; height:24px;"></i>
+                <div style="background:var(--surface-muted); padding:10px; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <div style="color:var(--brand); margin-bottom:4px;">
+                        <i data-lucide="map-pin" style="width:20px; height:20px;"></i>
                     </div>
-                    <div style="font-size:24px; font-weight:700; color:var(--ink);">
-                        ${stats.visitedPois} <span style="font-size:14px; color:var(--ink-soft); font-weight:400;">/ ${stats.totalPois}</span>
+                    <div style="font-size:18px; font-weight: 700; color:var(--ink);">
+                        ${stats.visitedPois}<span style="font-size:12px; font-weight:400; color:var(--ink-soft);">/${stats.totalPois}</span>
                     </div>
-                    <div style="font-size:12px; color:var(--ink-soft);">Lieux Visités</div>
+                    <div style="font-size:10px; color:var(--ink-soft); text-transform:uppercase; margin-top:2px;">Lieux</div>
                 </div>
 
                 <!-- KM -->
-                <div style="background:var(--surface-muted); padding:15px; border-radius:12px;">
-                    <div style="color:var(--warn); margin-bottom:5px;">
-                        <i data-lucide="footprints" style="width:24px; height:24px;"></i>
+                <div style="background:var(--surface-muted); padding:10px; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <div style="color:var(--warn); margin-bottom:4px;">
+                        <i data-lucide="footprints" style="width:20px; height:20px;"></i>
                     </div>
-                    <div style="font-size:24px; font-weight:700; color:var(--ink);">
+                    <div style="font-size:18px; font-weight: 700; color:var(--ink);">
                         ${stats.totalKm}
                     </div>
-                    <div style="font-size:12px; color:var(--ink-soft);">Km Parcourus</div>
+                    <div style="font-size:10px; color:var(--ink-soft); text-transform:uppercase; margin-top:2px;">Km</div>
+                </div>
+
+                <!-- CIRCUITS -->
+                <div style="background:var(--surface-muted); padding:10px; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <div style="color:var(--ok); margin-bottom:4px;">
+                        <i data-lucide="route" style="width:20px; height:20px;"></i>
+                    </div>
+                    <div style="font-size:18px; font-weight: 700; color:var(--ink);">
+                        ${stats.completedCircuits}<span style="font-size:12px; font-weight:400; color:var(--ink-soft);">/${stats.totalCircuits}</span>
+                    </div>
+                    <div style="font-size:10px; color:var(--ink-soft); text-transform:uppercase; margin-top:2px;">Circuits</div>
                 </div>
             </div>
 
-            <!-- CIRCUITS -->
-            <div style="background:var(--surface-muted); padding:15px; border-radius:12px; display:flex; align-items:center; justify-content:space-between; padding-left:20px; padding-right:20px;">
-                <div style="text-align:left;">
-                    <div style="font-size:12px; color:var(--ink-soft);">Circuits Terminés</div>
-                    <div style="font-size:18px; font-weight:700; color:var(--ink);">${stats.completedCircuits} / ${stats.totalCircuits}</div>
-                </div>
-                <div style="color:var(--ok);">
-                    <i data-lucide="route" style="width:28px; height:28px;"></i>
-                </div>
+             <!-- PROGRESS BAR (Visual Feedback) -->
+            <div style="background: var(--line); height: 8px; border-radius: 4px; overflow: hidden; margin-top: 4px;">
+                <div style="width: ${stats.poiPercent}%; background: ${stats.rank.color}; height: 100%;"></div>
+            </div>
+
+            <div style="font-size: 11px; color: var(--ink-soft); font-style: italic;">
+                Continuez d'explorer pour débloquer le prochain rang !
             </div>
 
         </div>
