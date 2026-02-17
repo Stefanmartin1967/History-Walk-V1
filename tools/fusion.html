@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="maritime">
+<head>
+    <meta charset="UTF-8">
+    <title>History Walk - Console de Fusion V2</title>
+    <link rel="icon" type="image/png" href="../icons/icon-192.png" />
+    <script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
+    <style>
+        :root { --bg: #0D3B66; --surface: #FFFFFF; --surface-alt: #F8FAFC; --ink: #102A43; --ink-light: #64748B; --brand: #3B82F6; --ok: #10B981; --warn: #F59E0B; --danger: #EF4444; --border: #E2E8F0; }
+        body { font-family: system-ui, sans-serif; background-color: #F1F5F9; color: var(--ink); padding: 40px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
+        h1 { color: var(--bg); margin-bottom: 10px; }
+        .subtitle { color: var(--ink-light); margin-bottom: 30px; }
+        
+        .card { background: var(--surface); padding: 30px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); width: 100%; max-width: 800px; margin-bottom: 20px; }
+        .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .upload-box { border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center; transition: all 0.2s; background: var(--surface-alt); }
+        .upload-box.active { border-color: var(--ok); background: #ECFDF5; }
+        .upload-box h3 { margin: 10px 0 5px 0; font-size: 16px; }
+        .upload-box p { font-size: 13px; color: var(--ink-light); margin: 0 0 15px 0; }
+        .btn-file { display: inline-block; padding: 8px 16px; background: white; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--brand); transition: 0.2s; }
+        .btn-file:hover { border-color: var(--brand); background: #EFF6FF; }
+        input[type="file"] { display: none; }
+        
+        .btn-action { width: 100%; padding: 16px; background: var(--brand); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-action:hover:not(:disabled) { transform: translateY(-2px); background-color: #2563EB; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); }
+        .btn-action:disabled { background-color: #94A3B8; cursor: not-allowed; opacity: 0.7; }
+        .btn-success { background-color: var(--ok); }
+        .btn-success:hover { background-color: #059669; }
+
+        /* Tableau de Bord */
+        #dashboard { display: none; width: 100%; max-width: 800px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .group-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; margin-top: 20px; margin-bottom: 10px; color: var(--ink); }
+        .badge { padding: 4px 8px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+        .badge-new { background: #DBEAFE; color: #1E40AF; }
+        .badge-gps { background: #FEF3C7; color: #92400E; }
+        .badge-content { background: #D1FAE5; color: #065F46; }
+
+        .change-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; align-items: flex-start; transition: border-color 0.2s; }
+        .change-item:hover { border-color: var(--brand); }
+        .checkbox-wrapper { padding-top: 2px; }
+        .checkbox-wrapper input { width: 18px; height: 18px; cursor: pointer; }
+        .change-content { flex-grow: 1; }
+        .poi-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+        .change-detail { font-size: 14px; color: var(--ink-light); display: flex; gap: 10px; align-items: center; margin-top: 6px; background: var(--surface-alt); padding: 8px; border-radius: 6px; }
+        .old-val { text-decoration: line-through; color: #94A3B8; font-size: 12px; }
+        .arrow { color: var(--brand); font-weight: bold; }
+        .new-val { color: var(--ink); font-weight: 500; }
+        .new-poi-input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; box-sizing: border-box; }
+        
+        /* Support RTL pour l'arabe */
+        input[dir="rtl"] { direction: rtl; }
+    </style>
+</head>
+<body>
+
+    <h1>History Walk • Console V2</h1>
+    <p class="subtitle">Importation et Consolidation des Données Terrain</p>
+
+    <div class="card" id="upload-card">
+        <div class="upload-grid">
+            <div class="upload-box" id="box-source">
+                <i data-lucide="map" size="32" color="#64748B"></i>
+                <h3>Fichier Source</h3>
+                <p><code>Djerba.geojson</code></p>
+                <label for="source-file" class="btn-file">Choisir...</label>
+                <input type="file" id="source-file" accept=".geojson,.json">
+                <div id="source-name" style="margin-top:5px; font-size:12px; font-weight:bold; color:var(--brand);"></div>
+            </div>
+            <div class="upload-box" id="box-backup">
+                <i data-lucide="save" size="32" color="#64748B"></i>
+                <h3>Sauvegarde Mobile</h3>
+                <p><code>HistoryWalk_Backup...json</code></p>
+                <label for="backup-file" class="btn-file">Choisir...</label>
+                <input type="file" id="backup-file" accept=".txt">
+                <div id="backup-name" style="margin-top:5px; font-size:12px; font-weight:bold; color:var(--brand);"></div>
+            </div>
+        </div>
+        <button id="btn-analyze" class="btn-action" disabled>
+            <i data-lucide="scan-search"></i> Analyser les différences
+        </button>
+    </div>
+
+    <div id="dashboard">
+        <div class="dashboard-header">
+            <h2>Modifications Détectées</h2>
+            <div style="font-size: 14px; color: var(--ink-light);">Décochez les lignes à ignorer</div>
+        </div>
+
+        <div id="list-new"></div>
+        <div id="list-gps"></div>
+        <div id="list-content"></div>
+
+        <button id="btn-fusion" class="btn-action btn-success" style="margin-top: 30px;">
+            <i data-lucide="file-check"></i> Valider et Télécharger la V2
+        </button>
+    </div>
+
+    <script type="module" src="../src/fusion.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

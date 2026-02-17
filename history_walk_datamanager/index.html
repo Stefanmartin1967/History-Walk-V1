@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="fr" data-theme="night">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>History Walk Data Manager</title>
+  </head>
+  <body>
+    
+    <div id="app">
+      <header class="app-header">
+        <div class="logo">
+          <i data-lucide="map" class="logo-icon"></i>
+          <h1>History Walk <span>Data Manager</span></h1>
+        </div>
+        
+        <div class="actions">
+          <div class="theme-dropdown">
+            <button id="theme-btn" class="btn-icon" type="button"><i data-lucide="palette"></i></button>
+            <div id="theme-menu" class="dropdown-content hidden">
+              <div class="theme-option" data-value="maritime">Maritime</div>
+              <div class="theme-option" data-value="desert">Désert</div>
+              <div class="theme-option" data-value="oasis">Oasis</div>
+              <div class="theme-option" data-value="night">Nuit</div>
+            </div>
+          </div>
+          
+          <span class="separator"></span>
+          <button id="btn-maintenance" class="btn btn-warning" type="button" title="Maintenance"><i data-lucide="sparkles"></i></button>
+          
+          <span class="separator"></span>
+          <button id="btn-undo" class="btn-icon" type="button"><i data-lucide="rotate-ccw"></i></button>
+          <button id="btn-redo" class="btn-icon" type="button"><i data-lucide="rotate-cw"></i></button>
+
+          <span class="separator"></span>
+          <button id="btn-add" class="btn btn-primary" type="button" disabled>
+            <i data-lucide="plus-circle"></i> <span>Ajouter</span>
+          </button>
+
+          <button id="btn-load" class="btn btn-neutral" type="button"><i data-lucide="folder-open"></i></button>
+          <button id="btn-save" class="btn btn-success" type="button" disabled><i data-lucide="save"></i> <span>Export</span></button>
+        </div>
+      </header>
+
+      <div id="status-bar" class="status-bar">
+        <div class="status-message"><i data-lucide="info"></i> <span id="status-text">Prêt. Chargez le fichier.</span></div>
+        <div id="result-counter" class="result-counter hidden">0 / 0</div>
+      </div>
+
+      <main class="table-container">
+        <table id="data-table"><thead></thead><tbody></tbody></table>
+      </main>
+    </div>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="modal-title">Lieu</h2>
+          <button id="btn-close-modal" type="button" class="btn-icon"><i data-lucide="x"></i></button>
+        </div>
+        <form id="feature-form" class="modal-body">
+          
+          <div class="form-section">
+            <div class="form-row">
+                <div class="form-group flex-2">
+                    <label>Nom du site (FR)</label>
+                    <input type="text" name="nom" required placeholder="Ex: Rym Beach">
+                </div>
+                <div class="form-group flex-1">
+                    <label>Catégorie</label>
+                    <input type="text" name="categorie" list="list-categories" required placeholder="Ex: Hôtel">
+                    <datalist id="list-categories"></datalist>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group flex-2">
+                    <label>GPS (Coller depuis Maps)</label>
+                    <input type="text" name="gps" required placeholder="33.827, 11.046">
+                </div>
+                <div class="form-group flex-1">
+                    <label>Zone (Auto)</label>
+                    <input type="text" name="zone" list="list-zones" placeholder="Détection auto...">
+                    <datalist id="list-zones"></datalist>
+                </div>
+            </div>
+          </div>
+
+          <hr class="form-separator">
+
+          <div class="form-group">
+            <label>Description Courte (Pour GPX)</label>
+            <input type="text" name="descWpt" placeholder="Très court (ex: Phare Taguermess)" maxlength="50">
+          </div>
+          <div class="form-group">
+            <label>Description Complète</label>
+            <textarea name="description" rows="3" placeholder="Description détaillée..."></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>Source (URL)</label>
+            <input type="url" name="source" placeholder="https://...">
+          </div>
+
+          <hr class="form-separator">
+
+          <div class="form-section details-section">
+            <div class="form-group">
+                <label>Nom Arabe</label>
+                <input type="text" name="nomArabe" placeholder="Optionnel" dir="rtl">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Temps Visite</label>
+                    <input type="text" name="temps" placeholder="Ex: 1h">
+                </div>
+                <div class="form-group">
+                    <label>Prix</label>
+                    <input type="text" name="prix" placeholder="Ex: Gratuit">
+                </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

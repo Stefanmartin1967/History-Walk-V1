@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>History Walk - Module Scout</title>
+    <link rel="icon" type="image/png" href="../icons/icon-192.png" />
+    <script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; max-width: 900px; margin: auto; background: #f4f4f9; color: #333; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { margin-top: 0; color: #2563eb; display: flex; align-items: center; gap: 10px; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; }
+        input[type="text"], input[type="number"] { padding: 10px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+
+        .row { display: flex; gap: 15px; }
+        .col { flex: 1; }
+
+        .filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        .filter-item { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+        .filter-item input { cursor: pointer; }
+
+        button { padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: background 0.2s; width: 100%; font-size: 16px; }
+        .btn-primary { background: #2563eb; color: white; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-secondary { background: #64748b; color: white; margin-top: 5px; }
+        .btn-secondary:hover { background: #475569; }
+        .btn-success { background: #059669; color: white; display: none; margin-top: 15px; }
+        .btn-success:hover { background: #047857; }
+
+        #log { margin-top: 20px; padding: 15px; background: #1e293b; color: #4ade80; font-family: monospace; font-size: 13px; height: 200px; overflow-y: auto; border-radius: 6px; }
+        .separator { height: 1px; background: #e2e8f0; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🔭 Module Scout</h2>
+        <p>Générez un squelette GeoJSON pour une nouvelle destination en filtrant les données OpenStreetMap.</p>
+        
+        <div class="separator"></div>
+
+        <!-- LOCALISATION -->
+        <div class="form-group">
+            <label>1. Définir le centre (Recherche ou Coordonnées)</label>
+            <div class="row" style="align-items: flex-end;">
+                <div class="col" style="flex: 2;">
+                    <input type="text" id="location-name" placeholder="Ex: Hôtel Sindbad, Hammamet...">
+                </div>
+                <div class="col">
+                    <button id="btn-geocode" class="btn-secondary">🔍 Trouver GPS</button>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 10px;">
+                <div class="col">
+                    <label style="font-size: 12px;">Latitude</label>
+                    <input type="number" id="lat" placeholder="33.xxx" step="any">
+                </div>
+                <div class="col">
+                    <label style="font-size: 12px;">Longitude</label>
+                    <input type="number" id="lon" placeholder="10.xxx" step="any">
+                </div>
+            </div>
+        </div>
+
+        <!-- RAYON -->
+        <div class="form-group">
+            <label>2. Rayon de recherche (Km)</label>
+            <input type="number" id="radius-km" value="3" step="0.5" min="0.1">
+        </div>
+
+        <!-- FILTRES -->
+        <div class="form-group">
+            <label>3. Catégories recherchées</label>
+            <div class="filters">
+                <label class="filter-item"><input type="checkbox" value="religion" checked> Religion (Mosquées, etc.)</label>
+                <label class="filter-item"><input type="checkbox" value="history" checked> Histoire (Forts, Ruines)</label>
+                <label class="filter-item"><input type="checkbox" value="museum" checked> Culture (Musées)</label>
+                <label class="filter-item"><input type="checkbox" value="hotel"> Hôtels</label>
+                <label class="filter-item"><input type="checkbox" value="restaurant"> Restaurants / Cafés</label>
+                <label class="filter-item"><input type="checkbox" value="leisure"> Loisirs / Jeunes (Parcs, Zoos)</label>
+                <label class="filter-item"><input type="checkbox" value="tourism"> Tourisme (Points de vue, Art)</label>
+                <label class="filter-item"><input type="checkbox" value="public"> Services Publics (Mairies, Police)</label>
+            </div>
+        </div>
+
+        <button id="btn-fetch" class="btn-primary">🚀 Lancer le moissonnage</button>
+        <button id="btn-download" class="btn-success">💾 Télécharger le GeoJSON</button>
+
+        <div id="log">En attente...</div>
+    </div>
+
+    <script>
+        const DOM = {
+            btnGeocode: document.getElementById('btn-geocode'),
+            btnFetch: document.getElementById('btn-fetch'),
+            btnDownload: document.getElementById('btn-download'),
+            locName: document.getElementById('location-name'),
+            lat: document.getElementById('lat'),
+            lon: document.getElementById('lon'),
+            radius: document.getElementById('radius-km'),
+            log: document.getElementById('log'),
+            filters: document.querySelectorAll('.filter-item input')
+        };
+
+        let lastResult = null;
+
+        function addLog(msg) { DOM.log.innerHTML += `<div>> ${msg}</div>`; DOM.log.scrollTop = DOM.log.scrollHeight; }
+
+        // --- MAPPING DES CATÉGORIES OSM -> HISTORY WALK ---
+        const HW_MAPPING = {
+            'place_of_worship': 'Mosquée', // Par défaut, affiné ensuite si possible
+            'museum': 'Culture et tradition',
+            'fort': 'Site historique',
+            'castle': 'Site historique',
+            'ruins': 'Site historique',
+            'archaeological_site': 'Site historique',
+            'hotel': 'Hôtel',
+            'guest_house': 'Hôtel',
+            'restaurant': 'Restaurant',
+            'cafe': 'Restaurant',
+            'theme_park': 'Curiosité',
+            'zoo': 'Curiosité',
+            'viewpoint': 'Curiosité',
+            'artwork': 'Curiosité',
+            'attraction': 'Curiosité'
+        };
+
+        function getHwCategory(tags) {
+            // Priorité aux tags spécifiques
+            if (tags.amenity === 'place_of_worship') {
+                if (tags.religion === 'muslim') return 'Mosquée';
+                if (tags.religion === 'christian') return 'Site religieux'; // Eglise
+                if (tags.religion === 'jewish') return 'Site religieux'; // Synagogue
+                return 'Mosquée'; // Par défaut dans les pays du Maghreb si non spécifié
+            }
+
+            const rawCat = tags.historic || tags.tourism || tags.amenity || tags.leisure;
+            return HW_MAPPING[rawCat] || 'A définir';
+        }
+
+        // --- GEOCODING ---
+        DOM.btnGeocode.onclick = async () => {
+            const query = DOM.locName.value;
+            if (!query) return alert("Entrez un nom de lieu !");
+
+            DOM.btnGeocode.textContent = "Recherche...";
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (data.length === 0) throw new Error("Aucun résultat.");
+                
+                DOM.lat.value = data[0].lat;
+                DOM.lon.value = data[0].lon;
+                addLog(`Coordonnées trouvées : ${data[0].lat}, ${data[0].lon}`);
+            } catch (err) {
+                alert("Erreur: " + err.message);
+            } finally {
+                DOM.btnGeocode.textContent = "🔍 Trouver GPS";
+            }
+        };
+
+        // --- MOISSONNAGE ---
+        DOM.btnFetch.onclick = async () => {
+            const lat = parseFloat(DOM.lat.value);
+            const lon = parseFloat(DOM.lon.value);
+            const radiusMeters = parseFloat(DOM.radius.value) * 1000;
+
+            if (isNaN(lat) || isNaN(lon)) return alert("Veuillez définir un centre (Latitude/Longitude) !");
+
+            // Construction de la requête Overpass dynamique
+            const activeTypes = Array.from(DOM.filters).filter(cb => cb.checked).map(cb => cb.value);
+            if (activeTypes.length === 0) return alert("Sélectionnez au moins une catégorie !");
+
+            let clauses = [];
+
+            // Mapping Filtres -> Clauses Overpass
+            if (activeTypes.includes('religion')) clauses.push(`node["amenity"="place_of_worship"](around:${radiusMeters},${lat},${lon});`);
+
+            if (activeTypes.includes('history')) {
+                clauses.push(`node["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"](around:${radiusMeters},${lat},${lon});`);
+            }
+
+            if (activeTypes.includes('museum')) clauses.push(`node["tourism"="museum"](around:${radiusMeters},${lat},${lon});`);
+
+            if (activeTypes.includes('hotel')) clauses.push(`node["tourism"~"hotel|guest_house|hostel"](around:${radiusMeters},${lat},${lon});`);
+
+            if (activeTypes.includes('restaurant')) clauses.push(`node["amenity"~"restaurant|cafe"](around:${radiusMeters},${lat},${lon});`);
+
+            if (activeTypes.includes('leisure')) {
+                clauses.push(`node["leisure"~"park|water_park"](around:${radiusMeters},${lat},${lon});`);
+                clauses.push(`node["tourism"~"theme_park|zoo|aquarium"](around:${radiusMeters},${lat},${lon});`);
+            }
+
+            if (activeTypes.includes('tourism')) {
+                clauses.push(`node["tourism"~"viewpoint|artwork|attraction|gallery"](around:${radiusMeters},${lat},${lon});`);
+            }
+
+            if (activeTypes.includes('public')) {
+                clauses.push(`node["amenity"~"townhall|police|post_office|library"](around:${radiusMeters},${lat},${lon});`);
+            }
+
+            const query = `[out:json];(${clauses.join('')});out body;`;
+
+            addLog("Envoi de la requête Overpass...");
+            addLog(`Centre: ${lat}, ${lon} | Rayon: ${DOM.radius.value} km`);
+
+            try {
+                const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                
+                const features = data.elements.map(el => {
+                    const category = getHwCategory(el.tags);
+
+                    return {
+                        type: "Feature",
+                        geometry: { type: "Point", coordinates: [el.lon, el.lat] },
+                        properties: {
+                            "Nom du site FR": el.tags.name || el.tags["name:fr"] || "Sans nom",
+                            "Nom du site arabe": el.tags["name:ar"] || "",
+                            "Catégorie": category,
+                            "Zone": DOM.locName.value.split(',')[0] || "A définir",
+                            "Description": el.tags.description || "",
+                            "Source": "OpenStreetMap",
+                            "Coordonnées GPS": `${el.lat}, ${el.lon}`,
+                            "Latitude": el.lat,
+                            "Longitude": el.lon,
+                            "HW_ID": `HW-SCOUT-${Date.now()}-${Math.floor(Math.random()*10000)}`
+                        }
+                    };
+                });
+
+                lastResult = { type: "FeatureCollection", features };
+                addLog(`✅ Succès ! ${features.length} POI trouvés.`);
+                DOM.btnDownload.style.display = 'block';
+
+            } catch (err) {
+                addLog(`❌ ERREUR : ${err.message}`);
+            }
+        };
+
+        DOM.btnDownload.onclick = () => {
+            if(!lastResult) return;
+            const blob = new Blob([JSON.stringify(lastResult, null, 2)], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const name = DOM.locName.value ? DOM.locName.value.replace(/[^a-z0-9]/gi, '_') : 'Search';
+            a.download = `Scout_${name}.geojson`;
+            a.click();
+        };
+    </script>
+</body>
+</html>

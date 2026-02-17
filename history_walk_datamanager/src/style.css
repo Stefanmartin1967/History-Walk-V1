@@ -1,0 +1,267 @@
+/* src/style.css - VERSION RÉPARÉE (Wrapper Flex) */
+
+/* --- 1. VARIABLES & THÈMES --- */
+:root {
+  --bg: #0D3B66; --bg-2: #062B4D; --surface: #FFFFFF; --surface-muted: #F0F4F8; 
+  --ink: #102A43; --ink-soft: #627D98; --line: #D9E2EC; 
+  --brand: #205596; --brand-soft: #D6EAFE; --ok: #10B981; --warn: #F59E0B; --danger: #EF4444; 
+  --header-height: 70px;
+}
+
+html[data-theme="desert"] { --bg: #4d2c12; --bg-2: #3a210e; --surface: #fff8f0; --surface-muted: #f5efe6; --ink: #3a210e; --ink-soft: #8a6f5e; --line: #e0d5c7; --brand: #e88c32; --brand-soft: #faeadd; --ok: #10B981; --warn: #F59E0B; --danger: #EF4444; }
+html[data-theme="oasis"] { --bg: #065f46; --bg-2: #054d39; --surface: #f0fdf4; --surface-muted: #e6f7eb; --ink: #064e3b; --ink-soft: #528c7c; --line: #cce8d8; --brand: #059669; --brand-soft: #d1fae5; --ok: #10B981; --warn: #F59E0B; --danger: #EF4444; }
+html[data-theme="night"] { --bg: #111827; --bg-2: #000000; --surface: #1f2937; --surface-muted: #374151; --ink: #d1d5db; --ink-soft: #9ca3af; --line: #4b5563; --brand: #60a5fa; --brand-soft: #374151; --ok: #34d399; --warn: #facc15; --danger: #f87171; }
+html[data-theme="night"] .editable-cell { color: var(--ink); }
+
+/* --- 2. BASE & LAYOUT --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--ink); background-color: var(--surface-muted);
+  height: 100vh; overflow: hidden;
+  transition: background-color 0.3s, color 0.3s;
+}
+#app { display: flex; flex-direction: column; height: 100%; }
+
+/* --- 3. HEADER --- */
+.app-header {
+  height: var(--header-height); background-color: var(--surface);
+  border-bottom: 2px solid var(--line); display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem; flex-shrink: 0;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo h1 { font-size: 1.2rem; font-weight: 700; color: var(--ink); margin: 0; }
+.logo span { color: var(--brand); }
+.logo-icon { color: var(--brand); width: 24px; height: 24px; }
+
+.actions { display: flex; align-items: center; gap: 10px; }
+.separator { width: 1px; height: 24px; background-color: var(--line); margin: 0 10px; }
+
+/* --- 4. BOUTONS & ICONES --- */
+.btn { 
+  padding: 0.5rem 1rem; border-radius: 6px; border: none; font-weight: 600; 
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  font-size: 0.9rem; color: white; transition: all 0.2s;
+}
+.btn i { width: 18px; height: 18px; }
+
+.btn-primary { background-color: var(--brand); }
+.btn-success { background-color: var(--ok); }
+.btn-warning { background-color: var(--warn); color: var(--bg-2); }
+.btn-neutral { background-color: var(--line); color: var(--ink); }
+
+.btn:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+.btn:disabled, .btn-icon:disabled { 
+    opacity: 0.3 !important; cursor: not-allowed; background-color: var(--line); 
+    color: var(--ink-soft); filter: grayscale(100%);
+}
+
+.btn-icon {
+  background: transparent; border: 1px solid var(--line); border-radius: 6px;
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  color: var(--ink); cursor: pointer; transition: all 0.2s;
+}
+.btn-icon:hover:not(:disabled) { background-color: var(--brand-soft); color: var(--brand); border-color: var(--brand-soft); }
+
+.icon-btn-shared {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; 
+    border-radius: 4px; border: none; background: transparent;
+    cursor: pointer; color: var(--ink-soft); transition: all 0.2s ease;
+    text-decoration: none; 
+}
+.icon-btn-shared:hover { background-color: var(--brand-soft); color: var(--brand); transform: scale(1.1); }
+.icon-btn-shared svg { width: 18px; height: 18px; }
+
+.btn-delete:hover { background-color: #fee2e2; color: var(--danger); }
+
+/* --- 5. MENU THÈME --- */
+.theme-dropdown { position: relative; }
+.dropdown-content {
+  position: absolute; top: 110%; right: 0; background-color: var(--surface); border: 1px solid var(--line);
+  border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 150px; z-index: 100; overflow: hidden;
+}
+.dropdown-content.hidden { display: none; }
+.theme-option { padding: 10px 15px; cursor: pointer; font-size: 0.9rem; color: var(--ink); }
+.theme-option:hover { background-color: var(--brand-soft); color: var(--brand); }
+
+/* --- 6. BARRE DE STATUT --- */
+.status-bar { 
+  background-color: var(--brand-soft); color: var(--bg-2); padding: 0.5rem 1.5rem; 
+  border-bottom: 1px solid var(--line); font-size: 0.9rem; font-weight: 600; 
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.status-message { display: flex; align-items: center; gap: 8px; }
+.result-counter { background: var(--surface); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; color: var(--ink); border: 1px solid var(--brand); }
+.result-counter.hidden { display: none; }
+
+/* --- 7. TABLEAU DE DONNÉES (Version Excel-Like Complète) --- */
+.table-container { 
+  flex-grow: 1; 
+  overflow: auto; 
+  background-color: var(--surface-muted); 
+  padding: 0 1rem 1rem 1rem; 
+}
+
+table { 
+  width: 100%; 
+  border-collapse: separate; 
+  border-spacing: 0; 
+  background-color: var(--surface); 
+  table-layout: fixed; /* Respecte strictement les largeurs ci-dessous */
+}
+
+/* --- A. GESTION DES COLONNES (LARGEURS) --- */
+/* C'est ici qu'on définit la grille. Comme le tableau est "fixed", 
+   la largeur du TH dicte celle de toute la colonne. */
+
+th.col-nom    { width: 350px; }
+th.col-cat    { width: 130px; }
+th.col-gps    { width: 250px; }
+th.col-source { width: 70px;  } 
+th.col-actions{ width: 90px;  }
+th.col-desc   { width: auto; } /* Prend le reste */
+
+
+/* --- B. GESTION DES EN-TÊTES FIGÉS (STICKY) --- */
+
+/* Style commun pour tous les TH */
+th {
+  text-align: left; 
+  color: var(--ink);
+  font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em;
+  border-right: 1px solid var(--line);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  
+  /* La mécanique Sticky */
+  position: sticky; 
+  background-color: var(--surface-muted); /* Fond opaque obligatoire */
+}
+
+/* LIGNE 1 : Les Titres */
+thead tr:first-child th {
+  top: 0;
+  z-index: 30;       
+  height: 50px;      
+  padding: 0 1rem;   
+  border-bottom: none;
+  border-top: none;
+}
+
+/* LIGNE 2 : Les Filtres */
+.filter-row th {
+  top: 50px;         
+  z-index: 20;       
+  height: 45px;      
+  padding: 5px;      
+  border-top: none;
+  border-bottom: 2px solid var(--line); 
+}
+
+/* --- C. DESIGN DES CHAMPS FILTRES --- */
+.filter-wrapper { position: relative; width: 100%; display: flex; align-items: center; height: 100%; }
+
+.filter-input {
+  width: 100%; 
+  height: 32px; 
+  padding: 0 25px 0 10px; 
+  border: 1px solid var(--line-dark, #bcccdc); 
+  border-radius: 4px;
+  font-size: 0.85rem; 
+  color: var(--ink); 
+  background-color: var(--surface); 
+  transition: all 0.2s;
+}
+
+.filter-input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-soft); }
+
+.filter-reset {
+  position: absolute; right: 8px; cursor: pointer; color: var(--ink-soft); 
+  font-size: 16px; font-weight: bold;
+  user-select: none;
+}
+.filter-reset:hover { color: var(--danger); }
+
+
+/* --- D. CELLULES DE DONNÉES (TD) --- */
+td {
+  padding: 0; 
+  border-bottom: 1px solid var(--line); 
+  border-right: 1px solid var(--line);
+  color: var(--ink); 
+  font-size: 0.9rem; 
+  background-color: var(--surface);
+  vertical-align: middle;
+}
+
+/* Wrapper Flex pour le contenu */
+.cell-content {
+  display: flex; align-items: center; justify-content: space-between;  
+  width: 100%; height: 100%;
+  padding: 0.5rem 0.8rem;
+  min-height: 40px; 
+}
+
+/* Alignements spécifiques */
+.col-source .cell-content, .col-actions .cell-content { justify-content: center; }
+
+/* Styles lignes (Zèbre et Survol) */
+tr:nth-child(even) td { background-color: var(--surface-muted); opacity: 0.95; }
+tr:hover td { background-color: var(--brand-soft) !important; opacity: 1; }
+tr.hidden-row { display: none; }
+
+/* --- 8. CELLULES & CONTENU --- */
+.editable-cell { 
+    flex-grow: 1;          
+    min-width: 0;          
+    margin-right: 8px;     
+    
+    outline: none; border-radius: 2px; padding: 2px 4px; 
+    border: 1px solid transparent; 
+    
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Exception pour la description */
+.col-desc .editable-cell { 
+    white-space: normal;
+    display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; 
+    max-height: 4.5em; 
+}
+
+/* --- 9. MODALE --- */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+  opacity: 1; pointer-events: auto; transition: opacity 0.2s;
+}
+.modal-overlay.hidden { display: none; pointer-events: none; opacity: 0; }
+
+.modal {
+  background: var(--surface); width: 800px; max-width: 95%; border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow: hidden; display: flex; flex-direction: column;
+}
+.modal-header { padding: 15px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; background: var(--surface-muted); }
+.modal-header h2 { font-size: 1.1rem; color: var(--brand); display: flex; align-items: center; gap: 10px; }
+
+.modal-body { display: flex; flex-direction: column; gap: 15px; padding: 20px; max-height: 75vh; overflow-y: auto; }
+
+.form-section { display: flex; flex-direction: column; gap: 10px; }
+.form-row { display: flex; gap: 15px; }
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); }
+.form-group input, .form-group textarea {
+  padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px;
+  font-family: inherit; color: var(--ink); background: var(--surface); resize: vertical; width: 100%;
+}
+.form-group textarea { min-height: 100px; }
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--brand); }
+
+.form-separator { border: 0; border-top: 1px solid var(--line); margin: 5px 0; }
+.details-section { 
+    background-color: var(--surface-muted); 
+    padding: 10px; border-radius: 6px; border: 1px dashed var(--line);
+}
+.modal-footer { padding: 15px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 10px; background: var(--surface-muted); }

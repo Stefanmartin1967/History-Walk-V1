@@ -1,0 +1,4391 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0561928,
+          36.7856656
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Statue de Bologhine Ibn Ziri",
+        "Catégorie": "artwork",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-957"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0590439,
+          36.7908067
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Taqoua",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-189"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9659914,
+          36.7703206
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Dar Diaf",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-87"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9645452,
+          36.7714932
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "l'auberge du Moulin",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-628"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0226646,
+          36.8116215
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد عمر بن الخطاب",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-87"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0107486,
+          36.8180888
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "الرئيس حميدو",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-779"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0013272,
+          36.8151053
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Abou Dher El Ghefari",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-873"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9712309,
+          36.8128462
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-583"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9661181,
+          36.7570061
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Émir",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-506"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9655576,
+          36.7322721
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد الخلفاء الراشدين",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-617"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0311309,
+          36.8015218
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al Ihssane",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-297"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0357443,
+          36.8021919
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "APC Annexe",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-595"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0450676,
+          36.7984033
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد بلال",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-538"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.030412,
+          36.8053618
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Aboubakr Sadik",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-349"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0340062,
+          36.8013672
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "أمام علي",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-128"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0434905,
+          36.8035492
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "APC de Bologhine",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-192"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0116319,
+          36.8156528
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Siège la commune de Raïs Hamidou",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-806"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0122649,
+          36.8130417
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد سيدي الكبير",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-170"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9878066,
+          36.8120946
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ecole coranique",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-346"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9769856,
+          36.7728807
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-792"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9689467,
+          36.781478
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد السميعة",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-757"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9866939,
+          36.7961265
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquee",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-544"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9914571,
+          36.7611427
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Lounge Hotel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-741"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0300298,
+          36.7383361
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Hydra",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-108"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9617435,
+          36.7674427
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Sidi Naoui",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-174"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0239917,
+          36.7624072
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel El Biar",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-781"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9885637,
+          36.7508761
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-821"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0498854,
+          36.7924179
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "El Fath",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-509"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9797384,
+          36.7595164
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-520"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0435267,
+          36.7857793
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "APC Oued Koreiche بلدية وادي قريش",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-762"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0103032,
+          36.7749809
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Masjid Othmane",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-275"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9614266,
+          36.7661296
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al-Fatah",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-376"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9916255,
+          36.7339621
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-802"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0026282,
+          36.7429998
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-941"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0002868,
+          36.7388958
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Feth El Kouloub",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-685"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0197219,
+          36.7394947
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "أسود",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-426"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0184908,
+          36.739974
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ours",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-477"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0090655,
+          36.7428284
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Les singes",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-570"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0176486,
+          36.7379513
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Tigres",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-558"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0080704,
+          36.7426285
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Cerf de Barbarie",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-975"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.048234,
+          36.786965
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "السلام",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-793"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0595375,
+          36.789827
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel La Famille",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-419"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0517961,
+          36.790986
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Trois Horloges",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-700"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.01447,
+          36.7408764
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Moncada",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-796"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0179823,
+          36.7391476
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hippopotame",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-829"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0190682,
+          36.738427
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Aigles",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-249"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0195,
+          36.7392949
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chameau",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-361"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0624407,
+          36.7886932
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-408"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.056135,
+          36.7737491
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Bibliothèque Municipale d'Alger Centre",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-871"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9611478,
+          36.8029952
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-894"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0577722,
+          36.7732154
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "l'Horloge Florale",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-803"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0432768,
+          36.8009649
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Notre Dame d'Afrique",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-405"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.030704,
+          36.7691841
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "دار الصحافة",
+        "Catégorie": "yes",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-346"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0583838,
+          36.776243
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Statue El Amir Abdelkader",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-708"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0013874,
+          36.7497773
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-771"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0566224,
+          36.7635197
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Bibliotheque",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-767"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0504368,
+          36.7655315
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Samir",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-679"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0391291,
+          36.7675342
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Balcon Saint Raphaël",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-928"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0585628,
+          36.7661763
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Attentat du 02 Mai 1962",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-908"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9215688,
+          36.8034516
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "APC Aïn Benian",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-701"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0142959,
+          36.77012
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-283"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0151151,
+          36.7783082
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-562"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.059425,
+          36.7717638
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-772"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0505657,
+          36.7928262
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-291"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0565321,
+          36.7632841
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "L'espace du livre",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-146"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0565684,
+          36.7696503
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Agha",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-974"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0614445,
+          36.791958
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-279"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0643052,
+          36.7845371
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "La Pêcherie",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-75"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9622863,
+          36.8033077
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-364"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0544689,
+          36.7913074
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Nahda",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-22"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0211182,
+          36.7346557
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "معرض الذاكرة",
+        "Catégorie": "museum",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-614"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0088404,
+          36.7796975
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-155"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.048188,
+          36.7894737
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "فتح الاسلام",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-807"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.058541,
+          36.7919377
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Place El Kettani",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-744"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0511568,
+          36.7636905
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-927"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.05508,
+          36.7904512
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-571"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0512828,
+          36.7905158
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "El Hamla",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-88"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0564912,
+          36.7620636
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-426"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0537158,
+          36.7777103
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-216"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0532402,
+          36.7618643
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-128"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0484316,
+          36.7525292
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Atlas tours",
+        "Catégorie": "information",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-830"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0502345,
+          36.7665764
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel ABC",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-163"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9962488,
+          36.7301009
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "castle",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-734"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0502522,
+          36.7652876
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Samir Hotel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-571"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0539434,
+          36.7906594
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مكتبة دار زاد المهاجر",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-998"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0183243,
+          36.7904683
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-596"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0557887,
+          36.7649042
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel du Moulin",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-160"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0557914,
+          36.765294
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Moulin",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-969"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0624141,
+          36.7830407
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mahlou tourisme",
+        "Catégorie": "information",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-453"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0542882,
+          36.7665568
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Audiothèque",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-733"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0543569,
+          36.7665329
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Médiathèque de la mosquée",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-357"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0520512,
+          36.7631392
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée de l'Hôpital",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-752"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.011036,
+          36.7380897
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Feth El Rahmane",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-373"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9539541,
+          36.7438069
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-323"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9459132,
+          36.807147
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hamamat",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-648"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0601581,
+          36.7900256
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Nelson",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-787"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0502367,
+          36.7916198
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-680"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.000843,
+          36.7939768
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-116"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9805044,
+          36.7794587
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "bibliothèque centrale",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-931"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0601261,
+          36.7726772
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Khemisti",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-196"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0599186,
+          36.7738668
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Afrique Timbres",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-218"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0453611,
+          36.7641899
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Dar El Ikram",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-879"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0579449,
+          36.7781785
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Lalla Khedidja",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-283"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0612758,
+          36.7803635
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Terminus",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-178"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0320036,
+          36.7383101
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Lala Douja",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-744"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.050628,
+          36.7696487
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Telemly Hôtel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-892"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9434949,
+          36.8070426
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Hammamat",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-400"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9241003,
+          36.8016995
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-808"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0586181,
+          36.7715182
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Djurdjura",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-523"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9800868,
+          36.814326
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "La Fayette",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-21"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0309207,
+          36.785754
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Beaux fraisiers",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-835"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9338832,
+          36.8003992
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al Kawthar",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-388"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9073034,
+          36.8064943
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "L'îlot",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-42"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9079057,
+          36.7953308
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-871"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0029677,
+          36.7961689
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Icosium calama hôtel - restaurant",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-814"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9654891,
+          36.7849723
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Annexe de la mairie",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-962"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0530691,
+          36.7931196
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Synagogue",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-74"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0592548,
+          36.7777967
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Sofiane",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-251"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9137464,
+          36.8034318
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-995"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9463031,
+          36.764232
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-436"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0191156,
+          36.7517881
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Radisson blue",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-41"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.94865,
+          36.8075029
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Centre Biométrique",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-320"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9483066,
+          36.8083684
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "ملحقة بلدية الحمامات",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-884"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0592183,
+          36.7785086
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Central Touring Hotel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-381"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0598067,
+          36.7802748
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hotel Estrangers",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-779"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.8877995,
+          36.7559586
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "El mahdi annexe",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-321"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0546651,
+          36.7681864
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Britanic",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-178"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0529022,
+          36.7676939
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Suisse",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-381"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0209538,
+          36.7708625
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ne",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-388"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0588044,
+          36.7849935
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد سيدي عبد الله",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-43"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0609357,
+          36.786707
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "المتحف الوطني للفنون والتقاليد الشعبية/دار خداوج العمياء",
+        "Catégorie": "museum",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-799"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9952865,
+          36.753257
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chez âami Cherif",
+        "Catégorie": "restaurant",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-479"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9881039,
+          36.7643334
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Walid N Mar",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-760"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9723982,
+          36.7430448
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "حديقة دنيا",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-699"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9734966,
+          36.7544151
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Safa oumia",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-197"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9796347,
+          36.7592271
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "École coranique Hamza Abdelkrim",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-815"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9246915,
+          36.7327162
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Le beau Fayet",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-738"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0541586,
+          36.7685833
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Audin",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-10"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0602841,
+          36.7906023
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "EL KAHF.RABIAAa",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-766"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0603614,
+          36.7593579
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مصلى",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-997"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0285827,
+          36.7562198
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "salle d'évasion غرفة الهروب",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-549"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0425343,
+          36.7442141
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "APC de Hydra",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-825"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0166405,
+          36.7675482
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مكتبة كلية الطب",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-198"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.8995536,
+          36.7912586
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Plage la Madrague",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-94"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0268549,
+          36.7959971
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-575"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9249306,
+          36.7628819
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Annexe APC Cheraga",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-895"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0605676,
+          36.7800103
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel moderne",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-758"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0440189,
+          36.7476751
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chateau",
+        "Catégorie": "castle",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-625"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0503306,
+          36.7655854
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Szmir",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-84"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0604993,
+          36.7743998
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-289"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0151916,
+          36.7916366
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Daïra de Bouzareah service biométrique",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-508"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0308489,
+          36.7593297
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "منزل الأبرشية",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-853"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9272102,
+          36.800784
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد عبد اللطيف سلطاني",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-363"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0557812,
+          36.7666442
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Dortoir Familial Hassiba",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-568"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9217916,
+          36.8024609
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-133"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.036787,
+          36.8091495
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-401"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0261876,
+          36.7684322
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Villa des Traités",
+        "Catégorie": "manor",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-977"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0259132,
+          36.7588722
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel du val",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-454"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9668734,
+          36.7677811
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Nid d ange",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-810"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0540219,
+          36.7574938
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ghermoul hôtel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-19"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0464199,
+          36.7697643
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مكتبة مولود فرعون",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-679"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0328037,
+          36.7636553
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-225"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0593469,
+          36.7634182
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-998"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0390286,
+          36.767118
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-568"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0238533,
+          36.7553815
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "José de San Martin خوسيه دي سان مارتين",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-627"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0613073,
+          36.7828695
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Akfadou",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-912"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9877001,
+          36.7350393
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mousala",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-278"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9234155,
+          36.7600497
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Teri Park",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-480"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0587167,
+          36.777913
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Sofien",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-565"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0320897,
+          36.8096609
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-749"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0318031,
+          36.8098431
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Vista point",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-791"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0541014,
+          36.7750254
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Balcon Ouaguenouni",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-968"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0474487,
+          36.7526248
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "library",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-889"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0135943,
+          36.8176561
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-300"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0609765,
+          36.7811966
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Beb Azzoun",
+        "Catégorie": "city_gate",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-344"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0614358,
+          36.7889612
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Bab El Oued",
+        "Catégorie": "city_gate",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-476"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0628992,
+          36.784662
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Beb El Bhar",
+        "Catégorie": "city_gate",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-886"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0440619,
+          36.7688521
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-119"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.8876049,
+          36.758554
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-394"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9131487,
+          36.7368728
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-270"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0609192,
+          36.7823805
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel El Badr",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-930"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9621643,
+          36.7594625
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ennour",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-618"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9279047,
+          36.7962044
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-990"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0551765,
+          36.7814814
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-507"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.010743,
+          36.7610824
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد عباد الرحمان",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-763"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0544547,
+          36.7800364
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mairie frère billaili",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-744"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9539392,
+          36.7438182
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد الزبير بن العوام",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-466"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9752055,
+          36.7581934
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée el Rahma",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-875"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0282246,
+          36.7624711
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Kimberling",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-479"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0400277,
+          36.7516417
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "AD Hôtel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-613"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0585359,
+          36.7798763
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Grand rich",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-703"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0585735,
+          36.779669
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel National Alger",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-966"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.05883,
+          36.779786
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Gran rich hôtel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-559"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0565316,
+          36.7626153
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "City 72",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-272"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0001441,
+          36.7981868
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Stade de Bouzareah",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-609"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9999028,
+          36.7958376
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "La mairie de Bouzareah - Annexe Bouhammam",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-119"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0189452,
+          36.7516613
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Lucsery hôtel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-517"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0638387,
+          36.7886647
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "cannon",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-743"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0638992,
+          36.788624
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "cannon",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-956"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0639576,
+          36.7885829
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "cannon",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-96"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0640084,
+          36.7885512
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "cannon",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-685"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0637967,
+          36.7886412
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "cannon",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-120"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0619581,
+          36.7909145
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "monument",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-327"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.947557,
+          36.7701766
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "pépinière SIDALI",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-479"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0581402,
+          36.7781994
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Carthage",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-978"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.059471,
+          36.7849147
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Al Hambra Palace",
+        "Catégorie": "castle",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-968"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0605868,
+          36.7848739
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Marhaba Hotel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-136"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0616291,
+          36.782879
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel Akfadou",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-716"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0610129,
+          36.7829466
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hôtel El Badr",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-55"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.062233,
+          36.7874546
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "دار الحمراء",
+        "Catégorie": "castle",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-814"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0587299,
+          36.7802378
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Afric Hotel",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-579"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.055111,
+          36.7845463
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "قصر الداي",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-628"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0640042,
+          36.7882733
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مركز الفنون والثقافة *قصر رياس البحر* حصن 23",
+        "Catégorie": "museum",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-895"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0608276,
+          36.7856612
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "castle",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-52"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0610319,
+          36.7855995
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "castle",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-638"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0607981,
+          36.7859502
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Dar Es-Souff",
+        "Catégorie": "museum",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-47"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0593638,
+          36.7882365
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Maqam Abd al-Rahman al-Tha'alibi",
+        "Catégorie": "tomb",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-352"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0565268,
+          36.7854447
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "castle",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-277"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0574778,
+          36.7855122
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Stah El Behdja",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-681"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0584367,
+          36.7862799
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-117"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0592597,
+          36.7864901
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Bir Chebana بير شبانة",
+        "Catégorie": "water_tap",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-344"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0608505,
+          36.7852479
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "museum",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-877"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0614473,
+          36.7850578
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "museum",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-224"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0625587,
+          36.783606
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "APC la Casbah",
+        "Catégorie": "townhall",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-444"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0640144,
+          36.7882729
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "fort",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-996"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0554922,
+          36.7836562
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "castle",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-305"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0622649,
+          36.7850365
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "information",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-728"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0625572,
+          36.785436
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "information",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-978"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0625194,
+          36.7850401
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "information",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-606"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0621299,
+          36.7853746
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "information",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-309"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9468141,
+          36.7527083
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "laser strik dz",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-57"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0625351,
+          36.7850605
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "information",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-950"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0623352,
+          36.7851413
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "الموقع الأثري لبقايا مسجد السيدة",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-901"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0623318,
+          36.7851422
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "ruins",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-922"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0624622,
+          36.7847278
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-39"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0642034,
+          36.7854354
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "الجامع الكبير",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-639"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0648292,
+          36.78519
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-9"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0645113,
+          36.7849559
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-908"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0647233,
+          36.7855071
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مقهى تلمساني",
+        "Catégorie": "cafe",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-684"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0588406,
+          36.7729332
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "نقطة الصفر كيلومتر",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-70"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0086684,
+          36.7568033
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-912"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0078442,
+          36.7558013
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "memorial",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-639"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0552289,
+          36.7699526
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Tunnel with Caffee",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-609"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0064284,
+          36.7498813
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Enclos des Elephants",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-10"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0057578,
+          36.750584
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Enclos des Giraffes",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-614"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0569201,
+          36.7845596
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "بير جباح",
+        "Catégorie": "water_tap",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-604"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0582549,
+          36.7846157
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Bir Sidi Abdallah بير سيدي عبدالله",
+        "Catégorie": "water_tap",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-661"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0504385,
+          36.7807894
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "الموقع السابق لبرج النجمة",
+        "Catégorie": "ruins",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-106"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0448054,
+          36.7738159
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "حصار قلعة برج مولاي الحسن",
+        "Catégorie": "battlefield",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-134"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9671562,
+          36.7774228
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد إبراهيم الخليل",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-593"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.9712673,
+          36.7558082
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مصلى",
+        "Catégorie": "place_of_worship",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-438"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0429981,
+          36.8012829
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-138"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0430051,
+          36.8007803
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-526"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0256738,
+          36.7585273
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hotel du Val",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-935"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.06168,
+          36.7754313
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "ساحة بونطة",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-374"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0410139,
+          36.7953102
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "viewpoint",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-150"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0586752,
+          36.7833518
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "attraction",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-423"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          3.0444486,
+          36.764214
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sans nom",
+        "Catégorie": "hotel",
+        "Zone": "Hammamet",
+        "Description": "",
+        "HW_ID": "HW-SCOUT-1770151706087-550"
+      }
+    }
+  ]
+}

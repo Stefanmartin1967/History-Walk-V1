@@ -1,0 +1,3144 @@
+* { box-sizing: border-box; }
+
+/* style.css - BASE V1 RESTAURÉE + PATCH BOUTONS */
+:root,
+html[data-theme="maritime"] {
+    --spacing-md: 16px;
+    --spacing-item-gap: 12px;
+    --sidebar-width: clamp(380px, 30vw, 480px);
+    --bg: #0D3B66;
+    --bg-2: #062B4D;
+    --surface: #FFFFFF;
+    --surface-muted: #F0F4F8;
+    --ink: #102A43;
+    --ink-soft: #627D98;
+    --line: #D9E2EC;
+    --brand: #3B82F6;
+    --brand-soft: #F0F9FF; /* Plus clair que la mer */
+    --ok: #10B981;
+    --warn: #F59E0B;
+    --danger: #EF4444;
+    --shadow: 0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
+    --shadow-soft: 0 4px 12px rgba(100, 116, 139, 0.1);
+}
+
+html[data-theme="desert"] {
+    --bg: #4d2c12;
+    --bg-2: #3a210e;
+    --surface: #fff8f0;
+    --surface-muted: #f5efe6;
+    --ink: #3a210e;
+    --ink-soft: #8a6f5e;
+    --line: #e0d5c7;
+    --brand: #e88c32;
+    --brand-soft: #faeadd;
+    --ok: #10B981;
+    --warn: #F59E0B;
+    --danger: #EF4444;
+}
+
+html[data-theme="oasis"] {
+    --bg: #065f46;
+    --bg-2: #054d39;
+    --surface: #f0fdf4;
+    --surface-muted: #e6f7eb;
+    --ink: #064e3b;
+    --ink-soft: #528c7c;
+    --line: #cce8d8;
+    --brand: #34d399;
+    --brand-soft: #d1fae5;
+    --ok: #10B981;
+    --warn: #F59E0B;
+    --danger: #EF4444;
+}
+
+html[data-theme="night"] {
+    --bg: #111827;
+    --bg-2: #000000;
+    --surface: #1f2937;
+    --surface-muted: #374151;
+    --ink: #f3f4f6; /* Plus clair (presque blanc) pour meilleure lisibilité */
+    --ink-soft: #9ca3af;
+    --line: #4b5563;
+    --brand: #60a5fa;
+    --brand-soft: #374151;
+    --ok: #34d399;
+    --warn: #facc15;
+    --danger: #f87171;
+}
+
+/* Force la couleur sur tous les éléments de formulaire et boutons en mode nuit */
+html[data-theme="night"] input,
+html[data-theme="night"] textarea,
+html[data-theme="night"] select,
+html[data-theme="night"] button {
+    color: var(--ink);
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0; padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--surface-muted);
+    color: var(--ink);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ======================== STYLES PC ============================ */
+
+.topbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px; /* Harmonized height */
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    color: #fff;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+    box-shadow: var(--shadow);
+    z-index: 1005;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.topbar-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.app-title {
+    font-size: 24px; /* Plus lisible */
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    flex-shrink: 1;
+    min-width: 200px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9eacba;
+    width: 24px; /* Icone plus grande */
+    height: 24px;
+    pointer-events: none;
+}
+
+#search-input {
+    width: 100%;
+    height: 42px; /* Harmonized height */
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, .18);
+    background-color: rgba(255, 255, 255, .10);
+    padding: 0 16px 0 48px;
+    color: white;
+    font-size: 16px; /* Texte plus grand */
+    transition: all .2s ease;
+}
+
+#search-input::placeholder {
+    color: #9eacba;
+}
+
+#search-input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, .14);
+    border-color: var(--brand);
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    margin-top: 8px;
+    background-color: var(--surface);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    z-index: 1003;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+}
+
+.search-results button {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--ink);
+    border-bottom: 1px solid var(--surface-muted);
+}
+
+.search-results button:last-child {
+    border-bottom: none;
+}
+
+.search-results button:hover {
+    background-color: var(--surface-muted);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 42px; /* Harmonized height */
+    padding: 0 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .10);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, .18);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all .18s ease;
+    white-space: nowrap;
+}
+
+.btn svg {
+    width: 24px; /* Icone plus grande */
+    height: 24px;
+}
+
+.explorer-item-action {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: all 0.2s;
+}
+
+.explorer-item-action:hover {
+    background-color: var(--surface-muted);
+    opacity: 1;
+}
+
+.explorer-item-action svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ========================================================= */
+/* === FIX SPECIFICITY FOR PC DETAILS PANEL === */
+/* ========================================================= */
+
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, .14);
+}
+
+.btn.active {
+    background: var(--brand);
+    color: #fff;
+    border-color: transparent;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    background-color: rgba(255, 255, 255, .05);
+}
+
+.separator {
+    height: 24px;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0 4px;
+}
+
+.zones-container {
+    position: relative;
+}
+
+.zones-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background-color: var(--surface);
+    color: var(--ink);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    z-index: 2000;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    min-width: 200px;
+}
+
+.zones-menu button {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--ink);
+}
+
+.zones-menu button:hover {
+    background-color: var(--surface-muted);
+}
+
+#map {
+    position: absolute;
+    top: 70px; /* Ajusté à la topbar */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: right 0.3s ease;
+}
+
+body.sidebar-open #map {
+    right: var(--sidebar-width);
+}
+
+#app-version {
+    position: absolute;
+    bottom: 30px;
+    left: 10px;
+    z-index: 1003;
+    color: var(--ink-soft);
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+
+.hw-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    background-color: var(--surface);
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    box-shadow: var(--shadow-soft);
+}
+
+.hw-icon svg {
+    color: var(--ink);
+    width: 18px;
+    height: 18px;
+}
+
+.right-sidebar {
+    position: fixed;
+    top: 70px; /* Ajusté à la topbar */
+    right: 0;
+    bottom: 0;
+    height: auto;
+    width: var(--sidebar-width);
+    max-width: 100%;
+    background: var(--surface-muted);
+    box-shadow: var(--shadow);
+    z-index: 1002;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-tabs {
+    display: flex;
+    background-color: var(--surface-muted);
+    padding: 4px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-button.active {
+    background-color: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-panel {
+    display: none;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+    background: var(--surface-muted);
+}
+
+.sidebar-panel.active {
+    display: flex;
+}
+
+.panel-content {
+    padding: 12px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    gap: 4px;
+}
+
+.detail-section {
+    margin-bottom: 4px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    /* Nouveau design : Carte Unifiée (Container Blanc) */
+    background-color: var(--surface);
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--line);
+    overflow: hidden;
+}
+
+.detail-section h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    align-items: center;
+    /* Header Fin et Coloré */
+    padding: 2px 12px;
+    background-color: var(--brand-soft);
+    border-radius: 0;
+    border-bottom: 1px solid var(--line);
+    min-height: 24px;
+}
+
+.detail-section h3 .action-button {
+    width: 24px;
+    height: 24px;
+}
+
+.detail-section h3 .action-button svg {
+    width: 14px;
+    height: 14px;
+}
+
+.detail-section .content {
+    background: var(--surface);
+    box-shadow: none;
+    border-radius: 0;
+    /* Espace réduit en haut */
+    padding: 6px 12px 10px 12px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+}
+
+.content.structured-input-row,
+.content.checkbox-group {
+    display: flex;
+    flex-direction: row;
+}
+
+.structured-input-row {
+    justify-content: space-around;
+    align-items: center;
+}
+
+.checkbox-group {
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+}
+
+.description-section,
+.notes-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.description-section .content,
+.notes-section .content {
+    display: flex;
+    flex-direction: column;
+}
+
+.description-content {
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.source-container {
+    font-size: 12px;
+    margin-top: auto;
+    padding-top: 8px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+
+.source-container a {
+    color: var(--brand);
+}
+
+.input-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-group label {
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--ink-soft);
+}
+
+.input-group .fields {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.input-group input[type="number"] {
+    width: auto;
+    min-width: 45px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    padding: 6px 4px;
+    height: 42px; /* 28px height + 6px*2 padding + 2px border = ~42px equivalent */
+    background-color: var(--surface);
+    color: var(--ink);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.photos-section {
+    min-height: 90px;
+}
+
+.photos-grid-scroller {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.photo-placeholder {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    background: var(--surface-muted);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    color: var(--line);
+    cursor: pointer;
+}
+
+.photo-placeholder:hover {
+    background-color: var(--line);
+}
+
+.action-button svg {
+    width: 18px;
+    height: 18px;
+}
+
+.panel-header {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    padding: 8px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    min-height: 56px;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+
+
+
+.editable-field .edit-controls {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-header .edit-controls {
+    margin-left: auto;
+}
+
+
+.header-btn {
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+}
+
+.action-button {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+}
+
+.header-btn,
+.action-button {
+    display: grid;
+    place-items: center;
+    color: var(--ink-soft);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.header-btn:hover,
+.action-button:hover {
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+
+.header-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--surface-muted);
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+.detail-section h3 .section-controls {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.editable-field .editable-input {
+    width: 100%;
+    border: 1px solid var(--brand);
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    background-color: var(--surface);
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.panel-header .header-input {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 4px 8px;
+}
+
+#panel-title-input {
+    grid-column: 1 / span 2;
+}
+
+.editable-field .editable-text {
+    min-height: 24px;
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.editable-text.short-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    height: 24px;
+    min-height: 24px;
+}
+
+.editable-field .editable-text:empty::before {
+    content: 'Cliquez sur le crayon pour ajouter du contenu...';
+    color: var(--ink-soft);
+    font-style: italic;
+    white-space: normal;
+}
+
+textarea.editable-input {
+    resize: vertical;
+    flex-grow: 1;
+}
+
+.detail-section[data-field-id="short_desc"] .content {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.time-editor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.time-adjust-btn {
+    display: grid;
+    place-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+}
+
+.time-adjust-btn:hover {
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+
+.duration-picker-trigger {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    min-width: 70px;
+    text-align: center;
+    height: 42px; /* 28px height + 12px padding + 2px border */
+    line-height: 28px;
+}
+
+.duration-picker-trigger:hover {
+    background: var(--surface-muted);
+}
+
+#circuit-panel .circuit-header {
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.circuit-title-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+#circuit-title-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.circuit-description-container {
+    width: 100%;
+}
+
+#circuit-description {
+    width: 100%;
+    resize: none;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background-color: var(--surface-muted);
+    box-sizing: border-box;
+    height: 70px;
+}
+
+#circuit-description:focus {
+    outline: none;
+    border-color: var(--brand);
+    background-color: var(--surface);
+}
+
+.circuit-title-container .action-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-soft);
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.circuit-title-container .action-button:hover {
+    background: var(--surface-muted);
+}
+
+
+.header-controls {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    width: 100%;
+}
+
+.controls-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+.header-controls .controls-group:first-child {
+    justify-content: flex-start;
+}
+
+.meta-info {
+    justify-content: center;
+    grid-column: 2 / 3;
+}
+
+.transport-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    gap: 16px;
+}
+
+.transport-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.transport-group:first-of-type {
+    justify-content: flex-start;
+    border-right: 1px solid var(--line);
+    padding-right: 16px;
+}
+
+.transport-group:last-of-type {
+    justify-content: flex-end;
+}
+
+.transport-group svg {
+    color: var(--ink-soft);
+}
+
+.transport-field {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-soft);
+}
+
+.transport-field input {
+    width: 40px;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+    font-size: 14px;
+    padding: 2px;
+    background: transparent;
+    color: var(--ink);
+}
+
+.transport-field input::placeholder {
+    color: var(--line);
+}
+
+.transport-field input:focus {
+    outline: none;
+    border-bottom-color: var(--brand);
+}
+
+.transport-field span {
+    font-size: 13px;
+}
+
+.steps {
+    padding: 8px;
+    background: var(--surface-muted);
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.empty-list-info {
+    padding: 20px;
+    text-align: center;
+    color: var(--ink-soft);
+}
+
+.step {
+    border-radius: 10px;
+    background: var(--surface);
+    margin-bottom: 6px;
+    box-shadow: var(--shadow-soft);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.num {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--brand-soft);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+}
+
+.step-main {
+    font-weight: 500;
+    color: var(--ink);
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.step-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.stepbtn {
+    color: var(--ink-soft);
+    background: none;
+    border: none;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+}
+
+.stepbtn:hover:not(:disabled) {
+    color: var(--ink);
+}
+
+.stepbtn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.panel-footer {
+    background: var(--surface-muted);
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    min-height: 56px;
+}
+
+.footer-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-soft);
+    border-radius: 12px;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+}
+
+.footer-btn:hover:not(:disabled) {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transform: translateY(-1px);
+}
+
+.footer-btn.active {
+    color: var(--brand);
+    background: var(--brand-soft);
+}
+
+.footer-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: grayscale(100%);
+}
+
+.footer-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.separator-vertical {
+    width: 1px;
+    height: 20px;
+    background: var(--line);
+    margin: 0 2px;
+}
+
+/* Suppression des styles spécifiques colorés pour uniformiser */
+.footer-btn.pill {
+    /* On garde la classe pour compatibilité HTML mais on reset */
+    height: 42px;
+    width: 42px;
+    border-radius: 12px;
+}
+
+/* Couleurs au survol spécifiques (Optionnel - On garde pour feedback visuel mais plus subtil) */
+#btn-clear-circuit:hover { color: var(--danger); background: #FEE2E2; }
+#btn-import-gpx:hover { color: var(--ok); background: #D1FAE5; }
+#btn-loop-circuit:hover { color: var(--brand); background: #DBEAFE; }
+
+.circuit-polyline {
+    stroke: var(--danger) !important; /* Rouge (Vol d'oiseau) */
+    stroke-width: 3;
+    stroke-dasharray: 6, 6;
+    opacity: 0.9;
+}
+
+.real-track-polyline {
+    stroke: var(--brand) !important; /* Bleu (Tracé réel non fait) */
+    stroke-width: 3;
+    opacity: 0.8;
+}
+
+.real-track-polyline-done {
+    stroke: var(--ok) !important; /* Vert (Tracé réel fait) */
+    stroke-width: 3;
+    opacity: 0.9;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(16, 42, 67, 0.6);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: var(--surface-muted);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    max-height: 80vh;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+}
+
+.modal-header h2 {
+    color: var(--ink);
+}
+
+.modal-body {
+    padding: 16px 24px;
+    overflow-y: auto;
+}
+
+.circuit-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background-color: var(--surface);
+    box-shadow: var(--shadow-soft);
+}
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(13, 59, 102, 0.7);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.toast-container {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    padding: 12px 18px;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateX(100%);
+    animation: slideIn 0.3s forwards, fadeOut 0.5s 3.5s forwards;
+}
+
+.toast svg {
+    flex-shrink: 0;
+}
+
+.toast.toast-success {
+    background-color: var(--ok);
+}
+
+.toast.toast-error {
+    background-color: var(--danger);
+}
+
+.toast.toast-warning {
+    background-color: var(--warn);
+}
+
+.toast.toast-info {
+    background-color: var(--brand);
+}
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* =================== STYLES MOBILES V1 (C'est ce qui marche !) ================== */
+
+#mobile-container {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh;
+    width: 100%;
+    background-color: var(--surface-muted);
+}
+
+#mobile-main-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    position: relative;
+}
+
+.mobile-view-header {
+    flex-shrink: 0;
+    background-color: var(--surface);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    box-sizing: border-box;
+    gap: 8px;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+}
+
+.mobile-view-header h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    white-space: normal;
+    text-align: center;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+#mobile-back-btn {
+    padding: 0;
+    background: transparent;
+    border: none;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+}
+
+#mobile-nav {
+    flex-shrink: 0;
+    order: 3;
+}
+
+#mobile-nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 4px 0 calc(4px + env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font-size: 12px;
+    flex: 1;
+    padding: 8px 4px;
+    border-radius: 8px;
+}
+
+.mobile-nav-btn span {
+    display: none;
+}
+
+.mobile-nav-btn.active {
+    color: var(--brand);
+}
+
+
+
+
+
+
+.mobile-list {
+    padding: 0;
+}
+
+.mobile-list-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 16px;
+    background-color: var(--surface);
+    border: none;
+    border-radius: 16px;
+    margin-bottom: var(--spacing-item-gap);
+    box-shadow: var(--shadow-soft);
+    text-align: left;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+.mobile-list-item [data-lucide="route"],
+.actions-list .mobile-list-item [data-lucide] {
+    margin-right: 16px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+
+.mobile-list-item [data-lucide="route"],
+.actions-list .mobile-list-item [data-lucide] {
+    color: var(--brand);
+}
+
+.mobile-list-item span {
+    flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mobile-list-item [data-lucide="chevron-right"] {
+    color: var(--line);
+    margin-left: auto;
+}
+
+
+#mobile-main-container .panel-content {
+    padding: 0;
+    gap: 0;
+    overflow-y: visible; /* Allows sticky elements to work relative to parent scroller */
+}
+
+
+
+.description-section .description-content,
+.notes-section .description-content {
+    min-height: 4.8em;
+}
+
+.description-section.editable-field .content {
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-search {
+    width: 100%;
+}
+
+.mobile-search #mobile-search-input {
+    width: 100%;
+    height: 44px;
+    border-radius: 12px;
+    padding-left: 48px;
+    background-color: var(--surface-muted);
+    border: 1px solid var(--line);
+    color: var(--ink);
+}
+
+.mobile-search #mobile-search-input::placeholder {
+    color: var(--ink-soft);
+}
+
+.mobile-search .search-icon {
+    position: absolute;
+    left: 16px;
+    color: var(--ink-soft);
+}
+
+#mobile-search-results {
+    padding-top: 0;
+}
+
+#fullscreen-editor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--surface);
+    z-index: 3000;
+    display: none;
+    flex-direction: column;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-soft);
+    padding: 12px 16px;
+}
+
+.editor-header h2 {
+    font-size: 18px;
+    color: var(--ink);
+}
+
+#editor-cancel-btn,
+#editor-save-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+#editor-cancel-btn {
+    color: var(--ink-soft);
+}
+
+#editor-save-btn {
+    color: var(--brand);
+}
+
+#editor-textarea {
+    flex-grow: 1;
+    border: none;
+    padding: 16px;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.6;
+    resize: none;
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+
+#editor-textarea:focus {
+    outline: none;
+}
+
+
+@media (min-width: 769px) {
+    #mobile-container {
+        display: none !important;
+    }
+}
+
+/* ========================================================= */
+/* === AJOUTS FINS (DESIGN & PATCH 5 BOUTONS) === */
+/* ========================================================= */
+
+/* --- GALERIE & PHOTOS (Restauré) --- */
+.photo-item {
+    position: relative;
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.photo-item .img-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: zoom-in;
+}
+
+.photo-delete-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    color: var(--danger);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.photo-delete-btn svg {
+    width: 12px;
+    height: 12px;
+}
+
+.checkbox-group {
+    justify-content: center !important;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Le conteneur (Fond noir) */
+.photo-viewer {
+    display: none;
+    /* Géré par le JS */
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+
+    /* CENTRAGE FLEXBOX */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* L'image (La Double Limite) */
+.viewer-content {
+    /* 1. Réinitialisation */
+    display: block;
+    width: auto;
+    height: auto;
+    margin: auto;
+
+    /* 2. La Logique PC : Max 800px de large OU 80% de haut */
+    max-width: 95vw;
+    max-height: 95vh;
+
+    /* 3. Esthétique */
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+    animation: zoom 0.3s;
+}
+
+/* 4. La Règle Mobile (SORTIE des accolades ci-dessus) */
+@media (max-width: 800px) {
+    .viewer-content {
+        max-width: 95vw;
+        /* Sur petit écran, on prend presque toute la largeur */
+    }
+}
+
+.close-viewer {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+    z-index: 10001;
+}
+
+.close-viewer:hover {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.viewer-nav {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -50px;
+    color: white;
+    font-weight: bold;
+    font-size: 30px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 10001;
+}
+
+.nav-next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.nav-prev {
+    left: 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.viewer-nav:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+@keyframes zoom {
+    from {
+        transform: scale(0)
+    }
+
+    to {
+        transform: scale(1)
+    }
+}
+
+@media only screen and (max-width: 700px) {
+    .viewer-content {
+        width: 100%;
+    }
+
+    .viewer-nav {
+        padding: 10px;
+        font-size: 20px;
+    }
+}
+
+/* --- PATCH POUR LE GÉNÉRATEUR (Design aéré) --- */
+.action-btn-large {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    background: var(--brand);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
+}
+
+input[type=range] {
+    width: 100%;
+    height: 6px;
+    background: var(--line);
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+/* --- PATCH POUR LA LISTE (Marges aérées pour scroll confortable) --- */
+
+/* --- CSS POUR BARRE MOBILE --- */
+#mobile-dock {
+    display: none;
+}
+
+
+.mobile-nav-btn {
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 11px;
+    gap: 4px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.mobile-nav-btn.active {
+    color: var(--brand);
+    font-weight: bold;
+}
+
+.mobile-nav-btn i,
+.mobile-nav-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* --- RESPONSIVE TOPBAR (Adaptation PC Portable) --- */
+/* Règle 2000px supprimée pour toujours afficher les labels */
+
+/* --- LE STYLE DES INCONTOURNABLES (Version Pentagone VIP) --- */
+
+/* 1. On nettoie le conteneur racine pour qu'il soit transparent et géré par Leaflet */
+.leaflet-marker-icon.marker-vip {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    /* On laisse le transform de Leaflet tranquille ! */
+    width: 40px !important;
+    height: 40px !important;
+    margin-left: -20px !important;
+    margin-top: -46px !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    overflow: visible !important;
+}
+
+/* 2. On applique le style Pentagone au wrapper interne */
+.leaflet-marker-icon.marker-vip .hw-icon-wrapper {
+    width: 100%;
+    height: 100%;
+    background: #FEF08A; /* Jaune Pastel (Tailwind Yellow-200) */
+    /* Clip Path Pentagone */
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+    transform: none; /* Pas de rotation */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Ombre portée pour le relief (remplace box-shadow qui est coupé) */
+    filter: drop-shadow(0 4px 3px rgba(0,0,0,0.25));
+}
+
+/* 3. On ajuste l'icône */
+.leaflet-marker-icon.marker-vip svg,
+.leaflet-marker-icon.marker-vip i {
+    color: #422006 !important; /* Marron foncé pour contraste */
+    width: 22px !important;
+    height: 22px !important;
+    z-index: 2;
+    transform: none; /* Pas de rotation */
+    padding-top: 5px; /* Léger décalage visuel vers le centre de masse */
+}
+
+/* --- ETATS DES MARQUEURS --- */
+
+.leaflet-marker-icon.marker-visited:not(.marker-vip) {
+    border: 3px solid #10B981 !important; /* Vert */
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+}
+
+.leaflet-marker-icon.marker-planned:not(.marker-vip) {
+    border: 3px solid #3B82F6 !important; /* Bleu Brand */
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* Si VIP est visité ou planifié : Simulation de bordure via Drop Shadow */
+.leaflet-marker-icon.marker-vip.marker-visited .hw-icon-wrapper {
+    background: #FEF08A !important;
+    /* Double shadow pour simuler une bordure nette verte + ombre */
+    filter: drop-shadow(0 0 2px #10B981) drop-shadow(0 0 2px #10B981) drop-shadow(0 4px 3px rgba(0,0,0,0.3));
+}
+.leaflet-marker-icon.marker-vip.marker-planned .hw-icon-wrapper {
+    background: #FEF08A !important;
+    /* Double shadow pour simuler une bordure nette bleue + ombre */
+    filter: drop-shadow(0 0 2px #3B82F6) drop-shadow(0 0 2px #3B82F6) drop-shadow(0 4px 3px rgba(0,0,0,0.3));
+}
+
+/* --- HIGHLIGHT SEARCH --- */
+.leaflet-marker-icon.marker-highlight {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    z-index: 2000 !important;
+}
+
+.leaflet-marker-icon.marker-highlight .hw-icon-wrapper {
+    background-color: var(--surface);
+    border: 2px solid #EF4444;
+    border-radius: 8px; /* Carré arrondi pour se différencier */
+    animation: pulse 1.5s infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    clip-path: none !important; /* Force la forme carrée même si VIP */
+}
+
+/* --- HEADER REORGANISE --- */
+/* (Block supprimé ou intégré plus haut dans .topbar-left) */
+
+/* --- ICON ONLY BUTTONS --- */
+#btn-categories span,
+#btn-filter-vus span,
+#btn-filter-planifies span,
+#btn-mode-selection span,
+#btn-tools-menu span {
+    display: none !important;
+}
+
+/* Ajustement Recherche pour Header Gauche */
+.search-container {
+    max-width: 300px;
+    margin-left: 16px;
+}
+
+/* --- WIZARD SELECTION MODE --- */
+.wizard-content {
+    text-align: left;
+    max-width: 450px;
+}
+
+.wizard-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+    background: var(--surface-muted);
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.wizard-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.wizard-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--brand);
+    cursor: pointer;
+}
+
+.wizard-select-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.wizard-select-container select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 15px;
+    color: var(--ink);
+}
+
+/* --- TOOLS DROPDOWN --- */
+.tools-dropdown-container {
+    position: relative;
+}
+
+.tools-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: auto; /* Correction : Alignement à droite */
+    right: 0;   /* Correction : Alignement à droite */
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    border: 1px solid var(--line);
+    width: 220px;
+    overflow: hidden;
+    z-index: 2000;
+}
+
+.tools-menu.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.tools-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: var(--ink);
+    font-size: 14px;
+    border-bottom: 1px solid var(--surface-muted);
+}
+
+.tools-menu-item:last-child {
+    border-bottom: none;
+}
+
+.tools-menu-item:hover {
+    background: var(--surface-muted);
+}
+
+.tools-menu-item svg {
+    width: 18px;
+    height: 18px;
+    color: var(--ink-soft);
+}
+
+.tools-menu-item:hover svg {
+    color: var(--brand);
+}
+/* ========================================================= */
+/* === SYSTÈME DE MODALES (Architecture) === */
+/* ========================================================= */
+
+.custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(13, 59, 102, 0.6); /* Teinte bleu nuit légère */
+    backdrop-filter: blur(2px);
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s;
+}
+
+.custom-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.custom-modal-box {
+    background: var(--surface);
+    border-radius: 16px;
+    width: 85%;
+    max-width: 380px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    padding: 24px;
+    text-align: center;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid var(--line);
+}
+
+.custom-modal-overlay.active .custom-modal-box {
+    transform: scale(1) translateY(0);
+}
+
+.custom-modal-title {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+}
+
+.custom-modal-message {
+    margin: 0 0 24px 0;
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.custom-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.custom-modal-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s, filter 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.custom-modal-btn:hover {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
+}
+
+.custom-modal-btn:active {
+    transform: translateY(1px);
+}
+
+.custom-modal-btn.primary {
+    background-color: var(--brand);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.custom-modal-btn.danger {
+    background-color: var(--danger);
+    color: white;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+.custom-modal-btn.secondary {
+    background-color: var(--surface-muted);
+    color: var(--ink);
+    border: 1px solid var(--line);
+}
+
+/* --- SCANNER QR CODE --- */
+#qr-scanner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+}
+
+#qr-reader {
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+}
+
+#close-scanner-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    cursor: pointer;
+}
+
+/* --- EXPLORER TAB STYLES --- */
+
+.explorer-header {
+    min-height: 50px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+}
+
+.explorer-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.explorer-item {
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; REMOVED to allow left stacking */
+    background: var(--surface);
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.2s;
+    gap: 12px; /* Increased gap for left button separation */
+    border: 1px solid var(--line);
+}
+
+.explorer-item:hover {
+    background-color: var(--surface-muted);
+    transform: translateY(-1px);
+    border-color: var(--brand-soft);
+}
+
+.explorer-item-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.explorer-item-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+
+    /* 2 lines max */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+}
+
+.explorer-item-meta {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+}
+
+.explorer-item-delete {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--danger);
+    border-radius: 8px;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.2s;
+}
+
+.explorer-item-delete:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    opacity: 1;
+}
+
+.explorer-item-delete svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* --- MOBILE TOOLBAR --- */
+.mobile-toolbar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    background: var(--surface);
+    border-top: none;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    gap: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-sizing: border-box;
+}
+
+.toolbar-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.toolbar-btn:active {
+    background: var(--surface-muted);
+}
+
+.toolbar-btn.active {
+    color: var(--brand);
+    background: var(--brand-soft);
+}
+
+.toolbar-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* --- PHOTO SELECTION MODAL --- */
+#photo-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Agrandissement des tuiles */
+    gap: 12px;
+    max-height: 60vh; /* Un peu plus d'espace vertical */
+    overflow-y: auto;
+    padding: 10px;
+    background: var(--surface-muted);
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    margin-bottom: 10px; /* Réduit pour laisser place à la pagination */
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.pagination-btn {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--surface-muted);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.photo-selection-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+    background: var(--surface);
+}
+
+.photo-selection-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.photo-selection-item.selected {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.photo-selection-check {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.photo-selection-item.selected .photo-selection-check {
+    opacity: 1;
+    background: var(--brand);
+    color: white;
+}
+
+.photo-selection-item:hover .photo-selection-check {
+    opacity: 0.5;
+}
+
+.photo-selection-item.selected:hover .photo-selection-check {
+    opacity: 1;
+}
+
+.photo-selection-intro {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+/* SAFETY NET FOR MOBILE */
+
+
+
+/* --- CONSOLIDATED MOBILE STYLES (16px Harmonization) --- */
+@media (max-width: 768px) {
+    :root {
+        --spacing-md: 8px;
+    }
+
+    /* 1. Reset Global Layout for Mobile */
+    .topbar,
+    #map,
+    .right-sidebar,
+    #app-version {
+        display: none !important;
+    }
+
+    #mobile-container {
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100dvh;
+        width: 100%;
+        background-color: var(--surface-muted);
+    }
+
+    /* 2. PADDING STRATEGY (Revised: 8px to maximize card width) */
+    .mobile-standard-padding {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    /* Apply to List and Details Content */
+    .mobile-list,
+    .panel-content,
+    .detail-section .content {
+        padding-left: var(--spacing-md) !important;
+        padding-right: var(--spacing-md) !important;
+        /* Ensure content clears the bottom dock */
+        padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+    }
+
+    /* Exclude Full-Width Elements */
+    .mobile-view-header,
+    .mobile-toolbar,
+    .circuit-info-bar,
+    .detail-section h3 {
+        padding-left: var(--spacing-md);
+        padding-right: var(--spacing-md);
+        /* These often have their own padding, so we just ensure alignment */
+    }
+
+    /* 3. Component Adjustments */
+    .detail-section {
+        margin-bottom: 0; /* Continuous flow */
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        border-bottom: 1px solid var(--surface-muted); /* Divider */
+        padding-bottom: 8px;
+    }
+
+    .detail-section:last-child {
+        border-bottom: none;
+    }
+
+    .detail-section h3 {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background-color: transparent !important; /* Remove colored header background */
+        border-bottom: none; /* Remove header border */
+        color: var(--brand); /* Use color to distinguish title */
+        padding-top: 12px;
+        padding-bottom: 4px;
+    }
+
+    .title-names {
+        text-align: left;
+    }
+
+    .input-group {
+        gap: 8px;
+    }
+
+    /* 4. Dock & Navigation */
+    #mobile-dock {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background: var(--surface-muted);
+        border-top: 1px solid var(--line);
+        box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.03);
+        z-index: 2000;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .mobile-nav {
+        display: flex !important;
+        width: 100%;
+        padding: 10px 0;
+        justify-content: space-around;
+    }
+
+    /* 5. Viewer & Modals */
+    .viewer-content {
+        max-width: 95vw;
+    }
+}
+
+/* ==========================================================================
+   MOBILE REFACTOR (Safe Append-Only)
+   ========================================================================== */
+
+/* Cible 1 : Conteneur de la liste des circuits (remplace padding-bottom: 140px) */
+.mobile-list-container {
+    padding-top: 10px;
+    padding-bottom: 140px !important; /* Force le padding pour eviter le masquage par le dock */
+}
+
+/* Cible 2 : Bouton de téléchargement GPX (remplace margin-right: -16px, calc height, etc.) */
+.mobile-download-btn {
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    margin-right: -16px; /* Pour coller au bord droit */
+    margin-top: -16px;   /* Pour coller en haut */
+    margin-bottom: -16px; /* Pour coller en bas */
+    align-self: stretch; /* Remplace height: calc(100% + 32px) pour plus de robustesse */
+}
+
+/* Cible 3 : Bouton Check/Visité (remplace padding:10px..., flex..., etc.) */
+.mobile-check-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 10px 10px 0;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+/* Cible 4 : Layout de la Carte Circuit (remplace justify-content: space-between, flex:1, etc.) */
+.mobile-card-layout {
+    justify-content: space-between;
+    flex: 1;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Cible 5 : Métadonnées Circuit (remplace font-size:13px, color:ink-soft, etc.) */
+.mobile-card-meta {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Cible 6 : Conteneur de la liste des POI (remplace flex-grow:1, overflow-y:auto, etc.) */
+.mobile-poi-list-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-top: 10px;
+}
+
+/* Cible 7 : Layout Item POI (remplace justify-content: space-between) */
+.mobile-poi-item-layout {
+    justify-content: space-between;
+}
+
+/* Cible 8 : Conteneur Menu Actions (remplace padding-top: 16px) */
+.mobile-actions-container {
+    padding-top: 16px;
+}
+
+/* Cible 9 : Séparateur Menu (remplace height:1px, background, margin) */
+.mobile-divider {
+    height: 1px;
+    background: var(--line);
+    margin: 10px 0;
+}
+
+/* Cible 10 : Couleur Rouge (remplace color:var(--danger)) */
+.text-danger {
+    color: var(--danger);
+}
+
+/* Cible 11 : Icône Coeur BMC (remplace color:#e91e63, margin-left:auto, fill:#e91e63) */
+.bmc-heart-icon {
+    color: #e91e63;
+    margin-left: auto;
+    fill: #e91e63;
+}
+
+/* Cible 12 : Mobile Search View (padding:16px) */
+.mobile-search-container {
+    padding: var(--spacing-md);
+}
+
+/* Cible 13 : Wrapper Input (position:relative) */
+.mobile-search-wrapper {
+    position: relative;
+}
+
+/* Cible 14 : Icône Recherche (absolute, left/top) */
+.mobile-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+}
+
+/* Cible 15 : Input Recherche (width, padding, border) */
+.mobile-search-input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+}
+
+/* Cible 16 : Résultats Recherche (margin-top:20px) */
+.mobile-search-results {
+    margin-top: 20px;
+}
+
+/* Cible 17 : État "Liste Vide" (remplace text-align:center, etc.) */
+.mobile-empty-state {
+    text-align: center;
+    color: var(--ink-soft);
+    margin-top: 20px;
+}
+
+/* Cible 18 : État "Tout Terminé" (remplace flex-direction:column, etc.) */
+.mobile-finished-state {
+    text-align: center;
+    color: var(--ink-soft);
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Cible 19 : Grande Icône Check (remplace width:48px, etc.) */
+.mobile-check-icon-large {
+    width: 48px;
+    height: 48px;
+    color: var(--ok);
+    margin-bottom: 10px;
+}
+
+/* Cible 20 : Bouton Reset Filtre (remplace padding:8px 16px, background:var(--surface-muted), etc.) */
+.mobile-reset-filter-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+}
+
+/* Cible 21 : Harmonisation Header (remplace padding-right:15px hardcoded) */
+.mobile-header-harmonized {
+    padding-right: var(--spacing-md) !important; /* Force match var(--spacing-md) */
+}
+
+/* === HARMONISATION MOBILE FINAL (USER REQUEST) === */
+@media (max-width: 768px) {
+    /* 1. Harmonisation Verticale des Conteneurs (Top 10px) */
+    .mobile-list-container,
+    .mobile-poi-list-container,
+    .mobile-actions-container,
+    .mobile-search-container {
+        padding-top: 10px !important;
+    }
+
+    /* 2. Optimisation Largeur : Padding Interne 12px (vs 16px) */
+    .mobile-list-item {
+        padding: 12px !important;
+        border-radius: 12px !important; /* Harmonisation Arrondis */
+    }
+
+    /* Cas spécifique Search Input */
+    .mobile-search-input {
+        border-radius: 12px !important;
+    }
+}
+
+/* === ALIGNEMENT TOOLBAR / DOCK (USER REQUEST) === */
+@media (max-width: 768px) {
+    /* On force la Toolbar à avoir le même padding vertical que le Dock */
+    .mobile-toolbar {
+        padding: 4px 0 !important;
+        justify-content: space-around !important; /* Safety */
+    }
+
+    /* On force les boutons de la Toolbar à se comporter comme ceux du Dock */
+    .toolbar-btn {
+        flex: 1 !important; /* Distribution égale */
+        width: auto !important; /* Overwrite width: 42px */
+        max-width: none !important;
+        padding: 8px 4px !important;
+        height: auto !important; /* Overwrite height: 42px */
+        border-radius: 8px !important; /* Match dock */
+    }
+}
+
+/* === HARMONISATION HEADER/TOOLBAR & LISTE (VERSION 3.5.2) === */
+@media (max-width: 768px) {
+    /* 1. Fusion Visuelle Header / Toolbar */
+    .mobile-view-header {
+        border-bottom: none !important; /* On supprime la ligne de séparation */
+        box-shadow: none !important; /* On supprime l'ombre intermédiaire */
+        padding-bottom: 4px !important; /* On réduit l'espace bas */
+        min-height: auto !important; /* Hauteur naturelle */
+        z-index: 102 !important; /* Au-dessus de la toolbar */
+    }
+
+    .mobile-toolbar {
+        border-top: none !important; /* Pas de bordure haute */
+        box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; /* Ombre uniquement en bas */
+        padding-top: 0 !important; /* Collé au header */
+        z-index: 101 !important;
+        position: sticky !important;
+        top: 0 !important; /* Si on veut que tout colle */
+        background-color: var(--surface) !important; /* Assurer fond blanc */
+    }
+
+    /* 2. Harmonisation Espacement Liste (Basé sur le plus petit : 8px) */
+    .mobile-list-container {
+        padding-top: 8px !important; /* Remplace le 10px précédent pour matcher margin-bottom: 8px */
+    }
+}
+
+/* === OPTIMISATION PWA & SAFE AREA (VERSION 3.5.3) === */
+@media (max-width: 768px) {
+    /* 1. Gestion du Notch (Encoche) en haut */
+    .mobile-view-header {
+        padding-top: calc(8px + env(safe-area-inset-top)) !important;
+        /* On s'assure que le contenu ne colle pas au status bar */
+    }
+
+    /* 2. Gestion de la Home Bar (Barre du bas) */
+    #mobile-dock {
+        padding-bottom: calc(4px + env(safe-area-inset-bottom)) !important;
+        /* Le dock remonte au-dessus de la barre système */
+    }
+
+    /* 3. Ajustement du padding bas des listes pour éviter d'être caché par le dock agrandi */
+    .mobile-list-container,
+    .mobile-poi-list-container,
+    .mobile-actions-container {
+        padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+
+/* --- LEAFLET CONTROLS HARMONIZATION (THEMED) --- */
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 24px !important;
+    border-radius: 12px !important;
+    box-shadow: var(--shadow) !important;
+    border: 1px solid var(--line) !important;
+    background-color: var(--bg) !important; /* THEME COLOR */
+    color: #fff !important; /* Always white for contrast on theme bg */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px !important; /* Space between buttons */
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.leaflet-bar a:hover,
+.leaflet-control-layers-toggle:hover {
+    background-color: var(--bg-2) !important; /* Darker theme color on hover */
+    transform: translateY(-1px);
+}
+
+/* Remove default Leaflet borders between grouped buttons */
+.leaflet-bar {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.leaflet-bar a:first-child {
+    border-bottom-left-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+}
+
+.leaflet-bar a:last-child {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+}
+
+/* Zoom icons specific styling */
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+    font-weight: bold !important;
+}
+
+/* Layers control specific adjustments */
+.leaflet-control-layers {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 12px !important;
+    margin-top: 8px !important; /* Harmonized spacing (was auto/large) */
+}
+
+/* Ajustement spécifique pour réduire l'écart si le zoom est juste au-dessus */
+.leaflet-top .leaflet-control {
+    margin-top: 0 !important;
+    margin-bottom: 8px !important;
+}
+
+/* EXPANDED LAYERS MENU (THEMED INVERTED) */
+.leaflet-control-layers-expanded {
+    background-color: var(--bg) !important; /* Theme Background (Dark Blue) */
+    color: #fff !important; /* White Text */
+    padding: 12px 16px !important;
+    box-shadow: var(--shadow) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    min-width: 150px;
+}
+
+.leaflet-control-layers-selector {
+    accent-color: var(--brand); /* Checkbox color */
+    transform: scale(1.2);
+    margin-right: 8px;
+}
+
+.leaflet-control-layers-base label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+.leaflet-control-layers-toggle {
+    background-image: none !important; /* Remove default icon */
+}
+
+/* Add Lucide icon via CSS pseudo-element for Layers */
+.leaflet-control-layers-toggle::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: #fff; /* Icon white on theme bg */
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E") no-repeat center;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E") no-repeat center;
+}
+
+/* --- BACKUP MODAL STYLES --- */
+.backup-option-btn {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: transform 0.1s, box-shadow 0.1s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.backup-option-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.backup-option-btn:active {
+    transform: translateY(0);
+}
+
+.backup-option-btn.primary {
+    background-color: var(--brand);
+    color: white;
+}
+
+.backup-option-btn.success {
+    background-color: var(--ok);
+    color: white;
+}
+
+.backup-option-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.backup-option-text {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.backup-title {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.backup-subtitle {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+.backup-size-tag {
+    font-size: 13px;
+    font-weight: 600;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+/* FORCE REDUCED GAP BETWEEN CONTROLS */
+.leaflet-top .leaflet-control {
+    margin-top: 8px !important;
+}
+
+/* BUT: Remove margin for the VERY FIRST control to avoid pushing it down from the header */
+.leaflet-top .leaflet-control:first-child {
+    margin-top: 0 !important;
+}
+
+/* RESET MARGINS FOR TOP-LEFT CONTROLS */
+.leaflet-top.leaflet-left .leaflet-control {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* ADD GAP ONLY BETWEEN CONTROLS */
+.leaflet-top.leaflet-left .leaflet-control + .leaflet-control {
+    margin-top: 8px !important;
+}
+
+/* RADICAL RESET FOR LEAFLET CONTROL SPACING */
+.leaflet-left .leaflet-control {
+    margin-left: 10px !important; /* Standard Leaflet margin left */
+    margin-right: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* Add spacing specifically between consecutive controls */
+.leaflet-top.leaflet-left .leaflet-control + .leaflet-control {
+    margin-top: 8px !important;
+}
+
+/* Ensure the first control has some top margin from the header */
+.leaflet-top.leaflet-left {
+    padding-top: 10px !important;
+}
+
+/* STEP 1: Remove vertical separators in panel footer */
+.panel-footer .separator-vertical {
+    display: none !important;
+}
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, filter 0.2s;
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    filter: brightness(0.95);
+    transform: translateY(-1px);
+}
+
+.action-btn:active {
+    transform: translateY(1px);
+}
+
+/* --- PATCH DETAILS PANEL (Design Refinement) --- */
+
+/* 1. Agrandir légèrement les icônes en dessous du titre */
+.panel-header .action-button svg {
+    width: 22px !important;
+    height: 22px !important;
+}
+
+/* 2. Doubler la taille de la fenêtre description */
+.description-section .description-content {
+    min-height: 120px !important; /* ~ double de la hauteur standard */
+}
+
+/* 3. Centrer Détails Pratiques */
+.structured-input-row {
+    justify-content: center !important;
+    gap: 40px !important; /* Espacement confortable */
+}
+
+/* 4. Centrer Mon Suivi */
+.checkbox-group {
+    justify-content: center !important;
+    gap: 40px !important; /* Espacement unifié avec Détails Pratiques */
+}
+
+/* --- PATCH DETAILS PANEL V2 (Price Input & Alignment) --- */
+
+.price-wrapper {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 42px; /* Hauteur unifiée avec le time picker */
+}
+
+.price-input {
+    width: 80px; /* Largeur fixe pour l'input */
+    border: none;
+    padding: 0 8px;
+    text-align: center;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--surface);
+    height: 100%;
+}
+
+.price-input:focus {
+    outline: none;
+    background: var(--surface-muted);
+}
+
+.currency-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border-left: 1px solid var(--line);
+    min-width: 50px;
+}
+
+/* Force l'alignement vertical sur toute la ligne */
+.structured-input-row .input-group {
+    display: flex;
+    align-items: center;
+    margin: 0; /* Nettoyage */
+}
+
+/* --- PATCH DETAILS PANEL V3 (Stepper Harmonization) --- */
+
+/* 1. Conteneur Stepper (Temps & Prix Identiques) */
+.stepper-control {
+    display: flex;
+    align-items: center;
+    gap: 0; /* Boutons collés ou léger gap géré par marges */
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    height: 40px; /* Hauteur fixe Harmonisée */
+    overflow: hidden;
+}
+
+/* 2. Boutons +/- (Carrés parfaits) */
+.stepper-btn {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 100%;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.2s;
+    padding: 0;
+}
+
+.stepper-btn:hover {
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+
+/* 3. Affichage Valeur (Central) */
+.value-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px; /* Largeur suffisante pour "Gratuit" */
+    height: 100%;
+    padding: 0 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    border-left: 1px solid var(--surface-muted);
+    border-right: 1px solid var(--surface-muted);
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* 4. Label Devise (À droite du stepper) */
+.currency-label {
+    margin-left: 8px; /* Petit espace avec le stepper */
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    height: 40px;
+}
+
+/* 5. Nettoyage des anciens styles conflictuels */
+.time-adjust-btn, .duration-picker-trigger, .price-wrapper, .price-input {
+    display: none !important; /* Désactivation brutale des vieux styles */
+}
+
+/* 6. Force Alignement Container */
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+/* --- PATCH DETAILS PANEL V4 (Stepper Polish & Centering) --- */
+
+/* 1. Centrage Vertical & Horizontal Absolu */
+.detail-section .content.structured-input-row,
+.detail-section .content.checkbox-group {
+    min-height: 70px !important;
+    padding: 0 16px !important; /* Marge interne pour ne pas coller */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 20px !important; /* Gap réduit car les éléments sont plus larges */
+    width: 100% !important; /* Occupe toute la largeur du parent */
+}
+
+/* Force les enfants à ne pas dépasser et à rester centrés */
+.input-group, .checkbox-label {
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+/* 2. Fixation de la largeur du Prix (pour éviter le saut Gratuit/10) */
+#panel-price-display {
+    min-width: 60px !important; /* Suffisant pour le nombre */
+    text-align: center;
+    flex-grow: 1; /* Remplit l'espace */
+}
+
+/* 3. Devise intégrée dans le stepper - FIX LARGEUR STABLE */
+.stepper-currency {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    padding: 0 8px 0 4px;
+    border-right: 1px solid var(--surface-muted);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-muted);
+    min-width: 50px; /* Largeur FIXE pour la devise */
+    text-align: center;
+}
+
+/* Si la devise est cachée (display:none via JS pour "Gratuit"), on garde l'espace ?
+   Non, l'utilisateur veut que "Prix" ait la MEME largeur.
+   Donc le conteneur global doit être fixe. */
+
+.stepper-control {
+    width: 160px; /* Largeur FIXE TOTALE pour empêcher tout mouvement */
+    justify-content: space-between; /* Répartit les boutons aux extrémités */
+}
+
+/* 4. Suppression de l'ancien label devise externe */
+.currency-label {
+    display: none !important;
+}
+
+/* 5. Harmonisation de la largeur du stepper Temps pour matcher */
+#panel-time-display {
+    min-width: 80px !important;
+}
+
+/* --- PATCH REGRESSION FIX (Polylines & Zoom) --- */
+
+/* Force re-declaration of Polyline styles to ensure they apply over any accidental breakage */
+.circuit-polyline {
+    stroke: #EF4444 !important; /* Rouge (Vol d'oiseau) - var(--danger) fallback */
+    stroke-width: 4px !important;
+    stroke-dasharray: 8, 8 !important; /* Pointillé plus visible */
+    opacity: 0.9 !important;
+    fill: none !important;
+}
+
+.real-track-polyline {
+    stroke: #3B82F6 !important; /* Bleu (Tracé réel) - var(--brand) fallback */
+    stroke-width: 5px !important; /* Un peu plus épais */
+    opacity: 0.8 !important;
+    stroke-dasharray: none !important;
+    fill: none !important;
+}
+
+.real-track-polyline-done {
+    stroke: #10B981 !important; /* Vert (Fait) - var(--ok) fallback */
+    stroke-width: 5px !important;
+    opacity: 0.9 !important;
+    stroke-dasharray: none !important;
+    fill: none !important;
+}

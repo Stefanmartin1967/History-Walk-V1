@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="maritime">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>History Walk</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css?v=1.9">
+    <link rel="icon" type="image/png" href="icons/icon-192.png" />
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0D3B66">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- Status bar style for iOS: black-translucent allows content to go under the status bar -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="History Walk">
+</head>
+
+<body>
+
+    <div id="backup-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
+        <div
+            style="background: var(--surface, #fff); padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;">
+            <h2 style="margin-top: 0; color: var(--ink, #333);">Sauvegarder</h2>
+            <p style="color: var(--ink-light, #666); margin-bottom: 20px;">Choisissez le format de votre sauvegarde :
+            </p>
+
+            <button id="btn-backup-full" class="backup-option-btn primary">
+                <div class="backup-option-icon">
+                    <i data-lucide="image"></i>
+                </div>
+                <div class="backup-option-text">
+                    <span class="backup-title">Complet (PC)</span>
+                    <span class="backup-subtitle">Données + Photos</span>
+                </div>
+                <span id="backup-size-full" class="backup-size-tag">Calcul...</span>
+            </button>
+
+            <button id="btn-backup-lite" class="backup-option-btn success">
+                <div class="backup-option-icon">
+                    <i data-lucide="file-text"></i>
+                </div>
+                <div class="backup-option-text">
+                    <span class="backup-title">Texte Seul (Mobile)</span>
+                    <span class="backup-subtitle">Rapide & Léger</span>
+                </div>
+                <span id="backup-size-lite" class="backup-size-tag">Calcul...</span>
+            </button>
+
+            <button id="btn-backup-cancel"
+                style="background: transparent; border: 1px solid var(--border, #ccc); color: var(--ink-light, #666); padding: 8px 20px; border-radius: 6px; cursor: pointer;">
+                Annuler
+            </button>
+        </div>
+    </div>
+
+    <div class="topbar">
+        <div class="topbar-left">
+            <h1 class="app-title" id="app-title">History Walk</h1>
+
+            <div class="search-container">
+                <i data-lucide="search" class="search-icon"></i>
+                <input type="search" id="search-input" placeholder="Rechercher un lieu...">
+                <div class="search-results" id="search-results" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="topbar-center">
+            <button class="btn" id="btn-open-my-circuits" title="Mes Circuits"><i data-lucide="route"></i></button>
+
+            <div class="zones-container">
+                <button class="btn" id="btn-filter-zones" title="Filtre par Zone"><i data-lucide="map-pin"></i> <span
+                        id="zonesLabel">Zone</span></button>
+                <div class="zones-menu" id="zonesMenu" style="display: none;"></div>
+            </div>
+
+            <div class="zones-container">
+                <button class="btn" id="btn-categories" title="Filtrer par catégorie"><i data-lucide="list"></i> <span>Catégories</span></button>
+                <div class="zones-menu" id="categoriesMenu" style="display: none;"></div>
+            </div>
+
+            <button class="btn" id="btn-filter-vus" title="Masquer les visités"><i
+                    data-lucide="eye"></i><span>Visités</span></button>
+
+            <button class="btn" id="btn-filter-planifies" title="Masquer les planifiés"><i
+                    data-lucide="calendar-check"></i><span>Planifiés</span></button>
+
+            <button class="btn" id="btn-mode-selection" title="Mode consultation"><i
+                    data-lucide="map-pin-off"></i><span>Sélection</span></button>
+
+            <button class="btn" id="btn-import-photos" title="Importer des photos GPS"><i
+                    data-lucide="image-up"></i></button>
+
+            <button class="btn" id="btn-legend" title="Afficher la légende"><i
+                    data-lucide="info"></i></button>
+        </div>
+
+        <div class="topbar-right">
+            <!-- GOD MODE TOOLS -->
+            <div class="tools-dropdown-container" id="admin-tools-container" style="display:none;">
+                <button class="btn" id="btn-admin-menu" title="God Mode Tools"
+                    style="background-color: #ef4444; color: white;">
+                    <i data-lucide="shield-alert"></i>
+                    <span>GOD MODE</span>
+                </button>
+                <div class="tools-menu" id="admin-menu-content">
+                    <button class="tools-menu-item" id="btn-admin-scout">
+                        <i data-lucide="scan-eye"></i> Scout (Overpass)
+                    </button>
+                    <button class="tools-menu-item" id="btn-admin-export-master">
+                        <i data-lucide="database"></i> Export Master GeoJSON
+                    </button>
+                    <button class="tools-menu-item" id="btn-save-circuits">
+                        <i data-lucide="share-2"></i> Exporter Circuits
+                    </button>
+                    <div style="height:1px; width:100%; background:var(--line); margin:5px 0;"></div>
+                    <button class="tools-menu-item" id="btn-admin-capture-view">
+                        <i data-lucide="aperture"></i> Capturer la vue
+                    </button>
+                    <button class="tools-menu-item" id="btn-admin-export-destinations">
+                        <i data-lucide="globe"></i> Exporter Destinations
+                    </button>
+                    <a href="tools/fusion.html" target="_blank" class="tools-menu-item" style="text-decoration: none;">
+                        <i data-lucide="combine"></i> Console Fusion
+                    </a>
+                </div>
+            </div>
+
+            <div class="tools-dropdown-container">
+                <button class="btn" id="btn-tools-menu" title="Menu Outils"><i
+                        data-lucide="settings"></i><span>Outils</span></button>
+                <div class="tools-menu" id="tools-menu-content">
+
+                    <button class="tools-menu-item" id="btn-open-geojson">
+                        <i data-lucide="folder-open"></i> Ouvrir Carte
+                    </button>
+
+                    <button class="tools-menu-item" id="btn-sync-scan">
+                        <i data-lucide="scan-line"></i> Scanner (Synchro/Circuit)
+                    </button>
+
+                    <button class="tools-menu-item" id="btn-sync-share">
+                        <i data-lucide="qr-code"></i> Partager Progression
+                    </button>
+
+                    <button class="tools-menu-item" id="btn-restore-data" disabled>
+                        <i data-lucide="folder-down"></i> Restaurer
+                    </button>
+
+                    <button class="tools-menu-item" id="btn-open-backup-modal" disabled>
+                        <i data-lucide="save"></i> Sauvegarder...
+                    </button>
+
+                    <div style="height:1px; width:100%; background:var(--line); margin:5px 0;"></div>
+
+                    <button class="tools-menu-item" id="btn-theme-selector">
+                        <i data-lucide="palette"></i> Thème
+                    </button>
+
+                    <button class="tools-menu-item" id="btn-export-pdf" disabled>
+                        <i data-lucide="file-down"></i> PDF (Bientôt)
+                    </button>
+
+                    <div style="height:1px; width:100%; background:var(--line); margin:5px 0;"></div>
+
+                    <button class="tools-menu-item" id="btn-bmc">
+                        <i data-lucide="coffee"></i> Offrir un café
+                        <i data-lucide="heart" style="color:#e91e63; margin-left:auto; fill:#e91e63; width:16px; height:16px;"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- HIDDEN LOADERS (Keep them for logic) -->
+            <input type="file" id="geojson-loader" accept=".geojson,.json" style="display: none;">
+            <input type="file" id="photo-gps-loader" accept=".jpg,.jpeg" multiple style="display: none;">
+            <input type="file" id="restore-loader" accept=".json,.geojson,.txt,application/json,text/plain,*/*"
+                style="display:none;">
+        </div>
+    </div>
+
+    <div id="map"></div>
+    <div id="app-version" style="display: none;"></div>
+
+    <div class="right-sidebar" id="right-sidebar">
+        <div class="sidebar-tabs" id="sidebar-tabs">
+            <button class="tab-button" data-tab="explorer" title="Mes Circuits"><span>Mes Circuits</span></button>
+            <button class="tab-button active" data-tab="circuit">Circuit</button>
+            <button class="tab-button" data-tab="details">Détails</button>
+        </div>
+
+        <div class="sidebar-panel" id="panel-explorer" data-panel="explorer">
+            <div class="panel-header explorer-header">
+                <!-- Reserved -->
+            </div>
+            <div class="explorer-list" id="explorer-list">
+                <!-- List content -->
+            </div>
+        </div>
+
+        <div class="sidebar-panel active" id="circuit-panel" data-panel="circuit">
+            <div class="panel-header circuit-header">
+                <div class="circuit-title-container">
+                    <h2 id="circuit-title-text" title="Nouveau Circuit">Nouveau Circuit</h2>
+                    <button id="edit-circuit-title-button" class="action-button" title="Modifier le titre" style="margin-left: 8px;"><i data-lucide="pencil"></i></button>
+                    <button id="close-circuit-panel-btn" class="header-btn" title="Fermer le mode création" style="margin-left: auto;"><i data-lucide="x"></i></button>
+                </div>
+
+                <div class="circuit-description-container">
+                    <textarea id="circuit-description" rows="3"
+                        placeholder="Ajoutez une description pour votre circuit..."></textarea>
+                </div>
+                <div class="header-controls">
+                    <div class="controls-group"></div>
+                    <div class="controls-group meta-info">
+                        <span id="circuit-poi-count">0/15</span>
+                        <span>•</span>
+                        <span id="circuit-distance">0.0 km</span>
+                        <i id="distance-icon" data-lucide="bird" title="Distance à vol d'oiseau"></i>
+                    </div>
+                    <div class="controls-group">
+                        <button id="btn-delete-active-circuit" class="header-btn" title="Supprimer ce circuit" style="display:none; color:var(--danger);"><i data-lucide="trash-2"></i></button>
+                    </div>
+                </div>
+                <div class="transport-info">
+                    <div class="transport-group">
+                        <i data-lucide="log-out" title="Trajet Aller"></i>
+                        <div class="transport-field">
+                            <input type="number" id="transport-aller-temps" min="0" max="999" step="5" placeholder="0">
+                            <span>min</span>
+                        </div>
+                        <div class="transport-field">
+                            <input type="number" id="transport-aller-cout" min="0" max="999" placeholder="0">
+                            <span>TND</span>
+                        </div>
+                    </div>
+                    <div class="transport-group">
+                        <i data-lucide="log-in" title="Trajet Retour"></i>
+                        <div class="transport-field">
+                            <input type="number" id="transport-retour-temps" min="0" max="999" step="5" placeholder="0">
+                            <span>min</span>
+                        </div>
+                        <div class="transport-field">
+                            <input type="number" id="transport-retour-cout" min="0" max="999" placeholder="0">
+                            <span>TND</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="steps" id="circuit-steps-list">
+                <p class="empty-list-info">Activez le mode sélection et cliquez sur la carte pour ajouter des points
+                    d'intérêt.</p>
+            </div>
+            <div class="panel-footer">
+                <button class="footer-btn pill" id="btn-loop-circuit" title="Boucler le circuit"><i data-lucide="repeat"></i></button>
+                <button class="footer-btn pill" id="btn-clear-circuit" title="Vider le circuit"><i data-lucide="trash-2"></i></button>
+                <div class="separator-vertical"></div>
+                <button class="footer-btn pill" id="btn-modify-circuit" title="Modifier le circuit" style="display:none;"><i data-lucide="edit-3"></i></button>
+                <button class="footer-btn pill" id="btn-import-gpx" title="Importer GPX" disabled><i data-lucide="upload-cloud"></i></button>
+                <button class="footer-btn pill" id="btn-export-gpx" title="Exporter GPX" disabled><i data-lucide="download-cloud"></i></button>
+                <a href="https://gpx.studio/fr/app" target="_blank" class="footer-btn pill" id="btn-open-gpx-studio" title="Ouvrir GPX Studio" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                    <i data-lucide="map"></i>
+                </a>
+                <div class="separator-vertical"></div>
+                <button class="footer-btn pill" id="btn-share-circuit" title="Partager"><i data-lucide="qr-code"></i></button>
+            </div>
+        </div>
+
+        <div class="sidebar-panel" id="details-panel" data-panel="details">
+        </div>
+    </div>
+
+    <div id="mobile-container">
+        <main id="mobile-main-container"></main>
+
+        <div id="mobile-dock">
+            <nav id="mobile-nav" class="mobile-nav">
+                <button class="mobile-nav-btn" data-view="circuits">
+                    <i data-lucide="route"></i>
+                    <span>Circuits</span>
+                </button>
+
+                <button class="mobile-nav-btn" data-view="search">
+                    <i data-lucide="search"></i>
+                    <span>Rech.</span>
+                </button>
+
+                <button class="mobile-nav-btn" id="btn-mobile-filter">
+                    <i data-lucide="list"></i>
+                    <span>Filtre</span>
+                </button>
+
+                <button class="mobile-nav-btn" data-view="add-poi">
+                    <i data-lucide="plus-circle"></i>
+                    <span>Ajout</span>
+                </button>
+
+                <button class="mobile-nav-btn" data-view="actions">
+                    <i data-lucide="settings"></i>
+                    <span>Menu</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- NOUVELLE MODALE RICHE (ADMIN / CREATION) -->
+    <div id="rich-poi-modal" class="modal-overlay" style="display: none; align-items: flex-start; padding-top: 50px; overflow-y: auto;">
+        <div class="modal-content" style="max-width: 600px; width: 95%; margin-bottom: 50px;">
+            <div class="modal-header">
+                <div style="display:flex; align-items:center; gap: 10px; flex-grow: 1;">
+                    <h2 id="rich-poi-modal-title" style="margin: 0;">Éditer le Lieu</h2>
+                    <div id="rich-poi-nav-controls" style="display:none; align-items:center; gap:5px; margin-left: 10px;">
+                        <button id="btn-rich-prev" class="header-btn" title="Précédent" style="padding: 5px;"><i data-lucide="chevron-left"></i></button>
+                        <button id="btn-rich-next" class="header-btn" title="Suivant" style="padding: 5px;"><i data-lucide="chevron-right"></i></button>
+                    </div>
+                </div>
+                <button id="close-rich-poi-modal" class="header-btn"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 15px; padding-top: 20px;">
+
+                <!-- Ligne 1 : Noms -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                        <label for="rich-poi-name-fr" style="font-weight: 600;">Nom (FR)*</label>
+                        <input type="text" id="rich-poi-name-fr" class="editable-input" style="padding: 10px;">
+                    </div>
+                    <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                        <label for="rich-poi-name-ar" style="font-weight: 600;">Nom (AR)</label>
+                        <input type="text" id="rich-poi-name-ar" class="editable-input" style="padding: 10px; text-align: right;" placeholder="الاسم بالعربية">
+                    </div>
+                </div>
+
+                <!-- Ligne 2 : Catégorie & Zone -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                        <label for="rich-poi-category" style="font-weight: 600;">Catégorie</label>
+                        <select id="rich-poi-category" class="editable-input" style="padding: 10px; background: var(--surface);">
+                            <!-- Rempli par JS -->
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                        <label for="rich-poi-zone" style="font-weight: 600;">Zone</label>
+                        <input type="text" id="rich-poi-zone" class="editable-input" style="padding: 10px;" placeholder="Ex: Houmt Souk">
+                    </div>
+                </div>
+
+                <!-- Descriptions -->
+                <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                    <label for="rich-poi-desc-short" style="font-weight: 600;">Description Courte (Résumé)</label>
+                    <input type="text" id="rich-poi-desc-short" class="editable-input" style="padding: 10px;" placeholder="Apparaît dans la liste...">
+                </div>
+
+                <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                    <label for="rich-poi-desc-long" style="font-weight: 600;">Description Complète</label>
+                    <textarea id="rich-poi-desc-long" class="editable-input" rows="4" style="padding: 10px;"></textarea>
+                </div>
+
+                <!-- Infos Pratiques -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--surface-muted); padding: 10px; border-radius: 8px;">
+                    <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                        <label style="font-weight: 600;">Temps de visite</label>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <input type="number" id="rich-poi-time-h" class="editable-input" placeholder="H" style="width: 50px; text-align: center;"> h
+                            <input type="number" id="rich-poi-time-m" class="editable-input" placeholder="M" style="width: 50px; text-align: center;"> min
+                        </div>
+                    </div>
+                    <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                        <label for="rich-poi-price" style="font-weight: 600;">Prix (TND)</label>
+                        <input type="number" id="rich-poi-price" class="editable-input" placeholder="0" step="0.5">
+                    </div>
+                </div>
+
+                <!-- Source & Notes -->
+                <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                    <label for="rich-poi-source" style="font-weight: 600;">Source (URL ou Texte)</label>
+                    <input type="text" id="rich-poi-source" class="editable-input" style="padding: 10px;" placeholder="https://...">
+                </div>
+
+                <div class="input-group" style="flex-direction: column; align-items: stretch; gap: 5px;">
+                    <label for="rich-poi-notes" style="font-weight: 600;">Notes</label>
+                    <textarea id="rich-poi-notes" class="editable-input" rows="2" style="padding: 10px;"></textarea>
+                </div>
+
+                <!-- Footer -->
+                <div style="font-size: 12px; color: var(--ink-soft); text-align: right;">
+                    📍 GPS : <span id="rich-poi-coords">...</span>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button id="btn-suggest-email" class="action-btn" style="flex: 1; background: var(--surface-muted); color: var(--brand); border: 1px solid var(--brand);">
+                        <i data-lucide="mail"></i> Suggérer
+                    </button>
+                    <button id="btn-cancel-rich-poi" class="action-btn" style="flex: 1; background: var(--surface-muted); color: var(--ink);">Annuler</button>
+                    <button id="btn-save-rich-poi" class="action-btn" style="flex: 2; background: var(--brand); color: white;">
+                        <i data-lucide="save"></i> Enregistrer
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="fullscreen-editor" style="display: none;">
+        <div class="editor-header">
+            <h2 id="editor-title">Éditer</h2>
+            <button id="editor-cancel-btn"><i data-lucide="arrow-left"></i> Annuler</button>
+            <button id="editor-save-btn"><i data-lucide="check"></i> Sauvegarder</button>
+        </div>
+        <textarea id="editor-textarea"></textarea>
+    </div>
+
+    <input type="file" id="gpx-importer" accept=".gpx" style="display: none;">
+    <input type="file" id="destination-loader" style="display: none;">
+    <div id="loader-overlay" class="loader-overlay" style="display: none;">
+        <div class="loader-spinner"></div>
+    </div>
+    <div id="toast-container" class="toast-container"></div>
+
+    <div id="photo-viewer" class="photo-viewer" style="display: none;">
+        <span class="close-viewer">×</span>
+        <div class="viewer-nav nav-prev" id="viewer-prev">❮</div>
+        <img class="viewer-content" id="viewer-img">
+        <div class="viewer-nav nav-next" id="viewer-next">❯</div>
+    </div>
+
+    <!-- MODALE GÉNÉRIQUE SYSTÈME -->
+    <div id="custom-modal-overlay" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h2 id="custom-modal-title" class="custom-modal-title">Titre</h2>
+            <p id="custom-modal-message" class="custom-modal-message">Message...</p>
+            <div id="custom-modal-actions" class="custom-modal-actions">
+                <!-- Les boutons seront injectés ici par modal.js -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "lucide": "https://unpkg.com/lucide@0.469.0/dist/esm/lucide.js",
+            "qrcode": "https://esm.sh/qrcode@1.5.3",
+            "html5-qrcode": "https://esm.sh/html5-qrcode@2.3.8",
+            "virtual:pwa-register": "./src/pwa-register-mock.js"
+        }
+    }
+    </script>
+    <script type="module" src="/src/main.js"></script>
+
+    <div id="selection-wizard-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content wizard-content">
+            <div class="modal-header">
+                <h2>Mode Sélection</h2>
+                <button id="close-wizard-modal" class="header-btn"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Configurez votre session de création :</p>
+
+                <div class="wizard-options">
+                    <div class="wizard-select-container">
+                        <label>Zone de travail :</label>
+                        <select id="wizard-zone-select">
+                            <option value="">Toute l'île</option>
+                        </select>
+                    </div>
+
+                    <label class="wizard-option">
+                        <input type="checkbox" id="wizard-check-visited" checked>
+                        Masquer les lieux visités
+                    </label>
+
+                    <label class="wizard-option">
+                        <input type="checkbox" id="wizard-check-planned" checked>
+                        Masquer les lieux déjà planifiés
+                    </label>
+                </div>
+
+                <button id="btn-wizard-start" class="action-btn-large">
+                    <i data-lucide="play"></i> Commencer
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
