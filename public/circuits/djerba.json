@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "id": "HW-1771316521571",
+    "name": "Boucle autour de Rym Beach via Mosquée Ibn Abass",
+    "file": "djerba/Boucle autour de Rym Beach via Mosquée Ibn Abass.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.2 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
+    "id": "HW-1771320398895",
+    "name": "Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen via Mosquée Ben Daoued",
+    "file": "djerba/Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen via Mosquée Ben Daoued.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
+    "id": "HW-1771317964994",
+    "name": "Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou",
+    "file": "djerba/Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "5.9 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
+    "id": "HW-1771324790804",
+    "name": "Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk via Ancien atelier de tissage",
+    "file": "djerba/Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk via Ancien atelier de tissage.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.2 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
+    "id": "HW-1771317389638",
+    "name": "Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba via Mosquée Sidi Brahim Eljomni",
+    "file": "djerba/Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba via Mosquée Sidi Brahim Eljomni.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "3.8 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
+    "id": "HW-1771319458286",
+    "name": "Circuit de Sidi Yati de Midoun à Ancienne Mosquée de Midoun via Mosque Sidi Sofiane",
+    "file": "djerba/Circuit de Sidi Yati de Midoun à Ancienne Mosquée de Midoun via Mosque Sidi Sofiane.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.0 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  }
+]
