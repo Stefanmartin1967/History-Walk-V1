@@ -259,6 +259,14 @@ body {
     height: 18px;
 }
 
+.hw-icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
 /* ========================================================= */
 /* === FIX SPECIFICITY FOR PC DETAILS PANEL === */
 /* ========================================================= */
