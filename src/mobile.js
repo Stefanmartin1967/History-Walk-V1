@@ -14,6 +14,7 @@ import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { getSearchResults } from './search.js';
+import { showStatisticsModal } from './statistics.js';
 
 let currentView = 'circuits'; 
 let mobileSort = 'date_desc'; // date_desc, date_asc, dist_asc, dist_desc
@@ -812,6 +813,11 @@ export function renderMobileMenu() {
             <h1>Menu</h1>
         </div>
         <div class="mobile-list actions-list mobile-standard-padding mobile-actions-container">
+            <button class="mobile-list-item" id="mob-action-stats">
+                <i data-lucide="trophy"></i>
+                <span>Mon Carnet de Voyage</span>
+            </button>
+            <div class="mobile-divider"></div>
             <button class="mobile-list-item" id="mob-action-scan">
                 <i data-lucide="scan-line"></i>
                 <span>Scanner un circuit</span>
@@ -851,6 +857,7 @@ export function renderMobileMenu() {
         </div>
     `;
 
+    document.getElementById('mob-action-stats').addEventListener('click', () => showStatisticsModal());
     document.getElementById('mob-action-scan').addEventListener('click', () => startGenericScanner());
     // document.getElementById('mob-action-sync-share').addEventListener('click', () => generateSyncQR()); // SUPPRIMÉ
     document.getElementById('mob-action-restore').addEventListener('click', () => DOM.restoreLoader.click());

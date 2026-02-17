@@ -20,6 +20,7 @@ import { RichEditor } from './richEditor.js';
 import { switchSidebarTab } from './ui-sidebar.js'; // Imported for use inside ui.js functions
 import { exportFullBackupPC, exportDataForMobilePC, saveUserData } from './fileManager.js';
 import { invalidateMapSize } from './map.js';
+import { showStatisticsModal } from './statistics.js';
 
 export const DOM = {};
 let currentEditor = { fieldId: null, poiId: null, callback: null };
@@ -76,6 +77,14 @@ export function initializeDomReferences() {
                 closeAllDropdowns();
                 if (!isActive) toolsMenu.classList.add('active');
             }
+        });
+    }
+
+    const btnStats = document.getElementById('btn-statistics');
+    if (btnStats) {
+        btnStats.addEventListener('click', () => {
+            showStatisticsModal();
+            closeAllDropdowns();
         });
     }
 
