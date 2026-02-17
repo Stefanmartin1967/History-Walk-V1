@@ -1,4 +1,5 @@
 // utils.js
+import EXIF from 'exif-js';
 import { zonesData } from './zones.js';
 
 export function getPoiId(feature) {

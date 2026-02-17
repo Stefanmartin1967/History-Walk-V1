@@ -1,4 +1,5 @@
 // map.js
+import L from 'leaflet';
 import { state } from './state.js';
 import { addPoiToCircuit, isCircuitCompleted } from './circuit.js';
 import { openDetailsPanel } from './ui.js';
