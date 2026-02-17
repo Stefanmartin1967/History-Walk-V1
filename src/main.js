@@ -193,6 +193,16 @@ async function loadAndInitializeMap() {
         state.officialCircuitsStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
         await loadOfficialCircuits();
 
+        // BUGFIX: Force application of status to loaded objects
+        if (state.officialCircuits && state.officialCircuitsStatus) {
+            state.officialCircuits.forEach(c => {
+                if (state.officialCircuitsStatus[String(c.id)] === true) {
+                    c.isCompleted = true;
+                }
+            });
+            console.log("[Main] Applied official circuit status from DB.");
+        }
+
         const validCircuits = [];
         for (const c of state.myCircuits) {
             let toDelete = false;
