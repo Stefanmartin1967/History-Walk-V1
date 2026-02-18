@@ -169,8 +169,7 @@ export function initializeDomReferences() {
         btnContact.addEventListener('click', () => {
             const subject = encodeURIComponent("History Walk - Signalement / Contact");
             const body = encodeURIComponent("Bonjour,\n\nJe souhaite signaler un problème ou faire une suggestion :\n\n");
-            // NOTE : Remplacez 'votre-email@exemple.com' par votre adresse réelle
-            window.location.href = `mailto:votre-email@exemple.com?subject=${subject}&body=${body}`;
+            window.location.href = `mailto:history.walk.007@gmail.com?subject=${subject}&body=${body}`;
         });
     }
 
