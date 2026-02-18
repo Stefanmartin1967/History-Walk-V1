@@ -94,8 +94,13 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
 
             if (updates.length > 0) {
                 try {
+                    // On attend que la DB soit à jour
                     await batchSavePoiData(state.currentMapId, updates);
+                    console.log(`[Circuit] ${updates.length} POIs marqués comme visités.`);
+
                     // Force refresh des marqueurs sur la carte (pour passer en vert)
+                    // On s'assure que state.userData est synchrone avec state.loadedFeatures
+                    // Normalement c'est le cas car ils partagent la même référence mémoire via data.js
                     import('./data.js').then(({ applyFilters }) => applyFilters());
                 } catch (e) {
                     console.error("Erreur mise à jour POIs du circuit:", e);
