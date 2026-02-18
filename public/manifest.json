@@ -1,7 +1,8 @@
 {
   "name": "History Walk",
   "short_name": "History Walk",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "background_color": "#F0F4F8",
