@@ -38,20 +38,31 @@ function convertDMSToDD(degrees, minutes, seconds, direction) {
 // Extrait la latitude/longitude d'un fichier image
 export function getExifLocation(file) {
     return new Promise((resolve, reject) => {
-        EXIF.getData(file, function() {
-            const latData = EXIF.getTag(this, "GPSLatitude");
-            const latRef = EXIF.getTag(this, "GPSLatitudeRef");
-            const lonData = EXIF.getTag(this, "GPSLongitude");
-            const lonRef = EXIF.getTag(this, "GPSLongitudeRef");
+        // Timeout de sécurité (10s) pour éviter le blocage infini
+        const timer = setTimeout(() => {
+            reject(new Error("Timeout lors de l'extraction EXIF (fichier trop gros ou corrompu ?)"));
+        }, 10000);
 
-            if (latData && lonData && latRef && lonRef) {
-                const lat = convertDMSToDD(latData[0], latData[1], latData[2], latRef);
-                const lng = convertDMSToDD(lonData[0], lonData[1], lonData[2], lonRef);
-                resolve({ lat, lng });
-            } else {
-                reject("Pas de données GPS trouvées dans cette photo.");
-            }
-        });
+        try {
+            EXIF.getData(file, function() {
+                clearTimeout(timer);
+                const latData = EXIF.getTag(this, "GPSLatitude");
+                const latRef = EXIF.getTag(this, "GPSLatitudeRef");
+                const lonData = EXIF.getTag(this, "GPSLongitude");
+                const lonRef = EXIF.getTag(this, "GPSLongitudeRef");
+
+                if (latData && lonData && latRef && lonRef) {
+                    const lat = convertDMSToDD(latData[0], latData[1], latData[2], latRef);
+                    const lng = convertDMSToDD(lonData[0], lonData[1], lonData[2], lonRef);
+                    resolve({ lat, lng });
+                } else {
+                    reject("Pas de données GPS trouvées dans cette photo.");
+                }
+            });
+        } catch (e) {
+            clearTimeout(timer);
+            reject(e);
+        }
     });
 }
 
@@ -73,33 +84,53 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
 
 export function resizeImage(file, maxWidth = 1280, quality = 0.9) {
     return new Promise((resolve, reject) => {
+        // Timeout de sécurité (15s) pour éviter le blocage infini sur les grosses images
+        const timer = setTimeout(() => {
+            reject(new Error("Timeout lors du redimensionnement de l'image."));
+        }, 15000);
+
         const reader = new FileReader();
         reader.readAsDataURL(file);
+
         reader.onload = (event) => {
             const img = new Image();
             img.src = event.target.result;
+
             img.onload = () => {
-                const canvas = document.createElement('canvas');
-                let width = img.width;
-                let height = img.height;
+                clearTimeout(timer);
+                try {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
 
-                // Calcul du ratio pour ne pas déformer l'image
-                if (width > maxWidth) {
-                    height = Math.round(height * (maxWidth / width));
-                    width = maxWidth;
+                    // Calcul du ratio pour ne pas déformer l'image
+                    if (width > maxWidth) {
+                        height = Math.round(height * (maxWidth / width));
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Renvoie l'image en Base64 compressée
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                } catch (e) {
+                    reject(e);
                 }
-
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                
-                // Renvoie l'image en Base64 compressée
-                resolve(canvas.toDataURL('image/jpeg', quality));
             };
-            img.onerror = (err) => reject(err);
+
+            img.onerror = (err) => {
+                clearTimeout(timer);
+                reject(new Error("Impossible de charger l'image (format non supporté ?)"));
+            };
         };
-        reader.onerror = (err) => reject(err);
+
+        reader.onerror = (err) => {
+            clearTimeout(timer);
+            reject(new Error("Erreur de lecture du fichier."));
+        };
     });
 }
 

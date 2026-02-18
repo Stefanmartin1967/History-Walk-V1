@@ -41,15 +41,6 @@ export function notifyCircuitChanged() {
 
 // --- FONCTION CORRIGÉE ---
 export async function setCircuitVisitedState(circuitId, isVisited) {
-    // Debug
-    console.log(`[Circuit] Request to set ${circuitId} to ${isVisited}. Map: ${state.currentMapId}`);
-
-    if (!state.currentMapId) {
-        console.error("[Circuit] Impossible de sauvegarder : Map ID manquant.");
-        showToast("Erreur système : Map ID manquant", "error");
-        return;
-    }
-
     // 1. Recherche du circuit (Local ou Officiel)
     // FIX: Recherche robuste avec String()
     let localCircuit = state.myCircuits.find(c => String(c.id) === String(circuitId));

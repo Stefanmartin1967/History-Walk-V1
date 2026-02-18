@@ -271,11 +271,11 @@ function showRankTable() {
         </div>
     `;
 
-    showAlert("Tableau des Rangs", html, "Fermer").then(() => {
-        // Refresh icons in modal
-        const modalContent = document.getElementById('custom-modal-message');
-        if (modalContent) {
-            createIcons({ icons, root: modalContent });
-        }
-    });
+    showAlert("Tableau des Rangs", html, "Fermer");
+
+    // Refresh icons in modal immediately
+    const modalContent = document.getElementById('custom-modal-message');
+    if (modalContent) {
+        createIcons({ icons, root: modalContent });
+    }
 }

@@ -118,7 +118,6 @@ export async function showStatisticsModal() {
         progressPercent = 100; // Niveau Max atteint
     }
 
-    // OPTIMISATION UI : Layout plus compact, Horizontal, et Coloré
     const html = `
         <div style="display:flex; flex-direction:column; gap:16px; text-align:center;">
 
@@ -144,6 +143,7 @@ export async function showStatisticsModal() {
                     <span style="color: var(--ink);">${stats.poiPercent}% exploré</span>
                     <span style="color: var(--ink-soft);">${nextRank ? 'Prochain : ' + nextRank.title : 'Niveau Max !'}</span>
                 </div>
+            </div>
 
             <!-- STATS GRID (Cleaner) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
@@ -174,7 +174,7 @@ export async function showStatisticsModal() {
         </div>
     `;
 
-    await showAlert("Mon Carnet de Voyage", html, "Génial !");
+    showAlert("Mon Carnet de Voyage", html, "Génial !");
 
     // Refresh icons inside the modal (since they are dynamic HTML)
     const modalContent = document.getElementById('custom-modal-message');
