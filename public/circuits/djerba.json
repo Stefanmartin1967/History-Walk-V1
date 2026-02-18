@@ -10,6 +10,16 @@
     "poiIds": []
   },
   {
+    "id": "HW-1771394208671",
+    "name": "Circuit de Mosquée Ben Hadid à Restaurant MBAREK via Lieu de Tournage Star Wars – Cantina Extérieure",
+    "file": "djerba/Circuit de Mosquée Ben Hadid à Restaurant MBAREK via Lieu de Tournage Star Wars – Cantina Extérieure.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.0 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
     "id": "HW-1771320398895",
     "name": "Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen via Mosquée Ben Daoued",
     "file": "djerba/Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen via Mosquée Ben Daoued.gpx",
@@ -45,6 +55,16 @@
     "file": "djerba/Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba via Mosquée Sidi Brahim Eljomni.gpx",
     "description": "Circuit généré par History Walk.",
     "distance": "3.8 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
+    "id": "HW-1771393204345",
+    "name": "Circuit de Mosquée d'Ouled Hlel à Mosquée Fadhloun via Fort Sraya Ben Ayed En Ruines",
+    "file": "djerba/Circuit de Mosquée d'Ouled Hlel à Mosquée Fadhloun via Fort Sraya Ben Ayed En Ruines.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.7 km",
     "isOfficial": true,
     "hasRealTrack": true,
     "poiIds": []
