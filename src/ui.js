@@ -164,6 +164,15 @@ export function initializeDomReferences() {
         });
     }
 
+    const btnContact = document.getElementById('btn-contact-dev');
+    if (btnContact) {
+        btnContact.addEventListener('click', () => {
+            const subject = encodeURIComponent("History Walk - Signalement / Contact");
+            const body = encodeURIComponent("Bonjour,\n\nJe souhaite signaler un problème ou faire une suggestion :\n\n");
+            window.location.href = `mailto:history.walk.007@gmail.com?subject=${subject}&body=${body}`;
+        });
+    }
+
     if (DOM.btnModeSelection) {
         updateSelectionModeButton(state.isSelectionModeActive);
     }
