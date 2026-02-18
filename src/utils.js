@@ -1,10 +1,9 @@
+
 // utils.js
-import EXIF from 'exif-js';
 import { zonesData } from './zones.js';
 
 export function getPoiId(feature) {
     if (!feature || !feature.properties) return null;
-    // Priorité à l'ID HW stable, sinon l'ID GeoJSON
     return feature.properties.HW_ID || feature.id;
 }
 
@@ -12,7 +11,6 @@ export function getPoiName(feature) {
     if (!feature || !feature.properties) return "Lieu sans nom";
     const props = feature.properties;
     const userData = props.userData || {};
-    // Ordre de priorité pour le nom
     return userData.custom_title || userData['Nom du site FR'] || props['Nom du site FR'] || userData['Nom du site arabe'] || props['Nom du site AR'] || props.name || "Lieu inconnu";
 }
 
@@ -25,45 +23,6 @@ export function downloadFile(filename, content, mimeType) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(a.href);
-}
-// Convertit [Degrés, Minutes, Secondes] en Décimal (33.87...)
-function convertDMSToDD(degrees, minutes, seconds, direction) {
-    let dd = degrees + minutes / 60 + seconds / (60 * 60);
-    if (direction === "S" || direction === "W") {
-        dd = dd * -1;
-    }
-    return dd;
-}
-
-// Extrait la latitude/longitude d'un fichier image
-export function getExifLocation(file) {
-    return new Promise((resolve, reject) => {
-        // Timeout de sécurité (10s) pour éviter le blocage infini
-        const timer = setTimeout(() => {
-            reject(new Error("Timeout lors de l'extraction EXIF (fichier trop gros ou corrompu ?)"));
-        }, 10000);
-
-        try {
-            EXIF.getData(file, function() {
-                clearTimeout(timer);
-                const latData = EXIF.getTag(this, "GPSLatitude");
-                const latRef = EXIF.getTag(this, "GPSLatitudeRef");
-                const lonData = EXIF.getTag(this, "GPSLongitude");
-                const lonRef = EXIF.getTag(this, "GPSLongitudeRef");
-
-                if (latData && lonData && latRef && lonRef) {
-                    const lat = convertDMSToDD(latData[0], latData[1], latData[2], latRef);
-                    const lng = convertDMSToDD(lonData[0], lonData[1], lonData[2], lonRef);
-                    resolve({ lat, lng });
-                } else {
-                    reject("Pas de données GPS trouvées dans cette photo.");
-                }
-            });
-        } catch (e) {
-            clearTimeout(timer);
-            reject(e);
-        }
-    });
 }
 
 // Calcule la distance en mètres entre deux points (Formule de Haversine)
@@ -80,6 +39,149 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return R * c; // Distance en mètres
+}
+
+// --- MINIMAL EXIF PARSER (Custom Implementation) ---
+// Remplace exif-js qui cause des erreurs 'n is not defined' en strict mode
+
+export function getExifLocation(file) {
+    return new Promise((resolve, reject) => {
+        // Timeout de sécurité (10s)
+        const timer = setTimeout(() => {
+            reject(new Error("Timeout lors de l'extraction GPS"));
+        }, 10000);
+
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            clearTimeout(timer);
+            try {
+                const dataView = new DataView(event.target.result);
+                const coords = parseExifGps(dataView);
+                if (coords) {
+                    resolve(coords);
+                } else {
+                    reject(new Error("Pas de données GPS trouvées"));
+                }
+            } catch (e) {
+                reject(e);
+            }
+        };
+
+        reader.onerror = () => {
+            clearTimeout(timer);
+            reject(new Error("Erreur de lecture du fichier"));
+        };
+
+        // On lit les premiers 128 Ko, suffisant pour l'en-tête EXIF
+        reader.readAsArrayBuffer(file.slice(0, 128 * 1024));
+    });
+}
+
+function parseExifGps(dataView) {
+    if (dataView.getUint16(0) !== 0xFFD8) return null; // Not JPEG
+
+    let offset = 2;
+    const length = dataView.byteLength;
+
+    while (offset < length) {
+        if (dataView.getUint8(offset) !== 0xFF) return null; // Invalid marker
+
+        const marker = dataView.getUint8(offset + 1);
+        if (marker === 0xE1) { // APP1 (Exif)
+            return readExifData(dataView, offset + 4);
+        }
+
+        offset += 2 + dataView.getUint16(offset + 2);
+    }
+    return null;
+}
+
+function readExifData(dataView, start) {
+    const tiffStart = start + 6; // Skip "Exif\0\0"
+    if (dataView.getUint32(start) !== 0x45786966) return null; // check "Exif"
+
+    // Endianness
+    const bigEndian = dataView.getUint16(tiffStart) === 0x4D4D;
+
+    // First IFD offset
+    const firstIFDOffset = dataView.getUint32(tiffStart + 4, bigEndian);
+    if (firstIFDOffset < 8) return null;
+
+    const ifdStart = tiffStart + firstIFDOffset;
+    const entries = dataView.getUint16(ifdStart, bigEndian);
+
+    let gpsOffset = null;
+
+    // Scan First IFD for GPSInfo (Tag 0x8825)
+    for (let i = 0; i < entries; i++) {
+        const entryOffset = ifdStart + 2 + i * 12;
+        const tag = dataView.getUint16(entryOffset, bigEndian);
+        if (tag === 0x8825) {
+            gpsOffset = dataView.getUint32(entryOffset + 8, bigEndian);
+            break;
+        }
+    }
+
+    if (gpsOffset) {
+        return readGpsIFD(dataView, tiffStart + gpsOffset, tiffStart, bigEndian);
+    }
+    return null;
+}
+
+function readGpsIFD(dataView, start, tiffStart, bigEndian) {
+    const entries = dataView.getUint16(start, bigEndian);
+
+    let lat = null, latRef = null, lng = null, lngRef = null;
+
+    for (let i = 0; i < entries; i++) {
+        const entryOffset = start + 2 + i * 12;
+        const tag = dataView.getUint16(entryOffset, bigEndian);
+
+        // GPSLatitudeRef (1)
+        if (tag === 0x0001) {
+             latRef = String.fromCharCode(dataView.getUint8(entryOffset + 8));
+        }
+        // GPSLatitude (2)
+        else if (tag === 0x0002) {
+             lat = readRationals(dataView, entryOffset, tiffStart, bigEndian, 3);
+        }
+        // GPSLongitudeRef (3)
+        else if (tag === 0x0003) {
+             lngRef = String.fromCharCode(dataView.getUint8(entryOffset + 8));
+        }
+        // GPSLongitude (4)
+        else if (tag === 0x0004) {
+             lng = readRationals(dataView, entryOffset, tiffStart, bigEndian, 3);
+        }
+    }
+
+    if (lat && latRef && lng && lngRef) {
+        return {
+            lat: convertDMSToDD(lat[0], lat[1], lat[2], latRef),
+            lng: convertDMSToDD(lng[0], lng[1], lng[2], lngRef)
+        };
+    }
+    return null;
+}
+
+function readRationals(dataView, entryOffset, tiffStart, bigEndian, count) {
+    const offset = dataView.getUint32(entryOffset + 8, bigEndian);
+    const result = [];
+    for (let i = 0; i < count; i++) {
+        const num = dataView.getUint32(tiffStart + offset + i * 8, bigEndian);
+        const den = dataView.getUint32(tiffStart + offset + i * 8 + 4, bigEndian);
+        result.push(num / den);
+    }
+    return result;
+}
+
+function convertDMSToDD(degrees, minutes, seconds, direction) {
+    let dd = degrees + minutes / 60 + seconds / (60 * 60);
+    if (direction === "S" || direction === "W") {
+        dd = dd * -1;
+    }
+    return dd;
 }
 
 export function resizeImage(file, maxWidth = 1280, quality = 0.9) {
