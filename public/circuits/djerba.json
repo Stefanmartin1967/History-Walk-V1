@@ -30,6 +30,16 @@
     "poiIds": []
   },
   {
+    "id": "HW-1771435443094",
+    "name": "Circuit de Mosquée Ejdid à Mosquée Rihia via Mosquée Ben Omran",
+    "file": "djerba/Circuit de Mosquée Ejdid à Mosquée Rihia via Mosquée Ben Omran.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.8 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
     "id": "HW-1771317964994",
     "name": "Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou",
     "file": "djerba/Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou.gpx",
