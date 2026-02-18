@@ -4,7 +4,7 @@ import { state } from './state.js';
 import { addPoiToCircuit, isCircuitCompleted } from './circuit.js';
 import { openDetailsPanel } from './ui.js';
 import { showToast } from './toast.js';
-import { getPoiId } from './data.js';
+import { getPoiId, getPoiName } from './data.js';
 import { createIcons, icons } from 'lucide';
 import { saveAppState } from './database.js';
 
@@ -369,7 +369,10 @@ export function refreshMapMarkers(visibleFeatures) {
                 icon.options.className += ' marker-planned';
             }
 
-            const marker = L.marker(latlng, { icon: icon });
+            const marker = L.marker(latlng, {
+                icon: icon,
+                title: getPoiName(feature) // Tooltip natif au survol
+            });
             
             marker.on('click', (e) => {
                 L.DomEvent.stop(e); 
