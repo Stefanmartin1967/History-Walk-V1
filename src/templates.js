@@ -171,19 +171,6 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             </div>
             ${practicalDetailsHtml}
             <div class="detail-section">
-                <h3>Position</h3>
-                <div class="content" style="display:flex; gap:10px;">
-                     <div style="flex:1;">
-                        <label style="font-size:11px; color:var(--ink-soft); display:block; margin-bottom:2px;">Latitude</label>
-                        <input type="number" id="poi-lat" step="0.00001" value="${feature.geometry.coordinates[1]}" readonly style="width:100%; padding:6px; border:1px solid var(--line); border-radius:6px; background:var(--surface-muted); color:var(--ink);">
-                     </div>
-                     <div style="flex:1;">
-                        <label style="font-size:11px; color:var(--ink-soft); display:block; margin-bottom:2px;">Longitude</label>
-                        <input type="number" id="poi-lng" step="0.00001" value="${feature.geometry.coordinates[0]}" readonly style="width:100%; padding:6px; border:1px solid var(--line); border-radius:6px; background:var(--surface-muted); color:var(--ink);">
-                     </div>
-                </div>
-            </div>
-            <div class="detail-section">
                 <h3>Mon Suivi</h3>
                 <div class="content checkbox-group">
                   <label class="checkbox-label"><input type="checkbox" id="panel-chk-vu" ${isVuChecked}> Visité</label>
