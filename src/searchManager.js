@@ -105,28 +105,29 @@ export function setupSmartSearch() {
                     const marker = L.marker([lat, lng], { icon: ghostIcon }).addTo(map);
                     state.ghostMarker = marker;
 
-                    // 3. Contenu de la popup
+                    // 3. Contenu de la popup (Style harmonisé avec le clic droit)
                     const popupContent = document.createElement('div');
+                    popupContent.style.textAlign = 'center';
+                    popupContent.style.display = 'flex';
+                    popupContent.style.flexDirection = 'column';
+                    popupContent.style.alignItems = 'center';
+                    popupContent.style.justifyContent = 'center';
+
                     popupContent.innerHTML = `
-                        <div style="text-align:center; padding:5px;">
-                            <div style="margin-bottom:8px; font-weight:600;">Position recherchée</div>
-                            <div style="margin-bottom:8px; font-size:12px; color:var(--ink-soft);">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
-                            <button id="btn-create-poi-ghost" class="action-button" style="width:100%; justify-content:center; display:flex; align-items:center; gap:5px;">
-                                <i data-lucide="plus"></i> Créer un POI ici
-                            </button>
-                        </div>
+                        <div style="font-weight:bold; margin-bottom:5px;">Nouveau Lieu ?</div>
+                        <div style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">Position recherchée</div>
+                        <button id="btn-create-poi-ghost" class="action-btn" style="background:var(--brand); color:white; padding:4px 8px; font-size:12px; cursor:pointer; margin: 0 auto;">
+                            Valider cette position
+                        </button>
                     `;
 
                     // 4. Binding Popup
-                    marker.bindPopup(popupContent).openPopup();
+                    marker.bindPopup(popupContent, { minWidth: 200 }).openPopup();
 
                     // 5. Listener sur le bouton (via l'événement popupopen)
                     marker.on('popupopen', () => {
                         const btn = document.getElementById('btn-create-poi-ghost');
                         if (btn) {
-                            // On ré-importe Lucide pour l'icône dans la popup
-                            import('lucide').then(({ createIcons, icons }) => createIcons({ icons, root: btn }));
-
                             btn.addEventListener('click', async () => {
                                 // Import dynamique de RichEditor
                                 const { RichEditor } = await import('./richEditor.js');
@@ -138,6 +139,14 @@ export function setupSmartSearch() {
                                     state.ghostMarker = null;
                                 }
                             });
+                        }
+                    });
+
+                    // 6. Suppression à la fermeture
+                    marker.on('popupclose', () => {
+                        if (state.ghostMarker) {
+                            state.ghostMarker.remove();
+                            state.ghostMarker = null;
                         }
                     });
                 }
