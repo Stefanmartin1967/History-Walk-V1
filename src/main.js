@@ -1,5 +1,19 @@
 // main.js
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// FIX: Leaflet default icon paths in Vite
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: markerIcon2x,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow,
+});
+
 import { initDB, getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { APP_VERSION, state } from './state.js';
 import { initMap, map, refreshMapMarkers, fitMapToContent } from './map.js';

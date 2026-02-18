@@ -370,13 +370,27 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
         desktopDraftMarker = null;
     });
 
-    desktopDraftMarker.bindPopup(popupContent, { minWidth: 200 }).openPopup();
+    desktopDraftMarker.bindPopup(popupContent, { minWidth: 200, closeOnClick: false }).openPopup();
 
-    desktopDraftMarker.on('dragend', () => desktopDraftMarker.openPopup());
+    // Gestion du drag pour ne pas fermer/supprimer le marqueur par erreur
+    let isDragging = false;
 
-    // NOUVEAU : Suppression du marqueur si on ferme la popup (Annuler)
+    desktopDraftMarker.on('dragstart', () => {
+        isDragging = true;
+        desktopDraftMarker.closePopup(); // On ferme proprement pour éviter les artefacts
+    });
+
+    desktopDraftMarker.on('dragend', () => {
+        isDragging = false;
+        // On rouvre la popup à la nouvelle position
+        setTimeout(() => {
+            if (desktopDraftMarker) desktopDraftMarker.openPopup();
+        }, 100);
+    });
+
+    // Suppression du marqueur UNIQUEMENT si on ferme la popup explicitement (pas en draggant)
     desktopDraftMarker.on('popupclose', () => {
-        if (mapInstance && desktopDraftMarker) {
+        if (!isDragging && mapInstance && desktopDraftMarker) {
             mapInstance.removeLayer(desktopDraftMarker);
             desktopDraftMarker = null;
         }
