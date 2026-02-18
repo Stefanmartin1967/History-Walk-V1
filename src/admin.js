@@ -4,6 +4,9 @@ import { downloadFile } from './utils.js';
 import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui.js';
 import { map } from './map.js';
+import { showAlert } from './modal.js';
+import { RANKS } from './statistics.js';
+import { createIcons, icons } from 'lucide';
 
 export function initAdminMode() {
     // Initial check
@@ -66,6 +69,33 @@ function setupAdminListeners() {
     const btnExportDestinations = document.getElementById('btn-admin-export-destinations');
     if (btnExportDestinations) {
         btnExportDestinations.addEventListener('click', exportDestinationsConfig);
+    }
+
+    // --- Ajout Dynamique du Bouton RANGS dans le Menu Admin ---
+    const menuContainer = document.getElementById('admin-menu-content');
+    if (menuContainer) {
+        // On vérifie si le bouton existe déjà (pour éviter les doublons lors des HMR)
+        let btnRanks = document.getElementById('btn-admin-show-ranks');
+        if (!btnRanks) {
+            btnRanks = document.createElement('button');
+            btnRanks.id = 'btn-admin-show-ranks';
+            btnRanks.className = 'tools-menu-item';
+            btnRanks.innerHTML = `<i data-lucide="award"></i> Rangs & XP`;
+            // Insérer avant le premier séparateur ou à la fin
+            const separator = menuContainer.querySelector('div[style*="height:1px"]');
+            if (separator) {
+                menuContainer.insertBefore(btnRanks, separator);
+            } else {
+                menuContainer.appendChild(btnRanks);
+            }
+            // Refresh icons
+            createIcons({ icons, root: btnRanks });
+        }
+
+        // Listener (on remplace l'ancien pour éviter les doublons d'écouteurs)
+        const newBtn = btnRanks.cloneNode(true);
+        btnRanks.parentNode.replaceChild(newBtn, btnRanks);
+        newBtn.addEventListener('click', showRankTable);
     }
 }
 
@@ -203,4 +233,49 @@ function exportDestinationsConfig() {
     const jsonStr = JSON.stringify(state.destinations, null, 2);
     downloadFile('destinations.json', jsonStr, 'application/json');
     showToast("destinations.json exporté !", "success");
+}
+
+function showRankTable() {
+    // Construction du tableau HTML
+    let tableRows = RANKS.map(r => `
+        <tr style="border-bottom: 1px solid var(--line);">
+            <td style="padding: 10px; color: ${r.color}; font-size: 24px;">
+                <i data-lucide="${r.icon}"></i>
+            </td>
+            <td style="padding: 10px; text-align: left; font-weight: 600; color: var(--ink);">
+                ${r.title}
+            </td>
+            <td style="padding: 10px; text-align: right; color: var(--ink-soft); font-family: monospace;">
+                ${r.min}%
+            </td>
+        </tr>
+    `).join('');
+
+    const html = `
+        <div style="max-height: 60vh; overflow-y: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: var(--surface-muted); position: sticky; top: 0;">
+                    <tr>
+                        <th style="padding: 10px;">Badge</th>
+                        <th style="padding: 10px; text-align: left;">Titre</th>
+                        <th style="padding: 10px; text-align: right;">Requis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+            <p style="margin-top: 15px; font-size: 12px; color: var(--ink-soft); font-style: italic;">
+                Le pourcentage est basé sur le nombre de lieux marqués comme "Visité" par rapport au total de lieux sur la carte.
+            </p>
+        </div>
+    `;
+
+    showAlert("Tableau des Rangs", html, "Fermer").then(() => {
+        // Refresh icons in modal
+        const modalContent = document.getElementById('custom-modal-message');
+        if (modalContent) {
+            createIcons({ icons, root: modalContent });
+        }
+    });
 }
