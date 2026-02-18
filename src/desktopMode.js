@@ -42,6 +42,7 @@ export async function handleDesktopPhotoImport(filesList) {
     if (loader) loader.style.display = 'flex';
 
     try {
+        console.log(">>> [Import] Début analyse EXIF...");
         // --- ETAPE 1 : EXTRACTION GPS ---
         const filesData = [];
 
@@ -50,25 +51,27 @@ export async function handleDesktopPhotoImport(filesList) {
                 const coords = await getExifLocation(file);
                 filesData.push({ file, coords, hasGps: true });
             } catch (e) {
-                console.warn(`Pas de GPS pour ${file.name}`);
+                console.warn(`[Import] Pas de GPS pour ${file.name}:`, e.message);
                 filesData.push({ file, coords: null, hasGps: false });
             }
         }
 
         const validItems = filesData.filter(f => f.hasGps);
         if (validItems.length === 0) {
+             console.log(">>> [Import] Aucune photo avec GPS.");
              if (loader) loader.style.display = 'none';
              return showToast("Aucune coordonnée GPS trouvée dans ces photos.", 'error');
         }
 
         // --- ETAPE 2 : CLUSTERING (Regroupement) ---
+        console.log(`>>> [Import] Clustering de ${validItems.length} photos...`);
         // On groupe les photos distantes de moins de 80m (augmenté pour éviter le split abusif)
         const clusters = clusterByLocation(validItems, 80);
 
         // On trie par taille : Les plus gros groupes d'abord ("Majorité")
         clusters.sort((a, b) => b.length - a.length);
 
-        console.log(`>>> ${clusters.length} clusters identifiés.`);
+        console.log(`>>> [Import] ${clusters.length} clusters identifiés.`);
 
         // --- ETAPE 3 : TRAITEMENT SÉQUENTIEL DES GROUPES ---
         let processedCount = 0;
@@ -91,6 +94,7 @@ export async function handleDesktopPhotoImport(filesList) {
 
             // --- PRÉ-TRAITEMENT : CALCUL BASE64 POUR DÉTECTION DOUBLONS ---
             // On le fait ici pour le cluster actif afin de comparer avec les photos existantes des POIs
+            console.log(`>>> [Import] Pré-traitement (resize) cluster ${i+1}...`);
             for (let item of cluster) {
                 if (!item.base64) {
                     try {
@@ -130,7 +134,8 @@ export async function handleDesktopPhotoImport(filesList) {
 
             // CAS A : PROPOSITIONS ITÉRATIVES
             if (nearbyPois.length > 0) {
-                if (loader) loader.style.display = 'none';
+                console.log(`>>> [Import] ${nearbyPois.length} POIs proches trouvés.`);
+                if (loader) loader.style.display = 'none'; // Masquer loader pour interaction utilisateur
 
                 for (let k = 0; k < nearbyPois.length; k++) {
                     const { feature, dist } = nearbyPois[k];
@@ -160,7 +165,7 @@ export async function handleDesktopPhotoImport(filesList) {
                     );
 
                     if (selectedPhotos && selectedPhotos.length > 0) {
-                        if (loader) loader.style.display = 'flex';
+                        if (loader) loader.style.display = 'flex'; // Réafficher loader
                         await addPhotosToPoi(feature, selectedPhotos);
                         processedCount += selectedPhotos.length;
                         totalDuplicates += duplicateCount; // On compte les doublons qu'on a filtrés
@@ -278,6 +283,7 @@ export async function handleDesktopPhotoImport(filesList) {
 
 // Fonction utilitaire pour l'ajout effectif avec détection de doublons
 export async function addPhotosToPoi(feature, clusterItems) {
+    console.log(`>>> [Import] Ajout de ${clusterItems.length} photos au POI...`);
     let poiId = getPoiId(feature);
 
     // Si c'est un POI "natif" sans ID user, on lui en crée un
@@ -296,7 +302,7 @@ export async function addPhotosToPoi(feature, clusterItems) {
 
     for (const item of clusterItems) {
         try {
-            // Utilisation du base64 pré-calculé si disponible, sinon on redimensionne
+            // Utilisation du base64 pré-calculé si disponible, sinon on redimensionne (avec timeout)
             const resizedBase64 = item.base64 || await resizeImage(item.file);
 
             // DÉTECTION DOUBLON
@@ -307,9 +313,12 @@ export async function addPhotosToPoi(feature, clusterItems) {
                 added++;
             }
         } catch (err) {
-            console.error("Erreur compression:", err);
+            console.error("Erreur compression lors de l'ajout:", err);
+            // On continue avec les autres photos même si une échoue
         }
     }
+
+    console.log(`>>> [Import] Résultat : ${added} ajoutées, ${duplicates} doublons.`);
 
     if (added > 0) {
         // Utilisation de updatePoiData pour garantir la sync Mémoire + DB + UI
