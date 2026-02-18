@@ -100,22 +100,35 @@ async function loadOfficialCircuits() {
     const mapId = state.currentMapId || 'djerba';
     const circuitsUrl = `./circuits/${mapId}.json`;
 
+    let officials = [];
     try {
-        const response = await fetch(circuitsUrl);
-        if (response.ok) {
-            const officials = await response.json();
-            state.officialCircuits = officials.map(off => ({
-                ...off,
-                isOfficial: true,
-                id: off.id || `official_${off.name.replace(/\s+/g, '_')}`
-            }));
-            console.log(`[Main] ${state.officialCircuits.length} circuits officiels chargés.`);
-            import('./events.js').then(({ eventBus }) => eventBus.emit('circuit:list-updated'));
-        } else {
-             state.officialCircuits = [];
-        }
+        // 1. Tentative Réseau (Bypass Cache SW avec timestamp)
+        const response = await fetch(`${circuitsUrl}?t=${Date.now()}`);
+        if (!response.ok) throw new Error("Network error");
+        officials = await response.json();
+        console.log(`[Main] Circuits officiels chargés (Network).`);
     } catch (e) {
-        console.warn(`[Main] Erreur circuits officiels ${mapId}:`, e);
+        // 2. Fallback Cache (Offline ou Erreur)
+        console.warn(`[Main] Echec réseau, tentative cache...`, e);
+        try {
+            const response = await fetch(circuitsUrl);
+            if (response.ok) {
+                officials = await response.json();
+                console.log(`[Main] Circuits officiels chargés (Cache).`);
+            }
+        } catch (e2) {
+            console.error(`[Main] Erreur finale chargement circuits:`, e2);
+        }
+    }
+
+    if (officials.length > 0) {
+        state.officialCircuits = officials.map(off => ({
+            ...off,
+            isOfficial: true,
+            id: off.id || `official_${off.name.replace(/\s+/g, '_')}`
+        }));
+        import('./events.js').then(({ eventBus }) => eventBus.emit('circuit:list-updated'));
+    } else {
         state.officialCircuits = [];
     }
 }
@@ -124,14 +137,29 @@ async function loadDestinationsConfig() {
     const baseUrl = import.meta.env?.BASE_URL || './';
     const configUrl = baseUrl + 'destinations.json';
 
+    let config = null;
     try {
-        const response = await fetch(configUrl);
+        // 1. Network First
+        const response = await fetch(`${configUrl}?t=${Date.now()}`);
         if (response.ok) {
-            state.destinations = await response.json();
-            console.log("[Config] destinations.json chargé.", state.destinations);
+            config = await response.json();
+            console.log("[Config] destinations.json chargé (Network).", config);
         }
     } catch (e) {
-        console.error("[Config] Erreur chargement destinations.json.", e);
+        // 2. Fallback Cache
+        try {
+            const response = await fetch(configUrl);
+            if (response.ok) {
+                config = await response.json();
+                console.log("[Config] destinations.json chargé (Cache).", config);
+            }
+        } catch (e2) {
+            console.error("[Config] Erreur chargement destinations.json.", e2);
+        }
+    }
+
+    if (config) {
+        state.destinations = config;
     }
 }
 
