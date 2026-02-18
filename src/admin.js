@@ -7,6 +7,7 @@ import { map } from './map.js';
 import { showAlert } from './modal.js';
 import { RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
+import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
 
 export function initAdminMode() {
     // Initial check
@@ -19,6 +20,7 @@ export function initAdminMode() {
 
     setupAdminListeners();
     setupGodModeListener();
+    setupGitHubUploadUI(); // Setup the new UI logic
 }
 
 function toggleAdminUI(isAdmin) {
@@ -96,6 +98,23 @@ function setupAdminListeners() {
         const newBtn = btnRanks.cloneNode(true);
         btnRanks.parentNode.replaceChild(newBtn, btnRanks);
         newBtn.addEventListener('click', showRankTable);
+
+        // --- NOUVEAU : Bouton Upload GitHub ---
+        let btnGitHub = document.getElementById('btn-admin-github-upload');
+        if (!btnGitHub) {
+            btnGitHub = document.createElement('button');
+            btnGitHub.id = 'btn-admin-github-upload';
+            btnGitHub.className = 'tools-menu-item';
+            btnGitHub.innerHTML = `<i data-lucide="upload-cloud"></i> Upload GitHub`;
+
+            // Add at the end
+            menuContainer.appendChild(btnGitHub);
+            createIcons({ icons, root: btnGitHub });
+        }
+
+        const newGitHubBtn = btnGitHub.cloneNode(true);
+        btnGitHub.parentNode.replaceChild(newGitHubBtn, btnGitHub);
+        newGitHubBtn.addEventListener('click', showGitHubUploadModal);
     }
 }
 
@@ -278,4 +297,118 @@ function showRankTable() {
     if (modalContent) {
         createIcons({ icons, root: modalContent });
     }
+}
+
+// --- GITHUB UPLOAD UI ---
+
+function setupGitHubUploadUI() {
+    // Nothing complex to setup on init, logic is inside showGitHubUploadModal
+}
+
+function showGitHubUploadModal() {
+    const storedToken = getStoredToken() || '';
+    const repoOwner = 'Stefanmartin1967'; // Default from user info
+    const repoName = 'History-Walk-V1';   // Default from user info
+
+    // 1. Récupération des éléments de la modale globale
+    const overlay = document.getElementById('custom-modal-overlay');
+    const title = document.getElementById('custom-modal-title');
+    const message = document.getElementById('custom-modal-message');
+    const actions = document.getElementById('custom-modal-actions');
+
+    if (!overlay || !title || !message || !actions) {
+        console.error("Modal elements not found");
+        return;
+    }
+
+    // 2. Configuration du contenu
+    title.textContent = "Mise en ligne GitHub";
+    message.innerHTML = `
+        <div style="text-align: left;">
+            <p style="margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft);">
+                Cette fonction permet d'ajouter un circuit officiel directement sur GitHub.
+                Cela déclenchera automatiquement la mise à jour du site.
+            </p>
+
+            <label style="display:block; margin-bottom: 5px; font-weight: 600;">GitHub Token (PAT)</label>
+            <input type="password" id="gh-token" value="${storedToken}" placeholder="ghp_..."
+                   style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+
+            <label style="display:block; margin-bottom: 5px; font-weight: 600;">Fichier Circuit (.json / .gpx)</label>
+            <input type="file" id="gh-file-input" accept=".json,.gpx"
+                   style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+
+            <div id="gh-status" style="margin-top: 10px; font-size: 0.9em; color: var(--primary);"></div>
+        </div>
+    `;
+
+    // 3. Configuration des boutons
+    actions.innerHTML = ''; // Reset
+
+    // Bouton Annuler
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'custom-modal-btn secondary';
+    btnCancel.textContent = "Annuler";
+    btnCancel.onclick = () => {
+        overlay.classList.remove('active');
+    };
+
+    // Bouton Envoyer
+    const btnSend = document.createElement('button');
+    btnSend.className = 'custom-modal-btn primary';
+    btnSend.textContent = "Envoyer sur GitHub";
+    btnSend.onclick = async () => {
+        const tokenInput = document.getElementById('gh-token');
+        const fileInput = document.getElementById('gh-file-input');
+        const statusDiv = document.getElementById('gh-status');
+
+        const token = tokenInput.value.trim();
+        const file = fileInput.files[0];
+
+        if (!token) {
+            statusDiv.textContent = "Erreur: Token manquant.";
+            statusDiv.style.color = "red";
+            return;
+        }
+        if (!file) {
+            statusDiv.textContent = "Erreur: Aucun fichier sélectionné.";
+            statusDiv.style.color = "red";
+            return;
+        }
+
+        // Save token
+        saveToken(token);
+
+        statusDiv.textContent = "Envoi en cours...";
+        statusDiv.style.color = "var(--primary)";
+        btnSend.disabled = true;
+
+        try {
+            // Determine path based on file type
+            // Assuming all circuits go to public/circuits/
+            const path = `public/circuits/${file.name}`;
+
+            await uploadFileToGitHub(file, token, repoOwner, repoName, path, `Add official circuit: ${file.name}`);
+
+            statusDiv.textContent = "Succès ! Le site se mettra à jour dans quelques minutes.";
+            statusDiv.style.color = "green";
+            showToast("Fichier envoyé avec succès !", "success");
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 2000);
+
+        } catch (error) {
+            console.error(error);
+            statusDiv.textContent = "Erreur: " + error.message;
+            statusDiv.style.color = "red";
+            btnSend.disabled = false;
+        }
+    };
+
+    actions.appendChild(btnCancel);
+    actions.appendChild(btnSend);
+
+    // 4. Affichage
+    overlay.classList.add('active');
 }
