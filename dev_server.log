@@ -1,9 +1,9 @@
 
 > version-suppression-poi-douce@1.0.0 dev
-> vite
+> vite --host
 
 
-  VITE v7.3.1  ready in 325 ms
+  VITE v7.3.1  ready in 501 ms
 
   ➜  Local:   http://localhost:5173/
-  ➜  Network: use --host to expose
+  ➜  Network: http://192.168.0.2:5173/

@@ -1,0 +1,28 @@
+name: Update Circuit Index
+
+on:
+  push:
+    paths:
+      - 'public/circuits/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Generate Circuit Index
+      run: node scripts/generate-circuit-index.js
+
+    - name: Commit and Push changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Auto-update circuit index"
+        file_pattern: "public/circuits/djerba.json"
