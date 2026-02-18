@@ -6570,6 +6570,40 @@
         "Catégorie": "Commerce",
         "Zone": "Houmt Souk"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.744851529598238,
+          33.720723389971724
+        ]
+      },
+      "properties": {
+        "HW_ID": "HW-PC-1771394122276",
+        "Nom du site FR": "Restaurant MBAREK",
+        "Nom du site AR": "",
+        "Catégorie": "Restaurant",
+        "Zone": "Ajim"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.76678663492203,
+          33.7812942328873
+        ]
+      },
+      "properties": {
+        "HW_ID": "HW-PC-1771441437248",
+        "Nom du site FR": "Mosquée El Fquira (Mezran)",
+        "Nom du site AR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "El Groa"
+      }
     }
   ]
 }
