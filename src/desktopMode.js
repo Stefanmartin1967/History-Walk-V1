@@ -373,6 +373,14 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
     desktopDraftMarker.bindPopup(popupContent, { minWidth: 200 }).openPopup();
 
     desktopDraftMarker.on('dragend', () => desktopDraftMarker.openPopup());
+
+    // NOUVEAU : Suppression du marqueur si on ferme la popup (Annuler)
+    desktopDraftMarker.on('popupclose', () => {
+        if (mapInstance && desktopDraftMarker) {
+            mapInstance.removeLayer(desktopDraftMarker);
+            desktopDraftMarker = null;
+        }
+    });
 }
 
 // L'ancienne fonction openDesktopAddModal a été supprimée car remplacée par RichEditor.
