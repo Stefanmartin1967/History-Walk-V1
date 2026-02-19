@@ -86,7 +86,9 @@ export function setupPhotoPanelListeners(poiId) {
     document.querySelectorAll('.photo-item .img-preview').forEach(img => {
         img.addEventListener('click', (e) => {
             const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-            const photos = feature?.properties?.userData?.photos || [];
+            // CORRECTION : On doit fusionner les propriétés comme dans templates.js pour voir les photos officielles
+            const props = { ...feature?.properties, ...feature?.properties?.userData };
+            const photos = props.photos || [];
 
             // Utilisation directe de l'index stocké sur l'image (plus robuste que de chercher le bouton delete)
             const photoIndex = parseInt(e.currentTarget.dataset.index, 10);
