@@ -96,10 +96,10 @@ export function setupSmartSearch() {
 
                     // 2. Création du nouveau marqueur
                     const ghostIcon = L.divIcon({
-                        html: `<div style="background-color:var(--brand); width:16px; height:16px; border-radius:50%; border:2px solid white; box-shadow:0 0 4px rgba(0,0,0,0.5);"></div>`,
+                        html: `<div style="background-color:var(--brand); width:20px; height:20px; border-radius:50%; border:2px solid white; box-shadow:0 0 4px rgba(0,0,0,0.5); margin:10px;"></div>`,
                         className: 'ghost-marker-icon',
-                        iconSize: [20, 20],
-                        iconAnchor: [10, 10]
+                        iconSize: [40, 40],
+                        iconAnchor: [20, 20]
                     });
 
                     const marker = L.marker([lat, lng], {
@@ -119,6 +119,7 @@ export function setupSmartSearch() {
 
                     popupContent.innerHTML = `
                         <div style="font-weight:bold; margin-bottom:5px;">Nouveau Lieu ?</div>
+                        <div id="ghost-marker-coords" style="font-size:11px; color:#888; margin-bottom:5px;">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
                         <div style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">Glissez pour ajuster</div>
                         <button id="btn-create-poi-ghost" class="action-btn" style="background:var(--brand); color:white; padding:4px 8px; font-size:12px; cursor:pointer; margin: 0 auto;">
                             Valider cette position
@@ -138,6 +139,12 @@ export function setupSmartSearch() {
 
                     marker.on('dragend', () => {
                         isDragging = false;
+
+                        // Update coords display
+                        const { lat, lng } = marker.getLatLng();
+                        const coordsEl = popupContent.querySelector('#ghost-marker-coords');
+                        if (coordsEl) coordsEl.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
                         setTimeout(() => {
                             if (state.ghostMarker) state.ghostMarker.openPopup();
                         }, 100);
