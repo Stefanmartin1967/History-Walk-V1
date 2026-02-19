@@ -324,6 +324,11 @@ export function renderMobileCircuitsList() {
                 const firstPoi = validPois[0];
                 const [lng, lat] = firstPoi.geometry.coordinates;
                 zoneName = getZoneFromCoords(lat, lng);
+            } else if (circuit.realTrack && circuit.realTrack.length > 0) {
+                // Fallback: Si pas de POI liés, on utilise le premier point de la trace réelle
+                // realTrack est au format [[lat, lng], ...]
+                const [lat, lng] = circuit.realTrack[0];
+                zoneName = getZoneFromCoords(lat, lng);
             }
 
             const displayName = circuit.name.split(' via ')[0];
