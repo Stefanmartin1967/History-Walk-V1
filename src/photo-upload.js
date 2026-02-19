@@ -52,16 +52,23 @@ export async function uploadPhotoForPoi(file, poiId) {
 export function injectAdminPhotoUploadButton(poiId) {
     if (!state.isAdmin) return;
 
-    // Target the photos section header controls
-    const photosSection = document.querySelector('.photos-section h3');
-    if (!photosSection) return;
+    // Target the photos section header
+    const photosHeader = document.querySelector('.photos-section h3');
+    if (!photosHeader) return;
 
-    // Look for existing controls or create one
-    let controlsDiv = photosSection.querySelector('.section-controls');
+    // Look for existing controls container or create it
+    let controlsDiv = photosHeader.querySelector('.section-controls');
     if (!controlsDiv) {
+        // Create a flex container for controls
         controlsDiv = document.createElement('div');
         controlsDiv.className = 'edit-controls section-controls';
-        photosSection.appendChild(controlsDiv);
+        controlsDiv.style.display = 'flex';
+        controlsDiv.style.alignItems = 'center';
+        controlsDiv.style.gap = '8px'; // Space between buttons
+        controlsDiv.style.marginLeft = 'auto'; // Push to the right
+        photosHeader.style.display = 'flex'; // Ensure header is flex
+        photosHeader.style.alignItems = 'center'; // Vertical align
+        photosHeader.appendChild(controlsDiv);
     }
 
     // 1. Calculate pending uploads
@@ -80,9 +87,8 @@ export function injectAdminPhotoUploadButton(poiId) {
         uploadBtn.id = 'btn-admin-upload-photos';
         uploadBtn.className = 'action-button';
 
-        // Icon
+        // Icon (Cloud Upload)
         uploadBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>`;
-        uploadBtn.style.marginRight = '8px';
         uploadBtn.style.position = 'relative';
 
         uploadBtn.addEventListener('click', async (e) => {
@@ -90,13 +96,8 @@ export function injectAdminPhotoUploadButton(poiId) {
             await handleAdminPhotoUpload(poiId);
         });
 
-        // Insert before the delete button if it exists
-        const deleteBtn = document.getElementById('btn-delete-all-photos');
-        if (deleteBtn && deleteBtn.parentNode === controlsDiv) {
-            controlsDiv.insertBefore(uploadBtn, deleteBtn);
-        } else {
-            controlsDiv.appendChild(uploadBtn);
-        }
+        // Insert as first child (Left of Delete button if exists)
+        controlsDiv.prepend(uploadBtn);
     }
 
     // Ensure badge exists
@@ -109,21 +110,25 @@ export function injectAdminPhotoUploadButton(poiId) {
     }
 
     // 3. Update Status (Visual feedback)
+    // ALWAYS VISIBLE (Blue if pending, Grey if empty but visible)
     if (localCount > 0) {
         uploadBtn.style.color = 'var(--brand)';
         uploadBtn.style.opacity = '1';
+        uploadBtn.style.cursor = 'pointer';
         uploadBtn.title = `Officialiser ${localCount} photo(s) locale(s) sur GitHub`;
-        uploadBtn.style.border = '1px solid var(--brand)';
+        uploadBtn.disabled = false;
 
         if (badge) {
             badge.textContent = localCount;
             badge.style.display = 'block';
         }
     } else {
-        uploadBtn.style.color = 'var(--ink-soft)';
-        uploadBtn.style.opacity = '0.7';
+        uploadBtn.style.color = 'var(--ink-soft)'; // Grey
+        uploadBtn.style.opacity = '0.5';
+        uploadBtn.style.cursor = 'default';
         uploadBtn.title = 'Toutes les photos sont synchronisées';
-        uploadBtn.style.border = '1px solid transparent';
+        // We disable click action logic but keep button visible
+        uploadBtn.disabled = true;
 
         if (badge) {
             badge.style.display = 'none';

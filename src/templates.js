@@ -74,12 +74,19 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const isIncontournableChecked = allProps.incontournable ? 'checked' : '';
 
     const photos = allProps.photos || [];
-    let photosHtml = photos.map((src, index) => `
+    let photosHtml = photos.map((src, index) => {
+        // Condition: delete button visible ONLY for local photos (starting with data:image)
+        const isLocal = typeof src === 'string' && src.startsWith('data:image');
+        const deleteBtnHtml = isLocal
+            ? `<button class="photo-delete-btn" data-index="${index}" title="Supprimer de l'appareil">${ICONS.trash}</button>`
+            : ''; // No delete button for remote photos
+
+        return `
         <div class="photo-item">
             <img src="${src}" class="img-preview" title="Cliquez pour agrandir" data-index="${index}">
-            <button class="photo-delete-btn" data-index="${index}">${ICONS.trash}</button>
+            ${deleteBtnHtml}
         </div>
-    `).join('');
+    `}).join('');
 
     const currency = getCurrentCurrency();
     const priceDisplay = priceValue === 0 || priceValue === '0' || priceValue === '' ? 'Gratuit' : priceValue;
