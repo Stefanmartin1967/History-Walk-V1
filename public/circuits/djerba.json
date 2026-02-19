@@ -7,6 +7,7 @@
     "distance": "7.2 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "Taguermess",
     "poiIds": []
   },
   {
@@ -17,6 +18,7 @@
     "distance": "6.0 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "Ajim",
     "poiIds": []
   },
   {
@@ -27,6 +29,7 @@
     "distance": "7.4 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "Mezraya",
     "poiIds": []
   },
   {
@@ -37,6 +40,7 @@
     "distance": "7.8 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "Sedouikech",
     "poiIds": []
   },
   {
@@ -47,6 +51,7 @@
     "distance": "5.9 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "El Groa",
     "poiIds": []
   },
   {
@@ -57,6 +62,7 @@
     "distance": "7.2 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "Houmt Souk",
     "poiIds": []
   },
   {
@@ -67,6 +73,7 @@
     "distance": "3.8 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "Houmt Souk",
     "poiIds": []
   },
   {
@@ -77,6 +84,7 @@
     "distance": "7.7 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "Midoun",
     "poiIds": []
   },
   {
@@ -87,6 +95,7 @@
     "distance": "6.0 km",
     "isOfficial": true,
     "hasRealTrack": true,
+    "zone": "Taguermess",
     "poiIds": []
   }
 ]

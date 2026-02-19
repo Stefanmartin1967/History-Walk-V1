@@ -4,6 +4,7 @@
     "djerba": {
       "name": "Djerba",
       "file": "djerba.geojson",
+      "circuitsFile": "circuits/djerba.json",
       "currency": "TND",
       "startView": {
         "center": [

@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CIRCUITS_DIR = path.join(__dirname, '../public/circuits');
+const MAP_GEOJSON_PATH = path.join(__dirname, '../public/map.geojson');
 const HISTORY_WALK_URL = 'https://stefanmartin1967.github.io/history-walk/';
 
 function getTimestampId() {
@@ -46,10 +47,10 @@ function getDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-function calculateTrackDistance(gpxContent) {
+function extractTrackPoints(gpxContent) {
     // Robust parsing: Find all trkpt tags, then extract attributes regardless of order
     const trkptMatches = gpxContent.match(/<trkpt[\s\S]*?>/g);
-    if (!trkptMatches) return 0;
+    if (!trkptMatches) return [];
 
     const coords = [];
 
@@ -61,7 +62,10 @@ function calculateTrackDistance(gpxContent) {
              coords.push([parseFloat(latMatch[1]), parseFloat(lonMatch[1])]);
         }
     });
+    return coords;
+}
 
+function calculateTrackDistance(coords) {
     if (coords.length < 2) return 0;
 
     let totalDist = 0;
@@ -72,7 +76,63 @@ function calculateTrackDistance(gpxContent) {
     return totalDist; // in meters
 }
 
-function processDirectory(mapId) {
+// Ray-casting algorithm for point in polygon
+function isPointInPolygon(point, vs) {
+    // point = [lon, lat] (GeoJSON convention) or [lat, lon]?
+    // GeoJSON polygons are usually [lon, lat].
+    // Our point input here is [lat, lon] from GPX.
+    // Let's standarize.
+
+    // WARNING: GPX provides [lat, lon]. GeoJSON provides [lon, lat].
+    // Let's assume 'point' passed to this function is [lon, lat] to match GeoJSON polygon format.
+
+    const x = point[0], y = point[1];
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        const xi = vs[i][0], yi = vs[i][1];
+        const xj = vs[j][0], yj = vs[j][1];
+
+        const intersect = ((yi > y) !== (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+function loadZones() {
+    if (!fs.existsSync(MAP_GEOJSON_PATH)) {
+        console.warn("Map GeoJSON not found at " + MAP_GEOJSON_PATH);
+        return [];
+    }
+    try {
+        const data = JSON.parse(fs.readFileSync(MAP_GEOJSON_PATH, 'utf8'));
+        if (data.type === 'FeatureCollection') {
+            return data.features.filter(f => f.geometry && f.geometry.type === 'Polygon');
+        }
+    } catch (e) {
+        console.error("Error loading zones:", e);
+    }
+    return [];
+}
+
+function getZoneForPoint(lat, lon, zones) {
+    // Point needs to be [lon, lat] for comparison with GeoJSON
+    const point = [lon, lat];
+
+    for (const zone of zones) {
+        // GeoJSON Polygon coordinates are nested: [ [ [x,y], ... ] ]
+        // Usually the first ring is the exterior ring.
+        if (zone.geometry.coordinates && zone.geometry.coordinates.length > 0) {
+            const polygon = zone.geometry.coordinates[0];
+            if (isPointInPolygon(point, polygon)) {
+                return zone.properties.name;
+            }
+        }
+    }
+    return null;
+}
+
+function processDirectory(mapId, zones) {
     const dirPath = path.join(CIRCUITS_DIR, mapId);
     const indexFilePath = path.join(CIRCUITS_DIR, `${mapId}.json`);
 
@@ -179,9 +239,17 @@ function processDirectory(mapId) {
             fileChanged = true;
         }
 
-        // 3. Calculate Distance
-        const distanceMeters = calculateTrackDistance(content);
+        // 3. Calculate Distance and Zone
+        const trackPoints = extractTrackPoints(content);
+        const distanceMeters = calculateTrackDistance(trackPoints);
         const distanceStr = (distanceMeters / 1000).toFixed(1) + ' km';
+
+        let zone = null;
+        if (trackPoints.length > 0) {
+            // trackPoints are [lat, lon]
+            const startPoint = trackPoints[0];
+            zone = getZoneForPoint(startPoint[0], startPoint[1], zones);
+        }
 
         // 4. Build New Entry
         // Merge with existing data to preserve manual fields (poiIds, transport)
@@ -193,12 +261,14 @@ function processDirectory(mapId) {
             distance: distanceStr, // Updated with calculated distance
             isOfficial: true,
             hasRealTrack: true,
+            zone: zone, // Calculated Zone
             poiIds: existingEntry ? existingEntry.poiIds : [],
             transport: existingEntry && existingEntry.transport ? existingEntry.transport : undefined
         };
 
         // Clean up undefined
         if (!entry.transport) delete entry.transport;
+        if (!entry.zone) delete entry.zone;
 
         newIndex.push(entry);
 
@@ -219,11 +289,14 @@ function main() {
         process.exit(1);
     }
 
+    const zones = loadZones();
+    console.log(`Loaded ${zones.length} zones.`);
+
     const entries = fs.readdirSync(CIRCUITS_DIR, { withFileTypes: true });
 
     entries.forEach(entry => {
         if (entry.isDirectory()) {
-            processDirectory(entry.name);
+            processDirectory(entry.name, zones);
         }
     });
 }
