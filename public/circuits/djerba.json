@@ -8,7 +8,11 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Taguermess",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE6722XTDVPGCQTPPBXR",
+      "HW-01K77WPE671G6V27VYYNMJV2NC",
+      "HW-01K77WPE6770BXCP2SW1Z2DTA2"
+    ]
   },
   {
     "id": "HW-1771394208671",
@@ -19,7 +23,18 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Ajim",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE6P1NA9ZF5TF1DK9GD2",
+      "HW-01K77WPE6PC9G02W8SX1JZX2HC",
+      "HW-01K77WPE6PKFFHK53AA0880TBZ",
+      "HW-01K77WPE6PGSGH7AWKFRACMNSJ",
+      "HW-01K77WPE6PRETC07TQDNMAG54C",
+      "HW-01K77WPE6P7XZY555VW8YDAVA0",
+      "HW-01K77WPE6P30E9MGC3BE3KYHP6",
+      "HW-01K77WPE6PGWRVHZ8H8CTQJ06X",
+      "HW-01K77WPE6RHDAFAXAA92EFT8GY",
+      "HW-PC-1771394122276"
+    ]
   },
   {
     "id": "HW-1771320398895",
@@ -30,7 +45,15 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Mezraya",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
+      "HW-01K77WPE6AS77NE3CRGHPYHJSE",
+      "HW-01K77WPE6A7EGYFGG7XNYT8AYC",
+      "HW-01K77WPE6BE6FFWWHJH6DSSZQ6",
+      "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
+      "HW-01K77WPE6BAJG9QADZMRDXPWTB",
+      "HW-01K77WPE6B49HSRPBACEWDY95T"
+    ]
   },
   {
     "id": "HW-1771435443094",
@@ -41,7 +64,16 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Sedouikech",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE6C4GTHCK9Y64EFE8SP",
+      "HW-01K77WPE6D5GR4P97YHEN41JNS",
+      "HW-01K77WPE6D6A1W50RR0KNXRAGH",
+      "HW-01K77WPE6EWBD679W4C2QRM2FA",
+      "HW-01K77WPE6HCCSTW9QXDV73Q1SF",
+      "HW-01K77WPE6R9A1BAASW9SGFA97P",
+      "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B",
+      "HW-01K77WPE6RN50H0B51NPN1GECK"
+    ]
   },
   {
     "id": "HW-1771317964994",
@@ -52,7 +84,15 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "El Groa",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
+      "HW-01K77WPE6N293MG25FFQBH1G10",
+      "HW-01K77WPE6N0ZBXJK23NVJ2MQPX",
+      "HW-01K77WPE6N6A0YBFFKMQQNQH0E",
+      "HW-01K77WPE6NJ1X6TBWGCTV85QMM",
+      "HW-01K77WPE6N6HF86MYJNJWFPNSV",
+      "HW-01K77WPE6RQNBBQXWYACNJTRAC"
+    ]
   },
   {
     "id": "HW-1771324790804",
@@ -63,7 +103,20 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Houmt Souk",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
+      "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
+      "HW-01K77WPE6H365AYB72RWY40WZX",
+      "HW-01K77WPE6J23YSBPP5PMBBZ23Y",
+      "HW-01K77WPE6JARCBVAYJCW1B3B14",
+      "HW-01K77WPE6M5QZM1DZV18R4EDHR",
+      "HW-PC-1769612491396",
+      "HW-PC-1769614282535",
+      "HW-PC-1769615185858",
+      "HW-PC-1771321149138",
+      "HW-PC-1771321603257",
+      "HW-PC-1771324774291"
+    ]
   },
   {
     "id": "HW-1771317389638",
@@ -74,7 +127,17 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Houmt Souk",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE6F1C25NNH5RAR2JPF6",
+      "HW-01K77WPE6G4S44DJQ98414C336",
+      "HW-01K77WPE6G6C1H17E6WP518B3J",
+      "HW-01K77WPE6GQX3PRD8TAKTDRNSZ",
+      "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
+      "HW-01K77WPE6HV1767JVPMV1000YQ",
+      "HW-01K77WPE6P5C0194DPJWYMX9C1",
+      "HW-PC-1769612491396",
+      "HW-PC-1771317321738"
+    ]
   },
   {
     "id": "HW-1771393204345",
@@ -85,7 +148,16 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Midoun",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE697JA8WM3N71KEFY6S",
+      "HW-01K77WPE69RBE6FB0RR05GEJM3",
+      "HW-01K77WPE69CKZWJHD3JAJT874K",
+      "HW-01K77WPE6A22WXDRBSQ8AEW7BR",
+      "HW-01K77WPE6AA25DRECXWRNXFZ4C",
+      "HW-01K77WPE6P9JFRW9XXGN7P7FPX",
+      "HW-01K77WPE6SFRMMS2GS11D6JXR5",
+      "HW-01K77WPE67434E7DEZHRXH0XL60RGD"
+    ]
   },
   {
     "id": "HW-1771319458286",
@@ -96,6 +168,14 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Taguermess",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE68SSRHFM5TYYA7F5YF",
+      "HW-01K77WPE68MMPS9ZVR6XTV9J61",
+      "HW-01K77WPE68Q2NTEKRWSPCDZZGE",
+      "HW-01K77WPE68JWCXJ0TCG1EDSB7A",
+      "HW-01K77WPE6QJNV1Q83SBNFKC88M",
+      "HW-01K77WPE6Q0QEE8APATRE5K4MS",
+      "HW-01K77WPE6QN6S4TSGEZQ6DQGXA"
+    ]
   }
 ]
