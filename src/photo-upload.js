@@ -50,57 +50,12 @@ export async function uploadPhotoForPoi(file, poiId) {
  * if the user is an admin.
  */
 export function injectAdminPhotoUploadButton(poiId) {
-    if (!state.isAdmin) return;
+    // Force hide the button as per new requirements (Viewer only)
+    const uploadBtn = document.getElementById('btn-admin-upload-photos');
+    const badge = document.getElementById('btn-admin-upload-badge');
 
-    // 1. Calculate pending uploads
-    let feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-    if (!feature && state.currentFeatureId !== null) {
-        feature = state.loadedFeatures[state.currentFeatureId];
-    }
-    const photos = feature?.properties?.userData?.photos || [];
-    const localCount = photos.filter(p => p.startsWith('data:image')).length;
-
-    // 2. Get button (already created by template)
-    let uploadBtn = document.getElementById('btn-admin-upload-photos');
-
-    // Bind listener if not already bound (we use a custom property to track binding)
-    if (uploadBtn && !uploadBtn.dataset.bound) {
-        uploadBtn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            if (!uploadBtn.disabled) {
-                await handleAdminPhotoUpload(poiId);
-            }
-        });
-        uploadBtn.dataset.bound = "true";
-    }
-
-    // 3. Update Status (Visual feedback)
-    let badge = document.getElementById('btn-admin-upload-badge');
-
-    if (uploadBtn) {
-        if (localCount > 0) {
-            uploadBtn.style.color = 'var(--brand)';
-            uploadBtn.style.opacity = '1';
-            uploadBtn.style.cursor = 'pointer';
-            uploadBtn.title = `Officialiser ${localCount} photo(s) locale(s) sur GitHub`;
-            uploadBtn.disabled = false;
-
-            if (badge) {
-                badge.textContent = localCount;
-                badge.style.display = 'block';
-            }
-        } else {
-            uploadBtn.style.color = 'var(--ink-soft)'; // Grey
-            uploadBtn.style.opacity = '0.5';
-            uploadBtn.style.cursor = 'default';
-            uploadBtn.title = 'Toutes les photos sont synchronisées';
-            uploadBtn.disabled = true;
-
-            if (badge) {
-                badge.style.display = 'none';
-            }
-        }
-    }
+    if (uploadBtn) uploadBtn.style.display = 'none';
+    if (badge) badge.style.display = 'none';
 }
 
 async function handleAdminPhotoUpload(poiId) {
