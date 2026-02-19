@@ -1,6 +1,5 @@
 import { state } from './state.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
-import { compressImage } from './photo-manager.js';
 import { getPoiId } from './data.js';
 import { showToast } from './toast.js';
 import { updatePoiData } from './data.js';
@@ -23,21 +22,15 @@ export async function uploadPhotoForPoi(file, poiId) {
         throw new Error("GitHub token not found. Please configure it in Admin Tools.");
     }
 
-    // 1. Compress the image (reuse existing logic from photo-manager)
-    // compressImage returns a DataURL (base64 string with prefix)
-    const compressedDataUrl = await compressImage(file, 1200); // 1200px max width/height for better quality than thumbnails
-
-    // 2. Convert DataURL to File object for uploadFileToGitHub
-    // The upload function expects a File object to handle base64 extraction internally
-    const response = await fetch(compressedDataUrl);
-    const blob = await response.blob();
-
     // Generate a unique filename: poi_{id}_{timestamp}.jpg
     // sanitize poiId to be safe for filenames
     const safePoiId = poiId.replace(/[^a-zA-Z0-9-_]/g, '_');
     const timestamp = Date.now();
     const filename = `poi_${safePoiId}_${timestamp}.jpg`;
-    const uploadFile = new File([blob], filename, { type: 'image/jpeg' });
+
+    // We create a new File object to ensure the filename is correct for the upload
+    // The input 'file' is already compressed/optimized (1200px) from local storage
+    const uploadFile = new File([file], filename, { type: 'image/jpeg' });
 
     // 3. Upload to GitHub
     const path = `${PHOTOS_DIR}/${filename}`;
@@ -71,29 +64,70 @@ export function injectAdminPhotoUploadButton(poiId) {
         photosSection.appendChild(controlsDiv);
     }
 
-    // Check if button already exists
-    if (document.getElementById('btn-admin-upload-photos')) return;
+    // 1. Calculate pending uploads
+    let feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    if (!feature && state.currentFeatureId !== null) {
+        feature = state.loadedFeatures[state.currentFeatureId];
+    }
+    const photos = feature?.properties?.userData?.photos || [];
+    const localCount = photos.filter(p => p.startsWith('data:image')).length;
 
-    const uploadBtn = document.createElement('button');
-    uploadBtn.id = 'btn-admin-upload-photos';
-    uploadBtn.className = 'action-button';
-    uploadBtn.title = 'Officialiser les photos (GitHub)';
-    // Use a cloud upload icon
-    uploadBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>`;
-    uploadBtn.style.color = 'var(--brand)';
-    uploadBtn.style.marginRight = '8px';
+    // 2. Create or Get button
+    let uploadBtn = document.getElementById('btn-admin-upload-photos');
 
-    uploadBtn.addEventListener('click', async (e) => {
-        e.stopPropagation();
-        await handleAdminPhotoUpload(poiId);
-    });
+    if (!uploadBtn) {
+        uploadBtn = document.createElement('button');
+        uploadBtn.id = 'btn-admin-upload-photos';
+        uploadBtn.className = 'action-button';
 
-    // Insert before the delete button if it exists
-    const deleteBtn = document.getElementById('btn-delete-all-photos');
-    if (deleteBtn && deleteBtn.parentNode === controlsDiv) {
-        controlsDiv.insertBefore(uploadBtn, deleteBtn);
+        // Icon
+        uploadBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>`;
+        uploadBtn.style.marginRight = '8px';
+        uploadBtn.style.position = 'relative';
+
+        uploadBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            await handleAdminPhotoUpload(poiId);
+        });
+
+        // Insert before the delete button if it exists
+        const deleteBtn = document.getElementById('btn-delete-all-photos');
+        if (deleteBtn && deleteBtn.parentNode === controlsDiv) {
+            controlsDiv.insertBefore(uploadBtn, deleteBtn);
+        } else {
+            controlsDiv.appendChild(uploadBtn);
+        }
+    }
+
+    // Ensure badge exists
+    let badge = document.getElementById('btn-admin-upload-badge');
+    if (uploadBtn && !badge) {
+        badge = document.createElement('span');
+        badge.id = 'btn-admin-upload-badge';
+        badge.style.cssText = "position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 10px; padding: 2px 5px; font-size: 10px; font-weight: bold; min-width: 15px; display: none;";
+        uploadBtn.appendChild(badge);
+    }
+
+    // 3. Update Status (Visual feedback)
+    if (localCount > 0) {
+        uploadBtn.style.color = 'var(--brand)';
+        uploadBtn.style.opacity = '1';
+        uploadBtn.title = `Officialiser ${localCount} photo(s) locale(s) sur GitHub`;
+        uploadBtn.style.border = '1px solid var(--brand)';
+
+        if (badge) {
+            badge.textContent = localCount;
+            badge.style.display = 'block';
+        }
     } else {
-        controlsDiv.appendChild(uploadBtn);
+        uploadBtn.style.color = 'var(--ink-soft)';
+        uploadBtn.style.opacity = '0.7';
+        uploadBtn.title = 'Toutes les photos sont synchronisées';
+        uploadBtn.style.border = '1px solid transparent';
+
+        if (badge) {
+            badge.style.display = 'none';
+        }
     }
 }
 

@@ -19,7 +19,7 @@ export function changePhoto(direction) {
     if (DOM.viewerImg) DOM.viewerImg.src = currentPhotoList[currentPhotoIndex];
 }
 
-export async function compressImage(file, targetMinSize = 800) {
+export async function compressImage(file, targetMinSize = 1200) {
     return new Promise((resolve) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
