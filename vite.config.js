@@ -27,7 +27,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        fusion: resolve(__dirname, 'tools/fusion.html'),
         scout: resolve(__dirname, 'tools/scout.html'),
       },
     },
