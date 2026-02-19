@@ -358,9 +358,16 @@ function showGitHubUploadModal() {
     btnSend.className = 'custom-modal-btn primary';
     btnSend.textContent = "Envoyer sur GitHub";
     btnSend.onclick = async () => {
-        const tokenInput = document.getElementById('gh-token');
-        const fileInput = document.getElementById('gh-file-input');
-        const statusDiv = document.getElementById('gh-status');
+        // Use querySelector on the container to ensure we target the current modal content
+        // This avoids issues with stale elements if the DOM was previously malformed
+        const tokenInput = message.querySelector('#gh-token');
+        const fileInput = message.querySelector('#gh-file-input');
+        const statusDiv = message.querySelector('#gh-status');
+
+        if (!tokenInput || !fileInput) {
+            console.error("Inputs not found in modal message container");
+            return;
+        }
 
         const token = tokenInput.value.trim();
         const file = fileInput.files[0];
