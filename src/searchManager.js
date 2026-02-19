@@ -162,15 +162,51 @@ export function setupSmartSearch() {
                         }
                     });
 
-                    // 6. Suppression à la fermeture
-                    marker.on('popupclose', () => {
-                        // Délai pour laisser passer le dragstart si on ferme en draggant
-                        setTimeout(() => {
-                            if (!isDragging && state.ghostMarker) {
-                                state.ghostMarker.remove();
-                                state.ghostMarker = null;
-                            }
-                        }, 50);
+                    // 6. Suppression uniquement si la popup est fermée explicitement (pas par un drag)
+                    // On ne supprime plus automatiquement sur popupclose pour éviter les conflits avec le drag
+                    // La suppression se fera :
+                    // - Au clic sur "Valider" (géré plus haut)
+                    // - Au lancement d'une nouvelle recherche (géré au début de setupSmartSearch)
+                    // - On ajoute un listener global au clic map pour nettoyer si besoin, ou on laisse l'utilisateur gérer via la croix
+
+                    // Pour garder le comportement "propre", on supprime si on ferme la popup SANS drag
+                    // Mais on utilise une approche plus robuste : on détecte le click sur le bouton fermer
+                    marker.getPopup().on('remove', () => {
+                        if (!isDragging && state.ghostMarker) {
+                            // Petite sécurité : on vérifie si le marqueur est encore sur la carte
+                            // S'il est en cours de drag, il ne doit pas être supprimé
+                            // Mais 'remove' de la popup est appelé par closePopup() qui est appelé par dragstart...
+                            // Donc on est revenu au point de départ si on utilise l'event de la popup.
+
+                            // SOLUTION : On ne supprime PAS le marqueur automatiquement à la fermeture de la popup.
+                            // On laisse le marqueur sur la carte. L'utilisateur peut le fermer via la croix (ferme popup, garde marqueur)
+                            // Pour le supprimer vraiment, il faudra cliquer ailleurs ou refaire une recherche.
+                        }
+                    });
+
+                    // Ajout d'un événement unique pour nettoyer le marqueur au clic ailleurs sur la carte
+                    const cleanUp = (e) => {
+                        if (state.ghostMarker && isDragging) return;
+
+                        // Vérifie si le clic a eu lieu sur le marker ou la popup
+                        // Leaflet 'click' sur la map ne se déclenche PAS si on clique sur un marker/popup (sauf propagation)
+                        // Donc un clic reçu ici est forcément sur la carte "vide".
+
+                        if (state.ghostMarker) {
+                            state.ghostMarker.remove();
+                            state.ghostMarker = null;
+                            map.off('click', cleanUp);
+                        }
+                    };
+
+                    // On utilise un petit délai pour ne pas capter le clic initial qui pourrait (théoriquement) propager
+                    setTimeout(() => {
+                        map.on('click', cleanUp);
+                    }, 100);
+
+                    // Nettoyage de l'écouteur si le marqueur est supprimé autrement
+                    marker.on('remove', () => {
+                        map.off('click', cleanUp);
                     });
                 }
             }
