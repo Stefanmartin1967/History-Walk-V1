@@ -74,19 +74,11 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const isIncontournableChecked = allProps.incontournable ? 'checked' : '';
 
     const photos = allProps.photos || [];
-    let photosHtml = photos.map((src, index) => {
-        // Condition: delete button visible ONLY for local photos (starting with data:image)
-        const isLocal = typeof src === 'string' && src.startsWith('data:image');
-        const deleteBtnHtml = isLocal
-            ? `<button class="photo-delete-btn" data-index="${index}" title="Supprimer de l'appareil">${ICONS.trash}</button>`
-            : ''; // No delete button for remote photos
-
-        return `
+    let photosHtml = photos.map((src, index) => `
         <div class="photo-item">
             <img src="${src}" class="img-preview" title="Cliquez pour agrandir" data-index="${index}">
-            ${deleteBtnHtml}
         </div>
-    `}).join('');
+    `).join('');
 
     const currency = getCurrentCurrency();
     const priceDisplay = priceValue === 0 || priceValue === '0' || priceValue === '' ? 'Gratuit' : priceValue;
@@ -191,12 +183,20 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 </div>
             </div>
             <div class="detail-section photos-section">
-                <h3>Photos (${photos.length})
-                    ${photos.length > 0 ? `
-                    <div class="edit-controls section-controls">
-                        <button class="action-button" id="btn-delete-all-photos" title="Tout supprimer" style="color: var(--danger);">${ICONS.trash}</button>
-                    </div>` : ''}
-                </h3>
+                <div class="photos-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h3>Photos (${photos.length})</h3>
+                    <div class="edit-controls section-controls" style="display:flex; gap:8px;">
+                        ${state.isAdmin ? `
+                            <button class="action-button" id="btn-admin-upload-photos" title="Officialiser (Upload GitHub)" style="position:relative;">
+                                ${ICONS.upload}
+                                <span id="btn-admin-upload-badge" style="position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 10px; padding: 2px 5px; font-size: 10px; font-weight: bold; min-width: 15px; display: none;">0</span>
+                            </button>
+                        ` : ''}
+                        ${photos.length > 0 ? `
+                            <button class="action-button" id="btn-delete-all-photos" title="Tout supprimer" style="color: var(--danger);">${ICONS.trash}</button>
+                        ` : ''}
+                    </div>
+                </div>
                 <div class="content">
                     <div class="photos-grid-scroller">
                         ${photosHtml}
@@ -295,12 +295,20 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 </div>
             </div>
             <div class="detail-section photos-section">
-                <h3>Photos (${photos.length})
-                    ${photos.length > 0 ? `
-                    <div class="edit-controls section-controls">
-                        <button class="action-button" id="btn-delete-all-photos" title="Tout supprimer" style="color: var(--danger);">${ICONS.trash}</button>
-                    </div>` : ''}
-                </h3>
+                <div class="photos-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <h3>Photos (${photos.length})</h3>
+                    <div class="edit-controls section-controls" style="display:flex; gap:8px;">
+                        ${state.isAdmin ? `
+                            <button class="action-button" id="btn-admin-upload-photos" title="Officialiser (Upload GitHub)" style="position:relative;">
+                                ${ICONS.upload}
+                                <span id="btn-admin-upload-badge" style="position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 10px; padding: 2px 5px; font-size: 10px; font-weight: bold; min-width: 15px; display: none;">0</span>
+                            </button>
+                        ` : ''}
+                        ${photos.length > 0 ? `
+                            <button class="action-button" id="btn-delete-all-photos" title="Tout supprimer" style="color: var(--danger);">${ICONS.trash}</button>
+                        ` : ''}
+                    </div>
+                </div>
                 <div class="content">
                     <div class="photos-grid-scroller">
                         ${photosHtml}

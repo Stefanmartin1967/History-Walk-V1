@@ -52,25 +52,6 @@ export async function uploadPhotoForPoi(file, poiId) {
 export function injectAdminPhotoUploadButton(poiId) {
     if (!state.isAdmin) return;
 
-    // Target the photos section header
-    const photosHeader = document.querySelector('.photos-section h3');
-    if (!photosHeader) return;
-
-    // Look for existing controls container or create it
-    let controlsDiv = photosHeader.querySelector('.section-controls');
-    if (!controlsDiv) {
-        // Create a flex container for controls
-        controlsDiv = document.createElement('div');
-        controlsDiv.className = 'edit-controls section-controls';
-        controlsDiv.style.display = 'flex';
-        controlsDiv.style.alignItems = 'center';
-        controlsDiv.style.gap = '8px'; // Space between buttons
-        controlsDiv.style.marginLeft = 'auto'; // Push to the right
-        photosHeader.style.display = 'flex'; // Ensure header is flex
-        photosHeader.style.alignItems = 'center'; // Vertical align
-        photosHeader.appendChild(controlsDiv);
-    }
-
     // 1. Calculate pending uploads
     let feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
     if (!feature && state.currentFeatureId !== null) {
@@ -79,59 +60,45 @@ export function injectAdminPhotoUploadButton(poiId) {
     const photos = feature?.properties?.userData?.photos || [];
     const localCount = photos.filter(p => p.startsWith('data:image')).length;
 
-    // 2. Create or Get button
+    // 2. Get button (already created by template)
     let uploadBtn = document.getElementById('btn-admin-upload-photos');
 
-    if (!uploadBtn) {
-        uploadBtn = document.createElement('button');
-        uploadBtn.id = 'btn-admin-upload-photos';
-        uploadBtn.className = 'action-button';
-
-        // Icon (Cloud Upload)
-        uploadBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cloud-upload"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>`;
-        uploadBtn.style.position = 'relative';
-
+    // Bind listener if not already bound (we use a custom property to track binding)
+    if (uploadBtn && !uploadBtn.dataset.bound) {
         uploadBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
-            await handleAdminPhotoUpload(poiId);
+            if (!uploadBtn.disabled) {
+                await handleAdminPhotoUpload(poiId);
+            }
         });
-
-        // Insert as first child (Left of Delete button if exists)
-        controlsDiv.prepend(uploadBtn);
-    }
-
-    // Ensure badge exists
-    let badge = document.getElementById('btn-admin-upload-badge');
-    if (uploadBtn && !badge) {
-        badge = document.createElement('span');
-        badge.id = 'btn-admin-upload-badge';
-        badge.style.cssText = "position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 10px; padding: 2px 5px; font-size: 10px; font-weight: bold; min-width: 15px; display: none;";
-        uploadBtn.appendChild(badge);
+        uploadBtn.dataset.bound = "true";
     }
 
     // 3. Update Status (Visual feedback)
-    // ALWAYS VISIBLE (Blue if pending, Grey if empty but visible)
-    if (localCount > 0) {
-        uploadBtn.style.color = 'var(--brand)';
-        uploadBtn.style.opacity = '1';
-        uploadBtn.style.cursor = 'pointer';
-        uploadBtn.title = `Officialiser ${localCount} photo(s) locale(s) sur GitHub`;
-        uploadBtn.disabled = false;
+    let badge = document.getElementById('btn-admin-upload-badge');
 
-        if (badge) {
-            badge.textContent = localCount;
-            badge.style.display = 'block';
-        }
-    } else {
-        uploadBtn.style.color = 'var(--ink-soft)'; // Grey
-        uploadBtn.style.opacity = '0.5';
-        uploadBtn.style.cursor = 'default';
-        uploadBtn.title = 'Toutes les photos sont synchronisées';
-        // We disable click action logic but keep button visible
-        uploadBtn.disabled = true;
+    if (uploadBtn) {
+        if (localCount > 0) {
+            uploadBtn.style.color = 'var(--brand)';
+            uploadBtn.style.opacity = '1';
+            uploadBtn.style.cursor = 'pointer';
+            uploadBtn.title = `Officialiser ${localCount} photo(s) locale(s) sur GitHub`;
+            uploadBtn.disabled = false;
 
-        if (badge) {
-            badge.style.display = 'none';
+            if (badge) {
+                badge.textContent = localCount;
+                badge.style.display = 'block';
+            }
+        } else {
+            uploadBtn.style.color = 'var(--ink-soft)'; // Grey
+            uploadBtn.style.opacity = '0.5';
+            uploadBtn.style.cursor = 'default';
+            uploadBtn.title = 'Toutes les photos sont synchronisées';
+            uploadBtn.disabled = true;
+
+            if (badge) {
+                badge.style.display = 'none';
+            }
         }
     }
 }
