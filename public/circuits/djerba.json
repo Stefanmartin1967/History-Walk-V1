@@ -103,7 +103,13 @@
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Taguermess",
-    "poiIds": []
+    "poiIds": [
+      "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
+      "HW-01K77WPE682HMFVV693F7BFA2B",
+      "HW-01K77WPE686WHQD4VDZT4Y6VK5",
+      "HW-01K77WPE68FAWKXDY3R89R5KTF",
+      "HW-PC-1769542364439"
+    ]
   },
   {
     "id": "HW-1771324790804",
