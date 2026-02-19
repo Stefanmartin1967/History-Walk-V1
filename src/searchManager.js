@@ -164,10 +164,13 @@ export function setupSmartSearch() {
 
                     // 6. Suppression à la fermeture
                     marker.on('popupclose', () => {
-                        if (!isDragging && state.ghostMarker) {
-                            state.ghostMarker.remove();
-                            state.ghostMarker = null;
-                        }
+                        // Délai pour laisser passer le dragstart si on ferme en draggant
+                        setTimeout(() => {
+                            if (!isDragging && state.ghostMarker) {
+                                state.ghostMarker.remove();
+                                state.ghostMarker = null;
+                            }
+                        }, 50);
                     });
                 }
             }
