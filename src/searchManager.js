@@ -95,15 +95,7 @@ export function setupSmartSearch() {
                     }
 
                     // 2. Création du nouveau marqueur
-                    const ghostIcon = L.divIcon({
-                        html: `<div style="background-color:var(--brand); width:20px; height:20px; border-radius:50%; border:2px solid white; box-shadow:0 0 4px rgba(0,0,0,0.5); margin:10px;"></div>`,
-                        className: 'ghost-marker-icon',
-                        iconSize: [40, 40],
-                        iconAnchor: [20, 20]
-                    });
-
                     const marker = L.marker([lat, lng], {
-                        icon: ghostIcon,
                         draggable: true, // RENDU DÉPLAÇABLE
                         title: "Déplacez-moi pour ajuster"
                     }).addTo(map);
