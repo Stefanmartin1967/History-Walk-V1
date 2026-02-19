@@ -376,6 +376,17 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
     // Gestion du drag pour ne pas fermer/supprimer le marqueur par erreur
     let isDragging = false;
 
+    // IMPORTANT : On doit anticiper le drag dès le mousedown sur le marqueur
+    // car Leaflet peut déclencher la fermeture de la popup avant dragstart
+    desktopDraftMarker.on('mousedown', () => {
+        isDragging = true;
+    });
+
+    // On réinitialise si ce n'était qu'un simple clic (sans drag)
+    desktopDraftMarker.on('mouseup', () => {
+        setTimeout(() => { isDragging = false; }, 50);
+    });
+
     desktopDraftMarker.on('dragstart', () => {
         isDragging = true;
         desktopDraftMarker.closePopup(); // On ferme proprement pour éviter les artefacts
@@ -395,26 +406,13 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
         }, 100);
     });
 
-    // Suppression du marqueur UNIQUEMENT lors d'un clic sur la carte (fond)
-    // Cela évite la suppression accidentelle lors du drag (qui ferme la popup)
-    const onMapClick = () => {
-        if (isDragging) return;
-
-        if (mapInstance && desktopDraftMarker) {
+    // Suppression du marqueur si la popup est fermée (X ou clic ailleurs),
+    // SAUF si c'est à cause du drag (qui ferme temporairement la popup)
+    desktopDraftMarker.on('popupclose', () => {
+        if (!isDragging && mapInstance && desktopDraftMarker) {
             mapInstance.removeLayer(desktopDraftMarker);
             desktopDraftMarker = null;
         }
-        mapInstance.off('click', onMapClick);
-    };
-
-    // On s'abonne avec un léger délai pour éviter l'exécution immédiate
-    setTimeout(() => {
-        mapInstance.on('click', onMapClick);
-    }, 100);
-
-    // Nettoyage si le marqueur est supprimé manuellement (ex: via bouton Valider)
-    desktopDraftMarker.on('remove', () => {
-        mapInstance.off('click', onMapClick);
     });
 }
 
