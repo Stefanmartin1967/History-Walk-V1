@@ -76,7 +76,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const photos = allProps.photos || [];
     let photosHtml = photos.map((src, index) => `
         <div class="photo-item">
-            <img src="${src}" class="img-preview" title="Cliquez pour agrandir">
+            <img src="${src}" class="img-preview" title="Cliquez pour agrandir" data-index="${index}">
             <button class="photo-delete-btn" data-index="${index}">${ICONS.trash}</button>
         </div>
     `).join('');
