@@ -319,7 +319,7 @@ export function renderMobileCircuitsList() {
             }
             const distDisplay = (distance / 1000).toFixed(1) + ' km';
 
-            let zoneName = "Zone Inconnue";
+            let zoneName = circuit.zone || "Zone Inconnue";
             if (validPois.length > 0) {
                 const firstPoi = validPois[0];
                 const [lng, lat] = firstPoi.geometry.coordinates;
