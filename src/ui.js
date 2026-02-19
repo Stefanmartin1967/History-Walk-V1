@@ -126,13 +126,13 @@ export function initializeDomReferences() {
     if (DOM.btnOpenBackupModal) {
         DOM.btnOpenBackupModal.addEventListener('click', () => {
             updateBackupSizeEstimates();
-            if(DOM.backupModal) DOM.backupModal.style.display = 'flex';
+            if(DOM.backupModal) DOM.backupModal.classList.add('active');
         });
     }
 
     if (DOM.btnBackupCancel) {
         DOM.btnBackupCancel.addEventListener('click', () => {
-            if(DOM.backupModal) DOM.backupModal.style.display = 'none';
+            if(DOM.backupModal) DOM.backupModal.classList.remove('active');
         });
     }
 
@@ -143,7 +143,7 @@ export function initializeDomReferences() {
             } else {
                 saveUserData(true);
             }
-            if(DOM.backupModal) DOM.backupModal.style.display = 'none';
+            if(DOM.backupModal) DOM.backupModal.classList.remove('active');
         });
     }
 
@@ -154,7 +154,7 @@ export function initializeDomReferences() {
             } else {
                 saveUserData(false);
             }
-            if(DOM.backupModal) DOM.backupModal.style.display = 'none';
+            if(DOM.backupModal) DOM.backupModal.classList.remove('active');
         });
     }
 

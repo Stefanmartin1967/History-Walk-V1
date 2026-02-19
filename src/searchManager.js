@@ -102,7 +102,11 @@ export function setupSmartSearch() {
                         iconAnchor: [10, 10]
                     });
 
-                    const marker = L.marker([lat, lng], { icon: ghostIcon }).addTo(map);
+                    const marker = L.marker([lat, lng], {
+                        icon: ghostIcon,
+                        draggable: true, // RENDU DÉPLAÇABLE
+                        title: "Déplacez-moi pour ajuster"
+                    }).addTo(map);
                     state.ghostMarker = marker;
 
                     // 3. Contenu de la popup (Style harmonisé avec le clic droit)
@@ -115,14 +119,29 @@ export function setupSmartSearch() {
 
                     popupContent.innerHTML = `
                         <div style="font-weight:bold; margin-bottom:5px;">Nouveau Lieu ?</div>
-                        <div style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">Position recherchée</div>
+                        <div style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">Glissez pour ajuster</div>
                         <button id="btn-create-poi-ghost" class="action-btn" style="background:var(--brand); color:white; padding:4px 8px; font-size:12px; cursor:pointer; margin: 0 auto;">
                             Valider cette position
                         </button>
                     `;
 
                     // 4. Binding Popup
-                    marker.bindPopup(popupContent, { minWidth: 200 }).openPopup();
+                    marker.bindPopup(popupContent, { minWidth: 200, closeOnClick: false }).openPopup();
+
+                    let isDragging = false;
+
+                    // Gestion du Drag
+                    marker.on('dragstart', () => {
+                        isDragging = true;
+                        marker.closePopup();
+                    });
+
+                    marker.on('dragend', () => {
+                        isDragging = false;
+                        setTimeout(() => {
+                            if (state.ghostMarker) state.ghostMarker.openPopup();
+                        }, 100);
+                    });
 
                     // 5. Listener sur le bouton (via l'événement popupopen)
                     marker.on('popupopen', () => {
@@ -131,7 +150,9 @@ export function setupSmartSearch() {
                             btn.addEventListener('click', async () => {
                                 // Import dynamique de RichEditor
                                 const { RichEditor } = await import('./richEditor.js');
-                                RichEditor.openForCreate(lat, lng);
+                                // Récupération dynamique de la position (post-drag)
+                                const currentPos = marker.getLatLng();
+                                RichEditor.openForCreate(currentPos.lat, currentPos.lng);
 
                                 // On supprime le marqueur fantôme une fois l'éditeur ouvert
                                 if (state.ghostMarker) {
@@ -144,7 +165,7 @@ export function setupSmartSearch() {
 
                     // 6. Suppression à la fermeture
                     marker.on('popupclose', () => {
-                        if (state.ghostMarker) {
+                        if (!isDragging && state.ghostMarker) {
                             state.ghostMarker.remove();
                             state.ghostMarker = null;
                         }
