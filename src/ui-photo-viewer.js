@@ -4,6 +4,7 @@ import { getPoiId } from './data.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel } from './ui.js';
 import { showConfirm } from './modal.js';
+import { injectAdminPhotoUploadButton } from './photo-upload.js';
 
 const els = {};
 function getEl(id) {
@@ -42,6 +43,9 @@ export function initPhotoViewer() {
 }
 
 export function setupPhotoPanelListeners(poiId) {
+    // Inject Admin Upload Button first
+    injectAdminPhotoUploadButton(poiId);
+
     const photoInput = document.getElementById('panel-photo-input');
     const photoBtn = document.querySelector('.photo-placeholder');
 
