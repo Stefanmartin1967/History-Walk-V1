@@ -50,6 +50,16 @@
     "poiIds": []
   },
   {
+    "id": "HW-1771481510099",
+    "name": "Circuit de Mosquée Sidi Sabah à Chez Adel via Mosquée Wichniya",
+    "file": "djerba/Circuit de Mosquée Sidi Sabah à Chez Adel via Mosquée Wichniya.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.6 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "poiIds": []
+  },
+  {
     "id": "HW-1771324790804",
     "name": "Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk via Ancien atelier de tissage",
     "file": "djerba/Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk via Ancien atelier de tissage.gpx",
