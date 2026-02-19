@@ -7,3 +7,5 @@
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: http://192.168.0.2:5173/
+6:39:11 AM [vite] (client) page reload src/admin.js
+6:41:25 AM [vite] (client) page reload src/github-sync.js
