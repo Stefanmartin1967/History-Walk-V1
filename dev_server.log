@@ -9,3 +9,5 @@
   ➜  Network: http://192.168.0.2:5173/
 6:39:11 AM [vite] (client) page reload src/admin.js
 6:41:25 AM [vite] (client) page reload src/github-sync.js
+6:51:23 AM [vite] (client) page reload index.html
+6:51:32 AM [vite] (client) page reload src/admin.js
