@@ -4,13 +4,13 @@ import { resolve } from 'path'; // 1. Ajout de l'import pour gérer les chemins
 
 export default defineConfig({
   // Le nom exact de votre dépôt GitHub
-  base: './',
+  base: '/History-Walk-V1/',
 
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
-      base: './',
-      scope: './',
+      base: '/History-Walk-V1/',
+      scope: '/History-Walk-V1/',
 
       manifest: false, // On utilise public/manifest.json manuellement
       workbox: {
