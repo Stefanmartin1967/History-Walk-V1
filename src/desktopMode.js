@@ -395,12 +395,26 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
         }, 100);
     });
 
-    // Suppression du marqueur UNIQUEMENT si on ferme la popup explicitement (pas en draggant)
-    desktopDraftMarker.on('popupclose', () => {
-        if (!isDragging && mapInstance && desktopDraftMarker) {
+    // Suppression du marqueur UNIQUEMENT lors d'un clic sur la carte (fond)
+    // Cela évite la suppression accidentelle lors du drag (qui ferme la popup)
+    const onMapClick = () => {
+        if (isDragging) return;
+
+        if (mapInstance && desktopDraftMarker) {
             mapInstance.removeLayer(desktopDraftMarker);
             desktopDraftMarker = null;
         }
+        mapInstance.off('click', onMapClick);
+    };
+
+    // On s'abonne avec un léger délai pour éviter l'exécution immédiate
+    setTimeout(() => {
+        mapInstance.on('click', onMapClick);
+    }, 100);
+
+    // Nettoyage si le marqueur est supprimé manuellement (ex: via bouton Valider)
+    desktopDraftMarker.on('remove', () => {
+        mapInstance.off('click', onMapClick);
     });
 }
 
