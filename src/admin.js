@@ -62,6 +62,12 @@ function setupAdminListeners() {
         btnExport.addEventListener('click', exportMasterGeoJSON);
     }
 
+    // --- NOUVEAU : Bouton Publier Carte Officielle (One-Click) ---
+    const btnPublish = document.getElementById('btn-admin-publish-map');
+    if (btnPublish) {
+        btnPublish.addEventListener('click', publishMapToGitHub);
+    }
+
     // --- NOUVEAU : Calibration Carte ---
     const btnCaptureView = document.getElementById('btn-admin-capture-view');
     if (btnCaptureView) {
@@ -105,7 +111,7 @@ function setupAdminListeners() {
             btnGitHub = document.createElement('button');
             btnGitHub.id = 'btn-admin-github-upload';
             btnGitHub.className = 'tools-menu-item';
-            btnGitHub.innerHTML = `<i data-lucide="upload-cloud"></i> Upload GitHub`;
+            btnGitHub.innerHTML = `<i data-lucide="upload-cloud"></i> Upload Fichier`;
 
             // Add at the end
             menuContainer.appendChild(btnGitHub);
@@ -115,6 +121,25 @@ function setupAdminListeners() {
         const newGitHubBtn = btnGitHub.cloneNode(true);
         btnGitHub.parentNode.replaceChild(newGitHubBtn, btnGitHub);
         newGitHubBtn.addEventListener('click', showGitHubUploadModal);
+
+        // --- NOUVEAU : Bouton Publier Carte (One-Click) ---
+        let btnPublish = document.getElementById('btn-admin-publish-map');
+        if (!btnPublish) {
+            btnPublish = document.createElement('button');
+            btnPublish.id = 'btn-admin-publish-map';
+            btnPublish.className = 'tools-menu-item';
+            btnPublish.style.color = 'var(--brand)';
+            btnPublish.style.fontWeight = '600';
+            btnPublish.innerHTML = `<i data-lucide="globe"></i> Publier Carte`;
+
+            // Add at the end
+            menuContainer.appendChild(btnPublish);
+            createIcons({ icons, root: btnPublish });
+        }
+
+        const newPublishBtn = btnPublish.cloneNode(true);
+        btnPublish.parentNode.replaceChild(newPublishBtn, btnPublish);
+        newPublishBtn.addEventListener('click', publishMapToGitHub);
     }
 }
 
@@ -146,16 +171,11 @@ function setupGodModeListener() {
     });
 }
 
-function exportMasterGeoJSON() {
+function generateMasterGeoJSONData() {
     if (!state.loadedFeatures || state.loadedFeatures.length === 0) {
-        showToast("Aucune donnée à exporter.", "error");
-        return;
+        return null;
     }
 
-    const filename = prompt("Nom du fichier à exporter :", `djerba-master-${Date.now()}.geojson`);
-    if (!filename) return;
-
-    // Nettoyage et préparation des données
     const features = state.loadedFeatures.map(f => {
         // Clone profond pour ne pas modifier l'original
         const properties = JSON.parse(JSON.stringify(f.properties));
@@ -176,10 +196,22 @@ function exportMasterGeoJSON() {
         };
     });
 
-    const geojson = {
+    return {
         type: "FeatureCollection",
         features: features
     };
+}
+
+function exportMasterGeoJSON() {
+    const geojson = generateMasterGeoJSONData();
+
+    if (!geojson) {
+        showToast("Aucune donnée à exporter.", "error");
+        return;
+    }
+
+    const filename = prompt("Nom du fichier à exporter :", `djerba-master-${Date.now()}.geojson`);
+    if (!filename) return;
 
     try {
         const jsonStr = JSON.stringify(geojson, null, 2);
@@ -190,6 +222,53 @@ function exportMasterGeoJSON() {
     } catch (e) {
         console.error(e);
         showToast("Erreur lors de l'export.", "error");
+    }
+}
+
+// --- PUBLICATION AUTOMATIQUE SUR GITHUB ---
+
+async function publishMapToGitHub() {
+    const token = getStoredToken();
+    if (!token) {
+        showToast("Token GitHub manquant. Configurez-le dans 'Upload Fichier'.", "error");
+        // On pourrait ouvrir la modale de config ici si on voulait être sympa
+        return;
+    }
+
+    const mapId = state.currentMapId || 'djerba';
+    const filename = `${mapId}.geojson`;
+    const repoOwner = 'Stefanmartin1967';
+    const repoName = 'History-Walk-V1';
+    const path = `public/${filename}`;
+
+    if (!confirm(`Voulez-vous publier la carte officielle (${filename}) sur GitHub ?\n\nCela rendra visibles toutes vos modifications (photos, déplacements) pour tous les utilisateurs.\n\nAttention : Cette action est irréversible.`)) {
+        return;
+    }
+
+    showToast("Génération du fichier...", "info");
+    const geojson = generateMasterGeoJSONData();
+    if (!geojson) {
+        showToast("Erreur: Données vides.", "error");
+        return;
+    }
+
+    try {
+        showToast("Envoi vers GitHub...", "info");
+
+        const jsonStr = JSON.stringify(geojson, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/geo+json' });
+        const file = new File([blob], filename, { type: 'application/geo+json' });
+
+        const message = `Update map data ${filename} via Admin One-Click`;
+
+        await uploadFileToGitHub(file, token, repoOwner, repoName, path, message);
+
+        showToast("Carte publiée avec succès !", "success");
+        alert("La carte a été mise à jour sur GitHub.\nLes changements seront visibles d'ici quelques minutes.");
+
+    } catch (error) {
+        console.error("Erreur publication carte:", error);
+        showToast(`Erreur : ${error.message}`, "error");
     }
 }
 
