@@ -186,12 +186,6 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 <div class="photos-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <h3>Photos (${photos.length})</h3>
                     <div class="edit-controls section-controls" style="display:flex; gap:8px;">
-                        ${state.isAdmin ? `
-                            <button class="action-button" id="btn-admin-upload-photos" title="Officialiser (Upload GitHub)" style="position:relative;">
-                                ${ICONS.upload}
-                                <span id="btn-admin-upload-badge" style="position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 10px; padding: 2px 5px; font-size: 10px; font-weight: bold; min-width: 15px; display: none;">0</span>
-                            </button>
-                        ` : ''}
                         ${photos.length > 0 ? `
                             <button class="action-button" id="btn-delete-all-photos" title="Tout supprimer" style="color: var(--danger);">${ICONS.trash}</button>
                         ` : ''}
@@ -298,12 +292,6 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 <div class="photos-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                     <h3>Photos (${photos.length})</h3>
                     <div class="edit-controls section-controls" style="display:flex; gap:8px;">
-                        ${state.isAdmin ? `
-                            <button class="action-button" id="btn-admin-upload-photos" title="Officialiser (Upload GitHub)" style="position:relative;">
-                                ${ICONS.upload}
-                                <span id="btn-admin-upload-badge" style="position: absolute; top: -5px; right: -5px; background: #e74c3c; color: white; border-radius: 10px; padding: 2px 5px; font-size: 10px; font-weight: bold; min-width: 15px; display: none;">0</span>
-                            </button>
-                        ` : ''}
                         ${photos.length > 0 ? `
                             <button class="action-button" id="btn-delete-all-photos" title="Tout supprimer" style="color: var(--danger);">${ICONS.trash}</button>
                         ` : ''}
