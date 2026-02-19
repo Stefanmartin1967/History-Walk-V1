@@ -385,8 +385,8 @@ function showGitHubUploadModal() {
 
         try {
             // Determine path based on file type
-            // Assuming all circuits go to public/circuits/
-            const path = `public/circuits/${file.name}`;
+            // The default folder for Djerba circuits is now public/circuits/djerba/
+            const path = `public/circuits/djerba/${file.name}`;
 
             await uploadFileToGitHub(file, token, repoOwner, repoName, path, `Add official circuit: ${file.name}`);
 

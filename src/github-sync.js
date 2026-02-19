@@ -79,8 +79,8 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
     // 3. Préparer le payload
     const payload = {
         message: message || `Add/Update ${file.name} via App Admin`,
-        content: content,
-        branch: 'main' // Ou 'master', à vérifier selon le repo. Défaut 'main' est safe.
+        content: content
+        // branch: 'main' // On laisse par défaut pour utiliser la branche par défaut du repo
     };
 
     if (sha) {
