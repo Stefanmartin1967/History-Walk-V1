@@ -88,8 +88,13 @@ export function setupPhotoPanelListeners(poiId) {
             const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
             const photos = feature?.properties?.userData?.photos || [];
 
-            const deleteBtn = e.target.closest('.photo-item').querySelector('.photo-delete-btn');
-            const photoIndex = parseInt(deleteBtn.dataset.index, 10);
+            // Utilisation directe de l'index stocké sur l'image (plus robuste que de chercher le bouton delete)
+            const photoIndex = parseInt(e.currentTarget.dataset.index, 10);
+
+            if (isNaN(photoIndex) || !photos[photoIndex]) {
+                console.error("Erreur index photo:", photoIndex);
+                return;
+            }
 
             setCurrentPhotos(photos, photoIndex);
 
