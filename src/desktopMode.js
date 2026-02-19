@@ -351,6 +351,7 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
     popupContent.style.justifyContent = 'center';
     popupContent.innerHTML = `
         <div style="font-weight:bold; margin-bottom:5px;">Nouveau Lieu ?</div>
+        <div id="desktop-draft-coords" style="font-size:11px; color:#888; margin-bottom:5px;">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
         <div style="font-size:12px; color:#666; margin-bottom:8px;">Glissez pour ajuster.</div>
         <button id="btn-validate-desktop-poi" class="action-btn" style="background:var(--brand); color:white; padding:4px 8px; font-size:12px; cursor:pointer; margin: 0 auto;">
             Valider cette position
@@ -382,6 +383,12 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
 
     desktopDraftMarker.on('dragend', () => {
         isDragging = false;
+
+        // Update coords display
+        const { lat, lng } = desktopDraftMarker.getLatLng();
+        const coordsEl = popupContent.querySelector('#desktop-draft-coords');
+        if (coordsEl) coordsEl.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+
         // On rouvre la popup à la nouvelle position
         setTimeout(() => {
             if (desktopDraftMarker) desktopDraftMarker.openPopup();

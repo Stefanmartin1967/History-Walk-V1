@@ -3152,3 +3152,227 @@ input[type=range] {
     stroke-dasharray: none !important;
     fill: none !important;
 }
+
+/* ========================================================= */
+/* === GAMIFICATION MODAL STYLES === */
+/* ========================================================= */
+
+.gamification-modal {
+    max-width: 500px !important;
+    background: var(--surface) !important;
+}
+
+.gamification-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 10px;
+}
+
+/* Rank Header */
+.rank-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, var(--surface), var(--surface-muted));
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-soft);
+}
+
+.rank-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 4px solid var(--surface);
+    flex-shrink: 0;
+}
+
+.rank-info {
+    text-align: left;
+    flex-grow: 1;
+}
+
+.rank-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.rank-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.2;
+}
+
+/* Progress Sections */
+.progress-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.progress-title {
+    color: var(--ink);
+}
+
+.progress-next {
+    color: var(--ink-soft);
+    font-size: 12px;
+}
+
+.progress-track {
+    width: 100%;
+    height: 10px;
+    background: var(--surface-muted);
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 1s ease-out;
+}
+
+.progress-sub {
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align: right;
+    font-style: italic;
+}
+
+.separator-line {
+    height: 1px;
+    background: var(--line);
+    margin: 10px 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stat-item {
+    background: var(--surface-muted);
+    padding: 15px 10px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+}
+
+.stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ink);
+}
+
+.stat-total {
+    font-size: 12px;
+    opacity: 0.5;
+    margin-left: 2px;
+    font-weight: 600;
+}
+
+.stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* Badges */
+.badges-section {
+    background: var(--surface-muted);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid var(--line);
+}
+
+.badges-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.badges-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.badge-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 60px;
+    opacity: 0.5;
+    transition: all 0.3s;
+}
+
+.badge-item.earned {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.badge-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--line); /* Locked */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid transparent;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.badge-item.locked .badge-circle {
+    background: #e2e8f0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.badge-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+
+.badge-item.earned .badge-label {
+    color: var(--ink);
+}
+
+.gamification-footer {
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-top: 10px;
+}

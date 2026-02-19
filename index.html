@@ -19,13 +19,10 @@
 
 <body>
 
-    <div id="backup-modal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center;">
-        <div
-            style="background: var(--surface, #fff); padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: center;">
-            <h2 style="margin-top: 0; color: var(--ink, #333);">Sauvegarder</h2>
-            <p style="color: var(--ink-light, #666); margin-bottom: 20px;">Choisissez le format de votre sauvegarde :
-            </p>
+    <div id="backup-modal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <h2 class="custom-modal-title">Sauvegarder</h2>
+            <p class="custom-modal-message">Choisissez le format de votre sauvegarde :</p>
 
             <button id="btn-backup-full" class="backup-option-btn primary">
                 <div class="backup-option-icon">
@@ -49,10 +46,11 @@
                 <span id="backup-size-lite" class="backup-size-tag">Calcul...</span>
             </button>
 
-            <button id="btn-backup-cancel"
-                style="background: transparent; border: 1px solid var(--border, #ccc); color: var(--ink-light, #666); padding: 8px 20px; border-radius: 6px; cursor: pointer;">
-                Annuler
-            </button>
+            <div class="custom-modal-actions">
+                <button id="btn-backup-cancel" class="custom-modal-btn secondary">
+                    Annuler
+                </button>
+            </div>
         </div>
     </div>
 

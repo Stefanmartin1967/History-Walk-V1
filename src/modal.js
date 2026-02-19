@@ -4,10 +4,19 @@ let activeResolve = null;
 function getElements() {
     return {
         overlay: document.getElementById('custom-modal-overlay'),
+        box: document.querySelector('#custom-modal-overlay .custom-modal-box'),
         title: document.getElementById('custom-modal-title'),
         message: document.getElementById('custom-modal-message'),
         actions: document.getElementById('custom-modal-actions')
     };
+}
+
+function resetModal() {
+    const { box } = getElements();
+    if (box) {
+        // Reset classes to base only to clean up any custom classes from previous calls
+        box.className = 'custom-modal-box';
+    }
 }
 
 function closeModal() {
@@ -27,6 +36,7 @@ function closeModal() {
  */
 export function showConfirm(titleText, messageText, confirmLabel = "Oui", cancelLabel = "Annuler", isDanger = false) {
     return new Promise((resolve) => {
+        resetModal();
         const { overlay, title, message, actions } = getElements();
 
         // Sécurité si le DOM n'est pas prêt (ne devrait pas arriver)
@@ -79,6 +89,7 @@ export function showConfirm(titleText, messageText, confirmLabel = "Oui", cancel
  */
 export function showPrompt(titleText, messageText, defaultValue = "") {
     return new Promise((resolve) => {
+        resetModal();
         const { overlay, title, message, actions } = getElements();
 
         if (!overlay) {
@@ -143,15 +154,21 @@ export function showPrompt(titleText, messageText, defaultValue = "") {
  * @param {string} titleText
  * @param {string} messageText
  * @param {string} okLabel
+ * @param {string|null} customClass - Classe CSS optionnelle pour la boîte modale.
  * @returns {Promise<void>}
  */
-export function showAlert(titleText, messageText, okLabel = "OK") {
+export function showAlert(titleText, messageText, okLabel = "OK", customClass = null) {
     return new Promise((resolve) => {
-        const { overlay, title, message, actions } = getElements();
+        resetModal();
+        const { overlay, box, title, message, actions } = getElements();
 
         if (!overlay) {
             window.alert(messageText);
             return resolve();
+        }
+
+        if (customClass && box) {
+            box.classList.add(customClass);
         }
 
         activeResolve = resolve;

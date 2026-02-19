@@ -5,7 +5,7 @@ import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui.js';
 import { map } from './map.js';
 import { showAlert } from './modal.js';
-import { RANKS } from './statistics.js';
+import { POI_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
 
@@ -335,7 +335,7 @@ function exportDestinationsConfig() {
 
 function showRankTable() {
     // Construction du tableau HTML
-    let tableRows = RANKS.map(r => `
+    let tableRows = POI_RANKS.map(r => `
         <tr style="border-bottom: 1px solid var(--line);">
             <td style="padding: 10px; color: ${r.color}; font-size: 24px;">
                 <i data-lucide="${r.icon}"></i>

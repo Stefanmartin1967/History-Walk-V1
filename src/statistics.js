@@ -4,12 +4,40 @@ import { getPoiId } from './data.js';
 import { showAlert } from './modal.js';
 import { createIcons, icons } from 'lucide';
 
+// --- DEFINITIONS DES RANGS & BADGES ---
+
+export const POI_RANKS = [
+    { min: 100, title: "Légende Locale", icon: "crown", color: "#F59E0B" }, // Or
+    { min: 80, title: "Guide Émérite", icon: "medal", color: "#10B981" }, // Vert
+    { min: 60, title: "Grand Explorateur", icon: "compass", color: "#3B82F6" }, // Bleu
+    { min: 45, title: "Explorateur Urbain", icon: "map-pin", color: "#8B5CF6" }, // Violet
+    { min: 30, title: "Voyageur Curieux", icon: "map", color: "#EC4899" }, // Rose
+    { min: 15, title: "Promeneur", icon: "footprints", color: "#6B7280" }, // Gris foncé
+    { min: 5, title: "Curieux de Quartier", icon: "search", color: "#9CA3AF" }, // Gris moyen
+    { min: 0, title: "Nouvel Arrivant", icon: "baby", color: "#D1D5DB" } // Gris clair
+];
+
+export const KM_RANKS = [
+    { min: 500, title: "Marathonien", color: "#EF4444" }, // Rouge
+    { min: 250, title: "Grand Voyageur", color: "#F97316" }, // Orange
+    { min: 100, title: "Randonneur", color: "#F59E0B" }, // Jaune
+    { min: 50, title: "Marcheur", color: "#10B981" }, // Vert
+    { min: 10, title: "Petit pas", color: "#3B82F6" }, // Bleu
+    { min: 0, title: "Débutant", color: "#9CA3AF" } // Gris
+];
+
+export const CIRCUIT_BADGES = [
+    { min: 30, title: "Maître des Parcours", id: "platinum", color: "#E5E4E2", label: "Platine" },
+    { min: 15, title: "Expert des Sentiers", id: "gold", color: "#FFD700", label: "Or" },
+    { min: 5, title: "Habitué", id: "silver", color: "#C0C0C0", label: "Argent" },
+    { min: 1, title: "Initié", id: "bronze", color: "#CD7F32", label: "Bronze" }
+];
+
 export function calculateStats() {
     // 1. POIs Visités
     const totalPois = state.loadedFeatures.length;
     let visitedPois = 0;
 
-    // On parcourt tous les POIs chargés
     state.loadedFeatures.forEach(feature => {
         const id = getPoiId(feature);
         if (state.userData[id] && state.userData[id].vu) {
@@ -28,17 +56,15 @@ export function calculateStats() {
     const officialCircuits = state.officialCircuits || [];
     officialCircuits.forEach(c => {
         totalCircuits++;
-        // Check completion in status map
         if (state.officialCircuitsStatus[String(c.id)]) {
             completedCircuits++;
             totalDistanceMeters += getCircuitDistance(c);
         }
     });
 
-    // B. Circuits Locaux (non supprimés, et qui ne sont pas des shadows d'officiels)
+    // B. Circuits Locaux
     const localCircuits = (state.myCircuits || []).filter(c => {
         if (c.isDeleted) return false;
-        // Si c'est un shadow d'un officiel, on l'a déjà compté dans la boucle A via le status map
         const isShadow = officialCircuits.some(off => String(off.id) === String(c.id));
         return !isShadow;
     });
@@ -51,10 +77,13 @@ export function calculateStats() {
         }
     });
 
-    const totalKm = (totalDistanceMeters / 1000).toFixed(1);
+    const totalKm = parseFloat((totalDistanceMeters / 1000).toFixed(1));
 
-    // 3. Rang
-    const rank = getRank(poiPercent);
+    // 3. Calculs de Progression
+    const poiRank = getRank(POI_RANKS, poiPercent);
+    const nextPoiRank = getNextRank(POI_RANKS, poiPercent);
+    const kmRank = getRank(KM_RANKS, totalKm);
+    const nextKmRank = getNextRank(KM_RANKS, totalKm);
 
     return {
         visitedPois,
@@ -63,7 +92,11 @@ export function calculateStats() {
         completedCircuits,
         totalCircuits,
         totalKm,
-        rank
+        poiRank,
+        nextPoiRank,
+        kmRank,
+        nextKmRank,
+        earnedBadges: getEarnedBadges(completedCircuits)
     };
 }
 
@@ -71,112 +104,162 @@ function getCircuitDistance(circuit) {
     if (circuit.realTrack && circuit.realTrack.length > 0) {
         return getRealDistance(circuit);
     }
-
-    // Fallback : Orthodromic distance based on POIs
     const circuitFeatures = (circuit.poiIds || [])
         .map(id => state.loadedFeatures.find(f => getPoiId(f) === id))
         .filter(Boolean);
-
     return getOrthodromicDistance(circuitFeatures);
 }
 
-export const RANKS = [
-    { min: 100, title: "Expert Local", icon: "trophy", color: "#F59E0B" },
-    { min: 75, title: "Guide Émérite", icon: "medal", color: "#10B981" },
-    { min: 50, title: "Grand Explorateur", icon: "compass", color: "#3B82F6" },
-    { min: 25, title: "Voyageur Curieux", icon: "map", color: "#8B5CF6" },
-    { min: 1, title: "Promeneur", icon: "footprints", color: "#6B7280" },
-    { min: 0, title: "Nouvel Arrivant", icon: "baby", color: "#9CA3AF" }
-];
-
-function getRank(percent) {
-    return RANKS.find(r => percent >= r.min) || RANKS[RANKS.length - 1];
+function getRank(rankList, value) {
+    return rankList.find(r => value >= r.min) || rankList[rankList.length - 1];
 }
 
-function getNextRank(percent) {
-    // On cherche le premier rang dont le min est strictement supérieur au pourcentage actuel
-    // Le tableau RANKS est trié décroissant (100 -> 0)
-    // Donc on doit inverser ou chercher intelligemment
-    const reversed = [...RANKS].reverse(); // 0 -> 100
-    return reversed.find(r => r.min > percent);
+function getNextRank(rankList, value) {
+    const reversed = [...rankList].reverse();
+    return reversed.find(r => r.min > value);
 }
+
+function getEarnedBadges(count) {
+    // Retourne la liste des badges avec leur état (acquis ou non)
+    // On veut afficher tous les badges (gris vs coloré)
+    return CIRCUIT_BADGES.slice().reverse().map(badge => ({
+        ...badge,
+        earned: count >= badge.min
+    }));
+}
+
+// --- AFFICHAGE MODALE ---
 
 export async function showStatisticsModal() {
     const stats = calculateStats();
-    const nextRank = getNextRank(stats.poiPercent);
 
-    // Calcul de la progression vers le prochain rang
-    // Ex: Actuel 15%. Prochain 25%. Précédent 0%.
-    // Progression relative : (15 - 0) / (25 - 0) = 60% de la barre
-    let progressPercent = 0;
-    if (nextRank) {
-        const currentRank = getRank(stats.poiPercent);
-        const range = nextRank.min - currentRank.min;
-        const value = stats.poiPercent - currentRank.min;
-        progressPercent = Math.max(5, Math.min(100, (value / range) * 100)); // Min 5% pour visibilité
+    // Calcul Progression POI (Barre Bleue)
+    let poiProgress = 0;
+    let poiNextVal = 100; // Default max
+    let poiPrevVal = 0;
+
+    if (stats.nextPoiRank) {
+        poiNextVal = stats.nextPoiRank.min;
+        poiPrevVal = stats.poiRank.min;
+        // % dans le rang actuel
+        const range = poiNextVal - poiPrevVal;
+        const relative = stats.poiPercent - poiPrevVal;
+        poiProgress = Math.min(100, Math.max(5, (relative / range) * 100));
     } else {
-        progressPercent = 100; // Niveau Max atteint
+        poiProgress = 100;
+    }
+
+    // Calcul de la valeur absolue restante (approx) pour POI
+    // nextRank.min est un %, on veut le nombre de POI
+    // n = (min / 100) * total
+    const remainingPois = stats.nextPoiRank
+        ? Math.ceil((stats.nextPoiRank.min / 100) * stats.totalPois) - stats.visitedPois
+        : 0;
+
+    // Calcul Progression KM (Barre Verte)
+    let kmProgress = 0;
+    let kmNextVal = 500;
+    let kmPrevVal = 0;
+
+    if (stats.nextKmRank) {
+        kmNextVal = stats.nextKmRank.min;
+        kmPrevVal = stats.kmRank.min;
+        const range = kmNextVal - kmPrevVal;
+        const relative = stats.totalKm - kmPrevVal;
+        kmProgress = Math.min(100, Math.max(5, (relative / range) * 100));
+    } else {
+        kmProgress = 100;
     }
 
     const html = `
-        <div style="display:flex; flex-direction:column; gap:16px; text-align:center;">
+        <div class="gamification-container">
 
-            <!-- RANK BADGE (Compact & Design) -->
-            <div style="background: linear-gradient(135deg, ${stats.rank.color}15, ${stats.rank.color}05); padding: 20px; border-radius: 20px; position: relative; overflow: hidden; border: 1px solid ${stats.rank.color}30;">
-
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
-                    <div style="text-align: left;">
-                        <div style="font-size: 11px; text-transform: uppercase; color: var(--ink-soft); letter-spacing: 1px; font-weight: 600;">Votre Rang</div>
-                        <div style="font-size: 22px; font-weight: 800; color: var(--ink); margin-top: 2px;">${stats.rank.title}</div>
-                    </div>
-                    <div style="background: white; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px ${stats.rank.color}40;">
-                        <i data-lucide="${stats.rank.icon}" style="width: 28px; height: 28px; color: ${stats.rank.color};"></i>
-                    </div>
+            <!-- SECTION RANG ACTUEL -->
+            <div class="rank-header">
+                <div class="rank-icon-wrapper" style="box-shadow: 0 0 20px ${stats.poiRank.color}40;">
+                    <i data-lucide="${stats.poiRank.icon}" style="color: ${stats.poiRank.color}; width: 40px; height: 40px;"></i>
                 </div>
-
-                <!-- PROGRESS BAR -->
-                <div style="background: rgba(0,0,0,0.05); height: 6px; border-radius: 3px; width: 100%; position: relative; margin-bottom: 8px;">
-                    <div style="background: ${stats.rank.color}; width: ${progressPercent}%; height: 100%; border-radius: 3px; transition: width 1s ease;"></div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 500;">
-                    <span style="color: var(--ink);">${stats.poiPercent}% exploré</span>
-                    <span style="color: var(--ink-soft);">${nextRank ? 'Prochain : ' + nextRank.title : 'Niveau Max !'}</span>
+                <div class="rank-info">
+                    <div class="rank-label">VOTRE RANG</div>
+                    <div class="rank-title">${stats.poiRank.title}</div>
                 </div>
             </div>
 
-            <!-- STATS GRID (Cleaner) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
-
-                <div class="stat-card" style="background: var(--surface-muted); padding: 15px 10px; border-radius: 12px; display: flex; flex-direction: column; align-items: center;">
-                    <div style="font-size: 20px; font-weight: 700; color: var(--ink);">${stats.visitedPois}<span style="font-size: 12px; opacity: 0.6;">/${stats.totalPois}</span></div>
-                    <div style="font-size: 10px; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; margin-top: 4px;">Lieux</div>
+            <!-- PROGRESSION LIEUX -->
+            <div class="progress-section">
+                <div class="progress-labels">
+                    <span class="progress-title">Exploration (${stats.poiPercent}%)</span>
+                    <span class="progress-next">${stats.nextPoiRank ? `Prochain : ${stats.nextPoiRank.title}` : 'Sommet atteint !'}</span>
                 </div>
-
-                <div class="stat-card" style="background: var(--surface-muted); padding: 15px 10px; border-radius: 12px; display: flex; flex-direction: column; align-items: center;">
-                    <div style="font-size: 20px; font-weight: 700; color: var(--ink);">${stats.totalKm}</div>
-                    <div style="font-size: 10px; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; margin-top: 4px;">Km</div>
+                <div class="progress-track">
+                    <div class="progress-fill poi-fill" style="width: ${poiProgress}%; background: ${stats.poiRank.color};"></div>
                 </div>
-
-                <div class="stat-card" style="background: var(--surface-muted); padding: 15px 10px; border-radius: 12px; display: flex; flex-direction: column; align-items: center;">
-                    <div style="font-size: 20px; font-weight: 700; color: var(--ink);">${stats.completedCircuits}<span style="font-size: 12px; opacity: 0.6;">/${stats.totalCircuits}</span></div>
-                    <div style="font-size: 10px; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; margin-top: 4px;">Circuits</div>
+                <div class="progress-sub">
+                    ${stats.nextPoiRank
+                        ? `<span class="progress-left">Encore <strong>${remainingPois} lieux</strong></span>`
+                        : '<span>Félicitations !</span>'}
                 </div>
-
             </div>
 
-            <div style="height: 1px; background: var(--line); margin: 5px 20px;"></div>
+            <!-- PROGRESSION KM -->
+            <div class="progress-section">
+                <div class="progress-labels">
+                    <span class="progress-title">Distance (${stats.totalKm} km)</span>
+                    <span class="progress-next">${stats.nextKmRank ? `Objectif : ${stats.nextKmRank.title}` : 'Objectif Ultime !'}</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill km-fill" style="width: ${kmProgress}%; background: #10B981;"></div>
+                </div>
+                <div class="progress-sub">
+                     ${stats.nextKmRank
+                        ? `<span class="progress-left">Encore <strong>${(stats.nextKmRank.min - stats.totalKm).toFixed(1)} km</strong></span>`
+                        : '<span>Tour du monde ?!</span>'}
+                </div>
+            </div>
 
-            <p style="font-size: 12px; color: var(--ink-soft); font-style: italic;">
+            <div class="separator-line"></div>
+
+            <!-- STATS & BADGES -->
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">${stats.visitedPois}<span class="stat-total">/${stats.totalPois}</span></div>
+                    <div class="stat-label">Lieux</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.totalKm}</div>
+                    <div class="stat-label">Km</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">${stats.completedCircuits}</div>
+                    <div class="stat-label">Circuits</div>
+                </div>
+            </div>
+
+            <div class="badges-section">
+                <div class="badges-title">Collection de Badges</div>
+                <div class="badges-row">
+                    ${stats.earnedBadges.map(b => `
+                        <div class="badge-item ${b.earned ? 'earned' : 'locked'}" title="${b.title} (${b.min} circuits)">
+                            <div class="badge-circle" style="${b.earned ? `background: ${b.color}; border-color: ${b.color};` : ''}">
+                                ${b.earned
+                                    ? `<i data-lucide="award" style="color: white; fill: rgba(255,255,255,0.2);"></i>`
+                                    : `<i data-lucide="lock" style="color: #cbd5e1;"></i>`}
+                            </div>
+                            <span class="badge-label">${b.label}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <p class="gamification-footer">
                 Continuez d'explorer pour débloquer le prochain rang !
             </p>
-
         </div>
     `;
 
-    showAlert("Mon Carnet de Voyage", html, "Génial !");
+    // Utilisation de la classe CSS personnalisée 'gamification-modal'
+    await showAlert("Mon Carnet de Voyage", html, "Génial !", "gamification-modal");
 
-    // Refresh icons inside the modal (since they are dynamic HTML)
     const modalContent = document.getElementById('custom-modal-message');
     if (modalContent) {
         createIcons({ icons, root: modalContent });
