@@ -16,7 +16,7 @@ const styles = `
         flex-direction: column;
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.2s;
+        transition: opacity 0.2s, visibility 0.2s;
     }
     .photo-grid-overlay.active {
         opacity: 1;
@@ -42,11 +42,12 @@ const styles = `
 
     .photo-grid-title {
         font-weight: 800;
-        font-size: 22px;
+        font-size: 24px; /* Larger Title */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         line-height: 1.2;
+        color: var(--brand); /* Brand Color */
     }
 
     .photo-grid-subtitle {
@@ -64,7 +65,7 @@ const styles = `
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--ink);
+        color: var(--brand); /* Brand Color */
         transition: background 0.2s;
     }
     .photo-grid-btn:hover {
@@ -80,6 +81,9 @@ const styles = `
     }
     .photo-grid-btn.upload-btn {
         color: #ef4444; /* Admin Upload Color (Red/Distinct) */
+    }
+    .photo-grid-btn.close-btn {
+        color: var(--brand); /* Close button also brand color */
     }
 
     .photo-grid-btn:disabled {
@@ -242,7 +246,7 @@ function initDOM() {
 
     headerSubtitle = document.createElement('div');
     headerSubtitle.className = 'photo-grid-subtitle';
-    headerSubtitle.textContent = "(Mode normal)";
+    // Default empty, populated only for Admin
 
     titleContainer.appendChild(headerTitle);
     titleContainer.appendChild(headerSubtitle);
@@ -324,9 +328,11 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
         if (state.isAdmin) {
              headerSubtitle.textContent = "(Mode GOD / Admin)";
              headerSubtitle.style.color = "#ef4444";
+             headerSubtitle.style.display = "block";
         } else {
-             headerSubtitle.textContent = "(Mode Édition)";
-             headerSubtitle.style.color = "var(--ink-soft)";
+             // User requested to remove "(Mode Édition)"
+             headerSubtitle.textContent = "";
+             headerSubtitle.style.display = "none";
         }
 
         // Load Photos
@@ -423,14 +429,52 @@ function renderGrid() {
 
         // --- Click to View ---
         img.onclick = () => {
+            // HIDE GRID WHEN OPENING VIEWER
+            if(gridOverlay) gridOverlay.style.opacity = '0';
+
             import('./photo-manager.js').then(pm => {
                 pm.setCurrentPhotos(currentGridPhotos.map(p => p.src), index);
                 const viewer = document.getElementById('photo-viewer');
                 const viewerImg = document.getElementById('viewer-img');
                 const toolbar = document.getElementById('viewer-toolbar');
+
+                // Add Close Listener to restore Grid
+                const closeBtn = document.getElementById('viewer-btn-close');
+                // Ensure we don't stack listeners
+                const restoreGrid = () => {
+                    if(gridOverlay) gridOverlay.style.opacity = '1';
+                    // Clean up listener is handled by the viewer closing logic generally,
+                    // but we need to ensure this callback fires.
+                    // The viewer close logic in ui-photo-viewer.js handles display:none.
+                };
+
+                // We hook into the close button click
+                // But better: hook into the Viewer Close Logic if possible.
+                // For now, let's just add a temporary click listener to the close button
+                if(closeBtn) {
+                     // We need to capture the click BEFORE the viewer closes it?
+                     // Or just when it's clicked.
+                     const oldOnClick = closeBtn.onclick;
+                     closeBtn.onclick = (e) => {
+                         restoreGrid();
+                         if(oldOnClick) oldOnClick(e);
+                     };
+                }
+
+                // Also handle ESC key via global listener in ui-photo-viewer?
+                // We can add a one-time ESC listener here
+                const escListener = (e) => {
+                    if (e.key === 'Escape') {
+                        restoreGrid();
+                        document.removeEventListener('keydown', escListener);
+                    }
+                };
+                document.addEventListener('keydown', escListener);
+
                 if (viewer && viewerImg) {
                     viewerImg.src = photo.src;
-                    viewer.style.zIndex = '10100';
+                    // FIX Z-INDEX CONFLICT: Viewer 20000, Grid 10050
+                    viewer.style.zIndex = '20000';
                     viewer.style.display = 'flex';
                     if (toolbar) toolbar.style.display = 'flex';
 

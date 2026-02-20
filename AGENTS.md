@@ -2,6 +2,12 @@
 
 This file contains critical information for AI agents working on this codebase. Please read it carefully before making any changes.
 
+## 0. Golden Rule: PC First 🖥️
+*   **History Walk is a PC-first application.** The primary interface for creation, editing, and management is the Desktop version.
+*   **Mobile is a Companion Tool:** The mobile version is strictly for use during the walk (consultation/tracking).
+*   **Assumption:** Unless explicitly stated otherwise, **assume the user is talking about the PC version.**
+*   **Impact Warning:** You must **always explicitly warn the user** if a change requested for PC will impact the Mobile experience. Do not silently break mobile features while fixing PC ones.
+
 ## 1. Data Source of Truth
 *   **Official Circuits (`public/circuits/*.json`):** These files are **GENERATED ARTIFACTS**.
     *   **Do NOT edit them manually.**
@@ -10,6 +16,9 @@ This file contains critical information for AI agents working on this codebase. 
 *   **Map Data (`public/*.geojson`):** These are the source of truth for POIs.
 
 ## 2. Critical Workflows
+*   **Photo Management:**
+    *   **Always use `src/ui-photo-grid.js`** for displaying and managing photo collections. Do not use legacy modals or custom implementations.
+    *   **Icons:** Use `lucide` icons exclusively (e.g., `image-up`, `save`, `cloud-upload`) via `createIcons`. Do not hardcode SVG strings.
 *   **Circuit Generation:** When a `.gpx` file is added to `public/circuits/[mapId]/`, the `generate-circuit-index.js` script must be run to update `public/circuits/[mapId].json`.
 *   **Mobile vs Desktop:** The application has distinct logic for Mobile (list-based) and Desktop (map-based). Always check `src/mobile.js` when modifying UI logic to ensure responsiveness.
 
