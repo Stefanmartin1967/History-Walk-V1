@@ -18,6 +18,20 @@ let currentViewerPoiId = null;
 export function initPhotoViewer() {
     const photoViewer = getEl('photo-viewer');
 
+    // OVERRIDE VIEWER STYLES (Themed & High Z-Index)
+    if (photoViewer) {
+        photoViewer.style.cssText = `
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg); /* Theme Background */
+            z-index: 21000; /* Highest Priority */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        `;
+    }
+
     // Create Toolbar if missing
     if (photoViewer && !document.getElementById('viewer-toolbar')) {
         const toolbar = document.createElement('div');
@@ -32,27 +46,51 @@ export function initPhotoViewer() {
                 top: 0;
                 left: 0;
                 right: 0;
-                padding: 15px 25px; /* Increased padding */
-                background: rgba(0,0,0,0.6);
+                padding: 10px 20px;
+                background: var(--surface); /* Theme Surface */
+                border-bottom: 1px solid var(--line);
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                z-index: 10010; /* Highest priority */
-                color: white;
+                z-index: 21010; /* Above Viewer */
+                color: var(--ink); /* Theme Ink */
+                box-shadow: var(--shadow-soft);
             }
             .viewer-controls {
                 display: flex;
-                gap: 25px; /* Increased gap */
+                gap: 20px;
                 align-items: center;
             }
             .viewer-title {
-                font-weight: 600;
+                font-weight: 700;
                 font-size: 16px;
-                text-shadow: 0 1px 2px black;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 max-width: 60%;
+                color: var(--brand);
+            }
+
+            /* Close Button Styled */
+            .close-viewer-btn {
+                background: none;
+                border: none;
+                color: var(--ink);
+                cursor: pointer;
+                padding: 8px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s;
+            }
+            .close-viewer-btn:hover {
+                background: var(--surface-muted);
+                color: var(--danger);
+            }
+            .close-viewer-btn svg {
+                width: 28px;
+                height: 28px;
             }
         `;
         document.head.appendChild(style);
@@ -71,8 +109,8 @@ export function initPhotoViewer() {
                 </button>
 
                 <!-- Close Button (ALWAYS VISIBLE) -->
-                <button class="close-viewer" title="Fermer" style="background: none; border: none; color: white; cursor: pointer;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                <button class="close-viewer-btn" title="Fermer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
             </div>
         `;
@@ -80,7 +118,7 @@ export function initPhotoViewer() {
     }
 
     // Now bind listeners
-    const closeBtn = document.querySelector('.close-viewer');
+    const closeBtn = document.querySelector('.close-viewer-btn');
     const viewerNext = getEl('viewer-next');
     const viewerPrev = getEl('viewer-prev');
 
@@ -146,7 +184,32 @@ export function initPhotoViewer() {
 
 function closePhotoViewer() {
     const photoViewer = getEl('photo-viewer');
-    if (photoViewer) photoViewer.style.display = 'none';
+    if (photoViewer) {
+        photoViewer.style.display = 'none';
+        // Force restoration of grid opacity if needed,
+        // though the grid listener handles it on close button click?
+        // Actually, the grid sets opacity to 0 when opening viewer.
+        // We need to restore it.
+        // The grid attaches a listener to the close button in 'ui-photo-grid.js'.
+        // BUT here we replaced the close button with a clone!
+        // This BREAKS the grid restoration logic if grid attaches to the button directly.
+
+        // CHECK ui-photo-grid.js:
+        // "const closeBtn = document.getElementById('viewer-btn-close'); ... closeBtn.onclick = ..."
+        // Wait, my updated ui-photo-viewer.js uses class 'close-viewer-btn'.
+        // And I am cloning it here.
+
+        // SOLUTION: Dispatch a custom event "viewer:closed" that the grid can listen to.
+        // OR simply rely on the fact that I am not hiding the grid anymore in the new plan?
+        // In the previous step thoughts, I said "Let's NOT hide it".
+        // Let's check the code I wrote in `ui-photo-grid.js`.
+
+        // I wrote:
+        // "// We don't need to set opacity 0 anymore... Let's NOT hide it, but just rely on the new Viewer Z-Index (21000)."
+
+        // So I don't need to restore anything! The grid stays visible underneath (z-index 10050) covered by the viewer (z-index 21000).
+        // PERFECT. No conflict.
+    }
 }
 
 function updateViewerUI() {
