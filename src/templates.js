@@ -136,11 +136,12 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                      <button class="action-button btn-web-search" id="btn-web-search" title="Rechercher sur Google">${ICONS.globe}</button>
                      ${gmapsButtonHtml}
                      <button class="action-button" id="btn-move-marker" title="Déplacer le marqueur">${ICONS.move}</button>
+                     <button class="action-button" id="btn-open-photo-grid" title="Gérer les photos">${ICONS.imagePlus}</button>
                      <button class="action-button" id="btn-global-edit" title="Modifier le lieu">${ICONS.pen}</button>
-                     <button class="action-button" id="btn-soft-delete" title="Signaler pour suppression" style="color: var(--danger);">${ICONS.trash}</button>
                 </div>
-                <!-- Right: Navigation -->
+                <!-- Right: Navigation + Delete -->
                 <div style="display:flex; gap:5px; align-items:center;">
+                     <button class="action-button" id="btn-soft-delete" title="Signaler pour suppression" style="color: var(--danger); margin-right: 10px;">${ICONS.trash}</button>
                      ${inCircuit ? `<button class="action-button" id="prev-poi-button" title="Précédent" ${circuitIndex === 0 ? 'disabled' : ''}>${ICONS.chevronLeft}</button>
                                     <button class="action-button" id="next-poi-button" title="Suivant" ${circuitIndex === state.currentCircuit.length - 1 ? 'disabled' : ''}>${ICONS.chevronRight}</button>` : ''}
                 </div>
@@ -180,23 +181,6 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 <h3>Notes</h3>
                 <div class="content">
                     <div id="panel-notes-display" class="description-content editable-text">${(allProps.notes || '').replace(/\n/g, '<br>')}</div>
-                </div>
-            </div>
-            <div class="detail-section photos-section">
-                <div class="photos-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h3>Photos (${photos.length})</h3>
-                    <div class="edit-controls section-controls" style="display:flex; gap:8px;">
-                        ${photos.length > 0 ? `
-                            <button class="action-button" id="btn-delete-all-photos" title="Tout supprimer" style="color: var(--danger);">${ICONS.trash}</button>
-                        ` : ''}
-                    </div>
-                </div>
-                <div class="content">
-                    <div class="photos-grid-scroller">
-                        ${photosHtml}
-                        <div class="photo-placeholder" title="Ajouter une photo">${ICONS.imagePlus}</div>
-                    </div>
-                    <input type="file" id="panel-photo-input" accept="image/*" multiple style="display: none;">
                 </div>
             </div>
         </div>`;
@@ -241,12 +225,13 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                              <button class="action-button" id="mobile-btn-toggle-gpx-desc" title="GPX Desc" style="${mobileBtnStyle}">${ICONS.fileText}</button>
                              <button class="action-button btn-web-search" id="btn-web-search" title="Google" style="${mobileBtnStyle}">${ICONS.globe}</button>
                              ${mobileGmapsBtn}
+                             <button class="action-button" id="btn-open-photo-grid" title="Gérer les photos" style="${mobileBtnStyle}">${ICONS.imagePlus}</button>
                              <button class="action-button" id="btn-global-edit" title="Editer" style="${mobileBtnStyle}">${ICONS.pen}</button>
-                             <button class="action-button" id="btn-soft-delete" title="Supprimer" style="${mobileBtnStyle} color: var(--danger);">${ICONS.trash}</button>
                          </div>
 
-                         <!-- Right: Navigation -->
+                         <!-- Right: Navigation + Delete -->
                          <div style="display:flex; gap:6px; align-items:center;">
+                             <button class="action-button" id="btn-soft-delete" title="Supprimer" style="${mobileBtnStyle} color: var(--danger);">${ICONS.trash}</button>
                              <button id="details-prev-btn" data-direction="-1" ${(!inCircuit || circuitIndex === 0) ? 'disabled' : ''} style="${mobileBtnStyle}">${ICONS.chevronLeft}</button>
                              <button id="details-next-btn" data-direction="1" ${(!inCircuit || circuitIndex === state.currentCircuit.length - 1) ? 'disabled' : ''} style="${mobileBtnStyle}">${ICONS.chevronRight}</button>
                          </div>
@@ -286,23 +271,6 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 <h3>Notes</h3>
                 <div class="content">
                     <div class="description-content editable-text">${(allProps.notes || '').replace(/\n/g, '<br>')}</div>
-                </div>
-            </div>
-            <div class="detail-section photos-section">
-                <div class="photos-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                    <h3>Photos (${photos.length})</h3>
-                    <div class="edit-controls section-controls" style="display:flex; gap:8px;">
-                        ${photos.length > 0 ? `
-                            <button class="action-button" id="btn-delete-all-photos" title="Tout supprimer" style="color: var(--danger);">${ICONS.trash}</button>
-                        ` : ''}
-                    </div>
-                </div>
-                <div class="content">
-                    <div class="photos-grid-scroller">
-                        ${photosHtml}
-                        <div class="photo-placeholder" title="Ajouter une photo">${ICONS.imagePlus}</div>
-                    </div>
-                    <input type="file" id="panel-photo-input" accept="image/*" multiple style="display: none;">
                 </div>
             </div>
         </div>`;

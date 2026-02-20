@@ -14,6 +14,7 @@ import { buildDetailsPanelHtml as buildHTML, ICONS } from './templates.js';
 import { getZonesData } from './circuit-actions.js';
 import { calculateAdjustedTime } from './utils.js';
 import { initPhotoViewer, setupPhotoPanelListeners } from './ui-photo-viewer.js';
+import { openPhotoGrid } from './ui-photo-grid.js';
 import { initCircuitListUI, renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm, showAlert } from './modal.js';
 import { RichEditor } from './richEditor.js';
@@ -458,7 +459,17 @@ if (chkInc) {
     });
 
     // Gestion Photos DÉLÉGUÉE
-    setupPhotoPanelListeners(poiId);
+    // setupPhotoPanelListeners(poiId); // REMOVED: Now handled via Photo Grid
+
+    // PHOTO GRID BUTTON LISTENER
+    const btnPhotoGrid = document.getElementById('btn-open-photo-grid') || document.getElementById('mobile-btn-open-photo-grid');
+    if(btnPhotoGrid) {
+        // Clone to remove old listeners (if any, though we rebuild html)
+        btnPhotoGrid.onclick = (e) => {
+            e.stopPropagation();
+            openPhotoGrid(poiId);
+        };
+    }
 
     // Ajustement du temps
     document.getElementById('time-increment-btn')?.addEventListener('click', () => adjustTime(5));
