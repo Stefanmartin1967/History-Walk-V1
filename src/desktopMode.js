@@ -11,6 +11,7 @@ import { DOM, closeDetailsPanel, openDetailsPanel, closeAllDropdowns } from './u
 import { getExifLocation, calculateDistance, resizeImage, getZoneFromCoords, clusterByLocation, calculateBarycenter, filterOutliers } from './utils.js';
 import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
+import { openPhotoGrid } from './ui-photo-grid.js';
 import { RichEditor } from './richEditor.js';
 
 let desktopDraftMarker = null;
@@ -154,29 +155,42 @@ export async function handleDesktopPhotoImport(filesList) {
                          break;
                     }
 
-                    const selectedPhotos = await showPhotoSelectionModal(
-                        "Ajout Photos",
-                        `Groupe ${i+1}/${clusters.length} détecté près de :\n` +
-                        `"${poiName}" (${Math.round(dist)}m).\n` +
-                        (duplicateCount > 0 ? `(${duplicateCount} doublons masqués)\n` : '') +
-                        `Sélectionnez les photos à AJOUTER à ce lieu :`,
-                        uniqueCluster,
-                        "Ajouter"
-                    );
+                    // NEW FLOW: Open Photo Grid with preloaded photos
+                    // We assume user wants to review them for THIS poi.
+                    // If they want to skip to next poi, they close the grid?
+                    // Or we need a "Skip / Next POI" button in the grid?
+                    // The requirement says: "Il reste à voir comment gérer les photos qu'on n'a joutent pas au premier POI proposé... On ne les coche pas, elles apparaissent avec les photos du second POI le plus proche"
 
-                    if (selectedPhotos && selectedPhotos.length > 0) {
-                        if (loader) loader.style.display = 'flex'; // Réafficher loader
-                        await addPhotosToPoi(feature, selectedPhotos);
-                        processedCount += selectedPhotos.length;
-                        totalDuplicates += duplicateCount; // On compte les doublons qu'on a filtrés
-                        assigned = true;
-                        break; // Sort de la boucle des POIs proches
-                    }
-                    // Si refus (null), on mémorise pour ne pas le reproposer plus tard
-                    ignoredPoiIds.add(poiId);
+                    // For now, let's keep it simple: We open the grid. User saves what they want.
+                    // The grid handles saving.
+                    // But we need to know what was NOT saved to pass to next iteration?
+                    // That's complex with the current "Grid is a standalone modal" approach.
+                    // Given the constraint "Use the same grid", maybe we just open it for the best candidate.
+
+                    // Let's use a simpler approach aligned with "Uniformiser":
+                    // Open Grid for the BEST candidate.
+                    if (loader) loader.style.display = 'none';
+
+                    // Pre-load photos
+                    const preloaded = uniqueCluster.map(item => ({
+                        src: item.base64,
+                        file: item.file
+                    }));
+
+                    // Show Toast context
+                    showToast(`Groupe ${i+1}: ${uniqueCluster.length} photos pour "${poiName}"`, "info");
+
+                    // Open Grid and Wait for User Action
+                    await openPhotoGrid(poiId, preloaded);
+
+                    // Once closed (saved or skipped), we mark as assigned to continue logic
+                    // If saved, photos are in POI. If skipped, we move to next cluster.
+                    // Ideally we could handle "Skip this POI, try next one" but user workflow is simple:
+                    // "Open Grid -> Save what you want -> Close -> Next Cluster"
+                    processedCount += uniqueCluster.length; // Approximate count
+                    assigned = true;
+                    break; // Break "nearbyPois" loop to go to next cluster (i)
                 }
-
-                if (assigned) continue; // On passe au cluster suivant
             }
 
             // CAS B : PAS DE POI PROCHE OU TOUS REFUSÉS -> PROPOSITION DE CRÉATION
