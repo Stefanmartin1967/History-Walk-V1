@@ -1,17 +1,16 @@
 import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { showToast } from './toast.js';
-import { showConfirm } from './modal.js';
 import { uploadPhotoForPoi } from './photo-upload.js';
 import { compressImage } from './photo-manager.js';
-import { openDetailsPanel } from './ui.js';
+import { createIcons, icons } from 'lucide';
 
 // --- STYLES INJECTION ---
 const styles = `
     .photo-grid-overlay {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.8);
+        background: rgba(0,0,0,0.9);
         z-index: 10050;
         display: flex;
         flex-direction: column;
@@ -23,75 +22,98 @@ const styles = `
         opacity: 1;
         visibility: visible;
     }
+
     .photo-grid-header {
         background: var(--surface);
-        padding: 10px 15px;
+        padding: 15px 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid var(--line);
         color: var(--ink);
-        min-height: 50px;
+        min-height: 70px;
     }
-    .photo-grid-title {
-        font-weight: 700;
-        font-size: 16px;
-        text-align: center;
+
+    .photo-grid-title-container {
         flex: 1;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .photo-grid-title {
+        font-weight: 800;
+        font-size: 22px;
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
+        line-height: 1.2;
     }
+
+    .photo-grid-subtitle {
+        font-size: 14px;
+        color: var(--ink-soft);
+        font-weight: 500;
+    }
+
     .photo-grid-btn {
         background: none;
         border: none;
         cursor: pointer;
-        padding: 8px;
+        padding: 10px;
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--ink);
+        transition: background 0.2s;
     }
     .photo-grid-btn:hover {
         background: var(--surface-muted);
     }
-    .photo-grid-btn svg {
-        width: 24px;
-        height: 24px;
+    .photo-grid-btn .lucide {
+        width: 32px; /* Larger Icons */
+        height: 32px;
     }
+
     .photo-grid-btn.save-btn {
-        color: var(--brand);
+        color: var(--brand); /* User Save Color */
     }
-    .photo-grid-btn.save-btn:disabled {
+    .photo-grid-btn.upload-btn {
+        color: #ef4444; /* Admin Upload Color (Red/Distinct) */
+    }
+
+    .photo-grid-btn:disabled {
         opacity: 0.5;
         cursor: not-allowed;
-    }
-    .photo-grid-btn.close-btn {
-        color: var(--ink-soft);
     }
 
     .photo-grid-content {
         flex: 1;
         overflow-y: auto;
-        padding: 15px;
+        padding: 10px;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 15px;
+        grid-template-columns: repeat(3, 1fr); /* 3x3 Default */
+        grid-auto-rows: 1fr;
+        gap: 10px;
         align-content: start;
-        background: #1a1a1a;
+        background: #000;
+    }
+
+    @media (min-width: 1024px) {
+        .photo-grid-content {
+            grid-template-columns: repeat(4, 1fr); /* 4x4 on Desktop */
+        }
     }
 
     .photo-card {
         position: relative;
-        background: #333;
-        border-radius: 8px;
+        background: #222;
+        border-radius: 4px;
         overflow: hidden;
-        aspect-ratio: 1;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        aspect-ratio: 1; /* Square */
         border: 2px solid transparent;
         cursor: grab;
-        transition: transform 0.2s;
+        transition: transform 0.1s;
     }
     .photo-card:active {
         cursor: grabbing;
@@ -108,36 +130,61 @@ const styles = `
         display: block;
     }
 
+    /* Photo Overlay Actions */
     .photo-card-actions {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
-        padding: 5px;
-        background: rgba(0,0,0,0.6);
+        padding: 8px;
+        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
         display: flex;
         justify-content: flex-end;
+        align-items: flex-end;
+        height: 40px;
     }
 
     .photo-card-btn {
-        background: none;
+        background: rgba(255,255,255,0.2);
         border: none;
         color: white;
         cursor: pointer;
-        padding: 4px;
-    }
-    .photo-card-btn.delete {
-        color: #ef4444;
+        padding: 6px;
+        border-radius: 4px;
+        backdrop-filter: blur(2px);
     }
     .photo-card-btn:hover {
-        transform: scale(1.1);
+        background: #ef4444;
+    }
+    .photo-card-btn .lucide {
+        width: 18px;
+        height: 18px;
     }
 
-    /* Drag & Drop Placeholder */
-    .photo-card-placeholder {
-        border: 2px dashed #666;
-        border-radius: 8px;
-        background: transparent;
+    /* Placeholders/Status */
+    .photo-card-new-badge {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        background: var(--brand);
+        color: white;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+        z-index: 2;
+    }
+
+    /* Message Empty */
+    .photo-grid-empty {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        padding: 50px;
+        text-align: center;
     }
 `;
 
@@ -150,15 +197,16 @@ document.head.appendChild(styleEl);
 let currentGridPoiId = null;
 let currentGridPhotos = [];
 let isDirty = false;
-let currentResolve = null; // For Promise
+let currentResolve = null;
 
 // --- DOM ELEMENTS ---
 let gridOverlay = null;
 let gridContent = null;
 let headerTitle = null;
+let headerSubtitle = null;
 let btnAdd = null;
 let btnSave = null;
-let btnClose = null; // Added close button
+let btnClose = null;
 let fileInput = null;
 
 function initDOM() {
@@ -170,43 +218,63 @@ function initDOM() {
     const header = document.createElement('div');
     header.className = 'photo-grid-header';
 
-    // Left: Add Photo + Close (New Layout)
+    // --- Left: Add + Close ---
     const leftGroup = document.createElement('div');
     leftGroup.style.display = 'flex';
-    leftGroup.style.gap = '5px';
+    leftGroup.style.gap = '10px';
 
-    btnClose = document.createElement('button');
-    btnClose.className = 'photo-grid-btn close-btn';
-    btnClose.title = "Fermer";
-    btnClose.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>`;
-    btnClose.onclick = () => closePhotoGrid(false);
-
+    // ADD BUTTON (Image Up)
     btnAdd = document.createElement('button');
     btnAdd.className = 'photo-grid-btn';
     btnAdd.title = "Ajouter des photos";
-    btnAdd.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="12" x2="12" y1="8" y2="16"/><line x1="8" x2="16" y1="12" y2="12"/></svg>`;
+    btnAdd.innerHTML = `<i data-lucide="image-up"></i>`;
     btnAdd.onclick = () => fileInput.click();
 
-    leftGroup.appendChild(btnClose);
     leftGroup.appendChild(btnAdd);
 
-    // Center: Title
+    // --- Center: Title ---
+    const titleContainer = document.createElement('div');
+    titleContainer.className = 'photo-grid-title-container';
+
     headerTitle = document.createElement('div');
     headerTitle.className = 'photo-grid-title';
+    headerTitle.textContent = "Titre du Lieu";
 
-    // Right: Save/Upload
+    headerSubtitle = document.createElement('div');
+    headerSubtitle.className = 'photo-grid-subtitle';
+    headerSubtitle.textContent = "(Mode normal)";
+
+    titleContainer.appendChild(headerTitle);
+    titleContainer.appendChild(headerSubtitle);
+
+    // --- Right: Save ---
+    const rightGroup = document.createElement('div');
+    rightGroup.style.display = 'flex';
+    rightGroup.style.gap = '10px';
+
+    // SAVE/UPLOAD BUTTON
     btnSave = document.createElement('button');
     btnSave.className = 'photo-grid-btn save-btn';
     btnSave.onclick = handleSave;
 
+    // CLOSE BUTTON
+    btnClose = document.createElement('button');
+    btnClose.className = 'photo-grid-btn close-btn';
+    btnClose.title = "Fermer";
+    btnClose.innerHTML = `<i data-lucide="x"></i>`; // Standard X icon
+    btnClose.onclick = () => closePhotoGrid(false);
+
+    rightGroup.appendChild(btnSave);
+    rightGroup.appendChild(btnClose);
+
     header.appendChild(leftGroup);
-    header.appendChild(headerTitle);
-    header.appendChild(btnSave);
+    header.appendChild(titleContainer);
+    header.appendChild(rightGroup);
 
     gridContent = document.createElement('div');
     gridContent.className = 'photo-grid-content';
 
-    // Drag & Drop Container Events
+    // Drag & Drop
     gridContent.addEventListener('dragover', (e) => {
         e.preventDefault();
         const afterElement = getDragAfterElement(gridContent, e.clientY, e.clientX);
@@ -234,14 +302,14 @@ function initDOM() {
     document.body.appendChild(gridOverlay);
 }
 
-// --- MAIN FUNCTION ---
+// --- MAIN FUNCTIONS ---
 
 export function openPhotoGrid(poiId, preloadedPhotos = null) {
     return new Promise((resolve) => {
         initDOM();
         currentGridPoiId = poiId;
         isDirty = false;
-        currentResolve = resolve; // Store promise resolver
+        currentResolve = resolve;
 
         const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
         if (!feature && !preloadedPhotos) {
@@ -251,6 +319,15 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
 
         const poiName = feature ? getPoiName(feature) : "Nouveau Lieu";
         headerTitle.textContent = poiName;
+
+        // Determine Mode Title
+        if (state.isAdmin) {
+             headerSubtitle.textContent = "(Mode GOD / Admin)";
+             headerSubtitle.style.color = "#ef4444";
+        } else {
+             headerSubtitle.textContent = "(Mode Édition)";
+             headerSubtitle.style.color = "var(--ink-soft)";
+        }
 
         // Load Photos
         if (preloadedPhotos) {
@@ -268,8 +345,12 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
             }));
         }
 
-        updateSaveButtonIcon();
+        updateSaveButton();
         renderGrid();
+
+        // Refresh Icons
+        createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridOverlay });
+
         gridOverlay.classList.add('active');
     });
 }
@@ -311,6 +392,18 @@ async function handleFileSelect(e) {
 function renderGrid() {
     gridContent.innerHTML = '';
 
+    if (currentGridPhotos.length === 0) {
+        gridContent.innerHTML = `
+            <div class="photo-grid-empty">
+                <i data-lucide="image" style="width:48px; height:48px; opacity:0.5; margin-bottom:10px;"></i>
+                <div>Aucune photo</div>
+                <div style="font-size:12px; margin-top:5px;">Utilisez le bouton + pour ajouter</div>
+            </div>
+        `;
+        createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+        return;
+    }
+
     currentGridPhotos.forEach((photo, index) => {
         const card = document.createElement('div');
         card.className = 'photo-card';
@@ -320,55 +413,58 @@ function renderGrid() {
         const img = document.createElement('img');
         img.src = photo.src;
 
-        // Launch Viewer on Click (Read-only mode effectively)
+        // --- Badge New ---
+        if (photo.isNew || photo.src.startsWith('data:')) {
+            const badge = document.createElement('div');
+            badge.className = 'photo-card-new-badge';
+            badge.textContent = "NEW";
+            card.appendChild(badge);
+        }
+
+        // --- Click to View ---
         img.onclick = () => {
             import('./photo-manager.js').then(pm => {
                 pm.setCurrentPhotos(currentGridPhotos.map(p => p.src), index);
-
                 const viewer = document.getElementById('photo-viewer');
                 const viewerImg = document.getElementById('viewer-img');
                 const toolbar = document.getElementById('viewer-toolbar');
-
                 if (viewer && viewerImg) {
                     viewerImg.src = photo.src;
-                    // Important: Z-Index Fix via CSS update or Inline
-                    viewer.style.zIndex = '10100'; // Higher than Grid (10050)
+                    viewer.style.zIndex = '10100';
                     viewer.style.display = 'flex';
+                    if (toolbar) toolbar.style.display = 'flex';
 
-                    if (toolbar) {
-                        // Hide Action buttons, KEEP Close button
-                        const uploadBtn = document.getElementById('viewer-btn-upload');
-                        const deleteBtn = document.getElementById('viewer-btn-delete');
-                        // const titleEl = document.getElementById('viewer-title');
-
-                        if(uploadBtn) uploadBtn.style.display = 'none';
-                        if(deleteBtn) deleteBtn.style.display = 'none';
-
-                        // We must ensure toolbar is visible
-                        toolbar.style.display = 'flex';
-                    }
+                    // Hide Edit Actions in Viewer when opened from Grid
+                    const uploadBtn = document.getElementById('viewer-btn-upload');
+                    const deleteBtn = document.getElementById('viewer-btn-delete');
+                    if(uploadBtn) uploadBtn.style.display = 'none';
+                    if(deleteBtn) deleteBtn.style.display = 'none';
                 }
             });
         };
 
+        // --- Actions ---
         const actions = document.createElement('div');
         actions.className = 'photo-card-actions';
 
         const btnDel = document.createElement('button');
         btnDel.className = 'photo-card-btn delete';
-        btnDel.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`;
+        btnDel.title = "Supprimer";
+        btnDel.innerHTML = `<i data-lucide="trash-2"></i>`;
         btnDel.onclick = (e) => {
             e.stopPropagation();
-            currentGridPhotos.splice(index, 1);
-            isDirty = true;
-            renderGrid();
+            if(confirm("Supprimer cette photo ?")) {
+                currentGridPhotos.splice(index, 1);
+                isDirty = true;
+                renderGrid();
+            }
         };
 
         actions.appendChild(btnDel);
         card.appendChild(img);
         card.appendChild(actions);
 
-        // Drag Events
+        // --- Drag Events ---
         card.addEventListener('dragstart', () => {
             card.classList.add('dragging');
         });
@@ -380,6 +476,9 @@ function renderGrid() {
 
         gridContent.appendChild(card);
     });
+
+    // Refresh Icons for new elements
+    createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
 }
 
 function updateArrayOrderFromDOM() {
@@ -412,13 +511,15 @@ function getDragAfterElement(container, y, x) {
     }, null).element;
 }
 
-function updateSaveButtonIcon() {
+function updateSaveButton() {
     if (state.isAdmin) {
-        btnSave.title = "Tout envoyer sur GitHub";
-        btnSave.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>`;
+        btnSave.title = "Uploader sur GitHub";
+        btnSave.className = 'photo-grid-btn upload-btn'; // Red/Admin class
+        btnSave.innerHTML = `<i data-lucide="cloud-upload"></i>`;
     } else {
-        btnSave.title = "Sauvegarder";
-        btnSave.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>`;
+        btnSave.title = "Sauvegarder localement";
+        btnSave.className = 'photo-grid-btn save-btn'; // Brand/User class
+        btnSave.innerHTML = `<i data-lucide="save"></i>`;
     }
 }
 
@@ -446,7 +547,7 @@ async function handleSave() {
         }
 
         await updatePoiData(currentGridPoiId, 'photos', finalPhotos);
-        showToast("Photos sauvegardées.", "success");
+        showToast("Sauvegarde effectuée.", "success");
 
         closePhotoGrid(true); // Resolve promise with saved=true
 
