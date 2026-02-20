@@ -186,6 +186,13 @@ function generateMasterGeoJSONData() {
             delete properties.userData; // On nettoie
         }
 
+        // --- NETTOYAGE CRITIQUE : Suppression des photos Base64 ---
+        if (properties.photos && Array.isArray(properties.photos)) {
+            // On ne garde que les URL (http/https/relative)
+            // On exclut tout ce qui commence par "data:image"
+            properties.photos = properties.photos.filter(p => !p.startsWith('data:image'));
+        }
+
         // Supprimer les clés internes inutiles
         delete properties._leaflet_id;
 
