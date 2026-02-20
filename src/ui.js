@@ -364,6 +364,9 @@ if (chkInc) {
 
              // 2. Activer le drag
              if (targetLayer.dragging) {
+                 // ON ACTIVE LE FLAG D'ÉTAT POUR IGNORER LE CLIC (Evite conflit avec Creation Mode)
+                 state.draggingMarkerId = poiId;
+
                  targetLayer.dragging.enable();
                  targetLayer.setOpacity(0.7); // Feedback visuel
                  showToast("Mode déplacement activé. Glissez le marqueur !", "info");
@@ -404,6 +407,9 @@ if (chkInc) {
                      // Cleanup
                      targetLayer.off('drag', onDrag);
                      targetLayer.off('dragend', onDragEnd);
+
+                     // ON RESET LE FLAG D'ÉTAT
+                     state.draggingMarkerId = null;
                  };
 
                  targetLayer.on('drag', onDrag);
