@@ -10,7 +10,7 @@ const styles = `
     .photo-grid-overlay {
         position: fixed;
         top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.9);
+        background: var(--bg); /* Theme Aware Background */
         z-index: 10050;
         display: flex;
         flex-direction: column;
@@ -25,13 +25,14 @@ const styles = `
 
     .photo-grid-header {
         background: var(--surface);
-        padding: 15px 20px;
+        padding: 8px 16px; /* Reduced Padding */
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px solid var(--line);
         color: var(--ink);
-        min-height: 70px;
+        min-height: 50px; /* Reduced Height */
+        box-shadow: var(--shadow-soft);
     }
 
     .photo-grid-title-container {
@@ -42,48 +43,49 @@ const styles = `
 
     .photo-grid-title {
         font-weight: 800;
-        font-size: 24px; /* Larger Title */
+        font-size: 18px; /* Slightly Smaller Title */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         line-height: 1.2;
-        color: var(--brand); /* Brand Color */
+        color: var(--brand);
     }
 
     .photo-grid-subtitle {
-        font-size: 14px;
+        font-size: 12px;
         color: var(--ink-soft);
         font-weight: 500;
+        margin-top: 2px;
     }
 
     .photo-grid-btn {
         background: none;
         border: none;
         cursor: pointer;
-        padding: 10px;
+        padding: 8px; /* Reduced Padding */
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--brand); /* Brand Color */
+        color: var(--brand);
         transition: background 0.2s;
     }
     .photo-grid-btn:hover {
         background: var(--surface-muted);
     }
     .photo-grid-btn .lucide {
-        width: 32px; /* Larger Icons */
-        height: 32px;
+        width: 24px; /* Slightly Smaller Icons */
+        height: 24px;
     }
 
     .photo-grid-btn.save-btn {
-        color: var(--brand); /* User Save Color */
+        color: var(--brand);
     }
     .photo-grid-btn.upload-btn {
-        color: #ef4444; /* Admin Upload Color (Red/Distinct) */
+        color: #ef4444;
     }
     .photo-grid-btn.close-btn {
-        color: var(--brand); /* Close button also brand color */
+        color: var(--brand);
     }
 
     .photo-grid-btn:disabled {
@@ -96,25 +98,25 @@ const styles = `
         overflow-y: auto;
         padding: 10px;
         display: grid;
-        grid-template-columns: repeat(3, 1fr); /* 3x3 Default */
+        grid-template-columns: repeat(3, 1fr);
         grid-auto-rows: 1fr;
         gap: 10px;
         align-content: start;
-        background: #000;
+        background: var(--bg); /* Theme Match */
     }
 
     @media (min-width: 1024px) {
         .photo-grid-content {
-            grid-template-columns: repeat(4, 1fr); /* 4x4 on Desktop */
+            grid-template-columns: repeat(4, 1fr);
         }
     }
 
     .photo-card {
         position: relative;
-        background: #222;
+        background: var(--surface-muted);
         border-radius: 4px;
         overflow: hidden;
-        aspect-ratio: 1; /* Square */
+        aspect-ratio: 1;
         border: 2px solid transparent;
         cursor: grab;
         transition: transform 0.1s;
@@ -186,7 +188,7 @@ const styles = `
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: #666;
+        color: var(--ink-soft);
         padding: 50px;
         text-align: center;
     }
@@ -430,7 +432,14 @@ function renderGrid() {
         // --- Click to View ---
         img.onclick = () => {
             // HIDE GRID WHEN OPENING VIEWER
-            if(gridOverlay) gridOverlay.style.opacity = '0';
+            // But we keep it active in DOM, just hidden visually to avoid Z-index mess if we want
+            // Actually, best practice is to keep it there but rely on Z-index.
+            // But user complained about "Black Hole".
+            // Since we set bg to var(--bg), it's opaque now.
+
+            // We don't need to set opacity 0 anymore if the Viewer covers everything perfectly.
+            // But to be safe and avoid double scrollbars or weird interactions:
+            // Let's NOT hide it, but just rely on the new Viewer Z-Index (21000).
 
             import('./photo-manager.js').then(pm => {
                 pm.setCurrentPhotos(currentGridPhotos.map(p => p.src), index);
@@ -438,44 +447,13 @@ function renderGrid() {
                 const viewerImg = document.getElementById('viewer-img');
                 const toolbar = document.getElementById('viewer-toolbar');
 
-                // Add Close Listener to restore Grid
-                const closeBtn = document.getElementById('viewer-btn-close');
-                // Ensure we don't stack listeners
-                const restoreGrid = () => {
-                    if(gridOverlay) gridOverlay.style.opacity = '1';
-                    // Clean up listener is handled by the viewer closing logic generally,
-                    // but we need to ensure this callback fires.
-                    // The viewer close logic in ui-photo-viewer.js handles display:none.
-                };
-
-                // We hook into the close button click
-                // But better: hook into the Viewer Close Logic if possible.
-                // For now, let's just add a temporary click listener to the close button
-                if(closeBtn) {
-                     // We need to capture the click BEFORE the viewer closes it?
-                     // Or just when it's clicked.
-                     const oldOnClick = closeBtn.onclick;
-                     closeBtn.onclick = (e) => {
-                         restoreGrid();
-                         if(oldOnClick) oldOnClick(e);
-                     };
-                }
-
-                // Also handle ESC key via global listener in ui-photo-viewer?
-                // We can add a one-time ESC listener here
-                const escListener = (e) => {
-                    if (e.key === 'Escape') {
-                        restoreGrid();
-                        document.removeEventListener('keydown', escListener);
-                    }
-                };
-                document.addEventListener('keydown', escListener);
-
+                // Viewer Open Logic is in ui-photo-viewer.js mostly but we trigger display here
                 if (viewer && viewerImg) {
                     viewerImg.src = photo.src;
-                    // FIX Z-INDEX CONFLICT: Viewer 20000, Grid 10050
-                    viewer.style.zIndex = '20000';
                     viewer.style.display = 'flex';
+                    // We rely on CSS update for Z-Index (next step) or force it here:
+                    viewer.style.zIndex = '21000';
+
                     if (toolbar) toolbar.style.display = 'flex';
 
                     // Hide Edit Actions in Viewer when opened from Grid
@@ -491,20 +469,28 @@ function renderGrid() {
         const actions = document.createElement('div');
         actions.className = 'photo-card-actions';
 
-        const btnDel = document.createElement('button');
-        btnDel.className = 'photo-card-btn delete';
-        btnDel.title = "Supprimer";
-        btnDel.innerHTML = `<i data-lucide="trash-2"></i>`;
-        btnDel.onclick = (e) => {
-            e.stopPropagation();
-            if(confirm("Supprimer cette photo ?")) {
-                currentGridPhotos.splice(index, 1);
-                isDirty = true;
-                renderGrid();
-            }
-        };
+        // CONDITIONAL DELETE BUTTON
+        // Only show if it's a local photo (data:image) OR if we are NOT in Admin Mode?
+        // User said: "Simplification : Tu retires la poubelle des photos qui sont sur le serveur"
 
-        actions.appendChild(btnDel);
+        const isServerPhoto = !photo.src.startsWith('data:image');
+
+        if (!isServerPhoto) {
+            const btnDel = document.createElement('button');
+            btnDel.className = 'photo-card-btn delete';
+            btnDel.title = "Supprimer";
+            btnDel.innerHTML = `<i data-lucide="trash-2"></i>`;
+            btnDel.onclick = (e) => {
+                e.stopPropagation();
+                if(confirm("Supprimer cette photo ?")) {
+                    currentGridPhotos.splice(index, 1);
+                    isDirty = true;
+                    renderGrid();
+                }
+            };
+            actions.appendChild(btnDel);
+        }
+
         card.appendChild(img);
         card.appendChild(actions);
 
