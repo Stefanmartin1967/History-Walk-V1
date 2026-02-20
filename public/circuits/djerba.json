@@ -76,6 +76,24 @@
     ]
   },
   {
+    "id": "HW-1771578509993",
+    "name": "Circuit de Mosquée El Maamoura à La Poste de Midoun via Mosquée El Azmouni",
+    "file": "djerba/Circuit de Mosquée El Maamoura à La Poste de Midoun via Mosquée El Azmouni.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.7 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Midoun",
+    "poiIds": [
+      "HW-01K77WPE682TM0N643W207BGNE",
+      "HW-01K77WPE69627R8AECX3S372Z3",
+      "HW-01K77WPE69NZS5NFTFBPG6V291",
+      "HW-01K77WPE697PHS21NP9P0JGJ6F",
+      "HW-AGVY6BXAX7HLGFO3CKDXA9DCML",
+      "HW-PC-1771480791691"
+    ]
+  },
+  {
     "id": "HW-1771317964994",
     "name": "Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou",
     "file": "djerba/Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou.gpx",
@@ -192,7 +210,8 @@
       "HW-01K77WPE68JWCXJ0TCG1EDSB7A",
       "HW-01K77WPE6QJNV1Q83SBNFKC88M",
       "HW-01K77WPE6Q0QEE8APATRE5K4MS",
-      "HW-01K77WPE6QN6S4TSGEZQ6DQGXA"
+      "HW-01K77WPE6QN6S4TSGEZQ6DQGXA",
+      "HW-PC-1771480791691"
     ]
   }
 ]
