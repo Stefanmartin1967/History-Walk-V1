@@ -155,20 +155,6 @@ export async function handleDesktopPhotoImport(filesList) {
                          break;
                     }
 
-                    // NEW FLOW: Open Photo Grid with preloaded photos
-                    // We assume user wants to review them for THIS poi.
-                    // If they want to skip to next poi, they close the grid?
-                    // Or we need a "Skip / Next POI" button in the grid?
-                    // The requirement says: "Il reste à voir comment gérer les photos qu'on n'a joutent pas au premier POI proposé... On ne les coche pas, elles apparaissent avec les photos du second POI le plus proche"
-
-                    // For now, let's keep it simple: We open the grid. User saves what they want.
-                    // The grid handles saving.
-                    // But we need to know what was NOT saved to pass to next iteration?
-                    // That's complex with the current "Grid is a standalone modal" approach.
-                    // Given the constraint "Use the same grid", maybe we just open it for the best candidate.
-
-                    // Let's use a simpler approach aligned with "Uniformiser":
-                    // Open Grid for the BEST candidate.
                     if (loader) loader.style.display = 'none';
 
                     // Pre-load photos
@@ -181,17 +167,21 @@ export async function handleDesktopPhotoImport(filesList) {
                     showToast(`Groupe ${i+1}: ${uniqueCluster.length} photos pour "${poiName}"`, "info");
 
                     // Open Grid and Wait for User Action
-                    await openPhotoGrid(poiId, preloaded);
+                    // UPDATE: Check for result.saved
+                    const result = await openPhotoGrid(poiId, preloaded);
 
-                    // Once closed (saved or skipped), we mark as assigned to continue logic
-                    // If saved, photos are in POI. If skipped, we move to next cluster.
-                    // Ideally we could handle "Skip this POI, try next one" but user workflow is simple:
-                    // "Open Grid -> Save what you want -> Close -> Next Cluster"
-                    processedCount += uniqueCluster.length; // Approximate count
-                    assigned = true;
-                    break; // Break "nearbyPois" loop to go to next cluster (i)
+                    if (result && result.saved) {
+                         processedCount += uniqueCluster.length; // Approximate count
+                         assigned = true;
+                         break; // Break "nearbyPois" loop to go to next cluster (i)
+                    }
+                    // If not saved, loop continues to next candidate
                 }
             }
+
+            // CRUCIAL FIX: If assigned (saved or all dups), skip the "Create New" fallback
+            if (assigned) continue;
+
 
             // CAS B : PAS DE POI PROCHE OU TOUS REFUSÉS -> PROPOSITION DE CRÉATION
             if (loader) loader.style.display = 'none';
