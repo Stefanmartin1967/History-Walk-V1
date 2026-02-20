@@ -204,6 +204,10 @@ export function getIconForFeature(feature) {
 }
 
 export function handleMarkerClick(feature) {
+    // Si ce marqueur est en cours de déplacement (via le bouton "Déplacer"), on ignore le clic
+    // Cela évite d'ajouter le point au circuit alors qu'on veut juste valider sa position
+    if (state.draggingMarkerId === getPoiId(feature)) return;
+
     clearMarkerHighlights();
     if (state.isSelectionModeActive) {
         // --- MODE SELECTION (ON) ---

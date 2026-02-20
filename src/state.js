@@ -37,6 +37,7 @@ export const state = {
     orthodromicPolyline: null,
     realTrackPolyline: null,
     ghostMarker: null, // Marqueur temporaire pour la recherche de coordonnées
+    draggingMarkerId: null, // Marqueur en cours de déplacement (pour ignorer le clic)
     filterCompleted: false,
     isAdmin: false, // Activation du "God Mode"
     selectionModeFilters: {
