@@ -16,8 +16,9 @@ export default defineConfig({
       workbox: {
         // Ajout explicite pour être sûr que fusion.html est mis en cache
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,geojson}'],
-        // Augmentation de la limite pour djerba.geojson (4.88MB+)
-        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024 // 6 MiB
+        // Augmentation de la limite pour djerba.geojson (4.88MB+ sur PC, 17.5MB chez l'user)
+        // On met 20 MiB pour être large et éviter les erreurs de build immédiates.
+        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024
       }
     })
   ],
