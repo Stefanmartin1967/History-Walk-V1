@@ -94,6 +94,20 @@
     ]
   },
   {
+    "id": "HW-1771678048762",
+    "name": "Circuit de Mosquée Hadherbach à Mosquée Al Hidaya",
+    "file": "djerba/Circuit de Mosquée Hadherbach à Mosquée Al Hidaya.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Midoun",
+    "poiIds": [
+      "HW-01K77WPE699CBRC4PV1ARJPXKM",
+      "HW-01K77WPE6QR67710KWTHBD0C6V"
+    ]
+  },
+  {
     "id": "HW-1771317964994",
     "name": "Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou",
     "file": "djerba/Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou.gpx",
