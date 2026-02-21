@@ -5,7 +5,7 @@ import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui.js';
 import { map } from './map.js';
 import { showAlert } from './modal.js';
-import { POI_RANKS } from './statistics.js';
+import { ANIMAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
 
@@ -341,17 +341,17 @@ function exportDestinationsConfig() {
 }
 
 function showRankTable() {
-    // Construction du tableau HTML
-    let tableRows = POI_RANKS.map(r => `
+    // Construction du tableau HTML pour les Animaux (Distance)
+    let tableRows = ANIMAL_RANKS.map(r => `
         <tr style="border-bottom: 1px solid var(--line);">
-            <td style="padding: 10px; color: ${r.color}; font-size: 24px;">
+            <td style="padding: 10px; font-size: 24px;">
                 <i data-lucide="${r.icon}"></i>
             </td>
             <td style="padding: 10px; text-align: left; font-weight: 600; color: var(--ink);">
                 ${r.title}
             </td>
             <td style="padding: 10px; text-align: right; color: var(--ink-soft); font-family: monospace;">
-                ${r.min}%
+                ${r.min} km
             </td>
         </tr>
     `).join('');
@@ -371,7 +371,7 @@ function showRankTable() {
                 </tbody>
             </table>
             <p style="margin-top: 15px; font-size: 12px; color: var(--ink-soft); font-style: italic;">
-                Le pourcentage est basé sur le nombre de lieux marqués comme "Visité" par rapport au total de lieux sur la carte.
+                Les rangs sont basés sur la distance totale parcourue (circuits terminés).
             </p>
         </div>
     `;
