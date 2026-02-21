@@ -101,9 +101,21 @@ export function calculateStats() {
 }
 
 function getCircuitDistance(circuit) {
+    // 1. Priorité absolue : La distance officielle affichée (string "6.0 km")
+    // Cela garantit que les stats matchent exactement ce que voit l'utilisateur
+    if (circuit.distance && typeof circuit.distance === 'string') {
+        const parsed = parseFloat(circuit.distance.replace(',', '.').replace(/[^\d.]/g, ''));
+        if (!isNaN(parsed) && parsed > 0) {
+            return parsed * 1000; // Conversion km -> mètres
+        }
+    }
+
+    // 2. Fallback : Calcul réel (si tracé GPS dispo)
     if (circuit.realTrack && circuit.realTrack.length > 0) {
         return getRealDistance(circuit);
     }
+
+    // 3. Fallback ultime : Vol d'oiseau
     const circuitFeatures = (circuit.poiIds || [])
         .map(id => state.loadedFeatures.find(f => getPoiId(f) === id))
         .filter(Boolean);
