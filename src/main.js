@@ -262,6 +262,9 @@ async function loadAndInitializeMap() {
         setSaveButtonsState(true);
         switchMobileView('circuits');
     } else {
+        // CORRECTION: On doit aussi peupler loadedFeatures sur Desktop
+        state.loadedFeatures = geojsonData.features || [];
+
         // INIT MAP UNE SEULE FOIS AVEC LA BONNE VUE
         // Plus de "Djerba default" puis "Jump"
         initMap(initialView.center, initialView.zoom);
