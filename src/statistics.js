@@ -234,9 +234,9 @@ export async function showStatisticsModal() {
                     <!-- COLONNE GAUCHE: AVATAR -->
                     <div class="card-col-left">
                         <div class="card-avatar-frame">
-                            <i data-lucide="user" style="color: #3e2723; width: 48px; height: 48px;"></i>
+                            <span class="xp-display-large">${stats.totalXP}</span>
                         </div>
-                        <div class="card-name">Nom du Marcheur</div>
+                        <div class="card-name-label">POINTS D'XP</div>
                     </div>
 
                     <!-- COLONNE DROITE: STATS -->
@@ -272,16 +272,16 @@ export async function showStatisticsModal() {
                             </div>
                         </div>
 
-                        <!-- BARRE 3: XP (GLOBAL) -->
+                        <!-- BARRE 3: RANG GLOBAL -->
                         <div class="stat-group">
                             <div class="stat-label">
-                                <span>POINTS D'AVENTURE</span>
+                                <span>RANG GLOBAL (${stats.globalRank.title.toUpperCase()})</span>
                             </div>
                             <div class="progress-bar-container">
                                 <div class="progress-bar-fill xp-fill" style="width: ${stats.xpProgressRel}%;"></div>
                             </div>
-                            <div class="stat-sublabel-right">
-                                Rang Global: <strong>${stats.globalRank.title}</strong>
+                            <div class="stat-sublabel">
+                                ${stats.nextGlobalRank ? 'Prochain: ' + stats.nextGlobalRank.title : 'Légende Vivante'}
                             </div>
                         </div>
 
@@ -393,7 +393,7 @@ export async function showStatisticsModal() {
                 height: 70px;
                 background: #d7ccc8;
                 border: 3px solid #5d4037;
-                border-radius: 50%; /* Cercle pour l'avatar */
+                border-radius: 50%; /* Cercle pour l'XP */
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -401,12 +401,21 @@ export async function showStatisticsModal() {
                 margin-bottom: 5px;
             }
 
-            .card-name {
+            .xp-display-large {
                 font-family: 'Cinzel', serif;
-                font-size: 9px;
+                font-size: 18px;
+                font-weight: 800;
+                color: #3e2723;
+            }
+
+            .card-name-label {
+                font-family: 'Cinzel', serif;
+                font-size: 8px;
                 font-weight: 700;
                 text-align: center;
                 line-height: 1.2;
+                text-transform: uppercase;
+                color: #5d4037;
             }
 
             /* RIGHT COL */
@@ -454,11 +463,6 @@ export async function showStatisticsModal() {
                 font-style: italic;
                 opacity: 0.7;
                 text-align: right;
-            }
-            .stat-sublabel-right {
-                font-size: 7px;
-                text-align: right;
-                opacity: 0.8;
             }
 
             .progress-bar-container {
@@ -584,10 +588,11 @@ export async function showStatisticsModal() {
 
                 /* Font Scaling for Print */
                 .card-title-main { font-size: 10pt !important; }
-                .card-name { font-size: 6pt !important; }
+                .card-name-label { font-size: 6pt !important; }
+                .xp-display-large { font-size: 14pt !important; }
                 .rank-text-large { font-size: 11pt !important; }
                 .stat-label { font-size: 5pt !important; }
-                .stat-sublabel, .stat-sublabel-right { font-size: 4pt !important; }
+                .stat-sublabel { font-size: 4pt !important; }
                 .footer-item { font-size: 5pt !important; }
 
                 .card-avatar-frame {
@@ -632,10 +637,6 @@ function printCardElement() {
     const cardClone = cardElement.cloneNode(true);
 
     // Copy computed styles for gradients/bg
-    // Note: CSS defined in style block is not auto-copied to iframe head unless we inject it.
-    // So we need to inject the CSS block again or inline styles.
-    // The previous implementation injected styles in the iframe head.
-
     doc.open();
     doc.write(`
         <!DOCTYPE html>
@@ -685,7 +686,8 @@ function printCardElement() {
 
                 .card-col-left { width: 30%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
                 .card-avatar-frame { width: 15mm; height: 15mm; background: #d7ccc8; border: 0.5mm solid #5d4037; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1mm; }
-                .card-name { font-family: 'Cinzel', serif; font-size: 6pt; font-weight: 700; text-align: center; }
+                .xp-display-large { font-family: 'Cinzel', serif; font-size: 14pt; font-weight: 800; color: #3e2723; }
+                .card-name-label { font-family: 'Cinzel', serif; font-size: 6pt; font-weight: 700; text-align: center; color: #5d4037; }
 
                 .card-col-right { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 1.5mm; }
                 .rank-display { margin-bottom: 1mm; }
@@ -694,7 +696,6 @@ function printCardElement() {
                 .stat-group { display: flex; flex-direction: column; gap: 0.5mm; }
                 .stat-label { font-size: 5pt; font-weight: 700; text-transform: uppercase; display: flex; justify-content: space-between; opacity: 0.9; }
                 .stat-sublabel { font-size: 4pt; font-style: italic; opacity: 0.7; text-align: right; }
-                .stat-sublabel-right { font-size: 4pt; text-align: right; opacity: 0.8; }
 
                 .progress-bar-container { width: 100%; height: 2mm; background: rgba(62, 39, 35, 0.15); border-radius: 1mm; overflow: hidden; border: 0.1mm solid rgba(62, 39, 35, 0.1); }
                 .progress-bar-fill { height: 100%; border-radius: 1mm; }
