@@ -1,75 +1,199 @@
-# Carnet de Voyage - Point sur les Rangs et la Progression
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        :root {
+            --bg-parchment: #f4ecd8;
+            --accent-copper: #b87333;
+            --text-dark: #2c2c2c;
+            --progress-bg: rgba(0, 0, 0, 0.1);
+        }
 
-Ce document récapitule la logique actuelle (implémentée dans `src/statistics.js`) pour le calcul des rangs, des stades et de la pondération.
+        .explorer-card {
+            width: 450px;
+            height: 280px;
+            background: var(--bg-parchment);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-dark);
+            position: relative;
+            border: 2px solid #e2d1a8;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-## 1. Pondération Globale (XP)
+        .header { display: flex; align-items: center; gap: 20px; }
 
-L'expérience (XP) est calculée sur une base de **20 000 points maximum**, répartis équitablement entre la distance parcourue et le nombre de circuits terminés.
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #ccc;
+            border: 4px solid var(--accent-copper);
+            overflow: hidden;
+        }
 
-**Formule :**
-`XP = (DistanceParcourue / DistanceTotaleOfficielle * 10 000) + (CircuitsTermines / CircuitsTotauxOfficiels * 10 000)`
+        .title-area h2 {
+            margin: 0;
+            font-family: 'Georgia', serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 1.4rem;
+        }
 
-- **Distance :** 50% de la note (10 000 XP max)
-- **Circuits :** 50% de la note (10 000 XP max)
+        .global-rank {
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #666;
+        }
 
-### Rangs Globaux (Basés sur l'XP Total)
+        .stats-container { margin-top: 15px; }
 
-| XP Minimum | Titre |
-| :--- | :--- |
-| 20 000 | **Lueur d'Éternité** (100%) |
-| 17 000 | Souffle Céleste |
-| 13 500 | Sagesse des Sables |
-| 10 000 | Regard d'Horizon |
-| 7 000 | Sillage d'Argent |
-| 4 500 | Âme Vagabonde |
-| 2 500 | Cœur Vaillant |
-| 1 200 | Esprit Curieux |
-| 500 | Petite Étincelle |
-| 0 | Premier Souffle |
+        .stat-group { margin-bottom: 12px; }
 
----
+        .stat-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
 
-## 2. Rangs Animaux (Basés sur la Distance)
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: var(--progress-bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }
 
-Ces rangs sont déterminés par le **pourcentage de la distance totale officielle** parcourue.
-*Note : Dans l'interface d'administration actuelle, ces valeurs peuvent apparaître avec l'unité "km", mais le code utilise bien des pourcentages (0-100%).*
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-copper), #e68a3e);
+            transition: width 0.5s ease-in-out;
+        }
 
-| Pourcentage Min | Titre | Icône | Description |
-| :--- | :--- | :--- | :--- |
-| 90% | **Phénix** | flame | Légendaire |
-| 80% | Aigle Royal | bird | Vue d'ensemble sur l'île |
-| 70% | Ours Polaire | snowflake | Un marcheur confirmé |
-| 60% | Grand Cerf | crown | Majestueux |
-| 50% | Loup | paw-print | L'endurance s'installe |
-| 40% | Chamois | mountain | On grimpe en compétence |
-| 30% | Lynx | eye | L'agilité augmente |
-| 20% | Renard | dog | On sort des sentiers battus |
-| 10% | Hérisson | sprout | On commence à explorer |
-| 0% | Colibri | feather | Les premiers pas |
+        .footer-stats {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 10px;
+            font-size: 0.8rem;
+        }
 
----
+        .next-goal { font-size: 0.7rem; color: #888; margin-top: 2px; text-align: right; }
+    </style>
+</head>
+<body>
 
-## 3. Rangs Matières (Basés sur les Circuits)
+<div class="explorer-card">
+    <div class="header">
+        <div class="avatar">
+            <img src="https://via.placeholder.com/80" alt="Avatar">
+        </div>
+        <div class="title-area">
+            <h2 id="dynamic-title">Chargement...</h2>
+            <div id="global-rank-label" class="global-rank">Rang : --</div>
+        </div>
+    </div>
 
-Ces rangs sont déterminés par le **pourcentage du nombre total de circuits officiels** terminés.
+    <div class="stats-container">
+        <div class="stat-group">
+            <div class="stat-label">
+                <span id="label-animal">Distance</span>
+                <span id="val-distance">0 km</span>
+            </div>
+            <div class="progress-bar-container">
+                <div id="bar-distance" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="goal-distance" class="next-goal">Objectif : --</div>
+        </div>
 
-| Pourcentage Min | Titre | Couleur |
-| :--- | :--- | :--- |
-| 90% | **Diamant** | #b9f2ff |
-| 80% | Saphir | #0F52BA |
-| 70% | Cristal | #e6e6fa |
-| 60% | Or | #FFD700 |
-| 50% | Argent | #C0C0C0 |
-| 40% | Acier | #434B4D |
-| 30% | Bronze | #CD7F32 |
-| 20% | Cuivre | #B87333 |
-| 10% | Pierre | #888888 |
-| 0% | Bois | #8B4513 |
+        <div class="stat-group">
+            <div class="stat-label">
+                <span id="label-matiere">Circuits</span>
+                <span id="val-circuits">0</span>
+            </div>
+            <div class="progress-bar-container">
+                <div id="bar-circuits" class="progress-fill" style="width: 0%"></div>
+            </div>
+            <div id="goal-circuits" class="next-goal">Objectif : --</div>
+        </div>
+    </div>
 
----
+    <div class="footer-stats">
+        <div>📍 <span id="footer-km">--</span> km à parcourir</div>
+        <div>🗺️ <span id="footer-circuits">--</span> défis en attente</div>
+    </div>
+</div>
 
-## Résumé Technique
+<script>
+    // Configuration issue de tes images
+    const CONFIG = {
+        paliers: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+        animaux: ["Colibri", "Hérisson", "Renard", "Lynx", "Chamois", "Loup", "Grand Cerf", "Ours Polaire", "Aigle Royal", "Phénix"],
+        matieres: ["Bois", "Pierre", "Cuivre", "Bronze", "Acier", "Argent", "Or", "Cristal", "Saphir", "Diamant"],
+        rangs: ["Premier Souffle", "Petite Étincelle", "Esprit Curieux", "Cœur Vaillant", "Âme Vagabonde", "Sillage d'Argent", "Regard d'Horizon", "Sagesse des Sables", "Souffle Céleste", "Lueur d'Éternité"]
+    };
 
-- **Fichier source :** `src/statistics.js`
-- **Variables exportées :** `GLOBAL_RANKS`, `ANIMAL_RANKS`, `MATERIAL_RANKS`
-- **Calcul :** Fonction `calculateStats()`
+    // DONNÉES À INJECTER PAR TON APPLI
+    const userStats = {
+        kmParcourus: 37.5,
+        totalKmCircuits: 100.0,
+        circuitsTermines: 6,
+        totalCircuitsDisponibles: 20
+    };
+
+    function updateCard() {
+        // 1. Calcul des pourcentages globaux
+        const pctDist = (userStats.kmParcourus / userStats.totalKmCircuits) * 100;
+        const pctCirc = (userStats.circuitsTermines / userStats.totalCircuitsDisponibles) * 100;
+        const pctGlobal = (pctDist * pctCirc) / 100; // Système Hardcore
+
+        // 2. Trouver les rangs actuels
+        const getRankInfo = (pct, list) => {
+            let idx = CONFIG.paliers.findIndex(p => pct < p) - 1;
+            if (idx < 0) idx = CONFIG.paliers.length - 1; // Max ou défaut
+            return {
+                title: list[idx] || list[list.length-1],
+                nextLimit: CONFIG.paliers[idx+1] || 100
+            };
+        };
+
+        const rankAnimal = getRankInfo(pctDist, CONFIG.animaux);
+        const rankMatiere = getRankInfo(pctCirc, CONFIG.matieres);
+        const rankGlobal = getRankInfo(pctGlobal, CONFIG.rangs);
+
+        // 3. Mise à jour DOM
+        document.getElementById('dynamic-title').innerText = `${rankAnimal.title} de ${rankMatiere.title}`;
+        document.getElementById('global-rank-label').innerText = `Rang : ${rankGlobal.title}`;
+
+        // Barres
+        document.getElementById('bar-distance').style.width = `${pctDist}%`;
+        document.getElementById('bar-circuits').style.width = `${pctCirc}%`;
+
+        // Textes
+        document.getElementById('val-distance').innerText = `${userStats.kmParcourus} km / ${userStats.totalKmCircuits} km`;
+        document.getElementById('val-circuits').innerText = `${userStats.circuitsTermines} / ${userStats.totalCircuitsDisponibles}`;
+
+        // Footer & Objectifs
+        const kmRestants = (userStats.totalKmCircuits - userStats.kmParcourus).toFixed(1);
+        const circuitsRestants = userStats.totalCircuitsDisponibles - userStats.circuitsTermines;
+
+        document.getElementById('footer-km').innerText = kmRestants;
+        document.getElementById('footer-circuits').innerText = circuitsRestants;
+
+        document.getElementById('goal-distance').innerText = `Prochain palier : ${rankAnimal.nextLimit}%`;
+        document.getElementById('goal-circuits').innerText = `Prochain palier : ${rankMatiere.nextLimit}%`;
+    }
+
+    // Init
+    updateCard();
+</script>
+</body>
+</html>
