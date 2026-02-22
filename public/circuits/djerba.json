@@ -127,6 +127,20 @@
     ]
   },
   {
+    "id": "HW-1771742072502",
+    "name": "Circuit de Mosquée Sidi Jmour à Mosquée El Fquira (Mezran)",
+    "file": "djerba/Circuit de Mosquée Sidi Jmour à Mosquée El Fquira (Mezran).gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.1 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El Groa",
+    "poiIds": [
+      "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
+      "HW-PC-1771441437248"
+    ]
+  },
+  {
     "id": "HW-1771481510099",
     "name": "Circuit de Mosquée Sidi Sabah à Chez Adel via Mosquée Wichniya",
     "file": "djerba/Circuit de Mosquée Sidi Sabah à Chez Adel via Mosquée Wichniya.gpx",
