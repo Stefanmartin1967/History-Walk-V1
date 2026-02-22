@@ -82,7 +82,8 @@ export async function saveUserData(forceFullMode = false) {
         },
         userData: JSON.parse(JSON.stringify(state.userData)), 
         myCircuits: state.myCircuits,
-        hiddenPoiIds: state.hiddenPoiIds
+        hiddenPoiIds: state.hiddenPoiIds,
+        officialCircuitsStatus: state.officialCircuitsStatus || {}
     };
 
     if (!includePhotos) {
@@ -204,7 +205,13 @@ async function restoreBackup(json) {
             await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
         }
 
-        // 5. Rafraîchissement UI
+        // 5. Restaurer le statut des circuits officiels
+        if (json.officialCircuitsStatus) {
+            state.officialCircuitsStatus = json.officialCircuitsStatus;
+            await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
+        }
+
+        // 6. Rafraîchissement UI
         if (closeDetailsPanel) closeDetailsPanel();
 
         if (isMobileView()) {
