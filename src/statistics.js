@@ -188,254 +188,323 @@ export async function showStatisticsModal() {
     // Ex: "Renard de Bronze"
     const badgeTitle = `${stats.animalRank.title} de ${stats.materialRank.title}`;
 
-    const html = `
-        <div class="walker-card">
+    // -- HTML: Format CARTE BANCAIRE (Paysage) --
+    // Dimensions standard ISO/IEC 7810 ID-1 : 85.60 × 53.98 mm -> Ratio ~1.58
+    // On va utiliser un conteneur relatif et une mise en page CSS Grid/Flex
 
-            <!-- EN-TÊTE : RANG GLOBAL -->
-            <div class="card-header" style="border-bottom: 2px solid ${stats.materialRank.color};">
-                <div class="card-identity">
-                    <div class="card-avatar-wrapper ${stats.materialRank.cssClass}" style="border-color: ${stats.materialRank.color}; box-shadow: 0 0 15px ${stats.materialRank.color}40;">
+    const html = `
+        <div class="walker-card-container">
+            <!-- CARTE RECTO -->
+            <div class="walker-card" id="walker-card-print">
+                <!-- COLONNE GAUCHE : IDENTITÉ -->
+                <div class="card-left-col">
+                    <div class="card-avatar-container ${stats.materialRank.cssClass}" style="border-color: ${stats.materialRank.color}; box-shadow: 0 0 10px ${stats.materialRank.color}40;">
                         <i data-lucide="${stats.animalRank.icon}" class="card-avatar-icon" style="color: ${stats.materialRank.color};"></i>
                     </div>
-                    <div class="card-titles">
-                        <div class="global-rank-title" style="color: var(--ink); text-transform: uppercase; font-size: 14px; letter-spacing: 2px;">Rang Global</div>
-                        <div class="card-rank-title" style="color: ${stats.materialRank.color}; font-size: 28px;">${stats.globalRank.title}</div>
-                        <div class="card-subtitle badge-name">${badgeTitle}</div>
+                    <div class="card-identity-text">
+                        <div class="identity-name">History Walk</div>
+                        <div class="identity-rank" style="color: ${stats.materialRank.color};">${stats.globalRank.title}</div>
+                        <div class="identity-badge">${badgeTitle}</div>
                     </div>
                 </div>
 
-                <!-- JAUGE XP GLOBALE -->
-                <div class="global-xp-container">
-                    <div class="xp-info">
-                        <span class="xp-val">${stats.totalXP} XP</span>
-                        <span class="xp-target">${stats.nextGlobalRank ? `Prochain: ${stats.nextGlobalRank.title} (${stats.nextGlobalRank.min} XP)` : 'Niveau Max'}</span>
+                <!-- COLONNE DROITE : STATS -->
+                <div class="card-right-col">
+                    <!-- XP BAR -->
+                    <div class="stat-mini-row">
+                        <div class="stat-label-mini">XP <span class="stat-val-mini">${stats.totalXP}</span></div>
+                        <div class="progress-track-mini">
+                            <div class="progress-fill-mini" style="width: ${xpProgress}%; background: linear-gradient(90deg, ${stats.materialRank.color}, var(--brand));"></div>
+                        </div>
                     </div>
-                    <div class="progress-track xp-track">
-                        <div class="progress-fill xp-fill" style="width: ${xpProgress}%; background: linear-gradient(90deg, ${stats.materialRank.color}, var(--brand));"></div>
+
+                    <!-- DISTANCE -->
+                    <div class="stat-mini-row">
+                        <div class="stat-label-mini">
+                            <i data-lucide="footprints" class="mini-icon"></i> ${stats.userOfficialKm} km
+                        </div>
+                        <div class="progress-track-mini">
+                            <div class="progress-fill-mini" style="width: ${stats.distancePercent}%; background: var(--brand);"></div>
+                        </div>
+                    </div>
+
+                    <!-- CIRCUITS -->
+                    <div class="stat-mini-row">
+                        <div class="stat-label-mini">
+                            <i data-lucide="map" class="mini-icon"></i> ${stats.userOfficialCircuits} circ.
+                        </div>
+                        <div class="progress-track-mini">
+                            <div class="progress-fill-mini" style="width: ${stats.circuitPercent}%; background: ${stats.materialRank.color};"></div>
+                        </div>
+                    </div>
+
+                    <!-- MINI STATS GRID (Bas de carte) -->
+                    <div class="card-mini-grid">
+                        <div class="grid-item">
+                            <div class="grid-val">${stats.visitedPois}</div>
+                            <div class="grid-lbl">Lieux</div>
+                        </div>
+                        <div class="grid-item">
+                            <div class="grid-val">${stats.poiPercent}%</div>
+                            <div class="grid-lbl">Découv.</div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- BANDE DECO EN BAS -->
+                <div class="card-bottom-strip" style="background: ${stats.materialRank.color};"></div>
             </div>
 
-            <div class="card-body">
-
-                <!-- SECTION 1 : DISTANCE (ANIMAL) -->
-                <div class="stat-row">
-                    <div class="stat-icon-col">
-                        <i data-lucide="footprints" style="color: var(--ink-soft);"></i>
-                    </div>
-                    <div class="stat-content-col">
-                        <div class="stat-header">
-                            <span class="stat-label">Distance (Officielle)</span>
-                            <span class="stat-value">${stats.userOfficialKm} / ${stats.totalOfficialKmAvailable} km</span>
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width: ${stats.distancePercent}%; background: var(--brand);"></div>
-                        </div>
-                        <div class="stat-footer">
-                            <span class="current-rank">${stats.animalRank.title}</span>
-                            <span class="next-objective">${Math.round(stats.distancePercent)}% complété</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION 2 : CIRCUITS (MATIÈRE) -->
-                <div class="stat-row">
-                    <div class="stat-icon-col">
-                        <i data-lucide="map" style="color: var(--ink-soft);"></i>
-                    </div>
-                    <div class="stat-content-col">
-                        <div class="stat-header">
-                            <span class="stat-label">Circuits (Officiels)</span>
-                            <span class="stat-value">${stats.userOfficialCircuits} / ${stats.totalOfficialCircuitsAvailable}</span>
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width: ${stats.circuitPercent}%; background: ${stats.materialRank.color};"></div>
-                        </div>
-                        <div class="stat-footer">
-                            <span class="current-rank" style="color:${stats.materialRank.color}; font-weight:600;">${stats.materialRank.title}</span>
-                            <span class="next-objective">${Math.round(stats.circuitPercent)}% complété</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION 3 : EXTRA -->
-                <div class="mini-stats-grid">
-                    <div class="mini-stat">
-                        <div class="mini-val">${stats.visitedPois}</div>
-                        <div class="mini-lbl">Lieux</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-val">${stats.poiPercent}%</div>
-                        <div class="mini-lbl">Découverte</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-val">${stats.totalOfficialCircuitsAvailable}</div>
-                        <div class="mini-lbl">Circuits</div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="card-footer">
-                "Plus le chemin est long, plus le récit est beau."
+            <!-- BOUTON IMPRESSION -->
+            <div class="card-actions">
+                <button id="btn-print-card" class="action-btn-print">
+                    <i data-lucide="printer"></i> Imprimer ma carte
+                </button>
             </div>
         </div>
 
         <style>
-            .walker-card {
-                font-family: 'Segoe UI', system-ui, sans-serif;
-                color: var(--ink);
-            }
-            .card-header {
-                padding-bottom: 20px;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-            .card-identity {
+            /* --- CONTENEUR GLOBAL --- */
+            .walker-card-container {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 10px;
-                margin-bottom: 20px;
-            }
-            .card-avatar-wrapper {
-                width: 80px;
-                height: 80px;
-                border-radius: 50%;
-                border: 4px solid #ccc;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--surface);
-                transition: transform 0.3s ease;
-            }
-            .card-avatar-wrapper:hover {
-                transform: scale(1.05) rotate(5deg);
-            }
-            .card-avatar-icon {
-                width: 40px;
-                height: 40px;
-            }
-            .card-rank-title {
-                font-weight: 800;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                margin-top: 5px;
-                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            }
-            .badge-name {
-                font-size: 16px;
-                font-weight: 600;
-                color: var(--ink-soft);
-                margin-top: 5px;
-            }
-            .global-xp-container {
-                margin-top: 15px;
-                text-align: left;
-            }
-            .xp-info {
-                display: flex;
-                justify-content: space-between;
-                font-size: 12px;
-                margin-bottom: 4px;
-                color: var(--ink-soft);
-                font-weight: 600;
-            }
-            .xp-track {
-                height: 12px;
-                background: var(--surface-muted);
-                border: 1px solid var(--line);
-            }
-            .xp-fill {
-                transition: width 1s ease-out;
-            }
-            .stat-row {
-                display: flex;
-                gap: 15px;
-                margin-bottom: 25px;
-                align-items: center;
-            }
-            .stat-icon-col {
-                width: 40px;
-                display: flex;
-                justify-content: center;
-            }
-            .stat-icon-col i {
-                width: 24px;
-                height: 24px;
-            }
-            .stat-content-col {
-                flex: 1;
-            }
-            .stat-header {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 6px;
-                font-size: 14px;
-            }
-            .stat-label { font-weight: 600; color: var(--ink); }
-            .stat-value { font-weight: 700; color: var(--ink); }
-            .progress-track {
-                height: 8px;
-                background: var(--surface-muted);
-                border-radius: 4px;
-                overflow: hidden;
-                margin-bottom: 6px;
-            }
-            .progress-fill {
-                height: 100%;
-                border-radius: 4px;
-                transition: width 1s ease-out;
-            }
-            .stat-footer {
-                display: flex;
-                justify-content: space-between;
-                font-size: 12px;
-            }
-            .current-rank { font-weight: 700; text-transform: uppercase; }
-            .next-objective { color: var(--ink-soft); }
-            .mini-stats-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-                background: var(--surface-muted);
-                border-radius: 12px;
-                padding: 15px;
-                margin-top: 10px;
-            }
-            .mini-stat {
-                text-align: center;
-            }
-            .mini-val {
-                font-size: 18px;
-                font-weight: 700;
-                color: var(--brand);
-            }
-            .mini-lbl {
-                font-size: 11px;
-                color: var(--ink-soft);
-                text-transform: uppercase;
-                margin-top: 2px;
-            }
-            .card-footer {
-                margin-top: 20px;
-                text-align: center;
-                font-size: 12px;
-                color: var(--ink-soft);
-                font-style: italic;
+                gap: 20px;
+                padding: 10px;
+                background: transparent;
             }
 
-            /* EFFETS DE MATIÈRE */
-            .rank-wood { background: #8B4513; }
-            .rank-stone { background: #888888; }
-            .rank-copper { background: #B87333; }
-            .rank-bronze { background: #CD7F32; }
-            .rank-steel { background: #434B4D; }
-            .rank-silver { background: radial-gradient(circle at 30% 30%, #f0f0f0, #c0c0c0); }
-            .rank-gold { background: radial-gradient(circle at 30% 30%, #fffbe0, #ffd700); }
-            .rank-crystal { background: radial-gradient(circle at 30% 30%, #ffffff, #e6e6fa); }
-            .rank-sapphire { background: radial-gradient(circle at 30% 30%, #4facfe, #00f2fe); }
-            .rank-diamond { background: radial-gradient(circle at 30% 30%, #e0faff, #b9f2ff); }
+            /* --- LA CARTE --- */
+            .walker-card {
+                position: relative;
+                width: 340px; /* Base width */
+                height: 215px; /* Ratio ~1.58 (Bank Card) */
+                background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); /* Dark theme default */
+                border-radius: 12px; /* Rounded corners standard ISO */
+                box-shadow: 0 10px 25px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+                display: flex;
+                overflow: hidden;
+                color: white;
+                font-family: 'Segoe UI', system-ui, sans-serif;
+            }
+
+            /* Mode Clair Support (Optionnel, ici on force un look "Carte Premium" sombre) */
+
+            /* --- COLONNE GAUCHE --- */
+            .card-left-col {
+                width: 40%;
+                padding: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: rgba(255,255,255,0.03);
+                border-right: 1px solid rgba(255,255,255,0.05);
+                z-index: 2;
+            }
+
+            .card-avatar-container {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.1);
+                border: 3px solid #ccc; /* Default */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 12px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            }
+
+            .card-avatar-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .card-identity-text {
+                text-align: center;
+            }
+
+            .identity-name {
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                opacity: 0.6;
+                margin-bottom: 4px;
+            }
+
+            .identity-rank {
+                font-size: 16px; /* Plus petit pour tenir */
+                font-weight: 700;
+                line-height: 1.2;
+                margin-bottom: 4px;
+                text-transform: uppercase;
+            }
+
+            .identity-badge {
+                font-size: 11px;
+                font-style: italic;
+                opacity: 0.8;
+                color: #cbd5e1;
+            }
+
+            /* --- COLONNE DROITE --- */
+            .card-right-col {
+                flex: 1;
+                padding: 15px 15px 25px 15px; /* Bottom padding pour la bande */
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                gap: 12px;
+                position: relative;
+                z-index: 2;
+            }
+
+            .stat-mini-row {
+                width: 100%;
+            }
+
+            .stat-label-mini {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 11px;
+                font-weight: 600;
+                margin-bottom: 4px;
+                color: #e2e8f0;
+            }
+
+            .stat-val-mini {
+                font-weight: 700;
+                color: white;
+            }
+
+            .mini-icon {
+                width: 12px;
+                height: 12px;
+                margin-right: 4px;
+                opacity: 0.7;
+            }
+
+            .progress-track-mini {
+                width: 100%;
+                height: 6px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 3px;
+                overflow: hidden;
+            }
+
+            .progress-fill-mini {
+                height: 100%;
+                border-radius: 3px;
+                transition: width 0.5s ease;
+            }
+
+            .card-mini-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-top: 4px;
+            }
+
+            .grid-item {
+                background: rgba(255,255,255,0.05);
+                border-radius: 6px;
+                padding: 4px;
+                text-align: center;
+                border: 1px solid rgba(255,255,255,0.05);
+            }
+
+            .grid-val {
+                font-size: 13px;
+                font-weight: 700;
+                color: white;
+            }
+
+            .grid-lbl {
+                font-size: 9px;
+                text-transform: uppercase;
+                opacity: 0.6;
+            }
+
+            /* --- BANDE DECO --- */
+            .card-bottom-strip {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 6px;
+                z-index: 1;
+                opacity: 0.8;
+            }
+
+            /* --- BOUTON PRINT --- */
+            .action-btn-print {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 20px;
+                background: var(--surface);
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                color: var(--ink);
+            }
+
+            .action-btn-print:hover {
+                background: var(--surface-muted);
+                transform: translateY(-1px);
+            }
+
+            /* --- STYLE D'IMPRESSION SPÉCIFIQUE --- */
+            @media print {
+                body * {
+                    visibility: hidden;
+                }
+                #custom-modal-message, #custom-modal-message * {
+                    visibility: visible;
+                }
+                /* Cacher tout sauf la carte */
+                .custom-modal-overlay, .custom-modal-box, .custom-modal-title, .custom-modal-actions, .card-actions {
+                    display: none !important;
+                }
+
+                /* Positionner la carte au centre de la page A4 */
+                .walker-card-container {
+                    position: fixed;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: white !important; /* Force white paper bg */
+                    padding: 0;
+                    margin: 0;
+                }
+
+                .walker-card {
+                    /* Force Print Size */
+                    width: 85.6mm !important;
+                    height: 53.98mm !important;
+                    box-shadow: none !important; /* No shadow on print */
+                    border: 1px solid #ddd; /* Light border for cutting */
+                    print-color-adjust: exact !important;
+                    -webkit-print-color-adjust: exact !important;
+                }
+
+                /* Ajuster les polices pour la taille physique */
+                .identity-rank { font-size: 11pt !important; }
+                .identity-badge { font-size: 7pt !important; }
+                .stat-label-mini { font-size: 6pt !important; }
+                .grid-val { font-size: 8pt !important; }
+                .grid-lbl { font-size: 5pt !important; }
+                .card-avatar-container { width: 15mm !important; height: 15mm !important; }
+            }
         </style>
     `;
 
@@ -444,5 +513,198 @@ export async function showStatisticsModal() {
     const modalContent = document.getElementById('custom-modal-message');
     if (modalContent) {
         createIcons({ icons, root: modalContent });
+
+        // Add Print Listener
+        const btnPrint = document.getElementById('btn-print-card');
+        if (btnPrint) {
+            btnPrint.addEventListener('click', () => {
+                // Créer une fenêtre d'impression dédiée pour éviter les conflits CSS globaux
+                printCardElement();
+            });
+        }
     }
+}
+
+function printCardElement() {
+    const cardElement = document.getElementById('walker-card-print');
+    if (!cardElement) return;
+
+    // Créer une iframe invisible pour l'impression
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+
+    // Récupérer les styles calculés ou insérer les styles nécessaires
+    // Pour simplifier, on réinjecte le style de la carte
+    // On doit cloner l'élément pour ne pas déplacer l'original
+    const cardClone = cardElement.cloneNode(true);
+
+    doc.open();
+    doc.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Impression Carte Walker</title>
+            <style>
+                @page {
+                    size: A4;
+                    margin: 0;
+                }
+                body {
+                    margin: 0;
+                    padding: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100vh;
+                    font-family: sans-serif;
+                }
+                .walker-card {
+                    position: relative;
+                    width: 85.6mm;
+                    height: 53.98mm;
+                    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+                    border-radius: 3.18mm; /* Standard corner radius ~3mm */
+                    display: flex;
+                    overflow: hidden;
+                    color: white;
+                    border: 1px dashed #ccc; /* Guide de découpe */
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+
+                /* Réplication des styles CSS de la modale pour l'impression */
+                /* Copier ici les styles critiques */
+                .card-left-col {
+                    width: 40%;
+                    padding: 4mm;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    background: rgba(255,255,255,0.03);
+                    border-right: 1px solid rgba(255,255,255,0.05);
+                    box-sizing: border-box;
+                }
+                .card-right-col {
+                    flex: 1;
+                    padding: 4mm 4mm 6mm 4mm;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    gap: 3mm;
+                    position: relative;
+                    box-sizing: border-box;
+                }
+                .card-avatar-container {
+                    width: 15mm;
+                    height: 15mm;
+                    border-radius: 50%;
+                    background: rgba(255,255,255,0.1);
+                    border: 1px solid #ccc;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-bottom: 3mm;
+                }
+                .card-avatar-icon {
+                    width: 8mm;
+                    height: 8mm;
+                }
+                .identity-name {
+                    font-size: 6pt;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    opacity: 0.6;
+                    margin-bottom: 1mm;
+                    text-align: center;
+                }
+                .identity-rank {
+                    font-size: 9pt;
+                    font-weight: 700;
+                    line-height: 1.2;
+                    margin-bottom: 1mm;
+                    text-transform: uppercase;
+                    text-align: center;
+                }
+                .identity-badge {
+                    font-size: 7pt;
+                    font-style: italic;
+                    opacity: 0.8;
+                    color: #cbd5e1;
+                    text-align: center;
+                }
+                .stat-mini-row { width: 100%; }
+                .stat-label-mini {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 6pt;
+                    font-weight: 600;
+                    margin-bottom: 1mm;
+                    color: #e2e8f0;
+                }
+                .progress-track-mini {
+                    width: 100%;
+                    height: 1.5mm;
+                    background: rgba(255,255,255,0.1);
+                    border-radius: 1mm;
+                    overflow: hidden;
+                }
+                .progress-fill-mini {
+                    height: 100%;
+                    border-radius: 1mm;
+                }
+                .card-mini-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 2mm;
+                    margin-top: 2mm;
+                }
+                .grid-item {
+                    background: rgba(255,255,255,0.05);
+                    border-radius: 2mm;
+                    padding: 1mm;
+                    text-align: center;
+                    border: 1px solid rgba(255,255,255,0.05);
+                }
+                .grid-val { font-size: 8pt; font-weight: 700; }
+                .grid-lbl { font-size: 5pt; text-transform: uppercase; opacity: 0.6; }
+                .card-bottom-strip {
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 1.5mm;
+                    z-index: 1;
+                    opacity: 0.8;
+                }
+                /* Reset icons */
+                svg { width: 100%; height: 100%; }
+            </style>
+            <!-- Lucide Icons Script from CDN for the print preview if needed, or inline SVG -->
+            <!-- Since we use createIcons, the SVGs are already in the DOM structure of cardClone -->
+        </head>
+        <body>
+            <!-- Content -->
+        </body>
+        </html>
+    `);
+
+    doc.body.appendChild(cardClone);
+    doc.close();
+
+    // Attendre que le contenu soit rendu
+    setTimeout(() => {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+        // Nettoyage après impression (ou annulation)
+        setTimeout(() => document.body.removeChild(iframe), 2000);
+    }, 500);
 }
