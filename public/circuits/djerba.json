@@ -94,6 +94,24 @@
     ]
   },
   {
+    "id": "HW-1771742968853",
+    "name": "Circuit de Mosquée El Methania à Restaurant MBAREK via Mosquée Ettouil",
+    "file": "djerba/Circuit de Mosquée El Methania à Restaurant MBAREK via Mosquée Ettouil.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.8 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Ajim",
+    "poiIds": [
+      "HW-01K77WPE6PDSWXWVZZR4ZDNXVX",
+      "HW-01K77WPE6PP29CK1JR2H25ACNK",
+      "HW-01K77WPE6PG0DA193W44FBQAHQ",
+      "HW-01K77WPE6P30E9MGC3BE3KYHP6",
+      "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
+      "HW-PC-1771394122276"
+    ]
+  },
+  {
     "id": "HW-1771742357322",
     "name": "Circuit de Mosquée Ghandri à Mosquée Khnensa via Mosquée de Taghzouïsni",
     "file": "djerba/Circuit de Mosquée Ghandri à Mosquée Khnensa via Mosquée de Taghzouïsni.gpx",
