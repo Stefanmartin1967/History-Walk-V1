@@ -94,6 +94,23 @@
     ]
   },
   {
+    "id": "HW-1771742357322",
+    "name": "Circuit de Mosquée Ghandri à Mosquée Khnensa via Mosquée de Taghzouïsni",
+    "file": "djerba/Circuit de Mosquée Ghandri à Mosquée Khnensa via Mosquée de Taghzouïsni.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "8.2 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El Groa",
+    "poiIds": [
+      "HW-01K77WPE6NGJQHEKJE3M2T5W5Q",
+      "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
+      "HW-01K77WPE6NGZN849YA6V0EC1R0",
+      "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
+      "HW-01K77WPE6NZ91JPSJG4M3A7TNR"
+    ]
+  },
+  {
     "id": "HW-1771678048762",
     "name": "Circuit de Mosquée Hadherbach à Mosquée Al Hidaya",
     "file": "djerba/Circuit de Mosquée Hadherbach à Mosquée Al Hidaya.gpx",
