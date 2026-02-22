@@ -2,7 +2,7 @@
 import { state } from './state.js';
 import { DOM, openDetailsPanel } from './ui.js';
 import { getPoiId, getPoiName, addPoiFeature } from './data.js';
-import { loadCircuitById, clearCircuit, setCircuitVisitedState, loadCircuitFromIds } from './circuit.js';
+import { loadCircuitById, clearCircuit, setCircuitVisitedState, loadCircuitFromIds, isCircuitCompleted } from './circuit.js';
 import { createIcons, icons } from 'lucide';
 import { saveUserData } from './fileManager.js'; 
 import { deleteDatabase, saveAppState } from './database.js';
@@ -236,9 +236,7 @@ export function renderMobileCircuitsList() {
         });
 
         // Visited status
-        const allVisited = validPois.length > 0 && validPois.every(f =>
-            f.properties.userData && f.properties.userData.vu
-        );
+        const allVisited = isCircuitCompleted(c);
 
         return {
             ...c,
@@ -426,6 +424,8 @@ export function renderMobileCircuitsList() {
         btn.addEventListener('click', async (e) => {
             if (e.target.closest('.mobile-toggle-visited') || e.target.closest('a')) return;
             const id = btn.dataset.id;
+            // On change de "Vue" logique pour autoriser renderMobilePoiList à s'afficher
+            currentView = 'circuit-details';
             await loadCircuitById(id);
         });
     });
@@ -597,6 +597,9 @@ function renderMobileZonesMenu() {
 }
 
 export function renderMobilePoiList(features) {
+    // FIX: Si on est en vue "Circuits", on ne laisse pas les filtres globaux écraser la vue
+    if (currentView === 'circuits') return;
+
     const listToDisplay = features || [];
     const container = document.getElementById('mobile-main-container');
     const isCircuit = state.activeCircuitId !== null;
@@ -610,11 +613,16 @@ export function renderMobilePoiList(features) {
     let isAllVisited = false;
 
     if (isCircuit) {
-        const currentCircuit = state.myCircuits.find(c => c.id === state.activeCircuitId);
+        // Recherche robuste (Local ou Officiel)
+        let currentCircuit = state.myCircuits.find(c => c.id === state.activeCircuitId);
+        if (!currentCircuit && state.officialCircuits) {
+            currentCircuit = state.officialCircuits.find(c => c.id === state.activeCircuitId);
+        }
+
         pageTitle = currentCircuit ? currentCircuit.name : 'Circuit inconnu';
         
-        if(features.length > 0) {
-            isAllVisited = features.every(f => f.properties.userData && f.properties.userData.vu);
+        if (currentCircuit) {
+            isAllVisited = isCircuitCompleted(currentCircuit);
         }
     }
 
@@ -713,23 +721,10 @@ export function renderMobilePoiList(features) {
         backBtn.addEventListener('click', () => {
             console.log("Mobile Back Button Clicked");
             try {
-                container.style.display = '';
-                container.style.flexDirection = '';
-                container.style.overflow = '';
-
-                console.log("Clearing circuit...");
+                // Nettoyage de l'état circuit
                 clearCircuit(false);
-
-                console.log("Rendering list...");
-                renderMobileCircuitsList();
-
-                // RESTAURATION DES MENUS (A la fin pour éviter les écrasements éventuels)
-                const d = document.getElementById('mobile-dock');
-                if (d) {
-                    d.style.display = 'flex';
-                    console.log("Dock restored to flex (Final)");
-                }
-
+                // Retour propre à la vue liste via le routeur
+                switchMobileView('circuits');
             } catch (e) {
                 console.error("Error in back button:", e);
             }
