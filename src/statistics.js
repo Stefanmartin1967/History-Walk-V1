@@ -102,7 +102,7 @@ export function calculateStats() {
 
     const totalXP = Math.round(xpDistance + xpCircuits);
 
-    // 5. Détermination des Rangs
+    // 5. Détermination des Rangs et Next Rangs
     // Pour Animaux/Matières, on utilise le pourcentage d'avancement (0-100)
     const distancePercent = totalOfficialDistanceAvailable > 0
         ? (userOfficialDistance / totalOfficialDistanceAvailable) * 100
@@ -113,9 +113,27 @@ export function calculateStats() {
         : 0;
 
     const animalRank = getRank(ANIMAL_RANKS, distancePercent);
+    const nextAnimalRank = getNextRank(ANIMAL_RANKS, distancePercent);
+
     const materialRank = getRank(MATERIAL_RANKS, circuitPercent);
+    const nextMaterialRank = getNextRank(MATERIAL_RANKS, circuitPercent);
+
     const globalRank = getRank(GLOBAL_RANKS, totalXP);
     const nextGlobalRank = getNextRank(GLOBAL_RANKS, totalXP);
+
+    // 6. Calcul Progression Relative (Rang Actuel -> Rang Suivant)
+    const getRelativeProgress = (val, currentR, nextR) => {
+        if (!nextR) return 100; // Niveau Max atteint
+        const range = nextR.min - currentR.min;
+        const current = val - currentR.min;
+        // Protection contre division par zéro ou valeurs négatives
+        if (range <= 0) return 100;
+        return Math.min(100, Math.max(0, (current / range) * 100));
+    };
+
+    const animalProgressRel = getRelativeProgress(distancePercent, animalRank, nextAnimalRank);
+    const materialProgressRel = getRelativeProgress(circuitPercent, materialRank, nextMaterialRank);
+    const xpProgressRel = getRelativeProgress(totalXP, globalRank, nextGlobalRank);
 
     return {
         visitedPois,
@@ -132,10 +150,17 @@ export function calculateStats() {
         totalXP,
         globalRank,
         nextGlobalRank,
+        xpProgressRel,
 
         // Sous-Rangs (pour badges)
         animalRank,
+        nextAnimalRank,
+        animalProgressRel,
+
         materialRank,
+        nextMaterialRank,
+        materialProgressRel,
+
         distancePercent,
         circuitPercent
     };
@@ -163,6 +188,17 @@ function getRank(rankList, value) {
 }
 
 function getNextRank(rankList, value) {
+    // Liste triée par min décroissant.
+    // On cherche le dernier élément dont le min est > value.
+    // Mais ANIMAL_RANKS est décroissant (90, 80...).
+    // Donc on veut le rang avec min > value le plus petit possible.
+    // En fait, dans une liste décroissante [90, 80, ...], le "Next Rank" est celui juste AVANT le rang actuel dans la liste.
+
+    // Exemple: value=25.
+    // getRank renvoie Renard (min 20).
+    // Le rang au dessus est Lynx (min 30).
+
+    // On inverse la liste pour chercher croissant [0, 10, 20, 30...]
     const reversed = [...rankList].reverse();
     return reversed.find(r => r.min > value);
 }
@@ -172,112 +208,98 @@ function getNextRank(rankList, value) {
 export async function showStatisticsModal() {
     const stats = calculateStats();
 
-    // -- Progression XP Globale --
-    let xpProgress = 0;
-    if (stats.nextGlobalRank) {
-        const range = stats.nextGlobalRank.min - stats.globalRank.min;
-        const current = stats.totalXP - stats.globalRank.min;
-        xpProgress = Math.min(100, Math.max(5, (current / range) * 100));
-    } else {
-        xpProgress = 100;
-    }
-
     // -- Titre Complet (Badge) --
-    const badgeTitle = `${stats.animalRank.title} de ${stats.materialRank.title}`;
+    const fullRankTitle = `${stats.animalRank.title} de ${stats.materialRank.title}`;
 
-    // -- Image de fond --
-    // Pour GitHub Pages, on utilise le chemin relatif ou absolu complet si nécessaire
-    // On suppose que le serveur sert la racine correctement
-    const bgImage = './images/gamification/id_card_bg.png';
-
-    // -- HTML: Format CARTE BANCAIRE (Paysage) --
-    // Dimensions standard ISO/IEC 7810 ID-1 : 85.60 × 53.98 mm -> Ratio ~1.58
+    // -- HTML: Format CARTE D'EXPLORATEUR (Parchemin) --
+    // Dimensions standard ISO/IEC 7810 ID-1 : 85.60 × 53.98 mm
 
     const html = `
         <div class="walker-card-container">
             <!-- CARTE RECTO -->
-            <div class="walker-card" id="walker-card-print" style="background-image: url('${bgImage}');">
+            <div class="walker-card" id="walker-card-print">
+                <!-- TEXTURE BG (CSS via class) -->
 
-                <!-- ENTÊTE GAUCHE -->
-                <div class="card-header-left">
-                    <div class="card-title-small">CARTE D'EXPLORATEUR</div>
+                <!-- ENTÊTE -->
+                <div class="card-header">
+                    <div class="card-title-main">CARTE D'EXPLORATEUR</div>
+                    <div class="card-logo-icon">
+                        <i data-lucide="compass" style="width: 100%; height: 100%; color: #5d4037;"></i>
+                    </div>
                 </div>
 
-                <!-- BADGE CENTRAL (Rank Icon) -->
-                <div class="card-badge">
-                    <i data-lucide="${stats.animalRank.icon}" style="color: ${stats.materialRank.color}; width: 24px; height: 24px;"></i>
-                </div>
-
-                <!-- CONTENU PRINCIPAL -->
+                <!-- CONTENU -->
                 <div class="card-body">
 
-                    <!-- COLONNE GAUCHE (Avatar + Identité) -->
+                    <!-- COLONNE GAUCHE: AVATAR -->
                     <div class="card-col-left">
-                        <div class="card-avatar-wrapper">
-                            <div class="card-avatar" style="border-color: ${stats.materialRank.color};">
-                                <i data-lucide="user" style="color: white; width: 32px; height: 32px;"></i>
-                            </div>
+                        <div class="card-avatar-frame">
+                            <i data-lucide="user" style="color: #3e2723; width: 48px; height: 48px;"></i>
                         </div>
-                        <div class="card-identity-block">
-                            <div class="card-user-name">MARCHEUR</div>
-                            <div class="card-user-rank">${stats.globalRank.title}</div>
-                        </div>
+                        <div class="card-name">Nom du Marcheur</div>
                     </div>
 
-                    <!-- COLONNE DROITE (Rangs + Stats) -->
+                    <!-- COLONNE DROITE: STATS -->
                     <div class="card-col-right">
-                        <!-- RANG TITLE -->
-                        <div class="rank-title-block">
-                            <div class="rank-main-title" style="color: ${stats.materialRank.color}; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">${badgeTitle.toUpperCase()}</div>
-                            <div class="rank-subtitle">Rang ${stats.animalRank.description}</div>
+                        <!-- TITRE RANG -->
+                        <div class="rank-display">
+                            <span class="rank-text-large">${fullRankTitle.toUpperCase()}</span>
                         </div>
 
-                        <!-- PROGRESS BARS -->
-                        <div class="stats-bars-container">
-                            <!-- DISTANCE -->
-                            <div class="stat-row">
-                                <div class="stat-info">
-                                    <span class="stat-lbl">DISTANCE</span>
-                                    <span class="stat-val">${stats.userOfficialKm} <span class="unit">km</span></span>
-                                </div>
-                                <div class="stat-track">
-                                    <div class="stat-fill" style="width: ${stats.distancePercent}%; background: ${stats.materialRank.color};"></div>
-                                </div>
+                        <!-- BARRE 1: DISTANCE (ANIMAL) -->
+                        <div class="stat-group">
+                            <div class="stat-label">
+                                <span>DISTANCE (${stats.animalRank.title.toUpperCase()})</span>
                             </div>
-
-                            <!-- CIRCUITS -->
-                            <div class="stat-row">
-                                <div class="stat-info">
-                                    <span class="stat-lbl">CIRCUITS</span>
-                                    <span class="stat-val">${stats.userOfficialCircuits} <span class="unit">/ ${stats.totalOfficialCircuitsAvailable}</span></span>
-                                </div>
-                                <div class="stat-track">
-                                    <div class="stat-fill" style="width: ${stats.circuitPercent}%; background: ${stats.materialRank.color};"></div>
-                                </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill animal-fill" style="width: ${stats.animalProgressRel}%;"></div>
+                            </div>
+                            <div class="stat-sublabel">
+                                ${stats.nextAnimalRank ? 'Prochain: ' + stats.nextAnimalRank.title : 'Niveau Max !'}
                             </div>
                         </div>
 
-                        <!-- XP (Bottom Right) -->
-                        <div class="xp-block">
-                            <div class="xp-val">${stats.totalXP}</div>
-                            <div class="xp-lbl">Points d'Aventure</div>
+                        <!-- BARRE 2: CIRCUITS (MATIERE) -->
+                        <div class="stat-group">
+                            <div class="stat-label">
+                                <span>CIRCUITS (${stats.materialRank.title.toUpperCase()})</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill material-fill" style="width: ${stats.materialProgressRel}%;"></div>
+                            </div>
+                            <div class="stat-sublabel">
+                                ${stats.nextMaterialRank ? 'Prochain: ' + stats.nextMaterialRank.title : 'Niveau Max !'}
+                            </div>
                         </div>
+
+                        <!-- BARRE 3: XP (GLOBAL) -->
+                        <div class="stat-group">
+                            <div class="stat-label">
+                                <span>POINTS D'AVENTURE</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill xp-fill" style="width: ${stats.xpProgressRel}%;"></div>
+                            </div>
+                            <div class="stat-sublabel-right">
+                                Rang Global: <strong>${stats.globalRank.title}</strong>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- FOOTER (Data Strip) -->
-                <div class="card-footer-strip">
-                    <div class="strip-item">
-                        <span class="strip-lbl">LIEUX</span>
-                        <span class="strip-val">${stats.visitedPois}</span>
+                <!-- FOOTER -->
+                <div class="card-footer">
+                    <div class="footer-item">
+                        <i data-lucide="map-pin" class="footer-icon"></i> POI: ${stats.visitedPois}
                     </div>
-                    <div class="strip-item">
-                        <span class="strip-lbl">EXPLORATION</span>
-                        <span class="strip-val">${stats.poiPercent}%</span>
+                    <div class="footer-divider">|</div>
+                    <div class="footer-item">
+                        <i data-lucide="compass" class="footer-icon"></i> EXPLORÉ: ${stats.poiPercent}%
                     </div>
-                    <div class="strip-item">
-                        <span class="strip-lbl">ID</span>
-                        <span class="strip-val">HW-${new Date().getFullYear()}-001</span>
+                    <div class="footer-divider">|</div>
+                    <div class="footer-item">
+                        <i data-lucide="map" class="footer-icon"></i> DISPO: ${stats.totalOfficialCircuitsAvailable}
                     </div>
                 </div>
             </div>
@@ -291,7 +313,10 @@ export async function showStatisticsModal() {
         </div>
 
         <style>
-            /* --- CONTENEUR GLOBAL --- */
+            /* --- FONTS --- */
+            @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+            /* --- CONTAINER --- */
             .walker-card-container {
                 display: flex;
                 flex-direction: column;
@@ -301,244 +326,227 @@ export async function showStatisticsModal() {
                 background: transparent;
             }
 
-            /* --- LA CARTE --- */
+            /* --- CARD BASE --- */
             .walker-card {
                 position: relative;
-                width: 340px; /* Largeur écran */
-                height: 215px; /* Ratio ~1.58 */
-                background-color: #1a202c; /* Fallback color */
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                border-radius: 12px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+                width: 340px;
+                height: 215px; /* Ratio ID-1 */
+                background-color: #f4e4bc; /* Parchment Fallback */
+                /* Texture parchemin via CSS gradient pattern */
+                background-image:
+                    radial-gradient(circle at 10% 20%, rgba(0,0,0,0.05) 0%, transparent 20%),
+                    radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05) 0%, transparent 20%),
+                    linear-gradient(to bottom right, #fdfbf7, #e6d0a0);
+                border-radius: 10px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.3);
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
-                color: white;
-                font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+                color: #3e2723; /* Dark Brown */
+                font-family: 'Lato', sans-serif;
+                border: 1px solid #d7c59a;
             }
 
             /* --- HEADER --- */
-            .card-header-left {
-                position: absolute;
-                top: 14px;
-                left: 18px;
-            }
-
-            .card-title-small {
-                font-size: 9px;
-                text-transform: uppercase;
-                letter-spacing: 1px;
-                opacity: 0.9;
-                font-weight: 700;
-                text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-                color: #e2e8f0;
-            }
-
-            /* --- BADGE --- */
-            .card-badge {
-                position: absolute;
-                top: 14px;
-                left: 142px; /* Ajusté visuellement */
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                background: white;
+            .card-header {
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-                z-index: 10;
-                border: 2px solid #ccc;
+                padding: 10px 15px 5px 15px;
+            }
+
+            .card-title-main {
+                font-family: 'Cinzel', serif;
+                font-weight: 700;
+                font-size: 14px;
+                line-height: 1;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: #2d1b15;
+            }
+
+            .card-logo-icon {
+                margin-left: 8px;
+                width: 16px;
+                height: 16px;
+                opacity: 0.8;
             }
 
             /* --- BODY --- */
             .card-body {
                 display: flex;
                 flex: 1;
-                margin-top: 25px; /* Espace pour le header */
-                padding: 0 15px 5px 15px;
+                padding: 5px 15px;
+                gap: 15px;
             }
 
-            /* --- LEFT COL --- */
+            /* LEFT COL */
             .card-col-left {
-                width: 35%;
+                width: 30%;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                padding-top: 12px;
+                justify-content: center;
             }
 
-            .card-avatar-wrapper {
-                margin-bottom: 8px;
-            }
-
-            .card-avatar {
-                width: 64px;
-                height: 64px;
-                border-radius: 50%; /* Cercle ou Carré arrondi selon préférence */
-                background: rgba(0,0,0,0.5); /* Plus sombre pour couvrir BG */
-                border: 2px solid white;
+            .card-avatar-frame {
+                width: 70px;
+                height: 70px;
+                background: #d7ccc8;
+                border: 3px solid #5d4037;
+                border-radius: 50%; /* Cercle pour l'avatar */
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+                margin-bottom: 5px;
             }
 
-            .card-identity-block {
-                text-align: center;
-            }
-
-            .card-user-name {
-                font-size: 10px;
+            .card-name {
+                font-family: 'Cinzel', serif;
+                font-size: 9px;
                 font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 2px;
-                text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+                text-align: center;
+                line-height: 1.2;
             }
 
-            .card-user-rank {
-                font-size: 8px;
-                opacity: 0.8;
-                font-style: italic;
-            }
-
-            /* --- RIGHT COL --- */
+            /* RIGHT COL */
             .card-col-right {
                 flex: 1;
                 display: flex;
                 flex-direction: column;
-                padding-left: 10px;
+                justify-content: center;
+                gap: 6px;
             }
 
-            .rank-title-block {
-                text-align: right;
-                margin-bottom: 15px;
+            .rank-display {
+                margin-bottom: 4px;
             }
 
-            .rank-main-title {
-                font-size: 14px;
+            .rank-text-large {
+                font-family: 'Cinzel', serif;
                 font-weight: 800;
+                font-size: 16px;
+                color: #3e2723;
                 text-transform: uppercase;
-                letter-spacing: 0.5px;
-                line-height: 1.1;
+                text-shadow: 0 1px 0px rgba(255,255,255,0.5);
+                display: block;
+                line-height: 1;
             }
 
-            .rank-subtitle {
-                font-size: 9px;
-                font-style: italic;
-                opacity: 0.7;
-            }
-
-            .stats-bars-container {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .stat-row {
+            /* STAT GROUPS */
+            .stat-group {
                 display: flex;
                 flex-direction: column;
                 gap: 2px;
             }
 
-            .stat-info {
+            .stat-label {
+                font-size: 8px;
+                font-weight: 700;
+                text-transform: uppercase;
                 display: flex;
                 justify-content: space-between;
-                font-size: 8px;
-                font-weight: 600;
-                text-transform: uppercase;
                 opacity: 0.9;
             }
 
-            .stat-val .unit {
-                opacity: 0.6;
+            .stat-sublabel {
                 font-size: 7px;
-            }
-
-            .stat-track {
-                width: 100%;
-                height: 4px;
-                background: rgba(255,255,255,0.15);
-                border-radius: 2px;
-                overflow: hidden;
-            }
-
-            .stat-fill {
-                height: 100%;
-                border-radius: 2px;
-            }
-
-            .xp-block {
-                margin-top: auto;
+                font-style: italic;
+                opacity: 0.7;
                 text-align: right;
-                padding-bottom: 5px;
             }
-
-            .xp-val {
-                font-size: 16px;
-                font-weight: 800;
-                line-height: 1;
-                text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            }
-
-            .xp-lbl {
+            .stat-sublabel-right {
                 font-size: 7px;
-                text-transform: uppercase;
-                opacity: 0.6;
+                text-align: right;
+                opacity: 0.8;
             }
 
-            /* --- FOOTER STRIP --- */
-            .card-footer-strip {
+            .progress-bar-container {
+                width: 100%;
+                height: 10px; /* Plus épais comme sur l'image */
+                background: rgba(62, 39, 35, 0.15); /* Brownish light */
+                border-radius: 5px;
+                overflow: hidden;
+                box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+                border: 1px solid rgba(62, 39, 35, 0.1);
+            }
+
+            .progress-bar-fill {
+                height: 100%;
+                border-radius: 4px;
+                /* Gradient métallique générique, surchargé ci-dessous */
+                background: linear-gradient(to bottom, #d7ccc8, #a1887f);
+                box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset;
+            }
+
+            /* Specific Gradients mimicking metals/earth */
+            .animal-fill {
+                /* Copper/Bronze style */
+                background: linear-gradient(to bottom, #ffccbc, #bf360c);
+            }
+            .material-fill {
+                /* Steel/Gold style - dynamically set? For now static Bronze/Gold mix */
+                background: linear-gradient(to bottom, #fff9c4, #fbc02d);
+            }
+            .xp-fill {
+                /* Blue/Mystic style or Green */
+                background: linear-gradient(to bottom, #b2dfdb, #00695c);
+            }
+
+            /* --- FOOTER --- */
+            .card-footer {
                 height: 24px;
-                background: rgba(0,0,0,0.4);
-                backdrop-filter: blur(2px);
+                background: #efebe9; /* Lighter brown */
+                border-top: 1px solid #d7ccc8;
                 display: flex;
                 align-items: center;
-                justify-content: space-around;
-                border-top: 1px solid rgba(255,255,255,0.1);
+                justify-content: center;
+                gap: 8px;
             }
 
-            .strip-item {
+            .footer-item {
                 display: flex;
                 align-items: center;
                 gap: 4px;
-            }
-
-            .strip-lbl {
-                font-size: 7px;
-                text-transform: uppercase;
-                opacity: 0.5;
-            }
-
-            .strip-val {
-                font-size: 9px;
+                font-size: 8px;
                 font-weight: 700;
+                color: #5d4037;
+                text-transform: uppercase;
             }
 
-            /* --- BOUTON PRINT --- */
+            .footer-icon {
+                width: 10px;
+                height: 10px;
+                color: #8d6e63;
+            }
+
+            .footer-divider {
+                color: #a1887f;
+                font-size: 8px;
+            }
+
+            /* --- PRINT BUTTON --- */
             .action-btn-print {
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 padding: 10px 20px;
-                background: var(--surface);
-                border: 1px solid var(--line);
+                background: #fff;
+                border: 1px solid #ddd;
                 border-radius: 8px;
                 font-weight: 600;
                 cursor: pointer;
                 transition: all 0.2s;
-                color: var(--ink);
+                color: #333;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             }
 
             .action-btn-print:hover {
-                background: var(--surface-muted);
+                background: #f9f9f9;
                 transform: translateY(-1px);
             }
 
-            /* --- STYLE D'IMPRESSION --- */
+            /* --- PRINT MEDIA QUERY --- */
             @media print {
                 body * {
                     visibility: hidden;
@@ -566,33 +574,27 @@ export async function showStatisticsModal() {
                 }
 
                 .walker-card {
-                    /* Force Print Size - ISO ID-1 */
                     width: 85.6mm !important;
                     height: 53.98mm !important;
                     box-shadow: none !important;
                     border: 1px dashed #ccc;
                     print-color-adjust: exact !important;
                     -webkit-print-color-adjust: exact !important;
-                    background-image: url('${bgImage}') !important; /* Ensure BG prints */
                 }
 
-                /* Scale fonts for physical size */
-                .card-title-small { font-size: 5pt !important; }
-                .card-user-name { font-size: 7pt !important; }
-                .card-user-rank { font-size: 5pt !important; }
-                .rank-main-title { font-size: 9pt !important; }
-                .rank-subtitle { font-size: 6pt !important; }
-                .stat-info { font-size: 5pt !important; }
-                .stat-val .unit { font-size: 4pt !important; }
-                .xp-val { font-size: 10pt !important; }
-                .xp-lbl { font-size: 4pt !important; }
-                .strip-lbl { font-size: 4pt !important; }
-                .strip-val { font-size: 6pt !important; }
+                /* Font Scaling for Print */
+                .card-title-main { font-size: 10pt !important; }
+                .card-name { font-size: 6pt !important; }
+                .rank-text-large { font-size: 11pt !important; }
+                .stat-label { font-size: 5pt !important; }
+                .stat-sublabel, .stat-sublabel-right { font-size: 4pt !important; }
+                .footer-item { font-size: 5pt !important; }
 
-                .card-avatar {
-                    width: 14mm !important;
-                    height: 14mm !important;
+                .card-avatar-frame {
+                    width: 15mm !important;
+                    height: 15mm !important;
                 }
+                .progress-bar-container { height: 2mm !important; }
             }
         </style>
     `;
@@ -629,9 +631,10 @@ function printCardElement() {
     const doc = iframe.contentWindow.document;
     const cardClone = cardElement.cloneNode(true);
 
-    // Récupérer l'image de fond computed
-    const bgStyle = window.getComputedStyle(cardElement).backgroundImage;
-    cardClone.style.backgroundImage = bgStyle;
+    // Copy computed styles for gradients/bg
+    // Note: CSS defined in style block is not auto-copied to iframe head unless we inject it.
+    // So we need to inject the CSS block again or inline styles.
+    // The previous implementation injected styles in the iframe head.
 
     doc.open();
     doc.write(`
@@ -640,6 +643,7 @@ function printCardElement() {
         <head>
             <title>Impression Carte Walker</title>
             <style>
+                @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@400;700&display=swap');
                 @page {
                     size: A4;
                     margin: 0;
@@ -651,61 +655,58 @@ function printCardElement() {
                     align-items: center;
                     justify-content: center;
                     height: 100vh;
-                    font-family: sans-serif;
+                    font-family: 'Lato', sans-serif;
                 }
                 .walker-card {
                     position: relative;
                     width: 85.6mm;
                     height: 53.98mm;
-                    background-color: #1a202c; /* Fallback */
-                    background-size: cover;
-                    background-position: center;
-                    background-repeat: no-repeat;
+                    background-color: #f4e4bc;
+                    background-image:
+                        radial-gradient(circle at 10% 20%, rgba(0,0,0,0.05) 0%, transparent 20%),
+                        radial-gradient(circle at 90% 80%, rgba(0,0,0,0.05) 0%, transparent 20%),
+                        linear-gradient(to bottom right, #fdfbf7, #e6d0a0);
                     border-radius: 3.18mm;
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
-                    color: white;
+                    color: #3e2723;
                     border: 1px dashed #ccc;
                     print-color-adjust: exact;
                     -webkit-print-color-adjust: exact;
                 }
 
-                /* Réplication Styles CSS */
-                .card-header-left { position: absolute; top: 3.5mm; left: 4.5mm; }
-                .card-title-small { font-size: 6pt; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.8); color: #e2e8f0; }
+                /* Layout Replication */
+                .card-header { display: flex; align-items: center; padding: 2mm 4mm 1mm 4mm; }
+                .card-title-main { font-family: 'Cinzel', serif; font-weight: 700; font-size: 10pt; line-height: 1; text-transform: uppercase; letter-spacing: 1px; color: #2d1b15; }
+                .card-logo-icon { margin-left: 2mm; width: 3mm; height: 3mm; opacity: 0.8; }
 
-                .card-badge { position: absolute; top: 3.5mm; left: 35.5mm; width: 9mm; height: 9mm; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 10; border: 0.5mm solid #ccc; }
+                .card-body { display: flex; flex: 1; padding: 1mm 4mm; gap: 4mm; }
 
-                .card-body { display: flex; flex: 1; margin-top: 6mm; padding: 0 4mm 1.5mm 4mm; }
+                .card-col-left { width: 30%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+                .card-avatar-frame { width: 15mm; height: 15mm; background: #d7ccc8; border: 0.5mm solid #5d4037; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1mm; }
+                .card-name { font-family: 'Cinzel', serif; font-size: 6pt; font-weight: 700; text-align: center; }
 
-                .card-col-left { width: 35%; display: flex; flex-direction: column; align-items: center; padding-top: 3mm; }
-                .card-avatar-wrapper { margin-bottom: 2mm; }
-                .card-avatar { width: 14mm; height: 14mm; border-radius: 50%; background: rgba(0,0,0,0.5); border: 0.5mm solid white; display: flex; align-items: center; justify-content: center; }
-                .card-identity-block { text-align: center; }
-                .card-user-name { font-size: 7pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5mm; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
-                .card-user-rank { font-size: 5pt; opacity: 0.8; font-style: italic; }
+                .card-col-right { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 1.5mm; }
+                .rank-display { margin-bottom: 1mm; }
+                .rank-text-large { font-family: 'Cinzel', serif; font-weight: 800; font-size: 11pt; color: #3e2723; text-transform: uppercase; line-height: 1; }
 
-                .card-col-right { flex: 1; display: flex; flex-direction: column; padding-left: 2mm; }
-                .rank-title-block { text-align: right; margin-bottom: 3mm; }
-                .rank-main-title { font-size: 9pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1; }
-                .rank-subtitle { font-size: 6pt; font-style: italic; opacity: 0.7; }
+                .stat-group { display: flex; flex-direction: column; gap: 0.5mm; }
+                .stat-label { font-size: 5pt; font-weight: 700; text-transform: uppercase; display: flex; justify-content: space-between; opacity: 0.9; }
+                .stat-sublabel { font-size: 4pt; font-style: italic; opacity: 0.7; text-align: right; }
+                .stat-sublabel-right { font-size: 4pt; text-align: right; opacity: 0.8; }
 
-                .stats-bars-container { display: flex; flex-direction: column; gap: 2mm; }
-                .stat-row { display: flex; flex-direction: column; gap: 0.5mm; }
-                .stat-info { display: flex; justify-content: space-between; font-size: 5pt; font-weight: 600; text-transform: uppercase; opacity: 0.9; }
-                .stat-val .unit { opacity: 0.6; font-size: 4pt; }
-                .stat-track { width: 100%; height: 1mm; background: rgba(255,255,255,0.15); border-radius: 0.5mm; overflow: hidden; }
-                .stat-fill { height: 100%; border-radius: 0.5mm; }
+                .progress-bar-container { width: 100%; height: 2mm; background: rgba(62, 39, 35, 0.15); border-radius: 1mm; overflow: hidden; border: 0.1mm solid rgba(62, 39, 35, 0.1); }
+                .progress-bar-fill { height: 100%; border-radius: 1mm; }
 
-                .xp-block { margin-top: auto; text-align: right; padding-bottom: 1mm; }
-                .xp-val { font-size: 10pt; font-weight: 800; line-height: 1; text-shadow: 0 1px 2px rgba(0,0,0,0.8); }
-                .xp-lbl { font-size: 4pt; text-transform: uppercase; opacity: 0.6; }
+                .animal-fill { background: linear-gradient(to bottom, #ffccbc, #bf360c); }
+                .material-fill { background: linear-gradient(to bottom, #fff9c4, #fbc02d); }
+                .xp-fill { background: linear-gradient(to bottom, #b2dfdb, #00695c); }
 
-                .card-footer-strip { height: 6mm; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: space-around; border-top: 0.2mm solid rgba(255,255,255,0.1); }
-                .strip-item { display: flex; align-items: center; gap: 1mm; }
-                .strip-lbl { font-size: 4pt; text-transform: uppercase; opacity: 0.5; }
-                .strip-val { font-size: 6pt; font-weight: 700; }
+                .card-footer { height: 5mm; background: #efebe9; border-top: 0.2mm solid #d7ccc8; display: flex; align-items: center; justify-content: center; gap: 2mm; }
+                .footer-item { display: flex; align-items: center; gap: 1mm; font-size: 5pt; font-weight: 700; color: #5d4037; text-transform: uppercase; }
+                .footer-icon { width: 2mm; height: 2mm; color: #8d6e63; }
+                .footer-divider { color: #a1887f; font-size: 5pt; }
 
                 svg { width: 100%; height: 100%; }
             </style>
