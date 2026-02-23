@@ -171,3 +171,98 @@ Outil dédié à la maintenance du fichier GeoJSON maître.
 ### 7.3 Module Scout (`tools/scout.html`)
 Outil de repérage pour l'initialisation de nouvelles destinations.
 *   **Usage** : Interroge l'API Overpass (OpenStreetMap) pour générer un squelette GeoJSON de POIs (Mosquées, Forts, Musées, etc.) autour d'un point donné.
+
+---
+
+## 8. Contraintes Architecturales & Risques Connus
+
+Cette section, issue de l'audit V2 (v3.5.5), recense les fragilités structurelles à connaître avant toute intervention.
+
+### 8.1 Dépendance Mobile / Carte (Le "Cheval de Troie")
+*   **Risque :** Le code mobile (`src/mobile.js`) importe des fonctions utilitaires depuis `src/map.js`.
+*   **Danger :** `src/map.js` dépend de `Leaflet` (L). Si Leaflet n'est pas chargé sur mobile (pour optimiser), l'import provoque un crash immédiat.
+*   **Règle d'Or :** Ne jamais ajouter de code "exécutable immédiatement" (top-level) dans `map.js`. Tout doit être encapsulé dans des fonctions. Idéalement, déplacer les calculs purs dans `src/utils.js`.
+
+### 8.2 Circuits : La "Shadow Copy"
+*   **Mécanisme :** Pour modifier un circuit officiel (lecture seule), l'app crée une copie locale (shadow) dans `state.myCircuits`.
+*   **Risque :** Conflit d'ID ou désynchronisation. Si l'utilisateur a une copie locale d'un circuit officiel qui a été mis à jour sur le serveur, il risque de voir des doublons ou des états incohérents (Trace Rouge vs Bleue).
+
+### 8.3 Race Conditions au Démarrage
+*   **Observation :** L'initialisation UI (`main.js`) démarre parfois avant le chargement complet de la config (`destinations.json`).
+*   **Symptôme :** Affichage temporaire de textes par défaut ("Djerba") avant le switch vers la bonne destination.
+
+### 8.4 Fragilité du Workflow GPX
+*   **Point Critique :** La reconnaissance des circuits repose sur le tag `[HW-ID]` dans les métadonnées GPX.
+*   **Vulnérabilité :** Si un éditeur tiers "nettoie" ce tag, le lien est rompu. L'import échoue ou crée un doublon.
+
+---
+
+## 9. Gamification & Progression System
+
+Ce chapitre récapitule la logique actuelle (implémentée dans `src/statistics.js`) pour le calcul des rangs, des stades et de la pondération.
+
+### 9.1 Pondération Globale (XP)
+
+L'expérience (XP) est calculée sur une base de **20 000 points maximum**, répartis équitablement entre la distance parcourue et le nombre de circuits terminés.
+
+**Formule :**
+`XP = (DistanceParcourue / DistanceTotaleOfficielle * 10 000) + (CircuitsTermines / CircuitsTotauxOfficiels * 10 000)`
+
+- **Distance :** 50% de la note (10 000 XP max)
+- **Circuits :** 50% de la note (10 000 XP max)
+
+#### Rangs Globaux (Basés sur l'XP Total)
+
+| XP Minimum | Titre |
+| :--- | :--- |
+| 20 000 | **Lueur d'Éternité** (100%) |
+| 17 000 | Souffle Céleste |
+| 13 500 | Sagesse des Sables |
+| 10 000 | Regard d'Horizon |
+| 7 000 | Sillage d'Argent |
+| 4 500 | Âme Vagabonde |
+| 2 500 | Cœur Vaillant |
+| 1 200 | Esprit Curieux |
+| 500 | Petite Étincelle |
+| 0 | Premier Souffle |
+
+### 9.2 Rangs Animaux (Basés sur la Distance)
+
+Ces rangs sont déterminés par le **pourcentage de la distance totale officielle** parcourue.
+*Note : Dans l'interface d'administration actuelle, ces valeurs peuvent apparaître avec l'unité "km", mais le code utilise bien des pourcentages (0-100%).*
+
+| Pourcentage Min | Titre | Icône | Description |
+| :--- | :--- | :--- | :--- |
+| 90% | **Phénix** | flame | Légendaire |
+| 80% | Aigle Royal | bird | Vue d'ensemble sur l'île |
+| 70% | Ours Polaire | snowflake | Un marcheur confirmé |
+| 60% | Grand Cerf | crown | Majestueux |
+| 50% | Loup | paw-print | L'endurance s'installe |
+| 40% | Chamois | mountain | On grimpe en compétence |
+| 30% | Lynx | eye | L'agilité augmente |
+| 20% | Renard | dog | On sort des sentiers battus |
+| 10% | Hérisson | sprout | On commence à explorer |
+| 0% | Colibri | feather | Les premiers pas |
+
+### 9.3 Rangs Matières (Basés sur les Circuits)
+
+Ces rangs sont déterminés par le **pourcentage du nombre total de circuits officiels** terminés.
+
+| Pourcentage Min | Titre | Couleur |
+| :--- | :--- | :--- |
+| 90% | **Diamant** | #b9f2ff |
+| 80% | Saphir | #0F52BA |
+| 70% | Cristal | #e6e6fa |
+| 60% | Or | #FFD700 |
+| 50% | Argent | #C0C0C0 |
+| 40% | Acier | #434B4D |
+| 30% | Bronze | #CD7F32 |
+| 20% | Cuivre | #B87333 |
+| 10% | Pierre | #888888 |
+| 0% | Bois | #8B4513 |
+
+### 9.4 Résumé Technique
+
+- **Fichier source :** `src/statistics.js`
+- **Variables exportées :** `GLOBAL_RANKS`, `ANIMAL_RANKS`, `MATERIAL_RANKS`
+- **Calcul :** Fonction `calculateStats()`
