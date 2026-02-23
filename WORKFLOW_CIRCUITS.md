@@ -19,8 +19,8 @@ Ce workflow est conçu pour garantir la qualité des tracés (via GPX Studio) to
 ## 📝 Guide Détaillé étape par étape
 
 ### Étape 1 : Création de l'ébauche (Dans l'Application)
-*   **Action :** Utilisez le mode "Création" pour sélectionner les lieux (pins bleus) dans l'ordre de visite souhaité.
-*   **Résultat :** Vous obtenez un tracé rectiligne (lignes droites) reliant les points.
+*   **Action :** Utilisez le mode "Création" pour sélectionner les lieux (icônes dans des cercles blancs) dans l'ordre de visite souhaité.
+*   **Résultat :** Vous obtenez un tracé rectiligne (lignes pointillées rouges) reliant les points.
 *   **Sauvegarde :** Cliquez sur "Exporter GPX".
 *   **Ce que contient le fichier :**
     *   Une trace "fictive" (lignes droites).
@@ -37,7 +37,7 @@ Ce workflow est conçu pour garantir la qualité des tracés (via GPX Studio) to
 ### Étape 3 : Vérification Locale (Optionnel mais recommandé)
 *   **Dans l'App :** Utilisez le bouton **"Importer une trace réelle"** (icône dossier/GPX).
 *   **Action :** Sélectionnez votre fichier modifié.
-*   **Résultat :** La trace bleue "Vol d'oiseau" est remplacée par votre tracé réel rouge/bleu précis.
+*   **Résultat :** La trace "Vol d'oiseau" (pointillée rouge) est remplacée par votre tracé réel (ligne continue bleue).
 *   **Utilité :** Permet de vérifier visuellement que le tracé passe bien par les endroits prévus avant de l'envoyer à tout le monde.
 *   *Note : Cette étape est purement locale et n'envoie rien au serveur.*
 
