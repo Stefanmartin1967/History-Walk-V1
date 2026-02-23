@@ -57,7 +57,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6722XTDVPGCQTPPBXR",
-        "planifieCounter": 2,
+        "planifieCounter": 1,
         "vu": true
       }
     },
@@ -109,7 +109,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE671G6V27VYYNMJV2NC",
-        "planifieCounter": 2,
+        "planifieCounter": 1,
         "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497287806.jpg",
@@ -167,7 +167,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6770BXCP2SW1Z2DTA2",
-        "planifieCounter": 2,
+        "planifieCounter": 1,
         "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497320289.jpg",
@@ -672,7 +672,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE699CBRC4PV1ARJPXKM",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -724,7 +724,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental.",
         "HW_ID": "HW-01K77WPE697JA8WM3N71KEFY6S",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -775,7 +776,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -852,7 +854,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69CKZWJHD3JAJT874K",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -878,7 +881,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A22WXDRBSQ8AEW7BR",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -1031,7 +1035,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6AA25DRECXWRNXFZ4C",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -2799,7 +2804,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": "Mosquée proche de la mer, à proximité de Goose island djerba où vous pouvez faire diverses activités aquatiques",
         "HW_ID": "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
-        "planifieCounter": 2,
+        "planifieCounter": 1,
         "vu": true,
         "photos": []
       }
@@ -3700,7 +3705,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6H7K49FQ4NSR5ASHX8"
+        "HW_ID": "HW-01K77WPE6H7K49FQ4NSR5ASHX8",
+        "planifieCounter": 0
       }
     },
     {
@@ -3827,7 +3833,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6JZQWS751K2WV46RB2"
+        "HW_ID": "HW-01K77WPE6JZQWS751K2WV46RB2",
+        "planifieCounter": 0
       }
     },
     {
@@ -3852,7 +3859,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24"
+        "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24",
+        "planifieCounter": 0
       }
     },
     {
@@ -3929,7 +3937,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6J38KA6V4M0KDZBJ15"
+        "HW_ID": "HW-01K77WPE6J38KA6V4M0KDZBJ15",
+        "planifieCounter": 0
       }
     },
     {
@@ -4029,7 +4038,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6JDTSE0J7BXJFSCPX4"
+        "HW_ID": "HW-01K77WPE6JDTSE0J7BXJFSCPX4",
+        "planifieCounter": 0
       }
     },
     {
@@ -4743,7 +4753,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NGJQHEKJE3M2T5W5Q",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -4769,7 +4779,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -4823,7 +4833,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NGZN849YA6V0EC1R0",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -4874,7 +4884,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N1D1N6TK82WX52BNM",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -4956,7 +4966,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -5007,7 +5017,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NZ91JPSJG4M3A7TNR",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -5033,7 +5043,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -5085,7 +5095,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": "Mosquée ibadite wahbite construite  au 4è siècle de l’hégire, ce qui correspond au 10è siècle de notre ère",
         "HW_ID": "HW-01K77WPE6PDSWXWVZZR4ZDNXVX",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -5136,7 +5146,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": "Mosquée ibadite wahbite rénovée, intialement construite sur le site d'un église byzantine.",
         "HW_ID": "HW-01K77WPE6PP29CK1JR2H25ACNK",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -5214,7 +5224,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": "Mosquée ibadite wahbite dont la date de construction estimée se situe aux environs du 17ème siècle, entre 1680 et 1720.\nMonument historique classé (INP, 2022).",
         "HW_ID": "HW-01K77WPE6PG0DA193W44FBQAHQ",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -5318,7 +5328,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": "A chercher, aucune info sur le net",
         "HW_ID": "HW-01K77WPE6P30E9MGC3BE3KYHP6",
-        "planifieCounter": 2
+        "planifieCounter": 1
       }
     },
     {
@@ -5344,7 +5354,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs",
         "HW_ID": "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -5423,7 +5433,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6P9JFRW9XXGN7P7FPX",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -5501,7 +5512,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QR67710KWTHBD0C6V",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -6190,7 +6201,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": "Mosquée ? Marabout ? A voir sur place",
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -6342,7 +6354,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE67434E7DEZHRXH0XL60RGD",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -6367,7 +6380,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE674DGFXSI4ZIDUXMN3HOGL"
+        "HW_ID": "HW-01K77WPE674DGFXSI4ZIDUXMN3HOGL",
+        "planifieCounter": 0
       }
     },
     {
@@ -6392,7 +6406,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6701ZTW3Z1PK130SE6VF73"
+        "HW_ID": "HW-01K77WPE6701ZTW3Z1PK130SE6VF73",
+        "planifieCounter": 0
       }
     },
     {
@@ -6792,7 +6807,7 @@
         "price": 0,
         "HW_ID": "HW-PC-1771394122276",
         "Description": "Ajouté via Rich Editor",
-        "planifieCounter": 2,
+        "planifieCounter": 3,
         "incontournable": true
       }
     },
@@ -6817,7 +6832,7 @@
         "Description": "Ajouté via Rich Editor",
         "lat": 33.7812942328873,
         "lng": 10.76678663492203,
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -6888,21 +6903,29 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.780556815765218,
-          33.85882818866646
+          10.780409427781358,
+          33.8558563506458
         ]
       },
       "properties": {
         "Nom du site FR": "Test pour Jules",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Hôtel",
         "Zone": "Houmt Souk",
-        "Description_courte": "Juste pour voir si Jules me voit",
+        "Description_courte": "Juste pour voir si Jules me voit na na nère",
         "description": "A effacer ensuite",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-PC-1771838835356",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "lat": 33.8558563506458,
+        "lng": 10.780409427781358,
+        "Nom du site arabe": "",
+        "notes": "",
+        "Source": "",
+        "photos": [
+          "photos/poi_HW-PC-1771838835356_1771880218342.jpg"
+        ]
       }
     }
   ]
