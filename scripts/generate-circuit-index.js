@@ -162,7 +162,7 @@ function loadPOIs(poiFilename) {
 }
 
 function findPOIsOnTrack(trackPoints, poiFeatures) {
-    const matchedIds = new Set();
+    const matchedPOIs = [];
     const DISTANCE_THRESHOLD = 50; // meters
 
     // Optimization: Calculate bounding box of track to quickly exclude distant POIs
@@ -186,15 +186,35 @@ function findPOIsOnTrack(trackPoints, poiFeatures) {
 
     nearbyPOIs.forEach(poi => {
         const [poiLon, poiLat] = poi.geometry.coordinates;
-        for (const [trackLat, trackLon] of trackPoints) {
-            if (getDistance(trackLat, trackLon, poiLat, poiLon) <= DISTANCE_THRESHOLD) {
-                matchedIds.add(poi.properties.HW_ID);
-                break; // Found it on the track, move to next POI
+        let bestIndex = -1;
+        let minDistance = Infinity;
+
+        // Find the closest point on the track for this POI
+        for (let i = 0; i < trackPoints.length; i++) {
+            const [trackLat, trackLon] = trackPoints[i];
+            const dist = getDistance(trackLat, trackLon, poiLat, poiLon);
+
+            if (dist <= DISTANCE_THRESHOLD) {
+                if (dist < minDistance) {
+                    minDistance = dist;
+                    bestIndex = i;
+                }
             }
+        }
+
+        if (bestIndex !== -1) {
+            matchedPOIs.push({
+                id: poi.properties.HW_ID,
+                index: bestIndex,
+                distance: minDistance
+            });
         }
     });
 
-    return Array.from(matchedIds);
+    // Sort POIs by their position along the track (index)
+    matchedPOIs.sort((a, b) => a.index - b.index);
+
+    return matchedPOIs.map(p => p.id);
 }
 
 function processDirectory(mapId, zones, destinations) {

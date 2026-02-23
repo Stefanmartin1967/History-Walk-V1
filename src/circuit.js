@@ -250,13 +250,18 @@ export function addPoiToCircuit(feature) {
 export function renderCircuitPanel() {
     const points = state.currentCircuit;
 
+    // Détermine si le circuit est officiel (pour masquer les actions d'édition)
+    const isOfficial = state.officialCircuits && state.activeCircuitId
+        ? state.officialCircuits.some(c => c.id === state.activeCircuitId)
+        : false;
+
     View.renderCircuitList(points, {
         onAction: (action, index) => handleCircuitAction(action, index),
         onDetails: (feature, index) => {
             const featureId = state.loadedFeatures.indexOf(feature);
             openDetailsPanel(featureId, index);
         }
-    });
+    }, isOfficial);
 
     // On met à jour les boutons
     View.updateControlButtons({

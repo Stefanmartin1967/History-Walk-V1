@@ -8,14 +8,13 @@ import { createIcons, icons } from 'lucide';
 /**
  * Génère le HTML pour une étape du circuit
  */
-function createStepElement(feature, index, totalPoints, callbacks) {
+function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
     const poiName = getPoiName(feature);
     const stepDiv = document.createElement('div');
     stepDiv.className = 'step';
     
-    stepDiv.innerHTML = `
-        <div class="num">${index + 1}</div>
-        <div class="step-main" title="${poiName}">${poiName}</div>
+    // On ne génère les actions que si le circuit N'EST PAS officiel
+    const actionsHtml = isOfficial ? '' : `
         <div class="step-actions">
             <button class="stepbtn" data-action="up" title="Monter" ${index === 0 ? 'disabled' : ''}>
                 <i data-lucide="chevron-up"></i>
@@ -28,11 +27,18 @@ function createStepElement(feature, index, totalPoints, callbacks) {
             </button>
         </div>`;
 
-    // Événements
-    stepDiv.querySelector('.step-actions').addEventListener('click', (e) => {
-        const button = e.target.closest('button');
-        if (button) callbacks.onAction(button.dataset.action, index);
-    });
+    stepDiv.innerHTML = `
+        <div class="num">${index + 1}</div>
+        <div class="step-main" title="${poiName}">${poiName}</div>
+        ${actionsHtml}`;
+
+    // Événements (Si les actions existent)
+    if (!isOfficial) {
+        stepDiv.querySelector('.step-actions').addEventListener('click', (e) => {
+            const button = e.target.closest('button');
+            if (button) callbacks.onAction(button.dataset.action, index);
+        });
+    }
 
     stepDiv.querySelector('.step-main').addEventListener('click', () => {
         callbacks.onDetails(feature, index);
@@ -44,7 +50,7 @@ function createStepElement(feature, index, totalPoints, callbacks) {
 /**
  * Rendu complet du panneau de circuit
  */
-export function renderCircuitList(points, callbacks) {
+export function renderCircuitList(points, callbacks, isOfficial = false) {
     if (!DOM.circuitStepsList) return;
 
     DOM.circuitStepsList.innerHTML = '';
@@ -53,7 +59,7 @@ export function renderCircuitList(points, callbacks) {
         DOM.circuitStepsList.innerHTML = `<p class="empty-list-info">Cliquez sur les lieux sur la carte pour les ajouter à votre circuit.</p>`;
     } else {
         points.forEach((feature, index) => {
-            const stepEl = createStepElement(feature, index, points.length, callbacks);
+            const stepEl = createStepElement(feature, index, points.length, callbacks, isOfficial);
             DOM.circuitStepsList.appendChild(stepEl);
         });
     }
