@@ -122,6 +122,23 @@ function setupAdminListeners() {
         btnGitHub.parentNode.replaceChild(newGitHubBtn, btnGitHub);
         newGitHubBtn.addEventListener('click', showGitHubUploadModal);
 
+        // --- NOUVEAU : Bouton Configuration GitHub (Token) ---
+        let btnConfig = document.getElementById('btn-admin-config-github');
+        if (!btnConfig) {
+            btnConfig = document.createElement('button');
+            btnConfig.id = 'btn-admin-config-github';
+            btnConfig.className = 'tools-menu-item';
+            btnConfig.innerHTML = `<i data-lucide="settings"></i> Config GitHub`;
+
+            // Add before Publish
+            menuContainer.appendChild(btnConfig);
+            createIcons({ icons, root: btnConfig });
+        }
+
+        const newConfigBtn = btnConfig.cloneNode(true);
+        btnConfig.parentNode.replaceChild(newConfigBtn, btnConfig);
+        newConfigBtn.addEventListener('click', showGitHubConfigModal);
+
         // --- NOUVEAU : Bouton Publier Carte (One-Click) ---
         let btnPublish = document.getElementById('btn-admin-publish-map');
         if (!btnPublish) {
@@ -389,6 +406,70 @@ function showRankTable() {
 
 function setupGitHubUploadUI() {
     // Nothing complex to setup on init, logic is inside showGitHubUploadModal
+}
+
+function showGitHubConfigModal() {
+    const storedToken = getStoredToken() || '';
+
+    const html = `
+        <div style="text-align: left;">
+            <p style="margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft);">
+                Configurez votre Token d'accès personnel (PAT) pour autoriser l'application à publier sur GitHub depuis ce navigateur.
+            </p>
+
+            <label style="display:block; margin-bottom: 5px; font-weight: 600;">GitHub Token (PAT)</label>
+            <input type="password" id="gh-config-token" value="${storedToken}" placeholder="ghp_..."
+                   style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+
+            <div style="font-size: 0.8em; color: var(--ink-soft);">
+                Ce token est stocké uniquement dans votre navigateur local.
+            </div>
+        </div>
+    `;
+
+    showAlert("Configuration GitHub", html, "Sauvegarder").then(() => {
+        // La promesse se résout à la fermeture (OK cliqué)
+        // Mais showAlert ne retourne pas la valeur des inputs.
+        // On doit ruser ou utiliser un bouton personnalisé dans showAlert (qui n'est pas prévu pour ça ici)
+        // Mieux vaut utiliser une implémentation custom comme showGitHubUploadModal
+    });
+
+    // REFACTO: showAlert est trop simple, on utilise le pattern manuel comme showGitHubUploadModal
+    // pour avoir accès aux inputs avant la fermeture.
+
+    // 1. Récupération des éléments de la modale globale
+    const overlay = document.getElementById('custom-modal-overlay');
+    const title = document.getElementById('custom-modal-title');
+    const message = document.getElementById('custom-modal-message');
+    const actions = document.getElementById('custom-modal-actions');
+
+    if (!overlay || !title || !message || !actions) return;
+
+    title.textContent = "Configuration GitHub";
+    message.innerHTML = html;
+    actions.innerHTML = '';
+
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'custom-modal-btn secondary';
+    btnCancel.textContent = "Annuler";
+    btnCancel.onclick = () => overlay.classList.remove('active');
+
+    const btnSave = document.createElement('button');
+    btnSave.className = 'custom-modal-btn primary';
+    btnSave.textContent = "Sauvegarder";
+    btnSave.onclick = () => {
+        const input = message.querySelector('#gh-config-token');
+        if (input) {
+            const token = input.value.trim();
+            saveToken(token);
+            showToast("Token sauvegardé !", "success");
+            overlay.classList.remove('active');
+        }
+    };
+
+    actions.appendChild(btnCancel);
+    actions.appendChild(btnSave);
+    overlay.classList.add('active');
 }
 
 function showGitHubUploadModal() {
