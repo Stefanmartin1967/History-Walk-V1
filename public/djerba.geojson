@@ -24,7 +24,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
-        "planifieCounter": 2,
+        "planifieCounter": 1,
         "vu": true,
         "Description_courte": "",
         "description": "Très bel hôtel 4 *, si vous voulez manger local, un coin Djerbie est présent à chaque repas. Soirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée",
@@ -57,7 +57,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6722XTDVPGCQTPPBXR",
-        "planifieCounter": 1,
+        "planifieCounter": 2,
         "vu": true
       }
     },
@@ -109,7 +109,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE671G6V27VYYNMJV2NC",
-        "planifieCounter": 1,
+        "planifieCounter": 2,
         "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497287806.jpg",
@@ -167,7 +167,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6770BXCP2SW1Z2DTA2",
-        "planifieCounter": 1,
+        "planifieCounter": 2,
         "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497320289.jpg",
@@ -672,7 +672,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE699CBRC4PV1ARJPXKM",
-        "planifieCounter": 2
+        "planifieCounter": 1
       }
     },
     {
@@ -5318,7 +5318,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": "A chercher, aucune info sur le net",
         "HW_ID": "HW-01K77WPE6P30E9MGC3BE3KYHP6",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -5501,7 +5501,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QR67710KWTHBD0C6V",
-        "planifieCounter": 2
+        "planifieCounter": 1
       }
     },
     {
@@ -6860,6 +6860,48 @@
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-PC-1771533852859",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.769282853548152,
+          33.873872343811016
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "aaaaa",
+        "Catégorie": "Café",
+        "Zone": "Houmt Souk",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-PC-1770724817732",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.780556815765218,
+          33.85882818866646
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test pour Jules",
+        "Catégorie": "Curiosité",
+        "Zone": "Houmt Souk",
+        "Description_courte": "Juste pour voir si Jules me voit",
+        "description": "A effacer ensuite",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-PC-1771838835356",
         "Description": "Ajouté via Rich Editor"
       }
     }
