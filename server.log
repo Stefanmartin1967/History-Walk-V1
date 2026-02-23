@@ -8,3 +8,5 @@ Port 5173 is in use, trying another one...
 
   ➜  Local:   http://localhost:5174/History-Walk-V1/
   ➜  Network: use --host to expose
+3:27:53 PM [vite] (client) page reload src/main.js
+3:28:13 PM [vite] (client) page reload src/main.js
