@@ -258,6 +258,15 @@ async function loadAndInitializeMap() {
     // 5. RENDU (La stabilisation est ici)
     if (isMobileView()) {
         state.loadedFeatures = geojsonData.features || [];
+
+        // FIX: Ensure userData is linked to features on Mobile too
+        state.loadedFeatures.forEach(feature => {
+            const id = getPoiId(feature);
+            if (state.userData[id]) {
+                feature.properties.userData = state.userData[id];
+            }
+        });
+
         await saveAppState('lastGeoJSON', geojsonData); // Mobile cache specific
         setSaveButtonsState(true);
         switchMobileView('circuits');

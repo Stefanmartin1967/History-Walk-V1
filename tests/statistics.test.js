@@ -42,6 +42,7 @@ describe('Statistics System', () => {
         state.officialCircuits = [];
         state.officialCircuitsStatus = {};
         state.myCircuits = [];
+        state.hiddenPoiIds = []; // Important: Reset hidden POIs
         vi.resetAllMocks();
     });
 
@@ -155,7 +156,7 @@ describe('Statistics System', () => {
         expect(stats.materialRank.title).toBe("Pierre");
     });
 
-    it('should exclude hidden POIs from total count', () => {
+    it('should include all POIs in total count (reverted hidden filter)', () => {
         // Setup 10 POIs
         state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
             properties: { HW_ID: `p${i}` }
@@ -166,18 +167,40 @@ describe('Statistics System', () => {
 
         // Visit 1 visible POI
         state.userData['p0'] = { vu: true };
-        // Visit 1 hidden POI (should not count)
+        // Visit 1 hidden POI (should count as visited if filtering is disabled)
         state.userData['p8'] = { vu: true };
 
         const stats = calculateStats();
 
-        // Total should be 8 (10 - 2 hidden)
-        expect(stats.totalPois).toBe(8);
+        // Total should be 10 (hidden are NOT excluded anymore)
+        expect(stats.totalPois).toBe(10);
 
-        // Visited should be 1 (p0). p8 is hidden so it shouldn't count.
-        expect(stats.visitedPois).toBe(1);
+        // Visited should be 2 (p0 and p8)
+        expect(stats.visitedPois).toBe(2);
 
-        // Percent: 1/8 = 12.5 -> 13%
-        expect(stats.poiPercent).toBe(13);
+        // Percent: 2/10 = 20%
+        expect(stats.poiPercent).toBe(20);
+    });
+
+    it('should count POIs from completed circuits as visited even if not marked vu', () => {
+        // Setup 10 POIs
+        state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
+            properties: { HW_ID: `p${i}` }
+        }));
+
+        // Setup 1 completed circuit containing p0, p1, p2
+        state.officialCircuits = [
+            { id: 'c1', poiIds: ['p0', 'p1', 'p2'] }
+        ];
+        state.officialCircuitsStatus = { 'c1': true };
+
+        // No individual 'vu' status set in userData
+        state.userData = {};
+
+        const stats = calculateStats();
+
+        // Should count p0, p1, p2 as visited because c1 is completed
+        expect(stats.visitedPois).toBe(3);
+        expect(stats.poiPercent).toBe(30);
     });
 });

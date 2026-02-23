@@ -52,25 +52,32 @@ export const MATERIAL_RANKS = [
 
 export function calculateStats() {
     // 1. POIs Visités (Base de référence pour la Gamification)
-    // On exclut les POIs "cachés" (Corbeille)
-    const validFeatures = state.loadedFeatures.filter(feature => {
-        const id = getPoiId(feature);
-        return !state.hiddenPoiIds || !state.hiddenPoiIds.includes(id);
-    });
-
-    const totalPois = validFeatures.length;
+    const totalPois = state.loadedFeatures.length;
     let visitedPois = 0;
 
-    validFeatures.forEach(feature => {
+    // Récupération de tous les IDs de POIs appartenant à des circuits terminés
+    const completedCircuitPoiIds = new Set();
+    const officialCircuits = state.officialCircuits || [];
+
+    officialCircuits.forEach(c => {
+        if (state.officialCircuitsStatus[String(c.id)]) {
+            (c.poiIds || []).forEach(poiId => completedCircuitPoiIds.add(poiId));
+        }
+    });
+
+    state.loadedFeatures.forEach(feature => {
         const id = getPoiId(feature);
-        if (state.userData[id] && state.userData[id].vu) {
+        const isVisitedDirectly = state.userData[id] && state.userData[id].vu;
+        const isVisitedViaCircuit = completedCircuitPoiIds.has(id);
+
+        if (isVisitedDirectly || isVisitedViaCircuit) {
             visitedPois++;
         }
     });
     const poiPercent = totalPois > 0 ? Math.round((visitedPois / totalPois) * 100) : 0;
 
     // 2. Calculs Officiels (Distance)
-    const officialCircuits = state.officialCircuits || [];
+    // On réutilise la variable 'officialCircuits' déjà déclarée plus haut
     let totalOfficialCircuitsAvailable = officialCircuits.length;
     let totalOfficialDistanceAvailable = 0;
 
