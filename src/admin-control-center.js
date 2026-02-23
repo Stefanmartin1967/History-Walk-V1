@@ -33,12 +33,13 @@ export async function initAdminControlCenter() {
     const style = document.createElement('style');
     style.textContent = `
         /* --- RESET & OVERRIDES --- */
-        .custom-modal-content.admin-cc-mode {
-            max-width: 1100px !important;
-            width: 90vw !important;
-            height: 85vh !important;
+        /* Cible la modale principale (.custom-modal-box) lorsqu'elle est en mode Admin CC */
+        .custom-modal-box.admin-cc-mode {
+            max-width: 1300px !important; /* LARGEUR ETENDUE */
+            width: 95vw !important;
+            height: 80vh !important; /* HAUTEUR AJUSTEE 16:9 */
             padding: 0 !important;
-            background: #f1f5f9 !important;
+            background: #f8fafc !important; /* GRIS TRES CLAIR */
             border-radius: 24px !important;
             overflow: hidden !important;
             display: flex !important;
@@ -47,13 +48,26 @@ export async function initAdminControlCenter() {
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
         }
 
+        /* Force le message interne à prendre tout l'espace */
+        .custom-modal-box.admin-cc-mode .custom-modal-message {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            overflow: hidden !important;
+        }
+
         /* --- CONTAINER PRINCIPAL --- */
         .admin-cc-container {
             display: flex;
             flex-direction: column;
             height: 100%;
+            width: 100%;
             font-family: 'Inter', system-ui, sans-serif;
-            background: #f1f5f9; /* Assure que le fond suit */
+            background: #f8fafc; /* Match modal background */
         }
 
         /* --- HEADER STICKY --- */
@@ -114,15 +128,16 @@ export async function initAdminControlCenter() {
             flex: 1;
             overflow-y: auto;
             padding: 40px;
-            background: #f1f5f9;
+            background: #f8fafc;
         }
 
         /* --- DASHBOARD GRID (Desktop focus) --- */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr); /* 3 COLONNES FORCEES */
             gap: 25px;
             margin-bottom: 40px;
+            width: 100%;
         }
 
         .stat-card {
@@ -137,6 +152,7 @@ export async function initAdminControlCenter() {
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            min-width: 0; /* Prevents flex items from overflowing */
         }
 
         .stat-card:hover { transform: translateY(-5px); border-color: var(--brand); }
@@ -406,12 +422,6 @@ let diffData = {
 };
 
 export async function openControlCenter() {
-    // Force specific class on modal content for overrides
-    const modalContent = document.getElementById('custom-modal-message').parentElement; // .custom-modal-content
-    if (modalContent) {
-        modalContent.classList.add('admin-cc-mode');
-    }
-
     // 1. Structure HTML (Header Sticky + Scrollable Body + Fixed Footer)
     const html = `
         <div class="admin-cc-container">
@@ -449,7 +459,7 @@ export async function openControlCenter() {
     `;
 
     // 2. Open Modal
-    showAlert("", html, null);
+    showAlert("", html, null, 'admin-cc-mode');
 
     // Hide default modal title
     const defaultTitle = document.getElementById('custom-modal-title');
