@@ -219,14 +219,19 @@ export function renderMobileCircuitsList() {
             
         // Distance
         let dist = 0;
-        if (c.realTrack) {
-            dist = getRealDistance(c);
-        } else {
-            dist = getOrthodromicDistance(validPois);
+
+        // CORRECTION: Priorité à la distance officielle déclarée (pour éviter 3.8km => 1.6km si calcul orthodromique)
+        if (c.distance && typeof c.distance === 'string') {
+            const parsed = parseFloat(c.distance.replace(',', '.').replace(/[^\d.]/g, ''));
+            if (!isNaN(parsed) && parsed > 0) dist = parsed * 1000;
         }
-        if (c.distance && typeof c.distance === 'string' && dist === 0) {
-            const parsed = parseFloat(c.distance.replace(',', '.'));
-            if (!isNaN(parsed)) dist = parsed * 1000;
+
+        if (dist === 0 && c.realTrack) {
+            dist = getRealDistance(c);
+        }
+
+        if (dist === 0) {
+            dist = getOrthodromicDistance(validPois);
         }
 
         // Restaurant
@@ -305,16 +310,21 @@ export function renderMobileCircuitsList() {
             
             // Calculs Métadonnées
             let distance = 0;
-            if (circuit.realTrack) {
+
+            // CORRECTION: Priorité à la distance officielle déclarée
+            if (circuit.distance && typeof circuit.distance === 'string') {
+                const parsed = parseFloat(circuit.distance.replace(',', '.').replace(/[^\d.]/g, ''));
+                if (!isNaN(parsed) && parsed > 0) distance = parsed * 1000;
+            }
+
+            if (distance === 0 && circuit.realTrack) {
                 distance = getRealDistance(circuit);
-            } else {
+            }
+
+            if (distance === 0) {
                 distance = getOrthodromicDistance(validPois);
             }
-            // Fix legacy distance string if needed
-            if (circuit.distance && typeof circuit.distance === 'string' && distance === 0) {
-                const parsed = parseFloat(circuit.distance.replace(',', '.'));
-                if (!isNaN(parsed)) distance = parsed * 1000;
-            }
+
             const distDisplay = (distance / 1000).toFixed(1) + ' km';
 
             let zoneName = circuit.zone || "Zone Inconnue";
