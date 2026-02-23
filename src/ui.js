@@ -43,7 +43,7 @@ export function initializeDomReferences() {
         'btn-clear-circuit', 'close-circuit-panel-btn',
         'btn-categories', 'btn-legend',
         'explorer-list', 'btn-open-my-circuits',
-        'btn-bmc', 'btn-tools-menu'
+        'btn-bmc', 'btn-tools-menu', 'btn-open-trash'
     ];
     
     // Récupération sécurisée des éléments
@@ -156,6 +156,13 @@ export function initializeDomReferences() {
                 saveUserData(false);
             }
             if(DOM.backupModal) DOM.backupModal.classList.remove('active');
+        });
+    }
+
+    if (DOM.btnOpenTrash) {
+        DOM.btnOpenTrash.addEventListener('click', () => {
+            openTrashModal();
+            closeAllDropdowns();
         });
     }
 
@@ -952,7 +959,7 @@ export function openRestoreModal() {
     const deletedCircuits = state.myCircuits.filter(c => c.isDeleted);
 
     if (deletedCircuits.length === 0) {
-        showToast("Corbeille vide.", "info");
+        showToast("Aucun circuit dans la corbeille.", "info");
         return;
     }
 
@@ -976,7 +983,7 @@ export function openRestoreModal() {
 
     if (!modal) return;
 
-    titleEl.textContent = "Corbeille";
+    titleEl.textContent = "Corbeille (Circuits)";
     msgEl.innerHTML = html;
     actionsEl.innerHTML = `<button class="custom-modal-btn secondary" id="btn-close-restore">Fermer</button>`;
 
@@ -994,6 +1001,69 @@ export function openRestoreModal() {
 
             modal.classList.remove('active');
             eventBus.emit('circuit:list-updated');
+        };
+    });
+}
+
+export function openTrashModal() {
+    if (!state.hiddenPoiIds || state.hiddenPoiIds.length === 0) {
+        showToast("Corbeille vide.", "info");
+        return;
+    }
+
+    const deletedFeatures = state.loadedFeatures.filter(f =>
+        state.hiddenPoiIds.includes(getPoiId(f))
+    );
+
+    const html = `
+        <div style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+            ${deletedFeatures.map(f => {
+                const name = getPoiName(f);
+                const id = getPoiId(f);
+                return `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--surface-muted); border-radius: 8px;">
+                    <span style="font-weight: 500; color: var(--ink); text-align: left;">${escapeXml(name)}</span>
+                    <button class="restore-poi-btn" data-id="${id}" style="background: transparent; color: var(--ok); border: 1px solid var(--ok); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: 600;">
+                        Restaurer
+                    </button>
+                </div>
+                `;
+            }).join('')}
+            ${deletedFeatures.length === 0 ? '<div style="padding:10px; color:var(--ink-soft);">Les lieux supprimés de la carte actuelle sont listés ici.</div>' : ''}
+        </div>
+    `;
+
+    const modal = document.getElementById('custom-modal-overlay');
+    const titleEl = document.getElementById('custom-modal-title');
+    const msgEl = document.getElementById('custom-modal-message');
+    const actionsEl = document.getElementById('custom-modal-actions');
+
+    if (!modal) return;
+
+    titleEl.textContent = "Corbeille (Lieux)";
+    msgEl.innerHTML = html;
+    actionsEl.innerHTML = `<button class="custom-modal-btn secondary" id="btn-close-trash">Fermer</button>`;
+
+    modal.classList.add('active');
+
+    const closeBtn = document.getElementById('btn-close-trash');
+    if (closeBtn) closeBtn.onclick = () => modal.classList.remove('active');
+
+    msgEl.querySelectorAll('.restore-poi-btn').forEach(btn => {
+        btn.onclick = async (e) => {
+            const id = e.currentTarget.dataset.id;
+
+            // Restore logic
+            if (state.hiddenPoiIds) {
+                state.hiddenPoiIds = state.hiddenPoiIds.filter(hid => hid !== id);
+                await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+            }
+
+            // Refresh UI
+            applyFilters();
+
+            modal.classList.remove('active');
+            showToast("Lieu restauré !", "success");
         };
     });
 }

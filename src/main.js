@@ -259,6 +259,14 @@ async function loadAndInitializeMap() {
     if (isMobileView()) {
         state.loadedFeatures = geojsonData.features || [];
 
+        // --- MERGE CUSTOM POIS (MOBILE) ---
+        const customPois = await getAppState(`customPois_${activeMapId}`) || [];
+        if (customPois.length > 0) {
+            console.log(`[Mobile] Fusion de ${customPois.length} lieux personnalisés.`);
+            state.loadedFeatures = [...state.loadedFeatures, ...customPois];
+            state.customFeatures = customPois;
+        }
+
         // FIX: Ensure userData is linked to features on Mobile too
         state.loadedFeatures.forEach(feature => {
             const id = getPoiId(feature);

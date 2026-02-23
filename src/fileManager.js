@@ -151,78 +151,62 @@ async function downloadJSON(data, filename) {
 
 async function restoreBackup(json) {
     try {
-        showToast("Restauration en cours...", "info");
+        showToast("Restauration intelligente en cours...", "info");
 
-        // 1. Restaurer la carte de base
-        const mapId = json.mapId || 'RestoredMap';
+        const mapId = json.mapId || 'djerba';
         state.currentMapId = mapId;
-        updateExportButtonLabel(mapId);
         await saveAppState('lastMapId', mapId);
 
-        if (json.baseGeoJSON) {
-            if (isMobileView()) {
-                // Mobile: On stocke juste en mémoire
-                state.loadedFeatures = json.baseGeoJSON.features || [];
-                // IMPORTANT: Sauvegarder le geojson pour le prochain reload
-                await saveAppState('lastGeoJSON', json.baseGeoJSON);
-            } else {
-                // Desktop: On affiche
-                await displayGeoJSON(json.baseGeoJSON, mapId);
-            }
-        }
-
-        // 2. Restaurer les données utilisateur
+        // 1. Restaurer les données utilisateur (Notes, Visites, Positions modifiées)
         if (json.userData) {
             state.userData = json.userData;
             for (const [id, data] of Object.entries(state.userData)) {
-                await savePoiData(state.currentMapId, id, data);
+                await savePoiData(mapId, id, data);
             }
-
-            state.loadedFeatures.forEach(feature => {
-        const id = getPoiId(feature);
-        if (state.userData[id]) {
-            feature.properties.userData = state.userData[id];
         }
-    });
 
+        // 2. Extraire et Restaurer les Lieux Créés (Custom POIs)
+        // On identifie les POIs créés par l'utilisateur grâce à leur ID (HW-PC-...) ou import (auto_)
+        if (json.baseGeoJSON && json.baseGeoJSON.features) {
+            const customFeatures = json.baseGeoJSON.features.filter(f => {
+                const id = f.properties.HW_ID || f.id || "";
+                return id.startsWith("HW-PC-") || id.startsWith("auto_");
+            });
+
+            if (customFeatures.length > 0) {
+                console.log(`[Restore] ${customFeatures.length} lieux personnalisés restaurés.`);
+                await saveAppState(`customPois_${mapId}`, customFeatures);
+            }
         }
 
         // 3. Restaurer les circuits
         if (json.myCircuits && Array.isArray(json.myCircuits)) {
-            state.myCircuits = json.myCircuits;
-            state.activeCircuitId = null; 
-            state.currentCircuit = [];
-            
             await clearStore('circuits'); 
-            for (const circuit of state.myCircuits) {
+            for (const circuit of json.myCircuits) {
                 await saveCircuit(circuit);
             }
         }
         
-        // 4. Restaurer les suppressions
+        // 4. Restaurer les suppressions (Corbeille)
         if (json.hiddenPoiIds) {
-            state.hiddenPoiIds = json.hiddenPoiIds;
-            await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+            await saveAppState(`hiddenPois_${mapId}`, json.hiddenPoiIds);
         }
 
         // 5. Restaurer le statut des circuits officiels
         if (json.officialCircuitsStatus) {
-            state.officialCircuitsStatus = json.officialCircuitsStatus;
-            await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
+            await saveAppState(`official_circuits_status_${mapId}`, json.officialCircuitsStatus);
         }
 
-        // 6. Rafraîchissement UI
-        if (closeDetailsPanel) closeDetailsPanel();
-
-        if (isMobileView()) {
-            // FORCE LE RAFRAÎCHISSEMENT MOBILE
-            console.log("Restauration Mobile Terminée -> Refresh UI");
-            switchMobileView('circuits');
-        } else {
-            // Desktop Refresh
-            const { applyFilters } = await import('./data.js'); 
-            if (applyFilters) applyFilters();
-        }
+        // 6. REDÉMARRAGE POUR FUSION PROPRE
+        // On recharge la page pour que l'application :
+        // - Charge le dernier GeoJSON officiel depuis le serveur
+        // - Applique les userData restaurés (dont les déplacements)
+        // - Ajoute les customPois restaurés
+        // - Masque les hiddenPois restaurés
+        showToast("Données restaurées ! Redémarrage...", "success");
+        setTimeout(() => {
+            window.location.reload();
+        }, 1500);
 
     } catch (error) {
         console.error("Erreur restauration:", error);

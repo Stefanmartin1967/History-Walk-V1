@@ -28,6 +28,11 @@ function toggleAdminUI(isAdmin) {
     if (adminContainer) {
         adminContainer.style.display = isAdmin ? 'block' : 'none';
     }
+
+    const fusionBtn = document.getElementById('btn-fusion-console');
+    if (fusionBtn) {
+        fusionBtn.style.display = isAdmin ? 'flex' : 'none';
+    }
 }
 
 function setupAdminListeners() {
