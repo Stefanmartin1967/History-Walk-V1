@@ -4,6 +4,7 @@ import { getPoiId } from './data.js';
 import { showToast } from './toast.js';
 import { updatePoiData } from './data.js';
 import { openDetailsPanel } from './ui.js';
+import { addToDraft } from './admin-control-center.js';
 
 const REPO_OWNER = 'Stefanmartin1967';
 const REPO_NAME = 'History-Walk-V1';
@@ -121,6 +122,9 @@ async function handleAdminPhotoUpload(poiId) {
                 // Update the URL in the list
                 newPhotosList[i] = publicUrl;
                 successCount++;
+
+                // Track in Admin Draft
+                addToDraft('photo', poiId, { url: publicUrl });
 
             } catch (err) {
                 console.error("Failed to upload photo", err);

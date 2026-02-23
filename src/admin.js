@@ -8,7 +8,7 @@ import { showAlert } from './modal.js';
 import { ANIMAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
-import { initAdminControlCenter, openControlCenter } from './admin-control-center.js';
+import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
 
 export function initAdminMode() {
     // Initial check
@@ -541,6 +541,9 @@ function showGitHubUploadModal() {
             const path = `public/circuits/djerba/${file.name}`;
 
             await uploadFileToGitHub(file, token, repoOwner, repoName, path, `Add official circuit: ${file.name}`);
+
+            // Track in Admin Draft
+            addToDraft('circuit', file.name, { type: 'upload' });
 
             statusDiv.textContent = "Succès ! Le site se mettra à jour dans quelques minutes.";
             statusDiv.style.color = "green";
