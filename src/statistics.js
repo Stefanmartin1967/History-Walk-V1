@@ -408,8 +408,9 @@ export async function showStatisticsModal() {
     </div>
     `;
 
-    await showAlert("Mon Carnet de Voyage", html, "Fermer", "gamification-modal");
+    const modalPromise = showAlert("Mon Carnet de Voyage", html, "Fermer", "gamification-modal");
 
+    // Fix: Attach listeners immediately after showing modal, do not wait for close
     const modalContent = document.getElementById('custom-modal-message');
     if (modalContent) {
         createIcons({ icons, root: modalContent });
@@ -422,6 +423,8 @@ export async function showStatisticsModal() {
             });
         }
     }
+
+    await modalPromise;
 }
 
 function printCardElement() {
