@@ -267,6 +267,10 @@ async function loadAndInitializeMap() {
             }
         });
 
+        // Recalculate counters to ensure consistency with loaded official circuits
+        const { recalculatePlannedCountersForMap } = await import('./gpx.js');
+        await recalculatePlannedCountersForMap(activeMapId);
+
         await saveAppState('lastGeoJSON', geojsonData); // Mobile cache specific
         setSaveButtonsState(true);
         switchMobileView('circuits');
@@ -282,6 +286,13 @@ async function loadAndInitializeMap() {
         enableDesktopCreationMode();
 
         await displayGeoJSON(geojsonData, activeMapId);
+
+        // Recalculate counters to ensure consistency with loaded official circuits
+        const { recalculatePlannedCountersForMap } = await import('./gpx.js');
+        await recalculatePlannedCountersForMap(activeMapId);
+
+        // Refresh UI with new counters
+        applyFilters();
 
         // Rétablissement du centrage intelligent
         fitMapToContent();
