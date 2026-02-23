@@ -32,68 +32,74 @@ export async function initAdminControlCenter() {
     // Inject styles (PC FIRST REDESIGN)
     const style = document.createElement('style');
     style.textContent = `
-        /* --- GLOBAL & LAYOUT (PC First) --- */
+        /* --- GLOBAL & LAYOUT (Ultra-Wide Optimization) --- */
+        :root {
+            --line-light: rgba(0,0,0,0.05); /* Defined locally as requested */
+        }
+
         .admin-cc-container {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             color: var(--ink);
             display: flex;
             flex-direction: column;
-            height: 100%;
-            max-height: 80vh; /* Fixed height for modal content */
+            height: 85vh; /* Hauteur fixe pour éviter l'étirement */
+            background: var(--surface);
         }
 
-        /* Modal Overrides for Admin Center */
-        /* Note: These target the generic modal container when active */
+        /* Override du container de la modale pour forcer la largeur */
         .custom-modal-content.admin-cc-mode {
-            max-width: 900px !important;
+            max-width: 950px !important;
             width: 90vw !important;
-            padding: 0 !important; /* Remove default padding to control scroll area */
-            border-radius: 16px;
-            overflow: hidden; /* Prevent outer scroll */
+            height: 85vh !important;
+            padding: 0 !important;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             display: flex;
             flex-direction: column;
         }
 
-        /* --- HEADER & TABS (Segmented Control) --- */
+        /* --- HEADER & TABS (Segmented Control Style) --- */
         .admin-cc-header {
-            padding: 20px 25px 0 25px;
+            padding: 25px 30px 15px 30px;
             background: var(--surface);
             border-bottom: 1px solid var(--line-light);
-            flex-shrink: 0; /* Don't shrink */
+            z-index: 10;
+            flex-shrink: 0;
         }
 
         .admin-cc-title {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.4rem;
+            font-weight: 800;
             margin-bottom: 20px;
+            color: var(--ink);
+            letter-spacing: -0.5px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
         .admin-cc-tabs {
-            display: flex;
-            gap: 5px;
+            display: inline-flex;
+            gap: 4px;
             background: var(--surface-muted);
-            padding: 4px;
-            border-radius: 10px;
-            width: fit-content;
-            margin-bottom: 20px;
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px solid var(--line-light);
         }
 
         .admin-cc-tab {
-            padding: 8px 24px;
+            padding: 8px 20px;
             cursor: pointer;
-            text-align: center;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 0.9em;
+            font-size: 0.85rem;
             color: var(--ink-soft);
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             gap: 8px;
-            user-select: none;
         }
 
         .admin-cc-tab:hover {
@@ -102,83 +108,90 @@ export async function initAdminControlCenter() {
         }
 
         .admin-cc-tab.active {
-            background: var(--surface);
+            background: white;
             color: var(--brand);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            transform: scale(1.02);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        /* --- SCROLLABLE CONTENT AREA --- */
+        /* --- CONTENT AREA (Scrollable) --- */
         .admin-cc-scroll-area {
-            flex: 1; /* Take remaining height */
+            flex: 1;
             overflow-y: auto;
-            padding: 25px;
-            background: var(--bg); /* Slight contrast */
+            padding: 30px;
+            background: #f8fafc; /* Fond très léger pour faire ressortir les cartes */
         }
 
-        /* --- DASHBOARD GRID (Glassmorphism) --- */
+        /* --- DASHBOARD (3-Column Grid) --- */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr); /* Force l'alignement horizontal */
             gap: 20px;
             margin-bottom: 30px;
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--line);
+            background: white;
+            border: 1px solid var(--line-light);
             border-radius: 16px;
-            padding: 24px;
-            text-align: center;
+            padding: 25px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            border-color: var(--brand-alpha);
-        }
+        .stat-card:hover { transform: translateY(-3px); border-color: var(--brand); }
 
-        .stat-card::before {
+        /* Background Icon Effect */
+        .stat-card::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(2.5);
+            width: 40px;
+            height: 40px;
             background: var(--brand);
-            opacity: 0;
-            transition: opacity 0.2s;
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
         }
-        .stat-card:hover::before { opacity: 1; }
 
-        .stat-icon {
+        /* Specific icon masks would be complex, simpler approach: just large absolute icon */
+        .stat-bg-icon {
+            position: absolute;
+            right: -10px;
+            bottom: -10px;
+            width: 80px;
+            height: 80px;
             color: var(--brand);
-            margin-bottom: 12px;
-            background: var(--brand-light-alpha);
-            padding: 10px;
-            border-radius: 50%;
+            opacity: 0.05;
+            transform: rotate(-15deg);
+            pointer-events: none;
         }
 
         .stat-value {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 800;
-            color: var(--ink);
+            color: var(--brand);
+            margin: 10px 0;
             line-height: 1;
-            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
         }
 
         .stat-label {
-            color: var(--ink-soft);
-            font-size: 0.85em;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             font-weight: 700;
+            color: var(--ink-soft);
+            position: relative;
+            z-index: 2;
         }
 
         /* --- SYNC BANNER --- */
@@ -192,19 +205,20 @@ export async function initAdminControlCenter() {
             align-items: flex-start;
             gap: 15px;
             box-shadow: 0 2px 10px rgba(33, 150, 243, 0.1);
+            margin-top: 20px;
         }
         .sync-banner i { flex-shrink: 0; margin-top: 3px; }
 
-        /* --- DIFF LIST (Side-by-Side) --- */
+        /* --- DIFF TABLE (Side-by-Side) --- */
         .diff-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         .diff-card {
-            background: var(--surface);
-            border: 1px solid var(--line);
+            background: white;
+            border: 1px solid var(--line-light);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
@@ -213,7 +227,7 @@ export async function initAdminControlCenter() {
         .diff-card-header {
             background: var(--surface-muted);
             padding: 12px 20px;
-            border-bottom: 1px solid var(--line);
+            border-bottom: 1px solid var(--line-light);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -221,7 +235,7 @@ export async function initAdminControlCenter() {
 
         .diff-title { font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 10px; }
         .diff-id {
-            font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+            font-family: 'SF Mono', 'Fira Code', Consolas, monospace; /* Monospace ID */
             font-size: 0.8em;
             color: var(--ink-light);
             background: rgba(0,0,0,0.05);
@@ -231,37 +245,137 @@ export async function initAdminControlCenter() {
 
         .diff-table {
             width: 100%;
+            border-spacing: 0;
             border-collapse: collapse;
-            font-size: 0.95em;
+            table-layout: fixed; /* Force le respect des largeurs */
         }
 
         .diff-table th {
             text-align: left;
-            padding: 10px 20px;
+            padding: 10px 15px;
             background: rgba(0,0,0,0.02);
             color: var(--ink-soft);
             font-weight: 600;
-            font-size: 0.8em;
+            font-size: 0.75em;
             text-transform: uppercase;
         }
 
         .diff-table td {
-            padding: 12px 20px;
+            padding: 12px 15px;
             border-bottom: 1px solid var(--line-light);
-            vertical-align: top;
+            vertical-align: middle;
+            font-size: 0.9em;
         }
         .diff-table tr:last-child td { border-bottom: none; }
 
-        .diff-key { font-weight: 600; color: var(--ink-soft); width: 15%; }
-        .diff-old { color: var(--danger); text-decoration: line-through; opacity: 0.6; width: 35%; font-family: monospace; }
-        .diff-arrow { color: var(--ink-light); text-align: center; width: 10%; }
-        .diff-new { color: var(--ok); font-weight: 600; width: 35%; font-family: monospace; background: rgba(0,255,0,0.05); }
+        .diff-key {
+            width: 100%;
+            font-weight: 700;
+            color: var(--ink-soft);
+            font-size: 0.8rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .diff-old {
+            width: 100%;
+            color: var(--danger);
+            /* Dynamic background using color-mix for theming compatibility */
+            background-color: color-mix(in srgb, var(--danger) 10%, transparent);
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .diff-new {
+            width: 100%;
+            color: var(--ok);
+            /* Dynamic background using color-mix for theming compatibility */
+            background-color: color-mix(in srgb, var(--ok) 10%, transparent);
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-weight: 600;
+            font-family: monospace;
+            word-break: break-all;
+        }
+
+        .diff-arrow {
+            width: 40px;
+            text-align: center;
+            color: var(--ink-light);
+        }
+
+        /* --- EMPTY STATE (Giant Checkmark) --- */
+        .empty-state-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            width: 80px;
+            height: 80px;
+            color: var(--ok);
+            opacity: 0.2;
+            margin-bottom: 20px;
+            transform: scale(1.1);
+        }
+
+        .empty-state-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ink-soft);
+        }
+
+        /* --- FOOTER ACTIONS --- */
+        #custom-modal-actions {
+            padding: 20px 30px;
+            background: white;
+            border-top: 1px solid var(--line-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        #btn-cc-publish {
+            background: var(--brand);
+            color: white;
+            font-weight: 700;
+            padding: 12px 28px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); /* Ombre portée légère */
+            border-radius: 12px;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+
+        #btn-cc-publish:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+
+        #btn-cc-publish:disabled {
+            background: var(--ink-soft);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
 
         /* --- SETTINGS --- */
         .settings-input {
             width: 100%;
             padding: 15px;
-            border: 1px solid var(--line);
+            border: 1px solid var(--line-light);
             border-radius: 8px;
             font-family: monospace;
             font-size: 1rem;
@@ -269,7 +383,7 @@ export async function initAdminControlCenter() {
             color: var(--ink);
             transition: border 0.2s;
         }
-        .settings-input:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 3px var(--brand-light-alpha); }
+        .settings-input:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 3px var(--brand-soft); }
 
         /* Scrollbar Polish */
         .admin-cc-scroll-area::-webkit-scrollbar { width: 8px; }
@@ -388,7 +502,7 @@ export async function openControlCenter() {
     if (actions) {
         actions.innerHTML = `
             <button class="custom-modal-btn secondary" onclick="document.getElementById('custom-modal-overlay').classList.remove('active')">Fermer</button>
-            <button class="custom-modal-btn primary" id="btn-cc-publish" style="background:var(--brand); font-weight:700; padding:10px 24px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+            <button id="btn-cc-publish">
                 <i data-lucide="rocket"></i> TOUT PUBLIER
             </button>
         `;
@@ -426,7 +540,6 @@ let diffData = {
 };
 
 async function prepareDiffData() {
-    // Similar logic to previous version
     let originalFeatures = [];
     try {
         const timestamp = Date.now();
@@ -537,19 +650,19 @@ function renderDashboard(container) {
     container.innerHTML = `
         <div class="dashboard-grid">
             <div class="stat-card">
-                <div class="stat-icon"><i data-lucide="map-pin" width="36" height="36"></i></div>
+                <i data-lucide="map-pin" class="stat-bg-icon"></i>
                 <div class="stat-value">${poisModified}</div>
-                <div class="stat-label">Lieux</div>
+                <div class="stat-label">Lieux Modifiés</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon"><i data-lucide="camera" width="36" height="36"></i></div>
+                <i data-lucide="camera" class="stat-bg-icon"></i>
                 <div class="stat-value">${photosAdded}</div>
-                <div class="stat-label">Photos</div>
+                <div class="stat-label">Photos Ajoutées</div>
             </div>
             <div class="stat-card">
-                <div class="stat-icon"><i data-lucide="route" width="36" height="36"></i></div>
+                <i data-lucide="route" class="stat-bg-icon"></i>
                 <div class="stat-value">${circuitsModified}</div>
-                <div class="stat-label">Circuits</div>
+                <div class="stat-label">Circuits Mis à jour</div>
             </div>
         </div>
 
@@ -566,9 +679,9 @@ function renderDashboard(container) {
                 </div>
             </div>
         ` : `
-            <div style="text-align:center; padding:40px; color:var(--ink-light); background:var(--surface); border-radius:12px; border:1px dashed var(--line);">
-                <i data-lucide="check-check" width="48" height="48" style="margin-bottom:10px; opacity:0.5;"></i>
-                <div>Tout est à jour. Aucune modification locale détectée.</div>
+            <div class="empty-state-container">
+                <i data-lucide="check-circle-2" class="empty-state-icon"></i>
+                <div class="empty-state-text">Tout est à jour. Aucune modification locale détectée.</div>
             </div>
         `}
     `;
@@ -576,7 +689,12 @@ function renderDashboard(container) {
 
 function renderChanges(container) {
     if (diffData.pois.length === 0 && diffData.stats.circuitsModified === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:50px;">Aucune modification à afficher.</div>`;
+        container.innerHTML = `
+            <div class="empty-state-container">
+                <i data-lucide="check-circle-2" class="empty-state-icon"></i>
+                <div class="empty-state-text">Aucune modification à afficher.</div>
+            </div>
+        `;
         return;
     }
 
@@ -595,19 +713,19 @@ function renderChanges(container) {
                 <table class="diff-table">
                     <thead>
                         <tr>
-                            <th>Propriété</th>
-                            <th>Ancienne Valeur</th>
-                            <th></th>
-                            <th>Nouvelle Valeur</th>
+                            <th style="width: 140px;">Propriété</th>
+                            <th style="width: 40%;">Ancienne Valeur</th>
+                            <th style="width: 40px;"></th>
+                            <th style="width: 40%;">Nouvelle Valeur</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${item.changes.map(c => `
                             <tr>
-                                <td class="diff-key">${c.key}</td>
-                                <td class="diff-old">${c.old}</td>
-                                <td class="diff-arrow">➜</td>
-                                <td class="diff-new">${c.new}</td>
+                                <td><div class="diff-key">${c.key}</div></td>
+                                <td><div class="diff-old">${c.old}</div></td>
+                                <td><div class="diff-arrow">➜</div></td>
+                                <td><div class="diff-new">${c.new}</div></td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -624,7 +742,7 @@ function renderSettings(container) {
     const token = getStoredToken() || '';
     container.innerHTML = `
         <div style="max-width:600px; margin:0 auto;">
-            <div style="background:var(--surface); padding:30px; border-radius:16px; border:1px solid var(--line); box-shadow:0 4px 15px rgba(0,0,0,0.02);">
+            <div style="background:var(--surface); padding:30px; border-radius:16px; border:1px solid var(--line-light); box-shadow:0 4px 15px rgba(0,0,0,0.02);">
                 <h3 style="margin-top:0;">Configuration GitHub</h3>
                 <p style="color:var(--ink-soft); margin-bottom:20px;">
                     Le Token d'accès personnel (PAT) permet à l'application d'écrire sur le dépôt GitHub.
