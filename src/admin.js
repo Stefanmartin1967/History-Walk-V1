@@ -80,8 +80,8 @@ function setupAdminListeners() {
     }
 
     // --- Ajout Dynamique du Bouton RANGS dans le Menu Admin ---
-    // menuContainer est déjà déclaré plus haut dans la fonction
-    if (menuContainer) {
+    // menuContent est déjà déclaré plus haut dans la fonction
+    if (menuContent) {
         // On vérifie si le bouton existe déjà (pour éviter les doublons lors des HMR)
         let btnRanks = document.getElementById('btn-admin-show-ranks');
         if (!btnRanks) {
@@ -90,11 +90,11 @@ function setupAdminListeners() {
             btnRanks.className = 'tools-menu-item';
             btnRanks.innerHTML = `<i data-lucide="award"></i> Rangs & XP`;
             // Insérer avant le premier séparateur ou à la fin
-            const separator = menuContainer.querySelector('div[style*="height:1px"]');
+            const separator = menuContent.querySelector('div[style*="height:1px"]');
             if (separator) {
-                menuContainer.insertBefore(btnRanks, separator);
+                menuContent.insertBefore(btnRanks, separator);
             } else {
-                menuContainer.appendChild(btnRanks);
+                menuContent.appendChild(btnRanks);
             }
             // Refresh icons
             createIcons({ icons, root: btnRanks });
@@ -114,7 +114,7 @@ function setupAdminListeners() {
             btnGitHub.innerHTML = `<i data-lucide="upload-cloud"></i> Upload Fichier`;
 
             // Add at the end
-            menuContainer.appendChild(btnGitHub);
+            menuContent.appendChild(btnGitHub);
             createIcons({ icons, root: btnGitHub });
         }
 
@@ -131,7 +131,7 @@ function setupAdminListeners() {
             btnConfig.innerHTML = `<i data-lucide="settings"></i> Config GitHub`;
 
             // Add before Publish
-            menuContainer.appendChild(btnConfig);
+            menuContent.appendChild(btnConfig);
             createIcons({ icons, root: btnConfig });
         }
 
@@ -150,7 +150,7 @@ function setupAdminListeners() {
             btnPublish.innerHTML = `<i data-lucide="globe"></i> Publier Carte`;
 
             // Add at the end
-            menuContainer.appendChild(btnPublish);
+            menuContent.appendChild(btnPublish);
             createIcons({ icons, root: btnPublish });
         }
 
