@@ -29,6 +29,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         scout: resolve(__dirname, 'tools/scout.html'),
+        fusion: resolve(__dirname, 'tools/fusion.html'),
       },
     },
   },
