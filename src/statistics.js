@@ -35,7 +35,7 @@ export const ANIMAL_RANKS = [
     { min: 0, title: "Colibri", icon: "feather", description: "Les premiers pas" }
 ];
 
-// --- 2. LES MATIÈRES (Basé sur % Circuits Officiels) ---
+// --- 2. LES MATIÈRES (Basé sur % POIs Visités) ---
 // 10 Paliers de 10%
 export const MATERIAL_RANKS = [
     { min: 90, title: "Diamant", color: "#b9f2ff", cssClass: "rank-diamond" },
@@ -51,7 +51,7 @@ export const MATERIAL_RANKS = [
 ];
 
 export function calculateStats() {
-    // 1. POIs Visités (Legacy Stats)
+    // 1. POIs Visités (Base de référence pour la Gamification)
     const totalPois = state.loadedFeatures.length;
     let visitedPois = 0;
     state.loadedFeatures.forEach(feature => {
@@ -62,7 +62,7 @@ export function calculateStats() {
     });
     const poiPercent = totalPois > 0 ? Math.round((visitedPois / totalPois) * 100) : 0;
 
-    // 2. Calculs Officiels (Base de référence pour la Gamification)
+    // 2. Calculs Officiels (Distance)
     const officialCircuits = state.officialCircuits || [];
     let totalOfficialCircuitsAvailable = officialCircuits.length;
     let totalOfficialDistanceAvailable = 0;
@@ -94,6 +94,7 @@ export function calculateStats() {
         xpDistance = (userOfficialDistance / totalOfficialDistanceAvailable) * 10000;
     }
 
+    // On garde xpCircuits pour le "XP Total" legacy, même si on change l'affichage "Matière"
     let xpCircuits = 0;
     if (totalOfficialCircuitsAvailable > 0) {
         xpCircuits = (userOfficialCircuits / totalOfficialCircuitsAvailable) * 10000;
@@ -101,7 +102,7 @@ export function calculateStats() {
 
     const totalXP = Math.round(xpDistance + xpCircuits);
 
-    // 5. Détermination des Rangs (LEGACY SUPPORT)
+    // 5. Détermination des Rangs
     const distancePercent = totalOfficialDistanceAvailable > 0
         ? (userOfficialDistance / totalOfficialDistanceAvailable) * 100
         : 0;
@@ -111,7 +112,8 @@ export function calculateStats() {
         : 0;
 
     const animalRank = getRank(ANIMAL_RANKS, distancePercent);
-    const materialRank = getRank(MATERIAL_RANKS, circuitPercent);
+    // CHANGEMENT ICI : Le rang Matière dépend désormais du % de POIs visités
+    const materialRank = getRank(MATERIAL_RANKS, poiPercent);
     const globalRank = getRank(GLOBAL_RANKS, totalXP);
 
     return {
@@ -310,8 +312,9 @@ export async function showStatisticsModal() {
 
     // 1. Calculs Hardcore
     const pctDist = Math.min(100, Math.max(0, stats.distancePercent));
-    const pctCirc = Math.min(100, Math.max(0, stats.circuitPercent));
-    const pctGlobal = (pctDist * pctCirc) / 100; // Système Hardcore
+    // CHANGEMENT ICI : On utilise le pourcentage de POIs au lieu du pourcentage de Circuits
+    const pctPoi = Math.min(100, Math.max(0, stats.poiPercent));
+    const pctGlobal = (pctDist * pctPoi) / 100; // Système Hardcore : Distance * Exploration
 
     // 2. Trouver les rangs (Logique utilisateur)
     const getRankInfo = (pct, list) => {
@@ -336,7 +339,7 @@ export async function showStatisticsModal() {
     };
 
     const animal = getRankInfo(pctDist, CONFIG.animaux);
-    const matiere = getRankInfo(pctCirc, CONFIG.matieres);
+    const matiere = getRankInfo(pctPoi, CONFIG.matieres);
     const globalR = getRankInfo(pctGlobal, CONFIG.rangs);
 
     // Titre dynamique
@@ -381,11 +384,11 @@ export async function showStatisticsModal() {
 
                 <div class="stat-group">
                     <div class="stat-label">
-                        <span id="label-matiere">Circuits (${matiere.title})</span>
-                        <span id="val-circuits">${stats.userOfficialCircuits} / ${stats.totalOfficialCircuitsAvailable}</span>
+                        <span id="label-matiere">Lieux (${matiere.title})</span>
+                        <span id="val-circuits">${stats.visitedPois} / ${stats.totalPois}</span>
                     </div>
                     <div class="progress-bar-container">
-                        <div id="bar-circuits" class="progress-fill" style="width: ${pctCirc}%"></div>
+                        <div id="bar-circuits" class="progress-fill" style="width: ${pctPoi}%"></div>
                     </div>
                     <div id="goal-circuits" class="next-goal">Objectif : ${matiere.nextGoalPct}%</div>
                 </div>
@@ -393,7 +396,7 @@ export async function showStatisticsModal() {
 
             <div class="footer-stats">
                 <div>📍 <span id="footer-km">${(stats.totalOfficialKmAvailable - stats.userOfficialKm).toFixed(1)}</span> km à parcourir</div>
-                <div>🗺️ <span id="footer-circuits">${stats.totalOfficialCircuitsAvailable - stats.userOfficialCircuits}</span> défis en attente</div>
+                <div>🗺️ <span id="footer-circuits">${stats.totalPois - stats.visitedPois}</span> lieux à découvrir</div>
             </div>
         </div>
 

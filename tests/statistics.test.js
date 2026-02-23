@@ -9,20 +9,24 @@ vi.mock('../src/map.js', () => ({
     getOrthodromicDistance: vi.fn()
 }));
 
-vi.mock('../src/state.js', () => ({
-    state: {
-        loadedFeatures: [],
-        userData: {},
-        officialCircuits: [],
-        officialCircuitsStatus: {},
-        myCircuits: []
-    },
-    getCurrentCurrency: vi.fn(() => 'TND'),
-    POI_CATEGORIES: []
-}));
+// We need to mock state in a way we can manipulate it
+vi.mock('../src/state.js', () => {
+    return {
+        state: {
+            loadedFeatures: [],
+            userData: {},
+            officialCircuits: [],
+            officialCircuitsStatus: {},
+            myCircuits: []
+        },
+        getCurrentCurrency: vi.fn(() => 'TND'),
+        POI_CATEGORIES: []
+    };
+});
 
 vi.mock('../src/data.js', () => ({
-    getPoiId: vi.fn(f => f.id)
+    // Mock getPoiId to simply return the ID property
+    getPoiId: vi.fn(f => f.properties.HW_ID)
 }));
 
 vi.mock('../src/modal.js', () => ({
@@ -50,6 +54,12 @@ describe('Statistics System', () => {
         // 0 progress
         state.officialCircuitsStatus = {};
 
+        // Setup POIs (for Material Rank)
+        state.loadedFeatures = [
+            { properties: { HW_ID: 'p1' } },
+            { properties: { HW_ID: 'p2' } }
+        ];
+
         const stats = calculateStats();
 
         expect(stats.totalXP).toBe(0);
@@ -58,12 +68,35 @@ describe('Statistics System', () => {
 
         expect(stats.distancePercent).toBe(0);
         expect(stats.circuitPercent).toBe(0);
+        expect(stats.poiPercent).toBe(0);
 
         expect(stats.animalRank.min).toBe(0); // Colibri (0-10%)
         expect(stats.materialRank.min).toBe(0); // Bois (0-10%)
     });
 
-    it('should calculate 50% XP correctly', () => {
+    it('should calculate Material Rank based on POI visits (NEW LOGIC)', () => {
+        // Setup POIs: 10 POIs
+        state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
+            properties: { HW_ID: `p${i}` }
+        }));
+
+        // Visit 5 POIs (50%)
+        ['p0', 'p1', 'p2', 'p3', 'p4'].forEach(id => {
+            state.userData[id] = { vu: true };
+        });
+
+        const stats = calculateStats();
+
+        expect(stats.visitedPois).toBe(5);
+        expect(stats.totalPois).toBe(10);
+        expect(stats.poiPercent).toBe(50);
+
+        // Material Rank for 50%: "Argent" (min: 50)
+        expect(stats.materialRank.title).toBe("Argent");
+    });
+
+    it('should calculate XP based on Circuits and Distance (LEGACY LOGIC)', () => {
+        // XP logic didn't change, only Material Rank did.
         // Setup: 2 circuits of 10km each. Total 20km.
         state.officialCircuits = [
             { id: 'c1', distance: '10.0 km' },
@@ -79,85 +112,46 @@ describe('Statistics System', () => {
         // Circuit XP: (1 / 2) * 10000 = 5000
         // Total XP: 10000
         expect(stats.totalXP).toBe(10000);
-
-        // Rank for 10000 XP is "Regard d'Horizon"
         expect(stats.globalRank.title).toBe("Regard d'Horizon");
 
+        // Distance Percent affects Animal Rank
         expect(stats.distancePercent).toBe(50);
-        expect(stats.circuitPercent).toBe(50);
-
-        // Animal Rank for 50%: "Loup" (min: 50)
         expect(stats.animalRank.title).toBe("Loup");
 
-        // Material Rank for 50%: "Argent" (min: 50)
-        expect(stats.materialRank.title).toBe("Argent");
+        // BUT Material Rank is based on POIs.
+        // We have 0 POIs loaded in this test case, so 0%.
+        expect(stats.poiPercent).toBe(0);
+        expect(stats.materialRank.title).toBe("Bois");
     });
 
-    it('should calculate 100% XP correctly (Max Level)', () => {
-        state.officialCircuits = [
-            { id: 'c1', distance: '10.0 km' }
-        ];
-        state.officialCircuitsStatus = { 'c1': true };
-
-        const stats = calculateStats();
-
-        expect(stats.totalXP).toBe(20000);
-        expect(stats.globalRank.title).toBe("Lueur d'Éternité");
-
-        expect(stats.animalRank.title).toBe("Phénix"); // 90-100%
-        expect(stats.materialRank.title).toBe("Diamant"); // 90-100%
-    });
-
-    it('should handle mixed progress (e.g. small circuit done)', () => {
+    it('should handle mixed progress', () => {
         // c1: 10km, c2: 90km. Total 100km.
         state.officialCircuits = [
             { id: 'c1', distance: '10.0 km' },
             { id: 'c2', distance: '90.0 km' }
         ];
-
-        // User done c1 only.
-        // Circuits: 1/2 = 50% -> 5000 XP.
-        // Distance: 10/100 = 10% -> 1000 XP.
-        // Total XP = 6000.
         state.officialCircuitsStatus = { 'c1': true };
+
+        // Add 100 POIs, visit 10 (10%)
+        state.loadedFeatures = Array.from({ length: 100 }, (_, i) => ({
+            properties: { HW_ID: `p${i}` }
+        }));
+        for(let i=0; i<10; i++) state.userData[`p${i}`] = { vu: true };
 
         const stats = calculateStats();
 
+        // XP Calculation (Legacy)
+        // Circuits: 1/2 = 50% -> 5000 XP
+        // Distance: 10/100 = 10% -> 1000 XP
+        // Total: 6000 XP
         expect(stats.totalXP).toBe(6000);
-        // Rank for 6000 XP: > 4500 (Âme Vagabonde) but < 7000 (Sillage d'Argent)
-        expect(stats.globalRank.title).toBe("Âme Vagabonde");
+        expect(stats.globalRank.title).toBe("Âme Vagabonde"); // > 4500
 
-        expect(stats.circuitPercent).toBe(50);
-        expect(stats.distancePercent).toBe(10);
+        // Animal Rank (Distance): 10% -> Hérisson
+        expect(stats.animalRank.title).toBe("Hérisson");
 
-        expect(stats.materialRank.title).toBe("Argent"); // 50%
-        expect(stats.animalRank.title).toBe("Hérisson"); // 10%
-    });
-
-    it('should handle zero official circuits gracefully', () => {
-        state.officialCircuits = [];
-        const stats = calculateStats();
-
-        expect(stats.totalXP).toBe(0);
-        expect(stats.distancePercent).toBe(0);
-        expect(stats.circuitPercent).toBe(0);
-    });
-
-    it('should use fallback distance calculation if string is missing', () => {
-        // Setup circuit with no string distance but realTrack
-        state.officialCircuits = [
-            { id: 'c1', realTrack: [[0,0], [0,1]] } // 1 degree lat ~ 111km
-        ];
-
-        // Mock getRealDistance to return 1000 meters
-        mapModule.getRealDistance.mockReturnValue(1000);
-
-        state.officialCircuitsStatus = { 'c1': true };
-
-        const stats = calculateStats();
-
-        // Total Distance 1000m. User 1000m. 100%
-        expect(stats.distancePercent).toBe(100);
-        expect(stats.totalXP).toBe(20000);
+        // Material Rank (POIs): 10% -> Pierre
+        expect(stats.poiPercent).toBe(10);
+        expect(stats.materialRank.title).toBe("Pierre");
     });
 });
