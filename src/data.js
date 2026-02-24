@@ -186,6 +186,12 @@ export async function addPoiFeature(feature) {
 
     // 1. Ajout à la liste en mémoire vive (pour affichage immédiat)
 
+    // Sécurité : On s'assure que le POI a un ID avant traitement
+    if (!feature.properties) feature.properties = {};
+    if (!feature.properties.HW_ID && !feature.id) {
+        feature.properties.HW_ID = `custom_${Date.now()}`;
+    }
+
     // IMPORTANT : On s'assure que le lien userData est établi
     const id = getPoiId(feature);
     if (!state.userData[id]) state.userData[id] = {};

@@ -659,6 +659,7 @@ async function publishChanges() {
 export function addToDraft(type, id, details) {
     if (type === 'poi') {
         adminDraft.pendingPois[id] = {
+            ...(adminDraft.pendingPois[id] || {}),
             timestamp: Date.now(),
             ...details
         };
