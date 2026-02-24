@@ -29,23 +29,23 @@ export async function initAdminControlCenter() {
         }
     }
 
-    // Inject styles (PC FIRST REDESIGN)
+    // Inject styles (PC FIRST REDESIGN - WARM THEME)
     const style = document.createElement('style');
     style.textContent = `
         /* --- RESET & OVERRIDES --- */
-        /* Cible la modale principale (.custom-modal-box) lorsqu'elle est en mode Admin CC */
         .custom-modal-box.admin-cc-mode {
-            max-width: 1300px !important; /* LARGEUR ETENDUE */
-            width: 95vw !important;
-            height: 80vh !important; /* HAUTEUR AJUSTEE 16:9 */
+            /* Largeur fluide : Max 1400px mais jamais plus de 95% de l'écran */
+            width: min(1400px, 95vw) !important;
+            max-width: none !important;
+            height: 85vh !important;
             padding: 0 !important;
-            background: #f8fafc !important; /* GRIS TRES CLAIR */
-            border-radius: 24px !important;
+            background: var(--surface) !important; /* Respect du thème */
+            border-radius: 28px !important;
             overflow: hidden !important;
             display: flex !important;
             flex-direction: column !important;
-            border: 1px solid rgba(255,255,255,0.4) !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid var(--line) !important;
         }
 
         /* Force le message interne à prendre tout l'espace */
@@ -67,32 +67,35 @@ export async function initAdminControlCenter() {
             height: 100%;
             width: 100%;
             font-family: 'Inter', system-ui, sans-serif;
-            background: #f8fafc; /* Match modal background */
+            color: var(--ink);
+            background: var(--surface);
         }
 
         /* --- HEADER STICKY --- */
         .admin-cc-header {
-            background: white;
-            padding: 30px 40px 20px 40px;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
+            background: var(--surface);
+            padding: 30px 50px;
+            border-bottom: 1px solid var(--line);
             flex-shrink: 0;
             z-index: 10;
         }
 
         .admin-cc-title {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 800;
+            color: var(--brand);
+            letter-spacing: -0.02em;
             display: flex;
             align-items: center;
             gap: 12px;
-            color: #1e293b;
             margin-bottom: 20px;
         }
 
+        /* --- TABS (Styled to match Warm Theme) --- */
         .admin-cc-tabs {
             display: inline-flex;
             gap: 8px;
-            background: #f1f5f9;
+            background: var(--surface-muted);
             padding: 5px;
             border-radius: 14px;
             width: fit-content;
@@ -104,7 +107,7 @@ export async function initAdminControlCenter() {
             border-radius: 10px;
             font-weight: 600;
             font-size: 0.9rem;
-            color: #64748b;
+            color: var(--ink-soft);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
@@ -113,12 +116,12 @@ export async function initAdminControlCenter() {
         }
 
         .admin-cc-tab:hover {
-            color: #1e293b;
+            color: var(--ink);
             background: rgba(0,0,0,0.03);
         }
 
         .admin-cc-tab.active {
-            background: white;
+            background: var(--surface);
             color: var(--brand);
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
@@ -128,34 +131,43 @@ export async function initAdminControlCenter() {
             flex: 1;
             overflow-y: auto;
             padding: 40px;
-            background: #f8fafc;
+            background: color-mix(in srgb, var(--surface), var(--ink) 2%); /* Teinte très légère pour le fond */
         }
 
-        /* --- DASHBOARD GRID (Desktop focus) --- */
+        .admin-cc-content-wrapper {
+            max-width: 1000px; /* On contient le contenu pour qu'il ne s'éparpille pas */
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* --- DASHBOARD GRID --- */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 COLONNES FORCEES */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adaptatif PC portable/UW */
             gap: 25px;
             margin-bottom: 40px;
             width: 100%;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 35px;
             text-align: center;
-            border: 1px solid rgba(0,0,0,0.03);
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-width: 0; /* Prevents flex items from overflowing */
         }
 
-        .stat-card:hover { transform: translateY(-5px); border-color: var(--brand); }
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--brand);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+        }
 
         .stat-value {
             font-size: 3.5rem;
@@ -166,11 +178,11 @@ export async function initAdminControlCenter() {
         }
 
         .stat-label {
-            font-size: 0.8rem;
-            font-weight: 700;
+            color: var(--ink-soft);
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #94a3b8;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
         }
 
         /* --- SYNC BANNER --- */
@@ -182,7 +194,7 @@ export async function initAdminControlCenter() {
             display: flex;
             align-items: center;
             gap: 20px;
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4); /* Brand shadow hint */
             margin-top: 20px;
         }
         .sync-banner i { flex-shrink: 0; }
@@ -191,28 +203,28 @@ export async function initAdminControlCenter() {
         .diff-container { display: flex; flex-direction: column; gap: 20px; }
 
         .diff-card {
-            background: white;
+            background: var(--surface);
             border-radius: 16px;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid var(--line);
             overflow: hidden;
             box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
 
         .diff-card-header {
             padding: 15px 25px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
+            background: var(--surface-muted);
+            border-bottom: 1px solid var(--line);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .diff-title { font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 10px; }
+        .diff-title { font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 10px; }
 
         .diff-id {
             font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
             font-size: 0.8em;
-            color: #64748b;
+            color: var(--ink-soft);
             background: rgba(0,0,0,0.05);
             padding: 4px 8px;
             border-radius: 4px;
@@ -228,18 +240,19 @@ export async function initAdminControlCenter() {
             text-align: left;
             padding: 12px 25px;
             background: rgba(0,0,0,0.02);
-            color: #64748b;
+            color: var(--ink-soft);
             font-weight: 600;
             font-size: 0.75em;
             text-transform: uppercase;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--line);
         }
 
         .diff-table td {
             padding: 15px 25px;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--line);
             vertical-align: middle;
             font-size: 0.9em;
+            color: var(--ink);
         }
 
         .diff-table tr:last-child td { border-bottom: none; }
@@ -247,7 +260,7 @@ export async function initAdminControlCenter() {
         .diff-key {
             width: 140px;
             font-weight: 700;
-            color: #64748b;
+            color: var(--ink-soft);
             font-size: 0.85rem;
             white-space: nowrap;
             overflow: hidden;
@@ -276,20 +289,20 @@ export async function initAdminControlCenter() {
         .diff-arrow {
             width: 40px;
             text-align: center;
-            color: #cbd5e1;
+            color: var(--line);
         }
 
         /* --- FOOTER FIXED --- */
         .admin-cc-footer {
-            padding: 25px 40px;
-            background: white;
-            border-top: 1px solid #e2e8f0;
+            padding: 20px 50px;
+            background: var(--surface);
+            border-top: 1px solid var(--line);
             display: flex;
             justify-content: flex-end;
             align-items: center;
             gap: 15px;
             flex-shrink: 0;
-            border-radius: 0 0 24px 24px; /* Arrondis bas */
+            border-radius: 0 0 24px 24px;
         }
 
         #btn-cc-publish {
@@ -300,7 +313,7 @@ export async function initAdminControlCenter() {
             font-weight: 700;
             border: none;
             cursor: pointer;
-            box-shadow: 0 8px 20px -6px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 8px 20px -6px rgba(59, 130, 246, 0.5); /* Brand shadow hint */
             transition: all 0.2s;
             display: flex;
             align-items: center;
@@ -311,16 +324,16 @@ export async function initAdminControlCenter() {
         #btn-cc-publish:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .custom-modal-btn.secondary {
-            background: white;
-            border: 1px solid #e2e8f0;
-            color: #64748b;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            color: var(--ink-soft);
             padding: 12px 24px;
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
         }
-        .custom-modal-btn.secondary:hover { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
+        .custom-modal-btn.secondary:hover { background: var(--surface-muted); color: var(--ink); border-color: var(--line); }
 
         /* --- EMPTY STATE --- */
         .empty-state-container {
@@ -344,12 +357,12 @@ export async function initAdminControlCenter() {
         .settings-input {
             width: 100%;
             padding: 15px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--line);
             border-radius: 12px;
             font-family: monospace;
             font-size: 1rem;
-            background: white;
-            color: #1e293b;
+            background: var(--surface);
+            color: var(--ink);
             transition: border 0.2s;
         }
         .settings-input:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
@@ -357,8 +370,8 @@ export async function initAdminControlCenter() {
         /* Scrollbar Polish */
         .admin-cc-scroll-area::-webkit-scrollbar { width: 8px; }
         .admin-cc-scroll-area::-webkit-scrollbar-track { background: transparent; }
-        .admin-cc-scroll-area::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.1); border-radius: 4px; }
-        .admin-cc-scroll-area::-webkit-scrollbar-thumb:hover { background-color: rgba(0,0,0,0.2); }
+        .admin-cc-scroll-area::-webkit-scrollbar-thumb { background-color: var(--line); border-radius: 4px; }
+        .admin-cc-scroll-area::-webkit-scrollbar-thumb:hover { background-color: var(--ink-soft); }
     `;
     document.head.appendChild(style);
 }
@@ -442,10 +455,12 @@ export async function openControlCenter() {
                 </div>
             </div>
 
-            <div id="admin-cc-content" class="admin-cc-scroll-area">
-                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; color:#64748b;">
-                    <i data-lucide="loader-2" class="spin" style="width:48px; height:48px; margin-bottom:15px; color:var(--brand);"></i>
-                    <div style="font-weight:500;">Analyse des modifications en cours...</div>
+            <div class="admin-cc-scroll-area">
+                <div id="admin-cc-content" class="admin-cc-content-wrapper">
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; color:var(--ink-soft);">
+                        <i data-lucide="loader-2" class="spin" style="width:48px; height:48px; margin-bottom:15px; color:var(--brand);"></i>
+                        <div style="font-weight:500;">Analyse des modifications en cours...</div>
+                    </div>
                 </div>
             </div>
 
@@ -490,6 +505,7 @@ export async function openControlCenter() {
         mutations.forEach((mutation) => {
             if (mutation.attributeName === 'class' && !overlay.classList.contains('active')) {
                 // Remove custom class when closed
+                const modalContent = document.querySelector('.custom-modal-box');
                 if (modalContent) modalContent.classList.remove('admin-cc-mode');
                 if (defaultTitle) defaultTitle.style.display = 'block';
                 if (defaultActions) defaultActions.style.display = 'flex'; // Restore default actions
@@ -639,7 +655,7 @@ function renderDashboard(container) {
         ` : `
             <div class="empty-state-container">
                 <i data-lucide="check-circle-2" class="empty-state-icon"></i>
-                <div style="font-weight:600; font-size:1.1rem; color:#64748b;">Votre carte est parfaitement synchronisée.</div>
+                <div style="font-weight:600; font-size:1.1rem; color:var(--ink-soft);">Votre carte est parfaitement synchronisée.</div>
             </div>
         `}
     `;
@@ -650,7 +666,7 @@ function renderChanges(container) {
         container.innerHTML = `
             <div class="empty-state-container">
                 <i data-lucide="check-circle-2" class="empty-state-icon"></i>
-                <div style="font-weight:600; color:#64748b;">Aucune modification à afficher.</div>
+                <div style="font-weight:600; color:var(--ink-soft);">Aucune modification à afficher.</div>
             </div>
         `;
         return;
@@ -700,13 +716,13 @@ function renderSettings(container) {
     const token = getStoredToken() || '';
     container.innerHTML = `
         <div style="max-width:600px; margin:0 auto;">
-            <div style="background:white; padding:40px; border-radius:24px; border:1px solid rgba(0,0,0,0.05); box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);">
-                <h3 style="margin-top:0; font-size:1.2rem; color:#1e293b;">Configuration GitHub</h3>
-                <p style="color:#64748b; margin-bottom:25px; line-height:1.5;">
+            <div style="background:var(--surface); padding:40px; border-radius:24px; border:1px solid var(--line); box-shadow:0 4px 6px -1px rgba(0,0,0,0.02);">
+                <h3 style="margin-top:0; font-size:1.2rem; color:var(--ink);">Configuration GitHub</h3>
+                <p style="color:var(--ink-soft); margin-bottom:25px; line-height:1.5;">
                     Le Token d'accès personnel (PAT) permet à l'application d'écrire sur le dépôt GitHub.
                 </p>
 
-                <label style="display:block; margin-bottom: 8px; font-weight: 600; color:#1e293b;">Personal Access Token</label>
+                <label style="display:block; margin-bottom: 8px; font-weight: 600; color:var(--ink);">Personal Access Token</label>
                 <input type="password" id="cc-token-input" value="${token}" class="settings-input" placeholder="ghp_...">
 
                 <button class="custom-modal-btn primary" id="btn-save-token" style="width:100%; margin-top:25px; padding:14px; background:var(--brand); color:white; border-radius:12px; font-weight:700; border:none; cursor:pointer;">
