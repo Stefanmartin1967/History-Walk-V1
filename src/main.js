@@ -233,6 +233,7 @@ async function loadAndInitializeMap() {
         state.userData = await getAllPoiDataForMap(activeMapId) || {};
         state.myCircuits = await getAllCircuitsForMap(activeMapId) || [];
         state.officialCircuitsStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
+        state.officialCircuitsPlanning = await getAppState(`official_circuits_planning_${activeMapId}`) || {};
         await loadOfficialCircuits();
 
         const validCircuits = [];

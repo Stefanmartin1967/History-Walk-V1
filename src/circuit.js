@@ -119,7 +119,36 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
     eventBus.emit('circuit:list-updated');
 }
 
-// ... LE RESTE DU FICHIER RESTE IDENTIQUE ...
+export async function toggleOfficialCircuitPlanning(circuitId) {
+    if (!circuitId) return;
+
+    // 1. Mise à jour de l'état
+    const isPlanned = !state.officialCircuitsPlanning[String(circuitId)];
+    state.officialCircuitsPlanning[String(circuitId)] = isPlanned;
+
+    // 2. Persistance
+    try {
+        await saveAppState(`official_circuits_planning_${state.currentMapId}`, state.officialCircuitsPlanning);
+        console.log(`[Circuit] Circuit officiel ${circuitId} marqué comme ${isPlanned ? 'PLANIFIÉ' : 'NON PLANIFIÉ'}`);
+    } catch (e) {
+        console.error("Erreur sauvegarde planning", e);
+    }
+
+    // 3. Mise à jour des compteurs et de la carte
+    // On doit importer dynamiquement pour éviter les dépendances circulaires si gpx.js importe circuit.js
+    import('./gpx.js').then(async ({ recalculatePlannedCountersForMap }) => {
+        await recalculatePlannedCountersForMap(state.currentMapId);
+        import('./data.js').then(({ applyFilters }) => {
+            applyFilters();
+            // 4. Refresh UI du panneau circuit
+            if (state.activeCircuitId === circuitId) {
+                renderCircuitPanel();
+            }
+            showToast(isPlanned ? "Circuit ajouté à votre planning" : "Circuit retiré du planning", "success");
+        });
+    });
+}
+
 export async function saveCircuitDraft() {
     if (!state.currentMapId) return;
     try {
@@ -868,6 +897,14 @@ export function setupCircuitEventListeners() {
                  updateCircuitMetadata();
                  saveCircuitDraft();
              }
+        });
+    }
+
+    // 7. Bouton PLANIFIER (Nouveau)
+    const btnTogglePlanning = document.getElementById('btn-toggle-planning');
+    if (btnTogglePlanning) {
+        btnTogglePlanning.addEventListener('click', () => {
+            toggleOfficialCircuitPlanning(state.activeCircuitId);
         });
     }
 }

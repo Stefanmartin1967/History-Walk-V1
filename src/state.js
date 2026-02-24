@@ -23,6 +23,7 @@ export const state = {
     myCircuits: [],
     officialCircuits: [],
     officialCircuitsStatus: {}, // Statut (Completed) des circuits officiels
+    officialCircuitsPlanning: {}, // Statut (Planned) des circuits officiels { id: true/false }
     geojsonLayer: null,
     loadedFeatures: [],
     currentFeatureId: null,
