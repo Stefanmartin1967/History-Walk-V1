@@ -393,6 +393,18 @@ async function prepareDiffData() {
         const current = state.loadedFeatures.find(f => getPoiId(f) === id);
         const original = originalFeatures.find(f => getPoiId(f) === id);
 
+        // Cas spécial : Suppression
+        if (adminDraft.pendingPois[id].type === 'delete') {
+            diffData.pois.push({
+                id: id,
+                name: current ? getPoiName(current) : (original ? getPoiName(original) : 'Inconnu'),
+                changes: [{ key: 'STATUT', old: 'Actif', new: 'SUPPRESSION' }],
+                isDeletion: true
+            });
+            diffData.stats.poisModified++;
+            return;
+        }
+
         if (!current) return;
 
         const changes = [];
@@ -495,11 +507,11 @@ function renderTab(tab) {
         }
 
         let html = diffData.pois.map(item => `
-            <div class="diff-entry" id="diff-card-${item.id}">
+            <div class="diff-entry" id="diff-card-${item.id}" style="${item.isDeletion ? 'border:1px solid #FCA5A5; background:#FEF2F2;' : ''}">
                 <div class="diff-header">
-                    <div class="diff-title">
-                        <i data-lucide="map-pin" width="18" style="color:var(--hw-amber);"></i>
-                        ${item.name}
+                    <div class="diff-title" style="${item.isDeletion ? 'color:#991B1B;' : ''}">
+                        <i data-lucide="${item.isDeletion ? 'trash-2' : 'map-pin'}" width="18" style="color:${item.isDeletion ? '#DC2626' : 'var(--hw-amber)'};"></i>
+                        ${item.name} ${item.isDeletion ? '(SUPPRESSION)' : ''}
                     </div>
                     <div class="diff-actions">
                         <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">Refuser</button>
@@ -594,7 +606,10 @@ async function publishChanges() {
     }
 
     try {
-        const geojson = generateMasterGeoJSONData();
+        // Collect IDs to delete
+        const idsToDelete = Object.keys(adminDraft.pendingPois).filter(id => adminDraft.pendingPois[id].type === 'delete');
+
+        const geojson = generateMasterGeoJSONData(idsToDelete);
         if (!geojson) throw new Error("Erreur données GeoJSON");
 
         const mapId = state.currentMapId || 'djerba';

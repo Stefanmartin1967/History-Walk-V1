@@ -249,3 +249,40 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
         addToDraft('poi', poiId, { type: 'coords', lat, lng });
     }
 }
+
+// --- SUPPRESSION DE LIEU (Soft Delete + Admin Draft) ---
+
+export async function deletePoi(poiId) {
+    // 1. Gestion Liste cachée (pour l'affichage local immédiat)
+    if (!state.hiddenPoiIds) state.hiddenPoiIds = [];
+    if (!state.hiddenPoiIds.includes(poiId)) {
+        state.hiddenPoiIds.push(poiId);
+    }
+    await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+
+    // 2. Gestion de la persistance (Si c'est un POI Custom)
+    // On le retire physiquement de la liste des customs pour ne pas le recharger au prochain démarrage
+    if (state.customFeatures) {
+        const idx = state.customFeatures.findIndex(f => getPoiId(f) === poiId);
+        if (idx !== -1) {
+            state.customFeatures.splice(idx, 1);
+            await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
+        }
+    }
+
+    // 3. Admin Tracking (Pour suppression définitive sur le serveur)
+    if (state.isAdmin) {
+        // On marque l'intention de suppression
+        addToDraft('poi', poiId, { type: 'delete' });
+
+        // On marque aussi l'objet en mémoire pour l'exporteur
+        const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+        if (feature) {
+            if (!feature.properties.userData) feature.properties.userData = {};
+            feature.properties.userData._deleted = true;
+        }
+    }
+
+    // 4. Rafraîchissement UI
+    applyFilters();
+}

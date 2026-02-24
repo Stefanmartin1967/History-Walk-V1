@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { eventBus } from './events.js';
-import { downloadFile } from './utils.js';
+import { downloadFile, getPoiId } from './utils.js';
 import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui.js';
 import { map } from './map.js';
@@ -166,12 +166,23 @@ function setupGodModeListener() {
     });
 }
 
-export function generateMasterGeoJSONData() {
+export function generateMasterGeoJSONData(excludedIds = []) {
     if (!state.loadedFeatures || state.loadedFeatures.length === 0) {
         return null;
     }
 
-    const features = state.loadedFeatures.map(f => {
+    const features = state.loadedFeatures
+        .filter(f => {
+             const id = getPoiId(f);
+             // 1. Exclu explicitement (via le brouillon admin)
+             if (excludedIds.includes(id)) return false;
+
+             // 2. Marqué comme supprimé dans userData (via deletePoi)
+             if (f.properties.userData && f.properties.userData._deleted) return false;
+
+             return true;
+        })
+        .map(f => {
         // Clone profond pour ne pas modifier l'original
         const properties = JSON.parse(JSON.stringify(f.properties));
 

@@ -1,6 +1,6 @@
 // ui.js
 import { state, POI_CATEGORIES } from './state.js';
-import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates } from './data.js';
+import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, deletePoi } from './data.js';
 import { restoreCircuit, saveAppState } from './database.js';
 import { escapeXml } from './utils.js';
 import { eventBus } from './events.js';
@@ -1087,11 +1087,7 @@ export async function requestSoftDelete(idOrIndex) {
         : `ATTENTION !\n\nVoulez-vous vraiment signaler "${poiName}" pour suppression ?`;
 
     if (await showConfirm("Suppression", msg, "Supprimer", "Garder", true)) {
-        if (!state.hiddenPoiIds) state.hiddenPoiIds = [];
-        if (!state.hiddenPoiIds.includes(poiId)) {
-            state.hiddenPoiIds.push(poiId);
-        }
-        await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+        await deletePoi(poiId);
 
         // On ferme le panneau
         closeDetailsPanel(true);
@@ -1099,8 +1095,6 @@ export async function requestSoftDelete(idOrIndex) {
         // Refresh selon mode
         if (isMobileView()) {
             switchMobileView('circuits'); // Refresh liste
-        } else {
-            applyFilters();
         }
     }
 }
