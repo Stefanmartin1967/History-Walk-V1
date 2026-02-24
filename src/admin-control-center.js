@@ -363,8 +363,58 @@ export async function openControlCenter() {
     createIcons({ icons, root: document.querySelector('.admin-cc-header') });
     createIcons({ icons, root: document.querySelector('.admin-cc-footer') });
 
+    reconcileLocalChanges();
     await prepareDiffData();
     renderTab('dashboard');
+}
+
+function reconcileLocalChanges() {
+    let changed = false;
+
+    // 1. Réconciliation des CRÉATIONS (Lieux ajoutés manuellement)
+    if (state.customFeatures && state.customFeatures.length > 0) {
+        state.customFeatures.forEach(f => {
+            const id = getPoiId(f);
+            if (!adminDraft.pendingPois[id]) {
+                console.log(`[Admin] Réconciliation: Ajout non pisté détecté (Création) -> ${id}`);
+                adminDraft.pendingPois[id] = { type: 'creation', timestamp: Date.now() };
+                changed = true;
+            }
+        });
+    }
+
+    // 2. Réconciliation des MODIFICATIONS (via userData)
+    if (state.userData) {
+        Object.keys(state.userData).forEach(id => {
+            const data = state.userData[id];
+
+            // Si déjà pisté, on passe
+            if (adminDraft.pendingPois[id]) return;
+
+            // On filtre pour ne pas pister les simples visites/favoris
+            // On cherche des modifications structurelles (lat, lng, _deleted, ou propriétés de contenu)
+            const ignoredKeys = ['visited', 'hidden', 'notes', 'planifie'];
+            const meaningfulKeys = Object.keys(data).filter(k => !ignoredKeys.includes(k));
+
+            if (meaningfulKeys.length > 0) {
+                 // Est-ce une création déjà gérée ?
+                 const isCreation = state.customFeatures && state.customFeatures.some(f => getPoiId(f) === id);
+
+                 if (!isCreation) {
+                      const type = data._deleted ? 'delete' : 'update';
+                      console.log(`[Admin] Réconciliation: Modif non pistée détectée (${type}) -> ${id}`);
+                      adminDraft.pendingPois[id] = { type: type, timestamp: Date.now() };
+                      changed = true;
+                 }
+            }
+        });
+    }
+
+    if (changed) {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(adminDraft));
+        updateButtonBadge();
+        showToast("Brouillon reconstruit depuis les données locales.", "info");
+    }
 }
 
 let diffData = { pois: [], stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0 } };
@@ -489,6 +539,8 @@ function renderTab(tab) {
 
     if (tab === 'dashboard') {
         const { poisModified, circuitsModified, photosAdded } = diffData.stats;
+        const hasToken = !!getStoredToken();
+
         container.innerHTML = `
             <div class="dashboard-grid">
                 <div class="stat-card">
@@ -504,6 +556,19 @@ function renderTab(tab) {
                     <div><div class="stat-val">${circuitsModified}</div><div class="stat-lab">Circuits Modifiés</div></div>
                 </div>
             </div>
+
+            ${!hasToken ? `
+                <div style="background:#FEF2F2; border:1px solid #FCA5A5; color:#991B1B; padding:15px; border-radius:12px; margin-top:20px; display:flex; align-items:center; gap:15px;">
+                    <i data-lucide="alert-triangle" style="flex-shrink:0;"></i>
+                    <div>
+                        <strong>Token GitHub manquant</strong>
+                        <div style="font-size:0.85rem; opacity:0.8; margin-top:2px;">
+                            L'envoi vers le serveur est impossible. Configurez votre clé d'accès dans l'onglet <strong>Config</strong>.
+                        </div>
+                    </div>
+                </div>
+            ` : ''}
+
             ${(poisModified + circuitsModified) === 0 ? `
                 <div class="empty-state">
                     <i data-lucide="check-circle-2" width="64" height="64" style="color:#10B981; margin-bottom:15px;"></i>
