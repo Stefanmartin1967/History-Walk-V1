@@ -9,6 +9,7 @@ import { ANIMAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
+import { recalculatePlannedCountersForMap } from './gpx.js';
 
 export function initAdminMode() {
     // Initial check
@@ -556,9 +557,29 @@ function showGitHubUploadModal() {
             // Track in Admin Draft
             addToDraft('circuit', file.name, { type: 'upload' });
 
-            statusDiv.textContent = "Succès ! Le site se mettra à jour dans quelques minutes.";
+            // --- MISE À JOUR AUTOMATIQUE DU GEOJSON MAÎTRE ---
+            // Pour que les POI du circuit aient leur statut "Planifié" (compteur) stocké sur le serveur immédiatement
+            statusDiv.textContent = "Mise à jour des données de carte (POIs)...";
+
+            // 1. Recalcul des compteurs (basé sur les circuits locaux/officiels actuels)
+            // Cela assure que les compteurs 'planifieCounter' dans userData sont à jour
+            await recalculatePlannedCountersForMap(state.currentMapId || 'djerba');
+
+            // 2. Génération et Envoi du Master GeoJSON
+            const masterGeoJSON = generateMasterGeoJSONData();
+            if (masterGeoJSON) {
+                const mapId = state.currentMapId || 'djerba';
+                const mapFilename = `${mapId}.geojson`;
+                const mapPath = `public/${mapFilename}`;
+                const mapBlob = new Blob([JSON.stringify(masterGeoJSON, null, 2)], { type: 'application/geo+json' });
+                const mapFile = new File([mapBlob], mapFilename, { type: 'application/geo+json' });
+
+                await uploadFileToGitHub(mapFile, token, repoOwner, repoName, mapPath, `Auto-update map data after circuit upload ${file.name}`);
+            }
+
+            statusDiv.textContent = "Succès ! Circuit et données de carte mis à jour.";
             statusDiv.style.color = "green";
-            showToast("Fichier envoyé avec succès !", "success");
+            showToast("Circuit et Carte mis à jour avec succès !", "success");
 
             setTimeout(() => {
                 overlay.classList.remove('active');
