@@ -128,11 +128,8 @@ export async function recalculatePlannedCountersForMap(mapId) {
         // FIX: On ne prend que les circuits NON supprimés
         const activeLocalCircuits = circuitsForMap.filter(c => !c.isDeleted);
 
-        // FIX: On inclut UNIQUEMENT les circuits officiels qui sont PLANIFIÉS
-        // (Option "Panier de courses" : L'officiel n'est planifié que si l'utilisateur l'a décidé)
-        const officialCircuits = (state.officialCircuits || []).filter(c => {
-            return state.officialCircuitsPlanning[String(c.id)] === true;
-        });
+        // FIX: On inclut aussi les circuits officiels (qui ne sont pas en base)
+        const officialCircuits = state.officialCircuits || [];
 
         const allCircuits = [...activeLocalCircuits, ...officialCircuits];
 

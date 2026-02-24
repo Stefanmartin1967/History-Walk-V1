@@ -96,34 +96,6 @@ export function updateCircuitHeader(data) {
     if (btnDelete) {
         btnDelete.style.display = state.activeCircuitId ? 'flex' : 'none';
     }
-
-    // Gestion du bouton PLANIFIER
-    const btnPlan = document.getElementById('btn-toggle-planning');
-    if (btnPlan) {
-        // Visible uniquement pour les circuits OFFICIELS actifs
-        const isOfficial = state.officialCircuits && state.activeCircuitId
-            ? state.officialCircuits.some(c => String(c.id) === String(state.activeCircuitId))
-            : false;
-
-        if (isOfficial) {
-            btnPlan.style.display = 'flex';
-            const isPlanned = !!state.officialCircuitsPlanning[String(state.activeCircuitId)];
-
-            if (isPlanned) {
-                btnPlan.innerHTML = '<i data-lucide="calendar-check"></i>';
-                btnPlan.title = "Retirer du planning";
-                btnPlan.style.color = "var(--ok)";
-            } else {
-                btnPlan.innerHTML = '<i data-lucide="calendar-plus"></i>';
-                btnPlan.title = "Planifier ce circuit";
-                btnPlan.style.color = "var(--ink-soft)";
-            }
-        } else {
-            btnPlan.style.display = 'none';
-        }
-    }
-
-    createIcons({ icons });
 }
 
 /**
