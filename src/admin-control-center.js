@@ -1,4 +1,3 @@
-
 import { state } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
 import { showAlert } from './modal.js';
@@ -32,20 +31,36 @@ export async function initAdminControlCenter() {
     // Inject styles (PREMIUM DASHBOARD - WARM THEME)
     const style = document.createElement('style');
     style.textContent = `
-        /* --- RESET & OVERRIDES (Code Gemini) --- */
+        /* --- VARIABLES THEME PREMIUM --- */
+        :root {
+            --brand: #D97706;       /* Ambre chaleureux */
+            --brand-light: #FDE68A;
+            --brand-gradient: linear-gradient(135deg, #F59E0B, #D97706);
+            --surface: #FFFFFF;
+            --surface-muted: #FDF9F3; /* Crème très doux */
+            --line: #E5E7EB;
+            --ink: #451A03;        /* Brun profond au lieu de noir */
+            --ink-soft: #78350F;
+            --danger-bg: #FEE2E2;
+            --danger-text: #991B1B;
+            --ok-bg: #DCFCE7;
+            --ok-text: #166534;
+        }
+
+        /* --- CONTAINER & MODAL --- */
         .custom-modal-box.admin-cc-mode {
-            width: min(1400px, 95vw) !important;
+            width: min(1200px, 95vw) !important;
             max-width: none !important;
             height: auto !important;
             max-height: 85vh !important;
+            border-radius: 32px !important; /* Coins très ronds */
+            background: var(--surface-muted) !important;
+            border: 1px solid rgba(255,255,255,0.8) !important;
+            box-shadow: 0 40px 100px -20px rgba(69, 26, 3, 0.15) !important;
             padding: 0 !important;
-            background: var(--surface) !important;
-            border-radius: 24px !important;
             overflow: hidden !important;
             display: flex !important;
             flex-direction: column !important;
-            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3) !important;
-            border: 1px solid var(--line) !important;
         }
 
         .custom-modal-box.admin-cc-mode .custom-modal-message {
@@ -59,72 +74,78 @@ export async function initAdminControlCenter() {
             overflow: hidden !important;
         }
 
-        /* --- CONTAINER PRINCIPAL (Code Gemini) --- */
+        /* --- CONTAINER PRINCIPAL --- */
         .admin-cc-container {
             display: flex;
             flex-direction: column;
             height: 100%;
+            width: 100%;
+            font-family: 'Inter', system-ui, sans-serif;
             color: var(--ink);
-            background: transparent;
+            background: var(--surface-muted);
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER PREMIUM --- */
         .admin-cc-header {
             background: var(--surface);
-            padding: 25px 40px;
+            padding: 24px 40px;
             border-bottom: 1px solid var(--line);
             flex-shrink: 0;
             z-index: 10;
-            display: flex;
-            justify-content: center;
         }
 
-        /* Bannière Bonjour Admin */
-        .admin-banner {
-            background: color-mix(in srgb, var(--brand) 10%, transparent);
-            padding: 20px 30px;
-            border-radius: 16px;
+        .admin-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header-logo {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--ink);
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-            color: var(--brand);
-            font-weight: 500;
+            gap: 8px;
         }
 
-        .admin-cc-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--brand);
-            letter-spacing: -0.02em;
+        .header-profile {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--ink-soft);
         }
 
-        /* --- TABS --- */
+        .avatar-mini {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--brand-light);
+            border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* --- TABS (PILLS) --- */
         .admin-cc-tabs {
-            display: inline-flex;
-            gap: 8px;
-            background: var(--surface-muted);
-            padding: 5px;
-            border-radius: 14px;
-            width: fit-content;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-start;
         }
 
         .admin-cc-tab {
-            padding: 10px 24px;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #94A3B8;
+            transition: all 0.3s ease;
             cursor: pointer;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--ink-soft);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: transparent;
             display: flex;
             align-items: center;
             gap: 8px;
-            user-select: none;
         }
 
         .admin-cc-tab:hover {
@@ -133,60 +154,57 @@ export async function initAdminControlCenter() {
         }
 
         .admin-cc-tab.active {
-            background: var(--surface);
-            color: var(--brand);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background: var(--brand);
+            color: white;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
         }
 
-        /* --- ZONE DE CONTENU (Code Gemini) --- */
+        /* --- ZONE DE CONTENU (SCROLLABLE) --- */
         .admin-cc-scroll-area {
             flex: 1;
             overflow-y: auto;
             padding: 40px;
-            background: color-mix(in srgb, var(--surface), var(--ink) 2%);
+            background: var(--surface-muted);
         }
 
         .admin-cc-content-wrapper {
-            max-width: 1100px;
+            max-width: 1100px; /* Keep strict layout constraint */
             margin: 0 auto;
             width: 100%;
         }
 
-        /* --- DASHBOARD GRID (Code Gemini) --- */
+        /* --- STAT CARDS --- */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+            gap: 20px;
+            margin-top: 30px;
             margin-bottom: 40px;
         }
 
         .stat-card {
             background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 20px;
-            padding: 30px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 24px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
             gap: 20px;
+            border: 1px solid white;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.03);
+            transition: transform 0.2s;
         }
+        .stat-card:hover { transform: translateY(-2px); }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--brand);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
-        }
-
-        .stat-icon-wrapper {
-            width: 60px;
-            height: 60px;
-            border-radius: 16px;
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: color-mix(in srgb, var(--brand) 10%, transparent);
             color: var(--brand);
+            font-size: 1.5rem;
             flex-shrink: 0;
         }
 
@@ -196,166 +214,146 @@ export async function initAdminControlCenter() {
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             color: var(--ink);
             line-height: 1;
-            margin-bottom: 5px;
         }
 
         .stat-label {
-            color: var(--ink-soft);
             font-weight: 600;
+            color: var(--ink-soft);
+            font-size: 0.9rem;
             text-transform: uppercase;
-            font-size: 0.75rem;
             letter-spacing: 0.05em;
         }
 
-        /* --- BANNERS (Preserved Styles) --- */
-        .welcome-banner {
-            margin-bottom: 30px;
-            text-align: left;
-            padding: 20px;
-            background: color-mix(in srgb, var(--brand) 5%, transparent);
-            border-radius: 16px;
-            border-left: 4px solid var(--brand);
+        .stat-sub {
+            font-size: 0.75rem;
+            color: #10B981; /* Vert positif */
+            font-weight: 600;
+            margin-top: 4px;
         }
 
-        .sync-banner {
-            background: var(--brand);
-            color: white;
-            padding: 25px 35px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-            margin-top: 20px;
-        }
-        .sync-banner i { flex-shrink: 0; }
-
-        /* --- DIFF VIEW (Side-by-Side Styled Cells) --- */
+        /* --- DIFF SYSTEM (AVANT/APRÈS) --- */
         .diff-container { display: flex; flex-direction: column; gap: 20px; }
 
-        .diff-card {
+        .diff-entry {
             background: var(--surface);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid white;
+        }
+
+        .diff-comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .diff-box {
+            padding: 20px;
             border-radius: 16px;
-            border: 1px solid var(--line);
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            font-family: 'Inter', sans-serif;
+            border: 1px solid transparent;
         }
 
-        .diff-card-header {
-            padding: 15px 25px;
-            background: var(--surface-muted);
-            border-bottom: 1px solid var(--line);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .diff-box.avant {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            border-color: rgba(153, 27, 27, 0.1);
+        }
+        .diff-box.apres {
+            background: var(--ok-bg);
+            color: var(--ok-text);
+            border-color: rgba(22, 101, 52, 0.1);
         }
 
-        .diff-title { font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 10px; }
-
-        .diff-id {
-            font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
-            font-size: 0.8em;
-            color: var(--ink-soft);
-            background: rgba(0,0,0,0.05);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        .diff-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px; /* Espacement vertical entre lignes */
-            padding: 0 15px;
-            table-layout: fixed;
-        }
-
-        .diff-table th {
-            text-align: left;
-            padding: 10px 15px;
-            color: var(--ink-soft);
-            font-weight: 600;
-            font-size: 0.75em;
+        .box-label {
+            font-size: 0.7rem;
+            font-weight: 800;
             text-transform: uppercase;
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.6;
         }
 
-        .diff-table td {
-            padding: 5px 10px;
-            vertical-align: middle;
-            font-size: 0.9em;
-            color: var(--ink);
+        .box-content {
+            font-family: monospace;
+            word-break: break-all;
+            font-size: 0.9rem;
         }
 
-        .diff-key {
+        /* --- DIFF ACTIONS --- */
+        .diff-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-diff-action {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: var(--ink-soft);
-            font-size: 0.85rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
         }
 
-        .diff-old {
-            color: var(--danger);
-            background: rgba(239, 68, 68, 0.1); /* Pastel Red */
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-family: monospace;
-            word-break: break-all;
-            border: 1px solid rgba(239, 68, 68, 0.2);
+        .btn-diff-action.refuse {
+            background: #F1F5F9;
+            color: #64748B;
         }
 
-        .diff-new {
-            color: var(--ok);
-            background: rgba(34, 197, 94, 0.1); /* Pastel Green */
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-family: monospace;
-            word-break: break-all;
-            border: 1px solid rgba(34, 197, 94, 0.2);
+        .btn-diff-action.refuse:hover {
+            background: var(--danger-bg);
+            color: var(--danger-text);
         }
 
-        .diff-arrow {
-            text-align: center;
-            color: var(--line);
-            font-size: 1.2em;
+        .btn-diff-action.validate {
+            background: var(--brand-light);
+            color: var(--brand);
         }
 
-        /* --- FOOTER (Code Gemini + Flex Fixes) --- */
+        .btn-diff-action.validate:hover {
+            background: var(--brand);
+            color: white; /* Contrast correction */
+        }
+
+        /* --- FOOTER FIXED --- */
         .admin-cc-footer {
             padding: 20px 40px;
             background: var(--surface);
             border-top: 1px solid var(--line);
             flex-shrink: 0;
-            border-radius: 0 0 24px 24px;
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Centered */
         }
 
         #btn-cc-publish {
-            background: var(--brand);
+            background: var(--brand-gradient);
+            border-radius: 30px;
+            padding: 16px 40px;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            box-shadow: 0 15px 30px -5px rgba(217, 119, 6, 0.4);
             color: white;
-            padding: 14px 40px;
-            border-radius: 14px;
-            font-weight: 700;
             border: none;
             cursor: pointer;
-            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
             transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 12px;
-            font-size: 1.05rem;
+            font-size: 1rem;
         }
-        #btn-cc-publish:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 15px 30px -8px rgba(59, 130, 246, 0.6); }
+        #btn-cc-publish:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 20px 40px -8px rgba(217, 119, 6, 0.5); }
         #btn-cc-publish:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .custom-modal-btn.secondary {
-            background: var(--surface);
+            background: transparent;
             border: 1px solid var(--line);
             color: var(--ink-soft);
             padding: 12px 24px;
@@ -364,9 +362,9 @@ export async function initAdminControlCenter() {
             cursor: pointer;
             transition: all 0.2s;
         }
-        .custom-modal-btn.secondary:hover { background: var(--surface-muted); color: var(--ink); border-color: var(--line); }
+        .custom-modal-btn.secondary:hover { background: var(--surface-muted); color: var(--ink); border-color: var(--ink-soft); }
 
-        /* --- EMPTY STATE & SETTINGS (Preserved) --- */
+        /* --- EMPTY STATE --- */
         .empty-state-container {
             display: flex;
             flex-direction: column;
@@ -378,12 +376,13 @@ export async function initAdminControlCenter() {
         .empty-state-icon {
             width: 80px;
             height: 80px;
-            color: var(--ok);
+            color: var(--ok-text);
             opacity: 0.2;
             margin-bottom: 20px;
             transform: scale(1.1);
         }
 
+        /* --- SETTINGS --- */
         .settings-input {
             width: 100%;
             padding: 15px;
@@ -395,7 +394,7 @@ export async function initAdminControlCenter() {
             color: var(--ink);
             transition: border 0.2s;
         }
-        .settings-input:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .settings-input:focus { border-color: var(--brand); outline: none; box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1); }
 
         /* Scrollbar Polish */
         .admin-cc-scroll-area::-webkit-scrollbar { width: 8px; }
@@ -470,21 +469,27 @@ export async function openControlCenter() {
         <div class="admin-cc-container">
             <div class="admin-cc-header">
                 <div class="admin-cc-content-wrapper">
-                    <!-- Bannière Bonjour Admin -->
-                    <div class="admin-banner" id="admin-banner-msg">
-                        <i data-lucide="hand" width="24" height="24"></i>
-                        <span>Bonjour Admin</span>
+                    <!-- Header Top (Logo + Profile) -->
+                    <div class="admin-header-top">
+                        <div class="header-logo">
+                            <span style="font-size:1.5rem;">🏰</span> History Walk <span style="font-weight:400; opacity:0.5;">| Centre de Contrôle</span>
+                        </div>
+                        <div class="header-profile">
+                            Bonjour <strong>Admin</strong> 👋
+                            <div class="avatar-mini"></div>
+                        </div>
                     </div>
 
+                    <!-- Tabs (Pills) -->
                     <div class="admin-cc-tabs">
                         <div class="admin-cc-tab active" data-tab="dashboard">
-                            <i data-lucide="layout-grid" width="18"></i> Dashboard
+                            <i data-lucide="layout-grid" width="16"></i> Dashboard
                         </div>
                         <div class="admin-cc-tab" data-tab="changes">
-                            <i data-lucide="list-checks" width="18"></i> Modifications
+                            <i data-lucide="list-checks" width="16"></i> Modifications
                         </div>
                         <div class="admin-cc-tab" data-tab="settings">
-                            <i data-lucide="settings-2" width="18"></i> Config
+                            <i data-lucide="settings-2" width="16"></i> Config
                         </div>
                     </div>
                 </div>
@@ -492,7 +497,7 @@ export async function openControlCenter() {
 
             <div class="admin-cc-scroll-area">
                 <div id="admin-cc-content" class="admin-cc-content-wrapper">
-                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--ink-soft);">
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:300px; color:var(--ink-soft);">
                         <i data-lucide="loader-2" class="spin" style="width:48px; height:48px; margin-bottom:15px; color:var(--brand);"></i>
                         <div style="font-weight:500;">Analyse des modifications en cours...</div>
                     </div>
@@ -535,7 +540,8 @@ export async function openControlCenter() {
     const btnPublish = document.getElementById('btn-cc-publish');
     if (btnPublish) btnPublish.onclick = publishChanges;
     createIcons({ icons, root: document.getElementById('admin-cc-footer-actions') });
-    createIcons({ icons, root: document.getElementById('admin-banner-msg') });
+    createIcons({ icons, root: document.querySelector('.admin-header-top') });
+    createIcons({ icons, root: document.querySelector('.admin-cc-tabs') });
 
     // Clean up when modal closes
     const overlay = document.getElementById('custom-modal-overlay');
@@ -555,20 +561,7 @@ export async function openControlCenter() {
 
     // 5. Load Data & Render
     await prepareDiffData();
-    updateBannerMessage();
     renderTab('dashboard');
-}
-
-function updateBannerMessage() {
-    const banner = document.getElementById('admin-banner-msg');
-    if (!banner) return;
-    const total = diffData.stats.poisModified + diffData.stats.circuitsModified + diffData.stats.photosAdded;
-    const msg = total > 0
-        ? `Bonjour Admin 👋, vous avez ${total} modification${total > 1 ? 's' : ''} en attente de publication.`
-        : `Bonjour Admin 👋, votre carte est à jour.`;
-
-    banner.innerHTML = `<i data-lucide="hand" width="24" height="24"></i><span>${msg}</span>`;
-    createIcons({ icons, root: banner });
 }
 
 async function prepareDiffData() {
@@ -682,55 +675,40 @@ function renderDashboard(container) {
     container.innerHTML = `
         <div class="dashboard-grid">
             <div class="stat-card">
-                <div class="stat-icon-wrapper"><i data-lucide="map-pin" width="32" height="32"></i></div>
+                <div class="stat-icon"><i data-lucide="map-pin" width="32" height="32"></i></div>
                 <div class="stat-content">
                     <div class="stat-value">${poisModified}</div>
                     <div class="stat-label">Lieux Modifiés</div>
+                    ${poisModified > 0 ? `<div class="stat-sub">+${poisModified} changes</div>` : ''}
                 </div>
             </div>
             <div class="stat-card">
-                 <div class="stat-icon-wrapper"><i data-lucide="camera" width="32" height="32"></i></div>
+                 <div class="stat-icon"><i data-lucide="camera" width="32" height="32"></i></div>
                  <div class="stat-content">
                     <div class="stat-value">${photosAdded}</div>
                     <div class="stat-label">Photos Ajoutées</div>
                 </div>
             </div>
             <div class="stat-card">
-                 <div class="stat-icon-wrapper"><i data-lucide="route" width="32" height="32"></i></div>
+                 <div class="stat-icon"><i data-lucide="route" width="32" height="32"></i></div>
                  <div class="stat-content">
                     <div class="stat-value">${circuitsModified}</div>
                     <div class="stat-label">Circuits Modifiés</div>
                 </div>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-value">${circuitsModified}</div>
-            <div class="stat-label">Circuits Modifiés</div>
-        </div>
-    `;
 
-    const syncStatusHtml = total > 0 ? `
-        <div class="sync-banner">
-            <i data-lucide="info" width="32" height="32"></i>
-            <div>
-                <div style="font-weight:800; font-size:1.2rem; margin-bottom:4px;">Modifications locales en attente</div>
-                <div style="opacity:0.9;">Cliquez sur publier pour mettre à jour la carte officielle.</div>
+        ${total > 0 ? `
+            <div style="background:var(--brand-light); color:var(--ink-soft); padding:20px; border-radius:16px; border:1px solid rgba(217, 119, 6, 0.2); display:flex; align-items:center; gap:15px;">
+                <i data-lucide="info" width="24" height="24" style="color:var(--brand);"></i>
+                <div style="font-weight:600;">Modifications locales en attente. Vérifiez dans l'onglet "Modifications" avant de publier.</div>
             </div>
-        </div>
-    ` : `
-        <div class="empty-state-container">
-            <i data-lucide="check-circle-2" class="empty-state-icon"></i>
-            <div style="font-weight:600; font-size:1.1rem; color:var(--ink-soft);">Votre carte est parfaitement synchronisée.</div>
-        </div>
-    `;
-
-    container.innerHTML = `
-        <div class="welcome-banner">
-            <h3 style="margin: 0; color: var(--brand); font-size: 1.1rem;">Bonjour Admin 👋</h3>
-            <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: var(--ink-soft);">Voici l'état actuel de vos modifications locales.</p>
-        </div>
-        <div class="dashboard-grid">${cardsHtml}</div>
-        ${syncStatusHtml}
+        ` : `
+            <div class="empty-state-container">
+                <i data-lucide="check-circle-2" class="empty-state-icon"></i>
+                <div style="font-weight:600; font-size:1.1rem; color:var(--ink-soft);">Votre carte est parfaitement synchronisée.</div>
+            </div>
+        `}
     `;
 }
 
@@ -739,51 +717,87 @@ function renderChanges(container) {
         container.innerHTML = `
             <div class="empty-state-container">
                 <i data-lucide="check-circle-2" class="empty-state-icon"></i>
-                <div style="font-weight:600; color:var(--ink-soft);">Aucune modification à afficher.</div>
+                <div style="font-weight:600; color:var(--ink-soft);">Tout est en ordre !</div>
             </div>
         `;
         return;
     }
 
-    let html = `<div class="diff-container">`;
+    let html = `<div class="diff-container">
+        <h3 style="color:var(--ink); margin-bottom:20px;">Dernières modifications en attente (${diffData.pois.length})</h3>`;
 
     // POIs
-    if (diffData.pois.length > 0) {
-        html += diffData.pois.map(item => `
-            <div class="diff-card">
-                <div class="diff-card-header">
-                    <div class="diff-title">
-                        <i data-lucide="map-pin" width="18" style="color:var(--brand);"></i> ${item.name}
-                    </div>
-                    <div class="diff-id">${item.id}</div>
+    html += diffData.pois.map(item => {
+        return `
+        <div class="diff-entry" id="diff-card-${item.id}">
+            <div class="admin-header-top" style="margin-bottom:15px; border-bottom:1px solid var(--line); padding-bottom:15px;">
+                <div class="diff-title" style="font-weight:700; color:var(--ink); display:flex; align-items:center; gap:10px;">
+                    <i data-lucide="map-pin" width="18" style="color:var(--brand);"></i>
+                    MODIFICATION : Lieu "<strong>${item.name}</strong>"
                 </div>
-                <table class="diff-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 140px;">Propriété</th>
-                            <th style="width: 40%;">Ancienne Valeur</th>
-                            <th style="width: 40px;"></th>
-                            <th style="width: 40%;">Nouvelle Valeur</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${item.changes.map(c => `
-                            <tr>
-                                <td><div class="diff-key">${c.key}</div></td>
-                                <td><div class="diff-old">${c.old}</div></td>
-                                <td><div class="diff-arrow">➜</div></td>
-                                <td><div class="diff-new">${c.new}</div></td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+                <div class="diff-actions">
+                    <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">Refuser</button>
+                    <button class="btn-diff-action validate" onclick="processDecision('${item.id}', 'accept')">Valider</button>
+                </div>
             </div>
-        `).join('');
-    }
+
+            ${item.changes.map(c => `
+                <div style="margin-top:10px;">
+                    <div style="font-size:0.75rem; font-weight:800; color:var(--ink-soft); margin-bottom:5px; opacity:0.6;">
+                        PROPRIÉTÉ : ${c.key ? c.key.toUpperCase() : 'INCONNU'}
+                    </div>
+                    <div class="diff-comparison-grid">
+                        <div class="diff-box avant">
+                            <span class="box-label">AVANT</span>
+                            <div class="box-content">${c.old !== undefined ? c.old : '-'}</div>
+                        </div>
+                        <div class="diff-box apres">
+                            <span class="box-label">APRÈS</span>
+                            <div class="box-content">${c.new !== undefined ? c.new : '-'}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `}).join('');
 
     html += `</div>`;
     container.innerHTML = html;
 }
+
+// Logic for Diff Actions
+window.processDecision = async (id, decision) => {
+    if (decision === 'refuse') {
+        // 1. Supprimer du brouillon admin
+        if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
+
+        // 2. Annuler les changements locaux dans state.userData
+        if (state.userData[id]) {
+            // Check if it was a creation (new POI) - tough to delete entirely if we just added it to userData
+            // but for now, we just clear userData override.
+            delete state.userData[id];
+            await saveAppState('userData', state.userData);
+        }
+
+        showToast("Modification refusée et annulée", "info");
+    } else {
+        // Pour "Valider", on garde simplement dans le brouillon
+        // pour le bouton final "TOUT PUBLIER"
+        showToast("Modification validée pour publication", "success");
+        const card = document.getElementById(`diff-card-${id}`);
+        if (card) {
+            card.style.opacity = "0.5"; // Feedback visuel
+            card.style.pointerEvents = "none";
+        }
+        return; // Don't reload everything, just feedback
+    }
+
+    // Mise à jour de l'interface (Full reload needed for Refuse)
+    saveDraft();
+    await prepareDiffData();
+    renderTab('changes');
+    updateButtonBadge();
+};
 
 function renderSettings(container) {
     const token = getStoredToken() || '';
