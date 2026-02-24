@@ -29,18 +29,18 @@ export async function initAdminControlCenter() {
         }
     }
 
-    // Inject styles (PC FIRST REDESIGN - WARM & COMPACT THEME)
+    // Inject styles (PREMIUM DASHBOARD - WARM THEME)
     const style = document.createElement('style');
     style.textContent = `
         /* --- RESET & OVERRIDES (Code Gemini) --- */
         .custom-modal-box.admin-cc-mode {
-            /* Largeur fluide : Max 1400px mais jamais plus de 95% de l'écran */
             width: min(1400px, 95vw) !important;
             max-width: none !important;
-            height: 85vh !important;
+            height: auto !important;
+            max-height: 85vh !important;
             padding: 0 !important;
-            background: var(--surface) !important; /* Respect du thème */
-            border-radius: 28px !important;
+            background: var(--surface) !important;
+            border-radius: 24px !important;
             overflow: hidden !important;
             display: flex !important;
             flex-direction: column !important;
@@ -48,7 +48,6 @@ export async function initAdminControlCenter() {
             border: 1px solid var(--line) !important;
         }
 
-        /* Force le message interne à prendre tout l'espace disponible (Necessary for Modal Structure) */
         .custom-modal-box.admin-cc-mode .custom-modal-message {
             flex: 1 !important;
             display: flex !important;
@@ -69,13 +68,28 @@ export async function initAdminControlCenter() {
             background: transparent;
         }
 
-        /* --- HEADER (Code Gemini + Flex Fixes) --- */
+        /* --- HEADER --- */
         .admin-cc-header {
             background: var(--surface);
-            padding: 30px 50px;
+            padding: 25px 40px;
             border-bottom: 1px solid var(--line);
             flex-shrink: 0;
             z-index: 10;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Bannière Bonjour Admin */
+        .admin-banner {
+            background: color-mix(in srgb, var(--brand) 10%, transparent);
+            padding: 20px 30px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            color: var(--brand);
+            font-weight: 500;
         }
 
         .admin-cc-title {
@@ -89,7 +103,7 @@ export async function initAdminControlCenter() {
             margin-bottom: 20px;
         }
 
-        /* --- TABS (Preserved) --- */
+        /* --- TABS --- */
         .admin-cc-tabs {
             display: inline-flex;
             gap: 8px;
@@ -129,11 +143,11 @@ export async function initAdminControlCenter() {
             flex: 1;
             overflow-y: auto;
             padding: 40px;
-            background: color-mix(in srgb, var(--surface), var(--ink) 2%); /* Teinte très légère pour le fond */
+            background: color-mix(in srgb, var(--surface), var(--ink) 2%);
         }
 
         .admin-cc-content-wrapper {
-            max-width: 1000px; /* On contient le contenu pour qu'il ne s'éparpille pas */
+            max-width: 1100px;
             margin: 0 auto;
             width: 100%;
         }
@@ -141,7 +155,7 @@ export async function initAdminControlCenter() {
         /* --- DASHBOARD GRID (Code Gemini) --- */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adaptatif PC portable/UW */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
             margin-bottom: 40px;
         }
@@ -149,15 +163,13 @@ export async function initAdminControlCenter() {
         .stat-card {
             background: var(--surface);
             border: 1px solid var(--line);
-            border-radius: 22px;
-            padding: 35px;
-            text-align: center;
+            border-radius: 20px;
+            padding: 30px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            gap: 20px;
         }
 
         .stat-card:hover {
@@ -166,19 +178,36 @@ export async function initAdminControlCenter() {
             box-shadow: 0 12px 25px rgba(0,0,0,0.1);
         }
 
-        .stat-value {
-            font-size: 3.5rem;
-            font-weight: 900;
+        .stat-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: color-mix(in srgb, var(--brand) 10%, transparent);
             color: var(--brand);
+            flex-shrink: 0;
+        }
+
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--ink);
             line-height: 1;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .stat-label {
             color: var(--ink-soft);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             letter-spacing: 0.05em;
         }
 
@@ -205,7 +234,7 @@ export async function initAdminControlCenter() {
         }
         .sync-banner i { flex-shrink: 0; }
 
-        /* --- DIFF VIEW (Preserved Styles) --- */
+        /* --- DIFF VIEW (Side-by-Side Styled Cells) --- */
         .diff-container { display: flex; flex-direction: column; gap: 20px; }
 
         .diff-card {
@@ -238,33 +267,29 @@ export async function initAdminControlCenter() {
 
         .diff-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 8px; /* Espacement vertical entre lignes */
+            padding: 0 15px;
             table-layout: fixed;
         }
 
         .diff-table th {
             text-align: left;
-            padding: 12px 25px;
-            background: rgba(0,0,0,0.02);
+            padding: 10px 15px;
             color: var(--ink-soft);
             font-weight: 600;
             font-size: 0.75em;
             text-transform: uppercase;
-            border-bottom: 1px solid var(--line);
         }
 
         .diff-table td {
-            padding: 15px 25px;
-            border-bottom: 1px solid var(--line);
+            padding: 5px 10px;
             vertical-align: middle;
             font-size: 0.9em;
             color: var(--ink);
         }
 
-        .diff-table tr:last-child td { border-bottom: none; }
-
         .diff-key {
-            width: 140px;
             font-weight: 700;
             color: var(--ink-soft);
             font-size: 0.85rem;
@@ -275,58 +300,58 @@ export async function initAdminControlCenter() {
 
         .diff-old {
             color: var(--danger);
-            background: color-mix(in srgb, var(--danger) 8%, transparent);
-            padding: 8px 12px;
-            border-radius: 6px;
+            background: rgba(239, 68, 68, 0.1); /* Pastel Red */
+            padding: 12px 16px;
+            border-radius: 8px;
             font-family: monospace;
             word-break: break-all;
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
         .diff-new {
             color: var(--ok);
-            background: color-mix(in srgb, var(--ok) 8%, transparent);
-            padding: 8px 12px;
-            border-radius: 6px;
+            background: rgba(34, 197, 94, 0.1); /* Pastel Green */
+            padding: 12px 16px;
+            border-radius: 8px;
             font-weight: 600;
             font-family: monospace;
             word-break: break-all;
+            border: 1px solid rgba(34, 197, 94, 0.2);
         }
 
         .diff-arrow {
-            width: 40px;
             text-align: center;
             color: var(--line);
+            font-size: 1.2em;
         }
 
         /* --- FOOTER (Code Gemini + Flex Fixes) --- */
         .admin-cc-footer {
-            padding: 20px 50px;
+            padding: 20px 40px;
             background: var(--surface);
             border-top: 1px solid var(--line);
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 15px;
             flex-shrink: 0;
-            border-radius: 0 0 28px 28px; /* Match modal radius */
+            border-radius: 0 0 24px 24px;
+            display: flex;
+            justify-content: center;
         }
 
         #btn-cc-publish {
             background: var(--brand);
             color: white;
-            padding: 12px 35px;
-            border-radius: 12px;
+            padding: 14px 40px;
+            border-radius: 14px;
             font-weight: 700;
             border: none;
             cursor: pointer;
-            box-shadow: 0 8px 20px -6px rgba(59, 130, 246, 0.5); /* Brand shadow hint */
+            box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
             transition: all 0.2s;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1rem;
+            gap: 12px;
+            font-size: 1.05rem;
         }
-        #btn-cc-publish:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 12px 24px -8px rgba(59, 130, 246, 0.6); }
+        #btn-cc-publish:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 15px 30px -8px rgba(59, 130, 246, 0.6); }
         #btn-cc-publish:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
 
         .custom-modal-btn.secondary {
@@ -444,18 +469,23 @@ export async function openControlCenter() {
     const html = `
         <div class="admin-cc-container">
             <div class="admin-cc-header">
-                <div class="admin-cc-title">
-                    <i data-lucide="shield-check" style="color:var(--brand);"></i> Centre de Contrôle Admin
-                </div>
-                <div class="admin-cc-tabs">
-                    <div class="admin-cc-tab active" data-tab="dashboard">
-                        <i data-lucide="layout-grid" width="18"></i> Dashboard
+                <div class="admin-cc-content-wrapper">
+                    <!-- Bannière Bonjour Admin -->
+                    <div class="admin-banner" id="admin-banner-msg">
+                        <i data-lucide="hand" width="24" height="24"></i>
+                        <span>Bonjour Admin</span>
                     </div>
-                    <div class="admin-cc-tab" data-tab="changes">
-                        <i data-lucide="list-checks" width="18"></i> Modifications
-                    </div>
-                    <div class="admin-cc-tab" data-tab="settings">
-                        <i data-lucide="settings-2" width="18"></i> Config
+
+                    <div class="admin-cc-tabs">
+                        <div class="admin-cc-tab active" data-tab="dashboard">
+                            <i data-lucide="layout-grid" width="18"></i> Dashboard
+                        </div>
+                        <div class="admin-cc-tab" data-tab="changes">
+                            <i data-lucide="list-checks" width="18"></i> Modifications
+                        </div>
+                        <div class="admin-cc-tab" data-tab="settings">
+                            <i data-lucide="settings-2" width="18"></i> Config
+                        </div>
                     </div>
                 </div>
             </div>
@@ -470,10 +500,12 @@ export async function openControlCenter() {
             </div>
 
             <div class="admin-cc-footer" id="admin-cc-footer-actions">
-                <button class="custom-modal-btn secondary" onclick="document.getElementById('custom-modal-overlay').classList.remove('active')">Fermer</button>
-                <button id="btn-cc-publish">
-                    <i data-lucide="rocket"></i> TOUT PUBLIER SUR GITHUB
-                </button>
+                <div class="admin-cc-content-wrapper" style="display:flex; justify-content:flex-end; gap:15px; align-items:center;">
+                    <button class="custom-modal-btn secondary" onclick="document.getElementById('custom-modal-overlay').classList.remove('active')">Fermer</button>
+                    <button id="btn-cc-publish">
+                        <i data-lucide="rocket"></i> TOUT PUBLIER SUR GITHUB
+                    </button>
+                </div>
             </div>
         </div>
     `;
@@ -503,6 +535,7 @@ export async function openControlCenter() {
     const btnPublish = document.getElementById('btn-cc-publish');
     if (btnPublish) btnPublish.onclick = publishChanges;
     createIcons({ icons, root: document.getElementById('admin-cc-footer-actions') });
+    createIcons({ icons, root: document.getElementById('admin-banner-msg') });
 
     // Clean up when modal closes
     const overlay = document.getElementById('custom-modal-overlay');
@@ -522,7 +555,20 @@ export async function openControlCenter() {
 
     // 5. Load Data & Render
     await prepareDiffData();
+    updateBannerMessage();
     renderTab('dashboard');
+}
+
+function updateBannerMessage() {
+    const banner = document.getElementById('admin-banner-msg');
+    if (!banner) return;
+    const total = diffData.stats.poisModified + diffData.stats.circuitsModified + diffData.stats.photosAdded;
+    const msg = total > 0
+        ? `Bonjour Admin 👋, vous avez ${total} modification${total > 1 ? 's' : ''} en attente de publication.`
+        : `Bonjour Admin 👋, votre carte est à jour.`;
+
+    banner.innerHTML = `<i data-lucide="hand" width="24" height="24"></i><span>${msg}</span>`;
+    createIcons({ icons, root: banner });
 }
 
 async function prepareDiffData() {
@@ -633,14 +679,29 @@ function renderDashboard(container) {
     const { poisModified, photosAdded, circuitsModified } = diffData.stats;
     const total = poisModified + circuitsModified;
 
-    const cardsHtml = `
-        <div class="stat-card">
-            <div class="stat-value">${poisModified}</div>
-            <div class="stat-label">Lieux Modifiés</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value">${photosAdded}</div>
-            <div class="stat-label">Photos Ajoutées</div>
+    container.innerHTML = `
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper"><i data-lucide="map-pin" width="32" height="32"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">${poisModified}</div>
+                    <div class="stat-label">Lieux Modifiés</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                 <div class="stat-icon-wrapper"><i data-lucide="camera" width="32" height="32"></i></div>
+                 <div class="stat-content">
+                    <div class="stat-value">${photosAdded}</div>
+                    <div class="stat-label">Photos Ajoutées</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                 <div class="stat-icon-wrapper"><i data-lucide="route" width="32" height="32"></i></div>
+                 <div class="stat-content">
+                    <div class="stat-value">${circuitsModified}</div>
+                    <div class="stat-label">Circuits Modifiés</div>
+                </div>
+            </div>
         </div>
         <div class="stat-card">
             <div class="stat-value">${circuitsModified}</div>
