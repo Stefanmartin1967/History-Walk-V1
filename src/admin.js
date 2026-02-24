@@ -260,6 +260,15 @@ async function publishMapToGitHub() {
     }
 
     showToast("Génération du fichier...", "info");
+
+    // Recalcul des compteurs "Planifié" pour être sûr qu'ils sont à jour avant publication
+    // Cela permet de mettre à jour le statut des POI pour TOUS les circuits (y compris existants)
+    try {
+        await recalculatePlannedCountersForMap(state.currentMapId || 'djerba');
+    } catch (e) {
+        console.warn("Erreur recalcul compteurs:", e);
+    }
+
     const geojson = generateMasterGeoJSONData();
     if (!geojson) {
         showToast("Erreur: Données vides.", "error");
