@@ -69,13 +69,6 @@ function extractTrackPoints(gpxContent) {
 
 function extractWaypoints(gpxContent) {
     const wpts = [];
-    // More robust regex for <wpt> block, capturing lat/lon and body
-    const regex = /<wpt[^>]+lat="([^"]+)"[^>]+lon="([^"]+)"[^>]*>([\s\S]*?)<\/wpt>/g;
-    let match;
-
-    // Also try reversed attribute order if regex fails (simple quick fix: just make regex attribute order agnostic)
-    // Actually, let's use a simpler approach: find <wpt, extract attributes, then find <name> inside
-
     const wptBlocks = gpxContent.match(/<wpt[\s\S]*?<\/wpt>/g);
     if (!wptBlocks) return [];
 
