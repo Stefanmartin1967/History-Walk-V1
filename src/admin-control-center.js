@@ -456,12 +456,25 @@ async function prepareDiffData() {
         }
 
         // Cas spécial : Création (Nouveau POI)
-        if (!original && current) {
+        if (!original && current && adminDraft.pendingPois[id].type === 'creation') {
              diffData.pois.push({
                 id: id,
                 name: getPoiName(current),
                 changes: [{ key: 'STATUT', old: 'Inexistant', new: 'NOUVEAU' }],
                 isCreation: true
+            });
+            diffData.stats.poisModified++;
+            return;
+        }
+
+        // Cas spécial : Migration d'ID
+        if (adminDraft.pendingPois[id].type === 'migration') {
+            const oldId = adminDraft.pendingPois[id].oldId;
+            diffData.pois.push({
+                id: id,
+                name: current ? getPoiName(current) : 'Lieu migré',
+                changes: [{ key: 'IDENTIFIANT', old: oldId || 'Legacy', new: id }],
+                isMigration: true
             });
             diffData.stats.poisModified++;
             return;
@@ -722,6 +735,26 @@ async function publishChanges() {
 
         await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/${filename}`, `Update via Admin Center`);
 
+        // --- NOUVEAU : Publication des Circuits si nécessaire ---
+        const pendingCircuitsCount = Object.keys(adminDraft.pendingCircuits).length;
+        if (pendingCircuitsCount > 0 && state.officialCircuits) {
+            console.log(`[Admin] Publication de l'index des circuits (${pendingCircuitsCount} modifiés)...`);
+            const circuitsFilename = state.destinations.maps[state.currentMapId]?.circuitsFile || `${state.currentMapId || 'djerba'}.json`;
+            const circuitsPath = `public/circuits/${circuitsFilename}`;
+
+            // On nettoie un peu les objets pour l'export (enlever les props circulaires ou UI)
+            const circuitsData = state.officialCircuits.map(c => {
+                const { ...cleanCircuit } = c;
+                delete cleanCircuit.isLoaded;
+                return cleanCircuit;
+            });
+
+            const circuitsBlob = new Blob([JSON.stringify(circuitsData, null, 2)], { type: 'application/json' });
+            const circuitsFile = new File([circuitsBlob], circuitsFilename, { type: 'application/json' });
+
+            await uploadFileToGitHub(circuitsFile, token, 'Stefanmartin1967', 'History-Walk-V1', circuitsPath, `Update circuits index via Admin Center`);
+        }
+
         showToast("Publication réussie !", "success");
         adminDraft = { pendingPois: {}, pendingCircuits: {} };
         localStorage.setItem(DRAFT_KEY, JSON.stringify(adminDraft));
@@ -759,4 +792,14 @@ export function addToDraft(type, id, details) {
 
     localStorage.setItem(DRAFT_KEY, JSON.stringify(adminDraft));
     updateButtonBadge();
+}
+
+/**
+ * Cherche si une migration est déjà enregistrée pour un ancien ID
+ */
+export function getMigrationId(oldId) {
+    if (!oldId) return null;
+    const entries = Object.entries(adminDraft.pendingPois);
+    const found = entries.find(([newId, data]) => data.type === 'migration' && data.oldId === oldId);
+    return found ? found[0] : null;
 }

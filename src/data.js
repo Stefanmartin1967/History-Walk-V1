@@ -7,16 +7,102 @@ import {
     getAllCircuitsForMap, 
     savePoiData, 
     getAppState, 
-    saveAppState 
+    saveAppState,
+    saveCircuit
 } from './database.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
-import { getPoiId, getPoiName } from './utils.js';
-import { addToDraft } from './admin-control-center.js';
+import { getPoiId, getPoiName, generateHWID } from './utils.js';
+import { addToDraft, getMigrationId } from './admin-control-center.js';
 
 // --- UTILITAIRES ---
 
 export { getPoiId, getPoiName };
+
+// --- GESTION DES MIGRATIONS D'ID (ADMIN) ---
+
+async function checkAndApplyMigrations() {
+    if (!state.isAdmin || !state.loadedFeatures) return;
+
+    let migrationsCount = 0;
+    const idMap = {}; // oldId -> newId
+
+    state.loadedFeatures.forEach((feature, index) => {
+        const pId = getPoiId(feature);
+        const isLegacyId = !pId || pId.startsWith('gen_') || pId.startsWith('custom_') || !pId.startsWith('HW-');
+
+        if (isLegacyId) {
+            const oldId = pId;
+            const newId = getMigrationId(oldId) || generateHWID();
+
+            console.log(`[Admin Migration] Unification ID : ${oldId || 'EMPTY'} -> ${newId}`);
+
+            feature.properties.HW_ID = newId;
+            idMap[oldId] = newId;
+
+            // 1. Migration des données utilisateur associées (Carnet de Voyage)
+            if (oldId && state.userData[oldId]) {
+                state.userData[newId] = state.userData[oldId];
+                // Note: On ne supprime pas l'ancien pour la session courante pour éviter de tout casser
+            }
+
+            // 2. Migration du statut "caché"
+            if (oldId && state.hiddenPoiIds.includes(oldId)) {
+                state.hiddenPoiIds = state.hiddenPoiIds.map(id => id === oldId ? newId : id);
+            }
+
+            // [ADMIN] Enregistrement dans le brouillon pour publication sur GitHub
+            addToDraft('poi', newId, { type: 'migration', oldId: oldId });
+            migrationsCount++;
+        }
+    });
+
+    if (migrationsCount > 0) {
+        // 3. Migration des CIRCUITS (Mise à jour des étapes)
+        let circuitsUpdated = 0;
+        const allCircuits = [...(state.myCircuits || []), ...(state.officialCircuits || [])];
+
+        for (const circuit of allCircuits) {
+            if (!circuit.poiIds) continue;
+
+            let hasChanged = false;
+            const newPoiIds = circuit.poiIds.map(pid => {
+                if (idMap[pid]) {
+                    hasChanged = true;
+                    return idMap[pid];
+                }
+                return pid;
+            });
+
+            if (hasChanged) {
+                circuit.poiIds = newPoiIds;
+                circuitsUpdated++;
+
+                // Sauvegarde immédiate si c'est un circuit perso (dans IndexedDB)
+                if (state.myCircuits.includes(circuit)) {
+                    await saveCircuit(circuit);
+                }
+
+                // Tracking admin pour le circuit
+                addToDraft('circuit', circuit.id, { type: 'update' });
+            }
+        }
+
+        // 4. Sauvegarde persistante de l'état (userData, hiddenPois et customFeatures)
+        await saveAppState('userData', state.userData);
+        await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+        await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
+
+        showToast(`${migrationsCount} IDs unifiés et ${circuitsUpdated} circuits mis à jour.`, "success");
+        applyFilters(); // Rafraîchir pour appliquer les nouveaux IDs aux listeners
+    }
+}
+
+// Écouteur pour déclencher la migration dès que le mode Admin est activé
+eventBus.on('admin:mode-toggled', (isAdmin) => {
+    if (isAdmin) checkAndApplyMigrations();
+});
+
 
 export function getDomainFromUrl(url) {
     if (!url) return '';
@@ -46,6 +132,9 @@ export async function displayGeoJSON(geoJSON, mapId) {
     
     state.customFeatures = storedCustomFeatures || [];
 
+    // 1.5 Pré-chargement des données utilisateur pour la migration
+    state.userData = Object.assign({}, storedUserData);
+
     // 2. FUSION : Carte Officielle + Lieux Ajoutés (Post-its)
     // Utilisation d'un Map pour garantir l'unicité des IDs (évite l'effet fantôme)
     const uniqueFeaturesMap = new Map();
@@ -69,17 +158,20 @@ export async function displayGeoJSON(geoJSON, mapId) {
     // On reconvertit le Map en tableau pour la suite du traitement
     let allFeatures = Array.from(uniqueFeaturesMap.values());
 
-    // 3. Préparation des données (Injection des notes/statuts utilisateur)
+    // 3. Préparation des données (Injection des notes/statuts utilisateur + Migration IDs)
     state.loadedFeatures = allFeatures.map((feature, index) => {
-        // Sécurité : On s'assure que chaque feature a un ID stable
-        if (!feature.properties.HW_ID) {
-            feature.properties.HW_ID = feature.id || `gen_${index}_${Date.now()}`; 
+        let pId = getPoiId(feature);
+
+        // --- GESTION DES IDENTIFIANTS MANQUANTS ---
+        // Pour les utilisateurs normaux, on assure un ID temporaire stable pour la session si HW_ID manque.
+        // La migration réelle vers HW-ULID est gérée par checkAndApplyMigrations() en mode Admin.
+        if (!pId) {
+            pId = `gen_${index}`;
+            feature.properties.HW_ID = pId;
         }
         
-        const pId = getPoiId(feature);
-        
         // On injecte les données utilisateur (Notes, Visité, etc.)
-        state.userData[pId] = state.userData[pId] || storedUserData[pId] || {};
+        state.userData[pId] = state.userData[pId] || {};
         feature.properties.userData = state.userData[pId];
 
         // --- GESTION OVERRIDE GEOMETRY (DÉPLACEMENT DE POINT) ---
@@ -186,10 +278,11 @@ export async function addPoiFeature(feature) {
 
     // 1. Ajout à la liste en mémoire vive (pour affichage immédiat)
 
-    // Sécurité : On s'assure que le POI a un ID avant traitement
+    // Sécurité : On s'assure que le POI a un ID au format HW-ULID avant traitement
     if (!feature.properties) feature.properties = {};
-    if (!feature.properties.HW_ID && !feature.id) {
-        feature.properties.HW_ID = `custom_${Date.now()}`;
+    const currentId = getPoiId(feature);
+    if (!currentId || !currentId.startsWith('HW-')) {
+        feature.properties.HW_ID = generateHWID();
     }
 
     // IMPORTANT : On s'assure que le lien userData est établi

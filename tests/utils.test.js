@@ -1,7 +1,31 @@
 import { describe, it, expect } from 'vitest';
-import { calculateDistance, isPointInPolygon, escapeXml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
 
 describe('Utils', () => {
+    describe('generateHWID', () => {
+        it('should generate a string starting with HW-', () => {
+            const id = generateHWID();
+            expect(id.startsWith('HW-')).toBe(true);
+        });
+
+        it('should generate a 29 character string (HW- + 26 chars)', () => {
+            const id = generateHWID();
+            expect(id.length).toBe(29);
+        });
+
+        it('should be reasonably unique', () => {
+            const id1 = generateHWID();
+            const id2 = generateHWID();
+            expect(id1).not.toBe(id2);
+        });
+
+        it('should only contain Crockford Base32 characters in the ULID part', () => {
+            const id = generateHWID();
+            const ulidPart = id.substring(3);
+            expect(ulidPart).toMatch(/^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]+$/);
+        });
+    });
+
     describe('calculateDistance (Haversine)', () => {
         it('should return 0 for same point', () => {
             expect(calculateDistance(48.8566, 2.3522, 48.8566, 2.3522)).toBe(0);
@@ -69,6 +93,48 @@ describe('Utils', () => {
 
         it('should clamp to zero', () => {
             expect(calculateAdjustedTime(0, 10, -20)).toEqual({ h: 0, m: 0 });
+        });
+    });
+
+    describe('getPoiId', () => {
+        it('should return null if feature is null or undefined', () => {
+            expect(getPoiId(null)).toBe(null);
+            expect(getPoiId(undefined)).toBe(null);
+        });
+
+        it('should return null if properties are missing', () => {
+            expect(getPoiId({})).toBe(null);
+            expect(getPoiId({ id: '123' })).toBe(null);
+        });
+
+        it('should return HW_ID if present in properties', () => {
+            const feature = {
+                properties: { HW_ID: 'POI_001' }
+            };
+            expect(getPoiId(feature)).toBe('POI_001');
+        });
+
+        it('should return feature.id if HW_ID is missing but id is present', () => {
+            const feature = {
+                id: 'GEO_123',
+                properties: { name: 'Some Place' }
+            };
+            expect(getPoiId(feature)).toBe('GEO_123');
+        });
+
+        it('should prioritize HW_ID over feature.id', () => {
+            const feature = {
+                id: 'GEO_123',
+                properties: { HW_ID: 'POI_001' }
+            };
+            expect(getPoiId(feature)).toBe('POI_001');
+        });
+
+        it('should return undefined if both HW_ID and id are missing but properties exist', () => {
+            const feature = {
+                properties: { name: 'Some Place' }
+            };
+            expect(getPoiId(feature)).toBe(undefined);
         });
     });
 });

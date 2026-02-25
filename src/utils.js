@@ -2,6 +2,40 @@
 import exifr from 'exifr';
 import { zonesData } from './zones.js';
 
+/**
+ * Génère un identifiant unique au format HW-ULID
+ * Format: HW- (préfixe) + 26 caractères (ULID: Timestamp + Random)
+ */
+export function generateHWID() {
+    const ENCODING = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+
+    function encodeBase32(number, length) {
+        let str = "";
+        for (let i = length - 1; i >= 0; i--) {
+            str = ENCODING.charAt(number % 32) + str;
+            number = Math.floor(number / 32);
+        }
+        return str;
+    }
+
+    function randomChar() {
+        return ENCODING.charAt(Math.floor(Math.random() * 32));
+    }
+
+    // 1. Timestamp (48 bits -> 10 chars)
+    // On utilise Date.now() qui est sur 42 bits environ
+    const now = Date.now();
+    const timestampPart = encodeBase32(now, 10);
+
+    // 2. Random (80 bits -> 16 chars)
+    let randomPart = "";
+    for (let i = 0; i < 16; i++) {
+        randomPart += randomChar();
+    }
+
+    return `HW-${timestampPart}${randomPart}`;
+}
+
 export function getPoiId(feature) {
     if (!feature || !feature.properties) return null;
     return feature.properties.HW_ID || feature.id;
