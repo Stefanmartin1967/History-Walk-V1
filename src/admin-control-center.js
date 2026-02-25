@@ -456,12 +456,25 @@ async function prepareDiffData() {
         }
 
         // Cas spécial : Création (Nouveau POI)
-        if (!original && current) {
+        if (!original && current && adminDraft.pendingPois[id].type === 'creation') {
              diffData.pois.push({
                 id: id,
                 name: getPoiName(current),
                 changes: [{ key: 'STATUT', old: 'Inexistant', new: 'NOUVEAU' }],
                 isCreation: true
+            });
+            diffData.stats.poisModified++;
+            return;
+        }
+
+        // Cas spécial : Migration d'ID
+        if (adminDraft.pendingPois[id].type === 'migration') {
+            const oldId = adminDraft.pendingPois[id].oldId;
+            diffData.pois.push({
+                id: id,
+                name: current ? getPoiName(current) : 'Lieu migré',
+                changes: [{ key: 'IDENTIFIANT', old: oldId || 'Legacy', new: id }],
+                isMigration: true
             });
             diffData.stats.poisModified++;
             return;
@@ -583,12 +596,37 @@ function renderTab(tab) {
              return;
         }
 
-        let html = diffData.pois.map(item => `
-            <div class="diff-entry" id="diff-card-${item.id}" style="${item.isDeletion ? 'border:1px solid #FCA5A5; background:#FEF2F2;' : (item.isCreation ? 'border:1px solid #86EFAC; background:#F0FDF4;' : '')}">
+        let html = diffData.pois.map(item => {
+            const isMigr = item.isMigration;
+            const isDel = item.isDeletion;
+            const isCre = item.isCreation;
+
+            let cardStyle = "";
+            if (isDel) cardStyle = "border:1px solid #FCA5A5; background:#FEF2F2;";
+            if (isCre) cardStyle = "border:1px solid #86EFAC; background:#F0FDF4;";
+            if (isMigr) cardStyle = "border:1px solid #BAE6FD; background:#F0F9FF;";
+
+            let iconName = "map-pin";
+            if (isDel) iconName = "trash-2";
+            if (isCre) iconName = "plus-circle";
+            if (isMigr) iconName = "refresh-cw";
+
+            let iconColor = "var(--hw-amber)";
+            if (isDel) iconColor = "#DC2626";
+            if (isCre) iconColor = "#16A34A";
+            if (isMigr) iconColor = "#0284C7";
+
+            let titleSuffix = "";
+            if (isDel) titleSuffix = "(SUPPRESSION)";
+            if (isCre) titleSuffix = "(NOUVEAU)";
+            if (isMigr) titleSuffix = "(MIGRATION ID)";
+
+            return `
+            <div class="diff-entry" id="diff-card-${item.id}" style="${cardStyle}">
                 <div class="diff-header">
-                    <div class="diff-title" style="${item.isDeletion ? 'color:#991B1B;' : (item.isCreation ? 'color:#166534;' : '')}">
-                        <i data-lucide="${item.isDeletion ? 'trash-2' : (item.isCreation ? 'plus-circle' : 'map-pin')}" width="18" style="color:${item.isDeletion ? '#DC2626' : (item.isCreation ? '#16A34A' : 'var(--hw-amber)')};"></i>
-                        ${item.name} ${item.isDeletion ? '(SUPPRESSION)' : (item.isCreation ? '(NOUVEAU)' : '')}
+                    <div class="diff-title" style="color:${isDel ? '#991B1B' : (isCre ? '#166534' : (isMigr ? '#0369A1' : 'inherit'))}">
+                        <i data-lucide="${iconName}" width="18" style="color:${iconColor};"></i>
+                        ${item.name} ${titleSuffix}
                     </div>
                     <div class="diff-actions">
                         <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">Refuser</button>
@@ -733,4 +771,14 @@ export function addToDraft(type, id, details) {
 
     localStorage.setItem(DRAFT_KEY, JSON.stringify(adminDraft));
     updateButtonBadge();
+}
+
+/**
+ * Cherche si une migration est déjà enregistrée pour un ancien ID
+ */
+export function getMigrationId(oldId) {
+    if (!oldId) return null;
+    const entries = Object.entries(adminDraft.pendingPois);
+    const found = entries.find(([newId, data]) => data.type === 'migration' && data.oldId === oldId);
+    return found ? found[0] : null;
 }

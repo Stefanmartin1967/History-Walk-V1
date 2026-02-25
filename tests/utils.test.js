@@ -1,7 +1,31 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, calculateDistance, isPointInPolygon, escapeXml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
 
 describe('Utils', () => {
+    describe('generateHWID', () => {
+        it('should generate a string starting with HW-', () => {
+            const id = generateHWID();
+            expect(id.startsWith('HW-')).toBe(true);
+        });
+
+        it('should generate a 29 character string (HW- + 26 chars)', () => {
+            const id = generateHWID();
+            expect(id.length).toBe(29);
+        });
+
+        it('should be reasonably unique', () => {
+            const id1 = generateHWID();
+            const id2 = generateHWID();
+            expect(id1).not.toBe(id2);
+        });
+
+        it('should only contain Crockford Base32 characters in the ULID part', () => {
+            const id = generateHWID();
+            const ulidPart = id.substring(3);
+            expect(ulidPart).toMatch(/^[0123456789ABCDEFGHJKMNPQRSTVWXYZ]+$/);
+        });
+    });
+
     describe('calculateDistance (Haversine)', () => {
         it('should return 0 for same point', () => {
             expect(calculateDistance(48.8566, 2.3522, 48.8566, 2.3522)).toBe(0);
