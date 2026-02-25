@@ -356,6 +356,11 @@ export async function showStatisticsModal() {
     const matiere = getRankInfo(pctPoi, CONFIG.matieres);
     const globalR = getRankInfo(pctGlobal, CONFIG.rangs);
 
+    // 3. Calculs des Barres de Progression (Objectif Prochain Palier)
+    // Si on est à 32% et le prochain palier est 40%, la barre doit être à (32/40)*100 = 80%
+    const pctDistBar = animal.nextGoalPct > 0 ? Math.min(100, (pctDist / animal.nextGoalPct) * 100) : 0;
+    const pctPoiBar = matiere.nextGoalPct > 0 ? Math.min(100, (pctPoi / matiere.nextGoalPct) * 100) : 0;
+
     // Titre dynamique
     const formatDe = (mot) => {
         const voyelles = ['A', 'E', 'I', 'O', 'U', 'Y', 'É', 'È'];
@@ -391,7 +396,7 @@ export async function showStatisticsModal() {
                         <span id="val-distance">${stats.userOfficialKm} / ${stats.totalOfficialKmAvailable} km</span>
                     </div>
                     <div class="progress-bar-container">
-                        <div id="bar-distance" class="progress-fill" style="width: ${pctDist}%"></div>
+                        <div id="bar-distance" class="progress-fill" style="width: ${pctDistBar}%"></div>
                     </div>
                     <div id="goal-distance" class="next-goal">Objectif : ${animal.nextGoalPct}%</div>
                 </div>
@@ -402,7 +407,7 @@ export async function showStatisticsModal() {
                         <span id="val-circuits">${stats.visitedPois} / ${stats.totalPois}</span>
                     </div>
                     <div class="progress-bar-container">
-                        <div id="bar-circuits" class="progress-fill" style="width: ${pctPoi}%"></div>
+                        <div id="bar-circuits" class="progress-fill" style="width: ${pctPoiBar}%"></div>
                     </div>
                     <div id="goal-circuits" class="next-goal">Objectif : ${matiere.nextGoalPct}%</div>
                 </div>
