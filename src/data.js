@@ -7,7 +7,8 @@ import {
     getAllCircuitsForMap, 
     savePoiData, 
     getAppState, 
-    saveAppState 
+    saveAppState,
+    saveCircuit
 } from './database.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
@@ -20,10 +21,12 @@ export { getPoiId, getPoiName };
 
 // --- GESTION DES MIGRATIONS D'ID (ADMIN) ---
 
-function checkAndApplyMigrations() {
+async function checkAndApplyMigrations() {
     if (!state.isAdmin || !state.loadedFeatures) return;
 
     let migrationsCount = 0;
+    const idMap = {}; // oldId -> newId
+
     state.loadedFeatures.forEach((feature, index) => {
         const pId = getPoiId(feature);
         const isLegacyId = !pId || pId.startsWith('gen_') || pId.startsWith('custom_') || !pId.startsWith('HW-');
@@ -35,26 +38,62 @@ function checkAndApplyMigrations() {
             console.log(`[Admin Migration] Unification ID : ${oldId || 'EMPTY'} -> ${newId}`);
 
             feature.properties.HW_ID = newId;
+            idMap[oldId] = newId;
 
-            // Migration des données utilisateur associées
+            // 1. Migration des données utilisateur associées (Carnet de Voyage)
             if (oldId && state.userData[oldId]) {
-                state.userData[newId] = { ...state.userData[oldId] };
-                // Note: On ne supprime pas l'ancien pour la session courante
+                state.userData[newId] = state.userData[oldId];
+                // Note: On ne supprime pas l'ancien pour la session courante pour éviter de tout casser
             }
 
-            // Migration du statut "caché"
+            // 2. Migration du statut "caché"
             if (oldId && state.hiddenPoiIds.includes(oldId)) {
                 state.hiddenPoiIds = state.hiddenPoiIds.map(id => id === oldId ? newId : id);
             }
 
-            // Enregistrement dans le brouillon pour publication sur GitHub
+            // [ADMIN] Enregistrement dans le brouillon pour publication sur GitHub
             addToDraft('poi', newId, { type: 'migration', oldId: oldId });
             migrationsCount++;
         }
     });
 
     if (migrationsCount > 0) {
-        showToast(`${migrationsCount} identifiants unifiés (HW-ULID)`, "success");
+        // 3. Migration des CIRCUITS (Mise à jour des étapes)
+        let circuitsUpdated = 0;
+        const allCircuits = [...(state.myCircuits || []), ...(state.officialCircuits || [])];
+
+        for (const circuit of allCircuits) {
+            if (!circuit.poiIds) continue;
+
+            let hasChanged = false;
+            const newPoiIds = circuit.poiIds.map(pid => {
+                if (idMap[pid]) {
+                    hasChanged = true;
+                    return idMap[pid];
+                }
+                return pid;
+            });
+
+            if (hasChanged) {
+                circuit.poiIds = newPoiIds;
+                circuitsUpdated++;
+
+                // Sauvegarde immédiate si c'est un circuit perso (dans IndexedDB)
+                if (state.myCircuits.includes(circuit)) {
+                    await saveCircuit(circuit);
+                }
+
+                // Tracking admin pour le circuit
+                addToDraft('circuit', circuit.id, { type: 'update' });
+            }
+        }
+
+        // 4. Sauvegarde persistante de l'état (userData, hiddenPois et customFeatures)
+        await saveAppState('userData', state.userData);
+        await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+        await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
+
+        showToast(`${migrationsCount} IDs unifiés et ${circuitsUpdated} circuits mis à jour.`, "success");
         applyFilters(); // Rafraîchir pour appliquer les nouveaux IDs aux listeners
     }
 }

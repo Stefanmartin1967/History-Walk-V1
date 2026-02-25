@@ -734,6 +734,26 @@ async function publishChanges() {
 
         await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/${filename}`, `Update via Admin Center`);
 
+        // --- NOUVEAU : Publication des Circuits si nécessaire ---
+        const pendingCircuitsCount = Object.keys(adminDraft.pendingCircuits).length;
+        if (pendingCircuitsCount > 0 && state.officialCircuits) {
+            console.log(`[Admin] Publication de l'index des circuits (${pendingCircuitsCount} modifiés)...`);
+            const circuitsFilename = state.destinations.maps[state.currentMapId]?.circuitsFile || `${state.currentMapId || 'djerba'}.json`;
+            const circuitsPath = `public/circuits/${circuitsFilename}`;
+
+            // On nettoie un peu les objets pour l'export (enlever les props circulaires ou UI)
+            const circuitsData = state.officialCircuits.map(c => {
+                const { ...cleanCircuit } = c;
+                delete cleanCircuit.isLoaded;
+                return cleanCircuit;
+            });
+
+            const circuitsBlob = new Blob([JSON.stringify(circuitsData, null, 2)], { type: 'application/json' });
+            const circuitsFile = new File([circuitsBlob], circuitsFilename, { type: 'application/json' });
+
+            await uploadFileToGitHub(circuitsFile, token, 'Stefanmartin1967', 'History-Walk-V1', circuitsPath, `Update circuits index via Admin Center`);
+        }
+
         showToast("Publication réussie !", "success");
         adminDraft = { pendingPois: {}, pendingCircuits: {} };
         localStorage.setItem(DRAFT_KEY, JSON.stringify(adminDraft));
