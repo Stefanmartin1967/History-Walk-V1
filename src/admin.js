@@ -140,6 +140,7 @@ function setupAdminListeners() {
 }
 
 function setupGodModeListener() {
+    // 1. Version PC (Clavier)
     let buffer = [];
     let timeout;
 
@@ -156,15 +157,43 @@ function setupGodModeListener() {
 
         // Check sequence "god"
         if (buffer.join('').endsWith('god')) {
-            state.isAdmin = !state.isAdmin;
-            showToast(`Mode GOD : ${state.isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ'}`, state.isAdmin ? 'success' : 'info');
-
-            // Émettre un événement pour que l'UI se mette à jour
-            eventBus.emit('admin:mode-toggled', state.isAdmin);
-
+            toggleGodMode();
             buffer = []; // Reset
         }
     });
+
+    // 2. Version Mobile (Quintuple Tap)
+    const btnMenu = document.getElementById('btn-admin-menu');
+    if (btnMenu) {
+        let tapCount = 0;
+        let tapTimeout;
+
+        btnMenu.addEventListener('click', (e) => {
+            // On laisse le comportement par défaut (ouvrir le menu) pour les 4 premiers taps
+            // Si on est Admin, le bouton ouvre déjà le menu, donc pas de conflit majeur.
+            // Si on n'est pas Admin, le bouton est quand même là (Menu Outils).
+
+            tapCount++;
+            clearTimeout(tapTimeout);
+
+            // Reset après 1 seconde sans tap
+            tapTimeout = setTimeout(() => {
+                tapCount = 0;
+            }, 1000);
+
+            if (tapCount === 5) {
+                console.log("[GodMode] 5 taps detected!");
+                toggleGodMode();
+                tapCount = 0; // Reset immédiat pour éviter de re-déclencher au 6ème
+            }
+        });
+    }
+}
+
+function toggleGodMode() {
+    state.isAdmin = !state.isAdmin;
+    showToast(`Mode GOD : ${state.isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ'}`, state.isAdmin ? 'success' : 'info');
+    eventBus.emit('admin:mode-toggled', state.isAdmin);
 }
 
 export function generateMasterGeoJSONData(excludedIds = []) {
