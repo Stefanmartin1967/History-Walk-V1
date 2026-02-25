@@ -1,0 +1,272 @@
+[
+  {
+    "id": "HW-1771316521571",
+    "name": "Boucle autour de Rym Beach via Mosquée Ibn Abass",
+    "file": "djerba/Boucle autour de Rym Beach via Mosquée Ibn Abass.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.2 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Taguermess",
+    "poiIds": [
+      "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
+      "HW-01K77WPE6722XTDVPGCQTPPBXR",
+      "HW-01K77WPE671G6V27VYYNMJV2NC",
+      "HW-01K77WPE6770BXCP2SW1Z2DTA2"
+    ]
+  },
+  {
+    "id": "HW-1771394208671",
+    "name": "Circuit de Mosquée Ben Hadid à Restaurant MBAREK via Lieu de Tournage Star Wars – Cantina Extérieure",
+    "file": "djerba/Circuit de Mosquée Ben Hadid à Restaurant MBAREK via Lieu de Tournage Star Wars – Cantina Extérieure.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.0 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Ajim",
+    "poiIds": [
+      "HW-01K77WPE6P1NA9ZF5TF1DK9GD2",
+      "HW-01K77WPE6PC9G02W8SX1JZX2HC",
+      "HW-01K77WPE6PKFFHK53AA0880TBZ",
+      "HW-01K77WPE6PGSGH7AWKFRACMNSJ",
+      "HW-01K77WPE6PRETC07TQDNMAG54C",
+      "HW-01K77WPE6P7XZY555VW8YDAVA0",
+      "HW-01K77WPE6RHDAFAXAA92EFT8GY",
+      "HW-01K77WPE6PGWRVHZ8H8CTQJ06X",
+      "HW-01K77WPE6P30E9MGC3BE3KYHP6",
+      "HW-01KJABRN0XJDFFSBSRFDN4PGQ4"
+    ]
+  },
+  {
+    "id": "HW-1771320398895",
+    "name": "Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen via Mosquée Ben Daoued",
+    "file": "djerba/Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen via Mosquée Ben Daoued.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Mezraya",
+    "poiIds": [
+      "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
+      "HW-01K77WPE6AS77NE3CRGHPYHJSE",
+      "HW-01K77WPE6BE6FFWWHJH6DSSZQ6",
+      "HW-01K77WPE6BAJG9QADZMRDXPWTB",
+      "HW-01K77WPE6B49HSRPBACEWDY95T",
+      "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
+      "HW-01K77WPE6A7EGYFGG7XNYT8AYC"
+    ]
+  },
+  {
+    "id": "HW-1771435443094",
+    "name": "Circuit de Mosquée Ejdid à Mosquée Rihia via Mosquée Ben Omran",
+    "file": "djerba/Circuit de Mosquée Ejdid à Mosquée Rihia via Mosquée Ben Omran.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.8 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Sedouikech",
+    "poiIds": [
+      "HW-01K77WPE6C4GTHCK9Y64EFE8SP",
+      "HW-01K77WPE6D6A1W50RR0KNXRAGH",
+      "HW-01K77WPE6HCCSTW9QXDV73Q1SF",
+      "HW-01K77WPE6EWBD679W4C2QRM2FA",
+      "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B",
+      "HW-01K77WPE6RN50H0B51NPN1GECK",
+      "HW-01K77WPE6R9A1BAASW9SGFA97P",
+      "HW-01K77WPE6D5GR4P97YHEN41JNS"
+    ]
+  },
+  {
+    "id": "HW-1771578509993",
+    "name": "Circuit de Mosquée El Maamoura à La Poste de Midoun via Mosquée El Azmouni",
+    "file": "djerba/Circuit de Mosquée El Maamoura à La Poste de Midoun via Mosquée El Azmouni.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.7 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Sedouikech",
+    "poiIds": [
+      "HW-01K77WPE697PHS21NP9P0JGJ6F",
+      "HW-01K77WPE69627R8AECX3S372Z3",
+      "HW-01K77WPE69FQZ84EBV7HCETGM2",
+      "HW-01K77WPE69NZS5NFTFBPG6V291",
+      "HW-AGVY6BXAX7HLGFO3CKDXA9DCML",
+      "HW-01K77WPE682TM0N643W207BGNE",
+      "HW-01KJABRN0YD2SFB393HG9SRDGW"
+    ]
+  },
+  {
+    "id": "HW-1771742968853",
+    "name": "Circuit de Mosquée El Methania à Restaurant MBAREK via Mosquée Ettouil",
+    "file": "djerba/Circuit de Mosquée El Methania à Restaurant MBAREK via Mosquée Ettouil.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.8 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Ajim",
+    "poiIds": [
+      "HW-01K77WPE6PDSWXWVZZR4ZDNXVX",
+      "HW-01K77WPE6PP29CK1JR2H25ACNK",
+      "HW-01K77WPE6PG0DA193W44FBQAHQ",
+      "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
+      "HW-01KJABRN0XJDFFSBSRFDN4PGQ4"
+    ]
+  },
+  {
+    "id": "HW-1771742357322",
+    "name": "Circuit de Mosquée Ghandri à Mosquée Khnensa via Mosquée de Taghzouïsni",
+    "file": "djerba/Circuit de Mosquée Ghandri à Mosquée Khnensa via Mosquée de Taghzouïsni.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "8.2 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El Groa",
+    "poiIds": [
+      "HW-01K77WPE6NZ91JPSJG4M3A7TNR",
+      "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
+      "HW-01K77WPE6N1D1N6TK82WX52BNM",
+      "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
+      "HW-01K77WPE6NGJQHEKJE3M2T5W5Q",
+      "HW-01K77WPE6NGZN849YA6V0EC1R0"
+    ]
+  },
+  {
+    "id": "HW-1771678048762",
+    "name": "Circuit de Mosquée Hadherbach à Mosquée Al Hidaya",
+    "file": "djerba/Circuit de Mosquée Hadherbach à Mosquée Al Hidaya.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Midoun",
+    "poiIds": [
+      "HW-01K77WPE699CBRC4PV1ARJPXKM",
+      "HW-01K77WPE6QR67710KWTHBD0C6V"
+    ]
+  },
+  {
+    "id": "HW-1771317964994",
+    "name": "Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou",
+    "file": "djerba/Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "5.9 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El Groa",
+    "poiIds": [
+      "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
+      "HW-01K77WPE6N293MG25FFQBH1G10",
+      "HW-01K77WPE6N0ZBXJK23NVJ2MQPX",
+      "HW-01K77WPE6N6A0YBFFKMQQNQH0E",
+      "HW-01K77WPE6NJ1X6TBWGCTV85QMM",
+      "HW-01K77WPE6N6HF86MYJNJWFPNSV"
+    ]
+  },
+  {
+    "id": "HW-1771742072502",
+    "name": "Circuit de Mosquée Sidi Jmour à Mosquée El Fquira (Mezran)",
+    "file": "djerba/Circuit de Mosquée Sidi Jmour à Mosquée El Fquira (Mezran).gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.1 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El Groa",
+    "poiIds": [
+      "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
+      "HW-01KJABRN0XK418GNG8GH5KPT4A"
+    ]
+  },
+  {
+    "id": "HW-1771481510099",
+    "name": "Circuit de Mosquée Sidi Sabah à Chez Adel via Mosquée Wichniya",
+    "file": "djerba/Circuit de Mosquée Sidi Sabah à Chez Adel via Mosquée Wichniya.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.6 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Taguermess",
+    "poiIds": [
+      "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
+      "HW-01K77WPE682HMFVV693F7BFA2B",
+      "HW-01K77WPE68FAWKXDY3R89R5KTF",
+      "HW-01K77WPE686WHQD4VDZT4Y6VK5",
+      "HW-01KJABRN0N92W2MJEHBB2FZRBD"
+    ]
+  },
+  {
+    "id": "HW-1771324790804",
+    "name": "Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk via Ancien atelier de tissage",
+    "file": "djerba/Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk via Ancien atelier de tissage.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.2 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Houmt Souk",
+    "poiIds": [
+      "HW-01K77WPE6M5QZM1DZV18R4EDHR",
+      "HW-01K77WPE6JARCBVAYJCW1B3B14",
+      "HW-01KJABRN0W6KJP2MNXC0GWQJN6",
+      "HW-01KJABRN0WBFCMMFBGZB582PRH",
+      "HW-01K77WPE6J23YSBPP5PMBBZ23Y",
+      "HW-01K77WPE6H365AYB72RWY40WZX",
+      "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
+      "HW-01KJABRN0XCGBFRH389WG2S71J"
+    ]
+  },
+  {
+    "id": "HW-1771317389638",
+    "name": "Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba via Mosquée Sidi Brahim Eljomni",
+    "file": "djerba/Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba via Mosquée Sidi Brahim Eljomni.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "3.8 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Houmt Souk",
+    "poiIds": [
+      "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
+      "HW-01K77WPE6F1C25NNH5RAR2JPF6",
+      "HW-01K77WPE6G6C1H17E6WP518B3J",
+      "HW-01K77WPE6GQX3PRD8TAKTDRNSZ",
+      "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
+      "HW-01KJABRN0WMXW7CV3JQJJK9EAV",
+      "HW-01K77WPE6HV1767JVPMV1000YQ"
+    ]
+  },
+  {
+    "id": "HW-1771393204345",
+    "name": "Circuit de Mosquée d'Ouled Hlel à Mosquée Fadhloun via Fort Sraya Ben Ayed En Ruines",
+    "file": "djerba/Circuit de Mosquée d'Ouled Hlel à Mosquée Fadhloun via Fort Sraya Ben Ayed En Ruines.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.7 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Midoun",
+    "poiIds": [
+      "HW-01K77WPE697JA8WM3N71KEFY6S",
+      "HW-01K77WPE69RBE6FB0RR05GEJM3",
+      "HW-01K77WPE69CKZWJHD3JAJT874K",
+      "HW-01K77WPE6AA25DRECXWRNXFZ4C",
+      "HW-01K77WPE6P9JFRW9XXGN7P7FPX",
+      "HW-01K77WPE6SFRMMS2GS11D6JXR5",
+      "HW-01K77WPE6A22WXDRBSQ8AEW7BR"
+    ]
+  },
+  {
+    "id": "HW-1771319458286",
+    "name": "Circuit de Sidi Yati de Midoun à Ancienne Mosquée de Midoun via Mosque Sidi Sofiane",
+    "file": "djerba/Circuit de Sidi Yati de Midoun à Ancienne Mosquée de Midoun via Mosque Sidi Sofiane.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.0 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Taguermess",
+    "poiIds": [
+      "HW-01K77WPE6QJNV1Q83SBNFKC88M",
+      "HW-01K77WPE68SSRHFM5TYYA7F5YF",
+      "HW-01K77WPE6Q0QEE8APATRE5K4MS",
+      "HW-01K77WPE68Q2NTEKRWSPCDZZGE",
+      "HW-01K77WPE68MMPS9ZVR6XTV9J61",
+      "HW-01K77WPE68JWCXJ0TCG1EDSB7A"
+    ]
+  }
+]
