@@ -131,8 +131,23 @@ function setupAdminListeners() {
         btnControl.parentNode.replaceChild(newControlBtn, btnControl);
         newControlBtn.addEventListener('click', openControlCenter);
 
+        // --- RESTAURATION : Bouton Upload Fichier (Pour envoi GPX) ---
+        let btnUpload = document.getElementById('btn-admin-github-upload');
+        if (!btnUpload) {
+            btnUpload = document.createElement('button');
+            btnUpload.id = 'btn-admin-github-upload';
+            btnUpload.className = 'tools-menu-item';
+            btnUpload.innerHTML = `<i data-lucide="upload-cloud"></i> Upload Fichier`;
+            menuContent.insertBefore(btnUpload, btnControl); // Juste avant le Centre de Contrôle
+            createIcons({ icons, root: btnUpload });
+        }
+
+        const newUploadBtn = btnUpload.cloneNode(true);
+        btnUpload.parentNode.replaceChild(newUploadBtn, btnUpload);
+        newUploadBtn.addEventListener('click', showGitHubUploadModal);
+
         // Nettoyage des anciens boutons s'ils existent (Migration)
-        ['btn-admin-github-upload', 'btn-admin-config-github', 'btn-admin-publish-map'].forEach(id => {
+        ['btn-admin-config-github', 'btn-admin-publish-map'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.remove();
         });
@@ -608,27 +623,14 @@ function showGitHubUploadModal() {
             // Track in Admin Draft
             addToDraft('circuit', file.name, { type: 'upload' });
 
-            // --- MISE À JOUR AUTOMATIQUE DU GEOJSON MAÎTRE ---
-            // Pour que les POI du circuit aient leur statut "Planifié" (compteur) stocké sur le serveur immédiatement
-            statusDiv.textContent = "Mise à jour des données de carte (POIs)...";
+            // --- RETRAIT DE L'AUTOMATISATION INDEX/GEOJSON ---
+            // Conformément à la demande stricte : ON N'ENVOIE QUE LE GPX.
+            // Le serveur (script) s'occupera du reste.
 
-            // 1. Recalcul des compteurs (basé sur les circuits locaux/officiels actuels)
-            // Cela assure que les compteurs 'planifieCounter' dans userData sont à jour
-            await recalculatePlannedCountersForMap(state.currentMapId || 'djerba');
+            // On ne recalcule pas les compteurs, on n'envoie pas le GeoJSON maître.
+            // Juste le fichier GPX.
 
-            // 2. Génération et Envoi du Master GeoJSON
-            const masterGeoJSON = generateMasterGeoJSONData();
-            if (masterGeoJSON) {
-                const mapId = state.currentMapId || 'djerba';
-                const mapFilename = `${mapId}.geojson`;
-                const mapPath = `public/${mapFilename}`;
-                const mapBlob = new Blob([JSON.stringify(masterGeoJSON, null, 2)], { type: 'application/geo+json' });
-                const mapFile = new File([mapBlob], mapFilename, { type: 'application/geo+json' });
-
-                await uploadFileToGitHub(mapFile, token, repoOwner, repoName, mapPath, `Auto-update map data after circuit upload ${file.name}`);
-            }
-
-            statusDiv.textContent = "Succès ! Circuit et données de carte mis à jour.";
+            statusDiv.textContent = "Succès ! Fichier envoyé. Le serveur traitera l'index.";
             statusDiv.style.color = "green";
             showToast("Circuit et Carte mis à jour avec succès !", "success");
 

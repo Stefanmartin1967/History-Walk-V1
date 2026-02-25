@@ -1036,14 +1036,10 @@ function renderDiffDetails(item) {
         } else if (!isPhoto) {
             // --- PROTECTION HW_ID (READ-ONLY) ---
             if (item.isCircuit) {
-                // Circuits : Upload GPX (Obligatoire pour validation)
+                // Circuits : Read Only (car pas de userData pour stocker les modifs admin)
                 editorHtml = `
-                    <div class="edit-row" style="flex-direction:column; align-items:flex-start;">
-                        <label style="font-size:0.8rem; font-weight:bold; margin-bottom:5px;">Fichier GPX (Requis)</label>
-                        <input type="file" id="gpx-upload-${item.id}" accept=".gpx" class="edit-input" onchange="storeCircuitFile('${item.id}', this.files[0])">
-                        <div style="font-size:0.75rem; color:var(--hw-ink-soft); margin-top:5px;">
-                            Sélectionnez le fichier GPX final généré avec GPX Studio.
-                        </div>
+                    <div class="edit-row">
+                        <span style="font-size:0.85rem; color:#64748B; font-style:italic;">Modification via l'éditeur de circuit</span>
                     </div>
                 `;
             } else if (logicalKey === 'HW_ID') {
@@ -1100,18 +1096,6 @@ window.toggleDiffDetails = (id) => {
         const isOpen = el.classList.contains('open');
         el.classList.toggle('open');
         // Rotate chevron (optional polish)
-    }
-};
-
-window.circuitFilesToUpload = {};
-
-window.storeCircuitFile = (id, file) => {
-    if (file) {
-        window.circuitFilesToUpload[id] = file;
-        console.log(`[Admin] Fichier GPX sélectionné pour ${id}:`, file.name);
-        showToast("Fichier prêt pour l'envoi", "info");
-    } else {
-        delete window.circuitFilesToUpload[id];
     }
 };
 
@@ -1204,41 +1188,34 @@ async function publishChanges() {
 
         await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/${filename}`, `Update via Admin Center`);
 
-        // --- NOUVEAU : Envoi des Fichiers GPX (Si sélectionnés) ---
-        // Le script serveur s'occupera de mettre à jour djerba.json (l'index) automatiquement
-        // en détectant les nouveaux fichiers GPX.
+        // --- NOUVEAU : Publication des Circuits si nécessaire ---
+        // On vérifie s'il y a des changements détectés (via Diff) OU des changements pistés (via Draft)
+        const hasCircuitChanges = (diffData.circuits && diffData.circuits.length > 0) || (Object.keys(adminDraft.pendingCircuits).length > 0);
 
-        const filesToUpload = Object.entries(window.circuitFilesToUpload || {});
+        // On combine pour inclure aussi les circuits locaux nouvellement créés
+        const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
 
-        if (filesToUpload.length > 0) {
-             const mapId = state.currentMapId || 'djerba';
-             let uploadedCount = 0;
+        if (hasCircuitChanges && allCircuits.length > 0) {
+            console.log(`[Admin] Publication de l'index des circuits (Changements détectés)...`);
+            const circuitsFilename = state.destinations.maps[state.currentMapId]?.circuitsFile || `${state.currentMapId || 'djerba'}.json`;
+            const circuitsPath = `public/circuits/${circuitsFilename}`;
 
-             for (const [id, file] of filesToUpload) {
-                 const uploadPath = `public/circuits/${mapId}/${file.name}`;
+            // On nettoie un peu les objets pour l'export (enlever les props circulaires ou UI)
+            const circuitsData = allCircuits.map(c => {
+                const { ...cleanCircuit } = c;
+                delete cleanCircuit.isLoaded;
+                delete cleanCircuit.isOfficial; // On nettoie le flag "isOfficial" local
+                // On s'assure que 'isCompleted' est aussi nettoyé si besoin, ou on le garde ?
+                // Généralement on publie le modèle, pas l'état utilisateur.
+                delete cleanCircuit.isCompleted;
+                delete cleanCircuit.isDeleted;
+                return cleanCircuit;
+            });
 
-                 try {
-                     await uploadFileToGitHub(
-                         file,
-                         token,
-                         'Stefanmartin1967',
-                         'History-Walk-V1',
-                         uploadPath,
-                         `Upload circuit file: ${file.name}`
-                     );
-                     uploadedCount++;
-                     console.log(`[Admin] GPX envoyé: ${uploadPath}`);
-                 } catch (e) {
-                     console.error(`[Admin] Erreur envoi GPX ${file.name}`, e);
-                     showToast(`Erreur envoi ${file.name}: ${e.message}`, "error");
-                 }
-             }
+            const circuitsBlob = new Blob([JSON.stringify(circuitsData, null, 2)], { type: 'application/json' });
+            const circuitsFile = new File([circuitsBlob], circuitsFilename, { type: 'application/json' });
 
-             if (uploadedCount > 0) {
-                 showToast(`${uploadedCount} fichier(s) GPX envoyé(s) !`, "success");
-                 // On nettoie
-                 window.circuitFilesToUpload = {};
-             }
+            await uploadFileToGitHub(circuitsFile, token, 'Stefanmartin1967', 'History-Walk-V1', circuitsPath, `Update circuits index via Admin Center`);
         }
 
         showToast("Publication réussie !", "success");
