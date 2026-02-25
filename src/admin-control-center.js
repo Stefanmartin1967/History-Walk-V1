@@ -651,7 +651,8 @@ function renderTab(tab) {
                     </div>
                 `).join('')}
             </div>
-        `).join('');
+            `;
+        }).join('');
         container.innerHTML = html;
 
     } else if (tab === 'settings') {
