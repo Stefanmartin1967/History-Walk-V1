@@ -649,8 +649,9 @@ function renderTab(tab) {
                                 </div>
                             </div>
                         </div>
-                    `).join('')}
-                </div>
+                    </div>
+                `).join('')}
+            </div>
             `;
         }).join('');
         container.innerHTML = html;
