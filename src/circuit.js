@@ -271,7 +271,7 @@ export function renderCircuitPanel() {
     });
 
     updateCircuitMetadata();
-    notifyCircuitChanged();; // Cette fonction va maintenant choisir la bonne ligne !
+    notifyCircuitChanged(); // Cette fonction va maintenant choisir la bonne ligne !
 }
 
 export function updateCircuitMetadata(updateTitle = true) {
@@ -528,7 +528,7 @@ export async function loadCircuitById(id) {
     }
 
     // On force un dernier rafraîchissement des lignes pour être sûr
-    notifyCircuitChanged();;
+    notifyCircuitChanged();
 }
 
 // --- GÉNÉRATION QR CODE (OFFICIEL: ONGLETS, LOCAL: UNIQUE) ---
