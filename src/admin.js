@@ -138,7 +138,13 @@ function setupAdminListeners() {
             btnUpload.id = 'btn-admin-github-upload';
             btnUpload.className = 'tools-menu-item';
             btnUpload.innerHTML = `<i data-lucide="upload-cloud"></i> Upload Fichier`;
-            menuContent.insertBefore(btnUpload, btnControl); // Juste avant le Centre de Contrôle
+
+            // SECURITY CHECK: Verify parent before insert
+            if (btnControl && btnControl.parentNode === menuContent) {
+                menuContent.insertBefore(btnUpload, btnControl);
+            } else {
+                menuContent.appendChild(btnUpload);
+            }
             createIcons({ icons, root: btnUpload });
         }
 
