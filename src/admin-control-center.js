@@ -42,10 +42,11 @@ export async function initAdminControlCenter() {
             background: var(--hw-cream) !important;
             width: min(1200px, 95vw) !important;
             max-width: none !important;
-            height: auto !important;
-            max-height: 85vh !important;
+            height: 90vh !important;
+            max-height: 900px !important;
             display: flex !important;
             flex-direction: column !important;
+            position: relative !important;
         }
 
         .admin-cc-mode .custom-modal-message {
@@ -66,6 +67,7 @@ export async function initAdminControlCenter() {
             width: 100%;
             font-family: 'Inter', system-ui, sans-serif;
             color: var(--hw-ink);
+            overflow: hidden; /* Force le scroll interne */
         }
 
         /* HEADER STRUCTURE RIGIDE */
@@ -150,7 +152,7 @@ export async function initAdminControlCenter() {
         .admin-cc-scroll-area {
             flex: 1;
             overflow-y: auto;
-            padding: 40px;
+            padding: 20px 40px;
         }
 
         .dashboard-grid {
@@ -223,42 +225,95 @@ export async function initAdminControlCenter() {
         }
         .custom-modal-btn.secondary:hover { background: #F8FAFC; color: var(--hw-ink); }
 
-        /* DIFF CARDS */
-        .diff-entry {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-            border: 1px solid #F1F5F9;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-        }
-        .diff-header {
+        /* DIFF LIST (Fusion Style) */
+        .diff-list-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #F1F5F9;
-            padding-bottom: 15px;
+            flex-direction: column;
+            gap: 10px;
         }
-        .diff-title {
-            font-weight: 700;
-            color: var(--hw-ink);
+
+        .diff-group-title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-top: 30px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--hw-ink);
         }
+
+        .diff-list-item {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.2s;
+        }
+        .diff-list-item:hover { border-color: var(--hw-amber); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+        /* HEADER ROW (Toujours visible) */
+        .diff-summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .diff-info { display: flex; align-items: center; gap: 15px; }
+        .diff-icon {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            background: #F1F5F9; color: #64748B;
+        }
+        .diff-text h4 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--hw-ink); }
+        .diff-text p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--hw-ink-soft); opacity: 0.7; }
+
+        .diff-toggle-btn {
+            background: transparent; border: none; cursor: pointer; color: #94A3B8; transition: 0.2s;
+        }
+        .diff-toggle-btn:hover { color: var(--hw-ink); }
+
+        /* DETAIL SECTION (Masqué par défaut) */
+        .diff-details {
+            display: none; /* JS toggle */
+            padding-top: 15px;
+            border-top: 1px solid #F1F5F9;
+            margin-top: 5px;
+        }
+        .diff-details.open { display: block; animation: slideDown 0.2s ease-out; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
         .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        .box { padding: 15px; border-radius: 12px; font-size: 0.9rem; font-family: monospace; word-break: break-all; }
+        .box { padding: 12px; border-radius: 8px; font-size: 0.85rem; font-family: monospace; word-break: break-all; position: relative; }
         .box-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 5px; opacity: 0.6; }
+
         .box.old { background: #FEF2F2; color: #991B1B; border: 1px solid rgba(153, 27, 27, 0.1); }
         .box.new { background: #F0FDF4; color: #166534; border: 1px solid rgba(22, 101, 52, 0.1); }
 
-        .diff-actions { display: flex; gap: 10px; }
-        .btn-diff-action { padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; cursor: pointer; border: none; }
-        .btn-diff-action.refuse { background: #F1F5F9; color: #64748B; }
-        .btn-diff-action.refuse:hover { background: #FEE2E2; color: #991B1B; }
-        .btn-diff-action.validate { background: #FFFBEB; color: var(--hw-amber); }
-        .btn-diff-action.validate:hover { background: var(--hw-amber); color: white; }
+        /* ÉDITION RAPIDE */
+        .edit-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .edit-input {
+            flex: 1; padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 8px; font-size: 0.9rem;
+        }
+        .edit-input:focus { outline: 2px solid var(--hw-amber); border-color: transparent; }
+
+        .diff-actions-row {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-diff-action { padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px; }
+        .btn-diff-action.refuse { background: white; border: 1px solid #E2E8F0; color: #64748B; }
+        .btn-diff-action.refuse:hover { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+        .btn-diff-action.validate { background: var(--hw-amber); color: white; }
+        .btn-diff-action.validate:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
         /* EMPTY STATE */
         .empty-state { text-align: center; padding: 60px 0; opacity: 0.6; }
@@ -596,63 +651,69 @@ function renderTab(tab) {
              return;
         }
 
-        let html = diffData.pois.map(item => {
-            const isMigr = item.isMigration;
-            const isDel = item.isDeletion;
-            const isCre = item.isCreation;
+        // --- GROUPAGE DES MODIFICATIONS ---
+        const groups = {
+            new: diffData.pois.filter(p => p.isCreation),
+            mod: diffData.pois.filter(p => !p.isCreation && !p.isDeletion && !p.isMigration),
+            del: diffData.pois.filter(p => p.isDeletion),
+            mig: diffData.pois.filter(p => p.isMigration)
+        };
 
-            let cardStyle = "";
-            if (isDel) cardStyle = "border:1px solid #FCA5A5; background:#FEF2F2;";
-            if (isCre) cardStyle = "border:1px solid #86EFAC; background:#F0FDF4;";
-            if (isMigr) cardStyle = "border:1px solid #BAE6FD; background:#F0F9FF;";
+        let html = `<div class="diff-list-container">`;
 
-            let iconName = "map-pin";
-            if (isDel) iconName = "trash-2";
-            if (isCre) iconName = "plus-circle";
-            if (isMigr) iconName = "refresh-cw";
+        // Helper Render Function
+        const renderGroup = (title, items, icon, colorClass) => {
+            if (items.length === 0) return '';
 
-            let iconColor = "var(--hw-amber)";
-            if (isDel) iconColor = "#DC2626";
-            if (isCre) iconColor = "#16A34A";
-            if (isMigr) iconColor = "#0284C7";
+            let groupHtml = `<div class="diff-group-title"><i data-lucide="${icon}" style="color:${colorClass}"></i> ${title} <span style="background:#F1F5F9; padding:2px 8px; border-radius:10px; font-size:0.8rem;">${items.length}</span></div>`;
 
-            let titleSuffix = "";
-            if (isDel) titleSuffix = "(SUPPRESSION)";
-            if (isCre) titleSuffix = "(NOUVEAU)";
-            if (isMigr) titleSuffix = "(MIGRATION ID)";
+            groupHtml += items.map(item => {
+                const changeCount = item.changes.length;
+                const changeSummary = item.isCreation ? "Nouvelle création" :
+                                      (item.isDeletion ? "Suppression demandée" :
+                                      `${changeCount} modification${changeCount > 1 ? 's' : ''} (${item.changes.map(c => c.key).join(', ')})`);
 
-            return `
-            <div class="diff-entry" id="diff-card-${item.id}" style="${cardStyle}">
-                <div class="diff-header">
-                    <div class="diff-title" style="color:${isDel ? '#991B1B' : (isCre ? '#166534' : (isMigr ? '#0369A1' : 'inherit'))}">
-                        <i data-lucide="${iconName}" width="18" style="color:${iconColor};"></i>
-                        ${item.name} ${titleSuffix}
+                return `
+                <div class="diff-list-item" id="diff-card-${item.id}">
+                    <!-- HEADER SUMMARY -->
+                    <div class="diff-summary-row" onclick="toggleDiffDetails('${item.id}')">
+                        <div class="diff-info">
+                            <div class="diff-icon" style="color:${colorClass}; background:${colorClass}15;">
+                                <i data-lucide="${item.isCreation ? 'plus' : (item.isDeletion ? 'trash-2' : 'edit-2')}"></i>
+                            </div>
+                            <div class="diff-text">
+                                <h4>${item.name}</h4>
+                                <p>${changeSummary}</p>
+                            </div>
+                        </div>
+                        <button class="diff-toggle-btn"><i data-lucide="chevron-down"></i></button>
                     </div>
-                    <div class="diff-actions">
-                        <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">Refuser</button>
-                        <button class="btn-diff-action validate" onclick="processDecision('${item.id}', 'accept')">Valider</button>
+
+                    <!-- DETAILS & EDIT (Hidden) -->
+                    <div class="diff-details" id="diff-details-${item.id}">
+                        ${renderDiffDetails(item)}
+
+                        <div class="diff-actions-row">
+                            <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">
+                                <i data-lucide="x"></i> Refuser
+                            </button>
+                            <button class="btn-diff-action validate" onclick="processDecision('${item.id}', 'accept')">
+                                <i data-lucide="check"></i> Valider
+                            </button>
+                        </div>
                     </div>
                 </div>
-                ${item.changes.map(c => `
-                    <div style="margin-top:10px;">
-                        <div style="font-size:0.75rem; font-weight:800; color:var(--hw-ink-soft); margin-bottom:5px; opacity:0.6;">
-                            ${c.key ? c.key.toUpperCase() : 'PROPRIÉTÉ'}
-                        </div>
-                        <div class="diff-grid">
-                            <div class="box old">
-                                <span class="box-label">AVANT</span>
-                                ${c.old !== undefined ? c.old : '-'}
-                            </div>
-                            <div class="box new">
-                                <span class="box-label">APRÈS</span>
-                                ${c.new !== undefined ? c.new : '-'}
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-            `;
-        }).join('');
+                `;
+            }).join('');
+            return groupHtml;
+        };
+
+        html += renderGroup("Nouveaux Lieux", groups.new, "plus-circle", "#16A34A"); // Green
+        html += renderGroup("Modifications", groups.mod, "pencil", "#D97706"); // Amber
+        html += renderGroup("Suppressions", groups.del, "trash-2", "#DC2626"); // Red
+        html += renderGroup("Migrations Techniques", groups.mig, "refresh-cw", "#0284C7"); // Blue
+
+        html += `</div>`;
         container.innerHTML = html;
 
     } else if (tab === 'settings') {
@@ -678,7 +739,110 @@ function renderTab(tab) {
     createIcons({ icons, root: container });
 }
 
-// Logic for Diff Actions
+// --- RENDER DETAIL HELPER ---
+function renderDiffDetails(item) {
+    // Si c'est une suppression, on n'a pas besoin d'édition
+    if (item.isDeletion) {
+        return `<div style="padding:15px; background:#FEF2F2; color:#991B1B; border-radius:8px; font-size:0.9rem;">
+            ⚠️ Ce lieu sera définitivement supprimé de la carte officielle.
+        </div>`;
+    }
+
+    return item.changes.map(c => {
+        const isPos = (c.key === 'Position');
+        const isPhoto = (c.key === 'Photos');
+        const inputId = `edit-${item.id}-${c.key}`;
+
+        // Contenu éditable ou lecture seule
+        let editorHtml = '';
+
+        if (isPos) {
+            // Pour la position, on affiche un lien Google Maps et un input manuel
+            // c.new format attendu : "lat, lng" (string)
+            const coords = c.new.split(',').map(s => s.trim());
+            const mapsLink = `https://www.google.com/maps/search/?api=1&query=${coords[0]},${coords[1]}`;
+
+            editorHtml = `
+                <div class="edit-row">
+                    <a href="${mapsLink}" target="_blank" style="color:#2563EB; font-weight:600; font-size:0.85rem; display:flex; align-items:center; gap:5px; text-decoration:none;">
+                        <i data-lucide="map"></i> Voir sur G.Maps
+                    </a>
+                </div>
+                <div class="edit-row">
+                   <span style="font-size:0.8rem; font-weight:bold; width:60px;">Lat,Lng</span>
+                   <input type="text" class="edit-input" id="${inputId}" value="${c.new}" onchange="updateDraftValue('${item.id}', '${c.key}', this.value)">
+                </div>
+            `;
+        } else if (!isPhoto) {
+            // Champ texte standard (Nom, Description, etc.)
+            editorHtml = `
+                <div class="edit-row">
+                    <input type="text" class="edit-input" id="${inputId}" value="${c.new}" onchange="updateDraftValue('${item.id}', '${c.key}', this.value)">
+                </div>
+            `;
+        }
+
+        return `
+            <div style="margin-top:15px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                    <div style="font-size:0.75rem; font-weight:800; color:var(--hw-ink-soft); opacity:0.6;">
+                        ${c.key ? c.key.toUpperCase() : 'PROPRIÉTÉ'}
+                    </div>
+                </div>
+
+                <div class="diff-grid" style="margin-bottom:10px;">
+                    <div class="box old">
+                        <span class="box-label">AVANT</span>
+                        ${c.old !== undefined ? c.old : '-'}
+                    </div>
+                    ${!isPos && isPhoto ? `
+                    <div class="box new">
+                        <span class="box-label">APRÈS</span>
+                        ${c.new}
+                    </div>` : ''}
+                </div>
+
+                ${editorHtml}
+            </div>
+        `;
+    }).join('');
+}
+
+// --- GLOBAL ACTIONS ---
+
+window.toggleDiffDetails = (id) => {
+    const el = document.getElementById(`diff-details-${id}`);
+    if (el) {
+        const isOpen = el.classList.contains('open');
+        el.classList.toggle('open');
+        // Rotate chevron (optional polish)
+    }
+};
+
+window.updateDraftValue = async (id, key, value) => {
+    // Cette fonction met à jour directement userData (la source de vérité locale)
+    // Cela permet de "corriger" la modification avant validation
+    console.log(`[Admin] Correction user: ${id} [${key}] = ${value}`);
+
+    if (!state.userData[id]) state.userData[id] = {};
+
+    if (key === 'Position') {
+        const parts = value.split(',').map(s => parseFloat(s.trim()));
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+            state.userData[id].lat = parts[0];
+            state.userData[id].lng = parts[1];
+        }
+    } else {
+        state.userData[id][key] = value;
+    }
+
+    await saveAppState('userData', state.userData);
+    showToast("Correction enregistrée localement", "info");
+
+    // On ne re-render pas tout de suite pour ne pas perdre le focus,
+    // mais la prochaine validation prendra cette valeur.
+};
+
 window.processDecision = async (id, decision) => {
     if (decision === 'refuse') {
         if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
@@ -691,10 +855,19 @@ window.processDecision = async (id, decision) => {
         showToast("Modification refusée et annulée", "info");
     } else {
         showToast("Modification validée pour publication", "success");
+        // Visuel : griser la ligne
         const card = document.getElementById(`diff-card-${id}`);
         if (card) {
             card.style.opacity = "0.5";
             card.style.pointerEvents = "none";
+            // Checkmark icon update
+            const icon = card.querySelector('.diff-icon');
+            if(icon) {
+                icon.innerHTML = `<i data-lucide="check-circle-2"></i>`;
+                icon.style.background = "#DCFCE7";
+                icon.style.color = "#16A34A";
+                createIcons({ icons, root: icon });
+            }
         }
         return;
     }
