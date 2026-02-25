@@ -632,7 +632,8 @@ async function prepareDiffData() {
     });
 
     // --- B. ANALYSE DES CIRCUITS (Comparaison State vs Remote) ---
-    const localCircuits = state.officialCircuits || [];
+    // On combine les Officiels et les Personnels (qui sont des candidats potentiels à l'officialisation)
+    const localCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
 
     // 1. Nouveaux & Modifiés
     localCircuits.forEach(local => {
@@ -1190,15 +1191,23 @@ async function publishChanges() {
         // On vérifie s'il y a des changements détectés (via Diff) OU des changements pistés (via Draft)
         const hasCircuitChanges = (diffData.circuits && diffData.circuits.length > 0) || (Object.keys(adminDraft.pendingCircuits).length > 0);
 
-        if (hasCircuitChanges && state.officialCircuits) {
+        // On combine pour inclure aussi les circuits locaux nouvellement créés
+        const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
+
+        if (hasCircuitChanges && allCircuits.length > 0) {
             console.log(`[Admin] Publication de l'index des circuits (Changements détectés)...`);
             const circuitsFilename = state.destinations.maps[state.currentMapId]?.circuitsFile || `${state.currentMapId || 'djerba'}.json`;
             const circuitsPath = `public/circuits/${circuitsFilename}`;
 
             // On nettoie un peu les objets pour l'export (enlever les props circulaires ou UI)
-            const circuitsData = state.officialCircuits.map(c => {
+            const circuitsData = allCircuits.map(c => {
                 const { ...cleanCircuit } = c;
                 delete cleanCircuit.isLoaded;
+                delete cleanCircuit.isOfficial; // On nettoie le flag "isOfficial" local
+                // On s'assure que 'isCompleted' est aussi nettoyé si besoin, ou on le garde ?
+                // Généralement on publie le modèle, pas l'état utilisateur.
+                delete cleanCircuit.isCompleted;
+                delete cleanCircuit.isDeleted;
                 return cleanCircuit;
             });
 
