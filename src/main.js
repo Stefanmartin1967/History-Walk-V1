@@ -46,7 +46,7 @@ import {
 
 import { performCircuitDeletion, toggleCircuitVisitedStatus } from './circuit-actions.js';
 
-import { displayGeoJSON, applyFilters, getPoiId } from './data.js';
+import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
 import { isMobileView, initMobileMode, switchMobileView, renderMobilePoiList } from './mobile.js';
 
 import {
@@ -127,6 +127,12 @@ async function loadOfficialCircuits() {
             isOfficial: true,
             id: off.id || `official_${off.name.replace(/\s+/g, '_')}`
         }));
+
+        // Si on est déjà en mode Admin, on déclenche une migration pour mettre à jour les circuits chargés
+        if (state.isAdmin) {
+            checkAndApplyMigrations();
+        }
+
         import('./events.js').then(({ eventBus }) => eventBus.emit('circuit:list-updated'));
     } else {
         state.officialCircuits = [];

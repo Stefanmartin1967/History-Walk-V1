@@ -5,7 +5,7 @@ import { generateCircuitName, loadCircuitById } from './circuit.js';
 import { DOM } from './ui.js';
 import { getAllPoiDataForMap, getAllCircuitsForMap, saveCircuit, batchSavePoiData, getAppState } from './database.js';
 import { showToast } from './toast.js';
-import { downloadFile, escapeXml } from './utils.js';
+import { downloadFile, escapeXml, generateHWID } from './utils.js';
 import { updatePolylines } from './map.js';
 
 // --- HELPER : Analyse de proximité ---
@@ -234,7 +234,7 @@ export async function saveAndExportCircuit() {
     }
     
     if (!circuitToSave) {
-        const newId = `HW-${Date.now()}`;
+        const newId = generateHWID();
         circuitToSave = {
             id: newId,
             mapId: state.currentMapId,
@@ -520,7 +520,7 @@ export async function processImportedGpx(file, circuitId) {
                     }
                 } else {
                     // Création d'un NOUVEAU circuit
-                    const newId = `HW-${Date.now()}`;
+                    const newId = generateHWID();
 
                     // On détecte aussi les POIs pour le nouveau circuit
                     const detectedFeatures = findFeaturesOnTrack(coordinates, state.loadedFeatures);
