@@ -596,56 +596,57 @@ function renderTab(tab) {
              return;
         }
 
-        let html = diffData.pois.map(item => {
+        const html = diffData.pois.map(item => {
             const isMigr = item.isMigration;
             const isDel = item.isDeletion;
             const isCre = item.isCreation;
 
-            let cardStyle = "";
-            if (isDel) cardStyle = "border:1px solid #FCA5A5; background:#FEF2F2;";
-            if (isCre) cardStyle = "border:1px solid #86EFAC; background:#F0FDF4;";
-            if (isMigr) cardStyle = "border:1px solid #BAE6FD; background:#F0F9FF;";
+            const rowStyle = isDel ? 'border:1px solid #FCA5A5; background:#FEF2F2;' :
+                           (isCre ? 'border:1px solid #86EFAC; background:#F0FDF4;' :
+                           (isMigr ? 'border:1px solid #BAE6FD; background:#F0F9FF;' : ''));
 
-            let iconName = "map-pin";
-            if (isDel) iconName = "trash-2";
-            if (isCre) iconName = "plus-circle";
-            if (isMigr) iconName = "refresh-cw";
+            const titleStyle = isDel ? 'color:#991B1B;' :
+                             (isCre ? 'color:#166534;' :
+                             (isMigr ? 'color:#0369A1;' : ''));
 
-            let iconColor = "var(--hw-amber)";
-            if (isDel) iconColor = "#DC2626";
-            if (isCre) iconColor = "#16A34A";
-            if (isMigr) iconColor = "#0284C7";
+            const iconName = isDel ? 'trash-2' :
+                           (isCre ? 'plus-circle' :
+                           (isMigr ? 'refresh-cw' : 'map-pin'));
 
-            let titleSuffix = "";
-            if (isDel) titleSuffix = "(SUPPRESSION)";
-            if (isCre) titleSuffix = "(NOUVEAU)";
-            if (isMigr) titleSuffix = "(MIGRATION ID)";
+            const iconColor = isDel ? '#DC2626' :
+                            (isCre ? '#16A34A' :
+                            (isMigr ? '#0284C7' : 'var(--hw-amber)'));
+
+            const statusLabel = isDel ? '(SUPPRESSION)' :
+                              (isCre ? '(NOUVEAU)' :
+                              (isMigr ? '(MIGRATION ID)' : ''));
 
             return `
-            <div class="diff-entry" id="diff-card-${item.id}" style="${cardStyle}">
-                <div class="diff-header">
-                    <div class="diff-title" style="color:${isDel ? '#991B1B' : (isCre ? '#166534' : (isMigr ? '#0369A1' : 'inherit'))}">
-                        <i data-lucide="${iconName}" width="18" style="color:${iconColor};"></i>
-                        ${item.name} ${titleSuffix}
-                    </div>
-                    <div class="diff-actions">
-                        <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">Refuser</button>
-                        <button class="btn-diff-action validate" onclick="processDecision('${item.id}', 'accept')">Valider</button>
-                    </div>
-                </div>
-                ${item.changes.map(c => `
-                    <div style="margin-top:10px;">
-                        <div style="font-size:0.75rem; font-weight:800; color:var(--hw-ink-soft); margin-bottom:5px; opacity:0.6;">
-                            ${c.key ? c.key.toUpperCase() : 'PROPRIÉTÉ'}
+                <div class="diff-entry" id="diff-card-${item.id}" style="${rowStyle}">
+                    <div class="diff-header">
+                        <div class="diff-title" style="${titleStyle}">
+                            <i data-lucide="${iconName}" width="18" style="color:${iconColor};"></i>
+                            ${item.name} ${statusLabel}
                         </div>
-                        <div class="diff-grid">
-                            <div class="box old">
-                                <span class="box-label">AVANT</span>
-                                ${c.old !== undefined ? c.old : '-'}
+                        <div class="diff-actions">
+                            <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">Refuser</button>
+                            <button class="btn-diff-action validate" onclick="processDecision('${item.id}', 'accept')">Valider</button>
+                        </div>
+                    </div>
+                    ${item.changes.map(c => `
+                        <div style="margin-top:10px;">
+                            <div style="font-size:0.75rem; font-weight:800; color:var(--hw-ink-soft); margin-bottom:5px; opacity:0.6;">
+                                ${c.key ? c.key.toUpperCase() : 'PROPRIÉTÉ'}
                             </div>
-                            <div class="box new">
-                                <span class="box-label">APRÈS</span>
-                                ${c.new !== undefined ? c.new : '-'}
+                            <div class="diff-grid">
+                                <div class="box old">
+                                    <span class="box-label">AVANT</span>
+                                    ${c.old !== undefined ? c.old : '-'}
+                                </div>
+                                <div class="box new">
+                                    <span class="box-label">APRÈS</span>
+                                    ${c.new !== undefined ? c.new : '-'}
+                                </div>
                             </div>
                         </div>
                     </div>
