@@ -6927,46 +6927,6 @@
           "photos/poi_HW-PC-1771838835356_1771880218342.jpg"
         ]
       }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.790628277807246,
-          33.85389355593814
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test console suppression 2",
-        "Catégorie": "Commerce",
-        "Zone": "Houmt Souk",
-        "timeH": 0,
-        "timeM": 0,
-        "price": 0,
-        "HW_ID": "HW-01KJAE9WGR6BCX7NGYAK9DMMR4",
-        "Description": "Ajouté via Rich Editor"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.775181628729065,
-          33.855033379463464
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test console suppression 3",
-        "Catégorie": "Restaurant",
-        "Zone": "Houmt Souk",
-        "timeH": 0,
-        "timeM": 0,
-        "price": 0,
-        "HW_ID": "HW-01KJAEAB8KH4MJD0ENYS6VQ1KP",
-        "Description": "Ajouté via Rich Editor"
-      }
     }
   ]
 }
