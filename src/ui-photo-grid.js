@@ -412,6 +412,8 @@ function renderGrid() {
         return;
     }
 
+    const fragment = document.createDocumentFragment();
+
     currentGridPhotos.forEach((photo, index) => {
         const card = document.createElement('div');
         card.className = 'photo-card';
@@ -504,8 +506,10 @@ function renderGrid() {
             updateArrayOrderFromDOM();
         });
 
-        gridContent.appendChild(card);
+        fragment.appendChild(card);
     });
+
+    gridContent.appendChild(fragment);
 
     // Refresh Icons for new elements
     createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
