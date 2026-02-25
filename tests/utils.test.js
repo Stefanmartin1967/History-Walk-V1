@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateDistance, isPointInPolygon, escapeXml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
+import { getPoiId, calculateDistance, isPointInPolygon, escapeXml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
 
 describe('Utils', () => {
     describe('calculateDistance (Haversine)', () => {
@@ -69,6 +69,48 @@ describe('Utils', () => {
 
         it('should clamp to zero', () => {
             expect(calculateAdjustedTime(0, 10, -20)).toEqual({ h: 0, m: 0 });
+        });
+    });
+
+    describe('getPoiId', () => {
+        it('should return null if feature is null or undefined', () => {
+            expect(getPoiId(null)).toBe(null);
+            expect(getPoiId(undefined)).toBe(null);
+        });
+
+        it('should return null if properties are missing', () => {
+            expect(getPoiId({})).toBe(null);
+            expect(getPoiId({ id: '123' })).toBe(null);
+        });
+
+        it('should return HW_ID if present in properties', () => {
+            const feature = {
+                properties: { HW_ID: 'POI_001' }
+            };
+            expect(getPoiId(feature)).toBe('POI_001');
+        });
+
+        it('should return feature.id if HW_ID is missing but id is present', () => {
+            const feature = {
+                id: 'GEO_123',
+                properties: { name: 'Some Place' }
+            };
+            expect(getPoiId(feature)).toBe('GEO_123');
+        });
+
+        it('should prioritize HW_ID over feature.id', () => {
+            const feature = {
+                id: 'GEO_123',
+                properties: { HW_ID: 'POI_001' }
+            };
+            expect(getPoiId(feature)).toBe('POI_001');
+        });
+
+        it('should return undefined if both HW_ID and id are missing but properties exist', () => {
+            const feature = {
+                properties: { name: 'Some Place' }
+            };
+            expect(getPoiId(feature)).toBe(undefined);
         });
     });
 });
