@@ -3,6 +3,7 @@ import { getPoiId, getPoiName } from './data.js';
 import { showAlert } from './modal.js';
 import { createIcons, icons } from 'lucide';
 import { generateMasterGeoJSONData } from './admin.js';
+import { generateGPXString } from './gpx.js';
 import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
 import { showToast } from './toast.js';
 import { saveAppState } from './database.js';
@@ -1196,6 +1197,72 @@ async function publishChanges() {
 
         if (hasCircuitChanges && allCircuits.length > 0) {
             console.log(`[Admin] Publication de l'index des circuits (Changements détectés)...`);
+
+            // 1. Upload des fichiers GPX individuels (Nouveaux ou Modifiés)
+            const circuitsToUpload = new Set();
+
+            if (diffData.circuits) {
+                diffData.circuits.forEach(diff => {
+                    if (!diff.isDeletion) circuitsToUpload.add(String(diff.id));
+                });
+            }
+            if (adminDraft.pendingCircuits) {
+                Object.keys(adminDraft.pendingCircuits).forEach(id => circuitsToUpload.add(String(id)));
+            }
+
+            const mapId = state.currentMapId || 'djerba';
+
+            for (const circuitId of circuitsToUpload) {
+                const circuit = allCircuits.find(c => String(c.id) === circuitId);
+                // On vérifie que le circuit existe encore (pas supprimé)
+                if (circuit && !circuit.isDeleted) {
+                     // Résolution des POIs
+                     const circuitFeatures = (circuit.poiIds || [])
+                         .map(id => state.loadedFeatures.find(f => getPoiId(f) === id))
+                         .filter(Boolean);
+
+                     if (circuitFeatures.length > 0) {
+                         // Génération du contenu GPX
+                         const gpxContent = generateGPXString(
+                             circuitFeatures,
+                             circuit.id,
+                             circuit.name,
+                             circuit.description,
+                             circuit.realTrack
+                         );
+
+                         // Construction du nom de fichier
+                         let filename = circuit.name.replace(/[<>:"/\\|?*]+/g, '').trim();
+                         if (!filename.toLowerCase().endsWith('.gpx')) filename += '.gpx';
+
+                         const uploadPath = `public/circuits/${mapId}/${filename}`;
+
+                         try {
+                             const blob = new Blob([gpxContent], { type: 'application/gpx+xml' });
+                             const file = new File([blob], filename, { type: 'application/gpx+xml' });
+
+                             await uploadFileToGitHub(
+                                 file,
+                                 token,
+                                 'Stefanmartin1967',
+                                 'History-Walk-V1',
+                                 uploadPath,
+                                 `Update circuit file: ${filename}`
+                             );
+
+                             // Mise à jour de la référence pour l'index
+                             circuit.file = `${mapId}/${filename}`;
+                             circuit.isOfficial = true;
+
+                             console.log(`[Admin] Circuit uploaded: ${uploadPath}`);
+                         } catch (e) {
+                             console.error(`[Admin] Failed to upload circuit ${circuit.name}`, e);
+                             showToast(`Erreur upload circuit: ${circuit.name}`, "error");
+                         }
+                     }
+                }
+            }
+
             const circuitsFilename = state.destinations.maps[state.currentMapId]?.circuitsFile || `${state.currentMapId || 'djerba'}.json`;
             const circuitsPath = `public/circuits/${circuitsFilename}`;
 

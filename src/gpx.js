@@ -65,7 +65,7 @@ function findFeaturesOnTrack(trackCoords, features, threshold = 0.0006) {
     return detected.map(d => d.feature);
 }
 
-function generateAndDownloadGPX(circuit, id, name, description, realTrack = null) {
+export function generateGPXString(circuit, id, name, description, realTrack = null) {
     const waypointsXML = circuit.map(feature => {
         const poiName = escapeXml(getPoiName(feature));
         // Description de l'étiquette (Wikiloc)
@@ -114,8 +114,11 @@ function generateAndDownloadGPX(circuit, id, name, description, realTrack = null
         </link>
     </metadata>`;
 
-    const gpxContent = `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="History Walk ${APP_VERSION}" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">${metadataXML}${waypointsXML}<trk><name>${escapeXml(name)}</name><desc><![CDATA[${description}]]></desc><trkseg>${trackpointsXML}</trkseg></trk></gpx>`;
+    return `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="History Walk ${APP_VERSION}" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">${metadataXML}${waypointsXML}<trk><name>${escapeXml(name)}</name><desc><![CDATA[${description}]]></desc><trkseg>${trackpointsXML}</trkseg></trk></gpx>`;
+}
 
+function generateAndDownloadGPX(circuit, id, name, description, realTrack = null) {
+    const gpxContent = generateGPXString(circuit, id, name, description, realTrack);
     downloadFile(`${name}.gpx`, gpxContent, 'application/gpx+xml');
 }
 
