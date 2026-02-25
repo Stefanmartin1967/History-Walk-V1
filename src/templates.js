@@ -165,7 +165,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     <button class="action-button speak-btn" title="Lire la description" style="margin:0;">${ICONS.volume}</button>
                 </h3>
                 <div class="content">
-                    <div id="panel-description-display" class="description-content editable-text" style="max-height:200px; overflow-y:auto;">${(allProps.description || allProps.Description || '').replace(/\n/g, '<br>')}</div>
+                    <div id="panel-description-display" class="description-content editable-text" style="max-height:200px; overflow-y:auto;">${escapeXml(allProps.description || allProps.Description || '').replace(/\n/g, '<br>')}</div>
                     ${renderSource(allProps)}
                 </div>
             </div>
@@ -180,7 +180,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="detail-section editable-field notes-section" data-field-id="notes">
                 <h3>Notes</h3>
                 <div class="content">
-                    <div id="panel-notes-display" class="description-content editable-text">${(allProps.notes || '').replace(/\n/g, '<br>')}</div>
+                    <div id="panel-notes-display" class="description-content editable-text">${escapeXml(allProps.notes || '').replace(/\n/g, '<br>')}</div>
                 </div>
             </div>
         </div>`;
@@ -255,7 +255,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     <button class="action-button speak-btn" title="Lire la description" style="margin:0;">${ICONS.volume}</button>
                 </h3>
                 <div class="content">
-                    <div class="description-content editable-text" style="max-height:200px; overflow-y:auto;">${(allProps.description || allProps.Description || '').replace(/\n/g, '<br>')}</div>
+                    <div class="description-content editable-text" style="max-height:200px; overflow-y:auto;">${escapeXml(allProps.description || allProps.Description || '').replace(/\n/g, '<br>')}</div>
                     ${renderSource(allProps)}
                 </div>
             </div>
@@ -270,7 +270,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="detail-section editable-field notes-section" data-field-id="notes">
                 <h3>Notes</h3>
                 <div class="content">
-                    <div class="description-content editable-text">${(allProps.notes || '').replace(/\n/g, '<br>')}</div>
+                    <div class="description-content editable-text">${escapeXml(allProps.notes || '').replace(/\n/g, '<br>')}</div>
                 </div>
             </div>
         </div>`;
