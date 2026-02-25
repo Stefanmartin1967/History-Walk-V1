@@ -742,24 +742,161 @@ function renderTab(tab) {
     } else if (tab === 'settings') {
         const token = getStoredToken() || '';
         container.innerHTML = `
-            <div style="max-width:600px; margin:0 auto; background:white; padding:30px; border-radius:20px; border:1px solid #E5E7EB;">
-                <h3>Configuration GitHub</h3>
-                <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin-bottom:15px;">Personal Access Token (PAT) pour l'upload.</p>
-                <input type="password" id="cc-token-input" value="${token}" class="settings-input" placeholder="ghp_...">
-                <button id="btn-save-token" style="margin-top:15px; width:100%; padding:12px; background:var(--hw-ink); color:white; border:none; border-radius:10px; cursor:pointer;">Sauvegarder</button>
+            <div style="max-width:600px; margin:0 auto; display:flex; flex-direction:column; gap:20px;">
+                <!-- GITHUB TOKEN -->
+                <div style="background:white; padding:30px; border-radius:20px; border:1px solid #E5E7EB;">
+                    <h3 style="margin-top:0;">Configuration GitHub</h3>
+                    <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin-bottom:15px;">Personal Access Token (PAT) pour l'upload.</p>
+                    <input type="password" id="cc-token-input" value="${token}" class="settings-input" placeholder="ghp_...">
+                    <button id="btn-save-token" style="margin-top:15px; width:100%; padding:12px; background:var(--hw-ink); color:white; border:none; border-radius:10px; cursor:pointer; font-weight:600;">Sauvegarder Token</button>
+                </div>
+
+                <!-- SYNC PERSO -->
+                <div style="background:white; padding:30px; border-radius:20px; border:1px solid #E5E7EB;">
+                    <h3 style="margin-top:0; display:flex; align-items:center; gap:10px;">
+                        <i data-lucide="cloud-cog" style="color:var(--hw-amber);"></i> Synchronisation Personnelle
+                    </h3>
+                    <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin-bottom:20px;">
+                        Sauvegardez votre avancement (Circuits Faits, Lieux visités) sur le repo GitHub pour le retrouver sur vos autres appareils Admin.
+                    </p>
+
+                    <div style="display:flex; gap:10px; margin-bottom:15px;">
+                        <button id="btn-sync-upload" style="flex:1; padding:12px; background:#F0FDF4; border:1px solid #86EFAC; color:#166534; border-radius:10px; cursor:pointer; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;">
+                            <i data-lucide="upload-cloud"></i> Sauvegarder (Upload)
+                        </button>
+                        <button id="btn-sync-download" style="flex:1; padding:12px; background:#EFF6FF; border:1px solid #93C5FD; color:#1E40AF; border-radius:10px; cursor:pointer; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;">
+                            <i data-lucide="download-cloud"></i> Récupérer (Download)
+                        </button>
+                    </div>
+
+                    <div id="sync-last-update" style="font-size:0.8rem; color:#94A3B8; text-align:center;">
+                        Fichier cible : public/admin/personal_data.json
+                    </div>
+                </div>
             </div>
         `;
+
         setTimeout(() => {
-            const btn = document.getElementById('btn-save-token');
-            if(btn) btn.onclick = () => {
+            const btnSave = document.getElementById('btn-save-token');
+            if(btnSave) btnSave.onclick = () => {
                 const val = document.getElementById('cc-token-input').value.trim();
                 saveToken(val);
                 showToast("Token sauvegardé !", "success");
             };
+
+            const btnUp = document.getElementById('btn-sync-upload');
+            if(btnUp) btnUp.onclick = uploadAdminData;
+
+            const btnDown = document.getElementById('btn-sync-download');
+            if(btnDown) btnDown.onclick = downloadAdminData;
         }, 0);
     }
 
     createIcons({ icons, root: container });
+}
+
+async function uploadAdminData() {
+    const token = getStoredToken();
+    if (!token) {
+        showToast("Token manquant. Configurez-le d'abord.", "error");
+        return;
+    }
+
+    const btn = document.getElementById('btn-sync-upload');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Envoi...`;
+        createIcons({ icons, root: btn });
+    }
+
+    try {
+        const data = {
+            lastUpdated: new Date().toISOString(),
+            officialCircuitsStatus: state.officialCircuitsStatus || {},
+            userData: state.userData || {},
+            hiddenPoiIds: state.hiddenPoiIds || []
+        };
+
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const file = new File([blob], 'personal_data.json', { type: 'application/json' });
+
+        await uploadFileToGitHub(
+            file,
+            token,
+            'Stefanmartin1967',
+            'History-Walk-V1',
+            'public/admin/personal_data.json',
+            'Update Admin Personal Data'
+        );
+
+        showToast("Données sauvegardées sur le serveur !", "success");
+        // Update UI timestamp
+        const timeEl = document.getElementById('sync-last-update');
+        if (timeEl) timeEl.textContent = `Dernier envoi : À l'instant`;
+
+    } catch (e) {
+        console.error(e);
+        showToast("Erreur lors de l'envoi : " + e.message, "error");
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="upload-cloud"></i> Sauvegarder (Upload)`;
+            createIcons({ icons, root: btn });
+        }
+    }
+}
+
+async function downloadAdminData() {
+    const btn = document.getElementById('btn-sync-download');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Récupération...`;
+        createIcons({ icons, root: btn });
+    }
+
+    try {
+        const timestamp = Date.now();
+        // Use raw.githubusercontent.com to avoid caching issues
+        const url = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/admin/personal_data.json?t=${timestamp}`;
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            if (response.status === 404) throw new Error("Aucune sauvegarde trouvée sur le serveur.");
+            throw new Error("Erreur réseau : " + response.status);
+        }
+
+        const data = await response.json();
+
+        // MERGE STRATEGY: Server Wins for status, Merge for objects
+        if (data.officialCircuitsStatus) {
+            state.officialCircuitsStatus = { ...state.officialCircuitsStatus, ...data.officialCircuitsStatus };
+            await saveAppState(`official_circuits_status_${state.currentMapId || 'djerba'}`, state.officialCircuitsStatus);
+        }
+
+        if (data.userData) {
+            state.userData = { ...state.userData, ...data.userData };
+            await saveAppState('userData', state.userData);
+        }
+
+        if (data.hiddenPoiIds) {
+             const newHidden = new Set([...(state.hiddenPoiIds || []), ...data.hiddenPoiIds]);
+             state.hiddenPoiIds = Array.from(newHidden);
+             await saveAppState(`hiddenPois_${state.currentMapId || 'djerba'}`, state.hiddenPoiIds);
+        }
+
+        showToast("Données récupérées et fusionnées !", "success");
+        setTimeout(() => window.location.reload(), 1500);
+
+    } catch (e) {
+        console.error(e);
+        showToast("Erreur : " + e.message, "error");
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="download-cloud"></i> Récupérer (Download)`;
+            createIcons({ icons, root: btn });
+        }
+    }
 }
 
 // --- RENDER DETAIL HELPER ---
