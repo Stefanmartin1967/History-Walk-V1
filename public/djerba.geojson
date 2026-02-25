@@ -6927,6 +6927,26 @@
           "photos/poi_HW-PC-1771838835356_1771880218342.jpg"
         ]
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.780132690542835,
+          33.86509076880778
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test console suppression",
+        "Catégorie": "Pâtisserie",
+        "Zone": "Houmt Souk",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KJAE5QSPWARHYJ88X4QR7G12",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
