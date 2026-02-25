@@ -13,7 +13,7 @@ import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML, ICONS } from './templates.js';
 import { getZonesData } from './circuit-actions.js';
 import { calculateAdjustedTime } from './utils.js';
-import { initPhotoViewer, setupPhotoPanelListeners } from './ui-photo-viewer.js';
+import { initPhotoViewer } from './ui-photo-viewer.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
 import { initCircuitListUI, renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm, showAlert } from './modal.js';
@@ -472,7 +472,6 @@ if (chkInc) {
     });
 
     // Gestion Photos DÉLÉGUÉE
-    // setupPhotoPanelListeners(poiId); // REMOVED: Now handled via Photo Grid
 
     // PHOTO GRID BUTTON LISTENER
     const btnPhotoGrid = document.getElementById('btn-open-photo-grid') || document.getElementById('mobile-btn-open-photo-grid');

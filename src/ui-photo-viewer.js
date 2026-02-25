@@ -226,7 +226,3 @@ function updateViewerUI() {
     }
 }
 
-// Deprecated or Empty function to satisfy imports if any
-export function setupPhotoPanelListeners(poiId) {
-    // No-op
-}
