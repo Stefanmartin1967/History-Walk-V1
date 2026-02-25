@@ -20,6 +20,9 @@ export function setupSearch() {
     
     // 2. Affichage des résultats
     if (results.length > 0) {
+        // On utilise un DocumentFragment pour limiter les reflows (Optimisation Performance)
+        const fragment = document.createDocumentFragment();
+
         // On limite à 50 résultats pour ne pas surcharger
         results.slice(0, 50).forEach(feature => {
             const resultBtn = document.createElement('button');
@@ -60,8 +63,10 @@ export function setupSearch() {
                     openDetailsPanel(globalIndex, circuitIndex !== -1 ? circuitIndex : null);
                 }
             });
-            DOM.searchResults.appendChild(resultBtn);
+            fragment.appendChild(resultBtn);
         });
+
+        DOM.searchResults.appendChild(fragment);
         DOM.searchResults.style.display = 'block';
     }
 }
