@@ -472,26 +472,37 @@ function reconcileLocalChanges() {
     }
 }
 
-let diffData = { pois: [], stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0 } };
+let diffData = { pois: [], circuits: [], stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0 } };
 
 async function prepareDiffData() {
     let originalFeatures = [];
+    let remoteCircuits = [];
+    const timestamp = Date.now();
+    const mapId = state.currentMapId || 'djerba';
+
+    // 1. Fetch Remote Data (POIs + Circuits)
     try {
-        const timestamp = Date.now();
-        const mapId = state.currentMapId || 'djerba';
-        const url = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/${mapId}.geojson?t=${timestamp}`;
-        const response = await fetch(url);
-        if (response.ok) {
-            const json = await response.json();
+        const [respGeo, respCirc] = await Promise.all([
+            fetch(`https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/${mapId}.geojson?t=${timestamp}`),
+            fetch(`https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${mapId}.json?t=${timestamp}`)
+        ]);
+
+        if (respGeo.ok) {
+            const json = await respGeo.json();
             originalFeatures = json.features;
         }
+        if (respCirc.ok) {
+            remoteCircuits = await respCirc.json();
+        }
     } catch (e) {
-        console.error("Erreur fetch original", e);
+        console.error("Erreur fetch original data", e);
     }
 
     diffData.pois = [];
+    diffData.circuits = [];
     diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0 };
 
+    // --- A. ANALYSE DES POIS (Via adminDraft + Comparaison directe) ---
     const pendingIds = Object.keys(adminDraft.pendingPois);
 
     pendingIds.forEach(id => {
@@ -620,7 +631,70 @@ async function prepareDiffData() {
         }
     });
 
-    diffData.stats.circuitsModified = Object.keys(adminDraft.pendingCircuits).length;
+    // --- B. ANALYSE DES CIRCUITS (Comparaison State vs Remote) ---
+    const localCircuits = state.officialCircuits || [];
+
+    // 1. Nouveaux & Modifiés
+    localCircuits.forEach(local => {
+        // On normalise l'ID (parfois string vs number)
+        const remote = remoteCircuits.find(r => String(r.id) === String(local.id));
+
+        if (!remote) {
+            // Cas : Nouveau Circuit
+            diffData.circuits.push({
+                id: local.id,
+                name: local.name,
+                changes: [{ key: 'STATUT', old: 'Inexistant', new: 'NOUVEAU' }],
+                isCreation: true
+            });
+        } else {
+            // Cas : Modification potentielle
+            const changes = [];
+
+            // Comparaison simple des champs clés
+            if (local.name !== remote.name) changes.push({ key: 'Nom', old: remote.name, new: local.name });
+            if ((local.description || '') !== (remote.description || '')) {
+                // On ignore les diffs vides vs null/undefined
+                if(local.description || remote.description) {
+                     changes.push({ key: 'Description', old: '...', new: '...' }); // Simplifié pour l'affichage
+                }
+            }
+
+            // Comparaison des étapes (Ordre et Contenu)
+            const localIds = (local.poiIds || []).join(',');
+            const remoteIds = (remote.poiIds || []).join(',');
+
+            if (localIds !== remoteIds) {
+                changes.push({
+                    key: 'Étapes',
+                    old: `${(remote.poiIds || []).length} étapes`,
+                    new: `${(local.poiIds || []).length} étapes`
+                });
+            }
+
+            if (changes.length > 0) {
+                diffData.circuits.push({
+                    id: local.id,
+                    name: local.name,
+                    changes: changes
+                });
+            }
+        }
+    });
+
+    // 2. Supprimés
+    remoteCircuits.forEach(remote => {
+        if (!localCircuits.find(l => String(l.id) === String(remote.id))) {
+            diffData.circuits.push({
+                id: remote.id,
+                name: remote.name,
+                changes: [{ key: 'STATUT', old: 'Actif', new: 'SUPPRESSION' }],
+                isDeletion: true
+            });
+        }
+    });
+
+    diffData.stats.circuitsModified = diffData.circuits.length;
 }
 
 
@@ -668,7 +742,7 @@ function renderTab(tab) {
             ` : ''}
         `;
     } else if (tab === 'changes') {
-        if (diffData.pois.length === 0) {
+        if (diffData.pois.length === 0 && diffData.circuits.length === 0) {
              container.innerHTML = `<div class="empty-state"><i data-lucide="check" width="48"></i><p>Aucune modification en attente.</p></div>`;
              createIcons({ icons, root: container });
              return;
@@ -679,8 +753,16 @@ function renderTab(tab) {
             new: diffData.pois.filter(p => p.isCreation),
             mod: diffData.pois.filter(p => !p.isCreation && !p.isDeletion && !p.isMigration),
             del: diffData.pois.filter(p => p.isDeletion),
-            mig: diffData.pois.filter(p => p.isMigration)
+            mig: diffData.pois.filter(p => p.isMigration),
+
+            // Circuits
+            cNew: diffData.circuits.filter(c => c.isCreation),
+            cMod: diffData.circuits.filter(c => !c.isCreation && !c.isDeletion),
+            cDel: diffData.circuits.filter(c => c.isDeletion)
         };
+
+        // Marquage des items circuits pour le renderer
+        [groups.cNew, groups.cMod, groups.cDel].forEach(arr => arr.forEach(i => i.isCircuit = true));
 
         let html = `<div class="diff-list-container">`;
 
@@ -718,7 +800,7 @@ function renderTab(tab) {
 
                         <div class="diff-actions-row">
                             <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">
-                                <i data-lucide="x"></i> Refuser
+                                <i data-lucide="x"></i> Ignorer
                             </button>
                             <button class="btn-diff-action validate" onclick="processDecision('${item.id}', 'accept')">
                                 <i data-lucide="check"></i> Valider
@@ -732,9 +814,17 @@ function renderTab(tab) {
         };
 
         html += renderGroup("Nouveaux Lieux", groups.new, "plus-circle", "#16A34A"); // Green
-        html += renderGroup("Modifications", groups.mod, "pencil", "#D97706"); // Amber
-        html += renderGroup("Suppressions", groups.del, "trash-2", "#DC2626"); // Red
+        html += renderGroup("Modifications Lieux", groups.mod, "pencil", "#D97706"); // Amber
+        html += renderGroup("Suppressions Lieux", groups.del, "trash-2", "#DC2626"); // Red
         html += renderGroup("Migrations Techniques", groups.mig, "refresh-cw", "#0284C7"); // Blue
+
+        // Circuits
+        if (groups.cNew.length > 0 || groups.cMod.length > 0 || groups.cDel.length > 0) {
+            html += `<div style="margin: 30px 0 10px 0; padding-bottom:10px; border-bottom:1px solid #E2E8F0; font-weight:800; color:#64748B; text-transform:uppercase; letter-spacing:1px; font-size:0.8rem;">Circuits</div>`;
+            html += renderGroup("Nouveaux Circuits", groups.cNew, "map", "#16A34A");
+            html += renderGroup("Circuits Modifiés", groups.cMod, "route", "#D97706");
+            html += renderGroup("Circuits Supprimés", groups.cDel, "trash-2", "#DC2626");
+        }
 
         html += `</div>`;
         container.innerHTML = html;
@@ -943,7 +1033,14 @@ function renderDiffDetails(item) {
             `;
         } else if (!isPhoto) {
             // --- PROTECTION HW_ID (READ-ONLY) ---
-            if (logicalKey === 'HW_ID') {
+            if (item.isCircuit) {
+                // Circuits : Read Only (car pas de userData pour stocker les modifs admin)
+                editorHtml = `
+                    <div class="edit-row">
+                        <span style="font-size:0.85rem; color:#64748B; font-style:italic;">Modification via l'éditeur de circuit</span>
+                    </div>
+                `;
+            } else if (logicalKey === 'HW_ID') {
                 editorHtml = `
                     <div class="edit-row">
                          <input type="text" class="edit-input" value="${safeAttr(c.new)}" disabled style="background:#F1F5F9; color:#64748B; cursor:not-allowed;">
@@ -1090,9 +1187,11 @@ async function publishChanges() {
         await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/${filename}`, `Update via Admin Center`);
 
         // --- NOUVEAU : Publication des Circuits si nécessaire ---
-        const pendingCircuitsCount = Object.keys(adminDraft.pendingCircuits).length;
-        if (pendingCircuitsCount > 0 && state.officialCircuits) {
-            console.log(`[Admin] Publication de l'index des circuits (${pendingCircuitsCount} modifiés)...`);
+        // On vérifie s'il y a des changements détectés (via Diff) OU des changements pistés (via Draft)
+        const hasCircuitChanges = (diffData.circuits && diffData.circuits.length > 0) || (Object.keys(adminDraft.pendingCircuits).length > 0);
+
+        if (hasCircuitChanges && state.officialCircuits) {
+            console.log(`[Admin] Publication de l'index des circuits (Changements détectés)...`);
             const circuitsFilename = state.destinations.maps[state.currentMapId]?.circuitsFile || `${state.currentMapId || 'djerba'}.json`;
             const circuitsPath = `public/circuits/${circuitsFilename}`;
 
