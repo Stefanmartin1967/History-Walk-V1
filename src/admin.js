@@ -176,15 +176,21 @@ function setupGodModeListener() {
             tapCount++;
             clearTimeout(tapTimeout);
 
-            // Reset après 1 seconde sans tap
+            // Reset après 2 secondes sans tap (plus tolérant pour mobile)
             tapTimeout = setTimeout(() => {
                 tapCount = 0;
-            }, 1000);
+            }, 2000);
 
             if (tapCount === 5) {
                 console.log("[GodMode] 5 taps detected!");
+                e.preventDefault(); // Empêche le menu de s'ouvrir/fermer sur le 5ème tap
+                e.stopPropagation();
+
                 toggleGodMode();
-                tapCount = 0; // Reset immédiat pour éviter de re-déclencher au 6ème
+                tapCount = 0; // Reset immédiat
+
+                // Petit feedback visuel (vibration si supporté)
+                if (navigator.vibrate) navigator.vibrate(200);
             }
         });
     }
