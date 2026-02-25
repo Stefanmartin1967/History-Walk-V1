@@ -540,7 +540,22 @@ async function prepareDiffData() {
         const changes = [];
 
         // Geometry Check
-        if (original) {
+        // On vérifie toujours la position, même si c'est un POI "existant" mais sans correspondance directe "original"
+        // (cas rare, mais possible si ID migré ou autre)
+        // Mais surtout on doit vérifier state.userData.lat/lng
+        const userLat = userData.lat;
+        const userLng = userData.lng;
+
+        if (userLat !== undefined && userLng !== undefined) {
+             // Il y a une surcharge explicite de position
+             const oldPos = original ? `${original.geometry.coordinates[1].toFixed(5)}, ${original.geometry.coordinates[0].toFixed(5)}` : 'Inconnu';
+             changes.push({
+                key: 'Position',
+                old: oldPos,
+                new: `${parseFloat(userLat).toFixed(5)}, ${parseFloat(userLng).toFixed(5)}`
+             });
+        } else if (original) {
+            // Fallback: check geometry object difference
             const [oLng, oLat] = original.geometry.coordinates;
             const [cLng, cLat] = current.geometry.coordinates;
             if (oLng.toFixed(5) !== cLng.toFixed(5) || oLat.toFixed(5) !== cLat.toFixed(5)) {
@@ -563,6 +578,13 @@ async function prepareDiffData() {
             let oldVal = original ? original.properties[key] : undefined;
             let newVal = userData[key] !== undefined ? userData[key] : current.properties[key];
 
+            // --- USER FRIENDLY LABELS ---
+            let displayKey = key;
+            if (key === 'timeH') displayKey = 'Heures (Durée)';
+            if (key === 'timeM') displayKey = 'Minutes (Durée)';
+            if (key === 'price') displayKey = 'Prix (TND)';
+            if (key === 'description') displayKey = 'Description';
+
             if (key === 'photos') {
                 const oldLen = (oldVal || []).length;
                 const newLen = (newVal || []).length;
@@ -580,7 +602,8 @@ async function prepareDiffData() {
             // Simple equality check
             if (String(oldVal) !== String(newVal) && !(oldVal === undefined && newVal === "")) {
                 changes.push({
-                    key: key,
+                    key: displayKey, // Use friendly name
+                    rawKey: key,     // Keep raw key for editing logic
                     old: oldVal !== undefined ? oldVal : '—',
                     new: newVal
                 });
@@ -748,10 +771,18 @@ function renderDiffDetails(item) {
         </div>`;
     }
 
+    // Helper to escape HTML attributes safely
+    const safeAttr = (str) => {
+        if (typeof str !== 'string') return str;
+        return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    };
+
     return item.changes.map(c => {
         const isPos = (c.key === 'Position');
         const isPhoto = (c.key === 'Photos');
-        const inputId = `edit-${item.id}-${c.key}`;
+        // Use rawKey if available (for logic), fallback to display key (for display)
+        const logicalKey = c.rawKey || c.key;
+        const inputId = `edit-${item.id}-${logicalKey}`;
 
         // Contenu éditable ou lecture seule
         let editorHtml = '';
@@ -770,16 +801,29 @@ function renderDiffDetails(item) {
                 </div>
                 <div class="edit-row">
                    <span style="font-size:0.8rem; font-weight:bold; width:60px;">Lat,Lng</span>
-                   <input type="text" class="edit-input" id="${inputId}" value="${c.new}" onchange="updateDraftValue('${item.id}', '${c.key}', this.value)">
+                   <input type="text" class="edit-input" id="${inputId}" value="${safeAttr(c.new)}" onchange="updateDraftValue('${item.id}', 'Position', this.value)">
                 </div>
             `;
         } else if (!isPhoto) {
-            // Champ texte standard (Nom, Description, etc.)
-            editorHtml = `
-                <div class="edit-row">
-                    <input type="text" class="edit-input" id="${inputId}" value="${c.new}" onchange="updateDraftValue('${item.id}', '${c.key}', this.value)">
-                </div>
-            `;
+            // --- PROTECTION HW_ID (READ-ONLY) ---
+            if (logicalKey === 'HW_ID') {
+                editorHtml = `
+                    <div class="edit-row">
+                         <input type="text" class="edit-input" value="${safeAttr(c.new)}" disabled style="background:#F1F5F9; color:#64748B; cursor:not-allowed;">
+                    </div>
+                    <div style="font-size:0.75rem; color:#EF4444; margin-top:-5px; margin-bottom:10px;">
+                        <i data-lucide="lock" width="12" style="display:inline; vertical-align:middle;"></i>
+                        Identifiant système (Non modifiable)
+                    </div>
+                `;
+            } else {
+                // Champ texte standard (Nom, Description, etc.)
+                editorHtml = `
+                    <div class="edit-row">
+                        <input type="text" class="edit-input" id="${inputId}" value="${safeAttr(c.new)}" onchange="updateDraftValue('${item.id}', '${logicalKey}', this.value)">
+                    </div>
+                `;
+            }
         }
 
         return `
