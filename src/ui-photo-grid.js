@@ -559,20 +559,25 @@ async function handleSave() {
 
     try {
         if (state.isAdmin) {
-            let uploadCount = 0;
             showToast("Upload en cours...", "info");
 
-            for (let i = 0; i < finalPhotos.length; i++) {
-                if (finalPhotos[i].startsWith('data:image')) {
-                    const response = await fetch(finalPhotos[i]);
+            // Perform uploads in parallel to improve performance
+            const uploadPromises = finalPhotos.map(async (photo, i) => {
+                if (photo.startsWith('data:image')) {
+                    const response = await fetch(photo);
                     const blob = await response.blob();
                     const file = new File([blob], "temp.jpg", { type: "image/jpeg" });
 
                     const publicUrl = await uploadPhotoForPoi(file, currentGridPoiId);
                     finalPhotos[i] = publicUrl;
-                    uploadCount++;
+                    return true;
                 }
-            }
+                return false;
+            });
+
+            const results = await Promise.all(uploadPromises);
+            const uploadCount = results.filter(r => r === true).length;
+
             if (uploadCount > 0) showToast(`${uploadCount} photo(s) envoyée(s) !`, "success");
         }
 
