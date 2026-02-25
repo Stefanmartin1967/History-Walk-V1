@@ -1,8 +1,8 @@
 {
   "name": "History Walk",
   "short_name": "History Walk",
-  "id": "./",
-  "start_url": "./",
+  "id": "history-walk-v1",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "display_override": [
