@@ -725,7 +725,7 @@
         "Desc_wpt": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental.",
         "HW_ID": "HW-01K77WPE697JA8WM3N71KEFY6S",
         "planifieCounter": 1,
-        "vu": true
+        "vu": false
       }
     },
     {
@@ -777,7 +777,7 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
         "planifieCounter": 1,
-        "vu": true
+        "vu": false
       }
     },
     {
@@ -855,7 +855,7 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69CKZWJHD3JAJT874K",
         "planifieCounter": 1,
-        "vu": true
+        "vu": false
       }
     },
     {
@@ -882,7 +882,7 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A22WXDRBSQ8AEW7BR",
         "planifieCounter": 1,
-        "vu": true
+        "vu": false
       }
     },
     {
@@ -1036,7 +1036,7 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6AA25DRECXWRNXFZ4C",
         "planifieCounter": 1,
-        "vu": true
+        "vu": false
       }
     },
     {
@@ -5043,7 +5043,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
@@ -5434,7 +5435,7 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6P9JFRW9XXGN7P7FPX",
         "planifieCounter": 1,
-        "vu": true
+        "vu": false
       }
     },
     {
@@ -6202,7 +6203,7 @@
         "Desc_wpt": "Mosquée ? Marabout ? A voir sur place",
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
         "planifieCounter": 1,
-        "vu": true
+        "vu": false
       }
     },
     {
@@ -6832,7 +6833,8 @@
         "Description": "Ajouté via Rich Editor",
         "lat": 33.7812942328873,
         "lng": 10.76678663492203,
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true
       }
     },
     {
