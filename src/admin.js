@@ -186,11 +186,18 @@ export function generateMasterGeoJSONData(excludedIds = []) {
         .map(f => {
         // Clone profond pour ne pas modifier l'original
         const properties = JSON.parse(JSON.stringify(f.properties));
+        const standardizedHWID = properties.HW_ID; // Sauvegarde de l'ID unifié
 
         // Fusionner userData dans properties (Officialisation des modifs)
         if (properties.userData) {
             Object.assign(properties, properties.userData);
             delete properties.userData; // On nettoie
+        }
+
+        // --- BLINDAGE ID ---
+        // On s'assure que l'ID unifié n'a pas été écrasé par une vieille valeur dans userData
+        if (standardizedHWID) {
+            properties.HW_ID = standardizedHWID;
         }
 
         // --- NETTOYAGE CRITIQUE : Suppression des photos Base64 ---

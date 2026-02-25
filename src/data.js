@@ -13,11 +13,11 @@ import {
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
 import { getPoiId, getPoiName, generateHWID } from './utils.js';
-import { addToDraft, getMigrationId } from './admin-control-center.js';
+import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
 
 // --- UTILITAIRES ---
 
-export { getPoiId, getPoiName };
+export { getPoiId, getPoiName, checkAndApplyMigrations };
 
 // --- GESTION DES MIGRATIONS D'ID (ADMIN) ---
 
@@ -27,9 +27,24 @@ async function checkAndApplyMigrations() {
     let migrationsCount = 0;
     const idMap = {}; // oldId -> newId
 
+    // On pré-remplit le map avec les migrations déjà présentes dans le brouillon
+    const draft = getAdminDraft();
+    Object.entries(draft.pendingPois).forEach(([newId, data]) => {
+        if (data.type === 'migration' && data.oldId) {
+            idMap[data.oldId] = newId;
+        }
+    });
+
     state.loadedFeatures.forEach((feature, index) => {
         const pId = getPoiId(feature);
-        const isLegacyId = !pId || pId.startsWith('gen_') || pId.startsWith('custom_') || !pId.startsWith('HW-');
+
+        // Un ID est considéré comme "Legacy" s'il est absent, s'il vient de la génération auto (gen_, custom_)
+        // ou s'il ne respecte pas le format strict HW-ULID (HW- suivi de 26 caractères)
+        const isLegacyId = !pId ||
+                           pId.startsWith('gen_') ||
+                           pId.startsWith('custom_') ||
+                           !pId.startsWith('HW-') ||
+                           pId.length !== 29; // HW- (3 chars) + ULID (26 chars)
 
         if (isLegacyId) {
             const oldId = pId;
@@ -43,6 +58,9 @@ async function checkAndApplyMigrations() {
             // 1. Migration des données utilisateur associées (Carnet de Voyage)
             if (oldId && state.userData[oldId]) {
                 state.userData[newId] = state.userData[oldId];
+                // Sécurité : on s'assure que userData ne contient pas d'ID qui écraserait le nouveau
+                delete state.userData[newId].HW_ID;
+                delete state.userData[newId].id;
                 // Note: On ne supprime pas l'ancien pour la session courante pour éviter de tout casser
             }
 
@@ -57,7 +75,7 @@ async function checkAndApplyMigrations() {
         }
     });
 
-    if (migrationsCount > 0) {
+    if (migrationsCount > 0 || Object.keys(idMap).length > 0) {
         // 3. Migration des CIRCUITS (Mise à jour des étapes)
         let circuitsUpdated = 0;
         const allCircuits = [...(state.myCircuits || []), ...(state.officialCircuits || [])];
@@ -281,7 +299,7 @@ export async function addPoiFeature(feature) {
     // Sécurité : On s'assure que le POI a un ID au format HW-ULID avant traitement
     if (!feature.properties) feature.properties = {};
     const currentId = getPoiId(feature);
-    if (!currentId || !currentId.startsWith('HW-')) {
+    if (!currentId || !currentId.startsWith('HW-') || currentId.length !== 29) {
         feature.properties.HW_ID = generateHWID();
     }
 
