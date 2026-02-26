@@ -551,6 +551,7 @@ async function prepareDiffData() {
 
         if (!current) return;
 
+        const userData = current.properties.userData || {};
         const changes = [];
 
         // Geometry Check
@@ -583,7 +584,6 @@ async function prepareDiffData() {
 
         // Property Checks (Check ALL relevant keys since we don't track specifically anymore)
         // We prioritize userData if it exists
-        const userData = current.properties.userData || {};
         const allKeys = new Set([...Object.keys(current.properties), ...Object.keys(userData)]);
 
         allKeys.forEach(key => {
