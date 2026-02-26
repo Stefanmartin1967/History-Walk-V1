@@ -94,6 +94,7 @@ function renderExplorerToolbar() {
         ? (currentSort === 'dist_desc' ? 'arrow-up-1-0' : 'arrow-down-0-1')
         : 'ruler';
 
+    // FIX: Safely access state.activeFilters
     const zoneActive = !!(state.activeFilters && state.activeFilters.zone);
 
     footer.innerHTML = `
@@ -104,9 +105,9 @@ function renderExplorerToolbar() {
             <i data-lucide="${distIcon}"></i>
         </button>
 
-        <div class="separator-vertical"></div>
+        <div class="separator-vertical" style="display:block !important; height:20px; width:1px; background:var(--line); margin:0 4px;"></div>
 
-        <button id="btn-filter-zone" class="footer-btn icon-only ${zoneActive ? 'active' : ''}" title="Filtrer par Zone">
+        <button id="btn-filter-zone" class="footer-btn icon-only ${zoneActive ? 'active' : ''}" title="Filtrer par Zone" style="display:flex;">
             <i data-lucide="map-pin"></i>
         </button>
 
@@ -114,44 +115,50 @@ function renderExplorerToolbar() {
             <i data-lucide="${filterTodo ? 'list-todo' : 'list-checks'}"></i>
         </button>
 
-        <div class="separator-vertical"></div>
+        <div class="separator-vertical" style="display:block !important; height:20px; width:1px; background:var(--line); margin:0 4px;"></div>
 
         <button id="btn-reset-filters" class="footer-btn icon-only" title="Réinitialiser">
             <i data-lucide="rotate-ccw"></i>
         </button>
     `;
 
-    createIcons({ icons });
+    // Ensure icons are drawn immediately
+    createIcons({ icons, root: footer });
 
-    // Event Listeners
-    footer.querySelector('#btn-sort-date').addEventListener('click', () => {
+    // Event Listeners (Must be re-attached as innerHTML cleared them)
+    const btnDate = footer.querySelector('#btn-sort-date');
+    if(btnDate) btnDate.onclick = () => {
         if (currentSort === 'date_desc') currentSort = 'date_asc';
         else currentSort = 'date_desc';
         refreshExplorer();
-    });
+    };
 
-    footer.querySelector('#btn-sort-dist').addEventListener('click', () => {
+    const btnDist = footer.querySelector('#btn-sort-dist');
+    if(btnDist) btnDist.onclick = () => {
         if (currentSort === 'dist_asc') currentSort = 'dist_desc';
         else currentSort = 'dist_asc';
         refreshExplorer();
-    });
+    };
 
-    footer.querySelector('#btn-filter-zone').addEventListener('click', () => {
+    const btnZone = footer.querySelector('#btn-filter-zone');
+    if(btnZone) btnZone.onclick = () => {
         openZonesModalPC();
-    });
+    };
 
-    footer.querySelector('#btn-filter-todo').addEventListener('click', () => {
+    const btnTodo = footer.querySelector('#btn-filter-todo');
+    if(btnTodo) btnTodo.onclick = () => {
         filterTodo = !filterTodo;
         refreshExplorer();
-    });
+    };
 
-    footer.querySelector('#btn-reset-filters').addEventListener('click', () => {
+    const btnReset = footer.querySelector('#btn-reset-filters');
+    if(btnReset) btnReset.onclick = () => {
         currentSort = 'date_desc';
         filterTodo = false;
-        state.activeFilters.zone = null; // Reset Zone Filter
-        applyFilters(); // Apply globally
+        if(state.activeFilters) state.activeFilters.zone = null;
+        applyFilters();
         refreshExplorer();
-    });
+    };
 }
 
 function openZonesModalPC() {
@@ -177,7 +184,7 @@ function openZonesModalPC() {
 
     btnAll.innerHTML = `<span>Toutes les zones</span>`;
     btnAll.onclick = () => {
-        state.activeFilters.zone = null;
+        if(state.activeFilters) state.activeFilters.zone = null;
         applyFilters(); // Updates map and triggers list refresh
         closeModal();
     };
@@ -197,13 +204,13 @@ function openZonesModalPC() {
 
         btn.innerHTML = `<span>${zone}</span> <span style="font-weight:bold; color:var(--ink-soft);">${zoneCounts[zone]}</span>`;
 
-        if (state.activeFilters.zone === zone) {
+        if (state.activeFilters && state.activeFilters.zone === zone) {
             btn.style.border = '2px solid var(--brand)';
             btn.style.background = 'var(--surface-muted)';
         }
 
         btn.onclick = () => {
-            state.activeFilters.zone = zone;
+            if(state.activeFilters) state.activeFilters.zone = zone;
             applyFilters();
             closeModal();
         };
