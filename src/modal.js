@@ -19,10 +19,47 @@ function resetModal() {
     }
 }
 
-function closeModal() {
+export function closeModal() {
     const { overlay } = getElements();
     if (overlay) overlay.classList.remove('active');
     activeResolve = null;
+}
+
+/**
+ * Affiche une modale générique avec contenu personnalisé.
+ * @param {string} titleText - Le titre de la modale.
+ * @param {string|HTMLElement} content - Contenu HTML ou élément DOM.
+ * @param {string|HTMLElement|null} actionsContent - Contenu des actions (boutons) ou null.
+ */
+export function showCustomModal(titleText, content, actionsContent = null) {
+    resetModal();
+    const { overlay, title, message, actions } = getElements();
+
+    if (!overlay) return;
+
+    // Titre
+    title.textContent = titleText;
+
+    // Contenu (Message)
+    message.innerHTML = '';
+    if (typeof content === 'string') {
+        message.innerHTML = content;
+    } else if (content instanceof HTMLElement) {
+        message.appendChild(content);
+    }
+
+    // Actions (Footer)
+    actions.innerHTML = '';
+    if (actionsContent) {
+        if (typeof actionsContent === 'string') {
+            actions.innerHTML = actionsContent;
+        } else if (actionsContent instanceof HTMLElement) {
+            actions.appendChild(actionsContent);
+        }
+    }
+
+    // Affichage
+    overlay.classList.add('active');
 }
 
 /**

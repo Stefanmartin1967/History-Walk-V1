@@ -12,7 +12,7 @@ import { generateSyncQR, startGenericScanner } from './sync.js';
 import QRCode from 'qrcode';
 import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
-import { showConfirm } from './modal.js';
+import { showConfirm, showCustomModal, closeModal } from './modal.js';
 import { getSearchResults } from './search.js';
 import { showStatisticsModal } from './statistics.js';
 
@@ -572,7 +572,7 @@ function renderMobileZonesMenu() {
     btnAll.onclick = () => {
         state.activeFilters.zone = null;
         renderMobileCircuitsList();
-        document.getElementById('custom-modal-overlay').classList.remove('active');
+        closeModal();
     };
     content.appendChild(btnAll);
 
@@ -586,24 +586,18 @@ function renderMobileZonesMenu() {
         btn.onclick = () => {
             state.activeFilters.zone = zone;
             renderMobileCircuitsList();
-            document.getElementById('custom-modal-overlay').classList.remove('active');
+            closeModal();
         };
         content.appendChild(btn);
     });
 
-    // 3. Affichage via showConfirm (Hack) ou Custom Modal direct
-    // On utilise le Custom Modal direct pour plus de flexibilité
-    const modal = document.getElementById('custom-modal-overlay');
-    const titleEl = document.getElementById('custom-modal-title');
-    const msgEl = document.getElementById('custom-modal-message');
-    const actionsEl = document.getElementById('custom-modal-actions');
+    // 3. Affichage via showCustomModal (Refactorisé)
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'custom-modal-btn secondary';
+    closeBtn.textContent = 'Fermer';
+    closeBtn.onclick = () => closeModal();
 
-    titleEl.textContent = "Filtrer par Zone";
-    msgEl.innerHTML = '';
-    msgEl.appendChild(content);
-    actionsEl.innerHTML = `<button class="custom-modal-btn secondary" onclick="document.getElementById('custom-modal-overlay').classList.remove('active')">Fermer</button>`;
-
-    modal.classList.add('active');
+    showCustomModal("Filtrer par Zone", content, closeBtn);
 }
 
 export function renderMobilePoiList(features) {
