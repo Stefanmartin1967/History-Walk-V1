@@ -179,7 +179,7 @@ export async function handleDesktopPhotoImport(filesList) {
                 }
             }
 
-            // CRUCIAL FIX: If assigned (saved or all dups), skip the "Create New" fallback
+            // Skip "Create New" fallback if photos were assigned to an existing POI (saved or identified as duplicates)
             if (assigned) continue;
 
 
