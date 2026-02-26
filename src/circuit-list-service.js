@@ -124,3 +124,55 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
 
     return enrichedCircuits;
 }
+
+/**
+ * Calculates available zones and their circuit counts from the raw circuit list.
+ * This logic mirrors how we enriched circuits above, but specifically for building the filter menu.
+ *
+ * @returns {Object} { zoneCounts: { "ZoneName": count }, sortedZones: ["ZoneName", ...] }
+ */
+export function getAvailableZonesFromCircuits() {
+    // 1. Get Base List (Official + Local Unique)
+    const officialCircuits = state.officialCircuits || [];
+    const localCircuits = (state.myCircuits || []).filter(c => {
+        if (c.isDeleted) return false;
+        if (c.isOfficial) return false;
+        const existsInOfficial = officialCircuits.some(off =>
+            String(off.id) === String(c.id) ||
+            (off.name && c.name && off.name.trim() === c.name.trim())
+        );
+        return !existsInOfficial;
+    });
+
+    const allCircuits = [...officialCircuits, ...localCircuits];
+    const zonesMap = {};
+
+    allCircuits.forEach(c => {
+        // Re-calculate zone (or trust stored property if consistent, but re-calc is safer)
+        let zoneName = c.zone || null;
+
+        if (!zoneName) {
+            const validPois = (c.poiIds || [])
+                .map(id => state.loadedFeatures.find(f => String(getPoiId(f)) === String(id)))
+                .filter(Boolean);
+
+            if (validPois.length > 0) {
+                const firstPoi = validPois[0];
+                const [lng, lat] = firstPoi.geometry.coordinates;
+                zoneName = getZoneFromCoords(lat, lng);
+            } else if (c.realTrack && c.realTrack.length > 0) {
+                const [lat, lng] = c.realTrack[0];
+                zoneName = getZoneFromCoords(lat, lng);
+            }
+        }
+
+        if (zoneName) {
+            zonesMap[zoneName] = (zonesMap[zoneName] || 0) + 1;
+        }
+    });
+
+    return {
+        zoneCounts: zonesMap,
+        sortedZones: Object.keys(zonesMap).sort()
+    };
+}
