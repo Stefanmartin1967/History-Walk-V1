@@ -44,5 +44,34 @@ describe('DataManager Utils', () => {
         it('should return null if one part is non-numeric', () => {
             expect(parseGps('48.8566, def')).toBe(null);
         });
+
+        // New tests
+        it('should handle newlines and tabs', () => {
+            expect(parseGps('48.8566\n2.3522')).toEqual({ lat: 48.8566, lon: 2.3522 });
+            expect(parseGps('48.8566\t2.3522')).toEqual({ lat: 48.8566, lon: 2.3522 });
+        });
+
+        it('should handle scientific notation', () => {
+            expect(parseGps('1.2e-4, 5.6E2')).toEqual({ lat: 0.00012, lon: 560 });
+        });
+
+        it('should handle multiple separators', () => {
+             expect(parseGps('48.8566,, 2.3522')).toEqual({ lat: 48.8566, lon: 2.3522 });
+             expect(parseGps('48.8566;; 2.3522')).toEqual({ lat: 48.8566, lon: 2.3522 });
+        });
+
+        it('should handle integers', () => {
+             expect(parseGps('48, 2')).toEqual({ lat: 48, lon: 2 });
+        });
+
+        it('should handle trailing text/numbers gracefully (parsing first two numbers)', () => {
+             expect(parseGps('48.8566, 2.3522, 100')).toEqual({ lat: 48.8566, lon: 2.3522 });
+             expect(parseGps('48.8566 2.3522 extra text')).toEqual({ lat: 48.8566, lon: 2.3522 });
+        });
+
+        it('should return null if valid numbers are mixed with invalid text in first two positions', () => {
+             expect(parseGps('text 48.8566 2.3522')).toBe(null);
+             expect(parseGps('48.8566 text 2.3522')).toBe(null);
+        });
     });
 });
