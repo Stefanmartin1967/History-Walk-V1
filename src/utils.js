@@ -187,16 +187,6 @@ export function getZoneFromCoords(lat, lng) {
     return "Hors zone"; 
 }
 
-export function escapeHtml(text) {
-    if (!text) return text;
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
 export function escapeXml(unsafe) {
     if (unsafe === null || unsafe === undefined) return '';
     // String(unsafe) garantit que .replace existe toujours
@@ -208,6 +198,8 @@ export function escapeXml(unsafe) {
         '"': '&quot;'
     }[c]));
 }
+
+export const escapeHtml = escapeXml;
 
 // --- CLUSTERING PHOTOS GPS ---
 
