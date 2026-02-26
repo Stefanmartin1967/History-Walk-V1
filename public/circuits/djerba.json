@@ -77,6 +77,22 @@
     ]
   },
   {
+    "id": "HW-1772136688189",
+    "name": "Circuit de Mosquée El Abied à Mosquée Sidi Nasr via Mosquée Ben Biène",
+    "file": "djerba/Circuit de Mosquée El Abied à Mosquée Sidi Nasr via Mosquée Ben Biène.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.1 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El Groa",
+    "poiIds": [
+      "HW-01K77WPE6JHY0DMFMJKW847EVZ",
+      "HW-01K77WPE6SYZ3CNCV0GXBV0MYX",
+      "HW-01K77WPE6MK0YGY2RG0RX2XX48",
+      "HW-01K77WPE6NHCHVH0JKDTF607DG"
+    ]
+  },
+  {
     "id": "HW-1771578509993",
     "name": "Circuit de Mosquée El Maamoura à La Poste de Midoun via Mosquée El Azmouni",
     "file": "djerba/Circuit de Mosquée El Maamoura à La Poste de Midoun via Mosquée El Azmouni.gpx",
