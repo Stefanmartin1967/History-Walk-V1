@@ -1,4 +1,6 @@
 
+import L from 'leaflet';
+import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId } from './data.js';
 import { getZoneFromCoords } from './utils.js';
@@ -34,7 +36,8 @@ const DOM_IDS = {
         CLOSE: 'close-rich-poi-modal',
         EMAIL: 'btn-suggest-email',
         PREV: 'btn-rich-prev',
-        NEXT: 'btn-rich-next'
+        NEXT: 'btn-rich-next',
+        MOVE: 'btn-rich-move-marker'
     },
     NAV_CONTROLS: 'rich-poi-nav-controls'
 };
@@ -67,6 +70,14 @@ export const RichEditor = {
 
         const btnSuggest = document.getElementById(DOM_IDS.BTNS.EMAIL);
         if (btnSuggest) btnSuggest.style.display = 'none';
+
+        // Move Marker Button
+        const moveBtn = document.getElementById(DOM_IDS.BTNS.MOVE);
+        if (moveBtn) {
+            const newMoveBtn = moveBtn.cloneNode(true);
+            moveBtn.parentNode.replaceChild(newMoveBtn, moveBtn);
+            newMoveBtn.addEventListener('click', handleMove);
+        }
 
         // Sauvegarde
         const saveBtn = document.getElementById(DOM_IDS.BTNS.SAVE);
@@ -231,6 +242,76 @@ export const RichEditor = {
 };
 
 // --- PRIVATE HELPERS ---
+
+async function handleMove() {
+    // Hide modal temporarily
+    const modal = document.getElementById(DOM_IDS.MODAL);
+    if (modal) modal.style.display = 'none';
+
+    // Helper to update coords in Rich Editor UI and state
+    const updateEditorCoords = (lat, lng) => {
+        currentDraftCoords = { lat, lng };
+        const coordsEl = document.getElementById(DOM_IDS.COORDS);
+        if (coordsEl) coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+        // Auto-update Zone if possible
+        const autoZone = getZoneFromCoords(lat, lng);
+        if (autoZone) setValue(DOM_IDS.INPUTS.ZONE, autoZone);
+
+        isDirty = true;
+    };
+
+    if (currentMode === 'EDIT' && currentFeatureId) {
+        // Mode ÉDITION : On utilise le marqueur existant
+        const success = startMarkerDrag(
+            currentFeatureId,
+            null, // No onDrag callback needed
+            async (lat, lng, revert) => {
+                if (await showConfirm("Déplacement", "Valider la nouvelle position ?", "Valider", "Annuler")) {
+                    updateEditorCoords(lat, lng);
+                    showToast("Position mise à jour.", "success");
+                } else {
+                    revert();
+                }
+                // Re-open modal
+                if (modal) modal.style.display = 'flex';
+            }
+        );
+
+        if (!success && modal) modal.style.display = 'flex';
+
+    } else if (currentMode === 'CREATE' && currentDraftCoords) {
+        // Mode CRÉATION : On crée un marqueur temporaire
+        const { lat, lng } = currentDraftCoords;
+        const tempMarker = L.marker([lat, lng], { draggable: true }).addTo(map);
+
+        tempMarker.bindPopup("Déplacez-moi !", { autoClose: false, closeOnClick: false }).openPopup();
+
+        showToast("Mode déplacement activé.", "info");
+
+        const onEnd = async () => {
+            const newPos = tempMarker.getLatLng();
+
+            if (await showConfirm("Déplacement", "Valider la nouvelle position ?", "Valider", "Annuler")) {
+                updateEditorCoords(newPos.lat, newPos.lng);
+                showToast("Position mise à jour.", "success");
+            } else {
+                // Cancelled, keep old coords (no action needed on editor state)
+            }
+
+            // Cleanup
+            tempMarker.remove();
+            if (modal) modal.style.display = 'flex';
+        };
+
+        // On écoute dragend, mais on peut aussi attendre un clic sur le marker ou autre
+        // Pour rester simple et cohérent : dragend -> confirm
+        tempMarker.on('dragend', onEnd);
+
+        // Optionnel : fermer au clic sur la carte si pas de drag ?
+        // Compliqué. Restons sur le dragend simple.
+    }
+}
 
 function updateNavigationControls(currentPoiId) {
     const navControls = document.getElementById(DOM_IDS.NAV_CONTROLS);

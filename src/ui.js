@@ -6,7 +6,7 @@ import { escapeXml } from './utils.js';
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive, speakText } from './voice.js';
 import { clearCircuit, navigatePoiDetails, toggleSelectionMode, loadCircuitById } from './circuit.js';
-import { map, clearMarkerHighlights } from './map.js';
+import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, updatePoiPosition, renderMobileCircuitsList, renderMobilePoiList, switchMobileView } from './mobile.js';
 import { createIcons, icons } from 'lucide';
 import { showToast } from './toast.js';
@@ -356,72 +356,30 @@ if (chkInc) {
     const moveMarkerBtn = document.getElementById('btn-move-marker');
     if (moveMarkerBtn) {
         moveMarkerBtn.addEventListener('click', () => {
-             // 1. Trouver le layer correspondant sur la carte
-             if (!state.geojsonLayer) return;
-
-             let targetLayer = null;
-             state.geojsonLayer.eachLayer(layer => {
-                 if (getPoiId(layer.feature) === poiId) targetLayer = layer;
-             });
-
-             if (!targetLayer) {
-                 showToast("Marqueur introuvable sur la carte.", "error");
-                 return;
-             }
-
-             // 2. Activer le drag
-             if (targetLayer.dragging) {
-                 // ON ACTIVE LE FLAG D'ÉTAT POUR IGNORER LE CLIC (Evite conflit avec Creation Mode)
-                 state.draggingMarkerId = poiId;
-
-                 targetLayer.dragging.enable();
-                 targetLayer.setOpacity(0.7); // Feedback visuel
-                 showToast("Mode déplacement activé. Glissez le marqueur !", "info");
-
-                 // Définition des handlers pour pouvoir les retirer proprement
-                 const onDrag = (e) => {
-                     const { lat, lng } = e.target.getLatLng();
+             startMarkerDrag(
+                 poiId,
+                 (lat, lng) => {
                      const latInput = document.getElementById('poi-lat');
                      const lngInput = document.getElementById('poi-lng');
                      if (latInput) latInput.value = lat.toFixed(5);
                      if (lngInput) lngInput.value = lng.toFixed(5);
-                 };
-
-                 const onDragEnd = async (e) => {
-                     const { lat, lng } = e.target.getLatLng();
-
-                     // Confirmation
+                 },
+                 async (lat, lng, revert) => {
                      if (await showConfirm("Déplacement", "Valider la nouvelle position ?", "Valider", "Annuler")) {
                          await updatePoiCoordinates(poiId, lat, lng);
-                         targetLayer.dragging.disable();
-                         targetLayer.setOpacity(1);
                          showToast("Position mise à jour.", "success");
                      } else {
-                         // Annulation : On remet l'ancienne position
+                         revert();
+                         // Reset inputs
                          const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
                          const [oldLng, oldLat] = feature.geometry.coordinates;
-                         targetLayer.setLatLng([oldLat, oldLng]);
-
-                         targetLayer.dragging.disable();
-                         targetLayer.setOpacity(1);
-
-                         // Reset inputs
                          const latInput = document.getElementById('poi-lat');
                          const lngInput = document.getElementById('poi-lng');
                          if (latInput) latInput.value = oldLat.toFixed(5);
                          if (lngInput) lngInput.value = oldLng.toFixed(5);
                      }
-                     // Cleanup
-                     targetLayer.off('drag', onDrag);
-                     targetLayer.off('dragend', onDragEnd);
-
-                     // ON RESET LE FLAG D'ÉTAT
-                     state.draggingMarkerId = null;
-                 };
-
-                 targetLayer.on('drag', onDrag);
-                 targetLayer.on('dragend', onDragEnd);
-             }
+                 }
+             );
         });
     }
 

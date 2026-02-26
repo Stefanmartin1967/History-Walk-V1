@@ -397,6 +397,57 @@ export function refreshMapMarkers(visibleFeatures) {
 }
 
 // --- NOUVEAU : AUTO-CENTRAGE INTELLIGENT (FITBOUNDS) ---
+export function startMarkerDrag(poiId, onDrag, onEnd) {
+    if (!state.geojsonLayer) return false;
+
+    let targetLayer = null;
+    state.geojsonLayer.eachLayer(layer => {
+        if (getPoiId(layer.feature) === poiId) targetLayer = layer;
+    });
+
+    if (!targetLayer) {
+        showToast("Marqueur introuvable sur la carte.", "error");
+        return false;
+    }
+
+    if (targetLayer.dragging) {
+        state.draggingMarkerId = poiId;
+        targetLayer.dragging.enable();
+        targetLayer.setOpacity(0.7);
+        showToast("Mode déplacement activé. Glissez le marqueur !", "info");
+
+        const originalLatLng = targetLayer.getLatLng();
+
+        const dragHandler = (e) => {
+            const { lat, lng } = e.target.getLatLng();
+            if (onDrag) onDrag(lat, lng);
+        };
+
+        const endHandler = (e) => {
+            const { lat, lng } = e.target.getLatLng();
+
+            // Cleanup
+            targetLayer.dragging.disable();
+            targetLayer.setOpacity(1);
+            targetLayer.off('drag', dragHandler);
+            targetLayer.off('dragend', endHandler);
+            state.draggingMarkerId = null;
+
+            if (onEnd) {
+                // Pass new coords + Revert function
+                onEnd(lat, lng, () => {
+                    targetLayer.setLatLng(originalLatLng);
+                });
+            }
+        };
+
+        targetLayer.on('drag', dragHandler);
+        targetLayer.on('dragend', endHandler);
+        return true;
+    }
+    return false;
+}
+
 export function fitMapToContent() {
     // Si on a une configuration fixe pour la carte actuelle, on l'utilise
     if (state.currentMapId && state.destinations && state.destinations.maps && state.destinations.maps[state.currentMapId]) {
