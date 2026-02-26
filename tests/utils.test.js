@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
 
 describe('Utils', () => {
     describe('generateHWID', () => {
@@ -63,6 +63,22 @@ describe('Utils', () => {
         it('should handle null/undefined', () => {
             expect(escapeXml(null)).toBe('');
             expect(escapeXml(undefined)).toBe('');
+        });
+    });
+
+    describe('escapeHtml (alias of escapeXml)', () => {
+        it('should escape special characters same as escapeXml', () => {
+            expect(escapeHtml('<script>')).toBe('&lt;script&gt;');
+            expect(escapeHtml("'")).toBe('&apos;');
+        });
+
+        it('should handle numbers safely', () => {
+            expect(escapeHtml(123)).toBe('123');
+        });
+
+        it('should handle null/undefined returning empty string', () => {
+            expect(escapeHtml(null)).toBe('');
+            expect(escapeHtml(undefined)).toBe('');
         });
     });
 
