@@ -69,33 +69,34 @@ function extractTrackPoints(gpxContent) {
 
 function extractWaypoints(gpxContent) {
     const wpts = [];
-    // More robust regex for <wpt> block, capturing lat/lon and body
-    const regex = /<wpt[^>]+lat="([^"]+)"[^>]+lon="([^"]+)"[^>]*>([\s\S]*?)<\/wpt>/g;
+    // Robust regex to capture attributes (group 1) and content (group 2)
+    // This ensures we extract lat/lon ONLY from the opening tag, avoiding false positives in content.
+    const regex = /<wpt\s+([^>]*)>([\s\S]*?)<\/wpt>/gi;
     let match;
 
-    // Also try reversed attribute order if regex fails (simple quick fix: just make regex attribute order agnostic)
-    // Actually, let's use a simpler approach: find <wpt, extract attributes, then find <name> inside
+    while ((match = regex.exec(gpxContent)) !== null) {
+        const attrString = match[1];
+        const content = match[2];
 
-    const wptBlocks = gpxContent.match(/<wpt[\s\S]*?<\/wpt>/g);
-    if (!wptBlocks) return [];
-
-    wptBlocks.forEach(block => {
-        const latMatch = block.match(/lat="([^"]+)"/);
-        const lonMatch = block.match(/lon="([^"]+)"/);
-        const nameMatch = block.match(/<name>(.*?)<\/name>/);
+        // Extract attributes from the opening tag string only
+        const latMatch = attrString.match(/lat="([^"]+)"/i);
+        const lonMatch = attrString.match(/lon="([^"]+)"/i);
 
         if (latMatch && lonMatch) {
+            const nameMatch = content.match(/<name>(.*?)<\/name>/i);
             let name = nameMatch ? unescapeXml(nameMatch[1].trim()) : null;
+
             if (name && name.includes('<![CDATA[')) {
-                 name = name.replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1');
+                 name = name.replace(/<!\[CDATA\[(.*?)\]\]>/gi, '$1');
             }
+
             wpts.push({
                 lat: parseFloat(latMatch[1]),
                 lon: parseFloat(lonMatch[1]),
                 name: name
             });
         }
-    });
+    }
 
     return wpts;
 }
@@ -512,4 +513,12 @@ function main() {
     });
 }
 
-main();
+if (require.main === module) {
+    main();
+}
+
+module.exports = {
+    extractWaypoints,
+    extractTrackPoints,
+    unescapeXml
+};
