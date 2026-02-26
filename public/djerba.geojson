@@ -141,7 +141,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P",
-        "planifieCounter": 0
+        "planifieCounter": 2
       }
     },
     {
@@ -226,7 +226,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68SW9XWBFFCRBWXZYM",
-        "planifieCounter": 0,
+        "planifieCounter": 2,
         "lat": 33.79811118269014,
         "lng": 11.028802710036706
       }
@@ -281,7 +281,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6805D82JWX44QAVVV9",
-        "planifieCounter": 0,
+        "planifieCounter": 2,
         "lat": 33.793757704808506,
         "lng": 11.021607244300704
       }
@@ -335,7 +335,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68ZXYA0Z9T3QEN0VYW",
-        "planifieCounter": 0
+        "planifieCounter": 2
       }
     },
     {
@@ -1167,7 +1167,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A3AYDG7D68R9A0JBT",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -1348,7 +1348,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -1981,7 +1981,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -3996,7 +3996,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ"
+        "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ",
+        "planifieCounter": 2
       }
     },
     {
@@ -4655,7 +4656,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6MK0YGY2RG0RX2XX48",
-        "planifieCounter": 0
+        "planifieCounter": 2
       }
     },
     {
@@ -4737,7 +4738,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG",
-        "planifieCounter": 0
+        "planifieCounter": 2
       }
     },
     {
@@ -5601,7 +5602,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QGFPEGPTZ1G59C9FZ",
-        "planifieCounter": 0
+        "planifieCounter": 2
       }
     },
     {
@@ -5652,7 +5653,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P",
-        "planifieCounter": 0
+        "planifieCounter": 2
       }
     },
     {
@@ -6187,7 +6188,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6SYZ3CNCV0GXBV0MYX"
+        "HW_ID": "HW-01K77WPE6SYZ3CNCV0GXBV0MYX",
+        "planifieCounter": 2
       }
     },
     {
@@ -6341,7 +6343,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -6673,7 +6675,7 @@
         "Catégorie": "Restaurant",
         "Zone": "Sedouikech",
         "Description": "Restaurant de bord de plage, face à la mer",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
