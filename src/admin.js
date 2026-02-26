@@ -12,17 +12,149 @@ import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-c
 import { recalculatePlannedCountersForMap } from './gpx.js';
 
 export function initAdminMode() {
+    // Check for persistent session
+    if (localStorage.getItem('admin_session') === 'active') {
+        state.isAdmin = true;
+    }
+
     // Initial check
     console.log("[Admin] Init mode. Is Admin?", state.isAdmin);
     toggleAdminUI(state.isAdmin);
 
     eventBus.on('admin:mode-toggled', (isAdmin) => {
         toggleAdminUI(isAdmin);
+        // Persist state
+        if (isAdmin) {
+            localStorage.setItem('admin_session', 'active');
+        } else {
+            localStorage.removeItem('admin_session');
+        }
+        updateAdminLoginButton();
     });
 
     setupAdminListeners();
     setupGodModeListener();
     initAdminControlCenter(); // Setup the new Control Center logic
+    updateAdminLoginButton(); // Setup/Update the login button
+}
+
+function updateAdminLoginButton() {
+    const menuContent = document.getElementById('tools-menu-content');
+    if (!menuContent) return;
+
+    let btn = document.getElementById('btn-admin-login-logout');
+
+    // Si le bouton n'existe pas, on le crée
+    if (!btn) {
+        // Ajout d'un séparateur avant le bouton s'il n'existe pas déjà juste avant
+        const lastChild = menuContent.lastElementChild;
+        if (lastChild && lastChild.tagName !== 'DIV') { // Simple heuristic
+             const separator = document.createElement('div');
+             separator.style.height = '1px';
+             separator.style.width = '100%';
+             separator.style.background = 'var(--line)';
+             separator.style.margin = '5px 0';
+             menuContent.appendChild(separator);
+        }
+
+        btn = document.createElement('button');
+        btn.id = 'btn-admin-login-logout';
+        btn.className = 'tools-menu-item';
+        menuContent.appendChild(btn);
+    }
+
+    // On clone pour nettoyer les anciens écouteurs
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+
+    if (state.isAdmin) {
+        newBtn.innerHTML = `<i data-lucide="log-out"></i> Déconnexion`;
+        newBtn.style.color = 'var(--danger)';
+        newBtn.addEventListener('click', logoutAdmin);
+    } else {
+        newBtn.innerHTML = `<i data-lucide="lock"></i> Connexion Admin`;
+        newBtn.style.color = 'var(--ink)';
+        newBtn.addEventListener('click', showAdminLoginModal);
+    }
+
+    // Refresh icons
+    createIcons({ icons, root: newBtn });
+}
+
+function logoutAdmin() {
+    state.isAdmin = false;
+    showToast("Déconnexion Admin effectuée.", "info");
+    eventBus.emit('admin:mode-toggled', false);
+}
+
+function showAdminLoginModal() {
+    const overlay = document.getElementById('custom-modal-overlay');
+    const title = document.getElementById('custom-modal-title');
+    const message = document.getElementById('custom-modal-message');
+    const actions = document.getElementById('custom-modal-actions');
+
+    if (!overlay || !title || !message || !actions) return;
+
+    title.textContent = "Connexion Admin";
+    message.innerHTML = `
+        <div style="text-align: left;">
+            <p style="margin-bottom: 15px; color: var(--ink-soft);">
+                Veuillez entrer le mot de passe administrateur.
+            </p>
+            <input type="password" id="admin-password-input" placeholder="Mot de passe..."
+                   style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 16px;">
+            <div id="login-error-msg" style="color: var(--danger); margin-top: 10px; font-size: 0.9em; min-height: 1.2em;"></div>
+        </div>
+    `;
+
+    actions.innerHTML = '';
+
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'custom-modal-btn secondary';
+    btnCancel.textContent = "Annuler";
+    btnCancel.onclick = () => overlay.classList.remove('active');
+
+    const btnLogin = document.createElement('button');
+    btnLogin.className = 'custom-modal-btn primary';
+    btnLogin.textContent = "Connexion";
+
+    const handleLogin = () => {
+        const input = document.getElementById('admin-password-input');
+        const errorMsg = document.getElementById('login-error-msg');
+
+        if (!input) return;
+
+        const pwd = input.value.trim();
+
+        if (pwd === 'S1a7n0d9r1i9n7e3') {
+            state.isAdmin = true;
+            showToast("Connexion réussie !", "success");
+            eventBus.emit('admin:mode-toggled', true);
+            overlay.classList.remove('active');
+        } else {
+            errorMsg.textContent = "Mot de passe incorrect.";
+            input.value = '';
+            input.focus();
+        }
+    };
+
+    btnLogin.onclick = handleLogin;
+
+    // Allow Enter key
+    setTimeout(() => {
+        const input = document.getElementById('admin-password-input');
+        if(input) {
+            input.focus();
+            input.onkeydown = (e) => {
+                if(e.key === 'Enter') handleLogin();
+            };
+        }
+    }, 100);
+
+    actions.appendChild(btnCancel);
+    actions.appendChild(btnLogin);
+
+    overlay.classList.add('active');
 }
 
 function toggleAdminUI(isAdmin) {
@@ -184,7 +316,8 @@ function setupGodModeListener() {
     });
 
     // 2. Version Mobile (Quintuple Tap)
-    const btnMenu = document.getElementById('btn-admin-menu');
+    // On cible le bouton Outils (visible) au lieu du bouton Admin (caché)
+    const btnMenu = document.getElementById('btn-tools-menu');
     if (btnMenu) {
         let tapCount = 0;
         let tapTimeout;
