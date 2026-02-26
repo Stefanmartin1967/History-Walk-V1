@@ -12,11 +12,14 @@ function getElements() {
 }
 
 function resetModal() {
-    const { box } = getElements();
+    const { box, title, actions } = getElements();
     if (box) {
         // Reset classes to base only to clean up any custom classes from previous calls
         box.className = 'custom-modal-box';
     }
+    // Reset inline styles that might have been set by specific modals (like Admin CC)
+    if (title) title.style.display = '';
+    if (actions) actions.style.display = '';
 }
 
 export function closeModal() {
