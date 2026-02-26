@@ -105,3 +105,58 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
 
     return await response.json();
 }
+
+/**
+ * Supprime un fichier sur GitHub via l'API
+ * @param {string} token Le Personal Access Token
+ * @param {string} owner Le propriétaire du repo
+ * @param {string} repo Le nom du repo
+ * @param {string} path Le chemin du fichier à supprimer
+ * @param {string} message Le message de commit
+ */
+export async function deleteFileFromGitHub(token, owner, repo, path, message) {
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
+    // 1. Récupérer le SHA du fichier (obligatoire pour DELETE)
+    let sha = null;
+    try {
+        const checkResponse = await fetch(apiUrl, {
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+        if (checkResponse.ok) {
+            const data = await checkResponse.json();
+            sha = data.sha;
+            console.log("[GitHub Delete] Fichier trouvé, SHA:", sha);
+        } else {
+            throw new Error(`Fichier introuvable sur le serveur: ${path}`);
+        }
+    } catch (e) {
+        throw new Error(`Erreur lors de la récupération du fichier à supprimer: ${e.message}`);
+    }
+
+    // 2. Envoyer la requête DELETE
+    const payload = {
+        message: message || `Delete ${path} via Admin`,
+        sha: sha
+    };
+
+    const response = await fetch(apiUrl, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erreur lors de la suppression GitHub");
+    }
+
+    return await response.json();
+}

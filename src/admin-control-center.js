@@ -7,6 +7,7 @@ import { generateGPXString } from './gpx.js';
 import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
 import { showToast } from './toast.js';
 import { saveAppState } from './database.js';
+import { renderMaintenanceTab } from './admin-maintenance.js';
 
 // --- STATE MANAGEMENT ---
 const DRAFT_KEY = 'admin_draft_v1';
@@ -352,6 +353,7 @@ export async function openControlCenter() {
                 <div class="admin-cc-tabs">
                     <div class="admin-cc-tab active" data-tab="dashboard"><i data-lucide="layout-grid" width="16"></i> Dashboard</div>
                     <div class="admin-cc-tab" data-tab="changes"><i data-lucide="list-checks" width="16"></i> Modifications</div>
+                    <div class="admin-cc-tab" data-tab="maintenance"><i data-lucide="server" width="16"></i> Nettoyage</div>
                     <div class="admin-cc-tab" data-tab="settings"><i data-lucide="settings" width="16"></i> Config</div>
                 </div>
             </div>
@@ -882,6 +884,8 @@ function renderTab(tab) {
             const btnDown = document.getElementById('btn-sync-download');
             if(btnDown) btnDown.onclick = downloadAdminData;
         }, 0);
+    } else if (tab === 'maintenance') {
+        renderMaintenanceTab(container);
     }
 
     createIcons({ icons, root: container });

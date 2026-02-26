@@ -262,11 +262,15 @@ export function renderExplorerList() {
                 : '';
 
             // Actions : Suppression interdite pour les officiels (sauf Admin)
+            // UPDATE: Masqué par défaut dans la liste pour éviter les erreurs. La suppression reste possible dans le détail.
+            const deleteBtn = '';
+            /*
             const deleteBtn = (!c.isOfficial || state.isAdmin)
                 ? `<button class="explorer-item-delete" data-id="${c.id}" title="Supprimer" style="color:var(--danger); background:none; border:none; padding:4px;">
                         <i data-lucide="trash-2" style="width:16px; height:16px;"></i>
                    </button>`
                 : '';
+            */
 
             // Toggle Visited Logic
             const isCompleted = c._isCompleted;
