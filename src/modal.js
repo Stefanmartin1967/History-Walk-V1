@@ -199,9 +199,10 @@ export function showPrompt(titleText, messageText, defaultValue = "") {
  * @param {string} messageText
  * @param {string} okLabel
  * @param {string|null} customClass - Classe CSS optionnelle pour la boîte modale.
+ * @param {Function|null} onReady - Fonction appelée lorsque la modale est prête (DOM affiché).
  * @returns {Promise<void>}
  */
-export function showAlert(titleText, messageText, okLabel = "OK", customClass = null) {
+export function showAlert(titleText, messageText, okLabel = "OK", customClass = null, onReady = null) {
     return new Promise((resolve) => {
         resetModal();
         const { overlay, box, title, message, actions } = getElements();
@@ -231,5 +232,13 @@ export function showAlert(titleText, messageText, okLabel = "OK", customClass = 
 
         actions.appendChild(btnOk);
         overlay.classList.add('active');
+
+        // Callback "onReady" pour attacher des listeners ou manipuler le DOM
+        if (typeof onReady === 'function') {
+            // Un petit délai pour s'assurer que le DOM est bien rendu si nécessaire,
+            // mais comme on manipule le DOM synchrone juste au-dessus, appel direct OK.
+            // On passe les éléments utiles au callback
+            onReady({ messageContainer: message, overlay });
+        }
     });
 }

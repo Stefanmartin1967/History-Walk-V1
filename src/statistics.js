@@ -443,21 +443,27 @@ export async function showStatisticsModal() {
     </div>
     `;
 
-    const modalPromise = showAlert("Mon Carnet de Voyage", html, "Fermer", "gamification-modal");
+    const modalPromise = showAlert(
+        "Mon Carnet de Voyage",
+        html,
+        "Fermer",
+        "gamification-modal",
+        // Callback onReady : Exécuté une fois le DOM de la modale en place
+        ({ messageContainer }) => {
+            if (messageContainer) {
+                // 1. Initialiser les icônes Lucide
+                createIcons({ icons, root: messageContainer });
 
-    // Fix: Attach listeners immediately after showing modal, do not wait for close
-    const modalContent = document.getElementById('custom-modal-message');
-    if (modalContent) {
-        createIcons({ icons, root: modalContent });
-
-        // Add Print Listener
-        const btnPrint = document.getElementById('btn-print-card');
-        if (btnPrint) {
-            btnPrint.addEventListener('click', () => {
-                printCardElement();
-            });
+                // 2. Attacher l'événement d'impression
+                const btnPrint = messageContainer.querySelector('#btn-print-card');
+                if (btnPrint) {
+                    btnPrint.addEventListener('click', () => {
+                        printCardElement();
+                    });
+                }
+            }
         }
-    }
+    );
 
     await modalPromise;
 }
