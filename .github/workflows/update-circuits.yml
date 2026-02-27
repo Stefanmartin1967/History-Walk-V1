@@ -5,6 +5,10 @@ on:
     paths:
       - 'public/circuits/**'
 
+concurrency:
+  group: "update-circuits"
+  cancel-in-progress: true
+
 jobs:
   update-index:
     runs-on: ubuntu-latest

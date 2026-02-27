@@ -1263,39 +1263,6 @@ async function publishChanges() {
             }
         }
 
-        // --- NOUVEAU : Publication des Circuits si nécessaire ---
-        // On vérifie s'il y a des changements détectés (via Diff) OU des changements pistés (via Draft)
-        const hasCircuitChanges = (diffData.circuits && diffData.circuits.length > 0) || (Object.keys(adminDraft.pendingCircuits).length > 0);
-
-        // On combine pour inclure aussi les circuits locaux nouvellement créés
-        const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
-
-        // On filtre les circuits supprimés (isDeleted) et ceux sans trace réelle AVANT l'upload de l'index
-        const validCircuits = allCircuits.filter(c => !c.isDeleted && c.realTrack && c.realTrack.length > 0);
-
-        if (hasCircuitChanges && validCircuits.length > 0) {
-            console.log(`[Admin] Publication de l'index des circuits (Changements détectés)...`);
-            const circuitsFilename = state.destinations.maps[state.currentMapId]?.circuitsFile || `${state.currentMapId || 'djerba'}.json`;
-            const circuitsPath = `public/circuits/${circuitsFilename}`;
-
-            // On nettoie un peu les objets pour l'export (enlever les props circulaires ou UI)
-            const circuitsData = validCircuits.map(c => {
-                const { ...cleanCircuit } = c;
-                delete cleanCircuit.isLoaded;
-                delete cleanCircuit.isOfficial; // On nettoie le flag "isOfficial" local
-                // On s'assure que 'isCompleted' est aussi nettoyé si besoin, ou on le garde ?
-                // Généralement on publie le modèle, pas l'état utilisateur.
-                delete cleanCircuit.isCompleted;
-                delete cleanCircuit.isDeleted;
-                return cleanCircuit;
-            });
-
-            const circuitsBlob = new Blob([JSON.stringify(circuitsData, null, 2)], { type: 'application/json' });
-            const circuitsFile = new File([circuitsBlob], circuitsFilename, { type: 'application/json' });
-
-            await uploadFileToGitHub(circuitsFile, token, 'Stefanmartin1967', 'History-Walk-V1', circuitsPath, `Update circuits index via Admin Center`);
-        }
-
         showToast("Publication réussie !", "success");
         adminDraft = { pendingPois: {}, pendingCircuits: {} };
         localStorage.setItem(DRAFT_KEY, JSON.stringify(adminDraft));
