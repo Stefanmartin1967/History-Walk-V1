@@ -723,10 +723,10 @@ export function renderMobileMenu() {
                 <span>Changer Thème</span>
             </button>
             <div class="mobile-divider"></div>
-            <button class="mobile-list-item bmc-btn-mobile" id="mob-action-bmc">
+            <button class="mobile-list-item bmc-btn-mobile" id="mob-action-bmc" style="background: linear-gradient(135deg, #FFDD00 0%, #FBB03B 100%); color: #422006; font-weight: 700;">
                 <i data-lucide="coffee"></i>
                 <span>Offrir un café</span>
-                <i data-lucide="heart" class="bmc-heart-icon"></i>
+                <i data-lucide="heart" class="bmc-heart-icon" style="color:#e91e63; fill:#e91e63;"></i>
             </button>
         </div>
         <div style="text-align:center; color:var(--ink-soft); font-size:12px; margin-top:20px; padding-bottom:100px;">

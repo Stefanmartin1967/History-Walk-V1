@@ -8,6 +8,80 @@ import { processImportedGpx } from './gpx.js';
 // Import pour contrôler la vue mobile
 import { isMobileView, switchMobileView } from './mobile.js';
 import { downloadFile } from './utils.js';
+import { showCustomModal, closeModal } from './modal.js';
+
+/**
+ * Affiche la modale de contribution avant d'exécuter une action d'export.
+ * @param {string} actionType - 'gpx', 'circuits', 'backup'
+ * @param {Function} proceedCallback - La fonction à exécuter si l'utilisateur continue.
+ */
+export function handleExportWithContribution(actionType, proceedCallback) {
+    if (state.isAdmin) {
+        proceedCallback();
+        return;
+    }
+
+    const content = `
+        <div style="display: flex; flex-direction: column; gap: 20px; text-align: center; padding: 10px;">
+            <p style="font-size: 16px; color: var(--ink); line-height: 1.5; margin: 0;">
+                Contribuer à la maintenance et à l'amélioration de l'outil
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 10px;">
+                <button id="btn-contrib-bmc" class="action-btn" style="background: linear-gradient(135deg, #FFDD00 0%, #FBB03B 100%); color: #422006; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 10px rgba(251, 176, 59, 0.3);">
+                    <i data-lucide="heart" style="fill:#e91e63; color:#e91e63;"></i>
+                    <span>Aider à améliorer le site</span>
+                </button>
+
+                <div style="display:flex; align-items:center; gap:10px; margin: 5px 0;">
+                    <div style="height:1px; background:var(--line); flex:1;"></div>
+                    <span style="font-size:12px; color:var(--ink-soft); font-weight:600;">OU</span>
+                    <div style="height:1px; background:var(--line); flex:1;"></div>
+                </div>
+
+                <button id="btn-contrib-export" class="action-btn" style="background: var(--surface); color: var(--ink); border: 2px solid var(--line); padding: 14px; border-radius: 12px; font-weight: 600; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i data-lucide="download"></i>
+                    <span>${getActionLabel(actionType)}</span>
+                </button>
+            </div>
+        </div>
+    `;
+
+    // On utilise une modale personnalisée sans boutons standard
+    showCustomModal("Soutenir le projet", content, null);
+
+    // Injection des icônes et écouteurs d'événements (Synchrone car le DOM est mis à jour)
+    const bmcBtn = document.getElementById('btn-contrib-bmc');
+    const exportBtn = document.getElementById('btn-contrib-export');
+
+    // Re-render icons inside modal content
+    import('lucide').then(({ createIcons, icons }) => {
+        const modalBox = document.querySelector('.custom-modal-box');
+        if (modalBox) createIcons({ icons, root: modalBox });
+    });
+
+    if (bmcBtn) {
+        bmcBtn.onclick = () => {
+            window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+        };
+    }
+
+    if (exportBtn) {
+        exportBtn.onclick = () => {
+            closeModal();
+            proceedCallback();
+        };
+    }
+}
+
+function getActionLabel(type) {
+    switch (type) {
+        case 'gpx': return "Exporter le GPX";
+        case 'circuits': return "Exporter les Circuits";
+        case 'backup': return "Continuer la Sauvegarde";
+        default: return "Continuer";
+    }
+}
 
 // --- IMPORTATION GÉNÉRIQUE ---
 

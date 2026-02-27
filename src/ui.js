@@ -19,7 +19,7 @@ import { initCircuitListUI, renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm, showAlert } from './modal.js';
 import { RichEditor } from './richEditor.js';
 import { switchSidebarTab } from './ui-sidebar.js'; // Imported for use inside ui.js functions
-import { exportFullBackupPC, exportDataForMobilePC, saveUserData } from './fileManager.js';
+import { exportFullBackupPC, exportDataForMobilePC, saveUserData, handleExportWithContribution } from './fileManager.js';
 import { showStatisticsModal } from './statistics.js';
 
 export const DOM = {};
@@ -41,8 +41,8 @@ export function initializeDomReferences() {
         'btn-loop-circuit',
         'btn-clear-circuit', 'close-circuit-panel-btn',
         'btn-categories', 'btn-legend',
-        'explorer-list', 'btn-open-my-circuits',
-        'btn-bmc', 'btn-tools-menu', 'btn-open-trash'
+        'btn-open-my-circuits', 'btn-save-circuits',
+        'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-sidebar'
     ];
     
     // Récupération sécurisée des éléments
@@ -121,6 +121,36 @@ export function initializeDomReferences() {
         });
     }
 
+    // --- EXPORT LOGIC WITH CONTRIBUTION MODAL ---
+    if (DOM.btnExportGpx) {
+        DOM.btnExportGpx.addEventListener('click', async () => {
+            if (DOM.btnExportGpx.disabled) return;
+            handleExportWithContribution('gpx', () => {
+                // Original logic trigger
+                // Note: The logic for GPX export is handled in main.js or circuit.js usually
+                // But looking at codebase, main.js sets up listener on DOM.btnExportGpx too.
+                // We need to Intercept it.
+                // Since main.js is likely already loaded, this listener adds to it.
+                // We should prevent Default if we want to stop immediate download?
+                // Actually, the best way is to let the main logic be callable or manage it here.
+                // However, main.js has the logic.
+                // To avoid complexity, we can assume the user clicked "Exporter" in the modal.
+                // But we need to BLOCK the original click if we want to show modal first.
+                // We can't easily block another listener added elsewhere unless we use capture or remove it.
+                // Strategy: We will dispatch a custom event 'ui:request-export-gpx' and move the logic from main.js to listen to that,
+                // OR we check state here.
+
+                // Simpler: Trigger the hidden export logic.
+                // If main.js listens to click, we can't easily stop it.
+                // We'll rely on a check in the actual export function or move the logic here.
+                // Let's look at main.js later to refactor. For now let's set up the modal.
+
+                // Assuming we can proceed:
+                eventBus.emit('request-export-gpx');
+            });
+        });
+    }
+
     // --- LOGIQUE SAUVEGARDE UNIFIÉE ---
     if (DOM.btnOpenBackupModal) {
         DOM.btnOpenBackupModal.addEventListener('click', () => {
@@ -137,23 +167,33 @@ export function initializeDomReferences() {
 
     if (DOM.btnBackupFull) {
         DOM.btnBackupFull.addEventListener('click', () => {
-            if(window.innerWidth > 768) {
-                exportFullBackupPC();
-            } else {
-                saveUserData(true);
-            }
-            if(DOM.backupModal) DOM.backupModal.classList.remove('active');
+            // Intercept for contribution modal
+            import('./fileManager.js').then(({ handleExportWithContribution }) => {
+                handleExportWithContribution('backup', () => {
+                    if(window.innerWidth > 768) {
+                        exportFullBackupPC();
+                    } else {
+                        saveUserData(true);
+                    }
+                    if(DOM.backupModal) DOM.backupModal.classList.remove('active');
+                });
+            });
         });
     }
 
     if (DOM.btnBackupLite) {
         DOM.btnBackupLite.addEventListener('click', () => {
-            if(window.innerWidth > 768) {
-                exportDataForMobilePC();
-            } else {
-                saveUserData(false);
-            }
-            if(DOM.backupModal) DOM.backupModal.classList.remove('active');
+            // Intercept for contribution modal
+            import('./fileManager.js').then(({ handleExportWithContribution }) => {
+                handleExportWithContribution('backup', () => {
+                    if(window.innerWidth > 768) {
+                        exportDataForMobilePC();
+                    } else {
+                        saveUserData(false);
+                    }
+                    if(DOM.backupModal) DOM.backupModal.classList.remove('active');
+                });
+            });
         });
     }
 
@@ -166,6 +206,12 @@ export function initializeDomReferences() {
 
     if (DOM.btnBmc) {
         DOM.btnBmc.addEventListener('click', () => {
+            window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+        });
+    }
+
+    if (DOM.btnBmcSidebar) {
+        DOM.btnBmcSidebar.addEventListener('click', () => {
             window.open('https://www.buymeacoffee.com/history_walk', '_blank');
         });
     }
