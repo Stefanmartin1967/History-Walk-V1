@@ -14,10 +14,11 @@ import { logModification } from './logger.js';
 import { showToast } from './toast.js';
 import { getPoiId, getPoiName, generateHWID } from './utils.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
+import { getDomainFromUrl } from './url-utils.js';
 
 // --- UTILITAIRES ---
 
-export { getPoiId, getPoiName, checkAndApplyMigrations };
+export { getPoiId, getPoiName, checkAndApplyMigrations, getDomainFromUrl };
 
 // --- GESTION DES MIGRATIONS D'ID (ADMIN) ---
 
@@ -120,17 +121,6 @@ async function checkAndApplyMigrations() {
 eventBus.on('admin:mode-toggled', (isAdmin) => {
     if (isAdmin) checkAndApplyMigrations();
 });
-
-
-export function getDomainFromUrl(url) {
-    if (!url) return '';
-    try {
-        const hostname = new URL(url).hostname;
-        return hostname.replace(/^www\./, '');
-    } catch (e) {
-        return url;
-    }
-}
 
 // --- CŒUR DU SYSTÈME : Chargement de la Carte ---
 
