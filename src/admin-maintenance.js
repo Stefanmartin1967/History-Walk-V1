@@ -1,5 +1,6 @@
 import { state } from './state.js';
 import { getStoredToken, deleteFileFromGitHub } from './github-sync.js';
+import { deleteCircuitById, restoreCircuit } from './database.js'; // DB Functions
 import { showToast } from './toast.js';
 import { createIcons, icons } from 'lucide';
 import { showConfirm } from './modal.js';
@@ -7,6 +8,7 @@ import { showConfirm } from './modal.js';
 // --- STATE ---
 let serverCircuits = [];
 let duplicateGroups = [];
+let deletedCircuits = []; // Local trash
 
 /**
  * Récupère l'index officiel depuis le serveur (bypass cache)
@@ -72,6 +74,9 @@ async function runAnalysis(container) {
     serverCircuits = await fetchServerCircuits();
     duplicateGroups = findDuplicates(serverCircuits);
 
+    // Scan local deleted
+    deletedCircuits = state.myCircuits.filter(c => c.isDeleted);
+
     renderResults(container);
 }
 
@@ -100,6 +105,42 @@ function renderResults(container) {
                 </div>
             ` : ''}
     `;
+
+    // 0. CORBEILLE LOCALE (New Section)
+    if (deletedCircuits.length > 0) {
+        html += `
+            <div style="margin-bottom:30px; border:1px solid #E5E7EB; border-radius:16px; overflow:hidden;">
+                <div style="background:#F3F4F6; padding:15px; border-bottom:1px solid #E5E7EB; display:flex; justify-content:space-between; align-items:center;">
+                    <h4 style="margin:0; color:var(--hw-ink); display:flex; align-items:center; gap:8px;">
+                        <i data-lucide="trash-2"></i> Corbeille Locale (${deletedCircuits.length})
+                    </h4>
+                </div>
+                <div style="background:white; max-height:250px; overflow-y:auto;">
+        `;
+
+        deletedCircuits.forEach(c => {
+            html += `
+                <div style="padding:12px 15px; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">
+                    <div style="opacity:0.6;">
+                        <div style="font-weight:600; color:var(--hw-ink);">${c.name}</div>
+                        <div style="font-size:0.75rem; color:var(--hw-ink-soft);">${c.poiIds ? c.poiIds.length : 0} étapes • ${c.id}</div>
+                    </div>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-restore-local" data-id="${c.id}" title="Restaurer"
+                                style="background:#F0FDF4; color:#166534; border:1px solid #86EFAC; padding:6px; border-radius:6px; cursor:pointer;">
+                            <i data-lucide="rotate-ccw" width="16"></i>
+                        </button>
+                        <button class="btn-purge-local" data-id="${c.id}" title="Supprimer définitivement"
+                                style="background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; padding:6px; border-radius:6px; cursor:pointer;">
+                            <i data-lucide="x" width="16"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div></div>`;
+    }
 
     // 1. DOUBLONS DÉTECTÉS
     if (duplicateGroups.length > 0) {
@@ -171,6 +212,45 @@ function renderResults(container) {
     container.querySelectorAll('.btn-delete-server-file').forEach(btn => {
         btn.onclick = () => handleDeleteClick(btn.dataset.path, btn.dataset.name, container);
     });
+
+    // Local Trash Actions
+    container.querySelectorAll('.btn-restore-local').forEach(btn => {
+        btn.onclick = () => handleRestoreLocal(btn.dataset.id, container);
+    });
+    container.querySelectorAll('.btn-purge-local').forEach(btn => {
+        btn.onclick = () => handlePurgeLocal(btn.dataset.id, container);
+    });
+}
+
+async function handleRestoreLocal(id, container) {
+    if (!await showConfirm("Restaurer", "Voulez-vous restaurer ce circuit ?", "Restaurer", "Annuler")) return;
+    try {
+        await restoreCircuit(id);
+        // Update local state
+        const c = state.myCircuits.find(x => String(x.id) === String(id));
+        if (c) c.isDeleted = false;
+
+        showToast("Circuit restauré !", "success");
+        runAnalysis(container); // Refresh UI
+    } catch (e) {
+        console.error(e);
+        showToast("Erreur restauration", "error");
+    }
+}
+
+async function handlePurgeLocal(id, container) {
+    if (!await showConfirm("Suppression Définitive", "Voulez-vous vraiment effacer ce circuit de la base de données locale ?\nCette action est irréversible.", "Supprimer", "Annuler", true)) return;
+    try {
+        await deleteCircuitById(id);
+        // Update local state
+        state.myCircuits = state.myCircuits.filter(x => String(x.id) !== String(id));
+
+        showToast("Circuit effacé définitivement !", "success");
+        runAnalysis(container); // Refresh UI
+    } catch (e) {
+        console.error(e);
+        showToast("Erreur purge", "error");
+    }
 }
 
 function renderCircuitRow(c, hasToken, extraStyle = '') {

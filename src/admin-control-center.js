@@ -468,10 +468,26 @@ function reconcileLocalChanges() {
         });
     }
 
+    // 3. Réconciliation des CIRCUITS (Suppression des fantômes)
+    const pendingCircuits = Object.keys(adminDraft.pendingCircuits);
+    if (pendingCircuits.length > 0) {
+        pendingCircuits.forEach(id => {
+            const exists = state.myCircuits.find(c => String(c.id) === String(id));
+
+            // Si le circuit n'existe plus localement, ou est supprimé, ou n'a pas de trace réelle
+            // => On le retire du brouillon de publication
+            if (!exists || exists.isDeleted || (!exists.realTrack || exists.realTrack.length === 0)) {
+                console.log(`[Admin] Nettoyage brouillon: Circuit invalide retiré -> ${id}`);
+                delete adminDraft.pendingCircuits[id];
+                changed = true;
+            }
+        });
+    }
+
     if (changed) {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(adminDraft));
         updateButtonBadge();
-        showToast("Brouillon reconstruit depuis les données locales.", "info");
+        // showToast("Brouillon reconstruit depuis les données locales.", "info"); // Trop verbeux
     }
 }
 
@@ -640,11 +656,15 @@ async function prepareDiffData() {
 
     // 1. Nouveaux & Modifiés
     localCircuits.forEach(local => {
+        // --- FILTRE STRICT : PAS DE PUBLICATION SANS TRACE RÉELLE NI POUR LES SUPPRIMÉS ---
+        if (local.isDeleted) return; // Ignorer la corbeille locale
+        if (!local.realTrack || local.realTrack.length === 0) return; // Ignorer les brouillons orthodromiques
+
         // On normalise l'ID (parfois string vs number)
         const remote = remoteCircuits.find(r => String(r.id) === String(local.id));
 
         if (!remote) {
-            // Cas : Nouveau Circuit
+            // Cas : Nouveau Circuit (Validé avec trace réelle)
             diffData.circuits.push({
                 id: local.id,
                 name: local.name,
@@ -676,6 +696,18 @@ async function prepareDiffData() {
                 });
             }
 
+            // Comparaison de la trace (Longueur approximative pour détecter un changement)
+            const localLen = local.realTrack ? local.realTrack.length : 0;
+            const remoteLen = remote.realTrack ? remote.realTrack.length : 0;
+            // On tolère une petite différence (compression ou arrondi), mais si écart > 5 points c'est une modif
+            if (Math.abs(localLen - remoteLen) > 5) {
+                changes.push({
+                    key: 'Trace GPS',
+                    old: `${remoteLen} pts`,
+                    new: `${localLen} pts`
+                });
+            }
+
             if (changes.length > 0) {
                 diffData.circuits.push({
                     id: local.id,
@@ -688,7 +720,10 @@ async function prepareDiffData() {
 
     // 2. Supprimés
     remoteCircuits.forEach(remote => {
-        if (!localCircuits.find(l => String(l.id) === String(remote.id))) {
+        // On considère un circuit supprimé s'il est absent localement OU marqué deleted
+        const localMatch = localCircuits.find(l => String(l.id) === String(remote.id));
+
+        if (!localMatch || localMatch.isDeleted) {
             diffData.circuits.push({
                 id: remote.id,
                 name: remote.name,
