@@ -318,6 +318,23 @@ export async function processImportedGpx(file, circuitId) {
                     throw new Error("Aucun point trouvé dans le fichier GPX.");
                 }
 
+                // --- VERIFICATION STRUCTURELLE (WPT) ---
+                // Une "vraie" trace de circuit doit idéalement contenir des Waypoints (<wpt>)
+                // correspondant aux étapes. Une simple trace brute (Garmin) n'a souvent que des <trkpt>.
+                // L'utilisateur souhaite une sécurité ici.
+                const wpts = xmlDoc.getElementsByTagName("wpt");
+                if (wpts.length === 0) {
+                    const { showConfirm } = await import('./modal.js');
+                    if (!await showConfirm(
+                        "Attention : Trace brute",
+                        "Ce fichier GPX ne contient aucun Waypoint (<wpt>).\n\nS'agit-il vraiment d'un circuit finalisé ou d'un simple enregistrement GPS brut ?\n\nImporter quand même ?",
+                        "Importer (Trace brute)", "Annuler", true
+                    )) {
+                        reject(new Error("Import annulé (Absence de Waypoints)"));
+                        return;
+                    }
+                }
+
                 // 3. LOGIQUE DE VÉRIFICATION
                 let canImport = false;
                 const { showConfirm, showAlert } = await import('./modal.js');
