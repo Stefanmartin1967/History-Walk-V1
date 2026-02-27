@@ -34,11 +34,15 @@ export function closeModal() {
  * @param {string|HTMLElement} content - Contenu HTML ou élément DOM.
  * @param {string|HTMLElement|null} actionsContent - Contenu des actions (boutons) ou null.
  */
-export function showCustomModal(titleText, content, actionsContent = null) {
+export function showCustomModal(titleText, content, actionsContent = null, customClass = null) {
     resetModal();
-    const { overlay, title, message, actions } = getElements();
+    const { overlay, box, title, message, actions } = getElements();
 
     if (!overlay) return;
+
+    if (customClass && box) {
+        box.classList.add(customClass);
+    }
 
     // Titre
     title.textContent = titleText;
