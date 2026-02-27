@@ -192,31 +192,39 @@ const EXPLORER_CARD_CSS = `
     }
 
     .explorer-card {
-        width: 100%;
-        max-width: 450px;
+        width: 340px; /* Largeur type carte bancaire (ratio ajusté) */
+        height: 215px; /* Hauteur type carte bancaire */
         background: var(--bg-parchment);
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        border-radius: 12px;
+        padding: 12px 16px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         color: var(--text-dark);
         position: relative;
-        border: 2px solid #e2d1a8;
+        border: 1px solid #e2d1a8;
         display: flex;
         flex-direction: column;
-            gap: 15px;
+        justify-content: space-between;
         margin: 0 auto;
         box-sizing: border-box;
+        overflow: hidden;
     }
 
-    .card-header { display: flex; align-items: center; gap: 20px; margin-bottom: 15px; }
+    /* Layout Compact "Carte Bancaire" */
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 0;
+        height: 60px;
+    }
 
     .avatar {
-        width: 80px;
-        height: 80px;
-        min-width: 80px;
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
         border-radius: 50%;
         background: #e2d1a8;
-        border: 4px solid var(--accent-copper);
+        border: 2px solid var(--accent-copper);
         overflow: hidden;
         display: flex;
         align-items: center;
@@ -230,42 +238,50 @@ const EXPLORER_CARD_CSS = `
         stroke-width: 1.5;
     }
 
+    .title-area { flex-grow: 1; }
+
     .title-area h2 {
         margin: 0;
         font-family: 'Georgia', serif;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
         text-transform: uppercase;
-        font-size: 1.4rem;
-        line-height: 1.2;
+        font-size: 1.1rem;
+        line-height: 1.1;
         color: var(--text-dark);
     }
 
     .global-rank {
         font-style: italic;
-        font-size: 0.9rem;
+        font-size: 0.75rem;
         color: #666;
-        margin-top: 4px;
+        margin-top: 2px;
     }
 
-    .stats-container { margin-top: 5px; }
+    .stats-container {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+    }
 
-    .stat-group { margin-bottom: 12px; }
+    .stat-group { margin-bottom: 0; }
 
     .stat-label {
         display: flex;
         justify-content: space-between;
-        font-size: 0.75rem;
+        font-size: 0.65rem;
         font-weight: bold;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
         text-transform: uppercase;
         color: var(--text-dark);
     }
 
     .progress-bar-container {
         width: 100%;
-        height: 8px;
+        height: 6px;
         background: var(--progress-bg);
-        border-radius: 4px;
+        border-radius: 3px;
         overflow: hidden;
     }
 
@@ -275,17 +291,17 @@ const EXPLORER_CARD_CSS = `
         transition: width 0.5s ease-in-out;
     }
 
+    .next-goal { font-size: 0.6rem; color: #888; margin-top: 1px; text-align: right; display: none; } /* Caché pour gagner place */
+
     .footer-stats {
         display: flex;
         justify-content: space-between;
         border-top: 1px solid rgba(0,0,0,0.1);
-        padding-top: 15px;
-        font-size: 0.8rem;
-        margin-top: 10px;
+        padding-top: 8px;
+        font-size: 0.7rem;
+        margin-top: 4px;
         color: var(--text-dark);
     }
-
-    .next-goal { font-size: 0.7rem; color: #888; margin-top: 2px; text-align: right; }
 
     /* Print Button Style - hidden in print media via CSS in function if needed, or ignored since we print specific element */
     .card-actions {
