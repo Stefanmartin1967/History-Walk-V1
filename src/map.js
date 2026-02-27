@@ -37,7 +37,17 @@ export const iconMap = {
 // --- INITIALISATION CARTE ---
 
 // Valeurs par défaut alignées sur destinations.json (Djerba)
-export function initMap(initialCenter = [33.77478, 10.94353], initialZoom = 12.7) {
+// Ces valeurs par défaut ne servent que si fitBounds échoue ou n'est pas utilisé
+const DEFAULT_CENTER = [33.77478, 10.94353];
+const DEFAULT_ZOOM = 12.7;
+
+// Limites idéales par défaut pour Djerba (Fallback)
+const DJERBA_BOUNDS = [
+    [33.65, 10.72], // Sud-Ouest
+    [33.91, 11.06]  // Nord-Est
+];
+
+export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZOOM) {
 
     // Si la carte existe déjà, on ignore (mais on pourrait repositionner si on le souhaitait)
     if (map) {
@@ -134,6 +144,27 @@ export function initMap(initialCenter = [33.77478, 10.94353], initialZoom = 12.7
     initMapListeners();
     initResizeObserver(); // Activation de l'observateur de redimensionnement
 
+    // --- MISE A L'ECHELLE INITIALE (FITBOUNDS) ---
+    // On essaie d'adapter la vue immédiatement aux limites idéales
+    try {
+        // On récupère les bounds depuis destinations.json via state si possible, sinon fallback
+        let bounds = DJERBA_BOUNDS;
+
+        if (state.currentMapId && state.destinations && state.destinations.maps && state.destinations.maps[state.currentMapId] && state.destinations.maps[state.currentMapId].bounds) {
+             bounds = state.destinations.maps[state.currentMapId].bounds;
+        }
+
+        // On applique le fitBounds avec un padding pour ne pas coller aux bords
+        map.fitBounds(bounds, {
+            padding: [20, 20],
+            maxZoom: 18
+        });
+        console.log("🌍 Carte initialisée avec fitBounds sur :", bounds);
+
+    } catch (e) {
+        console.warn("Erreur lors du fitBounds initial, repli sur setView", e);
+        map.setView(initialCenter, initialZoom);
+    }
 }
 
 /**
