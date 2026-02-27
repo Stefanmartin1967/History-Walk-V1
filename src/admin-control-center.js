@@ -1248,7 +1248,8 @@ async function publishChanges() {
                 // Amélioration : On va essayer de récupérer le filename depuis remoteCircuits (disponible dans prepareDiffData scope mais pas ici).
                 // On va refetcher l'index pour être sûr.
                 try {
-                    const indexUrl = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${state.currentMapId || 'djerba'}.json`;
+                    const timestamp = Date.now();
+                    const indexUrl = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${state.currentMapId || 'djerba'}.json?t=${timestamp}`;
                     const remoteIndex = await fetch(indexUrl).then(r => r.json());
                     const target = remoteIndex.find(r => String(r.id) === String(c.id));
 
@@ -1256,9 +1257,14 @@ async function publishChanges() {
                         const path = `public/circuits/${target.file}`;
                         await deleteFileFromGitHub(token, 'Stefanmartin1967', 'History-Walk-V1', path, `Delete circuit ${c.name}`);
                         console.log(`[Admin] Supprimé: ${path}`);
+                    } else {
+                        console.warn(`[Admin] Circuit ${c.id} introuvable dans l'index distant ou sans fichier associé.`);
+                        throw new Error(`Circuit ${c.name} introuvable sur le serveur.`);
                     }
                 } catch (err) {
-                    console.warn(`[Admin] Impossible de supprimer le fichier pour ${c.name}:`, err);
+                    console.error(`[Admin] Impossible de supprimer le fichier pour ${c.name}:`, err);
+                    showToast(`Erreur lors de la suppression de ${c.name}`, "error");
+                    // On ne bloque pas toute la publication si un seul fichier échoue
                 }
             }
         }
@@ -1273,6 +1279,17 @@ async function publishChanges() {
              if (state.userData[p.id]) delete state.userData[p.id];
         });
         await saveAppState('userData', state.userData);
+
+        // Vider la corbeille locale des circuits publiés (supprimés avec succès)
+        if (circuitsToDelete && circuitsToDelete.length > 0) {
+            import('./database.js').then(async ({ deleteCircuit }) => {
+                for (const c of circuitsToDelete) {
+                    // Supprimer de IndexedDB et de l'état mémoire
+                    await deleteCircuit(c.id);
+                    state.myCircuits = state.myCircuits.filter(mc => mc.id !== c.id);
+                }
+            });
+        }
 
         alert("Mise à jour effectuée avec succès !");
         document.getElementById('custom-modal-overlay').classList.remove('active');
