@@ -3376,3 +3376,39 @@ input[type=range] {
     font-style: italic;
     margin-top: 10px;
 }
+/* --- CONTRIBUTION MODAL STYLES (Minimalist & Themed) --- */
+.custom-modal-box {
+    /* Base styles are already good, but let's ensure text readability */
+    color: var(--ink);
+}
+
+#btn-contrib-bmc:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(251, 176, 59, 0.4) !important;
+    filter: brightness(1.05);
+}
+
+#btn-contrib-bmc:active {
+    transform: translateY(0);
+}
+
+#btn-contrib-export:hover {
+    background: var(--surface-muted) !important;
+    border-color: var(--brand) !important;
+    color: var(--brand) !important;
+}
+
+/* --- SIDEBAR BMC BUTTON --- */
+#sidebar-bmc-container {
+    padding: 16px !important; /* A bit more breathing room */
+}
+
+#btn-bmc-sidebar:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 10px rgba(251, 176, 59, 0.3) !important;
+    filter: brightness(1.05);
+}
+
+#btn-bmc-sidebar:active {
+    transform: translateY(0) !important;
+}

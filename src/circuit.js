@@ -765,18 +765,12 @@ export function setupCircuitEventListeners() {
     }
 
     // 1. Bouton EXPORTER GPX
-    // On vérifie DOM.btnExportGpx (généré automatiquement par ton ui.js)
-    if (DOM.btnExportGpx) {
-        // On clone le bouton pour supprimer les vieux bugs d'écouteurs
-        const newBtn = DOM.btnExportGpx.cloneNode(true);
-        DOM.btnExportGpx.parentNode.replaceChild(newBtn, DOM.btnExportGpx);
-        DOM.btnExportGpx = newBtn;
-
-        DOM.btnExportGpx.addEventListener('click', () => {
-            console.log("Clic sur Exporter GPX");
-            saveAndExportCircuit();
-        });
-    }
+    // La logique UI a déjà configuré un écouteur sur DOM.btnExportGpx pour la modale de contribution
+    // qui émettra 'request-export-gpx'. On écoute cet événement ici.
+    eventBus.on('request-export-gpx', () => {
+        console.log("Reçu demande export GPX via EventBus");
+        saveAndExportCircuit();
+    });
 
     // 2. Bouton IMPORTER GPX
     if (DOM.btnImportGpx) {

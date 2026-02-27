@@ -57,7 +57,8 @@ import {
     handleRestoreFile,
     exportOfficialCircuitsJSON,
     exportDataForMobilePC,
-    exportFullBackupPC
+    exportFullBackupPC,
+    handleExportWithContribution
 } from './fileManager.js';
 import { setupSearch, setupSmartSearch } from './searchManager.js';
 import { enableDesktopCreationMode, setupDesktopTools } from './desktopMode.js';
@@ -618,19 +619,15 @@ function setupFileListeners() {
 
     const btnSaveCircuits = document.getElementById('btn-save-circuits');
     if (btnSaveCircuits) {
-        btnSaveCircuits.addEventListener('click', () => exportOfficialCircuitsJSON());
-    }
-
-    const btnSaveFull = document.getElementById('btn-save-full');
-    if (btnSaveFull) {
-        btnSaveFull.addEventListener('click', () => {
-            if (window.innerWidth > 768) {
-                exportFullBackupPC();
-            } else {
-                saveUserData(true);
-            }
+        // Intercept global export for contribution modal
+        btnSaveCircuits.addEventListener('click', () => {
+            handleExportWithContribution('circuits', () => {
+                exportOfficialCircuitsJSON();
+            });
         });
     }
+
+    // Removed duplicate listener for btnSaveFull. This logic is handled in UI.js for backup modal
 
     const photoLoader = document.getElementById('photo-gps-loader');
     if (photoLoader) photoLoader.addEventListener('change', handlePhotoImport);
