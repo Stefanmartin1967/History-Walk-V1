@@ -3450,8 +3450,13 @@ input[type=range] {
 
 /* --- CONTRIBUTION MODAL DENSIFICATION --- */
 .custom-modal-box {
-    padding: 16px !important; /* Reduced padding */
-    max-width: 400px;
+    padding: 12px 16px 8px 16px !important; /* Reduced padding: Top/sides 16px, Bottom 8px */
+    max-width: 380px; /* Légèrement plus étroit */
+}
+
+/* Forcer le titre à être plus compact */
+.custom-modal-box .custom-modal-title {
+    margin-bottom: 5px !important;
 }
 
 .modal-close-x {
@@ -3474,4 +3479,24 @@ input[type=range] {
 /* Clean up old sidebar styles */
 #sidebar-bmc-container {
     display: none;
+}
+/* --- MOBILE MODAL ADAPTATION --- */
+@media (max-width: 768px) {
+    .custom-modal-box {
+        width: 90% !important; /* Slightly wider on mobile for comfort */
+        max-width: 320px !important; /* Cap width */
+        padding: 10px !important; /* Minimal padding */
+    }
+
+    #btn-contrib-bmc, #btn-contrib-export {
+        width: 100% !important; /* Full width buttons on mobile */
+        min-width: 0 !important;
+        padding: 12px !important; /* Comfortable touch target */
+    }
+
+    .modal-close-x {
+        top: 5px !important;
+        right: 5px !important;
+        padding: 10px !important; /* Larger touch target */
+    }
 }

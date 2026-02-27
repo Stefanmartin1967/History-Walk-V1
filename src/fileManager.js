@@ -40,18 +40,20 @@ export function handleExportWithContribution(actionType, proceedCallback) {
 
     const content = `
         <button class="modal-close-x" id="btn-close-contrib">×</button>
-        <div style="display: flex; flex-direction: column; gap: 16px; text-align: center; padding-top: 10px;">
-            <p style="font-size: 15px; color: var(--ink); line-height: 1.4; margin: 0;">
+        <div style="display: flex; flex-direction: column; gap: 5px; text-align: center; padding-top: 0;">
+            <p style="font-size: 15px; color: var(--ink); line-height: 1.4; margin: 0; text-align: center;">
                 Contribuer à la maintenance et à l'amélioration de l'outil
             </p>
 
-            <div style="display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 5px;">
-                <button id="btn-contrib-bmc" class="action-btn" style="background: linear-gradient(135deg, #FFDD00 0%, #FBB03B 100%); color: #422006; border: none; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 10px rgba(251, 176, 59, 0.3);">
+            <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 0; align-items: center;">
+                <!-- Bouton Jaune Pastel (Aligné avec Topbar) -->
+                <button id="btn-contrib-bmc" class="action-btn" style="width: auto; min-width: 200px; padding: 10px 20px; background-color: #FEF08A; color: #422006; border: 1px solid #FDE047; border-radius: 12px; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <i data-lucide="heart" style="fill:#e91e63; color:#e91e63; width:18px; height:18px;"></i>
                     <span>Aider à améliorer le site</span>
                 </button>
 
-                <button id="btn-contrib-export" class="action-btn" style="background: var(--surface); color: var(--ink); border: 2px solid var(--line); padding: 12px; border-radius: 12px; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <!-- Bouton Export (Simple) -->
+                <button id="btn-contrib-export" class="action-btn" style="width: auto; min-width: 200px; padding: 10px 20px; background: var(--surface); color: var(--ink); border: 2px solid var(--line); border-radius: 12px; font-weight: 600; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <i data-lucide="download" style="width:18px; height:18px;"></i>
                     <span>${getActionLabel(actionType)}</span>
                 </button>
