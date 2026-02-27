@@ -3412,3 +3412,66 @@ input[type=range] {
 #btn-bmc-sidebar:active {
     transform: translateY(0) !important;
 }
+/* --- TOPBAR BMC BUTTON (Soutenir le site) --- */
+#btn-bmc-topbar {
+    background-color: #FEF08A; /* Pastel Yellow (Yellow-200) */
+    color: #422006; /* Dark Brown Text for Contrast */
+    border: 1px solid #FDE047; /* Slightly darker border */
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+    flex-shrink: 0; /* Important: Ne pas écraser */
+    margin-right: 8px; /* Espace avec le bouton Outils */
+}
+
+#btn-bmc-topbar svg {
+    color: #e91e63; /* Pink Heart */
+    fill: #e91e63;
+    width: 20px;
+    height: 20px;
+}
+
+#btn-bmc-topbar:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    filter: brightness(0.98); /* Slight dim on hover */
+    background-color: #FDE047; /* Yellow-300 */
+}
+
+/* RESPONSIVE: On small PC screens, hide text but keep icon */
+@media (max-width: 1100px) {
+    #btn-bmc-topbar span {
+        display: none;
+    }
+    #btn-bmc-topbar {
+        padding: 0 10px; /* Square-ish aspect */
+    }
+}
+
+/* --- CONTRIBUTION MODAL DENSIFICATION --- */
+.custom-modal-box {
+    padding: 16px !important; /* Reduced padding */
+    max-width: 400px;
+}
+
+.modal-close-x {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.modal-close-x:hover {
+    color: var(--ink);
+}
+
+/* Clean up old sidebar styles */
+#sidebar-bmc-container {
+    display: none;
+}

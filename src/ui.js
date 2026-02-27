@@ -42,7 +42,7 @@ export function initializeDomReferences() {
         'btn-clear-circuit', 'close-circuit-panel-btn',
         'btn-categories', 'btn-legend',
         'btn-open-my-circuits', 'btn-save-circuits',
-        'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-sidebar'
+        'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-topbar'
     ];
     
     // Récupération sécurisée des éléments
@@ -210,9 +210,12 @@ export function initializeDomReferences() {
         });
     }
 
-    if (DOM.btnBmcSidebar) {
-        DOM.btnBmcSidebar.addEventListener('click', () => {
-            window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+    if (DOM.btnBmcTopbar) {
+        DOM.btnBmcTopbar.addEventListener('click', () => {
+            import('./fileManager.js').then(({ recordSupportClick }) => {
+                recordSupportClick(); // Enregistre le clic pour ne plus embêter l'utilisateur
+                window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+            });
         });
     }
 
