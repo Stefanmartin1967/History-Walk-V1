@@ -4,7 +4,7 @@ import { showAlert } from './modal.js';
 import { createIcons, icons } from 'lucide';
 import { generateMasterGeoJSONData } from './admin.js';
 import { generateGPXString } from './gpx.js';
-import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
+import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken, saveToken } from './github-sync.js';
 import { showToast } from './toast.js';
 import { saveAppState } from './database.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
@@ -1227,6 +1227,41 @@ async function publishChanges() {
 
         await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/${filename}`, `Update via Admin Center`);
 
+        // --- GESTION DES SUPPRESSIONS DE FICHIERS CIRCUITS ---
+        // On identifie les circuits marqués "SUPPRESSION" dans diffData
+        const circuitsToDelete = diffData.circuits.filter(c => c.status === 'SUPPRESSION' || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION')));
+
+        if (circuitsToDelete.length > 0) {
+            console.log(`[Admin] Suppression de ${circuitsToDelete.length} fichiers circuits...`);
+            for (const c of circuitsToDelete) {
+                // On doit trouver le nom du fichier original.
+                // On peut le deviner (Nom.gpx ?) ou on espère qu'il est dans les données remote.
+                // Le mieux est de charger la liste remote au début pour avoir le mapping ID -> Fichier.
+                // Ici on va faire une supposition basée sur le pattern standard ou utiliser l'info si dispo.
+
+                // Note: diffData ne stocke pas le filename complet. C'est une limite actuelle.
+                // Solution rapide : On tente de supprimer le .gpx avec le nom du circuit (slug) ou ID.
+                // MAIS ATTENTION : Les fichiers s'appellent souvent "Circuit du Phare.gpx".
+                // Sans le filename exact, on risque d'échouer.
+
+                // Amélioration : On va essayer de récupérer le filename depuis remoteCircuits (disponible dans prepareDiffData scope mais pas ici).
+                // On va refetcher l'index pour être sûr.
+                try {
+                    const indexUrl = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${state.currentMapId || 'djerba'}.json`;
+                    const remoteIndex = await fetch(indexUrl).then(r => r.json());
+                    const target = remoteIndex.find(r => String(r.id) === String(c.id));
+
+                    if (target && target.file) {
+                        const path = `public/circuits/${target.file}`;
+                        await deleteFileFromGitHub(token, 'Stefanmartin1967', 'History-Walk-V1', path, `Delete circuit ${c.name}`);
+                        console.log(`[Admin] Supprimé: ${path}`);
+                    }
+                } catch (err) {
+                    console.warn(`[Admin] Impossible de supprimer le fichier pour ${c.name}:`, err);
+                }
+            }
+        }
+
         // --- NOUVEAU : Publication des Circuits si nécessaire ---
         // On vérifie s'il y a des changements détectés (via Diff) OU des changements pistés (via Draft)
         const hasCircuitChanges = (diffData.circuits && diffData.circuits.length > 0) || (Object.keys(adminDraft.pendingCircuits).length > 0);
@@ -1234,13 +1269,16 @@ async function publishChanges() {
         // On combine pour inclure aussi les circuits locaux nouvellement créés
         const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
 
-        if (hasCircuitChanges && allCircuits.length > 0) {
+        // On filtre les circuits supprimés (isDeleted) et ceux sans trace réelle AVANT l'upload de l'index
+        const validCircuits = allCircuits.filter(c => !c.isDeleted && c.realTrack && c.realTrack.length > 0);
+
+        if (hasCircuitChanges && validCircuits.length > 0) {
             console.log(`[Admin] Publication de l'index des circuits (Changements détectés)...`);
             const circuitsFilename = state.destinations.maps[state.currentMapId]?.circuitsFile || `${state.currentMapId || 'djerba'}.json`;
             const circuitsPath = `public/circuits/${circuitsFilename}`;
 
             // On nettoie un peu les objets pour l'export (enlever les props circulaires ou UI)
-            const circuitsData = allCircuits.map(c => {
+            const circuitsData = validCircuits.map(c => {
                 const { ...cleanCircuit } = c;
                 delete cleanCircuit.isLoaded;
                 delete cleanCircuit.isOfficial; // On nettoie le flag "isOfficial" local
