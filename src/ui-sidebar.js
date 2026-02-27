@@ -5,7 +5,6 @@ import { getPoiId } from './data.js';
 import { openDetailsPanel } from './ui.js'; // Circular dependency risk?
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive } from './voice.js';
-import { invalidateMapSize } from './map.js';
 
 // We need to be careful with circular dependencies.
 // ui.js exports openDetailsPanel, which is needed here?
@@ -32,8 +31,7 @@ export function switchSidebarTab(tabName, isNavigating = false) {
         });
     }
 
-    // FIX: On force le redessin de la carte quand le panneau change (pour corriger le bug d'affichage partiel)
-    invalidateMapSize();
+    // FIX AUTOMATISÉ : Le redessin de la carte est maintenant géré automatiquement par ResizeObserver dans map.js
 }
 
 export function setupTabs() {
