@@ -41,7 +41,7 @@ export function initializeDomReferences() {
         'btn-loop-circuit',
         'btn-clear-circuit', 'close-circuit-panel-btn',
         'btn-categories', 'btn-legend',
-        'btn-open-my-circuits', 'btn-save-circuits',
+        'btn-open-my-circuits',
         'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-topbar'
     ];
     
@@ -904,14 +904,7 @@ export function updateSelectionModeButton(isActive) {
 }
 
 export function updateExportButtonLabel(mapId) {
-    const btn = document.getElementById('btn-save-circuits');
-    if (btn) {
-        const safeMapId = mapId || 'circuits';
-        // On met à jour le texte en conservant l'icône
-        btn.innerHTML = `<i data-lucide="share-2"></i> Exporter ${safeMapId}.json`;
-        // On force le rendu de l'icône pour ce bouton spécifique
-        createIcons({ icons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });
-    }
+    // Deprecated: Button removed
 }
 
 export function showLegendModal() {

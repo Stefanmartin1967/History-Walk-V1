@@ -55,7 +55,6 @@ import {
     handlePhotoImport,
     saveUserData,
     handleRestoreFile,
-    exportOfficialCircuitsJSON,
     exportDataForMobilePC,
     exportFullBackupPC,
     handleExportWithContribution
@@ -614,16 +613,6 @@ function setupFileListeners() {
             } else {
                 saveUserData(false);
             }
-        });
-    }
-
-    const btnSaveCircuits = document.getElementById('btn-save-circuits');
-    if (btnSaveCircuits) {
-        // Intercept global export for contribution modal
-        btnSaveCircuits.addEventListener('click', () => {
-            handleExportWithContribution('circuits', () => {
-                exportOfficialCircuitsJSON();
-            });
         });
     }
 
