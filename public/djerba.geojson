@@ -1580,7 +1580,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6C4QCW255MDZKT0RHK"
+        "HW_ID": "HW-01K77WPE6C4QCW255MDZKT0RHK",
+        "planifieCounter": 2
       }
     },
     {
@@ -1657,7 +1658,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6CC0RY56ECB2RCTGJP"
+        "HW_ID": "HW-01K77WPE6CC0RY56ECB2RCTGJP",
+        "planifieCounter": 2
       }
     },
     {
@@ -3051,7 +3053,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME"
+        "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME",
+        "planifieCounter": 2
       }
     },
     {
