@@ -3,7 +3,6 @@ import { renderExplorerList } from './ui-circuit-list.js';
 import { state } from './state.js';
 import { getPoiId } from './data.js';
 import { openDetailsPanel } from './ui.js'; // Circular dependency risk?
-import { eventBus } from './events.js';
 import { stopDictation, isDictationActive } from './voice.js';
 
 // We need to be careful with circular dependencies.
