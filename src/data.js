@@ -271,6 +271,11 @@ export async function updatePoiData(poiId, key, value) {
     // Sauvegarde en Base de Données
     await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
 
+    // Force le rafraîchissement des marqueurs Leaflet si la catégorie a changé
+    if (key === 'Catégorie') {
+        applyFilters();
+    }
+
     // [ADMIN] Tracking
     if (state.isAdmin) {
         addToDraft('poi', poiId, { key: key, value: value });

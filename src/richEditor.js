@@ -521,6 +521,10 @@ async function executeEdit(data) {
     const logType = state.isAdmin ? 'Edition (Admin)' : 'Edition (User)';
     await logModification(poiId, logType, 'All', null, `Mise à jour via Rich Editor`);
 
+    // Force le rafraîchissement des marqueurs Leaflet avec la nouvelle catégorie
+    const { applyFilters } = await import('./data.js');
+    applyFilters();
+
     // Force le rafraîchissement de l'interface si le panneau est ouvert
     if (state.currentFeatureId !== null) {
         const feature = state.loadedFeatures[state.currentFeatureId];

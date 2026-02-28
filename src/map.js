@@ -259,7 +259,7 @@ export function createHistoryWalkIcon(category) {
 }
 
 export function getIconForFeature(feature) {
-    const category = feature.properties.Catégorie;
+    const category = (feature.properties.userData && feature.properties.userData.Catégorie) || feature.properties.Catégorie;
     return getIconHtml(category);
 }
 
@@ -428,7 +428,7 @@ export function refreshMapMarkers(visibleFeatures) {
 
     const tempLayer = L.geoJSON(visibleFeatures, {
         pointToLayer: (feature, latlng) => {
-            const category = feature.properties.Catégorie || 'default'; 
+            const category = (feature.properties.userData && feature.properties.userData.Catégorie) || feature.properties.Catégorie || 'default';
             const icon = createHistoryWalkIcon(category);
 
             const props = feature.properties.userData || {};
