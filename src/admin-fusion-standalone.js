@@ -552,9 +552,20 @@ DOM.btnFusion.addEventListener('click', async () => {
 
         // 5. NETTOYAGE COMPLET ET FINAL DES DOUBLONS AVANT ENVOI
         finalFeatures.forEach(feat => {
-            if (feat.properties && feat.properties.userData) {
-                // On s'assure que le champ userData (qui cause les doublons) ne part JAMAIS sur GitHub
-                delete feat.properties.userData;
+            if (feat.properties) {
+                if (feat.properties.userData) {
+                    // On s'assure que le champ userData (qui cause les doublons) ne part JAMAIS sur GitHub
+                    delete feat.properties.userData;
+                }
+
+                // Nettoyage des clés redondantes qui pourraient être enregistrées en minuscule à la racine
+                // par erreur dans le passé, pour forcer l'usage des clés officielles (avec Majuscule)
+                const redundantKeys = ['description', 'Description_courte', 'notes', 'price', 'timeH', 'timeM'];
+                redundantKeys.forEach(k => {
+                    if (feat.properties.hasOwnProperty(k)) {
+                        delete feat.properties[k];
+                    }
+                });
             }
         });
 
