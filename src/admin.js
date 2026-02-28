@@ -335,15 +335,16 @@ function setupAdminListeners() {
                 menuContent.appendChild(btnFusionPlus);
             }
             createIcons({ icons, root: btnFusionPlus });
-        }
 
-        const newFusionBtn = btnFusionPlus.cloneNode(true);
-        btnFusionPlus.parentNode.replaceChild(newFusionBtn, btnFusionPlus);
-        // We will define this later or import it
-        newFusionBtn.addEventListener('click', () => {
-            // Lazy load to avoid circular dependencies if needed, or import at top
-            import('./admin-fusion.js').then(module => module.openAdminFusionConsole());
-        });
+            btnFusionPlus.addEventListener('click', () => {
+                // Sauvegarde de la carte active dans le localStorage pour le nouvel onglet
+                import('./state.js').then(module => {
+                    const currentMapId = module.state.currentMapId || 'djerba';
+                    localStorage.setItem('hw_admin_fusion_map', currentMapId);
+                    window.open('admin-fusion.html', '_blank');
+                });
+            });
+        }
 
         // Nettoyage des anciens boutons s'ils existent (Migration)
         ['btn-admin-config-github', 'btn-admin-publish-map'].forEach(id => {
