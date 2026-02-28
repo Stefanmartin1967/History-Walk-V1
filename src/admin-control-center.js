@@ -1166,7 +1166,6 @@ window.updateDraftValue = async (id, key, value) => {
 window.processDecision = async (id, decision) => {
     if (decision === 'refuse') {
         if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
-        if (adminDraft.pendingCircuits[id]) delete adminDraft.pendingCircuits[id];
 
         if (state.userData[id]) {
             delete state.userData[id];
@@ -1229,47 +1228,27 @@ async function publishChanges() {
 
         await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/${filename}`, `Update via Admin Center`);
 
-        // --- GESTION DES CIRCUITS (ENVOI NOUVEAUX/MODIFIÉS) ---
-        // On identifie les circuits validés (non supprimés) dans diffData
-        const circuitsToUpload = diffData.circuits.filter(c => !c.isDeletion && (!c.status || c.status !== 'SUPPRESSION') && (!c.changes || !c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION')));
-
-        if (circuitsToUpload.length > 0) {
-            console.log(`[Admin] Envoi de ${circuitsToUpload.length} fichiers circuits...`);
-            const localCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
-
-            for (const diffItem of circuitsToUpload) {
-                try {
-                    const circuitData = localCircuits.find(l => String(l.id) === String(diffItem.id));
-                    if (!circuitData) {
-                        console.warn(`[Admin] Impossible de trouver les données locales pour le circuit ${diffItem.id}`);
-                        continue;
-                    }
-
-                    const gpxString = generateGPXString(circuitData);
-                    const filename = `${circuitData.id}.gpx`;
-                    const blob = new Blob([gpxString], { type: 'application/gpx+xml' });
-                    const file = new File([blob], filename, { type: 'application/gpx+xml' });
-
-                    await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/circuits/${filename}`, `Add/Update circuit ${circuitData.name}`);
-                    console.log(`[Admin] Circuit envoyé : ${filename}`);
-                } catch (err) {
-                    console.error(`[Admin] Erreur lors de l'envoi du circuit ${diffItem.name}:`, err);
-                    showToast(`Erreur d'envoi pour ${diffItem.name}`, "error");
-                }
-            }
-        }
-
         // --- GESTION DES SUPPRESSIONS DE FICHIERS CIRCUITS ---
         // On identifie les circuits marqués "SUPPRESSION" dans diffData
-        const circuitsToDelete = diffData.circuits.filter(c => c.isDeletion || c.status === 'SUPPRESSION' || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION')));
-        const successfullyDeletedCircuitIds = [];
+        const circuitsToDelete = diffData.circuits.filter(c => c.status === 'SUPPRESSION' || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION')));
 
         if (circuitsToDelete.length > 0) {
             console.log(`[Admin] Suppression de ${circuitsToDelete.length} fichiers circuits...`);
             for (const c of circuitsToDelete) {
+                // On doit trouver le nom du fichier original.
+                // On peut le deviner (Nom.gpx ?) ou on espère qu'il est dans les données remote.
+                // Le mieux est de charger la liste remote au début pour avoir le mapping ID -> Fichier.
+                // Ici on va faire une supposition basée sur le pattern standard ou utiliser l'info si dispo.
+
+                // Note: diffData ne stocke pas le filename complet. C'est une limite actuelle.
+                // Solution rapide : On tente de supprimer le .gpx avec le nom du circuit (slug) ou ID.
+                // MAIS ATTENTION : Les fichiers s'appellent souvent "Circuit du Phare.gpx".
+                // Sans le filename exact, on risque d'échouer.
+
+                // Amélioration : On va essayer de récupérer le filename depuis remoteCircuits (disponible dans prepareDiffData scope mais pas ici).
+                // On va refetcher l'index pour être sûr.
                 try {
-                    const timestamp = Date.now();
-                    const indexUrl = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${state.currentMapId || 'djerba'}.json?t=${timestamp}`;
+                    const indexUrl = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${state.currentMapId || 'djerba'}.json`;
                     const remoteIndex = await fetch(indexUrl).then(r => r.json());
                     const target = remoteIndex.find(r => String(r.id) === String(c.id));
 
@@ -1277,14 +1256,9 @@ async function publishChanges() {
                         const path = `public/circuits/${target.file}`;
                         await deleteFileFromGitHub(token, 'Stefanmartin1967', 'History-Walk-V1', path, `Delete circuit ${c.name}`);
                         console.log(`[Admin] Supprimé: ${path}`);
-                        successfullyDeletedCircuitIds.push(c.id);
-                    } else {
-                        console.warn(`[Admin] Circuit ${c.id} introuvable dans l'index distant ou sans fichier associé.`);
-                        throw new Error(`Circuit ${c.name} introuvable sur le serveur.`);
                     }
                 } catch (err) {
-                    console.error(`[Admin] Impossible de supprimer le fichier pour ${c.name}:`, err);
-                    showToast(`Erreur lors de la suppression de ${c.name}`, "error");
+                    console.warn(`[Admin] Impossible de supprimer le fichier pour ${c.name}:`, err);
                 }
             }
         }
@@ -1299,17 +1273,6 @@ async function publishChanges() {
              if (state.userData[p.id]) delete state.userData[p.id];
         });
         await saveAppState('userData', state.userData);
-
-        // Vider la corbeille locale des circuits publiés (supprimés avec succès) UNIQUEMENT ceux qui ont réussi
-        if (successfullyDeletedCircuitIds.length > 0) {
-            import('./database.js').then(async ({ deleteCircuit }) => {
-                for (const id of successfullyDeletedCircuitIds) {
-                    // Supprimer de IndexedDB et de l'état mémoire
-                    await deleteCircuit(id);
-                    state.myCircuits = state.myCircuits.filter(mc => mc.id !== id);
-                }
-            });
-        }
 
         alert("Mise à jour effectuée avec succès !");
         document.getElementById('custom-modal-overlay').classList.remove('active');

@@ -7,7 +7,7 @@ import { map } from './map.js';
 import { showAlert, showConfirm } from './modal.js';
 import { ANIMAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
-import { uploadFileToGitHub, getStoredToken, saveToken } from './github-sync.js';
+import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken, saveToken } from './github-sync.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
 import { recalculatePlannedCountersForMap } from './gpx.js';
 
@@ -298,6 +298,23 @@ function setupAdminListeners() {
         const newUploadBtn = btnUpload.cloneNode(true);
         btnUpload.parentNode.replaceChild(newUploadBtn, btnUpload);
         newUploadBtn.addEventListener('click', showGitHubUploadModal);
+
+        // --- NOUVEAU : Bouton Delete Fichier (Pour suppression GPX) ---
+        let btnDeleteFile = document.getElementById('btn-admin-github-delete');
+        if (!btnDeleteFile) {
+            btnDeleteFile = document.createElement('button');
+            btnDeleteFile.id = 'btn-admin-github-delete';
+            btnDeleteFile.className = 'tools-menu-item';
+            btnDeleteFile.innerHTML = `<i data-lucide="trash-2"></i> Delete Fichier`;
+
+            // Insert just after the upload button
+            menuContent.insertBefore(btnDeleteFile, btnControl);
+            createIcons({ icons, root: btnDeleteFile });
+        }
+
+        const newDeleteBtn = btnDeleteFile.cloneNode(true);
+        btnDeleteFile.parentNode.replaceChild(newDeleteBtn, btnDeleteFile);
+        newDeleteBtn.addEventListener('click', showGitHubDeleteModal);
 
         // Nettoyage des anciens boutons s'ils existent (Migration)
         ['btn-admin-config-github', 'btn-admin-publish-map'].forEach(id => {
@@ -618,6 +635,141 @@ function showGitHubConfigModal() {
 
     actions.appendChild(btnCancel);
     actions.appendChild(btnSave);
+    overlay.classList.add('active');
+}
+
+export function showGitHubDeleteModal() {
+    const storedToken = getStoredToken() || '';
+    const repoOwner = 'Stefanmartin1967'; // Default from user info
+    const repoName = 'History-Walk-V1';   // Default from user info
+
+    // 1. Récupération des éléments de la modale globale
+    const overlay = document.getElementById('custom-modal-overlay');
+    const title = document.getElementById('custom-modal-title');
+    const message = document.getElementById('custom-modal-message');
+    const actions = document.getElementById('custom-modal-actions');
+
+    if (!overlay || !title || !message || !actions) {
+        console.error("Modal elements not found");
+        return;
+    }
+
+    // 2. Configuration du contenu
+    title.textContent = "Supprimer un circuit sur GitHub";
+
+    // Générer la liste des circuits à partir du state ou de l'index distant
+    const officialCircuits = state.officialCircuits || [];
+    let optionsHtml = '<option value="">Sélectionnez un circuit...</option>';
+    officialCircuits.forEach(c => {
+        optionsHtml += `<option value="${c.id}">${c.name}</option>`;
+    });
+
+    message.innerHTML = `
+        <div style="text-align: left; overflow-y: auto; padding-right: 5px; white-space: normal !important;">
+            <p style="margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft);">
+                Cette fonction supprime un circuit officiel (fichier GPX ou JSON) directement sur GitHub.
+                Cela déclenchera la mise à jour de l'index du site.
+            </p>
+
+            <label style="display:block; margin-bottom: 5px; font-weight: 600;">GitHub Token (PAT)</label>
+            <input type="password" id="gh-del-token" value="${storedToken}" placeholder="ghp_..."
+                   style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+
+            <label style="display:block; margin-bottom: 5px; font-weight: 600;">Circuit à supprimer</label>
+            <select id="gh-del-circuit" style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+                ${optionsHtml}
+            </select>
+
+            <div id="gh-del-status" style="margin-top: 10px; font-size: 0.9em; color: var(--danger);"></div>
+        </div>
+    `;
+
+    // 3. Configuration des boutons
+    actions.innerHTML = ''; // Reset
+
+    // Bouton Annuler
+    const btnCancel = document.createElement('button');
+    btnCancel.className = 'custom-modal-btn secondary';
+    btnCancel.textContent = "Annuler";
+    btnCancel.onclick = () => {
+        overlay.classList.remove('active');
+    };
+
+    // Bouton Supprimer
+    const btnDelete = document.createElement('button');
+    btnDelete.className = 'custom-modal-btn primary';
+    btnDelete.style.backgroundColor = "var(--danger)";
+    btnDelete.style.color = "white";
+    btnDelete.textContent = "Supprimer définitivement";
+
+    btnDelete.onclick = async () => {
+        const tokenInput = message.querySelector('#gh-del-token');
+        const circuitSelect = message.querySelector('#gh-del-circuit');
+        const statusDiv = message.querySelector('#gh-del-status');
+
+        const token = tokenInput.value.trim();
+        const circuitId = circuitSelect.value;
+        const circuitName = circuitSelect.options[circuitSelect.selectedIndex]?.text || circuitId;
+
+        if (!token) {
+            statusDiv.textContent = "Erreur: Token manquant.";
+            return;
+        }
+        if (!circuitId) {
+            statusDiv.textContent = "Erreur: Aucun circuit sélectionné.";
+            return;
+        }
+
+        if (!confirm(`Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT le circuit "${circuitName}" du serveur ?\nCette action est irréversible.`)) {
+            return;
+        }
+
+        statusDiv.textContent = "Recherche du fichier sur le serveur...";
+        statusDiv.style.color = "var(--ink-soft)";
+        btnDelete.disabled = true;
+
+        try {
+            saveToken(token);
+
+            // On doit trouver le nom du fichier depuis l'index
+            const timestamp = Date.now();
+            const indexUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/public/circuits/${state.currentMapId || 'djerba'}.json?t=${timestamp}`;
+            const remoteIndex = await fetch(indexUrl).then(r => r.json());
+            const target = remoteIndex.find(r => String(r.id) === String(circuitId));
+
+            if (!target || !target.file) {
+                 throw new Error(`Fichier introuvable sur le serveur pour le circuit ID: ${circuitId}`);
+            }
+
+            const path = `public/circuits/${target.file}`;
+            statusDiv.textContent = "Suppression en cours...";
+
+            await deleteFileFromGitHub(token, repoOwner, repoName, path, `Delete official circuit: ${circuitName}`);
+
+            // Nettoyage local mémoire + IndexedDB
+            state.officialCircuits = state.officialCircuits.filter(c => String(c.id) !== String(circuitId));
+            import('./database.js').then(async ({ deleteCircuit }) => {
+                await deleteCircuit(circuitId);
+            });
+
+            statusDiv.textContent = "Succès ! Circuit supprimé. L'index du site va se mettre à jour.";
+            statusDiv.style.color = "green";
+
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                window.location.reload();
+            }, 2000);
+
+        } catch (e) {
+            console.error("Delete error:", e);
+            statusDiv.textContent = `Erreur: ${e.message}`;
+            statusDiv.style.color = "var(--danger)";
+            btnDelete.disabled = false;
+        }
+    };
+
+    actions.appendChild(btnCancel);
+    actions.appendChild(btnDelete);
     overlay.classList.add('active');
 }
 
