@@ -30,6 +30,7 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         scout: resolve(__dirname, 'tools/scout.html'),
         fusion: resolve(__dirname, 'tools/fusion.html'),
+        adminFusion: resolve(__dirname, 'admin-fusion.html'),
         datamanager: resolve(__dirname, 'history_walk_datamanager/index.html'),
       },
     },
