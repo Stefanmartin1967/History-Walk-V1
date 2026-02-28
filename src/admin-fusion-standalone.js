@@ -129,34 +129,84 @@ function analyzeData() {
         }
 
         // C2. Content Check
-        const ignoredKeys = ['visited', 'vu', 'planifie', 'planifieCounter', 'notes', 'lat', 'lng', '_deleted'];
+        const ignoredKeys = ['visited', 'vu', 'planifie', 'planifieCounter', 'lat', 'lng', '_deleted'];
         const contentChanges = [];
         let updatedName = getPoiName(origFeat); // Default to original name
+
+        const DATA_DICTIONARY = {
+            'description': 'Description',
+            'Description_courte': 'Desc_wpt',
+            'notes': 'Notes_internes',
+            'price': "Prix d'entrée",
+            'timeH': 'Temps de visite',
+            'timeM': 'Temps de visite'
+        };
+
+        const processedTime = { timeH: false, timeM: false };
 
         Object.keys(uData).forEach(key => {
             if (ignoredKeys.includes(key)) return;
 
-            const oldVal = origFeat.properties[key];
-            const newVal = uData[key];
+            // Déterminer la clé cible officielle
+            let targetKey = key;
+            if (DATA_DICTIONARY[key]) {
+                targetKey = DATA_DICTIONARY[key];
+            }
 
-            if (String(oldVal) !== String(newVal) && !(oldVal === undefined && newVal === "")) {
-                let displayKey = key;
-                if (key === 'timeH') displayKey = 'Heures';
-                if (key === 'timeM') displayKey = 'Minutes';
+            let oldVal = origFeat.properties[targetKey];
+
+            // Si la propriété officielle n'existe pas sous le nom mappé, mais existe sous le nom exact
+            if (oldVal === undefined && origFeat.properties[key] !== undefined) {
+                oldVal = origFeat.properties[key];
+                targetKey = key;
+                }
+
+            let newVal = uData[key];
+
+            // Traitements spécifiques (Prix, Temps)
+            if (key === 'price' && newVal !== undefined && newVal !== 0 && newVal !== "") {
+                newVal = newVal + ' TND';
+            } else if (key === 'timeH' || key === 'timeM') {
+                if (processedTime[key]) return; // Déjà traité
+
+                const h = uData.timeH || 0;
+                const m = uData.timeM || 0;
+
+                // Si le temps n'a pas été défini ou est 0, on l'ignore sauf si on veut explicitement l'effacer
+                if (h === 0 && m === 0) return;
+
+                newVal = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+                targetKey = 'Temps de visite';
+                oldVal = origFeat.properties['Temps de visite'];
+
+                processedTime.timeH = true;
+                processedTime.timeM = true;
+            }
+
+            // Comparaison des chaînes pour éviter les faux positifs
+            if (String(oldVal) !== String(newVal) && !(oldVal === undefined && (newVal === "" || newVal === "00:00" || newVal === "0 TND"))) {
+                let displayKey = targetKey;
+                if (key === 'timeH' || key === 'timeM') displayKey = 'Temps de visite';
+
+                // Éviter d'ajouter des lignes en double si timeH/timeM ont été traités ensemble
+                if (contentChanges.some(c => c.targetKey === targetKey && c.sourceKey === key)) return;
+                // Éviter d'ajouter 2 fois Temps de visite
+                if ((key === 'timeH' || key === 'timeM') && contentChanges.some(c => c.targetKey === 'Temps de visite')) return;
 
                 contentChanges.push({
-                    key: key,
+                    sourceKey: key, // Clé dans uData
+                    targetKey: targetKey, // Clé officielle à modifier
                     displayKey: displayKey,
                     old: oldVal !== undefined ? oldVal : '—',
                     new: newVal
                 });
 
-                // If the name was modified, reflect it in the main list entry
+                // Si le nom a été modifié, le refléter dans l'UI
                 if (key === 'Nom du site FR' || key === 'Nom du site arabe' || key === 'Nom du site AR') {
                     if (key === 'Nom du site FR') updatedName = newVal;
                 }
             }
-        });
+            });
 
         if (contentChanges.length > 0) {
             pendingChanges.contentUpdates.push({
@@ -196,7 +246,7 @@ function renderDashboard() {
                         ${badgeClass === 'badge-del' ?
                             `<button class="btn-restore" onclick="restorePoi('${item.id}')"><i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Restaurer localement</button>`
                             : badgeClass !== 'badge-del' ?
-                            `<button class="btn-edit-poi" data-id="${item.id}" data-type="${badgeClass}" title="Éditer avec l'éditeur riche"><i data-lucide="edit-3" style="width:14px;height:14px;"></i></button>`
+                            `<button class="btn-edit-poi" data-id="${item.id}" data-type="${badgeClass}" title="Éditer avec l'éditeur riche"><i data-lucide="edit-3" style="width:14px;height:14px;"></i> Éditer / Vérifier</button>`
                             : ''}
                     </div>
                     ${renderItemFn(item, idx)}
@@ -462,7 +512,7 @@ DOM.btnFusion.addEventListener('click', async () => {
             const updates = pendingChanges.contentUpdates.find(u => u.id === id);
             if (feat && updates) {
                 updates.changes.forEach(c => {
-                    feat.properties[c.key] = c.new;
+                    feat.properties[c.targetKey] = c.new;
                 });
             }
         });
@@ -486,7 +536,8 @@ DOM.btnFusion.addEventListener('click', async () => {
 
             if (updates) {
                 const newFeat = JSON.parse(JSON.stringify(updates.feature));
-                if (newFeat.properties.userData) delete newFeat.properties.userData;
+
+                // Le nettoyage de userData est fait plus bas pour TOUS les POIs
 
                 // Apply mapped names if edited in the UI
                 const nameFrInput = document.getElementById(`name-new-${idx}`);
@@ -496,6 +547,14 @@ DOM.btnFusion.addEventListener('click', async () => {
                 if (nameArInput && nameArInput.value) newFeat.properties['Nom du site AR'] = nameArInput.value;
 
                 finalFeatures.push(newFeat);
+            }
+        });
+
+        // 5. NETTOYAGE COMPLET ET FINAL DES DOUBLONS AVANT ENVOI
+        finalFeatures.forEach(feat => {
+            if (feat.properties && feat.properties.userData) {
+                // On s'assure que le champ userData (qui cause les doublons) ne part JAMAIS sur GitHub
+                delete feat.properties.userData;
             }
         });
 
