@@ -1,20 +1,5 @@
 [
   {
-    "id": "HW-01KJHJC1F9G278REAZWC5B3K1Y",
-    "name": "Boucle autour de Mosquée Hallem via Mosquée Saïd Ben Salah",
-    "file": "djerba/Boucle autour de Mosquée Hallem via Mosquée Saïd Ben Salah.gpx",
-    "description": "Circuit généré par History Walk.",
-    "distance": "3.1 km",
-    "isOfficial": true,
-    "hasRealTrack": true,
-    "zone": "El May",
-    "poiIds": [
-      "HW-01K77WPE6CC0RY56ECB2RCTGJP",
-      "HW-01K77WPE6C4QCW255MDZKT0RHK",
-      "HW-01K77WPE6FTSXM87T9YTV7G4ME"
-    ]
-  },
-  {
     "id": "HW-1771316521571",
     "name": "Boucle autour de Rym Beach via Mosquée Ibn Abass",
     "file": "djerba/Boucle autour de Rym Beach via Mosquée Ibn Abass.gpx",
