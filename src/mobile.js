@@ -199,7 +199,11 @@ export function renderMobileCircuitsList() {
     
     // --- USE SHARED SERVICE ---
     // Note: We use the local mobileSort, but we assume state.activeFilters.zone is shared or relevant
-    const circuitsToDisplay = getProcessedCircuits(mobileSort, state.filterCompleted, state.activeFilters.zone || null);
+    let filterPoiId = null;
+    if (state.currentFeatureId !== null && state.loadedFeatures[state.currentFeatureId]) {
+        filterPoiId = getPoiId(state.loadedFeatures[state.currentFeatureId]);
+    }
+    const circuitsToDisplay = getProcessedCircuits(mobileSort, state.filterCompleted, state.activeFilters.zone || null, filterPoiId);
 
     // --- CALCULATE PAGINATION ---
     // Base estimations: Screen height minus mobile-nav (60px), header (~60px), toolbar (~50px), padding-top (~10px), padding-bottom (~100px safe area) = roughly screenHeight - 280px.

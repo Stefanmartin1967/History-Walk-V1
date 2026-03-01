@@ -562,6 +562,7 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         DOM.rightSidebar.style.display = 'flex';
         document.body.classList.add('sidebar-open');
         switchSidebarTab('details', true);
+        renderExplorerList(); // Render circuit list with new active POI filter
     }
 }
 
@@ -570,6 +571,8 @@ export function closeDetailsPanel(goBackToList = false) {
     if (window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     if (isDictationActive()) stopDictation();
     
+    state.currentFeatureId = null; // Reset filter universally BEFORE rendering either view
+
     if (isMobileView()) {
         if(goBackToList && state.activeCircuitId) {
             renderMobilePoiList(state.currentCircuit);
@@ -583,7 +586,6 @@ export function closeDetailsPanel(goBackToList = false) {
             // Default to explorer when closing details
             renderExplorerList();
             switchSidebarTab('explorer');
-            state.currentFeatureId = null;
         }
     }
 }

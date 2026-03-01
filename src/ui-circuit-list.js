@@ -5,7 +5,7 @@ import { showConfirm, showCustomModal, closeModal } from './modal.js';
 import { createIcons, icons } from 'lucide';
 import { getProcessedCircuits, getAvailableZonesFromCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
-import { applyFilters } from './data.js';
+import { applyFilters, getPoiId } from './data.js';
 
 // --- LOCAL STATE ---
 // Sort: 'date_desc', 'date_asc', 'dist_asc', 'dist_desc'
@@ -284,7 +284,12 @@ export function renderExplorerList() {
     // Note: We use the global zone filter state here to ensure consistency
     const globalZoneFilter = (state.activeFilters && state.activeFilters.zone) ? state.activeFilters.zone : null;
 
-    const processedCircuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter);
+    let filterPoiId = null;
+    if (state.currentFeatureId !== null && state.loadedFeatures[state.currentFeatureId]) {
+        filterPoiId = getPoiId(state.loadedFeatures[state.currentFeatureId]);
+    }
+
+    const processedCircuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter, filterPoiId);
 
     // --- PAGINATION LOGIC ---
     let listHeight = 0;
