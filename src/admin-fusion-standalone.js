@@ -1,4 +1,4 @@
-import { getAppState, saveAppState, savePoiData } from './database.js';
+import { getAppState, saveAppState, savePoiData, getAllPoiDataForMap } from './database.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { getPoiId, getPoiName, escapeHtml } from './utils.js';
 
@@ -43,7 +43,10 @@ async function init() {
             localCustomFeatures = window.indexedDBMockData[`customPois_${currentMapId}`] || [];
             localHiddenPoiIds = window.indexedDBMockData[`hiddenPois_${currentMapId}`] || [];
         } else {
-            localUserData = await getAppState('userData') || {};
+            const appStateUserData = await getAppState('userData') || {};
+            const mapUserData = await getAllPoiDataForMap(currentMapId) || {};
+            localUserData = { ...appStateUserData, ...mapUserData };
+
             localCustomFeatures = (await getAppState(`customPois_${currentMapId}`)) || [];
             localHiddenPoiIds = (await getAppState(`hiddenPois_${currentMapId}`)) || [];
         }
