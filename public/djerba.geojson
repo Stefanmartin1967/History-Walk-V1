@@ -6892,40 +6892,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.7809298077671,
-          33.86039375542632
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test console suppression",
-        "Catégorie": "Salon de thé",
-        "Zone": "Houmt Souk",
-        "HW_ID": "HW-01KJK2GG96X25DJWZDMKSD3ABM",
-        "Description": "Ajouté via Rich Editor"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.790296647510702,
-          33.844619834643225
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test console suppression 4",
-        "Catégorie": "Pâtisserie",
-        "Zone": "Houmt Souk",
-        "HW_ID": "HW-01KJK58B974670FMV4JTQTR6XG",
-        "Description": "Ajouté via Rich Editor"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.914542646022236,
           33.79916714833331
         ]
