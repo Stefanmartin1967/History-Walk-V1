@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state, removeMyCircuit } from './state.js';
 import { getStoredToken, deleteFileFromGitHub } from './github-sync.js';
 import { deleteCircuitById, restoreCircuit } from './database.js'; // DB Functions
 import { showToast } from './toast.js';
@@ -243,7 +243,7 @@ async function handlePurgeLocal(id, container) {
     try {
         await deleteCircuitById(id);
         // Update local state
-        state.myCircuits = state.myCircuits.filter(x => String(x.id) !== String(id));
+        removeMyCircuit(id);
 
         showToast("Circuit effacé définitivement !", "success");
         runAnalysis(container); // Refresh UI

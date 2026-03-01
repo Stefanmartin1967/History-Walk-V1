@@ -1,6 +1,6 @@
 // data.js
 // --- 1. IMPORTS ---
-import { state } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures } from './state.js';
 import { eventBus } from './events.js';
 import { 
     getAllPoiDataForMap, 
@@ -125,7 +125,7 @@ eventBus.on('admin:mode-toggled', (isAdmin) => {
 // --- CŒUR DU SYSTÈME : Chargement de la Carte ---
 
 export async function displayGeoJSON(geoJSON, mapId) {
-    state.currentMapId = mapId;
+    setCurrentMap(mapId);
 
     // 0. Mise à jour de l'Identité (Titre de la page)
     if (mapId) {
@@ -187,7 +187,7 @@ export async function displayGeoJSON(geoJSON, mapId) {
     let allFeatures = Array.from(uniqueFeaturesMap.values());
 
     // 3. Préparation des données (Injection des notes/statuts utilisateur + Migration IDs)
-    state.loadedFeatures = allFeatures.map((feature, index) => {
+    const newFeatures = allFeatures.map((feature, index) => {
         let pId = getPoiId(feature);
 
         // --- GESTION DES IDENTIFIANTS MANQUANTS ---
@@ -209,6 +209,7 @@ export async function displayGeoJSON(geoJSON, mapId) {
 
         return feature;
     });
+    setLoadedFeatures(newFeatures);
 
     // 4. Lancement de l'affichage
     applyFilters();

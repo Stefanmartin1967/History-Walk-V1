@@ -1,5 +1,5 @@
 // fileManager.js
-import { state } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures } from './state.js';
 import { getPoiId, displayGeoJSON } from './data.js';
 import { DOM, closeDetailsPanel, updateExportButtonLabel } from './ui.js'; // Note: DOM is mostly used in ui.js, but keeping import if needed
 import { showToast } from './toast.js';
@@ -125,8 +125,8 @@ export function handleFileLoad(event) {
                 
                 if (isMobileView()) {
                     // Mobile: Chargement mémoire uniquement
-                    state.loadedFeatures = json.features || [];
-                    state.currentMapId = mapName;
+                    setLoadedFeatures(json.features || []);
+                    setCurrentMap(mapName);
                     await saveAppState('lastMapId', mapName);
                     await saveAppState('lastGeoJSON', json);
                     updateExportButtonLabel(mapName);
@@ -253,7 +253,7 @@ async function restoreBackup(json) {
         showToast("Restauration intelligente en cours...", "info");
 
         const mapId = json.mapId || 'djerba';
-        state.currentMapId = mapId;
+        setCurrentMap(mapId);
         await saveAppState('lastMapId', mapId);
 
         // 1. Restaurer les données utilisateur (Notes, Visites, Positions modifiées)

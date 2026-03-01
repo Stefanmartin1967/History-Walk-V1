@@ -1,5 +1,5 @@
 // gpx.js
-import { state, APP_VERSION } from './state.js';
+import { state, APP_VERSION, addMyCircuit, updateMyCircuit } from './state.js';
 import { getPoiId, getPoiName, applyFilters } from './data.js';
 import { generateCircuitName, loadCircuitById } from './circuit.js';
 import { DOM } from './ui.js';
@@ -236,11 +236,12 @@ export async function saveAndExportCircuit() {
     if (state.activeCircuitId) {
         const index = state.myCircuits.findIndex(c => c.id === state.activeCircuitId);
         if (index > -1) {
-            state.myCircuits[index].name = circuitName;
-            state.myCircuits[index].description = description;
-            state.myCircuits[index].poiIds = poiIds;
-            state.myCircuits[index].transport = transportData;
-            circuitToSave = state.myCircuits[index];
+            circuitToSave = { ...state.myCircuits[index] };
+            circuitToSave.name = circuitName;
+            circuitToSave.description = description;
+            circuitToSave.poiIds = poiIds;
+            circuitToSave.transport = transportData;
+            updateMyCircuit(circuitToSave);
         } else {
              // Recherche dans les circuits officiels (si on est en train d'éditer une version officielle)
              const offIndex = state.officialCircuits ? state.officialCircuits.findIndex(c => c.id === state.activeCircuitId) : -1;
@@ -268,7 +269,7 @@ export async function saveAndExportCircuit() {
             realTrack: null,
             transport: transportData
         };
-        state.myCircuits.push(circuitToSave);
+        addMyCircuit(circuitToSave);
         state.activeCircuitId = newId;
     }
 
@@ -519,7 +520,7 @@ export async function processImportedGpx(file, circuitId) {
                             localCircuit = { ...targetCircuit };
                             // On s'assure qu'il est marqué officiel pour l'UI
                             if (!localCircuit.isOfficial) localCircuit.isOfficial = true;
-                            state.myCircuits.push(localCircuit);
+                            addMyCircuit(localCircuit);
                         }
 
                         if (localCircuit) {
@@ -577,7 +578,7 @@ export async function processImportedGpx(file, circuitId) {
                         transport: {}
                     };
 
-                    state.myCircuits.push(newCircuit);
+                    addMyCircuit(newCircuit);
                     await saveCircuit(newCircuit);
 
                     await loadCircuitById(newId);
