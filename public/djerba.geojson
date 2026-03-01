@@ -6972,6 +6972,23 @@
         "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.853783005772897,
+          33.76916729202362
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test console suppression",
+        "Catégorie": "Restaurant",
+        "Zone": "El Groa",
+        "HW_ID": "HW-01KJNK87V2E7XM7BRCPZG6Z3KD",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
