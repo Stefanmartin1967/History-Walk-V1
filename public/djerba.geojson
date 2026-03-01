@@ -6937,6 +6937,24 @@
         "HW_ID": "HW-01KJMJFS86CYM1JHB958Y33CZ0",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.854438543319702,
+          33.82125957539374
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Djerbahood",
+        "Catégorie": "Curiosité",
+        "Zone": "Erriadh",
+        "Source": "https://fr.wikipedia.org/wiki/Djerbahood",
+        "HW_ID": "HW-01KJN6EEH9Z49AMGYJT621WG9N",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
