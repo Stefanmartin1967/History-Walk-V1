@@ -135,7 +135,14 @@ export async function displayGeoJSON(geoJSON, mapId) {
     
     // 1. Récupération des données sauvegardées (Cachés, Notes, Ajouts manuels)
     state.hiddenPoiIds = (await getAppState(`hiddenPois_${mapId}`)) || [];
-    const storedUserData = await getAppState('userData') || {}; 
+
+    // Récupération globale (legacy/backup) et spécifique à la carte
+    const appStateUserData = await getAppState('userData') || {};
+    const mapUserData = await getAllPoiDataForMap(mapId) || {};
+
+    // On fusionne : les données de la carte (qui sont les plus récentes) écrasent les globales
+    const storedUserData = { ...appStateUserData, ...mapUserData };
+
     const storedCustomFeatures = (await getAppState(`customPois_${mapId}`)) || [];
     
     state.customFeatures = storedCustomFeatures || [];
