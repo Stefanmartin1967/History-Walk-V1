@@ -287,20 +287,25 @@ export function renderExplorerList() {
     const processedCircuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter);
 
     // --- PAGINATION LOGIC ---
-    let listHeight = listContainer.clientHeight;
+    let listHeight = 0;
 
-    // If clientHeight is 0 (container might be hidden but active), estimate height
-    if (listHeight === 0) {
-        const panelExplorer = document.getElementById('panel-explorer');
-        const header = document.querySelector('.explorer-header');
-        const footer = document.querySelector('.explorer-footer');
-        if (panelExplorer && header && footer) {
-            listHeight = panelExplorer.clientHeight - header.clientHeight - footer.clientHeight;
-        }
+    // Always use the panel height as the source of truth, not the listContainer itself,
+    // because the listContainer shrinks when it has fewer items (e.g., on the last page).
+    const panelExplorer = document.getElementById('panel-explorer');
+    const header = document.querySelector('.explorer-header');
+    const footer = document.querySelector('.explorer-footer');
+
+    if (panelExplorer && header && footer) {
+        // Available space = total panel - header - footer - (optional padding of container)
+        // Default gap is 10px, padding is 12px (top and bottom) -> ~24px
+        listHeight = panelExplorer.clientHeight - header.clientHeight - footer.clientHeight - 24;
+    } else {
+        // Fallback if elements aren't rendered yet
+        listHeight = listContainer.clientHeight || 500;
     }
 
-    // Item height is roughly 70px (padding 10 + border 1 + content height)
-    const itemHeight = 70;
+    // Item height is roughly 72px (padding 10*2 + border 1 + content height)
+    const itemHeight = 72;
 
     // Calculate items per page, minimum 8
     let itemsPerPage = Math.max(1, Math.floor(listHeight / itemHeight));

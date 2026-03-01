@@ -231,7 +231,7 @@ export function renderMobileCircuitsList() {
             </div>
         </div>
         <div id="mobile-toolbar-container"></div>
-        <div class="panel-content mobile-standard-padding mobile-list-container" style="display: flex; flex-direction: column;">
+        <div class="panel-content mobile-standard-padding mobile-list-container">
     `;
 
     // Empty state logic is simpler now, but we need to check if *any* circuits exist before filtering to show the correct empty message
@@ -251,7 +251,7 @@ export function renderMobileCircuitsList() {
             </button>
         </div>`;
     } else {
-        html += `<div class="mobile-list" style="flex: 1; overflow-y: auto;">`;
+        html += `<div class="mobile-list">`;
         paginatedCircuits.forEach(circuit => {
             // Using enriched properties from getProcessedCircuits
             const distDisplay = circuit._distDisplay;
@@ -320,6 +320,9 @@ export function renderMobileCircuitsList() {
     
     html += `</div>`;
     container.innerHTML = html;
+
+    // Explicitly re-create icons after updating innerHTML to ensure pagination arrows render
+    createIcons({ icons, root: container });
 
     // Pagination Event Listeners
     const prevBtn = document.getElementById('mobile-prev-page');
