@@ -20,6 +20,7 @@ import { handleCircuitVisitedToggle } from './circuit-actions.js';
 
 let currentView = 'circuits'; 
 let mobileSort = 'date_desc'; // date_desc, date_asc, dist_asc, dist_desc
+let mobileCurrentPage = 1;
 // Note: state.activeFilters.zone is used for Zone filtering
 
 export function isMobileView() {
@@ -90,6 +91,9 @@ export function initMobileMode() {
 
 export function switchMobileView(viewName) {
     currentView = viewName;
+    if (viewName === 'circuits') {
+        mobileCurrentPage = 1;
+    }
     
     document.querySelectorAll('.mobile-nav-btn[data-view]').forEach(btn => {
         if (btn.dataset.view === viewName) {
@@ -197,12 +201,37 @@ export function renderMobileCircuitsList() {
     // Note: We use the local mobileSort, but we assume state.activeFilters.zone is shared or relevant
     const circuitsToDisplay = getProcessedCircuits(mobileSort, state.filterCompleted, state.activeFilters.zone || null);
 
+    // --- CALCULATE PAGINATION ---
+    // Base estimations: Screen height minus mobile-nav (60px), header (~60px), toolbar (~50px), paddings (~20px) = roughly screenHeight - 190px.
+    const availableHeight = window.innerHeight - 190;
+    // Item height is roughly 80px in mobile mode.
+    const itemHeight = 80;
+    let itemsPerPage = Math.max(1, Math.floor(availableHeight / itemHeight));
+    if (itemsPerPage < 3) itemsPerPage = 6;
+
+    const totalPages = Math.max(1, Math.ceil(circuitsToDisplay.length / itemsPerPage));
+    if (mobileCurrentPage > totalPages) {
+        mobileCurrentPage = totalPages;
+    }
+
+    const startIdx = (mobileCurrentPage - 1) * itemsPerPage;
+    const paginatedCircuits = circuitsToDisplay.slice(startIdx, startIdx + itemsPerPage);
+
     let html = `
-        <div class="mobile-view-header mobile-header-harmonized">
-            <h1>Mes Circuits</h1>
+        <div class="mobile-view-header mobile-header-harmonized" style="justify-content: space-between; padding-right: 15px;">
+            <h1 style="margin:0;">Mes Circuits</h1>
+            <div style="display:flex; align-items:center; gap:5px;">
+                <button class="action-button" id="mobile-prev-page" title="Page précédente" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px; ${mobileCurrentPage <= 1 ? 'opacity: 0.3;' : ''}" ${mobileCurrentPage <= 1 ? 'disabled' : ''}>
+                    <i data-lucide="chevron-left" style="width:24px; height:24px;"></i>
+                </button>
+                <span id="mobile-page-info" style="font-size:14px; font-weight:600; color:var(--ink); min-width: 30px; text-align: center;">${mobileCurrentPage} / ${totalPages}</span>
+                <button class="action-button" id="mobile-next-page" title="Page suivante" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px; ${mobileCurrentPage >= totalPages ? 'opacity: 0.3;' : ''}" ${mobileCurrentPage >= totalPages ? 'disabled' : ''}>
+                    <i data-lucide="chevron-right" style="width:24px; height:24px;"></i>
+                </button>
+            </div>
         </div>
         <div id="mobile-toolbar-container"></div>
-        <div class="panel-content mobile-standard-padding mobile-list-container">
+        <div class="panel-content mobile-standard-padding mobile-list-container" style="display: flex; flex-direction: column;">
     `;
 
     // Empty state logic is simpler now, but we need to check if *any* circuits exist before filtering to show the correct empty message
@@ -222,8 +251,8 @@ export function renderMobileCircuitsList() {
             </button>
         </div>`;
     } else {
-        html += `<div class="mobile-list">`;
-        circuitsToDisplay.forEach(circuit => {
+        html += `<div class="mobile-list" style="flex: 1; overflow-y: auto;">`;
+        paginatedCircuits.forEach(circuit => {
             // Using enriched properties from getProcessedCircuits
             const distDisplay = circuit._distDisplay;
             const zoneName = circuit._zoneName;
@@ -291,6 +320,28 @@ export function renderMobileCircuitsList() {
     
     html += `</div>`;
     container.innerHTML = html;
+
+    // Pagination Event Listeners
+    const prevBtn = document.getElementById('mobile-prev-page');
+    const nextBtn = document.getElementById('mobile-next-page');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (mobileCurrentPage > 1) {
+                mobileCurrentPage--;
+                renderMobileCircuitsList();
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (mobileCurrentPage < totalPages) {
+                mobileCurrentPage++;
+                renderMobileCircuitsList();
+            }
+        });
+    }
 
     renderMobileToolbar();
 

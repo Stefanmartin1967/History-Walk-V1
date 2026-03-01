@@ -11,6 +11,7 @@ import { applyFilters } from './data.js';
 // Sort: 'date_desc', 'date_asc', 'dist_asc', 'dist_desc'
 let currentSort = 'date_desc';
 let filterTodo = false; // true = Show only circuits with unvisited points
+let explorerCurrentPage = 1;
 
 export function initCircuitListUI() {
     eventBus.on('circuit:list-updated', () => {
@@ -30,6 +31,7 @@ export function initCircuitListUI() {
     // Listen for global filter changes (like Zone) to refresh list
     eventBus.on('data:filtered', () => {
          if (document.getElementById('explorer-list')) {
+            explorerCurrentPage = 1;
             renderExplorerList();
         }
     });
@@ -46,11 +48,21 @@ function renderExplorerHeader() {
 
     const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Circuits';
 
-    // Header with Title and Close Button
+    // Header with Title, Pagination and Close Button
     header.innerHTML = `
         <div style="display:flex; align-items:center; justify-content:space-between; width:100%; height: 100%; padding: 0 10px;">
-            <div style="width: 32px;"></div> <!-- Spacer to center title visually -->
+            <div style="display:flex; align-items:center; gap:5px;">
+                <button class="action-button" id="explorer-prev-page" title="Page précédente" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;" disabled>
+                    <i data-lucide="chevron-left" style="width:20px; height:20px;"></i>
+                </button>
+                <span id="explorer-page-info" style="font-size:14px; font-weight:500; color:var(--ink); min-width: 30px; text-align: center;">- / -</span>
+                <button class="action-button" id="explorer-next-page" title="Page suivante" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;" disabled>
+                    <i data-lucide="chevron-right" style="width:20px; height:20px;"></i>
+                </button>
+            </div>
+
             <h2 style="margin:0; font-size:18px;">${mapName}</h2>
+
             <button class="action-button" id="close-explorer-btn" title="Fermer" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;">
                 <i data-lucide="x" style="width:20px; height:20px;"></i>
             </button>
@@ -66,6 +78,29 @@ function renderExplorerHeader() {
              const sidebar = document.getElementById('right-sidebar');
              if(sidebar) sidebar.style.display = 'none';
              document.body.classList.remove('sidebar-open');
+        });
+    }
+
+    const prevBtn = header.querySelector('#explorer-prev-page');
+    const nextBtn = header.querySelector('#explorer-next-page');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('mouseenter', () => { if (!prevBtn.disabled) prevBtn.style.backgroundColor = 'var(--surface-hover)'; });
+        prevBtn.addEventListener('mouseleave', () => prevBtn.style.backgroundColor = 'transparent');
+        prevBtn.addEventListener('click', () => {
+            if (explorerCurrentPage > 1) {
+                explorerCurrentPage--;
+                renderExplorerList();
+            }
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('mouseenter', () => { if (!nextBtn.disabled) nextBtn.style.backgroundColor = 'var(--surface-hover)'; });
+        nextBtn.addEventListener('mouseleave', () => nextBtn.style.backgroundColor = 'transparent');
+        nextBtn.addEventListener('click', () => {
+            explorerCurrentPage++;
+            renderExplorerList();
         });
     }
 
@@ -227,6 +262,7 @@ function openZonesModalPC() {
 }
 
 function refreshExplorer() {
+    explorerCurrentPage = 1; // Reset to page 1 when sort/filters change
     renderExplorerToolbar(); // Update icons/states
     renderExplorerList(); // Update list
 }
@@ -234,7 +270,7 @@ function refreshExplorer() {
 export function renderExplorerList() {
     // Ensure header/toolbar are up to date
     const headerTitle = document.querySelector('.explorer-header h2');
-    if (headerTitle && state.currentMapId && !headerTitle.textContent.includes(state.currentMapId.charAt(0).toUpperCase())) {
+    if (!headerTitle || (state.currentMapId && !headerTitle.textContent.includes(state.currentMapId.charAt(0).toUpperCase()))) {
          renderExplorerHeader();
     }
     if (!document.querySelector('.explorer-footer')) {
@@ -250,10 +286,57 @@ export function renderExplorerList() {
 
     const processedCircuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter);
 
+    // --- PAGINATION LOGIC ---
+    let listHeight = listContainer.clientHeight;
+
+    // If clientHeight is 0 (container might be hidden but active), estimate height
+    if (listHeight === 0) {
+        const panelExplorer = document.getElementById('panel-explorer');
+        const header = document.querySelector('.explorer-header');
+        const footer = document.querySelector('.explorer-footer');
+        if (panelExplorer && header && footer) {
+            listHeight = panelExplorer.clientHeight - header.clientHeight - footer.clientHeight;
+        }
+    }
+
+    // Item height is roughly 70px (padding 10 + border 1 + content height)
+    const itemHeight = 70;
+
+    // Calculate items per page, minimum 8
+    let itemsPerPage = Math.max(1, Math.floor(listHeight / itemHeight));
+    if (itemsPerPage < 3) itemsPerPage = 8;
+
+    const totalPages = Math.max(1, Math.ceil(processedCircuits.length / itemsPerPage));
+    if (explorerCurrentPage > totalPages) {
+        explorerCurrentPage = totalPages;
+    }
+
+    // Update Header Pagination UI
+    const prevBtn = document.getElementById('explorer-prev-page');
+    const nextBtn = document.getElementById('explorer-next-page');
+    const pageInfo = document.getElementById('explorer-page-info');
+
+    if (pageInfo) {
+        pageInfo.textContent = `${explorerCurrentPage} / ${totalPages}`;
+    }
+    if (prevBtn) {
+        prevBtn.disabled = explorerCurrentPage <= 1;
+        prevBtn.style.opacity = prevBtn.disabled ? '0.3' : '1';
+        prevBtn.style.cursor = prevBtn.disabled ? 'default' : 'pointer';
+    }
+    if (nextBtn) {
+        nextBtn.disabled = explorerCurrentPage >= totalPages;
+        nextBtn.style.opacity = nextBtn.disabled ? '0.3' : '1';
+        nextBtn.style.cursor = nextBtn.disabled ? 'default' : 'pointer';
+    }
+
+    const startIdx = (explorerCurrentPage - 1) * itemsPerPage;
+    const paginatedCircuits = processedCircuits.slice(startIdx, startIdx + itemsPerPage);
+
     // 5. Render
-    listContainer.innerHTML = (processedCircuits.length === 0)
+    listContainer.innerHTML = (paginatedCircuits.length === 0)
         ? '<div style="padding:20px; text-align:center; color:var(--ink-soft);">Aucun circuit correspondant.</div>'
-        : processedCircuits.map(c => {
+        : paginatedCircuits.map(c => {
             // Simplification du nom : Suppression des préfixes et du via
             let displayName = c.name.split(' via ')[0];
             displayName = displayName.replace(/^(Circuit de |Boucle de )/i, '');
