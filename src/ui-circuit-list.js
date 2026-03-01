@@ -289,19 +289,21 @@ export function renderExplorerList() {
     // --- PAGINATION LOGIC ---
     let listHeight = 0;
 
-    // Always use the panel height as the source of truth, not the listContainer itself,
-    // because the listContainer shrinks when it has fewer items (e.g., on the last page).
-    const panelExplorer = document.getElementById('panel-explorer');
+    // Always use the fixed sidebar height as the source of truth, not the listContainer or panel itself,
+    // because flex containers can shrink when their content shrinks (e.g., on the last page).
+    const sidebar = document.getElementById('right-sidebar');
     const header = document.querySelector('.explorer-header');
     const footer = document.querySelector('.explorer-footer');
+    const tabs = document.querySelector('.sidebar-tabs');
 
-    if (panelExplorer && header && footer) {
-        // Available space = total panel - header - footer - (optional padding of container)
+    // We calculate based on the rigid window/sidebar constraints to guarantee absolute stability across pages.
+    if (sidebar && header && footer && tabs) {
+        // Available space = fixed sidebar height - tabs - header - footer - (padding of container)
         // Default gap is 10px, padding is 12px (top and bottom) -> ~24px
-        listHeight = panelExplorer.clientHeight - header.clientHeight - footer.clientHeight - 24;
+        listHeight = sidebar.clientHeight - tabs.clientHeight - header.clientHeight - footer.clientHeight - 24;
     } else {
-        // Fallback if elements aren't rendered yet
-        listHeight = listContainer.clientHeight || 500;
+        // Fallback: window height minus topbar (70px), tabs (~40px), header (~56px), footer (~56px), padding (~24px)
+        listHeight = window.innerHeight - 70 - 40 - 56 - 56 - 24;
     }
 
     // Item height is roughly 72px (padding 10*2 + border 1 + content height)
