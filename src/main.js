@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
 });
 
 import { initDB, getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
-import { APP_VERSION, state } from './state.js';
+import { APP_VERSION, state, setCurrentMap, setLoadedFeatures, setMyCircuits } from './state.js';
 import { initMap, map, refreshMapMarkers, fitMapToContent } from './map.js';
 import { eventBus } from './events.js';
 import { createIcons, icons } from 'lucide';
@@ -230,7 +230,7 @@ async function loadAndInitializeMap() {
     }
 
     // 3. Mise à jour État
-    state.currentMapId = activeMapId;
+    setCurrentMap(activeMapId);
     updateAppTitle(activeMapId);
     await saveAppState('lastMapId', activeMapId);
     if (!isMobileView()) await saveAppState('lastGeoJSON', geojsonData);
@@ -238,7 +238,8 @@ async function loadAndInitializeMap() {
     // 4. Chargement User Data & Circuits (Smart Merge)
     try {
         state.userData = await getAllPoiDataForMap(activeMapId) || {};
-        state.myCircuits = await getAllCircuitsForMap(activeMapId) || [];
+        const loadedCircuits = await getAllCircuitsForMap(activeMapId) || [];
+        setMyCircuits(loadedCircuits);
         state.officialCircuitsStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
         await loadOfficialCircuits();
 
@@ -249,28 +250,29 @@ async function loadAndInitializeMap() {
             if (toDelete) await deleteCircuitById(c.id);
             else validCircuits.push(c);
         }
-        state.myCircuits = validCircuits;
+        setMyCircuits(validCircuits);
 
         if (state.officialCircuits) {
             state.officialCircuits = state.officialCircuits.map(off => {
                 const loc = state.myCircuits.find(l => String(l.id) === String(off.id));
                 return loc ? { ...off, ...loc, isOfficial: true } : off;
             });
-            state.myCircuits = state.myCircuits.filter(c =>
+            const filteredCircuits = state.myCircuits.filter(c =>
                 !state.officialCircuits.some(off => String(off.id) === String(c.id))
             );
+            setMyCircuits(filteredCircuits);
         }
     } catch (e) { console.warn("Erreur chargement user data", e); }
 
     // 5. RENDU (La stabilisation est ici)
     if (isMobileView()) {
-        state.loadedFeatures = geojsonData.features || [];
+        setLoadedFeatures(geojsonData.features || []);
 
         // --- MERGE CUSTOM POIS (MOBILE) ---
         const customPois = await getAppState(`customPois_${activeMapId}`) || [];
         if (customPois.length > 0) {
             console.log(`[Mobile] Fusion de ${customPois.length} lieux personnalisés.`);
-            state.loadedFeatures = [...state.loadedFeatures, ...customPois];
+            setLoadedFeatures([...state.loadedFeatures, ...customPois]);
             state.customFeatures = customPois;
         }
 
@@ -291,7 +293,7 @@ async function loadAndInitializeMap() {
         switchMobileView('circuits');
     } else {
         // CORRECTION: On doit aussi peupler loadedFeatures sur Desktop
-        state.loadedFeatures = geojsonData.features || [];
+        setLoadedFeatures(geojsonData.features || []);
 
         // INIT MAP UNE SEULE FOIS AVEC LA BONNE VUE
         // Plus de "Djerba default" puis "Jump"

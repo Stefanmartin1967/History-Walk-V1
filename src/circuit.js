@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit } from './state.js';
+import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit } from './state.js';
 import { DOM, openDetailsPanel, updateSelectionModeButton } from './ui.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters } from './data.js';
@@ -477,10 +477,12 @@ export async function loadCircuitById(id) {
                     if (shadowIndex === -1) {
                         // On s'assure que le flag isOfficial est présent pour que l'UI le masque (évite les doublons visuels)
                         if (!circuitToLoad.isOfficial) circuitToLoad.isOfficial = true;
-                        state.myCircuits.push(circuitToLoad);
+                        addMyCircuit(circuitToLoad);
                     } else {
                         // Mise à jour du shadow existant
-                        state.myCircuits[shadowIndex].realTrack = coordinates;
+                        const updatedShadow = { ...state.myCircuits[shadowIndex] };
+                        updatedShadow.realTrack = coordinates;
+                        updateMyCircuit(updatedShadow);
                     }
 
                     console.log(`[Circuit] Trace chargée (${coordinates.length} points) et sauvegardée (Shadow).`);
@@ -719,7 +721,7 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
 
     try {
         await saveCircuit(newCircuit);
-        state.myCircuits.push(newCircuit); // Mise à jour mémoire
+        addMyCircuit(newCircuit); // Mise à jour mémoire
         eventBus.emit('circuit:list-updated'); // Mise à jour UI
     } catch (err) {
         console.error("Erreur sauvegarde circuit importé:", err);
@@ -854,9 +856,11 @@ export function setupCircuitEventListeners() {
                  if (state.activeCircuitId) {
                      const idx = state.myCircuits.findIndex(c => c.id === state.activeCircuitId);
                      if (idx > -1) {
-                         state.myCircuits[idx].name = trimmed;
+                         const updatedCircuit = { ...state.myCircuits[idx] };
+                         updatedCircuit.name = trimmed;
+                         updateMyCircuit(updatedCircuit);
                          // SAUVEGARDE PERMANENTE
-                         await saveCircuit(state.myCircuits[idx]);
+                         await saveCircuit(updatedCircuit);
                          eventBus.emit('circuit:list-updated');
                      }
                  } else {

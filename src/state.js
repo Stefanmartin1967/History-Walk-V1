@@ -75,6 +75,46 @@ export function setCurrentMap(mapId) {
     console.log(`[State] Changement de carte pour : ${mapId}`);
 }
 
+// Gardien pour définir les points d'intérêt chargés (features)
+export function setLoadedFeatures(features) {
+    state.loadedFeatures = features || [];
+    console.log(`[State] ${state.loadedFeatures.length} POIs chargés en mémoire.`);
+}
+
+// Gardien pour remplacer toute la liste des circuits persos
+export function setMyCircuits(circuits) {
+    state.myCircuits = circuits || [];
+    console.log(`[State] Liste complète de circuits persos mise à jour (${state.myCircuits.length} circuits).`);
+}
+
+// Gardien pour ajouter un circuit perso
+export function addMyCircuit(circuit) {
+    if (!circuit) return;
+    state.myCircuits.push(circuit);
+    console.log(`[State] Circuit perso ajouté : ${circuit.id} (${circuit.name || 'Sans nom'})`);
+}
+
+// Gardien pour mettre à jour un circuit perso existant
+export function updateMyCircuit(updatedCircuit) {
+    if (!updatedCircuit) return;
+    const index = state.myCircuits.findIndex(c => String(c.id) === String(updatedCircuit.id));
+    if (index !== -1) {
+        state.myCircuits[index] = updatedCircuit;
+        console.log(`[State] Circuit perso mis à jour : ${updatedCircuit.id}`);
+    } else {
+        console.warn(`[State] Impossible de mettre à jour le circuit ${updatedCircuit.id}, il n'existe pas.`);
+    }
+}
+
+// Gardien pour supprimer un circuit perso
+export function removeMyCircuit(circuitId) {
+    const initialLength = state.myCircuits.length;
+    state.myCircuits = state.myCircuits.filter(c => String(c.id) !== String(circuitId));
+    if (state.myCircuits.length < initialLength) {
+        console.log(`[State] Circuit perso retiré : ${circuitId}`);
+    }
+}
+
 // Gardien pour ajouter un point au circuit
 export function addPoiToCurrentCircuit(feature) {
     state.currentCircuit.push(feature);
