@@ -167,6 +167,18 @@ export async function batchSavePoiData(mapId, dataArray) {
     return new Promise((resolve, reject) => {
         if (!dataArray || dataArray.length === 0) return resolve();
 
+        // 1. Regrouper et fusionner les modifications en mémoire par poiId
+        // Cela évite d'écraser des données si dataArray contient plusieurs mises à jour pour le même POI
+        const mergedDataMap = new Map();
+        dataArray.forEach(item => {
+            const { poiId, data } = item;
+            if (mergedDataMap.has(poiId)) {
+                mergedDataMap.set(poiId, { ...mergedDataMap.get(poiId), ...data });
+            } else {
+                mergedDataMap.set(poiId, { ...data });
+            }
+        });
+
         const transaction = db.transaction('poiUserData', 'readwrite');
         const store = transaction.objectStore('poiUserData');
         let errors = [];
@@ -181,8 +193,8 @@ export async function batchSavePoiData(mapId, dataArray) {
 
         transaction.onerror = (event) => reject(event.target.error);
 
-        dataArray.forEach(item => {
-            const { poiId, data } = item;
+        // 2. Traiter chaque poiId unique
+        mergedDataMap.forEach((data, poiId) => {
             try {
                 // Lecture d'abord pour fusionner (merge) au lieu d'écraser
                 const getRequest = store.get([mapId, poiId]);
