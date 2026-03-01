@@ -183,12 +183,17 @@ export async function batchSavePoiData(mapId, dataArray) {
 
         dataArray.forEach(item => {
             const { poiId, data } = item;
-            // Note : Pour optimiser la vitesse du batch, on ne fait pas de read-before-write ici
-            // On écrase ou on suppose que 'data' est complet.
-            // Si le merge est vital, cela ralentira le processus batch.
-            const dataToSave = { ...data, mapId, poiId };
             try {
-                store.put(dataToSave);
+                // Lecture d'abord pour fusionner (merge) au lieu d'écraser
+                const getRequest = store.get([mapId, poiId]);
+                getRequest.onsuccess = () => {
+                    const existingData = getRequest.result || {};
+                    const dataToSave = { ...existingData, ...data, mapId, poiId };
+
+                    const putRequest = store.put(dataToSave);
+                    putRequest.onerror = (e) => errors.push({ id: poiId, error: e.target.error });
+                };
+                getRequest.onerror = (e) => errors.push({ id: poiId, error: e.target.error });
             } catch (e) {
                 errors.push({ id: poiId, error: e });
             }

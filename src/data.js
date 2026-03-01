@@ -140,8 +140,21 @@ export async function displayGeoJSON(geoJSON, mapId) {
     const appStateUserData = await getAppState('userData') || {};
     const mapUserData = await getAllPoiDataForMap(mapId) || {};
 
-    // On fusionne : les données de la carte (qui sont les plus récentes) écrasent les globales
-    const storedUserData = { ...appStateUserData, ...mapUserData };
+    // SÉCURITÉ DES DONNÉES (Phase 1) :
+    // Au lieu d'un écrasement brutal (...appStateUserData, ...mapUserData) qui remplace
+    // tout l'objet d'un POI, on fait une fusion profonde (deep merge) pour chaque POI.
+    // Cela garantit qu'une note enregistrée dans 'appState' n'est pas effacée par un
+    // statut 'vu' enregistré dans 'mapUserData'.
+    const storedUserData = { ...appStateUserData };
+    for (const [poiId, data] of Object.entries(mapUserData)) {
+        if (storedUserData[poiId]) {
+            // Si le POI existe déjà, on fusionne les attributs
+            storedUserData[poiId] = { ...storedUserData[poiId], ...data };
+        } else {
+            // Sinon on l'ajoute
+            storedUserData[poiId] = data;
+        }
+    }
 
     const storedCustomFeatures = (await getAppState(`customPois_${mapId}`)) || [];
     
