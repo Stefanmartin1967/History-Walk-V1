@@ -6903,6 +6903,40 @@
         "HW_ID": "HW-01KJM8X5EEAHXPBF1YNSEA19F1",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.770022859969572,
+          33.71872346897096
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Briguen",
+        "Catégorie": "Mosquée",
+        "Zone": "Ajim",
+        "HW_ID": "HW-01KJMJATZZZRP02QNDTWS3YVK1",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.762771368026735,
+          33.70219792648904
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Les pêcheries modèles de Djerba",
+        "Catégorie": "Curiosité",
+        "Zone": "Ajim",
+        "HW_ID": "HW-01KJMJFS86CYM1JHB958Y33CZ0",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
