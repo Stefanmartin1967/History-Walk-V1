@@ -13,7 +13,7 @@ import { getZoneFromCoords } from './utils.js';
  * @param {string|null} filterZone - If provided, only show circuits in this zone
  * @returns {Array} List of enriched circuit objects
  */
-export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false, filterZone = null) {
+export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false, filterZone = null, filterPoiId = null) {
     // 1. Data Prep : Fusion des circuits officiels et utilisateur (Sans doublons)
     const officialCircuits = state.officialCircuits || [];
     const localCircuits = (state.myCircuits || []).filter(c => {
@@ -107,6 +107,10 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
 
     if (filterZone) {
         enrichedCircuits = enrichedCircuits.filter(c => c._zoneName === filterZone);
+    }
+
+    if (filterPoiId) {
+        enrichedCircuits = enrichedCircuits.filter(c => c.poiIds && c.poiIds.includes(filterPoiId));
     }
 
     // 4. Sorting
