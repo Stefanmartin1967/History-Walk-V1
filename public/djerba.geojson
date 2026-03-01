@@ -5462,7 +5462,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Soufiane",
+        "Nom du site FR": "Mosquée Sidi Yati de Midoun",
         "Nom du site arabe": "مسجد سيدي سفيان",
         "Catégorie": "Mosquée",
         "Zone": "Taguermess",
@@ -5470,10 +5470,10 @@
         "Latitude": 33.816849,
         "Longitude": 11.016661,
         "Description": "Nom sur OSM : Mosquée Sidi Yati. A vérifier.",
-        "Source": null,
+        "Source": "",
         "Temps de visite": null,
-        "Prix d'entrée": null,
-        "Desc_wpt": null,
+        "Prix d'entrée": 0,
+        "Desc_wpt": "",
         "HW_ID": "HW-01K77WPE6QJNV1Q83SBNFKC88M",
         "planifieCounter": 1,
         "vu": true
