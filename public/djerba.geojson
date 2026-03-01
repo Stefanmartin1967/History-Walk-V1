@@ -2892,11 +2892,11 @@
         "Coordonnées GPS": "33.827750, 10.867722",
         "Latitude": 33.82775,
         "Longitude": 10.867722,
-        "Description": null,
-        "Source": null,
+        "Description": "Renseignée sous Google Maps mais apparemment, il ne doit rien y subsister, on ne voir rien sur la carte",
+        "Source": "",
         "Temps de visite": null,
-        "Prix d'entrée": null,
-        "Desc_wpt": null,
+        "Prix d'entrée": 0,
+        "Desc_wpt": "A vérifier si toujours existante",
         "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB"
       }
     },
@@ -6953,6 +6953,23 @@
         "Zone": "Erriadh",
         "Source": "https://fr.wikipedia.org/wiki/Djerbahood",
         "HW_ID": "HW-01KJN6EEH9Z49AMGYJT621WG9N",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.895234524013045,
+          33.77044644512249
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Henchir",
+        "Catégorie": "Mosquée",
+        "Zone": "El May",
+        "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
         "Description": "Ajouté via Rich Editor"
       }
     }
