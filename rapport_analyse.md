@@ -55,8 +55,11 @@ Voici l'ordre de priorité que je vous conseille :
 
 ### Phase 2 : Découpage de l'Interface (Priorité Actuelle - En Cours)
 *   **Objectif** : Rendre le code lisible et faciliter les futures modifications visuelles.
-*   **Prochaine étape** : Casser l'énorme fichier `src/ui.js` (>1000 lignes) en plusieurs petits fichiers logiques (par exemple `ui-filters.js`, `ui-details.js`, `ui-modals.js`), en procédant de manière très chirurgicale et par petites étapes pour ne rien casser à l'affichage ni aux fonctionnalités.
-    *   **Action immédiate** : Extraire les fonctions liées aux Modales (`ui-modals.js`) et aux Filtres (`ui-filters.js`) qui sont les plus sûres à séparer pour commencer.
+*   **Bilan des Actions Réalisées (Étape 1)** :
+    *   Extraction réussie des fonctions liées aux Modales vers un nouveau fichier indépendant `src/ui-modals.js` (`showLegendModal`, `openRestoreModal`, `openTrashModal`, `requestSoftDelete`).
+    *   Extraction réussie de la logique des Filtres et des Menus vers `src/ui-filters.js` (`populateZonesMenu`, `populateCategoriesMenu`, etc.).
+    *   Le fichier principal `ui.js` a commencé à être allégé, et l'application compile et fonctionne parfaitement.
+*   **Prochaine étape** : Continuer de casser l'énorme fichier `src/ui.js` en petits fichiers logiques. Les prochaines cibles prioritaires et "sûres" à extraire pourraient être la gestion des détails (`ui-details.js`) ou la logique liée au mode de sélection. Il faudra toujours procéder de manière très chirurgicale.
 
 ### Phase 3 : Refonte de l'Administration (À Venir)
 *   **Objectif** : Fiabiliser la publication des données vers GitHub.
