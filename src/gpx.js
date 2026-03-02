@@ -1,5 +1,5 @@
 // gpx.js
-import { state, APP_VERSION, addMyCircuit, updateMyCircuit } from './state.js';
+import { state, APP_VERSION, addMyCircuit, updateMyCircuit, setUserData, setActiveCircuitId, setHasUnexportedChanges } from './state.js';
 import { getPoiId, getPoiName, applyFilters } from './data.js';
 import { generateCircuitName, loadCircuitById } from './circuit.js';
 import { DOM } from './ui.js';
@@ -193,7 +193,7 @@ export async function recalculatePlannedCountersForMap(mapId) {
         }
         
         // ... Mise à jour de l'état local ...
-        state.userData = await getAllPoiDataForMap(mapId);
+        setUserData(await getAllPoiDataForMap(mapId));
         state.loadedFeatures.forEach(feature => {
             const poiId = getPoiId(feature);
             if (state.userData[poiId]) {
@@ -270,12 +270,12 @@ export async function saveAndExportCircuit() {
             transport: transportData
         };
         addMyCircuit(circuitToSave);
-        state.activeCircuitId = newId;
+        setActiveCircuitId(newId);
     }
 
     try {
         await saveCircuit(circuitToSave);
-        state.hasUnexportedChanges = true; // FLAG CHANGEMENT
+        setHasUnexportedChanges(true); // FLAG CHANGEMENT
         await recalculatePlannedCountersForMap(state.currentMapId);
         applyFilters();
         generateAndDownloadGPX(state.currentCircuit, circuitToSave.id, circuitToSave.name, circuitToSave.description, circuitToSave.realTrack);

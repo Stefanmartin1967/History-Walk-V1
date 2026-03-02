@@ -2,7 +2,7 @@
 import L from 'leaflet';
 import { DOM } from './ui.js';
 import { openDetailsPanel } from './ui-details.js';
-import { state } from './state.js';
+import { state, setGhostMarker } from './state.js';
 import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
 import { map, clearMarkerHighlights } from './map.js';
 import { getSearchResults } from './search.js';
@@ -97,7 +97,7 @@ export function setupSmartSearch() {
                     // 1. Suppression de l'ancien marqueur s'il existe
                     if (state.ghostMarker) {
                         state.ghostMarker.remove();
-                        state.ghostMarker = null;
+                        setGhostMarker(null);
                     }
 
                     // 2. Création du nouveau marqueur
@@ -105,7 +105,7 @@ export function setupSmartSearch() {
                         draggable: true, // RENDU DÉPLAÇABLE
                         title: "Déplacez-moi pour ajuster"
                     }).addTo(map);
-                    state.ghostMarker = marker;
+                    setGhostMarker(marker);
 
                     // 3. Contenu de la popup (Style harmonisé avec le clic droit)
                     const popupContent = document.createElement('div');
@@ -162,7 +162,7 @@ export function setupSmartSearch() {
                                 // On supprime le marqueur fantôme une fois l'éditeur ouvert
                                 if (state.ghostMarker) {
                                     state.ghostMarker.remove();
-                                    state.ghostMarker = null;
+                                    setGhostMarker(null);
                                 }
                             });
                         }
@@ -200,7 +200,7 @@ export function setupSmartSearch() {
 
                         if (state.ghostMarker) {
                             state.ghostMarker.remove();
-                            state.ghostMarker = null;
+                            setGhostMarker(null);
                             map.off('click', cleanUp);
                         }
                     };

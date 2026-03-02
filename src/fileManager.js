@@ -1,5 +1,5 @@
 // fileManager.js
-import { state, setCurrentMap, setLoadedFeatures } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setUserData } from './state.js';
 import { getPoiId, displayGeoJSON } from './data.js';
 import { DOM, updateExportButtonLabel } from './ui.js';
 import { closeDetailsPanel } from './ui-details.js'; // Note: DOM is mostly used in ui.js, but keeping import if needed
@@ -259,7 +259,7 @@ async function restoreBackup(json) {
 
         // 1. Restaurer les données utilisateur (Notes, Visites, Positions modifiées)
         if (json.userData) {
-            state.userData = json.userData;
+            setUserData(json.userData);
             for (const [id, data] of Object.entries(state.userData)) {
                 await savePoiData(mapId, id, data);
             }

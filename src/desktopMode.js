@@ -4,7 +4,7 @@ import { applyFilters } from './data.js';
 import { toggleSelectionMode, clearCircuit } from './circuit.js';
 import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
-import { state } from './state.js';
+import { state, setSelectionModeFilters, setActiveFilters, setUserData } from './state.js';
 import { saveAppState, savePoiData } from './database.js';
 import { logModification } from './logger.js';
 import { DOM } from './ui.js';
@@ -300,8 +300,9 @@ export async function addPhotosToPoi(feature, clusterItems) {
         feature.properties.HW_ID = poiId;
     }
 
-    if (!state.userData[poiId]) state.userData[poiId] = {};
-    if (!state.userData[poiId].photos) state.userData[poiId].photos = [];
+    const newUserData = { ...state.userData };
+    if (!newUserData[poiId]) newUserData[poiId] = {};
+    if (!newUserData[poiId].photos) newUserData[poiId].photos = [];
 
     let added = 0;
     let duplicates = 0;
@@ -312,10 +313,10 @@ export async function addPhotosToPoi(feature, clusterItems) {
             const resizedBase64 = item.base64 || await resizeImage(item.file);
 
             // DÉTECTION DOUBLON
-            if (state.userData[poiId].photos.includes(resizedBase64)) {
+            if (newUserData[poiId].photos.includes(resizedBase64)) {
                 duplicates++;
             } else {
-                state.userData[poiId].photos.push(resizedBase64);
+                newUserData[poiId].photos.push(resizedBase64);
                 added++;
             }
         } catch (err) {
@@ -327,8 +328,9 @@ export async function addPhotosToPoi(feature, clusterItems) {
     console.log(`>>> [Import] Résultat : ${added} ajoutées, ${duplicates} doublons.`);
 
     if (added > 0) {
+        setUserData(newUserData);
         // Utilisation de updatePoiData pour garantir la sync Mémoire + DB + UI
-        await updatePoiData(poiId, 'photos', state.userData[poiId].photos);
+        await updatePoiData(poiId, 'photos', newUserData[poiId].photos);
         
         // Refresh UI
         closeDetailsPanel();
@@ -491,13 +493,15 @@ function handleWizardStart() {
     const hidePlanned = checkPlanned ? checkPlanned.checked : true;
 
     // 2. Mise à jour de l'état
-    state.selectionModeFilters = {
+    setSelectionModeFilters({
         hideVisited: hideVisited,
         hidePlanned: hidePlanned
-    };
+    });
 
     // On met à jour le filtre Zone global car il est partagé
-    state.activeFilters.zone = selectedZone || null;
+    const newFilters = { ...state.activeFilters };
+    newFilters.zone = selectedZone || null;
+    setActiveFilters(newFilters);
 
     // Mise à jour de l'étiquette du bouton Zone
     const zonesLabel = document.getElementById('zonesLabel');

@@ -124,6 +124,114 @@ export function addPoiToCurrentCircuit(feature) {
     console.log(`[State] +1 Point ajouté au circuit : ${poiName}. (Total : ${state.currentCircuit.length})`);
 }
 
+// --- Nouveaux Gardiens ajoutés (Nettoyage de Dette Technique) ---
+
+export function setUserData(userData) {
+    state.userData = userData || {};
+    console.log(`[State] userData mis à jour.`);
+}
+
+export function setOfficialCircuits(circuits) {
+    state.officialCircuits = circuits || [];
+    console.log(`[State] Circuits officiels mis à jour (${state.officialCircuits.length}).`);
+}
+
+export function setOfficialCircuitsStatus(status) {
+    state.officialCircuitsStatus = status || {};
+    console.log(`[State] Statut des circuits officiels mis à jour.`);
+}
+
+export function setGeojsonLayer(layer) {
+    state.geojsonLayer = layer;
+    console.log(`[State] geojsonLayer défini.`);
+}
+
+export function setCurrentFeatureId(featureId) {
+    state.currentFeatureId = featureId;
+    console.log(`[State] POI courant défini : ${featureId}`);
+}
+
+export function setCurrentCircuitIndex(index) {
+    state.currentCircuitIndex = index;
+    console.log(`[State] Index du circuit courant défini : ${index}`);
+}
+
+export function setCurrentCircuit(features) {
+    state.currentCircuit = features || [];
+    console.log(`[State] Circuit courant mis à jour (${state.currentCircuit.length} points).`);
+}
+
+export function setCustomFeatures(features) {
+    state.customFeatures = features || [];
+    console.log(`[State] customFeatures mis à jour (${state.customFeatures.length}).`);
+}
+
+export function setHiddenPoiIds(ids) {
+    state.hiddenPoiIds = ids || [];
+    console.log(`[State] hiddenPoiIds mis à jour (${state.hiddenPoiIds.length}).`);
+}
+
+export function setCustomDraftName(name) {
+    state.customDraftName = name;
+    console.log(`[State] Nom du brouillon personnalisé défini : ${name}`);
+}
+
+export function setActiveCircuitId(id) {
+    state.activeCircuitId = id;
+    console.log(`[State] Circuit actif défini : ${id}`);
+}
+
+export function setCircuitIdToImportFor(id) {
+    state.circuitIdToImportFor = id;
+    console.log(`[State] Circuit ID à importer défini : ${id}`);
+}
+
+export function setOrthodromicPolyline(polyline) {
+    state.orthodromicPolyline = polyline;
+}
+
+export function setRealTrackPolyline(polyline) {
+    state.realTrackPolyline = polyline;
+}
+
+export function setGhostMarker(marker) {
+    state.ghostMarker = marker;
+}
+
+export function setDraggingMarkerId(id) {
+    state.draggingMarkerId = id;
+}
+
+export function setFilterCompleted(value) {
+    state.filterCompleted = value;
+    console.log(`[State] Filtre 'terminé' défini à : ${value}`);
+}
+
+export function setIsAdmin(isAdmin) {
+    state.isAdmin = isAdmin;
+    console.log(`[State] Mode Admin défini : ${isAdmin ? 'OUI' : 'NON'}`);
+}
+
+export function setDestinations(destinations) {
+    state.destinations = destinations;
+    console.log(`[State] Destinations mises à jour.`);
+}
+
+export function setHasUnexportedChanges(value) {
+    state.hasUnexportedChanges = value;
+    console.log(`[State] Changements non exportés : ${value}`);
+}
+
+export function setSelectionModeFilters(filters) {
+    state.selectionModeFilters = filters || {};
+    console.log(`[State] selectionModeFilters mis à jour.`);
+}
+
+export function setActiveFilters(filters) {
+    state.activeFilters = filters || {};
+    console.log(`[State] Filtres actifs mis à jour.`);
+}
+
 // --- NOUVEAU : Helper pour la devise ---
 export function getCurrentCurrency() {
     if (!state.currentMapId || !state.destinations || !state.destinations.maps[state.currentMapId]) {

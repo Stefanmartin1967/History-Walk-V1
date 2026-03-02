@@ -1,4 +1,4 @@
-import { state, POI_CATEGORIES } from './state.js';
+import { state, POI_CATEGORIES, setActiveFilters } from './state.js';
 import { applyFilters } from './data.js';
 import { getZonesData } from './circuit-actions.js';
 import { escapeXml } from './utils.js';
@@ -24,7 +24,7 @@ export function populateZonesMenu() {
     const allZonesBtn = document.createElement('button');
     allZonesBtn.textContent = `Toutes les zones (${data.totalVisible})`;
     allZonesBtn.onclick = () => {
-        state.activeFilters.zone = null;
+        setActiveFilters({ ...state.activeFilters, zone: null });
         if(zonesLabel) zonesLabel.textContent = 'Zone';
         zonesMenu.style.display = 'none';
         applyFilters();
@@ -36,7 +36,7 @@ export function populateZonesMenu() {
         const zoneBtn = document.createElement('button');
         zoneBtn.textContent = `${zone} (${data.zoneCounts[zone]})`;
         zoneBtn.onclick = () => {
-            state.activeFilters.zone = zone;
+            setActiveFilters({ ...state.activeFilters, zone });
             if(zonesLabel) zonesLabel.textContent = zone;
             zonesMenu.style.display = 'none';
             applyFilters();
@@ -136,7 +136,7 @@ export function populateCategoriesMenu() {
     allCb.addEventListener('change', (e) => {
         if (e.target.checked) {
             // Si on coche "Tout voir", on vide la liste des filtres
-            state.activeFilters.categories = [];
+            setActiveFilters({ ...state.activeFilters, categories: [] });
             // Et on décoche visuellement les autres
             menu.querySelectorAll('input[type="checkbox"]:not([value="ALL"])').forEach(c => c.checked = false);
         } else {
@@ -175,17 +175,19 @@ export function populateCategoriesMenu() {
         }
 
         cb.addEventListener('change', (e) => {
+            const newFilters = { ...state.activeFilters };
             if (e.target.checked) {
-                state.activeFilters.categories.push(cat);
+                newFilters.categories = [...newFilters.categories, cat];
                 // Si on coche une catégorie, on décoche "Tout voir"
                 allCb.checked = false;
             } else {
-                state.activeFilters.categories = state.activeFilters.categories.filter(c => c !== cat);
+                newFilters.categories = newFilters.categories.filter(c => c !== cat);
                 // Si plus aucune catégorie n'est cochée, on recoche "Tout voir"
-                if (state.activeFilters.categories.length === 0) {
+                if (newFilters.categories.length === 0) {
                     allCb.checked = true;
                 }
             }
+            setActiveFilters(newFilters);
             applyFilters();
         });
 

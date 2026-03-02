@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state, setActiveFilters } from './state.js';
 import { escapeXml } from './utils.js';
 import { eventBus } from './events.js';
 import { showConfirm, showCustomModal, closeModal } from './modal.js';
@@ -190,7 +190,9 @@ function renderExplorerToolbar() {
     if(btnReset) btnReset.onclick = () => {
         currentSort = 'date_desc';
         filterTodo = false;
-        if(state.activeFilters) state.activeFilters.zone = null;
+        if(state.activeFilters) {
+            setActiveFilters({ ...state.activeFilters, zone: null });
+        }
         applyFilters();
         refreshExplorer();
     };
@@ -219,7 +221,9 @@ function openZonesModalPC() {
 
     btnAll.innerHTML = `<span>Toutes les zones</span>`;
     btnAll.onclick = () => {
-        if(state.activeFilters) state.activeFilters.zone = null;
+        if(state.activeFilters) {
+            setActiveFilters({ ...state.activeFilters, zone: null });
+        }
         applyFilters(); // Updates map and triggers list refresh
         closeModal();
     };
@@ -245,7 +249,9 @@ function openZonesModalPC() {
         }
 
         btn.onclick = () => {
-            if(state.activeFilters) state.activeFilters.zone = zone;
+            if(state.activeFilters) {
+                setActiveFilters({ ...state.activeFilters, zone });
+            }
             applyFilters();
             closeModal();
         };
