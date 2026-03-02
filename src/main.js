@@ -23,9 +23,9 @@ import {
     initializeDomReferences,
     DOM,
 
-    closeAllDropdowns,
     updateExportButtonLabel
 } from './ui.js';
+import { closeAllDropdowns } from './ui-utils.js';
 
 import { updateSelectionModeButton } from './ui-selection.js';
 
