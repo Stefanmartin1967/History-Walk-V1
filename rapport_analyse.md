@@ -48,10 +48,12 @@ Voici l'ordre de priorité que je vous conseille :
 
 ### Phase 1 : Sécurisation Absolue des Données (Priorité Haute)
 *   **Objectif** : Stopper les risques de perte de données.
-*   **Actions** :
-    1.  Verrouiller `state.js` : Forcer tout le code à utiliser des fonctions de mise à jour (getters/setters) pour que l'application "sache" quand une donnée change (et puisse déclencher des sauvegardes de façon fiable).
-    2.  Corriger `batchSavePoiData` dans `database.js` pour s'assurer que les données sont fusionnées et non écrasées brutalement.
-    3.  Clarifier le flux de chargement initial dans `data.js` pour qu'il n'y ait qu'une seule source de vérité entre le JSON serveur et l'IndexedDB.
+*   **Statut** : **En cours**. (L'Option B a été réalisée : sécurisation de la base de données terminée).
+*   **Actions réalisées** :
+    *   ✅ Correction de `batchSavePoiData` dans `database.js` : Implémentation d'une logique de lecture avant écriture (read-before-write) pour s'assurer que les données sont fusionnées et non écrasées brutalement lors des sauvegardes par lots.
+    *   ✅ Clarification du flux de chargement initial dans `data.js` : Remplacement de l'écrasement global (`...appStateUserData`) par une fusion profonde (deep merge) par attribut pour éviter la perte silencieuse d'informations (comme les notes utilisateur).
+*   **Prochaine étape à réaliser (Ouvrir un nouveau fil pour ceci) :**
+    *   ⏳ Verrouiller `state.js` : Parcourir tout le code (plus de 10 fichiers) pour remplacer les accès directs à `state.*` par des fonctions de mise à jour dédiées (getters/setters). Cela permettra de tracer les modifications de l'état global de l'application.
 
 ### Phase 2 : Découpage de l'Interface (Priorité Moyenne)
 *   **Objectif** : Rendre le code lisible et faciliter les futures modifications visuelles.
