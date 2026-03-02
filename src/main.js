@@ -22,18 +22,25 @@ import { createIcons, icons } from 'lucide';
 import {
     initializeDomReferences,
     DOM,
-    populateZonesMenu,
-    populateCategoriesMenu,
     openDetailsPanel,
     closeDetailsPanel,
-    populateAddPoiModalCategories,
-    showLegendModal,
-    openRestoreModal,
     updateSelectionModeButton,
-    populateCircuitsMenu,
     closeAllDropdowns,
     updateExportButtonLabel
 } from './ui.js';
+
+import {
+    populateZonesMenu,
+    populateCategoriesMenu,
+    populateAddPoiModalCategories,
+    populateCircuitsMenu
+} from './ui-filters.js';
+
+import {
+    showLegendModal,
+    openRestoreModal,
+    openTrashModal
+} from './ui-modals.js';
 import { showToast } from './toast.js';
 
 import {
