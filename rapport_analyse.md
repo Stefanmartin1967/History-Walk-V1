@@ -48,10 +48,11 @@ Voici l'ordre de priorité que je vous conseille :
 
 ### Phase 1 : Sécurisation Absolue des Données (Priorité Haute)
 *   **Objectif** : Stopper les risques de perte de données.
-*   **Actions** :
-    1.  ✅ **[FAIT]** Verrouiller `state.js` : Création de Gardiens (setters) pour `myCircuits`, `loadedFeatures` et `currentMapId`. Le code ne modifie plus l'état directement en cachette, ce qui sécurise la mémoire RAM.
-    2.  **[À FAIRE]** Corriger `batchSavePoiData` dans `database.js` pour s'assurer que les données sont fusionnées (Read-before-write) et non écrasées brutalement (sauvegardes IndexedDB).
-    3.  **[À FAIRE]** Clarifier le flux de chargement initial dans `data.js` pour qu'il n'y ait qu'une seule source de vérité entre le JSON serveur et l'IndexedDB.
+*   **Statut** : **Terminée**. (L'ensemble des vulnérabilités de données a été corrigé).
+*   **Actions réalisées** :
+    1.  ✅ **Verrouillage de `state.js`** : Création de Gardiens (setters) pour `myCircuits`, `loadedFeatures` et `currentMapId`. Le code ne modifie plus l'état directement en cachette, ce qui sécurise la mémoire RAM et permet de tracer les modifications.
+    2.  ✅ **Correction de `batchSavePoiData` dans `database.js`** : Implémentation d'une logique de lecture avant écriture (read-before-write) pour s'assurer que les données sont fusionnées et non écrasées brutalement lors des sauvegardes par lots.
+    3.  ✅ **Clarification du flux de chargement initial dans `data.js`** : Remplacement de l'écrasement global (`...appStateUserData`) par une fusion profonde (deep merge) par attribut pour éviter la perte silencieuse d'informations (comme les notes utilisateur).
 
 ### Phase 2 : Découpage de l'Interface (Priorité Moyenne)
 *   **Objectif** : Rendre le code lisible et faciliter les futures modifications visuelles.
