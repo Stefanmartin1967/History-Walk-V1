@@ -5,7 +5,7 @@ import { restoreCircuit, deletePoi } from './circuit.js';
 import { applyFilters } from './data.js'; // Assuming applyFilters is exported from data.js or wherever it resides.
 import { closeDetailsPanel } from './ui.js';
 import { switchMobileView } from './mobile.js';
-import { eventBus } from './event-bus.js';
+import { eventBus } from './events.js';
 import { saveAppState } from './database.js';
 import { createIcons, icons } from 'lucide';
 
