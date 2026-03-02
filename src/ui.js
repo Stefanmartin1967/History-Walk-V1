@@ -22,6 +22,7 @@ import { openTrashModal, requestSoftDelete } from './ui-modals.js';
 import { switchSidebarTab } from './ui-sidebar.js'; // Imported for use inside ui.js functions
 import { exportFullBackupPC, exportDataForMobilePC, saveUserData, handleExportWithContribution } from './fileManager.js';
 import { showStatisticsModal } from './statistics.js';
+import { updateSelectionModeButton } from './ui-selection.js';
 
 export const DOM = {};
 let currentEditor = { fieldId: null, poiId: null, callback: null };
@@ -339,20 +340,6 @@ function formatBytes(bytes, decimals = 1) {
 }
 
 // --- UTILITAIRES ---
-
-export function updateSelectionModeButton(isActive) {
-    const btn = document.getElementById('btn-mode-selection');
-    if (!btn) return;
-
-    if (isActive) {
-        btn.innerHTML = `<i data-lucide="map-pin-plus"></i><span>Créer circuit</span>`;
-        btn.title = "Mode création activé";
-    } else {
-        btn.innerHTML = `<i data-lucide="map-pin-off"></i><span>Explorer</span>`;
-        btn.title = "Mode consultation";
-    }
-    createIcons({ icons });
-}
 
 export function updateExportButtonLabel(mapId) {
     // Deprecated: Button removed

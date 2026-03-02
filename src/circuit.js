@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit } from './state.js';
-import { DOM, updateSelectionModeButton } from './ui.js';
+import { DOM } from './ui.js';
+import { updateSelectionModeButton } from './ui-selection.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters } from './data.js';

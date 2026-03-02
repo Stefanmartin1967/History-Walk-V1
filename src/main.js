@@ -23,10 +23,11 @@ import {
     initializeDomReferences,
     DOM,
 
-    updateSelectionModeButton,
     closeAllDropdowns,
     updateExportButtonLabel
 } from './ui.js';
+
+import { updateSelectionModeButton } from './ui-selection.js';
 
 import {
     populateZonesMenu,
