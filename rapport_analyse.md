@@ -70,10 +70,17 @@ Voici l'ordre de priorité que je vous conseille :
     2.  **Moteur d'Interface (UI)** : Tout ce qui concerne l'affichage visuel, les modales, la peinture (CSS) et les boutons a été extrait dans `src/admin-control-ui.js`.
     3.  **Le Chef d'Orchestre** : Le fichier original `src/admin-control-center.js` a été allégé de 70%. Il ne sert désormais plus qu'à faire communiquer le "Moteur de données" et le "Moteur d'Interface", garantissant qu'aucune fonctionnalité n'a été perdue, sans perturber le reste de l'application.
 
-### Phase 4 : Mise sous Surveillance (Prochaine Étape Recommandée)
-Maintenant que le moteur de données de l'administration (`admin-diff-engine.js`) est isolé de son interface graphique, il est **enfin possible de le tester automatiquement**.
-L'objectif est d'écrire des "tests unitaires" qui simulent des situations extrêmes pour garantir qu'aucune donnée ne pourra jamais être publiée par erreur.
+### Phase 4 : Mise sous Surveillance (Terminée 🎉)
+Maintenant que le moteur de données de l'administration (`admin-diff-engine.js`) est isolé de son interface graphique, il a été possible de le tester automatiquement.
+Les "tests unitaires" simulant des situations extrêmes ont été écrits pour garantir qu'aucune donnée ne pourra jamais être publiée par erreur. L'application possède désormais une suite de tests robuste.
+
+### Phase 5 : Éradication des Mutations Directes d'État (Terminée 🎉)
+*   **Objectif** : Rendre le comportement de l'application prévisible et traçable en interdisant à n'importe quel fichier de modifier l'état global "en douce".
+*   **Bilan des Actions Réalisées** :
+    1.  **Création de "Majordomes" (Setters) complets** : Ajout de fonctions dédiées dans `src/state.js` pour *toutes* les variables globales (ex: `setUserData`, `setActiveFilters`, `setOfficialCircuits`).
+    2.  **Nettoyage massif** : Plus de 70 occurrences de modifications directes (`state.xxx = yyy`) ont été traquées et remplacées par l'appel aux Setters dans l'intégralité du code source (`main.js`, `circuit.js`, `data.js`, `map.js`, `mobile.js`, etc.).
+    3.  **Sécurité des objets imbriqués** : Lors de la modification de propriétés complexes (comme les données utilisateur d'un lieu), le code crée désormais une copie propre avant de l'injecter dans l'état. Cela évite les bugs de réactivité et les écrasements asynchrones.
 
 ---
 
-**Conclusion** : L'application fonctionne, ce qui est l'essentiel. Les fondations techniques (Vite, Leaflet, IndexedDB) sont les bonnes. La dette technique des deux plus gros "God Objects" (`ui.js` et `admin-control-center.js`) a été entièrement résorbée !
+**Conclusion** : L'application fonctionne, ce qui est l'essentiel. Les fondations techniques (Vite, Leaflet, IndexedDB) sont les bonnes. La dette technique des deux plus gros "God Objects" (`ui.js` et `admin-control-center.js`) a été entièrement résorbée, et l'état de l'application est désormais protégé et prévisible !
