@@ -1,6 +1,8 @@
 import { state } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
-import { escapeXml, showToast, showAlert, showConfirm, isMobileView } from './utils.js';
+import { escapeXml, isMobileView } from './utils.js';
+import { showToast } from './toast.js';
+import { showAlert, showConfirm } from './modal.js';
 import { restoreCircuit, deletePoi } from './circuit.js';
 import { applyFilters } from './data.js'; // Assuming applyFilters is exported from data.js or wherever it resides.
 import { closeDetailsPanel } from './ui.js';
