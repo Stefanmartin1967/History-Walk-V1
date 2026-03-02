@@ -1,6 +1,7 @@
 // mobile.js
 import { state } from './state.js';
-import { DOM, openDetailsPanel } from './ui.js';
+import { DOM } from './ui.js';
+import { openDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature } from './data.js';
 import { loadCircuitById, clearCircuit, setCircuitVisitedState, loadCircuitFromIds, isCircuitCompleted } from './circuit.js';
 import { createIcons, icons } from 'lucide';

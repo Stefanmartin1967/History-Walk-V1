@@ -22,8 +22,7 @@ import { createIcons, icons } from 'lucide';
 import {
     initializeDomReferences,
     DOM,
-    openDetailsPanel,
-    closeDetailsPanel,
+
     updateSelectionModeButton,
     closeAllDropdowns,
     updateExportButtonLabel

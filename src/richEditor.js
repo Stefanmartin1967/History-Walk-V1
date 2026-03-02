@@ -8,7 +8,7 @@ import { addPoiFeature } from './data.js';
 import { saveAppState, savePoiData } from './database.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
-import { openDetailsPanel, closeDetailsPanel } from './ui.js';
+import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { showConfirm } from './modal.js';
 import { createIcons, icons } from 'lucide';
 

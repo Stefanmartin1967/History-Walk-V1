@@ -3,7 +3,7 @@ import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { getPoiId } from './data.js';
 import { showToast } from './toast.js';
 import { updatePoiData } from './data.js';
-import { openDetailsPanel } from './ui.js';
+import { openDetailsPanel } from './ui-details.js';
 import { addToDraft } from './admin-control-center.js';
 
 const REPO_OWNER = 'Stefanmartin1967';
