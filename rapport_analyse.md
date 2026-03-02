@@ -55,12 +55,15 @@ Voici l'ordre de priorité que je vous conseille :
 
 ### Phase 2 : Découpage de l'Interface (Priorité Actuelle - En Cours)
 *   **Objectif** : Rendre le code lisible et faciliter les futures modifications visuelles.
-*   **Bilan des Actions Réalisées (Étape 1 et 2)** :
+*   **Bilan des Actions Réalisées (Étapes 1 à 3)** :
     *   Extraction réussie des fonctions liées aux Modales vers un nouveau fichier indépendant `src/ui-modals.js` (`showLegendModal`, `openRestoreModal`, `openTrashModal`, `requestSoftDelete`).
     *   Extraction réussie de la logique des Filtres et des Menus vers `src/ui-filters.js` (`populateZonesMenu`, `populateCategoriesMenu`, etc.).
     *   Extraction réussie de la logique d'affichage des détails (Panneau de détails) vers `src/ui-details.js` (`openDetailsPanel`, `closeDetailsPanel`, `adjustTime`, `adjustPrice`, etc.).
-    *   Le fichier principal `ui.js` a été grandement allégé, et l'application compile et fonctionne parfaitement.
-*   **Prochaine étape** : Continuer de casser l'énorme fichier `src/ui.js` en petits fichiers logiques. La prochaine cible prioritaire et "sûre" à extraire pourrait être la logique liée au mode de sélection. Il faudra toujours procéder de manière très chirurgicale.
+    *   Extraction chirurgicale de l'interface du mode de sélection vers `src/ui-selection.js` (`updateSelectionModeButton`), tout en laissant la logique d'état en sécurité dans `circuit.js`.
+    *   Le fichier principal `ui.js` qui comptait plus de 1000 lignes n'en fait plus que ~340, l'application compile et fonctionne parfaitement.
+*   **Prochaine étape (Recommandation)** : L'extraction de `ui.js` touche à sa fin ! Les derniers éléments importants restants dans `ui.js` concernent l'**initialisation globale du DOM** (`initializeDomReferences`) et quelques utilitaires d'interface disparates.
+    *   **Option A** : Extraire les fonctions utilitaires comme `closeAllDropdowns` et la gestion de la taille des sauvegardes (`updateBackupSizeEstimates`, `formatBytes`) vers un nouveau fichier `src/ui-utils.js`.
+    *   **Option B** : Laisser `ui.js` tel quel pour l'instant (il est devenu très raisonnable en taille et sert de point de montage du DOM) et passer à la **Phase 3 : Refonte de l'Administration**, qui est un gros chantier critique (`admin-control-center.js` est un fichier de +1400 lignes très complexe).
 
 ### Phase 3 : Refonte de l'Administration (À Venir)
 *   **Objectif** : Fiabiliser la publication des données vers GitHub.
