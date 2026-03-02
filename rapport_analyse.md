@@ -55,11 +55,12 @@ Voici l'ordre de priorité que je vous conseille :
 
 ### Phase 2 : Découpage de l'Interface (Priorité Actuelle - En Cours)
 *   **Objectif** : Rendre le code lisible et faciliter les futures modifications visuelles.
-*   **Bilan des Actions Réalisées (Étape 1)** :
+*   **Bilan des Actions Réalisées (Étape 1 et 2)** :
     *   Extraction réussie des fonctions liées aux Modales vers un nouveau fichier indépendant `src/ui-modals.js` (`showLegendModal`, `openRestoreModal`, `openTrashModal`, `requestSoftDelete`).
     *   Extraction réussie de la logique des Filtres et des Menus vers `src/ui-filters.js` (`populateZonesMenu`, `populateCategoriesMenu`, etc.).
-    *   Le fichier principal `ui.js` a commencé à être allégé, et l'application compile et fonctionne parfaitement.
-*   **Prochaine étape** : Continuer de casser l'énorme fichier `src/ui.js` en petits fichiers logiques. Les prochaines cibles prioritaires et "sûres" à extraire pourraient être la gestion des détails (`ui-details.js`) ou la logique liée au mode de sélection. Il faudra toujours procéder de manière très chirurgicale.
+    *   Extraction réussie de la logique d'affichage des détails (Panneau de détails) vers `src/ui-details.js` (`openDetailsPanel`, `closeDetailsPanel`, `adjustTime`, `adjustPrice`, etc.).
+    *   Le fichier principal `ui.js` a été grandement allégé, et l'application compile et fonctionne parfaitement.
+*   **Prochaine étape** : Continuer de casser l'énorme fichier `src/ui.js` en petits fichiers logiques. La prochaine cible prioritaire et "sûre" à extraire pourrait être la logique liée au mode de sélection. Il faudra toujours procéder de manière très chirurgicale.
 
 ### Phase 3 : Refonte de l'Administration (À Venir)
 *   **Objectif** : Fiabiliser la publication des données vers GitHub.
