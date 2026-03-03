@@ -3,7 +3,7 @@ import { DOM } from './ui.js';
 import { updateSelectionModeButton } from './ui-selection.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { applyFilters } from './data.js';
-import { saveAndExportCircuit } from './gpx.js';
+import { saveAndExportCircuit } from './circuit-actions.js';
 import { saveCircuit } from './database.js';
 import { isMobileView } from './mobile.js';
 import { showToast } from './toast.js';

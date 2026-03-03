@@ -141,7 +141,7 @@ export function handleFileLoad(event) {
                 }
             } 
             // Cas 2 : Backup
-            else if (json.backupVersion && (json.baseGeoJSON || json.userData)) {
+            else if (isValidBackup(json) && (json.baseGeoJSON || json.userData)) {
                 await restoreBackup(json);
             }
             else {
@@ -162,7 +162,7 @@ export async function saveUserData(forceFullMode = false) {
 
     const includePhotos = forceFullMode;
 
-    const exportData = {
+    const exportData = cleanDataForExport({
         backupVersion: state.appVersion || "3.0",
         date: new Date().toISOString(),
         mapId: state.currentMapId,
@@ -184,7 +184,7 @@ export async function saveUserData(forceFullMode = false) {
         myCircuits: state.myCircuits,
         hiddenPoiIds: state.hiddenPoiIds,
         officialCircuitsStatus: state.officialCircuitsStatus || {}
-    };
+    });
 
     if (!includePhotos) {
         for (const key in exportData.userData) {
@@ -248,6 +248,46 @@ async function downloadJSON(data, filename) {
 }
 
 // --- RESTAURATION (Modifiée pour Mobile) ---
+
+
+/**
+ * Vérifie si le fichier JSON fourni est une sauvegarde valide.
+ * @param {Object} json L'objet JSON à vérifier
+ * @returns {boolean} True si valide, False sinon
+ */
+function isValidBackup(json) {
+    if (!json) return false;
+
+    // Vérification de la version de backup (doit exister)
+    if (!json.backupVersion) {
+        console.warn("[Validation] Version de backup manquante.");
+        return false;
+    }
+
+    // Vérification de l'ID de la carte (doit être une chaîne)
+    if (typeof json.mapId !== 'string' || json.mapId.trim() === '') {
+        console.warn("[Validation] ID de carte invalide ou manquant.");
+        return false;
+    }
+
+    // Vérification des données utilisateur (userData) si présentes
+    if (json.userData !== undefined) {
+        if (typeof json.userData !== 'object' || Array.isArray(json.userData) || json.userData === null) {
+            console.warn("[Validation] Format de userData invalide (doit être un objet).");
+            return false;
+        }
+    }
+
+    // Vérification des circuits (myCircuits) si présents
+    if (json.myCircuits !== undefined) {
+        if (!Array.isArray(json.myCircuits)) {
+            console.warn("[Validation] Format de myCircuits invalide (doit être un tableau).");
+            return false;
+        }
+    }
+
+    return true;
+}
 
 async function restoreBackup(json) {
     try {
@@ -357,7 +397,11 @@ export function handleRestoreFile(event) {
     reader.onload = (e) => {
         try {
             const json = JSON.parse(e.target.result);
-            restoreBackup(json);
+            if (isValidBackup(json)) {
+                restoreBackup(json);
+            } else {
+                showToast("Fichier de sauvegarde corrompu ou invalide.", "error");
+            }
         } catch(err) {
             console.error(err);
             showToast("Fichier de sauvegarde invalide", "error");
@@ -370,6 +414,34 @@ export function handleRestoreFile(event) {
 /**
  * MOTEUR INTERNE : Prépare l'objet de sauvegarde avec le bon format
  */
+
+/**
+ * Nettoie un objet en supprimant les clés ayant des valeurs null ou undefined.
+ * Pour les tableaux, on supprime les éléments nulls/undefined.
+ * @param {any} obj L'objet ou tableau à nettoyer
+ * @returns {any} L'objet nettoyé
+ */
+function cleanDataForExport(obj) {
+    if (obj === null || obj === undefined) return undefined;
+
+    if (Array.isArray(obj)) {
+        return obj.filter(item => item !== null && item !== undefined).map(cleanDataForExport);
+    }
+
+    if (typeof obj === 'object') {
+        const cleaned = {};
+        for (const [key, value] of Object.entries(obj)) {
+            const cleanedValue = cleanDataForExport(value);
+            if (cleanedValue !== undefined) {
+                cleaned[key] = cleanedValue;
+            }
+        }
+        return cleaned;
+    }
+
+    return obj;
+}
+
 async function prepareExportData(includePhotos = false) {
     const geojson = {
         type: 'FeatureCollection',
@@ -390,7 +462,9 @@ async function prepareExportData(includePhotos = false) {
     };
 
     // On retourne le format "Carton avec étiquette" attendu par la Fusion
-    return {
+
+    // On retourne le format "Carton avec étiquette" attendu par la Fusion
+    const exportData = {
         backupVersion: "3.0",
         mapId: state.currentMapId || 'djerba',
         date: new Date().toISOString(),
@@ -400,6 +474,9 @@ async function prepareExportData(includePhotos = false) {
         hiddenPoiIds: state.hiddenPoiIds || [],
         officialCircuitsStatus: state.officialCircuitsStatus || {}
     };
+
+    return cleanDataForExport(exportData);
+
 }
 
 /**

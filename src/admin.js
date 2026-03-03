@@ -9,7 +9,7 @@ import { ANIMAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken, saveToken } from './github-sync.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
-import { recalculatePlannedCountersForMap } from './gpx.js';
+import { recalculatePlannedCountersForMap } from './circuit-actions.js';
 
 export function initAdminMode() {
     // Check for persistent session

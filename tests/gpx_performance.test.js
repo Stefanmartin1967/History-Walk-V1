@@ -1,6 +1,9 @@
+/**
+ * @vitest-environment jsdom
+ */
 // tests/gpx_performance.test.js
 import { describe, it, expect, vi } from 'vitest';
-import { computeCircuitCounters } from '../src/gpx';
+import { computeCircuitCounters } from '../src/circuit-actions';
 
 // Mock simple getPoiId behavior
 vi.mock('../src/utils.js', () => ({

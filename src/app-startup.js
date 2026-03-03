@@ -218,7 +218,7 @@ export async function loadAndInitializeMap() {
         });
 
         // Recalculate counters to ensure consistency with loaded official circuits
-        const { recalculatePlannedCountersForMap } = await import('./gpx.js');
+        const { recalculatePlannedCountersForMap } = await import('./circuit-actions.js');
         await recalculatePlannedCountersForMap(activeMapId);
 
         await saveAppState('lastGeoJSON', geojsonData); // Mobile cache specific
@@ -238,7 +238,7 @@ export async function loadAndInitializeMap() {
         await displayGeoJSON(geojsonData, activeMapId);
 
         // Recalculate counters to ensure consistency with loaded official circuits
-        const { recalculatePlannedCountersForMap } = await import('./gpx.js');
+        const { recalculatePlannedCountersForMap } = await import('./circuit-actions.js');
         await recalculatePlannedCountersForMap(activeMapId);
 
         // Refresh UI with new counters
