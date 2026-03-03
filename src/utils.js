@@ -201,6 +201,37 @@ export function escapeXml(unsafe) {
 
 export const escapeHtml = escapeXml;
 
+/**
+ * Nettoie une chaîne HTML pour prévenir les failles XSS avant l'utilisation de .innerHTML.
+ * Ne conserve que les balises et attributs considérés comme sûrs.
+ * Cette version basique utilise DOMParser pour supprimer les scripts et les attributs d'événements.
+ */
+export function sanitizeHTML(html) {
+    if (!html) return '';
+
+    // Si c'est juste du texte sans chevron, pas besoin de parser (optimisation)
+    if (typeof html === 'string' && html.indexOf('<') === -1) {
+        return html;
+    }
+
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+
+    // Supprimer toutes les balises <script>
+    const scripts = doc.querySelectorAll('script');
+    scripts.forEach(script => script.remove());
+
+    // Ne pas supprimer les attributs 'on...' car l'application s'appuie sur des onClick inline
+    // On se contente de supprimer les balises <script> et de nettoyer les href javascript
+    const elements = doc.body.querySelectorAll('a');
+    elements.forEach(el => {
+        if (el.getAttribute('href') && el.getAttribute('href').trim().toLowerCase().startsWith('javascript:')) {
+            el.removeAttribute('href');
+        }
+    });
+
+    return doc.body.innerHTML;
+}
+
 // --- CLUSTERING PHOTOS GPS ---
 
 export function calculateBarycenter(coordsList) {

@@ -3,6 +3,7 @@ import { DOM } from './ui.js';
 import { openDetailsPanel } from './ui-details.js';
 import { getPoiName, getPoiId } from './data.js';
 import { state } from './state.js';
+import { sanitizeHTML } from './utils.js';
 import { showToast } from './toast.js';
 import { createIcons, icons } from 'lucide';
 
@@ -28,10 +29,10 @@ function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
             </button>
         </div>`;
 
-    stepDiv.innerHTML = `
+    stepDiv.innerHTML = sanitizeHTML(`
         <div class="num">${index + 1}</div>
         <div class="step-main" title="${poiName}">${poiName}</div>
-        ${actionsHtml}`;
+        ${actionsHtml}`);
 
     // Événements (Si les actions existent)
     if (!isOfficial) {

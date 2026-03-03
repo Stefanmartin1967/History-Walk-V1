@@ -1,5 +1,5 @@
 import { state, setActiveFilters } from './state.js';
-import { escapeXml } from './utils.js';
+import { escapeXml, sanitizeHTML } from './utils.js';
 import { eventBus } from './events.js';
 import { showConfirm, showCustomModal, closeModal } from './modal.js';
 import { createIcons, icons } from 'lucide';
@@ -361,7 +361,7 @@ export function renderExplorerList() {
     const paginatedCircuits = processedCircuits.slice(startIdx, startIdx + itemsPerPage);
 
     // 5. Render
-    listContainer.innerHTML = (paginatedCircuits.length === 0)
+    const rawHTML = (paginatedCircuits.length === 0)
         ? '<div style="padding:20px; text-align:center; color:var(--ink-soft);">Aucun circuit correspondant.</div>'
         : paginatedCircuits.map(c => {
             // Simplification du nom : Suppression des préfixes et du via
@@ -426,6 +426,8 @@ export function renderExplorerList() {
             </div>
             `;
         }).join('');
+
+    listContainer.innerHTML = sanitizeHTML(rawHTML);
 
     createIcons({ icons });
 

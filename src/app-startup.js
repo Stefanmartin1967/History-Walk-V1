@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setCustomFeatures } from './state.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -56,12 +56,13 @@ export async function loadOfficialCircuits() {
     }
 
     if (officials.length > 0) {
-        state.officialCircuits = officials.map(off => ({
+        const processedOfficials = officials.map(off => ({
             ...off,
             isOfficial: true,
             id: String(off.id || `official_${off.name.replace(/\s+/g, '_')}`),
             poiIds: (off.poiIds || []).map(pid => String(pid))
         }));
+        setOfficialCircuits(processedOfficials);
 
         // Si on est déjà en mode Admin, on déclenche une migration pour mettre à jour les circuits chargés
         if (state.isAdmin) {
@@ -70,7 +71,7 @@ export async function loadOfficialCircuits() {
 
         eventBus.emit('circuit:list-updated');
     } else {
-        state.officialCircuits = [];
+        setOfficialCircuits([]);
     }
 }
 
@@ -100,7 +101,7 @@ export async function loadDestinationsConfig() {
     }
 
     if (config) {
-        state.destinations = config;
+        setDestinations(config);
     }
 }
 
@@ -170,10 +171,12 @@ export async function loadAndInitializeMap() {
 
     // 4. Chargement User Data & Circuits (Smart Merge)
     try {
-        state.userData = await getAllPoiDataForMap(activeMapId) || {};
+        const loadedUserData = await getAllPoiDataForMap(activeMapId) || {};
+        setUserData(loadedUserData);
         const loadedCircuits = await getAllCircuitsForMap(activeMapId) || [];
         setMyCircuits(loadedCircuits);
-        state.officialCircuitsStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
+        const loadedStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
+        setOfficialCircuitsStatus(loadedStatus);
         await loadOfficialCircuits();
 
         const validCircuits = [];
@@ -186,10 +189,12 @@ export async function loadAndInitializeMap() {
         setMyCircuits(validCircuits);
 
         if (state.officialCircuits) {
-            state.officialCircuits = state.officialCircuits.map(off => {
+            const mergedOfficials = state.officialCircuits.map(off => {
                 const loc = state.myCircuits.find(l => String(l.id) === String(off.id));
                 return loc ? { ...off, ...loc, isOfficial: true } : off;
             });
+            setOfficialCircuits(mergedOfficials);
+
             const filteredCircuits = state.myCircuits.filter(c =>
                 !state.officialCircuits.some(off => String(off.id) === String(c.id))
             );
@@ -206,7 +211,7 @@ export async function loadAndInitializeMap() {
         if (customPois.length > 0) {
             console.log(`[Mobile] Fusion de ${customPois.length} lieux personnalisés.`);
             setLoadedFeatures([...state.loadedFeatures, ...customPois]);
-            state.customFeatures = customPois;
+            setCustomFeatures(customPois);
         }
 
         // FIX: Ensure userData is linked to features on Mobile too

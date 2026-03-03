@@ -8,7 +8,7 @@ import { createIcons, icons } from 'lucide';
 import { saveUserData } from './fileManager.js'; 
 import { deleteDatabase, saveAppState } from './database.js';
 import { getIconForFeature, getRealDistance, getOrthodromicDistance } from './map.js';
-import { isPointInPolygon, escapeHtml, getZoneFromCoords } from './utils.js';
+import { isPointInPolygon, escapeHtml, getZoneFromCoords, sanitizeHTML } from './utils.js';
 import { generateSyncQR, startGenericScanner } from './sync.js';
 import QRCode from 'qrcode';
 import { zonesData } from './zones.js';
@@ -332,7 +332,7 @@ export function renderMobileCircuitsList() {
     }
     
     html += `</div>`;
-    container.innerHTML = html;
+    container.innerHTML = sanitizeHTML(html);
 
     // Explicitly re-create icons after updating innerHTML to ensure pagination arrows render
     createIcons({ icons, root: container });
@@ -731,7 +731,7 @@ export function renderMobileSearch() {
                 </button>
             `;
         });
-        resultsContainer.innerHTML = html;
+        resultsContainer.innerHTML = sanitizeHTML(html);
         createIcons({ icons, root: resultsContainer });
 
         resultsContainer.querySelectorAll('.result-item').forEach(btn => {
