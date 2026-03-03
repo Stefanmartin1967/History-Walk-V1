@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state, setUserData, setOfficialCircuitsStatus, setHiddenPoiIds } from './state.js';
 import { createIcons, icons } from 'lucide';
 import { generateMasterGeoJSONData } from './admin.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
@@ -77,19 +77,21 @@ window.updateDraftValue = async (id, key, value) => {
     // Met à jour directement userData (la source de vérité locale)
     console.log(`[Admin] Correction user: ${id} [${key}] = ${value}`);
 
-    if (!state.userData[id]) state.userData[id] = {};
+    const newUserData = { ...state.userData };
+    if (!newUserData[id]) newUserData[id] = {};
 
     if (key === 'Position') {
         const parts = value.split(',').map(s => parseFloat(s.trim()));
         if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-            state.userData[id].lat = parts[0];
-            state.userData[id].lng = parts[1];
+            newUserData[id].lat = parts[0];
+            newUserData[id].lng = parts[1];
         }
     } else {
-        state.userData[id][key] = value;
+        newUserData[id][key] = value;
     }
 
-    await saveAppState('userData', state.userData);
+    setUserData(newUserData);
+    await saveAppState('userData', state.userData); // Uses state.userData which is updated via reactivity, but just to be safe:
     showToast("Correction enregistrée localement", "info");
 };
 
@@ -98,7 +100,9 @@ window.processDecision = async (id, decision) => {
         if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
 
         if (state.userData[id]) {
-            delete state.userData[id];
+            const newUserData = { ...state.userData };
+            delete newUserData[id];
+            setUserData(newUserData);
             await saveAppState('userData', state.userData);
         }
 
@@ -188,9 +192,11 @@ async function publishChanges() {
         updateButtonBadge();
 
         // Clean local userData for published POIs
+        const newUserData = { ...state.userData };
         diffData.pois.forEach(p => {
-             if (state.userData[p.id]) delete state.userData[p.id];
+             if (newUserData[p.id]) delete newUserData[p.id];
         });
+        setUserData(newUserData);
         await saveAppState('userData', state.userData);
 
         alert("Mise à jour effectuée avec succès !");
@@ -280,18 +286,18 @@ async function downloadAdminData() {
 
         // MERGE STRATEGY
         if (data.officialCircuitsStatus) {
-            state.officialCircuitsStatus = { ...state.officialCircuitsStatus, ...data.officialCircuitsStatus };
+            setOfficialCircuitsStatus({ ...state.officialCircuitsStatus, ...data.officialCircuitsStatus });
             await saveAppState(`official_circuits_status_${state.currentMapId || 'djerba'}`, state.officialCircuitsStatus);
         }
 
         if (data.userData) {
-            state.userData = { ...state.userData, ...data.userData };
+            setUserData({ ...state.userData, ...data.userData });
             await saveAppState('userData', state.userData);
         }
 
         if (data.hiddenPoiIds) {
              const newHidden = new Set([...(state.hiddenPoiIds || []), ...data.hiddenPoiIds]);
-             state.hiddenPoiIds = Array.from(newHidden);
+             setHiddenPoiIds(Array.from(newHidden));
              await saveAppState(`hiddenPois_${state.currentMapId || 'djerba'}`, state.hiddenPoiIds);
         }
 

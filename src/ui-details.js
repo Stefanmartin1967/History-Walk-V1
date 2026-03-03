@@ -9,7 +9,7 @@ import { isMobileView, updatePoiPosition, renderMobileCircuitsList, renderMobile
 import { createIcons, icons } from 'lucide';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
-import { calculateAdjustedTime } from './utils.js';
+import { calculateAdjustedTime, sanitizeHTML } from './utils.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
 import { renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm } from './modal.js';
