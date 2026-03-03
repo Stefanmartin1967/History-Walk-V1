@@ -88,19 +88,27 @@ Les "tests unitaires" simulant des situations extrêmes ont été écrits pour g
     2.  **Extraction de la logique visuelle** : Les fonctions qui manipulaient directement le DOM ou géraient l'affichage des modales (comme la génération du QR Code ou l'activation du mode sélection) ont été déplacées vers ce nouveau fichier.
     3.  **Purification du moteur** : `src/circuit.js` est désormais allégé et se concentre uniquement sur la gestion de l'état (brouillon, validation des points) et les calculs spatiaux (distances), garantissant que l'ajout de nouvelles fonctionnalités de parcours ne cassera plus l'interface.
 
-### Phase 7 : Nettoyage du Lanceur Principal (`src/main.js`) (Recommandation pour la suite)
-Le fichier `src/main.js` (plus de 600 lignes) est le dernier des trois "God Objects" identifiés lors de l'analyse initiale. Son rôle théorique est d'être le "point d'entrée" de l'application (initialiser la carte, charger les données de base, configurer le mode hors-ligne). Cependant, il a accumulé au fil du temps beaucoup de logique métier complexe.
+### Phase 7 : Nettoyage du Lanceur Principal (`src/main.js`) (Terminée 🎉)
+*   **Objectif** : Transformer `src/main.js` de plus de 600 lignes (le dernier des "God Objects") en un simple point d'entrée, un orchestrateur de l'application.
+*   **Bilan des Actions Réalisées** :
+    1.  **Séquence de démarrage isolée** : Création du module `src/app-startup.js` qui contient désormais toute la logique complexe de chargement (destinations, circuits officiels, carte).
+    2.  **Gestion des événements centralisée** : Création du module `src/app-events.js` pour y regrouper tous les écouteurs d'événements globaux (boutons de l'interface, raccourcis clavier, gestion des erreurs réseau) qui encombraient `main.js`.
+    3.  **Gestion des fichiers déléguée** : Déplacement de la logique d'import/export de fichiers utilisateur vers le module existant `src/fileManager.js`.
+    4.  **Résolution des bugs d'ordre d'initialisation** : L'extraction a mis en évidence l'importance stricte de l'ordre de chargement (attacher les écouteurs d'événements *avant* de charger les données de la carte), ce qui a été corrigé chirurgicalement.
+    5.  **Résultat** : `src/main.js` ne fait plus qu'une centaine de lignes et son rôle est clair : initialiser la base de données, configurer les écouteurs via `app-events`, lancer le démarrage via `app-startup`, et vérifier le mode administration.
 
-*   **Les problèmes actuels dans `main.js`** :
-    *   Il contient la logique lourde de préparation et de fusion des données GeoJSON (gestion des marqueurs, du centrage intelligent).
-    *   Il gère directement les popups d'interaction utilisateur au démarrage (messages d'accueil, alertes PWA).
-    *   Il gère directement les imports et exports de fichiers de sauvegarde utilisateur, ce qui n'est pas son rôle.
+### Phase 8 : Fiabilisation des Sauvegardes et Imports (Recommandation pour la suite)
+Maintenant que l'architecture globale (UI, État, Moteurs, Démarrage) est saine, la prochaine étape logique est de se concentrer sur la robustesse des données entrantes et sortantes de l'utilisateur.
 
-*   **L'objectif de cette phase (Phase 7)** :
-    *   **Alléger `main.js`** : Son seul rôle devrait être d'appeler d'autres modules pour configurer l'application (ex: `await initDatabase()`, `initMap()`, `loadApplicationData()`).
-    *   **Créer un `src/app-startup.js` ou `src/app-bootstrap.js`** : Pour gérer la séquence d'initialisation complexe (chargement des index, vérification des PWA, affichage des popups d'accueil).
-    *   **Externaliser la logique d'import/export global** : Déplacer les fonctions lourdes liées à la gestion des fichiers utilisateurs (`restoreUserData`, `exportUserData`) vers le fichier existant `src/fileManager.js` pour centraliser la gestion des fichiers.
+*   **Le besoin actuel** :
+    *   La gestion des fichiers de sauvegarde utilisateurs (`src/fileManager.js` et les exports dans `src/ui-export.js`) a besoin d'être fiabilisée.
+    *   Il faut s'assurer que si l'utilisateur importe un fichier mal formaté ou corrompu, l'application ne plante pas et n'écrase pas ses données saines actuelles.
+
+*   **L'objectif de cette phase (Phase 8)** :
+    *   **Sécuriser l'Importation** : Ajouter des validations strictes lors de l'importation de fichiers de sauvegarde.
+    *   **Fiabiliser l'Exportation** : Garantir que tous les champs (notes, favoris, catégories personnalisées) sont correctement inclus dans les exports.
+    *   **Nettoyer le code lié aux fichiers** : Regrouper et sécuriser les fonctions éparpillées qui traitent les fichiers GPX et JSON.
 
 ---
 
-**Conclusion** : L'application fonctionne, ce qui est l'essentiel. Les fondations techniques (Vite, Leaflet, IndexedDB) sont les bonnes. La dette technique majeure a été massivement réduite, et l'état de l'application est désormais protégé et prévisible. Les "God Objects" de l'UI et de l'Administration ont été vaincus (Phases 2, 3, et 6). La phase 7 sera la touche finale pour une architecture parfaitement saine.
+**Conclusion** : L'application fonctionne, ce qui est l'essentiel. Les fondations techniques (Vite, Leaflet, IndexedDB) sont les bonnes. La dette technique majeure a été massivement réduite, et l'état de l'application est désormais protégé et prévisible. Les "God Objects" de l'UI, de l'Administration et du Démarrage ont tous été vaincus. L'architecture est désormais saine et modulaire.
