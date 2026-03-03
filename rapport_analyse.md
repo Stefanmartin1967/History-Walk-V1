@@ -81,16 +81,26 @@ Les "tests unitaires" simulant des situations extrêmes ont été écrits pour g
     2.  **Nettoyage massif** : Plus de 70 occurrences de modifications directes (`state.xxx = yyy`) ont été traquées et remplacées par l'appel aux Setters dans l'intégralité du code source (`main.js`, `circuit.js`, `data.js`, `map.js`, `mobile.js`, etc.).
     3.  **Sécurité des objets imbriqués** : Lors de la modification de propriétés complexes (comme les données utilisateur d'un lieu), le code crée désormais une copie propre avant de l'injecter dans l'état. Cela évite les bugs de réactivité et les écrasements asynchrones.
 
-### Phase 6 : Découplage de l'Éditeur de Circuits (Recommandation pour la suite)
-Le fichier `src/circuit.js` (près de 900 lignes) reste le dernier vestige de la conception monolithique de l'application. Il agit actuellement comme un "God Object" pour la création de parcours, mélangeant trois responsabilités distinctes :
-1.  **La logique spatiale et mathématique** : Calcul des distances orthodromiques, réorganisation des points.
-2.  **La gestion de l'état local et des données** : Sauvegarde des brouillons, chargement depuis la base de données.
-3.  **La manipulation visuelle (UI)** : Modification directe du HTML (affichage/masquage de panneaux, rendu de la liste des points dans le DOM).
+### Phase 6 : Découplage de l'Éditeur de Circuits (Terminée 🎉)
+*   **Objectif** : Retirer la responsabilité de l'interface graphique (UI) du fichier `src/circuit.js` pour le transformer en un pur "moteur de règles" mathématique et logique.
+*   **Bilan des Actions Réalisées** :
+    1.  **Création du contrôleur d'interface** : Création du fichier `src/ui-circuit-editor.js` qui regroupe désormais tous les écouteurs d'événements (clics sur les boutons "Partager", "Exporter", "Vider", "Boucler", etc.).
+    2.  **Extraction de la logique visuelle** : Les fonctions qui manipulaient directement le DOM ou géraient l'affichage des modales (comme la génération du QR Code ou l'activation du mode sélection) ont été déplacées vers ce nouveau fichier.
+    3.  **Purification du moteur** : `src/circuit.js` est désormais allégé et se concentre uniquement sur la gestion de l'état (brouillon, validation des points) et les calculs spatiaux (distances), garantissant que l'ajout de nouvelles fonctionnalités de parcours ne cassera plus l'interface.
 
-*   **L'objectif de cette phase** :
-    *   Extraire toute la logique d'interface utilisateur vers un fichier dédié (par exemple `src/ui-circuit-editor.js`).
-    *   Transformer `circuit.js` en un pur "moteur de règles" qui se contente de valider les points et de calculer les distances, rendant ainsi le code beaucoup plus facile à maintenir et à faire évoluer (ex: ajout de nouvelles fonctionnalités de tracé sans casser l'interface).
+### Phase 7 : Nettoyage du Lanceur Principal (`src/main.js`) (Recommandation pour la suite)
+Le fichier `src/main.js` (plus de 600 lignes) est le dernier des trois "God Objects" identifiés lors de l'analyse initiale. Son rôle théorique est d'être le "point d'entrée" de l'application (initialiser la carte, charger les données de base, configurer le mode hors-ligne). Cependant, il a accumulé au fil du temps beaucoup de logique métier complexe.
+
+*   **Les problèmes actuels dans `main.js`** :
+    *   Il contient la logique lourde de préparation et de fusion des données GeoJSON (gestion des marqueurs, du centrage intelligent).
+    *   Il gère directement les popups d'interaction utilisateur au démarrage (messages d'accueil, alertes PWA).
+    *   Il gère directement les imports et exports de fichiers de sauvegarde utilisateur, ce qui n'est pas son rôle.
+
+*   **L'objectif de cette phase (Phase 7)** :
+    *   **Alléger `main.js`** : Son seul rôle devrait être d'appeler d'autres modules pour configurer l'application (ex: `await initDatabase()`, `initMap()`, `loadApplicationData()`).
+    *   **Créer un `src/app-startup.js` ou `src/app-bootstrap.js`** : Pour gérer la séquence d'initialisation complexe (chargement des index, vérification des PWA, affichage des popups d'accueil).
+    *   **Externaliser la logique d'import/export global** : Déplacer les fonctions lourdes liées à la gestion des fichiers utilisateurs (`restoreUserData`, `exportUserData`) vers le fichier existant `src/fileManager.js` pour centraliser la gestion des fichiers.
 
 ---
 
-**Conclusion** : L'application fonctionne, ce qui est l'essentiel. Les fondations techniques (Vite, Leaflet, IndexedDB) sont les bonnes. La dette technique majeure a été massivement réduite, et l'état de l'application est désormais protégé et prévisible ! La phase 6 sera la touche finale pour une architecture parfaitement saine.
+**Conclusion** : L'application fonctionne, ce qui est l'essentiel. Les fondations techniques (Vite, Leaflet, IndexedDB) sont les bonnes. La dette technique majeure a été massivement réduite, et l'état de l'application est désormais protégé et prévisible. Les "God Objects" de l'UI et de l'Administration ont été vaincus (Phases 2, 3, et 6). La phase 7 sera la touche finale pour une architecture parfaitement saine.
