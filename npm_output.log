@@ -1,0 +1,33 @@
+
+> version-suppression-poi-douce@1.0.0 dev
+> vite
+
+
+  VITE v7.3.1  ready in 326 ms
+
+  ➜  Local:   http://localhost:5173/History-Walk-V1/
+  ➜  Network: use --host to expose
+(!) Failed to run dependency scan. Skipping dependency pre-bundling. Error:   Failed to scan for dependencies from entries:
+  /app/index.html
+/app/tools/scout.html
+/app/tools/fusion.html
+/app/admin-fusion.html
+/app/history_walk_datamanager/index.html
+
+  [31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mNo matching export in "src/circuit.js" for import "toggleSelectionMode"[0m
+
+    src/ui-circuit-editor.js:23:4:
+[37m      23 │     [32mtoggleSelectionMode[37m as toggleSelectionModeCore,
+         ╵     [32m~~~~~~~~~~~~~~~~~~~[0m
+
+
+    at failureErrorWithLog (/app/node_modules/esbuild/lib/main.js:1467:15)
+    at /app/node_modules/esbuild/lib/main.js:926:25
+    at runOnEndCallbacks (/app/node_modules/esbuild/lib/main.js:1307:45)
+    at buildResponseToResult (/app/node_modules/esbuild/lib/main.js:924:7)
+    at /app/node_modules/esbuild/lib/main.js:936:9
+    at new Promise (<anonymous>)
+    at requestCallbacks.on-end (/app/node_modules/esbuild/lib/main.js:935:54)
+    at handleRequest (/app/node_modules/esbuild/lib/main.js:628:17)
+    at handleIncomingPacket (/app/node_modules/esbuild/lib/main.js:653:7)
+    at Socket.readFromStdout (/app/node_modules/esbuild/lib/main.js:581:7)

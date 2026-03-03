@@ -20,7 +20,6 @@ import {
 
 import {
     saveCircuitDraft,
-    toggleSelectionMode as toggleSelectionModeCore,
     addPoiToCircuit,
     clearCircuit,
     convertToDraft,

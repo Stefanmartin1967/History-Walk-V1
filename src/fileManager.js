@@ -431,6 +431,39 @@ export async function exportDataForMobilePC() {
 /**
  * BOUTON : Sauvegarde Full PC (Avec photos)
  */
+export function setupFileListeners() {
+    if (DOM.restoreLoader) {
+        DOM.restoreLoader.removeEventListener('change', handleRestoreFile);
+        DOM.restoreLoader.addEventListener('change', handleRestoreFile);
+    }
+    if (DOM.btnRestoreData) {
+        DOM.btnRestoreData.addEventListener('click', () => {
+            if (!DOM.btnRestoreData.disabled) import('./ui-modals.js').then(m => m.openRestoreModal());
+        });
+    }
+    if (DOM.geojsonLoader) {
+        DOM.geojsonLoader.removeEventListener('change', handleFileLoad);
+        DOM.geojsonLoader.addEventListener('change', handleFileLoad);
+    }
+    if (DOM.btnOpenGeojson) DOM.btnOpenGeojson.addEventListener('click', () => DOM.geojsonLoader.click());
+
+    const btnSaveMobile = document.getElementById('btn-save-mobile');
+    if (btnSaveMobile) {
+        btnSaveMobile.addEventListener('click', () => {
+            if (window.innerWidth > 768) {
+                exportDataForMobilePC();
+            } else {
+                saveUserData(false);
+            }
+        });
+    }
+
+    const photoLoader = document.getElementById('photo-gps-loader');
+    if (photoLoader) photoLoader.addEventListener('change', handlePhotoImport);
+
+    if (DOM.gpxImporter) DOM.gpxImporter.addEventListener('change', handleGpxFileImport);
+}
+
 export async function exportFullBackupPC() {
     try {
         const data = await prepareExportData(true);
