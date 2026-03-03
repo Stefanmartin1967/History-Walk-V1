@@ -103,19 +103,14 @@ async function initializeApp() {
         document.body.classList.add('sidebar-open');
     }
 
-    try {
-        await initDB();
-        const savedTheme = await getAppState('currentTheme');
-        if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+    // 3. Tour de contrôle et événements (AVANT le chargement de la carte pour s'assurer que data:filtered est capté)
+    setupEventBusListeners();
+    setupCircuitEventListeners();
+    setupDesktopUIListeners();
+    setupGlobalEventListeners();
+    setupFileListeners();
+    setupUnsavedChangesWarning();
 
-        // Lancement unique et propre de la carte
-        await loadAndInitializeMap();
-
-    } catch (error) {
-        console.error("Échec init global:", error);
-    }
-
-    // 4. Tour de contrôle
     const themeSelector = document.getElementById('btn-theme-selector');
     if (themeSelector) {
         themeSelector.addEventListener('click', () => {
@@ -129,12 +124,18 @@ async function initializeApp() {
         });
     }
 
-    setupEventBusListeners();
-    setupCircuitEventListeners();
-    setupDesktopUIListeners();
-    setupGlobalEventListeners();
-    setupFileListeners();
-    setupUnsavedChangesWarning();
+    try {
+        await initDB();
+        const savedTheme = await getAppState('currentTheme');
+        if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Lancement unique et propre de la carte
+        await loadAndInitializeMap();
+
+    } catch (error) {
+        console.error("Échec init global:", error);
+    }
+
     createIcons({ icons });
 
     // Import URL
