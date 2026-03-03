@@ -18,11 +18,11 @@
         "Coordonnées GPS": "33.827050, 11.046220",
         "Latitude": 33.82705,
         "Longitude": 11.04622,
-        "Description": "Très bel hôtel 4 *, si vous voulez manger local, un coin Djerbie est présent à chaque repas. Soirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée",
+        "Description": "Très bel hôtel 4 *, si vous voulez manger local, un coin Djerbie est présent à chaque repas. Soirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nPiscine actuellement fermée",
         "Source": "https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/",
-        "Temps de visite": null,
-        "Prix d'entrée": null,
-        "Desc_wpt": null,
+        "Temps de visite": "01:00",
+        "Prix d'entrée": 0,
+        "Desc_wpt": "Réouverture de la piscine le 16 mars",
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
         "planifieCounter": 1,
         "vu": true
@@ -6984,9 +6984,27 @@
       },
       "properties": {
         "Nom du site FR": "Test console suppression",
-        "Catégorie": "Restaurant",
+        "Catégorie": "Photo",
         "Zone": "El Groa",
         "HW_ID": "HW-01KJNK87V2E7XM7BRCPZG6Z3KD",
+        "Description": "Ajouté via Rich Editor",
+        "Prix d'entrée": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.779108477816962,
+          33.85326343967744
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test console suppression 2",
+        "Catégorie": "Site religieux",
+        "Zone": "Houmt Souk",
+        "HW_ID": "HW-01KJTJG1RJD4F25AS3972AZRCS",
         "Description": "Ajouté via Rich Editor"
       }
     }
