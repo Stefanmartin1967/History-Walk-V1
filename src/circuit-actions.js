@@ -1,11 +1,14 @@
 
 // circuit-actions.js
-import { state, addMyCircuit } from './state.js';
-import { deleteCircuitById, softDeleteCircuit } from './database.js';
-import { clearCircuit, setCircuitVisitedState } from './circuit.js';
+import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setUserData } from './state.js';
+import { deleteCircuitById, softDeleteCircuit, getAllPoiDataForMap, getAllCircuitsForMap, batchSavePoiData, getAppState, saveCircuit } from './database.js';
+import { clearCircuit, setCircuitVisitedState, generateCircuitName, computeCircuitCounters } from './circuit.js';
 import { applyFilters, getPoiId } from './data.js';
 import { isMobileView } from './mobile.js';
-import { showConfirm } from './modal.js';
+import { showConfirm, showToast } from './modal.js';
+import { generateHWID } from './utils.js';
+import { generateAndDownloadGPX } from './gpx.js';
+import { DOM } from './ui.js';
 
 /**
  * Logique métier pour supprimer un circuit
