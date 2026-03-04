@@ -294,7 +294,7 @@ export function renderMobileCircuitsList() {
             let rightActionHtml = '';
             if (circuit.isOfficial && circuit.file) {
                 rightActionHtml = `
-                <a href="./circuits/${circuit.file}" download title="Télécharger GPX" class="mobile-download-btn" onclick="event.stopPropagation();">
+                <a href="./circuits/${circuit.file}" download title="Télécharger GPX" class="mobile-download-btn">
                     <i data-lucide="download" style="width:24px; height:24px;"></i>
                 </a>`;
             }
@@ -303,7 +303,7 @@ export function renderMobileCircuitsList() {
             const visitedIcon = isDone ? 'check-circle' : 'circle';
             const visitedColor = isDone ? 'var(--ok)' : 'var(--line)'; // Gris clair si pas fait, Vert si fait
             const toggleVisitedHtml = `
-                <div class="mobile-toggle-visited mobile-check-btn" data-id="${circuit.id}" data-visited="${isDone}" style="color:${visitedColor};" onclick="event.stopPropagation();">
+                <div class="mobile-toggle-visited mobile-check-btn" data-id="${circuit.id}" data-visited="${isDone}" style="color:${visitedColor};">
                     <i data-lucide="${visitedIcon}" style="width:24px; height:24px;"></i>
                 </div>
             `;
@@ -373,25 +373,33 @@ export function renderMobileCircuitsList() {
 
     container.querySelectorAll('.circuit-item-mobile').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-            if (e.target.closest('.mobile-toggle-visited') || e.target.closest('a')) return;
+            // Check if click is on download link (don't propagate)
+            if (e.target.closest('.mobile-download-btn')) {
+                e.stopPropagation();
+                return;
+            }
+
+            // Check if click is on toggle visited
+            const toggleBtn = e.target.closest('.mobile-toggle-visited');
+            if (toggleBtn) {
+                e.stopPropagation();
+                const id = toggleBtn.dataset.id;
+                const isVisited = toggleBtn.dataset.visited === 'true';
+
+                // Unified Action with Confirmation
+                const result = await handleCircuitVisitedToggle(id, isVisited);
+                if (result.success) {
+                    renderMobileCircuitsList(); // Refresh UI
+                }
+                return;
+            }
+
+            if (e.target.closest('a')) return;
+
             const id = btn.dataset.id;
             // On change de "Vue" logique pour autoriser renderMobilePoiList à s'afficher
             currentView = 'circuit-details';
             await loadCircuitById(id);
-        });
-    });
-
-    container.querySelectorAll('.mobile-toggle-visited').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            const isVisited = btn.dataset.visited === 'true';
-
-            // Unified Action with Confirmation
-            const result = await handleCircuitVisitedToggle(id, isVisited);
-            if (result.success) {
-                renderMobileCircuitsList(); // Refresh UI
-            }
         });
     });
 }
