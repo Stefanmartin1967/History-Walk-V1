@@ -1,6 +1,6 @@
-import { addMyCircuit } from './state.js';
+
 // circuit-actions.js
-import { state } from './state.js';
+import { state, addMyCircuit } from './state.js';
 import { deleteCircuitById, softDeleteCircuit } from './database.js';
 import { clearCircuit, setCircuitVisitedState } from './circuit.js';
 import { applyFilters, getPoiId } from './data.js';
@@ -304,8 +304,7 @@ export async function saveAndExportCircuit() {
             realTrack: null,
             transport: transportData
         };
-        // It seems addMyCircuit wasn't added to imports, let's fix it manually later if needed. It's in state.js
-        const { addMyCircuit } = require('./state.js'); // just to know it's there
+
         addMyCircuit(circuitToSave);
         setActiveCircuitId(newId);
     }
