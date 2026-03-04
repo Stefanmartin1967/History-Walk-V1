@@ -347,7 +347,7 @@ export function openControlCenterModal(diffData, callbacks) {
 
             <div class="admin-cc-footer" id="admin-cc-footer-actions">
                 <button class="custom-modal-btn secondary" data-action="close-modal">Fermer</button>
-                <button id="btn-cc-publish"><i data-lucide="rocket" width="18"></i> TOUT PUBLIER</button>
+                <button id="btn-cc-publish" title="Tout publier" aria-label="Tout publier"><i data-lucide="rocket" width="18"></i> TOUT PUBLIER</button>
             </div>
         </div>
     `;
@@ -545,7 +545,7 @@ export function renderTab(tab, diffData, callbacks) {
                                 <p>${changeSummary}</p>
                             </div>
                         </div>
-                        <button class="diff-toggle-btn"><i data-lucide="chevron-down"></i></button>
+                        <button class="diff-toggle-btn" title="Voir les détails" aria-label="Voir les détails"><i data-lucide="chevron-down"></i></button>
                     </div>
 
                     <!-- DETAILS & EDIT (Hidden) -->

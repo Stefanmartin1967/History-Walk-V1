@@ -67,45 +67,45 @@
         </div>
 
         <div class="topbar-center">
-            <button class="btn" id="btn-open-my-circuits" title="Mes Circuits"><i data-lucide="route"></i></button>
+            <button class="btn" id="btn-open-my-circuits" title="Mes Circuits" aria-label="Mes Circuits"><i data-lucide="route"></i></button>
 
             <div class="zones-container">
-                <button class="btn" id="btn-filter-zones" title="Filtre par Zone"><i data-lucide="map-pin"></i> <span
+                <button class="btn" id="btn-filter-zones" title="Filtre par Zone" aria-label="Filtre par Zone"><i data-lucide="map-pin"></i> <span
                         id="zonesLabel">Zone</span></button>
                 <div class="zones-menu" id="zonesMenu" style="display: none;"></div>
             </div>
 
             <div class="zones-container">
-                <button class="btn" id="btn-categories" title="Filtrer par catégorie"><i data-lucide="list"></i> <span>Catégories</span></button>
+                <button class="btn" id="btn-categories" title="Filtrer par catégorie" aria-label="Filtrer par catégorie"><i data-lucide="list"></i> <span>Catégories</span></button>
                 <div class="zones-menu" id="categoriesMenu" style="display: none;"></div>
             </div>
 
-            <button class="btn" id="btn-filter-vus" title="Masquer les visités"><i
+            <button class="btn" id="btn-filter-vus" title="Masquer les visités" aria-label="Masquer les visités"><i
                     data-lucide="eye"></i><span>Visités</span></button>
 
-            <button class="btn" id="btn-filter-planifies" title="Masquer les planifiés"><i
+            <button class="btn" id="btn-filter-planifies" title="Masquer les planifiés" aria-label="Masquer les planifiés"><i
                     data-lucide="calendar-check"></i><span>Planifiés</span></button>
 
-            <button class="btn" id="btn-mode-selection" title="Mode consultation"><i
+            <button class="btn" id="btn-mode-selection" title="Mode consultation" aria-label="Mode consultation"><i
                     data-lucide="map-pin-off"></i><span>Sélection</span></button>
 
-            <button class="btn" id="btn-import-photos" title="Importer des photos GPS"><i
+            <button class="btn" id="btn-import-photos" title="Importer des photos GPS" aria-label="Importer des photos GPS"><i
                     data-lucide="image-up"></i></button>
 
-            <button class="btn" id="btn-legend" title="Afficher la légende"><i
+            <button class="btn" id="btn-legend" title="Afficher la légende" aria-label="Afficher la légende"><i
                     data-lucide="info"></i></button>
         </div>
 
         <div class="topbar-right">
             <!-- SOUTENIR LE SITE -->
-            <button class="btn" id="btn-bmc-topbar" title="Soutenir le site">
+            <button class="btn" id="btn-bmc-topbar" title="Soutenir le site" aria-label="Soutenir le site">
                 <i data-lucide="heart"></i>
                 <span>Soutenir le site</span>
             </button>
 
             <!-- GOD MODE TOOLS -->
             <div class="tools-dropdown-container" id="admin-tools-container" style="display:none;">
-                <button class="btn" id="btn-admin-menu" title="God Mode Tools"
+                <button class="btn" id="btn-admin-menu" title="God Mode Tools" aria-label="God Mode Tools"
                     style="background-color: #ef4444; color: white;">
                     <i data-lucide="shield-alert"></i>
                     <span>GOD MODE</span>
@@ -121,7 +121,7 @@
             </div>
 
             <div class="tools-dropdown-container">
-                <button class="btn" id="btn-tools-menu" title="Menu Outils"><i
+                <button class="btn" id="btn-tools-menu" title="Menu Outils" aria-label="Menu Outils"><i
                         data-lucide="settings"></i><span>Outils</span></button>
                 <div class="tools-menu" id="tools-menu-content">
 
@@ -187,7 +187,7 @@
 
     <div class="right-sidebar" id="right-sidebar">
         <div class="sidebar-tabs" id="sidebar-tabs">
-            <button class="tab-button" data-tab="explorer" title="Mes Circuits"><span>Mes Circuits</span></button>
+            <button class="tab-button" data-tab="explorer" title="Mes Circuits" aria-label="Mes Circuits"><span>Mes Circuits</span></button>
             <button class="tab-button active" data-tab="circuit">Circuit</button>
             <button class="tab-button" data-tab="details">Détails</button>
         </div>
@@ -205,8 +205,8 @@
             <div class="panel-header circuit-header">
                 <div class="circuit-title-container">
                     <h2 id="circuit-title-text" title="Nouveau Circuit">Nouveau Circuit</h2>
-                    <button id="edit-circuit-title-button" class="action-button" title="Modifier le titre" style="margin-left: 8px;"><i data-lucide="pencil"></i></button>
-                    <button id="close-circuit-panel-btn" class="header-btn" title="Fermer le mode création" style="margin-left: auto;"><i data-lucide="x"></i></button>
+                    <button id="edit-circuit-title-button" class="action-button" title="Modifier le titre" aria-label="Modifier le titre" style="margin-left: 8px;"><i data-lucide="pencil"></i></button>
+                    <button id="close-circuit-panel-btn" class="header-btn" title="Fermer le mode création" aria-label="Fermer le mode création" style="margin-left: auto;"><i data-lucide="x"></i></button>
                 </div>
 
                 <div class="circuit-description-container">
@@ -222,7 +222,7 @@
                         <i id="distance-icon" data-lucide="bird" title="Distance à vol d'oiseau"></i>
                     </div>
                     <div class="controls-group">
-                        <button id="btn-delete-active-circuit" class="header-btn" title="Supprimer ce circuit" style="display:none; color:var(--danger);"><i data-lucide="trash-2"></i></button>
+                        <button id="btn-delete-active-circuit" class="header-btn" title="Supprimer ce circuit" aria-label="Supprimer ce circuit" style="display:none; color:var(--danger);"><i data-lucide="trash-2"></i></button>
                     </div>
                 </div>
                 <div class="transport-info">
@@ -255,17 +255,17 @@
                     d'intérêt.</p>
             </div>
             <div class="panel-footer">
-                <button class="footer-btn pill" id="btn-loop-circuit" title="Boucler le circuit"><i data-lucide="repeat"></i></button>
-                <button class="footer-btn pill" id="btn-clear-circuit" title="Vider le circuit"><i data-lucide="trash-2"></i></button>
+                <button class="footer-btn pill" id="btn-loop-circuit" title="Boucler le circuit" aria-label="Boucler le circuit"><i data-lucide="repeat"></i></button>
+                <button class="footer-btn pill" id="btn-clear-circuit" title="Vider le circuit" aria-label="Vider le circuit"><i data-lucide="trash-2"></i></button>
                 <div class="separator-vertical"></div>
-                <button class="footer-btn pill" id="btn-modify-circuit" title="Modifier le circuit" style="display:none;"><i data-lucide="edit-3"></i></button>
-                <button class="footer-btn pill" id="btn-import-gpx" title="Importer GPX" disabled><i data-lucide="upload-cloud"></i></button>
-                <button class="footer-btn pill" id="btn-export-gpx" title="Exporter GPX" disabled><i data-lucide="download-cloud"></i></button>
+                <button class="footer-btn pill" id="btn-modify-circuit" title="Modifier le circuit" aria-label="Modifier le circuit" style="display:none;"><i data-lucide="edit-3"></i></button>
+                <button class="footer-btn pill" id="btn-import-gpx" title="Importer GPX" aria-label="Importer GPX" disabled><i data-lucide="upload-cloud"></i></button>
+                <button class="footer-btn pill" id="btn-export-gpx" title="Exporter GPX" aria-label="Exporter GPX" disabled><i data-lucide="download-cloud"></i></button>
                 <a href="https://gpx.studio/fr/app" target="_blank" class="footer-btn pill" id="btn-open-gpx-studio" title="Ouvrir GPX Studio" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
                     <i data-lucide="map"></i>
                 </a>
                 <div class="separator-vertical"></div>
-                <button class="footer-btn pill" id="btn-share-circuit" title="Partager"><i data-lucide="qr-code"></i></button>
+                <button class="footer-btn pill" id="btn-share-circuit" title="Partager" aria-label="Partager"><i data-lucide="qr-code"></i></button>
             </div>
         </div>
 
@@ -313,11 +313,11 @@
                 <div style="display:flex; align-items:center; gap: 10px; flex-grow: 1;">
                     <h2 id="rich-poi-modal-title" style="margin: 0;">Éditer le Lieu</h2>
                     <div id="rich-poi-nav-controls" style="display:none; align-items:center; gap:5px; margin-left: 10px;">
-                        <button id="btn-rich-prev" class="header-btn" title="Précédent" style="padding: 5px;"><i data-lucide="chevron-left"></i></button>
-                        <button id="btn-rich-next" class="header-btn" title="Suivant" style="padding: 5px;"><i data-lucide="chevron-right"></i></button>
+                        <button id="btn-rich-prev" class="header-btn" title="Précédent" aria-label="Précédent" style="padding: 5px;"><i data-lucide="chevron-left"></i></button>
+                        <button id="btn-rich-next" class="header-btn" title="Suivant" aria-label="Suivant" style="padding: 5px;"><i data-lucide="chevron-right"></i></button>
                     </div>
                 </div>
-                <button id="close-rich-poi-modal" class="header-btn"><i data-lucide="x"></i></button>
+                <button id="close-rich-poi-modal" class="header-btn" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body" style="display: flex; flex-direction: column; gap: 15px; padding-top: 20px;">
 
@@ -386,7 +386,7 @@
 
                 <!-- Footer -->
                 <div style="font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
-                    <button id="btn-rich-move-marker" class="header-btn" title="Déplacer le marqueur" style="padding: 4px 8px; font-size: 11px; background: var(--surface-muted); border: 1px solid var(--line); border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    <button id="btn-rich-move-marker" class="header-btn" title="Déplacer le marqueur" aria-label="Déplacer le marqueur" style="padding: 4px 8px; font-size: 11px; background: var(--surface-muted); border: 1px solid var(--line); border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
                         <i data-lucide="move" style="width: 14px; height: 14px;"></i> Déplacer
                     </button>
                     <span>📍 GPS : <span id="rich-poi-coords">...</span></span>
@@ -409,8 +409,8 @@
     <div id="fullscreen-editor" style="display: none;">
         <div class="editor-header">
             <h2 id="editor-title">Éditer</h2>
-            <button id="editor-cancel-btn"><i data-lucide="arrow-left"></i> Annuler</button>
-            <button id="editor-save-btn"><i data-lucide="check"></i> Sauvegarder</button>
+            <button id="editor-cancel-btn" title="Annuler" aria-label="Annuler"><i data-lucide="arrow-left"></i> Annuler</button>
+            <button id="editor-save-btn" title="Sauvegarder" aria-label="Sauvegarder"><i data-lucide="check"></i> Sauvegarder</button>
         </div>
         <textarea id="editor-textarea"></textarea>
     </div>
@@ -446,7 +446,7 @@
         <div class="modal-content wizard-content">
             <div class="modal-header">
                 <h2>Mode Sélection</h2>
-                <button id="close-wizard-modal" class="header-btn"><i data-lucide="x"></i></button>
+                <button id="close-wizard-modal" class="header-btn" title="Fermer l'assistant" aria-label="Fermer l'assistant"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
                 <p>Configurez votre session de création :</p>

@@ -89,23 +89,23 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="content structured-input-row">
                 <div class="input-group">
                     <div class="stepper-control time-editor">
-                        <button class="stepper-btn" id="time-decrement-btn" title="- 5 min">${ICONS.minus}</button>
+                        <button class="stepper-btn" id="time-decrement-btn" title="- 5 min" aria-label="- 5 min">${ICONS.minus}</button>
                         <span id="panel-time-display" class="value-display" data-hours="${hours}" data-minutes="${minutes}">${timeText}</span>
-                        <button class="stepper-btn" id="time-increment-btn" title="+ 5 min">${ICONS.plus}</button>
+                        <button class="stepper-btn" id="time-increment-btn" title="+ 5 min" aria-label="+ 5 min">${ICONS.plus}</button>
                     </div>
                 </div>
                 <div class="input-group">
                     <div class="stepper-control price-editor">
-                        <button class="stepper-btn" id="price-decrement-btn" title="- 0.5">${ICONS.minus}</button>
+                        <button class="stepper-btn" id="price-decrement-btn" title="- 0.5" aria-label="- 0.5">${ICONS.minus}</button>
                         <span id="panel-price-display" class="value-display" data-value="${priceValue || 0}">${priceDisplay}</span>
                         <span class="stepper-currency" id="panel-price-currency" style="${priceValue > 0 ? '' : 'display:none;'}">${currency}</span>
-                        <button class="stepper-btn" id="price-increment-btn" title="+ 0.5">${ICONS.plus}</button>
+                        <button class="stepper-btn" id="price-increment-btn" title="+ 0.5" aria-label="+ 0.5">${ICONS.plus}</button>
                     </div>
                 </div>
             </div>
         </div>`;
 
-    const gmapsButtonHtml = `<button class="action-button" id="open-gmaps-btn" title="Itinéraire Google Maps">${ICONS.googleMaps}</button>`;
+    const gmapsButtonHtml = `<button class="action-button" id="open-gmaps-btn" title="Itinéraire Google Maps" aria-label="Itinéraire Google Maps">${ICONS.googleMaps}</button>`;
     
     const categorySelectHtml = `
         <select id="panel-category-select" class="editable-input header-input" style="display:none; margin-top:5px; width:100%; font-size:14px;">
@@ -123,7 +123,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                      <h2 id="panel-title-ar" style="display:none; margin:0; font-size:20px; font-weight:700; color:var(--ink); text-align:right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" dir="rtl">${escapeXml(arName)}</h2>
                 </div>
                 <div style="flex-shrink:0;">
-                     <button class="action-button" id="close-details-button" title="Fermer" style="margin:0;">${ICONS.x}</button>
+                     <button class="action-button" id="close-details-button" title="Fermer" aria-label="Fermer" style="margin:0;">${ICONS.x}</button>
                 </div>
             </div>
 
@@ -131,19 +131,19 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%; padding-top: 8px;">
                 <!-- Left: Tools -->
                 <div style="display:flex; gap:5px; align-items:center;">
-                     <button class="action-button" id="btn-toggle-lang" title="Afficher le titre arabe" ${hasAr ? '' : 'disabled'} style="${hasAr ? '' : 'opacity:0.5; cursor:not-allowed;'}">${ICONS.languages}</button>
-                     <button class="action-button" id="btn-toggle-gpx-desc" title="Afficher/Masquer Description GPX">${ICONS.fileText}</button>
-                     <button class="action-button btn-web-search" id="btn-web-search" title="Rechercher sur Google">${ICONS.globe}</button>
+                     <button class="action-button" id="btn-toggle-lang" title="Afficher le titre arabe" aria-label="Afficher le titre arabe" ${hasAr ? '' : 'disabled'} style="${hasAr ? '' : 'opacity:0.5; cursor:not-allowed;'}">${ICONS.languages}</button>
+                     <button class="action-button" id="btn-toggle-gpx-desc" title="Afficher/Masquer Description GPX" aria-label="Afficher/Masquer Description GPX">${ICONS.fileText}</button>
+                     <button class="action-button btn-web-search" id="btn-web-search" title="Rechercher sur Google" aria-label="Rechercher sur Google">${ICONS.globe}</button>
                      ${gmapsButtonHtml}
-                     <button class="action-button" id="btn-move-marker" title="Déplacer le marqueur">${ICONS.move}</button>
-                     <button class="action-button" id="btn-open-photo-grid" title="Gérer les photos">${ICONS.imagePlus}</button>
-                     <button class="action-button" id="btn-global-edit" title="Modifier le lieu">${ICONS.pen}</button>
+                     <button class="action-button" id="btn-move-marker" title="Déplacer le marqueur" aria-label="Déplacer le marqueur">${ICONS.move}</button>
+                     <button class="action-button" id="btn-open-photo-grid" title="Gérer les photos" aria-label="Gérer les photos">${ICONS.imagePlus}</button>
+                     <button class="action-button" id="btn-global-edit" title="Modifier le lieu" aria-label="Modifier le lieu">${ICONS.pen}</button>
                 </div>
                 <!-- Right: Navigation + Delete -->
                 <div style="display:flex; gap:5px; align-items:center;">
-                     <button class="action-button" id="btn-soft-delete" title="Signaler pour suppression" style="color: var(--danger); margin-right: 10px;">${ICONS.trash}</button>
-                     ${inCircuit ? `<button class="action-button" id="prev-poi-button" title="Précédent" ${circuitIndex === 0 ? 'disabled' : ''}>${ICONS.chevronLeft}</button>
-                                    <button class="action-button" id="next-poi-button" title="Suivant" ${circuitIndex === state.currentCircuit.length - 1 ? 'disabled' : ''}>${ICONS.chevronRight}</button>` : ''}
+                     <button class="action-button" id="btn-soft-delete" title="Signaler pour suppression" aria-label="Signaler pour suppression" style="color: var(--danger); margin-right: 10px;">${ICONS.trash}</button>
+                     ${inCircuit ? `<button class="action-button" id="prev-poi-button" title="Précédent" aria-label="Précédent" ${circuitIndex === 0 ? 'disabled' : ''}>${ICONS.chevronLeft}</button>
+                                    <button class="action-button" id="next-poi-button" title="Suivant" aria-label="Suivant" ${circuitIndex === state.currentCircuit.length - 1 ? 'disabled' : ''}>${ICONS.chevronRight}</button>` : ''}
                 </div>
             </div>
 
@@ -162,7 +162,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="detail-section editable-field description-section" data-field-id="description">
                 <h3 style="display:flex; justify-content:space-between; align-items:center;">
                     <span>Description</span>
-                    <button class="action-button speak-btn" title="Lire la description" style="margin:0;">${ICONS.volume}</button>
+                    <button class="action-button speak-btn" title="Lire la description" aria-label="Lire la description" style="margin:0;">${ICONS.volume}</button>
                 </h3>
                 <div class="content">
                     <div id="panel-description-display" class="description-content editable-text" style="max-height:200px; overflow-y:auto;">${escapeXml(allProps.description || allProps.Description || '').replace(/\n/g, '<br>')}</div>
@@ -221,17 +221,17 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
                          <!-- Left: Tools -->
                          <div style="display:flex; gap:6px; align-items:center;">
-                             <button class="action-button" id="mobile-btn-toggle-lang" title="Arabe" ${hasAr ? '' : 'disabled'} style="${mobileBtnStyle} ${hasAr ? '' : 'opacity:0.5;'}">${ICONS.languages}</button>
-                             <button class="action-button" id="mobile-btn-toggle-gpx-desc" title="GPX Desc" style="${mobileBtnStyle}">${ICONS.fileText}</button>
-                             <button class="action-button btn-web-search" id="btn-web-search" title="Google" style="${mobileBtnStyle}">${ICONS.globe}</button>
+                             <button class="action-button" id="mobile-btn-toggle-lang" title="Arabe" aria-label="Arabe" ${hasAr ? '' : 'disabled'} style="${mobileBtnStyle} ${hasAr ? '' : 'opacity:0.5;'}">${ICONS.languages}</button>
+                             <button class="action-button" id="mobile-btn-toggle-gpx-desc" title="GPX Desc" aria-label="GPX Desc" style="${mobileBtnStyle}">${ICONS.fileText}</button>
+                             <button class="action-button btn-web-search" id="btn-web-search" title="Google" aria-label="Google" style="${mobileBtnStyle}">${ICONS.globe}</button>
                              ${mobileGmapsBtn}
-                             <button class="action-button" id="btn-open-photo-grid" title="Gérer les photos" style="${mobileBtnStyle}">${ICONS.imagePlus}</button>
-                             <button class="action-button" id="btn-global-edit" title="Editer" style="${mobileBtnStyle}">${ICONS.pen}</button>
+                             <button class="action-button" id="btn-open-photo-grid" title="Gérer les photos" aria-label="Gérer les photos" style="${mobileBtnStyle}">${ICONS.imagePlus}</button>
+                             <button class="action-button" id="btn-global-edit" title="Editer" aria-label="Editer" style="${mobileBtnStyle}">${ICONS.pen}</button>
                          </div>
 
                          <!-- Right: Navigation + Delete -->
                          <div style="display:flex; gap:6px; align-items:center;">
-                             <button class="action-button" id="btn-soft-delete" title="Supprimer" style="${mobileBtnStyle} color: var(--danger);">${ICONS.trash}</button>
+                             <button class="action-button" id="btn-soft-delete" title="Supprimer" aria-label="Supprimer" style="${mobileBtnStyle} color: var(--danger);">${ICONS.trash}</button>
                              <button id="details-prev-btn" data-direction="-1" ${(!inCircuit || circuitIndex === 0) ? 'disabled' : ''} style="${mobileBtnStyle}">${ICONS.chevronLeft}</button>
                              <button id="details-next-btn" data-direction="1" ${(!inCircuit || circuitIndex === state.currentCircuit.length - 1) ? 'disabled' : ''} style="${mobileBtnStyle}">${ICONS.chevronRight}</button>
                          </div>
@@ -252,7 +252,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="detail-section editable-field description-section" data-field-id="description">
                 <h3 style="display:flex; justify-content:space-between; align-items:center;">
                     <span>Description</span>
-                    <button class="action-button speak-btn" title="Lire la description" style="margin:0;">${ICONS.volume}</button>
+                    <button class="action-button speak-btn" title="Lire la description" aria-label="Lire la description" style="margin:0;">${ICONS.volume}</button>
                 </h3>
                 <div class="content">
                     <div class="description-content editable-text" style="max-height:200px; overflow-y:auto;">${escapeXml(allProps.description || allProps.Description || '').replace(/\n/g, '<br>')}</div>

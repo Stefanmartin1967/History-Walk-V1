@@ -52,18 +52,18 @@ function renderExplorerHeader() {
     header.innerHTML = `
         <div style="display:flex; align-items:center; justify-content:space-between; width:100%; height: 100%; padding: 0 10px;">
             <div style="display:flex; align-items:center; gap:5px;">
-                <button class="action-button" id="explorer-prev-page" title="Page précédente" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;" disabled>
+                <button class="action-button" id="explorer-prev-page" title="Page précédente" aria-label="Page précédente" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;" disabled>
                     <i data-lucide="chevron-left" style="width:20px; height:20px;"></i>
                 </button>
                 <span id="explorer-page-info" style="font-size:14px; font-weight:500; color:var(--ink); min-width: 30px; text-align: center;">- / -</span>
-                <button class="action-button" id="explorer-next-page" title="Page suivante" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;" disabled>
+                <button class="action-button" id="explorer-next-page" title="Page suivante" aria-label="Page suivante" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;" disabled>
                     <i data-lucide="chevron-right" style="width:20px; height:20px;"></i>
                 </button>
             </div>
 
             <h2 style="margin:0; font-size:18px;">${mapName}</h2>
 
-            <button class="action-button" id="close-explorer-btn" title="Fermer" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;">
+            <button class="action-button" id="close-explorer-btn" title="Fermer" aria-label="Fermer" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px;">
                 <i data-lucide="x" style="width:20px; height:20px;"></i>
             </button>
         </div>
@@ -133,26 +133,26 @@ function renderExplorerToolbar() {
     const zoneActive = !!(state.activeFilters && state.activeFilters.zone);
 
     footer.innerHTML = `
-        <button id="btn-sort-date" class="footer-btn icon-only ${currentSort.startsWith('date') ? 'active' : ''}" title="Trier par date">
+        <button id="btn-sort-date" class="footer-btn icon-only ${currentSort.startsWith('date') ? 'active' : ''}" title="Trier par date" aria-label="Trier par date">
             <i data-lucide="${dateIcon}"></i>
         </button>
-        <button id="btn-sort-dist" class="footer-btn icon-only ${currentSort.startsWith('dist') ? 'active' : ''}" title="Trier par distance">
+        <button id="btn-sort-dist" class="footer-btn icon-only ${currentSort.startsWith('dist') ? 'active' : ''}" title="Trier par distance" aria-label="Trier par distance">
             <i data-lucide="${distIcon}"></i>
         </button>
 
         <div class="separator-vertical" style="display:block !important; height:20px; width:1px; background:var(--line); margin:0 4px;"></div>
 
-        <button id="btn-filter-zone" class="footer-btn icon-only ${zoneActive ? 'active' : ''}" title="Filtrer par Zone" style="display:flex;">
+        <button id="btn-filter-zone" class="footer-btn icon-only ${zoneActive ? 'active' : ''}" title="Filtrer par Zone" aria-label="Filtrer par Zone" style="display:flex;">
             <i data-lucide="map-pin"></i>
         </button>
 
-        <button id="btn-filter-todo" class="footer-btn icon-only ${filterTodo ? 'active' : ''}" title="A faire">
+        <button id="btn-filter-todo" class="footer-btn icon-only ${filterTodo ? 'active' : ''}" title="A faire" aria-label="A faire">
             <i data-lucide="${filterTodo ? 'list-todo' : 'list-checks'}"></i>
         </button>
 
         <div class="separator-vertical" style="display:block !important; height:20px; width:1px; background:var(--line); margin:0 4px;"></div>
 
-        <button id="btn-reset-filters" class="footer-btn icon-only" title="Réinitialiser">
+        <button id="btn-reset-filters" class="footer-btn icon-only" title="Réinitialiser" aria-label="Réinitialiser">
             <i data-lucide="rotate-ccw"></i>
         </button>
     `;

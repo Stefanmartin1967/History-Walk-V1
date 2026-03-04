@@ -2462,6 +2462,12 @@ input[type=range] {
     padding: 10px 10px 10px 0;
     flex-shrink: 0;
     cursor: pointer;
+    /* Neutralisation des styles par défaut des boutons */
+    background: transparent;
+    border: none;
+    font: inherit;
+    color: inherit;
+    outline: none;
 }
 
 /* Cible 4 : Layout de la Carte Circuit (remplace justify-content: space-between, flex:1, etc.) */

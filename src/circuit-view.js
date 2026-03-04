@@ -18,13 +18,13 @@ function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
     // On ne génère les actions que si le circuit N'EST PAS officiel
     const actionsHtml = isOfficial ? '' : `
         <div class="step-actions">
-            <button class="stepbtn" data-action="up" title="Monter" ${index === 0 ? 'disabled' : ''}>
+            <button class="stepbtn" data-action="up" title="Monter" aria-label="Monter" ${index === 0 ? 'disabled' : ''}>
                 <i data-lucide="chevron-up"></i>
             </button>
-            <button class="stepbtn" data-action="down" title="Descendre" ${index === totalPoints - 1 ? 'disabled' : ''}>
+            <button class="stepbtn" data-action="down" title="Descendre" aria-label="Descendre" ${index === totalPoints - 1 ? 'disabled' : ''}>
                 <i data-lucide="chevron-down"></i>
             </button>
-            <button class="stepbtn" data-action="remove" title="Retirer">
+            <button class="stepbtn" data-action="remove" title="Retirer" aria-label="Retirer">
                 <i data-lucide="trash-2"></i>
             </button>
         </div>`;

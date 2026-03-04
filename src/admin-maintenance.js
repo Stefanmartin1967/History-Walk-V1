@@ -126,11 +126,11 @@ function renderResults(container) {
                         <div style="font-size:0.75rem; color:var(--hw-ink-soft);">${c.poiIds ? c.poiIds.length : 0} étapes • ${c.id}</div>
                     </div>
                     <div style="display:flex; gap:8px;">
-                        <button class="btn-restore-local" data-id="${c.id}" title="Restaurer"
+                        <button class="btn-restore-local" data-id="${c.id}" title="Restaurer" aria-label="Restaurer"
                                 style="background:#F0FDF4; color:#166534; border:1px solid #86EFAC; padding:6px; border-radius:6px; cursor:pointer;">
                             <i data-lucide="rotate-ccw" width="16"></i>
                         </button>
-                        <button class="btn-purge-local" data-id="${c.id}" title="Supprimer définitivement"
+                        <button class="btn-purge-local" data-id="${c.id}" title="Supprimer définitivement" aria-label="Supprimer définitivement"
                                 style="background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; padding:6px; border-radius:6px; cursor:pointer;">
                             <i data-lucide="x" width="16"></i>
                         </button>
@@ -270,7 +270,7 @@ function renderCircuitRow(c, hasToken, extraStyle = '') {
             </div>
 
             ${hasToken ? `
-            <button class="btn-delete-server-file" data-path="public/circuits/${c.file}" data-name="${c.name}" title="Supprimer définitivement du serveur"
+            <button class="btn-delete-server-file" data-path="public/circuits/${c.file}" data-name="${c.name}" title="Supprimer définitivement du serveur" aria-label="Supprimer définitivement du serveur"
                     style="background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; padding:6px; border-radius:6px; cursor:pointer; flex-shrink:0;">
                 <i data-lucide="trash-2" width="16"></i>
             </button>

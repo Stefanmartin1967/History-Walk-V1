@@ -250,7 +250,7 @@ function renderDashboard() {
                         ${badgeClass === 'badge-del' ?
                             `<button class="btn-restore" data-action="restore" data-id="${item.id}"><i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Restaurer localement</button>`
                             : badgeClass !== 'badge-del' ?
-                            `<button class="btn-edit-poi" data-id="${item.id}" data-type="${badgeClass}" title="Éditer avec l'éditeur riche"><i data-lucide="edit-3" style="width:14px;height:14px;"></i> Éditer / Vérifier</button>`
+                            `<button class="btn-edit-poi" data-id="${item.id}" data-type="${badgeClass}" title="Éditer avec l'éditeur riche" aria-label="Éditer avec l'éditeur riche" aria-label="Éditer avec l'éditeur riche"><i data-lucide="edit-3" style="width:14px;height:14px;"></i> Éditer / Vérifier</button>`
                             : ''}
                     </div>
                     ${renderItemFn(item, idx)}

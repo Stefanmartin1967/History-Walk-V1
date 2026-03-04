@@ -234,11 +234,11 @@ export function renderMobileCircuitsList() {
         <div class="mobile-view-header mobile-header-harmonized" style="justify-content: space-between; padding-right: 15px;">
             <h1 style="margin:0;">Mes Circuits</h1>
             <div style="display:flex; align-items:center; gap:5px;">
-                <button class="action-button" id="mobile-prev-page" title="Page précédente" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px; ${mobileCurrentPage <= 1 ? 'opacity: 0.3;' : ''}" ${mobileCurrentPage <= 1 ? 'disabled' : ''}>
+                <button class="action-button" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px; ${mobileCurrentPage <= 1 ? 'opacity: 0.3;' : ''}" ${mobileCurrentPage <= 1 ? 'disabled' : ''}>
                     <i data-lucide="chevron-left" style="width:24px; height:24px;"></i>
                 </button>
                 <span id="mobile-page-info" style="font-size:14px; font-weight:600; color:var(--ink); min-width: 30px; text-align: center;">${mobileCurrentPage} / ${totalPages}</span>
-                <button class="action-button" id="mobile-next-page" title="Page suivante" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px; ${mobileCurrentPage >= totalPages ? 'opacity: 0.3;' : ''}" ${mobileCurrentPage >= totalPages ? 'disabled' : ''}>
+                <button class="action-button" id="mobile-next-page" title="Page suivante" aria-label="Page suivante" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px; ${mobileCurrentPage >= totalPages ? 'opacity: 0.3;' : ''}" ${mobileCurrentPage >= totalPages ? 'disabled' : ''}>
                     <i data-lucide="chevron-right" style="width:24px; height:24px;"></i>
                 </button>
             </div>
@@ -303,9 +303,9 @@ export function renderMobileCircuitsList() {
             const visitedIcon = isDone ? 'check-circle' : 'circle';
             const visitedColor = isDone ? 'var(--ok)' : 'var(--line)'; // Gris clair si pas fait, Vert si fait
             const toggleVisitedHtml = `
-                <div class="mobile-toggle-visited mobile-check-btn" data-id="${circuit.id}" data-visited="${isDone}" style="color:${visitedColor};">
+                <button type="button" class="mobile-toggle-visited mobile-check-btn" data-id="${circuit.id}" data-visited="${isDone}" style="color:${visitedColor};" aria-label="Marquer comme visité" title="Marquer comme visité">
                     <i data-lucide="${visitedIcon}" style="width:24px; height:24px;"></i>
-                </div>
+                </button>
             `;
 
             html += `
@@ -588,7 +588,7 @@ export function renderMobilePoiList(features) {
     headerDiv.style.justifyContent = 'space-between';
     headerDiv.innerHTML = `
         <div style="display:flex; align-items:center;">
-            ${isCircuit ? '<button id="mobile-back-btn" style="margin-right:10px;"><i data-lucide="arrow-left"></i></button>' : ''}
+            ${isCircuit ? '<button id="mobile-back-btn" title="Retour" aria-label="Retour" style="margin-right:10px;"><i data-lucide="arrow-left"></i></button>' : ''}
             <h1 style="margin:0; font-size:18px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px;">${escapeHtml(pageTitle)}</h1>
         </div>
     `;
