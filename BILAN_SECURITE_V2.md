@@ -37,15 +37,28 @@ Voici les actions restantes issues de l'audit V2, à traiter prudemment dans de 
 
 ---
 
-## 2. Prochaines Étapes (Pour de futurs fils de travail)
+### D. Refonte de la Sécurité CSP et Délégation d'Événements (Priorité Critique - Faille XSS Active)
+*   **Le problème initial :** Les boutons de l'interface utilisaient des attributs `onclick="..."` directement dans le code HTML (Inline JavaScript). La directive `Content-Security-Policy` (CSP) de l'application était obligée d'autoriser l'exécution de tous les scripts "en ligne" (`'unsafe-inline'` dans `script-src`), laissant une porte grande ouverte aux attaques de type XSS si un contenu malveillant (comme le nom d'un circuit) n'était pas filtré correctement par le videur `sanitizeHTML`.
+*   **Notre approche (Refonte des Interactions) :** L'intégralité du code responsable des clics a été modernisée en utilisant le principe de "Délégation d'Événements". Au lieu de coder l'action directement dans le bouton en HTML, nous utilisons des "étiquettes" invisibles (attributs `data-action="..."`, `data-id="..."`). Un gestionnaire d'événements central en JavaScript lit ces étiquettes et exécute l'action appropriée. Nous avons appliqué cela aux vues d'administration (`admin-control-ui.js`, `admin-fusion-standalone.js`) et à la version Mobile (`mobile.js`).
+*   **Bénéfice :** Cette modernisation nous a enfin permis de durcir drastiquement la sécurité du site. La directive `'unsafe-inline'` a été **définitivement supprimée de `script-src`** dans tous les fichiers `index.html`, `tools/fusion.html` et `tools/scout.html`. Toute tentative d'exécuter un script pirate inséré au milieu de la page sera désormais instantanément bloquée par le navigateur lui-même.
 
-Voici les actions restantes issues de l'audit V2, à traiter prudemment dans de futures sessions :
+### 🛑 INCIDENT MAJEUR : À L'ATTENTION DES FUTURS DÉVELOPPEURS (NE PAS TOUCHER AU CSP DES STYLES CSS)
+*   **L'incident :** Lors du renforcement de la politique de sécurité (CSP), nous avons logiquement tenté de supprimer `'unsafe-inline'` de la directive `style-src` (qui gère l'application des règles de design et de couleurs).
+*   **La conséquence :** Cette action a provoqué un effondrement visuel catastrophique, principalement sur la version ordinateur (PC). Les fenêtres modales (pop-up) sont devenues inutilisables, les fonds d'écran ont disparu et les listes se sont désalignées.
+*   **L'explication technique :** Bien que l'application possède des fichiers CSS externes (ex: `style.css`), son architecture historique repose encore lourdement sur l'injection de styles CSS "en ligne" (directement dans l'attribut `style="..."` des balises HTML ou via l'API JavaScript `element.style.propriete`). Bloquer ces styles en ligne par le CSP désactive tout le moteur de rendu dynamique de l'application.
+*   **LA RÈGLE D'OR (INSTRUCTION FERME) :** Le compromis de sécurité a été acté avec l'utilisateur/administrateur. La faille principale (les scripts) est corrigée. **Il est formellement interdit de retirer `'unsafe-inline'` de la directive `style-src` du Content Security Policy (CSP)**. Ce point doit être considéré comme "hors périmètre" et ignoré dans toute analyse de sécurité automatique ou refactoring ultérieur, sous peine de destruction immédiate de l'interface utilisateur.
 
-### 1. Renforcement de la politique de sécurité (CSP)
-*   **Problème :** La règle de sécurité générale de la page (`Content-Security-Policy` dans `index.html`) est actuellement trop tolérante (`'unsafe-inline'`). Elle permet l'exécution de code écrit directement dans le HTML.
-*   **Action requise :** Retirer cette tolérance (`'unsafe-inline'`) pour bloquer net toute tentative d'exécution de code pirate.
-*   **Le défi technique :** Avant de pouvoir activer ce bouclier, il faudra d'abord transformer tous les boutons de l'application qui utilisent des `onclick="fonction()"` dans le texte HTML, pour utiliser une méthode d'attache d'événement plus moderne en JavaScript (via `addEventListener`). C'est un travail de longue haleine.
+---
 
-### 2. Modernisation du Rendu (Dette technique moyenne)
-*   **Problème :** L'utilisation de grosses chaînes de texte (`.innerHTML`) pour générer l'interface est ce qui ralentit l'application sur les vieux téléphones et complique les modifications visuelles.
-*   **Action requise :** Remplacer progressivement ces blocs de texte par la création d'éléments de manière native (`document.createElement`) ou la mise en place d'un système de rendu plus efficace. Cela rejoint l'étape 1 sur le retrait des `onclick`.
+## 2. Prochaines Étapes Planifiées (Audit V2 - Suite)
+
+Voici les prochaines phases d'architecture à prioriser pour les futures sessions de travail, en conservant notre approche chirurgicale et notre priorité absolue sur la non-régression de l'application existante :
+
+### Phase 1. Finalisation de la Modernisation du Rendu (Dette technique moyenne)
+*   **Problème :** L'utilisation résiduelle de très grosses chaînes de texte injectées via `.innerHTML` (notamment dans la création des cartes de circuits ou l'affichage de longues listes de POI) ralentit l'application sur les vieux téléphones et empêche une modularisation fine du design (et indirectement, nous oblige à garder des CSS en ligne).
+*   **Action requise :** Commencer à remplacer chirurgicalement ces gros blocs de texte `.innerHTML` par la création d'éléments de manière native via le DOM (`document.createElement()`) ou par une fonction utilitaire de rendu plus efficace (création de composants UI purs).
+*   **Attention :** Ce travail doit se faire élément par élément (ex: commencer par le bouton "Supprimer un circuit", valider, puis passer à la carte du circuit), et non par une refonte globale.
+
+### Phase 2. Découplage de la Gestion des Fichiers GPX (Dette Architecturale)
+*   **Problème :** Le fichier `src/gpx.js` gère à la fois l'analyse pure des coordonnées (parsing), les calculs mathématiques lourds de distance/dénivelé, et les alertes visuelles (`showToast`). C'est un "Objet Dieu" (God Object) miniature.
+*   **Action requise :** Séparer la logique métier pure (le calcul mathématique et la lecture du fichier XML) de la logique d'interface utilisateur (les notifications). Créer par exemple un `src/gpx-parser.js` indépendant de toute interface, qui renverrait des données brutes à traiter par l'interface. Cela facilitera grandement les tests unitaires et la maintenance des calculs de dénivelé.
