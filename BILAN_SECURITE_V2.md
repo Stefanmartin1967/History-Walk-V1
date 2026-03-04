@@ -30,10 +30,22 @@ Voici les actions restantes issues de l'audit V2, à traiter prudemment dans de 
 *   **Action requise :** Retirer cette tolérance (`'unsafe-inline'`) pour bloquer net toute tentative d'exécution de code pirate.
 *   **Le défi technique :** Avant de pouvoir activer ce bouclier, il faudra d'abord transformer tous les boutons de l'application qui utilisent des `onclick="fonction()"` dans le texte HTML, pour utiliser une méthode d'attache d'événement plus moderne en JavaScript (via `addEventListener`). C'est un travail de longue haleine.
 
-### 2. Le Token d'Administration GitHub en Clair (Sécurité)
-*   **Problème :** L'audit souligne que le "mot de passe" secret (Token PAT) qui permet au mode Admin de pousser les mises à jour sur GitHub est stocké "en clair" dans la mémoire du navigateur (`localStorage`). Si un pirate trouvait une autre faille pour lire cette mémoire, il aurait accès au serveur.
-*   **Action requise :** Trouver une méthode plus sécurisée pour stocker ou masquer ce jeton d'accès lors des sessions d'administration.
+### C. Sécurisation du Token GitHub (Priorité Critique - Fuite de secret)
+*   **Le problème initial :** L'audit soulignait que le "mot de passe" secret (Token PAT) qui permet au mode Admin de pousser les mises à jour sur GitHub était stocké "en clair" de manière persistante dans la mémoire du navigateur (`localStorage`). Si un pirate trouvait une faille pour lire cette mémoire, il aurait un accès direct et permanent au serveur (dépôt GitHub).
+*   **Notre approche (Option Sécurité sans friction complexe) :** Le Token a été retiré du `localStorage` (stockage permanent) pour être placé dans le `sessionStorage` (stockage temporaire de session). De plus, le code détecte et supprime activement toute ancienne clé traînant encore dans le `localStorage` des administrateurs.
+*   **Bénéfice :** Le Token ne survit plus à la fermeture de l'onglet ou du navigateur. Cela réduit considérablement la fenêtre d'exposition face à des attaques de type XSS persistantes, tout en évitant d'obliger l'administrateur à copier-coller son mot de passe à chaque action (ce qui aurait été le cas s'il était gardé uniquement en mémoire vive).
 
-### 3. Modernisation du Rendu (Dette technique moyenne)
+---
+
+## 2. Prochaines Étapes (Pour de futurs fils de travail)
+
+Voici les actions restantes issues de l'audit V2, à traiter prudemment dans de futures sessions :
+
+### 1. Renforcement de la politique de sécurité (CSP)
+*   **Problème :** La règle de sécurité générale de la page (`Content-Security-Policy` dans `index.html`) est actuellement trop tolérante (`'unsafe-inline'`). Elle permet l'exécution de code écrit directement dans le HTML.
+*   **Action requise :** Retirer cette tolérance (`'unsafe-inline'`) pour bloquer net toute tentative d'exécution de code pirate.
+*   **Le défi technique :** Avant de pouvoir activer ce bouclier, il faudra d'abord transformer tous les boutons de l'application qui utilisent des `onclick="fonction()"` dans le texte HTML, pour utiliser une méthode d'attache d'événement plus moderne en JavaScript (via `addEventListener`). C'est un travail de longue haleine.
+
+### 2. Modernisation du Rendu (Dette technique moyenne)
 *   **Problème :** L'utilisation de grosses chaînes de texte (`.innerHTML`) pour générer l'interface est ce qui ralentit l'application sur les vieux téléphones et complique les modifications visuelles.
 *   **Action requise :** Remplacer progressivement ces blocs de texte par la création d'éléments de manière native (`document.createElement`) ou la mise en place d'un système de rendu plus efficace. Cela rejoint l'étape 1 sur le retrait des `onclick`.

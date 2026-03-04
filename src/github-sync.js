@@ -1,25 +1,31 @@
 // src/github-sync.js
 
-// Clé de stockage local pour le token
+// Clé de stockage en session pour le token
 const STORAGE_KEY_TOKEN = 'github_pat';
 
-/**
- * Récupère le token stocké
- * @returns {string|null} Le token ou null s'il n'existe pas
- */
-export function getStoredToken() {
-    return localStorage.getItem(STORAGE_KEY_TOKEN);
+// Nettoyage de sécurité: on supprime activement l'ancien token stocké en clair dans le localStorage
+if (localStorage.getItem(STORAGE_KEY_TOKEN)) {
+    console.warn("[Sécurité] Ancien token GitHub trouvé dans localStorage. Suppression immédiate.");
+    localStorage.removeItem(STORAGE_KEY_TOKEN);
 }
 
 /**
- * Sauvegarde le token
+ * Récupère le token stocké en session
+ * @returns {string|null} Le token ou null s'il n'existe pas
+ */
+export function getStoredToken() {
+    return sessionStorage.getItem(STORAGE_KEY_TOKEN);
+}
+
+/**
+ * Sauvegarde le token en session
  * @param {string} token
  */
 export function saveToken(token) {
     if (token) {
-        localStorage.setItem(STORAGE_KEY_TOKEN, token.trim());
+        sessionStorage.setItem(STORAGE_KEY_TOKEN, token.trim());
     } else {
-        localStorage.removeItem(STORAGE_KEY_TOKEN);
+        sessionStorage.removeItem(STORAGE_KEY_TOKEN);
     }
 }
 
