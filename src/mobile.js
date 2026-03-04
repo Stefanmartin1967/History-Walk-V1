@@ -18,6 +18,7 @@ import { getSearchResults } from './search.js';
 import { showStatisticsModal } from './statistics.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
+import { generateCircuitQR } from './ui-circuit-editor.js';
 
 let currentView = 'circuits'; 
 let mobileSort = 'date_desc'; // date_desc, date_asc, dist_asc, dist_desc
@@ -629,17 +630,13 @@ export function renderMobilePoiList(features) {
         footerDiv.style.backgroundColor = 'var(--surface)';
         footerDiv.style.zIndex = '10';
         
-        // Si pas fait : Bordure de la couleur du thème (neutre/bleu). Si fait : Bordure verte douce.
-        const btnStateClass = isAllVisited 
-    ? 'background-color:var(--surface); color:var(--ok); border: 2px solid var(--ok);' 
-    : 'background-color:var(--surface); color:var(--ink); border: 2px solid var(--brand);';
-
-// Si c'est fait, l'icône devient une flèche de retour en arrière (undo)
-        const btnIcon = isAllVisited ? 'undo-2' : 'check-circle';
-        const btnText = isAllVisited ? 'Circuit terminé (Annuler)' : 'Marquer comme fait';
+        // Bouton Partager (QR Code)
+        const btnStateClass = 'background-color:var(--surface); color:var(--ink); border: 2px solid var(--brand);';
+        const btnIcon = 'qr-code';
+        const btnText = 'Partager le circuit';
         
         footerDiv.innerHTML = `
-            <button id="btn-toggle-visited" style="width:100%; padding:14px; border-radius:12px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer; font-size:16px; transition:all 0.2s; ${btnStateClass}">
+            <button id="btn-share-circuit-mobile" style="width:100%; padding:14px; border-radius:12px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer; font-size:16px; transition:all 0.2s; ${btnStateClass}">
                 <i data-lucide="${btnIcon}"></i>
                 <span>${btnText}</span>
             </button>
@@ -647,22 +644,10 @@ export function renderMobilePoiList(features) {
         container.appendChild(footerDiv);
         
         setTimeout(() => {
-            const btnToggle = document.getElementById('btn-toggle-visited');
-            if(btnToggle) {
-                btnToggle.addEventListener('click', async () => {
-                    // Reuse unified interaction here too? Yes, but this is Circuit Detail view, not list view.
-                    // state.activeCircuitId is set.
-                    // We can reuse handleCircuitVisitedToggle(state.activeCircuitId, isAllVisited)
-
-                    const result = await handleCircuitVisitedToggle(state.activeCircuitId, isAllVisited);
-                    if (result.success) {
-                        // Refresh POI List
-                        // We need to re-render renderMobilePoiList with updated features (visited status changes)
-                        // But features passed as argument 'features' are static?
-                        // Actually renderMobilePoiList takes 'features'.
-                        // Ideally we should reload the circuit.
-                        await loadCircuitById(state.activeCircuitId);
-                    }
+            const btnShare = document.getElementById('btn-share-circuit-mobile');
+            if(btnShare) {
+                btnShare.addEventListener('click', async () => {
+                    await generateCircuitQR();
                 });
             }
         }, 0);
