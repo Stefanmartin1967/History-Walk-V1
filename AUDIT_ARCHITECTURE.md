@@ -54,7 +54,11 @@ La dépendance au CSS injecté directement dans le JavaScript (ex: `"<div style=
 
 ## 3. Recommandations Concrètes (Plan d'Action)
 
-Pour poursuivre la professionnalisation de l'application, voici les actions recommandées, classées par ordre logique de réalisation (toujours avec une approche "chirurgicale" pour éviter les régressions) :
+Pour poursuivre la professionnalisation de l'application, voici les actions recommandées, classées par ordre logique de réalisation (toujours avec une approche "chirurgicale" pour éviter les régressions).
+
+> **💡 Note Stratégique (Mars 2026) - Priorité vs Stabilité :**
+> Bien que le plan ci-dessous propose un ordre "logique", la priorité a été donnée au maintien absolu de la stabilité de l'application et à la garantie du "risque zéro" avant une période d'utilisation critique (départ en voyage du seul utilisateur).
+> Ainsi, l'étape 4 ("Campagne Sémantique", classée Priorité Basse) a été exécutée en premier. Ce choix délibéré s'explique car c'est une intervention de surface (ajout d'attributs invisibles, changements de balises sans impact CSS) qui garantit de ne casser aucune fonctionnalité existante, contrairement au démantèlement du "God Object" `gpx.js` ou à la refonte du moteur de rendu, qui comportent un risque élevé de régression s'ils sont réalisés dans l'urgence.
 
 1.  **Poursuivre l'éradication du CSS Inline (Priorité absolue pour l'évolutivité)**
     *   *Action :* Appliquer strictement le `GUIDE_REFONTE_CSS.md`. Cibler fichier par fichier (ex: commencer par `mobile.js`), extraire les attributs `style="..."` du code JavaScript, créer les classes équivalentes dans `style.css`, et appliquer ces classes.
@@ -68,6 +72,6 @@ Pour poursuivre la professionnalisation de l'application, voici les actions reco
     *   *Action :* Séparer la logique de parsing pur (lecture du XML et maths) dans un fichier `src/core/gpx-parser.js` sans aucune interaction avec l'UI (pas de DOM, pas de `toast.js`). Le fichier `src/gpx.js` ne devrait être qu'un chef d'orchestre qui fait le lien entre le fichier de l'utilisateur, l'UI et le parser mathématique.
     *   *Objectif :* Avoir un moteur de calcul de traces testable unitairement de manière fiable.
 
-4.  **Campagne Sémantique et Accessibilité (Priorité "Quick Win")**
-    *   *Action :* Remplacer systématiquement les `<div>` cliquables par des balises `<button type="button">`. Ajouter systématiquement des attributs `aria-label="Nom de l'action"` ou `title` sur tous les boutons à base d'icônes (ex: `data-lucide="trash"`).
-    *   *Objectif :* Se conformer aux standards HTML5 basiques, améliorer le SEO interne et l'accessibilité sans effort architectural majeur.
+4.  **Campagne Sémantique et Accessibilité (Priorité "Quick Win") - ✅ COMPLÉTÉE**
+    *   *Action :* Remplacement des "faux boutons" (`<div>` cliquables comme la coche "Visité" sur mobile) par des balises `<button type="button">` avec neutralisation stricte de leurs styles par défaut pour garantir aucune régression visuelle. Ajout systématique des attributs `aria-label="Nom de l'action"` et `title` sur plus de 140 boutons à base d'icônes générés dynamiquement.
+    *   *Objectif :* Se conformer aux standards HTML5 basiques, et rendre l'interface accessible et compréhensible sans modifier la structure visuelle.
