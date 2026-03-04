@@ -44,7 +44,7 @@ const DEFAULT_ZOOM = 12.7;
 
 // Limites idéales par défaut pour Djerba (Fallback)
 const DJERBA_BOUNDS = [
-    [33.60, 10.72], // Sud-Ouest
+    [33.62, 10.72], // Sud-Ouest
     [33.91, 11.06]  // Nord-Est
 ];
 

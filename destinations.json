@@ -5,7 +5,7 @@
             "name": "Djerba",
             "file": "djerba.geojson",
             "circuitsFile": "djerba.json",
-            "bounds": [[33.60, 10.72], [33.91, 11.06]],
+            "bounds": [[33.62, 10.72], [33.91, 11.06]],
             "currency": "TND"
         },
         "hammamet": {
