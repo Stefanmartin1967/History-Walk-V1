@@ -6978,33 +6978,15 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.853783005772897,
-          33.76916729202362
+          10.836577713489534,
+          33.82040278197035
         ]
       },
       "properties": {
-        "Nom du site FR": "Test console suppression",
-        "Catégorie": "Photo",
-        "Zone": "El Groa",
-        "HW_ID": "HW-01KJNK87V2E7XM7BRCPZG6Z3KD",
-        "Description": "Ajouté via Rich Editor",
-        "Prix d'entrée": 0
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.779108477816962,
-          33.85326343967744
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test console suppression 2",
-        "Catégorie": "Site religieux",
-        "Zone": "Houmt Souk",
-        "HW_ID": "HW-01KJTJG1RJD4F25AS3972AZRCS",
+        "Nom du site FR": "Mosquée Medjine",
+        "Catégorie": "Mosquée",
+        "Zone": "Erriadh",
+        "HW_ID": "HW-01KJX5XSG18NC03E6900V170QX",
         "Description": "Ajouté via Rich Editor"
       }
     }
