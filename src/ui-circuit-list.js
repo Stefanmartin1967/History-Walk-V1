@@ -361,112 +361,132 @@ export function renderExplorerList() {
     const paginatedCircuits = processedCircuits.slice(startIdx, startIdx + itemsPerPage);
 
     // 5. Render
-    const rawHTML = (paginatedCircuits.length === 0)
-        ? '<div style="padding:20px; text-align:center; color:var(--ink-soft);">Aucun circuit correspondant.</div>'
-        : paginatedCircuits.map(c => {
-            // Simplification du nom : Suppression des préfixes et du via
-            let displayName = c.name.split(' via ')[0];
-            displayName = displayName.replace(/^(Circuit de |Boucle de )/i, '');
+    listContainer.innerHTML = '';
 
-            // Pas d'icône étoile pour gagner de la place (Demande utilisateur)
+    if (paginatedCircuits.length === 0) {
+        const emptyState = document.createElement('div');
+        emptyState.style.padding = '20px';
+        emptyState.style.textAlign = 'center';
+        emptyState.style.color = 'var(--ink-soft)';
+        emptyState.textContent = 'Aucun circuit correspondant.';
+        listContainer.appendChild(emptyState);
+        return;
+    }
 
-            // Actions : Suppression interdite pour les officiels (sauf Admin)
-            // UPDATE: Masqué par défaut dans la liste pour éviter les erreurs. La suppression reste possible dans le détail.
-            const deleteBtn = '';
-            /*
-            const deleteBtn = (!c.isOfficial || state.isAdmin)
-                ? `<button class="explorer-item-delete" data-id="${c.id}" title="Supprimer" style="color:var(--danger); background:none; border:none; padding:4px;">
-                        <i data-lucide="trash-2" style="width:16px; height:16px;"></i>
-                   </button>`
-                : '';
-            */
+    paginatedCircuits.forEach(c => {
+        // Simplification du nom : Suppression des préfixes et du via
+        let displayName = c.name.split(' via ')[0];
+        displayName = displayName.replace(/^(Circuit de |Boucle de )/i, '');
 
-            // Toggle Visited Logic
-            const isCompleted = c._isCompleted;
-            const toggleColor = isCompleted ? 'var(--ok)' : 'var(--line)'; // Gris clair si pas fait
-            const toggleIcon = isCompleted ? 'check-circle' : 'circle';
+        const isCompleted = c._isCompleted;
 
-            const toggleVisitedBtn = `
-                <button class="explorer-item-action btn-toggle-visited" data-id="${c.id}" data-visited="${isCompleted}" title="${isCompleted ? 'Marquer comme non fait' : 'Marquer comme fait'}" style="color: ${toggleColor}; background:none; border:none; padding:4px;">
-                    <i data-lucide="${toggleIcon}" style="width:24px; height:24px;"></i>
-                </button>
-            `;
+        // --- Container Principal (.explorer-item) ---
+        const itemContainer = document.createElement('div');
+        itemContainer.className = 'explorer-item';
+        itemContainer.dataset.id = c.id;
+        itemContainer.style.display = 'flex';
+        itemContainer.style.alignItems = 'center';
+        itemContainer.style.gap = '8px';
+        itemContainer.style.padding = '10px';
+        itemContainer.style.borderBottom = '1px solid var(--line)';
+        itemContainer.style.cursor = 'pointer';
 
-            const restoIcon = c._hasRestaurant
-                ? `<i data-lucide="utensils" style="width:14px; height:14px; vertical-align:text-bottom; margin-left:4px;" title="Restaurant présent"></i>`
-                : '';
-
-            // Style : Officiels en couleur brand, Personnels en noir. Police plus petite, 2 lignes max.
-            const nameColor = c.isOfficial ? 'var(--primary)' : 'var(--ink)';
-            const nameWeight = c.isOfficial ? '500' : '400';
-            const nameStyle = `font-weight:${nameWeight}; font-size:14px; color:${nameColor}; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; line-height:1.2;`;
-
-            // UNIFIED "CARD" LAYOUT (Sidebar Version)
-            return `
-            <div class="explorer-item" data-id="${c.id}" style="display:flex; align-items:center; gap:8px; padding:10px; border-bottom:1px solid var(--line); cursor:pointer;">
-                <!-- Left: Check -->
-                <div style="flex-shrink:0;">
-                    ${toggleVisitedBtn}
-                </div>
-
-                <!-- Center: Info -->
-                <div class="explorer-item-content" style="flex:1; min-width:0;">
-                    <div class="explorer-item-name" title="${escapeXml(c.name)}" style="${nameStyle}">
-                        ${escapeXml(displayName)}
-                    </div>
-                    <div class="explorer-item-meta" style="font-size:12px; color:var(--ink-soft); display:flex; align-items:center; margin-top:2px;">
-                        ${c._poiCount} POI • ${c._distDisplay} <i data-lucide="${c._iconName}" style="width:12px; height:12px; margin:0 3px;"></i> • ${c._zoneName}${restoIcon}
-                    </div>
-                </div>
-
-                <!-- Right: Actions -->
-                <div style="flex-shrink:0; display:flex; align-items:center;">
-                    ${deleteBtn}
-                </div>
-            </div>
-            `;
-        }).join('');
-
-    listContainer.innerHTML = sanitizeHTML(rawHTML);
-
-    createIcons({ icons });
-
-    // Event Listeners
-    listContainer.querySelectorAll('.explorer-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-            // Prevent triggering if clicked on action buttons
+        // Event de clic sur l'item pour ouvrir le circuit
+        itemContainer.addEventListener('click', (e) => {
             if (e.target.closest('.explorer-item-delete') || e.target.closest('a') || e.target.closest('.btn-toggle-visited')) return;
-
-            const id = item.dataset.id;
-            eventBus.emit('circuit:request-load', id);
+            eventBus.emit('circuit:request-load', c.id);
             eventBus.emit('ui:request-tab-change', 'circuit');
         });
-    });
 
-    listContainer.querySelectorAll('.explorer-item-delete').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
+        // --- Left: Check (Toggle Visited) ---
+        const leftDiv = document.createElement('div');
+        leftDiv.style.flexShrink = '0';
+
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'explorer-item-action btn-toggle-visited';
+        toggleBtn.dataset.id = c.id;
+        toggleBtn.dataset.visited = isCompleted.toString();
+        toggleBtn.title = isCompleted ? 'Marquer comme non fait' : 'Marquer comme fait';
+        toggleBtn.style.color = isCompleted ? 'var(--ok)' : 'var(--line)';
+        toggleBtn.style.background = 'none';
+        toggleBtn.style.border = 'none';
+        toggleBtn.style.padding = '4px';
+
+        const toggleIconName = isCompleted ? 'check-circle' : 'circle';
+        toggleBtn.innerHTML = `<i data-lucide="${toggleIconName}" style="width:24px; height:24px;"></i>`;
+
+        toggleBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
-            const id = btn.dataset.id;
-            if (await showConfirm("Suppression", "Voulez-vous vraiment supprimer ce circuit ?", "Supprimer", "Annuler", true)) {
-                eventBus.emit('circuit:request-delete', id);
-            }
-        });
-    });
-
-    listContainer.querySelectorAll('.btn-toggle-visited').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const id = btn.dataset.id;
-            const isCompleted = btn.dataset.visited === 'true';
-
-            const result = await handleCircuitVisitedToggle(id, isCompleted);
-
+            const result = await handleCircuitVisitedToggle(c.id, isCompleted);
             if (result.success) {
-                // Refresh is triggered by eventBus 'circuit:list-updated' usually,
-                // but handleCircuitVisitedToggle just updates the state.
-                // We need to notify the app that the circuit changed.
                 eventBus.emit('circuit:list-updated');
             }
         });
+
+        leftDiv.appendChild(toggleBtn);
+        itemContainer.appendChild(leftDiv);
+
+        // --- Center: Info ---
+        const centerDiv = document.createElement('div');
+        centerDiv.className = 'explorer-item-content';
+        centerDiv.style.flex = '1';
+        centerDiv.style.minWidth = '0';
+
+        // Nom du circuit
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'explorer-item-name';
+        nameDiv.title = c.name;
+        nameDiv.textContent = displayName;
+
+        const nameColor = c.isOfficial ? 'var(--primary)' : 'var(--ink)';
+        const nameWeight = c.isOfficial ? '500' : '400';
+        nameDiv.style.fontWeight = nameWeight;
+        nameDiv.style.fontSize = '14px';
+        nameDiv.style.color = nameColor;
+        nameDiv.style.display = '-webkit-box';
+        nameDiv.style.WebkitLineClamp = '2';
+        nameDiv.style.WebkitBoxOrient = 'vertical';
+        nameDiv.style.overflow = 'hidden';
+        nameDiv.style.whiteSpace = 'normal';
+        nameDiv.style.lineHeight = '1.2';
+
+        centerDiv.appendChild(nameDiv);
+
+        // Meta infos (POI, distance, icon, zone, resto)
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'explorer-item-meta';
+        metaDiv.style.fontSize = '12px';
+        metaDiv.style.color = 'var(--ink-soft)';
+        metaDiv.style.display = 'flex';
+        metaDiv.style.alignItems = 'center';
+        metaDiv.style.marginTop = '2px';
+
+        // Construction du contenu HTML pour les meta (les spans/icons sont sûrs)
+        let metaHtml = `${c._poiCount} POI • ${escapeXml(c._distDisplay)} <i data-lucide="${c._iconName}" style="width:12px; height:12px; margin:0 3px;"></i> • ${escapeXml(c._zoneName)}`;
+        if (c._hasRestaurant) {
+            metaHtml += ` <i data-lucide="utensils" style="width:14px; height:14px; vertical-align:text-bottom; margin-left:4px;" title="Restaurant présent"></i>`;
+        }
+        metaDiv.innerHTML = metaHtml;
+
+        centerDiv.appendChild(metaDiv);
+        itemContainer.appendChild(centerDiv);
+
+        // --- Right: Actions (Delete Button placeholder) ---
+        const rightDiv = document.createElement('div');
+        rightDiv.style.flexShrink = '0';
+        rightDiv.style.display = 'flex';
+        rightDiv.style.alignItems = 'center';
+
+        // Note: La suppression est masquée dans la vue liste actuellement,
+        // le code était commenté. Si elle est réactivée, le bouton peut être
+        // créé avec document.createElement et addEventListener ici.
+
+        itemContainer.appendChild(rightDiv);
+
+        // Ajout à la liste
+        listContainer.appendChild(itemContainer);
     });
+
+    // Render icons for newly created DOM elements
+    createIcons({ icons, root: listContainer });
 }
