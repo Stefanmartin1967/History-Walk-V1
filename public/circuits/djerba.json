@@ -16,6 +16,24 @@
     ]
   },
   {
+    "id": "HW-01KJX6CXCEHW85C8KCSF95NP3R",
+    "name": "Circuit de Henchir Bettes à Mosquée El Chouhoud via Mosquée Henchir",
+    "file": "djerba/Circuit de Henchir Bettes à Mosquée El Chouhoud via Mosquée Henchir.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.7 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El May",
+    "poiIds": [
+      "HW-01K77WPE6DFDJEFF1NP5V7YWS5",
+      "HW-01K77WPE6EZ7K06GM4HAWDESAE",
+      "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
+      "HW-01K77WPE6FCK1V446SXD2V5NNK",
+      "HW-01K77WPE6RR5DT6GBCGYFDHXJS",
+      "HW-01K77WPE6E5GCD9QGR33PMXVRP"
+    ]
+  },
+  {
     "id": "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5",
     "name": "Circuit de Mosquée Ben Hadid à Restaurant MBAREK via Lieu de Tournage Star Wars – Cantina Extérieure",
     "file": "djerba/Circuit de Mosquée Ben Hadid à Restaurant MBAREK via Lieu de Tournage Star Wars – Cantina Extérieure.gpx",
