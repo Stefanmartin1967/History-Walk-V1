@@ -6,7 +6,7 @@ L'objectif prioritaire de ces interventions était d'améliorer la sécurité et
 
 ---
 
-## 1. Ce qui a été réalisé aujourd'hui
+## 1. Ce qui a été réalisé jusqu'à présent
 
 ### A. Sécurisation du Rendu DOM (Priorité Critique - Risque XSS)
 *   **Le problème initial :** L'application utilise massivement `.innerHTML` pour afficher les listes (circuits, lieux). Cela permettait théoriquement à un texte malveillant (ex: le nom d'un circuit importé) d'exécuter du code à l'insu de l'utilisateur (faille XSS).
@@ -19,28 +19,22 @@ L'objectif prioritaire de ces interventions était d'améliorer la sécurité et
 *   **Notre approche :** Nous avons traqué ces dernières "fuites". Désormais, chaque fois que ces fichiers veulent modifier les données de l'utilisateur ou le statut des circuits, ils sont obligés de passer par la "porte d'entrée officielle" (les fonctions `setUserData`, `setOfficialCircuitsStatus`, etc.).
 *   **Bénéfice :** L'application est maintenant totalement prévisible. Le risque qu'une modification locale (comme cocher un lieu "vu") écrase une autre modification est presque réduit à zéro.
 
----
-
-## 2. Prochaines Étapes (Pour de futurs fils de travail)
-
-Voici les actions restantes issues de l'audit V2, à traiter prudemment dans de futures sessions :
-
-### 1. Renforcement de la politique de sécurité (CSP)
-*   **Problème :** La règle de sécurité générale de la page (`Content-Security-Policy` dans `index.html`) est actuellement trop tolérante (`'unsafe-inline'`). Elle permet l'exécution de code écrit directement dans le HTML.
-*   **Action requise :** Retirer cette tolérance (`'unsafe-inline'`) pour bloquer net toute tentative d'exécution de code pirate.
-*   **Le défi technique :** Avant de pouvoir activer ce bouclier, il faudra d'abord transformer tous les boutons de l'application qui utilisent des `onclick="fonction()"` dans le texte HTML, pour utiliser une méthode d'attache d'événement plus moderne en JavaScript (via `addEventListener`). C'est un travail de longue haleine.
-
 ### C. Sécurisation du Token GitHub (Priorité Critique - Fuite de secret)
 *   **Le problème initial :** L'audit soulignait que le "mot de passe" secret (Token PAT) qui permet au mode Admin de pousser les mises à jour sur GitHub était stocké "en clair" de manière persistante dans la mémoire du navigateur (`localStorage`). Si un pirate trouvait une faille pour lire cette mémoire, il aurait un accès direct et permanent au serveur (dépôt GitHub).
 *   **Notre approche (Option Sécurité sans friction complexe) :** Le Token a été retiré du `localStorage` (stockage permanent) pour être placé dans le `sessionStorage` (stockage temporaire de session). De plus, le code détecte et supprime activement toute ancienne clé traînant encore dans le `localStorage` des administrateurs.
 *   **Bénéfice :** Le Token ne survit plus à la fermeture de l'onglet ou du navigateur. Cela réduit considérablement la fenêtre d'exposition face à des attaques de type XSS persistantes, tout en évitant d'obliger l'administrateur à copier-coller son mot de passe à chaque action (ce qui aurait été le cas s'il était gardé uniquement en mémoire vive).
 
----
-
 ### D. Refonte de la Sécurité CSP et Délégation d'Événements (Priorité Critique - Faille XSS Active)
 *   **Le problème initial :** Les boutons de l'interface utilisaient des attributs `onclick="..."` directement dans le code HTML (Inline JavaScript). La directive `Content-Security-Policy` (CSP) de l'application était obligée d'autoriser l'exécution de tous les scripts "en ligne" (`'unsafe-inline'` dans `script-src`), laissant une porte grande ouverte aux attaques de type XSS si un contenu malveillant (comme le nom d'un circuit) n'était pas filtré correctement par le videur `sanitizeHTML`.
 *   **Notre approche (Refonte des Interactions) :** L'intégralité du code responsable des clics a été modernisée en utilisant le principe de "Délégation d'Événements". Au lieu de coder l'action directement dans le bouton en HTML, nous utilisons des "étiquettes" invisibles (attributs `data-action="..."`, `data-id="..."`). Un gestionnaire d'événements central en JavaScript lit ces étiquettes et exécute l'action appropriée. Nous avons appliqué cela aux vues d'administration (`admin-control-ui.js`, `admin-fusion-standalone.js`) et à la version Mobile (`mobile.js`).
 *   **Bénéfice :** Cette modernisation nous a enfin permis de durcir drastiquement la sécurité du site. La directive `'unsafe-inline'` a été **définitivement supprimée de `script-src`** dans tous les fichiers `index.html`, `tools/fusion.html` et `tools/scout.html`. Toute tentative d'exécuter un script pirate inséré au milieu de la page sera désormais instantanément bloquée par le navigateur lui-même.
+
+### E. Modernisation du Rendu (Phase 1) - Début d'implémentation
+*   **L'action réalisée :** Nous avons entamé la "Phase 1" de la modernisation en remplaçant l'utilisation de très grosses chaînes `.innerHTML` par la création native d'éléments (via l'API DOM `document.createElement`).
+*   **Cible de l'intervention :** La liste des circuits sur la version ordinateur (fonction `renderExplorerList` dans `src/ui-circuit-list.js`).
+*   **Bénéfice :** Nous avons supprimé un vecteur potentiel de faille XSS (en s'assurant que les noms de circuits et attributs sont traités comme du texte pur et non du code HTML) tout en attachant les actions (comme le clic) de manière directe et sécurisée lors de la création de l'élément, ce qui améliore les performances et la stabilité de l'interface.
+
+---
 
 ### 🛑 INCIDENT MAJEUR : À L'ATTENTION DES FUTURS DÉVELOPPEURS (NE PAS TOUCHER AU CSP DES STYLES CSS)
 *   **L'incident :** Lors du renforcement de la politique de sécurité (CSP), nous avons logiquement tenté de supprimer `'unsafe-inline'` de la directive `style-src` (qui gère l'application des règles de design et de couleurs).
@@ -54,10 +48,11 @@ Voici les actions restantes issues de l'audit V2, à traiter prudemment dans de 
 
 Voici les prochaines phases d'architecture à prioriser pour les futures sessions de travail, en conservant notre approche chirurgicale et notre priorité absolue sur la non-régression de l'application existante :
 
-### Phase 1. Finalisation de la Modernisation du Rendu (Dette technique moyenne)
-*   **Problème :** L'utilisation résiduelle de très grosses chaînes de texte injectées via `.innerHTML` (notamment dans la création des cartes de circuits ou l'affichage de longues listes de POI) ralentit l'application sur les vieux téléphones et empêche une modularisation fine du design (et indirectement, nous oblige à garder des CSS en ligne).
-*   **Action requise :** Commencer à remplacer chirurgicalement ces gros blocs de texte `.innerHTML` par la création d'éléments de manière native via le DOM (`document.createElement()`) ou par une fonction utilitaire de rendu plus efficace (création de composants UI purs).
-*   **Attention :** Ce travail doit se faire élément par élément (ex: commencer par le bouton "Supprimer un circuit", valider, puis passer à la carte du circuit), et non par une refonte globale.
+### Phase 1. Finalisation de la Modernisation du Rendu (EN COURS)
+*   **Problème :** L'utilisation résiduelle de très grosses chaînes de texte injectées via `.innerHTML` ralentit l'application sur les vieux téléphones et empêche une modularisation fine du design (et indirectement, nous oblige à garder des CSS en ligne).
+*   **Action restante :** Continuer à remplacer chirurgicalement ces gros blocs de texte `.innerHTML` par la création d'éléments de manière native via le DOM (`document.createElement()`) ou par une fonction utilitaire de rendu plus efficace.
+*   **Prochaine cible suggérée :** L'affichage des cartes de lieux (POI) ou des détails d'un circuit.
+*   **Attention :** Ce travail doit se faire élément par élément pour garantir l'absence de régression visuelle.
 
 ### Phase 2. Découplage de la Gestion des Fichiers GPX (Dette Architecturale)
 *   **Problème :** Le fichier `src/gpx.js` gère à la fois l'analyse pure des coordonnées (parsing), les calculs mathématiques lourds de distance/dénivelé, et les alertes visuelles (`showToast`). C'est un "Objet Dieu" (God Object) miniature.
