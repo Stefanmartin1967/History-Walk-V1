@@ -116,12 +116,12 @@ export async function generateCircuitQR() {
         }
 
         const htmlContent = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
-                <img src="${qrApp}" style="width:250px; height:250px; border-radius:10px; border:1px solid var(--line);">
-                <p style="text-align:center; color:var(--ink-soft); font-size:14px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <img src="${qrApp}" style="width:200px; height:200px; border-radius:10px; border:1px solid var(--line);">
+                <p style="text-align:center; color:var(--ink-soft); font-size:14px; margin:0; padding:0;">
                     Partager ce circuit avec un autre appareil.
                 </p>
-                <div style="font-size:14px; font-weight:bold; color:var(--text-main); word-break:break-word; text-align:center; max-width:100%;">
+                <div style="font-size:14px; font-weight:bold; color:var(--text-main); word-break:break-word; text-align:center; max-width:100%; margin:0; padding:0;">
                     ${escapeHtml(circuitName)}
                 </div>
             </div>
