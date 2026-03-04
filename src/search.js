@@ -15,7 +15,7 @@ export function getSearchResults(query, features = state.loadedFeatures) {
 
     const normalizedQuery = query.toLowerCase().trim();
 
-    return features.filter(f => {
+    const filteredFeatures = features.filter(f => {
         const poiId = getPoiId(f);
 
         // On ne montre pas les lieux cachés/supprimés
@@ -27,5 +27,12 @@ export function getSearchResults(query, features = state.loadedFeatures) {
         const displayedName = getPoiName(f).toLowerCase();
 
         return displayedName.includes(normalizedQuery);
+    });
+
+    // Tri par ordre alphabétique en fonction du nom du lieu
+    return filteredFeatures.sort((a, b) => {
+        const nameA = getPoiName(a);
+        const nameB = getPoiName(b);
+        return nameA.localeCompare(nameB, 'fr', { sensitivity: 'base' });
     });
 }
