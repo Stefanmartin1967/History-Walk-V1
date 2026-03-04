@@ -346,7 +346,7 @@ export function openControlCenterModal(diffData, callbacks) {
             </div>
 
             <div class="admin-cc-footer" id="admin-cc-footer-actions">
-                <button class="custom-modal-btn secondary" onclick="document.getElementById('custom-modal-overlay').classList.remove('active')">Fermer</button>
+                <button class="custom-modal-btn secondary" data-action="close-modal">Fermer</button>
                 <button id="btn-cc-publish"><i data-lucide="rocket" width="18"></i> TOUT PUBLIER</button>
             </div>
         </div>
@@ -394,6 +394,57 @@ export function openControlCenterModal(diffData, callbacks) {
 
     const btnPublish = document.getElementById('btn-cc-publish');
     if(btnPublish && callbacks.publishChanges) btnPublish.onclick = callbacks.publishChanges;
+
+    // Event Delegation for Admin Control Center
+    const container = document.getElementById('admin-cc-content');
+    if (container) {
+        container.addEventListener('click', (e) => {
+            // Close modal
+            if (e.target.closest('[data-action="close-modal"]')) {
+                document.getElementById('custom-modal-overlay').classList.remove('active');
+                return;
+            }
+            // Toggle Details
+            const toggleBtn = e.target.closest('[data-action="toggle-details"]');
+            if (toggleBtn) {
+                const id = toggleBtn.dataset.id;
+                if (callbacks.toggleDiffDetails) callbacks.toggleDiffDetails(id);
+                return;
+            }
+            // Diff Actions (Accept/Refuse)
+            const refuseBtn = e.target.closest('[data-action="refuse"]');
+            if (refuseBtn) {
+                const id = refuseBtn.dataset.id;
+                if (callbacks.processDecision) callbacks.processDecision(id, 'refuse');
+                return;
+            }
+            const acceptBtn = e.target.closest('[data-action="accept"]');
+            if (acceptBtn) {
+                const id = acceptBtn.dataset.id;
+                if (callbacks.processDecision) callbacks.processDecision(id, 'accept');
+                return;
+            }
+        });
+
+        container.addEventListener('change', (e) => {
+            // Update Draft Value
+            if (e.target.matches('[data-action="update-draft"]')) {
+                const id = e.target.dataset.id;
+                const key = e.target.dataset.key;
+                const value = e.target.value;
+                if (callbacks.updateDraftValue) callbacks.updateDraftValue(id, key, value);
+            }
+        });
+    }
+
+    const footer = document.getElementById('admin-cc-footer-actions');
+    if (footer) {
+        footer.addEventListener('click', (e) => {
+            if (e.target.closest('[data-action="close-modal"]')) {
+                document.getElementById('custom-modal-overlay').classList.remove('active');
+            }
+        });
+    }
 
     // Icons for initial load
     createIcons({ icons, root: document.querySelector('.admin-cc-header') });
@@ -483,7 +534,7 @@ export function renderTab(tab, diffData, callbacks) {
                 return `
                 <div class="diff-list-item" id="diff-card-${item.id}">
                     <!-- HEADER SUMMARY -->
-                    <div class="diff-summary-row" onclick="toggleDiffDetails('${item.id}')">
+                    <div class="diff-summary-row" data-action="toggle-details" data-id="${item.id}">
                         <div class="diff-info">
                             <div class="diff-icon" style="color:${colorClass}; background:${colorClass}15;">
                                 <i data-lucide="${item.isCreation ? 'plus' : (item.isDeletion ? 'trash-2' : 'edit-2')}"></i>
@@ -502,10 +553,10 @@ export function renderTab(tab, diffData, callbacks) {
                         ${renderDiffDetails(item)}
 
                         <div class="diff-actions-row">
-                            <button class="btn-diff-action refuse" onclick="processDecision('${item.id}', 'refuse')">
+                            <button class="btn-diff-action refuse" data-action="refuse" data-id="${item.id}">
                                 <i data-lucide="x"></i> Ignorer
                             </button>
-                            <button class="btn-diff-action validate" onclick="processDecision('${item.id}', 'accept')">
+                            <button class="btn-diff-action validate" data-action="accept" data-id="${item.id}">
                                 <i data-lucide="check"></i> Valider
                             </button>
                         </div>
@@ -629,7 +680,7 @@ export function renderDiffDetails(item) {
                 </div>
                 <div class="edit-row">
                    <span style="font-size:0.8rem; font-weight:bold; width:60px;">Lat,Lng</span>
-                   <input type="text" class="edit-input" id="${inputId}" value="${safeAttr(c.new)}" onchange="updateDraftValue('${item.id}', 'Position', this.value)">
+                   <input type="text" class="edit-input" id="${inputId}" value="${safeAttr(c.new)}" data-action="update-draft" data-id="${item.id}" data-key="Position">
                 </div>
             `;
         } else if (!isPhoto) {
@@ -655,7 +706,7 @@ export function renderDiffDetails(item) {
                 // Champ texte standard (Nom, Description, etc.)
                 editorHtml = `
                     <div class="edit-row">
-                        <input type="text" class="edit-input" id="${inputId}" value="${safeAttr(c.new)}" onchange="updateDraftValue('${item.id}', '${logicalKey}', this.value)">
+                        <input type="text" class="edit-input" id="${inputId}" value="${safeAttr(c.new)}" data-action="update-draft" data-id="${item.id}" data-key="${logicalKey}">
                     </div>
                 `;
             }

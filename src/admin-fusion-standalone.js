@@ -248,7 +248,7 @@ function renderDashboard() {
                     <div class="poi-name" style="display:flex; justify-content:space-between; align-items:center;">
                         <span>${escapeHtml(item.name)}</span>
                         ${badgeClass === 'badge-del' ?
-                            `<button class="btn-restore" onclick="restorePoi('${item.id}')"><i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Restaurer localement</button>`
+                            `<button class="btn-restore" data-action="restore" data-id="${item.id}"><i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Restaurer localement</button>`
                             : badgeClass !== 'badge-del' ?
                             `<button class="btn-edit-poi" data-id="${item.id}" data-type="${badgeClass}" title="Éditer avec l'éditeur riche"><i data-lucide="edit-3" style="width:14px;height:14px;"></i> Éditer / Vérifier</button>`
                             : ''}
@@ -313,6 +313,16 @@ function attachEditorListeners() {
         btn.addEventListener('click', (e) => {
             const poiId = e.currentTarget.dataset.id;
             openEditorForPoi(poiId);
+        });
+    });
+
+    const restoreBtns = document.querySelectorAll('.btn-restore');
+    restoreBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const poiId = e.currentTarget.dataset.id;
+            if (e.currentTarget.dataset.action === 'restore') {
+                restorePoi(poiId);
+            }
         });
     });
 
@@ -458,7 +468,7 @@ async function saveEditorChanges() {
 }
 
 // Global Restore Function
-window.restorePoi = async (poiId) => {
+async function restorePoi(poiId) {
     // 1. Remove from hiddenPoiIds
     if (localHiddenPoiIds.includes(poiId)) {
         localHiddenPoiIds = localHiddenPoiIds.filter(id => id !== poiId);

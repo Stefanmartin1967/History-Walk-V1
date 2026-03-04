@@ -46,34 +46,35 @@ function saveDraft(newDraft) {
 // --- OUVERTURE DU PANNEAU (Interface + Logique) ---
 export async function openControlCenter() {
     // 1. Ouvrir la modale (UI vide/chargement) avec les callbacks vers les actions
-    openControlCenterModal(diffData, {
+    const callbacks = {
         publishChanges: publishChanges,
         uploadAdminData: uploadAdminData,
-        downloadAdminData: downloadAdminData
-    });
+        downloadAdminData: downloadAdminData,
+        toggleDiffDetails: toggleDiffDetails,
+        updateDraftValue: updateDraftValue,
+        processDecision: processDecision
+    };
+
+    openControlCenterModal(diffData, callbacks);
 
     // 2. Calculer les données (Diff Engine)
     reconcileLocalChanges(adminDraft, saveDraft, updateButtonBadge);
     await prepareDiffData(adminDraft);
 
     // 3. Rendre l'onglet actif (Dashboard) avec les données calculées
-    renderTab('dashboard', diffData, {
-        publishChanges: publishChanges,
-        uploadAdminData: uploadAdminData,
-        downloadAdminData: downloadAdminData
-    });
+    renderTab('dashboard', diffData, callbacks);
 }
 
-// --- ACTIONS GLOBALES (Attachées à `window` pour le HTML injecté) ---
+// --- ACTIONS GLOBALES ---
 
-window.toggleDiffDetails = (id) => {
+export const toggleDiffDetails = (id) => {
     const el = document.getElementById(`diff-details-${id}`);
     if (el) {
         el.classList.toggle('open');
     }
 };
 
-window.updateDraftValue = async (id, key, value) => {
+export const updateDraftValue = async (id, key, value) => {
     // Met à jour directement userData (la source de vérité locale)
     console.log(`[Admin] Correction user: ${id} [${key}] = ${value}`);
 
@@ -95,7 +96,7 @@ window.updateDraftValue = async (id, key, value) => {
     showToast("Correction enregistrée localement", "info");
 };
 
-window.processDecision = async (id, decision) => {
+export const processDecision = async (id, decision) => {
     if (decision === 'refuse') {
         if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
 
