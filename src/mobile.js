@@ -20,6 +20,7 @@ import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
 import { showAdminLoginModal, logoutAdmin } from './admin.js';
+import { openControlCenter } from './admin-control-center.js';
 import { eventBus } from './events.js';
 
 let currentView = 'circuits'; 
@@ -795,6 +796,26 @@ export function renderMobileMenu() {
                 <i data-lucide="${state.isAdmin ? 'log-out' : 'lock'}"></i>
                 <span>${state.isAdmin ? 'Déconnexion' : 'Connexion Admin'}</span>
             </button>
+            ${state.isAdmin ? `
+            <div class="mobile-divider"></div>
+            <div style="padding: 10px 20px; font-weight: bold; color: var(--brand); font-size: 0.85em; text-transform: uppercase;">Outils Admin</div>
+            <button class="mobile-list-item" id="mob-action-admin-control-center">
+                <i data-lucide="layout-dashboard" style="color: var(--brand);"></i>
+                <span style="color: var(--brand); font-weight: 600;">Centre de Contrôle</span>
+            </button>
+            <button class="mobile-list-item" id="mob-action-admin-datamanager">
+                <i data-lucide="table"></i>
+                <span>Data Manager</span>
+            </button>
+            <button class="mobile-list-item" id="mob-action-admin-fusion">
+                <i data-lucide="combine"></i>
+                <span>Console Fusion</span>
+            </button>
+            <button class="mobile-list-item" id="mob-action-admin-scout">
+                <i data-lucide="scan-eye"></i>
+                <span>Scout (Overpass)</span>
+            </button>
+            ` : ''}
         </div>
         <div style="text-align:center; color:var(--ink-soft); font-size:12px; margin-top:20px; padding-bottom:100px;">
             History Walk Mobile v${state.appVersion || '3.5.3'}
@@ -829,6 +850,23 @@ export function renderMobileMenu() {
                 showAdminLoginModal();
             }
         });
+    }
+
+    if (state.isAdmin) {
+        const btnControl = document.getElementById('mob-action-admin-control-center');
+        if (btnControl) btnControl.addEventListener('click', openControlCenter);
+
+        const btnDataManager = document.getElementById('mob-action-admin-datamanager');
+        if (btnDataManager) btnDataManager.addEventListener('click', () => window.open('history_walk_datamanager/index.html', '_blank'));
+
+        const btnFusion = document.getElementById('mob-action-admin-fusion');
+        if (btnFusion) btnFusion.addEventListener('click', () => {
+            localStorage.setItem('hw_admin_fusion_map', state.currentMapId || 'djerba');
+            window.open('admin-fusion.html', '_blank');
+        });
+
+        const btnScout = document.getElementById('mob-action-admin-scout');
+        if (btnScout) btnScout.addEventListener('click', () => window.open('tools/scout.html', '_blank'));
     }
 }
 
