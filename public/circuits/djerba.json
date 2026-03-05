@@ -232,6 +232,23 @@
     ]
   },
   {
+    "id": "HW-01KJZTPCBZWWWB3AYQNPA9E9MJ",
+    "name": "Circuit de Mosquée Sidi Béchir Megmag à Mosquée Elil via Mosquée El Touil",
+    "file": "djerba/Circuit de Mosquée Sidi Béchir Megmag à Mosquée Elil via Mosquée El Touil.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.2 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El Groa",
+    "poiIds": [
+      "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
+      "HW-01KJABRN0GH1K6QDXPRRKMDATB",
+      "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
+      "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y",
+      "HW-01K77WPE6JDNJ7919QCH1HXSXT"
+    ]
+  },
+  {
     "id": "HW-1771742072502",
     "name": "Circuit de Mosquée Sidi Jmour à Mosquée El Fquira (Mezran)",
     "file": "djerba/Circuit de Mosquée Sidi Jmour à Mosquée El Fquira (Mezran).gpx",
