@@ -19,7 +19,7 @@ import { showStatisticsModal } from './statistics.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
-import { showAdminLoginModal, logoutAdmin } from './admin.js';
+import { showAdminLoginModal, logoutAdmin, showGitHubConfigModal } from './admin.js';
 import { openControlCenter } from './admin-control-center.js';
 import { eventBus } from './events.js';
 
@@ -815,6 +815,10 @@ export function renderMobileMenu() {
                 <i data-lucide="scan-eye"></i>
                 <span>Scout (Overpass)</span>
             </button>
+            <button class="mobile-list-item" id="mob-action-admin-config-token">
+                <i data-lucide="key"></i>
+                <span>Enregistrer token</span>
+            </button>
             ` : ''}
         </div>
         <div style="text-align:center; color:var(--ink-soft); font-size:12px; margin-top:20px; padding-bottom:100px;">
@@ -867,6 +871,9 @@ export function renderMobileMenu() {
 
         const btnScout = document.getElementById('mob-action-admin-scout');
         if (btnScout) btnScout.addEventListener('click', () => window.open('tools/scout.html', '_blank'));
+
+        const btnToken = document.getElementById('mob-action-admin-config-token');
+        if (btnToken) btnToken.addEventListener('click', showGitHubConfigModal);
     }
 }
 
