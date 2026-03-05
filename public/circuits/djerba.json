@@ -198,6 +198,22 @@
     ]
   },
   {
+    "id": "HW-01KJZ3SQ40CC0KF6ABNGZN09SF",
+    "name": "Circuit de Mosquée Louta Sedghiane à La Poste de Midoun via Mosquée Jaber Ibn Zayed",
+    "file": "djerba/Circuit de Mosquée Louta Sedghiane à La Poste de Midoun via Mosquée Jaber Ibn Zayed.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "8.1 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El May",
+    "poiIds": [
+      "HW-01K77WPE6FTSXM87T9YTV7G4ME",
+      "HW-01K77WPE6B757BJRXVWKNC8PBD",
+      "HW-01K77WPE6BNSENDPYVFJT2TW7Y",
+      "HW-01KJABRN0YD2SFB393HG9SRDGW"
+    ]
+  },
+  {
     "id": "HW-1771317964994",
     "name": "Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou",
     "file": "djerba/Circuit de Mosquée Ouilihi à Mosquée  Berdaoui via Mosquée Mourou.gpx",
