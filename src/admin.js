@@ -539,7 +539,7 @@ function setupGitHubUploadUI() {
     // Nothing complex to setup on init, logic is inside showGitHubUploadModal
 }
 
-function showGitHubConfigModal() {
+export function showGitHubConfigModal() {
     const storedToken = getStoredToken() || '';
 
     const html = `

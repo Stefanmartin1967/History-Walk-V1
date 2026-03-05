@@ -1,9 +1,17 @@
-
-> version-suppression-poi-douce@1.0.0 dev
-> vite
-
-
-  VITE v7.3.1  ready in 389 ms
-
-  ➜  Local:   http://localhost:5173/History-Walk-V1/
-  ➜  Network: use --host to expose
+npm warn exec The following package was not found and will be installed: vite@7.3.1
+failed to load config from /app/vite.config.js
+error when starting dev server:
+Error: Cannot find module 'vite'
+Require stack:
+- /app/vite.config.js
+- /home/jules/.npm/_npx/9ed06546b0653f96/node_modules/vite/dist/node/chunks/config.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)
+    at Function._load (node:internal/modules/cjs/loader:1192:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Module.require (node:internal/modules/cjs/loader:1463:12)
+    at require (node:internal/modules/helpers:147:16)
+    at Object.<anonymous> (/app/vite.config.js:25:19)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
