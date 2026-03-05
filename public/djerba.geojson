@@ -6989,6 +6989,23 @@
         "HW_ID": "HW-01KJX5XSG18NC03E6900V170QX",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.97166279626852,
+          33.758181788952335
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ibadite El Guebli",
+        "Catégorie": "Mosquée",
+        "Zone": "Sedouikech",
+        "HW_ID": "HW-01KJZ4D50T7NQJ187MJ21YDR20",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
