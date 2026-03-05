@@ -22,10 +22,11 @@
         "Source": "https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/",
         "Temps de visite": "01:00",
         "Prix d'entrée": 0,
-        "Desc_wpt": "Réouverture de la piscine le 16 mars",
+        "Desc_wpt": "Réouverture de la piscine le 16 mars. Elle se remplit lentement",
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "Notes_internes": "Test"
       }
     },
     {
