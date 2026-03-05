@@ -33,7 +33,6 @@ export function initAdminMode() {
     });
 
     setupAdminListeners();
-    setupGodModeListener();
     initAdminControlCenter(); // Setup the new Control Center logic
     updateAdminLoginButton(); // Setup/Update the login button
 }
@@ -81,13 +80,13 @@ function updateAdminLoginButton() {
     createIcons({ icons, root: newBtn });
 }
 
-function logoutAdmin() {
+export function logoutAdmin() {
     state.isAdmin = false;
     showToast("Déconnexion Admin effectuée.", "info");
     eventBus.emit('admin:mode-toggled', false);
 }
 
-function showAdminLoginModal() {
+export function showAdminLoginModal() {
     const overlay = document.getElementById('custom-modal-overlay');
     const title = document.getElementById('custom-modal-title');
     const message = document.getElementById('custom-modal-message');
@@ -352,70 +351,6 @@ function setupAdminListeners() {
             if (el) el.remove();
         });
     }
-}
-
-function setupGodModeListener() {
-    // 1. Version PC (Clavier)
-    let buffer = [];
-    let timeout;
-
-    window.addEventListener('keydown', (e) => {
-        // Ignorer si on est dans un champ texte
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-        const key = e.key.toLowerCase();
-        buffer.push(key);
-
-        // Reset buffer si pause trop longue
-        clearTimeout(timeout);
-        timeout = setTimeout(() => { buffer = []; }, 1000);
-
-        // Check sequence "god"
-        if (buffer.join('').endsWith('god')) {
-            toggleGodMode();
-            buffer = []; // Reset
-        }
-    });
-
-    // 2. Version Mobile (Quintuple Tap)
-    // On cible le bouton Outils (visible) au lieu du bouton Admin (caché)
-    const btnMenu = document.getElementById('btn-tools-menu');
-    if (btnMenu) {
-        let tapCount = 0;
-        let tapTimeout;
-
-        btnMenu.addEventListener('click', (e) => {
-            // On laisse le comportement par défaut (ouvrir le menu) pour les 4 premiers taps
-            // Si on est Admin, le bouton ouvre déjà le menu, donc pas de conflit majeur.
-            // Si on n'est pas Admin, le bouton est quand même là (Menu Outils).
-
-            tapCount++;
-            clearTimeout(tapTimeout);
-
-            // Reset après 2 secondes sans tap (plus tolérant pour mobile)
-            tapTimeout = setTimeout(() => {
-                tapCount = 0;
-            }, 2000);
-
-            if (tapCount === 5) {
-                console.log("[GodMode] 5 taps detected!");
-                e.preventDefault(); // Empêche le menu de s'ouvrir/fermer sur le 5ème tap
-                e.stopPropagation();
-
-                toggleGodMode();
-                tapCount = 0; // Reset immédiat
-
-                // Petit feedback visuel (vibration si supporté)
-                if (navigator.vibrate) navigator.vibrate(200);
-            }
-        });
-    }
-}
-
-function toggleGodMode() {
-    state.isAdmin = !state.isAdmin;
-    showToast(`Mode GOD : ${state.isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ'}`, state.isAdmin ? 'success' : 'info');
-    eventBus.emit('admin:mode-toggled', state.isAdmin);
 }
 
 export function generateMasterGeoJSONData(excludedIds = []) {

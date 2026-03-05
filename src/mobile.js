@@ -19,6 +19,8 @@ import { showStatisticsModal } from './statistics.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
+import { showAdminLoginModal, logoutAdmin } from './admin.js';
+import { eventBus } from './events.js';
 
 let currentView = 'circuits'; 
 let mobileSort = 'date_desc'; // date_desc, date_asc, dist_asc, dist_desc
@@ -788,6 +790,11 @@ export function renderMobileMenu() {
                 <span>Offrir un café</span>
                 <i data-lucide="heart" class="bmc-heart-icon" style="color:#e91e63; fill:#e91e63;"></i>
             </button>
+            <div class="mobile-divider"></div>
+            <button class="mobile-list-item" id="mob-action-admin-login" style="color: ${state.isAdmin ? 'var(--danger)' : 'var(--ink)'};">
+                <i data-lucide="${state.isAdmin ? 'log-out' : 'lock'}"></i>
+                <span>${state.isAdmin ? 'Déconnexion' : 'Connexion Admin'}</span>
+            </button>
         </div>
         <div style="text-align:center; color:var(--ink-soft); font-size:12px; margin-top:20px; padding-bottom:100px;">
             History Walk Mobile v${state.appVersion || '3.5.3'}
@@ -813,7 +820,23 @@ export function renderMobileMenu() {
     document.getElementById('mob-action-bmc').addEventListener('click', () => {
         window.open('https://www.buymeacoffee.com/history_walk', '_blank');
     });
+    const btnAdminLogin = document.getElementById('mob-action-admin-login');
+    if (btnAdminLogin) {
+        btnAdminLogin.addEventListener('click', () => {
+            if (state.isAdmin) {
+                logoutAdmin();
+            } else {
+                showAdminLoginModal();
+            }
+        });
+    }
 }
+
+eventBus.on('admin:mode-toggled', () => {
+    if (currentView === 'menu' && isMobileView()) {
+        renderMobileMenu();
+    }
+});
 
 async function handleShareAppClick() {
     const url = window.location.href.split('?')[0]; // On partage la racine de l'app
