@@ -216,6 +216,23 @@
     ]
   },
   {
+    "id": "HW-01KK1F3HVM50TEW74H3AKYEHS3",
+    "name": "Circuit de Mosquée Kharoubi à Mosquée Turkiya via Mosquee Ouchachna",
+    "file": "djerba/Circuit de Mosquée Kharoubi à Mosquée Turkiya via Mosquee Ouchachna.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El May",
+    "poiIds": [
+      "HW-01K77WPE6DN850VCNS22C48QFT",
+      "HW-01K77WPE6DWEFD7GCZ7SCRFQA9",
+      "HW-01K77WPE6E2G25V2R888QZDP0X",
+      "HW-01K77WPE6FDEFE8CMVWQSV93V4",
+      "HW-01K77WPE6ECJK1CMJKYVNTKGGS"
+    ]
+  },
+  {
     "id": "HW-01KJZ3SQ40CC0KF6ABNGZN09SF",
     "name": "Circuit de Mosquée Louta Sedghiane à La Poste de Midoun via Mosquée Jaber Ibn Zayed",
     "file": "djerba/Circuit de Mosquée Louta Sedghiane à La Poste de Midoun via Mosquée Jaber Ibn Zayed.gpx",
