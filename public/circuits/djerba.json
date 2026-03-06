@@ -112,6 +112,24 @@
     ]
   },
   {
+    "id": "HW-01KK1E3RZ1G0YKHSQTRXME7WVJ",
+    "name": "Circuit de Mosquée El Jadid à Mosquée El Aakel via Mosquée de Taghdimus",
+    "file": "djerba/Circuit de Mosquée El Jadid à Mosquée El Aakel via Mosquée de Taghdimus.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "7.5 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Erriadh",
+    "poiIds": [
+      "HW-01K77WPE6FZ42WKWV3QWS376RB",
+      "HW-01K77WPE6FZPTQ6J9PK4K8Z3DJ",
+      "HW-01KK1CNPZR005431XS160BZ1C4",
+      "HW-01K77WPE6RM4YJB23YX7AD522S",
+      "HW-01KJN6EEH9Z49AMGYJT621WG9N",
+      "HW-01K77WPE6QQH5FMV0T3V4A7MCD"
+    ]
+  },
+  {
     "id": "HW-1771578509993",
     "name": "Circuit de Mosquée El Maamoura à La Poste de Midoun via Mosquée El Azmouni",
     "file": "djerba/Circuit de Mosquée El Maamoura à La Poste de Midoun via Mosquée El Azmouni.gpx",
