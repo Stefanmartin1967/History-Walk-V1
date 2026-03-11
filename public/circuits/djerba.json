@@ -76,6 +76,23 @@
     ]
   },
   {
+    "id": "HW-01KKDSEVGXXB4Q4GMRC9YJDET6",
+    "name": "Circuit de Mosquée Braa à La Poste de Midoun via Marabout Sidi Saïd",
+    "file": "djerba/Circuit de Mosquée Braa à La Poste de Midoun via Marabout Sidi Saïd.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "6.6 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Midoun",
+    "poiIds": [
+      "HW-01K77WPE6BZYXKCYCZXB9RG3RP",
+      "HW-01K77WPE6A1GRGM843BF4KA3RT",
+      "HW-01K77WPE6A27VC54MEK4XHGV9V",
+      "HW-01K77WPE699CBRC4PV1ARJPXKM",
+      "HW-01KJABRN0YD2SFB393HG9SRDGW"
+    ]
+  },
+  {
     "id": "HW-1771435443094",
     "name": "Circuit de Mosquée Ejdid à Mosquée Rihia via Mosquée Ben Omran",
     "file": "djerba/Circuit de Mosquée Ejdid à Mosquée Rihia via Mosquée Ben Omran.gpx",
