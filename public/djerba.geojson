@@ -7092,6 +7092,42 @@
         "HW_ID": "HW-01KK1D9QR642904GDJN33MDHSK",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.990231,
+          33.8055485
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chez Moktar",
+        "Catégorie": "A définir",
+        "Zone": "Midoun",
+        "Description": "Créé sur le terrain",
+        "HW_ID": "HW-01KKEDXA9DTJXPB9DNY4EMVPR4",
+        "created_at": "2026-03-11T12:28:25.772Z"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9775885,
+          33.795488
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Errhama",
+        "Catégorie": "Mosquée",
+        "Zone": "Midoun",
+        "Description": "Créé sur le terrain",
+        "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
+        "created_at": "2026-03-11T14:18:04.014Z"
+      }
     }
   ]
 }
