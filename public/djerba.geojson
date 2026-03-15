@@ -7128,6 +7128,23 @@
         "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
         "created_at": "2026-03-11T14:18:04.014Z"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.972655564546585,
+          33.81398157183997
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Marabout Marmoura",
+        "Catégorie": "Mosquée",
+        "Zone": "Midoun",
+        "HW_ID": "HW-01KKS462NFDJ7E80WSWZ9TK9R7",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
