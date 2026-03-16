@@ -6330,23 +6330,23 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.99044,
-          33.75989
+          10.990437269210817,
+          33.75993763630792
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Qibli",
+        "Nom du site FR": "Mosquée Al-Hajar",
         "Nom du site arabe": "جامع القبلي",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
         "Coordonnées GPS": "33.75989000,10.99044000",
         "Latitude": 33.75989,
         "Longitude": 10.99044,
-        "Description": "Ruines d'un autre bâtiment tout proche visible sur OSM",
-        "Source": null,
+        "Description": "Mosquée dont il ne reste que peu de traces, proche de la mosquée Al-Qibli",
+        "Source": "",
         "Temps de visite": null,
-        "Prix d'entrée": null,
-        "Desc_wpt": null,
+        "Prix d'entrée": 0,
+        "Desc_wpt": "Quelques vestige de mosquée",
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
         "planifieCounter": 1
       }
@@ -7143,6 +7143,23 @@
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
         "HW_ID": "HW-01KKS462NFDJ7E80WSWZ9TK9R7",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.990643799304964,
+          33.75990418754944
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al-Qibli",
+        "Catégorie": "Mosquée",
+        "Zone": "Sedouikech",
+        "HW_ID": "HW-01KKVHNCEZHNGRPZ5XGAF9V0N3",
         "Description": "Ajouté via Rich Editor"
       }
     }
