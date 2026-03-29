@@ -235,15 +235,15 @@ export function renderMobileCircuitsList() {
     const paginatedCircuits = circuitsToDisplay.slice(startIdx, startIdx + itemsPerPage);
 
     let html = `
-        <div class="mobile-view-header mobile-header-harmonized" style="justify-content: space-between; padding-right: 15px;">
-            <h1 style="margin:0;">Mes Circuits</h1>
-            <div style="display:flex; align-items:center; gap:5px;">
-                <button class="action-button" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px; ${mobileCurrentPage <= 1 ? 'opacity: 0.3;' : ''}" ${mobileCurrentPage <= 1 ? 'disabled' : ''}>
-                    <i data-lucide="chevron-left" style="width:24px; height:24px;"></i>
+        <div class="mobile-view-header mobile-header-harmonized mobile-circuits-header">
+            <h1>Mes Circuits</h1>
+            <div class="mobile-pagination-group">
+                <button class="action-button mobile-pagination-btn" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" ${mobileCurrentPage <= 1 ? 'disabled' : ''}>
+                    <i data-lucide="chevron-left" class="icon-24"></i>
                 </button>
-                <span id="mobile-page-info" style="font-size:14px; font-weight:600; color:var(--ink); min-width: 30px; text-align: center;">${mobileCurrentPage} / ${totalPages}</span>
-                <button class="action-button" id="mobile-next-page" title="Page suivante" aria-label="Page suivante" style="background:none; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:4px; ${mobileCurrentPage >= totalPages ? 'opacity: 0.3;' : ''}" ${mobileCurrentPage >= totalPages ? 'disabled' : ''}>
-                    <i data-lucide="chevron-right" style="width:24px; height:24px;"></i>
+                <span id="mobile-page-info" class="mobile-page-info">${mobileCurrentPage} / ${totalPages}</span>
+                <button class="action-button mobile-pagination-btn" id="mobile-next-page" title="Page suivante" aria-label="Page suivante" ${mobileCurrentPage >= totalPages ? 'disabled' : ''}>
+                    <i data-lucide="chevron-right" class="icon-24"></i>
                 </button>
             </div>
         </div>
@@ -279,53 +279,51 @@ export function renderMobileCircuitsList() {
             const isDone = circuit._isCompleted;
             const iconName = circuit._iconName;
 
-            const statusIcon = isDone 
-                ? `<i data-lucide="check-circle" style="color:var(--ok); width:20px; height:20px;"></i>`
-                : `<span style="font-size:12px; color:var(--ink-soft); font-weight:600; background:var(--surface-muted); padding:2px 6px; border-radius:4px;">${done}/${total}</span>`;
+            const statusIcon = isDone
+                ? `<i data-lucide="check-circle" class="icon-20 lucide" style="color:var(--ok);"></i>`
+                : `<span class="mobile-status-badge">${done}/${total}</span>`;
 
             // Badge Officiel
             const badgeHtml = circuit.isOfficial
-                ? '<i data-lucide="star" style="color:var(--primary); width:14px; height:14px; margin-left:5px; fill:var(--primary);"></i>'
+                ? '<i data-lucide="star" class="icon-official-star lucide"></i>'
                 : '';
 
             const restoIcon = circuit._hasRestaurant
-                ? `<i data-lucide="utensils" style="width:14px; height:14px; margin-left:4px; vertical-align:text-bottom;"></i>`
+                ? `<i data-lucide="utensils" class="icon-utensils-meta lucide"></i>`
                 : '';
 
-            const nameStyle = circuit.isOfficial ? 'font-weight:700;' : 'font-weight:400;';
+            const nameClass = circuit.isOfficial ? 'mobile-circuit-name mobile-circuit-name--official' : 'mobile-circuit-name';
 
             // Action Droite (Téléchargement GPX pour Officiels)
             let rightActionHtml = '';
             if (circuit.isOfficial && circuit.file) {
                 rightActionHtml = `
                 <a href="./circuits/${circuit.file}" download title="Télécharger GPX" class="mobile-download-btn">
-                    <i data-lucide="download" style="width:24px; height:24px;"></i>
+                    <i data-lucide="download" class="icon-24 lucide"></i>
                 </a>`;
             }
 
             // Bouton Visité (Gauche)
             const visitedIcon = isDone ? 'check-circle' : 'circle';
-            const visitedColor = isDone ? 'var(--ok)' : 'var(--line)'; // Gris clair si pas fait, Vert si fait
             const toggleVisitedHtml = `
-                <button type="button" class="mobile-toggle-visited mobile-check-btn" data-id="${circuit.id}" data-visited="${isDone}" style="color:${visitedColor};" aria-label="Marquer comme visité" title="Marquer comme visité">
-                    <i data-lucide="${visitedIcon}" style="width:24px; height:24px;"></i>
+                <button type="button" class="mobile-toggle-visited mobile-check-btn ${isDone ? 'done' : 'todo'}" data-id="${circuit.id}" data-visited="${isDone}" aria-label="Marquer comme visité" title="Marquer comme visité">
+                    <i data-lucide="${visitedIcon}" class="icon-24 lucide"></i>
                 </button>
             `;
 
             html += `
-                <div style="display:flex; align-items:center; gap:5px; margin-bottom:8px;">
+                <div class="mobile-circuit-card-wrapper">
                     <div class="mobile-list-item circuit-item-mobile mobile-card-layout" data-id="${circuit.id}" role="button" tabindex="0">
                         ${toggleVisitedHtml}
-                        <div style="display:flex; flex-direction:column; flex:1; min-width:0; margin-right:4px;">
-                            <div style="display:flex; align-items:center; width:100%;">
-                                <span style="${nameStyle} font-size:16px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1;">${escapeHtml(displayName)}</span>
+                        <div class="mobile-circuit-info">
+                            <div class="mobile-circuit-name-row">
+                                <span class="${nameClass}">${escapeHtml(displayName)}</span>
                             </div>
                             <div class="mobile-card-meta">
-                                ${total} POI • ${distDisplay} <i data-lucide="${iconName}" style="width:14px; height:14px; margin:0 4px;"></i> • ${zoneName}${restoIcon}
+                                ${total} POI • ${distDisplay} <i data-lucide="${iconName}" class="icon-map-meta lucide"></i> • ${zoneName}${restoIcon}
                             </div>
                         </div>
-
-                        <div style="display:flex; align-items:center; flex-shrink:0; align-self:center; height:100%;">
+                        <div class="mobile-circuit-right">
                             ${rightActionHtml}
                         </div>
                     </div>
@@ -528,9 +526,9 @@ function renderMobileZonesMenu() {
     sortedZones.forEach(zone => {
         const btn = document.createElement('button');
         btn.className = 'mobile-list-item';
-        btn.innerHTML = `<span style="flex:1;">${zone}</span> <span style="font-weight:bold; color:var(--ink-soft);">${zonesMap[zone]}</span>`;
+        btn.innerHTML = `<span class="mobile-zone-btn-inner">${zone}</span> <span class="mobile-zone-btn-count">${zonesMap[zone]}</span>`;
         if (state.activeFilters.zone === zone) {
-            btn.style.border = '2px solid var(--brand)';
+            btn.classList.add('mobile-zone-btn--active');
         }
         btn.onclick = () => {
             state.activeFilters.zone = zone;
@@ -586,14 +584,11 @@ export function renderMobilePoiList(features) {
 
     const headerDiv = document.createElement('div');
     headerDiv.className = 'mobile-view-header mobile-header-harmonized';
-    headerDiv.style.flexShrink = '0';
-    headerDiv.style.display = 'flex';
-    headerDiv.style.alignItems = 'center';
-    headerDiv.style.justifyContent = 'space-between';
+    headerDiv.classList.add('mobile-poi-header');
     headerDiv.innerHTML = `
-        <div style="display:flex; align-items:center;">
-            ${isCircuit ? '<button id="mobile-back-btn" title="Retour" aria-label="Retour" style="margin-right:10px;"><i data-lucide="arrow-left"></i></button>' : ''}
-            <h1 style="margin:0; font-size:18px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:220px;">${escapeHtml(pageTitle)}</h1>
+        <div class="mobile-poi-header-inner">
+            ${isCircuit ? '<button id="mobile-back-btn" class="mobile-back-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>' : ''}
+            <h1 class="mobile-poi-title">${escapeHtml(pageTitle)}</h1>
         </div>
     `;
     container.appendChild(headerDiv);
@@ -607,12 +602,12 @@ export function renderMobilePoiList(features) {
         const poiId = getPoiId(feature);
         const iconHtml = getIconForFeature(feature);
         const isVisited = feature.properties.userData?.vu;
-        const checkIcon = isVisited ? '<i data-lucide="check" style="width:20px; height:20px; margin-left:5px; color:var(--ok); stroke-width:3;"></i>' : '';
+        const checkIcon = isVisited ? '<i data-lucide="check" class="icon-check-visited lucide"></i>' : '';
 
         listHtml += `
             <button class="mobile-list-item poi-item-mobile mobile-poi-item-layout" data-id="${poiId}">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <div style="color:${isVisited ? 'var(--ok)' : 'var(--brand)'}; display:flex; align-items:center;">
+                <div class="mobile-poi-icon-wrapper">
+                    <div class="${isVisited ? 'mobile-poi-icon--visited' : 'mobile-poi-icon--unvisited'}">
                         ${iconHtml}
                     </div>
                     <span>${escapeHtml(name)}</span>
@@ -626,22 +621,11 @@ export function renderMobilePoiList(features) {
 
     if (isCircuit) {
         const footerDiv = document.createElement('div');
-        footerDiv.style.flexShrink = '0';
-        // Padding réduit car le dock est masqué (80px -> 20px)
-        footerDiv.style.padding = '16px 16px 20px 16px';
-        footerDiv.style.borderTop = '1px solid var(--line)';
-        footerDiv.style.backgroundColor = 'var(--surface)';
-        footerDiv.style.zIndex = '10';
-        
-        // Bouton Partager (QR Code)
-        const btnStateClass = 'background-color:var(--surface); color:var(--ink); border: 2px solid var(--brand);';
-        const btnIcon = 'qr-code';
-        const btnText = 'Partager le circuit';
-        
+        footerDiv.className = 'mobile-poi-footer';
         footerDiv.innerHTML = `
-            <button id="btn-share-circuit-mobile" style="width:100%; padding:14px; border-radius:12px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:8px; cursor:pointer; font-size:16px; transition:all 0.2s; ${btnStateClass}">
-                <i data-lucide="${btnIcon}"></i>
-                <span>${btnText}</span>
+            <button id="btn-share-circuit-mobile" class="btn-share-circuit-mobile">
+                <i data-lucide="qr-code"></i>
+                <span>Partager le circuit</span>
             </button>
         `;
         container.appendChild(footerDiv);
@@ -720,7 +704,7 @@ export function renderMobileSearch() {
             const iconHtml = getIconForFeature(f);
             html += `
                 <button class="mobile-list-item result-item" data-id="${getPoiId(f)}">
-                    <div style="color:var(--brand); display:flex; align-items:center; margin-right:16px;">
+                    <div class="mobile-search-result-icon">
                         ${iconHtml}
                     </div>
                     <span>${escapeHtml(getPoiName(f))}</span>
@@ -786,22 +770,22 @@ export function renderMobileMenu() {
                 <span>Changer Thème</span>
             </button>
             <div class="mobile-divider"></div>
-            <button class="mobile-list-item bmc-btn-mobile" id="mob-action-bmc" style="background: linear-gradient(135deg, #FFDD00 0%, #FBB03B 100%); color: #422006; font-weight: 700;">
+            <button class="mobile-list-item bmc-btn-mobile" id="mob-action-bmc">
                 <i data-lucide="coffee"></i>
                 <span>Offrir un café</span>
-                <i data-lucide="heart" class="bmc-heart-icon" style="color:#e91e63; fill:#e91e63;"></i>
+                <i data-lucide="heart" class="bmc-heart-icon icon-heart"></i>
             </button>
             <div class="mobile-divider"></div>
-            <button class="mobile-list-item" id="mob-action-admin-login" style="color: ${state.isAdmin ? 'var(--danger)' : 'var(--ink)'};">
+            <button class="mobile-list-item ${state.isAdmin ? 'mobile-admin-login-btn--admin' : 'mobile-admin-login-btn--normal'}" id="mob-action-admin-login">
                 <i data-lucide="${state.isAdmin ? 'log-out' : 'lock'}"></i>
                 <span>${state.isAdmin ? 'Déconnexion' : 'Connexion Admin'}</span>
             </button>
             ${state.isAdmin ? `
             <div class="mobile-divider"></div>
-            <div style="padding: 10px 20px; font-weight: bold; color: var(--brand); font-size: 0.85em; text-transform: uppercase;">Outils Admin</div>
-            <button class="mobile-list-item" id="mob-action-admin-control-center">
-                <i data-lucide="layout-dashboard" style="color: var(--brand);"></i>
-                <span style="color: var(--brand); font-weight: 600;">Centre de Contrôle</span>
+            <div class="mobile-menu-admin-header">Outils Admin</div>
+            <button class="mobile-list-item mobile-menu-brand-item" id="mob-action-admin-control-center">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Centre de Contrôle</span>
             </button>
             <button class="mobile-list-item" id="mob-action-admin-datamanager">
                 <i data-lucide="table"></i>
@@ -821,7 +805,7 @@ export function renderMobileMenu() {
             </button>
             ` : ''}
         </div>
-        <div style="text-align:center; color:var(--ink-soft); font-size:12px; margin-top:20px; padding-bottom:100px;">
+        <div class="mobile-version-footer">
             History Walk Mobile v${state.appVersion || '3.5.3'}
         </div>
     `;
@@ -889,10 +873,10 @@ async function handleShareAppClick() {
         const qrDataUrl = await QRCode.toDataURL(url, { width: 300, margin: 2, color: { dark: "#000000", light: "#ffffff" } });
 
         const content = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
-                <p style="text-align:center; color:var(--ink);">Scannez ce code pour installer l'application :</p>
-                <img src="${qrDataUrl}" style="width:200px; height:200px; border-radius:12px; border:1px solid var(--line);">
-                <p style="font-size:12px; color:var(--brand); word-break:break-all; text-align:center;">${url}</p>
+            <div class="app-share-qr-container">
+                <p class="app-share-qr-text">Scannez ce code pour installer l'application :</p>
+                <img src="${qrDataUrl}" class="app-share-qr-img">
+                <p class="app-share-qr-url">${url}</p>
             </div>
         `;
 
