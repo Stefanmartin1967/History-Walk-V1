@@ -3918,3 +3918,58 @@ input[type=range] {
     cursor: pointer;
     font-weight: 600;
 }
+
+/* ================================================
+   UI-CIRCUIT-LIST.JS — Explorer (liste circuits)
+   ================================================ */
+
+/* En-tête Explorer */
+.explorer-header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; height: 100%; padding: 0 10px;
+}
+.explorer-pagination-group { display: flex; align-items: center; gap: 5px; }
+.explorer-header-title { margin: 0; font-size: 18px; }
+.explorer-page-info { font-size: 14px; font-weight: 500; color: var(--ink); min-width: 30px; text-align: center; }
+.explorer-header .action-button:hover:not(:disabled) { background: var(--surface-muted); }
+.action-button:disabled { opacity: 0.3; cursor: default; }
+.icon-20 { width: 20px; height: 20px; }
+
+/* Séparateur dans explorer-footer : override la règle panel-footer qui les cache */
+.explorer-footer .separator-vertical { display: block !important; margin: 0 4px; }
+
+/* Modale zones */
+.zone-modal-list { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; }
+.zone-modal-btn {
+    padding: 10px; text-align: left; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; width: 100%;
+}
+.zone-modal-btn.active { border: 2px solid var(--brand); background: var(--surface-muted); }
+.zone-count { font-weight: bold; color: var(--ink-soft); }
+
+/* Items liste (overrides pour correspondre aux valeurs actuelles des inline styles) */
+.explorer-list-empty { padding: 20px; text-align: center; color: var(--ink-soft); }
+#explorer-list .explorer-item { gap: 8px; padding: 10px; }
+.explorer-item-left  { flex-shrink: 0; }
+.explorer-item-right { flex-shrink: 0; display: flex; align-items: center; }
+#explorer-list .explorer-item-name { font-weight: 400; line-height: 1.2; white-space: normal; }
+.explorer-item-name--official { font-weight: 500; color: var(--primary); }
+#explorer-list .explorer-item-meta { display: flex; align-items: center; margin-top: 2px; }
+.icon-meta       { width: 12px; height: 12px; margin: 0 3px; }
+.icon-meta-extra { width: 14px; height: 14px; vertical-align: text-bottom; margin-left: 4px; }
+.btn-toggle-visited { color: var(--line); padding: 4px; }
+.btn-toggle-visited.completed { color: var(--ok); }
+.btn-toggle-visited .lucide { width: 24px; height: 24px; }
+
+/* ================================================
+   UI-CIRCUIT-EDITOR.JS — Partage / QR Circuit
+   ================================================ */
+
+.circuit-share-container { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; text-align: center; }
+.circuit-qr-img { width: 200px; height: 200px; border-radius: 10px; border: 1px solid var(--line); }
+.circuit-share-hint { text-align: center; color: var(--ink-soft); font-size: 14px; margin: 0; padding: 0; width: 100%; }
+.circuit-share-name { font-size: 14px; font-weight: bold; color: var(--ink); word-break: break-word; text-align: center; width: 100%; margin: 0; padding: 0; }
+.circuit-gpx-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.btn-gpx-download { text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 14px; }
+.circuit-no-gpx-msg { text-align: center; padding: 20px; color: var(--ink-soft); }

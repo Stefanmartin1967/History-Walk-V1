@@ -116,14 +116,10 @@ export async function generateCircuitQR() {
         }
 
         const htmlContent = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:8px; width:100%; text-align:center;">
-                <img src="${qrApp}" style="width:200px; height:200px; border-radius:10px; border:1px solid var(--line);">
-                <p style="text-align:center; color:var(--ink-soft); font-size:14px; margin:0; padding:0; width:100%;">
-                    Partager ce circuit avec un autre appareil.
-                </p>
-                <div style="font-size:14px; font-weight:bold; color:var(--text-main); word-break:break-word; text-align:center; width:100%; margin:0; padding:0;">
-                    ${escapeHtml(circuitName)}
-                </div>
+            <div class="circuit-share-container">
+                <img src="${qrApp}" class="circuit-qr-img">
+                <p class="circuit-share-hint">Partager ce circuit avec un autre appareil.</p>
+                <div class="circuit-share-name">${escapeHtml(circuitName)}</div>
             </div>
         `;
         await showAlert("Partager le circuit", htmlContent, "Fermer");
@@ -146,18 +142,11 @@ export async function generateCircuitQR() {
             }
 
             const htmlContent = `
-                <div style="display:flex; flex-direction:column; align-items:center; gap:10px; font-family:sans-serif;">
-
-                    <!-- QR Code GPX -->
-                    <img src="${qrGpx}" style="width:200px; height:200px; border-radius:8px; border:1px solid var(--line, #eee);">
-
-                    <!-- Bouton Téléchargement -->
-                    <a href="${gpxUrl}" download class="action-button primary" style="
-                        text-decoration:none; display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
-                        padding:10px 20px; border-radius:20px; font-weight:600; font-size:14px;">
+                <div class="circuit-gpx-container">
+                    <img src="${qrGpx}" class="circuit-qr-img">
+                    <a href="${gpxUrl}" download class="action-button primary btn-gpx-download">
                         <i data-lucide="download"></i> Télécharger le circuit
                     </a>
-
                 </div>
             `;
 
@@ -167,9 +156,7 @@ export async function generateCircuitQR() {
             // Pas de GPX disponible
              await showAlert(
                  escapeHtml(displayTitle),
-                 `<div style="text-align:center; padding:20px; color:var(--ink-soft);">
-                    Ce circuit ne dispose pas de fichier GPX téléchargeable.
-                 </div>`,
+                 `<div class="circuit-no-gpx-msg">Ce circuit ne dispose pas de fichier GPX téléchargeable.</div>`,
                  "Fermer"
              );
         }
