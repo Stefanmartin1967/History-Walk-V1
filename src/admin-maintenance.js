@@ -68,7 +68,7 @@ function findDuplicates(circuits) {
  * Lance l'analyse et l'affichage
  */
 async function runAnalysis(container) {
-    container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--hw-ink-soft);"><i data-lucide="loader-2" class="spin"></i> Analyse du serveur en cours...</div>`;
+    container.innerHTML = `<div class="maint-loading"><i data-lucide="loader-2" class="spin"></i> Analyse du serveur en cours...</div>`;
     createIcons({ icons, root: container });
 
     serverCircuits = await fetchServerCircuits();
@@ -87,16 +87,16 @@ function renderResults(container) {
     const hasToken = !!getStoredToken();
 
     let html = `
-        <div style="padding:20px; max-width:800px; margin:0 auto;">
-            <div style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0;"><i data-lucide="server"></i> Fichiers sur le Serveur</h3>
-                <button id="btn-refresh-maintenance" class="custom-modal-btn secondary" style="padding:8px 16px;">
+        <div class="maint-container">
+            <div class="maint-header-row">
+                <h3 class="maint-title"><i data-lucide="server"></i> Fichiers sur le Serveur</h3>
+                <button id="btn-refresh-maintenance" class="custom-modal-btn secondary">
                     <i data-lucide="refresh-cw"></i> Actualiser
                 </button>
             </div>
 
             ${!hasToken ? `
-                <div style="background:#FEF2F2; border:1px solid #FCA5A5; color:#991B1B; padding:15px; border-radius:12px; margin-bottom:20px; display:flex; align-items:center; gap:15px;">
+                <div class="maint-warning-banner">
                     <i data-lucide="alert-triangle"></i>
                     <div>
                         <strong>Mode Lecture Seule</strong><br>
@@ -109,29 +109,27 @@ function renderResults(container) {
     // 0. CORBEILLE LOCALE (New Section)
     if (deletedCircuits.length > 0) {
         html += `
-            <div style="margin-bottom:30px; border:1px solid #E5E7EB; border-radius:16px; overflow:hidden;">
-                <div style="background:#F3F4F6; padding:15px; border-bottom:1px solid #E5E7EB; display:flex; justify-content:space-between; align-items:center;">
-                    <h4 style="margin:0; color:var(--hw-ink); display:flex; align-items:center; gap:8px;">
+            <div class="maint-section">
+                <div class="maint-section-header">
+                    <h4 class="maint-section-title">
                         <i data-lucide="trash-2"></i> Corbeille Locale (${deletedCircuits.length})
                     </h4>
                 </div>
-                <div style="background:white; max-height:250px; overflow-y:auto;">
+                <div class="maint-section-body">
         `;
 
         deletedCircuits.forEach(c => {
             html += `
-                <div style="padding:12px 15px; border-bottom:1px solid #F1F5F9; display:flex; align-items:center; justify-content:space-between;">
-                    <div style="opacity:0.6;">
-                        <div style="font-weight:600; color:var(--hw-ink);">${c.name}</div>
-                        <div style="font-size:0.75rem; color:var(--hw-ink-soft);">${c.poiIds ? c.poiIds.length : 0} étapes • ${c.id}</div>
+                <div class="maint-item">
+                    <div class="maint-item-faded">
+                        <div class="maint-item-name">${c.name}</div>
+                        <div class="maint-item-meta">${c.poiIds ? c.poiIds.length : 0} étapes • ${c.id}</div>
                     </div>
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn-restore-local" data-id="${c.id}" title="Restaurer" aria-label="Restaurer"
-                                style="background:#F0FDF4; color:#166534; border:1px solid #86EFAC; padding:6px; border-radius:6px; cursor:pointer;">
+                    <div class="maint-item-actions">
+                        <button class="btn-restore-local maint-btn-restore" data-id="${c.id}" title="Restaurer" aria-label="Restaurer">
                             <i data-lucide="rotate-ccw" width="16"></i>
                         </button>
-                        <button class="btn-purge-local" data-id="${c.id}" title="Supprimer définitivement" aria-label="Supprimer définitivement"
-                                style="background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; padding:6px; border-radius:6px; cursor:pointer;">
+                        <button class="btn-purge-local maint-btn-danger" data-id="${c.id}" title="Supprimer définitivement" aria-label="Supprimer définitivement">
                             <i data-lucide="x" width="16"></i>
                         </button>
                     </div>
@@ -145,30 +143,26 @@ function renderResults(container) {
     // 1. DOUBLONS DÉTECTÉS
     if (duplicateGroups.length > 0) {
         html += `
-            <div style="margin-bottom:30px;">
-                <h4 style="color:#DC2626; display:flex; align-items:center; gap:8px;">
+            <div class="maint-dupes-section">
+                <h4 class="maint-dupes-title">
                     <i data-lucide="copy"></i> Doublons Détectés (${duplicateGroups.length} groupes)
                 </h4>
-                <p style="font-size:0.9rem; color:var(--hw-ink-soft); margin-bottom:15px;">
+                <p class="maint-dupes-desc">
                     Ces circuits ont exactement le même tracé (mêmes étapes, même distance).
                     Le fichier avec un suffixe comme <code>(1).gpx</code> est souvent la copie à supprimer.
                 </p>
-                <div style="display:flex; flex-direction:column; gap:15px;">
+                <div class="maint-dupes-list">
         `;
 
         duplicateGroups.forEach((group, idx) => {
-            html += `<div style="border:1px solid #FECACA; background:#FEF2F2; border-radius:12px; overflow:hidden;">
-                <div style="padding:10px 15px; background:#FEE2E2; color:#991B1B; font-weight:bold; font-size:0.85rem;">
-                    Groupe #${idx + 1}
-                </div>
-                <div style="display:flex; flex-direction:column;">`;
+            html += `<div class="maint-dupe-group">
+                <div class="maint-dupe-group-header">Groupe #${idx + 1}</div>
+                <div class="maint-dupe-group-body">`;
 
             group.forEach(c => {
                 // Détection visuelle du fichier "suspect" (contient (1), (2) ou copy)
                 const isSuspect = c.file.match(/\(\d+\)\.gpx$/) || c.file.includes('copy');
-                const highlightStyle = isSuspect ? 'background:rgba(255,255,255,0.8);' : '';
-
-                html += renderCircuitRow(c, hasToken, highlightStyle);
+                html += renderCircuitRow(c, hasToken, isSuspect);
             });
 
             html += `</div></div>`;
@@ -177,7 +171,7 @@ function renderResults(container) {
         html += `</div></div>`;
     } else if (serverCircuits.length > 0) {
          html += `
-            <div style="margin-bottom:30px; padding:20px; background:#F0FDF4; border:1px solid #86EFAC; border-radius:12px; color:#166534; display:flex; align-items:center; gap:10px;">
+            <div class="maint-ok-banner">
                 <i data-lucide="check-circle-2"></i> Aucun doublon strict détecté.
             </div>
         `;
@@ -185,11 +179,11 @@ function renderResults(container) {
 
     // 2. LISTE COMPLÈTE (Pour nettoyage manuel)
     html += `
-        <div style="margin-top:30px; border-top:1px solid #E5E7EB; padding-top:20px;">
-            <h4 style="margin-bottom:15px; display:flex; align-items:center; gap:8px;">
+        <div class="maint-all-section">
+            <h4 class="maint-all-title">
                 <i data-lucide="list"></i> Tous les fichiers (${serverCircuits.length})
             </h4>
-            <div style="background:white; border:1px solid #E5E7EB; border-radius:12px; max-height:400px; overflow-y:auto;">
+            <div class="maint-all-body">
     `;
 
     // On trie par nom de fichier pour regrouper visuellement les variantes
@@ -253,25 +247,22 @@ async function handlePurgeLocal(id, container) {
     }
 }
 
-function renderCircuitRow(c, hasToken, extraStyle = '') {
+function renderCircuitRow(c, hasToken, isSuspect = false) {
     const fileName = c.file.split('/').pop();
     const folder = c.file.split('/')[0];
 
     return `
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 15px; border-bottom:1px solid #F1F5F9; ${extraStyle}">
-            <div style="display:flex; flex-direction:column; gap:2px; overflow:hidden;">
-                <div style="font-weight:600; color:var(--hw-ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${c.name}">
-                    ${c.name}
-                </div>
-                <div style="font-size:0.75rem; color:var(--hw-ink-soft); font-family:monospace; display:flex; align-items:center; gap:6px;">
+        <div class="maint-circuit-row${isSuspect ? ' maint-circuit-suspect' : ''}">
+            <div class="maint-circuit-info">
+                <div class="maint-circuit-name" title="${c.name}">${c.name}</div>
+                <div class="maint-circuit-meta">
                     <i data-lucide="file" width="12"></i> ${folder}/<b>${fileName}</b>
-                    <span style="opacity:0.5;">| ${c.distance}</span>
+                    <span class="maint-circuit-dist">| ${c.distance}</span>
                 </div>
             </div>
 
             ${hasToken ? `
-            <button class="btn-delete-server-file" data-path="public/circuits/${c.file}" data-name="${c.name}" title="Supprimer définitivement du serveur" aria-label="Supprimer définitivement du serveur"
-                    style="background:#FEF2F2; color:#DC2626; border:1px solid #FECACA; padding:6px; border-radius:6px; cursor:pointer; flex-shrink:0;">
+            <button class="btn-delete-server-file maint-btn-danger" data-path="public/circuits/${c.file}" data-name="${c.name}" title="Supprimer définitivement du serveur" aria-label="Supprimer définitivement du serveur">
                 <i data-lucide="trash-2" width="16"></i>
             </button>
             ` : ''}
@@ -311,18 +302,15 @@ async function handleDeleteClick(path, name, container) {
  */
 export function renderMaintenanceTab(container) {
     container.innerHTML = `
-        <div style="padding:40px; text-align:center;">
-            <div style="margin-bottom:20px; font-size:3rem; color:var(--hw-ink-soft); opacity:0.2;">
-                <i data-lucide="server-cog"></i>
-            </div>
-            <h3 style="margin-bottom:10px;">Maintenance Serveur</h3>
-            <p style="color:var(--hw-ink-soft); max-width:500px; margin:0 auto 30px auto;">
+        <div class="maint-welcome">
+            <div class="maint-welcome-icon"><i data-lucide="server-cog"></i></div>
+            <h3 class="maint-welcome-title">Maintenance Serveur</h3>
+            <p class="maint-welcome-desc">
                 Analysez les fichiers présents sur le serveur GitHub pour détecter les doublons et supprimer les fichiers obsolètes.
                 <br><br>
                 <strong>Attention :</strong> Les suppressions ici sont irréversibles et affectent immédiatement l'index public.
             </p>
-
-            <button id="btn-start-scan" class="custom-modal-btn primary" style="padding:12px 24px; font-size:1rem;">
+            <button id="btn-start-scan" class="custom-modal-btn primary maint-start-btn">
                 <i data-lucide="search"></i> Scanner les fichiers
             </button>
         </div>

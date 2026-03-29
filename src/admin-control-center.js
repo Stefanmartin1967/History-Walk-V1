@@ -34,7 +34,7 @@ function updateButtonBadge() {
     const btn = document.getElementById('btn-admin-control-center');
     if (!btn) return;
     const total = Object.keys(adminDraft.pendingPois).length + Object.keys(adminDraft.pendingCircuits).length;
-    btn.innerHTML = `<i data-lucide="layout-dashboard"></i> Centre de Contrôle ${total > 0 ? `<span style="background:var(--hw-amber);color:white;padding:2px 7px;border-radius:10px;font-size:0.7rem;margin-left:5px;">${total}</span>` : ''}`;
+    btn.innerHTML = `<i data-lucide="layout-dashboard"></i> Centre de Contrôle ${total > 0 ? `<span class="cc-badge">${total}</span>` : ''}`;
     createIcons({ icons, root: btn });
 }
 
