@@ -49,13 +49,13 @@ export function handleExportWithContribution(actionType, proceedCallback) {
 
         <!-- Bouton Jaune Pastel (Aligné avec Topbar) -->
         <button id="btn-contrib-bmc" class="action-btn">
-            <i data-lucide="heart" style="fill:#e91e63; color:#e91e63; width:18px; height:18px;"></i>
+            <i data-lucide="heart" class="icon-heart"></i>
             <span>Aider à améliorer le site</span>
         </button>
 
         <!-- Bouton Export (Simple) -->
         <button id="btn-contrib-export" class="action-btn">
-            <i data-lucide="download" style="width:18px; height:18px;"></i>
+            <i data-lucide="download" class="icon-sm"></i>
             <span>${getActionLabel(actionType)}</span>
         </button>
     `;

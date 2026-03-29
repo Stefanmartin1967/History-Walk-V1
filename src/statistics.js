@@ -392,7 +392,6 @@ export async function showStatisticsModal() {
 
     // -- HTML --
     const html = `
-    <style>${EXPLORER_CARD_CSS}</style>
     <div id="explorer-card-root">
         <div class="explorer-card" id="explorer-card-print">
             <div class="card-header">

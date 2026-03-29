@@ -3975,6 +3975,89 @@ input[type=range] {
 .circuit-no-gpx-msg { text-align: center; padding: 20px; color: var(--ink-soft); }
 
 /* ================================================
+   MODAL.JS — Prompt dialog
+   ================================================ */
+
+.modal-prompt-body  { display: flex; flex-direction: column; gap: 10px; }
+.modal-prompt-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* ================================================
+   ADMIN.JS — Login & Rank table
+   ================================================ */
+
+.admin-login-body { text-align: left; }
+.admin-login-body p { margin-bottom: 15px; color: var(--ink-soft); }
+.admin-login-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+.admin-login-error { color: var(--danger); margin-top: 10px; font-size: 0.9em; min-height: 1.2em; }
+
+.admin-github-body { text-align: left; }
+.admin-github-body p { margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft); }
+.admin-github-label { display: block; margin-bottom: 5px; font-weight: 600; }
+.admin-github-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+.admin-github-note { font-size: 0.8em; color: var(--ink-soft); }
+
+.rank-table-wrapper { max-height: 60vh; overflow-y: auto; }
+.rank-table { width: 100%; border-collapse: collapse; }
+.rank-table thead { background: var(--surface-muted); position: sticky; top: 0; }
+.rank-table th,
+.rank-table td { padding: 10px; }
+.rank-table th:nth-child(1), .rank-table td:nth-child(1) { text-align: center; }
+.rank-table th:nth-child(2), .rank-table td:nth-child(2) { text-align: left; }
+.rank-table th:nth-child(3), .rank-table td:nth-child(3) { text-align: right; }
+.rank-table tr { border-bottom: 1px solid var(--line); }
+.rank-table td:nth-child(1) { font-size: 24px; }
+.rank-table td:nth-child(2) { font-weight: 600; color: var(--ink); }
+.rank-table td:nth-child(3) { color: var(--ink-soft); font-family: monospace; }
+.rank-table-note { margin-top: 15px; font-size: 12px; color: var(--ink-soft); font-style: italic; }
+
+/* ================================================
+   FILEMAAGER.JS — Contribution modal icons
+   ================================================ */
+
+.icon-heart { fill: #e91e63; color: #e91e63; width: 18px; height: 18px; }
+
+/* ================================================
+   FUSION.JS — File import status + form layout
+   ================================================ */
+
+.fusion-name-loading { color: var(--ink); }
+.fusion-name-ok      { color: var(--ok); }
+.fusion-name-error   { color: var(--danger); }
+.fusion-name-note    { font-style: italic; }
+
+.box-ok { border-color: var(--ok) !important; }
+
+.fusion-poi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 5px;
+}
+.fusion-label { font-size: 11px; color: #64748B; }
+.fusion-input-rtl { text-align: right; }
+
+/* ================================================
    UI-PHOTO-VIEWER.JS
    ================================================ */
 
@@ -4092,3 +4175,86 @@ input[type=range] {
     pointer-events: none;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
+
+/* ================================================
+   STATISTICS.JS — Explorer Card (Gamification)
+   ================================================ */
+
+:root {
+    --bg-parchment: #f4ecd8;
+    --accent-copper: #b87333;
+    --text-dark: #2c2c2c;
+    --progress-bg: rgba(0, 0, 0, 0.1);
+}
+
+#explorer-card-root { white-space: normal; }
+
+.explorer-card {
+    width: 340px;
+    height: 215px;
+    background: var(--bg-parchment);
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    color: var(--text-dark);
+    position: relative;
+    border: 1px solid #e2d1a8;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0; height: 60px; }
+
+.avatar {
+    width: 50px; height: 50px; min-width: 50px;
+    border-radius: 50%;
+    background: #e2d1a8;
+    border: 2px solid var(--accent-copper);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+}
+.avatar svg { width: 60%; height: 60%; stroke: var(--accent-copper); stroke-width: 1.5; }
+
+.title-area { flex-grow: 1; }
+.title-area h2 {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 1.1rem; line-height: 1.1;
+    color: var(--text-dark);
+}
+
+.global-rank { font-style: italic; font-size: 0.75rem; color: #666; margin-top: 2px; }
+
+.stats-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.stat-group { margin-bottom: 0; }
+.stat-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.65rem; font-weight: bold; margin-bottom: 2px;
+    text-transform: uppercase; color: var(--text-dark);
+}
+.progress-bar-container { width: 100%; height: 6px; background: var(--progress-bg); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-copper), #e68a3e); transition: width 0.5s ease-in-out; }
+.next-goal { font-size: 0.6rem; color: #888; margin-top: 1px; text-align: right; display: none; }
+
+.footer-stats {
+    display: flex; justify-content: space-between;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding-top: 8px; font-size: 0.7rem; margin-top: 4px;
+    color: var(--text-dark);
+}
+
+.card-actions { margin-top: 20px; display: flex; justify-content: center; }
+.action-btn-print {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 20px;
+    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+    color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.action-btn-print:hover { background: #f9f9f9; transform: translateY(-1px); }
