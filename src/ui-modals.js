@@ -14,35 +14,34 @@ import { createIcons, icons } from 'lucide';
 export function showLegendModal() {
     const title = "Légende";
     const message = `
-    <div style="text-align: left; display: flex; flex-direction: column; gap: 15px;">
-        <div style="font-weight: 600; border-bottom: 1px solid var(--line); padding-bottom: 4px; margin-bottom: 4px;">Marqueurs</div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 24px; height: 24px; background: #FFFFFF; border-radius: 50%; border: 3px solid #10B981; box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);"></div>
+    <div class="legend-list">
+        <div class="legend-section-header">Marqueurs</div>
+        <div class="legend-item">
+            <div class="legend-marker-circle legend-marker-circle--visited"></div>
             <span><strong>Visité</strong> (Lieu marqué comme vu)</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 24px; height: 24px; background: #FFFFFF; border-radius: 50%; border: 3px solid #3B82F6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);"></div>
+        <div class="legend-item">
+            <div class="legend-marker-circle legend-marker-circle--planned"></div>
             <span><strong>Planifié</strong> (Ajouté à un circuit)</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 28px; height: 28px; display: flex; justify-content: center; align-items: center;">
-                <div style="width: 100%; height: 100%; background: #FEF08A; clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%); display: flex; justify-content: center; align-items: center; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25));">
-                </div>
+        <div class="legend-item">
+            <div class="legend-marker-star-wrapper">
+                <div class="legend-marker-star"></div>
             </div>
             <span><strong>Incontournable</strong> (Lieu VIP à ne pas manquer)</span>
         </div>
 
-        <div style="font-weight: 600; border-bottom: 1px solid var(--line); padding-bottom: 4px; margin-bottom: 4px; margin-top: 10px;">Lignes des Circuits</div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 40px; height: 4px; background: #EF4444; border-radius: 2px;"></div>
+        <div class="legend-section-header mt">Lignes des Circuits</div>
+        <div class="legend-item">
+            <div class="legend-line-sample legend-line-sample--straight"></div>
             <span><strong>Vol d'oiseau</strong> (Trajet direct non précis)</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 40px; height: 4px; background: #3B82F6; border-radius: 2px;"></div>
+        <div class="legend-item">
+            <div class="legend-line-sample legend-line-sample--gps"></div>
             <span><strong>Tracé réel</strong> (Chemin GPS précis à suivre)</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 40px; height: 4px; background: #10B981; border-radius: 2px;"></div>
+        <div class="legend-item">
+            <div class="legend-line-sample legend-line-sample--done"></div>
             <span><strong>Circuit terminé</strong> (Marqué comme fait)</span>
         </div>
     </div>`;
@@ -65,13 +64,11 @@ export function openRestoreModal() {
     }
 
     const html = `
-        <div style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+        <div class="modal-list">
             ${deletedCircuits.map(c => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--surface-muted); border-radius: 8px;">
-                    <span style="font-weight: 500; color: var(--ink); text-align: left;">${escapeXml(c.name)}</span>
-                    <button class="restore-btn" data-id="${c.id}" style="background: transparent; color: var(--ok); border: 1px solid var(--ok); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: 600;">
-                        Restaurer
-                    </button>
+                <div class="modal-list-item">
+                    <span class="modal-list-item-name">${escapeXml(c.name)}</span>
+                    <button class="restore-btn" data-id="${c.id}">Restaurer</button>
                 </div>
             `).join('')}
         </div>
@@ -117,20 +114,18 @@ export function openTrashModal() {
     );
 
     const html = `
-        <div style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+        <div class="modal-list">
             ${deletedFeatures.map(f => {
                 const name = getPoiName(f);
                 const id = getPoiId(f);
                 return `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--surface-muted); border-radius: 8px;">
-                    <span style="font-weight: 500; color: var(--ink); text-align: left;">${escapeXml(name)}</span>
-                    <button class="restore-poi-btn" data-id="${id}" style="background: transparent; color: var(--ok); border: 1px solid var(--ok); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: 600;">
-                        Restaurer
-                    </button>
+                <div class="modal-list-item">
+                    <span class="modal-list-item-name">${escapeXml(name)}</span>
+                    <button class="restore-poi-btn" data-id="${id}">Restaurer</button>
                 </div>
                 `;
             }).join('')}
-            ${deletedFeatures.length === 0 ? '<div style="padding:10px; color:var(--ink-soft);">Les lieux supprimés de la carte actuelle sont listés ici.</div>' : ''}
+            ${deletedFeatures.length === 0 ? '<div class="modal-list-empty">Les lieux supprimés de la carte actuelle sont listés ici.</div>' : ''}
         </div>
     `;
 
