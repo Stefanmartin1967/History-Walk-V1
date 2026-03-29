@@ -5,200 +5,6 @@ import { uploadPhotoForPoi } from './photo-upload.js';
 import { compressImage } from './photo-manager.js';
 import { createIcons, icons } from 'lucide';
 
-// --- STYLES INJECTION ---
-const styles = `
-    .photo-grid-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: var(--bg); /* Theme Aware Background */
-        z-index: 10050;
-        display: flex;
-        flex-direction: column;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.2s, visibility 0.2s;
-    }
-    .photo-grid-overlay.active {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    .photo-grid-header {
-        background: var(--surface);
-        padding: 8px 16px; /* Reduced Padding */
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--line);
-        color: var(--ink);
-        min-height: 50px; /* Reduced Height */
-        box-shadow: var(--shadow-soft);
-    }
-
-    .photo-grid-title-container {
-        flex: 1;
-        text-align: center;
-        overflow: hidden;
-    }
-
-    .photo-grid-title {
-        font-weight: 800;
-        font-size: 18px; /* Slightly Smaller Title */
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        line-height: 1.2;
-        color: var(--brand);
-    }
-
-    .photo-grid-subtitle {
-        font-size: 12px;
-        color: var(--ink-soft);
-        font-weight: 500;
-        margin-top: 2px;
-    }
-
-    .photo-grid-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 8px; /* Reduced Padding */
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--brand);
-        transition: background 0.2s;
-    }
-    .photo-grid-btn:hover {
-        background: var(--surface-muted);
-    }
-    .photo-grid-btn .lucide {
-        width: 24px; /* Slightly Smaller Icons */
-        height: 24px;
-    }
-
-    .photo-grid-btn.save-btn {
-        color: var(--brand);
-    }
-    .photo-grid-btn.upload-btn {
-        color: #ef4444;
-    }
-    .photo-grid-btn.close-btn {
-        color: var(--brand);
-    }
-
-    .photo-grid-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .photo-grid-content {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-auto-rows: 1fr;
-        gap: 10px;
-        align-content: start;
-        background: var(--bg); /* Theme Match */
-    }
-
-    @media (min-width: 1024px) {
-        .photo-grid-content {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-
-    .photo-card {
-        position: relative;
-        background: var(--surface-muted);
-        border-radius: 4px;
-        overflow: hidden;
-        aspect-ratio: 1;
-        border: 2px solid transparent;
-        cursor: grab;
-        transition: transform 0.1s;
-    }
-    .photo-card:active {
-        cursor: grabbing;
-    }
-    .photo-card.dragging {
-        opacity: 0.5;
-        border-color: var(--brand);
-    }
-
-    .photo-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-
-    /* Photo Overlay Actions */
-    .photo-card-actions {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 8px;
-        background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-        display: flex;
-        justify-content: flex-end;
-        align-items: flex-end;
-        height: 40px;
-    }
-
-    .photo-card-btn {
-        background: rgba(255,255,255,0.2);
-        border: none;
-        color: white;
-        cursor: pointer;
-        padding: 6px;
-        border-radius: 4px;
-        backdrop-filter: blur(2px);
-    }
-    .photo-card-btn:hover {
-        background: #ef4444;
-    }
-    .photo-card-btn .lucide {
-        width: 18px;
-        height: 18px;
-    }
-
-    /* Placeholders/Status */
-    .photo-card-new-badge {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        background: var(--brand);
-        color: white;
-        font-size: 10px;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-weight: bold;
-        z-index: 2;
-    }
-
-    /* Message Empty */
-    .photo-grid-empty {
-        grid-column: 1 / -1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        color: var(--ink-soft);
-        padding: 50px;
-        text-align: center;
-    }
-`;
-
-// Inject Styles
-const styleEl = document.createElement('style');
-styleEl.textContent = styles;
-document.head.appendChild(styleEl);
-
 // --- STATE ---
 let currentGridPoiId = null;
 let currentGridPhotos = [];
@@ -224,10 +30,9 @@ function initDOM() {
     const header = document.createElement('div');
     header.className = 'photo-grid-header';
 
-    // --- Left: Add + Close ---
+    // --- Left: Add ---
     const leftGroup = document.createElement('div');
-    leftGroup.style.display = 'flex';
-    leftGroup.style.gap = '10px';
+    leftGroup.className = 'photo-grid-btn-group';
 
     // ADD BUTTON (Image Up)
     btnAdd = document.createElement('button');
@@ -253,10 +58,9 @@ function initDOM() {
     titleContainer.appendChild(headerTitle);
     titleContainer.appendChild(headerSubtitle);
 
-    // --- Right: Save ---
+    // --- Right: Save + Close ---
     const rightGroup = document.createElement('div');
-    rightGroup.style.display = 'flex';
-    rightGroup.style.gap = '10px';
+    rightGroup.className = 'photo-grid-btn-group';
 
     // SAVE/UPLOAD BUTTON
     btnSave = document.createElement('button');
@@ -267,7 +71,7 @@ function initDOM() {
     btnClose = document.createElement('button');
     btnClose.className = 'photo-grid-btn close-btn';
     btnClose.title = "Fermer";
-    btnClose.innerHTML = `<i data-lucide="x"></i>`; // Standard X icon
+    btnClose.innerHTML = `<i data-lucide="x"></i>`;
     btnClose.onclick = () => closePhotoGrid(false);
 
     rightGroup.appendChild(btnSave);
@@ -298,7 +102,7 @@ function initDOM() {
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
     fileInput.multiple = true;
-    fileInput.style.display = 'none';
+    fileInput.className = 'photo-file-input';
     fileInput.onchange = handleFileSelect;
 
     gridOverlay.appendChild(header);
@@ -328,13 +132,11 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
 
         // Determine Mode Title
         if (state.isAdmin) {
-             headerSubtitle.textContent = "(Mode GOD / Admin)";
-             headerSubtitle.style.color = "#ef4444";
-             headerSubtitle.style.display = "block";
+            headerSubtitle.textContent = "(Mode GOD / Admin)";
+            headerSubtitle.classList.add('admin-mode');
         } else {
-             // User requested to remove "(Mode Édition)"
-             headerSubtitle.textContent = "";
-             headerSubtitle.style.display = "none";
+            headerSubtitle.textContent = "";
+            headerSubtitle.classList.remove('admin-mode');
         }
 
         // Load Photos
@@ -403,9 +205,9 @@ function renderGrid() {
     if (currentGridPhotos.length === 0) {
         gridContent.innerHTML = `
             <div class="photo-grid-empty">
-                <i data-lucide="image" style="width:48px; height:48px; opacity:0.5; margin-bottom:10px;"></i>
+                <i data-lucide="image"></i>
                 <div>Aucune photo</div>
-                <div style="font-size:12px; margin-top:5px;">Utilisez le bouton + pour ajouter</div>
+                <div class="photo-grid-empty-hint">Utilisez le bouton + pour ajouter</div>
             </div>
         `;
         createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
@@ -548,11 +350,11 @@ function getDragAfterElement(container, y, x) {
 function updateSaveButton() {
     if (state.isAdmin) {
         btnSave.title = "Uploader sur GitHub";
-        btnSave.className = 'photo-grid-btn upload-btn'; // Red/Admin class
+        btnSave.className = 'photo-grid-btn upload-btn';
         btnSave.innerHTML = `<i data-lucide="cloud-upload"></i>`;
     } else {
         btnSave.title = "Sauvegarder localement";
-        btnSave.className = 'photo-grid-btn save-btn'; // Brand/User class
+        btnSave.className = 'photo-grid-btn save-btn';
         btnSave.innerHTML = `<i data-lucide="save"></i>`;
     }
 }
