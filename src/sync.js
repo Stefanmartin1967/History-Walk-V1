@@ -44,11 +44,11 @@ export async function generateSyncQR() {
 
         // 4. Affichage Modale
         const html = `
-            <div style="display:flex; flex-direction:column; align-items:center; gap:15px;">
-                <img src="${url}" style="width:250px; height:250px; border-radius:10px; border:1px solid var(--line);">
-                <div style="text-align:center;">
-                    <p style="font-weight:bold; color:var(--ink); margin-bottom:5px;">${visitedIndices.length} lieux visités</p>
-                    <p style="color:var(--ink-soft); font-size:14px;">
+            <div class="sync-qr-container">
+                <img src="${url}" class="sync-qr-img">
+                <div class="sync-qr-info">
+                    <p class="sync-visited-count">${visitedIndices.length} lieux visités</p>
+                    <p class="sync-instructions">
                         Sur l'autre appareil, allez dans <b>Menu > Outils > Scanner</b><br>
                         pour récupérer cette progression.
                     </p>
@@ -75,24 +75,11 @@ export async function startGenericScanner(onSuccessCallback) {
 
     const overlay = document.createElement('div');
     overlay.id = 'qr-scanner-overlay';
-    // Style inline de secours au cas où le CSS n'est pas chargé
-    overlay.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: #000; z-index: 99999; display: flex; flex-direction: column;
-    `;
 
     overlay.innerHTML = `
-        <div id="qr-reader" style="width:100%; flex-grow:1;"></div>
-        <button id="close-scanner-btn" style="
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(0,0,0,0.5); color: white; border: none;
-            width: 40px; height: 40px; border-radius: 50%;
-            font-size: 24px; cursor: pointer; z-index: 100000;
-            display: flex; align-items: center; justify-content: center;
-        ">×</button>
-        <div style="position:absolute; bottom:50px; left:0; width:100%; text-align:center; color:white; pointer-events:none; text-shadow:0 2px 4px rgba(0,0,0,0.8);">
-            Pointez la caméra vers un QR Code
-        </div>
+        <div id="qr-reader"></div>
+        <button id="close-scanner-btn" class="qr-scanner-close-btn">×</button>
+        <div class="qr-scanner-hint">Pointez la caméra vers un QR Code</div>
     `;
     document.body.appendChild(overlay);
 

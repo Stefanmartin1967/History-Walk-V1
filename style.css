@@ -3973,3 +3973,122 @@ input[type=range] {
 .circuit-gpx-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .btn-gpx-download { text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 14px; }
 .circuit-no-gpx-msg { text-align: center; padding: 20px; color: var(--ink-soft); }
+
+/* ================================================
+   UI-PHOTO-VIEWER.JS
+   ================================================ */
+
+#photo-viewer {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--bg);
+    z-index: 21000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.viewer-toolbar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 21010;
+    color: var(--ink);
+    box-shadow: var(--shadow-soft);
+}
+
+.viewer-controls { display: flex; gap: 20px; align-items: center; }
+
+.viewer-title {
+    font-weight: 700;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+    color: var(--brand);
+}
+
+.close-viewer-btn {
+    background: none;
+    border: none;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.close-viewer-btn:hover { background: var(--surface-muted); color: var(--danger); }
+.close-viewer-btn svg { width: 28px; height: 28px; }
+
+/* ================================================
+   GHOST MARKER POPUP (searchManager.js + desktopMode.js)
+   ================================================ */
+
+.ghost-popup {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.ghost-popup-title   { font-weight: bold; margin-bottom: 5px; }
+.ghost-popup-coords  { font-size: 11px; color: #888; margin-bottom: 5px; }
+.ghost-popup-hint    { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; }
+.ghost-popup-btn     { background: var(--brand); color: white; padding: 4px 8px; font-size: 12px; cursor: pointer; margin: 0 auto; }
+
+/* ================================================
+   SYNC.JS — QR Sync & Scanner
+   ================================================ */
+
+.sync-qr-container  { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.sync-qr-img        { width: 250px; height: 250px; border-radius: 10px; border: 1px solid var(--line); }
+.sync-qr-info       { text-align: center; }
+.sync-visited-count { font-weight: bold; color: var(--ink); margin-bottom: 5px; }
+.sync-instructions  { color: var(--ink-soft); font-size: 14px; }
+
+#qr-scanner-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+}
+
+#qr-reader { width: 100%; flex-grow: 1; }
+
+.qr-scanner-close-btn {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-scanner-hint {
+    position: absolute;
+    bottom: 50px; left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
