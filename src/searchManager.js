@@ -109,17 +109,13 @@ export function setupSmartSearch() {
 
                     // 3. Contenu de la popup (Style harmonisé avec le clic droit)
                     const popupContent = document.createElement('div');
-                    popupContent.style.textAlign = 'center';
-                    popupContent.style.display = 'flex';
-                    popupContent.style.flexDirection = 'column';
-                    popupContent.style.alignItems = 'center';
-                    popupContent.style.justifyContent = 'center';
+                    popupContent.className = 'ghost-popup';
 
                     popupContent.innerHTML = `
-                        <div style="font-weight:bold; margin-bottom:5px;">Nouveau Lieu ?</div>
-                        <div id="ghost-marker-coords" style="font-size:11px; color:#888; margin-bottom:5px;">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
-                        <div style="font-size:12px; color:var(--ink-soft); margin-bottom:8px;">Glissez pour ajuster</div>
-                        <button id="btn-create-poi-ghost" class="action-btn" style="background:var(--brand); color:white; padding:4px 8px; font-size:12px; cursor:pointer; margin: 0 auto;">
+                        <div class="ghost-popup-title">Nouveau Lieu ?</div>
+                        <div id="ghost-marker-coords" class="ghost-popup-coords">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
+                        <div class="ghost-popup-hint">Glissez pour ajuster</div>
+                        <button id="btn-create-poi-ghost" class="action-btn ghost-popup-btn">
                             Valider cette position
                         </button>
                     `;

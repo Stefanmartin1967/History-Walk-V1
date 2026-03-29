@@ -18,82 +18,11 @@ let currentViewerPoiId = null;
 export function initPhotoViewer() {
     const photoViewer = getEl('photo-viewer');
 
-    // OVERRIDE VIEWER STYLES (Themed & High Z-Index)
-    if (photoViewer) {
-        photoViewer.style.cssText = `
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg); /* Theme Background */
-            z-index: 21000; /* Highest Priority */
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        `;
-    }
-
     // Create Toolbar if missing
     if (photoViewer && !document.getElementById('viewer-toolbar')) {
         const toolbar = document.createElement('div');
         toolbar.id = 'viewer-toolbar';
         toolbar.className = 'viewer-toolbar';
-
-        // CSS Injection for Viewer Specifics
-        const style = document.createElement('style');
-        style.textContent = `
-            .viewer-toolbar {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                padding: 10px 20px;
-                background: var(--surface); /* Theme Surface */
-                border-bottom: 1px solid var(--line);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                z-index: 21010; /* Above Viewer */
-                color: var(--ink); /* Theme Ink */
-                box-shadow: var(--shadow-soft);
-            }
-            .viewer-controls {
-                display: flex;
-                gap: 20px;
-                align-items: center;
-            }
-            .viewer-title {
-                font-weight: 700;
-                font-size: 16px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 60%;
-                color: var(--brand);
-            }
-
-            /* Close Button Styled */
-            .close-viewer-btn {
-                background: none;
-                border: none;
-                color: var(--ink);
-                cursor: pointer;
-                padding: 8px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: background 0.2s;
-            }
-            .close-viewer-btn:hover {
-                background: var(--surface-muted);
-                color: var(--danger);
-            }
-            .close-viewer-btn svg {
-                width: 28px;
-                height: 28px;
-            }
-        `;
-        document.head.appendChild(style);
 
         toolbar.innerHTML = `
             <div class="viewer-title" id="viewer-title"></div>

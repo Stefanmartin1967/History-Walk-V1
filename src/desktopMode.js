@@ -353,16 +353,12 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
     }).addTo(mapInstance);
 
     const popupContent = document.createElement('div');
-    popupContent.style.textAlign = 'center';
-    popupContent.style.display = 'flex';
-    popupContent.style.flexDirection = 'column';
-    popupContent.style.alignItems = 'center';
-    popupContent.style.justifyContent = 'center';
+    popupContent.className = 'ghost-popup';
     popupContent.innerHTML = `
-        <div style="font-weight:bold; margin-bottom:5px;">Nouveau Lieu ?</div>
-        <div id="desktop-draft-coords" style="font-size:11px; color:#888; margin-bottom:5px;">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
-        <div style="font-size:12px; color:#666; margin-bottom:8px;">Glissez pour ajuster.</div>
-        <button id="btn-validate-desktop-poi" class="action-btn" style="background:var(--brand); color:white; padding:4px 8px; font-size:12px; cursor:pointer; margin: 0 auto;">
+        <div class="ghost-popup-title">Nouveau Lieu ?</div>
+        <div id="desktop-draft-coords" class="ghost-popup-coords">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
+        <div class="ghost-popup-hint">Glissez pour ajuster.</div>
+        <button id="btn-validate-desktop-poi" class="action-btn ghost-popup-btn">
             Valider cette position
         </button>
     `;
