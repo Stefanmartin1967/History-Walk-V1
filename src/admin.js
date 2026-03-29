@@ -614,22 +614,19 @@ export function showGitHubDeleteModal() {
     });
 
     message.innerHTML = `
-        <div style="text-align: left; overflow-y: auto; padding-right: 5px; white-space: normal !important;">
-            <p style="margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft);">
-                Cette fonction supprime un circuit officiel (fichier GPX ou JSON) directement sur GitHub.
-                Cela déclenchera la mise à jour de l'index du site.
-            </p>
+        <div class="admin-form-body">
+            <p>Cette fonction supprime un circuit officiel (fichier GPX ou JSON) directement sur GitHub.
+                Cela déclenchera la mise à jour de l'index du site.</p>
 
-            <label style="display:block; margin-bottom: 5px; font-weight: 600;">GitHub Token (PAT)</label>
-            <input type="password" id="gh-del-token" value="${storedToken}" placeholder="ghp_..."
-                   style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+            <label class="admin-form-label">GitHub Token (PAT)</label>
+            <input type="password" id="gh-del-token" value="${storedToken}" placeholder="ghp_..." class="admin-form-input">
 
-            <label style="display:block; margin-bottom: 5px; font-weight: 600;">Circuit à supprimer</label>
-            <select id="gh-del-circuit" style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+            <label class="admin-form-label">Circuit à supprimer</label>
+            <select id="gh-del-circuit" class="admin-form-input">
                 ${optionsHtml}
             </select>
 
-            <div id="gh-del-status" style="margin-top: 10px; font-size: 0.9em; color: var(--danger);"></div>
+            <div id="gh-del-status" class="admin-form-status"></div>
         </div>
     `;
 
@@ -647,8 +644,7 @@ export function showGitHubDeleteModal() {
     // Bouton Supprimer
     const btnDelete = document.createElement('button');
     btnDelete.className = 'custom-modal-btn primary';
-    btnDelete.style.backgroundColor = "var(--danger)";
-    btnDelete.style.color = "white";
+    btnDelete.classList.add('danger');
     btnDelete.textContent = "Supprimer définitivement";
 
     btnDelete.onclick = async () => {
@@ -741,21 +737,17 @@ export function showGitHubUploadModal() {
     // 2. Configuration du contenu
     title.textContent = "Mise en ligne GitHub";
     message.innerHTML = `
-        <div style="text-align: left;">
-            <p style="margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft);">
-                Cette fonction permet d'ajouter un circuit officiel directement sur GitHub.
-                Cela déclenchera automatiquement la mise à jour du site.
-            </p>
+        <div class="admin-form-body">
+            <p>Cette fonction permet d'ajouter un circuit officiel directement sur GitHub.
+                Cela déclenchera automatiquement la mise à jour du site.</p>
 
-            <label style="display:block; margin-bottom: 5px; font-weight: 600;">GitHub Token (PAT)</label>
-            <input type="password" id="gh-token" value="${storedToken}" placeholder="ghp_..."
-                   style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+            <label class="admin-form-label">GitHub Token (PAT)</label>
+            <input type="password" id="gh-token" value="${storedToken}" placeholder="ghp_..." class="admin-form-input">
 
-            <label style="display:block; margin-bottom: 5px; font-weight: 600;">Fichier Circuit (.json / .gpx)</label>
-            <input type="file" id="gh-file-input" accept=".json,.gpx"
-                   style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+            <label class="admin-form-label">Fichier Circuit (.json / .gpx)</label>
+            <input type="file" id="gh-file-input" accept=".json,.gpx" class="admin-form-input">
 
-            <div id="gh-status" style="margin-top: 10px; font-size: 0.9em; color: var(--primary);"></div>
+            <div id="gh-status" class="admin-form-status admin-form-status--info"></div>
         </div>
     `;
 
@@ -814,10 +806,10 @@ export function showGitHubUploadModal() {
             // Le mieux serait de restaurer la modale d'upload si annulé, mais pour l'instant on ferme tout si annulé.
 
             const warningMsg = `
-                <div style="text-align:left; color:var(--ink);">
-                    <p style="margin-bottom:10px;">Le fichier <strong>${file.name}</strong> ne semble pas être un circuit (.gpx) ou des données (.json).</p>
-                    <p style="font-size:0.9em; color:var(--danger);">⚠️ L'envoi de fichiers exécutables ou inconnus peut compromettre la sécurité de l'application.</p>
-                    <p style="margin-top:10px;">Voulez-vous vraiment continuer l'upload ?</p>
+                <div class="admin-file-warning-body">
+                    <p>Le fichier <strong>${file.name}</strong> ne semble pas être un circuit (.gpx) ou des données (.json).</p>
+                    <p class="admin-file-warning-danger">⚠️ L'envoi de fichiers exécutables ou inconnus peut compromettre la sécurité de l'application.</p>
+                    <p>Voulez-vous vraiment continuer l'upload ?</p>
                 </div>
             `;
 
@@ -840,7 +832,7 @@ export function showGitHubUploadModal() {
             // Si confirmé, on doit rouvrir "virtuellement" le contexte d'upload ou juste continuer ?
             // showConfirm a fermé la modale. On a perdu le statut "Envoi en cours..." visuel.
             // On peut réafficher une modale de statut simple.
-            showAlert("Upload en cours", `<div style="text-align:center; padding:20px;"><i data-lucide="loader-2" class="spin" style="width:32px; height:32px;"></i><br>Envoi du fichier exceptionnel...</div>`, null);
+            showAlert("Upload en cours", `<div class="admin-upload-loading"><i data-lucide="loader-2" class="spin lucide"></i><br>Envoi du fichier exceptionnel...</div>`, null);
         }
 
         // Save token

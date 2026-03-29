@@ -4447,3 +4447,41 @@ input[type=range] {
 .maint-welcome-title { margin-bottom: 10px; }
 .maint-welcome-desc { color: var(--hw-ink-soft); max-width: 500px; margin: 0 auto 30px auto; }
 .maint-start-btn { padding: 12px 24px; font-size: 1rem; }
+
+/* ================================================
+   ADMIN.JS — GitHub upload / delete modals
+   ================================================ */
+
+.admin-form-body { text-align: left; overflow-y: auto; padding-right: 5px; white-space: normal !important; }
+.admin-form-body p { margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft); }
+.admin-form-label { display: block; margin-bottom: 5px; font-weight: 600; }
+.admin-form-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+.admin-form-status       { margin-top: 10px; font-size: 0.9em; color: var(--danger); }
+.admin-form-status--info { color: var(--primary); }
+.custom-modal-btn.danger { background-color: var(--danger); color: white; }
+
+.admin-file-warning-body { text-align: left; color: var(--ink); }
+.admin-file-warning-body p { margin-bottom: 10px; }
+.admin-file-warning-danger { font-size: 0.9em; color: var(--danger); }
+.admin-file-warning-body .admin-upload-loading { text-align: center; padding: 20px; }
+.admin-upload-loading .lucide { width: 32px; height: 32px; }
+
+/* ================================================
+   ADMIN-FUSION-STANDALONE.JS
+   ================================================ */
+
+.fusion-standalone-poi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.fusion-standalone-label { font-size: 11px; color: var(--ink-light); font-weight: 600; }
+.fusion-standalone-badge-key { min-width: 60px; text-align: center; }
+.fusion-standalone-del-warning { background: #FEF2F2; color: #991B1B; }
+.fusion-standalone-error-icon { width: 48px; height: 48px; color: var(--danger); }
+.poi-name-row { display: flex; justify-content: space-between; align-items: center; }
+.icon-xs    { width: 12px; height: 12px; }
+.icon-sm-14 { width: 14px; height: 14px; }

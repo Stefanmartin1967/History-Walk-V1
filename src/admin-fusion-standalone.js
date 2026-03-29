@@ -61,7 +61,7 @@ async function init() {
         analyzeData();
     } catch (e) {
         console.error(e);
-        DOM.loading.innerHTML = `<i data-lucide="alert-triangle" style="width:48px;height:48px;color:var(--danger);"></i><br><br>Erreur: ${e.message}`;
+        DOM.loading.innerHTML = `<i data-lucide="alert-triangle" class="fusion-standalone-error-icon lucide"></i><br><br>Erreur: ${e.message}`;
         lucide.createIcons();
     }
 }
@@ -245,12 +245,12 @@ function renderDashboard() {
             <div class="change-item" id="item-${item.id}">
                 <div class="checkbox-wrapper"><input type="checkbox" checked id="chk-${badgeClass}-${idx}" data-id="${item.id}" data-type="${badgeClass}"></div>
                 <div class="change-content">
-                    <div class="poi-name" style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="poi-name poi-name-row">
                         <span>${escapeHtml(item.name)}</span>
                         ${badgeClass === 'badge-del' ?
-                            `<button class="btn-restore" data-action="restore" data-id="${item.id}"><i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Restaurer localement</button>`
+                            `<button class="btn-restore" data-action="restore" data-id="${item.id}"><i data-lucide="rotate-ccw" class="icon-xs lucide"></i> Restaurer localement</button>`
                             : badgeClass !== 'badge-del' ?
-                            `<button class="btn-edit-poi" data-id="${item.id}" data-type="${badgeClass}" title="Éditer avec l'éditeur riche" aria-label="Éditer avec l'éditeur riche"><i data-lucide="edit-3" style="width:14px;height:14px;"></i> Éditer / Vérifier</button>`
+                            `<button class="btn-edit-poi" data-id="${item.id}" data-type="${badgeClass}" title="Éditer avec l'éditeur riche" aria-label="Éditer avec l'éditeur riche"><i data-lucide="edit-3" class="icon-sm-14 lucide"></i> Éditer / Vérifier</button>`
                             : ''}
                     </div>
                     ${renderItemFn(item, idx)}
@@ -262,13 +262,13 @@ function renderDashboard() {
 
     // 1. Nouveaux
     renderSection(DOM.listNew, 'Nouveaux Lieux à Créer', 'badge-new', newPois, (item, idx) => `
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+        <div class="fusion-standalone-poi-grid">
             <div>
-                <label style="font-size:11px; color:var(--ink-light); font-weight:600;">Nom FR</label>
+                <label class="fusion-standalone-label">Nom FR</label>
                 <input type="text" class="new-poi-input" id="name-new-${idx}" value="${escapeHtml(item.name)}">
             </div>
             <div>
-                <label style="font-size:11px; color:var(--ink-light); font-weight:600;">Nom AR (Optionnel)</label>
+                <label class="fusion-standalone-label">Nom AR (Optionnel)</label>
                 <input type="text" class="new-poi-input" id="name-ar-new-${idx}" placeholder="الاسم بالعربية" dir="rtl">
             </div>
         </div>
@@ -287,7 +287,7 @@ function renderDashboard() {
     renderSection(DOM.listContent, 'Mises à jour Contenu', 'badge-content', contentUpdates, (item) => {
         return item.changes.map(c => `
             <div class="change-detail">
-                <span class="badge badge-content" style="min-width:60px; text-align:center;">${escapeHtml(c.displayKey)}</span>
+                <span class="badge badge-content fusion-standalone-badge-key">${escapeHtml(c.displayKey)}</span>
                 <span class="old-val">${escapeHtml(String(c.old))}</span>
                 <span class="arrow">➜</span>
                 <span class="new-val">${escapeHtml(String(c.new))}</span>
@@ -297,7 +297,7 @@ function renderDashboard() {
 
     // 4. Suppressions
     renderSection(DOM.listDel, 'Suppressions Demandées', 'badge-del', deletes, (item) => `
-        <div class="change-detail" style="background:#FEF2F2; color:#991B1B;">
+        <div class="change-detail fusion-standalone-del-warning">
             ⚠️ Ce lieu sera définitivement supprimé de la carte officielle.
         </div>
     `);
