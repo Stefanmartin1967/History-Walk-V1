@@ -96,13 +96,10 @@ export function showAdminLoginModal() {
 
     title.textContent = "Connexion Admin";
     message.innerHTML = `
-        <div style="text-align: left;">
-            <p style="margin-bottom: 15px; color: var(--ink-soft);">
-                Veuillez entrer le mot de passe administrateur.
-            </p>
-            <input type="password" id="admin-password-input" placeholder="Mot de passe..."
-                   style="width: 100%; padding: 10px; border: 1px solid var(--line); border-radius: 6px; font-size: 16px;">
-            <div id="login-error-msg" style="color: var(--danger); margin-top: 10px; font-size: 0.9em; min-height: 1.2em;"></div>
+        <div class="admin-login-body">
+            <p>Veuillez entrer le mot de passe administrateur.</p>
+            <input type="password" id="admin-password-input" placeholder="Mot de passe..." class="admin-login-input">
+            <div id="login-error-msg" class="admin-login-error"></div>
         </div>
     `;
 
@@ -491,36 +488,28 @@ async function publishMapToGitHub() {
 function showRankTable() {
     // Construction du tableau HTML pour les Animaux (Distance)
     let tableRows = ANIMAL_RANKS.map(r => `
-        <tr style="border-bottom: 1px solid var(--line);">
-            <td style="padding: 10px; font-size: 24px;">
-                <i data-lucide="${r.icon}"></i>
-            </td>
-            <td style="padding: 10px; text-align: left; font-weight: 600; color: var(--ink);">
-                ${r.title}
-            </td>
-            <td style="padding: 10px; text-align: right; color: var(--ink-soft); font-family: monospace;">
-                ${r.min} km
-            </td>
+        <tr>
+            <td><i data-lucide="${r.icon}"></i></td>
+            <td>${r.title}</td>
+            <td>${r.min} km</td>
         </tr>
     `).join('');
 
     const html = `
-        <div style="max-height: 60vh; overflow-y: auto;">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead style="background: var(--surface-muted); position: sticky; top: 0;">
+        <div class="rank-table-wrapper">
+            <table class="rank-table">
+                <thead>
                     <tr>
-                        <th style="padding: 10px;">Badge</th>
-                        <th style="padding: 10px; text-align: left;">Titre</th>
-                        <th style="padding: 10px; text-align: right;">Requis</th>
+                        <th>Badge</th>
+                        <th>Titre</th>
+                        <th>Requis</th>
                     </tr>
                 </thead>
                 <tbody>
                     ${tableRows}
                 </tbody>
             </table>
-            <p style="margin-top: 15px; font-size: 12px; color: var(--ink-soft); font-style: italic;">
-                Les rangs sont basés sur la distance totale parcourue (circuits terminés).
-            </p>
+            <p class="rank-table-note">Les rangs sont basés sur la distance totale parcourue (circuits terminés).</p>
         </div>
     `;
 
@@ -543,18 +532,13 @@ export function showGitHubConfigModal() {
     const storedToken = getStoredToken() || '';
 
     const html = `
-        <div style="text-align: left;">
-            <p style="margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft);">
-                Configurez votre Token d'accès personnel (PAT) pour autoriser l'application à publier sur GitHub depuis ce navigateur.
-            </p>
+        <div class="admin-github-body">
+            <p>Configurez votre Token d'accès personnel (PAT) pour autoriser l'application à publier sur GitHub depuis ce navigateur.</p>
 
-            <label style="display:block; margin-bottom: 5px; font-weight: 600;">GitHub Token (PAT)</label>
-            <input type="password" id="gh-config-token" value="${storedToken}" placeholder="ghp_..."
-                   style="width: 100%; padding: 8px; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 15px;">
+            <label class="admin-github-label">GitHub Token (PAT)</label>
+            <input type="password" id="gh-config-token" value="${storedToken}" placeholder="ghp_..." class="admin-github-input">
 
-            <div style="font-size: 0.8em; color: var(--ink-soft);">
-                Ce token est stocké uniquement dans votre navigateur local.
-            </div>
+            <div class="admin-github-note">Ce token est stocké uniquement dans votre navigateur local.</div>
         </div>
     `;
 

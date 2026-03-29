@@ -145,9 +145,9 @@ export function showPrompt(titleText, messageText, defaultValue = "") {
         title.textContent = titleText;
         // On construit le HTML : Message + Input
         message.innerHTML = `
-            <div style="display:flex; flex-direction:column; gap:10px;">
+            <div class="modal-prompt-body">
                 <span>${messageText}</span>
-                <input type="text" id="custom-modal-input" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; font-size:16px;">
+                <input type="text" id="custom-modal-input" class="modal-prompt-input">
             </div>
         `;
 

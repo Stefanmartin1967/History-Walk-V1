@@ -51,7 +51,7 @@ function setupFileInput(inputElement, nameDisplayId, boxId, isSource) {
 
         const nameDisplay = document.getElementById(nameDisplayId);
         const box = document.getElementById(boxId);
-        nameDisplay.innerHTML = `<span style="color:var(--ink);">Chargement...</span>`;
+        nameDisplay.innerHTML = `<span class="fusion-name-loading">Chargement...</span>`;
 
         try {
             const text = await file.text();
@@ -60,20 +60,19 @@ function setupFileInput(inputElement, nameDisplayId, boxId, isSource) {
             if (isSource) {
                 if (!json.features) throw new Error("Pas de 'features' trouvé.");
                 sourceData = json;
-                nameDisplay.innerHTML = `<span style="color:var(--ok);">✅ ${file.name} (${json.features.length} POIs)</span>`;
+                nameDisplay.innerHTML = `<span class="fusion-name-ok">✅ ${file.name} (${json.features.length} POIs)</span>`;
             } else {
                 if (!json.userData) throw new Error("Backup invalide.");
                 backupData = json;
                 const count = Object.keys(json.userData || {}).length;
-                nameDisplay.innerHTML = `<span style="color:var(--ok);">✅ ${file.name} (${count} entrées)</span>`;
+                nameDisplay.innerHTML = `<span class="fusion-name-ok">✅ ${file.name} (${count} entrées)</span>`;
             }
 
-            box.classList.add('active');
-            box.style.borderColor = "var(--ok)";
+            box.classList.add('active', 'box-ok');
             updateAnalyzeButton();
         } catch (err) {
             console.error(err);
-            nameDisplay.innerHTML = `<span style="color:var(--danger);">❌ Erreur: ${err.message}</span>`;
+            nameDisplay.innerHTML = `<span class="fusion-name-error">❌ Erreur: ${err.message}</span>`;
             if (isSource) sourceData = null; else backupData = null;
             updateAnalyzeButton();
         }
@@ -172,18 +171,18 @@ function renderDashboard() {
             <div class="change-content">
                 <div class="poi-name">Nouveau Lieu <span class="badge badge-new">Création</span></div>
 
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:5px;">
+                <div class="fusion-poi-grid">
                     <div>
-                        <label style="font-size:11px; color:#64748B;">Nom FR</label>
+                        <label class="fusion-label">Nom FR</label>
                         <input type="text" class="new-poi-input" id="name-new-${idx}" value="${escapeHtml(item.proposedName)}">
                     </div>
                     <div>
-                        <label style="font-size:11px; color:#64748B;">Nom AR (Optionnel)</label>
-                        <input type="text" class="new-poi-input" id="name-ar-new-${idx}" placeholder="الاسم بالعربية" dir="rtl" style="text-align:right;">
+                        <label class="fusion-label">Nom AR (Optionnel)</label>
+                        <input type="text" class="new-poi-input fusion-input-rtl" id="name-ar-new-${idx}" placeholder="الاسم بالعربية" dir="rtl">
                     </div>
                 </div>
 
-                ${item.proposedDesc ? `<div class="change-detail"><span style="font-style:italic">Note mobile : ${escapeHtml(item.proposedDesc)}</span></div>` : ''}
+                ${item.proposedDesc ? `<div class="change-detail"><span class="fusion-name-note">Note mobile : ${escapeHtml(item.proposedDesc)}</span></div>` : ''}
             </div>
         </div>`);
 
