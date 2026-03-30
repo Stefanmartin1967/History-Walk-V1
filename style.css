@@ -3822,8 +3822,8 @@ input[type=range] {
 .rank-section-label:first-child { margin-top: 0; }
 
 /* Rank tabs */
-.rank-tabs-wrapper { width: 100%; }
-.rank-tabs-nav { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid var(--line); padding-bottom: 0; }
+.rank-tabs-wrapper { width: 100%; white-space: normal; }
+.rank-tabs-nav { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid var(--line); padding-bottom: 0; }
 .rank-tab-btn {
     flex: 1;
     padding: 8px 6px;
@@ -3842,7 +3842,7 @@ input[type=range] {
 .rank-tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); background: none; }
 .rank-tab-panel { display: none; }
 .rank-tab-panel.active { display: block; }
-.rank-tab-hint { font-size: 11px; color: var(--ink-soft); font-style: italic; margin: 0 0 10px; }
+.rank-tab-hint { font-size: 11px; color: var(--ink-soft); font-style: italic; margin: 0 0 8px; }
 .rank-dot { display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--line); vertical-align: middle; }
 
 /* ================================================
