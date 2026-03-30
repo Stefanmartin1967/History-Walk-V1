@@ -212,7 +212,7 @@ function openZonesModalPC() {
     sortedZones.forEach(zone => {
         const btn = document.createElement('button');
         btn.className = 'zone-modal-btn';
-        btn.innerHTML = `<span>${zone}</span><span class="zone-count">${zoneCounts[zone]}</span>`;
+        btn.innerHTML = `<span>${escapeHtml(zone)}</span><span class="zone-count">${zoneCounts[zone]}</span>`;
 
         if (state.activeFilters && state.activeFilters.zone === zone) {
             btn.classList.add('active');
