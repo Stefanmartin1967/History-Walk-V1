@@ -163,4 +163,4 @@ const updateSW = registerSW({
     onOfflineReady() {
         console.log("Application prête pour le mode hors-ligne !");
     },
-});window.state = state; window.getPoiId = getPoiId;
+});
