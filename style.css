@@ -2447,11 +2447,11 @@ input[type=range] {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 16px;
-    margin-right: -16px; /* Pour coller au bord droit */
-    margin-top: -16px;   /* Pour coller en haut */
-    margin-bottom: -16px; /* Pour coller en bas */
-    align-self: stretch; /* Remplace height: calc(100% + 32px) pour plus de robustesse */
+    padding: 12px;
+    margin-right: -12px; /* Suit le padding mobile (12px) — identique tous thèmes */
+    margin-top: -12px;
+    margin-bottom: -12px;
+    align-self: stretch;
 }
 
 /* Cible 3 : Bouton Check/Visité (remplace padding:10px..., flex..., etc.) */
