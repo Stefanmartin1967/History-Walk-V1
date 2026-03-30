@@ -43,7 +43,6 @@ function setupUnsavedChangesWarning() {
 }
 
 async function initializeApp() {
-    console.log("🚀 Version chargée :", APP_VERSION);
 
     // 0. Vérification Version
     const storedVersion = localStorage.getItem('hw_app_version');
@@ -161,6 +160,5 @@ const updateSW = registerSW({
         updateSW(true);
     },
     onOfflineReady() {
-        console.log("Application prête pour le mode hors-ligne !");
     },
 });

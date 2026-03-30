@@ -643,7 +643,6 @@ export function renderMobilePoiList(features) {
     const backBtn = document.getElementById('mobile-back-btn');
     if (backBtn) {
         backBtn.addEventListener('click', () => {
-            console.log("Mobile Back Button Clicked");
             try {
                 // Nettoyage de l'état circuit
                 clearCircuit(false);

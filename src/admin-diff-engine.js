@@ -19,7 +19,6 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
         state.customFeatures.forEach(f => {
             const id = getPoiId(f);
             if (!adminDraft.pendingPois[id]) {
-                console.log(`[Admin] Réconciliation: Ajout non pisté détecté (Création) -> ${id}`);
                 adminDraft.pendingPois[id] = { type: 'creation', timestamp: Date.now() };
                 changed = true;
             }
@@ -45,7 +44,6 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
 
                  if (!isCreation) {
                       const type = data._deleted ? 'delete' : 'update';
-                      console.log(`[Admin] Réconciliation: Modif non pistée détectée (${type}) -> ${id}`);
                       adminDraft.pendingPois[id] = { type: type, timestamp: Date.now() };
                       changed = true;
                  }
@@ -62,7 +60,6 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
             // Si le circuit n'existe plus localement, ou est supprimé, ou n'a pas de trace réelle
             // => On le retire du brouillon de publication
             if (!exists || exists.isDeleted || (!exists.realTrack || exists.realTrack.length === 0)) {
-                console.log(`[Admin] Nettoyage brouillon: Circuit invalide retiré -> ${id}`);
                 delete adminDraft.pendingCircuits[id];
                 changed = true;
             }

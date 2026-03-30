@@ -51,7 +51,6 @@ async function checkAndApplyMigrations() {
             const oldId = pId;
             const newId = getMigrationId(oldId) || generateHWID();
 
-            console.log(`[Admin Migration] Unification ID : ${oldId || 'EMPTY'} -> ${newId}`);
 
             feature.properties.HW_ID = newId;
             idMap[oldId] = newId;
@@ -175,7 +174,6 @@ export async function displayGeoJSON(geoJSON, mapId) {
 
     // B. On fusionne les lieux personnalisés
     if (state.customFeatures.length > 0) {
-        console.log(`[Data] Fusion de ${state.customFeatures.length} lieux personnalisés.`);
         state.customFeatures.forEach(feature => {
             const id = getPoiId(feature);
             // .set() va écraser l'ancien POI s'il existe déjà, empêchant tout doublon !
@@ -268,7 +266,6 @@ export function applyFilters() {
     const visibleFeatures = getFilteredFeatures();
 
     // 2. On envoie le signal
-    console.log(`[Filtre] ${visibleFeatures.length} lieux trouvés.`);
 
     // On notifie le reste de l'application que les données filtrées sont prêtes
     eventBus.emit('data:filtered', visibleFeatures);
@@ -307,8 +304,6 @@ export async function updatePoiData(poiId, key, value) {
 
 export async function addPoiFeature(feature) {
 
-    console.log("🧐 INSPECTION DU POI REÇU :", feature);
-    console.log("[Data] Ajout d'un nouveau lieu (Post-it)...");
 
     // 1. Ajout à la liste en mémoire vive (pour affichage immédiat)
 

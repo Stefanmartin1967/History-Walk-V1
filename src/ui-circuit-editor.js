@@ -164,7 +164,6 @@ export async function generateCircuitQR() {
 }
 
 export function setupCircuitEventListeners() {
-    console.log("⚡ Démarrage des écouteurs du Circuit (UI Éditeur)...");
 
     // 0. Bouton PARTAGER
     const btnShare = document.getElementById('btn-share-circuit');
@@ -174,14 +173,12 @@ export function setupCircuitEventListeners() {
 
     // 1. Bouton EXPORTER GPX
     eventBus.on('request-export-gpx', () => {
-        console.log("Reçu demande export GPX via EventBus");
         saveAndExportCircuit();
     });
 
     // 2. Bouton IMPORTER GPX
     if (DOM.btnImportGpx) {
         DOM.btnImportGpx.addEventListener('click', () => {
-            console.log("Clic sur Import. ID Actif :", state.activeCircuitId);
 
             if (state.activeCircuitId) {
                 // CAS 1 : On est en mode actif -> On veut importer une trace réelle pour CE circuit
@@ -206,7 +203,6 @@ export function setupCircuitEventListeners() {
     // 3. Bouton BOUCLER
     if (DOM.btnLoopCircuit) {
         DOM.btnLoopCircuit.addEventListener('click', () => {
-            console.log("Clic sur Boucler");
             if (state.currentCircuit.length > 0 && state.currentCircuit.length < MAX_CIRCUIT_POINTS) {
                 // Ajoute le 1er point à la fin pour fermer la boucle
                 addPoiToCircuit(state.currentCircuit[0]);

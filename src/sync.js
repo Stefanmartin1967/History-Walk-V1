@@ -107,7 +107,6 @@ export async function startGenericScanner(onSuccessCallback) {
             { fps: 10, qrbox: { width: 250, height: 250 } },
             async (decodedText, decodedResult) => {
                 // Succès !
-                console.log("QR Scan Result:", decodedText);
 
                 // On arrête le scanneur
                 await closeScanner();
