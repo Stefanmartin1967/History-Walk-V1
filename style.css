@@ -3818,6 +3818,8 @@ input[type=range] {
 .rank-table td:nth-child(2) { font-weight: 600; color: var(--ink); }
 .rank-table td:nth-child(3) { color: var(--ink-soft); font-family: monospace; }
 .rank-table-note { margin-top: 15px; font-size: 12px; color: var(--ink-soft); font-style: italic; }
+.rank-section-label { margin: 18px 0 6px; font-size: 13px; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+.rank-section-label:first-child { margin-top: 0; }
 
 /* ================================================
    FILEMAAGER.JS — Contribution modal icons

@@ -5,7 +5,7 @@ import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { map } from './map.js';
 import { showAlert, showConfirm } from './modal.js';
-import { ANIMAL_RANKS } from './statistics.js';
+import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken, saveToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
@@ -488,8 +488,8 @@ async function publishMapToGitHub() {
 }
 
 function showRankTable() {
-    // Construction du tableau HTML pour les Animaux (Distance)
-    let tableRows = ANIMAL_RANKS.map(r => `
+    // --- Section 1 : Animaux (% Distance officielle) ---
+    const animalRows = ANIMAL_RANKS.map(r => `
         <tr>
             <td><i data-lucide="${r.icon}"></i></td>
             <td>${r.title}</td>
@@ -497,21 +497,46 @@ function showRankTable() {
         </tr>
     `).join('');
 
+    // --- Section 2 : Matières (% POIs visités) ---
+    const materialRows = MATERIAL_RANKS.map(r => `
+        <tr>
+            <td><span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:${r.color};border:1px solid var(--line);vertical-align:middle;"></span></td>
+            <td>${r.title}</td>
+            <td>${r.min}%</td>
+        </tr>
+    `).join('');
+
+    // --- Section 3 : Rangs Globaux (Distance% × POI% / 100) ---
+    const globalRows = GLOBAL_RANKS.map(r => `
+        <tr>
+            <td><i data-lucide="star"></i></td>
+            <td>${r.title}</td>
+            <td>${r.min}%</td>
+        </tr>
+    `).join('');
+
     const html = `
         <div class="rank-table-wrapper">
+
+            <p class="rank-section-label">🐾 Animaux — Distance parcourue</p>
             <table class="rank-table">
-                <thead>
-                    <tr>
-                        <th>Badge</th>
-                        <th>Titre</th>
-                        <th>Requis</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${tableRows}
-                </tbody>
+                <thead><tr><th>Badge</th><th>Titre</th><th>Requis</th></tr></thead>
+                <tbody>${animalRows}</tbody>
             </table>
-            <p class="rank-table-note">Les rangs sont basés sur le pourcentage de distance officielle parcourue (circuits terminés).</p>
+
+            <p class="rank-section-label">💎 Matières — Lieux visités</p>
+            <table class="rank-table">
+                <thead><tr><th>Couleur</th><th>Titre</th><th>Requis</th></tr></thead>
+                <tbody>${materialRows}</tbody>
+            </table>
+
+            <p class="rank-section-label">⭐ Global — Distance × Lieux / 100</p>
+            <table class="rank-table">
+                <thead><tr><th></th><th>Titre</th><th>Requis</th></tr></thead>
+                <tbody>${globalRows}</tbody>
+            </table>
+
+            <p class="rank-table-note">Le rang Global est le produit des deux pourcentages : exceller sur les deux axes est nécessaire pour atteindre les hauts rangs.</p>
         </div>
     `;
 
