@@ -4,7 +4,6 @@ import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel } from './ui-details.js';
 import { showConfirm } from './modal.js';
-import { injectAdminPhotoUploadButton, uploadPhotoForPoi } from './photo-upload.js';
 
 const els = {};
 function getEl(id) {
