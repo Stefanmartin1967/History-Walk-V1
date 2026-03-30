@@ -526,7 +526,7 @@ function renderMobileZonesMenu() {
     sortedZones.forEach(zone => {
         const btn = document.createElement('button');
         btn.className = 'mobile-list-item';
-        btn.innerHTML = `<span class="mobile-zone-btn-inner">${zone}</span> <span class="mobile-zone-btn-count">${zonesMap[zone]}</span>`;
+        btn.innerHTML = `<span class="mobile-zone-btn-inner">${escapeHtml(zone)}</span> <span class="mobile-zone-btn-count">${zonesMap[zone]}</span>`;
         if (state.activeFilters.zone === zone) {
             btn.classList.add('mobile-zone-btn--active');
         }
