@@ -76,7 +76,6 @@ export const toggleDiffDetails = (id) => {
 
 export const updateDraftValue = async (id, key, value) => {
     // Met à jour directement userData (la source de vérité locale)
-    console.log(`[Admin] Correction user: ${id} [${key}] = ${value}`);
 
     const newUserData = { ...state.userData };
     if (!newUserData[id]) newUserData[id] = {};
@@ -169,7 +168,6 @@ async function publishChanges() {
         const circuitsToDelete = diffData.circuits.filter(c => c.status === 'SUPPRESSION' || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION')));
 
         if (circuitsToDelete.length > 0) {
-            console.log(`[Admin] Suppression de ${circuitsToDelete.length} fichiers circuits...`);
             for (const c of circuitsToDelete) {
                 try {
                     const indexUrl = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${state.currentMapId || 'djerba'}.json`;
@@ -179,7 +177,6 @@ async function publishChanges() {
                     if (target && target.file) {
                         const path = `public/circuits/${target.file}`;
                         await deleteFileFromGitHub(token, 'Stefanmartin1967', 'History-Walk-V1', path, `Delete circuit ${c.name}`);
-                        console.log(`[Admin] Supprimé: ${path}`);
                     }
                 } catch (err) {
                     console.warn(`[Admin] Impossible de supprimer le fichier pour ${c.name}:`, err);

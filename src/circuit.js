@@ -63,7 +63,6 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
         }
 
         const name = (officialCircuit || localCircuit).name;
-        console.log(`[Circuit] Circuit "${name}" marqué comme ${isVisited ? 'FAIT' : 'NON FAIT'}.`);
 
     } catch (error) {
         console.error("Erreur de sauvegarde statut circuit :", error);
@@ -94,7 +93,6 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
                 try {
                     // On attend que la DB soit à jour
                     await batchSavePoiData(state.currentMapId, updates);
-                    console.log(`[Circuit] ${updates.length} POIs marqués comme visités.`);
 
                     // Force refresh des marqueurs sur la carte (pour passer en vert)
                     // On s'assure que state.userData est synchrone avec state.loadedFeatures
@@ -403,7 +401,6 @@ export async function loadCircuitById(id) {
     // --- LAZY LOADING DE LA TRACE (OFFICIAL CIRCUITS) ---
     if (circuitToLoad.file && (!circuitToLoad.realTrack || circuitToLoad.realTrack.length === 0)) {
         try {
-            console.log(`[Circuit] Chargement de la trace depuis ${circuitToLoad.file}...`);
             // Correction URL : encodage pour gérer les espaces et apostrophes
             const safeUrl = `./circuits/${circuitToLoad.file.split('/').map(encodeURIComponent).join('/')}`;
             const response = await fetch(safeUrl);
@@ -446,7 +443,6 @@ export async function loadCircuitById(id) {
                         updateMyCircuit(updatedShadow);
                     }
 
-                    console.log(`[Circuit] Trace chargée (${coordinates.length} points) et sauvegardée (Shadow).`);
                 }
             } else {
                 console.warn(`[Circuit] Fichier GPX introuvable : ${circuitToLoad.file}`);

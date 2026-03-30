@@ -160,7 +160,6 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
             padding: [20, 20],
             maxZoom: 18
         });
-        console.log("🌍 Carte initialisée avec fitBounds sur :", bounds);
 
     } catch (e) {
         console.warn("Erreur lors du fitBounds initial, repli sur setView", e);
@@ -198,7 +197,6 @@ function initResizeObserver() {
  * Initialise les écouteurs d'événements pour la carte
  */
 export function initMapListeners() {
-    console.log("📍 La carte est maintenant à l'écoute des changements de circuit...");
 
     // --- SAUVEGARDE POSITION CARTE (SUPPRIMÉE) ---
     // On ne sauvegarde plus la vue pour garantir une initialisation propre à chaque démarrage.
@@ -533,7 +531,6 @@ export function fitMapToContent() {
                 paddingBottomRight: [sidebarWidth, 0],
                 maxZoom: 18 // Sécurité
             });
-            console.log(`🔎 FIT BOUNDS APPLIQUÉ avec padding droite: ${sidebarWidth}px`);
             return;
         }
 

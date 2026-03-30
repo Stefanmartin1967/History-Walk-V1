@@ -18,7 +18,6 @@ export function initAdminMode() {
     }
 
     // Initial check
-    console.log("[Admin] Init mode. Is Admin?", state.isAdmin);
     toggleAdminUI(state.isAdmin);
 
     eventBus.on('admin:mode-toggled', (isAdmin) => {

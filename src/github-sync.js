@@ -75,11 +75,9 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
         if (checkResponse.ok) {
             const data = await checkResponse.json();
             sha = data.sha;
-            console.log("[GitHub] Fichier existant trouvé, SHA:", sha);
         }
     } catch (e) {
         // Ignorer si le fichier n'existe pas, c'est une création
-        console.log("[GitHub] Fichier nouveau ou erreur de vérification (normal si nouveau).");
     }
 
     // 3. Préparer le payload
@@ -135,7 +133,6 @@ export async function deleteFileFromGitHub(token, owner, repo, path, message) {
         if (checkResponse.ok) {
             const data = await checkResponse.json();
             sha = data.sha;
-            console.log("[GitHub Delete] Fichier trouvé, SHA:", sha);
         } else {
             throw new Error(`Fichier introuvable sur le serveur: ${path}`);
         }

@@ -384,7 +384,6 @@ export async function processImportedGpx(file, circuitId) {
                         // On force la sauvegarde DB pour que la modification persiste
                         // main.js se chargera de fusionner au prochain démarrage
                         await saveCircuit(targetCircuit);
-                        console.log("Circuit sauvegardé (Local ou Officiel modifié).");
 
                         // RAFFRAÎCHISSEMENT UI COMPLET (ESSENTIEL)
                         if (state.activeCircuitId === circuitId) {

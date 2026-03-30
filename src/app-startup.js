@@ -40,7 +40,6 @@ export async function loadOfficialCircuits() {
         const response = await fetch(`${circuitsUrl}?t=${Date.now()}`);
         if (!response.ok) throw new Error("Network error");
         officials = await response.json();
-        console.log(`[Startup] Circuits officiels chargés (Network).`);
     } catch (e) {
         // 2. Fallback Cache (Offline ou Erreur)
         console.warn(`[Startup] Echec réseau, tentative cache...`, e);
@@ -48,7 +47,6 @@ export async function loadOfficialCircuits() {
             const response = await fetch(circuitsUrl);
             if (response.ok) {
                 officials = await response.json();
-                console.log(`[Startup] Circuits officiels chargés (Cache).`);
             }
         } catch (e2) {
             console.error(`[Startup] Erreur finale chargement circuits:`, e2);
@@ -85,7 +83,6 @@ export async function loadDestinationsConfig() {
         const response = await fetch(`${configUrl}?t=${Date.now()}`);
         if (response.ok) {
             config = await response.json();
-            console.log("[Startup] destinations.json chargé (Network).", config);
         }
     } catch (e) {
         // 2. Fallback Cache
@@ -93,7 +90,6 @@ export async function loadDestinationsConfig() {
             const response = await fetch(configUrl);
             if (response.ok) {
                 config = await response.json();
-                console.log("[Startup] destinations.json chargé (Cache).", config);
             }
         } catch (e2) {
             console.error("[Startup] Erreur chargement destinations.json.", e2);
@@ -209,7 +205,6 @@ export async function loadAndInitializeMap() {
         // --- MERGE CUSTOM POIS (MOBILE) ---
         const customPois = await getAppState(`customPois_${activeMapId}`) || [];
         if (customPois.length > 0) {
-            console.log(`[Mobile] Fusion de ${customPois.length} lieux personnalisés.`);
             setLoadedFeatures([...state.loadedFeatures, ...customPois]);
             setCustomFeatures(customPois);
         }

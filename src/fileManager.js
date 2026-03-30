@@ -314,7 +314,6 @@ async function restoreBackup(json) {
             });
 
             if (customFeatures.length > 0) {
-                console.log(`[Restore] ${customFeatures.length} lieux personnalisés restaurés.`);
                 await saveAppState(`customPois_${mapId}`, customFeatures);
             }
         }
