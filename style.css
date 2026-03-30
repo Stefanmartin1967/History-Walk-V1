@@ -2322,8 +2322,9 @@ input[type=range] {
 
 /* --- CONSOLIDATED MOBILE STYLES (16px Harmonization) --- */
 @media (max-width: 768px) {
-    :root {
-        --spacing-md: 8px;
+    :root,
+    html[data-theme="maritime"] {
+        --spacing-md: 8px; /* Force maritime au même spacing que les autres thèmes sur mobile */
     }
 
     /* 1. Reset Global Layout for Mobile */
