@@ -1987,6 +1987,11 @@ input[type=range] {
     line-height: 1.5;
     white-space: pre-wrap;
 }
+/* Reset pre-wrap pour les modales avec contenu HTML riche (onglets, tableaux…) */
+.custom-modal-message:has(.rank-tabs-wrapper),
+.custom-modal-message:has(#explorer-card-root) {
+    white-space: normal;
+}
 
 .custom-modal-actions {
     display: flex;
