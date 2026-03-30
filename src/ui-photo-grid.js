@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { showToast } from './toast.js';
+import { showConfirm } from './modal.js';
 import { uploadPhotoForPoi } from './photo-upload.js';
 import { compressImage } from './photo-manager.js';
 import { createIcons, icons } from 'lucide';
@@ -284,9 +285,10 @@ function renderGrid() {
             btnDel.className = 'photo-card-btn delete';
             btnDel.title = "Supprimer";
             btnDel.innerHTML = `<i data-lucide="trash-2"></i>`;
-            btnDel.onclick = (e) => {
+            btnDel.onclick = async (e) => {
                 e.stopPropagation();
-                if(confirm("Supprimer cette photo ?")) {
+                const ok = await showConfirm("Supprimer la photo", "Supprimer définitivement cette photo ?", "Supprimer", "Annuler", true);
+                if (ok) {
                     currentGridPhotos.splice(index, 1);
                     isDirty = true;
                     renderGrid();

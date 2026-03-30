@@ -8,6 +8,7 @@ import { showAlert, showConfirm } from './modal.js';
 import { ANIMAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken, saveToken } from './github-sync.js';
+import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
 import { recalculatePlannedCountersForMap } from './circuit-actions.js';
 
@@ -440,13 +441,15 @@ async function publishMapToGitHub() {
 
     const mapId = state.currentMapId || 'djerba';
     const filename = `${mapId}.geojson`;
-    const repoOwner = 'Stefanmartin1967';
-    const repoName = 'History-Walk-V1';
-    const path = `public/${filename}`;
+    const path = GITHUB_PATHS.geojson(mapId);
 
-    if (!confirm(`Voulez-vous publier la carte officielle (${filename}) sur GitHub ?\n\nCela rendra visibles toutes vos modifications (photos, déplacements) pour tous les utilisateurs.\n\nAttention : Cette action est irréversible.`)) {
-        return;
-    }
+    const ok = await showConfirm(
+        "Publication de la carte",
+        `Publier la carte officielle <strong>${filename}</strong> sur GitHub ?\n\nToutes les modifications (photos, positions, détails) seront visibles pour tous les utilisateurs.`,
+        "Publier",
+        "Annuler"
+    );
+    if (!ok) return;
 
     showToast("Génération du fichier...", "info");
 
@@ -471,12 +474,12 @@ async function publishMapToGitHub() {
         const blob = new Blob([jsonStr], { type: 'application/geo+json' });
         const file = new File([blob], filename, { type: 'application/geo+json' });
 
-        const message = `Update map data ${filename} via Admin One-Click`;
+        const poiCount = geojson.features?.length ?? 0;
+        const message = `feat(map): Publication ${mapId} — ${poiCount} POIs`;
 
-        await uploadFileToGitHub(file, token, repoOwner, repoName, path, message);
+        await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, path, message);
 
-        showToast("Carte publiée avec succès !", "success");
-        alert("La carte a été mise à jour sur GitHub.\nLes changements seront visibles d'ici quelques minutes.");
+        showToast("Carte publiée avec succès ! Les changements seront visibles d'ici quelques minutes.", "success");
 
     } catch (error) {
         console.error("Erreur publication carte:", error);
@@ -490,7 +493,7 @@ function showRankTable() {
         <tr>
             <td><i data-lucide="${r.icon}"></i></td>
             <td>${r.title}</td>
-            <td>${r.min} km</td>
+            <td>${r.min}%</td>
         </tr>
     `).join('');
 
@@ -508,7 +511,7 @@ function showRankTable() {
                     ${tableRows}
                 </tbody>
             </table>
-            <p class="rank-table-note">Les rangs sont basés sur la distance totale parcourue (circuits terminés).</p>
+            <p class="rank-table-note">Les rangs sont basés sur le pourcentage de distance officielle parcourue (circuits terminés).</p>
         </div>
     `;
 
@@ -588,9 +591,6 @@ export function showGitHubConfigModal() {
 
 export function showGitHubDeleteModal() {
     const storedToken = getStoredToken() || '';
-    const repoOwner = 'Stefanmartin1967'; // Default from user info
-    const repoName = 'History-Walk-V1';   // Default from user info
-
     // 1. Récupération des éléments de la modale globale
     const overlay = document.getElementById('custom-modal-overlay');
     const title = document.getElementById('custom-modal-title');
@@ -664,31 +664,35 @@ export function showGitHubDeleteModal() {
             return;
         }
 
-        if (!confirm(`Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT le circuit "${circuitName}" du serveur ?\nCette action est irréversible.`)) {
-            return;
-        }
+        const okDel = await showConfirm(
+            "Suppression définitive",
+            `Supprimer définitivement le circuit <strong>"${circuitName}"</strong> du serveur ?\n\nCette action est irréversible.`,
+            "Supprimer",
+            "Annuler",
+            true
+        );
+        if (!okDel) return;
 
-        statusDiv.textContent = "Recherche du fichier sur le serveur...";
-        statusDiv.style.color = "var(--ink-soft)";
+        // La modale de confirmation est fermée — on passe aux toasts pour le feedback
         btnDelete.disabled = true;
+        showToast("Recherche du fichier sur le serveur...", "info");
 
         try {
             saveToken(token);
 
-            // On doit trouver le nom du fichier depuis l'index
             const timestamp = Date.now();
-            const indexUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/public/circuits/${state.currentMapId || 'djerba'}.json?t=${timestamp}`;
+            const indexUrl = `${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}?t=${timestamp}`;
             const remoteIndex = await fetch(indexUrl).then(r => r.json());
             const target = remoteIndex.find(r => String(r.id) === String(circuitId));
 
             if (!target || !target.file) {
-                 throw new Error(`Fichier introuvable sur le serveur pour le circuit ID: ${circuitId}`);
+                throw new Error(`Fichier introuvable sur le serveur pour le circuit ID: ${circuitId}`);
             }
 
             const path = `public/circuits/${target.file}`;
-            statusDiv.textContent = "Suppression en cours...";
+            showToast("Suppression en cours...", "info");
 
-            await deleteFileFromGitHub(token, repoOwner, repoName, path, `Delete official circuit: ${circuitName}`);
+            await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, path, `feat(circuit): Suppression "${circuitName}"`);
 
             // Nettoyage local mémoire + IndexedDB
             state.officialCircuits = state.officialCircuits.filter(c => String(c.id) !== String(circuitId));
@@ -696,18 +700,12 @@ export function showGitHubDeleteModal() {
                 await deleteCircuit(circuitId);
             });
 
-            statusDiv.textContent = "Succès ! Circuit supprimé. L'index du site va se mettre à jour.";
-            statusDiv.style.color = "green";
-
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                window.location.reload();
-            }, 2000);
+            showToast(`Circuit "${circuitName}" supprimé avec succès !`, "success");
+            setTimeout(() => { window.location.reload(); }, 2000);
 
         } catch (e) {
             console.error("Delete error:", e);
-            statusDiv.textContent = `Erreur: ${e.message}`;
-            statusDiv.style.color = "var(--danger)";
+            showToast(`Erreur : ${e.message}`, "error");
             btnDelete.disabled = false;
         }
     };
@@ -719,9 +717,6 @@ export function showGitHubDeleteModal() {
 
 export function showGitHubUploadModal() {
     const storedToken = getStoredToken() || '';
-    const repoOwner = 'Stefanmartin1967'; // Default from user info
-    const repoName = 'History-Walk-V1';   // Default from user info
-
     // 1. Récupération des éléments de la modale globale
     const overlay = document.getElementById('custom-modal-overlay');
     const title = document.getElementById('custom-modal-title');
@@ -846,7 +841,7 @@ export function showGitHubUploadModal() {
             // The default folder for Djerba circuits is now public/circuits/djerba/
             const path = `public/circuits/djerba/${file.name}`;
 
-            await uploadFileToGitHub(file, token, repoOwner, repoName, path, `Add official circuit: ${file.name}`);
+            await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, path, `feat(circuit): Ajout "${file.name}"`);
 
             // Track in Admin Draft
             addToDraft('circuit', file.name, { type: 'upload' });

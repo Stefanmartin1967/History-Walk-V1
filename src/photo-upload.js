@@ -1,8 +1,5 @@
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
-
-const REPO_OWNER = 'Stefanmartin1967';
-const REPO_NAME = 'History-Walk-V1';
-const PHOTOS_DIR = 'public/photos';
+import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 
 /**
  * Uploads a photo to GitHub for a specific POI.
@@ -27,14 +24,12 @@ export async function uploadPhotoForPoi(file, poiId) {
     // The input 'file' is already compressed/optimized (1200px) from local storage
     const uploadFile = new File([file], filename, { type: 'image/jpeg' });
 
-    // 3. Upload to GitHub
-    const path = `${PHOTOS_DIR}/${filename}`;
-    const commitMessage = `Add photo for POI ${poiId}`;
+    const path = GITHUB_PATHS.photo(filename);
+    const commitMessage = `feat(photo): Ajout photo pour POI ${poiId}`;
 
-    await uploadFileToGitHub(uploadFile, token, REPO_OWNER, REPO_NAME, path, commitMessage);
+    await uploadFileToGitHub(uploadFile, token, GITHUB_OWNER, GITHUB_REPO, path, commitMessage);
 
-    // 4. Construct the public URL
-    // We use the relative path "photos/..." which should work correctly with the app's base URL.
+    // Relative path works correctly with the app's base URL.
     // GitHub Pages URL: https://stefanmartin1967.github.io/History-Walk-V1/photos/...
     const publicUrl = `photos/${filename}`;
     return publicUrl;

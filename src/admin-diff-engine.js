@@ -1,5 +1,6 @@
 import { state } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
+import { RAW_BASE, GITHUB_PATHS } from './config.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
 // Ce fichier concentre exclusivement la logique complexe de comparaison
@@ -88,8 +89,8 @@ export async function prepareDiffData(adminDraft) {
     // 1. Fetch Remote Data (POIs + Circuits)
     try {
         const [respGeo, respCirc] = await Promise.all([
-            fetch(`https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/${mapId}.geojson?t=${timestamp}`),
-            fetch(`https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${mapId}.json?t=${timestamp}`)
+            fetch(`${RAW_BASE}/${GITHUB_PATHS.geojson(mapId)}?t=${timestamp}`),
+            fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`)
         ]);
 
         if (respGeo.ok) {
