@@ -4,19 +4,19 @@ import { getPoiId } from './data.js';
 import { showAlert } from './modal.js';
 import { createIcons, icons } from 'lucide';
 
-// --- 0. RANGS GLOBAUX (Basé sur XP Total) ---
-// XP = (UserDistance / TotalOfficialDistance * 10000) + (UserCircuits / TotalOfficialCircuits * 10000)
-// Max XP = 20 000
+// --- 0. RANGS GLOBAUX (Basé sur % Global = Distance% × POI% / 100) ---
+// pctGlobal = (distancePercent * poiPercent) / 100  → 0-100%
+// Système "hardcore" : il faut exceller sur BOTH axes pour atteindre les hauts rangs
 export const GLOBAL_RANKS = [
-    { min: 20000, title: "Lueur d'Éternité" },
-    { min: 17000, title: "Souffle Céleste" },
-    { min: 13500, title: "Sagesse des Sables" },
-    { min: 10000, title: "Regard d'Horizon" },
-    { min: 7000, title: "Sillage d'Argent" },
-    { min: 4500, title: "Âme Vagabonde" },
-    { min: 2500, title: "Cœur Vaillant" },
-    { min: 1200, title: "Esprit Curieux" },
-    { min: 500, title: "Petite Étincelle" },
+    { min: 90, title: "Lueur d'Éternité" },
+    { min: 80, title: "Souffle Céleste" },
+    { min: 70, title: "Sagesse des Sables" },
+    { min: 60, title: "Regard d'Horizon" },
+    { min: 50, title: "Sillage d'Argent" },
+    { min: 40, title: "Âme Vagabonde" },
+    { min: 30, title: "Cœur Vaillant" },
+    { min: 20, title: "Esprit Curieux" },
+    { min: 10, title: "Petite Étincelle" },
     { min: 0, title: "Premier Souffle" }
 ];
 
@@ -128,7 +128,9 @@ export function calculateStats() {
     const animalRank = getRank(ANIMAL_RANKS, distancePercent);
     // CHANGEMENT ICI : Le rang Matière dépend désormais du % de POIs visités
     const materialRank = getRank(MATERIAL_RANKS, poiPercent);
-    const globalRank = getRank(GLOBAL_RANKS, totalXP);
+    // Rang global basé sur le score combiné (même formule que la modale)
+    const pctGlobal = (distancePercent * poiPercent) / 100;
+    const globalRank = getRank(GLOBAL_RANKS, pctGlobal);
 
     return {
         visitedPois,
@@ -392,6 +394,7 @@ export async function showStatisticsModal() {
 
     // -- HTML --
     const html = `
+    <style>${EXPLORER_CARD_CSS}</style>
     <div id="explorer-card-root">
         <div class="explorer-card" id="explorer-card-print">
             <div class="card-header">

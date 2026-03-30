@@ -1,5 +1,6 @@
 import { state, removeMyCircuit } from './state.js';
 import { getStoredToken, deleteFileFromGitHub } from './github-sync.js';
+import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { deleteCircuitById, restoreCircuit } from './database.js'; // DB Functions
 import { showToast } from './toast.js';
 import { createIcons, icons } from 'lucide';
@@ -16,7 +17,7 @@ let deletedCircuits = []; // Local trash
 async function fetchServerCircuits() {
     const mapId = state.currentMapId || 'djerba';
     const timestamp = Date.now();
-    const url = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${mapId}.json?t=${timestamp}`;
+    const url = `${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`;
 
     try {
         const response = await fetch(url);
@@ -284,7 +285,7 @@ async function handleDeleteClick(path, name, container) {
 
     try {
         showToast("Suppression en cours...", "info");
-        await deleteFileFromGitHub(token, 'Stefanmartin1967', 'History-Walk-V1', path, `Delete ${path} via Admin Maintenance`);
+        await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, path, `chore(admin): Suppression ${path}`);
 
         showToast("Fichier supprimé avec succès !", "success");
 
