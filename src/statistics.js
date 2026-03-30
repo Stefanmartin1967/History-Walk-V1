@@ -179,10 +179,11 @@ function getRank(rankList, value) {
 // CSS partagé pour réutilisation dans l'impression
 const EXPLORER_CARD_CSS = `
     :root {
-        --bg-parchment: #f4ecd8;
-        --accent-copper: #b87333;
-        --text-dark: #2c2c2c;
-        --progress-bg: rgba(0, 0, 0, 0.1);
+        /* Adapts to active theme; hardcoded fallback for print iframe where theme vars are absent */
+        --bg-parchment:  var(--surface-muted, #f4ecd8);
+        --accent-copper: var(--brand,         #b87333);
+        --text-dark:     var(--ink,           #2c2c2c);
+        --progress-bg:   var(--line,          rgba(0, 0, 0, 0.1));
     }
 
     body {
@@ -202,7 +203,7 @@ const EXPLORER_CARD_CSS = `
         box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         color: var(--text-dark);
         position: relative;
-        border: 1px solid #e2d1a8;
+        border: 1px solid var(--line, #e2d1a8);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -225,7 +226,7 @@ const EXPLORER_CARD_CSS = `
         height: 50px;
         min-width: 50px;
         border-radius: 50%;
-        background: #e2d1a8;
+        background: var(--bg-parchment);
         border: 2px solid var(--accent-copper);
         overflow: hidden;
         display: flex;
@@ -255,7 +256,8 @@ const EXPLORER_CARD_CSS = `
     .global-rank {
         font-style: italic;
         font-size: 0.75rem;
-        color: #666;
+        color: var(--text-dark);
+        opacity: 0.65;
         margin-top: 2px;
     }
 
@@ -289,16 +291,16 @@ const EXPLORER_CARD_CSS = `
 
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, var(--accent-copper), #e68a3e);
+        background: var(--accent-copper);
         transition: width 0.5s ease-in-out;
     }
 
-    .next-goal { font-size: 0.6rem; color: #888; margin-top: 1px; text-align: right; display: none; } /* Caché pour gagner place */
+    .next-goal { font-size: 0.6rem; color: var(--text-dark); opacity: 0.55; margin-top: 1px; text-align: right; display: none; } /* Caché pour gagner place */
 
     .footer-stats {
         display: flex;
         justify-content: space-between;
-        border-top: 1px solid rgba(0,0,0,0.1);
+        border-top: 1px solid var(--line, rgba(0,0,0,0.1));
         padding-top: 8px;
         font-size: 0.7rem;
         margin-top: 4px;
@@ -316,17 +318,17 @@ const EXPLORER_CARD_CSS = `
         align-items: center;
         gap: 8px;
         padding: 10px 20px;
-        background: #fff;
-        border: 1px solid #ddd;
+        background: var(--bg-parchment, #fff);
+        border: 1px solid var(--line, #ddd);
         border-radius: 8px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
-        color: #333;
+        color: var(--text-dark, #333);
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
     .action-btn-print:hover {
-        background: #f9f9f9;
+        background: var(--surface-muted, #f9f9f9);
         transform: translateY(-1px);
     }
 `;
