@@ -3,6 +3,7 @@ import { test, expect } from '@playwright/test';
 const LOAD_TIMEOUT = 15000;
 
 // ─── Tests Desktop (viewport 1280x800) ───────────────────────────────────────
+// La carte Leaflet est uniquement en mode PC
 
 test.describe('Desktop', () => {
 
@@ -33,13 +34,13 @@ test.describe('Desktop', () => {
 });
 
 // ─── Tests Mobile (Pixel 5 — viewport 393x851) ───────────────────────────────
+// Mode encyclopédique : pas de carte, circuits sur Wikiloc
 
 test.describe('Mobile', () => {
 
   test.beforeEach(async ({ page, isMobile }) => {
     test.skip(!isMobile, 'Tests mobile uniquement sur le projet mobile');
     await page.goto('/');
-    // En mobile l'app démarre sur la liste circuits, pas la carte
     await page.waitForSelector('.mobile-nav', { timeout: LOAD_TIMEOUT });
     await page.waitForTimeout(1000);
   });
