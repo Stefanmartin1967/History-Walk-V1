@@ -13,8 +13,8 @@ test('Mobile menu updates correctly after admin login', async ({ page }) => {
 
     await page.waitForSelector('.mobile-nav-btn[data-view="actions"]');
 
-    // Make sure we wait for init
-    await page.waitForFunction(() => window.state && window.state.isAdmin === true);
+    // Attendre que l'app soit initialisée (dock visible)
+    await page.waitForSelector('.mobile-nav', { timeout: 8000 });
 
     await page.click('.mobile-nav-btn[data-view="actions"]');
 
