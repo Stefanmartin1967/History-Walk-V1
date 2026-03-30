@@ -488,7 +488,7 @@ async function publishMapToGitHub() {
 }
 
 function showRankTable() {
-    // --- Section 1 : Animaux (% Distance officielle) ---
+    // --- Lignes Animaux (% Distance officielle) ---
     const animalRows = ANIMAL_RANKS.map(r => `
         <tr>
             <td><i data-lucide="${r.icon}"></i></td>
@@ -497,16 +497,16 @@ function showRankTable() {
         </tr>
     `).join('');
 
-    // --- Section 2 : Matières (% POIs visités) ---
+    // --- Lignes Matières (% POIs visités) ---
     const materialRows = MATERIAL_RANKS.map(r => `
         <tr>
-            <td><span style="display:inline-block;width:16px;height:16px;border-radius:50%;background:${r.color};border:1px solid var(--line);vertical-align:middle;"></span></td>
+            <td><span class="rank-dot" style="background:${r.color};"></span></td>
             <td>${r.title}</td>
             <td>${r.min}%</td>
         </tr>
     `).join('');
 
-    // --- Section 3 : Rangs Globaux (Distance% × POI% / 100) ---
+    // --- Lignes Global (Distance% × POI% / 100) ---
     const globalRows = GLOBAL_RANKS.map(r => `
         <tr>
             <td><i data-lucide="star"></i></td>
@@ -516,36 +516,55 @@ function showRankTable() {
     `).join('');
 
     const html = `
-        <div class="rank-table-wrapper">
+        <div class="rank-tabs-wrapper">
+            <div class="rank-tabs-nav">
+                <button class="rank-tab-btn active" data-tab="animals">🐾 Animaux</button>
+                <button class="rank-tab-btn" data-tab="materials">💎 Matières</button>
+                <button class="rank-tab-btn" data-tab="global">⭐ Global</button>
+            </div>
 
-            <p class="rank-section-label">🐾 Animaux — Distance parcourue</p>
-            <table class="rank-table">
-                <thead><tr><th>Badge</th><th>Titre</th><th>Requis</th></tr></thead>
-                <tbody>${animalRows}</tbody>
-            </table>
+            <div class="rank-tab-panel active" id="rank-panel-animals">
+                <p class="rank-tab-hint">Basé sur le % de distance officielle parcourue</p>
+                <table class="rank-table">
+                    <thead><tr><th>Badge</th><th>Titre</th><th>Requis</th></tr></thead>
+                    <tbody>${animalRows}</tbody>
+                </table>
+            </div>
 
-            <p class="rank-section-label">💎 Matières — Lieux visités</p>
-            <table class="rank-table">
-                <thead><tr><th>Couleur</th><th>Titre</th><th>Requis</th></tr></thead>
-                <tbody>${materialRows}</tbody>
-            </table>
+            <div class="rank-tab-panel" id="rank-panel-materials">
+                <p class="rank-tab-hint">Basé sur le % de lieux visités</p>
+                <table class="rank-table">
+                    <thead><tr><th>Couleur</th><th>Titre</th><th>Requis</th></tr></thead>
+                    <tbody>${materialRows}</tbody>
+                </table>
+            </div>
 
-            <p class="rank-section-label">⭐ Global — Distance × Lieux / 100</p>
-            <table class="rank-table">
-                <thead><tr><th></th><th>Titre</th><th>Requis</th></tr></thead>
-                <tbody>${globalRows}</tbody>
-            </table>
-
-            <p class="rank-table-note">Le rang Global est le produit des deux pourcentages : exceller sur les deux axes est nécessaire pour atteindre les hauts rangs.</p>
+            <div class="rank-tab-panel" id="rank-panel-global">
+                <p class="rank-tab-hint">Distance% × Lieux% ÷ 100 — exceller sur les deux axes est nécessaire</p>
+                <table class="rank-table">
+                    <thead><tr><th></th><th>Titre</th><th>Requis</th></tr></thead>
+                    <tbody>${globalRows}</tbody>
+                </table>
+            </div>
         </div>
     `;
 
     showAlert("Tableau des Rangs", html, "Fermer");
 
-    // Refresh icons in modal immediately
+    // Activer la logique des onglets + refresh icônes
     const modalContent = document.getElementById('custom-modal-message');
     if (modalContent) {
         createIcons({ icons, root: modalContent });
+
+        modalContent.querySelectorAll('.rank-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.tab;
+                modalContent.querySelectorAll('.rank-tab-btn').forEach(b => b.classList.remove('active'));
+                modalContent.querySelectorAll('.rank-tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                modalContent.querySelector(`#rank-panel-${target}`).classList.add('active');
+            });
+        });
     }
 }
 
