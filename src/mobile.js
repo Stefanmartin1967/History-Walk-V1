@@ -774,12 +774,12 @@ export function renderMobileMenu() {
                 <span>Offrir un café</span>
                 <i data-lucide="heart" class="bmc-heart-icon icon-heart"></i>
             </button>
-            <div class="mobile-divider"></div>
-            <button class="mobile-list-item ${state.isAdmin ? 'mobile-admin-login-btn--admin' : 'mobile-admin-login-btn--normal'}" id="mob-action-admin-login">
-                <i data-lucide="${state.isAdmin ? 'log-out' : 'lock'}"></i>
-                <span>${state.isAdmin ? 'Déconnexion' : 'Connexion Admin'}</span>
-            </button>
             ${state.isAdmin ? `
+            <div class="mobile-divider"></div>
+            <button class="mobile-list-item mobile-admin-login-btn--admin" id="mob-action-admin-login">
+                <i data-lucide="log-out"></i>
+                <span>Déconnexion Admin</span>
+            </button>
             <div class="mobile-divider"></div>
             <div class="mobile-menu-admin-header">Outils Admin</div>
             <button class="mobile-list-item mobile-menu-brand-item" id="mob-action-admin-control-center">

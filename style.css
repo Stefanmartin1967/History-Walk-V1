@@ -2354,14 +2354,18 @@ input[type=range] {
         padding-right: 8px;
     }
 
-    /* Apply to List and Details Content */
+    /* Apply to List and scroll containers: dock clearance + horizontal padding */
     .mobile-list,
-    .panel-content,
-    .detail-section .content {
+    .panel-content {
         padding-left: var(--spacing-md) !important;
         padding-right: var(--spacing-md) !important;
         /* Ensure content clears the bottom dock */
         padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+    }
+    /* Section content: horizontal padding only (panel-content handles dock clearance) */
+    .detail-section .content {
+        padding-left: var(--spacing-md) !important;
+        padding-right: var(--spacing-md) !important;
     }
 
     /* Exclude Full-Width Elements */
@@ -3448,8 +3452,17 @@ input[type=range] {
     padding-bottom: 12px;
     margin-bottom: 0;
     border-bottom: 1px solid var(--line);
+    overflow: visible; /* Don't clip action buttons (inherited overflow:hidden from .detail-section is wrong here) */
 }
 .mobile-header-inner { display: flex; flex-direction: column; gap: 0; }
+/* Fix: sticky header content must NOT inherit the generic .detail-section .content padding,
+   otherwise the action row is squeezed (double 8px) and the right arrow gets clipped */
+.mobile-sticky-header .mobile-header-inner {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+/* Back button margin-left: -8px was compensating for the former 8px parent padding; reset it */
+.mobile-sticky-header .btn-back-mobile { margin-left: 0; }
 .mobile-header-grid {
     display: grid;
     grid-template-columns: 44px 1fr 44px;
@@ -3477,7 +3490,7 @@ input[type=range] {
     align-items: center;
     width: 100%;
 }
-.mobile-btn-group { display: flex; gap: 6px; align-items: center; }
+.mobile-btn-group { display: flex; gap: 4px; align-items: center; }
 
 /* --- Contenu commun --- */
 .section-title-row { display: flex; justify-content: space-between; align-items: center; }
