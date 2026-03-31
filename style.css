@@ -4198,7 +4198,9 @@ input[type=range] {
 .cc-card h3 { margin-top: 0; }
 .cc-card-title-flex { margin-top: 0; display: flex; align-items: center; gap: 10px; }
 .icon-amber { color: var(--hw-amber); }
-.cc-save-btn { margin-top: 15px; width: 100%; padding: 12px; background: var(--hw-ink); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
+.cc-token-persist-label { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.85rem; color: var(--ink); cursor: pointer; }
+.cc-token-persist-hint { color: var(--ink-soft); font-size: 0.75rem; }
+.cc-save-btn { margin-top: 12px; width: 100%; padding: 12px; background: var(--hw-ink); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
 .cc-sync-btns-row { display: flex; gap: 10px; margin-bottom: 15px; }
 .btn-cc-sync-upload { flex: 1; padding: 12px; background: #F0FDF4; border: 1px solid #86EFAC; color: #166534; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-cc-sync-download { flex: 1; padding: 12px; background: #EFF6FF; border: 1px solid #93C5FD; color: #1E40AF; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }

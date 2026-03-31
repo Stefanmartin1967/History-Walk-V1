@@ -41,42 +41,38 @@ function updateAdminLoginButton() {
     const menuContent = document.getElementById('tools-menu-content');
     if (!menuContent) return;
 
+    let separator = document.getElementById('admin-menu-separator');
     let btn = document.getElementById('btn-admin-login-logout');
 
-    // Si le bouton n'existe pas, on le crée
-    if (!btn) {
-        // Ajout d'un séparateur avant le bouton s'il n'existe pas déjà juste avant
-        const lastChild = menuContent.lastElementChild;
-        if (lastChild && lastChild.tagName !== 'DIV') { // Simple heuristic
-             const separator = document.createElement('div');
-             separator.style.height = '1px';
-             separator.style.width = '100%';
-             separator.style.background = 'var(--line)';
-             separator.style.margin = '5px 0';
-             menuContent.appendChild(separator);
-        }
+    if (!state.isAdmin) {
+        // Non connecté : aucune trace dans le menu
+        if (separator) separator.style.display = 'none';
+        if (btn) btn.style.display = 'none';
+        return;
+    }
 
+    // Connecté : afficher séparateur + bouton Déconnexion
+    if (!separator) {
+        separator = document.createElement('div');
+        separator.id = 'admin-menu-separator';
+        separator.style.cssText = 'height:1px;width:100%;background:var(--line);margin:5px 0';
+        menuContent.appendChild(separator);
+    }
+    separator.style.display = '';
+
+    if (!btn) {
         btn = document.createElement('button');
         btn.id = 'btn-admin-login-logout';
         btn.className = 'tools-menu-item';
         menuContent.appendChild(btn);
     }
+    btn.style.display = '';
 
-    // On clone pour nettoyer les anciens écouteurs
     const newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
-
-    if (state.isAdmin) {
-        newBtn.innerHTML = `<i data-lucide="log-out"></i> Déconnexion`;
-        newBtn.style.color = 'var(--danger)';
-        newBtn.addEventListener('click', logoutAdmin);
-    } else {
-        newBtn.innerHTML = `<i data-lucide="lock"></i> Connexion Admin`;
-        newBtn.style.color = 'var(--ink)';
-        newBtn.addEventListener('click', showAdminLoginModal);
-    }
-
-    // Refresh icons
+    newBtn.innerHTML = `<i data-lucide="log-out"></i> Déconnexion`;
+    newBtn.style.color = 'var(--danger)';
+    newBtn.addEventListener('click', logoutAdmin);
     createIcons({ icons, root: newBtn });
 }
 

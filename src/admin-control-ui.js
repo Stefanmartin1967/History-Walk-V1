@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { createIcons, icons } from 'lucide';
-import { getStoredToken, saveToken } from './github-sync.js';
+import { getStoredToken, saveToken, isTokenPersisted } from './github-sync.js';
 import { showToast } from './toast.js';
 import { showAlert } from './modal.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
@@ -281,6 +281,7 @@ export function renderTab(tab, diffData, callbacks) {
 
     } else if (tab === 'settings') {
         const token = getStoredToken() || '';
+        const persisted = isTokenPersisted();
         container.innerHTML = `
             <div class="cc-settings-layout">
                 <!-- GITHUB TOKEN -->
@@ -288,6 +289,11 @@ export function renderTab(tab, diffData, callbacks) {
                     <h3>Configuration GitHub</h3>
                     <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin-bottom:15px;">Personal Access Token (PAT) pour l'upload.</p>
                     <input type="password" id="cc-token-input" value="${token}" class="settings-input" placeholder="ghp_...">
+                    <label class="cc-token-persist-label">
+                        <input type="checkbox" id="cc-token-persist" ${persisted ? 'checked' : ''}>
+                        Se souvenir sur cet appareil
+                        <span class="cc-token-persist-hint">(PC personnel uniquement)</span>
+                    </label>
                     <button id="btn-save-token" class="cc-save-btn">Sauvegarder Token</button>
                 </div>
 
@@ -320,8 +326,9 @@ export function renderTab(tab, diffData, callbacks) {
             const btnSave = document.getElementById('btn-save-token');
             if(btnSave) btnSave.onclick = () => {
                 const val = document.getElementById('cc-token-input').value.trim();
-                saveToken(val);
-                showToast("Token sauvegardé !", "success");
+                const persistent = document.getElementById('cc-token-persist')?.checked ?? false;
+                saveToken(val, persistent);
+                showToast(persistent ? "Token sauvegardé (persistant)" : "Token sauvegardé (session)", "success");
             };
 
             const btnUp = document.getElementById('btn-sync-upload');
