@@ -1017,18 +1017,18 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Fort Sraya Ben Ayed En Ruines",
+        "Nom du site FR": "Palais Ben Ayed",
         "Nom du site arabe": "حصن سرايا بن عياد",
         "Catégorie": "Site historique",
         "Zone": "Midoun",
         "Coordonnées GPS": "33.819464, 10.952940",
         "Latitude": 33.819464,
         "Longitude": 10.95294,
-        "Description": null,
-        "Source": null,
+        "Description": "",
+        "Source": "",
         "Temps de visite": null,
-        "Prix d'entrée": null,
-        "Desc_wpt": null,
+        "Prix d'entrée": 0,
+        "Desc_wpt": "",
         "HW_ID": "HW-01K77WPE6AA25DRECXWRNXFZ4C",
         "planifieCounter": 1,
         "vu": false
