@@ -5,9 +5,10 @@ import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { map } from './map.js';
 import { showAlert, showConfirm } from './modal.js';
-import { ANIMAL_RANKS } from './statistics.js';
+import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken, saveToken } from './github-sync.js';
+import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
 import { recalculatePlannedCountersForMap } from './circuit-actions.js';
 
@@ -18,7 +19,6 @@ export function initAdminMode() {
     }
 
     // Initial check
-    console.log("[Admin] Init mode. Is Admin?", state.isAdmin);
     toggleAdminUI(state.isAdmin);
 
     eventBus.on('admin:mode-toggled', (isAdmin) => {
@@ -41,42 +41,38 @@ function updateAdminLoginButton() {
     const menuContent = document.getElementById('tools-menu-content');
     if (!menuContent) return;
 
+    let separator = document.getElementById('admin-menu-separator');
     let btn = document.getElementById('btn-admin-login-logout');
 
-    // Si le bouton n'existe pas, on le crée
-    if (!btn) {
-        // Ajout d'un séparateur avant le bouton s'il n'existe pas déjà juste avant
-        const lastChild = menuContent.lastElementChild;
-        if (lastChild && lastChild.tagName !== 'DIV') { // Simple heuristic
-             const separator = document.createElement('div');
-             separator.style.height = '1px';
-             separator.style.width = '100%';
-             separator.style.background = 'var(--line)';
-             separator.style.margin = '5px 0';
-             menuContent.appendChild(separator);
-        }
+    if (!state.isAdmin) {
+        // Non connecté : aucune trace dans le menu
+        if (separator) separator.style.display = 'none';
+        if (btn) btn.style.display = 'none';
+        return;
+    }
 
+    // Connecté : afficher séparateur + bouton Déconnexion
+    if (!separator) {
+        separator = document.createElement('div');
+        separator.id = 'admin-menu-separator';
+        separator.style.cssText = 'height:1px;width:100%;background:var(--line);margin:5px 0';
+        menuContent.appendChild(separator);
+    }
+    separator.style.display = '';
+
+    if (!btn) {
         btn = document.createElement('button');
         btn.id = 'btn-admin-login-logout';
         btn.className = 'tools-menu-item';
         menuContent.appendChild(btn);
     }
+    btn.style.display = '';
 
-    // On clone pour nettoyer les anciens écouteurs
     const newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
-
-    if (state.isAdmin) {
-        newBtn.innerHTML = `<i data-lucide="log-out"></i> Déconnexion`;
-        newBtn.style.color = 'var(--danger)';
-        newBtn.addEventListener('click', logoutAdmin);
-    } else {
-        newBtn.innerHTML = `<i data-lucide="lock"></i> Connexion Admin`;
-        newBtn.style.color = 'var(--ink)';
-        newBtn.addEventListener('click', showAdminLoginModal);
-    }
-
-    // Refresh icons
+    newBtn.innerHTML = `<i data-lucide="log-out"></i> Déconnexion`;
+    newBtn.style.color = 'var(--danger)';
+    newBtn.addEventListener('click', logoutAdmin);
     createIcons({ icons, root: newBtn });
 }
 
@@ -441,13 +437,15 @@ async function publishMapToGitHub() {
 
     const mapId = state.currentMapId || 'djerba';
     const filename = `${mapId}.geojson`;
-    const repoOwner = 'Stefanmartin1967';
-    const repoName = 'History-Walk-V1';
-    const path = `public/${filename}`;
+    const path = GITHUB_PATHS.geojson(mapId);
 
-    if (!confirm(`Voulez-vous publier la carte officielle (${filename}) sur GitHub ?\n\nCela rendra visibles toutes vos modifications (photos, déplacements) pour tous les utilisateurs.\n\nAttention : Cette action est irréversible.`)) {
-        return;
-    }
+    const ok = await showConfirm(
+        "Publication de la carte",
+        `Publier la carte officielle <strong>${filename}</strong> sur GitHub ?\n\nToutes les modifications (photos, positions, détails) seront visibles pour tous les utilisateurs.`,
+        "Publier",
+        "Annuler"
+    );
+    if (!ok) return;
 
     showToast("Génération du fichier...", "info");
 
@@ -472,12 +470,12 @@ async function publishMapToGitHub() {
         const blob = new Blob([jsonStr], { type: 'application/geo+json' });
         const file = new File([blob], filename, { type: 'application/geo+json' });
 
-        const message = `Update map data ${filename} via Admin One-Click`;
+        const poiCount = geojson.features?.length ?? 0;
+        const message = `feat(map): Publication ${mapId} — ${poiCount} POIs`;
 
-        await uploadFileToGitHub(file, token, repoOwner, repoName, path, message);
+        await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, path, message);
 
-        showToast("Carte publiée avec succès !", "success");
-        alert("La carte a été mise à jour sur GitHub.\nLes changements seront visibles d'ici quelques minutes.");
+        showToast("Carte publiée avec succès ! Les changements seront visibles d'ici quelques minutes.", "success");
 
     } catch (error) {
         console.error("Erreur publication carte:", error);
@@ -486,39 +484,83 @@ async function publishMapToGitHub() {
 }
 
 function showRankTable() {
-    // Construction du tableau HTML pour les Animaux (Distance)
-    let tableRows = ANIMAL_RANKS.map(r => `
+    // --- Lignes Animaux (% Distance officielle) ---
+    const animalRows = ANIMAL_RANKS.map(r => `
         <tr>
             <td><i data-lucide="${r.icon}"></i></td>
             <td>${r.title}</td>
-            <td>${r.min} km</td>
+            <td>${r.min}%</td>
+        </tr>
+    `).join('');
+
+    // --- Lignes Matières (% POIs visités) ---
+    const materialRows = MATERIAL_RANKS.map(r => `
+        <tr>
+            <td><span class="rank-dot" style="background:${r.color};"></span></td>
+            <td>${r.title}</td>
+            <td>${r.min}%</td>
+        </tr>
+    `).join('');
+
+    // --- Lignes Global (Distance% × POI% / 100) ---
+    const globalRows = GLOBAL_RANKS.map(r => `
+        <tr>
+            <td><i data-lucide="star"></i></td>
+            <td>${r.title}</td>
+            <td>${r.min}%</td>
         </tr>
     `).join('');
 
     const html = `
-        <div class="rank-table-wrapper">
-            <table class="rank-table">
-                <thead>
-                    <tr>
-                        <th>Badge</th>
-                        <th>Titre</th>
-                        <th>Requis</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${tableRows}
-                </tbody>
-            </table>
-            <p class="rank-table-note">Les rangs sont basés sur la distance totale parcourue (circuits terminés).</p>
+        <div class="rank-tabs-wrapper">
+            <div class="rank-tabs-nav">
+                <button class="rank-tab-btn active" data-tab="animals">🐾 Animaux</button>
+                <button class="rank-tab-btn" data-tab="materials">💎 Matières</button>
+                <button class="rank-tab-btn" data-tab="global">⭐ Global</button>
+            </div>
+
+            <div class="rank-tab-panel active" id="rank-panel-animals">
+                <p class="rank-tab-hint">Basé sur le % de distance officielle parcourue</p>
+                <table class="rank-table">
+                    <thead><tr><th>Badge</th><th>Titre</th><th>Requis</th></tr></thead>
+                    <tbody>${animalRows}</tbody>
+                </table>
+            </div>
+
+            <div class="rank-tab-panel" id="rank-panel-materials">
+                <p class="rank-tab-hint">Basé sur le % de lieux visités</p>
+                <table class="rank-table">
+                    <thead><tr><th>Couleur</th><th>Titre</th><th>Requis</th></tr></thead>
+                    <tbody>${materialRows}</tbody>
+                </table>
+            </div>
+
+            <div class="rank-tab-panel" id="rank-panel-global">
+                <p class="rank-tab-hint">Distance% × Lieux% ÷ 100 — exceller sur les deux axes est nécessaire</p>
+                <table class="rank-table">
+                    <thead><tr><th></th><th>Titre</th><th>Requis</th></tr></thead>
+                    <tbody>${globalRows}</tbody>
+                </table>
+            </div>
         </div>
     `;
 
     showAlert("Tableau des Rangs", html, "Fermer");
 
-    // Refresh icons in modal immediately
+    // Activer la logique des onglets + refresh icônes
     const modalContent = document.getElementById('custom-modal-message');
     if (modalContent) {
         createIcons({ icons, root: modalContent });
+
+        modalContent.querySelectorAll('.rank-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.dataset.tab;
+                modalContent.querySelectorAll('.rank-tab-btn').forEach(b => b.classList.remove('active'));
+                modalContent.querySelectorAll('.rank-tab-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                modalContent.querySelector(`#rank-panel-${target}`).classList.add('active');
+            });
+        });
     }
 }
 
@@ -589,9 +631,6 @@ export function showGitHubConfigModal() {
 
 export function showGitHubDeleteModal() {
     const storedToken = getStoredToken() || '';
-    const repoOwner = 'Stefanmartin1967'; // Default from user info
-    const repoName = 'History-Walk-V1';   // Default from user info
-
     // 1. Récupération des éléments de la modale globale
     const overlay = document.getElementById('custom-modal-overlay');
     const title = document.getElementById('custom-modal-title');
@@ -665,31 +704,35 @@ export function showGitHubDeleteModal() {
             return;
         }
 
-        if (!confirm(`Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT le circuit "${circuitName}" du serveur ?\nCette action est irréversible.`)) {
-            return;
-        }
+        const okDel = await showConfirm(
+            "Suppression définitive",
+            `Supprimer définitivement le circuit <strong>"${circuitName}"</strong> du serveur ?\n\nCette action est irréversible.`,
+            "Supprimer",
+            "Annuler",
+            true
+        );
+        if (!okDel) return;
 
-        statusDiv.textContent = "Recherche du fichier sur le serveur...";
-        statusDiv.style.color = "var(--ink-soft)";
+        // La modale de confirmation est fermée — on passe aux toasts pour le feedback
         btnDelete.disabled = true;
+        showToast("Recherche du fichier sur le serveur...", "info");
 
         try {
             saveToken(token);
 
-            // On doit trouver le nom du fichier depuis l'index
             const timestamp = Date.now();
-            const indexUrl = `https://raw.githubusercontent.com/${repoOwner}/${repoName}/main/public/circuits/${state.currentMapId || 'djerba'}.json?t=${timestamp}`;
+            const indexUrl = `${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}?t=${timestamp}`;
             const remoteIndex = await fetch(indexUrl).then(r => r.json());
             const target = remoteIndex.find(r => String(r.id) === String(circuitId));
 
             if (!target || !target.file) {
-                 throw new Error(`Fichier introuvable sur le serveur pour le circuit ID: ${circuitId}`);
+                throw new Error(`Fichier introuvable sur le serveur pour le circuit ID: ${circuitId}`);
             }
 
             const path = `public/circuits/${target.file}`;
-            statusDiv.textContent = "Suppression en cours...";
+            showToast("Suppression en cours...", "info");
 
-            await deleteFileFromGitHub(token, repoOwner, repoName, path, `Delete official circuit: ${circuitName}`);
+            await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, path, `feat(circuit): Suppression "${circuitName}"`);
 
             // Nettoyage local mémoire + IndexedDB
             state.officialCircuits = state.officialCircuits.filter(c => String(c.id) !== String(circuitId));
@@ -697,18 +740,12 @@ export function showGitHubDeleteModal() {
                 await deleteCircuit(circuitId);
             });
 
-            statusDiv.textContent = "Succès ! Circuit supprimé. L'index du site va se mettre à jour.";
-            statusDiv.style.color = "green";
-
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                window.location.reload();
-            }, 2000);
+            showToast(`Circuit "${circuitName}" supprimé avec succès !`, "success");
+            setTimeout(() => { window.location.reload(); }, 2000);
 
         } catch (e) {
             console.error("Delete error:", e);
-            statusDiv.textContent = `Erreur: ${e.message}`;
-            statusDiv.style.color = "var(--danger)";
+            showToast(`Erreur : ${e.message}`, "error");
             btnDelete.disabled = false;
         }
     };
@@ -720,9 +757,6 @@ export function showGitHubDeleteModal() {
 
 export function showGitHubUploadModal() {
     const storedToken = getStoredToken() || '';
-    const repoOwner = 'Stefanmartin1967'; // Default from user info
-    const repoName = 'History-Walk-V1';   // Default from user info
-
     // 1. Récupération des éléments de la modale globale
     const overlay = document.getElementById('custom-modal-overlay');
     const title = document.getElementById('custom-modal-title');
@@ -847,7 +881,7 @@ export function showGitHubUploadModal() {
             // The default folder for Djerba circuits is now public/circuits/djerba/
             const path = `public/circuits/djerba/${file.name}`;
 
-            await uploadFileToGitHub(file, token, repoOwner, repoName, path, `Add official circuit: ${file.name}`);
+            await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, path, `feat(circuit): Ajout "${file.name}"`);
 
             // Track in Admin Draft
             addToDraft('circuit', file.name, { type: 'upload' });

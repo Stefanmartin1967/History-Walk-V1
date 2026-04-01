@@ -34,7 +34,6 @@ export function enableDesktopCreationMode() {
 
 // --- FONCTION D'IMPORT AVEC CLUSTERING ET DÉTECTION ---
 export async function handleDesktopPhotoImport(filesList) {
-    console.log(">>> Démarrage Import Desktop. Fichiers reçus :", filesList);
 
     const files = Array.from(filesList);
     if (!files || files.length === 0) {
@@ -46,7 +45,6 @@ export async function handleDesktopPhotoImport(filesList) {
     if (loader) loader.style.display = 'flex';
 
     try {
-        console.log(">>> [Import] Début analyse EXIF...");
         // --- ETAPE 1 : EXTRACTION GPS ---
         const filesData = [];
 
@@ -62,20 +60,17 @@ export async function handleDesktopPhotoImport(filesList) {
 
         const validItems = filesData.filter(f => f.hasGps);
         if (validItems.length === 0) {
-             console.log(">>> [Import] Aucune photo avec GPS.");
              if (loader) loader.style.display = 'none';
              return showToast("Aucune coordonnée GPS trouvée dans ces photos.", 'error');
         }
 
         // --- ETAPE 2 : CLUSTERING (Regroupement) ---
-        console.log(`>>> [Import] Clustering de ${validItems.length} photos...`);
         // On groupe les photos distantes de moins de 80m (augmenté pour éviter le split abusif)
         const clusters = clusterByLocation(validItems, 80);
 
         // On trie par taille : Les plus gros groupes d'abord ("Majorité")
         clusters.sort((a, b) => b.length - a.length);
 
-        console.log(`>>> [Import] ${clusters.length} clusters identifiés.`);
 
         // --- ETAPE 3 : TRAITEMENT SÉQUENTIEL DES GROUPES ---
         let processedCount = 0;
@@ -89,7 +84,6 @@ export async function handleDesktopPhotoImport(filesList) {
             const { main, outliers } = filterOutliers(cluster);
 
             if (outliers.length > 0) {
-                console.log(`>>> Cluster ${i+1}: ${outliers.length} outliers détectés et séparés.`);
                 // On garde le noyau principal
                 cluster = main;
                 // On ajoute les outliers comme un nouveau groupe à traiter plus tard
@@ -98,7 +92,6 @@ export async function handleDesktopPhotoImport(filesList) {
 
             // --- PRÉ-TRAITEMENT : CALCUL BASE64 POUR DÉTECTION DOUBLONS ---
             // On le fait ici pour le cluster actif afin de comparer avec les photos existantes des POIs
-            console.log(`>>> [Import] Pré-traitement (resize) cluster ${i+1}...`);
             for (let item of cluster) {
                 if (!item.base64) {
                     try {
@@ -111,7 +104,6 @@ export async function handleDesktopPhotoImport(filesList) {
 
             const center = calculateBarycenter(cluster.map(c => c.coords));
 
-            console.log(`>>> Traitement Cluster ${i+1}/${clusters.length} (${cluster.length} photos) à [${center.lat}, ${center.lng}]`);
 
             // Centrage Carte
             if (map) map.flyTo([center.lat, center.lng], 18, { duration: 1.0 });
@@ -138,7 +130,6 @@ export async function handleDesktopPhotoImport(filesList) {
 
             // CAS A : PROPOSITIONS ITÉRATIVES
             if (nearbyPois.length > 0) {
-                console.log(`>>> [Import] ${nearbyPois.length} POIs proches trouvés.`);
                 if (loader) loader.style.display = 'none'; // Masquer loader pour interaction utilisateur
 
                 for (let k = 0; k < nearbyPois.length; k++) {
@@ -290,7 +281,6 @@ export async function handleDesktopPhotoImport(filesList) {
 
 // Fonction utilitaire pour l'ajout effectif avec détection de doublons
 export async function addPhotosToPoi(feature, clusterItems) {
-    console.log(`>>> [Import] Ajout de ${clusterItems.length} photos au POI...`);
     let poiId = getPoiId(feature);
 
     // Si c'est un POI "natif" sans ID user, on lui en crée un
@@ -326,7 +316,6 @@ export async function addPhotosToPoi(feature, clusterItems) {
         }
     }
 
-    console.log(`>>> [Import] Résultat : ${added} ajoutées, ${duplicates} doublons.`);
 
     if (added > 0) {
         setUserData(newUserData);

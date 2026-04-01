@@ -1017,18 +1017,18 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Fort Sraya Ben Ayed En Ruines",
+        "Nom du site FR": "Palais Ben Ayed",
         "Nom du site arabe": "حصن سرايا بن عياد",
         "Catégorie": "Site historique",
         "Zone": "Midoun",
         "Coordonnées GPS": "33.819464, 10.952940",
         "Latitude": 33.819464,
         "Longitude": 10.95294,
-        "Description": null,
-        "Source": null,
+        "Description": "",
+        "Source": "",
         "Temps de visite": null,
-        "Prix d'entrée": null,
-        "Desc_wpt": null,
+        "Prix d'entrée": 0,
+        "Desc_wpt": "",
         "HW_ID": "HW-01K77WPE6AA25DRECXWRNXFZ4C",
         "planifieCounter": 1,
         "vu": false
@@ -6330,23 +6330,23 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.99044,
-          33.75989
+          10.990437269210817,
+          33.75993763630792
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Qibli",
+        "Nom du site FR": "Mosquée Al-Hajar",
         "Nom du site arabe": "جامع القبلي",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
         "Coordonnées GPS": "33.75989000,10.99044000",
         "Latitude": 33.75989,
         "Longitude": 10.99044,
-        "Description": "Ruines d'un autre bâtiment tout proche visible sur OSM",
-        "Source": null,
+        "Description": "Mosquée dont il ne reste que peu de traces, proche de la mosquée Al-Qibli",
+        "Source": "",
         "Temps de visite": null,
-        "Prix d'entrée": null,
-        "Desc_wpt": null,
+        "Prix d'entrée": 0,
+        "Desc_wpt": "Quelques vestige de mosquée",
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
         "planifieCounter": 1
       }
@@ -7091,6 +7091,173 @@
         "Zone": "El Groa",
         "HW_ID": "HW-01KK1D9QR642904GDJN33MDHSK",
         "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.990231,
+          33.8055485
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chez Moktar",
+        "Catégorie": "Restaurant",
+        "Zone": "Midoun",
+        "Description": "Restaurant ouvert pendant le ramadan \nDélicieuses ojja/kakchouka, diffèrents couscous",
+        "HW_ID": "HW-01KKEDXA9DTJXPB9DNY4EMVPR4",
+        "created_at": "2026-03-11T12:28:25.772Z",
+        "Desc_wpt": "Petit restaurant sympathique",
+        "Prix d'entrée": "50 TND"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9775885,
+          33.795488
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Errhama",
+        "Catégorie": "Mosquée",
+        "Zone": "Midoun",
+        "Description": "Mosquée découverte lors de notre randonnée \nNom à vérifier \nMosquée Errahma  Kahil: la miséricorde",
+        "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
+        "created_at": "2026-03-11T14:18:04.014Z",
+        "Prix d'entrée": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.972655564546585,
+          33.81398157183997
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Marabout Marmoura",
+        "Catégorie": "Mosquée",
+        "Zone": "Midoun",
+        "HW_ID": "HW-01KKS462NFDJ7E80WSWZ9TK9R7",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.990643799304964,
+          33.75990418754944
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al-Qibli",
+        "Catégorie": "Mosquée",
+        "Zone": "Sedouikech",
+        "HW_ID": "HW-01KKVHNCEZHNGRPZ5XGAF9V0N3",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9894488,
+          33.8054905
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Nouveau Lieu",
+        "Catégorie": "A définir",
+        "Zone": "Midoun",
+        "Description": "Créé sur le terrain",
+        "HW_ID": "HW-01KKEDW0GVVT7GVF4YS991G1CK",
+        "created_at": "2026-03-11T12:27:43.000Z"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9732669,
+          33.8147173
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Nouveau Lieu",
+        "Catégorie": "A définir",
+        "Zone": "Midoun",
+        "Description": "Créé sur le terrain",
+        "HW_ID": "HW-01KKK6JJ2HWQJJR363X4HR3SA0",
+        "created_at": "2026-03-13T08:56:25.423Z"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0169117,
+          33.8170536
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée ?",
+        "Catégorie": "Mosquée",
+        "Zone": "Taguermess",
+        "Description": "Créé sur le terrain",
+        "HW_ID": "HW-01KKNTSXM381B30Z3TVRMS4D3K",
+        "created_at": "2026-03-14T09:28:27.009Z",
+        "Prix d'entrée": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9731949,
+          33.8137894
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Marmoura",
+        "Catégorie": "Mosquée",
+        "Zone": "Midoun",
+        "Description": "Créé sur le terrain",
+        "HW_ID": "HW-01KM2QY8VXPF72S6D9NAZ0AZ43",
+        "created_at": "2026-03-19T09:48:31.484Z",
+        "Prix d'entrée": 0
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9918592,
+          33.8083466
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Marchand d'épices",
+        "Catégorie": "Commerce",
+        "Zone": "Midoun",
+        "Description": "Créé sur le terrain",
+        "HW_ID": "HW-01KMFHDGG11K9M2SEENYB6AM3Q",
+        "created_at": "2026-03-24T09:04:38.397Z",
+        "Prix d'entrée": 0,
+        "incontournable": true
       }
     }
   ]

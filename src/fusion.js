@@ -60,12 +60,12 @@ function setupFileInput(inputElement, nameDisplayId, boxId, isSource) {
             if (isSource) {
                 if (!json.features) throw new Error("Pas de 'features' trouvé.");
                 sourceData = json;
-                nameDisplay.innerHTML = `<span class="fusion-name-ok">✅ ${file.name} (${json.features.length} POIs)</span>`;
+                nameDisplay.innerHTML = `<span class="fusion-name-ok">✅ ${escapeHtml(file.name)} (${json.features.length} POIs)</span>`;
             } else {
                 if (!json.userData) throw new Error("Backup invalide.");
                 backupData = json;
                 const count = Object.keys(json.userData || {}).length;
-                nameDisplay.innerHTML = `<span class="fusion-name-ok">✅ ${file.name} (${count} entrées)</span>`;
+                nameDisplay.innerHTML = `<span class="fusion-name-ok">✅ ${escapeHtml(file.name)} (${count} entrées)</span>`;
             }
 
             box.classList.add('active', 'box-ok');

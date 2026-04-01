@@ -2,7 +2,9 @@ import { state, setUserData, setOfficialCircuitsStatus, setHiddenPoiIds } from '
 import { createIcons, icons } from 'lucide';
 import { generateMasterGeoJSONData } from './admin.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
+import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { showToast } from './toast.js';
+import { showConfirm, closeModal } from './modal.js';
 import { saveAppState } from './database.js';
 
 // Nouveaux imports suite au découpage
@@ -76,7 +78,6 @@ export const toggleDiffDetails = (id) => {
 
 export const updateDraftValue = async (id, key, value) => {
     // Met à jour directement userData (la source de vérité locale)
-    console.log(`[Admin] Correction user: ${id} [${key}] = ${value}`);
 
     const newUserData = { ...state.userData };
     if (!newUserData[id]) newUserData[id] = {};
@@ -142,7 +143,13 @@ async function publishChanges() {
         return;
     }
 
-    if (!confirm("Publier toutes les modifications sur GitHub ?")) return;
+    const ok = await showConfirm(
+        "Publication GitHub",
+        "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
+        "Publier",
+        "Annuler"
+    );
+    if (!ok) return;
 
     const btn = document.getElementById('btn-cc-publish');
     if (btn) {
@@ -163,23 +170,28 @@ async function publishChanges() {
         const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/geo+json' });
         const file = new File([blob], filename, { type: 'application/geo+json' });
 
-        await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/${filename}`, `Update via Admin Center`);
+        // Build a descriptive commit message from the diff stats
+        const stats = diffData.stats || {};
+        const msgParts = [`feat(map): Publication ${mapId}`];
+        if (stats.poisModified > 0) msgParts.push(`${stats.poisModified} POI(s)`);
+        if (stats.photosAdded  > 0) msgParts.push(`${stats.photosAdded} photo(s)`);
+        const commitMessage = msgParts.join(' — ');
+
+        await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.geojson(mapId), commitMessage);
 
         // Gestion des suppressions de fichiers circuits
         const circuitsToDelete = diffData.circuits.filter(c => c.status === 'SUPPRESSION' || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION')));
 
         if (circuitsToDelete.length > 0) {
-            console.log(`[Admin] Suppression de ${circuitsToDelete.length} fichiers circuits...`);
             for (const c of circuitsToDelete) {
                 try {
-                    const indexUrl = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${state.currentMapId || 'djerba'}.json`;
+                    const indexUrl = `${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}`;
                     const remoteIndex = await fetch(indexUrl).then(r => r.json());
                     const target = remoteIndex.find(r => String(r.id) === String(c.id));
 
                     if (target && target.file) {
                         const path = `public/circuits/${target.file}`;
-                        await deleteFileFromGitHub(token, 'Stefanmartin1967', 'History-Walk-V1', path, `Delete circuit ${c.name}`);
-                        console.log(`[Admin] Supprimé: ${path}`);
+                        await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, path, `feat(circuit): Suppression "${c.name}"`);
                     }
                 } catch (err) {
                     console.warn(`[Admin] Impossible de supprimer le fichier pour ${c.name}:`, err);
@@ -200,8 +212,7 @@ async function publishChanges() {
         setUserData(newUserData);
         await saveAppState('userData', state.userData);
 
-        alert("Mise à jour effectuée avec succès !");
-        document.getElementById('custom-modal-overlay').classList.remove('active');
+        closeModal();
 
     } catch (e) {
         console.error(e);
@@ -243,10 +254,10 @@ async function uploadAdminData() {
         await uploadFileToGitHub(
             file,
             token,
-            'Stefanmartin1967',
-            'History-Walk-V1',
-            'public/admin/personal_data.json',
-            'Update Admin Personal Data'
+            GITHUB_OWNER,
+            GITHUB_REPO,
+            GITHUB_PATHS.adminData,
+            'chore(sync): Sauvegarde données admin'
         );
 
         showToast("Données sauvegardées sur le serveur !", "success");
@@ -275,7 +286,7 @@ async function downloadAdminData() {
 
     try {
         const timestamp = Date.now();
-        const url = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/admin/personal_data.json?t=${timestamp}`;
+        const url = `${RAW_BASE}/${GITHUB_PATHS.adminData}?t=${timestamp}`;
 
         const response = await fetch(url);
         if (!response.ok) {

@@ -1,6 +1,7 @@
 import { getAppState, saveAppState, savePoiData, getAllPoiDataForMap } from './database.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { getPoiId, getPoiName, escapeHtml } from './utils.js';
+import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 
 const DOM = {
     loading: document.getElementById('loading-state'),
@@ -52,7 +53,7 @@ async function init() {
         }
 
         // 2. Charger les données distantes (GeoJSON officiel)
-        const url = `https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/${currentMapId}.geojson?t=${Date.now()}`;
+        const url = `${RAW_BASE}/${GITHUB_PATHS.geojson(currentMapId)}?t=${Date.now()}`;
         const response = await fetch(url);
         if (!response.ok) throw new Error("Impossible de télécharger le fichier source depuis GitHub.");
 
@@ -595,7 +596,8 @@ DOM.btnFusion.addEventListener('click', async () => {
         DOM.btnFusion.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Envoi sur GitHub...`;
         lucide.createIcons();
 
-        await uploadFileToGitHub(file, token, 'Stefanmartin1967', 'History-Walk-V1', `public/${filename}`, `Update via Console Fusion ++`);
+        const commitMsg = `feat(map): Fusion ${filename} — ${finalFeatures.length} POIs`;
+        await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.geojson(currentMapId), commitMsg);
 
         showToastMsg("Succès ! La carte officielle a été mise à jour.", "success");
         DOM.btnFusion.innerHTML = `<i data-lucide="check-circle"></i> Mise à jour réussie`;

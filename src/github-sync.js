@@ -1,32 +1,43 @@
 // src/github-sync.js
 
-// Clé de stockage en session pour le token
 const STORAGE_KEY_TOKEN = 'github_pat';
 
-// Nettoyage de sécurité: on supprime activement l'ancien token stocké en clair dans le localStorage
-if (localStorage.getItem(STORAGE_KEY_TOKEN)) {
-    console.warn("[Sécurité] Ancien token GitHub trouvé dans localStorage. Suppression immédiate.");
-    localStorage.removeItem(STORAGE_KEY_TOKEN);
-}
-
 /**
- * Récupère le token stocké en session
- * @returns {string|null} Le token ou null s'il n'existe pas
+ * Récupère le token : sessionStorage d'abord, localStorage ensuite (si "Se souvenir" activé)
+ * @returns {string|null}
  */
 export function getStoredToken() {
-    return sessionStorage.getItem(STORAGE_KEY_TOKEN);
+    return sessionStorage.getItem(STORAGE_KEY_TOKEN)
+        || localStorage.getItem(STORAGE_KEY_TOKEN)
+        || null;
 }
 
 /**
- * Sauvegarde le token en session
+ * Sauvegarde le token.
  * @param {string} token
+ * @param {boolean} persistent - si true, stocke aussi en localStorage (survit à la fermeture)
  */
-export function saveToken(token) {
+export function saveToken(token, persistent = false) {
     if (token) {
-        sessionStorage.setItem(STORAGE_KEY_TOKEN, token.trim());
+        const trimmed = token.trim();
+        sessionStorage.setItem(STORAGE_KEY_TOKEN, trimmed);
+        if (persistent) {
+            localStorage.setItem(STORAGE_KEY_TOKEN, trimmed);
+        } else {
+            localStorage.removeItem(STORAGE_KEY_TOKEN);
+        }
     } else {
         sessionStorage.removeItem(STORAGE_KEY_TOKEN);
+        localStorage.removeItem(STORAGE_KEY_TOKEN);
     }
+}
+
+/**
+ * Indique si le token est persisté en localStorage ("Se souvenir sur cet appareil")
+ * @returns {boolean}
+ */
+export function isTokenPersisted() {
+    return !!localStorage.getItem(STORAGE_KEY_TOKEN);
 }
 
 /**
@@ -75,11 +86,9 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
         if (checkResponse.ok) {
             const data = await checkResponse.json();
             sha = data.sha;
-            console.log("[GitHub] Fichier existant trouvé, SHA:", sha);
         }
     } catch (e) {
         // Ignorer si le fichier n'existe pas, c'est une création
-        console.log("[GitHub] Fichier nouveau ou erreur de vérification (normal si nouveau).");
     }
 
     // 3. Préparer le payload
@@ -135,7 +144,6 @@ export async function deleteFileFromGitHub(token, owner, repo, path, message) {
         if (checkResponse.ok) {
             const data = await checkResponse.json();
             sha = data.sha;
-            console.log("[GitHub Delete] Fichier trouvé, SHA:", sha);
         } else {
             throw new Error(`Fichier introuvable sur le serveur: ${path}`);
         }

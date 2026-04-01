@@ -1,5 +1,6 @@
 import { state } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
+import { RAW_BASE, GITHUB_PATHS } from './config.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
 // Ce fichier concentre exclusivement la logique complexe de comparaison
@@ -19,7 +20,6 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
         state.customFeatures.forEach(f => {
             const id = getPoiId(f);
             if (!adminDraft.pendingPois[id]) {
-                console.log(`[Admin] Réconciliation: Ajout non pisté détecté (Création) -> ${id}`);
                 adminDraft.pendingPois[id] = { type: 'creation', timestamp: Date.now() };
                 changed = true;
             }
@@ -45,7 +45,6 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
 
                  if (!isCreation) {
                       const type = data._deleted ? 'delete' : 'update';
-                      console.log(`[Admin] Réconciliation: Modif non pistée détectée (${type}) -> ${id}`);
                       adminDraft.pendingPois[id] = { type: type, timestamp: Date.now() };
                       changed = true;
                  }
@@ -62,7 +61,6 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
             // Si le circuit n'existe plus localement, ou est supprimé, ou n'a pas de trace réelle
             // => On le retire du brouillon de publication
             if (!exists || exists.isDeleted || (!exists.realTrack || exists.realTrack.length === 0)) {
-                console.log(`[Admin] Nettoyage brouillon: Circuit invalide retiré -> ${id}`);
                 delete adminDraft.pendingCircuits[id];
                 changed = true;
             }
@@ -91,8 +89,8 @@ export async function prepareDiffData(adminDraft) {
     // 1. Fetch Remote Data (POIs + Circuits)
     try {
         const [respGeo, respCirc] = await Promise.all([
-            fetch(`https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/${mapId}.geojson?t=${timestamp}`),
-            fetch(`https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main/public/circuits/${mapId}.json?t=${timestamp}`)
+            fetch(`${RAW_BASE}/${GITHUB_PATHS.geojson(mapId)}?t=${timestamp}`),
+            fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`)
         ]);
 
         if (respGeo.ok) {

@@ -4,19 +4,19 @@ import { getPoiId } from './data.js';
 import { showAlert } from './modal.js';
 import { createIcons, icons } from 'lucide';
 
-// --- 0. RANGS GLOBAUX (Basé sur XP Total) ---
-// XP = (UserDistance / TotalOfficialDistance * 10000) + (UserCircuits / TotalOfficialCircuits * 10000)
-// Max XP = 20 000
+// --- 0. RANGS GLOBAUX (Basé sur % Global = Distance% × POI% / 100) ---
+// pctGlobal = (distancePercent * poiPercent) / 100  → 0-100%
+// Système "hardcore" : il faut exceller sur BOTH axes pour atteindre les hauts rangs
 export const GLOBAL_RANKS = [
-    { min: 20000, title: "Lueur d'Éternité" },
-    { min: 17000, title: "Souffle Céleste" },
-    { min: 13500, title: "Sagesse des Sables" },
-    { min: 10000, title: "Regard d'Horizon" },
-    { min: 7000, title: "Sillage d'Argent" },
-    { min: 4500, title: "Âme Vagabonde" },
-    { min: 2500, title: "Cœur Vaillant" },
-    { min: 1200, title: "Esprit Curieux" },
-    { min: 500, title: "Petite Étincelle" },
+    { min: 90, title: "Lueur d'Éternité" },
+    { min: 80, title: "Souffle Céleste" },
+    { min: 70, title: "Sagesse des Sables" },
+    { min: 60, title: "Regard d'Horizon" },
+    { min: 50, title: "Sillage d'Argent" },
+    { min: 40, title: "Âme Vagabonde" },
+    { min: 30, title: "Cœur Vaillant" },
+    { min: 20, title: "Esprit Curieux" },
+    { min: 10, title: "Petite Étincelle" },
     { min: 0, title: "Premier Souffle" }
 ];
 
@@ -128,7 +128,9 @@ export function calculateStats() {
     const animalRank = getRank(ANIMAL_RANKS, distancePercent);
     // CHANGEMENT ICI : Le rang Matière dépend désormais du % de POIs visités
     const materialRank = getRank(MATERIAL_RANKS, poiPercent);
-    const globalRank = getRank(GLOBAL_RANKS, totalXP);
+    // Rang global basé sur le score combiné (même formule que la modale)
+    const pctGlobal = (distancePercent * poiPercent) / 100;
+    const globalRank = getRank(GLOBAL_RANKS, pctGlobal);
 
     return {
         visitedPois,
@@ -177,10 +179,11 @@ function getRank(rankList, value) {
 // CSS partagé pour réutilisation dans l'impression
 const EXPLORER_CARD_CSS = `
     :root {
-        --bg-parchment: #f4ecd8;
-        --accent-copper: #b87333;
-        --text-dark: #2c2c2c;
-        --progress-bg: rgba(0, 0, 0, 0.1);
+        /* Adapts to active theme; hardcoded fallback for print iframe where theme vars are absent */
+        --bg-parchment:  var(--surface-muted, #f4ecd8);
+        --accent-copper: var(--brand,         #b87333);
+        --text-dark:     var(--ink,           #2c2c2c);
+        --progress-bg:   var(--line,          rgba(0, 0, 0, 0.1));
     }
 
     body {
@@ -200,7 +203,7 @@ const EXPLORER_CARD_CSS = `
         box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         color: var(--text-dark);
         position: relative;
-        border: 1px solid #e2d1a8;
+        border: 1px solid var(--line, #e2d1a8);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -223,7 +226,7 @@ const EXPLORER_CARD_CSS = `
         height: 50px;
         min-width: 50px;
         border-radius: 50%;
-        background: #e2d1a8;
+        background: var(--bg-parchment);
         border: 2px solid var(--accent-copper);
         overflow: hidden;
         display: flex;
@@ -253,7 +256,8 @@ const EXPLORER_CARD_CSS = `
     .global-rank {
         font-style: italic;
         font-size: 0.75rem;
-        color: #666;
+        color: var(--text-dark);
+        opacity: 0.65;
         margin-top: 2px;
     }
 
@@ -287,16 +291,16 @@ const EXPLORER_CARD_CSS = `
 
     .progress-fill {
         height: 100%;
-        background: linear-gradient(90deg, var(--accent-copper), #e68a3e);
+        background: var(--accent-copper);
         transition: width 0.5s ease-in-out;
     }
 
-    .next-goal { font-size: 0.6rem; color: #888; margin-top: 1px; text-align: right; display: none; } /* Caché pour gagner place */
+    .next-goal { font-size: 0.6rem; color: var(--text-dark); opacity: 0.55; margin-top: 1px; text-align: right; display: none; } /* Caché pour gagner place */
 
     .footer-stats {
         display: flex;
         justify-content: space-between;
-        border-top: 1px solid rgba(0,0,0,0.1);
+        border-top: 1px solid var(--line, rgba(0,0,0,0.1));
         padding-top: 8px;
         font-size: 0.7rem;
         margin-top: 4px;
@@ -314,17 +318,17 @@ const EXPLORER_CARD_CSS = `
         align-items: center;
         gap: 8px;
         padding: 10px 20px;
-        background: #fff;
-        border: 1px solid #ddd;
+        background: var(--bg-parchment, #fff);
+        border: 1px solid var(--line, #ddd);
         border-radius: 8px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s;
-        color: #333;
+        color: var(--text-dark, #333);
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
     .action-btn-print:hover {
-        background: #f9f9f9;
+        background: var(--surface-muted, #f9f9f9);
         transform: translateY(-1px);
     }
 `;
@@ -392,6 +396,7 @@ export async function showStatisticsModal() {
 
     // -- HTML --
     const html = `
+    <style>${EXPLORER_CARD_CSS}</style>
     <div id="explorer-card-root">
         <div class="explorer-card" id="explorer-card-print">
             <div class="card-header">

@@ -27,7 +27,7 @@ import { isMobileView, initMobileMode } from './mobile.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
 import { setupDesktopTools } from './desktopMode.js';
-import { initAdminMode } from './admin.js';
+import { initAdminMode, showAdminLoginModal } from './admin.js';
 
 import { loadAndInitializeMap } from './app-startup.js';
 import { setupEventBusListeners, setupDesktopUIListeners, setupGlobalEventListeners } from './app-events.js';
@@ -43,7 +43,6 @@ function setupUnsavedChangesWarning() {
 }
 
 async function initializeApp() {
-    console.log("🚀 Version chargée :", APP_VERSION);
 
     // 0. Vérification Version
     const storedVersion = localStorage.getItem('hw_app_version');
@@ -58,34 +57,41 @@ async function initializeApp() {
     }
 
     // 0. Admin
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('mode') === 'admin' || urlParams.get('admin') === 'true') {
-        state.isAdmin = true;
-        document.body.classList.add('admin-mode');
-        if (DOM.appTitle) DOM.appTitle.textContent += " (Admin)";
-    }
-
     // 1. Initialisation de base
     const versionEl = document.getElementById('app-version');
     if (versionEl) {
         versionEl.textContent = APP_VERSION;
+        // 7 clics sur le numéro de version → ouvre le login admin (ne bypass pas le mot de passe)
         let clickCount = 0;
         let clickTimeout;
         versionEl.addEventListener('click', () => {
             clickCount++;
             clearTimeout(clickTimeout);
             if (clickCount >= 7) {
-                state.isAdmin = !state.isAdmin;
-                showToast(`Mode GOD : ${state.isAdmin ? 'ACTIVÉ' : 'DÉSACTIVÉ'}`, state.isAdmin ? 'success' : 'info');
-                import('./events.js').then(({ eventBus }) => eventBus.emit('admin:mode-toggled', state.isAdmin));
                 clickCount = 0;
+                if (!state.isAdmin) showAdminLoginModal();
             } else {
                 clickTimeout = setTimeout(() => { clickCount = 0; }, 2000);
             }
         });
         versionEl.style.cursor = 'pointer';
-        versionEl.title = "Cliquez 7 fois pour le mode Admin";
     }
+
+    // Raccourci clavier G→O→D (hors champs de saisie) → ouvre le login admin
+    let godSequence = '';
+    let godTimeout;
+    document.addEventListener('keydown', (e) => {
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+        godSequence += e.key.toLowerCase();
+        if (godSequence.length > 3) godSequence = godSequence.slice(-3);
+        clearTimeout(godTimeout);
+        if (godSequence === 'god') {
+            godSequence = '';
+            if (!state.isAdmin) showAdminLoginModal();
+            return;
+        }
+        godTimeout = setTimeout(() => { godSequence = ''; }, 2000);
+    });
 
     initAdminMode();
     initializeDomReferences();
@@ -161,6 +167,5 @@ const updateSW = registerSW({
         updateSW(true);
     },
     onOfflineReady() {
-        console.log("Application prête pour le mode hors-ligne !");
     },
-});window.state = state; window.getPoiId = getPoiId;
+});

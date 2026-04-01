@@ -294,7 +294,6 @@ export function deleteDatabase() {
         const request = indexedDB.deleteDatabase(dbName);
 
         request.onsuccess = () => {
-            console.log("Base de données supprimée.");
             localStorage.clear(); 
             resolve();
         };
