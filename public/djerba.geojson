@@ -3237,8 +3237,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.852306,
-          33.836389
+          10.85242738136557,
+          33.83634639621094
         ]
       },
       "properties": {
@@ -4487,8 +4487,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.825806,
-          33.7575
+          10.82564382168558,
+          33.75766551570927
         ]
       },
       "properties": {
@@ -4562,8 +4562,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.80425,
-          33.825167
+          10.804257094860079,
+          33.82511671073605
         ]
       },
       "properties": {
@@ -7081,43 +7081,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.804257094860079,
-          33.825125623614504
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée Bazim 2",
-        "Catégorie": "Mosquée",
-        "Zone": "El Groa",
-        "HW_ID": "HW-01KK1D9QR642904GDJN33MDHSK",
-        "Description": "Ajouté via Rich Editor"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.990231,
-          33.8055485
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Chez Moktar",
-        "Catégorie": "Restaurant",
-        "Zone": "Midoun",
-        "Description": "Restaurant ouvert pendant le ramadan \nDélicieuses ojja/kakchouka, diffèrents couscous",
-        "HW_ID": "HW-01KKEDXA9DTJXPB9DNY4EMVPR4",
-        "created_at": "2026-03-11T12:28:25.772Z",
-        "Desc_wpt": "Petit restaurant sympathique",
-        "Prix d'entrée": "50 TND"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.9775885,
           33.795488
         ]
@@ -7171,17 +7134,18 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.9894488,
-          33.8054905
+          10.989700442216916,
+          33.80554964168438
         ]
       },
       "properties": {
-        "Nom du site FR": "Nouveau Lieu",
-        "Catégorie": "A définir",
+        "Nom du site FR": "Restaurant chez Moktar",
+        "Catégorie": "Restaurant",
         "Zone": "Midoun",
-        "Description": "Créé sur le terrain",
+        "Description": "",
         "HW_ID": "HW-01KKEDW0GVVT7GVF4YS991G1CK",
-        "created_at": "2026-03-11T12:27:43.000Z"
+        "created_at": "2026-03-11T12:27:43.000Z",
+        "Prix d'entrée": 0
       }
     },
     {
