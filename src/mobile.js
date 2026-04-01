@@ -273,7 +273,8 @@ export function renderMobileCircuitsList() {
             // Using enriched properties from getProcessedCircuits
             const distDisplay = circuit._distDisplay;
             const zoneName = circuit._zoneName;
-            const displayName = circuit.name.split(' via ')[0];
+            let displayName = circuit.name.split(' via ')[0];
+            displayName = displayName.replace(/^(Circuit de |Boucle de )/i, '');
             const total = circuit._poiCount;
             const done = circuit._visitedCount;
             const isDone = circuit._isCompleted;
