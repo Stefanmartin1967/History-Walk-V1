@@ -150,18 +150,31 @@ if (chkInc) {
                      if (lngInput) lngInput.value = lng.toFixed(5);
                  },
                  async (lat, lng, revert) => {
+                     // Capture old coords before saving (for undo)
+                     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+                     const [prevLng, prevLat] = feature.geometry.coordinates;
+
                      if (await showConfirm("Déplacement", "Valider la nouvelle position ?", "Valider", "Annuler")) {
                          await updatePoiCoordinates(poiId, lat, lng);
-                         showToast("Position mise à jour.", "success");
+                         showToast("Position mise à jour.", "success", 8000, {
+                             label: "Annuler",
+                             onClick: async () => {
+                                 revert();
+                                 await updatePoiCoordinates(poiId, prevLat, prevLng);
+                                 const latInput = document.getElementById('poi-lat');
+                                 const lngInput = document.getElementById('poi-lng');
+                                 if (latInput) latInput.value = prevLat.toFixed(5);
+                                 if (lngInput) lngInput.value = prevLng.toFixed(5);
+                                 showToast("Position restaurée.", "info");
+                             }
+                         });
                      } else {
                          revert();
                          // Reset inputs
-                         const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-                         const [oldLng, oldLat] = feature.geometry.coordinates;
                          const latInput = document.getElementById('poi-lat');
                          const lngInput = document.getElementById('poi-lng');
-                         if (latInput) latInput.value = oldLat.toFixed(5);
-                         if (lngInput) lngInput.value = oldLng.toFixed(5);
+                         if (latInput) latInput.value = prevLat.toFixed(5);
+                         if (lngInput) lngInput.value = prevLng.toFixed(5);
                      }
                  }
              );

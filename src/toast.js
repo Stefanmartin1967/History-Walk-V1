@@ -1,13 +1,13 @@
 // toast.js
 // Ce fichier gère uniquement les petits messages d'alerte (notifications)
 
-export function showToast(message, type = 'info', duration = 4000) {
+export function showToast(message, type = 'info', duration = 4000, action = null) {
     const container = document.getElementById('toast-container');
     if (!container) return;
-    
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    
+
     let iconSvg = '';
     // Définition des icônes spécifiques aux notifications
     if (type === 'success') iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>`;
@@ -19,8 +19,20 @@ export function showToast(message, type = 'info', duration = 4000) {
     const span = document.createElement('span');
     span.textContent = message;
     toast.appendChild(span);
+
+    if (action) {
+        const btn = document.createElement('button');
+        btn.className = 'toast-action';
+        btn.textContent = action.label;
+        btn.addEventListener('click', () => {
+            toast.remove();
+            action.onClick();
+        });
+        toast.appendChild(btn);
+    }
+
     container.appendChild(toast);
-    
+
     setTimeout(() => {
         toast.style.animation = 'fadeOut 0.5s forwards';
         toast.addEventListener('animationend', () => toast.remove());
