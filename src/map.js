@@ -293,6 +293,8 @@ export function handleMarkerClick(feature) {
     } else {
         // --- MODE CONSULTATION (OFF) ---
         const globalIndex = state.loadedFeatures.findIndex(f => f.properties.HW_ID === feature.properties.HW_ID);
+        const coords = feature.geometry.coordinates;
+        map.flyTo([coords[1], coords[0]], Math.max(map.getZoom(), 16), { animate: true, duration: 0.6 });
         openDetailsPanel(globalIndex, null);
     }
 }
