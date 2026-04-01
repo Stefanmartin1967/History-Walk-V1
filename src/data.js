@@ -12,7 +12,7 @@ import {
 } from './database.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
-import { getPoiId, getPoiName, generateHWID } from './utils.js';
+import { getPoiId, getPoiName, generateHWID, getZoneFromCoords } from './utils.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
 import { getDomainFromUrl } from './url-utils.js';
 
@@ -359,6 +359,9 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
     if (feature) {
         feature.geometry.coordinates = [lng, lat];
         feature.properties.userData = state.userData[poiId];
+        // Recalcul automatique de la zone
+        const newZone = getZoneFromCoords(lat, lng);
+        if (newZone) feature.properties.Zone = newZone;
     }
 
     // Gestion de la persistance (Custom vs Officiel)

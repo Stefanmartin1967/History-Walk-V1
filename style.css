@@ -1201,6 +1201,20 @@ textarea.editable-input {
     flex-shrink: 0;
 }
 
+.toast-action {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: inherit;
+    padding: 2px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    margin-left: 10px;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 .toast.toast-success {
     background-color: var(--ok);
 }
