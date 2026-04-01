@@ -562,7 +562,8 @@ export function renderMobilePoiList(features) {
             currentCircuit = state.officialCircuits.find(c => c.id === state.activeCircuitId);
         }
 
-        pageTitle = currentCircuit ? currentCircuit.name : 'Circuit inconnu';
+        let rawName = currentCircuit ? currentCircuit.name : 'Circuit inconnu';
+        pageTitle = rawName.split(' via ')[0].replace(/^(Circuit de |Boucle de )/i, '');
         
         if (currentCircuit) {
             isAllVisited = isCircuitCompleted(currentCircuit);

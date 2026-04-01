@@ -2495,6 +2495,7 @@ input[type=range] {
 /* Cible 6 : Conteneur de la liste des POI (remplace flex-grow:1, overflow-y:auto, etc.) */
 .mobile-poi-list-container {
     flex-grow: 1;
+    min-height: 0; /* Permet au flex item de rétrécir sous son contenu → footer toujours visible */
     overflow-y: auto;
     padding-top: 10px;
 }
@@ -2681,9 +2682,12 @@ input[type=range] {
 
     /* 3. Ajustement du padding bas des listes pour éviter d'être caché par le dock agrandi */
     .mobile-list-container,
-    .mobile-poi-list-container,
     .mobile-actions-container {
         padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important;
+    }
+    /* La liste POI d'un circuit a son propre footer (pas le dock) — clearance minimal */
+    .mobile-poi-list-container {
+        padding-bottom: 16px !important;
     }
 }
 
@@ -4532,17 +4536,17 @@ input[type=range] {
 
 /* POI list header */
 .mobile-poi-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
-.mobile-poi-header-inner { display: flex; align-items: center; }
-.mobile-back-btn { margin-right: 10px; }
-.mobile-poi-title { margin: 0; font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+.mobile-poi-header-inner { display: flex; align-items: center; flex: 1; min-width: 0; }
+.mobile-back-btn { flex-shrink: 0; margin-right: 10px; }
+.mobile-poi-title { margin: 0; font-size: 17px; font-weight: 700; min-width: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .mobile-poi-icon--visited { color: var(--ok); display: flex; align-items: center; }
 .mobile-poi-icon--unvisited { color: var(--brand); display: flex; align-items: center; }
 .mobile-poi-icon-wrapper { display: flex; align-items: center; gap: 10px; }
 
 /* Share button footer */
-.mobile-poi-footer { flex-shrink: 0; padding: 16px 16px 20px 16px; border-top: 1px solid var(--line); background-color: var(--surface); z-index: 10; display: flex; flex-direction: column; gap: 10px; }
-.btn-share-circuit-mobile { width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; font-size: 16px; transition: all 0.2s; background-color: var(--surface); color: var(--ink); border: 2px solid var(--brand); }
-.btn-download-gpx-mobile { width: 100%; padding: 12px; border-radius: 12px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 15px; transition: all 0.2s; background-color: var(--surface-muted); color: var(--ink-soft); border: 1px solid var(--line); text-decoration: none; }
+.mobile-poi-footer { flex-shrink: 0; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background-color: var(--surface); z-index: 10; display: flex; flex-direction: row; gap: 8px; }
+.btn-share-circuit-mobile { flex: 1; padding: 11px 8px; border-radius: 10px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; transition: all 0.2s; background-color: var(--surface); color: var(--brand); border: 2px solid var(--brand); }
+.btn-download-gpx-mobile { flex-shrink: 0; padding: 11px 14px; border-radius: 10px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 14px; transition: all 0.2s; background-color: var(--surface-muted); color: var(--ink-soft); border: 1px solid var(--line); text-decoration: none; }
 
 /* Zone filter btn */
 .mobile-zone-btn-inner { flex: 1; }
