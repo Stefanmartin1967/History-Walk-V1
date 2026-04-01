@@ -4517,7 +4517,7 @@ input[type=range] {
 .mobile-circuit-card-wrapper { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
 .mobile-circuit-info { display: flex; flex-direction: column; flex: 1; min-width: 0; margin-right: 4px; }
 .mobile-circuit-name-row { display: flex; align-items: center; width: 100%; min-width: 0; overflow: hidden; }
-.mobile-circuit-name { font-size: 16px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; font-weight: 400; }
+.mobile-circuit-name { font-size: 16px; color: var(--ink); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex: 1; min-width: 0; font-weight: 400; }
 .mobile-circuit-name--official { font-weight: 700; }
 .mobile-circuit-right { display: flex; align-items: center; flex-shrink: 0; align-self: center; height: 100%; }
 
@@ -4540,8 +4540,9 @@ input[type=range] {
 .mobile-poi-icon-wrapper { display: flex; align-items: center; gap: 10px; }
 
 /* Share button footer */
-.mobile-poi-footer { flex-shrink: 0; padding: 16px 16px 20px 16px; border-top: 1px solid var(--line); background-color: var(--surface); z-index: 10; }
+.mobile-poi-footer { flex-shrink: 0; padding: 16px 16px 20px 16px; border-top: 1px solid var(--line); background-color: var(--surface); z-index: 10; display: flex; flex-direction: column; gap: 10px; }
 .btn-share-circuit-mobile { width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; font-size: 16px; transition: all 0.2s; background-color: var(--surface); color: var(--ink); border: 2px solid var(--brand); }
+.btn-download-gpx-mobile { width: 100%; padding: 12px; border-radius: 12px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 15px; transition: all 0.2s; background-color: var(--surface-muted); color: var(--ink-soft); border: 1px solid var(--line); text-decoration: none; }
 
 /* Zone filter btn */
 .mobile-zone-btn-inner { flex: 1; }

@@ -295,14 +295,7 @@ export function renderMobileCircuitsList() {
 
             const nameClass = circuit.isOfficial ? 'mobile-circuit-name mobile-circuit-name--official' : 'mobile-circuit-name';
 
-            // Action Droite (Téléchargement GPX pour Officiels)
-            let rightActionHtml = '';
-            if (circuit.isOfficial && circuit.file) {
-                rightActionHtml = `
-                <a href="./circuits/${circuit.file}" download title="Télécharger GPX" class="mobile-download-btn">
-                    <i data-lucide="download" class="icon-24 lucide"></i>
-                </a>`;
-            }
+            // Plus de bouton download dans la liste — déplacé dans la page circuit
 
             // Bouton Visité (Gauche)
             const visitedIcon = isDone ? 'check-circle' : 'circle';
@@ -324,9 +317,7 @@ export function renderMobileCircuitsList() {
                                 ${total} POI • ${distDisplay} <i data-lucide="${iconName}" class="icon-map-meta lucide"></i> • ${zoneName}${restoIcon}
                             </div>
                         </div>
-                        <div class="mobile-circuit-right">
-                            ${rightActionHtml}
-                        </div>
+                        <div class="mobile-circuit-right"></div>
                     </div>
                 </div>
             `;
@@ -621,6 +612,16 @@ export function renderMobilePoiList(features) {
     container.appendChild(listDiv);
 
     if (isCircuit) {
+        // Récupérer le fichier GPX du circuit actif (officiels uniquement)
+        const activeOfficial = state.officialCircuits?.find(c => c.id === state.activeCircuitId);
+        const gpxFile = activeOfficial?.file || null;
+        const gpxBtnHtml = gpxFile
+            ? `<a href="./circuits/${gpxFile}" download id="btn-download-gpx-mobile" class="btn-download-gpx-mobile">
+                   <i data-lucide="download"></i>
+                   <span>Télécharger GPX</span>
+               </a>`
+            : '';
+
         const footerDiv = document.createElement('div');
         footerDiv.className = 'mobile-poi-footer';
         footerDiv.innerHTML = `
@@ -628,9 +629,10 @@ export function renderMobilePoiList(features) {
                 <i data-lucide="qr-code"></i>
                 <span>Partager le circuit</span>
             </button>
+            ${gpxBtnHtml}
         `;
         container.appendChild(footerDiv);
-        
+
         setTimeout(() => {
             const btnShare = document.getElementById('btn-share-circuit-mobile');
             if(btnShare) {
