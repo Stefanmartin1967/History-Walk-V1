@@ -172,6 +172,7 @@ export function saveFeature(formData, indexToUpdate = null) {
         "Temps de visite": formData.temps || null,
         "Prix d'entrée": formData.prix || null,
         "Desc_wpt": formData.descWpt || null,
+        "verified": formData.verified || false,
         "HW_ID": indexToUpdate !== null ? globalGeoJSON.features[indexToUpdate].properties.HW_ID : generateHWID()
     };
 

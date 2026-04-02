@@ -245,6 +245,9 @@ export function getFilteredFeatures() {
             return true;
         }
 
+        // D.bis. Filtre "Non vérifiés seulement" (admin/révision)
+        if (state.activeFilters.nonVerifies && props.verified) return false;
+
         // D. Gestion Visité / Planifié (Différente selon le mode)
         if (state.isSelectionModeActive) {
              // MODE SÉLECTION : Filtres stricts définis par le Wizard

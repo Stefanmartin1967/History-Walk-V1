@@ -4,6 +4,7 @@ import { decodeText } from './utils.js';
 
 const columnsConfig = [
     { key: 'HW_ID', label: 'ID', hidden: true },
+    { key: 'verified', label: '✓', widthClass: 'col-verif', type: 'verified' },
     { key: 'Nom du site FR', label: 'Nom', widthClass: 'col-nom', editable: false, type: 'search' },
     { key: 'Catégorie', label: 'Catégorie', widthClass: 'col-cat', editable: false },
     { key: 'Coordonnées GPS', label: 'GPS', widthClass: 'col-gps', editable: false, type: 'gps' },
@@ -91,7 +92,14 @@ export function renderTableRows(features) {
             const wrapper = document.createElement('div');
             wrapper.className = 'cell-content';
 
-            if (col.type === 'actions') {
+            if (col.type === 'verified') {
+                const isVerified = !!props['verified'];
+                const badge = document.createElement('span');
+                badge.className = isVerified ? 'verif-badge verif-yes' : 'verif-badge verif-no';
+                badge.title = isVerified ? 'Vérifié' : 'Non vérifié';
+                badge.textContent = isVerified ? '✓' : '–';
+                wrapper.appendChild(badge);
+            } else if (col.type === 'actions') {
                 // Actions (Edit/Delete)
                 // Ici on ajoute une classe spécifique si besoin, mais cell-content fait déjà le job
                 const btnEdit = document.createElement('button');
