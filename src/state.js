@@ -49,6 +49,7 @@ export const state = {
         restaurants: false,
         vus: false,
         planifies: false,
+        nonVerifies: false,
         zone: null
     }
 };

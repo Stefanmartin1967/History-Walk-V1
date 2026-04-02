@@ -298,3 +298,11 @@ tr.hidden-row { display: none; }
     padding: 10px; border-radius: 6px; border: 1px dashed var(--line);
 }
 .modal-footer { padding: 15px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 10px; background: var(--surface-muted); }
+/* --- COLONNE VÉRIFIÉ --- */
+.col-verif { width: 36px; text-align: center; }
+.verif-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 13px; font-weight: 700; }
+.verif-yes { background-color: var(--ok); color: #fff; }
+.verif-no  { background-color: var(--line); color: var(--ink-soft); }
+
+.verif-checkbox { display: flex; align-items: center; gap: 8px; margin-right: auto; font-weight: 600; color: var(--ink-soft); cursor: pointer; }
+.verif-checkbox input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--ok); }

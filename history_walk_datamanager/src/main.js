@@ -104,6 +104,7 @@ function openModal(feature = null, index = null) {
         form.nomArabe.value = p['Nom du site arabe'] || '';
         form.temps.value = p['Temps de visite'] || '';
         form.prix.value = p["Prix d'entrée"] || '';
+        form.verified.checked = !!p['verified'];
 
         // Marqueur draggable sur la carte
         const coords = feature.geometry?.coordinates;
@@ -161,7 +162,8 @@ form.addEventListener('submit', (e) => {
         source: form.source.value,
         nomArabe: form.nomArabe.value,
         temps: form.temps.value,
-        prix: form.prix.value
+        prix: form.prix.value,
+        verified: form.verified.checked
     };
 
     const success = saveFeature(formData, currentEditIndex);

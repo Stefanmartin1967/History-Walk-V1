@@ -105,6 +105,21 @@ export function setupDesktopUIListeners() {
         applyFilters();
     });
 
+    document.getElementById('btn-filter-nonverifies')?.addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        const isActive = btn.classList.toggle('active');
+        state.activeFilters.nonVerifies = isActive;
+        if (isActive) {
+            btn.innerHTML = `<i data-lucide="shield-off"></i><span>Vérifiés</span>`;
+            btn.title = "Afficher tous";
+        } else {
+            btn.innerHTML = `<i data-lucide="shield-check"></i><span>Vérifiés</span>`;
+            btn.title = "Non vérifiés seulement";
+        }
+        createIcons({ icons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });
+        applyFilters();
+    });
+
     document.getElementById('btn-filter-zones')?.addEventListener('click', (e) => {
         e.stopPropagation();
         const zMenu = document.getElementById('zonesMenu');
