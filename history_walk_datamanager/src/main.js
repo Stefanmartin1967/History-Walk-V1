@@ -11,10 +11,13 @@ import {
     getAllFeatures
 } from './storage.js';
 
+import { publishToGitHub } from './github-sync.js';
+
 import { initTable, renderTableRows } from './table.js'
 // UI
 const btnLoad = document.getElementById('btn-load');
 const btnSave = document.getElementById('btn-save');
+const btnPublish = document.getElementById('btn-publish');
 const btnAdd = document.getElementById('btn-add'); // NOUVEAU BOUTON
 const btnUndo = document.getElementById('btn-undo');
 const btnRedo = document.getElementById('btn-redo');
@@ -22,10 +25,10 @@ const btnMaintenance = document.getElementById('btn-maintenance');
 const statusBarText = document.getElementById('status-text');
 const statusBarIcon = document.querySelector('.status-bar i');
 
-// MODAL
-const modal = document.getElementById('modal-form');
-const modalOverlay = document.getElementById('modal-overlay');
-const btnCloseModal = document.getElementById('btn-close-modal');
+// PANNEAU D'ÉDITION
+const tableView = document.getElementById('table-view');
+const editPanel = document.getElementById('edit-panel');
+const btnBack = document.getElementById('btn-back');
 const form = document.getElementById('feature-form');
 const modalTitle = document.getElementById('modal-title');
 
@@ -119,17 +122,19 @@ function openModal(feature = null, index = null) {
         modalTitle.textContent = "Ajouter un lieu";
     }
 
-    modalOverlay.classList.remove('hidden');
+    tableView.classList.add('hidden');
+    editPanel.classList.remove('hidden');
     setTimeout(() => form.nom.focus(), 100);
 }
 
 function closeModal() {
-    modalOverlay.classList.add('hidden');
+    editPanel.classList.add('hidden');
+    tableView.classList.remove('hidden');
     currentEditIndex = null;
     stopEditMarker();
 }
 
-btnCloseModal.addEventListener('click', closeModal);
+btnBack.addEventListener('click', closeModal);
 
 // AUTO-ZONE + mise à jour marqueur lors de la saisie GPS
 form.gps.addEventListener('blur', () => {
@@ -197,6 +202,15 @@ btnLoad.addEventListener('click', async () => {
     btnLoad.disabled = false;
     btnSave.disabled = false;
     btnAdd.disabled = false;
+    btnPublish.disabled = false;
+});
+
+btnPublish.addEventListener('click', async () => {
+    const data = getGeoJSONForExport();
+    if (!data) return;
+    btnPublish.disabled = true;
+    await publishToGitHub(data, (type, msg) => updateStatus(type, msg));
+    btnPublish.disabled = false;
 });
 
 btnSave.addEventListener('click', () => {

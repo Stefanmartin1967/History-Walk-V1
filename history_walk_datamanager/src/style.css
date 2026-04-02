@@ -82,6 +82,7 @@ body {
 .btn-success { background-color: var(--ok); }
 .btn-warning { background-color: var(--warn); color: var(--bg-2); }
 .btn-neutral { background-color: var(--line); color: var(--ink); }
+.btn-publish { background-color: #6f42c1; color: #fff; }
 
 .btn:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
 .btn:disabled, .btn-icon:disabled { 
@@ -262,22 +263,49 @@ tr.hidden-row { display: none; }
     max-height: 4.5em; 
 }
 
-/* --- 9. MODALE --- */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
-  z-index: 2000; display: flex; align-items: center; justify-content: center;
-  opacity: 1; pointer-events: auto; transition: opacity 0.2s;
+/* --- 9. PANNEAU D'ÉDITION (remplace la modale) --- */
+.edit-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 2px solid var(--line);
+  background: var(--surface);
 }
-.modal-overlay.hidden { display: none; pointer-events: none; opacity: 0; }
+.edit-panel.hidden { display: none; }
 
-.modal {
-  background: var(--surface); width: 800px; max-width: 95%; border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow: hidden; display: flex; flex-direction: column;
+.edit-panel-header {
+  padding: 10px 16px;
+  border-bottom: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-muted);
+  flex-shrink: 0;
+  gap: 12px;
 }
-.modal-header { padding: 15px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; background: var(--surface-muted); }
-.modal-header h2 { font-size: 1.1rem; color: var(--brand); display: flex; align-items: center; gap: 10px; }
+.edit-panel-header h2 { font-size: 1rem; color: var(--brand); flex: 1; text-align: center; }
 
-.modal-body { display: flex; flex-direction: column; gap: 15px; padding: 20px; max-height: 75vh; overflow-y: auto; }
+.edit-form-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.edit-panel-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-muted);
+  flex-shrink: 0;
+}
 
 .form-section { display: flex; flex-direction: column; gap: 10px; }
 .form-row { display: flex; gap: 15px; }
@@ -285,19 +313,19 @@ tr.hidden-row { display: none; }
 .flex-2 { flex: 2; }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); }
+.form-group label small { font-weight: 400; font-style: italic; }
 .form-group input, .form-group textarea {
   padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px;
   font-family: inherit; color: var(--ink); background: var(--surface); resize: vertical; width: 100%;
 }
-.form-group textarea { min-height: 100px; }
+.form-group textarea { min-height: 80px; }
 .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--brand); }
 
-.form-separator { border: 0; border-top: 1px solid var(--line); margin: 5px 0; }
-.details-section { 
-    background-color: var(--surface-muted); 
+.form-separator { border: 0; border-top: 1px solid var(--line); margin: 2px 0; }
+.details-section {
+    background-color: var(--surface-muted);
     padding: 10px; border-radius: 6px; border: 1px dashed var(--line);
 }
-.modal-footer { padding: 15px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 10px; background: var(--surface-muted); }
 /* --- COLONNE VÉRIFIÉ --- */
 .col-verif { width: 36px; text-align: center; }
 .verif-badge { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; font-size: 13px; font-weight: 700; }
