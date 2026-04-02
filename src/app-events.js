@@ -110,10 +110,10 @@ export function setupDesktopUIListeners() {
         const isActive = btn.classList.toggle('active');
         state.activeFilters.nonVerifies = isActive;
         if (isActive) {
-            btn.innerHTML = `<i data-lucide="shield-off"></i><span>Vérifiés</span>`;
+            btn.innerHTML = `<i data-lucide="shield-off"></i>`;
             btn.title = "Afficher tous";
         } else {
-            btn.innerHTML = `<i data-lucide="shield-check"></i><span>Vérifiés</span>`;
+            btn.innerHTML = `<i data-lucide="shield-check"></i>`;
             btn.title = "Non vérifiés seulement";
         }
         createIcons({ icons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });

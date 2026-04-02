@@ -11,10 +11,13 @@ import {
     getAllFeatures
 } from './storage.js';
 
+import { publishToGitHub } from './github-sync.js';
+
 import { initTable, renderTableRows } from './table.js'
 // UI
 const btnLoad = document.getElementById('btn-load');
 const btnSave = document.getElementById('btn-save');
+const btnPublish = document.getElementById('btn-publish');
 const btnAdd = document.getElementById('btn-add'); // NOUVEAU BOUTON
 const btnUndo = document.getElementById('btn-undo');
 const btnRedo = document.getElementById('btn-redo');
@@ -197,6 +200,15 @@ btnLoad.addEventListener('click', async () => {
     btnLoad.disabled = false;
     btnSave.disabled = false;
     btnAdd.disabled = false;
+    btnPublish.disabled = false;
+});
+
+btnPublish.addEventListener('click', async () => {
+    const data = getGeoJSONForExport();
+    if (!data) return;
+    btnPublish.disabled = true;
+    await publishToGitHub(data, (type, msg) => updateStatus(type, msg));
+    btnPublish.disabled = false;
 });
 
 btnSave.addEventListener('click', () => {

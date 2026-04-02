@@ -82,6 +82,7 @@ body {
 .btn-success { background-color: var(--ok); }
 .btn-warning { background-color: var(--warn); color: var(--bg-2); }
 .btn-neutral { background-color: var(--line); color: var(--ink); }
+.btn-publish { background-color: #6f42c1; color: #fff; }
 
 .btn:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
 .btn:disabled, .btn-icon:disabled { 
