@@ -71,6 +71,12 @@ export function renderTableRows(features) {
         const props = feature.properties;
         const tr = document.createElement('tr');
         tr.dataset.index = index;
+        tr.addEventListener('click', (e) => {
+            if (e.target.closest('button, a')) return; // Ignorer clics sur boutons/liens
+            document.querySelectorAll('#data-table tbody tr').forEach(r => r.classList.remove('row-active'));
+            tr.classList.add('row-active');
+            document.dispatchEvent(new CustomEvent('request:preview', { detail: { index } }));
+        });
 
         columnsConfig.forEach(col => {
             if (col.hidden) return;

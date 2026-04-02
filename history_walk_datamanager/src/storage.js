@@ -113,6 +113,7 @@ export async function loadGeoJSON(forceRemote = false) {
 }
 
 export function getGeoJSONForExport() { return globalGeoJSON; }
+export function getAllFeatures() { return globalGeoJSON?.features || []; }
 
 // --- ACTIONS CRUD ---
 

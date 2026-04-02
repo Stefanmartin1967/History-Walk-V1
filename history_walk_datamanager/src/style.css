@@ -23,6 +23,39 @@ body {
 }
 #app { display: flex; flex-direction: column; height: 100%; }
 
+/* --- SPLIT LAYOUT : TABLE + CARTE --- */
+.main-split {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.table-container {
+    flex: 1;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-right: 2px solid var(--line);
+}
+
+.map-panel {
+    width: 42%;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#map-container {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Ligne de tableau cliquable */
+#data-table tbody tr { cursor: pointer; transition: background 0.15s; }
+#data-table tbody tr:hover { background-color: var(--brand-soft); }
+#data-table tbody tr.row-active { background-color: var(--brand-soft); outline: 2px solid var(--brand); outline-offset: -2px; }
+
 /* --- 3. HEADER --- */
 .app-header {
   height: var(--header-height); background-color: var(--surface);

@@ -1,15 +1,14 @@
 // src/main.js
 import './style.css';
 import { createIcons, icons } from 'lucide';
+import { parseGps } from './utils.js';
+import { initMap, renderMarkers, focusFeature, startEditMarker, stopEditMarker, moveEditMarker } from './map.js';
 
-// --- CORRECTION ICI : On importe parseGps depuis utils.js ---
-import { parseGps } from './utils.js'; 
-
-import { 
-    initStorage, loadGeoJSON, getGeoJSONForExport, 
-    undo, redo, runMaintenance, getUniqueValues, 
-    saveFeature, getFeatureByIndex, detectZone
-    // (J'ai retiré parseGps de cette liste ci-dessus)
+import {
+    initStorage, loadGeoJSON, getGeoJSONForExport,
+    undo, redo, runMaintenance, getUniqueValues,
+    saveFeature, getFeatureByIndex, detectZone,
+    getAllFeatures
 } from './storage.js';
 
 import { initTable, renderTableRows } from './table.js'
@@ -54,8 +53,10 @@ function updateStatus(type, msg) {
 }
 
 // --- INITIALISATION ---
+initMap('map-container');
+
 initStorage(
-    (features) => renderTableRows(features),
+    (features) => { renderTableRows(features); renderMarkers(features); },
     (type, msg) => updateStatus(type, msg)
 );
 initTable();
@@ -74,65 +75,72 @@ btnAdd.addEventListener('click', () => {
 document.addEventListener('request:edit', (e) => {
     const index = e.detail.index;
     const feature = getFeatureByIndex(index);
-    if(feature) openModal(feature, index);
+    if (feature) openModal(feature, index);
+});
+
+// 3. Clic sur une ligne → focus carte
+document.addEventListener('request:preview', (e) => {
+    const index = e.detail.index;
+    const feature = getFeatureByIndex(index);
+    if (feature) focusFeature(feature, index);
 });
 
 function openModal(feature = null, index = null) {
     currentEditIndex = index;
     form.reset();
-    populateDatalists(); // Rafraichir les suggestions
+    populateDatalists();
 
     if (feature) {
         modalTitle.textContent = "Modifier le lieu";
         const p = feature.properties;
-        
-        // Remplissage form
+
         form.nom.value = p['Nom du site FR'] || '';
         form.gps.value = p['Coordonnées GPS'] || '';
         form.categorie.value = p['Catégorie'] || '';
         form.zone.value = p['Zone'] || '';
         form.description.value = p['Description'] || '';
         form.source.value = p['Source'] || '';
-        
-        // Champs cachés/détails
         form.descWpt.value = p['Desc_wpt'] || '';
         form.nomArabe.value = p['Nom du site arabe'] || '';
         form.temps.value = p['Temps de visite'] || '';
-        
-        // --- CORRECTION ICI (Guillemets doubles autour de la clé) ---
         form.prix.value = p["Prix d'entrée"] || '';
-        // -----------------------------------------------------------
-        
+
+        // Marqueur draggable sur la carte
+        const coords = feature.geometry?.coordinates;
+        if (coords?.length >= 2) {
+            startEditMarker(coords[1], coords[0], (lat, lng) => {
+                form.gps.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                const zone = detectZone(lat, lng);
+                if (zone) form.zone.value = zone;
+            });
+        }
     } else {
         modalTitle.textContent = "Ajouter un lieu";
     }
 
     modalOverlay.classList.remove('hidden');
-    // Focus sur le nom
     setTimeout(() => form.nom.focus(), 100);
 }
 
 function closeModal() {
     modalOverlay.classList.add('hidden');
     currentEditIndex = null;
+    stopEditMarker();
 }
 
 btnCloseModal.addEventListener('click', closeModal);
 
-// 3. AUTO-ZONE lors de la saisie GPS
+// AUTO-ZONE + mise à jour marqueur lors de la saisie GPS
 form.gps.addEventListener('blur', () => {
-    const val = form.gps.value;
-    const coords = parseGps(val);
+    const coords = parseGps(form.gps.value);
     if (coords) {
-        // Auto-formatage visuel propre
         form.gps.value = `${coords.lat}, ${coords.lon}`;
-        
-        // Détection Zone si champ vide ou si on veut forcer
+        // Déplace le marqueur si on a tapé des coords manuellement
+        moveEditMarker(coords.lat, coords.lon);
         if (form.zone.value === '') {
             const detected = detectZone(coords.lat, coords.lon);
             if (detected) {
                 form.zone.value = detected;
-                // Petit effet visuel pour montrer que ça a changé ? (Optionnel)
                 form.zone.style.backgroundColor = 'var(--brand-soft)';
                 setTimeout(() => form.zone.style.backgroundColor = '', 500);
             }
