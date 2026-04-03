@@ -125,6 +125,7 @@ body {
   border-bottom: 1px solid var(--line); font-size: 0.9rem; font-weight: 600; 
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
+.status-bar.status-draft { background-color: #fef3c7; border-bottom-color: var(--warn); }
 .status-message { display: flex; align-items: center; gap: 8px; }
 .result-counter { background: var(--surface); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; color: var(--ink); border: 1px solid var(--brand); }
 .result-counter.hidden { display: none; }

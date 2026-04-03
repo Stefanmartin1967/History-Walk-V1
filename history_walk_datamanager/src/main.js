@@ -51,7 +51,9 @@ document.querySelectorAll('.theme-option').forEach(o => o.addEventListener('clic
 
 function updateStatus(type, msg) {
     statusBarText.textContent = msg;
-    statusBarText.style.color = type === 'error' ? 'var(--danger)' : 'var(--ink)';
+    const statusBar = document.getElementById('status-bar');
+    statusBar.className = 'status-bar' + (type === 'draft' ? ' status-draft' : '');
+    statusBarText.style.color = type === 'error' ? 'var(--danger)' : type === 'draft' ? 'var(--warn)' : 'var(--ink)';
     createIcons({ icons });
 }
 
