@@ -64,6 +64,16 @@ initStorage(
 );
 initTable();
 
+// Chargement automatique du GeoJSON au démarrage
+(async () => {
+    const ok = await loadGeoJSON(false);
+    if (ok) {
+        btnSave.disabled = false;
+        btnAdd.disabled = false;
+        btnPublish.disabled = false;
+    }
+})();
+
 document.addEventListener('table:rendered', () => createIcons({ icons }));
 document.addEventListener('status:update', (e) => updateStatus(e.detail.type, e.detail.msg));
 
@@ -196,9 +206,11 @@ function populateDatalists() {
 }
 
 // --- BUTTONS LISTENERS ---
+// Recharger depuis le serveur (bypass brouillon)
 btnLoad.addEventListener('click', async () => {
+    if (!confirm("Recharger depuis le serveur ? Le brouillon local sera perdu.")) return;
     btnLoad.disabled = true;
-    await loadGeoJSON(false);
+    await loadGeoJSON(true);
     btnLoad.disabled = false;
     btnSave.disabled = false;
     btnAdd.disabled = false;
