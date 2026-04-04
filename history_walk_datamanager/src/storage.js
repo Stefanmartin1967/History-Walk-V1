@@ -187,18 +187,15 @@ export function saveFeature(formData, indexToUpdate = null) {
         "properties": properties
     };
 
-    saveStateToHistory();
-
     if (indexToUpdate !== null) {
-        // Mise à jour
         globalGeoJSON.features[indexToUpdate] = newFeature;
         notify("success", "Lieu modifié.");
     } else {
-        // Création
-        globalGeoJSON.features.unshift(newFeature); // Ajout au début de la liste
+        globalGeoJSON.features.unshift(newFeature);
         notify("success", "Nouveau lieu ajouté.");
     }
 
+    saveStateToHistory(); // APRÈS modification pour un undo correct
     refreshUI();
     return true;
 }
@@ -207,8 +204,8 @@ export function deleteFeature(index) {
     if (!globalGeoJSON) return;
     const f = globalGeoJSON.features[index];
     if(!confirm(`Supprimer '${f.properties['Nom du site FR']}' ?`)) return;
-    saveStateToHistory();
     globalGeoJSON.features.splice(index, 1);
+    saveStateToHistory(); // APRÈS modification
     refreshUI();
     notify("success", "Supprimé.");
     return true;
@@ -222,7 +219,6 @@ export function getFeatureByIndex(index) {
 
 export function runMaintenance() {
     if (!globalGeoJSON) return;
-    saveStateToHistory();
     let cUrl = 0;
     let cZone = 0;
     
@@ -263,6 +259,7 @@ export function runMaintenance() {
         }
     });
 
+    saveStateToHistory(); // APRÈS modifications
     refreshUI();
     notify("success", `Maintenance : ${cUrl} URL(s) et ${cZone} Zone(s) mise(s) à jour.`);
 }
