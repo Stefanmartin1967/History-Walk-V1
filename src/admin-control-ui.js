@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import { createIcons, icons } from 'lucide';
 import { getStoredToken, saveToken, isTokenPersisted } from './github-sync.js';
+import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { showAlert } from './modal.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
@@ -294,7 +295,9 @@ export function renderTab(tab, diffData, callbacks) {
                         Se souvenir sur cet appareil
                         <span class="cc-token-persist-hint">(PC personnel uniquement)</span>
                     </label>
-                    <button id="btn-save-token" class="cc-save-btn">Sauvegarder Token</button>
+                    <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin:15px 0 8px;">Gist ID <small>(sync données personnelles — laisser vide si non utilisé)</small></p>
+                    <input type="text" id="cc-gist-id-input" value="${localStorage.getItem('hw_gist_id') || ''}" class="settings-input" placeholder="ex: 21f82c6a621a6acf09adeb228154bb04" style="font-family:monospace;font-size:0.85rem;">
+                    <button id="btn-save-token" class="cc-save-btn">Sauvegarder</button>
                 </div>
 
                 <!-- SYNC PERSO -->
@@ -328,7 +331,15 @@ export function renderTab(tab, diffData, callbacks) {
                 const val = document.getElementById('cc-token-input').value.trim();
                 const persistent = document.getElementById('cc-token-persist')?.checked ?? false;
                 saveToken(val, persistent);
-                showToast(persistent ? "Token sauvegardé (persistant)" : "Token sauvegardé (session)", "success");
+                const gistId = document.getElementById('cc-gist-id-input')?.value.trim();
+                if (gistId) {
+                    localStorage.setItem('hw_gist_id', gistId);
+                } else {
+                    localStorage.removeItem('hw_gist_id');
+                }
+                showToast("Configuration sauvegardée !", "success");
+                injectSyncIndicator();
+                pullFromGist();
             };
 
             const btnUp = document.getElementById('btn-sync-upload');
