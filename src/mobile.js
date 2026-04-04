@@ -48,6 +48,23 @@ export function initMobileMode() {
             const view = btn.dataset.view;
             switchMobileView(view);
         });
+
+        // Appui long (600ms) sur le bouton ⚙ Menu → login admin
+        if (btn.dataset.view === 'actions') {
+            let longPressTimer = null;
+            btn.addEventListener('touchstart', () => {
+                longPressTimer = setTimeout(() => {
+                    longPressTimer = null;
+                    if (!state.isAdmin) showAdminLoginModal();
+                }, 600);
+            }, { passive: true });
+            btn.addEventListener('touchend', () => {
+                if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+            });
+            btn.addEventListener('touchmove', () => {
+                if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+            }, { passive: true });
+        }
     });
 
     // --- GESTION DU BOUTON FILTRE (Oeil) ---
