@@ -1201,6 +1201,25 @@ textarea.editable-input {
     flex-shrink: 0;
 }
 
+/* --- GIST SYNC INDICATOR --- */
+.gist-sync-indicator {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    font-size: 14px; cursor: pointer; transition: all 0.3s;
+    border: 1px solid transparent;
+    user-select: none;
+}
+.gist-sync-idle    { color: #10B981; border-color: #10B981; opacity: 0.7; }
+.gist-sync-pushing { color: #F59E0B; border-color: #F59E0B; animation: gist-pulse 1s infinite; }
+.gist-sync-pulling { color: #3B82F6; border-color: #3B82F6; animation: gist-pulse 1s infinite; }
+.gist-sync-error   { color: #EF4444; border-color: #EF4444; }
+.gist-sync-indicator:hover { opacity: 1; transform: scale(1.1); }
+
+@keyframes gist-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+}
+
 .toast-action {
     background: none;
     border: 1px solid rgba(255, 255, 255, 0.5);

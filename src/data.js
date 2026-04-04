@@ -11,6 +11,7 @@ import {
     saveCircuit
 } from './database.js';
 import { logModification } from './logger.js';
+import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { getPoiId, getPoiName, generateHWID, getZoneFromCoords } from './utils.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
@@ -291,6 +292,9 @@ export async function updatePoiData(poiId, key, value) {
 
     // Sauvegarde en Base de Données
     await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
+
+    // Sync Gist (debounced 3s)
+    schedulePush();
 
     // Force le rafraîchissement des marqueurs Leaflet si la catégorie a changé
     if (key === 'Catégorie') {

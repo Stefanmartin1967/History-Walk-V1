@@ -12,6 +12,7 @@ import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
+import { pushToGist } from './gist-sync.js';
 
 export function isCircuitCompleted(circuit) {
     if (!circuit) return false;
@@ -95,9 +96,9 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
                     await batchSavePoiData(state.currentMapId, updates);
 
                     // Force refresh des marqueurs sur la carte (pour passer en vert)
-                    // On s'assure que state.userData est synchrone avec state.loadedFeatures
-                    // Normalement c'est le cas car ils partagent la même référence mémoire via data.js
                     import('./data.js').then(({ applyFilters }) => applyFilters());
+                    // Push immédiat vers Gist (circuit terminé = événement important)
+                    pushToGist();
                 } catch (e) {
                     console.error("Erreur mise à jour POIs du circuit:", e);
                 }

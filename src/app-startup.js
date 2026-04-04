@@ -9,6 +9,7 @@ import { showToast } from './toast.js';
 import { loadCircuitDraft } from './circuit.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';
+import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 
 // --- FONCTION UTILITAIRE : Gestion des boutons de sauvegarde ---
 export function setSaveButtonsState(enabled) {
@@ -255,4 +256,8 @@ export async function loadAndInitializeMap() {
     }
 
     if (DOM.loaderOverlay) DOM.loaderOverlay.style.display = 'none';
+
+    // Gist sync : pull après chargement complet + injecter indicateur
+    injectSyncIndicator();
+    pullFromGist();
 }
