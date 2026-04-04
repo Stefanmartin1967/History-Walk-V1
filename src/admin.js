@@ -572,6 +572,7 @@ function setupGitHubUploadUI() {
 
 export function showGitHubConfigModal() {
     const storedToken = getStoredToken() || '';
+    const storedGistId = localStorage.getItem('hw_gist_id') || '';
 
     const html = `
         <div class="admin-github-body">
@@ -580,21 +581,15 @@ export function showGitHubConfigModal() {
             <label class="admin-github-label">GitHub Token (PAT)</label>
             <input type="password" id="gh-config-token" value="${storedToken}" placeholder="ghp_..." class="admin-github-input">
 
-            <div class="admin-github-note">Ce token est stocké uniquement dans votre navigateur local.</div>
+            <label class="admin-github-label" style="margin-top:12px;">Gist ID <small style="color:var(--hw-ink-soft);font-weight:normal;">(sync données personnelles)</small></label>
+            <input type="text" id="gh-config-gist-id" value="${storedGistId}" placeholder="ex: 21f82c6a621a6acf09adeb228154bb04" class="admin-github-input" style="font-family:monospace;font-size:0.85rem;">
+            <div class="admin-github-note">Laissez vide si vous n'utilisez pas la sync Gist. Obtenez ce Gist ID depuis votre PC une fois la sync configurée.</div>
+
+            <div class="admin-github-note" style="margin-top:8px;">Ces valeurs sont stockées uniquement dans votre navigateur local.</div>
         </div>
     `;
 
-    showAlert("Configuration GitHub", html, "Sauvegarder").then(() => {
-        // La promesse se résout à la fermeture (OK cliqué)
-        // Mais showAlert ne retourne pas la valeur des inputs.
-        // On doit ruser ou utiliser un bouton personnalisé dans showAlert (qui n'est pas prévu pour ça ici)
-        // Mieux vaut utiliser une implémentation custom comme showGitHubUploadModal
-    });
-
-    // REFACTO: showAlert est trop simple, on utilise le pattern manuel comme showGitHubUploadModal
-    // pour avoir accès aux inputs avant la fermeture.
-
-    // 1. Récupération des éléments de la modale globale
+    // Récupération des éléments de la modale globale
     const overlay = document.getElementById('custom-modal-overlay');
     const title = document.getElementById('custom-modal-title');
     const message = document.getElementById('custom-modal-message');
@@ -615,13 +610,23 @@ export function showGitHubConfigModal() {
     btnSave.className = 'custom-modal-btn primary';
     btnSave.textContent = "Sauvegarder";
     btnSave.onclick = () => {
-        const input = message.querySelector('#gh-config-token');
-        if (input) {
-            const token = input.value.trim();
-            saveToken(token);
-            showToast("Token sauvegardé !", "success");
-            overlay.classList.remove('active');
+        const tokenInput = message.querySelector('#gh-config-token');
+        const gistInput  = message.querySelector('#gh-config-gist-id');
+        if (tokenInput) {
+            const token = tokenInput.value.trim();
+            // Sauvegarde persistante (localStorage) pour que le token survive à la fermeture
+            saveToken(token, true);
         }
+        if (gistInput) {
+            const gistId = gistInput.value.trim();
+            if (gistId) {
+                localStorage.setItem('hw_gist_id', gistId);
+            } else {
+                localStorage.removeItem('hw_gist_id');
+            }
+        }
+        showToast("Configuration sauvegardée !", "success");
+        overlay.classList.remove('active');
     };
 
     actions.appendChild(btnCancel);
