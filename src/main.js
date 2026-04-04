@@ -145,6 +145,7 @@ async function initializeApp() {
     createIcons({ icons });
 
     // Import URL
+    const urlParams = new URLSearchParams(window.location.search);
     const importIds = urlParams.get('import');
     const importName = urlParams.get('name');
     if (importIds) {
