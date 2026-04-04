@@ -8,6 +8,7 @@ import { showAlert, showConfirm } from './modal.js';
 import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken, saveToken } from './github-sync.js';
+import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
 import { recalculatePlannedCountersForMap } from './circuit-actions.js';
@@ -627,6 +628,9 @@ export function showGitHubConfigModal() {
         }
         showToast("Configuration sauvegardée !", "success");
         overlay.classList.remove('active');
+        // Déclencher la sync Gist immédiatement si token + gistId présents
+        injectSyncIndicator();
+        pullFromGist();
     };
 
     actions.appendChild(btnCancel);
