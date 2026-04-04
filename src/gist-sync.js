@@ -5,9 +5,10 @@
 
 import { state } from './state.js';
 import { getStoredToken } from './github-sync.js';
-import { getPoiId } from './data.js';
+import { getPoiId, applyFilters } from './data.js';
 import { showToast } from './toast.js';
 import { savePoiData, batchSavePoiData, saveAppState } from './database.js';
+import { eventBus } from './events.js';
 
 const GIST_ID_KEY    = 'hw_gist_id';
 const GIST_FILE_NAME = 'history_walk_userdata.json';
@@ -99,14 +100,16 @@ function mergeRemoteIntoLocal(remote) {
     }
 
     // circuitsStatus : true gagne
+    let circuitsChanged = false;
     const remoteStatus = remote.circuitsStatus || {};
     for (const [cId, val] of Object.entries(remoteStatus)) {
         if (val === true && !state.officialCircuitsStatus[cId]) {
             state.officialCircuitsStatus[cId] = true;
+            circuitsChanged = true;
         }
     }
 
-    return { updates };
+    return { updates, circuitsChanged };
 }
 
 // ─── API GIST ─────────────────────────────────────────────────────────────────
@@ -169,13 +172,19 @@ export async function pullFromGist() {
             return;
         }
 
-        const { updates } = mergeRemoteIntoLocal(remote);
+        const { updates, circuitsChanged } = mergeRemoteIntoLocal(remote);
 
         if (updates.length > 0) {
             await batchSavePoiData(state.currentMapId, updates);
-            // Sauvegarder circuitsStatus si modifié
+        }
+        if (circuitsChanged) {
             await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
-            showToast(`Sync Gist : ${updates.length} lieu(x) mis à jour.`, 'info', 3000);
+        }
+        if (updates.length > 0 || circuitsChanged) {
+            // Rafraîchir l'UI : marqueurs + liste circuits
+            applyFilters();
+            eventBus.emit('circuit:list-updated');
+            showToast(`Sync Gist : ${updates.length} lieu(x)${circuitsChanged ? ' + circuits' : ''} mis à jour.`, 'info', 3000);
         }
 
         setStatus('idle');
