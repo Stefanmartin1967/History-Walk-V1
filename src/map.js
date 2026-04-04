@@ -453,9 +453,8 @@ export function refreshMapMarkers(visibleFeatures) {
 
             if (props.vu === true) {
                 icon.options.className += ' marker-visited';
-            }
-
-            if ((props.planifieCounter || 0) > 0) {
+            } else if ((props.planifieCounter || 0) > 0) {
+                // Visité prime sur planifié : on n'applique "planned" que si pas encore visité
                 icon.options.className += ' marker-planned';
             }
 
