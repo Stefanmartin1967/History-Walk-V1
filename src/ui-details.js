@@ -75,18 +75,8 @@ function setupDetailsEventListeners(poiId) {
     if (chkVu) {
         chkVu.addEventListener('change', (e) => {
             updatePoiData(poiId, 'vu', e.target.checked);
-
-            if (!isMobileView()) {
-                import('./data.js').then(dataModule => {
-                    import('./map.js').then(mapModule => {
-                        if (mapModule.refreshMapMarkers && dataModule.getFilteredFeatures) {
-                            mapModule.refreshMapMarkers(dataModule.getFilteredFeatures());
-                        }
-                    });
-                });
-
-                if (state.activeFilters.vus) applyFilters();
-            }
+            // Rafraîchit les marqueurs sur mobile ET desktop (cohérent avec setCircuitVisitedState)
+            applyFilters();
         });
     }
 
