@@ -51,7 +51,9 @@ document.querySelectorAll('.theme-option').forEach(o => o.addEventListener('clic
 
 function updateStatus(type, msg) {
     statusBarText.textContent = msg;
-    statusBarText.style.color = type === 'error' ? 'var(--danger)' : 'var(--ink)';
+    const statusBar = document.getElementById('status-bar');
+    statusBar.className = 'status-bar' + (type === 'draft' ? ' status-draft' : '');
+    statusBarText.style.color = type === 'error' ? 'var(--danger)' : type === 'draft' ? 'var(--warn)' : 'var(--ink)';
     createIcons({ icons });
 }
 
@@ -63,6 +65,16 @@ initStorage(
     (type, msg) => updateStatus(type, msg)
 );
 initTable();
+
+// Chargement automatique du GeoJSON au démarrage
+(async () => {
+    const ok = await loadGeoJSON(false);
+    if (ok) {
+        btnSave.disabled = false;
+        btnAdd.disabled = false;
+        btnPublish.disabled = false;
+    }
+})();
 
 document.addEventListener('table:rendered', () => createIcons({ icons }));
 document.addEventListener('status:update', (e) => updateStatus(e.detail.type, e.detail.msg));
@@ -196,9 +208,11 @@ function populateDatalists() {
 }
 
 // --- BUTTONS LISTENERS ---
+// Recharger depuis le serveur (bypass brouillon)
 btnLoad.addEventListener('click', async () => {
+    if (!confirm("Recharger depuis le serveur ? Le brouillon local sera perdu.")) return;
     btnLoad.disabled = true;
-    await loadGeoJSON(false);
+    await loadGeoJSON(true);
     btnLoad.disabled = false;
     btnSave.disabled = false;
     btnAdd.disabled = false;

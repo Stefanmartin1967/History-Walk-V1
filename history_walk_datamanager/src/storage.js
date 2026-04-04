@@ -80,12 +80,14 @@ export async function loadGeoJSON(forceRemote = false) {
         await loadZones();
 
         let dataToLoad = null;
+        let fromDraft = false;
         const savedData = localStorage.getItem(STORAGE_KEY);
 
         if (savedData && !forceRemote) {
-            if (confirm("Brouillon trouvé. Restaurer ?")) {
+            try {
                 dataToLoad = JSON.parse(savedData);
-            } else {
+                fromDraft = true;
+            } catch (e) {
                 localStorage.removeItem(STORAGE_KEY);
             }
         }
@@ -96,7 +98,7 @@ export async function loadGeoJSON(forceRemote = false) {
             dataToLoad = await response.json();
             notify("success", `Chargé : ${dataToLoad.features.length} lieux.`);
         } else {
-            notify("success", "Restauré.");
+            notify("draft", `Brouillon restauré (${dataToLoad.features.length} lieux). Cliquer ↻ pour recharger depuis le serveur.`);
         }
 
         globalGeoJSON = dataToLoad;
