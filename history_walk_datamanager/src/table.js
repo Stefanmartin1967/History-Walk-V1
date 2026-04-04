@@ -7,9 +7,7 @@ const columnsConfig = [
     { key: 'verified', label: '✓', widthClass: 'col-verif', type: 'verified' },
     { key: 'Nom du site FR', label: 'Nom', widthClass: 'col-nom', editable: false, type: 'search' },
     { key: 'Catégorie', label: 'Catégorie', widthClass: 'col-cat', editable: false },
-    { key: 'Coordonnées GPS', label: 'GPS', widthClass: 'col-gps', editable: false, type: 'gps' },
-    { key: 'Description', label: 'Description', widthClass: 'col-desc', editable: false },
-    { key: 'Source', label: 'Source', widthClass: 'col-source', editable: false, type: 'url' },
+    { key: 'Zone', label: 'Zone', widthClass: 'col-zone', editable: false },
     { key: 'actions', label: '', widthClass: 'col-actions', type: 'actions', editable: false }
 ];
 

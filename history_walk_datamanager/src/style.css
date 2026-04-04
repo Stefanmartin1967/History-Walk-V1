@@ -40,7 +40,7 @@ body {
 }
 
 .map-panel {
-    width: 42%;
+    width: 60%;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -150,12 +150,10 @@ table {
 /* C'est ici qu'on définit la grille. Comme le tableau est "fixed", 
    la largeur du TH dicte celle de toute la colonne. */
 
-th.col-nom    { width: 350px; }
+th.col-nom    { width: auto; }  /* Prend le reste */
 th.col-cat    { width: 130px; }
-th.col-gps    { width: 250px; }
-th.col-source { width: 70px;  } 
+th.col-zone   { width: 120px; }
 th.col-actions{ width: 90px;  }
-th.col-desc   { width: auto; } /* Prend le reste */
 
 
 /* --- B. GESTION DES EN-TÊTES FIGÉS (STICKY) --- */
@@ -238,7 +236,7 @@ td {
 }
 
 /* Alignements spécifiques */
-.col-source .cell-content, .col-actions .cell-content { justify-content: center; }
+.col-actions .cell-content { justify-content: center; }
 
 /* Styles lignes (Zèbre et Survol) */
 tr:nth-child(even) td { background-color: var(--surface-muted); opacity: 0.95; }
@@ -257,12 +255,6 @@ tr.hidden-row { display: none; }
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* Exception pour la description */
-.col-desc .editable-cell { 
-    white-space: normal;
-    display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; 
-    max-height: 4.5em; 
-}
 
 /* --- 9. PANNEAU D'ÉDITION (remplace la modale) --- */
 .edit-panel {
