@@ -318,8 +318,8 @@ export async function saveAndExportCircuit() {
         setHasUnexportedChanges(true); // FLAG CHANGEMENT
         await recalculatePlannedCountersForMap(state.currentMapId);
         applyFilters();
-        generateAndDownloadGPX(state.currentCircuit, circuitToSave.id, circuitToSave.name, circuitToSave.description, circuitToSave.realTrack);
-        showToast(`Circuit "${circuitToSave.name}" sauvegardé et exporté !`, 'success');
+        await generateAndDownloadGPX(state.currentCircuit, circuitToSave.id, circuitToSave.name, circuitToSave.description, circuitToSave.realTrack);
+        showToast(`Circuit "${circuitToSave.name}" sauvegardé !`, 'success');
     } catch (error) {
         console.error("Erreur lors de la sauvegarde du circuit :", error);
         showToast("Erreur lors de la sauvegarde du circuit.", 'error');

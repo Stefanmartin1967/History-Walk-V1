@@ -64,23 +64,57 @@ function findFeaturesOnTrack(trackCoords, features, threshold = 0.0006) {
     return detected.map(d => d.feature);
 }
 
-export function generateGPXString(circuit, id, name, description, realTrack = null) {
+// ─── OSRM SNAPPING ───────────────────────────────────────────────────────────
+
+/**
+ * Snappe un point [lon, lat] sur la route la plus proche via OSRM.
+ * Retourne [lon, lat] snappé, ou les coordonnées d'origine en cas d'erreur.
+ */
+async function snapToNearestRoad(lon, lat) {
+    try {
+        const res = await fetch(
+            `https://router.project-osrm.org/nearest/v1/driving/${lon},${lat}?number=1`,
+            { signal: AbortSignal.timeout(4000) }
+        );
+        if (!res.ok) return [lon, lat];
+        const data = await res.json();
+        if (data.waypoints?.[0]?.location) return data.waypoints[0].location; // [lon, lat]
+    } catch (e) {
+        // Timeout ou réseau → fallback silencieux
+    }
+    return [lon, lat];
+}
+
+/**
+ * Snappe tous les POIs d'un circuit en parallèle.
+ * Retourne un tableau de [lon, lat] dans le même ordre que circuit[].
+ */
+async function snapCircuitToRoads(circuit) {
+    return Promise.all(
+        circuit.map(f => snapToNearestRoad(f.geometry.coordinates[0], f.geometry.coordinates[1]))
+    );
+}
+
+// ─── GÉNÉRATION GPX ──────────────────────────────────────────────────────────
+
+/**
+ * Génère la chaîne GPX.
+ * @param {Array} snappedCoords  - [[lon,lat], …] coordonnées snappées pour les <trkpt> (Cas B).
+ *                                 Si null, utilise les coordonnées réelles des POIs.
+ */
+export function generateGPXString(circuit, id, name, description, realTrack = null, snappedCoords = null) {
+    // <wpt> : toujours les coordonnées réelles du POI (repère visuel fidèle)
     const waypointsXML = circuit.map(feature => {
         const poiName = escapeXml(getPoiName(feature));
-        // Description de l'étiquette (Wikiloc)
         const desc = escapeXml(feature.properties.userData?.Description_courte || feature.properties.Desc_wpt || '');
-
-        // Lien externe (Wikiloc)
-        // On cherche 'Source' ou 'Lien'
         const sourceUrl = feature.properties.userData?.Source || feature.properties.Source || '';
         let linkXML = '';
         if (sourceUrl && sourceUrl.trim().startsWith('http')) {
-             linkXML = `
+            linkXML = `
       <link href="${escapeXml(sourceUrl.trim())}">
         <text>Lien vers le site</text>
       </link>`;
         }
-
         return `
     <wpt lat="${feature.geometry.coordinates[1]}" lon="${feature.geometry.coordinates[0]}">
       <name>${poiName}</name>
@@ -91,18 +125,18 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
     let trackpointsXML = '';
 
     if (realTrack && realTrack.length > 0) {
-        // Cas A : Trace réelle (Importée) -> Format [lat, lon]
+        // Cas A : Trace réelle importée → format [lat, lon]
         trackpointsXML = realTrack.map(coord =>
             `<trkpt lat="${coord[0]}" lon="${coord[1]}"><ele>0</ele></trkpt>`
         ).join('\n      ');
     } else {
-        // Cas B : Trace orthodromique (POI à POI) -> Format GeoJSON [lon, lat]
-        trackpointsXML = circuit.map(feature =>
-            `<trkpt lat="${feature.geometry.coordinates[1]}" lon="${feature.geometry.coordinates[0]}"><ele>0</ele></trkpt>`
+        // Cas B : Tracé direct POI→POI → on utilise les coords snappées si disponibles
+        const coords = snappedCoords || circuit.map(f => f.geometry.coordinates); // [lon, lat]
+        trackpointsXML = coords.map(([lon, lat]) =>
+            `<trkpt lat="${lat}" lon="${lon}"><ele>0</ele></trkpt>`
         ).join('\n      ');
     }
 
-    // MÉTADONNÉES ÉTENDUES (Destination + Lien)
     // NOUVELLE STRUCTURE V5 : ID dans <link><text> pour persistance GPX Studio
     const metadataXML = `
     <metadata>
@@ -116,9 +150,23 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
     return `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="History Walk ${APP_VERSION}" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">${metadataXML}${waypointsXML}<trk><name>${escapeXml(name)}</name><desc><![CDATA[${description}]]></desc><trkseg>${trackpointsXML}</trkseg></trk></gpx>`;
 }
 
-export function generateAndDownloadGPX(circuit, id, name, description, realTrack = null) {
-    const gpxContent = generateGPXString(circuit, id, name, description, realTrack);
+export async function generateAndDownloadGPX(circuit, id, name, description, realTrack = null) {
+    let snappedCoords = null;
+
+    // Snapping uniquement en Cas B (pas de trace réelle importée)
+    if (!realTrack || realTrack.length === 0) {
+        showToast('Calcul du tracé routier…', 'info', 5000);
+        try {
+            snappedCoords = await snapCircuitToRoads(circuit);
+        } catch (e) {
+            // Fallback silencieux : on génère sans snapping
+            snappedCoords = null;
+        }
+    }
+
+    const gpxContent = generateGPXString(circuit, id, name, description, realTrack, snappedCoords);
     downloadFile(`${name}.gpx`, gpxContent, 'application/gpx+xml');
+    showToast('GPX exporté ✓', 'success', 2500);
 }
 
 
