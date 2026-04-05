@@ -270,7 +270,7 @@ document.addEventListener('click', (e) => {
 
 async function searchPlace(query) {
     try {
-        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=6&countrycodes=tn&viewbox=10.5,34.2,11.4,33.4&bounded=0`;
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=20&countrycodes=tn&viewbox=10.5,34.2,11.4,33.4&bounded=1`;
         const res = await fetch(url, { headers: { 'Accept-Language': 'fr' } });
         const results = await res.json();
 
