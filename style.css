@@ -4373,11 +4373,12 @@ input[type=range] {
    ================================================ */
 
 /* Header pagination */
-.mobile-circuits-header { justify-content: space-between; padding-right: 15px; }
-.mobile-circuits-header h1 { margin: 0; }
-.mobile-pagination-group { display: flex; align-items: center; gap: 5px; }
-.mobile-pagination-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 4px; }
-.mobile-pagination-btn:disabled { opacity: 0.3; }
+.mobile-circuits-header { justify-content: space-between; align-items: center; padding: 0 8px; }
+.mobile-circuits-center { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.mobile-circuits-center h1 { margin: 0; }
+.mobile-circuits-center .mobile-page-info { font-size: 0.75rem; color: var(--ink-soft); }
+.mobile-pagination-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
+.mobile-pagination-btn:disabled { opacity: 0.25; pointer-events: none; }
 .mobile-page-info { font-size: 14px; font-weight: 600; color: var(--ink); min-width: 30px; text-align: center; }
 
 /* Circuit item layout */
@@ -4398,8 +4399,10 @@ input[type=range] {
 .icon-check-visited { width: 20px; height: 20px; margin-left: 5px; color: var(--ok); stroke-width: 3; }
 
 /* POI list header */
-.mobile-poi-header { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+.mobile-poi-header { flex-shrink: 0; display: flex; align-items: center; }
 .mobile-poi-header-inner { display: flex; align-items: center; flex: 1; min-width: 0; }
+.mobile-poi-header-inner h1 { flex: 1; text-align: center; margin: 0; }
+.mobile-back-btn-phantom { width: 36px; height: 36px; flex-shrink: 0; }
 .mobile-back-btn { flex-shrink: 0; margin-right: 10px; }
 .mobile-poi-title { margin: 0; font-size: 17px; font-weight: 700; min-width: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .mobile-poi-icon--visited { color: var(--ok); display: flex; align-items: center; }

@@ -253,19 +253,19 @@ export function renderMobileCircuitsList() {
 
     let html = `
         <div class="mobile-view-header mobile-header-harmonized mobile-circuits-header">
-            <h1>Mes Circuits</h1>
-            <div class="mobile-pagination-group">
-                <button class="action-button mobile-pagination-btn" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" ${mobileCurrentPage <= 1 ? 'disabled' : ''}>
-                    <i data-lucide="chevron-left" class="icon-24"></i>
-                </button>
+            <button class="action-button mobile-pagination-btn" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" ${mobileCurrentPage <= 1 ? 'disabled' : ''}>
+                <i data-lucide="chevron-left" class="icon-24"></i>
+            </button>
+            <div class="mobile-circuits-center">
+                <h1>Mes Circuits</h1>
                 <span id="mobile-page-info" class="mobile-page-info">${mobileCurrentPage} / ${totalPages}</span>
-                <button class="action-button mobile-pagination-btn" id="mobile-next-page" title="Page suivante" aria-label="Page suivante" ${mobileCurrentPage >= totalPages ? 'disabled' : ''}>
-                    <i data-lucide="chevron-right" class="icon-24"></i>
-                </button>
             </div>
+            <button class="action-button mobile-pagination-btn" id="mobile-next-page" title="Page suivante" aria-label="Page suivante" ${mobileCurrentPage >= totalPages ? 'disabled' : ''}>
+                <i data-lucide="chevron-right" class="icon-24"></i>
+            </button>
         </div>
         <div id="mobile-toolbar-container"></div>
-        <div class="panel-content mobile-standard-padding mobile-list-container">
+        <div class="panel-content mobile-standard-padding mobile-list-container" id="mobile-circuits-list">
     `;
 
     // Empty state logic is simpler now, but we need to check if *any* circuits exist before filtering to show the correct empty message
@@ -366,6 +366,20 @@ export function renderMobileCircuitsList() {
             if (mobileCurrentPage < totalPages) {
                 mobileCurrentPage++;
                 renderMobileCircuitsList();
+            }
+        });
+    }
+
+    // Swipe gauche/droite pour changer de page
+    const listEl = document.getElementById('mobile-circuits-list');
+    if (listEl) {
+        let swipeStartX = 0;
+        listEl.addEventListener('touchstart', e => { swipeStartX = e.touches[0].clientX; }, { passive: true });
+        listEl.addEventListener('touchend', e => {
+            const delta = swipeStartX - e.changedTouches[0].clientX;
+            if (Math.abs(delta) > 60) {
+                if (delta > 0 && mobileCurrentPage < totalPages) { mobileCurrentPage++; renderMobileCircuitsList(); }
+                else if (delta < 0 && mobileCurrentPage > 1) { mobileCurrentPage--; renderMobileCircuitsList(); }
             }
         });
     }
@@ -597,8 +611,9 @@ export function renderMobilePoiList(features) {
     headerDiv.classList.add('mobile-poi-header');
     headerDiv.innerHTML = `
         <div class="mobile-poi-header-inner">
-            ${isCircuit ? '<button id="mobile-back-btn" class="mobile-back-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>' : ''}
+            ${isCircuit ? '<button id="mobile-back-btn" class="mobile-back-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>' : '<div class="mobile-back-btn-phantom"></div>'}
             <h1 class="mobile-poi-title">${escapeHtml(pageTitle)}</h1>
+            <div class="mobile-back-btn-phantom"></div>
         </div>
     `;
     container.appendChild(headerDiv);
