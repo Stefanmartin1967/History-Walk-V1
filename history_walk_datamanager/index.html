@@ -142,6 +142,14 @@
 
         <!-- PANNEAU DROIT : Carte (toujours visible) -->
         <div id="map-panel" class="map-panel">
+          <div id="geocoder-bar">
+            <div id="geocoder-input-wrapper">
+              <i data-lucide="search" id="geocoder-icon"></i>
+              <input id="geocoder-input" type="text" placeholder="Rechercher un lieu sur la carte..." autocomplete="off">
+              <button id="geocoder-clear" class="geocoder-clear hidden" type="button">×</button>
+            </div>
+            <div id="geocoder-results" class="hidden"></div>
+          </div>
           <div id="map-container"></div>
         </div>
 

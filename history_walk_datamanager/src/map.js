@@ -139,3 +139,8 @@ export function stopEditMarker() {
 export function moveEditMarker(lat, lng) {
     if (editMarker) editMarker.setLatLng([lat, lng]);
 }
+
+export function flyToLocation(lat, lng, zoom = 17) {
+    if (!map) return;
+    map.flyTo([lat, lng], Math.max(map.getZoom(), zoom), { animate: true, duration: 0.4 });
+}

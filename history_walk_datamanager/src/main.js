@@ -2,7 +2,7 @@
 import './style.css';
 import { createIcons, icons } from 'lucide';
 import { parseGps } from './utils.js';
-import { initMap, renderMarkers, focusFeature, startEditMarker, stopEditMarker, moveEditMarker } from './map.js';
+import { initMap, renderMarkers, focusFeature, startEditMarker, stopEditMarker, moveEditMarker, flyToLocation } from './map.js';
 
 import {
     initStorage, loadGeoJSON, getGeoJSONForExport,
@@ -243,3 +243,82 @@ btnMaintenance.addEventListener('click', runMaintenance);
 
 // Init icons
 createIcons({ icons });
+
+// --- GÉOCODEUR NOMINATIM ---
+const geocoderInput = document.getElementById('geocoder-input');
+const geocoderClear = document.getElementById('geocoder-clear');
+const geocoderResults = document.getElementById('geocoder-results');
+let geocoderTimer = null;
+
+geocoderInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+    geocoderClear.classList.toggle('hidden', !query);
+    clearTimeout(geocoderTimer);
+    if (query.length < 3) { geocoderResults.classList.add('hidden'); return; }
+    geocoderTimer = setTimeout(() => searchPlace(query), 400);
+});
+
+geocoderClear.addEventListener('click', () => {
+    geocoderInput.value = '';
+    geocoderClear.classList.add('hidden');
+    geocoderResults.classList.add('hidden');
+});
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#geocoder-bar')) geocoderResults.classList.add('hidden');
+});
+
+async function searchPlace(query) {
+    try {
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=6&countrycodes=tn&viewbox=10.5,34.2,11.4,33.4&bounded=0`;
+        const res = await fetch(url, { headers: { 'Accept-Language': 'fr' } });
+        const results = await res.json();
+
+        geocoderResults.innerHTML = '';
+        if (!results.length) {
+            geocoderResults.innerHTML = '<div class="geocoder-no-result">Aucun résultat</div>';
+            geocoderResults.classList.remove('hidden');
+            return;
+        }
+
+        results.forEach(r => {
+            const item = document.createElement('div');
+            item.className = 'geocoder-result-item';
+            // Affiche uniquement les 2 premiers segments du nom (plus lisible)
+            const parts = r.display_name.split(', ');
+            item.textContent = parts.slice(0, 2).join(', ');
+            item.title = r.display_name;
+
+            item.addEventListener('click', () => {
+                const lat = parseFloat(r.lat);
+                const lng = parseFloat(r.lon);
+
+                // Si le formulaire d'édition est ouvert, pré-remplir les champs
+                if (!editPanel.classList.contains('hidden')) {
+                    form.gps.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    startEditMarker(lat, lng, (newLat, newLng) => {
+                        form.gps.value = `${newLat.toFixed(6)}, ${newLng.toFixed(6)}`;
+                        if (!form.zone.value) {
+                            const z = detectZone(newLat, newLng);
+                            if (z) form.zone.value = z;
+                        }
+                    });
+                    if (!form.zone.value) {
+                        const z = detectZone(lat, lng);
+                        if (z) form.zone.value = z;
+                    }
+                }
+
+                flyToLocation(lat, lng);
+                geocoderResults.classList.add('hidden');
+                geocoderInput.value = parts[0];
+            });
+
+            geocoderResults.appendChild(item);
+        });
+
+        geocoderResults.classList.remove('hidden');
+    } catch (e) {
+        console.error('Geocoder error:', e);
+    }
+}
