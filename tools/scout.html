@@ -34,6 +34,16 @@
         .filter-item input { cursor: pointer; }
 
         button { padding: 10px 15px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+
+        #fetch-status { padding: 10px 15px; border-radius: 4px; font-size: 14px; font-weight: 600; margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+        #fetch-status.hidden { display: none; }
+        #fetch-status.loading { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        #fetch-status.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        #fetch-status.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+        #fetch-status.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-hover); }
         .btn-secondary { background: var(--secondary); color: white; }
@@ -116,6 +126,7 @@
         </div>
 
         <button id="btn-fetch" class="btn-primary" style="width: 100%;">🚀 Lancer le moissonnage</button>
+        <div id="fetch-status" class="hidden"></div>
     </div>
 
     <!-- TABLEAU DE RÉSULTATS -->
@@ -328,19 +339,28 @@
             }
         };
 
+        // --- STATUS HELPER ---
+        const statusEl = document.getElementById('fetch-status');
+        function showStatus(type, msg) {
+            statusEl.className = type;
+            statusEl.innerHTML = (type === 'loading')
+                ? `<span class="spinner"></span> ${msg}`
+                : msg;
+        }
+
         // --- FETCHING ---
         DOM.btnFetch.onclick = async () => {
             const lat = parseFloat(DOM.lat.value);
             const lon = parseFloat(DOM.lon.value);
             const radiusMeters = parseFloat(DOM.radius.value) * 1000;
 
-            if (isNaN(lat) || isNaN(lon)) return alert("Veuillez définir un centre (Latitude/Longitude) !");
+            if (isNaN(lat) || isNaN(lon)) { showStatus('error', '⚠️ Veuillez définir un centre (Latitude / Longitude).'); return; }
 
             const activeTypes = Array.from(DOM.filters).filter(cb => cb.checked).map(cb => cb.value);
-            if (activeTypes.length === 0) return alert("Sélectionnez au moins une catégorie !");
+            if (activeTypes.length === 0) { showStatus('error', '⚠️ Sélectionnez au moins une catégorie.'); return; }
 
-            DOM.btnFetch.textContent = "⏳ Recherche en cours...";
             DOM.btnFetch.disabled = true;
+            showStatus('loading', 'Interrogation d\'Overpass OSM…');
 
             // Filtre de date optionnel
             const sinceDate = document.getElementById('newer-since').value;
@@ -364,17 +384,26 @@
 
             try {
                 const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-                const data = await res.json();
-                
-                // Clear table
+                const text = await res.text();
+
+                // Overpass renvoie du XML en cas d'erreur (rate limit, serveur surchargé…)
+                if (text.trimStart().startsWith('<')) {
+                    const rateLimitHint = text.includes('rate_limited') || text.includes('429');
+                    showStatus('error', rateLimitHint
+                        ? '🚫 Overpass rate-limit atteint. Patientez 30–60 s puis réessayez.'
+                        : `🚫 Overpass a retourné une erreur (HTTP ${res.status}). Réessayez dans quelques secondes.`
+                    );
+                    return;
+                }
+
+                const data = JSON.parse(text);
                 DOM.tbody.innerHTML = '';
                 DOM.resultsArea.classList.remove('hidden');
 
                 const defaultZone = DOM.locName.value.split(',')[0].trim() || "A définir";
-
                 data.elements.forEach(el => {
-                    const rowData = {
-                        "Nom du site FR": el.tags.name || el.tags["name:fr"] || "", // Laisse vide si pas de nom, pour inciter à remplir
+                    addRow({
+                        "Nom du site FR": el.tags.name || el.tags["name:fr"] || "",
                         "Nom du site arabe": el.tags["name:ar"] || "",
                         "Catégorie": getHwCategory(el.tags),
                         "Zone": defaultZone,
@@ -382,16 +411,18 @@
                         "Source": "OpenStreetMap",
                         "Coordonnées GPS": `${el.lat}, ${el.lon}`,
                         "HW_ID": generateHWID()
-                    };
-                    addRow(rowData);
+                    });
                 });
 
-                if (data.elements.length === 0) alert("Aucun résultat trouvé dans ce rayon.");
+                if (data.elements.length === 0) {
+                    showStatus('warning', '🔍 Aucun résultat dans cette zone pour les critères sélectionnés.');
+                } else {
+                    showStatus('success', `✅ ${data.elements.length} lieu(x) trouvé(s).`);
+                }
 
             } catch (err) {
-                alert("Erreur lors de la récupération : " + err.message);
+                showStatus('error', `❌ Erreur réseau : ${err.message}`);
             } finally {
-                DOM.btnFetch.textContent = "🚀 Lancer le moissonnage";
                 DOM.btnFetch.disabled = false;
             }
         };
