@@ -180,8 +180,53 @@
         };
 
         // --- UTILS ---
+
+        // Format HW-ULID identique à l'application principale (utils.js)
         function generateHWID() {
-            return `HW-SCOUT-${Date.now().toString(36).toUpperCase()}-${Math.floor(Math.random()*10000)}`;
+            const ENCODING = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+            function encodeBase32(number, length) {
+                let str = "";
+                for (let i = length - 1; i >= 0; i--) {
+                    str = ENCODING.charAt(number % 32) + str;
+                    number = Math.floor(number / 32);
+                }
+                return str;
+            }
+            const now = Date.now();
+            let randomPart = "";
+            for (let i = 0; i < 16; i++) randomPart += ENCODING.charAt(Math.floor(Math.random() * 32));
+            return `HW-${encodeBase32(now, 10)}${randomPart}`;
+        }
+
+        // Détection arabe
+        function isArabic(str) { return str && /[\u0600-\u06FF]/.test(str); }
+
+        // Détection de zone via map.geojson
+        let zonesGeoJSON = null;
+        (async () => {
+            try {
+                const res = await fetch('../map.geojson');
+                if (res.ok) zonesGeoJSON = await res.json();
+            } catch(e) { /* zones non disponibles */ }
+        })();
+
+        function isPointInPolygon(point, polygon) {
+            const [px, py] = point;
+            let inside = false;
+            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                const [xi, yi] = polygon[i], [xj, yj] = polygon[j];
+                if (((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi)) inside = !inside;
+            }
+            return inside;
+        }
+
+        function detectZone(lat, lon) {
+            if (!zonesGeoJSON) return "";
+            for (const f of zonesGeoJSON.features) {
+                const ring = f.geometry?.coordinates?.[0];
+                if (ring && isPointInPolygon([lon, lat], ring)) return f.properties.name || "";
+            }
+            return "";
         }
 
         const HW_MAPPING = {
@@ -306,9 +351,8 @@
         }
 
         DOM.btnAddRow.onclick = () => {
-            const defaultZone = DOM.locName.value.split(',')[0].trim() || "A définir";
             addRow({
-                'Zone': defaultZone,
+                'Zone': "",
                 'HW_ID': generateHWID()
             });
             // Scroll to bottom
@@ -400,15 +444,20 @@
                 DOM.tbody.innerHTML = '';
                 DOM.resultsArea.classList.remove('hidden');
 
-                const defaultZone = DOM.locName.value.split(',')[0].trim() || "A définir";
-                data.elements.forEach(el => {
+                    data.elements.forEach(el => {
+                    const t = el.tags;
+                    // Nom FR vs Arabe : name:fr → FR, name:ar → arabe
+                    // Si name est en arabe et name:fr absent → name = arabe, FR vide
+                    const nameFr  = t["name:fr"]  || (isArabic(t.name) ? "" : (t.name || ""));
+                    const nameAr  = t["name:ar"]  || (isArabic(t.name) ? t.name : "");
+
                     addRow({
-                        "Nom du site FR": el.tags.name || el.tags["name:fr"] || "",
-                        "Nom du site arabe": el.tags["name:ar"] || "",
-                        "Catégorie": getHwCategory(el.tags),
-                        "Zone": defaultZone,
-                        "Description": el.tags.description || "",
-                        "Source": "OpenStreetMap",
+                        "Nom du site FR":    nameFr,
+                        "Nom du site arabe": nameAr,
+                        "Catégorie": getHwCategory(t),
+                        "Zone": detectZone(el.lat, el.lon),
+                        "Description": t.description || "",
+                        "Source": "",
                         "Coordonnées GPS": `${el.lat}, ${el.lon}`,
                         "HW_ID": generateHWID()
                     });
