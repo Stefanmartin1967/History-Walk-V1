@@ -30,6 +30,7 @@ import { setupDesktopTools } from './desktopMode.js';
 import { initAdminMode, showAdminLoginModal } from './admin.js';
 
 import { loadAndInitializeMap } from './app-startup.js';
+import { showWelcomeIfNeeded } from './welcome.js';
 import { setupEventBusListeners, setupDesktopUIListeners, setupGlobalEventListeners } from './app-events.js';
 
 // --- PROTECTION CONTRE LA PERTE DE DONNÉES (WORKFLOW) ---
@@ -137,6 +138,9 @@ async function initializeApp() {
 
         // Lancement unique et propre de la carte
         await loadAndInitializeMap();
+
+        // Écran de bienvenue (premier lancement uniquement)
+        showWelcomeIfNeeded();
 
     } catch (error) {
         console.error("Échec init global:", error);
