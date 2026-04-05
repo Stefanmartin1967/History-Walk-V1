@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setCustomFeatures } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures } from './state.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -174,6 +174,8 @@ export async function loadAndInitializeMap() {
         setMyCircuits(loadedCircuits);
         const loadedStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
         setOfficialCircuitsStatus(loadedStatus);
+        const loadedTested = await getAppState(`tested_circuits_${activeMapId}`) || {};
+        setTestedCircuits(loadedTested);
         await loadOfficialCircuits();
 
         const validCircuits = [];

@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit } from './state.js';
+import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits } from './state.js';
 import { DOM } from './ui.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -13,6 +13,24 @@ import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { pushToGist } from './gist-sync.js';
+
+export function isCircuitTested(circuitId) {
+    return state.testedCircuits[String(circuitId)] === true;
+}
+
+export async function toggleCircuitTested(circuitId) {
+    if (!state.isAdmin) return;
+    circuitId = String(circuitId);
+    const current = state.testedCircuits[circuitId] === true;
+    if (current) {
+        delete state.testedCircuits[circuitId];
+    } else {
+        state.testedCircuits[circuitId] = true;
+    }
+    await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
+    pushToGist();
+    return !current; // nouvelle valeur
+}
 
 export function isCircuitCompleted(circuit) {
     if (!circuit) return false;
@@ -255,13 +273,22 @@ export function updateCircuitMetadata(updateTitle = true) {
         title = activeCircuitData.name;
     }
 
+    // Détermine si le circuit actif est officiel et testé (pour le badge desktop)
+    const isOfficialActive = state.officialCircuits && state.activeCircuitId
+        ? state.officialCircuits.some(c => c.id === state.activeCircuitId)
+        : false;
+    const isTestedActive = isOfficialActive ? isCircuitTested(state.activeCircuitId) : false;
+
     // 2. ENVOI À LA VUE (On ne touche plus au DOM ici)
     View.updateCircuitHeader({
         countText: `${state.currentCircuit.length}/${MAX_CIRCUIT_POINTS}`,
         distanceText: (totalDistance / 1000).toFixed(1) + ' km',
         title: title,
         iconType: isRealTrack ? 'footprints' : 'bird',
-        iconTitle: isRealTrack ? 'Distance du tracé réel' : "Distance à vol d'oiseau"
+        iconTitle: isRealTrack ? 'Distance du tracé réel' : "Distance à vol d'oiseau",
+        isOfficial: isOfficialActive,
+        isTested: isTestedActive,
+        circuitId: state.activeCircuitId
     });
 }
 

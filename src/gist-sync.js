@@ -58,6 +58,7 @@ function buildPayload() {
         mapId: state.currentMapId,
         userData: filtered,
         circuitsStatus: state.officialCircuitsStatus || {},
+        testedCircuits: state.testedCircuits || {},
         lastSync: new Date().toISOString(),
         appVersion: '1.0'
     };
@@ -105,6 +106,22 @@ function mergeRemoteIntoLocal(remote) {
     for (const [cId, val] of Object.entries(remoteStatus)) {
         if (val === true && !state.officialCircuitsStatus[cId]) {
             state.officialCircuitsStatus[cId] = true;
+            circuitsChanged = true;
+        }
+    }
+
+    // testedCircuits : true gagne (admin → tous appareils)
+    const remoteTested = remote.testedCircuits || {};
+    for (const [cId, val] of Object.entries(remoteTested)) {
+        if (val === true && !state.testedCircuits[cId]) {
+            state.testedCircuits[cId] = true;
+            circuitsChanged = true;
+        }
+    }
+    // Retraits : si absent du remote, on retire du local
+    for (const cId of Object.keys(state.testedCircuits)) {
+        if (!remoteTested[cId]) {
+            delete state.testedCircuits[cId];
             circuitsChanged = true;
         }
     }
@@ -179,6 +196,7 @@ export async function pullFromGist() {
         }
         if (circuitsChanged) {
             await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
+            await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
         }
         if (updates.length > 0 || circuitsChanged) {
             // Rafraîchir l'UI : marqueurs + liste circuits

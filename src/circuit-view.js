@@ -81,6 +81,39 @@ export function updateCircuitHeader(data) {
         DOM.circuitTitleText.title = data.title;
     }
 
+    // Badge "officiel / testé" et bouton admin dans le titre
+    const titleContainer = document.querySelector('.circuit-title-container');
+    if (titleContainer) {
+        // Nettoyer les anciens badges/boutons injectés
+        titleContainer.querySelectorAll('.circuit-tested-badge, .circuit-toggle-tested-btn').forEach(el => el.remove());
+
+        if (data.isOfficial) {
+            // Badge visible par tous
+            const badge = document.createElement('i');
+            badge.setAttribute('data-lucide', data.isTested ? 'shield-check' : 'star');
+            badge.className = `icon-official-star lucide circuit-tested-badge${data.isTested ? ' icon-tested' : ''}`;
+            badge.title = data.isTested ? 'Testé sur le terrain' : 'Circuit officiel';
+            DOM.circuitTitleText.insertAdjacentElement('afterend', badge);
+
+            // Bouton toggle admin uniquement
+            if (state.isAdmin && data.circuitId) {
+                const btn = document.createElement('button');
+                btn.className = `action-button circuit-toggle-tested-btn${data.isTested ? ' tested' : ''}`;
+                btn.title = data.isTested ? 'Retirer le badge "Testé"' : 'Marquer comme "Testé sur le terrain"';
+                btn.setAttribute('aria-label', btn.title);
+                btn.innerHTML = `<i data-lucide="${data.isTested ? 'shield-off' : 'shield-check'}"></i>`;
+                btn.style.marginLeft = '6px';
+                btn.addEventListener('click', async () => {
+                    const { toggleCircuitTested, updateCircuitMetadata } = await import('./circuit.js');
+                    const newVal = await toggleCircuitTested(data.circuitId);
+                    showToast(newVal ? 'Circuit marqué "Testé sur le terrain" ✅' : 'Badge "Testé" retiré', 'info', 2500);
+                    updateCircuitMetadata();
+                });
+                badge.insertAdjacentElement('afterend', btn);
+            }
+        }
+    }
+
     const distIcon = document.getElementById('distance-icon');
     if (distIcon) {
         // On remplace l'élément pour garantir que Lucide le re-génère correctement

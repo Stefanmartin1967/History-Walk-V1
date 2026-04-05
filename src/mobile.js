@@ -3,7 +3,7 @@ import { state } from './state.js';
 import { DOM } from './ui.js';
 import { openDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature } from './data.js';
-import { loadCircuitById, clearCircuit, setCircuitVisitedState, loadCircuitFromIds, isCircuitCompleted, navigatePoiDetails } from './circuit.js';
+import { loadCircuitById, clearCircuit, setCircuitVisitedState, loadCircuitFromIds, isCircuitCompleted, isCircuitTested, toggleCircuitTested, navigatePoiDetails } from './circuit.js';
 import { createIcons, icons } from 'lucide';
 import { saveUserData } from './fileManager.js'; 
 import { deleteDatabase, saveAppState } from './database.js';
@@ -334,9 +334,12 @@ export function renderMobileCircuitsList() {
                 ? `<i data-lucide="check-circle" class="icon-20 lucide" style="color:var(--ok);"></i>`
                 : `<span class="mobile-status-badge">${done}/${total}</span>`;
 
-            // Badge Officiel
+            // Badge Officiel + Badge Testé terrain
+            const isTested = isCircuitTested(circuit.id);
             const badgeHtml = circuit.isOfficial
-                ? '<i data-lucide="star" class="icon-official-star lucide"></i>'
+                ? (isTested
+                    ? '<i data-lucide="shield-check" class="icon-official-star icon-tested lucide" title="Testé sur le terrain"></i>'
+                    : '<i data-lucide="star" class="icon-official-star lucide"></i>')
                 : '';
 
             const restoIcon = circuit._hasRestaurant
@@ -651,6 +654,13 @@ export function renderMobilePoiList(features) {
     const headerDiv = document.createElement('div');
     headerDiv.className = 'mobile-view-header mobile-header-harmonized';
     headerDiv.classList.add('mobile-poi-header');
+    const isTested = isCircuit ? isCircuitTested(state.activeCircuitId) : false;
+    const testedBtnHtml = (isCircuit && state.isAdmin)
+        ? `<button id="mobile-toggle-tested" class="mobile-toggle-tested-btn ${isTested ? 'tested' : ''}" title="${isTested ? 'Retirer badge testé' : 'Marquer comme testé sur le terrain'}" data-id="${state.activeCircuitId}">
+               <i data-lucide="shield-check"></i>
+           </button>`
+        : '<div class="mobile-back-btn-phantom"></div>';
+
     headerDiv.innerHTML = `
         <div class="mobile-poi-header-inner">
             ${isCircuit ? '<button id="mobile-back-btn" class="mobile-back-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>' : '<div class="mobile-back-btn-phantom"></div>'}
@@ -658,7 +668,7 @@ export function renderMobilePoiList(features) {
                 <h1 class="mobile-poi-title">${escapeHtml(pageTitle)}</h1>
                 ${circuitPositionLabel ? `<span class="mobile-page-info">${circuitPositionLabel}</span>` : ''}
             </div>
-            <div class="mobile-back-btn-phantom"></div>
+            ${testedBtnHtml}
         </div>
     `;
     container.appendChild(headerDiv);
@@ -719,6 +729,18 @@ export function renderMobilePoiList(features) {
                 });
             }
         }, 0);
+    }
+
+    // Toggle "Testé sur le terrain" (admin uniquement)
+    const toggleTestedBtn = document.getElementById('mobile-toggle-tested');
+    if (toggleTestedBtn) {
+        toggleTestedBtn.addEventListener('click', async () => {
+            const circuitId = toggleTestedBtn.dataset.id;
+            const newVal = await toggleCircuitTested(circuitId);
+            toggleTestedBtn.classList.toggle('tested', newVal);
+            toggleTestedBtn.title = newVal ? 'Retirer badge testé' : 'Marquer comme testé sur le terrain';
+            showToast(newVal ? '🛡️ Circuit marqué comme testé' : 'Badge testé retiré', 'success');
+        });
     }
 
     const backBtn = document.getElementById('mobile-back-btn');

@@ -1,4 +1,5 @@
 import { state, setActiveFilters } from './state.js';
+import { isCircuitTested } from './circuit.js';
 import { escapeXml, sanitizeHTML } from './utils.js';
 import { eventBus } from './events.js';
 import { showConfirm, showCustomModal, closeModal } from './modal.js';
@@ -370,6 +371,14 @@ export function renderExplorerList() {
         nameDiv.className = `explorer-item-name${c.isOfficial ? ' explorer-item-name--official' : ''}`;
         nameDiv.title = c.name;
         nameDiv.textContent = displayName;
+        if (c.isOfficial) {
+            const isTested = isCircuitTested(c.id);
+            const badgeEl = document.createElement('i');
+            badgeEl.setAttribute('data-lucide', isTested ? 'shield-check' : 'star');
+            badgeEl.className = `icon-official-star lucide${isTested ? ' icon-tested' : ''}`;
+            badgeEl.title = isTested ? 'Testé sur le terrain' : 'Circuit officiel';
+            nameDiv.appendChild(badgeEl);
+        }
 
         centerDiv.appendChild(nameDiv);
 

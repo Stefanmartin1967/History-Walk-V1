@@ -1,5 +1,5 @@
 // fileManager.js
-import { state, setCurrentMap, setLoadedFeatures, setUserData } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setUserData, setTestedCircuits } from './state.js';
 import { getPoiId, displayGeoJSON } from './data.js';
 import { DOM, updateExportButtonLabel } from './ui.js';
 import { closeDetailsPanel } from './ui-details.js'; // Note: DOM is mostly used in ui.js, but keeping import if needed
@@ -183,7 +183,8 @@ export async function saveUserData(forceFullMode = false) {
         userData: JSON.parse(JSON.stringify(state.userData)), 
         myCircuits: state.myCircuits,
         hiddenPoiIds: state.hiddenPoiIds,
-        officialCircuitsStatus: state.officialCircuitsStatus || {}
+        officialCircuitsStatus: state.officialCircuitsStatus || {},
+        testedCircuits: state.testedCircuits || {}
     });
 
     if (!includePhotos) {
@@ -336,7 +337,12 @@ async function restoreBackup(json) {
             await saveAppState(`official_circuits_status_${mapId}`, json.officialCircuitsStatus);
         }
 
-        // 6. REDÉMARRAGE POUR FUSION PROPRE
+        // 6. Restaurer les circuits testés sur le terrain
+        if (json.testedCircuits) {
+            await saveAppState(`tested_circuits_${mapId}`, json.testedCircuits);
+        }
+
+        // 7. REDÉMARRAGE POUR FUSION PROPRE
         // On recharge la page pour que l'application :
         // - Charge le dernier GeoJSON officiel depuis le serveur
         // - Applique les userData restaurés (dont les déplacements)
@@ -471,7 +477,8 @@ async function prepareExportData(includePhotos = false) {
         userData: state.userData || {},
         myCircuits: state.myCircuits || [],
         hiddenPoiIds: state.hiddenPoiIds || [],
-        officialCircuitsStatus: state.officialCircuitsStatus || {}
+        officialCircuitsStatus: state.officialCircuitsStatus || {},
+        testedCircuits: state.testedCircuits || {}
     };
 
     return cleanDataForExport(exportData);

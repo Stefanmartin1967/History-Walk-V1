@@ -23,6 +23,7 @@ export const state = {
     myCircuits: [],
     officialCircuits: [],
     officialCircuitsStatus: {}, // Statut (Completed) des circuits officiels
+    testedCircuits: {},         // Circuits testés sur le terrain par l'admin (badge 🛡️)
     geojsonLayer: null,
     loadedFeatures: [],
     currentFeatureId: null,
@@ -128,6 +129,10 @@ export function setOfficialCircuits(circuits) {
 
 export function setOfficialCircuitsStatus(status) {
     state.officialCircuitsStatus = status || {};
+}
+
+export function setTestedCircuits(tested) {
+    state.testedCircuits = tested || {};
 }
 
 export function setGeojsonLayer(layer) {
