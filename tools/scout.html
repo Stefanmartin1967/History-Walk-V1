@@ -97,6 +97,10 @@
                  <label>Rayon (Km)</label>
                  <input type="number" id="radius-km" value="3" step="0.5" min="0.1">
             </div>
+            <div class="col" style="flex: 0.7;">
+                 <label>Depuis le <small style="font-weight:400">(optionnel)</small></label>
+                 <input type="date" id="newer-since" title="Filtrer les éléments ajoutés/modifiés dans OSM depuis cette date">
+            </div>
         </div>
 
         <!-- FILTRES -->
@@ -338,19 +342,23 @@
             DOM.btnFetch.textContent = "⏳ Recherche en cours...";
             DOM.btnFetch.disabled = true;
 
+            // Filtre de date optionnel
+            const sinceDate = document.getElementById('newer-since').value;
+            const newerFilter = sinceDate ? `["newer"="${sinceDate}"]` : '';
+
             let clauses = [];
-            // Mapping Filtres -> Clauses Overpass
-            if (activeTypes.includes('religion')) clauses.push(`node["amenity"="place_of_worship"](around:${radiusMeters},${lat},${lon});`);
-            if (activeTypes.includes('history')) clauses.push(`node["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"](around:${radiusMeters},${lat},${lon});`);
-            if (activeTypes.includes('museum')) clauses.push(`node["tourism"="museum"](around:${radiusMeters},${lat},${lon});`);
-            if (activeTypes.includes('hotel')) clauses.push(`node["tourism"~"hotel|guest_house|hostel"](around:${radiusMeters},${lat},${lon});`);
-            if (activeTypes.includes('restaurant')) clauses.push(`node["amenity"~"restaurant|cafe"](around:${radiusMeters},${lat},${lon});`);
+            const r = `(around:${radiusMeters},${lat},${lon})`;
+            if (activeTypes.includes('religion')) clauses.push(`node["amenity"="place_of_worship"]${newerFilter}${r};`);
+            if (activeTypes.includes('history')) clauses.push(`node["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"]${newerFilter}${r};`);
+            if (activeTypes.includes('museum')) clauses.push(`node["tourism"="museum"]${newerFilter}${r};`);
+            if (activeTypes.includes('hotel')) clauses.push(`node["tourism"~"hotel|guest_house|hostel"]${newerFilter}${r};`);
+            if (activeTypes.includes('restaurant')) clauses.push(`node["amenity"~"restaurant|cafe"]${newerFilter}${r};`);
             if (activeTypes.includes('leisure')) {
-                clauses.push(`node["leisure"~"park|water_park"](around:${radiusMeters},${lat},${lon});`);
-                clauses.push(`node["tourism"~"theme_park|zoo|aquarium"](around:${radiusMeters},${lat},${lon});`);
+                clauses.push(`node["leisure"~"park|water_park"]${newerFilter}${r};`);
+                clauses.push(`node["tourism"~"theme_park|zoo|aquarium"]${newerFilter}${r};`);
             }
-            if (activeTypes.includes('tourism')) clauses.push(`node["tourism"~"viewpoint|artwork|attraction|gallery"](around:${radiusMeters},${lat},${lon});`);
-            if (activeTypes.includes('public')) clauses.push(`node["amenity"~"townhall|police|post_office|library"](around:${radiusMeters},${lat},${lon});`);
+            if (activeTypes.includes('tourism')) clauses.push(`node["tourism"~"viewpoint|artwork|attraction|gallery"]${newerFilter}${r};`);
+            if (activeTypes.includes('public')) clauses.push(`node["amenity"~"townhall|police|post_office|library"]${newerFilter}${r};`);
 
             const query = `[out:json];(${clauses.join('')});out body;`;
 
