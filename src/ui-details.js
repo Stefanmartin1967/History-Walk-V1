@@ -291,6 +291,9 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         targetPanel.style.display = 'block';
         targetPanel.style.overflowY = 'auto'; // Fix for scrollbar issue
         targetPanel.classList.add('mobile-standard-padding');
+        targetPanel.classList.remove('view-enter');
+        void targetPanel.offsetWidth;
+        targetPanel.classList.add('view-enter');
     } else {
         DOM.rightSidebar.style.display = 'flex';
         document.body.classList.add('sidebar-open');

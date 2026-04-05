@@ -29,6 +29,12 @@ let mobileCurrentPage = 1;
 let _allCircuitsOrdered = []; // Liste ordonnée pour le swipe entre circuits
 // Note: state.activeFilters.zone is used for Zone filtering
 
+function animateContainer(container) {
+    container.classList.remove('view-enter');
+    void container.offsetWidth; // reflow pour relancer l'animation
+    container.classList.add('view-enter');
+}
+
 export function isMobileView() {
     return window.innerWidth <= 768;
 }
@@ -151,8 +157,9 @@ export function switchMobileView(viewName) {
     });
 
     const container = document.getElementById('mobile-main-container');
-    container.innerHTML = ''; 
-    
+    container.innerHTML = '';
+    animateContainer(container);
+
     // 1. On s'assure que le Dock est visible (Au cas où on vient de la vue détail masquée)
     const dock = document.getElementById('mobile-dock');
     if (dock) dock.style.display = 'flex';
@@ -462,6 +469,7 @@ function renderMobileToolbar() {
 
     // Nettoyage préventif
     container.innerHTML = '';
+    animateContainer(container);
 
     const toolbar = document.createElement('div');
     toolbar.id = 'mobile-toolbar';
@@ -612,6 +620,7 @@ export function renderMobilePoiList(features) {
     let pageTitle = 'Lieux';
     let isAllVisited = false;
 
+    let circuitPositionLabel = '';
     if (isCircuit) {
         // Recherche robuste (Local ou Officiel)
         let currentCircuit = state.myCircuits.find(c => c.id === state.activeCircuitId);
@@ -621,16 +630,23 @@ export function renderMobilePoiList(features) {
 
         let rawName = currentCircuit ? currentCircuit.name : 'Circuit inconnu';
         pageTitle = rawName.split(' via ')[0].replace(/^(Circuit de |Boucle de )/i, '');
-        
+
         if (currentCircuit) {
             isAllVisited = isCircuitCompleted(currentCircuit);
+        }
+
+        // Indicateur de position dans la liste des circuits
+        const circuitIdx = _allCircuitsOrdered.findIndex(c => c.id === state.activeCircuitId);
+        if (circuitIdx >= 0 && _allCircuitsOrdered.length > 1) {
+            circuitPositionLabel = `${circuitIdx + 1} / ${_allCircuitsOrdered.length}`;
         }
     }
 
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
-    container.style.overflow = 'hidden'; 
+    container.style.overflow = 'hidden';
     container.innerHTML = '';
+    animateContainer(container);
 
     const headerDiv = document.createElement('div');
     headerDiv.className = 'mobile-view-header mobile-header-harmonized';
@@ -638,7 +654,10 @@ export function renderMobilePoiList(features) {
     headerDiv.innerHTML = `
         <div class="mobile-poi-header-inner">
             ${isCircuit ? '<button id="mobile-back-btn" class="mobile-back-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>' : '<div class="mobile-back-btn-phantom"></div>'}
-            <h1 class="mobile-poi-title">${escapeHtml(pageTitle)}</h1>
+            <div class="mobile-circuits-center">
+                <h1 class="mobile-poi-title">${escapeHtml(pageTitle)}</h1>
+                ${circuitPositionLabel ? `<span class="mobile-page-info">${circuitPositionLabel}</span>` : ''}
+            </div>
             <div class="mobile-back-btn-phantom"></div>
         </div>
     `;
