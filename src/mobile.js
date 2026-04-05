@@ -3,7 +3,7 @@ import { state } from './state.js';
 import { DOM } from './ui.js';
 import { openDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature } from './data.js';
-import { loadCircuitById, clearCircuit, setCircuitVisitedState, loadCircuitFromIds, isCircuitCompleted } from './circuit.js';
+import { loadCircuitById, clearCircuit, setCircuitVisitedState, loadCircuitFromIds, isCircuitCompleted, navigatePoiDetails } from './circuit.js';
 import { createIcons, icons } from 'lucide';
 import { saveUserData } from './fileManager.js'; 
 import { deleteDatabase, saveAppState } from './database.js';
@@ -34,11 +34,26 @@ export function isMobileView() {
 
 export function initMobileMode() {
     document.body.classList.add('mobile-mode');
-    
+
     // Tentative de masquage de la barre d'adresse (Hack Android/iOS)
     setTimeout(() => {
         window.scrollTo(0, 1);
     }, 0);
+
+    // Swipe horizontal unique sur le container mobile pour naviguer entre POIs d'un circuit
+    let _swipeStartX = 0, _swipeStartY = 0;
+    DOM.mobileMainContainer.addEventListener('touchstart', e => {
+        _swipeStartX = e.touches[0].clientX;
+        _swipeStartY = e.touches[0].clientY;
+    }, { passive: true });
+    DOM.mobileMainContainer.addEventListener('touchend', e => {
+        if (state.currentFeatureId === null || !state.currentCircuit?.length) return;
+        const dx = _swipeStartX - e.changedTouches[0].clientX;
+        const dy = _swipeStartY - e.changedTouches[0].clientY;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+            navigatePoiDetails(dx > 0 ? 1 : -1);
+        }
+    });
 
     // Gestion des boutons de navigation
     const navButtons = document.querySelectorAll('.mobile-nav-btn[data-view]');

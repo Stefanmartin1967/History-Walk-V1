@@ -246,22 +246,6 @@ if (chkInc) {
         document.getElementById('details-next-btn')?.addEventListener('click', () => navigatePoiDetails(1));
         document.getElementById('details-close-btn')?.addEventListener('click', () => closeDetailsPanel(true));
 
-        // Swipe horizontal pour naviguer entre POIs
-        const panel = DOM.mobileMainContainer;
-        if (panel && state.currentCircuit?.length > 1) {
-            let swipeStartX = 0, swipeStartY = 0;
-            panel.addEventListener('touchstart', e => {
-                swipeStartX = e.touches[0].clientX;
-                swipeStartY = e.touches[0].clientY;
-            }, { passive: true });
-            panel.addEventListener('touchend', e => {
-                const dx = swipeStartX - e.changedTouches[0].clientX;
-                const dy = swipeStartY - e.changedTouches[0].clientY;
-                if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-                    navigatePoiDetails(dx > 0 ? 1 : -1);
-                }
-            });
-        }
     } else {
         document.getElementById('prev-poi-button')?.addEventListener('click', () => navigatePoiDetails(-1));
         document.getElementById('next-poi-button')?.addEventListener('click', () => navigatePoiDetails(1));
