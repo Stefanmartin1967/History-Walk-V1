@@ -23,9 +23,10 @@ import { showAdminLoginModal, logoutAdmin, showGitHubConfigModal } from './admin
 import { openControlCenter } from './admin-control-center.js';
 import { eventBus } from './events.js';
 
-let currentView = 'circuits'; 
+let currentView = 'circuits';
 let mobileSort = 'date_desc'; // date_desc, date_asc, dist_asc, dist_desc
 let mobileCurrentPage = 1;
+let _allCircuitsOrdered = []; // Liste ordonnée pour le swipe entre circuits
 // Note: state.activeFilters.zone is used for Zone filtering
 
 export function isMobileView() {
@@ -40,18 +41,27 @@ export function initMobileMode() {
         window.scrollTo(0, 1);
     }, 0);
 
-    // Swipe horizontal unique sur le container mobile pour naviguer entre POIs d'un circuit
+    // Swipe horizontal unique sur le container mobile
     let _swipeStartX = 0, _swipeStartY = 0;
     DOM.mobileMainContainer.addEventListener('touchstart', e => {
         _swipeStartX = e.touches[0].clientX;
         _swipeStartY = e.touches[0].clientY;
     }, { passive: true });
     DOM.mobileMainContainer.addEventListener('touchend', e => {
-        if (state.currentFeatureId === null || !state.currentCircuit?.length) return;
         const dx = _swipeStartX - e.changedTouches[0].clientX;
         const dy = _swipeStartY - e.changedTouches[0].clientY;
-        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (Math.abs(dx) <= 60 || Math.abs(dx) <= Math.abs(dy) * 1.5) return;
+
+        if (state.currentFeatureId !== null && state.currentCircuit?.length > 1) {
+            // Vue détail POI → naviguer entre POIs
             navigatePoiDetails(dx > 0 ? 1 : -1);
+        } else if (currentView === 'circuit-details' && state.activeCircuitId && _allCircuitsOrdered.length > 1) {
+            // Vue liste POI d'un circuit → naviguer entre circuits
+            const idx = _allCircuitsOrdered.findIndex(c => c.id === state.activeCircuitId);
+            const nextIdx = idx + (dx > 0 ? 1 : -1);
+            if (nextIdx >= 0 && nextIdx < _allCircuitsOrdered.length) {
+                loadCircuitById(_allCircuitsOrdered[nextIdx].id);
+            }
         }
     });
 
@@ -241,6 +251,7 @@ export function renderMobileCircuitsList() {
         filterPoiId = getPoiId(state.loadedFeatures[state.currentFeatureId]);
     }
     const circuitsToDisplay = getProcessedCircuits(mobileSort, state.filterCompleted, state.activeFilters.zone || null, filterPoiId);
+    _allCircuitsOrdered = circuitsToDisplay; // Mémorise pour le swipe entre circuits
 
     // --- CALCULATE PAGINATION ---
     // Base estimations: Screen height minus mobile-nav (60px), header (~60px), toolbar (~50px), padding-top (~10px), padding-bottom (~100px safe area) = roughly screenHeight - 280px.
