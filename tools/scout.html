@@ -2,7 +2,7 @@
 <html lang="fr" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://nominatim.openstreetmap.org https://overpass-api.de; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://overpass.private.coffee; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>History Walk - Module Scout</title>
     <link rel="icon" type="image/png" href="../icons/icon-192.png" />
     <script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
@@ -424,19 +424,42 @@
             if (activeTypes.includes('tourism')) clauses.push(`node["tourism"~"viewpoint|artwork|attraction|gallery"]${newerFilter}${r};`);
             if (activeTypes.includes('public')) clauses.push(`node["amenity"~"townhall|police|post_office|library"]${newerFilter}${r};`);
 
-            const query = `[out:json];(${clauses.join('')});out body;`;
+            const query = `[out:json][timeout:60];(${clauses.join('')});out body;`;
+
+            // Miroirs Overpass — essayés dans l'ordre jusqu'au premier succès
+            const OVERPASS_MIRRORS = [
+                'https://overpass-api.de/api/interpreter',
+                'https://overpass.kumi.systems/api/interpreter',
+                'https://overpass.private.coffee/api/interpreter',
+            ];
+
+            async function fetchOverpass(query) {
+                let lastError = null;
+                for (const mirror of OVERPASS_MIRRORS) {
+                    try {
+                        showStatus('loading', `⏳ Interrogation de ${new URL(mirror).hostname}…`);
+                        const res = await fetch(`${mirror}?data=${encodeURIComponent(query)}`,
+                            { signal: AbortSignal.timeout(15000) }
+                        );
+                        const text = await res.text();
+                        // Overpass renvoie du XML en cas d'erreur serveur
+                        if (text.trimStart().startsWith('<')) {
+                            const isRateLimit = text.includes('rate_limited') || text.includes('429');
+                            lastError = isRateLimit ? 'ratelimit' : `http_${res.status}`;
+                            continue; // on essaie le miroir suivant
+                        }
+                        return text; // succès
+                    } catch (e) {
+                        lastError = e.name === 'TimeoutError' ? 'timeout' : 'network';
+                    }
+                }
+                throw new Error(lastError || 'unknown');
+            }
 
             try {
-                const res = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-                const text = await res.text();
-
-                // Overpass renvoie du XML en cas d'erreur (rate limit, serveur surchargé…)
-                if (text.trimStart().startsWith('<')) {
-                    const rateLimitHint = text.includes('rate_limited') || text.includes('429');
-                    showStatus('error', rateLimitHint
-                        ? '🚫 Overpass rate-limit atteint. Patientez 30–60 s puis réessayez.'
-                        : `🚫 Overpass a retourné une erreur (HTTP ${res.status}). Réessayez dans quelques secondes.`
-                    );
+                const text = await fetchOverpass(query);
+                if (!text) {
+                    showStatus('error', '🚫 Tous les serveurs Overpass sont indisponibles. Réessayez plus tard.');
                     return;
                 }
 
@@ -470,7 +493,14 @@
                 }
 
             } catch (err) {
-                showStatus('error', `❌ Erreur réseau : ${err.message}`);
+                const msg = err.message;
+                if (msg === 'ratelimit') {
+                    showStatus('error', '🚫 Rate-limit atteint sur tous les serveurs. Patientez 30–60 s puis réessayez.');
+                } else if (msg === 'timeout') {
+                    showStatus('error', '⏱️ Tous les serveurs ont expiré. Réessayez dans quelques secondes.');
+                } else {
+                    showStatus('error', '🚫 Tous les serveurs Overpass sont indisponibles. Réessayez plus tard.');
+                }
             } finally {
                 DOM.btnFetch.disabled = false;
             }
