@@ -86,30 +86,37 @@
         <h2>🔭 Module Scout</h2>
         <p>Générez un squelette GeoJSON pour une nouvelle destination en filtrant les données OpenStreetMap.</p>
         
-        <!-- LOCALISATION -->
+        <!-- DESTINATION -->
         <div class="row" style="align-items: flex-end; margin-bottom: 15px;">
             <div class="col" style="flex: 2;">
-                <label>Centre (Recherche ou Coordonnées)</label>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="location-name" placeholder="Ex: Hôtel Sindbad, Hammamet...">
-                    <button id="btn-geocode" class="btn-secondary" title="Trouver GPS"><i data-lucide="search"></i></button>
-                </div>
-            </div>
-            <div class="col">
-                <label>Latitude</label>
-                <input type="number" id="lat" placeholder="33.xxx" step="any">
-            </div>
-            <div class="col">
-                <label>Longitude</label>
-                <input type="number" id="lon" placeholder="10.xxx" step="any">
-            </div>
-            <div class="col" style="flex: 0.5;">
-                 <label>Rayon (Km)</label>
-                 <input type="number" id="radius-km" value="3" step="0.5" min="0.1">
+                <label>Destination</label>
+                <select id="destination-select" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 14px;">
+                    <option value="">Chargement…</option>
+                    <option value="__manual__">➕ Nouvelle destination (manuel)…</option>
+                </select>
             </div>
             <div class="col" style="flex: 0.7;">
-                 <label>Depuis le <small style="font-weight:400">(optionnel)</small></label>
-                 <input type="date" id="newer-since" title="Filtrer les éléments ajoutés/modifiés dans OSM depuis cette date">
+                <label>Depuis le <small style="font-weight:400">(optionnel)</small></label>
+                <input type="date" id="newer-since" title="Filtrer les éléments ajoutés/modifiés dans OSM depuis cette date">
+            </div>
+        </div>
+
+        <!-- BBOX MANUELLE (cachée par défaut) -->
+        <div id="manual-bbox-group" class="hidden" style="margin-bottom: 15px;">
+            <div class="row" style="align-items: flex-end; margin-bottom: 8px;">
+                <div class="col" style="flex: 3;">
+                    <label>Rechercher la destination</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" id="location-name" placeholder="Ex: Hammamet, Tunisie…">
+                        <button id="btn-geocode" class="btn-secondary" title="Trouver la zone"><i data-lucide="search"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="align-items: flex-end;">
+                <div class="col"><label>Sud</label><input type="number" id="bbox-south" step="any" placeholder="33.62"></div>
+                <div class="col"><label>Ouest</label><input type="number" id="bbox-west" step="any" placeholder="10.72"></div>
+                <div class="col"><label>Nord</label><input type="number" id="bbox-north" step="any" placeholder="33.91"></div>
+                <div class="col"><label>Est</label><input type="number" id="bbox-east" step="any" placeholder="11.06"></div>
             </div>
         </div>
 
@@ -165,19 +172,68 @@
         lucide.createIcons();
 
         const DOM = {
-            btnGeocode: document.getElementById('btn-geocode'),
             btnFetch: document.getElementById('btn-fetch'),
             btnDownload: document.getElementById('btn-download'),
             btnAddRow: document.getElementById('btn-add-row'),
+            btnGeocode: document.getElementById('btn-geocode'),
+            destSelect: document.getElementById('destination-select'),
+            manualGroup: document.getElementById('manual-bbox-group'),
             locName: document.getElementById('location-name'),
-            lat: document.getElementById('lat'),
-            lon: document.getElementById('lon'),
-            radius: document.getElementById('radius-km'),
+            bboxSouth: document.getElementById('bbox-south'),
+            bboxWest: document.getElementById('bbox-west'),
+            bboxNorth: document.getElementById('bbox-north'),
+            bboxEast: document.getElementById('bbox-east'),
             filters: document.querySelectorAll('.filter-item input'),
             resultsArea: document.getElementById('results-area'),
             tbody: document.querySelector('#data-table tbody'),
             counter: document.getElementById('row-counter')
         };
+
+        // --- CHARGEMENT DES DESTINATIONS ---
+        let destinationsData = {};
+        (async () => {
+            try {
+                const res = await fetch('../destinations.json');
+                if (res.ok) {
+                    const json = await res.json();
+                    destinationsData = json.maps || {};
+                    // Pré-remplir le select
+                    DOM.destSelect.innerHTML = '';
+                    for (const [id, dest] of Object.entries(destinationsData)) {
+                        const opt = document.createElement('option');
+                        opt.value = id;
+                        opt.textContent = dest.name;
+                        DOM.destSelect.appendChild(opt);
+                    }
+                    const manualOpt = document.createElement('option');
+                    manualOpt.value = '__manual__';
+                    manualOpt.textContent = '➕ Nouvelle destination (manuel)…';
+                    DOM.destSelect.appendChild(manualOpt);
+                    // Déclenche le change pour pré-remplir la bbox de la première destination
+                    DOM.destSelect.dispatchEvent(new Event('change'));
+                }
+            } catch(e) {
+                DOM.destSelect.innerHTML = '<option value="__manual__">➕ Nouvelle destination (manuel)…</option>';
+            }
+        })();
+
+        DOM.destSelect.addEventListener('change', () => {
+            const val = DOM.destSelect.value;
+            if (val === '__manual__') {
+                DOM.manualGroup.classList.remove('hidden');
+            } else {
+                DOM.manualGroup.classList.add('hidden');
+                // Pré-remplir la bbox depuis destinations.json
+                const dest = destinationsData[val];
+                if (dest && dest.bounds) {
+                    const [[south, west], [north, east]] = dest.bounds;
+                    DOM.bboxSouth.value = south;
+                    DOM.bboxWest.value  = west;
+                    DOM.bboxNorth.value = north;
+                    DOM.bboxEast.value  = east;
+                }
+            }
+        });
 
         // --- UTILS ---
 
@@ -359,26 +415,26 @@
             DOM.tbody.lastElementChild.scrollIntoView({ behavior: 'smooth' });
         };
 
-        // --- GEOCODING ---
+        // --- GEOCODING (mode manuel) → remplit la bbox depuis Nominatim ---
         DOM.btnGeocode.onclick = async () => {
-            const query = DOM.locName.value;
-            if (!query) return alert("Entrez un nom de lieu !");
-
-            const originalText = DOM.btnGeocode.innerHTML;
-            DOM.btnGeocode.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i>';
-            lucide.createIcons();
-
+            const query = DOM.locName.value.trim();
+            if (!query) return;
+            DOM.btnGeocode.innerHTML = '<span class="spinner"></span>';
             try {
-                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`);
                 const data = await res.json();
-                if (data.length === 0) throw new Error("Aucun résultat.");
-                
-                DOM.lat.value = data[0].lat;
-                DOM.lon.value = data[0].lon;
+                if (data.length === 0) { showStatus('warning', '⚠️ Aucun résultat Nominatim pour cette recherche.'); return; }
+                // boundingbox : ["south","north","west","east"]
+                const [s, n, w, e] = data[0].boundingbox;
+                DOM.bboxSouth.value = parseFloat(s).toFixed(6);
+                DOM.bboxNorth.value = parseFloat(n).toFixed(6);
+                DOM.bboxWest.value  = parseFloat(w).toFixed(6);
+                DOM.bboxEast.value  = parseFloat(e).toFixed(6);
+                showStatus('success', `✅ Zone trouvée : ${data[0].display_name.split(',').slice(0,2).join(',')}`);
             } catch (err) {
-                alert("Erreur: " + err.message);
+                showStatus('error', '❌ Erreur Nominatim : ' + err.message);
             } finally {
-                DOM.btnGeocode.innerHTML = originalText;
+                DOM.btnGeocode.innerHTML = '<i data-lucide="search"></i>';
                 lucide.createIcons();
             }
         };
@@ -394,11 +450,15 @@
 
         // --- FETCHING ---
         DOM.btnFetch.onclick = async () => {
-            const lat = parseFloat(DOM.lat.value);
-            const lon = parseFloat(DOM.lon.value);
-            const radiusMeters = parseFloat(DOM.radius.value) * 1000;
+            const south = parseFloat(DOM.bboxSouth.value);
+            const west  = parseFloat(DOM.bboxWest.value);
+            const north = parseFloat(DOM.bboxNorth.value);
+            const east  = parseFloat(DOM.bboxEast.value);
 
-            if (isNaN(lat) || isNaN(lon)) { showStatus('error', '⚠️ Veuillez définir un centre (Latitude / Longitude).'); return; }
+            if ([south, west, north, east].some(isNaN)) {
+                showStatus('error', '⚠️ Zone non définie. Sélectionnez une destination ou remplissez la bbox manuelle.');
+                return;
+            }
 
             const activeTypes = Array.from(DOM.filters).filter(cb => cb.checked).map(cb => cb.value);
             if (activeTypes.length === 0) { showStatus('error', '⚠️ Sélectionnez au moins une catégorie.'); return; }
@@ -410,19 +470,21 @@
             const sinceDate = document.getElementById('newer-since').value;
             const newerFilter = sinceDate ? `["newer"="${sinceDate}"]` : '';
 
+            // Bbox Overpass : (south,west,north,east)
+            const bbox = `(${south},${west},${north},${east})`;
+
             let clauses = [];
-            const r = `(around:${radiusMeters},${lat},${lon})`;
-            if (activeTypes.includes('religion')) clauses.push(`node["amenity"="place_of_worship"]${newerFilter}${r};`);
-            if (activeTypes.includes('history')) clauses.push(`node["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"]${newerFilter}${r};`);
-            if (activeTypes.includes('museum')) clauses.push(`node["tourism"="museum"]${newerFilter}${r};`);
-            if (activeTypes.includes('hotel')) clauses.push(`node["tourism"~"hotel|guest_house|hostel"]${newerFilter}${r};`);
-            if (activeTypes.includes('restaurant')) clauses.push(`node["amenity"~"restaurant|cafe"]${newerFilter}${r};`);
+            if (activeTypes.includes('religion')) clauses.push(`node["amenity"="place_of_worship"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('history')) clauses.push(`node["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('museum')) clauses.push(`node["tourism"="museum"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('hotel')) clauses.push(`node["tourism"~"hotel|guest_house|hostel"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('restaurant')) clauses.push(`node["amenity"~"restaurant|cafe"]${newerFilter}${bbox};`);
             if (activeTypes.includes('leisure')) {
-                clauses.push(`node["leisure"~"park|water_park"]${newerFilter}${r};`);
-                clauses.push(`node["tourism"~"theme_park|zoo|aquarium"]${newerFilter}${r};`);
+                clauses.push(`node["leisure"~"park|water_park"]${newerFilter}${bbox};`);
+                clauses.push(`node["tourism"~"theme_park|zoo|aquarium"]${newerFilter}${bbox};`);
             }
-            if (activeTypes.includes('tourism')) clauses.push(`node["tourism"~"viewpoint|artwork|attraction|gallery"]${newerFilter}${r};`);
-            if (activeTypes.includes('public')) clauses.push(`node["amenity"~"townhall|police|post_office|library"]${newerFilter}${r};`);
+            if (activeTypes.includes('tourism')) clauses.push(`node["tourism"~"viewpoint|artwork|attraction|gallery"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('public')) clauses.push(`node["amenity"~"townhall|police|post_office|library"]${newerFilter}${bbox};`);
 
             const query = `[out:json][timeout:60];(${clauses.join('')});out body;`;
 
