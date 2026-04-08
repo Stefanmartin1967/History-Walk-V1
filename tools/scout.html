@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://overpass.private.coffee; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <title>History Walk - Module Scout</title>
+    <link rel="icon" type="image/png" href="../icons/icon-192.png" />
+    <script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #64748b;
+            --bg: #f4f4f9;
+            --surface: #ffffff;
+            --text: #333;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; max-width: 1400px; margin: auto; background: var(--bg); color: var(--text); }
+        .card { background: var(--surface); padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h2 { margin-top: 0; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9em; }
+        input[type="text"], input[type="number"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; }
+
+        .row { display: flex; gap: 15px; }
+        .col { flex: 1; }
+
+        .filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .filter-item { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+        .filter-item input { cursor: pointer; }
+
+        button { padding: 10px 15px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+
+        #fetch-status { padding: 10px 15px; border-radius: 4px; font-size: 14px; font-weight: 600; margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+        #fetch-status.hidden { display: none; }
+        #fetch-status.loading { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        #fetch-status.success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        #fetch-status.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+        #fetch-status.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-secondary:hover { background: #475569; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: var(--danger); color: white; padding: 6px; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+        /* TABLE STYLES */
+        .table-container { overflow-x: auto; margin-top: 20px; border: 1px solid var(--border); border-radius: 6px; background: white; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1000px; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+        th { background: #f1f5f9; color: #475569; font-weight: 600; position: sticky; top: 0; z-index: 10; }
+        tr:hover { background: #f8fafc; }
+
+        /* Inputs in table */
+        td input, td textarea {
+            width: 100%; padding: 6px; border: 1px solid transparent; background: transparent; font-family: inherit; font-size: inherit; resize: vertical; box-sizing: border-box;
+        }
+        td input:focus, td textarea:focus { border-color: var(--primary); background: #fff; outline: none; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1); border-radius: 3px; }
+        td textarea { min-height: 40px; }
+
+        .col-actions { width: 50px; text-align: center; }
+        .col-id { width: 80px; color: #94a3b8; font-family: monospace; font-size: 11px; }
+        .col-cat { width: 140px; }
+        .col-zone { width: 120px; }
+        .col-gps { width: 150px; font-family: monospace; }
+        .col-source { width: 150px; }
+
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 10px; background: #fff; border-top: 1px solid var(--border); position: sticky; bottom: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .status-bar { font-size: 13px; color: #64748b; margin-left: 10px; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🔭 Module Scout</h2>
+        <p>Générez un squelette GeoJSON pour une nouvelle destination en filtrant les données OpenStreetMap.</p>
+        
+        <!-- DESTINATION -->
+        <div class="row" style="align-items: flex-end; margin-bottom: 15px;">
+            <div class="col" style="flex: 2;">
+                <label>Destination</label>
+                <select id="destination-select" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 14px;">
+                    <option value="">Chargement…</option>
+                    <option value="__manual__">➕ Nouvelle destination (manuel)…</option>
+                </select>
+            </div>
+            <div class="col" style="flex: 0.7;">
+                <label>Depuis le <small style="font-weight:400">(optionnel)</small></label>
+                <input type="date" id="newer-since" title="Filtrer les éléments ajoutés/modifiés dans OSM depuis cette date">
+            </div>
+        </div>
+
+        <!-- BBOX MANUELLE (cachée par défaut) -->
+        <div id="manual-bbox-group" class="hidden" style="margin-bottom: 15px;">
+            <div class="row" style="align-items: flex-end; margin-bottom: 8px;">
+                <div class="col" style="flex: 3;">
+                    <label>Rechercher la destination</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" id="location-name" placeholder="Ex: Hammamet, Tunisie…">
+                        <button id="btn-geocode" class="btn-secondary" title="Trouver la zone"><i data-lucide="search"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="align-items: flex-end;">
+                <div class="col"><label>Sud</label><input type="number" id="bbox-south" step="any" placeholder="33.62"></div>
+                <div class="col"><label>Ouest</label><input type="number" id="bbox-west" step="any" placeholder="10.72"></div>
+                <div class="col"><label>Nord</label><input type="number" id="bbox-north" step="any" placeholder="33.91"></div>
+                <div class="col"><label>Est</label><input type="number" id="bbox-east" step="any" placeholder="11.06"></div>
+            </div>
+        </div>
+
+        <!-- FILTRES -->
+        <div class="filters">
+            <label class="filter-item"><input type="checkbox" value="religion" checked> Religion (Mosquées)</label>
+            <label class="filter-item"><input type="checkbox" value="history" checked> Histoire (Forts, Ruines)</label>
+            <label class="filter-item"><input type="checkbox" value="museum" checked> Culture (Musées)</label>
+            <label class="filter-item"><input type="checkbox" value="hotel"> Hôtels</label>
+            <label class="filter-item"><input type="checkbox" value="restaurant"> Restos / Cafés</label>
+            <label class="filter-item"><input type="checkbox" value="leisure"> Loisirs / Parcs</label>
+            <label class="filter-item"><input type="checkbox" value="tourism"> Tourisme / Art</label>
+            <label class="filter-item"><input type="checkbox" value="public"> Services Publics</label>
+        </div>
+
+        <button id="btn-fetch" class="btn-primary" style="width: 100%;">🚀 Lancer le moissonnage</button>
+        <div id="fetch-status" class="hidden"></div>
+    </div>
+
+    <!-- TABLEAU DE RÉSULTATS -->
+    <div id="results-area" class="hidden">
+        <div class="table-container">
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th class="col-actions"></th>
+                        <th>Nom du site (FR)</th>
+                        <th>Nom Arabe</th>
+                        <th class="col-cat">Catégorie</th>
+                        <th class="col-zone">Zone</th>
+                        <th class="col-gps">GPS (Lat, Lon)</th>
+                        <th>Description</th>
+                        <th class="col-source">Source</th>
+                        <th class="col-id">HW_ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows generated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="toolbar">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="btn-add-row" class="btn-secondary btn-sm"><i data-lucide="plus"></i> Ajouter une ligne</button>
+                <span id="row-counter" class="status-bar">0 résultats</span>
+            </div>
+            <button id="btn-download" class="btn-success"><i data-lucide="download"></i> Télécharger GeoJSON</button>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const DOM = {
+            btnFetch: document.getElementById('btn-fetch'),
+            btnDownload: document.getElementById('btn-download'),
+            btnAddRow: document.getElementById('btn-add-row'),
+            btnGeocode: document.getElementById('btn-geocode'),
+            destSelect: document.getElementById('destination-select'),
+            manualGroup: document.getElementById('manual-bbox-group'),
+            locName: document.getElementById('location-name'),
+            bboxSouth: document.getElementById('bbox-south'),
+            bboxWest: document.getElementById('bbox-west'),
+            bboxNorth: document.getElementById('bbox-north'),
+            bboxEast: document.getElementById('bbox-east'),
+            filters: document.querySelectorAll('.filter-item input'),
+            resultsArea: document.getElementById('results-area'),
+            tbody: document.querySelector('#data-table tbody'),
+            counter: document.getElementById('row-counter')
+        };
+
+        // --- CHARGEMENT DES DESTINATIONS ---
+        let destinationsData = {};
+        (async () => {
+            try {
+                const res = await fetch('../destinations.json');
+                if (res.ok) {
+                    const json = await res.json();
+                    destinationsData = json.maps || {};
+                    // Pré-remplir le select
+                    DOM.destSelect.innerHTML = '';
+                    for (const [id, dest] of Object.entries(destinationsData)) {
+                        const opt = document.createElement('option');
+                        opt.value = id;
+                        opt.textContent = dest.name;
+                        DOM.destSelect.appendChild(opt);
+                    }
+                    const manualOpt = document.createElement('option');
+                    manualOpt.value = '__manual__';
+                    manualOpt.textContent = '➕ Nouvelle destination (manuel)…';
+                    DOM.destSelect.appendChild(manualOpt);
+                    // Déclenche le change pour pré-remplir la bbox de la première destination
+                    DOM.destSelect.dispatchEvent(new Event('change'));
+                }
+            } catch(e) {
+                DOM.destSelect.innerHTML = '<option value="__manual__">➕ Nouvelle destination (manuel)…</option>';
+            }
+        })();
+
+        DOM.destSelect.addEventListener('change', () => {
+            const val = DOM.destSelect.value;
+            if (val === '__manual__') {
+                DOM.manualGroup.classList.remove('hidden');
+            } else {
+                DOM.manualGroup.classList.add('hidden');
+                // Pré-remplir la bbox depuis destinations.json
+                const dest = destinationsData[val];
+                if (dest && dest.bounds) {
+                    const [[south, west], [north, east]] = dest.bounds;
+                    DOM.bboxSouth.value = south;
+                    DOM.bboxWest.value  = west;
+                    DOM.bboxNorth.value = north;
+                    DOM.bboxEast.value  = east;
+                }
+            }
+        });
+
+        // --- UTILS ---
+
+        // Format HW-ULID identique à l'application principale (utils.js)
+        function generateHWID() {
+            const ENCODING = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+            function encodeBase32(number, length) {
+                let str = "";
+                for (let i = length - 1; i >= 0; i--) {
+                    str = ENCODING.charAt(number % 32) + str;
+                    number = Math.floor(number / 32);
+                }
+                return str;
+            }
+            const now = Date.now();
+            let randomPart = "";
+            for (let i = 0; i < 16; i++) randomPart += ENCODING.charAt(Math.floor(Math.random() * 32));
+            return `HW-${encodeBase32(now, 10)}${randomPart}`;
+        }
+
+        // Détection arabe
+        function isArabic(str) { return str && /[\u0600-\u06FF]/.test(str); }
+
+        // Détection de zone via map.geojson
+        let zonesGeoJSON = null;
+        (async () => {
+            try {
+                const res = await fetch('../map.geojson');
+                if (res.ok) zonesGeoJSON = await res.json();
+            } catch(e) { /* zones non disponibles */ }
+        })();
+
+        function isPointInPolygon(point, polygon) {
+            const [px, py] = point;
+            let inside = false;
+            for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+                const [xi, yi] = polygon[i], [xj, yj] = polygon[j];
+                if (((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi)) inside = !inside;
+            }
+            return inside;
+        }
+
+        function detectZone(lat, lon) {
+            if (!zonesGeoJSON) return "";
+            for (const f of zonesGeoJSON.features) {
+                const ring = f.geometry?.coordinates?.[0];
+                if (ring && isPointInPolygon([lon, lat], ring)) return f.properties.name || "";
+            }
+            return "";
+        }
+
+        const HW_MAPPING = {
+            'place_of_worship': 'Mosquée',
+            'museum': 'Culture et tradition',
+            'fort': 'Site historique',
+            'castle': 'Site historique',
+            'ruins': 'Site historique',
+            'archaeological_site': 'Site historique',
+            'hotel': 'Hôtel',
+            'guest_house': 'Hôtel',
+            'restaurant': 'Restaurant',
+            'cafe': 'Restaurant',
+            'theme_park': 'Curiosité',
+            'zoo': 'Curiosité',
+            'viewpoint': 'Curiosité',
+            'artwork': 'Curiosité',
+            'attraction': 'Curiosité',
+            'monument': 'Site historique',
+            'memorial': 'Site historique'
+        };
+
+        function getHwCategory(tags) {
+            if (tags.amenity === 'place_of_worship') {
+                if (tags.religion === 'muslim') return 'Mosquée';
+                if (tags.religion === 'christian' || tags.religion === 'jewish') return 'Site religieux';
+                return 'Mosquée';
+            }
+            const rawCat = tags.historic || tags.tourism || tags.amenity || tags.leisure;
+            return HW_MAPPING[rawCat] || 'A définir';
+        }
+
+        function createInput(value, placeholder = "") {
+            const input = document.createElement('input');
+            input.type = "text";
+            input.value = value || "";
+            input.placeholder = placeholder;
+            return input;
+        }
+
+        function createTextarea(value, placeholder = "") {
+            const input = document.createElement('textarea');
+            input.value = value || "";
+            input.placeholder = placeholder;
+            input.rows = 1;
+            return input;
+        }
+
+        // --- ROW MANAGEMENT ---
+        function addRow(data = {}) {
+            const tr = document.createElement('tr');
+
+            // 1. Actions
+            const tdActions = document.createElement('td');
+            tdActions.className = 'col-actions';
+            const btnDel = document.createElement('button');
+            btnDel.className = 'btn-danger btn-sm';
+            btnDel.innerHTML = '<i data-lucide="trash-2"></i>'; // Icon only
+            btnDel.onclick = () => { tr.remove(); updateCounter(); };
+            tdActions.appendChild(btnDel);
+            tr.appendChild(tdActions);
+
+            // 2. Nom FR
+            const tdNom = document.createElement('td');
+            tdNom.appendChild(createInput(data['Nom du site FR'], "Nom du lieu..."));
+            tr.appendChild(tdNom);
+
+            // 3. Nom Arabe
+            const tdNomAr = document.createElement('td');
+            const inputAr = createInput(data['Nom du site arabe'], "الاسم");
+            inputAr.dir = "rtl";
+            tdNomAr.appendChild(inputAr);
+            tr.appendChild(tdNomAr);
+
+            // 4. Categorie
+            const tdCat = document.createElement('td');
+            tdCat.className = 'col-cat';
+            const inputCat = createInput(data['Catégorie'], "Catégorie...");
+            inputCat.setAttribute('list', 'list-cats'); // Datalist added below
+            tdCat.appendChild(inputCat);
+            tr.appendChild(tdCat);
+
+            // 5. Zone
+            const tdZone = document.createElement('td');
+            tdZone.className = 'col-zone';
+            tdZone.appendChild(createInput(data['Zone'], "Zone..."));
+            tr.appendChild(tdZone);
+
+            // 6. GPS
+            const tdGps = document.createElement('td');
+            tdGps.className = 'col-gps';
+            tdGps.appendChild(createInput(data['Coordonnées GPS'], "Lat, Lon"));
+            tr.appendChild(tdGps);
+
+            // 7. Description
+            const tdDesc = document.createElement('td');
+            tdDesc.appendChild(createTextarea(data['Description'], "Courte description..."));
+            tr.appendChild(tdDesc);
+
+            // 8. Source
+            const tdSrc = document.createElement('td');
+            tdSrc.className = 'col-source';
+            tdSrc.appendChild(createInput(data['Source'], "URL..."));
+            tr.appendChild(tdSrc);
+
+            // 9. ID (Read only)
+            const tdId = document.createElement('td');
+            tdId.className = 'col-id';
+            const hwId = data['HW_ID'] || generateHWID();
+            tdId.textContent = hwId;
+            tdId.dataset.id = hwId; // Store in dataset
+            tr.appendChild(tdId);
+
+            DOM.tbody.appendChild(tr);
+            lucide.createIcons({ root: tr });
+            updateCounter();
+        }
+
+        function updateCounter() {
+            const count = DOM.tbody.querySelectorAll('tr').length;
+            DOM.counter.textContent = `${count} résultats`;
+        }
+
+        DOM.btnAddRow.onclick = () => {
+            addRow({
+                'Zone': "",
+                'HW_ID': generateHWID()
+            });
+            // Scroll to bottom
+            DOM.tbody.lastElementChild.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // --- GEOCODING (mode manuel) → retourne {south,west,north,east} ou null ---
+        async function geocodeToBox(query) {
+            DOM.btnGeocode.innerHTML = '<span class="spinner"></span>';
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (data.length === 0) { showStatus('warning', '⚠️ Aucun résultat Nominatim pour cette recherche.'); return null; }
+                // boundingbox Nominatim : ["south","north","west","east"]
+                const [s, n, w, e] = data[0].boundingbox;
+                const box = { south: parseFloat(s), west: parseFloat(w), north: parseFloat(n), east: parseFloat(e) };
+                DOM.bboxSouth.value = box.south.toFixed(6);
+                DOM.bboxWest.value  = box.west.toFixed(6);
+                DOM.bboxNorth.value = box.north.toFixed(6);
+                DOM.bboxEast.value  = box.east.toFixed(6);
+                showStatus('success', `✅ Zone : ${data[0].display_name.split(',').slice(0,2).join(',')}`);
+                return box;
+            } catch (err) {
+                showStatus('error', '❌ Erreur Nominatim : ' + err.message);
+                return null;
+            } finally {
+                DOM.btnGeocode.innerHTML = '<i data-lucide="search"></i>';
+                lucide.createIcons();
+            }
+        }
+
+        DOM.btnGeocode.onclick = () => geocodeToBox(DOM.locName.value.trim());
+
+        // --- STATUS HELPER ---
+        const statusEl = document.getElementById('fetch-status');
+        function showStatus(type, msg) {
+            statusEl.className = type;
+            statusEl.innerHTML = (type === 'loading')
+                ? `<span class="spinner"></span> ${msg}`
+                : msg;
+        }
+
+        // --- FETCHING ---
+        DOM.btnFetch.onclick = async () => {
+            let south, west, north, east;
+            const selectedDest = DOM.destSelect.value;
+
+            if (selectedDest && selectedDest !== '__manual__' && destinationsData[selectedDest]) {
+                // Destination connue → lire directement depuis destinationsData (fiable)
+                const [[s, w], [n, e]] = destinationsData[selectedDest].bounds;
+                [south, west, north, east] = [s, w, n, e];
+            } else {
+                // Mode manuel → auto-geocoder si bbox vide mais nom renseigné
+                const bboxEmpty = [DOM.bboxSouth.value, DOM.bboxWest.value, DOM.bboxNorth.value, DOM.bboxEast.value].some(v => v.trim() === '');
+                if (bboxEmpty && DOM.locName.value.trim()) {
+                    const box = await geocodeToBox(DOM.locName.value.trim());
+                    if (!box) { DOM.btnFetch.disabled = false; return; }
+                    ({ south, west, north, east } = box);
+                } else {
+                    south = parseFloat(DOM.bboxSouth.value);
+                    west  = parseFloat(DOM.bboxWest.value);
+                    north = parseFloat(DOM.bboxNorth.value);
+                    east  = parseFloat(DOM.bboxEast.value);
+                }
+            }
+
+            if ([south, west, north, east].some(isNaN)) {
+                showStatus('error', '⚠️ Zone non définie. Sélectionnez une destination ou renseignez le nom.');
+                return;
+            }
+
+            const activeTypes = Array.from(DOM.filters).filter(cb => cb.checked).map(cb => cb.value);
+            if (activeTypes.length === 0) { showStatus('error', '⚠️ Sélectionnez au moins une catégorie.'); return; }
+
+            DOM.btnFetch.disabled = true;
+            showStatus('loading', 'Interrogation d\'Overpass OSM…');
+
+            // Filtre de date optionnel
+            const sinceDate = document.getElementById('newer-since').value;
+            const newerFilter = sinceDate ? `["newer"="${sinceDate}"]` : '';
+
+            // Bbox Overpass : (south,west,north,east)
+            const bbox = `(${south},${west},${north},${east})`;
+
+            let clauses = [];
+            if (activeTypes.includes('religion')) clauses.push(`node["amenity"="place_of_worship"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('history')) clauses.push(`node["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('museum')) clauses.push(`node["tourism"="museum"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('hotel')) clauses.push(`node["tourism"~"hotel|guest_house|hostel"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('restaurant')) clauses.push(`node["amenity"~"restaurant|cafe"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('leisure')) {
+                clauses.push(`node["leisure"~"park|water_park"]${newerFilter}${bbox};`);
+                clauses.push(`node["tourism"~"theme_park|zoo|aquarium"]${newerFilter}${bbox};`);
+            }
+            if (activeTypes.includes('tourism')) clauses.push(`node["tourism"~"viewpoint|artwork|attraction|gallery"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('public')) clauses.push(`node["amenity"~"townhall|police|post_office|library"]${newerFilter}${bbox};`);
+
+            const query = `[out:json][timeout:60];(${clauses.join('')});out body;`;
+
+            // Miroirs Overpass — essayés dans l'ordre jusqu'au premier succès
+            const OVERPASS_MIRRORS = [
+                'https://overpass-api.de/api/interpreter',
+                'https://overpass.kumi.systems/api/interpreter',
+                'https://overpass.private.coffee/api/interpreter',
+            ];
+
+            async function fetchOverpass(query) {
+                let lastError = null;
+                for (const mirror of OVERPASS_MIRRORS) {
+                    try {
+                        showStatus('loading', `⏳ Interrogation de ${new URL(mirror).hostname}…`);
+                        const res = await fetch(`${mirror}?data=${encodeURIComponent(query)}`,
+                            { signal: AbortSignal.timeout(15000) }
+                        );
+                        const text = await res.text();
+                        // Overpass renvoie du XML en cas d'erreur serveur
+                        if (text.trimStart().startsWith('<')) {
+                            const isRateLimit = text.includes('rate_limited') || text.includes('429');
+                            lastError = isRateLimit ? 'ratelimit' : `http_${res.status}`;
+                            continue; // on essaie le miroir suivant
+                        }
+                        return text; // succès
+                    } catch (e) {
+                        lastError = e.name === 'TimeoutError' ? 'timeout' : 'network';
+                    }
+                }
+                throw new Error(lastError || 'unknown');
+            }
+
+            try {
+                const text = await fetchOverpass(query);
+                if (!text) {
+                    showStatus('error', '🚫 Tous les serveurs Overpass sont indisponibles. Réessayez plus tard.');
+                    return;
+                }
+
+                const data = JSON.parse(text);
+                DOM.tbody.innerHTML = '';
+                DOM.resultsArea.classList.remove('hidden');
+
+                    data.elements.forEach(el => {
+                    const t = el.tags;
+                    // Nom FR vs Arabe : name:fr → FR, name:ar → arabe
+                    // Si name est en arabe et name:fr absent → name = arabe, FR vide
+                    const nameFr  = t["name:fr"]  || (isArabic(t.name) ? "" : (t.name || ""));
+                    const nameAr  = t["name:ar"]  || (isArabic(t.name) ? t.name : "");
+
+                    addRow({
+                        "Nom du site FR":    nameFr,
+                        "Nom du site arabe": nameAr,
+                        "Catégorie": getHwCategory(t),
+                        "Zone": detectZone(el.lat, el.lon),
+                        "Description": t.description || "",
+                        "Source": "",
+                        "Coordonnées GPS": `${el.lat}, ${el.lon}`,
+                        "HW_ID": generateHWID()
+                    });
+                });
+
+                if (data.elements.length === 0) {
+                    showStatus('warning', '🔍 Aucun résultat dans cette zone pour les critères sélectionnés.');
+                } else {
+                    showStatus('success', `✅ ${data.elements.length} lieu(x) trouvé(s).`);
+                }
+
+            } catch (err) {
+                const msg = err.message;
+                if (msg === 'ratelimit') {
+                    showStatus('error', '🚫 Rate-limit atteint sur tous les serveurs. Patientez 30–60 s puis réessayez.');
+                } else if (msg === 'timeout') {
+                    showStatus('error', '⏱️ Tous les serveurs ont expiré. Réessayez dans quelques secondes.');
+                } else {
+                    showStatus('error', '🚫 Tous les serveurs Overpass sont indisponibles. Réessayez plus tard.');
+                }
+            } finally {
+                DOM.btnFetch.disabled = false;
+            }
+        };
+
+        // --- DOWNLOAD ---
+        DOM.btnDownload.onclick = () => {
+            const features = [];
+            const rows = DOM.tbody.querySelectorAll('tr');
+
+            rows.forEach(tr => {
+                const inputs = tr.querySelectorAll('input, textarea');
+                // Index mapping based on creation order in addRow:
+                // 0: Nom FR, 1: Nom Arabe, 2: Categorie, 3: Zone, 4: GPS, 5: Desc, 6: Source
+
+                const nom = inputs[0].value;
+                const nomAr = inputs[1].value;
+                const cat = inputs[2].value;
+                const zone = inputs[3].value;
+                const gps = inputs[4].value;
+                const desc = inputs[5].value;
+                const src = inputs[6].value;
+                const id = tr.querySelector('.col-id').textContent;
+
+                if (!gps.includes(',')) return; // Skip invalid GPS
+                const [latStr, lonStr] = gps.split(',').map(s => s.trim());
+                const lat = parseFloat(latStr);
+                const lon = parseFloat(lonStr);
+
+                if (isNaN(lat) || isNaN(lon)) return;
+
+                features.push({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [lon, lat] // GeoJSON is Lon, Lat
+                    },
+                    properties: {
+                        "Nom du site FR": nom,
+                        "Nom du site arabe": nomAr,
+                        "Catégorie": cat,
+                        "Zone": zone,
+                        "Coordonnées GPS": gps,
+                        "Latitude": lat,
+                        "Longitude": lon,
+                        "Description": desc,
+                        "Source": src,
+                        "Temps de visite": null,
+                        "Prix d'entrée": null,
+                        "Desc_wpt": null,
+                        "HW_ID": id
+                    }
+                });
+            });
+
+            if(features.length === 0) return alert("Le tableau est vide !");
+
+            const collection = { type: "FeatureCollection", features };
+            const blob = new Blob([JSON.stringify(collection, null, 2)], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const name = DOM.locName.value ? DOM.locName.value.replace(/[^a-z0-9]/gi, '_') : 'Search';
+            a.download = `Scout_${name}_v1.geojson`;
+            a.click();
+        };
+
+        // Add datalist for categories
+        const dl = document.createElement('datalist');
+        dl.id = 'list-cats';
+        ['Mosquée', 'Site historique', 'Culture et tradition', 'Hôtel', 'Restaurant', 'Curiosité', 'Site religieux'].forEach(c => {
+            const op = document.createElement('option');
+            op.value = c;
+            dl.appendChild(op);
+        });
+        document.body.appendChild(dl);
+
+    </script>
+</body>
+</html>
