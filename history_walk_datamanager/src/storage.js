@@ -1,8 +1,13 @@
 // src/storage.js
 import { cleanUrl, generateHWID, isPointInPolygon, parseGps } from './utils.js';
 
+// --- SOURCE DE VÉRITÉ UNIQUE : GitHub ---
+const GITHUB_RAW = 'https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main';
+const GEOJSON_URL  = `${GITHUB_RAW}/public/djerba.geojson`;
+const ZONES_URL    = `${GITHUB_RAW}/map.geojson`;
+
 let globalGeoJSON = null;
-let zonesGeoJSON = null; // Stocke les zones (map.geojson)
+let zonesGeoJSON = null;
 let historyStack = [];
 let historyIndex = -1;
 const MAX_HISTORY = 50;
@@ -30,7 +35,7 @@ function saveToLocalStorage() {
 
 async function loadZones() {
     try {
-        const response = await fetch(import.meta.env.BASE_URL + 'map.geojson');
+        const response = await fetch(ZONES_URL);
         if (response.ok) {
             zonesGeoJSON = await response.json();
             console.log("Zones chargées :", zonesGeoJSON.features.length);
@@ -93,7 +98,7 @@ export async function loadGeoJSON(forceRemote = false) {
         }
 
         if (!dataToLoad) {
-            const response = await fetch(import.meta.env.BASE_URL + 'djerba.geojson?t=' + Date.now());
+            const response = await fetch(GEOJSON_URL + '?t=' + Date.now());
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             dataToLoad = await response.json();
             notify("success", `Chargé : ${dataToLoad.features.length} lieux.`);
