@@ -2,7 +2,7 @@
 // Publier le GeoJSON modifié sur GitHub depuis le Data Manager.
 // Lit le token depuis localStorage (même clé que l'app HW principale).
 
-const TOKEN_KEY = 'github_pat';
+const TOKEN_KEY = 'github_repo_pat'; // Distinct du token Gist (github_pat) de l'app HW
 const OWNER = 'Stefanmartin1967';
 const REPO = 'History-Walk-V1';
 const FILE_PATH = 'public/djerba.geojson';
