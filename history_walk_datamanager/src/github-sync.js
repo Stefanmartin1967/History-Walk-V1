@@ -5,7 +5,7 @@
 const TOKEN_KEY = 'github_pat';
 const OWNER = 'Stefanmartin1967';
 const REPO = 'History-Walk-V1';
-const FILE_PATH = 'public/djerba.geojson';
+const FILE_PATH = 'djerba.geojson';
 
 function getToken() {
     return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || null;
