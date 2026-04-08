@@ -415,29 +415,32 @@
             DOM.tbody.lastElementChild.scrollIntoView({ behavior: 'smooth' });
         };
 
-        // --- GEOCODING (mode manuel) → remplit la bbox depuis Nominatim ---
-        DOM.btnGeocode.onclick = async () => {
-            const query = DOM.locName.value.trim();
-            if (!query) return;
+        // --- GEOCODING (mode manuel) → retourne {south,west,north,east} ou null ---
+        async function geocodeToBox(query) {
             DOM.btnGeocode.innerHTML = '<span class="spinner"></span>';
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`);
                 const data = await res.json();
-                if (data.length === 0) { showStatus('warning', '⚠️ Aucun résultat Nominatim pour cette recherche.'); return; }
-                // boundingbox : ["south","north","west","east"]
+                if (data.length === 0) { showStatus('warning', '⚠️ Aucun résultat Nominatim pour cette recherche.'); return null; }
+                // boundingbox Nominatim : ["south","north","west","east"]
                 const [s, n, w, e] = data[0].boundingbox;
-                DOM.bboxSouth.value = parseFloat(s).toFixed(6);
-                DOM.bboxNorth.value = parseFloat(n).toFixed(6);
-                DOM.bboxWest.value  = parseFloat(w).toFixed(6);
-                DOM.bboxEast.value  = parseFloat(e).toFixed(6);
-                showStatus('success', `✅ Zone trouvée : ${data[0].display_name.split(',').slice(0,2).join(',')}`);
+                const box = { south: parseFloat(s), west: parseFloat(w), north: parseFloat(n), east: parseFloat(e) };
+                DOM.bboxSouth.value = box.south.toFixed(6);
+                DOM.bboxWest.value  = box.west.toFixed(6);
+                DOM.bboxNorth.value = box.north.toFixed(6);
+                DOM.bboxEast.value  = box.east.toFixed(6);
+                showStatus('success', `✅ Zone : ${data[0].display_name.split(',').slice(0,2).join(',')}`);
+                return box;
             } catch (err) {
                 showStatus('error', '❌ Erreur Nominatim : ' + err.message);
+                return null;
             } finally {
                 DOM.btnGeocode.innerHTML = '<i data-lucide="search"></i>';
                 lucide.createIcons();
             }
-        };
+        }
+
+        DOM.btnGeocode.onclick = () => geocodeToBox(DOM.locName.value.trim());
 
         // --- STATUS HELPER ---
         const statusEl = document.getElementById('fetch-status');
@@ -450,13 +453,30 @@
 
         // --- FETCHING ---
         DOM.btnFetch.onclick = async () => {
-            const south = parseFloat(DOM.bboxSouth.value);
-            const west  = parseFloat(DOM.bboxWest.value);
-            const north = parseFloat(DOM.bboxNorth.value);
-            const east  = parseFloat(DOM.bboxEast.value);
+            let south, west, north, east;
+            const selectedDest = DOM.destSelect.value;
+
+            if (selectedDest && selectedDest !== '__manual__' && destinationsData[selectedDest]) {
+                // Destination connue → lire directement depuis destinationsData (fiable)
+                const [[s, w], [n, e]] = destinationsData[selectedDest].bounds;
+                [south, west, north, east] = [s, w, n, e];
+            } else {
+                // Mode manuel → auto-geocoder si bbox vide mais nom renseigné
+                const bboxEmpty = [DOM.bboxSouth.value, DOM.bboxWest.value, DOM.bboxNorth.value, DOM.bboxEast.value].some(v => v.trim() === '');
+                if (bboxEmpty && DOM.locName.value.trim()) {
+                    const box = await geocodeToBox(DOM.locName.value.trim());
+                    if (!box) { DOM.btnFetch.disabled = false; return; }
+                    ({ south, west, north, east } = box);
+                } else {
+                    south = parseFloat(DOM.bboxSouth.value);
+                    west  = parseFloat(DOM.bboxWest.value);
+                    north = parseFloat(DOM.bboxNorth.value);
+                    east  = parseFloat(DOM.bboxEast.value);
+                }
+            }
 
             if ([south, west, north, east].some(isNaN)) {
-                showStatus('error', '⚠️ Zone non définie. Sélectionnez une destination ou remplissez la bbox manuelle.');
+                showStatus('error', '⚠️ Zone non définie. Sélectionnez une destination ou renseignez le nom.');
                 return;
             }
 
