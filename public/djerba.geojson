@@ -24,7 +24,8 @@
         "Prix d'entrée": null,
         "Desc_wpt": "Réouverture de la piscine le 16 mars. Elle se remplit lentement",
         "verified": false,
-        "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD"
+        "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
+        "planifieCounter": 1
       }
     },
     {
@@ -665,7 +666,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE699CBRC4PV1ARJPXKM",
-        "planifieCounter": 1
+        "planifieCounter": 2
       }
     },
     {
@@ -900,7 +901,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6A27VC54MEK4XHGV9V"
+        "HW_ID": "HW-01K77WPE6A27VC54MEK4XHGV9V",
+        "planifieCounter": 1
       }
     },
     {
@@ -925,7 +927,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6A1GRGM843BF4KA3RT"
+        "HW_ID": "HW-01K77WPE6A1GRGM843BF4KA3RT",
+        "planifieCounter": 1
       }
     },
     {
@@ -1003,33 +1006,6 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A6PKFYXGMY0Z2B3NC"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.95294,
-          33.819464
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Palais Ben Ayed",
-        "Nom du site arabe": "حصن سرايا بن عياد",
-        "Catégorie": "Site historique",
-        "Zone": "Midoun",
-        "Coordonnées GPS": "33.819464, 10.952940",
-        "Latitude": 33.819464,
-        "Longitude": 10.95294,
-        "Description": "",
-        "Source": "",
-        "Temps de visite": null,
-        "Prix d'entrée": 0,
-        "Desc_wpt": "",
-        "HW_ID": "HW-01K77WPE6AA25DRECXWRNXFZ4C",
-        "planifieCounter": 1,
-        "vu": false
       }
     },
     {
@@ -1211,7 +1187,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BNSENDPYVFJT2TW7Y",
-        "planifieCounter": 0
+        "planifieCounter": 1
       }
     },
     {
@@ -1291,7 +1267,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BZYXKCYCZXB9RG3RP",
-        "planifieCounter": 0
+        "planifieCounter": 1
       }
     },
     {
@@ -1394,7 +1370,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6B757BJRXVWKNC8PBD"
+        "HW_ID": "HW-01K77WPE6B757BJRXVWKNC8PBD",
+        "planifieCounter": 1
       }
     },
     {
@@ -2082,7 +2059,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6DFDJEFF1NP5V7YWS5"
+        "HW_ID": "HW-01K77WPE6DFDJEFF1NP5V7YWS5",
+        "planifieCounter": 1
       }
     },
     {
@@ -2390,7 +2368,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
-        "planifieCounter": 0
+        "planifieCounter": 1
       }
     },
     {
@@ -2416,7 +2394,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB",
-        "planifieCounter": 0
+        "planifieCounter": 1
       }
     },
     {
@@ -2517,7 +2495,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6EZ7K06GM4HAWDESAE"
+        "HW_ID": "HW-01K77WPE6EZ7K06GM4HAWDESAE",
+        "planifieCounter": 1
       }
     },
     {
@@ -2618,7 +2597,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6E5GCD9QGR33PMXVRP"
+        "HW_ID": "HW-01K77WPE6E5GCD9QGR33PMXVRP",
+        "planifieCounter": 1
       }
     },
     {
@@ -2768,7 +2748,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6FCK1V446SXD2V5NNK"
+        "HW_ID": "HW-01K77WPE6FCK1V446SXD2V5NNK",
+        "planifieCounter": 1
       }
     },
     {
@@ -2793,7 +2774,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4"
+        "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4",
+        "planifieCounter": 1
       }
     },
     {
@@ -2896,7 +2878,8 @@
         "Temps de visite": null,
         "Prix d'entrée": 0,
         "Desc_wpt": "A vérifier si toujours existante",
-        "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB"
+        "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB",
+        "planifieCounter": 1
       }
     },
     {
@@ -2921,7 +2904,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6FZPTQ6J9PK4K8Z3DJ"
+        "HW_ID": "HW-01K77WPE6FZPTQ6J9PK4K8Z3DJ",
+        "planifieCounter": 1
       }
     },
     {
@@ -3047,7 +3031,7 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME",
-        "planifieCounter": 2
+        "planifieCounter": 1
       }
     },
     {
@@ -3818,7 +3802,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6JDNJ7919QCH1HXSXT"
+        "HW_ID": "HW-01K77WPE6JDNJ7919QCH1HXSXT",
+        "planifieCounter": 1
       }
     },
     {
@@ -3973,7 +3958,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y"
+        "HW_ID": "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y",
+        "planifieCounter": 1
       }
     },
     {
@@ -5706,7 +5692,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD"
+        "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD",
+        "planifieCounter": 1
       }
     },
     {
@@ -5834,7 +5821,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ"
+        "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
+        "planifieCounter": 1
       }
     },
     {
@@ -5987,7 +5975,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6RM4YJB23YX7AD522S"
+        "HW_ID": "HW-01K77WPE6RM4YJB23YX7AD522S",
+        "planifieCounter": 1
       }
     },
     {
@@ -6116,7 +6105,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS"
+        "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS",
+        "planifieCounter": 1
       }
     },
     {
@@ -6847,7 +6837,7 @@
         "Zone": "Midoun",
         "HW_ID": "HW-01KJABRN0YD2SFB393HG9SRDGW",
         "Description": "Ajouté via Rich Editor",
-        "planifieCounter": 1,
+        "planifieCounter": 3,
         "vu": true
       }
     },
@@ -6917,7 +6907,8 @@
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
         "HW_ID": "HW-01KJMJATZZZRP02QNDTWS3YVK1",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1
       }
     },
     {
@@ -6952,7 +6943,8 @@
         "Zone": "Erriadh",
         "Source": "https://fr.wikipedia.org/wiki/Djerbahood",
         "HW_ID": "HW-01KJN6EEH9Z49AMGYJT621WG9N",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1
       }
     },
     {
@@ -6969,7 +6961,8 @@
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1
       }
     },
     {
@@ -7037,7 +7030,8 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CNPZR005431XS160BZ1C4",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1
       }
     },
     {
@@ -7162,25 +7156,6 @@
         "Description": "Créé sur le terrain",
         "HW_ID": "HW-01KKK6JJ2HWQJJR363X4HR3SA0",
         "created_at": "2026-03-13T08:56:25.423Z"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          11.0169117,
-          33.8170536
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée ?",
-        "Catégorie": "Mosquée",
-        "Zone": "Taguermess",
-        "Description": "Créé sur le terrain",
-        "HW_ID": "HW-01KKNTSXM381B30Z3TVRMS4D3K",
-        "created_at": "2026-03-14T09:28:27.009Z",
-        "Prix d'entrée": 0
       }
     },
     {
