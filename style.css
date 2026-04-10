@@ -4272,6 +4272,16 @@ input[type=range] {
 .btn-cc-sync-download { flex: 1; padding: 12px; background: #EFF6FF; border: 1px solid #93C5FD; color: #1E40AF; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .cc-sync-update-label { font-size: 0.8rem; color: #94A3B8; text-align: center; }
 
+/* Quick Actions — Dashboard CC */
+.cc-quick-actions { margin-top: 24px; }
+.cc-quick-actions-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--hw-ink-soft); display: flex; align-items: center; gap: 7px; margin-bottom: 12px; }
+.cc-quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.cc-quick-btn { background: white; border: 1px solid #E5E7EB; border-radius: 16px; padding: 18px 14px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; transition: all 0.18s; color: var(--hw-ink); }
+.cc-quick-btn:hover { border-color: var(--hw-amber); box-shadow: 0 4px 14px rgba(217,119,6,0.12); transform: translateY(-2px); }
+.cc-quick-btn .lucide { color: var(--hw-amber); width: 24px; height: 24px; }
+.cc-quick-btn span { font-weight: 700; font-size: 0.88rem; }
+.cc-quick-btn small { font-size: 0.75rem; color: var(--hw-ink-soft); font-weight: 400; }
+
 /* Diff details */
 .cc-deletion-warning { padding: 15px; background: #FEF2F2; color: #991B1B; border-radius: 8px; font-size: 0.9rem; }
 .cc-maps-link { color: #2563EB; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; text-decoration: none; }

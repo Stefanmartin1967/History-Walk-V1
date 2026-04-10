@@ -190,7 +190,45 @@ export function renderTab(tab, diffData, callbacks) {
                     <div class="cc-sync-label">Tout est synchronisé !</div>
                 </div>
             ` : ''}
+
+            <div class="cc-quick-actions">
+                <div class="cc-quick-actions-title"><i data-lucide="zap"></i> Actions Rapides</div>
+                <div class="cc-quick-actions-grid">
+                    <button class="cc-quick-btn" id="btn-cc-upload-circuit">
+                        <i data-lucide="upload-cloud"></i>
+                        <span>Ajouter un circuit</span>
+                        <small>Upload GPX / JSON</small>
+                    </button>
+                    <button class="cc-quick-btn" id="btn-cc-goto-maintenance">
+                        <i data-lucide="server-cog"></i>
+                        <span>Nettoyage serveur</span>
+                        <small>Doublons et suppressions</small>
+                    </button>
+                    <button class="cc-quick-btn" id="btn-cc-goto-config">
+                        <i data-lucide="key-round"></i>
+                        <span>Configuration</span>
+                        <small>Token GitHub · Gist</small>
+                    </button>
+                </div>
+            </div>
         `;
+
+        setTimeout(() => {
+            const btnUpload = document.getElementById('btn-cc-upload-circuit');
+            if (btnUpload) btnUpload.onclick = () => {
+                import('./admin.js').then(({ showGitHubUploadModal }) => showGitHubUploadModal());
+            };
+
+            const btnMaint = document.getElementById('btn-cc-goto-maintenance');
+            if (btnMaint) btnMaint.onclick = () => {
+                document.querySelector('.admin-cc-tab[data-tab="maintenance"]')?.click();
+            };
+
+            const btnConf = document.getElementById('btn-cc-goto-config');
+            if (btnConf) btnConf.onclick = () => {
+                document.querySelector('.admin-cc-tab[data-tab="settings"]')?.click();
+            };
+        }, 0);
     } else if (tab === 'changes') {
         if (diffData.pois.length === 0 && diffData.circuits.length === 0) {
              container.innerHTML = `<div class="empty-state"><i data-lucide="check" width="48"></i><p>Aucune modification en attente.</p></div>`;
