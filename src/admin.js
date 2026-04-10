@@ -7,11 +7,10 @@ import { map } from './map.js';
 import { showAlert, showConfirm } from './modal.js';
 import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
-import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
+import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
-import { recalculatePlannedCountersForMap } from './circuit-actions.js';
 
 export function initAdminMode() {
     // Check for persistent session
@@ -220,12 +219,6 @@ function setupAdminListeners() {
         btnExport.addEventListener('click', exportMasterGeoJSON);
     }
 
-    // --- NOUVEAU : Bouton Publier Carte Officielle (One-Click) ---
-    const btnPublish = document.getElementById('btn-admin-publish-map');
-    if (btnPublish) {
-        btnPublish.addEventListener('click', publishMapToGitHub);
-    }
-
     // --- Ajout Dynamique du Bouton RANGS dans le Menu Admin ---
     // menuContent est déjà déclaré plus haut dans la fonction
     if (menuContent) {
@@ -291,27 +284,6 @@ function setupAdminListeners() {
         const newUploadBtn = btnUpload.cloneNode(true);
         btnUpload.parentNode.replaceChild(newUploadBtn, btnUpload);
         newUploadBtn.addEventListener('click', showGitHubUploadModal);
-
-        // --- NOUVEAU : Bouton Delete Circuit (Pour suppression GPX) ---
-        let btnDeleteFile = document.getElementById('btn-admin-github-delete');
-        if (!btnDeleteFile) {
-            btnDeleteFile = document.createElement('button');
-            btnDeleteFile.id = 'btn-admin-github-delete';
-            btnDeleteFile.className = 'tools-menu-item';
-            btnDeleteFile.innerHTML = `<i data-lucide="trash-2"></i> Delete Circuit`;
-
-            // SECURITY CHECK: Verify parent before insert
-            if (btnControl && btnControl.parentNode === menuContent) {
-                menuContent.insertBefore(btnDeleteFile, btnControl);
-            } else {
-                menuContent.appendChild(btnDeleteFile);
-            }
-            createIcons({ icons, root: btnDeleteFile });
-        }
-
-        const newDeleteBtn = btnDeleteFile.cloneNode(true);
-        btnDeleteFile.parentNode.replaceChild(newDeleteBtn, btnDeleteFile);
-        newDeleteBtn.addEventListener('click', showGitHubDeleteModal);
 
         // --- NOUVEAU : Bouton Console Fusion ++ ---
         let btnFusionPlus = document.getElementById('btn-admin-fusion-plus');
@@ -426,64 +398,6 @@ function exportMasterGeoJSON() {
     }
 }
 
-// --- PUBLICATION AUTOMATIQUE SUR GITHUB ---
-
-async function publishMapToGitHub() {
-    const token = getStoredToken();
-    if (!token) {
-        showToast("Token GitHub manquant. Configurez-le dans 'Upload Fichier'.", "error");
-        // On pourrait ouvrir la modale de config ici si on voulait être sympa
-        return;
-    }
-
-    const mapId = state.currentMapId || 'djerba';
-    const filename = `${mapId}.geojson`;
-    const path = GITHUB_PATHS.geojson(mapId);
-
-    const ok = await showConfirm(
-        "Publication de la carte",
-        `Publier la carte officielle <strong>${filename}</strong> sur GitHub ?\n\nToutes les modifications (photos, positions, détails) seront visibles pour tous les utilisateurs.`,
-        "Publier",
-        "Annuler"
-    );
-    if (!ok) return;
-
-    showToast("Génération du fichier...", "info");
-
-    // Recalcul des compteurs "Planifié" pour être sûr qu'ils sont à jour avant publication
-    // Cela permet de mettre à jour le statut des POI pour TOUS les circuits (y compris existants)
-    try {
-        await recalculatePlannedCountersForMap(state.currentMapId || 'djerba');
-    } catch (e) {
-        console.warn("Erreur recalcul compteurs:", e);
-    }
-
-    const geojson = generateMasterGeoJSONData();
-    if (!geojson) {
-        showToast("Erreur: Données vides.", "error");
-        return;
-    }
-
-    try {
-        showToast("Envoi vers GitHub...", "info");
-
-        const jsonStr = JSON.stringify(geojson, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/geo+json' });
-        const file = new File([blob], filename, { type: 'application/geo+json' });
-
-        const poiCount = geojson.features?.length ?? 0;
-        const message = `feat(map): Publication ${mapId} — ${poiCount} POIs`;
-
-        await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, path, message);
-
-        showToast("Carte publiée avec succès ! Les changements seront visibles d'ici quelques minutes.", "success");
-
-    } catch (error) {
-        console.error("Erreur publication carte:", error);
-        showToast(`Erreur : ${error.message}`, "error");
-    }
-}
-
 function showRankTable() {
     // --- Lignes Animaux (% Distance officielle) ---
     const animalRows = ANIMAL_RANKS.map(r => `
@@ -566,129 +480,6 @@ function showRankTable() {
 }
 
 // --- GITHUB UPLOAD UI ---
-
-function setupGitHubUploadUI() {
-    // Nothing complex to setup on init, logic is inside showGitHubUploadModal
-}
-
-export function showGitHubDeleteModal() {
-    // 1. Récupération des éléments de la modale globale
-    const overlay = document.getElementById('custom-modal-overlay');
-    const title = document.getElementById('custom-modal-title');
-    const message = document.getElementById('custom-modal-message');
-    const actions = document.getElementById('custom-modal-actions');
-
-    if (!overlay || !title || !message || !actions) {
-        console.error("Modal elements not found");
-        return;
-    }
-
-    // 2. Configuration du contenu
-    title.textContent = "Supprimer un circuit sur GitHub";
-
-    // Générer la liste des circuits à partir du state ou de l'index distant
-    const officialCircuits = state.officialCircuits || [];
-    let optionsHtml = '<option value="">Sélectionnez un circuit...</option>';
-    officialCircuits.forEach(c => {
-        optionsHtml += `<option value="${c.id}">${c.name}</option>`;
-    });
-
-    message.innerHTML = `
-        <div class="admin-form-body">
-            <p>Cette fonction supprime un circuit officiel (fichier GPX ou JSON) directement sur GitHub.
-                Cela déclenchera la mise à jour de l'index du site.</p>
-
-            <label class="admin-form-label">Circuit à supprimer</label>
-            <select id="gh-del-circuit" class="admin-form-input">
-                ${optionsHtml}
-            </select>
-
-            <div id="gh-del-status" class="admin-form-status"></div>
-        </div>
-    `;
-
-    // 3. Configuration des boutons
-    actions.innerHTML = ''; // Reset
-
-    // Bouton Annuler
-    const btnCancel = document.createElement('button');
-    btnCancel.className = 'custom-modal-btn secondary';
-    btnCancel.textContent = "Annuler";
-    btnCancel.onclick = () => {
-        overlay.classList.remove('active');
-    };
-
-    // Bouton Supprimer
-    const btnDelete = document.createElement('button');
-    btnDelete.className = 'custom-modal-btn primary';
-    btnDelete.classList.add('danger');
-    btnDelete.textContent = "Supprimer définitivement";
-
-    btnDelete.onclick = async () => {
-        const circuitSelect = message.querySelector('#gh-del-circuit');
-        const statusDiv = message.querySelector('#gh-del-status');
-
-        const token = getStoredToken();
-        const circuitId = circuitSelect.value;
-        const circuitName = circuitSelect.options[circuitSelect.selectedIndex]?.text || circuitId;
-
-        if (!token) {
-            statusDiv.textContent = "Token manquant — configurez-le dans Centre de Contrôle → Config.";
-            return;
-        }
-        if (!circuitId) {
-            statusDiv.textContent = "Erreur: Aucun circuit sélectionné.";
-            return;
-        }
-
-        const okDel = await showConfirm(
-            "Suppression définitive",
-            `Supprimer définitivement le circuit <strong>"${circuitName}"</strong> du serveur ?\n\nCette action est irréversible.`,
-            "Supprimer",
-            "Annuler",
-            true
-        );
-        if (!okDel) return;
-
-        // La modale de confirmation est fermée — on passe aux toasts pour le feedback
-        btnDelete.disabled = true;
-        showToast("Recherche du fichier sur le serveur...", "info");
-
-        try {
-            const timestamp = Date.now();
-            const indexUrl = `${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}?t=${timestamp}`;
-            const remoteIndex = await fetch(indexUrl).then(r => r.json());
-            const target = remoteIndex.find(r => String(r.id) === String(circuitId));
-
-            if (!target || !target.file) {
-                throw new Error(`Fichier introuvable sur le serveur pour le circuit ID: ${circuitId}`);
-            }
-
-            const path = `public/circuits/${target.file}`;
-            showToast("Suppression en cours...", "info");
-
-            await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, path, `feat(circuit): Suppression "${circuitName}"`);
-
-            // Nettoyage local mémoire + IndexedDB
-            state.officialCircuits = state.officialCircuits.filter(c => String(c.id) !== String(circuitId));
-            import('./database.js').then(async ({ deleteCircuit }) => {
-                await deleteCircuit(circuitId);
-            });
-
-            showToast(`Circuit "${circuitName}" supprimé avec succès !`, "success");
-            setTimeout(() => { window.location.reload(); }, 2000);
-
-        } catch (e) {
-            console.error("Delete error:", e);
-            showToast(`Erreur : ${e.message}`, "error");
-            btnDelete.disabled = false;
-        }
-    };
-
-    actions.appendChild(btnCancel);
-    actions.appendChild(btnDelete);
-    overlay.classList.add('active');
-}
 
 export function showGitHubUploadModal() {
     // 1. Récupération des éléments de la modale globale
