@@ -19,8 +19,8 @@ import { showStatisticsModal } from './statistics.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
-import { showAdminLoginModal, logoutAdmin, showGitHubConfigModal } from './admin.js';
-import { openControlCenter } from './admin-control-center.js';
+import { showAdminLoginModal, logoutAdmin } from './admin.js';
+import { openControlCenter, openControlCenterSettings, quickPublish } from './admin-control-center.js';
 import { eventBus } from './events.js';
 
 let currentView = 'circuits';
@@ -889,6 +889,10 @@ export function renderMobileMenu() {
                 <i data-lucide="layout-dashboard"></i>
                 <span>Centre de Contrôle</span>
             </button>
+            <button class="mobile-list-item" id="mob-action-admin-quick-publish">
+                <i data-lucide="upload-cloud"></i>
+                <span>Publier les modifs</span>
+            </button>
             <button class="mobile-list-item" id="mob-action-admin-datamanager">
                 <i data-lucide="table"></i>
                 <span>Data Manager</span>
@@ -946,6 +950,9 @@ export function renderMobileMenu() {
         const btnControl = document.getElementById('mob-action-admin-control-center');
         if (btnControl) btnControl.addEventListener('click', openControlCenter);
 
+        const btnQuickPublish = document.getElementById('mob-action-admin-quick-publish');
+        if (btnQuickPublish) btnQuickPublish.addEventListener('click', quickPublish);
+
         const btnDataManager = document.getElementById('mob-action-admin-datamanager');
         if (btnDataManager) btnDataManager.addEventListener('click', () => window.open('history_walk_datamanager/index.html', '_blank'));
 
@@ -959,7 +966,7 @@ export function renderMobileMenu() {
         if (btnScout) btnScout.addEventListener('click', () => window.open('tools/scout.html', '_blank'));
 
         const btnToken = document.getElementById('mob-action-admin-config-token');
-        if (btnToken) btnToken.addEventListener('click', showGitHubConfigModal);
+        if (btnToken) btnToken.addEventListener('click', openControlCenterSettings);
     }
 }
 

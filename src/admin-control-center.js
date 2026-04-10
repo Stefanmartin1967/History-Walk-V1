@@ -5,14 +5,14 @@ import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './gith
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { showToast } from './toast.js';
 import { showConfirm, closeModal } from './modal.js';
-import { saveAppState } from './database.js';
+import { saveAppState, getAppState } from './database.js';
 
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, diffData } from './admin-diff-engine.js';
 import { injectAdminStyles, openControlCenterModal, renderTab } from './admin-control-ui.js';
 
 // --- STATE MANAGEMENT (Brouillon) ---
-const DRAFT_KEY = 'admin_draft_v1';
+const DRAFT_IDB_KEY = 'adminDraft';
 let adminDraft = {
     pendingPois: {},
     pendingCircuits: {}
@@ -20,13 +20,15 @@ let adminDraft = {
 
 // --- INITIALISATION (Point d'entrée principal) ---
 export async function initAdminControlCenter() {
-    const saved = localStorage.getItem(DRAFT_KEY);
+    // Lire depuis IndexedDB (nouvelle source de vérité)
+    const saved = await getAppState(DRAFT_IDB_KEY);
     if (saved) {
-        try {
-            adminDraft = JSON.parse(saved);
-            updateButtonBadge();
-        } catch (e) { console.error("Erreur brouillon", e); }
+        adminDraft = saved;
+        updateButtonBadge();
     }
+
+    // Migration : nettoyer l'ancienne clé localStorage si elle existe encore
+    localStorage.removeItem('admin_draft_v1');
 
     // Injection des styles via le nouveau module UI
     injectAdminStyles();
@@ -42,7 +44,20 @@ function updateButtonBadge() {
 
 function saveDraft(newDraft) {
     adminDraft = newDraft;
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(adminDraft));
+    saveAppState(DRAFT_IDB_KEY, adminDraft).catch(e => console.error("Erreur sauvegarde draft", e));
+}
+
+// --- OUVERTURE DIRECTE ONGLET CONFIG (sans calcul diff) ---
+export function openControlCenterSettings() {
+    const callbacks = {
+        uploadAdminData: uploadAdminData,
+        downloadAdminData: downloadAdminData,
+    };
+    openControlCenterModal({ stats: { poisModified: 0, circuitsModified: 0, photosAdded: 0 }, items: [] }, callbacks);
+    setTimeout(() => {
+        const tab = document.querySelector('.admin-cc-tab[data-tab="settings"]');
+        if (tab) tab.click();
+    }, 0);
 }
 
 // --- OUVERTURE DU PANNEAU (Interface + Logique) ---
@@ -133,6 +148,14 @@ export const processDecision = async (id, decision) => {
     renderTab('changes', diffData, { publishChanges, uploadAdminData, downloadAdminData });
 };
 
+
+// --- PUBLICATION RAPIDE (sans ouvrir la CC modale) ---
+
+export async function quickPublish() {
+    reconcileLocalChanges(adminDraft, saveDraft, updateButtonBadge);
+    await prepareDiffData(adminDraft);
+    await publishChanges();
+}
 
 // --- GESTION DE LA PUBLICATION ET SYNCHRONISATION ---
 

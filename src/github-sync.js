@@ -3,37 +3,27 @@
 const STORAGE_KEY_TOKEN = 'github_pat';
 
 /**
- * Récupère le token : sessionStorage d'abord, localStorage ensuite (si "Se souvenir" activé)
+ * Récupère le token depuis localStorage.
  * @returns {string|null}
  */
 export function getStoredToken() {
-    return sessionStorage.getItem(STORAGE_KEY_TOKEN)
-        || localStorage.getItem(STORAGE_KEY_TOKEN)
-        || null;
+    return localStorage.getItem(STORAGE_KEY_TOKEN) || null;
 }
 
 /**
- * Sauvegarde le token.
+ * Sauvegarde le token en localStorage.
  * @param {string} token
- * @param {boolean} persistent - si true, stocke aussi en localStorage (survit à la fermeture)
  */
-export function saveToken(token, persistent = false) {
+export function saveToken(token) {
     if (token) {
-        const trimmed = token.trim();
-        sessionStorage.setItem(STORAGE_KEY_TOKEN, trimmed);
-        if (persistent) {
-            localStorage.setItem(STORAGE_KEY_TOKEN, trimmed);
-        } else {
-            localStorage.removeItem(STORAGE_KEY_TOKEN);
-        }
+        localStorage.setItem(STORAGE_KEY_TOKEN, token.trim());
     } else {
-        sessionStorage.removeItem(STORAGE_KEY_TOKEN);
         localStorage.removeItem(STORAGE_KEY_TOKEN);
     }
 }
 
 /**
- * Indique si le token est persisté en localStorage ("Se souvenir sur cet appareil")
+ * Indique si un token est enregistré.
  * @returns {boolean}
  */
 export function isTokenPersisted() {

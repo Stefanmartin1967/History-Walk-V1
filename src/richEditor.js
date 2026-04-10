@@ -11,6 +11,7 @@ import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { showConfirm } from './modal.js';
 import { createIcons, icons } from 'lucide';
+import { quickPublish } from './admin-control-center.js';
 
 // --- IDs DOM ---
 const DOM_IDS = {
@@ -501,6 +502,11 @@ async function executeCreate(data) {
     }
 
     await logModification(newPoiId, 'Création (Admin)', 'All', null, `Nouveau lieu : ${data['Nom du site FR']}`);
+
+    showToast("POI créé et enregistré localement.", "success", 6000, {
+        label: "Publier sur GitHub",
+        onClick: quickPublish
+    });
 }
 
 async function executeEdit(data) {
@@ -520,6 +526,13 @@ async function executeEdit(data) {
     // Log adapté selon admin ou non
     const logType = state.isAdmin ? 'Edition (Admin)' : 'Edition (User)';
     await logModification(poiId, logType, 'All', null, `Mise à jour via Rich Editor`);
+
+    if (state.isAdmin) {
+        showToast("Modification enregistrée localement.", "success", 6000, {
+            label: "Publier sur GitHub",
+            onClick: quickPublish
+        });
+    }
 
     // Force le rafraîchissement des marqueurs Leaflet avec la nouvelle catégorie
     // On importe data.js, puis on force l'application des filtres qui va émettre 'data:filtered'
