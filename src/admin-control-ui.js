@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { createIcons, icons } from 'lucide';
-import { getStoredToken, saveToken, isTokenPersisted } from './github-sync.js';
+import { getStoredToken, saveToken } from './github-sync.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { showAlert } from './modal.js';
@@ -282,19 +282,13 @@ export function renderTab(tab, diffData, callbacks) {
 
     } else if (tab === 'settings') {
         const token = getStoredToken() || '';
-        const persisted = isTokenPersisted();
         container.innerHTML = `
             <div class="cc-settings-layout">
                 <!-- GITHUB TOKEN -->
                 <div class="cc-card">
                     <h3>Configuration GitHub</h3>
-                    <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin-bottom:15px;">Personal Access Token (PAT) pour l'upload.</p>
+                    <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin-bottom:15px;">Personal Access Token (PAT) pour l'upload. Stocké en localStorage.</p>
                     <input type="password" id="cc-token-input" value="${token}" class="settings-input" placeholder="ghp_...">
-                    <label class="cc-token-persist-label">
-                        <input type="checkbox" id="cc-token-persist" ${persisted ? 'checked' : ''}>
-                        Se souvenir sur cet appareil
-                        <span class="cc-token-persist-hint">(PC personnel uniquement)</span>
-                    </label>
                     <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin:15px 0 8px;">Gist ID <small>(sync données personnelles — laisser vide si non utilisé)</small></p>
                     <input type="text" id="cc-gist-id-input" value="${localStorage.getItem('hw_gist_id') || ''}" class="settings-input" placeholder="ex: 21f82c6a621a6acf09adeb228154bb04" style="font-family:monospace;font-size:0.85rem;">
                     <button id="btn-save-token" class="cc-save-btn">Sauvegarder</button>
@@ -329,8 +323,7 @@ export function renderTab(tab, diffData, callbacks) {
             const btnSave = document.getElementById('btn-save-token');
             if(btnSave) btnSave.onclick = () => {
                 const val = document.getElementById('cc-token-input').value.trim();
-                const persistent = document.getElementById('cc-token-persist')?.checked ?? false;
-                saveToken(val, persistent);
+                saveToken(val);
                 const gistId = document.getElementById('cc-gist-id-input')?.value.trim();
                 if (gistId) {
                     localStorage.setItem('hw_gist_id', gistId);

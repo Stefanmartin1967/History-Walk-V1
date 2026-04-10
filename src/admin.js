@@ -7,7 +7,7 @@ import { map } from './map.js';
 import { showAlert, showConfirm } from './modal.js';
 import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, icons } from 'lucide';
-import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken, saveToken } from './github-sync.js';
+import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
@@ -571,75 +571,7 @@ function setupGitHubUploadUI() {
     // Nothing complex to setup on init, logic is inside showGitHubUploadModal
 }
 
-export function showGitHubConfigModal() {
-    const storedToken = getStoredToken() || '';
-    const storedGistId = localStorage.getItem('hw_gist_id') || '';
-
-    const html = `
-        <div class="admin-github-body">
-            <p>Configurez votre Token d'accès personnel (PAT) pour autoriser l'application à publier sur GitHub depuis ce navigateur.</p>
-
-            <label class="admin-github-label">GitHub Token (PAT)</label>
-            <input type="password" id="gh-config-token" value="${storedToken}" placeholder="ghp_..." class="admin-github-input">
-
-            <label class="admin-github-label" style="margin-top:12px;">Gist ID <small style="color:var(--hw-ink-soft);font-weight:normal;">(sync données personnelles)</small></label>
-            <input type="text" id="gh-config-gist-id" value="${storedGistId}" placeholder="ex: 21f82c6a621a6acf09adeb228154bb04" class="admin-github-input" style="font-family:monospace;font-size:0.85rem;">
-            <div class="admin-github-note">Laissez vide si vous n'utilisez pas la sync Gist. Obtenez ce Gist ID depuis votre PC une fois la sync configurée.</div>
-
-            <div class="admin-github-note" style="margin-top:8px;">Ces valeurs sont stockées uniquement dans votre navigateur local.</div>
-        </div>
-    `;
-
-    // Récupération des éléments de la modale globale
-    const overlay = document.getElementById('custom-modal-overlay');
-    const title = document.getElementById('custom-modal-title');
-    const message = document.getElementById('custom-modal-message');
-    const actions = document.getElementById('custom-modal-actions');
-
-    if (!overlay || !title || !message || !actions) return;
-
-    title.textContent = "Configuration GitHub";
-    message.innerHTML = html;
-    actions.innerHTML = '';
-
-    const btnCancel = document.createElement('button');
-    btnCancel.className = 'custom-modal-btn secondary';
-    btnCancel.textContent = "Annuler";
-    btnCancel.onclick = () => overlay.classList.remove('active');
-
-    const btnSave = document.createElement('button');
-    btnSave.className = 'custom-modal-btn primary';
-    btnSave.textContent = "Sauvegarder";
-    btnSave.onclick = () => {
-        const tokenInput = message.querySelector('#gh-config-token');
-        const gistInput  = message.querySelector('#gh-config-gist-id');
-        if (tokenInput) {
-            const token = tokenInput.value.trim();
-            // Sauvegarde persistante (localStorage) pour que le token survive à la fermeture
-            saveToken(token, true);
-        }
-        if (gistInput) {
-            const gistId = gistInput.value.trim();
-            if (gistId) {
-                localStorage.setItem('hw_gist_id', gistId);
-            } else {
-                localStorage.removeItem('hw_gist_id');
-            }
-        }
-        showToast("Configuration sauvegardée !", "success");
-        overlay.classList.remove('active');
-        // Déclencher la sync Gist immédiatement si token + gistId présents
-        injectSyncIndicator();
-        pullFromGist();
-    };
-
-    actions.appendChild(btnCancel);
-    actions.appendChild(btnSave);
-    overlay.classList.add('active');
-}
-
 export function showGitHubDeleteModal() {
-    const storedToken = getStoredToken() || '';
     // 1. Récupération des éléments de la modale globale
     const overlay = document.getElementById('custom-modal-overlay');
     const title = document.getElementById('custom-modal-title');
@@ -665,9 +597,6 @@ export function showGitHubDeleteModal() {
         <div class="admin-form-body">
             <p>Cette fonction supprime un circuit officiel (fichier GPX ou JSON) directement sur GitHub.
                 Cela déclenchera la mise à jour de l'index du site.</p>
-
-            <label class="admin-form-label">GitHub Token (PAT)</label>
-            <input type="password" id="gh-del-token" value="${storedToken}" placeholder="ghp_..." class="admin-form-input">
 
             <label class="admin-form-label">Circuit à supprimer</label>
             <select id="gh-del-circuit" class="admin-form-input">
@@ -696,16 +625,15 @@ export function showGitHubDeleteModal() {
     btnDelete.textContent = "Supprimer définitivement";
 
     btnDelete.onclick = async () => {
-        const tokenInput = message.querySelector('#gh-del-token');
         const circuitSelect = message.querySelector('#gh-del-circuit');
         const statusDiv = message.querySelector('#gh-del-status');
 
-        const token = tokenInput.value.trim();
+        const token = getStoredToken();
         const circuitId = circuitSelect.value;
         const circuitName = circuitSelect.options[circuitSelect.selectedIndex]?.text || circuitId;
 
         if (!token) {
-            statusDiv.textContent = "Erreur: Token manquant.";
+            statusDiv.textContent = "Token manquant — configurez-le dans Centre de Contrôle → Config.";
             return;
         }
         if (!circuitId) {
@@ -727,8 +655,6 @@ export function showGitHubDeleteModal() {
         showToast("Recherche du fichier sur le serveur...", "info");
 
         try {
-            saveToken(token);
-
             const timestamp = Date.now();
             const indexUrl = `${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}?t=${timestamp}`;
             const remoteIndex = await fetch(indexUrl).then(r => r.json());
@@ -765,7 +691,6 @@ export function showGitHubDeleteModal() {
 }
 
 export function showGitHubUploadModal() {
-    const storedToken = getStoredToken() || '';
     // 1. Récupération des éléments de la modale globale
     const overlay = document.getElementById('custom-modal-overlay');
     const title = document.getElementById('custom-modal-title');
@@ -783,9 +708,6 @@ export function showGitHubUploadModal() {
         <div class="admin-form-body">
             <p>Cette fonction permet d'ajouter un circuit officiel directement sur GitHub.
                 Cela déclenchera automatiquement la mise à jour du site.</p>
-
-            <label class="admin-form-label">GitHub Token (PAT)</label>
-            <input type="password" id="gh-token" value="${storedToken}" placeholder="ghp_..." class="admin-form-input">
 
             <label class="admin-form-label">Fichier Circuit (.json / .gpx)</label>
             <input type="file" id="gh-file-input" accept=".json,.gpx" class="admin-form-input">
@@ -810,22 +732,14 @@ export function showGitHubUploadModal() {
     btnSend.className = 'custom-modal-btn primary';
     btnSend.textContent = "Envoyer sur GitHub";
     btnSend.onclick = async () => {
-        // Use querySelector on the container to ensure we target the current modal content
-        // This avoids issues with stale elements if the DOM was previously malformed
-        const tokenInput = message.querySelector('#gh-token');
         const fileInput = message.querySelector('#gh-file-input');
         const statusDiv = message.querySelector('#gh-status');
 
-        if (!tokenInput || !fileInput) {
-            console.error("Inputs not found in modal message container");
-            return;
-        }
-
-        const token = tokenInput.value.trim();
-        const file = fileInput.files[0];
+        const token = getStoredToken();
+        const file = fileInput?.files[0];
 
         if (!token) {
-            statusDiv.textContent = "Erreur: Token manquant.";
+            statusDiv.textContent = "Token manquant — configurez-le dans Centre de Contrôle → Config.";
             statusDiv.style.color = "red";
             return;
         }
@@ -877,9 +791,6 @@ export function showGitHubUploadModal() {
             // On peut réafficher une modale de statut simple.
             showAlert("Upload en cours", `<div class="admin-upload-loading"><i data-lucide="loader-2" class="spin lucide"></i><br>Envoi du fichier exceptionnel...</div>`, null);
         }
-
-        // Save token
-        saveToken(token);
 
         statusDiv.textContent = "Envoi en cours...";
         statusDiv.style.color = "var(--primary)";
