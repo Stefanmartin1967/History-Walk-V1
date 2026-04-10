@@ -219,9 +219,47 @@ btnLoad.addEventListener('click', async () => {
     btnPublish.disabled = false;
 });
 
+function showTokenModal() {
+    return new Promise((resolve) => {
+        const overlay = document.getElementById('token-modal-overlay');
+        const input = document.getElementById('token-modal-input');
+        const btnConfirm = document.getElementById('token-modal-confirm');
+        const btnCancel = document.getElementById('token-modal-cancel');
+
+        input.value = '';
+        overlay.classList.remove('hidden');
+        setTimeout(() => input.focus(), 50);
+
+        function close(token) {
+            overlay.classList.add('hidden');
+            btnConfirm.removeEventListener('click', onConfirm);
+            btnCancel.removeEventListener('click', onCancel);
+            resolve(token);
+        }
+
+        function onConfirm() {
+            const token = input.value.trim();
+            if (!token) { input.focus(); return; }
+            localStorage.setItem('github_pat', token);
+            close(token);
+        }
+
+        function onCancel() { close(null); }
+
+        btnConfirm.addEventListener('click', onConfirm);
+        btnCancel.addEventListener('click', onCancel);
+    });
+}
+
 btnPublish.addEventListener('click', async () => {
     const data = getGeoJSONForExport();
     if (!data) return;
+
+    if (!localStorage.getItem('github_pat')) {
+        const token = await showTokenModal();
+        if (!token) { updateStatus('error', "Publication annulée : pas de token."); return; }
+    }
+
     btnPublish.disabled = true;
     await publishToGitHub(data, (type, msg) => updateStatus(type, msg));
     btnPublish.disabled = false;

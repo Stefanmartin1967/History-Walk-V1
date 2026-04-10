@@ -426,3 +426,74 @@ tr.hidden-row { display: none; }
     color: var(--ink-soft);
     font-style: italic;
 }
+
+/* --- MODALE TOKEN GITHUB --- */
+.token-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+.token-modal-overlay.hidden { display: none; }
+.token-modal-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 28px 32px;
+    width: min(420px, 90vw);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+}
+.token-modal-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+.token-modal-desc {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.5;
+}
+.token-modal-desc code {
+    background: var(--brand-soft);
+    color: var(--brand);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+}
+.token-modal-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 0.9rem;
+    font-family: monospace;
+    box-sizing: border-box;
+}
+.token-modal-input:focus { outline: none; border-color: var(--brand); }
+.token-modal-persist {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    cursor: pointer;
+}
+.token-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}

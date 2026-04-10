@@ -156,6 +156,20 @@
       </main>
     </div>
 
+    <!-- MODALE TOKEN GITHUB -->
+    <div id="token-modal-overlay" class="token-modal-overlay hidden">
+      <div class="token-modal-box">
+        <h3 class="token-modal-title"><i data-lucide="key-round"></i> Token GitHub requis</h3>
+        <p class="token-modal-desc">Aucun token trouvé. Saisissez votre Personal Access Token (PAT) avec les droits <code>repo</code>.</p>
+        <input type="password" id="token-modal-input" class="token-modal-input" placeholder="ghp_...">
+        <p style="font-size:0.8rem;color:#888;margin:0;">Stocké en localStorage de ce navigateur.</p>
+        <div class="token-modal-actions">
+          <button id="token-modal-cancel" class="btn btn-neutral" type="button">Annuler</button>
+          <button id="token-modal-confirm" class="btn btn-publish" type="button"><i data-lucide="upload-cloud"></i> Confirmer</button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>

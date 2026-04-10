@@ -8,7 +8,7 @@ const REPO = 'History-Walk-V1';
 const FILE_PATH = 'public/djerba.geojson';
 
 function getToken() {
-    return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || null;
+    return localStorage.getItem(TOKEN_KEY) || null;
 }
 
 /**
@@ -27,14 +27,11 @@ function toBase64(str) {
  * @param {function} onStatus Callback (type: 'loading'|'success'|'error', msg: string)
  */
 export async function publishToGitHub(geojson, onStatus) {
-    const token = getToken();
-    if (!token) {
-        const entered = prompt("Token GitHub (PAT) :");
-        if (!entered) { onStatus('error', "Publication annulée : pas de token."); return; }
-        sessionStorage.setItem(TOKEN_KEY, entered.trim());
-    }
-
     const pat = getToken();
+    if (!pat) {
+        onStatus('error', "Token manquant — publication annulée.");
+        return;
+    }
     const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
 
     onStatus('loading', "Publication en cours...");
