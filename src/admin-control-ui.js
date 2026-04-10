@@ -156,41 +156,8 @@ export function renderTab(tab, diffData, callbacks) {
         const { poisModified, circuitsModified, photosAdded } = diffData.stats;
         const hasToken = !!getStoredToken();
 
+        const isSynced = (poisModified + circuitsModified) === 0;
         container.innerHTML = `
-            <div class="dashboard-grid">
-                <div class="stat-card">
-                    <div class="stat-icon-box"><i data-lucide="map-pin"></i></div>
-                    <div><div class="stat-val">${poisModified}</div><div class="stat-lab">Lieux Modifiés</div></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-box"><i data-lucide="camera"></i></div>
-                    <div><div class="stat-val">${photosAdded}</div><div class="stat-lab">Photos Ajoutées</div></div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-box"><i data-lucide="route"></i></div>
-                    <div><div class="stat-val">${circuitsModified}</div><div class="stat-lab">Circuits Modifiés</div></div>
-                </div>
-            </div>
-
-            ${!hasToken ? `
-                <div class="cc-warning-banner">
-                    <i data-lucide="alert-triangle"></i>
-                    <div>
-                        <strong>Token GitHub manquant</strong>
-                        <div class="cc-warning-detail">
-                            L'envoi vers le serveur est impossible. Configurez votre clé d'accès dans l'onglet <strong>Config</strong>.
-                        </div>
-                    </div>
-                </div>
-            ` : ''}
-
-            ${(poisModified + circuitsModified) === 0 ? `
-                <div class="empty-state">
-                    <i data-lucide="check-circle-2" width="64" height="64" class="icon-success-lg"></i>
-                    <div class="cc-sync-label">Tout est synchronisé !</div>
-                </div>
-            ` : ''}
-
             <div class="cc-quick-actions">
                 <div class="cc-quick-actions-title"><i data-lucide="zap"></i> Actions Rapides</div>
                 <div class="cc-quick-actions-grid">
@@ -211,6 +178,29 @@ export function renderTab(tab, diffData, callbacks) {
                     </button>
                 </div>
             </div>
+
+            <div class="cc-status-row">
+                ${isSynced
+                    ? `<div class="cc-status-badge synced"><i data-lucide="check-circle-2"></i> Tout est synchronisé</div>`
+                    : `<div class="cc-status-badge pending"><i data-lucide="clock"></i> Modifications en attente</div>`
+                }
+                ${!hasToken ? `<div class="cc-status-badge no-token"><i data-lucide="alert-triangle"></i> Token manquant — <button class="cc-inline-link" id="btn-cc-goto-config2">Config</button></div>` : ''}
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-box"><i data-lucide="map-pin"></i></div>
+                    <div><div class="stat-val">${poisModified}</div><div class="stat-lab">Lieux Modifiés</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-box"><i data-lucide="camera"></i></div>
+                    <div><div class="stat-val">${photosAdded}</div><div class="stat-lab">Photos Ajoutées</div></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon-box"><i data-lucide="route"></i></div>
+                    <div><div class="stat-val">${circuitsModified}</div><div class="stat-lab">Circuits Modifiés</div></div>
+                </div>
+            </div>
         `;
 
         setTimeout(() => {
@@ -224,10 +214,11 @@ export function renderTab(tab, diffData, callbacks) {
                 document.querySelector('.admin-cc-tab[data-tab="maintenance"]')?.click();
             };
 
+            const goSettings = () => document.querySelector('.admin-cc-tab[data-tab="settings"]')?.click();
             const btnConf = document.getElementById('btn-cc-goto-config');
-            if (btnConf) btnConf.onclick = () => {
-                document.querySelector('.admin-cc-tab[data-tab="settings"]')?.click();
-            };
+            if (btnConf) btnConf.onclick = goSettings;
+            const btnConf2 = document.getElementById('btn-cc-goto-config2');
+            if (btnConf2) btnConf2.onclick = goSettings;
         }, 0);
     } else if (tab === 'changes') {
         if (diffData.pois.length === 0 && diffData.circuits.length === 0) {
