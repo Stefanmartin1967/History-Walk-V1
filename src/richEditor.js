@@ -458,8 +458,8 @@ async function handleSave() {
         ? "Voulez-vous suggérer ce nouveau POI par email à l'administrateur ?"
         : "Voulez-vous suggérer cette modification par email à l'administrateur ?";
 
-    // showConfirm returns true if primary button clicked
-    if (await showConfirm("Suggestion", msg, "Oui, suggérer", "Non, enregistrer seul", false)) {
+    // Dialog "suggérer par email" — ignoré en mode admin (évite aussi le conflit avec le modal CC)
+    if (!state.isAdmin && await showConfirm("Suggestion", msg, "Oui, suggérer", "Non, enregistrer seul", false)) {
         handleEmailSuggestion();
     }
 
