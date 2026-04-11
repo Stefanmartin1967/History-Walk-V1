@@ -10,6 +10,7 @@ import { saveAppState, getAppState } from './database.js';
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, diffData } from './admin-diff-engine.js';
 import { injectAdminStyles, openControlCenterModal, renderTab } from './admin-control-ui.js';
+import { RichEditor } from './richEditor.js';
 
 // --- STATE MANAGEMENT (Brouillon) ---
 const DRAFT_IDB_KEY = 'adminDraft';
@@ -69,7 +70,8 @@ export async function openControlCenter() {
         downloadAdminData: downloadAdminData,
         toggleDiffDetails: toggleDiffDetails,
         updateDraftValue: updateDraftValue,
-        processDecision: processDecision
+        processDecision: processDecision,
+        openEditorForPoi: openEditorForPoi
     };
 
     openControlCenterModal(diffData, callbacks);
@@ -112,6 +114,11 @@ export const updateDraftValue = async (id, key, value) => {
     showToast("Correction enregistrée localement", "info");
 };
 
+export function openEditorForPoi(id) {
+    closeModal();
+    setTimeout(() => RichEditor.openForEdit(id), 150);
+}
+
 export const processDecision = async (id, decision) => {
     if (decision === 'refuse') {
         if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
@@ -127,17 +134,10 @@ export const processDecision = async (id, decision) => {
     } else {
         showToast("Modification validée pour publication", "success");
         // Visuel : griser la ligne
-        const card = document.getElementById(`diff-card-${id}`);
+        const card = document.getElementById(`cc-diff-item-${id}`);
         if (card) {
             card.style.opacity = "0.5";
             card.style.pointerEvents = "none";
-            const icon = card.querySelector('.diff-icon');
-            if(icon) {
-                icon.innerHTML = `<i data-lucide="check-circle-2"></i>`;
-                icon.style.background = "#DCFCE7";
-                icon.style.color = "#16A34A";
-                createIcons({ icons, root: icon });
-            }
         }
         return;
     }

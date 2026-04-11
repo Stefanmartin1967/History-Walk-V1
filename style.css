@@ -4367,22 +4367,24 @@ input[type=range] {
 .cc-change-item:hover { border-color: var(--hw-amber); }
 
 .cc-change-item-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 12px;
     border-bottom: 1px solid #F1F5F9;
-}
-
-.cc-change-check {
-    display: flex; align-items: center; cursor: pointer; flex-shrink: 0;
-}
-.cc-change-check input[type="checkbox"] {
-    width: 16px; height: 16px; cursor: pointer; accent-color: var(--hw-amber);
 }
 
 .cc-change-name {
     flex: 1; font-weight: 700; font-size: 0.9rem; color: var(--hw-ink);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+
+.cc-btn-edit {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600;
+    background: white; border: 1px solid #E2E8F0; color: #2563EB;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
+}
+.cc-btn-edit:hover { background: #EFF6FF; border-color: #BFDBFE; }
 
 .cc-btn-ignore {
     display: flex; align-items: center; gap: 5px;

@@ -212,8 +212,9 @@ export async function prepareDiffData(adminDraft) {
                 return;
             }
 
-            // Simple equality check
-            if (String(oldVal) !== String(newVal) && !(oldVal === undefined && newVal === "")) {
+            // Simple equality check — ignore undefined→0/null/"" (champs vides par défaut)
+            const isDefaultEmpty = oldVal === undefined && (newVal === "" || newVal === 0 || newVal === "0" || newVal === null);
+            if (String(oldVal) !== String(newVal) && !isDefaultEmpty) {
                 changes.push({
                     key: displayKey, // Use friendly name
                     rawKey: key,     // Keep raw key for editing logic

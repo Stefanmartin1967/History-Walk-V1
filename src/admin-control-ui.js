@@ -111,17 +111,17 @@ export function openControlCenterModal(diffData, callbacks) {
                 if (callbacks.toggleDiffDetails) callbacks.toggleDiffDetails(id);
                 return;
             }
-            // Diff Actions (Accept/Refuse)
+            // Diff Actions
             const refuseBtn = e.target.closest('[data-action="refuse"]');
             if (refuseBtn) {
                 const id = refuseBtn.dataset.id;
                 if (callbacks.processDecision) callbacks.processDecision(id, 'refuse');
                 return;
             }
-            const acceptBtn = e.target.closest('[data-action="accept"]');
-            if (acceptBtn) {
-                const id = acceptBtn.dataset.id;
-                if (callbacks.processDecision) callbacks.processDecision(id, 'accept');
+            const editorBtn = e.target.closest('[data-action="open-editor"]');
+            if (editorBtn) {
+                const id = editorBtn.dataset.id;
+                if (callbacks.openEditorForPoi) callbacks.openEditorForPoi(id);
                 return;
             }
         });
@@ -286,14 +286,15 @@ export function renderTab(tab, diffData, callbacks) {
                                 <span class="cc-new-val">${c.new}</span>
                             </div>`).join('');
 
+                const canEdit = !item.isDeletion && !item.isMigration;
                 return `
                 <div class="cc-change-item" id="cc-diff-item-${item.id}">
                     <div class="cc-change-item-header">
-                        <label class="cc-change-check" title="Inclure dans la prochaine publication">
-                            <input type="checkbox" checked data-id="${item.id}">
-                        </label>
                         <span class="cc-change-name">${item.name}</span>
-                        <button class="cc-btn-ignore" data-action="refuse" data-id="${item.id}" title="Ignorer — effacer cette modification locale">
+                        ${canEdit ? `<button class="cc-btn-edit" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour vérifier avant publication">
+                            <i data-lucide="edit-3"></i> Éditer
+                        </button>` : ''}
+                        <button class="cc-btn-ignore" data-action="refuse" data-id="${item.id}" title="${item.isDeletion ? 'Restaurer ce lieu' : 'Effacer cette modification locale'}">
                             <i data-lucide="${item.isDeletion ? 'rotate-ccw' : 'x'}"></i>
                             <span>${item.isDeletion ? 'Restaurer' : 'Ignorer'}</span>
                         </button>
