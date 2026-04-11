@@ -191,45 +191,33 @@ export function renderTab(tab, diffData, callbacks) {
             </div>
 
             <div class="dashboard-grid">
-                <div class="stat-card">
+                <div class="stat-card" data-action="goto-changes" title="Voir les modifications">
                     <div class="stat-icon-box"><i data-lucide="map-pin"></i></div>
-                    <div><div class="stat-val">${poisModified}</div><div class="stat-lab">Lieux Modifiés</div></div>
+                    <div class="stat-val">${poisModified}</div>
+                    <div class="stat-lab">Lieux Modifiés</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-action="goto-changes" title="Voir les modifications">
                     <div class="stat-icon-box"><i data-lucide="camera"></i></div>
-                    <div><div class="stat-val">${photosAdded}</div><div class="stat-lab">Photos Ajoutées</div></div>
+                    <div class="stat-val">${photosAdded}</div>
+                    <div class="stat-lab">Photos Ajoutées</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-action="goto-changes" title="Voir les modifications">
                     <div class="stat-icon-box"><i data-lucide="route"></i></div>
-                    <div><div class="stat-val">${circuitsModified}</div><div class="stat-lab">Circuits Modifiés</div></div>
+                    <div class="stat-val">${circuitsModified}</div>
+                    <div class="stat-lab">Circuits Modifiés</div>
                 </div>
             </div>
 
-            <div class="cc-sysinfo">
-                <div class="cc-sysinfo-title"><i data-lucide="info"></i> Informations</div>
-                <div class="cc-sysinfo-grid">
-                    <div class="cc-sysinfo-item">
-                        <span class="cc-sysinfo-label">Dépôt GitHub</span>
-                        <a class="cc-sysinfo-val cc-repo-link" href="https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" target="_blank">
-                            <i data-lucide="github"></i> ${GITHUB_OWNER}/${GITHUB_REPO}
-                        </a>
-                    </div>
-                    <div class="cc-sysinfo-item">
-                        <span class="cc-sysinfo-label">Token</span>
-                        <span class="cc-sysinfo-val ${hasToken ? 'cc-token-ok' : 'cc-token-missing'}">
-                            <i data-lucide="${hasToken ? 'shield-check' : 'shield-x'}"></i>
-                            ${hasToken ? 'Configuré' : 'Non configuré'}
-                        </span>
-                    </div>
-                    <div class="cc-sysinfo-item">
-                        <span class="cc-sysinfo-label">Source de vérité</span>
-                        <span class="cc-sysinfo-val">public/djerba.geojson</span>
-                    </div>
-                    <div class="cc-sysinfo-item">
-                        <span class="cc-sysinfo-label">Dernière session</span>
-                        <span class="cc-sysinfo-val">${new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
-                    </div>
-                </div>
+            <div class="cc-info-strip">
+                <a class="cc-info-strip-repo" href="https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" target="_blank">
+                    <i data-lucide="github"></i> ${GITHUB_OWNER}/${GITHUB_REPO}
+                </a>
+                <span class="cc-info-strip-dot">·</span>
+                <span class="cc-info-strip-token ${hasToken ? 'cc-token-ok' : 'cc-token-missing'}">
+                    <i data-lucide="${hasToken ? 'shield-check' : 'shield-x'}"></i>
+                    ${hasToken ? 'Token configuré' : 'Token manquant'}
+                    ${!hasToken ? `— <button class="cc-inline-link" id="btn-cc-goto-config3">Configurer</button>` : ''}
+                </span>
             </div>
         `;
 
@@ -242,11 +230,18 @@ export function renderTab(tab, diffData, callbacks) {
                 document.querySelector('.admin-cc-tab[data-tab="maintenance"]')?.click();
             };
 
+            const goChanges = () => document.querySelector('.admin-cc-tab[data-tab="changes"]')?.click();
+            document.querySelectorAll('[data-action="goto-changes"]').forEach(el => {
+                el.onclick = goChanges;
+            });
+
             const goSettings = () => document.querySelector('.admin-cc-tab[data-tab="settings"]')?.click();
             const btnConf = document.getElementById('btn-cc-goto-config');
             if (btnConf) btnConf.onclick = goSettings;
             const btnConf2 = document.getElementById('btn-cc-goto-config2');
             if (btnConf2) btnConf2.onclick = goSettings;
+            const btnConf3 = document.getElementById('btn-cc-goto-config3');
+            if (btnConf3) btnConf3.onclick = goSettings;
         }, 0);
     } else if (tab === 'changes') {
         if (diffData.pois.length === 0 && diffData.circuits.length === 0) {
