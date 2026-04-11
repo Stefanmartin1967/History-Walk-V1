@@ -11,7 +11,6 @@ import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { showConfirm } from './modal.js';
 import { createIcons, icons } from 'lucide';
-import { quickPublish } from './admin-control-center.js';
 
 // --- IDs DOM ---
 const DOM_IDS = {
@@ -270,7 +269,7 @@ async function handleMove() {
             async (lat, lng, revert) => {
                 if (await showConfirm("Déplacement", "Valider la nouvelle position ?", "Valider", "Annuler")) {
                     updateEditorCoords(lat, lng);
-                    showToast("Position mise à jour.", "success");
+                    showToast("Position mise à jour localement.", "success");
                 } else {
                     revert();
                 }
@@ -295,7 +294,7 @@ async function handleMove() {
 
             if (await showConfirm("Déplacement", "Valider la nouvelle position ?", "Valider", "Annuler")) {
                 updateEditorCoords(newPos.lat, newPos.lng);
-                showToast("Position mise à jour.", "success");
+                showToast("Position mise à jour localement.", "success");
             } else {
                 // Cancelled, keep old coords (no action needed on editor state)
             }
@@ -503,10 +502,7 @@ async function executeCreate(data) {
 
     await logModification(newPoiId, 'Création (Admin)', 'All', null, `Nouveau lieu : ${data['Nom du site FR']}`);
 
-    showToast("POI créé et enregistré localement.", "success", 6000, {
-        label: "Publier sur GitHub",
-        onClick: quickPublish
-    });
+    showToast("POI créé et enregistré localement.", "success");
 }
 
 async function executeEdit(data) {
@@ -528,10 +524,7 @@ async function executeEdit(data) {
     await logModification(poiId, logType, 'All', null, `Mise à jour via Rich Editor`);
 
     if (state.isAdmin) {
-        showToast("Modification enregistrée localement.", "success", 6000, {
-            label: "Publier sur GitHub",
-            onClick: quickPublish
-        });
+        showToast("Modification enregistrée localement.", "success");
     }
 
     // Force le rafraîchissement des marqueurs Leaflet avec la nouvelle catégorie

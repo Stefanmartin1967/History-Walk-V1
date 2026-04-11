@@ -4339,6 +4339,106 @@ input[type=range] {
 .cc-badge { background: var(--hw-amber); color: white; padding: 2px 7px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px; }
 
 /* ================================================
+   CC ONGLET MODIFICATIONS — COMPACT DIFF DESIGN
+   ================================================ */
+
+.cc-diff-container { display: flex; flex-direction: column; gap: 0; }
+
+.cc-diff-group-title {
+    font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--hw-ink-soft); margin: 20px 0 8px 0;
+    display: flex; align-items: center; gap: 8px;
+}
+.cc-diff-group-title:first-child { margin-top: 0; }
+
+.cc-diff-badge {
+    padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;
+}
+.cc-badge-new  { background: #DCFCE7; color: #166534; }
+.cc-badge-mod  { background: #FEF3C7; color: #92400E; }
+.cc-badge-del  { background: #FEE2E2; color: #991B1B; }
+.cc-badge-mig  { background: #DBEAFE; color: #1E40AF; }
+
+.cc-change-item {
+    background: white; border: 1px solid #E5E7EB; border-radius: 12px;
+    margin-bottom: 8px; overflow: hidden;
+    transition: border-color 0.15s;
+}
+.cc-change-item:hover { border-color: var(--hw-amber); }
+
+.cc-change-item-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.cc-change-check {
+    display: flex; align-items: center; cursor: pointer; flex-shrink: 0;
+}
+.cc-change-check input[type="checkbox"] {
+    width: 16px; height: 16px; cursor: pointer; accent-color: var(--hw-amber);
+}
+
+.cc-change-name {
+    flex: 1; font-weight: 700; font-size: 0.9rem; color: var(--hw-ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.cc-btn-ignore {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600;
+    background: white; border: 1px solid #E2E8F0; color: #64748B;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.cc-btn-ignore:hover { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+
+.cc-change-diffs {
+    display: flex; flex-direction: column; gap: 2px;
+    padding: 8px 12px;
+    background: #FAFAFA;
+}
+
+.cc-change-detail {
+    display: flex; align-items: baseline; gap: 8px;
+    font-size: 0.8rem; line-height: 1.5; flex-wrap: wrap;
+}
+
+.cc-change-key {
+    background: #F1F5F9; color: #475569; font-weight: 700;
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 1px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0;
+}
+
+.cc-old-val {
+    color: #94A3B8; text-decoration: line-through;
+    max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.cc-change-arrow { color: #CBD5E1; font-size: 0.75rem; flex-shrink: 0; }
+
+.cc-new-val {
+    color: #16A34A; font-weight: 600;
+    max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.cc-del-warning {
+    color: #991B1B; font-weight: 600; font-size: 0.8rem;
+    display: flex; align-items: center; gap: 6px;
+}
+
+.cc-new-hint {
+    color: #64748B; font-style: italic;
+    display: flex; align-items: center; gap: 6px;
+}
+
+.cc-diff-section-sep {
+    margin: 20px 0 8px 0; padding-bottom: 8px; border-bottom: 1px solid #E2E8F0;
+    font-weight: 800; color: #64748B; text-transform: uppercase;
+    letter-spacing: 0.08em; font-size: 0.7rem;
+}
+
+/* ================================================
    ADMIN MAINTENANCE (admin-maintenance.js)
    ================================================ */
 

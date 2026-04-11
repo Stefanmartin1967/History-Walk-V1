@@ -250,88 +250,72 @@ export function renderTab(tab, diffData, callbacks) {
         }, 0);
     } else if (tab === 'changes') {
         if (diffData.pois.length === 0 && diffData.circuits.length === 0) {
-             container.innerHTML = `<div class="empty-state"><i data-lucide="check" width="48"></i><p>Aucune modification en attente.</p></div>`;
-             createIcons({ icons, root: container });
-             return;
+            container.innerHTML = `<div class="empty-state"><i data-lucide="check" width="48"></i><p>Aucune modification en attente.</p></div>`;
+            createIcons({ icons, root: container });
+            return;
         }
 
-        // --- GROUPAGE DES MODIFICATIONS ---
         const groups = {
             new: diffData.pois.filter(p => p.isCreation),
             mod: diffData.pois.filter(p => !p.isCreation && !p.isDeletion && !p.isMigration),
             del: diffData.pois.filter(p => p.isDeletion),
             mig: diffData.pois.filter(p => p.isMigration),
-
-            // Circuits
             cNew: diffData.circuits.filter(c => c.isCreation),
             cMod: diffData.circuits.filter(c => !c.isCreation && !c.isDeletion),
             cDel: diffData.circuits.filter(c => c.isDeletion)
         };
 
-        // Marquage des items circuits pour le renderer
-        [groups.cNew, groups.cMod, groups.cDel].forEach(arr => arr.forEach(i => i.isCircuit = true));
-
-        let html = `<div class="diff-list-container">`;
-
-        // Helper Render Function
-        const renderGroup = (title, items, icon, colorClass) => {
+        const renderGroup = (title, items, badgeClass, icon) => {
             if (items.length === 0) return '';
 
-            let groupHtml = `<div class="diff-group-title"><i data-lucide="${icon}" style="color:${colorClass}"></i> ${title} <span class="diff-count-badge">${items.length}</span></div>`;
+            let html = `<div class="cc-diff-group-title">
+                <i data-lucide="${icon}"></i> ${title}
+                <span class="cc-diff-badge ${badgeClass}">${items.length}</span>
+            </div>`;
 
-            groupHtml += items.map(item => {
-                const changeCount = item.changes.length;
-                const changeSummary = item.isCreation ? (item.isCircuit ? "Circuit créé" : "Lieu créé") :
-                                      (item.isDeletion ? "Suppression demandée" :
-                                      `${changeCount} modification${changeCount > 1 ? 's' : ''} (${item.changes.map(c => c.key).join(', ')})`);
+            html += items.map(item => {
+                const diffRows = item.isDeletion
+                    ? `<div class="cc-change-detail cc-del-warning"><i data-lucide="alert-triangle"></i> Sera supprimé de la carte officielle</div>`
+                    : item.isCreation && item.changes.length === 0
+                        ? `<div class="cc-change-detail cc-new-hint"><i data-lucide="sparkles"></i> Nouveau lieu — aucun champ antérieur</div>`
+                        : item.changes.map(c => `
+                            <div class="cc-change-detail">
+                                <span class="cc-change-key">${c.key}</span>
+                                <span class="cc-old-val">${c.old !== undefined ? c.old : '—'}</span>
+                                <span class="cc-change-arrow">➜</span>
+                                <span class="cc-new-val">${c.new}</span>
+                            </div>`).join('');
 
                 return `
-                <div class="diff-list-item" id="diff-card-${item.id}">
-                    <!-- HEADER SUMMARY -->
-                    <div class="diff-summary-row" data-action="toggle-details" data-id="${item.id}">
-                        <div class="diff-info">
-                            <div class="diff-icon" style="color:${colorClass}; background:${colorClass}15;">
-                                <i data-lucide="${item.isCreation ? 'plus' : (item.isDeletion ? 'trash-2' : 'edit-2')}"></i>
-                            </div>
-                            <div class="diff-text">
-                                <h4>${item.name}</h4>
-                                ${item.isCircuit ? `<div class="diff-circuit-id">ID: ${item.id}</div>` : ''}
-                                <p>${changeSummary}</p>
-                            </div>
-                        </div>
-                        <button class="diff-toggle-btn" title="Voir les détails" aria-label="Voir les détails"><i data-lucide="chevron-down"></i></button>
+                <div class="cc-change-item" id="cc-diff-item-${item.id}">
+                    <div class="cc-change-item-header">
+                        <label class="cc-change-check" title="Inclure dans la prochaine publication">
+                            <input type="checkbox" checked data-id="${item.id}">
+                        </label>
+                        <span class="cc-change-name">${item.name}</span>
+                        <button class="cc-btn-ignore" data-action="refuse" data-id="${item.id}" title="Ignorer — effacer cette modification locale">
+                            <i data-lucide="${item.isDeletion ? 'rotate-ccw' : 'x'}"></i>
+                            <span>${item.isDeletion ? 'Restaurer' : 'Ignorer'}</span>
+                        </button>
                     </div>
-
-                    <!-- DETAILS & EDIT (Hidden) -->
-                    <div class="diff-details" id="diff-details-${item.id}">
-                        ${renderDiffDetails(item)}
-
-                        <div class="diff-actions-row">
-                            <button class="btn-diff-action refuse" data-action="refuse" data-id="${item.id}">
-                                <i data-lucide="x"></i> Ignorer
-                            </button>
-                            <button class="btn-diff-action validate" data-action="accept" data-id="${item.id}">
-                                <i data-lucide="check"></i> Valider
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                `;
+                    <div class="cc-change-diffs">${diffRows}</div>
+                </div>`;
             }).join('');
-            return groupHtml;
+
+            return html;
         };
 
-        html += renderGroup("Nouveaux Lieux", groups.new, "plus-circle", "#16A34A"); // Green
-        html += renderGroup("Modifications Lieux", groups.mod, "pencil", "#D97706"); // Amber
-        html += renderGroup("Suppressions Lieux", groups.del, "trash-2", "#DC2626"); // Red
-        html += renderGroup("Migrations Techniques", groups.mig, "refresh-cw", "#0284C7"); // Blue
+        let html = `<div class="cc-diff-container">`;
+        html += renderGroup('Nouveaux Lieux', groups.new, 'cc-badge-new', 'plus-circle');
+        html += renderGroup('Modifications', groups.mod, 'cc-badge-mod', 'pencil');
+        html += renderGroup('Suppressions', groups.del, 'cc-badge-del', 'trash-2');
+        html += renderGroup('Migrations', groups.mig, 'cc-badge-mig', 'refresh-cw');
 
-        // Circuits
-        if (groups.cNew.length > 0 || groups.cMod.length > 0 || groups.cDel.length > 0) {
-            html += `<div class="diff-section-sep">Circuits</div>`;
-            html += renderGroup("Nouveaux Circuits", groups.cNew, "map", "#16A34A");
-            html += renderGroup("Circuits Modifiés", groups.cMod, "route", "#D97706");
-            html += renderGroup("Circuits Supprimés", groups.cDel, "trash-2", "#DC2626");
+        if (groups.cNew.length || groups.cMod.length || groups.cDel.length) {
+            html += `<div class="cc-diff-section-sep">Circuits</div>`;
+            html += renderGroup('Nouveaux Circuits', groups.cNew, 'cc-badge-new', 'map');
+            html += renderGroup('Circuits Modifiés', groups.cMod, 'cc-badge-mod', 'route');
+            html += renderGroup('Circuits Supprimés', groups.cDel, 'cc-badge-del', 'trash-2');
         }
 
         html += `</div>`;
