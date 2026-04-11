@@ -238,6 +238,10 @@ export const RichEditor = {
         const modal = document.getElementById(DOM_IDS.MODAL);
         if (modal) modal.style.display = 'none';
         isDirty = false;
+        // Notifie les écouteurs (ex: CC qui reste ouvert derrière)
+        window.dispatchEvent(new CustomEvent('richEditor:closed', {
+            detail: { poiId: currentFeatureId, mode: currentMode }
+        }));
     }
 };
 

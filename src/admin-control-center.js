@@ -115,8 +115,24 @@ export const updateDraftValue = async (id, key, value) => {
 };
 
 export function openEditorForPoi(id) {
-    closeModal();
-    setTimeout(() => RichEditor.openForEdit(id), 150);
+    // On n'ouvre PAS le RichEditor sur la map — on le laisse s'ouvrir par-dessus le CC
+    // Le CC reste ouvert en dessous (z-index CC=3000, RichEditor=4000)
+    RichEditor.openForEdit(id);
+
+    // Quand l'éditeur se ferme, on rafraîchit l'onglet Modifications
+    window.addEventListener('richEditor:closed', async () => {
+        await prepareDiffData(adminDraft);
+        const callbacks = {
+            publishChanges,
+            uploadAdminData,
+            downloadAdminData,
+            toggleDiffDetails,
+            updateDraftValue,
+            processDecision,
+            openEditorForPoi
+        };
+        renderTab('changes', diffData, callbacks);
+    }, { once: true });
 }
 
 export const processDecision = async (id, decision) => {

@@ -1107,6 +1107,9 @@ textarea.editable-input {
     align-items: center;
 }
 
+/* RichEditor ouvert depuis le CC : doit passer au-dessus du CC (z-index 3000) */
+#rich-poi-modal { z-index: 4000; }
+
 .modal-content {
     background: var(--surface-muted);
     border-radius: 16px;
