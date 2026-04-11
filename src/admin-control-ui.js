@@ -1,10 +1,13 @@
 import { state } from './state.js';
 import { createIcons, icons } from 'lucide';
-import { getStoredToken, saveToken } from './github-sync.js';
+import { getStoredToken, saveToken, uploadFileToGitHub } from './github-sync.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { showAlert } from './modal.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
+
+const GITHUB_OWNER = 'Stefanmartin1967';
+const GITHUB_REPO  = 'History-Walk-V1';
 
 // Ce fichier gère l'affichage (HTML, CSS, Interactions UI) du panneau d'administration
 
@@ -201,13 +204,38 @@ export function renderTab(tab, diffData, callbacks) {
                     <div><div class="stat-val">${circuitsModified}</div><div class="stat-lab">Circuits Modifiés</div></div>
                 </div>
             </div>
+
+            <div class="cc-sysinfo">
+                <div class="cc-sysinfo-title"><i data-lucide="info"></i> Informations</div>
+                <div class="cc-sysinfo-grid">
+                    <div class="cc-sysinfo-item">
+                        <span class="cc-sysinfo-label">Dépôt GitHub</span>
+                        <a class="cc-sysinfo-val cc-repo-link" href="https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" target="_blank">
+                            <i data-lucide="github"></i> ${GITHUB_OWNER}/${GITHUB_REPO}
+                        </a>
+                    </div>
+                    <div class="cc-sysinfo-item">
+                        <span class="cc-sysinfo-label">Token</span>
+                        <span class="cc-sysinfo-val ${hasToken ? 'cc-token-ok' : 'cc-token-missing'}">
+                            <i data-lucide="${hasToken ? 'shield-check' : 'shield-x'}"></i>
+                            ${hasToken ? 'Configuré' : 'Non configuré'}
+                        </span>
+                    </div>
+                    <div class="cc-sysinfo-item">
+                        <span class="cc-sysinfo-label">Source de vérité</span>
+                        <span class="cc-sysinfo-val">public/djerba.geojson</span>
+                    </div>
+                    <div class="cc-sysinfo-item">
+                        <span class="cc-sysinfo-label">Dernière session</span>
+                        <span class="cc-sysinfo-val">${new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                    </div>
+                </div>
+            </div>
         `;
 
         setTimeout(() => {
             const btnUpload = document.getElementById('btn-cc-upload-circuit');
-            if (btnUpload) btnUpload.onclick = () => {
-                import('./admin.js').then(({ showGitHubUploadModal }) => showGitHubUploadModal());
-            };
+            if (btnUpload) btnUpload.onclick = () => renderUploadCircuitPanel(diffData, callbacks);
 
             const btnMaint = document.getElementById('btn-cc-goto-maintenance');
             if (btnMaint) btnMaint.onclick = () => {
@@ -375,6 +403,114 @@ export function renderTab(tab, diffData, callbacks) {
     }
 
     createIcons({ icons, root: container });
+}
+
+// --- UPLOAD CIRCUIT PANEL ---
+function renderUploadCircuitPanel(diffData, callbacks) {
+    const container = document.getElementById('admin-cc-content');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="cc-subpanel-header">
+            <button class="cc-back-btn" id="btn-upload-back">
+                <i data-lucide="arrow-left"></i> Dashboard
+            </button>
+            <span class="cc-subpanel-title">Ajouter un circuit</span>
+        </div>
+
+        <div class="cc-card">
+            <div class="cc-upload-intro">
+                <i data-lucide="upload-cloud" class="icon-amber" style="width:32px;height:32px;flex-shrink:0;"></i>
+                <p>Envoyez un fichier de circuit directement sur GitHub.<br>
+                <small style="color:var(--hw-ink-soft);">Le serveur mettra à jour l'index automatiquement.</small></p>
+            </div>
+
+            <label class="cc-upload-field-label">Nom du circuit <small>(optionnel — extrait du fichier si absent)</small></label>
+            <input type="text" id="cc-circuit-name" class="settings-input" placeholder="Ex : Circuit du Patrimoine">
+
+            <label class="cc-upload-field-label" style="margin-top:14px;">
+                Fichier <span class="cc-format-badge">GPX</span> <span class="cc-format-badge">JSON</span>
+            </label>
+            <div class="cc-file-drop" id="cc-file-drop">
+                <i data-lucide="file-plus"></i>
+                <span>Cliquer pour choisir un fichier</span>
+                <small>GPX ou JSON uniquement</small>
+            </div>
+            <input type="file" id="cc-file-input" accept=".json,.gpx" style="display:none;">
+            <div id="cc-file-pill" class="cc-file-pill" style="display:none;"></div>
+
+            <div id="cc-upload-status" class="cc-upload-status" style="display:none;"></div>
+        </div>
+
+        <div class="cc-subpanel-footer">
+            <button class="custom-modal-btn secondary" id="btn-upload-cancel">Annuler</button>
+            <button class="cc-save-btn" id="btn-upload-submit" disabled>
+                <i data-lucide="send"></i> Envoyer sur GitHub
+            </button>
+        </div>
+    `;
+
+    createIcons({ icons, root: container });
+
+    const backFn = () => { renderTab('dashboard', diffData, callbacks); };
+    document.getElementById('btn-upload-back')?.addEventListener('click', backFn);
+    document.getElementById('btn-upload-cancel')?.addEventListener('click', backFn);
+
+    const fileInput  = document.getElementById('cc-file-input');
+    const filePill   = document.getElementById('cc-file-pill');
+    const submitBtn  = document.getElementById('btn-upload-submit');
+    const statusDiv  = document.getElementById('cc-upload-status');
+
+    document.getElementById('cc-file-drop')?.addEventListener('click', () => fileInput?.click());
+
+    fileInput?.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        filePill.innerHTML = `<i data-lucide="paperclip"></i> <strong>${file.name}</strong> <small>(${(file.size / 1024).toFixed(1)} Ko)</small>`;
+        filePill.style.display = 'flex';
+        submitBtn.disabled = false;
+        createIcons({ icons, root: filePill });
+    });
+
+    document.getElementById('btn-upload-submit')?.addEventListener('click', async () => {
+        const file = fileInput?.files[0];
+        if (!file) return;
+
+        const token = getStoredToken();
+        if (!token) {
+            statusDiv.style.display = 'flex';
+            statusDiv.className = 'cc-upload-status error';
+            statusDiv.innerHTML = `<i data-lucide="alert-triangle"></i> Token manquant — configurez-le dans <strong>Config</strong>`;
+            createIcons({ icons, root: statusDiv });
+            return;
+        }
+
+        const circuitName = document.getElementById('cc-circuit-name')?.value.trim();
+        const commitMsg = circuitName
+            ? `feat(circuit): Ajout "${circuitName}"`
+            : `feat(circuit): Ajout "${file.name}"`;
+        const path = `public/circuits/djerba/${file.name}`;
+
+        submitBtn.disabled = true;
+        statusDiv.style.display = 'flex';
+        statusDiv.className = 'cc-upload-status info';
+        statusDiv.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Envoi en cours…`;
+        createIcons({ icons, root: statusDiv });
+
+        try {
+            await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, path, commitMsg);
+            statusDiv.className = 'cc-upload-status success';
+            statusDiv.innerHTML = `<i data-lucide="check-circle-2"></i> Circuit envoyé avec succès !`;
+            createIcons({ icons, root: statusDiv });
+            showToast('Circuit envoyé sur GitHub !', 'success');
+            setTimeout(backFn, 2500);
+        } catch (err) {
+            statusDiv.className = 'cc-upload-status error';
+            statusDiv.innerHTML = `<i data-lucide="x-circle"></i> Erreur : ${err.message}`;
+            createIcons({ icons, root: statusDiv });
+            submitBtn.disabled = false;
+        }
+    });
 }
 
 // --- RENDER DETAIL HELPER ---

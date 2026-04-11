@@ -4266,7 +4266,9 @@ input[type=range] {
 .icon-amber { color: var(--hw-amber); }
 .cc-token-persist-label { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.85rem; color: var(--ink); cursor: pointer; }
 .cc-token-persist-hint { color: var(--ink-soft); font-size: 0.75rem; }
-.cc-save-btn { margin-top: 12px; width: 100%; padding: 12px; background: var(--hw-ink); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; }
+.cc-save-btn { margin-top: 12px; width: 100%; padding: 12px; background: var(--hw-amber); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.15s; }
+.cc-save-btn:hover:not(:disabled) { opacity: 0.88; }
+.cc-save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .cc-sync-btns-row { display: flex; gap: 10px; margin-bottom: 15px; }
 .btn-cc-sync-upload { flex: 1; padding: 12px; background: #F0FDF4; border: 1px solid #86EFAC; color: #166534; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-cc-sync-download { flex: 1; padding: 12px; background: #EFF6FF; border: 1px solid #93C5FD; color: #1E40AF; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -4289,6 +4291,39 @@ input[type=range] {
 .cc-quick-btn .lucide { color: var(--hw-amber); width: 24px; height: 24px; }
 .cc-quick-btn span { font-weight: 700; font-size: 0.88rem; }
 .cc-quick-btn small { font-size: 0.75rem; color: var(--hw-ink-soft); font-weight: 400; }
+
+/* Sysinfo block — Dashboard CC */
+.cc-sysinfo { margin-top: 14px; background: white; border: 1px solid #F3F4F6; border-radius: 14px; padding: 14px 16px; }
+.cc-sysinfo-title { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--hw-ink-soft); display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.cc-sysinfo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px; }
+.cc-sysinfo-item { display: flex; flex-direction: column; gap: 2px; }
+.cc-sysinfo-label { font-size: 0.72rem; color: var(--hw-ink-soft); font-weight: 500; }
+.cc-sysinfo-val { font-size: 0.8rem; font-weight: 600; color: var(--hw-ink); display: flex; align-items: center; gap: 4px; }
+.cc-sysinfo-val.cc-token-ok { color: #15803D; }
+.cc-sysinfo-val.cc-token-missing { color: #DC2626; }
+.cc-repo-link { text-decoration: none; color: var(--hw-ink); transition: color 0.15s; }
+.cc-repo-link:hover { color: var(--hw-amber); }
+
+/* Upload Circuit Sub-panel */
+.cc-subpanel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.cc-back-btn { background: none; border: 1px solid #E5E7EB; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--hw-ink); display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+.cc-back-btn:hover { border-color: var(--hw-amber); color: var(--hw-amber); }
+.cc-subpanel-title { font-size: 1rem; font-weight: 700; color: var(--hw-ink); }
+.cc-upload-intro { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+.cc-upload-intro p { margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--hw-ink); }
+.cc-upload-field-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--hw-ink); margin-bottom: 6px; }
+.cc-format-badge { background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 4px; padding: 1px 5px; font-size: 0.7rem; font-weight: 700; color: var(--hw-ink-soft); margin-left: 3px; }
+.cc-file-drop { border: 2px dashed #D1D5DB; border-radius: 12px; padding: 22px 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: all 0.18s; color: var(--hw-ink-soft); background: #FAFAFA; }
+.cc-file-drop:hover { border-color: var(--hw-amber); background: #FFFBF0; color: var(--hw-ink); }
+.cc-file-drop .lucide { width: 28px; height: 28px; }
+.cc-file-drop span { font-size: 0.88rem; font-weight: 600; }
+.cc-file-drop small { font-size: 0.75rem; }
+.cc-file-pill { display: flex; align-items: center; gap: 8px; background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 8px 12px; margin-top: 8px; font-size: 0.84rem; font-weight: 600; color: #15803D; }
+.cc-upload-status { display: flex; align-items: center; gap: 8px; border-radius: 8px; padding: 10px 12px; margin-top: 12px; font-size: 0.84rem; font-weight: 500; }
+.cc-upload-status.info    { background: #EFF6FF; color: #1E40AF; }
+.cc-upload-status.success { background: #F0FDF4; color: #15803D; }
+.cc-upload-status.error   { background: #FEF2F2; color: #991B1B; }
+.cc-subpanel-footer { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
 
 /* Diff details */
 .cc-deletion-warning { padding: 15px; background: #FEF2F2; color: #991B1B; border-radius: 8px; font-size: 0.9rem; }
