@@ -41,6 +41,7 @@ export const state = {
     draggingMarkerId: null, // Marqueur en cours de déplacement (pour ignorer le clic)
     filterCompleted: false,
     isAdmin: false, // Activation du "God Mode"
+    selectedOfficialCircuitIds: null, // null = tous affichés, [] = aucun, [...ids] = sélection
     selectionModeFilters: {
         hideVisited: true,
         hidePlanned: true
@@ -157,6 +158,10 @@ export function setCustomFeatures(features) {
 
 export function setHiddenPoiIds(ids) {
     state.hiddenPoiIds = ids || [];
+}
+
+export function setSelectedOfficialCircuitIds(ids) {
+    state.selectedOfficialCircuitIds = ids; // null | string[]
 }
 
 export function setCustomDraftName(name) {

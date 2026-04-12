@@ -46,7 +46,7 @@ export function initializeDomReferences() {
         'btn-clear-circuit', 'close-circuit-panel-btn',
         'btn-categories', 'btn-legend',
         'btn-open-my-circuits',
-        'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-topbar'
+        'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-topbar', 'btn-mon-espace'
     ];
     
     // Récupération sécurisée des éléments
@@ -198,6 +198,13 @@ export function initializeDomReferences() {
                     if(DOM.backupModal) DOM.backupModal.classList.remove('active');
                 });
             });
+        });
+    }
+
+    if (DOM.btnMonEspace) {
+        DOM.btnMonEspace.addEventListener('click', () => {
+            import('./user-space.js').then(({ openUserSpace }) => openUserSpace());
+            closeAllDropdowns();
         });
     }
 

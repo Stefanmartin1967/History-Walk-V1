@@ -15,7 +15,12 @@ import { getZoneFromCoords } from './utils.js';
  */
 export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false, filterZone = null, filterPoiId = null) {
     // 1. Data Prep : Fusion des circuits officiels et utilisateur (Sans doublons)
-    const officialCircuits = state.officialCircuits || [];
+    const allOfficial = state.officialCircuits || [];
+    // Filtre Mon Espace : null = tous, [] = aucun, [...ids] = sélection utilisateur
+    const selectedIds = state.selectedOfficialCircuitIds;
+    const officialCircuits = selectedIds === null
+        ? allOfficial
+        : allOfficial.filter(c => selectedIds.includes(String(c.id)));
     const localCircuits = (state.myCircuits || []).filter(c => {
         if (c.isDeleted) return false;
 

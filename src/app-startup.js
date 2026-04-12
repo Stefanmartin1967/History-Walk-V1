@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setSelectedOfficialCircuitIds } from './state.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -62,6 +62,13 @@ export async function loadOfficialCircuits() {
             poiIds: (off.poiIds || []).map(pid => String(pid))
         }));
         setOfficialCircuits(processedOfficials);
+
+        // Charger la sélection Mon Espace depuis IndexedDB
+        const savedSelection = await getAppState('selectedOfficialCircuits');
+        if (savedSelection !== null && savedSelection !== undefined) {
+            setSelectedOfficialCircuitIds(savedSelection);
+        }
+        // null = pas encore défini = tous affichés (comportement par défaut)
 
         // Si on est déjà en mode Admin, on déclenche une migration pour mettre à jour les circuits chargés
         if (state.isAdmin) {
