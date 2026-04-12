@@ -1,7 +1,6 @@
 import { state } from './state.js';
 import { createIcons, icons } from 'lucide';
 import { getStoredToken, saveToken, uploadFileToGitHub } from './github-sync.js';
-import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { showAlert } from './modal.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
@@ -323,29 +322,35 @@ export function renderTab(tab, diffData, callbacks) {
             <div class="cc-settings-layout">
                 <!-- GITHUB TOKEN -->
                 <div class="cc-card">
-                    <h3>Configuration GitHub</h3>
-                    <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin-bottom:15px;">Personal Access Token (PAT) pour l'upload. Stocké en localStorage.</p>
+                    <h3 class="cc-card-title-flex">
+                        <i data-lucide="key-round" class="icon-amber"></i> Token GitHub
+                    </h3>
+                    <p style="color:var(--hw-ink-soft); font-size:0.88rem; margin-bottom:14px;">
+                        Personal Access Token (PAT) nécessaire pour publier les modifications sur GitHub.
+                        Stocké localement sur cet appareil.
+                    </p>
                     <input type="password" id="cc-token-input" value="${token}" class="settings-input" placeholder="ghp_...">
-                    <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin:15px 0 8px;">Gist ID <small>(sync données personnelles — laisser vide si non utilisé)</small></p>
-                    <input type="text" id="cc-gist-id-input" value="${localStorage.getItem('hw_gist_id') || ''}" class="settings-input" placeholder="ex: 21f82c6a621a6acf09adeb228154bb04" style="font-family:monospace;font-size:0.85rem;">
-                    <button id="btn-save-token" class="cc-save-btn">Sauvegarder</button>
+                    <button id="btn-save-token" class="cc-save-btn" style="margin-top:12px;">
+                        <i data-lucide="save"></i> Sauvegarder
+                    </button>
                 </div>
 
-                <!-- SYNC PERSO -->
+                <!-- SYNC ADMIN MULTI-APPAREILS -->
                 <div class="cc-card">
                     <h3 class="cc-card-title-flex">
-                        <i data-lucide="cloud-cog" class="icon-amber"></i> Synchronisation Personnelle
+                        <i data-lucide="smartphone" class="icon-amber"></i> Sync Admin multi-appareils
                     </h3>
-                    <p style="color:var(--hw-ink-soft); font-size:0.9rem; margin-bottom:20px;">
-                        Sauvegardez votre avancement (Circuits Faits, Lieux visités) sur le repo GitHub pour le retrouver sur vos autres appareils Admin.
+                    <p style="color:var(--hw-ink-soft); font-size:0.88rem; margin-bottom:20px;">
+                        Sauvegardez votre état admin (modifications en attente, circuits, données locales)
+                        sur GitHub pour le retrouver depuis un autre appareil — utile en déplacement.
                     </p>
 
                     <div class="cc-sync-btns-row">
                         <button id="btn-sync-upload" class="btn-cc-sync-upload">
-                            <i data-lucide="upload-cloud"></i> Sauvegarder (Upload)
+                            <i data-lucide="upload-cloud"></i> Sauvegarder
                         </button>
                         <button id="btn-sync-download" class="btn-cc-sync-download">
-                            <i data-lucide="download-cloud"></i> Récupérer (Download)
+                            <i data-lucide="download-cloud"></i> Récupérer
                         </button>
                     </div>
 
@@ -358,25 +363,17 @@ export function renderTab(tab, diffData, callbacks) {
 
         setTimeout(() => {
             const btnSave = document.getElementById('btn-save-token');
-            if(btnSave) btnSave.onclick = () => {
+            if (btnSave) btnSave.onclick = () => {
                 const val = document.getElementById('cc-token-input').value.trim();
                 saveToken(val);
-                const gistId = document.getElementById('cc-gist-id-input')?.value.trim();
-                if (gistId) {
-                    localStorage.setItem('hw_gist_id', gistId);
-                } else {
-                    localStorage.removeItem('hw_gist_id');
-                }
-                showToast("Configuration sauvegardée !", "success");
-                injectSyncIndicator();
-                pullFromGist();
+                showToast("Token sauvegardé !", "success");
             };
 
             const btnUp = document.getElementById('btn-sync-upload');
-            if(btnUp && callbacks.uploadAdminData) btnUp.onclick = callbacks.uploadAdminData;
+            if (btnUp && callbacks.uploadAdminData) btnUp.onclick = callbacks.uploadAdminData;
 
             const btnDown = document.getElementById('btn-sync-download');
-            if(btnDown && callbacks.downloadAdminData) btnDown.onclick = callbacks.downloadAdminData;
+            if (btnDown && callbacks.downloadAdminData) btnDown.onclick = callbacks.downloadAdminData;
         }, 0);
     } else if (tab === 'maintenance') {
         renderMaintenanceTab(container);
