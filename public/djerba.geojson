@@ -6,8 +6,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          11.046238,
-          33.826879
+          11.046217898317652,
+          33.82679301484525
         ]
       },
       "properties": {
@@ -25,7 +25,15 @@
         "Desc_wpt": "Réouverture de la piscine le 16 mars. Elle se remplit lentement",
         "verified": false,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "lat": 33.82679301484525,
+        "lng": 11.046217898317652,
+        "Description_courte": "Piscine remise au norme accessible depuis le 07 mars 2026",
+        "description": "Très bel hôtel 4 *, si vous voulez manger local, un coin Djerbien est présent à chaque repas. Soirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nPiscine actuellement fermée",
+        "notes": "",
+        "timeH": 1,
+        "timeM": 0,
+        "price": 0
       }
     },
     {
