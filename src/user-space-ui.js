@@ -9,6 +9,9 @@ export function openUserSpaceModal(callbacks) {
             <div class="ue-header">
                 <div class="ue-header-top">
                     <div class="ue-header-brand">🧳 Mon Espace</div>
+                    <button class="ue-close-btn" id="btn-ue-close" title="Fermer">
+                        <i data-lucide="x"></i>
+                    </button>
                 </div>
                 <div class="ue-tabs">
                     <div class="ue-tab active" data-tab="circuits">
@@ -26,10 +29,6 @@ export function openUserSpaceModal(callbacks) {
             <div class="ue-scroll-area">
                 <div id="ue-content"></div>
             </div>
-
-            <div class="ue-footer">
-                <button class="custom-modal-btn secondary" data-action="close-ue">Fermer</button>
-            </div>
         </div>
     `;
 
@@ -41,8 +40,9 @@ export function openUserSpaceModal(callbacks) {
     const defaultActions = document.getElementById('custom-modal-actions');
     if (defaultActions) defaultActions.style.display = 'none';
 
-    // Nettoyage à la fermeture
     const overlay = document.getElementById('custom-modal-overlay');
+
+    // Nettoyage à la fermeture
     const observer = new MutationObserver(() => {
         if (!overlay.classList.contains('active')) {
             document.querySelector('.custom-modal-box')?.classList.remove('user-space-mode');
@@ -53,6 +53,11 @@ export function openUserSpaceModal(callbacks) {
     });
     observer.observe(overlay, { attributes: true });
 
+    // Bouton ✕ fermer
+    document.getElementById('btn-ue-close')?.addEventListener('click', () => {
+        overlay.classList.remove('active');
+    });
+
     // Tabs
     const tabs = document.querySelectorAll('.ue-tab');
     tabs.forEach(t => {
@@ -61,13 +66,6 @@ export function openUserSpaceModal(callbacks) {
             t.classList.add('active');
             renderUserTab(t.dataset.tab, callbacks);
         };
-    });
-
-    // Fermer
-    document.querySelector('.ue-footer')?.addEventListener('click', (e) => {
-        if (e.target.closest('[data-action="close-ue"]')) {
-            overlay.classList.remove('active');
-        }
     });
 
     createIcons({ icons, root: document.querySelector('.ue-header') });
@@ -91,7 +89,7 @@ function renderCircuitsTab(container, callbacks) {
     const allOfficial = state.officialCircuits || [];
 
     if (allOfficial.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i data-lucide="wifi-off" width="48"></i><p>Aucun circuit officiel disponible.</p></div>`;
+        container.innerHTML = `<div class="ue-empty-state"><i data-lucide="wifi-off"></i><p>Aucun circuit officiel disponible.</p></div>`;
         createIcons({ icons, root: container });
         return;
     }
@@ -111,16 +109,24 @@ function renderCircuitsTab(container, callbacks) {
                 ${selectedSet.size} / ${allOfficial.length} sélectionné${selectedSet.size > 1 ? 's' : ''}
             </span>
         </div>
-        <p class="ue-circuits-hint">Les circuits sélectionnés apparaissent dans votre liste. Les POIs restent toujours visibles sur la carte.</p>
+        <p class="ue-circuits-hint">
+            <i data-lucide="info"></i>
+            Les circuits sélectionnés apparaissent dans votre liste. Les POIs restent toujours visibles sur la carte.
+        </p>
         <div class="ue-circuits-list">
             ${allOfficial.map(c => {
                 const isChecked = selectedSet.has(String(c.id));
                 const poiCount = (c.poiIds || []).length;
+                const meta = [
+                    `${poiCount} POI${poiCount > 1 ? 's' : ''}`,
+                    c.zone ? c.zone : null,
+                    c.distance ? c.distance : null
+                ].filter(Boolean).join(' · ');
                 return `
                 <label class="ue-circuit-item ${isChecked ? 'is-checked' : ''}">
                     <div class="ue-circuit-info">
                         <span class="ue-circuit-name">${c.name || 'Circuit sans nom'}</span>
-                        <span class="ue-circuit-meta">${poiCount} POI${poiCount > 1 ? 's' : ''}${c.zone ? ' · ' + c.zone : ''}</span>
+                        <span class="ue-circuit-meta">${meta}</span>
                     </div>
                     <div class="ue-toggle-wrap">
                         <input type="checkbox" class="ue-circuit-check" data-circuit-id="${c.id}" ${isChecked ? 'checked' : ''}>
@@ -167,34 +173,42 @@ function renderCircuitsTab(container, callbacks) {
 
 function renderDataTab(container, callbacks) {
     container.innerHTML = `
-        <div class="cc-card">
-            <h3 class="cc-card-title-flex">
-                <i data-lucide="save" class="icon-amber"></i> Sauvegarder mes données
-            </h3>
-            <p style="color:var(--hw-ink-soft); font-size:0.88rem; margin-bottom:14px;">
-                Exportez vos notes, lieux visités, circuits et préférences.
-                Rechargez ce fichier pour retrouver votre état sur n'importe quel appareil.
-            </p>
-            <label class="ue-photo-label">
-                <input type="checkbox" id="ue-include-photos">
-                <span>Inclure mes photos <small style="color:var(--hw-ink-soft)">(fichier plus volumineux)</small></span>
-            </label>
-            <button id="btn-ue-backup" class="cc-save-btn" style="margin-top:14px; width:100%;">
-                <i data-lucide="download"></i> Télécharger la sauvegarde
-            </button>
+        <div class="ue-data-section">
+            <div class="ue-data-icon-wrap">
+                <i data-lucide="download" class="ue-data-icon"></i>
+            </div>
+            <div class="ue-data-body">
+                <div class="ue-data-title">Sauvegarder mes données</div>
+                <p class="ue-data-desc">
+                    Exportez vos notes, lieux visités, circuits et préférences.
+                    Rechargez ce fichier pour retrouver votre état sur n'importe quel appareil.
+                </p>
+                <label class="ue-photo-label">
+                    <input type="checkbox" id="ue-include-photos">
+                    <span>Inclure mes photos <small>(fichier plus volumineux)</small></span>
+                </label>
+                <button id="btn-ue-backup" class="ue-action-btn primary">
+                    <i data-lucide="download"></i> Télécharger la sauvegarde
+                </button>
+            </div>
         </div>
 
-        <div class="cc-card">
-            <h3 class="cc-card-title-flex">
-                <i data-lucide="folder-open" class="icon-amber"></i> Charger une sauvegarde
-            </h3>
-            <p style="color:var(--hw-ink-soft); font-size:0.88rem; margin-bottom:14px;">
-                Restaurez vos données depuis un fichier de sauvegarde précédemment exporté.
-            </p>
-            <button id="btn-ue-restore" class="custom-modal-btn secondary" style="width:100%;">
-                <i data-lucide="upload"></i> Choisir un fichier…
-            </button>
-            <input type="file" id="ue-restore-loader" accept=".json,.txt" style="display:none;">
+        <div class="ue-data-divider"></div>
+
+        <div class="ue-data-section">
+            <div class="ue-data-icon-wrap">
+                <i data-lucide="upload" class="ue-data-icon"></i>
+            </div>
+            <div class="ue-data-body">
+                <div class="ue-data-title">Charger une sauvegarde</div>
+                <p class="ue-data-desc">
+                    Restaurez vos données depuis un fichier de sauvegarde précédemment exporté.
+                </p>
+                <button id="btn-ue-restore" class="ue-action-btn secondary">
+                    <i data-lucide="folder-open"></i> Choisir un fichier…
+                </button>
+                <input type="file" id="ue-restore-loader" accept=".json,.txt" style="display:none;">
+            </div>
         </div>
     `;
 
@@ -219,8 +233,8 @@ function renderTrashTab(container, callbacks) {
 
     if (deletedCircuits.length === 0) {
         container.innerHTML = `
-            <div class="empty-state">
-                <i data-lucide="trash-2" width="48"></i>
+            <div class="ue-empty-state">
+                <i data-lucide="package-open"></i>
                 <p>La corbeille est vide.</p>
             </div>`;
         createIcons({ icons, root: container });
@@ -228,7 +242,7 @@ function renderTrashTab(container, callbacks) {
     }
 
     container.innerHTML = `
-        <p class="ue-trash-intro">
+        <p class="ue-circuits-hint">
             <i data-lucide="info"></i>
             Les circuits supprimés restent ici jusqu'à leur restauration.
         </p>
@@ -239,7 +253,7 @@ function renderTrashTab(container, callbacks) {
                         <i data-lucide="route"></i>
                         <span>${c.name || 'Circuit sans nom'}</span>
                     </div>
-                    <button class="cc-btn-edit" data-action="restore-circuit" data-id="${c.id}">
+                    <button class="ue-restore-btn" data-action="restore-circuit" data-id="${c.id}">
                         <i data-lucide="rotate-ccw"></i> Restaurer
                     </button>
                 </div>

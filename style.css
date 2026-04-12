@@ -4729,10 +4729,10 @@ input[type=range] {
     border: 1px solid rgba(255,255,255,0.8) !important;
     box-shadow: 0 32px 80px -16px rgba(69, 26, 3, 0.18) !important;
     background: var(--hw-cream, #FFFBF5) !important;
-    width: min(520px, 95vw) !important;
+    width: min(640px, 95vw) !important;
     max-width: none !important;
-    height: 90vh !important;
-    max-height: 720px !important;
+    height: 88vh !important;
+    max-height: 700px !important;
     display: flex !important;
     flex-direction: column !important;
 }
@@ -4750,28 +4750,40 @@ input[type=range] {
     overflow: hidden;
 }
 
-/* Header */
+/* ── HEADER ─────────────────────────────────────────────────── */
 .ue-header {
     background: #fff;
     border-bottom: 1px solid #E5E7EB;
     flex-shrink: 0;
-    padding: 16px 20px 0;
+    padding: 14px 20px 0;
 }
-.ue-header-top { margin-bottom: 12px; }
+.ue-header-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+}
 .ue-header-brand {
     font-weight: 800;
     font-size: 1.05rem;
     display: flex; align-items: center; gap: 8px;
 }
-
-/* Onglets */
-.ue-tabs {
-    display: flex; gap: 4px;
+.ue-close-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px;
+    border: none; background: none;
+    border-radius: 8px;
+    color: var(--hw-ink-soft, #78350F);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
 }
+.ue-close-btn:hover { background: #F3F4F6; color: var(--hw-ink, #1C0A00); }
+.ue-close-btn svg { width: 18px; height: 18px; }
+
+/* ── ONGLETS ─────────────────────────────────────────────────── */
+.ue-tabs { display: flex; gap: 2px; }
 .ue-tab {
     display: flex; align-items: center; gap: 6px;
-    padding: 8px 14px;
-    font-size: 0.82rem; font-weight: 500;
+    padding: 8px 16px;
+    font-size: 0.83rem; font-weight: 500;
     cursor: pointer; border: none; background: none;
     color: var(--hw-ink-soft, #78350F);
     border-bottom: 2px solid transparent;
@@ -4786,22 +4798,23 @@ input[type=range] {
 }
 .ue-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
 
-/* Zone de scroll */
+/* ── ZONE DE SCROLL ─────────────────────────────────────────── */
 .ue-scroll-area {
     flex: 1; overflow-y: auto;
-    padding: 16px 20px;
+    padding: 14px 18px 18px;
 }
 .ue-scroll-area::-webkit-scrollbar { width: 4px; }
 .ue-scroll-area::-webkit-scrollbar-thumb { background: #D1C4A8; border-radius: 4px; }
 
-/* Footer */
-.ue-footer {
-    padding: 12px 20px;
-    border-top: 1px solid #E5E7EB;
-    display: flex; justify-content: flex-end;
-    flex-shrink: 0;
-    background: #fff;
+/* ── EMPTY STATE ─────────────────────────────────────────────── */
+.ue-empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 12px; padding: 48px 20px;
+    color: var(--hw-ink-soft, #78350F); opacity: 0.6;
+    text-align: center;
 }
+.ue-empty-state svg { width: 44px; height: 44px; }
+.ue-empty-state p { margin: 0; font-size: 0.9rem; }
 
 /* ── ONGLET MES CIRCUITS ──────────────────────────────────────── */
 
@@ -4830,49 +4843,58 @@ input[type=range] {
     color: var(--hw-ink-soft, #78350F);
     font-weight: 500;
 }
+
+/* Bandeau info (partagé circuits + corbeille) */
 .ue-circuits-hint {
+    display: flex; align-items: flex-start; gap: 7px;
     font-size: 0.78rem;
     color: var(--hw-ink-soft, #78350F);
-    margin: 0 0 12px;
-    padding: 8px 10px;
+    margin: 0 0 10px;
+    padding: 8px 11px;
     background: #FEF9EE;
     border-radius: 8px;
     border: 1px solid #FDDFA4;
-    line-height: 1.4;
+    line-height: 1.45;
 }
+.ue-circuits-hint svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 2px; }
 
-.ue-circuits-list { display: flex; flex-direction: column; gap: 6px; }
+/* Liste circuits */
+.ue-circuits-list { display: flex; flex-direction: column; gap: 5px; }
 
 .ue-circuit-item {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 12px;
+    padding: 9px 12px;
     border: 1px solid #E5E7EB;
     border-radius: 10px;
     background: #fff;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
-    gap: 10px;
+    gap: 12px;
 }
+.ue-circuit-item:hover { border-color: #D1C4A8; background: #FFFBF7; }
 .ue-circuit-item.is-checked {
     border-color: #FCD34D;
     background: #FFFBF0;
 }
 .ue-circuit-info { flex: 1; min-width: 0; }
 .ue-circuit-name {
-    font-size: 0.88rem; font-weight: 600;
-    display: block;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 0.87rem; font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.35;
 }
 .ue-circuit-meta {
-    font-size: 0.75rem;
+    font-size: 0.73rem;
     color: var(--hw-ink-soft, #78350F);
-    display: block; margin-top: 1px;
+    display: block; margin-top: 2px;
 }
 
 /* Toggle switch */
 .ue-toggle-wrap {
     position: relative;
-    width: 40px; height: 22px;
+    width: 42px; height: 24px;
     flex-shrink: 0;
 }
 .ue-toggle-wrap input[type="checkbox"] {
@@ -4883,7 +4905,7 @@ input[type=range] {
 .ue-toggle-slider {
     position: absolute; inset: 0;
     background: #D1C4A8;
-    border-radius: 22px;
+    border-radius: 24px;
     transition: background 0.2s;
     pointer-events: none;
 }
@@ -4891,45 +4913,81 @@ input[type=range] {
     content: '';
     position: absolute;
     left: 3px; top: 3px;
-    width: 16px; height: 16px;
+    width: 18px; height: 18px;
     border-radius: 50%;
     background: #fff;
     transition: transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.22);
 }
-.ue-toggle-wrap input:checked ~ .ue-toggle-slider {
-    background: var(--brand, #D97706);
-}
-.ue-toggle-wrap input:checked ~ .ue-toggle-slider::after {
-    transform: translateX(18px);
-}
+.ue-toggle-wrap input:checked ~ .ue-toggle-slider { background: var(--brand, #D97706); }
+.ue-toggle-wrap input:checked ~ .ue-toggle-slider::after { transform: translateX(18px); }
 
 /* ── ONGLET MES DONNÉES ──────────────────────────────────────── */
 
-.ue-photo-label {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 0.85rem; cursor: pointer;
+.ue-data-section {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 18px 0;
+}
+.ue-data-icon-wrap {
+    width: 40px; height: 40px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: #FEF3C7;
+    border-radius: 10px;
+}
+.ue-data-icon { width: 20px; height: 20px; color: var(--brand, #D97706); }
+.ue-data-body { flex: 1; min-width: 0; }
+.ue-data-title {
+    font-size: 0.92rem; font-weight: 700;
+    margin-bottom: 4px;
     color: var(--hw-ink, #1C0A00);
 }
-.ue-photo-label input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--brand, #D97706); }
-
-/* ── ONGLET CORBEILLE ────────────────────────────────────────── */
-
-.ue-trash-intro {
-    display: flex; align-items: center; gap: 6px;
+.ue-data-desc {
     font-size: 0.8rem;
     color: var(--hw-ink-soft, #78350F);
     margin: 0 0 12px;
-    padding: 8px 10px;
-    background: #FEF9EE;
-    border-radius: 8px;
-    border: 1px solid #FDDFA4;
+    line-height: 1.45;
 }
-.ue-trash-intro svg { width: 14px; height: 14px; flex-shrink: 0; }
-.ue-trash-list { display: flex; flex-direction: column; gap: 6px; }
+.ue-data-divider {
+    height: 1px; background: #E5E7EB; margin: 0 0 2px;
+}
+.ue-photo-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.82rem; cursor: pointer;
+    color: var(--hw-ink, #1C0A00);
+    margin-bottom: 12px;
+}
+.ue-photo-label input[type="checkbox"] {
+    width: 15px; height: 15px; cursor: pointer;
+    accent-color: var(--brand, #D97706);
+    flex-shrink: 0;
+}
+.ue-photo-label small { color: var(--hw-ink-soft, #78350F); }
+
+/* Boutons action Données */
+.ue-action-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 16px;
+    border-radius: 9px; border: none;
+    font-size: 0.84rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.15s, background 0.15s;
+}
+.ue-action-btn svg { width: 15px; height: 15px; }
+.ue-action-btn.primary {
+    background: var(--brand, #D97706); color: #fff;
+}
+.ue-action-btn.primary:hover { opacity: 0.88; }
+.ue-action-btn.secondary {
+    background: #F3F4F6; color: var(--hw-ink, #1C0A00);
+    border: 1px solid #D1C4A8;
+}
+.ue-action-btn.secondary:hover { background: #E9ECEF; }
+
+/* ── ONGLET CORBEILLE ────────────────────────────────────────── */
+
+.ue-trash-list { display: flex; flex-direction: column; gap: 5px; }
 .ue-trash-item {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 12px;
+    padding: 9px 12px;
     border: 1px solid #E5E7EB;
     border-radius: 10px;
     background: #fff;
@@ -4938,9 +4996,23 @@ input[type=range] {
 }
 .ue-trash-name {
     display: flex; align-items: center; gap: 8px;
-    font-size: 0.88rem; font-weight: 500;
+    font-size: 0.87rem; font-weight: 500;
     flex: 1; min-width: 0;
 }
-.ue-trash-name svg { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.5; }
-.ue-trash-name span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ue-trash-name svg { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.45; }
+.ue-trash-name span {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; line-height: 1.3;
+}
+.ue-restore-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 11px;
+    background: #F0FDF4; color: #166534;
+    border: 1px solid #BBF7D0;
+    border-radius: 8px; font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; flex-shrink: 0;
+    transition: background 0.15s;
+}
+.ue-restore-btn:hover { background: #DCFCE7; }
+.ue-restore-btn svg { width: 13px; height: 13px; }
 
