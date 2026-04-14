@@ -13,9 +13,8 @@ export function openUserSpaceModal(callbacks) {
                         Mon Espace
                         <span class="ue-brand-subtitle">/ Mon voyage</span>
                     </div>
-                    <button class="ue-close-btn" id="btn-ue-close" title="Fermer">
+                    <button class="ue-close-icon-btn" id="btn-ue-close" title="Fermer">
                         <i data-lucide="x"></i>
-                        Fermer
                     </button>
                 </div>
                 <div class="ue-tabs">
@@ -33,6 +32,10 @@ export function openUserSpaceModal(callbacks) {
 
             <div class="ue-scroll-area">
                 <div id="ue-content"></div>
+            </div>
+
+            <div class="ue-footer">
+                <button class="custom-modal-btn secondary" id="btn-ue-footer-close">Fermer</button>
             </div>
         </div>
     `;
@@ -58,10 +61,10 @@ export function openUserSpaceModal(callbacks) {
     });
     observer.observe(overlay, { attributes: true });
 
-    // Bouton fermer
-    document.getElementById('btn-ue-close')?.addEventListener('click', () => {
-        overlay.classList.remove('active');
-    });
+    // Boutons fermer (header ✕ + footer)
+    const closeModal = () => overlay.classList.remove('active');
+    document.getElementById('btn-ue-close')?.addEventListener('click', closeModal);
+    document.getElementById('btn-ue-footer-close')?.addEventListener('click', closeModal);
 
     // Tabs
     const tabs = document.querySelectorAll('.ue-tab');

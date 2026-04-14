@@ -4731,7 +4731,7 @@ input[type=range] {
     border: 1px solid rgba(255,255,255,0.8) !important;
     box-shadow: 0 40px 100px -20px rgba(69, 26, 3, 0.22) !important;
     background: var(--hw-cream, #FFFBF5) !important;
-    width: min(680px, 95vw) !important;
+    width: min(820px, 95vw) !important;
     max-width: none !important;
     height: 90vh !important;
     max-height: 740px !important;
@@ -4774,21 +4774,17 @@ input[type=range] {
     font-size: 0.95rem; margin-left: 2px;
 }
 
-/* Bouton fermer — style pill discret (comme header-user dans CC) */
-.ue-close-btn {
-    display: flex; align-items: center; gap: 6px;
-    background: #F8FAFC; border: 1px solid #E5E7EB;
-    border-radius: 50px; padding: 5px 14px;
-    font-size: 0.82rem; font-weight: 500;
-    color: var(--hw-ink-soft, #78350F);
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
+/* Bouton ✕ en header — icône seule, discret */
+.ue-close-icon-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px;
+    background: none; border: none;
+    border-radius: 8px;
+    color: #94A3B8; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
 }
-.ue-close-btn:hover {
-    background: #F1F5F9; border-color: #CBD5E1;
-    color: var(--hw-ink, #1C0A00);
-}
-.ue-close-btn svg { width: 15px; height: 15px; }
+.ue-close-icon-btn:hover { background: #F1F5F9; color: var(--hw-ink, #1C0A00); }
+.ue-close-icon-btn svg { width: 18px; height: 18px; }
 
 /* ── TABS (style dossier comme CC) ───────────────────────────────────────── */
 .ue-tabs { display: flex; gap: 4px; }
@@ -4819,10 +4815,18 @@ input[type=range] {
 .ue-scroll-area::-webkit-scrollbar { width: 4px; }
 .ue-scroll-area::-webkit-scrollbar-thumb { background: #D1C4A8; border-radius: 4px; }
 
+/* ── FOOTER (miroir admin-cc-footer) ──────────────────────────────────────── */
+.ue-footer {
+    padding: 14px 28px;
+    background: white; border-top: 1px solid #E5E7EB;
+    display: flex; justify-content: flex-end;
+    flex-shrink: 0;
+}
+
 /* ── SECTION HEADER ───────────────────────────────────────────────────────── */
 .ue-section-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 .ue-section-title {
     display: flex; align-items: center; gap: 8px;
@@ -4933,11 +4937,13 @@ input[type=range] {
 /* ── ONGLET DONNEES : grille 2 colonnes ───────────────────────────────────── */
 .ue-data-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    align-items: stretch;
 }
 .ue-data-card {
     display: flex; flex-direction: column;
     background: white; border: 1px solid #E5E7EB; border-radius: 16px;
-    padding: 20px; gap: 10px;
+    padding: 22px; gap: 12px;
+    min-height: 220px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -4973,10 +4979,10 @@ input[type=range] {
 /* Boutons action */
 .ue-action-btn {
     display: flex; align-items: center; justify-content: center; gap: 7px;
-    padding: 9px 14px; border-radius: 10px; border: none;
+    width: 100%; padding: 10px 14px; border-radius: 10px; border: none;
     font-size: 0.83rem; font-weight: 700; cursor: pointer;
     transition: opacity 0.15s, background 0.15s, transform 0.15s;
-    margin-top: auto;
+    margin-top: auto; text-align: center;
 }
 .ue-action-btn svg { width: 15px; height: 15px; }
 .ue-action-btn.primary {
