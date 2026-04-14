@@ -8,20 +8,25 @@ export function openUserSpaceModal(callbacks) {
         <div class="ue-container">
             <div class="ue-header">
                 <div class="ue-header-top">
-                    <div class="ue-header-brand">🧳 Mon Espace</div>
+                    <div class="ue-header-brand">
+                        <span class="ue-brand-icon">🧳</span>
+                        Mon Espace
+                        <span class="ue-brand-subtitle">/ Mon voyage</span>
+                    </div>
                     <button class="ue-close-btn" id="btn-ue-close" title="Fermer">
                         <i data-lucide="x"></i>
+                        Fermer
                     </button>
                 </div>
                 <div class="ue-tabs">
                     <div class="ue-tab active" data-tab="circuits">
-                        <i data-lucide="map" width="15"></i> Mes Circuits
+                        <i data-lucide="map"></i> Mes Circuits
                     </div>
                     <div class="ue-tab" data-tab="data">
-                        <i data-lucide="hard-drive" width="15"></i> Mes Données
+                        <i data-lucide="hard-drive"></i> Mes Données
                     </div>
                     <div class="ue-tab" data-tab="trash">
-                        <i data-lucide="trash-2" width="15"></i> Corbeille
+                        <i data-lucide="trash-2"></i> Corbeille
                     </div>
                 </div>
             </div>
@@ -53,7 +58,7 @@ export function openUserSpaceModal(callbacks) {
     });
     observer.observe(overlay, { attributes: true });
 
-    // Bouton ✕ fermer
+    // Bouton fermer
     document.getElementById('btn-ue-close')?.addEventListener('click', () => {
         overlay.classList.remove('active');
     });
@@ -89,7 +94,12 @@ function renderCircuitsTab(container, callbacks) {
     const allOfficial = state.officialCircuits || [];
 
     if (allOfficial.length === 0) {
-        container.innerHTML = `<div class="ue-empty-state"><i data-lucide="wifi-off"></i><p>Aucun circuit officiel disponible.</p></div>`;
+        container.innerHTML = `
+            <div class="ue-empty-state">
+                <div class="ue-empty-icon"><i data-lucide="wifi-off"></i></div>
+                <p class="ue-empty-title">Aucun circuit disponible</p>
+                <p class="ue-empty-sub">Les circuits officiels apparaîtront ici une fois chargés.</p>
+            </div>`;
         createIcons({ icons, root: container });
         return;
     }
@@ -99,31 +109,39 @@ function renderCircuitsTab(container, callbacks) {
         ? new Set(allOfficial.map(c => String(c.id)))
         : new Set((selected || []).map(String));
 
+    const checkedCount = selectedSet.size;
+
     container.innerHTML = `
-        <div class="ue-circuits-top">
-            <div class="ue-circuits-actions">
-                <button class="ue-quick-btn" id="btn-ue-none">Aucun</button>
-                <button class="ue-quick-btn" id="btn-ue-all">Tous</button>
+        <div class="ue-section-header">
+            <div class="ue-section-title">
+                Circuits officiels
+                <span class="ue-badge ue-badge-amber" id="ue-circuits-count">${checkedCount} / ${allOfficial.length}</span>
             </div>
-            <span class="ue-circuits-count" id="ue-circuits-count">
-                ${selectedSet.size} / ${allOfficial.length} sélectionné${selectedSet.size > 1 ? 's' : ''}
-            </span>
+            <div class="ue-section-actions">
+                <button class="ue-pill-btn" id="btn-ue-none">Aucun</button>
+                <button class="ue-pill-btn" id="btn-ue-all">Tous</button>
+            </div>
         </div>
-        <p class="ue-circuits-hint">
+
+        <div class="ue-hint-banner">
             <i data-lucide="info"></i>
-            Les circuits sélectionnés apparaissent dans votre liste. Les POIs restent toujours visibles sur la carte.
-        </p>
+            <span>Les circuits masqués n'apparaissent plus dans la liste, mais leurs POIs restent toujours visibles sur la carte.</span>
+        </div>
+
         <div class="ue-circuits-list">
             ${allOfficial.map(c => {
                 const isChecked = selectedSet.has(String(c.id));
                 const poiCount = (c.poiIds || []).length;
                 const meta = [
                     `${poiCount} POI${poiCount > 1 ? 's' : ''}`,
-                    c.zone ? c.zone : null,
-                    c.distance ? c.distance : null
+                    c.zone || null,
+                    c.distance || null
                 ].filter(Boolean).join(' · ');
                 return `
                 <label class="ue-circuit-item ${isChecked ? 'is-checked' : ''}">
+                    <div class="ue-circuit-icon-box">
+                        <i data-lucide="route"></i>
+                    </div>
                     <div class="ue-circuit-info">
                         <span class="ue-circuit-name">${c.name || 'Circuit sans nom'}</span>
                         <span class="ue-circuit-meta">${meta}</span>
@@ -140,7 +158,7 @@ function renderCircuitsTab(container, callbacks) {
     const updateCount = () => {
         const checked = container.querySelectorAll('.ue-circuit-check:checked').length;
         const countEl = document.getElementById('ue-circuits-count');
-        if (countEl) countEl.textContent = `${checked} / ${allOfficial.length} sélectionné${checked > 1 ? 's' : ''}`;
+        if (countEl) countEl.textContent = `${checked} / ${allOfficial.length}`;
     };
 
     document.getElementById('btn-ue-none')?.addEventListener('click', () => {
@@ -173,42 +191,46 @@ function renderCircuitsTab(container, callbacks) {
 
 function renderDataTab(container, callbacks) {
     container.innerHTML = `
-        <div class="ue-data-section">
-            <div class="ue-data-icon-wrap">
-                <i data-lucide="download" class="ue-data-icon"></i>
-            </div>
-            <div class="ue-data-body">
-                <div class="ue-data-title">Sauvegarder mes données</div>
-                <p class="ue-data-desc">
-                    Exportez vos notes, lieux visités, circuits et préférences.
-                    Rechargez ce fichier pour retrouver votre état sur n'importe quel appareil.
+        <div class="ue-section-header">
+            <div class="ue-section-title">Gestion des données</div>
+        </div>
+
+        <div class="ue-data-grid">
+            <div class="ue-data-card">
+                <div class="ue-data-card-icon">
+                    <i data-lucide="download"></i>
+                </div>
+                <div class="ue-data-card-title">Sauvegarder</div>
+                <p class="ue-data-card-desc">
+                    Exportez vos notes, lieux visités, circuits et préférences dans un fichier portable.
                 </p>
                 <label class="ue-photo-label">
                     <input type="checkbox" id="ue-include-photos">
-                    <span>Inclure mes photos <small>(fichier plus volumineux)</small></span>
+                    <span>Inclure les photos</span>
                 </label>
                 <button id="btn-ue-backup" class="ue-action-btn primary">
-                    <i data-lucide="download"></i> Télécharger la sauvegarde
+                    <i data-lucide="download"></i> Télécharger
                 </button>
             </div>
-        </div>
 
-        <div class="ue-data-divider"></div>
-
-        <div class="ue-data-section">
-            <div class="ue-data-icon-wrap">
-                <i data-lucide="upload" class="ue-data-icon"></i>
-            </div>
-            <div class="ue-data-body">
-                <div class="ue-data-title">Charger une sauvegarde</div>
-                <p class="ue-data-desc">
-                    Restaurez vos données depuis un fichier de sauvegarde précédemment exporté.
+            <div class="ue-data-card">
+                <div class="ue-data-card-icon secondary">
+                    <i data-lucide="upload"></i>
+                </div>
+                <div class="ue-data-card-title">Restaurer</div>
+                <p class="ue-data-card-desc">
+                    Rechargez un fichier de sauvegarde pour retrouver votre progression sur cet appareil.
                 </p>
-                <button id="btn-ue-restore" class="ue-action-btn secondary">
+                <button id="btn-ue-restore" class="ue-action-btn secondary" style="margin-top:auto;">
                     <i data-lucide="folder-open"></i> Choisir un fichier…
                 </button>
                 <input type="file" id="ue-restore-loader" accept=".json,.txt" style="display:none;">
             </div>
+        </div>
+
+        <div class="ue-hint-banner" style="margin-top: 16px;">
+            <i data-lucide="shield-check"></i>
+            <span>Vos données restent sur votre appareil. Aucune information n'est envoyée à nos serveurs.</span>
         </div>
     `;
 
@@ -234,24 +256,36 @@ function renderTrashTab(container, callbacks) {
     if (deletedCircuits.length === 0) {
         container.innerHTML = `
             <div class="ue-empty-state">
-                <i data-lucide="package-open"></i>
-                <p>La corbeille est vide.</p>
+                <div class="ue-empty-icon green"><i data-lucide="package-check"></i></div>
+                <p class="ue-empty-title">Corbeille vide</p>
+                <p class="ue-empty-sub">Les circuits supprimés apparaîtront ici et pourront être restaurés.</p>
             </div>`;
         createIcons({ icons, root: container });
         return;
     }
 
     container.innerHTML = `
-        <p class="ue-circuits-hint">
+        <div class="ue-section-header">
+            <div class="ue-section-title">
+                Circuits supprimés
+                <span class="ue-badge ue-badge-red">${deletedCircuits.length}</span>
+            </div>
+        </div>
+
+        <div class="ue-hint-banner">
             <i data-lucide="info"></i>
-            Les circuits supprimés restent ici jusqu'à leur restauration.
-        </p>
-        <div class="ue-trash-list">
+            <span>Ces circuits ont été supprimés mais peuvent être restaurés à tout moment.</span>
+        </div>
+
+        <div class="ue-circuits-list">
             ${deletedCircuits.map(c => `
                 <div class="ue-trash-item" id="ue-trash-${c.id}">
-                    <div class="ue-trash-name">
+                    <div class="ue-circuit-icon-box muted">
                         <i data-lucide="route"></i>
-                        <span>${c.name || 'Circuit sans nom'}</span>
+                    </div>
+                    <div class="ue-circuit-info">
+                        <span class="ue-circuit-name">${c.name || 'Circuit sans nom'}</span>
+                        <span class="ue-circuit-meta">${(c.poiIds || []).length} POI${(c.poiIds || []).length > 1 ? 's' : ''} · Supprimé</span>
                     </div>
                     <button class="ue-restore-btn" data-action="restore-circuit" data-id="${c.id}">
                         <i data-lucide="rotate-ccw"></i> Restaurer
