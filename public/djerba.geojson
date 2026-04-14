@@ -18,16 +18,22 @@
         "Coordonnées GPS": "33.826879, 11.046238",
         "Latitude": 33.826879,
         "Longitude": 11.046238,
-        "Description": "Très bel hôtel 4 *, si vous voulez manger local, des spécialités tunisiennes sont à votre disposition à chaque repas. \nSoirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée",
+        "Description": "Très bel hôtel 4 *, si vous voulez manger local, un coin Djerbie est présent à chaque repas. Soirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nPiscine actuellement fermée",
         "Source": "https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/",
         "Temps de visite": "01:00",
-        "Prix d'entrée": 0,
-        "Desc_wpt": "Piscine remise au norme accessible depuis le 07 mars 2026",
+        "Prix d'entrée": null,
+        "Desc_wpt": "Réouverture de la piscine le 16 mars. Elle se remplit lentement",
         "verified": false,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
         "planifieCounter": 1,
         "lat": 33.82679301484525,
-        "lng": 11.046217898317652
+        "lng": 11.046217898317652,
+        "Description_courte": "Piscine remise au norme accessible depuis le 07 mars 2026",
+        "description": "Très bel hôtel 4 *, si vous voulez manger local, des spécialités tunisiennes sont à votre disposition à chaque repas. \nSoirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée",
+        "notes": "",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0
       }
     },
     {
