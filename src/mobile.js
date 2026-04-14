@@ -897,10 +897,6 @@ export function renderMobileMenu() {
                 <i data-lucide="table"></i>
                 <span>Data Manager</span>
             </button>
-            <button class="mobile-list-item" id="mob-action-admin-fusion">
-                <i data-lucide="combine"></i>
-                <span>Console Fusion</span>
-            </button>
             <button class="mobile-list-item" id="mob-action-admin-scout">
                 <i data-lucide="scan-eye"></i>
                 <span>Scout (Overpass)</span>
@@ -955,12 +951,6 @@ export function renderMobileMenu() {
 
         const btnDataManager = document.getElementById('mob-action-admin-datamanager');
         if (btnDataManager) btnDataManager.addEventListener('click', () => window.open('history_walk_datamanager/index.html', '_blank'));
-
-        const btnFusion = document.getElementById('mob-action-admin-fusion');
-        if (btnFusion) btnFusion.addEventListener('click', () => {
-            localStorage.setItem('hw_admin_fusion_map', state.currentMapId || 'djerba');
-            window.open('admin-fusion.html', '_blank');
-        });
 
         const btnScout = document.getElementById('mob-action-admin-scout');
         if (btnScout) btnScout.addEventListener('click', () => window.open('tools/scout.html', '_blank'));

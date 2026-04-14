@@ -3926,26 +3926,6 @@ input[type=range] {
 .icon-heart { fill: #e91e63; color: #e91e63; width: 18px; height: 18px; }
 
 /* ================================================
-   FUSION.JS — File import status + form layout
-   ================================================ */
-
-.fusion-name-loading { color: var(--ink); }
-.fusion-name-ok      { color: var(--ok); }
-.fusion-name-error   { color: var(--danger); }
-.fusion-name-note    { font-style: italic; }
-
-.box-ok { border-color: var(--ok) !important; }
-
-.fusion-poi-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 5px;
-}
-.fusion-label { font-size: 11px; color: #64748B; }
-.fusion-input-rtl { text-align: right; }
-
-/* ================================================
    UI-PHOTO-VIEWER.JS
    ================================================ */
 
@@ -4538,16 +4518,6 @@ input[type=range] {
 .admin-file-warning-body .admin-upload-loading { text-align: center; padding: 20px; }
 .admin-upload-loading .lucide { width: 32px; height: 32px; }
 
-/* ================================================
-   ADMIN-FUSION-STANDALONE.JS
-   ================================================ */
-
-.fusion-standalone-poi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-.fusion-standalone-label { font-size: 11px; color: var(--ink-light); font-weight: 600; }
-.fusion-standalone-badge-key { min-width: 60px; text-align: center; }
-.fusion-standalone-del-warning { background: #FEF2F2; color: #991B1B; }
-.fusion-standalone-error-icon { width: 48px; height: 48px; color: var(--danger); }
-.poi-name-row { display: flex; justify-content: space-between; align-items: center; }
 .icon-xs    { width: 12px; height: 12px; }
 .icon-sm-14 { width: 14px; height: 14px; }
 .icon-20    { width: 20px; height: 20px; }

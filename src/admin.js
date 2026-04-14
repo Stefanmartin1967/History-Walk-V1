@@ -155,10 +155,6 @@ function toggleAdminUI(isAdmin) {
         adminContainer.style.display = isAdmin ? 'block' : 'none';
     }
 
-    const fusionBtn = document.getElementById('btn-fusion-console');
-    if (fusionBtn) {
-        fusionBtn.style.display = isAdmin ? 'flex' : 'none';
-    }
 }
 
 function setupAdminListeners() {
@@ -284,32 +280,6 @@ function setupAdminListeners() {
         const newUploadBtn = btnUpload.cloneNode(true);
         btnUpload.parentNode.replaceChild(newUploadBtn, btnUpload);
         newUploadBtn.addEventListener('click', showGitHubUploadModal);
-
-        // --- NOUVEAU : Bouton Console Fusion ++ ---
-        let btnFusionPlus = document.getElementById('btn-admin-fusion-plus');
-        if (!btnFusionPlus) {
-            btnFusionPlus = document.createElement('button');
-            btnFusionPlus.id = 'btn-admin-fusion-plus';
-            btnFusionPlus.className = 'tools-menu-item';
-            btnFusionPlus.innerHTML = `<i data-lucide="git-merge"></i> Console Fusion ++`;
-
-            // On l'insère juste après Delete Circuit
-            if (btnControl && btnControl.parentNode === menuContent) {
-                menuContent.insertBefore(btnFusionPlus, btnControl);
-            } else {
-                menuContent.appendChild(btnFusionPlus);
-            }
-            createIcons({ icons, root: btnFusionPlus });
-
-            btnFusionPlus.addEventListener('click', () => {
-                // Sauvegarde de la carte active dans le localStorage pour le nouvel onglet
-                import('./state.js').then(module => {
-                    const currentMapId = module.state.currentMapId || 'djerba';
-                    localStorage.setItem('hw_admin_fusion_map', currentMapId);
-                    window.open('admin-fusion.html', '_blank');
-                });
-            });
-        }
 
         // Nettoyage des anciens boutons s'ils existent (Migration)
         ['btn-admin-config-github', 'btn-admin-publish-map'].forEach(id => {

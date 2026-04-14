@@ -14,7 +14,6 @@ export default defineConfig({
 
       manifest: false, // On utilise public/manifest.json manuellement
       workbox: {
-        // Ajout explicite pour être sûr que fusion.html est mis en cache
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,geojson}'],
         // Augmentation de la limite pour djerba.geojson (4.88MB+ sur PC, 17.5MB chez l'user)
         // On met 20 MiB pour être large et éviter les erreurs de build immédiates.
@@ -29,8 +28,6 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         scout: resolve(__dirname, 'tools/scout.html'),
-        fusion: resolve(__dirname, 'tools/fusion.html'),
-        adminFusion: resolve(__dirname, 'admin-fusion.html'),
         datamanager: resolve(__dirname, 'history_walk_datamanager/index.html'),
       },
     },
