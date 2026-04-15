@@ -465,7 +465,11 @@
 .user-space-mode .custom-modal-message {
     flex: 1 !important; display: flex !important; flex-direction: column !important;
     margin: 0 !important; padding: 0 !important; height: 100% !important; width: 100% !important; overflow: hidden !important;
+    white-space: normal !important; text-align: left !important;
 }
+/* Neutraliser via CSS (indépendamment du JS) */
+.user-space-mode #custom-modal-title,
+.user-space-mode #custom-modal-actions { display: none !important; }
 
 /* ── CONTAINER ────────────────────────────────────────────────────────────── */
 .ue-container {
