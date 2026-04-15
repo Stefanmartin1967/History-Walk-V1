@@ -5,11 +5,10 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>History Walk Data Manager</title>
-    <script type="module" crossorigin src="/History-Walk-V1/assets/datamanager-mjJjWSiQ.js"></script>
-    <link rel="modulepreload" crossorigin href="/History-Walk-V1/assets/modulepreload-polyfill-B5Qt9EMX.js">
-    <link rel="modulepreload" crossorigin href="/History-Walk-V1/assets/leaflet-src-hnZTiIbz.js">
+    <script type="module" crossorigin src="/History-Walk-V1/assets/datamanager-C3szD0Rs.js"></script>
+    <link rel="modulepreload" crossorigin href="/History-Walk-V1/assets/leaflet-src-Bex68Vyq.js">
     <link rel="stylesheet" crossorigin href="/History-Walk-V1/assets/leaflet-src-CIGW-MKW.css">
-    <link rel="stylesheet" crossorigin href="/History-Walk-V1/assets/datamanager-DZtOT6cZ.css">
+    <link rel="stylesheet" crossorigin href="/History-Walk-V1/assets/datamanager-DxL6XWVh.css">
   </head>
   <body>
 
@@ -159,6 +158,20 @@
         </div>
 
       </main>
+    </div>
+
+    <!-- MODALE TOKEN GITHUB -->
+    <div id="token-modal-overlay" class="token-modal-overlay hidden">
+      <div class="token-modal-box">
+        <h3 class="token-modal-title"><i data-lucide="key-round"></i> Token GitHub requis</h3>
+        <p class="token-modal-desc">Aucun token trouvé. Saisissez votre Personal Access Token (PAT) avec les droits <code>repo</code>.</p>
+        <input type="password" id="token-modal-input" class="token-modal-input" placeholder="ghp_...">
+        <p style="font-size:0.8rem;color:#888;margin:0;">Stocké en localStorage de ce navigateur.</p>
+        <div class="token-modal-actions">
+          <button id="token-modal-cancel" class="btn btn-neutral" type="button">Annuler</button>
+          <button id="token-modal-confirm" class="btn btn-publish" type="button"><i data-lucide="upload-cloud"></i> Confirmer</button>
+        </div>
+      </div>
     </div>
 
   </body>
