@@ -5,8 +5,9 @@ import { clearCircuit } from './circuit.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
-import { state, setSelectionModeFilters, setActiveFilters, setUserData } from './state.js';
-import { saveAppState, savePoiData } from './database.js';
+import { state, setSelectionModeFilters, setActiveFilters } from './state.js';
+import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos } from './database.js';
+import { compressImage, generatePhotoId } from './photo-service.js';
 import { logModification } from './logger.js';
 import { DOM } from './ui.js';
 import { closeAllDropdowns } from './ui-utils.js';
@@ -138,8 +139,13 @@ export async function handleDesktopPhotoImport(filesList) {
                     const poiId = getPoiId(feature);
 
                     // --- FILTRAGE DES DOUBLONS ---
-                    const existingPhotos = (state.userData[poiId] && state.userData[poiId].photos) || [];
-                    const uniqueCluster = cluster.filter(item => item.base64 && !existingPhotos.includes(item.base64));
+                    const existingBlobs = await getPoiPhotos(state.currentMapId, poiId);
+                    const existingSizes = new Set(existingBlobs.map(p => p.blob.size));
+                    const uniqueCluster = cluster.filter(item => {
+                        if (!item.base64) return false;
+                        const approxSize = Math.round(item.base64.length * 0.75);
+                        return ![...existingSizes].some(s => Math.abs(s - approxSize) <= Math.max(s * 0.01, 512));
+                    });
                     const duplicateCount = cluster.length - uniqueCluster.length;
 
                     // Si TOUT le cluster est en doublon
@@ -209,8 +215,13 @@ export async function handleDesktopPhotoImport(filesList) {
                 const nId = getPoiId(absoluteNearest);
 
                 // Vérification doublons pour Force Add
-                const existingPhotos = (state.userData[nId] && state.userData[nId].photos) || [];
-                uniqueClusterForNearest = cluster.filter(item => item.base64 && !existingPhotos.includes(item.base64));
+                const existingBlobsNearest = await getPoiPhotos(state.currentMapId, nId);
+                const existingSizesNearest = new Set(existingBlobsNearest.map(p => p.blob.size));
+                uniqueClusterForNearest = cluster.filter(item => {
+                    if (!item.base64) return false;
+                    const approxSize = Math.round(item.base64.length * 0.75);
+                    return ![...existingSizesNearest].some(s => Math.abs(s - approxSize) <= Math.max(s * 0.01, 512));
+                });
                 duplicateCountForNearest = cluster.length - uniqueClusterForNearest.length;
 
                 if (uniqueClusterForNearest.length > 0) {
@@ -279,7 +290,7 @@ export async function handleDesktopPhotoImport(filesList) {
     }
 }
 
-// Fonction utilitaire pour l'ajout effectif avec détection de doublons
+// Fonction utilitaire pour l'ajout effectif avec détection de doublons (par taille)
 export async function addPhotosToPoi(feature, clusterItems) {
     let poiId = getPoiId(feature);
 
@@ -291,37 +302,46 @@ export async function addPhotosToPoi(feature, clusterItems) {
         feature.properties.HW_ID = poiId;
     }
 
-    const newUserData = { ...state.userData };
-    if (!newUserData[poiId]) newUserData[poiId] = {};
-    if (!newUserData[poiId].photos) newUserData[poiId].photos = [];
+    const mapId = state.currentMapId;
+    const existingPhotos = await getPoiPhotos(mapId, poiId);
+    const existingSizes = new Set(existingPhotos.map(p => p.blob.size));
 
     let added = 0;
     let duplicates = 0;
+    const newItems = [...existingPhotos];
 
     for (const item of clusterItems) {
         try {
-            // Utilisation du base64 pré-calculé si disponible, sinon on redimensionne (avec timeout)
-            const resizedBase64 = item.base64 || await resizeImage(item.file);
+            // Convertit la base64 pré-calculée en Blob (sans re-compresser)
+            let blob;
+            if (item.base64) {
+                blob = await fetch(item.base64).then(r => r.blob());
+            } else if (item.file) {
+                blob = await compressImage(item.file);
+            } else {
+                continue;
+            }
 
-            // DÉTECTION DOUBLON
-            if (newUserData[poiId].photos.includes(resizedBase64)) {
+            // Détection doublon par taille (approximation fiable après compression déterministe)
+            const isDuplicate = [...existingSizes].some(
+                s => Math.abs(s - blob.size) <= Math.max(s * 0.01, 512)
+            );
+
+            if (isDuplicate) {
                 duplicates++;
             } else {
-                newUserData[poiId].photos.push(resizedBase64);
+                existingSizes.add(blob.size);
+                newItems.push({ id: generatePhotoId(), blob });
                 added++;
             }
         } catch (err) {
-            console.error("Erreur compression lors de l'ajout:", err);
-            // On continue avec les autres photos même si une échoue
+            console.error("Erreur lors de l'ajout photo:", err);
         }
     }
 
-
     if (added > 0) {
-        setUserData(newUserData);
-        // Utilisation de updatePoiData pour garantir la sync Mémoire + DB + UI
-        await updatePoiData(poiId, 'photos', newUserData[poiId].photos);
-        
+        await savePoiPhotos(mapId, poiId, newItems);
+
         // Refresh UI
         closeDetailsPanel();
         setTimeout(() => {
@@ -329,6 +349,8 @@ export async function addPhotosToPoi(feature, clusterItems) {
             if (index > -1) openDetailsPanel(index);
         }, 100);
     }
+
+    return { added, duplicates };
 }
 
 export function createDraftMarker(lat, lng, mapInstance, photos = []) {

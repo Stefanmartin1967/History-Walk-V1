@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { changePhoto, setCurrentPhotos, handlePhotoDeletion, handleAllPhotosDeletion, currentPhotoList, currentPhotoIndex } from './photo-manager.js';
+import { changePhoto, setCurrentPhotos, handlePhotoDeletion, handleAllPhotosDeletion, currentPhotoList, currentPhotoIndex } from './photo-service.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel } from './ui-details.js';

@@ -3630,6 +3630,36 @@ input[type=range] {
 .photo-grid-btn.upload-btn { color: #ef4444; }
 .photo-grid-btn.close-btn  { color: var(--brand); }
 .photo-grid-btn:disabled   { opacity: 0.5; cursor: not-allowed; }
+
+/* Toggle compression admin */
+.photo-grid-comp-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px 4px 8px;
+    border-radius: 99px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+}
+.photo-grid-comp-toggle .lucide { width: 14px; height: 14px; flex-shrink: 0; }
+.photo-grid-comp-toggle.comp-optimized {
+    background: #FEF3C7;
+    color: #92400E;
+    box-shadow: 0 1px 3px rgba(217,119,6,0.2);
+}
+.photo-grid-comp-toggle.comp-optimized:hover { background: #FDE68A; }
+.photo-grid-comp-toggle.comp-original {
+    background: #EFF6FF;
+    color: #1E40AF;
+    box-shadow: 0 1px 3px rgba(59,130,246,0.2);
+}
+.photo-grid-comp-toggle.comp-original:hover { background: #DBEAFE; }
+
 .photo-grid-content {
     flex: 1;
     overflow-y: auto;
