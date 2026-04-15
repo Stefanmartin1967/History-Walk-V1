@@ -479,13 +479,13 @@
 /* ── HEADER ───────────────────────────────────────────────────────────────── */
 .ue-header {
     background: #FFFFFF;
-    padding: 18px 28px 0;
+    padding: 10px 20px 0;
     border-bottom: 1px solid #E5E7EB;
     flex-shrink: 0;
 }
 .ue-header-top {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: 6px;
 }
 .ue-header-brand {
     display: flex; align-items: center; gap: 8px;
