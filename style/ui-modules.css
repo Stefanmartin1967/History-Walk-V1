@@ -1,0 +1,445 @@
+/* ================================================
+   UI-MODALS.JS — Légende + Listes Corbeille
+   ================================================ */
+
+/* Légende */
+.legend-list { text-align: left; display: flex; flex-direction: column; gap: 15px; }
+.legend-section-header {
+    font-weight: 600;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+}
+.legend-section-header.mt { margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 10px; }
+.legend-marker-circle {
+    width: 24px; height: 24px;
+    flex-shrink: 0;
+    background: #FFFFFF;
+    border-radius: 50%;
+}
+.legend-marker-circle--visited {
+    border: 3px solid #10B981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+}
+.legend-marker-circle--planned {
+    border: 3px solid #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+.legend-marker-star-wrapper {
+    width: 28px; height: 28px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.legend-marker-star {
+    width: 100%; height: 100%;
+    background: #FEF08A;
+    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25));
+}
+.legend-line-sample { width: 40px; height: 4px; flex-shrink: 0; border-radius: 2px; }
+.legend-line-sample--straight { background: #EF4444; }
+.legend-line-sample--gps      { background: #3B82F6; }
+.legend-line-sample--done     { background: #10B981; }
+
+/* Listes corbeille (circuits + lieux) */
+.modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+.modal-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: var(--surface-muted);
+    border-radius: 8px;
+}
+.modal-list-item-name { font-weight: 500; color: var(--ink); text-align: left; }
+.modal-list-empty    { padding: 10px; color: var(--ink-soft); }
+.restore-btn,
+.restore-poi-btn {
+    flex-shrink: 0;
+    background: transparent;
+    color: var(--ok);
+    border: 1px solid var(--ok);
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* ================================================
+   UI-CIRCUIT-LIST.JS — Explorer (liste circuits)
+   ================================================ */
+
+/* En-tête Explorer */
+.explorer-header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; height: 100%; padding: 0 10px;
+}
+.explorer-pagination-group { display: flex; align-items: center; gap: 5px; }
+.explorer-header-title { margin: 0; font-size: 18px; }
+.explorer-page-info { font-size: 14px; font-weight: 500; color: var(--ink); min-width: 30px; text-align: center; }
+.explorer-header .action-button:hover:not(:disabled) { background: var(--surface-muted); }
+.action-button:disabled { opacity: 0.3; cursor: default; }
+.icon-20 { width: 20px; height: 20px; }
+
+/* Séparateur dans explorer-footer : override la règle panel-footer qui les cache */
+.explorer-footer .separator-vertical { display: block !important; margin: 0 4px; }
+
+/* Modale zones */
+.zone-modal-list { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; }
+.zone-modal-btn {
+    padding: 10px; text-align: left; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; width: 100%;
+}
+.zone-modal-btn.active { border: 2px solid var(--brand); background: var(--surface-muted); }
+.zone-count { font-weight: bold; color: var(--ink-soft); }
+
+/* Items liste (overrides pour correspondre aux valeurs actuelles des inline styles) */
+.explorer-list-empty { padding: 20px; text-align: center; color: var(--ink-soft); }
+#explorer-list .explorer-item { gap: 8px; padding: 10px; }
+.explorer-item-left  { flex-shrink: 0; }
+.explorer-item-right { flex-shrink: 0; display: flex; align-items: center; }
+#explorer-list .explorer-item-name { font-weight: 400; line-height: 1.2; white-space: normal; }
+.explorer-item-name--official { font-weight: 500; color: var(--primary); }
+#explorer-list .explorer-item-meta { display: flex; align-items: center; margin-top: 2px; }
+.icon-meta       { width: 12px; height: 12px; margin: 0 3px; }
+.icon-meta-extra { width: 14px; height: 14px; vertical-align: text-bottom; margin-left: 4px; }
+.btn-toggle-visited { color: var(--line); padding: 4px; }
+.btn-toggle-visited.completed { color: var(--ok); }
+.btn-toggle-visited .lucide { width: 24px; height: 24px; }
+
+/* ================================================
+   UI-CIRCUIT-EDITOR.JS — Partage / QR Circuit
+   ================================================ */
+
+.circuit-share-container { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; text-align: center; }
+.circuit-qr-img { width: 200px; height: 200px; border-radius: 10px; border: 1px solid var(--line); }
+.circuit-share-hint { text-align: center; color: var(--ink-soft); font-size: 14px; margin: 0; padding: 0; width: 100%; }
+.circuit-share-name { font-size: 14px; font-weight: bold; color: var(--ink); word-break: break-word; text-align: center; width: 100%; margin: 0; padding: 0; }
+.circuit-gpx-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.btn-gpx-download { text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 14px; }
+.circuit-no-gpx-msg { text-align: center; padding: 20px; color: var(--ink-soft); }
+
+/* ================================================
+   MODAL.JS — Prompt dialog
+   ================================================ */
+
+.modal-prompt-body  { display: flex; flex-direction: column; gap: 10px; }
+.modal-prompt-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* ================================================
+   ADMIN.JS — Login & Rank table
+   ================================================ */
+
+.admin-login-body { text-align: left; }
+.admin-login-body p { margin-bottom: 15px; color: var(--ink-soft); }
+.admin-login-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+.admin-login-error { color: var(--danger); margin-top: 10px; font-size: 0.9em; min-height: 1.2em; }
+
+.admin-github-body { text-align: left; }
+.admin-github-body p { margin-bottom: 15px; font-size: 0.9em; color: var(--ink-soft); }
+.admin-github-label { display: block; margin-bottom: 5px; font-weight: 600; }
+.admin-github-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+.admin-github-note { font-size: 0.8em; color: var(--ink-soft); }
+
+.rank-table-wrapper { }
+.rank-table { width: 100%; border-collapse: collapse; }
+.rank-table thead { background: var(--surface-muted); }
+.rank-table th,
+.rank-table td { padding: 6px 10px; }
+.rank-table th:nth-child(1), .rank-table td:nth-child(1) { text-align: center; }
+.rank-table th:nth-child(2), .rank-table td:nth-child(2) { text-align: left; }
+.rank-table th:nth-child(3), .rank-table td:nth-child(3) { text-align: right; }
+.rank-table tr { border-bottom: 1px solid var(--line); }
+.rank-table td:nth-child(1) { font-size: 24px; }
+.rank-table td:nth-child(2) { font-weight: 600; color: var(--ink); }
+.rank-table td:nth-child(3) { color: var(--ink-soft); font-family: monospace; }
+.rank-table-note { margin-top: 15px; font-size: 12px; color: var(--ink-soft); font-style: italic; }
+.rank-section-label { margin: 18px 0 6px; font-size: 13px; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+.rank-section-label:first-child { margin-top: 0; }
+
+/* Rank tabs */
+.rank-tabs-wrapper { width: 100%; white-space: normal; }
+.rank-tabs-nav { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid var(--line); padding-bottom: 0; }
+.rank-tab-btn {
+    flex: 1;
+    padding: 8px 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    transition: color 0.15s, border-color 0.15s;
+    border-radius: 4px 4px 0 0;
+}
+.rank-tab-btn:hover { color: var(--ink); background: var(--surface-muted); }
+.rank-tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); background: none; }
+.rank-tab-panel { display: none; }
+.rank-tab-panel.active { display: block; }
+.rank-tab-hint { font-size: 11px; color: var(--ink-soft); font-style: italic; margin: 0 0 8px; }
+.rank-dot { display: inline-block; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--line); vertical-align: middle; }
+
+/* ================================================
+   FILEMAAGER.JS — Contribution modal icons
+   ================================================ */
+
+.icon-heart { fill: #e91e63; color: #e91e63; width: 18px; height: 18px; }
+
+/* ================================================
+   FUSION.JS — File import status + form layout
+   ================================================ */
+
+.fusion-name-loading { color: var(--ink); }
+.fusion-name-ok      { color: var(--ok); }
+.fusion-name-error   { color: var(--danger); }
+.fusion-name-note    { font-style: italic; }
+
+.box-ok { border-color: var(--ok) !important; }
+
+.fusion-poi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 5px;
+}
+.fusion-label { font-size: 11px; color: #64748B; }
+.fusion-input-rtl { text-align: right; }
+
+/* ================================================
+   UI-PHOTO-VIEWER.JS
+   ================================================ */
+
+#photo-viewer {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: var(--bg);
+    z-index: 21000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.viewer-toolbar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 10px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 21010;
+    color: var(--ink);
+    box-shadow: var(--shadow-soft);
+}
+
+.viewer-controls { display: flex; gap: 20px; align-items: center; }
+
+.viewer-title {
+    font-weight: 700;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+    color: var(--brand);
+}
+
+.close-viewer-btn {
+    background: none;
+    border: none;
+    color: var(--ink);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.close-viewer-btn:hover { background: var(--surface-muted); color: var(--danger); }
+.close-viewer-btn svg { width: 28px; height: 28px; }
+
+/* ================================================
+   GHOST MARKER POPUP (searchManager.js + desktopMode.js)
+   ================================================ */
+
+.ghost-popup {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.ghost-popup-title   { font-weight: bold; margin-bottom: 5px; }
+.ghost-popup-coords  { font-size: 11px; color: #888; margin-bottom: 5px; }
+.ghost-popup-hint    { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; }
+.ghost-popup-btn     { background: var(--brand); color: white; padding: 4px 8px; font-size: 12px; cursor: pointer; margin: 0 auto; }
+
+/* ================================================
+   SYNC.JS — QR Sync & Scanner
+   ================================================ */
+
+.sync-qr-container  { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.sync-qr-img        { width: 250px; height: 250px; border-radius: 10px; border: 1px solid var(--line); }
+.sync-qr-info       { text-align: center; }
+.sync-visited-count { font-weight: bold; color: var(--ink); margin-bottom: 5px; }
+.sync-instructions  { color: var(--ink-soft); font-size: 14px; }
+
+#qr-scanner-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+}
+
+#qr-reader { width: 100%; flex-grow: 1; }
+
+.qr-scanner-close-btn {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-scanner-hint {
+    position: absolute;
+    bottom: 50px; left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* ================================================
+   STATISTICS.JS — Explorer Card (Gamification)
+   ================================================ */
+
+:root {
+    --bg-parchment: #f4ecd8;
+    --accent-copper: #b87333;
+    --text-dark: #2c2c2c;
+    --progress-bg: rgba(0, 0, 0, 0.1);
+}
+
+#explorer-card-root { white-space: normal; }
+
+.explorer-card {
+    width: 340px;
+    height: 215px;
+    background: var(--bg-parchment);
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    color: var(--text-dark);
+    position: relative;
+    border: 1px solid #e2d1a8;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 0; height: 60px; }
+
+.avatar {
+    width: 50px; height: 50px; min-width: 50px;
+    border-radius: 50%;
+    background: #e2d1a8;
+    border: 2px solid var(--accent-copper);
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+}
+.avatar svg { width: 60%; height: 60%; stroke: var(--accent-copper); stroke-width: 1.5; }
+
+.title-area { flex-grow: 1; }
+.title-area h2 {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 1.1rem; line-height: 1.1;
+    color: var(--text-dark);
+}
+
+.global-rank { font-style: italic; font-size: 0.75rem; color: #666; margin-top: 2px; }
+
+.stats-container { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
+.stat-group { margin-bottom: 0; }
+.stat-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.65rem; font-weight: bold; margin-bottom: 2px;
+    text-transform: uppercase; color: var(--text-dark);
+}
+.progress-bar-container { width: 100%; height: 6px; background: var(--progress-bg); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-copper), #e68a3e); transition: width 0.5s ease-in-out; }
+.next-goal { font-size: 0.6rem; color: #888; margin-top: 1px; text-align: right; display: none; }
+
+.footer-stats {
+    display: flex; justify-content: space-between;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    padding-top: 8px; font-size: 0.7rem; margin-top: 4px;
+    color: var(--text-dark);
+}
+
+.card-actions { margin-top: 20px; display: flex; justify-content: center; }
+.action-btn-print {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 20px;
+    background: #fff; border: 1px solid #ddd; border-radius: 8px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+    color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.action-btn-print:hover { background: #f9f9f9; transform: translateY(-1px); }
+
