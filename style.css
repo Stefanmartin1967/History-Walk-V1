@@ -2987,7 +2987,9 @@ input[type=range] {
     transform: translateY(1px);
 }
 
-/* --- PATCH DETAILS PANEL (Design Refinement) --- */
+/* ================================================
+   PANNEAU DÉTAIL — Réglages visuels (Design Refinement)
+   ================================================ */
 
 /* 1. Agrandir légèrement les icônes en dessous du titre */
 .panel-header .action-button svg {
@@ -3012,8 +3014,7 @@ input[type=range] {
     gap: 40px !important; /* Espacement unifié avec Détails Pratiques */
 }
 
-/* --- PATCH DETAILS PANEL V2 (Price Input & Alignment) --- */
-/* Note: .price-wrapper, .price-input, .currency-label supprimés (display:none via V3/V4) */
+/* --- V2 : Price Input & Alignment (éléments masqués supprimés) --- */
 
 /* Force l'alignement vertical sur toute la ligne */
 .structured-input-row .input-group {
@@ -3022,7 +3023,7 @@ input[type=range] {
     margin: 0; /* Nettoyage */
 }
 
-/* --- PATCH DETAILS PANEL V3 (Stepper Harmonization) --- */
+/* --- V3 : Stepper Harmonization --- */
 
 /* 1. Conteneur Stepper (Temps & Prix Identiques) */
 .stepper-control {
@@ -3085,7 +3086,7 @@ input[type=range] {
     align-items: center;
 }
 
-/* --- PATCH DETAILS PANEL V4 (Stepper Polish & Centering) --- */
+/* --- V4 : Stepper Polish & Centering --- */
 
 /* 1. Centrage Vertical & Horizontal Absolu */
 .detail-section .content.structured-input-row,
@@ -3138,9 +3139,7 @@ input[type=range] {
     min-width: 80px !important;
 }
 
-/* --- PATCH REGRESSION FIX (Polylines & Zoom) --- */
-
-/* Force re-declaration of Polyline styles to ensure they apply over any accidental breakage */
+/* --- Polylines — re-déclaration anti-régression --- */
 .circuit-polyline {
     stroke: #EF4444 !important; /* Rouge (Vol d'oiseau) - var(--danger) fallback */
     stroke-width: 4px !important;
