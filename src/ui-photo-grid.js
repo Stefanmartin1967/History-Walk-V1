@@ -2,15 +2,23 @@ import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
-import { uploadPhotoForPoi } from './photo-upload.js';
-import { compressImage } from './photo-manager.js';
+import { compressImage, generatePhotoId, uploadPhotoForPoi, ADMIN_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
+import { getPoiPhotos, savePoiPhotos } from './database.js';
 import { createIcons, icons } from 'lucide';
 
 // --- STATE ---
 let currentGridPoiId = null;
+// Chaque entrée : { id, objectUrl, blob, isNew } pour photos locales (Blob)
+//                 { id: null, src, isNew: false }  pour photos serveur (URL string admin)
 let currentGridPhotos = [];
 let isDirty = false;
 let currentResolve = null;
+
+// Object URLs actives — révoquées à la fermeture de la grille
+let activeObjectUrls = [];
+
+// Mode de compression admin : 'OPTIMIZED' | 'ORIGINAL'
+let adminCompressionKey = 'OPTIMIZED';
 
 // --- DOM ELEMENTS ---
 let gridOverlay = null;
@@ -20,6 +28,7 @@ let headerSubtitle = null;
 let btnAdd = null;
 let btnSave = null;
 let btnClose = null;
+let btnCompToggle = null;
 let fileInput = null;
 
 function initDOM() {
@@ -42,7 +51,17 @@ function initDOM() {
     btnAdd.innerHTML = `<i data-lucide="image-up"></i>`;
     btnAdd.onclick = () => fileInput.click();
 
+    // TOGGLE COMPRESSION (admin uniquement — masqué par défaut)
+    btnCompToggle = document.createElement('button');
+    btnCompToggle.className = 'photo-grid-comp-toggle';
+    btnCompToggle.style.display = 'none';
+    btnCompToggle.onclick = () => {
+        adminCompressionKey = adminCompressionKey === 'OPTIMIZED' ? 'ORIGINAL' : 'OPTIMIZED';
+        _updateCompToggle();
+    };
+
     leftGroup.appendChild(btnAdd);
+    leftGroup.appendChild(btnCompToggle);
 
     // --- Center: Title ---
     const titleContainer = document.createElement('div');
@@ -131,43 +150,90 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
         const poiName = feature ? getPoiName(feature) : "Nouveau Lieu";
         headerTitle.textContent = poiName;
 
-        // Determine Mode Title
         if (state.isAdmin) {
-            headerSubtitle.textContent = "(Mode GOD / Admin)";
-            headerSubtitle.classList.add('admin-mode');
+            adminCompressionKey = 'OPTIMIZED'; // Repart toujours sur Optimisée à l'ouverture
+            btnCompToggle.style.display = 'flex';
+            _updateCompToggle();
         } else {
             headerSubtitle.textContent = "";
             headerSubtitle.classList.remove('admin-mode');
-        }
-
-        // Load Photos
-        if (preloadedPhotos) {
-            currentGridPhotos = preloadedPhotos.map(p => ({
-                src: p.base64 || p.src,
-                file: p.file,
-                isNew: true
-            }));
-        } else {
-            const props = { ...feature?.properties, ...feature?.properties?.userData };
-            const photos = props.photos || [];
-            currentGridPhotos = photos.map(src => ({
-                src: src,
-                isNew: false
-            }));
+            btnCompToggle.style.display = 'none';
         }
 
         updateSaveButton();
-        renderGrid();
-
-        // Refresh Icons
+        renderGrid(); // rendu vide initial (spinner implicite via grille vide)
+        gridOverlay.classList.add('active');
         createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridOverlay });
 
-        gridOverlay.classList.add('active');
+        // Chargement async des photos
+        _loadPhotos(poiId, feature, preloadedPhotos).then(() => {
+            renderGrid();
+            createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+        });
     });
+}
+
+/**
+ * Charge les photos selon le contexte (préchargées GPS, admin URL, ou blobs utilisateur).
+ * Crée les Object URLs nécessaires et les enregistre dans activeObjectUrls.
+ */
+async function _loadPhotos(poiId, feature, preloadedPhotos) {
+    // Révoque toute session précédente si on re-ouvre
+    activeObjectUrls.forEach(u => URL.revokeObjectURL(u));
+    activeObjectUrls = [];
+    currentGridPhotos = [];
+
+    if (preloadedPhotos) {
+        // Chemin GPS import : photos pré-compressées (base64 ou File)
+        for (const p of preloadedPhotos) {
+            let blob = p.blob || null;
+            // Préfère le base64 existant (déjà compressé) pour éviter une double compression
+            if (!blob && (p.src || p.base64)) {
+                try { blob = await fetch(p.src || p.base64).then(r => r.blob()); } catch (_) { /* skip */ }
+            }
+            if (!blob && p.file) {
+                try { blob = await compressImage(p.file); } catch (_) { /* skip */ }
+            }
+            if (blob) {
+                const objectUrl = URL.createObjectURL(blob);
+                activeObjectUrls.push(objectUrl);
+                currentGridPhotos.push({ id: generatePhotoId(), objectUrl, blob, isNew: true });
+            }
+        }
+        return;
+    }
+
+    if (state.isAdmin) {
+        // Admin : photos = URL strings dans userData.photos (uploadées sur GitHub)
+        const adminPhotos = feature?.properties?.userData?.photos || [];
+        currentGridPhotos = adminPhotos.map(src => ({ id: null, src, isNew: false }));
+        return;
+    }
+
+    // Utilisateur : blobs dans poiPhotos + URLs admin éventuelles dans userData.photos
+    const storedItems = await getPoiPhotos(state.currentMapId, poiId);
+    for (const item of storedItems) {
+        const objectUrl = URL.createObjectURL(item.blob);
+        activeObjectUrls.push(objectUrl);
+        currentGridPhotos.push({ id: item.id, objectUrl, blob: item.blob, isNew: false });
+    }
+
+    // Ajoute les photos serveur admin (URL strings, non-base64) visibles pour l'utilisateur
+    const adminUrls = (feature?.properties?.userData?.photos || [])
+        .filter(p => typeof p === 'string' && p.startsWith('http'));
+    for (const src of adminUrls) {
+        currentGridPhotos.push({ id: null, src, isNew: false });
+    }
 }
 
 export function closePhotoGrid(saved = false) {
     if (gridOverlay) gridOverlay.classList.remove('active');
+
+    // Révocation des Object URLs pour libérer la mémoire
+    activeObjectUrls.forEach(u => URL.revokeObjectURL(u));
+    activeObjectUrls = [];
+    currentGridPhotos = [];
+
     if (currentResolve) {
         currentResolve({ saved });
         currentResolve = null;
@@ -182,14 +248,17 @@ async function handleFileSelect(e) {
 
     showToast("Traitement...", "info");
 
+    // Choix du profil de compression selon le contexte
+    const profile = state.isAdmin
+        ? ADMIN_COMPRESSION[adminCompressionKey]
+        : USER_COMPRESSION;
+
     for (const file of files) {
         try {
-            const compressed = await compressImage(file);
-            currentGridPhotos.push({
-                src: compressed,
-                file: file,
-                isNew: true
-            });
+            const blob = await compressImage(file, profile.targetMinSize, profile.quality);
+            const objectUrl = URL.createObjectURL(blob);
+            activeObjectUrls.push(objectUrl);
+            currentGridPhotos.push({ id: generatePhotoId(), objectUrl, blob, isNew: true });
         } catch (err) {
             console.error("Image error", err);
         }
@@ -197,6 +266,7 @@ async function handleFileSelect(e) {
 
     isDirty = true;
     renderGrid();
+    createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
     fileInput.value = '';
 }
 
@@ -223,49 +293,38 @@ function renderGrid() {
         card.draggable = true;
         card.dataset.index = index;
 
-        const img = document.createElement('img');
-        img.src = photo.src;
+        const displaySrc = photo.objectUrl || photo.src;
 
-        // --- Badge New ---
-        if (photo.isNew || photo.src.startsWith('data:')) {
+        const img = document.createElement('img');
+        img.src = displaySrc;
+
+        // Badge "NEW" pour les photos fraîchement ajoutées
+        if (photo.isNew) {
             const badge = document.createElement('div');
             badge.className = 'photo-card-new-badge';
             badge.textContent = "NEW";
             card.appendChild(badge);
         }
 
-        // --- Click to View ---
+        // Click → viewer
         img.onclick = () => {
-            // HIDE GRID WHEN OPENING VIEWER
-            // But we keep it active in DOM, just hidden visually to avoid Z-index mess if we want
-            // Actually, best practice is to keep it there but rely on Z-index.
-            // But user complained about "Black Hole".
-            // Since we set bg to var(--bg), it's opaque now.
-
-            // We don't need to set opacity 0 anymore if the Viewer covers everything perfectly.
-            // But to be safe and avoid double scrollbars or weird interactions:
-            // Let's NOT hide it, but just rely on the new Viewer Z-Index (21000).
-
-            import('./photo-manager.js').then(pm => {
-                pm.setCurrentPhotos(currentGridPhotos.map(p => p.src), index);
+            import('./photo-service.js').then(pm => {
+                pm.setCurrentPhotos(currentGridPhotos.map(p => p.objectUrl || p.src), index);
                 const viewer = document.getElementById('photo-viewer');
                 const viewerImg = document.getElementById('viewer-img');
                 const toolbar = document.getElementById('viewer-toolbar');
 
-                // Viewer Open Logic is in ui-photo-viewer.js mostly but we trigger display here
                 if (viewer && viewerImg) {
-                    viewerImg.src = photo.src;
+                    viewerImg.src = displaySrc;
                     viewer.style.display = 'flex';
-                    // We rely on CSS update for Z-Index (next step) or force it here:
                     viewer.style.zIndex = '21000';
 
                     if (toolbar) toolbar.style.display = 'flex';
 
-                    // Hide Edit Actions in Viewer when opened from Grid
                     const uploadBtn = document.getElementById('viewer-btn-upload');
                     const deleteBtn = document.getElementById('viewer-btn-delete');
-                    if(uploadBtn) uploadBtn.style.display = 'none';
-                    if(deleteBtn) deleteBtn.style.display = 'none';
+                    if (uploadBtn) uploadBtn.style.display = 'none';
+                    if (deleteBtn) deleteBtn.style.display = 'none';
                 }
             });
         };
@@ -274,11 +333,8 @@ function renderGrid() {
         const actions = document.createElement('div');
         actions.className = 'photo-card-actions';
 
-        // CONDITIONAL DELETE BUTTON
-        // Only show if it's a local photo (data:image) OR if we are NOT in Admin Mode?
-        // User said: "Simplification : Tu retires la poubelle des photos qui sont sur le serveur"
-
-        const isServerPhoto = !photo.src.startsWith('data:image');
+        // Bouton supprimer seulement pour les photos locales (blob) — pas pour les URL serveur admin
+        const isServerPhoto = !photo.blob;
 
         if (!isServerPhoto) {
             const btnDel = document.createElement('button');
@@ -361,38 +417,70 @@ function updateSaveButton() {
     }
 }
 
+/** Met à jour l'apparence du bouton toggle et le sous-titre admin. */
+function _updateCompToggle() {
+    if (!btnCompToggle) return;
+    const profile = ADMIN_COMPRESSION[adminCompressionKey];
+    const isOptimized = adminCompressionKey === 'OPTIMIZED';
+
+    btnCompToggle.className = `photo-grid-comp-toggle ${isOptimized ? 'comp-optimized' : 'comp-original'}`;
+    btnCompToggle.title = isOptimized
+        ? 'Mode Optimisée actif — cliquer pour Pleine qualité'
+        : 'Mode Pleine qualité actif — cliquer pour Optimisée';
+    btnCompToggle.innerHTML = isOptimized
+        ? `<i data-lucide="image-down"></i><span>${profile.label}</span>`
+        : `<i data-lucide="image"></i><span>${profile.label}</span>`;
+
+    // Mise à jour du sous-titre
+    if (headerSubtitle) {
+        headerSubtitle.textContent = `Admin — ${profile.label}`;
+        headerSubtitle.classList.add('admin-mode');
+    }
+
+    createIcons({ icons, nameAttr: 'data-lucide', attrs: { class: 'lucide' }, root: btnCompToggle });
+}
+
 async function handleSave() {
     btnSave.disabled = true;
-    const finalPhotos = currentGridPhotos.map(p => p.src);
 
     try {
         if (state.isAdmin) {
+            // ─── Mode Admin : upload GitHub + save URL strings dans userData ───
             showToast("Upload en cours...", "info");
 
-            // Perform uploads in parallel to improve performance
-            const uploadPromises = finalPhotos.map(async (photo, i) => {
-                if (photo.startsWith('data:image')) {
-                    const response = await fetch(photo);
-                    const blob = await response.blob();
-                    const file = new File([blob], "temp.jpg", { type: "image/jpeg" });
-
+            const finalUrls = [];
+            const uploads = currentGridPhotos.map(async (photo) => {
+                const src = photo.objectUrl || photo.src;
+                if (photo.blob) {
+                    // Photo locale → upload GitHub
+                    const file = new File([photo.blob], "photo.jpg", { type: "image/jpeg" });
                     const publicUrl = await uploadPhotoForPoi(file, currentGridPoiId);
-                    finalPhotos[i] = publicUrl;
+                    finalUrls.push(publicUrl);
                     return true;
+                } else {
+                    // Déjà une URL serveur
+                    finalUrls.push(src);
+                    return false;
                 }
-                return false;
             });
 
-            const results = await Promise.all(uploadPromises);
-            const uploadCount = results.filter(r => r === true).length;
-
+            const results = await Promise.all(uploads);
+            const uploadCount = results.filter(Boolean).length;
             if (uploadCount > 0) showToast(`${uploadCount} photo(s) envoyée(s) !`, "success");
+
+            await updatePoiData(currentGridPoiId, 'photos', finalUrls);
+
+        } else {
+            // ─── Mode Utilisateur : sauvegarde blobs dans poiPhotos ───
+            const blobItems = currentGridPhotos
+                .filter(p => p.blob)
+                .map(p => ({ id: p.id || generatePhotoId(), blob: p.blob }));
+
+            await savePoiPhotos(state.currentMapId, currentGridPoiId, blobItems);
         }
 
-        await updatePoiData(currentGridPoiId, 'photos', finalPhotos);
         showToast("Sauvegarde effectuée.", "success");
-
-        closePhotoGrid(true); // Resolve promise with saved=true
+        closePhotoGrid(true);
 
     } catch (e) {
         console.error(e);

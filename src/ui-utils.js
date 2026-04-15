@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { getAllPoiPhotosForMap } from './database.js';
 
 // --- ÉDITION DE CONTENU ---
 
@@ -21,9 +22,8 @@ export function closeAllDropdowns() {
 
 // --- ESTIMATION TAILLE SAUVEGARDE ---
 
-export function updateBackupSizeEstimates() {
-    // 1. Calcul taille JSON (Lite)
-    // On simule l'objet qui sera exporté
+export async function updateBackupSizeEstimates() {
+    // 1. Calcul taille JSON (Lite) — ne contient plus les photos (stockées dans poiPhotos)
     const liteData = {
         appVersion: "ESTIMATION",
         backupVersion: "3.0",
@@ -34,39 +34,36 @@ export function updateBackupSizeEstimates() {
     const jsonStr = JSON.stringify(liteData);
     const bytesLite = new Blob([jsonStr]).size;
 
-    // Formatage Lite
-    const sizeLite = formatBytes(bytesLite);
     const spanLite = document.getElementById('backup-size-lite');
-    if(spanLite) spanLite.textContent = `~${sizeLite}`;
+    if (spanLite) spanLite.textContent = `~${formatBytes(bytesLite)}`;
 
-    // 2. Calcul taille Photos (Full)
-    // On parcourt userData pour trouver les photos Base64
+    // 2. Calcul taille Photos — lit les Blobs depuis le store poiPhotos
     let photoCount = 0;
     let photoBytes = 0;
 
-    if (state.userData) {
-        Object.values(state.userData).forEach(data => {
-            if (data.photos && Array.isArray(data.photos)) {
-                data.photos.forEach(photo => {
-                    if (typeof photo === 'string' && photo.startsWith('data:image')) {
+    try {
+        if (state.currentMapId) {
+            const allPhotoRecords = await getAllPoiPhotosForMap(state.currentMapId);
+            allPhotoRecords.forEach(record => {
+                (record.photos || []).forEach(item => {
+                    if (item.blob instanceof Blob) {
                         photoCount++;
-                        // Estimation taille Base64 : taille string * 0.75 (approx)
-                        photoBytes += photo.length; // En mémoire JS string = 2 octets/char mais en UTF-8 export c'est proche
+                        photoBytes += item.blob.size;
                     }
                 });
-            }
-        });
+            });
+        }
+    } catch (err) {
+        console.warn("Impossible de calculer la taille des photos:", err);
     }
 
     const totalFull = bytesLite + photoBytes;
-    const sizeFull = formatBytes(totalFull);
-
     const spanFull = document.getElementById('backup-size-full');
-    if(spanFull) {
-        if(photoCount > 0) {
-            spanFull.textContent = `~${sizeFull} (${photoCount} photo${photoCount > 1 ? 's' : ''})`;
+    if (spanFull) {
+        if (photoCount > 0) {
+            spanFull.textContent = `~${formatBytes(totalFull)} (${photoCount} photo${photoCount > 1 ? 's' : ''})`;
         } else {
-            spanFull.textContent = `~${sizeFull} (Sans photos)`;
+            spanFull.textContent = `~${formatBytes(totalFull)} (Sans photos)`;
         }
     }
 }

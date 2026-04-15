@@ -2,7 +2,17 @@
 const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
 
-const DB_VERSION = 5;
+const DB_VERSION = 6;
+
+// Helper: convert a base64 data-URL string to a Blob
+function base64ToBlob(base64) {
+    const [header, data] = base64.split(',');
+    const mime = (header.match(/:(.*?);/) || [])[1] || 'image/jpeg';
+    const binary = atob(data);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new Blob([bytes], { type: mime });
+}
 let db; // Variable locale au module pour garder la connexion ouverte
 
 export function initDB() {
@@ -52,6 +62,12 @@ export function initDB() {
             // CORRECTION: On ne supprime plus le store s'il existe déjà pour éviter de perdre des données lors d'une update
             if (!tempDb.objectStoreNames.contains('modifications')) {
                 tempDb.createObjectStore('modifications', { autoIncrement: true });
+            }
+
+            // 5. Photos utilisateur (Blobs natifs — séparé de poiUserData pour alléger les exports)
+            if (!tempDb.objectStoreNames.contains('poiPhotos')) {
+                tempDb.createObjectStore('poiPhotos', { keyPath: ['mapId', 'poiId'] })
+                      .createIndex('mapId_index', 'mapId', { unique: false });
             }
         };
     });
@@ -247,7 +263,7 @@ export async function clearAllUserData() {
     try {
         const db = await initDB();
         // On liste explicitement les stores connus
-        const storesToClear = ['poiUserData', 'savedCircuits', 'appState', 'modifications'];
+        const storesToClear = ['poiUserData', 'savedCircuits', 'appState', 'modifications', 'poiPhotos'];
         
         // On vérifie qu'ils existent dans la version actuelle de la DB pour éviter une erreur
         const activeStores = storesToClear.filter(name => db.objectStoreNames.contains(name));
@@ -309,6 +325,113 @@ export function deleteDatabase() {
             // On ne peut pas forcer la fermeture des autres onglets via JS.
             await showAlert("Base de données verrouillée", "Veuillez fermer les autres onglets de l'application pour permettre la réinitialisation complète.");
         };
+    });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PHOTOS (poiPhotos store)
+// Chaque enregistrement : { mapId, poiId, photos: [{ id: string, blob: Blob }] }
+// La migration lazy convertit les anciens base64 de poiUserData → Blob ici.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Charge les photos d'un POI depuis le store dédié.
+ * Migration automatique si des base64 traînent encore dans poiUserData.
+ * @returns {Promise<Array<{id: string, blob: Blob}>>}
+ */
+export async function getPoiPhotos(mapId, poiId) {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(['poiPhotos', 'poiUserData'], 'readwrite');
+        tx.onerror = (e) => reject(e.target.error);
+
+        const photosStore = tx.objectStore('poiPhotos');
+        const userDataStore = tx.objectStore('poiUserData');
+
+        const req1 = photosStore.get([mapId, poiId]);
+        req1.onerror = (e) => reject(e.target.error);
+        req1.onsuccess = () => {
+            const existing = req1.result;
+            if (existing?.photos?.length > 0) {
+                resolve(existing.photos);
+                return;
+            }
+
+            // Migration lazy : cherche les base64 dans l'ancien store
+            const req2 = userDataStore.get([mapId, poiId]);
+            req2.onerror = (e) => reject(e.target.error);
+            req2.onsuccess = () => {
+                const oldData = req2.result;
+                const base64List = (oldData?.photos || []).filter(
+                    p => typeof p === 'string' && p.startsWith('data:')
+                );
+
+                if (base64List.length === 0) {
+                    resolve([]);
+                    return;
+                }
+
+                // Convertit base64 → Blob et persiste dans le nouveau store
+                const migrated = base64List.map((b64, i) => ({
+                    id: `migrated_${poiId}_${i}_${Date.now()}`,
+                    blob: base64ToBlob(b64)
+                }));
+
+                photosStore.put({ mapId, poiId, photos: migrated });
+
+                // Retire les base64 de poiUserData (conserve les URL strings admin)
+                const remainingPhotos = (oldData.photos || []).filter(
+                    p => typeof p === 'string' && !p.startsWith('data:')
+                );
+                oldData.photos = remainingPhotos;
+                userDataStore.put(oldData);
+
+                tx.oncomplete = () => resolve(migrated);
+            };
+        };
+    });
+}
+
+/**
+ * Sauvegarde (remplace) toutes les photos d'un POI dans le store dédié.
+ * @param {string} mapId
+ * @param {string} poiId
+ * @param {Array<{id: string, blob: Blob}>} photos
+ */
+export async function savePoiPhotos(mapId, poiId, photos) {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('poiPhotos', 'readwrite');
+        const req = tx.objectStore('poiPhotos').put({ mapId, poiId, photos });
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+    });
+}
+
+/**
+ * Supprime toutes les photos d'un POI.
+ */
+export async function deletePoiPhotos(mapId, poiId) {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('poiPhotos', 'readwrite');
+        const req = tx.objectStore('poiPhotos').delete([mapId, poiId]);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+    });
+}
+
+/**
+ * Retourne toutes les entrées photos pour une carte (pour calcul de taille backup).
+ * @returns {Promise<Array<{mapId, poiId, photos}>>}
+ */
+export async function getAllPoiPhotosForMap(mapId) {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('poiPhotos', 'readonly');
+        const req = tx.objectStore('poiPhotos').index('mapId_index').getAll(mapId);
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = (e) => reject(e.target.error);
     });
 }
 
