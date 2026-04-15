@@ -118,9 +118,13 @@ function showWelcome() {
                 <div class="welcome-slides" id="welcome-slides"></div>
             </div>
             <div class="welcome-dots" id="welcome-dots"></div>
-            <div class="welcome-actions">
+            <div class="welcome-actions" id="welcome-actions">
                 <button class="welcome-btn-skip" id="welcome-skip">Passer</button>
                 <button class="welcome-btn-next" id="welcome-next">Suivant →</button>
+            </div>
+            <div class="welcome-choices" id="welcome-choices">
+                <button class="welcome-btn-choice-primary" id="welcome-all">Tous les circuits →</button>
+                <button class="welcome-btn-choice-secondary" id="welcome-space">Choisir dans Mon Espace</button>
             </div>
         </div>
     `;
@@ -130,6 +134,8 @@ function showWelcome() {
     const dotsEl    = document.getElementById('welcome-dots');
     const btnNext   = document.getElementById('welcome-next');
     const btnSkip   = document.getElementById('welcome-skip');
+    const actions   = document.getElementById('welcome-actions');
+    const choices   = document.getElementById('welcome-choices');
 
     // Construire les slides
     slides.forEach((s, i) => {
@@ -155,19 +161,25 @@ function showWelcome() {
             d.classList.toggle('active', i === current);
         });
         const isLast = current === slides.length - 1;
-        btnNext.textContent = isLast ? 'Commencer !' : 'Suivant →';
-        btnSkip.style.visibility = isLast ? 'hidden' : 'visible';
+        actions.style.display  = isLast ? 'none' : '';
+        choices.style.display  = isLast ? 'flex' : 'none';
     }
 
     btnNext.addEventListener('click', () => {
-        if (current < slides.length - 1) {
-            goTo(current + 1);
-        } else {
-            close();
-        }
+        if (current < slides.length - 1) goTo(current + 1);
     });
 
     btnSkip.addEventListener('click', close);
+
+    // Dernier slide — choix circuits
+    document.getElementById('welcome-all').addEventListener('click', close);
+
+    document.getElementById('welcome-space').addEventListener('click', () => {
+        close();
+        setTimeout(() => {
+            import('./user-space.js').then(({ openUserSpace }) => openUserSpace());
+        }, 400);
+    });
 
     // Swipe mobile
     let touchStartX = 0;

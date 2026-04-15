@@ -163,3 +163,39 @@
 }
 .welcome-btn-next:hover { opacity: 0.85; }
 
+/* Dernier slide — choix circuits */
+.welcome-choices {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+.welcome-btn-choice-primary {
+    width: 100%;
+    padding: 12px 20px;
+    background: var(--brand);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+.welcome-btn-choice-primary:hover { opacity: 0.85; }
+.welcome-btn-choice-secondary {
+    width: 100%;
+    padding: 11px 20px;
+    background: none;
+    color: var(--brand);
+    border: 2px solid var(--brand);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.welcome-btn-choice-secondary:hover {
+    background: var(--brand);
+    color: white;
+}
