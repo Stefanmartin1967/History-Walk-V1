@@ -503,7 +503,8 @@ body.sidebar-open #map {
 .checkbox-group {
     justify-content: center;
     align-items: center;
-    gap: 60px;
+    gap: 40px;
+    flex-wrap: wrap;
 }
 
 .description-section,
@@ -1574,12 +1575,6 @@ textarea.editable-input {
 .photo-delete-btn svg {
     width: 12px;
     height: 12px;
-}
-
-.checkbox-group {
-    justify-content: center !important;
-    gap: 15px;
-    flex-wrap: wrap;
 }
 
 /* Le conteneur (Fond noir) */
@@ -3033,11 +3028,13 @@ input[type=range] {
 .stepper-control {
     display: flex;
     align-items: center;
-    gap: 0; /* Boutons collés ou léger gap géré par marges */
+    justify-content: space-between;
+    gap: 0;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: var(--surface);
-    height: 40px; /* Hauteur fixe Harmonisée */
+    height: 40px;
+    width: 160px; /* Largeur fixe pour empêcher tout mouvement */
     overflow: hidden;
 }
 
@@ -3129,15 +3126,6 @@ input[type=range] {
     background: var(--surface-muted);
     min-width: 50px; /* Largeur FIXE pour la devise */
     text-align: center;
-}
-
-/* Si la devise est cachée (display:none via JS pour "Gratuit"), on garde l'espace ?
-   Non, l'utilisateur veut que "Prix" ait la MEME largeur.
-   Donc le conteneur global doit être fixe. */
-
-.stepper-control {
-    width: 160px; /* Largeur FIXE TOTALE pour empêcher tout mouvement */
-    justify-content: space-between; /* Répartit les boutons aux extrémités */
 }
 
 /* 4. Suppression de l'ancien label devise externe */
