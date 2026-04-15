@@ -1,0 +1,165 @@
+/* ================================================
+   MOBILE.JS — Circuit list + POI list + Menu
+   ================================================ */
+
+/* Header pagination */
+.mobile-circuits-header { justify-content: space-between; align-items: center; padding: 0 8px; }
+.mobile-circuits-center { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.mobile-circuits-center h1 { margin: 0; }
+.mobile-circuits-center .mobile-page-info { font-size: 0.75rem; color: var(--ink-soft); }
+.mobile-pagination-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
+.mobile-pagination-btn:disabled { opacity: 0.25; pointer-events: none; }
+.mobile-page-info { font-size: 14px; font-weight: 600; color: var(--ink); min-width: 30px; text-align: center; }
+
+/* Circuit item layout */
+.mobile-circuit-card-wrapper { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
+.mobile-circuit-info { display: flex; flex-direction: column; flex: 1; min-width: 0; margin-right: 4px; }
+.mobile-circuit-name-row { display: flex; align-items: center; width: 100%; min-width: 0; overflow: hidden; }
+.mobile-circuit-name { font-size: 16px; color: var(--ink); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex: 1; min-width: 0; font-weight: 400; }
+.mobile-circuit-name--official { font-weight: 700; }
+.mobile-circuit-right { display: flex; align-items: center; flex-shrink: 0; align-self: center; height: 100%; }
+
+/* Status icons */
+.mobile-check-btn.done { color: var(--ok); }
+.mobile-check-btn.todo { color: var(--line); }
+.mobile-status-badge { font-size: 12px; color: var(--ink-soft); font-weight: 600; background: var(--surface-muted); padding: 2px 6px; border-radius: 4px; }
+.icon-official-star { color: var(--primary); width: 14px; height: 14px; margin-left: 5px; fill: var(--primary); }
+.icon-tested { color: #2e7d32; fill: #2e7d32; } /* Vert foncé pour le bouclier "testé" */
+.icon-utensils-meta { width: 14px; height: 14px; margin-left: 4px; vertical-align: text-bottom; }
+.icon-map-meta { width: 14px; height: 14px; margin: 0 4px; }
+.icon-check-visited { width: 20px; height: 20px; margin-left: 5px; color: var(--ok); stroke-width: 3; }
+
+/* POI list header */
+.mobile-poi-header { flex-shrink: 0; display: flex; align-items: center; }
+.mobile-poi-header-inner { display: flex; align-items: center; flex: 1; min-width: 0; }
+.mobile-poi-header-inner h1 { flex: 1; text-align: center; margin: 0; }
+.mobile-back-btn-phantom { width: 36px; height: 36px; flex-shrink: 0; }
+.mobile-back-btn { flex-shrink: 0; margin-right: 10px; }
+
+/* Bouton admin "Testé sur le terrain" dans l'en-tête de liste circuit */
+.mobile-toggle-tested-btn {
+    flex-shrink: 0;
+    width: 36px; height: 36px;
+    border: none; border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink-soft);
+    transition: color 0.2s, background 0.2s;
+}
+.mobile-toggle-tested-btn:hover { background: var(--surface-muted); color: var(--ink); }
+.mobile-toggle-tested-btn.tested { color: #2e7d32; }
+.mobile-toggle-tested-btn .lucide { width: 18px; height: 18px; }
+.mobile-poi-title { margin: 0; font-size: 18px; font-weight: 700; min-width: 0; line-height: 1.3; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.mobile-poi-icon--visited { color: var(--ok); display: flex; align-items: center; }
+.mobile-poi-icon--unvisited { color: var(--brand); display: flex; align-items: center; }
+.mobile-poi-icon-wrapper { display: flex; align-items: center; gap: 10px; }
+
+/* Share button footer */
+.mobile-poi-footer { flex-shrink: 0; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background-color: var(--surface); z-index: 10; display: flex; flex-direction: row; gap: 8px; }
+.btn-share-circuit-mobile { flex: 1; padding: 11px 8px; border-radius: 10px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; transition: all 0.2s; background-color: var(--surface); color: var(--brand); border: 2px solid var(--brand); }
+.btn-download-gpx-mobile { flex-shrink: 0; padding: 11px 14px; border-radius: 10px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 14px; transition: all 0.2s; background-color: var(--surface-muted); color: var(--ink-soft); border: 1px solid var(--line); text-decoration: none; }
+
+/* Zone filter btn */
+.mobile-zone-btn-inner { flex: 1; }
+.mobile-zone-btn-count { font-weight: bold; color: var(--ink-soft); }
+.mobile-zone-btn--active { border: 2px solid var(--brand); }
+
+/* Search result icon */
+.mobile-search-result-icon { color: var(--brand); display: flex; align-items: center; margin-right: 16px; }
+
+/* Menu */
+.mobile-menu-admin-header { padding: 10px 20px; font-weight: bold; color: var(--brand); font-size: 0.85em; text-transform: uppercase; }
+.mobile-menu-brand-item { color: var(--brand); }
+.mobile-menu-brand-item span { color: var(--brand); font-weight: 600; }
+.mobile-admin-login-btn--admin { color: var(--danger); }
+.mobile-admin-login-btn--normal { color: var(--ink); }
+.mobile-version-footer { text-align: center; color: var(--ink-soft); font-size: 12px; margin-top: 20px; padding-bottom: 100px; }
+
+/* App share QR modal */
+.app-share-qr-container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.app-share-qr-text { text-align: center; color: var(--ink); }
+.app-share-qr-img { width: 200px; height: 200px; border-radius: 12px; border: 1px solid var(--line); }
+.app-share-qr-url { font-size: 12px; color: var(--brand); word-break: break-all; text-align: center; }
+
+/* ── MOBILE VIEW TRANSITIONS ─────────────────────────────────────────────── */
+@keyframes mobileViewEnter {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+#mobile-main-container.view-enter {
+    animation: mobileViewEnter 0.18s ease-out both;
+}
+
+/* ── WELCOME SCREEN ──────────────────────────────────────────────────────── */
+#welcome-overlay {
+    position: fixed; inset: 0; z-index: 99999;
+    background: rgba(0,0,0,0.55);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.3s ease;
+    padding: 16px;
+}
+#welcome-overlay.welcome-visible { opacity: 1; }
+#welcome-overlay.welcome-fadeout { opacity: 0; pointer-events: none; }
+
+.welcome-modal {
+    background: var(--surface);
+    border-radius: 20px;
+    width: 100%; max-width: 420px;
+    padding: 32px 24px 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.welcome-slides-wrapper { width: 100%; overflow: hidden; }
+.welcome-slides {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.welcome-slide {
+    min-width: 100%;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    text-align: center;
+}
+.welcome-illustration svg {
+    width: 180px; height: 130px;
+}
+.welcome-title {
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--ink); margin: 0;
+    line-height: 1.3;
+}
+.welcome-text {
+    font-size: 0.95rem; color: var(--ink-soft);
+    margin: 0; line-height: 1.6; max-width: 340px;
+}
+.welcome-dots {
+    display: flex; gap: 8px;
+}
+.welcome-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ink-soft); opacity: 0.3;
+    cursor: pointer; transition: all 0.2s;
+}
+.welcome-dot.active {
+    background: var(--brand); opacity: 1;
+    width: 24px; border-radius: 4px;
+}
+.welcome-actions {
+    width: 100%; display: flex;
+    justify-content: space-between; align-items: center;
+}
+.welcome-btn-skip {
+    background: none; border: none;
+    color: var(--ink-soft); font-size: 0.9rem;
+    cursor: pointer; padding: 8px 4px;
+}
+.welcome-btn-next {
+    background: var(--brand); color: white;
+    border: none; border-radius: 10px;
+    padding: 10px 24px; font-size: 0.95rem;
+    font-weight: 600; cursor: pointer;
+    transition: opacity 0.2s;
+}
+.welcome-btn-next:hover { opacity: 0.85; }
+
