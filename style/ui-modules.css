@@ -532,7 +532,7 @@
 /* ── SCROLL AREA ──────────────────────────────────────────────────────────── */
 .ue-scroll-area {
     flex: 1; overflow-y: auto;
-    padding: 20px 28px 24px;
+    padding: 12px 20px 16px;
 }
 .ue-scroll-area::-webkit-scrollbar { width: 4px; }
 .ue-scroll-area::-webkit-scrollbar-thumb { background: #D1C4A8; border-radius: 4px; }
@@ -548,7 +548,7 @@
 /* ── SECTION HEADER ───────────────────────────────────────────────────────── */
 .ue-section-header {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
 }
 .ue-section-title {
     display: flex; align-items: center; gap: 8px;
@@ -586,42 +586,40 @@
 .ue-hint-banner svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; }
 
 /* ── LISTE CIRCUITS ───────────────────────────────────────────────────────── */
-.ue-circuits-list { display: flex; flex-direction: column; gap: 8px; }
+.ue-circuits-list { display: flex; flex-direction: column; gap: 3px; }
 .ue-circuit-item {
     display: flex; align-items: center;
-    padding: 12px 14px;
+    padding: 8px 12px;
     background: white;
-    border: 1px solid #E5E7EB; border-radius: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-    cursor: pointer; gap: 12px;
-    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    border: 1px solid #E5E7EB; border-radius: 8px;
+    cursor: pointer; gap: 10px;
+    transition: border-color 0.2s, background 0.2s;
 }
 .ue-circuit-item:hover {
     border-color: var(--hw-amber, #D97706);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    background: #FFFBF0;
 }
 .ue-circuit-item.is-checked {
     border-color: #FCD34D;
     background: #FFFBF0;
 }
 .ue-circuit-icon-box {
-    width: 38px; height: 38px; flex-shrink: 0;
+    width: 30px; height: 30px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     background: #FFFBEB; color: var(--hw-amber, #D97706);
-    border-radius: 10px;
+    border-radius: 8px;
 }
 .ue-circuit-icon-box.muted { background: #F1F5F9; color: #94A3B8; }
 .ue-circuit-icon-box svg { width: 17px; height: 17px; }
 .ue-circuit-info { flex: 1; min-width: 0; }
 .ue-circuit-name {
-    font-size: 0.88rem; font-weight: 700;
+    font-size: 0.82rem; font-weight: 700;
     color: var(--hw-ink, #1C0A00);
     display: -webkit-box;
     -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden; line-height: 1.35;
+    overflow: hidden; line-height: 1.3;
 }
-.ue-circuit-meta { font-size: 0.73rem; margin-top: 3px; color: #94A3B8; display: block; }
+.ue-circuit-meta { font-size: 0.7rem; margin-top: 1px; color: #94A3B8; display: block; }
 
 /* ── TOGGLE SWITCH ────────────────────────────────────────────────────────── */
 .ue-toggle-wrap {
