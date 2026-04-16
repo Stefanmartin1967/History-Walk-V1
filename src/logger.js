@@ -5,12 +5,7 @@ import { state } from './state.js';
 import { showToast } from './toast.js';
 
 async function getDbConnection() {
-    await initDB();
-    const request = indexedDB.open('HistoryWalkDB');
-    return new Promise((resolve, reject) => {
-        request.onsuccess = event => resolve(event.target.result);
-        request.onerror = event => reject(event.target.error);
-    });
+    return initDB();
 }
 
 export async function logModification(poiId, action, field, oldValue, newValue) {

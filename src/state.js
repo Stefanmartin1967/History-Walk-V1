@@ -8,8 +8,6 @@ export const POI_CATEGORIES = [
     "Restaurant", "Salon de thé", "Site historique", "Site religieux", "Taxi"
 ].sort();
 
-import { getPoiName } from './utils.js';
-
 // --- 1. LE FRIGO (L'État Global) ---
 export const state = {
     isMobile: false,
@@ -40,6 +38,7 @@ export const state = {
     ghostMarker: null, // Marqueur temporaire pour la recherche de coordonnées
     draggingMarkerId: null, // Marqueur en cours de déplacement (pour ignorer le clic)
     filterCompleted: false,
+    hasUnexportedChanges: false,
     isAdmin: false, // Activation du "God Mode"
     selectedOfficialCircuitIds: null, // null = tous affichés, [] = aucun, [...ids] = sélection
     selectionModeFilters: {
@@ -104,18 +103,12 @@ export function updateMyCircuit(updatedCircuit) {
 
 // Gardien pour supprimer un circuit perso
 export function removeMyCircuit(circuitId) {
-    const initialLength = state.myCircuits.length;
     state.myCircuits = state.myCircuits.filter(c => String(c.id) !== String(circuitId));
-    if (state.myCircuits.length < initialLength) {
-    }
 }
 
 // Gardien pour ajouter un point au circuit
 export function addPoiToCurrentCircuit(feature) {
     state.currentCircuit.push(feature);
-    
-    // Pour la console, on essaie de récupérer le nom du lieu
-    const poiName = getPoiName(feature);
 }
 
 // --- Nouveaux Gardiens ajoutés (Nettoyage de Dette Technique) ---

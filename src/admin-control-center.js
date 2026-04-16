@@ -9,7 +9,7 @@ import { saveAppState, getAppState } from './database.js';
 
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, diffData } from './admin-diff-engine.js';
-import { injectAdminStyles, openControlCenterModal, renderTab } from './admin-control-ui.js';
+import { openControlCenterModal, renderTab } from './admin-control-ui.js';
 import { RichEditor } from './richEditor.js';
 
 // --- STATE MANAGEMENT (Brouillon) ---
@@ -31,8 +31,6 @@ export async function initAdminControlCenter() {
     // Migration : nettoyer l'ancienne clé localStorage si elle existe encore
     localStorage.removeItem('admin_draft_v1');
 
-    // Injection des styles via le nouveau module UI
-    injectAdminStyles();
 }
 
 function updateButtonBadge() {

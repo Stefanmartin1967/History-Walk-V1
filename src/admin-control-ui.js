@@ -4,15 +4,10 @@ import { getStoredToken, saveToken, uploadFileToGitHub } from './github-sync.js'
 import { showToast } from './toast.js';
 import { showAlert } from './modal.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
-
-const GITHUB_OWNER = 'Stefanmartin1967';
-const GITHUB_REPO  = 'History-Walk-V1';
+import { GITHUB_OWNER, GITHUB_REPO } from './config.js';
 
 // Ce fichier gère l'affichage (HTML, CSS, Interactions UI) du panneau d'administration
 
-export function injectAdminStyles() {
-    // Styles moved to style.css
-}
 
 export function openControlCenterModal(diffData, callbacks) {
     const html = `

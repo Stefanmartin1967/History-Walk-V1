@@ -23,7 +23,7 @@
 .mobile-check-btn.done { color: var(--ok); }
 .mobile-check-btn.todo { color: var(--line); }
 .mobile-status-badge { font-size: 12px; color: var(--ink-soft); font-weight: 600; background: var(--surface-muted); padding: 2px 6px; border-radius: 4px; }
-.icon-official-star { color: var(--primary); width: 14px; height: 14px; margin-left: 5px; fill: var(--primary); }
+.icon-official-star { color: var(--brand); width: 14px; height: 14px; margin-left: 5px; fill: var(--brand); }
 .icon-tested { color: #2e7d32; fill: #2e7d32; } /* Vert foncé pour le bouclier "testé" */
 .icon-utensils-meta { width: 14px; height: 14px; margin-left: 4px; vertical-align: text-bottom; }
 .icon-map-meta { width: 14px; height: 14px; margin: 0 4px; }
