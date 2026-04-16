@@ -28,7 +28,7 @@ import { renderMobileMenu } from './mobile-menu.js';
 
 export { isMobileView } from './mobile-state.js';
 
-// ─── Flag interne : évite de re-pousher l'historique lors d'un retour ─────────
+// ─── Flag interne : évite les boucles pendant le traitement d'un popstate ────
 
 let _poppingState = false;
 
@@ -40,23 +40,26 @@ export function initMobileMode() {
     // Hack Android/iOS : masquer la barre d'adresse
     setTimeout(() => { window.scrollTo(0, 1); }, 0);
 
-    // ─── Bouton Retour Android (hardware back button) ─────────────────────────
-    // Pose la baseline historique pour que le premier "back" reste dans l'app.
-    history.replaceState({ hwView: 'circuits' }, '');
+    // ─── Bouton Retour Android — pattern "sentinel" ───────────────────────────
+    // On pousse UNE entrée sentinelle. Sur chaque Back :
+    //  - si pas à la racine : ré-injecte la sentinelle + retour circuits
+    //  - si à la racine (circuits) : ne ré-injecte pas → prochain Back sort de l'app
+    history.pushState({ hwSentinel: true }, '');
 
     window.addEventListener('popstate', () => {
         if (!isMobileView()) return;
-        _poppingState = true;
         const view = getCurrentView();
-        if (view === 'circuit-details') {
-            clearCircuit(false);
+        const atRoot = view === 'circuits';
+
+        if (!atRoot) {
+            // Ré-injecte la sentinelle pour intercepter le Back suivant
+            history.pushState({ hwSentinel: true }, '');
+            _poppingState = true;
+            if (view === 'circuit-details') clearCircuit(false);
             switchMobileView('circuits');
-        } else if (view !== 'circuits') {
-            switchMobileView('circuits');
+            _poppingState = false;
         }
-        // Si on est déjà à 'circuits', l'historique est épuisé →
-        // le prochain Back sort de l'app (comportement natif souhaité).
-        _poppingState = false;
+        // Si atRoot : sentinelle non ré-injectée → prochain Back quitte l'app
     });
 
     // ─── Swipe horizontal sur le container mobile ─────────────────────────────
@@ -160,12 +163,6 @@ export function switchMobileView(viewName) {
     setCurrentView(viewName);
     if (viewName === 'circuits') {
         setMobileCurrentPage(1);
-    }
-
-    // Pousse un état historique pour le bouton Retour Android,
-    // sauf quand on est déjà en train de traiter un popstate.
-    if (!_poppingState && viewName !== 'circuits') {
-        history.pushState({ hwView: viewName }, '');
     }
 
     // Mise à jour des boutons du dock
