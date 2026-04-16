@@ -48,6 +48,7 @@ export function setupEventBusListeners() {
         if (result.success) eventBus.emit('circuit:list-updated');
     });
     eventBus.on('circuit:list-updated', () => populateCircuitsMenu());
+    eventBus.on('data:apply-filters', () => applyFilters());
 }
 
 export function setupDesktopUIListeners() {

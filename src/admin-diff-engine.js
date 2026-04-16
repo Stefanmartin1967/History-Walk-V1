@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { getPoiId, getPoiName } from './data.js';
+import { getPoiId, getPoiName } from './utils.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---

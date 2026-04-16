@@ -5,7 +5,7 @@
 
 import { state } from './state.js';
 import { getStoredToken } from './github-sync.js';
-import { getPoiId, applyFilters } from './data.js';
+import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
 import { savePoiData, batchSavePoiData, saveAppState } from './database.js';
 import { eventBus } from './events.js';
@@ -200,7 +200,7 @@ export async function pullFromGist() {
         }
         if (updates.length > 0 || circuitsChanged) {
             // Rafraîchir l'UI : marqueurs + liste circuits
-            applyFilters();
+            eventBus.emit('data:apply-filters');
             eventBus.emit('circuit:list-updated');
             showToast(`Sync Gist : ${updates.length} lieu(x)${circuitsChanged ? ' + circuits' : ''} mis à jour.`, 'info', 3000);
         }
