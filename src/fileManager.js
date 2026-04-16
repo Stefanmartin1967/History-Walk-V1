@@ -257,21 +257,21 @@ async function downloadJSON(data, filename) {
  * @returns {boolean} True si valide, False sinon
  */
 function isValidBackup(json) {
-    if (!json) return false;
+    if (!json || typeof json !== 'object') return false;
 
-    // Vérification de la version de backup (doit exister)
+    // backupVersion (doit exister)
     if (!json.backupVersion) {
         console.warn("[Validation] Version de backup manquante.");
         return false;
     }
 
-    // Vérification de l'ID de la carte (doit être une chaîne)
+    // mapId (string non vide)
     if (typeof json.mapId !== 'string' || json.mapId.trim() === '') {
         console.warn("[Validation] ID de carte invalide ou manquant.");
         return false;
     }
 
-    // Vérification des données utilisateur (userData) si présentes
+    // userData (objet plat, non-tableau)
     if (json.userData !== undefined) {
         if (typeof json.userData !== 'object' || Array.isArray(json.userData) || json.userData === null) {
             console.warn("[Validation] Format de userData invalide (doit être un objet).");
@@ -279,10 +279,36 @@ function isValidBackup(json) {
         }
     }
 
-    // Vérification des circuits (myCircuits) si présents
-    if (json.myCircuits !== undefined) {
-        if (!Array.isArray(json.myCircuits)) {
-            console.warn("[Validation] Format de myCircuits invalide (doit être un tableau).");
+    // myCircuits (tableau si présent)
+    if (json.myCircuits !== undefined && !Array.isArray(json.myCircuits)) {
+        console.warn("[Validation] myCircuits invalide (doit être un tableau).");
+        return false;
+    }
+
+    // hiddenPoiIds (tableau si présent)
+    if (json.hiddenPoiIds !== undefined && !Array.isArray(json.hiddenPoiIds)) {
+        console.warn("[Validation] hiddenPoiIds invalide (doit être un tableau).");
+        return false;
+    }
+
+    // testedCircuits (tableau si présent)
+    if (json.testedCircuits !== undefined && !Array.isArray(json.testedCircuits)) {
+        console.warn("[Validation] testedCircuits invalide (doit être un tableau).");
+        return false;
+    }
+
+    // officialCircuitsStatus (objet si présent)
+    if (json.officialCircuitsStatus !== undefined) {
+        if (typeof json.officialCircuitsStatus !== 'object' || Array.isArray(json.officialCircuitsStatus) || json.officialCircuitsStatus === null) {
+            console.warn("[Validation] officialCircuitsStatus invalide (doit être un objet).");
+            return false;
+        }
+    }
+
+    // baseGeoJSON (FeatureCollection si présent)
+    if (json.baseGeoJSON !== undefined) {
+        if (json.baseGeoJSON?.type !== 'FeatureCollection' || !Array.isArray(json.baseGeoJSON?.features)) {
+            console.warn("[Validation] baseGeoJSON invalide (doit être une FeatureCollection).");
             return false;
         }
     }
@@ -319,10 +345,15 @@ async function restoreBackup(json) {
             }
         }
 
-        // 3. Restaurer les circuits
+        // 3. Restaurer les circuits (on filtre les entrées malformées)
         if (json.myCircuits && Array.isArray(json.myCircuits)) {
-            await clearStore('circuits'); 
-            for (const circuit of json.myCircuits) {
+            const validCircuits = json.myCircuits.filter(c =>
+                c && typeof c.id === 'string' && typeof c.name === 'string' && Array.isArray(c.poiIds)
+            );
+            const skipped = json.myCircuits.length - validCircuits.length;
+            if (skipped > 0) console.warn(`[Restauration] ${skipped} circuit(s) ignoré(s) — données manquantes.`);
+            await clearStore('circuits');
+            for (const circuit of validCircuits) {
                 await saveCircuit(circuit);
             }
         }
