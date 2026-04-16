@@ -14,10 +14,28 @@ export default defineConfig({
 
       manifest: false, // On utilise public/manifest.json manuellement
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,geojson}'],
-        // Augmentation de la limite pour djerba.geojson (4.88MB+ sur PC, 17.5MB chez l'user)
-        // On met 20 MiB pour être large et éviter les erreurs de build immédiates.
-        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024
+        // Les fichiers .geojson sont exclus du precache (CacheFirst trop agressif)
+        // et gérés en NetworkFirst via runtimeCaching ci-dessous.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        // Limite élevée pour les grandes images (badges, gamification : jusqu'à ~8 MB)
+        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
+        runtimeCaching: [
+          {
+            // Stratégie NetworkFirst pour les GeoJSON :
+            // - En ligne : toujours récupérer la version fraîche du serveur
+            // - Hors ligne : utiliser le cache (fallback transparent)
+            urlPattern: /\.geojson(\?.*)?$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'geojson-data',
+              networkTimeoutSeconds: 8,
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 jours
+              },
+            },
+          },
+        ],
       }
     })
   ],
