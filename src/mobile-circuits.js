@@ -226,6 +226,7 @@ export function renderMobileCircuitsList() {
 
             const id = btn.dataset.id;
             setCurrentView('circuit-details'); // Autorise renderMobilePoiList
+            history.pushState({ hwView: 'circuit-details' }, ''); // Back Android
             await loadCircuitById(id);
         });
     });

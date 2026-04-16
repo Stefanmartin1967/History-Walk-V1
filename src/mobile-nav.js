@@ -13,7 +13,7 @@ import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { getSearchResults } from './search.js';
-import { navigatePoiDetails, loadCircuitById } from './circuit.js';
+import { navigatePoiDetails, loadCircuitById, clearCircuit } from './circuit.js';
 import { showAdminLoginModal } from './admin.js';
 import {
     getCurrentView, setCurrentView,
@@ -28,6 +28,10 @@ import { renderMobileMenu } from './mobile-menu.js';
 
 export { isMobileView } from './mobile-state.js';
 
+// ─── Flag interne : évite de re-pousher l'historique lors d'un retour ─────────
+
+let _poppingState = false;
+
 // ─── Initialisation ───────────────────────────────────────────────────────────
 
 export function initMobileMode() {
@@ -35,6 +39,25 @@ export function initMobileMode() {
 
     // Hack Android/iOS : masquer la barre d'adresse
     setTimeout(() => { window.scrollTo(0, 1); }, 0);
+
+    // ─── Bouton Retour Android (hardware back button) ─────────────────────────
+    // Pose la baseline historique pour que le premier "back" reste dans l'app.
+    history.replaceState({ hwView: 'circuits' }, '');
+
+    window.addEventListener('popstate', () => {
+        if (!isMobileView()) return;
+        _poppingState = true;
+        const view = getCurrentView();
+        if (view === 'circuit-details') {
+            clearCircuit(false);
+            switchMobileView('circuits');
+        } else if (view !== 'circuits') {
+            switchMobileView('circuits');
+        }
+        // Si on est déjà à 'circuits', l'historique est épuisé →
+        // le prochain Back sort de l'app (comportement natif souhaité).
+        _poppingState = false;
+    });
 
     // ─── Swipe horizontal sur le container mobile ─────────────────────────────
 
@@ -137,6 +160,12 @@ export function switchMobileView(viewName) {
     setCurrentView(viewName);
     if (viewName === 'circuits') {
         setMobileCurrentPage(1);
+    }
+
+    // Pousse un état historique pour le bouton Retour Android,
+    // sauf quand on est déjà en train de traiter un popstate.
+    if (!_poppingState && viewName !== 'circuits') {
+        history.pushState({ hwView: viewName }, '');
     }
 
     // Mise à jour des boutons du dock
