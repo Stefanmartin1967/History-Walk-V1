@@ -1,4 +1,4 @@
-import{s as y,c as u,i as l,a as o,b as g,d as C,r as b,e as E,f as S,h as I,g as L,j as $}from"./main-U-uXmbkv.js";import"./leaflet-src-Bex68Vyq.js";function B(e){y("",`
+import{s as y,c as u,a as l,b as r,d as g,e as C,r as b,f as E,g as S,h as I,i as L,j as $}from"./main-BJQSZooW.js";import"./leaflet-src-Bex68Vyq.js";function B(e){y("",`
         <div class="ue-container">
             <div class="ue-header">
                 <div class="ue-header-top">
@@ -32,12 +32,12 @@ import{s as y,c as u,i as l,a as o,b as g,d as C,r as b,e as E,f as S,h as I,g a
                 <button class="custom-modal-btn secondary" id="btn-ue-footer-close">Fermer</button>
             </div>
         </div>
-    `,null,"user-space-mode");const t=document.getElementById("custom-modal-title");t&&(t.style.display="none");const a=document.getElementById("custom-modal-actions");a&&(a.style.display="none");const n=document.getElementById("custom-modal-overlay"),d=new MutationObserver(()=>{n.classList.contains("active")||(document.querySelector(".custom-modal-box")?.classList.remove("user-space-mode"),t&&(t.style.display="block"),a&&(a.style.display="flex"),d.disconnect())});d.observe(n,{attributes:!0});const p=()=>n.classList.remove("active");document.getElementById("btn-ue-close")?.addEventListener("click",p),document.getElementById("btn-ue-footer-close")?.addEventListener("click",p);const s=document.querySelectorAll(".ue-tab");s.forEach(c=>{c.onclick=()=>{s.forEach(r=>r.classList.remove("active")),c.classList.add("active"),h(c.dataset.tab,e)}}),u({icons:l,root:document.querySelector(".ue-header")}),h("circuits",e)}function h(e,i){const t=document.getElementById("ue-content");t&&(e==="circuits"?f(t,i):e==="data"?k(t,i):e==="trash"&&w(t,i),u({icons:l,root:t}))}function f(e,i){const t=o.officialCircuits||[];if(t.length===0){e.innerHTML=`
+    `,null,"user-space-mode");const t=document.getElementById("custom-modal-title");t&&(t.style.display="none");const a=document.getElementById("custom-modal-actions");a&&(a.style.display="none");const n=document.getElementById("custom-modal-overlay"),d=new MutationObserver(()=>{n.classList.contains("active")||(document.querySelector(".custom-modal-box")?.classList.remove("user-space-mode"),t&&(t.style.display="block"),a&&(a.style.display="flex"),d.disconnect())});d.observe(n,{attributes:!0});const p=()=>n.classList.remove("active");document.getElementById("btn-ue-close")?.addEventListener("click",p),document.getElementById("btn-ue-footer-close")?.addEventListener("click",p);const s=document.querySelectorAll(".ue-tab");s.forEach(c=>{c.onclick=()=>{s.forEach(o=>o.classList.remove("active")),c.classList.add("active"),h(c.dataset.tab,e)}}),u({icons:l,root:document.querySelector(".ue-header")}),h("circuits",e)}function h(e,i){const t=document.getElementById("ue-content");t&&(e==="circuits"?f(t,i):e==="data"?k(t,i):e==="trash"&&w(t,i),u({icons:l,root:t}))}function f(e,i){const t=r.officialCircuits||[];if(t.length===0){e.innerHTML=`
             <div class="ue-empty-state">
                 <div class="ue-empty-icon"><i data-lucide="wifi-off"></i></div>
                 <p class="ue-empty-title">Aucun circuit disponible</p>
                 <p class="ue-empty-sub">Les circuits officiels apparaîtront ici une fois chargés.</p>
-            </div>`,u({icons:l,root:e});return}const a=o.selectedOfficialCircuitIds,n=a===null?new Set(t.map(s=>String(s.id))):new Set((a||[]).map(String)),d=n.size;e.innerHTML=`
+            </div>`,u({icons:l,root:e});return}const a=r.selectedOfficialCircuitIds,n=a===null?new Set(t.map(s=>String(s.id))):new Set((a||[]).map(String)),d=n.size;e.innerHTML=`
         <div class="ue-section-header">
             <div class="ue-section-title">
                 Circuits officiels
@@ -55,7 +55,7 @@ import{s as y,c as u,i as l,a as o,b as g,d as C,r as b,e as E,f as S,h as I,g a
         </div>
 
         <div class="ue-circuits-list">
-            ${t.map(s=>{const c=n.has(String(s.id)),r=(s.poiIds||[]).length,v=[`${r} POI${r>1?"s":""}`,s.zone||null,s.distance||null].filter(Boolean).join(" · ");return`
+            ${t.map(s=>{const c=n.has(String(s.id)),o=(s.poiIds||[]).length,v=[`${o} POI${o>1?"s":""}`,s.zone||null,s.distance||null].filter(Boolean).join(" · ");return`
                 <label class="ue-circuit-item ${c?"is-checked":""}">
                     <div class="ue-circuit-icon-box">
                         <i data-lucide="route"></i>
@@ -70,7 +70,7 @@ import{s as y,c as u,i as l,a as o,b as g,d as C,r as b,e as E,f as S,h as I,g a
                     </div>
                 </label>`}).join("")}
         </div>
-    `;const p=()=>{const s=e.querySelectorAll(".ue-circuit-check:checked").length,c=document.getElementById("ue-circuits-count");c&&(c.textContent=`${s} / ${t.length}`)};document.getElementById("btn-ue-none")?.addEventListener("click",()=>{i.setSelection&&i.setSelection([]),f(e,i)}),document.getElementById("btn-ue-all")?.addEventListener("click",()=>{i.setSelection&&i.setSelection(t.map(s=>String(s.id))),f(e,i)}),e.querySelectorAll(".ue-circuit-check").forEach(s=>{s.addEventListener("change",()=>{const c=o.selectedOfficialCircuitIds===null?t.map(m=>String(m.id)):[...o.selectedOfficialCircuitIds||[]],r=String(s.dataset.circuitId),v=s.checked?[...new Set([...c,r])]:c.filter(m=>m!==r);i.setSelection&&i.setSelection(v),s.closest(".ue-circuit-item")?.classList.toggle("is-checked",s.checked),p()})})}function k(e,i){e.innerHTML=`
+    `;const p=()=>{const s=e.querySelectorAll(".ue-circuit-check:checked").length,c=document.getElementById("ue-circuits-count");c&&(c.textContent=`${s} / ${t.length}`)};document.getElementById("btn-ue-none")?.addEventListener("click",()=>{i.setSelection&&i.setSelection([]),f(e,i)}),document.getElementById("btn-ue-all")?.addEventListener("click",()=>{i.setSelection&&i.setSelection(t.map(s=>String(s.id))),f(e,i)}),e.querySelectorAll(".ue-circuit-check").forEach(s=>{s.addEventListener("change",()=>{const c=r.selectedOfficialCircuitIds===null?t.map(m=>String(m.id)):[...r.selectedOfficialCircuitIds||[]],o=String(s.dataset.circuitId),v=s.checked?[...new Set([...c,o])]:c.filter(m=>m!==o);i.setSelection&&i.setSelection(v),s.closest(".ue-circuit-item")?.classList.toggle("is-checked",s.checked),p()})})}function k(e,i){e.innerHTML=`
         <div class="ue-section-header">
             <div class="ue-section-title">Gestion des données</div>
         </div>
@@ -112,7 +112,7 @@ import{s as y,c as u,i as l,a as o,b as g,d as C,r as b,e as E,f as S,h as I,g a
             <i data-lucide="shield-check"></i>
             <span>Vos données restent sur votre appareil. Aucune information n'est envoyée à nos serveurs.</span>
         </div>
-    `,document.getElementById("btn-ue-backup")?.addEventListener("click",()=>{const t=document.getElementById("ue-include-photos")?.checked||!1;i.exportData&&i.exportData(t)}),document.getElementById("btn-ue-restore")?.addEventListener("click",()=>{document.getElementById("ue-restore-loader")?.click()}),document.getElementById("ue-restore-loader")?.addEventListener("change",t=>{i.restoreData&&i.restoreData(t)})}function w(e,i){const t=(o.myCircuits||[]).filter(a=>a.isDeleted);if(t.length===0){e.innerHTML=`
+    `,document.getElementById("btn-ue-backup")?.addEventListener("click",()=>{const t=document.getElementById("ue-include-photos")?.checked||!1;i.exportData&&i.exportData(t)}),document.getElementById("btn-ue-restore")?.addEventListener("click",()=>{document.getElementById("ue-restore-loader")?.click()}),document.getElementById("ue-restore-loader")?.addEventListener("change",t=>{i.restoreData&&i.restoreData(t)})}function w(e,i){const t=(r.myCircuits||[]).filter(a=>a.isDeleted);if(t.length===0){e.innerHTML=`
             <div class="ue-empty-state">
                 <div class="ue-empty-icon green"><i data-lucide="package-check"></i></div>
                 <p class="ue-empty-title">Corbeille vide</p>
@@ -146,4 +146,4 @@ import{s as y,c as u,i as l,a as o,b as g,d as C,r as b,e as E,f as S,h as I,g a
                 </div>
             `).join("")}
         </div>
-    `,e.querySelectorAll('[data-action="restore-circuit"]').forEach(a=>{a.addEventListener("click",()=>{const n=a.dataset.id;i.restoreCircuit&&i.restoreCircuit(n);const d=document.getElementById(`ue-trash-${n}`);d&&(d.style.opacity="0.5",d.style.pointerEvents="none",a.innerHTML='<i data-lucide="check"></i> Restauré',u({icons:l,root:d}))})})}function q(){B({setSelection:x,exportData:T,restoreData:D,restoreCircuit:M})}async function x(e){g(e),await C("selectedOfficialCircuits",e),b()}async function T(e){e?await E():await S()}function D(e){I(e)}async function M(e){const i=(o.myCircuits||[]).find(t=>String(t.id)===String(e));await L(e),i&&(i.isDeleted=!1,$(`Circuit "${i.name||"Sans nom"}" restauré.`,"success"),b())}export{q as openUserSpace};
+    `,e.querySelectorAll('[data-action="restore-circuit"]').forEach(a=>{a.addEventListener("click",()=>{const n=a.dataset.id;i.restoreCircuit&&i.restoreCircuit(n);const d=document.getElementById(`ue-trash-${n}`);d&&(d.style.opacity="0.5",d.style.pointerEvents="none",a.innerHTML='<i data-lucide="check"></i> Restauré',u({icons:l,root:d}))})})}function q(){B({setSelection:x,exportData:T,restoreData:D,restoreCircuit:M})}async function x(e){g(e),await C("selectedOfficialCircuits",e),b()}async function T(e){e?await E():await S()}function D(e){I(e)}async function M(e){const i=(r.myCircuits||[]).find(t=>String(t.id)===String(e));await L(e),i&&(i.isDeleted=!1,$(`Circuit "${i.name||"Sans nom"}" restauré.`,"success"),b())}export{q as openUserSpace};
