@@ -5,7 +5,7 @@ import { getPoiName, getPoiId } from './data.js';
 import { state } from './state.js';
 import { sanitizeHTML } from './utils.js';
 import { showToast } from './toast.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 /**
  * Génère le HTML pour une étape du circuit
@@ -67,7 +67,7 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
     }
 
     // Rafraîchissement des icônes Lucide après injection HTML
-    createIcons({ icons });
+    createIcons({ icons: appIcons });
 }
 
 /**
@@ -124,7 +124,7 @@ export function updateCircuitHeader(data) {
 
         distIcon.replaceWith(newIcon);
 
-        createIcons({ icons });
+        createIcons({ icons: appIcons });
     }
 
     const btnDelete = document.getElementById('btn-delete-active-circuit');
@@ -185,7 +185,7 @@ export function updateControlButtons(uiState) {
         }
     }
 
-    createIcons({ icons });
+    createIcons({ icons: appIcons });
 }
 
 export function updateCircuitForm(data) {

@@ -16,7 +16,7 @@ L.Icon.Default.mergeOptions({
 
 import { initDB, getAppState, saveAppState } from './database.js';
 import { APP_VERSION, state } from './state.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { initializeDomReferences, DOM } from './ui.js';
 import { updateSelectionModeButton } from './ui-selection.js';
 import { populateAddPoiModalCategories } from './ui-filters.js';
@@ -149,7 +149,7 @@ async function initializeApp() {
         }
     }
 
-    createIcons({ icons });
+    createIcons({ icons: appIcons });
 
     // Import URL
     const urlParams = new URLSearchParams(window.location.search);

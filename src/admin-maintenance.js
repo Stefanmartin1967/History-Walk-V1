@@ -3,7 +3,7 @@ import { getStoredToken, deleteFileFromGitHub } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { deleteCircuitById, restoreCircuit } from './database.js'; // DB Functions
 import { showToast } from './toast.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { showConfirm } from './modal.js';
 
 // --- STATE ---
@@ -70,7 +70,7 @@ function findDuplicates(circuits) {
  */
 async function runAnalysis(container) {
     container.innerHTML = `<div class="maint-loading"><i data-lucide="loader-2" class="spin"></i> Analyse du serveur en cours...</div>`;
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 
     serverCircuits = await fetchServerCircuits();
     duplicateGroups = findDuplicates(serverCircuits);
@@ -197,7 +197,7 @@ function renderResults(container) {
     html += `</div></div></div>`;
 
     container.innerHTML = html;
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 
     // Events
     const btnRefresh = container.querySelector('#btn-refresh-maintenance');
@@ -316,7 +316,7 @@ export function renderMaintenanceTab(container) {
             </button>
         </div>
     `;
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 
     const btn = container.querySelector('#btn-start-scan');
     if (btn) btn.onclick = () => runAnalysis(container);

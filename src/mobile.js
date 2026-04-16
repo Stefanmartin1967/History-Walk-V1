@@ -4,13 +4,12 @@ import { DOM } from './ui.js';
 import { openDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature } from './data.js';
 import { loadCircuitById, clearCircuit, setCircuitVisitedState, loadCircuitFromIds, isCircuitCompleted, isCircuitTested, toggleCircuitTested, navigatePoiDetails } from './circuit.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { saveUserData } from './fileManager.js'; 
 import { deleteDatabase, saveAppState } from './database.js';
 import { getIconForFeature, getRealDistance, getOrthodromicDistance } from './map.js';
 import { isPointInPolygon, escapeHtml, getZoneFromCoords, sanitizeHTML } from './utils.js';
 import { generateSyncQR, startGenericScanner } from './sync.js';
-import QRCode from 'qrcode';
 import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
 import { showConfirm, showCustomModal, closeModal } from './modal.js';
@@ -133,7 +132,7 @@ export function initMobileMode() {
             }
             
             // 6. DESSIN DES ICÔNES ICI (À l'intérieur du clic)
-            createIcons({ icons, root: newFilterBtn });
+            createIcons({ icons: appIcons, root: newFilterBtn });
 
         });
     }
@@ -179,7 +178,7 @@ export function switchMobileView(viewName) {
             break;
     }
     
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 }
 
 async function handleAddPoiClick() {
@@ -382,7 +381,7 @@ export function renderMobileCircuitsList() {
     container.innerHTML = sanitizeHTML(html);
 
     // Explicitly re-create icons after updating innerHTML to ensure pagination arrows render
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 
     // Pagination Event Listeners
     const prevBtn = document.getElementById('mobile-prev-page');
@@ -513,7 +512,7 @@ function renderMobileToolbar() {
     `;
 
     container.appendChild(toolbar);
-    createIcons({ icons, root: toolbar });
+    createIcons({ icons: appIcons, root: toolbar });
 
     // Listeners (sur le nouvel élément toolbar)
     toolbar.querySelector('#mob-sort-date').onclick = () => {
@@ -766,7 +765,7 @@ export function renderMobilePoiList(features) {
         });
     });
     
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 }
 
 export function renderMobileSearch() {
@@ -814,7 +813,7 @@ export function renderMobileSearch() {
             `;
         });
         resultsContainer.innerHTML = sanitizeHTML(html);
-        createIcons({ icons, root: resultsContainer });
+        createIcons({ icons: appIcons, root: resultsContainer });
 
         resultsContainer.querySelectorAll('.result-item').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -969,6 +968,7 @@ eventBus.on('admin:mode-toggled', () => {
 async function handleShareAppClick() {
     const url = window.location.href.split('?')[0]; // On partage la racine de l'app
     try {
+        const QRCode = (await import('qrcode')).default;
         const qrDataUrl = await QRCode.toDataURL(url, { width: 300, margin: 2, color: { dark: "#000000", light: "#ffffff" } });
 
         const content = `

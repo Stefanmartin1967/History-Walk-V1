@@ -3,7 +3,7 @@ import { isCircuitTested } from './circuit.js';
 import { escapeXml, sanitizeHTML } from './utils.js';
 import { eventBus } from './events.js';
 import { showConfirm, showCustomModal, closeModal } from './modal.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits, getAvailableZonesFromCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId } from './data.js';
@@ -97,7 +97,7 @@ function renderExplorerHeader() {
         });
     }
 
-    createIcons({ icons });
+    createIcons({ icons: appIcons });
 }
 
 // --- EXPLORER TOOLBAR (NEW) ---
@@ -151,7 +151,7 @@ function renderExplorerToolbar() {
     `;
 
     // Ensure icons are drawn immediately
-    createIcons({ icons, root: footer });
+    createIcons({ icons: appIcons, root: footer });
 
     // Event Listeners (Must be re-attached as innerHTML cleared them)
     const btnDate = footer.querySelector('#btn-sort-date');
@@ -408,5 +408,5 @@ export function renderExplorerList() {
     });
 
     // Render icons for newly created DOM elements
-    createIcons({ icons, root: listContainer });
+    createIcons({ icons: appIcons, root: listContainer });
 }

@@ -1,6 +1,6 @@
 // user-space-ui.js — Interface "Mon Espace" (côté utilisateur)
 import { state } from './state.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { showAlert } from './modal.js';
 
 export function openUserSpaceModal(callbacks) {
@@ -76,7 +76,7 @@ export function openUserSpaceModal(callbacks) {
         };
     });
 
-    createIcons({ icons, root: document.querySelector('.ue-header') });
+    createIcons({ icons: appIcons, root: document.querySelector('.ue-header') });
     renderUserTab('circuits', callbacks);
 }
 
@@ -88,7 +88,7 @@ export function renderUserTab(tab, callbacks) {
     else if (tab === 'data') renderDataTab(container, callbacks);
     else if (tab === 'trash') renderTrashTab(container, callbacks);
 
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 }
 
 // ─── ONGLET MES CIRCUITS ───────────────────────────────────────────────────
@@ -103,7 +103,7 @@ function renderCircuitsTab(container, callbacks) {
                 <p class="ue-empty-title">Aucun circuit disponible</p>
                 <p class="ue-empty-sub">Les circuits officiels apparaîtront ici une fois chargés.</p>
             </div>`;
-        createIcons({ icons, root: container });
+        createIcons({ icons: appIcons, root: container });
         return;
     }
 
@@ -263,7 +263,7 @@ function renderTrashTab(container, callbacks) {
                 <p class="ue-empty-title">Corbeille vide</p>
                 <p class="ue-empty-sub">Les circuits supprimés apparaîtront ici et pourront être restaurés.</p>
             </div>`;
-        createIcons({ icons, root: container });
+        createIcons({ icons: appIcons, root: container });
         return;
     }
 
@@ -307,7 +307,7 @@ function renderTrashTab(container, callbacks) {
                 item.style.opacity = '0.5';
                 item.style.pointerEvents = 'none';
                 btn.innerHTML = `<i data-lucide="check"></i> Restauré`;
-                createIcons({ icons, root: item });
+                createIcons({ icons: appIcons, root: item });
             }
         });
     });

@@ -10,7 +10,7 @@ import { logModification } from './logger.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { showConfirm } from './modal.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 // --- IDs DOM ---
 const DOM_IDS = {

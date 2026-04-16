@@ -4,7 +4,7 @@ import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { compressImage, generatePhotoId, uploadPhotoForPoi, ADMIN_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
 import { getPoiPhotos, savePoiPhotos } from './database.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 // --- STATE ---
 let currentGridPoiId = null;
@@ -163,12 +163,12 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
         updateSaveButton();
         renderGrid(); // rendu vide initial (spinner implicite via grille vide)
         gridOverlay.classList.add('active');
-        createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridOverlay });
+        createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridOverlay });
 
         // Chargement async des photos
         _loadPhotos(poiId, feature, preloadedPhotos).then(() => {
             renderGrid();
-            createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+            createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
         });
     });
 }
@@ -266,7 +266,7 @@ async function handleFileSelect(e) {
 
     isDirty = true;
     renderGrid();
-    createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+    createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
     fileInput.value = '';
 }
 
@@ -281,7 +281,7 @@ function renderGrid() {
                 <div class="photo-grid-empty-hint">Utilisez le bouton + pour ajouter</div>
             </div>
         `;
-        createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+        createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
         return;
     }
 
@@ -372,7 +372,7 @@ function renderGrid() {
     gridContent.appendChild(fragment);
 
     // Refresh Icons for new elements
-    createIcons({ icons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+    createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
 }
 
 function updateArrayOrderFromDOM() {
@@ -437,7 +437,7 @@ function _updateCompToggle() {
         headerSubtitle.classList.add('admin-mode');
     }
 
-    createIcons({ icons, nameAttr: 'data-lucide', attrs: { class: 'lucide' }, root: btnCompToggle });
+    createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: { class: 'lucide' }, root: btnCompToggle });
 }
 
 async function handleSave() {

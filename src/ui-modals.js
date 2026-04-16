@@ -9,7 +9,7 @@ import { closeDetailsPanel } from './ui-details.js';
 import { switchMobileView, isMobileView } from './mobile.js';
 import { eventBus } from './events.js';
 import { saveAppState, restoreCircuit } from './database.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 export function showLegendModal() {
     const title = "Légende";
@@ -51,7 +51,7 @@ export function showLegendModal() {
     // Force l'affichage des icônes dans la modale
     const modalMessage = document.getElementById('custom-modal-message');
     if (modalMessage) {
-        createIcons({ icons, root: modalMessage });
+        createIcons({ icons: appIcons, root: modalMessage });
     }
 }
 

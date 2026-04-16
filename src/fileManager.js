@@ -69,9 +69,9 @@ export function handleExportWithContribution(actionType, proceedCallback) {
     const closeBtn = document.getElementById('btn-close-contrib');
 
     // Re-render icons inside modal content
-    import('lucide').then(({ createIcons, icons }) => {
+    import('./lucide-icons.js').then(({ createIcons, appIcons }) => {
         const modalBox = document.querySelector('.custom-modal-box');
-        if (modalBox) createIcons({ icons, root: modalBox });
+        if (modalBox) createIcons({ icons: appIcons, root: modalBox });
     });
 
     if (bmcBtn) {

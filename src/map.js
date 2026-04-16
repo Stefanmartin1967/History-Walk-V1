@@ -5,7 +5,7 @@ import { addPoiToCircuit, isCircuitCompleted } from './circuit.js';
 import { openDetailsPanel } from './ui-details.js';
 import { showToast } from './toast.js';
 import { getPoiId, getPoiName } from './data.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { saveAppState } from './database.js';
 import { calculateDistance } from './utils.js';
 
@@ -154,7 +154,7 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     map.addControl(new ResetViewControl());
 
     // Initialisation des icônes après ajout
-    createIcons({ icons });
+    createIcons({ icons: appIcons });
 
     initMapListeners();
     initResizeObserver(); // Activation de l'observateur de redimensionnement
@@ -478,7 +478,7 @@ export function refreshMapMarkers(visibleFeatures) {
         if (bounds.isValid()) map.flyToBounds(bounds.pad(0.1));
     }
 
-    createIcons({ icons });
+    createIcons({ icons: appIcons });
 }
 
 // --- NOUVEAU : AUTO-CENTRAGE INTELLIGENT (FITBOUNDS) ---

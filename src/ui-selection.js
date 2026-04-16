@@ -1,4 +1,4 @@
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 export function updateSelectionModeButton(isActive) {
     const btn = document.getElementById('btn-mode-selection');
@@ -11,5 +11,5 @@ export function updateSelectionModeButton(isActive) {
         btn.innerHTML = `<i data-lucide="map-pin-off"></i><span>Explorer</span>`;
         btn.title = "Mode consultation";
     }
-    createIcons({ icons });
+    createIcons({ icons: appIcons });
 }

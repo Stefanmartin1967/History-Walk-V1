@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { getRealDistance, getOrthodromicDistance } from './map.js';
 import { getPoiId } from './data.js';
 import { showAlert } from './modal.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 // --- 0. RANGS GLOBAUX (Basé sur % Global = Distance% × POI% / 100) ---
 // pctGlobal = (distancePercent * poiPercent) / 100  → 0-100%
@@ -456,7 +456,7 @@ export async function showStatisticsModal() {
         ({ messageContainer }) => {
             if (messageContainer) {
                 // 1. Initialiser les icônes Lucide
-                createIcons({ icons, root: messageContainer });
+                createIcons({ icons: appIcons, root: messageContainer });
 
                 // 2. Attacher l'événement d'impression
                 const btnPrint = messageContainer.querySelector('#btn-print-card');

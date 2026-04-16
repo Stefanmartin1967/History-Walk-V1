@@ -11,7 +11,7 @@ import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { showLegendModal } from './ui-modals.js';
 import { applyFilters } from './data.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { setupSearch } from './searchManager.js';
 import { setupTabs } from './ui-sidebar.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
@@ -81,7 +81,7 @@ export function setupDesktopUIListeners() {
             btn.innerHTML = `<i data-lucide="eye"></i><span>Visités</span>`;
             btn.title = "Masquer les visités";
         }
-        createIcons({ icons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });
+        createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });
         applyFilters();
     });
 
@@ -101,7 +101,7 @@ export function setupDesktopUIListeners() {
             btn.innerHTML = `<i data-lucide="calendar-check"></i><span>Planifiés</span>`;
             btn.title = "Masquer les planifiés";
         }
-        createIcons({ icons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });
+        createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });
         applyFilters();
     });
 
@@ -116,7 +116,7 @@ export function setupDesktopUIListeners() {
             btn.innerHTML = `<i data-lucide="shield-check"></i>`;
             btn.title = "Non vérifiés seulement";
         }
-        createIcons({ icons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });
+        createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: { 'class': "lucide" }, root: btn });
         applyFilters();
     });
 

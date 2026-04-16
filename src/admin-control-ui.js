@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { getStoredToken, saveToken, uploadFileToGitHub } from './github-sync.js';
 import { showToast } from './toast.js';
 import { showAlert } from './modal.js';
@@ -141,8 +141,8 @@ export function openControlCenterModal(diffData, callbacks) {
     }
 
     // Icons for initial load
-    createIcons({ icons, root: document.querySelector('.admin-cc-header') });
-    createIcons({ icons, root: document.querySelector('.admin-cc-footer') });
+    createIcons({ icons: appIcons, root: document.querySelector('.admin-cc-header') });
+    createIcons({ icons: appIcons, root: document.querySelector('.admin-cc-footer') });
 }
 
 export function renderTab(tab, diffData, callbacks) {
@@ -240,7 +240,7 @@ export function renderTab(tab, diffData, callbacks) {
     } else if (tab === 'changes') {
         if (diffData.pois.length === 0 && diffData.circuits.length === 0) {
             container.innerHTML = `<div class="empty-state"><i data-lucide="check" width="48"></i><p>Aucune modification en attente.</p></div>`;
-            createIcons({ icons, root: container });
+            createIcons({ icons: appIcons, root: container });
             return;
         }
 
@@ -374,7 +374,7 @@ export function renderTab(tab, diffData, callbacks) {
         renderMaintenanceTab(container);
     }
 
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 }
 
 // --- UPLOAD CIRCUIT PANEL ---
@@ -422,7 +422,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
         </div>
     `;
 
-    createIcons({ icons, root: container });
+    createIcons({ icons: appIcons, root: container });
 
     const backFn = () => { renderTab('dashboard', diffData, callbacks); };
     document.getElementById('btn-upload-back')?.addEventListener('click', backFn);
@@ -441,7 +441,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
         filePill.innerHTML = `<i data-lucide="paperclip"></i> <strong>${file.name}</strong> <small>(${(file.size / 1024).toFixed(1)} Ko)</small>`;
         filePill.style.display = 'flex';
         submitBtn.disabled = false;
-        createIcons({ icons, root: filePill });
+        createIcons({ icons: appIcons, root: filePill });
     });
 
     document.getElementById('btn-upload-submit')?.addEventListener('click', async () => {
@@ -453,7 +453,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
             statusDiv.style.display = 'flex';
             statusDiv.className = 'cc-upload-status error';
             statusDiv.innerHTML = `<i data-lucide="alert-triangle"></i> Token manquant — configurez-le dans <strong>Config</strong>`;
-            createIcons({ icons, root: statusDiv });
+            createIcons({ icons: appIcons, root: statusDiv });
             return;
         }
 
@@ -467,19 +467,19 @@ function renderUploadCircuitPanel(diffData, callbacks) {
         statusDiv.style.display = 'flex';
         statusDiv.className = 'cc-upload-status info';
         statusDiv.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Envoi en cours…`;
-        createIcons({ icons, root: statusDiv });
+        createIcons({ icons: appIcons, root: statusDiv });
 
         try {
             await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, path, commitMsg);
             statusDiv.className = 'cc-upload-status success';
             statusDiv.innerHTML = `<i data-lucide="check-circle-2"></i> Circuit envoyé avec succès !`;
-            createIcons({ icons, root: statusDiv });
+            createIcons({ icons: appIcons, root: statusDiv });
             showToast('Circuit envoyé sur GitHub !', 'success');
             setTimeout(backFn, 2500);
         } catch (err) {
             statusDiv.className = 'cc-upload-status error';
             statusDiv.innerHTML = `<i data-lucide="x-circle"></i> Erreur : ${err.message}`;
-            createIcons({ icons, root: statusDiv });
+            createIcons({ icons: appIcons, root: statusDiv });
             submitBtn.disabled = false;
         }
     });

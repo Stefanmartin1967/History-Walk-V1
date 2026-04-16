@@ -4,8 +4,6 @@ import { getPoiId, applyFilters } from './data.js';
 import { batchSavePoiData } from './database.js';
 import { showToast } from './toast.js';
 import { showConfirm, showAlert } from './modal.js';
-import { Html5Qrcode } from 'html5-qrcode';
-import QRCode from 'qrcode';
 import { loadCircuitFromIds } from './circuit.js';
 
 // --- GENERATION (PARTAGER) ---
@@ -40,6 +38,7 @@ export async function generateSyncQR() {
 
     // 3. Génération du QR Code
     try {
+        const QRCode = (await import('qrcode')).default;
         const url = await QRCode.toDataURL(jsonString, { width: 300, margin: 2, errorCorrectionLevel: 'L' });
 
         // 4. Affichage Modale
@@ -83,6 +82,7 @@ export async function startGenericScanner(onSuccessCallback) {
     `;
     document.body.appendChild(overlay);
 
+    const { Html5Qrcode } = await import('html5-qrcode');
     const html5QrCode = new Html5Qrcode("qr-reader");
 
     // Fonction de nettoyage

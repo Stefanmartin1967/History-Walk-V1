@@ -1,5 +1,5 @@
 import { state, setUserData, setOfficialCircuitsStatus, setHiddenPoiIds } from './state.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { generateMasterGeoJSONData } from './admin.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
@@ -38,7 +38,7 @@ function updateButtonBadge() {
     if (!btn) return;
     const total = Object.keys(adminDraft.pendingPois).length + Object.keys(adminDraft.pendingCircuits).length;
     btn.innerHTML = `<i data-lucide="layout-dashboard"></i> Centre de Contrôle ${total > 0 ? `<span class="cc-badge">${total}</span>` : ''}`;
-    createIcons({ icons, root: btn });
+    createIcons({ icons: appIcons, root: btn });
 }
 
 function saveDraft(newDraft) {
@@ -192,7 +192,7 @@ async function publishChanges() {
     if (btn) {
         btn.disabled = true;
         btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Envoi...`;
-        createIcons({ icons, root: btn });
+        createIcons({ icons: appIcons, root: btn });
     }
 
     try {
@@ -257,7 +257,7 @@ async function publishChanges() {
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = `<i data-lucide="rocket"></i> TOUT PUBLIER`;
-            createIcons({ icons, root: btn });
+            createIcons({ icons: appIcons, root: btn });
         }
     }
 }
@@ -273,7 +273,7 @@ async function uploadAdminData() {
     if (btn) {
         btn.disabled = true;
         btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Envoi...`;
-        createIcons({ icons, root: btn });
+        createIcons({ icons: appIcons, root: btn });
     }
 
     try {
@@ -308,7 +308,7 @@ async function uploadAdminData() {
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = `<i data-lucide="upload-cloud"></i> Sauvegarder (Upload)`;
-            createIcons({ icons, root: btn });
+            createIcons({ icons: appIcons, root: btn });
         }
     }
 }
@@ -318,7 +318,7 @@ async function downloadAdminData() {
     if (btn) {
         btn.disabled = true;
         btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Récupération...`;
-        createIcons({ icons, root: btn });
+        createIcons({ icons: appIcons, root: btn });
     }
 
     try {
@@ -359,7 +359,7 @@ async function downloadAdminData() {
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = `<i data-lucide="download-cloud"></i> Récupérer (Download)`;
-            createIcons({ icons, root: btn });
+            createIcons({ icons: appIcons, root: btn });
         }
     }
 }

@@ -6,7 +6,7 @@ import { closeAllDropdowns } from './ui-utils.js';
 import { map } from './map.js';
 import { showAlert, showConfirm } from './modal.js';
 import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
@@ -73,7 +73,7 @@ function updateAdminLoginButton() {
     newBtn.innerHTML = `<i data-lucide="log-out"></i> Déconnexion`;
     newBtn.style.color = 'var(--danger)';
     newBtn.addEventListener('click', logoutAdmin);
-    createIcons({ icons, root: newBtn });
+    createIcons({ icons: appIcons, root: newBtn });
 }
 
 export function logoutAdmin() {
@@ -199,7 +199,7 @@ function setupAdminListeners() {
              } else {
                  menuContent.prepend(btnDataManager);
              }
-             createIcons({ icons, root: btnDataManager });
+             createIcons({ icons: appIcons, root: btnDataManager });
         }
 
         // Listener
@@ -233,7 +233,7 @@ function setupAdminListeners() {
                 menuContent.appendChild(btnRanks);
             }
             // Refresh icons
-            createIcons({ icons, root: btnRanks });
+            createIcons({ icons: appIcons, root: btnRanks });
         }
 
         // Listener (on remplace l'ancien pour éviter les doublons d'écouteurs)
@@ -253,7 +253,7 @@ function setupAdminListeners() {
 
             // Add at the end
             menuContent.appendChild(btnControl);
-            createIcons({ icons, root: btnControl });
+            createIcons({ icons: appIcons, root: btnControl });
         }
 
         const newControlBtn = btnControl.cloneNode(true);
@@ -274,7 +274,7 @@ function setupAdminListeners() {
             } else {
                 menuContent.appendChild(btnUpload);
             }
-            createIcons({ icons, root: btnUpload });
+            createIcons({ icons: appIcons, root: btnUpload });
         }
 
         const newUploadBtn = btnUpload.cloneNode(true);
@@ -435,7 +435,7 @@ function showRankTable() {
     // Activer la logique des onglets + refresh icônes
     const modalContent = document.getElementById('custom-modal-message');
     if (modalContent) {
-        createIcons({ icons, root: modalContent });
+        createIcons({ icons: appIcons, root: modalContent });
 
         modalContent.querySelectorAll('.rank-tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {

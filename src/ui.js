@@ -9,7 +9,7 @@ import { clearCircuit, navigatePoiDetails, loadCircuitById } from './circuit.js'
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, updatePoiPosition, renderMobileCircuitsList, renderMobilePoiList, switchMobileView } from './mobile.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML, ICONS } from './templates.js';
 import { getZonesData } from './circuit-actions.js';

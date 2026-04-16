@@ -6,7 +6,7 @@ import { navigatePoiDetails } from './circuit.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, updatePoiPosition, renderMobileCircuitsList, renderMobilePoiList } from './mobile.js';
-import { createIcons, icons } from 'lucide';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
 import { calculateAdjustedTime, sanitizeHTML } from './utils.js';
@@ -285,7 +285,7 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
     setupDetailsEventListeners(poiId);
 
     // Initialisation icônes Lucide
-    createIcons({ icons });
+    createIcons({ icons: appIcons });
 
     if (isMobileView()) {
         targetPanel.style.display = 'block';

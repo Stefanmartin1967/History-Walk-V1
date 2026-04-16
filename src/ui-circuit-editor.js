@@ -11,7 +11,6 @@ import { showConfirm, showAlert, showPrompt } from './modal.js';
 import { performCircuitDeletion } from './circuit-actions.js';
 import { eventBus } from './events.js';
 import { escapeHtml } from './utils.js';
-import QRCode from 'qrcode';
 
 import {
     setSelectionMode,
@@ -108,6 +107,7 @@ export async function generateCircuitQR() {
 
         let qrApp;
         try {
+            const QRCode = (await import('qrcode')).default;
             qrApp = await QRCode.toDataURL(appDataString, { width: 300, margin: 2 });
         } catch (e) {
             console.error("Erreur QR App", e);
@@ -135,6 +135,7 @@ export async function generateCircuitQR() {
 
             let qrGpx;
             try {
+                const QRCode = (await import('qrcode')).default;
                 qrGpx = await QRCode.toDataURL(gpxUrl, { width: 250, margin: 1 });
             } catch (e) {
                 console.error("Erreur QR GPX", e);
