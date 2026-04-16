@@ -144,6 +144,9 @@ async function initializeApp() {
 
     } catch (error) {
         console.error("Échec init global:", error);
+        if (String(error).includes('indexedDB') || String(error).includes('IDBFactory') || error.name === 'InvalidStateError') {
+            showToast('Stockage local inaccessible (navigation privée stricte ?). Certaines fonctionnalités seront limitées.', 'error', 8000);
+        }
     }
 
     createIcons({ icons });
@@ -165,12 +168,29 @@ async function initializeApp() {
 
 document.addEventListener('DOMContentLoaded', initializeApp);
 
+// ── INDICATEUR OFFLINE ────────────────────────────────────────────────────
+function setupOfflineBanner() {
+    const banner = document.getElementById('offline-banner');
+    if (!banner) return;
+    const update = () => banner.classList.toggle('visible', !navigator.onLine);
+    window.addEventListener('online', update);
+    window.addEventListener('offline', update);
+    update();
+}
+setupOfflineBanner();
+
 import { registerSW } from 'virtual:pwa-register';
 
 const updateSW = registerSW({
     onNeedRefresh() {
-        updateSW(true);
+        showToast(
+            'Mise à jour disponible — rechargez pour l\'appliquer.',
+            'info',
+            10000,
+            { label: 'Recharger', onClick: () => updateSW(true) }
+        );
     },
     onOfflineReady() {
+        showToast('Application prête hors-ligne.', 'success', 3000);
     },
 });

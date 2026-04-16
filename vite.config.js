@@ -8,7 +8,7 @@ export default defineConfig({
 
   plugins: [
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       base: '/History-Walk-V1/',
       scope: '/History-Walk-V1/',
 

@@ -2987,3 +2987,14 @@ input[type=range] {
     transform: translateY(1px);
 }
 
+/* ── OFFLINE BANNER ──────────────────────────────────────────────────────── */
+#offline-banner {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 99998;
+    background: #92400E; color: #FEF3C7;
+    font-size: 0.8rem; font-weight: 600;
+    text-align: center; padding: 6px 16px;
+    letter-spacing: 0.02em;
+}
+#offline-banner.visible { display: block; }
+

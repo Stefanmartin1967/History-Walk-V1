@@ -292,6 +292,7 @@ export async function updatePoiData(poiId, key, value) {
 
     // Sauvegarde en Base de Données
     await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
+    showToast('Enregistré', 'success', 1500);
 
     // Sync Gist (debounced 3s)
     schedulePush();
