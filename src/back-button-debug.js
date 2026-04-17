@@ -163,6 +163,14 @@ function attachListeners() {
     }
 }
 
+/**
+ * Expose un logger accessible depuis l'extérieur pour instrumenter d'autres
+ * modules (ex: tracer le handler _onHwBack pour savoir où il crashe).
+ */
+export function debugLog(type, details = {}) {
+    log(type, details);
+}
+
 // ─── API publique ────────────────────────────────────────────────────────────
 
 /**

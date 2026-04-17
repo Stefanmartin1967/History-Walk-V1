@@ -23,7 +23,7 @@ import {
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
-import { initBackButtonDebug } from './back-button-debug.js';
+import { initBackButtonDebug, debugLog } from './back-button-debug.js';
 
 // ─── Re-export depuis mobile-state.js (compatibilité barrel) ─────────────────
 
@@ -59,21 +59,36 @@ export function initMobileMode() {
 
     // Gestionnaire unique appelé par popstate OU hashchange
     let _backHandled = false;
-    function _onHwBack() {
-        // Déduplication : les deux événements peuvent se déclencher ensemble
-        if (_backHandled) return;
-        _backHandled = true;
-        setTimeout(() => { _backHandled = false; }, 100);
+    function _onHwBack(evt) {
+        try {
+            debugLog('handler:enter', { via: evt?.type || '?', handled: _backHandled });
+            // Déduplication : les deux événements peuvent se déclencher ensemble
+            if (_backHandled) { debugLog('handler:skip-dedup'); return; }
+            _backHandled = true;
+            setTimeout(() => { _backHandled = false; }, 100);
 
-        if (!isMobileView()) return;
-        const view = getCurrentView();
+            if (!isMobileView()) { debugLog('handler:skip-desktop'); return; }
+            const view = getCurrentView();
+            debugLog('handler:view-check', { view });
 
-        if (view !== 'circuits') {
-            _pushBackSentinel();
-            if (view === 'circuit-details') clearCircuit(false);
-            switchMobileView('circuits');
+            if (view !== 'circuits') {
+                debugLog('handler:before-push');
+                _pushBackSentinel();
+                debugLog('handler:after-push');
+                if (view === 'circuit-details') {
+                    debugLog('handler:before-clear');
+                    clearCircuit(false);
+                    debugLog('handler:after-clear');
+                }
+                debugLog('handler:before-switch');
+                switchMobileView('circuits');
+                debugLog('handler:after-switch');
+            } else {
+                debugLog('handler:at-root');
+            }
+        } catch (err) {
+            debugLog('handler:ERROR', { msg: String(err?.message || err).slice(0, 60) });
         }
-        // À la racine : sentinelle non ré-injectée → prochain Back quitte l'app
     }
 
     window.addEventListener('popstate', _onHwBack);
