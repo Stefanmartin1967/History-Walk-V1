@@ -14,6 +14,7 @@ import {
     getMobileSort, setMobileSort,
     getMobileCurrentPage, setMobileCurrentPage,
     setCurrentView, setAllCircuitsOrdered,
+    pushMobileLevel,
 } from './mobile-state.js';
 
 // ─── Liste des circuits ───────────────────────────────────────────────────────
@@ -225,6 +226,7 @@ export function renderMobileCircuitsList() {
             if (e.target.closest('a')) return;
 
             const id = btn.dataset.id;
+            pushMobileLevel('c'); // Proactif C7 : pousser entrée avant descente
             setCurrentView('circuit-details'); // Autorise renderMobilePoiList
             await loadCircuitById(id);
         });

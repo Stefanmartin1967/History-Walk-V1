@@ -21,6 +21,7 @@ import {
     getMobileCurrentPage, setMobileCurrentPage,
     getAllCircuitsOrdered,
     animateContainer,
+    pushMobileLevel,
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
@@ -28,7 +29,7 @@ import { initBackButtonDebug, debugLog } from './back-button-debug.js';
 
 // ─── Re-export depuis mobile-state.js (compatibilité barrel) ─────────────────
 
-export { isMobileView } from './mobile-state.js';
+export { isMobileView, pushMobileLevel } from './mobile-state.js';
 
 // ─── Initialisation ───────────────────────────────────────────────────────────
 
@@ -44,81 +45,49 @@ export function initMobileMode() {
     // via ?debug-back=1. À retirer une fois C7 résolu.
     initBackButtonDebug();
 
-    // ─── Bouton Retour Android ────────────────────────────────────────────────
-    // Cause : pushState avec URL vide ('' ) n'est pas reconnu comme une vraie
-    // navigation par Android Chrome PWA → popstate ne se déclenche pas.
-    // Solution : pushState avec un fragment (#back) crée une vraie diff d'URL,
-    // ce qui inscrit l'entrée dans la pile native Android et déclenche hashchange.
-    const HW_BACK_HASH = '#back';
-
-    function _pushBackSentinel() {
-        history.pushState({ hwSentinel: true }, '', HW_BACK_HASH);
-    }
-
-    // Ré-injection différée : pousser le sentinel SYNCHRONEMENT pendant un
-    // handler popstate laisse Chrome Android dans un état où il croit que
-    // l'historique est vide (hashchange rapporte new=- malgré notre push).
-    // setTimeout(0) laisse le browser commit son état avant qu'on ré-empile.
-    function _deferredPushSentinel() {
-        setTimeout(() => {
-            _pushBackSentinel();
-            debugLog('handler:sentinel-deferred');
-        }, 0);
-    }
-
-    // Installation initiale
-    _pushBackSentinel();
-
-    // Gestionnaire unique appelé par popstate OU hashchange
-    // Navigation à 3 niveaux :
-    //   POI ouvert          → retour à la liste POIs du circuit (ou circuits)
-    //   circuit-details     → retour à Mes Circuits
-    //   search / actions    → retour à Mes Circuits
-    //   circuits (racine)   → sentinelle non réinjectée → prochain Back minimise
+    // ─── Bouton Retour Android (pattern proactif) ────────────────────────────
+    // Chaque navigation descendante pousse une entrée d'historique avec hash
+    // distinct. Chaque Back pop une entrée, popstate fire, le handler lit
+    // l'état de l'app et rend le niveau correspondant — sans rien re-pousser
+    // dans le handler (évite le lock Chrome Android mid-popstate).
     let _backHandled = false;
     function _onHwBack(evt) {
         try {
-            debugLog('handler:enter', { via: evt?.type || '?', handled: _backHandled });
-            // Déduplication : les deux événements peuvent se déclencher ensemble
+            debugLog('handler:enter', { via: evt?.type || '?', hash: location.hash });
+            // Déduplication : popstate + hashchange peuvent firer pour un même Back
             if (_backHandled) { debugLog('handler:skip-dedup'); return; }
             _backHandled = true;
             setTimeout(() => { _backHandled = false; }, 100);
 
             if (!isMobileView()) { debugLog('handler:skip-desktop'); return; }
 
-            const view = getCurrentView();
             const hasPoi = state.currentFeatureId !== null;
+            const view = getCurrentView();
             debugLog('handler:view-check', { view, poi: hasPoi });
 
-            // Niveau 3 : POI ouvert → fermer le panneau et revenir à la liste
-            // précédente (POIs du circuit si on était dans un circuit, sinon
-            // liste des circuits). closeDetailsPanel réinitialise
-            // state.currentFeatureId = null pour nous.
+            // Niveau 3 : POI ouvert → fermer le panneau
             if (hasPoi) {
-                _deferredPushSentinel();
                 closeDetailsPanel(!!state.activeCircuitId);
                 debugLog('handler:poi-closed', { toList: !!state.activeCircuitId });
                 return;
             }
 
-            // Niveau 2 : dans un circuit → retour à Mes Circuits
+            // Niveau 2 : circuit-details → retour Mes Circuits
             if (view === 'circuit-details') {
-                _deferredPushSentinel();
                 clearCircuit(false);
                 switchMobileView('circuits');
                 debugLog('handler:circuit-cleared');
                 return;
             }
 
-            // Niveau 2 bis : search / actions / add-poi → retour Mes Circuits
+            // Niveau 2 bis : search/actions/add-poi → retour Mes Circuits
             if (view !== 'circuits') {
-                _deferredPushSentinel();
                 switchMobileView('circuits');
                 debugLog('handler:switched-to-root');
                 return;
             }
 
-            // Niveau 1 (racine) : sentinelle non ré-injectée → prochain Back minimise
+            // Racine : plus rien à pop → prochain Back minimise
             debugLog('handler:at-root');
         } catch (err) {
             debugLog('handler:ERROR', { msg: String(err?.message || err).slice(0, 60) });
@@ -226,6 +195,15 @@ export function initMobileMode() {
 // ─── Routeur de vues ──────────────────────────────────────────────────────────
 
 export function switchMobileView(viewName) {
+    // Proactif C7 : pousser une entrée d'historique pour toute navigation
+    // depuis la racine vers un niveau 2 (search/actions/add-poi). Le Back
+    // Android pop alors l'entrée et popstate handler rend la racine.
+    // Ne rien pousser si on est déjà sur cette vue (anti-doublon) ou si on
+    // redescend à 'circuits' (qui EST la racine).
+    if (viewName !== 'circuits' && viewName !== getCurrentView()) {
+        pushMobileLevel(viewName);
+    }
+
     setCurrentView(viewName);
     if (viewName === 'circuits') {
         setMobileCurrentPage(1);

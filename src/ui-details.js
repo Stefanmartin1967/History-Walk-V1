@@ -6,6 +6,7 @@ import { navigatePoiDetails } from './circuit.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, updatePoiPosition, renderMobileCircuitsList, renderMobilePoiList } from './mobile.js';
+import { pushMobileLevel } from './mobile-state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
@@ -270,6 +271,14 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         const currentId = getPoiId(feature);
         const foundIndex = state.currentCircuit.findIndex(f => getPoiId(f) === currentId);
         if (foundIndex !== -1) circuitIndex = foundIndex;
+    }
+
+    // Proactif C7 : on pousse une entrée d'historique pour le niveau 3 (POI)
+    // uniquement sur une ouverture fraîche (pas pendant un swipe entre POIs,
+    // où currentFeatureId est déjà défini). Mobile seulement.
+    const isFreshOpen = state.currentFeatureId === null;
+    if (isFreshOpen && isMobileView()) {
+        pushMobileLevel('p');
     }
 
     state.currentFeatureId = featureId;
