@@ -1,25 +1,73 @@
 // src/github-sync.js
+//
+// Gestion du Personal Access Token (PAT) GitHub + opérations d'upload/suppression.
+//
+// ─── Stockage du PAT ─────────────────────────────────────────────────────────
+// Le PAT est stocké dans IndexedDB (object store 'appState', clé
+// 'github_pat'), pas dans localStorage. IndexedDB reste same-origin mais est
+// moins exposé aux scripts d'extension et aux snippets tiers qui scrutent
+// localStorage — c'est un durcissement, pas une protection absolue (un XSS
+// same-origin peut toujours lire l'IDB).
+//
+// API synchrone conservée (nombreux consommateurs) via un cache en mémoire :
+//   - initTokenCache() : async, lit l'IDB + migre l'ancienne valeur localStorage
+//     si présente. À appeler UNE FOIS au démarrage de l'app.
+//   - getStoredToken() / isTokenPersisted() : sync, lisent le cache.
+//   - saveToken(token) : sync vis-à-vis du cache, persiste l'IDB en arrière-plan.
+
+import { getAppState, saveAppState } from './database.js';
 
 const STORAGE_KEY_TOKEN = 'github_pat';
+const LEGACY_LS_KEY = 'github_pat';
+
+let _tokenCache = null;
+let _cacheReady = false;
 
 /**
- * Récupère le token depuis localStorage.
- * @returns {string|null}
+ * Initialise le cache PAT depuis IndexedDB. Si le PAT existe encore dans
+ * l'ancien localStorage (legacy), il est migré puis supprimé de localStorage.
+ * À appeler une fois au démarrage de l'app avant toute opération GitHub.
  */
-export function getStoredToken() {
-    return localStorage.getItem(STORAGE_KEY_TOKEN) || null;
+export async function initTokenCache() {
+    try {
+        let token = await getAppState(STORAGE_KEY_TOKEN);
+
+        // Migration legacy : si localStorage contient encore un PAT, on le
+        // transfère vers IndexedDB puis on le retire de localStorage.
+        if (!token) {
+            const legacy = localStorage.getItem(LEGACY_LS_KEY);
+            if (legacy) {
+                token = legacy.trim();
+                await saveAppState(STORAGE_KEY_TOKEN, token);
+                localStorage.removeItem(LEGACY_LS_KEY);
+            }
+        } else {
+            // Si IDB a déjà le token, on s'assure que localStorage est propre
+            if (localStorage.getItem(LEGACY_LS_KEY)) {
+                localStorage.removeItem(LEGACY_LS_KEY);
+            }
+        }
+
+        _tokenCache = token || null;
+    } catch (err) {
+        console.warn('[github-sync] initTokenCache failed, PAT indisponible', err);
+        _tokenCache = null;
+    } finally {
+        _cacheReady = true;
+    }
 }
 
 /**
- * Sauvegarde le token en localStorage.
- * @param {string} token
+ * Récupère le token depuis le cache mémoire.
+ * @returns {string|null}
  */
-export function saveToken(token) {
-    if (token) {
-        localStorage.setItem(STORAGE_KEY_TOKEN, token.trim());
-    } else {
-        localStorage.removeItem(STORAGE_KEY_TOKEN);
+export function getStoredToken() {
+    if (!_cacheReady) {
+        // Cache pas encore initialisé : on retombe sur localStorage legacy en
+        // lecture seule (ne devrait pas arriver en prod, mais évite un crash).
+        return localStorage.getItem(LEGACY_LS_KEY) || null;
     }
+    return _tokenCache;
 }
 
 /**
@@ -27,7 +75,30 @@ export function saveToken(token) {
  * @returns {boolean}
  */
 export function isTokenPersisted() {
-    return !!localStorage.getItem(STORAGE_KEY_TOKEN);
+    return !!getStoredToken();
+}
+
+/**
+ * Sauvegarde ou supprime le token. Le cache est mis à jour immédiatement
+ * (lecture sync cohérente dès le retour), la persistance IDB est asynchrone
+ * en arrière-plan.
+ * @param {string} token
+ */
+export function saveToken(token) {
+    const clean = token ? token.trim() : null;
+    _tokenCache = clean || null;
+    _cacheReady = true;
+
+    // Persiste en arrière-plan (fire-and-forget avec log en cas d'erreur)
+    if (clean) {
+        saveAppState(STORAGE_KEY_TOKEN, clean).catch(err => {
+            console.warn('[github-sync] saveToken: IDB persist failed', err);
+        });
+    } else {
+        saveAppState(STORAGE_KEY_TOKEN, null).catch(err => {
+            console.warn('[github-sync] saveToken clear: IDB persist failed', err);
+        });
+    }
 }
 
 /**

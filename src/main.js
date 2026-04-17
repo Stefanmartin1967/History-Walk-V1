@@ -28,6 +28,7 @@ import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
 import { setupDesktopTools } from './desktopMode.js';
 import { initAdminMode, showAdminLoginModal } from './admin.js';
+import { initTokenCache } from './github-sync.js';
 
 import { loadAndInitializeMap } from './app-startup.js';
 import { showWelcomeIfNeeded } from './welcome.js';
@@ -133,6 +134,12 @@ async function initializeApp() {
 
     try {
         await initDB();
+
+        // P3.2 : charger le PAT GitHub depuis IndexedDB (avec migration
+        // automatique depuis l'ancien localStorage['github_pat']). Doit
+        // s'exécuter avant toute opération admin/sync qui lit le token.
+        await initTokenCache();
+
         const savedTheme = await getAppState('currentTheme');
         if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
 
