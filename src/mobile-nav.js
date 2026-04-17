@@ -25,8 +25,6 @@ import {
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
-import { initBackButtonDebug, debugLog } from './back-button-debug.js';
-
 // ─── Re-export depuis mobile-state.js (compatibilité barrel) ─────────────────
 
 export { isMobileView, pushMobileLevel } from './mobile-state.js';
@@ -39,59 +37,52 @@ export function initMobileMode() {
     // Hack Android/iOS : masquer la barre d'adresse
     setTimeout(() => { window.scrollTo(0, 1); }, 0);
 
-    // ─── Diagnostic C7 ────────────────────────────────────────────────────────
-    // Logger on-screen des événements navigation (popstate / hashchange /
-    // Navigation API / pageshow / visibilitychange). Activé en mode admin ou
-    // via ?debug-back=1. À retirer une fois C7 résolu.
-    initBackButtonDebug();
-
     // ─── Bouton Retour Android (pattern proactif) ────────────────────────────
-    // Chaque navigation descendante pousse une entrée d'historique avec hash
-    // distinct. Chaque Back pop une entrée, popstate fire, le handler lit
-    // l'état de l'app et rend le niveau correspondant — sans rien re-pousser
-    // dans le handler (évite le lock Chrome Android mid-popstate).
+    // Chaque navigation descendante (clic sur circuit, ouverture POI, bouton
+    // dock non-circuits) pousse une entrée d'historique avec un hash distinct
+    // via pushMobileLevel() dans mobile-state.js. Le Back matériel pop alors
+    // cette entrée, popstate fire, et le handler ci-dessous lit l'état de
+    // l'app et rend le niveau correspondant — sans rien re-pousser dans le
+    // handler (évite le lock Chrome Android mid-popstate observé lors des
+    // tentatives précédentes du pattern réactif).
+    //
+    // Niveaux :
+    //   racine (circuits)        : pas de hash
+    //   circuit-details (POIs)   : #c
+    //   poi (fiche)              : #p
+    //   search/actions/add-poi   : #<view>
     let _backHandled = false;
-    function _onHwBack(evt) {
-        try {
-            debugLog('handler:enter', { via: evt?.type || '?', hash: location.hash });
-            // Déduplication : popstate + hashchange peuvent firer pour un même Back
-            if (_backHandled) { debugLog('handler:skip-dedup'); return; }
-            _backHandled = true;
-            setTimeout(() => { _backHandled = false; }, 100);
+    function _onHwBack() {
+        // Déduplication : popstate + hashchange peuvent firer pour un même Back
+        if (_backHandled) return;
+        _backHandled = true;
+        setTimeout(() => { _backHandled = false; }, 100);
 
-            if (!isMobileView()) { debugLog('handler:skip-desktop'); return; }
+        if (!isMobileView()) return;
 
-            const hasPoi = state.currentFeatureId !== null;
-            const view = getCurrentView();
-            debugLog('handler:view-check', { view, poi: hasPoi });
+        const hasPoi = state.currentFeatureId !== null;
+        const view = getCurrentView();
 
-            // Niveau 3 : POI ouvert → fermer le panneau
-            if (hasPoi) {
-                closeDetailsPanel(!!state.activeCircuitId);
-                debugLog('handler:poi-closed', { toList: !!state.activeCircuitId });
-                return;
-            }
-
-            // Niveau 2 : circuit-details → retour Mes Circuits
-            if (view === 'circuit-details') {
-                clearCircuit(false);
-                switchMobileView('circuits');
-                debugLog('handler:circuit-cleared');
-                return;
-            }
-
-            // Niveau 2 bis : search/actions/add-poi → retour Mes Circuits
-            if (view !== 'circuits') {
-                switchMobileView('circuits');
-                debugLog('handler:switched-to-root');
-                return;
-            }
-
-            // Racine : plus rien à pop → prochain Back minimise
-            debugLog('handler:at-root');
-        } catch (err) {
-            debugLog('handler:ERROR', { msg: String(err?.message || err).slice(0, 60) });
+        // Niveau 3 : POI ouvert → fermer le panneau (retour liste POIs ou circuits)
+        if (hasPoi) {
+            closeDetailsPanel(!!state.activeCircuitId);
+            return;
         }
+
+        // Niveau 2 : circuit-details → retour Mes Circuits
+        if (view === 'circuit-details') {
+            clearCircuit(false);
+            switchMobileView('circuits');
+            return;
+        }
+
+        // Niveau 2 bis : search/actions/add-poi → retour Mes Circuits
+        if (view !== 'circuits') {
+            switchMobileView('circuits');
+            return;
+        }
+
+        // Racine : plus rien à pop → prochain Back minimise (comportement natif)
     }
 
     window.addEventListener('popstate', _onHwBack);
