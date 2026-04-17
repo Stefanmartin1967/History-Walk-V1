@@ -1,5 +1,4 @@
 // utils.js
-import exifr from 'exifr';
 import { zonesData } from './zones.js';
 
 /**
@@ -79,6 +78,9 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
 
 export async function getExifLocation(file) {
     try {
+        // Import à la demande — exifr (~100KB) n'est chargé que si cette fonction est appelée
+        const { default: exifr } = await import('exifr');
+
         // Ajout d'un timeout (10s) pour éviter les blocages infinis
         const timeoutPromise = new Promise((_, reject) =>
             setTimeout(() => reject(new Error("Timeout extraction GPS")), 10000)

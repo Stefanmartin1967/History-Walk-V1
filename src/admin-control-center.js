@@ -47,21 +47,10 @@ function saveDraft(newDraft) {
 }
 
 // --- OUVERTURE DIRECTE ONGLET CONFIG (sans calcul diff) ---
-export function openControlCenterSettings() {
-    const callbacks = {
-        uploadAdminData: uploadAdminData,
-        downloadAdminData: downloadAdminData,
-    };
-    openControlCenterModal({ stats: { poisModified: 0, circuitsModified: 0, photosAdded: 0 }, items: [] }, callbacks);
-    setTimeout(() => {
-        const tab = document.querySelector('.admin-cc-tab[data-tab="settings"]');
-        if (tab) tab.click();
-    }, 0);
-}
-
 // --- OUVERTURE DU PANNEAU (Interface + Logique) ---
-export async function openControlCenter() {
-    // 1. Ouvrir la modale (UI vide/chargement) avec les callbacks vers les actions
+// initialTab : onglet affiché en premier ('dashboard' par défaut, 'settings' pour config token)
+export async function openControlCenter(initialTab = 'dashboard') {
+    // 1. Ouvrir la modale avec tous les callbacks
     const callbacks = {
         publishChanges: publishChanges,
         uploadAdminData: uploadAdminData,
@@ -78,8 +67,13 @@ export async function openControlCenter() {
     reconcileLocalChanges(adminDraft, saveDraft, updateButtonBadge);
     await prepareDiffData(adminDraft);
 
-    // 3. Rendre l'onglet actif (Dashboard) avec les données calculées
-    renderTab('dashboard', diffData, callbacks);
+    // 3. Rendre l'onglet demandé
+    renderTab(initialTab, diffData, callbacks);
+}
+
+// Raccourci : ouvre directement l'onglet Réglages (token GitHub)
+export function openControlCenterSettings() {
+    openControlCenter('settings');
 }
 
 // --- ACTIONS GLOBALES ---

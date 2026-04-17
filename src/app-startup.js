@@ -35,23 +35,14 @@ export async function loadOfficialCircuits() {
     const mapId = state.currentMapId || 'djerba';
     const circuitsUrl = `./circuits/${mapId}.json`;
 
+    // Le SW gère NetworkFirst avec fallback cache (timeout 8s) — pas besoin de double-fetch
     let officials = [];
     try {
-        // 1. Tentative Réseau (Bypass Cache SW avec timestamp)
-        const response = await fetch(`${circuitsUrl}?t=${Date.now()}`);
-        if (!response.ok) throw new Error("Network error");
+        const response = await fetch(circuitsUrl);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         officials = await response.json();
     } catch (e) {
-        // 2. Fallback Cache (Offline ou Erreur)
-        console.warn(`[Startup] Echec réseau, tentative cache...`, e);
-        try {
-            const response = await fetch(circuitsUrl);
-            if (response.ok) {
-                officials = await response.json();
-            }
-        } catch (e2) {
-            console.error(`[Startup] Erreur finale chargement circuits:`, e2);
-        }
+        console.error(`[Startup] Erreur chargement circuits:`, e);
     }
 
     if (officials.length > 0) {
@@ -85,23 +76,15 @@ export async function loadDestinationsConfig() {
     const baseUrl = import.meta.env?.BASE_URL || './';
     const configUrl = baseUrl + 'destinations.json';
 
+    // Le SW gère NetworkFirst avec fallback cache (timeout 8s) — pas besoin de double-fetch
     let config = null;
     try {
-        // 1. Network First
-        const response = await fetch(`${configUrl}?t=${Date.now()}`);
+        const response = await fetch(configUrl);
         if (response.ok) {
             config = await response.json();
         }
     } catch (e) {
-        // 2. Fallback Cache
-        try {
-            const response = await fetch(configUrl);
-            if (response.ok) {
-                config = await response.json();
-            }
-        } catch (e2) {
-            console.error("[Startup] Erreur chargement destinations.json.", e2);
-        }
+        console.error("[Startup] Erreur chargement destinations.json.", e);
     }
 
     if (config) {

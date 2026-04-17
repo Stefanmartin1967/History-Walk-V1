@@ -21,9 +21,7 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
         runtimeCaching: [
           {
-            // Stratégie NetworkFirst pour les GeoJSON :
-            // - En ligne : toujours récupérer la version fraîche du serveur
-            // - Hors ligne : utiliser le cache (fallback transparent)
+            // GeoJSON : NetworkFirst — données éditoriales qui évoluent
             urlPattern: /\.geojson(\?.*)?$/,
             handler: 'NetworkFirst',
             options: {
@@ -31,6 +29,20 @@ export default defineConfig({
               networkTimeoutSeconds: 8,
               expiration: {
                 maxEntries: 10,
+                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 jours
+              },
+            },
+          },
+          {
+            // Circuits officiels et config destinations : NetworkFirst
+            // Remplace le double-fetch manuel avec ?t=Date.now() dans app-startup.js
+            urlPattern: /\/(circuits\/[^?]+\.json|destinations\.json)(\?.*)?$/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'app-data',
+              networkTimeoutSeconds: 8,
+              expiration: {
+                maxEntries: 20,
                 maxAgeSeconds: 7 * 24 * 60 * 60, // 7 jours
               },
             },
