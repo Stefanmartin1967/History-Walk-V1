@@ -12,6 +12,42 @@ import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
 
+// ─── Authentification admin ──────────────────────────────────────────────────
+// Hash SHA-256 du mot de passe admin. La valeur claire n'est PAS dans le
+// source. Un attaquant qui lit le bundle doit inverser SHA-256 → protection
+// par résistance pré-image (mot de passe 16 caractères, entropie ~104 bits).
+// Pour changer le mdp : node -e "crypto.createHash('sha256').update('NOUVEAU').digest('hex')"
+const ADMIN_PASSWORD_HASH = '351186f6a16eb579ba3d83f573f518148fb84ab2a1536d87277534b06f4ac16d';
+
+/** Hash SHA-256 d'une chaîne, retourne l'hex en minuscules. */
+async function sha256Hex(str) {
+    const bytes = new TextEncoder().encode(str);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+}
+
+/** Comparaison constant-time de deux chaînes de même longueur. */
+function constantTimeEqual(a, b) {
+    if (a.length !== b.length) return false;
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) {
+        diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+    }
+    return diff === 0;
+}
+
+/** Vérifie si le mot de passe saisi correspond au hash admin. */
+export async function verifyAdminPassword(pwd) {
+    try {
+        const hash = await sha256Hex(pwd);
+        return constantTimeEqual(hash, ADMIN_PASSWORD_HASH);
+    } catch {
+        return false;
+    }
+}
+
 export function initAdminMode() {
     // Check for persistent session
     if (localStorage.getItem('admin_session') === 'active') {
@@ -110,15 +146,16 @@ export function showAdminLoginModal() {
     btnLogin.className = 'custom-modal-btn primary';
     btnLogin.textContent = "Connexion";
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         const input = document.getElementById('admin-password-input');
         const errorMsg = document.getElementById('login-error-msg');
 
         if (!input) return;
 
         const pwd = input.value.trim();
+        const ok = await verifyAdminPassword(pwd);
 
-        if (pwd === 'S1a7n0d9r1i9n7e3') {
+        if (ok) {
             state.isAdmin = true;
             showToast("Connexion réussie !", "success");
             eventBus.emit('admin:mode-toggled', true);
