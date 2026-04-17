@@ -55,6 +55,17 @@ export function initMobileMode() {
         history.pushState({ hwSentinel: true }, '', HW_BACK_HASH);
     }
 
+    // Ré-injection différée : pousser le sentinel SYNCHRONEMENT pendant un
+    // handler popstate laisse Chrome Android dans un état où il croit que
+    // l'historique est vide (hashchange rapporte new=- malgré notre push).
+    // setTimeout(0) laisse le browser commit son état avant qu'on ré-empile.
+    function _deferredPushSentinel() {
+        setTimeout(() => {
+            _pushBackSentinel();
+            debugLog('handler:sentinel-deferred');
+        }, 0);
+    }
+
     // Installation initiale
     _pushBackSentinel();
 
@@ -84,7 +95,7 @@ export function initMobileMode() {
             // liste des circuits). closeDetailsPanel réinitialise
             // state.currentFeatureId = null pour nous.
             if (hasPoi) {
-                _pushBackSentinel();
+                _deferredPushSentinel();
                 closeDetailsPanel(!!state.activeCircuitId);
                 debugLog('handler:poi-closed', { toList: !!state.activeCircuitId });
                 return;
@@ -92,7 +103,7 @@ export function initMobileMode() {
 
             // Niveau 2 : dans un circuit → retour à Mes Circuits
             if (view === 'circuit-details') {
-                _pushBackSentinel();
+                _deferredPushSentinel();
                 clearCircuit(false);
                 switchMobileView('circuits');
                 debugLog('handler:circuit-cleared');
@@ -101,7 +112,7 @@ export function initMobileMode() {
 
             // Niveau 2 bis : search / actions / add-poi → retour Mes Circuits
             if (view !== 'circuits') {
-                _pushBackSentinel();
+                _deferredPushSentinel();
                 switchMobileView('circuits');
                 debugLog('handler:switched-to-root');
                 return;
