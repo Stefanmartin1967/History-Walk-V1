@@ -3,7 +3,7 @@
 
 import { state } from './state.js';
 import { DOM } from './ui.js';
-import { openDetailsPanel } from './ui-details.js';
+import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { saveAppState } from './database.js';
@@ -59,6 +59,11 @@ export function initMobileMode() {
     _pushBackSentinel();
 
     // Gestionnaire unique appelé par popstate OU hashchange
+    // Navigation à 3 niveaux :
+    //   POI ouvert          → retour à la liste POIs du circuit (ou circuits)
+    //   circuit-details     → retour à Mes Circuits
+    //   search / actions    → retour à Mes Circuits
+    //   circuits (racine)   → sentinelle non réinjectée → prochain Back minimise
     let _backHandled = false;
     function _onHwBack(evt) {
         try {
@@ -69,24 +74,41 @@ export function initMobileMode() {
             setTimeout(() => { _backHandled = false; }, 100);
 
             if (!isMobileView()) { debugLog('handler:skip-desktop'); return; }
-            const view = getCurrentView();
-            debugLog('handler:view-check', { view });
 
-            if (view !== 'circuits') {
-                debugLog('handler:before-push');
+            const view = getCurrentView();
+            const hasPoi = state.currentFeatureId !== null;
+            debugLog('handler:view-check', { view, poi: hasPoi });
+
+            // Niveau 3 : POI ouvert → fermer le panneau et revenir à la liste
+            // précédente (POIs du circuit si on était dans un circuit, sinon
+            // liste des circuits). closeDetailsPanel réinitialise
+            // state.currentFeatureId = null pour nous.
+            if (hasPoi) {
                 _pushBackSentinel();
-                debugLog('handler:after-push');
-                if (view === 'circuit-details') {
-                    debugLog('handler:before-clear');
-                    clearCircuit(false);
-                    debugLog('handler:after-clear');
-                }
-                debugLog('handler:before-switch');
-                switchMobileView('circuits');
-                debugLog('handler:after-switch');
-            } else {
-                debugLog('handler:at-root');
+                closeDetailsPanel(!!state.activeCircuitId);
+                debugLog('handler:poi-closed', { toList: !!state.activeCircuitId });
+                return;
             }
+
+            // Niveau 2 : dans un circuit → retour à Mes Circuits
+            if (view === 'circuit-details') {
+                _pushBackSentinel();
+                clearCircuit(false);
+                switchMobileView('circuits');
+                debugLog('handler:circuit-cleared');
+                return;
+            }
+
+            // Niveau 2 bis : search / actions / add-poi → retour Mes Circuits
+            if (view !== 'circuits') {
+                _pushBackSentinel();
+                switchMobileView('circuits');
+                debugLog('handler:switched-to-root');
+                return;
+            }
+
+            // Niveau 1 (racine) : sentinelle non ré-injectée → prochain Back minimise
+            debugLog('handler:at-root');
         } catch (err) {
             debugLog('handler:ERROR', { msg: String(err?.message || err).slice(0, 60) });
         }
