@@ -17,7 +17,7 @@ import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-c
 // source. Un attaquant qui lit le bundle doit inverser SHA-256 → protection
 // par résistance pré-image (mot de passe 16 caractères, entropie ~104 bits).
 // Pour changer le mdp : node -e "crypto.createHash('sha256').update('NOUVEAU').digest('hex')"
-const ADMIN_PASSWORD_HASH = '351186f6a16eb579ba3d83f573f518148fb84ab2a1536d87277534b06f4ac16d';
+const ADMIN_PASSWORD_HASH = '92f0d12e77f7c551f3c1f57fe8376599a29518275d50978cd51175c8f8f44e03';
 
 /** Hash SHA-256 d'une chaîne, retourne l'hex en minuscules. */
 async function sha256Hex(str) {
