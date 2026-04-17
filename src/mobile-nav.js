@@ -41,25 +41,22 @@ export function initMobileMode() {
     setTimeout(() => { window.scrollTo(0, 1); }, 0);
 
     // ─── Bouton Retour Android — pattern "sentinel" ───────────────────────────
-    // On pousse UNE entrée sentinelle. Sur chaque Back :
-    //  - si pas à la racine : ré-injecte la sentinelle + retour circuits
-    //  - si à la racine (circuits) : ne ré-injecte pas → prochain Back sort de l'app
+    history.replaceState({ hwRoot: true }, '');
     history.pushState({ hwSentinel: true }, '');
 
-    window.addEventListener('popstate', () => {
-        if (!isMobileView()) return;
+    window.addEventListener('popstate', (event) => {
         const view = getCurrentView();
-        const atRoot = view === 'circuits';
+        const mobile = isMobileView();
 
-        if (!atRoot) {
-            // Ré-injecte la sentinelle pour intercepter le Back suivant
+        // 🔍 DIAGNOSTIC TEMPORAIRE — sera retiré après confirmation
+        showToast(`Back: vue=${view} | mobile=${mobile} | w=${window.innerWidth}`, 'info', 7000);
+
+        if (!mobile) return;
+        if (view !== 'circuits') {
             history.pushState({ hwSentinel: true }, '');
-            _poppingState = true;
             if (view === 'circuit-details') clearCircuit(false);
             switchMobileView('circuits');
-            _poppingState = false;
         }
-        // Si atRoot : sentinelle non ré-injectée → prochain Back quitte l'app
     });
 
     // ─── Swipe horizontal sur le container mobile ─────────────────────────────
