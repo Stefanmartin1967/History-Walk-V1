@@ -1,7 +1,7 @@
 // mobile-menu.js
 // Rendu du menu principal mobile (vue "actions") + listener eventBus admin
 
-import { state } from './state.js';
+import { state, APP_VERSION } from './state.js';
 import { DOM } from './ui.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
@@ -97,7 +97,7 @@ export function renderMobileMenu() {
             ` : ''}
         </div>
         <div class="mobile-version-footer">
-            History Walk Mobile v${state.appVersion || '3.5.3'}
+            History Walk Mobile v${APP_VERSION}
         </div>
     `;
 

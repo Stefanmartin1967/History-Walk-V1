@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.5.7'; // Version incrémentée (Icon Fix + UI Cleanup)
+export const APP_VERSION = '3.6.0'; // C2-C7 : imports, SW cache, backup validation, retour Android
 export const MAX_CIRCUIT_POINTS = 15;
 
 export const POI_CATEGORIES = [
