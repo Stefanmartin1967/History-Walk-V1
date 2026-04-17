@@ -16,6 +16,7 @@ import { getSearchResults } from './search.js';
 import { navigatePoiDetails, loadCircuitById, clearCircuit } from './circuit.js';
 import { showAdminLoginModal } from './admin.js';
 import {
+    isMobileView,
     getCurrentView, setCurrentView,
     getMobileCurrentPage, setMobileCurrentPage,
     getAllCircuitsOrdered,
