@@ -23,6 +23,7 @@ import {
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
+import { initBackButtonDebug } from './back-button-debug.js';
 
 // ─── Re-export depuis mobile-state.js (compatibilité barrel) ─────────────────
 
@@ -35,6 +36,12 @@ export function initMobileMode() {
 
     // Hack Android/iOS : masquer la barre d'adresse
     setTimeout(() => { window.scrollTo(0, 1); }, 0);
+
+    // ─── Diagnostic C7 ────────────────────────────────────────────────────────
+    // Logger on-screen des événements navigation (popstate / hashchange /
+    // Navigation API / pageshow / visibilitychange). Activé en mode admin ou
+    // via ?debug-back=1. À retirer une fois C7 résolu.
+    initBackButtonDebug();
 
     // ─── Bouton Retour Android ────────────────────────────────────────────────
     // Cause : pushState avec URL vide ('' ) n'est pas reconnu comme une vraie
