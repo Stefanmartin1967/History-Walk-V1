@@ -28,10 +28,6 @@ import { renderMobileMenu } from './mobile-menu.js';
 
 export { isMobileView } from './mobile-state.js';
 
-// ─── Flag interne : évite les boucles pendant le traitement d'un popstate ────
-
-let _poppingState = false;
-
 // ─── Initialisation ───────────────────────────────────────────────────────────
 
 export function initMobileMode() {
@@ -40,24 +36,41 @@ export function initMobileMode() {
     // Hack Android/iOS : masquer la barre d'adresse
     setTimeout(() => { window.scrollTo(0, 1); }, 0);
 
-    // ─── Bouton Retour Android — pattern "sentinel" ───────────────────────────
-    history.replaceState({ hwRoot: true }, '');
-    history.pushState({ hwSentinel: true }, '');
+    // ─── Bouton Retour Android ────────────────────────────────────────────────
+    // Cause : pushState avec URL vide ('' ) n'est pas reconnu comme une vraie
+    // navigation par Android Chrome PWA → popstate ne se déclenche pas.
+    // Solution : pushState avec un fragment (#back) crée une vraie diff d'URL,
+    // ce qui inscrit l'entrée dans la pile native Android et déclenche hashchange.
+    const HW_BACK_HASH = '#back';
 
-    window.addEventListener('popstate', (event) => {
+    function _pushBackSentinel() {
+        history.pushState({ hwSentinel: true }, '', HW_BACK_HASH);
+    }
+
+    // Installation initiale
+    _pushBackSentinel();
+
+    // Gestionnaire unique appelé par popstate OU hashchange
+    let _backHandled = false;
+    function _onHwBack() {
+        // Déduplication : les deux événements peuvent se déclencher ensemble
+        if (_backHandled) return;
+        _backHandled = true;
+        setTimeout(() => { _backHandled = false; }, 100);
+
+        if (!isMobileView()) return;
         const view = getCurrentView();
-        const mobile = isMobileView();
 
-        // 🔍 DIAGNOSTIC TEMPORAIRE — sera retiré après confirmation
-        showToast(`Back: vue=${view} | mobile=${mobile} | w=${window.innerWidth}`, 'info', 7000);
-
-        if (!mobile) return;
         if (view !== 'circuits') {
-            history.pushState({ hwSentinel: true }, '');
+            _pushBackSentinel();
             if (view === 'circuit-details') clearCircuit(false);
             switchMobileView('circuits');
         }
-    });
+        // À la racine : sentinelle non ré-injectée → prochain Back quitte l'app
+    }
+
+    window.addEventListener('popstate', _onHwBack);
+    window.addEventListener('hashchange', _onHwBack);
 
     // ─── Swipe horizontal sur le container mobile ─────────────────────────────
 
