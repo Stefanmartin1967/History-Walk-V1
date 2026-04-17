@@ -85,6 +85,32 @@ export const toggleDiffDetails = (id) => {
     }
 };
 
+// Regex strict : "lat, lng" avec décimales optionnelles, signe optionnel
+const POSITION_RE = /^-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?$/;
+
+/**
+ * Valide une chaîne "lat, lng". Retourne { ok: true, lat, lng } en cas de
+ * succès, ou { ok: false, reason } en cas d'échec (format, bornes, inversion).
+ */
+function validatePositionInput(value) {
+    const trimmed = String(value || '').trim();
+    if (!POSITION_RE.test(trimmed)) {
+        return { ok: false, reason: 'Format attendu : "lat, lng" (ex : 33.77, 10.94)' };
+    }
+    const [lat, lng] = trimmed.split(',').map(s => parseFloat(s.trim()));
+    if (lat < -90 || lat > 90) {
+        // Heuristique : si lat hors bornes mais lng dans [-90, 90], probable inversion
+        if (Math.abs(lng) <= 90) {
+            return { ok: false, reason: `Latitude ${lat} hors bornes (-90..90). Lat et lng inversés ?` };
+        }
+        return { ok: false, reason: `Latitude ${lat} hors bornes (-90..90).` };
+    }
+    if (lng < -180 || lng > 180) {
+        return { ok: false, reason: `Longitude ${lng} hors bornes (-180..180).` };
+    }
+    return { ok: true, lat, lng };
+}
+
 export const updateDraftValue = async (id, key, value) => {
     // Met à jour directement userData (la source de vérité locale)
 
@@ -92,11 +118,13 @@ export const updateDraftValue = async (id, key, value) => {
     if (!newUserData[id]) newUserData[id] = {};
 
     if (key === 'Position') {
-        const parts = value.split(',').map(s => parseFloat(s.trim()));
-        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-            newUserData[id].lat = parts[0];
-            newUserData[id].lng = parts[1];
+        const result = validatePositionInput(value);
+        if (!result.ok) {
+            showToast(result.reason, 'error', 5000);
+            return; // Pas d'écriture si invalide
         }
+        newUserData[id].lat = result.lat;
+        newUserData[id].lng = result.lng;
     } else {
         newUserData[id][key] = value;
     }

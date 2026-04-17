@@ -159,39 +159,60 @@ export async function handleScanResultDefault(decodedText) {
 
 // --- TRAITEMENT DU SYNC ---
 
+// Limites de sécurité sur le payload QR (protection DoS).
+// Une carte légitime contient typiquement < 500 POIs, on laisse une marge x20.
+const MAX_SYNC_INDICES = 10_000;
+const MAX_MAP_ID_LENGTH = 50;
+
 async function handleSyncPayload(payload) {
-    // 1. Vérification Carte
+    // 1. Validation de payload.m (identifiant carte) : string courte uniquement
+    if (typeof payload.m !== 'string' || payload.m.length === 0 || payload.m.length > MAX_MAP_ID_LENGTH) {
+        showToast("Identifiant de carte invalide dans le QR.", "error");
+        return;
+    }
     if (payload.m !== state.currentMapId) {
         showToast(`Ce code est pour la carte "${payload.m}", mais vous êtes sur "${state.currentMapId}".`, "error");
         return;
     }
 
+    // 2. Validation de payload.v (liste indices POIs visités)
     if (!Array.isArray(payload.v)) {
         showToast("Format de données corrompu.", "error");
         return;
     }
+    if (payload.v.length > MAX_SYNC_INDICES) {
+        showToast(`QR code trop volumineux (${payload.v.length} entrées, max ${MAX_SYNC_INDICES}).`, "error");
+        return;
+    }
 
-    // 2. Application des changements
+    // 3. Nettoyage : indices entiers dans les bornes, dédupliqués
+    const validIndices = new Set();
+    for (const index of payload.v) {
+        if (Number.isInteger(index) && index >= 0 && index < state.loadedFeatures.length) {
+            validIndices.add(index);
+        }
+        // Les indices invalides (float, hors bornes, non-nombres) sont silencieusement ignorés.
+    }
+
+    // 4. Application des changements
     const updates = [];
     let appliedCount = 0;
 
-    payload.v.forEach(index => {
-        if (index >= 0 && index < state.loadedFeatures.length) {
-            const feature = state.loadedFeatures[index];
-            const poiId = getPoiId(feature);
+    validIndices.forEach(index => {
+        const feature = state.loadedFeatures[index];
+        const poiId = getPoiId(feature);
 
-            // On ne met à jour que si ce n'est pas déjà fait (Optimisation)
-            if (!feature.properties.userData || !feature.properties.userData.vu) {
-                if (!feature.properties.userData) feature.properties.userData = {};
+        // On ne met à jour que si ce n'est pas déjà fait (Optimisation)
+        if (!feature.properties.userData || !feature.properties.userData.vu) {
+            if (!feature.properties.userData) feature.properties.userData = {};
 
-                feature.properties.userData.vu = true; // Mise à jour Mémoire
+            feature.properties.userData.vu = true; // Mise à jour Mémoire
 
-                updates.push({
-                    poiId: poiId,
-                    data: feature.properties.userData
-                });
-                appliedCount++;
-            }
+            updates.push({
+                poiId: poiId,
+                data: feature.properties.userData
+            });
+            appliedCount++;
         }
     });
 
