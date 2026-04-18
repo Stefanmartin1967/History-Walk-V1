@@ -428,6 +428,47 @@ export async function deletePoiPhotos(mapId, poiId) {
     });
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// PENDING ADMIN PHOTOS (appState key: `pendingAdminPhotos_${mapId}`)
+// Draft local des photos admin à uploader lors du prochain publish CC.
+// Les photos sont stockées sous forme de Blob local tant qu'elles ne sont pas
+// publiées sur GitHub (pattern aligné sur le reste de l'adminDraft).
+// Format : { [poiId]: [{ id: string, blob: Blob }] }
+// ─────────────────────────────────────────────────────────────────────────────
+
+function pendingAdminPhotosKey(mapId) {
+    return `pendingAdminPhotos_${mapId}`;
+}
+
+/** Photos pending d'un POI (array vide si aucune). */
+export async function getPendingAdminPhotos(mapId, poiId) {
+    const all = (await getAppState(pendingAdminPhotosKey(mapId))) || {};
+    return all[poiId] || [];
+}
+
+/** Map complète des photos pending pour la carte courante. */
+export async function getAllPendingAdminPhotos(mapId) {
+    return (await getAppState(pendingAdminPhotosKey(mapId))) || {};
+}
+
+/** Remplace les photos pending d'un POI (array vide = suppression). */
+export async function setPendingAdminPhotos(mapId, poiId, photos) {
+    const all = (await getAppState(pendingAdminPhotosKey(mapId))) || {};
+    if (!photos || photos.length === 0) {
+        delete all[poiId];
+    } else {
+        all[poiId] = photos;
+    }
+    await saveAppState(pendingAdminPhotosKey(mapId), all);
+}
+
+/** Supprime toutes les photos pending d'un POI. */
+export async function clearPendingAdminPhotos(mapId, poiId) {
+    const all = (await getAppState(pendingAdminPhotosKey(mapId))) || {};
+    delete all[poiId];
+    await saveAppState(pendingAdminPhotosKey(mapId), all);
+}
+
 /**
  * Retourne toutes les entrées photos pour une carte (pour calcul de taille backup).
  * @returns {Promise<Array<{mapId, poiId, photos}>>}

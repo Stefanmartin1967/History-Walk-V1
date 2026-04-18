@@ -150,10 +150,10 @@ export function renderTab(tab, diffData, callbacks) {
     if (!container) return;
 
     if (tab === 'dashboard') {
-        const { poisModified, circuitsModified, photosAdded, testedChanged = 0 } = diffData.stats;
+        const { poisModified, circuitsModified, testedChanged = 0, pendingPhotoCount = 0 } = diffData.stats;
         const hasToken = !!getStoredToken();
 
-        const isSynced = (poisModified + circuitsModified + testedChanged) === 0;
+        const isSynced = (poisModified + circuitsModified + testedChanged + pendingPhotoCount) === 0;
         container.innerHTML = `
             <div class="cc-quick-actions">
                 <div class="cc-quick-actions-title"><i data-lucide="zap"></i> Actions Rapides</div>
@@ -190,10 +190,10 @@ export function renderTab(tab, diffData, callbacks) {
                     <div class="stat-val">${poisModified}</div>
                     <div class="stat-lab">Lieux Modifiés</div>
                 </div>
-                <div class="stat-card" data-action="goto-changes" title="Voir les modifications">
+                <div class="stat-card" data-action="goto-changes" title="Photos locales en attente d'upload au prochain Publier">
                     <div class="stat-icon-box"><i data-lucide="camera"></i></div>
-                    <div class="stat-val">${photosAdded}</div>
-                    <div class="stat-lab">Photos Ajoutées</div>
+                    <div class="stat-val">${pendingPhotoCount}</div>
+                    <div class="stat-lab">Photos à publier</div>
                 </div>
                 <div class="stat-card" data-action="goto-changes" title="Voir les modifications">
                     <div class="stat-icon-box"><i data-lucide="route"></i></div>

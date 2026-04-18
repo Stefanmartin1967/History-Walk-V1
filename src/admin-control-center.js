@@ -5,7 +5,8 @@ import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './gith
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { showToast } from './toast.js';
 import { showConfirm, closeModal } from './modal.js';
-import { saveAppState, getAppState } from './database.js';
+import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos } from './database.js';
+import { uploadPhotoForPoi } from './photo-service.js';
 
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, diffData } from './admin-diff-engine.js';
@@ -166,6 +167,13 @@ export const processDecision = async (id, decision) => {
             await saveAppState('userData', state.userData);
         }
 
+        // Purge les photos en attente de publication pour ce POI
+        try {
+            await clearPendingAdminPhotos(state.currentMapId || 'djerba', id);
+        } catch (e) {
+            console.warn('[CC] clearPendingAdminPhotos failed:', e);
+        }
+
         showToast("Modification refusée et annulée", "info");
     } else {
         showToast("Modification validée pour publication", "success");
@@ -218,13 +226,64 @@ async function publishChanges() {
     }
 
     try {
+        const mapId = state.currentMapId || 'djerba';
+
+        // ─── 1. UPLOAD DES PHOTOS PENDING (blobs locaux → GitHub) ───
+        // Doit précéder la génération du geojson pour que les URLs fraîches
+        // soient injectées dans userData.photos et sérialisées dans le geojson.
+        let uploadedPhotoCount = 0;
+        let failedPhotoCount  = 0;
+
+        if (diffData.stats.pendingPhotoCount > 0) {
+            const pendingMap = diffData.pendingPhotos || {};
+            for (const poiId of Object.keys(pendingMap)) {
+                const pending = await getPendingAdminPhotos(mapId, poiId);
+                if (pending.length === 0) continue;
+
+                const newUrls = [];
+                const successIds = [];
+                // Séquentiel : évite les conflits de commit parallèles sur main.
+                for (const item of pending) {
+                    try {
+                        const file = new File([item.blob], 'photo.jpg', { type: 'image/jpeg' });
+                        const url = await uploadPhotoForPoi(file, poiId);
+                        newUrls.push(url);
+                        successIds.push(item.id);
+                        uploadedPhotoCount++;
+                    } catch (err) {
+                        console.error('[CC] Upload photo échoué pour', poiId, err);
+                        failedPhotoCount++;
+                    }
+                }
+
+                if (newUrls.length > 0) {
+                    // Fusion avec les URLs existantes de userData.photos (photos
+                    // déjà publiées conservées en tête de liste).
+                    const existingUrls = state.userData[poiId]?.photos || [];
+                    const mergedUrls   = [...existingUrls, ...newUrls];
+
+                    const newUserData = { ...state.userData };
+                    if (!newUserData[poiId]) newUserData[poiId] = {};
+                    newUserData[poiId].photos = mergedUrls;
+                    setUserData(newUserData);
+                }
+
+                // On ne conserve que les items pending qui ont ÉCHOUÉ — ils
+                // seront retentés au prochain Publier.
+                const successSet = new Set(successIds);
+                const remaining  = pending.filter(p => !successSet.has(p.id));
+                await setPendingAdminPhotos(mapId, poiId, remaining);
+            }
+
+            await saveAppState('userData', state.userData);
+        }
+
+        // ─── 2. GÉNÉRATION + UPLOAD DU GEOJSON ───
         // Collect IDs to delete
         const idsToDelete = Object.keys(adminDraft.pendingPois).filter(id => adminDraft.pendingPois[id].type === 'delete');
 
         const geojson = generateMasterGeoJSONData(idsToDelete);
         if (!geojson) throw new Error("Erreur données GeoJSON");
-
-        const mapId = state.currentMapId || 'djerba';
         const filename = `${mapId}.geojson`;
         const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/geo+json' });
         const file = new File([blob], filename, { type: 'application/geo+json' });
@@ -233,7 +292,8 @@ async function publishChanges() {
         const stats = diffData.stats || {};
         const msgParts = [`feat(map): Publication ${mapId}`];
         if (stats.poisModified > 0) msgParts.push(`${stats.poisModified} POI(s)`);
-        if (stats.photosAdded  > 0) msgParts.push(`${stats.photosAdded} photo(s)`);
+        const totalPhotos = (stats.photosAdded || 0) + uploadedPhotoCount;
+        if (totalPhotos > 0) msgParts.push(`${totalPhotos} photo(s)`);
         const commitMessage = msgParts.join(' — ');
 
         await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.geojson(mapId), commitMessage);

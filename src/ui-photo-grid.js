@@ -2,8 +2,8 @@ import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
-import { compressImage, generatePhotoId, uploadPhotoForPoi, ADMIN_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
-import { getPoiPhotos, savePoiPhotos } from './database.js';
+import { compressImage, generatePhotoId, ADMIN_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
+import { getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos } from './database.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 // --- STATE ---
@@ -221,8 +221,22 @@ async function _loadPhotos(poiId, feature, preloadedPhotos) {
     });
 
     if (state.isAdmin) {
-        // Admin : toutes les URLs (publiées + draft) sont éditables comme "serveur".
+        // URLs déjà publiées (relues du geojson + draft userData)
         currentGridPhotos = adminUrls.map(src => ({ id: null, src, isNew: false }));
+
+        // Photos en attente de publication (Blob locaux, pas encore uploadés)
+        const pending = await getPendingAdminPhotos(state.currentMapId, poiId);
+        for (const item of pending) {
+            const objectUrl = URL.createObjectURL(item.blob);
+            activeObjectUrls.push(objectUrl);
+            currentGridPhotos.push({
+                id: item.id,
+                objectUrl,
+                blob: item.blob,
+                isNew: false,
+                isPending: true,
+            });
+        }
         return;
     }
 
@@ -419,9 +433,9 @@ function getDragAfterElement(container, y, x) {
 
 function updateSaveButton() {
     if (state.isAdmin) {
-        btnSave.title = "Uploader sur GitHub";
-        btnSave.className = 'photo-grid-btn upload-btn';
-        btnSave.innerHTML = `<i data-lucide="cloud-upload"></i>`;
+        btnSave.title = "Enregistrer (publication via Centre de Contrôle)";
+        btnSave.className = 'photo-grid-btn save-btn';
+        btnSave.innerHTML = `<i data-lucide="save"></i>`;
     } else {
         btnSave.title = "Sauvegarder localement";
         btnSave.className = 'photo-grid-btn save-btn';
@@ -457,47 +471,32 @@ async function handleSave() {
 
     try {
         if (state.isAdmin) {
-            // ─── Mode Admin : upload GitHub + save URL strings dans userData ───
-            showToast("Upload en cours...", "info");
+            // ─── Mode Admin : stockage LOCAL uniquement ───
+            // Les URLs déjà publiées sont conservées dans userData.photos.
+            // Les nouveaux blobs partent dans pendingAdminPhotos et seront
+            // uploadés sur GitHub au prochain "Publier" du Centre de Contrôle.
+            const keptUrls = [];
+            const pendingItems = [];
 
-            const finalUrls = [];
-            let uploadCount = 0;
-            let failCount = 0;
-
-            // Upload SÉQUENTIEL : chaque appel à l'API Contents de GitHub crée
-            // un commit sur main. En parallèle, les commits se marchent dessus
-            // (base SHA obsolète → 409 Conflict) et la moindre rejection de
-            // Promise.all annulait toute la persistance. Séquentiel = fiable
-            // + ordre de la grille préservé dans finalUrls.
             for (const photo of currentGridPhotos) {
-                const src = photo.objectUrl || photo.src;
                 if (photo.blob) {
-                    try {
-                        const file = new File([photo.blob], "photo.jpg", { type: "image/jpeg" });
-                        const publicUrl = await uploadPhotoForPoi(file, currentGridPoiId);
-                        finalUrls.push(publicUrl);
-                        uploadCount++;
-                    } catch (err) {
-                        console.error("Upload photo échoué", err);
-                        failCount++;
-                        // On continue : les autres photos peuvent passer,
-                        // et ce qui a réussi sera persisté.
-                    }
-                } else {
-                    // Déjà une URL serveur, on la conserve telle quelle
-                    finalUrls.push(src);
+                    pendingItems.push({
+                        id: photo.id || generatePhotoId(),
+                        blob: photo.blob,
+                    });
+                } else if (photo.src) {
+                    keptUrls.push(photo.src);
                 }
             }
 
-            // Persiste TOUJOURS ce qui a réussi, même en cas d'échec partiel.
-            await updatePoiData(currentGridPoiId, 'photos', finalUrls);
+            await updatePoiData(currentGridPoiId, 'photos', keptUrls);
+            await setPendingAdminPhotos(state.currentMapId, currentGridPoiId, pendingItems);
 
-            if (uploadCount > 0 && failCount === 0) {
-                showToast(`${uploadCount} photo(s) envoyée(s) !`, "success");
-            } else if (uploadCount > 0 && failCount > 0) {
-                showToast(`${uploadCount} envoyée(s), ${failCount} échec(s).`, "info");
-            } else if (failCount > 0) {
-                showToast(`Échec de l'upload (${failCount} photo(s)).`, "error");
+            const pendingCount = pendingItems.length;
+            if (pendingCount > 0) {
+                showToast(`${pendingCount} photo(s) en attente de publication (CC).`, "info");
+            } else {
+                showToast("Enregistré.", "success");
             }
 
         } else {
