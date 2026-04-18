@@ -449,26 +449,44 @@ async function handleSave() {
             showToast("Upload en cours...", "info");
 
             const finalUrls = [];
-            const uploads = currentGridPhotos.map(async (photo) => {
+            let uploadCount = 0;
+            let failCount = 0;
+
+            // Upload SÉQUENTIEL : chaque appel à l'API Contents de GitHub crée
+            // un commit sur main. En parallèle, les commits se marchent dessus
+            // (base SHA obsolète → 409 Conflict) et la moindre rejection de
+            // Promise.all annulait toute la persistance. Séquentiel = fiable
+            // + ordre de la grille préservé dans finalUrls.
+            for (const photo of currentGridPhotos) {
                 const src = photo.objectUrl || photo.src;
                 if (photo.blob) {
-                    // Photo locale → upload GitHub
-                    const file = new File([photo.blob], "photo.jpg", { type: "image/jpeg" });
-                    const publicUrl = await uploadPhotoForPoi(file, currentGridPoiId);
-                    finalUrls.push(publicUrl);
-                    return true;
+                    try {
+                        const file = new File([photo.blob], "photo.jpg", { type: "image/jpeg" });
+                        const publicUrl = await uploadPhotoForPoi(file, currentGridPoiId);
+                        finalUrls.push(publicUrl);
+                        uploadCount++;
+                    } catch (err) {
+                        console.error("Upload photo échoué", err);
+                        failCount++;
+                        // On continue : les autres photos peuvent passer,
+                        // et ce qui a réussi sera persisté.
+                    }
                 } else {
-                    // Déjà une URL serveur
+                    // Déjà une URL serveur, on la conserve telle quelle
                     finalUrls.push(src);
-                    return false;
                 }
-            });
+            }
 
-            const results = await Promise.all(uploads);
-            const uploadCount = results.filter(Boolean).length;
-            if (uploadCount > 0) showToast(`${uploadCount} photo(s) envoyée(s) !`, "success");
-
+            // Persiste TOUJOURS ce qui a réussi, même en cas d'échec partiel.
             await updatePoiData(currentGridPoiId, 'photos', finalUrls);
+
+            if (uploadCount > 0 && failCount === 0) {
+                showToast(`${uploadCount} photo(s) envoyée(s) !`, "success");
+            } else if (uploadCount > 0 && failCount > 0) {
+                showToast(`${uploadCount} envoyée(s), ${failCount} échec(s).`, "info");
+            } else if (failCount > 0) {
+                showToast(`Échec de l'upload (${failCount} photo(s)).`, "error");
+            }
 
         } else {
             // ─── Mode Utilisateur : sauvegarde blobs dans poiPhotos ───
@@ -477,9 +495,9 @@ async function handleSave() {
                 .map(p => ({ id: p.id || generatePhotoId(), blob: p.blob }));
 
             await savePoiPhotos(state.currentMapId, currentGridPoiId, blobItems);
+            showToast("Sauvegarde effectuée.", "success");
         }
 
-        showToast("Sauvegarde effectuée.", "success");
         closePhotoGrid(true);
 
     } catch (e) {
