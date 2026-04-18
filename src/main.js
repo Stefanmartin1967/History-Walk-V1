@@ -32,7 +32,9 @@ import { initTokenCache } from './github-sync.js';
 
 import { loadAndInitializeMap } from './app-startup.js';
 import { showWelcomeIfNeeded } from './welcome.js';
-import { setupEventBusListeners, setupDesktopUIListeners, setupGlobalEventListeners } from './app-events.js';
+import { setupEventBusListeners } from './events-bus.js';
+import { setupDesktopUIListeners } from './events-desktop.js';
+import { setupGlobalEventListeners } from './events-global.js';
 
 // --- PROTECTION CONTRE LA PERTE DE DONNÉES (WORKFLOW) ---
 function setupUnsavedChangesWarning() {
