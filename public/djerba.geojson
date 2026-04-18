@@ -7204,6 +7204,26 @@
         "Prix d'entrée": 0,
         "incontournable": true
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.791724336667718,
+          33.87721084421286
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test console suppression",
+        "Catégorie": "Café",
+        "Zone": "Houmt Souk",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPFXT1HF050WVG041FG7XTQP",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
