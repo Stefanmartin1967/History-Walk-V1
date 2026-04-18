@@ -24,7 +24,7 @@ import {
     // Fichiers & données
     File, FilePlus, FileDown, FileText, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
-    Database, HardDrive, Save, Copy, Send,
+    Database, HardDrive, Save, Copy, Send, Trash, Trash2,
 
     // Carte & circuit
     Map, MapPin, MapPinOff, MapPinPlus, Route, Globe,
@@ -43,7 +43,7 @@ import {
 
     // Badges & gamification
     Award, Trophy, Star, Rocket, Sparkles, Zap, Crown,
-    Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather,
+    Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,
 
     // Catégories POI (map.js iconMap)
     CircleHelp, Hotel, CarTaxiFront,
@@ -71,7 +71,7 @@ export const appIcons = {
 
     File, FilePlus, FileDown, FileText, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
-    Database, HardDrive, Save, Copy, Send,
+    Database, HardDrive, Save, Copy, Send, Trash, Trash2,
 
     Map, MapPin, MapPinOff, MapPinPlus, Route, Globe,
 
@@ -85,7 +85,7 @@ export const appIcons = {
     Mail, Github, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
 
     Award, Trophy, Star, Rocket, Sparkles, Zap, Crown,
-    Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather,
+    Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,
 
     CircleHelp, Hotel, CarTaxiFront,
 
