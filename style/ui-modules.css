@@ -617,6 +617,33 @@
 }
 .ue-pill-btn:hover { background: #FEF3C7; border-color: var(--hw-amber, #D97706); }
 
+/* ── LIEU DE RÉSIDENCE (tri par proximité) ────────────────────────────────── */
+.ue-home-section {
+    padding: 12px 14px; margin-bottom: 14px;
+    background: #FFF8F0; border: 1px solid #FDE68A; border-radius: 10px;
+}
+.ue-home-section--set { background: #F0FDF4; border-color: #BBF7D0; }
+.ue-home-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+}
+.ue-home-header svg { width: 16px; height: 16px; color: var(--hw-amber, #D97706); flex-shrink: 0; }
+.ue-home-section--set .ue-home-header svg { color: #16A34A; }
+.ue-home-title { font-weight: 600; font-size: 0.92rem; color: var(--hw-ink, #1C0A00); }
+.ue-home-hint {
+    margin: 0 0 10px 0; font-size: 0.82rem; line-height: 1.45;
+    color: var(--ink-soft, #6B7280);
+}
+.ue-home-info {
+    display: flex; flex-direction: column; gap: 2px;
+    margin-bottom: 10px; font-size: 0.82rem;
+}
+.ue-home-coords { font-family: monospace; color: var(--hw-ink, #1C0A00); }
+.ue-home-date { color: var(--ink-soft, #6B7280); font-size: 0.76rem; }
+.ue-home-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.ue-home-actions .ue-pill-btn { display: inline-flex; align-items: center; gap: 4px; }
+.ue-home-actions svg { width: 13px; height: 13px; }
+
 /* ── HINT BANNER ──────────────────────────────────────────────────────────── */
 .ue-hint-banner {
     display: flex; align-items: flex-start; gap: 8px;

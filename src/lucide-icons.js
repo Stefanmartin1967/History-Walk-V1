@@ -12,7 +12,7 @@ import {
     // Navigation & actions
     ArrowLeft, ArrowLeftToLine, ArrowDown01, ArrowDown10, ArrowUp01, ArrowUp10,
     ChevronDown, ChevronLeft, ChevronRight, ChevronUp,
-    RotateCcw, RefreshCw, Repeat, LocateFixed, Locate,
+    RotateCcw, RefreshCw, Repeat, LocateFixed, Locate, Home,
 
     // Interface
     X, XCircle, Check, CheckCircle, CheckCircle2, Circle,
@@ -61,7 +61,7 @@ export { createIcons };
 export const appIcons = {
     ArrowLeft, ArrowLeftToLine, ArrowDown01, ArrowDown10, ArrowUp01, ArrowUp10,
     ChevronDown, ChevronLeft, ChevronRight, ChevronUp,
-    RotateCcw, RefreshCw, Repeat, LocateFixed, Locate,
+    RotateCcw, RefreshCw, Repeat, LocateFixed, Locate, Home,
 
     X, XCircle, Check, CheckCircle, CheckCircle2, Circle,
     Plus, PlusCircle, Minus, Move,

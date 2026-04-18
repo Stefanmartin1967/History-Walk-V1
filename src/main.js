@@ -15,7 +15,7 @@ L.Icon.Default.mergeOptions({
 });
 
 import { initDB, getAppState, saveAppState } from './database.js';
-import { APP_VERSION, state } from './state.js';
+import { APP_VERSION, state, setHomeLocation } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { initializeDomReferences, DOM } from './ui.js';
 import { updateSelectionModeButton } from './ui-selection.js';
@@ -130,6 +130,12 @@ async function initializeApp() {
 
         const savedTheme = await getAppState('currentTheme');
         if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Lieu de résidence pour le tri par proximité (défini dans Mon Espace)
+        const savedHome = await getAppState('homeLocation');
+        if (savedHome && typeof savedHome.lat === 'number' && typeof savedHome.lng === 'number') {
+            setHomeLocation(savedHome);
+        }
 
         // Lancement unique et propre de la carte
         await loadAndInitializeMap();

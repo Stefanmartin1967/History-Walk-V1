@@ -6,10 +6,11 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId, getPoiName } from './data.js';
+import { showToast } from './toast.js';
 
 // --- LOCAL STATE ---
-// Sort: 'date_desc', 'date_asc', 'dist_asc', 'dist_desc'
-let currentSort = 'date_desc';
+// Sort: 'proximity_asc', 'dist_asc', 'dist_desc' (legacy: 'date_desc', 'date_asc')
+let currentSort = 'proximity_asc';
 let filterTodo = false; // true = Show only circuits with unvisited points
 let explorerCurrentPage = 1;
 
@@ -120,10 +121,7 @@ function renderExplorerToolbar() {
     }
 
     // Determine Icons based on state
-    const dateIcon = currentSort.startsWith('date')
-        ? (currentSort === 'date_asc' ? 'calendar-arrow-up' : 'calendar-arrow-down')
-        : 'calendar';
-
+    const proximityActive = currentSort === 'proximity_asc';
     const distIcon = currentSort.startsWith('dist')
         ? (currentSort === 'dist_desc' ? 'arrow-up-1-0' : 'arrow-down-0-1')
         : 'ruler';
@@ -134,8 +132,8 @@ function renderExplorerToolbar() {
     // Sur mobile, le filtre vit dans mobile-circuits.js (#mob-filter-zone).
 
     footer.innerHTML = `
-        <button id="btn-sort-date" class="footer-btn icon-only ${currentSort.startsWith('date') ? 'active' : ''}" title="Trier par date" aria-label="Trier par date">
-            <i data-lucide="${dateIcon}"></i>
+        <button id="btn-sort-proximity" class="footer-btn icon-only ${proximityActive ? 'active' : ''}" title="Trier par proximité du lieu de résidence" aria-label="Trier par proximité">
+            <i data-lucide="home"></i>
         </button>
         <button id="btn-sort-dist" class="footer-btn icon-only ${currentSort.startsWith('dist') ? 'active' : ''}" title="Trier par distance" aria-label="Trier par distance">
             <i data-lucide="${distIcon}"></i>
@@ -158,10 +156,18 @@ function renderExplorerToolbar() {
     createIcons({ icons: appIcons, root: footer });
 
     // Event Listeners (Must be re-attached as innerHTML cleared them)
-    const btnDate = footer.querySelector('#btn-sort-date');
-    if(btnDate) btnDate.onclick = () => {
-        if (currentSort === 'date_desc') currentSort = 'date_asc';
-        else currentSort = 'date_desc';
+    const btnProximity = footer.querySelector('#btn-sort-proximity');
+    if(btnProximity) btnProximity.onclick = () => {
+        // Pas de home défini → toast + pas de changement de tri
+        if (!state.homeLocation) {
+            showToast(
+                "Définissez votre lieu de résidence dans Mon Espace pour activer ce tri.",
+                'info',
+                4500
+            );
+            return;
+        }
+        currentSort = 'proximity_asc';
         refreshExplorer();
     };
 
@@ -180,7 +186,7 @@ function renderExplorerToolbar() {
 
     const btnReset = footer.querySelector('#btn-reset-filters');
     if(btnReset) btnReset.onclick = () => {
-        currentSort = 'date_desc';
+        currentSort = 'proximity_asc';
         filterTodo = false;
         if(state.activeFilters) {
             setActiveFilters({ ...state.activeFilters, zone: null });

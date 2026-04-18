@@ -1,7 +1,9 @@
 // user-space-ui.js — Interface "Mon Espace" (côté utilisateur)
-import { state } from './state.js';
+import { state, setHomeLocation } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showAlert } from './modal.js';
+import { saveAppState } from './database.js';
+import { showToast } from './toast.js';
 
 export function openUserSpaceModal(callbacks) {
     const html = `
@@ -93,17 +95,132 @@ export function renderUserTab(tab, callbacks) {
 
 // ─── ONGLET MES CIRCUITS ───────────────────────────────────────────────────
 
+/**
+ * Rendu HTML pour la section "Lieu de résidence" (tri par proximité).
+ * Affiche soit un état vide avec un bouton de capture GPS, soit les coords
+ * enregistrées avec bouton "Effacer".
+ */
+function renderHomeLocationSection() {
+    const home = state.homeLocation;
+    if (home && typeof home.lat === 'number' && typeof home.lng === 'number') {
+        const savedDate = home.savedAt
+            ? new Date(home.savedAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+            : null;
+        const coordsLabel = `${home.lat.toFixed(5)}, ${home.lng.toFixed(5)}`;
+        return `
+            <div class="ue-home-section ue-home-section--set">
+                <div class="ue-home-header">
+                    <i data-lucide="home"></i>
+                    <span class="ue-home-title">Lieu de résidence</span>
+                </div>
+                <div class="ue-home-info">
+                    <span class="ue-home-coords">${coordsLabel}</span>
+                    ${savedDate ? `<span class="ue-home-date">Défini le ${savedDate}</span>` : ''}
+                </div>
+                <div class="ue-home-actions">
+                    <button class="ue-pill-btn" id="btn-ue-home-update" title="Remplacer par la position actuelle">
+                        <i data-lucide="locate-fixed"></i> Mettre à jour
+                    </button>
+                    <button class="ue-pill-btn" id="btn-ue-home-clear" title="Effacer le lieu de résidence">
+                        <i data-lucide="x"></i> Effacer
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    return `
+        <div class="ue-home-section">
+            <div class="ue-home-header">
+                <i data-lucide="home"></i>
+                <span class="ue-home-title">Lieu de résidence</span>
+            </div>
+            <p class="ue-home-hint">
+                Définissez votre lieu de résidence pour trier les circuits par proximité
+                depuis votre hôtel (ou équivalent).
+            </p>
+            <button class="ue-action-btn primary" id="btn-ue-home-set">
+                <i data-lucide="locate-fixed"></i> Définir depuis ma position actuelle
+            </button>
+        </div>
+    `;
+}
+
+/**
+ * Capture GPS one-shot et persiste dans state + IndexedDB.
+ * @param {Function} onDone callback pour re-render la section
+ */
+function captureHomeLocation(onDone) {
+    if (!navigator.geolocation) {
+        showToast("Géolocalisation non disponible sur cet appareil.", 'error', 4000);
+        return;
+    }
+    showToast("Localisation en cours…", 'info', 2000);
+    navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+            const home = {
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                savedAt: Date.now()
+            };
+            setHomeLocation(home);
+            try {
+                await saveAppState('homeLocation', home);
+                showToast("Lieu de résidence enregistré.", 'success', 2500);
+                if (typeof onDone === 'function') onDone();
+            } catch (err) {
+                console.error('[user-space] saveAppState(homeLocation) failed', err);
+                showToast("Erreur d'enregistrement du lieu.", 'error', 4000);
+            }
+        },
+        (err) => {
+            console.warn('[user-space] geolocation error', err);
+            const msg = err.code === err.PERMISSION_DENIED
+                ? "Permission de géolocalisation refusée."
+                : "Impossible d'obtenir votre position.";
+            showToast(msg, 'error', 4500);
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+}
+
+/**
+ * Wire les listeners des boutons "Lieu de résidence" dans le container Mon Espace.
+ * Idempotent : réattache à chaque render.
+ */
+function attachHomeLocationListeners(container, callbacks) {
+    const rerender = () => renderCircuitsTab(container, callbacks);
+
+    document.getElementById('btn-ue-home-set')?.addEventListener('click', () => {
+        captureHomeLocation(rerender);
+    });
+    document.getElementById('btn-ue-home-update')?.addEventListener('click', () => {
+        captureHomeLocation(rerender);
+    });
+    document.getElementById('btn-ue-home-clear')?.addEventListener('click', async () => {
+        setHomeLocation(null);
+        try {
+            await saveAppState('homeLocation', null);
+            showToast("Lieu de résidence effacé.", 'info', 2000);
+        } catch (err) {
+            console.error('[user-space] saveAppState(null) failed', err);
+        }
+        rerender();
+    });
+}
+
 function renderCircuitsTab(container, callbacks) {
     const allOfficial = state.officialCircuits || [];
 
     if (allOfficial.length === 0) {
         container.innerHTML = `
+            ${renderHomeLocationSection()}
             <div class="ue-empty-state">
                 <div class="ue-empty-icon"><i data-lucide="wifi-off"></i></div>
                 <p class="ue-empty-title">Aucun circuit disponible</p>
                 <p class="ue-empty-sub">Les circuits officiels apparaîtront ici une fois chargés.</p>
             </div>`;
         createIcons({ icons: appIcons, root: container });
+        attachHomeLocationListeners(container, callbacks);
         return;
     }
 
@@ -115,6 +232,8 @@ function renderCircuitsTab(container, callbacks) {
     const checkedCount = selectedSet.size;
 
     container.innerHTML = `
+        ${renderHomeLocationSection()}
+
         <div class="ue-section-header">
             <div class="ue-section-title">
                 Circuits officiels
@@ -188,6 +307,8 @@ function renderCircuitsTab(container, callbacks) {
             updateCount();
         });
     });
+
+    attachHomeLocationListeners(container, callbacks);
 }
 
 // ─── ONGLET MES DONNÉES ────────────────────────────────────────────────────

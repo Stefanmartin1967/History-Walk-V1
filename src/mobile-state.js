@@ -5,7 +5,7 @@
 // ─── État partagé ─────────────────────────────────────────────────────────────
 
 let currentView = 'circuits';
-let mobileSort = 'date_desc'; // date_desc | date_asc | dist_asc | dist_desc
+let mobileSort = 'proximity_asc'; // proximity_asc | dist_asc | dist_desc (legacy: date_desc | date_asc)
 let mobileCurrentPage = 1;
 let _allCircuitsOrdered = []; // Liste ordonnée pour le swipe entre circuits
 

@@ -3,12 +3,15 @@ import { getPoiId } from './data.js';
 import { getRealDistance, getOrthodromicDistance } from './map.js';
 import { isCircuitCompleted } from './circuit.js';
 import { getZoneFromCoords } from './utils.js';
+import L from 'leaflet';
 
 /**
  * Returns a processed list of circuits ready for display (Merged, Filtered, Sorted, Enriched).
  * Used by both PC (Sidebar) and Mobile (Full View) to ensure consistency.
  *
- * @param {string} sortMode - 'date_desc', 'date_asc', 'dist_asc', 'dist_desc'
+ * @param {string} sortMode - 'date_desc', 'date_asc', 'dist_asc', 'dist_desc', 'proximity_asc'
+ *                            proximity_asc : distance depuis state.homeLocation au premier POI du circuit.
+ *                            Si homeLocation non défini, fallback silencieux en 'date_desc'.
  * @param {boolean} filterTodo - If true, only show uncompleted circuits
  * @param {string|null} filterZone - If provided, only show circuits in this zone
  * @returns {Array} List of enriched circuit objects
@@ -90,6 +93,26 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
             iconName = 'footprints';
         }
 
+        // --- PROXIMITY FROM HOME (au premier POI du circuit) ---
+        // Infinity = calcul impossible (home non défini ou pas de POI valide)
+        // → ces circuits glissent en fin de liste quand on trie par proximité.
+        let proximity = Infinity;
+        const home = state.homeLocation;
+        if (home && typeof home.lat === 'number' && typeof home.lng === 'number') {
+            let startCoords = null;
+            if (validPois.length > 0) {
+                const [lng, lat] = validPois[0].geometry.coordinates;
+                startCoords = { lat, lng };
+            } else if (c.realTrack && c.realTrack.length > 0) {
+                const [lat, lng] = c.realTrack[0];
+                startCoords = { lat, lng };
+            }
+            if (startCoords) {
+                proximity = L.latLng(home.lat, home.lng)
+                    .distanceTo(L.latLng(startCoords.lat, startCoords.lng));
+            }
+        }
+
         return {
             ...c,
             _validPois: validPois,
@@ -101,7 +124,8 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
             _iconName: iconName,
             _poiCount: validPois.length,
             // Visited Count
-            _visitedCount: validPois.filter(f => f.properties.userData?.vu).length
+            _visitedCount: validPois.filter(f => f.properties.userData?.vu).length,
+            _proximityFromHome: proximity
         };
     });
 
@@ -119,9 +143,14 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
     }
 
     // 4. Sorting
-    if (sortMode === 'date_desc') {
-        // Default: Newest first (assuming array order is chronological for locals, officials are usually static)
-        // Note: Ideally we'd use a timestamp but array reverse is the legacy behavior
+    if (sortMode === 'proximity_asc') {
+        // Tri par distance depuis le lieu de résidence (premier POI).
+        // Circuits sans proximité calculable (_proximityFromHome = Infinity) vont en queue.
+        // Si homeLocation n'est pas défini, TOUS sont Infinity → ordre d'entrée préservé
+        // (l'UI doit dans ce cas afficher un message / rediriger vers Mon Espace).
+        enrichedCircuits.sort((a, b) => a._proximityFromHome - b._proximityFromHome);
+    } else if (sortMode === 'date_desc') {
+        // Legacy: array reverse (officiels : ordre inverse du geojson, locaux : plus récents en premier).
         enrichedCircuits.reverse();
     } else if (sortMode === 'date_asc') {
         // Keep order

@@ -52,7 +52,11 @@ export const state = {
         planifies: false,
         nonVerifies: false,
         zone: null
-    }
+    },
+    // Lieu de résidence (capté via GPS depuis Mon Espace).
+    // null = non défini → tri par proximité désactivé.
+    // { lat, lng, savedAt } = défini.
+    homeLocation: null
 };
 
 // --- 2. LES MAJORDOMES (Les "Gardiens" de l'état) ---
@@ -207,6 +211,12 @@ export function setSelectionModeFilters(filters) {
 
 export function setActiveFilters(filters) {
     state.activeFilters = filters || {};
+}
+
+// Majordome pour le lieu de résidence (tri par proximité).
+// Accepte { lat, lng, savedAt } ou null pour réinitialiser.
+export function setHomeLocation(home) {
+    state.homeLocation = home || null;
 }
 
 // --- NOUVEAU : Helper pour la devise ---

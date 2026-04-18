@@ -9,6 +9,7 @@ import { isCircuitTested, loadCircuitById } from './circuit.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { showCustomModal, closeModal } from './modal.js';
+import { showToast } from './toast.js';
 import {
     animateContainer,
     getMobileSort, setMobileSort,
@@ -289,17 +290,15 @@ function renderMobileToolbar() {
     toolbar.style.justifyContent = 'space-around';
 
     const sort = getMobileSort();
-    const dateIcon = sort.startsWith('date')
-        ? (sort === 'date_asc' ? 'calendar-arrow-up' : 'calendar-arrow-down')
-        : 'calendar';
+    const proximityActive = sort === 'proximity_asc';
     const distIcon = sort.startsWith('dist')
         ? (sort === 'dist_desc' ? 'arrow-up-1-0' : 'arrow-down-0-1')
         : 'ruler';
     const zoneActive = !!state.activeFilters.zone;
 
     toolbar.innerHTML = `
-        <button id="mob-sort-date" class="toolbar-btn ${sort.startsWith('date') ? 'active' : ''}">
-            <i data-lucide="${dateIcon}"></i>
+        <button id="mob-sort-proximity" class="toolbar-btn ${proximityActive ? 'active' : ''}" title="Trier par proximité du lieu de résidence" aria-label="Trier par proximité">
+            <i data-lucide="home"></i>
         </button>
         <button id="mob-sort-dist" class="toolbar-btn ${sort.startsWith('dist') ? 'active' : ''}">
             <i data-lucide="${distIcon}"></i>
@@ -318,8 +317,16 @@ function renderMobileToolbar() {
     container.appendChild(toolbar);
     createIcons({ icons: appIcons, root: toolbar });
 
-    toolbar.querySelector('#mob-sort-date').onclick = () => {
-        setMobileSort(getMobileSort() === 'date_desc' ? 'date_asc' : 'date_desc');
+    toolbar.querySelector('#mob-sort-proximity').onclick = () => {
+        if (!state.homeLocation) {
+            showToast(
+                "Définissez votre lieu de résidence dans Mon Espace pour activer ce tri.",
+                'info',
+                4500
+            );
+            return;
+        }
+        setMobileSort('proximity_asc');
         renderMobileCircuitsList();
     };
     toolbar.querySelector('#mob-sort-dist').onclick = () => {
@@ -334,7 +341,7 @@ function renderMobileToolbar() {
         renderMobileCircuitsList();
     };
     toolbar.querySelector('#mob-reset').onclick = () => {
-        setMobileSort('date_desc');
+        setMobileSort('proximity_asc');
         state.filterCompleted = false;
         renderMobileCircuitsList();
     };
