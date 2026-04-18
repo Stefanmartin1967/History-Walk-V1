@@ -3615,7 +3615,15 @@
         "Desc_wpt": "Dominant la côte nord de Houmt-Souk, la mosquée Sidi El-Bahri se dresse aujourd’hui comme un symbole de résilience. Reconstruite sur les ruines de l’édifice détruit en 2011, elle conserve la mémoire d’un sanctuaire trois fois centenaire dont le minaret seul avait survécu à la démolition. Sa silhouette blanche, son dôme discret et son phare vert rappellent la simplicité des mosquées maritimes djerbiennes. Autour d’elle, les tombes anciennes forment un manteau de silence : le passé veille encore, paisible, au seuil du présent.",
         "HW_ID": "HW-01K77WPE6H365AYB72RWY40WZX",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540468098.jpg",
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540469614.jpg",
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540470940.jpg",
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540472598.jpg",
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540474070.jpg",
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540475513.jpg"
+        ]
       }
     },
     {
@@ -3794,7 +3802,11 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6J23YSBPP5PMBBZ23Y",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1776540482752.jpg",
+          "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1776540484252.jpg"
+        ]
       }
     },
     {
@@ -3924,7 +3936,11 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JARCBVAYJCW1B3B14",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1776540488232.jpg",
+          "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1776540490197.jpg"
+        ]
       }
     },
     {
