@@ -2,7 +2,7 @@
 import L from 'leaflet';
 import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
-import { getPoiId } from './data.js';
+import { getPoiId, commitPendingPoiIfNeeded } from './data.js';
 import { getZoneFromCoords } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState, savePoiData } from './database.js';
@@ -522,6 +522,10 @@ async function executeEdit(data) {
     Object.assign(state.userData[poiId], data);
 
     await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
+
+    // Si c'est un POI "pending" (création mobile en attente), on finalise la persistance
+    // du GeoJSON maintenant que l'utilisateur a rempli la fiche via le Rich Editor.
+    await commitPendingPoiIfNeeded(poiId);
 
     // Log adapté selon admin ou non
     const logType = state.isAdmin ? 'Edition (Admin)' : 'Edition (User)';

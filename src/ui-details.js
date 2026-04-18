@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates } from './data.js';
+import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive, speakText } from './voice.js';
 import { navigatePoiDetails } from './circuit.js';
@@ -315,6 +315,19 @@ export function closeDetailsPanel(goBackToList = false) {
     clearMarkerHighlights();
     if (window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     if (isDictationActive()) stopDictation();
+
+    // Rollback POI fantôme : si la fiche en cours correspond à un POI "pending"
+    // (créé via le bouton "+" mobile mais non édité), on le jette.
+    if (state.currentFeatureId !== null && state.currentFeatureId !== undefined) {
+        const pendingFeature = state.loadedFeatures[state.currentFeatureId];
+        if (pendingFeature) {
+            const pendingId = getPoiId(pendingFeature);
+            if (isPendingPoi(pendingId)) {
+                discardPendingPoi(pendingId);
+                showToast("Lieu non validé : création annulée.", "info", 2500);
+            }
+        }
+    }
 
     state.currentFeatureId = null; // Reset filter universally BEFORE rendering either view
 

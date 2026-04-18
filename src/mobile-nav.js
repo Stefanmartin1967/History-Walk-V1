@@ -4,9 +4,8 @@
 import { state } from './state.js';
 import { DOM } from './ui.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
-import { getPoiId, getPoiName, addPoiFeature } from './data.js';
+import { getPoiId, getPoiName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { saveAppState } from './database.js';
 import { getIconForFeature } from './map.js';
 import { escapeHtml, sanitizeHTML, isPointInPolygon } from './utils.js';
 import { zonesData } from './zones.js';
@@ -282,11 +281,11 @@ async function handleAddPoiClick() {
                 }
             };
 
-            addPoiFeature(newFeature);
-            await saveAppState('lastGeoJSON', {
-                type: 'FeatureCollection',
-                features: state.loadedFeatures
-            });
+            // Persistance différée : on ajoute le POI en mémoire seulement.
+            // La sauvegarde disque (customPois + lastGeoJSON) aura lieu uniquement
+            // lorsque l'utilisateur aura édité au moins un champ. Si la fiche est
+            // fermée sans modification, `closeDetailsPanel` jette le POI fantôme.
+            addPendingPoiFeature(newFeature);
 
             showToast(`Lieu créé (Zone : ${detectedZone})`, "success");
 

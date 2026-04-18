@@ -280,9 +280,13 @@ export function applyFilters() {
 export async function updatePoiData(poiId, key, value) {
     // Initialisation si vide
     if (!state.userData[poiId]) state.userData[poiId] = {};
-    
+
     // Mise à jour locale
     state.userData[poiId][key] = value;
+
+    // Si c'est un POI en attente (créé mobile, non encore persisté),
+    // on finalise sa création dès qu'un champ est touché.
+    await commitPendingPoiIfNeeded(poiId);
 
     // Mise à jour visuelle immédiate (sans recharger toute la carte)
     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
@@ -309,6 +313,91 @@ export async function updatePoiData(poiId, key, value) {
 }
 
 // --- AJOUT D'UN LIEU (Fonction Post-it) ---
+
+// --- POI EN ATTENTE (Option 1 : persistance différée) ---
+// Usage : sur mobile, le bouton "+" crée un POI en mémoire uniquement.
+// La persistance (customPois + lastGeoJSON) n'intervient qu'à la première édition réelle.
+// Si l'utilisateur ferme le panneau sans rien éditer, le POI est jeté.
+
+export function addPendingPoiFeature(feature) {
+    if (!feature.properties) feature.properties = {};
+
+    // Garantie ID HW-ULID
+    const currentId = getPoiId(feature);
+    if (!currentId || !currentId.startsWith('HW-') || currentId.length !== 29) {
+        feature.properties.HW_ID = generateHWID();
+    }
+
+    // Marqueur pending
+    feature.properties._pending = true;
+
+    // Lien userData
+    const id = getPoiId(feature);
+    if (!state.userData[id]) state.userData[id] = {};
+    feature.properties.userData = state.userData[id];
+
+    // Ajout mémoire uniquement (pas de saveAppState)
+    state.loadedFeatures.push(feature);
+    if (!state.customFeatures) state.customFeatures = [];
+    if (!state.customFeatures.find(f => getPoiId(f) === id)) {
+        state.customFeatures.push(feature);
+    }
+
+    // Rafraîchissement carte (le POI apparaît visuellement)
+    applyFilters();
+}
+
+export async function commitPendingPoiIfNeeded(poiId) {
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    if (!feature || !feature.properties || !feature.properties._pending) return;
+
+    // On retire le flag avant persistance pour que le GeoJSON sauvegardé soit propre
+    delete feature.properties._pending;
+
+    await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
+    await saveAppState('lastGeoJSON', {
+        type: 'FeatureCollection',
+        features: state.loadedFeatures
+    });
+
+    // [ADMIN] Tracking à la validation réelle (pas à la création volatile)
+    if (state.isAdmin) {
+        addToDraft('poi', poiId, { type: 'creation' });
+    }
+}
+
+export function discardPendingPoi(poiId) {
+    let changed = false;
+
+    const idx = state.loadedFeatures.findIndex(f => getPoiId(f) === poiId);
+    if (idx !== -1 && state.loadedFeatures[idx].properties?._pending) {
+        state.loadedFeatures.splice(idx, 1);
+        changed = true;
+    }
+
+    if (state.customFeatures) {
+        const cIdx = state.customFeatures.findIndex(f => getPoiId(f) === poiId);
+        if (cIdx !== -1 && state.customFeatures[cIdx].properties?._pending) {
+            state.customFeatures.splice(cIdx, 1);
+            changed = true;
+        }
+    }
+
+    // Nettoyage userData éventuellement initialisé
+    if (state.userData[poiId]) {
+        // userData n'a pas encore été persistée via savePoiData tant que l'utilisateur
+        // n'a rien édité, donc un simple delete mémoire suffit.
+        const isEmpty = Object.keys(state.userData[poiId]).length === 0;
+        if (isEmpty) delete state.userData[poiId];
+    }
+
+    if (changed) applyFilters();
+}
+
+export function isPendingPoi(poiId) {
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    return !!(feature && feature.properties && feature.properties._pending);
+}
 
 export async function addPoiFeature(feature) {
 
