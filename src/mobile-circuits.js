@@ -2,7 +2,7 @@
 // Rendu de la liste des circuits, toolbar de tri/filtres et sélecteur de zones
 
 import { state } from './state.js';
-import { getPoiId } from './data.js';
+import { getPoiId, getPoiName } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { isCircuitTested, loadCircuitById } from './circuit.js';
@@ -19,13 +19,29 @@ import {
 
 // ─── Liste des circuits ───────────────────────────────────────────────────────
 
+// Bug D (mobile) : filtre POI clearable via chip.
+// Cf. ui-circuit-list.js — même logique de dismissal par POI.
+let mobilePoiFilterActive = true;
+let mobileLastPoiId = null;
+
 export function renderMobileCircuitsList() {
     const container = document.getElementById('mobile-main-container');
 
     // Calcul de la liste filtrée/triée via le service partagé
     let filterPoiId = null;
+    let currentPoiFeature = null;
+    let currentPoiId = null;
     if (state.currentFeatureId !== null && state.loadedFeatures[state.currentFeatureId]) {
-        filterPoiId = getPoiId(state.loadedFeatures[state.currentFeatureId]);
+        currentPoiFeature = state.loadedFeatures[state.currentFeatureId];
+        currentPoiId = getPoiId(currentPoiFeature);
+    }
+    // Reset dismissal quand le POI change
+    if (currentPoiId !== mobileLastPoiId) {
+        mobilePoiFilterActive = true;
+        mobileLastPoiId = currentPoiId;
+    }
+    if (currentPoiId && mobilePoiFilterActive) {
+        filterPoiId = currentPoiId;
     }
     const circuitsToDisplay = getProcessedCircuits(
         getMobileSort(),
@@ -71,6 +87,20 @@ export function renderMobileCircuitsList() {
         <div id="mobile-toolbar-container"></div>
         <div class="panel-content mobile-standard-padding mobile-list-container" id="mobile-circuits-list">
     `;
+
+    // Bug D (mobile) : chip "Filtré par : [POI] ✕" au-dessus de la liste
+    if (filterPoiId && currentPoiFeature) {
+        const poiName = getPoiName(currentPoiFeature);
+        html += `
+            <div class="explorer-poi-filter-chip" id="mobile-poi-filter-chip">
+                <i data-lucide="map-pin" class="icon-16"></i>
+                <span class="explorer-poi-filter-chip-label">Filtré par : <strong>${escapeHtml(poiName)}</strong></span>
+                <button type="button" class="explorer-poi-filter-chip-clear" id="mobile-poi-filter-chip-clear" title="Retirer le filtre" aria-label="Retirer le filtre">
+                    <i data-lucide="x" class="icon-16"></i>
+                </button>
+            </div>
+        `;
+    }
 
     const hasAnyCircuits = (state.officialCircuits?.length || 0) + (state.myCircuits?.length || 0) > 0;
 
@@ -149,6 +179,16 @@ export function renderMobileCircuitsList() {
     container.innerHTML = sanitizeHTML(html);
 
     createIcons({ icons: appIcons, root: container });
+
+    // Bug D (mobile) : handler du ✕ sur le chip de filtre POI
+    const chipClearBtn = document.getElementById('mobile-poi-filter-chip-clear');
+    if (chipClearBtn) {
+        chipClearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            mobilePoiFilterActive = false;
+            renderMobileCircuitsList();
+        });
+    }
 
     // ─── Event listeners — pagination ─────────────────────────────────────────
 

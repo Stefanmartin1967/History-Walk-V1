@@ -5,7 +5,7 @@ import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
-import { applyFilters, getPoiId } from './data.js';
+import { applyFilters, getPoiId, getPoiName } from './data.js';
 
 // --- LOCAL STATE ---
 // Sort: 'date_desc', 'date_asc', 'dist_asc', 'dist_desc'
@@ -279,7 +279,7 @@ export function renderExplorerList() {
 
     // Bug D : chip "Filtré par : [POI]  ✕" quand le filtre POI est actif
     if (filterPoiId && currentPoiFeature) {
-        const poiName = (currentPoiFeature.properties && currentPoiFeature.properties.name) || 'Lieu';
+        const poiName = getPoiName(currentPoiFeature);
         const chip = document.createElement('div');
         chip.className = 'explorer-poi-filter-chip';
         chip.innerHTML = `
