@@ -203,24 +203,36 @@ async function _loadPhotos(poiId, feature, preloadedPhotos) {
         return;
     }
 
+    // Fusionne les photos "publiques" du geojson (properties.photos, visibles
+    // par tout le monde après publication) et les photos "draft" admin
+    // (userData.photos, pas encore publiées). On déduplique, et on ignore
+    // les anciens base64 éventuels qui traîneraient.
+    const pool = [
+        ...(feature?.properties?.photos || []),
+        ...(feature?.properties?.userData?.photos || []),
+    ];
+    const seen = new Set();
+    const adminUrls = pool.filter(p => {
+        if (typeof p !== 'string') return false;
+        if (p.startsWith('data:')) return false;
+        if (seen.has(p)) return false;
+        seen.add(p);
+        return true;
+    });
+
     if (state.isAdmin) {
-        // Admin : photos = URL strings dans userData.photos (uploadées sur GitHub)
-        const adminPhotos = feature?.properties?.userData?.photos || [];
-        currentGridPhotos = adminPhotos.map(src => ({ id: null, src, isNew: false }));
+        // Admin : toutes les URLs (publiées + draft) sont éditables comme "serveur".
+        currentGridPhotos = adminUrls.map(src => ({ id: null, src, isNew: false }));
         return;
     }
 
-    // Utilisateur : blobs dans poiPhotos + URLs admin éventuelles dans userData.photos
+    // Utilisateur : blobs locaux + URLs admin publiques (relatives OU http).
     const storedItems = await getPoiPhotos(state.currentMapId, poiId);
     for (const item of storedItems) {
         const objectUrl = URL.createObjectURL(item.blob);
         activeObjectUrls.push(objectUrl);
         currentGridPhotos.push({ id: item.id, objectUrl, blob: item.blob, isNew: false });
     }
-
-    // Ajoute les photos serveur admin (URL strings, non-base64) visibles pour l'utilisateur
-    const adminUrls = (feature?.properties?.userData?.photos || [])
-        .filter(p => typeof p === 'string' && p.startsWith('http'));
     for (const src of adminUrls) {
         currentGridPhotos.push({ id: null, src, isNew: false });
     }
