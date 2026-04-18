@@ -60,23 +60,11 @@ async function initializeApp() {
 
     // 0. Admin
     // 1. Initialisation de base
+    // Affichage version (aucun raccourci admin associé : desktop = séquence G-O-D,
+    // mobile = appui long sur le bouton ⚙ Menu du dock, cf. mobile-nav.js)
     const versionEl = document.getElementById('app-version');
     if (versionEl) {
         versionEl.textContent = APP_VERSION;
-        // 7 clics sur le numéro de version → ouvre le login admin (ne bypass pas le mot de passe)
-        let clickCount = 0;
-        let clickTimeout;
-        versionEl.addEventListener('click', () => {
-            clickCount++;
-            clearTimeout(clickTimeout);
-            if (clickCount >= 7) {
-                clickCount = 0;
-                if (!state.isAdmin) showAdminLoginModal();
-            } else {
-                clickTimeout = setTimeout(() => { clickCount = 0; }, 2000);
-            }
-        });
-        versionEl.style.cursor = 'pointer';
     }
 
     // Raccourci clavier G→O→D (hors champs de saisie) → ouvre le login admin
