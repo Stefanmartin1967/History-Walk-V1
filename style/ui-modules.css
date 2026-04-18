@@ -120,6 +120,44 @@
 .btn-toggle-visited.completed { color: var(--ok); }
 .btn-toggle-visited .lucide { width: 24px; height: 24px; }
 
+/* Bug D : chip "Filtré par : [POI] ✕" au-dessus de la liste des circuits */
+.explorer-poi-filter-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px 6px 10px;
+    margin: 4px 4px 8px 4px;
+    background: var(--surface-muted, rgba(0,0,0,0.04));
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    font-size: 13px;
+    color: var(--ink);
+}
+.explorer-poi-filter-chip .lucide { width: 16px; height: 16px; flex-shrink: 0; }
+.explorer-poi-filter-chip-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.explorer-poi-filter-chip-label strong { font-weight: 600; color: var(--primary, var(--ink)); }
+.explorer-poi-filter-chip-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.explorer-poi-filter-chip-clear:hover { background: var(--line); color: var(--ink); }
+
 /* ================================================
    UI-CIRCUIT-EDITOR.JS — Partage / QR Circuit
    ================================================ */

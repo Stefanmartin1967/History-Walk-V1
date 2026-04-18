@@ -13,6 +13,13 @@ let currentSort = 'date_desc';
 let filterTodo = false; // true = Show only circuits with unvisited points
 let explorerCurrentPage = 1;
 
+// Bug D : filtre POI clearable via chip.
+// Quand un POI est sélectionné, la liste est filtrée par défaut sur les circuits
+// qui le contiennent. L'utilisateur peut dismiss le filtre via la ✕ du chip —
+// le filtre reste alors désactivé jusqu'à ce qu'un *autre* POI soit sélectionné.
+let explorerPoiFilterActive = true;
+let explorerLastPoiId = null;
+
 export function initCircuitListUI() {
     eventBus.on('circuit:list-updated', () => {
         // Also refresh explorer list if it exists
@@ -205,9 +212,21 @@ export function renderExplorerList() {
     // --- USE SHARED SERVICE ---
     const globalZoneFilter = (state.activeFilters && state.activeFilters.zone) ? state.activeFilters.zone : null;
 
+    // Bug D : détection du POI courant + gestion du dismissal
     let filterPoiId = null;
+    let currentPoiFeature = null;
+    let currentPoiId = null;
     if (state.currentFeatureId !== null && state.loadedFeatures[state.currentFeatureId]) {
-        filterPoiId = getPoiId(state.loadedFeatures[state.currentFeatureId]);
+        currentPoiFeature = state.loadedFeatures[state.currentFeatureId];
+        currentPoiId = getPoiId(currentPoiFeature);
+    }
+    // Reset dismissal quand le POI change
+    if (currentPoiId !== explorerLastPoiId) {
+        explorerPoiFilterActive = true;
+        explorerLastPoiId = currentPoiId;
+    }
+    if (currentPoiId && explorerPoiFilterActive) {
+        filterPoiId = currentPoiId;
     }
 
     const processedCircuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter, filterPoiId);
@@ -258,11 +277,36 @@ export function renderExplorerList() {
 
     listContainer.innerHTML = '';
 
+    // Bug D : chip "Filtré par : [POI]  ✕" quand le filtre POI est actif
+    if (filterPoiId && currentPoiFeature) {
+        const poiName = (currentPoiFeature.properties && currentPoiFeature.properties.name) || 'Lieu';
+        const chip = document.createElement('div');
+        chip.className = 'explorer-poi-filter-chip';
+        chip.innerHTML = `
+            <i data-lucide="map-pin" class="icon-16"></i>
+            <span class="explorer-poi-filter-chip-label">Filtré par : <strong>${escapeXml(poiName)}</strong></span>
+            <button type="button" class="explorer-poi-filter-chip-clear" title="Retirer le filtre" aria-label="Retirer le filtre">
+                <i data-lucide="x" class="icon-16"></i>
+            </button>
+        `;
+        const clearBtn = chip.querySelector('.explorer-poi-filter-chip-clear');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                explorerPoiFilterActive = false;
+                refreshExplorer();
+            });
+        }
+        listContainer.appendChild(chip);
+    }
+
     if (paginatedCircuits.length === 0) {
         const emptyState = document.createElement('div');
         emptyState.className = 'explorer-list-empty';
         emptyState.textContent = 'Aucun circuit correspondant.';
         listContainer.appendChild(emptyState);
+        // Render icons even si liste vide (pour le chip de filtre POI)
+        createIcons({ icons: appIcons, root: listContainer });
         return;
     }
 
