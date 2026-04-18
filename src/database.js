@@ -33,7 +33,14 @@ export function initDB() {
             // Gestion générique des erreurs de connexion ultérieures
             db.onversionchange = () => {
                 db.close();
+                db = null; // FIX : sans ça, initDB() renvoie la connexion fermée et le prochain
+                           // transaction() lève "database connection is closing".
                 console.warn("Base de données fermée car une nouvelle version a été ouverte ailleurs.");
+            };
+            // Idem si la connexion se ferme pour une autre raison (timeout, GC, etc.)
+            db.onclose = () => {
+                db = null;
+                console.warn("Connexion IndexedDB fermée inopinément — réouverture à la prochaine requête.");
             };
             resolve(db);
         };
