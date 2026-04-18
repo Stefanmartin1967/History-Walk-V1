@@ -2,9 +2,8 @@ import { state, setActiveFilters } from './state.js';
 import { isCircuitTested } from './circuit.js';
 import { escapeXml, sanitizeHTML } from './utils.js';
 import { eventBus } from './events.js';
-import { showConfirm, showCustomModal, closeModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { getProcessedCircuits, getAvailableZonesFromCircuits } from './circuit-list-service.js';
+import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId } from './data.js';
 
@@ -122,8 +121,10 @@ function renderExplorerToolbar() {
         ? (currentSort === 'dist_desc' ? 'arrow-up-1-0' : 'arrow-down-0-1')
         : 'ruler';
 
-    // FIX: Safely access state.activeFilters
-    const zoneActive = !!(state.activeFilters && state.activeFilters.zone);
+    // Note : pas de bouton "Filtrer par Zone" ici sur PC — le filtre Zone de la
+    // barre du haut (#btn-filter-zones) pilote le même state.activeFilters.zone
+    // et rafraîchit déjà la liste des circuits via l'event 'data:filtered'.
+    // Sur mobile, le filtre vit dans mobile-circuits.js (#mob-filter-zone).
 
     footer.innerHTML = `
         <button id="btn-sort-date" class="footer-btn icon-only ${currentSort.startsWith('date') ? 'active' : ''}" title="Trier par date" aria-label="Trier par date">
@@ -134,10 +135,6 @@ function renderExplorerToolbar() {
         </button>
 
         <div class="separator-vertical"></div>
-
-        <button id="btn-filter-zone" class="footer-btn icon-only ${zoneActive ? 'active' : ''}" title="Filtrer par Zone" aria-label="Filtrer par Zone">
-            <i data-lucide="map-pin"></i>
-        </button>
 
         <button id="btn-filter-todo" class="footer-btn icon-only ${filterTodo ? 'active' : ''}" title="A faire" aria-label="A faire">
             <i data-lucide="${filterTodo ? 'list-todo' : 'list-checks'}"></i>
@@ -168,11 +165,6 @@ function renderExplorerToolbar() {
         refreshExplorer();
     };
 
-    const btnZone = footer.querySelector('#btn-filter-zone');
-    if(btnZone) btnZone.onclick = () => {
-        openZonesModalPC();
-    };
-
     const btnTodo = footer.querySelector('#btn-filter-todo');
     if(btnTodo) btnTodo.onclick = () => {
         filterTodo = !filterTodo;
@@ -189,52 +181,6 @@ function renderExplorerToolbar() {
         applyFilters();
         refreshExplorer();
     };
-}
-
-function openZonesModalPC() {
-    const { zoneCounts, sortedZones } = getAvailableZonesFromCircuits();
-
-    const content = document.createElement('div');
-    content.className = 'zone-modal-list';
-
-    // Option "Toutes"
-    const btnAll = document.createElement('button');
-    btnAll.className = 'zone-modal-btn';
-    btnAll.innerHTML = `<span>Toutes les zones</span>`;
-    btnAll.onclick = () => {
-        if(state.activeFilters) {
-            setActiveFilters({ ...state.activeFilters, zone: null });
-        }
-        applyFilters();
-        closeModal();
-    };
-    content.appendChild(btnAll);
-
-    sortedZones.forEach(zone => {
-        const btn = document.createElement('button');
-        btn.className = 'zone-modal-btn';
-        btn.innerHTML = `<span>${escapeHtml(zone)}</span><span class="zone-count">${zoneCounts[zone]}</span>`;
-
-        if (state.activeFilters && state.activeFilters.zone === zone) {
-            btn.classList.add('active');
-        }
-
-        btn.onclick = () => {
-            if(state.activeFilters) {
-                setActiveFilters({ ...state.activeFilters, zone });
-            }
-            applyFilters();
-            closeModal();
-        };
-        content.appendChild(btn);
-    });
-
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'custom-modal-btn secondary';
-    closeBtn.textContent = 'Fermer';
-    closeBtn.onclick = () => closeModal();
-
-    showCustomModal("Filtrer par Zone", content, closeBtn);
 }
 
 function refreshExplorer() {
