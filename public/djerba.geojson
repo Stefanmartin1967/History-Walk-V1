@@ -33,7 +33,8 @@
         "notes": "",
         "timeH": 0,
         "timeM": 0,
-        "price": 0
+        "price": 0,
+        "incontournable": true
       }
     },
     {
