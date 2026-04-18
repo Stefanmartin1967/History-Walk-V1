@@ -11,7 +11,6 @@ import * as View from './circuit-view.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
-import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { pushToGist } from './gist-sync.js';
 
 export function isCircuitTested(circuitId) {
@@ -186,7 +185,7 @@ export async function loadCircuitDraft() {
 
             if (state.currentCircuit.length > 0) {
                 if (!state.isSelectionModeActive) {
-                    toggleSelectionMode();
+                    eventBus.emit('circuit:toggle-selection-mode', {});
                 } else {
                     renderCircuitPanel();
                 }
@@ -351,7 +350,7 @@ export async function clearCircuit(withConfirmation = true) {
     // CAS 1 : On consulte un circuit enregistré (Mode Consultation)
     if (state.activeCircuitId) {
         // Pas d'alerte, on "ferme" juste la vue
-        toggleSelectionMode(false); // Cette fonction ferme déjà le panneau et nettoie la carte
+        eventBus.emit('circuit:toggle-selection-mode', { force: false }); // Cette fonction ferme déjà le panneau et nettoie la carte
         resetCurrentCircuit();
         state.activeCircuitId = null;
     }
@@ -498,7 +497,7 @@ export async function loadCircuitById(id) {
     } else {
         // Active le mode sélection si besoin et rafraîchit le panneau
         if (!state.isSelectionModeActive) {
-            toggleSelectionMode(true);
+            eventBus.emit('circuit:toggle-selection-mode', { force: true });
         } else {
             renderCircuitPanel();
         }
@@ -612,7 +611,7 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
     } else {
         renderCircuitPanel();
         if (!state.isSelectionModeActive) {
-            toggleSelectionMode(true);
+            eventBus.emit('circuit:toggle-selection-mode', { force: true });
         }
         applyFilters();
 

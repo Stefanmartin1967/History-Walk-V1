@@ -7,7 +7,7 @@ import { eventBus } from './events.js';
 import { isMobileView, renderMobilePoiList } from './mobile.js';
 import { refreshMapMarkers } from './map.js';
 import { populateZonesMenu, populateCategoriesMenu, populateCircuitsMenu } from './ui-filters.js';
-import { loadCircuitById } from './circuit.js';
+import { loadCircuitById, toggleCircuitTested, updateCircuitMetadata } from './circuit.js';
 import { performCircuitDeletion, toggleCircuitVisitedStatus } from './circuit-actions.js';
 import { state } from './state.js';
 import { DOM } from './ui.js';
@@ -45,4 +45,13 @@ export function setupEventBusListeners() {
     });
     eventBus.on('circuit:list-updated', () => populateCircuitsMenu());
     eventBus.on('data:apply-filters', () => applyFilters());
+
+    // Admin — toggle badge "Testé sur le terrain" depuis la vue circuit
+    // (casse le cycle circuit.js ↔ circuit-view.js qui nécessitait un
+    // import() dynamique auparavant).
+    eventBus.on('circuit:request-toggle-tested', async ({ circuitId }) => {
+        const newVal = await toggleCircuitTested(circuitId);
+        showToast(newVal ? 'Circuit marqué "Testé sur le terrain" ✅' : 'Badge "Testé" retiré', 'info', 2500);
+        updateCircuitMetadata();
+    });
 }

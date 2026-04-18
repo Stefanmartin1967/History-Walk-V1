@@ -166,6 +166,12 @@ export async function generateCircuitQR() {
 
 export function setupCircuitEventListeners() {
 
+    // 0bis. Écoute de l'événement métier → UI (casse le cycle
+    // circuit.js → ui-circuit-editor.js qui existait auparavant).
+    eventBus.on('circuit:toggle-selection-mode', ({ force } = {}) => {
+        toggleSelectionMode(force);
+    });
+
     // 0. Bouton PARTAGER
     const btnShare = document.getElementById('btn-share-circuit');
     if (btnShare) {

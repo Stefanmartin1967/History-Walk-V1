@@ -6,6 +6,7 @@ import { state } from './state.js';
 import { sanitizeHTML } from './utils.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { eventBus } from './events.js';
 
 /**
  * Génère le HTML pour une étape du circuit
@@ -103,11 +104,10 @@ export function updateCircuitHeader(data) {
                 btn.setAttribute('aria-label', btn.title);
                 btn.innerHTML = `<i data-lucide="${data.isTested ? 'shield-off' : 'shield-check'}"></i>`;
                 btn.style.marginLeft = '6px';
-                btn.addEventListener('click', async () => {
-                    const { toggleCircuitTested, updateCircuitMetadata } = await import('./circuit.js');
-                    const newVal = await toggleCircuitTested(data.circuitId);
-                    showToast(newVal ? 'Circuit marqué "Testé sur le terrain" ✅' : 'Badge "Testé" retiré', 'info', 2500);
-                    updateCircuitMetadata();
+                btn.addEventListener('click', () => {
+                    // Emit vers circuit.js (casse le cycle circuit.js ↔ circuit-view.js
+                    // qui nécessitait un import() dynamique auparavant).
+                    eventBus.emit('circuit:request-toggle-tested', { circuitId: data.circuitId });
                 });
                 badge.insertAdjacentElement('afterend', btn);
             }
