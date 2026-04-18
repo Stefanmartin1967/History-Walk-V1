@@ -51,6 +51,10 @@ function saveDraft(newDraft) {
 // --- OUVERTURE DU PANNEAU (Interface + Logique) ---
 // initialTab : onglet affiché en premier ('dashboard' par défaut, 'settings' pour config token)
 export async function openControlCenter(initialTab = 'dashboard') {
+    // Garde-fou : quand branché directement via addEventListener('click', openControlCenter),
+    // le premier argument est un MouseEvent, pas une string. On retombe alors sur 'dashboard'.
+    if (typeof initialTab !== 'string') initialTab = 'dashboard';
+
     // 1. Ouvrir la modale avec tous les callbacks
     const callbacks = {
         publishChanges: publishChanges,
