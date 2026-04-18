@@ -162,7 +162,7 @@ export function renderMobileCircuitsList() {
                         ${toggleVisitedHtml}
                         <div class="mobile-circuit-info">
                             <div class="mobile-circuit-name-row">
-                                <span class="${nameClass}">${escapeHtml(displayName)}</span>
+                                <span class="${nameClass}">${escapeHtml(displayName)}${badgeHtml}</span>
                             </div>
                             <div class="mobile-card-meta">
                                 ${total} POI • ${distDisplay} <i data-lucide="${iconName}" class="icon-map-meta lucide"></i> • ${zoneName}${restoIcon}
