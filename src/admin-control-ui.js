@@ -150,10 +150,10 @@ export function renderTab(tab, diffData, callbacks) {
     if (!container) return;
 
     if (tab === 'dashboard') {
-        const { poisModified, circuitsModified, photosAdded } = diffData.stats;
+        const { poisModified, circuitsModified, photosAdded, testedChanged = 0 } = diffData.stats;
         const hasToken = !!getStoredToken();
 
-        const isSynced = (poisModified + circuitsModified) === 0;
+        const isSynced = (poisModified + circuitsModified + testedChanged) === 0;
         container.innerHTML = `
             <div class="cc-quick-actions">
                 <div class="cc-quick-actions-title"><i data-lucide="zap"></i> Actions Rapides</div>
@@ -199,6 +199,11 @@ export function renderTab(tab, diffData, callbacks) {
                     <div class="stat-icon-box"><i data-lucide="route"></i></div>
                     <div class="stat-val">${circuitsModified}</div>
                     <div class="stat-lab">Circuits Modifiés</div>
+                </div>
+                <div class="stat-card" title="Publication du statut 'vérifié' au prochain push">
+                    <div class="stat-icon-box"><i data-lucide="shield-check"></i></div>
+                    <div class="stat-val">${testedChanged}</div>
+                    <div class="stat-lab">Vérifiés à publier</div>
                 </div>
             </div>
 

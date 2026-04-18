@@ -18,4 +18,5 @@ export const GITHUB_PATHS = {
     circuitFile: (filename) => `public/circuits/djerba/${filename}`,
     photo:       (filename) => `public/photos/${filename}`,
     adminData:   'public/admin/personal_data.json',
+    tested:      (mapId)    => `public/circuits/tested_${mapId}.json`,
 };

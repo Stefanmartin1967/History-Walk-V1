@@ -6,7 +6,6 @@ import { state } from './state.js';
 import { sanitizeHTML } from './utils.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { eventBus } from './events.js';
 
 /**
  * Génère le HTML pour une étape du circuit
@@ -82,7 +81,9 @@ export function updateCircuitHeader(data) {
         DOM.circuitTitleText.title = data.title;
     }
 
-    // Badge "officiel / testé" et bouton admin dans le titre
+    // Badge "officiel / testé" (read-only). Le statut "testé" est désormais
+    // dérivé automatiquement du "coché fait" par l'admin (cf. circuit.js:
+    // setCircuitVisitedState). Plus de bouton toggle séparé ici.
     const titleContainer = document.querySelector('.circuit-title-container');
     if (titleContainer) {
         // Nettoyer les anciens badges/boutons injectés
@@ -95,22 +96,6 @@ export function updateCircuitHeader(data) {
             badge.className = `icon-official-star lucide circuit-tested-badge${data.isTested ? ' icon-tested' : ''}`;
             badge.title = data.isTested ? 'Testé sur le terrain' : 'Circuit officiel';
             DOM.circuitTitleText.insertAdjacentElement('afterend', badge);
-
-            // Bouton toggle admin uniquement
-            if (state.isAdmin && data.circuitId) {
-                const btn = document.createElement('button');
-                btn.className = `action-button circuit-toggle-tested-btn${data.isTested ? ' tested' : ''}`;
-                btn.title = data.isTested ? 'Retirer le badge "Testé"' : 'Marquer comme "Testé sur le terrain"';
-                btn.setAttribute('aria-label', btn.title);
-                btn.innerHTML = `<i data-lucide="${data.isTested ? 'shield-off' : 'shield-check'}"></i>`;
-                btn.style.marginLeft = '6px';
-                btn.addEventListener('click', () => {
-                    // Emit vers circuit.js (casse le cycle circuit.js ↔ circuit-view.js
-                    // qui nécessitait un import() dynamique auparavant).
-                    eventBus.emit('circuit:request-toggle-tested', { circuitId: data.circuitId });
-                });
-                badge.insertAdjacentElement('afterend', btn);
-            }
         }
     }
 

@@ -238,6 +238,25 @@ async function publishChanges() {
 
         await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.geojson(mapId), commitMessage);
 
+        // Publication du statut "vérifié" (testedCircuits) si changements détectés.
+        // Fichier public lu par tous les users au boot pour afficher le bouclier vert.
+        if (diffData.testedChanges && diffData.testedChanges.hasChanges) {
+            try {
+                const testedPayload = diffData.testedChanges.snapshot || {};
+                const testedBlob = new Blob([JSON.stringify(testedPayload, null, 2)], { type: 'application/json' });
+                const testedFile = new File([testedBlob], `tested_${mapId}.json`, { type: 'application/json' });
+
+                const addCount = diffData.testedChanges.additions.length;
+                const rmCount  = diffData.testedChanges.removals.length;
+                const testedMsg = `feat(verified): ${addCount} ajout(s), ${rmCount} retrait(s) sur ${mapId}`;
+
+                await uploadFileToGitHub(testedFile, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.tested(mapId), testedMsg);
+            } catch (err) {
+                console.warn('[Admin] Échec publication tested.json:', err);
+                showToast("Statut vérifié non publié (géojson OK)", "warning", 5000);
+            }
+        }
+
         // Gestion des suppressions de fichiers circuits
         const circuitsToDelete = diffData.circuits.filter(c => c.status === 'SUPPRESSION' || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION')));
 

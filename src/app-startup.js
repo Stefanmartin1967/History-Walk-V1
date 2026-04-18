@@ -10,6 +10,7 @@ import { loadCircuitDraft } from './circuit.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
+import { RAW_BASE, GITHUB_PATHS } from './config.js';
 
 // --- FONCTION UTILITAIRE : Gestion des boutons de sauvegarde ---
 export function setSaveButtonsState(enabled) {
@@ -166,6 +167,23 @@ export async function loadAndInitializeMap() {
         setOfficialCircuitsStatus(loadedStatus);
         const loadedTested = await getAppState(`tested_circuits_${activeMapId}`) || {};
         setTestedCircuits(loadedTested);
+
+        // Fetch du statut "vérifié" public (publié par admin via Control Center).
+        // Le public écrase le local pour que tous les users voient la même chose.
+        // 404 attendu avant la 1re publication → fallback silencieux.
+        try {
+            const testedUrl = `${RAW_BASE}/${GITHUB_PATHS.tested(activeMapId)}?t=${Date.now()}`;
+            const respTested = await fetch(testedUrl);
+            if (respTested.ok) {
+                const publicTested = await respTested.json();
+                if (publicTested && typeof publicTested === 'object') {
+                    setTestedCircuits({ ...state.testedCircuits, ...publicTested });
+                    await saveAppState(`tested_circuits_${activeMapId}`, state.testedCircuits);
+                }
+            }
+        } catch (e) {
+            // Silencieux : pas de fichier = premier démarrage, ou offline.
+        }
         await loadOfficialCircuits();
 
         const validCircuits = [];

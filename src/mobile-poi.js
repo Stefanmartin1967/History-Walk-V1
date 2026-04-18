@@ -8,7 +8,7 @@ import { escapeHtml } from './utils.js';
 import { getIconForFeature } from './map.js';
 import { openDetailsPanel } from './ui-details.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
-import { clearCircuit, isCircuitCompleted, isCircuitTested, toggleCircuitTested } from './circuit.js';
+import { clearCircuit, isCircuitCompleted } from './circuit.js';
 import { showToast } from './toast.js';
 import { animateContainer, getCurrentView, getAllCircuitsOrdered } from './mobile-state.js';
 import { switchMobileView } from './mobile-nav.js';
@@ -64,13 +64,6 @@ export function renderMobilePoiList(features) {
     headerDiv.className = 'mobile-view-header mobile-header-harmonized';
     headerDiv.classList.add('mobile-poi-header');
 
-    const isTested = isCircuit ? isCircuitTested(state.activeCircuitId) : false;
-    const testedBtnHtml = (isCircuit && state.isAdmin)
-        ? `<button id="mobile-toggle-tested" class="mobile-toggle-tested-btn ${isTested ? 'tested' : ''}" title="${isTested ? 'Retirer badge testé' : 'Marquer comme testé sur le terrain'}" data-id="${state.activeCircuitId}">
-               <i data-lucide="shield-check"></i>
-           </button>`
-        : '<div class="mobile-back-btn-phantom"></div>';
-
     headerDiv.innerHTML = `
         <div class="mobile-poi-header-inner">
             ${isCircuit
@@ -80,7 +73,7 @@ export function renderMobilePoiList(features) {
                 <h1 class="mobile-poi-title">${escapeHtml(pageTitle)}</h1>
                 ${circuitPositionLabel ? `<span class="mobile-page-info">${circuitPositionLabel}</span>` : ''}
             </div>
-            ${testedBtnHtml}
+            <div class="mobile-back-btn-phantom"></div>
         </div>
     `;
     container.appendChild(headerDiv);
@@ -146,21 +139,6 @@ export function renderMobilePoiList(features) {
                 });
             }
         }, 0);
-    }
-
-    // ─── Bouton "Testé sur le terrain" (admin) ────────────────────────────────
-
-    const toggleTestedBtn = document.getElementById('mobile-toggle-tested');
-    if (toggleTestedBtn) {
-        toggleTestedBtn.addEventListener('click', async () => {
-            const circuitId = toggleTestedBtn.dataset.id;
-            const newVal = await toggleCircuitTested(circuitId);
-            toggleTestedBtn.classList.toggle('tested', newVal);
-            toggleTestedBtn.title = newVal
-                ? 'Retirer badge testé'
-                : 'Marquer comme testé sur le terrain';
-            showToast(newVal ? '🛡️ Circuit marqué comme testé' : 'Badge testé retiré', 'success');
-        });
     }
 
     // ─── Bouton Retour ────────────────────────────────────────────────────────

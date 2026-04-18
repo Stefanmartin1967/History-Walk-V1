@@ -6,7 +6,12 @@ import { RAW_BASE, GITHUB_PATHS } from './config.js';
 // Ce fichier concentre exclusivement la logique complexe de comparaison
 // entre les données locales (modifiées par l'utilisateur) et les données du serveur (officielles).
 
-export let diffData = { pois: [], circuits: [], stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0 } };
+export let diffData = {
+    pois: [],
+    circuits: [],
+    testedChanges: { additions: [], removals: [], hasChanges: false, snapshot: {} },
+    stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0 }
+};
 
 /**
  * Réconcilie les changements locaux (créations, modifications, suppressions)
@@ -83,14 +88,16 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
 export async function prepareDiffData(adminDraft) {
     let originalFeatures = [];
     let remoteCircuits = [];
+    let remoteTested = {};
     const timestamp = Date.now();
     const mapId = state.currentMapId || 'djerba';
 
-    // 1. Fetch Remote Data (POIs + Circuits)
+    // 1. Fetch Remote Data (POIs + Circuits + Tested)
     try {
-        const [respGeo, respCirc] = await Promise.all([
+        const [respGeo, respCirc, respTested] = await Promise.all([
             fetch(`${RAW_BASE}/${GITHUB_PATHS.geojson(mapId)}?t=${timestamp}`),
-            fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`)
+            fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`),
+            fetch(`${RAW_BASE}/${GITHUB_PATHS.tested(mapId)}?t=${timestamp}`)
         ]);
 
         if (respGeo.ok) {
@@ -100,13 +107,18 @@ export async function prepareDiffData(adminDraft) {
         if (respCirc.ok) {
             remoteCircuits = await respCirc.json();
         }
+        // tested.json : 404 attendu avant 1re publication → fallback objet vide
+        if (respTested.ok) {
+            remoteTested = await respTested.json() || {};
+        }
     } catch (e) {
         console.error("Erreur fetch original data", e);
     }
 
     diffData.pois = [];
     diffData.circuits = [];
-    diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0 };
+    diffData.testedChanges = { additions: [], removals: [], hasChanges: false, snapshot: {} };
+    diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0 };
 
     // --- A. ANALYSE DES POIS (Via adminDraft + Comparaison directe) ---
     const pendingIds = Object.keys(adminDraft.pendingPois);
@@ -318,6 +330,41 @@ export async function prepareDiffData(adminDraft) {
     });
 
     diffData.stats.circuitsModified = diffData.circuits.length;
+
+    // --- C. ANALYSE DES CIRCUITS VÉRIFIÉS (testedCircuits local vs tested.json remote) ---
+    // Règle : admin qui coche "fait" sur un circuit officiel → testedCircuits[id] = true.
+    // Au push CC, on publie l'ensemble courant → les users voient le bouclier vert.
+    const localTested = state.testedCircuits || {};
+    const localIds = new Set(Object.keys(localTested).filter(k => localTested[k] === true));
+    const remoteIds = new Set(Object.keys(remoteTested).filter(k => remoteTested[k] === true));
+
+    // Résolveur de nom pour affichage CC
+    const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
+    const resolveName = (cid) => {
+        const c = allCircuits.find(x => String(x.id) === String(cid));
+        return c ? c.name : cid;
+    };
+
+    localIds.forEach(id => {
+        if (!remoteIds.has(id)) {
+            diffData.testedChanges.additions.push({ id, name: resolveName(id) });
+        }
+    });
+    remoteIds.forEach(id => {
+        if (!localIds.has(id)) {
+            diffData.testedChanges.removals.push({ id, name: resolveName(id) });
+        }
+    });
+
+    diffData.testedChanges.hasChanges =
+        diffData.testedChanges.additions.length > 0 ||
+        diffData.testedChanges.removals.length > 0;
+
+    // Snapshot du payload exact à publier (utilisé par publishChanges)
+    diffData.testedChanges.snapshot = { ...localTested };
+
+    diffData.stats.testedChanged =
+        diffData.testedChanges.additions.length + diffData.testedChanges.removals.length;
 
     return diffData;
 }

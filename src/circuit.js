@@ -17,19 +17,9 @@ export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
 }
 
-export async function toggleCircuitTested(circuitId) {
-    if (!state.isAdmin) return;
-    circuitId = String(circuitId);
-    const current = state.testedCircuits[circuitId] === true;
-    if (current) {
-        delete state.testedCircuits[circuitId];
-    } else {
-        state.testedCircuits[circuitId] = true;
-    }
-    await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
-    pushToGist();
-    return !current; // nouvelle valeur
-}
+// Le statut "testé/vérifié" d'un circuit officiel est désormais dérivé
+// automatiquement du "coché fait" par l'admin (cf. setCircuitVisitedState).
+// Publication via Control Center → tous les users voient le bouclier vert.
 
 export function isCircuitCompleted(circuit) {
     if (!circuit) return false;
@@ -72,6 +62,17 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
             state.officialCircuitsStatus[circuitId] = isVisited;
             officialCircuit.isCompleted = isVisited; // Maj en mémoire pour UI immédiate
             await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
+
+            // Admin : "coché fait" = circuit vérifié (publié via Control Center).
+            // Règle métier : si l'admin l'a fait, il est testé → rassure l'utilisateur lambda.
+            if (state.isAdmin) {
+                if (isVisited) {
+                    state.testedCircuits[circuitId] = true;
+                } else {
+                    delete state.testedCircuits[circuitId];
+                }
+                await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
+            }
         }
 
         // Si on a (aussi ou uniquement) une copie locale (Shadow), on la met à jour aussi pour la cohérence
