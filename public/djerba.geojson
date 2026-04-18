@@ -3555,7 +3555,15 @@
         "Desc_wpt": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant",
         "HW_ID": "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539382529.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539384195.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539385649.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539387144.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539388570.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539389948.jpg"
+        ]
       }
     },
     {
