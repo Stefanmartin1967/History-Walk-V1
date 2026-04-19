@@ -47,7 +47,7 @@ function setStatus(status) {
 
 function buildPayload() {
     // On ne sync que les champs utiles (pas les blobs photos)
-    const SYNC_KEYS = ['vu', 'notes', 'incontournable', 'planifie'];
+    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'incontournable', 'planifie'];
     const filtered = {};
     for (const [poiId, data] of Object.entries(state.userData || {})) {
         const slim = {};
@@ -75,10 +75,31 @@ function mergeRemoteIntoLocal(remote) {
         let changed = false;
         const merged = { ...local };
 
-        // vu : true gagne toujours
-        if (remoteData.vu === true && !local.vu) {
-            merged.vu = true;
+        // vuManual : true gagne toujours (action explicite de l'utilisateur)
+        if (remoteData.vuManual === true && local.vuManual !== true) {
+            merged.vuManual = true;
             changed = true;
+        }
+        // visitedByCircuits : union (chaque appareil peut avoir coché "Fait" des circuits différents)
+        if (Array.isArray(remoteData.visitedByCircuits) && remoteData.visitedByCircuits.length > 0) {
+            const localList = Array.isArray(local.visitedByCircuits) ? local.visitedByCircuits : [];
+            const union = Array.from(new Set([...localList, ...remoteData.visitedByCircuits]));
+            if (union.length !== localList.length) {
+                merged.visitedByCircuits = union;
+                changed = true;
+            }
+        }
+        // vu : rétro-compat — si le remote n'a pas encore migré, on traite son `vu=true`
+        // comme un vuManual=true (meilleur fallback possible côté lecture).
+        if (remoteData.vu === true && local.vu !== true && remoteData.vuManual === undefined && !Array.isArray(remoteData.visitedByCircuits)) {
+            merged.vuManual = true;
+            changed = true;
+        }
+        // Recompute vu après tout merge lié au visité
+        if (changed) {
+            const manual = merged.vuManual === true;
+            const byCircuits = Array.isArray(merged.visitedByCircuits) && merged.visitedByCircuits.length > 0;
+            merged.vu = manual || byCircuits;
         }
         // notes : le plus récent gagne (on utilise lastSync du payload)
         if (remoteData.notes && !local.notes) {

@@ -277,12 +277,27 @@ export function applyFilters() {
 
 // --- MODIFICATION DES DONNÉES ---
 
+// Recalcule le flag `vu` (dérivé) à partir de vuManual + visitedByCircuits.
+// Utilisé par les call-sites qui modifient vuManual ou visitedByCircuits.
+export function recomputeVu(userData) {
+    if (!userData) return;
+    const manual = userData.vuManual === true;
+    const byCircuits = Array.isArray(userData.visitedByCircuits) && userData.visitedByCircuits.length > 0;
+    userData.vu = manual || byCircuits;
+}
+
 export async function updatePoiData(poiId, key, value) {
     // Initialisation si vide
     if (!state.userData[poiId]) state.userData[poiId] = {};
 
-    // Mise à jour locale
-    state.userData[poiId][key] = value;
+    // Le toggle "vu" du panneau détails représente une action MANUELLE de l'utilisateur.
+    // On stocke donc dans vuManual ; `vu` reste dérivé (vuManual || visitedByCircuits > 0).
+    if (key === 'vu') {
+        state.userData[poiId].vuManual = value === true;
+        recomputeVu(state.userData[poiId]);
+    } else {
+        state.userData[poiId][key] = value;
+    }
 
     // Si c'est un POI en attente (créé mobile, non encore persisté),
     // on finalise sa création dès qu'un champ est touché.

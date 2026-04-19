@@ -166,6 +166,31 @@ export async function loadAndInitializeMap() {
     // 4. Chargement User Data & Circuits (Smart Merge)
     try {
         const loadedUserData = await getAllPoiDataForMap(activeMapId) || {};
+
+        // Migration one-shot (visité binaire → vuManual + visitedByCircuits).
+        // Pour chaque POI où `vu=true` sans trace des nouveaux champs,
+        // on suppose que l'état actuel vient d'une coche manuelle → vuManual=true.
+        // Les décochages de circuits ultérieurs ne toucheront pas à ce flag.
+        const migrationUpdates = [];
+        for (const [poiId, ud] of Object.entries(loadedUserData)) {
+            if (!ud || typeof ud !== 'object') continue;
+            const alreadyMigrated = ud.vuManual !== undefined || Array.isArray(ud.visitedByCircuits);
+            if (ud.vu === true && !alreadyMigrated) {
+                ud.vuManual = true;
+                ud.visitedByCircuits = [];
+                migrationUpdates.push({ poiId, data: ud });
+            }
+        }
+        if (migrationUpdates.length > 0) {
+            try {
+                const { batchSavePoiData } = await import('./database.js');
+                await batchSavePoiData(activeMapId, migrationUpdates);
+                console.log(`[Migration] ${migrationUpdates.length} POI(s) migrés vers vuManual.`);
+            } catch (e) {
+                console.warn("[Migration] Échec sauvegarde migration vuManual :", e);
+            }
+        }
+
         setUserData(loadedUserData);
         const loadedCircuits = await getAllCircuitsForMap(activeMapId) || [];
         setMyCircuits(loadedCircuits);

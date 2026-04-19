@@ -1,6 +1,6 @@
 
 import { state } from './state.js';
-import { getPoiId, applyFilters } from './data.js';
+import { getPoiId, applyFilters, recomputeVu } from './data.js';
 import { batchSavePoiData } from './database.js';
 import { showToast } from './toast.js';
 import { showConfirm, showAlert } from './modal.js';
@@ -206,7 +206,10 @@ async function handleSyncPayload(payload) {
         if (!feature.properties.userData || !feature.properties.userData.vu) {
             if (!feature.properties.userData) feature.properties.userData = {};
 
-            feature.properties.userData.vu = true; // Mise à jour Mémoire
+            // Import de visites depuis QR : action manuelle explicite → vuManual.
+            feature.properties.userData.vuManual = true;
+            recomputeVu(feature.properties.userData);
+            state.userData[poiId] = feature.properties.userData;
 
             updates.push({
                 poiId: poiId,
