@@ -7359,6 +7359,27 @@
         "HW_ID": "HW-01KPKQ7Y30RF7EDF0VX8ZBJE9G",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9805667,
+          33.80471109972222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test école",
+        "Catégorie": "Curiosité",
+        "Zone": "Midoun",
+        "description": "Test",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPKQRBE9EEMSF7FGYFKVJQEG",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
