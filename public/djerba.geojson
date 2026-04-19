@@ -6,8 +6,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          11.046217898317652,
-          33.82679301484525
+          11.046409561303415,
+          33.82645140393683
         ]
       },
       "properties": {
@@ -26,8 +26,8 @@
         "verified": false,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
         "planifieCounter": 1,
-        "lat": 33.82679301484525,
-        "lng": 11.046217898317652,
+        "lat": 33.82645140393683,
+        "lng": 11.046409561303415,
         "Description_courte": "Piscine remise au norme accessible depuis le 07 mars 2026",
         "description": "Très bel hôtel 4 *, si vous voulez manger local, des spécialités tunisiennes sont à votre disposition à chaque repas. \nSoirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nC'est notre \"Camp de base\"",
         "notes": "",
