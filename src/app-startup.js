@@ -131,7 +131,13 @@ export async function loadAndInitializeMap() {
     if (DOM.loaderOverlay) DOM.loaderOverlay.style.display = 'flex';
 
     try {
-        const resp = await fetch(baseUrl + fileName);
+        // Cache-bust : sans ça, le navigateur peut servir une version HTTP-cachée
+        // du geojson jusqu'à plusieurs minutes après une publication admin. Le SW
+        // en NetworkFirst ne protège pas contre le cache HTTP amont. Résultat :
+        // la session admin voyait ses propres modifs "réapparaître" dans le CC
+        // car le diff engine fetchait raw.githubusercontent (frais) tandis que
+        // l'app servait une version stale de GH Pages.
+        const resp = await fetch(`${baseUrl}${fileName}?t=${Date.now()}`, { cache: 'reload' });
         if(resp.ok) geojsonData = await resp.json();
     } catch(e) {
         // Fallback offline
