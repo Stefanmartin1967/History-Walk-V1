@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state, setIsAdmin } from './state.js';
 import { eventBus } from './events.js';
 import { downloadFile, getPoiId } from './utils.js';
 import { showToast } from './toast.js';
@@ -51,7 +51,7 @@ export async function verifyAdminPassword(pwd) {
 export function initAdminMode() {
     // Check for persistent session
     if (localStorage.getItem('admin_session') === 'active') {
-        state.isAdmin = true;
+        setIsAdmin(true);
     }
 
     // Initial check
@@ -113,7 +113,7 @@ function updateAdminLoginButton() {
 }
 
 export function logoutAdmin() {
-    state.isAdmin = false;
+    setIsAdmin(false);
     showToast("Déconnexion Admin effectuée.", "info");
     eventBus.emit('admin:mode-toggled', false);
 }
@@ -156,7 +156,7 @@ export function showAdminLoginModal() {
         const ok = await verifyAdminPassword(pwd);
 
         if (ok) {
-            state.isAdmin = true;
+            setIsAdmin(true);
             showToast("Connexion réussie !", "success");
             eventBus.emit('admin:mode-toggled', true);
             overlay.classList.remove('active');

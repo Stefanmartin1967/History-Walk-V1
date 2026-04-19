@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state, setCurrentFeatureId, setCurrentCircuitIndex } from './state.js';
 import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive, speakText } from './voice.js';
@@ -281,8 +281,8 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         pushMobileLevel('p');
     }
 
-    state.currentFeatureId = featureId;
-    state.currentCircuitIndex = circuitIndex;
+    setCurrentFeatureId(featureId);
+    setCurrentCircuitIndex(circuitIndex);
 
     // Injection du HTML
     const targetPanel = isMobileView() ? DOM.mobileMainContainer : DOM.detailsPanel;
@@ -329,7 +329,7 @@ export function closeDetailsPanel(goBackToList = false) {
         }
     }
 
-    state.currentFeatureId = null; // Reset filter universally BEFORE rendering either view
+    setCurrentFeatureId(null); // Reset filter universally BEFORE rendering either view
 
     if (isMobileView()) {
         if(goBackToList && state.activeCircuitId) {

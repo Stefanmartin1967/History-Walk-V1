@@ -1,4 +1,4 @@
-import { state, updateMyCircuit } from './state.js';
+import { state, updateMyCircuit, setCustomDraftName } from './state.js';
 import { DOM } from './ui.js';
 import { updateSelectionModeButton } from './ui-selection.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -270,7 +270,7 @@ export function setupCircuitEventListeners() {
                          eventBus.emit('circuit:list-updated');
                      }
                  } else {
-                     state.customDraftName = trimmed;
+                     setCustomDraftName(trimmed);
                  }
 
                  updateCircuitMetadata();

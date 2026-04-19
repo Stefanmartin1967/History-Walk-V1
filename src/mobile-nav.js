@@ -1,7 +1,7 @@
 // mobile-nav.js
 // Orchestrateur de navigation mobile : initialisation, routeur de vues et recherche
 
-import { state } from './state.js';
+import { state, setFilterCompleted } from './state.js';
 import { DOM } from './ui.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature, addPendingPoiFeature } from './data.js';
@@ -157,7 +157,7 @@ export function initMobileMode() {
             e.preventDefault();
             e.stopPropagation();
 
-            state.filterCompleted = !state.filterCompleted;
+            setFilterCompleted(!state.filterCompleted);
 
             const iconName = state.filterCompleted ? 'list-check' : 'list';
             const labelText = state.filterCompleted ? 'A faire' : 'Tout';
