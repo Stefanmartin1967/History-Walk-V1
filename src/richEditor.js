@@ -3,6 +3,7 @@ import L from 'leaflet';
 import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded } from './data.js';
+import { eventBus } from './events.js';
 import { getZoneFromCoords } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState, savePoiData } from './database.js';
@@ -551,6 +552,13 @@ async function executeEdit(data) {
     await logModification(poiId, logType, 'All', null, `Mise à jour via Rich Editor`);
 
     if (state.isAdmin) {
+        // [ADMIN] Tracking : signale au CC que ce POI a été modifié.
+        // Avant ce fix, executeEdit n'appelait pas addToDraft, donc le CC
+        // ne découvrait les modifs via RichEditor que lors du prochain
+        // openControlCenter (reconcileLocalChanges), jamais proactivement.
+        // On passe par le bus pour éviter un import circulaire
+        // (richEditor ← admin-control-center ← richEditor).
+        eventBus.emit('admin:poi-edited', { id: poiId, type: 'update' });
         showToast("Modification enregistrée localement.", "success");
     }
 

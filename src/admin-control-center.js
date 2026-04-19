@@ -1,4 +1,6 @@
 import { state, setUserData, setOfficialCircuitsStatus, setHiddenPoiIds } from './state.js';
+import { getPoiId } from './utils.js';
+import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { generateMasterGeoJSONData } from './admin.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
@@ -32,6 +34,13 @@ export async function initAdminControlCenter() {
     // Migration : nettoyer l'ancienne clé localStorage si elle existe encore
     localStorage.removeItem('admin_draft_v1');
 
+    // Écoute les modifications faites via RichEditor (évite l'import circulaire
+    // richEditor → admin-control-center → richEditor).
+    // Quand l'admin sauvegarde un POI via le modal d'édition, on propage
+    // l'information dans adminDraft immédiatement (sans attendre reconcileLocalChanges).
+    eventBus.on('admin:poi-edited', ({ id, type }) => {
+        addToDraft('poi', id, { type });
+    });
 }
 
 function updateButtonBadge() {
@@ -180,15 +189,32 @@ export const processDecision = async (id, decision) => {
         const card = document.getElementById(`cc-diff-item-${id}`);
         if (card) card.remove();
 
-        // 2. Nettoyage mémoire synchrone
+        // 2. Revert en mémoire COMPLET : coordonnées ET userData.
+        //
+        // Problème avant ce fix : Ignorer ne nettoyait que l'IDB et adminDraft.
+        // En mémoire, feature.geometry.coordinates restait muté (POI en position
+        // déplacée sur la carte) et feature.properties.userData pointait vers un
+        // objet orphelin conservant les champs édités.
+        // Résultat : carte et panneau Détails montraient l'état "modifié" jusqu'au F5.
+
+        // 2a. Restauration des coordonnées originales (si déplacement tracé)
+        const draftEntry = adminDraft.pendingPois[id] || {};
+        const feature = state.loadedFeatures.find(f => getPoiId(f) === id);
+        if (feature && draftEntry.originalLat !== undefined && draftEntry.originalLng !== undefined) {
+            feature.geometry.coordinates = [draftEntry.originalLng, draftEntry.originalLat];
+        }
+
+        // 2b. Nettoyage de userData en mémoire
         if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
 
-        let hadUserData = false;
-        if (state.userData[id]) {
-            hadUserData = true;
-            const newUserData = { ...state.userData };
-            delete newUserData[id];
-            setUserData(newUserData);
+        const newUserData = { ...state.userData };
+        delete newUserData[id];
+        setUserData(newUserData);
+
+        // 2c. Rebind feature.properties.userData → {} pour couper le lien avec
+        //     l'objet orphelin (qui conservait l'ancienne description, lat, lng…)
+        if (feature) {
+            feature.properties.userData = state.userData[id] || {};
         }
 
         showToast("Modification refusée et annulée", "info");

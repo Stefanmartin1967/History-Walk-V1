@@ -448,6 +448,20 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
 
     // Mise à jour de la géométrie en mémoire vive
     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+
+    // [ADMIN] Capture des coordonnées ORIGINALES AVANT mutation, pour
+    // permettre un revert propre en cas de "Ignorer" dans le CC.
+    // Sans ça, la géométrie en mémoire reste mutée même après Ignorer
+    // (jusqu'au F5). Stocké dans adminDraft pour être disponible dans
+    // processDecision sans re-fetch réseau.
+    let originalLat = null;
+    let originalLng = null;
+    if (state.isAdmin && feature) {
+        const [curLng, curLat] = feature.geometry.coordinates;
+        originalLat = curLat;
+        originalLng = curLng;
+    }
+
     if (feature) {
         feature.geometry.coordinates = [lng, lat];
         feature.properties.userData = state.userData[poiId];
@@ -472,9 +486,9 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
     // Log
     await logModification(poiId, 'Deplacement', 'All', null, `Nouvelle position : ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
 
-    // [ADMIN] Tracking
+    // [ADMIN] Tracking — on stocke aussi les coords d'origine pour le revert Ignorer.
     if (state.isAdmin) {
-        addToDraft('poi', poiId, { type: 'coords', lat, lng });
+        addToDraft('poi', poiId, { type: 'coords', lat, lng, originalLat, originalLng });
     }
 }
 
