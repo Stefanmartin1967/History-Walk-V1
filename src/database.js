@@ -13,38 +13,46 @@ function base64ToBlob(base64) {
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     return new Blob([bytes], { type: mime });
 }
-let db; // Variable locale au module pour garder la connexion ouverte
+// Singleton promise pour la connexion IDB.
+// Un seul `indexedDB.open()` en vol à la fois — les appels concurrents partagent
+// la même promesse. Reset sur fermeture pour que la prochaine requête réouvre.
+let _dbPromise = null;
 
 export function initDB() {
-    return new Promise((resolve, reject) => {
-        // Si la base de données est déjà ouverte avec la bonne version, on la réutilise.
-        if (db && db.version === DB_VERSION) {
-            return resolve(db);
-        }
+    if (_dbPromise) return _dbPromise;
+
+    _dbPromise = new Promise((resolve, reject) => {
         const request = indexedDB.open(DB_NAME, DB_VERSION);
-        
+
         request.onerror = (event) => {
+            _dbPromise = null; // Permettre une tentative ultérieure
             console.error("Erreur d'initialisation de la base de données:", event);
             reject(new Error("Erreur d'initialisation IndexedDB."));
         };
-        
+
         request.onsuccess = (event) => {
-            db = event.target.result;
-            // Gestion générique des erreurs de connexion ultérieures
+            const db = event.target.result;
+
+            // onversionchange : une connexion concurrente demande une version supérieure.
+            // On reset le singleton EN PREMIER pour que les prochains initDB() obtiennent
+            // une nouvelle connexion fraîche. PUIS on ferme — les transactions en cours
+            // sur cette connexion recevront une InvalidStateError, mais c'est inévitable
+            // (la connexion est condamnée de toute façon).
             db.onversionchange = () => {
-                db.close();
-                db = null; // FIX : sans ça, initDB() renvoie la connexion fermée et le prochain
-                           // transaction() lève "database connection is closing".
-                console.warn("Base de données fermée car une nouvelle version a été ouverte ailleurs.");
+                _dbPromise = null; // d'abord : les nouveaux appels ouvriront une connexion fraîche
+                db.close();        // ensuite  : on accepte la fermeture
+                console.warn('[IDB] Connexion fermée (nouvelle version détectée). Réouverture à la prochaine requête.');
             };
-            // Idem si la connexion se ferme pour une autre raison (timeout, GC, etc.)
+
+            // La connexion peut aussi se fermer pour d'autres raisons (GC, OS, etc.)
             db.onclose = () => {
-                db = null;
-                console.warn("Connexion IndexedDB fermée inopinément — réouverture à la prochaine requête.");
+                _dbPromise = null;
+                console.warn('[IDB] Connexion fermée inopinément — réouverture à la prochaine requête.');
             };
+
             resolve(db);
         };
-        
+
         request.onupgradeneeded = (event) => {
             const tempDb = event.target.result;
             
@@ -80,14 +88,32 @@ export function initDB() {
     });
 }
 
+// --- HELPER DE RÉSILIENCE IDB ---
+// Exécute fn(db) et, si la connexion était en cours de fermeture (onversionchange
+// concurrent), reset le singleton et réessaie UNE fois avec une connexion fraîche.
+// Évite l'"InvalidStateError: database connection is closing" qui survient quand :
+//   1. initDB() renvoie la connexion ouverte (t0)
+//   2. onversionchange → db.close() + _dbPromise = null (t1)
+//   3. db.transaction(...) → erreur (t2) car la connexion est fermée entre t0 et t2
+async function withRetry(fn) {
+    try {
+        return await fn(await initDB());
+    } catch (e) {
+        if (e?.name === 'InvalidStateError' && e?.message?.includes('closing')) {
+            _dbPromise = null; // Force réouverture si le singleton n'a pas encore été reset
+            return await fn(await initDB());
+        }
+        throw e;
+    }
+}
+
 export async function getAppState(key) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
+    return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('appState', 'readonly');
         const request = transaction.objectStore('appState').get(key);
         request.onsuccess = () => resolve(request.result ? request.result.value : undefined);
         request.onerror = (event) => reject(event.target.error);
-    });
+    }));
 }
 
 export async function softDeleteCircuit(id) {
@@ -135,18 +161,16 @@ export async function restoreCircuit(id) {
 }
 
 export async function saveAppState(key, value) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
+    return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('appState', 'readwrite');
         const request = transaction.objectStore('appState').put({ key, value });
         request.onsuccess = () => resolve();
         request.onerror = (event) => reject(event.target.error);
-    });
+    }));
 }
 
 export async function getAllPoiDataForMap(mapId) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
+    return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('poiUserData', 'readonly');
         const request = transaction.objectStore('poiUserData').index('mapId_index').getAll(mapId);
         request.onsuccess = () => {
@@ -160,29 +184,28 @@ export async function getAllPoiDataForMap(mapId) {
             resolve(userData);
         };
         request.onerror = (event) => reject(event.target.error);
-    });
+    }));
 }
 
 export async function savePoiData(mapId, poiId, data) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
+    return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('poiUserData', 'readwrite');
         const store = transaction.objectStore('poiUserData');
-        
+
         // Lecture d'abord pour fusionner (merge) au lieu d'écraser
         const getRequest = store.get([mapId, poiId]);
-        
+
         getRequest.onsuccess = () => {
             const existingData = getRequest.result || {};
             const dataToSave = { ...existingData, ...data, mapId, poiId };
-            
+
             const putRequest = store.put(dataToSave);
             putRequest.onsuccess = () => resolve();
             putRequest.onerror = (event) => reject(event.target.error);
         };
-        
+
         getRequest.onerror = (event) => reject(event.target.error);
-    });
+    }));
 }
 
 /**
@@ -192,13 +215,12 @@ export async function savePoiData(mapId, poiId, data) {
  * repeuplerait state.userData avec ces entrées orphelines).
  */
 export async function deletePoiData(mapId, poiId) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
+    return withRetry(db => new Promise((resolve, reject) => {
         const tx = db.transaction('poiUserData', 'readwrite');
         const req = tx.objectStore('poiUserData').delete([mapId, poiId]);
         req.onsuccess = () => resolve();
         req.onerror = (e) => reject(e.target.error);
-    });
+    }));
 }
 
 export async function batchSavePoiData(mapId, dataArray) {
