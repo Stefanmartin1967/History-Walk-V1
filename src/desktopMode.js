@@ -6,7 +6,7 @@ import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
 import { state, setSelectionModeFilters, setActiveFilters } from './state.js';
-import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos } from './database.js';
+import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos } from './database.js';
 import { compressImage, generatePhotoId } from './photo-service.js';
 import { logModification } from './logger.js';
 import { DOM } from './ui.js';
@@ -303,7 +303,10 @@ export async function addPhotosToPoi(feature, clusterItems) {
     }
 
     const mapId = state.currentMapId;
-    const existingPhotos = await getPoiPhotos(mapId, poiId);
+    // Admin : photos via workflow CC (pendingAdminPhotos). User : store perso (poiPhotos).
+    const existingPhotos = state.isAdmin
+        ? await getPendingAdminPhotos(mapId, poiId)
+        : await getPoiPhotos(mapId, poiId);
     const existingSizes = new Set(existingPhotos.map(p => p.blob.size));
 
     let added = 0;
@@ -340,7 +343,11 @@ export async function addPhotosToPoi(feature, clusterItems) {
     }
 
     if (added > 0) {
-        await savePoiPhotos(mapId, poiId, newItems);
+        if (state.isAdmin) {
+            await setPendingAdminPhotos(mapId, poiId, newItems);
+        } else {
+            await savePoiPhotos(mapId, poiId, newItems);
+        }
 
         // Refresh UI
         closeDetailsPanel();
