@@ -86,6 +86,8 @@ export function initDB() {
             }
         };
     });
+
+    return _dbPromise;
 }
 
 // --- HELPER DE RÉSILIENCE IDB ---
