@@ -43,7 +43,9 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
 
             // On filtre pour ne pas pister les simples visites/favoris
             // On cherche des modifications structurelles (lat, lng, _deleted, ou propriétés de contenu)
-            const ignoredKeys = ['visited', 'hidden', 'notes', 'planifie', 'planifieCounter'];
+            // Champs personnels (Gist sync privé) — ne doivent jamais apparaître dans le CC.
+            // `visited` est un legacy non utilisé ; les vrais champs sont `vu` / `vuManual` / `visitedByCircuits`.
+            const ignoredKeys = ['vu', 'vuManual', 'visitedByCircuits', 'visited', 'hidden', 'notes', 'planifie', 'planifieCounter'];
             const meaningfulKeys = Object.keys(data).filter(k => !ignoredKeys.includes(k));
 
             if (meaningfulKeys.length > 0) {
@@ -216,7 +218,7 @@ export async function prepareDiffData(adminDraft) {
         const allKeys = new Set([...Object.keys(current.properties), ...Object.keys(userData)]);
 
         allKeys.forEach(key => {
-            if (['lat', 'lng', 'userData', 'visited', 'hidden', 'planifieCounter'].includes(key)) return;
+            if (['lat', 'lng', 'userData', 'vu', 'vuManual', 'visitedByCircuits', 'visited', 'hidden', 'planifieCounter'].includes(key)) return;
 
             let oldVal = original ? original.properties[key] : undefined;
             let newVal = userData[key] !== undefined ? userData[key] : current.properties[key];

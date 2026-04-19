@@ -321,8 +321,9 @@ export async function updatePoiData(poiId, key, value) {
         applyFilters();
     }
 
-    // [ADMIN] Tracking
-    if (state.isAdmin) {
+    // [ADMIN] Tracking (exclure champs personnels — restent dans le Gist perso)
+    const PERSONAL_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'planifie', 'planifieCounter'];
+    if (state.isAdmin && !PERSONAL_KEYS.includes(key)) {
         addToDraft('poi', poiId, { key: key, value: value });
     }
 }
