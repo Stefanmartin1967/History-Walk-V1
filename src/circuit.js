@@ -3,7 +3,7 @@ import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, re
 import { DOM } from './ui.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
-import { getPoiId, getPoiName, applyFilters } from './data.js';
+import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
 import { getRealDistance, getOrthodromicDistance, map } from './map.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from './database.js';
 import { isMobileView, renderMobilePoiList } from './mobile.js';
@@ -85,37 +85,46 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
         return;
     }
 
-    // 3. Mise à jour des POIs (Si marqué comme FAIT)
-    if (isVisited) {
-        const circuit = officialCircuit || localCircuit;
-        if (circuit && circuit.poiIds && circuit.poiIds.length > 0) {
-            const updates = [];
-            circuit.poiIds.forEach(id => {
-                const feature = state.loadedFeatures.find(f => getPoiId(f) === id);
-                if (feature) {
-                    if (!feature.properties.userData) feature.properties.userData = {};
-                    // Mise à jour Mémoire
-                    feature.properties.userData.vu = true;
-                    // Préparation DB
-                    updates.push({
-                        poiId: id,
-                        data: feature.properties.userData
-                    });
-                }
-            });
+    // 3. Mise à jour des POIs (contribution du circuit à l'état visité)
+    // Modèle : chaque POI garde `visitedByCircuits` (liste des circuits qui le marquent).
+    // `vu` est dérivé = vuManual || visitedByCircuits.length > 0.
+    // Cocher "Fait"   → ajoute circuitId à visitedByCircuits
+    // Décocher "Fait" → retire circuitId ; si plus aucun circuit et pas de vuManual, le POI redevient non-visité.
+    const circuit = officialCircuit || localCircuit;
+    if (circuit && circuit.poiIds && circuit.poiIds.length > 0) {
+        const updates = [];
+        circuit.poiIds.forEach(id => {
+            const feature = state.loadedFeatures.find(f => getPoiId(f) === id);
+            if (feature) {
+                if (!feature.properties.userData) feature.properties.userData = {};
+                const ud = feature.properties.userData;
+                if (!Array.isArray(ud.visitedByCircuits)) ud.visitedByCircuits = [];
 
-            if (updates.length > 0) {
-                try {
-                    // On attend que la DB soit à jour
-                    await batchSavePoiData(state.currentMapId, updates);
-
-                    // Force refresh des marqueurs sur la carte (pour passer en vert)
-                    import('./data.js').then(({ applyFilters }) => applyFilters());
-                    // Push immédiat vers Gist (circuit terminé = événement important)
-                    pushToGist();
-                } catch (e) {
-                    console.error("Erreur mise à jour POIs du circuit:", e);
+                if (isVisited) {
+                    if (!ud.visitedByCircuits.includes(circuitId)) {
+                        ud.visitedByCircuits.push(circuitId);
+                    }
+                } else {
+                    ud.visitedByCircuits = ud.visitedByCircuits.filter(cid => cid !== circuitId);
                 }
+                recomputeVu(ud);
+
+                // Mémoire state.userData (source de vérité pour updatePoiData et Gist)
+                state.userData[id] = ud;
+
+                updates.push({ poiId: id, data: ud });
+            }
+        });
+
+        if (updates.length > 0) {
+            try {
+                await batchSavePoiData(state.currentMapId, updates);
+                // Refresh des marqueurs (couleur peut changer dans les 2 sens)
+                import('./data.js').then(({ applyFilters }) => applyFilters());
+                // Push Gist (événement important)
+                pushToGist();
+            } catch (e) {
+                console.error("Erreur mise à jour POIs du circuit:", e);
             }
         }
     }
