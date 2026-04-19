@@ -7337,6 +7337,28 @@
         "Prix d'entrée": 0,
         "incontournable": true
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9744585,
+          33.810623799999995
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test vieux bâtiments djerbiens",
+        "Catégorie": "Photo",
+        "Zone": "Midoun",
+        "Description_courte": "Test",
+        "description": "Test confirmé",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPKRW6RBS9J392RV7C79DFKN",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
