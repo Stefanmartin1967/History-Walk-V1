@@ -96,7 +96,13 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE67RMBHZ4JFG7PXTCRT",
         "lat": 33.81974876092748,
-        "lng": 11.044993404919456
+        "lng": 11.044993404919456,
+        "Description_courte": "Description courte pour test",
+        "description": "Faisant partie de Djerba Explore, ce musée est composé de quinze salles thématiques et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
+        "notes": "",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0
       }
     },
     {
