@@ -7348,14 +7348,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Test vieux bâtiments djerbiens",
+        "Nom du site FR": "Test vieux bâtiment djerbien",
         "Catégorie": "Curiosité",
         "Zone": "Midoun",
+        "Description_courte": "A effacer",
         "description": "Test",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
-        "HW_ID": "HW-01KPKJ7Q4X48C127BPMZ548BTN",
+        "HW_ID": "HW-01KPKQ7Y30RF7EDF0VX8ZBJE9G",
         "Description": "Ajouté via Rich Editor"
       }
     }
