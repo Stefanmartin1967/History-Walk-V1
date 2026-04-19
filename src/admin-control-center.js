@@ -2,7 +2,7 @@ import { state, setUserData, setOfficialCircuitsStatus, setHiddenPoiIds } from '
 import { getPoiId } from './utils.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { generateMasterGeoJSONData } from './admin.js';
+import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { showToast } from './toast.js';

@@ -11,6 +11,7 @@ import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
+import { generateMasterGeoJSONData } from './admin-geojson.js';
 
 // ─── Authentification admin ──────────────────────────────────────────────────
 // Hash SHA-256 du mot de passe admin. La valeur claire n'est PAS dans le
@@ -324,62 +325,6 @@ function setupAdminListeners() {
             if (el) el.remove();
         });
     }
-}
-
-export function generateMasterGeoJSONData(excludedIds = []) {
-    if (!state.loadedFeatures || state.loadedFeatures.length === 0) {
-        return null;
-    }
-
-    const features = state.loadedFeatures
-        .filter(f => {
-             const id = getPoiId(f);
-             // 1. Exclu explicitement (via le brouillon admin)
-             if (excludedIds.includes(id)) return false;
-
-             // 2. Marqué comme supprimé dans userData (via deletePoi)
-             if (f.properties.userData && f.properties.userData._deleted) return false;
-
-             return true;
-        })
-        .map(f => {
-        // Clone profond pour ne pas modifier l'original
-        const properties = JSON.parse(JSON.stringify(f.properties));
-        const standardizedHWID = properties.HW_ID; // Sauvegarde de l'ID unifié
-
-        // Fusionner userData dans properties (Officialisation des modifs)
-        if (properties.userData) {
-            Object.assign(properties, properties.userData);
-            delete properties.userData; // On nettoie
-        }
-
-        // --- BLINDAGE ID ---
-        // On s'assure que l'ID unifié n'a pas été écrasé par une vieille valeur dans userData
-        if (standardizedHWID) {
-            properties.HW_ID = standardizedHWID;
-        }
-
-        // --- NETTOYAGE CRITIQUE : Suppression des photos Base64 ---
-        if (properties.photos && Array.isArray(properties.photos)) {
-            // On ne garde que les URL (http/https/relative)
-            // On exclut tout ce qui commence par "data:image"
-            properties.photos = properties.photos.filter(p => !p.startsWith('data:image'));
-        }
-
-        // Supprimer les clés internes inutiles
-        delete properties._leaflet_id;
-
-        return {
-            type: "Feature",
-            geometry: f.geometry,
-            properties: properties
-        };
-    });
-
-    return {
-        type: "FeatureCollection",
-        features: features
-    };
 }
 
 function exportMasterGeoJSON() {
