@@ -463,14 +463,22 @@ async function handleSave() {
         handleEmailSuggestion();
     }
 
-    if (currentMode === 'CREATE') {
-        await executeCreate(data);
-    } else {
-        await executeEdit(data);
+    // try/finally : on garantit la fermeture de la modale même si executeEdit
+    // ou executeCreate throw (IDB / persistance async). Évite de laisser
+    // l'utilisateur coincé sur une modale "fantôme" après une erreur silencieuse.
+    try {
+        if (currentMode === 'CREATE') {
+            await executeCreate(data);
+        } else {
+            await executeEdit(data);
+        }
+    } catch (e) {
+        console.error('[RichEditor] Échec sauvegarde:', e);
+        showToast("Erreur lors de la sauvegarde : " + (e?.message || 'inconnue'), "error", 5000);
+    } finally {
+        isDirty = false; // Prevent warning on successful close
+        RichEditor.close();
     }
-
-    isDirty = false; // Prevent warning on successful close
-    RichEditor.close();
 }
 
 async function executeCreate(data) {

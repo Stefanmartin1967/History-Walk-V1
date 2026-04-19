@@ -162,45 +162,60 @@ export function openEditorForPoi(id) {
 
 export const processDecision = async (id, decision) => {
     if (decision === 'refuse') {
+        // 1. Feedback UI immédiat — ne jamais dépendre du succès des awaits
+        //    async qui suivent (IDB / fetch peuvent échouer silencieusement).
+        const card = document.getElementById(`cc-diff-item-${id}`);
+        if (card) card.remove();
+
+        // 2. Nettoyage mémoire synchrone
         if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
 
+        let hadUserData = false;
         if (state.userData[id]) {
+            hadUserData = true;
             const newUserData = { ...state.userData };
             delete newUserData[id];
             setUserData(newUserData);
-            await saveAppState('userData', state.userData);
-            // Purge la persistance IDB (sinon F5 repeuple state.userData via
-            // getAllPoiDataForMap et la modif réapparaît dans le CC).
-            try {
-                await deletePoiData(state.currentMapId || 'djerba', id);
-            } catch (e) {
-                console.warn('[CC] deletePoiData failed:', id, e);
-            }
-        }
-
-        // Purge les photos en attente de publication pour ce POI
-        try {
-            await clearPendingAdminPhotos(state.currentMapId || 'djerba', id);
-        } catch (e) {
-            console.warn('[CC] clearPendingAdminPhotos failed:', e);
         }
 
         showToast("Modification refusée et annulée", "info");
-    } else {
-        showToast("Modification validée pour publication", "success");
-        // Visuel : griser la ligne
-        const card = document.getElementById(`cc-diff-item-${id}`);
-        if (card) {
-            card.style.opacity = "0.5";
-            card.style.pointerEvents = "none";
+
+        // 3. Persistance asynchrone — chaque étape sous try/catch individuel
+        //    pour que l'UI reste cohérente même si IDB/réseau échoue.
+        try { saveDraft(adminDraft); } catch (e) { console.warn('[CC] saveDraft failed:', e); }
+        try { updateButtonBadge(); } catch (e) { console.warn('[CC] updateButtonBadge failed:', e); }
+
+        if (hadUserData) {
+            try { await saveAppState('userData', state.userData); }
+            catch (e) { console.warn('[CC] saveAppState userData failed:', e); }
+            // Purge IDB poiUserData — sinon F5 repeuple state.userData via
+            // getAllPoiDataForMap et la modif réapparaît dans le CC.
+            try { await deletePoiData(state.currentMapId || 'djerba', id); }
+            catch (e) { console.warn('[CC] deletePoiData failed:', id, e); }
+        }
+
+        try { await clearPendingAdminPhotos(state.currentMapId || 'djerba', id); }
+        catch (e) { console.warn('[CC] clearPendingAdminPhotos failed:', e); }
+
+        // 4. Re-calcul du diff + re-render complet (pour retomber sur
+        //    l'empty state s'il ne reste rien). Isolé pour que l'UI déjà
+        //    mise à jour ne soit pas perdue si prepareDiffData plante.
+        try {
+            await prepareDiffData(adminDraft);
+            renderTab('changes', diffData, { publishChanges, uploadAdminData, downloadAdminData });
+        } catch (e) {
+            console.warn('[CC] prepareDiffData/renderTab after refuse failed:', e);
         }
         return;
     }
 
-    saveDraft(adminDraft);
-    updateButtonBadge();
-    await prepareDiffData(adminDraft);
-    renderTab('changes', diffData, { publishChanges, uploadAdminData, downloadAdminData });
+    // Branche "accepter" : griser la ligne, UI mise à jour immédiatement
+    showToast("Modification validée pour publication", "success");
+    const card = document.getElementById(`cc-diff-item-${id}`);
+    if (card) {
+        card.style.opacity = "0.5";
+        card.style.pointerEvents = "none";
+    }
 };
 
 
@@ -375,6 +390,23 @@ async function publishChanges() {
             } catch (e) {
                 console.warn('[CC] deletePoiData failed:', poiId, e);
             }
+        }
+
+        // Invalide le cache SW pour .geojson et circuits.json — sinon au prochain
+        // F5 la session principale pourrait servir une version stale via NetworkFirst
+        // (fallback cache si la réponse réseau traîne) et l'admin ne verrait pas
+        // immédiatement ses propres modifs fraîchement publiées.
+        try {
+            if ('caches' in window) {
+                const names = await caches.keys();
+                await Promise.all(
+                    names
+                        .filter(n => n === 'geojson-data' || n === 'app-data')
+                        .map(n => caches.delete(n))
+                );
+            }
+        } catch (e) {
+            console.warn('[CC] Purge SW cache failed:', e);
         }
 
         closeModal();
