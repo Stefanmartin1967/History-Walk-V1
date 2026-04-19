@@ -7337,69 +7337,6 @@
         "Prix d'entrée": 0,
         "incontournable": true
       }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.973279299722222,
-          33.80604999972222
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test vieux bâtiment djerbien",
-        "Catégorie": "Curiosité",
-        "Zone": "Midoun",
-        "Description_courte": "A effacer",
-        "description": "Test",
-        "timeH": 0,
-        "timeM": 0,
-        "price": 0,
-        "HW_ID": "HW-01KPKQ7Y30RF7EDF0VX8ZBJE9G",
-        "Description": "Ajouté via Rich Editor"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.9805667,
-          33.80471109972222
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test école",
-        "Catégorie": "Curiosité",
-        "Zone": "Midoun",
-        "description": "Test",
-        "timeH": 0,
-        "timeM": 0,
-        "price": 0,
-        "HW_ID": "HW-01KPKQRBE9EEMSF7FGYFKVJQEG",
-        "Description": "Ajouté via Rich Editor"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.983894299722222,
-          33.8039208
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test console suppression",
-        "Catégorie": "Photo",
-        "Zone": "Midoun",
-        "timeH": 0,
-        "timeM": 0,
-        "price": 0,
-        "HW_ID": "HW-01KPKRCYBS06GJQ8KQTFSYKT8W",
-        "Description": "Ajouté via Rich Editor"
-      }
     }
   ]
 }
