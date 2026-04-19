@@ -17,19 +17,8 @@ import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
 import { RichEditor } from './richEditor.js';
-import { eventBus } from './events.js';
 
 let desktopDraftMarker = null;
-
-// Listener pour l'attachement de photos après création POI via RichEditor.
-// Remplace l'ancien import dynamique richEditor → desktopMode (cycle brisé).
-eventBus.on('photos:attach-after-create', async ({ feature, photos, done }) => {
-    try {
-        await addPhotosToPoi(feature, photos);
-    } finally {
-        if (typeof done === 'function') done();
-    }
-});
 
 export function enableDesktopCreationMode() {
     if (!map) return;

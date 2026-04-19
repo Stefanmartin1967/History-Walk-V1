@@ -507,16 +507,10 @@ async function executeCreate(data) {
     await saveAppState('lastGeoJSON', { type: 'FeatureCollection', features: state.loadedFeatures });
 
     // Si photos en attente (Import Photo Desktop)
-    // Pattern event-bus pour éviter la dépendance circulaire richEditor ↔ desktopMode.
-    // desktopMode écoute l'événement et appelle son propre addPhotosToPoi.
     if (currentPhotos && currentPhotos.length > 0) {
-         await new Promise(resolve => {
-             eventBus.emit('photos:attach-after-create', {
-                 feature: newFeature,
-                 photos: currentPhotos,
-                 done: resolve
-             });
-         });
+         // Import dynamique pour éviter les dépendances circulaires
+         const { addPhotosToPoi } = await import('./desktopMode.js');
+         await addPhotosToPoi(newFeature, currentPhotos);
     }
 
     await logModification(newPoiId, 'Création (Admin)', 'All', null, `Nouveau lieu : ${data['Nom du site FR']}`);
