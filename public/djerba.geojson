@@ -97,8 +97,8 @@
         "HW_ID": "HW-01K77WPE67RMBHZ4JFG7PXTCRT",
         "lat": 33.81974876092748,
         "lng": 11.044993404919456,
-        "Description_courte": "Description courte pour test",
-        "description": "Faisant partie de Djerba Explore, ce musée est composé de quinze salles thématiques et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.\nLigne ajoutée pour tests x 2",
+        "Description_courte": "",
+        "description": "Faisant partie de Djerba Explore, ce musée est composé de quinze salles thématiques et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
         "notes": "",
         "timeH": 0,
         "timeM": 0,
@@ -2158,11 +2158,17 @@
         "Latitude": 33.727278,
         "Longitude": 10.953639,
         "Description": null,
-        "Source": null,
+        "Source": "https://kapitalis.com/tunisie/2015/07/28/djerba-les-necropoles-puniques-saccagees-pillees-et-profanees/",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6DQEKFWMTWZ1A5XH39"
+        "HW_ID": "HW-01K77WPE6DQEKFWMTWZ1A5XH39",
+        "Description_courte": "Description pour test",
+        "description": "Les nécropoles puniques de Souk El Guebli au sud-est de l’île de Djerba renferment une douzaine de tombes les mieux conservées de toutes les autres tombes antiques dans l’île, découvertes en partie par le Français Ratel Gontrain suite aux premières fouilles effectuées depuis les années 1950, et les autres par Sami Ben Tahar, archéologue chargé de recherche auprès de l’Institut national du patrimoine (INP), grâce aux multiples fouilles entreprises par lui-même depuis 2004.\n\nS’étendant sur une superficie de 5000 m2, ce site archéologique exceptionnel, constitué de caveaux rupestres remontant au IIIe siècle Av. J.-C., est doté d’un plan original dont les parallèles se trouvent en Orient hellénistique et apporte un témoignage spectaculaire sur l’architecture libyco-punique, fruit d’un brassage culturel édifiant entre le substrat autochtone et l’apport phénicien.\n\nLes nombreuses fouilles effectuées sur ce site ont livré un riche mobilier funéraire constitué de poteries et d’artefacts en d’autres matériaux.",
+        "notes": "",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0
       }
     },
     {
