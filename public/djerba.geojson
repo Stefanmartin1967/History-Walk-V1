@@ -274,7 +274,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68SSRHFM5TYYA7F5YF",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -458,7 +460,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68MMPS9ZVR6XTV9J61",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -485,7 +489,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68Q2NTEKRWSPCDZZGE",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -512,7 +518,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68JWCXJ0TCG1EDSB7A",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -1421,7 +1429,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6B07WPJSEPWJAEXM5C"
+        "HW_ID": "HW-01K77WPE6B07WPJSEPWJAEXM5C",
+        "planifieCounter": 0
       }
     },
     {
@@ -2834,7 +2843,9 @@
         "HW_ID": "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
         "planifieCounter": 1,
         "vu": true,
-        "photos": []
+        "photos": [],
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -2910,7 +2921,10 @@
         "Prix d'entrée": 0,
         "Desc_wpt": "A vérifier si toujours existante",
         "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -2936,7 +2950,10 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FZPTQ6J9PK4K8Z3DJ",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3115,7 +3132,9 @@
         "HW_ID": "HW-01K77WPE6F1C25NNH5RAR2JPF6",
         "planifieCounter": 1,
         "vu": true,
-        "photos": []
+        "photos": [],
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3319,7 +3338,9 @@
         "Desc_wpt": "Mosquée ibadite devenue malékite construite en 967 de l’hégire, soit en 1560 de notre ère",
         "HW_ID": "HW-01K77WPE6G6C1H17E6WP518B3J",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3346,7 +3367,9 @@
         "Desc_wpt": "Mosquée, mausolée et medersa (Ecole) coranique constriten en \n1076 de l’hégire, soit 1675 de notre ère",
         "HW_ID": "HW-01K77WPE6GQX3PRD8TAKTDRNSZ",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3398,7 +3421,9 @@
         "Desc_wpt": "Mosquée hanafite puis malékite construite en 1560 de notre ère",
         "HW_ID": "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3475,7 +3500,9 @@
         "Desc_wpt": "Une des rares églises catholique de Djerba",
         "HW_ID": "HW-01K77WPE6HV1767JVPMV1000YQ",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3585,7 +3612,9 @@
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539387144.jpg",
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539388570.jpg",
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539389948.jpg"
-        ]
+        ],
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3645,7 +3674,9 @@
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540472598.jpg",
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540474070.jpg",
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540475513.jpg"
-        ]
+        ],
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3772,7 +3803,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": "Mosquée de type Ibadite située en milieu semi-rural",
-        "HW_ID": "HW-01K77WPE6HPEZNHF6GJF6P582Z"
+        "HW_ID": "HW-01K77WPE6HPEZNHF6GJF6P582Z",
+        "planifieCounter": 0
       }
     },
     {
@@ -3828,7 +3860,9 @@
         "photos": [
           "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1776540482752.jpg",
           "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1776540484252.jpg"
-        ]
+        ],
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3962,7 +3996,9 @@
         "photos": [
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1776540488232.jpg",
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1776540490197.jpg"
-        ]
+        ],
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -4116,7 +4152,8 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6J53FWBGSMAAVT8PKC"
+        "HW_ID": "HW-01K77WPE6J53FWBGSMAAVT8PKC",
+        "planifieCounter": 0
       }
     },
     {
@@ -4443,7 +4480,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6M5QZM1DZV18R4EDHR",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -4645,7 +4684,8 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6M14K3331NK215THZS",
         "lat": 33.86202557545826,
-        "lng": 10.806473154993117
+        "lng": 10.806473154993117,
+        "planifieCounter": 0
       }
     },
     {
@@ -4808,7 +4848,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NGJQHEKJE3M2T5W5Q",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -4835,7 +4877,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -4890,7 +4934,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NGZN849YA6V0EC1R0",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -4942,7 +4988,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N1D1N6TK82WX52BNM",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5025,7 +5073,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5077,7 +5127,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NZ91JPSJG4M3A7TNR",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5104,7 +5156,9 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5522,7 +5576,9 @@
         "Desc_wpt": "",
         "HW_ID": "HW-01K77WPE6QJNV1Q83SBNFKC88M",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5626,7 +5682,9 @@
         "Desc_wpt": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles.",
         "HW_ID": "HW-01K77WPE6Q0QEE8APATRE5K4MS",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5754,7 +5812,10 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -6037,7 +6098,10 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6RM4YJB23YX7AD522S",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -6782,7 +6846,9 @@
         "HW_ID": "HW-01KJABRN0WMXW7CV3JQJJK9EAV",
         "Description": "Ajouté via Rich Editor",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -6801,7 +6867,9 @@
         "HW_ID": "HW-01KJABRN0W6KJP2MNXC0GWQJN6",
         "Description": "Ajouté via Rich Editor",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -6820,7 +6888,9 @@
         "HW_ID": "HW-01KJABRN0WBFCMMFBGZB582PRH",
         "Description": "Ajouté via Rich Editor",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -6839,7 +6909,9 @@
         "HW_ID": "HW-01KJABRN0XCGBFRH389WG2S71J",
         "Description": "Ajouté via Rich Editor",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -6880,7 +6952,9 @@
         "lat": 33.7812942328873,
         "lng": 10.76678663492203,
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -7005,7 +7079,10 @@
         "Source": "https://fr.wikipedia.org/wiki/Djerbahood",
         "HW_ID": "HW-01KJN6EEH9Z49AMGYJT621WG9N",
         "Description": "Ajouté via Rich Editor",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -7092,7 +7169,10 @@
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CNPZR005431XS160BZ1C4",
         "Description": "Ajouté via Rich Editor",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -7256,26 +7336,6 @@
         "created_at": "2026-03-24T09:04:38.397Z",
         "Prix d'entrée": 0,
         "incontournable": true
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.791724336667718,
-          33.87721084421286
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test console suppression",
-        "Catégorie": "Café",
-        "Zone": "Houmt Souk",
-        "timeH": 0,
-        "timeM": 0,
-        "price": 0,
-        "HW_ID": "HW-01KPFXT1HF050WVG041FG7XTQP",
-        "Description": "Ajouté via Rich Editor"
       }
     }
   ]
