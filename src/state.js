@@ -213,6 +213,33 @@ export function setActiveFilters(filters) {
     state.activeFilters = filters || {};
 }
 
+// Majordome granulaire : modifie une seule clé du filtre actif.
+// Utile pour les toggles individuels (vus, planifies, zone, etc.) sans remplacer tout l'objet.
+export function setActiveFilter(key, value) {
+    if (!key) return;
+    if (!state.activeFilters) state.activeFilters = {};
+    state.activeFilters[key] = value;
+}
+
+// Majordome granulaire : marque/démarque un circuit testé par l'admin.
+// value falsy → suppression de la clé (évite la pollution de l'objet).
+export function setTestedCircuit(circuitId, value) {
+    if (!circuitId) return;
+    if (!state.testedCircuits) state.testedCircuits = {};
+    if (value) {
+        state.testedCircuits[circuitId] = true;
+    } else {
+        delete state.testedCircuits[circuitId];
+    }
+}
+
+// Majordome granulaire : statut "Completed" d'un circuit officiel.
+export function setOfficialCircuitStatus(circuitId, value) {
+    if (!circuitId) return;
+    if (!state.officialCircuitsStatus) state.officialCircuitsStatus = {};
+    state.officialCircuitsStatus[circuitId] = value;
+}
+
 // Majordome pour le lieu de résidence (tri par proximité).
 // Accepte { lat, lng, savedAt } ou null pour réinitialiser.
 export function setHomeLocation(home) {

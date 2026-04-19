@@ -1,6 +1,6 @@
 // data.js
 // --- 1. IMPORTS ---
-import { state, setCurrentMap, setLoadedFeatures } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setCustomFeatures, setHiddenPoiIds, setUserData } from './state.js';
 import { eventBus } from './events.js';
 import { 
     getAllPoiDataForMap, 
@@ -67,7 +67,7 @@ async function checkAndApplyMigrations() {
 
             // 2. Migration du statut "caché"
             if (oldId && state.hiddenPoiIds.includes(oldId)) {
-                state.hiddenPoiIds = state.hiddenPoiIds.map(id => id === oldId ? newId : id);
+                setHiddenPoiIds(state.hiddenPoiIds.map(id => id === oldId ? newId : id));
             }
 
             // [ADMIN] Enregistrement dans le brouillon pour publication sur GitHub
@@ -134,7 +134,7 @@ export async function displayGeoJSON(geoJSON, mapId) {
     }
     
     // 1. Récupération des données sauvegardées (Cachés, Notes, Ajouts manuels)
-    state.hiddenPoiIds = (await getAppState(`hiddenPois_${mapId}`)) || [];
+    setHiddenPoiIds((await getAppState(`hiddenPois_${mapId}`)) || []);
 
     // Récupération globale (legacy/backup) et spécifique à la carte
     const appStateUserData = await getAppState('userData') || {};
@@ -158,10 +158,10 @@ export async function displayGeoJSON(geoJSON, mapId) {
 
     const storedCustomFeatures = (await getAppState(`customPois_${mapId}`)) || [];
     
-    state.customFeatures = storedCustomFeatures || [];
+    setCustomFeatures(storedCustomFeatures || []);
 
     // 1.5 Pré-chargement des données utilisateur pour la migration
-    state.userData = Object.assign({}, storedUserData);
+    setUserData(Object.assign({}, storedUserData));
 
     // 2. FUSION : Carte Officielle + Lieux Ajoutés (Post-its)
     // Utilisation d'un Map pour garantir l'unicité des IDs (évite l'effet fantôme)
@@ -338,7 +338,7 @@ export function addPendingPoiFeature(feature) {
 
     // Ajout mémoire uniquement (pas de saveAppState)
     state.loadedFeatures.push(feature);
-    if (!state.customFeatures) state.customFeatures = [];
+    if (!state.customFeatures) setCustomFeatures([]);
     if (!state.customFeatures.find(f => getPoiId(f) === id)) {
         state.customFeatures.push(feature);
     }
@@ -418,7 +418,7 @@ export async function addPoiFeature(feature) {
 
     state.loadedFeatures.push(feature);
     
-    if (!state.customFeatures) state.customFeatures = [];
+    if (!state.customFeatures) setCustomFeatures([]);
     // ID déjà récupéré plus haut
     if (!state.customFeatures.find(f => getPoiId(f) === id)) {
         state.customFeatures.push(feature);
@@ -496,7 +496,7 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
 
 export async function deletePoi(poiId) {
     // 1. Gestion Liste cachée (pour l'affichage local immédiat)
-    if (!state.hiddenPoiIds) state.hiddenPoiIds = [];
+    if (!state.hiddenPoiIds) setHiddenPoiIds([]);
     if (!state.hiddenPoiIds.includes(poiId)) {
         state.hiddenPoiIds.push(poiId);
     }

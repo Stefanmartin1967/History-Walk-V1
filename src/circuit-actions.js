@@ -1,6 +1,6 @@
 
 // circuit-actions.js
-import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setUserData } from './state.js';
+import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setUserData, setOfficialCircuits } from './state.js';
 import { deleteCircuitById, softDeleteCircuit, getAllPoiDataForMap, getAllCircuitsForMap, batchSavePoiData, getAppState, saveCircuit } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
 import { applyFilters, getPoiId } from './data.js';
@@ -25,7 +25,7 @@ export async function performCircuitDeletion(id) {
                 return { success: false, message: "Impossible de supprimer un circuit officiel." };
             }
             // ADMIN : Suppression Mémoire Uniquement (Pour Export)
-            state.officialCircuits = state.officialCircuits.filter(c => c.id !== id);
+            setOfficialCircuits(state.officialCircuits.filter(c => c.id !== id));
             // On ne touche pas à softDeleteCircuit (DB) car ils n'y sont pas.
         } else {
             // STANDARD : Suppression logique (Corbeille)
@@ -37,7 +37,7 @@ export async function performCircuitDeletion(id) {
         }
         
         // FLAG CHANGEMENT
-        state.hasUnexportedChanges = true;
+        setHasUnexportedChanges(true);
 
         // 3. Si c'était le circuit actif, on nettoie l'affichage
         if (state.activeCircuitId === id) {

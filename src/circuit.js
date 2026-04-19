@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits } from './state.js';
+import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit } from './state.js';
 import { DOM } from './ui.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -59,18 +59,14 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
         // CORRECTION : Si un circuit est officiel (même s'il a un Shadow local),
         // on DOIT mettre à jour le statut officiel car c'est lui qui est lu par la liste Explorer.
         if (officialCircuit) {
-            state.officialCircuitsStatus[circuitId] = isVisited;
+            setOfficialCircuitStatus(circuitId, isVisited);
             officialCircuit.isCompleted = isVisited; // Maj en mémoire pour UI immédiate
             await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
 
             // Admin : "coché fait" = circuit vérifié (publié via Control Center).
             // Règle métier : si l'admin l'a fait, il est testé → rassure l'utilisateur lambda.
             if (state.isAdmin) {
-                if (isVisited) {
-                    state.testedCircuits[circuitId] = true;
-                } else {
-                    delete state.testedCircuits[circuitId];
-                }
+                setTestedCircuit(circuitId, isVisited);
                 await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
             }
         }
@@ -167,8 +163,8 @@ export async function loadCircuitDraft() {
     try {
         const savedData = await getAppState(`circuitDraft_${state.currentMapId}`);
         if (savedData && Array.isArray(savedData.poiIds) && savedData.poiIds.length > 0) {
-            state.currentCircuit = savedData.poiIds.map(id => state.loadedFeatures.find(feature => getPoiId(feature) === id)).filter(Boolean);
-            state.customDraftName = savedData.customDraftName || null;
+            setCurrentCircuit(savedData.poiIds.map(id => state.loadedFeatures.find(feature => getPoiId(feature) === id)).filter(Boolean));
+            setCustomDraftName(savedData.customDraftName || null);
 
             if (DOM.circuitTitleText) {
                 DOM.circuitTitleText.textContent = state.customDraftName || generateCircuitName();
@@ -302,8 +298,8 @@ function handleCircuitAction(action, index) {
         state.currentCircuit.splice(index, 1);
 
         if (state.currentFeatureId !== null && getPoiId(state.loadedFeatures[state.currentFeatureId]) === getPoiId(removedFeature)) {
-            state.currentFeatureId = null;
-            state.currentCircuitIndex = null;
+            setCurrentFeatureId(null);
+            setCurrentCircuitIndex(null);
 
             if (document.querySelector('#details-panel.active')) {
                 if (state.currentCircuit.length > 0) {
@@ -353,7 +349,7 @@ export async function clearCircuit(withConfirmation = true) {
         // Pas d'alerte, on "ferme" juste la vue
         eventBus.emit('circuit:toggle-selection-mode', { force: false }); // Cette fonction ferme déjà le panneau et nettoie la carte
         resetCurrentCircuit();
-        state.activeCircuitId = null;
+        setActiveCircuitId(null);
     }
     else {
         // CAS 2 : On est en mode Brouillon (Modification en cours)
@@ -362,14 +358,14 @@ export async function clearCircuit(withConfirmation = true) {
             if (!await showConfirm("Réinitialiser", "Voulez-vous vraiment réinitialiser ce brouillon ?", "Réinitialiser", "Annuler", true)) return;
         }
         resetCurrentCircuit();
-        state.activeCircuitId = null;
+        setActiveCircuitId(null);
     }
 
     // NETTOYAGE COMMUN (IMPORTANT pour éviter les fantômes)
     if(DOM.circuitDescription) DOM.circuitDescription.value = '';
     if(DOM.circuitTitleText) DOM.circuitTitleText.textContent = 'Nouveau Circuit';
     
-    state.customDraftName = null;
+    setCustomDraftName(null);
 
     // On vide le brouillon persistant
     await saveAppState(`circuitDraft_${state.currentMapId}`, null);
@@ -397,7 +393,7 @@ export function convertToDraft() {
     if (!state.activeCircuitId) return;
 
     // 1. On "oublie" l'ID pour autoriser l'édition
-    state.activeCircuitId = null;
+    setActiveCircuitId(null);
     
     // 2. On change le nom pour ne pas écraser l'original par mégarde plus tard
     if (DOM.circuitTitleText) {
@@ -484,10 +480,12 @@ export async function loadCircuitById(id) {
     await clearCircuit(false);
 
     // 2. Mise à jour de l'état
-    state.activeCircuitId = id;
-    state.currentCircuit = circuitToLoad.poiIds
-        .map(poiId => state.loadedFeatures.find(f => getPoiId(f) === poiId))
-        .filter(Boolean);
+    setActiveCircuitId(id);
+    setCurrentCircuit(
+        circuitToLoad.poiIds
+            .map(poiId => state.loadedFeatures.find(f => getPoiId(f) === poiId))
+            .filter(Boolean)
+    );
 
     // 3. Délégation à la VUE (On sort le HTML d'ici !)
     View.updateCircuitForm(circuitToLoad);
@@ -602,8 +600,8 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
     // 4. CHARGEMENT (Activer le circuit nouvellement créé)
     await clearCircuit(false);
 
-    state.activeCircuitId = newCircuitId;
-    state.currentCircuit = resolvedFeatures;
+    setActiveCircuitId(newCircuitId);
+    setCurrentCircuit(resolvedFeatures);
 
     // 5. Mise à jour de l'affichage
     if (isMobileView()) {

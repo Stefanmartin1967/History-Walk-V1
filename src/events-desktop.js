@@ -4,7 +4,7 @@
 // et aucune souscription eventBus ici.
 
 import { populateCategoriesMenu } from './ui-filters.js';
-import { state } from './state.js';
+import { state, setActiveFilter } from './state.js';
 import { DOM } from './ui.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { showLegendModal } from './ui-modals.js';
@@ -32,7 +32,7 @@ export function setupDesktopUIListeners() {
         const btn = e.currentTarget;
         // On inverse l'état logique : Actif = Masqué
         const isHidden = btn.classList.toggle('active');
-        state.activeFilters.vus = isHidden;
+        setActiveFilter('vus', isHidden);
 
         // Mise à jour de l'icône et du titre pour l'ACTION FUTURE
         if (isHidden) {
@@ -52,7 +52,7 @@ export function setupDesktopUIListeners() {
         const btn = e.currentTarget;
         // On inverse l'état logique : Actif = Masqué
         const isHidden = btn.classList.toggle('active');
-        state.activeFilters.planifies = isHidden;
+        setActiveFilter('planifies', isHidden);
 
         // Mise à jour de l'icône et du titre pour l'ACTION FUTURE
         if (isHidden) {
@@ -71,7 +71,7 @@ export function setupDesktopUIListeners() {
     document.getElementById('btn-filter-nonverifies')?.addEventListener('click', (e) => {
         const btn = e.currentTarget;
         const isActive = btn.classList.toggle('active');
-        state.activeFilters.nonVerifies = isActive;
+        setActiveFilter('nonVerifies', isActive);
         if (isActive) {
             btn.innerHTML = `<i data-lucide="shield-off"></i>`;
             btn.title = "Afficher tous";

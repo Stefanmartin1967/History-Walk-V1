@@ -9,7 +9,7 @@ import { refreshMapMarkers } from './map.js';
 import { populateZonesMenu, populateCategoriesMenu, populateCircuitsMenu } from './ui-filters.js';
 import { loadCircuitById } from './circuit.js';
 import { performCircuitDeletion, toggleCircuitVisitedStatus } from './circuit-actions.js';
-import { state } from './state.js';
+import { setCircuitIdToImportFor } from './state.js';
 import { DOM } from './ui.js';
 import { showToast } from './toast.js';
 import { applyFilters } from './data.js';
@@ -36,7 +36,7 @@ export function setupEventBusListeners() {
         }
     });
     eventBus.on('circuit:request-import', (id) => {
-        state.circuitIdToImportFor = id;
+        setCircuitIdToImportFor(id);
         if (DOM.gpxImporter) DOM.gpxImporter.click();
     });
     eventBus.on('circuit:request-toggle-visited', async ({ id, isChecked }) => {

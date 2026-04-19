@@ -1,6 +1,6 @@
 // map.js
 import L from 'leaflet';
-import { state } from './state.js';
+import { state, setOrthodromicPolyline, setRealTrackPolyline, setGeojsonLayer, setDraggingMarkerId } from './state.js';
 import { addPoiToCircuit, isCircuitCompleted } from './circuit.js';
 import { openDetailsPanel } from './ui-details.js';
 import { showToast } from './toast.js';
@@ -320,12 +320,12 @@ export function clearMapLines() {
 
     if (state.orthodromicPolyline) {
         state.orthodromicPolyline.remove();
-        state.orthodromicPolyline = null;
+        setOrthodromicPolyline(null);
     }
-    
+
     if (state.realTrackPolyline) {
         state.realTrackPolyline.remove();
-        state.realTrackPolyline = null;
+        setRealTrackPolyline(null);
     }
 }
 
@@ -351,9 +351,9 @@ export function drawLineOnMap(coordinates, isRealTrack = false, isCompleted = fa
     currentDrawnLine = polyline;
     
     if (isRealTrack) {
-        state.realTrackPolyline = polyline;
+        setRealTrackPolyline(polyline);
     } else {
-        state.orthodromicPolyline = polyline;
+        setOrthodromicPolyline(polyline);
     }
 }
 
@@ -395,20 +395,20 @@ export function updatePolylines() {
 
     if (activeCircuitData && activeCircuitData.realTrack) {
         const className = isCompleted ? 'real-track-polyline-done' : 'real-track-polyline';
-        state.realTrackPolyline = L.polyline(activeCircuitData.realTrack, {
+        setRealTrackPolyline(L.polyline(activeCircuitData.realTrack, {
             className: className,
             renderer: svgRenderer
-        }).addTo(map);
+        }).addTo(map));
     }
     else {
         const latLngs = state.currentCircuit.map(feature => {
             const [lon, lat] = feature.geometry.coordinates;
             return [lat, lon];
         });
-        state.orthodromicPolyline = L.polyline(latLngs, {
+        setOrthodromicPolyline(L.polyline(latLngs, {
             className: 'circuit-polyline',
             renderer: svgRenderer
-        }).addTo(map);
+        }).addTo(map));
     }
 }
 
@@ -433,7 +433,7 @@ export function refreshMapMarkers(visibleFeatures) {
     if (!map) return;
 
     if (!state.geojsonLayer) {
-        state.geojsonLayer = L.featureGroup().addTo(map); 
+        setGeojsonLayer(L.featureGroup().addTo(map));
     } else {
         state.geojsonLayer.clearLayers();
     }
@@ -496,7 +496,7 @@ export function startMarkerDrag(poiId, onDrag, onEnd) {
     }
 
     if (targetLayer.dragging) {
-        state.draggingMarkerId = poiId;
+        setDraggingMarkerId(poiId);
         targetLayer.dragging.enable();
         targetLayer.setOpacity(0.7);
         showToast("Mode déplacement activé. Glissez le marqueur !", "info");
@@ -516,7 +516,7 @@ export function startMarkerDrag(poiId, onDrag, onEnd) {
             targetLayer.setOpacity(1);
             targetLayer.off('drag', dragHandler);
             targetLayer.off('dragend', endHandler);
-            state.draggingMarkerId = null;
+            setDraggingMarkerId(null);
 
             if (onEnd) {
                 // Pass new coords + Revert function

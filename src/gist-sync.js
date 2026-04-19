@@ -3,7 +3,7 @@
 // Chaque utilisateur stocke son propre Gist ID dans localStorage.
 // Le token PAT (scope "gist") est partagé avec github-sync.js.
 
-import { state } from './state.js';
+import { state, setTestedCircuit, setOfficialCircuitStatus } from './state.js';
 import { getStoredToken } from './github-sync.js';
 import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
@@ -105,7 +105,7 @@ function mergeRemoteIntoLocal(remote) {
     const remoteStatus = remote.circuitsStatus || {};
     for (const [cId, val] of Object.entries(remoteStatus)) {
         if (val === true && !state.officialCircuitsStatus[cId]) {
-            state.officialCircuitsStatus[cId] = true;
+            setOfficialCircuitStatus(cId, true);
             circuitsChanged = true;
         }
     }
@@ -114,14 +114,14 @@ function mergeRemoteIntoLocal(remote) {
     const remoteTested = remote.testedCircuits || {};
     for (const [cId, val] of Object.entries(remoteTested)) {
         if (val === true && !state.testedCircuits[cId]) {
-            state.testedCircuits[cId] = true;
+            setTestedCircuit(cId, true);
             circuitsChanged = true;
         }
     }
     // Retraits : si absent du remote, on retire du local
     for (const cId of Object.keys(state.testedCircuits)) {
         if (!remoteTested[cId]) {
-            delete state.testedCircuits[cId];
+            setTestedCircuit(cId, false);
             circuitsChanged = true;
         }
     }

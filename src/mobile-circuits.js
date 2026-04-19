@@ -1,7 +1,7 @@
 // mobile-circuits.js
 // Rendu de la liste des circuits, toolbar de tri/filtres et sélecteur de zones
 
-import { state } from './state.js';
+import { state, setActiveFilter, setFilterCompleted } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
@@ -239,7 +239,7 @@ export function renderMobileCircuitsList() {
     const resetBtn = document.getElementById('btn-reset-filter-inline');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
-            state.filterCompleted = false;
+            setFilterCompleted(false);
             setMobileSort('date_desc');
             renderMobileCircuitsList();
         });
@@ -337,12 +337,12 @@ function renderMobileToolbar() {
         renderMobileZonesMenu();
     };
     toolbar.querySelector('#mob-filter-todo').onclick = () => {
-        state.filterCompleted = !state.filterCompleted;
+        setFilterCompleted(!state.filterCompleted);
         renderMobileCircuitsList();
     };
     toolbar.querySelector('#mob-reset').onclick = () => {
         setMobileSort('proximity_asc');
-        state.filterCompleted = false;
+        setFilterCompleted(false);
         renderMobileCircuitsList();
     };
 }
@@ -382,7 +382,7 @@ function renderMobileZonesMenu() {
     btnAll.className = 'mobile-list-item';
     btnAll.innerHTML = `<span>Toutes les zones</span>`;
     btnAll.onclick = () => {
-        state.activeFilters.zone = null;
+        setActiveFilter('zone', null);
         renderMobileCircuitsList();
         closeModal();
     };
@@ -396,7 +396,7 @@ function renderMobileZonesMenu() {
             btn.classList.add('mobile-zone-btn--active');
         }
         btn.onclick = () => {
-            state.activeFilters.zone = zone;
+            setActiveFilter('zone', zone);
             renderMobileCircuitsList();
             closeModal();
         };

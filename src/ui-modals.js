@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state, setHiddenPoiIds } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
 import { escapeXml } from './utils.js';
 import { showToast } from './toast.js';
@@ -151,7 +151,7 @@ export function openTrashModal() {
 
             // Restore logic
             if (state.hiddenPoiIds) {
-                state.hiddenPoiIds = state.hiddenPoiIds.filter(hid => hid !== id);
+                setHiddenPoiIds(state.hiddenPoiIds.filter(hid => hid !== id));
                 await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
             }
 
