@@ -172,20 +172,35 @@ export async function prepareDiffData(adminDraft) {
         const userData = current.properties.userData || {};
         const changes = [];
 
-        // Geometry Check
+        // Geometry Check — compare TOUJOURS local vs remote.
+        // (Auparavant, la présence de userData.lat/lng suffisait à signaler un
+        //  changement, même si remote avait déjà été publié aux mêmes valeurs.)
         const userLat = userData.lat;
         const userLng = userData.lng;
 
-        if (userLat !== undefined && userLng !== undefined) {
-             // Il y a une surcharge explicite de position
-             const oldPos = original ? `${original.geometry.coordinates[1].toFixed(5)}, ${original.geometry.coordinates[0].toFixed(5)}` : 'Inconnu';
-             changes.push({
+        if (userLat !== undefined && userLng !== undefined && original) {
+            // Surcharge explicite : comparer à original.geometry
+            const [oLng, oLat] = original.geometry.coordinates;
+            const localLatStr = parseFloat(userLat).toFixed(5);
+            const localLngStr = parseFloat(userLng).toFixed(5);
+            const remoteLatStr = oLat.toFixed(5);
+            const remoteLngStr = oLng.toFixed(5);
+            if (localLatStr !== remoteLatStr || localLngStr !== remoteLngStr) {
+                changes.push({
+                    key: 'Position',
+                    old: `${remoteLatStr}, ${remoteLngStr}`,
+                    new: `${localLatStr}, ${localLngStr}`
+                });
+            }
+        } else if (userLat !== undefined && userLng !== undefined && !original) {
+            // Cas rare : surcharge mais pas d'original (POI créé local ?)
+            changes.push({
                 key: 'Position',
-                old: oldPos,
+                old: 'Inconnu',
                 new: `${parseFloat(userLat).toFixed(5)}, ${parseFloat(userLng).toFixed(5)}`
-             });
+            });
         } else if (original) {
-            // Fallback: check geometry object difference
+            // Fallback : diff direct sur feature.geometry
             const [oLng, oLat] = original.geometry.coordinates;
             const [cLng, cLat] = current.geometry.coordinates;
             if (oLng.toFixed(5) !== cLng.toFixed(5) || oLat.toFixed(5) !== cLat.toFixed(5)) {

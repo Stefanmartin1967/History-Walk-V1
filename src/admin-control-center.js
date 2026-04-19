@@ -5,7 +5,7 @@ import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './gith
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { showToast } from './toast.js';
 import { showConfirm, closeModal } from './modal.js';
-import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos } from './database.js';
+import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData } from './database.js';
 import { uploadPhotoForPoi } from './photo-service.js';
 
 // Nouveaux imports suite au découpage
@@ -169,6 +169,13 @@ export const processDecision = async (id, decision) => {
             delete newUserData[id];
             setUserData(newUserData);
             await saveAppState('userData', state.userData);
+            // Purge la persistance IDB (sinon F5 repeuple state.userData via
+            // getAllPoiDataForMap et la modif réapparaît dans le CC).
+            try {
+                await deletePoiData(state.currentMapId || 'djerba', id);
+            } catch (e) {
+                console.warn('[CC] deletePoiData failed:', id, e);
+            }
         }
 
         // Purge les photos en attente de publication pour ce POI
@@ -346,13 +353,29 @@ async function publishChanges() {
         saveDraft(adminDraft);
         updateButtonBadge();
 
-        // Clean local userData for published POIs
+        // Clean local userData for published POIs (mémoire + IDB)
         const newUserData = { ...state.userData };
+        const poisToDeleteFromIdb = [];
         diffData.pois.forEach(p => {
-             if (newUserData[p.id]) delete newUserData[p.id];
+             if (newUserData[p.id]) {
+                 delete newUserData[p.id];
+                 poisToDeleteFromIdb.push(p.id);
+             }
         });
         setUserData(newUserData);
         await saveAppState('userData', state.userData);
+
+        // Supprime les entrées du store IDB `poiUserData` : sans ça,
+        // getAllPoiDataForMap repeuplerait state.userData au prochain F5
+        // et le diff engine signalerait à nouveau les modifications déjà publiées.
+        const cleanupMapId = state.currentMapId || 'djerba';
+        for (const poiId of poisToDeleteFromIdb) {
+            try {
+                await deletePoiData(cleanupMapId, poiId);
+            } catch (e) {
+                console.warn('[CC] deletePoiData failed:', poiId, e);
+            }
+        }
 
         closeModal();
 

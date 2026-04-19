@@ -185,6 +185,22 @@ export async function savePoiData(mapId, poiId, data) {
     });
 }
 
+/**
+ * Supprime l'entrée d'un POI dans le store `poiUserData`.
+ * Utilisé par le CC après publication ou refus pour éviter que les
+ * modifications locales réapparaissent au prochain boot (getAllPoiDataForMap
+ * repeuplerait state.userData avec ces entrées orphelines).
+ */
+export async function deletePoiData(mapId, poiId) {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('poiUserData', 'readwrite');
+        const req = tx.objectStore('poiUserData').delete([mapId, poiId]);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+    });
+}
+
 export async function batchSavePoiData(mapId, dataArray) {
     const db = await initDB();
     return new Promise((resolve, reject) => {
