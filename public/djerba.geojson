@@ -7357,10 +7357,7 @@
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-01KPKQ7Y30RF7EDF0VX8ZBJE9G",
-        "Description": "Ajouté via Rich Editor",
-        "photos": [
-          "photos/poi_HW-01KPKQ7Y30RF7EDF0VX8ZBJE9G_1776631572931.jpg"
-        ]
+        "Description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -7381,6 +7378,26 @@
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-01KPKQRBE9EEMSF7FGYFKVJQEG",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.983894299722222,
+          33.8039208
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test console suppression",
+        "Catégorie": "Photo",
+        "Zone": "Midoun",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPKRCYBS06GJQ8KQTFSYKT8W",
         "Description": "Ajouté via Rich Editor"
       }
     }
