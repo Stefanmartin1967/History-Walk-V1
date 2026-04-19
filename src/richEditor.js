@@ -529,6 +529,17 @@ async function executeEdit(data) {
 
     Object.assign(state.userData[poiId], data);
 
+    // Rebind feature.properties.userData au cas où une opération antérieure
+    // (ex: recalculatePlannedCountersForMap) aurait cassé la référence entre
+    // state.userData[poiId] et feature.properties.userData en créant un spread
+    // au lieu d'un alias. Sans ça, la modification est persistée mais le panel
+    // Détails continue de lire l'ancienne copie → description pas visible
+    // avant F5.
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    if (feature) {
+        feature.properties.userData = state.userData[poiId];
+    }
+
     await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
 
     // Si c'est un POI "pending" (création mobile en attente), on finalise la persistance

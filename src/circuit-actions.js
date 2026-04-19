@@ -230,11 +230,17 @@ export async function recalculatePlannedCountersForMap(mapId) {
         }
 
         // ... Mise à jour de l'état local ...
+        // ATTENTION : setUserData(freshDB) remplace state.userData par des NOUVEAUX
+        // objets et casse la référence feature.properties.userData === state.userData[pId].
+        // Conséquence : un Object.assign(state.userData[pId], ...) ultérieur (richEditor)
+        // ne se propage plus aux marqueurs car feature.properties.userData pointe vers
+        // une copie stale. On réaligne les deux sur le MÊME objet après refresh DB.
         setUserData(await getAllPoiDataForMap(mapId));
         state.loadedFeatures.forEach(feature => {
             const poiId = getPoiId(feature);
             if (state.userData[poiId]) {
-                feature.properties.userData = { ...feature.properties.userData, ...state.userData[poiId] };
+                // Référence directe — pas de spread, sinon on recasse l'alias.
+                feature.properties.userData = state.userData[poiId];
             }
         });
     } catch (error) {

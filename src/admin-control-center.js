@@ -44,7 +44,20 @@ function updateButtonBadge() {
 
 function saveDraft(newDraft) {
     adminDraft = newDraft;
+    // Fire-and-forget pour les callbacks synchrones (reconcileLocalChanges, etc.)
     saveAppState(DRAFT_IDB_KEY, adminDraft).catch(e => console.error("Erreur sauvegarde draft", e));
+}
+
+// Version awaitable : à utiliser dans les chemins où la persistance DOIT être
+// committée avant de retourner (ex: Ignorer → éviter que F5 ressuscite le draft).
+async function saveDraftAwait(newDraft) {
+    adminDraft = newDraft;
+    try {
+        await saveAppState(DRAFT_IDB_KEY, adminDraft);
+    } catch (e) {
+        console.error("Erreur sauvegarde draft (await)", e);
+        throw e;
+    }
 }
 
 // --- OUVERTURE DIRECTE ONGLET CONFIG (sans calcul diff) ---
@@ -180,20 +193,22 @@ export const processDecision = async (id, decision) => {
 
         showToast("Modification refusée et annulée", "info");
 
-        // 3. Persistance asynchrone — chaque étape sous try/catch individuel
-        //    pour que l'UI reste cohérente même si IDB/réseau échoue.
-        try { saveDraft(adminDraft); } catch (e) { console.warn('[CC] saveDraft failed:', e); }
+        // 3. Persistance asynchrone — on AWAIT la sauvegarde du draft pour
+        //    garantir qu'un F5 immédiat ne ressuscite pas l'entrée. Avant,
+        //    saveDraft était fire-and-forget : sous forte charge IDB, la
+        //    deletion pouvait se perdre en race avec les écritures suivantes.
+        try { await saveDraftAwait(adminDraft); }
+        catch (e) { console.warn('[CC] saveDraftAwait failed:', e); }
         try { updateButtonBadge(); } catch (e) { console.warn('[CC] updateButtonBadge failed:', e); }
 
-        if (hadUserData) {
-            try { await saveAppState('userData', state.userData); }
-            catch (e) { console.warn('[CC] saveAppState userData failed:', e); }
-            // Purge IDB poiUserData — sinon F5 repeuple state.userData via
-            // getAllPoiDataForMap et la modif réapparaît dans le CC.
-            try { await deletePoiData(state.currentMapId || 'djerba', id); }
-            catch (e) { console.warn('[CC] deletePoiData failed:', id, e); }
-        }
-
+        // Purge systématique — pas de garde hadUserData. `deletePoiData`
+        // est idempotent (no-op si absent) donc ça coûte rien de le tenter
+        // toujours, et ça ferme un trou si state.userData[id] était undefined
+        // au moment du clic (race possible entre init et action).
+        try { await saveAppState('userData', state.userData); }
+        catch (e) { console.warn('[CC] saveAppState userData failed:', e); }
+        try { await deletePoiData(state.currentMapId || 'djerba', id); }
+        catch (e) { console.warn('[CC] deletePoiData failed:', id, e); }
         try { await clearPendingAdminPhotos(state.currentMapId || 'djerba', id); }
         catch (e) { console.warn('[CC] clearPendingAdminPhotos failed:', e); }
 
@@ -365,7 +380,9 @@ async function publishChanges() {
 
         showToast("Publication réussie !", "success");
         adminDraft = { pendingPois: {}, pendingCircuits: {} };
-        saveDraft(adminDraft);
+        // AWAIT : même raison que Ignorer — garantir que le draft vide est
+        // persisté avant tout F5 éventuel.
+        await saveDraftAwait(adminDraft);
         updateButtonBadge();
 
         // Clean local userData for published POIs (mémoire + IDB)
