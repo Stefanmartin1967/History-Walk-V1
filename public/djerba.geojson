@@ -7337,6 +7337,27 @@
         "Prix d'entrée": 0,
         "incontournable": true
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.979714599722222,
+          33.80508069972222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test Porte",
+        "Catégorie": "Photo",
+        "Zone": "Midoun",
+        "description": "Test",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPMJ8F049DMQGT6569112MW7",
+        "Description": "Ajouté via Rich Editor"
+      }
     }
   ]
 }
