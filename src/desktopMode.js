@@ -316,9 +316,15 @@ export async function addPhotosToPoi(feature, clusterItems) {
     for (const item of clusterItems) {
         try {
             // Convertit la base64 pré-calculée en Blob (sans re-compresser)
+            // Conversion manuelle : fetch(data:...) est bloqué par CSP connect-src
             let blob;
             if (item.base64) {
-                blob = await fetch(item.base64).then(r => r.blob());
+                const [header, data] = item.base64.split(',');
+                const mime = (header.match(/:(.*?);/) || [])[1] || 'image/jpeg';
+                const binary = atob(data);
+                const bytes = new Uint8Array(binary.length);
+                for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+                blob = new Blob([bytes], { type: mime });
             } else if (item.file) {
                 blob = await compressImage(item.file);
             } else {
