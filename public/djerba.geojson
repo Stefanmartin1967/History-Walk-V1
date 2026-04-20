@@ -7358,6 +7358,30 @@
         "HW_ID": "HW-01KPMJ8F049DMQGT6569112MW7",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.981040899722222,
+          33.804647499999994
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Vieux bâtiment djerbien",
+        "Catégorie": "Photo",
+        "Zone": "Midoun",
+        "description": "Test",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPMX8RZ41MX6DCFWGA4HZKJA",
+        "Description": "Ajouté via Rich Editor",
+        "photos": [
+          "photos/poi_HW-01KPMX8RZ41MX6DCFWGA4HZKJA_1776670769155.jpg"
+        ]
+      }
     }
   ]
 }
