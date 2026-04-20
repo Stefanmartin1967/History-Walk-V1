@@ -189,7 +189,20 @@ async function _loadPhotos(poiId, feature, preloadedPhotos) {
             let blob = p.blob || null;
             // Préfère le base64 existant (déjà compressé) pour éviter une double compression
             if (!blob && (p.src || p.base64)) {
-                try { blob = await fetch(p.src || p.base64).then(r => r.blob()); } catch (_) { /* skip */ }
+                const src = p.src || p.base64;
+                try {
+                    if (src.startsWith('data:')) {
+                        // Conversion manuelle : fetch(data:...) est bloqué par CSP connect-src
+                        const [header, data] = src.split(',');
+                        const mime = (header.match(/:(.*?);/) || [])[1] || 'image/jpeg';
+                        const binary = atob(data);
+                        const bytes = new Uint8Array(binary.length);
+                        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+                        blob = new Blob([bytes], { type: mime });
+                    } else {
+                        blob = await fetch(src).then(r => r.blob());
+                    }
+                } catch (_) { /* skip */ }
             }
             if (!blob && p.file) {
                 try { blob = await compressImage(p.file); } catch (_) { /* skip */ }
