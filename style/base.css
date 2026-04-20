@@ -1986,7 +1986,10 @@ input[type=range] {
     height: 100%;
     background-color: rgba(13, 59, 102, 0.6); /* Teinte bleu nuit légère */
     backdrop-filter: blur(2px);
-    z-index: 3000;
+    /* 5000 > rich-poi-modal (4000) : showConfirm/showAlert doivent passer
+       AU-DESSUS du RichEditor, sinon les confirmations sont masquées et
+       handleSave bloque sur un await qui ne résout jamais. */
+    z-index: 5000;
     display: flex;
     justify-content: center;
     align-items: center;

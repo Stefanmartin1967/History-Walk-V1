@@ -504,6 +504,9 @@ async function executeCreate(data) {
     });
 
     addPoiFeature(newFeature);
+    // addPoiFeature régénère HW_ID en HW-ULID (29 chars). On lit l'ID
+    // définitif depuis le feature muté, pas depuis la variable locale.
+    const actualId = newFeature.properties.HW_ID;
     await saveAppState('lastGeoJSON', { type: 'FeatureCollection', features: state.loadedFeatures });
 
     // Si photos en attente (Import Photo Desktop)
@@ -513,7 +516,7 @@ async function executeCreate(data) {
          await addPhotosToPoi(newFeature, currentPhotos);
     }
 
-    await logModification(newPoiId, 'Création (Admin)', 'All', null, `Nouveau lieu : ${data['Nom du site FR']}`);
+    await logModification(actualId, 'Création (Admin)', 'All', null, `Nouveau lieu : ${data['Nom du site FR']}`);
 
     showToast("POI créé et enregistré localement.", "success");
 }
