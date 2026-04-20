@@ -7356,7 +7356,10 @@
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-01KPMHBP8GQH01QW4VXSQ7P3J7",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "photos": [
+          "photos/poi_HW-01KPMHBP8GQH01QW4VXSQ7P3J7_1776658438666.jpg"
+        ]
       }
     }
   ]
