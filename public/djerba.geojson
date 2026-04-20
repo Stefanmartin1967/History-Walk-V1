@@ -7343,20 +7343,19 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.9744585,
-          33.810623799999995
+          10.973279299722222,
+          33.80604999972222
         ]
       },
       "properties": {
-        "Nom du site FR": "Test vieux bâtiments djerbiens",
+        "Nom du site FR": "Test vieux bâtiments djerbiens - 20260426",
         "Catégorie": "Photo",
         "Zone": "Midoun",
-        "Description_courte": "Test",
-        "description": "Test confirmé",
+        "description": "Test",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
-        "HW_ID": "HW-01KPKRW6RBS9J392RV7C79DFKN",
+        "HW_ID": "HW-01KPMHBP8GQH01QW4VXSQ7P3J7",
         "Description": "Ajouté via Rich Editor"
       }
     }
