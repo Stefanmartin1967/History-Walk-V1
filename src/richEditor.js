@@ -239,9 +239,12 @@ export const RichEditor = {
         const modal = document.getElementById(DOM_IDS.MODAL);
         if (modal) modal.style.display = 'none';
         isDirty = false;
-        // Notifie les écouteurs (ex: CC qui reste ouvert derrière)
+        // `created: true` uniquement si CREATE s'est terminé par un executeCreate réussi
+        // (qui set currentFeatureId = actualId). Permet aux listeners (ex: ui-photo-batch)
+        // de distinguer "fermeture après création" vs "annulation".
+        const wasCreated = currentMode === 'CREATE' && currentFeatureId !== null;
         window.dispatchEvent(new CustomEvent('richEditor:closed', {
-            detail: { poiId: currentFeatureId, mode: currentMode }
+            detail: { poiId: currentFeatureId, mode: currentMode, created: wasCreated }
         }));
     }
 };
@@ -517,6 +520,10 @@ async function executeCreate(data) {
     }
 
     await logModification(actualId, 'Création (Admin)', 'All', null, `Nouveau lieu : ${data['Nom du site FR']}`);
+
+    // Marque la création réussie : les listeners de `richEditor:closed` (ex: ui-photo-batch
+    // qui attend le retour pour retirer le cluster) lisent `currentFeatureId` via le detail.
+    currentFeatureId = actualId;
 
     showToast("POI créé et enregistré localement.", "success");
 }

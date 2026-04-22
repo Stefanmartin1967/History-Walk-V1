@@ -56,16 +56,25 @@ function closeModal(result = null) {
 }
 
 // Normalise les clusters entrants : ajoute id, type, et id sur chaque photo
+// Sémantique unifiée :
+//   type: 'POI'     → au moins un POI dans 100m du barycentre (nearbyPois non vide)
+//   type: 'OUT_POI' → aucun POI dans 100m (orphelin à l'import OU split manuel)
+// Avant : tous les clusters naissaient 'POI', OUT_POI n'existait que via "Détacher" →
+// sémantique incohérente (un orphelin import auto ≠ un orphelin split, alors qu'ils ont
+// le même statut : aucun POI cible).
 function normalizeClusters(enriched) {
-    return enriched.map(c => ({
-        id: uid('c'),
-        type: 'POI',
-        photos: c.photos.map(p => ({ ...p, id: uid('p') })),
-        center: c.center,
-        nearbyPois: c.nearbyPois,
-        absoluteNearest: c.absoluteNearest,
-        selectedPhotoIds: new Set()
-    }));
+    return enriched.map(c => {
+        const hasPoi = c.nearbyPois && c.nearbyPois.length > 0;
+        return {
+            id: uid('c'),
+            type: hasPoi ? 'POI' : 'OUT_POI',
+            photos: c.photos.map(p => ({ ...p, id: uid('p') })),
+            center: c.center,
+            nearbyPois: c.nearbyPois,
+            absoluteNearest: c.absoluteNearest,
+            selectedPhotoIds: new Set()
+        };
+    });
 }
 
 // Flag partagé : Sortable.js passe à true pendant un drag pour ignorer le click final
@@ -124,12 +133,87 @@ function deletePhoto(photoId) {
     updateHeaderCounts();
 }
 
+// Calcule le barycentre d'un cluster depuis les coords EXIF de ses photos.
+// Utile pour les OUT_POI issus de "Détacher" (center=null) ou pour revalider
+// un center potentiellement obsolète après des drags inter-clusters.
+function getClusterCenter(cluster) {
+    if (cluster.center && typeof cluster.center.lat === 'number') return cluster.center;
+    const pts = cluster.photos.map(p => p.coords).filter(c => c && typeof c.lat === 'number');
+    if (pts.length === 0) return null;
+    const lat = pts.reduce((s, p) => s + p.lat, 0) / pts.length;
+    const lng = pts.reduce((s, p) => s + p.lng, 0) / pts.length;
+    return { lat, lng };
+}
+
 // Création d'un nouveau POI à partir d'un cluster sans POI proche.
-// Phase 3 stub : la bascule vers RichEditor.openForCreate(lat, lng, photos)
-// sera branchée une fois le bug d'attachement photos résolu.
-function handleCreatePoi(cluster) {
-    console.log('[photo-batch] handleCreatePoi — TODO brancher RichEditor', cluster);
-    alert('Création de POI : fonctionnalité à brancher sur RichEditor (Phase 3 suite).');
+// Flow :
+//   1. Masque photo-batch (z-index 10060 > rich-poi-modal 4000, sinon RichEditor invisible)
+//   2. Ouvre RichEditor.openForCreate(lat, lng, photos) avec les File originaux (pas la base64
+//      thumbnail 200px — cf. fix addPhotosToPoi dans desktopMode.js)
+//   3. Écoute `richEditor:closed` une seule fois :
+//        created: true → retire le cluster de modalState ; ferme photo-batch si vide
+//        created: false (annulation) → restaure photo-batch tel quel
+async function handleCreatePoi(cluster) {
+    const center = getClusterCenter(cluster);
+    if (!center) {
+        showToast("Coordonnées GPS introuvables pour ce cluster.", 'error');
+        return;
+    }
+
+    // Récupère les File originaux. On exclut `base64` volontairement : addPhotosToPoi
+    // privilégie file > base64, mais inutile de transporter la thumbnail pour rien.
+    const photos = cluster.photos
+        .filter(p => p.file)
+        .map(p => ({ file: p.file, date: p.date }));
+
+    if (photos.length === 0) {
+        showToast("Aucune photo valide pour créer un POI.", 'error');
+        return;
+    }
+
+    // Masque la modale photo-batch le temps du RichEditor
+    const overlay = document.getElementById('photo-batch-overlay');
+    const prevDisplay = overlay?.style.display;
+    if (overlay) overlay.style.display = 'none';
+
+    // Promise qui résout à la fermeture du RichEditor (succès OU annulation)
+    const result = await new Promise((resolve) => {
+        const onClose = (e) => {
+            window.removeEventListener('richEditor:closed', onClose);
+            resolve(e.detail || {});
+        };
+        window.addEventListener('richEditor:closed', onClose);
+
+        // Import dynamique : richEditor → data → desktopMode → ui-photo-batch
+        // cycle potentiel si statique ici.
+        import('./richEditor.js').then(({ RichEditor }) => {
+            RichEditor.openForCreate(center.lat, center.lng, photos);
+        }).catch((err) => {
+            console.error('[photo-batch] échec import RichEditor', err);
+            window.removeEventListener('richEditor:closed', onClose);
+            resolve({});
+        });
+    });
+
+    if (result.created) {
+        // POI créé : retire le cluster, photos déjà attachées par executeCreate → addPhotosToPoi
+        modalState.clusters = modalState.clusters.filter(c => c !== cluster);
+
+        if (modalState.clusters.length === 0) {
+            // Plus rien à traiter → ferme photo-batch, pas besoin de la restaurer
+            closeModal({ completed: true, createdPoiId: result.poiId });
+            return;
+        }
+    }
+
+    // Restaure photo-batch (annulation OU création avec d'autres clusters restants)
+    if (overlay) overlay.style.display = prevDisplay || 'flex';
+
+    if (result.created) {
+        renderBody();
+        updateHeaderCounts();
+        updateFooterButtons();
+    }
 }
 
 // Rattache un cluster au POI le plus proche connu (absoluteNearest).
@@ -151,6 +235,9 @@ function handleAttachToNearest(cluster) {
         existing.photos.sort((a, b) => (a.date || 0) - (b.date || 0));
         modalState.clusters = modalState.clusters.filter(c => c !== cluster);
     } else {
+        // Bascule OUT_POI → POI : le cluster a désormais un POI cible, il doit pouvoir
+        // être enregistré (handleSave filtre sur type === 'POI' && nearbyPois non vide).
+        cluster.type = 'POI';
         cluster.nearbyPois = [newPoi];
         cluster.absoluteNearest = null;
         cluster.customName = null;
@@ -753,18 +840,20 @@ function buildClusterSection(cluster, index) {
     title.textContent = cluster.customName || autoName;
 
     // Sous-titre contextuel
-    if (cluster.type === 'OUT_POI') {
-        subtitle.textContent = `${cluster.photos.length} photo(s) — conservées localement, non publiées`;
-        section.dataset.suggestedPoiId = '';
-    } else if (cluster.nearbyPois && cluster.nearbyPois.length > 0) {
+    // Priorité : nearbyPois (POI rattaché) > absoluteNearest (info "plus proche") > générique
+    // Même sur OUT_POI, on veut afficher le POI le plus proche s'il existe — ça aide
+    // l'utilisateur à décider s'il rattache ou s'il crée un nouveau lieu.
+    if (cluster.nearbyPois && cluster.nearbyPois.length > 0) {
         const best = cluster.nearbyPois[0];
         subtitle.textContent = `POI proche à ${Math.round(best.dist)} m — ${cluster.photos.length} photo(s)`;
         section.dataset.suggestedPoiId = getPoiId(best.feature) || '';
     } else if (cluster.absoluteNearest) {
         const n = cluster.absoluteNearest;
         subtitle.textContent = `Plus proche : ${getPoiName(n.feature) || '(sans nom)'} à ${Math.round(n.dist)} m — ${cluster.photos.length} photo(s)`;
+        section.dataset.suggestedPoiId = '';
     } else {
         subtitle.textContent = `${cluster.photos.length} photo(s) — aucun POI chargé à proximité`;
+        section.dataset.suggestedPoiId = '';
     }
 
     // Handlers du renommage
@@ -794,8 +883,9 @@ function buildClusterSection(cluster, index) {
     const hasNearbyPoi = cluster.nearbyPois && cluster.nearbyPois.length > 0;
     const hasAbsoluteNearest = !!cluster.absoluteNearest;
 
-    // Rattacher au POI le plus proche (uniquement si pas déjà rattaché et si absoluteNearest connu)
-    if (cluster.type !== 'OUT_POI' && !hasNearbyPoi && hasAbsoluteNearest) {
+    // Rattacher au POI le plus proche : visible sur tout cluster sans POI rattaché
+    // (POI orphelin OU OUT_POI) si un absoluteNearest existe. Utile pour POI à >100m.
+    if (!hasNearbyPoi && hasAbsoluteNearest) {
         const nearestName = getPoiName(cluster.absoluteNearest.feature) || 'ce POI';
         const attachBtn = document.createElement('button');
         attachBtn.className = 'photo-batch-cluster-btn';
@@ -808,8 +898,11 @@ function buildClusterSection(cluster, index) {
         actions.appendChild(attachBtn);
     }
 
-    // Créer un nouveau lieu (uniquement si pas de POI proche et non OUT_POI)
-    if (cluster.type !== 'OUT_POI' && !hasNearbyPoi) {
+    // Créer un nouveau lieu : visible sur tout cluster sans POI rattaché.
+    // OUT_POI couvre deux cas d'usage symétriques :
+    //  - vraiment pas un POI (panorama, végétation) → l'utilisateur ignore le bouton
+    //  - POI "à créer" découvert pendant la balade → l'utilisateur clique
+    if (!hasNearbyPoi) {
         const createBtn = document.createElement('button');
         createBtn.className = 'photo-batch-cluster-btn photo-batch-cluster-create-btn';
         createBtn.innerHTML = '<i data-lucide="map-pin-plus"></i><span>Créer un lieu</span>';

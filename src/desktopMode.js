@@ -209,18 +209,22 @@ export async function addPhotosToPoi(feature, clusterItems) {
 
     for (const item of clusterItems) {
         try {
-            // Convertit la base64 pré-calculée en Blob (sans re-compresser)
-            // Conversion manuelle : fetch(data:...) est bloqué par CSP connect-src
+            // Priorité : File original → compressImage (pleine qualité, ~1200px).
+            // Fallback base64 uniquement si File absent (cas legacy/admin review).
+            // ⚠️ Avant : on prenait base64 d'abord, mais ui-photo-batch pré-calcule
+            // une thumbnail à 200px pour l'affichage — utiliser cette base64 donnait
+            // des photos 200px sauvegardées en base (qualité dégradée).
             let blob;
-            if (item.base64) {
+            if (item.file) {
+                blob = await compressImage(item.file);
+            } else if (item.base64) {
+                // Conversion manuelle : fetch(data:...) bloqué par CSP connect-src
                 const [header, data] = item.base64.split(',');
                 const mime = (header.match(/:(.*?);/) || [])[1] || 'image/jpeg';
                 const binary = atob(data);
                 const bytes = new Uint8Array(binary.length);
                 for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
                 blob = new Blob([bytes], { type: mime });
-            } else if (item.file) {
-                blob = await compressImage(item.file);
             } else {
                 continue;
             }
