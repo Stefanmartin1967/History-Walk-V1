@@ -127,6 +127,26 @@ export function openControlCenterModal(diffData, callbacks) {
                 const key = e.target.dataset.key;
                 const value = e.target.value;
                 if (callbacks.updateDraftValue) callbacks.updateDraftValue(id, key, value);
+                return;
+            }
+            // Toggle skipPublish sur une photo pending (Chantier 2)
+            if (e.target.matches('[data-action="toggle-photo-skip"]')) {
+                const poiId   = e.target.dataset.poiId;
+                const photoId = e.target.dataset.photoId;
+                // Décoché → skipPublish=true (photo gardée locale, pas publiée)
+                const skipPublish = !e.target.checked;
+                // Bascule visuelle immédiate sur la cellule (badge 🔒 local)
+                const cell = e.target.closest('.cc-photo-cell');
+                if (cell) cell.classList.toggle('is-local', skipPublish);
+                // MAJ du compteur affiché dans l'en-tête de grille
+                const grid = e.target.closest('.cc-photo-grid');
+                if (grid) {
+                    const total = grid.querySelectorAll('.cc-photo-checkbox').length;
+                    const publishable = grid.querySelectorAll('.cc-photo-checkbox:checked').length;
+                    const header = grid.querySelector('.cc-photo-grid-count');
+                    if (header) header.textContent = `${publishable}/${total}`;
+                }
+                if (callbacks.togglePhotoSkip) callbacks.togglePhotoSkip(poiId, photoId, skipPublish);
             }
         });
     }
@@ -143,6 +163,63 @@ export function openControlCenterModal(diffData, callbacks) {
     // Icons for initial load
     createIcons({ icons: appIcons, root: document.querySelector('.admin-cc-header') });
     createIcons({ icons: appIcons, root: document.querySelector('.admin-cc-footer') });
+}
+
+/**
+ * Rend une grille de vignettes photo pending (Chantier 2) pour un item POI
+ * dans l'onglet Modifications. Chaque vignette a une case à cocher :
+ *   — cochée (par défaut) : la photo sera uploadée sur GitHub au prochain
+ *     Publier, puis retirée de `pendingAdminPhotos`.
+ *   — décochée : la photo est persistée avec `skipPublish: true`. Elle reste
+ *     visible dans l'app (via `addPhotosToPoi` → `poiPhotos`) mais n'est JAMAIS
+ *     poussée sur GitHub, même lors des Publier suivants.
+ *
+ * Usage : photo personnelle de l'admin qu'il veut voir dans son app mais pas
+ * publier (ex: photo romantique devant un POI).
+ *
+ * @param {Object} item - Élément diffData.pois avec `pendingPhotos` et `id`.
+ * @returns {string} HTML de la grille (ou chaîne vide si pas de photos pending).
+ */
+function renderPendingPhotoGrid(item) {
+    if (!item.hasPendingPhotos || !Array.isArray(item.pendingPhotos) || item.pendingPhotos.length === 0) {
+        return '';
+    }
+
+    const total = item.pendingPhotos.length;
+    const publishable = item.pendingPhotos.filter(p => !p.skipPublish).length;
+
+    const cells = item.pendingPhotos.map(photo => {
+        // Blob URL pour la miniature. Pas de revoke explicite : le modal CC reste
+        // ouvert pendant toute la session de publication, et les blobs sont
+        // relâchés quand la page est rechargée ou navigation suivante.
+        const url = URL.createObjectURL(photo.blob);
+        const checked = !photo.skipPublish;
+        const localClass = photo.skipPublish ? ' is-local' : '';
+        return `
+            <label class="cc-photo-cell${localClass}" title="${checked ? 'Décocher pour garder cette photo uniquement en local (ne pas publier)' : 'Cocher pour publier cette photo sur GitHub'}">
+                <input type="checkbox"
+                       class="cc-photo-checkbox"
+                       data-action="toggle-photo-skip"
+                       data-poi-id="${item.id}"
+                       data-photo-id="${photo.id}"
+                       ${checked ? 'checked' : ''}>
+                <img src="${url}" alt="" loading="lazy">
+                <span class="cc-photo-badge-local" aria-hidden="true">🔒 local</span>
+            </label>
+        `;
+    }).join('');
+
+    return `
+        <div class="cc-photo-grid">
+            <div class="cc-photo-grid-title">
+                <i data-lucide="camera"></i>
+                Photos à publier
+                <span class="cc-photo-grid-count">${publishable}/${total}</span>
+                <span class="cc-photo-grid-hint">Décocher une vignette pour la garder uniquement en local</span>
+            </div>
+            <div class="cc-photo-grid-cells">${cells}</div>
+        </div>
+    `;
 }
 
 export function renderTab(tab, diffData, callbacks) {
@@ -280,6 +357,8 @@ export function renderTab(tab, diffData, callbacks) {
                                 <span class="cc-new-val">${c.new}</span>
                             </div>`).join('');
 
+                const photoGrid = renderPendingPhotoGrid(item);
+
                 const canEdit = !item.isDeletion && !item.isMigration;
                 return `
                 <div class="cc-change-item" id="cc-diff-item-${item.id}">
@@ -293,7 +372,8 @@ export function renderTab(tab, diffData, callbacks) {
                             <span>${item.isDeletion ? 'Restaurer' : 'Ignorer'}</span>
                         </button>
                     </div>
-                    <div class="cc-change-diffs">${diffRows}</div>
+                    ${diffRows ? `<div class="cc-change-diffs">${diffRows}</div>` : ''}
+                    ${photoGrid}
                 </div>`;
             }).join('');
 

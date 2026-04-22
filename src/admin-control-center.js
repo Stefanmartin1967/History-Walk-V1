@@ -85,7 +85,8 @@ export async function openControlCenter(initialTab = 'dashboard') {
         toggleDiffDetails: toggleDiffDetails,
         updateDraftValue: updateDraftValue,
         processDecision: processDecision,
-        openEditorForPoi: openEditorForPoi
+        openEditorForPoi: openEditorForPoi,
+        togglePhotoSkip: togglePhotoSkip
     };
 
     openControlCenterModal(diffData, callbacks);
@@ -109,6 +110,46 @@ export const toggleDiffDetails = (id) => {
     const el = document.getElementById(`diff-details-${id}`);
     if (el) {
         el.classList.toggle('open');
+    }
+};
+
+/**
+ * Persiste le flag `skipPublish` d'une photo pending dans IDB (Chantier 2).
+ * Appelé quand l'admin coche/décoche une vignette dans l'onglet Modifications.
+ * - skipPublish=true : photo reste dans `pendingAdminPhotos` mais sera ignorée
+ *   lors du prochain Publier (pas d'upload GitHub). Elle reste visible dans
+ *   l'app via `poiPhotos` (source séparée).
+ * - skipPublish=false : photo sera uploadée et retirée de pendingAdminPhotos
+ *   lors du prochain Publier.
+ *
+ * MAJ aussi `diffData` en mémoire pour que le compteur du Dashboard reflète
+ * l'état courant sans attendre un rafraîchissement complet.
+ */
+export const togglePhotoSkip = async (poiId, photoId, skipPublish) => {
+    try {
+        const mapId = state.currentMapId || 'djerba';
+        const photos = await getPendingAdminPhotos(mapId, poiId);
+        const updated = photos.map(p =>
+            p.id === photoId ? { ...p, skipPublish } : p
+        );
+        await setPendingAdminPhotos(mapId, poiId, updated);
+
+        // MAJ diffData en mémoire (même référence que l'entrée pois[].pendingPhotos,
+        // donc la grille reste cohérente si on change d'onglet puis on revient).
+        const entry = diffData.pendingPhotos[poiId]?.find(e => e.id === photoId);
+        if (entry) {
+            const wasPublishable = !entry.skipPublish;
+            entry.skipPublish = skipPublish;
+            const isPublishable = !skipPublish;
+            if (wasPublishable && !isPublishable) {
+                diffData.stats.pendingPhotoCount = Math.max(0, diffData.stats.pendingPhotoCount - 1);
+            } else if (!wasPublishable && isPublishable) {
+                diffData.stats.pendingPhotoCount += 1;
+            }
+        }
+    } catch (err) {
+        console.error('[CC] togglePhotoSkip échoué', err);
+        showToast("Impossible d'enregistrer l'état local de la photo", 'error');
     }
 };
 
@@ -176,7 +217,8 @@ export function openEditorForPoi(id) {
             toggleDiffDetails,
             updateDraftValue,
             processDecision,
-            openEditorForPoi
+            openEditorForPoi,
+            togglePhotoSkip
         };
         renderTab('changes', diffData, callbacks);
     }, { once: true });
@@ -298,19 +340,32 @@ async function publishChanges() {
         // ─── 1. UPLOAD DES PHOTOS PENDING (blobs locaux → GitHub) ───
         // Doit précéder la génération du geojson pour que les URLs fraîches
         // soient injectées dans userData.photos et sérialisées dans le geojson.
+        //
+        // Chantier 2 : filtrage par flag `skipPublish`
+        //   — skipPublish=true : photo gardée locale (jamais poussée), reste
+        //     dans pendingAdminPhotos pour rester visible dans la grille CC.
+        //   — skipPublish=false : photo uploadée puis retirée de pendingAdminPhotos.
         let uploadedPhotoCount = 0;
-        let failedPhotoCount  = 0;
+        let failedPhotoCount   = 0;
+        let keptLocalCount     = 0;
 
-        if (diffData.stats.pendingPhotoCount > 0) {
-            const pendingMap = diffData.pendingPhotos || {};
-            for (const poiId of Object.keys(pendingMap)) {
+        const pendingMap = diffData.pendingPhotos || {};
+        const pendingPoiIds = Object.keys(pendingMap);
+
+        if (pendingPoiIds.length > 0) {
+            for (const poiId of pendingPoiIds) {
                 const pending = await getPendingAdminPhotos(mapId, poiId);
                 if (pending.length === 0) continue;
 
-                const newUrls = [];
+                // Sépare les photos à publier des photos gardées en local
+                const toPublish = pending.filter(p => !p.skipPublish);
+                const toKeep    = pending.filter(p =>  p.skipPublish);
+                keptLocalCount += toKeep.length;
+
+                const newUrls    = [];
                 const successIds = [];
                 // Séquentiel : évite les conflits de commit parallèles sur main.
-                for (const item of pending) {
+                for (const item of toPublish) {
                     try {
                         const file = new File([item.blob], 'photo.jpg', { type: 'image/jpeg' });
                         const url = await uploadPhotoForPoi(file, poiId);
@@ -335,10 +390,12 @@ async function publishChanges() {
                     setUserData(newUserData);
                 }
 
-                // On ne conserve que les items pending qui ont ÉCHOUÉ — ils
-                // seront retentés au prochain Publier.
+                // Photos restantes dans pendingAdminPhotos :
+                //   — Celles marquées skipPublish (jamais tentées, conservées).
+                //   — Celles dont l'upload a échoué (retentées au prochain Publier).
                 const successSet = new Set(successIds);
-                const remaining  = pending.filter(p => !successSet.has(p.id));
+                const failedPublish = toPublish.filter(p => !successSet.has(p.id));
+                const remaining = [...toKeep, ...failedPublish];
                 await setPendingAdminPhotos(mapId, poiId, remaining);
             }
 
@@ -404,7 +461,16 @@ async function publishChanges() {
             }
         }
 
-        showToast("Publication réussie !", "success");
+        // Toast adapté au contexte : mentionne les photos gardées en local si
+        // l'admin a décoché des vignettes (flag skipPublish).
+        const toastParts = ["Publication réussie !"];
+        if (uploadedPhotoCount > 0) toastParts.push(`${uploadedPhotoCount} photo(s) publiée(s)`);
+        if (keptLocalCount   > 0) toastParts.push(`${keptLocalCount} gardée(s) en local`);
+        if (failedPhotoCount > 0) toastParts.push(`${failedPhotoCount} échec(s) d'upload`);
+        const toastMsg  = toastParts.length > 1 ? toastParts.join(' · ') : toastParts[0];
+        const toastKind = failedPhotoCount > 0 ? 'warning' : 'success';
+        showToast(toastMsg, toastKind, failedPhotoCount > 0 ? 6000 : 3500);
+
         adminDraft = { pendingPois: {}, pendingCircuits: {} };
         // AWAIT : même raison que Ignorer — garantir que le draft vide est
         // persisté avant tout F5 éventuel.
