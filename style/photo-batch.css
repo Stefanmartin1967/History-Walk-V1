@@ -1,0 +1,684 @@
+/* ================================================
+   UI-PHOTO-BATCH.JS — Modal batch photos (Phase 1)
+   Vue d'ensemble multi-clusters read-only
+   Aligné sur le design language CC Admin (border-radius, shadow, amber)
+   ================================================ */
+
+.photo-batch-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(69, 26, 3, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 10060;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+    padding: 24px;
+}
+.photo-batch-overlay.active { opacity: 1; visibility: visible; }
+
+.photo-batch-container {
+    background: var(--hw-cream, #FDF9F3);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 40px 100px -20px rgba(69, 26, 3, 0.25);
+    width: min(1800px, 100vw);
+    height: min(100vh, 1400px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--hw-ink, #451A03);
+}
+
+/* --- HEADER --- */
+.photo-batch-header {
+    background: #FFFFFF;
+    padding: 18px 28px;
+    border-bottom: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+.photo-batch-header-title-block { display: flex; flex-direction: column; gap: 2px; }
+.photo-batch-header-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--hw-ink, #451A03);
+    letter-spacing: -0.01em;
+}
+.photo-batch-header-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--hw-ink-soft, #78350F);
+    opacity: 0.75;
+}
+
+.photo-batch-close-btn {
+    background: transparent;
+    border: 1px solid #E5E7EB;
+    color: var(--hw-ink-soft, #78350F);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.photo-batch-close-btn:hover {
+    background: #FEF2F2;
+    color: #991B1B;
+    border-color: #FECACA;
+}
+.photo-batch-close-btn .lucide { width: 18px; height: 18px; }
+
+/* --- BODY (scroll area) --- */
+.photo-batch-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    background: var(--hw-cream, #FDF9F3);
+}
+
+/* --- CLUSTER SECTION --- */
+.photo-batch-cluster {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+.photo-batch-cluster:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    border-color: #F1C97B;
+}
+
+.photo-batch-cluster-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    gap: 12px;
+}
+.photo-batch-cluster-title-block { flex: 1; min-width: 0; }
+.photo-batch-cluster-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--hw-ink, #451A03);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.photo-batch-cluster-subtitle {
+    margin: 3px 0 0 0;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--hw-ink-soft, #78350F);
+    opacity: 0.75;
+}
+.photo-batch-cluster-badge {
+    background: #FFFBEB;
+    color: var(--hw-amber, #D97706);
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 5px 11px;
+    border-radius: 50px;
+    flex-shrink: 0;
+}
+.photo-batch-cluster-badge.out-poi {
+    background: #F1F5F9;
+    color: #475569;
+}
+
+/* Cluster Hors POI : fond et bordure plus neutres */
+.photo-batch-cluster.out-poi {
+    background: #FAFAF9;
+    border-color: #E2E8F0;
+    border-style: dashed;
+}
+.photo-batch-cluster.out-poi:hover {
+    border-color: #94A3B8;
+}
+
+/* --- THUMBNAIL GRID --- */
+.photo-batch-thumb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+.photo-batch-thumb {
+    position: relative;
+    aspect-ratio: 1;
+    background: #F8FAFC;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: grab;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.photo-batch-thumb:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+.photo-batch-thumb:active { cursor: grabbing; }
+
+/* Sortable drag states */
+.photo-batch-thumb-ghost {
+    opacity: 0.35;
+    background: #FEF3C7;
+}
+.photo-batch-thumb-chosen {
+    box-shadow: 0 0 0 2px var(--hw-amber, #D97706);
+}
+.photo-batch-thumb-drag {
+    transform: rotate(2deg);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* Cible de drop */
+.photo-batch-thumb-grid {
+    min-height: 60px;
+    padding: 4px;
+    border-radius: 10px;
+    transition: background 0.15s;
+}
+
+/* Bouton "Extraire vers Hors POI" — toujours visible (inspiré Photo-Manager) */
+.photo-batch-thumb-action {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: var(--hw-amber, #D97706);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    z-index: 2;
+}
+.photo-batch-thumb-action:hover {
+    background: #B45309;
+    transform: scale(1.1);
+}
+.photo-batch-thumb-action svg,
+.photo-batch-thumb-action .lucide {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+}
+
+/* Bouton "Supprimer" (poubelle) — toujours visible, top-left */
+.photo-batch-thumb-delete {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border-radius: 50%;
+    border: none;
+    background: rgba(69, 26, 3, 0.82);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.15s;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    z-index: 2;
+}
+.photo-batch-thumb-delete:hover {
+    background: #991B1B;
+    transform: scale(1.1);
+}
+.photo-batch-thumb-delete svg,
+.photo-batch-thumb-delete .lucide {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.5;
+}
+
+.photo-batch-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.photo-batch-thumb-label {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 12px 6px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    outline: none;
+    cursor: text;
+}
+.photo-batch-thumb-label:focus {
+    background: rgba(0, 0, 0, 0.92);
+    overflow: visible;
+    white-space: normal;
+    word-break: break-all;
+    box-shadow: inset 0 0 0 2px var(--hw-amber, #D97706);
+}
+
+/* Titre cluster éditable */
+.photo-batch-cluster-title {
+    outline: none;
+    cursor: text;
+    border-radius: 6px;
+    padding: 2px 4px;
+    margin: 0 -4px;
+    transition: background 0.15s, box-shadow 0.15s;
+}
+.photo-batch-cluster-title:hover {
+    background: #FFFBEB;
+}
+.photo-batch-cluster-title:focus {
+    background: white;
+    box-shadow: inset 0 0 0 2px var(--hw-amber, #D97706);
+    white-space: normal;
+}
+
+/* Boutons d'action du header de cluster (créer, rattacher, comparer) */
+.photo-batch-cluster-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+.photo-batch-cluster-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--hw-amber, #D97706);
+    background: #FFFBEB;
+    border: 1px solid #FCD34D;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.photo-batch-cluster-btn:hover:not(:disabled) {
+    background: var(--hw-amber, #D97706);
+    color: white;
+    border-color: var(--hw-amber, #D97706);
+}
+.photo-batch-cluster-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+.photo-batch-cluster-btn svg,
+.photo-batch-cluster-btn .lucide {
+    width: 14px;
+    height: 14px;
+    stroke-width: 2.2;
+}
+/* Alias rétro-compatible pour les tests existants */
+.photo-batch-cluster-create-btn { /* idem boutons cluster */ }
+
+/* Bouton ZIP par groupe : icon-only, plus compact */
+.photo-batch-cluster-zip-btn {
+    padding: 6px 8px;
+    min-width: 32px;
+    justify-content: center;
+}
+.photo-batch-cluster-zip-btn svg,
+.photo-batch-cluster-zip-btn .lucide {
+    width: 16px;
+    height: 16px;
+}
+
+/* Vignette sélectionnée (liseré amber épais + check badge) */
+.photo-batch-thumb.selected {
+    outline: 3px solid var(--hw-amber, #D97706);
+    outline-offset: -3px;
+}
+.photo-batch-thumb-check {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--hw-amber, #D97706);
+    color: white;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    z-index: 2;
+    pointer-events: none;
+}
+.photo-batch-thumb.selected .photo-batch-thumb-check {
+    display: flex;
+}
+.photo-batch-thumb-check svg,
+.photo-batch-thumb-check .lucide {
+    width: 14px;
+    height: 14px;
+    stroke-width: 3;
+}
+
+/* --- LIGHTBOX (Voir / Comparer) --- */
+.photo-batch-lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.97);
+    z-index: 10070;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+.photo-batch-lightbox.active { opacity: 1; visibility: visible; }
+
+.photo-batch-lightbox-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    color: white;
+    flex-shrink: 0;
+}
+.photo-batch-lightbox-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+}
+.photo-batch-lightbox-close {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+.photo-batch-lightbox-close:hover { background: rgba(255, 255, 255, 0.15); }
+.photo-batch-lightbox-close .lucide { width: 20px; height: 20px; }
+
+.photo-batch-lightbox-grid {
+    flex: 1;
+    display: grid;
+    gap: 12px;
+    padding: 8px 20px 20px;
+    min-height: 0;
+    grid-auto-rows: 1fr;
+}
+/* 1 photo → plein écran ; 2-4 photos → 2 colonnes équilibrées (auto-flow pour la 3e/4e) */
+.photo-batch-lightbox-grid[data-count="1"] { grid-template-columns: 1fr; }
+.photo-batch-lightbox-grid[data-count="2"],
+.photo-batch-lightbox-grid[data-count="3"],
+.photo-batch-lightbox-grid[data-count="4"] {
+    grid-template-columns: 1fr 1fr;
+}
+.photo-batch-lightbox-cell {
+    position: relative;
+    min-height: 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.photo-batch-lightbox-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 6px;
+    display: block;
+}
+/* Bandeau d'actions en overlay bas : [nom éditable] [✓] [⇄] [🗑] */
+.photo-batch-lightbox-cell-bar {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 8px;
+    pointer-events: auto;
+}
+.photo-batch-lightbox-cell-name {
+    flex: 1;
+    min-width: 0;
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: transparent;
+    outline: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: text;
+    border: 1px solid transparent;
+    transition: background 0.12s, border-color 0.12s;
+}
+.photo-batch-lightbox-cell-name:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.photo-batch-lightbox-cell-name:focus {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(251, 191, 36, 0.8);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+}
+.photo-batch-lightbox-cell-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.photo-batch-lightbox-cell-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: background 0.15s, transform 0.15s;
+}
+.photo-batch-lightbox-cell-btn .lucide { width: 16px; height: 16px; stroke-width: 2.5; }
+.photo-batch-lightbox-cell-btn:hover { transform: scale(1.1); }
+
+.photo-batch-lightbox-cell-btn.validate { background: rgba(22, 163, 74, 0.88); }
+.photo-batch-lightbox-cell-btn.validate:hover { background: #15803D; }
+
+.photo-batch-lightbox-cell-btn.extract { background: rgba(120, 53, 15, 0.85); }
+.photo-batch-lightbox-cell-btn.extract:hover { background: #78350F; }
+
+.photo-batch-lightbox-cell-btn.delete { background: rgba(185, 28, 28, 0.88); }
+.photo-batch-lightbox-cell-btn.delete:hover { background: #7F1D1D; }
+
+/* Pellicule de pagination (cluster > 4 photos) */
+.photo-batch-lightbox-strip {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    padding: 10px 20px 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+.photo-batch-lightbox-strip::-webkit-scrollbar { height: 6px; }
+.photo-batch-lightbox-strip::-webkit-scrollbar-track { background: transparent; }
+.photo-batch-lightbox-strip::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 3px; }
+.photo-batch-lightbox-strip-thumb {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.15s, border-color 0.15s, transform 0.15s;
+}
+.photo-batch-lightbox-strip-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.photo-batch-lightbox-strip-thumb:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+.photo-batch-lightbox-strip-thumb.selected {
+    opacity: 1;
+    border-color: #F59E0B;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35);
+}
+
+/* --- EMPTY STATE --- */
+.photo-batch-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    color: var(--hw-ink-soft, #78350F);
+    opacity: 0.6;
+    text-align: center;
+}
+.photo-batch-empty .lucide {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+}
+.photo-batch-empty p { margin: 0; font-weight: 500; }
+
+/* --- FOOTER --- */
+.photo-batch-footer {
+    padding: 14px 28px;
+    background: white;
+    border-top: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+.photo-batch-footer-hint {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--hw-ink-soft, #78350F);
+    opacity: 0.6;
+    font-style: italic;
+}
+
+.photo-batch-btn {
+    padding: 10px 22px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.photo-batch-btn-secondary {
+    background: transparent;
+    border-color: #E5E7EB;
+    color: var(--hw-ink-soft, #78350F);
+}
+.photo-batch-btn-secondary:hover {
+    background: #F8FAFC;
+    color: var(--hw-ink, #451A03);
+}
+
+.photo-batch-btn-primary {
+    background: var(--hw-amber-500, #F59E0B);
+    border-color: var(--hw-amber-500, #F59E0B);
+    color: #1F1000;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+}
+.photo-batch-btn-primary:hover:not(:disabled) {
+    background: var(--hw-amber-600, #D97706);
+    border-color: var(--hw-amber-600, #D97706);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+.photo-batch-btn-primary:disabled {
+    background: #F3F4F6;
+    border-color: #E5E7EB;
+    color: #9CA3AF;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.photo-batch-footer-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* --- RESPONSIVE (tablette, même si desktop-only c'est plus propre) --- */
+@media (max-width: 768px) {
+    .photo-batch-overlay { padding: 0; }
+    .photo-batch-container {
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+    }
+    .photo-batch-header { padding: 14px 18px; }
+    .photo-batch-body { padding: 16px; }
+    .photo-batch-footer { padding: 12px 18px; }
+    .photo-batch-thumb-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 8px;
+    }
+}

@@ -1184,7 +1184,9 @@ textarea.editable-input {
     position: fixed;
     top: 70px;
     right: 20px;
-    z-index: 9998;
+    /* Doit rester au-dessus de toutes les modales (photo-batch: 10060, lightbox: 10070,
+       mobile fullscreen: 99999, etc.) — les toasts sont un feedback global. */
+    z-index: 100001;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -1986,10 +1988,11 @@ input[type=range] {
     height: 100%;
     background-color: rgba(13, 59, 102, 0.6); /* Teinte bleu nuit légère */
     backdrop-filter: blur(2px);
-    /* 5000 > rich-poi-modal (4000) : showConfirm/showAlert doivent passer
-       AU-DESSUS du RichEditor, sinon les confirmations sont masquées et
-       handleSave bloque sur un await qui ne résout jamais. */
-    z-index: 5000;
+    /* 100000 : showPrompt/showConfirm/showAlert doivent passer AU-DESSUS de
+       TOUTES les autres modales (photo-batch 10060, lightbox 10070, rich-poi 4000),
+       sinon les prompts sont masqués et les await bloquent sans retour visuel.
+       Reste sous le toast (100001) pour qu'un toast de confirmation reste visible. */
+    z-index: 100000;
     display: flex;
     justify-content: center;
     align-items: center;

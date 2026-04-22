@@ -1,17 +1,19 @@
 /* ============================================================
    History Walk — Feuille de style principale
    Les règles sont réparties dans le dossier style/ :
-     base.css       — variables, layout PC/mobile, patches historiques
-     panels.css     — panneau détail POI (stepper, gamification, templates)
-     photo-grid.css — grille photos (admin + utilisateur)
-     ui-modules.css — modales, explorer, circuit editor, photo viewer, sync
-     admin-cc.css   — Control Center Admin + maintenance + formulaires
-     mobile.css     — vues mobile (circuits, POI, menu) + écran de bienvenue
+     base.css        — variables, layout PC/mobile, patches historiques
+     panels.css      — panneau détail POI (stepper, gamification, templates)
+     photo-grid.css  — grille photos par POI (admin + utilisateur)
+     photo-batch.css — modal batch photos GPS multi-clusters
+     ui-modules.css  — modales, explorer, circuit editor, photo viewer, sync
+     admin-cc.css    — Control Center Admin + maintenance + formulaires
+     mobile.css      — vues mobile (circuits, POI, menu) + écran de bienvenue
    ============================================================ */
 
 @import "./style/base.css";
 @import "./style/panels.css";
 @import "./style/photo-grid.css";
+@import "./style/photo-batch.css";
 @import "./style/ui-modules.css";
 @import "./style/admin-cc.css";
 @import "./style/mobile.css";
