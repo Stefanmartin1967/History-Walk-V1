@@ -78,27 +78,32 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
 
 export async function getExifLocation(file) {
     try {
-        // Import à la demande — exifr (~100KB) n'est chargé que si cette fonction est appelée
         const { default: exifr } = await import('exifr');
 
-        // Ajout d'un timeout (10s) pour éviter les blocages infinis
         const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout extraction GPS")), 10000)
+            setTimeout(() => reject(new Error("Timeout extraction EXIF")), 10000)
         );
 
-        const gpsPromise = exifr.gps(file);
+        // On parse GPS + date dans un seul appel pour éviter 2 passes sur le fichier.
+        // Note : pas de `pick` — latitude/longitude sont des propriétés *dérivées*
+        // calculées par exifr depuis les tags bruts (GPSLatitude, GPSLatitudeRef...).
+        // Restreindre via `pick` empêche la dérivation et renvoie un objet sans coords.
+        const parsePromise = exifr.parse(file, { gps: true });
 
-        // Course entre le parsing et le timeout
-        const output = await Promise.race([gpsPromise, timeoutPromise]);
+        const output = await Promise.race([parsePromise, timeoutPromise]);
 
-        if (output && typeof output.latitude === 'number' && typeof output.longitude === 'number') {
-             return { lat: output.latitude, lng: output.longitude };
-        } else {
-             throw new Error("Pas de données GPS trouvées");
+        if (!output || typeof output.latitude !== 'number' || typeof output.longitude !== 'number') {
+            throw new Error("Pas de données GPS trouvées");
         }
+
+        const date = output.DateTimeOriginal || output.CreateDate || output.ModifyDate || null;
+        return {
+            lat: output.latitude,
+            lng: output.longitude,
+            date: date ? new Date(date).getTime() : null
+        };
     } catch (e) {
-        // On normalise l'erreur pour qu'elle soit attrapée proprement
-        throw new Error(e.message || "Erreur extraction GPS");
+        throw new Error(e.message || "Erreur extraction EXIF");
     }
 }
 

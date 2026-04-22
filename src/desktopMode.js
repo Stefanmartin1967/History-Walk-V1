@@ -16,6 +16,7 @@ import { getExifLocation, calculateDistance, resizeImage, getZoneFromCoords, clu
 import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
+import { openPhotoBatchModal } from './ui-photo-batch.js';
 import { RichEditor } from './richEditor.js';
 
 let desktopDraftMarker = null;
@@ -33,6 +34,37 @@ export function enableDesktopCreationMode() {
     });
 }
 
+// Fusionne les clusters qui ont le même POI proche (nearbyPois[0]) et pas encore de renommage.
+// Le POI le plus proche "gagne" : on garde le plus petit dist, et on recalcule le barycentre.
+function mergeClustersBySamePoi(clusters) {
+    const byPoi = new Map(); // poiId -> cluster fusionné
+    const result = [];
+
+    for (const c of clusters) {
+        const bestPoi = c.nearbyPois?.[0];
+        if (!bestPoi) {
+            // "Aucun POI proche" : on ne fusionne pas ces clusters
+            result.push(c);
+            continue;
+        }
+        const key = getPoiId(bestPoi.feature);
+        if (!key) { result.push(c); continue; }
+
+        if (byPoi.has(key)) {
+            const prev = byPoi.get(key);
+            prev.photos = prev.photos.concat(c.photos);
+            // Garde le POI le plus proche
+            if (bestPoi.dist < prev.nearbyPois[0].dist) {
+                prev.nearbyPois = c.nearbyPois;
+            }
+        } else {
+            byPoi.set(key, c);
+            result.push(c);
+        }
+    }
+    return result;
+}
+
 // --- FONCTION D'IMPORT AVEC CLUSTERING ET DÉTECTION ---
 export async function handleDesktopPhotoImport(filesList) {
 
@@ -46,16 +78,16 @@ export async function handleDesktopPhotoImport(filesList) {
     if (loader) loader.style.display = 'flex';
 
     try {
-        // --- ETAPE 1 : EXTRACTION GPS ---
+        // --- ETAPE 1 : EXTRACTION GPS + DATE ---
         const filesData = [];
 
         for (let file of files) {
             try {
-                const coords = await getExifLocation(file);
-                filesData.push({ file, coords, hasGps: true });
+                const meta = await getExifLocation(file);
+                filesData.push({ file, coords: { lat: meta.lat, lng: meta.lng }, date: meta.date, hasGps: true });
             } catch (e) {
                 console.warn(`[Import] Pas de GPS pour ${file.name}:`, e.message);
-                filesData.push({ file, coords: null, hasGps: false });
+                filesData.push({ file, coords: null, date: null, hasGps: false });
             }
         }
 
@@ -65,223 +97,85 @@ export async function handleDesktopPhotoImport(filesList) {
              return showToast("Aucune coordonnée GPS trouvée dans ces photos.", 'error');
         }
 
-        // --- ETAPE 2 : CLUSTERING (Regroupement) ---
-        // On groupe les photos distantes de moins de 80m (augmenté pour éviter le split abusif)
+        // --- ETAPE 2 : CLUSTERING (80m) ---
         const clusters = clusterByLocation(validItems, 80);
 
-        // On trie par taille : Les plus gros groupes d'abord ("Majorité")
-        clusters.sort((a, b) => b.length - a.length);
+        // --- ETAPE 3 : FILTER OUTLIERS (expansion des clusters) ---
+        const expandedClusters = [];
+        for (const c of clusters) {
+            const { main, outliers } = filterOutliers(c);
+            if (main.length > 0) expandedClusters.push(main);
+            if (outliers.length > 0) expandedClusters.push(outliers);
+        }
 
-
-        // --- ETAPE 3 : TRAITEMENT SÉQUENTIEL DES GROUPES ---
-        let processedCount = 0;
-        let totalDuplicates = 0;
-
-        for (let i = 0; i < clusters.length; i++) {
-            let cluster = clusters[i];
-            const ignoredPoiIds = new Set(); // Reset pour chaque cluster
-
-            // --- ETAPE 2b : DÉTECTION ET EXCLUSION DES OUTLIERS (Parasites) ---
-            const { main, outliers } = filterOutliers(cluster);
-
-            if (outliers.length > 0) {
-                // On garde le noyau principal
-                cluster = main;
-                // On ajoute les outliers comme un nouveau groupe à traiter plus tard
-                clusters.push(outliers);
-            }
-
-            // --- PRÉ-TRAITEMENT : CALCUL BASE64 POUR DÉTECTION DOUBLONS ---
-            // On le fait ici pour le cluster actif afin de comparer avec les photos existantes des POIs
-            for (let item of cluster) {
+        // --- ETAPE 4 : PRÉ-CALCUL BASE64 (thumbnails) ---
+        for (const cluster of expandedClusters) {
+            for (const item of cluster) {
                 if (!item.base64) {
-                    try {
-                        item.base64 = await resizeImage(item.file);
-                    } catch (e) {
-                        console.error("Erreur pré-calcul base64:", e);
-                    }
+                    try { item.base64 = await resizeImage(item.file, 200); }
+                    catch (e) { console.error("Pré-calcul base64:", e); }
                 }
             }
+        }
 
+        // --- ETAPE 5 : ENRICHISSEMENT (center + nearbyPois + absoluteNearest) ---
+        let enrichedClusters = expandedClusters.map(cluster => {
             const center = calculateBarycenter(cluster.map(c => c.coords));
 
+            const nearbyPois = [];
+            let absoluteNearest = null;
+            let minDist = Infinity;
 
-            // Centrage Carte
-            if (map) map.flyTo([center.lat, center.lng], 18, { duration: 1.0 });
-
-            // Recherche TOUS les POIs proches du BARYCENTRE (< 100m)
-            let nearbyPois = [];
             state.loadedFeatures.forEach(feature => {
                 const pId = getPoiId(feature);
                 if (state.hiddenPoiIds && state.hiddenPoiIds.includes(pId)) return;
+                if (!feature.geometry || !feature.geometry.coordinates) return;
 
-                if (feature.geometry && feature.geometry.coordinates) {
-                    const [fLng, fLat] = feature.geometry.coordinates;
-                    const dist = calculateDistance(center.lat, center.lng, fLat, fLng);
-                    if (dist < 100) {
-                        nearbyPois.push({ feature, dist });
-                    }
+                const [fLng, fLat] = feature.geometry.coordinates;
+                const dist = calculateDistance(center.lat, center.lng, fLat, fLng);
+
+                if (dist < 100) nearbyPois.push({ feature, dist });
+                if (dist < minDist) {
+                    minDist = dist;
+                    absoluteNearest = { feature, dist };
                 }
             });
 
-            // Tri par distance croissante
             nearbyPois.sort((a, b) => a.dist - b.dist);
 
-            let assigned = false;
+            return {
+                photos: cluster,
+                center,
+                nearbyPois,
+                absoluteNearest: nearbyPois.length === 0 ? absoluteNearest : null
+            };
+        });
 
-            // CAS A : PROPOSITIONS ITÉRATIVES
-            if (nearbyPois.length > 0) {
-                if (loader) loader.style.display = 'none'; // Masquer loader pour interaction utilisateur
+        // --- ETAPE 5.5 : FUSION de clusters avec le même POI le plus proche ---
+        enrichedClusters = mergeClustersBySamePoi(enrichedClusters);
 
-                for (let k = 0; k < nearbyPois.length; k++) {
-                    const { feature, dist } = nearbyPois[k];
-                    const poiName = getPoiName(feature);
-                    const poiId = getPoiId(feature);
+        // --- ETAPE 5.6 : TRI CHRONOLOGIQUE ---
+        // À l'intérieur d'un cluster : photos par date croissante
+        // Puis les clusters : par date la plus ancienne
+        enrichedClusters.forEach(c => {
+            c.photos.sort((a, b) => (a.date || 0) - (b.date || 0));
+        });
+        enrichedClusters.sort((a, b) => {
+            const da = a.photos[0]?.date || 0;
+            const db = b.photos[0]?.date || 0;
+            return da - db;
+        });
 
-                    // --- FILTRAGE DES DOUBLONS ---
-                    const existingBlobs = await getPoiPhotos(state.currentMapId, poiId);
-                    const existingSizes = new Set(existingBlobs.map(p => p.blob.size));
-                    const uniqueCluster = cluster.filter(item => {
-                        if (!item.base64) return false;
-                        const approxSize = Math.round(item.base64.length * 0.75);
-                        return ![...existingSizes].some(s => Math.abs(s - approxSize) <= Math.max(s * 0.01, 512));
-                    });
-                    const duplicateCount = cluster.length - uniqueCluster.length;
-
-                    // Si TOUT le cluster est en doublon
-                    if (uniqueCluster.length === 0) {
-                         totalDuplicates += duplicateCount;
-                         assigned = true; // On considère que c'était le bon endroit, donc on arrête
-                         break;
-                    }
-
-                    if (loader) loader.style.display = 'none';
-
-                    // Pre-load photos
-                    const preloaded = uniqueCluster.map(item => ({
-                        src: item.base64,
-                        file: item.file
-                    }));
-
-                    // Show Toast context
-                    showToast(`Groupe ${i+1}: ${uniqueCluster.length} photos pour "${poiName}"`, "info");
-
-                    // Open Grid and Wait for User Action
-                    // UPDATE: Check for result.saved
-                    const result = await openPhotoGrid(poiId, preloaded);
-
-                    if (result && result.saved) {
-                         processedCount += uniqueCluster.length; // Approximate count
-                         assigned = true;
-                         break; // Break "nearbyPois" loop to go to next cluster (i)
-                    }
-                    // If not saved, loop continues to next candidate
-                }
-            }
-
-            // Skip "Create New" fallback if photos were assigned to an existing POI (saved or identified as duplicates)
-            if (assigned) continue;
-
-
-            // CAS B : PAS DE POI PROCHE OU TOUS REFUSÉS -> PROPOSITION DE CRÉATION
-            if (loader) loader.style.display = 'none';
-
-            // 1. Recherche du POI le plus proche (Absolu, sans limite 100m) pour proposer le "Force Add"
-            let absoluteNearest = null;
-            let minDistance = Infinity;
-
-            state.loadedFeatures.forEach(feature => {
-                 const pId = getPoiId(feature);
-                 if (state.hiddenPoiIds && state.hiddenPoiIds.includes(pId)) return;
-                 // On ignore ceux que l'utilisateur vient de refuser explicitement
-                 if (ignoredPoiIds.has(pId)) return;
-
-                 if (feature.geometry && feature.geometry.coordinates) {
-                     const [fLng, fLat] = feature.geometry.coordinates;
-                     const d = calculateDistance(center.lat, center.lng, fLat, fLng);
-                     if (d < minDistance) {
-                         minDistance = d;
-                         absoluteNearest = feature;
-                     }
-                 }
-            });
-
-            let extraAction = null;
-            let duplicateCountForNearest = 0;
-            let uniqueClusterForNearest = cluster;
-
-            if (absoluteNearest) {
-                const nName = getPoiName(absoluteNearest);
-                const nId = getPoiId(absoluteNearest);
-
-                // Vérification doublons pour Force Add
-                const existingBlobsNearest = await getPoiPhotos(state.currentMapId, nId);
-                const existingSizesNearest = new Set(existingBlobsNearest.map(p => p.blob.size));
-                uniqueClusterForNearest = cluster.filter(item => {
-                    if (!item.base64) return false;
-                    const approxSize = Math.round(item.base64.length * 0.75);
-                    return ![...existingSizesNearest].some(s => Math.abs(s - approxSize) <= Math.max(s * 0.01, 512));
-                });
-                duplicateCountForNearest = cluster.length - uniqueClusterForNearest.length;
-
-                if (uniqueClusterForNearest.length > 0) {
-                    extraAction = {
-                        label: `Ajouter à "${nName}" (${Math.round(minDistance)}m)`,
-                        value: 'FORCE_ADD'
-                    };
-                }
-            }
-
-            // Si tout le cluster est doublon pour le nearest et qu'on n'a pas trouvé d'autre POI avant...
-            // On peut afficher le toast mais on doit quand même proposer "Créer Lieu" au cas où l'utilisateur
-            // veut créer un NOUVEAU lieu à côté.
-            // Mais si l'utilisateur voulait l'ajouter au nearest, c'est déjà fait.
-
-            const selectionResult = await showPhotoSelectionModal(
-                "Nouveau Lieu ?",
-                `Groupe ${i+1}/${clusters.length} non rattaché.\n` +
-                `Sélectionnez les photos pour créer un NOUVEAU lieu :`,
-                uniqueClusterForNearest, // On propose par défaut les uniques (pour Force Add)
-                // MAIS pour "Créer Lieu", on devrait peut-être proposer TOUT ?
-                // Non, car "Créer Lieu" utilise la sélection retournée.
-                // Si on crée un nouveau lieu, il n'y a pas de notion de doublon car le lieu est vide.
-                // Donc on peut ré-afficher tout le cluster si on veut créer un nouveau lieu.
-                // COMPROMIS : On affiche uniqueClusterForNearest pour être cohérent avec Force Add.
-                // Si l'utilisateur choisit "Créer Lieu", il créera avec ces photos.
-                "Créer Lieu",
-                extraAction
-            );
-
-            if (selectionResult && selectionResult.length > 0) {
-                // Cas 1 : Ajout Forcé au POI le plus proche
-                if (selectionResult.action === 'FORCE_ADD' && absoluteNearest) {
-                     if (loader) loader.style.display = 'flex';
-                     await addPhotosToPoi(absoluteNearest, selectionResult);
-                     processedCount += selectionResult.length;
-                     totalDuplicates += duplicateCountForNearest;
-                     // On continue la boucle vers le prochain cluster
-                }
-                // Cas 2 : Création (Comportement par défaut)
-                else {
-                    if (loader) loader.style.display = 'none';
-                    // Si on crée un nouveau lieu, on utilise selectionResult.
-                    // (On ignore duplicateCountForNearest car ça concernait un autre lieu)
-                    createDraftMarker(center.lat, center.lng, map, selectionResult);
-                    showToast(`Placez le marqueur pour le groupe ${i+1}. L'import s'arrête ici.`, 'info');
-                    return;
-                }
-            } else if (duplicateCountForNearest > 0 && uniqueClusterForNearest.length === 0) {
-                 // Cas où tout est doublon pour le nearest et l'utilisateur a annulé (ou liste vide)
-                 totalDuplicates += duplicateCountForNearest;
-            }
+        // Centrage carte sur le 1er cluster (UX visuelle, non bloquant)
+        if (map && enrichedClusters.length > 0) {
+            const firstCenter = enrichedClusters[0].center;
+            map.flyTo([firstCenter.lat, firstCenter.lng], 14, { duration: 0.8 });
         }
 
         if (loader) loader.style.display = 'none';
 
-        // Résumé final
-        const msg = `Import terminé. ${processedCount} photos ajoutées.`;
-        const dupMsg = totalDuplicates > 0 ? ` ${totalDuplicates} déjà présentes (ignorées).` : "";
-        showToast(msg + dupMsg, processedCount > 0 ? 'success' : 'info', 6000);
+        // --- ETAPE 6 : OUVERTURE DU MODAL BATCH (Phase 1 : read-only) ---
+        await openPhotoBatchModal(enrichedClusters);
 
     } catch (error) {
         if (loader) loader.style.display = 'none';
