@@ -11,7 +11,10 @@ export let diffData = {
     pois: [],
     circuits: [],
     testedChanges: { additions: [], removals: [], hasChanges: false, snapshot: {} },
-    pendingPhotos: {}, // { [poiId]: count } — blobs locaux en attente d'upload
+    // { [poiId]: [{id, blob, skipPublish}] } — blobs locaux en attente d'upload.
+    // Format enrichi (vs juste un compteur) pour que l'UI puisse afficher la
+    // grille de miniatures avec cases à cocher avant publication.
+    pendingPhotos: {},
     stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0 }
 };
 
@@ -387,34 +390,44 @@ export async function prepareDiffData(adminDraft) {
         diffData.testedChanges.additions.length + diffData.testedChanges.removals.length;
 
     // --- D. PHOTOS EN ATTENTE (blobs locaux admin, pas encore uploadés) ---
-    // Chaque entrée pendingAdminPhotos[poiId] = [{id, blob}, ...]. On compte
-    // et on injecte le POI dans diffData.pois (s'il n'y est pas déjà) pour
-    // qu'il apparaisse dans l'onglet Modifications avec Éditer/Ignorer.
+    // Chaque entrée pendingAdminPhotos[poiId] = [{id, blob, skipPublish?}, ...].
+    // On expose les entrées complètes (pas juste un compteur) pour que l'UI
+    // affiche une grille de miniatures avec cases à cocher (Chantier 2).
+    // - skipPublish=true : photo conservée localement mais PAS poussée sur GitHub
+    //   (usage : photos personnelles, admin veut les voir dans l'app seulement).
+    // - Le compteur stats.pendingPhotoCount reflète uniquement les photos qui
+    //   seront effectivement publiées au prochain Publier (skipPublish=false).
     const pendingPhotosMap = await getAllPendingAdminPhotos(mapId);
     for (const poiId of Object.keys(pendingPhotosMap)) {
         const list = pendingPhotosMap[poiId] || [];
         if (list.length === 0) continue;
 
-        diffData.pendingPhotos[poiId] = list.length;
-        diffData.stats.pendingPhotoCount += list.length;
+        const entries = list.map(p => ({
+            id: p.id,
+            blob: p.blob,
+            skipPublish: !!p.skipPublish
+        }));
+        diffData.pendingPhotos[poiId] = entries;
+
+        const publishableCount = entries.filter(e => !e.skipPublish).length;
+        diffData.stats.pendingPhotoCount += publishableCount;
 
         const current = state.loadedFeatures.find(f => getPoiId(f) === poiId);
         const name = current ? getPoiName(current) : poiId;
-        const photoChange = {
-            key: 'Photos',
-            old: '—',
-            new: `${list.length} en attente`,
-        };
 
+        // L'UI affiche la grille à partir de `pendingPhotos` sur l'item POI,
+        // donc on n'ajoute PAS de ligne texte dans `changes[]` (évite le
+        // doublon "Photos — N en attente" + grille).
         const existing = diffData.pois.find(p => p.id === poiId);
         if (existing) {
-            existing.changes.push(photoChange);
+            existing.pendingPhotos = entries;
             existing.hasPendingPhotos = true;
         } else {
             diffData.pois.push({
                 id: poiId,
                 name,
-                changes: [photoChange],
+                changes: [],
+                pendingPhotos: entries,
                 hasPendingPhotos: true,
             });
             diffData.stats.poisModified++;
