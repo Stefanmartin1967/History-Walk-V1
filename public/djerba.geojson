@@ -7377,10 +7377,67 @@
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-01KPMX8RZ41MX6DCFWGA4HZKJA",
-        "Description": "Ajouté via Rich Editor",
-        "photos": [
-          "photos/poi_HW-01KPMX8RZ41MX6DCFWGA4HZKJA_1776670769155.jpg"
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9574017,
+          33.818886999722224
         ]
+      },
+      "properties": {
+        "Nom du site FR": "Test Cactus",
+        "Catégorie": "Photo",
+        "Zone": "Midoun",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPV5XJ9Z922XKJRWYVWJBZ7X",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.89493765,
+          33.80751854972222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test Figuier",
+        "Catégorie": "Photo",
+        "Zone": "El May",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPV7HNXFKF1XM6K2W18881ZF",
+        "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.882583699722222,
+          33.80163689972222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test vieux bâtiment djerbien",
+        "Catégorie": "Curiosité",
+        "Zone": "El May",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KPV7JNCWX6A021ARBG52JPMK",
+        "Description": "Ajouté via Rich Editor"
       }
     }
   ]
