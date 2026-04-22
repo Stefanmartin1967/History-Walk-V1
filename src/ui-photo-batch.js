@@ -151,8 +151,9 @@ function getClusterCenter(cluster) {
 //   2. Ouvre RichEditor.openForCreate(lat, lng, photos) avec les File originaux (pas la base64
 //      thumbnail 200px — cf. fix addPhotosToPoi dans desktopMode.js)
 //   3. Écoute `richEditor:closed` une seule fois :
-//        created: true → retire le cluster de modalState ; ferme photo-batch si vide
-//        created: false (annulation) → restaure photo-batch tel quel
+//        created: true → bascule le cluster type='POI' + flag photos alreadySaved
+//                        (cluster GARDÉ dans modalState pour que le ZIP global les inclue)
+//        created: false (annulation) → restaure photo-batch tel quel, cluster inchangé
 async function handleCreatePoi(cluster) {
     const center = getClusterCenter(cluster);
     if (!center) {
@@ -195,21 +196,31 @@ async function handleCreatePoi(cluster) {
         });
     });
 
-    if (result.created) {
-        // POI créé : retire le cluster, photos déjà attachées par executeCreate → addPhotosToPoi
-        modalState.clusters = modalState.clusters.filter(c => c !== cluster);
-
-        if (modalState.clusters.length === 0) {
-            // Plus rien à traiter → ferme photo-batch, pas besoin de la restaurer
-            closeModal({ completed: true, createdPoiId: result.poiId });
-            return;
-        }
-    }
-
-    // Restaure photo-batch (annulation OU création avec d'autres clusters restants)
+    // Restaure photo-batch (succès OU annulation — on ne ferme plus automatiquement :
+    // le cluster reste visible, l'utilisateur décide de ZIPer / Save / Fermer à son rythme).
     if (overlay) overlay.style.display = prevDisplay || 'flex';
 
     if (result.created) {
+        // Le POI et ses photos viennent d'être persistés par RichEditor.executeCreate
+        // (via addPhotosToPoi → compressImage + savePoiPhotos). On GARDE le cluster dans
+        // modalState pour deux raisons :
+        //   1. Export ZIP : buildZipEntries itère sur tous les clusters. Retirer priverait
+        //      l'utilisateur de ses photos dans l'archive finale — or il a probablement
+        //      cliqué "Créer un lieu" *en attendant* de les exporter aussi localement.
+        //   2. Feedback visuel : l'utilisateur voit que son action a pris effet (le cluster
+        //      bascule de "Hors POI" à "Groupe N", subtitle "Nouveau lieu créé — …").
+        // On flag chaque photo `alreadySaved: true` pour que handleSave ne tente pas un
+        // double-save (compressImage vs compressFileToBlob produisent des blobs légèrement
+        // différents — la dédup par taille dans addPhotosToPoi ne les détecterait pas).
+        const newFeature = state.loadedFeatures.find(f => getPoiId(f) === result.poiId);
+        if (newFeature) {
+            cluster.type = 'POI';
+            cluster.nearbyPois = [{ feature: newFeature, dist: 0 }];
+            cluster.absoluteNearest = null;
+            cluster.customName = null;
+            cluster.savedAsNewPoi = true;
+            cluster.photos.forEach(p => { p.alreadySaved = true; });
+        }
         renderBody();
         updateHeaderCounts();
         updateFooterButtons();
@@ -605,12 +616,16 @@ function dedupById(items) {
     return [...map.values()];
 }
 
-// Met à jour l'état disabled du bouton Enregistrer selon la présence de clusters rattachés.
+// Met à jour l'état disabled du bouton Enregistrer selon la présence de clusters rattachés
+// ayant au moins une photo PAS encore sauvée (un cluster savedAsNewPoi a toutes ses photos
+// déjà persistées via addPhotosToPoi, inutile d'activer Enregistrer pour lui).
 function updateFooterButtons() {
     const saveBtn = document.getElementById('photo-batch-btn-save');
     if (!saveBtn || !modalState) return;
     const hasAttached = modalState.clusters.some(c =>
-        c.type !== 'OUT_POI' && c.nearbyPois && c.nearbyPois.length > 0
+        c.type !== 'OUT_POI' &&
+        c.nearbyPois && c.nearbyPois.length > 0 &&
+        c.photos.some(p => !p.alreadySaved)
     );
     saveBtn.disabled = !hasAttached;
     saveBtn.title = hasAttached
@@ -633,11 +648,15 @@ async function handleSave() {
             return;
         }
 
-        // Sépare clusters éligibles vs Hors POI (ignorés)
+        // Sépare clusters éligibles vs Hors POI (ignorés) vs déjà-sauvés-via-Créer-un-lieu.
+        // Un cluster savedAsNewPoi a ses photos déjà persistées par addPhotosToPoi : on ne
+        // veut pas les re-traiter ici (double-save — cf. commentaire dans handleCreatePoi).
         const poiClusters = modalState.clusters.filter(c =>
-            c.type !== 'OUT_POI' && c.nearbyPois && c.nearbyPois.length > 0
+            c.type !== 'OUT_POI' &&
+            c.nearbyPois && c.nearbyPois.length > 0 &&
+            c.photos.some(p => !p.alreadySaved)
         );
-        const outPoiCount = modalState.clusters.length - poiClusters.length;
+        const outPoiCount = modalState.clusters.filter(c => c.type === 'OUT_POI').length;
 
         if (poiClusters.length === 0) {
             showToast("Aucun cluster rattaché à un POI. Rattache au moins un lieu avant d'enregistrer.", 'warning');
@@ -649,10 +668,14 @@ async function handleSave() {
             const poiId = getPoiId(cluster.nearbyPois[0].feature);
             if (!poiId) continue;
 
-            // Compression en parallèle pour ce cluster
+            // Compression en parallèle pour ce cluster.
+            // On exclut les photos alreadySaved (déjà persistées via "Créer un lieu" →
+            // addPhotosToPoi). Sinon double-save : les deux chemins de compression produisent
+            // des tailles légèrement différentes → la dédup par taille dans addPhotosToPoi
+            // ne les reconnaîtrait pas comme doublons.
             const blobItems = await Promise.all(
                 cluster.photos
-                    .filter(p => p.file)
+                    .filter(p => p.file && !p.alreadySaved)
                     .map(async (p) => ({
                         id: p.id,
                         blob: await compressFileToBlob(p.file)
@@ -840,10 +863,16 @@ function buildClusterSection(cluster, index) {
     title.textContent = cluster.customName || autoName;
 
     // Sous-titre contextuel
-    // Priorité : nearbyPois (POI rattaché) > absoluteNearest (info "plus proche") > générique
+    // Priorité : savedAsNewPoi (feedback post-création) > nearbyPois (POI rattaché) >
+    //           absoluteNearest (info "plus proche") > générique.
     // Même sur OUT_POI, on veut afficher le POI le plus proche s'il existe — ça aide
     // l'utilisateur à décider s'il rattache ou s'il crée un nouveau lieu.
-    if (cluster.nearbyPois && cluster.nearbyPois.length > 0) {
+    if (cluster.savedAsNewPoi) {
+        // Cluster bascule après "Créer un lieu" : feedback explicite, évite le
+        // "POI proche à 0 m" générique qui serait techniquement correct mais peu parlant.
+        subtitle.textContent = `Nouveau lieu créé — ${cluster.photos.length} photo(s) enregistrée(s)`;
+        section.dataset.suggestedPoiId = getPoiId(cluster.nearbyPois[0].feature) || '';
+    } else if (cluster.nearbyPois && cluster.nearbyPois.length > 0) {
         const best = cluster.nearbyPois[0];
         subtitle.textContent = `POI proche à ${Math.round(best.dist)} m — ${cluster.photos.length} photo(s)`;
         section.dataset.suggestedPoiId = getPoiId(best.feature) || '';
