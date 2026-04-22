@@ -2042,7 +2042,13 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "photos": [
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1776885080412.jpg",
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1776885082239.jpg",
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1776885084064.jpg",
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1776885086075.jpg"
+        ]
       }
     },
     {
@@ -2146,7 +2152,13 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DWEFD7GCZ7SCRFQA9",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "photos": [
+          "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1776885087996.jpg",
+          "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1776885089775.jpg",
+          "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1776885091560.jpg",
+          "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1776885093170.jpg"
+        ]
       }
     },
     {
@@ -2382,7 +2394,11 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6E2G25V2R888QZDP0X",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "photos": [
+          "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1776885095070.jpg",
+          "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1776885096720.jpg"
+        ]
       }
     },
     {
