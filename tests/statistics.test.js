@@ -113,7 +113,11 @@ describe('Statistics System', () => {
         // Circuit XP: (1 / 2) * 10000 = 5000
         // Total XP: 10000
         expect(stats.totalXP).toBe(10000);
-        expect(stats.globalRank.title).toBe("Regard d'Horizon");
+
+        // Note : globalRank n'est plus lié au totalXP. Il dépend désormais de
+        // pctGlobal = distancePercent × poiPercent / 100. Avec 0 POI chargé ici,
+        // pctGlobal = 0 → "Premier Souffle". On vérifie globalRank dans un bloc dédié
+        // (voir "globalRank formula (pctGlobal = distance × poi / 100)" plus bas).
 
         // Distance Percent affects Animal Rank
         expect(stats.distancePercent).toBe(50);
@@ -146,7 +150,11 @@ describe('Statistics System', () => {
         // Distance: 10/100 = 10% -> 1000 XP
         // Total: 6000 XP
         expect(stats.totalXP).toBe(6000);
-        expect(stats.globalRank.title).toBe("Âme Vagabonde"); // > 4500
+
+        // globalRank repose sur pctGlobal = distance × poi / 100 = 10 × 10 / 100 = 1
+        // → "Premier Souffle" (min = 0). La multiplication pénalise toute progression
+        //   déséquilibrée, voir le bloc dédié pour une couverture exhaustive.
+        expect(stats.globalRank.title).toBe("Premier Souffle");
 
         // Animal Rank (Distance): 10% -> Hérisson
         expect(stats.animalRank.title).toBe("Hérisson");
@@ -202,5 +210,112 @@ describe('Statistics System', () => {
         // Should count p0, p1, p2 as visited because c1 is completed
         expect(stats.visitedPois).toBe(3);
         expect(stats.poiPercent).toBe(30);
+    });
+
+    // ------------------------------------------------------------------
+    // Couverture dédiée du rang global, qui repose désormais sur la formule
+    // multiplicative pctGlobal = (distancePercent × poiPercent) / 100.
+    // Caractéristique clé : il faut exceller sur LES DEUX axes (distance ET POIs)
+    // pour monter. Si l'un des deux est nul, pctGlobal est nul, quel que soit l'autre.
+    // ------------------------------------------------------------------
+    describe('globalRank formula (pctGlobal = distance × poi / 100)', () => {
+        it('est à 0 quand poiPercent=0, même avec 100% de distance', () => {
+            // 1 circuit de 10 km terminé => distancePercent = 100
+            // Mais aucun POI visité => poiPercent = 0
+            state.officialCircuits = [{ id: 'c1', distance: '10.0 km' }];
+            state.officialCircuitsStatus = { c1: true };
+            state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
+                properties: { HW_ID: `p${i}` }
+            }));
+            state.userData = {};
+
+            const stats = calculateStats();
+
+            expect(stats.distancePercent).toBe(100);
+            expect(stats.poiPercent).toBe(0);
+            // pctGlobal = 100 × 0 / 100 = 0 → "Premier Souffle"
+            expect(stats.globalRank.title).toBe('Premier Souffle');
+        });
+
+        it('est à 0 quand distancePercent=0, même avec 100% de POIs', () => {
+            // Aucun circuit terminé
+            state.officialCircuits = [{ id: 'c1', distance: '10.0 km' }];
+            state.officialCircuitsStatus = {};
+            // Tous les POIs visités
+            state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
+                properties: { HW_ID: `p${i}` }
+            }));
+            state.loadedFeatures.forEach(f => {
+                state.userData[f.properties.HW_ID] = { vu: true };
+            });
+
+            const stats = calculateStats();
+
+            expect(stats.distancePercent).toBe(0);
+            expect(stats.poiPercent).toBe(100);
+            // pctGlobal = 0 × 100 / 100 = 0 → "Premier Souffle"
+            expect(stats.globalRank.title).toBe('Premier Souffle');
+        });
+
+        it('atteint "Esprit Curieux" (min 20) avec 50% distance × 50% POIs', () => {
+            // 2 circuits de 5 km, 1 terminé => distance 50%
+            state.officialCircuits = [
+                { id: 'c1', distance: '5.0 km' },
+                { id: 'c2', distance: '5.0 km' }
+            ];
+            state.officialCircuitsStatus = { c1: true };
+            // 10 POIs, 5 visités => poi 50%
+            state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
+                properties: { HW_ID: `p${i}` }
+            }));
+            ['p0', 'p1', 'p2', 'p3', 'p4'].forEach(id => {
+                state.userData[id] = { vu: true };
+            });
+
+            const stats = calculateStats();
+
+            expect(stats.distancePercent).toBe(50);
+            expect(stats.poiPercent).toBe(50);
+            // pctGlobal = 50 × 50 / 100 = 25 → "Esprit Curieux" (min 20)
+            expect(stats.globalRank.title).toBe('Esprit Curieux');
+        });
+
+        it('atteint "Regard d\'Horizon" (min 60) avec 100% distance × 60% POIs', () => {
+            // 1 circuit terminé => 100% distance
+            state.officialCircuits = [{ id: 'c1', distance: '10.0 km' }];
+            state.officialCircuitsStatus = { c1: true };
+            // 10 POIs, 6 visités => poi 60%
+            state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
+                properties: { HW_ID: `p${i}` }
+            }));
+            ['p0', 'p1', 'p2', 'p3', 'p4', 'p5'].forEach(id => {
+                state.userData[id] = { vu: true };
+            });
+
+            const stats = calculateStats();
+
+            expect(stats.distancePercent).toBe(100);
+            expect(stats.poiPercent).toBe(60);
+            // pctGlobal = 100 × 60 / 100 = 60 → "Regard d'Horizon" (min 60)
+            expect(stats.globalRank.title).toBe("Regard d'Horizon");
+        });
+
+        it('atteint "Lueur d\'Éternité" (min 90) à la perfection (100% × 100%)', () => {
+            state.officialCircuits = [{ id: 'c1', distance: '10.0 km' }];
+            state.officialCircuitsStatus = { c1: true };
+            state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
+                properties: { HW_ID: `p${i}` }
+            }));
+            state.loadedFeatures.forEach(f => {
+                state.userData[f.properties.HW_ID] = { vu: true };
+            });
+
+            const stats = calculateStats();
+
+            expect(stats.distancePercent).toBe(100);
+            expect(stats.poiPercent).toBe(100);
+            // pctGlobal = 100 → "Lueur d'Éternité" (min 90)
+            expect(stats.globalRank.title).toBe("Lueur d'Éternité");
+        });
     });
 });

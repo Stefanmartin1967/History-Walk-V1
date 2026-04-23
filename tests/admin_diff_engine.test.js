@@ -24,6 +24,12 @@ vi.mock('../src/data.js', () => ({
     getPoiName: (f) => f.properties.Nom || 'Sans nom'
 }));
 
+// 4. On mock database.js pour éviter l'initialisation d'IndexedDB (indisponible sous jsdom).
+// admin-diff-engine importe getAllPendingAdminPhotos, qui déclenche initDB si non stubbé.
+vi.mock('../src/database.js', () => ({
+    getAllPendingAdminPhotos: vi.fn(() => Promise.resolve({}))
+}));
+
 import { state } from '../src/state.js';
 import { prepareDiffData, diffData } from '../src/admin-diff-engine.js';
 
