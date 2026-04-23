@@ -4302,8 +4302,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.84725,
-          33.866806
+          10.821201358600382,
+          33.86191783421097
         ]
       },
       "properties": {
@@ -4319,7 +4319,9 @@
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Desc_wpt": null,
-        "HW_ID": "HW-01K77WPE6KZREFKAR2DA4MTN6Y"
+        "HW_ID": "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
+        "lat": 33.86191783421097,
+        "lng": 10.821201358600382
       }
     },
     {
