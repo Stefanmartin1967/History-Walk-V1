@@ -5,7 +5,7 @@ import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
 import { isMobileView } from './mobile-state.js';
 import { switchMobileView } from './mobile-nav.js';
-import { updateExportButtonLabel, DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { showToast } from './toast.js';
 import { loadCircuitDraft } from './circuit.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
@@ -29,8 +29,6 @@ export function updateAppTitle(mapId) {
     document.title = title;
     const appTitle = document.getElementById('app-title');
     if (appTitle) appTitle.textContent = title;
-
-    updateExportButtonLabel(mapId);
 }
 
 export async function loadOfficialCircuits() {

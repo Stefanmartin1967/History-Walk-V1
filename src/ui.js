@@ -280,7 +280,3 @@ export { closeAllDropdowns };
 
 // --- UTILITAIRES ---
 
-export function updateExportButtonLabel(mapId) {
-    // Deprecated: Button removed
-}
-

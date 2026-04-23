@@ -1,8 +1,8 @@
 // fileManager.js
 import { state, setCurrentMap, setLoadedFeatures, setUserData, setTestedCircuits } from './state.js';
 import { getPoiId, displayGeoJSON } from './data.js';
-import { DOM, updateExportButtonLabel } from './ui.js';
-import { closeDetailsPanel } from './ui-details.js'; // Note: DOM is mostly used in ui.js, but keeping import if needed
+import { DOM } from './ui-dom.js';
+import { closeDetailsPanel } from './ui-details.js';
 import { showToast } from './toast.js';
 import { saveAppState, savePoiData, saveCircuit, clearStore } from './database.js';
 import { processImportedGpx } from './gpx.js';
@@ -131,12 +131,10 @@ export function handleFileLoad(event) {
                     setCurrentMap(mapName);
                     await saveAppState('lastMapId', mapName);
                     await saveAppState('lastGeoJSON', json);
-                    updateExportButtonLabel(mapName);
                     switchMobileView('circuits');
                 } else {
                     // Desktop: Rendu Carte
                     await displayGeoJSON(json, mapName);
-                    updateExportButtonLabel(mapName);
                     // On cadre la vue sur la nouvelle carte
                     import('./map.js').then(m => m.fitMapToContent());
                 }
