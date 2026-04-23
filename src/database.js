@@ -343,21 +343,26 @@ export async function clearAllUserData() {
     }
 }
 
-export function deleteDatabase() {
-    return new Promise((resolve, reject) => {
-        const dbName = DB_NAME; 
-        
-        // 1. On ferme la connexion active locale (celle du module)
-        if (db) {
+export async function deleteDatabase() {
+    // 1. Fermer la connexion active si elle existe, puis reset le singleton
+    //    AVANT indexedDB.deleteDatabase() — sinon une requête concurrente via
+    //    withRetry pourrait rouvrir la DB pendant la suppression.
+    if (_dbPromise) {
+        try {
+            const db = await _dbPromise;
             db.close();
-            db = null; // On remet à null pour éviter toute réutilisation
+        } catch {
+            // Connexion jamais établie (promise rejected) : rien à fermer.
         }
+        _dbPromise = null;
+    }
 
-        // 2. On lance la suppression
-        const request = indexedDB.deleteDatabase(dbName);
+    // 2. Lancer la suppression
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.deleteDatabase(DB_NAME);
 
         request.onsuccess = () => {
-            localStorage.clear(); 
+            localStorage.clear();
             resolve();
         };
 
