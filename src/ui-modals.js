@@ -6,7 +6,8 @@ import { showAlert, showConfirm } from './modal.js';
 import { deletePoi } from './data.js';
 import { applyFilters } from './data.js'; // Assuming applyFilters is exported from data.js or wherever it resides.
 import { closeDetailsPanel } from './ui-details.js';
-import { switchMobileView, isMobileView } from './mobile.js';
+import { isMobileView } from './mobile-state.js';
+import { switchMobileView } from './mobile-nav.js';
 import { eventBus } from './events.js';
 import { saveAppState, restoreCircuit } from './database.js';
 import { createIcons, appIcons } from './lucide-icons.js';

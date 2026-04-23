@@ -6,7 +6,8 @@ import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
 import { getRealDistance, getOrthodromicDistance, map } from './map.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from './database.js';
-import { isMobileView, renderMobilePoiList } from './mobile.js';
+import { isMobileView } from './mobile-state.js';
+import { renderMobilePoiList } from './mobile-poi.js';
 import * as View from './circuit-view.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
@@ -615,7 +616,7 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
     // 5. Mise à jour de l'affichage
     if (isMobileView()) {
         renderMobilePoiList(state.currentCircuit);
-        import('./mobile.js').then(m => m.switchMobileView('circuits'));
+        import('./mobile-nav.js').then(m => m.switchMobileView('circuits'));
     } else {
         renderCircuitPanel();
         if (!state.isSelectionModeActive) {

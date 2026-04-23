@@ -24,9 +24,6 @@ import {
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
-// ─── Re-export depuis mobile-state.js (compatibilité barrel) ─────────────────
-
-export { isMobileView, pushMobileLevel } from './mobile-state.js';
 
 // ─── Bouton Retour Android (pattern proactif) ────────────────────────────────
 // Chaque navigation descendante (clic sur circuit, ouverture POI, bouton

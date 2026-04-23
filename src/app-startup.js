@@ -3,7 +3,8 @@ import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCirc
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
-import { isMobileView, switchMobileView } from './mobile.js';
+import { isMobileView } from './mobile-state.js';
+import { switchMobileView } from './mobile-nav.js';
 import { updateExportButtonLabel, DOM } from './ui.js';
 import { showToast } from './toast.js';
 import { loadCircuitDraft } from './circuit.js';

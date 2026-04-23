@@ -7,7 +7,8 @@ import { showToast } from './toast.js';
 import { saveAppState, savePoiData, saveCircuit, clearStore } from './database.js';
 import { processImportedGpx } from './gpx.js';
 // Import pour contrôler la vue mobile
-import { isMobileView, switchMobileView } from './mobile.js';
+import { isMobileView } from './mobile-state.js';
+import { switchMobileView } from './mobile-nav.js';
 import { downloadFile } from './utils.js';
 import { showCustomModal, closeModal } from './modal.js';
 

@@ -4,7 +4,7 @@ import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexpor
 import { deleteCircuitById, softDeleteCircuit, getAllPoiDataForMap, getAllCircuitsForMap, batchSavePoiData, getAppState, saveCircuit } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
 import { applyFilters, getPoiId } from './data.js';
-import { isMobileView } from './mobile.js';
+import { isMobileView } from './mobile-state.js';
 import { showConfirm } from './modal.js';
 import { showToast } from './toast.js';
 import { generateHWID } from './utils.js';

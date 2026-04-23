@@ -29,7 +29,7 @@ vi.mock('../src/data.js', () => ({
     applyFilters: vi.fn(),
     getPoiId: (f) => f?.properties?.HW_ID || f?.id || null
 }));
-vi.mock('../src/mobile.js', () => ({ isMobileView: vi.fn(() => false) }));
+vi.mock('../src/mobile-state.js', () => ({ isMobileView: vi.fn(() => false) }));
 vi.mock('../src/modal.js', () => ({ showConfirm: vi.fn() }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/utils.js', () => ({ generateHWID: vi.fn(() => 'HW-TEST') }));

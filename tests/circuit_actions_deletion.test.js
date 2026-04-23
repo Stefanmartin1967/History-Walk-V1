@@ -47,7 +47,7 @@ vi.mock('../src/data.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID || f?.id || null
 }));
 
-vi.mock('../src/mobile.js', () => ({ isMobileView: vi.fn(() => false) }));
+vi.mock('../src/mobile-state.js', () => ({ isMobileView: vi.fn(() => false) }));
 vi.mock('../src/modal.js', () => ({ showConfirm: vi.fn() }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/utils.js', () => ({ generateHWID: vi.fn() }));
@@ -58,7 +58,7 @@ import { state, setHasUnexportedChanges, setOfficialCircuits } from '../src/stat
 import { softDeleteCircuit } from '../src/database.js';
 import { clearCircuit } from '../src/circuit.js';
 import { applyFilters } from '../src/data.js';
-import { isMobileView } from '../src/mobile.js';
+import { isMobileView } from '../src/mobile-state.js';
 import { performCircuitDeletion } from '../src/circuit-actions.js';
 
 describe('performCircuitDeletion', () => {

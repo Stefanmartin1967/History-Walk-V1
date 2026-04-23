@@ -4,7 +4,8 @@
 // à leurs handlers (render map/mobile, load/delete/import/toggle circuit, toasts).
 
 import { eventBus } from './events.js';
-import { isMobileView, renderMobilePoiList } from './mobile.js';
+import { isMobileView } from './mobile-state.js';
+import { renderMobilePoiList } from './mobile-poi.js';
 import { refreshMapMarkers } from './map.js';
 import { populateZonesMenu, populateCategoriesMenu, populateCircuitsMenu } from './ui-filters.js';
 import { loadCircuitById } from './circuit.js';

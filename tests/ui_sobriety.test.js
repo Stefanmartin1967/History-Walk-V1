@@ -11,8 +11,11 @@ vi.mock('../src/modal.js', () => ({
     closeModal: vi.fn()
 }));
 
-vi.mock('../src/mobile.js', () => ({
-    isMobileView: vi.fn().mockReturnValue(false),
+vi.mock('../src/mobile-state.js', () => ({
+    isMobileView: vi.fn().mockReturnValue(false)
+}));
+
+vi.mock('../src/mobile-nav.js', () => ({
     switchMobileView: vi.fn()
 }));
 

@@ -5,7 +5,7 @@ import { switchSidebarTab } from './ui-sidebar.js';
 import { applyFilters } from './data.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { saveCircuit } from './database.js';
-import { isMobileView } from './mobile.js';
+import { isMobileView } from './mobile-state.js';
 import { showToast } from './toast.js';
 import { showConfirm, showAlert, showPrompt } from './modal.js';
 import { performCircuitDeletion } from './circuit-actions.js';
