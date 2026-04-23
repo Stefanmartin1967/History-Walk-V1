@@ -12,6 +12,12 @@ import { clearCircuit, isCircuitCompleted } from './circuit.js';
 import { showToast } from './toast.js';
 import { animateContainer, getCurrentView, getAllCircuitsOrdered } from './mobile-state.js';
 import { switchMobileView } from './mobile-nav.js';
+import { eventBus } from './events.js';
+
+export function initMobilePoiListeners() {
+    eventBus.on('mobile:update-poi-position', (poiId) => updatePoiPosition(poiId));
+    eventBus.on('mobile:render-poi-list', (features) => renderMobilePoiList(features));
+}
 
 // ─── Liste des POIs d'un circuit ─────────────────────────────────────────────
 
