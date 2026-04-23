@@ -6,7 +6,6 @@ import { navigatePoiDetails } from './circuit.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, pushMobileLevel } from './mobile-state.js';
-import { updatePoiPosition, renderMobilePoiList } from './mobile-poi.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
@@ -240,7 +239,7 @@ if (chkInc) {
         if (moveBtn) {
             moveBtn.addEventListener('click', async () => {
                 if (await showConfirm("Mise à jour GPS", "Mettre à jour avec votre position GPS actuelle ?", "Mettre à jour", "Annuler")) {
-                    await updatePoiPosition(poiId);
+                    eventBus.emit('mobile:update-poi-position', poiId);
                 }
             });
         }
@@ -334,7 +333,7 @@ export function closeDetailsPanel(goBackToList = false) {
 
     if (isMobileView()) {
         if(goBackToList && state.activeCircuitId) {
-            renderMobilePoiList(state.currentCircuit);
+            eventBus.emit('mobile:render-poi-list', state.currentCircuit);
         } else {
              renderMobileCircuitsList();
         }
