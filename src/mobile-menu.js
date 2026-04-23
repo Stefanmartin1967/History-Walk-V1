@@ -2,7 +2,7 @@
 // Rendu du menu principal mobile (vue "actions") + listener eventBus admin
 
 import { state, APP_VERSION } from './state.js';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';

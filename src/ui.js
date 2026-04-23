@@ -25,8 +25,12 @@ import { exportFullBackupPC, exportDataForMobilePC, saveUserData, handleExportWi
 import { showStatisticsModal } from './statistics.js';
 import { updateSelectionModeButton } from './ui-selection.js';
 import { closeAllDropdowns, updateBackupSizeEstimates } from './ui-utils.js';
+import { DOM } from './ui-dom.js';
 
-export const DOM = {};
+// Re-export pour compat : les consommateurs existants importent DOM depuis ui.js.
+// La source unique est ui-dom.js (module feuille, sans cycle).
+export { DOM };
+
 let currentEditor = { fieldId: null, poiId: null, callback: null };
 
 // --- INITIALISATION DOM ---

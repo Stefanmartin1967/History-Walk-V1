@@ -16,7 +16,7 @@ import { renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm } from './modal.js';
 import { requestSoftDelete } from './ui-modals.js';
 import { switchSidebarTab } from './ui-sidebar.js';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 
 function setupGlobalEditButton(poiId) {
     const editBtns = document.querySelectorAll('#btn-global-edit'); // querySelectorAll au cas où (PC/Mobile)

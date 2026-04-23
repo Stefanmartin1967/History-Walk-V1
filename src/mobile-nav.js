@@ -2,7 +2,7 @@
 // Orchestrateur de navigation mobile : initialisation, routeur de vues et recherche
 
 import { state, setFilterCompleted } from './state.js';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';

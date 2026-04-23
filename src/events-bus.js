@@ -10,7 +10,7 @@ import { populateZonesMenu, populateCategoriesMenu, populateCircuitsMenu } from 
 import { loadCircuitById } from './circuit.js';
 import { performCircuitDeletion, toggleCircuitVisitedStatus } from './circuit-actions.js';
 import { setCircuitIdToImportFor } from './state.js';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { showToast } from './toast.js';
 import { applyFilters } from './data.js';
 

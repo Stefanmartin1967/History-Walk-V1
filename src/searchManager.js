@@ -1,6 +1,6 @@
 // searchManager.js
 import L from 'leaflet';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { state, setGhostMarker } from './state.js';
 import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js

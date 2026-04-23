@@ -1,5 +1,5 @@
 import { state, updateMyCircuit, setCustomDraftName } from './state.js';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { updateSelectionModeButton } from './ui-selection.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { applyFilters } from './data.js';

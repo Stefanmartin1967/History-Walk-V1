@@ -8,7 +8,7 @@
 //   3. CRUD local (Blob) — handlePhotoUpload, handlePhotoDeletion, handleAllPhotosDeletion
 //   4. Upload GitHub     — uploadPhotoForPoi (admin uniquement)
 
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { state } from './state.js';
 import { getPoiPhotos, savePoiPhotos, deletePoiPhotos } from './database.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';

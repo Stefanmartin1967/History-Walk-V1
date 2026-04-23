@@ -9,7 +9,7 @@ import { showConfirm } from './modal.js';
 import { showToast } from './toast.js';
 import { generateHWID } from './utils.js';
 import { generateAndDownloadGPX } from './gpx.js';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 
 /**
  * Logique métier pour supprimer un circuit

@@ -1,5 +1,5 @@
 // circuit-view.js
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { getPoiName, getPoiId } from './data.js';
 import { state } from './state.js';

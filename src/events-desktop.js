@@ -5,7 +5,7 @@
 
 import { populateCategoriesMenu } from './ui-filters.js';
 import { state, setActiveFilter } from './state.js';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { showLegendModal } from './ui-modals.js';
 import { applyFilters } from './data.js';

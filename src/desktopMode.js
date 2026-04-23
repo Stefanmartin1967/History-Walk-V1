@@ -9,7 +9,7 @@ import { state, setSelectionModeFilters, setActiveFilters } from './state.js';
 import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos } from './database.js';
 import { compressImage, generatePhotoId } from './photo-service.js';
 import { logModification } from './logger.js';
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
 import { getExifLocation, calculateDistance, resizeImage, getZoneFromCoords, clusterByLocation, calculateBarycenter, filterOutliers } from './utils.js';

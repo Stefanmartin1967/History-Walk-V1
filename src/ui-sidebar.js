@@ -1,4 +1,4 @@
-import { DOM } from './ui.js';
+import { DOM } from './ui-dom.js';
 import { renderExplorerList } from './ui-circuit-list.js';
 import { state } from './state.js';
 import { getPoiId } from './data.js';
