@@ -45,7 +45,7 @@ function setStatus(status) {
 
 // ─── SÉRIALISATION ────────────────────────────────────────────────────────────
 
-function buildPayload() {
+export function buildPayload() {
     // On ne sync que les champs utiles (pas les blobs photos)
     const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'incontournable', 'planifie'];
     const filtered = {};
@@ -66,7 +66,7 @@ function buildPayload() {
 
 // ─── MERGE ────────────────────────────────────────────────────────────────────
 
-function mergeRemoteIntoLocal(remote) {
+export function mergeRemoteIntoLocal(remote) {
     if (!remote || !remote.userData) return { updates: [] };
     const updates = [];
 
