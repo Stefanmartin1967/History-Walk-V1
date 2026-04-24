@@ -32,10 +32,8 @@ vi.mock('../src/ui-details.js', () => ({
     closeDetailsPanel: vi.fn()
 }));
 
-vi.mock('../src/circuit.js', () => ({
-    navigatePoiDetails: vi.fn(),
-    loadCircuitById: vi.fn(),
-    clearCircuit: vi.fn()
+vi.mock('../src/events.js', () => ({
+    eventBus: { emit: vi.fn(), on: vi.fn() }
 }));
 
 vi.mock('../src/mobile-circuits.js', () => ({
@@ -75,7 +73,7 @@ vi.mock('../src/utils.js', () => ({
 import { state } from '../src/state.js';
 import { isMobileView, getCurrentView, setCurrentView } from '../src/mobile-state.js';
 import { closeDetailsPanel } from '../src/ui-details.js';
-import { clearCircuit } from '../src/circuit.js';
+import { eventBus } from '../src/events.js';
 import { renderMobileCircuitsList } from '../src/mobile-circuits.js';
 import { onHwBack } from '../src/mobile-nav.js';
 
@@ -105,7 +103,7 @@ describe('onHwBack (bouton Back Android)', () => {
             onHwBack();
 
             expect(closeDetailsPanel).toHaveBeenCalledWith(true);
-            expect(clearCircuit).not.toHaveBeenCalled();
+            expect(eventBus.emit).not.toHaveBeenCalledWith('circuit:clear', expect.anything());
             expect(setCurrentView).not.toHaveBeenCalled();
         });
 
@@ -118,23 +116,23 @@ describe('onHwBack (bouton Back Android)', () => {
             expect(closeDetailsPanel).toHaveBeenCalledWith(false);
         });
 
-        it('view="circuit-details" → clearCircuit(false) + switchMobileView("circuits")', () => {
+        it('view="circuit-details" → emit("circuit:clear", false) + switchMobileView("circuits")', () => {
             getCurrentView.mockReturnValue('circuit-details');
 
             onHwBack();
 
-            expect(clearCircuit).toHaveBeenCalledWith(false);
+            expect(eventBus.emit).toHaveBeenCalledWith('circuit:clear', false);
             // switchMobileView('circuits') appelle setCurrentView + renderMobileCircuitsList
             expect(setCurrentView).toHaveBeenCalledWith('circuits');
             expect(renderMobileCircuitsList).toHaveBeenCalled();
         });
 
-        it('view="search" (≠ circuits) → switchMobileView("circuits") sans clearCircuit', () => {
+        it('view="search" (≠ circuits) → switchMobileView("circuits") sans circuit:clear', () => {
             getCurrentView.mockReturnValue('search');
 
             onHwBack();
 
-            expect(clearCircuit).not.toHaveBeenCalled();
+            expect(eventBus.emit).not.toHaveBeenCalledWith('circuit:clear', expect.anything());
             expect(setCurrentView).toHaveBeenCalledWith('circuits');
             expect(renderMobileCircuitsList).toHaveBeenCalled();
         });
@@ -149,7 +147,7 @@ describe('onHwBack (bouton Back Android)', () => {
             onHwBack();
 
             expect(closeDetailsPanel).not.toHaveBeenCalled();
-            expect(clearCircuit).not.toHaveBeenCalled();
+            expect(eventBus.emit).not.toHaveBeenCalledWith('circuit:clear', expect.anything());
             expect(renderMobileCircuitsList).not.toHaveBeenCalled();
         });
 
@@ -160,7 +158,7 @@ describe('onHwBack (bouton Back Android)', () => {
             onHwBack();
 
             expect(closeDetailsPanel).not.toHaveBeenCalled();
-            expect(clearCircuit).not.toHaveBeenCalled();
+            expect(eventBus.emit).not.toHaveBeenCalledWith('circuit:clear', expect.anything());
             expect(setCurrentView).not.toHaveBeenCalled();
             expect(renderMobileCircuitsList).not.toHaveBeenCalled();
         });

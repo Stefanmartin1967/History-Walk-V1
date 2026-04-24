@@ -8,7 +8,7 @@ import { isMobileView } from './mobile-state.js';
 import { renderMobilePoiList } from './mobile-poi.js';
 import { refreshMapMarkers } from './map.js';
 import { populateZonesMenu, populateCategoriesMenu, populateCircuitsMenu } from './ui-filters.js';
-import { loadCircuitById } from './circuit.js';
+import { loadCircuitById, clearCircuit, navigatePoiDetails } from './circuit.js';
 import { performCircuitDeletion, toggleCircuitVisitedStatus } from './circuit-actions.js';
 import { setCircuitIdToImportFor } from './state.js';
 import { DOM } from './ui-dom.js';
@@ -27,6 +27,8 @@ export function setupEventBusListeners() {
     });
 
     eventBus.on('circuit:request-load', async (id) => await loadCircuitById(id));
+    eventBus.on('circuit:clear', (silent) => clearCircuit(silent));
+    eventBus.on('circuit:navigate-poi', (dir) => navigatePoiDetails(dir));
     eventBus.on('circuit:request-delete', async (id) => {
         const result = await performCircuitDeletion(id);
         if (result.success) {
