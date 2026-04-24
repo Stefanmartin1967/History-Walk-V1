@@ -13,7 +13,6 @@ import { uploadPhotoForPoi } from './photo-service.js';
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, diffData } from './admin-diff-engine.js';
 import { openControlCenterModal, renderTab } from './admin-control-ui.js';
-import { RichEditor } from './richEditor.js';
 
 // --- STATE MANAGEMENT (Brouillon) ---
 const DRAFT_IDB_KEY = 'adminDraft';
@@ -205,7 +204,7 @@ export const updateDraftValue = async (id, key, value) => {
 export function openEditorForPoi(id) {
     // On n'ouvre PAS le RichEditor sur la map — on le laisse s'ouvrir par-dessus le CC
     // Le CC reste ouvert en dessous (z-index CC=3000, RichEditor=4000)
-    RichEditor.openForEdit(id);
+    eventBus.emit('richEditor:open-for-edit', id);
 
     // Quand l'éditeur se ferme, on rafraîchit l'onglet Modifications
     window.addEventListener('richEditor:closed', async () => {
