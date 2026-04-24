@@ -3,7 +3,6 @@ import { eventBus } from './events.js';
 import { downloadFile, getPoiId } from './utils.js';
 import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui-utils.js';
-import { map } from './map.js';
 import { showAlert, showConfirm } from './modal.js';
 import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, appIcons } from './lucide-icons.js';
