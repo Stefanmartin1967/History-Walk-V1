@@ -18,7 +18,6 @@ vi.mock('../src/state.js', () => {
             officialCircuitsStatus: {},
             myCircuits: []
         },
-        getCurrentCurrency: vi.fn(() => 'TND'),
         POI_CATEGORIES: []
     };
 });
