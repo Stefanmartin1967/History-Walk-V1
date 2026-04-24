@@ -226,22 +226,21 @@ export async function deletePoiData(mapId, poiId) {
 }
 
 export async function batchSavePoiData(mapId, dataArray) {
-    const db = await initDB();
-    return new Promise((resolve, reject) => {
-        if (!dataArray || dataArray.length === 0) return resolve();
+    if (!dataArray || dataArray.length === 0) return;
 
-        // 1. Regrouper et fusionner les modifications en mémoire par poiId
-        // Cela évite d'écraser des données si dataArray contient plusieurs mises à jour pour le même POI
-        const mergedDataMap = new Map();
-        dataArray.forEach(item => {
-            const { poiId, data } = item;
-            if (mergedDataMap.has(poiId)) {
-                mergedDataMap.set(poiId, { ...mergedDataMap.get(poiId), ...data });
-            } else {
-                mergedDataMap.set(poiId, { ...data });
-            }
-        });
+    // 1. Regrouper et fusionner les modifications en mémoire par poiId
+    // Cela évite d'écraser des données si dataArray contient plusieurs mises à jour pour le même POI
+    const mergedDataMap = new Map();
+    dataArray.forEach(item => {
+        const { poiId, data } = item;
+        if (mergedDataMap.has(poiId)) {
+            mergedDataMap.set(poiId, { ...mergedDataMap.get(poiId), ...data });
+        } else {
+            mergedDataMap.set(poiId, { ...data });
+        }
+    });
 
+    return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('poiUserData', 'readwrite');
         const store = transaction.objectStore('poiUserData');
         let errors = [];
@@ -273,7 +272,7 @@ export async function batchSavePoiData(mapId, dataArray) {
                 errors.push({ id: poiId, error: e });
             }
         });
-    });
+    }));
 }
 
 export async function getAllCircuitsForMap(mapId) {
