@@ -3,6 +3,7 @@ import { renderExplorerList } from './ui-circuit-list.js';
 import { state } from './state.js';
 import { getPoiId } from './data.js';
 import { stopDictation, isDictationActive } from './voice.js';
+import { eventBus } from './events.js';
 
 export function switchSidebarTab(tabName, isNavigating = false) {
     if (!isNavigating && window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
@@ -39,14 +40,13 @@ export function setupTabs() {
                         const id = getPoiId(currentFeature);
                         const circuitIndex = state.currentCircuit ? state.currentCircuit.findIndex(f => getPoiId(f) === id) : -1;
 
-                        // Import dynamique : évite un cycle statique ui-sidebar ↔ ui-details.
-                        import('./ui-details.js').then(m => m.openDetailsPanel(state.currentFeatureId, circuitIndex !== -1 ? circuitIndex : null));
+                        eventBus.emit('poi:open-details', { featureId: state.currentFeatureId, circuitIndex: circuitIndex !== -1 ? circuitIndex : null });
                     }
                 } else if (state.currentCircuit && state.currentCircuit.length > 0) {
                     const firstFeature = state.currentCircuit[0];
                     const featureId = state.loadedFeatures.indexOf(firstFeature);
                     if (featureId > -1) {
-                         import('./ui-details.js').then(m => m.openDetailsPanel(featureId, 0));
+                         eventBus.emit('poi:open-details', { featureId, circuitIndex: 0 });
                     } else {
                         switchSidebarTab(tabName);
                     }

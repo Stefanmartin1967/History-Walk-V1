@@ -28,6 +28,7 @@ import { initMobileMode } from './mobile-nav.js';
 import { initMobilePoiListeners } from './mobile-poi.js';
 import { initUiModalsListeners } from './ui-modals.js';
 import { initCircuitListeners } from './circuit.js';
+import { initUiDetailsListeners } from './ui-details.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
 import { setupDesktopTools } from './desktopMode.js';
@@ -94,6 +95,7 @@ async function initializeApp() {
     initMobilePoiListeners();
     initUiModalsListeners();
     initCircuitListeners();
+    initUiDetailsListeners();
 
     if (typeof populateAddPoiModalCategories === 'function') populateAddPoiModalCategories();
 
