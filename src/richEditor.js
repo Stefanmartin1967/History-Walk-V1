@@ -249,6 +249,11 @@ export const RichEditor = {
     }
 };
 
+// Listener eventBus au module-load (pas besoin de DOM pour cet écouteur — init()
+// reste lazy pour les écouteurs DOM). Permet aux modules externes de déclencher
+// l'ouverture sans import direct de RichEditor (casse admin-control-center → richEditor).
+eventBus.on('richEditor:open-for-edit', (id) => RichEditor.openForEdit(id));
+
 // --- PRIVATE HELPERS ---
 
 async function handleMove() {
