@@ -345,14 +345,14 @@ function renderDataTab(container, callbacks) {
                 <p class="ue-data-card-desc">
                     Rechargez un fichier de sauvegarde pour retrouver votre progression sur cet appareil.
                 </p>
-                <button id="btn-ue-restore" class="ue-action-btn secondary" style="margin-top:auto;">
+                <button id="btn-ue-restore" class="ue-action-btn secondary">
                     <i data-lucide="folder-open"></i> Choisir un fichier…
                 </button>
-                <input type="file" id="ue-restore-loader" accept=".json,.txt" style="display:none;">
+                <input type="file" id="ue-restore-loader" accept=".json,.txt" class="is-hidden">
             </div>
         </div>
 
-        <div class="ue-hint-banner" style="margin-top: 16px;">
+        <div class="ue-hint-banner ue-hint-banner--spaced">
             <i data-lucide="shield-check"></i>
             <span>Vos données restent sur votre appareil. Aucune information n'est envoyée à nos serveurs.</span>
         </div>

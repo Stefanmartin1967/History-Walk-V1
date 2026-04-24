@@ -405,12 +405,12 @@ export function renderTab(tab, diffData, callbacks) {
                     <h3 class="cc-card-title-flex">
                         <i data-lucide="key-round" class="icon-amber"></i> Token GitHub
                     </h3>
-                    <p style="color:var(--hw-ink-soft); font-size:0.88rem; margin-bottom:14px;">
+                    <p class="cc-card-hint">
                         Personal Access Token (PAT) nécessaire pour publier les modifications sur GitHub.
                         Stocké localement sur cet appareil.
                     </p>
                     <input type="password" id="cc-token-input" value="${token}" class="settings-input" placeholder="ghp_...">
-                    <button id="btn-save-token" class="cc-save-btn" style="margin-top:12px;">
+                    <button id="btn-save-token" class="cc-save-btn">
                         <i data-lucide="save"></i> Sauvegarder
                     </button>
                 </div>
@@ -420,7 +420,7 @@ export function renderTab(tab, diffData, callbacks) {
                     <h3 class="cc-card-title-flex">
                         <i data-lucide="smartphone" class="icon-amber"></i> Sync Admin multi-appareils
                     </h3>
-                    <p style="color:var(--hw-ink-soft); font-size:0.88rem; margin-bottom:20px;">
+                    <p class="cc-card-hint cc-card-hint--wide">
                         Sauvegardez votre état admin (modifications en attente, circuits, données locales)
                         sur GitHub pour le retrouver depuis un autre appareil — utile en déplacement.
                     </p>
@@ -477,15 +477,15 @@ function renderUploadCircuitPanel(diffData, callbacks) {
 
         <div class="cc-card">
             <div class="cc-upload-intro">
-                <i data-lucide="upload-cloud" class="icon-amber" style="width:32px;height:32px;flex-shrink:0;"></i>
+                <i data-lucide="upload-cloud" class="icon-amber cc-upload-icon"></i>
                 <p>Envoyez un fichier de circuit directement sur GitHub.<br>
-                <small style="color:var(--hw-ink-soft);">Le serveur mettra à jour l'index automatiquement.</small></p>
+                <small class="cc-upload-intro-note">Le serveur mettra à jour l'index automatiquement.</small></p>
             </div>
 
             <label class="cc-upload-field-label">Nom du circuit <small>(optionnel — extrait du fichier si absent)</small></label>
             <input type="text" id="cc-circuit-name" class="settings-input" placeholder="Ex : Circuit du Patrimoine">
 
-            <label class="cc-upload-field-label" style="margin-top:14px;">
+            <label class="cc-upload-field-label cc-upload-field-label--spaced">
                 Fichier <span class="cc-format-badge">GPX</span> <span class="cc-format-badge">JSON</span>
             </label>
             <div class="cc-file-drop" id="cc-file-drop">
@@ -493,7 +493,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
                 <span>Cliquer pour choisir un fichier</span>
                 <small>GPX ou JSON uniquement</small>
             </div>
-            <input type="file" id="cc-file-input" accept=".json,.gpx" style="display:none;">
+            <input type="file" id="cc-file-input" accept=".json,.gpx" class="is-hidden">
             <div id="cc-file-pill" class="cc-file-pill" style="display:none;"></div>
 
             <div id="cc-upload-status" class="cc-upload-status" style="display:none;"></div>
@@ -616,7 +616,7 @@ export function renderDiffDetails(item) {
                 // Circuits : Read Only (car pas de userData pour stocker les modifs admin)
                 editorHtml = `
                     <div class="edit-row">
-                        <span style="font-size:0.85rem; color:#64748B; font-style:italic;">Modification via l'éditeur de circuit</span>
+                        <span class="cc-readonly-hint">Modification via l'éditeur de circuit</span>
                     </div>
                 `;
             } else if (logicalKey === 'HW_ID') {
