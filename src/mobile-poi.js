@@ -2,7 +2,7 @@
 // Affichage de la liste des POIs d'un circuit
 
 import { state } from './state.js';
-import { getPoiId, getPoiName } from './data.js';
+import { getPoiId, getPoiName, updatePoiCoordinates, applyFilters } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml } from './utils.js';
 import { getIconForFeature } from './poi-icons.js';
@@ -179,11 +179,31 @@ export function renderMobilePoiList(features) {
 
 export function updatePoiPosition(poiId) {
     if (!navigator.geolocation) return showToast("GPS non supporté", "error");
+
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    if (!feature) return showToast("POI introuvable", "error");
+    const [prevLng, prevLat] = feature.geometry.coordinates;
+
     navigator.geolocation.getCurrentPosition(
-        (pos) => {
+        async (pos) => {
             const { latitude, longitude } = pos.coords;
-            showToast(`Position capturée: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
+            await updatePoiCoordinates(poiId, latitude, longitude);
+            applyFilters();
+            showToast(
+                `Position mise à jour : ${latitude.toFixed(5)}, ${longitude.toFixed(5)}`,
+                'success',
+                8000,
+                {
+                    label: 'Annuler',
+                    onClick: async () => {
+                        await updatePoiCoordinates(poiId, prevLat, prevLng);
+                        applyFilters();
+                        showToast('Position restaurée.', 'info');
+                    }
+                }
+            );
         },
-        (err) => showToast("Erreur GPS: " + err.message, "error")
+        (err) => showToast("Erreur GPS : " + err.message, "error"),
+        { enableHighAccuracy: true, timeout: 10000 }
     );
 }

@@ -222,6 +222,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                              <button class="action-button btn-mobile-action btn-web-search" id="btn-web-search" title="Google" aria-label="Google">${ICONS.globe}</button>
                              ${mobileGmapsBtn}
                              <button class="action-button btn-mobile-action" id="btn-open-photo-grid" title="Gérer les photos" aria-label="Gérer les photos">${ICONS.imagePlus}</button>
+                             <button class="action-button btn-mobile-action" id="mobile-move-poi-btn" title="Mettre à jour la position GPS" aria-label="Mettre à jour la position GPS">${ICONS.locate}</button>
                              <button class="action-button btn-mobile-action" id="btn-global-edit" title="Editer" aria-label="Editer">${ICONS.pen}</button>
                          </div>
 
