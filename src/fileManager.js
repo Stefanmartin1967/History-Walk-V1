@@ -8,7 +8,7 @@ import { saveAppState, savePoiData, saveCircuit, clearStore } from './database.j
 import { processImportedGpx } from './gpx.js';
 // Import pour contrôler la vue mobile
 import { isMobileView } from './mobile-state.js';
-import { switchMobileView } from './mobile-nav.js';
+import { eventBus } from './events.js';
 import { downloadFile } from './utils.js';
 import { showCustomModal, closeModal } from './modal.js';
 
@@ -131,7 +131,7 @@ export function handleFileLoad(event) {
                     setCurrentMap(mapName);
                     await saveAppState('lastMapId', mapName);
                     await saveAppState('lastGeoJSON', json);
-                    switchMobileView('circuits');
+                    eventBus.emit('mobile:switch-view', 'circuits');
                 } else {
                     // Desktop: Rendu Carte
                     await displayGeoJSON(json, mapName);

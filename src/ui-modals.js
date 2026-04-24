@@ -7,7 +7,6 @@ import { deletePoi } from './data.js';
 import { applyFilters } from './data.js'; // Assuming applyFilters is exported from data.js or wherever it resides.
 import { closeDetailsPanel } from './ui-details.js';
 import { isMobileView } from './mobile-state.js';
-import { switchMobileView } from './mobile-nav.js';
 import { eventBus } from './events.js';
 import { saveAppState, restoreCircuit } from './database.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -195,7 +194,7 @@ export async function requestSoftDelete(idOrIndex) {
 
         // Refresh selon mode
         if (isMobileView()) {
-            switchMobileView('circuits'); // Refresh liste
+            eventBus.emit('mobile:switch-view', 'circuits'); // Refresh liste
         }
     }
 }
