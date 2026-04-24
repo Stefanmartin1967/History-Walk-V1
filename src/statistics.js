@@ -3,6 +3,7 @@ import { getRealDistance, getOrthodromicDistance } from './utils.js';
 import { getPoiId } from './data.js';
 import { showAlert } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import explorerCardCssUrl from '../style/explorer-card.css?url';
 
 // --- 0. RANGS GLOBAUX (Basé sur % Global = Distance% × POI% / 100) ---
 // pctGlobal = (distancePercent * poiPercent) / 100  → 0-100%
@@ -176,163 +177,6 @@ function getRank(rankList, value) {
 
 // --- AFFICHAGE MODALE ---
 
-// CSS partagé pour réutilisation dans l'impression
-const EXPLORER_CARD_CSS = `
-    :root {
-        /* Adapts to active theme; hardcoded fallback for print iframe where theme vars are absent */
-        --bg-parchment:  var(--surface-muted, #f4ecd8);
-        --accent-copper: var(--brand,         #b87333);
-        --text-dark:     var(--ink,           #2c2c2c);
-        --progress-bg:   var(--line,          rgba(0, 0, 0, 0.1));
-    }
-
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    #explorer-card-root {
-        white-space: normal; /* Reset inherited pre-wrap from modal */
-    }
-
-    .explorer-card {
-        width: 340px; /* Largeur type carte bancaire (ratio ajusté) */
-        height: 215px; /* Hauteur type carte bancaire */
-        background: var(--bg-parchment);
-        border-radius: 12px;
-        padding: 12px 16px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        color: var(--text-dark);
-        position: relative;
-        border: 1px solid var(--line, #e2d1a8);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin: 0 auto;
-        box-sizing: border-box;
-        overflow: hidden;
-    }
-
-    /* Layout Compact "Carte Bancaire" */
-    .card-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 0;
-        height: 60px;
-    }
-
-    .avatar {
-        width: 50px;
-        height: 50px;
-        min-width: 50px;
-        border-radius: 50%;
-        background: var(--bg-parchment);
-        border: 2px solid var(--accent-copper);
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .avatar svg {
-        width: 60%;
-        height: 60%;
-        stroke: var(--accent-copper);
-        stroke-width: 1.5;
-    }
-
-    .title-area { flex-grow: 1; }
-
-    .title-area h2 {
-        margin: 0;
-        font-family: 'Georgia', serif;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        font-size: 1.1rem;
-        line-height: 1.1;
-        color: var(--text-dark);
-    }
-
-    .global-rank {
-        font-style: italic;
-        font-size: 0.75rem;
-        color: var(--text-dark);
-        opacity: 0.65;
-        margin-top: 2px;
-    }
-
-    .stats-container {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .stat-group { margin-bottom: 0; }
-
-    .stat-label {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.65rem;
-        font-weight: bold;
-        margin-bottom: 2px;
-        text-transform: uppercase;
-        color: var(--text-dark);
-    }
-
-    .progress-bar-container {
-        width: 100%;
-        height: 6px;
-        background: var(--progress-bg);
-        border-radius: 3px;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        height: 100%;
-        background: var(--accent-copper);
-        transition: width 0.5s ease-in-out;
-    }
-
-    .next-goal { font-size: 0.6rem; color: var(--text-dark); opacity: 0.55; margin-top: 1px; text-align: right; display: none; } /* Caché pour gagner place */
-
-    .footer-stats {
-        display: flex;
-        justify-content: space-between;
-        border-top: 1px solid var(--line, rgba(0,0,0,0.1));
-        padding-top: 8px;
-        font-size: 0.7rem;
-        margin-top: 4px;
-        color: var(--text-dark);
-    }
-
-    /* Print Button Style - hidden in print media via CSS in function if needed, or ignored since we print specific element */
-    .card-actions {
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
-    }
-    .action-btn-print {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        background: var(--bg-parchment, #fff);
-        border: 1px solid var(--line, #ddd);
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s;
-        color: var(--text-dark, #333);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .action-btn-print:hover {
-        background: var(--surface-muted, #f9f9f9);
-        transform: translateY(-1px);
-    }
-`;
-
 export async function showStatisticsModal() {
     const stats = calculateStats();
 
@@ -395,8 +239,8 @@ export async function showStatisticsModal() {
     const avatarSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
 
     // -- HTML --
+    // Styles de la carte explorateur : chargés globalement via style/explorer-card.css
     const html = `
-    <style>${EXPLORER_CARD_CSS}</style>
     <div id="explorer-card-root">
         <div class="explorer-card" id="explorer-card-print">
             <div class="card-header">
@@ -416,7 +260,7 @@ export async function showStatisticsModal() {
                         <span id="val-distance">${stats.userOfficialKm} / ${stats.totalOfficialKmAvailable} km</span>
                     </div>
                     <div class="progress-bar-container">
-                        <div id="bar-distance" class="progress-fill" style="width: ${pctDistBar}%"></div>
+                        <div id="bar-distance" class="progress-fill" data-width="${pctDistBar}"></div>
                     </div>
                     <div id="goal-distance" class="next-goal">Objectif : ${animal.nextGoalPct}%</div>
                 </div>
@@ -427,7 +271,7 @@ export async function showStatisticsModal() {
                         <span id="val-circuits">${stats.visitedPois} / ${stats.totalPois}</span>
                     </div>
                     <div class="progress-bar-container">
-                        <div id="bar-circuits" class="progress-fill" style="width: ${pctPoiBar}%"></div>
+                        <div id="bar-circuits" class="progress-fill" data-width="${pctPoiBar}"></div>
                     </div>
                     <div id="goal-circuits" class="next-goal">Objectif : ${matiere.nextGoalPct}%</div>
                 </div>
@@ -458,7 +302,12 @@ export async function showStatisticsModal() {
                 // 1. Initialiser les icônes Lucide
                 createIcons({ icons: appIcons, root: messageContainer });
 
-                // 2. Attacher l'événement d'impression
+                // 2. Appliquer les largeurs des progress-fill via CSSOM (CSP-safe : data-width en template)
+                messageContainer.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
+                    bar.style.width = `${bar.dataset.width}%`;
+                });
+
+                // 3. Attacher l'événement d'impression
                 const btnPrint = messageContainer.querySelector('#btn-print-card');
                 if (btnPrint) {
                     btnPrint.addEventListener('click', () => {
@@ -487,42 +336,32 @@ function printCardElement() {
 
     const doc = iframe.contentWindow.document;
 
-    // Write full HTML doc for correct rendering
+    // Write full HTML doc for correct rendering.
+    // Styles (card + print overrides + @page) chargés via explorer-card.css
+    // externe. La classe explorer-card-print-body sur <body> active les
+    // règles scopées @page/flex center/color-adjust pour ce contexte iframe.
+    // URL absolue via import.meta.env.BASE_URL → compatible GitHub Pages sub-path.
     doc.open();
     doc.write(`
         <!DOCTYPE html>
         <html>
         <head>
             <title>Impression Carte Explorateur</title>
-            <style>
-                ${EXPLORER_CARD_CSS}
-                /* Print specific overrides */
-                @page {
-                    size: A4; /* Or landscape if preferred, but A4 usually fine for this size */
-                    margin: 0;
-                }
-                body {
-                    margin: 0;
-                    padding: 0;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    height: 100vh;
-                    -webkit-print-color-adjust: exact;
-                    print-color-adjust: exact;
-                }
-                .explorer-card {
-                    box-shadow: none;
-                    border: 1px solid #ccc;
-                }
-            </style>
+            <link rel="stylesheet" href="${explorerCardCssUrl}">
         </head>
-        <body>
+        <body class="explorer-card-print-body">
             ${cardElement.outerHTML}
         </body>
         </html>
     `);
     doc.close();
+
+    // Re-apply progress-fill widths via CSSOM : CSP style-src (sans 'unsafe-inline')
+    // strip les style="..." serialisés par outerHTML dans le HTML parsé. Les data-width
+    // attributs ne sont pas affectés, donc on reconstruit les largeurs inline post-parse.
+    doc.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
+        bar.style.width = `${bar.dataset.width}%`;
+    });
 
     // Image loading safety (if SVG relies on ext resources, which it doesn't, but good practice)
     setTimeout(() => {

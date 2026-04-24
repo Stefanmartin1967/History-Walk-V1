@@ -494,9 +494,9 @@ function renderUploadCircuitPanel(diffData, callbacks) {
                 <small>GPX ou JSON uniquement</small>
             </div>
             <input type="file" id="cc-file-input" accept=".json,.gpx" class="is-hidden">
-            <div id="cc-file-pill" class="cc-file-pill" style="display:none;"></div>
+            <div id="cc-file-pill" class="cc-file-pill is-hidden"></div>
 
-            <div id="cc-upload-status" class="cc-upload-status" style="display:none;"></div>
+            <div id="cc-upload-status" class="cc-upload-status is-hidden"></div>
         </div>
 
         <div class="cc-subpanel-footer">
@@ -524,7 +524,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
         const file = fileInput.files[0];
         if (!file) return;
         filePill.innerHTML = `<i data-lucide="paperclip"></i> <strong>${file.name}</strong> <small>(${(file.size / 1024).toFixed(1)} Ko)</small>`;
-        filePill.style.display = 'flex';
+        filePill.classList.remove('is-hidden');
         submitBtn.disabled = false;
         createIcons({ icons: appIcons, root: filePill });
     });
