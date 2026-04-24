@@ -397,6 +397,10 @@ export function navigatePoiDetails(direction) {
     }
 }
 
+export function initCircuitListeners() {
+    eventBus.on('poi:navigate', (direction) => navigatePoiDetails(direction));
+}
+
 // circuit.js
 
 export function convertToDraft() {

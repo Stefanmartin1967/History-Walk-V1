@@ -26,6 +26,8 @@ import { getPoiId } from './data.js';
 import { isMobileView } from './mobile-state.js';
 import { initMobileMode } from './mobile-nav.js';
 import { initMobilePoiListeners } from './mobile-poi.js';
+import { initUiModalsListeners } from './ui-modals.js';
+import { initCircuitListeners } from './circuit.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
 import { setupDesktopTools } from './desktopMode.js';
@@ -90,6 +92,8 @@ async function initializeApp() {
     initAdminMode();
     initializeDomReferences();
     initMobilePoiListeners();
+    initUiModalsListeners();
+    initCircuitListeners();
 
     if (typeof populateAddPoiModalCategories === 'function') populateAddPoiModalCategories();
 

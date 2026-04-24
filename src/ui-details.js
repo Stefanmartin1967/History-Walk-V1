@@ -2,7 +2,6 @@ import { state, setCurrentFeatureId, setCurrentCircuitIndex } from './state.js';
 import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive, speakText } from './voice.js';
-import { navigatePoiDetails } from './circuit.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, pushMobileLevel } from './mobile-state.js';
@@ -14,7 +13,6 @@ import { calculateAdjustedTime, sanitizeHTML } from './utils.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
 import { renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm } from './modal.js';
-import { requestSoftDelete } from './ui-modals.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 
@@ -110,7 +108,7 @@ if (chkInc) {
     const softDeleteBtn = document.getElementById('btn-soft-delete');
     if (softDeleteBtn) {
         softDeleteBtn.addEventListener('click', () => {
-            requestSoftDelete(state.currentFeatureId);
+            eventBus.emit('poi:request-soft-delete', state.currentFeatureId);
         });
     }
 
@@ -243,13 +241,13 @@ if (chkInc) {
                 }
             });
         }
-        document.getElementById('details-prev-btn')?.addEventListener('click', () => navigatePoiDetails(-1));
-        document.getElementById('details-next-btn')?.addEventListener('click', () => navigatePoiDetails(1));
+        document.getElementById('details-prev-btn')?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
+        document.getElementById('details-next-btn')?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
         document.getElementById('details-close-btn')?.addEventListener('click', () => closeDetailsPanel(true));
 
     } else {
-        document.getElementById('prev-poi-button')?.addEventListener('click', () => navigatePoiDetails(-1));
-        document.getElementById('next-poi-button')?.addEventListener('click', () => navigatePoiDetails(1));
+        document.getElementById('prev-poi-button')?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
+        document.getElementById('next-poi-button')?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
         document.getElementById('close-details-button')?.addEventListener('click', () => closeDetailsPanel());
     }
 }

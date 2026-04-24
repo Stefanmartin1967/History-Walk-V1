@@ -12,6 +12,10 @@ import { eventBus } from './events.js';
 import { saveAppState, restoreCircuit } from './database.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
+export function initUiModalsListeners() {
+    eventBus.on('poi:request-soft-delete', (idOrIndex) => requestSoftDelete(idOrIndex));
+}
+
 export function showLegendModal() {
     const title = "Légende";
     const message = `
