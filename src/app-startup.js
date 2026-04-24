@@ -8,6 +8,7 @@ import { switchMobileView } from './mobile-nav.js';
 import { DOM } from './ui-dom.js';
 import { showToast } from './toast.js';
 import { loadCircuitDraft } from './circuit.js';
+import { recalculatePlannedCountersForMap } from './circuit-actions.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
@@ -259,7 +260,6 @@ export async function loadAndInitializeMap() {
         });
 
         // Recalculate counters to ensure consistency with loaded official circuits
-        const { recalculatePlannedCountersForMap } = await import('./circuit-actions.js');
         await recalculatePlannedCountersForMap(activeMapId);
 
         await saveAppState('lastGeoJSON', geojsonData); // Mobile cache specific
@@ -279,7 +279,6 @@ export async function loadAndInitializeMap() {
         await displayGeoJSON(geojsonData, activeMapId);
 
         // Recalculate counters to ensure consistency with loaded official circuits
-        const { recalculatePlannedCountersForMap } = await import('./circuit-actions.js');
         await recalculatePlannedCountersForMap(activeMapId);
 
         // Refresh UI with new counters
