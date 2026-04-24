@@ -28,7 +28,7 @@ import { initMobileMode, initMobileNavListeners } from './mobile-nav.js';
 import { initMobilePoiListeners } from './mobile-poi.js';
 import { initMobileCircuitsListeners } from './mobile-circuits.js';
 import { initUiModalsListeners } from './ui-modals.js';
-import { initCircuitListeners } from './circuit.js';
+import { initCircuitListeners, loadCircuitFromIds } from './circuit.js';
 import { initUiDetailsListeners } from './ui-details.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
@@ -174,9 +174,7 @@ async function initializeApp() {
         const newUrl = window.location.origin + window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
         setTimeout(() => {
-             import('./circuit.js').then(module => {
-                 module.loadCircuitFromIds(importIds, importName);
-             });
+            loadCircuitFromIds(importIds, importName);
         }, 500);
     }
 }
