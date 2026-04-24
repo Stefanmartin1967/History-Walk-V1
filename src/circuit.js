@@ -616,7 +616,7 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
     // 5. Mise à jour de l'affichage
     if (isMobileView()) {
         eventBus.emit('mobile:render-poi-list', state.currentCircuit);
-        import('./mobile-nav.js').then(m => m.switchMobileView('circuits'));
+        eventBus.emit('mobile:switch-view', 'circuits');
     } else {
         renderCircuitPanel();
         if (!state.isSelectionModeActive) {

@@ -12,7 +12,7 @@ import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { getSearchResults } from './search.js';
-import { navigatePoiDetails, loadCircuitById, clearCircuit } from './circuit.js';
+import { eventBus } from './events.js';
 import { showAdminLoginModal } from './admin.js';
 import {
     isMobileView,
@@ -59,7 +59,7 @@ export function onHwBack() {
 
     // Niveau 2 : circuit-details → retour Mes Circuits
     if (view === 'circuit-details') {
-        clearCircuit(false);
+        eventBus.emit('circuit:clear', false);
         switchMobileView('circuits');
         return;
     }
@@ -74,6 +74,10 @@ export function onHwBack() {
 }
 
 // ─── Initialisation ───────────────────────────────────────────────────────────
+
+export function initMobileNavListeners() {
+    eventBus.on('mobile:switch-view', (view) => switchMobileView(view));
+}
 
 export function initMobileMode() {
     document.body.classList.add('mobile-mode');
@@ -99,7 +103,7 @@ export function initMobileMode() {
 
         if (state.currentFeatureId !== null && state.currentCircuit?.length > 1) {
             // Vue détail POI → naviguer entre POIs
-            navigatePoiDetails(dx > 0 ? 1 : -1);
+            eventBus.emit('circuit:navigate-poi', dx > 0 ? 1 : -1);
         } else if (
             getCurrentView() === 'circuit-details' &&
             state.activeCircuitId &&
@@ -110,7 +114,7 @@ export function initMobileMode() {
             const idx = ordered.findIndex(c => c.id === state.activeCircuitId);
             const nextIdx = idx + (dx > 0 ? 1 : -1);
             if (nextIdx >= 0 && nextIdx < ordered.length) {
-                loadCircuitById(ordered[nextIdx].id);
+                eventBus.emit('circuit:request-load', ordered[nextIdx].id);
             }
         }
     });
