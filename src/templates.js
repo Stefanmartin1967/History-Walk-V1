@@ -116,7 +116,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const gmapsButtonHtml = `<button class="action-button" id="open-gmaps-btn" title="Itinéraire Google Maps" aria-label="Itinéraire Google Maps">${ICONS.googleMaps}</button>`;
 
     const categorySelectHtml = `
-        <select id="panel-category-select" class="editable-input header-input panel-category-select" style="display:none;">
+        <select id="panel-category-select" class="editable-input header-input panel-category-select is-hidden">
             ${categoryOptions}
         </select>
     `;
@@ -156,7 +156,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             </div>
 
             <!-- Hidden Inputs -->
-            <input type="text" id="panel-title-input" class="editable-input header-input" style="display: none;">
+            <input type="text" id="panel-title-input" class="editable-input header-input is-hidden">
             ${categorySelectHtml}
         </div>
 
@@ -243,7 +243,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     </div>
 
                     <!-- Hidden Stuff -->
-                    <input type="text" class="editable-input" style="display: none;" value="${escapeXml(poiName)}">
+                    <input type="text" class="editable-input is-hidden" value="${escapeXml(poiName)}">
                     ${categorySelectHtml}
                 </div>
             </div>

@@ -85,6 +85,10 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* ======================== UTILITIES ============================ */
+.is-hidden { display: none !important; }
+.icon-ok { color: var(--ok); }
+
 /* ======================== STYLES PC ============================ */
 
 .topbar {

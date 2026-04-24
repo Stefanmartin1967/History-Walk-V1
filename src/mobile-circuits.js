@@ -136,7 +136,7 @@ export function renderMobileCircuitsList() {
             const iconName = circuit._iconName;
 
             const statusIcon = isDone
-                ? `<i data-lucide="check-circle" class="icon-20 lucide" style="color:var(--ok);"></i>`
+                ? `<i data-lucide="check-circle" class="icon-20 lucide icon-ok"></i>`
                 : `<span class="mobile-status-badge">${done}/${total}</span>`;
 
             const isTested = isCircuitTested(circuit.id);

@@ -27,12 +27,12 @@ export function initPhotoViewer() {
             <div class="viewer-title" id="viewer-title"></div>
             <div class="viewer-controls">
                 <!-- Upload Button (For Admin Context from Grid - Initially Hidden) -->
-                <button id="viewer-btn-upload" class="btn-cloud-upload" title="Tout envoyer sur GitHub" aria-label="Tout envoyer sur GitHub" style="display: none;">
+                <button id="viewer-btn-upload" class="btn-cloud-upload is-hidden" title="Tout envoyer sur GitHub" aria-label="Tout envoyer sur GitHub">
                     <!-- SVG Hidden/Unused but structure kept for potential future use if logic reverts -->
                 </button>
 
                 <!-- Trash Button (For Local Context from Grid - Initially Hidden) -->
-                <button id="viewer-btn-delete" title="Supprimer cette photo" aria-label="Supprimer cette photo" style="display: none;">
+                <button id="viewer-btn-delete" class="is-hidden" title="Supprimer cette photo" aria-label="Supprimer cette photo">
                     <!-- SVG Hidden/Unused -->
                 </button>
 
