@@ -8,7 +8,6 @@ import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
 import { calculateAdjustedTime, sanitizeHTML } from './utils.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
-import { renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
@@ -22,8 +21,7 @@ function setupGlobalEditButton(poiId) {
 
     editBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-             // Redirection directe vers Rich Editor
-             import('./richEditor.js').then(m => m.RichEditor.openForEdit(poiId));
+             eventBus.emit('richEditor:open-for-edit', poiId);
         });
     });
 }
@@ -297,7 +295,7 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         DOM.rightSidebar.style.display = 'flex';
         document.body.classList.add('sidebar-open');
         switchSidebarTab('details', true);
-        renderExplorerList(); // Render circuit list with new active POI filter
+        eventBus.emit('ui:render-explorer-list');
     }
 }
 
@@ -331,7 +329,7 @@ export function closeDetailsPanel(goBackToList = false) {
         if (state.isSelectionModeActive) {
             switchSidebarTab('circuit');
         } else {
-            renderExplorerList();
+            eventBus.emit('ui:render-explorer-list');
             switchSidebarTab('explorer');
         }
     }

@@ -44,6 +44,10 @@ export function initCircuitListUI() {
         }
     });
 
+    // Rendu à la demande (appelé par ui-details pour casser le cycle
+    // ui-details → ui-circuit-list).
+    eventBus.on('ui:render-explorer-list', () => renderExplorerList());
+
     // Initial render of header and toolbar
     renderExplorerHeader();
     renderExplorerToolbar();

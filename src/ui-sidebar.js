@@ -1,5 +1,4 @@
 import { DOM } from './ui-dom.js';
-import { renderExplorerList } from './ui-circuit-list.js';
 import { state } from './state.js';
 import { getPoiId } from './data.js';
 import { stopDictation, isDictationActive } from './voice.js';
@@ -30,7 +29,7 @@ export function setupTabs() {
         button.addEventListener('click', () => {
             const tabName = button.dataset.tab;
             if (tabName === 'explorer') {
-                renderExplorerList();
+                eventBus.emit('ui:render-explorer-list');
                 switchSidebarTab('explorer');
             } else if (tabName === 'details') {
                 if (state.currentFeatureId !== null) {
