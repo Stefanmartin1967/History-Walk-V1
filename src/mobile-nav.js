@@ -6,7 +6,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { getIconForFeature } from './map.js';
+import { getIconForFeature } from './poi-icons.js';
 import { escapeHtml, sanitizeHTML, isPointInPolygon } from './utils.js';
 import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
