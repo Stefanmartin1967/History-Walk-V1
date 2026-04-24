@@ -15,6 +15,10 @@ import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 
+export function initUiDetailsListeners() {
+    eventBus.on('poi:open-details', ({ featureId, circuitIndex = null }) => openDetailsPanel(featureId, circuitIndex));
+}
+
 function setupGlobalEditButton(poiId) {
     const editBtns = document.querySelectorAll('#btn-global-edit'); // querySelectorAll au cas où (PC/Mobile)
 
