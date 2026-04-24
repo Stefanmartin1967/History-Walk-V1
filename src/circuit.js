@@ -1,10 +1,8 @@
-import L from 'leaflet';
 import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit } from './state.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
-import { map } from './map.js';
 import { getRealDistance, getOrthodromicDistance } from './utils.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from './database.js';
 import { isMobileView } from './mobile-state.js';
@@ -518,16 +516,14 @@ export async function loadCircuitById(id) {
         applyFilters();
 
         // 5. Centrage Intelligent de la carte
-        if (map && (state.currentCircuit.length > 0 || circuitToLoad.realTrack)) {
-            // On priorise la trace réelle pour le centrage si elle existe
+        if (state.currentCircuit.length > 0 || circuitToLoad.realTrack) {
             const pointsToFit = (circuitToLoad.realTrack && circuitToLoad.realTrack.length > 0)
                 ? circuitToLoad.realTrack
                 : state.currentCircuit.map(f => [f.geometry.coordinates[1], f.geometry.coordinates[0]]);
-
-            // On crée un groupe temporaire pour calculer les limites (bounds)
-            const bounds = L.latLngBounds(pointsToFit);
-            // Padding augmenté pour éviter que le circuit ne touche les bords (surtout avec la sidebar)
-            map.flyToBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+            eventBus.emit('map:fit-bounds-to-points', {
+                points: pointsToFit,
+                options: { padding: [50, 50], maxZoom: 16 }
+            });
         }
     }
 
@@ -629,10 +625,12 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
         }
         applyFilters();
 
-        if (typeof map !== 'undefined' && map && state.currentCircuit.length > 0) {
+        if (state.currentCircuit.length > 0) {
             const points = state.currentCircuit.map(f => [f.geometry.coordinates[1], f.geometry.coordinates[0]]);
-            const bounds = L.latLngBounds(points);
-            map.flyToBounds(bounds, { padding: [50, 50] });
+            eventBus.emit('map:fit-bounds-to-points', {
+                points,
+                options: { padding: [50, 50] }
+            });
         }
     }
 
