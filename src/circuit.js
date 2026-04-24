@@ -6,7 +6,6 @@ import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
 import { getRealDistance, getOrthodromicDistance } from './utils.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from './database.js';
 import { isMobileView } from './mobile-state.js';
-import { renderMobilePoiList } from './mobile-poi.js';
 import * as View from './circuit-view.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
@@ -505,7 +504,7 @@ export async function loadCircuitById(id) {
 
     // 4. Gestion de l'affichage selon le mode (Mobile ou PC)
     if (isMobileView()) {
-        renderMobilePoiList(state.currentCircuit);
+        eventBus.emit('mobile:render-poi-list', state.currentCircuit);
     } else {
         // Active le mode sélection si besoin et rafraîchit le panneau
         if (!state.isSelectionModeActive) {
@@ -616,7 +615,7 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
 
     // 5. Mise à jour de l'affichage
     if (isMobileView()) {
-        renderMobilePoiList(state.currentCircuit);
+        eventBus.emit('mobile:render-poi-list', state.currentCircuit);
         import('./mobile-nav.js').then(m => m.switchMobileView('circuits'));
     } else {
         renderCircuitPanel();
