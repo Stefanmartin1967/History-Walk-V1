@@ -106,7 +106,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     <div class="stepper-control price-editor">
                         <button class="stepper-btn" id="price-decrement-btn" title="- 0.5" aria-label="- 0.5">${ICONS.minus}</button>
                         <span id="panel-price-display" class="value-display" data-value="${priceValue || 0}">${priceDisplay}</span>
-                        <span class="stepper-currency" id="panel-price-currency" style="${priceValue > 0 ? '' : 'display:none;'}">${currency}</span>
+                        <span class="stepper-currency${priceValue > 0 ? '' : ' is-hidden'}" id="panel-price-currency">${currency}</span>
                         <button class="stepper-btn" id="price-increment-btn" title="+ 0.5" aria-label="+ 0.5">${ICONS.plus}</button>
                     </div>
                 </div>
@@ -128,7 +128,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="panel-header-title-row">
                 <div class="left-text-block panel-title-block">
                      <h2 id="panel-title-fr" class="panel-title-text" title="${escapeXml(poiName)}">${escapeXml(poiName)}</h2>
-                     <h2 id="panel-title-ar" class="panel-title-text panel-title-text--ar" style="display:none;" dir="rtl">${escapeXml(arName)}</h2>
+                     <h2 id="panel-title-ar" class="panel-title-text panel-title-text--ar is-hidden" dir="rtl">${escapeXml(arName)}</h2>
                 </div>
                 <div class="panel-title-close">
                      <button class="action-button" id="close-details-button" title="Fermer" aria-label="Fermer">${ICONS.x}</button>
@@ -161,7 +161,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         </div>
 
         <div class="panel-content">
-            <div class="detail-section editable-field" id="section-gpx-desc" data-field-id="short_desc" style="display:none;">
+            <div class="detail-section editable-field is-hidden" id="section-gpx-desc" data-field-id="short_desc">
                 <h3>Description GPX</h3>
                 <div class="content">
                     <p id="panel-short-desc-display" class="editable-text short-text text-expanded">${escapeXml(allProps.Description_courte || allProps.Desc_wpt || '')}</p>
@@ -212,7 +212,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                         <!-- Center: Title -->
                         <div class="title-names mobile-header-center">
                              <h2 id="mobile-title-fr" class="editable-text mobile-title-text">${escapeXml(poiName)}</h2>
-                             <h2 id="mobile-title-ar" class="mobile-title-text mobile-title-text--ar" style="display:none;" dir="rtl">${escapeXml(arName)}</h2>
+                             <h2 id="mobile-title-ar" class="mobile-title-text mobile-title-text--ar is-hidden" dir="rtl">${escapeXml(arName)}</h2>
                         </div>
 
                         <!-- Right: Empty Placeholder (for balance) -->
@@ -248,7 +248,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 </div>
             </div>
 
-            <div class="detail-section editable-field" id="mobile-section-gpx-desc" data-field-id="short_desc" style="display:none;">
+            <div class="detail-section editable-field is-hidden" id="mobile-section-gpx-desc" data-field-id="short_desc">
                 <h3>Description GPX</h3>
                 <div class="content">
                     <p class="editable-text short-text text-expanded">${escapeXml(allProps.Description_courte || allProps.Desc_wpt || '')}</p>

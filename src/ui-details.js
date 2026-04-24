@@ -183,9 +183,8 @@ if (chkInc) {
             const ar = document.getElementById('panel-title-ar') || document.getElementById('mobile-title-ar');
 
             if (fr && ar) {
-                const isFrVisible = fr.style.display !== 'none';
-                fr.style.display = isFrVisible ? 'none' : '';
-                ar.style.display = isFrVisible ? '' : 'none';
+                fr.classList.toggle('is-hidden');
+                ar.classList.toggle('is-hidden');
             }
         });
     }
@@ -373,6 +372,6 @@ export function adjustPrice(delta) {
 
     const currencySpan = document.getElementById('panel-price-currency');
     if (currencySpan) {
-        currencySpan.style.display = newVal > 0 ? '' : 'none';
+        currencySpan.classList.toggle('is-hidden', newVal <= 0);
     }
 }

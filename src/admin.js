@@ -360,9 +360,10 @@ function showRankTable() {
     `).join('');
 
     // --- Lignes Matières (% POIs visités) ---
+    // Couleur dynamique via data-color : appliquée au CSSOM post-render (CSP sans 'unsafe-inline')
     const materialRows = MATERIAL_RANKS.map(r => `
         <tr>
-            <td><span class="rank-dot" style="background:${r.color};"></span></td>
+            <td><span class="rank-dot" data-color="${r.color}"></span></td>
             <td>${r.title}</td>
             <td>${r.min}%</td>
         </tr>
@@ -417,6 +418,11 @@ function showRankTable() {
     const modalContent = document.getElementById('custom-modal-message');
     if (modalContent) {
         createIcons({ icons: appIcons, root: modalContent });
+
+        // Appliquer la couleur de fond des rank-dot via CSSOM (CSP-safe)
+        modalContent.querySelectorAll('.rank-dot[data-color]').forEach(dot => {
+            dot.style.backgroundColor = dot.dataset.color;
+        });
 
         modalContent.querySelectorAll('.rank-tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
