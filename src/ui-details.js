@@ -2,7 +2,6 @@ import { state, setCurrentFeatureId, setCurrentCircuitIndex } from './state.js';
 import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive, speakText } from './voice.js';
-import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, pushMobileLevel } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';

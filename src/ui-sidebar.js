@@ -2,18 +2,7 @@ import { DOM } from './ui-dom.js';
 import { renderExplorerList } from './ui-circuit-list.js';
 import { state } from './state.js';
 import { getPoiId } from './data.js';
-import { openDetailsPanel } from './ui-details.js'; // Circular dependency risk?
 import { stopDictation, isDictationActive } from './voice.js';
-
-// We need to be careful with circular dependencies.
-// ui.js exports openDetailsPanel, which is needed here?
-// switchSidebarTab is used by openDetailsPanel in ui.js.
-// If I move switchSidebarTab here, ui.js will import it.
-// openDetailsPanel is in ui.js.
-// It seems better to keep openDetailsPanel in ui.js for now or move it too.
-// openDetailsPanel uses buildHTML (templates) and setupDetailsEventListeners.
-
-// Let's start with just the tab switching logic.
 
 export function switchSidebarTab(tabName, isNavigating = false) {
     if (!isNavigating && window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
@@ -50,10 +39,7 @@ export function setupTabs() {
                         const id = getPoiId(currentFeature);
                         const circuitIndex = state.currentCircuit ? state.currentCircuit.findIndex(f => getPoiId(f) === id) : -1;
 
-                        // We need openDetailsPanel here.
-                        // To avoid circular dependency during module evaluation, we can import it dynamically or assume it's available via a shared module or pass it.
-                        // However, cyclic imports are allowed in ES modules if handled correctly (functions are hoisted).
-                        // Let's try importing openDetailsPanel from ui.js.
+                        // Import dynamique : évite un cycle statique ui-sidebar ↔ ui-details.
                         import('./ui-details.js').then(m => m.openDetailsPanel(state.currentFeatureId, circuitIndex !== -1 ? circuitIndex : null));
                     }
                 } else if (state.currentCircuit && state.currentCircuit.length > 0) {
