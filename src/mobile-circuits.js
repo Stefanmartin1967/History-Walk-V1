@@ -17,6 +17,11 @@ import {
     setCurrentView, setAllCircuitsOrdered,
     pushMobileLevel,
 } from './mobile-state.js';
+import { eventBus } from './events.js';
+
+export function initMobileCircuitsListeners() {
+    eventBus.on('mobile:render-circuits-list', () => renderMobileCircuitsList());
+}
 
 // ─── Liste des circuits ───────────────────────────────────────────────────────
 
