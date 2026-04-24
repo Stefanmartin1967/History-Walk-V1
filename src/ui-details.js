@@ -2,7 +2,6 @@ import { state, setCurrentFeatureId, setCurrentCircuitIndex } from './state.js';
 import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive, speakText } from './voice.js';
-import { navigatePoiDetails } from './circuit.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, pushMobileLevel } from './mobile-state.js';
@@ -242,13 +241,13 @@ if (chkInc) {
                 }
             });
         }
-        document.getElementById('details-prev-btn')?.addEventListener('click', () => navigatePoiDetails(-1));
-        document.getElementById('details-next-btn')?.addEventListener('click', () => navigatePoiDetails(1));
+        document.getElementById('details-prev-btn')?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
+        document.getElementById('details-next-btn')?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
         document.getElementById('details-close-btn')?.addEventListener('click', () => closeDetailsPanel(true));
 
     } else {
-        document.getElementById('prev-poi-button')?.addEventListener('click', () => navigatePoiDetails(-1));
-        document.getElementById('next-poi-button')?.addEventListener('click', () => navigatePoiDetails(1));
+        document.getElementById('prev-poi-button')?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
+        document.getElementById('next-poi-button')?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
         document.getElementById('close-details-button')?.addEventListener('click', () => closeDetailsPanel());
     }
 }
