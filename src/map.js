@@ -218,6 +218,10 @@ export function initMapListeners() {
     eventBus.on('map:close-popup', () => { if (map) map.closePopup(); });
     eventBus.on('map:clear-highlights', () => clearMarkerHighlights());
     eventBus.on('map:start-marker-drag', ({ poiId, onDrag, onEnd }) => startMarkerDrag(poiId, onDrag, onEnd));
+    eventBus.on('map:fit-bounds-to-points', ({ points, options }) => {
+        if (!map || !points || points.length === 0) return;
+        map.flyToBounds(L.latLngBounds(points), options);
+    });
 
     window.addEventListener('circuit:updated', (e) => {
         const { points, activeId } = e.detail;
