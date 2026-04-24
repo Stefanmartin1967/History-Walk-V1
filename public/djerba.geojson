@@ -7457,6 +7457,75 @@
         "HW_ID": "HW-01KPV7JNCWX6A021ARBG52JPMK",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.874964699722224,
+          33.807289299999994
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test chèvre",
+        "Catégorie": "Photo",
+        "Zone": "El May",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KQ056Y6XZEVG6B8E6JVP5TKC",
+        "Description": "Ajouté via Rich Editor",
+        "photos": [
+          "photos/poi_HW-01KQ056Y6XZEVG6B8E6JVP5TKC_1777048247541.jpg"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8766528,
+          33.80244429972222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test figuier",
+        "Catégorie": "Photo",
+        "Zone": "El May",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KQ057E32KNH0Z1A4FQ0N4EKT",
+        "Description": "Ajouté via Rich Editor",
+        "photos": [
+          "photos/poi_HW-01KQ057E32KNH0Z1A4FQ0N4EKT_1777048249378.jpg"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.875843299722222,
+          33.807437099999994
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test photo",
+        "Catégorie": "Photo",
+        "Zone": "El May",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KQ05809WVE3MYDZDF9XAFA37",
+        "Description": "Ajouté via Rich Editor",
+        "photos": [
+          "photos/poi_HW-01KQ05809WVE3MYDZDF9XAFA37_1777048251485.jpg"
+        ]
+      }
     }
   ]
 }
