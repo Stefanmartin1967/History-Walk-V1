@@ -5,7 +5,7 @@ import { state } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml } from './utils.js';
-import { getIconForFeature } from './map.js';
+import { getIconForFeature } from './poi-icons.js';
 import { openDetailsPanel } from './ui-details.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
 import { clearCircuit, isCircuitCompleted } from './circuit.js';
