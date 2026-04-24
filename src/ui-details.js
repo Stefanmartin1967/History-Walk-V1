@@ -14,7 +14,6 @@ import { calculateAdjustedTime, sanitizeHTML } from './utils.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
 import { renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm } from './modal.js';
-import { requestSoftDelete } from './ui-modals.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 
@@ -110,7 +109,7 @@ if (chkInc) {
     const softDeleteBtn = document.getElementById('btn-soft-delete');
     if (softDeleteBtn) {
         softDeleteBtn.addEventListener('click', () => {
-            requestSoftDelete(state.currentFeatureId);
+            eventBus.emit('poi:request-soft-delete', state.currentFeatureId);
         });
     }
 
