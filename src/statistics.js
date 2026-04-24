@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { getRealDistance, getOrthodromicDistance } from './map.js';
+import { getRealDistance, getOrthodromicDistance } from './utils.js';
 import { getPoiId } from './data.js';
 import { showAlert } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
