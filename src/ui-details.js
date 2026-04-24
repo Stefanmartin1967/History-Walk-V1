@@ -2,7 +2,6 @@ import { state, setCurrentFeatureId, setCurrentCircuitIndex } from './state.js';
 import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive, speakText } from './voice.js';
-import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView, pushMobileLevel } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -89,17 +88,8 @@ if (chkInc) {
         // 1. Sauvegarde (Mémoire + Disque) via votre fonction habituelle
         await updatePoiData(poiId, 'incontournable', e.target.checked);
 
-        // 2. Mise à jour visuelle : On demande au Peintre de rafraîchir la carte
-        if (!isMobileView()) {
-            import('./data.js').then(dataModule => {
-                import('./map.js').then(mapModule => {
-                    if (mapModule.refreshMapMarkers && dataModule.getFilteredFeatures) {
-                        // Le Tamis filtre, le Peintre dessine (avec le nouveau style doré !)
-                        mapModule.refreshMapMarkers(dataModule.getFilteredFeatures());
-                    }
-                });
-            });
-        }
+        // 2. Mise à jour visuelle : on refiltre → events-bus redessine (style doré)
+        if (!isMobileView()) applyFilters();
     });
 }
 
@@ -133,15 +123,15 @@ if (chkInc) {
     const moveMarkerBtn = document.getElementById('btn-move-marker');
     if (moveMarkerBtn) {
         moveMarkerBtn.addEventListener('click', () => {
-             startMarkerDrag(
+             eventBus.emit('map:start-marker-drag', {
                  poiId,
-                 (lat, lng) => {
+                 onDrag: (lat, lng) => {
                      const latInput = document.getElementById('poi-lat');
                      const lngInput = document.getElementById('poi-lng');
                      if (latInput) latInput.value = lat.toFixed(5);
                      if (lngInput) lngInput.value = lng.toFixed(5);
                  },
-                 async (lat, lng, revert) => {
+                 onEnd: async (lat, lng, revert) => {
                      // Capture old coords before saving (for undo)
                      const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
                      const [prevLng, prevLat] = feature.geometry.coordinates;
@@ -169,7 +159,7 @@ if (chkInc) {
                          if (lngInput) lngInput.value = prevLng.toFixed(5);
                      }
                  }
-             );
+             });
         });
     }
 
@@ -261,7 +251,7 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
     if (featureId === undefined || featureId < 0) return;
 
     // Fermeture propre d'une éventuelle popup carte existante
-    if(!isMobileView() && map) map.closePopup();
+    if(!isMobileView()) eventBus.emit('map:close-popup');
 
     // Sécurité: feature existe ?
     const feature = state.loadedFeatures[featureId];
@@ -313,7 +303,7 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
 }
 
 export function closeDetailsPanel(goBackToList = false) {
-    clearMarkerHighlights();
+    eventBus.emit('map:clear-highlights');
     if (window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     if (isDictationActive()) stopDictation();
 
