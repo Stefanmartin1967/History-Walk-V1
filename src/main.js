@@ -26,6 +26,7 @@ import { getPoiId } from './data.js';
 import { isMobileView } from './mobile-state.js';
 import { initMobileMode } from './mobile-nav.js';
 import { initMobilePoiListeners } from './mobile-poi.js';
+import { initMobileCircuitsListeners } from './mobile-circuits.js';
 import { initUiModalsListeners } from './ui-modals.js';
 import { initCircuitListeners } from './circuit.js';
 import { initUiDetailsListeners } from './ui-details.js';
@@ -93,6 +94,7 @@ async function initializeApp() {
     initAdminMode();
     initializeDomReferences();
     initMobilePoiListeners();
+    initMobileCircuitsListeners();
     initUiModalsListeners();
     initCircuitListeners();
     initUiDetailsListeners();

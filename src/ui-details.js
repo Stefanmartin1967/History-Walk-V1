@@ -3,7 +3,6 @@ import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates
 import { eventBus } from './events.js';
 import { stopDictation, isDictationActive, speakText } from './voice.js';
 import { isMobileView, pushMobileLevel } from './mobile-state.js';
-import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
@@ -326,7 +325,7 @@ export function closeDetailsPanel(goBackToList = false) {
         if(goBackToList && state.activeCircuitId) {
             eventBus.emit('mobile:render-poi-list', state.currentCircuit);
         } else {
-             renderMobileCircuitsList();
+             eventBus.emit('mobile:render-circuits-list');
         }
     } else {
         if (state.isSelectionModeActive) {
