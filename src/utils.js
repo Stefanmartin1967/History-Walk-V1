@@ -74,6 +74,36 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c; // Distance en mètres
 }
 
+// Distance totale d'un tracé réel (tableau de [lat, lng])
+export function getRealDistance(circuitData) {
+    if (!circuitData || !circuitData.realTrack) return 0;
+    const latLngs = circuitData.realTrack;
+    let total = 0;
+    for (let i = 0; i < latLngs.length - 1; i++) {
+        const p1 = latLngs[i];
+        const p2 = latLngs[i + 1];
+        if (!Array.isArray(p1) || p1.length < 2 || typeof p1[0] !== 'number' || typeof p1[1] !== 'number' ||
+            !Array.isArray(p2) || p2.length < 2 || typeof p2[0] !== 'number' || typeof p2[1] !== 'number') {
+            console.warn(`[Utils] Point invalide détecté dans le tracé à l'index ${i}`, p1, p2);
+            continue;
+        }
+        total += calculateDistance(p1[0], p1[1], p2[0], p2[1]);
+    }
+    return total;
+}
+
+// Distance "vol d'oiseau" d'un circuit (features GeoJSON)
+export function getOrthodromicDistance(circuit) {
+    if (!circuit || circuit.length < 2) return 0;
+    let total = 0;
+    for (let i = 0; i < circuit.length - 1; i++) {
+        const from = circuit[i].geometry.coordinates;
+        const to = circuit[i + 1].geometry.coordinates;
+        total += calculateDistance(from[1], from[0], to[1], to[0]);
+    }
+    return total;
+}
+
 // --- EXIF EXTRACTION WITH EXIFR ---
 
 export async function getExifLocation(file) {

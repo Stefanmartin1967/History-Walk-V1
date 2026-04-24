@@ -1,8 +1,7 @@
 import { state } from './state.js';
 import { getPoiId } from './data.js';
-import { getRealDistance, getOrthodromicDistance } from './map.js';
 import { isCircuitCompleted } from './circuit.js';
-import { getZoneFromCoords } from './utils.js';
+import { getZoneFromCoords, getRealDistance, getOrthodromicDistance } from './utils.js';
 import L from 'leaflet';
 
 /**

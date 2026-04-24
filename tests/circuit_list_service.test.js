@@ -19,17 +19,14 @@ vi.mock('../src/data.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID || f?.id || null
 }));
 
-vi.mock('../src/map.js', () => ({
-    getRealDistance: vi.fn(() => 0),
-    getOrthodromicDistance: vi.fn(() => 0)
-}));
-
 vi.mock('../src/circuit.js', () => ({
     isCircuitCompleted: vi.fn(() => false)
 }));
 
 vi.mock('../src/utils.js', () => ({
-    getZoneFromCoords: vi.fn(() => null)
+    getZoneFromCoords: vi.fn(() => null),
+    getRealDistance: vi.fn(() => 0),
+    getOrthodromicDistance: vi.fn(() => 0)
 }));
 
 // Leaflet : seul `L.latLng(lat, lng).distanceTo(...)` est utilisé.
@@ -49,9 +46,8 @@ vi.mock('leaflet', () => ({
 }));
 
 import { state } from '../src/state.js';
-import { getRealDistance, getOrthodromicDistance } from '../src/map.js';
 import { isCircuitCompleted } from '../src/circuit.js';
-import { getZoneFromCoords } from '../src/utils.js';
+import { getZoneFromCoords, getRealDistance, getOrthodromicDistance } from '../src/utils.js';
 import { getProcessedCircuits, getAvailableZonesFromCircuits } from '../src/circuit-list-service.js';
 
 // ----------------------------------------------------------------------------

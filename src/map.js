@@ -8,7 +8,6 @@ import { showToast } from './toast.js';
 import { getPoiId, getPoiName } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { saveAppState } from './database.js';
-import { calculateDistance } from './utils.js';
 
 export let map;
 let svgRenderer; // Renderer SVG spécifique pour les tracés (permet le CSS styling)
@@ -362,28 +361,6 @@ export function drawLineOnMap(coordinates, isRealTrack = false, isCompleted = fa
     }
 }
 
-// --- GESTION DES DISTANCES ET TRACÉS ---
-
-function calculateRealDistance(latLngs) {
-    let totalDistance = 0;
-    for (let i = 0; i < latLngs.length - 1; i++) {
-        const p1 = latLngs[i];
-        const p2 = latLngs[i + 1];
-
-        // Sécurité : Ignorer les points mal formés (null, undefined, non-tableau, longueur insuffisante)
-        if (!Array.isArray(p1) || p1.length < 2 || typeof p1[0] !== 'number' || typeof p1[1] !== 'number' ||
-            !Array.isArray(p2) || p2.length < 2 || typeof p2[0] !== 'number' || typeof p2[1] !== 'number') {
-            console.warn(`[Map] Point invalide détecté dans le tracé à l'index ${i}`, p1, p2);
-            continue;
-        }
-
-        // Optimisation de performance : Haversine direct (9x plus rapide)
-        // latLngs est un tableau de [lat, lng]
-        totalDistance += calculateDistance(p1[0], p1[1], p2[0], p2[1]);
-    }
-    return totalDistance;
-}
-
 export function updatePolylines() {
     if (state.orthodromicPolyline) state.orthodromicPolyline.remove();
     if (state.realTrackPolyline) state.realTrackPolyline.remove();
@@ -415,22 +392,6 @@ export function updatePolylines() {
             renderer: svgRenderer
         }).addTo(map));
     }
-}
-
-export function getRealDistance(circuitData) {
-    if (!circuitData || !circuitData.realTrack) return 0;
-    return calculateRealDistance(circuitData.realTrack);
-}
-
-export function getOrthodromicDistance(circuit) {
-    if (!circuit || circuit.length < 2) return 0;
-    let totalDistance = 0;
-    for (let i = 0; i < circuit.length - 1; i++) {
-        const from = circuit[i].geometry.coordinates;
-        const to = circuit[i + 1].geometry.coordinates;
-        totalDistance += L.latLng(from[1], from[0]).distanceTo(L.latLng(to[1], to[0]));
-    }
-    return totalDistance;
 }
 
 // --- LE PEINTRE DE POINTS (Reçoit les données déjà filtrées) ---

@@ -1,10 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { calculateStats, GLOBAL_RANKS, ANIMAL_RANKS, MATERIAL_RANKS } from '../src/statistics.js';
-import * as mapModule from '../src/map.js';
 import { state } from '../src/state.js';
 
 // Mock dependencies
-vi.mock('../src/map.js', () => ({
+vi.mock('../src/utils.js', () => ({
     getRealDistance: vi.fn(),
     getOrthodromicDistance: vi.fn()
 }));
