@@ -3,6 +3,7 @@ import L from 'leaflet';
 import { state, setOrthodromicPolyline, setRealTrackPolyline, setGeojsonLayer, setDraggingMarkerId } from './state.js';
 import { addPoiToCircuit, isCircuitCompleted } from './circuit.js';
 import { openDetailsPanel } from './ui-details.js';
+import { eventBus } from './events.js';
 import { showToast } from './toast.js';
 import { getPoiId, getPoiName } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -214,6 +215,10 @@ export function initMapListeners() {
 
     // --- SAUVEGARDE POSITION CARTE (SUPPRIMÉE) ---
     // On ne sauvegarde plus la vue pour garantir une initialisation propre à chaque démarrage.
+
+    eventBus.on('map:close-popup', () => { if (map) map.closePopup(); });
+    eventBus.on('map:clear-highlights', () => clearMarkerHighlights());
+    eventBus.on('map:start-marker-drag', ({ poiId, onDrag, onEnd }) => startMarkerDrag(poiId, onDrag, onEnd));
 
     window.addEventListener('circuit:updated', (e) => {
         const { points, activeId } = e.detail;
