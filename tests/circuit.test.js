@@ -17,7 +17,8 @@ vi.mock('../src/state.js', () => {
         currentFeatureId: null,
         currentCircuitIndex: null,
         customDraftName: null,
-        isAdmin: false
+        isAdmin: false,
+        isSelectionModeActive: false
     };
     return {
         state,
@@ -98,17 +99,23 @@ vi.mock('../src/gist-sync.js', () => ({
     pushToGist: vi.fn()
 }));
 
-import { state } from '../src/state.js';
+import { state, setOfficialCircuitStatus, setTestedCircuit, addMyCircuit, setCurrentCircuit, setActiveCircuitId } from '../src/state.js';
 import { DOM } from '../src/ui-dom.js';
 import { showToast } from '../src/toast.js';
-import { saveAppState } from '../src/database.js';
+import { saveAppState, saveCircuit, batchSavePoiData } from '../src/database.js';
+import { recomputeVu, applyFilters } from '../src/data.js';
+import { isMobileView } from '../src/mobile-state.js';
+import { eventBus } from '../src/events.js';
+import { pushToGist } from '../src/gist-sync.js';
 import {
     isCircuitTested,
     isCircuitCompleted,
     notifyCircuitChanged,
     generateCircuitName,
     addPoiToCircuit,
-    convertToDraft
+    convertToDraft,
+    setCircuitVisitedState,
+    loadCircuitFromIds
 } from '../src/circuit.js';
 
 function resetState() {
@@ -125,6 +132,7 @@ function resetState() {
     state.currentCircuitIndex = null;
     state.customDraftName = null;
     state.isAdmin = false;
+    state.isSelectionModeActive = false;
     DOM.circuitDescription = null;
     DOM.circuitTitleText = null;
 }
@@ -307,5 +315,238 @@ describe('convertToDraft', () => {
             expect.stringContaining('Mode édition'),
             'info'
         );
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('setCircuitVisitedState', () => {
+    it('no-op si circuit introuvable (ni local ni officiel)', async () => {
+        await setCircuitVisitedState('unknown-id', true);
+        expect(setOfficialCircuitStatus).not.toHaveBeenCalled();
+        expect(saveCircuit).not.toHaveBeenCalled();
+        expect(eventBus.emit).not.toHaveBeenCalled();
+    });
+
+    it('officiel non-admin : setOfficialCircuitStatus + saveAppState status, PAS setTestedCircuit', async () => {
+        state.officialCircuits = [{ id: 'off1', name: 'Off Circuit', poiIds: [] }];
+        state.isAdmin = false;
+
+        await setCircuitVisitedState('off1', true);
+
+        expect(setOfficialCircuitStatus).toHaveBeenCalledWith('off1', true);
+        expect(saveAppState).toHaveBeenCalledWith(
+            'official_circuits_status_djerba',
+            state.officialCircuitsStatus
+        );
+        expect(setTestedCircuit).not.toHaveBeenCalled();
+    });
+
+    it('officiel admin : setOfficialCircuitStatus + setTestedCircuit + saveAppState x2', async () => {
+        state.officialCircuits = [{ id: 'off1', name: 'Off', poiIds: [] }];
+        state.isAdmin = true;
+
+        await setCircuitVisitedState('off1', true);
+
+        expect(setOfficialCircuitStatus).toHaveBeenCalledWith('off1', true);
+        expect(setTestedCircuit).toHaveBeenCalledWith('off1', true);
+        expect(saveAppState).toHaveBeenCalledWith('official_circuits_status_djerba', expect.anything());
+        expect(saveAppState).toHaveBeenCalledWith('tested_circuits_djerba', expect.anything());
+    });
+
+    it('local : saveCircuit avec isCompleted MAJ', async () => {
+        const local = { id: 'loc1', name: 'L', poiIds: [], isCompleted: false };
+        state.myCircuits = [local];
+
+        await setCircuitVisitedState('loc1', true);
+
+        expect(local.isCompleted).toBe(true);
+        expect(saveCircuit).toHaveBeenCalledWith(local);
+    });
+
+    it('officiel + shadow local : les deux MAJ', async () => {
+        const off = { id: 'cx', name: 'O', poiIds: [] };
+        const shadow = { id: 'cx', name: 'O-shadow', poiIds: [], isCompleted: false };
+        state.officialCircuits = [off];
+        state.myCircuits = [shadow];
+
+        await setCircuitVisitedState('cx', true);
+
+        expect(setOfficialCircuitStatus).toHaveBeenCalledWith('cx', true);
+        expect(saveCircuit).toHaveBeenCalledWith(shadow);
+        expect(shadow.isCompleted).toBe(true);
+    });
+
+    it('coerce circuitId numérique en string', async () => {
+        const local = { id: '42', name: 'X', poiIds: [], isCompleted: false };
+        state.myCircuits = [local];
+
+        await setCircuitVisitedState(42, true);
+
+        expect(saveCircuit).toHaveBeenCalledWith(local);
+    });
+
+    it('propagation POIs : ajoute circuitId dans visitedByCircuits + recomputeVu', async () => {
+        const feature = poi('p1', 'A');
+        state.loadedFeatures = [feature];
+        state.myCircuits = [{ id: 'c1', name: 'C', poiIds: ['p1'], isCompleted: false }];
+
+        await setCircuitVisitedState('c1', true);
+
+        expect(feature.properties.userData.visitedByCircuits).toContain('c1');
+        expect(recomputeVu).toHaveBeenCalled();
+        expect(state.userData['p1']).toBe(feature.properties.userData);
+    });
+
+    it('propagation POIs : retire circuitId de visitedByCircuits quand isVisited=false', async () => {
+        const feature = poi('p1', 'A');
+        feature.properties.userData = { visitedByCircuits: ['c1', 'c2'] };
+        state.loadedFeatures = [feature];
+        state.myCircuits = [{ id: 'c1', name: 'C', poiIds: ['p1'], isCompleted: true }];
+
+        await setCircuitVisitedState('c1', false);
+
+        expect(feature.properties.userData.visitedByCircuits).toEqual(['c2']);
+        expect(recomputeVu).toHaveBeenCalled();
+    });
+
+    it('batchSavePoiData + pushToGist appelés si updates', async () => {
+        const feature = poi('p1', 'A');
+        state.loadedFeatures = [feature];
+        state.myCircuits = [{ id: 'c1', name: 'C', poiIds: ['p1'], isCompleted: false }];
+
+        await setCircuitVisitedState('c1', true);
+
+        expect(batchSavePoiData).toHaveBeenCalledWith('djerba', expect.arrayContaining([
+            expect.objectContaining({ poiId: 'p1' })
+        ]));
+        expect(pushToGist).toHaveBeenCalled();
+    });
+
+    it('notifyCircuitChanged + circuit:list-updated quand activeCircuitId === circuitId', async () => {
+        state.myCircuits = [{ id: 'c1', name: 'C', poiIds: [], isCompleted: false }];
+        state.activeCircuitId = 'c1';
+
+        const handler = vi.fn();
+        window.addEventListener('circuit:updated', handler);
+        await setCircuitVisitedState('c1', true);
+        window.removeEventListener('circuit:updated', handler);
+
+        expect(handler).toHaveBeenCalled();
+        expect(eventBus.emit).toHaveBeenCalledWith('circuit:list-updated');
+    });
+
+    it('toast error + early return si saveAppState lance', async () => {
+        state.officialCircuits = [{ id: 'off1', name: 'O', poiIds: ['p1'] }];
+        state.loadedFeatures = [poi('p1', 'A')];
+        saveAppState.mockRejectedValueOnce(new Error('IDB down'));
+
+        await setCircuitVisitedState('off1', true);
+
+        expect(showToast).toHaveBeenCalledWith(
+            expect.stringContaining('Erreur'),
+            'error'
+        );
+        // Propagation POIs ne doit pas avoir lieu
+        expect(batchSavePoiData).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('loadCircuitFromIds', () => {
+    it('no-op si inputString vide ou falsy', async () => {
+        await loadCircuitFromIds('');
+        await loadCircuitFromIds(null);
+        await loadCircuitFromIds(undefined);
+        expect(saveCircuit).not.toHaveBeenCalled();
+        expect(showToast).not.toHaveBeenCalled();
+    });
+
+    it('parsing format URL "?import=ID1,ID2"', async () => {
+        state.loadedFeatures = [poi('p1'), poi('p2')];
+        isMobileView.mockReturnValueOnce(true); // évite renderCircuitPanel desktop
+
+        await loadCircuitFromIds('https://example.com/?import=p1,p2');
+
+        expect(saveCircuit).toHaveBeenCalledWith(expect.objectContaining({
+            poiIds: ['p1', 'p2']
+        }));
+    });
+
+    it('parsing format URL avec name : importedName décodé', async () => {
+        state.loadedFeatures = [poi('p1')];
+        isMobileView.mockReturnValueOnce(true);
+
+        await loadCircuitFromIds('?import=p1&name=Mon%20Circuit');
+
+        expect(saveCircuit).toHaveBeenCalledWith(expect.objectContaining({
+            name: 'Mon Circuit'
+        }));
+    });
+
+    it('parsing format Legacy "hw:ID1,ID2"', async () => {
+        state.loadedFeatures = [poi('p1'), poi('p2')];
+        isMobileView.mockReturnValueOnce(true);
+
+        await loadCircuitFromIds('hw:p1,p2');
+
+        expect(saveCircuit).toHaveBeenCalledWith(expect.objectContaining({
+            poiIds: ['p1', 'p2']
+        }));
+    });
+
+    it('parsing format brut "ID1,ID2" (fallback)', async () => {
+        state.loadedFeatures = [poi('p1'), poi('p2')];
+        isMobileView.mockReturnValueOnce(true);
+
+        await loadCircuitFromIds('p1,p2');
+
+        expect(saveCircuit).toHaveBeenCalledWith(expect.objectContaining({
+            poiIds: ['p1', 'p2']
+        }));
+    });
+
+    it('toast warning si aucun POI résolu dans loadedFeatures', async () => {
+        state.loadedFeatures = [poi('px')];
+
+        await loadCircuitFromIds('p1,p2');
+
+        expect(showToast).toHaveBeenCalledWith(
+            expect.stringContaining('Aucune étape correspondante'),
+            'warning'
+        );
+        expect(saveCircuit).not.toHaveBeenCalled();
+    });
+
+    it('toast warning si IDs vides après parsing', async () => {
+        await loadCircuitFromIds('hw:,,');
+
+        expect(showToast).toHaveBeenCalledWith(
+            expect.stringContaining('Données de circuit vides'),
+            'warning'
+        );
+        expect(saveCircuit).not.toHaveBeenCalled();
+    });
+
+    it('addMyCircuit + emit circuit:list-updated après sauvegarde réussie', async () => {
+        state.loadedFeatures = [poi('p1')];
+        isMobileView.mockReturnValueOnce(true);
+
+        await loadCircuitFromIds('p1');
+
+        expect(addMyCircuit).toHaveBeenCalled();
+        expect(eventBus.emit).toHaveBeenCalledWith('circuit:list-updated');
+    });
+
+    it('toast error si saveCircuit lance', async () => {
+        state.loadedFeatures = [poi('p1')];
+        saveCircuit.mockRejectedValueOnce(new Error('IDB fail'));
+
+        await loadCircuitFromIds('p1');
+
+        expect(showToast).toHaveBeenCalledWith(
+            expect.stringContaining('sauvegarde'),
+            'error'
+        );
+        expect(addMyCircuit).not.toHaveBeenCalled();
     });
 });
