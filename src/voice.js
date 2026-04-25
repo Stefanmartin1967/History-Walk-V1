@@ -25,7 +25,7 @@ const punctuationMap = [
 ];
 
 // --- FONCTION CORRIGÉE ---
-function applyPunctuation(text) {
+export function applyPunctuation(text) {
     let correctedText = text;
 
     for (const p of punctuationMap) {
