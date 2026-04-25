@@ -128,7 +128,7 @@ export async function loadAndInitializeMap() {
         fileName = state.destinations.maps[activeMapId].file;
     }
 
-    if (DOM.loaderOverlay) DOM.loaderOverlay.style.display = 'flex';
+    if (DOM.loaderOverlay) DOM.loaderOverlay.classList.remove('is-hidden');
 
     try {
         // Cache-bust : sans ça, le navigateur peut servir une version HTTP-cachée
@@ -153,7 +153,7 @@ export async function loadAndInitializeMap() {
 
     if (!geojsonData) {
         showToast("Impossible de charger la carte.", 'error');
-        if (DOM.loaderOverlay) DOM.loaderOverlay.style.display = 'none';
+        if (DOM.loaderOverlay) DOM.loaderOverlay.classList.add('is-hidden');
         return;
     }
 
@@ -294,7 +294,7 @@ export async function loadAndInitializeMap() {
         eventBus.emit('circuit:list-updated');
     }
 
-    if (DOM.loaderOverlay) DOM.loaderOverlay.style.display = 'none';
+    if (DOM.loaderOverlay) DOM.loaderOverlay.classList.add('is-hidden');
 
     // Gist sync : pull après chargement complet + injecter indicateur
     injectSyncIndicator();

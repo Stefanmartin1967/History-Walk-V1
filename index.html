@@ -64,7 +64,7 @@
             <div class="search-container">
                 <i data-lucide="search" class="search-icon"></i>
                 <input type="search" id="search-input" placeholder="Rechercher un lieu...">
-                <div class="search-results" id="search-results" style="display: none;"></div>
+                <div class="search-results is-hidden" id="search-results"></div>
             </div>
         </div>
 
@@ -74,12 +74,12 @@
             <div class="zones-container">
                 <button class="btn" id="btn-filter-zones" title="Filtre par Zone" aria-label="Filtre par Zone"><i data-lucide="map-pin"></i> <span
                         id="zonesLabel">Zone</span></button>
-                <div class="zones-menu" id="zonesMenu" style="display: none;"></div>
+                <div class="zones-menu" id="zonesMenu"></div>
             </div>
 
             <div class="zones-container">
                 <button class="btn" id="btn-categories" title="Filtrer par catégorie" aria-label="Filtrer par catégorie"><i data-lucide="list"></i> <span>Catégories</span></button>
-                <div class="zones-menu" id="categoriesMenu" style="display: none;"></div>
+                <div class="zones-menu" id="categoriesMenu"></div>
             </div>
 
             <button class="btn" id="btn-filter-vus" title="Masquer les visités" aria-label="Masquer les visités"><i
@@ -109,7 +109,7 @@
             </button>
 
             <!-- GOD MODE TOOLS -->
-            <div class="tools-dropdown-container" id="admin-tools-container" style="display:none;">
+            <div class="tools-dropdown-container is-hidden" id="admin-tools-container">
                 <button class="btn" id="btn-admin-menu" title="God Mode Tools" aria-label="God Mode Tools"
                     style="background-color: var(--danger); color: white;">
                     <i data-lucide="shield-alert"></i>
@@ -180,15 +180,15 @@
             </div>
 
             <!-- HIDDEN LOADERS (Keep them for logic) -->
-            <input type="file" id="geojson-loader" accept=".geojson,.json" style="display: none;">
-            <input type="file" id="photo-gps-loader" accept=".jpg,.jpeg" multiple style="display: none;">
+            <input type="file" id="geojson-loader" accept=".geojson,.json" class="is-hidden">
+            <input type="file" id="photo-gps-loader" accept=".jpg,.jpeg" multiple class="is-hidden">
             <input type="file" id="restore-loader" accept=".json,.geojson,.txt,application/json,text/plain,*/*"
-                style="display:none;">
+                class="is-hidden">
         </div>
     </div>
 
     <div id="map"></div>
-    <div id="app-version" style="display: none;"></div>
+    <div id="app-version" class="is-hidden"></div>
 
     <div class="right-sidebar" id="right-sidebar">
         <div class="sidebar-tabs" id="sidebar-tabs">
@@ -210,8 +210,8 @@
             <div class="panel-header circuit-header">
                 <div class="circuit-title-container">
                     <h2 id="circuit-title-text" title="Nouveau Circuit">Nouveau Circuit</h2>
-                    <button id="edit-circuit-title-button" class="action-button" title="Modifier le titre" aria-label="Modifier le titre" style="margin-left: 8px;"><i data-lucide="pencil"></i></button>
-                    <button id="close-circuit-panel-btn" class="header-btn" title="Fermer le mode création" aria-label="Fermer le mode création" style="margin-left: auto;"><i data-lucide="x"></i></button>
+                    <button id="edit-circuit-title-button" class="action-button" title="Modifier le titre" aria-label="Modifier le titre"><i data-lucide="pencil"></i></button>
+                    <button id="close-circuit-panel-btn" class="header-btn" title="Fermer le mode création" aria-label="Fermer le mode création"><i data-lucide="x"></i></button>
                 </div>
 
                 <div class="circuit-description-container">
@@ -263,7 +263,7 @@
                 <button class="footer-btn pill" id="btn-loop-circuit" title="Boucler le circuit" aria-label="Boucler le circuit"><i data-lucide="repeat"></i></button>
                 <button class="footer-btn pill" id="btn-clear-circuit" title="Vider le circuit" aria-label="Vider le circuit"><i data-lucide="trash-2"></i></button>
                 <div class="separator-vertical"></div>
-                <button class="footer-btn pill" id="btn-modify-circuit" title="Modifier le circuit" aria-label="Modifier le circuit" style="display:none;"><i data-lucide="edit-3"></i></button>
+                <button class="footer-btn pill is-hidden" id="btn-modify-circuit" title="Modifier le circuit" aria-label="Modifier le circuit"><i data-lucide="edit-3"></i></button>
                 <button class="footer-btn pill" id="btn-import-gpx" title="Importer GPX" aria-label="Importer GPX" disabled><i data-lucide="upload-cloud"></i></button>
                 <button class="footer-btn pill" id="btn-export-gpx" title="Exporter GPX" aria-label="Exporter GPX" disabled><i data-lucide="download-cloud"></i></button>
                 <a href="https://gpx.studio/fr/app" target="_blank" class="footer-btn pill" id="btn-open-gpx-studio" title="Ouvrir GPX Studio" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
@@ -411,7 +411,7 @@
         </div>
     </div>
 
-    <div id="fullscreen-editor" style="display: none;">
+    <div id="fullscreen-editor">
         <div class="editor-header">
             <h2 id="editor-title">Éditer</h2>
             <button id="editor-cancel-btn" title="Annuler" aria-label="Annuler"><i data-lucide="arrow-left"></i> Annuler</button>
@@ -420,14 +420,14 @@
         <textarea id="editor-textarea"></textarea>
     </div>
 
-    <input type="file" id="gpx-importer" accept=".gpx" style="display: none;">
-    <input type="file" id="destination-loader" style="display: none;">
-    <div id="loader-overlay" class="loader-overlay" style="display: none;">
+    <input type="file" id="gpx-importer" accept=".gpx" class="is-hidden">
+    <input type="file" id="destination-loader" class="is-hidden">
+    <div id="loader-overlay" class="loader-overlay is-hidden">
         <div class="loader-spinner"></div>
     </div>
     <div id="toast-container" class="toast-container"></div>
 
-    <div id="photo-viewer" class="photo-viewer" style="display: none;">
+    <div id="photo-viewer" class="photo-viewer">
         <span class="close-viewer">×</span>
         <div class="viewer-nav nav-prev" id="viewer-prev">❮</div>
         <img class="viewer-content" id="viewer-img">
@@ -447,7 +447,7 @@
 
     <script type="module" src="/src/main.js"></script>
 
-    <div id="selection-wizard-modal" class="modal-overlay" style="display: none;">
+    <div id="selection-wizard-modal" class="modal-overlay is-hidden">
         <div class="modal-content wizard-content">
             <div class="modal-header">
                 <h2>Mode Sélection</h2>

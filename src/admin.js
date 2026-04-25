@@ -189,7 +189,7 @@ export function showAdminLoginModal() {
 function toggleAdminUI(isAdmin) {
     const adminContainer = document.getElementById('admin-tools-container');
     if (adminContainer) {
-        adminContainer.style.display = isAdmin ? 'block' : 'none';
+        adminContainer.classList.toggle('is-hidden', !isAdmin);
     }
 
 }

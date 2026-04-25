@@ -115,7 +115,7 @@ export function setupDesktopUIListeners() {
     if (DOM.searchInput) DOM.searchInput.addEventListener('input', setupSearch);
     document.addEventListener('click', (e) => {
         if (DOM.searchResults && !e.target.closest('.search-container')) {
-            DOM.searchResults.style.display = 'none';
+            DOM.searchResults.classList.add('is-hidden');
         }
     });
 

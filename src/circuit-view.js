@@ -134,7 +134,7 @@ export function updateControlButtons(uiState) {
     }
 
     if (btnModify) {
-        btnModify.style.display = uiState.isActive ? 'flex' : 'none';
+        btnModify.classList.toggle('is-hidden', !uiState.isActive);
         btnModify.disabled = false;
     }
 

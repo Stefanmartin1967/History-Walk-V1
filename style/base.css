@@ -89,6 +89,11 @@ body {
 .is-hidden { display: none !important; }
 .icon-ok { color: var(--ok); }
 
+/* Specificity helpers pour migration CSP 2b/1 : display par défaut quand visible (via classList.toggle('is-hidden')) */
+#btn-modify-circuit { display: flex; }
+#edit-circuit-title-button { margin-left: 8px; }
+#close-circuit-panel-btn { margin-left: auto; }
+
 /* ======================== STYLES PC ============================ */
 
 .topbar {
