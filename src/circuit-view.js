@@ -114,7 +114,7 @@ export function updateCircuitHeader(data) {
 
     const btnDelete = document.getElementById('btn-delete-active-circuit');
     if (btnDelete) {
-        btnDelete.style.display = state.activeCircuitId ? 'flex' : 'none';
+        btnDelete.classList.toggle('is-hidden', !state.activeCircuitId);
     }
 }
 

@@ -91,7 +91,7 @@ function updateAdminLoginButton() {
     if (!separator) {
         separator = document.createElement('div');
         separator.id = 'admin-menu-separator';
-        separator.style.cssText = 'height:1px;width:100%;background:var(--line);margin:5px 0';
+        separator.className = 'tools-menu-separator';
         menuContent.appendChild(separator);
     }
     separator.style.display = '';
