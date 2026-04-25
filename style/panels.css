@@ -596,12 +596,21 @@
     display: grid;
     place-items: center;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    /* Double shadow : porte (close) + ring (contraste sur photos claires/ciel) */
+    box-shadow:
+        0 2px 8px rgba(0,0,0,0.35),
+        0 0 0 1px rgba(0,0,0,0.05);
     border: none;
     z-index: 2;
-    transition: background 0.15s, transform 0.15s;
+    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
 }
-.poi-back-pill:hover { background: #fff; transform: scale(1.05); }
+.poi-back-pill:hover {
+    background: #fff;
+    transform: scale(1.05);
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(0,0,0,0.05);
+}
 .poi-back-pill svg { width: 18px; height: 18px; }
 
 /* Hero state vide (pas de photo) */
@@ -649,6 +658,14 @@
 .poi-title-block {
     padding: 18px 24px 14px;
     border-bottom: 1px solid var(--surface-muted);
+}
+.poi-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin: 0 0 6px;
 }
 .poi-title {
     margin: 0 0 4px;
@@ -980,15 +997,19 @@
 .poi-tool-brand .ico-box,
 .poi-tool-btn.danger .ico-box { background: #fee2e2; color: var(--danger); }
 
-/* Mobile : panel = bloc qui se déroule naturellement dans #mobile-main-container
-   (qui est lui-même scrollable). Header + CTA en position sticky sur les bords. */
+/* Mobile : flex column qui occupe au minimum la hauteur du conteneur scrollable
+   #mobile-main-container. Le body grandit pour pousser la CTA bar en bas vraiment.
+   Sans min-height + flex-grow, sur un POI à description vide la CTA bar
+   collait au contenu et apparaissait au milieu du viewport (vide blanc dessous). */
 .poi-panel.is-mobile {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
     height: auto;
 }
 .poi-panel.is-mobile .poi-body {
+    flex: 1 1 auto;
     overflow: visible;
-    flex: none;
 }
 .poi-panel.is-mobile .poi-mobile-header {
     padding: 8px 14px 14px;
