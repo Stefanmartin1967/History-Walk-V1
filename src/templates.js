@@ -221,18 +221,31 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
            </section>`
         : '';
 
-    // Section Détails pratiques (chips, masqués si vides)
+    // Section Détails pratiques
+    // - Si pas de temps de visite ET (prix vide OU prix=0) → "Visite libre" (1 chip englobante)
+    // - Sinon → chips renseignées (durée si renseignée, prix payant uniquement, horaires/téléphone si renseignés)
+    const isPaid = hasPrice && priceValue > 0;
+    const isFreeAccess = !hasTime && !isPaid;
+
     const facts = [];
-    if (hasTime) facts.push(`
-        <div class="poi-fact">
-            <div class="ico"><i data-lucide="clock"></i></div>
-            <div><span class="lab">Durée de visite</span><span class="val">${escapeXml(timeText)}</span></div>
-        </div>`);
-    if (hasPrice) facts.push(`
-        <div class="poi-fact">
-            <div class="ico"><i data-lucide="ticket"></i></div>
-            <div><span class="lab">Prix d'entrée</span><span class="val">${escapeXml(priceText)}</span></div>
-        </div>`);
+    if (isFreeAccess) {
+        facts.push(`
+            <div class="poi-fact">
+                <div class="ico"><i data-lucide="door-open"></i></div>
+                <div><span class="lab">Accès</span><span class="val">Visite libre</span></div>
+            </div>`);
+    } else {
+        if (hasTime) facts.push(`
+            <div class="poi-fact">
+                <div class="ico"><i data-lucide="clock"></i></div>
+                <div><span class="lab">Durée de visite</span><span class="val">${escapeXml(timeText)}</span></div>
+            </div>`);
+        if (isPaid) facts.push(`
+            <div class="poi-fact">
+                <div class="ico"><i data-lucide="ticket"></i></div>
+                <div><span class="lab">Prix d'entrée</span><span class="val">${escapeXml(priceText)}</span></div>
+            </div>`);
+    }
     if (hasHours) facts.push(`
         <div class="poi-fact">
             <div class="ico"><i data-lucide="calendar-clock"></i></div>
@@ -246,12 +259,11 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 <div><span class="lab">Téléphone</span><span class="val"><a href="tel:${escapeXml(tel)}">${escapeXml(phone)}</a></span></div>
             </div>`);
     }
-    const practicalSection = facts.length > 0
-        ? `<section class="poi-section">
-              <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="info"></i>Détails pratiques</span></h3>
-              <div class="poi-practical">${facts.join('')}</div>
-           </section>`
-        : '';
+    const practicalSection = `
+        <section class="poi-section">
+            <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="info"></i>Détails pratiques</span></h3>
+            <div class="poi-practical">${facts.join('')}</div>
+        </section>`;
 
     // Section Mon suivi
     const suiviSection = `
@@ -270,15 +282,20 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             </div>
         </section>`;
 
-    // Description block
+    // Description block (TTS button uniquement si description présente — rien à lire sinon)
     const descSection = `
         <section class="poi-section description-section">
             <h3 class="poi-section-title">
                 <span class="ttl-text">Description</span>
-                <button class="ttl-action speak-btn" title="Lire à voix haute" aria-label="Lire à voix haute"><i data-lucide="volume-2"></i></button>
+                ${hasLongDesc ? `<button class="ttl-action speak-btn" title="Lire à voix haute" aria-label="Lire à voix haute"><i data-lucide="volume-2"></i></button>` : ''}
             </h3>
             ${descBlock}
         </section>`;
+
+    // Compteur position dans le circuit (3 / 12) — affiché en eyebrow si in circuit
+    const positionText = inCircuit && state.currentCircuit
+        ? `${circuitIndex + 1} / ${state.currentCircuit.length}`
+        : '';
 
     // Tools panel content (commun PC + mobile, mais boutons spécifiques device)
     const toolsContent = buildToolsPanelHtml({ hasAr, hasGpxDesc, isMobile: mobile });
@@ -301,6 +318,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 ${heroHtml}
                 <div class="poi-body">
                     <div class="poi-title-block">
+                        ${positionText || zone || showCategory ? `<div class="poi-eyebrow">${[zone, showCategory ? category : '', positionText].filter(Boolean).map(escapeXml).join(' · ')}</div>` : ''}
                         <h2 class="poi-title" id="panel-title-fr">${escapeXml(poiName)}</h2>
                         ${hasAr ? `<h2 class="poi-title poi-subtitle-ar is-hidden" id="panel-title-ar" dir="rtl">${escapeXml(arName)}</h2>` : ''}
                     </div>
@@ -331,7 +349,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
 
     // ========== TEMPLATE MOBILE ==========
     const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: false });
-    const headerCap = [zone, showCategory ? category : ''].filter(Boolean).join(' · ');
+    const headerCap = [zone, showCategory ? category : '', positionText].filter(Boolean).join(' · ');
 
     return `
         <div class="poi-panel is-mobile" data-poi-id="${escapeXml(feature.properties.HW_ID || '')}">
