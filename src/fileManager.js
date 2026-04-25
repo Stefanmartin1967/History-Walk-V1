@@ -101,7 +101,7 @@ export function handleExportWithContribution(actionType, proceedCallback) {
     }
 }
 
-function getActionLabel(type) {
+export function getActionLabel(type) {
     switch (type) {
         case 'gpx': return "Exporter le GPX";
         case 'circuits': return "Exporter les Circuits";
@@ -255,7 +255,7 @@ async function downloadJSON(data, filename) {
  * @param {Object} json L'objet JSON à vérifier
  * @returns {boolean} True si valide, False sinon
  */
-function isValidBackup(json) {
+export function isValidBackup(json) {
     if (!json || typeof json !== 'object') return false;
 
     // backupVersion (doit exister)
@@ -456,7 +456,7 @@ export function handleRestoreFile(event) {
  * @param {any} obj L'objet ou tableau à nettoyer
  * @returns {any} L'objet nettoyé
  */
-function cleanDataForExport(obj) {
+export function cleanDataForExport(obj) {
     if (obj === null || obj === undefined) return undefined;
 
     if (Array.isArray(obj)) {
@@ -477,7 +477,7 @@ function cleanDataForExport(obj) {
     return obj;
 }
 
-async function prepareExportData(includePhotos = false) {
+export async function prepareExportData(includePhotos = false) {
     const geojson = {
         type: 'FeatureCollection',
         features: state.loadedFeatures.map(f => {
