@@ -30,7 +30,7 @@ import {
     Map, MapPin, MapPinOff, MapPinPlus, Route, Globe,
 
     // Médias
-    Camera, Image, ImagePlus, ImageDown, ImageUp,
+    Camera, Image, ImageOff, ImagePlus, ImageDown, ImageUp,
     Mic, MicOff, Volume2, Play,
 
     // Sécurité & statut
@@ -51,6 +51,7 @@ import {
     // UI & layout
     Pencil, Edit3, Printer, Palette, Languages, Paperclip,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,
+    CalendarClock, Phone, Bookmark, Landmark, Wrench,
     Ticket, Table, Package, PackageCheck, Server, ServerCog,
     Luggage, Heart, Coffee, Utensils, Ruler,
 
@@ -75,7 +76,7 @@ export const appIcons = {
 
     Map, MapPin, MapPinOff, MapPinPlus, Route, Globe,
 
-    Camera, Image, ImagePlus, ImageDown, ImageUp,
+    Camera, Image, ImageOff, ImagePlus, ImageDown, ImageUp,
     Mic, MicOff, Volume2, Play,
 
     ShieldAlert, ShieldCheck, ShieldOff, ShieldX,
@@ -91,6 +92,7 @@ export const appIcons = {
 
     Pencil, Edit3, Printer, Palette, Languages, Paperclip,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,
+    CalendarClock, Phone, Bookmark, Landmark, Wrench,
     Ticket, Table, Package, PackageCheck, Server, ServerCog,
     Luggage, Heart, Coffee, Utensils, Ruler,
 };

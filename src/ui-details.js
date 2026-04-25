@@ -6,7 +6,7 @@ import { isMobileView, pushMobileLevel } from './mobile-state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
-import { calculateAdjustedTime, sanitizeHTML } from './utils.js';
+import { sanitizeHTML } from './utils.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
 import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -17,8 +17,7 @@ export function initUiDetailsListeners() {
 }
 
 function setupGlobalEditButton(poiId) {
-    const editBtns = document.querySelectorAll('#btn-global-edit'); // querySelectorAll au cas où (PC/Mobile)
-
+    const editBtns = document.querySelectorAll('#btn-global-edit');
     editBtns.forEach(btn => {
         btn.addEventListener('click', () => {
              eventBus.emit('richEditor:open-for-edit', poiId);
@@ -26,97 +25,169 @@ function setupGlobalEditButton(poiId) {
     });
 }
 
-function setupDetailsEventListeners(poiId) {
-    // Note : Comme le HTML est écrasé à chaque ouverture, pas de risque de double-binding ici
-    // tant qu'on cible des éléments à l'intérieur du panneau.
+// Applique le background-image du hero via CSSOM (CSP-safe : 'unsafe-inline' style retiré).
+function applyHeroBackground() {
+    const hero = document.getElementById('poi-hero');
+    if (!hero) return;
+    const url = hero.dataset.bgUrl;
+    if (!url) return;
+    const safe = String(url).replace(/['"\\]/g, encodeURIComponent);
+    hero.style.setProperty('--poi-hero-bg', `url("${safe}")`);
+    hero.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
+}
 
-    // --- TOGGLE DESCRIPTION GPX (PRIORITAIRE) ---
-    const toggleGpxBtn = document.getElementById('btn-toggle-gpx-desc') || document.getElementById('mobile-btn-toggle-gpx-desc');
-    const gpxSection = document.getElementById('section-gpx-desc') || document.getElementById('mobile-section-gpx-desc');
+function setupToolsDrawer() {
+    const trigger = document.getElementById('poi-tools-trigger');
+    if (!trigger) return;
 
-    if (toggleGpxBtn && gpxSection) {
-        // Détection du contenu
-        const shortDescText = document.getElementById('panel-short-desc-display')?.textContent ||
-                              gpxSection.querySelector('.short-text')?.textContent || "";
-        const hasGpxDesc = shortDescText && shortDescText.trim() !== "";
-
-        // État Initial
-        if (hasGpxDesc) {
-            toggleGpxBtn.style.color = "var(--brand)";
-            toggleGpxBtn.style.opacity = "1";
-            gpxSection.style.setProperty('display', 'flex', 'important');
-        } else {
-            toggleGpxBtn.style.color = "var(--ink-soft)";
-            toggleGpxBtn.style.opacity = "0.5";
-            gpxSection.style.setProperty('display', 'none', 'important');
-        }
-
-        // Click Listener (Robuste et simple)
-        toggleGpxBtn.onclick = (e) => {
-            e.stopPropagation(); // Évite propagation parasite
-            const currentDisplay = window.getComputedStyle(gpxSection).display;
-
-            if (currentDisplay === 'none') {
-                gpxSection.style.setProperty('display', 'flex', 'important');
-            } else {
-                gpxSection.style.setProperty('display', 'none', 'important');
-            }
+    if (isMobileView()) {
+        const sheet = document.getElementById('poi-mobile-tools-sheet');
+        const close = () => {
+            sheet?.classList.remove('is-open');
+            sheet?.setAttribute('aria-hidden', 'true');
+            trigger.setAttribute('aria-expanded', 'false');
+            document.querySelector('.poi-panel.is-mobile')?.classList.remove('tools-open');
         };
-    }
-
-    const inputPrice = document.getElementById('panel-price');
-    if (inputPrice) {
-        inputPrice.addEventListener('input', (e) => updatePoiData(poiId, 'price', e.target.value));
-    }
-
-    const chkVu = document.getElementById('panel-chk-vu');
-    if (chkVu) {
-        chkVu.addEventListener('change', (e) => {
-            updatePoiData(poiId, 'vu', e.target.checked);
-            // Rafraîchit les marqueurs sur mobile ET desktop (cohérent avec setCircuitVisitedState)
-            applyFilters();
+        trigger.addEventListener('click', () => {
+            const open = !sheet.classList.contains('is-open');
+            sheet.classList.toggle('is-open', open);
+            sheet.setAttribute('aria-hidden', open ? 'false' : 'true');
+            trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            document.querySelector('.poi-panel.is-mobile')?.classList.toggle('tools-open', open);
         });
+        // Tap hors du panneau → fermer
+        sheet?.addEventListener('click', (e) => {
+            if (!e.target.closest('.sheet-panel')) close();
+        });
+        // Tap sur un bouton du tiroir → fermer après l'action
+        sheet?.querySelectorAll('.poi-tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => setTimeout(close, 50));
+        });
+        return;
     }
 
-    // --- NOUVEAU CÂBLAGE : CASE INCONTOURNABLE ---
-const chkInc = document.getElementById('panel-chk-incontournable');
-if (chkInc) {
-    chkInc.addEventListener('change', async (e) => {
-        // 1. Sauvegarde (Mémoire + Disque) via votre fonction habituelle
-        await updatePoiData(poiId, 'incontournable', e.target.checked);
+    // Desktop : drawer en pied de panneau, mémorise l'état dans localStorage
+    const tools = document.getElementById('poi-tools');
+    const panel = document.getElementById('poi-tools-panel');
+    if (!tools || !panel) return;
 
-        // 2. Mise à jour visuelle : on refiltre → events-bus redessine (style doré)
-        if (!isMobileView()) applyFilters();
+    const STORAGE_KEY = 'hw_poi_tools_open';
+    const initialOpen = localStorage.getItem(STORAGE_KEY) === '1';
+    if (initialOpen) {
+        tools.classList.add('is-open');
+        panel.classList.remove('is-hidden');
+        trigger.setAttribute('aria-expanded', 'true');
+    }
+    trigger.addEventListener('click', () => {
+        const open = !tools.classList.contains('is-open');
+        tools.classList.toggle('is-open', open);
+        panel.classList.toggle('is-hidden', !open);
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        localStorage.setItem(STORAGE_KEY, open ? '1' : '0');
     });
 }
 
-    const chkVerif = document.getElementById('panel-chk-verified');
-    if (chkVerif) {
-        chkVerif.addEventListener('change', (e) => updatePoiData(poiId, 'verified', e.target.checked));
-    }
-
-    const softDeleteBtn = document.getElementById('btn-soft-delete');
-    if (softDeleteBtn) {
-        softDeleteBtn.addEventListener('click', () => {
-            eventBus.emit('poi:request-soft-delete', state.currentFeatureId);
+function setupSuiviToggles(poiId) {
+    document.querySelectorAll('[data-toggle]').forEach(toggleEl => {
+        const field = toggleEl.dataset.toggle; // 'vu' ou 'incontournable'
+        toggleEl.addEventListener('click', async () => {
+            const willBeOn = !toggleEl.classList.contains('is-on');
+            toggleEl.classList.toggle('is-on', willBeOn);
+            // Hint update (libellé sous le toggle)
+            const hint = toggleEl.querySelector('.lab-hint');
+            if (hint) {
+                if (field === 'vu') {
+                    hint.textContent = willBeOn ? 'Ajouté à mon carnet de voyage' : 'Cocher après visite sur place';
+                } else if (field === 'incontournable') {
+                    hint.textContent = willBeOn ? 'Mis en avant sur la carte' : 'Mettre en avant sur la carte';
+                }
+            }
+            await updatePoiData(poiId, field, willBeOn);
+            // Refresh markers (CSS doré pour incontournable, état visité)
+            if (!isMobileView()) applyFilters();
+            else if (field === 'incontournable') applyFilters();
         });
-    }
+    });
+}
 
+function setupNotesAutosave(poiId) {
+    const notesEl = document.getElementById('poi-notes-area');
+    if (!notesEl) return;
+    let debounce = null;
+    notesEl.addEventListener('input', (e) => {
+        clearTimeout(debounce);
+        const value = e.target.value;
+        debounce = setTimeout(() => updatePoiData(poiId, 'notes', value), 350);
+    });
+    notesEl.addEventListener('blur', (e) => {
+        clearTimeout(debounce);
+        updatePoiData(poiId, 'notes', e.target.value);
+    });
+}
+
+function setupHeroClick(poiId) {
+    const hero = document.getElementById('poi-hero');
+    if (!hero || !hero.classList.contains('has-photo')) return;
+    hero.addEventListener('click', (e) => {
+        // Évite les clics sur le bouton close interne
+        if (e.target.closest('.poi-back-pill')) return;
+        openPhotoGrid(poiId);
+    });
+}
+
+function setupCtaItinerary() {
+    const cta = document.getElementById('poi-cta-itinerary');
+    if (!cta) return;
+    cta.addEventListener('click', () => {
+        const feature = state.loadedFeatures[state.currentFeatureId];
+        if (!feature || !feature.geometry) {
+            showToast('Coordonnées introuvables.', 'error');
+            return;
+        }
+        const [lng, lat] = feature.geometry.coordinates;
+        // Google Maps directions
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank', 'noopener,noreferrer');
+    });
+}
+
+function setupGpxDescToggle() {
+    // Bouton "Desc. GPX" du tiroir → toggle visibilité de la section poi-gpx-section
+    const toggleBtn = document.getElementById('btn-toggle-gpx-desc') || document.getElementById('mobile-btn-toggle-gpx-desc');
+    const section = document.getElementById('section-gpx-desc') || document.getElementById('mobile-section-gpx-desc');
+    if (!toggleBtn || !section) return;
+    toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        section.classList.toggle('is-hidden');
+        // Scroll into view si on vient d'ouvrir
+        if (!section.classList.contains('is-hidden')) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    });
+}
+
+function setupDetailsEventListeners(poiId) {
+    setupSuiviToggles(poiId);
+    setupNotesAutosave(poiId);
+    setupHeroClick(poiId);
+    setupCtaItinerary();
+    setupToolsDrawer();
+    setupGpxDescToggle();
+
+    // --- Bouton "Vérifier sur Google Maps" (lookup, ancien open-gmaps-btn) ---
     const gmapsBtn = document.getElementById('open-gmaps-btn');
     if (gmapsBtn) {
         gmapsBtn.addEventListener('click', () => {
             const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
             if (feature && feature.geometry && feature.geometry.coordinates) {
                 const [lng, lat] = feature.geometry.coordinates;
-                // Lien Google Maps universel
-                window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+                window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank', 'noopener,noreferrer');
             } else {
-                showToast("Coordonnées introuvables.", "error");
+                showToast('Coordonnées introuvables.', 'error');
             }
         });
     }
 
-    // --- DEPLACEMENT DU MARQUEUR (MODE DRAG & DROP) ---
+    // --- Bouton "Déplacer marqueur" (PC drag pin) ---
     const moveMarkerBtn = document.getElementById('btn-move-marker');
     if (moveMarkerBtn) {
         moveMarkerBtn.addEventListener('click', () => {
@@ -129,59 +200,55 @@ if (chkInc) {
                      if (lngInput) lngInput.value = lng.toFixed(5);
                  },
                  onEnd: async (lat, lng, revert) => {
-                     // Capture old coords before saving (for undo)
                      const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
                      const [prevLng, prevLat] = feature.geometry.coordinates;
-
-                     if (await showConfirm("Déplacement", "Valider la nouvelle position ?", "Valider", "Annuler")) {
+                     if (await showConfirm('Déplacement', 'Valider la nouvelle position ?', 'Valider', 'Annuler')) {
                          await updatePoiCoordinates(poiId, lat, lng);
-                         showToast("Position mise à jour.", "success", 8000, {
-                             label: "Annuler",
+                         showToast('Position mise à jour.', 'success', 8000, {
+                             label: 'Annuler',
                              onClick: async () => {
                                  revert();
                                  await updatePoiCoordinates(poiId, prevLat, prevLng);
-                                 const latInput = document.getElementById('poi-lat');
-                                 const lngInput = document.getElementById('poi-lng');
-                                 if (latInput) latInput.value = prevLat.toFixed(5);
-                                 if (lngInput) lngInput.value = prevLng.toFixed(5);
-                                 showToast("Position restaurée.", "info");
+                                 showToast('Position restaurée.', 'info');
                              }
                          });
                      } else {
                          revert();
-                         // Reset inputs
-                         const latInput = document.getElementById('poi-lat');
-                         const lngInput = document.getElementById('poi-lng');
-                         if (latInput) latInput.value = prevLat.toFixed(5);
-                         if (lngInput) lngInput.value = prevLng.toFixed(5);
                      }
                  }
              });
         });
     }
 
-    // --- NOUVEAU : BOUTON RECHERCHE GOOGLE ---
-    const searchBtns = document.querySelectorAll('.btn-web-search');
+    // --- Bouton "Capturer position" (Mobile getCurrentPosition) ---
+    const moveBtnMobile = document.getElementById('mobile-move-poi-btn');
+    if (moveBtnMobile) {
+        moveBtnMobile.addEventListener('click', async () => {
+            if (await showConfirm('Mise à jour GPS', 'Mettre à jour avec votre position GPS actuelle ?', 'Mettre à jour', 'Annuler')) {
+                eventBus.emit('mobile:update-poi-position', poiId);
+            }
+        });
+    }
+
+    // --- Bouton recherche Google ---
+    const searchBtns = document.querySelectorAll('.btn-web-search, #btn-web-search');
     searchBtns.forEach(btn => {
         btn.addEventListener('click', () => {
              const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
              if (feature) {
                  const name = getPoiName(feature);
-                 // Construction de la requête "Nom + Djerba"
-                 const query = encodeURIComponent(`${name} Djerba`);
-                 window.open(`https://www.google.com/search?q=${query}`, '_blank');
+                 const query = encodeURIComponent(name);
+                 window.open(`https://www.google.com/search?q=${query}`, '_blank', 'noopener,noreferrer');
              }
         });
     });
 
-    // --- TOGGLE LANGUE (FR/AR) ---
+    // --- Toggle FR / AR ---
     const toggleLangBtn = document.getElementById('btn-toggle-lang') || document.getElementById('mobile-btn-toggle-lang');
-    if (toggleLangBtn) {
+    if (toggleLangBtn && !toggleLangBtn.disabled) {
         toggleLangBtn.addEventListener('click', () => {
-            // On cible large (PC et Mobile)
             const fr = document.getElementById('panel-title-fr') || document.getElementById('mobile-title-fr');
             const ar = document.getElementById('panel-title-ar') || document.getElementById('mobile-title-ar');
-
             if (fr && ar) {
                 fr.classList.toggle('is-hidden');
                 ar.classList.toggle('is-hidden');
@@ -189,7 +256,7 @@ if (chkInc) {
         });
     }
 
-    // --- TTS (Text-To-Speech) ---
+    // --- TTS lecture description ---
     const speakBtns = document.querySelectorAll('.speak-btn');
     speakBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -197,43 +264,33 @@ if (chkInc) {
              if (!feature) return;
              const props = feature.properties || {};
              const userData = props.userData || {};
-             const textToRead = userData.description || props.Description || userData.Description || "Pas de description.";
-
+             const textToRead = userData.description || props.Description || userData.Description || 'Pas de description.';
              speakText(textToRead, btn);
         });
     });
 
-    // PHOTO GRID BUTTON LISTENER
-    const btnPhotoGrid = document.getElementById('btn-open-photo-grid') || document.getElementById('mobile-btn-open-photo-grid');
-    if(btnPhotoGrid) {
-        btnPhotoGrid.onclick = (e) => {
+    // --- Bouton "Photos" (galerie) ---
+    const btnPhotoGrid = document.getElementById('btn-open-photo-grid');
+    if (btnPhotoGrid) {
+        btnPhotoGrid.addEventListener('click', (e) => {
             e.stopPropagation();
             openPhotoGrid(poiId);
-        };
+        });
     }
 
-    // Ajustement du temps
-    document.getElementById('time-increment-btn')?.addEventListener('click', () => adjustTime(5));
-    document.getElementById('time-decrement-btn')?.addEventListener('click', () => adjustTime(-5));
+    // --- Bouton soft delete ---
+    const softDeleteBtn = document.getElementById('btn-soft-delete');
+    if (softDeleteBtn) {
+        softDeleteBtn.addEventListener('click', () => {
+            eventBus.emit('poi:request-soft-delete', state.currentFeatureId);
+        });
+    }
 
-    // Ajustement du prix (Stepper)
-    document.getElementById('price-increment-btn')?.addEventListener('click', () => adjustPrice(0.5));
-    document.getElementById('price-decrement-btn')?.addEventListener('click', () => adjustPrice(-0.5));
-
-    // Navigation Mobile vs Desktop
+    // --- Navigation prev/next + close ---
     if (isMobileView()) {
-        const moveBtn = document.getElementById('mobile-move-poi-btn');
-        if (moveBtn) {
-            moveBtn.addEventListener('click', async () => {
-                if (await showConfirm("Mise à jour GPS", "Mettre à jour avec votre position GPS actuelle ?", "Mettre à jour", "Annuler")) {
-                    eventBus.emit('mobile:update-poi-position', poiId);
-                }
-            });
-        }
         document.getElementById('details-prev-btn')?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
         document.getElementById('details-next-btn')?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
         document.getElementById('details-close-btn')?.addEventListener('click', () => closeDetailsPanel(true));
-
     } else {
         document.getElementById('prev-poi-button')?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
         document.getElementById('next-poi-button')?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
@@ -245,24 +302,19 @@ if (chkInc) {
 
 export function openDetailsPanel(featureId, circuitIndex = null) {
     if (featureId === undefined || featureId < 0) return;
+    if (!isMobileView()) eventBus.emit('map:close-popup');
 
-    // Fermeture propre d'une éventuelle popup carte existante
-    if(!isMobileView()) eventBus.emit('map:close-popup');
-
-    // Sécurité: feature existe ?
     const feature = state.loadedFeatures[featureId];
     if (!feature) return;
 
-    // --- CORRECTION : Auto-détection intelligente du circuit ---
+    // Auto-détection du circuit
     if (circuitIndex === null && state.currentCircuit && state.currentCircuit.length > 0) {
         const currentId = getPoiId(feature);
         const foundIndex = state.currentCircuit.findIndex(f => getPoiId(f) === currentId);
         if (foundIndex !== -1) circuitIndex = foundIndex;
     }
 
-    // Proactif C7 : on pousse une entrée d'historique pour le niveau 3 (POI)
-    // uniquement sur une ouverture fraîche (pas pendant un swipe entre POIs,
-    // où currentFeatureId est déjà défini). Mobile seulement.
+    // Proactif Back Android (C7)
     const isFreshOpen = state.currentFeatureId === null;
     if (isFreshOpen && isMobileView()) {
         pushMobileLevel('p');
@@ -275,17 +327,20 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
     const targetPanel = isMobileView() ? DOM.mobileMainContainer : DOM.detailsPanel;
     targetPanel.innerHTML = buildHTML(feature, circuitIndex);
 
-    // Ré-attachement des écouteurs
+    // Background hero (CSSOM, CSP-safe)
+    applyHeroBackground();
+
+    // Bindings
     const poiId = getPoiId(feature);
     setupGlobalEditButton(poiId);
     setupDetailsEventListeners(poiId);
 
-    // Initialisation icônes Lucide
+    // Icônes Lucide
     createIcons({ icons: appIcons });
 
     if (isMobileView()) {
         targetPanel.style.display = 'block';
-        targetPanel.style.overflowY = 'auto'; // Fix for scrollbar issue
+        targetPanel.style.overflowY = 'auto';
         targetPanel.classList.add('mobile-standard-padding');
         targetPanel.classList.remove('view-enter');
         void targetPanel.offsetWidth;
@@ -303,23 +358,22 @@ export function closeDetailsPanel(goBackToList = false) {
     if (window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
     if (isDictationActive()) stopDictation();
 
-    // Rollback POI fantôme : si la fiche en cours correspond à un POI "pending"
-    // (créé via le bouton "+" mobile mais non édité), on le jette.
+    // Rollback POI fantôme
     if (state.currentFeatureId !== null && state.currentFeatureId !== undefined) {
         const pendingFeature = state.loadedFeatures[state.currentFeatureId];
         if (pendingFeature) {
             const pendingId = getPoiId(pendingFeature);
             if (isPendingPoi(pendingId)) {
                 discardPendingPoi(pendingId);
-                showToast("Lieu non validé : création annulée.", "info", 2500);
+                showToast('Lieu non validé : création annulée.', 'info', 2500);
             }
         }
     }
 
-    setCurrentFeatureId(null); // Reset filter universally BEFORE rendering either view
+    setCurrentFeatureId(null);
 
     if (isMobileView()) {
-        if(goBackToList && state.activeCircuitId) {
+        if (goBackToList && state.activeCircuitId) {
             eventBus.emit('mobile:render-poi-list', state.currentCircuit);
         } else {
              eventBus.emit('mobile:render-circuits-list');
@@ -331,47 +385,5 @@ export function closeDetailsPanel(goBackToList = false) {
             eventBus.emit('ui:render-explorer-list');
             switchSidebarTab('explorer');
         }
-    }
-}
-
-export function adjustTime(minutesToAdd) {
-    if (state.currentFeatureId === null) return;
-    const trigger = document.getElementById('panel-time-display');
-    if (!trigger) return;
-
-    const newTime = calculateAdjustedTime(
-        trigger.dataset.hours,
-        trigger.dataset.minutes,
-        minutesToAdd
-    );
-
-    const poiId = getPoiId(state.loadedFeatures[state.currentFeatureId]);
-    updatePoiData(poiId, 'timeH', newTime.h);
-    updatePoiData(poiId, 'timeM', newTime.m);
-
-    trigger.textContent = `${String(newTime.h).padStart(2, '0')}h${String(newTime.m).padStart(2, '0')}`;
-    trigger.dataset.hours = newTime.h;
-    trigger.dataset.minutes = newTime.m;
-}
-
-export function adjustPrice(delta) {
-    if (state.currentFeatureId === null) return;
-    const trigger = document.getElementById('panel-price-display');
-    if (!trigger) return;
-
-    let currentVal = parseFloat(trigger.dataset.value) || 0;
-    let newVal = Math.max(0, currentVal + delta); // Pas de prix négatif
-
-    newVal = Math.round(newVal * 100) / 100;
-
-    const poiId = getPoiId(state.loadedFeatures[state.currentFeatureId]);
-    updatePoiData(poiId, 'price', newVal);
-
-    trigger.textContent = newVal === 0 ? 'Gratuit' : newVal;
-    trigger.dataset.value = newVal;
-
-    const currencySpan = document.getElementById('panel-price-currency');
-    if (currencySpan) {
-        currencySpan.classList.toggle('is-hidden', newVal <= 0);
     }
 }

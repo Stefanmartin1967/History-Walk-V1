@@ -1,7 +1,7 @@
 // templates.js
 import { getPoiName } from './data.js';
 import { escapeXml } from './utils.js';
-import { POI_CATEGORIES, state } from './state.js';
+import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
 
 // Devise de la destination active. Seul consommateur : buildDetailsPanelHtml ci-dessous.
@@ -47,238 +47,329 @@ export function renderSource(allProps) {
         const fullUrl = firstLine.startsWith('http') ? firstLine : `https://${firstLine}`;
         new URL(fullUrl);
         const domain = new URL(fullUrl).hostname.replace(/^www\./, '');
-        return `<div class="source-container">Source: <a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${domain}</a></div>`;
+        return `<div class="poi-source-link">Source : <a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${domain}</a></div>`;
     } catch (_) {
-        return `<div class="source-container">Source: <span>${escapeXml(firstLine)}</span></div>`;
+        return `<div class="poi-source-link">Source : <span>${escapeXml(firstLine)}</span></div>`;
     }
+}
+
+function formatTimeText(h, m) {
+    if (!h && !m) return '';
+    if (h === 0) return `${m} min`;
+    if (m === 0) return `${h}h`;
+    return `${h}h${String(m).padStart(2, '0')}`;
+}
+
+function buildHero(opts) {
+    const { photos, tagsHtml, hasFullscreenClose } = opts;
+    const photoCount = photos.length;
+    const closeBtn = hasFullscreenClose
+        ? `<button class="poi-back-pill" id="close-details-button" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>`
+        : '';
+
+    if (photoCount > 0) {
+        // Le background-image est appliqué côté JS (CSSOM) pour rester CSP-safe
+        return `
+            <div class="poi-hero has-photo" id="poi-hero" data-bg-url="${escapeXml(photos[0])}">
+                ${closeBtn}
+                ${photoCount > 0 ? `<span class="poi-photo-count"><i data-lucide="image"></i>${photoCount} ${photoCount > 1 ? 'photos' : 'photo'}</span>` : ''}
+                ${tagsHtml ? `<div class="poi-hero-overlay"><div class="poi-hero-tags">${tagsHtml}</div></div>` : ''}
+            </div>`;
+    }
+
+    return `
+        <div class="poi-hero is-empty" id="poi-hero">
+            ${closeBtn}
+            <div class="empty-icon"><i data-lucide="image-off"></i></div>
+            <span class="empty-label">Aucune photo</span>
+        </div>`;
+}
+
+function buildToolsPanelHtml({ hasAr, hasGpxDesc, isMobile }) {
+    // 3 groupes : Recherche externe · Données du lieu · Édition.
+    // Différenciation PC / mobile sur la position :
+    //   - PC  : "Déplacer marqueur" (drag pin sur la carte)
+    //   - Mobile : "Capturer position" (getCurrentPosition)
+
+    const rechercheBtns = `
+        <button class="poi-tool-btn btn-web-search" id="btn-web-search" title="Rechercher sur Google" aria-label="Rechercher sur Google">
+            <div class="ico-box"><i data-lucide="search"></i></div>Google
+        </button>
+        <button class="poi-tool-btn" id="open-gmaps-btn" title="Vérifier sur Google Maps" aria-label="Vérifier sur Google Maps">
+            <div class="ico-box"><i data-lucide="map"></i></div>Maps
+        </button>
+        <button class="poi-tool-btn ${hasAr ? '' : 'is-disabled'}" id="${isMobile ? 'mobile-btn-toggle-lang' : 'btn-toggle-lang'}" title="Afficher le titre arabe" aria-label="Afficher le titre arabe" ${hasAr ? '' : 'disabled'}>
+            <div class="ico-box"><i data-lucide="languages"></i></div>Arabe
+        </button>
+    `;
+
+    const donneesBtns = `
+        <button class="poi-tool-btn ${hasGpxDesc ? '' : 'is-disabled'}" id="${isMobile ? 'mobile-btn-toggle-gpx-desc' : 'btn-toggle-gpx-desc'}" title="Description GPX" aria-label="Description GPX" ${hasGpxDesc ? '' : 'disabled'}>
+            <div class="ico-box"><i data-lucide="file-text"></i></div>Desc. GPX
+        </button>
+        ${isMobile
+            ? `<button class="poi-tool-btn" id="mobile-move-poi-btn" title="Capturer ma position" aria-label="Capturer ma position">
+                   <div class="ico-box"><i data-lucide="locate-fixed"></i></div>Capturer position
+               </button>`
+            : `<button class="poi-tool-btn" id="btn-move-marker" title="Déplacer le marqueur sur la carte" aria-label="Déplacer le marqueur sur la carte">
+                   <div class="ico-box"><i data-lucide="move"></i></div>Déplacer marqueur
+               </button>`
+        }
+        <button class="poi-tool-btn" id="btn-open-photo-grid" title="Gérer les photos" aria-label="Gérer les photos">
+            <div class="ico-box"><i data-lucide="image-plus"></i></div>Photos
+        </button>
+    `;
+
+    const editionBtns = `
+        <button class="poi-tool-btn" id="btn-global-edit" title="Modifier le lieu" aria-label="Modifier le lieu">
+            <div class="ico-box"><i data-lucide="pencil"></i></div>Éditer
+        </button>
+        <button class="poi-tool-btn danger" id="btn-soft-delete" title="Signaler pour suppression" aria-label="Signaler pour suppression">
+            <div class="ico-box"><i data-lucide="trash-2"></i></div>Supprimer
+        </button>
+    `;
+
+    return `
+        <p class="poi-tools-cap">Recherche externe</p>
+        <div class="poi-tools-grid">${rechercheBtns}</div>
+        <div class="poi-tools-divider"></div>
+        <p class="poi-tools-cap">Données du lieu</p>
+        <div class="poi-tools-grid">${donneesBtns}</div>
+        <div class="poi-tools-divider"></div>
+        <p class="poi-tools-cap">Édition</p>
+        <div class="poi-tools-grid">${editionBtns}</div>
+    `;
 }
 
 export function buildDetailsPanelHtml(feature, circuitIndex) {
     const allProps = { ...feature.properties, ...feature.properties.userData };
     const poiName = getPoiName(feature);
     const inCircuit = circuitIndex !== null;
-    const currentCat = allProps['Catégorie'] || '';
+    const mobile = isMobileView();
 
-    // Extraction Titre AR
+    // Identité
     const arName = allProps['Nom du site arabe'] || allProps['Nom du site AR'] || '';
     const hasAr = !!arName && arName.trim() !== '';
+    const zone = (allProps.Zone || '').trim();
+    const category = (allProps['Catégorie'] || '').trim();
+    const showCategory = !!category && category !== 'A définir';
 
-    const categoryOptions = POI_CATEGORIES.map(c =>
-        `<option value="${c}" ${c === currentCat ? 'selected' : ''}>${c}</option>`
-    ).join('');
+    // États utilisateur
+    const isVu = !!allProps.vu;
+    const isIncontournable = !!allProps.incontournable;
 
-    let timeText = '00h00', hours = 0, minutes = 0;
+    // Photos
+    const photos = Array.isArray(allProps.photos) ? allProps.photos : [];
+
+    // Description longue (override userData prioritaire)
+    const longDesc = (allProps.description || allProps.Description || '').trim();
+    const hasLongDesc = longDesc !== '';
+
+    // Description GPX (Wikiloc)
+    const gpxDesc = (allProps.Description_courte || allProps.Desc_wpt || '').trim();
+    const hasGpxDesc = gpxDesc !== '';
+
+    // Détails pratiques
+    let timeH = 0, timeM = 0;
     if (allProps.timeH !== undefined && allProps.timeM !== undefined) {
-        hours = allProps.timeH; minutes = allProps.timeM;
+        timeH = parseInt(allProps.timeH, 10) || 0;
+        timeM = parseInt(allProps.timeM, 10) || 0;
     } else if (allProps['Temps de visite']) {
-        const timeParts = allProps['Temps de visite'].split(':');
-        hours = parseInt(timeParts[0], 10) || 0;
-        minutes = parseInt(timeParts[1], 10) || 0;
+        const parts = String(allProps['Temps de visite']).split(':');
+        timeH = parseInt(parts[0], 10) || 0;
+        timeM = parseInt(parts[1], 10) || 0;
     }
-    timeText = `${String(hours).padStart(2, '0')}h${String(minutes).padStart(2, '0')}`;
+    const hasTime = timeH > 0 || timeM > 0;
+    const timeText = formatTimeText(timeH, timeM);
 
-    const priceValue = allProps.price !== undefined ? allProps.price : (parseFloat(allProps['Prix d\'entrée']) || '');
-    const isVuChecked = allProps.vu ? 'checked' : '';
-    const isIncontournableChecked = allProps.incontournable ? 'checked' : '';
-
-    const photos = allProps.photos || [];
-    let photosHtml = photos.map((src, index) => `
-        <div class="photo-item">
-            <img src="${src}" class="img-preview" title="Cliquez pour agrandir" data-index="${index}">
-        </div>
-    `).join('');
-
+    let priceValue = null;
+    if (allProps.price !== undefined && allProps.price !== '') {
+        priceValue = Number(allProps.price);
+        if (!Number.isFinite(priceValue)) priceValue = null;
+    } else if (allProps['Prix d\'entrée'] !== undefined) {
+        const parsed = parseFloat(allProps['Prix d\'entrée']);
+        if (!isNaN(parsed)) priceValue = parsed;
+    }
+    const hasPrice = priceValue !== null;
     const currency = getCurrentCurrency();
-    const priceDisplay = priceValue === 0 || priceValue === '0' || priceValue === '' ? 'Gratuit' : priceValue;
+    const priceText = !hasPrice ? '' : (priceValue === 0 ? 'Gratuit' : `${priceValue}${currency ? ' ' + currency : ''}`);
 
-    const practicalDetailsHtml = `
-        <div class="detail-section">
-            <h3>Détails Pratiques</h3>
-            <div class="content structured-input-row">
-                <div class="input-group">
-                    <div class="stepper-control time-editor">
-                        <button class="stepper-btn" id="time-decrement-btn" title="- 5 min" aria-label="- 5 min">${ICONS.minus}</button>
-                        <span id="panel-time-display" class="value-display" data-hours="${hours}" data-minutes="${minutes}">${timeText}</span>
-                        <button class="stepper-btn" id="time-increment-btn" title="+ 5 min" aria-label="+ 5 min">${ICONS.plus}</button>
-                    </div>
+    const phone = (allProps['Téléphone'] || allProps.telephone || '').trim();
+    const hasPhone = phone !== '';
+    const hours = (allProps['Horaires'] || allProps.horaires || '').trim();
+    const hasHours = hours !== '';
+
+    const notes = (allProps.notes || '').toString();
+
+    // Tags hero
+    const tagsHtml = [
+        zone ? `<span class="poi-tag brand"><i data-lucide="map-pin"></i>${escapeXml(zone)}</span>` : '',
+        showCategory ? `<span class="poi-tag amber"><i data-lucide="landmark"></i>${escapeXml(category)}</span>` : '',
+        isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : ''
+    ].filter(Boolean).join('');
+
+    // Section Description
+    const descBlock = hasLongDesc
+        ? `<p class="poi-desc">${escapeXml(longDesc).replace(/\n/g, '<br>')}</p>${renderSource(allProps)}`
+        : `<p class="poi-desc is-placeholder">Aucune description disponible.</p>`;
+
+    // Section GPX (cachée par défaut, ouverte par bouton tiroir)
+    const gpxSection = hasGpxDesc
+        ? `<section class="poi-section poi-gpx-section is-hidden" id="${mobile ? 'mobile-section-gpx-desc' : 'section-gpx-desc'}">
+              <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="file-text"></i>Description GPX</span></h3>
+              <p class="poi-desc" id="${mobile ? '' : 'panel-short-desc-display'}">${escapeXml(gpxDesc).replace(/\n/g, '<br>')}</p>
+           </section>`
+        : '';
+
+    // Section Détails pratiques (chips, masqués si vides)
+    const facts = [];
+    if (hasTime) facts.push(`
+        <div class="poi-fact">
+            <div class="ico"><i data-lucide="clock"></i></div>
+            <div><span class="lab">Durée de visite</span><span class="val">${escapeXml(timeText)}</span></div>
+        </div>`);
+    if (hasPrice) facts.push(`
+        <div class="poi-fact">
+            <div class="ico"><i data-lucide="ticket"></i></div>
+            <div><span class="lab">Prix d'entrée</span><span class="val">${escapeXml(priceText)}</span></div>
+        </div>`);
+    if (hasHours) facts.push(`
+        <div class="poi-fact">
+            <div class="ico"><i data-lucide="calendar-clock"></i></div>
+            <div><span class="lab">Horaires</span><span class="val">${escapeXml(hours)}</span></div>
+        </div>`);
+    if (hasPhone) {
+        const tel = phone.replace(/\s+/g, '');
+        facts.push(`
+            <div class="poi-fact">
+                <div class="ico"><i data-lucide="phone"></i></div>
+                <div><span class="lab">Téléphone</span><span class="val"><a href="tel:${escapeXml(tel)}">${escapeXml(phone)}</a></span></div>
+            </div>`);
+    }
+    const practicalSection = facts.length > 0
+        ? `<section class="poi-section">
+              <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="info"></i>Détails pratiques</span></h3>
+              <div class="poi-practical">${facts.join('')}</div>
+           </section>`
+        : '';
+
+    // Section Mon suivi
+    const suiviSection = `
+        <section class="poi-section">
+            <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="bookmark"></i>Mon suivi</span></h3>
+            <div class="poi-suivi">
+                <div class="poi-toggle ${isVu ? 'is-on' : ''}" data-toggle="vu" id="poi-toggle-vu">
+                    <div class="check-box"><i data-lucide="check"></i></div>
+                    <div class="lab-text">Visité<span class="lab-hint">${isVu ? 'Ajouté à mon carnet de voyage' : 'Cocher après visite sur place'}</span></div>
                 </div>
-                <div class="input-group">
-                    <div class="stepper-control price-editor">
-                        <button class="stepper-btn" id="price-decrement-btn" title="- 0.5" aria-label="- 0.5">${ICONS.minus}</button>
-                        <span id="panel-price-display" class="value-display" data-value="${priceValue || 0}">${priceDisplay}</span>
-                        <span class="stepper-currency${priceValue > 0 ? '' : ' is-hidden'}" id="panel-price-currency">${currency}</span>
-                        <button class="stepper-btn" id="price-increment-btn" title="+ 0.5" aria-label="+ 0.5">${ICONS.plus}</button>
+                <div class="poi-toggle amber ${isIncontournable ? 'is-on' : ''}" data-toggle="incontournable" id="poi-toggle-incontournable">
+                    <div class="check-box"><i data-lucide="check"></i></div>
+                    <div class="lab-text">Incontournable<span class="lab-hint">${isIncontournable ? 'Mis en avant sur la carte' : 'Mettre en avant sur la carte'}</span></div>
+                </div>
+                <textarea class="poi-notes-area" id="poi-notes-area" placeholder="Mes notes : impressions, conseils, photos manquantes…">${escapeXml(notes)}</textarea>
+            </div>
+        </section>`;
+
+    // Description block
+    const descSection = `
+        <section class="poi-section description-section">
+            <h3 class="poi-section-title">
+                <span class="ttl-text">Description</span>
+                <button class="ttl-action speak-btn" title="Lire à voix haute" aria-label="Lire à voix haute"><i data-lucide="volume-2"></i></button>
+            </h3>
+            ${descBlock}
+        </section>`;
+
+    // Tools panel content (commun PC + mobile, mais boutons spécifiques device)
+    const toolsContent = buildToolsPanelHtml({ hasAr, hasGpxDesc, isMobile: mobile });
+
+    // Navigation prev/next quand POI in circuit
+    const isFirst = inCircuit && circuitIndex === 0;
+    const isLast = inCircuit && state.currentCircuit && circuitIndex === state.currentCircuit.length - 1;
+    const navHtmlDesktop = inCircuit ? `
+            <button id="prev-poi-button" class="poi-nav-btn" title="Précédent" aria-label="Précédent" ${isFirst ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button>
+            <button id="next-poi-button" class="poi-nav-btn" title="Suivant" aria-label="Suivant" ${isLast ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button>` : '';
+    const navHtmlMobilePrev = inCircuit ? `<button id="details-prev-btn" class="poi-nav-pill" data-direction="-1" title="Précédent" aria-label="Précédent" ${isFirst ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button>` : '';
+    const navHtmlMobileNext = inCircuit ? `<button id="details-next-btn" class="poi-nav-pill" data-direction="1" title="Suivant" aria-label="Suivant" ${isLast ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button>` : '';
+
+    // ========== TEMPLATE DESKTOP ==========
+    if (!mobile) {
+        const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: true });
+
+        return `
+            <div class="poi-panel" data-poi-id="${escapeXml(feature.properties.HW_ID || '')}">
+                ${heroHtml}
+                <div class="poi-body">
+                    <div class="poi-title-block">
+                        <h2 class="poi-title" id="panel-title-fr">${escapeXml(poiName)}</h2>
+                        ${hasAr ? `<h2 class="poi-title poi-subtitle-ar is-hidden" id="panel-title-ar" dir="rtl">${escapeXml(arName)}</h2>` : ''}
                     </div>
+                    ${descSection}
+                    ${gpxSection}
+                    ${practicalSection}
+                    ${suiviSection}
+                </div>
+                <div class="poi-footer">
+                    <button class="poi-cta" id="poi-cta-itinerary" title="Voir l'itinéraire dans Google Maps" aria-label="Voir l'itinéraire dans Google Maps">
+                        <i data-lucide="map-pin"></i>
+                        Voir l'itinéraire vers ce lieu
+                    </button>
+                    <div class="poi-tools" id="poi-tools">
+                        <button class="poi-tools-trigger" id="poi-tools-trigger" type="button" aria-expanded="false">
+                            <span class="dots"><i></i><i></i><i></i></span>
+                            Outils
+                            <span class="chev"><i data-lucide="chevron-down"></i></span>
+                        </button>
+                        <div class="poi-tools-panel is-hidden" id="poi-tools-panel">
+                            ${toolsContent}
+                        </div>
+                    </div>
+                    ${inCircuit ? `<div class="poi-nav-row">${navHtmlDesktop}</div>` : ''}
+                </div>
+            </div>`;
+    }
+
+    // ========== TEMPLATE MOBILE ==========
+    const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: false });
+    const headerCap = [zone, showCategory ? category : ''].filter(Boolean).join(' · ');
+
+    return `
+        <div class="poi-panel is-mobile" data-poi-id="${escapeXml(feature.properties.HW_ID || '')}">
+            <div class="poi-mobile-header">
+                <div class="poi-mobile-header-row">
+                    <button class="poi-mobile-back" id="details-close-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>
+                    <div class="poi-mobile-title-wrap">
+                        ${headerCap ? `<div class="poi-mobile-cap">${escapeXml(headerCap)}</div>` : ''}
+                        <h1 class="poi-mobile-title" id="mobile-title-fr">${escapeXml(poiName)}</h1>
+                        ${hasAr ? `<h1 class="poi-mobile-title is-hidden" id="mobile-title-ar" dir="rtl">${escapeXml(arName)}</h1>` : ''}
+                    </div>
+                    <button class="poi-mobile-tools-trigger" id="poi-tools-trigger" type="button" title="Outils" aria-label="Outils" aria-expanded="false">
+                        <span class="dots"><i></i><i></i><i></i></span>
+                    </button>
+                </div>
+            </div>
+            <div class="poi-body">
+                ${heroHtml}
+                ${descSection}
+                ${gpxSection}
+                ${practicalSection}
+                ${suiviSection}
+            </div>
+            <div class="poi-mobile-cta-bar">
+                ${navHtmlMobilePrev}
+                <button class="poi-cta" id="poi-cta-itinerary" title="Voir l'itinéraire" aria-label="Voir l'itinéraire">
+                    <i data-lucide="map-pin"></i>
+                    Voir l'itinéraire
+                </button>
+                ${navHtmlMobileNext}
+            </div>
+            <div class="poi-mobile-tools-sheet" id="poi-mobile-tools-sheet" aria-hidden="true">
+                <div class="sheet-backdrop" id="poi-mobile-tools-backdrop"></div>
+                <div class="sheet-panel">
+                    <div class="sheet-handle"></div>
+                    <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="wrench"></i>Outils</span></h3>
+                    ${toolsContent}
                 </div>
             </div>
         </div>`;
-
-    const gmapsButtonHtml = `<button class="action-button" id="open-gmaps-btn" title="Itinéraire Google Maps" aria-label="Itinéraire Google Maps">${ICONS.googleMaps}</button>`;
-
-    const categorySelectHtml = `
-        <select id="panel-category-select" class="editable-input header-input panel-category-select is-hidden">
-            ${categoryOptions}
-        </select>
-    `;
-
-    // --- TEMPLATE PC ---
-    const pcHtml = `
-        <div class="panel-header editable-field pc-layout" data-field-id="title">
-            <!-- ROW 1: Title + Close -->
-            <div class="panel-header-title-row">
-                <div class="left-text-block panel-title-block">
-                     <h2 id="panel-title-fr" class="panel-title-text" title="${escapeXml(poiName)}">${escapeXml(poiName)}</h2>
-                     <h2 id="panel-title-ar" class="panel-title-text panel-title-text--ar is-hidden" dir="rtl">${escapeXml(arName)}</h2>
-                </div>
-                <div class="panel-title-close">
-                     <button class="action-button" id="close-details-button" title="Fermer" aria-label="Fermer">${ICONS.x}</button>
-                </div>
-            </div>
-
-            <!-- ROW 2: Actions Toolbar -->
-            <div class="panel-header-actions-row">
-                <!-- Left: Tools -->
-                <div class="panel-btn-group">
-                     <button class="action-button${hasAr ? '' : ' btn-disabled-look'}" id="btn-toggle-lang" title="Afficher le titre arabe" aria-label="Afficher le titre arabe" ${hasAr ? '' : 'disabled'}>${ICONS.languages}</button>
-                     <button class="action-button" id="btn-toggle-gpx-desc" title="Afficher/Masquer Description GPX" aria-label="Afficher/Masquer Description GPX">${ICONS.fileText}</button>
-                     <button class="action-button btn-web-search" id="btn-web-search" title="Rechercher sur Google" aria-label="Rechercher sur Google">${ICONS.globe}</button>
-                     ${gmapsButtonHtml}
-                     <button class="action-button" id="btn-move-marker" title="Déplacer le marqueur" aria-label="Déplacer le marqueur">${ICONS.move}</button>
-                     <button class="action-button" id="btn-open-photo-grid" title="Gérer les photos" aria-label="Gérer les photos">${ICONS.imagePlus}</button>
-                     <button class="action-button" id="btn-global-edit" title="Modifier le lieu" aria-label="Modifier le lieu">${ICONS.pen}</button>
-                </div>
-                <!-- Right: Navigation + Delete -->
-                <div class="panel-btn-group">
-                     <button class="action-button btn-danger-icon" id="btn-soft-delete" title="Signaler pour suppression" aria-label="Signaler pour suppression">${ICONS.trash}</button>
-                     ${inCircuit ? `<button class="action-button" id="prev-poi-button" title="Précédent" aria-label="Précédent" ${circuitIndex === 0 ? 'disabled' : ''}>${ICONS.chevronLeft}</button>
-                                    <button class="action-button" id="next-poi-button" title="Suivant" aria-label="Suivant" ${circuitIndex === state.currentCircuit.length - 1 ? 'disabled' : ''}>${ICONS.chevronRight}</button>` : ''}
-                </div>
-            </div>
-
-            <!-- Hidden Inputs -->
-            <input type="text" id="panel-title-input" class="editable-input header-input is-hidden">
-            ${categorySelectHtml}
-        </div>
-
-        <div class="panel-content">
-            <div class="detail-section editable-field is-hidden" id="section-gpx-desc" data-field-id="short_desc">
-                <h3>Description GPX</h3>
-                <div class="content">
-                    <p id="panel-short-desc-display" class="editable-text short-text text-expanded">${escapeXml(allProps.Description_courte || allProps.Desc_wpt || '')}</p>
-                </div>
-            </div>
-            <div class="detail-section editable-field description-section" data-field-id="description">
-                <h3 class="section-title-row">
-                    <span>Description</span>
-                    <button class="action-button speak-btn" title="Lire la description" aria-label="Lire la description">${ICONS.volume}</button>
-                </h3>
-                <div class="content">
-                    <div id="panel-description-display" class="description-content editable-text description-scrollable">${escapeXml(allProps.description || allProps.Description || '').replace(/\n/g, '<br>')}</div>
-                    ${renderSource(allProps)}
-                </div>
-            </div>
-            ${practicalDetailsHtml}
-            <div class="detail-section">
-                <h3>Mon Suivi</h3>
-                <div class="content checkbox-group">
-                  <label class="checkbox-label"><input type="checkbox" id="panel-chk-vu" ${isVuChecked}> Visité</label>
-                  <label class="checkbox-label"><input type="checkbox" id="panel-chk-incontournable" ${isIncontournableChecked}> Incontournable</label>
-                </div>
-            </div>
-            <div class="detail-section editable-field notes-section" data-field-id="notes">
-                <h3>Notes</h3>
-                <div class="content">
-                    <div id="panel-notes-display" class="description-content editable-text">${escapeXml(allProps.notes || '').replace(/\n/g, '<br>')}</div>
-                </div>
-            </div>
-        </div>`;
-
-    // --- TEMPLATE MOBILE ---
-    const mobileGmapsBtn = gmapsButtonHtml.replace('class="action-button"', 'class="action-button btn-mobile-action"');
-
-    const mobileHtml = `
-        <div class="panel-content mobile-panel-content">
-            <div class="detail-section editable-field mobile-sticky-header" data-field-id="title">
-                <div class="content mobile-header-inner">
-
-                    <!-- ROW 1: Header Grid (Back + Centered Title) -->
-                    <div class="mobile-header-grid">
-
-                        <!-- Left: Back Button -->
-                        <div class="mobile-header-left">
-                             <button id="details-close-btn" class="action-button btn-back-mobile">${ICONS.arrowLeft}</button>
-                        </div>
-
-                        <!-- Center: Title -->
-                        <div class="title-names mobile-header-center">
-                             <h2 id="mobile-title-fr" class="editable-text mobile-title-text">${escapeXml(poiName)}</h2>
-                             <h2 id="mobile-title-ar" class="mobile-title-text mobile-title-text--ar is-hidden" dir="rtl">${escapeXml(arName)}</h2>
-                        </div>
-
-                        <!-- Right: Empty Placeholder (for balance) -->
-                        <div class="mobile-header-right">
-                             <!-- Reserved space -->
-                        </div>
-                    </div>
-
-                    <!-- ROW 2: Toolbar -->
-                    <div class="mobile-header-actions-row">
-                         <!-- Left: Tools -->
-                         <div class="mobile-btn-group">
-                             <button class="action-button btn-mobile-action${hasAr ? '' : ' btn-disabled-look'}" id="mobile-btn-toggle-lang" title="Arabe" aria-label="Arabe" ${hasAr ? '' : 'disabled'}>${ICONS.languages}</button>
-                             <button class="action-button btn-mobile-action" id="mobile-btn-toggle-gpx-desc" title="GPX Desc" aria-label="GPX Desc">${ICONS.fileText}</button>
-                             <button class="action-button btn-mobile-action btn-web-search" id="btn-web-search" title="Google" aria-label="Google">${ICONS.globe}</button>
-                             ${mobileGmapsBtn}
-                             <button class="action-button btn-mobile-action" id="btn-open-photo-grid" title="Gérer les photos" aria-label="Gérer les photos">${ICONS.imagePlus}</button>
-                             <button class="action-button btn-mobile-action" id="mobile-move-poi-btn" title="Mettre à jour la position GPS" aria-label="Mettre à jour la position GPS">${ICONS.locate}</button>
-                             <button class="action-button btn-mobile-action" id="btn-global-edit" title="Editer" aria-label="Editer">${ICONS.pen}</button>
-                         </div>
-
-                         <!-- Right: Navigation + Delete -->
-                         <div class="mobile-btn-group">
-                             <button class="action-button btn-mobile-action btn-danger-color" id="btn-soft-delete" title="Supprimer" aria-label="Supprimer">${ICONS.trash}</button>
-                             <button id="details-prev-btn" class="action-button btn-mobile-action" data-direction="-1" ${(!inCircuit || circuitIndex === 0) ? 'disabled' : ''}>${ICONS.chevronLeft}</button>
-                             <button id="details-next-btn" class="action-button btn-mobile-action" data-direction="1" ${(!inCircuit || circuitIndex === state.currentCircuit.length - 1) ? 'disabled' : ''}>${ICONS.chevronRight}</button>
-                         </div>
-                    </div>
-
-                    <!-- Hidden Stuff -->
-                    <input type="text" class="editable-input is-hidden" value="${escapeXml(poiName)}">
-                    ${categorySelectHtml}
-                </div>
-            </div>
-
-            <div class="detail-section editable-field is-hidden" id="mobile-section-gpx-desc" data-field-id="short_desc">
-                <h3>Description GPX</h3>
-                <div class="content">
-                    <p class="editable-text short-text text-expanded">${escapeXml(allProps.Description_courte || allProps.Desc_wpt || '')}</p>
-                </div>
-            </div>
-            <div class="detail-section editable-field description-section" data-field-id="description">
-                <h3 class="section-title-row">
-                    <span>Description</span>
-                    <button class="action-button speak-btn" title="Lire la description" aria-label="Lire la description">${ICONS.volume}</button>
-                </h3>
-                <div class="content">
-                    <div class="description-content editable-text description-scrollable">${escapeXml(allProps.description || allProps.Description || '').replace(/\n/g, '<br>')}</div>
-                    ${renderSource(allProps)}
-                </div>
-            </div>
-            ${practicalDetailsHtml}
-            <div class="detail-section">
-                <h3>Mon Suivi</h3>
-                <div class="content checkbox-group">
-                  <label class="checkbox-label"><input type="checkbox" id="panel-chk-vu" ${isVuChecked}> Visité</label>
-                  <label class="checkbox-label"><input type="checkbox" id="panel-chk-incontournable" ${isIncontournableChecked}> Incontournable</label>
-                </div>
-            </div>
-            <div class="detail-section editable-field notes-section" data-field-id="notes">
-                <h3>Notes</h3>
-                <div class="content">
-                    <div class="description-content editable-text">${escapeXml(allProps.notes || '').replace(/\n/g, '<br>')}</div>
-                </div>
-            </div>
-        </div>`;
-
-    return isMobileView() ? mobileHtml : pcHtml;
 }
