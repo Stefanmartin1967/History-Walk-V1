@@ -77,15 +77,24 @@ vi.mock('../src/url-utils.js', () => ({
 }));
 
 import { state } from '../src/state.js';
-import { saveAppState } from '../src/database.js';
+import { saveAppState, savePoiData } from '../src/database.js';
 import { addToDraft } from '../src/admin-control-center.js';
+import { schedulePush } from '../src/gist-sync.js';
+import { showToast } from '../src/toast.js';
+import { logModification } from '../src/logger.js';
+import { eventBus } from '../src/events.js';
+import { getZoneFromCoords } from '../src/utils.js';
 import {
     recomputeVu,
     getFilteredFeatures,
     isPendingPoi,
     addPendingPoiFeature,
     commitPendingPoiIfNeeded,
-    discardPendingPoi
+    discardPendingPoi,
+    updatePoiData,
+    addPoiFeature,
+    updatePoiCoordinates,
+    deletePoi
 } from '../src/data.js';
 
 function poi(id, props = {}) {
@@ -368,5 +377,222 @@ describe('discardPendingPoi', () => {
         state.userData['p1'] = { vuManual: true };
         discardPendingPoi('p1');
         expect(state.userData['p1']).toEqual({ vuManual: true });
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('updatePoiData', () => {
+    it('initialise userData[poiId] si absent', async () => {
+        await updatePoiData('p1', 'notes', 'hello');
+        expect(state.userData['p1']).toBeDefined();
+        expect(state.userData['p1'].notes).toBe('hello');
+    });
+
+    it('cas key="vu" : écrit vuManual et recalcule vu (jamais directement vu)', async () => {
+        await updatePoiData('p1', 'vu', true);
+        expect(state.userData['p1'].vuManual).toBe(true);
+        expect(state.userData['p1'].vu).toBe(true);
+    });
+
+    it('cas key="vu" : value=false écrit vuManual=false', async () => {
+        state.userData['p1'] = { vuManual: true, vu: true, visitedByCircuits: [] };
+        await updatePoiData('p1', 'vu', false);
+        expect(state.userData['p1'].vuManual).toBe(false);
+        expect(state.userData['p1'].vu).toBe(false);
+    });
+
+    it('cas key autre : écrit la valeur directement', async () => {
+        await updatePoiData('p1', 'planifie', true);
+        expect(state.userData['p1'].planifie).toBe(true);
+    });
+
+    it('sync feature.properties.userData après update', async () => {
+        const f = poi('p1');
+        state.loadedFeatures = [f];
+        await updatePoiData('p1', 'notes', 'sync');
+        expect(f.properties.userData).toBe(state.userData['p1']);
+    });
+
+    it('savePoiData + showToast "Enregistré" + schedulePush appelés', async () => {
+        await updatePoiData('p1', 'notes', 'x');
+        expect(savePoiData).toHaveBeenCalledWith('djerba', 'p1', state.userData['p1']);
+        expect(showToast).toHaveBeenCalledWith('Enregistré', 'success', 1500);
+        expect(schedulePush).toHaveBeenCalled();
+    });
+
+    it('emit data:filtered (via applyFilters) si key="Catégorie"', async () => {
+        await updatePoiData('p1', 'Catégorie', 'Hotel');
+        expect(eventBus.emit).toHaveBeenCalledWith('data:filtered', expect.anything());
+    });
+
+    it('PAS d\'emit data:filtered si key autre que "Catégorie"', async () => {
+        await updatePoiData('p1', 'notes', 'x');
+        expect(eventBus.emit).not.toHaveBeenCalledWith('data:filtered', expect.anything());
+    });
+
+    it('admin + key non-personal : addToDraft appelé', async () => {
+        state.isAdmin = true;
+        await updatePoiData('p1', 'Catégorie', 'Hotel');
+        expect(addToDraft).toHaveBeenCalledWith('poi', 'p1', { key: 'Catégorie', value: 'Hotel' });
+    });
+
+    it('admin + key personal (vu/notes/planifie) : PAS de addToDraft', async () => {
+        state.isAdmin = true;
+        await updatePoiData('p1', 'vu', true);
+        await updatePoiData('p1', 'notes', 'private');
+        await updatePoiData('p1', 'planifieCounter', 3);
+        expect(addToDraft).not.toHaveBeenCalled();
+    });
+
+    it('non-admin + key non-personal : PAS de addToDraft', async () => {
+        state.isAdmin = false;
+        await updatePoiData('p1', 'Catégorie', 'Hotel');
+        expect(addToDraft).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('addPoiFeature', () => {
+    it('génère un HW_ID si absent ou format invalide', async () => {
+        const f = { type: 'Feature', properties: {}, geometry: null };
+        await addPoiFeature(f);
+        expect(f.properties.HW_ID).toMatch(/^HW-/);
+        expect(f.properties.HW_ID.length).toBe(29);
+    });
+
+    it('préserve un HW_ID valide existant', async () => {
+        const validId = 'HW-' + '1'.repeat(26);
+        const f = poi(validId);
+        await addPoiFeature(f);
+        expect(f.properties.HW_ID).toBe(validId);
+    });
+
+    it('ajoute le feature à loadedFeatures + customFeatures sans flag _pending', async () => {
+        const f = poi('HW-' + '2'.repeat(26));
+        await addPoiFeature(f);
+        expect(state.loadedFeatures).toContain(f);
+        expect(state.customFeatures).toContain(f);
+        expect(f.properties._pending).toBeUndefined();
+    });
+
+    it('persiste customPois immédiatement via saveAppState (vs addPendingPoiFeature qui ne persiste pas)', async () => {
+        const f = poi('HW-' + '3'.repeat(26));
+        await addPoiFeature(f);
+        expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', state.customFeatures);
+    });
+
+    it('admin : addToDraft creation appelé', async () => {
+        state.isAdmin = true;
+        const f = poi('HW-' + '4'.repeat(26));
+        await addPoiFeature(f);
+        expect(addToDraft).toHaveBeenCalledWith('poi', 'HW-' + '4'.repeat(26), { type: 'creation' });
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('updatePoiCoordinates', () => {
+    it('initialise userData[poiId] avec lat/lng', async () => {
+        await updatePoiCoordinates('p1', 36.5, 10.7);
+        expect(state.userData['p1'].lat).toBe(36.5);
+        expect(state.userData['p1'].lng).toBe(10.7);
+    });
+
+    it('met à jour la geometry du feature ([lng, lat] order GeoJSON)', async () => {
+        const f = poi('p1');
+        state.loadedFeatures = [f];
+        await updatePoiCoordinates('p1', 36.5, 10.7);
+        expect(f.geometry.coordinates).toEqual([10.7, 36.5]);
+    });
+
+    it('recalcule la Zone via getZoneFromCoords et la met sur properties.Zone', async () => {
+        const f = poi('p1');
+        state.loadedFeatures = [f];
+        getZoneFromCoords.mockReturnValueOnce('NewZone');
+        await updatePoiCoordinates('p1', 36.5, 10.7);
+        expect(getZoneFromCoords).toHaveBeenCalledWith(36.5, 10.7);
+        expect(f.properties.Zone).toBe('NewZone');
+    });
+
+    it('met à jour customFeatures et persiste customPois si POI custom', async () => {
+        const f = poi('p1');
+        state.loadedFeatures = [f];
+        state.customFeatures = [f];
+        await updatePoiCoordinates('p1', 36.5, 10.7);
+        expect(state.customFeatures[0].geometry.coordinates).toEqual([10.7, 36.5]);
+        expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', state.customFeatures);
+    });
+
+    it('savePoiData + logModification appelés systématiquement', async () => {
+        await updatePoiCoordinates('p1', 36.5, 10.7);
+        expect(savePoiData).toHaveBeenCalledWith('djerba', 'p1', state.userData['p1']);
+        expect(logModification).toHaveBeenCalledWith(
+            'p1',
+            'Deplacement',
+            'All',
+            null,
+            expect.stringContaining('36.50000')
+        );
+    });
+
+    it('admin : addToDraft coords avec originalLat/Lng capturés AVANT mutation', async () => {
+        const f = poi('p1');
+        f.geometry.coordinates = [9.0, 33.0]; // [lng, lat] initial
+        state.loadedFeatures = [f];
+        state.isAdmin = true;
+
+        await updatePoiCoordinates('p1', 36.5, 10.7);
+
+        expect(addToDraft).toHaveBeenCalledWith('poi', 'p1', {
+            type: 'coords',
+            lat: 36.5,
+            lng: 10.7,
+            originalLat: 33.0,
+            originalLng: 9.0
+        });
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('deletePoi', () => {
+    it('initialise hiddenPoiIds si absent et y ajoute le poiId', async () => {
+        state.hiddenPoiIds = null;
+        await deletePoi('p1');
+        expect(state.hiddenPoiIds).toContain('p1');
+    });
+
+    it('persiste hiddenPois via saveAppState', async () => {
+        await deletePoi('p1');
+        expect(saveAppState).toHaveBeenCalledWith('hiddenPois_djerba', state.hiddenPoiIds);
+    });
+
+    it('évite le doublon dans hiddenPoiIds', async () => {
+        state.hiddenPoiIds = ['p1'];
+        await deletePoi('p1');
+        const occurrences = state.hiddenPoiIds.filter(id => id === 'p1').length;
+        expect(occurrences).toBe(1);
+    });
+
+    it('retire de customFeatures + persiste customPois si POI custom', async () => {
+        const f = poi('p1');
+        state.customFeatures = [f, poi('p2')];
+        await deletePoi('p1');
+        expect(state.customFeatures.map(x => x.properties.HW_ID)).toEqual(['p2']);
+        expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', state.customFeatures);
+    });
+
+    it('admin : addToDraft delete + flag _deleted sur properties.userData', async () => {
+        const f = poi('p1');
+        state.loadedFeatures = [f];
+        state.isAdmin = true;
+
+        await deletePoi('p1');
+
+        expect(addToDraft).toHaveBeenCalledWith('poi', 'p1', { type: 'delete' });
+        expect(f.properties.userData._deleted).toBe(true);
+    });
+
+    it('emit data:filtered (via applyFilters) après suppression', async () => {
+        await deletePoi('p1');
+        expect(eventBus.emit).toHaveBeenCalledWith('data:filtered', expect.anything());
     });
 });
