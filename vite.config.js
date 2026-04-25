@@ -7,6 +7,17 @@ export default defineConfig({
   base: '/History-Walk-V1/',
 
   plugins: [
+    // En dev seulement : Vite HMR injecte des styles inline qui frappent la CSP stricte.
+    // On autorise 'unsafe-inline' uniquement pour `vite serve`. En build, la CSP reste strict.
+    {
+      name: 'csp-dev-relax',
+      transformIndexHtml(html, ctx) {
+        if (ctx.server) {
+          return html.replace("style-src 'self'", "style-src 'self' 'unsafe-inline'");
+        }
+        return html;
+      }
+    },
     VitePWA({
       registerType: 'prompt',
       base: '/History-Walk-V1/',
