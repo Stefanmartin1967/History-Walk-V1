@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' ; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.google.com https://raw.githubusercontent.com https://stefanmartin1967.github.io; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.tile.openstreetmap.org https://*.google.com https://router.project-osrm.org https://nominatim.openstreetmap.org; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' ; style-src 'self'; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.google.com https://raw.githubusercontent.com https://stefanmartin1967.github.io; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.tile.openstreetmap.org https://*.google.com https://router.project-osrm.org https://nominatim.openstreetmap.org; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>History Walk</title>
 
@@ -110,8 +110,7 @@
 
             <!-- GOD MODE TOOLS -->
             <div class="tools-dropdown-container is-hidden" id="admin-tools-container">
-                <button class="btn" id="btn-admin-menu" title="God Mode Tools" aria-label="God Mode Tools"
-                    style="background-color: var(--danger); color: white;">
+                <button class="btn" id="btn-admin-menu" title="God Mode Tools" aria-label="God Mode Tools">
                     <i data-lucide="shield-alert"></i>
                     <span>GOD MODE</span>
                 </button>
@@ -162,7 +161,7 @@
                         <i data-lucide="save"></i> Sauvegarder...
                     </button>
 
-                    <div style="height:1px; width:100%; background:var(--line); margin:5px 0;"></div>
+                    <div class="tools-menu-separator"></div>
 
                     <button class="tools-menu-item" id="btn-theme-selector">
                         <i data-lucide="palette"></i> Thème
@@ -227,7 +226,7 @@
                         <i id="distance-icon" data-lucide="bird" title="Distance à vol d'oiseau"></i>
                     </div>
                     <div class="controls-group">
-                        <button id="btn-delete-active-circuit" class="header-btn" title="Supprimer ce circuit" aria-label="Supprimer ce circuit" style="display:none; color:var(--danger);"><i data-lucide="trash-2"></i></button>
+                        <button id="btn-delete-active-circuit" class="header-btn is-hidden" title="Supprimer ce circuit" aria-label="Supprimer ce circuit"><i data-lucide="trash-2"></i></button>
                     </div>
                 </div>
                 <div class="transport-info">
@@ -266,7 +265,7 @@
                 <button class="footer-btn pill is-hidden" id="btn-modify-circuit" title="Modifier le circuit" aria-label="Modifier le circuit"><i data-lucide="edit-3"></i></button>
                 <button class="footer-btn pill" id="btn-import-gpx" title="Importer GPX" aria-label="Importer GPX" disabled><i data-lucide="upload-cloud"></i></button>
                 <button class="footer-btn pill" id="btn-export-gpx" title="Exporter GPX" aria-label="Exporter GPX" disabled><i data-lucide="download-cloud"></i></button>
-                <a href="https://gpx.studio/fr/app" target="_blank" class="footer-btn pill" id="btn-open-gpx-studio" title="Ouvrir GPX Studio" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                <a href="https://gpx.studio/fr/app" target="_blank" class="footer-btn pill" id="btn-open-gpx-studio" title="Ouvrir GPX Studio">
                     <i data-lucide="map"></i>
                 </a>
                 <div class="separator-vertical"></div>

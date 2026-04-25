@@ -94,6 +94,29 @@ body {
 #edit-circuit-title-button { margin-left: 8px; }
 #close-circuit-panel-btn { margin-left: auto; }
 
+/* ============== CSP 2b/3 — Migration finale styles inline (suppression unsafe-inline) ============== */
+/* Tools menu separator (réutilisé HTML statique + admin.js dynamique) */
+.tools-menu-separator {
+    height: 1px;
+    width: 100%;
+    background: var(--line);
+    margin: 5px 0;
+}
+/* GOD MODE button (visuel danger pour distinguer admin) */
+#btn-admin-menu {
+    background-color: var(--danger);
+    color: white;
+}
+/* Bouton delete circuit actif (.header-btn → display:grid quand visible via .is-hidden) */
+#btn-delete-active-circuit {
+    color: var(--danger);
+}
+/* Bouton lien GPX Studio (anchor : flex centré + no underline) */
+#btn-open-gpx-studio {
+    display: flex;
+    text-decoration: none;
+}
+
 /* ============== RICH POI MODAL (CSP 2b/2) ============== */
 /* Override .modal-overlay defaults (align flex-start au lieu de center, scrollable) */
 #rich-poi-modal {
