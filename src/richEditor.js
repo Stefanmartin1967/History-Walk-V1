@@ -67,10 +67,10 @@ export const RichEditor = {
 
         // Hide explicit Cancel and Suggest buttons (New workflow)
         const btnCancel = document.getElementById(DOM_IDS.BTNS.CANCEL);
-        if (btnCancel) btnCancel.style.display = 'none';
+        if (btnCancel) btnCancel.classList.add('is-hidden');
 
         const btnSuggest = document.getElementById(DOM_IDS.BTNS.EMAIL);
-        if (btnSuggest) btnSuggest.style.display = 'none';
+        if (btnSuggest) btnSuggest.classList.add('is-hidden');
 
         // Move Marker Button
         const moveBtn = document.getElementById(DOM_IDS.BTNS.MOVE);
@@ -155,7 +155,7 @@ export const RichEditor = {
 
         // Hide navigation in create mode
         const navControls = document.getElementById(DOM_IDS.NAV_CONTROLS);
-        if (navControls) navControls.style.display = 'none';
+        if (navControls) navControls.classList.add('is-hidden');
 
         showModal();
     },
@@ -237,7 +237,7 @@ export const RichEditor = {
             }
         }
         const modal = document.getElementById(DOM_IDS.MODAL);
-        if (modal) modal.style.display = 'none';
+        if (modal) modal.classList.add('is-hidden');
         isDirty = false;
         // `created: true` uniquement si CREATE s'est terminé par un executeCreate réussi
         // (qui set currentFeatureId = actualId). Permet aux listeners (ex: ui-photo-batch)
@@ -259,7 +259,7 @@ eventBus.on('richEditor:open-for-edit', (id) => RichEditor.openForEdit(id));
 async function handleMove() {
     // Hide modal temporarily
     const modal = document.getElementById(DOM_IDS.MODAL);
-    if (modal) modal.style.display = 'none';
+    if (modal) modal.classList.add('is-hidden');
 
     // Helper to update coords in Rich Editor UI and state
     const updateEditorCoords = (lat, lng) => {
@@ -287,11 +287,11 @@ async function handleMove() {
                     revert();
                 }
                 // Re-open modal
-                if (modal) modal.style.display = 'flex';
+                if (modal) modal.classList.remove('is-hidden');
             }
         );
 
-        if (!success && modal) modal.style.display = 'flex';
+        if (!success && modal) modal.classList.remove('is-hidden');
 
     } else if (currentMode === 'CREATE' && currentDraftCoords) {
         // Mode CRÉATION : On crée un marqueur temporaire
@@ -314,7 +314,7 @@ async function handleMove() {
 
             // Cleanup
             tempMarker.remove();
-            if (modal) modal.style.display = 'flex';
+            if (modal) modal.classList.remove('is-hidden');
         };
 
         // On écoute dragend, mais on peut aussi attendre un clic sur le marker ou autre
@@ -335,7 +335,7 @@ function updateNavigationControls(currentPoiId) {
 
     // Check if we are in a circuit context
     if (!state.currentCircuit || state.currentCircuit.length === 0) {
-        navControls.style.display = 'none';
+        navControls.classList.add('is-hidden');
         return;
     }
 
@@ -343,12 +343,12 @@ function updateNavigationControls(currentPoiId) {
     const index = state.currentCircuit.findIndex(f => getPoiId(f) === currentPoiId);
 
     if (index === -1) {
-        navControls.style.display = 'none';
+        navControls.classList.add('is-hidden');
         return;
     }
 
     // Show controls
-    navControls.style.display = 'flex';
+    navControls.classList.remove('is-hidden');
 
     // Update buttons
     if (prevBtn) prevBtn.disabled = index === 0;
@@ -379,7 +379,7 @@ function showModal() {
     updateSaveButtonState();
     const modal = document.getElementById(DOM_IDS.MODAL);
     if (modal) {
-        modal.style.display = 'flex';
+        modal.classList.remove('is-hidden');
         // Focus premier champ
         const firstInput = document.getElementById(DOM_IDS.INPUTS.NAME_FR);
         if (firstInput) firstInput.focus();

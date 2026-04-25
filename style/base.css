@@ -94,6 +94,137 @@ body {
 #edit-circuit-title-button { margin-left: 8px; }
 #close-circuit-panel-btn { margin-left: auto; }
 
+/* ============== RICH POI MODAL (CSP 2b/2) ============== */
+/* Override .modal-overlay defaults (align flex-start au lieu de center, scrollable) */
+#rich-poi-modal {
+    align-items: flex-start;
+    padding-top: 50px;
+    overflow-y: auto;
+}
+#rich-poi-modal .modal-content {
+    max-width: 600px;
+    width: 95%;
+    margin-bottom: 50px;
+}
+#rich-poi-modal .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-top: 20px;
+}
+/* Header inner */
+.rich-poi-header-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+.rich-poi-header-title h2 {
+    margin: 0;
+}
+/* Nav prev/next (toggle via classList.toggle('is-hidden')) */
+.rich-poi-nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 10px;
+}
+#btn-rich-prev,
+#btn-rich-next {
+    padding: 5px;
+}
+/* Grid 2 colonnes */
+.rich-poi-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.rich-poi-section-muted {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    background: var(--surface-muted);
+    padding: 10px;
+    border-radius: 8px;
+}
+/* Override input-group dans la modale (column au lieu de row) */
+#rich-poi-modal .input-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+}
+#rich-poi-modal .input-group label {
+    font-weight: 600;
+}
+/* Inputs/select dans la modale */
+#rich-poi-modal .editable-input {
+    padding: 10px;
+}
+#rich-poi-modal #rich-poi-name-ar {
+    text-align: right;
+}
+#rich-poi-modal #rich-poi-category {
+    background: var(--surface);
+}
+/* Time row */
+.rich-poi-time-row {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+#rich-poi-time-h,
+#rich-poi-time-m {
+    width: 50px;
+    text-align: center;
+}
+/* GPS footer */
+.rich-poi-gps-footer {
+    font-size: 12px;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+/* Move marker btn */
+#btn-rich-move-marker {
+    padding: 4px 8px;
+    font-size: 11px;
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+#btn-rich-move-marker svg {
+    width: 14px;
+    height: 14px;
+}
+/* Actions footer */
+.rich-poi-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+#btn-suggest-email {
+    flex: 1;
+    background: var(--surface-muted);
+    color: var(--brand);
+    border: 1px solid var(--brand);
+}
+#btn-cancel-rich-poi {
+    flex: 1;
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+#btn-save-rich-poi {
+    flex: 2;
+    background: var(--brand);
+    color: white;
+}
+
 /* ======================== STYLES PC ============================ */
 
 .topbar {
