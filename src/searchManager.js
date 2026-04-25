@@ -12,7 +12,7 @@ export function setupSearch() {
     
     // Nettoyage de l'interface si vide
     DOM.searchResults.innerHTML = '';
-    DOM.searchResults.style.display = 'none';
+    DOM.searchResults.classList.add('is-hidden');
     
     if (!query || query.trim().length === 0) return;
     
@@ -32,7 +32,7 @@ export function setupSearch() {
             resultBtn.addEventListener('click', () => {
                 // Reset de la barre de recherche
                 DOM.searchInput.value = '';
-                DOM.searchResults.style.display = 'none';
+                DOM.searchResults.classList.add('is-hidden');
 
                 const targetId = getPoiId(feature);
 
@@ -68,7 +68,7 @@ export function setupSearch() {
         });
 
         DOM.searchResults.appendChild(fragment);
-        DOM.searchResults.style.display = 'block';
+        DOM.searchResults.classList.remove('is-hidden');
     }
 }
 
@@ -89,8 +89,8 @@ export function setupSmartSearch() {
 
                 if (map) {
                     map.flyTo([lat, lng], 18, { duration: 1.5 });
-                    DOM.searchResults.style.display = 'none';
-                    DOM.searchInput.value = ''; 
+                    DOM.searchResults.classList.add('is-hidden');
+                    DOM.searchInput.value = '';
                     DOM.searchInput.blur(); // Masque le clavier sur mobile
 
                     // --- GESTION MARQUEUR FANTÔME ---

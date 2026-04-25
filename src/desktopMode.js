@@ -385,7 +385,7 @@ export function setupDesktopTools() {
     const btnClose = document.getElementById('close-wizard-modal');
     if (btnStart) btnStart.addEventListener('click', handleWizardStart);
     if (btnClose) btnClose.addEventListener('click', () => {
-        document.getElementById('selection-wizard-modal').style.display = 'none';
+        document.getElementById('selection-wizard-modal').classList.add('is-hidden');
     });
 }
 
@@ -409,7 +409,7 @@ function openSelectionWizard() {
         }
     }
 
-    modal.style.display = 'flex';
+    modal.classList.remove('is-hidden');
 }
 
 function handleWizardStart() {
@@ -445,5 +445,5 @@ function handleWizardStart() {
     applyFilters(); // Force le rafraîchissement avec les nouvelles règles
 
     // 4. Fermeture du Wizard
-    document.getElementById('selection-wizard-modal').style.display = 'none';
+    document.getElementById('selection-wizard-modal').classList.add('is-hidden');
 }
