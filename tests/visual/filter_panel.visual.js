@@ -111,4 +111,100 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
         await expect(section).not.toHaveClass(/is-collapsed/);
     });
 
+    // ─── PR 2 : nouvelles sections câblées ────────────────────────────────────
+
+    test('7 — Catégories : cocher une catégorie active la section + reset', async ({ page }) => {
+        await openPanelViaToolsMenu(page);
+        const cats = page.locator('#hw-fp-categories-list .hw-fp-checkbox');
+        const count = await cats.count();
+        expect(count).toBeGreaterThan(0);
+
+        // Cocher la 1ère catégorie
+        await cats.first().click();
+        await page.waitForTimeout(300);
+
+        await expect(cats.first()).toHaveClass(/is-checked/);
+        await expect(page.locator('[data-section="categories"]')).toHaveClass(/is-active/);
+        await expect(page.locator('#hw-fp-subtitle')).toHaveText('1 section active');
+
+        // Reset
+        await page.locator('#hw-fp-reset').click();
+        await page.waitForTimeout(300);
+        await expect(cats.first()).not.toHaveClass(/is-checked/);
+        await expect(page.locator('#hw-fp-subtitle')).toHaveText('Aucun filtre actif');
+    });
+
+    test('8 — Mon parcours : changer Visités à "Masquer" active la section', async ({ page }) => {
+        await openPanelViaToolsMenu(page);
+
+        // Le 1er groupe radio est "Lieux visités". Bouton "Masquer" = 2e option.
+        const visitGroup = page.locator('#hw-fp-parcours-content .hw-fp-radio-group').first();
+        const masquerBtn = visitGroup.locator('.hw-fp-radio-btn[data-value="hide"]');
+
+        await masquerBtn.click();
+        await page.waitForTimeout(300);
+
+        await expect(masquerBtn).toHaveClass(/is-selected/);
+        await expect(page.locator('[data-section="parcours"]')).toHaveClass(/is-active/);
+        await expect(page.locator('#hw-fp-subtitle')).toHaveText('1 section active');
+
+        // Reset
+        await page.locator('#hw-fp-reset').click();
+        await page.waitForTimeout(300);
+        await expect(visitGroup.locator('.hw-fp-radio-btn[data-value="all"]')).toHaveClass(/is-selected/);
+    });
+
+    test('9 — Mon parcours : toggle Incontournable active la section', async ({ page }) => {
+        await openPanelViaToolsMenu(page);
+        const toggle = page.locator('.hw-fp-incontournable');
+
+        await toggle.click();
+        await page.waitForTimeout(300);
+
+        await expect(toggle).toHaveClass(/is-checked/);
+        await expect(page.locator('[data-section="parcours"]')).toHaveClass(/is-active/);
+        await expect(page.locator('#hw-fp-subtitle')).toHaveText('1 section active');
+
+        // Reset
+        await page.locator('#hw-fp-reset').click();
+        await page.waitForTimeout(300);
+        await expect(toggle).not.toHaveClass(/is-checked/);
+    });
+
+    test('10 — État de la fiche : cocher Sans photo active la section', async ({ page }) => {
+        await openPanelViaToolsMenu(page);
+
+        // Section État de la fiche est repliée par défaut → la déplier d'abord
+        await page.locator('[data-section-toggle="fiche"]').click();
+        await page.waitForTimeout(200);
+
+        const ficheCheckboxes = page.locator('#hw-fp-fiche-content .hw-fp-checkbox');
+        // ordre : nonVerifies, noPhoto, noDesc → cocher la 2e (noPhoto)
+        await ficheCheckboxes.nth(1).click();
+        await page.waitForTimeout(300);
+
+        await expect(ficheCheckboxes.nth(1)).toHaveClass(/is-checked/);
+        await expect(page.locator('[data-section="fiche"]')).toHaveClass(/is-active/);
+        await expect(page.locator('#hw-fp-subtitle')).toHaveText('1 section active');
+    });
+
+    test('11 — compteur multi-sections : zone + catégorie + visités = 3 sections actives', async ({ page }) => {
+        await openPanelViaToolsMenu(page);
+
+        // Zone
+        await page.locator('#hw-fp-zone-select').click();
+        await page.locator('.hw-fp-zone-btn').nth(1).click();
+        await page.waitForTimeout(300);
+
+        // Catégorie
+        await page.locator('#hw-fp-categories-list .hw-fp-checkbox').first().click();
+        await page.waitForTimeout(300);
+
+        // Visités masquer
+        await page.locator('#hw-fp-parcours-content .hw-fp-radio-btn[data-value="hide"]').first().click();
+        await page.waitForTimeout(300);
+
+        await expect(page.locator('#hw-fp-subtitle')).toHaveText('3 sections actives');
+    });
+
 });

@@ -47,9 +47,14 @@ export const state = {
     },
     activeFilters: {
         categories: [],
-        vus: false,
-        planifies: false,
+        // 3-states refonte filtres (Claude Design) : 'all' (par défaut) | 'hide' | 'only'
+        // L'ancien topbar (toggle binaire) bascule entre 'all' et 'hide' uniquement.
+        vus: 'all',
+        planifies: 'all',
         nonVerifies: false,
+        incontournablesOnly: false,
+        noPhoto: false,
+        noDesc: false,
         zone: null
     },
     // Lieu de résidence (capté via GPS depuis Mon Espace).
