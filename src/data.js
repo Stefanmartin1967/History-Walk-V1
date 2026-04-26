@@ -23,13 +23,23 @@ export { getPoiId, getPoiName, checkAndApplyMigrations, getDomainFromUrl };
 
 // --- GESTION DES MIGRATIONS D'ID (ADMIN) ---
 
+// Migration des IDs legacy (gen_*, custom_*, hors format HW-ULID) vers HW-ULID.
+// Cascade le rename à travers 4 entités liées : features.HW_ID, state.userData,
+// state.hiddenPoiIds, circuit.poiIds (myCircuits + officialCircuits).
+//
+// Pattern stage-then-commit : on calcule d'abord toutes les mutations dans des
+// snapshots locaux (sans toucher state ni features), on persiste ensuite sous
+// try/catch unique. Mutations mémoire appliquées UNIQUEMENT après succès complet
+// → si une écriture échoue, l'état mémoire reste intact, l'admin peut retenter.
+// (Note : IndexedDB n'offre pas de transaction multi-store via notre wrapper, donc
+// une corruption DB partielle reste théoriquement possible, mais la mémoire ne
+// dériverait jamais de l'état persisté.)
 async function checkAndApplyMigrations() {
     if (!state.isAdmin || !state.loadedFeatures) return;
 
-    let migrationsCount = 0;
+    // ─── 1. PHASE COMPUTE — détection des migrations, aucun side-effect ───
     const idMap = {}; // oldId -> newId
 
-    // On pré-remplit le map avec les migrations déjà présentes dans le brouillon
     const draft = getAdminDraft();
     Object.entries(draft.pendingPois).forEach(([newId, data]) => {
         if (data.type === 'migration' && data.oldId) {
@@ -37,84 +47,103 @@ async function checkAndApplyMigrations() {
         }
     });
 
-    state.loadedFeatures.forEach((feature, index) => {
+    const featuresToMigrate = []; // { feature, oldId, newId }
+    state.loadedFeatures.forEach(feature => {
         const pId = getPoiId(feature);
-
-        // Un ID est considéré comme "Legacy" s'il est absent, s'il vient de la génération auto (gen_, custom_)
-        // ou s'il ne respecte pas le format strict HW-ULID (HW- suivi de 26 caractères)
         const isLegacyId = !pId ||
                            pId.startsWith('gen_') ||
                            pId.startsWith('custom_') ||
                            !pId.startsWith('HW-') ||
-                           pId.length !== 29; // HW- (3 chars) + ULID (26 chars)
-
-        if (isLegacyId) {
-            const oldId = pId;
-            const newId = getMigrationId(oldId) || generateHWID();
-
-
-            feature.properties.HW_ID = newId;
-            idMap[oldId] = newId;
-
-            // 1. Migration des données utilisateur associées (Carnet de Voyage)
-            if (oldId && state.userData[oldId]) {
-                state.userData[newId] = state.userData[oldId];
-                // Sécurité : on s'assure que userData ne contient pas d'ID qui écraserait le nouveau
-                delete state.userData[newId].HW_ID;
-                delete state.userData[newId].id;
-                // Note: On ne supprime pas l'ancien pour la session courante pour éviter de tout casser
-            }
-
-            // 2. Migration du statut "caché"
-            if (oldId && state.hiddenPoiIds.includes(oldId)) {
-                setHiddenPoiIds(state.hiddenPoiIds.map(id => id === oldId ? newId : id));
-            }
-
-            // [ADMIN] Enregistrement dans le brouillon pour publication sur GitHub
-            addToDraft('poi', newId, { type: 'migration', oldId: oldId });
-            migrationsCount++;
-        }
+                           pId.length !== 29; // HW- (3) + ULID (26)
+        if (!isLegacyId) return;
+        const oldId = pId;
+        const newId = getMigrationId(oldId) || generateHWID();
+        idMap[oldId] = newId;
+        featuresToMigrate.push({ feature, oldId, newId });
     });
 
-    if (migrationsCount > 0 || Object.keys(idMap).length > 0) {
-        // 3. Migration des CIRCUITS (Mise à jour des étapes)
-        let circuitsUpdated = 0;
-        const allCircuits = [...(state.myCircuits || []), ...(state.officialCircuits || [])];
+    if (featuresToMigrate.length === 0 && Object.keys(idMap).length === 0) return;
 
-        for (const circuit of allCircuits) {
-            if (!circuit.poiIds) continue;
+    // ─── 2. PHASE STAGE — snapshots prêts à persister, state encore intact ───
 
-            let hasChanged = false;
-            const newPoiIds = circuit.poiIds.map(pid => {
-                if (idMap[pid]) {
-                    hasChanged = true;
-                    return idMap[pid];
-                }
-                return pid;
-            });
-
-            if (hasChanged) {
-                circuit.poiIds = newPoiIds;
-                circuitsUpdated++;
-
-                // Sauvegarde immédiate si c'est un circuit perso (dans IndexedDB)
-                if (state.myCircuits.includes(circuit)) {
-                    await saveCircuit(circuit);
-                }
-
-                // Tracking admin pour le circuit
-                addToDraft('circuit', circuit.id, { type: 'update' });
-            }
+    // userData : ajout des nouveaux IDs (clones de l'ancien, sans HW_ID/id internes)
+    const nextUserData = { ...state.userData };
+    for (const { oldId, newId } of featuresToMigrate) {
+        if (oldId && state.userData[oldId]) {
+            const cleaned = { ...state.userData[oldId] };
+            delete cleaned.HW_ID;
+            delete cleaned.id;
+            nextUserData[newId] = cleaned;
         }
-
-        // 4. Sauvegarde persistante de l'état (userData, hiddenPois et customFeatures)
-        await saveAppState('userData', state.userData);
-        await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
-        await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
-
-        showToast(`${migrationsCount} IDs unifiés et ${circuitsUpdated} circuits mis à jour.`, "success");
-        applyFilters(); // Rafraîchir pour appliquer les nouveaux IDs aux listeners
     }
+
+    // hiddenPois : remap des anciens IDs vers les nouveaux
+    const nextHiddenPoiIds = state.hiddenPoiIds.map(id => idMap[id] || id);
+
+    // customFeatures : clones des features migrées avec le nouveau HW_ID
+    const nextCustomFeatures = (state.customFeatures || []).map(f => {
+        const oldId = getPoiId(f);
+        if (idMap[oldId]) {
+            return { ...f, properties: { ...f.properties, HW_ID: idMap[oldId] } };
+        }
+        return f;
+    });
+
+    // Circuits : calcul des nouveaux poiIds, séparation perso/officiels
+    const allCircuits = [...(state.myCircuits || []), ...(state.officialCircuits || [])];
+    const circuitsToUpdate = []; // { circuit, newPoiIds, isMine }
+    for (const circuit of allCircuits) {
+        if (!circuit.poiIds) continue;
+        let hasChanged = false;
+        const newPoiIds = circuit.poiIds.map(pid => {
+            if (idMap[pid]) { hasChanged = true; return idMap[pid]; }
+            return pid;
+        });
+        if (hasChanged) {
+            circuitsToUpdate.push({
+                circuit,
+                newPoiIds,
+                isMine: !!(state.myCircuits && state.myCircuits.includes(circuit))
+            });
+        }
+    }
+
+    // ─── 3. PHASE PERSIST — try/catch unique, abort sur la moindre erreur ───
+    try {
+        await Promise.all([
+            saveAppState('userData', nextUserData),
+            saveAppState(`hiddenPois_${state.currentMapId}`, nextHiddenPoiIds),
+            saveAppState(`customPois_${state.currentMapId}`, nextCustomFeatures),
+            ...circuitsToUpdate
+                .filter(c => c.isMine)
+                .map(c => saveCircuit({ ...c.circuit, poiIds: c.newPoiIds }))
+        ]);
+    } catch (err) {
+        console.error('[Migration] Échec de persistance, mémoire intacte :', err);
+        showToast('Échec de la migration des IDs. Aucun changement appliqué, réessaie plus tard.', 'error');
+        return;
+    }
+
+    // ─── 4. PHASE COMMIT — mutations mémoire après succès garanti ───
+    for (const { feature, oldId, newId } of featuresToMigrate) {
+        feature.properties.HW_ID = newId;
+        if (oldId && state.userData[oldId]) {
+            state.userData[newId] = state.userData[oldId];
+            delete state.userData[newId].HW_ID;
+            delete state.userData[newId].id;
+            // L'ancien key reste pour la session courante (évite de casser les
+            // refs déjà tenues par d'autres modules).
+        }
+        addToDraft('poi', newId, { type: 'migration', oldId });
+    }
+    setHiddenPoiIds(nextHiddenPoiIds);
+    for (const { circuit, newPoiIds } of circuitsToUpdate) {
+        circuit.poiIds = newPoiIds;
+        addToDraft('circuit', circuit.id, { type: 'update' });
+    }
+
+    showToast(`${featuresToMigrate.length} IDs unifiés et ${circuitsToUpdate.length} circuits mis à jour.`, 'success');
+    applyFilters();
 }
 
 // Écouteur pour déclencher la migration dès que le mode Admin est activé

@@ -77,8 +77,8 @@ vi.mock('../src/url-utils.js', () => ({
 }));
 
 import { state } from '../src/state.js';
-import { saveAppState, savePoiData } from '../src/database.js';
-import { addToDraft } from '../src/admin-control-center.js';
+import { saveAppState, savePoiData, saveCircuit } from '../src/database.js';
+import { addToDraft, getMigrationId, getAdminDraft } from '../src/admin-control-center.js';
 import { schedulePush } from '../src/gist-sync.js';
 import { showToast } from '../src/toast.js';
 import { logModification } from '../src/logger.js';
@@ -96,7 +96,8 @@ import {
     updatePoiData,
     addPoiFeature,
     updatePoiCoordinates,
-    deletePoi
+    deletePoi,
+    checkAndApplyMigrations
 } from '../src/data.js';
 
 function poi(id, props = {}) {
@@ -711,5 +712,78 @@ describe('deletePoi', () => {
     it('emit data:filtered (via applyFilters) après suppression', async () => {
         await deletePoi('p1');
         expect(eventBus.emit).toHaveBeenCalledWith('data:filtered', expect.anything());
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('checkAndApplyMigrations (stage-then-commit)', () => {
+    beforeEach(() => {
+        state.isAdmin = true;
+        state.myCircuits = [];
+        state.officialCircuits = [];
+        // getAdminDraft renvoie un brouillon vide par défaut (cf. mock global)
+        getAdminDraft.mockReturnValue({ pendingPois: {}, modifications: {} });
+    });
+
+    it('happy path : ID legacy migré, saves OK → mutations mémoire appliquées', async () => {
+        const f = poi('gen_old1');
+        state.loadedFeatures = [f];
+        state.userData['gen_old1'] = { vu: true, notes: 'avant' };
+
+        await checkAndApplyMigrations();
+
+        // HW_ID réécrit vers HW-ULID
+        expect(f.properties.HW_ID).toMatch(/^HW-/);
+        expect(f.properties.HW_ID.length).toBe(29);
+        const newId = f.properties.HW_ID;
+
+        // userData : nouvelle clé pointe vers les mêmes données
+        expect(state.userData[newId]).toEqual({ vu: true, notes: 'avant' });
+
+        // Persistance : 3 saveAppState (userData, hiddenPois, customPois)
+        expect(saveAppState).toHaveBeenCalledWith('userData', expect.anything());
+        expect(saveAppState).toHaveBeenCalledWith('hiddenPois_djerba', expect.anything());
+        expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', expect.anything());
+
+        // Brouillon admin : entrée migration enregistrée
+        expect(addToDraft).toHaveBeenCalledWith('poi', newId, { type: 'migration', oldId: 'gen_old1' });
+
+        // Toast succès
+        expect(showToast).toHaveBeenCalledWith(expect.stringContaining('IDs unifiés'), 'success');
+    });
+
+    it('persist failure : saveAppState rejette → AUCUNE mutation mémoire (garantie clé)', async () => {
+        const f = poi('gen_old2');
+        state.loadedFeatures = [f];
+        state.userData['gen_old2'] = { vu: true };
+
+        saveAppState.mockRejectedValueOnce(new Error('IndexedDB quota exceeded'));
+
+        await checkAndApplyMigrations();
+
+        // HW_ID inchangé
+        expect(f.properties.HW_ID).toBe('gen_old2');
+
+        // Aucune nouvelle clé dans userData
+        expect(Object.keys(state.userData)).toEqual(['gen_old2']);
+
+        // Pas de tracking admin
+        expect(addToDraft).not.toHaveBeenCalled();
+
+        // Toast erreur affiché
+        expect(showToast).toHaveBeenCalledWith(expect.stringContaining('Échec'), 'error');
+    });
+
+    it('no-op : aucun ID legacy → aucun save ni draft tenté', async () => {
+        const validHwId = 'HW-' + '1'.repeat(26);
+        const f = poi(validHwId);
+        state.loadedFeatures = [f];
+
+        await checkAndApplyMigrations();
+
+        expect(saveAppState).not.toHaveBeenCalled();
+        expect(saveCircuit).not.toHaveBeenCalled();
+        expect(addToDraft).not.toHaveBeenCalled();
+        expect(f.properties.HW_ID).toBe(validHwId);
     });
 });
