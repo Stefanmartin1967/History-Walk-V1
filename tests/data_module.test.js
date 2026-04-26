@@ -88,6 +88,7 @@ import {
     recomputeVu,
     getFilteredFeatures,
     passesUserFilters,
+    passesStructuralFilters,
     isPendingPoi,
     addPendingPoiFeature,
     commitPendingPoiIfNeeded,
@@ -333,6 +334,48 @@ describe('passesUserFilters', () => {
 
     it('par défaut (aucun filtre actif) : POI passe', () => {
         expect(passesUserFilters(poi('p1'))).toBe(true);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('passesStructuralFilters', () => {
+    it('retourne false pour feature null/undefined', () => {
+        expect(passesStructuralFilters(null)).toBe(false);
+        expect(passesStructuralFilters(undefined)).toBe(false);
+    });
+
+    it('par défaut (aucun filtre) : POI passe', () => {
+        expect(passesStructuralFilters(poi('p1', { Zone: 'A' }))).toBe(true);
+    });
+
+    it('filtre zone : POI hors zone exclu', () => {
+        state.activeFilters.zone = 'A';
+        expect(passesStructuralFilters(poi('p1', { Zone: 'B' }))).toBe(false);
+        expect(passesStructuralFilters(poi('p2', { Zone: 'A' }))).toBe(true);
+    });
+
+    it('skipZone:true ignore le filtre zone', () => {
+        state.activeFilters.zone = 'A';
+        expect(passesStructuralFilters(poi('p1', { Zone: 'B' }), { skipZone: true })).toBe(true);
+    });
+
+    it('filtre catégorie multi : POI hors liste exclu', () => {
+        state.activeFilters.categories = ['Mosquée', 'Plage'];
+        expect(passesStructuralFilters(poi('p1', { 'Catégorie': 'Restaurant' }))).toBe(false);
+        expect(passesStructuralFilters(poi('p2', { 'Catégorie': 'Mosquée' }))).toBe(true);
+    });
+
+    it('skipZone:true conserve le filtre catégorie', () => {
+        state.activeFilters.zone = 'A';
+        state.activeFilters.categories = ['Mosquée'];
+        const f = poi('p1', { Zone: 'B', 'Catégorie': 'Restaurant' });
+        // skipZone passe le filtre Zone, mais catégorie échoue toujours
+        expect(passesStructuralFilters(f, { skipZone: true })).toBe(false);
+    });
+
+    it('categories=[] équivaut à pas de filtre catégorie', () => {
+        state.activeFilters.categories = [];
+        expect(passesStructuralFilters(poi('p1', { 'Catégorie': 'Restaurant' }))).toBe(true);
     });
 });
 
