@@ -278,15 +278,168 @@
     font-size: 12px;
 }
 
-/* ─── Stubs (visuels seulement, non câblés en PR 1) ─── */
-.hw-fp-stub {
-    padding: 12px 14px;
-    background: var(--surface-muted);
-    border-radius: 10px;
+/* ─── Checkbox (Catégories + État de la fiche) ─── */
+.hw-fp-checklist {
+    display: block;
+}
+
+.hw-fp-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+}
+
+.hw-fp-checkbox input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hw-fp-checkbox-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid #C5D2DD;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    color: #fff;
+    transition: all 0.12s;
+}
+
+.hw-fp-checkbox-box svg {
+    width: 12px;
+    height: 12px;
+    opacity: 0;
+}
+
+.hw-fp-checkbox.is-checked .hw-fp-checkbox-box {
+    background: var(--brand);
+    border-color: var(--brand);
+}
+
+.hw-fp-checkbox.is-checked .hw-fp-checkbox-box svg {
+    opacity: 1;
+}
+
+.hw-fp-checkbox-label {
+    flex-grow: 1;
+    color: #334E68;
+}
+
+.hw-fp-checkbox.is-checked .hw-fp-checkbox-label {
+    color: var(--ink);
+}
+
+.hw-fp-checkbox-count {
     color: var(--ink-soft);
+    font-size: 12px;
+}
+
+/* ─── Radio group (segmented control — Visités / Planifiés) ─── */
+.hw-fp-radio-wrapper {
+    margin-bottom: 12px;
+}
+
+.hw-fp-radio-wrapper:last-child {
+    margin-bottom: 0;
+}
+
+.hw-fp-radio-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+}
+
+.hw-fp-radio-group {
+    display: flex;
+    background: var(--surface-muted);
+    padding: 3px;
+    border-radius: 10px;
+    gap: 2px;
+}
+
+.hw-fp-radio-btn {
+    flex: 1;
+    padding: 7px 8px;
+    border-radius: 8px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    font-weight: 500;
     font-size: 13px;
-    font-style: italic;
-    text-align: center;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.12s;
+}
+
+.hw-fp-radio-btn.is-selected {
+    background: var(--surface);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    font-weight: 700;
+    color: var(--bg);
+}
+
+/* ─── Incontournable toggle (amber, special) ─── */
+.hw-fp-incontournable {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--surface-muted);
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.12s;
+}
+
+.hw-fp-incontournable.is-checked {
+    background: #FEF3C7;
+    border-color: var(--warn);
+}
+
+.hw-fp-incontournable input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.hw-fp-incontournable .hw-fp-checkbox-box {
+    border-color: #C5D2DD;
+}
+
+.hw-fp-incontournable.is-checked .hw-fp-checkbox-box {
+    background: var(--warn);
+    border-color: var(--warn);
+}
+
+.hw-fp-incontournable-label {
+    flex-grow: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334E68;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hw-fp-incontournable.is-checked .hw-fp-incontournable-label {
+    color: #92400E;
+}
+
+.hw-fp-incontournable-label svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
 }
 
 /* ─── Footer ─── */

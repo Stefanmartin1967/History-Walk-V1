@@ -30,9 +30,10 @@ export function setupDesktopUIListeners() {
 
     document.getElementById('btn-filter-vus')?.addEventListener('click', (e) => {
         const btn = e.currentTarget;
-        // On inverse l'état logique : Actif = Masqué
+        // Toggle binaire entre 'all' et 'hide' (3-states refonte filtres :
+        // l'état 'only' n'est accessible que via le nouveau panneau de filtres).
         const isHidden = btn.classList.toggle('active');
-        setActiveFilter('vus', isHidden);
+        setActiveFilter('vus', isHidden ? 'hide' : 'all');
 
         // Mise à jour de l'icône et du titre pour l'ACTION FUTURE
         if (isHidden) {
@@ -50,9 +51,10 @@ export function setupDesktopUIListeners() {
 
     document.getElementById('btn-filter-planifies')?.addEventListener('click', (e) => {
         const btn = e.currentTarget;
-        // On inverse l'état logique : Actif = Masqué
+        // Toggle binaire entre 'all' et 'hide' (3-states refonte filtres :
+        // l'état 'only' n'est accessible que via le nouveau panneau de filtres).
         const isHidden = btn.classList.toggle('active');
-        setActiveFilter('planifies', isHidden);
+        setActiveFilter('planifies', isHidden ? 'hide' : 'all');
 
         // Mise à jour de l'icône et du titre pour l'ACTION FUTURE
         if (isHidden) {
