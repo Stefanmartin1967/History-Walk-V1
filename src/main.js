@@ -41,6 +41,7 @@ import { showWelcomeIfNeeded } from './welcome.js';
 import { setupEventBusListeners } from './events-bus.js';
 import { setupFilterPanel } from './filter-panel.js';
 import { setupTopbarV2 } from './topbar-v2.js';
+import { showLegalNoticeModal } from './legal-modal.js';
 import { setupDesktopUIListeners } from './events-desktop.js';
 import { setupGlobalEventListeners } from './events-global.js';
 
@@ -120,6 +121,10 @@ async function initializeApp() {
     setupCircuitEventListeners();
     setupFilterPanel();
     setupTopbarV2();
+    document.getElementById('btn-legal-notice')?.addEventListener('click', () => {
+        document.getElementById('tools-menu-content')?.classList.remove('active');
+        showLegalNoticeModal();
+    });
     setupDesktopUIListeners();
     setupGlobalEventListeners();
     setupFileListeners();
