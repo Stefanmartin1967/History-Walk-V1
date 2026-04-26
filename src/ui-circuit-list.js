@@ -1,6 +1,16 @@
+// ui-circuit-list.js
+// Onglet "Mes Circuits" — refonte Claude Design (PR B).
+// Rendu du panneau PC : toolbar (recherche + filtres + nouveau + menu + close),
+// chips de filtres dépliables, liste de cartes 2 lignes (.mc-card) avec
+// badge officiel/testé + check toggle "fait".
+//
+// Le menu ⋮ regroupe les options secondaires (tris, filtre "à faire", reset).
+// Le filtre Zone vit dans le panneau de filtres global (cf. filter-panel.js)
+// — pas dupliqué ici. Les chips locales : Tous · Officiels · Avec resto.
+
 import { state, setActiveFilters } from './state.js';
 import { isCircuitTested } from './circuit.js';
-import { escapeXml, sanitizeHTML } from './utils.js';
+import { escapeXml } from './utils.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
@@ -8,222 +18,253 @@ import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId, getPoiName } from './data.js';
 import { showToast } from './toast.js';
 
-// --- LOCAL STATE ---
-// Sort: 'proximity_asc', 'dist_asc', 'dist_desc' (legacy: 'date_desc', 'date_asc')
+// ─── Local state ──────────────────────────────────────────────────────────
 let currentSort = 'proximity_asc';
-let filterTodo = false; // true = Show only circuits with unvisited points
-let explorerCurrentPage = 1;
-
-// Bug D : filtre POI clearable via chip.
-// Quand un POI est sélectionné, la liste est filtrée par défaut sur les circuits
-// qui le contiennent. L'utilisateur peut dismiss le filtre via la ✕ du chip —
-// le filtre reste alors désactivé jusqu'à ce qu'un *autre* POI soit sélectionné.
+let filterTodo = false;
+let activeChip = 'all'; // 'all' | 'official' | 'with-resto'
+let searchQuery = '';
+let filtersOpen = false;
+let menuOpen = false;
 let explorerPoiFilterActive = true;
 let explorerLastPoiId = null;
 
 export function initCircuitListUI() {
     eventBus.on('circuit:list-updated', () => {
-        // Also refresh explorer list if it exists
-        if (document.getElementById('explorer-list')) {
-            renderExplorerList();
-        }
+        if (document.getElementById('explorer-list')) renderAll();
     });
-
-    // Écouter le changement de mode Admin pour afficher/masquer les poubelles
     eventBus.on('admin:mode-toggled', () => {
-        if (document.getElementById('explorer-list')) {
-            renderExplorerList();
-        }
+        if (document.getElementById('explorer-list')) renderAll();
     });
-
-    // Listen for global filter changes (like Zone) to refresh list
     eventBus.on('data:filtered', () => {
-         if (document.getElementById('explorer-list')) {
-            explorerCurrentPage = 1;
-            renderExplorerList();
-        }
+        if (document.getElementById('explorer-list')) renderAll();
+    });
+    eventBus.on('ui:render-explorer-list', () => renderAll());
+
+    // Click extérieur ferme le menu ⋮
+    document.addEventListener('click', (e) => {
+        if (!menuOpen) return;
+        if (e.target.closest('#mc-menu-dropdown')) return;
+        if (e.target.closest('#mc-btn-menu')) return;
+        closeMenu();
     });
 
-    // Rendu à la demande (appelé par ui-details pour casser le cycle
-    // ui-details → ui-circuit-list).
-    eventBus.on('ui:render-explorer-list', () => renderExplorerList());
-
-    // Initial render of header and toolbar
-    renderExplorerHeader();
-    renderExplorerToolbar();
+    renderAll();
 }
 
-// --- EXPLORER HEADER (SIMPLIFIED) ---
-function renderExplorerHeader() {
-    const header = document.querySelector('.explorer-header');
-    if (!header) return;
+function renderAll() {
+    renderToolbar();
+    renderFilterChips();
+    renderExplorerList();
+}
 
-    const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Circuits';
+// ─── Toolbar ──────────────────────────────────────────────────────────────
+function renderToolbar() {
+    const toolbar = document.getElementById('mc-toolbar');
+    if (!toolbar) return;
 
-    header.innerHTML = `
-        <div class="explorer-header-inner">
-            <div class="explorer-pagination-group">
-                <button class="action-button" id="explorer-prev-page" title="Page précédente" aria-label="Page précédente" disabled>
-                    <i data-lucide="chevron-left" class="icon-20"></i>
-                </button>
-                <span id="explorer-page-info" class="explorer-page-info">- / -</span>
-                <button class="action-button" id="explorer-next-page" title="Page suivante" aria-label="Page suivante" disabled>
-                    <i data-lucide="chevron-right" class="icon-20"></i>
-                </button>
-            </div>
+    const hasActiveFilter = activeChip !== 'all';
 
-            <h2 class="explorer-header-title">${mapName}</h2>
-
-            <button class="action-button" id="close-explorer-btn" title="Fermer" aria-label="Fermer">
-                <i data-lucide="x" class="icon-20"></i>
-            </button>
-        </div>
+    toolbar.innerHTML = `
+        <label class="mc-search">
+            <i data-lucide="search"></i>
+            <input type="text" id="mc-search-input" placeholder="Rechercher un circuit…" value="${escapeXml(searchQuery)}">
+        </label>
+        <button class="mc-tool-btn ${filtersOpen ? 'is-active' : ''}" id="mc-btn-filters" title="Filtres" aria-label="Filtres">
+            <i data-lucide="sliders-horizontal"></i>
+            ${hasActiveFilter ? '<span class="badge-dot"></span>' : ''}
+        </button>
+        <button class="mc-tool-btn" id="mc-btn-new" title="Nouveau circuit" aria-label="Nouveau circuit">
+            <i data-lucide="plus"></i>
+        </button>
+        <button class="mc-tool-btn ${menuOpen ? 'is-active' : ''}" id="mc-btn-menu" title="Plus d'options" aria-label="Plus d'options">
+            <i data-lucide="more-vertical"></i>
+        </button>
+        <button class="mc-tool-btn" id="mc-btn-close" title="Cacher le panneau" aria-label="Cacher le panneau">
+            <i data-lucide="x"></i>
+        </button>
     `;
+    createIcons({ icons: appIcons, root: toolbar });
 
-    const closeBtn = header.querySelector('#close-explorer-btn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-             const sidebar = document.getElementById('right-sidebar');
-             if(sidebar) sidebar.style.display = 'none';
-             document.body.classList.remove('sidebar-open');
+    // Recherche en temps réel
+    const searchInput = document.getElementById('mc-search-input');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            renderExplorerList();
         });
     }
 
-    const prevBtn = header.querySelector('#explorer-prev-page');
-    const nextBtn = header.querySelector('#explorer-next-page');
+    // Toggle filtres dépliables
+    document.getElementById('mc-btn-filters')?.addEventListener('click', () => {
+        filtersOpen = !filtersOpen;
+        const filtersEl = document.getElementById('mc-filters');
+        if (filtersEl) filtersEl.classList.toggle('is-collapsed', !filtersOpen);
+        // Re-render uniquement le bouton (badge actif)
+        document.getElementById('mc-btn-filters')?.classList.toggle('is-active', filtersOpen);
+    });
 
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            if (explorerCurrentPage > 1) {
-                explorerCurrentPage--;
-                renderExplorerList();
+    // Nouveau circuit → mode sélection
+    document.getElementById('mc-btn-new')?.addEventListener('click', () => {
+        document.getElementById('btn-mode-selection')?.click();
+    });
+
+    // Menu ⋮
+    document.getElementById('mc-btn-menu')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
+    });
+
+    // Fermer panneau
+    document.getElementById('mc-btn-close')?.addEventListener('click', () => {
+        const sidebar = document.getElementById('right-sidebar');
+        if (sidebar) sidebar.style.display = 'none';
+        document.body.classList.remove('sidebar-open');
+    });
+}
+
+// ─── Filter chips dépliables ──────────────────────────────────────────────
+function renderFilterChips() {
+    const container = document.getElementById('mc-filters');
+    if (!container) return;
+
+    const chips = [
+        { value: 'all', label: 'Tous', icon: null },
+        { value: 'official', label: 'Officiels', icon: 'badge-check' },
+        { value: 'with-resto', label: 'Avec resto', icon: 'utensils' },
+    ];
+
+    container.innerHTML = chips.map(c => `
+        <button class="mc-filter-chip ${activeChip === c.value ? 'is-on' : ''}" data-chip="${c.value}">
+            ${c.icon ? `<i data-lucide="${c.icon}"></i>` : ''}
+            ${c.label}
+        </button>
+    `).join('');
+
+    createIcons({ icons: appIcons, root: container });
+
+    container.querySelectorAll('.mc-filter-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            activeChip = chip.dataset.chip;
+            renderFilterChips();
+            renderExplorerList();
+            // Mise à jour du badge-dot sur le bouton filtres
+            const filtersBtn = document.getElementById('mc-btn-filters');
+            if (filtersBtn) {
+                const dot = filtersBtn.querySelector('.badge-dot');
+                if (activeChip !== 'all' && !dot) {
+                    const span = document.createElement('span');
+                    span.className = 'badge-dot';
+                    filtersBtn.appendChild(span);
+                } else if (activeChip === 'all' && dot) {
+                    dot.remove();
+                }
             }
         });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            explorerCurrentPage++;
-            renderExplorerList();
-        });
-    }
-
-    createIcons({ icons: appIcons });
+    });
 }
 
-// --- EXPLORER TOOLBAR (NEW) ---
-function renderExplorerToolbar() {
-    const panel = document.getElementById('panel-explorer');
-    if (!panel) return;
+// ─── Menu ⋮ (dropdown overlay) ────────────────────────────────────────────
+function toggleMenu() {
+    if (menuOpen) {
+        closeMenu();
+    } else {
+        openMenu();
+    }
+}
 
-    // Check if footer already exists
-    let footer = panel.querySelector('.explorer-footer');
-    if (!footer) {
-        footer = document.createElement('div');
-        footer.className = 'explorer-footer panel-footer'; // Reuse panel-footer style base
-        panel.appendChild(footer);
+function openMenu() {
+    menuOpen = true;
+    let menu = document.getElementById('mc-menu-dropdown');
+    if (!menu) {
+        menu = document.createElement('div');
+        menu.id = 'mc-menu-dropdown';
+        menu.className = 'mc-menu-dropdown';
+        document.getElementById('panel-explorer')?.appendChild(menu);
     }
 
-    // Determine Icons based on state
-    const proximityActive = currentSort === 'proximity_asc';
-    const distIcon = currentSort.startsWith('dist')
-        ? (currentSort === 'dist_desc' ? 'arrow-up-1-0' : 'arrow-down-0-1')
-        : 'ruler';
+    const distIcon = currentSort === 'dist_desc' ? 'arrow-up-1-0' :
+                     currentSort === 'dist_asc' ? 'arrow-down-0-1' : 'ruler';
 
-    // Note : pas de bouton "Filtrer par Zone" ici sur PC — le filtre Zone vit
-    // dans le panneau de filtres unifié (cf. filter-panel.js, ouvert depuis
-    // #hw-topbar-filters-btn). Il pilote le même state.activeFilters.zone
-    // et rafraîchit déjà la liste des circuits via l'event 'data:filtered'.
-    // Sur mobile, le filtre vit dans mobile-circuits.js (#mob-filter-zone).
-
-    footer.innerHTML = `
-        <button id="btn-sort-proximity" class="footer-btn icon-only ${proximityActive ? 'active' : ''}" title="Trier par proximité du lieu de résidence" aria-label="Trier par proximité">
-            <i data-lucide="home"></i>
+    menu.innerHTML = `
+        <button class="mc-menu-item ${currentSort === 'proximity_asc' ? 'is-active' : ''}" data-action="sort-proximity">
+            <i data-lucide="home"></i><span>Tri par proximité</span>
         </button>
-        <button id="btn-sort-dist" class="footer-btn icon-only ${currentSort.startsWith('dist') ? 'active' : ''}" title="Trier par distance" aria-label="Trier par distance">
-            <i data-lucide="${distIcon}"></i>
+        <button class="mc-menu-item ${currentSort.startsWith('dist') ? 'is-active' : ''}" data-action="sort-dist">
+            <i data-lucide="${distIcon}"></i><span>Tri par distance</span>
         </button>
-
-        <div class="separator-vertical"></div>
-
-        <button id="btn-filter-todo" class="footer-btn icon-only ${filterTodo ? 'active' : ''}" title="A faire" aria-label="A faire">
+        <div class="mc-menu-sep"></div>
+        <button class="mc-menu-item ${filterTodo ? 'is-active' : ''}" data-action="toggle-todo">
             <i data-lucide="${filterTodo ? 'list-todo' : 'list-checks'}"></i>
+            <span>${filterTodo ? 'Tous les circuits' : 'À faire uniquement'}</span>
         </button>
-
-        <div class="separator-vertical"></div>
-
-        <button id="btn-reset-filters" class="footer-btn icon-only" title="Réinitialiser" aria-label="Réinitialiser">
-            <i data-lucide="rotate-ccw"></i>
+        <div class="mc-menu-sep"></div>
+        <button class="mc-menu-item" data-action="reset">
+            <i data-lucide="rotate-ccw"></i><span>Réinitialiser</span>
         </button>
     `;
+    createIcons({ icons: appIcons, root: menu });
 
-    // Ensure icons are drawn immediately
-    createIcons({ icons: appIcons, root: footer });
+    menu.querySelectorAll('.mc-menu-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            const action = e.currentTarget.dataset.action;
+            handleMenuAction(action);
+            closeMenu();
+        });
+    });
 
-    // Event Listeners (Must be re-attached as innerHTML cleared them)
-    const btnProximity = footer.querySelector('#btn-sort-proximity');
-    if(btnProximity) btnProximity.onclick = () => {
-        // Pas de home défini → toast + pas de changement de tri
+    document.getElementById('mc-btn-menu')?.classList.add('is-active');
+}
+
+function closeMenu() {
+    menuOpen = false;
+    document.getElementById('mc-menu-dropdown')?.remove();
+    document.getElementById('mc-btn-menu')?.classList.remove('is-active');
+}
+
+function handleMenuAction(action) {
+    if (action === 'sort-proximity') {
         if (!state.homeLocation) {
             showToast(
                 "Définissez votre lieu de résidence dans Mon Espace pour activer ce tri.",
-                'info',
-                4500
+                'info', 4500
             );
             return;
         }
         currentSort = 'proximity_asc';
-        refreshExplorer();
-    };
-
-    const btnDist = footer.querySelector('#btn-sort-dist');
-    if(btnDist) btnDist.onclick = () => {
-        if (currentSort === 'dist_asc') currentSort = 'dist_desc';
-        else currentSort = 'dist_asc';
-        refreshExplorer();
-    };
-
-    const btnTodo = footer.querySelector('#btn-filter-todo');
-    if(btnTodo) btnTodo.onclick = () => {
+        renderExplorerList();
+    } else if (action === 'sort-dist') {
+        currentSort = currentSort === 'dist_asc' ? 'dist_desc' : 'dist_asc';
+        renderExplorerList();
+    } else if (action === 'toggle-todo') {
         filterTodo = !filterTodo;
-        refreshExplorer();
-    };
-
-    const btnReset = footer.querySelector('#btn-reset-filters');
-    if(btnReset) btnReset.onclick = () => {
+        renderExplorerList();
+    } else if (action === 'reset') {
         currentSort = 'proximity_asc';
         filterTodo = false;
-        if(state.activeFilters) {
+        activeChip = 'all';
+        searchQuery = '';
+        if (state.activeFilters) {
             setActiveFilters({ ...state.activeFilters, zone: null });
         }
         applyFilters();
-        refreshExplorer();
-    };
+        renderAll();
+    }
 }
 
-function refreshExplorer() {
-    explorerCurrentPage = 1; // Reset to page 1 when sort/filters change
-    renderExplorerToolbar(); // Update icons/states
-    renderExplorerList(); // Update list
-}
-
+// ─── Liste circuits ───────────────────────────────────────────────────────
 export function renderExplorerList() {
-    // Ensure header/toolbar are up to date
-    const headerTitle = document.querySelector('.explorer-header h2');
-    if (!headerTitle || (state.currentMapId && !headerTitle.textContent.includes(state.currentMapId.charAt(0).toUpperCase()))) {
-         renderExplorerHeader();
-    }
-    if (!document.querySelector('.explorer-footer')) {
-        renderExplorerToolbar();
-    }
-
     const listContainer = document.getElementById('explorer-list');
     if (!listContainer) return;
 
-    // --- USE SHARED SERVICE ---
-    const globalZoneFilter = (state.activeFilters && state.activeFilters.zone) ? state.activeFilters.zone : null;
+    // Garantit la toolbar/chips rendus (premier appel via renderAll)
+    if (!document.getElementById('mc-search-input')) renderToolbar();
+    if (!document.querySelector('#mc-filters .mc-filter-chip')) renderFilterChips();
 
-    // Bug D : détection du POI courant + gestion du dismissal
+    // Source : on délègue le filtre Zone global au filter-panel ; ici on combine
+    // tri + "à faire" + zone globale + filtre POI courant.
+    const globalZoneFilter = (state.activeFilters && state.activeFilters.zone) || null;
+
+    // Filtre POI courant (chip dynamique "Filtré par : [POI]")
     let filterPoiId = null;
     let currentPoiFeature = null;
     let currentPoiId = null;
@@ -231,7 +272,6 @@ export function renderExplorerList() {
         currentPoiFeature = state.loadedFeatures[state.currentFeatureId];
         currentPoiId = getPoiId(currentPoiFeature);
     }
-    // Reset dismissal quand le POI change
     if (currentPoiId !== explorerLastPoiId) {
         explorerPoiFilterActive = true;
         explorerLastPoiId = currentPoiId;
@@ -240,174 +280,131 @@ export function renderExplorerList() {
         filterPoiId = currentPoiId;
     }
 
-    const processedCircuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter, filterPoiId);
+    let circuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter, filterPoiId);
 
-    // --- PAGINATION LOGIC ---
-    let listHeight = 0;
-
-    const sidebar = document.getElementById('right-sidebar');
-    const header = document.querySelector('.explorer-header');
-    const footer = document.querySelector('.explorer-footer');
-    const tabs = document.querySelector('.sidebar-tabs');
-
-    if (sidebar && header && footer && tabs) {
-        listHeight = sidebar.clientHeight - tabs.clientHeight - header.clientHeight - footer.clientHeight;
-    } else {
-        listHeight = window.innerHeight - 70 - 40 - 56 - 56;
+    // Recherche locale (filtre par nom, case-insensitive)
+    if (searchQuery.trim()) {
+        const q = searchQuery.trim().toLowerCase();
+        circuits = circuits.filter(c => (c.name || '').toLowerCase().includes(q));
     }
 
-    const availableSpaceForItems = listHeight - 24;
-    const itemHeight = 72;
-    const gap = 10;
-
-    let itemsPerPage = Math.max(1, Math.floor((availableSpaceForItems + gap) / (itemHeight + gap)));
-    if (itemsPerPage < 3) itemsPerPage = 6;
-
-    const totalPages = Math.max(1, Math.ceil(processedCircuits.length / itemsPerPage));
-    if (explorerCurrentPage > totalPages) {
-        explorerCurrentPage = totalPages;
+    // Chips locales
+    if (activeChip === 'official') {
+        circuits = circuits.filter(c => c.isOfficial);
+    } else if (activeChip === 'with-resto') {
+        circuits = circuits.filter(c => c._hasRestaurant);
     }
-
-    // Update Header Pagination UI
-    const prevBtn = document.getElementById('explorer-prev-page');
-    const nextBtn = document.getElementById('explorer-next-page');
-    const pageInfo = document.getElementById('explorer-page-info');
-
-    if (pageInfo) {
-        pageInfo.textContent = `${explorerCurrentPage} / ${totalPages}`;
-    }
-    if (prevBtn) {
-        prevBtn.disabled = explorerCurrentPage <= 1;
-    }
-    if (nextBtn) {
-        nextBtn.disabled = explorerCurrentPage >= totalPages;
-    }
-
-    const startIdx = (explorerCurrentPage - 1) * itemsPerPage;
-    const paginatedCircuits = processedCircuits.slice(startIdx, startIdx + itemsPerPage);
 
     listContainer.innerHTML = '';
 
-    // Bug D : chip "Filtré par : [POI]  ✕" quand le filtre POI est actif
+    // Chip "Filtré par : [POI]" (dynamique, dismissable)
     if (filterPoiId && currentPoiFeature) {
         const poiName = getPoiName(currentPoiFeature);
         const chip = document.createElement('div');
-        chip.className = 'explorer-poi-filter-chip';
+        chip.className = 'mc-poi-filter-chip';
         chip.innerHTML = `
-            <i data-lucide="map-pin" class="icon-16"></i>
-            <span class="explorer-poi-filter-chip-label">Filtré par : <strong>${escapeXml(poiName)}</strong></span>
-            <button type="button" class="explorer-poi-filter-chip-clear" title="Retirer le filtre" aria-label="Retirer le filtre">
-                <i data-lucide="x" class="icon-16"></i>
+            <i data-lucide="map-pin"></i>
+            <span>Filtré par <strong>${escapeXml(poiName)}</strong></span>
+            <button type="button" class="mc-poi-filter-chip-clear" title="Retirer le filtre" aria-label="Retirer le filtre">
+                <i data-lucide="x"></i>
             </button>
         `;
-        const clearBtn = chip.querySelector('.explorer-poi-filter-chip-clear');
-        if (clearBtn) {
-            clearBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                explorerPoiFilterActive = false;
-                refreshExplorer();
-            });
-        }
+        chip.querySelector('.mc-poi-filter-chip-clear')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            explorerPoiFilterActive = false;
+            renderExplorerList();
+        });
         listContainer.appendChild(chip);
     }
 
-    if (paginatedCircuits.length === 0) {
-        const emptyState = document.createElement('div');
-        emptyState.className = 'explorer-list-empty';
-        emptyState.textContent = 'Aucun circuit correspondant.';
-        listContainer.appendChild(emptyState);
-        // Render icons even si liste vide (pour le chip de filtre POI)
+    if (circuits.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'mc-empty';
+        const hasActiveFilters = !!searchQuery || activeChip !== 'all' || filterTodo;
+        empty.innerHTML = `
+            <div class="icon-wrap"><i data-lucide="map"></i></div>
+            <h4>Aucun circuit</h4>
+            <p>${hasActiveFilters ? 'Aucun résultat avec ces filtres.' : 'Cliquez sur + pour créer un circuit, ou explorez la carte pour ajouter des POI.'}</p>
+        `;
+        listContainer.appendChild(empty);
         createIcons({ icons: appIcons, root: listContainer });
         return;
     }
 
-    paginatedCircuits.forEach(c => {
-        // Simplification du nom : Suppression des préfixes et du via
-        let displayName = c.name.split(' via ')[0];
-        displayName = displayName.replace(/^(Circuit de |Boucle de )/i, '');
+    const list = document.createElement('div');
+    list.className = 'mc-list';
+    circuits.forEach(c => list.appendChild(createCircuitCard(c)));
+    listContainer.appendChild(list);
 
-        const isCompleted = c._isCompleted;
+    createIcons({ icons: appIcons, root: listContainer });
+}
 
-        // --- Container Principal (.explorer-item) ---
-        const itemContainer = document.createElement('div');
-        itemContainer.className = 'explorer-item';
-        itemContainer.dataset.id = c.id;
+function createCircuitCard(c) {
+    let displayName = (c.name || '').split(' via ')[0];
+    displayName = displayName.replace(/^(Circuit de |Boucle de )/i, '');
 
-        itemContainer.addEventListener('click', (e) => {
-            if (e.target.closest('.explorer-item-delete') || e.target.closest('a') || e.target.closest('.btn-toggle-visited')) return;
-            eventBus.emit('circuit:request-load', c.id);
-            eventBus.emit('ui:request-tab-change', 'circuit');
-        });
+    const isCompleted = c._isCompleted;
+    const isTested = c.isOfficial && isCircuitTested(c.id);
+    const isActive = state.activeCircuitId === c.id;
 
-        // --- Left: Check (Toggle Visited) ---
-        const leftDiv = document.createElement('div');
-        leftDiv.className = 'explorer-item-left';
+    const card = document.createElement('article');
+    card.className = `mc-card${isActive ? ' is-active' : ''}${isCompleted ? ' is-completed' : ''}`;
+    card.dataset.id = c.id;
 
-        const toggleBtn = document.createElement('button');
-        toggleBtn.className = `explorer-item-action btn-toggle-visited${isCompleted ? ' completed' : ''}`;
-        toggleBtn.dataset.id = c.id;
-        toggleBtn.dataset.visited = isCompleted.toString();
-        toggleBtn.title = isCompleted ? 'Marquer comme non fait' : 'Marquer comme fait';
-
-        const toggleIconName = isCompleted ? 'check-circle' : 'circle';
-        toggleBtn.innerHTML = `<i data-lucide="${toggleIconName}" class="icon-md"></i>`;
-
-        toggleBtn.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const result = await handleCircuitVisitedToggle(c.id, isCompleted);
-            if (result.success) {
-                eventBus.emit('circuit:list-updated');
-            }
-        });
-
-        leftDiv.appendChild(toggleBtn);
-        itemContainer.appendChild(leftDiv);
-
-        // --- Center: Info ---
-        const centerDiv = document.createElement('div');
-        centerDiv.className = 'explorer-item-content';
-
-        // Nom du circuit
-        const nameDiv = document.createElement('div');
-        nameDiv.className = `explorer-item-name${c.isOfficial ? ' explorer-item-name--official' : ''}`;
-        nameDiv.title = c.name;
-        nameDiv.textContent = displayName;
-        if (c.isOfficial) {
-            const isTested = isCircuitTested(c.id);
-            const badgeEl = document.createElement('i');
-            badgeEl.setAttribute('data-lucide', isTested ? 'shield-check' : 'star');
-            badgeEl.className = `icon-official-star lucide${isTested ? ' icon-tested' : ''}`;
-            badgeEl.title = isTested ? 'Testé sur le terrain' : 'Circuit officiel';
-            nameDiv.appendChild(badgeEl);
-        }
-
-        centerDiv.appendChild(nameDiv);
-
-        // Meta infos (POI, distance, icon, zone, resto)
-        const metaDiv = document.createElement('div');
-        metaDiv.className = 'explorer-item-meta';
-
-        let metaHtml = `${c._poiCount} POI • ${escapeXml(c._distDisplay)} <i data-lucide="${c._iconName}" class="icon-meta"></i> • ${escapeXml(c._zoneName)}`;
-        if (c._hasRestaurant) {
-            metaHtml += ` <i data-lucide="utensils" class="icon-meta-extra" title="Restaurant présent"></i>`;
-        }
-        metaDiv.innerHTML = metaHtml;
-
-        centerDiv.appendChild(metaDiv);
-        itemContainer.appendChild(centerDiv);
-
-        // --- Right: Actions ---
-        const rightDiv = document.createElement('div');
-        rightDiv.className = 'explorer-item-right';
-
-        // Note: La suppression est masquée dans la vue liste actuellement.
-        // Si elle est réactivée, le bouton peut être créé ici avec createElement.
-
-        itemContainer.appendChild(rightDiv);
-
-        listContainer.appendChild(itemContainer);
+    // Click sur la carte → activer + bascule onglet "Circuit"
+    card.addEventListener('click', (e) => {
+        if (e.target.closest('.mc-card-action-check')) return;
+        eventBus.emit('circuit:request-load', c.id);
+        eventBus.emit('ui:request-tab-change', 'circuit');
     });
 
-    // Render icons for newly created DOM elements
-    createIcons({ icons: appIcons, root: listContainer });
+    // ─ Ligne 1 : titre + badge officiel/testé + check toggle ─
+    const line1 = document.createElement('div');
+    line1.className = 'mc-card-line1';
+
+    const title = document.createElement('h3');
+    title.className = 'mc-card-title';
+    title.textContent = displayName;
+    title.title = c.name || '';
+    line1.appendChild(title);
+
+    if (c.isOfficial) {
+        const badge = document.createElement('span');
+        badge.className = `mc-badge-official${isTested ? ' is-tested' : ''}`;
+        badge.title = isTested ? 'Vérifié sur le terrain' : 'Circuit officiel';
+        const icon = document.createElement('i');
+        icon.setAttribute('data-lucide', isTested ? 'shield-check' : 'check');
+        badge.appendChild(icon);
+        line1.appendChild(badge);
+    }
+
+    const checkBtn = document.createElement('button');
+    checkBtn.type = 'button';
+    checkBtn.className = `mc-card-action-check${isCompleted ? ' is-completed' : ''}`;
+    checkBtn.title = isCompleted ? 'Marquer comme non fait' : 'Marquer comme fait';
+    checkBtn.dataset.id = c.id;
+    const checkIcon = document.createElement('i');
+    checkIcon.setAttribute('data-lucide', isCompleted ? 'check' : 'circle');
+    checkBtn.appendChild(checkIcon);
+    checkBtn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const result = await handleCircuitVisitedToggle(c.id, isCompleted);
+        if (result.success) eventBus.emit('circuit:list-updated');
+    });
+    line1.appendChild(checkBtn);
+
+    card.appendChild(line1);
+
+    // ─ Ligne 2 : pastilles meta ─
+    const line2 = document.createElement('div');
+    line2.className = 'mc-card-line2';
+    line2.innerHTML = `
+        <span class="mc-meta"><i data-lucide="map-pin"></i>${c._poiCount}</span>
+        <span class="mc-meta"><i data-lucide="route"></i>${escapeXml(c._distDisplay)}</span>
+        ${c._zoneName ? `<span class="mc-meta zone">${escapeXml(c._zoneName)}</span>` : ''}
+        ${c._hasRestaurant ? `<span class="mc-meta resto" title="Restaurant en fin de circuit"><i data-lucide="utensils"></i></span>` : ''}
+    `;
+    card.appendChild(line2);
+
+    return card;
 }
