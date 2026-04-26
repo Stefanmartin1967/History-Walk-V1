@@ -509,6 +509,44 @@
 .user-space-mode #custom-modal-title,
 .user-space-mode #custom-modal-actions { display: none !important; }
 
+/* ── MENTIONS LÉGALES ─────────────────────────────────────────────────────── */
+.legal-modal .custom-modal-message {
+    text-align: left;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.legal-modal-content {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink);
+}
+.legal-modal-content p {
+    margin: 0 0 12px;
+}
+.legal-modal-content .legal-copyright {
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--surface-muted);
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+}
+.legal-modal-content .legal-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ink-soft);
+    margin: 14px 0 6px;
+}
+.legal-modal-content a {
+    color: var(--brand);
+    text-decoration: none;
+}
+.legal-modal-content a:hover {
+    text-decoration: underline;
+}
+
 /* ── CONTAINER ────────────────────────────────────────────────────────────── */
 .ue-container {
     display: flex; flex-direction: column;

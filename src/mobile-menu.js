@@ -6,6 +6,7 @@ import { DOM } from './ui-dom.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
+import { showLegalNoticeModal } from './legal-modal.js';
 import { saveUserData } from './fileManager.js';
 import { deleteDatabase } from './database.js';
 import { startGenericScanner } from './sync.js';
@@ -65,6 +66,11 @@ export function renderMobileMenu() {
                 <i data-lucide="coffee"></i>
                 <span>Offrir un café</span>
                 <i data-lucide="heart" class="bmc-heart-icon icon-heart"></i>
+            </button>
+            <div class="mobile-divider"></div>
+            <button class="mobile-list-item" id="mob-action-legal-notice">
+                <i data-lucide="scale"></i>
+                <span>Mentions légales</span>
             </button>
             ${state.isAdmin ? `
             <div class="mobile-divider"></div>
@@ -126,6 +132,7 @@ export function renderMobileMenu() {
     document.getElementById('mob-action-bmc').addEventListener('click', () => {
         window.open('https://www.buymeacoffee.com/history_walk', '_blank');
     });
+    document.getElementById('mob-action-legal-notice')?.addEventListener('click', () => showLegalNoticeModal());
 
     const btnAdminLogin = document.getElementById('mob-action-admin-login');
     if (btnAdminLogin) {

@@ -78,3 +78,11 @@ L'application supporte plusieurs destinations via `public/destinations.json`. Ch
 ## Documentation
 
 Analyse architecturale et notes internes : voir `.claude/` (non distribué).
+
+## License
+
+Copyright © 2026 Stefan Martin. All rights reserved.
+See [LICENSE](LICENSE) file for details.
+
+Map data © OpenStreetMap contributors, available under the
+[Open Database License (ODbL)](https://www.openstreetmap.org/copyright).
