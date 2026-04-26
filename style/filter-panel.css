@@ -1,0 +1,328 @@
+/* ============================================================
+   filter-panel.css — Panneau de filtres unifié (refonte Claude Design)
+   PR 1 (foundation) : structure visuelle + section Localisation câblée.
+   Sections Catégories / Mon parcours / État de la fiche : stubs visuels.
+   Couleurs via vars de base.css → adapte automatiquement aux thèmes.
+   ============================================================ */
+
+.hw-filter-panel {
+    position: absolute;
+    top: 12px;
+    left: 60px; /* dégage les contrôles Leaflet (zoom +/−, etc.) */
+    bottom: 12px;
+    width: 340px;
+    max-height: calc(100% - 24px);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    box-shadow: 0 18px 40px rgba(2, 12, 27, 0.18), 0 4px 12px rgba(2, 12, 27, 0.08);
+    overflow: hidden;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    font-family: system-ui, -apple-system, sans-serif;
+    transform: translateX(-12px);
+    opacity: 0;
+    transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.hw-filter-panel.is-open {
+    display: flex;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* ─── Header ─── */
+.hw-fp-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 14px 12px;
+    border-bottom: 1px solid #EEF2F6;
+}
+
+.hw-fp-header-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.hw-fp-header-icon svg {
+    width: 18px;
+    height: 18px;
+}
+
+.hw-fp-header-text {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.hw-fp-title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.hw-fp-subtitle {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+}
+
+.hw-fp-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.hw-fp-close:hover {
+    background: var(--surface-muted);
+}
+
+.hw-fp-close svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ─── Body (scroll) ─── */
+.hw-fp-body {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+/* ─── Section ─── */
+.hw-fp-section {
+    border-bottom: 1px solid #EEF2F6;
+}
+
+.hw-fp-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    background: transparent;
+    border: 0;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+}
+
+.hw-fp-section-header:hover {
+    background: var(--surface-muted);
+}
+
+.hw-fp-chevron {
+    color: var(--ink-soft);
+    display: grid;
+    place-items: center;
+    transform: rotate(0deg);
+    transition: transform 0.15s;
+    flex-shrink: 0;
+}
+
+.hw-fp-chevron svg {
+    width: 16px;
+    height: 16px;
+}
+
+.hw-fp-section.is-collapsed .hw-fp-chevron {
+    transform: rotate(-90deg);
+}
+
+.hw-fp-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #334E68;
+    flex-grow: 1;
+}
+
+.hw-fp-section.is-active .hw-fp-section-title {
+    color: var(--bg);
+}
+
+.hw-fp-section-badge-active {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--brand);
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+
+.hw-fp-section-badge-info {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface-muted);
+    padding: 3px 8px;
+    border-radius: 999px;
+}
+
+.hw-fp-section-content {
+    padding: 0 14px 14px;
+}
+
+.hw-fp-section.is-collapsed .hw-fp-section-content {
+    display: none;
+}
+
+/* ─── FakeSelect (Localisation) ─── */
+.hw-fp-select {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    font-size: 14px;
+    color: var(--ink);
+    position: relative;
+}
+
+.hw-fp-select:hover {
+    background: var(--surface-muted);
+}
+
+.hw-fp-select-icon {
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+
+.hw-fp-select-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.hw-fp-select-value {
+    flex-grow: 1;
+}
+
+.hw-fp-select-value-count {
+    color: var(--ink-soft);
+    margin-left: 6px;
+}
+
+/* Zones dropdown rendu sous le select */
+.hw-fp-zones-list {
+    margin-top: 8px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    max-height: 280px;
+    overflow-y: auto;
+    display: none;
+}
+
+.hw-fp-zones-list.is-open {
+    display: block;
+}
+
+.hw-fp-zone-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 9px 12px;
+    border: 0;
+    background: var(--surface);
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    text-align: left;
+    border-bottom: 1px solid #EEF2F6;
+}
+
+.hw-fp-zone-btn:last-child {
+    border-bottom: none;
+}
+
+.hw-fp-zone-btn:hover {
+    background: var(--surface-muted);
+}
+
+.hw-fp-zone-btn.is-current {
+    background: var(--brand-soft);
+    font-weight: 600;
+}
+
+.hw-fp-zone-count {
+    margin-left: auto;
+    color: var(--ink-soft);
+    font-size: 12px;
+}
+
+/* ─── Stubs (visuels seulement, non câblés en PR 1) ─── */
+.hw-fp-stub {
+    padding: 12px 14px;
+    background: var(--surface-muted);
+    border-radius: 10px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    font-style: italic;
+    text-align: center;
+}
+
+/* ─── Footer ─── */
+.hw-fp-footer {
+    padding: 12px;
+    border-top: 1px solid #EEF2F6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FAFBFC;
+    flex-shrink: 0;
+}
+
+.hw-fp-footer-status {
+    font-size: 12px;
+    color: var(--ink-soft);
+}
+
+.hw-fp-reset-btn {
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: #334E68;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.hw-fp-reset-btn:hover:not(:disabled) {
+    background: var(--surface-muted);
+}
+
+.hw-fp-reset-btn:disabled {
+    opacity: 0.6;
+    color: #9FB3C8;
+    cursor: not-allowed;
+}

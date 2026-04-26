@@ -9,6 +9,7 @@
      admin-cc.css       — Control Center Admin + maintenance + formulaires
      mobile.css         — vues mobile (circuits, POI, menu) + écran de bienvenue
      explorer-card.css  — carte explorateur (modale stats + iframe impression)
+     filter-panel.css   — panneau de filtres unifié (refonte Claude Design)
    ============================================================ */
 
 @import "./style/base.css";
@@ -19,3 +20,4 @@
 @import "./style/admin-cc.css";
 @import "./style/mobile.css";
 @import "./style/explorer-card.css";
+@import "./style/filter-panel.css";
