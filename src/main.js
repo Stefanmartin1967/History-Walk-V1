@@ -39,6 +39,7 @@ import { initTokenCache } from './github-sync.js';
 import { loadAndInitializeMap } from './app-startup.js';
 import { showWelcomeIfNeeded } from './welcome.js';
 import { setupEventBusListeners } from './events-bus.js';
+import { setupFilterPanel, toggleFilterPanel } from './filter-panel.js';
 import { setupDesktopUIListeners } from './events-desktop.js';
 import { setupGlobalEventListeners } from './events-global.js';
 
@@ -116,6 +117,11 @@ async function initializeApp() {
     // 3. Tour de contrôle et événements (AVANT le chargement de la carte pour s'assurer que data:filtered est capté)
     setupEventBusListeners();
     setupCircuitEventListeners();
+    setupFilterPanel();
+    document.getElementById('btn-new-filters')?.addEventListener('click', () => {
+        document.getElementById('tools-menu-content')?.classList.remove('active');
+        toggleFilterPanel();
+    });
     setupDesktopUIListeners();
     setupGlobalEventListeners();
     setupFileListeners();

@@ -137,6 +137,10 @@
                         <i data-lucide="trophy"></i> Mon Carnet de Voyage
                     </button>
 
+                    <button class="tools-menu-item" id="btn-new-filters">
+                        <i data-lucide="filter"></i> Nouveaux filtres (preview)
+                    </button>
+
                     <button class="tools-menu-item" id="btn-sync-scan">
                         <i data-lucide="scan-line"></i> Scanner (Synchro/Circuit)
                     </button>
@@ -186,7 +190,10 @@
         </div>
     </div>
 
-    <div id="map"></div>
+    <div id="map">
+        <!-- Panneau de filtres unifié (refonte Claude Design) — rendu via filter-panel.js -->
+        <div id="hw-filter-panel" class="hw-filter-panel"></div>
+    </div>
     <div id="app-version" class="is-hidden"></div>
 
     <div class="right-sidebar" id="right-sidebar">
