@@ -69,20 +69,6 @@ export async function performCircuitDeletion(id) {
 }
 
 /**
- * Change le statut visité d'un circuit sans confirmation (Low-level).
- * @deprecated Utilisez handleCircuitVisitedToggle pour l'action utilisateur avec UI.
- */
-export async function toggleCircuitVisitedStatus(circuitId, isChecked) {
-    try {
-        await setCircuitVisitedState(circuitId, isChecked);
-        return { success: true };
-    } catch (error) {
-        console.error("Erreur lors du changement de statut visité:", error);
-        return { success: false };
-    }
-}
-
-/**
  * Gère l'action utilisateur de bascule du statut "Fait" d'un circuit avec dialogues de confirmation.
  * @param {string} circuitId
  * @param {boolean} currentStatus - Le statut actuel (avant le clic) : true = Déjà fait (on veut décocher), false = Pas fait (on veut cocher)

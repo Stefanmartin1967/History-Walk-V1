@@ -9,7 +9,7 @@ import { renderMobilePoiList } from './mobile-poi.js';
 import { refreshMapMarkers } from './map.js';
 import { populateZonesMenu, populateCategoriesMenu, populateCircuitsMenu } from './ui-filters.js';
 import { loadCircuitById, clearCircuit, navigatePoiDetails } from './circuit.js';
-import { performCircuitDeletion, toggleCircuitVisitedStatus } from './circuit-actions.js';
+import { performCircuitDeletion } from './circuit-actions.js';
 import { setCircuitIdToImportFor } from './state.js';
 import { DOM } from './ui-dom.js';
 import { showToast } from './toast.js';
@@ -41,10 +41,6 @@ export function setupEventBusListeners() {
     eventBus.on('circuit:request-import', (id) => {
         setCircuitIdToImportFor(id);
         if (DOM.gpxImporter) DOM.gpxImporter.click();
-    });
-    eventBus.on('circuit:request-toggle-visited', async ({ id, isChecked }) => {
-        const result = await toggleCircuitVisitedStatus(id, isChecked);
-        if (result.success) eventBus.emit('circuit:list-updated');
     });
     eventBus.on('circuit:list-updated', () => populateCircuitsMenu());
     eventBus.on('data:apply-filters', () => applyFilters());
