@@ -87,6 +87,7 @@ import { getZoneFromCoords } from '../src/utils.js';
 import {
     recomputeVu,
     getFilteredFeatures,
+    passesUserFilters,
     isPendingPoi,
     addPendingPoiFeature,
     commitPendingPoiIfNeeded,
@@ -271,6 +272,67 @@ describe('getFilteredFeatures', () => {
         state.activeFilters.nonVerifies = true;
         const r = getFilteredFeatures();
         expect(r.map(f => f.properties.HW_ID).sort()).toEqual(['p2', 'p3']);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('passesUserFilters', () => {
+    it('retourne false pour feature null/undefined', () => {
+        expect(passesUserFilters(null)).toBe(false);
+        expect(passesUserFilters(undefined)).toBe(false);
+    });
+
+    it('out si POI dans hiddenPoiIds', () => {
+        state.hiddenPoiIds = ['p1'];
+        expect(passesUserFilters(poi('p1'))).toBe(false);
+    });
+
+    it('hidden bat incontournable (POI caché reste caché même incontournable)', () => {
+        state.hiddenPoiIds = ['p1'];
+        expect(passesUserFilters(poi('p1', { incontournable: true }))).toBe(false);
+    });
+
+    it('incontournable bypasse vus + planifies', () => {
+        state.activeFilters.vus = true;
+        state.activeFilters.planifies = true;
+        const f = poi('p1', { incontournable: true, userData: { vu: true, planifieCounter: 5 } });
+        expect(passesUserFilters(f)).toBe(true);
+    });
+
+    it('POI du circuit actif bypasse les filtres user', () => {
+        const p1 = poi('p1', { userData: { vu: true } });
+        state.loadedFeatures = [p1];
+        state.currentCircuit = [p1];
+        state.activeCircuitId = 'c1';
+        state.activeFilters.vus = true;
+        expect(passesUserFilters(p1)).toBe(true);
+    });
+
+    it('mode standard : vus=true exclut un POI vu (non incontournable)', () => {
+        state.activeFilters.vus = true;
+        expect(passesUserFilters(poi('p1', { userData: { vu: true } }))).toBe(false);
+    });
+
+    it('mode standard : planifies=true exclut planifieCounter > 0', () => {
+        state.activeFilters.planifies = true;
+        expect(passesUserFilters(poi('p1', { userData: { planifieCounter: 1 } }))).toBe(false);
+    });
+
+    it('mode sélection : utilise selectionModeFilters au lieu de activeFilters', () => {
+        state.isSelectionModeActive = true;
+        state.activeFilters.vus = false; // ignoré en mode sélection
+        state.selectionModeFilters.hideVisited = true;
+        expect(passesUserFilters(poi('p1', { userData: { vu: true } }))).toBe(false);
+    });
+
+    it('admin : nonVerifies=true exclut les POIs verified=true', () => {
+        state.activeFilters.nonVerifies = true;
+        expect(passesUserFilters(poi('p1', { verified: true }))).toBe(false);
+        expect(passesUserFilters(poi('p2', { verified: false }))).toBe(true);
+    });
+
+    it('par défaut (aucun filtre actif) : POI passe', () => {
+        expect(passesUserFilters(poi('p1'))).toBe(true);
     });
 });
 

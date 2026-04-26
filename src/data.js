@@ -217,50 +217,57 @@ export async function displayGeoJSON(geoJSON, mapId) {
 // --- FILTRES & AFFICHAGE ---
 
 // --- 1. LE TAMIS PUR (Le Cerveau) ---
+// Règles "personnelles" (état utilisateur) avec leurs exceptions :
+//   - hidden → out
+//   - incontournable → in (court-circuit)
+//   - POI du circuit actif → in (court-circuit)
+//   - non-vérifiés (admin) / vus / planifiés selon mode standard ou sélection
+// Ne traite PAS les filtres structurels (zone, catégorie multi). Réutilisée par
+// getFilteredFeatures et getZonesData pour garantir la cohérence du compteur de
+// zones avec les POI réellement affichés.
+export function passesUserFilters(feature) {
+    if (!feature) return false;
+    const props = { ...feature.properties, ...feature.properties.userData };
+    const poiId = getPoiId(feature);
+
+    if (state.hiddenPoiIds && state.hiddenPoiIds.includes(poiId)) return false;
+
+    if (props.incontournable) return true;
+
+    if (state.activeCircuitId && state.currentCircuit && state.currentCircuit.some(f => getPoiId(f) === poiId)) {
+        return true;
+    }
+
+    if (state.activeFilters.nonVerifies && props.verified) return false;
+
+    if (state.isSelectionModeActive) {
+        if (state.selectionModeFilters?.hideVisited && props.vu) return false;
+        if (state.selectionModeFilters?.hidePlanned && (props.planifieCounter || 0) > 0) return false;
+    } else {
+        if (state.activeFilters.vus && props.vu) return false;
+        if (state.activeFilters.planifies && (props.planifieCounter || 0) > 0) return false;
+    }
+
+    return true;
+}
+
 // Il ne fait que du tri mathématique en mémoire. Il ne touche pas à la carte.
 export function getFilteredFeatures() {
     if (!state.loadedFeatures) return [];
 
     return state.loadedFeatures.filter(feature => {
         const props = { ...feature.properties, ...feature.properties.userData };
-        const poiId = getPoiId(feature);
-        
-        // A. Lieux cachés par l'utilisateur
-        if (state.hiddenPoiIds && state.hiddenPoiIds.includes(poiId)) return false; 
-        
-        // B. Les Filtres Structurels (Zone, Catégorie)
-        // Ceux-ci s'appliquent TOUT LE TEMPS, même aux VIPs
-        if (state.activeFilters.zone && props.Zone !== state.activeFilters.zone) return false;
 
-        // Filtre Catégories (Multi-sélection)
+        // Filtres structurels (Zone, Catégorie multi) — s'appliquent TOUJOURS,
+        // même aux incontournables.
+        if (state.activeFilters.zone && props.Zone !== state.activeFilters.zone) return false;
         if (state.activeFilters.categories && state.activeFilters.categories.length > 0) {
             if (!state.activeFilters.categories.includes(props['Catégorie'])) return false;
         }
 
-        // C. Les incontournables passent TOUJOURS (Exception Majeure pour le statut)
-        if (props.incontournable) return true;
-
-        // C.bis. Les lieux du circuit ACTIF passent TOUJOURS (Même si visités ou planifiés ailleurs)
-        // Cela permet de voir tout le tracé d'un circuit en cours de consultation, indépendamment des filtres.
-        if (state.activeCircuitId && state.currentCircuit && state.currentCircuit.some(f => getPoiId(f) === poiId)) {
-            return true;
-        }
-
-        // D.bis. Filtre "Non vérifiés seulement" (admin/révision)
-        if (state.activeFilters.nonVerifies && props.verified) return false;
-
-        // D. Gestion Visité / Planifié (Différente selon le mode)
-        if (state.isSelectionModeActive) {
-             // MODE SÉLECTION : Filtres stricts définis par le Wizard
-             if (state.selectionModeFilters?.hideVisited && props.vu) return false;
-             if (state.selectionModeFilters?.hidePlanned && (props.planifieCounter || 0) > 0) return false;
-        } else {
-             // MODE STANDARD : Filtres toggles de la barre
-             if (state.activeFilters.vus && props.vu) return false;
-             if (state.activeFilters.planifies && (props.planifieCounter || 0) > 0) return false;
-        }
-        
-        return true;
+        // Filtres personnels (hidden, vus, planifiés, non-vérifiés) avec leurs
+        // exceptions (incontournables, circuit actif).
+        return passesUserFilters(feature);
     });
 }
 

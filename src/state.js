@@ -47,7 +47,6 @@ export const state = {
     },
     activeFilters: {
         categories: [],
-        restaurants: false,
         vus: false,
         planifies: false,
         nonVerifies: false,

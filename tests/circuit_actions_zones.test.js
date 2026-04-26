@@ -1,13 +1,23 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-// Mocks des dépendances lourdes (UI, DB, carte) — getZonesData ne lit que
-// state + getPoiId. On garde une vraie implémentation de getPoiId.
-vi.mock('../src/state.js', () => ({
-    state: {
+// État partagé entre les mocks state.js et data.js : passesUserFilters lit
+// l'état pour reproduire le comportement réel. vi.hoisted garantit que la
+// référence est créée AVANT les factories mockés.
+const { sharedState, getPoiIdImpl } = vi.hoisted(() => ({
+    sharedState: {
         loadedFeatures: [],
         hiddenPoiIds: [],
-        activeFilters: { restaurants: false, vus: false, planifies: false }
+        activeFilters: { vus: false, planifies: false, nonVerifies: false },
+        isSelectionModeActive: false,
+        selectionModeFilters: { hideVisited: false, hidePlanned: false },
+        activeCircuitId: null,
+        currentCircuit: null
     },
+    getPoiIdImpl: (f) => f?.properties?.HW_ID || f?.id || null
+}));
+
+vi.mock('../src/state.js', () => ({
+    state: sharedState,
     addMyCircuit: vi.fn(),
     updateMyCircuit: vi.fn(),
     setActiveCircuitId: vi.fn(),
@@ -29,9 +39,32 @@ vi.mock('../src/circuit.js', () => ({
     setCircuitVisitedState: vi.fn(),
     generateCircuitName: vi.fn()
 }));
+// passesUserFilters mocké : réimplémente la logique de data.js, lit sharedState.
+// Le test reste centré sur getZonesData (comptage par zone) sans dépendre de
+// l'import réel de data.js (qui tire IndexedDB, gist-sync, etc.).
 vi.mock('../src/data.js', () => ({
     applyFilters: vi.fn(),
-    getPoiId: (f) => f?.properties?.HW_ID || f?.id || null
+    getPoiId: getPoiIdImpl,
+    passesUserFilters(feature) {
+        if (!feature) return false;
+        const props = { ...feature.properties, ...feature.properties.userData };
+        const poiId = getPoiIdImpl(feature);
+        const s = sharedState;
+        if (s.hiddenPoiIds && s.hiddenPoiIds.includes(poiId)) return false;
+        if (props.incontournable) return true;
+        if (s.activeCircuitId && s.currentCircuit && s.currentCircuit.some(f => getPoiIdImpl(f) === poiId)) {
+            return true;
+        }
+        if (s.activeFilters.nonVerifies && props.verified) return false;
+        if (s.isSelectionModeActive) {
+            if (s.selectionModeFilters?.hideVisited && props.vu) return false;
+            if (s.selectionModeFilters?.hidePlanned && (props.planifieCounter || 0) > 0) return false;
+        } else {
+            if (s.activeFilters.vus && props.vu) return false;
+            if (s.activeFilters.planifies && (props.planifieCounter || 0) > 0) return false;
+        }
+        return true;
+    }
 }));
 vi.mock('../src/mobile-state.js', () => ({ isMobileView: vi.fn(() => false) }));
 vi.mock('../src/modal.js', () => ({ showConfirm: vi.fn() }));
@@ -60,7 +93,11 @@ describe('getZonesData', () => {
     beforeEach(() => {
         state.loadedFeatures = [];
         state.hiddenPoiIds = [];
-        state.activeFilters = { restaurants: false, vus: false, planifies: false };
+        state.activeFilters = { vus: false, planifies: false, nonVerifies: false };
+        state.isSelectionModeActive = false;
+        state.selectionModeFilters = { hideVisited: false, hidePlanned: false };
+        state.activeCircuitId = null;
+        state.currentCircuit = null;
     });
 
     describe('Cas triviaux', () => {
@@ -149,20 +186,6 @@ describe('getZonesData', () => {
         });
     });
 
-    describe('Filtre restaurants', () => {
-        it('ne garde que les Catégorie=Restaurant quand le filtre est actif', () => {
-            state.loadedFeatures = [
-                makeFeature('A', 'Nord', { categorie: 'Restaurant' }),
-                makeFeature('B', 'Nord', { categorie: 'Monument' }),
-                makeFeature('C', 'Sud', { categorie: 'Restaurant' })
-            ];
-            state.activeFilters.restaurants = true;
-            const r = getZonesData();
-            expect(r.totalVisible).toBe(2);
-            expect(r.zoneCounts).toEqual({ Nord: 1, Sud: 1 });
-        });
-    });
-
     describe('Filtre vus', () => {
         it('exclut les POI marqués vu quand le filtre est actif', () => {
             state.loadedFeatures = [
@@ -220,18 +243,18 @@ describe('getZonesData', () => {
     });
 
     describe('Combinaison de filtres', () => {
-        it('applique tous les filtres actifs simultanément', () => {
+        it('applique vus + planifies simultanément', () => {
             state.loadedFeatures = [
-                makeFeature('A', 'Nord', { categorie: 'Restaurant', userData: { vu: false } }),
-                makeFeature('B', 'Nord', { categorie: 'Monument' }),
-                makeFeature('C', 'Sud', { categorie: 'Restaurant', userData: { vu: true } }),
-                makeFeature('D', 'Est', { categorie: 'Restaurant', userData: { planifieCounter: 1 } })
+                makeFeature('A', 'Nord', { userData: { vu: false } }),
+                makeFeature('B', 'Nord', { userData: { vu: true } }),
+                makeFeature('C', 'Sud', { userData: { planifieCounter: 1 } }),
+                makeFeature('D', 'Est')
             ];
-            state.activeFilters = { restaurants: true, vus: true, planifies: true };
+            state.activeFilters = { vus: true, planifies: true, nonVerifies: false };
             const r = getZonesData();
-            // Seul A : restaurant, pas vu, pas planifié
-            expect(r.totalVisible).toBe(1);
-            expect(r.zoneCounts).toEqual({ Nord: 1 });
+            // A et D passent ; B (vu) et C (planifié) sont filtrés
+            expect(r.totalVisible).toBe(2);
+            expect(r.zoneCounts).toEqual({ Nord: 1, Est: 1 });
         });
     });
 });
