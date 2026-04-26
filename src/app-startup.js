@@ -276,22 +276,27 @@ export async function loadAndInitializeMap() {
         // NOUVEAU : On active la création desktop après que la map soit prête
         enableDesktopCreationMode();
 
-        await displayGeoJSON(geojsonData, activeMapId);
+        try {
+            await displayGeoJSON(geojsonData, activeMapId);
 
-        // Recalculate counters to ensure consistency with loaded official circuits
-        await recalculatePlannedCountersForMap(activeMapId);
+            // Recalculate counters to ensure consistency with loaded official circuits
+            await recalculatePlannedCountersForMap(activeMapId);
 
-        // Refresh UI with new counters
-        applyFilters();
+            // Refresh UI with new counters
+            applyFilters();
 
-        // Rétablissement du centrage intelligent
-        import('./map.js').then(m => m.fitMapToContent());
+            // Rétablissement du centrage intelligent
+            import('./map.js').then(m => m.fitMapToContent());
 
-        try { await loadCircuitDraft(); } catch (e) {}
-        setSaveButtonsState(true);
-        if (DOM.btnRestoreData) DOM.btnRestoreData.disabled = false;
+            try { await loadCircuitDraft(); } catch (e) {}
+            setSaveButtonsState(true);
+            if (DOM.btnRestoreData) DOM.btnRestoreData.disabled = false;
 
-        eventBus.emit('circuit:list-updated');
+            eventBus.emit('circuit:list-updated');
+        } catch (e) {
+            console.error("Erreur lors du rendu de la carte :", e);
+            showToast("Erreur lors de l'affichage de la carte. Réessayez ou rechargez la page.", "error");
+        }
     }
 
     if (DOM.loaderOverlay) DOM.loaderOverlay.classList.add('is-hidden');

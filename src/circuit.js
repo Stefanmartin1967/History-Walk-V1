@@ -482,9 +482,11 @@ export async function loadCircuitById(id) {
                 }
             } else {
                 console.warn(`[Circuit] Fichier GPX introuvable : ${circuitToLoad.file}`);
+                showToast("Tracé GPX indisponible — circuit affiché sans trace.", "warning");
             }
         } catch (e) {
             console.error(`[Circuit] Erreur chargement trace :`, e);
+            showToast("Erreur de chargement du tracé GPX (hors-ligne ?).", "error");
         }
     }
 
