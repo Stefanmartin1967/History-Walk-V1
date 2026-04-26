@@ -3,7 +3,7 @@
 import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setUserData, setOfficialCircuits } from './state.js';
 import { deleteCircuitById, softDeleteCircuit, getAllPoiDataForMap, getAllCircuitsForMap, batchSavePoiData, getAppState, saveCircuit } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
-import { applyFilters, getPoiId, passesUserFilters } from './data.js';
+import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters } from './data.js';
 import { isMobileView } from './mobile-state.js';
 import { showConfirm } from './modal.js';
 import { showToast } from './toast.js';
@@ -114,16 +114,18 @@ export async function handleCircuitVisitedToggle(circuitId, currentStatus) {
 
 
 /**
- * Prépare les données des zones : filtre les POI (mêmes règles personnelles que
- * getFilteredFeatures via passesUserFilters) et compte les occurrences par zone.
- * Ne re-applique volontairement pas les filtres structurels (zone, catégorie multi)
- * pour que le menu "Filtrer par Zone" reste pertinent quel que soit le filtre Zone
- * courant.
+ * Prépare les données des zones : filtre les POI (mêmes règles personnelles +
+ * filtre catégorie multi que getFilteredFeatures) et compte les occurrences par
+ * zone. Le filtre Zone lui-même est volontairement ignoré (skipZone:true) pour
+ * que chaque zone affiche son compte propre, indépendamment de la zone
+ * actuellement sélectionnée.
  */
 export function getZonesData() {
     if (!state.loadedFeatures || state.loadedFeatures.length === 0) return null;
 
-    const preFilteredFeatures = state.loadedFeatures.filter(passesUserFilters);
+    const preFilteredFeatures = state.loadedFeatures.filter(f =>
+        passesStructuralFilters(f, { skipZone: true }) && passesUserFilters(f)
+    );
 
     const zoneCounts = preFilteredFeatures.reduce((acc, feature) => {
         const zone = feature.properties.Zone;

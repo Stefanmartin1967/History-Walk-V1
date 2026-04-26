@@ -251,24 +251,27 @@ export function passesUserFilters(feature) {
     return true;
 }
 
+// Filtres "structurels" (Zone, Catégorie multi) — s'appliquent TOUJOURS, même
+// aux incontournables. L'option `skipZone` permet à getZonesData d'appliquer
+// la catégorie sans appliquer la zone (sinon le menu Zone n'aurait qu'une
+// entrée non-nulle).
+export function passesStructuralFilters(feature, { skipZone = false } = {}) {
+    if (!feature) return false;
+    const props = { ...feature.properties, ...feature.properties.userData };
+
+    if (!skipZone && state.activeFilters.zone && props.Zone !== state.activeFilters.zone) return false;
+    if (state.activeFilters.categories && state.activeFilters.categories.length > 0) {
+        if (!state.activeFilters.categories.includes(props['Catégorie'])) return false;
+    }
+    return true;
+}
+
 // Il ne fait que du tri mathématique en mémoire. Il ne touche pas à la carte.
 export function getFilteredFeatures() {
     if (!state.loadedFeatures) return [];
-
-    return state.loadedFeatures.filter(feature => {
-        const props = { ...feature.properties, ...feature.properties.userData };
-
-        // Filtres structurels (Zone, Catégorie multi) — s'appliquent TOUJOURS,
-        // même aux incontournables.
-        if (state.activeFilters.zone && props.Zone !== state.activeFilters.zone) return false;
-        if (state.activeFilters.categories && state.activeFilters.categories.length > 0) {
-            if (!state.activeFilters.categories.includes(props['Catégorie'])) return false;
-        }
-
-        // Filtres personnels (hidden, vus, planifiés, non-vérifiés) avec leurs
-        // exceptions (incontournables, circuit actif).
-        return passesUserFilters(feature);
-    });
+    return state.loadedFeatures.filter(feature =>
+        passesStructuralFilters(feature) && passesUserFilters(feature)
+    );
 }
 
 // --- 2. LE DISTRIBUTEUR ---

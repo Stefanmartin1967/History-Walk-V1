@@ -7,7 +7,7 @@ const { sharedState, getPoiIdImpl } = vi.hoisted(() => ({
     sharedState: {
         loadedFeatures: [],
         hiddenPoiIds: [],
-        activeFilters: { vus: false, planifies: false, nonVerifies: false },
+        activeFilters: { vus: false, planifies: false, nonVerifies: false, zone: null, categories: [] },
         isSelectionModeActive: false,
         selectionModeFilters: { hideVisited: false, hidePlanned: false },
         activeCircuitId: null,
@@ -45,6 +45,16 @@ vi.mock('../src/circuit.js', () => ({
 vi.mock('../src/data.js', () => ({
     applyFilters: vi.fn(),
     getPoiId: getPoiIdImpl,
+    passesStructuralFilters(feature, { skipZone = false } = {}) {
+        if (!feature) return false;
+        const props = { ...feature.properties, ...feature.properties.userData };
+        const s = sharedState;
+        if (!skipZone && s.activeFilters.zone && props.Zone !== s.activeFilters.zone) return false;
+        if (s.activeFilters.categories && s.activeFilters.categories.length > 0) {
+            if (!s.activeFilters.categories.includes(props['Catégorie'])) return false;
+        }
+        return true;
+    },
     passesUserFilters(feature) {
         if (!feature) return false;
         const props = { ...feature.properties, ...feature.properties.userData };
@@ -93,7 +103,7 @@ describe('getZonesData', () => {
     beforeEach(() => {
         state.loadedFeatures = [];
         state.hiddenPoiIds = [];
-        state.activeFilters = { vus: false, planifies: false, nonVerifies: false };
+        state.activeFilters = { vus: false, planifies: false, nonVerifies: false, zone: null, categories: [] };
         state.isSelectionModeActive = false;
         state.selectionModeFilters = { hideVisited: false, hidePlanned: false };
         state.activeCircuitId = null;
@@ -239,6 +249,48 @@ describe('getZonesData', () => {
             state.activeFilters.planifies = true;
             const r = getZonesData();
             expect(r.totalVisible).toBe(1);
+        });
+    });
+
+    describe('Filtre catégorie multi (appliqué)', () => {
+        it('ne compte que les POI dont Catégorie est dans activeFilters.categories', () => {
+            state.loadedFeatures = [
+                makeFeature('A', 'Ajim', { categorie: 'Mosquée' }),
+                makeFeature('B', 'Ajim', { categorie: 'Mosquée' }),
+                makeFeature('C', 'Ajim', { categorie: 'Plage' }),
+                makeFeature('D', 'El Groa', { categorie: 'Mosquée' }),
+                makeFeature('E', 'El Groa', { categorie: 'Restaurant' })
+            ];
+            state.activeFilters.categories = ['Mosquée'];
+            const r = getZonesData();
+            expect(r.totalVisible).toBe(3);
+            expect(r.zoneCounts).toEqual({ Ajim: 2, 'El Groa': 1 });
+        });
+
+        it('categories=[] équivaut à aucun filtre catégorie', () => {
+            state.loadedFeatures = [
+                makeFeature('A', 'Ajim', { categorie: 'Mosquée' }),
+                makeFeature('B', 'Ajim', { categorie: 'Plage' })
+            ];
+            state.activeFilters.categories = [];
+            const r = getZonesData();
+            expect(r.totalVisible).toBe(2);
+        });
+    });
+
+    describe('Filtre Zone (skipZone:true → ignoré)', () => {
+        it('un filtre Zone actif n\'affecte PAS les compteurs (chaque zone garde son propre compte)', () => {
+            state.loadedFeatures = [
+                makeFeature('A', 'Ajim'),
+                makeFeature('B', 'Ajim'),
+                makeFeature('C', 'Houmt Souk'),
+                makeFeature('D', 'Houmt Souk'),
+                makeFeature('E', 'Houmt Souk')
+            ];
+            state.activeFilters.zone = 'Ajim'; // ne doit RIEN changer ici
+            const r = getZonesData();
+            expect(r.totalVisible).toBe(5);
+            expect(r.zoneCounts).toEqual({ Ajim: 2, 'Houmt Souk': 3 });
         });
     });
 
