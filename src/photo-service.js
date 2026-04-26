@@ -57,6 +57,38 @@ export const USER_COMPRESSION = { targetMinSize: 1200, quality: 0.8 };
 export const MAX_PHOTO_SIZE_BYTES = 50 * 1024 * 1024;
 
 /**
+ * Texte du watermark appliqué automatiquement aux photos importées en mode
+ * admin (cf. compressImage). Sert de dissuadeur en complément du LICENSE et
+ * d'un éventuel dépôt i-DEPOT — ce n'est pas une protection cryptographique.
+ */
+export const ADMIN_WATERMARK_TEXT = '© Stefan Martin — History Walk';
+
+/**
+ * Applique un watermark texte en bas à droite du canvas. Style : ombre noire
+ * + texte blanc semi-transparent, taille de police adaptative à la largeur
+ * de l'image (max 12px, sinon ~width/65) pour rester lisible sans dominer.
+ */
+function applyWatermark(ctx, canvasWidth, canvasHeight, text) {
+    const fontSize = Math.max(12, Math.round(canvasWidth / 65));
+    const padding = Math.max(10, Math.round(fontSize * 0.8));
+
+    ctx.save();
+    ctx.font = `${fontSize}px system-ui, -apple-system, sans-serif`;
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+
+    // Ombre noire (offset 1px) pour la lisibilité sur fonds clairs
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+    ctx.fillText(text, canvasWidth - padding + 1, canvasHeight - padding + 1);
+
+    // Texte principal en blanc semi-transparent
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+    ctx.fillText(text, canvasWidth - padding, canvasHeight - padding);
+
+    ctx.restore();
+}
+
+/**
  * Valide qu'un fichier est une image acceptable (MIME image/* + taille ≤ MAX_PHOTO_SIZE_BYTES).
  * @param {File|Blob} file
  * @returns {{ valid: boolean, reason: string|null }}
@@ -110,7 +142,16 @@ export function compressImage(file, targetMinSize = 1200, quality = 0.8) {
                 }
                 canvas.width = width;
                 canvas.height = height;
-                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Watermark automatique pour les photos importées en mode
+                // admin (cf. ADMIN_WATERMARK_TEXT). Cuit dans le JPEG → permanent.
+                // Photos perso utilisateur : pas de watermark (c'est leur contenu).
+                if (state.isAdmin) {
+                    applyWatermark(ctx, width, height, ADMIN_WATERMARK_TEXT);
+                }
+
                 canvas.toBlob(blob => {
                     if (blob) resolve(blob);
                     else reject(new Error('canvas.toBlob returned null'));

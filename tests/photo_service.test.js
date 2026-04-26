@@ -17,7 +17,7 @@ vi.mock('../src/ui-dom.js', () => ({
     DOM: {}
 }));
 
-import { validatePhotoFile, MAX_PHOTO_SIZE_BYTES, compressImage } from '../src/photo-service.js';
+import { validatePhotoFile, MAX_PHOTO_SIZE_BYTES, compressImage, ADMIN_WATERMARK_TEXT } from '../src/photo-service.js';
 
 describe('validatePhotoFile', () => {
     it('accepte un File JPEG sous le cap', () => {
@@ -88,5 +88,16 @@ describe('compressImage — validation en entrée', () => {
 
     it('reject sur null', async () => {
         await expect(compressImage(null)).rejects.toThrow(/Fichier manquant/);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Watermark admin — la branche canvas ne peut pas tourner sous jsdom
+// (canvas.toBlob non implémenté). Validation visuelle réelle via smoke test
+// live sur l'app. Ici on vérifie juste l'export du texte attendu.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('ADMIN_WATERMARK_TEXT', () => {
+    it('exporte le texte exact "© Stefan Martin — History Walk"', () => {
+        expect(ADMIN_WATERMARK_TEXT).toBe('© Stefan Martin — History Walk');
     });
 });
