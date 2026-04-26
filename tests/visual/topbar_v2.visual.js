@@ -98,4 +98,80 @@ test.describe('Desktop — Topbar v2 (refonte)', () => {
         await expect(page.locator('#app-title')).toHaveCount(0);
     });
 
+    // ─── PR 4 : dropdown destinations ─────────────────────────────────────────
+
+    test('6 — dropdown destinations fermé par défaut', async ({ page }) => {
+        await expect(page.locator('#hw-dest-menu')).toBeHidden();
+        await expect(page.locator('#hw-dest-selector')).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('7 — clic sur le sélecteur ouvre le dropdown + chevron rotate', async ({ page }) => {
+        const selector = page.locator('#hw-dest-selector');
+        const menu = page.locator('#hw-dest-menu');
+
+        await selector.click();
+        await expect(menu).toBeVisible();
+        await expect(selector).toHaveAttribute('aria-expanded', 'true');
+        await expect(selector).toHaveClass(/is-open/);
+    });
+
+    test('8 — dropdown contient Djerba active + Hammamet/Agadir désactivés', async ({ page }) => {
+        await page.locator('#hw-dest-selector').click();
+        await page.waitForSelector('#hw-dest-menu:visible', { timeout: 2000 });
+
+        // Djerba : active
+        const djerba = page.locator('.hw-dest-item[data-dest="djerba"]');
+        await expect(djerba).toHaveClass(/is-active/);
+        await expect(djerba.locator('.hw-dest-item-name')).toHaveText('Djerba');
+        await expect(djerba.locator('.hw-dest-item-check')).toBeVisible();
+
+        // Hammamet : désactivé, badge "Bientôt"
+        const hammamet = page.locator('.hw-dest-item[data-dest="hammamet"]');
+        await expect(hammamet).toHaveClass(/is-disabled/);
+        await expect(hammamet).toHaveAttribute('aria-disabled', 'true');
+        await expect(hammamet.locator('.hw-dest-item-name')).toHaveText('Hammamet');
+        await expect(hammamet.locator('.hw-dest-item-badge')).toHaveText('Bientôt');
+
+        // Agadir : désactivé
+        const agadir = page.locator('.hw-dest-item[data-dest="agadir"]');
+        await expect(agadir).toHaveClass(/is-disabled/);
+        await expect(agadir.locator('.hw-dest-item-name')).toHaveText('Agadir');
+        await expect(agadir.locator('.hw-dest-item-sub')).toHaveText('Maroc');
+
+        // Footer
+        await expect(page.locator('.hw-dest-menu-footer')).toContainText("D'autres destinations à venir");
+    });
+
+    test('9 — clic sur Djerba (active) ferme le dropdown', async ({ page }) => {
+        await page.locator('#hw-dest-selector').click();
+        await page.waitForSelector('#hw-dest-menu:visible', { timeout: 2000 });
+
+        await page.locator('.hw-dest-item[data-dest="djerba"]').click();
+        await page.waitForTimeout(200);
+
+        await expect(page.locator('#hw-dest-menu')).toBeHidden();
+        await expect(page.locator('#hw-dest-selector')).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    test('10 — clic en dehors ferme le dropdown', async ({ page }) => {
+        await page.locator('#hw-dest-selector').click();
+        await page.waitForSelector('#hw-dest-menu:visible', { timeout: 2000 });
+
+        // Clic sur la carte (largement en dehors du sélecteur et du menu)
+        await page.locator('.leaflet-container').click({ position: { x: 600, y: 400 }, force: true });
+        await page.waitForTimeout(200);
+
+        await expect(page.locator('#hw-dest-menu')).toBeHidden();
+    });
+
+    test('11 — Escape ferme le dropdown', async ({ page }) => {
+        await page.locator('#hw-dest-selector').click();
+        await page.waitForSelector('#hw-dest-menu:visible', { timeout: 2000 });
+
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(200);
+
+        await expect(page.locator('#hw-dest-menu')).toBeHidden();
+    });
+
 });

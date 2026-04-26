@@ -95,3 +95,158 @@
     background: rgba(255, 255, 255, 0.18);
     flex-shrink: 0;
 }
+
+/* ─── Dropdown destinations (sous le sélecteur) ─── */
+.hw-dest-menu {
+    position: absolute;
+    top: 64px;
+    left: 16px;
+    width: 320px;
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    box-shadow: 0 18px 40px rgba(2, 12, 27, 0.22), 0 4px 12px rgba(2, 12, 27, 0.10);
+    overflow: hidden;
+    z-index: 1010;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+.hw-dest-menu[hidden] {
+    display: none;
+}
+
+.hw-dest-menu-section-title {
+    padding: 10px 14px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+}
+
+.hw-dest-menu-section-title.is-divided {
+    padding-top: 12px;
+    padding-bottom: 6px;
+    border-top: 1px solid #EEF2F6;
+    margin-top: 4px;
+}
+
+.hw-dest-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 14px;
+    background: transparent;
+    border: 0;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    text-align: left;
+    color: var(--ink);
+    font-family: inherit;
+    transition: background 0.12s;
+}
+
+.hw-dest-item.is-active {
+    background: var(--brand-soft);
+    border-left-color: var(--brand);
+}
+
+.hw-dest-item:hover:not(.is-disabled):not(.is-active) {
+    background: var(--surface-muted);
+}
+
+.hw-dest-item.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    padding: 9px 14px;
+}
+
+.hw-dest-item-flag {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.hw-dest-item-icon {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    background: var(--surface-muted);
+    border-radius: 8px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+
+.hw-dest-item-icon svg {
+    width: 14px;
+    height: 14px;
+}
+
+.hw-dest-item-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.hw-dest-item-name {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.hw-dest-item.is-disabled .hw-dest-item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334E68;
+}
+
+.hw-dest-item-sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+}
+
+.hw-dest-item.is-disabled .hw-dest-item-sub {
+    font-size: 11px;
+    color: #9FB3C8;
+}
+
+.hw-dest-item-check {
+    color: var(--brand);
+    flex-shrink: 0;
+}
+
+.hw-dest-item-check svg {
+    width: 18px;
+    height: 18px;
+}
+
+.hw-dest-item-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #9FB3C8;
+    background: #EEF2F6;
+    padding: 3px 7px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.hw-dest-menu-footer {
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--surface-muted);
+    border-top: 1px solid #EEF2F6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hw-dest-menu-footer svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
