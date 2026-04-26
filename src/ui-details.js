@@ -1,5 +1,5 @@
 import { state, setCurrentFeatureId, setCurrentCircuitIndex } from './state.js';
-import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
+import { getPoiId, getPoiName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
 import { isMobileView, pushMobileLevel } from './mobile-state.js';
@@ -103,9 +103,6 @@ function setupSuiviToggles(poiId) {
                 }
             }
             await updatePoiData(poiId, field, willBeOn);
-            // Refresh markers (CSS doré pour incontournable, état visité)
-            if (!isMobileView()) applyFilters();
-            else if (field === 'incontournable') applyFilters();
         });
     });
 }
