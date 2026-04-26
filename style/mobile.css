@@ -199,3 +199,57 @@
     background: var(--brand);
     color: white;
 }
+
+
+/* ============================================================
+   === SIDEBAR V2 — MOBILE ===
+   Refonte panneau latéral droit (Claude Design — 26/04/2026).
+   PR A (foundation) : tokens visuels prêts à l'emploi, encore inutilisés.
+   Header générique mobile (.m-top) + sticky bar (.m-sticky-bar) qui
+   serviront aux 3 onglets refondus en PR B/C/D.
+   ============================================================ */
+
+/* Mobile top header (générique pour les 3 onglets refondus) */
+.m-top {
+    flex-shrink: 0;
+    padding: 10px 12px;
+    background: #fff;
+    border-bottom: 1px solid var(--surface-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 54px;
+}
+.m-top-back {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--surface-muted);
+    border: 0;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    color: var(--ink);
+    flex-shrink: 0;
+}
+.m-top-back svg { width: 18px; height: 18px; }
+.m-top-title {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.005em;
+}
+
+/* Sticky bottom bar mobile (Circuit + Détails) */
+.m-sticky-bar {
+    flex-shrink: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: #fff;
+    border-top: 1px solid var(--surface-muted);
+    box-shadow: 0 -8px 20px -12px rgba(20, 42, 67, 0.18);
+}

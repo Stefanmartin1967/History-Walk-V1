@@ -15,9 +15,14 @@ html[data-theme="maritime"] {
     --line: #D9E2EC;
     --brand: #3B82F6;
     --brand-soft: #F0F9FF; /* Plus clair que la mer */
+    --brand-2: #2563EB; /* Brand foncé — gradients CTA refonte sidebar V2 */
     --ok: #10B981;
     --warn: #F59E0B;
     --danger: #EF4444;
+    /* Amber tokens — refonte sidebar V2 (pastilles resto, accents Mon parcours).
+       --hw-amber existait dans admin-cc.css uniquement, on le promeut au :root global. */
+    --hw-amber: #D97706;
+    --hw-amber-soft: #FFFBEB;
     --shadow: 0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
     --shadow-soft: 0 4px 12px rgba(100, 116, 139, 0.1);
 }
