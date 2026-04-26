@@ -29,16 +29,13 @@ export function applyPunctuation(text) {
     let correctedText = text;
 
     for (const p of punctuationMap) {
-        // Regex complexe pour :
-        // 1. Échapper les caractères spéciaux dans la clé
-        // 2. 'gi' = Case insensitive (trouve "Point" et "point")
-        // 3. \b = Word Boundary (évite de remplacer "pointer" par ".")
-        // Note : Pour les clés avec espaces (ex: point d'exclamation), \b fonctionne aux extrémités
+        // Frontières Unicode-aware via [^\p{L}] (flag u) — \b est ASCII-only
+        // et raterait les clés débutant par un caractère accentué (ex : "à la ligne").
+        // Le préfixe est capturé pour être préservé dans le remplacement.
         const safeKey = p.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        const regex = new RegExp(`\\b${safeKey}\\b`, 'gi');
-        
-        // On remplace par la ponctuation
-        correctedText = correctedText.replace(regex, p.value);
+        const regex = new RegExp(`(^|[^\\p{L}])${safeKey}(?=$|[^\\p{L}])`, 'giu');
+
+        correctedText = correctedText.replace(regex, `$1${p.value}`);
     }
 
     // Nettoyage cosmétique :
