@@ -54,14 +54,10 @@ describe('applyPunctuation — substitutions de base', () => {
         expect(result).toContain(')');
     });
 
-    it('"à la ligne" : non transformé (limitation regex \\b avec caractères accentués)', () => {
-        // BUG LATENT documenté : la regex `\b${safeKey}\b` ne matche pas "à la ligne"
-        // car `à` n'est pas dans [a-zA-Z0-9_] et `\b` (word boundary ASCII) ne détecte
-        // donc pas la transition espace→à. Le code source utilise la regex sans flag `u`.
-        // Si ce test casse → la commande "à la ligne" devient fonctionnelle (bug fixé).
+    it('"à la ligne" → "\\n" (frontières Unicode via \\p{L})', () => {
         const result = applyPunctuation('ligne1 à la ligne ligne2');
-        expect(result).toContain('à la ligne');
-        expect(result).not.toContain('\n');
+        expect(result).toContain('\n');
+        expect(result).not.toContain('à la ligne');
     });
 });
 
