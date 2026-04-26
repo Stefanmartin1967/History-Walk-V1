@@ -1,20 +1,25 @@
 // filter-panel.js
-// Panneau de filtres unifié — refonte Claude Design (PR 1 foundation).
-// Cette PR met en place la structure visuelle + câble UNIQUEMENT la section
-// Localisation au filtre Zone existant. Les autres sections (Catégories,
-// Mon parcours, État de la fiche) sont rendues comme stubs visuels et seront
-// câblées en PR 2. La topbar actuelle reste intacte — l'ouverture du panneau
-// se fait via une entrée temporaire dans le menu Outils.
+// Panneau de filtres unifié — refonte Claude Design.
+// PR 1 (foundation) : structure + section Localisation câblée.
+// PR 2 (cette PR)   : Catégories + Mon parcours (3-states + incontournables) +
+//                     État de la fiche (non vérifiés / sans photo / sans description).
+// La topbar actuelle reste intacte — l'ouverture du panneau se fait via une
+// entrée temporaire dans le menu Outils. PR 3 fera la bascule visuelle.
 
-import { state, setActiveFilters } from './state.js';
+import { state, setActiveFilters, POI_CATEGORIES } from './state.js';
 import { applyFilters } from './data.js';
 import { getZonesData } from './circuit-actions.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
 
 const PANEL_ID = 'hw-filter-panel';
+const VISIT_OPTIONS = [
+    { value: 'all',  label: 'Tous'     },
+    { value: 'hide', label: 'Masquer'  },
+    { value: 'only', label: 'Afficher' },
+];
 
-// ─── Rendu HTML ───────────────────────────────────────────────────────────
+// ─── Rendu HTML (squelette) ───────────────────────────────────────────────
 
 function buildPanelHtml() {
     return `
@@ -40,15 +45,15 @@ function buildPanelHtml() {
             `)}
 
             ${buildSection('categories', 'Type de lieu', `
-                <div class="hw-fp-stub">Câblage en PR 2 — UI ci-dessus reste fonctionnelle</div>
+                <div class="hw-fp-checklist" id="hw-fp-categories-list"></div>
             `)}
 
             ${buildSection('parcours', 'Mon parcours', `
-                <div class="hw-fp-stub">Câblage en PR 2 — Visités / Planifiés / Incontournables</div>
+                <div id="hw-fp-parcours-content"></div>
             `)}
 
             ${buildSection('fiche', 'État de la fiche', `
-                <div class="hw-fp-stub">Câblage en PR 2 — Non vérifiés / Sans photo / Sans description</div>
+                <div id="hw-fp-fiche-content"></div>
             `, { collapsed: true })}
         </div>
 
@@ -75,7 +80,7 @@ function buildSection(id, title, content, { collapsed = false, active = false } 
     `;
 }
 
-// ─── Câblage Localisation (zone) ──────────────────────────────────────────
+// ─── Section Localisation ─────────────────────────────────────────────────
 
 function refreshZonesList() {
     const list = document.getElementById('hw-fp-zones-list');
@@ -86,21 +91,18 @@ function refreshZonesList() {
     const currentZone = state.activeFilters.zone;
 
     list.innerHTML = '';
-
     if (!data || data.sortedZones.length === 0) {
         list.innerHTML = '<button class="hw-fp-zone-btn" disabled>Aucune zone visible</button>';
         valueEl.textContent = 'Toutes les zones';
         return;
     }
 
-    // Bouton "Toutes les zones"
     const allBtn = document.createElement('button');
     allBtn.className = 'hw-fp-zone-btn' + (currentZone === null ? ' is-current' : '');
     allBtn.innerHTML = `<span>Toutes les zones</span><span class="hw-fp-zone-count">${data.totalVisible}</span>`;
     allBtn.addEventListener('click', () => selectZone(null));
     list.appendChild(allBtn);
 
-    // Boutons par zone
     data.sortedZones.forEach(zone => {
         const btn = document.createElement('button');
         btn.className = 'hw-fp-zone-btn' + (currentZone === zone ? ' is-current' : '');
@@ -109,7 +111,6 @@ function refreshZonesList() {
         list.appendChild(btn);
     });
 
-    // Mise à jour du label du select
     valueEl.textContent = currentZone || 'Toutes les zones';
 }
 
@@ -118,9 +119,7 @@ function selectZone(zone) {
     applyFilters();
     refreshZonesList();
     closeZonesList();
-    refreshHeaderSubtitle();
-    refreshSectionStates();
-    refreshResetButton();
+    refreshAllMeta();
 }
 
 function toggleZonesList() {
@@ -131,17 +130,237 @@ function toggleZonesList() {
 }
 
 function closeZonesList() {
-    const list = document.getElementById('hw-fp-zones-list');
-    list?.classList.remove('is-open');
+    document.getElementById('hw-fp-zones-list')?.classList.remove('is-open');
 }
 
-// ─── Méta : sous-titre + état des sections + reset ────────────────────────
+// ─── Section Catégories ───────────────────────────────────────────────────
+
+function getAvailableCategories() {
+    if (state.loadedFeatures && state.loadedFeatures.length > 0) {
+        const cats = new Set(
+            state.loadedFeatures
+                .map(f => f.properties['Catégorie'])
+                .filter(c => c && c.trim() !== '')
+        );
+        return Array.from(cats).sort();
+    }
+    return POI_CATEGORIES;
+}
+
+function getCategoryCounts() {
+    const counts = {};
+    if (!state.loadedFeatures) return counts;
+    state.loadedFeatures.forEach(f => {
+        const cat = f.properties['Catégorie'];
+        if (cat && cat.trim() !== '') {
+            counts[cat] = (counts[cat] || 0) + 1;
+        }
+    });
+    return counts;
+}
+
+function populateCategoriesSection() {
+    const list = document.getElementById('hw-fp-categories-list');
+    if (!list) return;
+
+    const categories = getAvailableCategories();
+    const counts = getCategoryCounts();
+    const selected = state.activeFilters.categories || [];
+
+    list.innerHTML = '';
+    categories.forEach(cat => {
+        const row = renderCheckbox({
+            label: cat,
+            count: counts[cat],
+            checked: selected.includes(cat),
+            onChange: (isChecked) => {
+                const current = state.activeFilters.categories || [];
+                const next = isChecked
+                    ? [...current, cat]
+                    : current.filter(c => c !== cat);
+                setActiveFilters({ ...state.activeFilters, categories: next });
+                applyFilters();
+                refreshAllMeta();
+                // Refresh checkbox visual state in place
+                row.classList.toggle('is-checked', isChecked);
+            },
+        });
+        list.appendChild(row);
+    });
+}
+
+// ─── Section Mon parcours ─────────────────────────────────────────────────
+
+function populateParcoursSection() {
+    const wrap = document.getElementById('hw-fp-parcours-content');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+
+    wrap.appendChild(renderRadioGroup({
+        label: 'Lieux visités',
+        value: state.activeFilters.vus || 'all',
+        options: VISIT_OPTIONS,
+        onChange: (val) => {
+            setActiveFilters({ ...state.activeFilters, vus: val });
+            applyFilters();
+            populateParcoursSection();
+            refreshAllMeta();
+        },
+    }));
+
+    wrap.appendChild(renderRadioGroup({
+        label: 'Lieux planifiés',
+        value: state.activeFilters.planifies || 'all',
+        options: VISIT_OPTIONS,
+        onChange: (val) => {
+            setActiveFilters({ ...state.activeFilters, planifies: val });
+            applyFilters();
+            populateParcoursSection();
+            refreshAllMeta();
+        },
+    }));
+
+    wrap.appendChild(renderIncontournableToggle({
+        checked: !!state.activeFilters.incontournablesOnly,
+        onChange: (isChecked) => {
+            setActiveFilters({ ...state.activeFilters, incontournablesOnly: isChecked });
+            applyFilters();
+            populateParcoursSection();
+            refreshAllMeta();
+        },
+    }));
+}
+
+// ─── Section État de la fiche ─────────────────────────────────────────────
+
+function populateFicheSection() {
+    const wrap = document.getElementById('hw-fp-fiche-content');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+
+    const fiche = [
+        { key: 'nonVerifies', label: 'Lieux non vérifiés uniquement' },
+        { key: 'noPhoto',     label: 'Lieux sans photo'              },
+        { key: 'noDesc',      label: 'Lieux sans description'        },
+    ];
+
+    fiche.forEach(({ key, label }) => {
+        const row = renderCheckbox({
+            label,
+            checked: !!state.activeFilters[key],
+            onChange: (isChecked) => {
+                setActiveFilters({ ...state.activeFilters, [key]: isChecked });
+                applyFilters();
+                refreshAllMeta();
+                row.classList.toggle('is-checked', isChecked);
+            },
+        });
+        wrap.appendChild(row);
+    });
+}
+
+// ─── Atoms : checkbox / radio group / incontournable ──────────────────────
+
+function renderCheckbox({ label, count, checked, onChange }) {
+    const row = document.createElement('label');
+    row.className = 'hw-fp-checkbox' + (checked ? ' is-checked' : '');
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = !!checked;
+    input.addEventListener('change', () => onChange(input.checked));
+
+    const box = document.createElement('span');
+    box.className = 'hw-fp-checkbox-box';
+    box.innerHTML = '<i data-lucide="check"></i>';
+
+    const labelEl = document.createElement('span');
+    labelEl.className = 'hw-fp-checkbox-label';
+    labelEl.textContent = label;
+
+    row.appendChild(input);
+    row.appendChild(box);
+    row.appendChild(labelEl);
+
+    if (count != null) {
+        const countEl = document.createElement('span');
+        countEl.className = 'hw-fp-checkbox-count';
+        countEl.textContent = String(count);
+        row.appendChild(countEl);
+    }
+
+    return row;
+}
+
+function renderRadioGroup({ label, value, options, onChange }) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'hw-fp-radio-wrapper';
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'hw-fp-radio-label';
+    labelEl.textContent = label;
+    wrapper.appendChild(labelEl);
+
+    const group = document.createElement('div');
+    group.className = 'hw-fp-radio-group';
+    group.setAttribute('role', 'radiogroup');
+    group.setAttribute('aria-label', label);
+
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'hw-fp-radio-btn' + (opt.value === value ? ' is-selected' : '');
+        btn.textContent = opt.label;
+        btn.dataset.value = opt.value;
+        btn.addEventListener('click', () => onChange(opt.value));
+        group.appendChild(btn);
+    });
+
+    wrapper.appendChild(group);
+    return wrapper;
+}
+
+function renderIncontournableToggle({ checked, onChange }) {
+    const row = document.createElement('label');
+    row.className = 'hw-fp-incontournable' + (checked ? ' is-checked' : '');
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = !!checked;
+    input.addEventListener('change', () => onChange(input.checked));
+
+    const box = document.createElement('span');
+    box.className = 'hw-fp-checkbox-box';
+    box.innerHTML = '<i data-lucide="check"></i>';
+
+    const label = document.createElement('span');
+    label.className = 'hw-fp-incontournable-label';
+    label.innerHTML = '<i data-lucide="star"></i>Afficher uniquement les incontournables';
+
+    row.appendChild(input);
+    row.appendChild(box);
+    row.appendChild(label);
+    return row;
+}
+
+// ─── Méta : sous-titre + badges sections + reset ──────────────────────────
+
+function isSectionActive(id) {
+    const f = state.activeFilters;
+    switch (id) {
+        case 'localisation': return f.zone !== null;
+        case 'categories':   return Array.isArray(f.categories) && f.categories.length > 0;
+        case 'parcours':     return (f.vus && f.vus !== 'all')
+                                  || (f.planifies && f.planifies !== 'all')
+                                  || !!f.incontournablesOnly;
+        case 'fiche':        return !!f.nonVerifies || !!f.noPhoto || !!f.noDesc;
+        default:             return false;
+    }
+}
 
 function countActiveSections() {
-    let n = 0;
-    if (state.activeFilters.zone) n++;
-    // Catégories / Mon parcours / Fiche → wired en PR 2
-    return n;
+    return ['localisation', 'categories', 'parcours', 'fiche']
+        .reduce((n, id) => n + (isSectionActive(id) ? 1 : 0), 0);
 }
 
 function refreshHeaderSubtitle() {
@@ -154,39 +373,57 @@ function refreshHeaderSubtitle() {
 }
 
 function refreshSectionStates() {
-    const localisation = document.querySelector('[data-section="localisation"]');
-    if (localisation) {
-        localisation.classList.toggle('is-active', state.activeFilters.zone !== null);
-        const badges = document.getElementById('hw-fp-badges-localisation');
+    ['localisation', 'categories', 'parcours', 'fiche'].forEach(id => {
+        const section = document.querySelector(`[data-section="${id}"]`);
+        if (!section) return;
+        const active = isSectionActive(id);
+        section.classList.toggle('is-active', active);
+        const badges = document.getElementById(`hw-fp-badges-${id}`);
         if (badges) {
-            badges.innerHTML = state.activeFilters.zone
+            badges.innerHTML = active
                 ? '<span class="hw-fp-section-badge-active">Actif</span>'
                 : '';
         }
-    }
+    });
 }
 
 function refreshResetButton() {
     const btn = document.getElementById('hw-fp-reset');
-    if (!btn) return;
-    btn.disabled = countActiveSections() === 0;
+    if (btn) btn.disabled = countActiveSections() === 0;
 }
 
-function resetAll() {
-    setActiveFilters({ ...state.activeFilters, zone: null });
-    applyFilters();
-    refreshZonesList();
-    closeZonesList();
+function refreshAllMeta() {
     refreshHeaderSubtitle();
     refreshSectionStates();
     refreshResetButton();
 }
 
-// ─── Toggle section (pliage) ──────────────────────────────────────────────
+function resetAll() {
+    setActiveFilters({
+        ...state.activeFilters,
+        zone: null,
+        categories: [],
+        vus: 'all',
+        planifies: 'all',
+        nonVerifies: false,
+        incontournablesOnly: false,
+        noPhoto: false,
+        noDesc: false,
+    });
+    applyFilters();
+    refreshZonesList();
+    closeZonesList();
+    populateCategoriesSection();
+    populateParcoursSection();
+    populateFicheSection();
+    refreshAllMeta();
+    createIcons({ icons: appIcons });
+}
+
+// ─── Toggle pli sections ──────────────────────────────────────────────────
 
 function toggleSection(id) {
-    const section = document.querySelector(`[data-section="${id}"]`);
-    section?.classList.toggle('is-collapsed');
+    document.querySelector(`[data-section="${id}"]`)?.classList.toggle('is-collapsed');
 }
 
 // ─── Open / Close panel ───────────────────────────────────────────────────
@@ -195,15 +432,16 @@ export function openFilterPanel() {
     const panel = document.getElementById(PANEL_ID);
     if (!panel) return;
     panel.classList.add('is-open');
+    populateCategoriesSection();
+    populateParcoursSection();
+    populateFicheSection();
     refreshZonesList();
-    refreshHeaderSubtitle();
-    refreshSectionStates();
-    refreshResetButton();
+    refreshAllMeta();
+    createIcons({ icons: appIcons });
 }
 
 export function closeFilterPanel() {
-    const panel = document.getElementById(PANEL_ID);
-    panel?.classList.remove('is-open');
+    document.getElementById(PANEL_ID)?.classList.remove('is-open');
     closeZonesList();
 }
 
@@ -217,37 +455,36 @@ export function toggleFilterPanel() {
 
 export function setupFilterPanel() {
     const panel = document.getElementById(PANEL_ID);
-    if (!panel) return; // conteneur pas encore dans le DOM
+    if (!panel) return;
 
     panel.innerHTML = buildPanelHtml();
     createIcons({ icons: appIcons });
 
-    // Close
     panel.querySelector('#hw-fp-close')?.addEventListener('click', closeFilterPanel);
 
-    // Sections : toggle pli / dépli au clic du header
     panel.querySelectorAll('[data-section-toggle]').forEach(header => {
         header.addEventListener('click', () => {
             toggleSection(header.dataset.sectionToggle);
         });
     });
 
-    // Localisation : ouverture de la liste des zones au clic du select
     panel.querySelector('#hw-fp-zone-select')?.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleZonesList();
     });
 
-    // Reset
     panel.querySelector('#hw-fp-reset')?.addEventListener('click', resetAll);
 
-    // Si le filtre Zone change ailleurs (ex: ancien dropdown), on rafraîchit
+    // Si l'état des filtres change ailleurs (ex: anciens boutons topbar),
+    // on rafraîchit le panneau si ouvert pour rester en sync.
     eventBus.on('data:filtered', () => {
         if (panel.classList.contains('is-open')) {
             refreshZonesList();
-            refreshHeaderSubtitle();
-            refreshSectionStates();
-            refreshResetButton();
+            populateCategoriesSection();
+            populateParcoursSection();
+            populateFicheSection();
+            refreshAllMeta();
+            createIcons({ icons: appIcons });
         }
     });
 }

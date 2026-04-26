@@ -126,7 +126,7 @@ test.describe('Desktop — POI details panel', () => {
 
         await notesArea.fill(noteText);
         await notesArea.blur(); // updatePoiData immédiat (pas le path debounce)
-        await page.waitForTimeout(500); // savePoiData → IndexedDB
+        await page.waitForTimeout(800); // savePoiData → IndexedDB (durable avant reload)
 
         // Reload complet — teste réellement la persistance IndexedDB
         await page.reload();

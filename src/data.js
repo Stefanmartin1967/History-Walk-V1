@@ -258,26 +258,45 @@ export function passesUserFilters(feature) {
     if (!feature) return false;
     const props = { ...feature.properties, ...feature.properties.userData };
     const poiId = getPoiId(feature);
+    const f = state.activeFilters;
 
     if (state.hiddenPoiIds && state.hiddenPoiIds.includes(poiId)) return false;
 
-    if (props.incontournable) return true;
+    // État de la fiche (s'applique avant le court-circuit incontournable :
+    // un POI incontournable peut être "non vérifié" et l'admin veut le voir).
+    if (f.nonVerifies && props.verified) return false;
+    if (f.incontournablesOnly && !props.incontournable) return false;
+    if (f.noPhoto && hasPhotos(props)) return false;
+    if (f.noDesc && hasDescription(props)) return false;
 
-    if (state.activeCircuitId && state.currentCircuit && state.currentCircuit.some(f => getPoiId(f) === poiId)) {
+    // Court-circuits (priment sur Visités/Planifiés)
+    if (state.activeCircuitId && state.currentCircuit && state.currentCircuit.some(g => getPoiId(g) === poiId)) {
         return true;
     }
-
-    if (state.activeFilters.nonVerifies && props.verified) return false;
+    if (props.incontournable) return true;
 
     if (state.isSelectionModeActive) {
         if (state.selectionModeFilters?.hideVisited && props.vu) return false;
         if (state.selectionModeFilters?.hidePlanned && (props.planifieCounter || 0) > 0) return false;
     } else {
-        if (state.activeFilters.vus && props.vu) return false;
-        if (state.activeFilters.planifies && (props.planifieCounter || 0) > 0) return false;
+        // 3-states : 'all' (rien à filtrer) | 'hide' | 'only'
+        if (f.vus === 'hide' && props.vu) return false;
+        if (f.vus === 'only' && !props.vu) return false;
+        const isPlanned = (props.planifieCounter || 0) > 0;
+        if (f.planifies === 'hide' && isPlanned) return false;
+        if (f.planifies === 'only' && !isPlanned) return false;
     }
 
     return true;
+}
+
+function hasPhotos(props) {
+    return Array.isArray(props.photos) && props.photos.length > 0;
+}
+
+function hasDescription(props) {
+    const longDesc = (props.description || props.Description || '').trim();
+    return longDesc !== '';
 }
 
 // Filtres "structurels" (Zone, Catégorie multi) — s'appliquent TOUJOURS, même
@@ -332,6 +351,10 @@ const FILTER_AFFECTING_KEYS = new Set([
     'Catégorie', 'Zone',
     'vu', 'vuManual', 'planifieCounter',
     'incontournable', 'verified',
+    // Filtres "État de la fiche" (refonte Claude Design) : photos absentes
+    // / description absente. Modif d'une de ces props peut changer la
+    // visibilité si filter noPhoto / noDesc est actif.
+    'photos', 'description', 'Description',
 ]);
 
 export async function updatePoiData(poiId, key, value) {

@@ -7,7 +7,7 @@ const { sharedState, getPoiIdImpl } = vi.hoisted(() => ({
     sharedState: {
         loadedFeatures: [],
         hiddenPoiIds: [],
-        activeFilters: { vus: false, planifies: false, nonVerifies: false, zone: null, categories: [] },
+        activeFilters: { vus: 'all', planifies: 'all', nonVerifies: false, zone: null, categories: [], incontournablesOnly: false, noPhoto: false, noDesc: false },
         isSelectionModeActive: false,
         selectionModeFilters: { hideVisited: false, hidePlanned: false },
         activeCircuitId: null,
@@ -302,7 +302,7 @@ describe('getZonesData', () => {
                 makeFeature('C', 'Sud', { userData: { planifieCounter: 1 } }),
                 makeFeature('D', 'Est')
             ];
-            state.activeFilters = { vus: true, planifies: true, nonVerifies: false };
+            state.activeFilters = { vus: 'hide', planifies: 'hide', nonVerifies: false };
             const r = getZonesData();
             // A et D passent ; B (vu) et C (planifié) sont filtrés
             expect(r.totalVisible).toBe(2);

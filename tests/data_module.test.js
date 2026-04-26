@@ -17,9 +17,12 @@ vi.mock('../src/state.js', () => {
         activeFilters: {
             zone: null,
             categories: [],
-            vus: false,
-            planifies: false,
-            nonVerifies: false
+            vus: 'all',
+            planifies: 'all',
+            nonVerifies: false,
+            incontournablesOnly: false,
+            noPhoto: false,
+            noDesc: false
         },
         selectionModeFilters: { hideVisited: false, hidePlanned: false }
     };
@@ -121,9 +124,12 @@ function resetState() {
     state.activeFilters = {
         zone: null,
         categories: [],
-        vus: false,
-        planifies: false,
-        nonVerifies: false
+        vus: 'all',
+        planifies: 'all',
+        nonVerifies: false,
+        incontournablesOnly: false,
+        noPhoto: false,
+        noDesc: false
     };
     state.selectionModeFilters = { hideVisited: false, hidePlanned: false };
     _hwidCounter = 0;
@@ -219,7 +225,7 @@ describe('getFilteredFeatures', () => {
 
     it('incontournable bypass tous les filtres user (sauf hidden/zone/cat)', () => {
         state.loadedFeatures = [poi('p1', { incontournable: true, userData: { vu: true } })];
-        state.activeFilters.vus = true; // normalement filtrerait les vus
+        state.activeFilters.vus = 'hide'; // normalement filtrerait les vus
         const r = getFilteredFeatures();
         expect(r).toHaveLength(1);
     });
@@ -229,7 +235,7 @@ describe('getFilteredFeatures', () => {
         state.loadedFeatures = [p1];
         state.currentCircuit = [p1];
         state.activeCircuitId = 'c1';
-        state.activeFilters.vus = true;
+        state.activeFilters.vus = 'hide';
         const r = getFilteredFeatures();
         expect(r).toHaveLength(1);
     });
@@ -239,7 +245,7 @@ describe('getFilteredFeatures', () => {
             poi('p1', { userData: { vu: true } }),
             poi('p2', { userData: { vu: false } })
         ];
-        state.activeFilters.vus = true;
+        state.activeFilters.vus = 'hide';
         const r = getFilteredFeatures();
         expect(r.map(f => f.properties.HW_ID)).toEqual(['p2']);
     });
@@ -249,7 +255,7 @@ describe('getFilteredFeatures', () => {
             poi('p1', { userData: { planifieCounter: 2 } }),
             poi('p2', { userData: {} })
         ];
-        state.activeFilters.planifies = true;
+        state.activeFilters.planifies = 'hide';
         const r = getFilteredFeatures();
         expect(r.map(f => f.properties.HW_ID)).toEqual(['p2']);
     });
@@ -295,8 +301,8 @@ describe('passesUserFilters', () => {
     });
 
     it('incontournable bypasse vus + planifies', () => {
-        state.activeFilters.vus = true;
-        state.activeFilters.planifies = true;
+        state.activeFilters.vus = 'hide';
+        state.activeFilters.planifies = 'hide';
         const f = poi('p1', { incontournable: true, userData: { vu: true, planifieCounter: 5 } });
         expect(passesUserFilters(f)).toBe(true);
     });
@@ -306,23 +312,23 @@ describe('passesUserFilters', () => {
         state.loadedFeatures = [p1];
         state.currentCircuit = [p1];
         state.activeCircuitId = 'c1';
-        state.activeFilters.vus = true;
+        state.activeFilters.vus = 'hide';
         expect(passesUserFilters(p1)).toBe(true);
     });
 
     it('mode standard : vus=true exclut un POI vu (non incontournable)', () => {
-        state.activeFilters.vus = true;
+        state.activeFilters.vus = 'hide';
         expect(passesUserFilters(poi('p1', { userData: { vu: true } }))).toBe(false);
     });
 
     it('mode standard : planifies=true exclut planifieCounter > 0', () => {
-        state.activeFilters.planifies = true;
+        state.activeFilters.planifies = 'hide';
         expect(passesUserFilters(poi('p1', { userData: { planifieCounter: 1 } }))).toBe(false);
     });
 
     it('mode sélection : utilise selectionModeFilters au lieu de activeFilters', () => {
         state.isSelectionModeActive = true;
-        state.activeFilters.vus = false; // ignoré en mode sélection
+        state.activeFilters.vus = 'all'; // ignoré en mode sélection
         state.selectionModeFilters.hideVisited = true;
         expect(passesUserFilters(poi('p1', { userData: { vu: true } }))).toBe(false);
     });
@@ -534,6 +540,10 @@ describe('updatePoiData', () => {
         ['planifieCounter', 2],
         ['incontournable', true],
         ['verified', true],
+        // Filtres "État de la fiche" (refonte Claude Design) : photos / description
+        ['photos', ['url']],
+        ['description', 'Long texte'],
+        ['Description', 'Long texte capitalisé'],
     ])('emit data:filtered (via applyFilters) si key="%s" affecte les filtres', async (key, value) => {
         await updatePoiData('p1', key, value);
         expect(eventBus.emit).toHaveBeenCalledWith('data:filtered', expect.anything());
@@ -541,7 +551,6 @@ describe('updatePoiData', () => {
 
     it.each([
         ['notes', 'x'],
-        ['photos', []],
         ['planifie', true],
     ])('PAS d\'emit data:filtered si key="%s" n\'affecte pas les filtres', async (key, value) => {
         await updatePoiData('p1', key, value);
