@@ -4,7 +4,7 @@
 //
 // Sections :
 //   1. État viewer       — currentPhotoList, currentPhotoIndex, setCurrentPhotos, changePhoto
-//   2. Compression       — compressImage, generatePhotoId
+//   2. Compression       — compressImage, generatePhotoId, validatePhotoFile
 //   3. CRUD local (Blob) — handlePhotoUpload, handlePhotoDeletion, handleAllPhotosDeletion
 //   4. Upload GitHub     — uploadPhotoForPoi (admin uniquement)
 
@@ -13,6 +13,7 @@ import { state } from './state.js';
 import { getPoiPhotos, savePoiPhotos, deletePoiPhotos } from './database.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
+import { showToast } from './toast.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. ÉTAT VIEWER
@@ -52,6 +53,27 @@ export const ADMIN_COMPRESSION = {
 /** Profil de compression par défaut pour les photos utilisateur. */
 export const USER_COMPRESSION = { targetMinSize: 1200, quality: 0.8 };
 
+/** Taille max acceptée en entrée (avant compression). 50 Mo couvre les RAW smartphones. */
+export const MAX_PHOTO_SIZE_BYTES = 50 * 1024 * 1024;
+
+/**
+ * Valide qu'un fichier est une image acceptable (MIME image/* + taille ≤ MAX_PHOTO_SIZE_BYTES).
+ * @param {File|Blob} file
+ * @returns {{ valid: boolean, reason: string|null }}
+ */
+export function validatePhotoFile(file) {
+    if (!file) return { valid: false, reason: 'Fichier manquant.' };
+    if (!file.type || !file.type.startsWith('image/')) {
+        return { valid: false, reason: `Format non supporté (${file.type || 'inconnu'}).` };
+    }
+    if (typeof file.size === 'number' && file.size > MAX_PHOTO_SIZE_BYTES) {
+        const mb = (file.size / 1024 / 1024).toFixed(1);
+        const maxMb = Math.round(MAX_PHOTO_SIZE_BYTES / 1024 / 1024);
+        return { valid: false, reason: `Trop volumineux (${mb} Mo, max ${maxMb} Mo).` };
+    }
+    return { valid: true, reason: null };
+}
+
 /**
  * Compresse un fichier image en Blob JPEG.
  * @param {File}   file
@@ -61,6 +83,11 @@ export const USER_COMPRESSION = { targetMinSize: 1200, quality: 0.8 };
  */
 export function compressImage(file, targetMinSize = 1200, quality = 0.8) {
     return new Promise((resolve, reject) => {
+        const validation = validatePhotoFile(file);
+        if (!validation.valid) {
+            reject(new Error(validation.reason));
+            return;
+        }
         const reader = new FileReader();
         reader.onerror = reject;
         reader.readAsDataURL(file);
@@ -104,19 +131,32 @@ export function generatePhotoId() {
 
 /**
  * Ajoute de nouvelles photos pour un POI : compression → Blob → store dédié.
+ * Pré-filtre via validatePhotoFile (MIME image/* + cap taille). Toaste les rejets.
  */
 export async function handlePhotoUpload(poiId, files) {
     const mapId = state.currentMapId;
     const existing = await getPoiPhotos(mapId, poiId);
     const newItems = [];
+    let rejected = 0;
 
     for (const file of files) {
+        const validation = validatePhotoFile(file);
+        if (!validation.valid) {
+            console.warn(`Photo rejetée (${file?.name || 'sans nom'}) :`, validation.reason);
+            rejected++;
+            continue;
+        }
         try {
             const blob = await compressImage(file);
             newItems.push({ id: generatePhotoId(), blob });
         } catch (err) {
             console.error("Erreur compression image", err);
+            rejected++;
         }
+    }
+
+    if (rejected > 0) {
+        showToast(`${rejected} photo(s) ignorée(s) (format ou taille invalide).`, 'warning');
     }
 
     if (newItems.length === 0) return { success: false };
