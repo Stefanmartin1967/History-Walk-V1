@@ -296,6 +296,15 @@ export function recomputeVu(userData) {
     userData.vu = manual || byCircuits;
 }
 
+// Clés dont la modification peut changer la visibilité d'un POI sur la carte
+// ou la liste mobile (cf. passesUserFilters / passesStructuralFilters).
+// Toute nouvelle prop influençant ces fonctions doit être ajoutée ici.
+const FILTER_AFFECTING_KEYS = new Set([
+    'Catégorie', 'Zone',
+    'vu', 'vuManual', 'planifieCounter',
+    'incontournable', 'verified',
+]);
+
 export async function updatePoiData(poiId, key, value) {
     // Initialisation si vide
     if (!state.userData[poiId]) state.userData[poiId] = {};
@@ -326,8 +335,10 @@ export async function updatePoiData(poiId, key, value) {
     // Sync Gist (debounced 3s)
     schedulePush();
 
-    // Force le rafraîchissement des marqueurs Leaflet si la catégorie a changé
-    if (key === 'Catégorie') {
+    // Force le rafraîchissement carte/liste mobile si la clé modifiée affecte
+    // la visibilité (passesUserFilters + passesStructuralFilters). Centralisé
+    // ici pour que les call-sites n'aient pas à connaître la liste.
+    if (FILTER_AFFECTING_KEYS.has(key)) {
         applyFilters();
     }
 

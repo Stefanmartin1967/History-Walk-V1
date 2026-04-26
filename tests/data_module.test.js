@@ -525,13 +525,25 @@ describe('updatePoiData', () => {
         expect(schedulePush).toHaveBeenCalled();
     });
 
-    it('emit data:filtered (via applyFilters) si key="Catégorie"', async () => {
-        await updatePoiData('p1', 'Catégorie', 'Hotel');
+    it.each([
+        ['Catégorie', 'Hotel'],
+        ['Zone', 'Houmt Souk'],
+        ['vu', true],
+        ['vuManual', true],
+        ['planifieCounter', 2],
+        ['incontournable', true],
+        ['verified', true],
+    ])('emit data:filtered (via applyFilters) si key="%s" affecte les filtres', async (key, value) => {
+        await updatePoiData('p1', key, value);
         expect(eventBus.emit).toHaveBeenCalledWith('data:filtered', expect.anything());
     });
 
-    it('PAS d\'emit data:filtered si key autre que "Catégorie"', async () => {
-        await updatePoiData('p1', 'notes', 'x');
+    it.each([
+        ['notes', 'x'],
+        ['photos', []],
+        ['planifie', true],
+    ])('PAS d\'emit data:filtered si key="%s" n\'affecte pas les filtres', async (key, value) => {
+        await updatePoiData('p1', key, value);
         expect(eventBus.emit).not.toHaveBeenCalledWith('data:filtered', expect.anything());
     });
 
