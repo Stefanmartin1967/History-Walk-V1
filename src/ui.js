@@ -50,7 +50,7 @@ export function initializeDomReferences() {
         'backup-modal', 'btn-backup-full', 'btn-backup-lite', 'btn-backup-cancel', 'btn-open-backup-modal',
         'btn-loop-circuit',
         'btn-clear-circuit', 'close-circuit-panel-btn',
-        'btn-categories', 'btn-legend',
+        'btn-legend',
         'btn-open-my-circuits',
         'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-topbar', 'btn-mon-espace'
     ];

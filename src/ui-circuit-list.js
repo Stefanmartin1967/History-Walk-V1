@@ -130,8 +130,9 @@ function renderExplorerToolbar() {
         ? (currentSort === 'dist_desc' ? 'arrow-up-1-0' : 'arrow-down-0-1')
         : 'ruler';
 
-    // Note : pas de bouton "Filtrer par Zone" ici sur PC — le filtre Zone de la
-    // barre du haut (#btn-filter-zones) pilote le même state.activeFilters.zone
+    // Note : pas de bouton "Filtrer par Zone" ici sur PC — le filtre Zone vit
+    // dans le panneau de filtres unifié (cf. filter-panel.js, ouvert depuis
+    // #hw-topbar-filters-btn). Il pilote le même state.activeFilters.zone
     // et rafraîchit déjà la liste des circuits via l'event 'data:filtered'.
     // Sur mobile, le filtre vit dans mobile-circuits.js (#mob-filter-zone).
 

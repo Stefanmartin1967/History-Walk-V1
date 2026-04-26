@@ -59,8 +59,19 @@
 
     <div class="topbar">
         <div class="topbar-left">
-            <h1 class="app-title" id="app-title">History Walk</h1>
+            <!-- Sélecteur de destination (PR 3 : visuel uniquement, dropdown câblé en PR 4) -->
+            <button type="button" class="hw-dest-selector" id="hw-dest-selector"
+                    title="Changer de destination (bientôt)" aria-label="Sélecteur de destination">
+                <span class="hw-dest-selector-flag">🇹🇳</span>
+                <span class="hw-dest-selector-text">
+                    <span class="hw-dest-selector-overline">HISTORY WALK</span>
+                    <span class="hw-dest-selector-name" id="hw-dest-selector-name">Djerba</span>
+                </span>
+                <span class="hw-dest-selector-chevron"><i data-lucide="chevron-down"></i></span>
+            </button>
+        </div>
 
+        <div class="topbar-center">
             <div class="search-container">
                 <i data-lucide="search" class="search-icon"></i>
                 <input type="search" id="search-input" placeholder="Rechercher un lieu...">
@@ -68,28 +79,17 @@
             </div>
         </div>
 
-        <div class="topbar-center">
-            <button class="btn" id="btn-open-my-circuits" title="Mes Circuits" aria-label="Mes Circuits"><i data-lucide="route"></i></button>
+        <div class="topbar-right">
+            <!-- Bouton Filtres unique (refonte Claude Design) — compteur dynamique géré par topbar-v2.js -->
+            <button class="btn hw-topbar-filters-btn" id="hw-topbar-filters-btn"
+                    title="Ouvrir le panneau de filtres" aria-label="Filtres">
+                <i data-lucide="filter"></i>
+                <span id="hw-topbar-filters-label">Filtres</span>
+            </button>
 
-            <div class="zones-container">
-                <button class="btn" id="btn-filter-zones" title="Filtre par Zone" aria-label="Filtre par Zone"><i data-lucide="map-pin"></i> <span
-                        id="zonesLabel">Zone</span></button>
-                <div class="zones-menu" id="zonesMenu"></div>
-            </div>
+            <div class="hw-topbar-separator" aria-hidden="true"></div>
 
-            <div class="zones-container">
-                <button class="btn" id="btn-categories" title="Filtrer par catégorie" aria-label="Filtrer par catégorie"><i data-lucide="list"></i> <span>Catégories</span></button>
-                <div class="zones-menu" id="categoriesMenu"></div>
-            </div>
-
-            <button class="btn" id="btn-filter-vus" title="Masquer les visités" aria-label="Masquer les visités"><i
-                    data-lucide="eye"></i><span>Visités</span></button>
-
-            <button class="btn" id="btn-filter-planifies" title="Masquer les planifiés" aria-label="Masquer les planifiés"><i
-                    data-lucide="calendar-check"></i><span>Planifiés</span></button>
-
-            <button class="btn" id="btn-filter-nonverifies" title="Non vérifiés seulement" aria-label="Non vérifiés seulement"><i
-                    data-lucide="shield-check"></i></button>
+            <button class="btn" id="btn-open-my-circuits" title="Mes Circuits" aria-label="Mes Circuits"><i data-lucide="route"></i><span>Circuits</span></button>
 
             <button class="btn" id="btn-mode-selection" title="Mode consultation" aria-label="Mode consultation"><i
                     data-lucide="map-pin-off"></i><span>Sélection</span></button>
@@ -99,9 +99,9 @@
 
             <button class="btn" id="btn-legend" title="Afficher la légende" aria-label="Afficher la légende"><i
                     data-lucide="info"></i></button>
-        </div>
 
-        <div class="topbar-right">
+            <div class="hw-topbar-separator" aria-hidden="true"></div>
+
             <!-- SOUTENIR LE SITE -->
             <button class="btn" id="btn-bmc-topbar" title="Soutenir le site" aria-label="Soutenir le site">
                 <i data-lucide="heart"></i>
@@ -135,10 +135,6 @@
 
                     <button class="tools-menu-item" id="btn-statistics">
                         <i data-lucide="trophy"></i> Mon Carnet de Voyage
-                    </button>
-
-                    <button class="tools-menu-item" id="btn-new-filters">
-                        <i data-lucide="filter"></i> Nouveaux filtres (preview)
                     </button>
 
                     <button class="tools-menu-item" id="btn-sync-scan">

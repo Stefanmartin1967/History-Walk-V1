@@ -39,7 +39,8 @@ import { initTokenCache } from './github-sync.js';
 import { loadAndInitializeMap } from './app-startup.js';
 import { showWelcomeIfNeeded } from './welcome.js';
 import { setupEventBusListeners } from './events-bus.js';
-import { setupFilterPanel, toggleFilterPanel } from './filter-panel.js';
+import { setupFilterPanel } from './filter-panel.js';
+import { setupTopbarV2 } from './topbar-v2.js';
 import { setupDesktopUIListeners } from './events-desktop.js';
 import { setupGlobalEventListeners } from './events-global.js';
 
@@ -118,10 +119,7 @@ async function initializeApp() {
     setupEventBusListeners();
     setupCircuitEventListeners();
     setupFilterPanel();
-    document.getElementById('btn-new-filters')?.addEventListener('click', () => {
-        document.getElementById('tools-menu-content')?.classList.remove('active');
-        toggleFilterPanel();
-    });
+    setupTopbarV2();
     setupDesktopUIListeners();
     setupGlobalEventListeners();
     setupFileListeners();

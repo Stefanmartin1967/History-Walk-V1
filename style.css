@@ -10,6 +10,7 @@
      mobile.css         — vues mobile (circuits, POI, menu) + écran de bienvenue
      explorer-card.css  — carte explorateur (modale stats + iframe impression)
      filter-panel.css   — panneau de filtres unifié (refonte Claude Design)
+     topbar-v2.css      — refonte topbar : destination selector + Filtres unique
    ============================================================ */
 
 @import "./style/base.css";
@@ -21,3 +22,4 @@
 @import "./style/mobile.css";
 @import "./style/explorer-card.css";
 @import "./style/filter-panel.css";
+@import "./style/topbar-v2.css";

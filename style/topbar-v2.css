@@ -1,0 +1,97 @@
+/* ============================================================
+   topbar-v2.css — Refonte topbar (Claude Design)
+   Sélecteur de destination à gauche, recherche centrée, cluster
+   d'outils condensé à droite (Filtres unique + séparateurs verticaux).
+   Couleurs via vars de base.css → adapte aux thèmes desert/oasis/etc.
+   ============================================================ */
+
+/* ─── Sélecteur de destination (remplace l'ancien #app-title) ─── */
+.hw-dest-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 14px 0 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #fff;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s, border-color 0.12s;
+}
+
+.hw-dest-selector:hover,
+.hw-dest-selector.is-open {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.hw-dest-selector-flag {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    background: var(--brand);
+    border-radius: 8px;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.hw-dest-selector-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    line-height: 1.1;
+    min-width: 0;
+}
+
+.hw-dest-selector-overline {
+    font-size: 11px;
+    opacity: 0.65;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+}
+
+.hw-dest-selector-name {
+    font-size: 17px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.hw-dest-selector-chevron {
+    margin-left: 4px;
+    opacity: 0.85;
+    transform: rotate(0);
+    transition: transform 0.15s;
+    flex-shrink: 0;
+}
+
+.hw-dest-selector.is-open .hw-dest-selector-chevron {
+    transform: rotate(180deg);
+}
+
+.hw-dest-selector-chevron svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ─── Bouton Filtres unique (avec compteur dynamique) ─── */
+.hw-topbar-filters-btn {
+    /* hérite de .btn défini dans base.css ; on ajoute le compteur */
+    position: relative;
+}
+
+.hw-topbar-filters-btn.is-active {
+    background: var(--brand);
+    border-color: transparent;
+}
+
+/* ─── Séparateurs verticaux entre clusters ─── */
+.hw-topbar-separator {
+    width: 1px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.18);
+    flex-shrink: 0;
+}

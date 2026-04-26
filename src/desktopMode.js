@@ -433,11 +433,8 @@ function handleWizardStart() {
     newFilters.zone = selectedZone || null;
     setActiveFilters(newFilters);
 
-    // Mise à jour de l'étiquette du bouton Zone
-    const zonesLabel = document.getElementById('zonesLabel');
-    if (zonesLabel) {
-        zonesLabel.textContent = selectedZone || 'Zone';
-    }
+    // PR 3 (refonte topbar) : l'ancien #zonesLabel a été retiré. Le nouveau
+    // panneau de filtres se rafraîchit via son propre listener data:filtered.
 
     // 3. Lancement du mode (Avec reset du circuit précédent pour éviter la confusion)
     clearCircuit(false);
