@@ -102,7 +102,10 @@
         "notes": "",
         "timeH": 0,
         "timeM": 0,
-        "price": 0
+        "price": 0,
+        "vuManual": false,
+        "vu": false,
+        "incontournable": false
       }
     },
     {
@@ -988,7 +991,10 @@
         "Desc_wpt": "Mosquée Ibadite restaurée en août 2025",
         "HW_ID": "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -1065,7 +1071,10 @@
         "Desc_wpt": "Mosquée qui se dresse isolée au milieu d’un terrain pierreux planté de quelques oliviers.",
         "HW_ID": "HW-01K77WPE6AS77NE3CRGHPYHJSE",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -1118,7 +1127,10 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A7EGYFGG7XNYT8AYC",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -1247,7 +1259,10 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BE6FFWWHJH6DSSZQ6",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -1274,7 +1289,10 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -1378,7 +1396,10 @@
         "Desc_wpt": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux.",
         "HW_ID": "HW-01K77WPE6BAJG9QADZMRDXPWTB",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -1457,7 +1478,10 @@
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6B49HSRPBACEWDY95T",
         "planifieCounter": 1,
-        "vu": true
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -7475,10 +7499,7 @@
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-01KQ056Y6XZEVG6B8E6JVP5TKC",
-        "Description": "Ajouté via Rich Editor",
-        "photos": [
-          "photos/poi_HW-01KQ056Y6XZEVG6B8E6JVP5TKC_1777048247541.jpg"
-        ]
+        "Description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -7498,10 +7519,7 @@
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-01KQ057E32KNH0Z1A4FQ0N4EKT",
-        "Description": "Ajouté via Rich Editor",
-        "photos": [
-          "photos/poi_HW-01KQ057E32KNH0Z1A4FQ0N4EKT_1777048249378.jpg"
-        ]
+        "Description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -7521,10 +7539,7 @@
         "timeM": 0,
         "price": 0,
         "HW_ID": "HW-01KQ05809WVE3MYDZDF9XAFA37",
-        "Description": "Ajouté via Rich Editor",
-        "photos": [
-          "photos/poi_HW-01KQ05809WVE3MYDZDF9XAFA37_1777048251485.jpg"
-        ]
+        "Description": "Ajouté via Rich Editor"
       }
     }
   ]
