@@ -1,12 +1,10 @@
 import { DOM } from './ui-dom.js';
 import { state } from './state.js';
 import { getPoiId } from './data.js';
-import { stopDictation, isDictationActive } from './voice.js';
 import { eventBus } from './events.js';
 
 export function switchSidebarTab(tabName, isNavigating = false) {
     if (!isNavigating && window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
-    if (isDictationActive()) stopDictation();
 
     if (DOM.sidebarPanels) {
         DOM.sidebarPanels.forEach(panel => {

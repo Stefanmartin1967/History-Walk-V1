@@ -4,7 +4,6 @@ import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates
 import { restoreCircuit, saveAppState } from './database.js';
 import { escapeXml } from './utils.js';
 import { eventBus } from './events.js';
-import { stopDictation, isDictationActive, speakText } from './voice.js';
 import { clearCircuit, navigatePoiDetails, loadCircuitById } from './circuit.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';

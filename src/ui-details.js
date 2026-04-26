@@ -1,7 +1,7 @@
 import { state, setCurrentFeatureId, setCurrentCircuitIndex } from './state.js';
 import { getPoiId, getPoiName, applyFilters, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
-import { stopDictation, isDictationActive, speakText } from './voice.js';
+import { speakText } from './tts.js';
 import { isMobileView, pushMobileLevel } from './mobile-state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
@@ -356,7 +356,6 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
 export function closeDetailsPanel(goBackToList = false) {
     eventBus.emit('map:clear-highlights');
     if (window.speechSynthesis && window.speechSynthesis.speaking) window.speechSynthesis.cancel();
-    if (isDictationActive()) stopDictation();
 
     // Rollback POI fantôme
     if (state.currentFeatureId !== null && state.currentFeatureId !== undefined) {
