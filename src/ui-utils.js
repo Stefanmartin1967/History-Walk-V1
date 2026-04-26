@@ -4,17 +4,12 @@ import { getAllPoiPhotosForMap } from './database.js';
 // --- ÉDITION DE CONTENU ---
 
 export function closeAllDropdowns() {
-    const ids = ['zonesMenu', 'categoriesMenu', 'tools-menu-content', 'admin-menu-content'];
+    // PR 3 (refonte topbar) : 'zonesMenu' / 'categoriesMenu' retirés.
+    const ids = ['tools-menu-content', 'admin-menu-content'];
     ids.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
-            // Pour les menus gérés par classe CSS (Outils / Admin), on retire le style inline qui bloque la classe active
-            if (id === 'tools-menu-content' || id === 'admin-menu-content') {
-                el.style.display = '';
-            } else {
-                // Pour les autres (Zones / Catégories), on utilise display: none
-                el.style.display = 'none';
-            }
+            el.style.display = '';
             el.classList.remove('active');
         }
     });

@@ -7,7 +7,7 @@ import { eventBus } from './events.js';
 import { isMobileView } from './mobile-state.js';
 import { renderMobilePoiList } from './mobile-poi.js';
 import { refreshMapMarkers } from './map.js';
-import { populateZonesMenu, populateCategoriesMenu, populateCircuitsMenu } from './ui-filters.js';
+import { populateCircuitsMenu } from './ui-filters.js';
 import { loadCircuitById, clearCircuit, navigatePoiDetails } from './circuit.js';
 import { performCircuitDeletion } from './circuit-actions.js';
 import { setCircuitIdToImportFor } from './state.js';
@@ -21,8 +21,9 @@ export function setupEventBusListeners() {
             renderMobilePoiList(visibleFeatures);
         } else {
             refreshMapMarkers(visibleFeatures);
-            populateZonesMenu();
-            populateCategoriesMenu();
+            // Anciens menus dropdown #zonesMenu / #categoriesMenu retirés en
+            // PR 3 (refonte topbar). Le panneau de filtres unifié se rafraîchit
+            // tout seul via son propre listener data:filtered.
         }
     });
 

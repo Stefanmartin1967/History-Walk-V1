@@ -22,29 +22,27 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
         await page.waitForTimeout(800);
     });
 
-    async function openPanelViaToolsMenu(page) {
-        await page.locator('#btn-tools-menu').click();
-        await page.waitForSelector('#btn-new-filters', { state: 'visible', timeout: 3000 });
-        await page.locator('#btn-new-filters').click();
+    async function openPanelViaTopbar(page) {
+        await page.locator('#hw-topbar-filters-btn').click();
         await page.waitForSelector('#hw-filter-panel.is-open', { timeout: 3000 });
     }
 
-    test('1 — bouton "Nouveaux filtres" du menu Outils ouvre le panneau', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+    test('1 — bouton Filtres du topbar ouvre le panneau', async ({ page }) => {
+        await openPanelViaTopbar(page);
         await expect(page.locator('#hw-filter-panel')).toHaveClass(/is-open/);
         await expect(page.locator('.hw-fp-title')).toHaveText('Filtres');
         await expect(page.locator('#hw-fp-subtitle')).toHaveText('Aucun filtre actif');
     });
 
     test('2 — clic sur la croix ferme le panneau', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
         await page.locator('#hw-fp-close').click();
         await page.waitForTimeout(300);
         await expect(page.locator('#hw-filter-panel')).not.toHaveClass(/is-open/);
     });
 
     test('3 — clic sur le select Localisation ouvre la liste des zones', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
         await page.locator('#hw-fp-zone-select').click();
         await page.waitForSelector('#hw-fp-zones-list.is-open', { timeout: 2000 });
         // "Toutes les zones" doit toujours figurer
@@ -52,7 +50,7 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
     });
 
     test('4 — sélection d\'une zone applique le filtre + met à jour le sous-titre', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
         await page.locator('#hw-fp-zone-select').click();
         await page.waitForSelector('#hw-fp-zones-list.is-open', { timeout: 2000 });
 
@@ -77,7 +75,7 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
     });
 
     test('5 — bouton "Tout réinitialiser" remet la zone à null', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
 
         // Sélection d'une zone
         await page.locator('#hw-fp-zone-select').click();
@@ -94,7 +92,7 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
     });
 
     test('6 — clic sur header de section toggle son pli', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
         const section = page.locator('[data-section="categories"]');
 
         // Initialement déplié (pas de class is-collapsed)
@@ -114,7 +112,7 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
     // ─── PR 2 : nouvelles sections câblées ────────────────────────────────────
 
     test('7 — Catégories : cocher une catégorie active la section + reset', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
         const cats = page.locator('#hw-fp-categories-list .hw-fp-checkbox');
         const count = await cats.count();
         expect(count).toBeGreaterThan(0);
@@ -135,7 +133,7 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
     });
 
     test('8 — Mon parcours : changer Visités à "Masquer" active la section', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
 
         // Le 1er groupe radio est "Lieux visités". Bouton "Masquer" = 2e option.
         const visitGroup = page.locator('#hw-fp-parcours-content .hw-fp-radio-group').first();
@@ -155,7 +153,7 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
     });
 
     test('9 — Mon parcours : toggle Incontournable active la section', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
         const toggle = page.locator('.hw-fp-incontournable');
 
         await toggle.click();
@@ -172,7 +170,7 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
     });
 
     test('10 — État de la fiche : cocher Sans photo active la section', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
 
         // Section État de la fiche est repliée par défaut → la déplier d'abord
         await page.locator('[data-section-toggle="fiche"]').click();
@@ -189,7 +187,7 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
     });
 
     test('11 — compteur multi-sections : zone + catégorie + visités = 3 sections actives', async ({ page }) => {
-        await openPanelViaToolsMenu(page);
+        await openPanelViaTopbar(page);
 
         // Zone
         await page.locator('#hw-fp-zone-select').click();
