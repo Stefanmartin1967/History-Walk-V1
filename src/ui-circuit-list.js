@@ -17,6 +17,7 @@ import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId, getPoiName } from './data.js';
 import { showToast } from './toast.js';
+import { switchSidebarTab } from './ui-sidebar.js';
 
 // ─── Local state ──────────────────────────────────────────────────────────
 let currentSort = 'proximity_asc';
@@ -282,10 +283,24 @@ export function renderExplorerList() {
 
     let circuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter, filterPoiId);
 
-    // Recherche locale (filtre par nom, case-insensitive)
+    // Recherche locale (case-insensitive) : matche le nom du circuit OU
+    // le nom d'un POI contenu dans le circuit.
+    // Permet de taper "Borj" pour trouver tous les circuits contenant
+    // "Borj el Kebir", par exemple.
     if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
-        circuits = circuits.filter(c => (c.name || '').toLowerCase().includes(q));
+        circuits = circuits.filter(c => {
+            if ((c.name || '').toLowerCase().includes(q)) return true;
+            // Match aussi sur les noms de POI du circuit
+            if (Array.isArray(c.poiIds)) {
+                return c.poiIds.some(id => {
+                    const f = state.loadedFeatures.find(g => getPoiId(g) === id);
+                    if (!f) return false;
+                    return getPoiName(f).toLowerCase().includes(q);
+                });
+            }
+            return false;
+        });
     }
 
     // Chips locales
@@ -352,10 +367,12 @@ function createCircuitCard(c) {
     card.dataset.id = c.id;
 
     // Click sur la carte → activer + bascule onglet "Circuit"
+    // (switchSidebarTab direct car aucun listener n'écoute 'ui:request-tab-change'
+    //  — pattern utilisé partout ailleurs dans la code base : circuit.js, ui-details.js, etc.)
     card.addEventListener('click', (e) => {
         if (e.target.closest('.mc-card-action-check')) return;
         eventBus.emit('circuit:request-load', c.id);
-        eventBus.emit('ui:request-tab-change', 'circuit');
+        switchSidebarTab('circuit');
     });
 
     // ─ Ligne 1 : titre + badge officiel/testé + check toggle ─

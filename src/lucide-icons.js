@@ -55,6 +55,9 @@ import {
     Ticket, Table, Package, PackageCheck, Server, ServerCog,
     Luggage, Heart, Coffee, Utensils, Ruler,
 
+    // Sidebar V2 (refonte Mes Circuits — PR B)
+    SlidersHorizontal, MoreVertical, BadgeCheck, Scale,
+
 } from 'lucide';
 
 export { createIcons };
@@ -95,4 +98,6 @@ export const appIcons = {
     CalendarClock, Phone, Bookmark, Landmark, Wrench, DoorOpen,
     Ticket, Table, Package, PackageCheck, Server, ServerCog,
     Luggage, Heart, Coffee, Utensils, Ruler,
+
+    SlidersHorizontal, MoreVertical, BadgeCheck, Scale,
 };
