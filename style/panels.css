@@ -1816,26 +1816,66 @@
 .va-card.is-done .va-done { background: var(--ok); border-color: var(--ok); color: #fff; }
 .va-card.is-done .va-title { color: var(--ink-soft); }
 
-/* Ligne 2 — métadonnées sobres */
+/* Ligne 2 — métadonnées en pastilles cohérentes (POI / km / zone) */
 .va-meta {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 14px;
-    font-size: 12.5px;
+    gap: 10px;
+    font-size: 12px;
     color: var(--ink-soft);
     font-variant-numeric: tabular-nums;
 }
-.va-meta .sep { color: var(--line); }
-.va-meta .resto {
+/* Stat avec stack vertical : pastille chiffre au-dessus, libellé centré dessous */
+.va-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.va-stat .num {
+    background: var(--surface-muted);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.2;
+    padding: 3px 10px;
+    border-radius: 999px;
+    min-width: 32px;
+    text-align: center;
+}
+.va-stat .unit {
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+/* Zone en pastille subtile (cohérence avec POI / km) */
+.va-zone {
+    display: inline-flex;
+    align-items: center;
+    background: var(--surface-muted);
+    color: var(--ink);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 500;
+    align-self: center;
+}
+/* Pastille resto amber */
+.va-resto {
     display: inline-flex;
     align-items: center;
     gap: 4px;
     color: var(--hw-amber);
+    background: var(--hw-amber-soft);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
     font-weight: 600;
+    align-self: center;
 }
-.va-meta .resto svg { width: 11px; height: 11px; }
-.va-meta .num { font-weight: 600; color: var(--ink); }
+.va-resto svg { width: 11px; height: 11px; }
 
 /* Ligne 3 — flag textuel typographique */
 .va-flag {

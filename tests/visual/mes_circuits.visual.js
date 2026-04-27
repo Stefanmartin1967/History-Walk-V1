@@ -86,13 +86,25 @@ test.describe('Desktop — Mes Circuits V2 Lot 2', () => {
         await page.locator('#mc-btn-filters').click();
         await page.waitForTimeout(200);
 
-        const seg = page.locator('#mc-fseg');
-        await expect(seg.locator('button[data-sort="proximity_asc"]')).toHaveClass(/is-on/);
+        await expect(page.locator('.fseg button[data-sort="proximity_asc"]')).toHaveClass(/is-on/);
 
-        await seg.locator('button[data-sort="dist_asc"]').click();
+        await page.locator('.fseg button[data-sort="dist_asc"]').click();
         await page.waitForTimeout(200);
-        await expect(seg.locator('button[data-sort="dist_asc"]')).toHaveClass(/is-on/);
-        await expect(seg.locator('button[data-sort="proximity_asc"]')).not.toHaveClass(/is-on/);
+        await expect(page.locator('.fseg button[data-sort="dist_asc"]')).toHaveClass(/is-on/);
+        await expect(page.locator('.fseg button[data-sort="proximity_asc"]')).not.toHaveClass(/is-on/);
+    });
+
+    test('5b — segmented Mon parcours (Tout / À faire / Fait)', async ({ page }) => {
+        await page.locator('#mc-btn-filters').click();
+        await page.waitForTimeout(200);
+
+        const seg = page.locator('#mc-fseg-completion');
+        await expect(seg.locator('button[data-completion="all"]')).toHaveClass(/is-on/);
+
+        await seg.locator('button[data-completion="todo"]').click();
+        await page.waitForTimeout(300);
+        await expect(seg.locator('button[data-completion="todo"]')).toHaveClass(/is-on/);
+        await expect(seg.locator('button[data-completion="all"]')).not.toHaveClass(/is-on/);
     });
 
     test('6 — badge n sur le bouton Filtres après cochage', async ({ page }) => {
@@ -159,10 +171,25 @@ test.describe('Desktop — Mes Circuits V2 Lot 2', () => {
         const flaggedCards = page.locator('.va-card[data-flag="official"], .va-card[data-flag="verified"]');
         expect(await flaggedCards.count()).toBeGreaterThan(0);
 
-        // Chaque carte a un titre + toggle done
+        // Chaque carte a un titre + toggle done + meta avec pastilles POI/km/zone
         const first = cards.first();
         await expect(first.locator('.va-title')).toBeVisible();
         await expect(first.locator('.va-done')).toBeVisible();
+        await expect(first.locator('.va-stat').first()).toBeVisible();
+        // Au moins 2 va-stat (POI + km)
+        expect(await first.locator('.va-stat').count()).toBeGreaterThanOrEqual(2);
+    });
+
+    test('10b — slider double-handle : 2 poignées présentes (min + max)', async ({ page }) => {
+        await page.locator('#mc-btn-filters').click();
+        await page.waitForTimeout(200);
+        await expect(page.locator('#mc-fslider-handle-min')).toBeVisible();
+        await expect(page.locator('#mc-fslider-handle-max')).toBeVisible();
+        // Initial : min=0, max=20 → fill couvre 100%
+        const fill = page.locator('#mc-fslider-fill');
+        const fillStyle = await fill.getAttribute('style');
+        expect(fillStyle).toContain('left:0%');
+        expect(fillStyle).toContain('width:100%');
     });
 
     test('11 — clic sur une carte bascule sur l\'onglet "Circuit"', async ({ page }) => {
