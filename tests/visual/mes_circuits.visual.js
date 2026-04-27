@@ -1,13 +1,13 @@
 /**
  * mes_circuits.visual.js
- * Tests E2E desktop de l'onglet "Mes Circuits" V2 (refonte Claude Design — PR B).
+ * Tests E2E desktop de l'onglet "Mes Circuits" V2 Lot 2 (refonte filtres + cartes Variante A).
  */
 
 import { test, expect } from '@playwright/test';
 
 const LOAD_TIMEOUT = 20000;
 
-test.describe('Desktop — Mes Circuits V2', () => {
+test.describe('Desktop — Mes Circuits V2 Lot 2', () => {
 
     test.beforeEach(async ({ page, isMobile }) => {
         test.skip(isMobile, 'Tests desktop uniquement');
@@ -18,7 +18,6 @@ test.describe('Desktop — Mes Circuits V2', () => {
 
         await page.goto('/');
         await page.waitForSelector('.leaflet-marker-icon', { timeout: LOAD_TIMEOUT });
-        // Attendre le chargement des circuits officiels
         await page.waitForTimeout(1200);
 
         // Bascule sur l'onglet "Mes Circuits"
@@ -26,125 +25,172 @@ test.describe('Desktop — Mes Circuits V2', () => {
         await page.waitForSelector('#mc-toolbar', { timeout: 5000 });
     });
 
-    test('1 — toolbar rendue avec recherche + 4 boutons icônes', async ({ page }) => {
+    test('1 — toolbar 4 boutons (recherche + filtres + nouveau + fermer)', async ({ page }) => {
         await expect(page.locator('#mc-search-input')).toBeVisible();
         await expect(page.locator('#mc-btn-filters')).toBeVisible();
         await expect(page.locator('#mc-btn-new')).toBeVisible();
-        await expect(page.locator('#mc-btn-menu')).toBeVisible();
         await expect(page.locator('#mc-btn-close')).toBeVisible();
+        // Pas de menu ⋮
+        await expect(page.locator('#mc-btn-menu')).toHaveCount(0);
     });
 
-    test('2 — bouton filtres déplie la zone .mc-filters', async ({ page }) => {
-        const filters = page.locator('#mc-filters');
-        await expect(filters).toHaveClass(/is-collapsed/);
+    test('2 — bouton Filtres ouvre le panneau dropdown (filter-pop)', async ({ page }) => {
+        await expect(page.locator('#panel-explorer')).toHaveAttribute('data-filter-open', 'false');
 
-        await page.locator('#mc-btn-filters').click();
-        await page.waitForTimeout(300);
-
-        await expect(filters).not.toHaveClass(/is-collapsed/);
-        await expect(page.locator('.mc-filter-chip[data-chip="all"]')).toBeVisible();
-        await expect(page.locator('.mc-filter-chip[data-chip="official"]')).toBeVisible();
-        await expect(page.locator('.mc-filter-chip[data-chip="with-resto"]')).toBeVisible();
-    });
-
-    test('3 — chip "Officiels" filtre la liste + badge-dot apparaît', async ({ page }) => {
         await page.locator('#mc-btn-filters').click();
         await page.waitForTimeout(200);
 
-        // Badge-dot absent au départ
-        await expect(page.locator('#mc-btn-filters .badge-dot')).toHaveCount(0);
+        await expect(page.locator('#panel-explorer')).toHaveAttribute('data-filter-open', 'true');
+        await expect(page.locator('.filter-pop')).toBeVisible();
+        // 4 sections : Type, Distance, Tri, Mon parcours
+        await expect(page.locator('.filter-section')).toHaveCount(4);
+    });
 
-        // Active le chip "Officiels"
-        await page.locator('.mc-filter-chip[data-chip="official"]').click();
+    test('3 — cocher "Vérifiés" auto-coche "Officiels"', async ({ page }) => {
+        await page.locator('#mc-btn-filters').click();
+        await page.waitForTimeout(200);
+
+        const officiels = page.locator('.fchk[data-fchk="official"]');
+        const verifies = page.locator('.fchk[data-fchk="verified"]');
+
+        await expect(officiels).not.toHaveClass(/is-on/);
+        await expect(verifies).not.toHaveClass(/is-on/);
+
+        await verifies.click();
+        await page.waitForTimeout(200);
+
+        // Les deux doivent être cochés
+        await expect(officiels).toHaveClass(/is-on/);
+        await expect(verifies).toHaveClass(/is-on/);
+    });
+
+    test('4 — décocher "Officiels" décoche aussi "Vérifiés"', async ({ page }) => {
+        await page.locator('#mc-btn-filters').click();
+        await page.waitForTimeout(200);
+
+        // Coche Vérifiés (auto-coche Officiels) — le panneau est re-rendu donc
+        // on relit le locator après l'action.
+        await page.locator('.fchk[data-fchk="verified"]').click();
+        await page.waitForTimeout(300);
+        await expect(page.locator('.fchk[data-fchk="official"]')).toHaveClass(/is-on/);
+
+        // Décoche Officiels
+        await page.locator('.fchk[data-fchk="official"]').click();
         await page.waitForTimeout(300);
 
-        // Badge-dot apparaît
-        await expect(page.locator('#mc-btn-filters .badge-dot')).toBeVisible();
-        // Le chip est dans l'état actif
-        await expect(page.locator('.mc-filter-chip[data-chip="official"]')).toHaveClass(/is-on/);
-        // Toutes les cartes affichées doivent avoir le badge officiel
-        const cards = page.locator('.mc-card');
-        const count = await cards.count();
-        expect(count).toBeGreaterThan(0);
+        await expect(page.locator('.fchk[data-fchk="official"]')).not.toHaveClass(/is-on/);
+        await expect(page.locator('.fchk[data-fchk="verified"]')).not.toHaveClass(/is-on/);
     });
 
-    test('4 — recherche en temps réel filtre les cartes', async ({ page }) => {
-        // Compter le nombre initial de cartes
-        const initialCount = await page.locator('.mc-card').count();
-        expect(initialCount).toBeGreaterThan(0);
-
-        // Recherche d'un terme improbable
-        await page.locator('#mc-search-input').fill('zzzimprobable123');
+    test('5 — segmented tri (Proximité / Distance / Vérifiés)', async ({ page }) => {
+        await page.locator('#mc-btn-filters').click();
         await page.waitForTimeout(200);
 
-        // La liste doit afficher l'empty state
-        await expect(page.locator('.mc-empty')).toBeVisible();
-        await expect(page.locator('.mc-card')).toHaveCount(0);
+        const seg = page.locator('#mc-fseg');
+        await expect(seg.locator('button[data-sort="proximity_asc"]')).toHaveClass(/is-on/);
 
-        // Effacer la recherche → cartes reviennent
-        await page.locator('#mc-search-input').fill('');
+        await seg.locator('button[data-sort="dist_asc"]').click();
         await page.waitForTimeout(200);
-        const restoredCount = await page.locator('.mc-card').count();
-        expect(restoredCount).toBe(initialCount);
+        await expect(seg.locator('button[data-sort="dist_asc"]')).toHaveClass(/is-on/);
+        await expect(seg.locator('button[data-sort="proximity_asc"]')).not.toHaveClass(/is-on/);
     });
 
-    test('5 — bouton ⋮ ouvre le menu dropdown avec les options', async ({ page }) => {
-        await page.locator('#mc-btn-menu').click();
-        await page.waitForSelector('#mc-menu-dropdown', { timeout: 2000 });
+    test('6 — badge n sur le bouton Filtres après cochage', async ({ page }) => {
+        // Au départ, pas de badge
+        await expect(page.locator('#mc-btn-filters .badge-n')).toHaveCount(0);
 
-        const menu = page.locator('#mc-menu-dropdown');
-        await expect(menu).toBeVisible();
-        await expect(menu.locator('[data-action="sort-proximity"]')).toContainText('proximité');
-        await expect(menu.locator('[data-action="sort-dist"]')).toContainText('distance');
-        await expect(menu.locator('[data-action="toggle-todo"]')).toBeVisible();
-        await expect(menu.locator('[data-action="reset"]')).toContainText('Réinitialiser');
-
-        // Clic extérieur ferme le menu
-        await page.locator('#explorer-list').click({ position: { x: 100, y: 100 } });
+        await page.locator('#mc-btn-filters').click();
         await page.waitForTimeout(200);
-        await expect(page.locator('#mc-menu-dropdown')).toHaveCount(0);
+        await page.locator('.fchk[data-fchk="resto"]').click();
+        await page.waitForTimeout(200);
+
+        // Badge n apparaît avec valeur 1
+        await expect(page.locator('#mc-btn-filters .badge-n')).toContainText('1');
     });
 
-    test('6 — carte de circuit a la structure 2 lignes + badge officiel + check toggle', async ({ page }) => {
-        const firstCard = page.locator('.mc-card').first();
-        await expect(firstCard).toBeVisible();
+    test('7 — bouton Tout réinitialiser remet tout à zéro', async ({ page }) => {
+        await page.locator('#mc-btn-filters').click();
+        await page.waitForTimeout(200);
+        await page.locator('.fchk[data-fchk="official"]').click();
+        await page.waitForTimeout(300);
+        await page.locator('.fchk[data-fchk="resto"]').click();
+        await page.waitForTimeout(300);
 
-        // Ligne 1 : titre + check toggle (badge officiel optionnel selon le circuit)
-        await expect(firstCard.locator('.mc-card-title')).toBeVisible();
-        await expect(firstCard.locator('.mc-card-action-check')).toBeVisible();
-
-        // Ligne 2 : pastilles meta (au moins POI + distance)
-        const metas = firstCard.locator('.mc-card-line2 .mc-meta');
-        const metaCount = await metas.count();
-        expect(metaCount).toBeGreaterThanOrEqual(2);
-    });
-
-    test('7 — clic sur une carte bascule sur l\'onglet "Circuit"', async ({ page }) => {
-        const firstCard = page.locator('.mc-card').first();
-        await firstCard.click();
+        await page.locator('#mc-fp-reset').click();
         await page.waitForTimeout(400);
 
-        // L'onglet "circuit" devient actif
+        // Réouvrir le panneau (le reset peut le fermer / re-render)
+        if (await page.locator('#panel-explorer').getAttribute('data-filter-open') !== 'true') {
+            await page.locator('#mc-btn-filters').click();
+            await page.waitForTimeout(200);
+        }
+
+        await expect(page.locator('.fchk[data-fchk="official"]')).not.toHaveClass(/is-on/);
+        await expect(page.locator('.fchk[data-fchk="resto"]')).not.toHaveClass(/is-on/);
+        await expect(page.locator('#mc-btn-filters .badge-n')).toHaveCount(0);
+    });
+
+    test('8 — clic extérieur ferme le panneau filtres', async ({ page }) => {
+        await page.locator('#mc-btn-filters').click();
+        await page.waitForTimeout(200);
+        await expect(page.locator('#panel-explorer')).toHaveAttribute('data-filter-open', 'true');
+
+        // Clic sur la carte (largement en dehors de la sidebar et du filter-pop)
+        await page.locator('.leaflet-container').click({ position: { x: 200, y: 400 }, force: true });
+        await page.waitForTimeout(300);
+
+        await expect(page.locator('#panel-explorer')).toHaveAttribute('data-filter-open', 'false');
+    });
+
+    test('9 — Escape ferme le panneau filtres', async ({ page }) => {
+        await page.locator('#mc-btn-filters').click();
+        await page.waitForTimeout(200);
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(200);
+        await expect(page.locator('#panel-explorer')).toHaveAttribute('data-filter-open', 'false');
+    });
+
+    test('10 — carte Variante A : ruban gauche + flag textuel + check toggle', async ({ page }) => {
+        const cards = page.locator('.va-card');
+        const count = await cards.count();
+        expect(count).toBeGreaterThan(0);
+
+        // Au moins une carte avec data-flag="official" ou "verified" (les officiels Djerba)
+        const flaggedCards = page.locator('.va-card[data-flag="official"], .va-card[data-flag="verified"]');
+        expect(await flaggedCards.count()).toBeGreaterThan(0);
+
+        // Chaque carte a un titre + toggle done
+        const first = cards.first();
+        await expect(first.locator('.va-title')).toBeVisible();
+        await expect(first.locator('.va-done')).toBeVisible();
+    });
+
+    test('11 — clic sur une carte bascule sur l\'onglet "Circuit"', async ({ page }) => {
+        await page.locator('.va-card').first().click();
+        await page.waitForTimeout(400);
         await expect(page.locator('.tab-button[data-tab="circuit"]')).toHaveClass(/active/);
     });
 
-    test('8 — menu Réinitialiser remet tout à zéro', async ({ page }) => {
-        // Active une recherche + un chip
-        await page.locator('#mc-search-input').fill('test');
-        await page.locator('#mc-btn-filters').click();
-        await page.locator('.mc-filter-chip[data-chip="official"]').click();
-        await page.waitForTimeout(300);
+    test('12 — recherche temps réel filtre les cartes (par nom)', async ({ page }) => {
+        const initialCount = await page.locator('.va-card').count();
+        expect(initialCount).toBeGreaterThan(0);
 
-        // Reset via menu
-        await page.locator('#mc-btn-menu').click();
-        await page.waitForSelector('#mc-menu-dropdown', { timeout: 2000 });
-        await page.locator('[data-action="reset"]').click();
-        await page.waitForTimeout(300);
+        await page.locator('#mc-search-input').fill('zzzimprobable');
+        await page.waitForTimeout(200);
 
-        // Recherche vidée + chip Tous actif
+        await expect(page.locator('.va-empty')).toBeVisible();
+        await expect(page.locator('.va-card')).toHaveCount(0);
+    });
+
+    test('13 — X clear vide la recherche', async ({ page }) => {
+        await page.locator('#mc-search-input').fill('mosquée');
+        await page.waitForTimeout(200);
+        await expect(page.locator('#mc-search-clear')).toBeVisible();
+
+        await page.locator('#mc-search-clear').click();
+        await page.waitForTimeout(200);
         await expect(page.locator('#mc-search-input')).toHaveValue('');
-        await expect(page.locator('.mc-filter-chip[data-chip="all"]')).toHaveClass(/is-on/);
-        await expect(page.locator('#mc-btn-filters .badge-dot')).toHaveCount(0);
+        await expect(page.locator('#mc-search-clear')).toHaveClass(/is-hidden/);
     });
 
 });
