@@ -399,7 +399,7 @@ body {
     border: none;
     border-left: 1px solid var(--line);
     border-bottom: none;
-    color: var(--brand-2);
+    color: var(--brand); /* --brand est redéfini par thème (desert→orange, oasis→vert, etc.) */
     cursor: pointer;
     display: grid;
     place-items: center;
