@@ -20,9 +20,9 @@ import { showToast } from './toast.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 
 // ─── Local state ──────────────────────────────────────────────────────────
-let currentSort = 'proximity_asc';
+let currentSort = 'proximity_asc'; // 'proximity_asc' | 'dist_asc' | 'dist_desc' | 'verified_first'
 let filterTodo = false;
-let activeChip = 'all'; // 'all' | 'official' | 'with-resto'
+let activeChip = 'all'; // 'all' | 'official' | 'verified' | 'with-resto'
 let searchQuery = '';
 let filtersOpen = false;
 let menuOpen = false;
@@ -69,6 +69,9 @@ function renderToolbar() {
         <label class="mc-search">
             <i data-lucide="search"></i>
             <input type="text" id="mc-search-input" placeholder="Rechercher un circuit…" value="${escapeXml(searchQuery)}">
+            <button type="button" class="mc-search-clear ${searchQuery ? '' : 'is-hidden'}" id="mc-search-clear" title="Effacer la recherche" aria-label="Effacer la recherche">
+                <i data-lucide="x"></i>
+            </button>
         </label>
         <button class="mc-tool-btn ${filtersOpen ? 'is-active' : ''}" id="mc-btn-filters" title="Filtres" aria-label="Filtres">
             <i data-lucide="sliders-horizontal"></i>
@@ -88,9 +91,24 @@ function renderToolbar() {
 
     // Recherche en temps réel
     const searchInput = document.getElementById('mc-search-input');
+    const searchClear = document.getElementById('mc-search-clear');
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             searchQuery = e.target.value;
+            // Toggle visibilité du bouton clear sans rerender complet de la toolbar
+            // (sinon on perd le focus de l'input à chaque touche).
+            if (searchClear) searchClear.classList.toggle('is-hidden', !searchQuery);
+            renderExplorerList();
+        });
+    }
+    if (searchClear) {
+        searchClear.addEventListener('click', () => {
+            searchQuery = '';
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+            searchClear.classList.add('is-hidden');
             renderExplorerList();
         });
     }
@@ -129,9 +147,10 @@ function renderFilterChips() {
     if (!container) return;
 
     const chips = [
-        { value: 'all', label: 'Tous', icon: null },
-        { value: 'official', label: 'Officiels', icon: 'badge-check' },
-        { value: 'with-resto', label: 'Avec resto', icon: 'utensils' },
+        { value: 'all',        label: 'Tous',       icon: null          },
+        { value: 'official',   label: 'Officiels',  icon: 'badge-check' },
+        { value: 'verified',   label: 'Vérifiés',   icon: 'shield-check' },
+        { value: 'with-resto', label: 'Avec resto', icon: 'utensils'    },
     ];
 
     container.innerHTML = chips.map(c => `
@@ -193,6 +212,9 @@ function openMenu() {
         <button class="mc-menu-item ${currentSort.startsWith('dist') ? 'is-active' : ''}" data-action="sort-dist">
             <i data-lucide="${distIcon}"></i><span>Tri par distance</span>
         </button>
+        <button class="mc-menu-item ${currentSort === 'verified_first' ? 'is-active' : ''}" data-action="sort-verified">
+            <i data-lucide="shield-check"></i><span>Vérifiés d'abord</span>
+        </button>
         <div class="mc-menu-sep"></div>
         <button class="mc-menu-item ${filterTodo ? 'is-active' : ''}" data-action="toggle-todo">
             <i data-lucide="${filterTodo ? 'list-todo' : 'list-checks'}"></i>
@@ -235,6 +257,9 @@ function handleMenuAction(action) {
         renderExplorerList();
     } else if (action === 'sort-dist') {
         currentSort = currentSort === 'dist_asc' ? 'dist_desc' : 'dist_asc';
+        renderExplorerList();
+    } else if (action === 'sort-verified') {
+        currentSort = 'verified_first';
         renderExplorerList();
     } else if (action === 'toggle-todo') {
         filterTodo = !filterTodo;
@@ -281,7 +306,11 @@ export function renderExplorerList() {
         filterPoiId = currentPoiId;
     }
 
-    let circuits = getProcessedCircuits(currentSort, filterTodo, globalZoneFilter, filterPoiId);
+    // Pour le tri "Vérifiés d'abord", on délègue le tri de base au service en
+    // mode proximity (les vérifiés gardent leur ordre relatif par proximité)
+    // puis on reorder avec un post-tri ci-dessous.
+    const baseSortMode = currentSort === 'verified_first' ? 'proximity_asc' : currentSort;
+    let circuits = getProcessedCircuits(baseSortMode, filterTodo, globalZoneFilter, filterPoiId);
 
     // Recherche locale (case-insensitive) : matche le nom du circuit OU
     // le nom d'un POI contenu dans le circuit.
@@ -306,8 +335,19 @@ export function renderExplorerList() {
     // Chips locales
     if (activeChip === 'official') {
         circuits = circuits.filter(c => c.isOfficial);
+    } else if (activeChip === 'verified') {
+        circuits = circuits.filter(c => c.isOfficial && isCircuitTested(c.id));
     } else if (activeChip === 'with-resto') {
         circuits = circuits.filter(c => c._hasRestaurant);
+    }
+
+    // Tri "Vérifiés d'abord" (post-tri du service) : reorder pour mettre les
+    // officiels testés en tête, le reste conserve l'ordre du tri courant.
+    if (currentSort === 'verified_first') {
+        circuits = [
+            ...circuits.filter(c => c.isOfficial && isCircuitTested(c.id)),
+            ...circuits.filter(c => !(c.isOfficial && isCircuitTested(c.id))),
+        ];
     }
 
     listContainer.innerHTML = '';

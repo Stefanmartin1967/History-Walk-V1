@@ -1905,10 +1905,15 @@
    - Le chip dynamique "Filtré par : [POI]"
    ============================================================ */
 
-/* Le panneau explorer doit être positionné pour le dropdown overlay */
+/* Le panneau explorer doit être positionné pour le dropdown overlay (menu ⋮).
+   Note : on N'override PAS display ici — .sidebar-panel { display: none }
+   et .sidebar-panel.active { display: flex } gérés dans base.css restent
+   prioritaires. Sinon le panneau "Mes Circuits" reste visible quand on
+   bascule vers les onglets "Circuit" ou "Détails". */
 #panel-explorer {
     position: relative;
-    display: flex;
+}
+#panel-explorer.active {
     flex-direction: column;
 }
 
@@ -2052,4 +2057,39 @@
     height: 1px;
     background: var(--surface-muted);
     margin: 4px 8px;
+}
+
+/* ─── Lot 1b polish (PR #389) ───────────────────────────────────────── */
+
+/* Bouton X clear dans la barre de recherche */
+.mc-search-clear {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    padding: 0;
+    transition: 0.12s;
+}
+.mc-search-clear:hover {
+    background: var(--line);
+    color: var(--ink);
+}
+.mc-search-clear svg { width: 13px; height: 13px; }
+.mc-search-clear.is-hidden { display: none; }
+
+/* Alignement check toggle + badge officiel sur la ligne 1 :
+   centré verticalement (vs flex-start qui poussait sur la 2e ligne quand
+   le titre wrappait). */
+.mc-card-line1 {
+    align-items: center;
+}
+.mc-card-action-check,
+.mc-badge-official {
+    margin-top: 0;
 }
