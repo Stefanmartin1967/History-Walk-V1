@@ -1845,8 +1845,10 @@
     line-height: 1.2;
     padding: 3px 10px;
     border-radius: 999px;
-    min-width: 32px;
+    min-width: 38px;
     text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
 }
 .va-stat .unit {
     font-size: 10.5px;
