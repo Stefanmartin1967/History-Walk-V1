@@ -1816,10 +1816,14 @@
 .va-card.is-done .va-done { background: var(--ok); border-color: var(--ok); color: #fff; }
 .va-card.is-done .va-title { color: var(--ink-soft); }
 
-/* Ligne 2 — métadonnées en pastilles cohérentes (POI / km / zone) */
+/* Ligne 2 — métadonnées en pastilles cohérentes (POI / km / zone)
+   align-items: flex-start → toutes les pastilles s'alignent par le haut.
+   Sans ça, la zone (sans libellé en dessous) se retrouve centrée à mi-hauteur
+   du va-stat (qui a chiffre + libellé), ce qui décale visuellement la zone
+   à hauteur du libellé "POI" plutôt que du chiffre. */
 .va-meta {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 10px;
     font-size: 12px;
@@ -1850,7 +1854,9 @@
     letter-spacing: 0.02em;
     line-height: 1;
 }
-/* Zone en pastille subtile (cohérence avec POI / km) */
+/* Zone en pastille subtile (cohérence avec POI / km).
+   align-self: flex-start hérité de .va-meta → alignée par le haut, au niveau
+   du chiffre dans la pastille num du va-stat. */
 .va-zone {
     display: inline-flex;
     align-items: center;
@@ -1860,7 +1866,6 @@
     border-radius: 999px;
     font-size: 11.5px;
     font-weight: 500;
-    align-self: center;
 }
 /* Pastille resto amber */
 .va-resto {
@@ -1873,7 +1878,6 @@
     border-radius: 999px;
     font-size: 11.5px;
     font-weight: 600;
-    align-self: center;
 }
 .va-resto svg { width: 11px; height: 11px; }
 
