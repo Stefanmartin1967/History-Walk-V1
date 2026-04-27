@@ -32,7 +32,8 @@ let currentSort = 'proximity_asc'; // 'proximity_asc' | 'dist_asc' | 'verified_f
 let filterTypeOfficial = false;
 let filterTypeVerified = false;
 let filterTypeResto    = false;
-let filterTodo         = false;
+let filterCompletion   = 'all'; // 'all' | 'todo' | 'done'
+let filterMinKm        = 0;
 let filterMaxKm        = DIST_MAX_KM;
 let searchQuery        = '';
 let filterOpen         = false;
@@ -142,7 +143,11 @@ function renderFilterPanel() {
     if (!pop) return;
 
     const n = countActiveFilters();
-    const slidPct = (filterMaxKm / DIST_MAX_KM) * 100;
+    const minPct = (filterMinKm / DIST_MAX_KM) * 100;
+    const maxPct = (filterMaxKm / DIST_MAX_KM) * 100;
+    const distLabel = (filterMinKm === 0 && filterMaxKm === DIST_MAX_KM)
+        ? `${DIST_MAX_KM} km (tous)`
+        : `${filterMinKm} → ${filterMaxKm} km`;
 
     pop.innerHTML = `
         <div class="filter-pop-head">
@@ -182,13 +187,16 @@ function renderFilterPanel() {
         </div>
 
         <div class="filter-section">
-            <div class="lbl"><span>Distance maximum</span><span class="v" id="mc-fslider-value">${filterMaxKm} km${filterMaxKm === DIST_MAX_KM ? ' (tous)' : ''}</span></div>
+            <div class="lbl"><span>Distance</span><span class="v" id="mc-fslider-value">${distLabel}</span></div>
             <div class="fslider">
                 <div class="fslider-track-wrap" id="mc-fslider">
                     <div class="fslider-track"></div>
-                    <div class="fslider-fill" id="mc-fslider-fill" style="width:${slidPct}%"></div>
-                    <div class="fslider-handle" id="mc-fslider-handle" style="left:${slidPct}%">
-                        <div class="fslider-bubble" id="mc-fslider-bubble">${filterMaxKm} km</div>
+                    <div class="fslider-fill" id="mc-fslider-fill" style="left:${minPct}%;width:${maxPct - minPct}%"></div>
+                    <div class="fslider-handle" id="mc-fslider-handle-min" data-handle="min" style="left:${minPct}%">
+                        <div class="fslider-bubble" id="mc-fslider-bubble-min">${filterMinKm} km</div>
+                    </div>
+                    <div class="fslider-handle" id="mc-fslider-handle-max" data-handle="max" style="left:${maxPct}%">
+                        <div class="fslider-bubble" id="mc-fslider-bubble-max">${filterMaxKm} km</div>
                     </div>
                 </div>
                 <div class="fslider-scale"><span>0 km</span><span>10 km</span><span>${DIST_MAX_KM} km</span></div>
@@ -212,14 +220,17 @@ function renderFilterPanel() {
 
         <div class="filter-section">
             <div class="lbl">Mon parcours</div>
-            <button class="fchk ${filterTodo ? 'is-on' : ''}" data-fchk="todo">
-                <span class="ico-leading"><i data-lucide="list-todo"></i></span>
-                <span class="lab-text">
-                    <span class="lab-main">À faire uniquement</span>
-                    <span class="lab-hint">Masque les circuits déjà marqués « fait »</span>
-                </span>
-                <span class="box"><i data-lucide="check"></i></span>
-            </button>
+            <div class="fseg" id="mc-fseg-completion">
+                <button class="${filterCompletion === 'all' ? 'is-on' : ''}" data-completion="all">
+                    Tout
+                </button>
+                <button class="${filterCompletion === 'todo' ? 'is-on' : ''}" data-completion="todo">
+                    <i data-lucide="list-todo"></i>À faire
+                </button>
+                <button class="${filterCompletion === 'done' ? 'is-on' : ''}" data-completion="done">
+                    <i data-lucide="check"></i>Fait
+                </button>
+            </div>
         </div>
 
         <div class="filter-pop-foot">
@@ -238,8 +249,8 @@ function renderFilterPanel() {
         });
     });
 
-    // Listener segmented tri
-    pop.querySelectorAll('.fseg button').forEach(btn => {
+    // Listener segmented Tri (data-sort)
+    pop.querySelectorAll('.fseg button[data-sort]').forEach(btn => {
         btn.addEventListener('click', () => {
             const v = btn.dataset.sort;
             if (v === 'proximity_asc' && !state.homeLocation) {
@@ -250,6 +261,16 @@ function renderFilterPanel() {
                 return;
             }
             currentSort = v;
+            renderFilterPanel();
+            renderExplorerList();
+            renderToolbar();
+        });
+    });
+
+    // Listener segmented Mon parcours (data-completion)
+    pop.querySelectorAll('.fseg button[data-completion]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterCompletion = btn.dataset.completion;
             renderFilterPanel();
             renderExplorerList();
             renderToolbar();
@@ -274,8 +295,6 @@ function handleFchkToggle(key) {
         if (filterTypeVerified) filterTypeOfficial = true;
     } else if (key === 'resto') {
         filterTypeResto = !filterTypeResto;
-    } else if (key === 'todo') {
-        filterTodo = !filterTodo;
     }
     // Toggle in-place les classes is-on (pas de rerender HTML — préserve les
     // listeners et l'identité DOM, plus stable pour clicks rapides successifs).
@@ -288,7 +307,6 @@ function syncFchkClasses() {
     document.querySelector('.fchk[data-fchk="official"]')?.classList.toggle('is-on', filterTypeOfficial);
     document.querySelector('.fchk[data-fchk="verified"]')?.classList.toggle('is-on', filterTypeVerified);
     document.querySelector('.fchk[data-fchk="resto"]')?.classList.toggle('is-on', filterTypeResto);
-    document.querySelector('.fchk[data-fchk="todo"]')?.classList.toggle('is-on', filterTodo);
 }
 
 function syncFiltersBadge() {
@@ -323,33 +341,72 @@ function syncFiltersBadge() {
     }
 }
 
-// Slider drag (pointer events, touch-friendly)
+// Slider double-handle (range min/max), pointer events, touch-friendly
 function setupSlider(track) {
     const fill = document.getElementById('mc-fslider-fill');
-    const handle = document.getElementById('mc-fslider-handle');
+    const handleMin = document.getElementById('mc-fslider-handle-min');
+    const handleMax = document.getElementById('mc-fslider-handle-max');
+    const bubbleMin = document.getElementById('mc-fslider-bubble-min');
+    const bubbleMax = document.getElementById('mc-fslider-bubble-max');
     const valueLabel = document.getElementById('mc-fslider-value');
-    const bubble = document.getElementById('mc-fslider-bubble');
+
+    let activeHandle = null; // 'min' | 'max'
+
+    function pickClosestHandle(clientX) {
+        const rect = track.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const minX = (filterMinKm / DIST_MAX_KM) * rect.width;
+        const maxX = (filterMaxKm / DIST_MAX_KM) * rect.width;
+        return Math.abs(x - minX) <= Math.abs(x - maxX) ? 'min' : 'max';
+    }
 
     function updateFromX(clientX) {
+        if (!activeHandle) return;
         const rect = track.getBoundingClientRect();
         const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-        const km = Math.round(pct * DIST_MAX_KM);
-        if (km !== filterMaxKm) {
+        let km = Math.round(pct * DIST_MAX_KM);
+        if (activeHandle === 'min') {
+            km = Math.min(km, filterMaxKm); // min ne peut pas dépasser max
+            if (km === filterMinKm) return;
+            filterMinKm = km;
+        } else {
+            km = Math.max(km, filterMinKm); // max ne peut pas être < min
+            if (km === filterMaxKm) return;
             filterMaxKm = km;
-            const p = (km / DIST_MAX_KM) * 100;
-            if (fill) fill.style.width = p + '%';
-            if (handle) handle.style.left = p + '%';
-            if (valueLabel) valueLabel.textContent = `${km} km${km === DIST_MAX_KM ? ' (tous)' : ''}`;
-            if (bubble) bubble.textContent = `${km} km`;
-            renderExplorerList();
-            renderToolbar();
+        }
+        applyVisualSlider();
+        renderExplorerList();
+        // toolbar : badge n peut changer
+        syncFiltersBadge();
+    }
+
+    function applyVisualSlider() {
+        const minPct = (filterMinKm / DIST_MAX_KM) * 100;
+        const maxPct = (filterMaxKm / DIST_MAX_KM) * 100;
+        if (fill) {
+            fill.style.left = minPct + '%';
+            fill.style.width = (maxPct - minPct) + '%';
+        }
+        if (handleMin) handleMin.style.left = minPct + '%';
+        if (handleMax) handleMax.style.left = maxPct + '%';
+        if (bubbleMin) bubbleMin.textContent = `${filterMinKm} km`;
+        if (bubbleMax) bubbleMax.textContent = `${filterMaxKm} km`;
+        if (valueLabel) {
+            valueLabel.textContent = (filterMinKm === 0 && filterMaxKm === DIST_MAX_KM)
+                ? `${DIST_MAX_KM} km (tous)`
+                : `${filterMinKm} → ${filterMaxKm} km`;
         }
     }
 
     track.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         track.setPointerCapture(e.pointerId);
+        // Si on clique directement sur une poignée, c'est elle. Sinon la plus proche.
+        const handleHit = e.target.closest('.fslider-handle');
+        activeHandle = handleHit ? handleHit.dataset.handle : pickClosestHandle(e.clientX);
         track.classList.add('is-active');
+        if (handleMin) handleMin.classList.toggle('is-active', activeHandle === 'min');
+        if (handleMax) handleMax.classList.toggle('is-active', activeHandle === 'max');
         updateFromX(e.clientX);
     });
     track.addEventListener('pointermove', (e) => {
@@ -358,9 +415,15 @@ function setupSlider(track) {
     track.addEventListener('pointerup', (e) => {
         track.releasePointerCapture(e.pointerId);
         track.classList.remove('is-active');
+        if (handleMin) handleMin.classList.remove('is-active');
+        if (handleMax) handleMax.classList.remove('is-active');
+        activeHandle = null;
     });
     track.addEventListener('pointercancel', () => {
         track.classList.remove('is-active');
+        if (handleMin) handleMin.classList.remove('is-active');
+        if (handleMax) handleMax.classList.remove('is-active');
+        activeHandle = null;
     });
 }
 
@@ -384,7 +447,8 @@ function resetAllFilters() {
     filterTypeOfficial = false;
     filterTypeVerified = false;
     filterTypeResto    = false;
-    filterTodo         = false;
+    filterCompletion   = 'all';
+    filterMinKm        = 0;
     filterMaxKm        = DIST_MAX_KM;
     currentSort        = 'proximity_asc';
     searchQuery        = '';
@@ -401,8 +465,8 @@ function countActiveFilters() {
     if (filterTypeOfficial) n++;
     if (filterTypeVerified) n++;
     if (filterTypeResto)    n++;
-    if (filterTodo)         n++;
-    if (filterMaxKm < DIST_MAX_KM) n++;
+    if (filterCompletion !== 'all') n++;
+    if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) n++;
     if (currentSort !== 'proximity_asc') n++;
     return n;
 }
@@ -432,8 +496,16 @@ export function renderExplorerList() {
 
     // Tri base : verified_first → on délègue 'proximity_asc' au service puis on
     // post-reorder pour mettre les vérifiés en tête.
+    // filterTodo (legacy bool du service) : true uniquement si filterCompletion === 'todo'.
+    // Le cas 'done' est filtré par nous (post-service) car le service ne le connaît pas.
     const baseSortMode = currentSort === 'verified_first' ? 'proximity_asc' : currentSort;
-    let circuits = getProcessedCircuits(baseSortMode, filterTodo, globalZoneFilter, filterPoiId);
+    const legacyFilterTodo = filterCompletion === 'todo';
+    let circuits = getProcessedCircuits(baseSortMode, legacyFilterTodo, globalZoneFilter, filterPoiId);
+
+    // Filtre completion 'done' : circuits déjà marqués fait
+    if (filterCompletion === 'done') {
+        circuits = circuits.filter(c => c._isCompleted);
+    }
 
     // Recherche : nom de circuit OU nom d'un POI du circuit
     if (searchQuery.trim()) {
@@ -456,9 +528,14 @@ export function renderExplorerList() {
     if (filterTypeVerified) circuits = circuits.filter(c => c.isOfficial && isCircuitTested(c.id));
     if (filterTypeResto)    circuits = circuits.filter(c => c._hasRestaurant);
 
-    // Filtre distance max (en mètres : c._dist)
-    if (filterMaxKm < DIST_MAX_KM) {
-        circuits = circuits.filter(c => (c._dist || 0) <= filterMaxKm * 1000);
+    // Filtre distance (range min → max, en mètres : c._dist)
+    if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) {
+        const minM = filterMinKm * 1000;
+        const maxM = filterMaxKm * 1000;
+        circuits = circuits.filter(c => {
+            const d = c._dist || 0;
+            return d >= minM && d <= maxM;
+        });
     }
 
     // Tri "verified_first" — vérifiés en tête, le reste conserve l'ordre
@@ -517,10 +594,13 @@ export function renderExplorerList() {
 
 function pickEmptyHint() {
     // Suggestion ciblée selon le filtre le plus restrictif détecté
-    if (filterMaxKm < DIST_MAX_KM) return `Aucun circuit ≤ ${filterMaxKm} km. Élargis la distance ou réinitialise.`;
+    if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) {
+        return `Aucun circuit entre ${filterMinKm} et ${filterMaxKm} km. Élargis la fourchette ou réinitialise.`;
+    }
     if (filterTypeVerified) return 'Aucun circuit vérifié pour ces critères. Décoche "Vérifiés" pour élargir.';
     if (filterTypeOfficial) return 'Aucun officiel pour ces critères. Décoche "Officiels" pour voir aussi tes circuits perso.';
-    if (filterTodo) return 'Tous les circuits sont déjà marqués "fait". Décoche "À faire uniquement".';
+    if (filterCompletion === 'todo') return 'Tous les circuits sont déjà marqués "fait". Sélectionne "Tout" ou "Fait".';
+    if (filterCompletion === 'done') return 'Aucun circuit n\'a encore été marqué "fait".';
     if (searchQuery) return `Aucun circuit ne correspond à "${escapeXml(searchQuery)}". Efface la recherche pour tout voir.`;
     return 'Aucun circuit avec ces filtres. Réinitialise pour tout voir.';
 }
@@ -576,20 +656,17 @@ function createCircuitCard(c) {
 
     card.appendChild(line1);
 
-    // Ligne 2 — méta sobre avec séparateurs
+    // Ligne 2 — méta : POI / km en stack pastille + zone en pastille subtile
     const distKm = ((c._dist || 0) / 1000).toFixed(1).replace('.', ',');
     const metaPieces = [
-        `<span><span class="num">${c._poiCount}</span> POI</span>`,
-        `<span class="sep">·</span>`,
-        `<span><span class="num">${distKm}</span> km</span>`,
+        `<span class="va-stat"><span class="num">${c._poiCount}</span><span class="unit">POI</span></span>`,
+        `<span class="va-stat"><span class="num">${distKm}</span><span class="unit">km</span></span>`,
     ];
     if (c._zoneName) {
-        metaPieces.push('<span class="sep">·</span>');
-        metaPieces.push(`<span>${escapeXml(c._zoneName)}</span>`);
+        metaPieces.push(`<span class="va-zone">${escapeXml(c._zoneName)}</span>`);
     }
     if (c._hasRestaurant) {
-        metaPieces.push('<span class="sep">·</span>');
-        metaPieces.push(`<span class="resto"><i data-lucide="utensils"></i>Resto</span>`);
+        metaPieces.push(`<span class="va-resto"><i data-lucide="utensils"></i>Resto</span>`);
     }
     const line2 = document.createElement('div');
     line2.className = 'va-meta';
