@@ -2892,7 +2892,7 @@
     padding: 14px 12px 24px;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 8px;
     position: relative;
 }
 #circuit-panel[data-mode="consult"] .circuit-timeline { padding: 14px 16px 24px; }
@@ -2916,14 +2916,19 @@
     color: var(--ink);
 }
 
+/* Chaque étape = mini-carte façon Mes Circuits Variante A
+   (background blanc, border, padding, radius). Pas de connecteur vertical :
+   les cartes sont séparées par le gap de .circuit-timeline. */
 .timeline-step {
     /* Consultation : 32px num + body */
     display: grid;
     grid-template-columns: 32px 1fr;
-    gap: 14px;
-    align-items: flex-start;
-    padding: 10px 4px;
-    border-radius: 12px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid var(--line);
     cursor: pointer;
     position: relative;
     min-height: 56px;
@@ -2934,30 +2939,16 @@
 /* Création : handle + num + body + actions */
 #circuit-panel[data-mode="create"] .timeline-step {
     grid-template-columns: 18px 32px 1fr auto;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
-    padding: 8px 6px 8px 4px;
-    border-radius: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
 }
-.timeline-step:hover { background: var(--surface-muted); }
+.timeline-step:hover {
+    border-color: var(--brand);
+    box-shadow: 0 2px 8px -2px rgba(20, 42, 67, 0.08);
+}
 
-/* Connecteur vertical (sous la pastille num) */
-.timeline-step::before {
-    content: "";
-    position: absolute;
-    left: 19.5px;
-    top: 42px;
-    bottom: -10px;
-    width: 2px;
-    background: var(--line);
-    z-index: 0;
-}
-#circuit-panel[data-mode="create"] .timeline-step::before {
-    left: 35.5px;
-    top: 46px;
-    bottom: -8px;
-}
-.timeline-step:last-child::before { display: none; }
 
 /* Drag handle (création uniquement) */
 .step-handle {
@@ -3021,12 +3012,11 @@
 }
 .step-name {
     font-size: 14.5px;
-    font-weight: 600;
+    font-weight: 700; /* match .va-title de Mes Circuits */
     color: var(--ink);
-    line-height: 1.25;
+    line-height: 1.32;
     letter-spacing: -0.005em;
 }
-#circuit-panel[data-mode="create"] .step-name { font-size: 14px; }
 .timeline-step.is-done .step-name {
     color: var(--ink-soft);
     text-decoration: line-through;
