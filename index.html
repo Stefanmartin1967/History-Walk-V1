@@ -252,71 +252,120 @@
             <div class="va-list" id="explorer-list"></div>
         </div>
 
-        <div class="sidebar-panel active" id="circuit-panel" data-panel="circuit">
-            <div class="panel-header circuit-header">
-                <div class="circuit-title-container">
-                    <h2 id="circuit-title-text" title="Nouveau Circuit">Nouveau Circuit</h2>
-                    <button id="edit-circuit-title-button" class="action-button" title="Modifier le titre" aria-label="Modifier le titre"><i data-lucide="pencil"></i></button>
-                    <button id="close-circuit-panel-btn" class="header-btn" title="Fermer le mode création" aria-label="Fermer le mode création"><i data-lucide="x"></i></button>
-                </div>
+        <div class="sidebar-panel active" id="circuit-panel" data-panel="circuit" data-mode="create" data-flag="perso">
+            <div class="cp-frame">
+                <div class="cp-flag-rail"></div>
+                <div class="cp-scroll">
 
-                <div class="circuit-description-container">
-                    <textarea id="circuit-description" rows="3"
-                        placeholder="Ajoutez une description pour votre circuit..."></textarea>
-                </div>
-                <div class="header-controls">
-                    <div class="controls-group"></div>
-                    <div class="controls-group meta-info">
-                        <span id="circuit-poi-count">0/15</span>
-                        <span>•</span>
-                        <span id="circuit-distance">0.0 km</span>
-                        <i id="distance-icon" data-lucide="bird" title="Distance à vol d'oiseau"></i>
+                    <!-- 1. COVER (consultation uniquement, masquée en création via CSS) -->
+                    <div class="circuit-cover is-empty" id="circuit-cover">
+                        <div class="empty-glyph"><i data-lucide="route"></i></div>
                     </div>
-                    <div class="controls-group">
-                        <button id="btn-delete-active-circuit" class="header-btn is-hidden" title="Supprimer ce circuit" aria-label="Supprimer ce circuit"><i data-lucide="trash-2"></i></button>
-                    </div>
-                </div>
-                <div class="transport-info">
-                    <div class="transport-group">
-                        <i data-lucide="log-out" title="Trajet Aller"></i>
-                        <div class="transport-field">
-                            <input type="number" id="transport-aller-temps" min="0" max="999" step="5" placeholder="0">
-                            <span>min</span>
+
+                    <!-- 2. IDENTITÉ -->
+                    <div class="circuit-ident">
+                        <div class="cp-mode-tag" id="cp-mode-tag">
+                            <span class="pulse"></span>
+                            <span id="cp-mode-tag-text">Brouillon · auto-sauvegardé</span>
                         </div>
-                        <div class="transport-field">
-                            <input type="number" id="transport-aller-cout" min="0" max="999" placeholder="0">
-                            <span>TND</span>
+                        <div class="cp-breadcrumb" id="cp-breadcrumb">
+                            <span id="cp-zone-text"></span>
+                            <span class="sep" id="cp-zone-sep" hidden>·</span>
+                            <span id="circuit-poi-count">0 POI</span>
+                            <span class="sep">·</span>
+                            <span id="circuit-distance">0 km</span>
                         </div>
-                    </div>
-                    <div class="transport-group">
-                        <i data-lucide="log-in" title="Trajet Retour"></i>
-                        <div class="transport-field">
-                            <input type="number" id="transport-retour-temps" min="0" max="999" step="5" placeholder="0">
-                            <span>min</span>
+                        <div class="cp-title-wrap">
+                            <h2 class="cp-title is-empty" id="circuit-title-text" title="Sans titre">Sans titre</h2>
+                            <button class="cp-title-edit" id="cp-title-edit-btn" title="Modifier le titre" aria-label="Modifier le titre"><i data-lucide="pencil"></i></button>
                         </div>
-                        <div class="transport-field">
-                            <input type="number" id="transport-retour-cout" min="0" max="999" placeholder="0">
-                            <span>TND</span>
+                        <div class="cp-flag" id="cp-flag" hidden>
+                            <span class="dot"></span>
+                            <span id="cp-flag-text">Officiel</span>
                         </div>
                     </div>
+
+                    <!-- 3. DESCRIPTION -->
+                    <div class="circuit-desc" id="circuit-desc-wrap">
+                        <p class="desc-text" id="circuit-description-display" hidden></p>
+                        <span class="desc-placeholder" id="circuit-desc-placeholder"><i data-lucide="plus"></i>Ajouter une description…</span>
+                        <textarea class="desc-textarea" id="circuit-description" rows="3" placeholder="Décrivez ce circuit…" hidden></textarea>
+                        <button class="read-more" id="circuit-desc-readmore" hidden>Lire plus <i data-lucide="chevron-down"></i></button>
+                    </div>
+
+                    <!-- 4. TRANSPORT (création uniquement) -->
+                    <div class="circuit-transport" id="circuit-transport" data-open="false">
+                        <button class="transport-head" id="transport-toggle" type="button">
+                            <span class="chev"><i data-lucide="chevron-right"></i></span>
+                            <span>Transport</span>
+                            <span class="summary is-empty" id="transport-summary">— non renseigné</span>
+                        </button>
+                        <div class="transport-body">
+                            <div class="transport-row">
+                                <span class="transport-label"><i data-lucide="log-out"></i>Aller</span>
+                                <span class="transport-input-wrap">
+                                    <input type="number" id="transport-aller-temps" min="0" max="999" step="5" placeholder="0">
+                                    <span class="unit">min</span>
+                                </span>
+                                <span class="transport-input-wrap">
+                                    <input type="number" id="transport-aller-cout" min="0" max="999" placeholder="0">
+                                    <span class="unit" data-currency-unit>TND</span>
+                                </span>
+                            </div>
+                            <div class="transport-row">
+                                <span class="transport-label"><i data-lucide="log-in"></i>Retour</span>
+                                <span class="transport-input-wrap">
+                                    <input type="number" id="transport-retour-temps" min="0" max="999" step="5" placeholder="0">
+                                    <span class="unit">min</span>
+                                </span>
+                                <span class="transport-input-wrap">
+                                    <input type="number" id="transport-retour-cout" min="0" max="999" placeholder="0">
+                                    <span class="unit" data-currency-unit>TND</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. TOP BAR ACTIONS -->
+                    <div class="circuit-actions" id="circuit-actions">
+                        <!-- Toggle trace visible (les 2 modes) -->
+                        <button class="cp-act is-on" id="btn-toggle-trace" title="Trace visible/masquée"><i data-lucide="eye"></i></button>
+                        <!-- Boucler (création) -->
+                        <button class="cp-act" id="btn-loop-circuit" title="Boucler le circuit" data-show="create"><i data-lucide="repeat"></i></button>
+                        <!-- Importer GPX (création) -->
+                        <button class="cp-act" id="btn-import-gpx" title="Importer un GPX" data-show="create"><i data-lucide="upload-cloud"></i></button>
+                        <!-- GPX Studio (création) -->
+                        <a class="cp-act" id="btn-open-gpx-studio" href="https://gpx.studio/fr/app" target="_blank" rel="noopener" title="Ouvrir GPX Studio" data-show="create"><i data-lucide="external-link"></i></a>
+                        <!-- Sauver + Exporter GPX (création) -->
+                        <button class="cp-act" id="btn-export-gpx" title="Sauver + exporter GPX" data-show="create"><i data-lucide="download"></i></button>
+                        <!-- Partager (consultation) -->
+                        <button class="cp-act" id="btn-share-circuit" title="Partager" data-show="consult"><i data-lucide="share-2"></i></button>
+                        <!-- Télécharger GPX (consultation) -->
+                        <button class="cp-act" id="btn-download-gpx" title="Télécharger GPX" data-show="consult"><i data-lucide="download"></i></button>
+                        <span class="cp-act-divider" data-show="create"></span>
+                        <!-- Modifier (consultation perso) -->
+                        <button class="cp-act" id="btn-modify-circuit" title="Modifier le circuit" data-show="consult-perso"><i data-lucide="edit-3"></i></button>
+                        <!-- Marquer fait (consultation) -->
+                        <button class="cp-act" id="btn-mark-done" title="Marquer comme fait" data-show="consult"><i data-lucide="check-circle-2"></i></button>
+                        <!-- Masquer du listing (consultation) -->
+                        <button class="cp-act" id="btn-mask-listing" title="Masquer du listing" data-show="consult"><i data-lucide="bookmark-x"></i></button>
+                        <!-- Vider brouillon (création, danger) -->
+                        <button class="cp-act danger" id="btn-clear-circuit" title="Vider le brouillon" data-show="create"><i data-lucide="eraser"></i></button>
+                        <!-- Supprimer définitivement (consultation perso, danger) -->
+                        <button class="cp-act danger" id="btn-delete-active-circuit" title="Supprimer ce circuit" data-show="consult-perso"><i data-lucide="trash-2"></i></button>
+                    </div>
+
+                    <!-- 6. TIMELINE POIs -->
+                    <div class="circuit-timeline" id="circuit-steps-list">
+                        <!-- Rendu dynamique par circuit-view.js / ui-circuit-page.js -->
+                    </div>
+
                 </div>
             </div>
-            <div class="steps" id="circuit-steps-list">
-                <p class="empty-list-info">Activez le mode sélection et cliquez sur la carte pour ajouter des points
-                    d'intérêt.</p>
-            </div>
-            <div class="panel-footer">
-                <button class="footer-btn pill" id="btn-loop-circuit" title="Boucler le circuit" aria-label="Boucler le circuit"><i data-lucide="repeat"></i></button>
-                <button class="footer-btn pill" id="btn-clear-circuit" title="Vider le circuit" aria-label="Vider le circuit"><i data-lucide="trash-2"></i></button>
-                <div class="separator-vertical"></div>
-                <button class="footer-btn pill is-hidden" id="btn-modify-circuit" title="Modifier le circuit" aria-label="Modifier le circuit"><i data-lucide="edit-3"></i></button>
-                <button class="footer-btn pill" id="btn-import-gpx" title="Importer GPX" aria-label="Importer GPX" disabled><i data-lucide="upload-cloud"></i></button>
-                <button class="footer-btn pill" id="btn-export-gpx" title="Exporter GPX" aria-label="Exporter GPX" disabled><i data-lucide="download-cloud"></i></button>
-                <a href="https://gpx.studio/fr/app" target="_blank" class="footer-btn pill" id="btn-open-gpx-studio" title="Ouvrir GPX Studio">
-                    <i data-lucide="map"></i>
-                </a>
-                <div class="separator-vertical"></div>
-                <button class="footer-btn pill" id="btn-share-circuit" title="Partager" aria-label="Partager"><i data-lucide="qr-code"></i></button>
+
+            <!-- 8. STICKY CTA (consultation mobile) -->
+            <div class="circuit-sticky">
+                <button class="cta-start" id="btn-start-circuit"><i data-lucide="play"></i>Démarrer le circuit</button>
             </div>
         </div>
 

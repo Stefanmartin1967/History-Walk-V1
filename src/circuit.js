@@ -3,7 +3,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
-import { getRealDistance, getOrthodromicDistance } from './utils.js';
+import { getRealDistance, getOrthodromicDistance, getZoneFromCoords } from './utils.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import * as View from './circuit-view.js';
@@ -283,6 +283,25 @@ export function updateCircuitMetadata(updateTitle = true) {
         : false;
     const isTestedActive = isOfficialActive ? isCircuitTested(state.activeCircuitId) : false;
 
+    // V2 : zone calculée depuis le 1er POI (pour le breadcrumb)
+    let zoneName = '';
+    if (state.currentCircuit.length > 0) {
+        const firstPoi = state.currentCircuit[0];
+        const coords = firstPoi?.geometry?.coordinates;
+        if (coords && coords.length >= 2) {
+            const [lng, lat] = coords;
+            zoneName = getZoneFromCoords(lat, lng) || '';
+        }
+    }
+
+    // V2 : description du circuit actif (consultation) ou du brouillon (création)
+    let description = '';
+    if (activeCircuitData && activeCircuitData.description) {
+        description = activeCircuitData.description;
+    } else if (DOM.circuitDescription && DOM.circuitDescription.value) {
+        description = DOM.circuitDescription.value;
+    }
+
     // 2. ENVOI À LA VUE (On ne touche plus au DOM ici)
     View.updateCircuitHeader({
         countText: `${state.currentCircuit.length}/${MAX_CIRCUIT_POINTS}`,
@@ -292,7 +311,11 @@ export function updateCircuitMetadata(updateTitle = true) {
         iconTitle: isRealTrack ? 'Distance du tracé réel' : "Distance à vol d'oiseau",
         isOfficial: isOfficialActive,
         isTested: isTestedActive,
-        circuitId: state.activeCircuitId
+        circuitId: state.activeCircuitId,
+        // V2
+        zoneName,
+        description,
+        isRealTrack,
     });
 }
 
@@ -408,6 +431,10 @@ export function navigatePoiDetails(direction) {
 
 export function initCircuitListeners() {
     eventBus.on('poi:navigate', (direction) => navigatePoiDetails(direction));
+
+    // V2 : init des handlers de l'onglet Circuit (toggle sélection, édition titre,
+    // accordion transport, etc.). Import dynamique pour éviter les cycles.
+    import('./ui-circuit-page-events.js').then(m => m.initCircuitPageEvents());
 }
 
 // circuit.js

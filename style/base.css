@@ -379,6 +379,42 @@ body {
     background-color: var(--surface-muted);
 }
 
+/* V2 : ligne avec bouton "+" en mode création (ajout direct au circuit) */
+.search-results .search-result-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--surface-muted);
+}
+.search-results .search-result-row:last-child { border-bottom: none; }
+.search-results .search-result-row .search-result-main {
+    flex: 1;
+    min-width: 0;
+    width: auto;       /* override .search-results button { width: 100% } */
+    border-bottom: none;
+}
+.search-results .search-result-row .search-result-add {
+    width: 44px;
+    flex-shrink: 0;
+    background: var(--surface-muted);
+    border: none;
+    border-left: 1px solid var(--line);
+    border-bottom: none;
+    color: var(--brand); /* --brand est redéfini par thème (desert→orange, oasis→vert, etc.) */
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background 0.15s;
+    padding: 0;        /* override .search-results button { padding: 12px 15px } */
+}
+.search-results .search-result-row .search-result-add:hover {
+    background: var(--brand-soft);
+}
+.search-results .search-result-row .search-result-add svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.5;
+}
+
 .btn {
     display: inline-flex;
     align-items: center;

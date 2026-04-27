@@ -6,6 +6,8 @@ import { state, setGhostMarker } from './state.js';
 import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
 import { map, clearMarkerHighlights } from './map.js';
 import { getSearchResults } from './search.js';
+import { showToast } from './toast.js';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 export function setupSearch() {
     const query = DOM.searchInput.value;
@@ -24,11 +26,19 @@ export function setupSearch() {
         // On utilise un DocumentFragment pour limiter les reflows (Optimisation Performance)
         const fragment = document.createDocumentFragment();
 
+        // V2 : en mode création (panel Circuit ouvert sans circuit chargé),
+        // on propose un bouton "+" pour ajouter directement au brouillon.
+        const isCreateMode = !state.activeCircuitId;
+
         // On limite à 50 résultats pour ne pas surcharger
         results.slice(0, 50).forEach(feature => {
+            const row = document.createElement('div');
+            row.className = 'search-result-row';
+
             const resultBtn = document.createElement('button');
+            resultBtn.className = 'search-result-main';
             resultBtn.textContent = getPoiName(feature); // Utilise le nom intelligent (custom > officiel)
-            
+
             resultBtn.addEventListener('click', () => {
                 // Reset de la barre de recherche
                 DOM.searchInput.value = '';
@@ -42,7 +52,7 @@ export function setupSearch() {
                 state.geojsonLayer.eachLayer(layer => {
                     if (layer.feature && getPoiId(layer.feature) === targetId) {
                         map.flyTo(layer.getLatLng(), 16);
-                        
+
                         // Ajout de la mise en valeur visuelle
                         if (layer.getElement()) {
                             layer.getElement().classList.add('marker-highlight');
@@ -53,22 +63,47 @@ export function setupSearch() {
                 // B. Ouverture du panneau latéral
                 // On retrouve l'index global de manière sûre
                 const globalIndex = state.loadedFeatures.findIndex(f => getPoiId(f) === targetId);
-                
+
                 if (globalIndex > -1) {
                     // Vérifie si le lieu est dans le circuit actuel
                     let circuitIndex = -1;
                     if (state.currentCircuit) {
                         circuitIndex = state.currentCircuit.findIndex(f => getPoiId(f) === targetId);
                     }
-                    
+
                     openDetailsPanel(globalIndex, circuitIndex !== -1 ? circuitIndex : null);
                 }
             });
-            fragment.appendChild(resultBtn);
+            row.appendChild(resultBtn);
+
+            if (isCreateMode) {
+                const addBtn = document.createElement('button');
+                addBtn.className = 'search-result-add';
+                addBtn.title = 'Ajouter au circuit';
+                addBtn.setAttribute('aria-label', 'Ajouter au circuit');
+                addBtn.innerHTML = '<i data-lucide="plus"></i>';
+                addBtn.addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    try {
+                        const { addPoiToCircuit } = await import('./circuit.js');
+                        addPoiToCircuit(feature);
+                        DOM.searchInput.value = '';
+                        DOM.searchResults.classList.add('is-hidden');
+                        showToast(`« ${getPoiName(feature)} » ajouté au circuit`, 'success');
+                    } catch (err) {
+                        console.error('Erreur ajout POI au circuit :', err);
+                        showToast("Impossible d'ajouter ce lieu au circuit", 'error');
+                    }
+                });
+                row.appendChild(addBtn);
+            }
+
+            fragment.appendChild(row);
         });
 
         DOM.searchResults.appendChild(fragment);
         DOM.searchResults.classList.remove('is-hidden');
+        createIcons({ icons: appIcons });
     }
 }
 
