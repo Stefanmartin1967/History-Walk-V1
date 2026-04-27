@@ -643,6 +643,8 @@ function createCircuitCard(c) {
     doneBtn.type = 'button';
     doneBtn.className = 'va-done';
     doneBtn.title = isCompleted ? 'Marquer comme non fait' : 'Marquer comme fait';
+    doneBtn.setAttribute('aria-label', isCompleted ? 'Marquer comme non fait' : 'Marquer comme fait');
+    doneBtn.setAttribute('aria-pressed', isCompleted ? 'true' : 'false');
     doneBtn.dataset.id = c.id;
     const doneIcon = document.createElement('i');
     doneIcon.setAttribute('data-lucide', isCompleted ? 'check' : 'circle');
