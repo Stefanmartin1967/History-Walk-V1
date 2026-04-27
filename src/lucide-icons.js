@@ -58,6 +58,9 @@ import {
     // Sidebar V2 (refonte Mes Circuits — PR B)
     SlidersHorizontal, MoreVertical, BadgeCheck, Scale,
 
+    // Onglet Circuit V2 (refonte avril 2026 — consultation + création)
+    Crosshair, GripVertical, Eraser, ExternalLink, Share2, BookmarkX,
+
 } from 'lucide';
 
 export { createIcons };
@@ -100,4 +103,6 @@ export const appIcons = {
     Luggage, Heart, Coffee, Utensils, Ruler,
 
     SlidersHorizontal, MoreVertical, BadgeCheck, Scale,
+
+    Crosshair, GripVertical, Eraser, ExternalLink, Share2, BookmarkX,
 };

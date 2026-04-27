@@ -3198,4 +3198,24 @@
 }
 .cta-start svg { width: 18px; height: 18px; }
 
+/* L'attribut HTML `hidden` est overridé par display:flex/inline-flex.
+   On force le respect de hidden dans le scope du panel Circuit V2. */
+#circuit-panel[data-mode] [hidden] { display: none !important; }
+
+/* ----------- 10. SHOW/HIDE selon mode (data-show) ----------- */
+/* Création : masque tout ce qui est marqué "consult" */
+#circuit-panel[data-mode="create"] [data-show="consult"],
+#circuit-panel[data-mode="create"] [data-show="consult-perso"] { display: none !important; }
+
+/* Consultation : masque tout ce qui est marqué "create" */
+#circuit-panel[data-mode="consult"] [data-show="create"] { display: none !important; }
+
+/* Consultation officielle/vérifiée : masque les actions perso (modifier/supprimer) */
+#circuit-panel[data-mode="consult"][data-flag="official"] [data-show="consult-perso"],
+#circuit-panel[data-mode="consult"][data-flag="verified"] [data-show="consult-perso"] { display: none !important; }
+
+/* Tag "Brouillon" visible uniquement en création */
+#circuit-panel[data-mode="consult"] .cp-mode-tag { display: none; }
+/* Flag textuel uniquement en consultation officielle/vérifiée (déjà géré par .cp-flag) */
+
 
