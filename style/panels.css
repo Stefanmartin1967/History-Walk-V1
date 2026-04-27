@@ -1421,7 +1421,13 @@
     box-shadow: 0 8px 20px -8px rgba(59, 130, 246, 0.2);
     transform: translateY(-1px);
 }
-.mc-card.is-active { border-color: var(--brand); background: var(--brand-soft); }
+.mc-card.is-active {
+    border-color: var(--brand);
+    /* Fond blanc conservé pour ne pas masquer le gris du panneau autour des
+       cartes — l'état actif se signale par la bordure brand + l'indicateur
+       latéral et l'ombre douce. */
+    box-shadow: 0 8px 20px -8px rgba(59, 130, 246, 0.25);
+}
 .mc-card.is-active::before {
     content: "";
     position: absolute;
@@ -1906,15 +1912,27 @@
     flex-direction: column;
 }
 
-/* Toolbar : la barre du haut elle-même (rendue par renderToolbar) */
+/* Toolbar : la barre du haut elle-même (rendue par renderToolbar)
+   Note : padding et gap réduits + boutons légèrement plus petits (34px) pour
+   que les 4 boutons icônes + la recherche tiennent dans la largeur de la
+   sidebar (clamp(380px, 30vw, 480px) — peut descendre à 380px). */
 #mc-toolbar {
     flex-shrink: 0;
-    padding: 12px 16px;
+    padding: 12px;
     background: var(--surface);
     border-bottom: 1px solid var(--surface-muted);
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
+}
+#mc-toolbar .mc-tool-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+}
+#mc-toolbar .mc-search {
+    min-width: 0;
+    padding: 7px 10px;
 }
 
 /* Le body explorer-list utilise maintenant la classe .hw-body (pas de pad) */
