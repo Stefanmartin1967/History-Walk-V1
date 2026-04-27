@@ -323,20 +323,31 @@ function handleCircuitAction(action, index) {
     renderCircuitPanel();
 }
 
+function isRestaurantPoi(poi) {
+    if (!poi || !poi.properties) return false;
+    const cat = poi.properties['Catégorie'] || poi.properties.userData?.['Catégorie'];
+    return cat === 'Restaurant';
+}
+
 export function generateCircuitName() {
     if (state.currentCircuit.length === 0) return "Nouveau Circuit";
     if (state.currentCircuit.length === 1) return `Départ de ${getPoiName(state.currentCircuit[0])}`;
 
-    const startPoi = getPoiName(state.currentCircuit[0]);
-    const endPoi = getPoiName(state.currentCircuit[state.currentCircuit.length - 1]);
+    // App patrimoniale : on nomme avec des POIs patrimoniaux, pas un resto.
+    // Le resto apparaît déjà via la pastille "Resto" sur la carte du circuit.
+    const heritage = state.currentCircuit.filter(p => !isRestaurantPoi(p));
+    const pool = heritage.length >= 1 ? heritage : state.currentCircuit;
+
+    const startPoi = getPoiName(pool[0]);
+    const endPoi = getPoiName(pool[pool.length - 1]);
 
     let middlePoi = "";
-    if (state.currentCircuit.length > 2) {
-        const middleIndex = Math.floor((state.currentCircuit.length - 1) / 2);
-        middlePoi = getPoiName(state.currentCircuit[middleIndex]);
+    if (pool.length > 2) {
+        const middleIndex = Math.floor((pool.length - 1) / 2);
+        middlePoi = getPoiName(pool[middleIndex]);
     }
 
-    if (getPoiId(state.currentCircuit[0]) === getPoiId(state.currentCircuit[state.currentCircuit.length - 1])) {
+    if (getPoiId(pool[0]) === getPoiId(pool[pool.length - 1])) {
         if (middlePoi && startPoi !== middlePoi) {
             return `Boucle autour de ${startPoi} via ${middlePoi}`;
         }

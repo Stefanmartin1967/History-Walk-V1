@@ -737,15 +737,26 @@ function triggerBlobDownload(blob, filename) {
 // en s'inspirant de generateCircuitName() (circuit.js).
 // Utilise UNIQUEMENT les clusters rattachés à un POI (type !== 'OUT_POI' et nearbyPois.length > 0).
 function buildDefaultAlbumName(clusters) {
-    const attached = clusters.filter(c =>
+    const attachedAll = clusters.filter(c =>
         c.type !== 'OUT_POI' && c.nearbyPois && c.nearbyPois.length > 0
     );
 
-    if (attached.length === 0) {
+    if (attachedAll.length === 0) {
         const today = new Date();
         const pad = (n) => String(n).padStart(2, '0');
         return `Photos Djerba ${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
     }
+
+    // App patrimoniale : on exclut les POIs Restaurant pour le nommage
+    // (le resto reste un POI du circuit, juste pas dans le titre).
+    const isResto = (cluster) => {
+        const props = cluster.nearbyPois?.[0]?.feature?.properties;
+        if (!props) return false;
+        const cat = props['Catégorie'] || props.userData?.['Catégorie'];
+        return cat === 'Restaurant';
+    };
+    const heritage = attachedAll.filter(c => !isResto(c));
+    const attached = heritage.length >= 1 ? heritage : attachedAll;
 
     const firstName = attached[0].customName || getPoiName(attached[0].nearbyPois[0].feature) || 'Lieu';
     if (attached.length === 1) {
