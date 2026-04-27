@@ -18,10 +18,13 @@ function getCategoryDisplay(feature) {
         || '';
 
     const lower = cat.toLowerCase();
+    // Cohérence avec Mes Circuits : pastilles toutes en gris (--surface-muted) par défaut.
+    // Seuls resto et café gardent l'ambre (cohérent avec la pastille "Resto" de Mes Circuits).
     if (lower === 'restaurant') return { icon: 'utensils', label: 'Restaurant', cls: 'amber' };
-    if (lower === 'mosquée' || lower === 'mosquee') return { icon: 'moon-star', label: cat, cls: 'brand' };
-    if (lower === 'synagogue') return { icon: 'moon-star', label: cat, cls: 'brand' };
-    if (lower === 'église' || lower === 'eglise') return { icon: 'landmark', label: cat, cls: 'brand' };
+    if (lower === 'café' || lower === 'cafe') return { icon: 'coffee', label: cat, cls: 'amber' };
+    if (lower === 'mosquée' || lower === 'mosquee') return { icon: 'moon-star', label: cat, cls: '' };
+    if (lower === 'synagogue') return { icon: 'moon-star', label: cat, cls: '' };
+    if (lower === 'église' || lower === 'eglise') return { icon: 'landmark', label: cat, cls: '' };
     if (lower === 'fontaine') return { icon: 'droplets', label: cat, cls: '' };
     if (lower === 'place' || lower === 'place historique') return { icon: 'landmark', label: cat, cls: '' };
     if (lower === 'forteresse' || lower === 'borj' || lower === 'tour de guet') return { icon: 'castle', label: cat, cls: '' };
@@ -29,10 +32,9 @@ function getCategoryDisplay(feature) {
     if (lower === 'plage') return { icon: 'image', label: cat, cls: '' };
     if (lower === 'marché' || lower === 'marche' || lower === 'souk') return { icon: 'shopping-cart', label: cat, cls: '' };
     if (lower === 'phare') return { icon: 'lightbulb', label: cat, cls: '' };
-    if (lower === 'café' || lower === 'cafe') return { icon: 'coffee', label: cat, cls: 'amber' };
     if (lower === 'caravansérail' || lower === 'fondouk' || lower === 'quartier') return { icon: 'building', label: cat, cls: '' };
     if (lower === 'artisanat') return { icon: 'wrench', label: cat, cls: '' };
-    if (lower === 'nature' || lower === 'palmeraie') return { icon: 'sprout', label: cat, cls: 'ok' };
+    if (lower === 'nature' || lower === 'palmeraie') return { icon: 'sprout', label: cat, cls: '' };
     return { icon: 'map-pin', label: cat || 'Lieu', cls: '' };
 }
 

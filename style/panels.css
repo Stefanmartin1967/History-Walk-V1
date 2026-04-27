@@ -2333,10 +2333,9 @@
      - + data-mode="create"  → ruban dashed brand (override)
    ========================================================= */
 
-/* Layout panneau Circuit V2 */
+/* Layout panneau Circuit V2 — display:flex géré par .sidebar-panel.active
+   dans base.css (sinon le panel resterait visible quand on switch d'onglet). */
 #circuit-panel.sidebar-panel[data-mode] {
-    display: flex;
-    flex-direction: column;
     padding: 0;
 }
 #circuit-panel.sidebar-panel[data-mode] .panel-header,
@@ -2364,13 +2363,12 @@
     background: transparent;
     border-right: 1px dashed var(--line);
 }
-/* Mode création : ruban dashed brand override */
+/* Mode création : pas de ruban gauche (le mode est déjà visuellement
+   distinct via le badge "Brouillon · auto-sauvegardé" + breadcrumb +
+   absence de cover photo). Pas la peine d'ajouter un signal redondant. */
 #circuit-panel[data-mode="create"] .cp-flag-rail {
     background: transparent;
-    border-right: 2px dashed var(--brand);
-    width: 0;
-    margin-left: 2px;
-    margin-right: 2px;
+    border-right: none;
 }
 #circuit-panel.sidebar-panel[data-mode] .cp-scroll {
     flex: 1;
@@ -2787,7 +2785,9 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    justify-content: flex-end;
+    /* Boutons centrés : remplit l'espace au lieu de s'aligner à droite,
+       évite l'effet "vide à gauche" quand il y a peu d'actions. */
+    justify-content: center;
     flex-wrap: wrap;
 }
 .cp-act {
