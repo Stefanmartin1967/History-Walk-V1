@@ -13,13 +13,11 @@
  * - Édition inline description (placeholder + double-clic)
  */
 
-import { state, setActiveCircuitId, setCustomDraftName } from './state.js';
-import { toggleSelectionMode } from './ui-circuit-editor.js';
-import { saveCircuitDraft, renderCircuitPanel, isCircuitTested } from './circuit.js';
+import { state, setCustomDraftName } from './state.js';
+import { saveCircuitDraft, isCircuitTested } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { eventBus } from './events.js';
-import { showToast } from './toast.js';
 
 let inited = false;
 
@@ -27,7 +25,6 @@ export function initCircuitPageEvents() {
     if (inited) return;
     inited = true;
 
-    initSelectionToggle();
     initTraceToggle();
     initMarkDone();
     // initModifyCircuit() : déjà branché par ui-circuit-editor.js via convertToDraft()
@@ -39,54 +36,10 @@ export function initCircuitPageEvents() {
     // Sync de l'UI quand l'état change
     eventBus.on('circuit:changed', updateMarkDoneState);
     eventBus.on('circuit:list-updated', updateMarkDoneState);
-
-    // Premier sync
-    updateSelectionUI();
-}
-
-// Exposé pour que d'autres modules puissent re-sync la UI sélection
-export { updateSelectionUI };
-
-/* ============================================================
-   1. TOGGLE MODE SÉLECTION (crosshair + banner)
-   ============================================================ */
-
-function initSelectionToggle() {
-    const btn = document.getElementById('btn-toggle-selection');
-    const dismiss = document.getElementById('dismiss-selection');
-
-    if (btn) {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const newState = !state.isSelectionModeActive;
-            toggleSelectionMode(newState);
-            updateSelectionUI();
-        });
-    }
-    if (dismiss) {
-        dismiss.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            toggleSelectionMode(false);
-            updateSelectionUI();
-        });
-    }
-}
-
-function updateSelectionUI() {
-    const btn = document.getElementById('btn-toggle-selection');
-    const banner = document.getElementById('selection-banner');
-    const isActive = !!state.isSelectionModeActive;
-
-    if (btn) btn.classList.toggle('is-on', isActive);
-    if (banner) {
-        if (isActive) banner.removeAttribute('hidden');
-        else banner.setAttribute('hidden', '');
-    }
 }
 
 /* ============================================================
-   2. TOGGLE TRACE VISIBLE
+   1. TOGGLE TRACE VISIBLE
    ============================================================ */
 
 function initTraceToggle() {
@@ -286,21 +239,10 @@ function initDescriptionEdit() {
 }
 
 /* ============================================================
-   8. EMPTY STATE CTA (Activer la sélection)
+   8. EMPTY STATE — pas de CTA puisque toggle supprimé
    ============================================================ */
 
 function initEmptyStateCTA() {
-    // Le bouton est rendu dynamiquement dans renderCircuitList → on utilise
-    // une délégation d'event sur le panneau parent.
-    const panel = document.getElementById('circuit-panel');
-    if (!panel) return;
-
-    panel.addEventListener('click', (e) => {
-        const cta = e.target.closest('#activate-selection-cta');
-        if (cta) {
-            e.preventDefault();
-            toggleSelectionMode(true);
-            updateSelectionUI();
-        }
-    });
+    // No-op : le mode sélection est désactivé. L'utilisateur clique un POI sur
+    // la carte → ouvre l'onglet Détails → bouton "Ajouter au circuit" dedans.
 }

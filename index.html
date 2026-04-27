@@ -328,8 +328,6 @@
 
                     <!-- 5. TOP BAR ACTIONS -->
                     <div class="circuit-actions" id="circuit-actions">
-                        <!-- Création : toggle sélection map -->
-                        <button class="cp-act" id="btn-toggle-selection" title="Mode sélection (cliquer carte = ajouter POI)" data-show="create"><i data-lucide="crosshair"></i></button>
                         <!-- Toggle trace visible (les 2 modes) -->
                         <button class="cp-act is-on" id="btn-toggle-trace" title="Trace visible/masquée"><i data-lucide="eye"></i></button>
                         <!-- Boucler (création) -->
@@ -357,14 +355,7 @@
                         <button class="cp-act danger" id="btn-delete-active-circuit" title="Supprimer ce circuit" data-show="consult-perso"><i data-lucide="trash-2"></i></button>
                     </div>
 
-                    <!-- 6. SELECTION BANNER (création + sélection ON) -->
-                    <div class="selection-banner" id="selection-banner" hidden>
-                        <span class="ico"><i data-lucide="crosshair"></i></span>
-                        <span class="msg"><b>Cliquez sur la carte</b> pour ajouter un POI au circuit</span>
-                        <button class="dismiss" id="dismiss-selection" type="button" title="Désactiver" aria-label="Désactiver la sélection"><i data-lucide="x"></i></button>
-                    </div>
-
-                    <!-- 7. TIMELINE POIs -->
+                    <!-- 6. TIMELINE POIs -->
                     <div class="circuit-timeline" id="circuit-steps-list">
                         <!-- Rendu dynamique par circuit-view.js / ui-circuit-page.js -->
                     </div>

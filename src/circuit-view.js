@@ -2,10 +2,11 @@
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { getPoiName, getPoiId } from './data.js';
-import { state } from './state.js';
+import { state, setCurrentCircuit } from './state.js';
 import { sanitizeHTML, escapeXml } from './utils.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import Sortable from 'sortablejs';
 
 /**
  * Mappe une catégorie POI vers une icône lucide + variante de couleur pour
@@ -111,13 +112,12 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
 
     if (points.length === 0) {
         if (isCreateMode) {
-            // Empty state V2 : crosshair + CTA "Activer la sélection"
+            // Empty state V2 : icône route + invitation à cliquer sur les POIs de la carte
             DOM.circuitStepsList.innerHTML = sanitizeHTML(`
                 <div class="timeline-empty">
-                    <div class="ico-bubble"><i data-lucide="crosshair"></i></div>
+                    <div class="ico-bubble"><i data-lucide="route"></i></div>
                     <h4>Commençons par le premier lieu</h4>
-                    <p>Activez le mode sélection puis cliquez sur les lieux de la carte pour les ajouter au circuit.</p>
-                    <button class="activate-cta" id="activate-selection-cta" type="button"><i data-lucide="crosshair"></i>Activer la sélection</button>
+                    <p>Cliquez sur un lieu de la carte pour ouvrir sa fiche, puis ajoutez-le au circuit depuis l'onglet Détails.</p>
                 </div>
             `);
         } else {
@@ -137,6 +137,65 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
     }
 
     createIcons({ icons: appIcons });
+
+    // Drag and drop (Sortable.js) en mode création uniquement
+    initTimelineDrag();
+}
+
+let _sortableInstance = null;
+
+function initTimelineDrag() {
+    // Mode création uniquement
+    if (state.activeCircuitId) {
+        if (_sortableInstance) {
+            _sortableInstance.destroy();
+            _sortableInstance = null;
+        }
+        return;
+    }
+    if (!DOM.circuitStepsList) return;
+
+    // Détruire l'instance précédente avant de re-créer (chaque renderCircuitList crée
+    // un nouveau DOM, l'ancienne instance pointe sur des nodes obsolètes)
+    if (_sortableInstance) {
+        try { _sortableInstance.destroy(); } catch (e) {}
+        _sortableInstance = null;
+    }
+
+    _sortableInstance = Sortable.create(DOM.circuitStepsList, {
+        handle: '.step-handle',
+        animation: 180,
+        chosenClass: 'is-dragging',
+        ghostClass: 'sortable-ghost',
+        dragClass: 'sortable-drag',
+        // Empêche le drag sur la cap (.circuit-timeline-cap) et l'empty state
+        filter: '.circuit-timeline-cap, .timeline-empty',
+        preventOnFilter: false,
+        onEnd: async (evt) => {
+            const oldIdx = evt.oldIndex;
+            const newIdx = evt.newIndex;
+            if (oldIdx === undefined || newIdx === undefined || oldIdx === newIdx) return;
+
+            // Compense le décalage du cap (premier child = .circuit-timeline-cap)
+            // Si le cap est inclus dans les indices, ajuster.
+            const cap = DOM.circuitStepsList.querySelector('.circuit-timeline-cap');
+            const capIdx = cap ? Array.from(DOM.circuitStepsList.children).indexOf(cap) : -1;
+
+            const adjOld = capIdx !== -1 && oldIdx > capIdx ? oldIdx - 1 : oldIdx;
+            const adjNew = capIdx !== -1 && newIdx > capIdx ? newIdx - 1 : newIdx;
+
+            // Réordonne state.currentCircuit
+            const arr = [...state.currentCircuit];
+            const [moved] = arr.splice(adjOld, 1);
+            arr.splice(adjNew, 0, moved);
+            setCurrentCircuit(arr);
+
+            // Sauvegarde brouillon + re-render (renumérote les steps)
+            const { saveCircuitDraft, renderCircuitPanel } = await import('./circuit.js');
+            await saveCircuitDraft();
+            renderCircuitPanel();
+        },
+    });
 }
 
 /**

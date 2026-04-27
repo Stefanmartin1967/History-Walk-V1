@@ -295,6 +295,14 @@ export async function loadAndInitializeMap() {
             setSaveButtonsState(true);
             if (DOM.btnRestoreData) DOM.btnRestoreData.disabled = false;
 
+            // V2 : premier rendu de l'onglet Circuit (applique data-mode/data-flag,
+            // rend l'empty state ou les steps existants, met à jour le breadcrumb)
+            try {
+                const { renderCircuitPanel } = await import('./circuit.js');
+                renderCircuitPanel();
+                updateCurrencyUnits();
+            } catch (e) { console.warn('Init circuit panel V2 failed:', e); }
+
             eventBus.emit('circuit:list-updated');
         } catch (e) {
             console.error("Erreur lors du rendu de la carte :", e);
