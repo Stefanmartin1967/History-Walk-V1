@@ -28,8 +28,8 @@ html[data-theme="maritime"] {
 }
 
 html[data-theme="desert"] {
-    --bg: #4d2c12;
-    --bg-2: #3a210e;
+    --bg: #7a5230;     /* Brun chaleureux (avant: #4d2c12 trop foncé) */
+    --bg-2: #5e3d20;   /* Brun moyen (avant: #3a210e quasi noir) */
     --surface: #fff8f0;
     --surface-muted: #f5efe6;
     --ink: #3a210e;
