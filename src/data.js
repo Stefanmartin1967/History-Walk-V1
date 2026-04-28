@@ -275,17 +275,16 @@ export function passesUserFilters(feature) {
     }
     if (props.incontournable) return true;
 
-    if (state.isSelectionModeActive) {
-        if (state.selectionModeFilters?.hideVisited && props.vu) return false;
-        if (state.selectionModeFilters?.hidePlanned && (props.planifieCounter || 0) > 0) return false;
-    } else {
-        // 3-states : 'all' (rien à filtrer) | 'hide' | 'only'
-        if (f.vus === 'hide' && props.vu) return false;
-        if (f.vus === 'only' && !props.vu) return false;
-        const isPlanned = (props.planifieCounter || 0) > 0;
-        if (f.planifies === 'hide' && isPlanned) return false;
-        if (f.planifies === 'only' && !isPlanned) return false;
-    }
+    // Filtres parcours (3-states 'all' | 'hide' | 'only') du panneau topbar.
+    // Point #5 audit Stefan : on utilise UN SEUL système — l'ancien
+    // selectionModeFilters (qui s'appliquait uniquement en mode sélection)
+    // est supprimé. Le filtre topbar pilote le filtrage en mode normal ET
+    // en mode création de circuit.
+    if (f.vus === 'hide' && props.vu) return false;
+    if (f.vus === 'only' && !props.vu) return false;
+    const isPlanned = (props.planifieCounter || 0) > 0;
+    if (f.planifies === 'hide' && isPlanned) return false;
+    if (f.planifies === 'only' && !isPlanned) return false;
 
     return true;
 }

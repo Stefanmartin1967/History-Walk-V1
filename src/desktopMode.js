@@ -1,11 +1,10 @@
 import L from 'leaflet';
-import { getZonesData } from './circuit-actions.js';
 import { applyFilters } from './data.js';
 import { clearCircuit } from './circuit.js';
 import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
-import { state, setSelectionModeFilters, setActiveFilters } from './state.js';
+import { state } from './state.js';
 import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos } from './database.js';
 import { compressImage, generatePhotoId } from './photo-service.js';
 import { logModification } from './logger.js';
@@ -359,7 +358,14 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
 // --- LOGIQUE WIZARD & OUTILS ---
 
 export function setupDesktopTools() {
-    // 1. Bouton "Mode Sélection" avec Interception pour Wizard
+    // Bouton "Mode Sélection" : toggle direct du mode création.
+    // L'ancienne modale d'assistant (selection-wizard-modal) qui demandait zone +
+    // hide-visited + hide-planned a été supprimée — point #5 audit Stefan : ses
+    // options sont déjà couvertes par le filtre topbar (#hw-filter-panel) qui
+    // gère catégories, zones, parcours (visités/à faire), incontournables.
+    // L'utilisateur configure ses filtres via la topbar puis clique Sélection
+    // pour activer le mode (les filtres actifs s'appliquent automatiquement aux
+    // POIs cliquables sur la carte).
     const btnSelect = document.getElementById('btn-mode-selection');
     if (btnSelect) {
         // On clone le bouton pour supprimer les anciens écouteurs (toggle simple)
@@ -367,80 +373,15 @@ export function setupDesktopTools() {
         btnSelect.parentNode.replaceChild(newBtn, btnSelect);
 
         newBtn.addEventListener('click', () => {
-             if (state.isSelectionModeActive) {
-                 toggleSelectionMode(false);
-             } else {
-                 openSelectionWizard();
-             }
+            if (state.isSelectionModeActive) {
+                toggleSelectionMode(false);
+            } else {
+                // Lancement direct : reset circuit en cours + activation +
+                // refresh des règles de filtrage.
+                clearCircuit(false);
+                toggleSelectionMode(true);
+                applyFilters();
+            }
         });
     }
-
-    // 2. Menu Outils (Dropdown) - GÉRÉ DANS ui.js (initializeDomReferences)
-    // Ne pas dupliquer l'écouteur ici !
-
-    // La fermeture au clic ailleurs est aussi gérée globalement dans main.js/setupDesktopUIListeners
-
-    // 3. Initialisation du Wizard
-    const btnStart = document.getElementById('btn-wizard-start');
-    const btnClose = document.getElementById('close-wizard-modal');
-    if (btnStart) btnStart.addEventListener('click', handleWizardStart);
-    if (btnClose) btnClose.addEventListener('click', () => {
-        document.getElementById('selection-wizard-modal').classList.add('is-hidden');
-    });
-}
-
-function openSelectionWizard() {
-    const modal = document.getElementById('selection-wizard-modal');
-    if (!modal) return;
-
-    // Remplissage de la liste des zones
-    const zoneSelect = document.getElementById('wizard-zone-select');
-    if (zoneSelect) {
-        // On garde "Toute l'île"
-        zoneSelect.innerHTML = '<option value="">Toute l\'île</option>';
-        const data = getZonesData();
-        if (data && data.sortedZones) {
-             data.sortedZones.forEach(zone => {
-                 const option = document.createElement('option');
-                 option.value = zone;
-                 option.textContent = `${zone} (${data.zoneCounts[zone]})`;
-                 zoneSelect.appendChild(option);
-             });
-        }
-    }
-
-    modal.classList.remove('is-hidden');
-}
-
-function handleWizardStart() {
-    // 1. Récupération des choix
-    const zoneSelect = document.getElementById('wizard-zone-select');
-    const checkVisited = document.getElementById('wizard-check-visited');
-    const checkPlanned = document.getElementById('wizard-check-planned');
-
-    const selectedZone = zoneSelect ? zoneSelect.value : "";
-    const hideVisited = checkVisited ? checkVisited.checked : true;
-    const hidePlanned = checkPlanned ? checkPlanned.checked : true;
-
-    // 2. Mise à jour de l'état
-    setSelectionModeFilters({
-        hideVisited: hideVisited,
-        hidePlanned: hidePlanned
-    });
-
-    // On met à jour le filtre Zone global car il est partagé
-    const newFilters = { ...state.activeFilters };
-    newFilters.zone = selectedZone || null;
-    setActiveFilters(newFilters);
-
-    // PR 3 (refonte topbar) : l'ancien #zonesLabel a été retiré. Le nouveau
-    // panneau de filtres se rafraîchit via son propre listener data:filtered.
-
-    // 3. Lancement du mode (Avec reset du circuit précédent pour éviter la confusion)
-    clearCircuit(false);
-    toggleSelectionMode(true);
-    applyFilters(); // Force le rafraîchissement avec les nouvelles règles
-
-    // 4. Fermeture du Wizard
-    document.getElementById('selection-wizard-modal').classList.add('is-hidden');
 }

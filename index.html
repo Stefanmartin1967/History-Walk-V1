@@ -544,40 +544,11 @@
 
     <script type="module" src="/src/main.js"></script>
 
-    <div id="selection-wizard-modal" class="modal-overlay is-hidden">
-        <div class="modal-content wizard-content">
-            <div class="modal-header">
-                <h2>Mode Sélection</h2>
-                <button id="close-wizard-modal" class="header-btn" title="Fermer l'assistant" aria-label="Fermer l'assistant"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
-                <p>Configurez votre session de création :</p>
-
-                <div class="wizard-options">
-                    <div class="wizard-select-container">
-                        <label>Zone de travail :</label>
-                        <select id="wizard-zone-select">
-                            <option value="">Toute l'île</option>
-                        </select>
-                    </div>
-
-                    <label class="wizard-option">
-                        <input type="checkbox" id="wizard-check-visited" checked>
-                        Masquer les lieux visités
-                    </label>
-
-                    <label class="wizard-option">
-                        <input type="checkbox" id="wizard-check-planned" checked>
-                        Masquer les lieux déjà planifiés
-                    </label>
-                </div>
-
-                <button id="btn-wizard-start" class="action-btn-large">
-                    <i data-lucide="play"></i> Commencer
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Modale "selection-wizard-modal" supprimée (point #5 audit Stefan) :
+         son rôle (filtre zone + hide-visited + hide-planned avant activation
+         du mode sélection) est maintenant assuré par le filtre topbar global
+         (bouton "Filtres" → panneau hw-filter-panel). Le bouton Sélection
+         active directement le mode, les filtres topbar actifs s'appliquent. -->
 </body>
 
 </html>
