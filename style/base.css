@@ -521,6 +521,68 @@ body.sidebar-open #map {
     right: var(--sidebar-width);
 }
 
+/* ================================================================
+   Sidebar toggle collapsible (point #6 audit Stefan)
+   Poignée verticale entre la map et la sidebar, repliable.
+   - sidebar ouverte (default) : poignée à droite de la sidebar avec ◀
+   - sidebar repliée : poignée collée au bord droit avec ▶
+   - persistance via localStorage 'sidebar-collapsed'
+   - raccourci clavier Ctrl+B / Cmd+B
+   - mobile : toggle masqué (sidebar pleine page gérée différemment)
+   ================================================================ */
+.sidebar-toggle {
+    position: fixed;
+    top: 50%;
+    right: var(--sidebar-width);
+    transform: translateY(-50%);
+    width: 22px;
+    height: 64px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-right: none;
+    border-radius: 10px 0 0 10px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    z-index: 1003;
+    padding: 0;
+    transition: right 0.3s ease, background 0.15s, color 0.15s;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
+}
+.sidebar-toggle:hover {
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+.sidebar-toggle svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s ease;
+}
+.sidebar-toggle:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+}
+
+/* État replié */
+body.sidebar-collapsed .right-sidebar {
+    right: calc(var(--sidebar-width) * -1);
+}
+body.sidebar-collapsed #map {
+    right: 0 !important;
+}
+body.sidebar-collapsed .sidebar-toggle {
+    right: 0;
+}
+body.sidebar-collapsed .sidebar-toggle svg {
+    transform: rotate(180deg); /* la flèche pointe vers ◀ pour réouvrir */
+}
+
+@media (max-width: 767px) {
+    /* Mobile : la sidebar est en plein écran et a sa propre nav, pas de toggle */
+    .sidebar-toggle { display: none; }
+}
+
 #app-version {
     position: absolute;
     bottom: 30px;
