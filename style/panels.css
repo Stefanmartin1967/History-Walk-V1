@@ -2779,8 +2779,9 @@
     position: sticky;
     top: 0;
     z-index: 3;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0.85));
-    backdrop-filter: blur(6px);
+    /* Fond suit la --surface du thème (blanc maritime/desert/oasis, sombre night)
+       avec un fade léger en bas pour adoucir le passage à la timeline. */
+    background: var(--surface);
     border-top: 1px solid var(--surface-muted);
     border-bottom: 1px solid var(--surface-muted);
     padding: 8px 14px;
