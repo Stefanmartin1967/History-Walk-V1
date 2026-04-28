@@ -37,6 +37,7 @@ html[data-theme="desert"] {
     --line: #e0d5c7;
     --brand: #e88c32;
     --brand-soft: #faeadd;
+    --brand-2: #c46f1c; /* Brand foncé — orange sable sombre */
     --ok: #10B981;
     --warn: #F59E0B;
     --danger: #EF4444;
@@ -52,6 +53,7 @@ html[data-theme="oasis"] {
     --line: #cce8d8;
     --brand: #34d399;
     --brand-soft: #d1fae5;
+    --brand-2: #059669; /* Brand foncé — vert oasis profond */
     --ok: #10B981;
     --warn: #F59E0B;
     --danger: #EF4444;
@@ -67,6 +69,7 @@ html[data-theme="night"] {
     --line: #4b5563;
     --brand: #60a5fa;
     --brand-soft: #374151;
+    --brand-2: #93c5fd; /* Brand foncé en thème nuit = plus clair pour rester lisible sur fond sombre */
     --ok: #34d399;
     --warn: #facc15;
     --danger: #f87171;
