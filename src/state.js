@@ -41,10 +41,8 @@ export const state = {
     hasUnexportedChanges: false,
     isAdmin: false, // Activation du "God Mode"
     selectedOfficialCircuitIds: null, // null = tous affichés, [] = aucun, [...ids] = sélection
-    selectionModeFilters: {
-        hideVisited: true,
-        hidePlanned: true
-    },
+    // selectionModeFilters supprimé (point #5 audit Stefan) : le filtre topbar
+    // (activeFilters) gère désormais le filtrage en mode normal ET en mode création.
     activeFilters: {
         categories: [],
         // 3-states refonte filtres (Claude Design) : 'all' (par défaut) | 'hide' | 'only'
@@ -209,9 +207,8 @@ export function setHasUnexportedChanges(value) {
     state.hasUnexportedChanges = value;
 }
 
-export function setSelectionModeFilters(filters) {
-    state.selectionModeFilters = filters || {};
-}
+// setSelectionModeFilters supprimé (point #5 audit Stefan).
+// Le filtre topbar (setActiveFilters) gère désormais tous les modes.
 
 export function setActiveFilters(filters) {
     state.activeFilters = filters || {};

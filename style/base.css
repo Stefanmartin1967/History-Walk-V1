@@ -2048,51 +2048,8 @@ input[type=range] {
     margin-left: 16px;
 }
 
-/* --- WIZARD SELECTION MODE --- */
-.wizard-content {
-    text-align: left;
-    max-width: 450px;
-}
-
-.wizard-options {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin: 20px 0;
-    background: var(--surface-muted);
-    padding: 15px;
-    border-radius: 12px;
-}
-
-.wizard-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 15px;
-    cursor: pointer;
-}
-
-.wizard-option input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--brand);
-    cursor: pointer;
-}
-
-.wizard-select-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.wizard-select-container select {
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid var(--line);
-    background: var(--surface);
-    font-size: 15px;
-    color: var(--ink);
-}
+/* CSS du wizard "Mode Sélection" supprimé (point #5 audit Stefan) :
+   modale absorbée par le filtre topbar global. */
 
 /* --- TOOLS DROPDOWN --- */
 .tools-dropdown-container {
