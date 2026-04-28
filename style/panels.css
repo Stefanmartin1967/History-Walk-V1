@@ -605,7 +605,7 @@
     transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
 }
 .poi-back-pill:hover {
-    background: #fff;
+    background: var(--surface);
     transform: scale(1.05);
     box-shadow:
         0 4px 12px rgba(0,0,0,0.4),
@@ -826,7 +826,7 @@
     height: 22px;
     border-radius: 7px;
     border: 2px solid var(--line);
-    background: #fff;
+    background: var(--surface);
     display: grid;
     place-items: center;
     flex-shrink: 0;
@@ -845,7 +845,7 @@
     padding: 11px 12px;
     border-radius: 14px;
     border: 1px solid var(--line);
-    background: #fff;
+    background: var(--surface);
     font-family: inherit;
     font-size: 13.5px;
     line-height: 1.45;
@@ -955,7 +955,7 @@
     margin: 10px -2px;
 }
 .poi-tool-btn {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid #fde7c4;
     border-radius: 12px;
     padding: 11px 6px;
@@ -1013,7 +1013,7 @@
 }
 .poi-panel.is-mobile .poi-mobile-header {
     padding: 8px 14px 14px;
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid var(--surface-muted);
     position: sticky;
     top: 0;
@@ -1091,7 +1091,7 @@
 .poi-panel.is-mobile .poi-mobile-cta-bar {
     flex-shrink: 0;
     padding: 12px 14px 14px;
-    background: #fff;
+    background: var(--surface);
     border-top: 1px solid var(--surface-muted);
     box-shadow: 0 -8px 20px -12px rgba(20,42,67,0.15);
     position: sticky;
@@ -1177,7 +1177,7 @@
 .poi-mobile-tools-sheet .sheet-panel {
     position: relative;
     width: 100%;
-    background: #fff;
+    background: var(--surface);
     border-radius: 24px 24px 0 0;
     padding: 18px 18px 24px;
     box-shadow: 0 -20px 50px -10px rgba(20,42,67,0.3);
@@ -1279,7 +1279,7 @@
 .hw-footer {
     flex-shrink: 0;
     padding: 14px 16px 16px;
-    background: #fff;
+    background: var(--surface);
     border-top: 1px solid var(--surface-muted);
     position: relative;
     z-index: 2;
@@ -1329,7 +1329,7 @@
     transition: 0.15s;
     min-width: 0;
 }
-.mc-search:focus-within { background: #fff; border-color: var(--brand); color: var(--ink); }
+.mc-search:focus-within { background: var(--surface); border-color: var(--brand); color: var(--ink); }
 .mc-search svg { width: 16px; height: 16px; flex-shrink: 0; }
 .mc-search input {
     flex: 1;
@@ -1366,7 +1366,7 @@
     height: 34px;
     border-radius: 10px;
     border: 1px solid var(--line);
-    background: #fff;
+    background: var(--surface);
     color: var(--ink-soft);
     cursor: pointer;
     display: grid;
@@ -1403,7 +1403,7 @@
     top: 8px;
     right: 8px;
     left: 8px;
-    background: #fff;
+    background: var(--surface);
     border-radius: 14px;
     border: 1px solid var(--line);
     box-shadow: 0 18px 40px rgba(2, 12, 27, 0.18), 0 2px 4px rgba(2, 12, 27, 0.04);
@@ -1513,7 +1513,7 @@
     height: 18px;
     border-radius: 5px;
     border: 1.5px solid var(--line);
-    background: #fff;
+    background: var(--surface);
     display: grid;
     place-items: center;
     flex-shrink: 0;
@@ -1581,7 +1581,7 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--surface);
     border: 2px solid var(--brand);
     box-shadow: 0 4px 10px rgba(59, 130, 246, 0.35), 0 1px 2px rgba(0, 0, 0, 0.05);
     transform: translate(-50%, -50%);
@@ -1660,7 +1660,7 @@
     transition: 0.15s;
 }
 .fseg button.is-on {
-    background: #fff;
+    background: var(--surface);
     color: var(--ink);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 1px var(--line);
 }
@@ -1688,7 +1688,7 @@
     padding: 6px 8px;
     border-radius: 8px;
 }
-.filter-reset:hover { color: var(--danger); background: #fff; }
+.filter-reset:hover { color: var(--danger); background: var(--surface); }
 .filter-reset svg { width: 13px; height: 13px; }
 
 /* ─── Liste cartes (Variante A) ─── */
@@ -1741,7 +1741,7 @@
 
 /* ─── Carte circuit (Variante A) ─── */
 .va-card {
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 14px;
     padding: 14px 14px 12px 18px;
@@ -1920,7 +1920,7 @@
     width: 56px;
     height: 56px;
     border-radius: 18px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--line);
     display: grid;
     place-items: center;
@@ -1941,7 +1941,7 @@
     padding: 8px 14px;
     border-radius: 10px;
     border: 1px solid var(--line);
-    background: #fff;
+    background: var(--surface);
     color: var(--ink);
     font-family: inherit;
     font-size: 13px;
@@ -1961,7 +1961,7 @@
 .cc-header {
     flex-shrink: 0;
     padding: 14px 18px 16px;
-    background: #fff;
+    background: var(--surface);
     border-bottom: 1px solid var(--surface-muted);
 }
 .cc-title-row {
@@ -2079,7 +2079,7 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--surface);
     border: 2px solid var(--line);
     color: var(--ink-soft);
     font-size: 12px;
@@ -2261,7 +2261,7 @@
     transition: 0.15s;
     line-height: 1;
 }
-.action-btn:hover { background: #fff; border-color: var(--brand); color: var(--brand); }
+.action-btn:hover { background: var(--surface); border-color: var(--brand); color: var(--brand); }
 .action-btn svg { width: 16px; height: 16px; }
 .action-btn.danger:hover { border-color: var(--danger); color: var(--danger); }
 
@@ -2319,7 +2319,7 @@
     flex-shrink: 0;
     transition: 0.15s;
 }
-.nav-arrow:hover { background: #fff; border-color: var(--brand); color: var(--brand); }
+.nav-arrow:hover { background: var(--surface); border-color: var(--brand); color: var(--brand); }
 .nav-arrow:disabled { opacity: 0.35; cursor: not-allowed; }
 .nav-arrow svg { width: 18px; height: 18px; }
 
@@ -2552,7 +2552,7 @@
 .cp-title-input {
     width: 100%;
     border: 0;
-    background: #fff;
+    background: var(--surface);
     outline: none;
     font-family: inherit;
     font-size: 20px;
@@ -2658,7 +2658,7 @@
     padding: 9px 10px;
     border-radius: 8px;
     border: 1px solid var(--brand);
-    background: #fff;
+    background: var(--surface);
     outline: none;
     font-family: inherit;
     font-size: 13px;
@@ -2680,7 +2680,7 @@
 #circuit-panel[data-mode="consult"] .circuit-transport { display: none; }
 .circuit-transport[data-open="true"] {
     border-color: var(--line);
-    background: #fff;
+    background: var(--surface);
 }
 .transport-head {
     display: flex;
@@ -2744,7 +2744,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 5px 9px;
@@ -2930,7 +2930,7 @@
     align-items: center;
     padding: 12px 14px;
     border-radius: 14px;
-    background: #fff;
+    background: var(--surface);
     border: 1px solid var(--line);
     cursor: pointer;
     position: relative;
@@ -2995,7 +2995,7 @@
     color: #fff;
 }
 .timeline-step.is-current .step-num {
-    background: #fff;
+    background: var(--surface);
     border-color: var(--brand);
     color: var(--brand);
     box-shadow: 0 0 0 4px var(--brand-soft);
@@ -3072,7 +3072,7 @@
     transition: 0.12s;
 }
 .step-actions .sa-btn:hover {
-    background: #fff;
+    background: var(--surface);
     color: var(--brand-2);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
