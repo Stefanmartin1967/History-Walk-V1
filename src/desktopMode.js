@@ -5,6 +5,7 @@ import { toggleSelectionMode } from './ui-circuit-editor.js';
 import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
 import { state } from './state.js';
+import { openFilterPanel } from './filter-panel.js';
 import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos } from './database.js';
 import { compressImage, generatePhotoId } from './photo-service.js';
 import { logModification } from './logger.js';
@@ -381,6 +382,12 @@ export function setupDesktopTools() {
                 clearCircuit(false);
                 toggleSelectionMode(true);
                 applyFilters();
+                // UX : ouvre le panneau Filtres topbar pour que l'utilisateur
+                // configure ses filtres comme il faisait via l'ancien wizard
+                // (zone, hide-visited, hide-planned, etc.). Sans ça, l'activation
+                // du mode est silencieuse et l'utilisateur ne sait pas où trouver
+                // les options de filtrage.
+                openFilterPanel();
             }
         });
     }
