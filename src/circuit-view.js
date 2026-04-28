@@ -114,12 +114,14 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
 
     if (points.length === 0) {
         if (isCreateMode) {
-            // Empty state V2 : icône route + invitation à cliquer sur les POIs de la carte
+            // Empty state V2 : icône route + invitation à cliquer un POI sur la carte.
+            // En mode création, isSelectionModeActive est ON donc le clic AJOUTE
+            // directement le POI au circuit (cf. map.js:handleMarkerClick).
             DOM.circuitStepsList.innerHTML = sanitizeHTML(`
                 <div class="timeline-empty">
                     <div class="ico-bubble"><i data-lucide="route"></i></div>
                     <h4>Commençons par le premier lieu</h4>
-                    <p>Cliquez sur un lieu de la carte pour ouvrir sa fiche, puis ajoutez-le au circuit depuis l'onglet Détails.</p>
+                    <p>Cliquez sur un lieu de la carte pour l'ajouter au circuit. Vous pourrez réordonner les étapes par glisser-déposer.</p>
                 </div>
             `);
         } else {

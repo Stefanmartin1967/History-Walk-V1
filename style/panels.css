@@ -1801,8 +1801,8 @@
     width: 26px;
     height: 26px;
     border-radius: 50%;
-    background: #fff;
-    border: 1.5px solid var(--line);
+    background: transparent;
+    border: none;
     color: var(--ink-soft);
     cursor: pointer;
     display: grid;
@@ -1811,9 +1811,11 @@
     margin-top: -2px;
     padding: 0;
 }
-.va-done:hover { border-color: var(--ok); color: var(--ok); }
-.va-done svg { width: 14px; height: 14px; stroke-width: 2.5; }
-.va-card.is-done .va-done { background: var(--ok); border-color: var(--ok); color: #fff; }
+.va-done:hover { color: var(--ok); }
+.va-done svg { width: 22px; height: 22px; stroke-width: 2; }
+/* Pattern unifié Apple Reminders / Todoist : non fait = circle outline gris,
+   fait = check-circle-2 vert. L'icône fait tout le travail visuel. */
+.va-card.is-done .va-done { color: var(--ok); }
 .va-card.is-done .va-title { color: var(--ink-soft); }
 
 /* Ligne 2 — métadonnées en pastilles cohérentes (POI / km / zone)
@@ -2777,8 +2779,9 @@
     position: sticky;
     top: 0;
     z-index: 3;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0.85));
-    backdrop-filter: blur(6px);
+    /* Fond suit la --surface du thème (blanc maritime/desert/oasis, sombre night)
+       avec un fade léger en bas pour adoucir le passage à la timeline. */
+    background: var(--surface);
     border-top: 1px solid var(--surface-muted);
     border-bottom: 1px solid var(--surface-muted);
     padding: 8px 14px;

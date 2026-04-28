@@ -647,7 +647,9 @@ function createCircuitCard(c) {
     doneBtn.setAttribute('aria-pressed', isCompleted ? 'true' : 'false');
     doneBtn.dataset.id = c.id;
     const doneIcon = document.createElement('i');
-    doneIcon.setAttribute('data-lucide', isCompleted ? 'check' : 'circle');
+    // Pattern unifié (Apple Reminders / Todoist / Google Tasks) :
+    // non fait = cercle vide outline, fait = cercle plein avec V (check-circle-2)
+    doneIcon.setAttribute('data-lucide', isCompleted ? 'check-circle-2' : 'circle');
     doneBtn.appendChild(doneIcon);
     doneBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
