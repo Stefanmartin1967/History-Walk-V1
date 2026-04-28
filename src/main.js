@@ -33,6 +33,7 @@ import { initUiDetailsListeners } from './ui-details.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
 import { setupDesktopTools } from './desktopMode.js';
+import { setupSidebarToggle } from './sidebar-toggle.js';
 import { initAdminMode, showAdminLoginModal } from './admin.js';
 import { initTokenCache } from './github-sync.js';
 
@@ -112,6 +113,7 @@ async function initializeApp() {
         // UI Setup only (Map init is deferred to loadAndInitializeMap)
         setupDesktopTools();
         setupSmartSearch();
+        setupSidebarToggle();
         updateSelectionModeButton(state.isSelectionModeActive);
         document.body.classList.add('sidebar-open');
     }
