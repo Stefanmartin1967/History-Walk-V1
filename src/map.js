@@ -363,18 +363,11 @@ export function refreshMapMarkers(visibleFeatures) {
             const category = (feature.properties.userData && feature.properties.userData.Catégorie) || feature.properties.Catégorie || 'default';
             const icon = createHistoryWalkIcon(category);
 
-            const props = feature.properties.userData || {};
-
-            if (props.incontournable === true) {
-                icon.options.className += ' marker-vip'; 
-            }
-
-            if (props.vu === true) {
-                icon.options.className += ' marker-visited';
-            } else if ((props.planifieCounter || 0) > 0) {
-                // Visité prime sur planifié : on n'applique "planned" que si pas encore visité
-                icon.options.className += ' marker-planned';
-            }
+            // Suppression volontaire des décorations marker-vip/-visited/-planned
+            // (audit Stefan #5) : redondantes avec les filtres "Mon parcours",
+            // "Officiel", "Incontournable" qui contrôlent déjà l'affichage des POIs.
+            // Garde le marqueur en marker-highlight (utilisé par la recherche topbar
+            // pour mettre en évidence un POI ciblé).
 
             const marker = L.marker(latlng, {
                 icon: icon,
