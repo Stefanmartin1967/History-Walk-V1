@@ -119,7 +119,7 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
                 <div class="timeline-empty">
                     <div class="ico-bubble"><i data-lucide="route"></i></div>
                     <h4>Commençons par le premier lieu</h4>
-                    <p>Cliquez sur un lieu de la carte pour ouvrir sa fiche, puis ajoutez-le au circuit depuis l'onglet Détails.</p>
+                    <p>Cliquez sur un lieu de la carte pour ouvrir sa fiche, puis ajoutez-le au circuit depuis l'onglet Lieu.</p>
                 </div>
             `);
         } else {
