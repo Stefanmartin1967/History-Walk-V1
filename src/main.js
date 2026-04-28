@@ -130,6 +130,22 @@ async function initializeApp() {
     setupFileListeners();
     setupUnsavedChangesWarning();
 
+    // Synchronise la meta theme-color (utilisée par la barre d'adresse navigateur,
+    // status bar mobile PWA, title bar Windows en mode standalone) avec le thème actif.
+    // Sans ça, la zone hors-app reste bleue même en thèmes desert/oasis/night.
+    const THEME_COLORS = {
+        maritime: '#0D3B66',
+        desert: '#7a5230',
+        oasis: '#065f46',
+        night: '#111827',
+    };
+    function applyThemeColor(theme) {
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.setAttribute('content', THEME_COLORS[theme] || THEME_COLORS.maritime);
+    }
+    // Applique au boot pour le theme déjà défini par l'attribut data-theme
+    applyThemeColor(document.documentElement.getAttribute('data-theme') || 'maritime');
+
     const themeSelector = document.getElementById('btn-theme-selector');
     if (themeSelector) {
         themeSelector.addEventListener('click', () => {
@@ -140,6 +156,7 @@ async function initializeApp() {
             const nextTheme = themes[nextIndex];
             document.documentElement.setAttribute('data-theme', nextTheme);
             saveAppState('currentTheme', nextTheme);
+            applyThemeColor(nextTheme);
         });
     }
 
@@ -152,7 +169,10 @@ async function initializeApp() {
         await initTokenCache();
 
         const savedTheme = await getAppState('currentTheme');
-        if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+        if (savedTheme) {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            applyThemeColor(savedTheme);
+        }
 
         // Lieu de résidence pour le tri par proximité (défini dans Mon Espace)
         const savedHome = await getAppState('homeLocation');
