@@ -2,18 +2,25 @@
 import L from 'leaflet';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
-import { state, setGhostMarker } from './state.js';
+import { state, setGhostMarker, setCurrentFeatureId } from './state.js';
+import { eventBus } from './events.js';
 import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
 import { map, clearMarkerHighlights } from './map.js';
 import { getSearchResults } from './search.js';
 
 export function setupSearch() {
     const query = DOM.searchInput.value;
-    
+
+    // Note : le filtrage de Mes Circuits par POI est déjà géré nativement —
+    // sélectionner un POI (depuis les résultats topbar OU clic carte) met à
+    // jour state.currentFeatureId, et ui-circuit-list:renderExplorerList
+    // active automatiquement le chip "Filtré par : [POI]" sur la liste.
+    // Pas besoin de synchroniser le texte tapé entre les 2 barres.
+
     // Nettoyage de l'interface si vide
     DOM.searchResults.innerHTML = '';
     DOM.searchResults.classList.add('is-hidden');
-    
+
     if (!query || query.trim().length === 0) return;
     
     // 1. Filtrage des résultats (Logique centralisée)
@@ -61,7 +68,17 @@ export function setupSearch() {
                         circuitIndex = state.currentCircuit.findIndex(f => getPoiId(f) === targetId);
                     }
 
-                    openDetailsPanel(globalIndex, circuitIndex !== -1 ? circuitIndex : null);
+                    // UX : si on est sur l'onglet Mes Circuits, on RESTE dessus
+                    // et on filtre la liste par ce POI (chip "Filtré par : [POI]"
+                    // déjà géré par renderExplorerList via state.currentFeatureId).
+                    // Sur les autres onglets (ou onglet inconnu), on ouvre la fiche Lieu.
+                    const activeTab = document.querySelector('.sidebar-panel.active')?.dataset.panel;
+                    if (activeTab === 'explorer') {
+                        setCurrentFeatureId(globalIndex);
+                        eventBus.emit('circuit:list-updated');
+                    } else {
+                        openDetailsPanel(globalIndex, circuitIndex !== -1 ? circuitIndex : null);
+                    }
                 }
             });
             fragment.appendChild(resultBtn);
