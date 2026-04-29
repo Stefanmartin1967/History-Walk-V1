@@ -864,7 +864,9 @@
 .poi-footer {
     flex-shrink: 0;
     padding: 14px 18px 18px;
-    background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,1) 30%);
+    /* Theme-aware : --surface au lieu de rgba blanc hardcodé. Sinon en thème
+       nuit le fond reste blanc et masque les éléments situés sous (bouton Outils). */
+    background: var(--surface);
     border-top: 1px solid var(--surface-muted);
     position: relative;
     z-index: 2;
@@ -872,7 +874,7 @@
 .poi-cta {
     width: 100%;
     padding: 14px 18px;
-    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
     color: #fff;
     border: none;
     border-radius: 18px;

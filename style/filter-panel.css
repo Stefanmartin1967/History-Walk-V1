@@ -39,7 +39,7 @@
     align-items: center;
     gap: 10px;
     padding: 14px 14px 12px;
-    border-bottom: 1px solid #EEF2F6;
+    border-bottom: 1px solid var(--line);
 }
 
 .hw-fp-header-icon {
@@ -107,7 +107,7 @@
 
 /* ─── Section ─── */
 .hw-fp-section {
-    border-bottom: 1px solid #EEF2F6;
+    border-bottom: 1px solid var(--line);
 }
 
 .hw-fp-section-header {
@@ -152,7 +152,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #334E68;
+    color: var(--ink);
     flex-grow: 1;
 }
 
@@ -256,7 +256,7 @@
     font-size: 14px;
     color: var(--ink);
     text-align: left;
-    border-bottom: 1px solid #EEF2F6;
+    border-bottom: 1px solid var(--line);
 }
 
 .hw-fp-zone-btn:last-child {
@@ -303,8 +303,8 @@
     width: 18px;
     height: 18px;
     border-radius: 5px;
-    border: 1.5px solid #C5D2DD;
-    background: #fff;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
     display: grid;
     place-items: center;
     flex-shrink: 0;
@@ -329,7 +329,7 @@
 
 .hw-fp-checkbox-label {
     flex-grow: 1;
-    color: #334E68;
+    color: var(--ink);
 }
 
 .hw-fp-checkbox.is-checked .hw-fp-checkbox-label {
@@ -403,7 +403,7 @@
 }
 
 .hw-fp-incontournable.is-checked {
-    background: #FEF3C7;
+    background: var(--hw-amber-soft);
     border-color: var(--warn);
 }
 
@@ -414,7 +414,7 @@
 }
 
 .hw-fp-incontournable .hw-fp-checkbox-box {
-    border-color: #C5D2DD;
+    border-color: var(--line);
 }
 
 .hw-fp-incontournable.is-checked .hw-fp-checkbox-box {
@@ -426,14 +426,14 @@
     flex-grow: 1;
     font-size: 14px;
     font-weight: 600;
-    color: #334E68;
+    color: var(--ink);
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
 .hw-fp-incontournable.is-checked .hw-fp-incontournable-label {
-    color: #92400E;
+    color: var(--hw-amber);
 }
 
 .hw-fp-incontournable-label svg {
@@ -445,11 +445,11 @@
 /* ─── Footer ─── */
 .hw-fp-footer {
     padding: 12px;
-    border-top: 1px solid #EEF2F6;
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #FAFBFC;
+    background: var(--surface-muted);
     flex-shrink: 0;
 }
 
@@ -463,7 +463,7 @@
     border-radius: 8px;
     border: 1px solid var(--line);
     background: var(--surface);
-    color: #334E68;
+    color: var(--ink);
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
@@ -476,6 +476,6 @@
 
 .hw-fp-reset-btn:disabled {
     opacity: 0.6;
-    color: #9FB3C8;
+    color: var(--ink-soft);
     cursor: not-allowed;
 }
