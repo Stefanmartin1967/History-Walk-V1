@@ -131,6 +131,18 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     height: 18px;
 }
 
+/* ===== Subheader (zone fixe sous le header — typiquement tabs) ===== */
+.hw-modal-subheader {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    /* Padding repris du body pour aligner les tabs au contenu sous-jacent */
+    padding: 0 24px;
+}
+@media (max-width: 600px) {
+    .hw-modal-subheader { padding: 0 18px; }
+}
+
 /* ===== Body ===== */
 .hw-modal-body {
     padding: 20px 24px;

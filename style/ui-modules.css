@@ -15,7 +15,7 @@
 .legend-marker-circle {
     width: 24px; height: 24px;
     flex-shrink: 0;
-    background: #FFFFFF;
+    background: var(--surface);
     border-radius: 50%;
 }
 .legend-marker-circle--visited {
@@ -276,7 +276,7 @@
     gap: 10px;
     margin-top: 5px;
 }
-.fusion-label { font-size: 11px; color: #64748B; }
+.fusion-label { font-size: 11px; color: var(--ink-soft); }
 .fusion-input-rtl { text-align: right; }
 
 /* ================================================
@@ -558,9 +558,9 @@
 
 /* ── HEADER ───────────────────────────────────────────────────────────────── */
 .ue-header {
-    background: #FFFFFF;
+    background: var(--surface);
     padding: 8px 20px 0;
-    border-bottom: 1px solid #E5E7EB;
+    border-bottom: 1px solid var(--line);
     flex-shrink: 0;
 }
 .ue-header-top {
@@ -582,30 +582,47 @@
     width: 32px; height: 32px;
     background: none; border: none;
     border-radius: 8px;
-    color: #94A3B8; cursor: pointer;
+    color: var(--ink-soft); cursor: pointer;
     transition: background 0.15s, color 0.15s;
 }
-.ue-close-icon-btn:hover { background: #F1F5F9; color: var(--hw-ink, #1C0A00); }
+.ue-close-icon-btn:hover { background: var(--surface-muted); color: var(--hw-ink, #1C0A00); }
 .ue-close-icon-btn svg { width: 18px; height: 18px; }
 
-/* ── TABS (style dossier comme CC) ───────────────────────────────────────── */
-.ue-tabs { display: flex; gap: 4px; }
-.ue-tab {
-    display: flex; align-items: center; gap: 7px;
-    padding: 8px 16px;
-    border-radius: 10px 10px 0 0;
-    font-size: 0.83rem; font-weight: 700;
-    cursor: pointer;
-    color: #64748B;
-    border: 1px solid transparent;
-    border-bottom: none;
-    transition: background 0.2s, color 0.2s;
+/* ── TABS theme-aware (utilisé par Mon Espace + CC Admin V2) ─────────────── */
+.ue-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--line);
+    margin: -8px -8px 16px;
+    padding: 0 8px;
 }
-.ue-tab:hover { background: #F1F5F9; color: var(--hw-ink, #1C0A00); }
+.ue-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 16px;
+    background: transparent;
+    /* appearance:none pour reset le fond gris par défaut des <button> */
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.ue-tab:hover {
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+.ue-tab.is-active,
 .ue-tab.active {
-    background: var(--hw-cream, #FFFBF5);
-    color: var(--hw-amber, #D97706);
-    border-color: #E5E7EB;
+    color: var(--brand-2);
+    border-bottom-color: var(--brand);
+    font-weight: 700;
 }
 .ue-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
 
@@ -615,12 +632,12 @@
     padding: 12px 20px 16px;
 }
 .ue-scroll-area::-webkit-scrollbar { width: 4px; }
-.ue-scroll-area::-webkit-scrollbar-thumb { background: #D1C4A8; border-radius: 4px; }
+.ue-scroll-area::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 
 /* ── FOOTER ───────────────────────────────────────────────────────────────── */
 .ue-footer {
     padding: 14px 28px;
-    background: white; border-top: 1px solid #E5E7EB;
+    background: var(--surface); border-top: 1px solid var(--line);
     display: flex; justify-content: flex-end;
     flex-shrink: 0;
 }
@@ -642,31 +659,31 @@
     padding: 2px 9px; border-radius: 99px;
     font-size: 0.7rem; font-weight: 700;
 }
-.ue-badge-amber { background: #FEF3C7; color: #92400E; }
-.ue-badge-red   { background: #FEE2E2; color: #991B1B; }
-.ue-badge-green { background: #DCFCE7; color: #166534; }
+.ue-badge-amber { background: var(--hw-amber-soft); color: var(--hw-amber); }
+.ue-badge-red   { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+.ue-badge-green { background: var(--ok-soft); color: var(--ok); }
 
 .ue-pill-btn {
     padding: 4px 12px;
-    border: 1px solid #D1C4A8; border-radius: 99px;
-    background: white; font-size: 0.76rem; font-weight: 600;
+    border: 1px solid var(--line); border-radius: 99px;
+    background: var(--surface); font-size: 0.76rem; font-weight: 600;
     color: var(--hw-ink, #1C0A00); cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
 }
-.ue-pill-btn:hover { background: #FEF3C7; border-color: var(--hw-amber, #D97706); }
+.ue-pill-btn:hover { background: var(--hw-amber-soft); border-color: var(--hw-amber, #D97706); }
 
 /* ── LIEU DE RÉSIDENCE (tri par proximité) ────────────────────────────────── */
 .ue-home-section {
     padding: 12px 14px; margin-bottom: 14px;
-    background: #FFF8F0; border: 1px solid #FDE68A; border-radius: 10px;
+    background: var(--hw-amber-soft); border: 1px solid var(--hw-amber); border-radius: 10px;
 }
-.ue-home-section--set { background: #F0FDF4; border-color: #BBF7D0; }
+.ue-home-section--set { background: var(--ok-soft); border-color: var(--ok); }
 .ue-home-header {
     display: flex; align-items: center; gap: 8px;
     margin-bottom: 8px;
 }
 .ue-home-header svg { width: 16px; height: 16px; color: var(--hw-amber, #D97706); flex-shrink: 0; }
-.ue-home-section--set .ue-home-header svg { color: #16A34A; }
+.ue-home-section--set .ue-home-header svg { color: var(--ok); }
 .ue-home-title { font-weight: 600; font-size: 0.92rem; color: var(--hw-ink, #1C0A00); }
 .ue-home-hint {
     margin: 0 0 10px 0; font-size: 0.82rem; line-height: 1.45;
@@ -686,9 +703,9 @@
 .ue-hint-banner {
     display: flex; align-items: flex-start; gap: 8px;
     padding: 10px 13px; margin-bottom: 14px;
-    background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 10px;
+    background: var(--hw-amber-soft); border: 1px solid var(--hw-amber); border-radius: 10px;
     font-size: 0.79rem; line-height: 1.45;
-    color: #92400E;
+    color: var(--hw-amber);
 }
 .ue-hint-banner svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px; }
 .ue-hint-banner--spaced { margin-top: 16px; }
@@ -698,26 +715,26 @@
 .ue-circuit-item {
     display: flex; align-items: center;
     padding: 8px 12px;
-    background: white;
-    border: 1px solid #E5E7EB; border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line); border-radius: 8px;
     cursor: pointer; gap: 10px;
     transition: border-color 0.2s, background 0.2s;
 }
 .ue-circuit-item:hover {
     border-color: var(--hw-amber, #D97706);
-    background: #FFFBF0;
+    background: var(--hw-amber-soft);
 }
 .ue-circuit-item.is-checked {
-    border-color: #FCD34D;
-    background: #FFFBF0;
+    border-color: var(--hw-amber);
+    background: var(--hw-amber-soft);
 }
 .ue-circuit-icon-box {
     width: 30px; height: 30px; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    background: #FFFBEB; color: var(--hw-amber, #D97706);
+    background: var(--hw-amber-soft); color: var(--hw-amber, #D97706);
     border-radius: 8px;
 }
-.ue-circuit-icon-box.muted { background: #F1F5F9; color: #94A3B8; }
+.ue-circuit-icon-box.muted { background: var(--surface-muted); color: var(--ink-soft); }
 .ue-circuit-icon-box svg { width: 17px; height: 17px; }
 .ue-circuit-info { flex: 1; min-width: 0; }
 .ue-circuit-name {
@@ -727,7 +744,7 @@
     -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; line-height: 1.3;
 }
-.ue-circuit-meta { font-size: 0.7rem; margin-top: 1px; color: #94A3B8; display: block; }
+.ue-circuit-meta { font-size: 0.7rem; margin-top: 1px; color: var(--ink-soft); display: block; }
 
 /* ── TOGGLE SWITCH ────────────────────────────────────────────────────────── */
 .ue-toggle-wrap {
@@ -746,7 +763,7 @@
     content: ''; position: absolute;
     left: 3px; top: 3px;
     width: 18px; height: 18px;
-    border-radius: 50%; background: white;
+    border-radius: 50%; background: var(--surface);
     transition: transform 0.22s;
     box-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
@@ -760,7 +777,7 @@
 }
 .ue-data-card {
     display: flex; flex-direction: column;
-    background: white; border: 1px solid #E5E7EB; border-radius: 16px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
     padding: 22px; gap: 12px; min-height: 220px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     transition: border-color 0.2s, box-shadow 0.2s;
@@ -772,13 +789,13 @@
 .ue-data-card-icon {
     width: 42px; height: 42px;
     display: flex; align-items: center; justify-content: center;
-    background: #FFFBEB; color: var(--hw-amber, #D97706);
+    background: var(--hw-amber-soft); color: var(--hw-amber, #D97706);
     border-radius: 12px;
 }
 .ue-data-card-icon.secondary { background: #EFF6FF; color: #2563EB; }
 .ue-data-card-icon svg { width: 20px; height: 20px; }
 .ue-data-card-title { font-size: 0.95rem; font-weight: 800; color: var(--hw-ink, #1C0A00); margin: 0; }
-.ue-data-card-desc { font-size: 0.79rem; line-height: 1.45; color: #64748B; margin: 0; flex: 1; }
+.ue-data-card-desc { font-size: 0.79rem; line-height: 1.45; color: var(--ink-soft); margin: 0; flex: 1; }
 .ue-photo-label {
     display: flex; align-items: center; gap: 8px;
     font-size: 0.8rem; cursor: pointer; color: var(--hw-ink, #1C0A00);
@@ -803,28 +820,28 @@
 .ue-action-btn.primary:hover { opacity: 0.9; transform: translateY(-1px); }
 .ue-action-btn.secondary {
     background: #F8FAFC; color: var(--hw-ink, #1C0A00);
-    border: 1px solid #E5E7EB;
+    border: 1px solid var(--line);
 }
-.ue-action-btn.secondary:hover { background: #F1F5F9; border-color: #CBD5E1; }
+.ue-action-btn.secondary:hover { background: var(--surface-muted); border-color: #CBD5E1; }
 
 /* ── ONGLET CORBEILLE ─────────────────────────────────────────────────────── */
 .ue-trash-item {
     display: flex; align-items: center;
     padding: 12px 14px;
-    background: white; border: 1px solid #E5E7EB; border-radius: 14px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     gap: 12px; transition: opacity 0.3s;
 }
 .ue-restore-btn {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 6px 13px;
-    background: #F0FDF4; color: #15803D;
+    background: var(--ok-soft); color: #15803D;
     border: 1px solid #86EFAC; border-radius: 99px;
     font-size: 0.78rem; font-weight: 700;
     cursor: pointer; flex-shrink: 0;
     transition: background 0.15s, transform 0.15s;
 }
-.ue-restore-btn:hover { background: #DCFCE7; transform: translateY(-1px); }
+.ue-restore-btn:hover { background: var(--ok-soft); transform: translateY(-1px); }
 .ue-restore-btn svg { width: 13px; height: 13px; }
 
 /* ── EMPTY STATE ──────────────────────────────────────────────────────────── */
@@ -835,10 +852,10 @@
 .ue-empty-icon {
     width: 56px; height: 56px;
     display: flex; align-items: center; justify-content: center;
-    background: #F1F5F9; border-radius: 16px;
-    color: #94A3B8; margin-bottom: 4px;
+    background: var(--surface-muted); border-radius: 16px;
+    color: var(--ink-soft); margin-bottom: 4px;
 }
-.ue-empty-icon.green { background: #F0FDF4; color: #16A34A; }
+.ue-empty-icon.green { background: var(--ok-soft); color: var(--ok); }
 .ue-empty-icon svg { width: 28px; height: 28px; }
 .ue-empty-title { font-size: 0.95rem; font-weight: 700; color: var(--hw-ink, #1C0A00); margin: 0; }
-.ue-empty-sub { font-size: 0.8rem; color: #94A3B8; max-width: 280px; line-height: 1.45; margin: 0; }
+.ue-empty-sub { font-size: 0.8rem; color: var(--ink-soft); max-width: 280px; line-height: 1.45; margin: 0; }
