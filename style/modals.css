@@ -205,6 +205,12 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     }
 }
 
+/* Modale sans footer (info-only, fermeture via croix uniquement) :
+   on garde un padding-bottom légèrement plus généreux sur le body. */
+.hw-modal:not(:has(.hw-modal-footer)) .hw-modal-body {
+    padding-bottom: 24px;
+}
+
 /* ===== Footer ===== */
 .hw-modal-footer {
     display: flex;

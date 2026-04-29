@@ -21,8 +21,11 @@ let activeHwEscapeHandler = null;
  * @param {string} [opts.icon] - Nom d'icône lucide (optionnel) à afficher dans le header.
  * @param {string} opts.title - Titre de la modale.
  * @param {string|HTMLElement} opts.body - Contenu HTML du body.
- * @param {string|HTMLElement|null} [opts.footer] - Contenu HTML du footer (boutons custom).
- *        Si null, génère un seul bouton "Fermer" qui résout la promise.
+ * @param {string|HTMLElement|null|false} [opts.footer] - Contenu HTML du footer.
+ *        - `null` (défaut) : footer avec un bouton "Fermer" générique.
+ *        - `false` : aucun footer rendu (modale info-only, la croix du header
+ *          est le seul moyen de fermer — évite la redondance croix + bouton).
+ *        - `string` ou `HTMLElement` : footer custom.
  * @param {boolean} [opts.closeOnBackdrop=true] - Si true, clic sur l'overlay ferme.
  * @param {boolean} [opts.closeOnEscape=true] - Si true, touche Escape ferme.
  * @returns {Promise<void>} - Résout à la fermeture.
@@ -52,14 +55,17 @@ export function openHwModal(opts) {
         const variantCls = variant === 'default' ? '' : ` is-${variant}`;
         const iconHtml = icon ? `<div class="hw-modal-icon"><i data-lucide="${icon}"></i></div>` : '';
 
-        // Footer par défaut : 1 bouton "Fermer"
-        let footerHtml;
-        if (footer === null) {
-            footerHtml = '<button class="hw-btn hw-btn-primary" data-hw-modal-action="close">Fermer</button>';
-        } else if (typeof footer === 'string') {
-            footerHtml = footer;
-        } else {
-            footerHtml = ''; // sera ajouté en HTMLElement après
+        // Footer : null → bouton "Fermer" par défaut, false → pas de footer,
+        // string/HTMLElement → custom.
+        const noFooter = footer === false;
+        let footerHtml = '';
+        if (!noFooter) {
+            if (footer === null) {
+                footerHtml = '<button class="hw-btn hw-btn-primary" data-hw-modal-action="close">Fermer</button>';
+            } else if (typeof footer === 'string') {
+                footerHtml = footer;
+            }
+            // sinon HTMLElement → ajouté après
         }
 
         overlay.innerHTML = `
@@ -72,7 +78,7 @@ export function openHwModal(opts) {
                     </button>
                 </header>
                 <div class="hw-modal-body"></div>
-                <footer class="hw-modal-footer">${footerHtml}</footer>
+                ${noFooter ? '' : `<footer class="hw-modal-footer">${footerHtml}</footer>`}
             </div>
         `;
 
@@ -84,8 +90,8 @@ export function openHwModal(opts) {
             bodyEl.appendChild(body);
         }
 
-        // Inject footer si HTMLElement
-        if (footer instanceof HTMLElement) {
+        // Inject footer si HTMLElement (et seulement si on a un footer rendu)
+        if (!noFooter && footer instanceof HTMLElement) {
             overlay.querySelector('.hw-modal-footer').appendChild(footer);
         }
 

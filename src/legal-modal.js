@@ -3,7 +3,8 @@
 // (étape 2 de la protection juridique). Accessible depuis le menu Outils desktop
 // et le menu mobile.
 //
-// Utilise le système HW Modal V2 (variante md, icône scale).
+// Utilise le système HW Modal V2 (variante md, icône scale, sans footer :
+// fermeture via croix uniquement — info-only, pas d'action explicite).
 
 import { openHwModal } from './modal.js';
 
@@ -23,10 +24,13 @@ export function showLegalNoticeModal() {
             préalable est interdite.</p>
 
         <h3>Données cartographiques</h3>
-        <p>Données cartographiques © OpenStreetMap contributors, sous licence
-            <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">ODbL (Open Database License)</a>.
-            Ces données restent la propriété de leurs contributeurs et ne sont pas
-            couvertes par la licence du présent projet.</p>
+        <p>Le fond de carte par défaut provient d'<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors,
+            sous licence ODbL (Open Database License). Ces données restent la propriété de
+            leurs contributeurs et ne sont pas couvertes par la licence du présent projet.</p>
+        <p>L'application utilise également les
+            <a href="https://www.google.com/intl/fr_fr/help/terms_maps/" target="_blank" rel="noopener noreferrer">fonds Google Maps</a>
+            (vue satellite et plan), soumis aux conditions d'utilisation de Google.
+            Le contenu Google reste la propriété exclusive de Google et de ses fournisseurs.</p>
 
         <h3>Contact</h3>
         <p>Pour toute question juridique, demande de licence ou signalement,
@@ -40,6 +44,8 @@ export function showLegalNoticeModal() {
         icon: 'scale',
         title: 'Mentions légales',
         body,
-        // footer null → bouton "Fermer" par défaut
+        // footer: false → pas de bouton "Fermer" redondant avec la croix.
+        // L'utilisateur ferme via la croix du header, le clic sur le backdrop ou Escape.
+        footer: false,
     });
 }
