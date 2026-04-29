@@ -20,6 +20,9 @@ let activeHwEscapeHandler = null;
  * @param {'default'|'danger'|'success'} [opts.variant='default'] - Variante visuelle.
  * @param {string} [opts.icon] - Nom d'icône lucide (optionnel) à afficher dans le header.
  * @param {string} opts.title - Titre de la modale.
+ * @param {string|HTMLElement|null} [opts.subheader] - Contenu HTML d'une zone
+ *        fixe sous le header (typiquement des tabs). Reste visible quand
+ *        le body scroll. Null = pas de subheader (défaut).
  * @param {string|HTMLElement} opts.body - Contenu HTML du body.
  * @param {string|HTMLElement|null|false} [opts.footer] - Contenu HTML du footer.
  *        - `null` (défaut) : footer avec un bouton "Fermer" générique.
@@ -36,6 +39,7 @@ export function openHwModal(opts) {
         variant = 'default',
         icon = null,
         title = '',
+        subheader = null,
         body = '',
         footer = null,
         closeOnBackdrop = true,
@@ -68,6 +72,10 @@ export function openHwModal(opts) {
             // sinon HTMLElement → ajouté après
         }
 
+        const subheaderHtml = (typeof subheader === 'string' && subheader)
+            ? `<div class="hw-modal-subheader"></div>`
+            : '';
+
         overlay.innerHTML = `
             <div class="hw-modal ${sizeCls}${variantCls}">
                 <header class="hw-modal-header">
@@ -77,10 +85,21 @@ export function openHwModal(opts) {
                         <i data-lucide="x"></i>
                     </button>
                 </header>
+                ${subheaderHtml}
                 <div class="hw-modal-body"></div>
                 ${noFooter ? '' : `<footer class="hw-modal-footer">${footerHtml}</footer>`}
             </div>
         `;
+
+        // Inject subheader si présent
+        const subheaderEl = overlay.querySelector('.hw-modal-subheader');
+        if (subheaderEl) {
+            if (typeof subheader === 'string') {
+                subheaderEl.innerHTML = subheader;
+            } else if (subheader instanceof HTMLElement) {
+                subheaderEl.appendChild(subheader);
+            }
+        }
 
         // Inject body
         const bodyEl = overlay.querySelector('.hw-modal-body');

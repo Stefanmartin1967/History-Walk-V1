@@ -15,14 +15,16 @@ export function openControlCenterModal(diffData, callbacks) {
     // Le hack legacy (showAlert + customClass + masquage manuel + observer)
     // est remplacé par une utilisation directe et propre du système V2.
 
-    const body = `
+    const subheader = `
         <div class="admin-cc-tabs ue-tabs">
             <button class="admin-cc-tab ue-tab is-active" type="button" data-tab="dashboard"><i data-lucide="layout-grid"></i> Dashboard</button>
             <button class="admin-cc-tab ue-tab" type="button" data-tab="changes"><i data-lucide="list-checks"></i> Modifications</button>
             <button class="admin-cc-tab ue-tab" type="button" data-tab="maintenance"><i data-lucide="server"></i> Nettoyage</button>
             <button class="admin-cc-tab ue-tab" type="button" data-tab="settings"><i data-lucide="settings"></i> Config</button>
         </div>
+    `;
 
+    const body = `
         <div id="admin-cc-content" class="admin-cc-scroll-area">
             <div class="cc-loading-state">
                 <i data-lucide="loader-2" class="spin cc-loading-icon"></i>
@@ -42,6 +44,7 @@ export function openControlCenterModal(diffData, callbacks) {
         size: 'lg',
         icon: 'shield-check',
         title: 'Control Center · Admin',
+        subheader,
         body,
         footer,
         // CC est complexe (4 tabs, tableaux, formulaires) : pas de fermeture

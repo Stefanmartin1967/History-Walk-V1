@@ -10,7 +10,7 @@ export function openUserSpaceModal(callbacks) {
     // Stefan : tabs inline plutôt qu'un nouveau pattern réutilisable).
     // La logique métier (renderUserTab) reste inchangée.
 
-    const body = `
+    const subheader = `
         <div class="ue-tabs">
             <button class="ue-tab is-active" type="button" data-tab="circuits">
                 <i data-lucide="map"></i> Mes Circuits
@@ -22,16 +22,17 @@ export function openUserSpaceModal(callbacks) {
                 <i data-lucide="trash-2"></i> Corbeille
             </button>
         </div>
-
-        <div id="ue-content" class="ue-content"></div>
     `;
+
+    const body = `<div id="ue-content" class="ue-content"></div>`;
 
     openHwModal({
         size: 'lg',
         icon: 'briefcase',
         title: 'Mon Espace',
+        subheader,
         body,
-        footer: false, // croix du header suffit (audit Stefan : éviter redondance)
+        footer: false,
     });
 
     // Bind après ouverture (DOM prêt)
