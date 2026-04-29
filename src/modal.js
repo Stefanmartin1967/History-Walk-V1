@@ -13,6 +13,14 @@ let activeHwOverlay = null;
 let activeHwResolve = null;
 let activeHwEscapeHandler = null;
 
+// Modale temporairement mise en pause (cf. suspendHwModal/resumeHwModal).
+// Permet de cacher une modale V2 le temps d'ouvrir une autre modale V2 (ex:
+// showConfirm depuis un handler interne — sinon V2 ferme la 1ère via le
+// "stacking interdit" de openHwModal).
+let suspendedHwOverlay = null;
+let suspendedHwResolve = null;
+let suspendedHwEscapeHandler = null;
+
 /**
  * Ouvre une modale du système V2 (hw-modal).
  * @param {Object} opts
@@ -172,6 +180,59 @@ export function closeHwModal(value) {
         const resolve = activeHwResolve;
         activeHwResolve = null;
         resolve(value);
+    }
+}
+
+/**
+ * Met la modale V2 active en pause (cachée mais préservée dans le DOM).
+ * Permet d'ouvrir une autre modale V2 par-dessus (ex: showConfirm depuis un
+ * handler) sans détruire la 1ère. À réactiver impérativement par
+ * `resumeHwModal()` après usage. No-op si aucune modale active ou si une
+ * autre est déjà suspendue.
+ */
+export function suspendHwModal() {
+    if (!activeHwOverlay || suspendedHwOverlay) return;
+    activeHwOverlay.style.display = 'none';
+    if (activeHwEscapeHandler) {
+        document.removeEventListener('keydown', activeHwEscapeHandler);
+    }
+    suspendedHwOverlay = activeHwOverlay;
+    suspendedHwResolve = activeHwResolve;
+    suspendedHwEscapeHandler = activeHwEscapeHandler;
+    // Détache du système V2 → la prochaine openHwModal ne fermera pas la modale
+    activeHwOverlay = null;
+    activeHwResolve = null;
+    activeHwEscapeHandler = null;
+}
+
+/**
+ * Restaure la modale V2 mise en pause par `suspendHwModal()`. No-op si
+ * aucune modale suspendue. Si une autre modale V2 est entretemps devenue
+ * active, la suspendue est détruite proprement (évite le fantôme DOM).
+ */
+export function resumeHwModal() {
+    if (!suspendedHwOverlay) return;
+    // Si une autre modale V2 a été ouverte entretemps, on détruit la suspendue
+    // (l'utilisateur a navigué ailleurs, on ne peut pas restaurer sans casser
+    // le contexte courant).
+    if (activeHwOverlay) {
+        suspendedHwOverlay.remove();
+        if (suspendedHwResolve) suspendedHwResolve();
+        suspendedHwOverlay = null;
+        suspendedHwResolve = null;
+        suspendedHwEscapeHandler = null;
+        return;
+    }
+    // Restauration : réinjecte dans le système V2
+    activeHwOverlay = suspendedHwOverlay;
+    activeHwResolve = suspendedHwResolve;
+    activeHwEscapeHandler = suspendedHwEscapeHandler;
+    suspendedHwOverlay = null;
+    suspendedHwResolve = null;
+    suspendedHwEscapeHandler = null;
+    activeHwOverlay.style.display = '';
+    if (activeHwEscapeHandler) {
+        document.addEventListener('keydown', activeHwEscapeHandler);
     }
 }
 

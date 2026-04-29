@@ -10,7 +10,7 @@ import { saveAppState, savePoiData } from './database.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
-import { showConfirm, openHwModal, closeHwModal } from './modal.js';
+import { showConfirm, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 // --- IDs DOM ---
@@ -307,11 +307,11 @@ eventBus.on('richEditor:open-for-edit', (id) => RichEditor.openForEdit(id));
 // --- PRIVATE HELPERS ---
 
 async function handleMove() {
-    // Migration V2 : on hide l'overlay actif au lieu de toggle .is-hidden sur
-    // la modale statique. La modale reste dans le DOM (et tous les setValue
-    // ne sont pas perdus), elle est juste invisible le temps du drag.
-    const modal = document.querySelector('.hw-modal-overlay.is-active');
-    if (modal) modal.style.display = 'none';
+    // Migration V2 : on suspend la modale (cachée + détachée du système V2).
+    // Indispensable car showConfirm ouvre une modale V2 par-dessus, et le
+    // système V2 interdit le stacking : il fermerait définitivement la rich
+    // editor. suspendHwModal préserve l'overlay, resumeHwModal le restaure.
+    suspendHwModal();
 
     // Helper to update coords in Rich Editor UI and state
     const updateEditorCoords = (lat, lng) => {
@@ -339,11 +339,11 @@ async function handleMove() {
                     revert();
                 }
                 // Re-open modal
-                if (modal) modal.style.display = '';
+                resumeHwModal();
             }
         );
 
-        if (!success && modal) modal.style.display = '';
+        if (!success) resumeHwModal();
 
     } else if (currentMode === 'CREATE' && currentDraftCoords) {
         // Mode CRÉATION : On crée un marqueur temporaire
@@ -366,7 +366,7 @@ async function handleMove() {
 
             // Cleanup
             tempMarker.remove();
-            if (modal) modal.style.display = '';
+            resumeHwModal();
         };
 
         // On écoute dragend, mais on peut aussi attendre un clic sur le marker ou autre
