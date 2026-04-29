@@ -25,6 +25,7 @@ import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId, getPoiName } from './data.js';
 import { showToast } from './toast.js';
 import { switchSidebarTab } from './ui-sidebar.js';
+import { isMobileView } from './mobile-state.js';
 
 // ─── État local ───────────────────────────────────────────────────────────
 const DIST_MAX_KM = 20;
@@ -98,9 +99,10 @@ function renderToolbar() {
         <button class="mc-tool-btn" id="mc-btn-new" title="Nouveau circuit" aria-label="Nouveau circuit">
             <i data-lucide="plus"></i>
         </button>
+        ${isMobileView() ? `
         <button class="mc-tool-btn" id="mc-btn-close" title="Cacher le panneau" aria-label="Cacher le panneau">
             <i data-lucide="x"></i>
-        </button>
+        </button>` : ''}
     `;
     createIcons({ icons: appIcons, root: toolbar });
 

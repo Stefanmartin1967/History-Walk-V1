@@ -102,6 +102,21 @@ function setupSuiviToggles(poiId) {
                     hint.textContent = willBeOn ? 'Mis en avant sur la carte' : 'Mettre en avant sur la carte';
                 }
             }
+            // Swap d'icône lucide pour refléter l'état (audit #1) :
+            // 'vu' → circle / check-circle-2 ; 'incontournable' → star-off / star
+            const iconEl = toggleEl.querySelector('.poi-toggle-icon');
+            if (iconEl) {
+                let nextIcon;
+                if (field === 'vu') nextIcon = willBeOn ? 'check-circle-2' : 'circle';
+                else if (field === 'incontournable') nextIcon = willBeOn ? 'star' : 'star-off';
+                if (nextIcon) {
+                    const newI = document.createElement('i');
+                    newI.className = 'poi-toggle-icon';
+                    newI.setAttribute('data-lucide', nextIcon);
+                    iconEl.replaceWith(newI);
+                    createIcons({ icons: appIcons });
+                }
+            }
             await updatePoiData(poiId, field, willBeOn);
         });
     });

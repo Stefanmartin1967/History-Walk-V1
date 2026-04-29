@@ -42,7 +42,7 @@ import {
     Mail, Github, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
 
     // Badges & gamification
-    Award, Trophy, Star, Rocket, Sparkles, Zap, Crown,
+    Award, Trophy, Star, StarOff, Rocket, Sparkles, Zap, Crown,
     Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,
 
     // Catégories POI (map.js iconMap)
@@ -91,7 +91,7 @@ export const appIcons = {
 
     Mail, Github, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
 
-    Award, Trophy, Star, Rocket, Sparkles, Zap, Crown,
+    Award, Trophy, Star, StarOff, Rocket, Sparkles, Zap, Crown,
     Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,
 
     CircleHelp, Hotel, CarTaxiFront,
