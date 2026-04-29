@@ -821,20 +821,25 @@
 .poi-toggle:hover { border-color: var(--line); }
 .poi-toggle.is-on { background: var(--brand-soft); border-color: rgba(59,130,246,0.3); }
 .poi-toggle.is-on.amber { background: var(--hw-amber-soft); border-color: rgba(217,119,6,0.3); }
-.poi-toggle .check-box {
-    width: 22px;
-    height: 22px;
-    border-radius: 7px;
-    border: 2px solid var(--line);
-    background: var(--surface);
+/* Icône toggle harmonisée avec Mes Circuits / Circuit (audit Stefan #1) :
+   pattern circle/check-circle-2 (Apple Reminders / Todoist).
+   Vert quand "Visité" actif, ambre quand "Incontournable" (star) actif. */
+.poi-toggle .poi-toggle-icon {
+    width: 26px;
+    height: 26px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
     display: grid;
     place-items: center;
-    flex-shrink: 0;
+    transition: color 0.15s;
 }
-.poi-toggle.is-on .check-box { background: var(--brand); border-color: var(--brand); }
-.poi-toggle.is-on.amber .check-box { background: var(--hw-amber); border-color: var(--hw-amber); }
-.poi-toggle .check-box svg { width: 13px; height: 13px; color: #fff; opacity: 0; }
-.poi-toggle.is-on .check-box svg { opacity: 1; }
+.poi-toggle .poi-toggle-icon svg {
+    width: 26px;
+    height: 26px;
+    stroke-width: 2;
+}
+.poi-toggle.is-on .poi-toggle-icon { color: var(--ok); }
+.poi-toggle.is-on.amber .poi-toggle-icon { color: var(--hw-amber); fill: var(--hw-amber); }
 .poi-toggle .lab-text { font-weight: 600; color: var(--ink); flex: 1; }
 .poi-toggle .lab-hint { font-size: 12px; color: var(--ink-soft); font-weight: 400; display: block; margin-top: 1px; }
 

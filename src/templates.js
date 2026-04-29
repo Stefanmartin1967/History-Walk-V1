@@ -271,11 +271,11 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="bookmark"></i>Mon suivi</span></h3>
             <div class="poi-suivi">
                 <div class="poi-toggle ${isVu ? 'is-on' : ''}" data-toggle="vu" id="poi-toggle-vu">
-                    <div class="check-box"><i data-lucide="check"></i></div>
+                    <i class="poi-toggle-icon" data-lucide="${isVu ? 'check-circle-2' : 'circle'}"></i>
                     <div class="lab-text">Visité<span class="lab-hint">${isVu ? 'Ajouté à mon carnet de voyage' : 'Cocher après visite sur place'}</span></div>
                 </div>
                 <div class="poi-toggle amber ${isIncontournable ? 'is-on' : ''}" data-toggle="incontournable" id="poi-toggle-incontournable">
-                    <div class="check-box"><i data-lucide="check"></i></div>
+                    <i class="poi-toggle-icon" data-lucide="${isIncontournable ? 'star' : 'star-off'}"></i>
                     <div class="lab-text">Incontournable<span class="lab-hint">${isIncontournable ? 'Mis en avant sur la carte' : 'Mettre en avant sur la carte'}</span></div>
                 </div>
                 <textarea class="poi-notes-area" id="poi-notes-area" placeholder="Mes notes : impressions, conseils, photos manquantes…">${escapeXml(notes)}</textarea>
@@ -311,7 +311,9 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
 
     // ========== TEMPLATE DESKTOP ==========
     if (!mobile) {
-        const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: true });
+        // PC : pas de croix de fermeture (audit Stefan #2 : la nav se fait
+        // via les onglets sidebar, croix redondante).
+        const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: false });
 
         return `
             <div class="poi-panel" data-poi-id="${escapeXml(feature.properties.HW_ID || '')}">
