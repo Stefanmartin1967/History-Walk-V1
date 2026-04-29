@@ -9,7 +9,6 @@ import { DOM } from './ui-dom.js';
 import { showToast } from './toast.js';
 import { loadCircuitDraft } from './circuit.js';
 import { recalculatePlannedCountersForMap } from './circuit-actions.js';
-import { initCircuitPageEvents } from './ui-circuit-page-events.js';
 import { updateCurrencyUnits } from './circuit-view.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';

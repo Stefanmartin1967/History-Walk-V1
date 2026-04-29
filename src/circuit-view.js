@@ -110,6 +110,10 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
     if (!DOM.circuitStepsList) return;
     DOM.circuitStepsList.innerHTML = '';
 
+    // Conserve les callbacks pour initTimelineDrag (notamment onReorder, qui
+    // appelle saveCircuitDraft + renderCircuitPanel sans réimporter circuit.js).
+    _currentCallbacks = callbacks;
+
     const isCreateMode = !state.activeCircuitId;
 
     if (points.length === 0) {
@@ -147,6 +151,7 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
 }
 
 let _sortableInstance = null;
+let _currentCallbacks = null;
 
 function initTimelineDrag() {
     // Mode création uniquement
@@ -194,10 +199,12 @@ function initTimelineDrag() {
             arr.splice(adjNew, 0, moved);
             setCurrentCircuit(arr);
 
-            // Sauvegarde brouillon + re-render (renumérote les steps)
-            const { saveCircuitDraft, renderCircuitPanel } = await import('./circuit.js');
-            await saveCircuitDraft();
-            renderCircuitPanel();
+            // Sauvegarde brouillon + re-render (renumérote les steps) via le
+            // callback passé par circuit.js — évite un import dynamique qui
+            // casserait la propriété "0 cycle madge".
+            if (_currentCallbacks?.onReorder) {
+                await _currentCallbacks.onReorder();
+            }
         },
     });
 }

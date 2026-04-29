@@ -131,7 +131,6 @@ function resetState() {
         noPhoto: false,
         noDesc: false
     };
-    state.selectionModeFilters = { hideVisited: false, hidePlanned: false };
     _hwidCounter = 0;
 }
 
@@ -260,13 +259,15 @@ describe('getFilteredFeatures', () => {
         expect(r.map(f => f.properties.HW_ID)).toEqual(['p2']);
     });
 
-    it('mode sélection : selectionModeFilters.hideVisited filtre indépendamment', () => {
+    it('mode sélection : utilise activeFilters comme partout (pas de filtre dédié)', () => {
+        // PR #398 : selectionModeFilters supprimé. En mode sélection, le filtrage
+        // suit les filtres topbar comme en mode normal — un seul système.
         state.loadedFeatures = [
             poi('p1', { userData: { vu: true } }),
             poi('p2', { userData: { vu: false } })
         ];
         state.isSelectionModeActive = true;
-        state.selectionModeFilters.hideVisited = true;
+        state.activeFilters.vus = 'hide';
         const r = getFilteredFeatures();
         expect(r.map(f => f.properties.HW_ID)).toEqual(['p2']);
     });
@@ -326,11 +327,15 @@ describe('passesUserFilters', () => {
         expect(passesUserFilters(poi('p1', { userData: { planifieCounter: 1 } }))).toBe(false);
     });
 
-    it('mode sélection : utilise selectionModeFilters au lieu de activeFilters', () => {
+    it('mode sélection : aucune branche dédiée — activeFilters.vus pilote', () => {
+        // PR #398 : la branche state.isSelectionModeActive a été retirée de
+        // passesUserFilters. activeFilters.vus est la source de vérité unique.
         state.isSelectionModeActive = true;
-        state.activeFilters.vus = 'all'; // ignoré en mode sélection
-        state.selectionModeFilters.hideVisited = true;
+        state.activeFilters.vus = 'hide';
         expect(passesUserFilters(poi('p1', { userData: { vu: true } }))).toBe(false);
+        // Et inversement : si activeFilters.vus='all', aucune exclusion
+        state.activeFilters.vus = 'all';
+        expect(passesUserFilters(poi('p2', { userData: { vu: true } }))).toBe(true);
     });
 
     it('admin : nonVerifies=true exclut les POIs verified=true', () => {
