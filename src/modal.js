@@ -132,9 +132,11 @@ export function openHwModal(opts) {
 }
 
 /**
- * Ferme la modale HW active.
+ * Ferme la modale HW active et résout la promise avec une valeur optionnelle.
+ * @param {*} [value] - Valeur passée au resolve de la promise (ex: true/false
+ *   pour confirm, string pour prompt). Undefined pour les modales sans valeur.
  */
-export function closeHwModal() {
+export function closeHwModal(value) {
     if (!activeHwOverlay) return;
     if (activeHwEscapeHandler) {
         document.removeEventListener('keydown', activeHwEscapeHandler);
@@ -150,7 +152,7 @@ export function closeHwModal() {
     if (activeHwResolve) {
         const resolve = activeHwResolve;
         activeHwResolve = null;
-        resolve();
+        resolve(value);
     }
 }
 
@@ -165,7 +167,10 @@ function escapeText(s) {
 
 /* ============================================================
    LEGACY API — showAlert/showConfirm/showPrompt (sm)
-   À conserver pour rétro-compatibilité avec le code existant.
+   API préservée pour rétro-compatibilité du code appelant. Le backend
+   utilise désormais openHwModal (système V2) au lieu du
+   .custom-modal-box historique → tous les usages bénéficient du
+   nouveau visuel sans changer le code.
    ============================================================ */
 
 
@@ -191,9 +196,17 @@ function resetModal() {
 }
 
 export function closeModal() {
+    // Ferme à la fois les modales legacy (.custom-modal-box) ET V2 (.hw-modal).
+    // Migration V2 : la plupart des modales sont désormais V2, mais quelques
+    // fichiers (admin, fileManager, mobile-circuits) appellent encore closeModal()
+    // explicitement pour fermer leur modale custom — on couvre les 2 cas.
     const { overlay } = getElements();
-    if (overlay) overlay.classList.remove('active');
+    if (overlay && overlay.classList.contains('active')) {
+        overlay.classList.remove('active');
+    }
     activeResolve = null;
+    // Ferme aussi une éventuelle modale V2 ouverte
+    if (activeHwOverlay) closeHwModal();
 }
 
 /**
@@ -203,38 +216,25 @@ export function closeModal() {
  * @param {string|HTMLElement|null} actionsContent - Contenu des actions (boutons) ou null.
  */
 export function showCustomModal(titleText, content, actionsContent = null, customClass = null) {
-    resetModal();
-    const { overlay, box, title, message, actions } = getElements();
+    // Migration V2 : utilise openHwModal en interne. Le paramètre customClass
+    // est conservé pour rétro-compat mais ignoré (le styling se fait via
+    // size/variant du nouveau système).
+    let body = '';
+    if (typeof content === 'string') body = content;
+    else if (content instanceof HTMLElement) body = content.outerHTML;
 
-    if (!overlay) return;
-
-    if (customClass && box) {
-        box.classList.add(customClass);
-    }
-
-    // Titre
-    title.textContent = titleText;
-
-    // Contenu (Message)
-    message.innerHTML = '';
-    if (typeof content === 'string') {
-        message.innerHTML = content;
-    } else if (content instanceof HTMLElement) {
-        message.appendChild(content);
-    }
-
-    // Actions (Footer)
-    actions.innerHTML = '';
+    let footer = null;
     if (actionsContent) {
-        if (typeof actionsContent === 'string') {
-            actions.innerHTML = actionsContent;
-        } else if (actionsContent instanceof HTMLElement) {
-            actions.appendChild(actionsContent);
-        }
+        if (typeof actionsContent === 'string') footer = actionsContent;
+        else if (actionsContent instanceof HTMLElement) footer = actionsContent.outerHTML;
     }
 
-    // Affichage
-    overlay.classList.add('active');
+    return openHwModal({
+        size: 'md',
+        title: titleText,
+        body,
+        footer,
+    });
 }
 
 /**
@@ -247,50 +247,41 @@ export function showCustomModal(titleText, content, actionsContent = null, custo
  * @returns {Promise<boolean>} - Résout true si confirmé, false sinon.
  */
 export function showConfirm(titleText, messageText, confirmLabel = "Oui", cancelLabel = "Annuler", isDanger = false) {
-    return new Promise((resolve) => {
-        resetModal();
-        const { overlay, title, message, actions } = getElements();
+    // Migration V2 : openHwModal sm avec footer custom (Annuler à gauche,
+    // Confirmer à droite). Variante 'danger' si isDanger.
+    const confirmBtnCls = isDanger ? 'hw-btn-danger' : 'hw-btn-primary';
+    const footer = `
+        <button class="hw-btn hw-btn-ghost" data-confirm-action="cancel">${escapeText(cancelLabel)}</button>
+        <button class="hw-btn ${confirmBtnCls}" data-confirm-action="confirm">${escapeText(confirmLabel)}</button>
+    `;
 
-        // Sécurité si le DOM n'est pas prêt (ne devrait pas arriver)
-        if (!overlay) {
-            console.error("Modal overlay not found in DOM");
-            return resolve(window.confirm(messageText)); // Fallback natif
-        }
-
-        activeResolve = resolve;
-
-        // Contenu
-        title.textContent = titleText;
-        message.innerHTML = messageText;
-
-        // Nettoyage boutons
-        actions.innerHTML = '';
-
-        // 1. Bouton Action (Primaire/Danger) - Placé à GAUCHE selon la demande Architecte [SUPPRIMER] [Garder]
-        const btnConfirm = document.createElement('button');
-        btnConfirm.className = isDanger ? 'custom-modal-btn danger' : 'custom-modal-btn primary';
-        btnConfirm.textContent = confirmLabel;
-        btnConfirm.onclick = () => {
-            closeModal();
-            resolve(true);
-        };
-
-        // 2. Bouton Annuler (Secondaire) - Placé à DROITE
-        const btnCancel = document.createElement('button');
-        btnCancel.className = 'custom-modal-btn secondary';
-        btnCancel.textContent = cancelLabel;
-        btnCancel.onclick = () => {
-            closeModal();
-            resolve(false);
-        };
-
-        actions.appendChild(btnConfirm);
-        actions.appendChild(btnCancel);
-
-        // Affichage
-        overlay.classList.add('active');
+    return openHwModal({
+        size: 'sm',
+        variant: isDanger ? 'danger' : 'default',
+        icon: isDanger ? 'alert-triangle' : null,
+        title: titleText,
+        body: `<p>${messageText}</p>`,
+        footer,
+        // Backdrop fermeture = équivalent "annuler" → pas de fermeture spontanée
+        // pour les confirms danger (force un choix explicite).
+        closeOnBackdrop: !isDanger,
+    }).then((result) => {
+        // Si la modale est fermée via la croix/Escape/backdrop, result est undefined
+        // → on traite comme "annuler" (false). Si l'utilisateur a cliqué un bouton
+        // explicite, le handler ci-dessous a déjà résolu avec true/false.
+        return result === true;
+    }).finally(() => {
+        // (no-op, juste pour la lisibilité)
     });
 }
+
+// Listener global pour les boutons des confirm (délégation depuis le body)
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-confirm-action]');
+    if (!btn) return;
+    const action = btn.dataset.confirmAction;
+    closeHwModal(action === 'confirm');
+});
 
 /**
  * Affiche une modale de saisie de texte (Input).
@@ -300,65 +291,55 @@ export function showConfirm(titleText, messageText, confirmLabel = "Oui", cancel
  * @returns {Promise<string|null>} - La valeur saisie ou null si annulé.
  */
 export function showPrompt(titleText, messageText, defaultValue = "") {
-    return new Promise((resolve) => {
-        resetModal();
-        const { overlay, title, message, actions } = getElements();
+    // Migration V2 : openHwModal sm avec body texte + input + footer
+    // (Annuler à gauche, Valider à droite). Resolve avec la valeur de
+    // l'input ou null si annulé.
+    const body = `
+        <p>${messageText}</p>
+        <input type="text" class="hw-input" id="hw-prompt-input" style="margin-top:12px">
+    `;
+    const footer = `
+        <button class="hw-btn hw-btn-ghost" data-prompt-action="cancel">Annuler</button>
+        <button class="hw-btn hw-btn-primary" data-prompt-action="confirm">Valider</button>
+    `;
 
-        if (!overlay) {
-            return resolve(window.prompt(messageText, defaultValue));
-        }
-
-        activeResolve = resolve;
-
-        title.textContent = titleText;
-        // On construit le HTML : Message + Input
-        message.innerHTML = `
-            <div class="modal-prompt-body">
-                <span>${messageText}</span>
-                <input type="text" id="custom-modal-input" class="modal-prompt-input">
-            </div>
-        `;
-
-        // Sécurité : Assignation via propriété (et non attribut HTML) pour éviter XSS et problèmes de quotes
-        const inputField = document.getElementById('custom-modal-input');
-        if (inputField) inputField.value = defaultValue;
-        actions.innerHTML = '';
-
-        const input = document.getElementById('custom-modal-input'); // Sera dispo après l'ajout au DOM via innerHTML ? Non, il faut append.
-        // innerHTML est synchrone, donc le DOM est mis à jour immédiatement mais getElementById doit chercher dans le document.
-        // Comme 'message' est dans le document, ça devrait marcher.
-
-        const btnConfirm = document.createElement('button');
-        btnConfirm.className = 'custom-modal-btn primary';
-        btnConfirm.textContent = "Valider";
-        btnConfirm.onclick = () => {
-            const val = document.getElementById('custom-modal-input').value;
-            closeModal();
-            resolve(val);
-        };
-
-        const btnCancel = document.createElement('button');
-        btnCancel.className = 'custom-modal-btn secondary';
-        btnCancel.textContent = "Annuler";
-        btnCancel.onclick = () => {
-            closeModal();
-            resolve(null);
-        };
-
-        actions.appendChild(btnConfirm);
-        actions.appendChild(btnCancel);
-
-        overlay.classList.add('active');
-
-        // Focus l'input
-        setTimeout(() => {
-            const inp = document.getElementById('custom-modal-input');
-            if(inp) {
-                inp.focus();
-                inp.select();
-            }
-        }, 50);
+    return openHwModal({
+        size: 'sm',
+        title: titleText,
+        body,
+        footer,
+    }).then((result) => {
+        // Si fermé par bouton confirm/cancel, result est string|null. Sinon undefined.
+        return result === undefined ? null : result;
     });
+}
+
+// Listener global pour les boutons de prompt
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-prompt-action]');
+    if (!btn) return;
+    const action = btn.dataset.promptAction;
+    if (action === 'confirm') {
+        const input = document.getElementById('hw-prompt-input');
+        closeHwModal(input ? input.value : '');
+    } else {
+        closeHwModal(null);
+    }
+});
+
+// Focus auto sur l'input prompt à l'ouverture
+const promptObserver = new MutationObserver(() => {
+    const input = document.getElementById('hw-prompt-input');
+    if (input && document.activeElement !== input) {
+        // Petit délai pour laisser la transition d'apparition
+        setTimeout(() => {
+            input.focus();
+            input.select();
+        }, 80);
+    }
+});
+if (typeof document !== 'undefined' && document.body) {
+    promptObserver.observe(document.body, { childList: true, subtree: true });
 }
 
 /**
@@ -371,42 +352,36 @@ export function showPrompt(titleText, messageText, defaultValue = "") {
  * @returns {Promise<void>}
  */
 export function showAlert(titleText, messageText, okLabel = "OK", customClass = null, onReady = null) {
-    return new Promise((resolve) => {
-        resetModal();
-        const { overlay, box, title, message, actions } = getElements();
+    // Migration V2 : openHwModal sm avec un seul bouton qui résout la promise.
+    // Le paramètre customClass est conservé pour rétro-compat mais ignoré
+    // (le styling se fait via size/variant). onReady est appelé après ouverture.
+    const footer = `<button class="hw-btn hw-btn-primary" data-alert-action="ok">${escapeText(okLabel)}</button>`;
 
-        if (!overlay) {
-            window.alert(messageText);
-            return resolve();
-        }
-
-        if (customClass && box) {
-            box.classList.add(customClass);
-        }
-
-        activeResolve = resolve;
-
-        title.textContent = titleText;
-        message.innerHTML = messageText;
-        actions.innerHTML = '';
-
-        const btnOk = document.createElement('button');
-        btnOk.className = 'custom-modal-btn primary';
-        btnOk.textContent = okLabel;
-        btnOk.onclick = () => {
-            closeModal();
-            resolve();
-        };
-
-        actions.appendChild(btnOk);
-        overlay.classList.add('active');
-
-        // Callback "onReady" pour attacher des listeners ou manipuler le DOM
-        if (typeof onReady === 'function') {
-            // Un petit délai pour s'assurer que le DOM est bien rendu si nécessaire,
-            // mais comme on manipule le DOM synchrone juste au-dessus, appel direct OK.
-            // On passe les éléments utiles au callback
-            onReady({ messageContainer: message, overlay });
-        }
+    const promise = openHwModal({
+        size: 'sm',
+        title: titleText,
+        body: messageText,
+        footer,
     });
+
+    // Callback "onReady" pour les usages historiques qui attachent des listeners
+    // au contenu après rendu (cf. ranking modal, explorer card iframe…)
+    if (typeof onReady === 'function') {
+        // Délai pour laisser le DOM se mettre en place (createElement + append).
+        setTimeout(() => {
+            const overlay = document.querySelector('.hw-modal-overlay.is-active');
+            const messageContainer = overlay?.querySelector('.hw-modal-body');
+            if (messageContainer) {
+                onReady({ messageContainer, overlay });
+            }
+        }, 30);
+    }
+
+    return promise;
 }
+
+// Listener global pour le bouton OK des alerts
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-alert-action="ok"]');
+    if (btn) closeHwModal();
+});
