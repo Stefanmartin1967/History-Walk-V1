@@ -2,7 +2,7 @@ import { state } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStoredToken, saveToken, uploadFileToGitHub } from './github-sync.js';
 import { showToast } from './toast.js';
-import { showAlert } from './modal.js';
+import { openHwModal, closeHwModal } from './modal.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
 import { GITHUB_OWNER, GITHUB_REPO } from './config.js';
 
@@ -10,92 +10,79 @@ import { GITHUB_OWNER, GITHUB_REPO } from './config.js';
 
 
 export function openControlCenterModal(diffData, callbacks) {
-    const html = `
-        <div class="admin-cc-container">
-            <div class="admin-cc-header">
-                <div class="header-top-row">
-                    <div class="header-brand">
-                        <span class="brand-castle">🏰</span> History Walk <span class="brand-subtitle">| Admin</span>
-                    </div>
-                    <div class="header-user">
-                        <span class="header-greeting">Bonjour <strong>Admin</strong> 👋</span>
-                        <div class="avatar-circle">AD</div>
-                    </div>
-                </div>
-                <div class="admin-cc-tabs">
-                    <div class="admin-cc-tab active" data-tab="dashboard"><i data-lucide="layout-grid" width="16"></i> Dashboard</div>
-                    <div class="admin-cc-tab" data-tab="changes"><i data-lucide="list-checks" width="16"></i> Modifications</div>
-                    <div class="admin-cc-tab" data-tab="maintenance"><i data-lucide="server" width="16"></i> Nettoyage</div>
-                    <div class="admin-cc-tab" data-tab="settings"><i data-lucide="settings" width="16"></i> Config</div>
-                </div>
-            </div>
+    // Migration V2 : openHwModal lg avec tabs intégrés au body (option B :
+    // tabs inline plutôt qu'un nouveau pattern réutilisable du système).
+    // Le hack legacy (showAlert + customClass + masquage manuel + observer)
+    // est remplacé par une utilisation directe et propre du système V2.
 
-            <div class="admin-cc-scroll-area">
-                <div id="admin-cc-content">
-                    <div class="cc-loading-state">
-                        <i data-lucide="loader-2" class="spin cc-loading-icon"></i>
-                        <div class="cc-loading-label">Analyse des modifications en cours...</div>
-                    </div>
-                </div>
-            </div>
+    const body = `
+        <div class="admin-cc-tabs ue-tabs">
+            <button class="admin-cc-tab ue-tab is-active" type="button" data-tab="dashboard"><i data-lucide="layout-grid"></i> Dashboard</button>
+            <button class="admin-cc-tab ue-tab" type="button" data-tab="changes"><i data-lucide="list-checks"></i> Modifications</button>
+            <button class="admin-cc-tab ue-tab" type="button" data-tab="maintenance"><i data-lucide="server"></i> Nettoyage</button>
+            <button class="admin-cc-tab ue-tab" type="button" data-tab="settings"><i data-lucide="settings"></i> Config</button>
+        </div>
 
-            <div class="admin-cc-footer" id="admin-cc-footer-actions">
-                <button class="custom-modal-btn secondary" data-action="close-modal">Fermer</button>
-                <button id="btn-cc-publish" title="Tout publier" aria-label="Tout publier"><i data-lucide="rocket" width="18"></i> TOUT PUBLIER</button>
+        <div id="admin-cc-content" class="admin-cc-scroll-area">
+            <div class="cc-loading-state">
+                <i data-lucide="loader-2" class="spin cc-loading-icon"></i>
+                <div class="cc-loading-label">Analyse des modifications en cours…</div>
             </div>
         </div>
     `;
 
-    showAlert("", html, null, 'admin-cc-mode');
+    const footer = `
+        <button class="hw-btn hw-btn-ghost" data-cc-action="close">Fermer</button>
+        <button class="hw-btn hw-btn-primary" id="btn-cc-publish" title="Tout publier" aria-label="Tout publier">
+            <i data-lucide="rocket"></i> TOUT PUBLIER
+        </button>
+    `;
 
-    // Nettoyage des titres par défaut du modal
-    const modal = document.querySelector('.custom-modal-box.admin-cc-mode');
-    if(modal) {
-        // Hide default title and actions if they exist
-        const defaultTitle = document.getElementById('custom-modal-title');
-        if (defaultTitle) defaultTitle.style.display = 'none';
-        const defaultActions = document.getElementById('custom-modal-actions');
-        if (defaultActions) defaultActions.style.display = 'none';
-    }
+    openHwModal({
+        size: 'lg',
+        icon: 'shield-check',
+        title: 'Control Center · Admin',
+        body,
+        footer,
+        // CC est complexe (4 tabs, tableaux, formulaires) : pas de fermeture
+        // au clic backdrop pour éviter les pertes accidentelles.
+        closeOnBackdrop: false,
+    });
 
-    // Clean up when modal closes
-    const overlay = document.getElementById('custom-modal-overlay');
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.attributeName === 'class' && !overlay.classList.contains('active')) {
-                // Remove custom class when closed
-                const modalContent = document.querySelector('.custom-modal-box');
-                if (modalContent) modalContent.classList.remove('admin-cc-mode');
-                const defaultTitle = document.getElementById('custom-modal-title');
-                if (defaultTitle) defaultTitle.style.display = 'block';
-                const defaultActions = document.getElementById('custom-modal-actions');
-                if (defaultActions) defaultActions.style.display = 'flex';
-                observer.disconnect();
-            }
+    // Bind après ouverture (DOM prêt)
+    setTimeout(() => {
+        // Tabs
+        const tabs = document.querySelectorAll('.hw-modal .admin-cc-tab');
+        tabs.forEach(t => {
+            t.addEventListener('click', () => {
+                tabs.forEach(x => x.classList.remove('is-active'));
+                t.classList.add('is-active');
+                renderTab(t.dataset.tab, diffData, callbacks);
+            });
         });
-    });
-    observer.observe(overlay, { attributes: true });
 
-    // Tab Logic
-    const tabs = document.querySelectorAll('.admin-cc-tab');
-    tabs.forEach(t => {
-        t.onclick = () => {
-            tabs.forEach(x => x.classList.remove('active'));
-            t.classList.add('active');
-            renderTab(t.dataset.tab, diffData, callbacks);
-        };
-    });
+        // Bouton "TOUT PUBLIER"
+        const btnPublish = document.getElementById('btn-cc-publish');
+        if (btnPublish && callbacks.publishChanges) btnPublish.onclick = callbacks.publishChanges;
 
-    const btnPublish = document.getElementById('btn-cc-publish');
-    if(btnPublish && callbacks.publishChanges) btnPublish.onclick = callbacks.publishChanges;
+        // Bouton "Fermer" du footer
+        document.querySelector('[data-cc-action="close"]')?.addEventListener('click', () => closeHwModal());
 
+        bindCCEventDelegation(diffData, callbacks);
+
+        // Render initial tab
+        renderTab('dashboard', diffData, callbacks);
+    }, 30);
+}
+
+function bindCCEventDelegation(diffData, callbacks) {
     // Event Delegation for Admin Control Center
     const container = document.getElementById('admin-cc-content');
     if (container) {
         container.addEventListener('click', (e) => {
             // Close modal
             if (e.target.closest('[data-action="close-modal"]')) {
-                document.getElementById('custom-modal-overlay').classList.remove('active');
+                closeHwModal();
                 return;
             }
             // Toggle Details
@@ -151,18 +138,8 @@ export function openControlCenterModal(diffData, callbacks) {
         });
     }
 
-    const footer = document.getElementById('admin-cc-footer-actions');
-    if (footer) {
-        footer.addEventListener('click', (e) => {
-            if (e.target.closest('[data-action="close-modal"]')) {
-                document.getElementById('custom-modal-overlay').classList.remove('active');
-            }
-        });
-    }
-
-    // Icons for initial load
-    createIcons({ icons: appIcons, root: document.querySelector('.admin-cc-header') });
-    createIcons({ icons: appIcons, root: document.querySelector('.admin-cc-footer') });
+    // Icons rendered on the modal root (header + footer + body initial state)
+    createIcons({ icons: appIcons, root: document.querySelector('.hw-modal') });
 }
 
 /**

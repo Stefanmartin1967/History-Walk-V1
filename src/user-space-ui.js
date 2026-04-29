@@ -1,85 +1,51 @@
 // user-space-ui.js — Interface "Mon Espace" (côté utilisateur)
 import { state, setHomeLocation } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { showAlert } from './modal.js';
+import { openHwModal, closeHwModal } from './modal.js';
 import { saveAppState } from './database.js';
 import { showToast } from './toast.js';
 
 export function openUserSpaceModal(callbacks) {
-    const html = `
-        <div class="ue-container">
-            <div class="ue-header">
-                <div class="ue-header-top">
-                    <div class="ue-header-brand">
-                        <span class="ue-brand-icon">🧳</span>
-                        Mon Espace
-                        <span class="ue-brand-subtitle">/ Mon voyage</span>
-                    </div>
-                    <button class="ue-close-icon-btn" id="btn-ue-close" title="Fermer">
-                        <i data-lucide="x"></i>
-                    </button>
-                </div>
-                <div class="ue-tabs">
-                    <div class="ue-tab active" data-tab="circuits">
-                        <i data-lucide="map"></i> Mes Circuits
-                    </div>
-                    <div class="ue-tab" data-tab="data">
-                        <i data-lucide="hard-drive"></i> Mes Données
-                    </div>
-                    <div class="ue-tab" data-tab="trash">
-                        <i data-lucide="trash-2"></i> Corbeille
-                    </div>
-                </div>
-            </div>
+    // Migration V2 : openHwModal lg avec tabs intégrés au body (option B audit
+    // Stefan : tabs inline plutôt qu'un nouveau pattern réutilisable).
+    // La logique métier (renderUserTab) reste inchangée.
 
-            <div class="ue-scroll-area">
-                <div id="ue-content"></div>
-            </div>
-
-            <div class="ue-footer">
-                <button class="custom-modal-btn secondary" id="btn-ue-footer-close">Fermer</button>
-            </div>
+    const body = `
+        <div class="ue-tabs">
+            <button class="ue-tab is-active" type="button" data-tab="circuits">
+                <i data-lucide="map"></i> Mes Circuits
+            </button>
+            <button class="ue-tab" type="button" data-tab="data">
+                <i data-lucide="hard-drive"></i> Mes Données
+            </button>
+            <button class="ue-tab" type="button" data-tab="trash">
+                <i data-lucide="trash-2"></i> Corbeille
+            </button>
         </div>
+
+        <div id="ue-content" class="ue-content"></div>
     `;
 
-    showAlert('', html, null, 'user-space-mode');
-
-    // Masquer les éléments par défaut du modal générique
-    const defaultTitle = document.getElementById('custom-modal-title');
-    if (defaultTitle) defaultTitle.style.display = 'none';
-    const defaultActions = document.getElementById('custom-modal-actions');
-    if (defaultActions) defaultActions.style.display = 'none';
-
-    const overlay = document.getElementById('custom-modal-overlay');
-
-    // Nettoyage à la fermeture
-    const observer = new MutationObserver(() => {
-        if (!overlay.classList.contains('active')) {
-            document.querySelector('.custom-modal-box')?.classList.remove('user-space-mode');
-            if (defaultTitle) defaultTitle.style.display = 'block';
-            if (defaultActions) defaultActions.style.display = 'flex';
-            observer.disconnect();
-        }
-    });
-    observer.observe(overlay, { attributes: true });
-
-    // Boutons fermer (header ✕ + footer)
-    const closeModal = () => overlay.classList.remove('active');
-    document.getElementById('btn-ue-close')?.addEventListener('click', closeModal);
-    document.getElementById('btn-ue-footer-close')?.addEventListener('click', closeModal);
-
-    // Tabs
-    const tabs = document.querySelectorAll('.ue-tab');
-    tabs.forEach(t => {
-        t.onclick = () => {
-            tabs.forEach(x => x.classList.remove('active'));
-            t.classList.add('active');
-            renderUserTab(t.dataset.tab, callbacks);
-        };
+    openHwModal({
+        size: 'lg',
+        icon: 'briefcase',
+        title: 'Mon Espace',
+        body,
+        footer: false, // croix du header suffit (audit Stefan : éviter redondance)
     });
 
-    createIcons({ icons: appIcons, root: document.querySelector('.ue-header') });
-    renderUserTab('circuits', callbacks);
+    // Bind après ouverture (DOM prêt)
+    setTimeout(() => {
+        const tabs = document.querySelectorAll('.hw-modal .ue-tab');
+        tabs.forEach(t => {
+            t.addEventListener('click', () => {
+                tabs.forEach(x => x.classList.remove('is-active'));
+                t.classList.add('is-active');
+                renderUserTab(t.dataset.tab, callbacks);
+            });
+        });
+        renderUserTab('circuits', callbacks);
+    }, 30);
 }
 
 export function renderUserTab(tab, callbacks) {

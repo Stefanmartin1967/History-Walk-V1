@@ -588,24 +588,41 @@
 .ue-close-icon-btn:hover { background: #F1F5F9; color: var(--hw-ink, #1C0A00); }
 .ue-close-icon-btn svg { width: 18px; height: 18px; }
 
-/* ── TABS (style dossier comme CC) ───────────────────────────────────────── */
-.ue-tabs { display: flex; gap: 4px; }
-.ue-tab {
-    display: flex; align-items: center; gap: 7px;
-    padding: 8px 16px;
-    border-radius: 10px 10px 0 0;
-    font-size: 0.83rem; font-weight: 700;
-    cursor: pointer;
-    color: #64748B;
-    border: 1px solid transparent;
-    border-bottom: none;
-    transition: background 0.2s, color 0.2s;
+/* ── TABS theme-aware (utilisé par Mon Espace + CC Admin V2) ─────────────── */
+.ue-tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--line);
+    margin: -8px -8px 16px;
+    padding: 0 8px;
 }
-.ue-tab:hover { background: #F1F5F9; color: var(--hw-ink, #1C0A00); }
+.ue-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 16px;
+    background: transparent;
+    /* appearance:none pour reset le fond gris par défaut des <button> */
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.ue-tab:hover {
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+.ue-tab.is-active,
 .ue-tab.active {
-    background: var(--hw-cream, #FFFBF5);
-    color: var(--hw-amber, #D97706);
-    border-color: #E5E7EB;
+    color: var(--brand-2);
+    border-bottom-color: var(--brand);
+    font-weight: 700;
 }
 .ue-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
 
