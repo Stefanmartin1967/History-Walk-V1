@@ -62,7 +62,10 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     });
 
     // 2. Couche "Satellite Hybride" (Google Maps) - Le meilleur compromis
-    const googleHybridLayer = L.tileLayer('http://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+    // HTTPS forcé : le CSP `img-src` n'autorise que `https://*.google.com`. En
+    // ligne, Chrome fait un Mixed Content Auto-Upgrade pour HTTP → HTTPS, mais
+    // en dev local (HTTP), pas d'auto-upgrade → la tile était bloquée.
+    const googleHybridLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
         attribution: '&copy; Google Maps'

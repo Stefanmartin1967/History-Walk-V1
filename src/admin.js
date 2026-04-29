@@ -3,7 +3,7 @@ import { eventBus } from './events.js';
 import { downloadFile, getPoiId } from './utils.js';
 import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui-utils.js';
-import { showAlert, showConfirm } from './modal.js';
+import { showAlert, showConfirm, openHwModal } from './modal.js';
 import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
@@ -375,15 +375,20 @@ function showRankTable() {
         </tr>
     `).join('');
 
-    const html = `
-        <div class="rank-tabs-wrapper">
-            <div class="rank-tabs-nav">
-                <button class="rank-tab-btn active" data-tab="animals">🐾 Animaux</button>
-                <button class="rank-tab-btn" data-tab="materials">💎 Matières</button>
-                <button class="rank-tab-btn" data-tab="global">⭐ Global</button>
-            </div>
+    // Migration V2 : openHwModal md avec subheader (tabs) + body (panels).
+    // Pattern Mon Espace : footer false (croix uniquement) — c'est une modale
+    // info-only, le bouton "Fermer" en footer ne sert à rien.
+    const subheader = `
+        <div class="ue-tabs">
+            <button class="ue-tab is-active" type="button" data-rank-tab="animals">🐾 Animaux</button>
+            <button class="ue-tab" type="button" data-rank-tab="materials">💎 Matières</button>
+            <button class="ue-tab" type="button" data-rank-tab="global">⭐ Global</button>
+        </div>
+    `;
 
-            <div class="rank-tab-panel active" id="rank-panel-animals">
+    const body = `
+        <div class="rank-tabs-wrapper">
+            <div class="rank-tab-panel is-active" id="rank-panel-animals">
                 <p class="rank-tab-hint">Basé sur le % de distance officielle parcourue</p>
                 <table class="rank-table">
                     <thead><tr><th>Badge</th><th>Titre</th><th>Requis</th></tr></thead>
@@ -409,28 +414,41 @@ function showRankTable() {
         </div>
     `;
 
-    showAlert("Tableau des Rangs", html, "Fermer");
+    openHwModal({
+        size: 'md',
+        icon: 'award',
+        title: 'Tableau des Rangs',
+        subheader,
+        body,
+        footer: false,
+    });
 
-    // Activer la logique des onglets + refresh icônes
-    const modalContent = document.getElementById('custom-modal-message');
-    if (modalContent) {
-        createIcons({ icons: appIcons, root: modalContent });
+    // Bind après ouverture (DOM prêt)
+    setTimeout(() => {
+        const modalEl = document.querySelector('.hw-modal-overlay.is-active .hw-modal');
+        if (!modalEl) return;
 
-        // Appliquer la couleur de fond des rank-dot via CSSOM (CSP-safe)
-        modalContent.querySelectorAll('.rank-dot[data-color]').forEach(dot => {
+        // 1. Icônes Lucide
+        createIcons({ icons: appIcons, root: modalEl });
+
+        // 2. Couleur des rank-dot via CSSOM (CSP-safe)
+        modalEl.querySelectorAll('.rank-dot[data-color]').forEach(dot => {
             dot.style.backgroundColor = dot.dataset.color;
         });
 
-        modalContent.querySelectorAll('.rank-tab-btn').forEach(btn => {
+        // 3. Logique des onglets
+        const tabs = modalEl.querySelectorAll('.ue-tab[data-rank-tab]');
+        const panels = modalEl.querySelectorAll('.rank-tab-panel');
+        tabs.forEach(btn => {
             btn.addEventListener('click', () => {
-                const target = btn.dataset.tab;
-                modalContent.querySelectorAll('.rank-tab-btn').forEach(b => b.classList.remove('active'));
-                modalContent.querySelectorAll('.rank-tab-panel').forEach(p => p.classList.remove('active'));
-                btn.classList.add('active');
-                modalContent.querySelector(`#rank-panel-${target}`).classList.add('active');
+                const target = btn.dataset.rankTab;
+                tabs.forEach(b => b.classList.remove('is-active'));
+                panels.forEach(p => p.classList.remove('is-active'));
+                btn.classList.add('is-active');
+                modalEl.querySelector(`#rank-panel-${target}`)?.classList.add('is-active');
             });
         });
-    }
+    }, 30);
 }
 
 // --- GITHUB UPLOAD UI ---

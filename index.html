@@ -376,105 +376,10 @@
         </div>
     </div>
 
-    <!-- NOUVELLE MODALE RICHE (ADMIN / CREATION) -->
-    <div id="rich-poi-modal" class="modal-overlay is-hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="rich-poi-header-title">
-                    <h2 id="rich-poi-modal-title">Éditer le Lieu</h2>
-                    <div id="rich-poi-nav-controls" class="rich-poi-nav-controls is-hidden">
-                        <button id="btn-rich-prev" class="header-btn" title="Précédent" aria-label="Précédent"><i data-lucide="chevron-left"></i></button>
-                        <button id="btn-rich-next" class="header-btn" title="Suivant" aria-label="Suivant"><i data-lucide="chevron-right"></i></button>
-                    </div>
-                </div>
-                <button id="close-rich-poi-modal" class="header-btn" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
-            </div>
-            <div class="modal-body">
+    <!-- Modale Rich POI Editor : migrée V2 (système hw-modal). Le HTML est
+         désormais une string template dans src/richEditor.js, créée à la
+         demande par openHwModal. Plus de DOM statique ici. -->
 
-                <!-- Ligne 1 : Noms -->
-                <div class="rich-poi-row-2col">
-                    <div class="input-group">
-                        <label for="rich-poi-name-fr">Nom (FR)*</label>
-                        <input type="text" id="rich-poi-name-fr" class="editable-input">
-                    </div>
-                    <div class="input-group">
-                        <label for="rich-poi-name-ar">Nom (AR)</label>
-                        <input type="text" id="rich-poi-name-ar" class="editable-input" placeholder="الاسم بالعربية">
-                    </div>
-                </div>
-
-                <!-- Ligne 2 : Catégorie & Zone -->
-                <div class="rich-poi-row-2col">
-                    <div class="input-group">
-                        <label for="rich-poi-category">Catégorie</label>
-                        <select id="rich-poi-category" class="editable-input">
-                            <!-- Rempli par JS -->
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="rich-poi-zone">Zone</label>
-                        <input type="text" id="rich-poi-zone" class="editable-input" placeholder="Ex: Houmt Souk">
-                    </div>
-                </div>
-
-                <!-- Descriptions -->
-                <div class="input-group">
-                    <label for="rich-poi-desc-short">Description Courte (Résumé)</label>
-                    <input type="text" id="rich-poi-desc-short" class="editable-input" placeholder="Apparaît dans la liste...">
-                </div>
-
-                <div class="input-group">
-                    <label for="rich-poi-desc-long">Description Complète</label>
-                    <textarea id="rich-poi-desc-long" class="editable-input" rows="4"></textarea>
-                </div>
-
-                <!-- Infos Pratiques -->
-                <div class="rich-poi-section-muted">
-                    <div class="input-group">
-                        <label>Temps de visite</label>
-                        <div class="rich-poi-time-row">
-                            <input type="number" id="rich-poi-time-h" class="editable-input" placeholder="H"> h
-                            <input type="number" id="rich-poi-time-m" class="editable-input" placeholder="M"> min
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label for="rich-poi-price">Prix (TND)</label>
-                        <input type="number" id="rich-poi-price" class="editable-input" placeholder="0" step="0.5">
-                    </div>
-                </div>
-
-                <!-- Source & Notes -->
-                <div class="input-group">
-                    <label for="rich-poi-source">Source (URL ou Texte)</label>
-                    <input type="text" id="rich-poi-source" class="editable-input" placeholder="https://...">
-                </div>
-
-                <div class="input-group">
-                    <label for="rich-poi-notes">Notes</label>
-                    <textarea id="rich-poi-notes" class="editable-input" rows="2"></textarea>
-                </div>
-
-                <!-- Footer -->
-                <div class="rich-poi-gps-footer">
-                    <button id="btn-rich-move-marker" class="header-btn" title="Déplacer le marqueur" aria-label="Déplacer le marqueur">
-                        <i data-lucide="move"></i> Déplacer
-                    </button>
-                    <span>📍 GPS : <span id="rich-poi-coords">...</span></span>
-                </div>
-
-                <div class="rich-poi-actions">
-                    <button id="btn-suggest-email" class="action-btn">
-                        <i data-lucide="mail"></i> Suggérer
-                    </button>
-                    <button id="btn-cancel-rich-poi" class="action-btn">Annuler</button>
-                    <button id="btn-save-rich-poi" class="action-btn">
-                        <i data-lucide="save"></i> Enregistrer
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
     <div id="fullscreen-editor">
         <div class="editor-header">

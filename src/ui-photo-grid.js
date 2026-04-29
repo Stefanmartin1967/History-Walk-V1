@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { showToast } from './toast.js';
-import { showConfirm } from './modal.js';
+import { showConfirm, openHwModal, closeHwModal } from './modal.js';
 import { compressImage, generatePhotoId, ADMIN_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
 import { getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos } from './database.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -12,7 +12,6 @@ let currentGridPoiId = null;
 //                 { id: null, src, isNew: false }  pour photos serveur (URL string admin)
 let currentGridPhotos = [];
 let isDirty = false;
-let currentResolve = null;
 
 // Object URLs actives — révoquées à la fermeture de la grille
 let activeObjectUrls = [];
@@ -20,126 +19,20 @@ let activeObjectUrls = [];
 // Mode de compression admin : 'OPTIMIZED' | 'ORIGINAL'
 let adminCompressionKey = 'OPTIMIZED';
 
-// --- DOM ELEMENTS ---
-let gridOverlay = null;
-let gridContent = null;
-let headerTitle = null;
-let headerSubtitle = null;
-let btnAdd = null;
-let btnSave = null;
-let btnClose = null;
-let btnCompToggle = null;
-let fileInput = null;
-
-function initDOM() {
-    if (gridOverlay) return;
-
-    gridOverlay = document.createElement('div');
-    gridOverlay.className = 'photo-grid-overlay';
-
-    const header = document.createElement('div');
-    header.className = 'photo-grid-header';
-
-    // --- Left: Add ---
-    const leftGroup = document.createElement('div');
-    leftGroup.className = 'photo-grid-btn-group';
-
-    // ADD BUTTON (Image Up)
-    btnAdd = document.createElement('button');
-    btnAdd.className = 'photo-grid-btn';
-    btnAdd.title = "Ajouter des photos";
-    btnAdd.innerHTML = `<i data-lucide="image-up"></i>`;
-    btnAdd.onclick = () => fileInput.click();
-
-    // TOGGLE COMPRESSION (admin uniquement — masqué par défaut)
-    btnCompToggle = document.createElement('button');
-    btnCompToggle.className = 'photo-grid-comp-toggle';
-    btnCompToggle.style.display = 'none';
-    btnCompToggle.onclick = () => {
-        adminCompressionKey = adminCompressionKey === 'OPTIMIZED' ? 'ORIGINAL' : 'OPTIMIZED';
-        _updateCompToggle();
-    };
-
-    leftGroup.appendChild(btnAdd);
-    leftGroup.appendChild(btnCompToggle);
-
-    // --- Center: Title ---
-    const titleContainer = document.createElement('div');
-    titleContainer.className = 'photo-grid-title-container';
-
-    headerTitle = document.createElement('div');
-    headerTitle.className = 'photo-grid-title';
-    headerTitle.textContent = "Titre du Lieu";
-
-    headerSubtitle = document.createElement('div');
-    headerSubtitle.className = 'photo-grid-subtitle';
-    // Default empty, populated only for Admin
-
-    titleContainer.appendChild(headerTitle);
-    titleContainer.appendChild(headerSubtitle);
-
-    // --- Right: Save + Close ---
-    const rightGroup = document.createElement('div');
-    rightGroup.className = 'photo-grid-btn-group';
-
-    // SAVE/UPLOAD BUTTON
-    btnSave = document.createElement('button');
-    btnSave.className = 'photo-grid-btn save-btn';
-    btnSave.onclick = handleSave;
-
-    // CLOSE BUTTON
-    btnClose = document.createElement('button');
-    btnClose.className = 'photo-grid-btn close-btn';
-    btnClose.title = "Fermer";
-    btnClose.innerHTML = `<i data-lucide="x"></i>`;
-    btnClose.onclick = () => closePhotoGrid(false);
-
-    rightGroup.appendChild(btnSave);
-    rightGroup.appendChild(btnClose);
-
-    header.appendChild(leftGroup);
-    header.appendChild(titleContainer);
-    header.appendChild(rightGroup);
-
-    gridContent = document.createElement('div');
-    gridContent.className = 'photo-grid-content';
-
-    // Drag & Drop
-    gridContent.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        const afterElement = getDragAfterElement(gridContent, e.clientY, e.clientX);
-        const draggable = document.querySelector('.dragging');
-        if (draggable) {
-            if (afterElement == null) {
-                gridContent.appendChild(draggable);
-            } else {
-                gridContent.insertBefore(draggable, afterElement);
-            }
-        }
-    });
-
-    fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.multiple = true;
-    fileInput.className = 'photo-file-input';
-    fileInput.onchange = handleFileSelect;
-
-    gridOverlay.appendChild(header);
-    gridOverlay.appendChild(gridContent);
-    gridOverlay.appendChild(fileInput);
-
-    document.body.appendChild(gridOverlay);
-}
+// --- DOM REFS (réinitialisés à chaque ouverture de modale V2) ---
+let gridContentEl = null;
+let fileInputEl = null;
+let btnSaveEl = null;
+let btnCompToggleEl = null;
+let subtitleEl = null;
 
 // --- MAIN FUNCTIONS ---
 
 export function openPhotoGrid(poiId, preloadedPhotos = null) {
     return new Promise((resolve) => {
-        initDOM();
         currentGridPoiId = poiId;
         isDirty = false;
-        currentResolve = resolve;
+        adminCompressionKey = 'OPTIMIZED';
 
         const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
         if (!feature && !preloadedPhotos) {
@@ -148,27 +41,106 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
         }
 
         const poiName = feature ? getPoiName(feature) : "Nouveau Lieu";
-        headerTitle.textContent = poiName;
+        const isAdmin = state.isAdmin;
 
-        if (state.isAdmin) {
-            adminCompressionKey = 'OPTIMIZED'; // Repart toujours sur Optimisée à l'ouverture
-            btnCompToggle.style.display = 'flex';
-            _updateCompToggle();
-        } else {
-            headerSubtitle.textContent = "";
-            headerSubtitle.classList.remove('admin-mode');
-            btnCompToggle.style.display = 'none';
-        }
+        const subheader = `
+            <div class="photo-grid-toolbar">
+                <button class="photo-grid-toolbar-btn" id="pg-btn-add" type="button" title="Ajouter des photos">
+                    <i data-lucide="image-up"></i>
+                    <span>Ajouter</span>
+                </button>
+                ${isAdmin ? `
+                    <button class="photo-grid-comp-toggle" id="pg-btn-comp" type="button"></button>
+                    <div class="photo-grid-subtitle" id="pg-subtitle"></div>
+                ` : ''}
+            </div>
+        `;
 
-        updateSaveButton();
-        renderGrid(); // rendu vide initial (spinner implicite via grille vide)
-        gridOverlay.classList.add('active');
-        createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridOverlay });
+        const body = `
+            <div class="photo-grid-content" id="pg-content"></div>
+            <input type="file" accept="image/*" multiple class="photo-file-input" id="pg-file-input">
+        `;
 
-        // Chargement async des photos
-        _loadPhotos(poiId, feature, preloadedPhotos).then(() => {
+        const footer = `
+            <button class="hw-btn hw-btn-ghost" id="pg-btn-cancel" type="button">Annuler</button>
+            <button class="hw-btn hw-btn-primary" id="pg-btn-save" type="button">
+                <i data-lucide="save"></i>
+                <span>Enregistrer</span>
+            </button>
+        `;
+
+        const promise = openHwModal({
+            size: 'xl',
+            icon: 'image',
+            title: poiName,
+            subheader,
+            body,
+            footer,
+        });
+
+        // Bind après ouverture (DOM prêt)
+        setTimeout(() => {
+            gridContentEl = document.getElementById('pg-content');
+            fileInputEl = document.getElementById('pg-file-input');
+            btnSaveEl = document.getElementById('pg-btn-save');
+            btnCompToggleEl = document.getElementById('pg-btn-comp');
+            subtitleEl = document.getElementById('pg-subtitle');
+
+            const btnAdd = document.getElementById('pg-btn-add');
+            const btnCancel = document.getElementById('pg-btn-cancel');
+
+            if (btnAdd) btnAdd.onclick = () => fileInputEl.click();
+            if (btnCancel) btnCancel.onclick = () => closeHwModal({ saved: false });
+            if (btnSaveEl) btnSaveEl.onclick = handleSave;
+            if (fileInputEl) fileInputEl.onchange = handleFileSelect;
+
+            if (btnCompToggleEl) {
+                btnCompToggleEl.onclick = () => {
+                    adminCompressionKey = adminCompressionKey === 'OPTIMIZED' ? 'ORIGINAL' : 'OPTIMIZED';
+                    _updateCompToggle();
+                };
+                _updateCompToggle();
+            }
+
+            // Drag & drop sur la grille
+            if (gridContentEl) {
+                gridContentEl.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElement(gridContentEl, e.clientY, e.clientX);
+                    const draggable = gridContentEl.querySelector('.dragging');
+                    if (draggable) {
+                        if (afterElement == null) {
+                            gridContentEl.appendChild(draggable);
+                        } else {
+                            gridContentEl.insertBefore(draggable, afterElement);
+                        }
+                    }
+                });
+            }
+
             renderGrid();
-            createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+            createIcons({ icons: appIcons, root: document.querySelector('.hw-modal') });
+
+            // Chargement async des photos
+            _loadPhotos(poiId, feature, preloadedPhotos).then(() => {
+                renderGrid();
+                if (gridContentEl) createIcons({ icons: appIcons, root: gridContentEl });
+            });
+        }, 30);
+
+        // Cleanup à la fermeture (peu importe la cause : croix, Escape, backdrop, bouton)
+        promise.then((result) => {
+            activeObjectUrls.forEach(u => URL.revokeObjectURL(u));
+            activeObjectUrls = [];
+            currentGridPhotos = [];
+            gridContentEl = null;
+            fileInputEl = null;
+            btnSaveEl = null;
+            btnCompToggleEl = null;
+            subtitleEl = null;
+
+            const saved = !!(result && result.saved === true);
+            resolve({ saved });
         });
     });
 }
@@ -265,20 +237,6 @@ async function _loadPhotos(poiId, feature, preloadedPhotos) {
     }
 }
 
-export function closePhotoGrid(saved = false) {
-    if (gridOverlay) gridOverlay.classList.remove('active');
-
-    // Révocation des Object URLs pour libérer la mémoire
-    activeObjectUrls.forEach(u => URL.revokeObjectURL(u));
-    activeObjectUrls = [];
-    currentGridPhotos = [];
-
-    if (currentResolve) {
-        currentResolve({ saved });
-        currentResolve = null;
-    }
-}
-
 // --- LOGIC ---
 
 async function handleFileSelect(e) {
@@ -305,22 +263,23 @@ async function handleFileSelect(e) {
 
     isDirty = true;
     renderGrid();
-    createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
-    fileInput.value = '';
+    if (gridContentEl) createIcons({ icons: appIcons, root: gridContentEl });
+    if (fileInputEl) fileInputEl.value = '';
 }
 
 function renderGrid() {
-    gridContent.innerHTML = '';
+    if (!gridContentEl) return;
+    gridContentEl.innerHTML = '';
 
     if (currentGridPhotos.length === 0) {
-        gridContent.innerHTML = `
+        gridContentEl.innerHTML = `
             <div class="photo-grid-empty">
                 <i data-lucide="image"></i>
                 <div>Aucune photo</div>
-                <div class="photo-grid-empty-hint">Utilisez le bouton + pour ajouter</div>
+                <div class="photo-grid-empty-hint">Utilisez le bouton « Ajouter » pour en intégrer</div>
             </div>
         `;
-        createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+        createIcons({ icons: appIcons, root: gridContentEl });
         return;
     }
 
@@ -356,7 +315,8 @@ function renderGrid() {
                 if (viewer && viewerImg) {
                     viewerImg.src = displaySrc;
                     viewer.style.display = 'flex';
-                    viewer.style.zIndex = '21000';
+                    // Au-dessus de la modale V2 (overlay z-index 100000)
+                    viewer.style.zIndex = '100001';
 
                     if (toolbar) toolbar.style.display = 'flex';
 
@@ -408,15 +368,16 @@ function renderGrid() {
         fragment.appendChild(card);
     });
 
-    gridContent.appendChild(fragment);
+    gridContentEl.appendChild(fragment);
 
     // Refresh Icons for new elements
-    createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: {class: "lucide"}, root: gridContent });
+    createIcons({ icons: appIcons, root: gridContentEl });
 }
 
 function updateArrayOrderFromDOM() {
+    if (!gridContentEl) return;
     const newOrder = [];
-    const cards = gridContent.querySelectorAll('.photo-card');
+    const cards = gridContentEl.querySelectorAll('.photo-card');
     cards.forEach(card => {
         const oldIndex = parseInt(card.dataset.index);
         newOrder.push(currentGridPhotos[oldIndex]);
@@ -444,43 +405,30 @@ function getDragAfterElement(container, y, x) {
     }, null).element;
 }
 
-function updateSaveButton() {
-    if (state.isAdmin) {
-        btnSave.title = "Enregistrer (publication via Centre de Contrôle)";
-        btnSave.className = 'photo-grid-btn save-btn';
-        btnSave.innerHTML = `<i data-lucide="save"></i>`;
-    } else {
-        btnSave.title = "Sauvegarder localement";
-        btnSave.className = 'photo-grid-btn save-btn';
-        btnSave.innerHTML = `<i data-lucide="save"></i>`;
-    }
-}
-
 /** Met à jour l'apparence du bouton toggle et le sous-titre admin. */
 function _updateCompToggle() {
-    if (!btnCompToggle) return;
+    if (!btnCompToggleEl) return;
     const profile = ADMIN_COMPRESSION[adminCompressionKey];
     const isOptimized = adminCompressionKey === 'OPTIMIZED';
 
-    btnCompToggle.className = `photo-grid-comp-toggle ${isOptimized ? 'comp-optimized' : 'comp-original'}`;
-    btnCompToggle.title = isOptimized
+    btnCompToggleEl.className = `photo-grid-comp-toggle ${isOptimized ? 'comp-optimized' : 'comp-original'}`;
+    btnCompToggleEl.title = isOptimized
         ? 'Mode Optimisée actif — cliquer pour Pleine qualité'
         : 'Mode Pleine qualité actif — cliquer pour Optimisée';
-    btnCompToggle.innerHTML = isOptimized
+    btnCompToggleEl.innerHTML = isOptimized
         ? `<i data-lucide="image-down"></i><span>${profile.label}</span>`
         : `<i data-lucide="image"></i><span>${profile.label}</span>`;
 
-    // Mise à jour du sous-titre
-    if (headerSubtitle) {
-        headerSubtitle.textContent = `Admin — ${profile.label}`;
-        headerSubtitle.classList.add('admin-mode');
+    if (subtitleEl) {
+        subtitleEl.textContent = `Admin — ${profile.label}`;
     }
 
-    createIcons({ icons: appIcons, nameAttr: 'data-lucide', attrs: { class: 'lucide' }, root: btnCompToggle });
+    createIcons({ icons: appIcons, root: btnCompToggleEl });
 }
 
 async function handleSave() {
-    btnSave.disabled = true;
+    if (!btnSaveEl) return;
+    btnSaveEl.disabled = true;
 
     try {
         if (state.isAdmin) {
@@ -522,12 +470,11 @@ async function handleSave() {
             showToast("Sauvegarde effectuée.", "success");
         }
 
-        closePhotoGrid(true);
+        closeHwModal({ saved: true });
 
     } catch (e) {
         console.error(e);
         showToast("Erreur: " + e.message, "error");
-    } finally {
-        btnSave.disabled = false;
+        btnSaveEl.disabled = false;
     }
 }

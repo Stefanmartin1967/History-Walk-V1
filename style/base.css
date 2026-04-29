@@ -128,46 +128,18 @@ body {
     text-decoration: none;
 }
 
-/* ============== RICH POI MODAL (CSP 2b/2) ============== */
-/* Override .modal-overlay defaults (align flex-start au lieu de center, scrollable) */
-#rich-poi-modal {
-    align-items: flex-start;
-    padding-top: 50px;
-    overflow-y: auto;
-}
-#rich-poi-modal .modal-content {
-    max-width: 600px;
-    width: 95%;
-    margin-bottom: 50px;
-}
-#rich-poi-modal .modal-body {
+/* ============== RICH POI MODAL ==============
+   Migré V2 : la modale est créée par openHwModal({ size: 'lg', ... }).
+   Restent ici les styles de layout du formulaire (scopés à .rich-poi-form),
+   et la barre de nav du subheader. Les boutons (Save/Cancel/Move) utilisent
+   désormais .hw-btn du système V2. */
+
+/* Form layout : grid 2 colonnes pour les paires Nom FR/AR, Cat/Zone */
+.rich-poi-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    padding-top: 20px;
+    gap: 14px;
 }
-/* Header inner */
-.rich-poi-header-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-grow: 1;
-}
-.rich-poi-header-title h2 {
-    margin: 0;
-}
-/* Nav prev/next (toggle via classList.toggle('is-hidden')) */
-.rich-poi-nav-controls {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-left: 10px;
-}
-#btn-rich-prev,
-#btn-rich-next {
-    padding: 5px;
-}
-/* Grid 2 colonnes */
 .rich-poi-row-2col {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -181,82 +153,66 @@ body {
     padding: 10px;
     border-radius: 8px;
 }
-/* Override input-group dans la modale (column au lieu de row) */
-#rich-poi-modal .input-group {
+/* Override input-group : colonne (label au-dessus) au lieu du row global */
+.rich-poi-form .input-group {
     flex-direction: column;
     align-items: stretch;
     gap: 5px;
 }
-#rich-poi-modal .input-group label {
+.rich-poi-form .input-group label {
     font-weight: 600;
 }
-/* Inputs/select dans la modale */
-#rich-poi-modal .editable-input {
+/* Inputs/select du formulaire — uniformisés visuellement */
+.rich-poi-form .editable-input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 8px;
     padding: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    background-color: var(--surface);
+    color: var(--ink);
+    box-sizing: border-box;
+    font-family: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
-#rich-poi-modal #rich-poi-name-ar {
+.rich-poi-form .editable-input:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-soft);
+}
+.rich-poi-form #rich-poi-name-ar {
     text-align: right;
 }
-#rich-poi-modal #rich-poi-category {
-    background: var(--surface);
-}
-/* Time row */
+/* Time row (h + m côte à côte) */
 .rich-poi-time-row {
     display: flex;
     gap: 5px;
     align-items: center;
 }
-#rich-poi-time-h,
-#rich-poi-time-m {
+.rich-poi-form #rich-poi-time-h,
+.rich-poi-form #rich-poi-time-m {
     width: 50px;
     text-align: center;
 }
-/* GPS footer */
+/* GPS footer interne au body (bouton "Déplacer" + coords) */
 .rich-poi-gps-footer {
     font-size: 12px;
     color: var(--ink-soft);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 10px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--line);
+    margin-top: 4px;
 }
-/* Move marker btn */
-#btn-rich-move-marker {
-    padding: 4px 8px;
-    font-size: 11px;
-    background: var(--surface-muted);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    cursor: pointer;
+/* Subheader nav controls (prev/next dans circuit) */
+.rich-poi-nav-controls {
     display: flex;
     align-items: center;
-    gap: 5px;
-}
-#btn-rich-move-marker svg {
-    width: 14px;
-    height: 14px;
-}
-/* Actions footer */
-.rich-poi-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-#btn-suggest-email {
-    flex: 1;
-    background: var(--surface-muted);
-    color: var(--brand);
-    border: 1px solid var(--brand);
-}
-#btn-cancel-rich-poi {
-    flex: 1;
-    background: var(--surface-muted);
-    color: var(--ink);
-}
-#btn-save-rich-poi {
-    flex: 2;
-    background: var(--brand);
-    color: white;
+    gap: 6px;
+    padding: 8px 0;
 }
 
 /* ======================== STYLES PC ============================ */
@@ -2234,11 +2190,9 @@ input[type=range] {
     line-height: 1.5;
     white-space: pre-wrap;
 }
-/* Reset pre-wrap pour les modales avec contenu HTML riche (onglets, tableaux…) */
-.custom-modal-message:has(.rank-tabs-wrapper),
-.custom-modal-message:has(#explorer-card-root) {
-    white-space: normal;
-}
+/* Note : les anciennes règles `:has(.rank-tabs-wrapper)` et `:has(#explorer-card-root)`
+   ciblaient .custom-modal-message (legacy). Devenues inutiles depuis la migration
+   V2 de showRankTable et showStatisticsModal vers openHwModal. */
 
 .custom-modal-actions {
     display: flex;
