@@ -193,11 +193,11 @@ function renderFilterPanel() {
             <div class="fslider">
                 <div class="fslider-track-wrap" id="mc-fslider">
                     <div class="fslider-track"></div>
-                    <div class="fslider-fill" id="mc-fslider-fill" style="left:${minPct}%;width:${maxPct - minPct}%"></div>
-                    <div class="fslider-handle" id="mc-fslider-handle-min" data-handle="min" style="left:${minPct}%">
+                    <div class="fslider-fill" id="mc-fslider-fill"></div>
+                    <div class="fslider-handle" id="mc-fslider-handle-min" data-handle="min">
                         <div class="fslider-bubble" id="mc-fslider-bubble-min">${filterMinKm} km</div>
                     </div>
-                    <div class="fslider-handle" id="mc-fslider-handle-max" data-handle="max" style="left:${maxPct}%">
+                    <div class="fslider-handle" id="mc-fslider-handle-max" data-handle="max">
                         <div class="fslider-bubble" id="mc-fslider-bubble-max">${filterMaxKm} km</div>
                     </div>
                 </div>
@@ -427,6 +427,11 @@ function setupSlider(track) {
         if (handleMax) handleMax.classList.remove('is-active');
         activeHandle = null;
     });
+
+    // Pose initiale via CSSOM (element.style.X = Y) après injection DOM —
+    // remplace les style="left:${minPct}%" inline qui étaient bloqués par
+    // CSP `style-src 'self'` strict (cf. PR #352).
+    applyVisualSlider();
 }
 
 // ─── Open / close panneau filtres ────────────────────────────────────────

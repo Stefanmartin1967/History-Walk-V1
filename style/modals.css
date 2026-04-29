@@ -484,3 +484,39 @@ html[data-theme="night"] .hw-banner.is-error {
     border-radius: 50%;
     background: var(--brand);
 }
+
+/* ============================================================
+   Utilities pour migrations CSP — remplacent les style="..." dans
+   innerHTML strings (bloqués par style-src 'self' strict, cf. PR #352).
+   Le CSSOM (element.style.X = Y) reste autorisé.
+   ============================================================ */
+.hw-mt-3 { margin-top: 12px; }
+
+/* ===== Backup modal — boutons d'option (Complet / Texte seul) ===== */
+.hw-backup-intro {
+    text-align: center;
+    margin-bottom: 16px;
+}
+.hw-backup-option {
+    width: 100%;
+    cursor: pointer;
+    text-align: left;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+}
+.hw-backup-option:last-child { margin-bottom: 0; }
+.hw-backup-option .icn {
+    width: 40px;
+    height: 40px;
+}
+.hw-backup-option.is-full .icn {
+    background: var(--brand-soft);
+    color: var(--brand-2);
+}
+.hw-backup-option.is-lite .icn {
+    background: var(--ok-soft);
+    color: var(--ok);
+}

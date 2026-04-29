@@ -125,8 +125,8 @@ export async function showAdminLoginModal() {
 
     const body = `
         <p>Veuillez entrer le mot de passe administrateur.</p>
-        <input type="password" id="admin-password-input" placeholder="Mot de passe…" class="hw-input" style="margin-top:12px">
-        <div class="hw-banner is-error" id="login-error-banner" hidden style="margin-top:12px">
+        <input type="password" id="admin-password-input" placeholder="Mot de passe…" class="hw-input hw-mt-3">
+        <div class="hw-banner is-error hw-mt-3" id="login-error-banner" hidden>
             <i data-lucide="alert-circle"></i>
             <div><b>Mot de passe incorrect.</b></div>
         </div>

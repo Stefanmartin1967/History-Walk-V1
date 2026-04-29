@@ -9,10 +9,10 @@ import { updateBackupSizeEstimates } from './ui-utils.js';
 
 export function showBackupModal() {
     const body = `
-        <p class="muted" style="text-align:center;margin-bottom:16px">Choisissez le format de votre sauvegarde :</p>
+        <p class="muted hw-backup-intro">Choisissez le format de votre sauvegarde :</p>
 
-        <button class="hw-row backup-option-btn" id="btn-backup-full" type="button" style="width:100%;cursor:pointer;text-align:left;background:transparent;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px">
-            <div class="icn" style="background:var(--brand-soft);color:var(--brand-2);width:40px;height:40px"><i data-lucide="image"></i></div>
+        <button class="hw-row hw-backup-option is-full" id="btn-backup-full" type="button">
+            <div class="icn"><i data-lucide="image"></i></div>
             <div class="lbl">
                 <b>Complet (PC)</b>
                 <span>Données + Photos</span>
@@ -20,8 +20,8 @@ export function showBackupModal() {
             <span class="meta" id="backup-size-full">Calcul…</span>
         </button>
 
-        <button class="hw-row backup-option-btn" id="btn-backup-lite" type="button" style="width:100%;cursor:pointer;text-align:left;background:transparent;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:0">
-            <div class="icn" style="background:var(--ok-soft);color:var(--ok);width:40px;height:40px"><i data-lucide="file-text"></i></div>
+        <button class="hw-row hw-backup-option is-lite" id="btn-backup-lite" type="button">
+            <div class="icn"><i data-lucide="file-text"></i></div>
             <div class="lbl">
                 <b>Texte seul (Mobile)</b>
                 <span>Rapide & léger</span>
