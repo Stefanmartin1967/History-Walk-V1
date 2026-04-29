@@ -243,7 +243,15 @@ export function renderCircuitPanel() {
         onDetails: (feature, index) => {
             const featureId = state.loadedFeatures.indexOf(feature);
             openDetailsPanel(featureId, index);
-        }
+        },
+        // Drag-reorder Sortable.js (circuit-view.js:initTimelineDrag) appelle
+        // ce callback à la fin du drop, après que state.currentCircuit a été
+        // réordonné. Évite à circuit-view de réimporter dynamiquement circuit.js
+        // (source du cycle madge fermé).
+        onReorder: async () => {
+            await saveCircuitDraft();
+            renderCircuitPanel();
+        },
     }, isOfficial);
 
     // On met à jour les boutons
@@ -431,10 +439,9 @@ export function navigatePoiDetails(direction) {
 
 export function initCircuitListeners() {
     eventBus.on('poi:navigate', (direction) => navigatePoiDetails(direction));
-
-    // V2 : init des handlers de l'onglet Circuit (toggle sélection, édition titre,
-    // accordion transport, etc.). Import dynamique pour éviter les cycles.
-    import('./ui-circuit-page-events.js').then(m => m.initCircuitPageEvents());
+    // initCircuitPageEvents() est appelé directement depuis main.js avec un
+    // import statique — pas de cycle car ui-circuit-page-events.js → circuit.js
+    // est désormais le seul sens (circuit.js → ui-circuit-page-events.js retiré).
 }
 
 // circuit.js

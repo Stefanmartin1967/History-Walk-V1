@@ -32,12 +32,12 @@ test.describe('Desktop — Mentions légales', () => {
         await page.waitForSelector('#btn-legal-notice', { state: 'visible', timeout: 3000 });
         await page.locator('#btn-legal-notice').click();
 
-        // La modale doit apparaître
-        const modal = page.locator('.legal-modal');
+        // La modale doit apparaître (système V2 hw-modal)
+        const modal = page.locator('.hw-modal-overlay.is-active');
         await expect(modal).toBeVisible({ timeout: 3000 });
 
         // Titre
-        await expect(page.locator('#custom-modal-title')).toHaveText('Mentions légales');
+        await expect(modal.locator('.hw-modal-title')).toHaveText('Mentions légales');
 
         // Copyright
         await expect(modal).toContainText('© 2026 Stefan Martin');
@@ -56,16 +56,16 @@ test.describe('Desktop — Mentions légales', () => {
         await expect(modal.locator('a[href="mailto:history.walk.007@gmail.com"]')).toBeVisible();
     });
 
-    test('3 — bouton "Fermer" referme la modale', async ({ page }) => {
+    test('3 — croix du header referme la modale', async ({ page }) => {
         await page.locator('#btn-tools-menu').click();
         await page.locator('#btn-legal-notice').click();
-        await expect(page.locator('.legal-modal')).toBeVisible({ timeout: 3000 });
+        await expect(page.locator('.hw-modal-overlay.is-active')).toBeVisible({ timeout: 3000 });
 
-        // Le bouton primaire de showAlert porte la classe "primary"
-        await page.locator('.custom-modal-btn.primary').click();
-        await page.waitForTimeout(300);
+        // legal-modal.js ouvre avec footer:false → fermeture via la croix du header
+        await page.locator('.hw-modal-close').click();
+        await page.waitForTimeout(400);
 
-        await expect(page.locator('.legal-modal')).not.toBeVisible();
+        await expect(page.locator('.hw-modal-overlay.is-active')).not.toBeVisible();
     });
 
     test('4 — attribution OSM visible (bottom-left, non masquée)', async ({ page }) => {

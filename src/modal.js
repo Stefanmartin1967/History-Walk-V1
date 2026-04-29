@@ -376,7 +376,7 @@ export function showPrompt(titleText, messageText, defaultValue = "") {
     // l'input ou null si annulé.
     const body = `
         <p>${messageText}</p>
-        <input type="text" class="hw-input" id="hw-prompt-input" style="margin-top:12px">
+        <input type="text" class="hw-input" id="hw-prompt-input" value="${escapeText(defaultValue)}" style="margin-top:12px">
     `;
     const footer = `
         <button class="hw-btn hw-btn-ghost" data-prompt-action="cancel">Annuler</button>

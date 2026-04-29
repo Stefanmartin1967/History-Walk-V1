@@ -29,6 +29,7 @@ import { initMobilePoiListeners } from './mobile-poi.js';
 import { initMobileCircuitsListeners } from './mobile-circuits.js';
 import { initUiModalsListeners } from './ui-modals.js';
 import { initCircuitListeners, loadCircuitFromIds } from './circuit.js';
+import { initCircuitPageEvents } from './ui-circuit-page-events.js';
 import { initUiDetailsListeners } from './ui-details.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
@@ -102,6 +103,7 @@ async function initializeApp() {
     initMobileNavListeners();
     initUiModalsListeners();
     initCircuitListeners();
+    initCircuitPageEvents();
     initUiDetailsListeners();
 
     if (typeof populateAddPoiModalCategories === 'function') populateAddPoiModalCategories();
