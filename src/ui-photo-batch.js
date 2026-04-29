@@ -15,7 +15,7 @@ import {
     getPendingAdminPhotos,
 } from './database.js';
 import { showToast } from './toast.js';
-import { showPrompt } from './modal.js';
+import { showPrompt, openHwModal, closeHwModal } from './modal.js';
 import { createZipBlob } from './zip-store.js';
 
 let activeResolve = null;
@@ -37,22 +37,10 @@ function releaseObjectUrls() {
 }
 
 function closeModal(result = null) {
-    const overlay = document.getElementById('photo-batch-overlay');
-    if (overlay) {
-        overlay.classList.remove('active');
-        setTimeout(() => overlay.remove(), 200);
-    }
-    if (keydownHandler) {
-        document.removeEventListener('keydown', keydownHandler);
-        keydownHandler = null;
-    }
-    releaseObjectUrls();
-    modalState = null;
-    if (activeResolve) {
-        const resolve = activeResolve;
-        activeResolve = null;
-        resolve(result);
-    }
+    // Migration V2 : on délègue à closeHwModal. Le cleanup (objectURLs,
+    // keydown handler, modalState reset, resolve(result)) se fait dans le
+    // .then() de openPhotoBatchModal. closeHwModal passe la valeur au resolve.
+    closeHwModal(result);
 }
 
 // Normalise les clusters entrants : ajoute id, type, et id sur chaque photo
@@ -986,17 +974,15 @@ function buildClusterSection(cluster, index) {
 
     titleBlock.appendChild(actions);
 
-    const badge = document.createElement('span');
-    badge.className = 'photo-batch-cluster-badge';
-    if (cluster.type === 'OUT_POI') {
-        badge.classList.add('out-poi');
-        badge.textContent = 'Hors POI';
-    } else {
-        badge.textContent = `Groupe ${index + 1}`;
-    }
-
     header.appendChild(titleBlock);
-    header.appendChild(badge);
+    // Badge "Hors POI" uniquement (le compteur "Groupe N" est redondant maintenant
+    // que le titre amber est plus présent + le compteur global est en subheader).
+    if (cluster.type === 'OUT_POI') {
+        const badge = document.createElement('span');
+        badge.className = 'photo-batch-cluster-badge out-poi';
+        badge.textContent = 'Hors POI';
+        header.appendChild(badge);
+    }
     section.appendChild(header);
 
     // Grid Sortable
@@ -1169,117 +1155,96 @@ function updateClusterCompareBtn(cluster) {
 
 /**
  * Ouvre le modal batch photos avec drag-drop (Phase 2).
+ * Migré sur le système hw-modal V2 : openHwModal({ size: 'xl', subheader,
+ * body, footer }). La logique métier (Sortable, lightbox, save, ZIP, créer
+ * POI, etc.) est inchangée. La hint admin/user et le compteur dynamique
+ * passent en subheader. ESC géré manuellement pour laisser priorité à la
+ * lightbox.
  *
  * @param {Array} enrichedClusters — Array of { photos, center, nearbyPois, absoluteNearest }
  * @returns {Promise<null>} — resolve(null) à la fermeture
  */
 export function openPhotoBatchModal(enrichedClusters) {
     return new Promise((resolve) => {
-        const existing = document.getElementById('photo-batch-overlay');
-        if (existing) existing.remove();
-
         activeResolve = resolve;
         modalState = { clusters: normalizeClusters(enrichedClusters) };
 
-        const overlay = document.createElement('div');
-        overlay.id = 'photo-batch-overlay';
-        overlay.className = 'photo-batch-overlay';
-
-        const container = document.createElement('div');
-        container.className = 'photo-batch-container';
-
-        // --- HEADER ---
-        const header = document.createElement('header');
-        header.className = 'photo-batch-header';
-
-        const titleBlock = document.createElement('div');
-        titleBlock.className = 'photo-batch-header-title-block';
-
-        const title = document.createElement('h2');
-        title.className = 'photo-batch-header-title';
-        title.textContent = 'Traitement photos';
-
-        const subtitle = document.createElement('p');
-        subtitle.id = 'photo-batch-header-subtitle';
-        subtitle.className = 'photo-batch-header-subtitle';
-
-        titleBlock.appendChild(title);
-        titleBlock.appendChild(subtitle);
-
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'photo-batch-close-btn';
-        closeBtn.setAttribute('aria-label', 'Fermer');
-        closeBtn.innerHTML = '<i data-lucide="x"></i>';
-        closeBtn.addEventListener('click', () => closeModal(null));
-
-        header.appendChild(titleBlock);
-        header.appendChild(closeBtn);
-        container.appendChild(header);
-
-        // --- BODY (scroll area) ---
-        const body = document.createElement('div');
-        body.id = 'photo-batch-body';
-        body.className = 'photo-batch-body';
-        container.appendChild(body);
-
-        // --- FOOTER ---
-        const footer = document.createElement('footer');
-        footer.className = 'photo-batch-footer';
-
-        const hint = document.createElement('span');
-        hint.className = 'photo-batch-footer-hint';
-        hint.textContent = state.isAdmin
+        const isAdmin = state.isAdmin;
+        const hintText = isAdmin
             ? 'Mode admin — enregistrement en attente de publication CC'
             : 'Enregistrer rattache les photos aux POI ; le ZIP inclut tout';
 
-        const btnGroup = document.createElement('div');
-        btnGroup.className = 'photo-batch-footer-actions';
+        const subheader = `
+            <div class="photo-batch-subheader">
+                <span class="photo-batch-counts" id="photo-batch-header-subtitle"></span>
+                <span class="photo-batch-hint">${hintText}</span>
+            </div>
+        `;
 
-        const btnZip = document.createElement('button');
-        btnZip.id = 'photo-batch-btn-zip';
-        btnZip.className = 'photo-batch-btn photo-batch-btn-secondary';
-        btnZip.textContent = 'ZIP';
-        btnZip.title = 'Exporter toutes les photos en ZIP';
-        btnZip.addEventListener('click', handleExportZip);
+        const body = `<div id="photo-batch-body" class="photo-batch-body"></div>`;
 
-        const btnClose = document.createElement('button');
-        btnClose.className = 'photo-batch-btn photo-batch-btn-secondary';
-        btnClose.textContent = 'Fermer';
-        btnClose.addEventListener('click', () => closeModal(null));
+        const footer = `
+            <button class="hw-btn hw-btn-ghost" id="photo-batch-btn-close" type="button">Fermer</button>
+            <button class="hw-btn hw-btn-ghost" id="photo-batch-btn-zip" type="button" title="Exporter toutes les photos en ZIP">
+                <i data-lucide="archive"></i><span>ZIP</span>
+            </button>
+            <button class="hw-btn hw-btn-primary" id="photo-batch-btn-save" type="button">
+                <i data-lucide="save"></i><span>Enregistrer</span>
+            </button>
+        `;
 
-        const btnSave = document.createElement('button');
-        btnSave.id = 'photo-batch-btn-save';
-        btnSave.className = 'photo-batch-btn photo-batch-btn-primary';
-        btnSave.textContent = 'Enregistrer';
-        btnSave.addEventListener('click', handleSave);
+        const promise = openHwModal({
+            size: 'xl',
+            icon: 'images',
+            title: 'Traitement photos',
+            subheader,
+            body,
+            footer,
+            // Pas de fermeture spontanée : workflow long, beaucoup d'état mutable.
+            closeOnBackdrop: false,
+            // ESC géré manuellement : la lightbox doit pouvoir intercepter avant la modale.
+            closeOnEscape: false,
+        });
 
-        btnGroup.appendChild(btnClose);
-        btnGroup.appendChild(btnZip);
-        btnGroup.appendChild(btnSave);
+        // Bind après ouverture (DOM prêt)
+        setTimeout(() => {
+            // Marqueur sur l'overlay pour que handleCreatePoi puisse le masquer/restaurer
+            // (RichEditor est en z-index 4000, < modale V2 100000 : il faut hide la modale).
+            const overlayEl = document.querySelector('.hw-modal-overlay.is-active');
+            if (overlayEl) overlayEl.id = 'photo-batch-overlay';
 
-        footer.appendChild(hint);
-        footer.appendChild(btnGroup);
-        container.appendChild(footer);
+            const btnClose = document.getElementById('photo-batch-btn-close');
+            const btnZip = document.getElementById('photo-batch-btn-zip');
+            const btnSave = document.getElementById('photo-batch-btn-save');
+            if (btnClose) btnClose.addEventListener('click', () => closeModal(null));
+            if (btnZip) btnZip.addEventListener('click', handleExportZip);
+            if (btnSave) btnSave.addEventListener('click', handleSave);
 
-        overlay.appendChild(container);
-        document.body.appendChild(overlay);
+            updateHeaderCounts();
+            renderBody();
+        }, 30);
 
-        // Render initial
-        updateHeaderCounts();
-        renderBody();
-
+        // ESC handler custom : la lightbox a priorité (sa fermeture appelle son
+        // propre cleanup). Si pas de lightbox ouverte, ESC ferme la modale.
         keydownHandler = (e) => {
             if (e.key !== 'Escape') return;
-            // Si la lightbox est ouverte, c'est elle qui doit se fermer d'abord
             if (document.getElementById('photo-batch-lightbox')) return;
             closeModal(null);
         };
         document.addEventListener('keydown', keydownHandler);
 
-        requestAnimationFrame(() => {
-            overlay.classList.add('active');
-            if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                window.lucide.createIcons();
+        // Cleanup à la fermeture (peu importe : croix V2, bouton Fermer, ESC)
+        promise.then((result) => {
+            if (keydownHandler) {
+                document.removeEventListener('keydown', keydownHandler);
+                keydownHandler = null;
+            }
+            releaseObjectUrls();
+            modalState = null;
+            if (activeResolve) {
+                const r = activeResolve;
+                activeResolve = null;
+                r(result ?? null);
             }
         });
     });

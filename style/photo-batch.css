@@ -1,95 +1,44 @@
 /* ================================================
-   UI-PHOTO-BATCH.JS — Modal batch photos (Phase 1)
-   Vue d'ensemble multi-clusters read-only
-   Aligné sur le design language CC Admin (border-radius, shadow, amber)
+   UI-PHOTO-BATCH.JS — Modale "Traitement photos"
+   Migrée sur le système hw-modal V2 (size: xl). Header/footer/overlay
+   gérés par hw-modal-*. Restent ici les styles internes (subheader,
+   clusters, photos, lightbox).
    ================================================ */
 
-.photo-batch-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(69, 26, 3, 0.55);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: 10060;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s, visibility 0.2s;
-    padding: 24px;
-}
-.photo-batch-overlay.active { opacity: 1; visibility: visible; }
-
-.photo-batch-container {
-    background: var(--hw-cream, #FDF9F3);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 40px 100px -20px rgba(69, 26, 3, 0.25);
-    width: min(1800px, 100vw);
-    height: min(100vh, 1400px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    font-family: 'Inter', system-ui, sans-serif;
-    color: var(--hw-ink, #451A03);
-}
-
-/* --- HEADER --- */
-.photo-batch-header {
-    background: #FFFFFF;
-    padding: 18px 28px;
-    border-bottom: 1px solid #E5E7EB;
+/* --- SUBHEADER (compteurs + hint) --- */
+.photo-batch-subheader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-shrink: 0;
+    gap: 16px;
+    padding: 10px 0;
+    font-size: 13px;
 }
-.photo-batch-header-title-block { display: flex; flex-direction: column; gap: 2px; }
-.photo-batch-header-title {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--hw-ink, #451A03);
-    letter-spacing: -0.01em;
+.photo-batch-counts {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
 }
-.photo-batch-header-subtitle {
-    margin: 0;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--hw-ink-soft, #78350F);
-    opacity: 0.75;
+.photo-batch-hint {
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    text-align: right;
 }
 
-.photo-batch-close-btn {
-    background: transparent;
-    border: 1px solid #E5E7EB;
-    color: var(--hw-ink-soft, #78350F);
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
+/* --- BODY : la modale V2 fournit overflow-y et flex. Ici on règle
+   juste le layout vertical des clusters et le fond. --- */
+.hw-modal-body:has(#photo-batch-body) {
+    background: var(--surface-muted);
+    padding: 16px 20px;
 }
-.photo-batch-close-btn:hover {
-    background: #FEF2F2;
-    color: #991B1B;
-    border-color: #FECACA;
-}
-.photo-batch-close-btn .lucide { width: 18px; height: 18px; }
-
-/* --- BODY (scroll area) --- */
 .photo-batch-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 28px;
     display: flex;
     flex-direction: column;
     gap: 18px;
-    background: var(--hw-cream, #FDF9F3);
 }
 
 /* --- CLUSTER SECTION --- */
@@ -114,14 +63,49 @@
     gap: 12px;
 }
 .photo-batch-cluster-title-block { flex: 1; min-width: 0; }
+
+/* Titre cluster : override les styles V2 `.hw-modal-body h3` (label de
+   section uppercase 11px avec trait `::before`) — inadapté pour un titre
+   éditable. On adopte le look "badge pill amber" : présence visuelle forte,
+   look distinct du texte body, contentEditable préservé. */
 .photo-batch-cluster-title {
+    /* Reset h3 V2 */
+    display: inline-block;
     margin: 0;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--hw-ink, #451A03);
+    font-family: 'Inter', system-ui, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    /* Look badge */
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--hw-amber, #D97706);
+    background: var(--hw-amber-soft, #FFFBEB);
+    border: 1px solid transparent;
+    border-radius: 50px;
+    padding: 6px 14px;
+    max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: text;
+    transition: border-color 0.15s, background 0.15s;
+}
+.photo-batch-cluster-title::before {
+    /* Annule la barre `::before` injectée par .hw-modal-body h3 */
+    display: none !important;
+}
+.photo-batch-cluster-title:hover {
+    border-color: var(--hw-amber, #D97706);
+}
+.photo-batch-cluster-title:focus {
+    outline: none;
+    background: var(--surface);
+    border-color: var(--hw-amber, #D97706);
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+}
+.photo-batch-cluster.out-poi .photo-batch-cluster-title {
+    color: var(--ink-soft);
+    background: var(--surface-muted);
 }
 .photo-batch-cluster-subtitle {
     margin: 3px 0 0 0;
@@ -289,21 +273,9 @@
     box-shadow: inset 0 0 0 2px var(--hw-amber, #D97706);
 }
 
-/* Titre cluster éditable */
-.photo-batch-cluster-title {
-    outline: none;
-    cursor: text;
-    border-radius: 6px;
-    padding: 2px 4px;
-    margin: 0 -4px;
-    transition: background 0.15s, box-shadow 0.15s;
-}
-.photo-batch-cluster-title:hover {
-    background: #FFFBEB;
-}
+/* Titre cluster éditable : styles définis plus haut (look badge pill amber).
+   Le `:focus` autorise le wrap pour pouvoir voir le titre complet en édition. */
 .photo-batch-cluster-title:focus {
-    background: white;
-    box-shadow: inset 0 0 0 2px var(--hw-amber, #D97706);
     white-space: normal;
 }
 
@@ -390,11 +362,12 @@
 }
 
 /* --- LIGHTBOX (Voir / Comparer) --- */
+/* Lightbox : doit passer AU-DESSUS de la modale V2 (overlay z-index 100000). */
 .photo-batch-lightbox {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.97);
-    z-index: 10070;
+    z-index: 100002;
     display: flex;
     flex-direction: column;
     opacity: 0;
@@ -598,85 +571,14 @@
 }
 .photo-batch-empty p { margin: 0; font-weight: 500; }
 
-/* --- FOOTER --- */
-.photo-batch-footer {
-    padding: 14px 28px;
-    background: white;
-    border-top: 1px solid #E5E7EB;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-shrink: 0;
-}
-.photo-batch-footer-hint {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--hw-ink-soft, #78350F);
-    opacity: 0.6;
-    font-style: italic;
-}
-
-.photo-batch-btn {
-    padding: 10px 22px;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-.photo-batch-btn-secondary {
-    background: transparent;
-    border-color: #E5E7EB;
-    color: var(--hw-ink-soft, #78350F);
-}
-.photo-batch-btn-secondary:hover {
-    background: #F8FAFC;
-    color: var(--hw-ink, #451A03);
-}
-
-.photo-batch-btn-primary {
-    background: var(--hw-amber-500, #F59E0B);
-    border-color: var(--hw-amber-500, #F59E0B);
-    color: #1F1000;
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
-}
-.photo-batch-btn-primary:hover:not(:disabled) {
-    background: var(--hw-amber-600, #D97706);
-    border-color: var(--hw-amber-600, #D97706);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
-}
-.photo-batch-btn-primary:disabled {
-    background: #F3F4F6;
-    border-color: #E5E7EB;
-    color: #9CA3AF;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-.photo-batch-footer-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
+/* Footer/boutons : fournis par hw-modal-footer + .hw-btn V2. Le bouton
+   "Enregistrer" disabled est géré par .hw-btn:disabled générique
+   (cf. modals.css). */
 
 /* --- RESPONSIVE (tablette, même si desktop-only c'est plus propre) --- */
 @media (max-width: 768px) {
-    .photo-batch-overlay { padding: 0; }
-    .photo-batch-container {
-        width: 100vw;
-        height: 100vh;
-        max-height: none;
-        border-radius: 0;
-    }
-    .photo-batch-header { padding: 14px 18px; }
-    .photo-batch-body { padding: 16px; }
-    .photo-batch-footer { padding: 12px 18px; }
+    .photo-batch-subheader { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .photo-batch-hint { text-align: left; }
     .photo-batch-thumb-grid {
         grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
         gap: 8px;

@@ -16,7 +16,7 @@ let activeHwEscapeHandler = null;
 /**
  * Ouvre une modale du système V2 (hw-modal).
  * @param {Object} opts
- * @param {'sm'|'md'|'lg'} [opts.size='md'] - Taille de la modale.
+ * @param {'sm'|'md'|'lg'|'xl'} [opts.size='md'] - Taille de la modale.
  * @param {'default'|'danger'|'success'} [opts.variant='default'] - Variante visuelle.
  * @param {string} [opts.icon] - Nom d'icône lucide (optionnel) à afficher dans le header.
  * @param {string} opts.title - Titre de la modale.

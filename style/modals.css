@@ -74,6 +74,9 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
 .hw-modal.is-sm { max-width: 380px; }
 .hw-modal.is-md { max-width: 560px; }
 .hw-modal.is-lg { max-width: 800px; }
+/* xl : modales avec contenu large (grilles photos, tableaux denses).
+   Plus généreux que lg (1200px max) tout en gardant le squelette V2. */
+.hw-modal.is-xl { max-width: 1200px; width: 95%; }
 
 /* ===== Header ===== */
 .hw-modal-header {

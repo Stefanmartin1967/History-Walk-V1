@@ -175,16 +175,10 @@
     fill: none !important;
 }
 
-/* ========================================================= */
-/* === GAMIFICATION MODAL STYLES === */
-/* ========================================================= */
+/* Migration V2 : la modale "Carnet de Voyage" (statistics.js) utilise
+   désormais openHwModal({ size: 'md' }) — la classe .gamification-modal
+   et son override max-width n'ont plus d'utilité. */
 
-.gamification-modal {
-    max-width: 500px !important;
-    background: var(--surface) !important;
-}
-
-/* Styles du Carnet de Voyage injectés directement dans la modale via EXPLORER_CARD_CSS (statistics.js) */
 /* --- CONTRIBUTION MODAL STYLES (Minimalist & Themed) --- */
 .custom-modal-box {
     /* Base styles are already good, but let's ensure text readability */

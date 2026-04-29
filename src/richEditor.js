@@ -10,7 +10,7 @@ import { saveAppState, savePoiData } from './database.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
-import { showConfirm } from './modal.js';
+import { showConfirm, openHwModal, closeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 // --- IDs DOM ---
@@ -49,70 +49,110 @@ let currentDraftCoords = null; // Pour le mode CREATE
 let currentPhotos = []; // Pour le mode CREATE (import photos)
 let isDirty = false;
 
+// HTML du formulaire (body de la modale V2). IDs préservés à l'identique
+// pour que toute la logique métier (setValue/getValue/handleSave/executeCreate
+// /executeEdit) reste fonctionnelle sans modification. Le wrapper
+// `.rich-poi-form` scope les règles CSS (input-group en colonne, padding
+// inputs, etc.) qui étaient préfixées `#rich-poi-modal` avant la migration.
+const RICH_POI_BODY_HTML = `
+<div class="rich-poi-form">
+    <!-- Ligne 1 : Noms -->
+    <div class="rich-poi-row-2col">
+        <div class="input-group">
+            <label for="rich-poi-name-fr">Nom (FR)*</label>
+            <input type="text" id="rich-poi-name-fr" class="editable-input">
+        </div>
+        <div class="input-group">
+            <label for="rich-poi-name-ar">Nom (AR)</label>
+            <input type="text" id="rich-poi-name-ar" class="editable-input" placeholder="الاسم بالعربية">
+        </div>
+    </div>
+
+    <!-- Ligne 2 : Catégorie & Zone -->
+    <div class="rich-poi-row-2col">
+        <div class="input-group">
+            <label for="rich-poi-category">Catégorie</label>
+            <select id="rich-poi-category" class="editable-input">
+                <!-- Rempli par prepareModal -->
+            </select>
+        </div>
+        <div class="input-group">
+            <label for="rich-poi-zone">Zone</label>
+            <input type="text" id="rich-poi-zone" class="editable-input" placeholder="Ex: Houmt Souk">
+        </div>
+    </div>
+
+    <!-- Descriptions -->
+    <div class="input-group">
+        <label for="rich-poi-desc-short">Description Courte (Résumé)</label>
+        <input type="text" id="rich-poi-desc-short" class="editable-input" placeholder="Apparaît dans la liste...">
+    </div>
+    <div class="input-group">
+        <label for="rich-poi-desc-long">Description Complète</label>
+        <textarea id="rich-poi-desc-long" class="editable-input" rows="4"></textarea>
+    </div>
+
+    <!-- Infos Pratiques -->
+    <div class="rich-poi-section-muted">
+        <div class="input-group">
+            <label>Temps de visite</label>
+            <div class="rich-poi-time-row">
+                <input type="number" id="rich-poi-time-h" class="editable-input" placeholder="H"> h
+                <input type="number" id="rich-poi-time-m" class="editable-input" placeholder="M"> min
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="rich-poi-price">Prix (TND)</label>
+            <input type="number" id="rich-poi-price" class="editable-input" placeholder="0" step="0.5">
+        </div>
+    </div>
+
+    <!-- Source & Notes -->
+    <div class="input-group">
+        <label for="rich-poi-source">Source (URL ou Texte)</label>
+        <input type="text" id="rich-poi-source" class="editable-input" placeholder="https://...">
+    </div>
+    <div class="input-group">
+        <label for="rich-poi-notes">Notes</label>
+        <textarea id="rich-poi-notes" class="editable-input" rows="2"></textarea>
+    </div>
+
+    <!-- GPS footer : déplacer + coords -->
+    <div class="rich-poi-gps-footer">
+        <button id="btn-rich-move-marker" class="hw-btn hw-btn-ghost" title="Déplacer le marqueur" aria-label="Déplacer le marqueur" type="button">
+            <i data-lucide="move"></i><span>Déplacer</span>
+        </button>
+        <span>📍 GPS : <span id="rich-poi-coords">...</span></span>
+    </div>
+</div>
+`;
+
+// Subheader : nav controls (prev/next dans circuit). Caché en mode CREATE
+// ou si le POI courant n'est pas dans un circuit affiché.
+const RICH_POI_SUBHEADER_HTML = `
+    <div id="rich-poi-nav-controls" class="rich-poi-nav-controls is-hidden">
+        <button id="btn-rich-prev" class="hw-btn hw-btn-ghost" title="Précédent" aria-label="Précédent" type="button"><i data-lucide="chevron-left"></i></button>
+        <button id="btn-rich-next" class="hw-btn hw-btn-ghost" title="Suivant" aria-label="Suivant" type="button"><i data-lucide="chevron-right"></i></button>
+    </div>
+`;
+
+// Footer : Annuler (ghost) + Enregistrer (primary, désactivable via updateSaveButtonState)
+const RICH_POI_FOOTER_HTML = `
+    <button id="btn-cancel-rich-poi" class="hw-btn hw-btn-ghost" type="button">Annuler</button>
+    <button id="btn-save-rich-poi" class="hw-btn hw-btn-primary" type="button">
+        <i data-lucide="save"></i><span>Enregistrer</span>
+    </button>
+`;
+
 export const RichEditor = {
     /**
-     * Initialise les écouteurs d'événements (à appeler une fois au démarrage si besoin,
-     * ou on le fait à l'ouverture pour être sûr que le DOM existe)
+     * Initialise les écouteurs d'événements.
+     * Migration V2 : la modale est désormais créée à la volée par openHwModal,
+     * donc init() est devenue un no-op pour rétro-compat avec les callers
+     * (desktopMode, ui.js). Le bind effectif des listeners se fait dans
+     * showModal() après chaque création de la modale.
      */
-    init: () => {
-        const modal = document.getElementById(DOM_IDS.MODAL);
-        if (!modal) return;
-
-        // Fermeture
-        document.getElementById(DOM_IDS.BTNS.CLOSE)?.addEventListener('click', () => RichEditor.close());
-
-        // Navigation
-        document.getElementById(DOM_IDS.BTNS.PREV)?.addEventListener('click', () => navigate(-1));
-        document.getElementById(DOM_IDS.BTNS.NEXT)?.addEventListener('click', () => navigate(1));
-
-        // Hide explicit Cancel and Suggest buttons (New workflow)
-        const btnCancel = document.getElementById(DOM_IDS.BTNS.CANCEL);
-        if (btnCancel) btnCancel.classList.add('is-hidden');
-
-        const btnSuggest = document.getElementById(DOM_IDS.BTNS.EMAIL);
-        if (btnSuggest) btnSuggest.classList.add('is-hidden');
-
-        // Move Marker Button
-        const moveBtn = document.getElementById(DOM_IDS.BTNS.MOVE);
-        if (moveBtn) {
-            const newMoveBtn = moveBtn.cloneNode(true);
-            moveBtn.parentNode.replaceChild(newMoveBtn, moveBtn);
-            newMoveBtn.addEventListener('click', handleMove);
-        }
-
-        // Sauvegarde
-        const saveBtn = document.getElementById(DOM_IDS.BTNS.SAVE);
-        // On clone pour éviter les multiples listeners si init est appelé plusieurs fois
-        const newSaveBtn = saveBtn.cloneNode(true);
-        saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
-        newSaveBtn.addEventListener('click', handleSave);
-
-        // Validation Listeners
-        const validationEvents = ['input', 'change'];
-        const fieldsToCheck = [DOM_IDS.INPUTS.NAME_FR, DOM_IDS.INPUTS.CATEGORY, DOM_IDS.INPUTS.DESC_LONG, DOM_IDS.INPUTS.SOURCE];
-
-        fieldsToCheck.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) {
-                validationEvents.forEach(evt => {
-                    el.addEventListener(evt, () => {
-                        updateSaveButtonState();
-                        isDirty = true;
-                    });
-                });
-            }
-        });
-
-        // Dirty tracking for other fields
-        Object.values(DOM_IDS.INPUTS).forEach(id => {
-            if (!fieldsToCheck.includes(id)) {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.addEventListener('input', () => { isDirty = true; });
-                }
-            }
-        });
-    },
+    init: () => { /* no-op : voir bindModalEvents() */ },
 
     /**
      * Ouvre la modale en mode CRÉATION
@@ -126,7 +166,8 @@ export const RichEditor = {
         currentPhotos = photos;
         currentFeatureId = null;
 
-        prepareModal("Nouveau Lieu");
+        // V2 : showModal crée la modale via openHwModal (DOM dispo après).
+        showModal();
 
         // Valeurs par défaut
         setValue(DOM_IDS.INPUTS.NAME_FR, "");
@@ -157,7 +198,11 @@ export const RichEditor = {
         const navControls = document.getElementById(DOM_IDS.NAV_CONTROLS);
         if (navControls) navControls.classList.add('is-hidden');
 
-        showModal();
+        // Focus premier champ + reset isDirty (déjà reset par showModal mais
+        // certains setValue peuvent l'avoir set à true via les listeners input)
+        isDirty = false;
+        updateSaveButtonState();
+        document.getElementById(DOM_IDS.INPUTS.NAME_FR)?.focus();
     },
 
     /**
@@ -177,7 +222,8 @@ export const RichEditor = {
         currentDraftCoords = null;
         currentPhotos = [];
 
-        prepareModal("Éditer le Lieu");
+        // V2 : showModal crée la modale via openHwModal (DOM dispo après).
+        showModal();
 
         // Fusion Properties + UserData
         const props = feature.properties || {};
@@ -227,7 +273,9 @@ export const RichEditor = {
         }
 
         updateNavigationControls(poiId);
-        showModal();
+        isDirty = false;
+        updateSaveButtonState();
+        document.getElementById(DOM_IDS.INPUTS.NAME_FR)?.focus();
     },
 
     close: async () => {
@@ -236,13 +284,15 @@ export const RichEditor = {
                 return;
             }
         }
-        const modal = document.getElementById(DOM_IDS.MODAL);
-        if (modal) modal.classList.add('is-hidden');
         isDirty = false;
         // `created: true` uniquement si CREATE s'est terminé par un executeCreate réussi
         // (qui set currentFeatureId = actualId). Permet aux listeners (ex: ui-photo-batch)
         // de distinguer "fermeture après création" vs "annulation".
         const wasCreated = currentMode === 'CREATE' && currentFeatureId !== null;
+        // Migration V2 : closeHwModal au lieu de toggle .is-hidden. L'event
+        // richEditor:closed est dispatch après la fermeture (les listeners
+        // peuvent assumer que la modale n'est plus dans le DOM).
+        closeHwModal();
         window.dispatchEvent(new CustomEvent('richEditor:closed', {
             detail: { poiId: currentFeatureId, mode: currentMode, created: wasCreated }
         }));
@@ -257,9 +307,11 @@ eventBus.on('richEditor:open-for-edit', (id) => RichEditor.openForEdit(id));
 // --- PRIVATE HELPERS ---
 
 async function handleMove() {
-    // Hide modal temporarily
-    const modal = document.getElementById(DOM_IDS.MODAL);
-    if (modal) modal.classList.add('is-hidden');
+    // Migration V2 : on hide l'overlay actif au lieu de toggle .is-hidden sur
+    // la modale statique. La modale reste dans le DOM (et tous les setValue
+    // ne sont pas perdus), elle est juste invisible le temps du drag.
+    const modal = document.querySelector('.hw-modal-overlay.is-active');
+    if (modal) modal.style.display = 'none';
 
     // Helper to update coords in Rich Editor UI and state
     const updateEditorCoords = (lat, lng) => {
@@ -287,11 +339,11 @@ async function handleMove() {
                     revert();
                 }
                 // Re-open modal
-                if (modal) modal.classList.remove('is-hidden');
+                if (modal) modal.style.display = '';
             }
         );
 
-        if (!success && modal) modal.classList.remove('is-hidden');
+        if (!success && modal) modal.style.display = '';
 
     } else if (currentMode === 'CREATE' && currentDraftCoords) {
         // Mode CRÉATION : On crée un marqueur temporaire
@@ -314,7 +366,7 @@ async function handleMove() {
 
             // Cleanup
             tempMarker.remove();
-            if (modal) modal.classList.remove('is-hidden');
+            if (modal) modal.style.display = '';
         };
 
         // On écoute dragend, mais on peut aussi attendre un clic sur le marker ou autre
@@ -374,16 +426,72 @@ async function navigate(direction) {
     }
 }
 
+// Bind les listeners de la modale après chaque création par openHwModal.
+// Remplace l'ancienne RichEditor.init() qui s'exécutait sur HTML statique.
+function bindModalEvents() {
+    // Fermeture (croix V2 gérée par openHwModal, mais bouton "Annuler" du footer
+    // doit déclencher la même logique de confirm-if-dirty que close()).
+    document.getElementById(DOM_IDS.BTNS.CANCEL)?.addEventListener('click', () => RichEditor.close());
+
+    // Navigation prev/next
+    document.getElementById(DOM_IDS.BTNS.PREV)?.addEventListener('click', () => navigate(-1));
+    document.getElementById(DOM_IDS.BTNS.NEXT)?.addEventListener('click', () => navigate(1));
+
+    // Move Marker
+    document.getElementById(DOM_IDS.BTNS.MOVE)?.addEventListener('click', handleMove);
+
+    // Sauvegarde
+    document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', handleSave);
+
+    // Validation Listeners
+    const validationEvents = ['input', 'change'];
+    const fieldsToCheck = [DOM_IDS.INPUTS.NAME_FR, DOM_IDS.INPUTS.CATEGORY, DOM_IDS.INPUTS.DESC_LONG, DOM_IDS.INPUTS.SOURCE];
+    fieldsToCheck.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            validationEvents.forEach(evt => {
+                el.addEventListener(evt, () => {
+                    updateSaveButtonState();
+                    isDirty = true;
+                });
+            });
+        }
+    });
+
+    // Dirty tracking pour les autres champs
+    Object.values(DOM_IDS.INPUTS).forEach(id => {
+        if (!fieldsToCheck.includes(id)) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => { isDirty = true; });
+            }
+        }
+    });
+}
+
 function showModal() {
     isDirty = false; // Reset on open
-    updateSaveButtonState();
-    const modal = document.getElementById(DOM_IDS.MODAL);
-    if (modal) {
-        modal.classList.remove('is-hidden');
-        // Focus premier champ
-        const firstInput = document.getElementById(DOM_IDS.INPUTS.NAME_FR);
-        if (firstInput) firstInput.focus();
-    }
+
+    // Migration V2 : crée la modale via openHwModal. Le titre + l'icône sont
+    // passés en options (au lieu de l'h2 statique). Le close (croix/Escape)
+    // déclenche directement la fermeture sans confirm — pour conserver le
+    // contrôle isDirty, on laisse le bouton "Annuler" gérer ça via close().
+    const isCreate = currentMode === 'CREATE';
+    openHwModal({
+        size: 'lg',
+        icon: isCreate ? 'map-pin-plus' : 'edit-3',
+        title: isCreate ? 'Nouveau Lieu' : 'Éditer le Lieu',
+        subheader: RICH_POI_SUBHEADER_HTML,
+        body: RICH_POI_BODY_HTML,
+        footer: RICH_POI_FOOTER_HTML,
+        // closeOnBackdrop: true par défaut — formulaire long, on évite la perte
+        closeOnBackdrop: false,
+    });
+
+    // DOM prêt après openHwModal (synchrone). Bind + remplissage.
+    bindModalEvents();
+    populateCategorySelect();
+    createIcons({ icons: appIcons });
 }
 
 function updateSaveButtonState() {
@@ -413,11 +521,9 @@ function updateSaveButtonState() {
     }
 }
 
-function prepareModal(title) {
-    const titleEl = document.getElementById(DOM_IDS.TITLE);
-    if (titleEl) titleEl.textContent = title;
-
-    // Remplir le select Catégories (Toujours reconstruire pour être à jour)
+// Migration V2 : le titre est passé à openHwModal (plus de DOM_IDS.TITLE).
+// prepareModal() ne sert plus qu'au populate du select catégories.
+function populateCategorySelect() {
     const catSelect = document.getElementById(DOM_IDS.INPUTS.CATEGORY);
     if (catSelect) {
         catSelect.innerHTML = '<option value="" disabled selected>Choisir une catégorie...</option>';

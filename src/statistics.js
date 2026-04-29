@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { getRealDistance, getOrthodromicDistance } from './utils.js';
 import { getPoiId } from './data.js';
-import { showAlert } from './modal.js';
+import { openHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import explorerCardCssUrl from '../style/explorer-card.css?url';
 
@@ -291,32 +291,39 @@ export async function showStatisticsModal() {
     </div>
     `;
 
-    const modalPromise = showAlert(
-        "Mon Carnet de Voyage",
-        html,
-        "Fermer",
-        "gamification-modal",
-        // Callback onReady : Exécuté une fois le DOM de la modale en place
-        ({ messageContainer }) => {
-            if (messageContainer) {
-                // 1. Initialiser les icônes Lucide
-                createIcons({ icons: appIcons, root: messageContainer });
+    // Migration V2 : openHwModal md avec carte explorateur + bouton "Imprimer"
+    // dans le body. Footer = juste "Fermer". L'ancienne customClass
+    // 'gamification-modal' (max-width: 500px) devient inutile car size: 'md'
+    // donne 560px, suffisant pour la carte de 340px + paddings.
+    const modalPromise = openHwModal({
+        size: 'md',
+        icon: 'award',
+        title: 'Mon Carnet de Voyage',
+        body: html,
+        footer: null, // bouton "Fermer" générique
+    });
 
-                // 2. Appliquer les largeurs des progress-fill via CSSOM (CSP-safe : data-width en template)
-                messageContainer.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
-                    bar.style.width = `${bar.dataset.width}%`;
+    // Bind après ouverture (DOM prêt)
+    setTimeout(() => {
+        const bodyEl = document.querySelector('.hw-modal-overlay.is-active .hw-modal-body');
+        if (bodyEl) {
+            // 1. Initialiser les icônes Lucide
+            createIcons({ icons: appIcons, root: bodyEl });
+
+            // 2. Appliquer les largeurs des progress-fill via CSSOM (CSP-safe : data-width en template)
+            bodyEl.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
+                bar.style.width = `${bar.dataset.width}%`;
+            });
+
+            // 3. Attacher l'événement d'impression
+            const btnPrint = bodyEl.querySelector('#btn-print-card');
+            if (btnPrint) {
+                btnPrint.addEventListener('click', () => {
+                    printCardElement();
                 });
-
-                // 3. Attacher l'événement d'impression
-                const btnPrint = messageContainer.querySelector('#btn-print-card');
-                if (btnPrint) {
-                    btnPrint.addEventListener('click', () => {
-                        printCardElement();
-                    });
-                }
             }
         }
-    );
+    }, 30);
 
     await modalPromise;
 }
