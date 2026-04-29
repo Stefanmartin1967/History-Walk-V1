@@ -1,5 +1,167 @@
 // modal.js
+import { createIcons, appIcons } from './lucide-icons.js';
+
 let activeResolve = null;
+
+/* ============================================================
+   HW MODAL SYSTEM V2 (brief Claude Design #5)
+   API moderne pour modales md/lg avec contenu riche.
+   Coexiste avec showAlert/showConfirm/showPrompt (legacy sm).
+   ============================================================ */
+
+let activeHwOverlay = null;
+let activeHwResolve = null;
+let activeHwEscapeHandler = null;
+
+/**
+ * Ouvre une modale du système V2 (hw-modal).
+ * @param {Object} opts
+ * @param {'sm'|'md'|'lg'} [opts.size='md'] - Taille de la modale.
+ * @param {'default'|'danger'|'success'} [opts.variant='default'] - Variante visuelle.
+ * @param {string} [opts.icon] - Nom d'icône lucide (optionnel) à afficher dans le header.
+ * @param {string} opts.title - Titre de la modale.
+ * @param {string|HTMLElement} opts.body - Contenu HTML du body.
+ * @param {string|HTMLElement|null} [opts.footer] - Contenu HTML du footer (boutons custom).
+ *        Si null, génère un seul bouton "Fermer" qui résout la promise.
+ * @param {boolean} [opts.closeOnBackdrop=true] - Si true, clic sur l'overlay ferme.
+ * @param {boolean} [opts.closeOnEscape=true] - Si true, touche Escape ferme.
+ * @returns {Promise<void>} - Résout à la fermeture.
+ */
+export function openHwModal(opts) {
+    const {
+        size = 'md',
+        variant = 'default',
+        icon = null,
+        title = '',
+        body = '',
+        footer = null,
+        closeOnBackdrop = true,
+        closeOnEscape = true,
+    } = opts || {};
+
+    return new Promise((resolve) => {
+        // Nettoie une éventuelle modale V2 ouverte (stacking interdit)
+        if (activeHwOverlay) closeHwModal();
+
+        activeHwResolve = resolve;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'hw-modal-overlay';
+
+        const sizeCls = `is-${size}`;
+        const variantCls = variant === 'default' ? '' : ` is-${variant}`;
+        const iconHtml = icon ? `<div class="hw-modal-icon"><i data-lucide="${icon}"></i></div>` : '';
+
+        // Footer par défaut : 1 bouton "Fermer"
+        let footerHtml;
+        if (footer === null) {
+            footerHtml = '<button class="hw-btn hw-btn-primary" data-hw-modal-action="close">Fermer</button>';
+        } else if (typeof footer === 'string') {
+            footerHtml = footer;
+        } else {
+            footerHtml = ''; // sera ajouté en HTMLElement après
+        }
+
+        overlay.innerHTML = `
+            <div class="hw-modal ${sizeCls}${variantCls}">
+                <header class="hw-modal-header">
+                    ${iconHtml}
+                    <h2 class="hw-modal-title">${escapeText(title)}</h2>
+                    <button class="hw-modal-close" type="button" aria-label="Fermer" data-hw-modal-action="close">
+                        <i data-lucide="x"></i>
+                    </button>
+                </header>
+                <div class="hw-modal-body"></div>
+                <footer class="hw-modal-footer">${footerHtml}</footer>
+            </div>
+        `;
+
+        // Inject body
+        const bodyEl = overlay.querySelector('.hw-modal-body');
+        if (typeof body === 'string') {
+            bodyEl.innerHTML = body;
+        } else if (body instanceof HTMLElement) {
+            bodyEl.appendChild(body);
+        }
+
+        // Inject footer si HTMLElement
+        if (footer instanceof HTMLElement) {
+            overlay.querySelector('.hw-modal-footer').appendChild(footer);
+        }
+
+        // Listeners de fermeture
+        overlay.querySelectorAll('[data-hw-modal-action="close"]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                closeHwModal();
+            });
+        });
+
+        if (closeOnBackdrop) {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) closeHwModal();
+            });
+        }
+
+        if (closeOnEscape) {
+            activeHwEscapeHandler = (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeHwModal();
+                }
+            };
+            document.addEventListener('keydown', activeHwEscapeHandler);
+        }
+
+        document.body.appendChild(overlay);
+        activeHwOverlay = overlay;
+
+        // Lucide icons + transition active
+        createIcons({ icons: appIcons });
+        // Force reflow puis active la classe pour la transition
+        // eslint-disable-next-line no-unused-expressions
+        overlay.offsetHeight;
+        overlay.classList.add('is-active');
+    });
+}
+
+/**
+ * Ferme la modale HW active.
+ */
+export function closeHwModal() {
+    if (!activeHwOverlay) return;
+    if (activeHwEscapeHandler) {
+        document.removeEventListener('keydown', activeHwEscapeHandler);
+        activeHwEscapeHandler = null;
+    }
+    activeHwOverlay.classList.remove('is-active');
+    const overlay = activeHwOverlay;
+    activeHwOverlay = null;
+    // Délai pour laisser la transition s'achever avant de retirer du DOM
+    setTimeout(() => {
+        overlay.remove();
+    }, 300);
+    if (activeHwResolve) {
+        const resolve = activeHwResolve;
+        activeHwResolve = null;
+        resolve();
+    }
+}
+
+function escapeText(s) {
+    return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+/* ============================================================
+   LEGACY API — showAlert/showConfirm/showPrompt (sm)
+   À conserver pour rétro-compatibilité avec le code existant.
+   ============================================================ */
+
 
 function getElements() {
     return {
