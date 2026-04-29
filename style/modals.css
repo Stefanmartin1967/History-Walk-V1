@@ -335,6 +335,10 @@ html[data-theme="night"] .hw-modal.is-loading .hw-modal-body::after {
     pointer-events: none;
 }
 
+/* L'attribut HTML `hidden` est overridé par display:flex sur les bannières.
+   Force le respect de hidden dans le scope du système V2. */
+.hw-modal [hidden] { display: none !important; }
+
 /* ===== Bannières inline (states error / success / info) ===== */
 .hw-banner {
     display: flex;

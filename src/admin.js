@@ -118,72 +118,69 @@ export function logoutAdmin() {
     eventBus.emit('admin:mode-toggled', false);
 }
 
-export function showAdminLoginModal() {
-    const overlay = document.getElementById('custom-modal-overlay');
-    const title = document.getElementById('custom-modal-title');
-    const message = document.getElementById('custom-modal-message');
-    const actions = document.getElementById('custom-modal-actions');
+export async function showAdminLoginModal() {
+    // Migration V2 : utilise openHwModal (sm, icône lock, variante default,
+    // banner is-error pour mot de passe invalide).
+    const { openHwModal, closeHwModal } = await import('./modal.js');
 
-    if (!overlay || !title || !message || !actions) return;
-
-    title.textContent = "Connexion Admin";
-    message.innerHTML = `
-        <div class="admin-login-body">
-            <p>Veuillez entrer le mot de passe administrateur.</p>
-            <input type="password" id="admin-password-input" placeholder="Mot de passe..." class="admin-login-input">
-            <div id="login-error-msg" class="admin-login-error"></div>
+    const body = `
+        <p>Veuillez entrer le mot de passe administrateur.</p>
+        <input type="password" id="admin-password-input" placeholder="Mot de passe…" class="hw-input" style="margin-top:12px">
+        <div class="hw-banner is-error" id="login-error-banner" hidden style="margin-top:12px">
+            <i data-lucide="alert-circle"></i>
+            <div><b>Mot de passe incorrect.</b></div>
         </div>
     `;
 
-    actions.innerHTML = '';
+    const footer = `
+        <button class="hw-btn hw-btn-ghost" data-admin-login-action="cancel">Annuler</button>
+        <button class="hw-btn hw-btn-primary" data-admin-login-action="confirm">Connexion</button>
+    `;
 
-    const btnCancel = document.createElement('button');
-    btnCancel.className = 'custom-modal-btn secondary';
-    btnCancel.textContent = "Annuler";
-    btnCancel.onclick = () => overlay.classList.remove('active');
+    openHwModal({
+        size: 'sm',
+        icon: 'lock',
+        title: 'Connexion Admin',
+        body,
+        footer,
+    });
 
-    const btnLogin = document.createElement('button');
-    btnLogin.className = 'custom-modal-btn primary';
-    btnLogin.textContent = "Connexion";
-
-    const handleLogin = async () => {
-        const input = document.getElementById('admin-password-input');
-        const errorMsg = document.getElementById('login-error-msg');
-
-        if (!input) return;
-
-        const pwd = input.value.trim();
-        const ok = await verifyAdminPassword(pwd);
-
-        if (ok) {
-            setIsAdmin(true);
-            showToast("Connexion réussie !", "success");
-            eventBus.emit('admin:mode-toggled', true);
-            overlay.classList.remove('active');
-        } else {
-            errorMsg.textContent = "Mot de passe incorrect.";
-            input.value = '';
-            input.focus();
-        }
-    };
-
-    btnLogin.onclick = handleLogin;
-
-    // Allow Enter key
+    // Bind après ouverture (DOM prêt)
     setTimeout(() => {
         const input = document.getElementById('admin-password-input');
-        if(input) {
+        const errorBanner = document.getElementById('login-error-banner');
+        const btnConfirm = document.querySelector('[data-admin-login-action="confirm"]');
+        const btnCancel = document.querySelector('[data-admin-login-action="cancel"]');
+
+        if (input) {
             input.focus();
-            input.onkeydown = (e) => {
-                if(e.key === 'Enter') handleLogin();
-            };
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    btnConfirm?.click();
+                }
+            });
         }
-    }, 100);
 
-    actions.appendChild(btnCancel);
-    actions.appendChild(btnLogin);
+        btnCancel?.addEventListener('click', () => closeHwModal());
 
-    overlay.classList.add('active');
+        btnConfirm?.addEventListener('click', async () => {
+            if (!input) return;
+            const pwd = input.value.trim();
+            const ok = await verifyAdminPassword(pwd);
+
+            if (ok) {
+                setIsAdmin(true);
+                showToast('Connexion réussie !', 'success');
+                eventBus.emit('admin:mode-toggled', true);
+                closeHwModal();
+            } else {
+                if (errorBanner) errorBanner.hidden = false;
+                input.value = '';
+                input.focus();
+            }
+        });
+    }, 30);
 }
 
 function toggleAdminUI(isAdmin) {
