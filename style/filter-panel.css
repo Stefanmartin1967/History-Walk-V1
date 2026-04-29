@@ -157,7 +157,9 @@
 }
 
 .hw-fp-section.is-active .hw-fp-section-title {
-    color: var(--bg);
+    /* Idem .is-selected : --bg est trop sombre en thème nuit → invisible.
+       --ink reste lisible quel que soit le thème. */
+    color: var(--ink);
 }
 
 .hw-fp-section-badge-active {
@@ -384,7 +386,10 @@
     background: var(--surface);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
     font-weight: 700;
-    color: var(--bg);
+    /* var(--ink) au lieu de var(--bg) : --bg est la couleur du fond global
+       (très sombre en thème nuit) → invisible sur var(--surface) clair.
+       --ink est l'inverse de --surface (toujours contrasté). */
+    color: var(--ink);
 }
 
 /* ─── Incontournable toggle (amber, special) ─── */
