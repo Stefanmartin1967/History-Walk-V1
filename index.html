@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>History Walk</title>
 
-    <link rel="stylesheet" href="style.css?v=6.0">
+    <link rel="stylesheet" href="style.css?v=7.0">
     <link rel="icon" type="image/png" href="icons/icon-192.png" />
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0D3B66">
@@ -22,40 +22,8 @@
 
     <div id="offline-banner">⚡ Hors-ligne — les modifications seront synchronisées au retour du réseau.</div>
 
-    <div id="backup-modal" class="custom-modal-overlay">
-        <div class="custom-modal-box">
-            <h2 class="custom-modal-title">Sauvegarder</h2>
-            <p class="custom-modal-message">Choisissez le format de votre sauvegarde :</p>
-
-            <button id="btn-backup-full" class="backup-option-btn primary">
-                <div class="backup-option-icon">
-                    <i data-lucide="image"></i>
-                </div>
-                <div class="backup-option-text">
-                    <span class="backup-title">Complet (PC)</span>
-                    <span class="backup-subtitle">Données + Photos</span>
-                </div>
-                <span id="backup-size-full" class="backup-size-tag">Calcul...</span>
-            </button>
-
-            <button id="btn-backup-lite" class="backup-option-btn success">
-                <div class="backup-option-icon">
-                    <i data-lucide="file-text"></i>
-                </div>
-                <div class="backup-option-text">
-                    <span class="backup-title">Texte Seul (Mobile)</span>
-                    <span class="backup-subtitle">Rapide & Léger</span>
-                </div>
-                <span id="backup-size-lite" class="backup-size-tag">Calcul...</span>
-            </button>
-
-            <div class="custom-modal-actions">
-                <button id="btn-backup-cancel" class="custom-modal-btn secondary">
-                    Annuler
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Modale "backup-modal" supprimée (migration V2) : construite à la
+         volée par src/backup-modal.js → openHwModal. -->
 
     <div class="topbar">
         <div class="topbar-left">

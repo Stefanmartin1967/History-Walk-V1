@@ -23,10 +23,10 @@ import { showConfirm, showAlert } from './modal.js';
 import { RichEditor } from './richEditor.js';
 import { openTrashModal, requestSoftDelete } from './ui-modals.js';
 import { switchSidebarTab } from './ui-sidebar.js'; // Imported for use inside ui.js functions
-import { exportFullBackupPC, exportDataForMobilePC, saveUserData, handleExportWithContribution } from './fileManager.js';
+import { handleExportWithContribution } from './fileManager.js';
 import { showStatisticsModal } from './statistics.js';
 import { updateSelectionModeButton } from './ui-selection.js';
-import { closeAllDropdowns, updateBackupSizeEstimates } from './ui-utils.js';
+import { closeAllDropdowns } from './ui-utils.js';
 import { DOM } from './ui-dom.js';
 
 // Re-export pour compat : les consommateurs existants importent DOM depuis ui.js.
@@ -47,7 +47,9 @@ export function initializeDomReferences() {
         'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title', 
         'editor-cancel-btn', 'editor-save-btn', 'editor-textarea', 'destination-loader',
         'photo-viewer', 'viewer-img', 'viewer-next', 'viewer-prev',
-        'backup-modal', 'btn-backup-full', 'btn-backup-lite', 'btn-backup-cancel', 'btn-open-backup-modal',
+        // backup-modal et ses 4 sous-IDs supprimés (migration V2, cf. backup-modal.js).
+        // btn-open-backup-modal seul reste car référencé pour ouvrir la modale dynamique.
+        'btn-open-backup-modal',
         'btn-loop-circuit',
         'btn-clear-circuit', 'close-circuit-panel-btn',
         'btn-legend',
@@ -162,47 +164,14 @@ export function initializeDomReferences() {
     }
 
     // --- LOGIQUE SAUVEGARDE UNIFIÉE ---
+    // Migration V2 : backup-modal n'est plus rendue en HTML inline mais
+    // construite à la volée via openHwModal (cf. src/backup-modal.js).
+    // Les listeners sur btn-backup-full/lite/cancel sont attachés
+    // dynamiquement au moment de l'ouverture.
     if (DOM.btnOpenBackupModal) {
         DOM.btnOpenBackupModal.addEventListener('click', () => {
-            updateBackupSizeEstimates();
-            if(DOM.backupModal) DOM.backupModal.classList.add('active');
-        });
-    }
-
-    if (DOM.btnBackupCancel) {
-        DOM.btnBackupCancel.addEventListener('click', () => {
-            if(DOM.backupModal) DOM.backupModal.classList.remove('active');
-        });
-    }
-
-    if (DOM.btnBackupFull) {
-        DOM.btnBackupFull.addEventListener('click', () => {
-            // Intercept for contribution modal
-            import('./fileManager.js').then(({ handleExportWithContribution }) => {
-                handleExportWithContribution('backup', () => {
-                    if(window.innerWidth > 768) {
-                        exportFullBackupPC();
-                    } else {
-                        saveUserData(true);
-                    }
-                    if(DOM.backupModal) DOM.backupModal.classList.remove('active');
-                });
-            });
-        });
-    }
-
-    if (DOM.btnBackupLite) {
-        DOM.btnBackupLite.addEventListener('click', () => {
-            // Intercept for contribution modal
-            import('./fileManager.js').then(({ handleExportWithContribution }) => {
-                handleExportWithContribution('backup', () => {
-                    if(window.innerWidth > 768) {
-                        exportDataForMobilePC();
-                    } else {
-                        saveUserData(false);
-                    }
-                    if(DOM.backupModal) DOM.backupModal.classList.remove('active');
-                });
+            import('./backup-modal.js').then(({ showBackupModal }) => {
+                showBackupModal();
             });
         });
     }
