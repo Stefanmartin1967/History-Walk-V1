@@ -128,7 +128,7 @@
 .hw-dest-menu-section-title.is-divided {
     padding-top: 12px;
     padding-bottom: 6px;
-    border-top: 1px solid #EEF2F6;
+    border-top: 1px solid var(--line);
     margin-top: 4px;
 }
 
@@ -199,7 +199,7 @@
 .hw-dest-item.is-disabled .hw-dest-item-name {
     font-size: 14px;
     font-weight: 600;
-    color: #334E68;
+    color: var(--ink);
 }
 
 .hw-dest-item-sub {
@@ -209,7 +209,7 @@
 
 .hw-dest-item.is-disabled .hw-dest-item-sub {
     font-size: 11px;
-    color: #9FB3C8;
+    color: var(--ink-soft);
 }
 
 .hw-dest-item-check {
@@ -227,8 +227,8 @@
     font-weight: 700;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    color: #9FB3C8;
-    background: #EEF2F6;
+    color: var(--ink-soft);
+    background: var(--surface-muted);
     padding: 3px 7px;
     border-radius: 999px;
     flex-shrink: 0;
@@ -239,7 +239,7 @@
     font-size: 12px;
     color: var(--ink-soft);
     background: var(--surface-muted);
-    border-top: 1px solid #EEF2F6;
+    border-top: 1px solid var(--line);
     display: flex;
     align-items: center;
     gap: 8px;
