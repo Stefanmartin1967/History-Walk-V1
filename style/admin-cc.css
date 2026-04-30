@@ -506,3 +506,32 @@
 .icon-sm-14 { width: 14px; height: 14px; }
 .icon-24    { width: 24px; height: 24px; }
 
+/* ================================================
+   NIGHT THEME — overrides CC Admin
+   Le CC Admin reste sur fond clair (var(--hw-cream)) même en night theme
+   (cf. .admin-cc-mode { background: var(--hw-cream) !important }) — c'est
+   un panneau "always-light" pour la précision admin. Or la règle force
+   `html[data-theme="night"] button { color: var(--ink) }` (base.css:82-87)
+   passe `--ink` (= #f3f4f6 quasi-blanc en night) sur tous les boutons,
+   rendant les titres invisibles sur les cards à fond white hardcodé
+   (.cc-quick-btn, .stat-card, .diff-list-item, etc.). On force ici les
+   couleurs --hw-ink (marron foncé) pour rester lisibles.
+   ================================================ */
+html[data-theme="night"] .admin-cc-mode,
+html[data-theme="night"] .admin-cc-mode button,
+html[data-theme="night"] .admin-cc-mode input,
+html[data-theme="night"] .admin-cc-mode textarea,
+html[data-theme="night"] .admin-cc-mode select {
+    color: var(--hw-ink);
+}
+html[data-theme="night"] .admin-cc-mode .cc-quick-btn small,
+html[data-theme="night"] .admin-cc-mode .stat-lab,
+html[data-theme="night"] .admin-cc-mode .cc-quick-actions-title,
+html[data-theme="night"] .admin-cc-mode .cc-readonly-hint,
+html[data-theme="night"] .admin-cc-mode .cc-loading-state,
+html[data-theme="night"] .admin-cc-mode .diff-circuit-id,
+html[data-theme="night"] .admin-cc-mode .diff-section-sep,
+html[data-theme="night"] .admin-cc-mode .diff-text p {
+    color: var(--hw-ink-soft);
+}
+
