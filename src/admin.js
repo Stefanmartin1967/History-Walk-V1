@@ -484,7 +484,7 @@ export function showGitHubUploadModal() {
 
     // Bouton Annuler
     const btnCancel = document.createElement('button');
-    btnCancel.className = 'custom-modal-btn secondary';
+    btnCancel.className = 'hw-btn hw-btn-ghost';
     btnCancel.textContent = "Annuler";
     btnCancel.onclick = () => {
         overlay.classList.remove('active');
@@ -492,7 +492,7 @@ export function showGitHubUploadModal() {
 
     // Bouton Envoyer
     const btnSend = document.createElement('button');
-    btnSend.className = 'custom-modal-btn primary';
+    btnSend.className = 'hw-btn hw-btn-primary';
     btnSend.textContent = "Envoyer sur GitHub";
     btnSend.onclick = async () => {
         const fileInput = message.querySelector('#gh-file-input');

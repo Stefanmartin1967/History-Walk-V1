@@ -41,9 +41,10 @@ export function handleExportWithContribution(actionType, proceedCallback) {
     }
 
     // --- HTML Structure cleaned up for CSS class styling ---
+    // Note : la croix legacy `<button class="modal-close-x">×</button>` a été
+    // retirée — le système V2 hw-modal fournit déjà sa propre croix dans le
+    // header + bouton "Fermer" dans le footer (cf. showCustomModal → openHwModal).
     const content = `
-        <button class="modal-close-x" id="btn-close-contrib">×</button>
-
         <p>
             Contribuer à la maintenance et à l'amélioration de l'outil
         </p>
@@ -67,12 +68,11 @@ export function handleExportWithContribution(actionType, proceedCallback) {
     // Injection des icônes et écouteurs d'événements (Synchrone car le DOM est mis à jour)
     const bmcBtn = document.getElementById('btn-contrib-bmc');
     const exportBtn = document.getElementById('btn-contrib-export');
-    const closeBtn = document.getElementById('btn-close-contrib');
 
-    // Re-render icons inside modal content
+    // Re-render icons inside modal content (V2 hw-modal-body)
     import('./lucide-icons.js').then(({ createIcons, appIcons }) => {
-        const modalBox = document.querySelector('.custom-modal-box');
-        if (modalBox) createIcons({ icons: appIcons, root: modalBox });
+        const modalBody = document.querySelector('.hw-modal-overlay.is-active .hw-modal-body');
+        if (modalBody) createIcons({ icons: appIcons, root: modalBody });
     });
 
     if (bmcBtn) {
@@ -91,12 +91,6 @@ export function handleExportWithContribution(actionType, proceedCallback) {
         exportBtn.onclick = () => {
             closeModal();
             proceedCallback();
-        };
-    }
-
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            closeModal();
         };
     }
 }

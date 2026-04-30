@@ -1772,120 +1772,8 @@ textarea.editable-input {
     height: 12px;
 }
 
-/* Le conteneur (Fond noir) */
-.photo-viewer {
-    display: none;
-    /* Géré par le JS */
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.95);
-
-    /* CENTRAGE FLEXBOX */
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-/* L'image (La Double Limite) */
-.viewer-content {
-    /* 1. Réinitialisation */
-    display: block;
-    width: auto;
-    height: auto;
-    margin: auto;
-
-    /* 2. La Logique PC : Max 800px de large OU 80% de haut */
-    max-width: 95vw;
-    max-height: 95vh;
-
-    /* 3. Esthétique */
-    object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
-    animation: zoom 0.3s;
-}
-
-/* 4. La Règle Mobile (SORTIE des accolades ci-dessus) */
-@media (max-width: 800px) {
-    .viewer-content {
-        max-width: 95vw;
-        /* Sur petit écran, on prend presque toute la largeur */
-    }
-}
-
-.close-viewer {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
-    cursor: pointer;
-    z-index: 10001;
-}
-
-.close-viewer:hover {
-    color: #bbb;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.viewer-nav {
-    cursor: pointer;
-    position: absolute;
-    top: 50%;
-    width: auto;
-    padding: 16px;
-    margin-top: -50px;
-    color: white;
-    font-weight: bold;
-    font-size: 30px;
-    transition: 0.6s ease;
-    border-radius: 0 3px 3px 0;
-    user-select: none;
-    background-color: rgba(0, 0, 0, 0.3);
-    z-index: 10001;
-}
-
-.nav-next {
-    right: 0;
-    border-radius: 3px 0 0 3px;
-}
-
-.nav-prev {
-    left: 0;
-    border-radius: 0 3px 3px 0;
-}
-
-.viewer-nav:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-@keyframes zoom {
-    from {
-        transform: scale(0)
-    }
-
-    to {
-        transform: scale(1)
-    }
-}
-
-@media only screen and (max-width: 700px) {
-    .viewer-content {
-        width: 100%;
-    }
-
-    .viewer-nav {
-        padding: 10px;
-        font-size: 20px;
-    }
-}
+/* Photo viewer (lightbox) : règles legacy supprimées — migration V2 dans
+   style/modals.css (.hw-modal-overlay.is-photo-viewer). Cf. rapport v3 N4. */
 
 /* --- PATCH POUR LE GÉNÉRATEUR (Design aéré) --- */
 .action-btn-large {
@@ -2200,47 +2088,9 @@ input[type=range] {
     justify-content: center;
 }
 
-.custom-modal-btn {
-    flex: 1;
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: pointer;
-    border: none;
-    transition: transform 0.1s, filter 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.custom-modal-btn:hover {
-    filter: brightness(0.95);
-    transform: translateY(-1px);
-}
-
-.custom-modal-btn:active {
-    transform: translateY(1px);
-}
-
-.custom-modal-btn.primary {
-    background-color: var(--brand);
-    color: white;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-}
-
-.custom-modal-btn.danger {
-    background-color: var(--danger);
-    color: white;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
-}
-
-.custom-modal-btn.secondary {
-    background-color: var(--surface-muted);
-    color: var(--ink);
-    border: 1px solid var(--line);
-}
+/* .custom-modal-btn legacy : règles supprimées — N12 rapport v3.
+   Tous les usages migrés vers .hw-btn (.hw-btn-primary / .hw-btn-ghost /
+   .hw-btn-danger) défini dans style/modals.css. */
 
 /* --- SCANNER QR CODE --- */
 #qr-scanner-overlay {
@@ -2636,10 +2486,7 @@ input[type=range] {
         justify-content: space-around;
     }
 
-    /* 5. Viewer & Modals */
-    .viewer-content {
-        max-width: 95vw;
-    }
+    /* 5. Modals (viewer migré vers modals.css → .hw-modal-overlay.is-photo-viewer) */
 }
 
 /* ==========================================================================

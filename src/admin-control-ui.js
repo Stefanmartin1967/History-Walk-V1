@@ -480,7 +480,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
         </div>
 
         <div class="cc-subpanel-footer">
-            <button class="custom-modal-btn secondary" id="btn-upload-cancel">Annuler</button>
+            <button class="hw-btn hw-btn-secondary" id="btn-upload-cancel">Annuler</button>
             <button class="cc-save-btn" id="btn-upload-submit" disabled>
                 <i data-lucide="send"></i> Envoyer sur GitHub
             </button>
