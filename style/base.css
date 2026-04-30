@@ -83,7 +83,10 @@ html[data-theme="night"] {
     --ok: #34d399;
     --ok-soft: #064e3b; /* Vert profond pour les fonds is-done lisibles */
     --hw-amber: #fbbf24;
-    --hw-amber-soft: #78350f; /* Ambre sombre pour les fonds resto/café */
+    /* Spec #6 fix night repos visuel : surface teintée légèrement ambre via
+       color-mix au lieu d'un brun saturé #78350f qui cassait le calme du dark.
+       Texte var(--hw-amber) sur ce fond reste lisible (ratio ~7:1 AA+). */
+    --hw-amber-soft: color-mix(in oklab, var(--hw-amber) 14%, var(--surface));
     --warn: #facc15;
     --danger: #f87171;
     --cta-bg: #1D4ED8; /* Spec #6 — IDENTIQUE à maritime, 8.59:1 AAA sur blanc.

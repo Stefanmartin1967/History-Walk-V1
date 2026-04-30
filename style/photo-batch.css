@@ -115,7 +115,7 @@
     opacity: 0.75;
 }
 .photo-batch-cluster-badge {
-    background: #FFFBEB;
+    background: var(--hw-amber-soft);
     color: var(--hw-amber, #D97706);
     font-size: 0.7rem;
     font-weight: 800;
@@ -294,8 +294,8 @@
     font-size: 0.78rem;
     font-weight: 600;
     color: var(--hw-amber, #D97706);
-    background: #FFFBEB;
-    border: 1px solid #FCD34D;
+    background: var(--hw-amber-soft);
+    border: 1px solid var(--hw-amber);
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s, color 0.15s;

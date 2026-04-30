@@ -325,13 +325,13 @@
 
 .cc-photo-grid {
     padding: 10px 12px;
-    background: #FEFCE8; /* amber-50, distinct du gris cc-change-diffs */
-    border-top: 1px solid #FDE68A;
+    background: var(--hw-amber-soft);
+    border-top: 1px solid var(--hw-amber);
 }
 
 .cc-photo-grid-title {
     display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
-    font-size: 0.75rem; font-weight: 700; color: #78350F;
+    font-size: 0.75rem; font-weight: 700; color: var(--hw-amber);
     text-transform: uppercase; letter-spacing: 0.04em;
     margin-bottom: 10px;
 }
