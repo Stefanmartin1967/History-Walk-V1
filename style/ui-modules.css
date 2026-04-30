@@ -426,7 +426,7 @@
     overflow: hidden !important;
     border: 1px solid rgba(255,255,255,0.8) !important;
     box-shadow: 0 40px 100px -20px rgba(69, 26, 3, 0.22) !important;
-    background: var(--hw-cream, #FFFBF5) !important;
+    background: var(--surface) !important;
     width: min(820px, 95vw) !important;
     max-width: none !important;
     height: 90vh !important;
@@ -486,7 +486,7 @@
     display: flex; flex-direction: column;
     height: 100%; width: 100%;
     font-family: 'Inter', system-ui, sans-serif;
-    color: var(--hw-ink, #1C0A00);
+    color: var(--ink);
     overflow: hidden;
 }
 
@@ -504,7 +504,7 @@
 .ue-header-brand {
     display: flex; align-items: center; gap: 8px;
     font-weight: 800; font-size: 1.1rem;
-    color: var(--hw-ink, #1C0A00);
+    color: var(--ink);
 }
 .ue-brand-icon { font-size: 1.25rem; }
 .ue-brand-subtitle {
@@ -519,7 +519,7 @@
     color: var(--ink-soft); cursor: pointer;
     transition: background 0.15s, color 0.15s;
 }
-.ue-close-icon-btn:hover { background: var(--surface-muted); color: var(--hw-ink, #1C0A00); }
+.ue-close-icon-btn:hover { background: var(--surface-muted); color: var(--ink); }
 .ue-close-icon-btn svg { width: 18px; height: 18px; }
 
 /* ── TABS theme-aware (utilisé par Mon Espace + CC Admin V2) ─────────────── */
@@ -585,7 +585,7 @@
     display: flex; align-items: center; gap: 8px;
     font-size: 0.75rem; font-weight: 800;
     text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--hw-ink-soft, #78350F);
+    color: var(--ink-soft);
 }
 .ue-section-actions { display: flex; gap: 6px; }
 
@@ -601,7 +601,7 @@
     padding: 4px 12px;
     border: 1px solid var(--line); border-radius: 99px;
     background: var(--surface); font-size: 0.76rem; font-weight: 600;
-    color: var(--hw-ink, #1C0A00); cursor: pointer;
+    color: var(--ink); cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
 }
 .ue-pill-btn:hover { background: var(--hw-amber-soft); border-color: var(--hw-amber, #D97706); }
@@ -618,7 +618,7 @@
 }
 .ue-home-header svg { width: 16px; height: 16px; color: var(--hw-amber, #D97706); flex-shrink: 0; }
 .ue-home-section--set .ue-home-header svg { color: var(--ok); }
-.ue-home-title { font-weight: 600; font-size: 0.92rem; color: var(--hw-ink, #1C0A00); }
+.ue-home-title { font-weight: 600; font-size: 0.92rem; color: var(--ink); }
 .ue-home-hint {
     margin: 0 0 10px 0; font-size: 0.82rem; line-height: 1.45;
     color: var(--ink-soft, #6B7280);
@@ -627,7 +627,7 @@
     display: flex; flex-direction: column; gap: 2px;
     margin-bottom: 10px; font-size: 0.82rem;
 }
-.ue-home-coords { font-family: monospace; color: var(--hw-ink, #1C0A00); }
+.ue-home-coords { font-family: monospace; color: var(--ink); }
 .ue-home-date { color: var(--ink-soft, #6B7280); font-size: 0.76rem; }
 .ue-home-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .ue-home-actions .ue-pill-btn { display: inline-flex; align-items: center; gap: 4px; }
@@ -673,7 +673,7 @@
 .ue-circuit-info { flex: 1; min-width: 0; }
 .ue-circuit-name {
     font-size: 0.82rem; font-weight: 700;
-    color: var(--hw-ink, #1C0A00);
+    color: var(--ink);
     display: -webkit-box;
     -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; line-height: 1.3;
@@ -728,11 +728,11 @@
 }
 .ue-data-card-icon.secondary { background: #EFF6FF; color: #2563EB; }
 .ue-data-card-icon svg { width: 20px; height: 20px; }
-.ue-data-card-title { font-size: 0.95rem; font-weight: 800; color: var(--hw-ink, #1C0A00); margin: 0; }
+.ue-data-card-title { font-size: 0.95rem; font-weight: 800; color: var(--ink); margin: 0; }
 .ue-data-card-desc { font-size: 0.79rem; line-height: 1.45; color: var(--ink-soft); margin: 0; flex: 1; }
 .ue-photo-label {
     display: flex; align-items: center; gap: 8px;
-    font-size: 0.8rem; cursor: pointer; color: var(--hw-ink, #1C0A00);
+    font-size: 0.8rem; cursor: pointer; color: var(--ink);
 }
 .ue-photo-label input[type="checkbox"] {
     width: 15px; height: 15px; flex-shrink: 0;
@@ -753,7 +753,7 @@
 }
 .ue-action-btn.primary:hover { opacity: 0.9; transform: translateY(-1px); }
 .ue-action-btn.secondary {
-    background: #F8FAFC; color: var(--hw-ink, #1C0A00);
+    background: #F8FAFC; color: var(--ink);
     border: 1px solid var(--line);
 }
 .ue-action-btn.secondary:hover { background: var(--surface-muted); border-color: #CBD5E1; }
@@ -791,5 +791,5 @@
 }
 .ue-empty-icon.green { background: var(--ok-soft); color: var(--ok); }
 .ue-empty-icon svg { width: 28px; height: 28px; }
-.ue-empty-title { font-size: 0.95rem; font-weight: 700; color: var(--hw-ink, #1C0A00); margin: 0; }
+.ue-empty-title { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin: 0; }
 .ue-empty-sub { font-size: 0.8rem; color: var(--ink-soft); max-width: 280px; line-height: 1.45; margin: 0; }

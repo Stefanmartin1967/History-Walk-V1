@@ -111,7 +111,7 @@
     margin: 3px 0 0 0;
     font-size: 0.82rem;
     font-weight: 500;
-    color: var(--hw-ink-soft, #78350F);
+    color: var(--ink-soft);
     opacity: 0.75;
 }
 .photo-batch-cluster-badge {
@@ -560,7 +560,7 @@
     align-items: center;
     justify-content: center;
     padding: 80px 20px;
-    color: var(--hw-ink-soft, #78350F);
+    color: var(--ink-soft);
     opacity: 0.6;
     text-align: center;
 }

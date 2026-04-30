@@ -1,22 +1,21 @@
 /* ================================================
    ADMIN CONTROL CENTER (admin-control-ui.js + admin-maintenance.js)
-   ================================================ */
 
-:root {
-    --hw-amber: #D97706;
-    --hw-cream: #FDF9F3;
-    --hw-ink: #451A03;
-    --hw-ink-soft: #78350F;
-}
+   Spec #6 Audit thèmes & contraste (2026-04-30) — le CC suit désormais
+   le thème global (always-light supprimé). Les vars locales --hw-cream,
+   --hw-ink, --hw-ink-soft ont été retirées au profit de --surface, --ink,
+   --ink-soft. --hw-amber reste comme accent identitaire (couleur de texte
+   uniquement, jamais en background CTA — voir migration PR 4).
+   ================================================ */
 
 /* RESET & CONTAINER */
 .admin-cc-mode {
     padding: 0 !important;
     border-radius: 32px !important;
     overflow: hidden !important;
-    border: 1px solid rgba(255,255,255,0.8) !important;
-    box-shadow: 0 40px 100px -20px rgba(69, 26, 3, 0.2) !important;
-    background: var(--hw-cream) !important;
+    border: 1px solid var(--line) !important;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.2) !important;
+    background: var(--surface);
     width: min(1200px, 95vw) !important;
     max-width: none !important;
     height: 94vh !important;
@@ -29,7 +28,7 @@
     flex: 1 !important; display: flex !important; flex-direction: column !important;
     margin: 0 !important; padding: 0 !important; height: 100% !important; width: 100% !important; overflow: hidden !important;
 }
-.admin-cc-container { display: flex; flex-direction: column; height: 100%; width: 100%; font-family: 'Inter', system-ui, sans-serif; color: var(--hw-ink); overflow: hidden; white-space: normal; }
+.admin-cc-container { display: flex; flex-direction: column; height: 100%; width: 100%; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); overflow: hidden; white-space: normal; }
 
 .admin-cc-header { background: #FFFFFF; padding: 16px 28px 0; border-bottom: 1px solid #E5E7EB; flex-shrink: 0; }
 .header-top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 14px; }
@@ -42,8 +41,8 @@
 
 .admin-cc-tabs { display: flex; gap: 4px; }
 .admin-cc-tab { padding: 8px 16px; border-radius: 10px 10px 0 0; font-size: 0.82rem; font-weight: 700; cursor: pointer; color: #64748B; transition: 0.2s; display: flex; align-items: center; gap: 7px; border: 1px solid transparent; border-bottom: none; }
-.admin-cc-tab:hover { background: #F1F5F9; color: var(--hw-ink); }
-.admin-cc-tab.active { background: var(--hw-cream); color: var(--hw-amber); border-color: #E5E7EB; }
+.admin-cc-tab:hover { background: #F1F5F9; color: var(--ink); }
+.admin-cc-tab.active { background: var(--surface); color: var(--hw-amber); border-color: #E5E7EB; }
 
 .admin-cc-scroll-area { flex: 1; overflow-y: auto; padding: 20px 28px; }
 
@@ -60,8 +59,8 @@
     box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }
 .stat-icon-box { width: 42px; height: 42px; border-radius: 12px; background: #FFFBEB; color: var(--hw-amber); display: flex; align-items: center; justify-content: center; }
-.stat-val { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--hw-ink); }
-.stat-lab { font-size: 0.72rem; font-weight: 600; color: var(--hw-ink-soft); text-transform: uppercase; letter-spacing: 0.04em; text-align: center; }
+.stat-val { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--ink); }
+.stat-lab { font-size: 0.72rem; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; text-align: center; }
 
 .admin-cc-footer { padding: 14px 28px; background: white; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
 #btn-cc-publish { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; padding: 14px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px -5px rgba(217, 119, 6, 0.4); transition: all 0.2s; }
@@ -71,18 +70,18 @@
 
 /* DIFF LIST */
 .diff-list-container { display: flex; flex-direction: column; gap: 10px; }
-.diff-group-title { font-size: 1rem; font-weight: 800; margin-top: 30px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: var(--hw-ink); }
+.diff-group-title { font-size: 1rem; font-weight: 800; margin-top: 30px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: var(--ink); }
 .diff-count-badge { background: #F1F5F9; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; }
 .diff-list-item { background: white; border: 1px solid #E5E7EB; border-radius: 16px; padding: 16px 20px; display: flex; flex-direction: column; gap: 15px; transition: all 0.2s; }
 .diff-list-item:hover { border-color: var(--hw-amber); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 .diff-summary-row { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 .diff-info { display: flex; align-items: center; gap: 15px; }
 .diff-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: #F1F5F9; color: #64748B; }
-.diff-text h4 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--hw-ink); }
-.diff-text p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--hw-ink-soft); opacity: 0.7; }
+.diff-text h4 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--ink); }
+.diff-text p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--ink-soft); opacity: 0.7; }
 .diff-circuit-id { font-size: 0.7rem; color: #94A3B8; font-family: monospace; margin-top: 2px; }
 .diff-toggle-btn { background: transparent; border: none; cursor: pointer; color: #94A3B8; transition: 0.2s; }
-.diff-toggle-btn:hover { color: var(--hw-ink); }
+.diff-toggle-btn:hover { color: var(--ink); }
 .diff-details { display: none; padding-top: 15px; border-top: 1px solid #F1F5F9; margin-top: 5px; }
 .diff-details.open { display: block; animation: slideDown 0.2s ease-out; }
 @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
@@ -105,7 +104,7 @@
 .settings-input { width: 100%; padding: 15px; border: 1px solid #E5E7EB; border-radius: 12px; font-family: monospace; font-size: 1rem; margin-top: 10px; }
 
 /* Loading state */
-.cc-loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: var(--hw-ink-soft); }
+.cc-loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: var(--ink-soft); }
 .cc-loading-icon { width: 48px; height: 48px; margin-bottom: 15px; color: var(--hw-amber); }
 .cc-loading-label { font-weight: 500; }
 
@@ -147,13 +146,13 @@
 
 /* Quick Actions — Dashboard CC */
 .cc-quick-actions { margin-top: 0; margin-bottom: 8px; }
-.cc-quick-actions-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--hw-ink-soft); display: flex; align-items: center; gap: 7px; margin-bottom: 12px; }
+.cc-quick-actions-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); display: flex; align-items: center; gap: 7px; margin-bottom: 12px; }
 .cc-quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.cc-quick-btn { background: white; border: 1px solid #E5E7EB; border-radius: 14px; padding: 14px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: all 0.18s; color: var(--hw-ink); }
+.cc-quick-btn { background: white; border: 1px solid #E5E7EB; border-radius: 14px; padding: 14px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: all 0.18s; color: var(--ink); }
 .cc-quick-btn:hover { border-color: var(--hw-amber); box-shadow: 0 4px 14px rgba(217,119,6,0.12); transform: translateY(-2px); }
 .cc-quick-btn .lucide { color: var(--hw-amber); width: 24px; height: 24px; }
 .cc-quick-btn span { font-weight: 700; font-size: 0.88rem; }
-.cc-quick-btn small { font-size: 0.75rem; color: var(--hw-ink-soft); font-weight: 400; }
+.cc-quick-btn small { font-size: 0.75rem; color: var(--ink-soft); font-weight: 400; }
 
 /* Info strip — Dashboard CC (remplace cc-sysinfo) */
 .cc-info-strip {
@@ -165,7 +164,7 @@
 .cc-info-strip-dot { color: #CBD5E1; }
 .cc-info-strip-repo {
     display: flex; align-items: center; gap: 5px;
-    color: var(--hw-ink); text-decoration: none; font-weight: 600;
+    color: var(--ink); text-decoration: none; font-weight: 600;
     transition: color 0.15s;
 }
 .cc-info-strip-repo:hover { color: var(--hw-amber); }
@@ -174,26 +173,26 @@
 }
 .cc-info-strip-token.cc-token-ok  { color: #15803D; }
 .cc-info-strip-token.cc-token-missing { color: #DC2626; }
-.cc-repo-link { text-decoration: none; color: var(--hw-ink); transition: color 0.15s; }
+.cc-repo-link { text-decoration: none; color: var(--ink); transition: color 0.15s; }
 .cc-repo-link:hover { color: var(--hw-amber); }
 
 /* Upload Circuit Sub-panel */
 .cc-subpanel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.cc-back-btn { background: none; border: 1px solid #E5E7EB; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--hw-ink); display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+.cc-back-btn { background: none; border: 1px solid #E5E7EB; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
 .cc-back-btn:hover { border-color: var(--hw-amber); color: var(--hw-amber); }
-.cc-subpanel-title { font-size: 1rem; font-weight: 700; color: var(--hw-ink); }
+.cc-subpanel-title { font-size: 1rem; font-weight: 700; color: var(--ink); }
 .cc-upload-intro { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
-.cc-upload-intro p { margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--hw-ink); }
+.cc-upload-intro p { margin: 0; font-size: 0.88rem; line-height: 1.5; color: var(--ink); }
 .cc-upload-icon { width: 32px; height: 32px; flex-shrink: 0; }
-.cc-upload-intro-note { color: var(--hw-ink-soft); }
-.cc-upload-field-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--hw-ink); margin-bottom: 6px; }
+.cc-upload-intro-note { color: var(--ink-soft); }
+.cc-upload-field-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
 .cc-upload-field-label--spaced { margin-top: 14px; }
-.cc-card-hint { color: var(--hw-ink-soft); font-size: 0.88rem; margin-bottom: 14px; }
+.cc-card-hint { color: var(--ink-soft); font-size: 0.88rem; margin-bottom: 14px; }
 .cc-card-hint--wide { margin-bottom: 20px; }
 .cc-readonly-hint { font-size: 0.85rem; color: #64748B; font-style: italic; }
-.cc-format-badge { background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 4px; padding: 1px 5px; font-size: 0.7rem; font-weight: 700; color: var(--hw-ink-soft); margin-left: 3px; }
-.cc-file-drop { border: 2px dashed #D1D5DB; border-radius: 12px; padding: 22px 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: all 0.18s; color: var(--hw-ink-soft); background: #FAFAFA; }
-.cc-file-drop:hover { border-color: var(--hw-amber); background: #FFFBF0; color: var(--hw-ink); }
+.cc-format-badge { background: #F3F4F6; border: 1px solid #E5E7EB; border-radius: 4px; padding: 1px 5px; font-size: 0.7rem; font-weight: 700; color: var(--ink-soft); margin-left: 3px; }
+.cc-file-drop { border: 2px dashed #D1D5DB; border-radius: 12px; padding: 22px 16px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: all 0.18s; color: var(--ink-soft); background: #FAFAFA; }
+.cc-file-drop:hover { border-color: var(--hw-amber); background: #FFFBF0; color: var(--ink); }
 .cc-file-drop .lucide { width: 28px; height: 28px; }
 .cc-file-drop span { font-size: 0.88rem; font-weight: 600; }
 .cc-file-drop small { font-size: 0.75rem; }
@@ -212,7 +211,7 @@
 .cc-lock-note .lucide { display: inline; vertical-align: middle; }
 .diff-change-block { margin-top: 15px; }
 .diff-change-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
-.diff-change-key { font-size: 0.75rem; font-weight: 800; color: var(--hw-ink-soft); opacity: 0.6; }
+.diff-change-key { font-size: 0.75rem; font-weight: 800; color: var(--ink-soft); opacity: 0.6; }
 
 /* Badge counter on CC button */
 .cc-badge { background: var(--hw-amber); color: white; padding: 2px 7px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px; }
@@ -225,7 +224,7 @@
 
 .cc-diff-group-title {
     font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--hw-ink-soft); margin: 20px 0 8px 0;
+    color: var(--ink-soft); margin: 20px 0 8px 0;
     display: flex; align-items: center; gap: 8px;
 }
 .cc-diff-group-title:first-child { margin-top: 0; }
@@ -252,7 +251,7 @@
 }
 
 .cc-change-name {
-    flex: 1; font-weight: 700; font-size: 0.9rem; color: var(--hw-ink);
+    flex: 1; font-weight: 700; font-size: 0.9rem; color: var(--ink);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
@@ -421,7 +420,7 @@
    ADMIN MAINTENANCE (admin-maintenance.js)
    ================================================ */
 
-.maint-loading { text-align: center; padding: 40px; color: var(--hw-ink-soft); }
+.maint-loading { text-align: center; padding: 40px; color: var(--ink-soft); }
 .maint-container { padding: 20px; max-width: 800px; margin: 0 auto; }
 .maint-header-row { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
 .maint-title { margin: 0; display: flex; align-items: center; gap: 8px; }
@@ -429,20 +428,20 @@
 
 .maint-section { margin-bottom: 30px; border: 1px solid #E5E7EB; border-radius: 16px; overflow: hidden; }
 .maint-section-header { background: #F3F4F6; padding: 15px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center; }
-.maint-section-title { margin: 0; color: var(--hw-ink); display: flex; align-items: center; gap: 8px; }
+.maint-section-title { margin: 0; color: var(--ink); display: flex; align-items: center; gap: 8px; }
 .maint-section-body { background: white; max-height: 250px; overflow-y: auto; }
 
 .maint-item { padding: 12px 15px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
 .maint-item-faded { opacity: 0.6; }
-.maint-item-name { font-weight: 600; color: var(--hw-ink); }
-.maint-item-meta { font-size: 0.75rem; color: var(--hw-ink-soft); }
+.maint-item-name { font-weight: 600; color: var(--ink); }
+.maint-item-meta { font-size: 0.75rem; color: var(--ink-soft); }
 .maint-item-actions { display: flex; gap: 8px; }
 .maint-btn-restore { background: #F0FDF4; color: #166534; border: 1px solid #86EFAC; padding: 6px; border-radius: 6px; cursor: pointer; }
 .maint-btn-danger  { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; padding: 6px; border-radius: 6px; cursor: pointer; flex-shrink: 0; }
 
 .maint-dupes-section { margin-bottom: 30px; }
 .maint-dupes-title { color: #DC2626; display: flex; align-items: center; gap: 8px; }
-.maint-dupes-desc { font-size: 0.9rem; color: var(--hw-ink-soft); margin-bottom: 15px; }
+.maint-dupes-desc { font-size: 0.9rem; color: var(--ink-soft); margin-bottom: 15px; }
 .maint-dupes-list { display: flex; flex-direction: column; gap: 15px; }
 .maint-dupe-group { border: 1px solid #FECACA; background: #FEF2F2; border-radius: 12px; overflow: hidden; }
 .maint-dupe-group-header { padding: 10px 15px; background: #FEE2E2; color: #991B1B; font-weight: bold; font-size: 0.85rem; }
@@ -457,14 +456,14 @@
 
 .maint-circuit-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #F1F5F9; }
 .maint-circuit-info { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-.maint-circuit-name { font-weight: 600; color: var(--hw-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.maint-circuit-meta { font-size: 0.75rem; color: var(--hw-ink-soft); font-family: monospace; display: flex; align-items: center; gap: 6px; }
+.maint-circuit-name { font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.maint-circuit-meta { font-size: 0.75rem; color: var(--ink-soft); font-family: monospace; display: flex; align-items: center; gap: 6px; }
 .maint-circuit-dist { opacity: 0.5; }
 
 .maint-welcome { padding: 40px; text-align: center; }
-.maint-welcome-icon { margin-bottom: 20px; font-size: 3rem; color: var(--hw-ink-soft); opacity: 0.2; }
+.maint-welcome-icon { margin-bottom: 20px; font-size: 3rem; color: var(--ink-soft); opacity: 0.2; }
 .maint-welcome-title { margin-bottom: 10px; }
-.maint-welcome-desc { color: var(--hw-ink-soft); max-width: 500px; margin: 0 auto 30px auto; }
+.maint-welcome-desc { color: var(--ink-soft); max-width: 500px; margin: 0 auto 30px auto; }
 .maint-start-btn { padding: 12px 24px; font-size: 1rem; }
 
 /* ================================================
@@ -506,32 +505,8 @@
 .icon-sm-14 { width: 14px; height: 14px; }
 .icon-24    { width: 24px; height: 24px; }
 
-/* ================================================
-   NIGHT THEME — overrides CC Admin
-   Le CC Admin reste sur fond clair (var(--hw-cream)) même en night theme
-   (cf. .admin-cc-mode { background: var(--hw-cream) !important }) — c'est
-   un panneau "always-light" pour la précision admin. Or la règle force
-   `html[data-theme="night"] button { color: var(--ink) }` (base.css:82-87)
-   passe `--ink` (= #f3f4f6 quasi-blanc en night) sur tous les boutons,
-   rendant les titres invisibles sur les cards à fond white hardcodé
-   (.cc-quick-btn, .stat-card, .diff-list-item, etc.). On force ici les
-   couleurs --hw-ink (marron foncé) pour rester lisibles.
-   ================================================ */
-html[data-theme="night"] .admin-cc-mode,
-html[data-theme="night"] .admin-cc-mode button,
-html[data-theme="night"] .admin-cc-mode input,
-html[data-theme="night"] .admin-cc-mode textarea,
-html[data-theme="night"] .admin-cc-mode select {
-    color: var(--hw-ink);
-}
-html[data-theme="night"] .admin-cc-mode .cc-quick-btn small,
-html[data-theme="night"] .admin-cc-mode .stat-lab,
-html[data-theme="night"] .admin-cc-mode .cc-quick-actions-title,
-html[data-theme="night"] .admin-cc-mode .cc-readonly-hint,
-html[data-theme="night"] .admin-cc-mode .cc-loading-state,
-html[data-theme="night"] .admin-cc-mode .diff-circuit-id,
-html[data-theme="night"] .admin-cc-mode .diff-section-sep,
-html[data-theme="night"] .admin-cc-mode .diff-text p {
-    color: var(--hw-ink-soft);
-}
+/* Note : l'override `html[data-theme="night"] .admin-cc-mode { color: var(--ink) }`
+   ajouté en PR #412 a été retiré (Spec #6, 2026-04-30). Devenu inutile depuis que
+   le CC suit le thème global — le texte var(--ink) est désormais cohérent par
+   construction, sans force. */
 
