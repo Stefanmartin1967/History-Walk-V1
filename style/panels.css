@@ -558,7 +558,7 @@
     letter-spacing: 0.02em;
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
-.poi-tag.amber { background: rgba(255,251,235,0.95); color: var(--hw-ink-soft); }
+.poi-tag.amber { background: rgba(255,251,235,0.95); color: var(--ink-soft); }
 .poi-tag.brand { background: rgba(240,249,255,0.95); color: var(--brand); }
 .poi-tag svg { width: 11px; height: 11px; }
 .poi-photo-count {
@@ -940,7 +940,7 @@
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--hw-ink-soft);
+    color: var(--ink-soft);
     opacity: 0.7;
     margin: 0 0 8px;
     padding: 0 2px;
@@ -967,7 +967,7 @@
     gap: 5px;
     font-size: 11px;
     font-weight: 600;
-    color: var(--hw-ink);
+    color: var(--ink);
     text-align: center;
     line-height: 1.2;
     transition: border-color 0.18s, transform 0.18s, box-shadow 0.18s;
@@ -1377,7 +1377,7 @@
     position: relative;
 }
 .mc-tool-btn:hover { border-color: var(--brand); color: var(--brand); }
-.mc-tool-btn.is-active { background: var(--brand); border-color: var(--brand); color: #fff; }
+.mc-tool-btn.is-active { background: var(--cta-bg); border-color: var(--cta-bg); color: var(--cta-fg); }
 .mc-tool-btn svg { width: 16px; height: 16px; }
 .mc-tool-btn .badge-n {
     position: absolute;

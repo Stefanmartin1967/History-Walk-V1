@@ -43,8 +43,8 @@
 
 /* --- CLUSTER SECTION --- */
 .photo-batch-cluster {
-    background: white;
-    border: 1px solid #E5E7EB;
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: 20px;
     padding: 18px 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -111,7 +111,7 @@
     margin: 3px 0 0 0;
     font-size: 0.82rem;
     font-weight: 500;
-    color: var(--hw-ink-soft, #78350F);
+    color: var(--ink-soft);
     opacity: 0.75;
 }
 .photo-batch-cluster-badge {
@@ -126,18 +126,18 @@
     flex-shrink: 0;
 }
 .photo-batch-cluster-badge.out-poi {
-    background: #F1F5F9;
-    color: #475569;
+    background: var(--surface-muted);
+    color: var(--ink-soft);
 }
 
 /* Cluster Hors POI : fond et bordure plus neutres */
 .photo-batch-cluster.out-poi {
-    background: #FAFAF9;
-    border-color: #E2E8F0;
+    background: var(--surface-muted);
+    border-color: var(--line);
     border-style: dashed;
 }
 .photo-batch-cluster.out-poi:hover {
-    border-color: #94A3B8;
+    border-color: var(--ink-soft);
 }
 
 /* --- THUMBNAIL GRID --- */
@@ -149,8 +149,8 @@
 .photo-batch-thumb {
     position: relative;
     aspect-ratio: 1;
-    background: #F8FAFC;
-    border: 1px solid #E5E7EB;
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
     border-radius: 10px;
     overflow: hidden;
     cursor: grab;
@@ -193,8 +193,8 @@
     padding: 0;
     border-radius: 50%;
     border: none;
-    background: var(--hw-amber, #D97706);
-    color: white;
+    background: var(--cta-bg);
+    color: var(--cta-fg);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -301,9 +301,9 @@
     transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .photo-batch-cluster-btn:hover:not(:disabled) {
-    background: var(--hw-amber, #D97706);
-    color: white;
-    border-color: var(--hw-amber, #D97706);
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    border-color: var(--cta-bg);
 }
 .photo-batch-cluster-btn:disabled {
     opacity: 0.45;
@@ -342,8 +342,8 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: var(--hw-amber, #D97706);
-    color: white;
+    background: var(--cta-bg);
+    color: var(--cta-fg);
     display: none;
     align-items: center;
     justify-content: center;
@@ -560,7 +560,7 @@
     align-items: center;
     justify-content: center;
     padding: 80px 20px;
-    color: var(--hw-ink-soft, #78350F);
+    color: var(--ink-soft);
     opacity: 0.6;
     text-align: center;
 }
