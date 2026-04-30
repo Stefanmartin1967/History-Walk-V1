@@ -67,8 +67,7 @@
 #btn-cc-publish { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; padding: 14px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px -5px rgba(217, 119, 6, 0.4); transition: all 0.2s; }
 #btn-cc-publish:hover { transform: translateY(-2px); filter: brightness(1.1); }
 #btn-cc-publish:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
-.custom-modal-btn.secondary { background: transparent; border: 1px solid #E5E7EB; color: var(--hw-ink-soft); padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-.custom-modal-btn.secondary:hover { background: #F8FAFC; color: var(--hw-ink); }
+/* .custom-modal-btn.secondary legacy supprimé — N12 rapport v3, migré vers .hw-btn-ghost. */
 
 /* DIFF LIST */
 .diff-list-container { display: flex; flex-direction: column; gap: 10px; }
@@ -485,7 +484,7 @@
 }
 .admin-form-status       { margin-top: 10px; font-size: 0.9em; color: var(--danger); }
 .admin-form-status--info { color: var(--primary); }
-.custom-modal-btn.danger { background-color: var(--danger); color: white; }
+/* .custom-modal-btn.danger legacy supprimé — N12 rapport v3, migré vers .hw-btn-danger. */
 
 .admin-file-warning-body { text-align: left; color: var(--ink); }
 .admin-file-warning-body p { margin-bottom: 10px; }

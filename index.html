@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>History Walk</title>
 
-    <link rel="stylesheet" href="style.css?v=7.0">
+    <link rel="stylesheet" href="style.css?v=7.1">
     <link rel="icon" type="image/png" href="icons/icon-192.png" />
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0D3B66">
@@ -397,12 +397,9 @@
     </div>
     <div id="toast-container" class="toast-container"></div>
 
-    <div id="photo-viewer" class="photo-viewer">
-        <span class="close-viewer">×</span>
-        <div class="viewer-nav nav-prev" id="viewer-prev">❮</div>
-        <img class="viewer-content" id="viewer-img">
-        <div class="viewer-nav nav-next" id="viewer-next">❯</div>
-    </div>
+    <!-- Photo viewer (lightbox) : migration V2 — désormais géré par
+         ui-photo-viewer.js via openHwModal({ size:'xl', body:..., footer:false }).
+         Cf. rapport v3 §N4. -->
 
     <!-- MODALE GÉNÉRIQUE SYSTÈME -->
     <div id="custom-modal-overlay" class="custom-modal-overlay">

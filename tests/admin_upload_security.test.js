@@ -39,7 +39,7 @@ describe('Admin Upload Security (Custom Modal)', () => {
 
     it('should allow .gpx files without any confirmation modal', async () => {
         showGitHubUploadModal();
-        const sendBtn = actions.querySelector('.custom-modal-btn.primary');
+        const sendBtn = actions.querySelector('.hw-btn.hw-btn-primary');
         const fileInput = message.querySelector('#gh-file-input');
 
         const file = new File(['<gpx></gpx>'], 'test.gpx', { type: 'application/gpx+xml' });
@@ -56,7 +56,7 @@ describe('Admin Upload Security (Custom Modal)', () => {
 
     it('should ask for confirmation (showConfirm) for .html files', async () => {
         showGitHubUploadModal();
-        const sendBtn = actions.querySelector('.custom-modal-btn.primary');
+        const sendBtn = actions.querySelector('.hw-btn.hw-btn-primary');
         const fileInput = message.querySelector('#gh-file-input');
 
         const file = new File(['<html></html>'], 'malicious.html', { type: 'text/html' });
@@ -76,7 +76,7 @@ describe('Admin Upload Security (Custom Modal)', () => {
 
     it('should abort upload if showConfirm returns false', async () => {
         showGitHubUploadModal();
-        const sendBtn = actions.querySelector('.custom-modal-btn.primary');
+        const sendBtn = actions.querySelector('.hw-btn.hw-btn-primary');
         const fileInput = message.querySelector('#gh-file-input');
 
         const file = new File(['<html></html>'], 'malicious.html', { type: 'text/html' });

@@ -280,6 +280,18 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     background: var(--surface-muted);
     color: var(--ink);
 }
+/* Variante "secondary" : plus contrastée que ghost, pour usages hors
+   hw-modal-footer (CC Admin Nettoyage, sub-panel Upload manuel) où le
+   transparent du ghost se noie dans le fond clair du panneau. Reproduit
+   le contraste de l'ancien .custom-modal-btn.secondary (legacy retiré N12). */
+.hw-btn-secondary {
+    background: var(--surface-muted);
+    color: var(--ink);
+    border-color: var(--line);
+}
+.hw-btn-secondary:hover {
+    background: var(--line);
+}
 .hw-btn-danger {
     background: var(--danger);
     color: #fff;
@@ -519,4 +531,90 @@ html[data-theme="night"] .hw-banner.is-error {
 .hw-backup-option.is-lite .icn {
     background: var(--ok-soft);
     color: var(--ok);
+}
+
+/* ============================================================
+   Photo viewer (lightbox plein écran) — variante hw-modal
+   Neutralise le styling V2 standard (padding overlay, max-width,
+   fond bleu nuit, padding body) pour retrouver l'apparence
+   lightbox attendue. Activée via la classe is-photo-viewer
+   ajoutée dynamiquement par ui-photo-viewer.js après openHwModal.
+   ============================================================ */
+.hw-modal-overlay.is-photo-viewer {
+    padding: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.hw-modal-overlay.is-photo-viewer .hw-modal {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.hw-modal-overlay.is-photo-viewer .hw-modal-header {
+    background: transparent;
+    border-bottom: none;
+    flex-shrink: 0;
+    color: white;
+}
+.hw-modal-overlay.is-photo-viewer .hw-modal-title { color: white; }
+.hw-modal-overlay.is-photo-viewer .hw-modal-close { color: white; }
+.hw-modal-overlay.is-photo-viewer .hw-modal-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+.hw-modal-overlay.is-photo-viewer .hw-modal-body {
+    background: transparent;
+    padding: 0;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hw-photo-viewer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hw-photo-viewer-img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: auto;
+}
+.hw-photo-viewer-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 16px 20px;
+    font-size: 28px;
+    font-weight: bold;
+    user-select: none;
+    transition: background 0.2s;
+    z-index: 1;
+}
+.hw-photo-viewer-nav:hover { background: rgba(0, 0, 0, 0.85); }
+.hw-photo-viewer-nav.is-prev { left: 12px; border-radius: 0 4px 4px 0; }
+.hw-photo-viewer-nav.is-next { right: 12px; border-radius: 4px 0 0 4px; }
+
+@media (max-width: 700px) {
+    .hw-photo-viewer-nav { padding: 10px 14px; font-size: 22px; }
+    .hw-photo-viewer-img { max-width: 100vw; }
 }

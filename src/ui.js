@@ -16,7 +16,8 @@ import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML, ICONS } from './templates.js';
 import { getZonesData } from './circuit-actions.js';
 import { calculateAdjustedTime } from './utils.js';
-import { initPhotoViewer } from './ui-photo-viewer.js';
+// ui-photo-viewer.js est désormais lazy-loadé par ui-photo-grid.js
+// (openPhotoViewer dynamique). Plus d'init au boot — N4 rapport v3.
 import { openPhotoGrid } from './ui-photo-grid.js';
 import { initCircuitListUI, renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm, showAlert } from './modal.js';
@@ -46,7 +47,7 @@ export function initializeDomReferences() {
         'btn-import-gpx', 'loader-overlay', 'btn-save-data', 'btn-restore-data', 'restore-loader', 'btn-open-geojson', 
         'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title', 
         'editor-cancel-btn', 'editor-save-btn', 'editor-textarea', 'destination-loader',
-        'photo-viewer', 'viewer-img', 'viewer-next', 'viewer-prev',
+        // photo-viewer/viewer-* supprimés : migration V2 vers ui-photo-viewer.openPhotoViewer.
         // backup-modal et ses 4 sous-IDs supprimés (migration V2, cf. backup-modal.js).
         // btn-open-backup-modal seul reste car référencé pour ouvrir la modale dynamique.
         'btn-open-backup-modal',
@@ -234,7 +235,6 @@ export function initializeDomReferences() {
     }
 
     // Initialisation des sous-modules UI
-    initPhotoViewer();
     initCircuitListUI();
     RichEditor.init(); // Setup écouteurs Rich Modal
 

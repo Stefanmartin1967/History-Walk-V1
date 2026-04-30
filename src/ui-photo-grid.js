@@ -304,27 +304,11 @@ function renderGrid() {
             card.appendChild(badge);
         }
 
-        // Click → viewer
+        // Click → lightbox V2 (cf. ui-photo-viewer.js)
         img.onclick = () => {
-            import('./photo-service.js').then(pm => {
-                pm.setCurrentPhotos(currentGridPhotos.map(p => p.objectUrl || p.src), index);
-                const viewer = document.getElementById('photo-viewer');
-                const viewerImg = document.getElementById('viewer-img');
-                const toolbar = document.getElementById('viewer-toolbar');
-
-                if (viewer && viewerImg) {
-                    viewerImg.src = displaySrc;
-                    viewer.style.display = 'flex';
-                    // Au-dessus de la modale V2 (overlay z-index 100000)
-                    viewer.style.zIndex = '100001';
-
-                    if (toolbar) toolbar.style.display = 'flex';
-
-                    const uploadBtn = document.getElementById('viewer-btn-upload');
-                    const deleteBtn = document.getElementById('viewer-btn-delete');
-                    if (uploadBtn) uploadBtn.style.display = 'none';
-                    if (deleteBtn) deleteBtn.style.display = 'none';
-                }
+            import('./ui-photo-viewer.js').then(m => {
+                const photos = currentGridPhotos.map(p => p.objectUrl || p.src);
+                m.openPhotoViewer(photos, index);
             });
         };
 

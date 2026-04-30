@@ -409,7 +409,7 @@ function renderMobileZonesMenu() {
     });
 
     const closeBtn = document.createElement('button');
-    closeBtn.className = 'custom-modal-btn secondary';
+    closeBtn.className = 'hw-btn hw-btn-ghost';
     closeBtn.textContent = 'Fermer';
     closeBtn.onclick = () => closeModal();
 

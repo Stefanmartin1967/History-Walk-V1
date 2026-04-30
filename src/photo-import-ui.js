@@ -150,7 +150,7 @@ export function showPhotoSelectionModal(titleText, introText, items, confirmLabe
 
         // Bouton Principal (Import / Créer)
         const btnImport = document.createElement('button');
-        btnImport.className = 'custom-modal-btn primary';
+        btnImport.className = 'hw-btn hw-btn-primary';
         // Le texte sera mis à jour par updateButtonState
         btnImport.onclick = () => {
             const selectedItems = items.filter((_, i) => selectionState.get(i));
@@ -163,8 +163,9 @@ export function showPhotoSelectionModal(titleText, introText, items, confirmLabe
         let btnExtra = null;
         if (extraAction) {
             btnExtra = document.createElement('button');
-            btnExtra.className = 'custom-modal-btn success'; // Use a distinct style if possible, or secondary
-            btnExtra.style.backgroundColor = '#10B981'; // Force green/success color
+            btnExtra.className = 'hw-btn hw-btn-primary';
+            // Couleur verte pour distinguer "Forcer ajout" — CSSOM (autorisé par CSP).
+            btnExtra.style.backgroundColor = '#10B981';
             btnExtra.style.color = 'white';
             btnExtra.textContent = extraAction.label;
             btnExtra.onclick = () => {
@@ -179,7 +180,7 @@ export function showPhotoSelectionModal(titleText, introText, items, confirmLabe
 
         // Bouton Ignorer
         const btnSkip = document.createElement('button');
-        btnSkip.className = 'custom-modal-btn secondary';
+        btnSkip.className = 'hw-btn hw-btn-ghost';
         btnSkip.textContent = "Ignorer";
         btnSkip.onclick = () => {
             closeModal();

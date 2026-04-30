@@ -91,7 +91,7 @@ function renderResults(container) {
         <div class="maint-container">
             <div class="maint-header-row">
                 <h3 class="maint-title"><i data-lucide="server"></i> Fichiers sur le Serveur</h3>
-                <button id="btn-refresh-maintenance" class="custom-modal-btn secondary">
+                <button id="btn-refresh-maintenance" class="hw-btn hw-btn-secondary">
                     <i data-lucide="refresh-cw"></i> Actualiser
                 </button>
             </div>
@@ -311,7 +311,7 @@ export function renderMaintenanceTab(container) {
                 <br><br>
                 <strong>Attention :</strong> Les suppressions ici sont irréversibles et affectent immédiatement l'index public.
             </p>
-            <button id="btn-start-scan" class="custom-modal-btn primary maint-start-btn">
+            <button id="btn-start-scan" class="hw-btn hw-btn-primary maint-start-btn">
                 <i data-lucide="search"></i> Scanner les fichiers
             </button>
         </div>
