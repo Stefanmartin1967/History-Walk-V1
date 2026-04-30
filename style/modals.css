@@ -539,7 +539,10 @@ html[data-theme="night"] .hw-banner.is-error {
    lightbox attendue. Activée via la classe is-photo-viewer
    ajoutée dynamiquement par ui-photo-viewer.js après openHwModal.
    ============================================================ */
-.hw-modal-overlay.is-photo-viewer {
+.hw-modal-overlay.is-photo-viewer,
+html[data-theme="desert"] .hw-modal-overlay.is-photo-viewer,
+html[data-theme="oasis"] .hw-modal-overlay.is-photo-viewer,
+html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     padding: 0;
     background: rgba(0, 0, 0, 0.95);
     backdrop-filter: none;
