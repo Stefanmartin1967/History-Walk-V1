@@ -753,10 +753,10 @@
 }
 .ue-action-btn.primary:hover { opacity: 0.9; transform: translateY(-1px); }
 .ue-action-btn.secondary {
-    background: #F8FAFC; color: var(--ink);
+    background: var(--surface-muted); color: var(--ink);
     border: 1px solid var(--line);
 }
-.ue-action-btn.secondary:hover { background: var(--surface-muted); border-color: #CBD5E1; }
+.ue-action-btn.secondary:hover { background: var(--surface-muted); border-color: var(--line); }
 
 /* ── ONGLET CORBEILLE ─────────────────────────────────────────────────────── */
 .ue-trash-item {

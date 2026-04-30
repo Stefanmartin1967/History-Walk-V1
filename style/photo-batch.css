@@ -43,8 +43,8 @@
 
 /* --- CLUSTER SECTION --- */
 .photo-batch-cluster {
-    background: white;
-    border: 1px solid #E5E7EB;
+    background: var(--surface);
+    border: 1px solid var(--line);
     border-radius: 20px;
     padding: 18px 20px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
@@ -126,18 +126,18 @@
     flex-shrink: 0;
 }
 .photo-batch-cluster-badge.out-poi {
-    background: #F1F5F9;
-    color: #475569;
+    background: var(--surface-muted);
+    color: var(--ink-soft);
 }
 
 /* Cluster Hors POI : fond et bordure plus neutres */
 .photo-batch-cluster.out-poi {
-    background: #FAFAF9;
-    border-color: #E2E8F0;
+    background: var(--surface-muted);
+    border-color: var(--line);
     border-style: dashed;
 }
 .photo-batch-cluster.out-poi:hover {
-    border-color: #94A3B8;
+    border-color: var(--ink-soft);
 }
 
 /* --- THUMBNAIL GRID --- */
@@ -149,8 +149,8 @@
 .photo-batch-thumb {
     position: relative;
     aspect-ratio: 1;
-    background: #F8FAFC;
-    border: 1px solid #E5E7EB;
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
     border-radius: 10px;
     overflow: hidden;
     cursor: grab;
