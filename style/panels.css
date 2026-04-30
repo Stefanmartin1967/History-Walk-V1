@@ -1377,7 +1377,7 @@
     position: relative;
 }
 .mc-tool-btn:hover { border-color: var(--brand); color: var(--brand); }
-.mc-tool-btn.is-active { background: var(--brand); border-color: var(--brand); color: #fff; }
+.mc-tool-btn.is-active { background: var(--cta-bg); border-color: var(--cta-bg); color: var(--cta-fg); }
 .mc-tool-btn svg { width: 16px; height: 16px; }
 .mc-tool-btn .badge-n {
     position: absolute;

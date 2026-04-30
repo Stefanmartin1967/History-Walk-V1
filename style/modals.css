@@ -263,13 +263,12 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
 }
 .hw-btn svg { width: 14px; height: 14px; }
 .hw-btn-primary {
-    background: var(--brand);
-    color: #fff;
-    border-color: var(--brand);
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    border-color: var(--cta-bg);
 }
 .hw-btn-primary:hover {
-    background: var(--brand-2);
-    border-color: var(--brand-2);
+    filter: brightness(0.94);
 }
 .hw-btn-ghost {
     background: transparent;
@@ -293,9 +292,9 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     background: var(--line);
 }
 .hw-btn-danger {
-    background: var(--danger);
-    color: #fff;
-    border-color: var(--danger);
+    background: var(--danger-bg);
+    color: var(--cta-fg);
+    border-color: var(--danger-bg);
 }
 .hw-btn-danger:hover { filter: brightness(0.94); }
 .hw-btn-link {

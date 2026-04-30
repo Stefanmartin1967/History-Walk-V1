@@ -421,8 +421,8 @@ body {
 }
 
 .btn.active {
-    background: var(--brand);
-    color: #fff;
+    background: var(--cta-bg);
+    color: var(--cta-fg);
     border-color: transparent;
 }
 
@@ -2887,13 +2887,13 @@ input[type=range] {
 }
 
 .backup-option-btn.primary {
-    background-color: var(--brand);
-    color: white;
+    background-color: var(--cta-bg);
+    color: var(--cta-fg);
 }
 
 .backup-option-btn.success {
-    background-color: var(--ok);
-    color: white;
+    background-color: var(--ok-bg);
+    color: var(--cta-fg);
 }
 
 .backup-option-icon {
