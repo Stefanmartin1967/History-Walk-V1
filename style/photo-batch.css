@@ -193,8 +193,8 @@
     padding: 0;
     border-radius: 50%;
     border: none;
-    background: var(--hw-amber, #D97706);
-    color: white;
+    background: var(--cta-bg);
+    color: var(--cta-fg);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -301,9 +301,9 @@
     transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .photo-batch-cluster-btn:hover:not(:disabled) {
-    background: var(--hw-amber, #D97706);
-    color: white;
-    border-color: var(--hw-amber, #D97706);
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    border-color: var(--cta-bg);
 }
 .photo-batch-cluster-btn:disabled {
     opacity: 0.45;
@@ -342,8 +342,8 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: var(--hw-amber, #D97706);
-    color: white;
+    background: var(--cta-bg);
+    color: var(--cta-fg);
     display: none;
     align-items: center;
     justify-content: center;

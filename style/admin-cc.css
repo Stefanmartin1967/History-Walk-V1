@@ -37,7 +37,7 @@
 .brand-subtitle { font-weight: 400; opacity: 0.4; margin-left: 5px; }
 .header-user { display: flex; align-items: center; gap: 12px; background: #F8FAFC; padding: 5px 14px; border-radius: 50px; border: 1px solid #F1F5F9; }
 .header-greeting { font-size: 0.85rem; }
-.avatar-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--hw-amber); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.75rem; box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3); }
+.avatar-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--cta-bg); display: flex; align-items: center; justify-content: center; color: var(--cta-fg); font-weight: bold; font-size: 0.75rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
 
 .admin-cc-tabs { display: flex; gap: 4px; }
 .admin-cc-tab { padding: 8px 16px; border-radius: 10px 10px 0 0; font-size: 0.82rem; font-weight: 700; cursor: pointer; color: #64748B; transition: 0.2s; display: flex; align-items: center; gap: 7px; border: 1px solid transparent; border-bottom: none; }
@@ -63,7 +63,7 @@
 .stat-lab { font-size: 0.72rem; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; text-align: center; }
 
 .admin-cc-footer { padding: 14px 28px; background: white; border-top: 1px solid #E5E7EB; display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
-#btn-cc-publish { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; padding: 14px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px -5px rgba(217, 119, 6, 0.4); transition: all 0.2s; }
+#btn-cc-publish { background: var(--cta-bg); color: var(--cta-fg); border: none; padding: 14px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.25); transition: all 0.2s; }
 #btn-cc-publish:hover { transform: translateY(-2px); filter: brightness(1.1); }
 #btn-cc-publish:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
 /* .custom-modal-btn.secondary legacy supprimé — N12 rapport v3, migré vers .hw-btn-ghost. */
@@ -98,7 +98,7 @@
 .btn-diff-action { padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px; }
 .btn-diff-action.refuse { background: white; border: 1px solid #E2E8F0; color: #64748B; }
 .btn-diff-action.refuse:hover { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
-.btn-diff-action.validate { background: var(--hw-amber); color: white; }
+.btn-diff-action.validate { background: var(--cta-bg); color: var(--cta-fg); }
 .btn-diff-action.validate:hover { filter: brightness(1.1); transform: translateY(-1px); }
 .empty-state { text-align: center; padding: 24px 0; opacity: 0.6; }
 .settings-input { width: 100%; padding: 15px; border: 1px solid #E5E7EB; border-radius: 12px; font-family: monospace; font-size: 1rem; margin-top: 10px; }
@@ -128,7 +128,7 @@
 .icon-amber { color: var(--hw-amber); }
 .cc-token-persist-label { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.85rem; color: var(--ink); cursor: pointer; }
 .cc-token-persist-hint { color: var(--ink-soft); font-size: 0.75rem; }
-.cc-save-btn { margin-top: 12px; width: 100%; padding: 12px; background: var(--hw-amber); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.15s; }
+.cc-save-btn { margin-top: 12px; width: 100%; padding: 12px; background: var(--cta-bg); color: var(--cta-fg); border: none; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.15s; }
 .cc-save-btn:hover:not(:disabled) { opacity: 0.88; }
 .cc-save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .cc-sync-btns-row { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -214,7 +214,7 @@
 .diff-change-key { font-size: 0.75rem; font-weight: 800; color: var(--ink-soft); opacity: 0.6; }
 
 /* Badge counter on CC button */
-.cc-badge { background: var(--hw-amber); color: white; padding: 2px 7px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px; }
+.cc-badge { background: var(--cta-bg); color: var(--cta-fg); padding: 2px 7px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px; }
 
 /* ================================================
    CC ONGLET MODIFICATIONS — COMPACT DIFF DESIGN
@@ -339,7 +339,7 @@
     width: 14px; height: 14px;
 }
 .cc-photo-grid-count {
-    background: #F59E0B; color: white;
+    background: var(--cta-bg); color: var(--cta-fg);
     padding: 1px 7px; border-radius: 10px;
     font-size: 0.72rem; font-weight: 700;
     letter-spacing: 0;

@@ -747,9 +747,9 @@
 }
 .ue-action-btn svg { width: 15px; height: 15px; }
 .ue-action-btn.primary {
-    background: linear-gradient(135deg, #F59E0B, #D97706);
-    color: white;
-    box-shadow: 0 4px 12px -2px rgba(217,119,6,0.35);
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    box-shadow: 0 4px 12px -2px rgba(0,0,0,0.2);
 }
 .ue-action-btn.primary:hover { opacity: 0.9; transform: translateY(-1px); }
 .ue-action-btn.secondary {
