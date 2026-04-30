@@ -130,7 +130,10 @@ function renderToolbar() {
         toggleFilterPanel();
     });
     document.getElementById('mc-btn-new')?.addEventListener('click', () => {
-        document.getElementById('btn-mode-selection')?.click();
+        // Découplage UI-UI : on n'appelle plus le bouton legacy #btn-mode-selection
+        // via un click programmatique (couplage DOM fragile). À la place, on émet
+        // un event que desktopMode écoute pour entrer en mode création.
+        eventBus.emit('circuit:create-new');
     });
     document.getElementById('mc-btn-close')?.addEventListener('click', () => {
         const sidebar = document.getElementById('right-sidebar');
