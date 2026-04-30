@@ -23,6 +23,14 @@ html[data-theme="maritime"] {
        --hw-amber existait dans admin-cc.css uniquement, on le promeut au :root global. */
     --hw-amber: #D97706;
     --hw-amber-soft: #FFFBEB;
+    /* CTA tokens — Spec #6 Audit thèmes & contraste (2026-04-30).
+       Rôle figé : --cta-bg = fond foncé, --cta-fg = blanc, dans les 4 thèmes.
+       Cible WCAG : ≥ 4.5:1 (AA texte normal). Maritime/night atteignent AAA (8.59:1).
+       --danger-bg / --ok-bg : signal CTA identique dans les 4 thèmes. */
+    --cta-bg: #1D4ED8;
+    --cta-fg: #FFFFFF;
+    --danger-bg: #B91C1C;
+    --ok-bg: #15803D;
     --shadow: 0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
     --shadow-soft: 0 4px 12px rgba(100, 116, 139, 0.1);
 }
@@ -41,6 +49,7 @@ html[data-theme="desert"] {
     --ok: #10B981;
     --warn: #F59E0B;
     --danger: #EF4444;
+    --cta-bg: #A2570F; /* Spec #6 — terre-cuite assombrie, 5.46:1 AA+ sur blanc */
 }
 
 html[data-theme="oasis"] {
@@ -57,6 +66,7 @@ html[data-theme="oasis"] {
     --ok: #10B981;
     --warn: #F59E0B;
     --danger: #EF4444;
+    --cta-bg: #047857; /* Spec #6 — emerald-700, 5.78:1 AA+ sur blanc */
 }
 
 html[data-theme="night"] {
@@ -76,6 +86,8 @@ html[data-theme="night"] {
     --hw-amber-soft: #78350f; /* Ambre sombre pour les fonds resto/café */
     --warn: #facc15;
     --danger: #f87171;
+    --cta-bg: #1D4ED8; /* Spec #6 — IDENTIQUE à maritime, 8.59:1 AAA sur blanc.
+                          Le CTA en night est PLUS FONCÉ que --surface (#1f2937), pas plus clair. */
 }
 
 /* Force la couleur sur tous les éléments de formulaire et boutons en mode nuit */
