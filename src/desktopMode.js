@@ -376,12 +376,27 @@ export function setupDesktopTools() {
             if (state.isSelectionModeActive) {
                 toggleSelectionMode(false);
             } else {
-                // Lancement direct : reset circuit en cours + activation +
-                // refresh des règles de filtrage.
-                clearCircuit(false);
-                toggleSelectionMode(true);
-                applyFilters();
+                enterCircuitCreationMode();
             }
         });
     }
 }
+
+// Helper partagé entre le bouton legacy #btn-mode-selection et l'event
+// `circuit:create-new` (émit par la sidebar V2). Reset du circuit en cours +
+// activation du mode sélection + refresh des règles de filtrage.
+function enterCircuitCreationMode() {
+    clearCircuit(false);
+    toggleSelectionMode(true);
+    applyFilters();
+}
+
+// N6 rapport v3 : la sidebar V2 (mc-btn-new) émet `circuit:create-new` au
+// lieu de cliquer programmatiquement sur #btn-mode-selection (couplage DOM-DOM
+// fragile). Listener enregistré au module-load (et non dans setupDesktopTools
+// qui n'est appelé qu'en mode desktop) pour qu'il soit toujours actif —
+// no-op gratuit en mobile puisque mc-btn-new n'y est pas rendu.
+eventBus.on('circuit:create-new', () => {
+    if (state.isSelectionModeActive) return; // déjà en mode création, no-op
+    enterCircuitCreationMode();
+});
