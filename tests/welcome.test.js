@@ -1,28 +1,21 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { showWelcomeIfNeeded } from '../src/welcome.js';
+import { showWelcomeIfNeeded, showWelcomeAgain } from '../src/welcome.js';
+import { eventBus } from '../src/events.js';
 
 const WELCOME_KEY = 'hw_welcome_seen';
 
 beforeEach(() => {
     document.body.innerHTML = '';
     localStorage.clear();
+    // Vider les listeners pour éviter les fuites entre tests
+    eventBus.listeners = {};
 });
 
 afterEach(() => {
     vi.useRealTimers();
 });
-
-// Helper: simulate a touch event on an element
-function fireTouch(target, type, clientX) {
-    const touchData = type === 'touchend'
-        ? { changedTouches: [{ clientX }] }
-        : { touches: [{ clientX }] };
-    const evt = new Event(type, { bubbles: true });
-    Object.assign(evt, touchData);
-    target.dispatchEvent(evt);
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 describe('showWelcomeIfNeeded — gate localStorage', () => {
@@ -36,147 +29,131 @@ describe('showWelcomeIfNeeded — gate localStorage', () => {
         showWelcomeIfNeeded();
         expect(document.getElementById('welcome-overlay')).not.toBeNull();
     });
+
+    it('appel répété ne duplique pas l\'overlay', () => {
+        showWelcomeIfNeeded();
+        // Simuler appel direct interne (showWelcomeAgain force l'affichage même si seen)
+        showWelcomeAgain();
+        expect(document.querySelectorAll('#welcome-overlay')).toHaveLength(1);
+    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('showWelcomeIfNeeded — construction initiale', () => {
-    it('construit 4 slides (.welcome-slide) avec un titre h2 chacune', () => {
+describe('showWelcomeIfNeeded — 1er démarrage : 3 cartes', () => {
+    it('affiche 3 cartes au 1er démarrage', () => {
         showWelcomeIfNeeded();
-        const slides = document.querySelectorAll('.welcome-slide');
-        expect(slides).toHaveLength(4);
-        slides.forEach(s => {
-            expect(s.querySelector('h2.welcome-title')).not.toBeNull();
+        const cards = document.querySelectorAll('.welcome-card');
+        expect(cards).toHaveLength(3);
+    });
+
+    it('cartes ont les data-choice attendus (discover, import, create) dans cet ordre', () => {
+        showWelcomeIfNeeded();
+        const choices = Array.from(document.querySelectorAll('.welcome-card'))
+            .map(c => c.dataset.choice);
+        expect(choices).toEqual(['discover', 'import', 'create']);
+    });
+
+    it('chaque carte a un titre et un sous-titre', () => {
+        showWelcomeIfNeeded();
+        const cards = document.querySelectorAll('.welcome-card');
+        cards.forEach(card => {
+            expect(card.querySelector('.welcome-card-title')).not.toBeNull();
+            expect(card.querySelector('.welcome-card-subtitle')).not.toBeNull();
         });
     });
 
-    it('construit 4 dots, le premier avec class "active"', () => {
+    it('le bouton "Passer" est présent', () => {
         showWelcomeIfNeeded();
-        const dots = document.querySelectorAll('.welcome-dot');
-        expect(dots).toHaveLength(4);
-        expect(dots[0].classList.contains('active')).toBe(true);
-        for (let i = 1; i < dots.length; i++) {
-            expect(dots[i].classList.contains('active')).toBe(false);
-        }
-    });
-
-    it('état initial : actions visibles (skip/next), choices cachés', () => {
-        showWelcomeIfNeeded();
-        const actions = document.getElementById('welcome-actions');
-        const choices = document.getElementById('welcome-choices');
-        // Pas encore navigué : on n'est pas sur le dernier slide
-        // → actions display "" (default), choices display "none" géré dans goTo (mais initial state DOM = pas de style inline appliqué tant que goTo n'est pas appelé)
-        // On vérifie surtout que les boutons sont présents
         expect(document.getElementById('welcome-skip')).not.toBeNull();
-        expect(document.getElementById('welcome-next')).not.toBeNull();
-        expect(document.getElementById('welcome-all')).not.toBeNull();
-        expect(document.getElementById('welcome-space')).not.toBeNull();
+    });
+
+    it('titre et sous-titre de la modal sont présents', () => {
+        showWelcomeIfNeeded();
+        expect(document.querySelector('.welcome-modal-title')).not.toBeNull();
+        expect(document.querySelector('.welcome-modal-subtitle')).not.toBeNull();
     });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('showWelcomeIfNeeded — navigation (Suivant / dot / borne)', () => {
-    it('click "Suivant" : avance d\'un slide et active le dot suivant', () => {
-        showWelcomeIfNeeded();
-        document.getElementById('welcome-next').click();
-        const dots = document.querySelectorAll('.welcome-dot');
-        expect(dots[0].classList.contains('active')).toBe(false);
-        expect(dots[1].classList.contains('active')).toBe(true);
+describe('showWelcomeAgain — mode "revoir" : 4 cartes', () => {
+    it('affiche 4 cartes (les 3 + photos)', () => {
+        showWelcomeAgain();
+        const cards = document.querySelectorAll('.welcome-card');
+        expect(cards).toHaveLength(4);
     });
 
-    it('click sur un dot : navigue directement vers ce slide', () => {
-        showWelcomeIfNeeded();
-        const dots = document.querySelectorAll('.welcome-dot');
-        dots[2].click();
-        expect(dots[2].classList.contains('active')).toBe(true);
-        expect(dots[0].classList.contains('active')).toBe(false);
+    it('la 4e carte a data-choice="photos"', () => {
+        showWelcomeAgain();
+        const choices = Array.from(document.querySelectorAll('.welcome-card'))
+            .map(c => c.dataset.choice);
+        expect(choices).toEqual(['discover', 'import', 'create', 'photos']);
     });
 
-    it('borne max : click "Suivant" sur le dernier slide n\'avance pas plus loin', () => {
-        showWelcomeIfNeeded();
-        // Aller au dernier slide (index 3) via dot
-        const dots = document.querySelectorAll('.welcome-dot');
-        dots[3].click();
-        expect(dots[3].classList.contains('active')).toBe(true);
-        // Click "Suivant" → ne fait rien (on reste sur le 3)
-        document.getElementById('welcome-next').click();
-        expect(dots[3].classList.contains('active')).toBe(true);
-    });
-
-    it('dernier slide : actions caché (display none), choices affichés (display flex)', () => {
-        showWelcomeIfNeeded();
-        document.querySelectorAll('.welcome-dot')[3].click();
-        const actions = document.getElementById('welcome-actions');
-        const choices = document.getElementById('welcome-choices');
-        expect(actions.style.display).toBe('none');
-        expect(choices.style.display).toBe('flex');
+    it('s\'affiche même si hw_welcome_seen est déjà à 1 (réaffichage forcé)', () => {
+        localStorage.setItem(WELCOME_KEY, '1');
+        showWelcomeAgain();
+        expect(document.getElementById('welcome-overlay')).not.toBeNull();
     });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('showWelcomeIfNeeded — fermeture (Skip / choix final)', () => {
-    it('click "Passer" : set hw_welcome_seen=1 et démarre le fadeout', () => {
+describe('choix utilisateur — émission eventBus + persistance + fadeout', () => {
+    it('clic sur une carte émet welcome:choice avec le bon id', () => {
+        showWelcomeIfNeeded();
+        const received = vi.fn();
+        eventBus.on('welcome:choice', received);
+        document.querySelector('[data-choice="create"]').click();
+        expect(received).toHaveBeenCalledWith({ choice: 'create' });
+    });
+
+    it('clic sur une carte set hw_welcome_seen=1', () => {
+        showWelcomeIfNeeded();
+        document.querySelector('[data-choice="discover"]').click();
+        expect(localStorage.getItem(WELCOME_KEY)).toBe('1');
+    });
+
+    it('clic sur "Passer" émet welcome:choice avec choice=discover (skip = découvrir)', () => {
+        showWelcomeIfNeeded();
+        const received = vi.fn();
+        eventBus.on('welcome:choice', received);
+        document.getElementById('welcome-skip').click();
+        expect(received).toHaveBeenCalledWith({ choice: 'discover' });
+    });
+
+    it('clic déclenche le fadeout puis retire l\'overlay après 350ms', () => {
         vi.useFakeTimers();
         showWelcomeIfNeeded();
-        document.getElementById('welcome-skip').click();
-        expect(localStorage.getItem(WELCOME_KEY)).toBe('1');
-        // Avant timeout : overlay encore présent avec class welcome-fadeout
+        document.querySelector('[data-choice="import"]').click();
         const overlay = document.getElementById('welcome-overlay');
         expect(overlay).not.toBeNull();
         expect(overlay.classList.contains('welcome-fadeout')).toBe(true);
-        // Après timeout : overlay retiré
         vi.advanceTimersByTime(400);
         expect(document.getElementById('welcome-overlay')).toBeNull();
     });
 
-    it('click "Tous les circuits" : set localStorage + retire overlay', () => {
-        vi.useFakeTimers();
-        showWelcomeIfNeeded();
-        document.querySelectorAll('.welcome-dot')[3].click();
-        document.getElementById('welcome-all').click();
-        expect(localStorage.getItem(WELCOME_KEY)).toBe('1');
-        vi.advanceTimersByTime(400);
-        expect(document.getElementById('welcome-overlay')).toBeNull();
-    });
-
-    it('click "Mon Espace" : set localStorage + retire overlay (import dynamique non testé)', () => {
-        vi.useFakeTimers();
-        showWelcomeIfNeeded();
-        document.querySelectorAll('.welcome-dot')[3].click();
-        document.getElementById('welcome-space').click();
-        expect(localStorage.getItem(WELCOME_KEY)).toBe('1');
-        vi.advanceTimersByTime(400);
-        expect(document.getElementById('welcome-overlay')).toBeNull();
+    it('en mode "revoir", clic sur photos émet welcome:choice avec choice=photos', () => {
+        showWelcomeAgain();
+        const received = vi.fn();
+        eventBus.on('welcome:choice', received);
+        document.querySelector('[data-choice="photos"]').click();
+        expect(received).toHaveBeenCalledWith({ choice: 'photos' });
     });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('showWelcomeIfNeeded — swipe touches (mobile)', () => {
-    it('swipe gauche (delta > 50px) : avance au slide suivant', () => {
+describe('accessibilité — attributs ARIA', () => {
+    it('la modal a role=dialog et aria-modal=true', () => {
         showWelcomeIfNeeded();
-        const overlay = document.getElementById('welcome-overlay');
-        fireTouch(overlay, 'touchstart', 200);
-        fireTouch(overlay, 'touchend', 100); // delta = 200 - 100 = 100 > 50
-        const dots = document.querySelectorAll('.welcome-dot');
-        expect(dots[1].classList.contains('active')).toBe(true);
+        const modal = document.querySelector('.welcome-modal');
+        expect(modal.getAttribute('role')).toBe('dialog');
+        expect(modal.getAttribute('aria-modal')).toBe('true');
     });
 
-    it('swipe droite (delta < -50px) : recule au slide précédent (si pas premier)', () => {
+    it('la modal est labellisée par son titre', () => {
         showWelcomeIfNeeded();
-        // D'abord aller au slide 1
-        document.getElementById('welcome-next').click();
-        const overlay = document.getElementById('welcome-overlay');
-        fireTouch(overlay, 'touchstart', 100);
-        fireTouch(overlay, 'touchend', 200); // delta = 100 - 200 = -100, |delta| > 50
-        const dots = document.querySelectorAll('.welcome-dot');
-        expect(dots[0].classList.contains('active')).toBe(true);
-    });
-
-    it('swipe court (|delta| < 50) : no-op (pas de changement de slide)', () => {
-        showWelcomeIfNeeded();
-        const overlay = document.getElementById('welcome-overlay');
-        fireTouch(overlay, 'touchstart', 200);
-        fireTouch(overlay, 'touchend', 180); // delta = 20 < 50
-        const dots = document.querySelectorAll('.welcome-dot');
-        expect(dots[0].classList.contains('active')).toBe(true);
+        const modal = document.querySelector('.welcome-modal');
+        const labelledById = modal.getAttribute('aria-labelledby');
+        expect(labelledById).toBeTruthy();
+        expect(document.getElementById(labelledById)).not.toBeNull();
     });
 });

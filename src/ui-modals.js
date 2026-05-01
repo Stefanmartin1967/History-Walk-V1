@@ -15,50 +15,6 @@ export function initUiModalsListeners() {
     eventBus.on('poi:request-soft-delete', (idOrIndex) => requestSoftDelete(idOrIndex));
 }
 
-export function showLegendModal() {
-    const title = "Légende";
-    const message = `
-    <div class="legend-list">
-        <div class="legend-section-header">Marqueurs</div>
-        <div class="legend-item">
-            <div class="legend-marker-circle legend-marker-circle--visited"></div>
-            <span><strong>Visité</strong> (Lieu marqué comme vu)</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-marker-circle legend-marker-circle--planned"></div>
-            <span><strong>Planifié</strong> (Ajouté à un circuit)</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-marker-star-wrapper">
-                <div class="legend-marker-star"></div>
-            </div>
-            <span><strong>Incontournable</strong> (Lieu VIP à ne pas manquer)</span>
-        </div>
-
-        <div class="legend-section-header mt">Lignes des Circuits</div>
-        <div class="legend-item">
-            <div class="legend-line-sample legend-line-sample--straight"></div>
-            <span><strong>Vol d'oiseau</strong> (Trajet direct non précis)</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-line-sample legend-line-sample--gps"></div>
-            <span><strong>Tracé réel</strong> (Chemin GPS précis à suivre)</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-line-sample legend-line-sample--done"></div>
-            <span><strong>Circuit terminé</strong> (Marqué comme fait)</span>
-        </div>
-    </div>`;
-
-    showAlert(title, message, "Fermer").catch(() => {});
-
-    // Force l'affichage des icônes dans la modale
-    const modalMessage = document.getElementById('custom-modal-message');
-    if (modalMessage) {
-        createIcons({ icons: appIcons, root: modalMessage });
-    }
-}
-
 export function openRestoreModal() {
     const deletedCircuits = state.myCircuits.filter(c => c.isDeleted);
 

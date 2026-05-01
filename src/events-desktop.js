@@ -4,7 +4,7 @@
 // et aucune souscription eventBus ici.
 
 import { DOM } from './ui-dom.js';
-import { showLegendModal } from './ui-modals.js';
+import { showInfoPopover } from './info-popover.js';
 import { setupSearch } from './searchManager.js';
 import { setupTabs } from './ui-sidebar.js';
 
@@ -15,7 +15,7 @@ import { setupTabs } from './ui-sidebar.js';
 // (cf. topbar-v2.js).
 
 export function setupDesktopUIListeners() {
-    document.getElementById('btn-legend')?.addEventListener('click', () => showLegendModal());
+    document.getElementById('btn-legend')?.addEventListener('click', () => showInfoPopover());
 
     document.addEventListener('click', (e) => {
         if (!e.target.closest('#btn-tools-menu') && !e.target.closest('#tools-menu-content')) {
