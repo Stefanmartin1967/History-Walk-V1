@@ -53,7 +53,6 @@ export function initializeDomReferences() {
         'btn-loop-circuit',
         'btn-clear-circuit', 'close-circuit-panel-btn',
         'btn-legend',
-        'btn-open-my-circuits',
         'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-topbar', 'btn-mon-espace'
     ];
     
@@ -63,14 +62,6 @@ export function initializeDomReferences() {
         const el = document.getElementById(id);
         if (el) DOM[camelCaseId] = el;
     });
-
-    if (DOM.btnOpenMyCircuits) {
-        DOM.btnOpenMyCircuits.addEventListener('click', () => {
-            closeAllDropdowns();
-            renderExplorerList();
-            switchSidebarTab('explorer');
-        });
-    }
 
     if (DOM.btnToolsMenu) {
         DOM.btnToolsMenu.addEventListener('click', (e) => {

@@ -595,11 +595,19 @@ export function renderExplorerList() {
         listContainer.appendChild(empty);
         document.getElementById('mc-empty-reset')?.addEventListener('click', resetAllFilters);
         createIcons({ icons: appIcons, root: listContainer });
+        updateExplorerCount(0);
         return;
     }
 
     circuits.forEach(c => listContainer.appendChild(createCircuitCard(c)));
     createIcons({ icons: appIcons, root: listContainer });
+
+    updateExplorerCount(circuits.length);
+}
+
+function updateExplorerCount(n) {
+    const el = document.getElementById('tab-count-explorer');
+    if (el) el.textContent = String(n);
 }
 
 function pickEmptyHint() {
