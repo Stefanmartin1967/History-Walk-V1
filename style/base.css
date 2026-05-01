@@ -250,7 +250,7 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 70px; /* Harmonized height */
+    height: 72px; /* Harmonized height (aligné avec sidebar-tabs) */
     padding: 0 16px;
     display: flex;
     align-items: center;
@@ -260,6 +260,18 @@ body {
     background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
     box-shadow: var(--shadow);
     z-index: 1005;
+}
+
+/* PR 8 (Hybride v10) : sur desktop, la topbar s'arrête au bord de la sidebar
+   pour créer 2 zones nettement séparées (carte / sidebar), chacune avec son
+   propre header aligné en hauteur. Pattern Linear / Notion. La séparation
+   visuelle entre topbar et sidebar est fournie par le contraste de couleur
+   et le box-shadow de la sidebar — pas de border-right qui ressortirait
+   trop nettement sur fond sombre. */
+@media (min-width: 768px) {
+    .topbar {
+        right: var(--sidebar-width);
+    }
 }
 
 .topbar-left {
@@ -494,7 +506,7 @@ body {
 
 #map {
     position: absolute;
-    top: 70px; /* Ajusté à la topbar */
+    top: 72px; /* Aligné à la topbar (et sidebar-tabs) */
     left: 0;
     right: 0;
     bottom: 0;
@@ -543,7 +555,10 @@ body {
 
 .right-sidebar {
     position: fixed;
-    top: 70px; /* Ajusté à la topbar */
+    /* PR 8 (Hybride v10) : pleine hauteur sur desktop. La topbar s'arrête à
+       gauche de la sidebar, donc la sidebar a son propre header tabs (72px)
+       aligné visuellement avec la topbar. */
+    top: 0;
     right: 0;
     bottom: 0;
     height: auto;
@@ -555,32 +570,61 @@ body {
     display: flex;
     flex-direction: column;
 }
+@media (max-width: 767px) {
+    /* Mobile : sidebar pleine page comme avant (toggle absent, layout natif). */
+    .right-sidebar {
+        top: 72px;
+    }
+}
 
 .sidebar-tabs {
     display: flex;
+    gap: 4px;
     background-color: var(--surface-muted);
-    padding: 4px;
+    height: 72px; /* Aligné avec la topbar PR 8 */
+    padding: 12px;
     flex-shrink: 0;
-    border-bottom: 1px solid var(--line);
 }
 
 .tab-button {
     flex: 1;
-    padding: 10px;
+    height: 100%;
+    padding: 0 12px;
     border: none;
     background-color: transparent;
     cursor: pointer;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--ink-soft);
-    border-radius: 8px;
-    transition: all 0.2s ease-in-out;
+    border-radius: 12px;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
+
+.tab-button:hover { color: var(--ink); }
 
 .tab-button.active {
     background-color: var(--surface);
     color: var(--ink);
+    font-weight: 600;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.tab-button .count {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    background: var(--surface);
+    padding: 1px 7px;
+    border-radius: 999px;
+    line-height: 1.4;
+}
+.tab-button.active .count {
+    background: var(--ink);
+    color: var(--surface);
 }
 
 .sidebar-panel {
