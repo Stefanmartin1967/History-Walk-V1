@@ -118,7 +118,12 @@ async function initializeApp() {
         setupSmartSearch();
         setupSidebarToggle();
         updateSelectionModeButton(state.isSelectionModeActive);
-        document.body.classList.add('sidebar-open');
+        // sidebar-open n'est ajoutée que si l'utilisateur n'a pas demandé
+        // explicitement la sidebar repliée (sidebar-collapsed restauré
+        // depuis localStorage par setupSidebarToggle ci-dessus).
+        if (!document.body.classList.contains('sidebar-collapsed')) {
+            document.body.classList.add('sidebar-open');
+        }
     }
 
     // 3. Tour de contrôle et événements (AVANT le chargement de la carte pour s'assurer que data:filtered est capté)

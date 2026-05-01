@@ -11,6 +11,7 @@ import { showConfirm, showAlert, showPrompt } from './modal.js';
 import { performCircuitDeletion } from './circuit-actions.js';
 import { eventBus } from './events.js';
 import { escapeHtml } from './utils.js';
+import { ensureSidebarOpen } from './sidebar-utils.js';
 
 import {
     setSelectionMode,
@@ -48,8 +49,8 @@ export function toggleSelectionMode(forceValue) {
     if (state.isSelectionModeActive) {
         if (DOM.rightSidebar) {
             DOM.rightSidebar.style.display = 'flex';
-            document.body.classList.add('sidebar-open');
         }
+        ensureSidebarOpen();
         switchSidebarTab('circuit');
         renderCircuitPanel();
     } else {

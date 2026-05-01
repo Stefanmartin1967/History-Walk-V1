@@ -454,7 +454,9 @@ export function fitMapToContent() {
 
         // NOUVEAU : Gestion par BOUNDS (Prioritaire)
         if (config.bounds) {
-            const sidebarWidth = document.body.classList.contains('sidebar-open') ? document.getElementById('right-sidebar').offsetWidth : 0;
+            // Lit l'état utilisateur de la sidebar (source de vérité = sidebar-collapsed).
+            const sidebarHidden = document.body.classList.contains('sidebar-collapsed');
+            const sidebarWidth = sidebarHidden ? 0 : (document.getElementById('right-sidebar')?.offsetWidth || 0);
             // paddingBottomRight permet de décaler le centre "utile" vers la gauche pour éviter la sidebar
             map.fitBounds(config.bounds, {
                 paddingBottomRight: [sidebarWidth, 0],
