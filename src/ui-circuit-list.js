@@ -587,7 +587,7 @@ export function renderExplorerList() {
         empty.innerHTML = `
             <div class="icon-wrap"><i data-lucide="map"></i></div>
             <h4>Aucun circuit</h4>
-            <p>${hasActiveFilters ? hint : 'Cliquez sur + pour créer un circuit, ou explorez la carte pour ajouter des POI.'}</p>
+            <p>${hasActiveFilters ? hint : 'Vous n\'avez pas encore de circuit. Importez ceux proposés depuis Mon Espace, ou créez le vôtre avec le bouton +.'}</p>
             ${hasActiveFilters ? `<button class="btn-reset" type="button" id="mc-empty-reset">
                 <i data-lucide="rotate-ccw"></i>Tout réinitialiser
             </button>` : ''}

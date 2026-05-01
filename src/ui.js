@@ -29,6 +29,7 @@ import { showStatisticsModal } from './statistics.js';
 import { updateSelectionModeButton } from './ui-selection.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { DOM } from './ui-dom.js';
+import { ensureSidebarOpen } from './sidebar-utils.js';
 
 // Re-export pour compat : les consommateurs existants importent DOM depuis ui.js.
 // La source unique est ui-dom.js (module feuille, sans cycle).
@@ -71,9 +72,11 @@ export function initializeDomReferences() {
 
             if (DOM.rightSidebar && DOM.rightSidebar.style.display === 'none') {
                 DOM.rightSidebar.style.display = 'flex';
-                document.body.classList.add('sidebar-open');
                 // FIX AUTOMATISÉ : Le redessin de la carte est maintenant géré automatiquement par ResizeObserver dans map.js
             }
+            // S'assurer que la sidebar est dépliée même si l'user l'avait
+            // repliée via le toggle (Ctrl+B / sidebar-collapsed).
+            ensureSidebarOpen();
 
             renderExplorerList();
             switchSidebarTab('explorer');

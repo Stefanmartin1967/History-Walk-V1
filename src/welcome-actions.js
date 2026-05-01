@@ -10,18 +10,7 @@
 //   - photos   : déclenche l'import des photos GPS (mode "revoir" uniquement)
 
 import { eventBus } from './events.js';
-
-const SIDEBAR_KEY = 'sidebar-collapsed';
-
-function collapseSidebar() {
-    document.body.classList.add('sidebar-collapsed');
-    localStorage.setItem(SIDEBAR_KEY, '1');
-}
-
-function expandSidebar() {
-    document.body.classList.remove('sidebar-collapsed');
-    localStorage.setItem(SIDEBAR_KEY, '0');
-}
+import { ensureSidebarOpen, ensureSidebarCollapsed } from './sidebar-utils.js';
 
 function clickIfPresent(selector) {
     const el = document.querySelector(selector);
@@ -32,21 +21,21 @@ export function setupWelcomeActions() {
     eventBus.on('welcome:choice', ({ choice }) => {
         switch (choice) {
             case 'discover':
-                collapseSidebar();
+                ensureSidebarCollapsed();
                 break;
 
             case 'import':
                 // Sidebar dépliée sur Mes Circuits : l'utilisateur consulte
                 // la liste des circuits déjà importés par défaut.
                 // (Le filtrage fin reste accessible via Mon Espace.)
-                expandSidebar();
+                ensureSidebarOpen();
                 clickIfPresent('[data-tab="explorer"]');
                 break;
 
             case 'create':
                 // Sidebar dépliée sur l'onglet Circuit : brouillon vide,
                 // prêt à recevoir les premiers POIs.
-                expandSidebar();
+                ensureSidebarOpen();
                 clickIfPresent('[data-tab="circuit"]');
                 break;
 

@@ -11,6 +11,7 @@ import { openPhotoGrid } from './ui-photo-grid.js';
 import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
+import { ensureSidebarOpen } from './sidebar-utils.js';
 
 export function initUiDetailsListeners() {
     eventBus.on('poi:open-details', ({ featureId, circuitIndex = null }) => openDetailsPanel(featureId, circuitIndex));
@@ -359,7 +360,7 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         targetPanel.classList.add('view-enter');
     } else {
         DOM.rightSidebar.style.display = 'flex';
-        document.body.classList.add('sidebar-open');
+        ensureSidebarOpen();
         switchSidebarTab('details', true);
         eventBus.emit('ui:render-explorer-list');
     }
