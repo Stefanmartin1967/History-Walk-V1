@@ -12,6 +12,13 @@
 import { eventBus } from './events.js';
 import { ensureSidebarOpen, ensureSidebarCollapsed } from './sidebar-utils.js';
 
+function requestMapRefit() {
+    // La transition CSS de la sidebar dure ~300ms ; map.js réagit à cet event
+    // avec un setTimeout supplémentaire pour laisser le DOM se stabiliser avant
+    // de recalculer le cadrage.
+    eventBus.emit('map:request-refit');
+}
+
 function clickIfPresent(selector) {
     const el = document.querySelector(selector);
     if (el) el.click();
@@ -22,6 +29,7 @@ export function setupWelcomeActions() {
         switch (choice) {
             case 'discover':
                 ensureSidebarCollapsed();
+                requestMapRefit();
                 break;
 
             case 'import':
@@ -30,6 +38,7 @@ export function setupWelcomeActions() {
                 // (Le filtrage fin reste accessible via Mon Espace.)
                 ensureSidebarOpen();
                 clickIfPresent('[data-tab="explorer"]');
+                requestMapRefit();
                 break;
 
             case 'create':
@@ -37,6 +46,7 @@ export function setupWelcomeActions() {
                 // prêt à recevoir les premiers POIs.
                 ensureSidebarOpen();
                 clickIfPresent('[data-tab="circuit"]');
+                requestMapRefit();
                 break;
 
             case 'photos':
