@@ -18,16 +18,11 @@ let mapResizeObserver; // Pour observer les changements de taille du conteneur
 
 // --- INITIALISATION CARTE ---
 
-// Valeurs par défaut alignées sur destinations.json (Djerba)
-// Ces valeurs par défaut ne servent que si fitBounds échoue ou n'est pas utilisé
+// Centre/zoom par défaut alignés sur destinations.json (Djerba). Servent uniquement
+// au moment de la création L.map ; fitMapToContent ajuste ensuite la vue selon
+// state.destinations.maps[currentMapId].bounds (la source de vérité du cadrage).
 const DEFAULT_CENTER = [33.77478, 10.94353];
 const DEFAULT_ZOOM = 12.7;
-
-// Limites idéales par défaut pour Djerba (Fallback)
-const DJERBA_BOUNDS = [
-    [33.62, 10.72], // Sud-Ouest
-    [33.91, 11.06]  // Nord-Est
-];
 
 export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZOOM) {
 
@@ -48,7 +43,9 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
         zoomControl: false // On désactive le zoom par défaut pour le repositionner/styler nous-même si besoin
     });
 
-    // NOTE: On ne fait plus setView ici, car fitMapToContent va s'en charger intelligemment
+    // L.map est créé avec initialCenter/initialZoom comme état par défaut.
+    // fitMapToContent (appelé en fin d'initMap) ajuste la vue aux bounds de la
+    // destination active dès que state.destinations est disponible.
 
     // Ajout explicite du contrôle de zoom en haut à gauche (position standard)
     L.control.zoom({
@@ -129,26 +126,9 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     initMapListeners();
     initResizeObserver(); // Activation de l'observateur de redimensionnement
 
-    // --- MISE A L'ECHELLE INITIALE (FITBOUNDS) ---
-    // On essaie d'adapter la vue immédiatement aux limites idéales
-    try {
-        // On récupère les bounds depuis destinations.json via state si possible, sinon fallback
-        let bounds = DJERBA_BOUNDS;
-
-        if (state.currentMapId && state.destinations && state.destinations.maps && state.destinations.maps[state.currentMapId] && state.destinations.maps[state.currentMapId].bounds) {
-             bounds = state.destinations.maps[state.currentMapId].bounds;
-        }
-
-        // On applique le fitBounds avec un padding pour ne pas coller aux bords
-        map.fitBounds(bounds, {
-            padding: [20, 20],
-            maxZoom: 18
-        });
-
-    } catch (e) {
-        console.warn("Erreur lors du fitBounds initial, repli sur setView", e);
-        map.setView(initialCenter, initialZoom);
-    }
+    // Cadrage initial unique : fitMapToContent décide entre config.bounds
+    // (destinations.json) et fallback sur le geojsonLayer si présent.
+    fitMapToContent();
 }
 
 /**
@@ -448,36 +428,28 @@ export function startMarkerDrag(poiId, onDrag, onEnd) {
 }
 
 export function fitMapToContent() {
-    // Si on a une configuration fixe pour la carte actuelle, on l'utilise
-    if (state.currentMapId && state.destinations && state.destinations.maps && state.destinations.maps[state.currentMapId]) {
-        const config = state.destinations.maps[state.currentMapId];
+    if (!map) return;
 
-        // NOUVEAU : Gestion par BOUNDS (Prioritaire)
-        if (config.bounds) {
-            // Lit l'état utilisateur de la sidebar (source de vérité = sidebar-collapsed).
-            const sidebarHidden = document.body.classList.contains('sidebar-collapsed');
-            const sidebarWidth = sidebarHidden ? 0 : (document.getElementById('right-sidebar')?.offsetWidth || 0);
-            // paddingBottomRight permet de décaler le centre "utile" vers la gauche pour éviter la sidebar
-            map.fitBounds(config.bounds, {
-                paddingBottomRight: [sidebarWidth, 0],
-                maxZoom: 18 // Sécurité
-            });
-            return;
-        }
-
-        // ANCIEN : Gestion par startView (Fallback)
-        if (config.startView) {
-            map.setView(config.startView.center, config.startView.zoom);
-            return;
-        }
+    // Niveau 1 : bounds définis dans destinations.json pour la carte active.
+    const config = state.currentMapId && state.destinations?.maps?.[state.currentMapId];
+    if (config?.bounds) {
+        // paddingBottomRight décale le centre "utile" vers la gauche pour
+        // éviter la sidebar quand elle est dépliée.
+        const sidebarHidden = document.body.classList.contains('sidebar-collapsed');
+        const sidebarWidth = sidebarHidden ? 0 : (document.getElementById('right-sidebar')?.offsetWidth || 0);
+        map.fitBounds(config.bounds, {
+            paddingBottomRight: [sidebarWidth, 0],
+            maxZoom: 18
+        });
+        return;
     }
 
-    // Sinon, comportement par défaut (Fit Bounds sur les données)
-    if (map && state.geojsonLayer && state.geojsonLayer.getLayers().length > 0) {
+    // Niveau 2 (fallback) : fit sur les POIs chargés s'ils existent.
+    if (state.geojsonLayer && state.geojsonLayer.getLayers().length > 0) {
         const bounds = state.geojsonLayer.getBounds();
         if (bounds.isValid()) {
-             // On ajoute un peu de marge (5%) pour ne pas coller aux bords
-             map.fitBounds(bounds.pad(0.05));
+            map.fitBounds(bounds.pad(0.05));
         }
     }
+    // Niveau 3 (rien) : la carte garde l'état initial (initialCenter/initialZoom).
 }
