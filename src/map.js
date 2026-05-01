@@ -433,12 +433,15 @@ export function fitMapToContent() {
     // Niveau 1 : bounds définis dans destinations.json pour la carte active.
     const config = state.currentMapId && state.destinations?.maps?.[state.currentMapId];
     if (config?.bounds) {
-        // paddingBottomRight décale le centre "utile" vers la gauche pour
-        // éviter la sidebar quand elle est dépliée.
+        // Padding uniforme de 20px tout autour pour donner un peu d'air et éviter
+        // que la zone géographique ne touche les bords. paddingBottomRight ajoute
+        // en plus la largeur de la sidebar (si dépliée) pour décaler le centre
+        // "utile" vers la gauche.
         const sidebarHidden = document.body.classList.contains('sidebar-collapsed');
         const sidebarWidth = sidebarHidden ? 0 : (document.getElementById('right-sidebar')?.offsetWidth || 0);
         map.fitBounds(config.bounds, {
-            paddingBottomRight: [sidebarWidth, 0],
+            paddingTopLeft: [20, 20],
+            paddingBottomRight: [sidebarWidth + 20, 20],
             maxZoom: 18
         });
         return;
