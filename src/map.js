@@ -167,6 +167,13 @@ export function initMapListeners() {
 
     eventBus.on('map:close-popup', () => { if (map) map.closePopup(); });
     eventBus.on('map:clear-highlights', () => clearMarkerHighlights());
+
+    // Re-fit demandé après une action qui modifie la taille du panneau droit
+    // (ex : welcome:choice qui replie/déplie la sidebar). Le délai laisse le
+    // temps à la transition CSS (0.3s) de se terminer avant de recalculer.
+    eventBus.on('map:request-refit', () => {
+        setTimeout(() => fitMapToContent(), 400);
+    });
     eventBus.on('map:start-marker-drag', ({ poiId, onDrag, onEnd }) => startMarkerDrag(poiId, onDrag, onEnd));
     eventBus.on('map:fit-bounds-to-points', ({ points, options }) => {
         if (!map || !points || points.length === 0) return;
