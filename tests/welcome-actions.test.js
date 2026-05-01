@@ -11,32 +11,50 @@ beforeEach(() => {
     eventBus.listeners = {};
 });
 
-describe('welcome-actions — choix "discover"', () => {
-    it('replie la sidebar (ajoute classe sidebar-collapsed)', () => {
+describe('welcome-actions — choix "discover" / "import"', () => {
+    it('clique sur l\'onglet [data-tab="explorer"] (Mes Circuits)', () => {
+        const tab = document.createElement('button');
+        tab.dataset.tab = 'explorer';
+        const clickSpy = vi.fn();
+        tab.addEventListener('click', clickSpy);
+        document.body.appendChild(tab);
+
         setupWelcomeActions();
         eventBus.emit('welcome:choice', { choice: 'discover' });
-        expect(document.body.classList.contains('sidebar-collapsed')).toBe(true);
+        expect(clickSpy).toHaveBeenCalled();
     });
 
-    it('persiste l\'état "replié" dans localStorage', () => {
+    it('"import" cible aussi l\'onglet Mes Circuits', () => {
+        const tab = document.createElement('button');
+        tab.dataset.tab = 'explorer';
+        const clickSpy = vi.fn();
+        tab.addEventListener('click', clickSpy);
+        document.body.appendChild(tab);
+
         setupWelcomeActions();
-        eventBus.emit('welcome:choice', { choice: 'discover' });
-        expect(localStorage.getItem('sidebar-collapsed')).toBe('1');
+        eventBus.emit('welcome:choice', { choice: 'import' });
+        expect(clickSpy).toHaveBeenCalled();
+    });
+
+    it('ne plante pas si l\'onglet est absent', () => {
+        setupWelcomeActions();
+        expect(() => {
+            eventBus.emit('welcome:choice', { choice: 'discover' });
+        }).not.toThrow();
     });
 });
 
 describe('welcome-actions — choix "create"', () => {
-    it('déplie la sidebar (retire classe sidebar-collapsed)', () => {
-        document.body.classList.add('sidebar-collapsed');
-        setupWelcomeActions();
-        eventBus.emit('welcome:choice', { choice: 'create' });
-        expect(document.body.classList.contains('sidebar-collapsed')).toBe(false);
-    });
+    it('clique sur l\'onglet [data-tab="circuit"]', () => {
+        const tab = document.createElement('button');
+        tab.dataset.tab = 'circuit';
+        const clickSpy = vi.fn();
+        tab.addEventListener('click', clickSpy);
+        document.body.appendChild(tab);
 
-    it('persiste l\'état "déplié" dans localStorage', () => {
         setupWelcomeActions();
         eventBus.emit('welcome:choice', { choice: 'create' });
-        expect(localStorage.getItem('sidebar-collapsed')).toBe('0');
+        expect(clickSpy).toHaveBeenCalled();
     });
 });
 
@@ -61,54 +79,11 @@ describe('welcome-actions — choix "photos"', () => {
     });
 });
 
-describe('welcome-actions — choix "import"', () => {
-    it('déplie la sidebar', () => {
-        document.body.classList.add('sidebar-collapsed');
-        setupWelcomeActions();
-        eventBus.emit('welcome:choice', { choice: 'import' });
-        expect(document.body.classList.contains('sidebar-collapsed')).toBe(false);
-    });
-
-    it('clique sur l\'onglet [data-tab="explorer"] (Mes Circuits)', () => {
-        const tab = document.createElement('button');
-        tab.dataset.tab = 'explorer';
-        const clickSpy = vi.fn();
-        tab.addEventListener('click', clickSpy);
-        document.body.appendChild(tab);
-
-        setupWelcomeActions();
-        eventBus.emit('welcome:choice', { choice: 'import' });
-        expect(clickSpy).toHaveBeenCalled();
-    });
-
-    it('ne plante pas si l\'onglet est absent', () => {
-        setupWelcomeActions();
-        expect(() => {
-            eventBus.emit('welcome:choice', { choice: 'import' });
-        }).not.toThrow();
-    });
-});
-
-describe('welcome-actions — choix "create"', () => {
-    it('clique sur l\'onglet [data-tab="circuit"] (Circuit)', () => {
-        const tab = document.createElement('button');
-        tab.dataset.tab = 'circuit';
-        const clickSpy = vi.fn();
-        tab.addEventListener('click', clickSpy);
-        document.body.appendChild(tab);
-
-        setupWelcomeActions();
-        eventBus.emit('welcome:choice', { choice: 'create' });
-        expect(clickSpy).toHaveBeenCalled();
-    });
-});
-
 describe('welcome-actions — choix inconnu', () => {
     it('ne fait rien (no-op gracieux)', () => {
         setupWelcomeActions();
         expect(() => {
             eventBus.emit('welcome:choice', { choice: 'unknown-thing' });
         }).not.toThrow();
-        expect(document.body.classList.contains('sidebar-collapsed')).toBe(false);
     });
 });

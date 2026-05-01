@@ -100,22 +100,10 @@
 
             <button class="btn" id="btn-open-my-circuits" title="Mes Circuits" aria-label="Mes Circuits"><i data-lucide="route"></i><span>Circuits</span></button>
 
-            <button class="btn" id="btn-mode-selection" title="Mode consultation" aria-label="Mode consultation"><i
-                    data-lucide="map-pin-off"></i><span>Sélection</span></button>
-
-            <button class="btn" id="btn-import-photos" title="Importer des photos GPS" aria-label="Importer des photos GPS"><i
-                    data-lucide="image-up"></i></button>
-
             <button class="btn" id="btn-legend" title="Informations" aria-label="Informations"><i
                     data-lucide="info"></i></button>
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
-
-            <!-- SOUTENIR LE SITE -->
-            <button class="btn" id="btn-bmc-topbar" title="Soutenir le site" aria-label="Soutenir le site">
-                <i data-lucide="heart"></i>
-                <span>Soutenir le site</span>
-            </button>
 
             <!-- GOD MODE TOOLS -->
             <div class="tools-dropdown-container is-hidden" id="admin-tools-container">
@@ -138,52 +126,51 @@
                         data-lucide="settings"></i><span>Outils</span></button>
                 <div class="tools-menu" id="tools-menu-content">
 
+                    <div class="tools-menu-section-title">Navigation</div>
                     <button class="tools-menu-item" id="btn-open-geojson">
                         <i data-lucide="folder-open"></i> Ouvrir Carte
                     </button>
-
-                    <button class="tools-menu-item" id="btn-statistics">
-                        <i data-lucide="trophy"></i> Mon Carnet de Voyage
-                    </button>
-
-                    <button class="tools-menu-item" id="btn-sync-scan">
-                        <i data-lucide="scan-line"></i> Scanner (Synchro/Circuit)
-                    </button>
-
-                    <button class="tools-menu-item" id="btn-sync-share">
-                        <i data-lucide="qr-code"></i> Partager Progression
-                    </button>
-
-                    <button class="tools-menu-item" id="btn-restore-data" disabled>
-                        <i data-lucide="folder-down"></i> Restaurer
-                    </button>
-
                     <button class="tools-menu-item" id="btn-mon-espace">
                         <i data-lucide="luggage"></i> Mon Espace
                     </button>
 
+                    <div class="tools-menu-section-title">Voyage</div>
+                    <button class="tools-menu-item" id="btn-statistics">
+                        <i data-lucide="trophy"></i> Mon Carnet de Voyage
+                    </button>
+                    <button class="tools-menu-item" id="btn-import-photos">
+                        <i data-lucide="image-up"></i> Importer des photos GPS
+                    </button>
+                    <button class="tools-menu-item" id="btn-sync-scan">
+                        <i data-lucide="scan-line"></i> Scanner (Synchro/Circuit)
+                    </button>
+                    <button class="tools-menu-item" id="btn-sync-share">
+                        <i data-lucide="qr-code"></i> Partager Progression
+                    </button>
+
+                    <div class="tools-menu-section-title">Gestion</div>
+                    <button class="tools-menu-item" id="btn-open-backup-modal" disabled>
+                        <i data-lucide="save"></i> Sauvegarder...
+                    </button>
+                    <button class="tools-menu-item" id="btn-restore-data" disabled>
+                        <i data-lucide="folder-down"></i> Restaurer
+                    </button>
                     <button class="tools-menu-item" id="btn-open-trash">
                         <i data-lucide="trash"></i> Corbeille
                     </button>
 
-                    <button class="tools-menu-item" id="btn-open-backup-modal" disabled>
-                        <i data-lucide="save"></i> Sauvegarder...
-                    </button>
-
-                    <div class="tools-menu-separator"></div>
-
+                    <div class="tools-menu-section-title">Préférences</div>
                     <button class="tools-menu-item" id="btn-theme-selector">
                         <i data-lucide="palette"></i> Thème
                     </button>
 
-                    <button class="tools-menu-item" id="btn-export-pdf" disabled>
-                        <i data-lucide="file-down"></i> PDF (Bientôt)
+                    <div class="tools-menu-section-title">Support</div>
+                    <button class="tools-menu-item" id="btn-bmc-topbar">
+                        <i data-lucide="heart"></i> Soutenir le site
                     </button>
-
                     <button class="tools-menu-item" id="btn-contact-dev">
                         <i data-lucide="bug"></i> Signaler un bug
                     </button>
-
                     <button class="tools-menu-item" id="btn-legal-notice">
                         <i data-lucide="scale"></i> Mentions légales
                     </button>
@@ -204,8 +191,6 @@
         <div id="hw-filter-panel" class="hw-filter-panel"></div>
     </div>
     <div id="app-version" class="is-hidden"></div>
-
-    <button id="sidebar-toggle" class="sidebar-toggle" type="button" aria-label="Replier la barre latérale" title="Replier la barre latérale (Ctrl+B)"><i data-lucide="chevron-right"></i></button>
 
     <div class="right-sidebar" id="right-sidebar">
         <div class="sidebar-tabs" id="sidebar-tabs">

@@ -169,13 +169,6 @@ export function initMapListeners() {
 
     eventBus.on('map:close-popup', () => { if (map) map.closePopup(); });
     eventBus.on('map:clear-highlights', () => clearMarkerHighlights());
-
-    // Re-fit demandé après une action qui modifie la taille du panneau droit
-    // (ex : welcome:choice qui replie/déplie la sidebar). Le délai laisse le
-    // temps à la transition CSS (0.3s) de se terminer avant de recalculer.
-    eventBus.on('map:request-refit', () => {
-        setTimeout(() => fitMapToContent(), 400);
-    });
     eventBus.on('map:start-marker-drag', ({ poiId, onDrag, onEnd }) => startMarkerDrag(poiId, onDrag, onEnd));
     eventBus.on('map:fit-bounds-to-points', ({ points, options }) => {
         if (!map || !points || points.length === 0) return;
@@ -456,12 +449,11 @@ export function fitMapToContent() {
     // Niveau 1 : bounds définis dans destinations.json pour la carte active.
     const config = state.currentMapId && state.destinations?.maps?.[state.currentMapId];
     if (config?.bounds) {
-        // Padding uniforme de 20px tout autour pour donner un peu d'air et éviter
-        // que la zone géographique ne touche les bords. paddingBottomRight ajoute
-        // en plus la largeur de la sidebar (si dépliée) pour décaler le centre
-        // "utile" vers la gauche.
-        const sidebarHidden = document.body.classList.contains('sidebar-collapsed');
-        const sidebarWidth = sidebarHidden ? 0 : (document.getElementById('right-sidebar')?.offsetWidth || 0);
+        // La sidebar droite est toujours visible sur desktop (PR 6).
+        // paddingBottomRight ajoute la largeur de la sidebar pour décaler le
+        // centre "utile" vers la gauche, plus 20px d'air. paddingTopLeft : 20px
+        // d'air uniforme sur les autres bords.
+        const sidebarWidth = document.getElementById('right-sidebar')?.offsetWidth || 0;
         map.fitBounds(config.bounds, {
             paddingTopLeft: [20, 20],
             paddingBottomRight: [sidebarWidth + 20, 20],
