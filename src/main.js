@@ -40,6 +40,7 @@ import { initTokenCache } from './github-sync.js';
 
 import { loadAndInitializeMap } from './app-startup.js';
 import { showWelcomeIfNeeded } from './welcome.js';
+import { setupWelcomeActions } from './welcome-actions.js';
 import { setupEventBusListeners } from './events-bus.js';
 import { setupFilterPanel } from './filter-panel.js';
 import { setupTopbarV2 } from './topbar-v2.js';
@@ -188,6 +189,7 @@ async function initializeApp() {
         await loadAndInitializeMap();
 
         // Écran de bienvenue (premier lancement uniquement)
+        setupWelcomeActions();
         showWelcomeIfNeeded();
 
     } catch (error) {
