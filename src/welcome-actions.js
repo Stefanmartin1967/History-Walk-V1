@@ -40,11 +40,14 @@ export function setupWelcomeActions() {
                 // la liste des circuits déjà importés par défaut.
                 // (Le filtrage fin reste accessible via Mon Espace.)
                 expandSidebar();
-                clickIfPresent('#btn-open-my-circuits');
+                clickIfPresent('[data-tab="explorer"]');
                 break;
 
             case 'create':
+                // Sidebar dépliée sur l'onglet Circuit : brouillon vide,
+                // prêt à recevoir les premiers POIs.
                 expandSidebar();
+                clickIfPresent('[data-tab="circuit"]');
                 break;
 
             case 'photos':

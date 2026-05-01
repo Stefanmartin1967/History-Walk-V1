@@ -69,23 +69,37 @@ describe('welcome-actions — choix "import"', () => {
         expect(document.body.classList.contains('sidebar-collapsed')).toBe(false);
     });
 
-    it('clique sur #btn-open-my-circuits s\'il est présent (active l\'onglet Mes Circuits)', () => {
-        const btn = document.createElement('button');
-        btn.id = 'btn-open-my-circuits';
+    it('clique sur l\'onglet [data-tab="explorer"] (Mes Circuits)', () => {
+        const tab = document.createElement('button');
+        tab.dataset.tab = 'explorer';
         const clickSpy = vi.fn();
-        btn.addEventListener('click', clickSpy);
-        document.body.appendChild(btn);
+        tab.addEventListener('click', clickSpy);
+        document.body.appendChild(tab);
 
         setupWelcomeActions();
         eventBus.emit('welcome:choice', { choice: 'import' });
         expect(clickSpy).toHaveBeenCalled();
     });
 
-    it('ne plante pas si #btn-open-my-circuits est absent', () => {
+    it('ne plante pas si l\'onglet est absent', () => {
         setupWelcomeActions();
         expect(() => {
             eventBus.emit('welcome:choice', { choice: 'import' });
         }).not.toThrow();
+    });
+});
+
+describe('welcome-actions — choix "create"', () => {
+    it('clique sur l\'onglet [data-tab="circuit"] (Circuit)', () => {
+        const tab = document.createElement('button');
+        tab.dataset.tab = 'circuit';
+        const clickSpy = vi.fn();
+        tab.addEventListener('click', clickSpy);
+        document.body.appendChild(tab);
+
+        setupWelcomeActions();
+        eventBus.emit('welcome:choice', { choice: 'create' });
+        expect(clickSpy).toHaveBeenCalled();
     });
 });
 
