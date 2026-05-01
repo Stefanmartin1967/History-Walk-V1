@@ -358,44 +358,26 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
 // --- LOGIQUE WIZARD & OUTILS ---
 
 export function setupDesktopTools() {
-    // Bouton "Mode Sélection" : toggle direct du mode création.
-    // L'ancienne modale d'assistant (selection-wizard-modal) qui demandait zone +
-    // hide-visited + hide-planned a été supprimée — point #5 audit Stefan : ses
-    // options sont déjà couvertes par le filtre topbar (#hw-filter-panel) qui
-    // gère catégories, zones, parcours (visités/à faire), incontournables.
-    // L'utilisateur configure ses filtres via la topbar puis clique Sélection
-    // pour activer le mode (les filtres actifs s'appliquent automatiquement aux
-    // POIs cliquables sur la carte).
-    const btnSelect = document.getElementById('btn-mode-selection');
-    if (btnSelect) {
-        // On clone le bouton pour supprimer les anciens écouteurs (toggle simple)
-        const newBtn = btnSelect.cloneNode(true);
-        btnSelect.parentNode.replaceChild(newBtn, btnSelect);
-
-        newBtn.addEventListener('click', () => {
-            if (state.isSelectionModeActive) {
-                toggleSelectionMode(false);
-            } else {
-                enterCircuitCreationMode();
-            }
-        });
-    }
+    // PR 6 : le bouton legacy #btn-mode-selection a été supprimé du header.
+    // Le passage en mode création se fait désormais uniquement via :
+    //   - le choix "Créer mon circuit" de la modale d'accueil (welcome-actions)
+    //   - le bouton + (mc-btn-new) de l'onglet Mes Circuits (émet circuit:create-new)
+    // Les filtres topbar restent appliqués automatiquement quand le mode est actif.
 }
 
-// Helper partagé entre le bouton legacy #btn-mode-selection et l'event
-// `circuit:create-new` (émit par la sidebar V2). Reset du circuit en cours +
-// activation du mode sélection + refresh des règles de filtrage.
+// Reset du circuit en cours + activation du mode sélection + refresh des règles
+// de filtrage. Appelé via l'event `circuit:create-new` (émis par la sidebar V2)
+// ou via welcome-actions au choix d'usage "Créer mon circuit".
 function enterCircuitCreationMode() {
     clearCircuit(false);
     toggleSelectionMode(true);
     applyFilters();
 }
 
-// N6 rapport v3 : la sidebar V2 (mc-btn-new) émet `circuit:create-new` au
-// lieu de cliquer programmatiquement sur #btn-mode-selection (couplage DOM-DOM
-// fragile). Listener enregistré au module-load (et non dans setupDesktopTools
-// qui n'est appelé qu'en mode desktop) pour qu'il soit toujours actif —
-// no-op gratuit en mobile puisque mc-btn-new n'y est pas rendu.
+// La sidebar V2 (mc-btn-new) émet `circuit:create-new` pour entrer en mode
+// création (couplage DOM-DOM évité). Listener enregistré au module-load pour
+// qu'il soit toujours actif — no-op gratuit en mobile puisque mc-btn-new n'y
+// est pas rendu.
 eventBus.on('circuit:create-new', () => {
     if (state.isSelectionModeActive) return; // déjà en mode création, no-op
     enterCircuitCreationMode();

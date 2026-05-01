@@ -20,7 +20,6 @@ import { initDB, getAppState, saveAppState } from './database.js';
 import { APP_VERSION, state, setHomeLocation } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { initializeDomReferences, DOM } from './ui.js';
-import { updateSelectionModeButton } from './ui-selection.js';
 import { populateAddPoiModalCategories } from './ui-filters.js';
 import { showToast } from './toast.js';
 import { setupCircuitEventListeners } from './ui-circuit-editor.js';
@@ -36,7 +35,6 @@ import { initUiDetailsListeners } from './ui-details.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
 import { setupDesktopTools } from './desktopMode.js';
-import { setupSidebarToggle } from './sidebar-toggle.js';
 import { initAdminMode, showAdminLoginModal } from './admin.js';
 import { initTokenCache } from './github-sync.js';
 
@@ -118,14 +116,6 @@ async function initializeApp() {
         // UI Setup only (Map init is deferred to loadAndInitializeMap)
         setupDesktopTools();
         setupSmartSearch();
-        setupSidebarToggle();
-        updateSelectionModeButton(state.isSelectionModeActive);
-        // sidebar-open n'est ajoutée que si l'utilisateur n'a pas demandé
-        // explicitement la sidebar repliée (sidebar-collapsed restauré
-        // depuis localStorage par setupSidebarToggle ci-dessus).
-        if (!document.body.classList.contains('sidebar-collapsed')) {
-            document.body.classList.add('sidebar-open');
-        }
     }
 
     // 3. Tour de contrôle et événements (AVANT le chargement de la carte pour s'assurer que data:filtered est capté)

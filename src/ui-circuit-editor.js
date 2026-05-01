@@ -1,6 +1,5 @@
 import { state, updateMyCircuit, setCustomDraftName } from './state.js';
 import { DOM } from './ui-dom.js';
-import { updateSelectionModeButton } from './ui-selection.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { applyFilters } from './data.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
@@ -11,7 +10,6 @@ import { showConfirm, showAlert, showPrompt } from './modal.js';
 import { performCircuitDeletion } from './circuit-actions.js';
 import { eventBus } from './events.js';
 import { escapeHtml } from './utils.js';
-import { ensureSidebarOpen } from './sidebar-utils.js';
 
 import {
     setSelectionMode,
@@ -39,25 +37,11 @@ export function toggleSelectionMode(forceValue) {
         setSelectionMode(!state.isSelectionModeActive);
     }
 
-    // 2. Mise à jour du bouton
-    if (DOM.btnModeSelection) {
-        DOM.btnModeSelection.classList.toggle('active', state.isSelectionModeActive);
-        updateSelectionModeButton(state.isSelectionModeActive);
-    }
-
-    // 3. Gestion de l'Interface (Panneaux et Lignes)
+    // 2. Gestion de l'Interface (Panneaux et Lignes)
     if (state.isSelectionModeActive) {
-        if (DOM.rightSidebar) {
-            DOM.rightSidebar.style.display = 'flex';
-        }
-        ensureSidebarOpen();
         switchSidebarTab('circuit');
         renderCircuitPanel();
     } else {
-        if (DOM.rightSidebar) {
-            DOM.rightSidebar.style.display = 'none';
-            document.body.classList.remove('sidebar-open');
-        }
         if (state.orthodromicPolyline) state.orthodromicPolyline.remove();
         if (state.realTrackPolyline) state.realTrackPolyline.remove();
     }

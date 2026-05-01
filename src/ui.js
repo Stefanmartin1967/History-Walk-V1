@@ -26,10 +26,8 @@ import { openTrashModal, requestSoftDelete } from './ui-modals.js';
 import { switchSidebarTab } from './ui-sidebar.js'; // Imported for use inside ui.js functions
 import { handleExportWithContribution } from './fileManager.js';
 import { showStatisticsModal } from './statistics.js';
-import { updateSelectionModeButton } from './ui-selection.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { DOM } from './ui-dom.js';
-import { ensureSidebarOpen } from './sidebar-utils.js';
 
 // Re-export pour compat : les consommateurs existants importent DOM depuis ui.js.
 // La source unique est ui-dom.js (module feuille, sans cycle).
@@ -41,7 +39,7 @@ let currentEditor = { fieldId: null, poiId: null, callback: null };
 
 export function initializeDomReferences() {
     const ids = [
-        'geojson-loader', 'search-input', 'search-results', 'btn-mode-selection', 'right-sidebar', 'sidebar-tabs', 
+        'geojson-loader', 'search-input', 'search-results', 'right-sidebar', 'sidebar-tabs',
         'details-panel', 'circuit-panel', 'circuit-steps-list', 'circuit-title-text', 'circuit-title-input', 
         'circuit-description', 'edit-circuit-title-button', 'circuit-poi-count', 'circuit-distance',
         'gpx-importer', 'btn-export-gpx',
@@ -69,15 +67,6 @@ export function initializeDomReferences() {
     if (DOM.btnOpenMyCircuits) {
         DOM.btnOpenMyCircuits.addEventListener('click', () => {
             closeAllDropdowns();
-
-            if (DOM.rightSidebar && DOM.rightSidebar.style.display === 'none') {
-                DOM.rightSidebar.style.display = 'flex';
-                // FIX AUTOMATISÉ : Le redessin de la carte est maintenant géré automatiquement par ResizeObserver dans map.js
-            }
-            // S'assurer que la sidebar est dépliée même si l'user l'avait
-            // repliée via le toggle (Ctrl+B / sidebar-collapsed).
-            ensureSidebarOpen();
-
             renderExplorerList();
             switchSidebarTab('explorer');
         });
@@ -216,10 +205,6 @@ export function initializeDomReferences() {
             const body = encodeURIComponent("Bonjour,\n\nJe souhaite signaler un problème ou faire une suggestion :\n\n");
             window.location.href = `mailto:history.walk.007@gmail.com?subject=${subject}&body=${body}`;
         });
-    }
-
-    if (DOM.btnModeSelection) {
-        updateSelectionModeButton(state.isSelectionModeActive);
     }
 
     DOM.tabButtons = document.querySelectorAll('.tab-button');

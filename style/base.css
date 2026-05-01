@@ -128,6 +128,19 @@ body {
     background: var(--line);
     margin: 5px 0;
 }
+/* Section titles inside tools menu (PR 6) */
+.tools-menu-section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    padding: 10px 14px 4px;
+    margin-top: 4px;
+}
+.tools-menu-section-title:first-child {
+    margin-top: 0;
+}
 /* GOD MODE button (visuel danger pour distinguer admin) */
 #btn-admin-menu {
     background-color: var(--danger);
@@ -488,70 +501,13 @@ body {
     transition: right 0.3s ease;
 }
 
-body.sidebar-open #map {
-    right: var(--sidebar-width);
-}
-
-/* ================================================================
-   Sidebar toggle collapsible (point #6 audit Stefan)
-   Poignée verticale entre la map et la sidebar, repliable.
-   - sidebar ouverte (default) : poignée à droite de la sidebar avec ◀
-   - sidebar repliée : poignée collée au bord droit avec ▶
-   - persistance via localStorage 'sidebar-collapsed'
-   - raccourci clavier Ctrl+B / Cmd+B
-   - mobile : toggle masqué (sidebar pleine page gérée différemment)
-   ================================================================ */
-.sidebar-toggle {
-    position: fixed;
-    top: 50%;
-    right: var(--sidebar-width);
-    transform: translateY(-50%);
-    width: 22px;
-    height: 64px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-right: none;
-    border-radius: 10px 0 0 10px;
-    color: var(--ink-soft);
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    z-index: 1003;
-    padding: 0;
-    transition: right 0.3s ease, background 0.15s, color 0.15s;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
-}
-.sidebar-toggle:hover {
-    background: var(--surface-muted);
-    color: var(--ink);
-}
-.sidebar-toggle svg {
-    width: 14px;
-    height: 14px;
-    transition: transform 0.3s ease;
-}
-.sidebar-toggle:focus-visible {
-    outline: 2px solid var(--brand);
-    outline-offset: 2px;
-}
-
-/* État replié */
-body.sidebar-collapsed .right-sidebar {
-    right: calc(var(--sidebar-width) * -1);
-}
-body.sidebar-collapsed #map {
-    right: 0 !important;
-}
-body.sidebar-collapsed .sidebar-toggle {
-    right: 0;
-}
-body.sidebar-collapsed .sidebar-toggle svg {
-    transform: rotate(180deg); /* la flèche pointe vers ◀ pour réouvrir */
-}
-
-@media (max-width: 767px) {
-    /* Mobile : la sidebar est en plein écran et a sa propre nav, pas de toggle */
-    .sidebar-toggle { display: none; }
+/* La sidebar droite est toujours visible sur desktop (PR 6 a supprimé le
+   toggle). Le map laisse de la place à droite via right: var(--sidebar-width).
+   Sur mobile la sidebar a sa propre logique (pleine page). */
+@media (min-width: 768px) {
+    #map {
+        right: var(--sidebar-width);
+    }
 }
 
 #app-version {
