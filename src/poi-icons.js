@@ -15,37 +15,36 @@ const ICON_STORE_SVG        = ICON_MDI('<path d="M18.36 9L18.96 12H5.04L5.64 9H1
 const ICON_RESTAURANT_SVG   = ICON_MDI('<path d="M11,9H9V2H7V9H5V2H3V9C3,11.12 4.66,12.84 6.75,12.97V22H9.25V12.97C11.34,12.84 13,11.12 13,9V2H11V9M16,6V14H18.5V22H21V2C18.24,2 16,4.24 16,6Z" />');
 const ICON_PILLAR_SVG       = ICON_MDI('<path d="M6,5H18A1,1 0 0,1 19,6A1,1 0 0,1 18,7H6A1,1 0 0,1 5,6A1,1 0 0,1 6,5M21,2V4H3V2H21M15,8H17V22H15V8M7,8H9V22H7V8M11,8H13V22H11V8Z" />');
 const ICON_BINOCULARS_SVG   = ICON_MDI('<path d="M11,6H13V13H11V6M9,20A1,1 0 0,1 8,21H5A1,1 0 0,1 4,20V15L6,6H10V13A1,1 0 0,1 9,14V20M10,5H7V3H10V5M15,20V14A1,1 0 0,1 14,13V6H18L20,15V20A1,1 0 0,1 19,21H16A1,1 0 0,1 15,20M14,5V3H17V5H14Z" />');
+// Variantes "outline" MDI (style raccord avec ICON_MOSQUE_SVG / ICON_PRAY_SVG)
+const ICON_HELP_CIRCLE_SVG  = ICON_MDI('<path d="M11,18H13V16H11V18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z" />');
+const ICON_HOTEL_SVG        = ICON_MDI('<path d="M7,13A3,3 0 0,0 10,10A3,3 0 0,0 7,7A3,3 0 0,0 4,10A3,3 0 0,0 7,13M7,9A1,1 0 0,1 8,10A1,1 0 0,1 7,11A1,1 0 0,1 6,10A1,1 0 0,1 7,9M19,7H11V14H3V5H1V20H3V17H21V20H23V11A4,4 0 0,0 19,7M21,14H13V9H19A2,2 0 0,1 21,11V14Z" />');
+const ICON_CAMERA_SVG       = ICON_MDI('<path d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M20,18V6H16.83L15,4H9L7.17,6H4V18H20M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" />');
+const ICON_TAXI_SVG         = ICON_MDI('<path d="M18.92,6.01C18.72,5.42 18.16,5 17.5,5H15V3H9V5H6.5C5.84,5 5.29,5.42 5.08,6.01L3,12V20A1,1 0 0,0 4,21H5A1,1 0 0,0 6,20V19H18V20A1,1 0 0,0 19,21H20A1,1 0 0,0 21,20V12L18.92,6.01M6.5,16A1.5,1.5 0 0,1 5,14.5A1.5,1.5 0 0,1 6.5,13A1.5,1.5 0 0,1 8,14.5A1.5,1.5 0 0,1 6.5,16M17.5,16A1.5,1.5 0 0,1 16,14.5A1.5,1.5 0 0,1 17.5,13A1.5,1.5 0 0,1 19,14.5A1.5,1.5 0 0,1 17.5,16M5,11L6.5,6.5H17.5L19,11H5Z" />');
+const ICON_MAP_MARKER_SVG   = ICON_MDI('<path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2M12,4A5,5 0 0,1 17,9C17,11.61 14.59,14.84 12,18.05C9.41,14.84 7,11.61 7,9A5,5 0 0,1 12,4Z" />');
 
 // Icône SVG personnalisée Lucide (style outline) — conservée pour Culture et tradition
 const ICON_AMPHORA_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v5.632c0 .424-.272.795-.653.982A6 6 0 0 0 6 14c.006 4 3 7 5 8"/><path d="M10 5H8a2 2 0 0 0 0 4h.68"/><path d="M14 2v5.632c0 .424.272.795.652.982A6 6 0 0 1 18 14c0 4-3 7-5 8"/><path d="M14 5h2a2 2 0 0 1 0 4h-.68"/><path d="M18 22H6"/><path d="M9 2h6"/></svg>';
 
 export const iconMap = {
-    'A définir':           'circle-help',
+    'A définir':           ICON_HELP_CIRCLE_SVG,
     'Café':                ICON_COFFEE_SVG,
     'Commerce':            ICON_STORE_SVG,
     'Culture et tradition': ICON_AMPHORA_SVG,
     'Curiosité':           ICON_BINOCULARS_SVG,
-    'Hôtel':               'hotel',
+    'Hôtel':               ICON_HOTEL_SVG,
     'Mosquée':             ICON_MOSQUE_SVG,
     'Pâtisserie':          ICON_CAKE_SVG,
-    'Photo':               'camera',
+    'Photo':               ICON_CAMERA_SVG,
     'Puits':               ICON_WATER_WELL_SVG,
     'Restaurant':          ICON_RESTAURANT_SVG,
     'Salon de thé':        ICON_TEA_SVG,
     'Site historique':     ICON_PILLAR_SVG,
     'Site religieux':      ICON_PRAY_SVG,
-    'Taxi':                'car-taxi-front'
+    'Taxi':                ICON_TAXI_SVG
 };
 
 export function getIconHtml(category) {
-    const defaultIcon = 'map-pin';
-    const iconContent = iconMap[category] || defaultIcon;
-
-    if (iconContent.startsWith('<svg')) {
-        return iconContent;
-    } else {
-        return `<i data-lucide="${iconContent}"></i>`;
-    }
+    return iconMap[category] || ICON_MAP_MARKER_SVG;
 }
 
 export function getIconForFeature(feature) {

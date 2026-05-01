@@ -1,5 +1,7 @@
 // map.js
 import L from 'leaflet';
+// Side-effect : étend L avec L.markerClusterGroup
+import 'leaflet.markercluster';
 import { state, setOrthodromicPolyline, setRealTrackPolyline, setGeojsonLayer, setDraggingMarkerId } from './state.js';
 import { addPoiToCircuit, isCircuitCompleted } from './circuit.js';
 import { openDetailsPanel } from './ui-details.js';
@@ -341,7 +343,21 @@ export function refreshMapMarkers(visibleFeatures) {
     if (!map) return;
 
     if (!state.geojsonLayer) {
-        setGeojsonLayer(L.featureGroup().addTo(map));
+        // Clustering progressif : Leaflet regroupe les marqueurs dont la distance
+        // est inférieure à maxClusterRadius pixels. Plus on zoome, plus la
+        // distance pixel entre POIs augmente, donc les clusters se défont
+        // naturellement. Pas de seuil binaire = transition douce.
+        // Au max zoom, spiderfyOnMaxZoom permet d'éclater en spirale les POIs
+        // qui restent superposés (cas Houmt Souk : 23 mosquées sur ~50m).
+        // Toutes les icônes POI sont désormais des SVG inline (poi-icons.js),
+        // donc pas besoin de re-déclencher createIcons sur l'animation des
+        // clusters — les icônes apparaissent immédiatement dans le DOM.
+        setGeojsonLayer(L.markerClusterGroup({
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            chunkedLoading: true,
+            maxClusterRadius: 50
+        }).addTo(map));
     } else {
         state.geojsonLayer.clearLayers();
     }
