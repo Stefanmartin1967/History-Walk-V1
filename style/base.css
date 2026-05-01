@@ -588,7 +588,7 @@ body {
 
 .tab-button {
     flex: 1;
-    height: 100%;
+    height: 42px; /* Aligné avec les .btn de la topbar */
     padding: 0 12px;
     border: none;
     background-color: transparent;
@@ -602,6 +602,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    align-self: center; /* centrage vertical dans le conteneur sidebar-tabs */
 }
 
 .tab-button:hover { color: var(--ink); }
