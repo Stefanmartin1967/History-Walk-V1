@@ -2448,7 +2448,9 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -2474,7 +2476,9 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -3654,7 +3658,9 @@
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539389948.jpg"
         ],
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -3716,7 +3722,9 @@
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540475513.jpg"
         ],
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -3902,7 +3910,9 @@
           "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1776540484252.jpg"
         ],
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -3928,7 +3938,9 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JDNJ7919QCH1HXSXT",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -4090,7 +4102,9 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -4116,7 +4130,11 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJDS3E0D23NTEB3ATM02S8DZ"
+        ],
+        "vu": true
       }
     },
     {
@@ -4524,7 +4542,9 @@
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -4781,7 +4801,11 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6MK0YGY2RG0RX2XX48",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJDS3E0D23NTEB3ATM02S8DZ"
+        ],
+        "vu": true
       }
     },
     {
@@ -4863,7 +4887,11 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJDS3E0D23NTEB3ATM02S8DZ"
+        ],
+        "vu": true
       }
     },
     {
@@ -5986,7 +6014,9 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -6349,7 +6379,11 @@
         "Prix d'entrée": null,
         "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6SYZ3CNCV0GXBV0MYX",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJDS3E0D23NTEB3ATM02S8DZ"
+        ],
+        "vu": true
       }
     },
     {
@@ -6911,7 +6945,9 @@
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -6932,7 +6968,9 @@
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -6953,7 +6991,9 @@
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -7540,6 +7580,29 @@
         "price": 0,
         "HW_ID": "HW-01KQ05809WVE3MYDZDF9XAFA37",
         "Description": "Ajouté via Rich Editor"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.972271299722223,
+          33.80570399972222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test watermark",
+        "Catégorie": "Photo",
+        "Zone": "Midoun",
+        "timeH": 0,
+        "timeM": 0,
+        "price": 0,
+        "HW_ID": "HW-01KQJDTQNPVKD1HA1KGV06G4XG",
+        "Description": "Ajouté via Rich Editor",
+        "photos": [
+          "photos/poi_HW-01KQJDTQNPVKD1HA1KGV06G4XG_1777661239628.jpg"
+        ]
       }
     }
   ]
