@@ -1,0 +1,421 @@
+{
+  "lastUpdated": "2026-05-02T14:49:20.018Z",
+  "officialCircuitsStatus": {
+    "HW-1771316521571": true
+  },
+  "userData": {
+    "HW-01K77WPE671G6V27VYYNMJV2NC": {
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-1771316521571"
+      ],
+      "vu": true
+    },
+    "HW-01K77WPE6722XTDVPGCQTPPBXR": {
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-1771316521571"
+      ],
+      "vu": true
+    },
+    "HW-01K77WPE6770BXCP2SW1Z2DTA2": {
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-1771316521571"
+      ],
+      "vu": true
+    },
+    "HW-01K77WPE67MSESGPPZ5CAD0XTZ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE67RPHVJVH6A0PC0ZWD": {
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-1771316521571"
+      ],
+      "vu": true
+    },
+    "HW-01K77WPE67YEYJ337ADV7QBX5P": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6805D82JWX44QAVVV9": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE682HMFVV693F7BFA2B": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE682TM0N643W207BGNE": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE686WHQD4VDZT4Y6VK5": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE68FAWKXDY3R89R5KTF": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE68JWCXJ0TCG1EDSB7A": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE68MMPS9ZVR6XTV9J61": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE68Q2NTEKRWSPCDZZGE": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE68SSRHFM5TYYA7F5YF": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE68SW9XWBFFCRBWXZYM": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE68ZXYA0Z9T3QEN0VYW": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE69627R8AECX3S372Z3": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE697JA8WM3N71KEFY6S": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE697PHS21NP9P0JGJ6F": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE699CBRC4PV1ARJPXKM": {
+      "planifieCounter": 2
+    },
+    "HW-01K77WPE69CKZWJHD3JAJT874K": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE69FQZ84EBV7HCETGM2": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE69NZS5NFTFBPG6V291": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE69RBE6FB0RR05GEJM3": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6A1GRGM843BF4KA3RT": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6A22WXDRBSQ8AEW7BR": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6A27VC54MEK4XHGV9V": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6A3AYDG7D68R9A0JBT": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6A7EGYFGG7XNYT8AYC": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6AFSTY1DA2XVPB3MVC": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6AS77NE3CRGHPYHJSE": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6B2CT1A4B58N917MXQ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6B49HSRPBACEWDY95T": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6B757BJRXVWKNC8PBD": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6BAJG9QADZMRDXPWTB": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6BE2HDNBY0FSWSNRTH": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6BE6FFWWHJH6DSSZQ6": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6BNSENDPYVFJT2TW7Y": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6BZYXKCYCZXB9RG3RP": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6C4GTHCK9Y64EFE8SP": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6D5GR4P97YHEN41JNS": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6D6A1W50RR0KNXRAGH": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6DFDJEFF1NP5V7YWS5": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6DN850VCNS22C48QFT": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6DWEFD7GCZ7SCRFQA9": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6E2G25V2R888QZDP0X": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6E5GCD9QGR33PMXVRP": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6ECJK1CMJKYVNTKGGS": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6EWBD679W4C2QRM2FA": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6EZ7K06GM4HAWDESAE": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6F1C25NNH5RAR2JPF6": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6F9K1DFXDYCR7CPAWN": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6FCK1V446SXD2V5NNK": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6FDEFE8CMVWQSV93V4": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6FTSXM87T9YTV7G4ME": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6FZ42WKWV3QWS376RB": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6FZPTQ6J9PK4K8Z3DJ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6G6C1H17E6WP518B3J": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6G6RDSP8C7C5WQVJCN": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6GQX3PRD8TAKTDRNSZ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6H0HDCNZVRSJGSX5TF": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6H365AYB72RWY40WZX": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6HCCSTW9QXDV73Q1SF": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6HV1767JVPMV1000YQ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6J23YSBPP5PMBBZ23Y": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6JARCBVAYJCW1B3B14": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6JDNJ7919QCH1HXSXT": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6JHY0DMFMJKW847EVZ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6M5QZM1DZV18R4EDHR": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6MK0YGY2RG0RX2XX48": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6MXA1DKNG7R2XWZQGJ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6N0ZBXJK23NVJ2MQPX": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6N1D1N6TK82WX52BNM": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6N293MG25FFQBH1G10": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6N6A0YBFFKMQQNQH0E": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6N6HF86MYJNJWFPNSV": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6NBNNW3DFHDZ0PFMX8": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6ND38ZJ2GFV2K4NRTK": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6NGJQHEKJE3M2T5W5Q": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6NGZN849YA6V0EC1R0": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6NHCHVH0JKDTF607DG": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6NJ1X6TBWGCTV85QMM": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6NQ35ND0B1DQGT4BQT": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6NZ91JPSJG4M3A7TNR": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6P1NA9ZF5TF1DK9GD2": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6P30E9MGC3BE3KYHP6": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6P7XZY555VW8YDAVA0": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6P9JFRW9XXGN7P7FPX": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PC9G02W8SX1JZX2HC": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PDSWXWVZZR4ZDNXVX": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PG0DA193W44FBQAHQ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PGSGH7AWKFRACMNSJ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PGWRVHZ8H8CTQJ06X": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PKFFHK53AA0880TBZ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PN0QBJJWTRH1X9CJH": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PP29CK1JR2H25ACNK": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6PRETC07TQDNMAG54C": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6Q0QEE8APATRE5K4MS": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6Q8D5BKFN1PMA6APBZ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6QGFPEGPTZ1G59C9FZ": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6QJNV1Q83SBNFKC88M": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6QQH5FMV0T3V4A7MCD": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6QR67710KWTHBD0C6V": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6QS9TJZYHXPSJKW47P": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6R9A1BAASW9SGFA97P": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6RHDAFAXAA92EFT8GY": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6RM4YJB23YX7AD522S": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6RN50H0B51NPN1GECK": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6RR5DT6GBCGYFDHXJS": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6SFRMMS2GS11D6JXR5": {
+      "planifieCounter": 1
+    },
+    "HW-01K77WPE6SYZ3CNCV0GXBV0MYX": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0DWM059C795C8SSD8C": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0FEQVR2EN2M5SDKSYG": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0GH1K6QDXPRRKMDATB": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0N92W2MJEHBB2FZRBD": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0VFPFW41YCMJ2CX585": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0W6KJP2MNXC0GWQJN6": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0WBFCMMFBGZB582PRH": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0WMXW7CV3JQJJK9EAV": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0XCGBFRH389WG2S71J": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0XJDFFSBSRFDN4PGQ4": {
+      "planifieCounter": 2
+    },
+    "HW-01KJABRN0XK418GNG8GH5KPT4A": {
+      "planifieCounter": 1
+    },
+    "HW-01KJABRN0YD2SFB393HG9SRDGW": {
+      "planifieCounter": 3
+    },
+    "HW-01KJMJATZZZRP02QNDTWS3YVK1": {
+      "planifieCounter": 1
+    },
+    "HW-01KJN6EEH9Z49AMGYJT621WG9N": {
+      "planifieCounter": 1
+    },
+    "HW-01KJN81XT3Q98DN3NRHHD38D2Q": {
+      "planifieCounter": 1
+    },
+    "HW-01KK1CNPZR005431XS160BZ1C4": {
+      "planifieCounter": 1
+    },
+    "HW-AGVY6BXAX7HLGFO3CKDXA9DCML": {
+      "planifieCounter": 1
+    },
+    "HW-PWQM8ZZC2LR7PF4UTX73MGTM21": {
+      "planifieCounter": 1
+    }
+  },
+  "hiddenPoiIds": []
+}
