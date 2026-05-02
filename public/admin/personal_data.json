@@ -1,8 +1,9 @@
 {
-  "lastUpdated": "2026-05-02T14:51:30.827Z",
+  "lastUpdated": "2026-05-02T14:52:55.778Z",
   "officialCircuitsStatus": {
     "HW-1771316521571": true,
-    "HW-01KJX6CXCEHW85C8KCSF95NP3R": true
+    "HW-01KJX6CXCEHW85C8KCSF95NP3R": true,
+    "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5": true
   },
   "userData": {
     "HW-01K77WPE671G6V27VYYNMJV2NC": {
@@ -296,19 +297,35 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6P1NA9ZF5TF1DK9GD2": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6P30E9MGC3BE3KYHP6": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6P7XZY555VW8YDAVA0": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6P9JFRW9XXGN7P7FPX": {
       "planifieCounter": 1
     },
     "HW-01K77WPE6PC9G02W8SX1JZX2HC": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6PDSWXWVZZR4ZDNXVX": {
       "planifieCounter": 1
@@ -317,13 +334,25 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6PGSGH7AWKFRACMNSJ": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6PGWRVHZ8H8CTQJ06X": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6PKFFHK53AA0880TBZ": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6PN0QBJJWTRH1X9CJH": {
       "planifieCounter": 1
@@ -332,7 +361,11 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6PRETC07TQDNMAG54C": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6Q0QEE8APATRE5K4MS": {
       "planifieCounter": 1
@@ -359,7 +392,11 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6RHDAFAXAA92EFT8GY": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6RM4YJB23YX7AD522S": {
       "planifieCounter": 1
@@ -411,7 +448,11 @@
       "planifieCounter": 1
     },
     "HW-01KJABRN0XJDFFSBSRFDN4PGQ4": {
-      "planifieCounter": 2
+      "planifieCounter": 2,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01KJABRN0XK418GNG8GH5KPT4A": {
       "planifieCounter": 1
@@ -420,7 +461,11 @@
       "planifieCounter": 3
     },
     "HW-01KJMJATZZZRP02QNDTWS3YVK1": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+      ],
+      "vu": true
     },
     "HW-01KJN6EEH9Z49AMGYJT621WG9N": {
       "planifieCounter": 1
