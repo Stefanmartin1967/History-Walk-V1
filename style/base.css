@@ -3060,5 +3060,18 @@ input[type=range] {
     .tab-button {
         height: 32px;
     }
+
+    /* Carte : aligner sous la topbar 40px (sinon 32px d'espace vide hérité
+       du top: 72px par défaut). */
+    #map {
+        top: 40px;
+    }
+
+    /* Sidebar mobile : idem (la règle desktop garde top: 0 pleine hauteur). */
+    @media (max-width: 767px) {
+        .right-sidebar {
+            top: 40px;
+        }
+    }
 }
 
