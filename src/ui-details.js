@@ -11,6 +11,7 @@ import { openPhotoGrid } from './ui-photo-grid.js';
 import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
+import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
 
 export function initUiDetailsListeners() {
     eventBus.on('poi:open-details', ({ featureId, circuitIndex = null }) => openDetailsPanel(featureId, circuitIndex));
@@ -34,6 +35,76 @@ function applyHeroBackground() {
     const safe = String(url).replace(/['"\\]/g, encodeURIComponent);
     hero.style.setProperty('--poi-hero-bg', `url("${safe}")`);
     hero.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
+}
+
+// Re-render la fiche POI courante après save de la modale Photos (le hero
+// passera en has-photo via hydrateHeroFromBlobs si un blob pending existe).
+function refreshCurrentDetailsPanel() {
+    const id = state.currentFeatureId;
+    if (id === null || id === undefined) return;
+    openDetailsPanel(id, state.currentCircuitIndex);
+}
+
+// Tracking de l'objectURL utilisé par le hero pour pouvoir le révoquer au prochain render.
+let activeHeroObjectUrl = null;
+
+function revokeHeroObjectUrl() {
+    if (activeHeroObjectUrl) {
+        URL.revokeObjectURL(activeHeroObjectUrl);
+        activeHeroObjectUrl = null;
+    }
+}
+
+// Hydrate le hero avec un blob local quand aucune URL publiée n'est disponible
+// (ex: photo qui vient d'être ajoutée à un POI avant publication GitHub admin,
+// ou photo perso côté user). Lit depuis pendingAdminPhotos (admin) ou poiPhotos (user).
+async function hydrateHeroFromBlobs(poiId) {
+    const hero = document.getElementById('poi-hero');
+    if (!hero || !hero.classList.contains('is-empty')) return;
+
+    const mapId = state.currentMapId;
+    if (!mapId || !poiId) return;
+
+    const items = state.isAdmin
+        ? await getPendingAdminPhotos(mapId, poiId)
+        : await getPoiPhotos(mapId, poiId);
+    if (!items || items.length === 0) return;
+
+    // Le panel a pu être re-rendu pendant l'await (autre POI ouvert).
+    // On vérifie que le hero ciblé est toujours dans le DOM courant.
+    const currentHero = document.getElementById('poi-hero');
+    if (currentHero !== hero) return;
+
+    const blob = items[0]?.blob;
+    if (!blob) return;
+
+    revokeHeroObjectUrl();
+    activeHeroObjectUrl = URL.createObjectURL(blob);
+
+    // Switch is-empty → has-photo : retire icône/label vides, ajoute compteur.
+    hero.classList.remove('is-empty');
+    hero.classList.add('has-photo');
+    hero.querySelector('.empty-icon')?.remove();
+    hero.querySelector('.empty-label')?.remove();
+
+    const count = items.length;
+    const badge = document.createElement('span');
+    badge.className = 'poi-photo-count';
+    badge.innerHTML = `<i data-lucide="image"></i>${count} ${count > 1 ? 'photos' : 'photo'}`;
+    hero.appendChild(badge);
+
+    const safe = activeHeroObjectUrl.replace(/['"\\]/g, encodeURIComponent);
+    hero.style.setProperty('--poi-hero-bg', `url("${safe}")`);
+    hero.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
+
+    createIcons({ icons: appIcons, root: hero });
+
+    // Le clic sur le hero (gérée par setupHeroClick) early-return si pas
+    // .has-photo. Comme la classe vient d'être ajoutée, on rebind ici.
+    hero.addEventListener('click', (e) => {
+        if (e.target.closest('.poi-back-pill')) return;
+        openPhotoGrid(poiId);
+    });
 }
 
 function setupToolsDrawer() {
@@ -140,10 +211,11 @@ function setupNotesAutosave(poiId) {
 function setupHeroClick(poiId) {
     const hero = document.getElementById('poi-hero');
     if (!hero || !hero.classList.contains('has-photo')) return;
-    hero.addEventListener('click', (e) => {
+    hero.addEventListener('click', async (e) => {
         // Évite les clics sur le bouton close interne
         if (e.target.closest('.poi-back-pill')) return;
-        openPhotoGrid(poiId);
+        const result = await openPhotoGrid(poiId);
+        if (result?.saved) refreshCurrentDetailsPanel();
     });
 }
 
@@ -284,9 +356,10 @@ function setupDetailsEventListeners(poiId) {
     // --- Bouton "Photos" (galerie) ---
     const btnPhotoGrid = document.getElementById('btn-open-photo-grid');
     if (btnPhotoGrid) {
-        btnPhotoGrid.addEventListener('click', (e) => {
+        btnPhotoGrid.addEventListener('click', async (e) => {
             e.stopPropagation();
-            openPhotoGrid(poiId);
+            const result = await openPhotoGrid(poiId);
+            if (result?.saved) refreshCurrentDetailsPanel();
         });
     }
 
@@ -335,7 +408,8 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
     setCurrentFeatureId(featureId);
     setCurrentCircuitIndex(circuitIndex);
 
-    // Injection du HTML
+    // Injection du HTML — révoque l'objectURL du hero précédent (évite leak).
+    revokeHeroObjectUrl();
     const targetPanel = isMobileView() ? DOM.mobileMainContainer : DOM.detailsPanel;
     targetPanel.innerHTML = buildHTML(feature, circuitIndex);
 
@@ -349,6 +423,10 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
 
     // Icônes Lucide
     createIcons({ icons: appIcons });
+
+    // Hero "is-empty" malgré la présence de blobs locaux : hydratation async
+    // (photo créée mais pas encore publiée GitHub admin, ou photo perso user).
+    hydrateHeroFromBlobs(poiId);
 
     if (isMobileView()) {
         targetPanel.style.display = 'block';
