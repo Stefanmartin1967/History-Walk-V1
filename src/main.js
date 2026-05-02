@@ -60,6 +60,13 @@ function setupUnsavedChangesWarning() {
 
 async function initializeApp() {
 
+    // Sécurité splash : si le boot crashe ou prend > 5s, on retire quand même
+    // le splash pour ne pas bloquer l'utilisateur. Le set normal se fait à la
+    // fin de loadAndInitializeMap (cf. app-startup.js).
+    setTimeout(() => {
+        document.documentElement.setAttribute('hw-ready', '');
+    }, 5000);
+
     // 0. Vérification Version
     const storedVersion = localStorage.getItem('hw_app_version');
     if (storedVersion !== APP_VERSION) {

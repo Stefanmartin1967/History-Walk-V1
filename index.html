@@ -11,7 +11,11 @@
          pour éviter le FOUC maritime au démarrage (cf. theme-bootstrap.js). -->
     <script src="theme-bootstrap.js"></script>
 
-    <link rel="stylesheet" href="style.css?v=7.3">
+    <!-- Préchargement de l'image de splash (~45 KB) en parallèle du CSS pour
+         qu'elle soit prête avant le 1er paint du #hw-boot-splash. -->
+    <link rel="preload" as="image" href="splash-bg.webp" type="image/webp">
+
+    <link rel="stylesheet" href="style.css?v=7.5">
     <link rel="icon" type="image/png" href="icons/icon-192.png" />
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0D3B66">
@@ -23,6 +27,15 @@
 </head>
 
 <body>
+
+    <!-- Splash de boot : masque l'app pendant l'initialisation pour éviter
+         tout flash visible (FOUC thème, saut de carte, POI=0 brièvement,
+         etc.). Retiré quand l'app est prête via html[hw-ready] (cf. main.js
+         à la fin de loadAndInitializeMap). Couleur de fond = var(--bg) qui
+         suit data-theme appliqué par theme-bootstrap.js. -->
+    <div id="hw-boot-splash" aria-hidden="true">
+        <div class="hw-boot-spinner"></div>
+    </div>
 
     <div id="offline-banner">⚡ Hors-ligne — les modifications seront synchronisées au retour du réseau.</div>
 

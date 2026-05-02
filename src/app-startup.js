@@ -315,6 +315,16 @@ export async function loadAndInitializeMap() {
 
     if (DOM.loaderOverlay) DOM.loaderOverlay.classList.add('is-hidden');
 
+    // Splash de boot retiré : tout est chargé (POIs, circuits, layout stabilisé,
+    // 1er render circuit-list-updated émis). Double rAF pour s'assurer que les
+    // pixels du 1er frame sont peints avant le fade out (sinon on peut encore
+    // voir un saut sur des layouts complexes).
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.documentElement.setAttribute('hw-ready', '');
+        });
+    });
+
     // Gist sync : pull après chargement complet + injecter indicateur
     injectSyncIndicator();
     pullFromGist();

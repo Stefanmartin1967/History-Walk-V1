@@ -25,4 +25,42 @@
 @import "./style/topbar-v2.css";
 @import "./style/modals.css";
 
-/* Last updated 2026-04-30 (N4+N12 finalisation hw-btn-secondary). */
+/* ============================================================
+   BOOT SPLASH — Couvre l'app pendant l'initialisation
+   ============================================================
+   Empêche les flashes visibles au démarrage (FOUC thème, saut de
+   carte au cadrage, POI=0 brièvement, etc.). Retiré quand l'app
+   est prête via l'attribut [hw-ready] sur <html> (cf. main.js).
+   Sécurité timeout 5s pour ne pas bloquer en cas d'erreur boot.
+   Mis ici (pas dans base.css) pour contourner un cache Vite des
+   @imports CSS qui empêchait l'application en dev. */
+#hw-boot-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: var(--bg) url('splash-bg.webp') center/cover no-repeat;
+    display: grid;
+    place-items: center;
+    transition: opacity 250ms ease-out;
+}
+html[hw-ready] #hw-boot-splash {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Spinner discret : apparaît seulement après 200ms (delay) pour éviter
+   le clignotement quand le boot est rapide (< 200ms). */
+.hw-boot-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(255, 255, 255, 0.25);
+    border-top-color: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    opacity: 0;
+    animation: hw-boot-spin 0.9s linear infinite,
+               hw-boot-fade-in 200ms 200ms forwards;
+}
+@keyframes hw-boot-spin { to { transform: rotate(360deg); } }
+@keyframes hw-boot-fade-in { to { opacity: 1; } }
+
+/* Last updated 2026-05-02 (boot splash). */
