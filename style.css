@@ -38,7 +38,11 @@
     position: fixed;
     inset: 0;
     z-index: 99999;
-    background: var(--bg) url('splash-bg.webp') center/cover no-repeat;
+    /* Path absolu inclusif du base path Vite (`/History-Walk-V1/`) :
+       url() relatif est résolu depuis dist/assets/main-XXXX.css après build,
+       ce qui donnait /assets/splash-bg.webp 404 alors que le fichier est à
+       la racine du déploiement. */
+    background: var(--bg) url('/History-Walk-V1/splash-bg.webp') center/cover no-repeat;
     display: grid;
     place-items: center;
     transition: opacity 250ms ease-out;
