@@ -1,7 +1,8 @@
 {
-  "lastUpdated": "2026-05-02T14:49:20.018Z",
+  "lastUpdated": "2026-05-02T14:51:30.827Z",
   "officialCircuitsStatus": {
-    "HW-1771316521571": true
+    "HW-1771316521571": true,
+    "HW-01KJX6CXCEHW85C8KCSF95NP3R": true
   },
   "userData": {
     "HW-01K77WPE671G6V27VYYNMJV2NC": {
@@ -150,7 +151,11 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6DFDJEFF1NP5V7YWS5": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6DN850VCNS22C48QFT": {
       "planifieCounter": 1
@@ -162,7 +167,11 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6E5GCD9QGR33PMXVRP": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6ECJK1CMJKYVNTKGGS": {
       "planifieCounter": 1
@@ -171,7 +180,11 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6EZ7K06GM4HAWDESAE": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6F1C25NNH5RAR2JPF6": {
       "planifieCounter": 1
@@ -180,7 +193,11 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6FCK1V446SXD2V5NNK": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6FDEFE8CMVWQSV93V4": {
       "planifieCounter": 1
@@ -351,7 +368,11 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6RR5DT6GBCGYFDHXJS": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+      ],
+      "vu": true
     },
     "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B": {
       "planifieCounter": 1
@@ -405,7 +426,11 @@
       "planifieCounter": 1
     },
     "HW-01KJN81XT3Q98DN3NRHHD38D2Q": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "visitedByCircuits": [
+        "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+      ],
+      "vu": true
     },
     "HW-01KK1CNPZR005431XS160BZ1C4": {
       "planifieCounter": 1
