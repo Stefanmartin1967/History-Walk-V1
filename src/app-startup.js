@@ -291,8 +291,20 @@ export async function loadAndInitializeMap() {
             // Refresh UI with new counters
             applyFilters();
 
-            // Rétablissement du centrage intelligent
-            import('./map.js').then(m => m.fitMapToContent());
+            // Cadrage carte au boot : on fait confiance au startView défini
+            // dans destinations.json (utilisé par L.map à la création) et on
+            // ne re-cadre PAS — sinon glissement visible entre la position
+            // initiale et le fit recalculé sur les markers (zoom ~identique
+            // mais pas exact). fitMapToContent reste utilisé par le bouton
+            // "Reset view" et au boot SI aucun startView n'est défini (cas
+            // fallback : cadrage sur les markers).
+            const hasStartView = !!state.destinations?.maps?.[activeMapId]?.startView;
+            if (!hasStartView) {
+                try {
+                    const { fitMapToContent } = await import('./map.js');
+                    fitMapToContent();
+                } catch (e) { console.warn('fitMapToContent failed:', e); }
+            }
 
             try { await loadCircuitDraft(); } catch (e) {}
             setSaveButtonsState(true);
