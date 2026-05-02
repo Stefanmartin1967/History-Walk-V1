@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-05-02T14:52:55.778Z",
+  "lastUpdated": "2026-05-02T17:34:20.388Z",
   "officialCircuitsStatus": {
     "HW-1771316521571": true,
     "HW-01KJX6CXCEHW85C8KCSF95NP3R": true,
@@ -28,7 +28,8 @@
       "vu": true
     },
     "HW-01K77WPE67MSESGPPZ5CAD0XTZ": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "incontournable": true
     },
     "HW-01K77WPE67RPHVJVH6A0PC0ZWD": {
       "planifieCounter": 1,
@@ -374,7 +375,8 @@
       "planifieCounter": 1
     },
     "HW-01K77WPE6QGFPEGPTZ1G59C9FZ": {
-      "planifieCounter": 1
+      "planifieCounter": 1,
+      "incontournable": true
     },
     "HW-01K77WPE6QJNV1Q83SBNFKC88M": {
       "planifieCounter": 1
@@ -458,7 +460,9 @@
       "planifieCounter": 1
     },
     "HW-01KJABRN0YD2SFB393HG9SRDGW": {
-      "planifieCounter": 3
+      "planifieCounter": 3,
+      "incontournable": true,
+      "notes": ""
     },
     "HW-01KJMJATZZZRP02QNDTWS3YVK1": {
       "planifieCounter": 1,
@@ -485,6 +489,18 @@
     },
     "HW-PWQM8ZZC2LR7PF4UTX73MGTM21": {
       "planifieCounter": 1
+    },
+    "HW-01KK1CD2CREMNC3CHCGC44PK80": {
+      "vuManual": true,
+      "vu": true
+    },
+    "HW-01KJX5XSG18NC03E6900V170QX": {
+      "vuManual": true,
+      "vu": true
+    },
+    "HW-01KQ057E32KNH0Z1A4FQ0N4EKT": {
+      "vuManual": true,
+      "vu": true
     }
   },
   "hiddenPoiIds": []
