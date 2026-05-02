@@ -128,15 +128,14 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     initMapListeners();
     initResizeObserver(); // Activation de l'observateur de redimensionnement
 
-    // Cadrage initial : on défère à un rAF + invalidateSize. Sans ce rAF,
-    // Leaflet calcule sa taille avant que le layout soit stabilisé (la sidebar
-    // peut ne pas avoir sa largeur finale au 1er paint), puis se réajuste via
-    // ResizeObserver après — le visuel saute. fitMapToContent s'exécute après
-    // invalidateSize pour que le cadrage utilise les dimensions correctes.
+    // invalidateSize seul (pas de fitMapToContent ici) : on synchronise les
+    // dimensions internes Leaflet avec le DOM stabilisé du 1er frame.
+    // Le cadrage final est fait UNE SEULE FOIS dans loadAndInitializeMap
+    // (await fitMapToContent après displayGeoJSON), pour éviter le saut
+    // entre une 1re position (basée sur initialView ou destinations.bounds)
+    // et une 2e position (basée sur les markers réels).
     requestAnimationFrame(() => {
-        if (!map) return;
-        map.invalidateSize();
-        fitMapToContent();
+        if (map) map.invalidateSize();
     });
 }
 
