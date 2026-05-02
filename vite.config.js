@@ -27,7 +27,7 @@ export default defineConfig({
       workbox: {
         // Les fichiers .geojson sont exclus du precache (CacheFirst trop agressif)
         // et gérés en NetworkFirst via runtimeCaching ci-dessous.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webp}'],
         // Limite élevée pour les grandes images (badges, gamification : jusqu'à ~8 MB)
         maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
         runtimeCaching: [
