@@ -158,6 +158,9 @@ async function initializeApp() {
             const nextTheme = themes[nextIndex];
             document.documentElement.setAttribute('data-theme', nextTheme);
             saveAppState('currentTheme', nextTheme);
+            // Mirror localStorage pour que theme-bootstrap.js (script blocking
+            // dans <head>) puisse l'appliquer dès le 1er paint au prochain F5.
+            try { localStorage.setItem('hw_theme', nextTheme); } catch (_) {}
             applyThemeColor(nextTheme);
         });
     }
@@ -174,6 +177,11 @@ async function initializeApp() {
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
             applyThemeColor(savedTheme);
+            // Sync localStorage : si l'utilisateur a sauvegardé son thème dans
+            // une session antérieure (avant l'introduction de theme-bootstrap.js),
+            // on hydrate le miroir localStorage maintenant pour que le prochain
+            // F5 démarre directement avec le bon thème.
+            try { localStorage.setItem('hw_theme', savedTheme); } catch (_) {}
         }
 
         // Lieu de résidence pour le tri par proximité (défini dans Mon Espace)
