@@ -3016,32 +3016,19 @@ input[type=range] {
 #offline-banner.visible { display: block; }
 
 /* ============================================================
-   MODE PWA INSTALLÉ — Window Controls Overlay (Chrome/Edge)
+   MODE PWA INSTALLÉ — display: standalone
    ============================================================
-   Quand l'app est lancée en mode standalone avec WCO actif
-   (manifest.json : display_override: ["window-controls-overlay"]),
-   Chrome n'affiche pas de barre de titre séparée — l'app dessine
-   sous les contrôles de fenêtre. Sans support CSS, on a une bande
-   marron en haut + topbar app dessous (= double bandeau).
+   Quand l'app est lancée en standalone (PWA installée), Chrome
+   affiche sa propre titlebar mince (~30px avec _ ▢ ×) AU-DESSUS
+   de l'app. Pour gagner de la hauteur verticale, on compacte la
+   topbar de l'app à 40px (au lieu de 72px par défaut).
 
-   Ici on transforme la topbar en titlebar custom (40px) + on
-   décale la rangée d'onglets sidebar pour ne pas être recouverte
-   par les boutons _ ▢ × de l'OS (toujours en haut-droite).
    Mode navigateur : non touché (cette media query ne s'active
    qu'en mode installé). */
-@media (display-mode: window-controls-overlay) {
+@media (display-mode: standalone) {
     .topbar {
         height: 40px;
         padding: 0 12px;
-        -webkit-app-region: drag;        /* drag fenêtre depuis la topbar */
-                app-region: drag;
-    }
-    .topbar > *,
-    .topbar button,
-    .topbar input,
-    .topbar .hw-dest-selector {
-        -webkit-app-region: no-drag;     /* contrôles cliquables */
-                app-region: no-drag;
     }
 
     /* Sélecteur destination : version compacte 32px */
@@ -3065,14 +3052,10 @@ input[type=range] {
         height: 32px;
     }
 
-    /* Sidebar tabs : alignées avec la topbar 40px et padding-right pour
-       laisser passer les contrôles _ ▢ × (zone non disponible pour l'app
-       côté droit de la titlebar = 100vw - x - width). Fallback 140px si
-       les CSS env() ne sont pas dispo. */
+    /* Sidebar tabs : alignées avec la topbar 40px */
     .sidebar-tabs {
         height: 40px;
         padding: 4px 12px;
-        padding-right: calc(100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, calc(100vw - 140px)));
     }
     .tab-button {
         height: 32px;
