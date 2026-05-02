@@ -486,6 +486,12 @@ export function renderExplorerList() {
     const listContainer = document.getElementById('explorer-list');
     if (!listContainer) return;
 
+    // Guard : skip render si les POIs ne sont pas encore chargés. Sans ça, on
+    // afficherait POI=0 et pas de pastille Resto pour TOUS les circuits (validPois
+    // dérivé de loadedFeatures vide). Le boot émet `circuit:list-updated` une
+    // 2e fois après chargement complet, qui passera ce guard.
+    if (!state.loadedFeatures || state.loadedFeatures.length === 0) return;
+
     if (!document.getElementById('mc-search-input')) renderToolbar();
 
     const globalZoneFilter = (state.activeFilters && state.activeFilters.zone) || null;

@@ -69,7 +69,11 @@ export async function loadOfficialCircuits() {
             checkAndApplyMigrations();
         }
 
-        eventBus.emit('circuit:list-updated');
+        // Pas d'émission `circuit:list-updated` ici : `loadOfficialCircuits` est
+        // appelé pendant le boot AVANT que `setLoadedFeatures` ne soit invoqué.
+        // Émettre maintenant déclenche un 1er render avec validPois=[] (POI=0,
+        // pas de pastille Resto). L'appelant (loadAndInitializeMap) émet déjà
+        // l'event après chargement complet — c'est suffisant.
     } else {
         setOfficialCircuits([]);
     }
