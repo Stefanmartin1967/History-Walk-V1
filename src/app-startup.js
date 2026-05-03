@@ -8,7 +8,6 @@ import { switchMobileView } from './mobile-nav.js';
 import { DOM } from './ui-dom.js';
 import { showToast } from './toast.js';
 import { loadCircuitDraft } from './circuit.js';
-import { recalculatePlannedCountersForMap } from './circuit-actions.js';
 import { updateCurrencyUnits } from './circuit-view.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';
@@ -265,9 +264,7 @@ export async function loadAndInitializeMap() {
             }
         });
 
-        // Recalculate counters to ensure consistency with loaded official circuits
-        await recalculatePlannedCountersForMap(activeMapId);
-
+        // Compteur planifié calculé à la volée par computePlanifieCounter (data.js) — plus de recalc à faire ici
         await saveAppState('lastGeoJSON', geojsonData); // Mobile cache specific
         setSaveButtonsState(true);
         switchMobileView('circuits');
@@ -285,10 +282,8 @@ export async function loadAndInitializeMap() {
         try {
             await displayGeoJSON(geojsonData, activeMapId);
 
-            // Recalculate counters to ensure consistency with loaded official circuits
-            await recalculatePlannedCountersForMap(activeMapId);
-
-            // Refresh UI with new counters
+            // Compteur planifié calculé à la volée par computePlanifieCounter (data.js)
+            // Refresh UI avec les filtres
             applyFilters();
 
             // Cadrage carte au boot : on fait confiance au startView défini

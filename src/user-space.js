@@ -5,6 +5,7 @@ import { showToast } from './toast.js';
 import { openUserSpaceModal } from './user-space-ui.js';
 import { exportDataForMobilePC, exportFullBackupPC, handleRestoreFile } from './fileManager.js';
 import { renderExplorerList } from './ui-circuit-list.js';
+import { applyFilters } from './data.js';
 
 export function openUserSpace() {
     const callbacks = {
@@ -20,6 +21,9 @@ async function setCircuitSelection(ids) {
     setSelectedOfficialCircuitIds(ids);
     await saveAppState('selectedOfficialCircuits', ids);
     renderExplorerList();
+    // Rafraîchir la carte / liste : le compteur planifié des POIs des circuits
+    // (dé)sélectionnés est calculé à la volée via computePlanifieCounter (data.js).
+    applyFilters();
 }
 
 async function exportUserData(includePhotos) {
