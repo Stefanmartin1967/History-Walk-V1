@@ -3,7 +3,7 @@
 // Chaque utilisateur stocke son propre Gist ID dans localStorage.
 // Le token PAT (scope "gist") est partagé avec github-sync.js.
 
-import { state, setTestedCircuit, setOfficialCircuitStatus } from './state.js';
+import { state, setTestedCircuit, setOfficialCircuitStatus, setHiddenPoiIds } from './state.js';
 import { getStoredToken } from './github-sync.js';
 import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
@@ -59,6 +59,10 @@ export function buildPayload() {
         userData: filtered,
         circuitsStatus: state.officialCircuitsStatus || {},
         testedCircuits: state.testedCircuits || {},
+        // Ajout 03/05/2026 : sync admin des POIs masqués entre appareils.
+        // Stratégie merge : UNION (cf. mergeRemoteIntoLocal).
+        // Cf. mémoire project_admin_sync_history.md.
+        hiddenPoiIds: state.hiddenPoiIds || [],
         lastSync: new Date().toISOString(),
         appVersion: '1.0'
     };
@@ -147,7 +151,20 @@ export function mergeRemoteIntoLocal(remote) {
         }
     }
 
-    return { updates, circuitsChanged };
+    // hiddenPoiIds : UNION (admin peut masquer différents POIs sur PC vs mobile).
+    // Cf. mémoire project_admin_sync_history.md — décision Stefan 03/05/2026
+    // d'inclure hiddenPoiIds au Gist sync (revient sur la décision du 02/05).
+    let hiddenChanged = false;
+    if (Array.isArray(remote.hiddenPoiIds) && remote.hiddenPoiIds.length > 0) {
+        const localList = Array.isArray(state.hiddenPoiIds) ? state.hiddenPoiIds : [];
+        const union = Array.from(new Set([...localList, ...remote.hiddenPoiIds]));
+        if (union.length !== localList.length) {
+            setHiddenPoiIds(union);
+            hiddenChanged = true;
+        }
+    }
+
+    return { updates, circuitsChanged, hiddenChanged };
 }
 
 // ─── API GIST ─────────────────────────────────────────────────────────────────
@@ -251,7 +268,7 @@ export async function pullFromGist() {
             return;
         }
 
-        const { updates, circuitsChanged } = mergeRemoteIntoLocal(remote);
+        const { updates, circuitsChanged, hiddenChanged } = mergeRemoteIntoLocal(remote);
 
         if (updates.length > 0) {
             await batchSavePoiData(state.currentMapId, updates);
@@ -260,11 +277,19 @@ export async function pullFromGist() {
             await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
             await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
         }
-        if (updates.length > 0 || circuitsChanged) {
+        if (hiddenChanged) {
+            // Persistance même clé que data.js et admin-control-center.js
+            await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+        }
+        if (updates.length > 0 || circuitsChanged || hiddenChanged) {
             // Rafraîchir l'UI : marqueurs + liste circuits
             eventBus.emit('data:apply-filters');
             eventBus.emit('circuit:list-updated');
-            showToast(`Sync Gist : ${updates.length} lieu(x)${circuitsChanged ? ' + circuits' : ''} mis à jour.`, 'info', 3000);
+            const parts = [];
+            if (updates.length > 0) parts.push(`${updates.length} lieu(x)`);
+            if (circuitsChanged) parts.push('circuits');
+            if (hiddenChanged) parts.push('masquages');
+            showToast(`Sync Gist : ${parts.join(' + ')} mis à jour.`, 'info', 3000);
         }
 
         setStatus('idle');
