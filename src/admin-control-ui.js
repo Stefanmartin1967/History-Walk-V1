@@ -349,7 +349,7 @@ export function renderTab(tab, diffData, callbacks) {
                         </button>` : ''}
                         <button class="cc-btn-ignore" data-action="refuse" data-id="${item.id}" title="${item.isDeletion ? 'Restaurer ce lieu' : 'Effacer cette modification locale'}">
                             <i data-lucide="${item.isDeletion ? 'rotate-ccw' : 'x'}"></i>
-                            <span>${item.isDeletion ? 'Restaurer' : 'Ignorer'}</span>
+                            <span>${item.isDeletion ? 'Restaurer' : 'Annuler'}</span>
                         </button>
                     </div>
                     ${diffRows ? `<div class="cc-change-diffs">${diffRows}</div>` : ''}
