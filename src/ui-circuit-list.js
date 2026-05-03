@@ -635,11 +635,15 @@ function createCircuitCard(c) {
 
     const isCompleted = c._isCompleted;
     const isOfficial  = !!c.isOfficial;
-    const isTested    = isOfficial && isCircuitTested(c.id);
     const isActive    = state.activeCircuitId === c.id;
 
+    // Statut "vérifié" — cf. mémoire project_verified_status_definition.md (Stefan 03/05/2026) :
+    //  - 'verified' : officiel ET testé OU perso ET marqué "Fait" → ruban + dot vert
+    //  - 'official' : officiel non testé → ruban + dot bleu
+    //  - 'none'     : perso non fait → pas de badge
+    // Le label final dépend aussi de isOfficial (cf. plus bas, "Officiel · Vérifié" vs "Vérifié").
     let flag = 'none';
-    if (isTested) flag = 'verified';
+    if ((isOfficial && isCircuitTested(c.id)) || (!isOfficial && isCompleted)) flag = 'verified';
     else if (isOfficial) flag = 'official';
 
     const card = document.createElement('article');
@@ -701,11 +705,15 @@ function createCircuitCard(c) {
     line2.innerHTML = metaPieces.join('');
     card.appendChild(line2);
 
-    // Ligne 3 — flag textuel typographique (perso = caché via CSS)
+    // Ligne 3 — flag textuel typographique
     if (flag !== 'none') {
         const flagEl = document.createElement('div');
         flagEl.className = 'va-flag';
-        flagEl.innerHTML = `<span class="dot"></span>${flag === 'verified' ? 'Officiel · Vérifié' : 'Officiel'}`;
+        let label = '';
+        if (flag === 'verified' && isOfficial) label = 'Officiel · Vérifié';
+        else if (flag === 'verified') label = 'Vérifié';  // perso fait
+        else if (flag === 'official') label = 'Officiel';
+        flagEl.innerHTML = `<span class="dot"></span>${label}`;
         card.appendChild(flagEl);
     }
 
