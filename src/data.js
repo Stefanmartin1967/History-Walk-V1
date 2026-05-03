@@ -245,6 +245,40 @@ export async function displayGeoJSON(geoJSON, mapId) {
 
 // --- FILTRES & AFFICHAGE ---
 
+/**
+ * Calcule à la volée le nombre de circuits ACTIFS contenant ce POI.
+ *
+ * Définition métier (validée 03/05/2026) :
+ * - Circuit ACTIF = circuit perso non supprimé OU circuit officiel sélectionné dans Mon Espace
+ * - state.selectedOfficialCircuitIds === null      → TOUS les officiels comptent (défaut)
+ * - state.selectedOfficialCircuitIds === []        → AUCUN officiel ne compte
+ * - state.selectedOfficialCircuitIds === [...ids]  → seulement les ids listés
+ *
+ * Placée ici (data.js) plutôt que circuit-actions.js pour éviter un cycle d'import :
+ * data.js ne peut pas importer circuit-actions.js (qui importe déjà data.js).
+ *
+ * @param {string} poiId - HW_ID du POI
+ * @returns {number} - Nombre de circuits actifs contenant ce POI
+ */
+export function computePlanifieCounter(poiId) {
+    if (!poiId) return 0;
+
+    // 1. Circuits officiels effectivement actifs (selon Mon Espace)
+    const allOfficial = state.officialCircuits || [];
+    const selectedIds = state.selectedOfficialCircuitIds;
+    const activeOfficial = selectedIds === null
+        ? allOfficial
+        : allOfficial.filter(c => selectedIds.includes(String(c.id)));
+
+    // 2. Circuits perso non supprimés
+    const activePerso = (state.myCircuits || []).filter(c => !c.isDeleted);
+
+    // 3. Compter ceux qui contiennent ce POI
+    return [...activeOfficial, ...activePerso]
+        .filter(c => Array.isArray(c.poiIds) && c.poiIds.includes(poiId))
+        .length;
+}
+
 // --- 1. LE TAMIS PUR (Le Cerveau) ---
 // Règles "personnelles" (état utilisateur) avec leurs exceptions :
 //   - hidden → out
@@ -282,7 +316,8 @@ export function passesUserFilters(feature) {
     // en mode création de circuit.
     if (f.vus === 'hide' && props.vu) return false;
     if (f.vus === 'only' && !props.vu) return false;
-    const isPlanned = (props.planifieCounter || 0) > 0;
+    // Calcul à la volée du compteur planifié (évite la désync stockée)
+    const isPlanned = computePlanifieCounter(props.HW_ID) > 0;
     if (f.planifies === 'hide' && isPlanned) return false;
     if (f.planifies === 'only' && !isPlanned) return false;
 
@@ -348,12 +383,14 @@ export function recomputeVu(userData) {
 // Toute nouvelle prop influençant ces fonctions doit être ajoutée ici.
 const FILTER_AFFECTING_KEYS = new Set([
     'Catégorie', 'Zone',
-    'vu', 'vuManual', 'planifieCounter',
+    'vu', 'vuManual',
     'incontournable', 'verified',
     // Filtres "État de la fiche" (refonte Claude Design) : photos absentes
     // / description absente. Modif d'une de ces props peut changer la
     // visibilité si filter noPhoto / noDesc est actif.
     'photos', 'description', 'Description',
+    // Note : 'planifieCounter' retiré (03/05/2026) — plus stocké dans userData,
+    // calculé à la volée par computePlanifieCounter().
 ]);
 
 export async function updatePoiData(poiId, key, value) {

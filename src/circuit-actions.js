@@ -1,7 +1,7 @@
 
 // circuit-actions.js
-import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setUserData, setOfficialCircuits } from './state.js';
-import { deleteCircuitById, softDeleteCircuit, getAllPoiDataForMap, getAllCircuitsForMap, batchSavePoiData, getAppState, saveCircuit } from './database.js';
+import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits } from './state.js';
+import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
 import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters } from './data.js';
 import { isMobileView } from './mobile-state.js';
@@ -43,11 +43,9 @@ export async function performCircuitDeletion(id) {
         if (state.activeCircuitId === id) {
             await clearCircuit(false);
         }
-        
-        // 4. Recalcul technique des compteurs pour les marqueurs de la carte
-        await recalculatePlannedCountersForMap(state.currentMapId);
-        
-        // 5. Mise à jour des filtres (uniquement sur Desktop)
+
+        // 4. Mise à jour des filtres (uniquement sur Desktop)
+        // Le compteur planifié est calculé à la volée par computePlanifieCounter (data.js)
         if (!isMobileView()) {
             applyFilters();
         }
@@ -133,96 +131,10 @@ export function getZonesData() {
 
 
 
-/**
- * Calcule les compteurs "Planifié" pour chaque POI de manière optimisée.
- * @param {Array} features - La liste des POIs chargés (state.loadedFeatures)
- * @param {Array} circuits - La liste des circuits à analyser
- * @returns {Object} Un objet { poiId: count }
- */
-export function computeCircuitCounters(features, circuits) {
-    const counters = {};
-
-    // OPTIMISATION V2 : Création d'une Map pour accès O(1)
-    // Au lieu de features.find() dans la boucle (O(N*M)), on prépare l'index (O(N)).
-    const featureMap = new Map();
-    features.forEach(f => {
-        const id = getPoiId(f);
-        featureMap.set(id, f);
-        counters[id] = 0; // Init à 0
-    });
-
-    const activeCircuits = circuits.filter(c => !c.isDeleted);
-
-    activeCircuits.forEach(circuit => {
-        const poiIds = circuit.poiIds || [];
-        // Set pour éviter de compter 2 fois le même POI dans un même circuit
-        [...new Set(poiIds)].forEach(poiId => {
-            if (counters.hasOwnProperty(poiId)) {
-                // Recherche O(1) grâce à la Map
-                const feature = featureMap.get(poiId);
-
-                // CORRECTION : On ne compte QUE si le POI n'est pas marqué supprimé
-                const isDeleted = feature && feature.properties.userData && feature.properties.userData.deleted;
-
-                if (!isDeleted) {
-                    counters[poiId]++;
-                }
-            }
-        });
-    });
-
-    return counters;
-}
-
-export async function recalculatePlannedCountersForMap(mapId) {
-    if (!mapId) return;
-    try {
-        const poiDataForMap = await getAllPoiDataForMap(mapId);
-        const circuitsForMap = await getAllCircuitsForMap(mapId);
-
-        // FIX: On ne prend que les circuits NON supprimés
-        const activeLocalCircuits = circuitsForMap.filter(c => !c.isDeleted);
-
-        // FIX: On inclut aussi les circuits officiels (qui ne sont pas en base)
-        const officialCircuits = state.officialCircuits || [];
-
-        const allCircuits = [...activeLocalCircuits, ...officialCircuits];
-
-        // APPEL DE LA FONCTION OPTIMISÉE
-        const counters = computeCircuitCounters(state.loadedFeatures, allCircuits);
-
-        const updatesToBatch = [];
-        for (const [poiId, count] of Object.entries(counters)) {
-            const currentCount = (poiDataForMap[poiId] && poiDataForMap[poiId].planifieCounter) || 0;
-            if (currentCount !== count) {
-                updatesToBatch.push({ poiId: poiId, data: { planifieCounter: count } });
-            }
-        }
-
-        if (updatesToBatch.length > 0) {
-            await batchSavePoiData(mapId, updatesToBatch);
-        }
-
-        // ... Mise à jour de l'état local ...
-        // ATTENTION : setUserData(freshDB) remplace state.userData par des NOUVEAUX
-        // objets et casse la référence feature.properties.userData === state.userData[pId].
-        // Conséquence : un Object.assign(state.userData[pId], ...) ultérieur (richEditor)
-        // ne se propage plus aux marqueurs car feature.properties.userData pointe vers
-        // une copie stale. On réaligne les deux sur le MÊME objet après refresh DB.
-        setUserData(await getAllPoiDataForMap(mapId));
-        state.loadedFeatures.forEach(feature => {
-            const poiId = getPoiId(feature);
-            if (state.userData[poiId]) {
-                // Référence directe — pas de spread, sinon on recasse l'alias.
-                feature.properties.userData = state.userData[poiId];
-            }
-        });
-    } catch (error) {
-        console.error("Erreur lors du recalcul des compteurs:", error);
-    }
-}
-
-
+// NOTE : Les fonctions computeCircuitCounters() et recalculatePlannedCountersForMap()
+// ont été supprimées le 03/05/2026. Le compteur planifié est désormais calculé à la
+// volée par computePlanifieCounter() (data.js), évitant les bugs de désynchronisation
+// (cf. mémoire project_planifie_counter_definition.md).
 
 export async function saveAndExportCircuit() {
     if (state.currentCircuit.length === 0) return;
@@ -296,7 +208,7 @@ export async function saveAndExportCircuit() {
     try {
         await saveCircuit(circuitToSave);
         setHasUnexportedChanges(true); // FLAG CHANGEMENT
-        await recalculatePlannedCountersForMap(state.currentMapId);
+        // Compteur planifié calculé à la volée → applyFilters suffit pour rafraîchir
         applyFilters();
         await generateAndDownloadGPX(state.currentCircuit, circuitToSave.id, circuitToSave.name, circuitToSave.description, circuitToSave.realTrack);
         showToast(`Circuit "${circuitToSave.name}" sauvegardé !`, 'success');
@@ -305,3 +217,4 @@ export async function saveAndExportCircuit() {
         showToast("Erreur lors de la sauvegarde du circuit.", 'error');
     }
 }
+
