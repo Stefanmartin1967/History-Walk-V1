@@ -163,6 +163,37 @@ async function fetchGist(token, gistId) {
     return JSON.parse(content);
 }
 
+/**
+ * Découverte automatique du gistId au boot.
+ * Si gistId absent en localStorage mais token présent (cas nouvel appareil),
+ * parcourt les Gists du user via API GitHub pour trouver celui qui contient
+ * GIST_FILE_NAME. Prend le plus récemment modifié (utile si plusieurs Gists
+ * fantômes ont été créés sur différents appareils).
+ *
+ * @param {string} token - PAT GitHub avec scope gist
+ * @returns {Promise<string|null>} - gistId trouvé, ou null si rien
+ */
+async function discoverGistId(token) {
+    try {
+        const res = await fetch('https://api.github.com/gists?per_page=100', {
+            headers: getHeaders(token)
+        });
+        if (!res.ok) {
+            console.warn('[GistSync] Discovery failed:', res.status);
+            return null;
+        }
+        const gists = await res.json();
+        const matching = gists.filter(g => g.files && g.files[GIST_FILE_NAME]);
+        if (matching.length === 0) return null;
+        // Plus récemment modifié en premier (utile en cas de Gists fantômes)
+        matching.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+        return matching[0].id;
+    } catch (e) {
+        console.warn('[GistSync] Discovery exception:', e.message);
+        return null;
+    }
+}
+
 async function createGist(token, payload) {
     const res = await fetch('https://api.github.com/gists', {
         method: 'POST',
@@ -197,8 +228,18 @@ async function updateGist(token, gistId, payload) {
  */
 export async function pullFromGist() {
     const token = getStoredToken();
-    const gistId = getGistId();
-    if (!token || !gistId) return; // Pas configuré → silencieux
+    let gistId = getGistId();
+    if (!token) return; // Pas de token → silencieux
+
+    // Auto-discovery si gistId absent (cas typique : nouvel appareil avec
+    // token configuré mais sans gistId en localStorage). Cf. mémoire
+    // project_gist_for_future_users.md (anomalie #8 trou d'onboarding).
+    if (!gistId) {
+        gistId = await discoverGistId(token);
+        if (!gistId) return; // Aucun Gist trouvé → silencieux
+        setGistId(gistId);
+        showToast('Gist détecté, sync activée.', 'info', 3000);
+    }
 
     try {
         setStatus('pulling');
