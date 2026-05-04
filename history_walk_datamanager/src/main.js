@@ -120,9 +120,12 @@ function openModal(feature = null, index = null) {
         form.description.value = p['Description'] || '';
         form.source.value = p['Source'] || '';
         form.descWpt.value = p['Desc_wpt'] || '';
+        form.descCourte.value = p['Description_courte'] || '';
         form.nomArabe.value = p['Nom du site arabe'] || '';
         form.temps.value = p['Temps de visite'] || '';
         form.prix.value = p["Prix d'entrée"] || '';
+        form.telephone.value = p['Téléphone'] || p['telephone'] || '';
+        form.horaires.value = p['Horaires'] || p['horaires'] || '';
         form.verified.checked = !!p['verified'];
 
         if (Array.isArray(p.photos) && p.photos.length > 0) {
@@ -185,11 +188,14 @@ form.addEventListener('submit', (e) => {
         categorie: form.categorie.value,
         zone: form.zone.value,
         descWpt: form.descWpt.value,
+        descCourte: form.descCourte.value,
         description: form.description.value,
         source: form.source.value,
         nomArabe: form.nomArabe.value,
         temps: form.temps.value,
         prix: form.prix.value,
+        telephone: form.telephone.value,
+        horaires: form.horaires.value,
         verified: form.verified.checked
     };
 

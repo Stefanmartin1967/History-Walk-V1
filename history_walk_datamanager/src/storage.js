@@ -177,9 +177,12 @@ export function saveFeature(formData, indexToUpdate = null) {
         "Longitude": coords.lon,
         // CORRECTION ICI : Ajout de || null pour Description et Source
         "Description": formData.description || null,
+        "Description_courte": formData.descCourte || null,
         "Source": formData.source || null,
         "Temps de visite": formData.temps || null,
         "Prix d'entrée": formData.prix || null,
+        "Téléphone": formData.telephone || null,
+        "Horaires": formData.horaires || null,
         "Desc_wpt": formData.descWpt || null,
         "verified": formData.verified || false,
         "HW_ID": existing?.HW_ID ?? generateHWID()
