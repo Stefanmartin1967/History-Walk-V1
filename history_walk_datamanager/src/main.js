@@ -8,7 +8,7 @@ import {
     initStorage, loadGeoJSON, getGeoJSONForExport,
     undo, redo, runMaintenance, getUniqueValues,
     saveFeature, getFeatureByIndex, detectZone,
-    getAllFeatures
+    getAllFeatures, getPoiCategories
 } from './storage.js';
 
 import { publishToGitHub } from './github-sync.js';
@@ -32,8 +32,8 @@ const btnBack = document.getElementById('btn-back');
 const form = document.getElementById('feature-form');
 const modalTitle = document.getElementById('modal-title');
 
-// Inputs Datalists
-const dlCategories = document.getElementById('list-categories');
+// Inputs Datalists / Selects
+const selCategorie = document.getElementById('categorie-select');
 const dlZones = document.getElementById('list-zones');
 
 // État édition
@@ -103,7 +103,8 @@ document.addEventListener('request:preview', (e) => {
 function openModal(feature = null, index = null) {
     currentEditIndex = index;
     form.reset();
-    populateDatalists();
+    const currentCategorie = feature?.properties?.['Catégorie'] || '';
+    populateDatalists(currentCategorie);
 
     const photosRow = document.getElementById('photos-readonly-row');
     const photosCount = document.getElementById('photos-count-display');
@@ -203,17 +204,28 @@ form.addEventListener('submit', (e) => {
     if (success) closeModal();
 });
 
-function populateDatalists() {
-    // Categories
-    const cats = getUniqueValues('Catégorie');
-    dlCategories.innerHTML = '';
+function populateDatalists(currentCategorie = '') {
+    // Categories : <select> peuplé depuis poi-categories.json (source unique HW/DM)
+    // Si la valeur actuelle du POI n'est pas dans la liste officielle, on l'ajoute
+    // dynamiquement avec un suffixe pour la signaler (cas rétro-compat / typo legacy).
+    const cats = getPoiCategories();
+    const officielle = cats.includes(currentCategorie);
+    selCategorie.innerHTML = '<option value="">— Choisir —</option>';
     cats.forEach(c => {
         const op = document.createElement('option');
         op.value = c;
-        dlCategories.appendChild(op);
+        op.textContent = c;
+        selCategorie.appendChild(op);
     });
+    if (currentCategorie && !officielle) {
+        const op = document.createElement('option');
+        op.value = currentCategorie;
+        op.textContent = `${currentCategorie} (non standard)`;
+        op.dataset.nonStandard = 'true';
+        selCategorie.appendChild(op);
+    }
 
-    // Zones
+    // Zones : datalist libre (chantier zones reste hors scope DM)
     const zones = getUniqueValues('Zone');
     dlZones.innerHTML = '';
     zones.forEach(z => {
