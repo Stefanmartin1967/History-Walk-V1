@@ -2,7 +2,7 @@
 import L from 'leaflet';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
-import { state, setGhostMarker, setCurrentFeatureId } from './state.js';
+import { state, setGhostMarker, setCurrentFeatureId, setPoiFilterFromSearch } from './state.js';
 import { eventBus } from './events.js';
 import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
 import { map, clearMarkerHighlights } from './map.js';
@@ -74,6 +74,9 @@ export function setupSearch() {
                     // Sur les autres onglets (ou onglet inconnu), on ouvre la fiche Lieu.
                     const activeTab = document.querySelector('.sidebar-panel.active')?.dataset.panel;
                     if (activeTab === 'explorer') {
+                        // Marqueur : ce changement de POI vient de la searchbar,
+                        // donc on active le filtre POI sur la liste des circuits.
+                        setPoiFilterFromSearch(true);
                         setCurrentFeatureId(globalIndex);
                         eventBus.emit('circuit:list-updated');
                     } else {
