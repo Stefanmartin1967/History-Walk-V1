@@ -239,23 +239,23 @@ function populateFicheSection() {
     wrap.innerHTML = '';
 
     const fiche = [
-        { key: 'nonVerifies', label: 'Lieux non vérifiés uniquement' },
-        { key: 'noPhoto',     label: 'Lieux sans photo'              },
-        { key: 'noDesc',      label: 'Lieux sans description'        },
+        { key: 'verified',    label: 'Lieux vérifiés'         },
+        { key: 'photo',       label: 'Lieux avec photo'       },
+        { key: 'description', label: 'Lieux avec description' },
     ];
 
     fiche.forEach(({ key, label }) => {
-        const row = renderCheckbox({
+        wrap.appendChild(renderRadioGroup({
             label,
-            checked: !!state.activeFilters[key],
-            onChange: (isChecked) => {
-                setActiveFilters({ ...state.activeFilters, [key]: isChecked });
+            value: state.activeFilters[key] || 'all',
+            options: VISIT_OPTIONS,
+            onChange: (val) => {
+                setActiveFilters({ ...state.activeFilters, [key]: val });
                 applyFilters();
+                populateFicheSection();
                 refreshAllMeta();
-                row.classList.toggle('is-checked', isChecked);
             },
-        });
-        wrap.appendChild(row);
+        }));
     });
 }
 
@@ -353,7 +353,9 @@ function isSectionActive(id) {
         case 'parcours':     return (f.vus && f.vus !== 'all')
                                   || (f.planifies && f.planifies !== 'all')
                                   || !!f.incontournablesOnly;
-        case 'fiche':        return !!f.nonVerifies || !!f.noPhoto || !!f.noDesc;
+        case 'fiche':        return (f.verified && f.verified !== 'all')
+                                  || (f.photo && f.photo !== 'all')
+                                  || (f.description && f.description !== 'all');
         default:             return false;
     }
 }
@@ -405,10 +407,10 @@ function resetAll() {
         categories: [],
         vus: 'all',
         planifies: 'all',
-        nonVerifies: false,
+        verified: 'all',
+        photo: 'all',
+        description: 'all',
         incontournablesOnly: false,
-        noPhoto: false,
-        noDesc: false,
     });
     applyFilters();
     refreshZonesList();

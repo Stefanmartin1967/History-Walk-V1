@@ -19,10 +19,10 @@ vi.mock('../src/state.js', () => {
             categories: [],
             vus: 'all',
             planifies: 'all',
-            nonVerifies: false,
-            incontournablesOnly: false,
-            noPhoto: false,
-            noDesc: false
+            verified: 'all',
+            photo: 'all',
+            description: 'all',
+            incontournablesOnly: false
         },
         selectionModeFilters: { hideVisited: false, hidePlanned: false }
     };
@@ -126,10 +126,10 @@ function resetState() {
         categories: [],
         vus: 'all',
         planifies: 'all',
-        nonVerifies: false,
-        incontournablesOnly: false,
-        noPhoto: false,
-        noDesc: false
+        verified: 'all',
+        photo: 'all',
+        description: 'all',
+        incontournablesOnly: false
     };
     _hwidCounter = 0;
 }
@@ -272,15 +272,26 @@ describe('getFilteredFeatures', () => {
         expect(r.map(f => f.properties.HW_ID)).toEqual(['p2']);
     });
 
-    it('admin : activeFilters.nonVerifies exclut les POIs verified', () => {
+    it('admin : activeFilters.verified=hide exclut les POIs verified', () => {
         state.loadedFeatures = [
             poi('p1', { verified: true }),
             poi('p2', { verified: false }),
             poi('p3', {})
         ];
-        state.activeFilters.nonVerifies = true;
+        state.activeFilters.verified = 'hide';
         const r = getFilteredFeatures();
         expect(r.map(f => f.properties.HW_ID).sort()).toEqual(['p2', 'p3']);
+    });
+
+    it('admin : activeFilters.verified=only n\'affiche que les POIs verified', () => {
+        state.loadedFeatures = [
+            poi('p1', { verified: true }),
+            poi('p2', { verified: false }),
+            poi('p3', {})
+        ];
+        state.activeFilters.verified = 'only';
+        const r = getFilteredFeatures();
+        expect(r.map(f => f.properties.HW_ID)).toEqual(['p1']);
     });
 });
 
@@ -338,10 +349,28 @@ describe('passesUserFilters', () => {
         expect(passesUserFilters(poi('p2', { userData: { vu: true } }))).toBe(true);
     });
 
-    it('admin : nonVerifies=true exclut les POIs verified=true', () => {
-        state.activeFilters.nonVerifies = true;
+    it('admin : verified=hide exclut les POIs verified=true', () => {
+        state.activeFilters.verified = 'hide';
         expect(passesUserFilters(poi('p1', { verified: true }))).toBe(false);
         expect(passesUserFilters(poi('p2', { verified: false }))).toBe(true);
+    });
+
+    it('admin : verified=only n\'affiche que les POIs verified=true', () => {
+        state.activeFilters.verified = 'only';
+        expect(passesUserFilters(poi('p1', { verified: true }))).toBe(true);
+        expect(passesUserFilters(poi('p2', { verified: false }))).toBe(false);
+    });
+
+    it('admin : photo=only n\'affiche que les POIs avec photo', () => {
+        state.activeFilters.photo = 'only';
+        expect(passesUserFilters(poi('p1', { photos: ['url'] }))).toBe(true);
+        expect(passesUserFilters(poi('p2', {}))).toBe(false);
+    });
+
+    it('admin : description=hide exclut les POIs avec description', () => {
+        state.activeFilters.description = 'hide';
+        expect(passesUserFilters(poi('p1', { description: 'Texte' }))).toBe(false);
+        expect(passesUserFilters(poi('p2', {}))).toBe(true);
     });
 
     it('par défaut (aucun filtre actif) : POI passe', () => {

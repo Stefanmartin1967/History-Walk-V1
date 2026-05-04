@@ -169,19 +169,20 @@ test.describe('Desktop — Nouveau panneau de filtres', () => {
         await expect(toggle).not.toHaveClass(/is-checked/);
     });
 
-    test('10 — État de la fiche : cocher Sans photo active la section', async ({ page }) => {
+    test('10 — État de la fiche : Masquer Photos active la section', async ({ page }) => {
         await openPanelViaTopbar(page);
 
         // Section État de la fiche est repliée par défaut → la déplier d'abord
         await page.locator('[data-section-toggle="fiche"]').click();
         await page.waitForTimeout(200);
 
-        const ficheCheckboxes = page.locator('#hw-fp-fiche-content .hw-fp-checkbox');
-        // ordre : nonVerifies, noPhoto, noDesc → cocher la 2e (noPhoto)
-        await ficheCheckboxes.nth(1).click();
+        // 3 radio groups (verified, photo, description) → cliquer "Masquer" sur le 2e (photo)
+        const photoGroup = page.locator('#hw-fp-fiche-content .hw-fp-radio-group').nth(1);
+        const masquerBtn = photoGroup.locator('.hw-fp-radio-btn[data-value="hide"]');
+        await masquerBtn.click();
         await page.waitForTimeout(300);
 
-        await expect(ficheCheckboxes.nth(1)).toHaveClass(/is-checked/);
+        await expect(masquerBtn).toHaveClass(/is-selected/);
         await expect(page.locator('[data-section="fiche"]')).toHaveClass(/is-active/);
         await expect(page.locator('#hw-fp-subtitle')).toHaveText('1 section active');
     });

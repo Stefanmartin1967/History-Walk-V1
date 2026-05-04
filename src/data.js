@@ -298,10 +298,14 @@ export function passesUserFilters(feature) {
 
     // État de la fiche (s'applique avant le court-circuit incontournable :
     // un POI incontournable peut être "non vérifié" et l'admin veut le voir).
-    if (f.nonVerifies && props.verified) return false;
+    // 3-states : 'all' (pas de filtre) | 'hide' (cache ceux qui ont la prop) | 'only' (n'affiche que ceux qui ont la prop).
+    if (f.verified === 'hide' && props.verified) return false;
+    if (f.verified === 'only' && !props.verified) return false;
     if (f.incontournablesOnly && !props.incontournable) return false;
-    if (f.noPhoto && hasPhotos(props)) return false;
-    if (f.noDesc && hasDescription(props)) return false;
+    if (f.photo === 'hide' && hasPhotos(props)) return false;
+    if (f.photo === 'only' && !hasPhotos(props)) return false;
+    if (f.description === 'hide' && hasDescription(props)) return false;
+    if (f.description === 'only' && !hasDescription(props)) return false;
 
     // Court-circuits (priment sur Visités/Planifiés)
     if (state.activeCircuitId && state.currentCircuit && state.currentCircuit.some(g => getPoiId(g) === poiId)) {
@@ -387,7 +391,7 @@ const FILTER_AFFECTING_KEYS = new Set([
     'incontournable', 'verified',
     // Filtres "État de la fiche" (refonte Claude Design) : photos absentes
     // / description absente. Modif d'une de ces props peut changer la
-    // visibilité si filter noPhoto / noDesc est actif.
+    // visibilité si filter photo / description est actif.
     'photos', 'description', 'Description',
     // Note : 'planifieCounter' retiré (03/05/2026) — plus stocké dans userData,
     // calculé à la volée par computePlanifieCounter().
