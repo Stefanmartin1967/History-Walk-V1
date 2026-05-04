@@ -95,8 +95,12 @@
             <hr class="form-separator">
 
             <div class="form-group">
-              <label>Description Courte (Pour GPX)</label>
+              <label>Description Courte (Pour GPX) <small>— sera migré en PR 4</small></label>
               <input type="text" name="descWpt" placeholder="Très court (ex: Phare Taguermess)" maxlength="50">
+            </div>
+            <div class="form-group">
+              <label>Description Courte (Résumé)</label>
+              <input type="text" name="descCourte" placeholder="Apparaît dans la liste...">
             </div>
             <div class="form-group">
               <label>Description Complète</label>
@@ -123,6 +127,16 @@
                   <div class="form-group">
                       <label>Prix</label>
                       <input type="text" name="prix" placeholder="Ex: Gratuit">
+                  </div>
+              </div>
+              <div class="form-row">
+                  <div class="form-group">
+                      <label>Téléphone</label>
+                      <input type="tel" name="telephone" placeholder="+216 ...">
+                  </div>
+                  <div class="form-group">
+                      <label>Horaires</label>
+                      <input type="text" name="horaires" placeholder="Ex: 09h-18h">
                   </div>
               </div>
             </div>
