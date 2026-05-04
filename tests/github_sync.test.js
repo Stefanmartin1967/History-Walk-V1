@@ -21,13 +21,16 @@ import { getAppState, saveAppState } from '../src/database.js';
 import {
     initTokenCache,
     getStoredToken,
+    getStoredUsername,
     isTokenPersisted,
     saveToken,
+    validateToken,
     uploadFileToGitHub,
     deleteFileFromGitHub
 } from '../src/github-sync.js';
 
 const STORAGE_KEY_TOKEN = 'github_pat';
+const STORAGE_KEY_USERNAME = 'github_username';
 const LEGACY_LS_KEY = 'github_pat';
 
 beforeEach(() => {
@@ -143,6 +146,137 @@ describe('saveToken', () => {
         saveToken(null);
         await Promise.resolve();
         expect(saveAppState).toHaveBeenCalledWith(STORAGE_KEY_TOKEN, null);
+    });
+
+    it('stocke le username quand fourni avec un token', () => {
+        saveToken('ghp_x', 'octocat');
+        expect(getStoredToken()).toBe('ghp_x');
+        expect(getStoredUsername()).toBe('octocat');
+    });
+
+    it('clear le username quand le token est supprimé', () => {
+        saveToken('ghp_x', 'octocat');
+        saveToken(null);
+        expect(getStoredUsername()).toBeNull();
+    });
+
+    it('ignore le username si le token est vide (jamais de username orphelin)', () => {
+        saveToken('', 'octocat');
+        expect(getStoredUsername()).toBeNull();
+    });
+
+    it('persiste le username via saveAppState', async () => {
+        saveToken('ghp_x', 'octocat');
+        await Promise.resolve();
+        expect(saveAppState).toHaveBeenCalledWith(STORAGE_KEY_USERNAME, 'octocat');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('validateToken', () => {
+    it('rejette un token vide ou whitespace sans appel réseau', async () => {
+        const fetchSpy = vi.fn();
+        vi.stubGlobal('fetch', fetchSpy);
+
+        const r1 = await validateToken('');
+        const r2 = await validateToken('   ');
+
+        expect(r1.ok).toBe(false);
+        expect(r1.error).toBe('Token vide');
+        expect(r2.ok).toBe(false);
+        expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it('rejette un 401 avec message clair', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce({
+            status: 401,
+            ok: false,
+            headers: new Headers(),
+            json: async () => ({ message: 'Bad credentials' })
+        }));
+
+        const r = await validateToken('ghp_bad');
+        expect(r.ok).toBe(false);
+        expect(r.error).toContain('invalide');
+    });
+
+    it('rejette un autre code HTTP avec le statut', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce({
+            status: 503,
+            ok: false,
+            headers: new Headers(),
+            json: async () => ({})
+        }));
+
+        const r = await validateToken('ghp_x');
+        expect(r.ok).toBe(false);
+        expect(r.error).toContain('503');
+    });
+
+    it('rejette une erreur réseau (fetch throw)', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockRejectedValueOnce(new Error('NetworkError')));
+
+        const r = await validateToken('ghp_x');
+        expect(r.ok).toBe(false);
+        expect(r.error).toContain('réseau');
+    });
+
+    it('valide un token OK et retourne le username (PAT classique avec scopes complets)', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce({
+            status: 200,
+            ok: true,
+            headers: new Headers({ 'X-OAuth-Scopes': 'repo, gist, read:user' }),
+            json: async () => ({ login: 'Stefanmartin1967' })
+        }));
+
+        const r = await validateToken('ghp_good');
+        expect(r.ok).toBe(true);
+        expect(r.username).toBe('Stefanmartin1967');
+        expect(r.scopes).toEqual(['repo', 'gist', 'read:user']);
+        expect(r.missingScopes).toEqual([]);
+    });
+
+    it('signale les scopes manquants pour un PAT classique incomplet', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce({
+            status: 200,
+            ok: true,
+            headers: new Headers({ 'X-OAuth-Scopes': 'repo' }),
+            json: async () => ({ login: 'octocat' })
+        }));
+
+        const r = await validateToken('ghp_partial');
+        expect(r.ok).toBe(true);
+        expect(r.missingScopes).toEqual(['gist']);
+    });
+
+    it('accepte un fine-grained PAT (header X-OAuth-Scopes absent) sans warn', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce({
+            status: 200,
+            ok: true,
+            headers: new Headers(),
+            json: async () => ({ login: 'octocat' })
+        }));
+
+        const r = await validateToken('github_pat_xxx');
+        expect(r.ok).toBe(true);
+        expect(r.username).toBe('octocat');
+        expect(r.missingScopes).toEqual([]);
+    });
+
+    it('utilise le bon header Authorization', async () => {
+        const fetchSpy = vi.fn().mockResolvedValueOnce({
+            status: 200,
+            ok: true,
+            headers: new Headers({ 'X-OAuth-Scopes': 'repo, gist' }),
+            json: async () => ({ login: 'x' })
+        });
+        vi.stubGlobal('fetch', fetchSpy);
+
+        await validateToken('  ghp_trim_me  ');
+
+        const [url, opts] = fetchSpy.mock.calls[0];
+        expect(url).toBe('https://api.github.com/user');
+        expect(opts.headers.Authorization).toBe('token ghp_trim_me');
     });
 });
 
