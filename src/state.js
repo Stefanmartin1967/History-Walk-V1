@@ -58,10 +58,10 @@ export const state = {
         // L'ancien topbar (toggle binaire) bascule entre 'all' et 'hide' uniquement.
         vus: 'all',
         planifies: 'all',
-        nonVerifies: false,
+        verified: 'all',
+        photo: 'all',
+        description: 'all',
         incontournablesOnly: false,
-        noPhoto: false,
-        noDesc: false,
         zone: null
     },
     // Lieu de résidence (capté via GPS depuis Mon Espace).

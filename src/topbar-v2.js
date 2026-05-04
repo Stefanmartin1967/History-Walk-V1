@@ -25,7 +25,9 @@ function isSectionActive(id) {
         case 'parcours':     return (f.vus && f.vus !== 'all')
                                   || (f.planifies && f.planifies !== 'all')
                                   || !!f.incontournablesOnly;
-        case 'fiche':        return !!f.nonVerifies || !!f.noPhoto || !!f.noDesc;
+        case 'fiche':        return (f.verified && f.verified !== 'all')
+                                  || (f.photo && f.photo !== 'all')
+                                  || (f.description && f.description !== 'all');
         default:             return false;
     }
 }

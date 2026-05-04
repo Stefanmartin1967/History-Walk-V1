@@ -7,7 +7,7 @@ const { sharedState, getPoiIdImpl } = vi.hoisted(() => ({
     sharedState: {
         loadedFeatures: [],
         hiddenPoiIds: [],
-        activeFilters: { vus: 'all', planifies: 'all', nonVerifies: false, zone: null, categories: [], incontournablesOnly: false, noPhoto: false, noDesc: false },
+        activeFilters: { vus: 'all', planifies: 'all', verified: 'all', zone: null, categories: [], incontournablesOnly: false, photo: 'all', description: 'all' },
         isSelectionModeActive: false,
         selectionModeFilters: { hideVisited: false, hidePlanned: false },
         activeCircuitId: null,
@@ -65,7 +65,8 @@ vi.mock('../src/data.js', () => ({
         if (s.activeCircuitId && s.currentCircuit && s.currentCircuit.some(f => getPoiIdImpl(f) === poiId)) {
             return true;
         }
-        if (s.activeFilters.nonVerifies && props.verified) return false;
+        if (s.activeFilters.verified === 'hide' && props.verified) return false;
+        if (s.activeFilters.verified === 'only' && !props.verified) return false;
         if (s.isSelectionModeActive) {
             if (s.selectionModeFilters?.hideVisited && props.vu) return false;
             if (s.selectionModeFilters?.hidePlanned && (props.planifieCounter || 0) > 0) return false;
@@ -103,7 +104,7 @@ describe('getZonesData', () => {
     beforeEach(() => {
         state.loadedFeatures = [];
         state.hiddenPoiIds = [];
-        state.activeFilters = { vus: false, planifies: false, nonVerifies: false, zone: null, categories: [] };
+        state.activeFilters = { vus: 'all', planifies: 'all', verified: 'all', zone: null, categories: [] };
         state.isSelectionModeActive = false;
         state.selectionModeFilters = { hideVisited: false, hidePlanned: false };
         state.activeCircuitId = null;
@@ -302,7 +303,7 @@ describe('getZonesData', () => {
                 makeFeature('C', 'Sud', { userData: { planifieCounter: 1 } }),
                 makeFeature('D', 'Est')
             ];
-            state.activeFilters = { vus: 'hide', planifies: 'hide', nonVerifies: false };
+            state.activeFilters = { vus: 'hide', planifies: 'hide', verified: 'all' };
             const r = getZonesData();
             // A et D passent ; B (vu) et C (planifié) sont filtrés
             expect(r.totalVisible).toBe(2);
