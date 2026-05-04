@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { getStoredToken, saveToken, uploadFileToGitHub } from './github-sync.js';
+import { getStoredToken, getStoredUsername, saveToken, validateToken, uploadFileToGitHub } from './github-sync.js';
 import { showToast } from './toast.js';
 import { openHwModal, closeHwModal } from './modal.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
@@ -271,7 +271,9 @@ export function renderTab(tab, diffData, callbacks) {
                 <span class="cc-info-strip-dot">·</span>
                 <span class="cc-info-strip-token ${hasToken ? 'cc-token-ok' : 'cc-token-missing'}">
                     <i data-lucide="${hasToken ? 'shield-check' : 'shield-x'}"></i>
-                    ${hasToken ? 'Token configuré' : 'Token manquant'}
+                    ${hasToken
+                        ? (getStoredUsername() ? `Connecté @${getStoredUsername()}` : 'Token configuré')
+                        : 'Token manquant'}
                     ${!hasToken ? `— <button class="cc-inline-link" id="btn-cc-goto-config3">Configurer</button>` : ''}
                 </span>
             </div>
@@ -423,10 +425,37 @@ export function renderTab(tab, diffData, callbacks) {
 
         setTimeout(() => {
             const btnSave = document.getElementById('btn-save-token');
-            if (btnSave) btnSave.onclick = () => {
+            if (btnSave) btnSave.onclick = async () => {
                 const val = document.getElementById('cc-token-input').value.trim();
-                saveToken(val);
-                showToast("Token sauvegardé !", "success");
+                if (!val) {
+                    saveToken('');
+                    showToast('Token supprimé', 'info');
+                    return;
+                }
+                btnSave.disabled = true;
+                const originalHTML = btnSave.innerHTML;
+                btnSave.textContent = 'Vérification…';
+                try {
+                    const result = await validateToken(val);
+                    if (!result.ok) {
+                        showToast(`Token rejeté : ${result.error}`, 'error', 5000);
+                        return;
+                    }
+                    saveToken(val, result.username);
+                    if (result.missingScopes && result.missingScopes.length > 0) {
+                        showToast(
+                            `Connecté @${result.username} — scopes manquants : ${result.missingScopes.join(', ')}`,
+                            'warning',
+                            6000
+                        );
+                    } else {
+                        showToast(`Connecté @${result.username}`, 'success');
+                    }
+                } finally {
+                    btnSave.disabled = false;
+                    btnSave.innerHTML = originalHTML;
+                    createIcons({ icons: appIcons, root: btnSave });
+                }
             };
 
             const btnUp = document.getElementById('btn-sync-upload');

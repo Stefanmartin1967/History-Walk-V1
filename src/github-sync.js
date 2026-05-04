@@ -18,9 +18,12 @@
 import { getAppState, saveAppState } from './database.js';
 
 const STORAGE_KEY_TOKEN = 'github_pat';
+const STORAGE_KEY_USERNAME = 'github_username';
 const LEGACY_LS_KEY = 'github_pat';
+const REQUIRED_SCOPES = ['repo', 'gist'];
 
 let _tokenCache = null;
+let _usernameCache = null;
 let _cacheReady = false;
 
 /**
@@ -48,10 +51,13 @@ export async function initTokenCache() {
             }
         }
 
+        const username = await getAppState(STORAGE_KEY_USERNAME);
         _tokenCache = token || null;
+        _usernameCache = (token && username) ? username : null;
     } catch (err) {
         console.warn('[github-sync] initTokenCache failed, PAT indisponible', err);
         _tokenCache = null;
+        _usernameCache = null;
     } finally {
         _cacheReady = true;
     }
@@ -79,26 +85,90 @@ export function isTokenPersisted() {
 }
 
 /**
+ * Récupère le username GitHub associé au token (validé via API à la sauvegarde).
+ * Null si aucun token, ou si le token a été stocké avant l'introduction de la validation.
+ * @returns {string|null}
+ */
+export function getStoredUsername() {
+    return _usernameCache;
+}
+
+/**
  * Sauvegarde ou supprime le token. Le cache est mis à jour immédiatement
  * (lecture sync cohérente dès le retour), la persistance IDB est asynchrone
  * en arrière-plan.
  * @param {string} token
+ * @param {string|null} [username] Username GitHub validé via validateToken().
  */
-export function saveToken(token) {
+export function saveToken(token, username = null) {
     const clean = token ? token.trim() : null;
+    const cleanUsername = clean ? (username || null) : null;
     _tokenCache = clean || null;
+    _usernameCache = cleanUsername;
     _cacheReady = true;
 
     // Persiste en arrière-plan (fire-and-forget avec log en cas d'erreur)
-    if (clean) {
-        saveAppState(STORAGE_KEY_TOKEN, clean).catch(err => {
-            console.warn('[github-sync] saveToken: IDB persist failed', err);
-        });
-    } else {
-        saveAppState(STORAGE_KEY_TOKEN, null).catch(err => {
-            console.warn('[github-sync] saveToken clear: IDB persist failed', err);
-        });
+    saveAppState(STORAGE_KEY_TOKEN, clean).catch(err => {
+        console.warn('[github-sync] saveToken: IDB persist failed', err);
+    });
+    saveAppState(STORAGE_KEY_USERNAME, cleanUsername).catch(err => {
+        console.warn('[github-sync] saveToken username persist failed', err);
+    });
+}
+
+/**
+ * Valide un token GitHub via l'API `GET /user`.
+ * Vérifie aussi les scopes (header X-OAuth-Scopes) pour les PAT classiques.
+ * Les fine-grained PAT n'exposent pas ce header — on ne signale alors aucun scope manquant.
+ *
+ * @param {string} token
+ * @returns {Promise<{ok: boolean, username?: string, scopes?: string[], missingScopes?: string[], error?: string}>}
+ */
+export async function validateToken(token) {
+    const clean = token ? token.trim() : '';
+    if (!clean) {
+        return { ok: false, error: 'Token vide' };
     }
+    let response;
+    try {
+        response = await fetch('https://api.github.com/user', {
+            headers: {
+                'Authorization': `token ${clean}`,
+                'Accept': 'application/vnd.github.v3+json'
+            }
+        });
+    } catch (err) {
+        return { ok: false, error: `Erreur réseau : ${err.message}` };
+    }
+    if (response.status === 401) {
+        return { ok: false, error: 'Token invalide ou expiré' };
+    }
+    if (!response.ok) {
+        return { ok: false, error: `Erreur API GitHub (HTTP ${response.status})` };
+    }
+    let data;
+    try {
+        data = await response.json();
+    } catch (err) {
+        return { ok: false, error: 'Réponse GitHub invalide' };
+    }
+    const scopesHeader = response.headers.get('X-OAuth-Scopes');
+    let scopes = [];
+    let missingScopes = [];
+    if (scopesHeader !== null) {
+        scopes = scopesHeader.split(',').map(s => s.trim()).filter(Boolean);
+        // Si le header est présent (PAT classique), on vérifie les scopes requis.
+        // Si absent (PAT fine-grained), on ne peut pas vérifier — on accepte sans warn.
+        if (scopes.length > 0) {
+            missingScopes = REQUIRED_SCOPES.filter(s => !scopes.includes(s));
+        }
+    }
+    return {
+        ok: true,
+        username: data.login,
+        scopes,
+        missingScopes
+    };
 }
 
 /**
