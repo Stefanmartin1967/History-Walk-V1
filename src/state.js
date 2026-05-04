@@ -32,6 +32,11 @@ export const state = {
     hiddenPoiIds: [],
     customDraftName: null, // Titre personnalisé pour le brouillon
     activeCircuitId: null,
+    // Édition d'un circuit chargé : true quand admin clique "Modifier" sur un
+    // officiel/vérifié et qu'on garde l'ID pour mettre à jour (pas de duplication).
+    // applyCircuitMode lit ce flag pour forcer data-mode='create' même si
+    // activeCircuitId est set.
+    editingMode: false,
     circuitIdToImportFor: null,
     orthodromicPolyline: null,
     realTrackPolyline: null,
@@ -169,6 +174,12 @@ export function setCustomDraftName(name) {
 
 export function setActiveCircuitId(id) {
     state.activeCircuitId = id;
+    // Charger un nouveau circuit (ou clear) sort automatiquement du mode édition.
+    state.editingMode = false;
+}
+
+export function setEditingMode(value) {
+    state.editingMode = value === true;
 }
 
 export function setCircuitIdToImportFor(id) {

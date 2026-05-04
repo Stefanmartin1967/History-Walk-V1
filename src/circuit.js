@@ -1,4 +1,4 @@
-import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit } from './state.js';
+import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode } from './state.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -206,8 +206,9 @@ export async function loadCircuitDraft() {
 // circuit.js
 
 export function addPoiToCircuit(feature) {
-    // 1. Sécurité : Si un circuit est déjà chargé (Mode Consultation)
-    if (state.activeCircuitId) {
+    // 1. Sécurité : circuit chargé en lecture seule.
+    // Exception : admin en mode édition (state.editingMode === true).
+    if (state.activeCircuitId && !state.editingMode) {
         showToast("Mode lecture seule. Cliquez sur 'Modifier' pour changer ce circuit.", "info");
         return false;
     }
@@ -279,9 +280,11 @@ export function updateCircuitMetadata(updateTitle = true) {
         totalDistance = getOrthodromicDistance(state.currentCircuit);
     }
 
-    // Priorité : Titre sauvegardé > Titre personnalisé brouillon > Génération auto
+    // Priorité : Titre sauvegardé > Titre personnalisé brouillon > Génération auto.
+    // En mode édition admin (state.editingMode), on regénère le titre dynamiquement
+    // à partir des POIs courants — Q2 décision Stefan 03/05/2026 : "On reset au nom auto".
     let title = state.customDraftName || generateCircuitName();
-    if (activeCircuitData && activeCircuitData.name && !activeCircuitData.name.startsWith("Nouveau Circuit")) {
+    if (activeCircuitData && activeCircuitData.name && !activeCircuitData.name.startsWith("Nouveau Circuit") && !state.editingMode) {
         title = activeCircuitData.name;
     }
 
@@ -446,22 +449,58 @@ export function initCircuitListeners() {
 
 // circuit.js
 
-export function convertToDraft() {
+/**
+ * Bascule un circuit chargé en mode édition.
+ *
+ * Deux comportements selon le contexte :
+ *  - User lambda (preserveId=false) : oublie l'ID, ajoute " (modifié)" au titre
+ *    → la sauvegarde créera un nouveau circuit (safety, l'original n'est pas touché)
+ *  - Admin (preserveId=true) : préserve l'ID, reset trace réelle (vol d'oiseau),
+ *    retire le statut "Vérifié" si présent (un POI ajouté n'est pas visité)
+ *    → la sauvegarde met à jour le circuit existant (admin maintient son contenu)
+ *
+ * Décisions Stefan 03/05/2026 :
+ *  - Q1 : tracé orthodromique au passage en édition (realTrack = null)
+ *  - Q2 : titre auto re-calculé à la sauvegarde (laissé tel quel ici)
+ *  - Q3 : statut "Vérifié" retiré automatiquement
+ *
+ * @param {Object} [opts]
+ * @param {boolean} [opts.preserveId=false] - Si true ET state.isAdmin, garde l'ID actif.
+ */
+export function convertToDraft({ preserveId = false } = {}) {
     if (!state.activeCircuitId) return;
 
-    // 1. On "oublie" l'ID pour autoriser l'édition
-    setActiveCircuitId(null);
-    
-    // 2. On change le nom pour ne pas écraser l'original par mégarde plus tard
-    if (DOM.circuitTitleText) {
-        DOM.circuitTitleText.textContent += " (modifié)";
+    const adminMode = preserveId && state.isAdmin;
+
+    if (adminMode) {
+        // Mode admin : on garde l'ID pour mettre à jour le circuit existant
+        const id = state.activeCircuitId;
+        // Q3 : retirer le statut "Vérifié" (un POI ajouté n'est pas visité par l'admin)
+        if (state.testedCircuits && state.testedCircuits[id]) {
+            setTestedCircuit(id, false);
+        }
+        // Q1 : reset trace réelle dans les DEUX listes (officialCircuits + myCircuits)
+        // Le circuit peut exister en doublon (résidu de tests, sync). On nettoie partout
+        // pour que map.js (qui cherche d'abord dans myCircuits) trouve realTrack=null.
+        [(state.officialCircuits || []), (state.myCircuits || [])].forEach(list => {
+            const c = list.find(x => x.id === id);
+            if (c) c.realTrack = null;
+        });
+        // Active le flag : applyCircuitMode forcera 'create' tant qu'il est true
+        // (et sera reset automatiquement au prochain setActiveCircuitId).
+        setEditingMode(true);
+    } else {
+        // Mode user lambda : ancien comportement (oublie ID + ajoute "(modifié)")
+        setActiveCircuitId(null);
+        if (DOM.circuitTitleText) {
+            DOM.circuitTitleText.textContent += " (modifié)";
+        }
     }
 
     showToast("Mode édition activé. Vous pouvez maintenant modifier ce circuit.", "info");
 
-    // 3. On redessine tout (Boutons + Carte)
-    renderCircuitPanel(); 
-    notifyCircuitChanged(); // Cela va forcer le passage à la ligne bleue
+    renderCircuitPanel();
+    notifyCircuitChanged(); // Force le passage à la ligne bleue (vol d'oiseau)
 }
 
 export async function loadCircuitById(id) {

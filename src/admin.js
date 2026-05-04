@@ -188,7 +188,9 @@ function toggleAdminUI(isAdmin) {
     if (adminContainer) {
         adminContainer.classList.toggle('is-hidden', !isAdmin);
     }
-
+    // Expose le mode admin au CSS pour conditionner certains affichages
+    // (ex: bouton "Modifier" sur circuits officiels/vérifiés — cf. panels.css).
+    document.body.classList.toggle('admin-mode', isAdmin);
 }
 
 function setupAdminListeners() {
