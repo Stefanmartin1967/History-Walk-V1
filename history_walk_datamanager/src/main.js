@@ -105,6 +105,10 @@ function openModal(feature = null, index = null) {
     form.reset();
     populateDatalists();
 
+    const photosRow = document.getElementById('photos-readonly-row');
+    const photosCount = document.getElementById('photos-count-display');
+    photosRow.style.display = 'none';
+
     if (feature) {
         modalTitle.textContent = "Modifier le lieu";
         const p = feature.properties;
@@ -120,6 +124,12 @@ function openModal(feature = null, index = null) {
         form.temps.value = p['Temps de visite'] || '';
         form.prix.value = p["Prix d'entrée"] || '';
         form.verified.checked = !!p['verified'];
+
+        if (Array.isArray(p.photos) && p.photos.length > 0) {
+            const n = p.photos.length;
+            photosCount.textContent = `${n} photo${n > 1 ? 's' : ''}`;
+            photosRow.style.display = '';
+        }
 
         // Marqueur draggable sur la carte
         const coords = feature.geometry?.coordinates;

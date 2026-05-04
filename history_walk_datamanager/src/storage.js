@@ -164,6 +164,8 @@ export function saveFeature(formData, indexToUpdate = null) {
     const coords = parseGps(formData.gps);
     if (!coords) { alert("Coordonnées GPS invalides"); return false; }
 
+    const existing = indexToUpdate !== null ? globalGeoJSON.features[indexToUpdate].properties : null;
+
     const properties = {
         "Nom du site FR": formData.nom,
         "Nom du site arabe": formData.nomArabe || null,
@@ -180,8 +182,14 @@ export function saveFeature(formData, indexToUpdate = null) {
         "Prix d'entrée": formData.prix || null,
         "Desc_wpt": formData.descWpt || null,
         "verified": formData.verified || false,
-        "HW_ID": indexToUpdate !== null ? globalGeoJSON.features[indexToUpdate].properties.HW_ID : generateHWID()
+        "HW_ID": existing?.HW_ID ?? generateHWID()
     };
+
+    // Préservation explicite : les photos sont gérées exclusivement côté HW
+    // (pipeline watermark + blob store). Le DM ne les touche jamais.
+    if (existing && Array.isArray(existing.photos) && existing.photos.length > 0) {
+        properties.photos = existing.photos;
+    }
 
     const newFeature = {
         "type": "Feature",
