@@ -46,8 +46,13 @@ function getCategoryDisplay(feature) {
 function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
     const poiName = getPoiName(feature);
     const cat = getCategoryDisplay(feature);
+    // Mode édition possible si :
+    //  - brouillon (pas d'activeCircuitId), OU
+    //  - circuit perso chargé (édition libre), OU
+    //  - admin a cliqué "Modifier" sur officiel/vérifié (state.editingMode).
     const isCreate = !state.activeCircuitId
-        || (state.activeCircuitId && !isOfficial); // perso → édition possible
+        || (state.activeCircuitId && !isOfficial)
+        || state.editingMode;
 
     const a = document.createElement('a');
     a.className = 'timeline-step';
@@ -154,8 +159,9 @@ let _sortableInstance = null;
 let _currentCallbacks = null;
 
 function initTimelineDrag() {
-    // Mode création uniquement
-    if (state.activeCircuitId) {
+    // Mode création OU mode édition admin (state.editingMode).
+    // En consultation seule (activeCircuitId set ET pas d'editingMode), drag désactivé.
+    if (state.activeCircuitId && !state.editingMode) {
         if (_sortableInstance) {
             _sortableInstance.destroy();
             _sortableInstance = null;
@@ -218,7 +224,9 @@ export function applyCircuitMode(opts = {}) {
     if (!panel) return;
 
     // Mode : consult (circuit chargé) ou create (brouillon en cours)
-    const isConsult = !!state.activeCircuitId && !opts.forceCreate;
+    // state.editingMode = true → admin a cliqué "Modifier" sur un officiel : reste en 'create'
+    // même si activeCircuitId set (cf. convertToDraft, project_circuit_description_missing.md).
+    const isConsult = !!state.activeCircuitId && !opts.forceCreate && !state.editingMode;
     panel.setAttribute('data-mode', isConsult ? 'consult' : 'create');
 
     // Flag : determine selon le circuit actif

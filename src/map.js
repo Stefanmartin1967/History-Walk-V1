@@ -196,13 +196,16 @@ export function initMapListeners() {
         }
 
         const isCompleted = isCircuitCompleted(activeCircuit);
-        
-        // 3. Choix du tracé (Réel prioritaire sur Vol d'oiseau)
-        if (activeCircuit?.realTrack) {
+
+        // 3. Choix du tracé (Réel prioritaire sur Vol d'oiseau).
+        // Exception : en mode édition admin, on force le vol d'oiseau même si
+        // une realTrack existe encore (state.editingMode = true → on est en
+        // train de modifier les POIs, la trace réelle n'est plus pertinente).
+        if (activeCircuit?.realTrack && !state.editingMode) {
             drawLineOnMap(activeCircuit.realTrack, true, isCompleted);
         } else {
             const coords = points.map(f => [
-                f.geometry.coordinates[1], 
+                f.geometry.coordinates[1],
                 f.geometry.coordinates[0]
             ]);
             drawLineOnMap(coords, false, isCompleted);

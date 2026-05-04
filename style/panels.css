@@ -3208,6 +3208,14 @@
 #circuit-panel[data-mode="consult"][data-flag="official"] [data-show="consult-perso"],
 #circuit-panel[data-mode="consult"][data-flag="verified"] [data-show="consult-perso"] { display: none !important; }
 
+/* Admin : peut modifier les circuits officiels/vérifiés (cf. project_circuit_description_missing.md).
+   Réautorise UNIQUEMENT le bouton "Modifier le circuit" (#btn-modify-circuit), pas tous
+   les actions perso (la suppression d'un officiel passe par d'autres voies). */
+body.admin-mode #circuit-panel[data-mode="consult"][data-flag="official"] #btn-modify-circuit,
+body.admin-mode #circuit-panel[data-mode="consult"][data-flag="verified"] #btn-modify-circuit {
+    display: inline-flex !important;
+}
+
 /* Tag "Brouillon" visible uniquement en création */
 #circuit-panel[data-mode="consult"] .cp-mode-tag { display: none; }
 /* Flag textuel uniquement en consultation officielle/vérifiée (déjà géré par .cp-flag) */

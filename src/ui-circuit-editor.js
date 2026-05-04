@@ -231,7 +231,9 @@ export function setupCircuitEventListeners() {
     const btnModify = document.getElementById('btn-modify-circuit');
     if (btnModify) {
         btnModify.addEventListener('click', () => {
-            convertToDraft();
+            // Admin : preserveId=true → met à jour le circuit existant (même HW_ID)
+            // User lambda : preserveId=false → comportement legacy (oublie ID + "(modifié)")
+            convertToDraft({ preserveId: state.isAdmin });
         });
     }
 
