@@ -462,6 +462,8 @@ function resetAllFilters() {
     filterMaxKm        = DIST_MAX_KM;
     currentSort        = 'proximity_asc';
     searchQuery        = '';
+    // Reset aussi le filtre POI (chip "Filtré par X")
+    explorerPoiFilterActive = false;
     if (state.activeFilters) {
         setActiveFilters({ ...state.activeFilters, zone: null });
     }
@@ -505,7 +507,10 @@ export function renderExplorerList() {
         currentPoiId = getPoiId(currentPoiFeature);
     }
     if (currentPoiId !== explorerLastPoiId) {
-        explorerPoiFilterActive = true;
+        // Activer le filtre UNIQUEMENT si le changement de POI courant vient
+        // de la searchbar (state.poiFilterFromSearch). Un clic carte sur un
+        // POI ne doit pas filtrer les circuits — décision Stefan 04/05/2026.
+        explorerPoiFilterActive = state.poiFilterFromSearch === true;
         explorerLastPoiId = currentPoiId;
     }
     if (currentPoiId && explorerPoiFilterActive) filterPoiId = currentPoiId;
@@ -586,8 +591,12 @@ export function renderExplorerList() {
 
     // Empty state
     if (circuits.length === 0) {
-        const hasActiveFilters = countActiveFilters() > 0 || !!searchQuery.trim();
-        const hint = pickEmptyHint();
+        // hasActiveFilters inclut désormais le filtre POI (chip "Filtré par X")
+        // sinon le message "Vous n'avez pas encore de circuit" s'affichait à tort.
+        const hasActiveFilters = countActiveFilters() > 0 || !!searchQuery.trim() || !!filterPoiId;
+        const hint = filterPoiId && currentPoiFeature
+            ? `Aucun circuit ne contient <strong>${escapeXml(getPoiName(currentPoiFeature))}</strong>. Retire le filtre pour tout voir.`
+            : pickEmptyHint();
         const empty = document.createElement('div');
         empty.className = 'va-empty';
         empty.innerHTML = `

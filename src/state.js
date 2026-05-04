@@ -37,6 +37,10 @@ export const state = {
     // applyCircuitMode lit ce flag pour forcer data-mode='create' même si
     // activeCircuitId est set.
     editingMode: false,
+    // Filtre POI sur la liste des circuits (Mes Circuits) : true uniquement
+    // quand la searchbar a sélectionné un POI. Un clic carte sur un POI ne
+    // doit PAS activer ce filtre (juste ouvrir la fiche POI).
+    poiFilterFromSearch: false,
     circuitIdToImportFor: null,
     orthodromicPolyline: null,
     realTrackPolyline: null,
@@ -180,6 +184,10 @@ export function setActiveCircuitId(id) {
 
 export function setEditingMode(value) {
     state.editingMode = value === true;
+}
+
+export function setPoiFilterFromSearch(value) {
+    state.poiFilterFromSearch = value === true;
 }
 
 export function setCircuitIdToImportFor(id) {

@@ -1,4 +1,4 @@
-import { state, setCurrentFeatureId, setCurrentCircuitIndex } from './state.js';
+import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch } from './state.js';
 import { getPoiId, getPoiName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
@@ -405,6 +405,10 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         pushMobileLevel('p');
     }
 
+    // Reset le flag : ce changement de POI ne vient PAS de la searchbar
+    // (clic carte / marker / timeline). Le filtre POI sur la liste des
+    // circuits ne doit donc pas s'activer.
+    setPoiFilterFromSearch(false);
     setCurrentFeatureId(featureId);
     setCurrentCircuitIndex(circuitIndex);
 
