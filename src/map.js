@@ -231,17 +231,19 @@ export function handleMarkerClick(feature) {
     if (state.draggingMarkerId === getPoiId(feature)) return;
 
     clearMarkerHighlights();
-    if (state.isSelectionModeActive) {
+
+    // On ajoute au circuit UNIQUEMENT si :
+    //  - Mode sélection actif ET
+    //  - On est réellement en train d'éditer (brouillon OU admin en mode édition).
+    // Sinon (cas typique : circuit chargé en consultation, isSelectionModeActive=true
+    // posé par loadCircuitById pour l'affichage du panel), on ouvre la fiche du POI.
+    const inEditMode = !state.activeCircuitId || state.editingMode;
+    if (state.isSelectionModeActive && inEditMode) {
         // --- MODE SELECTION (ON) ---
         // On délègue toute la logique (ajout, bouclage, limitation) à addPoiToCircuit
-        // Cela permet de :
-        // 1. Ignorer le dernier point (déjà géré dans addPoiToCircuit)
-        // 2. Boucler sur le premier point (déjà géré)
-        // 3. Ajouter des points intermédiaires (forme de 8)
-
         addPoiToCircuit(feature);
     } else {
-        // --- MODE CONSULTATION (OFF) ---
+        // --- MODE CONSULTATION (OFF) ou consultation d'un circuit chargé ---
         const globalIndex = state.loadedFeatures.findIndex(f => f.properties.HW_ID === feature.properties.HW_ID);
         const coords = feature.geometry.coordinates;
         map.flyTo([coords[1], coords[0]], Math.max(map.getZoom(), 16), { animate: true, duration: 0.6 });
