@@ -205,7 +205,6 @@ export function saveFeature(formData, indexToUpdate = null) {
         "Prix d'entrée": formData.prix || null,
         "Téléphone": formData.telephone || null,
         "Horaires": formData.horaires || null,
-        "Desc_wpt": formData.descWpt || null,
         "verified": formData.verified || false,
         "HW_ID": existing?.HW_ID ?? generateHWID()
     };

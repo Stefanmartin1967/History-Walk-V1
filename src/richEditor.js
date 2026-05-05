@@ -245,7 +245,7 @@ export const RichEditor = {
         const zoneInput = document.getElementById(DOM_IDS.INPUTS.ZONE);
         if (zoneInput) zoneInput.disabled = true;
 
-        setValue(DOM_IDS.INPUTS.DESC_SHORT, merged['Description_courte'] || merged.Desc_wpt || "");
+        setValue(DOM_IDS.INPUTS.DESC_SHORT, merged['Description_courte'] || "");
         setValue(DOM_IDS.INPUTS.DESC_LONG, merged['description'] || merged.Description || "");
         setValue(DOM_IDS.INPUTS.NOTES, merged['notes'] || "");
 

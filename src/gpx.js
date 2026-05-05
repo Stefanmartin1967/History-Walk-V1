@@ -106,7 +106,7 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
     // <wpt> : toujours les coordonnées réelles du POI (repère visuel fidèle)
     const waypointsXML = circuit.map(feature => {
         const poiName = escapeXml(getPoiName(feature));
-        const desc = escapeXml(feature.properties.userData?.Description_courte || feature.properties.Desc_wpt || '');
+        const desc = escapeXml(feature.properties.userData?.Description_courte || feature.properties.Description_courte || '');
         const sourceUrl = feature.properties.userData?.Source || feature.properties.Source || '';
         let linkXML = '';
         if (sourceUrl && sourceUrl.trim().startsWith('http')) {
