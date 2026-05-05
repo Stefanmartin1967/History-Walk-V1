@@ -249,19 +249,14 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.DESC_LONG, merged['description'] || merged.Description || "");
         setValue(DOM_IDS.INPUTS.NOTES, merged['notes'] || "");
 
-        // Temps
-        let h = merged.timeH;
-        let m = merged.timeM;
-        if (h === undefined && merged['Temps de visite']) {
-             const parts = merged['Temps de visite'].split(':');
-             h = parts[0]; m = parts[1];
-        }
-        setValue(DOM_IDS.INPUTS.TIME_H, h !== undefined ? h : "");
-        setValue(DOM_IDS.INPUTS.TIME_M, m !== undefined ? m : "");
+        // Temps : Temps_minutes (number) → décomposé en h + m
+        const totalMin = Number.isFinite(merged['Temps_minutes']) ? merged['Temps_minutes'] : null;
+        setValue(DOM_IDS.INPUTS.TIME_H, totalMin != null ? Math.floor(totalMin / 60) : "");
+        setValue(DOM_IDS.INPUTS.TIME_M, totalMin != null ? totalMin % 60 : "");
 
-        // Prix
-        const price = merged.price !== undefined ? merged.price : merged['Prix d\'entrée'];
-        setValue(DOM_IDS.INPUTS.PRICE, price !== undefined ? price : "");
+        // Prix : Prix_TND (number)
+        const price = merged['Prix_TND'];
+        setValue(DOM_IDS.INPUTS.PRICE, Number.isFinite(price) ? price : "");
 
         setValue(DOM_IDS.INPUTS.SOURCE, merged.Source || "");
 
@@ -561,9 +556,8 @@ async function handleSave() {
         'Description_courte': getValue(DOM_IDS.INPUTS.DESC_SHORT),
         'description': getValue(DOM_IDS.INPUTS.DESC_LONG),
         'notes': getValue(DOM_IDS.INPUTS.NOTES),
-        'timeH': parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0,
-        'timeM': parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0,
-        'price': parseFloat(getValue(DOM_IDS.INPUTS.PRICE)) || 0,
+        'Temps_minutes': (parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0) * 60 + (parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0),
+        'Prix_TND': parseFloat(getValue(DOM_IDS.INPUTS.PRICE)) || 0,
         'Source': getValue(DOM_IDS.INPUTS.SOURCE)
     };
 
@@ -718,9 +712,8 @@ function handleEmailSuggestion() {
         'Description_courte': getValue(DOM_IDS.INPUTS.DESC_SHORT),
         'description': getValue(DOM_IDS.INPUTS.DESC_LONG),
         'notes': getValue(DOM_IDS.INPUTS.NOTES),
-        'timeH': parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0,
-        'timeM': parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0,
-        'price': parseFloat(getValue(DOM_IDS.INPUTS.PRICE)) || 0,
+        'Temps_minutes': (parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0) * 60 + (parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0),
+        'Prix_TND': parseFloat(getValue(DOM_IDS.INPUTS.PRICE)) || 0,
         'Source': getValue(DOM_IDS.INPUTS.SOURCE)
     };
 
