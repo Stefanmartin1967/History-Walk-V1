@@ -120,7 +120,6 @@ function openModal(feature = null, index = null) {
         form.zone.value = p['Zone'] || '';
         form.description.value = p['Description'] || '';
         form.source.value = p['Source'] || '';
-        form.descWpt.value = p['Desc_wpt'] || '';
         form.descCourte.value = p['Description_courte'] || '';
         form.nomArabe.value = p['Nom du site arabe'] || '';
         form.temps.value = p['Temps de visite'] || '';
@@ -188,7 +187,6 @@ form.addEventListener('submit', (e) => {
         gps: form.gps.value,
         categorie: form.categorie.value,
         zone: form.zone.value,
-        descWpt: form.descWpt.value,
         descCourte: form.descCourte.value,
         description: form.description.value,
         source: form.source.value,

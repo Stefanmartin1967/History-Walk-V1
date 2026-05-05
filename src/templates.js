@@ -166,7 +166,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const hasLongDesc = longDesc !== '';
 
     // Description GPX (Wikiloc)
-    const gpxDesc = (allProps.Description_courte || allProps.Desc_wpt || '').trim();
+    const gpxDesc = (allProps.Description_courte || '').trim();
     const hasGpxDesc = gpxDesc !== '';
 
     // Détails pratiques

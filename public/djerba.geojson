@@ -22,7 +22,6 @@
         "Source": "https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/",
         "Temps de visite": "01:00",
         "Prix d'entrée": null,
-        "Desc_wpt": "Réouverture de la piscine le 16 mars. Elle se remplit lentement",
         "verified": false,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
         "planifieCounter": 1,
@@ -58,7 +57,6 @@
         "Source": "https://fr.wikipedia.org/wiki/Phare_de_Taguermess",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6722XTDVPGCQTPPBXR",
         "planifieCounter": 1,
         "vu": true,
@@ -93,7 +91,6 @@
         "Source": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Lalla_Hadria",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE67RMBHZ4JFG7PXTCRT",
         "lat": 33.81974876092748,
         "lng": 11.044993404919456,
@@ -129,7 +126,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE671G6V27VYYNMJV2NC",
         "planifieCounter": 1,
         "vu": true,
@@ -161,7 +157,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P",
         "planifieCounter": 1
       }
@@ -187,7 +182,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6770BXCP2SW1Z2DTA2",
         "planifieCounter": 1,
         "vu": true,
@@ -220,7 +214,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
         "planifieCounter": 1
       }
@@ -246,7 +239,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68SW9XWBFFCRBWXZYM",
         "planifieCounter": 1,
         "lat": 33.79811118269014,
@@ -274,7 +266,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68SSRHFM5TYYA7F5YF",
         "planifieCounter": 1,
         "vu": true,
@@ -303,7 +294,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6805D82JWX44QAVVV9",
         "planifieCounter": 1,
         "lat": 33.793757704808506,
@@ -331,7 +321,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE682HMFVV693F7BFA2B",
         "planifieCounter": 1
       }
@@ -357,7 +346,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68ZXYA0Z9T3QEN0VYW",
         "planifieCounter": 1
       }
@@ -383,7 +371,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE686WHQD4VDZT4Y6VK5",
         "planifieCounter": 1
       }
@@ -409,8 +396,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "La Mosquée Kbess est un édifice composite mêlant architecture traditionnelle djerbienne et ajouts contemporains.\nSa coupole blanche et son minaret géométrique en font un repère visuel important à l’entrée sud de Mezraya.",
-        "HW_ID": "HW-01K77WPE68SW5H9AGP366WDFHH"
+        "HW_ID": "HW-01K77WPE68SW5H9AGP366WDFHH",
+        "Description_courte": "La Mosquée Kbess est un édifice composite mêlant architecture traditionnelle djerbienne et ajouts contemporains.\nSa coupole blanche et son minaret géométrique en font un repère visuel important à l’entrée sud de Mezraya."
       }
     },
     {
@@ -434,7 +421,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68FAWKXDY3R89R5KTF",
         "planifieCounter": 1
       }
@@ -460,7 +446,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68MMPS9ZVR6XTV9J61",
         "planifieCounter": 1,
         "vu": true,
@@ -489,7 +474,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68Q2NTEKRWSPCDZZGE",
         "planifieCounter": 1,
         "vu": true,
@@ -518,7 +502,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE68JWCXJ0TCG1EDSB7A",
         "planifieCounter": 1,
         "vu": true,
@@ -547,8 +530,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions.",
-        "HW_ID": "HW-01K77WPE68HB12PE5Y0ZGTGJ3X"
+        "HW_ID": "HW-01K77WPE68HB12PE5Y0ZGTGJ3X",
+        "Description_courte": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions."
       }
     },
     {
@@ -572,7 +555,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE682TM0N643W207BGNE",
         "planifieCounter": 1
       }
@@ -598,7 +580,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69FQZ84EBV7HCETGM2",
         "planifieCounter": 1
       }
@@ -624,7 +605,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69627R8AECX3S372Z3",
         "planifieCounter": 1
       }
@@ -650,8 +630,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance.",
-        "HW_ID": "HW-01K77WPE698R49VRAQ6C6J1XXF"
+        "HW_ID": "HW-01K77WPE698R49VRAQ6C6J1XXF",
+        "Description_courte": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance."
       }
     },
     {
@@ -675,8 +655,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée qui témoigne rare de la continuité du style vernaculaire djerbien, où architecture, spiritualité et paysage forment une unité indissociable.",
-        "HW_ID": "HW-01K77WPE69R3QRREC9E9W0S5V4"
+        "HW_ID": "HW-01K77WPE69R3QRREC9E9W0S5V4",
+        "Description_courte": "Mosquée qui témoigne rare de la continuité du style vernaculaire djerbien, où architecture, spiritualité et paysage forment une unité indissociable."
       }
     },
     {
@@ -700,7 +680,6 @@
         "Source": "http://palaisbenayed.com/la-mosquee-hadher-bach-%D8%AC%D8%A7%D9%85%D8%B9-%D8%AD%D8%A7%D8%B6%D8%B1-%D8%A8%D8%A7%D8%B4",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE699CBRC4PV1ARJPXKM",
         "planifieCounter": 2
       }
@@ -726,7 +705,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69NZS5NFTFBPG6V291",
         "planifieCounter": 1
       }
@@ -752,10 +730,10 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental.",
         "HW_ID": "HW-01K77WPE697JA8WM3N71KEFY6S",
         "planifieCounter": 1,
-        "vu": false
+        "vu": false,
+        "Description_courte": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental."
       }
     },
     {
@@ -779,8 +757,8 @@
         "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée unique en son genre, non seulement pour son architecture troglodytique mais aussi pour son rôle historique dans le système de défense de l’île.",
-        "HW_ID": "HW-01K77WPE69Z6P5WA0YY1ETQ5XB"
+        "HW_ID": "HW-01K77WPE69Z6P5WA0YY1ETQ5XB",
+        "Description_courte": "Mosquée unique en son genre, non seulement pour son architecture troglodytique mais aussi pour son rôle historique dans le système de défense de l’île."
       }
     },
     {
@@ -804,7 +782,6 @@
         "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgou\nhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
         "planifieCounter": 1,
         "vu": false
@@ -831,8 +808,8 @@
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-beaute-immaculee-de-mosquee-sellaouati/187481/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée massive au minaret carré qui se cache derrière les oliviers.\nCe sanctuaire immaculé continue de recevoir les fidèles et, parfois, de simples curieux.",
-        "HW_ID": "HW-01K77WPE69KD9K0SES4DYYWZQA"
+        "HW_ID": "HW-01K77WPE69KD9K0SES4DYYWZQA",
+        "Description_courte": "Mosquée massive au minaret carré qui se cache derrière les oliviers.\nCe sanctuaire immaculé continue de recevoir les fidèles et, parfois, de simples curieux."
       }
     },
     {
@@ -856,7 +833,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE697PHS21NP9P0JGJ6F",
         "planifieCounter": 1
       }
@@ -882,7 +858,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE69CKZWJHD3JAJT874K",
         "planifieCounter": 1,
         "vu": false
@@ -909,7 +884,6 @@
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Fadhloun",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A22WXDRBSQ8AEW7BR",
         "planifieCounter": 1,
         "vu": false
@@ -936,7 +910,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A27VC54MEK4XHGV9V",
         "planifieCounter": 1
       }
@@ -962,7 +935,6 @@
         "Source": "https://fr.wikipedia.org/wiki/Mahboubine",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A1GRGM843BF4KA3RT",
         "planifieCounter": 1
       }
@@ -988,7 +960,6 @@
         "Source": "https://lapresse.tn/2025/08/26/restauree-apres-des-siecles-la-mosquee-al-maazouzine-retrouve-son-eclat-a-djerba/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée Ibadite restaurée en août 2025",
         "HW_ID": "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
         "planifieCounter": 1,
         "vu": true,
@@ -997,7 +968,8 @@
         ],
         "photos": [
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1777701416678.jpg"
-        ]
+        ],
+        "Description_courte": "Mosquée Ibadite restaurée en août 2025"
       }
     },
     {
@@ -1021,7 +993,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6AC5NNAYN5AF2HNACS"
       }
     },
@@ -1046,7 +1017,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A6PKFYXGMY0Z2B3NC"
       }
     },
@@ -1071,13 +1041,13 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée qui se dresse isolée au milieu d’un terrain pierreux planté de quelques oliviers.",
         "HW_ID": "HW-01K77WPE6AS77NE3CRGHPYHJSE",
         "planifieCounter": 1,
         "vu": true,
         "visitedByCircuits": [
           "HW-1771320398895"
-        ]
+        ],
+        "Description_courte": "Mosquée qui se dresse isolée au milieu d’un terrain pierreux planté de quelques oliviers."
       }
     },
     {
@@ -1101,7 +1071,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6AB83SMA3RRSYH0SK9",
         "planifieCounter": 0
       }
@@ -1127,7 +1096,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A7EGYFGG7XNYT8AYC",
         "planifieCounter": 1,
         "vu": true,
@@ -1157,7 +1125,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6AVNZQPMPCEZ1V17GX"
       }
     },
@@ -1182,7 +1149,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6A3AYDG7D68R9A0JBT",
         "planifieCounter": 1
       }
@@ -1208,7 +1174,6 @@
         "Source": "https://fr.wikipedia.org/wiki/Mezraya",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6AJXE1YKC3AA7S78SA"
       }
     },
@@ -1233,7 +1198,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BNSENDPYVFJT2TW7Y",
         "planifieCounter": 1
       }
@@ -1259,7 +1223,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BE6FFWWHJH6DSSZQ6",
         "planifieCounter": 1,
         "vu": true,
@@ -1289,7 +1252,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
         "planifieCounter": 1,
         "vu": true,
@@ -1319,7 +1281,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BZYXKCYCZXB9RG3RP",
         "planifieCounter": 1
       }
@@ -1345,7 +1306,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BDX79P55JZDF0G5SB"
       }
     },
@@ -1370,7 +1330,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ",
         "planifieCounter": 1
       }
@@ -1396,13 +1355,13 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux.",
         "HW_ID": "HW-01K77WPE6BAJG9QADZMRDXPWTB",
         "planifieCounter": 1,
         "vu": true,
         "visitedByCircuits": [
           "HW-1771320398895"
-        ]
+        ],
+        "Description_courte": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux."
       }
     },
     {
@@ -1426,7 +1385,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6B757BJRXVWKNC8PBD",
         "planifieCounter": 1
       }
@@ -1452,7 +1410,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6B07WPJSEPWJAEXM5C",
         "planifieCounter": 0
       }
@@ -1478,7 +1435,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6B49HSRPBACEWDY95T",
         "planifieCounter": 1,
         "vu": true,
@@ -1508,7 +1464,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6B87GSD5BT3NXXR5RE"
       }
     },
@@ -1533,7 +1488,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BG5X8YCCG07AEVQY8",
         "planifieCounter": 0
       }
@@ -1559,7 +1513,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6B8K7SZXAC90M70BMM"
       }
     },
@@ -1584,7 +1537,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6BGKED1DHN669J64P7",
         "planifieCounter": 0
       }
@@ -1610,7 +1562,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6C4QCW255MDZKT0RHK",
         "planifieCounter": 2
       }
@@ -1636,7 +1587,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CVR05TNW29PD4ZT89",
         "planifieCounter": 0
       }
@@ -1662,7 +1612,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CBWN7QDW6G4G73RWZ",
         "planifieCounter": 0
       }
@@ -1688,7 +1637,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CC0RY56ECB2RCTGJP",
         "planifieCounter": 2
       }
@@ -1714,7 +1662,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CZ52F0ERH3WR0ZT77"
       }
     },
@@ -1739,7 +1686,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6C4WQ1CR342MVCN64V"
       }
     },
@@ -1764,7 +1710,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6C5GHRJMF8MP5ZQC6D"
       }
     },
@@ -1789,7 +1734,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CNKRKMD8T6VEG3WSE"
       }
     },
@@ -1814,7 +1758,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CP8P9RJP202ZRWJQJ",
         "planifieCounter": 0
       }
@@ -1840,7 +1783,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CW6FA3ED63PXQ5WHX"
       }
     },
@@ -1865,7 +1807,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CT271602JBDQFH8AM"
       }
     },
@@ -1890,7 +1831,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CT3DF98CMH3E04Y6K"
       }
     },
@@ -1915,7 +1855,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6CMHE8GHTTW13GZ8M1"
       }
     },
@@ -1940,7 +1879,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6C4GTHCK9Y64EFE8SP",
         "planifieCounter": 1
       }
@@ -1966,7 +1904,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DADD5BVFVTP8P3EXY"
       }
     },
@@ -1991,7 +1928,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6D46D9BH4QCBXE331N"
       }
     },
@@ -2016,7 +1952,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C",
         "planifieCounter": 1
       }
@@ -2042,7 +1977,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DRTH3M3NHYQJSR1NE"
       }
     },
@@ -2067,7 +2001,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
         "planifieCounter": 1,
         "photos": [
@@ -2099,7 +2032,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DT0F6KA225EP7PSK9",
         "planifieCounter": 1
       }
@@ -2125,7 +2057,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DFDJEFF1NP5V7YWS5",
         "planifieCounter": 1
       }
@@ -2151,7 +2082,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DAMFCVRGASY61DKJE",
         "planifieCounter": 0
       }
@@ -2177,7 +2107,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DWEFD7GCZ7SCRFQA9",
         "planifieCounter": 1,
         "photos": [
@@ -2209,7 +2138,6 @@
         "Source": "https://kapitalis.com/tunisie/2015/07/28/djerba-les-necropoles-puniques-saccagees-pillees-et-profanees/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DQEKFWMTWZ1A5XH39",
         "Description_courte": "Description pour test",
         "description": "Les nécropoles puniques de Souk El Guebli au sud-est de l’île de Djerba renferment une douzaine de tombes les mieux conservées de toutes les autres tombes antiques dans l’île, découvertes en partie par le Français Ratel Gontrain suite aux premières fouilles effectuées depuis les années 1950, et les autres par Sami Ben Tahar, archéologue chargé de recherche auprès de l’Institut national du patrimoine (INP), grâce aux multiples fouilles entreprises par lui-même depuis 2004.\n\nS’étendant sur une superficie de 5000 m2, ce site archéologique exceptionnel, constitué de caveaux rupestres remontant au IIIe siècle Av. J.-C., est doté d’un plan original dont les parallèles se trouvent en Orient hellénistique et apporte un témoignage spectaculaire sur l’architecture libyco-punique, fruit d’un brassage culturel édifiant entre le substrat autochtone et l’apport phénicien.\n\nLes nombreuses fouilles effectuées sur ce site ont livré un riche mobilier funéraire constitué de poteries et d’artefacts en d’autres matériaux.",
@@ -2240,7 +2168,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6D5GR4P97YHEN41JNS",
         "planifieCounter": 1
       }
@@ -2266,7 +2193,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DA1GT81ZQDNQARTBX"
       }
     },
@@ -2291,7 +2217,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DPZ5JB93JZ7BZ9ZJF"
       }
     },
@@ -2316,7 +2241,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6D2K1P48SM77XZNYQH",
         "planifieCounter": 0
       }
@@ -2342,7 +2266,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6D6A1W50RR0KNXRAGH",
         "planifieCounter": 1
       }
@@ -2368,7 +2291,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6DJK9XDN27CANR4VKN"
       }
     },
@@ -2393,7 +2315,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6EPM3A4QJN2D566KZ5",
         "planifieCounter": 1
       }
@@ -2419,7 +2340,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6E2G25V2R888QZDP0X",
         "planifieCounter": 1,
         "photos": [
@@ -2449,7 +2369,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
         "planifieCounter": 1,
         "visitedByCircuits": [],
@@ -2477,7 +2396,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB",
         "planifieCounter": 1,
         "visitedByCircuits": [],
@@ -2505,7 +2423,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6EGHYR09XESQ3285RK"
       }
     },
@@ -2530,7 +2447,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6EC6AFJV78TZ4CNG4K"
       }
     },
@@ -2555,7 +2471,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6EWBD679W4C2QRM2FA",
         "planifieCounter": 1
       }
@@ -2581,7 +2496,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6EZ7K06GM4HAWDESAE",
         "planifieCounter": 1
       }
@@ -2607,7 +2521,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6ETRHVANF00XDKFMTP"
       }
     },
@@ -2632,7 +2545,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6E249JWGGTZMC3XMHH"
       }
     },
@@ -2657,7 +2569,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6ECJK1CMJKYVNTKGGS",
         "planifieCounter": 1
       }
@@ -2683,7 +2594,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6E5GCD9QGR33PMXVRP",
         "planifieCounter": 1
       }
@@ -2709,7 +2619,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6EWVYE0ZBA3R72TVE9"
       }
     },
@@ -2734,7 +2643,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6ECHRHQW02VE596FZV"
       }
     },
@@ -2759,7 +2667,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6E4HG0PW6ZMZCH8DCJ"
       }
     },
@@ -2784,7 +2691,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6EFFWW2G36S6SF3ZBV"
       }
     },
@@ -2809,7 +2715,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6F6AGR7DE65A8C1Y93"
       }
     },
@@ -2834,7 +2739,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FCK1V446SXD2V5NNK",
         "planifieCounter": 1
       }
@@ -2860,7 +2764,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4",
         "planifieCounter": 1
       }
@@ -2886,13 +2789,13 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée proche de la mer, à proximité de Goose island djerba où vous pouvez faire diverses activités aquatiques",
         "HW_ID": "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
         "planifieCounter": 1,
         "vu": true,
         "photos": [],
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [],
+        "Description_courte": "Mosquée proche de la mer, à proximité de Goose island djerba où vous pouvez faire diverses activités aquatiques"
       }
     },
     {
@@ -2916,7 +2819,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FQSGQH7Q843BCXE8K"
       }
     },
@@ -2941,7 +2843,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FSBBA3K7NVS4GTVTD"
       }
     },
@@ -2966,12 +2867,12 @@
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": 0,
-        "Desc_wpt": "A vérifier si toujours existante",
         "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB",
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [],
+        "Description_courte": "A vérifier si toujours existante"
       }
     },
     {
@@ -2995,7 +2896,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FZPTQ6J9PK4K8Z3DJ",
         "planifieCounter": 1,
         "vu": true,
@@ -3024,7 +2924,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FKPXGG3JYG58QMES3"
       }
     },
@@ -3049,7 +2948,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FVZ53RX9CM5VVC777"
       }
     },
@@ -3074,7 +2972,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FYGYG0HW2BTHPGFF6"
       }
     },
@@ -3099,7 +2996,6 @@
         "Source": "https://www.djerba-tunisie.com/borj-el-kastil/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FHQDWSEQTK48QZ00P"
       }
     },
@@ -3124,7 +3020,6 @@
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/jemaa-louta-a-djerba-une-mysterieuse-mosquee-souterraine/203375/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME",
         "planifieCounter": 1
       }
@@ -3150,7 +3045,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93"
       }
     },
@@ -3175,13 +3069,13 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée et mausolée malékite de construction récente intégrant le mausolée",
         "HW_ID": "HW-01K77WPE6F1C25NNH5RAR2JPF6",
         "planifieCounter": 1,
         "vu": true,
         "photos": [],
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [],
+        "Description_courte": "Mosquée et mausolée malékite de construction récente intégrant le mausolée"
       }
     },
     {
@@ -3205,7 +3099,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6GA20S9G7CF10EAFSW"
       }
     },
@@ -3230,10 +3123,10 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Masquée et mausolée malékite de construction récente intégrant le mausolée",
         "HW_ID": "HW-01K77WPE6G4S44DJQ98414C336",
         "vu": true,
-        "planifieCounter": 0
+        "planifieCounter": 0,
+        "Description_courte": "Masquée et mausolée malékite de construction récente intégrant le mausolée"
       }
     },
     {
@@ -3257,7 +3150,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6GRXRR29KB5N5T582A"
       }
     },
@@ -3282,8 +3174,8 @@
         "Source": "https://www.facebook.com/Amis.Tunisie/posts/mosqu%C3%A9e-ibrahim-al-charef-taouritla-mosqu%C3%A9e-ibrahim-al-charef-est-consid%C3%A9r%C3%A9e-com/1104312605062607/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée mausolée malékite au style ottoman construite au 19è siècle de notre ère, restaurée en 1991",
-        "HW_ID": "HW-01K77WPE6GX5J8BG85Y7V1ZXKS"
+        "HW_ID": "HW-01K77WPE6GX5J8BG85Y7V1ZXKS",
+        "Description_courte": "Mosquée mausolée malékite au style ottoman construite au 19è siècle de notre ère, restaurée en 1991"
       }
     },
     {
@@ -3307,7 +3199,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6GMMWPTC6BX2DN2N6C"
       }
     },
@@ -3332,7 +3223,6 @@
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6GCJG1C7RFFRYEK7B3"
       }
     },
@@ -3357,8 +3247,8 @@
         "Source": "https://www.patrimoinedetunisie.com.tn/musees/musee-du-patrimoine-traditionnel-de-djerba/apercu/",
         "Temps de visite": "03:00:00",
         "Prix d'entrée": "8 Dt",
-        "Desc_wpt": "Musée du Patrimoine de Djerba, ouvert de 09h30 à 16h30. Prix d'entrée pour les non résidents : 8Dt",
-        "HW_ID": "HW-01K77WPE6G6JHJFHW35MKZBZEW"
+        "HW_ID": "HW-01K77WPE6G6JHJFHW35MKZBZEW",
+        "Description_courte": "Musée du Patrimoine de Djerba, ouvert de 09h30 à 16h30. Prix d'entrée pour les non résidents : 8Dt"
       }
     },
     {
@@ -3382,12 +3272,12 @@
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_%C3%89trangers",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée ibadite devenue malékite construite en 967 de l’hégire, soit en 1560 de notre ère",
         "HW_ID": "HW-01K77WPE6G6C1H17E6WP518B3J",
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [],
+        "Description_courte": "Mosquée ibadite devenue malékite construite en 967 de l’hégire, soit en 1560 de notre ère"
       }
     },
     {
@@ -3411,12 +3301,12 @@
         "Source": "https://djerba-insolite.com/blog/sidi-brahim-eljomni",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée, mausolée et medersa (Ecole) coranique constriten en \n1076 de l’hégire, soit 1675 de notre ère",
         "HW_ID": "HW-01K77WPE6GQX3PRD8TAKTDRNSZ",
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [],
+        "Description_courte": "Mosquée, mausolée et medersa (Ecole) coranique constriten en \n1076 de l’hégire, soit 1675 de notre ère"
       }
     },
     {
@@ -3440,8 +3330,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée Mausolée construite au 18è siècle de notre ère",
-        "HW_ID": "HW-01K77WPE6GJ0DN3APAMA1JCFV8"
+        "HW_ID": "HW-01K77WPE6GJ0DN3APAMA1JCFV8",
+        "Description_courte": "Mosquée Mausolée construite au 18è siècle de notre ère"
       }
     },
     {
@@ -3465,12 +3355,12 @@
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_Turcs",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée hanafite puis malékite construite en 1560 de notre ère",
         "HW_ID": "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [],
+        "Description_courte": "Mosquée hanafite puis malékite construite en 1560 de notre ère"
       }
     },
     {
@@ -3494,8 +3384,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée mausolée malékite 1054 de l’hégire, soit 1643 de notre ère",
-        "HW_ID": "HW-01K77WPE6GJMBZYBJGZZAWQDYZ"
+        "HW_ID": "HW-01K77WPE6GJMBZYBJGZZAWQDYZ",
+        "Description_courte": "Mosquée mausolée malékite 1054 de l’hégire, soit 1643 de notre ère"
       }
     },
     {
@@ -3519,8 +3409,8 @@
         "Source": "https://fr.wikipedia.org/wiki/Borj_El_Kebir_(Houmt_Souk)",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Un des plus beau monument historique de Djerba, ayant été le siège de nombreuses batailles",
-        "HW_ID": "HW-01K77WPE6H4XSK53CW38Q81RWP"
+        "HW_ID": "HW-01K77WPE6H4XSK53CW38Q81RWP",
+        "Description_courte": "Un des plus beau monument historique de Djerba, ayant été le siège de nombreuses batailles"
       }
     },
     {
@@ -3544,12 +3434,12 @@
         "Source": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Joseph_de_Djerba",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Une des rares églises catholique de Djerba",
         "HW_ID": "HW-01K77WPE6HV1767JVPMV1000YQ",
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [],
+        "Description_courte": "Une des rares églises catholique de Djerba"
       }
     },
     {
@@ -3573,8 +3463,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée située au sud-est de Houmt Souk",
-        "HW_ID": "HW-01K77WPE6HCR84JJZ3E1PQRRQ9"
+        "HW_ID": "HW-01K77WPE6HCR84JJZ3E1PQRRQ9",
+        "Description_courte": "Mosquée située au sud-est de Houmt Souk"
       }
     },
     {
@@ -3598,7 +3488,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6HCAQTSR2RW7BNKJCN"
       }
     },
@@ -3623,7 +3512,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6H6EYA6VQDR7SPKG7T"
       }
     },
@@ -3648,7 +3536,6 @@
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-vingt-deux-mosquees-une-eglise-et-une-synagogue/208839/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant",
         "HW_ID": "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
         "planifieCounter": 1,
         "vu": true,
@@ -3663,7 +3550,8 @@
         "vuManual": true,
         "visitedByCircuits": [
           "HW-1771324790804"
-        ]
+        ],
+        "Description_courte": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant"
       }
     },
     {
@@ -3687,7 +3575,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6HSHY4FP2SZ4V6M2PN"
       }
     },
@@ -3712,7 +3599,6 @@
         "Source": "https://www.turess.com/fr/letemps/52984?utm",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Dominant la côte nord de Houmt-Souk, la mosquée Sidi El-Bahri se dresse aujourd’hui comme un symbole de résilience. Reconstruite sur les ruines de l’édifice détruit en 2011, elle conserve la mémoire d’un sanctuaire trois fois centenaire dont le minaret seul avait survécu à la démolition. Sa silhouette blanche, son dôme discret et son phare vert rappellent la simplicité des mosquées maritimes djerbiennes. Autour d’elle, les tombes anciennes forment un manteau de silence : le passé veille encore, paisible, au seuil du présent.",
         "HW_ID": "HW-01K77WPE6H365AYB72RWY40WZX",
         "planifieCounter": 1,
         "vu": true,
@@ -3727,7 +3613,8 @@
         "vuManual": true,
         "visitedByCircuits": [
           "HW-1771324790804"
-        ]
+        ],
+        "Description_courte": "Dominant la côte nord de Houmt-Souk, la mosquée Sidi El-Bahri se dresse aujourd’hui comme un symbole de résilience. Reconstruite sur les ruines de l’édifice détruit en 2011, elle conserve la mémoire d’un sanctuaire trois fois centenaire dont le minaret seul avait survécu à la démolition. Sa silhouette blanche, son dôme discret et son phare vert rappellent la simplicité des mosquées maritimes djerbiennes. Autour d’elle, les tombes anciennes forment un manteau de silence : le passé veille encore, paisible, au seuil du présent."
       }
     },
     {
@@ -3751,7 +3638,6 @@
         "Source": "https://fr.wikipedia.org/wiki/Tamazight_de_Djerba",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6HCCSTW9QXDV73Q1SF",
         "planifieCounter": 1
       }
@@ -3777,7 +3663,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6HN8AD9RQQTGD38K99"
       }
     },
@@ -3802,7 +3687,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6HTHPF05JHNVACW732"
       }
     },
@@ -3827,7 +3711,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6H7K49FQ4NSR5ASHX8",
         "planifieCounter": 0
       }
@@ -3853,9 +3736,9 @@
         "Source": "https://www.facebook.com/photo/?fbid=498602698174992&set=a.100670254634907",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée de type Ibadite située en milieu semi-rural",
         "HW_ID": "HW-01K77WPE6HPEZNHF6GJF6P582Z",
-        "planifieCounter": 0
+        "planifieCounter": 0,
+        "Description_courte": "Mosquée de type Ibadite située en milieu semi-rural"
       }
     },
     {
@@ -3879,7 +3762,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6H3TDARVM1G3V5E49B"
       }
     },
@@ -3904,7 +3786,6 @@
         "Source": "https://evendo.com/locations/tunisia/djerba/landmark/mosquee-sidi-bou-said",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6J23YSBPP5PMBBZ23Y",
         "planifieCounter": 1,
         "vu": true,
@@ -3939,7 +3820,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JDNJ7919QCH1HXSXT",
         "planifieCounter": 1,
         "visitedByCircuits": [],
@@ -3967,7 +3847,6 @@
         "Source": "https://www.inp2020.tn/2023/03/09/_meninx/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JZQWS751K2WV46RB2",
         "planifieCounter": 0
       }
@@ -3993,7 +3872,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24",
         "planifieCounter": 0
       }
@@ -4019,7 +3897,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JTGSWHX55Z21ENNDH"
       }
     },
@@ -4044,7 +3921,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JARCBVAYJCW1B3B14",
         "planifieCounter": 1,
         "vu": true,
@@ -4077,7 +3953,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6J38KA6V4M0KDZBJ15",
         "planifieCounter": 0
       }
@@ -4103,7 +3978,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y",
         "planifieCounter": 1,
         "visitedByCircuits": [],
@@ -4131,7 +4005,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ",
         "planifieCounter": 1,
         "visitedByCircuits": [
@@ -4161,7 +4034,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6J1QAQ84TRYQFPQ165"
       }
     },
@@ -4186,7 +4058,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6JDTSE0J7BXJFSCPX4",
         "planifieCounter": 0
       }
@@ -4212,7 +4083,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6J53FWBGSMAAVT8PKC",
         "planifieCounter": 0
       }
@@ -4238,7 +4108,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KFB4E74C7MZ22HEYN"
       }
     },
@@ -4263,8 +4132,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala.",
-        "HW_ID": "HW-01K77WPE6KD37GVA594C0XAQQ0"
+        "HW_ID": "HW-01K77WPE6KD37GVA594C0XAQQ0",
+        "Description_courte": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala."
       }
     },
     {
@@ -4288,8 +4157,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Plusieurs potiers dans la rue, flânerie recommandée",
-        "HW_ID": "HW-01K77WPE6KC7BYPZ2982MZ1BQ6"
+        "HW_ID": "HW-01K77WPE6KC7BYPZ2982MZ1BQ6",
+        "Description_courte": "Plusieurs potiers dans la rue, flânerie recommandée"
       }
     },
     {
@@ -4313,7 +4182,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KJNGWAFK1RVYNKE6D"
       }
     },
@@ -4338,7 +4206,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KHCJJTJDZF8MXD4EB"
       }
     },
@@ -4363,7 +4230,6 @@
         "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
         "lat": 33.86191783421097,
         "lng": 10.821201358600382
@@ -4390,7 +4256,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0HW8QW8YRNXWWWA8WB"
       }
     },
@@ -4415,7 +4280,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KHGCS19HJDB943QAF"
       }
     },
@@ -4440,7 +4304,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KC3CHMHRWZ0A8HKB4"
       }
     },
@@ -4465,7 +4328,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KT8VGFJTHK03SWPZR"
       }
     },
@@ -4490,7 +4352,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KQ3W8ZNZCKYQ3G9DB"
       }
     },
@@ -4515,7 +4376,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6KANR1XY901X5NCZAT"
       }
     },
@@ -4540,7 +4400,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6M5QZM1DZV18R4EDHR",
         "planifieCounter": 1,
         "vu": true,
@@ -4571,7 +4430,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6MEFR0X3WG50GNT8RS"
       }
     },
@@ -4596,7 +4454,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T"
       }
     },
@@ -4621,7 +4478,6 @@
         "Source": "https://www.djerba-insolite.com/blog/sidi-yati",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6M06HKCT56J0P2HVZZ"
       }
     },
@@ -4646,7 +4502,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6M1P0KY03A93VBEFXX"
       }
     },
@@ -4671,7 +4526,6 @@
         "Source": "https://djerba-insolite.com/blog/jema-tamazgida",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6MV84XQXSZC6FJZ44Y"
       }
     },
@@ -4696,7 +4550,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6M71Q47QVPFQV4C4H5"
       }
     },
@@ -4721,7 +4574,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6MTFTPQQCESF5JYJSJ"
       }
     },
@@ -4746,7 +4598,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6M14K3331NK215THZS",
         "lat": 33.86202557545826,
         "lng": 10.806473154993117,
@@ -4774,7 +4625,6 @@
         "Source": "https://www.flickr.com/photos/44928546@N05/8008665414\nhttps://www.facebook.com/Assidje.org/posts/la-l%C3%A9gendaire-mosqu%C3%A9e-ouelhi-retrouve-son-%C3%A9clat-apr%C3%A8s-avoir-%C3%A9t%C3%A9-pilli%C3%A9e-et-sacca/2453064461400785/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
         "planifieCounter": 1,
         "vu": true,
@@ -4802,7 +4652,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6MK0YGY2RG0RX2XX48",
         "planifieCounter": 1,
         "visitedByCircuits": [
@@ -4832,7 +4681,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N293MG25FFQBH1G10",
         "planifieCounter": 1,
         "vu": true,
@@ -4860,7 +4708,6 @@
         "Source": "https://djerba-insolite.com/blog/boulimen",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N0ZBXJK23NVJ2MQPX",
         "planifieCounter": 1,
         "vu": true,
@@ -4888,7 +4735,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG",
         "planifieCounter": 1,
         "visitedByCircuits": [
@@ -4918,7 +4764,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NGJQHEKJE3M2T5W5Q",
         "planifieCounter": 1,
         "vu": true,
@@ -4947,7 +4792,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
         "planifieCounter": 1,
         "vu": true,
@@ -4976,7 +4820,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N6A0YBFFKMQQNQH0E",
         "planifieCounter": 1,
         "vu": true,
@@ -5004,7 +4847,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NGZN849YA6V0EC1R0",
         "planifieCounter": 1,
         "vu": true,
@@ -5033,7 +4875,6 @@
         "Source": "https://www.misk.art/lire/un-monument-en-quelques-mots-2%C2%A0-la-l%C3%A9gende-de-borj-el-agreb",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N1VXNG3MVD2QPQFQV"
       }
     },
@@ -5058,7 +4899,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N1D1N6TK82WX52BNM",
         "planifieCounter": 1,
         "vu": true,
@@ -5087,7 +4927,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NJ1X6TBWGCTV85QMM",
         "planifieCounter": 1,
         "vu": true,
@@ -5115,7 +4954,6 @@
         "Source": "https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322https://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N6HF86MYJNJWFPNSV",
         "planifieCounter": 1,
         "vu": true,
@@ -5143,7 +4981,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
         "planifieCounter": 1,
         "vu": true,
@@ -5172,7 +5009,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6N4X1KPEA5FHVM8VXJ"
       }
     },
@@ -5197,7 +5033,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6NZ91JPSJG4M3A7TNR",
         "planifieCounter": 1,
         "vu": true,
@@ -5226,7 +5061,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
         "planifieCounter": 1,
         "vu": true,
@@ -5255,9 +5089,9 @@
         "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Ancienne mosquée ibadite wahbite rénovée récemment.",
         "HW_ID": "HW-01K77WPE6P1NA9ZF5TF1DK9GD2",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment."
       }
     },
     {
@@ -5281,9 +5115,9 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée ibadite wahbite construite  au 4è siècle de l’hégire, ce qui correspond au 10è siècle de notre ère",
         "HW_ID": "HW-01K77WPE6PDSWXWVZZR4ZDNXVX",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée ibadite wahbite construite  au 4è siècle de l’hégire, ce qui correspond au 10è siècle de notre ère"
       }
     },
     {
@@ -5307,7 +5141,6 @@
         "Source": "https://fr.wikipedia.org/wiki/Phare_de_Bordj_Djillidj",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6P5S30A1TBKN0MKF1E"
       }
     },
@@ -5332,9 +5165,9 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée ibadite wahbite rénovée, intialement construite sur le site d'un église byzantine.",
         "HW_ID": "HW-01K77WPE6PP29CK1JR2H25ACNK",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée ibadite wahbite rénovée, intialement construite sur le site d'un église byzantine."
       }
     },
     {
@@ -5358,9 +5191,9 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Ancienne mosquée ibadite wahbite rénovée récemment.",
         "HW_ID": "HW-01K77WPE6PC9G02W8SX1JZX2HC",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment."
       }
     },
     {
@@ -5384,9 +5217,9 @@
         "Source": "https://arachne.dainst.org/entity/7043417?fl=20&q=connectedEntities:7343375&resultIndex=1",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère",
         "HW_ID": "HW-01K77WPE6PKFFHK53AA0880TBZ",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère"
       }
     },
     {
@@ -5410,9 +5243,9 @@
         "Source": "https://fr.wikipedia.org/wiki/Fichier:Mosqu%C3%A9e_Ettouil_01.jpg",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée ibadite wahbite dont la date de construction estimée se situe aux environs du 17ème siècle, entre 1680 et 1720.\nMonument historique classé (INP, 2022).",
         "HW_ID": "HW-01K77WPE6PG0DA193W44FBQAHQ",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée ibadite wahbite dont la date de construction estimée se situe aux environs du 17ème siècle, entre 1680 et 1720.\nMonument historique classé (INP, 2022)."
       }
     },
     {
@@ -5436,9 +5269,9 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée ibadite wahbite construite en 1117 de l’hégire, soit 1705 de notre ère",
         "HW_ID": "HW-01K77WPE6PGSGH7AWKFRACMNSJ",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée ibadite wahbite construite en 1117 de l’hégire, soit 1705 de notre ère"
       }
     },
     {
@@ -5462,9 +5295,9 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Un des lieux de tournage de Star Wars",
         "HW_ID": "HW-01K77WPE6PRETC07TQDNMAG54C",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Un des lieux de tournage de Star Wars"
       }
     },
     {
@@ -5488,9 +5321,9 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle\n",
         "HW_ID": "HW-01K77WPE6P7XZY555VW8YDAVA0",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle\n"
       }
     },
     {
@@ -5514,9 +5347,9 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "A chercher, aucune info sur le net",
         "HW_ID": "HW-01K77WPE6P30E9MGC3BE3KYHP6",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "A chercher, aucune info sur le net"
       }
     },
     {
@@ -5540,9 +5373,9 @@
         "Source": "https://routes.discovertunisia.com/storymap/data/download/Site_08_Mosqu%C3%A9e%20Amghar.pdf",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs",
         "HW_ID": "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs"
       }
     },
     {
@@ -5566,9 +5399,9 @@
         "Source": "https://www.uib.com.tn/accueil/pages-intermediaires/les-forts-de-djerba-un-patrimoine-fragile",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "L'accès est restreint et demande des autorisations",
         "HW_ID": "HW-01K77WPE6PGWRVHZ8H8CTQJ06X",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "L'accès est restreint et demande des autorisations"
       }
     },
     {
@@ -5592,7 +5425,6 @@
         "Source": "https://djerba-insolite.com/blog/mosque-el-cheikh",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6P5C0194DPJWYMX9C1",
         "planifieCounter": 0,
         "vu": true
@@ -5619,7 +5451,6 @@
         "Source": "http://palaisbenayed.com/mosquee-du-caid-hmida-ben-ayed-%D8%AC%D8%A7%D9%85%D8%B9-%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D8%AF-%D8%AD%D9%85%D9%8A%D8%AF%D8%A9-%D8%A8%D9%86-%D8%B9%D9%8A%D8%A7%D8%AF",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6P9JFRW9XXGN7P7FPX",
         "planifieCounter": 1,
         "vu": false
@@ -5646,7 +5477,6 @@
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": 0,
-        "Desc_wpt": "",
         "HW_ID": "HW-01K77WPE6QJNV1Q83SBNFKC88M",
         "planifieCounter": 1,
         "vu": true,
@@ -5675,7 +5505,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QK25S6E6T5BG94JEM",
         "planifieCounter": 0
       }
@@ -5701,7 +5530,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QR67710KWTHBD0C6V",
         "planifieCounter": 1
       }
@@ -5727,7 +5555,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6Q4P5NBGTBKW79MMJT"
       }
     },
@@ -5752,12 +5579,12 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles.",
         "HW_ID": "HW-01K77WPE6Q0QEE8APATRE5K4MS",
         "planifieCounter": 1,
         "vu": true,
         "vuManual": true,
-        "visitedByCircuits": []
+        "visitedByCircuits": [],
+        "Description_courte": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles."
       }
     },
     {
@@ -5781,7 +5608,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QGFPEGPTZ1G59C9FZ",
         "planifieCounter": 1
       }
@@ -5807,7 +5633,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6Q8F3RTEJT1892FPNK"
       }
     },
@@ -5832,7 +5657,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P",
         "planifieCounter": 1
       }
@@ -5858,8 +5682,8 @@
         "Source": "https://flamingo-djerba.com/lieux-a-visiter.html",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones",
-        "HW_ID": "HW-01K77WPE6Q670Z1X2VY3ZKFP8E"
+        "HW_ID": "HW-01K77WPE6Q670Z1X2VY3ZKFP8E",
+        "Description_courte": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones"
       }
     },
     {
@@ -5883,7 +5707,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD",
         "planifieCounter": 1,
         "vu": true,
@@ -5912,8 +5735,8 @@
         "Source": "https://guide-voyage-tunisie.com/le-port-et-la-marina/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Port de pêche, criée aux poissons, cafés et restaurant, sans oublier le point de départ d'excursions en bâteau pirate",
-        "HW_ID": "HW-01K77WPE6Q38XR19W8H70JP4AK"
+        "HW_ID": "HW-01K77WPE6Q38XR19W8H70JP4AK",
+        "Description_courte": "Port de pêche, criée aux poissons, cafés et restaurant, sans oublier le point de départ d'excursions en bâteau pirate"
       }
     },
     {
@@ -5937,7 +5760,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QN6S4TSGEZQ6DQGXA",
         "planifieCounter": 0,
         "vu": true
@@ -5964,7 +5786,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QE5NJP25N8WEWSR03",
         "planifieCounter": 0
       }
@@ -5990,7 +5811,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6QEKDE45N0B9HGYZ0W"
       }
     },
@@ -6015,7 +5835,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
         "planifieCounter": 1,
         "visitedByCircuits": [],
@@ -6043,7 +5862,6 @@
         "Source": "https://www.facebook.com/reel/1357121528501043",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6R3GZWK8NSTPF441RW"
       }
     },
@@ -6068,7 +5886,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6R9A1BAASW9SGFA97P",
         "planifieCounter": 1
       }
@@ -6094,7 +5911,6 @@
         "Source": "https://galaxytours.com/starwars-tunisia-recce-sites/bouregba-mosque/",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B",
         "planifieCounter": 1
       }
@@ -6120,9 +5936,9 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée malékite construite au 20ème siècle",
         "HW_ID": "HW-01K77WPE6RHDAFAXAA92EFT8GY",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée malékite construite au 20ème siècle"
       }
     },
     {
@@ -6146,8 +5962,8 @@
         "Source": "https://fr.wikipedia.org/wiki/Mezraya",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Egalement connue sous le nom de mosquée Sidi Ghrib dont l'architecture évoque la période de transition entre les modèles ruraux à coupoles multiples et cellesplus organisées des mosquées centrales.",
-        "HW_ID": "HW-01K77WPE6RCC0S7XMA08ES9BDD"
+        "HW_ID": "HW-01K77WPE6RCC0S7XMA08ES9BDD",
+        "Description_courte": "Egalement connue sous le nom de mosquée Sidi Ghrib dont l'architecture évoque la période de transition entre les modèles ruraux à coupoles multiples et cellesplus organisées des mosquées centrales."
       }
     },
     {
@@ -6171,7 +5987,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6RM4YJB23YX7AD522S",
         "planifieCounter": 1,
         "vu": true,
@@ -6200,7 +6015,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6R1ZH8B0JTAF5HKXPG"
       }
     },
@@ -6225,7 +6039,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6RK8MBMVETZV9353S6"
       }
     },
@@ -6250,7 +6063,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6RQNBBQXWYACNJTRAC",
         "planifieCounter": 0,
         "vu": true,
@@ -6278,7 +6090,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6RN50H0B51NPN1GECK",
         "planifieCounter": 1
       }
@@ -6304,7 +6115,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS",
         "planifieCounter": 1
       }
@@ -6330,8 +6140,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Petit édifice isolé, implanté sur une légère élévation du terrain, à proximité d’un axe secondaire. Sa morphologie évoque les mosquées rurales djerbiennes à plan simple et fonctionnel.",
-        "HW_ID": "HW-01K77WPE6SGS36CX14YZ6N38ZG"
+        "HW_ID": "HW-01K77WPE6SGS36CX14YZ6N38ZG",
+        "Description_courte": "Petit édifice isolé, implanté sur une légère élévation du terrain, à proximité d’un axe secondaire. Sa morphologie évoque les mosquées rurales djerbiennes à plan simple et fonctionnel."
       }
     },
     {
@@ -6355,7 +6165,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6S9HZ3NW8MK3ME35XW"
       }
     },
@@ -6380,7 +6189,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6SYZ3CNCV0GXBV0MYX",
         "planifieCounter": 1,
         "visitedByCircuits": [
@@ -6410,10 +6218,10 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée ? Marabout ? A voir sur place",
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
         "planifieCounter": 1,
-        "vu": false
+        "vu": false,
+        "Description_courte": "Mosquée ? Marabout ? A voir sur place"
       }
     },
     {
@@ -6437,7 +6245,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01K77WPE6SJ6F4XB4CC3W6YNSG"
       }
     },
@@ -6462,8 +6269,8 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Mosquée située sur un petit ilot. Accessible par la piste menant aux pêcheries modèles de Djerba, juste avant la langue de sable sud.",
-        "HW_ID": "HW-01K77WPE6SQ294ZTDM1HZ3ASFR"
+        "HW_ID": "HW-01K77WPE6SQ294ZTDM1HZ3ASFR",
+        "Description_courte": "Mosquée située sur un petit ilot. Accessible par la piste menant aux pêcheries modèles de Djerba, juste avant la langue de sable sud."
       }
     },
     {
@@ -6487,8 +6294,8 @@
         "Source": "https://fr.wikipedia.org/wiki/Bataille_de_Djerba",
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits",
-        "HW_ID": "HW-4KDVBOTPXFYVRIW9IEE46G09VG"
+        "HW_ID": "HW-4KDVBOTPXFYVRIW9IEE46G09VG",
+        "Description_courte": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits"
       }
     },
     {
@@ -6512,7 +6319,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-AGVY6BXAX7HLGFO3CKDXA9DCML",
         "planifieCounter": 1
       }
@@ -6538,9 +6344,9 @@
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": 0,
-        "Desc_wpt": "Quelques vestige de mosquée",
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "Description_courte": "Quelques vestige de mosquée"
       }
     },
     {
@@ -6564,7 +6370,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0J9FDDEKWKYWHQWE3P",
         "planifieCounter": 0,
         "vu": true
@@ -6591,7 +6396,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0KWM7Z2QZ124W3X09R",
         "planifieCounter": 0
       }
@@ -6617,7 +6421,6 @@
         "Source": null,
         "Temps de visite": null,
         "Prix d'entrée": null,
-        "Desc_wpt": null,
         "HW_ID": "HW-01KJABRN0KCKZMYXY1DGZBH05D",
         "planifieCounter": 0
       }
