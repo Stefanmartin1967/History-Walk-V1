@@ -1,0 +1,20 @@
+{
+  "_comment": "Source unique des catégories POI partagée entre HW (app principale) et DM (data manager). Modifier ici puis publier sur GitHub.",
+  "categories": [
+    "A définir",
+    "Café",
+    "Commerce",
+    "Culture et tradition",
+    "Curiosité",
+    "Hôtel",
+    "Mosquée",
+    "Pâtisserie",
+    "Photo",
+    "Puits",
+    "Restaurant",
+    "Salon de thé",
+    "Site historique",
+    "Site religieux",
+    "Taxi"
+  ]
+}

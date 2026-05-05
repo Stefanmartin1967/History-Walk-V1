@@ -5,9 +5,11 @@ import { cleanUrl, generateHWID, isPointInPolygon, parseGps } from './utils.js';
 const GITHUB_RAW = 'https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main';
 const GEOJSON_URL  = `${GITHUB_RAW}/public/djerba.geojson`;
 const ZONES_URL    = `${GITHUB_RAW}/map.geojson`;
+const CATEGORIES_URL = `${GITHUB_RAW}/public/poi-categories.json`;
 
 let globalGeoJSON = null;
 let zonesGeoJSON = null;
+let poiCategories = null; // Liste partagée HW/DM, chargée au boot
 let historyStack = [];
 let historyIndex = -1;
 const MAX_HISTORY = 50;
@@ -45,6 +47,26 @@ async function loadZones() {
     }
 }
 
+async function loadPoiCategories() {
+    try {
+        const response = await fetch(CATEGORIES_URL + '?t=' + Date.now());
+        if (response.ok) {
+            const data = await response.json();
+            if (Array.isArray(data?.categories)) {
+                poiCategories = [...data.categories].sort();
+                console.log("Catégories chargées :", poiCategories.length);
+            }
+        }
+    } catch (e) {
+        console.warn("Impossible de charger poi-categories.json — fallback sur valeurs uniques du data.", e);
+    }
+}
+
+export function getPoiCategories() {
+    // Fallback : si le JSON n'a pas pu être chargé, on utilise les valeurs présentes dans le data
+    return poiCategories || getUniqueValues('Catégorie');
+}
+
 export function detectZone(lat, lon) {
     if (!zonesGeoJSON || !zonesGeoJSON.features) return "";
     
@@ -80,9 +102,9 @@ export function getUniqueValues(key) {
 export async function loadGeoJSON(forceRemote = false) {
     try {
         notify("loading", "Chargement...");
-        
-        // Charger les zones en arrière-plan
-        await loadZones();
+
+        // Charger les zones et catégories en parallèle
+        await Promise.all([loadZones(), loadPoiCategories()]);
 
         let dataToLoad = null;
         let fromDraft = false;

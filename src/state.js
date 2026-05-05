@@ -2,11 +2,20 @@
 export const APP_VERSION = '3.6.0'; // C2-C7 : imports, SW cache, backup validation, retour Android
 export const MAX_CIRCUIT_POINTS = 15;
 
-export const POI_CATEGORIES = [
+// Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
+// La liste hardcodée ci-dessous est un fallback initial — synchronisée manuellement avec le JSON.
+// Les imports ESM sont des bindings live, donc une réassignation via setPoiCategories
+// est visible côté importeurs sans reload.
+export let POI_CATEGORIES = [
     "A définir", "Café", "Commerce", "Culture et tradition",
     "Curiosité", "Hôtel", "Mosquée", "Pâtisserie", "Photo", "Puits",
     "Restaurant", "Salon de thé", "Site historique", "Site religieux", "Taxi"
 ].sort();
+
+export function setPoiCategories(arr) {
+    if (!Array.isArray(arr) || arr.length === 0) return;
+    POI_CATEGORIES = [...arr].sort();
+}
 
 // --- 1. LE FRIGO (L'État Global) ---
 export const state = {

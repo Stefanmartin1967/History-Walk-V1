@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setSelectedOfficialCircuitIds } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setSelectedOfficialCircuitIds, setPoiCategories } from './state.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -98,9 +98,29 @@ export async function loadDestinationsConfig() {
     }
 }
 
+export async function loadPoiCategoriesConfig() {
+    const baseUrl = import.meta.env?.BASE_URL || './';
+    const configUrl = baseUrl + 'poi-categories.json';
+
+    try {
+        const response = await fetch(configUrl);
+        if (response.ok) {
+            const data = await response.json();
+            if (Array.isArray(data?.categories)) {
+                setPoiCategories(data.categories);
+            }
+        }
+    } catch (e) {
+        console.warn("[Startup] poi-categories.json indisponible — fallback sur la liste hardcodée.", e);
+    }
+}
+
 export async function loadAndInitializeMap() {
-    // 0. Config (CRITIQUE : On attend la config avant tout)
-    await loadDestinationsConfig();
+    // 0. Configs (CRITIQUE : On attend les configs avant tout)
+    await Promise.all([
+        loadDestinationsConfig(),
+        loadPoiCategoriesConfig()
+    ]);
 
     const baseUrl = import.meta.env?.BASE_URL || './';
 
