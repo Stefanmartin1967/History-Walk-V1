@@ -122,8 +122,11 @@ function openModal(feature = null, index = null) {
         form.source.value = p['Source'] || '';
         form.descCourte.value = p['Description_courte'] || '';
         form.nomArabe.value = p['Nom du site arabe'] || '';
-        form.temps.value = p['Temps de visite'] || '';
-        form.prix.value = p["Prix d'entrée"] || '';
+        // Temps_minutes (number) → décomposé en h + min pour le form
+        const totalMin = Number.isFinite(p['Temps_minutes']) ? p['Temps_minutes'] : null;
+        form.tempsH.value = totalMin != null ? Math.floor(totalMin / 60) : '';
+        form.tempsM.value = totalMin != null ? totalMin % 60 : '';
+        form.prixTND.value = Number.isFinite(p['Prix_TND']) ? p['Prix_TND'] : '';
         form.telephone.value = p['Téléphone'] || p['telephone'] || '';
         form.horaires.value = p['Horaires'] || p['horaires'] || '';
         form.verified.checked = !!p['verified'];
@@ -182,6 +185,16 @@ form.gps.addEventListener('blur', () => {
 // 4. Soumission Formulaire
 form.addEventListener('submit', (e) => {
     e.preventDefault();
+    // Temps : combiner h + min en minutes (number) ; null si tout vide
+    const tH = parseInt(form.tempsH.value, 10);
+    const tM = parseInt(form.tempsM.value, 10);
+    const hasTime = !isNaN(tH) || !isNaN(tM);
+    const tempsMinutes = hasTime ? (isNaN(tH) ? 0 : tH) * 60 + (isNaN(tM) ? 0 : tM) : null;
+
+    // Prix : float ; null si vide
+    const prixRaw = form.prixTND.value;
+    const prixTND = prixRaw === '' ? null : parseFloat(prixRaw);
+
     const formData = {
         nom: form.nom.value,
         gps: form.gps.value,
@@ -191,8 +204,8 @@ form.addEventListener('submit', (e) => {
         description: form.description.value,
         source: form.source.value,
         nomArabe: form.nomArabe.value,
-        temps: form.temps.value,
-        prix: form.prix.value,
+        tempsMinutes,
+        prixTND: Number.isFinite(prixTND) ? prixTND : null,
         telephone: form.telephone.value,
         horaires: form.horaires.value,
         verified: form.verified.checked

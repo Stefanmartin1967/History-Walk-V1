@@ -192,19 +192,29 @@ export async function loadAndInitializeMap() {
     try {
         const loadedUserData = await getAllPoiDataForMap(activeMapId) || {};
 
-        // Migration one-shot (visité binaire → vuManual + visitedByCircuits).
-        // Pour chaque POI où `vu=true` sans trace des nouveaux champs,
-        // on suppose que l'état actuel vient d'une coche manuelle → vuManual=true.
-        // Les décochages de circuits ultérieurs ne toucheront pas à ce flag.
+        // Migrations one-shot userData :
+        //   1. Visité binaire (vu=true sans vuManual) → vuManual=true + visitedByCircuits=[]
+        //   2. Champs legacy `timeH/timeM/price` → supprimés (PR 5 chantier DM, le geojson
+        //      stocke désormais Temps_minutes / Prix_TND en racine, plus en userData).
         const migrationUpdates = [];
         for (const [poiId, ud] of Object.entries(loadedUserData)) {
             if (!ud || typeof ud !== 'object') continue;
+            let dirty = false;
+
+            // Migration 1
             const alreadyMigrated = ud.vuManual !== undefined || Array.isArray(ud.visitedByCircuits);
             if (ud.vu === true && !alreadyMigrated) {
                 ud.vuManual = true;
                 ud.visitedByCircuits = [];
-                migrationUpdates.push({ poiId, data: ud });
+                dirty = true;
             }
+
+            // Migration 2 (PR 5)
+            if ('timeH' in ud) { delete ud.timeH; dirty = true; }
+            if ('timeM' in ud) { delete ud.timeM; dirty = true; }
+            if ('price' in ud) { delete ud.price; dirty = true; }
+
+            if (dirty) migrationUpdates.push({ poiId, data: ud });
         }
         if (migrationUpdates.length > 0) {
             try {

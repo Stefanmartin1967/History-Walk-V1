@@ -169,26 +169,19 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const gpxDesc = (allProps.Description_courte || '').trim();
     const hasGpxDesc = gpxDesc !== '';
 
-    // Détails pratiques
+    // Détails pratiques (Temps_minutes / Prix_TND : numbers depuis PR 5 chantier DM)
     let timeH = 0, timeM = 0;
-    if (allProps.timeH !== undefined && allProps.timeM !== undefined) {
-        timeH = parseInt(allProps.timeH, 10) || 0;
-        timeM = parseInt(allProps.timeM, 10) || 0;
-    } else if (allProps['Temps de visite']) {
-        const parts = String(allProps['Temps de visite']).split(':');
-        timeH = parseInt(parts[0], 10) || 0;
-        timeM = parseInt(parts[1], 10) || 0;
+    if (Number.isFinite(allProps['Temps_minutes'])) {
+        const total = allProps['Temps_minutes'];
+        timeH = Math.floor(total / 60);
+        timeM = total % 60;
     }
     const hasTime = timeH > 0 || timeM > 0;
     const timeText = formatTimeText(timeH, timeM);
 
     let priceValue = null;
-    if (allProps.price !== undefined && allProps.price !== '') {
-        priceValue = Number(allProps.price);
-        if (!Number.isFinite(priceValue)) priceValue = null;
-    } else if (allProps['Prix d\'entrée'] !== undefined) {
-        const parsed = parseFloat(allProps['Prix d\'entrée']);
-        if (!isNaN(parsed)) priceValue = parsed;
+    if (Number.isFinite(allProps['Prix_TND'])) {
+        priceValue = allProps['Prix_TND'];
     }
     const hasPrice = priceValue !== null;
     const currency = getCurrentCurrency();

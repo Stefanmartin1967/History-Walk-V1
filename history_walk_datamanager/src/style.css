@@ -312,6 +312,10 @@ tr.hidden-row { display: none; }
   font-family: inherit; color: var(--ink); background: var(--surface); resize: vertical; width: 100%;
 }
 .form-group select { cursor: pointer; }
+/* Temps Visite : 2 inputs h + min côté DM (PR 5 chantier DM) */
+.time-inputs { display: flex; align-items: center; gap: 6px; }
+.time-inputs input { width: 60px; flex: 0 0 auto; }
+.time-inputs span { font-size: 0.85rem; color: var(--ink-soft); }
 .form-group textarea { min-height: 80px; }
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--brand); }
 

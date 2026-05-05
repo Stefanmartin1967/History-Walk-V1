@@ -228,9 +228,8 @@ export async function prepareDiffData(adminDraft) {
 
             // --- USER FRIENDLY LABELS ---
             let displayKey = key;
-            if (key === 'timeH') displayKey = 'Heures (Durée)';
-            if (key === 'timeM') displayKey = 'Minutes (Durée)';
-            if (key === 'price') displayKey = 'Prix (TND)';
+            if (key === 'Temps_minutes') displayKey = 'Durée (min)';
+            if (key === 'Prix_TND') displayKey = 'Prix (TND)';
             if (key === 'description') displayKey = 'Description';
 
             if (key === 'photos') {
