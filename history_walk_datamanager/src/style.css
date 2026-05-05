@@ -307,12 +307,13 @@ tr.hidden-row { display: none; }
 .form-group { display: flex; flex-direction: column; gap: 5px; }
 .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); }
 .form-group label small { font-weight: 400; font-style: italic; }
-.form-group input, .form-group textarea {
+.form-group input, .form-group textarea, .form-group select {
   padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px;
   font-family: inherit; color: var(--ink); background: var(--surface); resize: vertical; width: 100%;
 }
+.form-group select { cursor: pointer; }
 .form-group textarea { min-height: 80px; }
-.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--brand); }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--brand); }
 
 .form-separator { border: 0; border-top: 1px solid var(--line); margin: 2px 0; }
 .details-section {
