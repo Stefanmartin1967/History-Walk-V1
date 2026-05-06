@@ -869,11 +869,16 @@
         "Nom du site FR": "Phare Aghir",
         "Nom du site arabe": "منارة أجير",
         "Catégorie": "Curiosité",
-        "Zone": "Sedouikech",
+        "Zone": "Arkou",
         "Description": "Fait partie du circuit invaders",
+        "Description_courte": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6AB83SMA3RRSYH0SK9",
-        "planifieCounter": 0
+        "Temps_minutes": null,
+        "Prix_TND": null,
+        "Téléphone": null,
+        "Horaires": null,
+        "verified": false,
+        "HW_ID": "HW-01K77WPE6AB83SMA3RRSYH0SK9"
       }
     },
     {
@@ -3936,9 +3941,15 @@
         "Nom du site FR": "Borj el Agreb",
         "Nom du site arabe": "برج العقرب",
         "Catégorie": "Site historique",
-        "Zone": "Meninx",
+        "Zone": "Guellala",
         "Description": "Fort, en ruines, présentant la particularité d'être construit en pleine mer. Pourrait être lié à la construction du Borj Kebir en 1284, il est cité pour la première fois en 1432. Rares sont les infos à son sujet, auxquelles se mélange une légende de scorpion décimant les enfants d'un prince.",
+        "Description_courte": null,
         "Source": "https://www.misk.art/lire/un-monument-en-quelques-mots-2%C2%A0-la-l%C3%A9gende-de-borj-el-agreb",
+        "Temps_minutes": null,
+        "Prix_TND": null,
+        "Téléphone": null,
+        "Horaires": null,
+        "verified": false,
         "HW_ID": "HW-01K77WPE6N1VXNG3MVD2QPQFQV"
       }
     },
@@ -5063,9 +5074,14 @@
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
         "Description": "Ancienne mosquée Ibadite, en ruine, située sur un ilot accessible à pied.",
+        "Description_courte": "Mosquée située sur un petit ilot. Accessible par la piste menant aux pêcheries modèles de Djerba, juste avant la langue de sable sud.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6SQ294ZTDM1HZ3ASFR",
-        "Description_courte": "Mosquée située sur un petit ilot. Accessible par la piste menant aux pêcheries modèles de Djerba, juste avant la langue de sable sud."
+        "Temps_minutes": null,
+        "Prix_TND": null,
+        "Téléphone": null,
+        "Horaires": null,
+        "verified": false,
+        "HW_ID": "HW-01K77WPE6SQ294ZTDM1HZ3ASFR"
       }
     },
     {
