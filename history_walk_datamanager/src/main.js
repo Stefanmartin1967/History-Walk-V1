@@ -98,8 +98,8 @@ window.addEventListener('storage', (e) => {
     }
 });
 
-// --- TOOLBAR DE FILTRES (PR C chantier DM v2) ---
-const ADVANCED_KEYS = ['noDesc', 'noPhoto', 'notVerified'];
+// --- TOOLBAR DE FILTRES (PR C chantier DM v2 + UX-2 : 3 états cohérents HW) ---
+const ADVANCED_KEYS = ['description', 'verified'];
 function initFilterToolbar() {
     const inputSearch = document.getElementById('filter-search');
     const clearSearch = document.getElementById('filter-search-clear');
@@ -135,17 +135,18 @@ function initFilterToolbar() {
         btnAdvanced.classList.toggle('is-active', !open);
     });
 
-    // Délégation : un seul listener sur le panneau, plus robuste qu'un forEach
-    // qui attache 3 listeners individuels (qui ne s'attachaient pas en preview).
-    panelAdvanced.addEventListener('change', (e) => {
-        if (!e.target.matches('input[type="checkbox"]')) return;
-        const id = e.target.id;
-        const key = id === 'filter-no-desc' ? 'noDesc'
-                  : id === 'filter-no-photo' ? 'noPhoto'
-                  : id === 'filter-not-verified' ? 'notVerified'
-                  : null;
-        if (!key) return;
-        setFilter(key, e.target.checked);
+    // Délégation sur le panneau pour les boutons radio (3 états par filtre)
+    panelAdvanced.addEventListener('click', (e) => {
+        const btn = e.target.closest('.advanced-radio-btn');
+        if (!btn) return;
+        const row = btn.closest('.advanced-filter-row');
+        const key = row?.dataset.filterKey;
+        const value = btn.dataset.value; // 'all' | 'hide' | 'only'
+        if (!key || !value) return;
+        // Mise à jour visuelle : déselectionner les autres boutons du même groupe
+        row.querySelectorAll('.advanced-radio-btn').forEach(b => b.classList.remove('is-selected'));
+        btn.classList.add('is-selected');
+        setFilter(key, value);
         refreshAdvancedBadge();
         refreshResetVisibility();
     });
@@ -157,10 +158,11 @@ function initFilterToolbar() {
         selCat.value = ''; setFilter('categorie', '');
         selZone.value = ''; setFilter('zone', '');
         ADVANCED_KEYS.forEach(key => {
-            const checkboxId = `filter-${key === 'noDesc' ? 'no-desc' : key === 'noPhoto' ? 'no-photo' : 'not-verified'}`;
-            const cb = document.getElementById(checkboxId);
-            if (cb) cb.checked = false;
-            setFilter(key, false);
+            const row = panelAdvanced.querySelector(`.advanced-filter-row[data-filter-key="${key}"]`);
+            row?.querySelectorAll('.advanced-radio-btn').forEach(b => {
+                b.classList.toggle('is-selected', b.dataset.value === 'all');
+            });
+            setFilter(key, 'all');
         });
         refreshAdvancedBadge();
         refreshResetVisibility();
@@ -170,8 +172,9 @@ function initFilterToolbar() {
 function countActiveAdvanced() {
     let n = 0;
     ADVANCED_KEYS.forEach(key => {
-        const checkboxId = `filter-${key === 'noDesc' ? 'no-desc' : key === 'noPhoto' ? 'no-photo' : 'not-verified'}`;
-        if (document.getElementById(checkboxId)?.checked) n++;
+        const row = document.querySelector(`.advanced-filter-row[data-filter-key="${key}"]`);
+        const selected = row?.querySelector('.advanced-radio-btn.is-selected');
+        if (selected && selected.dataset.value !== 'all') n++;
     });
     return n;
 }
@@ -190,9 +193,10 @@ function refreshResetVisibility() {
 }
 function refreshAdvancedCounts() {
     const counts = getAdvancedFilterCounts();
-    document.getElementById('count-no-desc').textContent = String(counts.noDesc);
-    document.getElementById('count-no-photo').textContent = String(counts.noPhoto);
-    document.getElementById('count-not-verified').textContent = String(counts.notVerified);
+    const noDesc = document.getElementById('count-no-desc');
+    const notVerified = document.getElementById('count-not-verified');
+    if (noDesc) noDesc.textContent = `${counts.noDesc} sans`;
+    if (notVerified) notVerified.textContent = `${counts.notVerified} non vérifiés`;
 }
 
 // Chargement automatique du GeoJSON au démarrage
