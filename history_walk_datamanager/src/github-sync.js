@@ -1,13 +1,99 @@
 // github-sync.js
 // Publier le GeoJSON modifié sur GitHub depuis le Data Manager.
-// Lit le token depuis localStorage (même clé que l'app HW principale).
+//
+// ─── Stockage du PAT ─────────────────────────────────────────────────────────
+// Le token est stocké dans IndexedDB (DB 'HistoryWalkDB', store 'appState',
+// clé 'github_pat'), aligné sur HW. HW supprime activement la clé localStorage
+// legacy au boot (durcissement sécurité), donc le DM doit lire/écrire au même
+// endroit qu'HW pour partager le token entre les deux apps.
+// Migration legacy : si IDB est vide mais localStorage contient encore la clé,
+// on transfère puis on supprime la clé localStorage.
 
-const TOKEN_KEY = 'github_pat'; // Même clé que HW — un seul token avec scopes repo + gist
+const TOKEN_KEY = 'github_pat';
+const LEGACY_LS_KEY = 'github_pat';
+const IDB_NAME = 'HistoryWalkDB';
+const IDB_STORE = 'appState';
 const OWNER = 'Stefanmartin1967';
 const REPO = 'History-Walk-V1';
 
-function getToken() {
-    return localStorage.getItem(TOKEN_KEY) || null;
+// ─── Mini-couche IDB autonome ───────────────────────────────────────────────
+// On ouvre la DB sans imposer de version : si HW l'a déjà créée, on prend la
+// version courante ; sinon on la crée et on ajoute juste le store qu'on
+// utilise. HW au prochain démarrage déclenchera son propre onupgradeneeded
+// pour ajouter ses autres stores — sans toucher à `appState`.
+
+function idbOpen() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDB_NAME);
+        req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(IDB_STORE)) {
+                db.createObjectStore(IDB_STORE, { keyPath: 'key' });
+            }
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => reject(e.target.error);
+    });
+}
+
+async function idbGet(key) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, 'readonly');
+        const req = tx.objectStore(IDB_STORE).get(key);
+        req.onsuccess = () => resolve(req.result ? req.result.value : null);
+        req.onerror = (e) => reject(e.target.error);
+    });
+}
+
+async function idbPut(key, value) {
+    const db = await idbOpen();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        const req = tx.objectStore(IDB_STORE).put({ key, value });
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+    });
+}
+
+// ─── API token ───────────────────────────────────────────────────────────────
+
+/**
+ * Récupère le token GitHub depuis IndexedDB.
+ * Fallback : si IDB est vide mais localStorage contient encore la clé legacy,
+ * on migre vers IDB et on supprime la clé localStorage.
+ * @returns {Promise<string|null>}
+ */
+export async function getStoredToken() {
+    try {
+        let token = await idbGet(TOKEN_KEY);
+        if (!token) {
+            const legacy = localStorage.getItem(LEGACY_LS_KEY);
+            if (legacy) {
+                token = legacy.trim();
+                await idbPut(TOKEN_KEY, token);
+                localStorage.removeItem(LEGACY_LS_KEY);
+            }
+        }
+        return token || null;
+    } catch (err) {
+        console.warn('[DM github-sync] getStoredToken IDB failed', err);
+        return localStorage.getItem(LEGACY_LS_KEY) || null;
+    }
+}
+
+/**
+ * Persiste le token GitHub dans IndexedDB.
+ * @param {string|null} token
+ */
+export async function saveToken(token) {
+    const clean = token ? token.trim() : null;
+    try {
+        await idbPut(TOKEN_KEY, clean);
+        localStorage.removeItem(LEGACY_LS_KEY);
+    } catch (err) {
+        console.warn('[DM github-sync] saveToken IDB failed', err);
+    }
 }
 
 /**
@@ -27,7 +113,7 @@ function toBase64(str) {
  * @param {function} onStatus Callback (type: 'loading'|'success'|'error', msg: string)
  */
 export async function publishToGitHub(geojson, fileName, onStatus) {
-    const pat = getToken();
+    const pat = await getStoredToken();
     if (!pat) {
         onStatus('error', "Token manquant — publication annulée.");
         return;

@@ -12,7 +12,7 @@ import {
     getDestinations, getActiveDestinationId, setActiveDestination
 } from './storage.js';
 
-import { publishToGitHub } from './github-sync.js';
+import { publishToGitHub, getStoredToken, saveToken } from './github-sync.js';
 
 import { initTable, renderTableRows, setFilter, refreshToolbarDropdowns, getAdvancedFilterCounts } from './table.js'
 // UI
@@ -466,10 +466,10 @@ function showTokenModal() {
             resolve(token);
         }
 
-        function onConfirm() {
+        async function onConfirm() {
             const token = input.value.trim();
             if (!token) { input.focus(); return; }
-            localStorage.setItem('github_pat', token);
+            await saveToken(token);
             close(token);
         }
 
@@ -484,7 +484,7 @@ btnPublish.addEventListener('click', async () => {
     const data = getGeoJSONForExport();
     if (!data) return;
 
-    if (!localStorage.getItem('github_pat')) {
+    if (!(await getStoredToken())) {
         const token = await showTokenModal();
         if (!token) { updateStatus('error', "Publication annulée : pas de token."); return; }
     }
