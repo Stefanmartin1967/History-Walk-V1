@@ -198,16 +198,14 @@ export function saveFeature(formData, indexToUpdate = null) {
 
     const existing = indexToUpdate !== null ? globalGeoJSON.features[indexToUpdate].properties : null;
 
+    // Note coords : la source canonique est `geometry.coordinates` (GeoJSON
+    // standard, écrit plus bas). Les champs textuels legacy (Coordonnées GPS,
+    // Latitude, Longitude) ont été supprimés du schéma le 06/05/2026.
     const properties = {
         "Nom du site FR": formData.nom,
         "Nom du site arabe": formData.nomArabe || null,
-        // CORRECTION ICI : Ajout de || null pour Catégorie et Zone
         "Catégorie": formData.categorie || null,
         "Zone": formData.zone || null,
-        "Coordonnées GPS": `${coords.lat}, ${coords.lon}`,
-        "Latitude": coords.lat,
-        "Longitude": coords.lon,
-        // CORRECTION ICI : Ajout de || null pour Description et Source
         "Description": formData.description || null,
         "Description_courte": formData.descCourte || null,
         "Source": formData.source || null,

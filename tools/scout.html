@@ -625,9 +625,10 @@
                         "Nom du site arabe": nomAr,
                         "Catégorie": cat,
                         "Zone": zone,
-                        "Coordonnées GPS": gps,
-                        "Latitude": lat,
-                        "Longitude": lon,
+                        // Coords : la source canonique est `geometry.coordinates`
+                        // (GeoJSON standard, écrit ci-dessus). Plus de champs
+                        // textuels Coordonnées GPS / Latitude / Longitude
+                        // depuis le cleanup 06/05/2026.
                         "Description": desc,
                         "Source": src,
                         "Temps de visite": null,
