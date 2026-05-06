@@ -1,102 +1,89 @@
 // src/table.js
-import { deleteFeature, saveStateToHistory, getUniqueValues } from './storage.js';
-import { decodeText } from './utils.js';
+import { deleteFeature, getUniqueValues } from './storage.js';
 
 const columnsConfig = [
     { key: 'HW_ID', label: 'ID', hidden: true },
     { key: 'verified', label: '✓', widthClass: 'col-verif', type: 'verified' },
     { key: 'Nom du site FR', label: 'Nom', widthClass: 'col-nom', type: 'search' },
-    { key: 'Catégorie', label: 'Catégorie', widthClass: 'col-cat', type: 'dropdown' },
-    { key: 'Zone', label: 'Zone', widthClass: 'col-zone', type: 'dropdown' },
+    { key: 'Catégorie', label: 'Catégorie', widthClass: 'col-cat' },
+    { key: 'Zone', label: 'Zone', widthClass: 'col-zone' },
     { key: 'actions', label: '', widthClass: 'col-actions', type: 'actions' }
 ];
 
-let activeFilters = {};
+// État des filtres centralisé (lu par main.js, mis à jour via setFilter).
+// Les filtres "avancés" (noDesc, noPhoto, notVerified) sont des booléens.
+const activeFilters = {
+    nom: '',
+    categorie: '',
+    zone: '',
+    noDesc: false,
+    noPhoto: false,
+    notVerified: false
+};
+
 const tableBody = document.querySelector('#data-table tbody');
 const tableHead = document.querySelector('#data-table thead');
 const resultCounter = document.getElementById('result-counter');
+
+let lastFeatures = [];
 
 export function initTable() { renderHeader(); }
 
 function renderHeader() {
     tableHead.innerHTML = '';
     const trTitle = document.createElement('tr');
-    const trFilter = document.createElement('tr');
-    trFilter.className = 'filter-row';
 
     columnsConfig.forEach(col => {
         if (col.hidden) return;
-
         const th = document.createElement('th');
         th.textContent = col.label;
         th.className = col.widthClass || '';
         trTitle.appendChild(th);
-
-        const thFilter = document.createElement('th');
-
-        if (col.type === 'actions' || col.type === 'verified') {
-            thFilter.innerHTML = '';
-        } else if (col.type === 'dropdown') {
-            const select = document.createElement('select');
-            select.className = 'filter-input filter-select';
-            select.dataset.filterKey = col.key;
-            select.innerHTML = '<option value="">Tous</option>';
-            if (activeFilters[col.key]) select.value = activeFilters[col.key];
-
-            select.addEventListener('change', (e) => {
-                activeFilters[col.key] = e.target.value;
-                applyFilters();
-            });
-            thFilter.appendChild(select);
-        } else {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'filter-wrapper';
-
-            const input = document.createElement('input');
-            input.className = 'filter-input';
-            input.placeholder = '...';
-            if (activeFilters[col.key]) input.value = activeFilters[col.key];
-
-            input.addEventListener('input', (e) => {
-                activeFilters[col.key] = e.target.value;
-                applyFilters();
-            });
-
-            const reset = document.createElement('span');
-            reset.className = 'filter-reset';
-            reset.textContent = '×';
-            reset.onclick = () => { input.value = ''; activeFilters[col.key] = ''; applyFilters(); };
-
-            wrapper.appendChild(input);
-            wrapper.appendChild(reset);
-            thFilter.appendChild(wrapper);
-        }
-
-        trFilter.appendChild(thFilter);
     });
 
     tableHead.appendChild(trTitle);
-    tableHead.appendChild(trFilter);
 }
 
-function refreshFilterDropdowns() {
-    columnsConfig.filter(c => c.type === 'dropdown').forEach(col => {
-        const select = tableHead.querySelector(`select[data-filter-key="${col.key}"]`);
-        if (!select) return;
-        const current = select.value;
-        const values = getUniqueValues(col.key);
-        select.innerHTML = '<option value="">Tous</option>';
-        values.forEach(v => {
-            const opt = document.createElement('option');
-            opt.value = v;
-            opt.textContent = v;
-            if (v === current) opt.selected = true;
-            select.appendChild(opt);
-        });
-    });
+export function setFilter(key, value) {
+    if (!(key in activeFilters)) return;
+    activeFilters[key] = value;
+    applyFilters();
+}
+
+export function getActiveFilters() {
+    return { ...activeFilters };
+}
+
+export function getAdvancedFilterCounts() {
+    const features = lastFeatures;
+    return {
+        noDesc: features.filter(f => !hasDescription(f.properties)).length,
+        noPhoto: features.filter(f => !hasPhoto(f.properties)).length,
+        notVerified: features.filter(f => !f.properties.verified).length
+    };
+}
+
+function hasDescription(props) {
+    const d = (props.Description || props.Description_courte || '').trim();
+    return d !== '';
+}
+function hasPhoto(props) {
+    return Array.isArray(props.photos) && props.photos.length > 0;
+}
+
+function passesFilters(props) {
+    const f = activeFilters;
+    if (f.nom && !(props['Nom du site FR'] || '').toLowerCase().includes(f.nom.toLowerCase())) return false;
+    if (f.categorie && props['Catégorie'] !== f.categorie) return false;
+    if (f.zone && props['Zone'] !== f.zone) return false;
+    if (f.noDesc && hasDescription(props)) return false;
+    if (f.noPhoto && hasPhoto(props)) return false;
+    if (f.notVerified && props.verified) return false;
+    return true;
 }
 
 export function renderTableRows(features) {
+    lastFeatures = features;
     tableBody.innerHTML = '';
     const fragment = document.createDocumentFragment();
 
@@ -167,7 +154,6 @@ export function renderTableRows(features) {
     });
 
     tableBody.appendChild(fragment);
-    refreshFilterDropdowns();
     applyFilters();
     document.dispatchEvent(new Event('table:rendered'));
 }
@@ -183,18 +169,46 @@ function appendLink(parent, href, icon, title) {
 
 function applyFilters() {
     const rows = tableBody.querySelectorAll('tr');
-    let c = 0;
-    rows.forEach(row => {
-        let visible = true;
-        for (const [key, val] of Object.entries(activeFilters)) {
-            if (!val) continue;
-            const cell = row.querySelector(`td[data-col="${key}"]`);
-            const cellText = cell ? (cell.textContent || '').toLowerCase() : '';
-            if (!cellText.includes(val.toLowerCase())) { visible = false; break; }
-        }
+    let visibleCount = 0;
+    rows.forEach((row) => {
+        const idx = parseInt(row.dataset.index, 10);
+        const feature = lastFeatures[idx];
+        if (!feature) return;
+        const visible = passesFilters(feature.properties);
         row.style.display = visible ? '' : 'none';
-        if (visible) c++;
+        if (visible) visibleCount++;
     });
-    resultCounter.textContent = `${c} visible(s)`;
+    resultCounter.textContent = `${visibleCount} visible(s)`;
     resultCounter.classList.remove('hidden');
+    document.dispatchEvent(new CustomEvent('table:filters-applied', { detail: { visibleCount, total: lastFeatures.length } }));
+}
+
+// Peupler les dropdowns Catégorie / Zone côté toolbar (appelé depuis main.js)
+export function refreshToolbarDropdowns() {
+    const selCat = document.getElementById('filter-categorie');
+    const selZone = document.getElementById('filter-zone');
+    if (!selCat || !selZone) return;
+
+    const currentCat = selCat.value;
+    const currentZone = selZone.value;
+
+    const cats = getUniqueValues('Catégorie');
+    selCat.innerHTML = '<option value="">Toutes catégories</option>';
+    cats.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        if (c === currentCat) opt.selected = true;
+        selCat.appendChild(opt);
+    });
+
+    const zones = getUniqueValues('Zone');
+    selZone.innerHTML = '<option value="">Toutes zones</option>';
+    zones.forEach(z => {
+        const opt = document.createElement('option');
+        opt.value = z;
+        opt.textContent = z;
+        if (z === currentZone) opt.selected = true;
+        selZone.appendChild(opt);
+    });
 }

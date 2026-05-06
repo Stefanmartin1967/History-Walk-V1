@@ -307,6 +307,86 @@ tr.hidden-row { display: none; }
 .time-inputs input { width: 60px; flex: 0 0 auto; }
 .time-inputs span { font-size: 0.85rem; color: var(--ink-soft); }
 
+/* --- Toolbar de filtres (PR C chantier DM v2) --- */
+.filter-toolbar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+}
+.filter-search-wrapper {
+    position: relative; flex: 1; min-width: 200px; max-width: 320px;
+}
+.filter-search-wrapper input {
+    width: 100%; padding: 7px 30px 7px 32px;
+    border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg); color: var(--ink); font: inherit;
+}
+.filter-search-wrapper input:focus { outline: none; border-color: var(--brand); }
+.filter-search-icon {
+    position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; color: var(--ink-soft);
+    pointer-events: none;
+}
+.filter-search-clear {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    cursor: pointer; color: var(--ink-soft); font-size: 1.2rem;
+    line-height: 1; padding: 0 4px;
+}
+.filter-search-clear:hover { color: var(--ink); }
+.filter-search-clear.hidden { display: none; }
+.filter-toolbar-select {
+    padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg); color: var(--ink); font: inherit; cursor: pointer;
+    min-width: 130px;
+}
+.filter-toolbar-select:focus { outline: none; border-color: var(--brand); }
+.filter-advanced-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 12px;
+    position: relative;
+}
+.filter-advanced-btn.is-active { background: var(--brand-soft); color: var(--brand); }
+.filter-badge {
+    background: var(--brand); color: white;
+    font-size: 0.7rem; font-weight: 700;
+    border-radius: 10px; padding: 2px 6px;
+    min-width: 18px; text-align: center;
+}
+.filter-badge.hidden { display: none; }
+.filter-reset-all {
+    color: var(--danger); padding: 6px;
+}
+.filter-reset-all.hidden { display: none; }
+
+/* Panneau Filtres avancés (collapse) */
+.advanced-filters-panel {
+    display: flex; align-items: center; gap: 24px;
+    padding: 12px 16px;
+    background: var(--bg-soft, var(--surface));
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+}
+.advanced-filters-panel.hidden { display: none; }
+.advanced-filter-row {
+    display: flex; align-items: center; gap: 8px;
+    cursor: pointer; user-select: none;
+    font-size: 0.9rem; color: var(--ink);
+}
+.advanced-filter-row input[type="checkbox"] {
+    width: 16px; height: 16px; cursor: pointer; accent-color: var(--brand);
+}
+.advanced-filter-label { font-weight: 500; }
+.advanced-filter-count {
+    background: var(--line); color: var(--ink-soft);
+    font-size: 0.75rem; font-weight: 600;
+    border-radius: 10px; padding: 2px 7px;
+}
+.advanced-filter-row input:checked ~ .advanced-filter-count {
+    background: var(--brand); color: white;
+}
+
 /* Bandeau cross-app warning (DM ↔ HW) */
 .cross-app-warn {
     display: flex; align-items: center; gap: 10px;
