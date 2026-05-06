@@ -137,7 +137,13 @@
               </div>
               <div class="form-row">
                   <div class="form-group flex-2">
-                      <label>GPS <small>(glisser le marqueur sur la carte →)</small></label>
+                      <label>
+                        GPS <small>(glisser le marqueur sur la carte →)</small>
+                        <span class="gps-links">
+                          <a id="gps-link-gmaps" href="#" target="_blank" rel="noopener" class="gps-link is-disabled" title="Voir sur Google Maps">GMaps ↗</a>
+                          <a id="gps-link-osm" href="#" target="_blank" rel="noopener" class="gps-link is-disabled" title="Voir sur OpenStreetMap">OSM ↗</a>
+                        </span>
+                      </label>
                       <input type="text" name="gps" required placeholder="33.827, 11.046">
                   </div>
                   <div class="form-group flex-1">
