@@ -13,7 +13,7 @@ import {
 
 import { publishToGitHub } from './github-sync.js';
 
-import { initTable, renderTableRows } from './table.js'
+import { initTable, renderTableRows, setFilter, refreshToolbarDropdowns, getAdvancedFilterCounts } from './table.js'
 // UI
 const btnLoad = document.getElementById('btn-load');
 const btnSave = document.getElementById('btn-save');
@@ -55,10 +55,16 @@ function updateStatus(type, msg) {
 initMap('map-container');
 
 initStorage(
-    (features) => { renderTableRows(features); renderMarkers(features); },
+    (features) => {
+        renderTableRows(features);
+        renderMarkers(features);
+        refreshToolbarDropdowns();
+        refreshAdvancedCounts();
+    },
     (type, msg) => updateStatus(type, msg)
 );
 initTable();
+initFilterToolbar();
 
 // Bandeau cross-app : si HW a un brouillon admin non publié, on alerte
 // (même origin = localStorage partagé en prod, en dev les ports diffèrent
@@ -91,6 +97,103 @@ window.addEventListener('storage', (e) => {
         else warn.classList.add('hidden');
     }
 });
+
+// --- TOOLBAR DE FILTRES (PR C chantier DM v2) ---
+const ADVANCED_KEYS = ['noDesc', 'noPhoto', 'notVerified'];
+function initFilterToolbar() {
+    const inputSearch = document.getElementById('filter-search');
+    const clearSearch = document.getElementById('filter-search-clear');
+    const selCat = document.getElementById('filter-categorie');
+    const selZone = document.getElementById('filter-zone');
+    const btnAdvanced = document.getElementById('btn-advanced-filters');
+    const panelAdvanced = document.getElementById('advanced-filters-panel');
+    const btnResetAll = document.getElementById('btn-reset-filters');
+
+    inputSearch.addEventListener('input', (e) => {
+        setFilter('nom', e.target.value);
+        clearSearch.classList.toggle('hidden', !e.target.value);
+        refreshResetVisibility();
+    });
+    clearSearch.addEventListener('click', () => {
+        inputSearch.value = '';
+        setFilter('nom', '');
+        clearSearch.classList.add('hidden');
+        refreshResetVisibility();
+    });
+
+    selCat.addEventListener('change', (e) => {
+        setFilter('categorie', e.target.value);
+        refreshResetVisibility();
+    });
+    selZone.addEventListener('change', (e) => {
+        setFilter('zone', e.target.value);
+        refreshResetVisibility();
+    });
+
+    btnAdvanced.addEventListener('click', () => {
+        const open = panelAdvanced.classList.toggle('hidden');
+        btnAdvanced.classList.toggle('is-active', !open);
+    });
+
+    // Délégation : un seul listener sur le panneau, plus robuste qu'un forEach
+    // qui attache 3 listeners individuels (qui ne s'attachaient pas en preview).
+    panelAdvanced.addEventListener('change', (e) => {
+        if (!e.target.matches('input[type="checkbox"]')) return;
+        const id = e.target.id;
+        const key = id === 'filter-no-desc' ? 'noDesc'
+                  : id === 'filter-no-photo' ? 'noPhoto'
+                  : id === 'filter-not-verified' ? 'notVerified'
+                  : null;
+        if (!key) return;
+        setFilter(key, e.target.checked);
+        refreshAdvancedBadge();
+        refreshResetVisibility();
+    });
+
+    btnResetAll.addEventListener('click', () => {
+        inputSearch.value = '';
+        clearSearch.classList.add('hidden');
+        setFilter('nom', '');
+        selCat.value = ''; setFilter('categorie', '');
+        selZone.value = ''; setFilter('zone', '');
+        ADVANCED_KEYS.forEach(key => {
+            const checkboxId = `filter-${key === 'noDesc' ? 'no-desc' : key === 'noPhoto' ? 'no-photo' : 'not-verified'}`;
+            const cb = document.getElementById(checkboxId);
+            if (cb) cb.checked = false;
+            setFilter(key, false);
+        });
+        refreshAdvancedBadge();
+        refreshResetVisibility();
+    });
+}
+
+function countActiveAdvanced() {
+    let n = 0;
+    ADVANCED_KEYS.forEach(key => {
+        const checkboxId = `filter-${key === 'noDesc' ? 'no-desc' : key === 'noPhoto' ? 'no-photo' : 'not-verified'}`;
+        if (document.getElementById(checkboxId)?.checked) n++;
+    });
+    return n;
+}
+function refreshAdvancedBadge() {
+    const badge = document.getElementById('advanced-filters-badge');
+    const n = countActiveAdvanced();
+    if (n > 0) { badge.textContent = String(n); badge.classList.remove('hidden'); }
+    else badge.classList.add('hidden');
+}
+function refreshResetVisibility() {
+    const inputSearch = document.getElementById('filter-search');
+    const selCat = document.getElementById('filter-categorie');
+    const selZone = document.getElementById('filter-zone');
+    const anyActive = !!inputSearch.value || !!selCat.value || !!selZone.value || countActiveAdvanced() > 0;
+    document.getElementById('btn-reset-filters').classList.toggle('hidden', !anyActive);
+}
+function refreshAdvancedCounts() {
+    const counts = getAdvancedFilterCounts();
+    document.getElementById('count-no-desc').textContent = String(counts.noDesc);
+    document.getElementById('count-no-photo').textContent = String(counts.noPhoto);
+    document.getElementById('count-not-verified').textContent = String(counts.notVerified);
+}
 
 // Chargement automatique du GeoJSON au démarrage
 (async () => {

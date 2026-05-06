@@ -61,6 +61,48 @@
 
         <!-- PANNEAU GAUCHE : Tableau (visible par défaut) -->
         <div id="table-view" class="table-container">
+          <!-- Toolbar de filtres (recherche + dropdowns + filtres avancés) -->
+          <div id="filter-toolbar" class="filter-toolbar">
+            <div class="filter-search-wrapper">
+              <i data-lucide="search" class="filter-search-icon"></i>
+              <input id="filter-search" type="text" placeholder="Rechercher un nom de POI…" autocomplete="off">
+              <span id="filter-search-clear" class="filter-search-clear hidden">×</span>
+            </div>
+            <select id="filter-categorie" class="filter-toolbar-select" title="Catégorie">
+              <option value="">Toutes catégories</option>
+            </select>
+            <select id="filter-zone" class="filter-toolbar-select" title="Zone">
+              <option value="">Toutes zones</option>
+            </select>
+            <button id="btn-advanced-filters" type="button" class="btn btn-neutral filter-advanced-btn" title="Filtres avancés">
+              <i data-lucide="sliders-horizontal"></i>
+              <span>Avancés</span>
+              <span id="advanced-filters-badge" class="filter-badge hidden">0</span>
+            </button>
+            <button id="btn-reset-filters" type="button" class="btn-icon filter-reset-all hidden" title="Réinitialiser tous les filtres">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+
+          <!-- Panneau Filtres avancés (replié par défaut) -->
+          <div id="advanced-filters-panel" class="advanced-filters-panel hidden">
+            <label class="advanced-filter-row">
+              <input type="checkbox" id="filter-no-desc">
+              <span class="advanced-filter-label">Sans description</span>
+              <span id="count-no-desc" class="advanced-filter-count">0</span>
+            </label>
+            <label class="advanced-filter-row">
+              <input type="checkbox" id="filter-no-photo">
+              <span class="advanced-filter-label">Sans photo</span>
+              <span id="count-no-photo" class="advanced-filter-count">0</span>
+            </label>
+            <label class="advanced-filter-row">
+              <input type="checkbox" id="filter-not-verified">
+              <span class="advanced-filter-label">Non vérifiés</span>
+              <span id="count-not-verified" class="advanced-filter-count">0</span>
+            </label>
+          </div>
+
           <table id="data-table"><thead></thead><tbody></tbody></table>
         </div>
 
