@@ -1,10 +1,4 @@
-// src/zones.js
-// Généré automatiquement à partir de public/djerba-zones.geojson (OSM admin_level=6).
-// Pour régénérer : node scripts/fetch-zones-from-osm.mjs djerba 6 + cleanup
-// puis copier ce fichier ou exécuter le script ad-hoc.
-// Sert à detectZone(lat, lng) côté HW (mobile-nav, utils).
-
-export const zonesData = {
+{
   "type": "FeatureCollection",
   "features": [
     {
@@ -54880,4 +54874,4 @@ export const zonesData = {
       }
     }
   ]
-};
+}
