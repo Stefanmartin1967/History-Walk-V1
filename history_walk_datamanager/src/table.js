@@ -9,14 +9,16 @@ const columnsConfig = [
 ];
 
 // État des filtres centralisé (lu par main.js, mis à jour via setFilter).
-// Les filtres "avancés" (noDesc, noPhoto, notVerified) sont des booléens.
+// Les filtres "avancés" `description` et `verified` sont en 3 états
+// ('all' | 'hide' | 'only') alignés sur le pattern HW (PR #446).
+//   - 'hide' : cache les POIs qui ont la propriété (ex: cache ceux qui ont une description)
+//   - 'only' : montre uniquement ceux qui ont la propriété
 const activeFilters = {
     nom: '',
     categorie: '',
     zone: '',
-    noDesc: false,
-    noPhoto: false,
-    notVerified: false
+    description: 'all',
+    verified: 'all'
 };
 
 const tableBody = document.querySelector('#data-table tbody');
@@ -54,9 +56,10 @@ export function getActiveFilters() {
 
 export function getAdvancedFilterCounts() {
     const features = lastFeatures;
+    // Compteurs informatifs : nombre de POIs en état "manquant" pour chaque
+    // critère. Aide à savoir d'un coup d'œil combien il reste à traiter.
     return {
         noDesc: features.filter(f => !hasDescription(f.properties)).length,
-        noPhoto: features.filter(f => !hasPhoto(f.properties)).length,
         notVerified: features.filter(f => !f.properties.verified).length
     };
 }
@@ -65,18 +68,18 @@ function hasDescription(props) {
     const d = (props.Description || props.Description_courte || '').trim();
     return d !== '';
 }
-function hasPhoto(props) {
-    return Array.isArray(props.photos) && props.photos.length > 0;
-}
 
 function passesFilters(props) {
     const f = activeFilters;
     if (f.nom && !(props['Nom du site FR'] || '').toLowerCase().includes(f.nom.toLowerCase())) return false;
     if (f.categorie && props['Catégorie'] !== f.categorie) return false;
     if (f.zone && props['Zone'] !== f.zone) return false;
-    if (f.noDesc && hasDescription(props)) return false;
-    if (f.noPhoto && hasPhoto(props)) return false;
-    if (f.notVerified && props.verified) return false;
+    // 3 états : 'hide' cache les POIs qui ONT la propriété, 'only' montre QUE ceux-là.
+    const hasDesc = hasDescription(props);
+    if (f.description === 'hide' && hasDesc) return false;
+    if (f.description === 'only' && !hasDesc) return false;
+    if (f.verified === 'hide' && props.verified) return false;
+    if (f.verified === 'only' && !props.verified) return false;
     return true;
 }
 

@@ -84,23 +84,26 @@
             </button>
           </div>
 
-          <!-- Panneau Filtres avancés (replié par défaut) -->
+          <!-- Panneau Filtres avancés (replié par défaut, 3 états cohérents avec HW) -->
           <div id="advanced-filters-panel" class="advanced-filters-panel hidden">
-            <label class="advanced-filter-row">
-              <input type="checkbox" id="filter-no-desc">
-              <span class="advanced-filter-label">Sans description</span>
-              <span id="count-no-desc" class="advanced-filter-count">0</span>
-            </label>
-            <label class="advanced-filter-row">
-              <input type="checkbox" id="filter-no-photo">
-              <span class="advanced-filter-label">Sans photo</span>
-              <span id="count-no-photo" class="advanced-filter-count">0</span>
-            </label>
-            <label class="advanced-filter-row">
-              <input type="checkbox" id="filter-not-verified">
-              <span class="advanced-filter-label">Non vérifiés</span>
-              <span id="count-not-verified" class="advanced-filter-count">0</span>
-            </label>
+            <div class="advanced-filter-row" data-filter-key="description">
+              <span class="advanced-filter-label">Avec description</span>
+              <span id="count-no-desc" class="advanced-filter-count" title="POIs sans description">0 sans</span>
+              <div class="advanced-radio-group" role="radiogroup" aria-label="Filtre Description">
+                <button type="button" class="advanced-radio-btn is-selected" data-value="all">Tous</button>
+                <button type="button" class="advanced-radio-btn" data-value="hide">Masquer</button>
+                <button type="button" class="advanced-radio-btn" data-value="only">Afficher</button>
+              </div>
+            </div>
+            <div class="advanced-filter-row" data-filter-key="verified">
+              <span class="advanced-filter-label">Vérifiés</span>
+              <span id="count-not-verified" class="advanced-filter-count" title="POIs non vérifiés">0 non vérifiés</span>
+              <div class="advanced-radio-group" role="radiogroup" aria-label="Filtre Vérifié">
+                <button type="button" class="advanced-radio-btn is-selected" data-value="all">Tous</button>
+                <button type="button" class="advanced-radio-btn" data-value="hide">Masquer</button>
+                <button type="button" class="advanced-radio-btn" data-value="only">Afficher</button>
+              </div>
+            </div>
           </div>
 
           <table id="data-table"><thead></thead><tbody></tbody></table>
