@@ -241,6 +241,14 @@ export function renderTab(tab, diffData, callbacks) {
                 ${!hasToken ? `<div class="cc-status-badge no-token"><i data-lucide="alert-triangle"></i> Token manquant — <button class="cc-inline-link" id="btn-cc-goto-config2">Config</button></div>` : ''}
             </div>
 
+            ${localStorage.getItem('dm_has_unpublished_changes') === '1' ? `
+                <div class="cc-cross-app-warn">
+                    <i data-lucide="alert-triangle"></i>
+                    <span>Le Data Manager a un brouillon non publié. Publie-le d'abord pour éviter d'écraser tes modifs.</span>
+                    <button class="cc-inline-link" id="btn-goto-dm">Ouvrir le DM</button>
+                </div>
+            ` : ''}
+
             <div class="dashboard-grid">
                 <div class="stat-card" data-action="goto-changes" title="Voir les modifications">
                     <div class="stat-icon-box"><i data-lucide="map-pin"></i></div>
@@ -300,6 +308,13 @@ export function renderTab(tab, diffData, callbacks) {
             if (btnConf2) btnConf2.onclick = goSettings;
             const btnConf3 = document.getElementById('btn-cc-goto-config3');
             if (btnConf3) btnConf3.onclick = goSettings;
+
+            const btnGotoDm = document.getElementById('btn-goto-dm');
+            if (btnGotoDm) btnGotoDm.onclick = () => {
+                const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+                const url = isDev ? 'http://localhost:5175/' : '/History-Walk-V1/history_walk_datamanager/';
+                window.open(url, '_blank');
+            };
         }, 0);
     } else if (tab === 'changes') {
         if (diffData.pois.length === 0 && diffData.circuits.length === 0) {

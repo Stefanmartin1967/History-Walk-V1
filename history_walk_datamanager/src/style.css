@@ -316,6 +316,28 @@ tr.hidden-row { display: none; }
 .time-inputs { display: flex; align-items: center; gap: 6px; }
 .time-inputs input { width: 60px; flex: 0 0 auto; }
 .time-inputs span { font-size: 0.85rem; color: var(--ink-soft); }
+
+/* Bandeau cross-app warning (DM ↔ HW) */
+.cross-app-warn {
+    display: flex; align-items: center; gap: 10px;
+    background: #FEF3C7; color: #92400E;
+    border: 1px solid #FDE68A;
+    padding: 8px 14px; font-size: 0.9rem;
+    border-radius: 4px; margin: 8px 12px;
+}
+.cross-app-warn.hidden { display: none; }
+.cross-app-warn i { width: 16px; height: 16px; flex-shrink: 0; }
+.cross-app-warn span { flex: 1; }
+.cross-app-btn {
+    background: #92400E; color: white; border: none;
+    padding: 4px 10px; border-radius: 4px; cursor: pointer;
+    font-size: 0.85rem; font-weight: 600;
+}
+.cross-app-btn:hover { background: #78350F; }
+.cross-app-dismiss {
+    background: transparent; border: none; cursor: pointer;
+    color: #92400E; font-size: 1.2rem; padding: 0 4px;
+}
 .form-group textarea { min-height: 80px; }
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--brand); }
 
