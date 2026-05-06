@@ -20,6 +20,7 @@
   <div id="toolbar">
     <label>Zones de :</label>
     <select id="dest-select"></select>
+    <label style="margin-left:14px"><input type="checkbox" id="compare-toggle"> Comparer (legacy + OSM)</label>
     <span id="count"></span>
   </div>
   <div id="map"></div>
@@ -31,31 +32,82 @@
       attribution: '© OpenStreetMap', maxZoom: 19
     }).addTo(map);
 
-    let currentLayer = null;
+    let currentLayers = [];
     const sel = document.getElementById('dest-select');
     const counter = document.getElementById('count');
+    const compareToggle = document.getElementById('compare-toggle');
 
-    async function loadDest(destId) {
-      if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
-      const dests = await (await fetch('destinations.json')).json();
-      const dest = dests.maps[destId];
-      if (!dest?.zonesFile) { counter.textContent = 'Pas de zonesFile'; return; }
-      const url = dest.zonesFile === 'map.geojson' ? '../map.geojson' : dest.zonesFile;
+    function clearLayers() {
+      currentLayers.forEach(l => map.removeLayer(l));
+      currentLayers = [];
+    }
+
+    async function fetchGeo(url) {
       const res = await fetch(url);
-      if (!res.ok) { counter.textContent = `Aucun fichier zones (${url})`; return; }
-      const geo = await res.json();
-      counter.textContent = `${geo.features.length} zones`;
-      currentLayer = L.geoJSON(geo, {
-        style: { color: '#2563eb', weight: 2, fillOpacity: 0.15, fillColor: '#2563eb' },
+      if (!res.ok) return null;
+      return await res.json();
+    }
+
+    function makeLayer(geo, color, labelClass) {
+      return L.geoJSON(geo, {
+        style: { color, weight: 2, fillOpacity: 0.15, fillColor: color },
         onEachFeature: (f, l) => {
           const name = f.properties.name || '?';
           const ar = f.properties.name_ar ? `<br><span style="direction:rtl">${f.properties.name_ar}</span>` : '';
-          l.bindTooltip(name, { permanent: true, direction: 'center', className: 'zone-label' });
+          l.bindTooltip(name, { permanent: true, direction: 'center', className: labelClass });
           l.bindPopup(`<b>${name}</b>${ar}`);
         }
-      }).addTo(map);
-      map.fitBounds(currentLayer.getBounds());
+      });
     }
+
+    async function loadDest(destId) {
+      clearLayers();
+      const dests = await (await fetch('destinations.json')).json();
+      const dest = dests.maps[destId];
+      if (!dest?.zonesFile) { counter.textContent = 'Pas de zonesFile'; return; }
+
+      const compare = compareToggle.checked;
+      const layers = [];
+
+      // Source officielle : zonesFile depuis destinations.json, dans public/
+      // Le viewer est dans public/ → path relatif simple.
+      const officialUrl = dest.zonesFile;
+      const officialGeo = await fetchGeo(officialUrl);
+      if (officialGeo) {
+        const color = compare ? '#dc2626' : '#2563eb';
+        const labelClass = compare ? 'zone-label zone-label-red' : 'zone-label';
+        const layer = makeLayer(officialGeo, color, labelClass);
+        layer.addTo(map);
+        layers.push({ layer, count: officialGeo.features.length, label: dest.zonesFile });
+      }
+
+      // Source 2 : OSM admin (si compare = on et fichier OSM existe)
+      let osmCount = 0;
+      if (compare) {
+        const osmUrl = `${destId}-zones.geojson`;
+        // Si le zonesFile officiel EST déjà ce fichier OSM, on évite le doublon
+        if (osmUrl !== dest.zonesFile) {
+          const osmGeo = await fetchGeo(osmUrl);
+          if (osmGeo) {
+            const layer = makeLayer(osmGeo, '#2563eb', 'zone-label');
+            layer.addTo(map);
+            layers.push({ layer, count: osmGeo.features.length, label: osmUrl });
+            osmCount = osmGeo.features.length;
+          }
+        }
+      }
+
+      currentLayers = layers.map(x => x.layer);
+      counter.textContent = layers.map(x => `${x.count} (${x.label})`).join(' • ');
+
+      // Fit bounds sur la combinaison
+      if (currentLayers.length > 0) {
+        const group = L.featureGroup(currentLayers);
+        map.fitBounds(group.getBounds());
+      }
+    }
+
+    compareToggle.addEventListener('change', () => loadDest(sel.value));
 
     (async () => {
       const dests = await (await fetch('destinations.json')).json();
@@ -78,6 +130,7 @@
       background: rgba(255,255,255,0.85); border: none; box-shadow: none;
       font-size: 0.75rem; font-weight: 600; color: #1e40af; padding: 2px 6px;
     }
+    .zone-label-red { color: #b91c1c; }
   </style>
 </body>
 </html>

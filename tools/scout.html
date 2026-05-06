@@ -264,19 +264,15 @@
         // Détection arabe
         function isArabic(str) { return str && /[\u0600-\u06FF]/.test(str); }
 
-        // Détection de zone — fichier dépend de la destination active (PR B).
-        // Convention : 'map.geojson' à la racine pour Djerba (legacy),
-        // 'public/{dest}-zones.geojson' pour les autres.
+        // Détection de zone — fichier zonesFile depuis destinations.json,
+        // toujours dans public/ depuis la migration OSM 06/05/2026.
         let zonesGeoJSON = null;
         async function loadZonesFor(destId) {
             zonesGeoJSON = null;
             const dest = destinationsData[destId];
             if (!dest?.zonesFile) return;
-            const url = dest.zonesFile === 'map.geojson'
-                ? `../${dest.zonesFile}`
-                : `../public/${dest.zonesFile}`;
             try {
-                const res = await fetch(url + '?t=' + Date.now());
+                const res = await fetch(`../public/${dest.zonesFile}?t=${Date.now()}`);
                 if (res.ok) zonesGeoJSON = await res.json();
             } catch(e) { /* zones non disponibles pour cette destination */ }
         }

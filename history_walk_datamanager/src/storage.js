@@ -20,11 +20,7 @@ function getGeoJSONUrl(destId = activeDestId) {
 function getZonesUrl(destId = activeDestId) {
     const zonesFile = destinationsData?.[destId]?.zonesFile;
     if (!zonesFile) return null;
-    // Convention legacy djerba : map.geojson à la racine du repo.
-    // Les autres destinations : public/{dest}-zones.geojson.
-    return zonesFile === 'map.geojson'
-        ? `${GITHUB_RAW}/${zonesFile}`
-        : `${GITHUB_RAW}/public/${zonesFile}`;
+    return `${GITHUB_RAW}/public/${zonesFile}`;
 }
 
 // Brouillon localStorage par destination (évite la pollution entre destinations).
