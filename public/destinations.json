@@ -5,6 +5,8 @@
       "name": "Djerba",
       "file": "djerba.geojson",
       "circuitsFile": "circuits/djerba.json",
+      "zonesFile": "map.geojson",
+      "bounds": [[33.62, 10.72], [33.91, 11.06]],
       "currency": "TND",
       "startView": {
         "center": [
@@ -18,6 +20,8 @@
       "name": "Hammamet",
       "file": "hammamet.geojson",
       "circuitsFile": "circuits/hammamet.json",
+      "zonesFile": "hammamet-zones.geojson",
+      "bounds": [[36.35, 10.55], [36.45, 10.67]],
       "currency": "TND",
       "startView": {
         "center": [

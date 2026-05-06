@@ -5,7 +5,6 @@
 const TOKEN_KEY = 'github_pat'; // Même clé que HW — un seul token avec scopes repo + gist
 const OWNER = 'Stefanmartin1967';
 const REPO = 'History-Walk-V1';
-const FILE_PATH = 'public/djerba.geojson';
 
 function getToken() {
     return localStorage.getItem(TOKEN_KEY) || null;
@@ -24,12 +23,17 @@ function toBase64(str) {
 /**
  * Publie le GeoJSON sur GitHub.
  * @param {object} geojson L'objet GeoJSON à publier.
+ * @param {string} fileName Nom du fichier dans public/ (ex: 'djerba.geojson', 'hammamet.geojson')
  * @param {function} onStatus Callback (type: 'loading'|'success'|'error', msg: string)
  */
-export async function publishToGitHub(geojson, onStatus) {
+export async function publishToGitHub(geojson, fileName, onStatus) {
     const pat = getToken();
     if (!pat) {
         onStatus('error', "Token manquant — publication annulée.");
+        return;
+    }
+    if (!fileName) {
+        onStatus('error', "Destination indéterminée — publication annulée.");
         return;
     }
 
@@ -49,7 +53,8 @@ export async function publishToGitHub(geojson, onStatus) {
         }
     }
 
-    const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
+    const filePath = `public/${fileName}`;
+    const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${filePath}`;
 
     onStatus('loading', "Publication en cours...");
 
@@ -70,7 +75,7 @@ export async function publishToGitHub(geojson, onStatus) {
         // 3. Construire le payload
         const now = new Date().toISOString().slice(0, 16).replace('T', ' ');
         const payload = {
-            message: `Data Manager: mise à jour djerba.geojson (${now})`,
+            message: `Data Manager: mise à jour ${fileName} (${now})`,
             content,
             ...(sha ? { sha } : {})
         };

@@ -209,7 +209,11 @@
                     manualOpt.value = '__manual__';
                     manualOpt.textContent = '➕ Nouvelle destination (manuel)…';
                     DOM.destSelect.appendChild(manualOpt);
-                    // Déclenche le change pour pré-remplir la bbox de la première destination
+                    // Préselectionne la destination active de destinations.json (par défaut)
+                    if (json.activeMapId && destinationsData[json.activeMapId]) {
+                        DOM.destSelect.value = json.activeMapId;
+                    }
+                    // Déclenche le change pour pré-remplir la bbox + charger les zones
                     DOM.destSelect.dispatchEvent(new Event('change'));
                 }
             } catch(e) {
@@ -221,6 +225,7 @@
             const val = DOM.destSelect.value;
             if (val === '__manual__') {
                 DOM.manualGroup.classList.remove('hidden');
+                zonesGeoJSON = null; // mode manuel : pas de zones (autodetect désactivé)
             } else {
                 DOM.manualGroup.classList.add('hidden');
                 // Pré-remplir la bbox depuis destinations.json
@@ -232,6 +237,8 @@
                     DOM.bboxNorth.value = north;
                     DOM.bboxEast.value  = east;
                 }
+                // Recharger les zones de la destination
+                loadZonesFor(val);
             }
         });
 
@@ -257,14 +264,22 @@
         // Détection arabe
         function isArabic(str) { return str && /[\u0600-\u06FF]/.test(str); }
 
-        // Détection de zone via map.geojson
+        // Détection de zone — fichier dépend de la destination active (PR B).
+        // Convention : 'map.geojson' à la racine pour Djerba (legacy),
+        // 'public/{dest}-zones.geojson' pour les autres.
         let zonesGeoJSON = null;
-        (async () => {
+        async function loadZonesFor(destId) {
+            zonesGeoJSON = null;
+            const dest = destinationsData[destId];
+            if (!dest?.zonesFile) return;
+            const url = dest.zonesFile === 'map.geojson'
+                ? `../${dest.zonesFile}`
+                : `../public/${dest.zonesFile}`;
             try {
-                const res = await fetch('../map.geojson');
+                const res = await fetch(url + '?t=' + Date.now());
                 if (res.ok) zonesGeoJSON = await res.json();
-            } catch(e) { /* zones non disponibles */ }
-        })();
+            } catch(e) { /* zones non disponibles pour cette destination */ }
+        }
 
         function isPointInPolygon(point, polygon) {
             const [px, py] = point;
