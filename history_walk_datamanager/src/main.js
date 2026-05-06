@@ -39,15 +39,9 @@ const dlZones = document.getElementById('list-zones');
 // État édition
 let currentEditIndex = null;
 
-// --- STATUS & THEME ---
-// (Même code que précédemment pour le thème, je l'abrège ici pour la lisibilité)
-const themeBtn = document.getElementById('theme-btn');
-const themeMenu = document.getElementById('theme-menu');
-themeBtn.addEventListener('click', (e) => { e.stopPropagation(); themeMenu.classList.toggle('hidden'); });
-document.addEventListener('click', (e) => { if(!themeBtn.contains(e.target)) themeMenu.classList.add('hidden'); });
-document.querySelectorAll('.theme-option').forEach(o => o.addEventListener('click', () => {
-    document.documentElement.setAttribute('data-theme', o.dataset.value);
-}));
+// --- STATUS ---
+// Le thème est désormais hérité de HW (cf. <script> bootstrap dans index.html
+// qui lit localStorage 'hw_theme'). Plus de switcher dédié dans le DM.
 
 function updateStatus(type, msg) {
     statusBarText.textContent = msg;

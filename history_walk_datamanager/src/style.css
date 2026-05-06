@@ -109,17 +109,7 @@ body {
 
 .btn-delete:hover { background-color: #fee2e2; color: var(--danger); }
 
-/* --- 5. MENU THÈME --- */
-.theme-dropdown { position: relative; }
-.dropdown-content {
-  position: absolute; top: 110%; right: 0; background-color: var(--surface); border: 1px solid var(--line);
-  border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 150px; z-index: 100; overflow: hidden;
-}
-.dropdown-content.hidden { display: none; }
-.theme-option { padding: 10px 15px; cursor: pointer; font-size: 0.9rem; color: var(--ink); }
-.theme-option:hover { background-color: var(--brand-soft); color: var(--brand); }
-
-/* --- 6. BARRE DE STATUT --- */
+/* --- 5. BARRE DE STATUT --- */
 .status-bar { 
   background-color: var(--brand-soft); color: var(--bg-2); padding: 0.5rem 1.5rem; 
   border-bottom: 1px solid var(--line); font-size: 0.9rem; font-weight: 600; 
