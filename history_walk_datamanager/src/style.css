@@ -23,7 +23,7 @@ body {
 }
 #app { display: flex; flex-direction: column; height: 100%; }
 
-/* --- SPLIT LAYOUT : TABLE + CARTE --- */
+/* --- SPLIT LAYOUT MASTER-DETAIL : TABLE + ÉDITION + CARTE --- */
 .main-split {
     display: flex;
     flex: 1;
@@ -32,15 +32,17 @@ body {
 }
 
 .table-container {
-    flex: 1;
+    flex: 0 0 30%;
     min-width: 0;
     overflow-y: auto;
     overflow-x: auto;
     border-right: 2px solid var(--line);
+    display: flex;
+    flex-direction: column;
 }
 
 .map-panel {
-    width: 60%;
+    flex: 1 1 35%;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
@@ -246,9 +248,9 @@ tr.hidden-row { display: none; }
 }
 
 
-/* --- 9. PANNEAU D'ÉDITION (remplace la modale) --- */
+/* --- 9. PANNEAU D'ÉDITION (master-detail, toujours visible) --- */
 .edit-panel {
-  flex: 1;
+  flex: 0 0 35%;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -256,7 +258,22 @@ tr.hidden-row { display: none; }
   border-right: 2px solid var(--line);
   background: var(--surface);
 }
-.edit-panel.hidden { display: none; }
+.edit-panel-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.edit-panel-content.hidden { display: none; }
+.edit-panel-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+.edit-panel-empty.hidden { display: none; }
+.edit-panel-empty i { width: 48px; height: 48px; opacity: 0.4; }
+.edit-panel-empty p { font-size: 0.9rem; line-height: 1.5; }
 
 .edit-panel-header {
   padding: 10px 16px;

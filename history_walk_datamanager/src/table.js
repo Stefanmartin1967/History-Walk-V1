@@ -5,8 +5,6 @@ const columnsConfig = [
     { key: 'HW_ID', label: 'ID', hidden: true },
     { key: 'verified', label: '✓', widthClass: 'col-verif', type: 'verified' },
     { key: 'Nom du site FR', label: 'Nom', widthClass: 'col-nom', type: 'search' },
-    { key: 'Catégorie', label: 'Catégorie', widthClass: 'col-cat' },
-    { key: 'Zone', label: 'Zone', widthClass: 'col-zone' },
     { key: 'actions', label: '', widthClass: 'col-actions', type: 'actions' }
 ];
 
@@ -91,11 +89,15 @@ export function renderTableRows(features) {
         const props = feature.properties;
         const tr = document.createElement('tr');
         tr.dataset.index = index;
+        // Master-detail : clic ligne = édition directe (le panneau central est
+        // toujours visible). Le bouton ✏️ Édit n'est plus nécessaire.
+        // On dispatche aussi request:preview pour focuser la carte sur le POI.
         tr.addEventListener('click', (e) => {
             if (e.target.closest('button, a')) return;
             document.querySelectorAll('#data-table tbody tr').forEach(r => r.classList.remove('row-active'));
             tr.classList.add('row-active');
             document.dispatchEvent(new CustomEvent('request:preview', { detail: { index } }));
+            document.dispatchEvent(new CustomEvent('request:edit', { detail: { index } }));
         });
 
         columnsConfig.forEach(col => {
@@ -116,21 +118,13 @@ export function renderTableRows(features) {
                 badge.textContent = isVerified ? '✓' : '–';
                 wrapper.appendChild(badge);
             } else if (col.type === 'actions') {
-                const btnEdit = document.createElement('button');
-                btnEdit.className = 'icon-btn-shared btn-edit';
-                btnEdit.innerHTML = `<i data-lucide="pencil"></i>`;
-                btnEdit.title = 'Modifier';
-                btnEdit.onclick = () => {
-                    document.dispatchEvent(new CustomEvent('request:edit', { detail: { index } }));
-                };
-
+                // Master-detail : plus de bouton Édit (clic ligne = édition).
+                // On garde uniquement Supprimer (action destructrice qui mérite un bouton dédié).
                 const btnDel = document.createElement('button');
                 btnDel.className = 'icon-btn-shared btn-delete';
                 btnDel.innerHTML = `<i data-lucide="trash-2"></i>`;
                 btnDel.title = 'Supprimer';
                 btnDel.onclick = () => deleteFeature(index);
-
-                wrapper.appendChild(btnEdit);
                 wrapper.appendChild(btnDel);
             } else {
                 const val = props[col.key];
