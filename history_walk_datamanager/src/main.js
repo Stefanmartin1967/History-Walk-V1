@@ -8,7 +8,8 @@ import {
     initStorage, loadGeoJSON, getGeoJSONForExport,
     undo, redo, runMaintenance, getUniqueValues,
     saveFeature, getFeatureByIndex, detectZone,
-    getAllFeatures, getPoiCategories
+    getAllFeatures, getPoiCategories,
+    getDestinations, getActiveDestinationId, setActiveDestination
 } from './storage.js';
 
 import { publishToGitHub } from './github-sync.js';
@@ -60,11 +61,33 @@ initStorage(
         renderMarkers(features);
         refreshToolbarDropdowns();
         refreshAdvancedCounts();
+        refreshDestSelector();
     },
     (type, msg) => updateStatus(type, msg)
 );
 initTable();
 initFilterToolbar();
+
+// --- SÉLECTEUR DE DESTINATION (PR B multi-destinations) ---
+const selDest = document.getElementById('dest-select');
+function refreshDestSelector() {
+    const dests = getDestinations();
+    const activeId = getActiveDestinationId();
+    selDest.innerHTML = '';
+    Object.entries(dests).forEach(([id, dest]) => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = dest.name || id;
+        if (id === activeId) opt.selected = true;
+        selDest.appendChild(opt);
+    });
+}
+selDest.addEventListener('change', async () => {
+    const newId = selDest.value;
+    btnAdd.disabled = true; btnPublish.disabled = true; btnSave.disabled = true;
+    await setActiveDestination(newId);
+    btnAdd.disabled = false; btnPublish.disabled = false; btnSave.disabled = false;
+});
 
 // Bandeau cross-app : si HW a un brouillon admin non publié, on alerte
 // (même origin = localStorage partagé en prod, en dev les ports diffèrent
@@ -466,8 +489,13 @@ btnPublish.addEventListener('click', async () => {
         if (!token) { updateStatus('error', "Publication annulée : pas de token."); return; }
     }
 
+    // Multi-dest : on publie sur le fichier de la destination active
+    const dests = getDestinations();
+    const activeId = getActiveDestinationId();
+    const fileName = dests[activeId]?.file || `${activeId}.geojson`;
+
     btnPublish.disabled = true;
-    await publishToGitHub(data, (type, msg) => updateStatus(type, msg));
+    await publishToGitHub(data, fileName, (type, msg) => updateStatus(type, msg));
     btnPublish.disabled = false;
 });
 

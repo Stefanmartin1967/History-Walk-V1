@@ -320,6 +320,21 @@ tr.hidden-row { display: none; }
 }
 .form-group select { cursor: pointer; }
 
+/* Sélecteur de destination dans le header (PR B multi-destinations) */
+.dest-selector {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0 16px;
+}
+.dest-selector-label {
+    font-size: 0.85rem; color: var(--ink-soft); font-weight: 600;
+}
+.dest-select {
+    padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px;
+    background: var(--bg); color: var(--ink); font: inherit;
+    cursor: pointer; min-width: 130px;
+}
+.dest-select:focus { outline: none; border-color: var(--brand); }
+
 /* Liens externes GMaps/OSM à côté du label GPS (UX-3) */
 .gps-links {
     display: inline-flex; gap: 8px; margin-left: 10px;

@@ -3,9 +3,33 @@ import { cleanUrl, generateHWID, isPointInPolygon, parseGps } from './utils.js';
 
 // --- SOURCE DE VÉRITÉ UNIQUE : GitHub ---
 const GITHUB_RAW = 'https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main';
-const GEOJSON_URL  = `${GITHUB_RAW}/public/djerba.geojson`;
-const ZONES_URL    = `${GITHUB_RAW}/map.geojson`;
+const DESTINATIONS_URL = `${GITHUB_RAW}/public/destinations.json`;
 const CATEGORIES_URL = `${GITHUB_RAW}/public/poi-categories.json`;
+
+// Multi-destinations (PR B). Source : destinations.json à la racine du repo.
+// La destination active est persistée en localStorage 'hw_active_dest' (clé
+// partagée avec HW pour cohérence cross-app).
+const ACTIVE_DEST_KEY = 'hw_active_dest';
+let destinationsData = null; // { djerba: {file, zonesFile, ...}, hammamet: {...} }
+let activeDestId = 'djerba'; // fallback initial
+
+function getGeoJSONUrl(destId = activeDestId) {
+    const file = destinationsData?.[destId]?.file || `${destId}.geojson`;
+    return `${GITHUB_RAW}/public/${file}`;
+}
+function getZonesUrl(destId = activeDestId) {
+    const zonesFile = destinationsData?.[destId]?.zonesFile;
+    if (!zonesFile) return null;
+    // Convention legacy djerba : map.geojson à la racine du repo.
+    // Les autres destinations : public/{dest}-zones.geojson.
+    return zonesFile === 'map.geojson'
+        ? `${GITHUB_RAW}/${zonesFile}`
+        : `${GITHUB_RAW}/public/${zonesFile}`;
+}
+
+// Brouillon localStorage par destination (évite la pollution entre destinations).
+const STORAGE_KEY_PREFIX = 'history_walk_autosave_';
+function getStorageKey() { return STORAGE_KEY_PREFIX + activeDestId; }
 
 let globalGeoJSON = null;
 let zonesGeoJSON = null;
@@ -13,7 +37,6 @@ let poiCategories = null; // Liste partagée HW/DM, chargée au boot
 let historyStack = [];
 let historyIndex = -1;
 const MAX_HISTORY = 50;
-const STORAGE_KEY = 'history_walk_autosave';
 
 let renderCallback = null;
 let statusCallback = null;
@@ -29,8 +52,47 @@ function refreshUI() { if (renderCallback && globalGeoJSON) renderCallback(globa
 
 function saveToLocalStorage() {
     if (!globalGeoJSON) return;
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(globalGeoJSON)); }
+    try { localStorage.setItem(getStorageKey(), JSON.stringify(globalGeoJSON)); }
     catch (e) { console.warn(e); notify("error", "Sauvegarde locale impossible"); }
+}
+
+// --- DESTINATIONS (PR B) ---
+
+async function loadDestinationsConfig() {
+    try {
+        const response = await fetch(DESTINATIONS_URL + '?t=' + Date.now());
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const json = await response.json();
+        destinationsData = json.maps || {};
+        // Choix de la destination active : URL > localStorage > json activeMapId > djerba
+        const urlDest = new URLSearchParams(location.search).get('dest');
+        const lsDest = localStorage.getItem(ACTIVE_DEST_KEY);
+        const candidates = [urlDest, lsDest, json.activeMapId, 'djerba'];
+        for (const c of candidates) {
+            if (c && destinationsData[c]) { activeDestId = c; break; }
+        }
+        // Synchronise le localStorage si on a choisi via URL ou fallback
+        localStorage.setItem(ACTIVE_DEST_KEY, activeDestId);
+    } catch (e) {
+        console.warn("Impossible de charger destinations.json — fallback djerba seul.", e);
+        destinationsData = { djerba: { name: 'Djerba', file: 'djerba.geojson', zonesFile: 'map.geojson' } };
+        activeDestId = 'djerba';
+    }
+}
+
+export function getDestinations() { return destinationsData || {}; }
+export function getActiveDestinationId() { return activeDestId; }
+
+export async function setActiveDestination(destId) {
+    if (!destinationsData?.[destId]) return false;
+    if (destId === activeDestId) return true;
+    activeDestId = destId;
+    localStorage.setItem(ACTIVE_DEST_KEY, destId);
+    // Reload du data pour cette nouvelle destination
+    historyStack = []; historyIndex = -1;
+    globalGeoJSON = null;
+    zonesGeoJSON = null;
+    return await loadGeoJSON(false);
 }
 
 // Flag cross-app (HW ↔ DM) : indique qu'on a des modifs non publiées sur GitHub.
@@ -46,14 +108,20 @@ export function clearDmDirty() {
 // --- ZONES & CALCULS ---
 
 async function loadZones() {
+    const url = getZonesUrl();
+    if (!url) { zonesGeoJSON = null; return; }
     try {
-        const response = await fetch(ZONES_URL);
+        const response = await fetch(url + '?t=' + Date.now());
         if (response.ok) {
             zonesGeoJSON = await response.json();
-            console.log("Zones chargées :", zonesGeoJSON.features.length);
+            console.log(`Zones chargées (${activeDestId}) :`, zonesGeoJSON.features?.length || 0);
+        } else {
+            console.warn(`Zones absentes pour ${activeDestId} (HTTP ${response.status})`);
+            zonesGeoJSON = null;
         }
     } catch (e) {
-        console.warn("Impossible de charger map.geojson", e);
+        console.warn(`Impossible de charger les zones de ${activeDestId} :`, e);
+        zonesGeoJSON = null;
     }
 }
 
@@ -113,29 +181,43 @@ export async function loadGeoJSON(forceRemote = false) {
     try {
         notify("loading", "Chargement...");
 
-        // Charger les zones et catégories en parallèle
+        // Charger destinations.json en premier (détermine la destination active)
+        if (!destinationsData) await loadDestinationsConfig();
+
+        // Charger les zones (par destination) et catégories en parallèle
         await Promise.all([loadZones(), loadPoiCategories()]);
 
         let dataToLoad = null;
         let fromDraft = false;
-        const savedData = localStorage.getItem(STORAGE_KEY);
+        const savedData = localStorage.getItem(getStorageKey());
 
         if (savedData && !forceRemote) {
             try {
                 dataToLoad = JSON.parse(savedData);
                 fromDraft = true;
             } catch (e) {
-                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem(getStorageKey());
             }
         }
 
         if (!dataToLoad) {
-            const response = await fetch(GEOJSON_URL + '?t=' + Date.now());
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            dataToLoad = await response.json();
-            notify("success", `Chargé : ${dataToLoad.features.length} lieux.`);
+            const destName = destinationsData?.[activeDestId]?.name || activeDestId;
+            const response = await fetch(getGeoJSONUrl() + '?t=' + Date.now());
+            if (!response.ok) {
+                // 404 gracieux : data pas encore créé pour cette destination (ex: Hammamet pré-saisie)
+                if (response.status === 404) {
+                    dataToLoad = { type: 'FeatureCollection', features: [] };
+                    notify("warning", `Pas encore de data pour ${destName}. Tu peux commencer à ajouter des POIs.`);
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } else {
+                dataToLoad = await response.json();
+                notify("success", `${destName} : ${dataToLoad.features.length} lieux chargés.`);
+            }
         } else {
-            notify("draft", `Brouillon restauré (${dataToLoad.features.length} lieux). Cliquer ↻ pour recharger depuis le serveur.`);
+            const destName = destinationsData?.[activeDestId]?.name || activeDestId;
+            notify("draft", `Brouillon ${destName} restauré (${dataToLoad.features.length} lieux). Cliquer ↻ pour recharger depuis le serveur.`);
         }
 
         globalGeoJSON = dataToLoad;
