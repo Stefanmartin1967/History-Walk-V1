@@ -244,7 +244,11 @@ function openModal(feature = null, index = null) {
         const p = feature.properties;
 
         form.nom.value = p['Nom du site FR'] || '';
-        form.gps.value = p['Coordonnées GPS'] || '';
+        // Source canonique = geometry.coordinates (GeoJSON standard).
+        // Les champs textuels Coordonnées GPS/Latitude/Longitude ont été
+        // retirés du data (cleanup script 06/05/2026).
+        const c = feature.geometry?.coordinates;
+        form.gps.value = (c?.length >= 2) ? `${c[1]}, ${c[0]}` : '';
         form.categorie.value = p['Catégorie'] || '';
         form.zone.value = p['Zone'] || '';
         form.description.value = p['Description'] || '';
