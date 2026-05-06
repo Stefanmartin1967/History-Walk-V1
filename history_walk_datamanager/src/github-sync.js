@@ -32,6 +32,23 @@ export async function publishToGitHub(geojson, onStatus) {
         onStatus('error', "Token manquant — publication annulée.");
         return;
     }
+
+    // Garde-fou cross-app (UX-4) : alerter si HW a un brouillon admin non
+    // publié. Publier le DM maintenant écraserait le geojson distant et HW
+    // verrait au prochain refresh une version sans ses modifs en attente.
+    if (localStorage.getItem('hw_has_unpublished_changes') === '1') {
+        const ok = confirm(
+            "⚠️ History Walk a un brouillon admin non publié.\n\n"
+            + "Si tu publies depuis le DM maintenant, les modifs HW en attente "
+            + "pourraient être écrasées au prochain refresh côté HW.\n\n"
+            + "Veux-tu vraiment continuer ?"
+        );
+        if (!ok) {
+            onStatus('error', "Publication annulée par sécurité.");
+            return;
+        }
+    }
+
     const apiUrl = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${FILE_PATH}`;
 
     onStatus('loading', "Publication en cours...");
