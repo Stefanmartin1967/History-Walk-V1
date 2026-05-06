@@ -319,6 +319,24 @@ tr.hidden-row { display: none; }
   font-family: inherit; color: var(--ink); background: var(--surface); resize: vertical; width: 100%;
 }
 .form-group select { cursor: pointer; }
+
+/* Liens externes GMaps/OSM à côté du label GPS (UX-3) */
+.gps-links {
+    display: inline-flex; gap: 8px; margin-left: 10px;
+    font-size: 0.75rem; font-weight: 600;
+    vertical-align: middle;
+}
+.gps-link {
+    color: var(--brand); text-decoration: none;
+    padding: 1px 6px; border-radius: 4px;
+    background: var(--brand-soft);
+    transition: background 0.15s;
+}
+.gps-link:hover { background: var(--brand); color: white; }
+.gps-link.is-disabled {
+    color: var(--ink-soft); background: var(--line);
+    pointer-events: none; opacity: 0.6;
+}
 /* Temps Visite : 2 inputs h + min côté DM (PR 5 chantier DM) */
 .time-inputs { display: flex; align-items: center; gap: 6px; }
 .time-inputs input { width: 60px; flex: 0 0 auto; }

@@ -253,6 +253,8 @@ function openModal(feature = null, index = null) {
         // retirés du data (cleanup script 06/05/2026).
         const c = feature.geometry?.coordinates;
         form.gps.value = (c?.length >= 2) ? `${c[1]}, ${c[0]}` : '';
+        if (c?.length >= 2) updateGpsLinks(c[1], c[0]);
+        else updateGpsLinks(null, null);
         form.categorie.value = p['Catégorie'] || '';
         form.zone.value = p['Zone'] || '';
         form.description.value = p['Description'] || '';
@@ -279,6 +281,7 @@ function openModal(feature = null, index = null) {
         if (coords?.length >= 2) {
             startEditMarker(coords[1], coords[0], (lat, lng) => {
                 form.gps.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                updateGpsLinks(lat, lng);
                 const zone = detectZone(lat, lng);
                 if (zone) form.zone.value = zone;
             });
@@ -298,17 +301,41 @@ function closeModal() {
     document.getElementById('edit-panel-content')?.classList.add('hidden');
     document.getElementById('edit-panel-empty')?.classList.remove('hidden');
     document.querySelectorAll('#data-table tbody tr').forEach(r => r.classList.remove('row-active'));
+    updateGpsLinks(null, null);
     currentEditIndex = null;
     stopEditMarker();
 }
 
 btnBack.addEventListener('click', closeModal);
 
+// Liens externes GMaps/OSM (UX-3) — synchronisés avec le champ GPS.
+const linkGmaps = document.getElementById('gps-link-gmaps');
+const linkOsm = document.getElementById('gps-link-osm');
+function updateGpsLinks(lat, lon) {
+    if (Number.isFinite(lat) && Number.isFinite(lon)) {
+        linkGmaps.href = `https://www.google.com/maps?q=${lat},${lon}`;
+        linkOsm.href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}&zoom=18`;
+        linkGmaps.classList.remove('is-disabled');
+        linkOsm.classList.remove('is-disabled');
+    } else {
+        linkGmaps.href = '#';
+        linkOsm.href = '#';
+        linkGmaps.classList.add('is-disabled');
+        linkOsm.classList.add('is-disabled');
+    }
+}
+form.gps.addEventListener('input', () => {
+    const c = parseGps(form.gps.value);
+    if (c) updateGpsLinks(c.lat, c.lon);
+    else updateGpsLinks(null, null);
+});
+
 // AUTO-ZONE + mise à jour marqueur lors de la saisie GPS
 form.gps.addEventListener('blur', () => {
     const coords = parseGps(form.gps.value);
     if (coords) {
         form.gps.value = `${coords.lat}, ${coords.lon}`;
+        updateGpsLinks(coords.lat, coords.lon);
         // Déplace le marqueur si on a tapé des coords manuellement
         moveEditMarker(coords.lat, coords.lon);
         if (form.zone.value === '') {
@@ -514,8 +541,10 @@ async function searchPlace(query) {
                 // pré-remplir les champs
                 if (!document.getElementById('edit-panel-content').classList.contains('hidden')) {
                     form.gps.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    updateGpsLinks(lat, lng);
                     startEditMarker(lat, lng, (newLat, newLng) => {
                         form.gps.value = `${newLat.toFixed(6)}, ${newLng.toFixed(6)}`;
+                        updateGpsLinks(newLat, newLng);
                         if (!form.zone.value) {
                             const z = detectZone(newLat, newLng);
                             if (z) form.zone.value = z;
