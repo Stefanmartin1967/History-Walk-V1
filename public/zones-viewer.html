@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Zones Viewer</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    #map { height: 100vh; }
+    #toolbar {
+      position: absolute; top: 10px; right: 10px; z-index: 1000;
+      background: white; padding: 10px 14px; border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    #toolbar select { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; font: inherit; }
+    #count { font-size: 0.85rem; color: #666; margin-left: 10px; }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <label>Zones de :</label>
+    <select id="dest-select"></select>
+    <span id="count"></span>
+  </div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([33.78, 10.94], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap', maxZoom: 19
+    }).addTo(map);
+
+    let currentLayer = null;
+    const sel = document.getElementById('dest-select');
+    const counter = document.getElementById('count');
+
+    async function loadDest(destId) {
+      if (currentLayer) { map.removeLayer(currentLayer); currentLayer = null; }
+      const dests = await (await fetch('destinations.json')).json();
+      const dest = dests.maps[destId];
+      if (!dest?.zonesFile) { counter.textContent = 'Pas de zonesFile'; return; }
+      const url = dest.zonesFile === 'map.geojson' ? '../map.geojson' : dest.zonesFile;
+      const res = await fetch(url);
+      if (!res.ok) { counter.textContent = `Aucun fichier zones (${url})`; return; }
+      const geo = await res.json();
+      counter.textContent = `${geo.features.length} zones`;
+      currentLayer = L.geoJSON(geo, {
+        style: { color: '#2563eb', weight: 2, fillOpacity: 0.15, fillColor: '#2563eb' },
+        onEachFeature: (f, l) => {
+          const name = f.properties.name || '?';
+          const ar = f.properties.name_ar ? `<br><span style="direction:rtl">${f.properties.name_ar}</span>` : '';
+          l.bindTooltip(name, { permanent: true, direction: 'center', className: 'zone-label' });
+          l.bindPopup(`<b>${name}</b>${ar}`);
+        }
+      }).addTo(map);
+      map.fitBounds(currentLayer.getBounds());
+    }
+
+    (async () => {
+      const dests = await (await fetch('destinations.json')).json();
+      sel.innerHTML = '';
+      Object.entries(dests.maps).forEach(([id, dest]) => {
+        const opt = document.createElement('option');
+        opt.value = id;
+        opt.textContent = dest.name;
+        sel.appendChild(opt);
+      });
+      const params = new URLSearchParams(location.search);
+      const initialDest = params.get('dest') || dests.activeMapId || Object.keys(dests.maps)[0];
+      sel.value = initialDest;
+      sel.addEventListener('change', () => loadDest(sel.value));
+      await loadDest(initialDest);
+    })();
+  </script>
+  <style>
+    .zone-label {
+      background: rgba(255,255,255,0.85); border: none; box-shadow: none;
+      font-size: 0.75rem; font-weight: 600; color: #1e40af; padding: 2px 6px;
+    }
+  </style>
+</body>
+</html>
