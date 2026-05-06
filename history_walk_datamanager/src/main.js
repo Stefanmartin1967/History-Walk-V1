@@ -283,14 +283,17 @@ function openModal(feature = null, index = null) {
         modalTitle.textContent = "Ajouter un lieu";
     }
 
-    tableView.classList.add('hidden');
-    editPanel.classList.remove('hidden');
+    // Master-detail : tableau toujours visible, on bascule juste l'état du
+    // panneau central (empty placeholder ↔ form).
+    document.getElementById('edit-panel-empty')?.classList.add('hidden');
+    document.getElementById('edit-panel-content')?.classList.remove('hidden');
     setTimeout(() => form.nom.focus(), 100);
 }
 
 function closeModal() {
-    editPanel.classList.add('hidden');
-    tableView.classList.remove('hidden');
+    document.getElementById('edit-panel-content')?.classList.add('hidden');
+    document.getElementById('edit-panel-empty')?.classList.remove('hidden');
+    document.querySelectorAll('#data-table tbody tr').forEach(r => r.classList.remove('row-active'));
     currentEditIndex = null;
     stopEditMarker();
 }
@@ -503,8 +506,9 @@ async function searchPlace(query) {
                 const lat = parseFloat(r.lat);
                 const lng = parseFloat(r.lon);
 
-                // Si le formulaire d'édition est ouvert, pré-remplir les champs
-                if (!editPanel.classList.contains('hidden')) {
+                // Si on est en train d'éditer un POI (panneau content visible),
+                // pré-remplir les champs
+                if (!document.getElementById('edit-panel-content').classList.contains('hidden')) {
                     form.gps.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
                     startEditMarker(lat, lng, (newLat, newLng) => {
                         form.gps.value = `${newLat.toFixed(6)}, ${newLng.toFixed(6)}`;

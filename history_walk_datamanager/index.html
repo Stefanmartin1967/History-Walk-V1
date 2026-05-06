@@ -106,14 +106,18 @@
           <table id="data-table"><thead></thead><tbody></tbody></table>
         </div>
 
-        <!-- PANNEAU GAUCHE : Formulaire d'édition (visible en mode édition) -->
-        <div id="edit-panel" class="edit-panel hidden">
+        <!-- PANNEAU CENTRE : Édition du POI (master-detail, toujours visible) -->
+        <div id="edit-panel" class="edit-panel">
+          <div id="edit-panel-empty" class="edit-panel-empty">
+            <i data-lucide="mouse-pointer-click"></i>
+            <p>Sélectionne un lieu dans le tableau<br>pour l'éditer ici</p>
+          </div>
+          <div id="edit-panel-content" class="edit-panel-content hidden">
           <div class="edit-panel-header">
-            <button id="btn-back" type="button" class="btn btn-neutral">
-              <i data-lucide="arrow-left"></i> <span>Tableau</span>
-            </button>
             <h2 id="modal-title">Lieu</h2>
-            <span></span>
+            <button id="btn-back" type="button" class="btn-icon" title="Fermer l'édition">
+              <i data-lucide="x"></i>
+            </button>
           </div>
           <form id="feature-form" class="edit-form-body">
 
@@ -211,6 +215,7 @@
             </div>
 
           </form>
+          </div>
         </div>
 
         <!-- PANNEAU DROIT : Carte (toujours visible) -->
