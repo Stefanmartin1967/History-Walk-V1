@@ -33,6 +33,9 @@ export async function initAdminControlCenter() {
     // Migration : nettoyer l'ancienne clé localStorage si elle existe encore
     localStorage.removeItem('admin_draft_v1');
 
+    // Synchroniser le flag cross-app au boot (cas : F5 alors qu'un brouillon existait déjà)
+    updateUnpublishedFlag();
+
     // Écoute les modifications faites via RichEditor (évite l'import circulaire
     // richEditor → admin-control-center → richEditor).
     // Quand l'admin sauvegarde un POI via le modal d'édition, on propage
@@ -40,6 +43,20 @@ export async function initAdminControlCenter() {
     eventBus.on('admin:poi-edited', ({ id, type }) => {
         addToDraft('poi', id, { type });
     });
+}
+
+// Flag cross-app (HW ↔ DM) : indique qu'on a des changements non publiés.
+// Lu par le DM au boot (même origin = localStorage partagé) pour afficher
+// un bandeau "HW a un brouillon non publié, va publier d'abord".
+const UNPUBLISHED_FLAG_KEY = 'hw_has_unpublished_changes';
+function updateUnpublishedFlag() {
+    const total = Object.keys(adminDraft.pendingPois).length
+                + Object.keys(adminDraft.pendingCircuits).length;
+    if (total > 0) {
+        localStorage.setItem(UNPUBLISHED_FLAG_KEY, '1');
+    } else {
+        localStorage.removeItem(UNPUBLISHED_FLAG_KEY);
+    }
 }
 
 function updateButtonBadge() {
@@ -54,6 +71,7 @@ function saveDraft(newDraft) {
     adminDraft = newDraft;
     // Fire-and-forget pour les callbacks synchrones (reconcileLocalChanges, etc.)
     saveAppState(DRAFT_IDB_KEY, adminDraft).catch(e => console.error("Erreur sauvegarde draft", e));
+    updateUnpublishedFlag();
 }
 
 // Version awaitable : à utiliser dans les chemins où la persistance DOIT être
@@ -62,6 +80,7 @@ async function saveDraftAwait(newDraft) {
     adminDraft = newDraft;
     try {
         await saveAppState(DRAFT_IDB_KEY, adminDraft);
+        updateUnpublishedFlag();
     } catch (e) {
         console.error("Erreur sauvegarde draft (await)", e);
         throw e;

@@ -142,6 +142,15 @@
 .cc-status-badge.synced { background: #DCFCE7; color: #15803D; }
 .cc-status-badge.pending { background: #FEF3C7; color: #92400E; }
 .cc-status-badge.no-token { background: #FEE2E2; color: #991B1B; }
+.cc-cross-app-warn {
+    display: flex; align-items: center; gap: 8px;
+    background: #FEF3C7; color: #92400E;
+    padding: 8px 12px; border-radius: 6px;
+    font-size: 0.85rem; margin: 8px 0;
+    border: 1px solid #FDE68A;
+}
+.cc-cross-app-warn i { width: 16px; height: 16px; flex-shrink: 0; }
+.cc-cross-app-warn .cc-inline-link { color: #92400E; }
 .cc-inline-link { background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: inherit; font-weight: 700; text-decoration: underline; }
 
 /* Quick Actions — Dashboard CC */

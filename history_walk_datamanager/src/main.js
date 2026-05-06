@@ -66,6 +66,38 @@ initStorage(
 );
 initTable();
 
+// Bandeau cross-app : si HW a un brouillon admin non publié, on alerte
+// (même origin = localStorage partagé en prod, en dev les ports diffèrent
+// donc le bandeau ne se déclenche qu'en prod).
+function maybeShowCrossAppWarn() {
+    const warn = document.getElementById('cross-app-warn');
+    if (!warn) return;
+    if (localStorage.getItem('hw_has_unpublished_changes') === '1') {
+        warn.classList.remove('hidden');
+    }
+}
+maybeShowCrossAppWarn();
+
+document.getElementById('btn-goto-hw')?.addEventListener('click', () => {
+    const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const url = isDev ? 'http://localhost:5173/History-Walk-V1/' : '/History-Walk-V1/';
+    window.open(url, '_blank');
+});
+document.getElementById('btn-dismiss-warn')?.addEventListener('click', () => {
+    document.getElementById('cross-app-warn')?.classList.add('hidden');
+});
+
+// Mise à jour live si HW publie pendant que le DM est ouvert (storage event
+// déclenché par les autres tabs même origin).
+window.addEventListener('storage', (e) => {
+    if (e.key === 'hw_has_unpublished_changes') {
+        const warn = document.getElementById('cross-app-warn');
+        if (!warn) return;
+        if (e.newValue === '1') warn.classList.remove('hidden');
+        else warn.classList.add('hidden');
+    }
+});
+
 // Chargement automatique du GeoJSON au démarrage
 (async () => {
     const ok = await loadGeoJSON(false);

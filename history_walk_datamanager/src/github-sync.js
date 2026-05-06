@@ -74,6 +74,9 @@ export async function publishToGitHub(geojson, onStatus) {
             throw new Error(err.message || `HTTP ${putRes.status}`);
         }
 
+        // Clear le flag cross-app — le brouillon DM est maintenant publié.
+        localStorage.removeItem('dm_has_unpublished_changes');
+
         onStatus('success', `Publié sur GitHub (${geojson.features.length} lieux).`);
 
     } catch (e) {

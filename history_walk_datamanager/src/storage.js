@@ -29,8 +29,18 @@ function refreshUI() { if (renderCallback && globalGeoJSON) renderCallback(globa
 
 function saveToLocalStorage() {
     if (!globalGeoJSON) return;
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(globalGeoJSON)); } 
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(globalGeoJSON)); }
     catch (e) { console.warn(e); notify("error", "Sauvegarde locale impossible"); }
+}
+
+// Flag cross-app (HW ↔ DM) : indique qu'on a des modifs non publiées sur GitHub.
+// Lu par HW au boot du Control Center pour afficher un bandeau de warning.
+const UNPUBLISHED_FLAG_KEY = 'dm_has_unpublished_changes';
+export function markDmDirty() {
+    localStorage.setItem(UNPUBLISHED_FLAG_KEY, '1');
+}
+export function clearDmDirty() {
+    localStorage.removeItem(UNPUBLISHED_FLAG_KEY);
 }
 
 // --- ZONES & CALCULS ---
@@ -233,6 +243,7 @@ export function saveFeature(formData, indexToUpdate = null) {
     }
 
     saveStateToHistory(); // APRÈS modification pour un undo correct
+    markDmDirty();
     refreshUI();
     return true;
 }
@@ -243,6 +254,7 @@ export function deleteFeature(index) {
     if(!confirm(`Supprimer '${f.properties['Nom du site FR']}' ?`)) return;
     globalGeoJSON.features.splice(index, 1);
     saveStateToHistory(); // APRÈS modification
+    markDmDirty();
     refreshUI();
     notify("success", "Supprimé.");
     return true;
@@ -297,6 +309,7 @@ export function runMaintenance() {
     });
 
     saveStateToHistory(); // APRÈS modifications
+    if (cUrl > 0 || cZone > 0) markDmDirty();
     refreshUI();
     notify("success", `Maintenance : ${cUrl} URL(s) et ${cZone} Zone(s) mise(s) à jour.`);
 }
