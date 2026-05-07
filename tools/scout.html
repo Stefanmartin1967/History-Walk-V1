@@ -346,6 +346,109 @@
             } catch(e) { /* zones non disponibles pour cette destination */ }
         }
 
+        // ─── Overpass : moteur partagé ──────────────────────────────────────
+        // Sorti du scope local de btnFetch.onclick pour être réutilisable par
+        // fetchZonesViaOverpass() ci-dessous (mode "Nouvelle destination").
+        const OVERPASS_MIRRORS = [
+            'https://overpass-api.de/api/interpreter',
+            'https://overpass.kumi.systems/api/interpreter',
+            'https://overpass.private.coffee/api/interpreter',
+        ];
+
+        async function fetchOverpass(query) {
+            let lastError = null;
+            for (const mirror of OVERPASS_MIRRORS) {
+                try {
+                    showStatus('loading', `⏳ Interrogation de ${new URL(mirror).hostname}…`);
+                    const res = await fetch(`${mirror}?data=${encodeURIComponent(query)}`,
+                        { signal: AbortSignal.timeout(15000) }
+                    );
+                    const text = await res.text();
+                    // Overpass renvoie du XML en cas d'erreur serveur
+                    if (text.trimStart().startsWith('<')) {
+                        const isRateLimit = text.includes('rate_limited') || text.includes('429');
+                        lastError = isRateLimit ? 'ratelimit' : `http_${res.status}`;
+                        continue;
+                    }
+                    return text;
+                } catch (e) {
+                    lastError = e.name === 'TimeoutError' ? 'timeout' : 'network';
+                }
+            }
+            throw new Error(lastError || 'unknown');
+        }
+
+        // ─── Zonage à la volée (mode "Nouvelle destination") ────────────────
+        // Reproduit la logique de scripts/fetch-zones-from-osm.mjs côté browser :
+        // récupère les boundaries admin OSM dans la bbox + assemble les rings
+        // (ways outer chaînés par nodes adjacents) → FeatureCollection prête à
+        // être consommée par detectZone(). Permet d'avoir les zones auto-remplies
+        // pour les POIs scoutés d'une nouvelle destination, sans dépendre du
+        // script Node CLI.
+
+        function assembleRings(outerWays) {
+            if (outerWays.length === 0) return [];
+            const segments = outerWays.map(w => w.geometry.map(n => [n.lon, n.lat]));
+            const ptKey = (p) => `${p[0].toFixed(7)},${p[1].toFixed(7)}`;
+            const ptEqual = (a, b) => ptKey(a) === ptKey(b);
+            const rings = [];
+            const used = new Array(segments.length).fill(false);
+            for (let start = 0; start < segments.length; start++) {
+                if (used[start]) continue;
+                const ring = [...segments[start]];
+                used[start] = true;
+                let extended = true;
+                while (extended) {
+                    extended = false;
+                    const tail = ring[ring.length - 1];
+                    for (let i = 0; i < segments.length; i++) {
+                        if (used[i]) continue;
+                        const seg = segments[i];
+                        if (ptEqual(tail, seg[0])) {
+                            ring.push(...seg.slice(1));
+                            used[i] = true; extended = true; break;
+                        }
+                        if (ptEqual(tail, seg[seg.length - 1])) {
+                            const reversed = [...seg].reverse();
+                            ring.push(...reversed.slice(1));
+                            used[i] = true; extended = true; break;
+                        }
+                    }
+                }
+                const first = ring[0], last = ring[ring.length - 1];
+                if (!ptEqual(first, last)) ring.push([...first]);
+                if (ring.length >= 4) rings.push(ring);
+            }
+            return rings;
+        }
+
+        // adminLevel par défaut = 6 (Tunisie). Pour France/Allemagne : 8.
+        async function fetchZonesViaOverpass(bbox, adminLevel = 6) {
+            const { south, west, north, east } = bbox;
+            const query = `[out:json][timeout:60];
+(relation["boundary"="administrative"]["admin_level"="${adminLevel}"](${south},${west},${north},${east}););
+out geom;`;
+            const text = await fetchOverpass(query);
+            if (!text) return null;
+            const data = JSON.parse(text);
+            const features = [];
+            for (const rel of data.elements) {
+                const name = rel.tags?.['name:fr'] || rel.tags?.['name:en'] || rel.tags?.name || `(zone ${rel.id})`;
+                if (!rel.members) continue;
+                const outerWays = rel.members.filter(m => m.type === 'way' && m.role === 'outer' && m.geometry);
+                if (outerWays.length === 0) continue;
+                const rings = assembleRings(outerWays);
+                if (rings.length === 0) continue;
+                rings.sort((a, b) => b.length - a.length);
+                features.push({
+                    type: 'Feature',
+                    properties: { name, osm_id: rel.id, admin_level: rel.tags?.admin_level },
+                    geometry: { type: 'Polygon', coordinates: [rings[0]] }
+                });
+            }
+            return { type: 'FeatureCollection', features };
+        }
+
         function isPointInPolygon(point, polygon) {
             const [px, py] = point;
             let inside = false;
@@ -609,34 +712,24 @@
             // calcule un centroid (sous-champ `el.center`). Les nodes restent inchangés.
             const query = `[out:json][timeout:60];(${clauses.join('')});out center;`;
 
-            // Miroirs Overpass — essayés dans l'ordre jusqu'au premier succès
-            const OVERPASS_MIRRORS = [
-                'https://overpass-api.de/api/interpreter',
-                'https://overpass.kumi.systems/api/interpreter',
-                'https://overpass.private.coffee/api/interpreter',
-            ];
-
-            async function fetchOverpass(query) {
-                let lastError = null;
-                for (const mirror of OVERPASS_MIRRORS) {
-                    try {
-                        showStatus('loading', `⏳ Interrogation de ${new URL(mirror).hostname}…`);
-                        const res = await fetch(`${mirror}?data=${encodeURIComponent(query)}`,
-                            { signal: AbortSignal.timeout(15000) }
-                        );
-                        const text = await res.text();
-                        // Overpass renvoie du XML en cas d'erreur serveur
-                        if (text.trimStart().startsWith('<')) {
-                            const isRateLimit = text.includes('rate_limited') || text.includes('429');
-                            lastError = isRateLimit ? 'ratelimit' : `http_${res.status}`;
-                            continue; // on essaie le miroir suivant
-                        }
-                        return text; // succès
-                    } catch (e) {
-                        lastError = e.name === 'TimeoutError' ? 'timeout' : 'network';
+            // Mode "Nouvelle destination" : avant le moissonnage POIs, on récupère
+            // les zones admin OSM dans la bbox via Overpass pour activer la
+            // détection de zone sur les POIs scoutés (sinon colonne Zone vide).
+            // Pour les destinations connues, zonesGeoJSON est déjà chargé via
+            // loadZonesFor() (fichier {dest}-zones.geojson).
+            if (isManual && !zonesGeoJSON) {
+                showStatus('loading', '⏳ Récupération des zones admin OSM…');
+                try {
+                    const zones = await fetchZonesViaOverpass({ south, west, north, east });
+                    if (zones?.features?.length) {
+                        zonesGeoJSON = zones;
+                        DOM.bboxInfo.textContent = `${zones.features.length} zones admin OSM chargées (admin_level=6).`;
+                    } else {
+                        DOM.bboxInfo.textContent = 'Aucune zone admin OSM trouvée — la colonne Zone restera vide.';
                     }
+                } catch (e) {
+                    DOM.bboxInfo.textContent = `Zones non récupérées (${e.message || e}) — la colonne Zone restera vide.`;
                 }
-                throw new Error(lastError || 'unknown');
             }
 
             try {
