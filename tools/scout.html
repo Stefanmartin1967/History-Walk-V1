@@ -312,38 +312,60 @@
             return Math.round(dLat * dLon);
         }
 
+        // Promesse en vol pour `loadZonesFor` : permet au bouton "Lancer" de
+        // l'attendre si l'utilisateur clique avant que le chargement ne soit fini
+        // (évite la race condition au changement de destination).
+        let _loadZonesPromise = null;
+
+        function fillBboxFromBounds(dest, reason) {
+            if (!dest?.bounds) return false;
+            const [[south, west], [north, east]] = dest.bounds;
+            DOM.bboxSouth.value = south;
+            DOM.bboxWest.value  = west;
+            DOM.bboxNorth.value = north;
+            DOM.bboxEast.value  = east;
+            DOM.bboxInfo.textContent = `Bbox depuis destinations.json (${reason}).`;
+            return true;
+        }
+
         async function loadZonesFor(destId) {
-            zonesGeoJSON = null;
-            const dest = destinationsData[destId];
-            DOM.bboxInfo.textContent = '';
-            if (!dest?.zonesFile) {
-                // Fallback : pas de zones → on prend bounds de destinations.json
-                if (dest?.bounds) {
-                    const [[south, west], [north, east]] = dest.bounds;
-                    DOM.bboxSouth.value = south;
-                    DOM.bboxWest.value  = west;
-                    DOM.bboxNorth.value = north;
-                    DOM.bboxEast.value  = east;
-                    DOM.bboxInfo.textContent = `Bbox depuis destinations.json (pas de zones disponibles).`;
+            _loadZonesPromise = (async () => {
+                zonesGeoJSON = null;
+                const dest = destinationsData[destId];
+                DOM.bboxInfo.textContent = '';
+
+                if (!dest?.zonesFile) {
+                    fillBboxFromBounds(dest, 'pas de zones disponibles');
+                    return;
                 }
-                return;
-            }
-            try {
-                const res = await fetch(`../public/${dest.zonesFile}?t=${Date.now()}`);
-                if (res.ok) {
+
+                // Path RELATIF à scout.html, sans préfixe `public/`. En dev Vite
+                // comme en build prod, les fichiers de `public/` sont servis à la
+                // racine de l'app. Préfixer avec `public/` casse la prod.
+                try {
+                    const res = await fetch(`../${dest.zonesFile}?t=${Date.now()}`);
+                    if (!res.ok) {
+                        fillBboxFromBounds(dest, `fichier zones absent (HTTP ${res.status})`);
+                        return;
+                    }
                     zonesGeoJSON = await res.json();
                     const env = computeZonesEnvelope(zonesGeoJSON);
-                    if (env) {
-                        DOM.bboxSouth.value = env.south.toFixed(6);
-                        DOM.bboxWest.value  = env.west.toFixed(6);
-                        DOM.bboxNorth.value = env.north.toFixed(6);
-                        DOM.bboxEast.value  = env.east.toFixed(6);
-                        const n = zonesGeoJSON.features.length;
-                        const km2 = bboxAreaKm2(env);
-                        DOM.bboxInfo.textContent = `Bbox = enveloppe des ${n} zones (~${km2} km²) — couvre tous les polygones du fichier zones.geojson, y compris leurs débordements.`;
+                    if (!env) {
+                        fillBboxFromBounds(dest, 'zones vides');
+                        return;
                     }
+                    DOM.bboxSouth.value = env.south.toFixed(6);
+                    DOM.bboxWest.value  = env.west.toFixed(6);
+                    DOM.bboxNorth.value = env.north.toFixed(6);
+                    DOM.bboxEast.value  = env.east.toFixed(6);
+                    const n = zonesGeoJSON.features.length;
+                    const km2 = bboxAreaKm2(env);
+                    DOM.bboxInfo.textContent = `Bbox = enveloppe des ${n} zones (~${km2} km²) — couvre tous les polygones du fichier zones.geojson, y compris leurs débordements.`;
+                } catch(e) {
+                    fillBboxFromBounds(dest, `erreur chargement zones : ${e.message || e}`);
                 }
-            } catch(e) { /* zones non disponibles pour cette destination */ }
+            })();
+            return _loadZonesPromise;
         }
 
         function isPointInPolygon(point, polygon) {
@@ -542,6 +564,16 @@
             let south, west, north, east;
             const selectedDest = DOM.destSelect.value;
             const isManual = (selectedDest === '__manual__' || !destinationsData[selectedDest]);
+
+            // Race-proof : si destination connue + bbox vide + chargement zones
+            // en cours, on attend qu'il finisse avant de valider la bbox.
+            if (!isManual && _loadZonesPromise) {
+                const bboxEmpty = !DOM.bboxSouth.value || !DOM.bboxWest.value || !DOM.bboxNorth.value || !DOM.bboxEast.value;
+                if (bboxEmpty) {
+                    showStatus('loading', '⏳ Chargement des zones en cours…');
+                    await _loadZonesPromise;
+                }
+            }
 
             // Mode manuel : auto-geocoder si bbox vide mais nom renseigné
             if (isManual) {
