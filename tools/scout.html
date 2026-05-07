@@ -243,6 +243,7 @@
             if (val === '__manual__') {
                 DOM.manualSearch.classList.remove('hidden');
                 zonesGeoJSON = null; // mode manuel : pas de zones (autodetect désactivé)
+                existingPois = []; // mode manuel = nouvelle destination, rien à déduper
                 setBboxReadOnly(false);
                 DOM.bboxInfo.textContent = 'Mode manuel — saisis la bbox directement ou via la recherche Nominatim.';
                 // Vide la bbox pour repartir de zéro
@@ -253,8 +254,11 @@
             } else {
                 DOM.manualSearch.classList.add('hidden');
                 setBboxReadOnly(true);
-                // Charger les zones et calculer l'enveloppe pour pré-remplir la bbox
+                // En parallèle : zones (pour bbox + detectZone) + data existant
+                // (pour dédup au moissonnage). Tous deux race-proofés via leurs
+                // promesses respectives (`_loadZonesPromise` / `_loadExistingPromise`).
                 loadZonesFor(val);
+                loadExistingPoisFor(val);
             }
         });
 
@@ -366,6 +370,46 @@
                 }
             })();
             return _loadZonesPromise;
+        }
+
+        // ─── Dédoublonnage des POIs déjà dans le data ───────────────────────
+        // Pour éviter de re-créer dans le tableau scout des POIs qui existent
+        // déjà dans `{dest}.geojson`. Match GPS de proximité (<50 m).
+        // Règle métier validée Stefan 07/05/2026 : on ne RECRÉE jamais un POI
+        // existant. Le scout devient additif : on n'ajoute que les nouveautés.
+
+        let existingPois = []; // liste [{lat, lon}] des POIs du data officiel
+        let _loadExistingPromise = null;
+
+        async function loadExistingPoisFor(destId) {
+            _loadExistingPromise = (async () => {
+                existingPois = [];
+                const dest = destinationsData[destId];
+                if (!dest?.file) return;
+                try {
+                    const res = await fetch(`../${dest.file}?t=${Date.now()}`);
+                    if (!res.ok) return;
+                    const gj = await res.json();
+                    existingPois = (gj.features || [])
+                        .map(f => f.geometry?.coordinates)
+                        .filter(c => Array.isArray(c) && c.length >= 2 && Number.isFinite(c[0]) && Number.isFinite(c[1]))
+                        .map(([lon, lat]) => ({ lat, lon }));
+                } catch(e) { /* pas de data dispo */ }
+            })();
+            return _loadExistingPromise;
+        }
+
+        function distMeters(lat1, lon1, lat2, lon2) {
+            const R = 6371000;
+            const dLat = (lat2-lat1)*Math.PI/180;
+            const dLon = (lon2-lon1)*Math.PI/180;
+            const a = Math.sin(dLat/2)**2
+                    + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        function isAlreadyInData(lat, lon) {
+            return existingPois.some(p => distMeters(lat, lon, p.lat, p.lon) < 50);
         }
 
         // ─── Overpass : moteur partagé ──────────────────────────────────────
@@ -678,6 +722,12 @@ out geom;`;
                 }
             }
 
+            // Race-proof : attendre que le data existant soit chargé pour la
+            // dédup (clic rapide après changement de destination).
+            if (!isManual && _loadExistingPromise) {
+                await _loadExistingPromise;
+            }
+
             // Mode manuel : auto-geocoder si bbox vide mais nom renseigné
             if (isManual) {
                 const bboxEmpty = [DOM.bboxSouth.value, DOM.bboxWest.value, DOM.bboxNorth.value, DOM.bboxEast.value].some(v => v.toString().trim() === '');
@@ -787,6 +837,7 @@ out geom;`;
                 // le node "POI" + le way "bâtiment" d'une même mosquée.
                 const seenKeys = new Set();
                 let added = 0;
+                let alreadyInData = 0;
 
                 ranked.forEach(el => {
                     const t = el.tags || {};
@@ -797,6 +848,14 @@ out geom;`;
                     const key = `${lat.toFixed(4)},${lon.toFixed(4)}`;
                     if (seenKeys.has(key)) return;
                     seenKeys.add(key);
+
+                    // Filtre : POI déjà dans le data officiel (destination connue) ?
+                    // → on l'exclut pour préserver les données existantes (règle :
+                    // ne JAMAIS recréer un POI existant). Le scout devient additif.
+                    if (!isManual && isAlreadyInData(lat, lon)) {
+                        alreadyInData++;
+                        return;
+                    }
 
                     // Nom FR vs Arabe : name:fr → FR, name:ar → arabe
                     // Si name est en arabe et name:fr absent → name = arabe, FR vide
@@ -816,11 +875,17 @@ out geom;`;
                     added++;
                 });
 
-                const dedup = data.elements.length - added;
-                if (added === 0) {
+                const dedup = data.elements.length - added - alreadyInData;
+                if (added === 0 && alreadyInData === 0) {
                     showStatus('warning', '🔍 Aucun résultat dans cette zone pour les critères sélectionnés.');
+                } else if (added === 0 && alreadyInData > 0) {
+                    showStatus('warning', `🔍 Aucun nouveau POI — ${alreadyInData} déjà dans le data, masqués.`);
                 } else {
-                    showStatus('success', `✅ ${added} lieu(x) trouvé(s)${dedup > 0 ? ` (${dedup} doublons fusionnés)` : ''}.`);
+                    const parts = [];
+                    if (dedup > 0) parts.push(`${dedup} doublons fusionnés`);
+                    if (alreadyInData > 0) parts.push(`${alreadyInData} déjà dans le data, masqués`);
+                    const suffix = parts.length ? ` (${parts.join(', ')})` : '';
+                    showStatus('success', `✅ ${added} nouveau(x) POI(s)${suffix}.`);
                 }
 
             } catch (err) {
