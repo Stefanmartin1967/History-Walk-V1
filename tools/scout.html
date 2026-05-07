@@ -101,9 +101,9 @@
             </div>
         </div>
 
-        <!-- BBOX MANUELLE (cachée par défaut) -->
-        <div id="manual-bbox-group" class="hidden" style="margin-bottom: 15px;">
-            <div class="row" style="align-items: flex-end; margin-bottom: 8px;">
+        <!-- RECHERCHE NOMINATIM (mode manuel uniquement) -->
+        <div id="manual-search-group" class="hidden" style="margin-bottom: 15px;">
+            <div class="row" style="align-items: flex-end;">
                 <div class="col" style="flex: 3;">
                     <label>Rechercher la destination</label>
                     <div style="display: flex; gap: 5px;">
@@ -112,12 +112,18 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- BBOX — toujours visible. Read-only quand destination connue
+             (calculée depuis l'enveloppe des zones du fichier zones.geojson). -->
+        <div id="bbox-group" style="margin-bottom: 15px;">
             <div class="row" style="align-items: flex-end;">
                 <div class="col"><label>Sud</label><input type="number" id="bbox-south" step="any" placeholder="33.62"></div>
                 <div class="col"><label>Ouest</label><input type="number" id="bbox-west" step="any" placeholder="10.72"></div>
                 <div class="col"><label>Nord</label><input type="number" id="bbox-north" step="any" placeholder="33.91"></div>
                 <div class="col"><label>Est</label><input type="number" id="bbox-east" step="any" placeholder="11.06"></div>
             </div>
+            <div id="bbox-info" style="margin-top:6px; font-size:12px; color:#64748b; min-height:18px;"></div>
         </div>
 
         <!-- FILTRES -->
@@ -177,7 +183,8 @@
             btnAddRow: document.getElementById('btn-add-row'),
             btnGeocode: document.getElementById('btn-geocode'),
             destSelect: document.getElementById('destination-select'),
-            manualGroup: document.getElementById('manual-bbox-group'),
+            manualSearch: document.getElementById('manual-search-group'),
+            bboxInfo: document.getElementById('bbox-info'),
             locName: document.getElementById('location-name'),
             bboxSouth: document.getElementById('bbox-south'),
             bboxWest: document.getElementById('bbox-west'),
@@ -188,6 +195,16 @@
             tbody: document.querySelector('#data-table tbody'),
             counter: document.getElementById('row-counter')
         };
+
+        // Toggle des inputs bbox (read-only en mode destination connue,
+        // éditables en mode manuel)
+        function setBboxReadOnly(readonly) {
+            for (const inp of [DOM.bboxSouth, DOM.bboxWest, DOM.bboxNorth, DOM.bboxEast]) {
+                inp.readOnly = readonly;
+                inp.style.background = readonly ? '#f1f5f9' : '';
+                inp.style.color = readonly ? '#475569' : '';
+            }
+        }
 
         // --- CHARGEMENT DES DESTINATIONS ---
         let destinationsData = {};
@@ -224,20 +241,19 @@
         DOM.destSelect.addEventListener('change', () => {
             const val = DOM.destSelect.value;
             if (val === '__manual__') {
-                DOM.manualGroup.classList.remove('hidden');
+                DOM.manualSearch.classList.remove('hidden');
                 zonesGeoJSON = null; // mode manuel : pas de zones (autodetect désactivé)
+                setBboxReadOnly(false);
+                DOM.bboxInfo.textContent = 'Mode manuel — saisis la bbox directement ou via la recherche Nominatim.';
+                // Vide la bbox pour repartir de zéro
+                DOM.bboxSouth.value = '';
+                DOM.bboxWest.value  = '';
+                DOM.bboxNorth.value = '';
+                DOM.bboxEast.value  = '';
             } else {
-                DOM.manualGroup.classList.add('hidden');
-                // Pré-remplir la bbox depuis destinations.json
-                const dest = destinationsData[val];
-                if (dest && dest.bounds) {
-                    const [[south, west], [north, east]] = dest.bounds;
-                    DOM.bboxSouth.value = south;
-                    DOM.bboxWest.value  = west;
-                    DOM.bboxNorth.value = north;
-                    DOM.bboxEast.value  = east;
-                }
-                // Recharger les zones de la destination
+                DOM.manualSearch.classList.add('hidden');
+                setBboxReadOnly(true);
+                // Charger les zones et calculer l'enveloppe pour pré-remplir la bbox
                 loadZonesFor(val);
             }
         });
@@ -267,13 +283,66 @@
         // Détection de zone — fichier zonesFile depuis destinations.json,
         // toujours dans public/ depuis la migration OSM 06/05/2026.
         let zonesGeoJSON = null;
+
+        // Calcule l'enveloppe (bbox englobante) de tous les polygones d'un
+        // FeatureCollection. Utilisée pour la bbox du scout : elle couvre
+        // toute la géographie des zones, y compris les parties qui dépassent
+        // la bbox d'origine de destinations.json (les boundaries OSM
+        // débordent souvent de la bbox de requête Overpass).
+        function computeZonesEnvelope(geo) {
+            if (!geo?.features?.length) return null;
+            let minLat = Infinity, maxLat = -Infinity, minLon = Infinity, maxLon = -Infinity;
+            for (const f of geo.features) {
+                const ring = f.geometry?.coordinates?.[0];
+                if (!ring) continue;
+                for (const [lon, lat] of ring) {
+                    if (lat < minLat) minLat = lat;
+                    if (lat > maxLat) maxLat = lat;
+                    if (lon < minLon) minLon = lon;
+                    if (lon > maxLon) maxLon = lon;
+                }
+            }
+            if (!isFinite(minLat)) return null;
+            return { south: minLat, west: minLon, north: maxLat, east: maxLon };
+        }
+
+        function bboxAreaKm2(b) {
+            const dLat = (b.north - b.south) * 111;
+            const dLon = (b.east - b.west) * 111 * Math.cos((b.south + b.north) / 2 * Math.PI / 180);
+            return Math.round(dLat * dLon);
+        }
+
         async function loadZonesFor(destId) {
             zonesGeoJSON = null;
             const dest = destinationsData[destId];
-            if (!dest?.zonesFile) return;
+            DOM.bboxInfo.textContent = '';
+            if (!dest?.zonesFile) {
+                // Fallback : pas de zones → on prend bounds de destinations.json
+                if (dest?.bounds) {
+                    const [[south, west], [north, east]] = dest.bounds;
+                    DOM.bboxSouth.value = south;
+                    DOM.bboxWest.value  = west;
+                    DOM.bboxNorth.value = north;
+                    DOM.bboxEast.value  = east;
+                    DOM.bboxInfo.textContent = `Bbox depuis destinations.json (pas de zones disponibles).`;
+                }
+                return;
+            }
             try {
                 const res = await fetch(`../public/${dest.zonesFile}?t=${Date.now()}`);
-                if (res.ok) zonesGeoJSON = await res.json();
+                if (res.ok) {
+                    zonesGeoJSON = await res.json();
+                    const env = computeZonesEnvelope(zonesGeoJSON);
+                    if (env) {
+                        DOM.bboxSouth.value = env.south.toFixed(6);
+                        DOM.bboxWest.value  = env.west.toFixed(6);
+                        DOM.bboxNorth.value = env.north.toFixed(6);
+                        DOM.bboxEast.value  = env.east.toFixed(6);
+                        const n = zonesGeoJSON.features.length;
+                        const km2 = bboxAreaKm2(env);
+                        DOM.bboxInfo.textContent = `Bbox = enveloppe des ${n} zones (~${km2} km²) — couvre tous les polygones du fichier zones.geojson, y compris leurs débordements.`;
+                    }
+                }
             } catch(e) { /* zones non disponibles pour cette destination */ }
         }
 
@@ -466,24 +535,29 @@
         DOM.btnFetch.onclick = async () => {
             let south, west, north, east;
             const selectedDest = DOM.destSelect.value;
+            const isManual = (selectedDest === '__manual__' || !destinationsData[selectedDest]);
 
-            if (selectedDest && selectedDest !== '__manual__' && destinationsData[selectedDest]) {
-                // Destination connue → lire directement depuis destinationsData (fiable)
-                const [[s, w], [n, e]] = destinationsData[selectedDest].bounds;
-                [south, west, north, east] = [s, w, n, e];
-            } else {
-                // Mode manuel → auto-geocoder si bbox vide mais nom renseigné
-                const bboxEmpty = [DOM.bboxSouth.value, DOM.bboxWest.value, DOM.bboxNorth.value, DOM.bboxEast.value].some(v => v.trim() === '');
+            // Mode manuel : auto-geocoder si bbox vide mais nom renseigné
+            if (isManual) {
+                const bboxEmpty = [DOM.bboxSouth.value, DOM.bboxWest.value, DOM.bboxNorth.value, DOM.bboxEast.value].some(v => v.toString().trim() === '');
                 if (bboxEmpty && DOM.locName.value.trim()) {
                     const box = await geocodeToBox(DOM.locName.value.trim());
                     if (!box) { DOM.btnFetch.disabled = false; return; }
                     ({ south, west, north, east } = box);
-                } else {
-                    south = parseFloat(DOM.bboxSouth.value);
-                    west  = parseFloat(DOM.bboxWest.value);
-                    north = parseFloat(DOM.bboxNorth.value);
-                    east  = parseFloat(DOM.bboxEast.value);
+                    DOM.bboxSouth.value = south.toFixed(6);
+                    DOM.bboxWest.value  = west.toFixed(6);
+                    DOM.bboxNorth.value = north.toFixed(6);
+                    DOM.bboxEast.value  = east.toFixed(6);
                 }
+            }
+
+            // Lire depuis les inputs (remplis par loadZonesFor pour destinations
+            // connues, ou par l'utilisateur / Nominatim en mode manuel)
+            if (south === undefined) {
+                south = parseFloat(DOM.bboxSouth.value);
+                west  = parseFloat(DOM.bboxWest.value);
+                north = parseFloat(DOM.bboxNorth.value);
+                east  = parseFloat(DOM.bboxEast.value);
             }
 
             if ([south, west, north, east].some(isNaN)) {
