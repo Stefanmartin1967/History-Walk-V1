@@ -1324,18 +1324,19 @@ out geom;`;
                 // b. {destId}-zones.geojson : depuis zonesGeoJSON courant si dispo, sinon FeatureCollection vide
                 const zonesGj = zonesGeoJSON || { type: 'FeatureCollection', features: [] };
 
-                // c. {destId}.geojson : POIs scoutés
-                // d. circuits/{destId}.json : vide
-                const circuitsJson = { circuits: [] };
+                // c. {destId}.geojson : POIs scoutés (poussé en premier ci-dessous)
+                // PAS de push circuits/{destId}.json : un fichier vide
+                // {circuits:[]} déclenchait le workflow "Update Circuit Index"
+                // qui plantait en race condition avec les pushes suivants.
+                // HW gère gracieusement l'absence du fichier (= pas de circuits
+                // officiels). Le fichier sera créé au premier vrai circuit
+                // publié (via le mécanisme circuits existant).
 
                 setSaveStatus('loading', `⏳ Push public/${destId}.geojson (${scoutGj.features.length} POIs)…`);
                 await ghPutFile(`public/${destId}.geojson`, JSON.stringify(scoutGj, null, 2) + '\n', `scout: création data ${destId}`, token);
 
                 setSaveStatus('loading', `⏳ Push public/${destId}-zones.geojson (${zonesGj.features.length} zones)…`);
                 await ghPutFile(`public/${destId}-zones.geojson`, JSON.stringify(zonesGj, null, 2) + '\n', `scout: création zones ${destId}`, token);
-
-                setSaveStatus('loading', `⏳ Push public/circuits/${destId}.json…`);
-                await ghPutFile(`public/circuits/${destId}.json`, JSON.stringify(circuitsJson, null, 2) + '\n', `scout: création circuits ${destId}`, token);
 
                 setSaveStatus('loading', '⏳ Push destinations.json…');
                 await ghPutFile('public/destinations.json', JSON.stringify(destJson, null, 2) + '\n', `scout: ajout destination ${destId}`, token, destFile?.sha);
