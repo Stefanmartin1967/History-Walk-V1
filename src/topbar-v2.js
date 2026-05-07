@@ -195,6 +195,9 @@ export function renderDestinationMenu(destinations, activeMapId) {
                 setDestMenuOpen(false);
                 return;
             }
+            // Synchronise le localStorage avant le reload → le DM, ouvert
+            // ensuite, prendra automatiquement la même destination active.
+            try { localStorage.setItem('hw_active_dest', targetId); } catch (e) { /* ignore */ }
             // Reload avec param ?map=… (consommé par loadAndInitializeMap au boot)
             const url = new URL(window.location.href);
             url.searchParams.set('map', targetId);
