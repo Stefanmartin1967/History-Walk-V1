@@ -386,6 +386,12 @@
         };
 
         function getHwCategory(tags) {
+            // Bâtiments religieux mappés sans amenity=place_of_worship
+            // (fréquent sur OSM pour les mosquées de Djerba mappées comme way).
+            if (tags.building === 'mosque') return 'Mosquée';
+            if (tags.building === 'synagogue') return 'Site religieux';
+            if (tags.building === 'church') return 'Site religieux';
+
             if (tags.amenity === 'place_of_worship') {
                 if (tags.religion === 'muslim') return 'Mosquée';
                 if (tags.religion === 'christian' || tags.religion === 'jewish') return 'Site religieux';
@@ -578,20 +584,30 @@
             // Bbox Overpass : (south,west,north,east)
             const bbox = `(${south},${west},${north},${east})`;
 
+            // `nwr` = node + way + relation. Beaucoup de mosquées/sites historiques
+            // sont mappés comme way (bâtiment) sur OSM, pas comme node. Sans nwr,
+            // on rate ~70% des mosquées (mesuré sur Djerba : 95/300 POIs officiels
+            // matchés avec nodes seuls).
             let clauses = [];
-            if (activeTypes.includes('religion')) clauses.push(`node["amenity"="place_of_worship"]${newerFilter}${bbox};`);
-            if (activeTypes.includes('history')) clauses.push(`node["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"]${newerFilter}${bbox};`);
-            if (activeTypes.includes('museum')) clauses.push(`node["tourism"="museum"]${newerFilter}${bbox};`);
-            if (activeTypes.includes('hotel')) clauses.push(`node["tourism"~"hotel|guest_house|hostel"]${newerFilter}${bbox};`);
-            if (activeTypes.includes('restaurant')) clauses.push(`node["amenity"~"restaurant|cafe"]${newerFilter}${bbox};`);
-            if (activeTypes.includes('leisure')) {
-                clauses.push(`node["leisure"~"park|water_park"]${newerFilter}${bbox};`);
-                clauses.push(`node["tourism"~"theme_park|zoo|aquarium"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('religion')) {
+                clauses.push(`nwr["amenity"="place_of_worship"]${newerFilter}${bbox};`);
+                // Bâtiments religieux sans tag amenity (cas fréquent à Djerba)
+                clauses.push(`way["building"~"mosque|church|synagogue"]${newerFilter}${bbox};`);
             }
-            if (activeTypes.includes('tourism')) clauses.push(`node["tourism"~"viewpoint|artwork|attraction|gallery"]${newerFilter}${bbox};`);
-            if (activeTypes.includes('public')) clauses.push(`node["amenity"~"townhall|police|post_office|library"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('history')) clauses.push(`nwr["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('museum')) clauses.push(`nwr["tourism"="museum"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('hotel')) clauses.push(`nwr["tourism"~"hotel|guest_house|hostel"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('restaurant')) clauses.push(`nwr["amenity"~"restaurant|cafe"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('leisure')) {
+                clauses.push(`nwr["leisure"~"park|water_park"]${newerFilter}${bbox};`);
+                clauses.push(`nwr["tourism"~"theme_park|zoo|aquarium"]${newerFilter}${bbox};`);
+            }
+            if (activeTypes.includes('tourism')) clauses.push(`nwr["tourism"~"viewpoint|artwork|attraction|gallery"]${newerFilter}${bbox};`);
+            if (activeTypes.includes('public')) clauses.push(`nwr["amenity"~"townhall|police|post_office|library"]${newerFilter}${bbox};`);
 
-            const query = `[out:json][timeout:60];(${clauses.join('')});out body;`;
+            // `out center;` au lieu de `out body;` : pour les way/relation, Overpass
+            // calcule un centroid (sous-champ `el.center`). Les nodes restent inchangés.
+            const query = `[out:json][timeout:60];(${clauses.join('')});out center;`;
 
             // Miroirs Overpass — essayés dans l'ordre jusqu'au premier succès
             const OVERPASS_MIRRORS = [
@@ -634,8 +650,29 @@
                 DOM.tbody.innerHTML = '';
                 DOM.resultsArea.classList.remove('hidden');
 
-                    data.elements.forEach(el => {
-                    const t = el.tags;
+                // Tri : on préfère les `way` (polygones de bâtiments, plus précis)
+                // sur les `node` (point posé manuellement) pour le même POI. Lors
+                // de la déduplication par GPS, le premier inséré gagne.
+                const ranked = [...data.elements].sort((a, b) => {
+                    const rank = el => el.type === 'way' ? 0 : el.type === 'relation' ? 1 : 2;
+                    return rank(a) - rank(b);
+                });
+
+                // Dédup par GPS arrondi à 4 décimales (~11 m). Fusionne typiquement
+                // le node "POI" + le way "bâtiment" d'une même mosquée.
+                const seenKeys = new Set();
+                let added = 0;
+
+                ranked.forEach(el => {
+                    const t = el.tags || {};
+                    const lat = el.lat ?? el.center?.lat;
+                    const lon = el.lon ?? el.center?.lon;
+                    if (lat == null || lon == null) return;
+
+                    const key = `${lat.toFixed(4)},${lon.toFixed(4)}`;
+                    if (seenKeys.has(key)) return;
+                    seenKeys.add(key);
+
                     // Nom FR vs Arabe : name:fr → FR, name:ar → arabe
                     // Si name est en arabe et name:fr absent → name = arabe, FR vide
                     const nameFr  = t["name:fr"]  || (isArabic(t.name) ? "" : (t.name || ""));
@@ -645,18 +682,20 @@
                         "Nom du site FR":    nameFr,
                         "Nom du site arabe": nameAr,
                         "Catégorie": getHwCategory(t),
-                        "Zone": detectZone(el.lat, el.lon),
+                        "Zone": detectZone(lat, lon),
                         "Description": t.description || "",
                         "Source": "",
-                        "Coordonnées GPS": `${el.lat}, ${el.lon}`,
+                        "Coordonnées GPS": `${lat}, ${lon}`,
                         "HW_ID": generateHWID()
                     });
+                    added++;
                 });
 
-                if (data.elements.length === 0) {
+                const dedup = data.elements.length - added;
+                if (added === 0) {
                     showStatus('warning', '🔍 Aucun résultat dans cette zone pour les critères sélectionnés.');
                 } else {
-                    showStatus('success', `✅ ${data.elements.length} lieu(x) trouvé(s).`);
+                    showStatus('success', `✅ ${added} lieu(x) trouvé(s)${dedup > 0 ? ` (${dedup} doublons fusionnés)` : ''}.`);
                 }
 
             } catch (err) {
