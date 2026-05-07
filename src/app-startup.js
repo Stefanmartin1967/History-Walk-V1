@@ -128,15 +128,25 @@ export async function loadAndInitializeMap() {
     let activeMapId = 'djerba';
     let initialView = { center: [33.77478, 10.94353], zoom: 11.5 }; // Fallback ultime
 
-    // A. Détermination Map ID
+    // A. Détermination Map ID — priorité :
+    //    1. URL `?map=...` (intention explicite)
+    //    2. localStorage `hw_active_dest` (dernier choix utilisateur, partagé avec le DM)
+    //    3. `destinations.activeMapId` (default config)
+    //    4. fallback "djerba"
     if (state.destinations) {
         const urlParams = new URLSearchParams(window.location.search);
         const urlMapId = urlParams.get('map');
+        const lsMapId = localStorage.getItem('hw_active_dest');
         if (urlMapId && state.destinations.maps[urlMapId]) {
             activeMapId = urlMapId;
+        } else if (lsMapId && state.destinations.maps[lsMapId]) {
+            activeMapId = lsMapId;
         } else if (state.destinations.activeMapId) {
             activeMapId = state.destinations.activeMapId;
         }
+        // Synchronise le localStorage avec le choix final → si Stefan ouvre
+        // le DM ensuite, il prendra la même destination active.
+        try { localStorage.setItem('hw_active_dest', activeMapId); } catch (e) { /* QuotaExceeded etc. */ }
         // B. Config View (si dispo)
         if (state.destinations.maps[activeMapId] && state.destinations.maps[activeMapId].startView) {
             initialView = state.destinations.maps[activeMapId].startView;
