@@ -2,7 +2,7 @@
 <html lang="fr" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://overpass.private.coffee; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://overpass.private.coffee https://api.github.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>History Walk - Module Scout</title>
     <link rel="icon" type="image/png" href="../icons/icon-192.png" />
     <script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
@@ -170,9 +170,60 @@
                 <button id="btn-add-row" class="btn-secondary btn-sm"><i data-lucide="plus"></i> Ajouter une ligne</button>
                 <span id="row-counter" class="status-bar">0 résultats</span>
             </div>
-            <button id="btn-download" class="btn-success"><i data-lucide="download"></i> Télécharger GeoJSON</button>
+            <div style="display: flex; gap: 10px;">
+                <button id="btn-download" class="btn-secondary"><i data-lucide="download"></i> Télécharger GeoJSON</button>
+                <button id="btn-save-dest" class="btn-success" title="Pousse les fichiers sur GitHub via ton PAT"><i data-lucide="cloud-upload"></i> Enregistrer dans HW</button>
+            </div>
+        </div>
+        <div id="save-status" class="hidden" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- Modale "Saisir le token GitHub" (réutilisée pour la sauvegarde) -->
+    <div id="token-modal-overlay" class="hidden token-modal-overlay">
+        <div class="token-modal-box">
+            <div class="token-modal-title">Token GitHub requis</div>
+            <div class="token-modal-desc">
+                Personal Access Token avec scope <code>repo</code>. Stocké dans IndexedDB
+                (partagé avec History Walk et le Data Manager).
+            </div>
+            <input type="password" id="token-modal-input" class="token-modal-input" placeholder="ghp_…">
+            <div class="token-modal-actions">
+                <button id="token-modal-cancel" class="btn-secondary">Annuler</button>
+                <button id="token-modal-confirm" class="btn-primary">Confirmer</button>
+            </div>
         </div>
     </div>
+
+    <!-- Modale "Saisir l'ID de la nouvelle destination" -->
+    <div id="dest-modal-overlay" class="hidden token-modal-overlay">
+        <div class="token-modal-box">
+            <div class="token-modal-title">Enregistrer une nouvelle destination</div>
+            <div class="token-modal-desc">
+                Choisis un identifiant court (lettres minuscules, ex: <code>agadir</code>) et un nom affiché.
+            </div>
+            <label style="display:block;margin-top:10px;font-weight:600;font-size:13px;">Identifiant</label>
+            <input type="text" id="dest-modal-id" class="token-modal-input" placeholder="agadir" pattern="[a-z0-9-]+">
+            <label style="display:block;margin-top:10px;font-weight:600;font-size:13px;">Nom affiché</label>
+            <input type="text" id="dest-modal-name" class="token-modal-input" placeholder="Agadir">
+            <div class="token-modal-actions">
+                <button id="dest-modal-cancel" class="btn-secondary">Annuler</button>
+                <button id="dest-modal-confirm" class="btn-primary">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Modales (token + destination) — réutilise le style du DM */
+        .token-modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.55); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .token-modal-overlay.hidden { display: none; }
+        .token-modal-box { background: #fff; padding: 24px; border-radius: 8px; max-width: 480px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .token-modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
+        .token-modal-desc { font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 12px; }
+        .token-modal-desc code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; }
+        .token-modal-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; box-sizing: border-box; margin-top: 4px; }
+        .token-modal-input:focus { outline: none; border-color: var(--primary); }
+        .token-modal-actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; }
+    </style>
 
     <script>
         lucide.createIcons();
@@ -193,7 +244,9 @@
             filters: document.querySelectorAll('.filter-item input'),
             resultsArea: document.getElementById('results-area'),
             tbody: document.querySelector('#data-table tbody'),
-            counter: document.getElementById('row-counter')
+            counter: document.getElementById('row-counter'),
+            btnSaveDest: document.getElementById('btn-save-dest'),
+            saveStatus: document.getElementById('save-status'),
         };
 
         // Toggle des inputs bbox (read-only en mode destination connue,
@@ -974,6 +1027,318 @@ out geom;`;
             dl.appendChild(op);
         });
         document.body.appendChild(dl);
+
+        // ─── Enregistrer cette destination dans HW ──────────────────────────
+        // Workflow zero-CLI : push 4 fichiers sur GitHub via PAT.
+        // - Nouvelle destination : crée destinations.json (entrée), {dest}.geojson,
+        //   {dest}-zones.geojson, circuits/{dest}.json (vide).
+        // - Destination existante : merge — récupère le {dest}.geojson distant,
+        //   ajoute les nouveaux POIs (déjà dédoublonnés au scout), pousse le résultat.
+        //   Aucun écrasement des autres fichiers.
+
+        // Mini-couche IDB pour le token (cohérent HW + DM, durcissement sécurité)
+        const IDB_NAME = 'HistoryWalkDB';
+        const IDB_STORE = 'appState';
+        const TOKEN_KEY = 'github_pat';
+        const REPO_OWNER = 'Stefanmartin1967';
+        const REPO_NAME = 'History-Walk-V1';
+
+        function idbOpen() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(IDB_NAME);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(IDB_STORE)) {
+                        db.createObjectStore(IDB_STORE, { keyPath: 'key' });
+                    }
+                };
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+        async function idbGet(key) {
+            const db = await idbOpen();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(IDB_STORE, 'readonly');
+                const req = tx.objectStore(IDB_STORE).get(key);
+                req.onsuccess = () => resolve(req.result ? req.result.value : null);
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+        async function idbPut(key, value) {
+            const db = await idbOpen();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(IDB_STORE, 'readwrite');
+                const req = tx.objectStore(IDB_STORE).put({ key, value });
+                req.onsuccess = () => resolve();
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        async function getStoredToken() {
+            try {
+                let token = await idbGet(TOKEN_KEY);
+                if (!token) {
+                    const legacy = localStorage.getItem(TOKEN_KEY);
+                    if (legacy) {
+                        token = legacy.trim();
+                        await idbPut(TOKEN_KEY, token);
+                        localStorage.removeItem(TOKEN_KEY);
+                    }
+                }
+                return token || null;
+            } catch (err) { return localStorage.getItem(TOKEN_KEY) || null; }
+        }
+        async function saveToken(token) {
+            const clean = token ? token.trim() : null;
+            try {
+                await idbPut(TOKEN_KEY, clean);
+                localStorage.removeItem(TOKEN_KEY);
+            } catch (err) { /* fallback localStorage si IDB ko */ localStorage.setItem(TOKEN_KEY, clean || ''); }
+        }
+
+        // Modales
+        function showTokenModal() {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('token-modal-overlay');
+                const input = document.getElementById('token-modal-input');
+                const btnConfirm = document.getElementById('token-modal-confirm');
+                const btnCancel = document.getElementById('token-modal-cancel');
+                input.value = '';
+                overlay.classList.remove('hidden');
+                setTimeout(() => input.focus(), 50);
+                const close = (token) => {
+                    overlay.classList.add('hidden');
+                    btnConfirm.removeEventListener('click', onConfirm);
+                    btnCancel.removeEventListener('click', onCancel);
+                    resolve(token);
+                };
+                const onConfirm = async () => {
+                    const t = input.value.trim();
+                    if (!t) { input.focus(); return; }
+                    await saveToken(t);
+                    close(t);
+                };
+                const onCancel = () => close(null);
+                btnConfirm.addEventListener('click', onConfirm);
+                btnCancel.addEventListener('click', onCancel);
+            });
+        }
+
+        function showDestModal() {
+            return new Promise((resolve) => {
+                const overlay = document.getElementById('dest-modal-overlay');
+                const inputId = document.getElementById('dest-modal-id');
+                const inputName = document.getElementById('dest-modal-name');
+                const btnConfirm = document.getElementById('dest-modal-confirm');
+                const btnCancel = document.getElementById('dest-modal-cancel');
+                inputId.value = ''; inputName.value = '';
+                overlay.classList.remove('hidden');
+                setTimeout(() => inputId.focus(), 50);
+                const close = (val) => {
+                    overlay.classList.add('hidden');
+                    btnConfirm.removeEventListener('click', onConfirm);
+                    btnCancel.removeEventListener('click', onCancel);
+                    resolve(val);
+                };
+                const onConfirm = () => {
+                    const id = inputId.value.trim().toLowerCase();
+                    const name = inputName.value.trim();
+                    if (!/^[a-z0-9-]+$/.test(id)) { inputId.focus(); return; }
+                    if (!name) { inputName.focus(); return; }
+                    close({ id, name });
+                };
+                const onCancel = () => close(null);
+                btnConfirm.addEventListener('click', onConfirm);
+                btnCancel.addEventListener('click', onCancel);
+            });
+        }
+
+        function setSaveStatus(type, msg) {
+            const el = DOM.saveStatus;
+            el.classList.remove('hidden');
+            const color = type === 'error' ? '#dc2626' : type === 'success' ? '#15803d' : '#1d4ed8';
+            const bg    = type === 'error' ? '#fef2f2' : type === 'success' ? '#f0fdf4' : '#eff6ff';
+            const border= type === 'error' ? '#fecaca' : type === 'success' ? '#bbf7d0' : '#bfdbfe';
+            el.style.cssText = `padding:10px 15px;border-radius:4px;font-size:14px;font-weight:600;background:${bg};color:${color};border:1px solid ${border};`;
+            el.textContent = msg;
+        }
+
+        // GitHub API helpers
+        function toBase64Utf8(str) {
+            const bytes = new TextEncoder().encode(str);
+            let bin = '';
+            bytes.forEach(b => bin += String.fromCharCode(b));
+            return btoa(bin);
+        }
+        async function ghGetFile(path, token) {
+            const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+                headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+            });
+            if (res.status === 404) return null;
+            if (!res.ok) throw new Error(`GET ${path} → HTTP ${res.status}`);
+            const data = await res.json();
+            return { sha: data.sha, content: atob(data.content.replace(/\n/g, '')) };
+        }
+        async function ghPutFile(path, contentStr, message, token, sha) {
+            const payload = {
+                message,
+                content: toBase64Utf8(contentStr),
+                ...(sha ? { sha } : {})
+            };
+            const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+                method: 'PUT',
+                headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(`PUT ${path} → ${err.message || `HTTP ${res.status}`}`);
+            }
+        }
+
+        // Construit un FeatureCollection à partir des rows du tableau scout.
+        // Réutilise la logique de btnDownload mais retourne l'objet (pas le download).
+        function buildScoutGeoJSON() {
+            const features = [];
+            const rows = DOM.tbody.querySelectorAll('tr');
+            rows.forEach(tr => {
+                const inputs = tr.querySelectorAll('input, textarea');
+                const nom = inputs[0].value;
+                const nomAr = inputs[1].value;
+                const cat = inputs[2].value;
+                const zone = inputs[3].value;
+                const gps = inputs[4].value;
+                const desc = inputs[5].value;
+                const src = inputs[6].value;
+                const id = tr.querySelector('.col-id').textContent;
+                if (!gps.includes(',')) return;
+                const [latStr, lonStr] = gps.split(',').map(s => s.trim());
+                const lat = parseFloat(latStr), lon = parseFloat(lonStr);
+                if (isNaN(lat) || isNaN(lon)) return;
+                features.push({
+                    type: 'Feature',
+                    geometry: { type: 'Point', coordinates: [lon, lat] },
+                    properties: {
+                        'Nom du site FR': nom, 'Nom du site arabe': nomAr,
+                        'Catégorie': cat, 'Zone': zone,
+                        'Description': desc, 'Source': src,
+                        'Temps de visite': null, 'Prix d\'entrée': null,
+                        'Description_courte': null, 'HW_ID': id
+                    }
+                });
+            });
+            return { type: 'FeatureCollection', features };
+        }
+
+        DOM.btnSaveDest.onclick = async () => {
+            try {
+                DOM.btnSaveDest.disabled = true;
+
+                const selectedDest = DOM.destSelect.value;
+                const isManual = (selectedDest === '__manual__' || !destinationsData[selectedDest]);
+
+                // 1. Récupérer ou demander le token
+                let token = await getStoredToken();
+                if (!token) {
+                    token = await showTokenModal();
+                    if (!token) { setSaveStatus('error', 'Annulé : pas de token.'); return; }
+                }
+
+                // 2. Construire le geojson des POIs scoutés (depuis les rows actuelles)
+                const scoutGj = buildScoutGeoJSON();
+                if (scoutGj.features.length === 0) {
+                    setSaveStatus('error', 'Aucun POI à enregistrer (tableau vide).');
+                    return;
+                }
+
+                // 3. Mode merge (destination existante) ou nouveau
+                if (!isManual) {
+                    // Merge : récupère le {dest}.geojson distant, ajoute les nouveaux POIs
+                    const dest = destinationsData[selectedDest];
+                    const fileName = dest.file || `${selectedDest}.geojson`;
+                    setSaveStatus('loading', `⏳ Récupération de ${fileName}…`);
+                    const existing = await ghGetFile(`public/${fileName}`, token);
+                    if (!existing) {
+                        setSaveStatus('error', `${fileName} introuvable sur GitHub. Annulé.`);
+                        return;
+                    }
+                    const existingGj = JSON.parse(existing.content);
+                    existingGj.features = [...(existingGj.features || []), ...scoutGj.features];
+                    setSaveStatus('loading', `⏳ Push ${fileName} (${scoutGj.features.length} nouveaux POIs)…`);
+                    await ghPutFile(
+                        `public/${fileName}`,
+                        JSON.stringify(existingGj, null, 2) + '\n',
+                        `scout: +${scoutGj.features.length} POIs sur ${selectedDest}`,
+                        token,
+                        existing.sha
+                    );
+                    setSaveStatus('success', `✅ ${scoutGj.features.length} nouveaux POIs ajoutés à ${fileName}.`);
+                    return;
+                }
+
+                // Nouveau : demande destId + nom
+                const newDest = await showDestModal();
+                if (!newDest) { setSaveStatus('error', 'Annulé.'); return; }
+                const { id: destId, name: destName } = newDest;
+
+                // Vérifie qu'il n'existe pas déjà dans destinations.json
+                if (destinationsData[destId]) {
+                    setSaveStatus('error', `❌ "${destId}" existe déjà dans destinations.json. Sélectionne-la dans le dropdown pour ajouter en mode merge.`);
+                    return;
+                }
+
+                // a. destinations.json mis à jour
+                setSaveStatus('loading', '⏳ Lecture de destinations.json…');
+                const destFile = await ghGetFile('public/destinations.json', token);
+                const destJson = destFile ? JSON.parse(destFile.content) : { activeMapId: destId, maps: {} };
+                destJson.maps = destJson.maps || {};
+                destJson.maps[destId] = {
+                    name: destName,
+                    file: `${destId}.geojson`,
+                    circuitsFile: `circuits/${destId}.json`,
+                    zonesFile: `${destId}-zones.geojson`,
+                    bounds: [
+                        [parseFloat(DOM.bboxSouth.value), parseFloat(DOM.bboxWest.value)],
+                        [parseFloat(DOM.bboxNorth.value), parseFloat(DOM.bboxEast.value)]
+                    ],
+                    currency: 'EUR',
+                    startView: {
+                        center: [
+                            (parseFloat(DOM.bboxSouth.value) + parseFloat(DOM.bboxNorth.value)) / 2,
+                            (parseFloat(DOM.bboxWest.value)  + parseFloat(DOM.bboxEast.value))  / 2
+                        ],
+                        zoom: 11.5
+                    }
+                };
+
+                // b. {destId}-zones.geojson : depuis zonesGeoJSON courant si dispo, sinon FeatureCollection vide
+                const zonesGj = zonesGeoJSON || { type: 'FeatureCollection', features: [] };
+
+                // c. {destId}.geojson : POIs scoutés
+                // d. circuits/{destId}.json : vide
+                const circuitsJson = { circuits: [] };
+
+                setSaveStatus('loading', `⏳ Push public/${destId}.geojson (${scoutGj.features.length} POIs)…`);
+                await ghPutFile(`public/${destId}.geojson`, JSON.stringify(scoutGj, null, 2) + '\n', `scout: création data ${destId}`, token);
+
+                setSaveStatus('loading', `⏳ Push public/${destId}-zones.geojson (${zonesGj.features.length} zones)…`);
+                await ghPutFile(`public/${destId}-zones.geojson`, JSON.stringify(zonesGj, null, 2) + '\n', `scout: création zones ${destId}`, token);
+
+                setSaveStatus('loading', `⏳ Push public/circuits/${destId}.json…`);
+                await ghPutFile(`public/circuits/${destId}.json`, JSON.stringify(circuitsJson, null, 2) + '\n', `scout: création circuits ${destId}`, token);
+
+                setSaveStatus('loading', '⏳ Push destinations.json…');
+                await ghPutFile('public/destinations.json', JSON.stringify(destJson, null, 2) + '\n', `scout: ajout destination ${destId}`, token, destFile?.sha);
+
+                setSaveStatus('success', `✅ Destination "${destName}" créée (${scoutGj.features.length} POIs, ${zonesGj.features.length} zones). Recharge HW pour la voir.`);
+            } catch (e) {
+                setSaveStatus('error', `❌ ${e.message || e}`);
+            } finally {
+                DOM.btnSaveDest.disabled = false;
+                lucide.createIcons();
+            }
+        };
 
     </script>
 </body>
