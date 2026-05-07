@@ -1,0 +1,1171 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6448187,
+          36.4060841
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFYZYRC4PG9QH45Y49FH9"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5346034,
+          36.3693912
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Carthage Land",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0006R3A3WYPY2X8AMR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5297813,
+          36.3590406
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ02RGH870SY75DA13BJ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6133242,
+          36.3939475
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "مدينة الحمامات العتيقة",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ03PQR4DW2C3XRK81MM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5616218,
+          36.3933267
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Pupput",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ05PD2KBK72TYK17A07"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6740901,
+          36.4219938
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Aqua Park Flipper",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "El Mrezga",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ07QS934TY3WVP9VEQT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5335819,
+          36.369107
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Aqua Land",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ08X3ZY6RRJ7NFQM7NH"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6140034,
+          36.3950631
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Place des Martyres",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0AWXTBA0Q989ATXHVA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6150324,
+          36.3957909
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Youssef",
+        "Nom du site arabe": "يوسف مسجد سيدي",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0B3D0R2VY05KJWZ44C"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6176637,
+          36.3948144
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Church of Hammamet",
+        "Nom du site arabe": "",
+        "Catégorie": "Site religieux",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0DKT0E8AXQB8ER8BJJ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6787075,
+          36.4359524
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jardin Campus Mrezga",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Neapolis",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0FBTKVWJ4W1DTKC3F9"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.675714,
+          36.4230844
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Parc de Mrezga",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "El Mrezga",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0GRVVYWX2A5EC6SM0T"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6311443,
+          36.4073918
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0JG2D0HVX4BTMYHZX8"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6726918,
+          36.4284094
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquee Al Ikhlass Mreaga",
+        "Nom du site arabe": "",
+        "Catégorie": "Mosquée",
+        "Zone": "El Mrezga",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0M26AQNAYMZEV8WNS8"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6121738,
+          36.3971918
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0PGTCHQ4FVN603YTDF"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6548571,
+          36.4182511
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquee El Fath",
+        "Nom du site arabe": "",
+        "Catégorie": "Mosquée",
+        "Zone": "El Mrezga",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0R7FW36MM22MTTPF2W"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6366069,
+          36.4069047
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0TDX42BTP9SDX4DR7V"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.534422,
+          36.3661745
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mickey & Mike Park",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0WAVZA7TJQCQ744SVB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6329367,
+          36.4085182
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al Ber",
+        "Nom du site arabe": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ0X8F4XZNV0EE9VZMK9"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5412172,
+          36.3752272
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ12JH5EZ45X18VA1VGK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6095475,
+          36.4103836
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ15NK01D0E43F1XD82E"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6469965,
+          36.4528367
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ17MVQ01W9NH6ZW691R"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6479862,
+          36.4527559
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1913353H30VQWZ3FKJ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6489597,
+          36.4506168
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1B96TAPATTFSNDHYXR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.648852,
+          36.4506259
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1DJ5APQFMXZ24B6WS7"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6488458,
+          36.4504562
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1FQTDN2H2HBXKDKBP8"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5887757,
+          36.4038348
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Dar Sébastien, Centre culturel international de Hammamet",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Hammamet Ouest",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1HADY6JPTHTDPV33T9"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5280938,
+          36.3533286
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Parc Bouficha",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Yasmine Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1M2NDAHZJ0DAR5AFJ5"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6123709,
+          36.3945431
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Fort de Hammamet",
+        "Nom du site arabe": "قصبة",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1PQZSANBFHVG4A1W5F"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6193816,
+          36.42147
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1R88EC3V1AZYFAEGGZ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6197599,
+          36.4220631
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1TJ17C6FM2S488QV38"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6135913,
+          36.3943987
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Al Jamie Al Kbir",
+        "Nom du site arabe": "المسجد الكبير",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1XK4ECVS82DXGXZHH7"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6125423,
+          36.3944648
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ1ZQZ276871P3X4ZB5S"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6146842,
+          36.3936926
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ21Q9B4C7TMWXA7A4C0"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6119883,
+          36.3946915
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2AM3GEFCD4VHC31TAW"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5347265,
+          36.3688994
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Carthage Land",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2B6571EKA786B6BGGF"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5335239,
+          36.3658548
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "New Medina",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2D5RF1MYEQYMW0SR0P"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6126293,
+          36.3931586
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2FEAPRFFC5VG50ED96"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6175029,
+          36.4054052
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "mosquée El Ghofrane",
+        "Nom du site arabe": "جامع الغفران",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2GHAPQ4H58XE3ZS7DM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6096312,
+          36.4103855
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Ihsen",
+        "Nom du site arabe": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2JVPX5WV3ZY0H3B5QV"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6209599,
+          36.4014338
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "mosquée El Salem",
+        "Nom du site arabe": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2MJERBV4CGCNQ9ACA7"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6144926,
+          36.3947446
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2P7EJVCBZGV0XZ2AGS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6103233,
+          36.400475
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "منازل للكراء",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Ouest",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2R1E80F39KPQKHFAY5"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5331076,
+          36.3690902
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Aqua Land",
+        "Nom du site arabe": "",
+        "Catégorie": "A définir",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2T09FPK9VQWX25X4EQ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5345396,
+          36.3680714
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "King Kong",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2W0B6KD3EBW2BJZ7QB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5355097,
+          36.3684609
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Les Elephants Carthage-Land",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ2YEF35MYB665AVXQMT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6113687,
+          36.3974809
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Club nautique hammamet C.N.H",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ308X7JR5XNJ2SPW75S"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6303823,
+          36.4050921
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Statue d'un Soldat Martyr",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ32C7VDVWJF7VWMX006"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5343572,
+          36.3697637
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Zoo - Carthage Land Hammamet",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Manaret El Hammamet",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ34YXKHRW2DY39HSEHM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.513276,
+          36.476213
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jebel Latrach - Haouanet",
+        "Nom du site arabe": "",
+        "Catégorie": "Site historique",
+        "Zone": "Latrach",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ37VY4K76MTEVSTPX44"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6142829,
+          36.3941172
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Barberous",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ39RC5JJS5XK9ZB7FXX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6495988,
+          36.4035184
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Private Beach - La Badira",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Nord",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ3B8A46BJXQY4S237FD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6116935,
+          36.3946884
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "Description": "",
+        "Source": "",
+        "Temps de visite": null,
+        "Prix d'entrée": null,
+        "Description_courte": null,
+        "HW_ID": "HW-01KR1XFZ3DDZ6YK2TC1TQBN8YT"
+      }
+    }
+  ]
+}
