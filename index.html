@@ -56,45 +56,11 @@
                 <span class="hw-dest-selector-chevron"><i data-lucide="chevron-down"></i></span>
             </button>
 
-            <!-- Dropdown destinations (PR 4) — Djerba active, Hammamet et Agadir à venir -->
-            <div class="hw-dest-menu" id="hw-dest-menu" role="menu" hidden>
-                <div class="hw-dest-menu-section-title">Destinations disponibles</div>
-
-                <button type="button" class="hw-dest-item is-active" role="menuitemradio"
-                        aria-checked="true" data-dest="djerba">
-                    <span class="hw-dest-item-flag">🇹🇳</span>
-                    <span class="hw-dest-item-info">
-                        <span class="hw-dest-item-name">Djerba</span>
-                        <span class="hw-dest-item-sub">Tunisie</span>
-                    </span>
-                    <span class="hw-dest-item-check"><i data-lucide="check"></i></span>
-                </button>
-
-                <div class="hw-dest-menu-section-title is-divided">Bientôt disponibles</div>
-
-                <div class="hw-dest-item is-disabled" role="menuitem" aria-disabled="true" data-dest="hammamet">
-                    <span class="hw-dest-item-icon"><i data-lucide="map-pin"></i></span>
-                    <span class="hw-dest-item-info">
-                        <span class="hw-dest-item-name">Hammamet</span>
-                        <span class="hw-dest-item-sub">Tunisie</span>
-                    </span>
-                    <span class="hw-dest-item-badge">Bientôt</span>
-                </div>
-
-                <div class="hw-dest-item is-disabled" role="menuitem" aria-disabled="true" data-dest="agadir">
-                    <span class="hw-dest-item-icon"><i data-lucide="map-pin"></i></span>
-                    <span class="hw-dest-item-info">
-                        <span class="hw-dest-item-name">Agadir</span>
-                        <span class="hw-dest-item-sub">Maroc</span>
-                    </span>
-                    <span class="hw-dest-item-badge">Bientôt</span>
-                </div>
-
-                <div class="hw-dest-menu-footer">
-                    <i data-lucide="info"></i>
-                    <span>D'autres destinations à venir</span>
-                </div>
-            </div>
+            <!-- Dropdown destinations — peuplé dynamiquement depuis
+                 destinations.json par renderDestinationMenu() (topbar-v2.js)
+                 après loadDestinationsConfig(). Plus de section "Bientôt" :
+                 toute destination présente dans destinations.json est cliquable. -->
+            <div class="hw-dest-menu" id="hw-dest-menu" role="menu" hidden></div>
         </div>
 
         <div class="topbar-center">

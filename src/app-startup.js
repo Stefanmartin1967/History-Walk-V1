@@ -141,6 +141,17 @@ export async function loadAndInitializeMap() {
         if (state.destinations.maps[activeMapId] && state.destinations.maps[activeMapId].startView) {
             initialView = state.destinations.maps[activeMapId].startView;
         }
+
+        // Peuple le sélecteur de destination du topbar maintenant qu'on connaît
+        // l'activeMapId définitif (URL > activeMapId config > fallback).
+        // Toute destination présente dans destinations.json est cliquable —
+        // plus de section "Bientôt" hardcodée.
+        try {
+            const { renderDestinationMenu } = await import('./topbar-v2.js');
+            renderDestinationMenu(state.destinations, activeMapId);
+        } catch (e) {
+            console.warn('[Startup] renderDestinationMenu failed', e);
+        }
     }
 
     // C. Restauration Vue Utilisateur (SUPPRIMÉE)

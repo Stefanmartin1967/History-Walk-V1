@@ -83,14 +83,6 @@ function setupDestinationMenu() {
         toggleDestMenu();
     });
 
-    // Click sur la destination active (Djerba) : ferme simplement le menu.
-    // Les destinations disabled (Hammamet, Agadir) ne sont pas focusables
-    // ni cliquables (pointer-events laissé natif via aria-disabled, et le
-    // CSS .is-disabled met cursor:not-allowed).
-    menu.querySelectorAll('.hw-dest-item.is-active').forEach(item => {
-        item.addEventListener('click', () => setDestMenuOpen(false));
-    });
-
     // Fermeture sur clic extérieur
     document.addEventListener('click', (e) => {
         if (!isDestMenuOpen()) return;
@@ -106,6 +98,115 @@ function setupDestinationMenu() {
             selector.focus();
         }
     });
+}
+
+// ─── Population dynamique du dropdown destinations ──────────────────────────
+// Génère le HTML du menu depuis state.destinations.maps. Appelée après
+// loadDestinationsConfig() (cf. app-startup.js). Toute destination présente
+// dans destinations.json devient cliquable. Plus de section "Bientôt" : si
+// une dest est dans destinations.json, elle est utilisable.
+
+// Heuristique drapeau / sous-titre basée sur les bounds (lat, lon) ou un
+// override `country` dans destinations.json. Pour l'instant : Tunisie ou
+// Maroc ou autre selon la lat/lon. Si on ouvre d'autres pays, ajouter un
+// champ explicite `country` + `flag` dans destinations.json.
+function inferCountryAndFlag(dest) {
+    if (dest?.country && dest?.flag) return { country: dest.country, flag: dest.flag };
+    const center = dest?.startView?.center;
+    if (Array.isArray(center) && center.length === 2) {
+        const [lat, lon] = center;
+        // Tunisie
+        if (lat >= 30 && lat <= 38 && lon >= 7 && lon <= 12) return { country: 'Tunisie', flag: '🇹🇳' };
+        // Maroc
+        if (lat >= 27 && lat <= 36 && lon >= -14 && lon <= 0) return { country: 'Maroc', flag: '🇲🇦' };
+    }
+    return { country: dest?.country || '', flag: dest?.flag || '🌍' };
+}
+
+export function renderDestinationMenu(destinations, activeMapId) {
+    const menu = document.getElementById(DEST_MENU_ID);
+    const selectorName = document.getElementById('hw-dest-selector-name');
+    const selectorFlagEl = document.querySelector('.hw-dest-selector-flag');
+    if (!menu || !destinations) return;
+
+    const maps = destinations.maps || {};
+    const entries = Object.entries(maps);
+    if (entries.length === 0) return;
+
+    // Met à jour la pastille du sélecteur (drapeau + nom de la dest active)
+    const activeDest = maps[activeMapId];
+    if (activeDest) {
+        const { flag } = inferCountryAndFlag(activeDest);
+        if (selectorName) selectorName.textContent = activeDest.name || activeMapId;
+        if (selectorFlagEl) selectorFlagEl.textContent = flag;
+    }
+
+    // Génère le HTML du menu : entrée active en premier, puis les autres.
+    const html = ['<div class="hw-dest-menu-section-title">Destinations disponibles</div>'];
+
+    // Active en premier
+    if (activeDest) {
+        const { country, flag } = inferCountryAndFlag(activeDest);
+        html.push(`
+            <button type="button" class="hw-dest-item is-active" role="menuitemradio"
+                    aria-checked="true" data-dest="${activeMapId}">
+                <span class="hw-dest-item-flag">${flag}</span>
+                <span class="hw-dest-item-info">
+                    <span class="hw-dest-item-name">${escapeHtml(activeDest.name || activeMapId)}</span>
+                    <span class="hw-dest-item-sub">${escapeHtml(country)}</span>
+                </span>
+                <span class="hw-dest-item-check"><i data-lucide="check"></i></span>
+            </button>
+        `);
+    }
+
+    // Les autres
+    const others = entries.filter(([id]) => id !== activeMapId);
+    if (others.length > 0) {
+        html.push('<div class="hw-dest-menu-section-title is-divided">Autres destinations</div>');
+        for (const [id, dest] of others) {
+            const { country, flag } = inferCountryAndFlag(dest);
+            html.push(`
+                <button type="button" class="hw-dest-item" role="menuitemradio"
+                        aria-checked="false" data-dest="${id}">
+                    <span class="hw-dest-item-flag">${flag}</span>
+                    <span class="hw-dest-item-info">
+                        <span class="hw-dest-item-name">${escapeHtml(dest.name || id)}</span>
+                        <span class="hw-dest-item-sub">${escapeHtml(country)}</span>
+                    </span>
+                </button>
+            `);
+        }
+    }
+
+    menu.innerHTML = html.join('');
+
+    // Re-render des icônes lucide injectées
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons({ root: menu });
+    }
+
+    // Click sur n'importe quelle entrée : reload avec ?map={destId}.
+    // L'entrée active ferme juste le menu.
+    menu.querySelectorAll('.hw-dest-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const targetId = item.dataset.dest;
+            if (targetId === activeMapId) {
+                setDestMenuOpen(false);
+                return;
+            }
+            // Reload avec param ?map=… (consommé par loadAndInitializeMap au boot)
+            const url = new URL(window.location.href);
+            url.searchParams.set('map', targetId);
+            window.location.href = url.toString();
+        });
+    });
+}
+
+function escapeHtml(s) {
+    return String(s ?? '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────
