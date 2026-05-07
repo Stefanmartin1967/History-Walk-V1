@@ -6,7 +6,16 @@
       "file": "djerba.geojson",
       "circuitsFile": "circuits/djerba.json",
       "zonesFile": "djerba-zones.geojson",
-      "bounds": [[33.62, 10.72], [33.91, 11.06]],
+      "bounds": [
+        [
+          33.62,
+          10.72
+        ],
+        [
+          33.91,
+          11.06
+        ]
+      ],
       "currency": "TND",
       "startView": {
         "center": [
@@ -14,6 +23,30 @@
           10.94353
         ],
         "zoom": 12
+      }
+    },
+    "hammamet": {
+      "name": "Hammamet",
+      "file": "hammamet.geojson",
+      "circuitsFile": "circuits/hammamet.json",
+      "zonesFile": "hammamet-zones.geojson",
+      "bounds": [
+        [
+          36.308445,
+          10.494454
+        ],
+        [
+          36.494119,
+          10.685636
+        ]
+      ],
+      "currency": "EUR",
+      "startView": {
+        "center": [
+          36.401281999999995,
+          10.590045
+        ],
+        "zoom": 11.5
       }
     }
   }
