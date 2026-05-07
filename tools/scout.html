@@ -1260,7 +1260,16 @@ out geom;`;
                     setSaveStatus('loading', `⏳ Récupération de ${fileName}…`);
                     const existing = await ghGetFile(`public/${fileName}`, token);
                     if (!existing) {
-                        setSaveStatus('error', `${fileName} introuvable sur GitHub. Annulé.`);
+                        // Cas edge : destination déclarée dans destinations.json
+                        // mais sans fichier data initial. On crée au lieu d'abandonner.
+                        setSaveStatus('loading', `⏳ Création initiale de ${fileName}…`);
+                        await ghPutFile(
+                            `public/${fileName}`,
+                            JSON.stringify(scoutGj, null, 2) + '\n',
+                            `scout: création initiale ${fileName} (${scoutGj.features.length} POIs)`,
+                            token
+                        );
+                        setSaveStatus('success', `✅ ${fileName} créé avec ${scoutGj.features.length} POIs.`);
                         return;
                     }
                     const existingGj = JSON.parse(existing.content);
