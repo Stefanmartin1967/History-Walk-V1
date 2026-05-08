@@ -245,65 +245,10 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     .hw-modal-footer .hw-btn:only-child { width: 100%; justify-content: center; }
 }
 
-/* ===== Buttons ===== */
-.hw-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 16px;
-    border-radius: 8px;
-    font-family: "Inter", sans-serif;
-    font-size: 13.5px;
-    font-weight: 600;
-    letter-spacing: 0.005em;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-    white-space: nowrap;
-}
-.hw-btn svg { width: 14px; height: 14px; }
-.hw-btn-primary {
-    background: var(--cta-bg);
-    color: var(--cta-fg);
-    border-color: var(--cta-bg);
-}
-.hw-btn-primary:hover {
-    filter: brightness(0.94);
-}
-.hw-btn-ghost {
-    background: transparent;
-    color: var(--ink-soft);
-    border-color: var(--line);
-}
-.hw-btn-ghost:hover {
-    background: var(--surface-muted);
-    color: var(--ink);
-}
-/* Variante "secondary" : plus contrastée que ghost, pour usages hors
-   hw-modal-footer (CC Admin Nettoyage, sub-panel Upload manuel) où le
-   transparent du ghost se noie dans le fond clair du panneau. Reproduit
-   le contraste de l'ancien .custom-modal-btn.secondary (legacy retiré N12). */
-.hw-btn-secondary {
-    background: var(--surface-muted);
-    color: var(--ink);
-    border-color: var(--line);
-}
-.hw-btn-secondary:hover {
-    background: var(--line);
-}
-.hw-btn-danger {
-    background: var(--danger-bg);
-    color: var(--cta-fg);
-    border-color: var(--danger-bg);
-}
-.hw-btn-danger:hover { filter: brightness(0.94); }
-.hw-btn-link {
-    background: transparent;
-    color: var(--ink-soft);
-    border-color: transparent;
-    padding: 9px 12px;
-}
-.hw-btn-link:hover { color: var(--ink); }
+/* ===== Buttons =====
+   Système .btn-* / .hw-btn-* déplacé vers style/components/buttons.css (PR 3d).
+   Les sélecteurs .hw-btn-* restent en alias temporaire (sélecteurs combinés
+   avec .btn-*) jusqu'au cleanup PR 3g. */
 
 /* ===== Variantes : danger / success ===== */
 .hw-modal.is-danger .hw-modal-icon {

@@ -1,0 +1,156 @@
+/* style/components/buttons.css — Système de boutons unifié HW/DM/Scout (PR 3d)
+   Préserve les affordances V2 actuelles (style/modals.css §Buttons) en les
+   tokenisant. Les sélecteurs `.hw-btn-*` sont conservés en alias temporaire
+   pendant la migration : ils seront retirés en PR 3g (cleanup final) une
+   fois les call sites HTML/JS migrés vers `.btn-*`.
+
+   Décisions Stefan :
+   - padding 9px 16px préservé pixel-perfect (pas de tokenisation via --space-sm)
+   - border-radius 8px préservé (pas d'alignement sur --radius-md/10px)
+   - font-family: 'Inter' retiré → hérite var(--font-family-base) (system-ui)
+   - .btn-secondary ≠ .btn-ghost (préservation, cf. modals.css §V2 history)
+   - :focus-visible ajouté (a11y, absent du V2 actuel)
+   - PAS de translateY au hover, PAS de .btn-chrome (gimmicky pour un outil sobre)
+*/
+
+/* ===== Base ===== */
+.btn,
+.hw-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-family: var(--font-family-base);
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+    white-space: nowrap;
+}
+.btn svg,
+.hw-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+.btn:focus-visible,
+.hw-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+/* État disabled : on conserve uniquement `cursor: not-allowed` au niveau CSS.
+   L'opacité (et autres effets visuels) est gérée par le JS appelant qui peut
+   choisir le bon moment (cf. richEditor.js updateSaveButtonState) — éviter
+   d'imposer `opacity: 0.5` automatiquement par CSS qui pâlit visuellement
+   le bouton dès le moindre `disabled=true` même quand le JS n'a pas eu le
+   temps de styler. */
+.btn:disabled,
+.hw-btn:disabled,
+.btn[aria-disabled="true"],
+.hw-btn[aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
+/* ===== Variantes pleines (filter au hover) ===== */
+.btn-primary,
+.hw-btn-primary {
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    border-color: var(--cta-bg);
+}
+.btn-success {
+    background: var(--ok-bg);
+    color: var(--cta-fg);
+    border-color: var(--ok-bg);
+}
+.btn-danger,
+.hw-btn-danger {
+    background: var(--danger-bg);
+    color: var(--cta-fg);
+    border-color: var(--danger-bg);
+}
+.btn-primary:hover:not(:disabled),
+.hw-btn-primary:hover:not(:disabled),
+.btn-success:hover:not(:disabled),
+.btn-danger:hover:not(:disabled),
+.hw-btn-danger:hover:not(:disabled) {
+    filter: brightness(0.94);
+}
+
+/* ===== Variantes neutres (bg shift au hover) ===== */
+
+/* Ghost : transparent par défaut, pour fonds contrastés (modale, header) */
+.btn-ghost,
+.hw-btn-ghost {
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: var(--line);
+}
+.btn-ghost:hover:not(:disabled),
+.hw-btn-ghost:hover:not(:disabled) {
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+
+/* Secondary : plus contrastée que ghost — pour fonds clairs où le transparent
+   du ghost se noie (CC Admin Nettoyage, sub-panel Upload manuel). NE PAS
+   fusionner avec .btn-ghost. */
+.btn-secondary,
+.hw-btn-secondary {
+    background: var(--surface-muted);
+    color: var(--ink);
+    border-color: var(--line);
+}
+.btn-secondary:hover:not(:disabled),
+.hw-btn-secondary:hover:not(:disabled) {
+    background: var(--line);
+}
+
+/* Warning : brouillon, à vérifier */
+.btn-warning {
+    background: var(--warn);
+    color: var(--bg-2);
+    border-color: var(--warn);
+}
+.btn-warning:hover:not(:disabled) {
+    filter: brightness(0.94);
+}
+
+/* ===== Variante link (texte seul, padding réduit) ===== */
+.btn-link,
+.hw-btn-link {
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: transparent;
+    padding: 9px 12px;
+}
+.btn-link:hover:not(:disabled),
+.hw-btn-link:hover:not(:disabled) {
+    color: var(--ink);
+}
+
+/* ===== Bouton icône seul (carré 32×32) ===== */
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: transparent;
+    justify-content: center;
+}
+.btn-icon:hover:not(:disabled) {
+    background: var(--surface-muted);
+    color: var(--ink);
+}
+
+/* ===== Tailles ===== */
+.btn-sm {
+    padding: 6px 10px;
+    font-size: 12px;
+}
+.btn-lg {
+    padding: 12px 20px;
+    font-size: 15px;
+}

@@ -1,4 +1,5 @@
 @import url("./tokens.css");
+@import url("./components/buttons.css");
 
 * { box-sizing: border-box; }
 
@@ -298,7 +299,10 @@ body {
 }
 
 
-.btn {
+/* Boutons de la topbar HW — fond chrome foncé, scopé pour ne pas entrer
+   en conflit avec le système .btn-* unifié (PR 3d, style/components/buttons.css).
+   Cf. components-specs.md §1.7 : "styles topbar locaux scopés .topbar .btn". */
+.topbar .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -316,7 +320,7 @@ body {
     white-space: nowrap;
 }
 
-.btn svg {
+.topbar .btn svg {
     width: 24px; /* Icone plus grande */
     height: 24px;
 }
@@ -359,18 +363,18 @@ body {
 /* ========================================================= */
 
 
-.btn:hover:not(:disabled) {
+.topbar .btn:hover:not(:disabled) {
     transform: translateY(-1px);
     background: rgba(255, 255, 255, .14);
 }
 
-.btn.active {
+.topbar .btn.active {
     background: var(--cta-bg);
     color: var(--cta-fg);
     border-color: transparent;
 }
 
-.btn:disabled {
+.topbar .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
