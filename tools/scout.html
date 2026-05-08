@@ -194,52 +194,21 @@
         <div id="save-status" class="hidden" style="margin-top: 10px;"></div>
     </div>
 
-    <!-- Modale "Saisir le token GitHub" (réutilisée pour la sauvegarde) -->
-    <div id="token-modal-overlay" class="hidden token-modal-overlay">
-        <div class="token-modal-box">
-            <div class="token-modal-title">Token GitHub requis</div>
-            <div class="token-modal-desc">
-                Personal Access Token avec scope <code>repo</code>. Stocké dans IndexedDB
-                (partagé avec History Walk et le Data Manager).
-            </div>
-            <input type="password" id="token-modal-input" class="token-modal-input" placeholder="ghp_…">
-            <div class="token-modal-actions">
-                <button id="token-modal-cancel" class="btn-secondary">Annuler</button>
-                <button id="token-modal-confirm" class="btn-primary">Confirmer</button>
-            </div>
-        </div>
-    </div>
+    <!-- Modales custom (token-modal-overlay + dest-modal-overlay) supprimées
+         en PR 3e-3. Remplacées par hwPrompt + openHwModal du système V2 HW
+         (cf. src/modal.js). Le HTML est désormais construit à la volée par
+         showTokenModal/showDestModal ci-dessous via window.HW exposé par le
+         module ES du modal HW. -->
 
-    <!-- Modale "Saisir l'ID de la nouvelle destination" -->
-    <div id="dest-modal-overlay" class="hidden token-modal-overlay">
-        <div class="token-modal-box">
-            <div class="token-modal-title">Enregistrer une nouvelle destination</div>
-            <div class="token-modal-desc">
-                Choisis un identifiant court (lettres minuscules, ex: <code>agadir</code>) et un nom affiché.
-            </div>
-            <label style="display:block;margin-top:10px;font-weight:600;font-size:13px;">Identifiant</label>
-            <input type="text" id="dest-modal-id" class="token-modal-input" placeholder="agadir" pattern="[a-z0-9-]+">
-            <label style="display:block;margin-top:10px;font-weight:600;font-size:13px;">Nom affiché</label>
-            <input type="text" id="dest-modal-name" class="token-modal-input" placeholder="Agadir">
-            <div class="token-modal-actions">
-                <button id="dest-modal-cancel" class="btn-secondary">Annuler</button>
-                <button id="dest-modal-confirm" class="btn-primary">Enregistrer</button>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        /* Modales (token + destination) — réutilise le style du DM */
-        .token-modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.55); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .token-modal-overlay.hidden { display: none; }
-        .token-modal-box { background: #fff; padding: 24px; border-radius: 8px; max-width: 480px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        .token-modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--brand); }
-        .token-modal-desc { font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 12px; }
-        .token-modal-desc code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; }
-        .token-modal-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; box-sizing: border-box; margin-top: 4px; }
-        .token-modal-input:focus { outline: none; border-color: var(--brand); }
-        .token-modal-actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; }
-    </style>
+    <!-- Module ES qui expose les helpers HW à window.HW pour usage dans le
+         <script> inline ci-dessous (qui n'est pas un module). Les modules
+         sont défer par défaut → race condition impossible en pratique car
+         les modales ne s'ouvrent que sur clic utilisateur (bien après le
+         chargement initial). -->
+    <script type="module">
+        import { openHwModal, closeHwModal, hwPrompt } from '../src/modal.js';
+        window.HW = { openHwModal, closeHwModal, hwPrompt };
+    </script>
 
     <script>
         lucide.createIcons();
@@ -1113,60 +1082,72 @@ out geom;`;
             } catch (err) { /* fallback localStorage si IDB ko */ localStorage.setItem(TOKEN_KEY, clean || ''); }
         }
 
-        // Modales
-        function showTokenModal() {
-            return new Promise((resolve) => {
-                const overlay = document.getElementById('token-modal-overlay');
-                const input = document.getElementById('token-modal-input');
-                const btnConfirm = document.getElementById('token-modal-confirm');
-                const btnCancel = document.getElementById('token-modal-cancel');
-                input.value = '';
-                overlay.classList.remove('hidden');
-                setTimeout(() => input.focus(), 50);
-                const close = (token) => {
-                    overlay.classList.add('hidden');
-                    btnConfirm.removeEventListener('click', onConfirm);
-                    btnCancel.removeEventListener('click', onCancel);
-                    resolve(token);
-                };
-                const onConfirm = async () => {
-                    const t = input.value.trim();
-                    if (!t) { input.focus(); return; }
-                    await saveToken(t);
-                    close(t);
-                };
-                const onCancel = () => close(null);
-                btnConfirm.addEventListener('click', onConfirm);
-                btnCancel.addEventListener('click', onCancel);
+        // Modales — système V2 HW (PR 3e-3). Les helpers viennent du module ES
+        // ../src/modal.js exposé via window.HW (cf. <script type="module"> plus haut).
+        async function showTokenModal() {
+            const token = await window.HW.hwPrompt({
+                title: 'Token GitHub requis',
+                body: 'Personal Access Token avec scope <code>repo</code>. Stocké dans IndexedDB (partagé avec History Walk et le Data Manager).',
+                placeholder: 'ghp_…',
+                inputType: 'password',
+                confirmLabel: 'Confirmer',
             });
+            if (!token) return null;
+            const trimmed = token.trim();
+            if (!trimmed) return null;
+            await saveToken(trimmed);
+            return trimmed;
         }
 
         function showDestModal() {
             return new Promise((resolve) => {
-                const overlay = document.getElementById('dest-modal-overlay');
-                const inputId = document.getElementById('dest-modal-id');
-                const inputName = document.getElementById('dest-modal-name');
-                const btnConfirm = document.getElementById('dest-modal-confirm');
-                const btnCancel = document.getElementById('dest-modal-cancel');
-                inputId.value = ''; inputName.value = '';
-                overlay.classList.remove('hidden');
-                setTimeout(() => inputId.focus(), 50);
-                const close = (val) => {
-                    overlay.classList.add('hidden');
-                    btnConfirm.removeEventListener('click', onConfirm);
-                    btnCancel.removeEventListener('click', onCancel);
-                    resolve(val);
-                };
-                const onConfirm = () => {
+                // Body custom à 2 champs (id + nom). hwPrompt n'en supporte qu'1
+                // donc on utilise openHwModal directement avec body+footer custom.
+                const bodyEl = document.createElement('div');
+                bodyEl.innerHTML = `
+                    <p style="margin-top:0;">
+                        Choisis un identifiant court (lettres minuscules, ex: <code>agadir</code>) et un nom affiché.
+                    </p>
+                    <label style="display:block;margin-top:10px;font-weight:600;font-size:13px;">Identifiant</label>
+                    <input type="text" id="dest-modal-id" placeholder="agadir" pattern="[a-z0-9-]+"
+                           style="width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;box-sizing:border-box;margin-top:4px;">
+                    <label style="display:block;margin-top:10px;font-weight:600;font-size:13px;">Nom affiché</label>
+                    <input type="text" id="dest-modal-name" placeholder="Agadir"
+                           style="width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;box-sizing:border-box;margin-top:4px;">
+                `;
+                const inputId = bodyEl.querySelector('#dest-modal-id');
+                const inputName = bodyEl.querySelector('#dest-modal-name');
+
+                const footer = document.createElement('span');
+                footer.style.display = 'contents';
+                const btnCancel = document.createElement('button');
+                btnCancel.type = 'button';
+                btnCancel.className = 'hw-btn hw-btn-ghost';
+                btnCancel.textContent = 'Annuler';
+                btnCancel.addEventListener('click', () => window.HW.closeHwModal(null));
+                const btnConfirm = document.createElement('button');
+                btnConfirm.type = 'button';
+                btnConfirm.className = 'hw-btn hw-btn-primary';
+                btnConfirm.textContent = 'Enregistrer';
+                btnConfirm.addEventListener('click', () => {
                     const id = inputId.value.trim().toLowerCase();
                     const name = inputName.value.trim();
                     if (!/^[a-z0-9-]+$/.test(id)) { inputId.focus(); return; }
                     if (!name) { inputName.focus(); return; }
-                    close({ id, name });
-                };
-                const onCancel = () => close(null);
-                btnConfirm.addEventListener('click', onConfirm);
-                btnCancel.addEventListener('click', onCancel);
+                    window.HW.closeHwModal({ id, name });
+                });
+                footer.appendChild(btnCancel);
+                footer.appendChild(btnConfirm);
+
+                window.HW.openHwModal({
+                    size: 'sm',
+                    title: 'Enregistrer une nouvelle destination',
+                    body: bodyEl,
+                    footer,
+                }).then((val) => resolve(val && val.id ? val : null));
+
+                // Autofocus du premier input après ouverture
+                setTimeout(() => inputId.focus(), 50);
             });
         }
 
