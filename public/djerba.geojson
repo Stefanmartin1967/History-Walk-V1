@@ -14,7 +14,7 @@
         "Nom du site FR": "Rym Beach",
         "Nom du site arabe": "فندق سيبل ريم بيتش جربة",
         "Catégorie": "Hôtel",
-        "Zone": "Midoun",
+        "Zone": "Taguermess",
         "Description": "Très bel hôtel 4 *, si vous voulez manger local, un coin Djerbie est présent à chaque repas. Soirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nPiscine actuellement fermée",
         "Source": "https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/",
         "verified": false,
@@ -22,14 +22,19 @@
         "planifieCounter": 1,
         "lat": 33.826540531288295,
         "lng": 11.046173596441804,
-        "Description_courte": "Piscine remise au norme accessible depuis le 07 mars 2026",
+        "Description_courte": "Hôtel au trs bon rapport qualité/Prix",
         "description": "Très bel hôtel 4 *, si vous voulez manger local, des spécialités tunisiennes sont à votre disposition à chaque repas. \nSoirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nC'est notre \"Camp de base\", on y retourne en novembre",
         "notes": "",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
         "incontournable": true,
-        "Temps_minutes": 60
+        "Temps_minutes": 60,
+        "visitedByCircuits": [
+          "HW-1771316521571"
+        ],
+        "vu": true,
+        "Prix_TND": 0
       }
     },
     {
@@ -58,7 +63,10 @@
         "notes": "",
         "timeH": 0,
         "timeM": 0,
-        "price": 0
+        "price": 0,
+        "visitedByCircuits": [
+          "HW-1771316521571"
+        ]
       }
     },
     {
@@ -86,8 +94,8 @@
         "timeH": 0,
         "timeM": 0,
         "price": 0,
-        "vuManual": false,
-        "vu": false,
+        "vuManual": true,
+        "vu": true,
         "incontournable": false
       }
     },
@@ -114,7 +122,11 @@
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497287806.jpg",
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497289182.jpg",
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497290453.jpg"
-        ]
+        ],
+        "visitedByCircuits": [
+          "HW-1771316521571"
+        ],
+        "notes": "J'y ai rencontré Axel"
       }
     },
     {
@@ -161,6 +173,9 @@
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497321290.jpg",
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497322560.jpg",
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497323648.jpg"
+        ],
+        "visitedByCircuits": [
+          "HW-1771316521571"
         ]
       }
     },
@@ -181,7 +196,8 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "incontournable": true
       }
     },
     {
@@ -517,7 +533,9 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE698R49VRAQ6C6J1XXF",
-        "Description_courte": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance."
+        "Description_courte": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance.",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -599,7 +617,16 @@
         "HW_ID": "HW-01K77WPE697JA8WM3N71KEFY6S",
         "planifieCounter": 1,
         "vu": false,
-        "Description_courte": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental."
+        "Description_courte": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental.",
+        "photos": [
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1778273837033.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1778273838656.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1778273840731.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1778273842241.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1778273844046.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1778273846104.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1778273847594.jpg"
+        ]
       }
     },
     {
@@ -640,7 +667,12 @@
         "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgou\nhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
         "planifieCounter": 1,
-        "vu": false
+        "vu": false,
+        "photos": [
+          "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1778273849257.jpg",
+          "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1778273851150.jpg",
+          "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1778273853186.jpg"
+        ]
       }
     },
     {
@@ -701,7 +733,11 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE69CKZWJHD3JAJT874K",
         "planifieCounter": 1,
-        "vu": false
+        "vu": false,
+        "photos": [
+          "photos/poi_HW-01K77WPE69CKZWJHD3JAJT874K_1778273855055.jpg",
+          "photos/poi_HW-01K77WPE69CKZWJHD3JAJT874K_1778273856733.jpg"
+        ]
       }
     },
     {
@@ -1372,7 +1408,8 @@
         "Zone": "Mazraia",
         "Description": "Située à Ghizen, également appelée Mosquée Said Yamoun. Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6C4WQ1CR342MVCN64V"
+        "HW_ID": "HW-01K77WPE6C4WQ1CR342MVCN64V",
+        "incontournable": true
       }
     },
     {
@@ -1649,7 +1686,8 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6DT0F6KA225EP7PSK9",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "incontournable": true
       }
     },
     {
@@ -1669,7 +1707,11 @@
         "Description": "Appelé Borj El Ghoula ? Om à véirifier.",
         "Source": null,
         "HW_ID": "HW-01K77WPE6DFDJEFF1NP5V7YWS5",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -2023,7 +2065,11 @@
         "Description": "Située à Robbana. Infos à rechercher.",
         "Source": null,
         "HW_ID": "HW-01K77WPE6EZ7K06GM4HAWDESAE",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -2101,7 +2147,11 @@
         "Description": "Située à Robbana. Infos à rechercher.",
         "Source": null,
         "HW_ID": "HW-01K77WPE6E5GCD9QGR33PMXVRP",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -2216,7 +2266,11 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6FCK1V446SXD2V5NNK",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -2366,7 +2420,9 @@
         "Zone": "Erriadh",
         "Description": "Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6FKPXGG3JYG58QMES3"
+        "HW_ID": "HW-01K77WPE6FKPXGG3JYG58QMES3",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -2443,7 +2499,9 @@
         "Description": "Mosquée souterraine, blanchie à la chaux, comme la majorité des mosquées djerbiennes. Elle est située sur un plateau, point plus élevé de l'île à 52 mètre de hauteur et date du 12ème siècle. Les deux coupoles visibles confirment le caractère défensif de cette mosquée.",
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/jemaa-louta-a-djerba-une-mysterieuse-mosquee-souterraine/203375/",
         "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -2462,7 +2520,10 @@
         "Zone": "El May",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93"
+        "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93",
+        "incontournable": true,
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -3097,7 +3158,8 @@
         "HW_ID": "HW-01K77WPE6JDNJ7919QCH1HXSXT",
         "planifieCounter": 1,
         "visitedByCircuits": [],
-        "vu": false
+        "vu": true,
+        "vuManual": true
       }
     },
     {
@@ -3117,7 +3179,10 @@
         "Description": "Situé au lieu-dit \"d'El Qantara\", proche du grand large, Meninx est un ancien site romain où les premières fouilles datent de 1881. Il s'étend sur deux kilomètres le long du littoral, sur quelques centaines de mètres en direction de la mer. Aucune visite n'étant organisée, on y flâne un peu au hasard, découvrant au passage : un forum, avec une basilique en son centre, un temps, un amphithéâtre, des thermes, et autres vestiges du passé romain de cette patie de l'île",
         "Source": "https://www.inp2020.tn/2023/03/09/_meninx/",
         "HW_ID": "HW-01K77WPE6JZQWS751K2WV46RB2",
-        "planifieCounter": 0
+        "planifieCounter": 0,
+        "vuManual": true,
+        "vu": true,
+        "incontournable": true
       }
     },
     {
@@ -3137,7 +3202,9 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24",
-        "planifieCounter": 0
+        "planifieCounter": 0,
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -3347,7 +3414,9 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6KD37GVA594C0XAQQ0",
-        "Description_courte": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala."
+        "Description_courte": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala.",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -3603,7 +3672,8 @@
         "Zone": "Guellala",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T"
+        "HW_ID": "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T",
+        "incontournable": true
       }
     },
     {
@@ -4126,7 +4196,11 @@
         "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6P1NA9ZF5TF1DK9GD2",
         "planifieCounter": 1,
-        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment."
+        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment.",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4208,7 +4282,11 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6PC9G02W8SX1JZX2HC",
         "planifieCounter": 1,
-        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment."
+        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment.",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4229,7 +4307,11 @@
         "Source": "https://arachne.dainst.org/entity/7043417?fl=20&q=connectedEntities:7343375&resultIndex=1",
         "HW_ID": "HW-01K77WPE6PKFFHK53AA0880TBZ",
         "planifieCounter": 1,
-        "Description_courte": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère"
+        "Description_courte": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4271,7 +4353,11 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6PGSGH7AWKFRACMNSJ",
         "planifieCounter": 1,
-        "Description_courte": "Mosquée ibadite wahbite construite en 1117 de l’hégire, soit 1705 de notre ère"
+        "Description_courte": "Mosquée ibadite wahbite construite en 1117 de l’hégire, soit 1705 de notre ère",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4292,7 +4378,11 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6PRETC07TQDNMAG54C",
         "planifieCounter": 1,
-        "Description_courte": "Un des lieux de tournage de Star Wars"
+        "Description_courte": "Un des lieux de tournage de Star Wars",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4313,7 +4403,11 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6P7XZY555VW8YDAVA0",
         "planifieCounter": 1,
-        "Description_courte": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle\n"
+        "Description_courte": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle\n",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4334,7 +4428,11 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6P30E9MGC3BE3KYHP6",
         "planifieCounter": 1,
-        "Description_courte": "A chercher, aucune info sur le net"
+        "Description_courte": "A chercher, aucune info sur le net",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4376,7 +4474,11 @@
         "Source": "https://www.uib.com.tn/accueil/pages-intermediaires/les-forts-de-djerba-un-patrimoine-fragile",
         "HW_ID": "HW-01K77WPE6PGWRVHZ8H8CTQJ06X",
         "planifieCounter": 1,
-        "Description_courte": "L'accès est restreint et demande des autorisations"
+        "Description_courte": "L'accès est restreint et demande des autorisations",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4545,7 +4647,8 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6QGFPEGPTZ1G59C9FZ",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "incontournable": true
       }
     },
     {
@@ -4809,7 +4912,11 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6RHDAFAXAA92EFT8GY",
         "planifieCounter": 1,
-        "Description_courte": "Mosquée malékite construite au 20ème siècle"
+        "Description_courte": "Mosquée malékite construite au 20ème siècle",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4952,7 +5059,11 @@
         "Description": "Nom provisoire. Située à Robbana. Infos à rechercher.",
         "Source": null,
         "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -4991,7 +5102,9 @@
         "Zone": "Mazraia",
         "Description": "Située à Mazline. Egalement appelée Jamaa Ben Mazlin. Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6S9HZ3NW8MK3ME35XW"
+        "HW_ID": "HW-01K77WPE6S9HZ3NW8MK3ME35XW",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -5239,7 +5352,8 @@
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
         "Zone": "Arkou",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "notes": "Restaurant de bord de plage"
       }
     },
     {
@@ -5600,7 +5714,11 @@
         "HW_ID": "HW-01KJABRN0XJDFFSBSRFDN4PGQ4",
         "Description": "Ajouté via Rich Editor",
         "planifieCounter": 2,
-        "incontournable": true
+        "incontournable": true,
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -5643,7 +5761,9 @@
         "HW_ID": "HW-01KJABRN0YD2SFB393HG9SRDGW",
         "Description": "Ajouté via Rich Editor",
         "planifieCounter": 3,
-        "vu": true
+        "vu": true,
+        "incontournable": true,
+        "notes": ""
       }
     },
     {
@@ -5713,7 +5833,11 @@
         "Zone": "Ajim",
         "HW_ID": "HW-01KJMJATZZZRP02QNDTWS3YVK1",
         "Description": "Ajouté via Rich Editor",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -5770,7 +5894,11 @@
         "Zone": "Robbana",
         "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
         "Description": "Ajouté via Rich Editor",
-        "planifieCounter": 1
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -5787,7 +5915,9 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJX5XSG18NC03E6900V170QX",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -5821,7 +5951,9 @@
         "Catégorie": "Pâtisserie",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CD2CREMNC3CHCGC44PK80",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -5962,11 +6094,18 @@
       },
       "properties": {
         "Nom du site FR": "Nouveau Lieu",
-        "Catégorie": "A définir",
+        "Catégorie": "Café",
         "Zone": "Midoun",
         "Description": "Créé sur le terrain",
         "HW_ID": "HW-01KKK6JJ2HWQJJR363X4HR3SA0",
-        "created_at": "2026-03-13T08:56:25.423Z"
+        "created_at": "2026-03-13T08:56:25.423Z",
+        "Nom du site arabe": "",
+        "Description_courte": "",
+        "description": "Créé sur le terrain",
+        "notes": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": ""
       }
     },
     {
