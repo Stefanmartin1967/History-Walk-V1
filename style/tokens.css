@@ -1,0 +1,181 @@
+/* style/tokens.css — Design tokens partagés HW / DM / Scout
+   Source de vérité unique. Ne pas dupliquer ces valeurs ailleurs. */
+
+/* ============================================================
+   1. TOKENS NEUTRES (mêmes valeurs dans tous les thèmes)
+   ============================================================ */
+:root {
+  /* — Spacings (multiples de 4, échelle resserrée) — */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  /* Note : 12px reste utilisable en valeur brute si vraiment nécessaire ;
+     on n'introduit pas --space-sm-plus tant que le besoin n'est pas avéré. */
+
+  /* — Border radius — */
+  --radius-sm:   6px;   /* badges, inputs, selects */
+  --radius-md:  10px;   /* boutons, cards */
+  --radius-lg:  14px;   /* modales, gros panneaux */
+  --radius-pill: 9999px; /* pastilles full-rounded */
+
+  /* — Typo — */
+  --font-family-base: system-ui, -apple-system, BlinkMacSystemFont,
+                      "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-family-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --font-size-xs:   12px;  /* captions, footers */
+  --font-size-sm:   13px;  /* DM body, labels */
+  --font-size-base: 15px;  /* HW body */
+  --font-size-lg:   17px;  /* sous-titres */
+  --font-size-xl:   20px;  /* titres de panneau */
+  --font-size-2xl:  24px;  /* titre app */
+  --font-weight-regular:  400;
+  --font-weight-medium:   500;
+  --font-weight-semibold: 600;
+  --font-weight-bold:     700;
+  --line-height-tight:   1.2;
+  --line-height-base:    1.4;
+  --line-height-relaxed: 1.6;
+
+  /* — Hauteurs de contrôles standards — */
+  --control-h-sm: 32px;  /* boutons icônes, .btn-sm */
+  --control-h-md: 42px;  /* topbar HW, inputs, boutons standards */
+  --control-h-lg: 48px;  /* CTA proéminents */
+
+  /* — Sémantiques fixes (light → mêmes 4 thèmes) — */
+  --ok:        #10B981;
+  --warn:      #F59E0B;
+  --danger:    #EF4444;
+
+  /* — Z-index ladder — */
+  --z-dropdown: 1000;
+  --z-sidebar:  1002;
+  --z-topbar:   1005;
+  --z-modal:    2000;
+  --z-toast:    2100;
+}
+
+/* ============================================================
+   2. THÈME MARITIME (par défaut)
+   ============================================================ */
+:root,
+html[data-theme="maritime"] {
+  --bg:            #0D3B66;
+  --bg-2:          #062B4D;
+  --surface:       #FFFFFF;
+  --surface-muted: #F0F4F8;
+  --ink:           #102A43;
+  --ink-soft:      #627D98;
+  --line:          #D9E2EC;
+
+  --brand:      #3B82F6;
+  --brand-soft: #F0F9FF;
+  --brand-2:    #2563EB;
+
+  --ok-soft:    #D1FAE5;
+  --ok-bg:      #15803D;
+  --danger-bg:  #B91C1C;
+  --cta-bg:     #1D4ED8;
+  --cta-fg:     #FFFFFF;
+
+  --hw-amber:      #D97706;
+  --hw-amber-soft: #FFFBEB;
+
+  --shadow:      0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
+  --shadow-soft: 0 4px 12px rgba(100, 116, 139, .10);
+  --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
+}
+
+/* ============================================================
+   3. THÈME DESERT
+   ============================================================ */
+html[data-theme="desert"] {
+  --bg:            #7A5230;
+  --bg-2:          #5E3D20;
+  --surface:       #FFF8F0;
+  --surface-muted: #F5EFE6;
+  --ink:           #3A210E;
+  --ink-soft:      #8A6F5E;
+  --line:          #E0D5C7;
+
+  --brand:      #E88C32;
+  --brand-soft: #FAEADD;
+  --brand-2:    #C46F1C;
+
+  --ok-soft:    #D1FAE5;
+  --ok-bg:      #15803D;
+  --danger-bg:  #B91C1C;
+  --cta-bg:     #A2570F;
+  --cta-fg:     #FFFFFF;
+
+  --hw-amber:      #D97706;
+  --hw-amber-soft: #FFFBEB;
+
+  --shadow:      0 8px 24px rgba(60, 30, 10, .12), 0 2px 8px rgba(60, 30, 10, .06);
+  --shadow-soft: 0 4px 12px rgba(138, 111, 94, .12);
+  --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
+}
+
+/* ============================================================
+   4. THÈME OASIS
+   ============================================================ */
+html[data-theme="oasis"] {
+  --bg:            #065F46;
+  --bg-2:          #054D39;
+  --surface:       #F0FDF4;
+  --surface-muted: #E6F7EB;
+  --ink:           #064E3B;
+  --ink-soft:      #528C7C;
+  --line:          #CCE8D8;
+
+  --brand:      #34D399;
+  --brand-soft: #D1FAE5;
+  --brand-2:    #059669;
+
+  --ok-soft:    #D1FAE5;
+  --ok-bg:      #15803D;
+  --danger-bg:  #B91C1C;
+  --cta-bg:     #047857;
+  --cta-fg:     #FFFFFF;
+
+  --hw-amber:      #D97706;
+  --hw-amber-soft: #FFFBEB;
+
+  --shadow:      0 8px 24px rgba(6, 78, 59, .12), 0 2px 8px rgba(6, 78, 59, .06);
+  --shadow-soft: 0 4px 12px rgba(82, 140, 124, .12);
+  --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
+}
+
+/* ============================================================
+   5. THÈME NIGHT (dark)
+   ============================================================ */
+html[data-theme="night"] {
+  --bg:            #111827;
+  --bg-2:          #000000;
+  --surface:       #1F2937;
+  --surface-muted: #2A3441;
+  --ink:           #F3F4F6;
+  --ink-soft:      #CBD5E1;
+  --line:          #4B5563;
+
+  --brand:      #60A5FA;
+  --brand-soft: #1E3A8A;
+  --brand-2:    #93C5FD;
+
+  --ok:         #34D399;
+  --ok-soft:    #064E3B;
+  --ok-bg:      #15803D;
+  --warn:       #FACC15;
+  --danger:     #F87171;
+  --danger-bg:  #B91C1C;
+  --cta-bg:     #1D4ED8;
+  --cta-fg:     #FFFFFF;
+
+  --hw-amber:      #FBBF24;
+  --hw-amber-soft: color-mix(in oklab, var(--hw-amber) 14%, var(--surface));
+
+  --shadow:      0 8px 24px rgba(0, 0, 0, .50), 0 2px 8px rgba(0, 0, 0, .35);
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, .35);
+  --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
+}

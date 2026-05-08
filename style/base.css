@@ -1,96 +1,12 @@
+@import url("./tokens.css");
+
 * { box-sizing: border-box; }
 
-/* style.css - BASE V1 RESTAURÉE + PATCH BOUTONS */
-:root,
-html[data-theme="maritime"] {
-    --spacing-md: 16px;
-    --spacing-item-gap: 12px;
+/* style.css - BASE V1 RESTAURÉE + PATCH BOUTONS
+   Tokens design (couleurs, spacings, radii, typo) → style/tokens.css.
+   Ce bloc :root ne contient que les tokens spécifiques à HW. */
+:root {
     --sidebar-width: clamp(380px, 30vw, 480px);
-    --bg: #0D3B66;
-    --bg-2: #062B4D;
-    --surface: #FFFFFF;
-    --surface-muted: #F0F4F8;
-    --ink: #102A43;
-    --ink-soft: #627D98;
-    --line: #D9E2EC;
-    --brand: #3B82F6;
-    --brand-soft: #F0F9FF; /* Plus clair que la mer */
-    --brand-2: #2563EB; /* Brand foncé — gradients CTA refonte sidebar V2 */
-    --ok: #10B981;
-    --warn: #F59E0B;
-    --danger: #EF4444;
-    /* Amber tokens — refonte sidebar V2 (pastilles resto, accents Mon parcours).
-       --hw-amber existait dans admin-cc.css uniquement, on le promeut au :root global. */
-    --hw-amber: #D97706;
-    --hw-amber-soft: #FFFBEB;
-    /* CTA tokens — Spec #6 Audit thèmes & contraste (2026-04-30).
-       Rôle figé : --cta-bg = fond foncé, --cta-fg = blanc, dans les 4 thèmes.
-       Cible WCAG : ≥ 4.5:1 (AA texte normal). Maritime/night atteignent AAA (8.59:1).
-       --danger-bg / --ok-bg : signal CTA identique dans les 4 thèmes. */
-    --cta-bg: #1D4ED8;
-    --cta-fg: #FFFFFF;
-    --danger-bg: #B91C1C;
-    --ok-bg: #15803D;
-    --shadow: 0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
-    --shadow-soft: 0 4px 12px rgba(100, 116, 139, 0.1);
-}
-
-html[data-theme="desert"] {
-    --bg: #7a5230;     /* Brun chaleureux (avant: #4d2c12 trop foncé) */
-    --bg-2: #5e3d20;   /* Brun moyen (avant: #3a210e quasi noir) */
-    --surface: #fff8f0;
-    --surface-muted: #f5efe6;
-    --ink: #3a210e;
-    --ink-soft: #8a6f5e;
-    --line: #e0d5c7;
-    --brand: #e88c32;
-    --brand-soft: #faeadd;
-    --brand-2: #c46f1c; /* Brand foncé — orange sable sombre */
-    --ok: #10B981;
-    --warn: #F59E0B;
-    --danger: #EF4444;
-    --cta-bg: #A2570F; /* Spec #6 — terre-cuite assombrie, 5.46:1 AA+ sur blanc */
-}
-
-html[data-theme="oasis"] {
-    --bg: #065f46;
-    --bg-2: #054d39;
-    --surface: #f0fdf4;
-    --surface-muted: #e6f7eb;
-    --ink: #064e3b;
-    --ink-soft: #528c7c;
-    --line: #cce8d8;
-    --brand: #34d399;
-    --brand-soft: #d1fae5;
-    --brand-2: #059669; /* Brand foncé — vert oasis profond */
-    --ok: #10B981;
-    --warn: #F59E0B;
-    --danger: #EF4444;
-    --cta-bg: #047857; /* Spec #6 — emerald-700, 5.78:1 AA+ sur blanc */
-}
-
-html[data-theme="night"] {
-    --bg: #111827;
-    --bg-2: #000000;
-    --surface: #1f2937;
-    --surface-muted: #2a3441; /* Avant: #374151 = identique --line. Désormais distinct pour permettre le contraste cartes/panel. */
-    --ink: #f3f4f6; /* Plus clair (presque blanc) pour meilleure lisibilité */
-    --ink-soft: #cbd5e1; /* Avant: #9ca3af. Plus clair pour meilleure lisibilité des libellés secondaires sur fond sombre. */
-    --line: #4b5563;
-    --brand: #60a5fa;
-    --brand-soft: #1e3a8a; /* Avant: #374151 = identique --surface-muted (donc invisible). Bleu profond distinct désormais. */
-    --brand-2: #93c5fd; /* Brand foncé en thème nuit = plus clair pour rester lisible sur fond sombre */
-    --ok: #34d399;
-    --ok-soft: #064e3b; /* Vert profond pour les fonds is-done lisibles */
-    --hw-amber: #fbbf24;
-    /* Spec #6 fix night repos visuel : surface teintée légèrement ambre via
-       color-mix au lieu d'un brun saturé #78350f qui cassait le calme du dark.
-       Texte var(--hw-amber) sur ce fond reste lisible (ratio ~7:1 AA+). */
-    --hw-amber-soft: color-mix(in oklab, var(--hw-amber) 14%, var(--surface));
-    --warn: #facc15;
-    --danger: #f87171;
-    --cta-bg: #1D4ED8; /* Spec #6 — IDENTIQUE à maritime, 8.59:1 AAA sur blanc.
-                          Le CTA en night est PLUS FONCÉ que --surface (#1f2937), pas plus clair. */
 }
 
 /* Force la couleur sur tous les éléments de formulaire et boutons en mode nuit */
@@ -1597,7 +1513,7 @@ textarea.editable-input {
     background-color: var(--surface);
     border: none;
     border-radius: 16px;
-    margin-bottom: var(--spacing-item-gap);
+    margin-bottom: 12px;
     box-shadow: var(--shadow-soft);
     text-align: left;
     cursor: pointer;
@@ -2396,7 +2312,7 @@ input[type=range] {
 @media (max-width: 768px) {
     :root,
     html[data-theme="maritime"] {
-        --spacing-md: 8px; /* Force maritime au même spacing que les autres thèmes sur mobile */
+        --space-md: 8px; /* Force maritime au même spacing que les autres thèmes sur mobile */
     }
 
     /* 1. Reset Global Layout for Mobile */
@@ -2424,15 +2340,15 @@ input[type=range] {
     /* Apply to List and scroll containers: dock clearance + horizontal padding */
     .mobile-list,
     .panel-content {
-        padding-left: var(--spacing-md) !important;
-        padding-right: var(--spacing-md) !important;
+        padding-left: var(--space-md) !important;
+        padding-right: var(--space-md) !important;
         /* Ensure content clears the bottom dock */
         padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
     }
     /* Section content: horizontal padding only (panel-content handles dock clearance) */
     .detail-section .content {
-        padding-left: var(--spacing-md) !important;
-        padding-right: var(--spacing-md) !important;
+        padding-left: var(--space-md) !important;
+        padding-right: var(--space-md) !important;
     }
 
     /* Exclude Full-Width Elements */
@@ -2440,8 +2356,8 @@ input[type=range] {
     .mobile-toolbar,
     .circuit-info-bar,
     .detail-section h3 {
-        padding-left: var(--spacing-md);
-        padding-right: var(--spacing-md);
+        padding-left: var(--space-md);
+        padding-right: var(--space-md);
         /* These often have their own padding, so we just ensure alignment */
     }
 
@@ -2601,7 +2517,7 @@ input[type=range] {
 
 /* Cible 12 : Mobile Search View (padding:16px) */
 .mobile-search-container {
-    padding: var(--spacing-md);
+    padding: var(--space-md);
 }
 
 /* Cible 13 : Wrapper Input (position:relative) */
@@ -2665,7 +2581,7 @@ input[type=range] {
 
 /* Cible 21 : Harmonisation Header (remplace padding-right:15px hardcoded) */
 .mobile-header-harmonized {
-    padding-right: var(--spacing-md) !important; /* Force match var(--spacing-md) */
+    padding-right: var(--space-md) !important; /* Force match var(--space-md) */
 }
 
 /* === HARMONISATION MOBILE FINAL (USER REQUEST) === */
