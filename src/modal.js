@@ -465,3 +465,171 @@ document.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-alert-action="ok"]');
     if (btn) closeHwModal();
 });
+
+/* ============================================================
+   HELPERS IDIOMATIQUES — hwConfirm / hwAlert / hwPrompt (PR 3e-1)
+   Wrappers Promise-friendly autour d'openHwModal, conçus pour remplacer
+   les `confirm()` / `alert()` / `prompt()` natifs du navigateur dans DM
+   (PR 3e-2) et Scout (PR 3e-3). Importables depuis n'importe quel
+   sous-projet du repo (DM, Scout) en relatif.
+
+   Conventions :
+   - hwConfirm({ title, body, danger? }) → Promise<boolean>
+       Retourne `true` si l'utilisateur clique Confirmer, `false` sinon
+       (bouton Annuler, Escape, croix, ou clic sur le backdrop).
+   - hwAlert({ title, body }) → Promise<void>
+       Une seule action (OK). Résout à la fermeture, valeur ignorée.
+   - hwPrompt({ title, body, defaultValue?, placeholder?, inputType? }) → Promise<string|null>
+       Retourne la valeur saisie si l'utilisateur clique Valider, `null`
+       sinon (Annuler, Escape, croix, backdrop).
+   ============================================================ */
+
+function makeFooterButtons(buttons) {
+    // Construit un wrapper transparent (display: contents) qui injecte
+    // les boutons directement dans .hw-modal-footer sans niveau supplémentaire.
+    const wrapper = document.createElement('span');
+    wrapper.style.display = 'contents';
+    for (const btnSpec of buttons) {
+        const btn = document.createElement('button');
+        btn.className = btnSpec.className;
+        btn.type = 'button';
+        btn.textContent = btnSpec.label;
+        btn.addEventListener('click', btnSpec.onClick);
+        wrapper.appendChild(btn);
+    }
+    return wrapper;
+}
+
+/**
+ * Boîte de dialogue de confirmation (oui/non).
+ * @param {Object} opts
+ * @param {string} opts.title - Titre de la modale.
+ * @param {string} [opts.body=''] - Message HTML (échappé par openHwModal côté title, body brut côté body).
+ * @param {string} [opts.confirmLabel='Confirmer'] - Texte du bouton de confirmation.
+ * @param {string} [opts.cancelLabel='Annuler'] - Texte du bouton d'annulation.
+ * @param {boolean} [opts.danger=false] - Si true, le bouton de confirmation est rouge (action destructive).
+ * @returns {Promise<boolean>}
+ */
+export function hwConfirm({
+    title,
+    body = '',
+    confirmLabel = 'Confirmer',
+    cancelLabel = 'Annuler',
+    danger = false,
+} = {}) {
+    const footer = makeFooterButtons([
+        {
+            className: 'hw-btn hw-btn-ghost',
+            label: cancelLabel,
+            onClick: () => closeHwModal(false),
+        },
+        {
+            className: danger ? 'hw-btn hw-btn-danger' : 'hw-btn hw-btn-primary',
+            label: confirmLabel,
+            onClick: () => closeHwModal(true),
+        },
+    ]);
+    return openHwModal({
+        size: 'sm',
+        variant: danger ? 'danger' : 'default',
+        title,
+        body,
+        footer,
+    }).then((v) => v === true);
+}
+
+/**
+ * Boîte de dialogue informative (un seul bouton OK).
+ * @param {Object} opts
+ * @param {string} opts.title
+ * @param {string} [opts.body='']
+ * @param {string} [opts.label='OK']
+ * @returns {Promise<void>}
+ */
+export function hwAlert({ title, body = '', label = 'OK' } = {}) {
+    const footer = makeFooterButtons([
+        {
+            className: 'hw-btn hw-btn-primary',
+            label,
+            onClick: () => closeHwModal(),
+        },
+    ]);
+    return openHwModal({
+        size: 'sm',
+        title,
+        body,
+        footer,
+    }).then(() => undefined);
+}
+
+/**
+ * Boîte de dialogue de saisie texte.
+ * @param {Object} opts
+ * @param {string} opts.title
+ * @param {string} [opts.body='']
+ * @param {string} [opts.defaultValue='']
+ * @param {string} [opts.placeholder='']
+ * @param {string} [opts.inputType='text'] - Type HTML de l'input ('text', 'password', etc.).
+ * @param {string} [opts.confirmLabel='Valider']
+ * @param {string} [opts.cancelLabel='Annuler']
+ * @returns {Promise<string|null>}
+ */
+export function hwPrompt({
+    title,
+    body = '',
+    defaultValue = '',
+    placeholder = '',
+    inputType = 'text',
+    confirmLabel = 'Valider',
+    cancelLabel = 'Annuler',
+} = {}) {
+    // Body : message + input. Wrapper en HTMLElement pour conserver la
+    // référence à l'input et lire sa valeur au submit.
+    const bodyEl = document.createElement('div');
+    if (body) {
+        const msg = document.createElement('p');
+        msg.style.marginTop = '0';
+        msg.innerHTML = body;
+        bodyEl.appendChild(msg);
+    }
+    const input = document.createElement('input');
+    input.type = inputType;
+    input.className = 'hw-modal-input';
+    input.value = defaultValue;
+    if (placeholder) input.placeholder = placeholder;
+    input.style.cssText = 'width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font:inherit; box-sizing:border-box;';
+    bodyEl.appendChild(input);
+
+    const submit = () => closeHwModal(input.value);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submit();
+        }
+    });
+
+    const footer = makeFooterButtons([
+        {
+            className: 'hw-btn hw-btn-ghost',
+            label: cancelLabel,
+            onClick: () => closeHwModal(null),
+        },
+        {
+            className: 'hw-btn hw-btn-primary',
+            label: confirmLabel,
+            onClick: submit,
+        },
+    ]);
+
+    const promise = openHwModal({
+        size: 'sm',
+        title,
+        body: bodyEl,
+        footer,
+    }).then((v) => (typeof v === 'string' ? v : null));
+
+    // Autofocus de l'input après ouverture (le DOM est en place après openHwModal).
+    setTimeout(() => input.focus(), 50);
+
+    return promise;
+}
