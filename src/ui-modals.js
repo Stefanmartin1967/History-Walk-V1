@@ -43,7 +43,7 @@ export function openRestoreModal() {
 
     titleEl.textContent = "Corbeille (Circuits)";
     msgEl.innerHTML = html;
-    actionsEl.innerHTML = `<button class="hw-btn hw-btn-ghost" id="btn-close-restore">Fermer</button>`;
+    actionsEl.innerHTML = `<button class="btn btn-ghost" id="btn-close-restore">Fermer</button>`;
 
     modal.classList.add('active');
 
@@ -98,7 +98,7 @@ export function openTrashModal() {
 
     titleEl.textContent = "Corbeille (Lieux)";
     msgEl.innerHTML = html;
-    actionsEl.innerHTML = `<button class="hw-btn hw-btn-ghost" id="btn-close-trash">Fermer</button>`;
+    actionsEl.innerHTML = `<button class="btn btn-ghost" id="btn-close-trash">Fermer</button>`;
 
     modal.classList.add('active');
 

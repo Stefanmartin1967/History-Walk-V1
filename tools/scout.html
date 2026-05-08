@@ -1126,12 +1126,12 @@ out geom;`;
                 footer.style.display = 'contents';
                 const btnCancel = document.createElement('button');
                 btnCancel.type = 'button';
-                btnCancel.className = 'hw-btn hw-btn-ghost';
+                btnCancel.className = 'btn btn-ghost';
                 btnCancel.textContent = 'Annuler';
                 btnCancel.addEventListener('click', () => window.HW.closeHwModal(null));
                 const btnConfirm = document.createElement('button');
                 btnConfirm.type = 'button';
-                btnConfirm.className = 'hw-btn hw-btn-primary';
+                btnConfirm.className = 'btn btn-primary';
                 btnConfirm.textContent = 'Enregistrer';
                 btnConfirm.addEventListener('click', () => {
                     const id = inputId.value.trim().toLowerCase();

@@ -66,7 +66,7 @@
 #btn-cc-publish { background: var(--cta-bg); color: var(--cta-fg); border: none; padding: 14px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.25); transition: all 0.2s; }
 #btn-cc-publish:hover { transform: translateY(-2px); filter: brightness(1.1); }
 #btn-cc-publish:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
-/* .custom-modal-btn.secondary legacy supprimé — N12 rapport v3, migré vers .hw-btn-ghost. */
+/* .custom-modal-btn.secondary legacy supprimé — N12 rapport v3, migré vers .btn-ghost. */
 
 /* DIFF LIST */
 .diff-list-container { display: flex; flex-direction: column; gap: 10px; }
@@ -492,7 +492,7 @@
 }
 .admin-form-status       { margin-top: 10px; font-size: 0.9em; color: var(--danger); }
 .admin-form-status--info { color: var(--primary); }
-/* .custom-modal-btn.danger legacy supprimé — N12 rapport v3, migré vers .hw-btn-danger. */
+/* .custom-modal-btn.danger legacy supprimé — N12 rapport v3, migré vers .btn-danger. */
 
 .admin-file-warning-body { text-align: left; color: var(--ink); }
 .admin-file-warning-body p { margin-bottom: 10px; }

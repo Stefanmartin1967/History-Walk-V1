@@ -78,7 +78,7 @@ body {
    Migré V2 : la modale est créée par openHwModal({ size: 'lg', ... }).
    Restent ici les styles de layout du formulaire (scopés à .rich-poi-form),
    et la barre de nav du subheader. Les boutons (Save/Cancel/Move) utilisent
-   désormais .hw-btn du système V2. */
+   désormais .btn du système V2. */
 
 /* Form layout : grid 2 colonnes pour les paires Nom FR/AR, Cat/Zone */
 .rich-poi-form {
@@ -2026,8 +2026,8 @@ input[type=range] {
 }
 
 /* .custom-modal-btn legacy : règles supprimées — N12 rapport v3.
-   Tous les usages migrés vers .hw-btn (.hw-btn-primary / .hw-btn-ghost /
-   .hw-btn-danger) défini dans style/modals.css. */
+   Tous les usages migrés vers .btn (.btn-primary / .btn-ghost /
+   .btn-danger) défini dans style/modals.css. */
 
 /* --- SCANNER QR CODE --- */
 #qr-scanner-overlay {

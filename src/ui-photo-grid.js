@@ -62,8 +62,8 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
         `;
 
         const footer = `
-            <button class="hw-btn hw-btn-ghost" id="pg-btn-cancel" type="button">Annuler</button>
-            <button class="hw-btn hw-btn-primary" id="pg-btn-save" type="button">
+            <button class="btn btn-ghost" id="pg-btn-cancel" type="button">Annuler</button>
+            <button class="btn btn-primary" id="pg-btn-save" type="button">
                 <i data-lucide="save"></i>
                 <span>Enregistrer</span>
             </button>
