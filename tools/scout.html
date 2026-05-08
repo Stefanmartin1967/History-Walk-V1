@@ -1,26 +1,42 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="light">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://overpass.private.coffee https://api.github.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <title>History Walk - Module Scout</title>
     <link rel="icon" type="image/png" href="../icons/icon-192.png" />
+
+    <!-- Bootstrap thème : lit localStorage 'hw_theme' (clé partagée HW/DM)
+         et l'applique AVANT le premier paint pour éviter le FOUC. -->
+    <script>
+      (function () {
+        var SUPPORTED = ['maritime', 'desert', 'oasis', 'night'];
+        var theme = 'maritime';
+        try {
+          var saved = localStorage.getItem('hw_theme');
+          if (saved && SUPPORTED.indexOf(saved) !== -1) theme = saved;
+        } catch (e) { /* localStorage indisponible (mode privé strict) */ }
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute('data-app', 'scout');
+      })();
+    </script>
+
+    <!-- Tokens design partagés HW / DM / Scout (PR 3a) -->
+    <link rel="stylesheet" href="../style/tokens.css" />
+
     <script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --secondary: #64748b;
-            --bg: #f4f4f9;
-            --surface: #ffffff;
-            --text: #333;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-            --success: #10b981;
+        /* Override densité Scout — identité "outil data". Pas d'override --brand,
+           cohérence couleurs assurée par tokens.css (PR 3a). Pas d'override --shadow
+           pour préserver l'élévation des modales. */
+        [data-app="scout"] {
+            --font-size-base: var(--font-size-sm);   /* 15 → 13 */
+            --space-md: 12px;                         /* 16 → 12 */
+            --radius-md: var(--radius-sm);            /* 10 → 6 */
         }
-        body { font-family: sans-serif; padding: 20px; line-height: 1.6; max-width: 1400px; margin: auto; background: var(--bg); color: var(--text); }
+        body { font-family: var(--font-family-base); padding: 20px; line-height: 1.6; max-width: 1400px; margin: auto; background: var(--surface-muted); color: var(--ink); }
         .card { background: var(--surface); padding: 25px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        h2 { margin-top: 0; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        h2 { margin-top: 0; color: var(--brand); display: flex; align-items: center; gap: 10px; }
 
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 0.9em; }
@@ -29,7 +45,7 @@
         .row { display: flex; gap: 15px; }
         .col { flex: 1; }
 
-        .filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--line); margin-bottom: 20px; }
         .filter-item { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
         .filter-item input { cursor: pointer; }
 
@@ -44,20 +60,20 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
         .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-primary { background: var(--brand); color: white; }
+        .btn-primary:hover { background: var(--brand-2); }
+        .btn-secondary { background: var(--ink-soft); color: white; }
         .btn-secondary:hover { background: #475569; }
-        .btn-success { background: var(--success); color: white; }
+        .btn-success { background: var(--ok); color: white; }
         .btn-success:hover { background: #059669; }
         .btn-danger { background: var(--danger); color: white; padding: 6px; }
         .btn-danger:hover { background: #dc2626; }
         .btn-sm { padding: 5px 10px; font-size: 12px; }
 
         /* TABLE STYLES */
-        .table-container { overflow-x: auto; margin-top: 20px; border: 1px solid var(--border); border-radius: 6px; background: white; }
+        .table-container { overflow-x: auto; margin-top: 20px; border: 1px solid var(--line); border-radius: 6px; background: white; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1000px; }
-        th, td { padding: 10px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
+        th, td { padding: 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
         th { background: #f1f5f9; color: #475569; font-weight: 600; position: sticky; top: 0; z-index: 10; }
         tr:hover { background: #f8fafc; }
 
@@ -65,7 +81,7 @@
         td input, td textarea {
             width: 100%; padding: 6px; border: 1px solid transparent; background: transparent; font-family: inherit; font-size: inherit; resize: vertical; box-sizing: border-box;
         }
-        td input:focus, td textarea:focus { border-color: var(--primary); background: #fff; outline: none; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1); border-radius: 3px; }
+        td input:focus, td textarea:focus { border-color: var(--brand); background: #fff; outline: none; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1); border-radius: 3px; }
         td textarea { min-height: 40px; }
 
         .col-actions { width: 50px; text-align: center; }
@@ -75,7 +91,7 @@
         .col-gps { width: 150px; font-family: monospace; }
         .col-source { width: 150px; }
 
-        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 10px; background: #fff; border-top: 1px solid var(--border); position: sticky; bottom: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding: 10px; background: #fff; border-top: 1px solid var(--line); position: sticky; bottom: 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
         .status-bar { font-size: 13px; color: #64748b; margin-left: 10px; }
 
         .hidden { display: none; }
@@ -217,11 +233,11 @@
         .token-modal-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.55); display: flex; align-items: center; justify-content: center; z-index: 9999; }
         .token-modal-overlay.hidden { display: none; }
         .token-modal-box { background: #fff; padding: 24px; border-radius: 8px; max-width: 480px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        .token-modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
+        .token-modal-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--brand); }
         .token-modal-desc { font-size: 13px; color: #475569; line-height: 1.5; margin-bottom: 12px; }
         .token-modal-desc code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-family: monospace; font-size: 12px; }
         .token-modal-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; box-sizing: border-box; margin-top: 4px; }
-        .token-modal-input:focus { outline: none; border-color: var(--primary); }
+        .token-modal-input:focus { outline: none; border-color: var(--brand); }
         .token-modal-actions { margin-top: 16px; display: flex; justify-content: flex-end; gap: 10px; }
     </style>
 
@@ -1350,6 +1366,18 @@ out geom;`;
             }
         };
 
+    </script>
+
+    <!-- Synchro cross-tab : si HW (ou DM) change le thème dans un autre onglet,
+         Scout suit en live sans rechargement. -->
+    <script>
+      window.addEventListener('storage', function (e) {
+        if (e.key !== 'hw_theme') return;
+        var SUPPORTED = ['maritime', 'desert', 'oasis', 'night'];
+        var theme = e.newValue || 'maritime';
+        if (SUPPORTED.indexOf(theme) === -1) theme = 'maritime';
+        document.documentElement.setAttribute('data-theme', theme);
+      });
     </script>
 </body>
 </html>
