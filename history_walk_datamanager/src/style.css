@@ -1,6 +1,7 @@
 /* src/style.css - VERSION RÉPARÉE (Wrapper Flex) */
 
 @import url("../../style/tokens.css");
+@import url("../../style/components/leaflet-controls.css");
 
 /* --- 1. VARIABLES & DENSITÉ DM ---
    Tokens design partagés → style/tokens.css (PR 3a).
@@ -124,7 +125,7 @@ body {
   border-bottom: 1px solid var(--line); font-size: 0.9rem; font-weight: 600; 
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
-.status-bar.status-draft { background-color: #fef3c7; border-bottom-color: var(--warn); }
+.status-bar.status-draft { background-color: var(--hw-amber-soft); border-bottom-color: var(--hw-amber); }
 .status-message { display: flex; align-items: center; gap: 8px; }
 .result-counter { background: var(--surface); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; color: var(--ink); border: 1px solid var(--brand); }
 .result-counter.hidden { display: none; }
@@ -453,11 +454,12 @@ tr.hidden-row { display: none; }
     background: var(--brand); color: white;
 }
 
-/* Bandeau cross-app warning (DM ↔ HW) */
+/* Bandeau cross-app warning (DM ↔ HW) — couleurs via tokens hw-amber
+   pour suivre le thème automatiquement (PR 3g-2). */
 .cross-app-warn {
     display: flex; align-items: center; gap: 10px;
-    background: #FEF3C7; color: #92400E;
-    border: 1px solid #FDE68A;
+    background: var(--hw-amber-soft); color: var(--hw-amber);
+    border: 1px solid var(--hw-amber);
     padding: 8px 14px; font-size: 0.9rem;
     border-radius: 4px; margin: 8px 12px;
 }
@@ -465,14 +467,14 @@ tr.hidden-row { display: none; }
 .cross-app-warn i { width: 16px; height: 16px; flex-shrink: 0; }
 .cross-app-warn span { flex: 1; }
 .cross-app-btn {
-    background: #92400E; color: white; border: none;
+    background: var(--hw-amber); color: var(--cta-fg); border: none;
     padding: 4px 10px; border-radius: 4px; cursor: pointer;
     font-size: 0.85rem; font-weight: 600;
 }
-.cross-app-btn:hover { background: #78350F; }
+.cross-app-btn:hover { filter: brightness(0.9); }
 .cross-app-dismiss {
     background: transparent; border: none; cursor: pointer;
-    color: #92400E; font-size: 1.2rem; padding: 0 4px;
+    color: var(--hw-amber); font-size: 1.2rem; padding: 0 4px;
 }
 .form-group textarea { min-height: 80px; }
 .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: var(--brand); }
@@ -672,102 +674,5 @@ tr.hidden-row { display: none; }
     margin-top: 4px;
 }
 
-/* --- LEAFLET CONTROLS — alignés sur HW (style/base.css §leaflet)
-   Le DM utilisait les styles Leaflet par défaut (toggle layers.png gris invisible
-   sur fond clair). On reprend la solution HW : toggle thématique fond --bg +
-   icône Lucide blanche via mask CSS. Si on factorise un jour, viser un fichier
-   partagé style/leaflet-controls.css. */
-
-.leaflet-control-layers-toggle {
-    width: 44px !important;
-    height: 44px !important;
-    line-height: 44px !important;
-    font-size: 24px !important;
-    border-radius: 12px !important;
-    box-shadow: var(--shadow) !important;
-    border: 1px solid var(--line) !important;
-    background-color: var(--bg) !important; /* THEME COLOR */
-    color: #fff !important; /* Always white for contrast on theme bg */
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 8px !important;
-    transition: background-color 0.2s, transform 0.1s;
-}
-
-.leaflet-bar a:hover,
-.leaflet-control-layers-toggle:hover {
-    background-color: var(--bg-2) !important;
-    transform: translateY(-1px);
-}
-
-.leaflet-bar {
-    box-shadow: none !important;
-    border: none !important;
-}
-
-.leaflet-bar a:first-child {
-    border-bottom-left-radius: 12px !important;
-    border-bottom-right-radius: 12px !important;
-}
-
-.leaflet-bar a:last-child {
-    border-top-left-radius: 12px !important;
-    border-top-right-radius: 12px !important;
-}
-
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out {
-    font-weight: bold !important;
-}
-
-.leaflet-control-layers {
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    border-radius: 12px !important;
-    margin-top: 8px !important;
-}
-
-.leaflet-top .leaflet-control {
-    margin-top: 0 !important;
-    margin-bottom: 8px !important;
-}
-
-.leaflet-control-layers-expanded {
-    background-color: var(--bg) !important;
-    color: #fff !important;
-    padding: 12px 16px !important;
-    box-shadow: var(--shadow) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    min-width: 150px;
-}
-
-.leaflet-control-layers-selector {
-    accent-color: var(--brand);
-    transform: scale(1.2);
-    margin-right: 8px;
-}
-
-.leaflet-control-layers-base label {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    cursor: pointer;
-}
-
-.leaflet-control-layers-toggle {
-    background-image: none !important; /* Remove default icon */
-}
-
-.leaflet-control-layers-toggle::after {
-    content: '';
-    display: block;
-    width: 24px;
-    height: 24px;
-    background-color: #fff;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E") no-repeat center;
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E") no-repeat center;
-}
+/* Styles Leaflet déplacés vers style/components/leaflet-controls.css (PR 3g-2),
+   importé en tête de ce fichier (factorisation HW/DM). */

@@ -140,17 +140,19 @@
 .cc-status-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 10px 0 8px; }
 .cc-status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
 .cc-status-badge.synced { background: #DCFCE7; color: #15803D; }
-.cc-status-badge.pending { background: #FEF3C7; color: #92400E; }
+.cc-status-badge.pending { background: var(--hw-amber-soft); color: var(--hw-amber); }
 .cc-status-badge.no-token { background: #FEE2E2; color: #991B1B; }
+/* Bandeau cross-app warning (HW Admin CC) — couleurs via tokens hw-amber
+   pour suivre le thème automatiquement (PR 3g-2). */
 .cc-cross-app-warn {
     display: flex; align-items: center; gap: 8px;
-    background: #FEF3C7; color: #92400E;
+    background: var(--hw-amber-soft); color: var(--hw-amber);
     padding: 8px 12px; border-radius: 6px;
     font-size: 0.85rem; margin: 8px 0;
-    border: 1px solid #FDE68A;
+    border: 1px solid var(--hw-amber);
 }
 .cc-cross-app-warn i { width: 16px; height: 16px; flex-shrink: 0; }
-.cc-cross-app-warn .cc-inline-link { color: #92400E; }
+.cc-cross-app-warn .cc-inline-link { color: var(--hw-amber); }
 .cc-inline-link { background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: inherit; font-weight: 700; text-decoration: underline; }
 
 /* Quick Actions — Dashboard CC */
@@ -242,7 +244,7 @@
     padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;
 }
 .cc-badge-new  { background: #DCFCE7; color: #166534; }
-.cc-badge-mod  { background: #FEF3C7; color: #92400E; }
+.cc-badge-mod  { background: var(--hw-amber-soft); color: var(--hw-amber); }
 .cc-badge-del  { background: #FEE2E2; color: #991B1B; }
 .cc-badge-mig  { background: #DBEAFE; color: #1E40AF; }
 

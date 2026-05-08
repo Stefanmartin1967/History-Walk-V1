@@ -165,7 +165,7 @@
 /* Sortable drag states */
 .photo-batch-thumb-ghost {
     opacity: 0.35;
-    background: #FEF3C7;
+    background: var(--hw-amber-soft);
 }
 .photo-batch-thumb-chosen {
     box-shadow: 0 0 0 2px var(--hw-amber, #D97706);
