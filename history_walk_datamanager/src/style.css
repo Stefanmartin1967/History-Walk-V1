@@ -1,22 +1,29 @@
 /* src/style.css - VERSION RÉPARÉE (Wrapper Flex) */
 
-/* --- 1. VARIABLES & THÈMES --- */
+@import url("../../style/tokens.css");
+
+/* --- 1. VARIABLES & DENSITÉ DM ---
+   Tokens design partagés → style/tokens.css (PR 3a).
+   Le DM hérite des 4 thèmes (maritime / desert / oasis / night) et exprime
+   son identité "outil/sobre" via la densité (font, paddings, radii réduits)
+   scopée [data-app="dm"], pas via un override de --brand. */
 :root {
-  --bg: #0D3B66; --bg-2: #062B4D; --surface: #FFFFFF; --surface-muted: #F0F4F8; 
-  --ink: #102A43; --ink-soft: #627D98; --line: #D9E2EC; 
-  --brand: #205596; --brand-soft: #D6EAFE; --ok: #10B981; --warn: #F59E0B; --danger: #EF4444; 
   --header-height: 70px;
 }
 
-html[data-theme="desert"] { --bg: #4d2c12; --bg-2: #3a210e; --surface: #fff8f0; --surface-muted: #f5efe6; --ink: #3a210e; --ink-soft: #8a6f5e; --line: #e0d5c7; --brand: #e88c32; --brand-soft: #faeadd; --ok: #10B981; --warn: #F59E0B; --danger: #EF4444; }
-html[data-theme="oasis"] { --bg: #065f46; --bg-2: #054d39; --surface: #f0fdf4; --surface-muted: #e6f7eb; --ink: #064e3b; --ink-soft: #528c7c; --line: #cce8d8; --brand: #059669; --brand-soft: #d1fae5; --ok: #10B981; --warn: #F59E0B; --danger: #EF4444; }
-html[data-theme="night"] { --bg: #111827; --bg-2: #000000; --surface: #1f2937; --surface-muted: #374151; --ink: #d1d5db; --ink-soft: #9ca3af; --line: #4b5563; --brand: #60a5fa; --brand-soft: #374151; --ok: #34d399; --warn: #facc15; --danger: #f87171; }
+[data-app="dm"] {
+  --font-size-base: var(--font-size-sm);  /* 15 → 13 */
+  --space-md: 12px;                        /* 16 → 12 (padding standard plus serré) */
+  --radius-md: var(--radius-sm);           /* 10 → 6 (coins plus secs) */
+  --line-height-base: 1.35;                /* léger resserrement vertical */
+}
+
 html[data-theme="night"] .editable-cell { color: var(--ink); }
 
 /* --- 2. BASE & LAYOUT --- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-family-base);
   color: var(--ink); background-color: var(--surface-muted);
   height: 100vh; overflow: hidden;
   transition: background-color 0.3s, color 0.3s;
@@ -330,7 +337,7 @@ tr.hidden-row { display: none; }
 }
 .dest-select {
     padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px;
-    background: var(--bg); color: var(--ink); font: inherit;
+    background: var(--surface); color: var(--ink); font: inherit;
     cursor: pointer; min-width: 130px;
 }
 .dest-select:focus { outline: none; border-color: var(--brand); }
@@ -371,7 +378,7 @@ tr.hidden-row { display: none; }
 .filter-search-wrapper input {
     width: 100%; padding: 7px 30px 7px 32px;
     border: 1px solid var(--line); border-radius: 6px;
-    background: var(--bg); color: var(--ink); font: inherit;
+    background: var(--surface); color: var(--ink); font: inherit;
 }
 .filter-search-wrapper input:focus { outline: none; border-color: var(--brand); }
 .filter-search-icon {
@@ -388,7 +395,7 @@ tr.hidden-row { display: none; }
 .filter-search-clear.hidden { display: none; }
 .filter-toolbar-select {
     padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px;
-    background: var(--bg); color: var(--ink); font: inherit; cursor: pointer;
+    background: var(--surface); color: var(--ink); font: inherit; cursor: pointer;
     min-width: 130px;
 }
 .filter-toolbar-select:focus { outline: none; border-color: var(--brand); }
@@ -414,7 +421,7 @@ tr.hidden-row { display: none; }
 .advanced-filters-panel {
     display: flex; flex-direction: column; gap: 10px;
     padding: 12px 16px;
-    background: var(--bg-soft, var(--surface));
+    background: var(--surface-muted);
     border-bottom: 1px solid var(--line);
 }
 .advanced-filters-panel.hidden { display: none; }
@@ -488,7 +495,7 @@ tr.hidden-row { display: none; }
 .photos-readonly {
     display: flex; align-items: center; gap: 8px;
     padding: 8px 12px; border-radius: 6px;
-    background: var(--bg-soft, #f5f5f5);
+    background: var(--surface-muted);
     border: 1px solid var(--line);
     color: var(--ink-soft); font-size: 0.9rem;
 }
@@ -663,4 +670,104 @@ tr.hidden-row { display: none; }
     justify-content: flex-end;
     gap: 10px;
     margin-top: 4px;
+}
+
+/* --- LEAFLET CONTROLS — alignés sur HW (style/base.css §leaflet)
+   Le DM utilisait les styles Leaflet par défaut (toggle layers.png gris invisible
+   sur fond clair). On reprend la solution HW : toggle thématique fond --bg +
+   icône Lucide blanche via mask CSS. Si on factorise un jour, viser un fichier
+   partagé style/leaflet-controls.css. */
+
+.leaflet-control-layers-toggle {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 24px !important;
+    border-radius: 12px !important;
+    box-shadow: var(--shadow) !important;
+    border: 1px solid var(--line) !important;
+    background-color: var(--bg) !important; /* THEME COLOR */
+    color: #fff !important; /* Always white for contrast on theme bg */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px !important;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.leaflet-bar a:hover,
+.leaflet-control-layers-toggle:hover {
+    background-color: var(--bg-2) !important;
+    transform: translateY(-1px);
+}
+
+.leaflet-bar {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.leaflet-bar a:first-child {
+    border-bottom-left-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
+}
+
+.leaflet-bar a:last-child {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+    font-weight: bold !important;
+}
+
+.leaflet-control-layers {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    border-radius: 12px !important;
+    margin-top: 8px !important;
+}
+
+.leaflet-top .leaflet-control {
+    margin-top: 0 !important;
+    margin-bottom: 8px !important;
+}
+
+.leaflet-control-layers-expanded {
+    background-color: var(--bg) !important;
+    color: #fff !important;
+    padding: 12px 16px !important;
+    box-shadow: var(--shadow) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    min-width: 150px;
+}
+
+.leaflet-control-layers-selector {
+    accent-color: var(--brand);
+    transform: scale(1.2);
+    margin-right: 8px;
+}
+
+.leaflet-control-layers-base label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
+
+.leaflet-control-layers-toggle {
+    background-image: none !important; /* Remove default icon */
+}
+
+.leaflet-control-layers-toggle::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E") no-repeat center;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E") no-repeat center;
 }
