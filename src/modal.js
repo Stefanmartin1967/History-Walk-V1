@@ -73,7 +73,7 @@ export function openHwModal(opts) {
         let footerHtml = '';
         if (!noFooter) {
             if (footer === null) {
-                footerHtml = '<button class="hw-btn hw-btn-primary" data-hw-modal-action="close">Fermer</button>';
+                footerHtml = '<button class="btn btn-primary" data-hw-modal-action="close">Fermer</button>';
             } else if (typeof footer === 'string') {
                 footerHtml = footer;
             }
@@ -329,10 +329,10 @@ export function showCustomModal(titleText, content, actionsContent = null, custo
 export function showConfirm(titleText, messageText, confirmLabel = "Oui", cancelLabel = "Annuler", isDanger = false) {
     // Migration V2 : openHwModal sm avec footer custom (Annuler à gauche,
     // Confirmer à droite). Variante 'danger' si isDanger.
-    const confirmBtnCls = isDanger ? 'hw-btn-danger' : 'hw-btn-primary';
+    const confirmBtnCls = isDanger ? 'btn-danger' : 'btn-primary';
     const footer = `
-        <button class="hw-btn hw-btn-ghost" data-confirm-action="cancel">${escapeText(cancelLabel)}</button>
-        <button class="hw-btn ${confirmBtnCls}" data-confirm-action="confirm">${escapeText(confirmLabel)}</button>
+        <button class="btn btn-ghost" data-confirm-action="cancel">${escapeText(cancelLabel)}</button>
+        <button class="btn ${confirmBtnCls}" data-confirm-action="confirm">${escapeText(confirmLabel)}</button>
     `;
 
     return openHwModal({
@@ -379,8 +379,8 @@ export function showPrompt(titleText, messageText, defaultValue = "") {
         <input type="text" class="hw-input hw-mt-3" id="hw-prompt-input" value="${escapeText(defaultValue)}">
     `;
     const footer = `
-        <button class="hw-btn hw-btn-ghost" data-prompt-action="cancel">Annuler</button>
-        <button class="hw-btn hw-btn-primary" data-prompt-action="confirm">Valider</button>
+        <button class="btn btn-ghost" data-prompt-action="cancel">Annuler</button>
+        <button class="btn btn-primary" data-prompt-action="confirm">Valider</button>
     `;
 
     return openHwModal({
@@ -435,7 +435,7 @@ export function showAlert(titleText, messageText, okLabel = "OK", customClass = 
     // Migration V2 : openHwModal sm avec un seul bouton qui résout la promise.
     // Le paramètre customClass est conservé pour rétro-compat mais ignoré
     // (le styling se fait via size/variant). onReady est appelé après ouverture.
-    const footer = `<button class="hw-btn hw-btn-primary" data-alert-action="ok">${escapeText(okLabel)}</button>`;
+    const footer = `<button class="btn btn-primary" data-alert-action="ok">${escapeText(okLabel)}</button>`;
 
     const promise = openHwModal({
         size: 'sm',
@@ -519,12 +519,12 @@ export function hwConfirm({
 } = {}) {
     const footer = makeFooterButtons([
         {
-            className: 'hw-btn hw-btn-ghost',
+            className: 'btn btn-ghost',
             label: cancelLabel,
             onClick: () => closeHwModal(false),
         },
         {
-            className: danger ? 'hw-btn hw-btn-danger' : 'hw-btn hw-btn-primary',
+            className: danger ? 'btn btn-danger' : 'btn btn-primary',
             label: confirmLabel,
             onClick: () => closeHwModal(true),
         },
@@ -549,7 +549,7 @@ export function hwConfirm({
 export function hwAlert({ title, body = '', label = 'OK' } = {}) {
     const footer = makeFooterButtons([
         {
-            className: 'hw-btn hw-btn-primary',
+            className: 'btn btn-primary',
             label,
             onClick: () => closeHwModal(),
         },
@@ -610,12 +610,12 @@ export function hwPrompt({
 
     const footer = makeFooterButtons([
         {
-            className: 'hw-btn hw-btn-ghost',
+            className: 'btn btn-ghost',
             label: cancelLabel,
             onClick: () => closeHwModal(null),
         },
         {
-            className: 'hw-btn hw-btn-primary',
+            className: 'btn btn-primary',
             label: confirmLabel,
             onClick: submit,
         },

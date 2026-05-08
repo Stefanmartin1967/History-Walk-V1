@@ -67,4 +67,4 @@ html[hw-ready] #hw-boot-splash {
 @keyframes hw-boot-spin { to { transform: rotate(360deg); } }
 @keyframes hw-boot-fade-in { to { opacity: 1; } }
 
-/* Last updated 2026-05-08 (PR 3d : new buttons system). */
+/* Last updated 2026-05-09 (PR 3g-1 : .hw-btn-* migrated to .btn-*). */

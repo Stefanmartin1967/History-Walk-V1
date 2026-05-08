@@ -1184,11 +1184,11 @@ export function openPhotoBatchModal(enrichedClusters) {
         const body = `<div id="photo-batch-body" class="photo-batch-body"></div>`;
 
         const footer = `
-            <button class="hw-btn hw-btn-ghost" id="photo-batch-btn-close" type="button">Fermer</button>
-            <button class="hw-btn hw-btn-ghost" id="photo-batch-btn-zip" type="button" title="Exporter toutes les photos en ZIP">
+            <button class="btn btn-ghost" id="photo-batch-btn-close" type="button">Fermer</button>
+            <button class="btn btn-ghost" id="photo-batch-btn-zip" type="button" title="Exporter toutes les photos en ZIP">
                 <i data-lucide="archive"></i><span>ZIP</span>
             </button>
-            <button class="hw-btn hw-btn-primary" id="photo-batch-btn-save" type="button">
+            <button class="btn btn-primary" id="photo-batch-btn-save" type="button">
                 <i data-lucide="save"></i><span>Enregistrer</span>
             </button>
         `;

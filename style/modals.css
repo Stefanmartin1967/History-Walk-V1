@@ -15,7 +15,7 @@
            ... contenu libre, h3, p, ...
            .hw-loader (si is-loading)
          .hw-modal-footer
-           button.hw-btn.hw-btn-ghost|primary|danger|link
+           button.btn.btn-ghost|primary|danger|link
 
    Tous les usages CSS référencent uniquement les tokens (--surface, --ink,
    --line, --brand*, --danger*, --ok*, --hw-amber*) — aucun hex hardcodé.
@@ -242,13 +242,12 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
 /* Mobile : padding réduit + bouton primaire pleine largeur si seul */
 @media (max-width: 600px) {
     .hw-modal-footer { padding: 12px 16px; }
-    .hw-modal-footer .hw-btn:only-child { width: 100%; justify-content: center; }
+    .hw-modal-footer .btn:only-child { width: 100%; justify-content: center; }
 }
 
 /* ===== Buttons =====
-   Système .btn-* / .hw-btn-* déplacé vers style/components/buttons.css (PR 3d).
-   Les sélecteurs .hw-btn-* restent en alias temporaire (sélecteurs combinés
-   avec .btn-*) jusqu'au cleanup PR 3g. */
+   Système .btn-* canonique défini dans style/components/buttons.css (PR 3d).
+   Les anciens .hw-btn-* (V2 legacy) ont été migrés vers .btn-* en PR 3g-1. */
 
 /* ===== Variantes : danger / success ===== */
 .hw-modal.is-danger .hw-modal-icon {
@@ -301,7 +300,7 @@ html[data-theme="night"] .hw-modal.is-loading .hw-modal-body::after {
 }
 .hw-loader .spin svg { width: 32px; height: 32px; }
 @keyframes hw-spin { to { transform: rotate(360deg); } }
-.hw-modal.is-loading .hw-modal-footer .hw-btn {
+.hw-modal.is-loading .hw-modal-footer .btn {
     opacity: 0.4;
     pointer-events: none;
 }

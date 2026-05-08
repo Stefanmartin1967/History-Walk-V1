@@ -133,8 +133,8 @@ export async function showAdminLoginModal() {
     `;
 
     const footer = `
-        <button class="hw-btn hw-btn-ghost" data-admin-login-action="cancel">Annuler</button>
-        <button class="hw-btn hw-btn-primary" data-admin-login-action="confirm">Connexion</button>
+        <button class="btn btn-ghost" data-admin-login-action="cancel">Annuler</button>
+        <button class="btn btn-primary" data-admin-login-action="confirm">Connexion</button>
     `;
 
     openHwModal({
@@ -486,7 +486,7 @@ export function showGitHubUploadModal() {
 
     // Bouton Annuler
     const btnCancel = document.createElement('button');
-    btnCancel.className = 'hw-btn hw-btn-ghost';
+    btnCancel.className = 'btn btn-ghost';
     btnCancel.textContent = "Annuler";
     btnCancel.onclick = () => {
         overlay.classList.remove('active');
@@ -494,7 +494,7 @@ export function showGitHubUploadModal() {
 
     // Bouton Envoyer
     const btnSend = document.createElement('button');
-    btnSend.className = 'hw-btn hw-btn-primary';
+    btnSend.className = 'btn btn-primary';
     btnSend.textContent = "Envoyer sur GitHub";
     btnSend.onclick = async () => {
         const fileInput = message.querySelector('#gh-file-input');

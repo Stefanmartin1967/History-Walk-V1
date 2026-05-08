@@ -135,20 +135,20 @@ describe('showConfirm', () => {
         await p;
     });
 
-    it('isDanger=true → bouton confirm a class "hw-btn-danger" (vs hw-btn-primary)', async () => {
+    it('isDanger=true → bouton confirm a class "btn-danger" (vs btn-primary)', async () => {
         const p = showConfirm('T', 'M', 'OK', 'NO', true);
         const confirmBtn = document.querySelector('[data-confirm-action="confirm"]');
-        expect(confirmBtn.classList.contains('hw-btn-danger')).toBe(true);
-        expect(confirmBtn.classList.contains('hw-btn-primary')).toBe(false);
+        expect(confirmBtn.classList.contains('btn-danger')).toBe(true);
+        expect(confirmBtn.classList.contains('btn-primary')).toBe(false);
         confirmBtn.click();
         await p;
     });
 
-    it('isDanger=false (default) → bouton confirm a class "hw-btn-primary"', async () => {
+    it('isDanger=false (default) → bouton confirm a class "btn-primary"', async () => {
         const p = showConfirm('T', 'M');
         const confirmBtn = document.querySelector('[data-confirm-action="confirm"]');
-        expect(confirmBtn.classList.contains('hw-btn-primary')).toBe(true);
-        expect(confirmBtn.classList.contains('hw-btn-danger')).toBe(false);
+        expect(confirmBtn.classList.contains('btn-primary')).toBe(true);
+        expect(confirmBtn.classList.contains('btn-danger')).toBe(false);
         confirmBtn.click();
         await p;
     });

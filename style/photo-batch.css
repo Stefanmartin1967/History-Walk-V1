@@ -571,8 +571,8 @@
 }
 .photo-batch-empty p { margin: 0; font-weight: 500; }
 
-/* Footer/boutons : fournis par hw-modal-footer + .hw-btn V2. Le bouton
-   "Enregistrer" disabled est géré par .hw-btn:disabled générique
+/* Footer/boutons : fournis par hw-modal-footer + .btn V2. Le bouton
+   "Enregistrer" disabled est géré par .btn:disabled générique
    (cf. modals.css). */
 
 /* --- RESPONSIVE (tablette, même si desktop-only c'est plus propre) --- */

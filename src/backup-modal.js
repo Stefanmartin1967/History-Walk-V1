@@ -31,7 +31,7 @@ export function showBackupModal() {
     `;
 
     const footer = `
-        <button class="hw-btn hw-btn-ghost" data-backup-action="cancel">Annuler</button>
+        <button class="btn btn-ghost" data-backup-action="cancel">Annuler</button>
     `;
 
     const promise = openHwModal({

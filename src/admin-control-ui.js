@@ -34,8 +34,8 @@ export function openControlCenterModal(diffData, callbacks) {
     `;
 
     const footer = `
-        <button class="hw-btn hw-btn-ghost" data-cc-action="close">Fermer</button>
-        <button class="hw-btn hw-btn-primary" id="btn-cc-publish" title="Tout publier" aria-label="Tout publier">
+        <button class="btn btn-ghost" data-cc-action="close">Fermer</button>
+        <button class="btn btn-primary" id="btn-cc-publish" title="Tout publier" aria-label="Tout publier">
             <i data-lucide="rocket"></i> TOUT PUBLIER
         </button>
     `;
@@ -524,7 +524,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
         </div>
 
         <div class="cc-subpanel-footer">
-            <button class="hw-btn hw-btn-secondary" id="btn-upload-cancel">Annuler</button>
+            <button class="btn btn-secondary" id="btn-upload-cancel">Annuler</button>
             <button class="cc-save-btn" id="btn-upload-submit" disabled>
                 <i data-lucide="send"></i> Envoyer sur GitHub
             </button>

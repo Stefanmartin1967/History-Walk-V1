@@ -119,7 +119,7 @@ const RICH_POI_BODY_HTML = `
 
     <!-- GPS footer : déplacer + coords -->
     <div class="rich-poi-gps-footer">
-        <button id="btn-rich-move-marker" class="hw-btn hw-btn-ghost" title="Déplacer le marqueur" aria-label="Déplacer le marqueur" type="button">
+        <button id="btn-rich-move-marker" class="btn btn-ghost" title="Déplacer le marqueur" aria-label="Déplacer le marqueur" type="button">
             <i data-lucide="move"></i><span>Déplacer</span>
         </button>
         <span>📍 GPS : <span id="rich-poi-coords">...</span></span>
@@ -131,15 +131,15 @@ const RICH_POI_BODY_HTML = `
 // ou si le POI courant n'est pas dans un circuit affiché.
 const RICH_POI_SUBHEADER_HTML = `
     <div id="rich-poi-nav-controls" class="rich-poi-nav-controls is-hidden">
-        <button id="btn-rich-prev" class="hw-btn hw-btn-ghost" title="Précédent" aria-label="Précédent" type="button"><i data-lucide="chevron-left"></i></button>
-        <button id="btn-rich-next" class="hw-btn hw-btn-ghost" title="Suivant" aria-label="Suivant" type="button"><i data-lucide="chevron-right"></i></button>
+        <button id="btn-rich-prev" class="btn btn-ghost" title="Précédent" aria-label="Précédent" type="button"><i data-lucide="chevron-left"></i></button>
+        <button id="btn-rich-next" class="btn btn-ghost" title="Suivant" aria-label="Suivant" type="button"><i data-lucide="chevron-right"></i></button>
     </div>
 `;
 
 // Footer : Annuler (ghost) + Enregistrer (primary, désactivable via updateSaveButtonState)
 const RICH_POI_FOOTER_HTML = `
-    <button id="btn-cancel-rich-poi" class="hw-btn hw-btn-ghost" type="button">Annuler</button>
-    <button id="btn-save-rich-poi" class="hw-btn hw-btn-primary" type="button">
+    <button id="btn-cancel-rich-poi" class="btn btn-ghost" type="button">Annuler</button>
+    <button id="btn-save-rich-poi" class="btn btn-primary" type="button">
         <i data-lucide="save"></i><span>Enregistrer</span>
     </button>
 `;
