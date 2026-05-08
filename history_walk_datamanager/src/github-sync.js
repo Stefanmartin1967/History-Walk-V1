@@ -1,5 +1,8 @@
 // github-sync.js
 // Publier le GeoJSON modifié sur GitHub depuis le Data Manager.
+
+import { hwConfirm } from '../../src/modal.js';
+
 //
 // ─── Stockage du PAT ─────────────────────────────────────────────────────────
 // Le token est stocké dans IndexedDB (DB 'HistoryWalkDB', store 'appState',
@@ -127,12 +130,15 @@ export async function publishToGitHub(geojson, fileName, onStatus) {
     // publié. Publier le DM maintenant écraserait le geojson distant et HW
     // verrait au prochain refresh une version sans ses modifs en attente.
     if (localStorage.getItem('hw_has_unpublished_changes') === '1') {
-        const ok = confirm(
-            "⚠️ History Walk a un brouillon admin non publié.\n\n"
-            + "Si tu publies depuis le DM maintenant, les modifs HW en attente "
-            + "pourraient être écrasées au prochain refresh côté HW.\n\n"
-            + "Veux-tu vraiment continuer ?"
-        );
+        const ok = await hwConfirm({
+            title: '⚠️ Brouillon admin non publié',
+            body: 'History Walk a un brouillon admin non publié.<br><br>'
+                + 'Si tu publies depuis le DM maintenant, les modifs HW en attente '
+                + 'pourraient être écrasées au prochain refresh côté HW.<br><br>'
+                + 'Veux-tu vraiment continuer ?',
+            confirmLabel: 'Publier quand même',
+            danger: true,
+        });
         if (!ok) {
             onStatus('error', "Publication annulée par sécurité.");
             return;

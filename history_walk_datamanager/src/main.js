@@ -3,6 +3,7 @@ import './style.css';
 import { createIcons, icons } from 'lucide';
 import { parseGps } from './utils.js';
 import { initMap, renderMarkers, focusFeature, startEditMarker, stopEditMarker, moveEditMarker, flyToLocation } from './map.js';
+import { hwConfirm } from '../../src/modal.js';
 
 import {
     initStorage, loadGeoJSON, getGeoJSONForExport,
@@ -439,7 +440,13 @@ function populateDatalists(currentCategorie = '') {
 // --- BUTTONS LISTENERS ---
 // Recharger depuis le serveur (bypass brouillon)
 btnLoad.addEventListener('click', async () => {
-    if (!confirm("Recharger depuis le serveur ? Le brouillon local sera perdu.")) return;
+    const ok = await hwConfirm({
+        title: 'Recharger depuis le serveur ?',
+        body: 'Le brouillon local sera perdu.',
+        confirmLabel: 'Recharger',
+        danger: true,
+    });
+    if (!ok) return;
     btnLoad.disabled = true;
     await loadGeoJSON(true);
     btnLoad.disabled = false;

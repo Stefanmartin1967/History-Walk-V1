@@ -1,5 +1,6 @@
 // src/storage.js
 import { cleanUrl, generateHWID, isPointInPolygon, parseGps } from './utils.js';
+import { hwConfirm, hwAlert } from '../../src/modal.js';
 
 // --- SOURCE DE VÉRITÉ UNIQUE : GitHub ---
 const GITHUB_RAW = 'https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main';
@@ -272,7 +273,10 @@ export function saveFeature(formData, indexToUpdate = null) {
     if (!globalGeoJSON) return;
 
     const coords = parseGps(formData.gps);
-    if (!coords) { alert("Coordonnées GPS invalides"); return false; }
+    if (!coords) {
+        hwAlert({ title: 'GPS invalides', body: 'Coordonnées GPS invalides.' });
+        return false;
+    }
 
     const existing = indexToUpdate !== null ? globalGeoJSON.features[indexToUpdate].properties : null;
 
@@ -324,10 +328,17 @@ export function saveFeature(formData, indexToUpdate = null) {
     return true;
 }
 
-export function deleteFeature(index) {
+export async function deleteFeature(index) {
     if (!globalGeoJSON) return;
     const f = globalGeoJSON.features[index];
-    if(!confirm(`Supprimer '${f.properties['Nom du site FR']}' ?`)) return;
+    const name = f.properties['Nom du site FR'] || 'ce lieu';
+    const ok = await hwConfirm({
+        title: 'Supprimer ce lieu ?',
+        body: `Confirmer la suppression de <strong>${name}</strong> ?`,
+        confirmLabel: 'Supprimer',
+        danger: true,
+    });
+    if (!ok) return;
     globalGeoJSON.features.splice(index, 1);
     saveStateToHistory(); // APRÈS modification
     markDmDirty();
@@ -349,7 +360,10 @@ export function runMaintenance() {
     
     // On s'assure que les zones sont chargées avant de lancer le calcul
     if (!zonesGeoJSON) {
-        alert("Les zones (map.geojson) ne sont pas encore chargées. Réessayez dans une seconde.");
+        hwAlert({
+            title: 'Zones non chargées',
+            body: 'Les zones (map.geojson) ne sont pas encore chargées. Réessayez dans une seconde.',
+        });
         return;
     }
 
