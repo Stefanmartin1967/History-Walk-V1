@@ -64,7 +64,7 @@
     "distance": "7.4 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Mezraya",
+    "zone": "Mazraia",
     "poiIds": [
       "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
       "HW-01K77WPE6AS77NE3CRGHPYHJSE",
@@ -83,7 +83,7 @@
     "distance": "6.6 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Midoun",
+    "zone": "El Mahboubine",
     "poiIds": [
       "HW-01K77WPE6BZYXKCYCZXB9RG3RP",
       "HW-01K77WPE6A1GRGM843BF4KA3RT",
@@ -100,7 +100,7 @@
     "distance": "7.8 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Sedouikech",
+    "zone": "Beni Maaguel",
     "poiIds": [
       "HW-01K77WPE6C4GTHCK9Y64EFE8SP",
       "HW-01K77WPE6D6A1W50RR0KNXRAGH",
@@ -154,7 +154,7 @@
     "distance": "7.7 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Sedouikech",
+    "zone": "Arkou",
     "poiIds": [
       "HW-01K77WPE697PHS21NP9P0JGJ6F",
       "HW-01K77WPE69627R8AECX3S372Z3",
@@ -190,7 +190,7 @@
     "distance": "8.2 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "El Groa",
+    "zone": "Mezrene",
     "poiIds": [
       "HW-01K77WPE6NZ91JPSJG4M3A7TNR",
       "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
@@ -208,7 +208,7 @@
     "distance": "7.4 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Midoun",
+    "zone": "El Mahboubine",
     "poiIds": [
       "HW-01K77WPE699CBRC4PV1ARJPXKM",
       "HW-01K77WPE6QR67710KWTHBD0C6V"
@@ -222,7 +222,7 @@
     "distance": "7.2 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Taguermess",
+    "zone": "Arkou",
     "poiIds": [
       "HW-01K77WPE68SW9XWBFFCRBWXZYM",
       "HW-01K77WPE6805D82JWX44QAVVV9",
@@ -257,7 +257,7 @@
     "distance": "8.1 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "El May",
+    "zone": "Sedghaiane",
     "poiIds": [
       "HW-01K77WPE6FTSXM87T9YTV7G4ME",
       "HW-01K77WPE6B757BJRXVWKNC8PBD",
@@ -273,7 +273,7 @@
     "distance": "5.9 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "El Groa",
+    "zone": "Oued Ezzebib",
     "poiIds": [
       "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
       "HW-01K77WPE6N293MG25FFQBH1G10",
@@ -322,7 +322,7 @@
     "distance": "6.6 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Taguermess",
+    "zone": "Arkou",
     "poiIds": [
       "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
       "HW-01K77WPE682HMFVV693F7BFA2B",
@@ -339,7 +339,7 @@
     "distance": "7.2 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Houmt Souk",
+    "zone": "Bou Melel",
     "poiIds": [
       "HW-01K77WPE6M5QZM1DZV18R4EDHR",
       "HW-01K77WPE6JARCBVAYJCW1B3B14",
@@ -359,7 +359,7 @@
     "distance": "3.8 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Houmt Souk",
+    "zone": "Fatou",
     "poiIds": [
       "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
       "HW-01K77WPE6F1C25NNH5RAR2JPF6",
@@ -378,7 +378,7 @@
     "distance": "8.1 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Sedouikech",
+    "zone": "Arkou",
     "poiIds": [
       "HW-01K77WPE6B2CT1A4B58N917MXQ",
       "HW-01KJABRN0DWM059C795C8SSD8C",
@@ -413,7 +413,7 @@
     "distance": "6.0 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Taguermess",
+    "zone": "Midoun",
     "poiIds": [
       "HW-01K77WPE6QJNV1Q83SBNFKC88M",
       "HW-01K77WPE68SSRHFM5TYYA7F5YF",
