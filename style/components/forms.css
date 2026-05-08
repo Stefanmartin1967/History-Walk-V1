@@ -1,0 +1,143 @@
+/* style/components/forms.css — Système de formulaires unifié HW/DM/Scout (PR 3f)
+   Implémentation des spécifications components-specs.md §3 (.input) et §4 (.select).
+
+   Convention : adoption progressive via les classes `.input` / `.select`.
+   Les call sites existants (HW: #search-input, DM: .filter-input, .dest-select,
+   etc.) sont conservés tels quels. La migration de leurs styles vers .input /
+   .select est reportée en PR 3g (cleanup final).
+
+   Décisions Stefan :
+   - height: var(--control-h-md) (42px) — alignement avec les boutons standards
+   - border-radius: var(--radius-sm) (6px) — cohérence input/badge
+   - chevron du select via `mask-image` (couleur pilotée par var(--ink-soft),
+     suit le thème automatiquement dans les 4 thèmes — pas d'override par thème)
+   - :focus-visible avec var(--focus-ring) (a11y, cohérence avec les boutons)
+*/
+
+/* ===== Input (text, number, email, tel, url, date, password) ===== */
+.input {
+    width: 100%;
+    height: var(--control-h-md);
+    padding: 0 var(--space-md);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--font-size-base);
+    transition: border-color .15s ease, box-shadow .15s ease;
+    box-sizing: border-box;
+}
+.input::placeholder { color: var(--ink-soft); }
+
+.input:hover:not([readonly]):not(:disabled) {
+    border-color: color-mix(in oklab, var(--line), var(--ink-soft) 50%);
+}
+
+.input:focus-visible {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: var(--focus-ring);
+}
+
+.input[readonly] {
+    background: var(--surface-muted);
+    cursor: default;
+}
+
+.input:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.input[aria-invalid="true"] {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--danger) 30%, transparent);
+}
+
+/* Variante textarea — hauteur auto avec un minimum, padding vertical réduit */
+textarea.input {
+    height: auto;
+    min-height: calc(var(--control-h-md) * 2);
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-sm);
+    line-height: var(--line-height-base);
+    resize: vertical;
+}
+
+/* ===== Wrapper "input-group" : label + input verticalement empilés ===== */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.input-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--ink-soft);
+}
+
+/* ===== Select ===== */
+/* Le select doit être enveloppé dans un .select-wrapper pour bénéficier du
+   chevron via ::after (cf. .select-wrapper::after plus bas). Sans wrapper,
+   le select reste fonctionnel et stylé mais sans chevron custom (le navigateur
+   affichera son propre chevron natif). */
+.select {
+    width: 100%;
+    height: var(--control-h-md);
+    /* padding-right généreux pour laisser place au chevron */
+    padding: 0 var(--space-xl) 0 var(--space-md);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    box-sizing: border-box;
+}
+
+.select:hover:not(:disabled) {
+    border-color: color-mix(in oklab, var(--line), var(--ink-soft) 50%);
+}
+
+.select:focus-visible {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: var(--focus-ring);
+}
+
+.select:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+/* Wrapper requis pour le chevron pseudo-element (sinon le mask masquerait
+   le texte du select). Usage : <div class="select-wrapper"><select class="select">…</select></div> */
+.select-wrapper {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+/* Chevron via mask CSS — couleur pilotée par var(--ink-soft), suit le thème
+   automatiquement dans les 4 thèmes. Préférable au background-image qui
+   nécessiterait un override par thème (currentColor non supporté dans les
+   data-URL des background-image). */
+.select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    background-color: var(--ink-soft);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/></svg>") no-repeat center / contain;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M4 6l4 4 4-4'/></svg>") no-repeat center / contain;
+    pointer-events: none;
+}

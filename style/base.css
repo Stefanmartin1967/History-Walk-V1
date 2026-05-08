@@ -1,5 +1,6 @@
 @import url("./tokens.css");
 @import url("./components/buttons.css");
+@import url("./components/forms.css");
 
 * { box-sizing: border-box; }
 

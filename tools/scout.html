@@ -23,6 +23,8 @@
 
     <!-- Tokens design partagés HW / DM / Scout (PR 3a) -->
     <link rel="stylesheet" href="../style/tokens.css" />
+    <!-- Système de formulaires unifié .input / .select (PR 3f) -->
+    <link rel="stylesheet" href="../style/components/forms.css" />
 
     <script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
     <style>
@@ -106,10 +108,12 @@
         <div class="row" style="align-items: flex-end; margin-bottom: 15px;">
             <div class="col" style="flex: 2;">
                 <label>Destination</label>
-                <select id="destination-select" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 14px;">
-                    <option value="">Chargement…</option>
-                    <option value="__manual__">➕ Nouvelle destination (manuel)…</option>
-                </select>
+                <div class="select-wrapper">
+                    <select id="destination-select" class="select">
+                        <option value="">Chargement…</option>
+                        <option value="__manual__">➕ Nouvelle destination (manuel)…</option>
+                    </select>
+                </div>
             </div>
             <div class="col" style="flex: 0.7;">
                 <label>Depuis le <small style="font-weight:400">(optionnel)</small></label>
