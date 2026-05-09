@@ -45,6 +45,22 @@
 .admin-cc-tab.active { background: var(--surface); color: var(--hw-amber); border-color: #E5E7EB; }
 .admin-cc-tab.cc-tab-hidden { display: none; }
 
+/* B2 — Sub-router de l'onglet Modifications (Lieux / Photos / Circuits) */
+.cc-changes-subnav { display: flex; gap: 6px; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.cc-changes-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; background: var(--surface-muted); border: 1px solid var(--line);
+    border-radius: 999px; font-size: 0.85rem; font-weight: 600; color: var(--ink-soft);
+    cursor: pointer; transition: all 0.15s;
+}
+.cc-changes-pill:hover { background: var(--surface); color: var(--ink); }
+.cc-changes-pill.is-active { background: var(--hw-amber-soft); border-color: var(--hw-amber); color: var(--hw-amber); }
+.cc-changes-pill-count {
+    display: inline-block; min-width: 20px; padding: 1px 7px; border-radius: 10px;
+    background: var(--surface); font-size: 0.75rem; font-weight: 700;
+}
+.cc-changes-pill.is-active .cc-changes-pill-count { background: var(--surface); color: var(--hw-amber); }
+
 .admin-cc-scroll-area { flex: 1; overflow-y: auto; padding: 20px 28px; }
 
 .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }

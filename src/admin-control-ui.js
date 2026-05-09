@@ -8,6 +8,22 @@ import { GITHUB_OWNER, GITHUB_REPO } from './config.js';
 
 // Ce fichier gère l'affichage (HTML, CSS, Interactions UI) du panneau d'administration
 
+// B2 — État du sub-router de l'onglet Modifications.
+// 3 sous-vues : Lieux (POI texte/coords) / Photos (grille pending) / Circuits.
+// Persistant entre les renders du même onglet, reset implicite à 'lieux' au prochain
+// boot (variable module-level non sérialisée).
+let _changesSubView = 'lieux';
+
+export function setChangesSubView(view) {
+    if (['lieux', 'photos', 'circuits'].includes(view)) {
+        _changesSubView = view;
+    }
+}
+
+export function getChangesSubView() {
+    return _changesSubView;
+}
+
 
 export function openControlCenterModal(diffData, callbacks) {
     // Migration V2 : openHwModal lg avec tabs intégrés au body (option B :
@@ -103,7 +119,19 @@ function bindCCEventDelegation(diffData, callbacks) {
             const refuseBtn = e.target.closest('[data-action="refuse"]');
             if (refuseBtn) {
                 const id = refuseBtn.dataset.id;
-                if (callbacks.processDecision) callbacks.processDecision(id, 'refuse');
+                // B2 — `data-scope` indique si on annule un POI (texte+coords),
+                // les photos pending d'un POI, ou un circuit. Default = 'poi'
+                // pour rétrocompat.
+                const scope = refuseBtn.dataset.scope || 'poi';
+                if (callbacks.processDecision) callbacks.processDecision(id, 'refuse', scope);
+                return;
+            }
+            // B2 — Sub-router : changement de vue dans l'onglet Modifications
+            const subPill = e.target.closest('[data-action="changes-subview"]');
+            if (subPill) {
+                const view = subPill.dataset.view;
+                setChangesSubView(view);
+                renderTab('changes', diffData, callbacks);
                 return;
             }
             const editorBtn = e.target.closest('[data-action="open-editor"]');
@@ -328,81 +356,34 @@ export function renderTab(tab, diffData, callbacks) {
             };
         }, 0);
     } else if (tab === 'changes') {
-        if (diffData.pois.length === 0 && diffData.circuits.length === 0) {
+        // B2 — Sub-router : 3 sous-vues thématiques au lieu d'un seul long flux.
+        const subviewItems = computeChangesSubviewItems(diffData);
+        const totalCount = subviewItems.lieux.length + subviewItems.photos.length + subviewItems.circuits.length;
+
+        if (totalCount === 0) {
             container.innerHTML = `<div class="empty-state"><i data-lucide="check" width="48"></i><p>Aucune modification en attente.</p></div>`;
             createIcons({ icons: appIcons, root: container });
             return;
         }
 
-        const groups = {
-            new: diffData.pois.filter(p => p.isCreation),
-            mod: diffData.pois.filter(p => !p.isCreation && !p.isDeletion && !p.isMigration),
-            del: diffData.pois.filter(p => p.isDeletion),
-            mig: diffData.pois.filter(p => p.isMigration),
-            cNew: diffData.circuits.filter(c => c.isCreation),
-            cMod: diffData.circuits.filter(c => !c.isCreation && !c.isDeletion),
-            cDel: diffData.circuits.filter(c => c.isDeletion)
-        };
-
-        const renderGroup = (title, items, badgeClass, icon) => {
-            if (items.length === 0) return '';
-
-            let html = `<div class="cc-diff-group-title">
-                <i data-lucide="${icon}"></i> ${title}
-                <span class="cc-diff-badge ${badgeClass}">${items.length}</span>
-            </div>`;
-
-            html += items.map(item => {
-                const diffRows = item.isDeletion
-                    ? `<div class="cc-change-detail cc-del-warning"><i data-lucide="alert-triangle"></i> Sera supprimé de la carte officielle</div>`
-                    : item.isCreation && item.changes.length === 0
-                        ? `<div class="cc-change-detail cc-new-hint"><i data-lucide="sparkles"></i> Nouveau lieu — aucun champ antérieur</div>`
-                        : item.changes.map(c => `
-                            <div class="cc-change-detail">
-                                <span class="cc-change-key">${c.key}</span>
-                                <span class="cc-old-val">${c.old !== undefined ? c.old : '—'}</span>
-                                <span class="cc-change-arrow">➜</span>
-                                <span class="cc-new-val">${c.new}</span>
-                            </div>`).join('');
-
-                const photoGrid = renderPendingPhotoGrid(item);
-
-                const canEdit = !item.isDeletion && !item.isMigration;
-                return `
-                <div class="cc-change-item" id="cc-diff-item-${item.id}">
-                    <div class="cc-change-item-header">
-                        <span class="cc-change-name">${item.name}</span>
-                        ${canEdit ? `<button class="cc-btn-edit" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour vérifier avant publication">
-                            <i data-lucide="edit-3"></i> Éditer
-                        </button>` : ''}
-                        <button class="cc-btn-ignore" data-action="refuse" data-id="${item.id}" title="${item.isDeletion ? 'Restaurer ce lieu' : 'Effacer cette modification locale'}">
-                            <i data-lucide="${item.isDeletion ? 'rotate-ccw' : 'x'}"></i>
-                            <span>${item.isDeletion ? 'Restaurer' : 'Annuler'}</span>
-                        </button>
-                    </div>
-                    ${diffRows ? `<div class="cc-change-diffs">${diffRows}</div>` : ''}
-                    ${photoGrid}
-                </div>`;
-            }).join('');
-
-            return html;
-        };
-
-        let html = `<div class="cc-diff-container">`;
-        html += renderGroup('Nouveaux Lieux', groups.new, 'cc-badge-new', 'plus-circle');
-        html += renderGroup('Modifications', groups.mod, 'cc-badge-mod', 'pencil');
-        html += renderGroup('Suppressions', groups.del, 'cc-badge-del', 'trash-2');
-        html += renderGroup('Migrations', groups.mig, 'cc-badge-mig', 'refresh-cw');
-
-        if (groups.cNew.length || groups.cMod.length || groups.cDel.length) {
-            html += `<div class="cc-diff-section-sep">Circuits</div>`;
-            html += renderGroup('Nouveaux Circuits', groups.cNew, 'cc-badge-new', 'map');
-            html += renderGroup('Circuits Modifiés', groups.cMod, 'cc-badge-mod', 'route');
-            html += renderGroup('Circuits Supprimés', groups.cDel, 'cc-badge-del', 'trash-2');
+        // Auto-redirige sur une vue non vide si la vue active est vide
+        // (ex: l'admin a fini d'annuler tous les Lieux mais reste sur la pill Lieux).
+        if (subviewItems[_changesSubView].length === 0) {
+            if (subviewItems.lieux.length > 0) _changesSubView = 'lieux';
+            else if (subviewItems.photos.length > 0) _changesSubView = 'photos';
+            else if (subviewItems.circuits.length > 0) _changesSubView = 'circuits';
         }
 
-        html += `</div>`;
-        container.innerHTML = html;
+        const pillsHtml = renderChangesSubnav(subviewItems, _changesSubView);
+        let bodyHtml = '';
+        if (_changesSubView === 'lieux') {
+            bodyHtml = renderLieuxView(subviewItems.lieux);
+        } else if (_changesSubView === 'photos') {
+            bodyHtml = renderPhotosView(subviewItems.photos);
+        } else if (_changesSubView === 'circuits') {
+            bodyHtml = renderCircuitsView(subviewItems.circuits);
+        }
+        container.innerHTML = pillsHtml + bodyHtml;
 
     } else if (tab === 'settings') {
         const token = getStoredToken() || '';
@@ -465,6 +446,150 @@ export function renderTab(tab, diffData, callbacks) {
     }
 
     createIcons({ icons: appIcons, root: container });
+}
+
+// ============================================================================
+// B2 — Sub-router de l'onglet Modifications : Lieux / Photos / Circuits
+// ============================================================================
+
+/**
+ * Sépare le contenu de `diffData` en 3 ensembles correspondant aux 3 sous-vues.
+ * Pure function — pas d'effet de bord, testable sans DOM.
+ *
+ * @param {Object} diffData - Sortie du diff engine
+ * @returns {{ lieux: Array, photos: Array, circuits: Array }}
+ */
+export function computeChangesSubviewItems(diffData) {
+    const pois = diffData.pois || [];
+    const circuits = diffData.circuits || [];
+
+    // Lieux : POI avec changements meaningful (texte/coords) OU statut spécial.
+    // Exclut les POI qui ont uniquement des photos pending (changes vide,
+    // pas creation/deletion/migration).
+    const lieux = pois.filter(p =>
+        (Array.isArray(p.changes) && p.changes.length > 0) ||
+        p.isCreation || p.isDeletion || p.isMigration
+    );
+
+    // Photos : POI avec photos en attente (qu'ils aient ou non des changes texte).
+    const photos = pois.filter(p => p.hasPendingPhotos);
+
+    return { lieux, photos, circuits };
+}
+
+function renderChangesSubnav(subviewItems, activeView) {
+    const pill = (view, icon, label, count) => `
+        <button class="cc-changes-pill ${activeView === view ? 'is-active' : ''}"
+                type="button"
+                data-action="changes-subview" data-view="${view}">
+            <i data-lucide="${icon}"></i>
+            <span class="cc-changes-pill-label">${label}</span>
+            <span class="cc-changes-pill-count">${count}</span>
+        </button>
+    `;
+    return `
+        <div class="cc-changes-subnav" role="tablist">
+            ${pill('lieux',    'map-pin', 'Lieux',    subviewItems.lieux.length)}
+            ${pill('photos',   'camera',  'Photos',   subviewItems.photos.length)}
+            ${pill('circuits', 'route',   'Circuits', subviewItems.circuits.length)}
+        </div>
+    `;
+}
+
+function renderLieuxView(items) {
+    if (items.length === 0) {
+        return `<div class="empty-state"><i data-lucide="check" width="32"></i><p>Aucun lieu modifié.</p></div>`;
+    }
+    const groups = {
+        new: items.filter(p => p.isCreation),
+        mod: items.filter(p => !p.isCreation && !p.isDeletion && !p.isMigration),
+        del: items.filter(p => p.isDeletion),
+        mig: items.filter(p => p.isMigration),
+    };
+    let html = `<div class="cc-diff-container">`;
+    html += renderItemGroup('Nouveaux Lieux',  groups.new, 'cc-badge-new', 'plus-circle', { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
+    html += renderItemGroup('Modifications',   groups.mod, 'cc-badge-mod', 'pencil',      { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
+    html += renderItemGroup('Suppressions',    groups.del, 'cc-badge-del', 'trash-2',     { showEdit: false, showPhotoGrid: false, scope: 'poi' });
+    html += renderItemGroup('Migrations',      groups.mig, 'cc-badge-mig', 'refresh-cw',  { showEdit: false, showPhotoGrid: false, scope: 'poi' });
+    html += `</div>`;
+    return html;
+}
+
+function renderPhotosView(items) {
+    if (items.length === 0) {
+        return `<div class="empty-state"><i data-lucide="check" width="32"></i><p>Aucune photo en attente.</p></div>`;
+    }
+    let html = `<div class="cc-diff-container">`;
+    html += renderItemGroup('Photos à publier', items, 'cc-badge-mod', 'camera', { showEdit: false, showPhotoGrid: true, scope: 'photos' });
+    html += `</div>`;
+    return html;
+}
+
+function renderCircuitsView(items) {
+    if (items.length === 0) {
+        return `<div class="empty-state"><i data-lucide="check" width="32"></i><p>Aucun circuit modifié.</p></div>`;
+    }
+    const groups = {
+        new: items.filter(c => c.isCreation),
+        mod: items.filter(c => !c.isCreation && !c.isDeletion),
+        del: items.filter(c => c.isDeletion),
+    };
+    let html = `<div class="cc-diff-container">`;
+    html += renderItemGroup('Nouveaux Circuits',  groups.new, 'cc-badge-new', 'map',     { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
+    html += renderItemGroup('Circuits Modifiés',  groups.mod, 'cc-badge-mod', 'route',   { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
+    html += renderItemGroup('Circuits Supprimés', groups.del, 'cc-badge-del', 'trash-2', { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
+    html += `</div>`;
+    return html;
+}
+
+function renderItemGroup(title, items, badgeClass, icon, opts) {
+    if (items.length === 0) return '';
+    let html = `<div class="cc-diff-group-title">
+        <i data-lucide="${icon}"></i> ${title}
+        <span class="cc-diff-badge ${badgeClass}">${items.length}</span>
+    </div>`;
+
+    html += items.map(item => {
+        const diffRows = item.isDeletion
+            ? `<div class="cc-change-detail cc-del-warning"><i data-lucide="alert-triangle"></i> Sera supprimé de la carte officielle</div>`
+            : item.isCreation && item.changes && item.changes.length === 0
+                ? `<div class="cc-change-detail cc-new-hint"><i data-lucide="sparkles"></i> Nouveau lieu — aucun champ antérieur</div>`
+                : (item.changes || []).map(c => `
+                    <div class="cc-change-detail">
+                        <span class="cc-change-key">${c.key}</span>
+                        <span class="cc-old-val">${c.old !== undefined ? c.old : '—'}</span>
+                        <span class="cc-change-arrow">➜</span>
+                        <span class="cc-new-val">${c.new}</span>
+                    </div>`).join('');
+
+        const photoGrid = opts.showPhotoGrid ? renderPendingPhotoGrid(item) : '';
+        const showEdit = opts.showEdit && !item.isDeletion && !item.isMigration;
+
+        // Libellé du bouton "Annuler" : adapté au scope pour clarté UX.
+        const refuseTitle = item.isDeletion
+            ? 'Restaurer ce lieu'
+            : (opts.scope === 'photos' ? 'Retirer les photos pending de ce lieu' : 'Effacer cette modification locale');
+        const refuseLabel = item.isDeletion ? 'Restaurer' : 'Annuler';
+        const refuseIcon = item.isDeletion ? 'rotate-ccw' : 'x';
+
+        return `
+        <div class="cc-change-item" id="cc-diff-item-${item.id}">
+            <div class="cc-change-item-header">
+                <span class="cc-change-name">${item.name}</span>
+                ${showEdit ? `<button class="cc-btn-edit" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour vérifier avant publication">
+                    <i data-lucide="edit-3"></i> Éditer
+                </button>` : ''}
+                <button class="cc-btn-ignore" data-action="refuse" data-id="${item.id}" data-scope="${opts.scope}" title="${refuseTitle}">
+                    <i data-lucide="${refuseIcon}"></i>
+                    <span>${refuseLabel}</span>
+                </button>
+            </div>
+            ${diffRows ? `<div class="cc-change-diffs">${diffRows}</div>` : ''}
+            ${photoGrid}
+        </div>`;
+    }).join('');
+
+    return html;
 }
 
 // --- UPLOAD CIRCUIT PANEL ---

@@ -238,80 +238,111 @@ export function openEditorForPoi(id) {
     }, { once: true });
 }
 
-export const processDecision = async (id, decision) => {
-    if (decision === 'refuse') {
-        // 1. Feedback UI immédiat — ne jamais dépendre du succès des awaits
-        //    async qui suivent (IDB / fetch peuvent échouer silencieusement).
+/**
+ * Refuser une modification ou supprimer un sous-ensemble de l'état pending.
+ *
+ * @param {string} id - POI / circuit ID
+ * @param {string} decision - 'refuse' (revert) ou autre (accepter, no-op affichage)
+ * @param {string} [scope='poi'] - 'poi' : revert geom + userData, garde les photos
+ *                                  pending ; 'photos' : supprime UNIQUEMENT les
+ *                                  photos pending pour ce POI sans toucher au reste.
+ *                                  Pour les circuits, le scope est ignoré
+ *                                  (comportement legacy conservé).
+ */
+export const processDecision = async (id, decision, scope = 'poi') => {
+    if (decision !== 'refuse') {
+        // Branche "accepter" : griser la ligne, UI mise à jour immédiatement
+        showToast("Modification validée pour publication", "success");
         const card = document.getElementById(`cc-diff-item-${id}`);
-        if (card) card.remove();
-
-        // 2. Revert en mémoire COMPLET : coordonnées ET userData.
-        //
-        // Problème avant ce fix : Ignorer ne nettoyait que l'IDB et adminDraft.
-        // En mémoire, feature.geometry.coordinates restait muté (POI en position
-        // déplacée sur la carte) et feature.properties.userData pointait vers un
-        // objet orphelin conservant les champs édités.
-        // Résultat : carte et panneau Détails montraient l'état "modifié" jusqu'au F5.
-
-        // 2a. Restauration des coordonnées originales (si déplacement tracé)
-        const draftEntry = adminDraft.pendingPois[id] || {};
-        const feature = state.loadedFeatures.find(f => getPoiId(f) === id);
-        if (feature && draftEntry.originalLat !== undefined && draftEntry.originalLng !== undefined) {
-            feature.geometry.coordinates = [draftEntry.originalLng, draftEntry.originalLat];
-        }
-
-        // 2b. Nettoyage de userData en mémoire
-        if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
-
-        const newUserData = { ...state.userData };
-        delete newUserData[id];
-        setUserData(newUserData);
-
-        // 2c. Rebind feature.properties.userData → {} pour couper le lien avec
-        //     l'objet orphelin (qui conservait l'ancienne description, lat, lng…)
-        if (feature) {
-            feature.properties.userData = state.userData[id] || {};
-        }
-
-        showToast("Modification refusée et annulée", "info");
-
-        // 3. Persistance asynchrone — on AWAIT la sauvegarde du draft pour
-        //    garantir qu'un F5 immédiat ne ressuscite pas l'entrée. Avant,
-        //    saveDraft était fire-and-forget : sous forte charge IDB, la
-        //    deletion pouvait se perdre en race avec les écritures suivantes.
-        try { await saveDraftAwait(adminDraft); }
-        catch (e) { console.warn('[CC] saveDraftAwait failed:', e); }
-        try { updateButtonBadge(); } catch (e) { console.warn('[CC] updateButtonBadge failed:', e); }
-
-        // Purge systématique — pas de garde hadUserData. `deletePoiData`
-        // est idempotent (no-op si absent) donc ça coûte rien de le tenter
-        // toujours, et ça ferme un trou si state.userData[id] était undefined
-        // au moment du clic (race possible entre init et action).
-        try { await saveAppState('userData', state.userData); }
-        catch (e) { console.warn('[CC] saveAppState userData failed:', e); }
-        try { await deletePoiData(state.currentMapId || 'djerba', id); }
-        catch (e) { console.warn('[CC] deletePoiData failed:', id, e); }
-        try { await clearPendingAdminPhotos(state.currentMapId || 'djerba', id); }
-        catch (e) { console.warn('[CC] clearPendingAdminPhotos failed:', e); }
-
-        // 4. Re-calcul du diff + re-render complet (pour retomber sur
-        //    l'empty state s'il ne reste rien). Isolé pour que l'UI déjà
-        //    mise à jour ne soit pas perdue si prepareDiffData plante.
-        try {
-            await prepareDiffData(adminDraft);
-            renderTab('changes', diffData, { publishChanges });
-        } catch (e) {
-            console.warn('[CC] prepareDiffData/renderTab after refuse failed:', e);
+        if (card) {
+            card.style.opacity = "0.5";
+            card.style.pointerEvents = "none";
         }
         return;
     }
 
-    // Branche "accepter" : griser la ligne, UI mise à jour immédiatement
-    showToast("Modification validée pour publication", "success");
+    // Feedback UI immédiat — ne jamais dépendre du succès des awaits
+    // async qui suivent (IDB / fetch peuvent échouer silencieusement).
     const card = document.getElementById(`cc-diff-item-${id}`);
-    if (card) {
-        card.style.opacity = "0.5";
-        card.style.pointerEvents = "none";
+    if (card) card.remove();
+
+    if (scope === 'photos') {
+        // B2 — Suppression isolée des photos pending d'un POI : ne touche
+        // pas au userData / geometry. L'admin garde la main sur le contenu
+        // texte (voir vue Lieux) tout en pouvant nettoyer le contenu visuel.
+        try { await clearPendingAdminPhotos(state.currentMapId || 'djerba', id); }
+        catch (e) { console.warn('[CC] clearPendingAdminPhotos failed:', e); }
+
+        showToast("Photos retirées du brouillon", "info");
+
+        try {
+            await prepareDiffData(adminDraft);
+            renderTab('changes', diffData, { publishChanges });
+        } catch (e) {
+            console.warn('[CC] prepareDiffData/renderTab after photos refuse failed:', e);
+        }
+        return;
+    }
+
+    // scope === 'poi' (vue Lieux) ou non spécifié (circuits, comportement legacy)
+    //
+    // Revert en mémoire COMPLET : coordonnées ET userData. Mais (B2) NE TOUCHE
+    // PLUS aux photos pending — l'admin doit les supprimer explicitement
+    // depuis la vue Photos s'il le souhaite.
+    //
+    // Problème avant ce fix : Ignorer ne nettoyait que l'IDB et adminDraft.
+    // En mémoire, feature.geometry.coordinates restait muté (POI en position
+    // déplacée sur la carte) et feature.properties.userData pointait vers un
+    // objet orphelin conservant les champs édités.
+    // Résultat : carte et panneau Détails montraient l'état "modifié" jusqu'au F5.
+
+    // 1. Restauration des coordonnées originales (si déplacement tracé)
+    const draftEntry = adminDraft.pendingPois[id] || {};
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === id);
+    if (feature && draftEntry.originalLat !== undefined && draftEntry.originalLng !== undefined) {
+        feature.geometry.coordinates = [draftEntry.originalLng, draftEntry.originalLat];
+    }
+
+    // 2. Nettoyage de userData en mémoire
+    if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
+
+    const newUserData = { ...state.userData };
+    delete newUserData[id];
+    setUserData(newUserData);
+
+    // 3. Rebind feature.properties.userData → {} pour couper le lien avec
+    //    l'objet orphelin (qui conservait l'ancienne description, lat, lng…)
+    if (feature) {
+        feature.properties.userData = state.userData[id] || {};
+    }
+
+    showToast("Modification refusée et annulée", "info");
+
+    // 4. Persistance asynchrone — on AWAIT la sauvegarde du draft pour
+    //    garantir qu'un F5 immédiat ne ressuscite pas l'entrée. Avant,
+    //    saveDraft était fire-and-forget : sous forte charge IDB, la
+    //    deletion pouvait se perdre en race avec les écritures suivantes.
+    try { await saveDraftAwait(adminDraft); }
+    catch (e) { console.warn('[CC] saveDraftAwait failed:', e); }
+    try { updateButtonBadge(); } catch (e) { console.warn('[CC] updateButtonBadge failed:', e); }
+
+    // Purge systématique — pas de garde hadUserData. `deletePoiData`
+    // est idempotent (no-op si absent) donc ça coûte rien de le tenter
+    // toujours, et ça ferme un trou si state.userData[id] était undefined
+    // au moment du clic (race possible entre init et action).
+    try { await saveAppState('userData', state.userData); }
+    catch (e) { console.warn('[CC] saveAppState userData failed:', e); }
+    try { await deletePoiData(state.currentMapId || 'djerba', id); }
+    catch (e) { console.warn('[CC] deletePoiData failed:', id, e); }
+
+    // 5. Re-calcul du diff + re-render complet (pour retomber sur
+    //    l'empty state s'il ne reste rien). Isolé pour que l'UI déjà
+    //    mise à jour ne soit pas perdue si prepareDiffData plante.
+    try {
+        await prepareDiffData(adminDraft);
+        renderTab('changes', diffData, { publishChanges });
+    } catch (e) {
+        console.warn('[CC] prepareDiffData/renderTab after refuse failed:', e);
     }
 };
 
