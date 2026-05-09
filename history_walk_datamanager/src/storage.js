@@ -94,12 +94,67 @@ export async function setActiveDestination(destId) {
 
 // Flag cross-app (HW ↔ DM) : indique qu'on a des modifs non publiées sur GitHub.
 // Lu par HW au boot du Control Center pour afficher un bandeau de warning.
+//
+// Fiabilisation PR C1 — au-delà de "il y a eu une modif", on suit aussi
+// `cleanHistoryIndex` : l'index de l'historique correspondant à l'état "propre"
+// (= dernier load OK ou dernière publication GitHub). À chaque mutation /
+// undo / redo, on appelle `refreshDirtyFlag()` qui clear le flag SI on est
+// revenus à cet index (faux positif sinon : flag à 1 alors que l'admin a
+// annulé toutes ses modifs et n'a plus rien à publier).
 const UNPUBLISHED_FLAG_KEY = 'dm_has_unpublished_changes';
+let cleanHistoryIndex = -1;
+
 export function markDmDirty() {
     localStorage.setItem(UNPUBLISHED_FLAG_KEY, '1');
 }
 export function clearDmDirty() {
     localStorage.removeItem(UNPUBLISHED_FLAG_KEY);
+}
+
+/**
+ * Marque l'état courant comme "propre" : aligne `cleanHistoryIndex` sur
+ * `historyIndex` et clear le flag. À appeler après un load réussi ou une
+ * publication GitHub réussie.
+ */
+export function markDmClean() {
+    cleanHistoryIndex = historyIndex;
+    clearDmDirty();
+}
+
+/** Recalcule le flag selon la position courante dans l'historique. */
+function refreshDirtyFlag() {
+    if (historyIndex === cleanHistoryIndex) {
+        clearDmDirty();
+    } else {
+        markDmDirty();
+    }
+}
+
+/** Test-only : reset l'index propre (utilisé en setup vitest). */
+export function _resetCleanHistoryIndexForTests() {
+    cleanHistoryIndex = -1;
+}
+
+/**
+ * Test-only : initialise un état "propre" en mémoire pour les tests vitest.
+ * Bypasse loadGeoJSON (qui fetch le remote) — pas pour usage en prod.
+ */
+export function _initStateForTests(geojson) {
+    globalGeoJSON = geojson;
+    historyStack = [];
+    historyIndex = -1;
+    cleanHistoryIndex = -1;
+    saveStateToHistory();
+    markDmClean();
+}
+
+/** Test-only : retourne l'état interne pour assertions. */
+export function _getInternalStateForTests() {
+    return {
+        historyIndex,
+        cleanHistoryIndex,
+        historyStackLength: historyStack.length,
+    };
 }
 
 // --- ZONES & CALCULS ---
@@ -220,6 +275,9 @@ export async function loadGeoJSON(forceRemote = false) {
         globalGeoJSON = dataToLoad;
         historyStack = []; historyIndex = -1;
         saveStateToHistory();
+        // Aligne `cleanHistoryIndex` sur le snapshot initial : pas de modifs
+        // par rapport au remote tant qu'on n'a rien touché.
+        markDmClean();
         refreshUI();
         return true;
 
@@ -239,8 +297,19 @@ export function saveStateToHistory() {
     if (!globalGeoJSON) return;
     if (historyIndex < historyStack.length - 1) historyStack = historyStack.slice(0, historyIndex + 1);
     historyStack.push(JSON.parse(JSON.stringify(globalGeoJSON)));
-    if (historyStack.length > MAX_HISTORY) historyStack.shift(); else historyIndex++;
+    if (historyStack.length > MAX_HISTORY) {
+        historyStack.shift();
+        // Le shift décale tout l'historique d'1 vers la gauche : il faut
+        // décrémenter cleanHistoryIndex aussi (il pointait vers une position
+        // qui vient de se déplacer). Si cleanHistoryIndex devient < 0, l'état
+        // "propre" est sorti de l'historique → impossible d'y revenir, on
+        // considère le draft comme dirty pour toujours (jusqu'à publish/load).
+        if (cleanHistoryIndex >= 0) cleanHistoryIndex--;
+    } else {
+        historyIndex++;
+    }
     saveToLocalStorage();
+    refreshDirtyFlag();
     return { canUndo: historyIndex > 0, canRedo: historyIndex < historyStack.length - 1 };
 }
 
@@ -249,6 +318,7 @@ export function undo() {
         historyIndex--;
         globalGeoJSON = JSON.parse(JSON.stringify(historyStack[historyIndex]));
         saveToLocalStorage();
+        refreshDirtyFlag();
         refreshUI();
         notify("success", "Annulation");
         return { canUndo: historyIndex > 0, canRedo: historyIndex < historyStack.length - 1 };
@@ -261,6 +331,7 @@ export function redo() {
         historyIndex++;
         globalGeoJSON = JSON.parse(JSON.stringify(historyStack[historyIndex]));
         saveToLocalStorage();
+        refreshDirtyFlag();
         refreshUI();
         notify("success", "Rétablissement");
         return { canUndo: historyIndex > 0, canRedo: historyIndex < historyStack.length - 1 };
@@ -322,8 +393,7 @@ export function saveFeature(formData, indexToUpdate = null) {
         notify("success", "Nouveau lieu ajouté.");
     }
 
-    saveStateToHistory(); // APRÈS modification pour un undo correct
-    markDmDirty();
+    saveStateToHistory(); // APRÈS modification pour un undo correct ; gère aussi le flag dirty
     refreshUI();
     return true;
 }
@@ -340,8 +410,7 @@ export async function deleteFeature(index) {
     });
     if (!ok) return;
     globalGeoJSON.features.splice(index, 1);
-    saveStateToHistory(); // APRÈS modification
-    markDmDirty();
+    saveStateToHistory(); // APRÈS modification ; gère aussi le flag dirty
     refreshUI();
     notify("success", "Supprimé.");
     return true;
@@ -398,8 +467,12 @@ export function runMaintenance() {
         }
     });
 
-    saveStateToHistory(); // APRÈS modifications
-    if (cUrl > 0 || cZone > 0) markDmDirty();
+    // Snapshot d'historique uniquement si un vrai changement a eu lieu (sinon
+    // saveStateToHistory ferait avancer historyIndex sans cause et passerait
+    // le flag à dirty alors que rien n'a bougé).
+    if (cUrl > 0 || cZone > 0) {
+        saveStateToHistory(); // gère le flag dirty
+    }
     refreshUI();
     notify("success", `Maintenance : ${cUrl} URL(s) et ${cZone} Zone(s) mise(s) à jour.`);
 }
