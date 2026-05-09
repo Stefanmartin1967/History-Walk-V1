@@ -10,6 +10,42 @@ import { showToast } from './toast.js';
 import { generateHWID } from './utils.js';
 import { generateAndDownloadGPX } from './gpx.js';
 import { DOM } from './ui-dom.js';
+import { getStoredToken } from './github-sync.js';
+import { RAW_BASE, GITHUB_PATHS } from './config.js';
+
+/**
+ * B1 — Détection de doublon à la source : compare la signature `poiIds` du
+ * circuit local à celle des circuits déjà publiés (circuits.json sur GitHub).
+ *
+ * Signature retenue = `poiIds.join('|')` SEUL. La distance n'est pas un
+ * critère fiable car elle peut être calculée différemment (orthodromique
+ * live vs valeur stockée à la publication).
+ *
+ * Skippe silencieusement si pas de token, pas de POIs, fichier manquant ou
+ * réseau indisponible — la détection ne doit jamais bloquer une sauvegarde.
+ *
+ * @param {string[]} poiIds - Séquence d'IDs du circuit local à vérifier
+ * @param {string} [excludeId] - ID du circuit en cours d'édition (à ignorer)
+ * @returns {Promise<Object|null>} - Circuit remote dupliqué, ou null
+ */
+export async function checkCircuitDuplicate(poiIds, excludeId = null) {
+    const token = getStoredToken();
+    if (!token || !poiIds || poiIds.length === 0) return null;
+
+    const mapId = state.currentMapId || 'djerba';
+    try {
+        const res = await fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
+        if (!res.ok) return null;
+        const remote = await res.json();
+        const sig = poiIds.join('|');
+        return remote.find(c =>
+            String(c.id) !== String(excludeId) &&
+            (c.poiIds || []).join('|') === sig
+        ) || null;
+    } catch (e) {
+        return null;
+    }
+}
 
 /**
  * Logique métier pour supprimer un circuit
@@ -203,6 +239,25 @@ export async function saveAndExportCircuit() {
 
         addMyCircuit(circuitToSave);
         setActiveCircuitId(newId);
+    }
+
+    // B1 — Vérification anti-doublon à la source (admin uniquement, skip silencieux
+    // si pas de token / offline). Mieux qu'une détection post-hoc dans Nettoyage :
+    // l'admin est alerté AVANT de polluer le repo.
+    if (state.isAdmin) {
+        const dupe = await checkCircuitDuplicate(poiIds, circuitToSave.id);
+        if (dupe) {
+            const proceed = await showConfirm(
+                "Circuit similaire détecté",
+                `Un circuit avec exactement les mêmes étapes existe déjà : « ${dupe.name} ».\n\nVoulez-vous l'enregistrer quand même ?`,
+                "Continuer",
+                "Annuler"
+            );
+            if (!proceed) {
+                showToast("Sauvegarde annulée", "info");
+                return;
+            }
+        }
     }
 
     try {
