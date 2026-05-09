@@ -395,17 +395,17 @@ export function renderTab(tab, diffData, callbacks) {
             ` : ''}
 
             <div class="dashboard-grid">
-                <div class="stat-card" data-action="goto-changes" title="Voir les modifications">
+                <div class="stat-card" data-action="goto-changes" data-target-subview="lieux" title="Voir les lieux modifiés">
                     <div class="stat-icon-box"><i data-lucide="map-pin"></i></div>
                     <div class="stat-val">${poisModified}</div>
                     <div class="stat-lab">Lieux Modifiés</div>
                 </div>
-                <div class="stat-card" data-action="goto-changes" title="Photos locales en attente d'upload au prochain Publier">
+                <div class="stat-card" data-action="goto-changes" data-target-subview="photos" title="Photos locales en attente d'upload au prochain Publier">
                     <div class="stat-icon-box"><i data-lucide="camera"></i></div>
                     <div class="stat-val">${pendingPhotoCount}</div>
                     <div class="stat-lab">Photos à publier</div>
                 </div>
-                <div class="stat-card" data-action="goto-changes" title="Voir les modifications">
+                <div class="stat-card" data-action="goto-changes" data-target-subview="circuits" title="Voir les circuits modifiés">
                     <div class="stat-icon-box"><i data-lucide="route"></i></div>
                     <div class="stat-val">${circuitsModified}</div>
                     <div class="stat-lab">Circuits Modifiés</div>
@@ -438,9 +438,12 @@ export function renderTab(tab, diffData, callbacks) {
                 document.querySelector('.admin-cc-tab[data-tab="maintenance"]')?.click();
             };
 
-            const goChanges = () => document.querySelector('.admin-cc-tab[data-tab="changes"]')?.click();
+            const goChanges = (targetSubview) => {
+                if (targetSubview) setChangesSubView(targetSubview);
+                document.querySelector('.admin-cc-tab[data-tab="changes"]')?.click();
+            };
             document.querySelectorAll('[data-action="goto-changes"]').forEach(el => {
-                el.onclick = goChanges;
+                el.onclick = () => goChanges(el.dataset.targetSubview);
             });
 
             const goSettings = () => {
@@ -479,13 +482,11 @@ export function renderTab(tab, diffData, callbacks) {
             return;
         }
 
-        // Auto-redirige sur une vue non vide si la vue active est vide
-        // (ex: l'admin a fini d'annuler tous les Lieux mais reste sur la pill Lieux).
-        if (subviewItems[_changesSubView].length === 0) {
-            if (subviewItems.lieux.length > 0) _changesSubView = 'lieux';
-            else if (subviewItems.photos.length > 0) _changesSubView = 'photos';
-            else if (subviewItems.circuits.length > 0) _changesSubView = 'circuits';
-        }
+        // Pas d'auto-redirect : on respecte la sous-vue demandée par
+        // l'utilisateur (via stat-card du Dashboard ou clic sur pill) même
+        // si elle est vide. L'empty-state interne à chaque vue ("Aucun lieu
+        // modifié" / "Aucune photo en attente" / "Aucun circuit modifié")
+        // donne un retour visuel cohérent et explicite.
 
         const pillsHtml = renderChangesSubnav(subviewItems, _changesSubView);
         let bodyHtml = '';
