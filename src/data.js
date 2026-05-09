@@ -17,6 +17,7 @@ import { getPoiId, getPoiName, generateHWID, getZoneFromCoords } from './utils.j
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
 import { getDomainFromUrl } from './url-utils.js';
 import { PERSONAL_KEYS } from './config.js';
+import { recordModification } from './backup-auto-local.js';
 
 // --- UTILITAIRES ---
 
@@ -439,6 +440,9 @@ export async function updatePoiData(poiId, key, value) {
     if (state.isAdmin && !PERSONAL_KEYS.includes(key)) {
         addToDraft('poi', poiId, { key: key, value: value });
     }
+
+    // [USER] Compte la modif pour l'auto-backup local. No-op côté admin.
+    void recordModification();
 }
 
 // --- AJOUT D'UN LIEU (Fonction Post-it) ---
@@ -563,6 +567,9 @@ export async function addPoiFeature(feature) {
     if (state.isAdmin) {
         addToDraft('poi', id, { type: 'creation' });
     }
+
+    // [USER] Compte la modif pour l'auto-backup local. No-op côté admin.
+    void recordModification();
 }
 
 // --- MISE À JOUR DE LA POSITION (GEOMETRY) ---
@@ -619,6 +626,9 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
     if (state.isAdmin) {
         addToDraft('poi', poiId, { type: 'coords', lat, lng, originalLat, originalLng });
     }
+
+    // [USER] Compte la modif pour l'auto-backup local. No-op côté admin.
+    void recordModification();
 }
 
 // --- SUPPRESSION DE LIEU (Soft Delete + Admin Draft) ---
@@ -656,4 +666,7 @@ export async function deletePoi(poiId) {
 
     // 4. Rafraîchissement UI
     applyFilters();
+
+    // [USER] Compte la modif pour l'auto-backup local. No-op côté admin.
+    void recordModification();
 }
