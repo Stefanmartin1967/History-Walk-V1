@@ -16,6 +16,7 @@ import { showToast } from './toast.js';
 import { getPoiId, getPoiName, generateHWID, getZoneFromCoords } from './utils.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
 import { getDomainFromUrl } from './url-utils.js';
+import { PERSONAL_KEYS } from './config.js';
 
 // --- UTILITAIRES ---
 
@@ -435,7 +436,6 @@ export async function updatePoiData(poiId, key, value) {
     }
 
     // [ADMIN] Tracking (exclure champs personnels — restent dans le Gist perso)
-    const PERSONAL_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'planifie', 'planifieCounter'];
     if (state.isAdmin && !PERSONAL_KEYS.includes(key)) {
         addToDraft('poi', poiId, { key: key, value: value });
     }

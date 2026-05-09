@@ -5,6 +5,7 @@
 
 import { state } from './state.js';
 import { getPoiId } from './utils.js';
+import { PERSONAL_KEYS } from './config.js';
 
 export function generateMasterGeoJSONData(excludedIds = []) {
     if (!state.loadedFeatures || state.loadedFeatures.length === 0) {
@@ -31,6 +32,9 @@ export function generateMasterGeoJSONData(excludedIds = []) {
             if (standardizedHWID) {
                 properties.HW_ID = standardizedHWID;
             }
+
+            // Purge des champs perso (Gist privé) — ne JAMAIS pousser dans le geojson public.
+            PERSONAL_KEYS.forEach(k => { delete properties[k]; });
 
             // Nettoyage critique : photos base64 exclues (on ne garde que les URL).
             if (properties.photos && Array.isArray(properties.photos)) {

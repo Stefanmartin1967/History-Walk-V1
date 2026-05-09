@@ -605,6 +605,19 @@ describe('updatePoiData', () => {
         expect(addToDraft).not.toHaveBeenCalled();
     });
 
+    it('régression A1 : admin + `incontournable` ou `hidden` (perso) : PAS de addToDraft', async () => {
+        // Avant le fix A1, la liste PERSONAL_KEYS locale dans data.js
+        // ne contenait pas `incontournable` ni `hidden` → marquer un POI
+        // comme favori côté admin créait un draft, ce qui menait à une
+        // fuite de données perso dans le geojson public au publish.
+        state.isAdmin = true;
+        await updatePoiData('p1', 'incontournable', true);
+        await updatePoiData('p1', 'hidden', true);
+        await updatePoiData('p1', 'vuManual', true);
+        await updatePoiData('p1', 'visitedByCircuits', ['c1']);
+        expect(addToDraft).not.toHaveBeenCalled();
+    });
+
     it('non-admin + key non-personal : PAS de addToDraft', async () => {
         state.isAdmin = false;
         await updatePoiData('p1', 'Catégorie', 'Hotel');

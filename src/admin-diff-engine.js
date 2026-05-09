@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { getPoiId, getPoiName } from './utils.js';
-import { RAW_BASE, GITHUB_PATHS } from './config.js';
+import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos } from './database.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
@@ -47,9 +47,7 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
             // On filtre pour ne pas pister les simples visites/favoris
             // On cherche des modifications structurelles (lat, lng, _deleted, ou propriétés de contenu)
             // Champs personnels (Gist sync privé) — ne doivent jamais apparaître dans le CC.
-            // `visited` est un legacy non utilisé ; les vrais champs sont `vu` / `vuManual` / `visitedByCircuits`.
-            const ignoredKeys = ['vu', 'vuManual', 'visitedByCircuits', 'visited', 'hidden', 'notes', 'planifie', 'planifieCounter'];
-            const meaningfulKeys = Object.keys(data).filter(k => !ignoredKeys.includes(k));
+            const meaningfulKeys = Object.keys(data).filter(k => !PERSONAL_KEYS.includes(k));
 
             if (meaningfulKeys.length > 0) {
                  // Est-ce une création déjà gérée ?
@@ -220,8 +218,10 @@ export async function prepareDiffData(adminDraft) {
         // Property Checks (Check ALL relevant keys)
         const allKeys = new Set([...Object.keys(current.properties), ...Object.keys(userData)]);
 
+        // Clés structurelles (comparées séparément) + clés perso (jamais affichées dans le diff).
+        const skipKeys = new Set(['lat', 'lng', 'userData', ...PERSONAL_KEYS]);
         allKeys.forEach(key => {
-            if (['lat', 'lng', 'userData', 'vu', 'vuManual', 'visitedByCircuits', 'visited', 'hidden', 'planifieCounter'].includes(key)) return;
+            if (skipKeys.has(key)) return;
 
             let oldVal = original ? original.properties[key] : undefined;
             let newVal = userData[key] !== undefined ? userData[key] : current.properties[key];
