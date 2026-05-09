@@ -411,30 +411,6 @@ export function renderTab(tab, diffData, callbacks) {
                         <i data-lucide="save"></i> Sauvegarder
                     </button>
                 </div>
-
-                <!-- SYNC ADMIN MULTI-APPAREILS -->
-                <div class="cc-card">
-                    <h3 class="cc-card-title-flex">
-                        <i data-lucide="smartphone" class="icon-amber"></i> Sync Admin multi-appareils
-                    </h3>
-                    <p class="cc-card-hint cc-card-hint--wide">
-                        Sauvegardez votre état admin (modifications en attente, circuits, données locales)
-                        sur GitHub pour le retrouver depuis un autre appareil — utile en déplacement.
-                    </p>
-
-                    <div class="cc-sync-btns-row">
-                        <button id="btn-sync-upload" class="btn-cc-sync-upload">
-                            <i data-lucide="upload-cloud"></i> Sauvegarder
-                        </button>
-                        <button id="btn-sync-download" class="btn-cc-sync-download">
-                            <i data-lucide="download-cloud"></i> Récupérer
-                        </button>
-                    </div>
-
-                    <div id="sync-last-update" class="cc-sync-update-label">
-                        Fichier cible : public/admin/personal_data.json
-                    </div>
-                </div>
             </div>
         `;
 
@@ -472,12 +448,6 @@ export function renderTab(tab, diffData, callbacks) {
                     createIcons({ icons: appIcons, root: btnSave });
                 }
             };
-
-            const btnUp = document.getElementById('btn-sync-upload');
-            if (btnUp && callbacks.uploadAdminData) btnUp.onclick = callbacks.uploadAdminData;
-
-            const btnDown = document.getElementById('btn-sync-download');
-            if (btnDown && callbacks.downloadAdminData) btnDown.onclick = callbacks.downloadAdminData;
         }, 0);
     } else if (tab === 'maintenance') {
         renderMaintenanceTab(container);

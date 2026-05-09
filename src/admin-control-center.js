@@ -1,4 +1,4 @@
-import { state, setUserData, setOfficialCircuitsStatus, setHiddenPoiIds } from './state.js';
+import { state, setUserData } from './state.js';
 import { getPoiId } from './utils.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -98,8 +98,6 @@ export async function openControlCenter(initialTab = 'dashboard') {
     // 1. Ouvrir la modale avec tous les callbacks
     const callbacks = {
         publishChanges: publishChanges,
-        uploadAdminData: uploadAdminData,
-        downloadAdminData: downloadAdminData,
         toggleDiffDetails: toggleDiffDetails,
         updateDraftValue: updateDraftValue,
         processDecision: processDecision,
@@ -230,8 +228,6 @@ export function openEditorForPoi(id) {
         await prepareDiffData(adminDraft);
         const callbacks = {
             publishChanges,
-            uploadAdminData,
-            downloadAdminData,
             toggleDiffDetails,
             updateDraftValue,
             processDecision,
@@ -303,7 +299,7 @@ export const processDecision = async (id, decision) => {
         //    mise à jour ne soit pas perdue si prepareDiffData plante.
         try {
             await prepareDiffData(adminDraft);
-            renderTab('changes', diffData, { publishChanges, uploadAdminData, downloadAdminData });
+            renderTab('changes', diffData, { publishChanges });
         } catch (e) {
             console.warn('[CC] prepareDiffData/renderTab after refuse failed:', e);
         }
@@ -562,107 +558,6 @@ async function publishChanges() {
     }
 }
 
-async function uploadAdminData() {
-    const token = getStoredToken();
-    if (!token) {
-        showToast("Token manquant. Configurez-le d'abord.", "error");
-        return;
-    }
-
-    const btn = document.getElementById('btn-sync-upload');
-    if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Envoi...`;
-        createIcons({ icons: appIcons, root: btn });
-    }
-
-    try {
-        const data = {
-            lastUpdated: new Date().toISOString(),
-            officialCircuitsStatus: state.officialCircuitsStatus || {},
-            userData: state.userData || {},
-            hiddenPoiIds: state.hiddenPoiIds || []
-        };
-
-        const jsonStr = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const file = new File([blob], 'personal_data.json', { type: 'application/json' });
-
-        await uploadFileToGitHub(
-            file,
-            token,
-            GITHUB_OWNER,
-            GITHUB_REPO,
-            GITHUB_PATHS.adminData,
-            'chore(sync): Sauvegarde données admin'
-        );
-
-        showToast("Données sauvegardées sur le serveur !", "success");
-        const timeEl = document.getElementById('sync-last-update');
-        if (timeEl) timeEl.textContent = `Dernier envoi : À l'instant`;
-
-    } catch (e) {
-        console.error(e);
-        showToast("Erreur lors de l'envoi : " + e.message, "error");
-    } finally {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = `<i data-lucide="upload-cloud"></i> Sauvegarder (Upload)`;
-            createIcons({ icons: appIcons, root: btn });
-        }
-    }
-}
-
-async function downloadAdminData() {
-    const btn = document.getElementById('btn-sync-download');
-    if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Récupération...`;
-        createIcons({ icons: appIcons, root: btn });
-    }
-
-    try {
-        const timestamp = Date.now();
-        const url = `${RAW_BASE}/${GITHUB_PATHS.adminData}?t=${timestamp}`;
-
-        const response = await fetch(url);
-        if (!response.ok) {
-            if (response.status === 404) throw new Error("Aucune sauvegarde trouvée sur le serveur.");
-            throw new Error("Erreur réseau : " + response.status);
-        }
-
-        const data = await response.json();
-
-        // MERGE STRATEGY
-        if (data.officialCircuitsStatus) {
-            setOfficialCircuitsStatus({ ...state.officialCircuitsStatus, ...data.officialCircuitsStatus });
-            await saveAppState(`official_circuits_status_${state.currentMapId || 'djerba'}`, state.officialCircuitsStatus);
-        }
-
-        if (data.userData) {
-            setUserData({ ...state.userData, ...data.userData });
-            await saveAppState('userData', state.userData);
-        }
-
-        if (data.hiddenPoiIds) {
-             const newHidden = new Set([...(state.hiddenPoiIds || []), ...data.hiddenPoiIds]);
-             setHiddenPoiIds(Array.from(newHidden));
-             await saveAppState(`hiddenPois_${state.currentMapId || 'djerba'}`, state.hiddenPoiIds);
-        }
-
-        showToast("Données récupérées et fusionnées !", "success");
-        setTimeout(() => window.location.reload(), 1500);
-
-    } catch (e) {
-        console.error(e);
-        showToast("Erreur : " + e.message, "error");
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = `<i data-lucide="download-cloud"></i> Récupérer (Download)`;
-            createIcons({ icons: appIcons, root: btn });
-        }
-    }
-}
 
 
 // --- EXPORTS POUR COMPATIBILITÉ ET TESTS ---
