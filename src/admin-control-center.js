@@ -102,7 +102,9 @@ export async function openControlCenter(initialTab = 'dashboard') {
         updateDraftValue: updateDraftValue,
         processDecision: processDecision,
         openEditorForPoi: openEditorForPoi,
-        togglePhotoSkip: togglePhotoSkip
+        togglePhotoSkip: togglePhotoSkip,
+        removeAdminPhoto: removeAdminPhoto,
+        bulkSetPhotoSkip: bulkSetPhotoSkip
     };
 
     openControlCenterModal(diffData, callbacks);
@@ -163,9 +165,100 @@ export const togglePhotoSkip = async (poiId, photoId, skipPublish) => {
                 diffData.stats.pendingPhotoCount += 1;
             }
         }
+        // B3 — Re-render pour déplacer la photo entre les sections "À publier"
+        // et "Gardées en local" selon son nouveau flag.
+        try {
+            renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip });
+        } catch (e) {
+            console.warn('[CC] renderTab after togglePhotoSkip failed:', e);
+        }
     } catch (err) {
         console.error('[CC] togglePhotoSkip échoué', err);
         showToast("Impossible d'enregistrer l'état local de la photo", 'error');
+    }
+};
+
+/**
+ * B3 — Supprime UNE photo pending d'un POI (corbeille unitaire dans la grille).
+ * Retire de pendingAdminPhotos uniquement (les photos admin ne sont jamais
+ * dans poiPhotos avant publication).
+ */
+export const removeAdminPhoto = async (poiId, photoId) => {
+    try {
+        const mapId = state.currentMapId || 'djerba';
+        const photos = await getPendingAdminPhotos(mapId, poiId);
+        const removedEntry = photos.find(p => p.id === photoId);
+        const updated = photos.filter(p => p.id !== photoId);
+        await setPendingAdminPhotos(mapId, poiId, updated);
+
+        // MAJ diffData en mémoire pour cohérence immédiate
+        if (diffData.pendingPhotos[poiId]) {
+            diffData.pendingPhotos[poiId] = diffData.pendingPhotos[poiId].filter(e => e.id !== photoId);
+            if (diffData.pendingPhotos[poiId].length === 0) {
+                delete diffData.pendingPhotos[poiId];
+            }
+        }
+        const item = diffData.pois.find(p => p.id === poiId);
+        if (item && Array.isArray(item.pendingPhotos)) {
+            item.pendingPhotos = item.pendingPhotos.filter(e => e.id !== photoId);
+            if (item.pendingPhotos.length === 0) {
+                item.hasPendingPhotos = false;
+            }
+        }
+        // Décrémente le compteur publishable si la photo retirée était à publier
+        if (removedEntry && !removedEntry.skipPublish) {
+            diffData.stats.pendingPhotoCount = Math.max(0, (diffData.stats.pendingPhotoCount || 0) - 1);
+        }
+
+        showToast("Photo supprimée du brouillon", "info");
+
+        // Re-render pour refléter immédiatement (compteurs des pills + grille)
+        try {
+            renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip });
+        } catch (e) {
+            console.warn('[CC] renderTab after removeAdminPhoto failed:', e);
+        }
+    } catch (err) {
+        console.error('[CC] removeAdminPhoto échoué', err);
+        showToast("Impossible de supprimer la photo", 'error');
+    }
+};
+
+/**
+ * B3 — Bascule le flag `skipPublish` sur TOUTES les photos pending d'un POI
+ * en une seule opération (boutons "Tout cocher" / "Tout décocher" en lot).
+ * @param {string} poiId
+ * @param {boolean} skipPublish - true = toutes en local, false = toutes à publier
+ */
+export const bulkSetPhotoSkip = async (poiId, skipPublish) => {
+    try {
+        const mapId = state.currentMapId || 'djerba';
+        const photos = await getPendingAdminPhotos(mapId, poiId);
+        if (photos.length === 0) return;
+
+        const updated = photos.map(p => ({ ...p, skipPublish }));
+        await setPendingAdminPhotos(mapId, poiId, updated);
+
+        // MAJ diffData en mémoire
+        const entries = diffData.pendingPhotos[poiId];
+        if (Array.isArray(entries)) {
+            const oldPublishable = entries.filter(e => !e.skipPublish).length;
+            entries.forEach(e => { e.skipPublish = skipPublish; });
+            const newPublishable = entries.filter(e => !e.skipPublish).length;
+            diffData.stats.pendingPhotoCount = Math.max(
+                0,
+                (diffData.stats.pendingPhotoCount || 0) - oldPublishable + newPublishable
+            );
+        }
+
+        try {
+            renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip });
+        } catch (e) {
+            console.warn('[CC] renderTab after bulkSetPhotoSkip failed:', e);
+        }
+    } catch (err) {
+        console.error('[CC] bulkSetPhotoSkip échoué', err);
+        showToast("Impossible d'appliquer l'action en lot", 'error');
     }
 };
 
@@ -232,7 +325,9 @@ export function openEditorForPoi(id) {
             updateDraftValue,
             processDecision,
             openEditorForPoi,
-            togglePhotoSkip
+            togglePhotoSkip,
+            removeAdminPhoto,
+            bulkSetPhotoSkip
         };
         renderTab('changes', diffData, callbacks);
     }, { once: true });
@@ -277,7 +372,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
 
         try {
             await prepareDiffData(adminDraft);
-            renderTab('changes', diffData, { publishChanges });
+            renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip });
         } catch (e) {
             console.warn('[CC] prepareDiffData/renderTab after photos refuse failed:', e);
         }
