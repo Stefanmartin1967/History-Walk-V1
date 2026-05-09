@@ -112,6 +112,34 @@ describe('Admin Diff Engine', () => {
             expect(draft.pendingPois).toEqual({});
         });
 
+        it('régression A1 : `incontournable` (perso) seule ne crée pas d\'entrée draft', () => {
+            // Avant le fix A1, `incontournable` n'était dans aucune des listes
+            // ignoredKeys (admin-diff-engine + data.js) — le marquer comme
+            // favori côté admin créait un draft puis fuit dans le geojson public.
+            state.userData = {
+                'poi_1': { incontournable: true }
+            };
+            const draft = { pendingPois: {}, pendingCircuits: {} };
+
+            const changed = reconcileLocalChanges(draft, null, null);
+
+            expect(changed).toBe(false);
+            expect(draft.pendingPois).toEqual({});
+        });
+
+        it('régression A1 : mix incontournable (perso) + Description (métier) → tracé update', () => {
+            // La présence de `incontournable` ne doit pas masquer une vraie
+            // modif métier qui, elle, doit être tracée normalement.
+            state.userData = {
+                'poi_1': { incontournable: true, Description: 'Nouveau texte' }
+            };
+            const draft = { pendingPois: {}, pendingCircuits: {} };
+
+            reconcileLocalChanges(draft, null, null);
+
+            expect(draft.pendingPois['poi_1']).toMatchObject({ type: 'update' });
+        });
+
         it('tracke une modification structurelle userData comme update', () => {
             state.userData = {
                 'poi_1': { description: 'Nouveau texte', vu: true } // vu ignoré, description meaningful
@@ -277,6 +305,46 @@ describe('Admin Diff Engine', () => {
             // Format "lat, lng" (ordre inversé par rapport à GeoJSON [lng, lat])
             expect(posChange.old).toBe('20.00000, 10.00000');
             expect(posChange.new).toBe('20.00100, 10.00100');
+        });
+
+        it('régression A1 : `incontournable` (perso) n\'apparaît jamais dans les changes', async () => {
+            // Avant le fix A1, la liste display ignoredKeys ne contenait pas
+            // `incontournable, notes, planifie` — un POI déjà tracé pour une
+            // autre raison (ex: changement de description) affichait aussi
+            // ces clés perso dans le diff CC, suggérant à l'admin de les
+            // publier alors qu'elles devaient rester locales (Gist privé).
+            const remotePoi = {
+                type: 'Feature',
+                properties: { HW_ID: 'p1', Nom: 'Phare', description: 'Original' },
+                geometry: { type: 'Point', coordinates: [10, 20] }
+            };
+            state.loadedFeatures = [{
+                type: 'Feature',
+                properties: {
+                    HW_ID: 'p1',
+                    Nom: 'Phare',
+                    description: 'Modifié',
+                    userData: { incontournable: true, notes: 'priv', planifie: true, hidden: true }
+                },
+                geometry: { type: 'Point', coordinates: [10, 20] }
+            }];
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [remotePoi] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([]) });
+            });
+            const draft = { pendingPois: { p1: { type: 'update' } }, pendingCircuits: {} };
+
+            const r = await prepareDiffData(draft);
+
+            const changeKeys = r.pois[0].changes.map(c => c.rawKey || c.key);
+            // Aucune clé personnelle ne doit apparaître dans les changes affichés
+            ['incontournable', 'notes', 'planifie', 'hidden', 'vu', 'vuManual', 'visitedByCircuits'].forEach(k => {
+                expect(changeKeys).not.toContain(k);
+            });
+            // Mais le vrai changement métier (description) reste détecté
+            const descChange = r.pois[0].changes.find(c => c.rawKey === 'description');
+            expect(descChange).toBeDefined();
         });
 
         it('détecte une modification de description', async () => {
