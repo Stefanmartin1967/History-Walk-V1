@@ -22,7 +22,7 @@ import {
     Search, Filter,
 
     // Fichiers & données
-    File, FilePlus, FileDown, FileText, FolderDown, FolderOpen,
+    File, FilePlus, FileDown, FileText, FileEdit, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
 
@@ -76,7 +76,7 @@ export const appIcons = {
     Settings, LayoutDashboard, LayoutGrid, List, ListChecks, ListTodo,
     Search, Filter,
 
-    File, FilePlus, FileDown, FileText, FolderDown, FolderOpen,
+    File, FilePlus, FileDown, FileText, FileEdit, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
 
