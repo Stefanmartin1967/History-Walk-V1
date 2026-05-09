@@ -265,11 +265,6 @@ export function renderTab(tab, diffData, callbacks) {
                     <div class="stat-val">${circuitsModified}</div>
                     <div class="stat-lab">Circuits Modifiés</div>
                 </div>
-                <div class="stat-card" title="Publication du statut 'vérifié' au prochain push">
-                    <div class="stat-icon-box"><i data-lucide="shield-check"></i></div>
-                    <div class="stat-val">${testedChanged}</div>
-                    <div class="stat-lab">Vérifiés à publier</div>
-                </div>
             </div>
 
             <div class="cc-info-strip">
