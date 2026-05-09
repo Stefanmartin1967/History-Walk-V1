@@ -601,6 +601,9 @@ export function renderTab(tab, diffData, callbacks) {
             if (pendingPhotoCount > 0) breakdown.push(`${pendingPhotoCount} photo${pendingPhotoCount > 1 ? 's' : ''}`);
             if (circuitsModified > 0)  breakdown.push(`${circuitsModified} circuit${circuitsModified > 1 ? 's' : ''}`);
             const subText = breakdown.join(' · ') || 'Modifications locales';
+            // Pas de CTA inline dans le hero pending : doublon avec le bouton
+            // "Tout publier" du footer (canonique, visible sur les 3 écrans).
+            // Décision validée Stefan suite au feedback test PR #502.
             heroHtml = `
                 <div class="cc-hero cc-hero--pending">
                     <div class="cc-hero-mark"><i data-lucide="upload-cloud"></i></div>
@@ -609,9 +612,6 @@ export function renderTab(tab, diffData, callbacks) {
                         <h3 class="cc-hero-title">${totalCount} changement${totalCount > 1 ? 's' : ''} en attente sur ${mapLabel}</h3>
                         <p class="cc-hero-sub">${subText}</p>
                     </div>
-                    <button class="cc-btn-cta cc-btn-cta--inline" id="btn-cc-hero-publish" type="button">
-                        <i data-lucide="upload-cloud"></i> Publier
-                    </button>
                 </div>
             `;
         }
@@ -666,10 +666,8 @@ export function renderTab(tab, diffData, callbacks) {
         container.innerHTML = heroHtml + dmBannerHtml + statsHtml + toolsHtml;
 
         setTimeout(() => {
-            // Hero CTAs (conditionnels selon variant)
-            document.getElementById('btn-cc-hero-publish')?.addEventListener('click', () => {
-                if (callbacks.publishChanges) callbacks.publishChanges();
-            });
+            // Hero CTA — uniquement no-token (variant pending n'a plus de bouton
+            // inline, le footer "Tout publier" sert de CTA canonique).
             document.getElementById('btn-cc-hero-config')?.addEventListener('click', () => {
                 const settingsTabBtn = document.querySelector('.cc-nav-item[data-tab="settings"]');
                 if (settingsTabBtn) {
