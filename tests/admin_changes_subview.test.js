@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // ============================================================================
 // admin-control-ui.computeChangesSubviewItems (PR B2)
@@ -139,5 +139,73 @@ describe('setChangesSubView / getChangesSubView', () => {
         setChangesSubView('lieux');
         setChangesSubView('foobar');
         expect(getChangesSubView()).toBe('lieux');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// renderTab respecte la sous-vue demandée même si elle est vide
+// (pas d'auto-redirect) — fix UX clic stat-card Dashboard
+// ─────────────────────────────────────────────────────────────────────────────
+describe('renderTab — pas d\'auto-redirect quand sous-vue vide', () => {
+    beforeEach(() => {
+        document.body.innerHTML = '<div id="admin-cc-content"></div>';
+    });
+
+    // Petite suite légère : on ne vérifie que la pill active dans le rendu.
+    // La logique métier est déjà testée par computeChangesSubviewItems.
+    const renderTabModule = async () => (await import('../src/admin-control-ui.js'));
+
+    it('clic "Photos" alors que photos est vide : la pill Photos reste active', async () => {
+        const { renderTab, setChangesSubView } = await renderTabModule();
+        // diffData : seulement des Lieux, aucune photo, aucun circuit
+        const diffData = {
+            pois: [{ id: 'p1', name: 'L', changes: [{ key: 'Description', old: 'a', new: 'b' }] }],
+            circuits: [],
+            stats: {}
+        };
+        setChangesSubView('photos');
+        renderTab('changes', diffData, {});
+
+        const activePill = document.querySelector('.cc-changes-pill.is-active');
+        expect(activePill?.dataset.view).toBe('photos');
+    });
+
+    it('clic "Circuits" alors que circuits est vide : la pill Circuits reste active', async () => {
+        const { renderTab, setChangesSubView } = await renderTabModule();
+        const diffData = {
+            pois: [{ id: 'p1', name: 'L', changes: [{ key: 'Description', old: 'a', new: 'b' }] }],
+            circuits: [],
+            stats: {}
+        };
+        setChangesSubView('circuits');
+        renderTab('changes', diffData, {});
+
+        const activePill = document.querySelector('.cc-changes-pill.is-active');
+        expect(activePill?.dataset.view).toBe('circuits');
+    });
+
+    it('clic "Lieux" alors que lieux est vide : la pill Lieux reste active', async () => {
+        const { renderTab, setChangesSubView } = await renderTabModule();
+        const diffData = {
+            pois: [],
+            circuits: [{ id: 'c1', name: 'C', changes: [{ key: 'Distance', old: '1', new: '2' }] }],
+            stats: {}
+        };
+        setChangesSubView('lieux');
+        renderTab('changes', diffData, {});
+
+        const activePill = document.querySelector('.cc-changes-pill.is-active');
+        expect(activePill?.dataset.view).toBe('lieux');
+    });
+
+    it('totalCount === 0 : empty-state global, pas de pills', async () => {
+        const { renderTab, setChangesSubView } = await renderTabModule();
+        setChangesSubView('lieux');
+        renderTab('changes', { pois: [], circuits: [], stats: {} }, {});
+
+        const pills = document.querySelectorAll('.cc-changes-pill');
+        const emptyState = document.querySelector('.empty-state');
+        expect(pills.length).toBe(0);
+        expect(emptyState).not.toBeNull();
     });
 });
