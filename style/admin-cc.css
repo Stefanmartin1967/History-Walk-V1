@@ -440,6 +440,69 @@ button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-
     border-color: #CA8A04; /* amber-600, visuellement "local only" */
 }
 
+/* B3 — Header de grille avec actions en lot */
+.cc-photo-grid-header {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 10px;
+}
+.cc-photo-grid-actions { display: flex; gap: 6px; }
+.cc-photo-bulk-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 6px; font-size: 0.72rem; font-weight: 600; color: var(--ink-soft);
+    cursor: pointer; transition: all 0.15s;
+}
+.cc-photo-bulk-btn:hover { background: var(--surface-muted); color: var(--ink); border-color: var(--hw-amber); }
+.cc-photo-bulk-btn i[data-lucide] { width: 12px; height: 12px; }
+
+/* B3 — Sections collapsibles "À publier" / "Gardées en local" */
+.cc-photo-section { margin-bottom: 10px; }
+.cc-photo-section:last-child { margin-bottom: 0; }
+.cc-photo-section-header {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    padding: 6px 0; background: none; border: none; cursor: pointer;
+    font-size: 0.72rem; font-weight: 700; color: var(--hw-amber);
+    text-transform: uppercase; letter-spacing: 0.04em;
+}
+.cc-photo-section-chevron {
+    width: 14px; height: 14px;
+    transition: transform 0.15s;
+}
+.cc-photo-section.is-collapsed .cc-photo-section-chevron { transform: rotate(-90deg); }
+.cc-photo-section-count {
+    margin-left: auto;
+    background: var(--surface); color: var(--ink-soft);
+    padding: 1px 7px; border-radius: 10px;
+    font-size: 0.7rem; letter-spacing: 0;
+}
+.cc-photo-section-cells {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+    gap: 8px;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+.cc-photo-section.is-collapsed .cc-photo-section-cells {
+    max-height: 0;
+    margin: 0; padding: 0;
+}
+
+/* B3 — Wrapper cellule + bouton corbeille (suppression unitaire) */
+.cc-photo-cell-wrap { position: relative; }
+.cc-photo-remove-btn {
+    position: absolute; top: 4px; right: 4px;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(220, 38, 38, 0.92); /* red-600 translucide */
+    border: none; border-radius: 4px;
+    color: white; cursor: pointer; z-index: 3;
+    opacity: 0; transition: opacity 0.15s;
+}
+.cc-photo-cell-wrap:hover .cc-photo-remove-btn,
+.cc-photo-remove-btn:focus-visible { opacity: 1; }
+.cc-photo-remove-btn:hover { background: #B91C1C; /* red-700 plein */ }
+.cc-photo-remove-btn i[data-lucide] { width: 12px; height: 12px; }
+
 /* ================================================
    ADMIN MAINTENANCE (admin-maintenance.js)
    ================================================ */
