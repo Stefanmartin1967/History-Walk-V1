@@ -1331,3 +1331,119 @@ button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-
    le CC suit le thème global — le texte var(--ink) est désormais cohérent par
    construction, sans force. */
 
+/* ================================================
+   MOBILE (PR 8) — plein écran, sidebar → tabs horizontales en haut,
+   stats 2×2, hero compact, footer sticky CTA pleine largeur.
+   Use case mobile : "publier depuis le terrain".
+
+   Bloc placé en fin de fichier pour que ses règles aient la priorité
+   sur les règles base définies plus haut (specificity tied = ordre gagne).
+   ================================================ */
+@media (max-width: 767px) {
+    .admin-cc-overlay { padding: 0; }
+    .admin-cc-modal {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        width: 100vw; height: 100vh; max-width: none; max-height: none;
+        border-radius: 0; border: none;
+    }
+
+    /* Sidebar → strip horizontal en haut. Brand + sidebar-foot masqués. */
+    .cc-sidebar {
+        flex-direction: row;
+        padding: var(--space-sm) var(--space-md);
+        gap: var(--space-xs);
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+    .cc-sidebar::-webkit-scrollbar { display: none; }
+    .cc-brand,
+    .cc-sidebar-foot { display: none; }
+    .cc-nav {
+        flex-direction: row; flex: 1; gap: var(--space-xs);
+        min-height: 0; min-width: 0;
+    }
+    .cc-nav-item {
+        flex: 1; justify-content: center;
+        padding: 8px 6px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+    .cc-nav-item i[data-lucide] { display: none; }
+    .cc-nav-count {
+        font-size: 10px; padding: 0 5px;
+        min-width: 16px;
+    }
+    .cc-nav-warn-dot { width: 5px; height: 5px; }
+
+    /* Topbar : padding mobile + cacher subtitle si serré */
+    .cc-topbar { padding: 0 var(--space-md); height: 48px; }
+    .cc-topbar-title { font-size: 17px; }
+    .cc-topbar-title small { display: none; }
+    .cc-topbar--with-tabs {
+        padding: 10px var(--space-md) 0;
+        height: auto;
+    }
+    .cc-subtab { padding: 8px var(--space-sm); font-size: 12.5px; }
+
+    /* Panel : padding réduit */
+    .cc-panel { padding: var(--space-md); }
+
+    /* Footer : CTA prend toute la largeur disponible */
+    .cc-footer { padding: var(--space-sm) var(--space-md); height: auto; min-height: 56px; }
+    .cc-footer-info { display: none; }
+    .cc-footer-actions { width: 100%; }
+    .cc-footer-actions .cc-btn-cta { flex: 1; justify-content: center; }
+    .cc-footer-actions .cc-btn-ghost { flex-shrink: 0; }
+
+    /* Hero compact — CTA passe en bas pour ne pas serrer le titre */
+    .cc-hero {
+        padding: var(--space-md);
+        gap: var(--space-sm);
+        flex-wrap: wrap;
+    }
+    .cc-hero-mark { width: 40px; height: 40px; border-radius: var(--radius-md); }
+    .cc-hero-mark i[data-lucide] { width: 18px; height: 18px; }
+    .cc-hero-title { font-size: 17px; line-height: 1.25; }
+    .cc-hero-sub { font-size: 12px; }
+    .cc-hero .cc-btn-cta--inline {
+        width: 100%;
+        justify-content: center;
+        order: 99;
+    }
+
+    /* Stats 2×2 sur mobile */
+    .cc-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-sm);
+    }
+    .cc-stat { padding: var(--space-sm) var(--space-md); }
+    .cc-stat-val { font-size: 20px; }
+    .cc-stat-trend { font-size: 10.5px; }
+
+    /* Diff cards : actions sous le titre, body en stack vertical */
+    .cc-diff-head {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    .cc-diff-name { width: 100%; order: -1; }
+    .cc-diff-actions { margin-left: auto; }
+    .cc-diff-body {
+        grid-template-columns: 1fr;
+        gap: 2px var(--space-sm);
+        padding: 10px 12px;
+    }
+    .cc-diff-key { padding-top: 6px; }
+    .cc-diff-key:first-child { padding-top: 0; }
+
+    /* Config : layout pleine largeur sur mobile */
+    .cc-config-layout { max-width: none; }
+    .cc-config-avatar { width: 40px; height: 40px; }
+
+    /* Empty state : padding réduit pour ne pas pousser le footer */
+    .cc-empty { padding: var(--space-lg) 0; }
+}
+
