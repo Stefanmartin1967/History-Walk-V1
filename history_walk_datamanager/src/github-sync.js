@@ -2,6 +2,7 @@
 // Publier le GeoJSON modifié sur GitHub depuis le Data Manager.
 
 import { hwConfirm } from '../../src/modal.js';
+import { markDmClean } from './storage.js';
 
 //
 // ─── Stockage du PAT ─────────────────────────────────────────────────────────
@@ -189,7 +190,10 @@ export async function publishToGitHub(geojson, fileName, onStatus) {
         }
 
         // Clear le flag cross-app — le brouillon DM est maintenant publié.
-        localStorage.removeItem('dm_has_unpublished_changes');
+        // PR C1 : on aligne aussi `cleanHistoryIndex` sur le snapshot courant
+        // pour que tout undo ultérieur sache repérer l'état "propre" =
+        // dernière publication.
+        markDmClean();
 
         onStatus('success', `Publié sur GitHub (${geojson.features.length} lieux).`);
 
