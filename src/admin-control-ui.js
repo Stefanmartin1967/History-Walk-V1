@@ -14,6 +14,34 @@ import { GITHUB_OWNER, GITHUB_REPO } from './config.js';
 // boot (variable module-level non sérialisée).
 let _changesSubView = 'lieux';
 
+// C2 — Track des blob URLs créées par renderPendingPhotoGrid pour pouvoir les
+// revoke (URL.revokeObjectURL) lors du re-render de la grille ou de la
+// fermeture du modal CC. Évite la fuite mémoire qui s'accumulait sinon à
+// chaque bascule de vue ou ouverture/fermeture du CC avec des photos pending.
+const _activeBlobUrls = new Set();
+
+function _trackBlobUrl(url) {
+    _activeBlobUrls.add(url);
+    return url;
+}
+
+/**
+ * Revoke toutes les blob URLs trackées et vide le Set.
+ * Exporté pour être appelé au close modal et avant un re-render de la grille.
+ */
+export function revokeAllPendingBlobUrls() {
+    for (const url of _activeBlobUrls) {
+        try { URL.revokeObjectURL(url); }
+        catch (e) { /* tolérant : URL déjà revoked ou contexte fermé */ }
+    }
+    _activeBlobUrls.clear();
+}
+
+/** Test-only : retourne le nombre de blob URLs trackées. */
+export function _getActiveBlobUrlCountForTests() {
+    return _activeBlobUrls.size;
+}
+
 export function setChangesSubView(view) {
     if (['lieux', 'photos', 'circuits'].includes(view)) {
         _changesSubView = view;
@@ -88,8 +116,12 @@ export function openControlCenterModal(diffData, callbacks) {
         const btnPublish = document.getElementById('btn-cc-publish');
         if (btnPublish && callbacks.publishChanges) btnPublish.onclick = callbacks.publishChanges;
 
-        // Bouton "Fermer" du footer
-        document.querySelector('[data-cc-action="close"]')?.addEventListener('click', () => closeHwModal());
+        // Bouton "Fermer" du footer (C2 : revoke les blob URLs avant fermeture
+        // pour libérer la mémoire des miniatures pending).
+        document.querySelector('[data-cc-action="close"]')?.addEventListener('click', () => {
+            revokeAllPendingBlobUrls();
+            closeHwModal();
+        });
 
         bindCCEventDelegation(diffData, callbacks);
 
@@ -103,8 +135,9 @@ function bindCCEventDelegation(diffData, callbacks) {
     const container = document.getElementById('admin-cc-content');
     if (container) {
         container.addEventListener('click', (e) => {
-            // Close modal
+            // Close modal (C2 : revoke blob URLs avant fermeture)
             if (e.target.closest('[data-action="close-modal"]')) {
+                revokeAllPendingBlobUrls();
                 closeHwModal();
                 return;
             }
@@ -223,10 +256,10 @@ function renderPendingPhotoGrid(item) {
     const keptLocal = item.pendingPhotos.filter(p => p.skipPublish);
 
     const renderCell = (photo) => {
-        // Blob URL pour la miniature. Pas de revoke explicite : le modal CC reste
-        // ouvert pendant toute la session de publication, et les blobs sont
-        // relâchés quand la page est rechargée ou navigation suivante.
-        const url = URL.createObjectURL(photo.blob);
+        // Blob URL pour la miniature. Trackée via _trackBlobUrl pour revoke
+        // explicite (PR C2) au close modal ou au re-render de la grille.
+        // Évite la fuite qui s'accumulait à chaque bascule de vue.
+        const url = _trackBlobUrl(URL.createObjectURL(photo.blob));
         const checked = !photo.skipPublish;
         const localClass = photo.skipPublish ? ' is-local' : '';
         const cellTitle = checked
@@ -313,6 +346,10 @@ function renderPendingPhotoGrid(item) {
 export function renderTab(tab, diffData, callbacks) {
     const container = document.getElementById('admin-cc-content');
     if (!container) return;
+
+    // C2 — Révoque les blob URLs des anciennes miniatures avant chaque rendu.
+    // Évite l'accumulation lors des bascules entre sous-vues / onglets.
+    revokeAllPendingBlobUrls();
 
     if (tab === 'dashboard') {
         const { poisModified, circuitsModified, testedChanged = 0, pendingPhotoCount = 0 } = diffData.stats;
