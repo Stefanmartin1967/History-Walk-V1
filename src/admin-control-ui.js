@@ -76,6 +76,46 @@ function updateTopbarTitle(tab, opts = {}) {
         : title;
 }
 
+function syncFooterAndNavCount(diffData) {
+    const overlay = _ccModalOverlay;
+    if (!overlay) return;
+
+    const stats = (diffData && diffData.stats) || {};
+    const totalCount = (stats.poisModified      || 0)
+                     + (stats.circuitsModified  || 0)
+                     + (stats.pendingPhotoCount || 0);
+
+    const btn = overlay.querySelector('#btn-cc-publish');
+    if (btn) {
+        btn.disabled = (totalCount === 0);
+        let countSpan = btn.querySelector('.cc-cta-count');
+        if (totalCount > 0) {
+            if (countSpan) countSpan.textContent = String(totalCount);
+            else btn.insertAdjacentHTML('beforeend', ` <span class="cc-cta-count">${totalCount}</span>`);
+        } else if (countSpan) {
+            countSpan.remove();
+        }
+    }
+
+    const info = overlay.querySelector('.cc-footer-info');
+    if (info) {
+        info.textContent = totalCount > 0
+            ? 'Brouillon local · sauvegardé automatiquement'
+            : 'Aucune modification locale';
+    }
+
+    const navChanges = overlay.querySelector('.cc-nav-item[data-tab="changes"]');
+    if (navChanges) {
+        let navCount = navChanges.querySelector('.cc-nav-count');
+        if (totalCount > 0) {
+            if (navCount) navCount.textContent = String(totalCount);
+            else navChanges.insertAdjacentHTML('beforeend', `<span class="cc-nav-count">${totalCount}</span>`);
+        } else if (navCount) {
+            navCount.remove();
+        }
+    }
+}
+
 /**
  * Définit ou efface les sub-tabs dans le topbar (PR 5 — sub-router intégré).
  * Quand `subtabsHTML` est non vide, le topbar passe en mode `--with-tabs`
@@ -496,6 +536,11 @@ export function renderTab(tab, diffData, callbacks) {
     // PR 5 — Reset des sub-tabs du topbar à chaque switch d'onglet. Les onglets
     // qui en ont besoin (changes, maintenance) les re-définiront eux-mêmes.
     setTopbarSubtabs('');
+
+    // Sync footer + nav count avec le diffData courant. Sans ça, le bouton
+    // "Tout publier" reste grisé après que prepareDiffData ait résolu (le
+    // footer n'est construit qu'une fois à l'ouverture, avec diffData vide).
+    syncFooterAndNavCount(diffData);
 
     if (tab === 'dashboard') {
         // PR 4 — Refonte Dashboard : hero (pending/synced/no-token) + 4 stats
