@@ -8,7 +8,6 @@ import { showConfirm } from './modal.js';
 
 // --- STATE ---
 let serverCircuits = [];
-let duplicateGroups = [];
 let deletedCircuits = []; // Local trash
 
 /**
@@ -31,49 +30,15 @@ async function fetchServerCircuits() {
 }
 
 /**
- * Analyse les circuits pour trouver les doublons potentiels
- * Critères : Séquence identique de POIs + Distance identique
- */
-function findDuplicates(circuits) {
-    const groups = {};
-    const potentialDupes = [];
-
-    circuits.forEach(c => {
-        // Signature unique basée sur le contenu technique
-        const poiSig = (c.poiIds || []).join('|');
-        // On arrondit la distance pour éviter les écarts minimes de string
-        const distSig = c.distance || '0';
-
-        // Si pas de POIs, on ignore pour éviter les faux positifs sur les traces brutes vides
-        if (!c.poiIds || c.poiIds.length === 0) return;
-
-        const signature = `${poiSig}::${distSig}`;
-
-        if (!groups[signature]) {
-            groups[signature] = [];
-        }
-        groups[signature].push(c);
-    });
-
-    // Filtrer pour ne garder que les groupes > 1 élément
-    Object.values(groups).forEach(group => {
-        if (group.length > 1) {
-            potentialDupes.push(group);
-        }
-    });
-
-    return potentialDupes;
-}
-
-/**
- * Lance l'analyse et l'affichage
+ * Lance l'analyse et l'affichage.
+ * Détection des doublons retirée (PR B1) — désormais traitée à la source via
+ * `checkCircuitDuplicate()` dans circuit-actions.js, au moment de l'enregistrement.
  */
 async function runAnalysis(container) {
     container.innerHTML = `<div class="maint-loading"><i data-lucide="loader-2" class="spin"></i> Analyse du serveur en cours...</div>`;
     createIcons({ icons: appIcons, root: container });
 
     serverCircuits = await fetchServerCircuits();
-    duplicateGroups = findDuplicates(serverCircuits);
 
     // Scan local deleted
     deletedCircuits = state.myCircuits.filter(c => c.isDeleted);
@@ -141,44 +106,7 @@ function renderResults(container) {
         html += `</div></div>`;
     }
 
-    // 1. DOUBLONS DÉTECTÉS
-    if (duplicateGroups.length > 0) {
-        html += `
-            <div class="maint-dupes-section">
-                <h4 class="maint-dupes-title">
-                    <i data-lucide="copy"></i> Doublons Détectés (${duplicateGroups.length} groupes)
-                </h4>
-                <p class="maint-dupes-desc">
-                    Ces circuits ont exactement le même tracé (mêmes étapes, même distance).
-                    Le fichier avec un suffixe comme <code>(1).gpx</code> est souvent la copie à supprimer.
-                </p>
-                <div class="maint-dupes-list">
-        `;
-
-        duplicateGroups.forEach((group, idx) => {
-            html += `<div class="maint-dupe-group">
-                <div class="maint-dupe-group-header">Groupe #${idx + 1}</div>
-                <div class="maint-dupe-group-body">`;
-
-            group.forEach(c => {
-                // Détection visuelle du fichier "suspect" (contient (1), (2) ou copy)
-                const isSuspect = c.file.match(/\(\d+\)\.gpx$/) || c.file.includes('copy');
-                html += renderCircuitRow(c, hasToken, isSuspect);
-            });
-
-            html += `</div></div>`;
-        });
-
-        html += `</div></div>`;
-    } else if (serverCircuits.length > 0) {
-         html += `
-            <div class="maint-ok-banner">
-                <i data-lucide="check-circle-2"></i> Aucun doublon strict détecté.
-            </div>
-        `;
-    }
-
-    // 2. LISTE COMPLÈTE (Pour nettoyage manuel)
+    // 1. LISTE COMPLÈTE (Pour nettoyage manuel)
     html += `
         <div class="maint-all-section">
             <h4 class="maint-all-title">
@@ -248,12 +176,12 @@ async function handlePurgeLocal(id, container) {
     }
 }
 
-function renderCircuitRow(c, hasToken, isSuspect = false) {
+function renderCircuitRow(c, hasToken) {
     const fileName = c.file.split('/').pop();
     const folder = c.file.split('/')[0];
 
     return `
-        <div class="maint-circuit-row${isSuspect ? ' maint-circuit-suspect' : ''}">
+        <div class="maint-circuit-row">
             <div class="maint-circuit-info">
                 <div class="maint-circuit-name" title="${c.name}">${c.name}</div>
                 <div class="maint-circuit-meta">
@@ -307,7 +235,7 @@ export function renderMaintenanceTab(container) {
             <div class="maint-welcome-icon"><i data-lucide="server-cog"></i></div>
             <h3 class="maint-welcome-title">Maintenance Serveur</h3>
             <p class="maint-welcome-desc">
-                Analysez les fichiers présents sur le serveur GitHub pour détecter les doublons et supprimer les fichiers obsolètes.
+                Listez les fichiers présents sur le serveur GitHub pour supprimer les fichiers obsolètes ou restaurer les circuits de la corbeille locale.
                 <br><br>
                 <strong>Attention :</strong> Les suppressions ici sont irréversibles et affectent immédiatement l'index public.
             </p>
