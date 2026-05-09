@@ -134,6 +134,33 @@ function bindCCEventDelegation(diffData, callbacks) {
                 renderTab('changes', diffData, callbacks);
                 return;
             }
+            // B3 — Suppression unitaire d'une photo pending (corbeille)
+            const removePhotoBtn = e.target.closest('[data-action="remove-photo"]');
+            if (removePhotoBtn) {
+                const poiId = removePhotoBtn.dataset.poiId;
+                const photoId = removePhotoBtn.dataset.photoId;
+                if (callbacks.removeAdminPhoto) callbacks.removeAdminPhoto(poiId, photoId);
+                return;
+            }
+            // B3 — Action en lot : tout cocher / tout décocher
+            const bulkBtn = e.target.closest('[data-action="bulk-photo-skip"]');
+            if (bulkBtn) {
+                const poiId = bulkBtn.dataset.poiId;
+                const skipPublish = bulkBtn.dataset.skip === 'true';
+                if (callbacks.bulkSetPhotoSkip) callbacks.bulkSetPhotoSkip(poiId, skipPublish);
+                return;
+            }
+            // B3 — Repli/déplie d'une section photo (à publier / gardées en local)
+            const sectionHeader = e.target.closest('[data-action="toggle-photo-section"]');
+            if (sectionHeader) {
+                const section = sectionHeader.closest('.cc-photo-section');
+                if (section) {
+                    section.classList.toggle('is-collapsed');
+                    const isCollapsed = section.classList.contains('is-collapsed');
+                    sectionHeader.setAttribute('aria-expanded', String(!isCollapsed));
+                }
+                return;
+            }
             const editorBtn = e.target.closest('[data-action="open-editor"]');
             if (editorBtn) {
                 const id = editorBtn.dataset.id;
@@ -151,23 +178,14 @@ function bindCCEventDelegation(diffData, callbacks) {
                 if (callbacks.updateDraftValue) callbacks.updateDraftValue(id, key, value);
                 return;
             }
-            // Toggle skipPublish sur une photo pending (Chantier 2)
+            // Toggle skipPublish sur une photo pending. La fonction côté admin
+            // déclenche un re-render complet (B3) pour déplacer la photo entre
+            // les sections "À publier" et "Gardées en local". Pas de manipulation
+            // DOM locale ici — un seul chemin de vérité.
             if (e.target.matches('[data-action="toggle-photo-skip"]')) {
                 const poiId   = e.target.dataset.poiId;
                 const photoId = e.target.dataset.photoId;
-                // Décoché → skipPublish=true (photo gardée locale, pas publiée)
                 const skipPublish = !e.target.checked;
-                // Bascule visuelle immédiate sur la cellule (badge 🔒 local)
-                const cell = e.target.closest('.cc-photo-cell');
-                if (cell) cell.classList.toggle('is-local', skipPublish);
-                // MAJ du compteur affiché dans l'en-tête de grille
-                const grid = e.target.closest('.cc-photo-grid');
-                if (grid) {
-                    const total = grid.querySelectorAll('.cc-photo-checkbox').length;
-                    const publishable = grid.querySelectorAll('.cc-photo-checkbox:checked').length;
-                    const header = grid.querySelector('.cc-photo-grid-count');
-                    if (header) header.textContent = `${publishable}/${total}`;
-                }
                 if (callbacks.togglePhotoSkip) callbacks.togglePhotoSkip(poiId, photoId, skipPublish);
             }
         });
@@ -178,16 +196,19 @@ function bindCCEventDelegation(diffData, callbacks) {
 }
 
 /**
- * Rend une grille de vignettes photo pending (Chantier 2) pour un item POI
- * dans l'onglet Modifications. Chaque vignette a une case à cocher :
- *   — cochée (par défaut) : la photo sera uploadée sur GitHub au prochain
- *     Publier, puis retirée de `pendingAdminPhotos`.
- *   — décochée : la photo est persistée avec `skipPublish: true`. Elle reste
- *     visible dans l'app (via `addPhotosToPoi` → `poiPhotos`) mais n'est JAMAIS
- *     poussée sur GitHub, même lors des Publier suivants.
+ * Rend une grille de vignettes photo pending pour un item POI (PR B3).
  *
- * Usage : photo personnelle de l'admin qu'il veut voir dans son app mais pas
- * publier (ex: photo romantique devant un POI).
+ * 2 sections distinctes :
+ *   - "À publier"      : skipPublish=false, sera uploadée au prochain Publier.
+ *   - "Gardées en local" : skipPublish=true, ne sera jamais publiée. Repliable.
+ *
+ * Chaque vignette a :
+ *   - case à cocher (toggle skipPublish individuel — comportement Chantier 2)
+ *   - bouton corbeille (suppression unitaire — B3)
+ *
+ * Boutons en lot en haut de la grille :
+ *   - "Tout cocher"   : toutes en "à publier" (skipPublish=false)
+ *   - "Tout décocher" : toutes en "local" (skipPublish=true)
  *
  * @param {Object} item - Élément diffData.pois avec `pendingPhotos` et `id`.
  * @returns {string} HTML de la grille (ou chaîne vide si pas de photos pending).
@@ -198,38 +219,93 @@ function renderPendingPhotoGrid(item) {
     }
 
     const total = item.pendingPhotos.length;
-    const publishable = item.pendingPhotos.filter(p => !p.skipPublish).length;
+    const toPublish = item.pendingPhotos.filter(p => !p.skipPublish);
+    const keptLocal = item.pendingPhotos.filter(p => p.skipPublish);
 
-    const cells = item.pendingPhotos.map(photo => {
+    const renderCell = (photo) => {
         // Blob URL pour la miniature. Pas de revoke explicite : le modal CC reste
         // ouvert pendant toute la session de publication, et les blobs sont
         // relâchés quand la page est rechargée ou navigation suivante.
         const url = URL.createObjectURL(photo.blob);
         const checked = !photo.skipPublish;
         const localClass = photo.skipPublish ? ' is-local' : '';
+        const cellTitle = checked
+            ? 'Décocher pour garder cette photo uniquement en local (ne pas publier)'
+            : 'Cocher pour publier cette photo sur GitHub';
         return `
-            <label class="cc-photo-cell${localClass}" title="${checked ? 'Décocher pour garder cette photo uniquement en local (ne pas publier)' : 'Cocher pour publier cette photo sur GitHub'}">
-                <input type="checkbox"
-                       class="cc-photo-checkbox"
-                       data-action="toggle-photo-skip"
-                       data-poi-id="${item.id}"
-                       data-photo-id="${photo.id}"
-                       ${checked ? 'checked' : ''}>
-                <img src="${url}" alt="" loading="lazy">
-                <span class="cc-photo-badge-local" aria-hidden="true">🔒 local</span>
-            </label>
+            <div class="cc-photo-cell-wrap">
+                <label class="cc-photo-cell${localClass}" title="${cellTitle}">
+                    <input type="checkbox"
+                           class="cc-photo-checkbox"
+                           data-action="toggle-photo-skip"
+                           data-poi-id="${item.id}"
+                           data-photo-id="${photo.id}"
+                           ${checked ? 'checked' : ''}>
+                    <img src="${url}" alt="" loading="lazy">
+                    <span class="cc-photo-badge-local" aria-hidden="true">🔒 local</span>
+                </label>
+                <button class="cc-photo-remove-btn"
+                        type="button"
+                        data-action="remove-photo"
+                        data-poi-id="${item.id}"
+                        data-photo-id="${photo.id}"
+                        title="Supprimer cette photo du brouillon"
+                        aria-label="Supprimer cette photo">
+                    <i data-lucide="trash-2"></i>
+                </button>
+            </div>
         `;
-    }).join('');
+    };
+
+    const renderSection = (label, items, sectionType, collapsed = false) => {
+        if (items.length === 0) return '';
+        const cells = items.map(renderCell).join('');
+        const stateClass = collapsed ? ' is-collapsed' : '';
+        return `
+            <div class="cc-photo-section${stateClass}" data-section="${sectionType}">
+                <button class="cc-photo-section-header"
+                        type="button"
+                        data-action="toggle-photo-section"
+                        data-section="${sectionType}"
+                        aria-expanded="${!collapsed}">
+                    <i data-lucide="chevron-down" class="cc-photo-section-chevron"></i>
+                    <span class="cc-photo-section-label">${label}</span>
+                    <span class="cc-photo-section-count">${items.length}</span>
+                </button>
+                <div class="cc-photo-section-cells">${cells}</div>
+            </div>
+        `;
+    };
 
     return `
         <div class="cc-photo-grid">
-            <div class="cc-photo-grid-title">
-                <i data-lucide="camera"></i>
-                Photos à publier
-                <span class="cc-photo-grid-count">${publishable}/${total}</span>
-                <span class="cc-photo-grid-hint">Décocher une vignette pour la garder uniquement en local</span>
+            <div class="cc-photo-grid-header">
+                <div class="cc-photo-grid-title">
+                    <i data-lucide="camera"></i>
+                    <span>Photos</span>
+                    <span class="cc-photo-grid-count">${toPublish.length}/${total} à publier</span>
+                </div>
+                <div class="cc-photo-grid-actions">
+                    <button class="cc-photo-bulk-btn"
+                            type="button"
+                            data-action="bulk-photo-skip"
+                            data-poi-id="${item.id}"
+                            data-skip="false"
+                            title="Marquer toutes les photos comme à publier">
+                        <i data-lucide="check-square"></i> Tout cocher
+                    </button>
+                    <button class="cc-photo-bulk-btn"
+                            type="button"
+                            data-action="bulk-photo-skip"
+                            data-poi-id="${item.id}"
+                            data-skip="true"
+                            title="Marquer toutes les photos comme gardées en local">
+                        <i data-lucide="square"></i> Tout décocher
+                    </button>
+                </div>
             </div>
-            <div class="cc-photo-grid-cells">${cells}</div>
+            ${renderSection('À publier',        toPublish, 'to-publish', false)}
+            ${renderSection('Gardées en local', keptLocal, 'kept-local', true)}
         </div>
     `;
 }
