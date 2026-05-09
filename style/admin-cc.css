@@ -531,6 +531,37 @@ html[data-theme="night"]  .admin-cc-overlay { background: rgba(2, 8, 18, 0.7); }
     color: var(--ink);
 }
 
+/* — Helpers CSP-friendly pour Config (remplacent les `style="..."` inline
+   qui violent la CSP `style-src 'self'`). — */
+.cc-card--config {
+    /* Carte connexion / dépôt : padding plus généreux que .cc-card--row standard. */
+    padding: var(--space-md);
+}
+.cc-card-ico--danger {
+    background: var(--danger-soft);
+    color: var(--danger-fg);
+}
+.cc-config-pat-header {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: var(--space-sm); flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.cc-config-pat-header .cc-card-hint { margin: 0; }
+.cc-btn-cta--full {
+    margin-top: 12px;
+    width: 100%;
+    justify-content: center;
+}
+/* Section title avec :first-child reset (utilisé par Config + Modifications) */
+.cc-section-title:first-child { margin-top: 0; }
+/* Variante "row" : titre + bouton actuel à droite (utilisé par Nettoyage > Fichiers serveur) */
+.cc-section-title--row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin: var(--space-lg) 0 var(--space-sm);
+}
+.cc-section-title--row > .cc-section-title { margin: 0; }
+.cc-section-title--row:first-child { margin-top: 0; }
+
 /* ================================================
    DASHBOARD (PR 4) — hero + stats + outils
    ================================================ */

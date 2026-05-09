@@ -183,8 +183,8 @@ function renderServerView(items, hasToken) {
     }).join('');
 
     return `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <h4 class="cc-section-title" style="margin:0">Fichiers publiés · ${items.length}</h4>
+        <div class="cc-section-title--row">
+            <h4 class="cc-section-title">Fichiers publiés · ${items.length}</h4>
             <button id="btn-refresh-maintenance" class="cc-btn-ghost" type="button" title="Re-scanner le serveur">
                 <i data-lucide="refresh-cw"></i> Actualiser
             </button>
