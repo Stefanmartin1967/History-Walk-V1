@@ -74,16 +74,25 @@ html[data-theme="maritime"] {
   --brand-2:    #2563EB;
 
   --ok-soft:    #D1FAE5;
+  --ok-fg:      #15803D;
   --ok-bg:      #15803D;
+  --warn-soft:  #FEF3C7;
+  --warn-fg:    #A16207;
+  --danger-soft: #FEE2E2;
+  --danger-fg:  #B91C1C;
   --danger-bg:  #B91C1C;
+  --info-soft:  #DBEAFE;
+  --info-fg:    #1E40AF;
   --cta-bg:     #1D4ED8;
   --cta-fg:     #FFFFFF;
 
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
 
-  --shadow:      0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
-  --shadow-soft: 0 4px 12px rgba(100, 116, 139, .10);
+  --shadow:       0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
+  --shadow-soft:  0 4px 12px rgba(100, 116, 139, .10);
+  --shadow-card:  0 1px 2px rgba(20, 33, 43, .04), 0 1px 1px rgba(20, 33, 43, .03);
+  --shadow-modal: 0 40px 100px -20px rgba(0, 0, 0, .20), 0 16px 40px -16px rgba(0, 0, 0, .12);
   --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
 }
 
@@ -104,16 +113,25 @@ html[data-theme="desert"] {
   --brand-2:    #C46F1C;
 
   --ok-soft:    #D1FAE5;
+  --ok-fg:      #3F6B2A;
   --ok-bg:      #15803D;
+  --warn-soft:  #FAEADD;
+  --warn-fg:    #A2570F;
+  --danger-soft: #FBE0DA;
+  --danger-fg:  #9A2820;
   --danger-bg:  #B91C1C;
+  --info-soft:  #E2EAF5;
+  --info-fg:    #1E3A8A;
   --cta-bg:     #A2570F;
   --cta-fg:     #FFFFFF;
 
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
 
-  --shadow:      0 8px 24px rgba(60, 30, 10, .12), 0 2px 8px rgba(60, 30, 10, .06);
-  --shadow-soft: 0 4px 12px rgba(138, 111, 94, .12);
+  --shadow:       0 8px 24px rgba(60, 30, 10, .12), 0 2px 8px rgba(60, 30, 10, .06);
+  --shadow-soft:  0 4px 12px rgba(138, 111, 94, .12);
+  --shadow-card:  0 1px 2px rgba(60, 30, 10, .04), 0 1px 1px rgba(60, 30, 10, .03);
+  --shadow-modal: 0 40px 100px -20px rgba(60, 30, 10, .22), 0 16px 40px -16px rgba(60, 30, 10, .14);
   --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
 }
 
@@ -134,16 +152,25 @@ html[data-theme="oasis"] {
   --brand-2:    #059669;
 
   --ok-soft:    #D1FAE5;
+  --ok-fg:      #047857;
   --ok-bg:      #15803D;
+  --warn-soft:  #FEF3C7;
+  --warn-fg:    #A16207;
+  --danger-soft: #FEE2E2;
+  --danger-fg:  #B91C1C;
   --danger-bg:  #B91C1C;
+  --info-soft:  #DBEAFE;
+  --info-fg:    #1E40AF;
   --cta-bg:     #047857;
   --cta-fg:     #FFFFFF;
 
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
 
-  --shadow:      0 8px 24px rgba(6, 78, 59, .12), 0 2px 8px rgba(6, 78, 59, .06);
-  --shadow-soft: 0 4px 12px rgba(82, 140, 124, .12);
+  --shadow:       0 8px 24px rgba(6, 78, 59, .12), 0 2px 8px rgba(6, 78, 59, .06);
+  --shadow-soft:  0 4px 12px rgba(82, 140, 124, .12);
+  --shadow-card:  0 1px 2px rgba(6, 78, 59, .04), 0 1px 1px rgba(6, 78, 59, .03);
+  --shadow-modal: 0 40px 100px -20px rgba(6, 78, 59, .22), 0 16px 40px -16px rgba(6, 78, 59, .14);
   --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
 }
 
@@ -165,17 +192,26 @@ html[data-theme="night"] {
 
   --ok:         #34D399;
   --ok-soft:    #064E3B;
+  --ok-fg:      #86EFAC;
   --ok-bg:      #15803D;
   --warn:       #FACC15;
+  --warn-soft:  #3F2C0A;
+  --warn-fg:    #FBBF24;
   --danger:     #F87171;
+  --danger-soft: #3A1414;
+  --danger-fg:  #FCA5A5;
   --danger-bg:  #B91C1C;
+  --info-soft:  #0E2654;
+  --info-fg:    #93C5FD;
   --cta-bg:     #1D4ED8;
   --cta-fg:     #FFFFFF;
 
   --hw-amber:      #FBBF24;
   --hw-amber-soft: color-mix(in oklab, var(--hw-amber) 14%, var(--surface));
 
-  --shadow:      0 8px 24px rgba(0, 0, 0, .50), 0 2px 8px rgba(0, 0, 0, .35);
-  --shadow-soft: 0 4px 12px rgba(0, 0, 0, .35);
+  --shadow:       0 8px 24px rgba(0, 0, 0, .50), 0 2px 8px rgba(0, 0, 0, .35);
+  --shadow-soft:  0 4px 12px rgba(0, 0, 0, .35);
+  --shadow-card:  0 1px 0 rgba(0, 0, 0, .4);
+  --shadow-modal: 0 40px 100px -20px rgba(0, 0, 0, .60), 0 16px 40px -16px rgba(0, 0, 0, .40);
   --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
 }

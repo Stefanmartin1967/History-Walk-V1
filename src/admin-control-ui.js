@@ -2,7 +2,8 @@ import { state } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStoredToken, getStoredUsername, saveToken, validateToken, uploadFileToGitHub } from './github-sync.js';
 import { showToast } from './toast.js';
-import { openHwModal, closeHwModal } from './modal.js';
+// PR 3 — shell custom (admin-cc-overlay), plus de dépendance à openHwModal/closeHwModal.
+// Les imports legacy sont retirés volontairement ; tout passe par openControlCenterModal/closeCCModal.
 import { renderMaintenanceTab } from './admin-maintenance.js';
 import { GITHUB_OWNER, GITHUB_REPO } from './config.js';
 
@@ -52,82 +53,222 @@ export function getChangesSubView() {
     return _changesSubView;
 }
 
+// — Shell PR 3 — référence à l'overlay actuellement ouvert.
+// Permet à closeCCModal d'identifier l'overlay même si plusieurs modales
+// s'ouvrent en cascade (ex: confirm imbriqué → still need to close root CC).
+let _ccModalOverlay = null;
+let _ccEscHandler = null;
+
+const TAB_LABELS = {
+    dashboard:   { title: 'Tableau de bord', sub: "vue d'ensemble" },
+    changes:     { title: 'Modifications',   sub: '' },
+    maintenance: { title: 'Nettoyage',       sub: 'archive et serveur' },
+    settings:    { title: 'Configuration',   sub: '' },
+};
+
+function updateTopbarTitle(tab, opts = {}) {
+    const titleEl = _ccModalOverlay?.querySelector('.cc-topbar-title');
+    if (!titleEl) return;
+    const { title, sub } = TAB_LABELS[tab] || { title: 'Centre de Contrôle', sub: '' };
+    const subText = opts.subOverride !== undefined ? opts.subOverride : sub;
+    titleEl.innerHTML = subText
+        ? `${title} <small>· ${subText}</small>`
+        : title;
+}
+
+/**
+ * Définit ou efface les sub-tabs dans le topbar (PR 5 — sub-router intégré).
+ * Quand `subtabsHTML` est non vide, le topbar passe en mode `--with-tabs`
+ * (column flex) et les tabs s'affichent sur une 2e ligne avec border-bottom.
+ *
+ * @param {string} subtabsHTML — HTML des `<button.cc-subtab>`. '' pour effacer.
+ * @param {Function|null} onClick — callback `(view) => void` quand un sub-tab
+ *                                  est cliqué. Le view vient de `data-sub`.
+ */
+export function setTopbarSubtabs(subtabsHTML, onClick = null) {
+    const topbar = document.getElementById('cc-topbar');
+    const slot = document.getElementById('cc-topbar-subtabs');
+    if (!topbar || !slot) return;
+
+    if (subtabsHTML) {
+        slot.innerHTML = subtabsHTML;
+        topbar.classList.add('cc-topbar--with-tabs');
+        if (onClick) {
+            slot.querySelectorAll('.cc-subtab').forEach(btn => {
+                btn.addEventListener('click', () => onClick(btn.dataset.sub));
+            });
+        }
+        createIcons({ icons: appIcons, root: slot });
+    } else {
+        slot.innerHTML = '';
+        topbar.classList.remove('cc-topbar--with-tabs');
+    }
+}
+
+/**
+ * Ferme le shell CC custom (PR 3+). Révoque les blob URLs des photos pending
+ * avant suppression du DOM pour éviter les fuites mémoire.
+ */
+export function closeCCModal() {
+    if (!_ccModalOverlay) return;
+    revokeAllPendingBlobUrls();
+    _ccModalOverlay.classList.remove('is-active');
+    if (_ccEscHandler) {
+        document.removeEventListener('keydown', _ccEscHandler);
+        _ccEscHandler = null;
+    }
+    const overlay = _ccModalOverlay;
+    _ccModalOverlay = null;
+    setTimeout(() => {
+        if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+    }, 250);
+}
 
 export function openControlCenterModal(diffData, callbacks) {
-    // Migration V2 : openHwModal lg avec tabs intégrés au body (option B :
-    // tabs inline plutôt qu'un nouveau pattern réutilisable du système).
-    // Le hack legacy (showAlert + customClass + masquage manuel + observer)
-    // est remplacé par une utilisation directe et propre du système V2.
+    // PR 3 — Custom shell (sidebar 220px + main avec topbar 56px + panel
+    // scrollable + footer 64px). Dimensions stables 1100×min(90vh,880px),
+    // indépendantes du contenu de l'onglet actif. Plein écran sous 768px.
 
-    // Tab "Config" masqué tant que le token est valide — accessible via le badge
-    // token du Dashboard (clic) ou la Quick Action "Configuration".
+    // Onglet Configuration masqué tant que le token est valide — accessible
+    // via le bouton tokenchip dans le footer de la sidebar.
     const settingsTabHidden = !!getStoredToken() ? ' cc-tab-hidden' : '';
+    const tokenOk = !!getStoredToken();
+    const username = getStoredUsername();
 
-    const subheader = `
-        <div class="admin-cc-tabs ue-tabs">
-            <button class="admin-cc-tab ue-tab is-active" type="button" data-tab="dashboard"><i data-lucide="layout-grid"></i> Dashboard</button>
-            <button class="admin-cc-tab ue-tab" type="button" data-tab="changes"><i data-lucide="list-checks"></i> Modifications</button>
-            <button class="admin-cc-tab ue-tab" type="button" data-tab="maintenance"><i data-lucide="server"></i> Nettoyage</button>
-            <button class="admin-cc-tab ue-tab${settingsTabHidden}" type="button" data-tab="settings"><i data-lucide="settings"></i> Config</button>
+    const stats = diffData.stats || {};
+    const totalCount = (stats.poisModified || 0)
+                     + (stats.circuitsModified || 0)
+                     + (stats.testedChanged || 0)
+                     + (stats.pendingPhotoCount || 0);
+    const changesCountHtml = totalCount > 0
+        ? `<span class="cc-nav-count">${totalCount}</span>`
+        : '';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'admin-cc-overlay';
+    overlay.innerHTML = `
+        <div class="admin-cc-modal" role="dialog" aria-modal="true" aria-label="Centre de contrôle Admin">
+            <aside class="cc-sidebar">
+                <div class="cc-brand">
+                    <div class="cc-brand-mark">HW</div>
+                    <div class="cc-brand-text">Control Center<small>Admin</small></div>
+                </div>
+                <nav class="cc-nav" role="tablist">
+                    <button class="cc-nav-item is-active" type="button" role="tab" data-tab="dashboard">
+                        <i data-lucide="layout-grid"></i> Tableau de bord
+                    </button>
+                    <button class="cc-nav-item" type="button" role="tab" data-tab="changes">
+                        <i data-lucide="list-checks"></i> Modifications
+                        ${changesCountHtml}
+                    </button>
+                    <button class="cc-nav-item" type="button" role="tab" data-tab="maintenance">
+                        <i data-lucide="server"></i> Nettoyage
+                    </button>
+                    <button class="cc-nav-item${settingsTabHidden}" type="button" role="tab" data-tab="settings">
+                        <i data-lucide="settings"></i> Configuration
+                        ${!tokenOk ? '<span class="cc-nav-warn-dot" aria-label="Token manquant"></span>' : ''}
+                    </button>
+                </nav>
+                <footer class="cc-sidebar-foot">
+                    ${tokenOk
+                        ? `<button class="cc-tokenchip is-ok" type="button" id="btn-cc-token-chip" title="${username ? `Connecté @${username}` : 'Token configuré'} — modifier">
+                            <span class="dot"></span>${username ? `@${username}` : 'Token ok'}
+                          </button>`
+                        : `<button class="cc-tokenchip is-missing" type="button" id="btn-cc-token-chip" title="Token GitHub manquant — configurer">
+                            <span class="dot"></span>Token manquant
+                          </button>`
+                    }
+                    <a class="cc-repo-link" href="https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" target="_blank" rel="noopener" title="Ouvrir le dépôt sur GitHub">
+                        <i data-lucide="github"></i>${GITHUB_OWNER}/${GITHUB_REPO}
+                    </a>
+                </footer>
+            </aside>
+            <main class="cc-main">
+                <header class="cc-topbar" id="cc-topbar">
+                    <div class="cc-topbar-row">
+                        <h2 class="cc-topbar-title">Tableau de bord <small>· vue d'ensemble</small></h2>
+                        <button class="cc-close" type="button" id="btn-cc-close" aria-label="Fermer">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    <div class="cc-subtabs" id="cc-topbar-subtabs" role="tablist"></div>
+                </header>
+                <section class="cc-panel" id="admin-cc-content" role="tabpanel">
+                    <div class="cc-loading-state">
+                        <i data-lucide="loader-2" class="spin cc-loading-icon"></i>
+                        <div class="cc-loading-label">Analyse des modifications en cours…</div>
+                    </div>
+                </section>
+                <footer class="cc-footer">
+                    <span class="cc-footer-info">${totalCount > 0 ? 'Brouillon local · sauvegardé automatiquement' : 'Aucune modification locale'}</span>
+                    <div class="cc-footer-actions">
+                        <button class="cc-btn-ghost" type="button" id="btn-cc-close-foot">Fermer</button>
+                        <button class="cc-btn-cta" type="button" id="btn-cc-publish" ${totalCount === 0 ? 'disabled' : ''} title="Publier toutes les modifications">
+                            <i data-lucide="upload-cloud"></i>
+                            Tout publier${totalCount > 0 ? ` <span class="cc-cta-count">${totalCount}</span>` : ''}
+                        </button>
+                    </div>
+                </footer>
+            </main>
         </div>
     `;
 
-    const body = `
-        <div id="admin-cc-content" class="admin-cc-scroll-area">
-            <div class="cc-loading-state">
-                <i data-lucide="loader-2" class="spin cc-loading-icon"></i>
-                <div class="cc-loading-label">Analyse des modifications en cours…</div>
-            </div>
-        </div>
-    `;
+    document.body.appendChild(overlay);
+    _ccModalOverlay = overlay;
 
-    const footer = `
-        <button class="btn btn-ghost" data-cc-action="close">Fermer</button>
-        <button class="btn btn-primary" id="btn-cc-publish" title="Tout publier" aria-label="Tout publier">
-            <i data-lucide="rocket"></i> TOUT PUBLIER
-        </button>
-    `;
+    // Trigger CSS transition (paint avant ajout de la classe is-active)
+    requestAnimationFrame(() => overlay.classList.add('is-active'));
 
-    openHwModal({
-        size: 'lg',
-        icon: 'shield-check',
-        title: 'Control Center · Admin',
-        subheader,
-        body,
-        footer,
-        // CC est complexe (4 tabs, tableaux, formulaires) : pas de fermeture
-        // au clic backdrop pour éviter les pertes accidentelles.
-        closeOnBackdrop: false,
-    });
-
-    // Bind après ouverture (DOM prêt)
+    // Bind events après mise en DOM (un tick pour laisser les éléments
+    // enfants être référençables par getElementById)
     setTimeout(() => {
-        // Tabs
-        const tabs = document.querySelectorAll('.hw-modal .admin-cc-tab');
-        tabs.forEach(t => {
-            t.addEventListener('click', () => {
-                tabs.forEach(x => x.classList.remove('is-active'));
-                t.classList.add('is-active');
-                renderTab(t.dataset.tab, diffData, callbacks);
+        // — Sidebar nav (switch tab) —
+        const navItems = overlay.querySelectorAll('.cc-nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(x => x.classList.remove('is-active'));
+                item.classList.add('is-active');
+                const tab = item.dataset.tab;
+                updateTopbarTitle(tab);
+                renderTab(tab, diffData, callbacks);
             });
         });
 
-        // Bouton "TOUT PUBLIER"
+        // — Close handlers (topbar X + footer Fermer) —
+        document.getElementById('btn-cc-close')?.addEventListener('click', closeCCModal);
+        document.getElementById('btn-cc-close-foot')?.addEventListener('click', closeCCModal);
+
+        // — Escape key ferme la modale (bonus a11y) —
+        _ccEscHandler = (e) => {
+            if (e.key === 'Escape') closeCCModal();
+        };
+        document.addEventListener('keydown', _ccEscHandler);
+
+        // — Tokenchip → ouvre l'onglet Configuration (révèle s'il était
+        //   masqué via cc-tab-hidden quand le token était valide) —
+        document.getElementById('btn-cc-token-chip')?.addEventListener('click', () => {
+            const settingsTabBtn = overlay.querySelector('.cc-nav-item[data-tab="settings"]');
+            if (settingsTabBtn) {
+                settingsTabBtn.classList.remove('cc-tab-hidden');
+                settingsTabBtn.click();
+            }
+        });
+
+        // — Bouton Publier (footer) —
         const btnPublish = document.getElementById('btn-cc-publish');
         if (btnPublish && callbacks.publishChanges) btnPublish.onclick = callbacks.publishChanges;
 
-        // Bouton "Fermer" du footer (C2 : revoke les blob URLs avant fermeture
-        // pour libérer la mémoire des miniatures pending).
-        document.querySelector('[data-cc-action="close"]')?.addEventListener('click', () => {
-            revokeAllPendingBlobUrls();
-            closeHwModal();
-        });
-
+        // — Event delegation interne (clicks/changes dans #admin-cc-content) —
         bindCCEventDelegation(diffData, callbacks);
 
-        // Render initial tab
+        // — Render initial tab —
         renderTab('dashboard', diffData, callbacks);
+
+        // — Lucide icons (toute la modale, sidebar + topbar + footer compris) —
+        createIcons({ icons: appIcons, root: overlay });
     }, 30);
+
+    return overlay;
 }
 
 function bindCCEventDelegation(diffData, callbacks) {
@@ -135,10 +276,9 @@ function bindCCEventDelegation(diffData, callbacks) {
     const container = document.getElementById('admin-cc-content');
     if (container) {
         container.addEventListener('click', (e) => {
-            // Close modal (C2 : revoke blob URLs avant fermeture)
+            // Close modal (PR 3 : custom shell, closeCCModal gère revoke + transition)
             if (e.target.closest('[data-action="close-modal"]')) {
-                revokeAllPendingBlobUrls();
-                closeHwModal();
+                closeCCModal();
                 return;
             }
             // Toggle Details
@@ -224,8 +364,10 @@ function bindCCEventDelegation(diffData, callbacks) {
         });
     }
 
-    // Icons rendered on the modal root (header + footer + body initial state)
-    createIcons({ icons: appIcons, root: document.querySelector('.hw-modal') });
+    // Icons rendered on the modal root (sidebar + topbar + footer + initial body)
+    // PR 3 — `.hw-modal` n'existe plus (shell custom), on cible `.admin-cc-modal`.
+    const modalRoot = document.querySelector('.admin-cc-modal');
+    if (modalRoot) createIcons({ icons: appIcons, root: modalRoot });
 }
 
 /**
@@ -351,144 +493,212 @@ export function renderTab(tab, diffData, callbacks) {
     // Évite l'accumulation lors des bascules entre sous-vues / onglets.
     revokeAllPendingBlobUrls();
 
+    // PR 5 — Reset des sub-tabs du topbar à chaque switch d'onglet. Les onglets
+    // qui en ont besoin (changes, maintenance) les re-définiront eux-mêmes.
+    setTopbarSubtabs('');
+
     if (tab === 'dashboard') {
-        const { poisModified, circuitsModified, testedChanged = 0, pendingPhotoCount = 0 } = diffData.stats;
+        // PR 4 — Refonte Dashboard : hero (pending/synced/no-token) + 4 stats
+        // cliquables + outils. La hiérarchie répond d'abord à "qu'est-ce qui
+        // m'attend ?" (hero) avant "que puis-je faire ?" (outils).
+        const stats = diffData.stats || {};
+        const poisModified      = stats.poisModified      || 0;
+        const circuitsModified  = stats.circuitsModified  || 0;
+        const pendingPhotoCount = stats.pendingPhotoCount || 0;
+        const totalCount = poisModified + circuitsModified + pendingPhotoCount;
         const hasToken = !!getStoredToken();
+        const dmHasUnpublished = localStorage.getItem('dm_has_unpublished_changes') === '1';
+        const dmDraftCount = dmHasUnpublished ? 1 : 0;
+        const mapId = state.currentMapId || 'djerba';
+        const mapLabel = mapId.charAt(0).toUpperCase() + mapId.slice(1);
 
-        const isSynced = (poisModified + circuitsModified + testedChanged + pendingPhotoCount) === 0;
-        container.innerHTML = `
-            <div class="cc-quick-actions">
-                <div class="cc-quick-actions-title"><i data-lucide="zap"></i> Actions Rapides</div>
-                <div class="cc-quick-actions-grid">
-                    <button class="cc-quick-btn" id="btn-cc-upload-circuit">
-                        <i data-lucide="upload-cloud"></i>
-                        <span>Ajouter un circuit</span>
-                        <small>Upload GPX / JSON</small>
-                    </button>
-                    <button class="cc-quick-btn" id="btn-cc-goto-maintenance">
-                        <i data-lucide="server-cog"></i>
-                        <span>Nettoyage serveur</span>
-                        <small>Doublons et suppressions</small>
-                    </button>
-                    <button class="cc-quick-btn" id="btn-cc-goto-config">
-                        <i data-lucide="key-round"></i>
-                        <span>Configuration</span>
-                        <small>Token GitHub · Gist</small>
+        // — Hero variant —
+        let heroHtml = '';
+        if (!hasToken) {
+            heroHtml = `
+                <div class="cc-hero cc-hero--no-token">
+                    <div class="cc-hero-mark"><i data-lucide="shield-x"></i></div>
+                    <div class="cc-hero-text">
+                        <div class="cc-hero-eyebrow">Configuration requise</div>
+                        <h3 class="cc-hero-title">Token GitHub manquant</h3>
+                        <p class="cc-hero-sub">Connecte ton Personal Access Token pour activer la publication.</p>
+                    </div>
+                    <button class="cc-btn-cta cc-btn-cta--inline" id="btn-cc-hero-config" type="button">
+                        <i data-lucide="key-round"></i> Configurer
                     </button>
                 </div>
-            </div>
-
-            <div class="cc-status-row">
-                ${isSynced
-                    ? `<div class="cc-status-badge synced"><i data-lucide="check-circle-2"></i> Tout est synchronisé</div>`
-                    : `<div class="cc-status-badge pending"><i data-lucide="clock"></i> Modifications en attente</div>`
-                }
-                ${!hasToken ? `<div class="cc-status-badge no-token"><i data-lucide="alert-triangle"></i> Token manquant — <button class="cc-inline-link" id="btn-cc-goto-config2">Config</button></div>` : ''}
-            </div>
-
-            ${localStorage.getItem('dm_has_unpublished_changes') === '1' ? `
-                <div class="cc-cross-app-warn">
-                    <i data-lucide="alert-triangle"></i>
-                    <span>Le Data Manager a un brouillon non publié. Publie-le d'abord pour éviter d'écraser tes modifs.</span>
-                    <button class="cc-inline-link" id="btn-goto-dm">Ouvrir le DM</button>
+            `;
+        } else if (totalCount === 0) {
+            // Synced empty state — no hero, just .cc-empty centered
+            container.innerHTML = `
+                <div class="cc-empty">
+                    <div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div>
+                    <h3 class="cc-empty-title">Tout est synchronisé.</h3>
+                    <p class="cc-empty-sub">Aucune modification locale à publier sur ${mapLabel}. Continue sur le terrain — les nouvelles modifications apparaîtront ici.</p>
+                    <div class="cc-empty-actions">
+                        <button class="cc-btn-ghost" id="btn-cc-upload-circuit-empty" type="button">
+                            <i data-lucide="upload-cloud"></i> Importer un circuit
+                        </button>
+                    </div>
                 </div>
-            ` : ''}
+            `;
+            setTimeout(() => {
+                document.getElementById('btn-cc-upload-circuit-empty')?.addEventListener('click',
+                    () => renderUploadCircuitPanel(diffData, callbacks));
+                createIcons({ icons: appIcons, root: container });
+            }, 0);
+            createIcons({ icons: appIcons, root: container });
+            return;
+        } else {
+            // Pending state hero
+            const breakdown = [];
+            if (poisModified > 0)      breakdown.push(`${poisModified} lieu${poisModified > 1 ? 'x' : ''} modifié${poisModified > 1 ? 's' : ''}`);
+            if (pendingPhotoCount > 0) breakdown.push(`${pendingPhotoCount} photo${pendingPhotoCount > 1 ? 's' : ''}`);
+            if (circuitsModified > 0)  breakdown.push(`${circuitsModified} circuit${circuitsModified > 1 ? 's' : ''}`);
+            const subText = breakdown.join(' · ') || 'Modifications locales';
+            heroHtml = `
+                <div class="cc-hero cc-hero--pending">
+                    <div class="cc-hero-mark"><i data-lucide="upload-cloud"></i></div>
+                    <div class="cc-hero-text">
+                        <div class="cc-hero-eyebrow">À publier</div>
+                        <h3 class="cc-hero-title">${totalCount} changement${totalCount > 1 ? 's' : ''} en attente sur ${mapLabel}</h3>
+                        <p class="cc-hero-sub">${subText}</p>
+                    </div>
+                    <button class="cc-btn-cta cc-btn-cta--inline" id="btn-cc-hero-publish" type="button">
+                        <i data-lucide="upload-cloud"></i> Publier
+                    </button>
+                </div>
+            `;
+        }
 
-            <div class="dashboard-grid">
-                <div class="stat-card" data-action="goto-changes" data-target-subview="lieux" title="Voir les lieux modifiés">
-                    <div class="stat-icon-box"><i data-lucide="map-pin"></i></div>
-                    <div class="stat-val">${poisModified}</div>
-                    <div class="stat-lab">Lieux Modifiés</div>
-                </div>
-                <div class="stat-card" data-action="goto-changes" data-target-subview="photos" title="Photos locales en attente d'upload au prochain Publier">
-                    <div class="stat-icon-box"><i data-lucide="camera"></i></div>
-                    <div class="stat-val">${pendingPhotoCount}</div>
-                    <div class="stat-lab">Photos à publier</div>
-                </div>
-                <div class="stat-card" data-action="goto-changes" data-target-subview="circuits" title="Voir les circuits modifiés">
-                    <div class="stat-icon-box"><i data-lucide="route"></i></div>
-                    <div class="stat-val">${circuitsModified}</div>
-                    <div class="stat-lab">Circuits Modifiés</div>
-                </div>
-            </div>
+        // — DM banner (warn, conditionnel) —
+        const dmBannerHtml = dmHasUnpublished
+            ? `<div class="cc-banner cc-banner--warn">
+                <i data-lucide="alert-triangle"></i>
+                <div>Le Data Manager a un brouillon non publié. Publie-le d'abord pour éviter d'écraser tes modifs. <button class="cc-banner-link" id="btn-goto-dm" type="button">Ouvrir le DM</button></div>
+              </div>`
+            : '';
 
-            <div class="cc-info-strip">
-                <a class="cc-info-strip-repo" href="https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" target="_blank">
-                    <i data-lucide="github"></i> ${GITHUB_OWNER}/${GITHUB_REPO}
-                </a>
-                <span class="cc-info-strip-dot">·</span>
-                ${hasToken
-                    ? `<button id="btn-cc-token-badge" class="cc-info-strip-token cc-token-ok cc-token-clickable" type="button" title="Modifier le token GitHub">
-                        <i data-lucide="shield-check"></i>
-                        ${getStoredUsername() ? `Connecté @${getStoredUsername()}` : 'Token configuré'}
-                       </button>`
-                    : `<span class="cc-info-strip-token cc-token-missing">
-                        <i data-lucide="shield-x"></i>
-                        Token manquant — <button class="cc-inline-link" id="btn-cc-goto-config3">Configurer</button>
-                       </span>`}
+        // — Stats grid (4 colonnes) —
+        const statsHtml = `
+            <div class="cc-stats">
+                <button class="cc-stat${poisModified > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="lieux" title="Voir les lieux modifiés">
+                    <span class="cc-stat-head"><i data-lucide="map-pin"></i> Lieux</span>
+                    <span class="cc-stat-val">${poisModified}</span>
+                    <span class="cc-stat-trend">${poisModified > 0 ? `${poisModified} en attente` : 'Aucun changement'}</span>
+                </button>
+                <button class="cc-stat${pendingPhotoCount > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="photos" title="Photos locales en attente d'upload">
+                    <span class="cc-stat-head"><i data-lucide="camera"></i> Photos</span>
+                    <span class="cc-stat-val">${pendingPhotoCount}</span>
+                    <span class="cc-stat-trend">${pendingPhotoCount > 0 ? 'à publier' : 'Aucune photo'}</span>
+                </button>
+                <button class="cc-stat${circuitsModified > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="circuits" title="Voir les circuits modifiés">
+                    <span class="cc-stat-head"><i data-lucide="route"></i> Circuits</span>
+                    <span class="cc-stat-val">${circuitsModified}</span>
+                    <span class="cc-stat-trend">${circuitsModified > 0 ? `${circuitsModified} en attente` : 'Aucun changement'}</span>
+                </button>
+                <button class="cc-stat${dmHasUnpublished ? ' is-info' : ''}" type="button" id="btn-cc-stat-drafts" title="Brouillons depuis le Data Manager">
+                    <span class="cc-stat-head"><i data-lucide="file-edit"></i> Brouillons</span>
+                    <span class="cc-stat-val">${dmDraftCount}</span>
+                    <span class="cc-stat-trend">${dmHasUnpublished ? 'DM non publié' : 'Aucun brouillon'}</span>
+                </button>
             </div>
         `;
 
+        // — Outils (cards, secondaires) —
+        const toolsHtml = `
+            <h4 class="cc-section-title">Outils</h4>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Importer un circuit GPX ou JSON">
+                <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Importer un circuit</div>
+                    <div class="cc-card-sub">Depuis un fichier GPX ou JSON</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
+        `;
+
+        container.innerHTML = heroHtml + dmBannerHtml + statsHtml + toolsHtml;
+
         setTimeout(() => {
-            const btnUpload = document.getElementById('btn-cc-upload-circuit');
-            if (btnUpload) btnUpload.onclick = () => renderUploadCircuitPanel(diffData, callbacks);
+            // Hero CTAs (conditionnels selon variant)
+            document.getElementById('btn-cc-hero-publish')?.addEventListener('click', () => {
+                if (callbacks.publishChanges) callbacks.publishChanges();
+            });
+            document.getElementById('btn-cc-hero-config')?.addEventListener('click', () => {
+                const settingsTabBtn = document.querySelector('.cc-nav-item[data-tab="settings"]');
+                if (settingsTabBtn) {
+                    settingsTabBtn.classList.remove('cc-tab-hidden');
+                    settingsTabBtn.click();
+                }
+            });
 
-            const btnMaint = document.getElementById('btn-cc-goto-maintenance');
-            if (btnMaint) btnMaint.onclick = () => {
-                document.querySelector('.admin-cc-tab[data-tab="maintenance"]')?.click();
-            };
+            // Outils — Importer un circuit
+            const triggerUploadPanel = () => renderUploadCircuitPanel(diffData, callbacks);
+            const uploadCard = document.getElementById('btn-cc-upload-circuit-card');
+            if (uploadCard) {
+                uploadCard.addEventListener('click', triggerUploadPanel);
+                uploadCard.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        triggerUploadPanel();
+                    }
+                });
+            }
 
+            // Stat-cards → goto changes sub-view
             const goChanges = (targetSubview) => {
                 if (targetSubview) setChangesSubView(targetSubview);
-                document.querySelector('.admin-cc-tab[data-tab="changes"]')?.click();
+                document.querySelector('.cc-nav-item[data-tab="changes"]')?.click();
             };
             document.querySelectorAll('[data-action="goto-changes"]').forEach(el => {
                 el.onclick = () => goChanges(el.dataset.targetSubview);
             });
 
-            const goSettings = () => {
-                // Le tab Config est caché tant que le token est valide ; révéler
-                // avant de cliquer dessus (l'utilisateur a cliqué un point d'accès).
-                const settingsTabBtn = document.querySelector('.admin-cc-tab[data-tab="settings"]');
-                if (settingsTabBtn) {
-                    settingsTabBtn.classList.remove('cc-tab-hidden');
-                    settingsTabBtn.click();
-                }
-            };
-            const btnConf = document.getElementById('btn-cc-goto-config');
-            if (btnConf) btnConf.onclick = goSettings;
-            const btnConf2 = document.getElementById('btn-cc-goto-config2');
-            if (btnConf2) btnConf2.onclick = goSettings;
-            const btnConf3 = document.getElementById('btn-cc-goto-config3');
-            if (btnConf3) btnConf3.onclick = goSettings;
-            const btnTokenBadge = document.getElementById('btn-cc-token-badge');
-            if (btnTokenBadge) btnTokenBadge.onclick = goSettings;
-
-            const btnGotoDm = document.getElementById('btn-goto-dm');
-            if (btnGotoDm) btnGotoDm.onclick = () => {
+            // DM banner → ouvre le DM dans nouvel onglet
+            const openDm = () => {
                 const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
                 const url = isDev ? 'http://localhost:5175/' : '/History-Walk-V1/history_walk_datamanager/';
                 window.open(url, '_blank');
             };
+            document.getElementById('btn-goto-dm')?.addEventListener('click', openDm);
+
+            // Brouillons stat → ouvre le DM si non publié
+            document.getElementById('btn-cc-stat-drafts')?.addEventListener('click', () => {
+                if (dmHasUnpublished) openDm();
+            });
         }, 0);
     } else if (tab === 'changes') {
-        // B2 — Sub-router : 3 sous-vues thématiques au lieu d'un seul long flux.
+        // PR 5 — Sub-router intégré au topbar (.cc-subtabs), groupes typés
+        // par couleur sémantique, diff cards sans clipping (multi-ligne).
         const subviewItems = computeChangesSubviewItems(diffData);
         const totalCount = subviewItems.lieux.length + subviewItems.photos.length + subviewItems.circuits.length;
 
+        // Topbar title : indique le total à publier
+        updateTopbarTitle('changes', { subOverride: totalCount > 0 ? `${totalCount} en attente` : '' });
+
         if (totalCount === 0) {
-            container.innerHTML = `<div class="empty-state"><i data-lucide="check" width="48"></i><p>Aucune modification en attente.</p></div>`;
+            container.innerHTML = `
+                <div class="cc-empty">
+                    <div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div>
+                    <h3 class="cc-empty-title">Aucune modification en attente.</h3>
+                    <p class="cc-empty-sub">Toutes les modifications locales ont été publiées ou annulées.</p>
+                </div>
+            `;
             createIcons({ icons: appIcons, root: container });
             return;
         }
 
-        // Pas d'auto-redirect : on respecte la sous-vue demandée par
-        // l'utilisateur (via stat-card du Dashboard ou clic sur pill) même
-        // si elle est vide. L'empty-state interne à chaque vue ("Aucun lieu
-        // modifié" / "Aucune photo en attente" / "Aucun circuit modifié")
-        // donne un retour visuel cohérent et explicite.
+        // — Sub-tabs dans le topbar (Lieux / Photos / Circuits) —
+        // Intégrés à la barre du panneau plutôt que sous forme de pills internes
+        // (un seul paradigme de nav plutôt que deux comme avant).
+        const subtabsHtml = renderChangesSubtabs(subviewItems, _changesSubView);
+        setTopbarSubtabs(subtabsHtml, (view) => {
+            setChangesSubView(view);
+            renderTab('changes', diffData, callbacks);
+        });
 
-        const pillsHtml = renderChangesSubnav(subviewItems, _changesSubView);
+        // — Body : la sous-vue active uniquement —
         let bodyHtml = '';
         if (_changesSubView === 'lieux') {
             bodyHtml = renderLieuxView(subviewItems.lieux);
@@ -497,26 +707,101 @@ export function renderTab(tab, diffData, callbacks) {
         } else if (_changesSubView === 'circuits') {
             bodyHtml = renderCircuitsView(subviewItems.circuits);
         }
-        container.innerHTML = pillsHtml + bodyHtml;
+        container.innerHTML = bodyHtml;
 
     } else if (tab === 'settings') {
+        // PR 7 — Refonte Config : carte connexion GitHub (avatar + scopes badges
+        // si token connecté), input PAT avec aide contextuelle, carte dépôt.
+        // Layout centré max-width 680px pour la lisibilité.
         const token = getStoredToken() || '';
-        container.innerHTML = `
-            <div class="cc-settings-layout">
-                <!-- GITHUB TOKEN -->
-                <div class="cc-card">
-                    <h3 class="cc-card-title-flex">
-                        <i data-lucide="key-round" class="icon-amber"></i> Token GitHub
-                    </h3>
-                    <p class="cc-card-hint">
-                        Personal Access Token (PAT) nécessaire pour publier les modifications sur GitHub.
-                        Stocké localement sur cet appareil.
-                    </p>
-                    <input type="password" id="cc-token-input" value="${token}" class="settings-input" placeholder="ghp_...">
-                    <button id="btn-save-token" class="cc-save-btn">
-                        <i data-lucide="save"></i> Sauvegarder
-                    </button>
+        const username = getStoredUsername();
+        const tokenOk = !!token;
+
+        // — Section Connexion GitHub —
+        let connectionHtml = '';
+        if (tokenOk) {
+            const avatarUrl = username
+                ? `https://github.com/${encodeURIComponent(username)}.png?size=96`
+                : '';
+            connectionHtml = `
+                <h4 class="cc-section-title" style="margin-top:0">Connexion GitHub</h4>
+                <div class="cc-card cc-card--row" style="padding:16px">
+                    ${avatarUrl ? `<img class="cc-config-avatar" src="${avatarUrl}" alt="" loading="lazy">` : '<div class="cc-card-ico"><i data-lucide="github"></i></div>'}
+                    <div class="cc-card-text">
+                        <div class="cc-card-title">${username ? `@${username}` : 'Token configuré'}</div>
+                        <div class="cc-config-badges">
+                            <span class="status-badge sb-ok"><span class="dot"></span>repo</span>
+                            <span class="status-badge sb-ok"><span class="dot"></span>workflow</span>
+                        </div>
+                    </div>
+                    <div class="cc-card-meta">
+                        <button class="cc-diff-btn cc-diff-btn--danger" type="button" id="btn-cc-disconnect" title="Supprimer le token">
+                            <i data-lucide="log-out"></i> Déconnecter
+                        </button>
+                    </div>
                 </div>
+            `;
+        } else {
+            connectionHtml = `
+                <h4 class="cc-section-title" style="margin-top:0">Connexion GitHub</h4>
+                <div class="cc-card cc-card--row" style="padding:16px">
+                    <div class="cc-card-ico" style="background:var(--danger-soft);color:var(--danger-fg)">
+                        <i data-lucide="github"></i>
+                    </div>
+                    <div class="cc-card-text">
+                        <div class="cc-card-title">Aucun token configuré</div>
+                        <div class="cc-card-sub">Connecte ton compte GitHub pour publier les modifications.</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // — Section Personal Access Token (input) —
+        const patHtml = `
+            <h4 class="cc-section-title">Personal Access Token</h4>
+            <div class="cc-card cc-card--padded cc-card--block">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                    <p class="cc-card-hint" style="margin:0">
+                        Token stocké localement sur cet appareil.
+                    </p>
+                    <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener" class="cc-config-help" id="link-cc-pat-help">
+                        <i data-lucide="external-link"></i> Comment créer un PAT&nbsp;?
+                    </a>
+                </div>
+                <input type="password" id="cc-token-input" value="${token}" class="cc-config-input" placeholder="ghp_••••••••••••••••••••••••" autocomplete="off" spellcheck="false">
+                <button id="btn-save-token" class="cc-btn-cta" style="margin-top:12px;width:100%;justify-content:center">
+                    <i data-lucide="save"></i> Sauvegarder
+                </button>
+                <div class="cc-config-scopes-note">
+                    <strong>Scopes requis :</strong>
+                    <code>repo</code> (lecture/écriture)
+                    · <code>workflow</code> (déclencher deploy.yml)
+                </div>
+            </div>
+        `;
+
+        // — Section Dépôt GitHub —
+        const repoHtml = `
+            <h4 class="cc-section-title">Dépôt GitHub</h4>
+            <div class="cc-card cc-card--row">
+                <div class="cc-card-ico"><i data-lucide="github"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">${GITHUB_OWNER} / ${GITHUB_REPO}</div>
+                    <div class="cc-card-sub">Branche <code>main</code> · destination de publication</div>
+                </div>
+                <div class="cc-card-meta">
+                    <a class="cc-diff-btn" href="https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}" target="_blank" rel="noopener" title="Ouvrir le dépôt sur GitHub">
+                        <i data-lucide="external-link"></i> Ouvrir
+                    </a>
+                </div>
+            </div>
+        `;
+
+        container.innerHTML = `
+            <div class="cc-config-layout">
+                ${connectionHtml}
+                ${patHtml}
+                ${repoHtml}
             </div>
         `;
 
@@ -527,6 +812,7 @@ export function renderTab(tab, diffData, callbacks) {
                 if (!val) {
                     saveToken('');
                     showToast('Token supprimé', 'info');
+                    renderTab('settings', diffData, callbacks);
                     return;
                 }
                 btnSave.disabled = true;
@@ -548,12 +834,20 @@ export function renderTab(tab, diffData, callbacks) {
                     } else {
                         showToast(`Connecté @${result.username}`, 'success');
                     }
+                    renderTab('settings', diffData, callbacks);
                 } finally {
                     btnSave.disabled = false;
                     btnSave.innerHTML = originalHTML;
                     createIcons({ icons: appIcons, root: btnSave });
                 }
             };
+
+            // — Déconnecter —
+            document.getElementById('btn-cc-disconnect')?.addEventListener('click', () => {
+                saveToken('');
+                showToast('Déconnecté de GitHub', 'info');
+                renderTab('settings', diffData, callbacks);
+            });
         }, 0);
     } else if (tab === 'maintenance') {
         renderMaintenanceTab(container);
@@ -591,28 +885,27 @@ export function computeChangesSubviewItems(diffData) {
     return { lieux, photos, circuits };
 }
 
-function renderChangesSubnav(subviewItems, activeView) {
-    const pill = (view, icon, label, count) => `
-        <button class="cc-changes-pill ${activeView === view ? 'is-active' : ''}"
-                type="button"
-                data-action="changes-subview" data-view="${view}">
-            <i data-lucide="${icon}"></i>
-            <span class="cc-changes-pill-label">${label}</span>
-            <span class="cc-changes-pill-count">${count}</span>
+/**
+ * PR 5 — Subtabs format pour le topbar (sub-router intégré).
+ * Remplace l'ancien `renderChangesSubnav` (pills internes au panneau).
+ */
+function renderChangesSubtabs(subviewItems, activeView) {
+    const tab = (view, label, count) => `
+        <button class="cc-subtab${activeView === view ? ' is-active' : ''}"
+                type="button" role="tab"
+                aria-selected="${activeView === view}"
+                data-sub="${view}">
+            ${label}<span class="cc-subtab-count">${count}</span>
         </button>
     `;
-    return `
-        <div class="cc-changes-subnav" role="tablist">
-            ${pill('lieux',    'map-pin', 'Lieux',    subviewItems.lieux.length)}
-            ${pill('photos',   'camera',  'Photos',   subviewItems.photos.length)}
-            ${pill('circuits', 'route',   'Circuits', subviewItems.circuits.length)}
-        </div>
-    `;
+    return tab('lieux',    'Lieux',    subviewItems.lieux.length)
+         + tab('photos',   'Photos',   subviewItems.photos.length)
+         + tab('circuits', 'Circuits', subviewItems.circuits.length);
 }
 
 function renderLieuxView(items) {
     if (items.length === 0) {
-        return `<div class="empty-state"><i data-lucide="check" width="32"></i><p>Aucun lieu modifié.</p></div>`;
+        return `<div class="cc-empty"><div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div><h3 class="cc-empty-title">Aucun lieu modifié.</h3></div>`;
     }
     const groups = {
         new: items.filter(p => p.isCreation),
@@ -620,89 +913,123 @@ function renderLieuxView(items) {
         del: items.filter(p => p.isDeletion),
         mig: items.filter(p => p.isMigration),
     };
-    let html = `<div class="cc-diff-container">`;
-    html += renderItemGroup('Nouveaux Lieux',  groups.new, 'cc-badge-new', 'plus-circle', { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
-    html += renderItemGroup('Modifications',   groups.mod, 'cc-badge-mod', 'pencil',      { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
-    html += renderItemGroup('Suppressions',    groups.del, 'cc-badge-del', 'trash-2',     { showEdit: false, showPhotoGrid: false, scope: 'poi' });
-    html += renderItemGroup('Migrations',      groups.mig, 'cc-badge-mig', 'refresh-cw',  { showEdit: false, showPhotoGrid: false, scope: 'poi' });
-    html += `</div>`;
+    let html = '';
+    html += renderItemGroup('Nouveau',   groups.new, 'new', { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
+    html += renderItemGroup('Modifié',   groups.mod, 'mod', { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
+    html += renderItemGroup('Supprimé',  groups.del, 'del', { showEdit: false, showPhotoGrid: false, scope: 'poi' });
+    html += renderItemGroup('Migré',     groups.mig, 'mig', { showEdit: false, showPhotoGrid: false, scope: 'poi' });
     return html;
 }
 
 function renderPhotosView(items) {
     if (items.length === 0) {
-        return `<div class="empty-state"><i data-lucide="check" width="32"></i><p>Aucune photo en attente.</p></div>`;
+        return `<div class="cc-empty"><div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div><h3 class="cc-empty-title">Aucune photo en attente.</h3></div>`;
     }
-    let html = `<div class="cc-diff-container">`;
-    html += renderItemGroup('Photos à publier', items, 'cc-badge-mod', 'camera', { showEdit: false, showPhotoGrid: true, scope: 'photos' });
-    html += `</div>`;
-    return html;
+    return renderItemGroup('Photos à publier', items, 'photos', { showEdit: false, showPhotoGrid: true, scope: 'photos' });
 }
 
 function renderCircuitsView(items) {
     if (items.length === 0) {
-        return `<div class="empty-state"><i data-lucide="check" width="32"></i><p>Aucun circuit modifié.</p></div>`;
+        return `<div class="cc-empty"><div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div><h3 class="cc-empty-title">Aucun circuit modifié.</h3></div>`;
     }
     const groups = {
         new: items.filter(c => c.isCreation),
         mod: items.filter(c => !c.isCreation && !c.isDeletion),
         del: items.filter(c => c.isDeletion),
     };
-    let html = `<div class="cc-diff-container">`;
-    html += renderItemGroup('Nouveaux Circuits',  groups.new, 'cc-badge-new', 'map',     { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
-    html += renderItemGroup('Circuits Modifiés',  groups.mod, 'cc-badge-mod', 'route',   { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
-    html += renderItemGroup('Circuits Supprimés', groups.del, 'cc-badge-del', 'trash-2', { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
-    html += `</div>`;
+    let html = '';
+    html += renderItemGroup('Nouveau',  groups.new, 'new', { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
+    html += renderItemGroup('Modifié',  groups.mod, 'mod', { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
+    html += renderItemGroup('Supprimé', groups.del, 'del', { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
     return html;
 }
 
-function renderItemGroup(title, items, badgeClass, icon, opts) {
+/**
+ * PR 5 — Refonte du rendu d'un groupe d'items (Nouveau/Modifié/Supprimé/Migré/Photos).
+ *
+ * Format : titre groupé avec couleur sémantique + glyph ▸ + compteur, puis liste
+ * de `.cc-diff` cards. Chaque card a un header (tag, name, actions) et un body
+ * grid 2 colonnes (key/value) sans clipping (multi-ligne libre).
+ *
+ * @param {string} title — libellé du groupe ("Nouveau", "Modifié", etc.)
+ * @param {Array} items — éléments diffData à afficher
+ * @param {string} kind — 'new' | 'mod' | 'del' | 'mig' | 'photos' (couleur sémantique)
+ * @param {Object} opts — { showEdit, showPhotoGrid, scope }
+ */
+function renderItemGroup(title, items, kind, opts) {
     if (items.length === 0) return '';
-    let html = `<div class="cc-diff-group-title">
-        <i data-lucide="${icon}"></i> ${title}
-        <span class="cc-diff-badge ${badgeClass}">${items.length}</span>
-    </div>`;
+
+    const tagLabels = {
+        new: 'Nouveau', mod: 'Modifié', del: 'Supprimé', mig: 'Migré', photos: 'Photos',
+    };
+    const tagClass = `tag-${kind === 'photos' ? 'mod' : kind}`;
+
+    let html = `<div class="cc-diff-group cc-diff-group--${kind}">
+        <h4 class="cc-diff-group-typed-title">
+            ${title}<span class="cc-diff-group-count">· ${items.length}</span>
+        </h4>`;
 
     html += items.map(item => {
-        const diffRows = item.isDeletion
-            ? `<div class="cc-change-detail cc-del-warning"><i data-lucide="alert-triangle"></i> Sera supprimé de la carte officielle</div>`
-            : item.isCreation && item.changes && item.changes.length === 0
-                ? `<div class="cc-change-detail cc-new-hint"><i data-lucide="sparkles"></i> Nouveau lieu — aucun champ antérieur</div>`
-                : (item.changes || []).map(c => `
-                    <div class="cc-change-detail">
-                        <span class="cc-change-key">${c.key}</span>
-                        <span class="cc-old-val">${c.old !== undefined ? c.old : '—'}</span>
-                        <span class="cc-change-arrow">➜</span>
-                        <span class="cc-new-val">${c.new}</span>
-                    </div>`).join('');
-
-        const photoGrid = opts.showPhotoGrid ? renderPendingPhotoGrid(item) : '';
-        const showEdit = opts.showEdit && !item.isDeletion && !item.isMigration;
-
-        // Libellé du bouton "Annuler" : adapté au scope pour clarté UX.
         const refuseTitle = item.isDeletion
             ? 'Restaurer ce lieu'
             : (opts.scope === 'photos' ? 'Retirer les photos pending de ce lieu' : 'Effacer cette modification locale');
         const refuseLabel = item.isDeletion ? 'Restaurer' : 'Annuler';
-        const refuseIcon = item.isDeletion ? 'rotate-ccw' : 'x';
+        const refuseIcon  = item.isDeletion ? 'rotate-ccw' : 'x';
+        const showEdit    = opts.showEdit && !item.isDeletion && !item.isMigration;
+
+        // Header : tag sémantique + nom + actions
+        const headerHtml = `
+            <div class="cc-diff-head">
+                <span class="cc-diff-tag ${tagClass}">${tagLabels[kind] || tagLabels.mod}</span>
+                <div class="cc-diff-name">${item.name}</div>
+                <div class="cc-diff-actions">
+                    ${showEdit ? `<button class="cc-diff-btn cc-diff-btn--primary" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour vérifier avant publication">
+                        <i data-lucide="edit-3"></i> Réviser
+                    </button>` : ''}
+                    <button class="cc-diff-btn cc-diff-btn--danger" data-action="refuse" data-id="${item.id}" data-scope="${opts.scope}" title="${refuseTitle}">
+                        <i data-lucide="${refuseIcon}"></i> ${refuseLabel}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Body : grid key/value 2 colonnes, multi-ligne, sans clipping
+        let bodyHtml = '';
+        if (item.isDeletion) {
+            bodyHtml = `<div class="cc-diff-body">
+                <div class="cc-diff-note cc-diff-note--del">
+                    <i data-lucide="alert-triangle"></i> Sera supprimé de la carte officielle
+                </div>
+            </div>`;
+        } else if (item.isCreation && (!item.changes || item.changes.length === 0)) {
+            bodyHtml = `<div class="cc-diff-body">
+                <div class="cc-diff-note cc-diff-note--new">
+                    <i data-lucide="sparkles"></i> Nouveau lieu — aucun champ antérieur
+                </div>
+            </div>`;
+        } else if (item.changes && item.changes.length > 0) {
+            const rows = item.changes.map(c => `
+                <div class="cc-diff-key">${c.key}</div>
+                <div class="cc-diff-val">
+                    ${c.old !== undefined && c.old !== null && c.old !== ''
+                        ? `<div class="cc-diff-old">${c.old}</div>` : ''}
+                    <div class="cc-diff-new">${c.new !== undefined ? c.new : '—'}</div>
+                </div>
+            `).join('');
+            bodyHtml = `<div class="cc-diff-body">${rows}</div>`;
+        }
+
+        const photoGrid = opts.showPhotoGrid ? renderPendingPhotoGrid(item) : '';
 
         return `
-        <div class="cc-change-item" id="cc-diff-item-${item.id}">
-            <div class="cc-change-item-header">
-                <span class="cc-change-name">${item.name}</span>
-                ${showEdit ? `<button class="cc-btn-edit" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour vérifier avant publication">
-                    <i data-lucide="edit-3"></i> Éditer
-                </button>` : ''}
-                <button class="cc-btn-ignore" data-action="refuse" data-id="${item.id}" data-scope="${opts.scope}" title="${refuseTitle}">
-                    <i data-lucide="${refuseIcon}"></i>
-                    <span>${refuseLabel}</span>
-                </button>
-            </div>
-            ${diffRows ? `<div class="cc-change-diffs">${diffRows}</div>` : ''}
+        <div class="cc-diff" id="cc-diff-item-${item.id}">
+            ${headerHtml}
+            ${bodyHtml}
             ${photoGrid}
         </div>`;
     }).join('');
 
+    html += `</div>`;
     return html;
 }
 
@@ -719,7 +1046,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
             <span class="cc-subpanel-title">Ajouter un circuit</span>
         </div>
 
-        <div class="cc-card">
+        <div class="cc-card cc-card--padded cc-card--block">
             <div class="cc-upload-intro">
                 <i data-lucide="upload-cloud" class="icon-amber cc-upload-icon"></i>
                 <p>Envoyez un fichier de circuit directement sur GitHub.<br>

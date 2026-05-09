@@ -147,15 +147,25 @@ describe('setChangesSubView / getChangesSubView', () => {
 // (pas d'auto-redirect) — fix UX clic stat-card Dashboard
 // ─────────────────────────────────────────────────────────────────────────────
 describe('renderTab — pas d\'auto-redirect quand sous-vue vide', () => {
+    // PR 5 — Le sub-router est passé des `.cc-changes-pill` (dans le panneau)
+    // aux `.cc-subtab` (dans le topbar). Les tests reflètent le nouveau DOM :
+    // un slot `#cc-topbar-subtabs` est nécessaire pour que `setTopbarSubtabs`
+    // puisse populer la barre. L'empty state utilise `.cc-empty` (PR 4).
     beforeEach(() => {
-        document.body.innerHTML = '<div id="admin-cc-content"></div>';
+        document.body.innerHTML = `
+            <header id="cc-topbar" class="cc-topbar">
+                <div class="cc-topbar-row">
+                    <h2 class="cc-topbar-title">Modifications</h2>
+                </div>
+                <div id="cc-topbar-subtabs" class="cc-subtabs"></div>
+            </header>
+            <div id="admin-cc-content"></div>
+        `;
     });
 
-    // Petite suite légère : on ne vérifie que la pill active dans le rendu.
-    // La logique métier est déjà testée par computeChangesSubviewItems.
     const renderTabModule = async () => (await import('../src/admin-control-ui.js'));
 
-    it('clic "Photos" alors que photos est vide : la pill Photos reste active', async () => {
+    it('clic "Photos" alors que photos est vide : la subtab Photos reste active', async () => {
         const { renderTab, setChangesSubView } = await renderTabModule();
         // diffData : seulement des Lieux, aucune photo, aucun circuit
         const diffData = {
@@ -166,11 +176,11 @@ describe('renderTab — pas d\'auto-redirect quand sous-vue vide', () => {
         setChangesSubView('photos');
         renderTab('changes', diffData, {});
 
-        const activePill = document.querySelector('.cc-changes-pill.is-active');
-        expect(activePill?.dataset.view).toBe('photos');
+        const activeSubtab = document.querySelector('.cc-subtab.is-active');
+        expect(activeSubtab?.dataset.sub).toBe('photos');
     });
 
-    it('clic "Circuits" alors que circuits est vide : la pill Circuits reste active', async () => {
+    it('clic "Circuits" alors que circuits est vide : la subtab Circuits reste active', async () => {
         const { renderTab, setChangesSubView } = await renderTabModule();
         const diffData = {
             pois: [{ id: 'p1', name: 'L', changes: [{ key: 'Description', old: 'a', new: 'b' }] }],
@@ -180,11 +190,11 @@ describe('renderTab — pas d\'auto-redirect quand sous-vue vide', () => {
         setChangesSubView('circuits');
         renderTab('changes', diffData, {});
 
-        const activePill = document.querySelector('.cc-changes-pill.is-active');
-        expect(activePill?.dataset.view).toBe('circuits');
+        const activeSubtab = document.querySelector('.cc-subtab.is-active');
+        expect(activeSubtab?.dataset.sub).toBe('circuits');
     });
 
-    it('clic "Lieux" alors que lieux est vide : la pill Lieux reste active', async () => {
+    it('clic "Lieux" alors que lieux est vide : la subtab Lieux reste active', async () => {
         const { renderTab, setChangesSubView } = await renderTabModule();
         const diffData = {
             pois: [],
@@ -194,18 +204,18 @@ describe('renderTab — pas d\'auto-redirect quand sous-vue vide', () => {
         setChangesSubView('lieux');
         renderTab('changes', diffData, {});
 
-        const activePill = document.querySelector('.cc-changes-pill.is-active');
-        expect(activePill?.dataset.view).toBe('lieux');
+        const activeSubtab = document.querySelector('.cc-subtab.is-active');
+        expect(activeSubtab?.dataset.sub).toBe('lieux');
     });
 
-    it('totalCount === 0 : empty-state global, pas de pills', async () => {
+    it('totalCount === 0 : empty state global, pas de sub-tabs', async () => {
         const { renderTab, setChangesSubView } = await renderTabModule();
         setChangesSubView('lieux');
         renderTab('changes', { pois: [], circuits: [], stats: {} }, {});
 
-        const pills = document.querySelectorAll('.cc-changes-pill');
-        const emptyState = document.querySelector('.empty-state');
-        expect(pills.length).toBe(0);
+        const subtabs = document.querySelectorAll('.cc-subtab');
+        const emptyState = document.querySelector('.cc-empty');
+        expect(subtabs.length).toBe(0);
         expect(emptyState).not.toBeNull();
     });
 });
