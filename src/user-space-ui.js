@@ -4,6 +4,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { openHwModal, closeHwModal } from './modal.js';
 import { saveAppState } from './database.js';
 import { showToast } from './toast.js';
+import { forceBackup, getBackupStatusForUI } from './backup-auto-local.js';
 
 export function openUserSpaceModal(callbacks) {
     // Migration V2 : openHwModal lg avec tabs intégrés au body (option B audit
@@ -20,6 +21,9 @@ export function openUserSpaceModal(callbacks) {
             </button>
             <button class="ue-tab" type="button" data-tab="trash">
                 <i data-lucide="trash-2"></i> Corbeille
+            </button>
+            <button class="ue-tab" type="button" data-tab="security">
+                <i data-lucide="shield"></i> Sécurité
             </button>
         </div>
     `;
@@ -56,6 +60,7 @@ export function renderUserTab(tab, callbacks) {
     if (tab === 'circuits') renderCircuitsTab(container, callbacks);
     else if (tab === 'data') renderDataTab(container, callbacks);
     else if (tab === 'trash') renderTrashTab(container, callbacks);
+    else if (tab === 'security') renderSecurityTab(container, callbacks);
 
     createIcons({ icons: appIcons, root: container });
 }
@@ -399,4 +404,134 @@ function renderTrashTab(container, callbacks) {
             }
         });
     });
+}
+
+// ─── ONGLET SÉCURITÉ ───────────────────────────────────────────────────────
+//
+// Phase 1 du chantier protection des données user (Couche 1 + Couche 2).
+// Affiche le statut de l'auto-backup local, propose un backup forcé / partage
+// natif (Web Share API), et annonce la sync cloud à venir (Phase 2).
+
+function formatRelativeDate(date) {
+    if (!date) return null;
+    const days = Math.floor((Date.now() - date.getTime()) / (24 * 60 * 60 * 1000));
+    if (days === 0) return "aujourd'hui";
+    if (days === 1) return "hier";
+    if (days < 7) return `il y a ${days} jours`;
+    if (days < 30) return `il y a ${Math.floor(days / 7)} semaine${days >= 14 ? 's' : ''}`;
+    return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+async function renderSecurityTab(container, callbacks) {
+    const status = await getBackupStatusForUI();
+
+    const lastLabel = status.lastDate
+        ? `Dernier : <strong>${formatRelativeDate(status.lastDate)}</strong>`
+        : 'Aucun backup auto encore créé';
+    const sinceLabel = status.count > 0
+        ? `${status.count} modification${status.count > 1 ? 's' : ''} depuis`
+        : 'Aucune modification depuis';
+
+    container.innerHTML = `
+        <div class="ue-security">
+            <p class="ue-security-intro">
+                Tes données restent sur cet appareil. Pour ne rien perdre en cas de
+                changement de téléphone ou de vidage du cache, sauvegarde régulièrement.
+            </p>
+
+            <!-- Auto-backup local -->
+            <div class="ue-security-card ue-security-card--active">
+                <div class="ue-security-card-header">
+                    <i data-lucide="hard-drive-download" class="ue-security-icon"></i>
+                    <div class="ue-security-card-title">Backup auto local</div>
+                    <span class="ue-security-status ue-security-status--on">Actif</span>
+                </div>
+                <div class="ue-security-card-body">
+                    <div class="ue-security-stat">${lastLabel}</div>
+                    <div class="ue-security-stat-secondary">${sinceLabel}</div>
+                    <div class="ue-security-hint">
+                        Téléchargement automatique tous les ${status.modifsThreshold} changements
+                        ou ${status.daysThreshold} jours. Le fichier arrive dans ton dossier
+                        Téléchargements.
+                    </div>
+                </div>
+                <div class="ue-security-card-actions">
+                    <button class="btn btn-primary" id="ue-btn-force-backup">
+                        <i data-lucide="download"></i> Forcer un backup maintenant
+                    </button>
+                </div>
+            </div>
+
+            <!-- Partage / Email -->
+            <div class="ue-security-card">
+                <div class="ue-security-card-header">
+                    <i data-lucide="share-2" class="ue-security-icon"></i>
+                    <div class="ue-security-card-title">Sauvegarder ailleurs</div>
+                </div>
+                <div class="ue-security-card-body">
+                    <div class="ue-security-hint">
+                        Envoie ton backup vers un email, Drive, Telegram… Sur mobile, tu auras
+                        la palette de partage native. Sur ordinateur, le fichier est téléchargé
+                        et tu peux l'envoyer toi-même.
+                    </div>
+                </div>
+                <div class="ue-security-card-actions">
+                    <button class="btn btn-ghost" id="ue-btn-share-backup">
+                        <i data-lucide="send"></i> Sauvegarder / partager
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cloud sync (à venir) -->
+            <div class="ue-security-card ue-security-card--soon">
+                <div class="ue-security-card-header">
+                    <i data-lucide="cloud" class="ue-security-icon"></i>
+                    <div class="ue-security-card-title">Sync cloud entre appareils</div>
+                    <span class="ue-security-status ue-security-status--soon">Bientôt</span>
+                </div>
+                <div class="ue-security-card-body">
+                    <div class="ue-security-hint">
+                        Pour retrouver tes données automatiquement sur tous tes appareils.
+                        Disponible dans une prochaine version.
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const btnForce = document.getElementById('ue-btn-force-backup');
+    if (btnForce) {
+        btnForce.addEventListener('click', async () => {
+            btnForce.disabled = true;
+            const originalHTML = btnForce.innerHTML;
+            btnForce.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Création…';
+            createIcons({ icons: appIcons, root: btnForce });
+            await forceBackup();
+            // Re-render pour rafraîchir le statut (count remis à 0, date courante).
+            renderUserTab('security', callbacks);
+        });
+    }
+
+    const btnShare = document.getElementById('ue-btn-share-backup');
+    if (btnShare) {
+        btnShare.addEventListener('click', async () => {
+            btnShare.disabled = true;
+            const originalHTML = btnShare.innerHTML;
+            btnShare.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Préparation…';
+            createIcons({ icons: appIcons, root: btnShare });
+            try {
+                // saveUserData utilise déjà Web Share API + fallback download
+                // (cf. fileManager.js downloadJSON).
+                const { saveUserData } = await import('./fileManager.js');
+                await saveUserData(false);
+            } catch (err) {
+                console.error('[security] share backup failed:', err);
+                showToast("Impossible de préparer le backup.", 'error');
+            } finally {
+                btnShare.disabled = false;
+                btnShare.innerHTML = originalHTML;
+                createIcons({ icons: appIcons, root: btnShare });
+            }
+        });
+    }
 }

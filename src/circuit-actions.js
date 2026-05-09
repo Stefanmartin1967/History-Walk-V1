@@ -12,6 +12,7 @@ import { generateAndDownloadGPX } from './gpx.js';
 import { DOM } from './ui-dom.js';
 import { getStoredToken } from './github-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
+import { recordModification } from './backup-auto-local.js';
 
 /**
  * B1 — Détection de doublon à la source : compare la signature `poiIds` du
@@ -74,6 +75,9 @@ export async function performCircuitDeletion(id) {
         
         // FLAG CHANGEMENT
         setHasUnexportedChanges(true);
+
+        // [USER] Compte la suppression de circuit pour l'auto-backup local.
+        void recordModification();
 
         // 3. Si c'était le circuit actif, on nettoie l'affichage
         if (state.activeCircuitId === id) {
@@ -267,6 +271,8 @@ export async function saveAndExportCircuit() {
         applyFilters();
         await generateAndDownloadGPX(state.currentCircuit, circuitToSave.id, circuitToSave.name, circuitToSave.description, circuitToSave.realTrack);
         showToast(`Circuit "${circuitToSave.name}" sauvegardé !`, 'success');
+        // [USER] Compte la création/modif du circuit pour l'auto-backup local.
+        void recordModification();
     } catch (error) {
         console.error("Erreur lors de la sauvegarde du circuit :", error);
         showToast("Erreur lors de la sauvegarde du circuit.", 'error');

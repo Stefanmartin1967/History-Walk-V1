@@ -793,3 +793,40 @@
 .ue-empty-icon svg { width: 28px; height: 28px; }
 .ue-empty-title { font-size: 0.95rem; font-weight: 700; color: var(--ink); margin: 0; }
 .ue-empty-sub { font-size: 0.8rem; color: var(--ink-soft); max-width: 280px; line-height: 1.45; margin: 0; }
+
+/* ── ONGLET SÉCURITÉ (Phase 1 protection données user) ───────────────────── */
+.ue-security { display: flex; flex-direction: column; gap: 14px; padding: 4px 2px; }
+.ue-security-intro {
+    margin: 0 0 4px;
+    font-size: 0.88rem; line-height: 1.5; color: var(--ink-soft);
+}
+.ue-security-card {
+    border: 1px solid var(--line); border-radius: 14px;
+    background: var(--surface);
+    padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 10px;
+}
+.ue-security-card--active { border-color: var(--ok); background: var(--ok-soft); }
+.ue-security-card--soon { opacity: 0.6; }
+.ue-security-card-header {
+    display: flex; align-items: center; gap: 10px;
+}
+.ue-security-icon { width: 18px; height: 18px; color: var(--ink); flex-shrink: 0; }
+.ue-security-card-title {
+    flex: 1; font-size: 0.92rem; font-weight: 700; color: var(--ink);
+}
+.ue-security-status {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 999px; letter-spacing: 0.04em;
+}
+.ue-security-status--on { background: var(--ok); color: white; }
+.ue-security-status--soon { background: var(--surface-muted); color: var(--ink-soft); }
+.ue-security-card-body { display: flex; flex-direction: column; gap: 4px; }
+.ue-security-stat { font-size: 0.85rem; color: var(--ink); }
+.ue-security-stat-secondary { font-size: 0.78rem; color: var(--ink-soft); }
+.ue-security-hint {
+    margin-top: 2px;
+    font-size: 0.78rem; line-height: 1.45; color: var(--ink-soft);
+}
+.ue-security-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.ue-security-card-actions .btn { font-size: 0.85rem; padding: 8px 14px; }

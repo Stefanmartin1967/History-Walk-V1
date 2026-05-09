@@ -18,6 +18,7 @@ import { openPhotoGrid } from './ui-photo-grid.js';
 import { openPhotoBatchModal } from './ui-photo-batch.js';
 import { RichEditor } from './richEditor.js';
 import { eventBus } from './events.js';
+import { recordModification } from './backup-auto-local.js';
 
 let desktopDraftMarker = null;
 
@@ -261,6 +262,8 @@ export async function addPhotosToPoi(feature, clusterItems) {
             await setPendingAdminPhotos(mapId, poiId, newItems);
         } else {
             await savePoiPhotos(mapId, poiId, newItems);
+            // [USER] Photos ajoutées côté user → compte pour l'auto-backup local.
+            void recordModification();
         }
 
         // Refresh UI
