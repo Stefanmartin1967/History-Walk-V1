@@ -76,6 +76,50 @@ function updateTopbarTitle(tab, opts = {}) {
         : title;
 }
 
+function syncFooterAndNavCount(diffData) {
+    const overlay = _ccModalOverlay;
+    if (!overlay) return;
+
+    // testedChanged = POIs avec uniquement un toggle "Vérifié" basculé. Inclus
+    // dans le total car publiable. Affiché en sub-text de la carte LIEUX du
+    // Dashboard pour visibilité (sinon 4+8+0 = 12 visible vs 13 dans le total).
+    const stats = (diffData && diffData.stats) || {};
+    const totalCount = (stats.poisModified      || 0)
+                     + (stats.circuitsModified  || 0)
+                     + (stats.pendingPhotoCount || 0)
+                     + (stats.testedChanged     || 0);
+
+    const btn = overlay.querySelector('#btn-cc-publish');
+    if (btn) {
+        btn.disabled = (totalCount === 0);
+        let countSpan = btn.querySelector('.cc-cta-count');
+        if (totalCount > 0) {
+            if (countSpan) countSpan.textContent = String(totalCount);
+            else btn.insertAdjacentHTML('beforeend', ` <span class="cc-cta-count">${totalCount}</span>`);
+        } else if (countSpan) {
+            countSpan.remove();
+        }
+    }
+
+    const info = overlay.querySelector('.cc-footer-info');
+    if (info) {
+        info.textContent = totalCount > 0
+            ? 'Brouillon local · sauvegardé automatiquement'
+            : 'Aucune modification locale';
+    }
+
+    const navChanges = overlay.querySelector('.cc-nav-item[data-tab="changes"]');
+    if (navChanges) {
+        let navCount = navChanges.querySelector('.cc-nav-count');
+        if (totalCount > 0) {
+            if (navCount) navCount.textContent = String(totalCount);
+            else navChanges.insertAdjacentHTML('beforeend', `<span class="cc-nav-count">${totalCount}</span>`);
+        } else if (navCount) {
+            navCount.remove();
+        }
+    }
+}
+
 /**
  * Définit ou efface les sub-tabs dans le topbar (PR 5 — sub-router intégré).
  * Quand `subtabsHTML` est non vide, le topbar passe en mode `--with-tabs`
@@ -497,6 +541,11 @@ export function renderTab(tab, diffData, callbacks) {
     // qui en ont besoin (changes, maintenance) les re-définiront eux-mêmes.
     setTopbarSubtabs('');
 
+    // Sync footer + nav count avec le diffData courant. Sans ça, le bouton
+    // "Tout publier" reste grisé après que prepareDiffData ait résolu (le
+    // footer n'est construit qu'une fois à l'ouverture, avec diffData vide).
+    syncFooterAndNavCount(diffData);
+
     if (tab === 'dashboard') {
         // PR 4 — Refonte Dashboard : hero (pending/synced/no-token) + 4 stats
         // cliquables + outils. La hiérarchie répond d'abord à "qu'est-ce qui
@@ -505,7 +554,12 @@ export function renderTab(tab, diffData, callbacks) {
         const poisModified      = stats.poisModified      || 0;
         const circuitsModified  = stats.circuitsModified  || 0;
         const pendingPhotoCount = stats.pendingPhotoCount || 0;
-        const totalCount = poisModified + circuitsModified + pendingPhotoCount;
+        const testedChanged     = stats.testedChanged     || 0;
+        // testedChanged compte les POIs dont le toggle "Vérifié" a basculé sans
+        // édition de texte/coords. Ce sont des modifs publiables — on les
+        // inclut dans le total pour cohérence avec le footer "Tout publier" et
+        // le badge nav. Le détail apparaît en sub-text de la carte LIEUX.
+        const totalCount = poisModified + circuitsModified + pendingPhotoCount + testedChanged;
         const hasToken = !!getStoredToken();
         const dmHasUnpublished = localStorage.getItem('dm_has_unpublished_changes') === '1';
         const dmDraftCount = dmHasUnpublished ? 1 : 0;
@@ -555,7 +609,11 @@ export function renderTab(tab, diffData, callbacks) {
             if (poisModified > 0)      breakdown.push(`${poisModified} lieu${poisModified > 1 ? 'x' : ''} modifié${poisModified > 1 ? 's' : ''}`);
             if (pendingPhotoCount > 0) breakdown.push(`${pendingPhotoCount} photo${pendingPhotoCount > 1 ? 's' : ''}`);
             if (circuitsModified > 0)  breakdown.push(`${circuitsModified} circuit${circuitsModified > 1 ? 's' : ''}`);
+            if (testedChanged > 0)     breakdown.push(`${testedChanged} vérification${testedChanged > 1 ? 's' : ''}`);
             const subText = breakdown.join(' · ') || 'Modifications locales';
+            // Pas de CTA inline dans le hero pending : doublon avec le bouton
+            // "Tout publier" du footer (canonique, visible sur les 3 écrans).
+            // Décision validée Stefan suite au feedback test PR #502.
             heroHtml = `
                 <div class="cc-hero cc-hero--pending">
                     <div class="cc-hero-mark"><i data-lucide="upload-cloud"></i></div>
@@ -564,9 +622,6 @@ export function renderTab(tab, diffData, callbacks) {
                         <h3 class="cc-hero-title">${totalCount} changement${totalCount > 1 ? 's' : ''} en attente sur ${mapLabel}</h3>
                         <p class="cc-hero-sub">${subText}</p>
                     </div>
-                    <button class="cc-btn-cta cc-btn-cta--inline" id="btn-cc-hero-publish" type="button">
-                        <i data-lucide="upload-cloud"></i> Publier
-                    </button>
                 </div>
             `;
         }
@@ -582,10 +637,18 @@ export function renderTab(tab, diffData, callbacks) {
         // — Stats grid (4 colonnes) —
         const statsHtml = `
             <div class="cc-stats">
-                <button class="cc-stat${poisModified > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="lieux" title="Voir les lieux modifiés">
+                <button class="cc-stat${(poisModified + testedChanged) > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="lieux" title="Voir les lieux modifiés">
                     <span class="cc-stat-head"><i data-lucide="map-pin"></i> Lieux</span>
                     <span class="cc-stat-val">${poisModified}</span>
-                    <span class="cc-stat-trend">${poisModified > 0 ? `${poisModified} en attente` : 'Aucun changement'}</span>
+                    <span class="cc-stat-trend">${
+                        poisModified > 0 && testedChanged > 0
+                            ? `${poisModified} modifié${poisModified > 1 ? 's' : ''} · ${testedChanged} vérifié${testedChanged > 1 ? 's' : ''}`
+                            : poisModified > 0
+                                ? `${poisModified} en attente`
+                                : testedChanged > 0
+                                    ? `${testedChanged} vérification${testedChanged > 1 ? 's' : ''}`
+                                    : 'Aucun changement'
+                    }</span>
                 </button>
                 <button class="cc-stat${pendingPhotoCount > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="photos" title="Photos locales en attente d'upload">
                     <span class="cc-stat-head"><i data-lucide="camera"></i> Photos</span>
@@ -621,10 +684,8 @@ export function renderTab(tab, diffData, callbacks) {
         container.innerHTML = heroHtml + dmBannerHtml + statsHtml + toolsHtml;
 
         setTimeout(() => {
-            // Hero CTAs (conditionnels selon variant)
-            document.getElementById('btn-cc-hero-publish')?.addEventListener('click', () => {
-                if (callbacks.publishChanges) callbacks.publishChanges();
-            });
+            // Hero CTA — uniquement no-token (variant pending n'a plus de bouton
+            // inline, le footer "Tout publier" sert de CTA canonique).
             document.getElementById('btn-cc-hero-config')?.addEventListener('click', () => {
                 const settingsTabBtn = document.querySelector('.cc-nav-item[data-tab="settings"]');
                 if (settingsTabBtn) {
@@ -724,8 +785,8 @@ export function renderTab(tab, diffData, callbacks) {
                 ? `https://github.com/${encodeURIComponent(username)}.png?size=96`
                 : '';
             connectionHtml = `
-                <h4 class="cc-section-title" style="margin-top:0">Connexion GitHub</h4>
-                <div class="cc-card cc-card--row" style="padding:16px">
+                <h4 class="cc-section-title">Connexion GitHub</h4>
+                <div class="cc-card cc-card--row cc-card--config">
                     ${avatarUrl ? `<img class="cc-config-avatar" src="${avatarUrl}" alt="" loading="lazy">` : '<div class="cc-card-ico"><i data-lucide="github"></i></div>'}
                     <div class="cc-card-text">
                         <div class="cc-card-title">${username ? `@${username}` : 'Token configuré'}</div>
@@ -743,9 +804,9 @@ export function renderTab(tab, diffData, callbacks) {
             `;
         } else {
             connectionHtml = `
-                <h4 class="cc-section-title" style="margin-top:0">Connexion GitHub</h4>
-                <div class="cc-card cc-card--row" style="padding:16px">
-                    <div class="cc-card-ico" style="background:var(--danger-soft);color:var(--danger-fg)">
+                <h4 class="cc-section-title">Connexion GitHub</h4>
+                <div class="cc-card cc-card--row cc-card--config">
+                    <div class="cc-card-ico cc-card-ico--danger">
                         <i data-lucide="github"></i>
                     </div>
                     <div class="cc-card-text">
@@ -760,8 +821,8 @@ export function renderTab(tab, diffData, callbacks) {
         const patHtml = `
             <h4 class="cc-section-title">Personal Access Token</h4>
             <div class="cc-card cc-card--padded cc-card--block">
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-                    <p class="cc-card-hint" style="margin:0">
+                <div class="cc-config-pat-header">
+                    <p class="cc-card-hint">
                         Token stocké localement sur cet appareil.
                     </p>
                     <a href="https://github.com/settings/tokens?type=beta" target="_blank" rel="noopener" class="cc-config-help" id="link-cc-pat-help">
@@ -769,7 +830,7 @@ export function renderTab(tab, diffData, callbacks) {
                     </a>
                 </div>
                 <input type="password" id="cc-token-input" value="${token}" class="cc-config-input" placeholder="ghp_••••••••••••••••••••••••" autocomplete="off" spellcheck="false">
-                <button id="btn-save-token" class="cc-btn-cta" style="margin-top:12px;width:100%;justify-content:center">
+                <button id="btn-save-token" class="cc-btn-cta cc-btn-cta--full">
                     <i data-lucide="save"></i> Sauvegarder
                 </button>
                 <div class="cc-config-scopes-note">
