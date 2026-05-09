@@ -15,12 +15,16 @@ export function openControlCenterModal(diffData, callbacks) {
     // Le hack legacy (showAlert + customClass + masquage manuel + observer)
     // est remplacé par une utilisation directe et propre du système V2.
 
+    // Tab "Config" masqué tant que le token est valide — accessible via le badge
+    // token du Dashboard (clic) ou la Quick Action "Configuration".
+    const settingsTabHidden = !!getStoredToken() ? ' cc-tab-hidden' : '';
+
     const subheader = `
         <div class="admin-cc-tabs ue-tabs">
             <button class="admin-cc-tab ue-tab is-active" type="button" data-tab="dashboard"><i data-lucide="layout-grid"></i> Dashboard</button>
             <button class="admin-cc-tab ue-tab" type="button" data-tab="changes"><i data-lucide="list-checks"></i> Modifications</button>
             <button class="admin-cc-tab ue-tab" type="button" data-tab="maintenance"><i data-lucide="server"></i> Nettoyage</button>
-            <button class="admin-cc-tab ue-tab" type="button" data-tab="settings"><i data-lucide="settings"></i> Config</button>
+            <button class="admin-cc-tab ue-tab${settingsTabHidden}" type="button" data-tab="settings"><i data-lucide="settings"></i> Config</button>
         </div>
     `;
 
@@ -272,13 +276,15 @@ export function renderTab(tab, diffData, callbacks) {
                     <i data-lucide="github"></i> ${GITHUB_OWNER}/${GITHUB_REPO}
                 </a>
                 <span class="cc-info-strip-dot">·</span>
-                <span class="cc-info-strip-token ${hasToken ? 'cc-token-ok' : 'cc-token-missing'}">
-                    <i data-lucide="${hasToken ? 'shield-check' : 'shield-x'}"></i>
-                    ${hasToken
-                        ? (getStoredUsername() ? `Connecté @${getStoredUsername()}` : 'Token configuré')
-                        : 'Token manquant'}
-                    ${!hasToken ? `— <button class="cc-inline-link" id="btn-cc-goto-config3">Configurer</button>` : ''}
-                </span>
+                ${hasToken
+                    ? `<button id="btn-cc-token-badge" class="cc-info-strip-token cc-token-ok cc-token-clickable" type="button" title="Modifier le token GitHub">
+                        <i data-lucide="shield-check"></i>
+                        ${getStoredUsername() ? `Connecté @${getStoredUsername()}` : 'Token configuré'}
+                       </button>`
+                    : `<span class="cc-info-strip-token cc-token-missing">
+                        <i data-lucide="shield-x"></i>
+                        Token manquant — <button class="cc-inline-link" id="btn-cc-goto-config3">Configurer</button>
+                       </span>`}
             </div>
         `;
 
@@ -296,13 +302,23 @@ export function renderTab(tab, diffData, callbacks) {
                 el.onclick = goChanges;
             });
 
-            const goSettings = () => document.querySelector('.admin-cc-tab[data-tab="settings"]')?.click();
+            const goSettings = () => {
+                // Le tab Config est caché tant que le token est valide ; révéler
+                // avant de cliquer dessus (l'utilisateur a cliqué un point d'accès).
+                const settingsTabBtn = document.querySelector('.admin-cc-tab[data-tab="settings"]');
+                if (settingsTabBtn) {
+                    settingsTabBtn.classList.remove('cc-tab-hidden');
+                    settingsTabBtn.click();
+                }
+            };
             const btnConf = document.getElementById('btn-cc-goto-config');
             if (btnConf) btnConf.onclick = goSettings;
             const btnConf2 = document.getElementById('btn-cc-goto-config2');
             if (btnConf2) btnConf2.onclick = goSettings;
             const btnConf3 = document.getElementById('btn-cc-goto-config3');
             if (btnConf3) btnConf3.onclick = goSettings;
+            const btnTokenBadge = document.getElementById('btn-cc-token-badge');
+            if (btnTokenBadge) btnTokenBadge.onclick = goSettings;
 
             const btnGotoDm = document.getElementById('btn-goto-dm');
             if (btnGotoDm) btnGotoDm.onclick = () => {
