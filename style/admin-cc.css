@@ -366,7 +366,7 @@
     overflow: hidden;
     transition: border-color 0.15s ease;
 }
-.cc-diff:hover { border-color: var(--ink-soft); }
+.cc-diff:hover { border-color: color-mix(in oklab, var(--cta-bg) 40%, var(--line)); }
 
 .cc-diff-head {
     display: flex; align-items: center; gap: var(--space-sm);
@@ -575,6 +575,13 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-md);
+}
+
+/* Sur night, l'écart de luminance --surface ↔ --surface-muted crée une bande
+   visible — on aplatit en gardant la teinte muted. Les 3 autres thèmes
+   conservent le gradient. */
+html[data-theme="night"] .cc-hero {
+    background: var(--surface-muted);
 }
 .cc-hero-mark {
     width: 56px; height: 56px;
