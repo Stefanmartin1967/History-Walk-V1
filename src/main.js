@@ -164,13 +164,10 @@ async function initializeApp() {
 
         const savedTheme = await getAppState('currentTheme');
         if (savedTheme) {
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            applyThemeColor(savedTheme);
-            // Sync localStorage : si l'utilisateur a sauvegardé son thème dans
-            // une session antérieure (avant l'introduction de theme-bootstrap.js),
-            // on hydrate le miroir localStorage maintenant pour que le prochain
-            // F5 démarre directement avec le bon thème.
-            try { localStorage.setItem('hw_theme', savedTheme); } catch (_) {}
+            // setTheme fait : data-theme sur html, applyThemeColor (meta),
+            // saveAppState (idempotent, on vient de la lire), et hydrate le
+            // miroir localStorage hw_theme pour theme-bootstrap.js au prochain F5.
+            setTheme(savedTheme);
         }
 
         // Lieu de résidence pour le tri par proximité (défini dans Mon Espace)
