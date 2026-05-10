@@ -323,6 +323,13 @@
     border-color: color-mix(in oklab, var(--hw-amber) 50%, var(--line));
     background: color-mix(in oklab, var(--hw-amber-soft) 30%, var(--surface));
 }
+/* Focus visible en navigation clavier : la checkbox interne est opacity:0,
+   donc sans :focus-within la card ne montre aucun signal de focus quand
+   l'utilisateur Tab dessus. Ne s'active pas au clic souris. */
+.me-card:focus-within {
+    box-shadow: var(--focus-ring);
+    border-color: var(--hw-amber);
+}
 .me-card.is-checked {
     background: var(--hw-amber-soft);
     border-color: color-mix(in oklab, var(--hw-amber) 40%, var(--line));
@@ -369,7 +376,7 @@
 }
 .me-toggle-track {
     position: absolute; inset: 0;
-    background: #cbd5e1;
+    background: var(--line);
     border-radius: var(--radius-pill);
     transition: background 0.2s;
     pointer-events: none;
