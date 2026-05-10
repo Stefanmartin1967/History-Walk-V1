@@ -353,7 +353,7 @@ function renderCircuitsTab(container, callbacks) {
                         <span class="me-card-sub">${meta}</span>
                     </div>
                     <div class="me-toggle">
-                        <input type="checkbox" class="ue-circuit-check" data-circuit-id="${c.id}" ${isChecked ? 'checked' : ''}>
+                        <input type="checkbox" class="me-circuit-check" data-circuit-id="${c.id}" ${isChecked ? 'checked' : ''}>
                         <span class="me-toggle-track"></span>
                     </div>
                 </label>`;
@@ -362,7 +362,7 @@ function renderCircuitsTab(container, callbacks) {
     `;
 
     const updateCount = () => {
-        const checked = container.querySelectorAll('.ue-circuit-check:checked').length;
+        const checked = container.querySelectorAll('.me-circuit-check:checked').length;
         const countEl = document.getElementById('ue-circuits-count');
         if (countEl) countEl.textContent = `${checked} / ${allOfficial.length}`;
     };
@@ -377,7 +377,7 @@ function renderCircuitsTab(container, callbacks) {
         renderCircuitsTab(container, callbacks);
     });
 
-    container.querySelectorAll('.ue-circuit-check').forEach(checkbox => {
+    container.querySelectorAll('.me-circuit-check').forEach(checkbox => {
         checkbox.addEventListener('change', () => {
             const currentIds = state.selectedOfficialCircuitIds === null
                 ? allOfficial.map(c => String(c.id))
