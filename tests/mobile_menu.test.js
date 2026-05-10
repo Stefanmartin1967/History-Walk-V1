@@ -62,6 +62,10 @@ vi.mock('../src/user-space.js', () => ({
     openUserSpace: vi.fn()
 }));
 
+vi.mock('../src/theme.js', () => ({
+    cycleTheme: vi.fn()
+}));
+
 vi.mock('../src/events.js', () => ({
     eventBus: {
         emit: vi.fn(),

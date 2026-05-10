@@ -13,6 +13,7 @@ import { showStatisticsModal } from './statistics.js';
 import { showAdminLoginModal, logoutAdmin } from './admin.js';
 import { openControlCenter, openControlCenterSettings, quickPublish } from './admin-control-center.js';
 import { openUserSpace } from './user-space.js';
+import { cycleTheme } from './theme.js';
 import { eventBus } from './events.js';
 import { getCurrentView, isMobileView } from './mobile-state.js';
 
@@ -115,9 +116,7 @@ export function renderMobileMenu() {
             location.reload();
         }
     });
-    document.getElementById('mob-action-theme').addEventListener('click', () => {
-        document.getElementById('btn-theme-selector').click();
-    });
+    document.getElementById('mob-action-theme').addEventListener('click', () => cycleTheme());
     document.getElementById('mob-action-bmc').addEventListener('click', () => {
         window.open('https://www.buymeacoffee.com/history_walk', '_blank');
     });

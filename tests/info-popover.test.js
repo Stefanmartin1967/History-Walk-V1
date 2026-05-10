@@ -67,22 +67,18 @@ describe('showInfoPopover — contenu légende', () => {
     });
 });
 
-describe('showInfoPopover — bouton Visite guidée', () => {
-    it('contient un bouton "Visite guidée"', () => {
+describe('showInfoPopover — Visite guidée extraite (PR PC-2, 10/05/2026)', () => {
+    // La Visite guidée a été promue en bouton dédié dans la topbar
+    // (icône `compass`, btn-tour). Elle ne fait plus partie de la popover Info
+    // qui est désormais purement une référence cartographique.
+    it('NE contient PAS de bouton "Visite guidée" (extrait en topbar)', () => {
         showInfoPopover();
-        const btn = document.getElementById('info-popover-btn-tour');
-        expect(btn).not.toBeNull();
-        expect(btn.textContent.trim()).toContain('Visite guidée');
+        expect(document.getElementById('info-popover-btn-tour')).toBeNull();
     });
 
-    it('clic sur "Visite guidée" ferme le popover et déclenche la modal de bienvenue (4 cartes)', () => {
+    it('NE contient PAS de section divider (qui séparait légende/visite guidée)', () => {
         showInfoPopover();
-        document.getElementById('info-popover-btn-tour').click();
-        // Popover fermé
-        expect(document.getElementById('info-popover')).toBeNull();
-        // Modal de bienvenue ouverte avec 4 cartes (mode "revoir")
-        const cards = document.querySelectorAll('.welcome-card');
-        expect(cards).toHaveLength(4);
+        expect(document.querySelector('.info-popover-divider')).toBeNull();
     });
 });
 

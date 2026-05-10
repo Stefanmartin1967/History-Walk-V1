@@ -11,11 +11,17 @@
 import { state } from './state.js';
 import { eventBus } from './events.js';
 import { toggleFilterPanel } from './filter-panel.js';
+import { openUserSpace } from './user-space.js';
+import { showWelcomeAgain } from './welcome.js';
+import { setTheme, getCurrentTheme, THEMES, THEME_LABELS } from './theme.js';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 const FILTERS_BTN_ID = 'hw-topbar-filters-btn';
 const FILTERS_LABEL_ID = 'hw-topbar-filters-label';
 const DEST_SELECTOR_ID = 'hw-dest-selector';
 const DEST_MENU_ID = 'hw-dest-menu';
+const THEME_BTN_ID = 'btn-theme-topbar';
+const THEME_MENU_ID = 'hw-theme-menu';
 
 function isSectionActive(id) {
     const f = state.activeFilters || {};
@@ -45,6 +51,10 @@ export function refreshFiltersButton() {
     const n = countActiveSections();
     label.textContent = n > 0 ? `Filtres (${n})` : 'Filtres';
     btn.classList.toggle('is-active', n > 0);
+    // a11y : aria-pressed reflète l'état "filtres appliqués" (au moins 1 section
+    // active). aria-expanded reflète l'ouverture du panneau (mis à jour ailleurs
+    // — voir setupFiltersA11y).
+    btn.setAttribute('aria-pressed', n > 0 ? 'true' : 'false');
 }
 
 // ─── Dropdown destination ──────────────────────────────────────────────────
@@ -212,12 +222,113 @@ function escapeHtml(s) {
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+// ─── Dropdown thème (PR PC-2) ──────────────────────────────────────────────
+
+function setThemeMenuOpen(open) {
+    const menu = document.getElementById(THEME_MENU_ID);
+    const btn = document.getElementById(THEME_BTN_ID);
+    if (!menu || !btn) return;
+    if (open) {
+        renderThemeMenu();
+        menu.removeAttribute('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+    } else {
+        menu.setAttribute('hidden', '');
+        btn.setAttribute('aria-expanded', 'false');
+    }
+}
+
+function isThemeMenuOpen() {
+    const menu = document.getElementById(THEME_MENU_ID);
+    return !!menu && !menu.hasAttribute('hidden');
+}
+
+function toggleThemeMenu() {
+    setThemeMenuOpen(!isThemeMenuOpen());
+}
+
+function renderThemeMenu() {
+    const menu = document.getElementById(THEME_MENU_ID);
+    if (!menu) return;
+    const current = getCurrentTheme();
+
+    menu.innerHTML = `
+        <div class="hw-theme-menu-title">Thème</div>
+        ${THEMES.map(theme => `
+            <button type="button" class="hw-theme-item${theme === current ? ' is-active' : ''}"
+                    role="menuitemradio" aria-checked="${theme === current ? 'true' : 'false'}"
+                    data-theme="${theme}">
+                <span class="hw-theme-swatch hw-theme-swatch--${theme}" aria-hidden="true"></span>
+                <span class="hw-theme-name">${THEME_LABELS[theme] || theme}</span>
+                ${theme === current ? '<span class="hw-theme-check"><i data-lucide="check"></i></span>' : ''}
+            </button>
+        `).join('')}
+    `;
+
+    // Render icons (check)
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+        window.lucide.createIcons({ root: menu });
+    } else {
+        createIcons({ icons: appIcons, root: menu });
+    }
+
+    // Bind clicks
+    menu.querySelectorAll('.hw-theme-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const theme = item.dataset.theme;
+            if (theme && theme !== getCurrentTheme()) setTheme(theme);
+            setThemeMenuOpen(false);
+        });
+    });
+}
+
+function setupThemeDropdown() {
+    const btn = document.getElementById(THEME_BTN_ID);
+    const menu = document.getElementById(THEME_MENU_ID);
+    if (!btn || !menu) return;
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleThemeMenu();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!isThemeMenuOpen()) return;
+        if (e.target.closest(`#${THEME_BTN_ID}`)) return;
+        if (e.target.closest(`#${THEME_MENU_ID}`)) return;
+        setThemeMenuOpen(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isThemeMenuOpen()) {
+            setThemeMenuOpen(false);
+            btn.focus();
+        }
+    });
+}
+
+// ─── Boutons directs topbar Mon Espace + Visite guidée (PR PC-2) ────────────
+
+function setupMonEspaceButton() {
+    const btn = document.getElementById('btn-mon-espace-topbar');
+    if (btn) btn.addEventListener('click', () => openUserSpace());
+}
+
+function setupTourButton() {
+    const btn = document.getElementById('btn-tour');
+    if (btn) btn.addEventListener('click', () => showWelcomeAgain());
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────
 
 export function setupTopbarV2() {
     const filtersBtn = document.getElementById(FILTERS_BTN_ID);
     if (filtersBtn) {
         filtersBtn.addEventListener('click', toggleFilterPanel);
+        // a11y : signaler que ce bouton ouvre un panneau (aria-expanded sera
+        // mis à jour ailleurs si le panneau expose son état d'ouverture).
+        filtersBtn.setAttribute('aria-haspopup', 'true');
+        filtersBtn.setAttribute('aria-expanded', 'false');
     }
 
     // Mise à jour du compteur à chaque changement de filtre.
@@ -230,4 +341,9 @@ export function setupTopbarV2() {
 
     // Dropdown des destinations (PR 4)
     setupDestinationMenu();
+
+    // Boutons directs topbar (PR PC-2 — promotion : Mon Espace, Thème, Visite)
+    setupMonEspaceButton();
+    setupTourButton();
+    setupThemeDropdown();
 }
