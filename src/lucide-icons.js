@@ -49,7 +49,7 @@ import {
     CircleHelp, Hotel, CarTaxiFront,
 
     // UI & layout
-    Pencil, Edit3, Printer, Palette, Languages, Paperclip,
+    Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,
     CalendarClock, Phone, Bookmark, Landmark, Wrench, DoorOpen,
     Ticket, Table, Package, PackageCheck, Server, ServerCog,
@@ -96,7 +96,7 @@ export const appIcons = {
 
     CircleHelp, Hotel, CarTaxiFront,
 
-    Pencil, Edit3, Printer, Palette, Languages, Paperclip,
+    Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,
     CalendarClock, Phone, Bookmark, Landmark, Wrench, DoorOpen,
     Ticket, Table, Package, PackageCheck, Server, ServerCog,

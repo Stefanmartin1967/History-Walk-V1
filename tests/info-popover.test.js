@@ -18,17 +18,17 @@ describe('showInfoPopover — création', () => {
         expect(document.getElementById('info-popover')).not.toBeNull();
     });
 
-    it('le popover a le titre "Informations"', () => {
+    it('le popover a le titre "Légende" (renommé en PR PC-3)', () => {
         showInfoPopover();
         const title = document.querySelector('.info-popover-title');
-        expect(title?.textContent).toBe('Informations');
+        expect(title?.textContent).toBe('Légende');
     });
 
-    it('le popover a role="dialog" et aria-label="Informations"', () => {
+    it('le popover a role="dialog" et aria-label="Légende"', () => {
         showInfoPopover();
         const popover = document.getElementById('info-popover');
         expect(popover.getAttribute('role')).toBe('dialog');
-        expect(popover.getAttribute('aria-label')).toBe('Informations');
+        expect(popover.getAttribute('aria-label')).toBe('Légende');
     });
 });
 
@@ -36,6 +36,8 @@ describe('showInfoPopover — contenu légende', () => {
     it('affiche les 3 lignes de polylines (Vol d\'oiseau / Tracé réel / Circuit terminé)', () => {
         showInfoPopover();
         const items = document.querySelectorAll('.info-popover-legend-item');
+        // 3 tracés (le sample cluster est désormais dans une grille séparée à 3
+        // samples vert/jaune/rouge — voir test "3 cluster samples" plus bas).
         expect(items).toHaveLength(3);
         const labels = Array.from(document.querySelectorAll('.info-popover-legend-label'))
             .map(l => l.textContent.trim());
@@ -64,6 +66,38 @@ describe('showInfoPopover — contenu légende', () => {
         expect(txt).not.toContain('Visité');
         expect(txt).not.toContain('Planifié');
         expect(txt).not.toContain('Incontournable');
+    });
+});
+
+describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
+    it('contient une section "Catégories de lieux" avec une grille des 15 catégories iconMap', () => {
+        showInfoPopover();
+        const txt = document.getElementById('info-popover').textContent;
+        expect(txt).toContain('Catégories de lieux');
+        // 15 catégories dans iconMap (cf. src/poi-icons.js)
+        const items = document.querySelectorAll('.info-popover-cat-item');
+        expect(items).toHaveLength(15);
+        // Vérification de quelques catégories représentatives
+        expect(txt).toContain('Restaurant');
+        expect(txt).toContain('Mosquée');
+        expect(txt).toContain('Site historique');
+    });
+
+    it('contient une section "Regroupements" avec 3 samples cluster (vert/jaune/rouge)', () => {
+        showInfoPopover();
+        const txt = document.getElementById('info-popover').textContent;
+        expect(txt).toContain('Regroupements');
+        // Reproduit la sémantique tricolore Leaflet markercluster (small/medium/
+        // large) plutôt qu'un seul sample bleu (qui aurait menti — Leaflet rend
+        // vert/jaune/rouge selon densité, pas bleu).
+        expect(document.querySelectorAll('.info-popover-cluster-sample')).toHaveLength(3);
+        expect(document.querySelector('.info-popover-cluster-sample--small')).not.toBeNull();
+        expect(document.querySelector('.info-popover-cluster-sample--medium')).not.toBeNull();
+        expect(document.querySelector('.info-popover-cluster-sample--large')).not.toBeNull();
+        // Labels descriptifs
+        const labels = Array.from(document.querySelectorAll('.info-popover-cluster-label'))
+            .map(l => l.textContent.trim());
+        expect(labels).toEqual(['Quelques lieux', 'Plusieurs', 'Beaucoup']);
     });
 });
 

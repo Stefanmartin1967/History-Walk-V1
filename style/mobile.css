@@ -182,18 +182,20 @@
     border-radius: 4px;
 }
 
-/* ── INFO POPOVER — légende des circuits + visite guidée ─────────────────── */
+/* ── INFO POPOVER — Légende (renommée en PR PC-3 : tracés + catégories + clusters) ──── */
 .info-popover {
-    width: 320px; max-width: calc(100vw - 16px);
+    width: 360px; max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 100px);
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 12px;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    box-shadow: var(--shadow-modal);
     z-index: 9999;
     padding: 14px 16px 16px;
-    display: flex; flex-direction: column; gap: 10px;
+    display: flex; flex-direction: column; gap: 14px;
     font-size: 0.9rem;
     color: var(--ink);
+    overflow-y: auto;
 }
 .info-popover-header {
     display: flex; align-items: center; justify-content: space-between;
@@ -240,20 +242,97 @@
     height: 1px; background: var(--line);
     margin: 4px 0;
 }
-.info-popover-btn-tour {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%;
-    padding: 10px 14px;
-    background: var(--brand); color: white;
-    border: none; border-radius: 8px;
-    font-size: 0.95rem; font-weight: 600;
-    cursor: pointer; transition: opacity 0.15s;
-    font-family: inherit;
+
+/* ── Catégories de POI (PR PC-3) — grille 2 colonnes des 15 catégories ──── */
+.info-popover-cat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
 }
-.info-popover-btn-tour:hover { opacity: 0.88; }
-.info-popover-btn-tour:focus-visible {
-    outline: 2px solid var(--brand);
-    outline-offset: 2px;
+.info-popover-cat-item {
+    display: flex; align-items: center; gap: 8px;
+    min-width: 0;
+}
+.info-popover-cat-marker {
+    /* Reproduit visuellement le rendu .hw-icon de la carte (cercle + svg) en
+       version compacte 24px (vs 32px sur la carte) — l'utilisateur reconnaît
+       immédiatement la correspondance légende ↔ marker. */
+    width: 24px; height: 24px;
+    background: var(--surface);
+    border: 1.5px solid var(--ink);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-soft);
+}
+.info-popover-cat-marker svg {
+    width: 14px; height: 14px;
+    color: var(--ink);
+}
+.info-popover-cat-name {
+    font-size: 0.78rem;
+    color: var(--ink);
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Clusters (PR PC-3 + audit Claude Design) ─────────────────────────────
+   Les 3 samples reproduisent les couleurs réelles de Leaflet.markercluster
+   par défaut (small / medium / large), que HW n'override pas. Sémantique
+   "feu tricolore" : vert = peu de lieux, jaune = plusieurs, rouge = beaucoup.
+   Couleurs hardcodées intentionnellement — elles correspondent au rendu
+   Leaflet, pas à des tokens HW (qui changeraient par thème et créeraient
+   un mensonge visuel entre carte et légende).
+*/
+.info-popover-cluster-intro {
+    margin: 0 0 8px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+}
+.info-popover-cluster-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    align-items: start;
+    justify-items: center;
+}
+.info-popover-cluster-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+.info-popover-cluster-sample {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    color: rgba(20, 30, 40, 0.85);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+/* Outer color = couleur Leaflet par défaut. Halo = inner color (60% opacity)
+   reproduit l'anneau translucide du rendu carte. */
+.info-popover-cluster-sample--small {
+    background: #b5e28c;
+    box-shadow: 0 0 0 4px rgba(110, 204, 57, 0.35);
+}
+.info-popover-cluster-sample--medium {
+    background: #f1d357;
+    box-shadow: 0 0 0 4px rgba(241, 211, 87, 0.35);
+}
+.info-popover-cluster-sample--large {
+    background: #fd9c73;
+    box-shadow: 0 0 0 4px rgba(253, 156, 115, 0.35);
+}
+.info-popover-cluster-label {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    line-height: 1.2;
 }
 
 

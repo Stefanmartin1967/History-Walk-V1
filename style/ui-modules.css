@@ -43,9 +43,16 @@
     filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25));
 }
 .legend-line-sample { width: 40px; height: 4px; flex-shrink: 0; border-radius: 2px; }
-.legend-line-sample--straight { background: #EF4444; }
-.legend-line-sample--gps      { background: #3B82F6; }
-.legend-line-sample--done     { background: #10B981; }
+/* --straight : pointillé (cohérent avec rendu carte du tracé Vol d'oiseau).
+   `background-image` repeat-x avec gradient horizontal qui simule des dashes. */
+.legend-line-sample--straight {
+    background-image: linear-gradient(to right, var(--danger) 50%, transparent 50%);
+    background-size: 8px 4px;
+    background-repeat: repeat-x;
+    border-radius: 0;
+}
+.legend-line-sample--gps      { background: var(--brand); }
+.legend-line-sample--done     { background: var(--ok); }
 
 /* Listes corbeille (circuits + lieux) */
 .modal-list {
