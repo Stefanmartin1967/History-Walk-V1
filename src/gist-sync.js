@@ -317,7 +317,23 @@ export async function pushToGist() {
             setGistId(gistId);
             showToast('Gist créé ! Sync activée.', 'success', 4000);
         } else {
-            await updateGist(token, gistId, payload);
+            try {
+                await updateGist(token, gistId, payload);
+            } catch (updateErr) {
+                // Auto-recovery 404 : si le Gist stocké a été supprimé manuellement
+                // sur github.com (ou n'a jamais existé proprement), on reset le local
+                // et on retry en mode création. Sinon `updateGist` échoue silencieusement
+                // sur chaque clic et la sync est cassée jusqu'à intervention manuelle.
+                if (/\b404\b/.test(updateErr.message)) {
+                    console.warn('[GistSync] Gist 404 — recreating with new ID');
+                    localStorage.removeItem(GIST_ID_KEY);
+                    const newId = await createGist(token, payload);
+                    setGistId(newId);
+                    showToast('Gist re-créé après suppression côté GitHub.', 'info', 4000);
+                } else {
+                    throw updateErr;
+                }
+            }
         }
 
         setStatus('idle');
