@@ -14,14 +14,9 @@ import { eventBus } from './events.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
 
-// --- FONCTION UTILITAIRE : Gestion des boutons de sauvegarde ---
-export function setSaveButtonsState(enabled) {
-    const btnBackup = document.getElementById('btn-open-backup-modal');
-    const btnRestore = document.getElementById('btn-restore-data');
-
-    if (btnBackup) btnBackup.disabled = !enabled;
-    if (btnRestore) btnRestore.disabled = false;
-}
+// (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
+// btn-open-backup-modal et btn-restore-data n'existent plus dans le DOM
+// — Sauvegarder/Restaurer sont accessibles uniquement via Mon Espace > Mes Données.)
 
 export function updateAppTitle(mapId) {
     if (!mapId) return;
@@ -317,7 +312,6 @@ export async function loadAndInitializeMap() {
 
         // Compteur planifié calculé à la volée par computePlanifieCounter (data.js) — plus de recalc à faire ici
         await saveAppState('lastGeoJSON', geojsonData); // Mobile cache specific
-        setSaveButtonsState(true);
         switchMobileView('circuits');
     } else {
         // CORRECTION: On doit aussi peupler loadedFeatures sur Desktop
@@ -353,8 +347,6 @@ export async function loadAndInitializeMap() {
             }
 
             try { await loadCircuitDraft(); } catch (e) {}
-            setSaveButtonsState(true);
-            if (DOM.btnRestoreData) DOM.btnRestoreData.disabled = false;
 
             // V2 : premier rendu de l'onglet Circuit (applique data-mode/data-flag,
             // rend l'empty state ou les steps existants, met à jour le breadcrumb)
