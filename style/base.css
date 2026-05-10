@@ -1203,9 +1203,9 @@ textarea.editable-input {
 }
 
 /* Couleurs au survol spécifiques (Optionnel - On garde pour feedback visuel mais plus subtil) */
-#btn-clear-circuit:hover { color: var(--danger); background: #FEE2E2; }
-#btn-import-gpx:hover { color: var(--ok); background: #D1FAE5; }
-#btn-loop-circuit:hover { color: var(--brand); background: #DBEAFE; }
+#btn-clear-circuit:hover { color: var(--danger); background: var(--danger-soft); }
+#btn-import-gpx:hover { color: var(--ok); background: var(--ok-soft); }
+#btn-loop-circuit:hover { color: var(--brand); background: var(--info-soft); }
 
 .circuit-polyline {
     stroke: var(--danger) !important; /* Rouge (Vol d'oiseau) */
