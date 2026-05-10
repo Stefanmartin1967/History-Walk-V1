@@ -17,7 +17,7 @@
 
 .admin-cc-overlay {
     position: fixed; inset: 0;
-    background: rgba(13, 59, 102, 0.6);
+    background: var(--scrim);
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
     z-index: var(--z-modal, 2000);
@@ -27,9 +27,8 @@
     transition: opacity 0.2s ease, visibility 0.2s;
 }
 .admin-cc-overlay.is-active { opacity: 1; visibility: visible; }
-html[data-theme="desert"] .admin-cc-overlay { background: rgba(120, 53, 15, 0.55); }
-html[data-theme="oasis"]  .admin-cc-overlay { background: rgba(5, 71, 55, 0.55); }
-html[data-theme="night"]  .admin-cc-overlay { background: rgba(2, 8, 18, 0.7); }
+/* La teinte du scrim suit le thème automatiquement via le token --scrim
+   (défini par thème dans style/tokens.css). Plus besoin d'override par thème. */
 
 .admin-cc-modal {
     display: grid;
@@ -264,7 +263,7 @@ html[data-theme="night"]  .admin-cc-overlay { background: rgba(2, 8, 18, 0.7); }
 .cc-btn-ghost:hover { border-color: var(--ink-soft); color: var(--ink); }
 
 .cc-cta-count {
-    background: rgba(255, 255, 255, 0.2);
+    background: color-mix(in oklab, var(--cta-fg) 20%, transparent);
     color: inherit;
     padding: 1px 8px;
     border-radius: var(--radius-pill);
@@ -694,134 +693,15 @@ html[data-theme="night"]  .admin-cc-overlay { background: rgba(2, 8, 18, 0.7); }
 }
 
 /* ================================================
-   LEGACY SHELL (avant PR 3) — gardé temporairement
-   pour les écrans pas encore migrés. À supprimer en PR 9.
+   LOADING STATE — affiché dans le panel pendant que prepareDiffData
+   calcule le diff (entre l'ouverture du modal et le 1er render renderTab).
    ================================================ */
-
-/* RESET & CONTAINER (legacy) */
-.admin-cc-mode {
-    padding: 0 !important;
-    border-radius: 32px !important;
-    overflow: hidden !important;
-    border: 1px solid var(--line) !important;
-    box-shadow: var(--shadow-modal) !important;
-    background: var(--surface);
-    width: min(1200px, 95vw) !important;
-    max-width: none !important;
-    height: 94vh !important;
-    max-height: 960px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    position: relative !important;
-}
-.admin-cc-mode .custom-modal-message {
-    flex: 1 !important; display: flex !important; flex-direction: column !important;
-    margin: 0 !important; padding: 0 !important; height: 100% !important; width: 100% !important; overflow: hidden !important;
-}
-.admin-cc-container { display: flex; flex-direction: column; height: 100%; width: 100%; font-family: 'Inter', system-ui, sans-serif; color: var(--ink); overflow: hidden; white-space: normal; }
-
-.admin-cc-header { background: var(--surface); padding: 16px 28px 0; border-bottom: 1px solid var(--line); flex-shrink: 0; }
-.header-top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 14px; }
-.header-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; }
-.brand-castle { font-size: 1.3rem; }
-.brand-subtitle { font-weight: 400; opacity: 0.4; margin-left: 5px; }
-.header-user { display: flex; align-items: center; gap: 12px; background: var(--surface-muted); padding: 5px 14px; border-radius: 50px; border: 1px solid var(--line); }
-.header-greeting { font-size: 0.85rem; }
-.avatar-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--cta-bg); display: flex; align-items: center; justify-content: center; color: var(--cta-fg); font-weight: bold; font-size: 0.75rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
-
-.admin-cc-tabs { display: flex; gap: 4px; }
-.admin-cc-tab { padding: 8px 16px; border-radius: 10px 10px 0 0; font-size: 0.82rem; font-weight: 700; cursor: pointer; color: var(--ink-soft); transition: 0.2s; display: flex; align-items: center; gap: 7px; border: 1px solid transparent; border-bottom: none; }
-.admin-cc-tab:hover { background: var(--surface-muted); color: var(--ink); }
-.admin-cc-tab.active { background: var(--surface); color: var(--hw-amber); border-color: var(--line); }
-.admin-cc-tab.cc-tab-hidden { display: none; }
-
-/* B2 — Sub-router de l'onglet Modifications (Lieux / Photos / Circuits) */
-.cc-changes-subnav { display: flex; gap: 6px; margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
-.cc-changes-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px; background: var(--surface-muted); border: 1px solid var(--line);
-    border-radius: 999px; font-size: 0.85rem; font-weight: 600; color: var(--ink-soft);
-    cursor: pointer; transition: all 0.15s;
-}
-.cc-changes-pill:hover { background: var(--surface); color: var(--ink); }
-.cc-changes-pill.is-active { background: var(--hw-amber-soft); border-color: var(--hw-amber); color: var(--hw-amber); }
-.cc-changes-pill-count {
-    display: inline-block; min-width: 20px; padding: 1px 7px; border-radius: 10px;
-    background: var(--surface); font-size: 0.75rem; font-weight: 700;
-}
-.cc-changes-pill.is-active .cc-changes-pill-count { background: var(--surface); color: var(--hw-amber); }
-
-.admin-cc-scroll-area { flex: 1; overflow-y: auto; padding: 20px 28px; }
-
-.dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
-.stat-card {
-    background: var(--surface); padding: 18px 12px; border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid transparent;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    cursor: pointer; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-}
-.stat-card:hover {
-    border-color: var(--hw-amber);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-}
-.stat-icon-box { width: 42px; height: 42px; border-radius: 12px; background: var(--hw-amber-soft); color: var(--hw-amber); display: flex; align-items: center; justify-content: center; }
-.stat-val { font-size: 1.8rem; font-weight: 800; line-height: 1; color: var(--ink); }
-.stat-lab { font-size: 0.72rem; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; text-align: center; }
-
-.admin-cc-footer { padding: 14px 28px; background: var(--surface); border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0; }
-#btn-cc-publish { background: var(--cta-bg); color: var(--cta-fg); border: none; padding: 14px 30px; border-radius: 50px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.25); transition: all 0.2s; }
-#btn-cc-publish:hover { transform: translateY(-2px); filter: brightness(1.1); }
-#btn-cc-publish:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
-/* .custom-modal-btn.secondary legacy supprimé — N12 rapport v3, migré vers .btn-ghost. */
-
-/* DIFF LIST */
-.diff-list-container { display: flex; flex-direction: column; gap: 10px; }
-.diff-group-title { font-size: 1rem; font-weight: 800; margin-top: 30px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: var(--ink); }
-.diff-count-badge { background: var(--surface-muted); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; }
-.diff-list-item { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px; display: flex; flex-direction: column; gap: 15px; transition: all 0.2s; }
-.diff-list-item:hover { border-color: var(--hw-amber); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.diff-summary-row { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-.diff-info { display: flex; align-items: center; gap: 15px; }
-.diff-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--surface-muted); color: var(--ink-soft); }
-.diff-text h4 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--ink); }
-.diff-text p { margin: 4px 0 0 0; font-size: 0.85rem; color: var(--ink-soft); opacity: 0.7; }
-.diff-circuit-id { font-size: 0.7rem; color: var(--ink-soft); font-family: monospace; margin-top: 2px; }
-.diff-toggle-btn { background: transparent; border: none; cursor: pointer; color: var(--ink-soft); transition: 0.2s; }
-.diff-toggle-btn:hover { color: var(--ink); }
-.diff-details { display: none; padding-top: 15px; border-top: 1px solid var(--line); margin-top: 5px; }
-.diff-details.open { display: block; animation: slideDown 0.2s ease-out; }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-.diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; margin-bottom: 10px; }
-.box { padding: 12px; border-radius: 8px; font-size: 0.85rem; font-family: monospace; word-break: break-all; position: relative; }
-.box-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 5px; opacity: 0.6; }
-.box.old { background: var(--danger-soft); color: var(--danger-fg); border: 1px solid color-mix(in oklab, var(--danger-fg) 10%, transparent); }
-.box.new { background: var(--ok-soft); color: var(--ok-fg); border: 1px solid color-mix(in oklab, var(--ok-fg) 10%, transparent); }
-.edit-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
-.edit-input { flex: 1; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 0.9rem; }
-.edit-input:focus { outline: 2px solid var(--hw-amber); border-color: transparent; }
-.edit-input:disabled { background: var(--surface-muted); color: var(--ink-soft); cursor: not-allowed; }
-.diff-actions-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-.btn-diff-action { padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border: none; display: flex; align-items: center; gap: 6px; }
-.btn-diff-action.refuse { background: var(--surface); border: 1px solid var(--line); color: var(--ink-soft); }
-.btn-diff-action.refuse:hover { background: var(--danger-soft); color: var(--danger-fg); border-color: color-mix(in oklab, var(--danger-fg) 25%, transparent); }
-.btn-diff-action.validate { background: var(--cta-bg); color: var(--cta-fg); }
-.btn-diff-action.validate:hover { filter: brightness(1.1); transform: translateY(-1px); }
-.empty-state { text-align: center; padding: 24px 0; opacity: 0.6; }
-.settings-input { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 12px; font-family: monospace; font-size: 1rem; margin-top: 10px; }
-
-/* Loading state */
 .cc-loading-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: var(--ink-soft); }
 .cc-loading-icon { width: 48px; height: 48px; margin-bottom: 15px; color: var(--hw-amber); }
 .cc-loading-label { font-weight: 500; }
 
-/* Warning banner */
-.cc-warning-banner { background: var(--danger-soft); border: 1px solid color-mix(in oklab, var(--danger-fg) 25%, transparent); color: var(--danger-fg); padding: 15px; border-radius: 12px; margin-top: 20px; display: flex; align-items: center; gap: 15px; }
-.cc-warning-banner .lucide { flex-shrink: 0; }
-.cc-warning-detail { font-size: 0.85rem; opacity: 0.8; margin-top: 2px; }
-
-/* Circuits section separator */
-.diff-section-sep { margin: 30px 0 10px 0; padding-bottom: 10px; border-bottom: 1px solid var(--line); font-weight: 800; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; }
+/* — settings-input : champ texte du panneau Upload Circuit (Nom du circuit). */
+.settings-input { width: 100%; padding: 15px; border: 1px solid var(--line); border-radius: 12px; font-family: monospace; font-size: 1rem; margin-top: 10px; }
 
 /* ================================================
    SHARED COMPONENTS (PR 2 — refonte CC Admin)
@@ -908,74 +788,21 @@ html[data-theme="night"]  .admin-cc-overlay { background: rgba(2, 8, 18, 0.7); }
 .cc-banner--info   { background: var(--info-soft);   color: var(--info-fg); }
 .cc-banner--ok     { background: var(--ok-soft);     color: var(--ok-fg); }
 
-/* ================================================ */
+/* ================================================
+   MISC — classes encore référencées par renderUploadCircuitPanel
+   et par la topbar HW (cc-badge sur le bouton CC). À regrouper si on
+   refactore l'upload circuit dans un futur chantier.
+   ================================================ */
 
-/* Settings tab */
-.cc-settings-layout { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-.cc-card-title-flex { margin-top: 0; display: flex; align-items: center; gap: 10px; }
-.cc-card-title-flex:first-child { margin-top: 0; }
+/* Couleur d'icône amber (utilisée dans le panneau Upload Circuit) */
 .icon-amber { color: var(--hw-amber); }
-.cc-token-persist-label { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.85rem; color: var(--ink); cursor: pointer; }
-.cc-token-persist-hint { color: var(--ink-soft); font-size: 0.75rem; }
+
+/* Bouton "Sauvegarder" du panneau Upload Circuit (form full-width) */
 .cc-save-btn { margin-top: 12px; width: 100%; padding: 12px; background: var(--cta-bg); color: var(--cta-fg); border: none; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.15s; }
 .cc-save-btn:hover:not(:disabled) { opacity: 0.88; }
 .cc-save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-/* Status Row — Dashboard CC */
-.cc-status-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 10px 0 8px; }
-.cc-status-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
-.cc-status-badge.synced { background: var(--ok-soft); color: var(--ok-fg); }
-.cc-status-badge.pending { background: var(--hw-amber-soft); color: var(--hw-amber); }
-.cc-status-badge.no-token { background: var(--danger-soft); color: var(--danger-fg); }
-/* Bandeau cross-app warning (HW Admin CC) — couleurs via tokens hw-amber
-   pour suivre le thème automatiquement (PR 3g-2). */
-.cc-cross-app-warn {
-    display: flex; align-items: center; gap: 8px;
-    background: var(--hw-amber-soft); color: var(--hw-amber);
-    padding: 8px 12px; border-radius: 6px;
-    font-size: 0.85rem; margin: 8px 0;
-    border: 1px solid var(--hw-amber);
-}
-.cc-cross-app-warn i { width: 16px; height: 16px; flex-shrink: 0; }
-.cc-cross-app-warn .cc-inline-link { color: var(--hw-amber); }
-.cc-inline-link { background: none; border: none; padding: 0; cursor: pointer; font: inherit; color: inherit; font-weight: 700; text-decoration: underline; }
-
-/* Quick Actions — Dashboard CC */
-.cc-quick-actions { margin-top: 0; margin-bottom: 8px; }
-.cc-quick-actions-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); display: flex; align-items: center; gap: 7px; margin-bottom: 12px; }
-.cc-quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.cc-quick-btn { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: all 0.18s; color: var(--ink); }
-.cc-quick-btn:hover { border-color: var(--hw-amber); box-shadow: 0 4px 14px rgba(217,119,6,0.12); transform: translateY(-2px); }
-.cc-quick-btn .lucide { color: var(--hw-amber); width: 24px; height: 24px; }
-.cc-quick-btn span { font-weight: 700; font-size: 0.88rem; }
-.cc-quick-btn small { font-size: 0.75rem; color: var(--ink-soft); font-weight: 400; }
-
-/* Info strip — Dashboard CC (remplace cc-sysinfo) */
-.cc-info-strip {
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    margin-top: 12px; padding: 9px 14px;
-    background: var(--surface-muted); border: 1px solid var(--line); border-radius: 10px;
-    font-size: 0.78rem;
-}
-.cc-info-strip-dot { color: var(--ink-soft); }
-.cc-info-strip-repo {
-    display: flex; align-items: center; gap: 5px;
-    color: var(--ink); text-decoration: none; font-weight: 600;
-    transition: color 0.15s;
-}
-.cc-info-strip-repo:hover { color: var(--hw-amber); }
-.cc-info-strip-token {
-    display: flex; align-items: center; gap: 5px; font-weight: 600;
-}
-.cc-info-strip-token.cc-token-ok  { color: var(--ok-fg); }
-.cc-info-strip-token.cc-token-missing { color: var(--danger-fg); }
-button.cc-info-strip-token.cc-token-clickable {
-    background: none; border: none; padding: 4px 8px; border-radius: 6px;
-    cursor: pointer; font: inherit; transition: background 0.15s;
-}
-button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-muted); }
-.cc-repo-link { text-decoration: none; color: var(--ink); transition: color 0.15s; }
-.cc-repo-link:hover { color: var(--hw-amber); }
+/* Note : .cc-repo-link est défini dans la section SHELL (~ligne 155). */
 
 /* Upload Circuit Sub-panel */
 .cc-subpanel-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
@@ -1003,120 +830,9 @@ button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-
 .cc-upload-status.error   { background: var(--danger-soft); color: var(--danger-fg); }
 .cc-subpanel-footer { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
 
-/* Diff details */
-.cc-deletion-warning { padding: 15px; background: var(--danger-soft); color: var(--danger-fg); border-radius: 8px; font-size: 0.9rem; }
-.cc-maps-link { color: var(--brand-2); font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 5px; text-decoration: none; }
-.cc-coord-label { font-size: 0.8rem; font-weight: bold; width: 60px; }
-.cc-lock-note { font-size: 0.75rem; color: var(--danger); margin-top: -5px; margin-bottom: 10px; }
-.cc-lock-note .lucide { display: inline; vertical-align: middle; }
-.diff-change-block { margin-top: 15px; }
-.diff-change-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
-.diff-change-key { font-size: 0.75rem; font-weight: 800; color: var(--ink-soft); opacity: 0.6; }
-
-/* Badge counter on CC button */
+/* — Badge compteur sur le bouton "Centre de Contrôle" de la topbar HW
+   (rendu hors du shell CC, dans admin-control-center.js:66) — */
 .cc-badge { background: var(--cta-bg); color: var(--cta-fg); padding: 2px 7px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px; }
-
-/* ================================================
-   CC ONGLET MODIFICATIONS — COMPACT DIFF DESIGN
-   ================================================ */
-
-.cc-diff-container { display: flex; flex-direction: column; gap: 0; }
-
-.cc-diff-group-title {
-    font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--ink-soft); margin: 20px 0 8px 0;
-    display: flex; align-items: center; gap: 8px;
-}
-.cc-diff-group-title:first-child { margin-top: 0; }
-
-.cc-diff-badge {
-    padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 700;
-}
-.cc-badge-new  { background: var(--ok-soft); color: var(--ok-fg); }
-.cc-badge-mod  { background: var(--hw-amber-soft); color: var(--hw-amber); }
-.cc-badge-del  { background: var(--danger-soft); color: var(--danger-fg); }
-.cc-badge-mig  { background: var(--info-soft); color: var(--info-fg); }
-
-.cc-change-item {
-    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-    margin-bottom: 8px; overflow: hidden;
-    transition: border-color 0.15s;
-}
-.cc-change-item:hover { border-color: var(--hw-amber); }
-
-.cc-change-item-header {
-    display: flex; align-items: center; gap: 8px;
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--line);
-}
-
-.cc-change-name {
-    flex: 1; font-weight: 700; font-size: 0.9rem; color: var(--ink);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-
-.cc-btn-edit {
-    display: flex; align-items: center; gap: 5px;
-    padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600;
-    background: var(--surface); border: 1px solid var(--line); color: var(--brand-2);
-    cursor: pointer; white-space: nowrap; flex-shrink: 0;
-    transition: background 0.15s, border-color 0.15s;
-}
-.cc-btn-edit:hover { background: var(--info-soft); border-color: color-mix(in oklab, var(--brand-2) 30%, transparent); }
-
-.cc-btn-ignore {
-    display: flex; align-items: center; gap: 5px;
-    padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 600;
-    background: var(--surface); border: 1px solid var(--line); color: var(--ink-soft);
-    cursor: pointer; white-space: nowrap; flex-shrink: 0;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-.cc-btn-ignore:hover { background: var(--danger-soft); color: var(--danger-fg); border-color: color-mix(in oklab, var(--danger-fg) 25%, transparent); }
-
-.cc-change-diffs {
-    display: flex; flex-direction: column; gap: 2px;
-    padding: 8px 12px;
-    background: var(--surface-muted);
-}
-
-.cc-change-detail {
-    display: flex; align-items: baseline; gap: 8px;
-    font-size: 0.8rem; line-height: 1.5; flex-wrap: wrap;
-}
-
-.cc-change-key {
-    background: var(--surface-muted); color: var(--ink-soft); font-weight: 700;
-    font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em;
-    padding: 1px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0;
-}
-
-.cc-old-val {
-    color: var(--ink-soft); text-decoration: line-through;
-    max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-
-.cc-change-arrow { color: var(--ink-soft); font-size: 0.75rem; flex-shrink: 0; }
-
-.cc-new-val {
-    color: var(--ok-fg); font-weight: 600;
-    max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-
-.cc-del-warning {
-    color: var(--danger-fg); font-weight: 600; font-size: 0.8rem;
-    display: flex; align-items: center; gap: 6px;
-}
-
-.cc-new-hint {
-    color: var(--ink-soft); font-style: italic;
-    display: flex; align-items: center; gap: 6px;
-}
-
-.cc-diff-section-sep {
-    margin: 20px 0 8px 0; padding-bottom: 8px; border-bottom: 1px solid var(--line);
-    font-weight: 800; color: var(--ink-soft); text-transform: uppercase;
-    letter-spacing: 0.08em; font-size: 0.7rem;
-}
 
 /* ─── Chantier 2 : Grille photos pending avec cases à cocher ─── */
 /* Affichée dans chaque item POI de l'onglet Modifications qui a des photos
@@ -1185,8 +901,10 @@ button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-
     cursor: pointer;
     z-index: 2;
     accent-color: var(--ok-fg);
-    /* Fond blanc translucide pour contraster sur image claire comme sombre */
-    background: rgba(255, 255, 255, 0.9);
+    /* Fond blanc translucide INTENTIONNELLEMENT non-thématisé : overlay sur
+       les photos uploadées par l'admin (couleurs imprévisibles), neutre
+       garantit le contraste à la fois sur clair et sur sombre. */
+    background: color-mix(in oklab, white 90%, transparent);
     border-radius: 3px;
 }
 
@@ -1194,7 +912,9 @@ button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-
 .cc-photo-cell .cc-photo-badge-local {
     position: absolute;
     bottom: 4px; left: 4px; right: 4px;
-    background: rgba(17, 24, 39, 0.85); /* slate-900 translucide */
+    /* Fond sombre translucide non-thématisé (idem checkbox ci-dessus :
+       overlay sur photos, neutre pour le contraste). */
+    background: color-mix(in oklab, black 85%, transparent);
     color: var(--hw-amber);
     font-size: 0.65rem; font-weight: 700;
     text-align: center;
@@ -1269,7 +989,7 @@ button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-
     position: absolute; top: 4px; right: 4px;
     width: 22px; height: 22px;
     display: flex; align-items: center; justify-content: center;
-    background: rgba(220, 38, 38, 0.92); /* red-600 translucide */
+    background: color-mix(in oklab, var(--danger) 92%, transparent);
     border: none; border-radius: 4px;
     color: white; cursor: pointer; z-index: 3;
     opacity: 0; transition: opacity 0.15s;
@@ -1279,44 +999,10 @@ button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-
 .cc-photo-remove-btn:hover { background: var(--danger-fg); /* red-700 plein */ }
 .cc-photo-remove-btn i[data-lucide] { width: 12px; height: 12px; }
 
-/* ================================================
-   ADMIN MAINTENANCE (admin-maintenance.js)
-   ================================================ */
-
-.maint-loading { text-align: center; padding: 40px; color: var(--ink-soft); }
-.maint-container { padding: 20px; max-width: 800px; margin: 0 auto; }
-.maint-header-row { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-.maint-title { margin: 0; display: flex; align-items: center; gap: 8px; }
-.maint-warning-banner { background: var(--danger-soft); border: 1px solid color-mix(in oklab, var(--danger-fg) 25%, transparent); color: var(--danger-fg); padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
-
-.maint-section { margin-bottom: 30px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
-.maint-section-header { background: var(--surface-muted); padding: 15px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
-.maint-section-title { margin: 0; color: var(--ink); display: flex; align-items: center; gap: 8px; }
-.maint-section-body { background: var(--surface); max-height: 250px; overflow-y: auto; }
-
-.maint-item { padding: 12px 15px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
-.maint-item-faded { opacity: 0.6; }
-.maint-item-name { font-weight: 600; color: var(--ink); }
-.maint-item-meta { font-size: 0.75rem; color: var(--ink-soft); }
-.maint-item-actions { display: flex; gap: 8px; }
-.maint-btn-restore { background: var(--ok-soft); color: var(--ok-fg); border: 1px solid color-mix(in oklab, var(--ok-fg) 30%, transparent); padding: 6px; border-radius: 6px; cursor: pointer; }
-.maint-btn-danger  { background: var(--danger-soft); color: var(--danger-fg); border: 1px solid color-mix(in oklab, var(--danger-fg) 25%, transparent); padding: 6px; border-radius: 6px; cursor: pointer; flex-shrink: 0; }
-
-.maint-all-section { margin-top: 30px; border-top: 1px solid var(--line); padding-top: 20px; }
-.maint-all-title { margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-.maint-all-body { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; max-height: 400px; overflow-y: auto; }
-
-.maint-circuit-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid var(--line); }
-.maint-circuit-info { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-.maint-circuit-name { font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.maint-circuit-meta { font-size: 0.75rem; color: var(--ink-soft); font-family: monospace; display: flex; align-items: center; gap: 6px; }
-.maint-circuit-dist { opacity: 0.5; }
-
-.maint-welcome { padding: 40px; text-align: center; }
-.maint-welcome-icon { margin-bottom: 20px; font-size: 3rem; color: var(--ink-soft); opacity: 0.2; }
-.maint-welcome-title { margin-bottom: 10px; }
-.maint-welcome-desc { color: var(--ink-soft); max-width: 500px; margin: 0 auto 30px auto; }
-.maint-start-btn { padding: 12px 24px; font-size: 1rem; }
+/* — ADMIN MAINTENANCE legacy supprimé : admin-maintenance.js a été refactoré
+     en PR #502 pour utiliser le pattern partagé `.cc-card.cc-card--row` au lieu
+     du chrome dédié `.maint-section*` / `.maint-item*` / etc. Aucune classe
+     `.maint-*` n'est plus rendue par le code. — */
 
 /* ================================================
    ADMIN.JS — GitHub upload / delete modals
@@ -1343,24 +1029,11 @@ button.cc-info-strip-token.cc-token-clickable:hover { background: var(--surface-
 .admin-file-warning-body .admin-upload-loading { text-align: center; padding: 20px; }
 .admin-upload-loading .lucide { width: 32px; height: 32px; }
 
-/* ================================================
-   ADMIN-FUSION-STANDALONE.JS
-   ================================================ */
-
-.fusion-standalone-poi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-.fusion-standalone-label { font-size: 11px; color: var(--ink-light); font-weight: 600; }
-.fusion-standalone-badge-key { min-width: 60px; text-align: center; }
-.fusion-standalone-del-warning { background: var(--danger-soft); color: var(--danger-fg); }
-.fusion-standalone-error-icon { width: 48px; height: 48px; color: var(--danger); }
-.poi-name-row { display: flex; justify-content: space-between; align-items: center; }
-.icon-xs    { width: 12px; height: 12px; }
-.icon-sm-14 { width: 14px; height: 14px; }
-.icon-24    { width: 24px; height: 24px; }
-
-/* Note : l'override `html[data-theme="night"] .admin-cc-mode { color: var(--ink) }`
-   ajouté en PR #412 a été retiré (Spec #6, 2026-04-30). Devenu inutile depuis que
-   le CC suit le thème global — le texte var(--ink) est désormais cohérent par
-   construction, sans force. */
+/* — Helper d'icône partagé (utilisé par mobile-circuits.js entre autres).
+     Les autres tailles `.icon-xs`, `.icon-sm-14` et les styles
+     `.fusion-standalone-*`, `.poi-name-row` ont été retirés (admin-fusion-standalone.js
+     n'existe plus, helpers de taille remplacés par `width=` directement sur l'icône). */
+.icon-24 { width: 24px; height: 24px; }
 
 /* ================================================
    MOBILE (PR 8) — plein écran, sidebar → tabs horizontales en haut,
