@@ -103,6 +103,12 @@
                     <button class="tools-menu-item" id="btn-admin-export-master">
                         <i data-lucide="database"></i> Export Master GeoJSON
                     </button>
+                    <!-- Import GeoJSON local (déplacé du menu Outils desktop +
+                         retiré du menu mobile — usage admin/dev uniquement
+                         depuis l'arrivée du sélecteur destination). -->
+                    <button class="tools-menu-item" id="btn-open-geojson">
+                        <i data-lucide="folder-open"></i> Importer Carte (GeoJSON)
+                    </button>
                 </div>
             </div>
 
@@ -112,9 +118,6 @@
                 <div class="tools-menu" id="tools-menu-content">
 
                     <div class="tools-menu-section-title">Navigation</div>
-                    <button class="tools-menu-item" id="btn-open-geojson">
-                        <i data-lucide="folder-open"></i> Ouvrir Carte
-                    </button>
                     <button class="tools-menu-item" id="btn-mon-espace">
                         <i data-lucide="luggage"></i> Mon Espace
                     </button>
@@ -133,16 +136,11 @@
                         <i data-lucide="qr-code"></i> Partager Progression
                     </button>
 
-                    <div class="tools-menu-section-title">Gestion</div>
-                    <button class="tools-menu-item" id="btn-open-backup-modal" disabled>
-                        <i data-lucide="save"></i> Sauvegarder...
-                    </button>
-                    <button class="tools-menu-item" id="btn-restore-data" disabled>
-                        <i data-lucide="folder-down"></i> Restaurer
-                    </button>
-                    <button class="tools-menu-item" id="btn-open-trash">
-                        <i data-lucide="trash"></i> Corbeille
-                    </button>
+                    <!-- Section "Gestion" supprimée (PR PC-1, 10/05/2026) :
+                         Sauvegarder + Restaurer + Corbeille font doublon avec
+                         Mon Espace > Mes Données et Mon Espace > Corbeille.
+                         Cohérence cross-plateforme avec le menu mobile (option A
+                         déjà appliquée en PR #511). -->
 
                     <div class="tools-menu-section-title">Préférences</div>
                     <button class="tools-menu-item" id="btn-theme-selector">

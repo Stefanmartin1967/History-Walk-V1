@@ -111,19 +111,20 @@ afterEach(() => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 describe('renderMobileMenu — render structure', () => {
-    it('rend les 7 boutons standards (non-admin) — option A : Mon Espace remplace Sauvegarder/Restaurer', () => {
+    it('rend les 6 boutons standards (non-admin) — Mon Espace point d\'entrée unique, GeoJSON déplacé en GOD MODE', () => {
         renderMobileMenu();
         expect(document.getElementById('mob-action-stats')).not.toBeNull();
         expect(document.getElementById('mob-action-mon-espace')).not.toBeNull();
         expect(document.getElementById('mob-action-scan')).not.toBeNull();
-        expect(document.getElementById('mob-action-geojson')).not.toBeNull();
         expect(document.getElementById('mob-action-reset')).not.toBeNull();
         expect(document.getElementById('mob-action-theme')).not.toBeNull();
         expect(document.getElementById('mob-action-bmc')).not.toBeNull();
-        // Sauvegarder/Restaurer retirés du menu mobile principal — désormais accessibles
-        // via Mon Espace > onglet Données (cf. handoff Claude Design 10/05/2026, §2.4 option A).
+        // Sauvegarder/Restaurer retirés du menu mobile principal (option A, PR #511).
         expect(document.getElementById('mob-action-save')).toBeNull();
         expect(document.getElementById('mob-action-restore')).toBeNull();
+        // Charger Destination (GeoJSON) retiré du menu mobile (PR PC-1) :
+        // déplacé dans le menu GOD MODE desktop (admin-only, usage dev).
+        expect(document.getElementById('mob-action-geojson')).toBeNull();
     });
 
     it('section admin absente si !state.isAdmin', () => {
@@ -173,12 +174,6 @@ describe('renderMobileMenu — listeners boutons standards', () => {
         renderMobileMenu();
         document.getElementById('mob-action-mon-espace').click();
         expect(openUserSpace).toHaveBeenCalled();
-    });
-
-    it('click "Charger Destination" → DOM.geojsonLoader.click()', () => {
-        renderMobileMenu();
-        document.getElementById('mob-action-geojson').click();
-        expect(DOM.geojsonLoader.click).toHaveBeenCalled();
     });
 
     it('click "Vider données" confirmé → deleteDatabase appelé (reload ignoré : jsdom)', async () => {

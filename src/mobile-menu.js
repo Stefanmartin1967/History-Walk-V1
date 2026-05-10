@@ -43,10 +43,6 @@ export function renderMobileMenu() {
                 <span>Scanner un circuit</span>
             </button>
             <div class="mobile-divider"></div>
-            <button class="mobile-list-item" id="mob-action-geojson">
-                <i data-lucide="map"></i>
-                <span>Charger Destination (GeoJSON)</span>
-            </button>
             <button class="mobile-list-item text-danger" id="mob-action-reset">
                 <i data-lucide="trash-2"></i>
                 <span>Vider les données locales</span>
@@ -109,7 +105,6 @@ export function renderMobileMenu() {
     document.getElementById('mob-action-stats').addEventListener('click', () => showStatisticsModal());
     document.getElementById('mob-action-mon-espace').addEventListener('click', () => openUserSpace());
     document.getElementById('mob-action-scan').addEventListener('click', () => startGenericScanner());
-    document.getElementById('mob-action-geojson').addEventListener('click', () => DOM.geojsonLoader.click());
     document.getElementById('mob-action-reset').addEventListener('click', async () => {
         if (await showConfirm(
             "Danger Zone",
