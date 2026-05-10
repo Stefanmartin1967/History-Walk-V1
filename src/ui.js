@@ -22,7 +22,9 @@ import { openPhotoGrid } from './ui-photo-grid.js';
 import { initCircuitListUI, renderExplorerList } from './ui-circuit-list.js';
 import { showConfirm, showAlert } from './modal.js';
 import { RichEditor } from './richEditor.js';
-import { openTrashModal, requestSoftDelete } from './ui-modals.js';
+// (Imports openTrashModal + requestSoftDelete retirés 10/05/2026, PR cleanup
+// post-#514 : aucun usage actif dans ui.js après retrait du listener btnOpenTrash.
+// requestSoftDelete reste utilisée dans ui-modals.js uniquement.)
 import { switchSidebarTab } from './ui-sidebar.js'; // Imported for use inside ui.js functions
 import { handleExportWithContribution } from './fileManager.js';
 import { showStatisticsModal } from './statistics.js';
@@ -43,17 +45,17 @@ export function initializeDomReferences() {
         'details-panel', 'circuit-panel', 'circuit-steps-list', 'circuit-title-text', 'circuit-title-input', 
         'circuit-description', 'edit-circuit-title-button', 'circuit-poi-count', 'circuit-distance',
         'gpx-importer', 'btn-export-gpx',
-        'btn-import-gpx', 'loader-overlay', 'btn-save-data', 'btn-restore-data', 'restore-loader', 'btn-open-geojson', 
-        'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title', 
+        'btn-import-gpx', 'loader-overlay', 'btn-save-data', 'restore-loader', 'btn-open-geojson',
+        'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title',
         'editor-cancel-btn', 'editor-save-btn', 'editor-textarea', 'destination-loader',
         // photo-viewer/viewer-* supprimés : migration V2 vers ui-photo-viewer.openPhotoViewer.
-        // backup-modal et ses 4 sous-IDs supprimés (migration V2, cf. backup-modal.js).
-        // btn-open-backup-modal seul reste car référencé pour ouvrir la modale dynamique.
-        'btn-open-backup-modal',
+        // backup-modal supprimé : migration V2 (cf. backup-modal.js construit à la volée).
+        // btn-open-backup-modal / btn-restore-data / btn-open-trash retirés du DOM en
+        // PR #514 (cleanup menu Outils). Sauvegarder/Restaurer/Corbeille = via Mon Espace.
         'btn-loop-circuit',
         'btn-clear-circuit', 'close-circuit-panel-btn',
         'btn-legend',
-        'btn-bmc', 'btn-tools-menu', 'btn-open-trash', 'btn-bmc-topbar', 'btn-mon-espace'
+        'btn-bmc', 'btn-tools-menu', 'btn-bmc-topbar', 'btn-mon-espace'
     ];
     
     // Récupération sécurisée des éléments
@@ -152,18 +154,11 @@ export function initializeDomReferences() {
         });
     }
 
-    // --- LOGIQUE SAUVEGARDE UNIFIÉE ---
-    // Migration V2 : backup-modal n'est plus rendue en HTML inline mais
-    // construite à la volée via openHwModal (cf. src/backup-modal.js).
-    // Les listeners sur btn-backup-full/lite/cancel sont attachés
-    // dynamiquement au moment de l'ouverture.
-    if (DOM.btnOpenBackupModal) {
-        DOM.btnOpenBackupModal.addEventListener('click', () => {
-            import('./backup-modal.js').then(({ showBackupModal }) => {
-                showBackupModal();
-            });
-        });
-    }
+    // (Listener btnOpenBackupModal retiré 10/05/2026, PR cleanup post-#514 :
+    // le bouton Sauvegarder n'existe plus dans le menu Outils. Sauvegarde
+    // accessible uniquement via Mon Espace > Mes Données. La fonction
+    // showBackupModal() reste exportée de backup-modal.js si un autre point
+    // d'entrée la rappelle un jour.)
 
     if (DOM.btnMonEspace) {
         DOM.btnMonEspace.addEventListener('click', () => {
@@ -172,12 +167,9 @@ export function initializeDomReferences() {
         });
     }
 
-    if (DOM.btnOpenTrash) {
-        DOM.btnOpenTrash.addEventListener('click', () => {
-            openTrashModal();
-            closeAllDropdowns();
-        });
-    }
+    // (Listener btnOpenTrash retiré 10/05/2026, PR cleanup post-#514 :
+    // le bouton Corbeille n'existe plus dans le menu Outils. Corbeille
+    // accessible uniquement via Mon Espace > Corbeille.)
 
     if (DOM.btnBmc) {
         DOM.btnBmc.addEventListener('click', () => {

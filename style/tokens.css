@@ -54,6 +54,17 @@
   --z-topbar:   1005;
   --z-modal:    2000;
   --z-toast:    2100;
+
+  /* — "On brand" : couleurs translucides pour les éléments interactifs
+     posés sur le fond brand foncé (--bg) de la topbar. Identiques sur
+     les 4 thèmes car --bg est foncé partout (bleu nuit, brun, vert
+     profond, noir). Effet "verre dépoli" cohérent cross-thème.
+     Utilisés par style/topbar-v2.css. — */
+  --on-brand-fg:           #FFFFFF;                        /* texte blanc */
+  --on-brand-soft:         rgba(255, 255, 255, 0.06);      /* fond bouton normal */
+  --on-brand-soft-border:  rgba(255, 255, 255, 0.14);      /* bordure bouton normal */
+  --on-brand-strong:       rgba(255, 255, 255, 0.18);      /* fond hover / séparateur */
+  --on-brand-strong-border:rgba(255, 255, 255, 0.35);      /* bordure hover */
 }
 
 /* ============================================================

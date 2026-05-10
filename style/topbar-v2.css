@@ -13,9 +13,9 @@
     height: 46px;
     padding: 0 14px 0 12px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    color: #fff;
+    background: var(--on-brand-soft);
+    border: 1px solid var(--on-brand-soft-border);
+    color: var(--on-brand-fg);
     cursor: pointer;
     font-family: inherit;
     transition: background 0.12s, border-color 0.12s;
@@ -23,8 +23,8 @@
 
 .hw-dest-selector:hover,
 .hw-dest-selector.is-open {
-    background: rgba(255, 255, 255, 0.18);
-    border-color: rgba(255, 255, 255, 0.35);
+    background: var(--on-brand-strong);
+    border-color: var(--on-brand-strong-border);
 }
 
 .hw-dest-selector-flag {
@@ -92,7 +92,7 @@
 .hw-topbar-separator {
     width: 1px;
     height: 26px;
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--on-brand-strong);
     flex-shrink: 0;
 }
 
@@ -106,7 +106,7 @@
     color: var(--ink);
     border-radius: 14px;
     border: 1px solid var(--line);
-    box-shadow: 0 18px 40px rgba(2, 12, 27, 0.22), 0 4px 12px rgba(2, 12, 27, 0.10);
+    box-shadow: var(--shadow-modal);
     overflow: hidden;
     z-index: 1010;
     font-family: system-ui, -apple-system, sans-serif;

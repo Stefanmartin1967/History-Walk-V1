@@ -543,11 +543,10 @@ export function setupFileListeners() {
         DOM.restoreLoader.removeEventListener('change', handleRestoreFile);
         DOM.restoreLoader.addEventListener('change', handleRestoreFile);
     }
-    if (DOM.btnRestoreData) {
-        DOM.btnRestoreData.addEventListener('click', () => {
-            if (!DOM.btnRestoreData.disabled) import('./ui-modals.js').then(m => m.openRestoreModal());
-        });
-    }
+    // (Listener btnRestoreData retiré 10/05/2026, PR cleanup post-#514 : le
+    // bouton Restaurer n'existe plus dans le menu Outils. Restauration via
+    // Mon Espace > Mes Données. La fonction openRestoreModal() reste exportée
+    // de ui-modals.js si un autre point d'entrée la rappelle un jour.)
     if (DOM.geojsonLoader) {
         DOM.geojsonLoader.removeEventListener('change', handleFileLoad);
         DOM.geojsonLoader.addEventListener('change', handleFileLoad);
