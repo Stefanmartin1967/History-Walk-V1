@@ -85,8 +85,29 @@
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
 
+            <!-- Cluster "découverte/préférences" : Légende, Visite guidée, Thème -->
             <button class="btn" id="btn-legend" title="Informations" aria-label="Informations"><i
                     data-lucide="info"></i></button>
+
+            <button class="btn" id="btn-tour" title="Visite guidée"
+                    aria-label="Visite guidée"><i data-lucide="compass"></i></button>
+
+            <!-- Bouton Thème : ouvre un dropdown avec preview des 4 thèmes
+                 (cf. topbar-v2.js setupThemeDropdown). Le dropdown est rendu
+                 dynamiquement (pas dans le HTML statique). -->
+            <div class="hw-theme-dropdown-container">
+                <button class="btn" type="button" id="btn-theme-topbar"
+                        title="Changer de thème" aria-label="Changer de thème"
+                        aria-haspopup="true" aria-expanded="false"
+                        aria-controls="hw-theme-menu"><i data-lucide="palette"></i></button>
+                <div class="hw-theme-menu" id="hw-theme-menu" role="menu" hidden></div>
+            </div>
+
+            <div class="hw-topbar-separator" aria-hidden="true"></div>
+
+            <!-- Cluster "espace user" : Mon Espace + Outils -->
+            <button class="btn" id="btn-mon-espace-topbar" title="Mon Espace"
+                    aria-label="Mon Espace"><i data-lucide="luggage"></i></button>
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
 
@@ -117,11 +138,6 @@
                         data-lucide="settings"></i><span>Outils</span></button>
                 <div class="tools-menu" id="tools-menu-content">
 
-                    <div class="tools-menu-section-title">Navigation</div>
-                    <button class="tools-menu-item" id="btn-mon-espace">
-                        <i data-lucide="luggage"></i> Mon Espace
-                    </button>
-
                     <div class="tools-menu-section-title">Voyage</div>
                     <button class="tools-menu-item" id="btn-statistics">
                         <i data-lucide="trophy"></i> Mon Carnet de Voyage
@@ -142,9 +158,13 @@
                          Cohérence cross-plateforme avec le menu mobile (option A
                          déjà appliquée en PR #511). -->
 
-                    <div class="tools-menu-section-title">Préférences</div>
-                    <button class="tools-menu-item" id="btn-theme-selector">
-                        <i data-lucide="palette"></i> Thème
+                    <!-- Section "Préférences" supprimée (PR PC-2, 10/05/2026) :
+                         le bouton Thème est désormais en topbar avec dropdown
+                         preview 4 thèmes. Le legacy `btn-theme-selector` survit
+                         caché pour rétrocompatibilité (cf. main.js). -->
+                    <button class="tools-menu-item is-hidden" id="btn-theme-selector"
+                            aria-hidden="true" tabindex="-1">
+                        <i data-lucide="palette"></i> Thème (legacy)
                     </button>
 
                     <div class="tools-menu-section-title">Support</div>

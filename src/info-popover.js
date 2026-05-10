@@ -4,12 +4,12 @@
 //
 // Contenu :
 //   - Légende des polylines de circuits (Vol d'oiseau / Tracé réel / Terminé)
-//   - Bouton "Visite guidée" qui rouvre la modal d'accueil en mode 4 cartes
+//
+// La "Visite guidée" a été extraite en bouton dédié dans la topbar
+// (PR PC-2, 10/05/2026) pour visibilité immédiate aux nouveaux users.
 //
 // Toggle : un clic sur l'icône ouvre, un nouveau clic ferme.
 // Fermeture aussi : clic à l'extérieur, touche Échap.
-
-import { showWelcomeAgain } from './welcome.js';
 
 const POPOVER_ID = 'info-popover';
 
@@ -61,22 +61,12 @@ function openPopover() {
                 </div>
             </div>
         </div>
-
-        <div class="info-popover-divider"></div>
-
-        <button type="button" class="info-popover-btn-tour" id="info-popover-btn-tour">
-            🧭 Visite guidée
-        </button>
     `;
     document.body.appendChild(popover);
 
     positionPopover(popover, anchor);
 
     popover.querySelector('.info-popover-close').addEventListener('click', closePopover);
-    popover.querySelector('#info-popover-btn-tour').addEventListener('click', () => {
-        closePopover();
-        showWelcomeAgain();
-    });
 
     // Fermeture clic extérieur (différé pour éviter de capturer le clic d'ouverture)
     setTimeout(() => {

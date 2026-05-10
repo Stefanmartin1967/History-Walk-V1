@@ -141,35 +141,17 @@ async function initializeApp() {
 
     // Synchronise la meta theme-color (utilisée par la barre d'adresse navigateur,
     // status bar mobile PWA, title bar Windows en mode standalone) avec le thème actif.
-    // Sans ça, la zone hors-app reste bleue même en thèmes desert/oasis/night.
-    const THEME_COLORS = {
-        maritime: '#0D3B66',
-        desert: '#7a5230',
-        oasis: '#065f46',
-        night: '#111827',
-    };
-    function applyThemeColor(theme) {
-        const meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', THEME_COLORS[theme] || THEME_COLORS.maritime);
-    }
-    // Applique au boot pour le theme déjà défini par l'attribut data-theme
-    applyThemeColor(document.documentElement.getAttribute('data-theme') || 'maritime');
+    // Logique extraite dans src/theme.js (refonte topbar PC-2).
+    const { initThemeColorMeta, cycleTheme, setTheme } = await import('./theme.js');
+    initThemeColorMeta();
 
+    // Bouton Thème legacy du menu Outils — conservé caché pour rétrocompatibilité
+    // (sert encore de cible si jamais un appelant externe le déclenche).
+    // Le vrai sélecteur thème vit désormais en topbar (dropdown preview 4 thèmes,
+    // cf. topbar-v2.js setupThemeDropdown).
     const themeSelector = document.getElementById('btn-theme-selector');
     if (themeSelector) {
-        themeSelector.addEventListener('click', () => {
-            const themes = ['maritime', 'desert', 'oasis', 'night'];
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'maritime';
-            const currentIndex = themes.indexOf(currentTheme);
-            const nextIndex = (currentIndex + 1) % themes.length;
-            const nextTheme = themes[nextIndex];
-            document.documentElement.setAttribute('data-theme', nextTheme);
-            saveAppState('currentTheme', nextTheme);
-            // Mirror localStorage pour que theme-bootstrap.js (script blocking
-            // dans <head>) puisse l'appliquer dès le 1er paint au prochain F5.
-            try { localStorage.setItem('hw_theme', nextTheme); } catch (_) {}
-            applyThemeColor(nextTheme);
-        });
+        themeSelector.addEventListener('click', cycleTheme);
     }
 
     try {

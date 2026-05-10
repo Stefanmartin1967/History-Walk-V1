@@ -250,3 +250,103 @@
     height: 14px;
     flex-shrink: 0;
 }
+
+/* ─── Dropdown thème (PR PC-2 — promotion topbar) ─── */
+.hw-theme-dropdown-container {
+    position: relative;
+}
+
+.hw-theme-menu {
+    position: absolute;
+    top: 64px;
+    right: 0;
+    width: 220px;
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-modal);
+    overflow: hidden;
+    z-index: 1010;
+    padding: 6px 0;
+}
+
+.hw-theme-menu[hidden] { display: none; }
+
+.hw-theme-menu-title {
+    padding: 8px 14px 6px;
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+
+.hw-theme-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 14px;
+    background: transparent;
+    border: 0;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    text-align: left;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    transition: background 0.12s;
+}
+
+.hw-theme-item:hover:not(.is-active) {
+    background: var(--surface-muted);
+}
+
+.hw-theme-item.is-active {
+    background: var(--brand-soft);
+    border-left-color: var(--brand);
+    font-weight: 600;
+}
+
+.hw-theme-item:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+/* Swatch : mini-aperçu bg+surface du thème, hardcodé volontairement
+   (les swatches doivent rester maritime/desert/oasis/night peu importe
+   le thème actif — sémantique de prévisualisation). */
+.hw-theme-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+    background-image: linear-gradient(135deg,
+        var(--swatch-bg) 0%,
+        var(--swatch-bg) 50%,
+        var(--swatch-surface) 50%,
+        var(--swatch-surface) 100%);
+}
+.hw-theme-swatch--maritime { --swatch-bg: #0D3B66; --swatch-surface: #FFFFFF; }
+.hw-theme-swatch--desert   { --swatch-bg: #7A5230; --swatch-surface: #FFF8F0; }
+.hw-theme-swatch--oasis    { --swatch-bg: #065F46; --swatch-surface: #F0FDF4; }
+.hw-theme-swatch--night    { --swatch-bg: #111827; --swatch-surface: #1F2937; }
+
+.hw-theme-name {
+    flex: 1;
+}
+
+.hw-theme-check {
+    color: var(--brand);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.hw-theme-check svg {
+    width: 16px;
+    height: 16px;
+}
