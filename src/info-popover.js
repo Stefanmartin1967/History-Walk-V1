@@ -1,15 +1,20 @@
 // info-popover.js
-// Popover compact ancré sur l'icône "Informations" du header (anciennement
-// "Afficher la légende"). Remplace la modale Légende plein écran.
+// Popover compact "Légende" ancré sur l'icône book-open du header (renommé
+// "Légende" en PR PC-3, anciennement "Informations").
 //
-// Contenu :
-//   - Légende des polylines de circuits (Vol d'oiseau / Tracé réel / Terminé)
+// Contenu (PR PC-3) :
+//   - Tracés de circuits : Vol d'oiseau (pointillé) / Tracé réel / Terminé
+//   - Catégories de POI : 15 marqueurs avec icônes (lus dynamiquement de
+//     poi-icons.js iconMap, donc auto-sync si on ajoute/retire une catégorie)
+//   - Clusters : explication du cercle avec chiffre au zoom out
 //
 // La "Visite guidée" a été extraite en bouton dédié dans la topbar
 // (PR PC-2, 10/05/2026) pour visibilité immédiate aux nouveaux users.
 //
 // Toggle : un clic sur l'icône ouvre, un nouveau clic ferme.
 // Fermeture aussi : clic à l'extérieur, touche Échap.
+
+import { iconMap } from './poi-icons.js';
 
 const POPOVER_ID = 'info-popover';
 
@@ -26,19 +31,28 @@ function openPopover() {
     const anchor = document.getElementById('btn-legend');
     if (!anchor) return;
 
+    // Génère dynamiquement la grille des catégories à partir de iconMap (poi-icons.js)
+    // → auto-sync si Stefan ajoute/retire une catégorie sans toucher ce fichier.
+    const categoriesHtml = Object.entries(iconMap).map(([name, svg]) => `
+        <div class="info-popover-cat-item">
+            <div class="info-popover-cat-marker">${svg}</div>
+            <span class="info-popover-cat-name">${name}</span>
+        </div>
+    `).join('');
+
     const popover = document.createElement('div');
     popover.id = POPOVER_ID;
     popover.className = 'info-popover';
     popover.setAttribute('role', 'dialog');
-    popover.setAttribute('aria-label', 'Informations');
+    popover.setAttribute('aria-label', 'Légende');
     popover.innerHTML = `
         <div class="info-popover-header">
-            <span class="info-popover-title">Informations</span>
+            <span class="info-popover-title">Légende</span>
             <button type="button" class="info-popover-close" aria-label="Fermer">×</button>
         </div>
 
         <div class="info-popover-section">
-            <div class="info-popover-section-title">Légende des circuits</div>
+            <div class="info-popover-section-title">Tracés de circuits</div>
             <div class="info-popover-legend-item">
                 <div class="legend-line-sample legend-line-sample--straight"></div>
                 <div class="info-popover-legend-text">
@@ -58,6 +72,24 @@ function openPopover() {
                 <div class="info-popover-legend-text">
                     <span class="info-popover-legend-label">Circuit terminé</span>
                     <span class="info-popover-legend-desc">Marqué comme fait</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-popover-section">
+            <div class="info-popover-section-title">Catégories de lieux</div>
+            <div class="info-popover-cat-grid">
+                ${categoriesHtml}
+            </div>
+        </div>
+
+        <div class="info-popover-section">
+            <div class="info-popover-section-title">Regroupements</div>
+            <div class="info-popover-legend-item">
+                <div class="info-popover-cluster-sample">12</div>
+                <div class="info-popover-legend-text">
+                    <span class="info-popover-legend-label">Lieux groupés</span>
+                    <span class="info-popover-legend-desc">Plusieurs lieux proches — zoomez pour les voir séparément</span>
                 </div>
             </div>
         </div>

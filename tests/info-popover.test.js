@@ -18,28 +18,29 @@ describe('showInfoPopover — création', () => {
         expect(document.getElementById('info-popover')).not.toBeNull();
     });
 
-    it('le popover a le titre "Informations"', () => {
+    it('le popover a le titre "Légende" (renommé en PR PC-3)', () => {
         showInfoPopover();
         const title = document.querySelector('.info-popover-title');
-        expect(title?.textContent).toBe('Informations');
+        expect(title?.textContent).toBe('Légende');
     });
 
-    it('le popover a role="dialog" et aria-label="Informations"', () => {
+    it('le popover a role="dialog" et aria-label="Légende"', () => {
         showInfoPopover();
         const popover = document.getElementById('info-popover');
         expect(popover.getAttribute('role')).toBe('dialog');
-        expect(popover.getAttribute('aria-label')).toBe('Informations');
+        expect(popover.getAttribute('aria-label')).toBe('Légende');
     });
 });
 
 describe('showInfoPopover — contenu légende', () => {
-    it('affiche les 3 lignes de polylines (Vol d\'oiseau / Tracé réel / Circuit terminé)', () => {
+    it('affiche les 3 lignes de polylines + 1 cluster (4 items au total)', () => {
         showInfoPopover();
         const items = document.querySelectorAll('.info-popover-legend-item');
-        expect(items).toHaveLength(3);
+        // 3 tracés (Vol d'oiseau / Tracé réel / Circuit terminé) + 1 ligne Cluster
+        expect(items).toHaveLength(4);
         const labels = Array.from(document.querySelectorAll('.info-popover-legend-label'))
             .map(l => l.textContent.trim());
-        expect(labels).toEqual(['Vol d\'oiseau', 'Tracé réel', 'Circuit terminé']);
+        expect(labels).toEqual(['Vol d\'oiseau', 'Tracé réel', 'Circuit terminé', 'Lieux groupés']);
     });
 
     it('chaque ligne a un label en gras et une description en dessous (pas de parenthèses)', () => {
@@ -64,6 +65,28 @@ describe('showInfoPopover — contenu légende', () => {
         expect(txt).not.toContain('Visité');
         expect(txt).not.toContain('Planifié');
         expect(txt).not.toContain('Incontournable');
+    });
+});
+
+describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
+    it('contient une section "Catégories de lieux" avec une grille des 15 catégories iconMap', () => {
+        showInfoPopover();
+        const txt = document.getElementById('info-popover').textContent;
+        expect(txt).toContain('Catégories de lieux');
+        // 15 catégories dans iconMap (cf. src/poi-icons.js)
+        const items = document.querySelectorAll('.info-popover-cat-item');
+        expect(items).toHaveLength(15);
+        // Vérification de quelques catégories représentatives
+        expect(txt).toContain('Restaurant');
+        expect(txt).toContain('Mosquée');
+        expect(txt).toContain('Site historique');
+    });
+
+    it('contient une section "Regroupements" avec un sample cluster', () => {
+        showInfoPopover();
+        const txt = document.getElementById('info-popover').textContent;
+        expect(txt).toContain('Regroupements');
+        expect(document.querySelector('.info-popover-cluster-sample')).not.toBeNull();
     });
 });
 
