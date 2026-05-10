@@ -376,8 +376,8 @@
 
 .cc-diff-tag {
     display: inline-flex; align-items: center;
-    font-size: 10px; font-weight: 700;
-    padding: 2px 8px;
+    font-size: 11.5px; font-weight: 700;
+    padding: 2px 9px;
     border-radius: var(--radius-pill);
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -424,10 +424,13 @@
 }
 .cc-diff-btn i[data-lucide] { width: 12px; height: 12px; }
 
-/* — Body : grid key/value 2 colonnes, multi-ligne, sans clipping — */
+/* — Body : grid key/value 2 colonnes, multi-ligne, sans clipping.
+     `align-items: baseline` aligne la 1re ligne de la valeur avec la key
+     (plus propre que l'ancien `padding-top: 2px` arbitraire). */
 .cc-diff-body {
     display: grid;
     grid-template-columns: 90px 1fr;
+    align-items: baseline;
     gap: 6px var(--space-md);
     padding: 10px 14px;
     background: var(--surface-muted);
@@ -435,12 +438,11 @@
 }
 .cc-diff-key {
     font-family: var(--font-family-mono);
-    font-size: 10.5px;
+    font-size: 11.5px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--ink-soft);
     font-weight: 700;
-    padding-top: 2px;
     line-height: 1.4;
     word-break: break-word;
 }
