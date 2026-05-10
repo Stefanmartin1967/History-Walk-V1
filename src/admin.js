@@ -202,7 +202,12 @@ function setupAdminListeners() {
             e.stopPropagation();
             const isActive = menuContent.classList.contains('active');
             closeAllDropdowns();
-            if (!isActive) menuContent.classList.add('active');
+            if (!isActive) {
+                // Ferme aussi les autres popups topbar (dest, theme, info-popover)
+                // qui n'écoutent pas closeAllDropdowns. Cf. fix #6 PR R3.
+                eventBus.emit('topbar:popup-opening', { id: 'god-mode' });
+                menuContent.classList.add('active');
+            }
         });
 
         // Close menu when clicking outside

@@ -64,6 +64,8 @@ function setDestMenuOpen(open) {
     const selector = document.getElementById(DEST_SELECTOR_ID);
     if (!menu || !selector) return;
     if (open) {
+        // Avise les autres popups topbar de se fermer (cf. setupTopbarPopupCoordination).
+        eventBus.emit('topbar:popup-opening', { id: 'dest' });
         menu.removeAttribute('hidden');
         selector.classList.add('is-open');
         selector.setAttribute('aria-expanded', 'true');
@@ -229,6 +231,8 @@ function setThemeMenuOpen(open) {
     const btn = document.getElementById(THEME_BTN_ID);
     if (!menu || !btn) return;
     if (open) {
+        // Avise les autres popups topbar de se fermer (cf. setupTopbarPopupCoordination).
+        eventBus.emit('topbar:popup-opening', { id: 'theme' });
         renderThemeMenu();
         menu.removeAttribute('hidden');
         btn.setAttribute('aria-expanded', 'true');
@@ -319,6 +323,22 @@ function setupTourButton() {
     if (btn) btn.addEventListener('click', () => showWelcomeAgain());
 }
 
+// ─── Coordination des popups topbar (1 seul ouvert à la fois) ─────────────
+// Quand un popup s'ouvre, il émet `topbar:popup-opening` avec son id. Tous
+// les autres popups écoutent et se ferment s'ils ne sont pas l'émetteur.
+// Couvre : sélecteur destination, dropdown thème, popover Légende, menus
+// Outils / GOD MODE. Le panneau Filtres et Mon Espace ne sont PAS gérés ici
+// (Filtres = panel large, Mon Espace = modale exclusive plein écran).
+
+function setupTopbarPopupCoordination() {
+    eventBus.on('topbar:popup-opening', ({ id }) => {
+        if (id !== 'dest' && isDestMenuOpen()) setDestMenuOpen(false);
+        if (id !== 'theme' && isThemeMenuOpen()) setThemeMenuOpen(false);
+        // Les autres popups (info-popover, tools, god-mode) gèrent leur propre
+        // listener — voir info-popover.js et events-desktop.js.
+    });
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────
 
 export function setupTopbarV2() {
@@ -346,4 +366,7 @@ export function setupTopbarV2() {
     setupMonEspaceButton();
     setupTourButton();
     setupThemeDropdown();
+
+    // Coordination popups topbar : 1 seul ouvert à la fois (cf. fix #6).
+    setupTopbarPopupCoordination();
 }
