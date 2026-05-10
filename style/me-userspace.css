@@ -93,6 +93,21 @@
 .me-close:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .me-close i[data-lucide] { width: 16px; height: 16px; }
 
+/* — Variante topbar mobile (cachée par défaut, activée en media query) — */
+.me-topbar-mobile { display: none; }
+.me-topbar-mobile-eyebrow {
+    font-family: var(--font-family-mono);
+    font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 1px;
+}
+.me-topbar-mobile-title {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 17px; font-weight: 700;
+    line-height: 1.1; color: var(--ink);
+}
+
 /* — Tabs accessibles (role="tablist") — */
 .me-tabs {
     display: flex; gap: 2px;
@@ -634,6 +649,118 @@
     font-size: 13px; color: var(--ink-soft);
     max-width: 340px; margin: 0 auto;
     line-height: 1.5;
+}
+
+/* ============================================================
+   MOBILE (< 768px) : plein écran, tabs scrollables, grille 1 col
+   ============================================================ */
+@media (max-width: 767px) {
+    .me-overlay {
+        padding: 0;
+    }
+    .me-modal {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh; /* ios safe area : prendre la dynamic viewport quand dispo */
+        max-width: none;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+    }
+
+    /* Topbar : on cache la brand desktop, on affiche le titre dynamique mobile */
+    .me-topbar {
+        padding: 14px 16px 0;
+    }
+    .me-topbar-brand { display: none; }
+    .me-topbar-mobile { display: block; flex: 1; min-width: 0; }
+    .me-close { width: 36px; height: 36px; }
+
+    /* Tabs scrollables horizontalement, sans scrollbar visible */
+    .me-tabs {
+        padding: 12px 14px 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+        scroll-snap-type: x proximity;
+        scroll-padding-inline: 14px;
+    }
+    .me-tabs::-webkit-scrollbar { display: none; }
+    .me-tab {
+        scroll-snap-align: start;
+        padding: 10px 12px;
+        flex-shrink: 0;
+    }
+
+    .me-body {
+        padding: 16px 14px 24px;
+    }
+
+    /* Hero compact */
+    .me-hero {
+        padding: 14px 16px;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+    .me-hero-mark { width: 40px; height: 40px; border-radius: var(--radius-md); }
+    .me-hero-mark i[data-lucide] { width: 18px; height: 18px; }
+    .me-hero-title { font-size: 15px; }
+    .me-hero-coords { font-size: 13px; }
+    .me-hero-sub { font-size: 12px; }
+    .me-hero-actions {
+        width: 100%;
+        margin-top: 4px;
+    }
+    .me-hero-cta { flex: 1; justify-content: center; }
+
+    /* Section header compact */
+    .me-section-h { margin: 10px 0 8px; }
+    .me-section-title { font-size: 10.5px; }
+
+    /* Cards : padding et touch target augmentés */
+    .me-card {
+        padding: 12px 14px;
+        gap: 12px;
+    }
+    .me-card-title { font-size: 13px; }
+    .me-card-sub { font-size: 11.5px; }
+
+    /* Toggle plus large pour le tap (cible 44px sur le label entier) */
+    .me-toggle {
+        width: 44px; height: 24px;
+    }
+    .me-toggle-track::after {
+        width: 18px; height: 18px;
+        top: 3px; left: 3px;
+    }
+    .me-toggle input:checked ~ .me-toggle-track::after {
+        transform: translateX(20px);
+    }
+
+    /* Pills : touch target min 32px */
+    .me-pill { padding: 7px 12px; font-size: 11.5px; }
+
+    /* Données : grille 1 col */
+    .me-data-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .me-data-card {
+        padding: 16px;
+        min-height: 0;
+    }
+
+    /* Sécurité : padding card légèrement réduit */
+    .me-sec-card { padding: 12px 14px; }
+
+    /* Trash items */
+    .me-trash-item { padding: 10px 12px; }
+    .me-trash-restore { padding: 7px 12px; font-size: 11.5px; }
+
+    /* Empty states : moins de padding vertical */
+    .me-empty { padding: 36px 16px; }
+    .me-empty-mark { width: 56px; height: 56px; margin-bottom: 12px; }
+    .me-empty-mark i[data-lucide] { width: 24px; height: 24px; }
+    .me-empty-title { font-size: 16px; }
 }
 
 /* ============================================================

@@ -7,12 +7,12 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { showLegalNoticeModal } from './legal-modal.js';
-import { saveUserData } from './fileManager.js';
 import { deleteDatabase } from './database.js';
 import { startGenericScanner } from './sync.js';
 import { showStatisticsModal } from './statistics.js';
 import { showAdminLoginModal, logoutAdmin } from './admin.js';
 import { openControlCenter, openControlCenterSettings, quickPublish } from './admin-control-center.js';
+import { openUserSpace } from './user-space.js';
 import { eventBus } from './events.js';
 import { getCurrentView, isMobileView } from './mobile-state.js';
 
@@ -33,19 +33,14 @@ export function renderMobileMenu() {
                 <i data-lucide="trophy"></i>
                 <span>Mon Carnet de Voyage</span>
             </button>
+            <button class="mobile-list-item" id="mob-action-mon-espace">
+                <i data-lucide="luggage"></i>
+                <span>Mon Espace</span>
+            </button>
             <div class="mobile-divider"></div>
             <button class="mobile-list-item" id="mob-action-scan">
                 <i data-lucide="scan-line"></i>
                 <span>Scanner un circuit</span>
-            </button>
-            <div class="mobile-divider"></div>
-            <button class="mobile-list-item" id="mob-action-restore">
-                <i data-lucide="folder-down"></i>
-                <span>Restaurer les données</span>
-            </button>
-            <button class="mobile-list-item" id="mob-action-save">
-                <i data-lucide="save"></i>
-                <span>Sauvegarder les données</span>
             </button>
             <div class="mobile-divider"></div>
             <button class="mobile-list-item" id="mob-action-geojson">
@@ -112,9 +107,8 @@ export function renderMobileMenu() {
     // ─── Event listeners ──────────────────────────────────────────────────────
 
     document.getElementById('mob-action-stats').addEventListener('click', () => showStatisticsModal());
+    document.getElementById('mob-action-mon-espace').addEventListener('click', () => openUserSpace());
     document.getElementById('mob-action-scan').addEventListener('click', () => startGenericScanner());
-    document.getElementById('mob-action-restore').addEventListener('click', () => DOM.restoreLoader.click());
-    document.getElementById('mob-action-save').addEventListener('click', () => saveUserData());
     document.getElementById('mob-action-geojson').addEventListener('click', () => DOM.geojsonLoader.click());
     document.getElementById('mob-action-reset').addEventListener('click', async () => {
         if (await showConfirm(

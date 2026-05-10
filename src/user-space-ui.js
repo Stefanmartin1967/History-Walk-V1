@@ -43,6 +43,13 @@ export function openUserSpaceModal(callbacks) {
                         <div class="me-topbar-sub">Vos circuits, données et sauvegardes</div>
                     </div>
                 </div>
+                <!-- Variante mobile (< 768px) : eyebrow + titre dynamique selon
+                     l'onglet actif. Économise du vertical sans perdre le contexte.
+                     Cachée en desktop par CSS, mise à jour par activateTab(). -->
+                <div class="me-topbar-mobile" aria-hidden="true">
+                    <div class="me-topbar-mobile-eyebrow">Mon Espace</div>
+                    <div class="me-topbar-mobile-title" id="me-topbar-mobile-title">Mes Circuits</div>
+                </div>
                 <button class="me-close" type="button" id="me-close-btn"
                         aria-label="Fermer Mon Espace" title="Fermer">
                     <i data-lucide="x"></i>
@@ -117,11 +124,13 @@ function closeUserSpace() {
 function activateTab(tabId, callbacks) {
     if (!_meOverlay) return;
     const tabBtns = _meOverlay.querySelectorAll('.me-tab');
+    let activeBtn = null;
     tabBtns.forEach(btn => {
         const isTarget = btn.dataset.tab === tabId;
         btn.classList.toggle('is-active', isTarget);
         btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
         btn.setAttribute('tabindex', isTarget ? '0' : '-1');
+        if (isTarget) activeBtn = btn;
     });
     // Mettre à jour aussi les attributs du panel (un seul panel — on met à jour
     // ses id et aria-labelledby pour pointer sur le tab actif).
@@ -129,6 +138,16 @@ function activateTab(tabId, callbacks) {
     if (panel) {
         panel.id = `me-panel-${tabId}`;
         panel.setAttribute('aria-labelledby', `me-tab-${tabId}`);
+    }
+    // Titre mobile dynamique (visible uniquement sous 768px, cf. me-userspace.css).
+    const mobileTitle = _meOverlay.querySelector('#me-topbar-mobile-title');
+    if (mobileTitle) {
+        const tab = TABS.find(t => t.id === tabId);
+        if (tab) mobileTitle.textContent = tab.label;
+    }
+    // Scroll-into-view du tab actif sur mobile (tabs scrollables horizontalement).
+    if (activeBtn) {
+        activeBtn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
     }
     renderUserTab(tabId, callbacks);
 }
