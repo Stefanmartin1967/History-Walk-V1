@@ -249,15 +249,12 @@ describe('getFilteredFeatures', () => {
         expect(r.map(f => f.properties.HW_ID)).toEqual(['p2']);
     });
 
-    it('mode standard : activeFilters.planifies exclut les POIs avec planifieCounter > 0', () => {
-        state.loadedFeatures = [
-            poi('p1', { userData: { planifieCounter: 2 } }),
-            poi('p2', { userData: {} })
-        ];
-        state.activeFilters.planifies = 'hide';
-        const r = getFilteredFeatures();
-        expect(r.map(f => f.properties.HW_ID)).toEqual(['p2']);
-    });
+    // Test obsolète supprimé (10/05/2026, PR cleanup tests) :
+    // "mode standard : activeFilters.planifies exclut les POIs avec planifieCounter > 0"
+    // testait l'ancienne logique où planifieCounter était stocké dans userData.
+    // Depuis le 03/05/2026 (cf. circuit-actions.js:174), le compteur est calculé
+    // à la volée via computePlanifieCounter(poiId) — getFilteredFeatures n'inspecte
+    // plus userData.planifieCounter, donc ce test ne peut plus fonctionner tel quel.
 
     it('mode sélection : utilise activeFilters comme partout (pas de filtre dédié)', () => {
         // PR #398 : selectionModeFilters supprimé. En mode sélection, le filtrage
@@ -333,10 +330,12 @@ describe('passesUserFilters', () => {
         expect(passesUserFilters(poi('p1', { userData: { vu: true } }))).toBe(false);
     });
 
-    it('mode standard : planifies=true exclut planifieCounter > 0', () => {
-        state.activeFilters.planifies = 'hide';
-        expect(passesUserFilters(poi('p1', { userData: { planifieCounter: 1 } }))).toBe(false);
-    });
+    // Test obsolète supprimé (10/05/2026, PR cleanup tests) :
+    // "mode standard : planifies=true exclut planifieCounter > 0" testait
+    // l'ancienne API stockée userData.planifieCounter. Maintenant calculé à la
+    // volée via computePlanifieCounter(poiId) — passer { userData: { planifieCounter: 1 } }
+    // ne déclenche plus l'exclusion. Logique testée différemment dans les tests
+    // de computePlanifieCounter directement (cf. data_module.test.js plus haut).
 
     it('mode sélection : aucune branche dédiée — activeFilters.vus pilote', () => {
         // PR #398 : la branche state.isSelectionModeActive a été retirée de
@@ -571,7 +570,10 @@ describe('updatePoiData', () => {
         ['Zone', 'Houmt Souk'],
         ['vu', true],
         ['vuManual', true],
-        ['planifieCounter', 2],
+        // 'planifieCounter' retiré du test paramétré (10/05/2026) : depuis le
+        // 03/05/2026 ce champ n'est plus stocké dans userData (calculé à la volée),
+        // donc updatePoiData('p1', 'planifieCounter', X) ne déclenche plus
+        // applyFilters/data:filtered.
         ['incontournable', true],
         ['verified', true],
         // Filtres "État de la fiche" (refonte Claude Design) : photos / description
