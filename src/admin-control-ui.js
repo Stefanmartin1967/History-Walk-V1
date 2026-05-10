@@ -80,9 +80,11 @@ function syncFooterAndNavCount(diffData) {
     const overlay = _ccModalOverlay;
     if (!overlay) return;
 
-    // testedChanged = POIs avec uniquement un toggle "Vérifié" basculé. Inclus
-    // dans le total car publiable. Affiché en sub-text de la carte LIEUX du
-    // Dashboard pour visibilité (sinon 4+8+0 = 12 visible vs 13 dans le total).
+    // testedChanged = CIRCUITS officiels que l'admin a coché "Fait" mais dont
+    // le statut local diverge de tested.json côté serveur (publié pour les users
+    // publics). Avec l'auto-publish (`tested-sync.js`), ce delta est normalement
+    // à 0 — il ne réapparaît que si le push auto a échoué (network, rate limit).
+    // Inclus dans le total et affiché en sub-text de la carte CIRCUITS.
     const stats = (diffData && diffData.stats) || {};
     const totalCount = (stats.poisModified      || 0)
                      + (stats.circuitsModified  || 0)
@@ -555,10 +557,10 @@ export function renderTab(tab, diffData, callbacks) {
         const circuitsModified  = stats.circuitsModified  || 0;
         const pendingPhotoCount = stats.pendingPhotoCount || 0;
         const testedChanged     = stats.testedChanged     || 0;
-        // testedChanged compte les POIs dont le toggle "Vérifié" a basculé sans
-        // édition de texte/coords. Ce sont des modifs publiables — on les
-        // inclut dans le total pour cohérence avec le footer "Tout publier" et
-        // le badge nav. Le détail apparaît en sub-text de la carte LIEUX.
+        // testedChanged compte les CIRCUITS officiels coché "Fait" en attente
+        // de publication serveur. Avec l'auto-publish (tested-sync.js), normalement
+        // toujours 0 — n'apparaît que si le push auto a échoué (filet de sécurité).
+        // Inclus dans le total ; sub-text affiché dans la carte CIRCUITS (pas Lieux).
         const totalCount = poisModified + circuitsModified + pendingPhotoCount + testedChanged;
         const hasToken = !!getStoredToken();
         const dmHasUnpublished = localStorage.getItem('dm_has_unpublished_changes') === '1';
@@ -609,7 +611,7 @@ export function renderTab(tab, diffData, callbacks) {
             if (poisModified > 0)      breakdown.push(`${poisModified} lieu${poisModified > 1 ? 'x' : ''} modifié${poisModified > 1 ? 's' : ''}`);
             if (pendingPhotoCount > 0) breakdown.push(`${pendingPhotoCount} photo${pendingPhotoCount > 1 ? 's' : ''}`);
             if (circuitsModified > 0)  breakdown.push(`${circuitsModified} circuit${circuitsModified > 1 ? 's' : ''}`);
-            if (testedChanged > 0)     breakdown.push(`${testedChanged} vérification${testedChanged > 1 ? 's' : ''}`);
+            if (testedChanged > 0)     breakdown.push(`${testedChanged} statut${testedChanged > 1 ? 's' : ''} testé${testedChanged > 1 ? 's' : ''}`);
             const subText = breakdown.join(' · ') || 'Modifications locales';
             // Pas de CTA inline dans le hero pending : doublon avec le bouton
             // "Tout publier" du footer (canonique, visible sur les 3 écrans).
@@ -637,28 +639,28 @@ export function renderTab(tab, diffData, callbacks) {
         // — Stats grid (4 colonnes) —
         const statsHtml = `
             <div class="cc-stats">
-                <button class="cc-stat${(poisModified + testedChanged) > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="lieux" title="Voir les lieux modifiés">
+                <button class="cc-stat${poisModified > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="lieux" title="Voir les lieux modifiés">
                     <span class="cc-stat-head"><i data-lucide="map-pin"></i> Lieux</span>
                     <span class="cc-stat-val">${poisModified}</span>
-                    <span class="cc-stat-trend">${
-                        poisModified > 0 && testedChanged > 0
-                            ? `${poisModified} modifié${poisModified > 1 ? 's' : ''} · ${testedChanged} vérifié${testedChanged > 1 ? 's' : ''}`
-                            : poisModified > 0
-                                ? `${poisModified} en attente`
-                                : testedChanged > 0
-                                    ? `${testedChanged} vérification${testedChanged > 1 ? 's' : ''}`
-                                    : 'Aucun changement'
-                    }</span>
+                    <span class="cc-stat-trend">${poisModified > 0 ? `${poisModified} en attente` : 'Aucun changement'}</span>
                 </button>
                 <button class="cc-stat${pendingPhotoCount > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="photos" title="Photos locales en attente d'upload">
                     <span class="cc-stat-head"><i data-lucide="camera"></i> Photos</span>
                     <span class="cc-stat-val">${pendingPhotoCount}</span>
                     <span class="cc-stat-trend">${pendingPhotoCount > 0 ? 'à publier' : 'Aucune photo'}</span>
                 </button>
-                <button class="cc-stat${circuitsModified > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="circuits" title="Voir les circuits modifiés">
+                <button class="cc-stat${(circuitsModified + testedChanged) > 0 ? ' is-warn' : ''}" type="button" data-action="goto-changes" data-target-subview="circuits" title="Voir les circuits modifiés">
                     <span class="cc-stat-head"><i data-lucide="route"></i> Circuits</span>
                     <span class="cc-stat-val">${circuitsModified}</span>
-                    <span class="cc-stat-trend">${circuitsModified > 0 ? `${circuitsModified} en attente` : 'Aucun changement'}</span>
+                    <span class="cc-stat-trend">${
+                        circuitsModified > 0 && testedChanged > 0
+                            ? `${circuitsModified} modifié${circuitsModified > 1 ? 's' : ''} · ${testedChanged} testé${testedChanged > 1 ? 's' : ''}`
+                            : circuitsModified > 0
+                                ? `${circuitsModified} en attente`
+                                : testedChanged > 0
+                                    ? `${testedChanged} statut${testedChanged > 1 ? 's' : ''} testé${testedChanged > 1 ? 's' : ''}`
+                                    : 'Aucun changement'
+                    }</span>
                 </button>
                 <button class="cc-stat${dmHasUnpublished ? ' is-info' : ''}" type="button" id="btn-cc-stat-drafts" title="Brouillons depuis le Data Manager">
                     <span class="cc-stat-head"><i data-lucide="file-edit"></i> Brouillons</span>
@@ -792,7 +794,7 @@ export function renderTab(tab, diffData, callbacks) {
                         <div class="cc-card-title">${username ? `@${username}` : 'Token configuré'}</div>
                         <div class="cc-config-badges">
                             <span class="status-badge sb-ok"><span class="dot"></span>repo</span>
-                            <span class="status-badge sb-ok"><span class="dot"></span>workflow</span>
+                            <span class="status-badge sb-ok"><span class="dot"></span>gist</span>
                         </div>
                     </div>
                     <div class="cc-card-meta">
@@ -835,8 +837,8 @@ export function renderTab(tab, diffData, callbacks) {
                 </button>
                 <div class="cc-config-scopes-note">
                     <strong>Scopes requis :</strong>
-                    <code>repo</code> (lecture/écriture)
-                    · <code>workflow</code> (déclencher deploy.yml)
+                    <code>repo</code> (publier les modifications)
+                    · <code>gist</code> (sync inter-devices admin)
                 </div>
             </div>
         `;

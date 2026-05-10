@@ -11,6 +11,7 @@ import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
 import { pushToGist } from './gist-sync.js';
+import { schedulePushTestedToGitHub } from './tested-sync.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -62,11 +63,16 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
             officialCircuit.isCompleted = isVisited; // Maj en mémoire pour UI immédiate
             await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
 
-            // Admin : "coché fait" = circuit vérifié (publié via Control Center).
+            // Admin : "coché fait" = circuit vérifié.
             // Règle métier : si l'admin l'a fait, il est testé → rassure l'utilisateur lambda.
+            // Auto-publish : on push tested_{mapId}.json directement sur GitHub
+            // (debounced 2s) afin que les users publics voient le bouclier vert
+            // immédiatement, sans attendre un clic "Tout publier" via le CC.
+            // Le filet de sécurité du CC reste actif si l'auto-push échoue.
             if (state.isAdmin) {
                 setTestedCircuit(circuitId, isVisited);
                 await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
+                schedulePushTestedToGitHub();
             }
         }
 
