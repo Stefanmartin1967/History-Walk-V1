@@ -15,8 +15,13 @@
 // Fermeture aussi : clic à l'extérieur, touche Échap.
 
 import { iconMap } from './poi-icons.js';
+import { eventBus } from './events.js';
 
 const POPOVER_ID = 'info-popover';
+
+// Listener pour fermer la popover si un autre popup topbar s'ouvre.
+// Stocké en module-level pour pouvoir le retirer dans closePopover.
+let _onOtherPopupOpening = null;
 
 export function showInfoPopover() {
     const existing = document.getElementById(POPOVER_ID);
@@ -30,6 +35,14 @@ export function showInfoPopover() {
 function openPopover() {
     const anchor = document.getElementById('btn-legend');
     if (!anchor) return;
+
+    // Coordination popups topbar (cf. fix #6 PR R3) : avise les autres,
+    // et écoute pour se fermer si un autre s'ouvre.
+    eventBus.emit('topbar:popup-opening', { id: 'info' });
+    _onOtherPopupOpening = ({ id }) => {
+        if (id !== 'info') closePopover();
+    };
+    eventBus.on('topbar:popup-opening', _onOtherPopupOpening);
 
     // Génère dynamiquement la grille des catégories à partir de iconMap (poi-icons.js)
     // → auto-sync si Stefan ajoute/retire une catégorie sans toucher ce fichier.
@@ -123,6 +136,10 @@ function closePopover() {
     if (popover) popover.remove();
     document.removeEventListener('click', onOutsideClick, true);
     document.removeEventListener('keydown', onEscapeKey);
+    if (_onOtherPopupOpening) {
+        eventBus.off('topbar:popup-opening', _onOtherPopupOpening);
+        _onOtherPopupOpening = null;
+    }
 }
 
 function onOutsideClick(e) {

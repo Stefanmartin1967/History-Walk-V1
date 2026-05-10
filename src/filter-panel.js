@@ -135,11 +135,20 @@ function closeZonesList() {
 
 // ─── Section Catégories ───────────────────────────────────────────────────
 
+// Helper : retourne la catégorie effective d'un POI en respectant les modifs
+// admin via userData (cohérent avec passesStructuralFilters dans data.js qui
+// merge { ...properties, ...userData }). Sans ce merge, les compteurs et la
+// liste des catégories ne reflètent pas les changements faits via richEditor.
+function effectiveCategory(feature) {
+    const userCat = feature.properties.userData?.['Catégorie'];
+    return userCat || feature.properties['Catégorie'];
+}
+
 function getAvailableCategories() {
     if (state.loadedFeatures && state.loadedFeatures.length > 0) {
         const cats = new Set(
             state.loadedFeatures
-                .map(f => f.properties['Catégorie'])
+                .map(effectiveCategory)
                 .filter(c => c && c.trim() !== '')
         );
         return Array.from(cats).sort();
@@ -151,7 +160,7 @@ function getCategoryCounts() {
     const counts = {};
     if (!state.loadedFeatures) return counts;
     state.loadedFeatures.forEach(f => {
-        const cat = f.properties['Catégorie'];
+        const cat = effectiveCategory(f);
         if (cat && cat.trim() !== '') {
             counts[cat] = (counts[cat] || 0) + 1;
         }
