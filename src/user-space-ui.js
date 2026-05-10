@@ -1,56 +1,156 @@
 // user-space-ui.js — Interface "Mon Espace" (côté utilisateur)
+// Refonte design (handoff Claude Design 10/05/2026, PR 1) : shell custom
+// `.me-overlay` + `.me-modal` au lieu d'`openHwModal`, tabs accessibles
+// ARIA + clavier, mapping classes `.ue-*` → `.me-*`. Logique métier et IDs
+// DOM testés inchangés (cf. handoff §13 + tests/backup_auto_local.test.js).
 import { state, setHomeLocation } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { openHwModal, closeHwModal } from './modal.js';
 import { saveAppState } from './database.js';
 import { showToast } from './toast.js';
 import { forceBackup, getBackupStatusForUI } from './backup-auto-local.js';
 
-export function openUserSpaceModal(callbacks) {
-    // Migration V2 : openHwModal lg avec tabs intégrés au body (option B audit
-    // Stefan : tabs inline plutôt qu'un nouveau pattern réutilisable).
-    // La logique métier (renderUserTab) reste inchangée.
+// Shell singleton — un seul "Mon Espace" ouvert à la fois.
+let _meOverlay = null;
+let _meEscHandler = null;
 
-    const subheader = `
-        <div class="ue-tabs">
-            <button class="ue-tab is-active" type="button" data-tab="circuits">
-                <i data-lucide="map"></i> Mes Circuits
-            </button>
-            <button class="ue-tab" type="button" data-tab="data">
-                <i data-lucide="hard-drive"></i> Mes Données
-            </button>
-            <button class="ue-tab" type="button" data-tab="trash">
-                <i data-lucide="trash-2"></i> Corbeille
-            </button>
-            <button class="ue-tab" type="button" data-tab="security">
-                <i data-lucide="shield"></i> Sécurité
-            </button>
+// Onglets dans l'ordre validé Stefan : Circuits / Données / Sécurité / Corbeille
+// (Sécurité passe en 3ᵉ — nouvelle valeur produit Phase 1 backup auto, à
+// rendre plus visible que la Corbeille qui reste l'action la plus ponctuelle.)
+const TABS = [
+    { id: 'circuits', label: 'Mes Circuits', icon: 'map' },
+    { id: 'data',     label: 'Mes Données', icon: 'hard-drive' },
+    { id: 'security', label: 'Sécurité',    icon: 'shield' },
+    { id: 'trash',    label: 'Corbeille',   icon: 'trash-2' },
+];
+
+export function openUserSpaceModal(callbacks) {
+    // Si déjà ouvert (double-clic / race), on ne ré-ouvre pas.
+    if (_meOverlay) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'me-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-labelledby', 'me-topbar-title');
+
+    overlay.innerHTML = `
+        <div class="me-modal" role="document">
+            <header class="me-topbar">
+                <div class="me-topbar-brand">
+                    <div class="me-topbar-mark"><i data-lucide="luggage"></i></div>
+                    <div class="me-topbar-text">
+                        <h2 class="me-topbar-title" id="me-topbar-title">Mon Espace</h2>
+                        <div class="me-topbar-sub">Vos circuits, données et sauvegardes</div>
+                    </div>
+                </div>
+                <button class="me-close" type="button" id="me-close-btn"
+                        aria-label="Fermer Mon Espace" title="Fermer">
+                    <i data-lucide="x"></i>
+                </button>
+            </header>
+
+            <div class="me-tabs" role="tablist" aria-label="Mon Espace — sections">
+                ${TABS.map((t, i) => `
+                    <button class="me-tab${i === 0 ? ' is-active' : ''}" type="button"
+                            role="tab" id="me-tab-${t.id}"
+                            aria-controls="me-panel-${t.id}"
+                            aria-selected="${i === 0 ? 'true' : 'false'}"
+                            tabindex="${i === 0 ? '0' : '-1'}"
+                            data-tab="${t.id}">
+                        <i data-lucide="${t.icon}"></i> ${t.label}
+                    </button>
+                `).join('')}
+            </div>
+
+            <section class="me-body" role="tabpanel"
+                     id="me-panel-circuits"
+                     aria-labelledby="me-tab-circuits">
+                <div id="ue-content"></div>
+            </section>
         </div>
     `;
 
-    const body = `<div id="ue-content" class="ue-content"></div>`;
+    document.body.appendChild(overlay);
+    _meOverlay = overlay;
 
-    openHwModal({
-        size: 'lg',
-        icon: 'briefcase',
-        title: 'Mon Espace',
-        subheader,
-        body,
-        footer: false,
-    });
+    // Trigger CSS transition (paint avant ajout de la classe is-active).
+    requestAnimationFrame(() => overlay.classList.add('is-active'));
 
-    // Bind après ouverture (DOM prêt)
+    // Bind events après mise en DOM.
     setTimeout(() => {
-        const tabs = document.querySelectorAll('.hw-modal .ue-tab');
-        tabs.forEach(t => {
-            t.addEventListener('click', () => {
-                tabs.forEach(x => x.classList.remove('is-active'));
-                t.classList.add('is-active');
-                renderUserTab(t.dataset.tab, callbacks);
-            });
+        // — Close —
+        overlay.querySelector('#me-close-btn')?.addEventListener('click', closeUserSpace);
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeUserSpace();
         });
+
+        // — ESC pour fermer —
+        _meEscHandler = (e) => { if (e.key === 'Escape') closeUserSpace(); };
+        document.addEventListener('keydown', _meEscHandler);
+
+        // — Tabs : clic + clavier (manual activation, plus accessible que l'auto)
+        const tabBtns = overlay.querySelectorAll('.me-tab');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => activateTab(btn.dataset.tab, callbacks));
+            btn.addEventListener('keydown', (e) => handleTabKeydown(e, tabBtns, callbacks));
+        });
+
+        // Render initial onglet "circuits".
         renderUserTab('circuits', callbacks);
+        createIcons({ icons: appIcons, root: overlay });
     }, 30);
+}
+
+function closeUserSpace() {
+    if (!_meOverlay) return;
+    _meOverlay.classList.remove('is-active');
+    if (_meEscHandler) {
+        document.removeEventListener('keydown', _meEscHandler);
+        _meEscHandler = null;
+    }
+    // Attendre la fin de la transition (200ms) avant de retirer du DOM.
+    const ov = _meOverlay;
+    _meOverlay = null;
+    setTimeout(() => ov.remove(), 220);
+}
+
+function activateTab(tabId, callbacks) {
+    if (!_meOverlay) return;
+    const tabBtns = _meOverlay.querySelectorAll('.me-tab');
+    tabBtns.forEach(btn => {
+        const isTarget = btn.dataset.tab === tabId;
+        btn.classList.toggle('is-active', isTarget);
+        btn.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+        btn.setAttribute('tabindex', isTarget ? '0' : '-1');
+    });
+    // Mettre à jour aussi les attributs du panel (un seul panel — on met à jour
+    // ses id et aria-labelledby pour pointer sur le tab actif).
+    const panel = _meOverlay.querySelector('.me-body[role="tabpanel"]');
+    if (panel) {
+        panel.id = `me-panel-${tabId}`;
+        panel.setAttribute('aria-labelledby', `me-tab-${tabId}`);
+    }
+    renderUserTab(tabId, callbacks);
+}
+
+function handleTabKeydown(e, tabBtns, callbacks) {
+    const list = Array.from(tabBtns);
+    const i = list.indexOf(e.target);
+    if (i === -1) return;
+    let next = null;
+    if (e.key === 'ArrowRight') next = (i + 1) % list.length;
+    else if (e.key === 'ArrowLeft') next = (i - 1 + list.length) % list.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = list.length - 1;
+    else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activateTab(e.target.dataset.tab, callbacks);
+        return;
+    }
+    if (next !== null) {
+        e.preventDefault();
+        list[next].focus();
+    }
 }
 
 export function renderUserTab(tab, callbacks) {
@@ -69,8 +169,8 @@ export function renderUserTab(tab, callbacks) {
 
 /**
  * Rendu HTML pour la section "Lieu de résidence" (tri par proximité).
- * Affiche soit un état vide avec un bouton de capture GPS, soit les coords
- * enregistrées avec bouton "Effacer".
+ * Affiche soit un état invitatif (hero ambre + CTA capture), soit l'état
+ * défini (hero vert + actions Mettre à jour / Effacer).
  */
 function renderHomeLocationSection() {
     const home = state.homeLocation;
@@ -80,20 +180,18 @@ function renderHomeLocationSection() {
             : null;
         const coordsLabel = `${home.lat.toFixed(5)}, ${home.lng.toFixed(5)}`;
         return `
-            <div class="ue-home-section ue-home-section--set">
-                <div class="ue-home-header">
-                    <i data-lucide="home"></i>
-                    <span class="ue-home-title">Lieu de résidence</span>
+            <div class="me-hero is-set">
+                <div class="me-hero-mark"><i data-lucide="home"></i></div>
+                <div class="me-hero-text">
+                    <div class="me-hero-eyebrow">Lieu de résidence</div>
+                    <div class="me-hero-coords">${coordsLabel}</div>
+                    ${savedDate ? `<div class="me-hero-sub">Défini le ${savedDate} — circuits triés par proximité</div>` : ''}
                 </div>
-                <div class="ue-home-info">
-                    <span class="ue-home-coords">${coordsLabel}</span>
-                    ${savedDate ? `<span class="ue-home-date">Défini le ${savedDate}</span>` : ''}
-                </div>
-                <div class="ue-home-actions">
-                    <button class="ue-pill-btn" id="btn-ue-home-update" title="Remplacer par la position actuelle">
+                <div class="me-hero-actions">
+                    <button class="me-hero-cta" id="btn-ue-home-update" title="Remplacer par la position actuelle">
                         <i data-lucide="locate-fixed"></i> Mettre à jour
                     </button>
-                    <button class="ue-pill-btn" id="btn-ue-home-clear" title="Effacer le lieu de résidence">
+                    <button class="me-hero-cta" id="btn-ue-home-clear" title="Effacer le lieu de résidence">
                         <i data-lucide="x"></i> Effacer
                     </button>
                 </div>
@@ -101,25 +199,24 @@ function renderHomeLocationSection() {
         `;
     }
     return `
-        <div class="ue-home-section">
-            <div class="ue-home-header">
-                <i data-lucide="home"></i>
-                <span class="ue-home-title">Lieu de résidence</span>
+        <div class="me-hero">
+            <div class="me-hero-mark"><i data-lucide="home"></i></div>
+            <div class="me-hero-text">
+                <div class="me-hero-eyebrow">Astuce</div>
+                <div class="me-hero-title">Triez vos circuits par proximité</div>
+                <div class="me-hero-sub">Définissez votre lieu de résidence (hôtel ou équivalent) pour voir d'abord ce qui est le plus proche.</div>
             </div>
-            <p class="ue-home-hint">
-                Définissez votre lieu de résidence pour trier les circuits par proximité
-                depuis votre hôtel (ou équivalent).
-            </p>
-            <button class="ue-action-btn primary" id="btn-ue-home-set">
-                <i data-lucide="locate-fixed"></i> Définir depuis ma position actuelle
-            </button>
+            <div class="me-hero-actions">
+                <button class="me-hero-cta" id="btn-ue-home-set">
+                    <i data-lucide="locate-fixed"></i> Définir depuis ma position
+                </button>
+            </div>
         </div>
     `;
 }
 
 /**
  * Capture GPS one-shot et persiste dans state + IndexedDB.
- * @param {Function} onDone callback pour re-render la section
  */
 function captureHomeLocation(onDone) {
     if (!navigator.geolocation) {
@@ -155,10 +252,6 @@ function captureHomeLocation(onDone) {
     );
 }
 
-/**
- * Wire les listeners des boutons "Lieu de résidence" dans le container Mon Espace.
- * Idempotent : réattache à chaque render.
- */
 function attachHomeLocationListeners(container, callbacks) {
     const rerender = () => renderCircuitsTab(container, callbacks);
 
@@ -186,10 +279,10 @@ function renderCircuitsTab(container, callbacks) {
     if (allOfficial.length === 0) {
         container.innerHTML = `
             ${renderHomeLocationSection()}
-            <div class="ue-empty-state">
-                <div class="ue-empty-icon"><i data-lucide="wifi-off"></i></div>
-                <p class="ue-empty-title">Aucun circuit disponible</p>
-                <p class="ue-empty-sub">Les circuits officiels apparaîtront ici une fois chargés.</p>
+            <div class="me-empty">
+                <div class="me-empty-mark"><i data-lucide="wifi-off"></i></div>
+                <p class="me-empty-title">Aucun circuit disponible</p>
+                <p class="me-empty-sub">Les circuits officiels apparaîtront ici une fois chargés.</p>
             </div>`;
         createIcons({ icons: appIcons, root: container });
         attachHomeLocationListeners(container, callbacks);
@@ -206,23 +299,23 @@ function renderCircuitsTab(container, callbacks) {
     container.innerHTML = `
         ${renderHomeLocationSection()}
 
-        <div class="ue-section-header">
-            <div class="ue-section-title">
+        <div class="me-section-h">
+            <div class="me-section-title">
                 Circuits officiels
-                <span class="ue-badge ue-badge-amber" id="ue-circuits-count">${checkedCount} / ${allOfficial.length}</span>
+                <span class="badge amber" id="ue-circuits-count">${checkedCount} / ${allOfficial.length}</span>
             </div>
-            <div class="ue-section-actions">
-                <button class="ue-pill-btn" id="btn-ue-none">Aucun</button>
-                <button class="ue-pill-btn" id="btn-ue-all">Tous</button>
+            <div class="me-section-actions">
+                <button class="me-pill" id="btn-ue-none">Aucun</button>
+                <button class="me-pill" id="btn-ue-all">Tous</button>
             </div>
         </div>
 
-        <div class="ue-hint-banner">
+        <div class="me-hint">
             <i data-lucide="info"></i>
             <span>Les circuits masqués n'apparaissent plus dans la liste, mais leurs POIs restent toujours visibles sur la carte.</span>
         </div>
 
-        <div class="ue-circuits-list">
+        <div class="me-circuits-list">
             ${allOfficial.map(c => {
                 const isChecked = selectedSet.has(String(c.id));
                 const poiCount = (c.poiIds || []).length;
@@ -232,17 +325,17 @@ function renderCircuitsTab(container, callbacks) {
                     c.distance || null
                 ].filter(Boolean).join(' · ');
                 return `
-                <label class="ue-circuit-item ${isChecked ? 'is-checked' : ''}">
-                    <div class="ue-circuit-icon-box">
+                <label class="me-card${isChecked ? ' is-checked' : ''}">
+                    <div class="me-card-ico">
                         <i data-lucide="route"></i>
                     </div>
-                    <div class="ue-circuit-info">
-                        <span class="ue-circuit-name">${c.name || 'Circuit sans nom'}</span>
-                        <span class="ue-circuit-meta">${meta}</span>
+                    <div class="me-card-text">
+                        <span class="me-card-title">${c.name || 'Circuit sans nom'}</span>
+                        <span class="me-card-sub">${meta}</span>
                     </div>
-                    <div class="ue-toggle-wrap">
+                    <div class="me-toggle">
                         <input type="checkbox" class="ue-circuit-check" data-circuit-id="${c.id}" ${isChecked ? 'checked' : ''}>
-                        <span class="ue-toggle-slider"></span>
+                        <span class="me-toggle-track"></span>
                     </div>
                 </label>`;
             }).join('')}
@@ -275,7 +368,7 @@ function renderCircuitsTab(container, callbacks) {
                 ? [...new Set([...currentIds, id])]
                 : currentIds.filter(x => x !== id);
             if (callbacks.setSelection) callbacks.setSelection(newIds);
-            checkbox.closest('.ue-circuit-item')?.classList.toggle('is-checked', checkbox.checked);
+            checkbox.closest('.me-card')?.classList.toggle('is-checked', checkbox.checked);
             updateCount();
         });
     });
@@ -287,44 +380,45 @@ function renderCircuitsTab(container, callbacks) {
 
 function renderDataTab(container, callbacks) {
     container.innerHTML = `
-        <div class="ue-section-header">
-            <div class="ue-section-title">Gestion des données</div>
+        <div class="me-section-h">
+            <div class="me-section-title">Gestion des données</div>
         </div>
 
-        <div class="ue-data-grid">
-            <div class="ue-data-card">
-                <div class="ue-data-card-icon">
+        <div class="me-data-grid">
+            <div class="me-data-card">
+                <div class="me-data-card-ico">
                     <i data-lucide="download"></i>
                 </div>
-                <div class="ue-data-card-title">Sauvegarder</div>
-                <p class="ue-data-card-desc">
+                <div class="me-data-card-title">Sauvegarder</div>
+                <p class="me-data-card-desc">
                     Exportez vos notes, lieux visités, circuits et préférences dans un fichier portable.
                 </p>
-                <label class="ue-photo-label">
+                <label class="me-cb">
                     <input type="checkbox" id="ue-include-photos">
+                    <span class="me-cb-box"></span>
                     <span>Inclure les photos</span>
                 </label>
-                <button id="btn-ue-backup" class="ue-action-btn primary">
+                <button id="btn-ue-backup" class="me-btn primary">
                     <i data-lucide="download"></i> Télécharger
                 </button>
             </div>
 
-            <div class="ue-data-card">
-                <div class="ue-data-card-icon secondary">
+            <div class="me-data-card">
+                <div class="me-data-card-ico info">
                     <i data-lucide="upload"></i>
                 </div>
-                <div class="ue-data-card-title">Restaurer</div>
-                <p class="ue-data-card-desc">
+                <div class="me-data-card-title">Restaurer</div>
+                <p class="me-data-card-desc">
                     Rechargez un fichier de sauvegarde pour retrouver votre progression sur cet appareil.
                 </p>
-                <button id="btn-ue-restore" class="ue-action-btn secondary">
+                <button id="btn-ue-restore" class="me-btn secondary">
                     <i data-lucide="folder-open"></i> Choisir un fichier…
                 </button>
                 <input type="file" id="ue-restore-loader" accept=".json,.txt" class="is-hidden">
             </div>
         </div>
 
-        <div class="ue-hint-banner ue-hint-banner--spaced">
+        <div class="me-hint me-hint--spaced">
             <i data-lucide="shield-check"></i>
             <span>Vos données restent sur votre appareil. Aucune information n'est envoyée à nos serveurs.</span>
         </div>
@@ -351,39 +445,39 @@ function renderTrashTab(container, callbacks) {
 
     if (deletedCircuits.length === 0) {
         container.innerHTML = `
-            <div class="ue-empty-state">
-                <div class="ue-empty-icon green"><i data-lucide="package-check"></i></div>
-                <p class="ue-empty-title">Corbeille vide</p>
-                <p class="ue-empty-sub">Les circuits supprimés apparaîtront ici et pourront être restaurés.</p>
+            <div class="me-empty">
+                <div class="me-empty-mark green"><i data-lucide="package-check"></i></div>
+                <p class="me-empty-title">Corbeille vide</p>
+                <p class="me-empty-sub">Les circuits supprimés apparaîtront ici et pourront être restaurés à tout moment.</p>
             </div>`;
         createIcons({ icons: appIcons, root: container });
         return;
     }
 
     container.innerHTML = `
-        <div class="ue-section-header">
-            <div class="ue-section-title">
+        <div class="me-section-h">
+            <div class="me-section-title">
                 Circuits supprimés
-                <span class="ue-badge ue-badge-red">${deletedCircuits.length}</span>
+                <span class="badge red">${deletedCircuits.length}</span>
             </div>
         </div>
 
-        <div class="ue-hint-banner">
+        <div class="me-hint">
             <i data-lucide="info"></i>
             <span>Ces circuits ont été supprimés mais peuvent être restaurés à tout moment.</span>
         </div>
 
-        <div class="ue-circuits-list">
+        <div class="me-trash">
             ${deletedCircuits.map(c => `
-                <div class="ue-trash-item" id="ue-trash-${c.id}">
-                    <div class="ue-circuit-icon-box muted">
+                <div class="me-trash-item" id="ue-trash-${c.id}">
+                    <div class="me-card-ico muted">
                         <i data-lucide="route"></i>
                     </div>
-                    <div class="ue-circuit-info">
-                        <span class="ue-circuit-name">${c.name || 'Circuit sans nom'}</span>
-                        <span class="ue-circuit-meta">${(c.poiIds || []).length} POI${(c.poiIds || []).length > 1 ? 's' : ''} · Supprimé</span>
+                    <div class="me-card-text">
+                        <span class="me-card-title">${c.name || 'Circuit sans nom'}</span>
+                        <span class="me-card-sub">${(c.poiIds || []).length} POI${(c.poiIds || []).length > 1 ? 's' : ''} · Supprimé</span>
                     </div>
-                    <button class="ue-restore-btn" data-action="restore-circuit" data-id="${c.id}">
+                    <button class="me-trash-restore" data-action="restore-circuit" data-id="${c.id}">
                         <i data-lucide="rotate-ccw"></i> Restaurer
                     </button>
                 </div>
@@ -411,6 +505,9 @@ function renderTrashTab(container, callbacks) {
 // Phase 1 du chantier protection des données user (Couche 1 + Couche 2).
 // Affiche le statut de l'auto-backup local, propose un backup forcé / partage
 // natif (Web Share API), et annonce la sync cloud à venir (Phase 2).
+//
+// Architecture en cards modulaires (.me-sec-card) — Phase 2 = ajouter une
+// 4ᵉ carte "Sync GitHub Device Flow" sans refactor structurel.
 
 function formatRelativeDate(date) {
     if (!date) return null;
@@ -433,67 +530,58 @@ async function renderSecurityTab(container, callbacks) {
         : 'Aucune modification depuis';
 
     container.innerHTML = `
-        <div class="ue-security">
-            <p class="ue-security-intro">
+        <div class="me-sec">
+            <p class="me-sec-intro">
                 Tes données restent sur cet appareil. Pour ne rien perdre en cas de
                 changement de téléphone ou de vidage du cache, sauvegarde régulièrement.
             </p>
 
-            <!-- Auto-backup local -->
-            <div class="ue-security-card ue-security-card--active">
-                <div class="ue-security-card-header">
-                    <i data-lucide="hard-drive-download" class="ue-security-icon"></i>
-                    <div class="ue-security-card-title">Backup auto local</div>
-                    <span class="ue-security-status ue-security-status--on">Actif</span>
+            <div class="me-sec-card active">
+                <div class="me-sec-head">
+                    <i data-lucide="hard-drive-download"></i>
+                    <div class="me-sec-title">Backup auto local</div>
+                    <span class="me-sec-status on">Actif</span>
                 </div>
-                <div class="ue-security-card-body">
-                    <div class="ue-security-stat">${lastLabel}</div>
-                    <div class="ue-security-stat-secondary">${sinceLabel}</div>
-                    <div class="ue-security-hint">
-                        Téléchargement automatique tous les ${status.modifsThreshold} changements
-                        ou ${status.daysThreshold} jours. Le fichier arrive dans ton dossier
-                        Téléchargements.
-                    </div>
+                <div class="me-sec-stat">${lastLabel}</div>
+                <div class="me-sec-stat sub">${sinceLabel}</div>
+                <div class="me-sec-hint">
+                    Téléchargement automatique tous les ${status.modifsThreshold} changements
+                    ou ${status.daysThreshold} jours. Le fichier arrive dans ton dossier
+                    Téléchargements.
                 </div>
-                <div class="ue-security-card-actions">
-                    <button class="btn btn-primary" id="ue-btn-force-backup">
+                <div class="me-sec-actions">
+                    <button class="me-btn primary" id="ue-btn-force-backup">
                         <i data-lucide="download"></i> Forcer un backup maintenant
                     </button>
                 </div>
             </div>
 
-            <!-- Partage / Email -->
-            <div class="ue-security-card">
-                <div class="ue-security-card-header">
-                    <i data-lucide="share-2" class="ue-security-icon"></i>
-                    <div class="ue-security-card-title">Sauvegarder ailleurs</div>
+            <div class="me-sec-card">
+                <div class="me-sec-head">
+                    <i data-lucide="share-2"></i>
+                    <div class="me-sec-title">Sauvegarder ailleurs</div>
                 </div>
-                <div class="ue-security-card-body">
-                    <div class="ue-security-hint">
-                        Envoie ton backup vers un email, Drive, Telegram… Sur mobile, tu auras
-                        la palette de partage native. Sur ordinateur, le fichier est téléchargé
-                        et tu peux l'envoyer toi-même.
-                    </div>
+                <div class="me-sec-hint">
+                    Envoie ton backup vers un email, Drive, Telegram… Sur mobile, tu auras
+                    la palette de partage native. Sur ordinateur, le fichier est téléchargé
+                    et tu peux l'envoyer toi-même.
                 </div>
-                <div class="ue-security-card-actions">
-                    <button class="btn btn-ghost" id="ue-btn-share-backup">
+                <div class="me-sec-actions">
+                    <button class="me-btn secondary" id="ue-btn-share-backup">
                         <i data-lucide="send"></i> Sauvegarder / partager
                     </button>
                 </div>
             </div>
 
-            <!-- Cloud sync (à venir) -->
-            <div class="ue-security-card ue-security-card--soon">
-                <div class="ue-security-card-header">
-                    <i data-lucide="cloud" class="ue-security-icon"></i>
-                    <div class="ue-security-card-title">Sync cloud entre appareils</div>
-                    <span class="ue-security-status ue-security-status--soon">Bientôt</span>
+            <div class="me-sec-card soon">
+                <div class="me-sec-head">
+                    <i data-lucide="cloud"></i>
+                    <div class="me-sec-title">Sync entre appareils</div>
+                    <span class="me-sec-status soon">Bientôt</span>
                 </div>
-                <div class="ue-security-card-body">
-                    <div class="ue-security-hint">
-                        Pour retrouver tes données automatiquement sur tous tes appareils.
-                        Disponible dans une prochaine version.
-                    </div>
+                <div class="me-sec-hint">
+                    Pour retrouver tes données automatiquement sur tous tes appareils.
+                    Disponible dans une prochaine version.
                 </div>
             </div>
         </div>
@@ -503,7 +591,6 @@ async function renderSecurityTab(container, callbacks) {
     if (btnForce) {
         btnForce.addEventListener('click', async () => {
             btnForce.disabled = true;
-            const originalHTML = btnForce.innerHTML;
             btnForce.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Création…';
             createIcons({ icons: appIcons, root: btnForce });
             await forceBackup();
@@ -520,8 +607,7 @@ async function renderSecurityTab(container, callbacks) {
             btnShare.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Préparation…';
             createIcons({ icons: appIcons, root: btnShare });
             try {
-                // saveUserData utilise déjà Web Share API + fallback download
-                // (cf. fileManager.js downloadJSON).
+                // saveUserData utilise déjà Web Share API + fallback download.
                 const { saveUserData } = await import('./fileManager.js');
                 await saveUserData(false);
             } catch (err) {

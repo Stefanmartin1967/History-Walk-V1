@@ -1,0 +1,650 @@
+/* style/me-userspace.css — Mon Espace (côté user)
+   Refonte design suite handoff Claude Design 10/05/2026.
+   Cousin du CC Admin : mêmes tokens, même grammaire de composants, mais
+   ambre HW comme accent identitaire (au lieu du cobalt CC), radius-lg sur
+   les cards, hero plat amber-soft, pas de sidebar — tabs horizontales.
+   La logique métier (callbacks user-space.js) et les IDs DOM testés ne
+   bougent pas — voir mapping classes documenté dans le handoff §13. */
+
+/* ============================================================
+   Variables locales (pas de pollution tokens.css)
+   ============================================================ */
+.me-overlay {
+    --me-modal-w: min(760px, 92vw);
+    --me-modal-h: min(82vh, 720px);
+}
+
+/* ============================================================
+   SHELL : overlay + modale
+   ============================================================ */
+.me-overlay {
+    position: fixed; inset: 0;
+    background: color-mix(in srgb, var(--scrim) 75%, transparent);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: var(--z-modal, 2000);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s;
+}
+.me-overlay.is-active { opacity: 1; visibility: visible; }
+
+.me-modal {
+    width: var(--me-modal-w);
+    height: var(--me-modal-h);
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    overflow: hidden;
+    transform: scale(0.96);
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1.1);
+    font-family: "Inter", system-ui, sans-serif;
+    display: flex; flex-direction: column;
+}
+.me-overlay.is-active .me-modal { transform: scale(1); }
+
+/* — Topbar — */
+.me-topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 26px 0;
+    background: var(--surface);
+    flex-shrink: 0;
+}
+.me-topbar-brand {
+    display: flex; align-items: center; gap: 12px;
+    min-width: 0;
+}
+.me-topbar-mark {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-lg);
+    background: var(--hw-amber-soft);
+    color: var(--hw-amber);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.me-topbar-mark i[data-lucide] { width: 18px; height: 18px; }
+.me-topbar-text { min-width: 0; }
+.me-topbar-title {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 17px; font-weight: 700;
+    line-height: 1.15; color: var(--ink);
+    margin: 0;
+}
+.me-topbar-sub {
+    font-size: 12px; color: var(--ink-soft);
+    margin-top: 2px;
+}
+.me-close {
+    width: 32px; height: 32px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    flex-shrink: 0;
+    font-family: inherit;
+}
+.me-close:hover { background: var(--surface-muted); color: var(--ink); }
+.me-close:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.me-close i[data-lucide] { width: 16px; height: 16px; }
+
+/* — Tabs accessibles (role="tablist") — */
+.me-tabs {
+    display: flex; gap: 2px;
+    padding: 14px 22px 0;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+}
+.me-tab {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    border: none; background: transparent;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+    font-size: 13px; font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    margin-bottom: -1px;
+    white-space: nowrap;
+}
+.me-tab:hover { color: var(--ink); }
+.me-tab:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-sm);
+}
+.me-tab.is-active {
+    color: var(--hw-amber);
+    border-bottom-color: var(--hw-amber);
+    font-weight: 700;
+}
+.me-tab i[data-lucide] { width: 14px; height: 14px; flex-shrink: 0; }
+.me-tab .count {
+    margin-left: 2px;
+    background: var(--surface-muted); color: var(--ink-soft);
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+}
+.me-tab.is-active .count {
+    background: var(--hw-amber-soft);
+    color: var(--hw-amber);
+}
+
+/* — Body & scroll — */
+.me-body {
+    flex: 1; overflow-y: auto;
+    padding: 22px 26px;
+}
+.me-body::-webkit-scrollbar { width: 4px; }
+.me-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+
+/* ============================================================
+   Section header (titre + actions Tous/Aucun)
+   ============================================================ */
+.me-section-h {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 6px 0 10px;
+}
+.me-section-title {
+    font-family: var(--font-family-mono);
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-soft);
+    display: flex; align-items: center; gap: 8px;
+}
+.me-section-title .badge {
+    font-family: "Inter", sans-serif;
+    text-transform: none; letter-spacing: 0;
+    background: var(--hw-amber-soft); color: var(--hw-amber);
+    font-size: 11px; padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+}
+.me-section-title .badge.amber { background: var(--hw-amber-soft); color: var(--hw-amber); }
+.me-section-title .badge.red { background: var(--danger-soft); color: var(--danger-fg); }
+.me-section-title .badge.green { background: var(--ok-soft); color: var(--ok-fg); }
+.me-section-actions { display: flex; gap: 6px; }
+
+.me-pill {
+    padding: 5px 11px;
+    border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink-soft);
+    border-radius: var(--radius-pill);
+    font-family: inherit;
+    font-size: 11.5px; font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.me-pill:hover {
+    border-color: var(--hw-amber);
+    color: var(--hw-amber);
+    background: var(--hw-amber-soft);
+}
+.me-pill:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ============================================================
+   Hero (lieu de résidence)
+   ============================================================ */
+.me-hero {
+    background: var(--hw-amber-soft);
+    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    margin-bottom: var(--space-lg);
+    display: flex; align-items: center; gap: 18px;
+}
+.me-hero.is-set {
+    background: var(--ok-soft);
+    border-color: color-mix(in oklab, var(--ok) 35%, transparent);
+}
+.me-hero-mark {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    color: var(--hw-amber);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
+}
+.me-hero.is-set .me-hero-mark {
+    color: var(--ok-fg);
+    border-color: color-mix(in oklab, var(--ok) 35%, transparent);
+}
+.me-hero-mark i[data-lucide] { width: 22px; height: 22px; }
+.me-hero-text { flex: 1; min-width: 0; }
+.me-hero-eyebrow {
+    font-family: var(--font-family-mono);
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--hw-amber);
+    margin-bottom: 3px;
+}
+.me-hero.is-set .me-hero-eyebrow { color: var(--ok-fg); }
+.me-hero-title {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 16px; font-weight: 700;
+    line-height: 1.25; color: var(--ink);
+    margin: 0;
+}
+.me-hero-coords {
+    font-family: var(--font-family-mono);
+    font-size: 14px; font-weight: 600;
+    color: var(--ink);
+}
+.me-hero-sub {
+    font-size: 12.5px; color: var(--ink-soft);
+    margin-top: 3px;
+}
+.me-hero-actions { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
+.me-hero-cta {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface);
+    color: var(--hw-amber);
+    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 12.5px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+.me-hero-cta:hover {
+    background: color-mix(in oklab, var(--hw-amber-soft) 60%, var(--surface));
+    border-color: var(--hw-amber);
+}
+.me-hero-cta:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.me-hero-cta i[data-lucide] { width: 13px; height: 13px; }
+.me-hero.is-set .me-hero-cta { color: var(--ok-fg); border-color: color-mix(in oklab, var(--ok) 35%, transparent); }
+.me-hero.is-set .me-hero-cta:hover { background: color-mix(in oklab, var(--ok-soft) 60%, var(--surface)); border-color: var(--ok); }
+
+/* Hero "vide" : invitatif pour définir le lieu */
+.me-hero-hint {
+    font-size: 13px; line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+}
+
+/* ============================================================
+   Hint banner (info neutre)
+   ============================================================ */
+.me-hint {
+    display: flex; gap: 10px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    font-size: 12.5px; line-height: 1.45;
+    color: var(--ink-soft);
+}
+.me-hint i[data-lucide] {
+    width: 14px; height: 14px;
+    flex-shrink: 0; margin-top: 2px;
+    color: var(--ink-soft);
+}
+.me-hint--spaced { margin-top: 16px; }
+
+/* ============================================================
+   Card (circuits + trash items)
+   ============================================================ */
+.me-card {
+    display: flex; align-items: center; gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.me-card:hover {
+    border-color: color-mix(in oklab, var(--hw-amber) 50%, var(--line));
+    background: color-mix(in oklab, var(--hw-amber-soft) 30%, var(--surface));
+}
+.me-card.is-checked {
+    background: var(--hw-amber-soft);
+    border-color: color-mix(in oklab, var(--hw-amber) 40%, var(--line));
+}
+.me-card-ico {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-md);
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.me-card.is-checked .me-card-ico {
+    background: var(--surface);
+    color: var(--hw-amber);
+    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
+}
+.me-card-ico i[data-lucide] { width: 17px; height: 17px; }
+.me-card-ico.muted { background: var(--surface-muted); color: var(--ink-soft); }
+.me-card-text { flex: 1; min-width: 0; }
+.me-card-title {
+    font-size: 13.5px; font-weight: 700; color: var(--ink);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.me-card-sub {
+    font-size: 12px; color: var(--ink-soft);
+    margin-top: 2px;
+}
+
+/* ============================================================
+   Toggle switch (circuit on/off)
+   ============================================================ */
+.me-toggle {
+    position: relative;
+    width: 38px; height: 22px;
+    flex-shrink: 0;
+}
+.me-toggle input[type="checkbox"] {
+    opacity: 0; position: absolute; inset: 0;
+    width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1;
+}
+.me-toggle-track {
+    position: absolute; inset: 0;
+    background: #cbd5e1;
+    border-radius: var(--radius-pill);
+    transition: background 0.2s;
+    pointer-events: none;
+}
+.me-toggle-track::after {
+    content: ''; position: absolute;
+    left: 3px; top: 3px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--surface);
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+.me-toggle input:checked ~ .me-toggle-track { background: var(--hw-amber); }
+.me-toggle input:checked ~ .me-toggle-track::after { transform: translateX(16px); }
+.me-toggle input:focus-visible ~ .me-toggle-track {
+    box-shadow: var(--focus-ring);
+}
+
+/* ============================================================
+   Onglet Données : grid 2 cols + cards
+   ============================================================ */
+.me-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.me-data-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    display: flex; flex-direction: column;
+    gap: 10px;
+    min-height: 180px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.me-data-card:hover {
+    border-color: color-mix(in oklab, var(--hw-amber) 50%, var(--line));
+    box-shadow: var(--shadow-card);
+}
+.me-data-card-ico {
+    width: 38px; height: 38px;
+    border-radius: var(--radius-md);
+    background: var(--hw-amber-soft);
+    color: var(--hw-amber);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.me-data-card-ico.info {
+    background: var(--info-soft);
+    color: var(--info-fg);
+}
+.me-data-card-ico i[data-lucide] { width: 18px; height: 18px; }
+.me-data-card-title {
+    font-size: 14px; font-weight: 700; color: var(--ink);
+    margin: 0;
+}
+.me-data-card-desc {
+    font-size: 12.5px; line-height: 1.45;
+    color: var(--ink-soft);
+    margin: 0;
+    flex: 1;
+}
+
+/* Custom checkbox (Inclure les photos) — natif caché */
+.me-cb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+}
+.me-cb input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 0; height: 0;
+}
+.me-cb-box {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s;
+}
+.me-cb input:checked ~ .me-cb-box {
+    background: var(--hw-amber-soft);
+    border-color: var(--hw-amber);
+}
+.me-cb-box::after {
+    content: '✓';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--hw-amber);
+    font-size: 10px; font-weight: 700; line-height: 1;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.me-cb input:checked ~ .me-cb-box::after { opacity: 1; }
+.me-cb input:focus-visible ~ .me-cb-box { box-shadow: var(--focus-ring); }
+
+/* CTA standard */
+.me-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.15s, transform 0.15s, border-color 0.15s;
+    margin-top: auto;
+    text-align: center;
+}
+.me-btn i[data-lucide] { width: 14px; height: 14px; }
+.me-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.me-btn.primary {
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+}
+.me-btn.primary:hover { opacity: 0.92; transform: translateY(-1px); }
+.me-btn.secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+}
+.me-btn.secondary:hover {
+    background: var(--surface-muted);
+    border-color: color-mix(in oklab, var(--ink-soft) 30%, var(--line));
+}
+.me-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* ============================================================
+   Onglet Sécurité (cards modulaires)
+   ============================================================ */
+.me-sec {
+    display: flex; flex-direction: column;
+    gap: 10px;
+}
+.me-sec-intro {
+    margin: 0 0 4px;
+    font-size: 13px; line-height: 1.5;
+    color: var(--ink-soft);
+}
+.me-sec-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    display: flex; flex-direction: column;
+    gap: 8px;
+}
+.me-sec-card.active {
+    background: var(--ok-soft);
+    border-color: color-mix(in oklab, var(--ok) 35%, var(--line));
+}
+.me-sec-card.soon { opacity: 0.55; }
+.me-sec-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 4px;
+}
+.me-sec-head i[data-lucide] {
+    width: 18px; height: 18px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+.me-sec-card.active .me-sec-head i[data-lucide] { color: var(--ok-fg); }
+.me-sec-title {
+    flex: 1;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--ink);
+}
+.me-sec-status {
+    font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+}
+.me-sec-status.on { background: var(--ok-fg); color: var(--surface); }
+.me-sec-status.soon {
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+}
+.me-sec-stat {
+    font-size: 13px; color: var(--ink);
+}
+.me-sec-stat strong { font-weight: 700; }
+.me-sec-stat.sub {
+    font-size: 12px; color: var(--ink-soft);
+}
+.me-sec-hint {
+    margin-top: 4px;
+    font-size: 12px; line-height: 1.45;
+    color: var(--ink-soft);
+}
+.me-sec-actions {
+    display: flex; gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+.me-sec-actions .me-btn {
+    width: auto;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    margin-top: 0;
+}
+
+/* ============================================================
+   Onglet Corbeille (trash items + restore pill)
+   ============================================================ */
+.me-trash {
+    display: flex; flex-direction: column;
+    gap: 6px;
+}
+.me-trash-item {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+    display: flex; align-items: center;
+    gap: 12px;
+    transition: opacity 0.4s ease;
+}
+.me-trash-restore {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 13px;
+    background: var(--ok-soft);
+    color: var(--ok-fg);
+    border: 1px solid color-mix(in oklab, var(--ok) 40%, var(--surface));
+    border-radius: var(--radius-pill);
+    font-family: inherit;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.15s;
+}
+.me-trash-restore:hover {
+    background: color-mix(in oklab, var(--ok-soft) 70%, var(--ok));
+    transform: translateY(-1px);
+}
+.me-trash-restore:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.me-trash-restore i[data-lucide] { width: 13px; height: 13px; }
+
+/* ============================================================
+   Empty states
+   ============================================================ */
+.me-empty {
+    padding: 48px 20px;
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+}
+.me-empty-mark {
+    width: 64px; height: 64px;
+    margin: 0 auto 14px;
+    border-radius: var(--radius-lg);
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+}
+.me-empty-mark.green {
+    background: var(--ok-soft);
+    color: var(--ok-fg);
+}
+.me-empty-mark i[data-lucide] { width: 28px; height: 28px; }
+.me-empty-title {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 17px; font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+}
+.me-empty-sub {
+    font-size: 13px; color: var(--ink-soft);
+    max-width: 340px; margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* ============================================================
+   Util : caché visuellement mais accessible aux lecteurs d'écran
+   ============================================================ */
+.me-sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
