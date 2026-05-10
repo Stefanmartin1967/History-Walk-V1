@@ -2897,3 +2897,57 @@ input[type=range] {
     }
 }
 
+/* ============================================================
+   MODE PWA WINDOW CONTROLS OVERLAY (Edge / Chrome desktop récents)
+   ============================================================
+   Quand l'app est lancée en PWA installée ET que le navigateur supporte
+   `display_override: window-controls-overlay`, l'app s'étend SOUS la
+   barre titre Windows (et iOS standalone se rabat sur display:standalone
+   classique via le fallback dans le manifest).
+
+   Avantages vs `standalone` simple :
+   - Plus de double-bandeau (titlebar Chrome + topbar app empilées)
+   - L'app récupère la zone titlebar et y place ses propres contrôles
+   - Topbar respire mieux (boutons gardent leurs dimensions normales)
+
+   Ce que cette règle fait :
+   - Topbar reste à 40px (compactage utile car la titlebar prend déjà ~30px)
+   - padding-left/right s'adapte à la zone disponible (env(titlebar-area-x/width))
+     pour éviter chevauchement avec les boutons système Windows (_ ▢ ×) à droite
+   - Topbar devient la "drag area" (déplacement de la fenêtre par drag)
+   - Tous les éléments interactifs gardent leur cliquabilité via app-region:no-drag
+
+   Note : `display-mode: window-controls-overlay` ET `standalone` matchent
+   tous deux quand WCO est actif (cf. spec). Cette règle vient APRÈS le
+   bloc standalone donc l'override prend le dessus quand applicable.
+   ============================================================ */
+@media (display-mode: window-controls-overlay) {
+    .topbar {
+        /* Hauteur identique au mode standalone simple (compactée) */
+        height: 40px;
+        /* Évite le chevauchement avec les zones non-disponibles
+           (les boutons système Windows _ ▢ × sont à droite, et selon la
+           plateforme il peut y avoir un titre app à gauche).
+           Les `env(titlebar-area-*)` valent leur fallback (0 / 100vw) si
+           non disponibles — comportement gracieux. */
+        padding-left: max(12px, env(titlebar-area-x, 12px));
+        padding-right: calc(100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw) + 12px);
+        /* La topbar devient la drag-region : permet à l'utilisateur de
+           déplacer la fenêtre en draggant cette zone (sinon la titlebar
+           native disparaît avec WCO et il n'y a plus de moyen de bouger
+           la fenêtre). */
+        -webkit-app-region: drag;
+        app-region: drag;
+    }
+    /* Tous les éléments interactifs DOIVENT échapper au drag, sinon ils
+       deviennent non-cliquables (le drag avale les events click). */
+    .topbar button,
+    .topbar input,
+    .topbar a,
+    .topbar [role="button"],
+    .topbar [contenteditable="true"] {
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
+    }
+}
+
