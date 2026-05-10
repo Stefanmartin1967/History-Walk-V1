@@ -85,11 +85,22 @@ function openPopover() {
 
         <div class="info-popover-section">
             <div class="info-popover-section-title">Regroupements</div>
-            <div class="info-popover-legend-item">
-                <div class="info-popover-cluster-sample">12</div>
-                <div class="info-popover-legend-text">
-                    <span class="info-popover-legend-label">Lieux groupés</span>
-                    <span class="info-popover-legend-desc">Plusieurs lieux proches — zoomez pour les voir séparément</span>
+            <p class="info-popover-cluster-intro">
+                Plusieurs lieux proches sont groupés en un cercle. Sa couleur indique
+                combien — zoomez pour les voir séparément.
+            </p>
+            <div class="info-popover-cluster-grid">
+                <div class="info-popover-cluster-item">
+                    <div class="info-popover-cluster-sample info-popover-cluster-sample--small">5</div>
+                    <span class="info-popover-cluster-label">Quelques lieux</span>
+                </div>
+                <div class="info-popover-cluster-item">
+                    <div class="info-popover-cluster-sample info-popover-cluster-sample--medium">25</div>
+                    <span class="info-popover-cluster-label">Plusieurs</span>
+                </div>
+                <div class="info-popover-cluster-item">
+                    <div class="info-popover-cluster-sample info-popover-cluster-sample--large">75</div>
+                    <span class="info-popover-cluster-label">Beaucoup</span>
                 </div>
             </div>
         </div>

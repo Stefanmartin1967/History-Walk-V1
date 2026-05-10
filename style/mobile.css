@@ -278,18 +278,61 @@
     text-overflow: ellipsis;
 }
 
-/* ── Cluster (PR PC-3) — exemple visuel d'un regroupement ─────────────── */
+/* ── Clusters (PR PC-3 + audit Claude Design) ─────────────────────────────
+   Les 3 samples reproduisent les couleurs réelles de Leaflet.markercluster
+   par défaut (small / medium / large), que HW n'override pas. Sémantique
+   "feu tricolore" : vert = peu de lieux, jaune = plusieurs, rouge = beaucoup.
+   Couleurs hardcodées intentionnellement — elles correspondent au rendu
+   Leaflet, pas à des tokens HW (qui changeraient par thème et créeraient
+   un mensonge visuel entre carte et légende).
+*/
+.info-popover-cluster-intro {
+    margin: 0 0 8px;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--ink-soft);
+}
+.info-popover-cluster-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    align-items: start;
+    justify-items: center;
+}
+.info-popover-cluster-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
 .info-popover-cluster-sample {
     width: 36px; height: 36px;
     border-radius: 50%;
-    background: color-mix(in oklab, var(--brand) 70%, var(--surface));
-    color: var(--cta-fg);
+    color: rgba(20, 30, 40, 0.85);
     display: flex; align-items: center; justify-content: center;
     font-weight: 700;
     font-size: 0.85rem;
     flex-shrink: 0;
-    box-shadow: 0 0 0 5px color-mix(in oklab, var(--brand) 30%, transparent);
-    margin-top: 2px;
+}
+/* Outer color = couleur Leaflet par défaut. Halo = inner color (60% opacity)
+   reproduit l'anneau translucide du rendu carte. */
+.info-popover-cluster-sample--small {
+    background: #b5e28c;
+    box-shadow: 0 0 0 4px rgba(110, 204, 57, 0.35);
+}
+.info-popover-cluster-sample--medium {
+    background: #f1d357;
+    box-shadow: 0 0 0 4px rgba(241, 211, 87, 0.35);
+}
+.info-popover-cluster-sample--large {
+    background: #fd9c73;
+    box-shadow: 0 0 0 4px rgba(253, 156, 115, 0.35);
+}
+.info-popover-cluster-label {
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+    line-height: 1.2;
 }
 
 

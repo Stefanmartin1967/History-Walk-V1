@@ -33,14 +33,15 @@ describe('showInfoPopover — création', () => {
 });
 
 describe('showInfoPopover — contenu légende', () => {
-    it('affiche les 3 lignes de polylines + 1 cluster (4 items au total)', () => {
+    it('affiche les 3 lignes de polylines (Vol d\'oiseau / Tracé réel / Circuit terminé)', () => {
         showInfoPopover();
         const items = document.querySelectorAll('.info-popover-legend-item');
-        // 3 tracés (Vol d'oiseau / Tracé réel / Circuit terminé) + 1 ligne Cluster
-        expect(items).toHaveLength(4);
+        // 3 tracés (le sample cluster est désormais dans une grille séparée à 3
+        // samples vert/jaune/rouge — voir test "3 cluster samples" plus bas).
+        expect(items).toHaveLength(3);
         const labels = Array.from(document.querySelectorAll('.info-popover-legend-label'))
             .map(l => l.textContent.trim());
-        expect(labels).toEqual(['Vol d\'oiseau', 'Tracé réel', 'Circuit terminé', 'Lieux groupés']);
+        expect(labels).toEqual(['Vol d\'oiseau', 'Tracé réel', 'Circuit terminé']);
     });
 
     it('chaque ligne a un label en gras et une description en dessous (pas de parenthèses)', () => {
@@ -82,11 +83,21 @@ describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
         expect(txt).toContain('Site historique');
     });
 
-    it('contient une section "Regroupements" avec un sample cluster', () => {
+    it('contient une section "Regroupements" avec 3 samples cluster (vert/jaune/rouge)', () => {
         showInfoPopover();
         const txt = document.getElementById('info-popover').textContent;
         expect(txt).toContain('Regroupements');
-        expect(document.querySelector('.info-popover-cluster-sample')).not.toBeNull();
+        // Reproduit la sémantique tricolore Leaflet markercluster (small/medium/
+        // large) plutôt qu'un seul sample bleu (qui aurait menti — Leaflet rend
+        // vert/jaune/rouge selon densité, pas bleu).
+        expect(document.querySelectorAll('.info-popover-cluster-sample')).toHaveLength(3);
+        expect(document.querySelector('.info-popover-cluster-sample--small')).not.toBeNull();
+        expect(document.querySelector('.info-popover-cluster-sample--medium')).not.toBeNull();
+        expect(document.querySelector('.info-popover-cluster-sample--large')).not.toBeNull();
+        // Labels descriptifs
+        const labels = Array.from(document.querySelectorAll('.info-popover-cluster-label'))
+            .map(l => l.textContent.trim());
+        expect(labels).toEqual(['Quelques lieux', 'Plusieurs', 'Beaucoup']);
     });
 });
 
