@@ -58,6 +58,10 @@ vi.mock('../src/admin-control-center.js', () => ({
     quickPublish: vi.fn()
 }));
 
+vi.mock('../src/user-space.js', () => ({
+    openUserSpace: vi.fn()
+}));
+
 vi.mock('../src/events.js', () => ({
     eventBus: {
         emit: vi.fn(),
@@ -79,11 +83,11 @@ import { state } from '../src/state.js';
 import { DOM } from '../src/ui-dom.js';
 import { showStatisticsModal } from '../src/statistics.js';
 import { startGenericScanner } from '../src/sync.js';
-import { saveUserData } from '../src/fileManager.js';
 import { deleteDatabase } from '../src/database.js';
 import { showConfirm } from '../src/modal.js';
 import { showAdminLoginModal, logoutAdmin } from '../src/admin.js';
 import { openControlCenter } from '../src/admin-control-center.js';
+import { openUserSpace } from '../src/user-space.js';
 import { eventBus } from '../src/events.js';
 import { getCurrentView, isMobileView } from '../src/mobile-state.js';
 import { renderMobileMenu } from '../src/mobile-menu.js';
@@ -107,16 +111,19 @@ afterEach(() => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 describe('renderMobileMenu — render structure', () => {
-    it('rend les 8 boutons standards (non-admin)', () => {
+    it('rend les 7 boutons standards (non-admin) — option A : Mon Espace remplace Sauvegarder/Restaurer', () => {
         renderMobileMenu();
         expect(document.getElementById('mob-action-stats')).not.toBeNull();
+        expect(document.getElementById('mob-action-mon-espace')).not.toBeNull();
         expect(document.getElementById('mob-action-scan')).not.toBeNull();
-        expect(document.getElementById('mob-action-restore')).not.toBeNull();
-        expect(document.getElementById('mob-action-save')).not.toBeNull();
         expect(document.getElementById('mob-action-geojson')).not.toBeNull();
         expect(document.getElementById('mob-action-reset')).not.toBeNull();
         expect(document.getElementById('mob-action-theme')).not.toBeNull();
         expect(document.getElementById('mob-action-bmc')).not.toBeNull();
+        // Sauvegarder/Restaurer retirés du menu mobile principal — désormais accessibles
+        // via Mon Espace > onglet Données (cf. handoff Claude Design 10/05/2026, §2.4 option A).
+        expect(document.getElementById('mob-action-save')).toBeNull();
+        expect(document.getElementById('mob-action-restore')).toBeNull();
     });
 
     it('section admin absente si !state.isAdmin', () => {
@@ -162,16 +169,10 @@ describe('renderMobileMenu — listeners boutons standards', () => {
         expect(startGenericScanner).toHaveBeenCalled();
     });
 
-    it('click "Sauvegarder" → saveUserData()', () => {
+    it('click "Mon Espace" → openUserSpace()', () => {
         renderMobileMenu();
-        document.getElementById('mob-action-save').click();
-        expect(saveUserData).toHaveBeenCalled();
-    });
-
-    it('click "Restaurer" → DOM.restoreLoader.click()', () => {
-        renderMobileMenu();
-        document.getElementById('mob-action-restore').click();
-        expect(DOM.restoreLoader.click).toHaveBeenCalled();
+        document.getElementById('mob-action-mon-espace').click();
+        expect(openUserSpace).toHaveBeenCalled();
     });
 
     it('click "Charger Destination" → DOM.geojsonLoader.click()', () => {
