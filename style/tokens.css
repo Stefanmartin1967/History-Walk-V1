@@ -89,6 +89,10 @@ html[data-theme="maritime"] {
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
 
+  /* Scrim : voile coloré thématique sous les overlays/modales (anciennement
+     hardcodé en rgba dans admin-cc.css). Teinte au bleu nuit en maritime. */
+  --scrim: rgba(13, 59, 102, 0.6);
+
   --shadow:       0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
   --shadow-soft:  0 4px 12px rgba(100, 116, 139, .10);
   --shadow-card:  0 1px 2px rgba(20, 33, 43, .04), 0 1px 1px rgba(20, 33, 43, .03);
@@ -128,6 +132,9 @@ html[data-theme="desert"] {
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
 
+  /* Scrim : voile orangé pour le désert. */
+  --scrim: rgba(120, 53, 15, 0.55);
+
   --shadow:       0 8px 24px rgba(60, 30, 10, .12), 0 2px 8px rgba(60, 30, 10, .06);
   --shadow-soft:  0 4px 12px rgba(138, 111, 94, .12);
   --shadow-card:  0 1px 2px rgba(60, 30, 10, .04), 0 1px 1px rgba(60, 30, 10, .03);
@@ -166,6 +173,9 @@ html[data-theme="oasis"] {
 
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
+
+  /* Scrim : voile vert profond pour l'oasis. */
+  --scrim: rgba(5, 71, 55, 0.55);
 
   --shadow:       0 8px 24px rgba(6, 78, 59, .12), 0 2px 8px rgba(6, 78, 59, .06);
   --shadow-soft:  0 4px 12px rgba(82, 140, 124, .12);
@@ -208,6 +218,9 @@ html[data-theme="night"] {
 
   --hw-amber:      #FBBF24;
   --hw-amber-soft: color-mix(in oklab, var(--hw-amber) 14%, var(--surface));
+
+  /* Scrim : voile presque noir pour le night, avec une pointe de bleu nuit. */
+  --scrim: rgba(2, 8, 18, 0.7);
 
   --shadow:       0 8px 24px rgba(0, 0, 0, .50), 0 2px 8px rgba(0, 0, 0, .35);
   --shadow-soft:  0 4px 12px rgba(0, 0, 0, .35);
