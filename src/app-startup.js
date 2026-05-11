@@ -111,6 +111,11 @@ export async function loadPoiCategoriesConfig() {
 }
 
 export async function loadAndInitializeMap() {
+    // Migration one-shot : la clé localStorage `hw_poi_tools_open` (drawer
+    // outils PC, refonte 11/05/2026) n'est plus utilisée. Cleanup pour les
+    // users existants. No-op si la clé n'existe pas.
+    try { localStorage.removeItem('hw_poi_tools_open'); } catch {}
+
     // 0. Configs (CRITIQUE : On attend les configs avant tout)
     await Promise.all([
         loadDestinationsConfig(),

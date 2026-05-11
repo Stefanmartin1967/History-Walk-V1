@@ -77,68 +77,69 @@ function buildHero(opts) {
             </div>`;
     }
 
+    // F1 : hero vide cliquable. Le label invite à ajouter une photo,
+    // le clic est branché par setupHeroClick (ouvre la photo grid).
     return `
-        <div class="poi-hero is-empty" id="poi-hero">
+        <div class="poi-hero is-empty is-clickable" id="poi-hero" role="button" tabindex="0" aria-label="Ajouter une photo">
             ${closeBtn}
-            <div class="empty-icon"><i data-lucide="image-off"></i></div>
-            <span class="empty-label">Aucune photo</span>
+            <div class="empty-icon"><i data-lucide="image-plus"></i></div>
+            <span class="empty-label">Cliquer pour ajouter une photo</span>
         </div>`;
 }
 
-function buildToolsPanelHtml({ hasAr, hasGpxDesc, isMobile }) {
-    // 3 groupes : Recherche externe · Données du lieu · Édition.
-    // Différenciation PC / mobile sur la position :
-    //   - PC  : "Déplacer marqueur" (drag pin sur la carte)
-    //   - Mobile : "Capturer position" (getCurrentPosition)
+// Mini-barre de raccourcis sous la fiche : Google · Maps · Éditer + kebab inline.
+// Identique PC et mobile (cohérence "toolbar du bas").
+function buildPoiQuickBar() {
+    return `
+        <div class="poi-quick-bar">
+            <button class="poi-quick-btn btn-web-search" id="btn-web-search" type="button" title="Rechercher sur Google" aria-label="Rechercher sur Google">
+                <i data-lucide="search"></i>Google
+            </button>
+            <button class="poi-quick-btn" id="open-gmaps-btn" type="button" title="Vérifier sur Google Maps" aria-label="Vérifier sur Google Maps">
+                <i data-lucide="map-pin"></i>Maps
+            </button>
+            <button class="poi-quick-btn" id="btn-global-edit" type="button" title="Modifier le lieu" aria-label="Modifier le lieu">
+                <i data-lucide="pencil"></i>Éditer
+            </button>
+            <div class="poi-kebab-wrap in-mini-bar">
+                <button class="poi-kebab" id="poi-tools-trigger" type="button"
+                        aria-haspopup="menu" aria-expanded="false" aria-controls="poi-tools-pop"
+                        title="Plus d'actions" aria-label="Plus d'actions">
+                    <span class="dots"><i></i><i></i><i></i></span>
+                </button>
+            </div>
+        </div>`;
+}
 
-    const rechercheBtns = `
-        <button class="poi-tool-btn btn-web-search" id="btn-web-search" title="Rechercher sur Google" aria-label="Rechercher sur Google">
-            <div class="ico-box"><i data-lucide="search"></i></div>Google
-        </button>
-        <button class="poi-tool-btn" id="open-gmaps-btn" title="Vérifier sur Google Maps" aria-label="Vérifier sur Google Maps">
-            <div class="ico-box"><i data-lucide="map"></i></div>Maps
-        </button>
-        <button class="poi-tool-btn ${hasAr ? '' : 'is-disabled'}" id="${isMobile ? 'mobile-btn-toggle-lang' : 'btn-toggle-lang'}" title="Afficher le titre arabe" aria-label="Afficher le titre arabe" ${hasAr ? '' : 'disabled'}>
-            <div class="ico-box"><i data-lucide="languages"></i></div>Arabe
-        </button>
-    `;
-
-    const donneesBtns = `
-        <button class="poi-tool-btn ${hasGpxDesc ? '' : 'is-disabled'}" id="${isMobile ? 'mobile-btn-toggle-gpx-desc' : 'btn-toggle-gpx-desc'}" title="Description GPX" aria-label="Description GPX" ${hasGpxDesc ? '' : 'disabled'}>
-            <div class="ico-box"><i data-lucide="file-text"></i></div>Desc. GPX
-        </button>
-        ${isMobile
-            ? `<button class="poi-tool-btn" id="mobile-move-poi-btn" title="Capturer ma position" aria-label="Capturer ma position">
-                   <div class="ico-box"><i data-lucide="locate-fixed"></i></div>Capturer position
-               </button>`
-            : `<button class="poi-tool-btn" id="btn-move-marker" title="Déplacer le marqueur sur la carte" aria-label="Déplacer le marqueur sur la carte">
-                   <div class="ico-box"><i data-lucide="move"></i></div>Déplacer marqueur
-               </button>`
-        }
-        <button class="poi-tool-btn" id="btn-open-photo-grid" title="Gérer les photos" aria-label="Gérer les photos">
-            <div class="ico-box"><i data-lucide="image-plus"></i></div>Photos
-        </button>
-    `;
-
-    const editionBtns = `
-        <button class="poi-tool-btn" id="btn-global-edit" title="Modifier le lieu" aria-label="Modifier le lieu">
-            <div class="ico-box"><i data-lucide="pencil"></i></div>Éditer
-        </button>
-        <button class="poi-tool-btn danger" id="btn-soft-delete" title="Signaler pour suppression" aria-label="Signaler pour suppression">
-            <div class="ico-box"><i data-lucide="trash-2"></i></div>Supprimer
-        </button>
-    `;
+// Popover du kebab — items secondaires : Arabe · Desc. GPX · Position · Supprimer.
+// IDs identiques à l'ancien menu pour réutiliser tous les handlers existants.
+function buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile }) {
+    const langId = isMobile ? 'mobile-btn-toggle-lang' : 'btn-toggle-lang';
+    const gpxId  = isMobile ? 'mobile-btn-toggle-gpx-desc' : 'btn-toggle-gpx-desc';
+    const positionItem = isMobile
+        ? `<button class="poi-pop-item" role="menuitem" id="mobile-move-poi-btn" type="button">
+               <i data-lucide="locate-fixed"></i>Capturer ma position
+           </button>`
+        : `<button class="poi-pop-item" role="menuitem" id="btn-move-marker" type="button">
+               <i data-lucide="move"></i>Déplacer le marqueur
+           </button>`;
 
     return `
-        <p class="poi-tools-cap">Recherche externe</p>
-        <div class="poi-tools-grid">${rechercheBtns}</div>
-        <div class="poi-tools-divider"></div>
-        <p class="poi-tools-cap">Données du lieu</p>
-        <div class="poi-tools-grid">${donneesBtns}</div>
-        <div class="poi-tools-divider"></div>
-        <p class="poi-tools-cap">Édition</p>
-        <div class="poi-tools-grid">${editionBtns}</div>
-    `;
+        <div class="poi-kebab-pop is-hidden" id="poi-tools-pop" role="menu" aria-label="Outils du lieu">
+            <button class="poi-pop-item" role="menuitem" id="${langId}" type="button"
+                    aria-disabled="${hasAr ? 'false' : 'true'}">
+                <i data-lucide="languages"></i>Titre en arabe
+            </button>
+            <button class="poi-pop-item" role="menuitem" id="${gpxId}" type="button"
+                    aria-disabled="${hasGpxDesc ? 'false' : 'true'}">
+                <i data-lucide="file-text"></i>Description GPX
+            </button>
+            ${positionItem}
+            <div class="poi-pop-sep" role="separator"></div>
+            <button class="poi-pop-item poi-pop-item--danger" role="menuitem" id="btn-soft-delete" type="button">
+                <i data-lucide="trash-2"></i>Supprimer
+            </button>
+        </div>`;
 }
 
 export function buildDetailsPanelHtml(feature, circuitIndex) {
@@ -285,22 +286,38 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             ${descBlock}
         </section>`;
 
-    // Compteur position dans le circuit (3 / 12) — affiché en eyebrow si in circuit
-    const positionText = inCircuit && state.currentCircuit
-        ? `${circuitIndex + 1} / ${state.currentCircuit.length}`
-        : '';
-
-    // Tools panel content (commun PC + mobile, mais boutons spécifiques device)
-    const toolsContent = buildToolsPanelHtml({ hasAr, hasGpxDesc, isMobile: mobile });
-
-    // Navigation prev/next quand POI in circuit
+    // Compteur position dans le circuit (3 / 12) — affiché en eyebrow si in circuit.
+    // Si in circuit, deux chevrons cliquables encadrent le compteur pour naviguer
+    // entre POIs (remplace les nav pills/row supprimés du footer).
     const isFirst = inCircuit && circuitIndex === 0;
     const isLast = inCircuit && state.currentCircuit && circuitIndex === state.currentCircuit.length - 1;
-    const navHtmlDesktop = inCircuit ? `
-            <button id="prev-poi-button" class="poi-nav-btn" title="Précédent" aria-label="Précédent" ${isFirst ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button>
-            <button id="next-poi-button" class="poi-nav-btn" title="Suivant" aria-label="Suivant" ${isLast ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button>` : '';
-    const navHtmlMobilePrev = inCircuit ? `<button id="details-prev-btn" class="poi-nav-pill" data-direction="-1" title="Précédent" aria-label="Précédent" ${isFirst ? 'disabled' : ''}><i data-lucide="chevron-left"></i></button>` : '';
-    const navHtmlMobileNext = inCircuit ? `<button id="details-next-btn" class="poi-nav-pill" data-direction="1" title="Suivant" aria-label="Suivant" ${isLast ? 'disabled' : ''}><i data-lucide="chevron-right"></i></button>` : '';
+    const positionText = inCircuit && state.currentCircuit
+        ? `<span class="poi-eyebrow-nav">
+              <button class="poi-eyebrow-chev" id="poi-eyebrow-prev" type="button"
+                      title="POI précédent" aria-label="POI précédent" ${isFirst ? 'disabled' : ''}>
+                  <i data-lucide="chevron-left"></i>
+              </button>
+              <span class="poi-eyebrow-pos">${circuitIndex + 1} / ${state.currentCircuit.length}</span>
+              <button class="poi-eyebrow-chev" id="poi-eyebrow-next" type="button"
+                      title="POI suivant" aria-label="POI suivant" ${isLast ? 'disabled' : ''}>
+                  <i data-lucide="chevron-right"></i>
+              </button>
+           </span>`
+        : '';
+
+    // Mini-barre + popover kebab — communs PC + mobile.
+    // Le kebab vit dans la mini-barre sur les deux (cohérence PC/mobile).
+    const quickBarHtml = buildPoiQuickBar({ withKebab: true });
+    const kebabPopover = buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile: mobile });
+
+    // Eyebrow contextuel partagé PC/mobile.
+    // zone et category sont escapés ; positionText est du HTML safe (chevrons + index).
+    const eyebrowParts = [
+        zone ? escapeXml(zone) : '',
+        showCategory ? escapeXml(category) : '',
+        positionText
+    ].filter(Boolean);
+    const hasEyebrow = eyebrowParts.length > 0;
 
     // ========== TEMPLATE DESKTOP ==========
     if (!mobile) {
@@ -313,7 +330,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 ${heroHtml}
                 <div class="poi-body">
                     <div class="poi-title-block">
-                        ${positionText || zone || showCategory ? `<div class="poi-eyebrow">${[zone, showCategory ? category : '', positionText].filter(Boolean).map(escapeXml).join(' · ')}</div>` : ''}
+                        ${hasEyebrow ? `<div class="poi-eyebrow">${eyebrowParts.join(' · ')}</div>` : ''}
                         <h2 class="poi-title" id="panel-title-fr">${escapeXml(poiName)}</h2>
                         ${hasAr ? `<h2 class="poi-title poi-subtitle-ar is-hidden" id="panel-title-ar" dir="rtl">${escapeXml(arName)}</h2>` : ''}
                     </div>
@@ -323,42 +340,25 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     ${suiviSection}
                 </div>
                 <div class="poi-footer">
-                    <button class="poi-cta" id="poi-cta-itinerary" title="Voir l'itinéraire dans Google Maps" aria-label="Voir l'itinéraire dans Google Maps">
-                        <i data-lucide="map-pin"></i>
-                        Voir l'itinéraire vers ce lieu
-                    </button>
-                    <div class="poi-tools" id="poi-tools">
-                        <button class="poi-tools-trigger" id="poi-tools-trigger" type="button" aria-expanded="false">
-                            <span class="dots"><i></i><i></i><i></i></span>
-                            Outils
-                            <span class="chev"><i data-lucide="chevron-down"></i></span>
-                        </button>
-                        <div class="poi-tools-panel is-hidden" id="poi-tools-panel">
-                            ${toolsContent}
-                        </div>
-                    </div>
-                    ${inCircuit ? `<div class="poi-nav-row">${navHtmlDesktop}</div>` : ''}
+                    ${quickBarHtml}
+                    ${kebabPopover}
                 </div>
             </div>`;
     }
 
     // ========== TEMPLATE MOBILE ==========
     const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: false });
-    const headerCap = [zone, showCategory ? category : '', positionText].filter(Boolean).join(' · ');
 
     return `
         <div class="poi-panel is-mobile" data-poi-id="${escapeXml(feature.properties.HW_ID || '')}">
             <div class="poi-mobile-header">
                 <div class="poi-mobile-header-row">
-                    <button class="poi-mobile-back" id="details-close-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>
                     <div class="poi-mobile-title-wrap">
-                        ${headerCap ? `<div class="poi-mobile-cap">${escapeXml(headerCap)}</div>` : ''}
+                        ${hasEyebrow ? `<div class="poi-mobile-cap">${eyebrowParts.join(' · ')}</div>` : ''}
                         <h1 class="poi-mobile-title" id="mobile-title-fr">${escapeXml(poiName)}</h1>
                         ${hasAr ? `<h1 class="poi-mobile-title is-hidden" id="mobile-title-ar" dir="rtl">${escapeXml(arName)}</h1>` : ''}
                     </div>
-                    <button class="poi-mobile-tools-trigger" id="poi-tools-trigger" type="button" title="Outils" aria-label="Outils" aria-expanded="false">
-                        <span class="dots"><i></i><i></i><i></i></span>
-                    </button>
+                    <button class="poi-mobile-back" id="details-close-btn" title="Fermer la fiche" aria-label="Fermer la fiche"><i data-lucide="x"></i></button>
                 </div>
             </div>
             <div class="poi-body">
@@ -368,21 +368,9 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 ${practicalSection}
                 ${suiviSection}
             </div>
-            <div class="poi-mobile-cta-bar">
-                ${navHtmlMobilePrev}
-                <button class="poi-cta" id="poi-cta-itinerary" title="Voir l'itinéraire" aria-label="Voir l'itinéraire">
-                    <i data-lucide="map-pin"></i>
-                    Voir l'itinéraire
-                </button>
-                ${navHtmlMobileNext}
-            </div>
-            <div class="poi-mobile-tools-sheet" id="poi-mobile-tools-sheet" aria-hidden="true">
-                <div class="sheet-backdrop" id="poi-mobile-tools-backdrop"></div>
-                <div class="sheet-panel">
-                    <div class="sheet-handle"></div>
-                    <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="wrench"></i>Outils</span></h3>
-                    ${toolsContent}
-                </div>
+            <div class="poi-mobile-quick-bar-wrap">
+                ${quickBarHtml}
+                ${kebabPopover}
             </div>
         </div>`;
 }
