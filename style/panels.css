@@ -1135,18 +1135,27 @@
     padding-right: 16px;
 }
 
-/* Mini-barre mobile : bande sticky en bas de la fiche, sans CTA itinéraire
-   (supprimé) ni nav pills (couvertes par swipe horizontal de mobile-nav.js
-   + chevrons inline dans l'eyebrow). */
+/* Mini-barre mobile : barre fixe en bas du viewport (toujours visible),
+   sans CTA itinéraire (supprimé) ni nav pills (couvertes par swipe horizontal
+   de mobile-nav.js + chevrons inline dans l'eyebrow).
+   `fixed` plutôt que `sticky` pour rester collée même quand on est en haut
+   de la fiche. Le body compense via padding-bottom (cf. .poi-panel.is-mobile
+   .poi-body ci-dessous). */
 .poi-mobile-quick-bar-wrap {
-    flex-shrink: 0;
-    padding: 12px 14px 14px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 14px calc(14px + env(safe-area-inset-bottom, 0px));
     background: var(--surface);
     border-top: 1px solid var(--surface-muted);
     box-shadow: 0 -8px 20px -12px rgba(20,42,67,0.15);
-    position: sticky;
-    bottom: 0;
     z-index: 3;
+}
+/* Le body mobile doit réserver l'espace du quick-bar pour que le dernier
+   contenu (notes, etc.) reste atteignable. ~76px = 44 (boutons) + 12+14 padding. */
+.poi-panel.is-mobile .poi-body {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
 }
 /* Sur mobile, la mini-barre garde 44px mais les boutons sont compactés
    à font-size 12.5px (place serrée sur 320-360px). */
