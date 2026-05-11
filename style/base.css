@@ -2401,19 +2401,19 @@ input[type=range] {
         gap: 8px;
     }
 
-    /* 4. Dock & Navigation */
+    /* 4. Dock & Navigation
+       Pas de `position: fixed` : le dock vit dans le flex column de #mobile-container
+       (flex-shrink: 0), donc reste naturellement en bas du viewport et son espace est
+       réservé. Avec fixed, il sortait du flow → #mobile-main-container prenait toute
+       la hauteur (100dvh) et son contenu était masqué par les ~54px du dock par-dessus.
+       Le bug se manifestait sur toutes les vues mobiles (Mes Circuits, Recherche, etc.). */
     #mobile-dock {
         display: flex;
         flex-direction: column;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
+        flex-shrink: 0;
         background: var(--surface-muted);
         border-top: 1px solid var(--line);
         box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.03);
-        z-index: 2000;
         padding-bottom: env(safe-area-inset-bottom);
     }
 
