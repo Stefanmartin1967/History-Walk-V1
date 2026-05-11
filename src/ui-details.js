@@ -107,55 +107,86 @@ async function hydrateHeroFromBlobs(poiId) {
     });
 }
 
-function setupToolsDrawer() {
+// Kebab + popover : remplace l'ancien drawer (PC) et bottom-sheet (mobile).
+// WAI-ARIA menu pattern : focus 1er item à l'ouverture, ↑↓/Home/End navigue,
+// Esc/Tab ferme et restaure le focus sur le trigger.
+// Pas de persistence : le popover est fermé par défaut à chaque rendu de fiche
+// (re-render innerHTML ⇒ DOM neuf, état initial fermé "gratuit").
+function setupKebab() {
     const trigger = document.getElementById('poi-tools-trigger');
-    if (!trigger) return;
+    const pop = document.getElementById('poi-tools-pop');
+    if (!trigger || !pop) return;
 
-    if (isMobileView()) {
-        const sheet = document.getElementById('poi-mobile-tools-sheet');
-        const close = () => {
-            sheet?.classList.remove('is-open');
-            sheet?.setAttribute('aria-hidden', 'true');
-            trigger.setAttribute('aria-expanded', 'false');
-            document.querySelector('.poi-panel.is-mobile')?.classList.remove('tools-open');
-        };
-        trigger.addEventListener('click', () => {
-            const open = !sheet.classList.contains('is-open');
-            sheet.classList.toggle('is-open', open);
-            sheet.setAttribute('aria-hidden', open ? 'false' : 'true');
-            trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-            document.querySelector('.poi-panel.is-mobile')?.classList.toggle('tools-open', open);
-        });
-        // Tap hors du panneau → fermer
-        sheet?.addEventListener('click', (e) => {
-            if (!e.target.closest('.sheet-panel')) close();
-        });
-        // Tap sur un bouton du tiroir → fermer après l'action
-        sheet?.querySelectorAll('.poi-tool-btn').forEach(btn => {
-            btn.addEventListener('click', () => setTimeout(close, 50));
-        });
-        return;
-    }
+    let isOpen = false;
 
-    // Desktop : drawer en pied de panneau, mémorise l'état dans localStorage
-    const tools = document.getElementById('poi-tools');
-    const panel = document.getElementById('poi-tools-panel');
-    if (!tools || !panel) return;
-
-    const STORAGE_KEY = 'hw_poi_tools_open';
-    const initialOpen = localStorage.getItem(STORAGE_KEY) === '1';
-    if (initialOpen) {
-        tools.classList.add('is-open');
-        panel.classList.remove('is-hidden');
+    const open = () => {
+        if (isOpen) return;
+        isOpen = true;
+        pop.classList.remove('is-hidden');
         trigger.setAttribute('aria-expanded', 'true');
-    }
-    trigger.addEventListener('click', () => {
-        const open = !tools.classList.contains('is-open');
-        tools.classList.toggle('is-open', open);
-        panel.classList.toggle('is-hidden', !open);
-        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-        localStorage.setItem(STORAGE_KEY, open ? '1' : '0');
+        const first = pop.querySelector('.poi-pop-item:not([aria-disabled="true"])');
+        first?.focus();
+    };
+
+    const close = ({ restoreFocus = true } = {}) => {
+        if (!isOpen) return;
+        isOpen = false;
+        pop.classList.add('is-hidden');
+        trigger.setAttribute('aria-expanded', 'false');
+        if (restoreFocus) trigger.focus();
+    };
+
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        isOpen ? close({ restoreFocus: false }) : open();
     });
+
+    // Clic extérieur → fermer (pas de restore focus, l'utilisateur est ailleurs)
+    document.addEventListener('click', (e) => {
+        if (!isOpen) return;
+        if (pop.contains(e.target) || trigger.contains(e.target)) return;
+        close({ restoreFocus: false });
+    });
+
+    // Clic sur un item : exécute le handler attaché par setupDetailsEventListeners
+    // et ferme le popover juste après. aria-disabled coupe l'action.
+    pop.querySelectorAll('.poi-pop-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            if (item.getAttribute('aria-disabled') === 'true') {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+            setTimeout(() => close({ restoreFocus: false }), 50);
+        });
+    });
+
+    // Clavier
+    trigger.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (!isOpen) open();
+        }
+    });
+    pop.addEventListener('keydown', (e) => {
+        const items = [...pop.querySelectorAll('.poi-pop-item:not([aria-disabled="true"])')];
+        const idx = items.indexOf(document.activeElement);
+        if (e.key === 'Escape') { e.preventDefault(); close(); }
+        else if (e.key === 'ArrowDown') { e.preventDefault(); items[(idx + 1) % items.length]?.focus(); }
+        else if (e.key === 'ArrowUp')   { e.preventDefault(); items[(idx - 1 + items.length) % items.length]?.focus(); }
+        else if (e.key === 'Home')      { e.preventDefault(); items[0]?.focus(); }
+        else if (e.key === 'End')       { e.preventDefault(); items[items.length - 1]?.focus(); }
+        else if (e.key === 'Tab')       { close({ restoreFocus: false }); /* Tab agit naturellement après fermeture */ }
+    });
+}
+
+// Chevrons inline dans l'eyebrow (‹ 3/12 ›) — remplace les anciens
+// boutons prev/next du footer (PC) et pills mobile (couvert aussi par le swipe global).
+function setupEyebrowNav() {
+    document.getElementById('poi-eyebrow-prev')
+        ?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
+    document.getElementById('poi-eyebrow-next')
+        ?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
 }
 
 function setupSuiviToggles(poiId) {
@@ -210,28 +241,25 @@ function setupNotesAutosave(poiId) {
 
 function setupHeroClick(poiId) {
     const hero = document.getElementById('poi-hero');
-    if (!hero || !hero.classList.contains('has-photo')) return;
-    hero.addEventListener('click', async (e) => {
-        // Évite les clics sur le bouton close interne
+    if (!hero) return;
+    // Hero avec photo : clic ouvre la grid (galerie). Hero vide marqué
+    // .is-clickable (F1) : clic ouvre aussi la grid en upload direct.
+    if (!hero.classList.contains('has-photo') && !hero.classList.contains('is-clickable')) return;
+    const handleOpen = async (e) => {
         if (e.target.closest('.poi-back-pill')) return;
         const result = await openPhotoGrid(poiId);
         if (result?.saved) refreshCurrentDetailsPanel();
-    });
-}
-
-function setupCtaItinerary() {
-    const cta = document.getElementById('poi-cta-itinerary');
-    if (!cta) return;
-    cta.addEventListener('click', () => {
-        const feature = state.loadedFeatures[state.currentFeatureId];
-        if (!feature || !feature.geometry) {
-            showToast('Coordonnées introuvables.', 'error');
-            return;
-        }
-        const [lng, lat] = feature.geometry.coordinates;
-        // Google Maps directions
-        window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank', 'noopener,noreferrer');
-    });
+    };
+    hero.addEventListener('click', handleOpen);
+    // Clavier sur hero vide (role="button" tabindex="0")
+    if (hero.classList.contains('is-empty')) {
+        hero.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleOpen(e);
+            }
+        });
+    }
 }
 
 function setupGpxDescToggle() {
@@ -253,8 +281,8 @@ function setupDetailsEventListeners(poiId) {
     setupSuiviToggles(poiId);
     setupNotesAutosave(poiId);
     setupHeroClick(poiId);
-    setupCtaItinerary();
-    setupToolsDrawer();
+    setupKebab();
+    setupEyebrowNav();
     setupGpxDescToggle();
 
     // --- Bouton "Vérifier sur Google Maps" (lookup, ancien open-gmaps-btn) ---
@@ -353,16 +381,6 @@ function setupDetailsEventListeners(poiId) {
         });
     });
 
-    // --- Bouton "Photos" (galerie) ---
-    const btnPhotoGrid = document.getElementById('btn-open-photo-grid');
-    if (btnPhotoGrid) {
-        btnPhotoGrid.addEventListener('click', async (e) => {
-            e.stopPropagation();
-            const result = await openPhotoGrid(poiId);
-            if (result?.saved) refreshCurrentDetailsPanel();
-        });
-    }
-
     // --- Bouton soft delete ---
     const softDeleteBtn = document.getElementById('btn-soft-delete');
     if (softDeleteBtn) {
@@ -371,14 +389,13 @@ function setupDetailsEventListeners(poiId) {
         });
     }
 
-    // --- Navigation prev/next + close ---
+    // --- Close fiche ---
+    // Mobile : bouton X dans le header. PC : bouton X dans le hero (si présent).
+    // Nav prev/next : eyebrow chevrons (PC + mobile, cf. setupEyebrowNav)
+    // + swipe horizontal sur mobile (cf. mobile-nav.js).
     if (isMobileView()) {
-        document.getElementById('details-prev-btn')?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
-        document.getElementById('details-next-btn')?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
         document.getElementById('details-close-btn')?.addEventListener('click', () => closeDetailsPanel(true));
     } else {
-        document.getElementById('prev-poi-button')?.addEventListener('click', () => eventBus.emit('poi:navigate', -1));
-        document.getElementById('next-poi-button')?.addEventListener('click', () => eventBus.emit('poi:navigate', 1));
         document.getElementById('close-details-button')?.addEventListener('click', () => closeDetailsPanel());
     }
 }
