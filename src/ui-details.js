@@ -2,7 +2,7 @@ import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSea
 import { getPoiId, getPoiName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
-import { isMobileView, pushMobileLevel } from './mobile-state.js';
+import { isMobileView, pushMobileLevel, animateContainer } from './mobile-state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
@@ -453,9 +453,7 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         targetPanel.style.display = 'block';
         targetPanel.style.overflowY = 'auto';
         targetPanel.classList.add('mobile-standard-padding');
-        targetPanel.classList.remove('view-enter');
-        void targetPanel.offsetWidth;
-        targetPanel.classList.add('view-enter');
+        animateContainer(targetPanel); // remove/reflow/add + animationend cleanup
     } else {
         switchSidebarTab('details', true);
         eventBus.emit('ui:render-explorer-list');
