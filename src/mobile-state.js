@@ -30,11 +30,22 @@ export function isMobileView() {
     return window.innerWidth <= 768;
 }
 
-/** Animation de transition d'entrée sur un conteneur. */
+/** Animation de transition d'entrée sur un conteneur.
+ *
+ * Retire la classe `view-enter` après la fin de l'animation pour éviter
+ * qu'un transform identity persistant (effet de `animation-fill-mode: both`
+ * combiné à `to { transform: none }`, que le browser calcule comme
+ * `matrix(1, 0, 0, 1, 0, 0)` non-none) crée un containing block qui casse
+ * `position: fixed` des descendants — bug observé sur la mini-barre POI mobile
+ * qui scrollait avec le contenu au lieu de rester collée en bas.
+ */
 export function animateContainer(container) {
     container.classList.remove('view-enter');
     void container.offsetWidth; // reflow pour relancer l'animation CSS
     container.classList.add('view-enter');
+    container.addEventListener('animationend', () => {
+        container.classList.remove('view-enter');
+    }, { once: true });
 }
 
 // ─── Navigation historique mobile (pattern proactif C7) ──────────────────────
