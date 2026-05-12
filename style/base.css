@@ -1422,6 +1422,14 @@ textarea.editable-input {
     flex-grow: 1;
     overflow-y: auto;
     position: relative;
+    /* Bloque l'élasticité native du scroll (le "rebond" Android/iOS qui permet
+       de tirer le contenu au-delà des bords même quand il tient dans le viewport).
+       Symptôme remonté par Stefan en PWA Brave Android : "interface plus haute
+       que l'écran, on doit scroller pour voir le haut/bas" — en réalité c'est
+       l'overscroll élastique qui fait disparaître le header non-sticky.
+       `contain` permet le scroll interne légitime (si contenu > viewport) mais
+       bloque le rebond et la propagation du scroll au parent. */
+    overscroll-behavior: contain;
 }
 
 .mobile-view-header {
