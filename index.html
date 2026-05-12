@@ -352,36 +352,46 @@
         </div>
     </div>
 
+    <!-- Layout mobile en 3 slots (refonte structurelle 12/05/2026, étape 1).
+         Pattern : header / scrollable / footer, dans un flex column #mobile-container.
+         À l'étape 1, on pose juste la structure ; le comportement reste identique
+         (chaque vue continue de rendre dans #mobile-main-container et la dock vit
+         dans #mobile-footer-slot). Les étapes 3-5 migreront les vues vers
+         le pattern « la vue rend dans chaque slot ». -->
     <div id="mobile-container">
-        <main id="mobile-main-container"></main>
+        <div id="mobile-header-slot" class="mobile-slot-header"></div>
 
-        <div id="mobile-dock">
-            <nav id="mobile-nav" class="mobile-nav">
-                <button class="mobile-nav-btn" data-view="circuits">
-                    <i data-lucide="route"></i>
-                    <span>Circuits</span>
-                </button>
+        <main id="mobile-main-container" class="mobile-slot-content"></main>
 
-                <button class="mobile-nav-btn" data-view="search">
-                    <i data-lucide="search"></i>
-                    <span>Rech.</span>
-                </button>
+        <div id="mobile-footer-slot" class="mobile-slot-footer">
+            <div id="mobile-dock">
+                <nav id="mobile-nav" class="mobile-nav">
+                    <button class="mobile-nav-btn" data-view="circuits">
+                        <i data-lucide="route"></i>
+                        <span>Circuits</span>
+                    </button>
 
-                <button class="mobile-nav-btn" id="btn-mobile-filter">
-                    <i data-lucide="list"></i>
-                    <span>Filtre</span>
-                </button>
+                    <button class="mobile-nav-btn" data-view="search">
+                        <i data-lucide="search"></i>
+                        <span>Rech.</span>
+                    </button>
 
-                <button class="mobile-nav-btn" data-view="add-poi">
-                    <i data-lucide="plus-circle"></i>
-                    <span>Ajout</span>
-                </button>
+                    <button class="mobile-nav-btn" id="btn-mobile-filter">
+                        <i data-lucide="list"></i>
+                        <span>Filtre</span>
+                    </button>
 
-                <button class="mobile-nav-btn" data-view="actions">
-                    <i data-lucide="settings"></i>
-                    <span>Menu</span>
-                </button>
-            </nav>
+                    <button class="mobile-nav-btn" data-view="add-poi">
+                        <i data-lucide="plus-circle"></i>
+                        <span>Ajout</span>
+                    </button>
+
+                    <button class="mobile-nav-btn" data-view="actions">
+                        <i data-lucide="settings"></i>
+                        <span>Menu</span>
+                    </button>
+                </nav>
+            </div>
         </div>
     </div>
 

@@ -1433,6 +1433,24 @@ textarea.editable-input {
     overscroll-behavior: none;
 }
 
+/* ── Layout mobile en 3 slots (refonte structurelle, étape 1) ───────────────
+   Pattern : #mobile-container flex column avec :
+     - .mobile-slot-header   (flex-shrink:0)  → header de la vue
+     - .mobile-slot-content  (flex-grow:1)    → contenu scrollable
+     - .mobile-slot-footer   (flex-shrink:0)  → footer dynamique (dock OU footer-de-vue)
+   À l'étape 1, on définit juste les classes — le comportement reste identique
+   (#mobile-main-container = .mobile-slot-content, #mobile-dock dans .mobile-slot-footer).
+   Les étapes suivantes migreront chaque vue vers ce pattern. */
+.mobile-slot-header {
+    flex-shrink: 0;
+    /* Vide par défaut, ne prend pas de place. Les vues le remplissent. */
+}
+.mobile-slot-footer {
+    flex-shrink: 0;
+    /* Contient #mobile-dock par défaut, peut être remplacé par un footer-de-vue
+       (boutons Partager/GPX, mini-barre POI, etc.) à l'étape 5. */
+}
+
 .mobile-view-header {
     flex-shrink: 0;
     background-color: var(--surface);
