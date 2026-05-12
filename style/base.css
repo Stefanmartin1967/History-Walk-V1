@@ -1416,6 +1416,14 @@ textarea.editable-input {
     height: 100dvh;
     width: 100%;
     background-color: var(--surface-muted);
+    /* PWA standalone Android (Brave/Chrome avec viewport-fit=cover) : le viewport
+       100dvh inclut la status bar Android. Sans padding-top safe-area, le contenu
+       commence sous la status bar et le 1er élément (header de la vue) est masqué.
+       Symptôme remonté par Stefan : "interface plus haute que l'écran, on doit
+       scroller pour voir le haut". Le bas est déjà géré : #mobile-dock applique
+       son propre `padding-bottom: env(safe-area-inset-bottom)`. */
+    padding-top: env(safe-area-inset-top, 0px);
+    box-sizing: border-box;
 }
 
 #mobile-main-container {
