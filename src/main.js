@@ -192,6 +192,16 @@ async function initializeApp() {
 
     createIcons({ icons: appIcons });
 
+    // Bandeau "Installer cette app" : capture beforeinstallprompt et propose
+    // l'install via un bouton custom (UX bien plus simple que le menu Chrome).
+    try {
+        const { initInstallBanner } = await import('./install-pwa-banner.js');
+        initInstallBanner();
+    } catch (e) {
+        // Module optionnel : ne casse pas l'app si l'import échoue.
+        console.warn('[install-banner] init failed', e);
+    }
+
     // Import URL
     const urlParams = new URLSearchParams(window.location.search);
     const importIds = urlParams.get('import');

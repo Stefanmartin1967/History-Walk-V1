@@ -41,6 +41,27 @@
         <div class="hw-boot-spinner"></div>
     </div>
 
+    <!-- Bandeau "Installer cette app" — affiché par install-pwa-banner.js
+         uniquement si le browser supporte beforeinstallprompt et que l'app
+         n'est pas déjà installée. Caché par défaut (is-hidden). -->
+    <div id="install-banner" class="install-banner is-hidden" role="region" aria-label="Installer l'application">
+        <div class="install-banner-icon" aria-hidden="true">
+            <i data-lucide="download"></i>
+        </div>
+        <div class="install-banner-text">
+            <strong>Installer History Walk</strong>
+            <span>Accès rapide depuis l'écran d'accueil, usage hors-ligne.</span>
+        </div>
+        <div class="install-banner-actions">
+            <button id="install-banner-install" type="button" class="install-banner-btn install-banner-btn--primary">
+                Installer
+            </button>
+            <button id="install-banner-dismiss" type="button" class="install-banner-btn install-banner-btn--dismiss" aria-label="Fermer">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+    </div>
+
     <div id="offline-banner">⚡ Hors-ligne — les modifications seront synchronisées au retour du réseau.</div>
 
     <!-- Modale "backup-modal" supprimée (migration V2) : construite à la
