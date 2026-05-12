@@ -28,6 +28,10 @@ import { isMobileView } from './mobile-state.js';
 import { initMobileMode, initMobileNavListeners } from './mobile-nav.js';
 import { initMobilePoiListeners } from './mobile-poi.js';
 import { initMobileCircuitsListeners } from './mobile-circuits.js';
+// Import statique (pas dynamique) pour que le listener `beforeinstallprompt`
+// attaché au top-level du module soit en place avant que Chrome/Edge émette
+// l'event (sinon event perdu, banner jamais affiché).
+import { initInstallBanner } from './install-pwa-banner.js';
 import { initUiModalsListeners } from './ui-modals.js';
 import { initCircuitListeners, loadCircuitFromIds } from './circuit.js';
 import { initCircuitPageEvents } from './ui-circuit-page-events.js';
@@ -194,13 +198,10 @@ async function initializeApp() {
 
     // Bandeau "Installer cette app" : capture beforeinstallprompt et propose
     // l'install via un bouton custom (UX bien plus simple que le menu Chrome).
-    try {
-        const { initInstallBanner } = await import('./install-pwa-banner.js');
-        initInstallBanner();
-    } catch (e) {
-        // Module optionnel : ne casse pas l'app si l'import échoue.
-        console.warn('[install-banner] init failed', e);
-    }
+    // Le listener `beforeinstallprompt` est attaché au top-level du module
+    // (cf. import statique en haut), donc déjà en place. Ici on initialise
+    // juste l'UI (bouton install, dismiss).
+    initInstallBanner();
 
     // Import URL
     const urlParams = new URLSearchParams(window.location.search);

@@ -79,26 +79,44 @@ function hideBanner() {
     document.body.classList.remove('has-install-banner');
 }
 
+// ⚠️ Listener attaché au top-level du module, dès l'import.
+// Chrome/Edge peuvent émettre `beforeinstallprompt` très tôt (juste après que
+// la page atteigne hw-ready ou même avant), et si le listener est attaché trop
+// tard (ex : depuis une fonction d'init appelée après loadAndInitializeMap),
+// l'event est perdu et le banner ne s'affiche jamais. C'est exactement ce
+// qui s'est passé en test sur Brave / Chrome Android : import dynamique tardif
+// → event émis avant → listener attaché → trop tard.
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    console.log('[install-banner] beforeinstallprompt captured', e);
+    // Si l'UI est déjà initialisée (banner element trouvé), on l'affiche tout de suite.
+    if (bannerEl) showBanner();
+});
+
+window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    console.log('[install-banner] app installed');
+    hideBanner();
+});
+
 export function initInstallBanner() {
     bannerEl = document.getElementById('install-banner');
     if (!bannerEl) return;
 
-    // Si déjà en mode standalone, le banner reste caché par défaut, on n'attache rien.
-    if (isStandalone()) return;
+    // Si déjà en mode standalone, le banner reste caché par défaut.
+    if (isStandalone()) {
+        console.log('[install-banner] already in standalone mode, banner stays hidden');
+        return;
+    }
 
-    // Capture l'événement natif et empêche le prompt automatique du browser.
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
+    // Si l'event a déjà été reçu (avant init UI), afficher maintenant.
+    if (deferredPrompt) {
+        console.log('[install-banner] event already captured, showing banner');
         showBanner();
-    });
-
-    // Détecte une installation effective (depuis notre bouton OU depuis le menu Chrome).
-    window.addEventListener('appinstalled', () => {
-        deferredPrompt = null;
-        hideBanner();
-        // Pas besoin de mémoriser : isStandalone() retournera true au prochain reload.
-    });
+    } else {
+        console.log('[install-banner] init OK, waiting for beforeinstallprompt event…');
+    }
 
     bannerEl.querySelector('#install-banner-install')
         ?.addEventListener('click', () => triggerInstall());
