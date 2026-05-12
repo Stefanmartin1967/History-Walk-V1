@@ -2839,38 +2839,29 @@ input[type=range] {
 
 /* ── INSTALL PWA BANNER ──────────────────────────────────────────────────────
    Bandeau dismissible affiché quand le browser supporte beforeinstallprompt
-   et que l'app n'est pas déjà installée. Vit en haut du viewport, au-dessus
-   du contenu. Géré par src/install-pwa-banner.js.
-   Quand visible (body.has-install-banner), le contenu est poussé via
-   --install-banner-h pour éviter le masquage. */
-:root { --install-banner-h: 0px; }
-body.has-install-banner {
-    --install-banner-h: 64px;
-    padding-top: var(--install-banner-h); /* push topbar PC + tout le contenu */
-}
-/* Mobile : le #mobile-container est en `height: 100dvh` ; on réduit pour
-   compenser le padding-top body et éviter que le dock déborde en bas. */
-body.has-install-banner #mobile-container { height: calc(100dvh - var(--install-banner-h)); }
-
+   et que l'app n'est pas déjà installée. Géré par src/install-pwa-banner.js.
+   Placement EN BAS du viewport (validation pragmatique : un banner top peut
+   être masqué par la barre URL Chrome ou des éléments fixed top ; en bas on
+   est sûr qu'il sera visible). Ne pousse pas le contenu : le banner se
+   superpose au bas (peut masquer la dock mobile temporairement, dismissable). */
 .install-banner {
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
     z-index: 99997; /* sous offline-banner (99998), au-dessus du reste */
     background: var(--surface);
-    border-bottom: 1px solid var(--line);
-    box-shadow: 0 4px 12px -6px rgba(20, 42, 67, 0.15);
-    padding: 12px 16px calc(12px + env(safe-area-inset-top, 0px));
-    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -4px 12px -6px rgba(20, 42, 67, 0.15);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
     display: flex;
     align-items: center;
     gap: 12px;
-    animation: installBannerSlideDown 0.25s ease-out;
+    animation: installBannerSlideUp 0.25s ease-out;
 }
 .install-banner.is-hidden { display: none; }
-@keyframes installBannerSlideDown {
-    from { transform: translateY(-100%); opacity: 0; }
+@keyframes installBannerSlideUp {
+    from { transform: translateY(100%); opacity: 0; }
     to { transform: none; opacity: 1; }
 }
 .install-banner-icon {
