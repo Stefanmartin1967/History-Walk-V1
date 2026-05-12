@@ -56,7 +56,8 @@
 .mobile-poi-icon-wrapper { display: flex; align-items: center; gap: 10px; }
 
 /* Share button footer */
-.mobile-poi-footer { flex-shrink: 0; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background-color: var(--surface); z-index: 10; display: flex; flex-direction: row; gap: 8px; }
+/* Safe-area gérée par #mobile-container (padding-bottom). */
+.mobile-poi-footer { flex-shrink: 0; padding: 10px 12px; border-top: 1px solid var(--line); background-color: var(--surface); z-index: 10; display: flex; flex-direction: row; gap: 8px; }
 .btn-share-circuit-mobile { flex: 1; padding: 11px 8px; border-radius: 10px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; transition: all 0.2s; background-color: var(--surface); color: var(--brand); border: 2px solid var(--brand); }
 .btn-download-gpx-mobile { flex-shrink: 0; padding: 11px 14px; border-radius: 10px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 14px; transition: all 0.2s; background-color: var(--surface-muted); color: var(--ink-soft); border: 1px solid var(--line); text-decoration: none; }
 
