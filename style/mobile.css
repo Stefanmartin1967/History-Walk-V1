@@ -223,36 +223,294 @@
 .icon-map-meta { width: 14px; height: 14px; margin: 0 4px; }
 .icon-check-visited { width: 20px; height: 20px; margin-left: 5px; color: var(--ok); stroke-width: 3; }
 
-/* POI list header */
-.mobile-poi-header { flex-shrink: 0; display: flex; align-items: center; }
-.mobile-poi-header-inner { display: flex; align-items: center; flex: 1; min-width: 0; }
-.mobile-poi-header-inner h1 { flex: 1; text-align: center; margin: 0; }
-.mobile-back-btn-phantom { width: 36px; height: 36px; flex-shrink: 0; }
-.mobile-back-btn { flex-shrink: 0; margin-right: 10px; }
+/* ============================================================
+   ONGLET CIRCUIT — Hero photo + identité + actions + timeline
+   (refonte PR 3 chantier mobile design)
+   ============================================================ */
 
-/* Bouton admin "Testé sur le terrain" dans l'en-tête de liste circuit */
-.mobile-toggle-tested-btn {
+/* Hero photo du circuit (mobile) */
+.cc-hero {
+    position: relative;
     flex-shrink: 0;
-    width: 36px; height: 36px;
-    border: none; border-radius: 50%;
-    background: transparent;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--ink-soft);
-    transition: color 0.2s, background 0.2s;
+    height: 188px;
+    background: var(--surface-muted);
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
 }
-.mobile-toggle-tested-btn:hover { background: var(--surface-muted); color: var(--ink); }
-.mobile-toggle-tested-btn.tested { color: #2e7d32; }
-.mobile-toggle-tested-btn .lucide { width: 18px; height: 18px; }
-.mobile-poi-title { margin: 0; font-size: 18px; font-weight: 700; min-width: 0; line-height: 1.3; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-.mobile-poi-icon--visited { color: var(--ok); display: flex; align-items: center; }
-.mobile-poi-icon--unvisited { color: var(--brand); display: flex; align-items: center; }
-.mobile-poi-icon-wrapper { display: flex; align-items: center; gap: 10px; }
+/* Photo trouvée : data-bg défini par applyMobileCircuitHero, --cc-hero-bg
+   set en CSS var ; le backgroundImage est aussi posé en inline-style direct
+   par le JS pour résoudre l'URL contre le document (cf. PR #554 pour le
+   pourquoi : url() via var() depuis feuille CSS bundlée résout contre la
+   feuille → 404 en prod). */
+.cc-hero[data-bg] {
+    background-image: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45)), var(--cc-hero-bg);
+}
+/* Fallback : motif topo subtil quand aucune photo dispo */
+.cc-hero.is-empty {
+    background:
+        radial-gradient(circle at 30% 40%, var(--brand-soft) 0%, transparent 55%),
+        radial-gradient(circle at 75% 70%, color-mix(in oklab, var(--brand) 25%, var(--surface)) 0%, transparent 60%),
+        repeating-radial-gradient(circle at 50% 50%, transparent 0 22px, color-mix(in oklab, var(--brand) 6%, transparent) 22px 23px),
+        var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cc-hero-glyph { color: var(--brand); opacity: 0.7; }
+.cc-hero-glyph svg { width: 56px; height: 56px; stroke-width: 1.6; }
+.cc-photo-count {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    padding: 4px 9px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(8px);
+}
+.cc-photo-count svg { width: 12px; height: 12px; }
+.cc-hero-tags {
+    position: absolute;
+    bottom: 10px;
+    left: 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.cc-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    background: rgba(240, 244, 248, 0.95);
+    color: var(--ink);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+.cc-pill svg { width: 11px; height: 11px; }
 
-/* Share button footer */
-.mobile-poi-footer { flex-shrink: 0; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background-color: var(--surface); z-index: 10; display: flex; flex-direction: row; gap: 8px; }
-.btn-share-circuit-mobile { flex: 1; padding: 11px 8px; border-radius: 10px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; transition: all 0.2s; background-color: var(--surface); color: var(--brand); border: 2px solid var(--brand); }
-.btn-download-gpx-mobile { flex-shrink: 0; padding: 11px 14px; border-radius: 10px; font-weight: 500; display: flex; justify-content: center; align-items: center; gap: 6px; font-size: 14px; transition: all 0.2s; background-color: var(--surface-muted); color: var(--ink-soft); border: 1px solid var(--line); text-decoration: none; }
+/* Identité (eyebrow + titre + flag) */
+.cc-ident {
+    padding: 14px 16px 8px;
+    background: var(--surface);
+}
+.cc-eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 0 0 6px;
+}
+.cc-eyebrow .sep { opacity: 0.5; }
+.cc-title {
+    margin: 0 0 6px;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+}
+.cc-flag {
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-top: 2px;
+}
+.cc-flag .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.cc-flag[data-flag="official"] { color: var(--brand-2, var(--brand)); }
+.cc-flag[data-flag="verified"] { color: var(--ok); }
+
+/* Description */
+.cc-desc {
+    padding: 6px 16px 12px;
+    background: var(--surface);
+}
+.cc-desc-text {
+    margin: 0;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Toolbar actions (3 icônes mobile : partage / GPX / fait) */
+.cc-actions {
+    padding: 8px 12px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--surface-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: space-around;
+}
+.cc-act {
+    flex: 1;
+    height: 44px;
+    border-radius: 10px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    text-decoration: none;
+}
+.cc-act.is-on {
+    background: var(--brand-soft);
+    color: var(--brand-2, var(--brand));
+    border-color: rgba(59, 130, 246, 0.25);
+}
+.cc-act.is-done { color: var(--ok); }
+.cc-act:disabled { opacity: 0.35; cursor: not-allowed; }
+.cc-act svg { width: 20px; height: 20px; }
+
+/* Composant chevrons « < n/total > » réutilisable */
+.cc-pager {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-variant-numeric: tabular-nums;
+}
+.cc-pager-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: transparent;
+    border: 0;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+.cc-pager-btn:hover { background: var(--surface-muted); color: var(--ink); }
+.cc-pager-btn:disabled { opacity: 0.3; pointer-events: none; }
+.cc-pager-btn svg { width: 14px; height: 14px; }
+.cc-pager-pos {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    min-width: 38px;
+    text-align: center;
+}
+/* Variante « eyebrow » (PC-03 like) : chevrons compacts inline dans la
+   ligne mono uppercase de métadonnées */
+.cc-pager.in-eyebrow { gap: 2px; }
+.cc-pager.in-eyebrow .cc-pager-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+.cc-pager.in-eyebrow .cc-pager-btn svg { width: 11px; height: 11px; }
+.cc-pager.in-eyebrow .cc-pager-pos {
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: var(--ink-soft);
+    min-width: 0;
+}
+
+/* Timeline steps */
+.cc-timeline-wrap { padding: 12px 12px 20px; }
+.cc-timeline-cap {
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin: 0 4px 8px;
+    padding-left: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.cc-step {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    margin-bottom: 8px;
+    min-height: 56px;
+    text-decoration: none;
+    color: inherit;
+}
+.cc-step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface-muted);
+    border: 1.5px solid var(--line);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 13px;
+    display: grid;
+    place-items: center;
+}
+.cc-step-num svg { width: 16px; height: 16px; }
+.cc-step.is-done .cc-step-num {
+    background: var(--ok);
+    border-color: var(--ok);
+    color: #fff;
+}
+.cc-step-body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.cc-step-name {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.32;
+    letter-spacing: -0.005em;
+}
+.cc-step-cat {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--surface-muted);
+    border-radius: 6px;
+    padding: 2px 7px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    align-self: flex-start;
+}
+.cc-step-cat svg { width: 11px; height: 11px; }
+.cc-step-cat.amber { background: var(--hw-amber-soft); color: var(--hw-amber); }
+.cc-step-cat.brand { background: var(--brand-soft); color: var(--brand-2, var(--brand)); }
+.cc-step-chev { color: var(--ink-soft); display: grid; place-items: center; }
+.cc-step-chev svg { width: 18px; height: 18px; }
 
 /* Zone filter btn */
 .mobile-zone-btn-inner { flex: 1; }

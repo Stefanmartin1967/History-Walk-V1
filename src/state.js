@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.6'; // Fix .mc-stat : pastilles inline (chiffre + unité dans même pill) au lieu de column num+label dessous → toutes les pills méta (POI/km/zone/resto) ont la même hauteur et s'alignent proprement par le centre
+export const APP_VERSION = '3.7.7'; // Refonte Onglet Circuit mobile (PR 3 chantier design) : structure .cc-* (hero photo + eyebrow avec chevrons < n/total > + titre + flag + description + toolbar 3 actions + timeline POIs). Suppression sticky bar Partager/GPX (absorbée dans la toolbar). Composant .cc-pager réutilisable pour navigation prev/next circuit.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
