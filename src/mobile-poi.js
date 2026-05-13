@@ -10,7 +10,7 @@ import { openDetailsPanel } from './ui-details.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
 import { clearCircuit, isCircuitCompleted } from './circuit.js';
 import { showToast } from './toast.js';
-import { animateContainer, getCurrentView, getAllCircuitsOrdered } from './mobile-state.js';
+import { animateContainer, getCurrentView, getAllCircuitsOrdered, setMobileHeaderSlot, setMobileViewFooter } from './mobile-state.js';
 import { switchMobileView } from './mobile-nav.js';
 import { eventBus } from './events.js';
 
@@ -29,9 +29,9 @@ export function renderMobilePoiList(features) {
     const container = document.getElementById('mobile-main-container');
     const isCircuit = state.activeCircuitId !== null;
 
-    // Masquage du dock pour maximiser l'espace POIs
-    const dock = document.getElementById('mobile-dock');
-    if (dock) dock.style.display = 'none';
+    // Le dock se masque automatiquement quand le view-footer est rempli
+    // (sélecteur CSS `.mobile-view-footer:not(:empty) ~ #mobile-dock`).
+    // Cf. setMobileViewFooter() en bas de cette fonction.
 
     let pageTitle = 'Lieux';
     let isAllVisited = false;
@@ -58,36 +58,29 @@ export function renderMobilePoiList(features) {
         }
     }
 
-    container.style.display = 'flex';
-    container.style.flexDirection = 'column';
-    container.style.overflow = 'hidden';
     container.innerHTML = '';
     animateContainer(container);
 
-    // ─── En-tête ──────────────────────────────────────────────────────────────
+    // ─── En-tête → header-slot ────────────────────────────────────────────────
+    // (refonte étape 4 : header sort du #mobile-main-container vers #mobile-header-slot)
 
-    const headerDiv = document.createElement('div');
-    headerDiv.className = 'mobile-view-header mobile-header-harmonized';
-    headerDiv.classList.add('mobile-poi-header');
-
-    headerDiv.innerHTML = `
-        <div class="mobile-poi-header-inner">
-            ${isCircuit
-                ? '<button id="mobile-back-btn" class="mobile-back-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>'
-                : '<div class="mobile-back-btn-phantom"></div>'}
-            <div class="mobile-circuits-center">
-                <h1 class="mobile-poi-title">${escapeHtml(pageTitle)}</h1>
-                ${circuitPositionLabel ? `<span class="mobile-page-info">${circuitPositionLabel}</span>` : ''}
+    const headerHtml = `
+        <div class="mobile-view-header mobile-header-harmonized mobile-poi-header">
+            <div class="mobile-poi-header-inner">
+                ${isCircuit
+                    ? '<button id="mobile-back-btn" class="mobile-back-btn" title="Retour" aria-label="Retour"><i data-lucide="arrow-left"></i></button>'
+                    : '<div class="mobile-back-btn-phantom"></div>'}
+                <div class="mobile-circuits-center">
+                    <h1 class="mobile-poi-title">${escapeHtml(pageTitle)}</h1>
+                    ${circuitPositionLabel ? `<span class="mobile-page-info">${circuitPositionLabel}</span>` : ''}
+                </div>
+                <div class="mobile-back-btn-phantom"></div>
             </div>
-            <div class="mobile-back-btn-phantom"></div>
         </div>
     `;
-    container.appendChild(headerDiv);
+    setMobileHeaderSlot(headerHtml);
 
-    // ─── Liste des POIs ───────────────────────────────────────────────────────
-
-    const listDiv = document.createElement('div');
-    listDiv.className = 'mobile-list mobile-standard-padding mobile-poi-list-container';
+    // ─── Liste des POIs (dans le main-container scrollable) ───────────────────
 
     let listHtml = '';
     listToDisplay.forEach(feature => {
@@ -111,10 +104,11 @@ export function renderMobilePoiList(features) {
             </button>
         `;
     });
-    listDiv.innerHTML = listHtml;
-    container.appendChild(listDiv);
+    container.innerHTML = `<div class="mobile-list mobile-standard-padding mobile-poi-list-container">${listHtml}</div>`;
 
-    // ─── Footer circuit (partage + GPX) ──────────────────────────────────────
+    // ─── Footer circuit (partage + GPX) → view-footer-slot ────────────────────
+    // (refonte étape 4 : remplir le view-footer masque AUTOMATIQUEMENT le dock
+    // via le sélecteur CSS `.mobile-view-footer:not(:empty) ~ #mobile-dock`).
 
     if (isCircuit) {
         const activeOfficial = state.officialCircuits?.find(c => c.id === state.activeCircuitId);
@@ -126,16 +120,15 @@ export function renderMobilePoiList(features) {
                </a>`
             : '';
 
-        const footerDiv = document.createElement('div');
-        footerDiv.className = 'mobile-poi-footer';
-        footerDiv.innerHTML = `
-            <button id="btn-share-circuit-mobile" class="btn-share-circuit-mobile">
-                <i data-lucide="qr-code"></i>
-                <span>Partager le circuit</span>
-            </button>
-            ${gpxBtnHtml}
-        `;
-        container.appendChild(footerDiv);
+        setMobileViewFooter(`
+            <div class="mobile-poi-footer">
+                <button id="btn-share-circuit-mobile" class="btn-share-circuit-mobile">
+                    <i data-lucide="qr-code"></i>
+                    <span>Partager le circuit</span>
+                </button>
+                ${gpxBtnHtml}
+            </div>
+        `);
 
         setTimeout(() => {
             const btnShare = document.getElementById('btn-share-circuit-mobile');
@@ -172,7 +165,12 @@ export function renderMobilePoiList(features) {
         });
     });
 
+    // Icônes Lucide : main-container (liste) + header-slot (back btn) + view-footer (Partager/GPX)
     createIcons({ icons: appIcons, root: container });
+    const headerSlot = document.getElementById('mobile-header-slot');
+    if (headerSlot) createIcons({ icons: appIcons, root: headerSlot });
+    const viewFooter = document.getElementById('mobile-view-footer');
+    if (viewFooter) createIcons({ icons: appIcons, root: viewFooter });
 }
 
 // ─── Mise à jour position GPS d'un POI ───────────────────────────────────────
