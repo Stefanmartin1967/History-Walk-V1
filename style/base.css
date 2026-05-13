@@ -2386,13 +2386,17 @@ input[type=range] {
         padding-right: 8px;
     }
 
-    /* Apply to List and scroll containers: dock clearance + horizontal padding */
+    /* Apply to List and scroll containers: horizontal padding seulement.
+       Le padding-bottom dock-clearance (90px) est obsolète depuis la refonte
+       3 slots — le dock est maintenant en flex-shrink:0 dans le footer-slot,
+       son espace est réservé par le flex column de #mobile-container. Garder
+       ce padding était la cause du glissement de cards sur Mes Circuits
+       (calcul pagination biaisé de ~120px). */
     .mobile-list,
     .panel-content {
         padding-left: var(--space-md) !important;
         padding-right: var(--space-md) !important;
-        /* Ensure content clears the bottom dock */
-        padding-bottom: calc(90px + env(safe-area-inset-bottom)) !important;
+        padding-bottom: 16px !important; /* respiration esthétique */
     }
     /* Section content: horizontal padding only (panel-content handles dock clearance) */
     .detail-section .content {
@@ -2714,12 +2718,13 @@ input[type=range] {
         /* Le dock remonte au-dessus de la barre système */
     }
 
-    /* 3. Ajustement du padding bas des listes pour éviter d'être caché par le dock agrandi */
+    /* Padding bas des listes : juste de la respiration esthétique.
+       Le 100px+safe historique réservait l'espace du dock fixed (avant
+       refonte 3 slots). Maintenant le dock est en flex-shrink:0 donc son
+       espace est déjà réservé par le layout — on n'a plus à compenser dans
+       le contenu. Cause du bug "cards qui glissent" sur Mes Circuits. */
     .mobile-list-container,
-    .mobile-actions-container {
-        padding-bottom: calc(100px + env(safe-area-inset-bottom)) !important;
-    }
-    /* La liste POI d'un circuit a son propre footer (pas le dock) — clearance minimal */
+    .mobile-actions-container,
     .mobile-poi-list-container {
         padding-bottom: 16px !important;
     }
