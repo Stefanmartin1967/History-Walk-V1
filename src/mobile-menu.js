@@ -1,9 +1,14 @@
 // mobile-menu.js
-// Rendu du menu principal mobile (vue "actions") + listener eventBus admin
+// Menu mobile refondu (PR 4 chantier design — handoff Claude Design).
+// Pattern : 4 sections groupées (Mon parcours / Outils / Préférences / Soutenir
+// & à propos), section admin optionnelle. Chaque item a un sous-titre contextuel
+// dynamique (Option C validée Stefan : tout dynamique — compteurs réels pour
+// Mon Carnet, thème courant pour Préférences). Variants visuels : danger
+// (rouge), love (cœur rose pour Buy Me a Coffee), brand-emph (CC plein brand).
 
 import { state, APP_VERSION } from './state.js';
-import { DOM } from './ui-dom.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { escapeHtml } from './utils.js';
 import { showConfirm } from './modal.js';
 import { showLegalNoticeModal } from './legal-modal.js';
 import { deleteDatabase } from './database.js';
@@ -12,100 +17,145 @@ import { showStatisticsModal } from './statistics.js';
 import { showAdminLoginModal, logoutAdmin } from './admin.js';
 import { openControlCenter, openControlCenterSettings, quickPublish } from './admin-control-center.js';
 import { openUserSpace } from './user-space.js';
-import { cycleTheme } from './theme.js';
+import { cycleTheme, getCurrentTheme, THEME_LABELS } from './theme.js';
 import { eventBus } from './events.js';
-import { getCurrentView, isMobileView } from './mobile-state.js';
+import { getCurrentView, isMobileView, setMobileHeaderSlot, clearMobileViewFooter } from './mobile-state.js';
 
-// ─── Rendu du menu ────────────────────────────────────────────────────────────
+// ─── Sous-titres dynamiques ──────────────────────────────────────────────────
+// Compteurs réels lus de state pour donner du contexte à chaque action.
+function computeSubtitles() {
+    const visitedPois = (state.loadedFeatures || []).filter(f => f?.properties?.userData?.vu).length;
+    const officialCompleted = (state.officialCircuits || []).filter(c => state.officialCircuitsStatus?.[c.id] === true).length;
+    const myCompleted = (state.myCircuits || []).filter(c => c.isCompleted === true).length;
+    const completedCircuits = officialCompleted + myCompleted;
+    const currentThemeLabel = THEME_LABELS[getCurrentTheme()] || 'Maritime';
 
+    const plural = (n, s, p) => `${n} ${n === 1 || n === 0 ? s : p}`;
+    return {
+        carnet: `${plural(visitedPois, 'lieu visité', 'lieux visités')} · ${plural(completedCircuits, 'circuit complété', 'circuits complétés')}`,
+        monEspace: 'Profil & sauvegardes',
+        scan: 'QR code partagé par un autre voyageur',
+        reset: 'Supprime carnet & circuits hors-ligne',
+        theme: `Actuel : ${currentThemeLabel}`,
+        bmc: 'Soutenir le projet',
+        cc: 'Tableau de bord opérations',
+    };
+}
+
+// ─── Définition des sections (data) ──────────────────────────────────────────
+function buildSections(subs) {
+    const sections = [
+        {
+            label: 'Mon parcours',
+            items: [
+                { id: 'mob-action-stats', ico: 'trophy', label: 'Mon Carnet de Voyage', sub: subs.carnet },
+                { id: 'mob-action-mon-espace', ico: 'briefcase', label: 'Mon Espace', sub: subs.monEspace },
+            ],
+        },
+        {
+            label: 'Outils',
+            items: [
+                { id: 'mob-action-scan', ico: 'scan-line', label: 'Scanner un circuit', sub: subs.scan },
+                { id: 'mob-action-reset', ico: 'trash-2', label: 'Vider les données locales', sub: subs.reset, variant: 'danger' },
+            ],
+        },
+        {
+            label: 'Préférences',
+            items: [
+                { id: 'mob-action-theme', ico: 'palette', label: 'Changer Thème', sub: subs.theme },
+            ],
+        },
+        {
+            label: 'Soutenir & à propos',
+            items: [
+                { id: 'mob-action-bmc', ico: 'coffee', label: 'Offrir un café', sub: subs.bmc, variant: 'love' },
+                { id: 'mob-action-legal-notice', ico: 'scale', label: 'Mentions légales' },
+            ],
+        },
+    ];
+
+    if (state.isAdmin) {
+        sections.push({
+            label: 'Outils admin',
+            items: [
+                { id: 'mob-action-admin-login', ico: 'log-out', label: 'Déconnexion Admin', variant: 'danger' },
+                { id: 'mob-action-admin-control-center', ico: 'layout-dashboard', label: 'Centre de Contrôle', sub: subs.cc, variant: 'brand-emph' },
+                { id: 'mob-action-admin-quick-publish', ico: 'upload-cloud', label: 'Publier les modifs' },
+                { id: 'mob-action-admin-datamanager', ico: 'table', label: 'Data Manager' },
+                { id: 'mob-action-admin-scout', ico: 'scan-eye', label: 'Scout (Overpass)' },
+                { id: 'mob-action-admin-config-token', ico: 'key', label: 'Enregistrer token' },
+            ],
+        });
+    }
+
+    return sections;
+}
+
+// ─── Rendu ───────────────────────────────────────────────────────────────────
 export function renderMobileMenu() {
     const container = document.getElementById('mobile-main-container');
+    if (!container) return;
     container.style.display = '';
     container.style.flexDirection = '';
     container.style.overflow = '';
 
-    container.innerHTML = `
-        <div class="mobile-view-header mobile-header-harmonized">
-            <h1>Menu</h1>
-        </div>
-        <div class="mobile-list actions-list mobile-standard-padding mobile-actions-container">
-            <button class="mobile-list-item" id="mob-action-stats">
-                <i data-lucide="trophy"></i>
-                <span>Mon Carnet de Voyage</span>
-            </button>
-            <button class="mobile-list-item" id="mob-action-mon-espace">
-                <i data-lucide="luggage"></i>
-                <span>Mon Espace</span>
-            </button>
-            <div class="mobile-divider"></div>
-            <button class="mobile-list-item" id="mob-action-scan">
-                <i data-lucide="scan-line"></i>
-                <span>Scanner un circuit</span>
-            </button>
-            <div class="mobile-divider"></div>
-            <button class="mobile-list-item text-danger" id="mob-action-reset">
-                <i data-lucide="trash-2"></i>
-                <span>Vider les données locales</span>
-            </button>
-            <div class="mobile-divider"></div>
-            <button class="mobile-list-item" id="mob-action-theme">
-                <i data-lucide="palette"></i>
-                <span>Changer Thème</span>
-            </button>
-            <div class="mobile-divider"></div>
-            <button class="mobile-list-item bmc-btn-mobile" id="mob-action-bmc">
-                <i data-lucide="coffee"></i>
-                <span>Offrir un café</span>
-                <i data-lucide="heart" class="bmc-heart-icon icon-heart"></i>
-            </button>
-            <div class="mobile-divider"></div>
-            <button class="mobile-list-item" id="mob-action-legal-notice">
-                <i data-lucide="scale"></i>
-                <span>Mentions légales</span>
-            </button>
-            ${state.isAdmin ? `
-            <div class="mobile-divider"></div>
-            <button class="mobile-list-item mobile-admin-login-btn--admin" id="mob-action-admin-login">
-                <i data-lucide="log-out"></i>
-                <span>Déconnexion Admin</span>
-            </button>
-            <div class="mobile-divider"></div>
-            <div class="mobile-menu-admin-header">Outils Admin</div>
-            <button class="mobile-list-item mobile-menu-brand-item" id="mob-action-admin-control-center">
-                <i data-lucide="layout-dashboard"></i>
-                <span>Centre de Contrôle</span>
-            </button>
-            <button class="mobile-list-item" id="mob-action-admin-quick-publish">
-                <i data-lucide="upload-cloud"></i>
-                <span>Publier les modifs</span>
-            </button>
-            <button class="mobile-list-item" id="mob-action-admin-datamanager">
-                <i data-lucide="table"></i>
-                <span>Data Manager</span>
-            </button>
-            <button class="mobile-list-item" id="mob-action-admin-scout">
-                <i data-lucide="scan-eye"></i>
-                <span>Scout (Overpass)</span>
-            </button>
-            <button class="mobile-list-item" id="mob-action-admin-config-token">
-                <i data-lucide="key"></i>
-                <span>Enregistrer token</span>
-            </button>
-            ` : ''}
-        </div>
-        <div class="mobile-version-footer">
-            History Walk Mobile v${APP_VERSION}
+    // Vue Menu : pas de footer custom → clear pour restaurer le dock.
+    clearMobileViewFooter();
+
+    const subs = computeSubtitles();
+    const sections = buildSections(subs);
+
+    // Header dans le slot dédié (cohérent avec le pattern des autres vues).
+    const headerHtml = `
+        <div class="m-top">
+            <div class="m-top-trail"></div>
+            <div class="m-top-title">Menu</div>
+            <div class="m-top-trail"></div>
         </div>
     `;
+    setMobileHeaderSlot(headerHtml);
 
+    // Body : sections groupées
+    let html = '<div class="menu-list">';
+    sections.forEach(sec => {
+        html += `<section class="menu-section">
+            <div class="menu-section-label">${escapeHtml(sec.label)}</div>
+            <div class="menu-group">`;
+        sec.items.forEach(it => {
+            const variantCls = it.variant === 'danger' ? ' danger'
+                            : it.variant === 'love' ? ' love'
+                            : it.variant === 'brand-emph' ? ' brand-emph'
+                            : '';
+            // L'icône trail : cœur plein pour love (BMC), chevron pour le reste.
+            const trailIcon = it.variant === 'love' ? 'heart' : 'chevron-right';
+            html += `
+                <button type="button" class="menu-item${variantCls}" id="${it.id}">
+                    <span class="menu-item-icon"><i data-lucide="${it.ico}"></i></span>
+                    <span class="menu-item-text">
+                        <div class="menu-item-label">${escapeHtml(it.label)}</div>
+                        ${it.sub ? `<div class="menu-item-sub">${escapeHtml(it.sub)}</div>` : ''}
+                    </span>
+                    <span class="menu-item-trail"><i data-lucide="${trailIcon}"></i></span>
+                </button>
+            `;
+        });
+        html += '</div></section>';
+    });
+    html += `<div class="menu-version">History Walk Mobile v${APP_VERSION}</div>`;
+    html += '</div>';
+
+    container.innerHTML = html;
+
+    // Icons (header + container)
     createIcons({ icons: appIcons, root: container });
+    const headerSlot = document.getElementById('mobile-header-slot');
+    if (headerSlot) createIcons({ icons: appIcons, root: headerSlot });
 
-    // ─── Event listeners ──────────────────────────────────────────────────────
-
-    document.getElementById('mob-action-stats').addEventListener('click', () => showStatisticsModal());
-    document.getElementById('mob-action-mon-espace').addEventListener('click', () => openUserSpace());
-    document.getElementById('mob-action-scan').addEventListener('click', () => startGenericScanner());
-    document.getElementById('mob-action-reset').addEventListener('click', async () => {
+    // ─── Event listeners ─────────────────────────────────────────────────────
+    document.getElementById('mob-action-stats')?.addEventListener('click', () => showStatisticsModal());
+    document.getElementById('mob-action-mon-espace')?.addEventListener('click', () => openUserSpace());
+    document.getElementById('mob-action-scan')?.addEventListener('click', () => startGenericScanner());
+    document.getElementById('mob-action-reset')?.addEventListener('click', async () => {
         if (await showConfirm(
             "Danger Zone",
             "ATTENTION : Cela va effacer toutes les données locales (caches, sauvegardes automatiques). Continuez ?",
@@ -115,47 +165,35 @@ export function renderMobileMenu() {
             location.reload();
         }
     });
-    document.getElementById('mob-action-theme').addEventListener('click', () => cycleTheme());
-    document.getElementById('mob-action-bmc').addEventListener('click', () => {
+    document.getElementById('mob-action-theme')?.addEventListener('click', () => {
+        cycleTheme();
+        // Re-render pour rafraîchir le sous-titre « Actuel : <thème> ».
+        renderMobileMenu();
+    });
+    document.getElementById('mob-action-bmc')?.addEventListener('click', () => {
         window.open('https://www.buymeacoffee.com/history_walk', '_blank');
     });
     document.getElementById('mob-action-legal-notice')?.addEventListener('click', () => showLegalNoticeModal());
 
-    const btnAdminLogin = document.getElementById('mob-action-admin-login');
-    if (btnAdminLogin) {
-        btnAdminLogin.addEventListener('click', () => {
-            if (state.isAdmin) {
-                logoutAdmin();
-            } else {
-                showAdminLoginModal();
-            }
-        });
-    }
+    document.getElementById('mob-action-admin-login')?.addEventListener('click', () => {
+        if (state.isAdmin) logoutAdmin();
+        else showAdminLoginModal();
+    });
 
     if (state.isAdmin) {
-        const btnControl = document.getElementById('mob-action-admin-control-center');
-        if (btnControl) btnControl.addEventListener('click', openControlCenter);
-
-        const btnQuickPublish = document.getElementById('mob-action-admin-quick-publish');
-        if (btnQuickPublish) btnQuickPublish.addEventListener('click', quickPublish);
-
-        const btnDataManager = document.getElementById('mob-action-admin-datamanager');
-        if (btnDataManager) btnDataManager.addEventListener('click', () =>
+        document.getElementById('mob-action-admin-control-center')?.addEventListener('click', openControlCenter);
+        document.getElementById('mob-action-admin-quick-publish')?.addEventListener('click', quickPublish);
+        document.getElementById('mob-action-admin-datamanager')?.addEventListener('click', () =>
             window.open('history_walk_datamanager/index.html', '_blank')
         );
-
-        const btnScout = document.getElementById('mob-action-admin-scout');
-        if (btnScout) btnScout.addEventListener('click', () =>
+        document.getElementById('mob-action-admin-scout')?.addEventListener('click', () =>
             window.open('tools/scout.html', '_blank')
         );
-
-        const btnToken = document.getElementById('mob-action-admin-config-token');
-        if (btnToken) btnToken.addEventListener('click', openControlCenterSettings);
+        document.getElementById('mob-action-admin-config-token')?.addEventListener('click', openControlCenterSettings);
     }
 }
 
 // ─── Listener eventBus — rechargement menu si admin change ───────────────────
-
 eventBus.on('admin:mode-toggled', () => {
     if (getCurrentView() === 'actions' && isMobileView()) {
         renderMobileMenu();

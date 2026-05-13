@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.7'; // Refonte Onglet Circuit mobile (PR 3 chantier design) : structure .cc-* (hero photo + eyebrow avec chevrons < n/total > + titre + flag + description + toolbar 3 actions + timeline POIs). Suppression sticky bar Partager/GPX (absorbée dans la toolbar). Composant .cc-pager réutilisable pour navigation prev/next circuit.
+export const APP_VERSION = '3.7.8'; // Refonte Menu mobile (PR 4 chantier design) : 4 sections groupées (Mon parcours / Outils / Préférences / Soutenir & à propos) + section admin conditionnelle. Sous-titres dynamiques (Mon Carnet : compteurs visités + circuits complétés ; Thème : nom thème courant). Variants visuels : danger (rouge), love (rose pour BMC), brand-emph (CC plein brand).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).

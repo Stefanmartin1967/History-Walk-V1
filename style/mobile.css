@@ -520,13 +520,96 @@
 /* Search result icon */
 .mobile-search-result-icon { color: var(--brand); display: flex; align-items: center; margin-right: 16px; }
 
-/* Menu */
-.mobile-menu-admin-header { padding: 10px 20px; font-weight: bold; color: var(--brand); font-size: 0.85em; text-transform: uppercase; }
-.mobile-menu-brand-item { color: var(--brand); }
-.mobile-menu-brand-item span { color: var(--brand); font-weight: 600; }
-.mobile-admin-login-btn--admin { color: var(--danger); }
-.mobile-admin-login-btn--normal { color: var(--ink); }
-.mobile-version-footer { text-align: center; color: var(--ink-soft); font-size: 12px; margin-top: 20px; padding-bottom: 100px; }
+/* ============================================================
+   MENU MOBILE — sections groupées (refonte PR 4 chantier design)
+   Pattern : .menu-list > .menu-section > .menu-section-label + .menu-group
+   > .menu-item. Variants visuels : .danger (rouge), .love (rose), .brand-emph
+   (CC plein brand). Sous-titres contextuels dynamiques (compteurs réels +
+   thème courant).
+   ============================================================ */
+.menu-list {
+    padding: 12px 12px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.menu-section { display: flex; flex-direction: column; gap: 2px; }
+.menu-section-label {
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    padding: 0 6px 8px;
+}
+.menu-group {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+}
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    background: var(--surface);
+    border: 0;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 500;
+}
+.menu-item + .menu-item { border-top: 1px solid var(--surface-muted); }
+.menu-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.menu-item-icon svg { width: 18px; height: 18px; }
+.menu-item-text { flex: 1; min-width: 0; }
+.menu-item-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+}
+.menu-item-sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    line-height: 1.35;
+}
+.menu-item-trail { color: var(--ink-soft); flex-shrink: 0; display: grid; place-items: center; }
+.menu-item-trail svg { width: 16px; height: 16px; }
+
+/* Variants visuels */
+.menu-item.danger .menu-item-icon { background: var(--danger-soft); color: var(--danger); }
+.menu-item.danger .menu-item-label { color: var(--danger); }
+.menu-item.love .menu-item-icon { background: #FCE7F3; color: #DB2777; }
+.menu-item.love .menu-item-trail { color: #DB2777; }
+.menu-item.love .menu-item-trail svg { fill: #DB2777; }
+html[data-theme="night"] .menu-item.love .menu-item-icon { background: rgba(219, 39, 119, 0.18); }
+.menu-item.brand-emph .menu-item-icon { background: var(--brand); color: #fff; }
+.menu-item.brand-emph .menu-item-label { color: var(--brand-2, var(--brand)); }
+
+.menu-version {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    padding: 8px 0 0;
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+}
 
 /* App share QR modal */
 .app-share-qr-container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
