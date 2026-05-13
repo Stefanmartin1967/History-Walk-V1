@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.8'; // Refonte Menu mobile (PR 4 chantier design) : 4 sections groupées (Mon parcours / Outils / Préférences / Soutenir & à propos) + section admin conditionnelle. Sous-titres dynamiques (Mon Carnet : compteurs visités + circuits complétés ; Thème : nom thème courant). Variants visuels : danger (rouge), love (rose pour BMC), brand-emph (CC plein brand).
+export const APP_VERSION = '3.7.9'; // Fix icône Mon Espace : briefcase n'était pas dans appIcons → invisible. Retour à luggage (existant + plus thématique pour app voyage).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
