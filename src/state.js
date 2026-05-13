@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.2'; // Ménage pré-chantier harmonisation mobile (dead code QR, padding obsolète, fusion 4 couches CSS, refactor inline style)
+export const APP_VERSION = '3.7.3'; // Hero photo circuit PC : applyCircuitHero parcourt POIs du circuit, applique 1re photo dispo (URL publiée ou blob local) + badge compteur + pills zone/étapes, sinon motif topo
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).

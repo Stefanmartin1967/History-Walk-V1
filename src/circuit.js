@@ -3,10 +3,11 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
-import { getRealDistance, getOrthodromicDistance, getZoneFromCoords } from './utils.js';
-import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from './database.js';
+import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, escapeXml } from './utils.js';
+import { getAppState, saveAppState, saveCircuit, batchSavePoiData, getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import * as View from './circuit-view.js';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
@@ -236,6 +237,107 @@ export function addPoiToCircuit(feature) {
 }
 
 // circuit.js (extrait)
+// ─── Hero photo du panneau Circuit (PC) ─────────────────────────────────────
+// Cherche la première photo dispo parmi les POIs du circuit (URL publiée ou
+// blob local admin/user) et l'applique en background du .circuit-cover, avec
+// badge compteur + pills (zone + nb étapes). Fallback motif topo + icône si
+// aucun POI n'a de photo.
+let activeCoverObjectUrl = null;
+
+function revokeCoverObjectUrl() {
+    if (activeCoverObjectUrl) {
+        URL.revokeObjectURL(activeCoverObjectUrl);
+        activeCoverObjectUrl = null;
+    }
+}
+
+async function applyCircuitHero() {
+    const cover = document.getElementById('circuit-cover');
+    if (!cover) return;
+
+    revokeCoverObjectUrl();
+    cover.innerHTML = '';
+    cover.style.removeProperty('--circuit-hero-bg');
+    delete cover.dataset.bg;
+    cover.classList.add('is-empty');
+
+    const circuit = state.currentCircuit;
+    if (!circuit || circuit.length === 0) {
+        cover.innerHTML = '<div class="empty-glyph"><i data-lucide="route"></i></div>';
+        createIcons({ icons: appIcons, root: cover });
+        return;
+    }
+
+    let heroUrl = null;
+    let totalPhotoCount = 0;
+
+    // Passe 1 : URLs publiées (properties.photos). Compte aussi le total.
+    for (const poi of circuit) {
+        const published = poi?.properties?.photos;
+        if (Array.isArray(published) && published.length > 0) {
+            totalPhotoCount += published.length;
+            if (!heroUrl) heroUrl = published[0];
+        }
+    }
+
+    // Passe 2 : fallback blob local (seulement si aucune URL publiée trouvée).
+    const mapId = state.currentMapId;
+    if (!heroUrl && mapId) {
+        for (const poi of circuit) {
+            const poiId = getPoiId(poi);
+            if (!poiId) continue;
+            const items = state.isAdmin
+                ? await getPendingAdminPhotos(mapId, poiId)
+                : await getPoiPhotos(mapId, poiId);
+            if (items && items.length > 0 && items[0]?.blob) {
+                // Le panel a pu être re-rendu pendant l'await : si le cover
+                // n'est plus dans le DOM courant ou si state.currentCircuit
+                // a changé, on abandonne silencieusement.
+                if (document.getElementById('circuit-cover') !== cover) return;
+                if (state.currentCircuit !== circuit) return;
+                activeCoverObjectUrl = URL.createObjectURL(items[0].blob);
+                heroUrl = activeCoverObjectUrl;
+                totalPhotoCount += items.length;
+                break;
+            }
+        }
+    }
+
+    if (!heroUrl) {
+        cover.innerHTML = '<div class="empty-glyph"><i data-lucide="route"></i></div>';
+        createIcons({ icons: appIcons, root: cover });
+        return;
+    }
+
+    // Photo trouvée : applique le background, badge compteur, pills zone + étapes.
+    cover.classList.remove('is-empty');
+    cover.dataset.bg = 'true';
+    const safe = String(heroUrl).replace(/['"\\]/g, encodeURIComponent);
+    cover.style.setProperty('--circuit-hero-bg', `url("${safe}")`);
+
+    const badge = document.createElement('span');
+    badge.className = 'cp-photo-count';
+    badge.innerHTML = `<i data-lucide="image"></i>${totalPhotoCount} ${totalPhotoCount > 1 ? 'photos' : 'photo'}`;
+    cover.appendChild(badge);
+
+    const zone = (() => {
+        const coords = circuit[0]?.geometry?.coordinates;
+        if (!coords || coords.length < 2) return null;
+        const [lng, lat] = coords;
+        return getZoneFromCoords(lat, lng) || null;
+    })();
+
+    const tags = document.createElement('div');
+    tags.className = 'cp-cover-tags';
+    let tagsHtml = '';
+    if (zone) tagsHtml += `<span class="cp-pill"><i data-lucide="map-pin"></i>${escapeXml(zone)}</span>`;
+    tagsHtml += `<span class="cp-pill"><i data-lucide="route"></i>${circuit.length} étape${circuit.length > 1 ? 's' : ''}</span>`;
+    tags.innerHTML = tagsHtml;
+    cover.appendChild(tags);
+
+    createIcons({ icons: appIcons, root: cover });
+}
+
 // circuit.js
 export function renderCircuitPanel() {
     const points = state.currentCircuit;
@@ -270,6 +372,11 @@ export function renderCircuitPanel() {
 
     updateCircuitMetadata();
     notifyCircuitChanged(); // Cette fonction va maintenant choisir la bonne ligne !
+
+    // Hero photo du circuit (PR 1 chantier mobile design — feature transverse
+    // PC + mobile). Fire-and-forget : la fonction await en interne, le DOM est
+    // mis à jour quand la photo (publiée ou blob) est trouvée.
+    applyCircuitHero();
 }
 
 export function updateCircuitMetadata(updateTitle = true) {
