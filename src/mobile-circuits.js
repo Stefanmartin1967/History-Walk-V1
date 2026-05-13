@@ -16,6 +16,7 @@ import {
     getMobileCurrentPage, setMobileCurrentPage,
     setCurrentView, setAllCircuitsOrdered,
     pushMobileLevel,
+    setMobileHeaderSlot,
 } from './mobile-state.js';
 import { eventBus } from './events.js';
 
@@ -75,9 +76,9 @@ export function renderMobileCircuitsList() {
     const startIdx = (currentPage - 1) * itemsPerPage;
     const paginatedCircuits = circuitsToDisplay.slice(startIdx, startIdx + itemsPerPage);
 
-    // ─── Génération HTML ──────────────────────────────────────────────────────
+    // ─── Génération HTML — header dans header-slot, body dans main-container ──
 
-    let html = `
+    const headerHtml = `
         <div class="mobile-view-header mobile-header-harmonized mobile-circuits-header">
             <button class="action-button mobile-pagination-btn" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" ${currentPage <= 1 ? 'disabled' : ''}>
                 <i data-lucide="chevron-left" class="icon-24"></i>
@@ -90,6 +91,9 @@ export function renderMobileCircuitsList() {
                 <i data-lucide="chevron-right" class="icon-24"></i>
             </button>
         </div>
+    `;
+
+    let html = `
         <div id="mobile-toolbar-container"></div>
         <div class="panel-content mobile-standard-padding mobile-list-container" id="mobile-circuits-list">
     `;
@@ -182,8 +186,15 @@ export function renderMobileCircuitsList() {
     }
 
     html += `</div>`;
+
+    // Header dans le header-slot (refonte étape 3) ; corps dans main-container.
+    setMobileHeaderSlot(sanitizeHTML(headerHtml));
     container.innerHTML = sanitizeHTML(html);
 
+    // createIcons doit s'appliquer aux deux conteneurs (header-slot + main-container)
+    // pour que les icônes Lucide du header (chevrons pagination) soient rendues.
+    const headerSlot = document.getElementById('mobile-header-slot');
+    if (headerSlot) createIcons({ icons: appIcons, root: headerSlot });
     createIcons({ icons: appIcons, root: container });
 
     // Bug D (mobile) : handler du ✕ sur le chip de filtre POI
