@@ -2357,12 +2357,24 @@
     background: var(--surface-muted);
     background-size: cover;
     background-position: center;
+    overflow: hidden;
 }
 #circuit-panel[data-mode="create"] .circuit-cover { display: none; }
 
-/* Cover fallback (perso, pas de photo) */
+/* Cover avec photo POI (data-bg défini par applyCircuitHero — la photo
+   est la première dispo parmi les POIs du circuit, gradient overlay pour
+   la lisibilité du badge + pills). */
+.circuit-cover[data-bg] {
+    background-image: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), var(--circuit-hero-bg);
+}
+
+/* Cover fallback (aucune photo dans le circuit) — motif topo subtil. */
 .circuit-cover.is-empty {
-    background: linear-gradient(135deg, var(--brand-soft) 0%, #dde9f5 60%, #c8d8eb 100%);
+    background:
+        radial-gradient(circle at 30% 40%, var(--brand-soft) 0%, transparent 55%),
+        radial-gradient(circle at 75% 70%, color-mix(in oklab, var(--brand) 25%, var(--surface)) 0%, transparent 60%),
+        repeating-radial-gradient(circle at 50% 50%, transparent 0 22px, color-mix(in oklab, var(--brand) 6%, transparent) 22px 23px),
+        var(--surface);
     display: flex;
     align-items: center;
     justify-content: center;
