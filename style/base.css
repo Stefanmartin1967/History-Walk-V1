@@ -1447,8 +1447,23 @@ textarea.editable-input {
 }
 .mobile-slot-footer {
     flex-shrink: 0;
-    /* Contient #mobile-dock par défaut, peut être remplacé par un footer-de-vue
-       (boutons Partager/GPX, mini-barre POI, etc.) à l'étape 5. */
+    /* Contient #mobile-dock par défaut. Quand une vue veut un footer custom
+       (boutons Partager/GPX, mini-barre POI), elle remplit #mobile-view-footer
+       qui s'affiche ET masque automatiquement le dock via le sélecteur ci-dessous. */
+}
+
+/* View-footer : container pour les footers spécifiques à une vue.
+   - Vide par défaut → caché (display: none).
+   - Rempli (au moins 1 enfant) → visible (display: block).
+   - Quand visible, masque le #mobile-dock dans le même slot via le sélecteur sibling. */
+.mobile-view-footer {
+    display: none;
+}
+.mobile-view-footer:not(:empty) {
+    display: block;
+}
+.mobile-view-footer:not(:empty) ~ #mobile-dock {
+    display: none !important;
 }
 
 .mobile-view-header {

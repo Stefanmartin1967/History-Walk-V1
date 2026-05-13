@@ -24,7 +24,12 @@ vi.mock('../src/mobile-state.js', () => ({
     setMobileCurrentPage: vi.fn(),
     getAllCircuitsOrdered: vi.fn(() => []),
     animateContainer: vi.fn(),
-    pushMobileLevel: vi.fn()
+    pushMobileLevel: vi.fn(),
+    resetMobileSlots: vi.fn(),
+    setMobileHeaderSlot: vi.fn(),
+    clearMobileHeaderSlot: vi.fn(),
+    setMobileViewFooter: vi.fn(),
+    clearMobileViewFooter: vi.fn()
 }));
 
 vi.mock('../src/ui-details.js', () => ({
