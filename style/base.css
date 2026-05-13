@@ -1422,15 +1422,16 @@ textarea.editable-input {
     flex-grow: 1;
     overflow-y: auto;
     position: relative;
-    /* Bloque l'élasticité native du scroll (le "rebond" Android/iOS qui permet
-       de tirer le contenu au-delà des bords même quand il tient dans le viewport).
-       Symptôme remonté par Stefan en PWA Brave Android : "interface glisse".
-       `none` (et pas seulement `contain`) bloque AUSSI le rebond local de
-       l'élément : `contain` n'empêche que la propagation du scroll au parent,
-       mais autorise le rebond élastique de l'élément lui-même. C'est ce rebond
-       qui faisait remonter la photo hero hors écran sur la fiche POI quand le
-       user scrollait jusqu'au bas. `none` bloque complètement l'overscroll. */
-    overscroll-behavior: none;
+    /* `contain` : bloque la propagation du scroll au parent (utile pour
+       éviter qu'un scroll dans le main-container ne remonte au #mobile-container)
+       MAIS permet le pull-to-refresh natif Android.
+       Note historique : on était passé à `none` pour bloquer le rebond élastique
+       qui faisait remonter la photo hero de la fiche POI. Depuis la refonte
+       structurelle (mini-barre dans footer-slot, plus de position:fixed dans
+       le scrollable, cleanup view-enter au animationend), ce bug n'existe plus
+       structurellement. On peut donc revenir à `contain` sans risque, et
+       restaurer le pull-to-refresh natif. */
+    overscroll-behavior: contain;
 }
 
 /* ── Layout mobile en 3 slots (refonte structurelle, étape 1) ───────────────

@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.6.0'; // C2-C7 : imports, SW cache, backup validation, retour Android
+export const APP_VERSION = '3.7.0'; // Refonte layout mobile 3 slots + restore pull-to-refresh
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
