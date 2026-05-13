@@ -144,8 +144,8 @@ export function renderMobileCircuitsList() {
                         </button>
                     </div>
                     <div class="mc-meta">
-                        <div class="mc-stat"><span class="num">${circuit._poiCount}</span><span class="unit">POI</span></div>
-                        <div class="mc-stat"><span class="num">${kmNum}</span><span class="unit">km</span></div>
+                        <span class="mc-stat"><b>${circuit._poiCount}</b> POI</span>
+                        <span class="mc-stat"><b>${kmNum}</b> km</span>
                         ${circuit._zoneName ? `<span class="mc-zone">${escapeHtml(circuit._zoneName)}</span>` : ''}
                         ${circuit._hasRestaurant ? `<span class="mc-resto"><i data-lucide="utensils"></i>Resto</span>` : ''}
                     </div>

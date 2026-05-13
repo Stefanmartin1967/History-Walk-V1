@@ -116,55 +116,51 @@
 .mc-card.is-done .mc-title { color: var(--ink-soft); }
 .mc-meta {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 6px;
     font-variant-numeric: tabular-nums;
 }
-.mc-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-}
-.mc-stat .num {
-    background: var(--surface-muted);
-    color: var(--ink);
-    font-weight: 700;
-    font-size: 13px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    min-width: 38px;
-    text-align: center;
-}
-.mc-stat .unit {
-    font-size: 10.5px;
-    color: var(--ink-soft);
-    letter-spacing: 0.02em;
-    line-height: 1;
-}
-.mc-zone {
-    display: inline-flex;
-    align-items: center;
-    background: var(--surface-muted);
-    color: var(--ink);
-    padding: 5px 10px;
-    border-radius: 999px;
-    font-size: 11.5px;
-    font-weight: 500;
-    align-self: center;
-}
+/* Pills méta : toutes la même hauteur pour un alignement propre.
+   .mc-stat = pastille chiffre + unité (4 POI / 7.2 km).
+   .mc-zone = pill zone géographique.
+   .mc-resto = pill ambre si le circuit contient un resto. */
+.mc-stat,
+.mc-zone,
 .mc-resto {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    color: var(--hw-amber);
-    background: var(--hw-amber-soft);
     padding: 5px 10px;
     border-radius: 999px;
     font-size: 11.5px;
+    line-height: 1;
+}
+.mc-stat {
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+    font-weight: 500;
+    gap: 3px;
+}
+/* On utilise le tag <b> plutôt qu'une classe .num pour éviter la collision avec
+   la règle globale `.num` (steppers, base.css l.1095) qui force width/height 28px
+   et display:grid. Le `<b>` est porteur de sémantique (chiffre saillant) et a
+   un sélecteur unique. */
+.mc-stat b {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1;
+}
+.mc-zone {
+    background: var(--surface-muted);
+    color: var(--ink);
+    font-weight: 500;
+}
+.mc-resto {
+    color: var(--hw-amber);
+    background: var(--hw-amber-soft);
     font-weight: 600;
-    align-self: center;
 }
 .mc-resto svg { width: 11px; height: 11px; }
 .mc-flag {
