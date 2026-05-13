@@ -64,13 +64,43 @@ export function renderMobileCircuitsList() {
     );
     setAllCircuitsOrdered(circuitsToDisplay); // Mémorise pour le swipe entre circuits
 
-    // ─── Pagination dynamique ─────────────────────────────────────────────────
-    // Marge de sécurité (330) calibrée post-refonte 3 slots : header-slot
-    // ~93px + dock 54px + safe-area-bottom + paddings + cards à 80px
-    // = pas de débordement scroll. Valeur précédente (280) laissait passer
-    // ~7-15px d'overflow et le user voyait la 1re carte glisser sous la toolbar.
+    // ─── Pagination dynamique 2-passes ────────────────────────────────────────
+    // 1) Render header provisoire pour qu'il occupe sa hauteur réelle dans le
+    //    header-slot (sinon mainEl.clientHeight surestime la place dispo).
+    // 2) Mesurer mainEl.clientHeight (= place réelle pour les cards).
+    // 3) Calculer itemsPerPage / totalPages / currentPage.
+    // 4) Re-render le header avec les vraies valeurs (compteur 1/X final).
+    //
+    // Le double render du header est négligeable (innerHTML rapide). Élimine
+    // l'overflow remonté par Stefan en PWA Brave standalone Android (la 1re
+    // carte glissait sous la toolbar à cause d'estimations device-spécifiques).
 
-    const availableHeight = window.innerHeight - 330;
+    const buildHeader = (page, total) => `
+        <div class="mobile-view-header mobile-header-harmonized mobile-circuits-header">
+            <button class="action-button mobile-pagination-btn" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" ${page <= 1 ? 'disabled' : ''}>
+                <i data-lucide="chevron-left" class="icon-24"></i>
+            </button>
+            <div class="mobile-circuits-center">
+                <h1>Mes Circuits</h1>
+                <span id="mobile-page-info" class="mobile-page-info">${page} / ${total}</span>
+            </div>
+            <button class="action-button mobile-pagination-btn" id="mobile-next-page" title="Page suivante" aria-label="Page suivante" ${page >= total ? 'disabled' : ''}>
+                <i data-lucide="chevron-right" class="icon-24"></i>
+            </button>
+        </div>
+        <div id="mobile-toolbar-container"></div>
+    `;
+
+    // Pass 1 : header provisoire pour avoir la hauteur réelle du main-container.
+    setMobileHeaderSlot(sanitizeHTML(buildHeader(1, 1)));
+
+    // Force reflow pour que clientHeight reflète le nouveau header-slot.
+    const mainEl = document.getElementById('mobile-main-container');
+    void mainEl?.offsetHeight;
+    const availableHeight = (mainEl?.clientHeight || 0) > 100
+        ? mainEl.clientHeight - 30  // 30 = padding-top container + padding-bottom + marge
+        : window.innerHeight - 330; // fallback si mainEl pas encore stable
+
     const itemHeight = 75;
     const gap = 8;
     let itemsPerPage = Math.max(1, Math.floor((availableHeight + gap) / (itemHeight + gap)));
@@ -86,26 +116,10 @@ export function renderMobileCircuitsList() {
     const startIdx = (currentPage - 1) * itemsPerPage;
     const paginatedCircuits = circuitsToDisplay.slice(startIdx, startIdx + itemsPerPage);
 
-    // ─── Génération HTML — header dans header-slot, body dans main-container ──
+    // ─── Génération HTML — body dans main-container ───────────────────────────
 
-    // Header + toolbar dans le header-slot (toolbar incluse car son sticky:top:0
-    // ne fonctionne pas dans un wrapper de hauteur intrinsèque ; en la mettant
-    // dans le header-slot on garantit qu'elle reste visible sans scroll).
-    const headerHtml = `
-        <div class="mobile-view-header mobile-header-harmonized mobile-circuits-header">
-            <button class="action-button mobile-pagination-btn" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" ${currentPage <= 1 ? 'disabled' : ''}>
-                <i data-lucide="chevron-left" class="icon-24"></i>
-            </button>
-            <div class="mobile-circuits-center">
-                <h1>Mes Circuits</h1>
-                <span id="mobile-page-info" class="mobile-page-info">${currentPage} / ${totalPages}</span>
-            </div>
-            <button class="action-button mobile-pagination-btn" id="mobile-next-page" title="Page suivante" aria-label="Page suivante" ${currentPage >= totalPages ? 'disabled' : ''}>
-                <i data-lucide="chevron-right" class="icon-24"></i>
-            </button>
-        </div>
-        <div id="mobile-toolbar-container"></div>
-    `;
+    // Pass 2 : header avec les vraies valeurs (compteur final).
+    const headerHtml = buildHeader(currentPage, totalPages);
 
     let html = `
         <div class="panel-content mobile-standard-padding mobile-list-container" id="mobile-circuits-list">
