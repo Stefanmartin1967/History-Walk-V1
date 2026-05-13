@@ -32,6 +32,11 @@ export function renderMobilePoiList(features) {
     // Le dock se masque automatiquement quand le view-footer est rempli
     // (sélecteur CSS `.mobile-view-footer:not(:empty) ~ #mobile-dock`).
     // Cf. setMobileViewFooter() en bas de cette fonction.
+    // Si !isCircuit, on n'a pas de footer custom → clear pour restaurer le dock.
+    if (!isCircuit) {
+        const viewFooter = document.getElementById('mobile-view-footer');
+        if (viewFooter) viewFooter.innerHTML = '';
+    }
 
     let pageTitle = 'Lieux';
     let isAllVisited = false;

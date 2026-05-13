@@ -347,11 +347,16 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     }
 
     // ========== TEMPLATE MOBILE ==========
+    // Refonte étape 5 : retourne un objet { header, body, footer } pour que
+    // openDetailsPanel mobile (ui-details.js) puisse rendre dans les 3 slots
+    // du #mobile-container. Plus de wrapper .poi-panel.is-mobile (le contenu
+    // est éclaté dans header-slot / main-container / view-footer-slot).
     const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: false });
+    const dataPoiId = escapeXml(feature.properties.HW_ID || '');
 
-    return `
-        <div class="poi-panel is-mobile" data-poi-id="${escapeXml(feature.properties.HW_ID || '')}">
-            <div class="poi-mobile-header">
+    return {
+        header: `
+            <div class="poi-mobile-header" data-poi-id="${dataPoiId}">
                 <div class="poi-mobile-header-row">
                     <div class="poi-mobile-title-wrap">
                         ${hasEyebrow ? `<div class="poi-mobile-cap">${eyebrowParts.join(' · ')}</div>` : ''}
@@ -361,16 +366,21 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     <button class="poi-mobile-back" id="details-close-btn" title="Fermer la fiche" aria-label="Fermer la fiche"><i data-lucide="x"></i></button>
                 </div>
             </div>
-            <div class="poi-body">
+        `,
+        body: `
+            <div class="poi-body" data-poi-id="${dataPoiId}">
                 ${heroHtml}
                 ${descSection}
                 ${gpxSection}
                 ${practicalSection}
                 ${suiviSection}
             </div>
+        `,
+        footer: `
             <div class="poi-mobile-quick-bar-wrap">
                 ${quickBarHtml}
                 ${kebabPopover}
             </div>
-        </div>`;
+        `
+    };
 }

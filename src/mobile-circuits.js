@@ -17,6 +17,7 @@ import {
     setCurrentView, setAllCircuitsOrdered,
     pushMobileLevel,
     setMobileHeaderSlot,
+    clearMobileViewFooter,
 } from './mobile-state.js';
 import { eventBus } from './events.js';
 
@@ -33,6 +34,11 @@ let mobileLastPoiId = null;
 
 export function renderMobileCircuitsList() {
     const container = document.getElementById('mobile-main-container');
+
+    // Vue Mes Circuits : pas de footer custom → clear le view-footer pour
+    // restaurer le dock (au cas où on viendrait de Liste POIs ou Fiche POI
+    // qui ont rempli le view-footer avec leur footer custom).
+    clearMobileViewFooter();
 
     // Calcul de la liste filtrée/triée via le service partagé
     let filterPoiId = null;

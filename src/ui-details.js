@@ -2,7 +2,7 @@ import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSea
 import { getPoiId, getPoiName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
-import { isMobileView, pushMobileLevel, animateContainer } from './mobile-state.js';
+import { isMobileView, pushMobileLevel, animateContainer, setMobileHeaderSlot, setMobileViewFooter } from './mobile-state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
@@ -432,7 +432,18 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
     // Injection du HTML — révoque l'objectURL du hero précédent (évite leak).
     revokeHeroObjectUrl();
     const targetPanel = isMobileView() ? DOM.mobileMainContainer : DOM.detailsPanel;
-    targetPanel.innerHTML = buildHTML(feature, circuitIndex);
+    const html = buildHTML(feature, circuitIndex);
+    if (isMobileView()) {
+        // Refonte étape 5 : buildHTML mobile retourne { header, body, footer }.
+        // On rend dans les 3 slots du #mobile-container — plus de wrapper
+        // .poi-panel.is-mobile, plus de position:fixed sur la mini-barre
+        // (qui devient un simple flex element dans le view-footer-slot).
+        setMobileHeaderSlot(html.header);
+        targetPanel.innerHTML = html.body;
+        setMobileViewFooter(html.footer);
+    } else {
+        targetPanel.innerHTML = html;
+    }
 
     // Background hero (CSSOM, CSP-safe)
     applyHeroBackground();

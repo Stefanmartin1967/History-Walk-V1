@@ -1075,30 +1075,25 @@
    #mobile-main-container. Le body grandit pour pousser la CTA bar en bas vraiment.
    Sans min-height + flex-grow, sur un POI à description vide la CTA bar
    collait au contenu et apparaissait au milieu du viewport (vide blanc dessous). */
-.poi-panel.is-mobile {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    height: auto;
-}
-.poi-panel.is-mobile .poi-body {
-    flex: 1 1 auto;
-    overflow: visible;
-}
-.poi-panel.is-mobile .poi-mobile-header {
+/* Refonte étape 5 : .poi-panel.is-mobile n'existe plus comme wrapper unique
+   (le contenu est éclaté dans #mobile-header-slot / #mobile-main-container /
+   #mobile-view-footer). Sélecteurs désimbriqués pour cibler les classes
+   directement. */
+
+/* Header de fiche POI mobile : vit dans #mobile-header-slot (refonte étape 5).
+   Plus de `position: sticky` nécessaire car le slot est lui-même flex-shrink:0
+   du #mobile-container, donc reste visible en haut sans hack. */
+.poi-mobile-header {
     padding: 8px 14px 14px;
     background: var(--surface);
     border-bottom: 1px solid var(--surface-muted);
-    position: sticky;
-    top: 0;
-    z-index: 3;
 }
-.poi-panel.is-mobile .poi-mobile-header-row {
+.poi-mobile-header-row {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.poi-panel.is-mobile .poi-mobile-back {
+.poi-mobile-back {
     width: 40px;
     height: 40px;
     border-radius: 12px;
@@ -1110,16 +1105,16 @@
     color: var(--ink);
     flex-shrink: 0;
 }
-.poi-panel.is-mobile .poi-mobile-back svg { width: 18px; height: 18px; }
-.poi-panel.is-mobile .poi-mobile-title-wrap { flex: 1; min-width: 0; }
-.poi-panel.is-mobile .poi-mobile-cap {
+.poi-mobile-back svg { width: 18px; height: 18px; }
+.poi-mobile-title-wrap { flex: 1; min-width: 0; }
+.poi-mobile-cap {
     font-size: 9px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--ink-soft);
     margin-bottom: 1px;
 }
-.poi-panel.is-mobile .poi-mobile-title {
+.poi-mobile-title {
     margin: 0;
     font-size: 15px;
     font-weight: 700;
@@ -1129,8 +1124,11 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.poi-panel.is-mobile .poi-section,
-.poi-panel.is-mobile .poi-title-block {
+
+/* Padding contenu de fiche POI mobile : vit dans #mobile-main-container.
+   Cible le body POI mobile qui a data-poi-id (vs. PC qui n'a pas cet attribut). */
+.poi-body[data-poi-id] .poi-section,
+.poi-body[data-poi-id] .poi-title-block {
     padding-left: 16px;
     padding-right: 16px;
 }
@@ -1141,21 +1139,16 @@
    `fixed` plutôt que `sticky` pour rester collée même quand on est en haut
    de la fiche. Le body compense via padding-bottom (cf. .poi-panel.is-mobile
    .poi-body ci-dessous). */
+/* Refonte étape 5 : la mini-barre n'est plus position:fixed. Elle vit dans
+   #mobile-view-footer (slot footer du #mobile-container) en flex-shrink:0,
+   donc toujours visible en bas du viewport sans hack de positionnement.
+   Plus de bug "transform fantôme" ni de besoin de réserver de l'espace
+   dans le body via padding-bottom. */
 .poi-mobile-quick-bar-wrap {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
     padding: 12px 14px calc(14px + env(safe-area-inset-bottom, 0px));
     background: var(--surface);
     border-top: 1px solid var(--surface-muted);
     box-shadow: 0 -8px 20px -12px rgba(20,42,67,0.15);
-    z-index: 3;
-}
-/* Le body mobile doit réserver l'espace du quick-bar pour que le dernier
-   contenu (notes, etc.) reste atteignable. ~76px = 44 (boutons) + 12+14 padding. */
-.poi-panel.is-mobile .poi-body {
-    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
 }
 /* Sur mobile, la mini-barre garde 44px mais les boutons sont compactés
    à font-size 12.5px (place serrée sur 320-360px). */
