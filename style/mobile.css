@@ -2,29 +2,227 @@
    MOBILE.JS — Circuit list + POI list + Menu
    ================================================ */
 
-/* Header pagination */
-.mobile-circuits-header { justify-content: space-between; align-items: center; padding: 0 8px; }
-.mobile-circuits-center { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 1px; }
-.mobile-circuits-center h1 { margin: 0; }
-.mobile-circuits-center .mobile-page-info { font-size: 0.75rem; color: var(--ink-soft); }
-.mobile-pagination-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; }
-.mobile-pagination-btn:disabled { opacity: 0.25; pointer-events: none; }
-.mobile-page-info { font-size: 14px; font-weight: 600; color: var(--ink); min-width: 30px; text-align: center; }
+/* ============================================================
+   MES CIRCUITS — Liste de cards mobile (refonte chantier 13/05/2026)
+   Pattern .mc-* : inspiré de .va-card du panneau PC mais 100% pleine
+   largeur, touch-target augmenté, marges latérales 12px. Le ruban
+   gauche (4px) signale le statut "officiel" (brand) / "vérifié" (ok).
+   ============================================================ */
+.mc-search-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--surface-muted);
+}
+.mc-search {
+    flex: 1;
+    height: 40px;
+    background: var(--surface-muted);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    cursor: text;
+}
+.mc-search svg { width: 16px; height: 16px; flex-shrink: 0; }
+.mc-search-placeholder { color: var(--ink-soft); }
+.mc-icon-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--surface-muted);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    color: var(--ink-soft);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.mc-icon-btn svg { width: 18px; height: 18px; }
 
-/* Circuit item layout */
-.mobile-circuit-card-wrapper { display: flex; align-items: center; gap: 5px; margin-bottom: 8px; }
-.mobile-circuit-info { display: flex; flex-direction: column; flex: 1; min-width: 0; margin-right: 4px; }
-.mobile-circuit-name-row { display: flex; align-items: center; width: 100%; min-width: 0; overflow: hidden; }
-.mobile-circuit-name { font-size: 16px; color: var(--ink); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex: 1; min-width: 0; font-weight: 400; }
-.mobile-circuit-name--official { font-weight: 700; }
-.mobile-circuit-right { display: flex; align-items: center; flex-shrink: 0; align-self: center; height: 100%; }
+.mc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.mc-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 14px 12px 18px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+}
+.mc-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: transparent;
+}
+.mc-card[data-flag="official"]::before { background: var(--brand); }
+.mc-card[data-flag="verified"]::before { background: var(--ok); }
+.mc-card.is-active {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+}
+.mc-line1 {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+.mc-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.32;
+    letter-spacing: -0.005em;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    text-wrap: pretty;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.mc-done {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: transparent;
+    border: 0;
+    color: var(--ink-soft);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    margin-top: -2px;
+}
+.mc-done svg { width: 22px; height: 22px; stroke-width: 2; }
+.mc-card.is-done .mc-done { color: var(--ok); }
+.mc-card.is-done .mc-title { color: var(--ink-soft); }
+.mc-meta {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-variant-numeric: tabular-nums;
+}
+.mc-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+.mc-stat .num {
+    background: var(--surface-muted);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    min-width: 38px;
+    text-align: center;
+}
+.mc-stat .unit {
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+.mc-zone {
+    display: inline-flex;
+    align-items: center;
+    background: var(--surface-muted);
+    color: var(--ink);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 500;
+    align-self: center;
+}
+.mc-resto {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--hw-amber);
+    background: var(--hw-amber-soft);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    align-self: center;
+}
+.mc-resto svg { width: 11px; height: 11px; }
+.mc-flag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.mc-flag .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.mc-card[data-flag="official"] .mc-flag { color: var(--brand-2, var(--brand)); }
+.mc-card[data-flag="verified"] .mc-flag { color: var(--ok); }
+.mc-card[data-flag="none"] .mc-flag { display: none; }
 
-/* Status icons */
-.mobile-check-btn.done { color: var(--ok); }
-.mobile-check-btn.todo { color: var(--line); }
-.mobile-status-badge { font-size: 12px; color: var(--ink-soft); font-weight: 600; background: var(--surface-muted); padding: 2px 6px; border-radius: 4px; }
+/* Modale filtres unifiée (remplace l'ancienne toolbar 5-boutons) */
+.mobile-filters-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 65vh;
+    overflow-y: auto;
+}
+.mobile-filters-section { display: flex; flex-direction: column; gap: 4px; }
+.mobile-filters-section-title {
+    margin: 0 0 4px;
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    padding: 0 4px;
+}
+.mobile-filters-section .mobile-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+}
+.mobile-filters-section .mobile-list-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.mobile-filters-item--active {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    color: var(--brand-2, var(--brand));
+}
+
+/* Icônes méta héritées (encore référencées par certains conteneurs ; le pattern
+   .mc-* n'utilise plus ces classes mais on les garde le temps de la transition). */
 .icon-official-star { color: var(--brand); width: 14px; height: 14px; margin-left: 5px; fill: var(--brand); }
-.icon-tested { color: #2e7d32; fill: #2e7d32; } /* Vert foncé pour le bouclier "testé" */
+.icon-tested { color: #2e7d32; fill: #2e7d32; }
 .icon-utensils-meta { width: 14px; height: 14px; margin-left: 4px; vertical-align: text-bottom; }
 .icon-map-meta { width: 14px; height: 14px; margin: 0 4px; }
 .icon-check-visited { width: 20px; height: 20px; margin-left: 5px; color: var(--ok); stroke-width: 3; }
@@ -384,6 +582,13 @@
     overflow: hidden;
     text-overflow: ellipsis;
     letter-spacing: -0.005em;
+}
+/* Spacer m-top-trail : occupe la même largeur que .m-top-back pour équilibrer
+   le centrage du titre quand un seul côté a une action (ou aucun côté). */
+.m-top-trail {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
 }
 
 /* Sticky bottom bar mobile (Circuit + Détails) */

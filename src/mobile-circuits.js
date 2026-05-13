@@ -1,5 +1,9 @@
 // mobile-circuits.js
-// Rendu de la liste des circuits, toolbar de tri/filtres et sélecteur de zones
+// Vue Mes Circuits mobile (refonte chantier mobile design — handoff Claude Design).
+// Structure : .m-top header + .mc-search-row + .mc-list scrollable de .mc-card.
+// Plus de pagination « 1/n » : la liste est scrollable. Toolbar 5-boutons remplacée
+// par le bouton filtres (sliders icon) qui ouvre une modale unifiée (tri + zone
+// + état + reset).
 
 import { state, setActiveFilter, setFilterCompleted } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
@@ -11,9 +15,7 @@ import { getProcessedCircuits } from './circuit-list-service.js';
 import { showCustomModal, closeModal } from './modal.js';
 import { showToast } from './toast.js';
 import {
-    animateContainer,
     getMobileSort, setMobileSort,
-    getMobileCurrentPage, setMobileCurrentPage,
     setCurrentView, setAllCircuitsOrdered,
     pushMobileLevel,
     setMobileHeaderSlot,
@@ -25,8 +27,6 @@ export function initMobileCircuitsListeners() {
     eventBus.on('mobile:render-circuits-list', () => renderMobileCircuitsList());
 }
 
-// ─── Liste des circuits ───────────────────────────────────────────────────────
-
 // Filtre POI clearable via chip (même logique que ui-circuit-list.js).
 let mobilePoiFilterActive = true;
 let mobileLastPoiId = null;
@@ -35,11 +35,10 @@ export function renderMobileCircuitsList() {
     const container = document.getElementById('mobile-main-container');
 
     // Vue Mes Circuits : pas de footer custom → clear le view-footer pour
-    // restaurer le dock (au cas où on viendrait de Liste POIs ou Fiche POI
-    // qui ont rempli le view-footer avec leur footer custom).
+    // restaurer le dock.
     clearMobileViewFooter();
 
-    // Calcul de la liste filtrée/triée via le service partagé
+    // Filtre POI courant (si on revient d'une fiche POI avec un POI sélectionné)
     let filterPoiId = null;
     let currentPoiFeature = null;
     let currentPoiId = null;
@@ -47,7 +46,6 @@ export function renderMobileCircuitsList() {
         currentPoiFeature = state.loadedFeatures[state.currentFeatureId];
         currentPoiId = getPoiId(currentPoiFeature);
     }
-    // Reset dismissal quand le POI change
     if (currentPoiId !== mobileLastPoiId) {
         mobilePoiFilterActive = true;
         mobileLastPoiId = currentPoiId;
@@ -55,6 +53,7 @@ export function renderMobileCircuitsList() {
     if (currentPoiId && mobilePoiFilterActive) {
         filterPoiId = currentPoiId;
     }
+
     const circuitsToDisplay = getProcessedCircuits(
         getMobileSort(),
         state.filterCompleted,
@@ -63,77 +62,34 @@ export function renderMobileCircuitsList() {
     );
     setAllCircuitsOrdered(circuitsToDisplay); // Mémorise pour le swipe entre circuits
 
-    // ─── Pagination dynamique 2-passes ────────────────────────────────────────
-    // 1) Render header provisoire pour qu'il occupe sa hauteur réelle dans le
-    //    header-slot (sinon mainEl.clientHeight surestime la place dispo).
-    // 2) Mesurer mainEl.clientHeight (= place réelle pour les cards).
-    // 3) Calculer itemsPerPage / totalPages / currentPage.
-    // 4) Re-render le header avec les vraies valeurs (compteur 1/X final).
-    //
-    // Le double render du header est négligeable (innerHTML rapide). Élimine
-    // l'overflow remonté par Stefan en PWA Brave standalone Android (la 1re
-    // carte glissait sous la toolbar à cause d'estimations device-spécifiques).
-
-    const buildHeader = (page, total) => `
-        <div class="mobile-view-header mobile-header-harmonized mobile-circuits-header">
-            <button class="action-button mobile-pagination-btn" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" ${page <= 1 ? 'disabled' : ''}>
-                <i data-lucide="chevron-left" class="icon-24"></i>
-            </button>
-            <div class="mobile-circuits-center">
-                <h1>Mes Circuits</h1>
-                <span id="mobile-page-info" class="mobile-page-info">${page} / ${total}</span>
+    // ─── Header slot : .m-top + .mc-search-row ────────────────────────────────
+    // .m-top-trail des deux côtés pour équilibrer (pas de croix « Fermer » —
+    // Mes Circuits est la vue racine, rien à fermer). Le bouton filtres ouvre
+    // la modale unifiée qui remplace l'ancienne toolbar 5-boutons.
+    // Le champ recherche est un placeholder visuel pour cette PR — il sera
+    // câblé fonctionnellement en PR 5 (Refonte Recherche).
+    const headerHtml = `
+        <div class="m-top">
+            <div class="m-top-trail"></div>
+            <div class="m-top-title">Mes Circuits</div>
+            <div class="m-top-trail"></div>
+        </div>
+        <div class="mc-search-row">
+            <div class="mc-search" role="search">
+                <i data-lucide="search"></i>
+                <span class="mc-search-placeholder">Rechercher un circuit ou un POI…</span>
             </div>
-            <button class="action-button mobile-pagination-btn" id="mobile-next-page" title="Page suivante" aria-label="Page suivante" ${page >= total ? 'disabled' : ''}>
-                <i data-lucide="chevron-right" class="icon-24"></i>
+            <button class="mc-icon-btn" id="mobile-mc-filter-btn" aria-label="Filtres">
+                <i data-lucide="sliders-horizontal"></i>
             </button>
         </div>
-        <div id="mobile-toolbar-container"></div>
     `;
+    setMobileHeaderSlot(sanitizeHTML(headerHtml));
 
-    // Pass 1 : header provisoire + toolbar mobile (~50px) AVANT la mesure.
-    // Sans la toolbar matérialisée, mainEl.clientHeight surestime la place
-    // dispo de 50px → 1-2 cards de trop → glissement au scroll.
-    setMobileHeaderSlot(sanitizeHTML(buildHeader(1, 1)));
-    renderMobileToolbar(); // remplit #mobile-toolbar-container dans le header-slot
+    // ─── Body : liste des cartes circuit ──────────────────────────────────────
+    let html = `<div class="mobile-list-container" id="mobile-circuits-list">`;
 
-    // Force reflow pour que clientHeight reflète le header-slot complet.
-    const mainEl = document.getElementById('mobile-main-container');
-    void mainEl?.offsetHeight;
-    const availableHeight = (mainEl?.clientHeight || 0) > 100
-        ? mainEl.clientHeight - 30  // 30 = padding-top container + padding-bottom + marge
-        : window.innerHeight - 330; // fallback si mainEl pas encore stable
-
-    const itemHeight = 75;
-    const gap = 8;
-    let itemsPerPage = Math.max(1, Math.floor((availableHeight + gap) / (itemHeight + gap)));
-    if (itemsPerPage < 3) itemsPerPage = 5;
-
-    let totalPages = Math.max(1, Math.ceil(circuitsToDisplay.length / itemsPerPage));
-    let currentPage = getMobileCurrentPage();
-    if (currentPage > totalPages) {
-        currentPage = totalPages;
-        setMobileCurrentPage(currentPage);
-    }
-
-    const startIdx = (currentPage - 1) * itemsPerPage;
-    const paginatedCircuits = circuitsToDisplay.slice(startIdx, startIdx + itemsPerPage);
-
-    // ─── Génération HTML — body dans main-container ───────────────────────────
-
-    // Pass 2 : update IN-PLACE le compteur + disabled state des prev/next
-    // (PAS de re-render header complet pour ne pas perdre la toolbar déjà rendue).
-    const pageInfoEl = document.getElementById('mobile-page-info');
-    if (pageInfoEl) pageInfoEl.textContent = `${currentPage} / ${totalPages}`;
-    const prevBtnEl = document.getElementById('mobile-prev-page');
-    const nextBtnEl = document.getElementById('mobile-next-page');
-    if (prevBtnEl) prevBtnEl.toggleAttribute('disabled', currentPage <= 1);
-    if (nextBtnEl) nextBtnEl.toggleAttribute('disabled', currentPage >= totalPages);
-
-    let html = `
-        <div class="panel-content mobile-standard-padding mobile-list-container" id="mobile-circuits-list">
-    `;
-
-    // Chip "Filtré par : [POI] ✕" au-dessus de la liste
+    // Chip « Filtré par : [POI] ✕ » au-dessus de la liste
     if (filterPoiId && currentPoiFeature) {
         const poiName = getPoiName(currentPoiFeature);
         html += `
@@ -152,7 +108,7 @@ export function renderMobileCircuitsList() {
     if (!hasAnyCircuits) {
         html += `<p class="mobile-empty-state">
             Aucun circuit enregistré.<br>
-            Utilisez le menu <b>Menu > Restaurer</b> pour charger une sauvegarde.
+            Utilisez le menu <b>Menu &gt; Restaurer</b> pour charger une sauvegarde.
         </p>`;
     } else if (circuitsToDisplay.length === 0) {
         html += `<div class="mobile-finished-state">
@@ -163,104 +119,56 @@ export function renderMobileCircuitsList() {
             </button>
         </div>`;
     } else {
-        html += `<div class="mobile-list">`;
-        paginatedCircuits.forEach(circuit => {
-            const distDisplay = circuit._distDisplay;
-            const zoneName = circuit._zoneName;
-            let displayName = circuit.name.split(' via ')[0];
-            displayName = displayName.replace(/^(Circuit de |Boucle de )/i, '');
-            const total = circuit._poiCount;
-            const done = circuit._visitedCount;
+        html += `<div class="mc-list">`;
+        circuitsToDisplay.forEach(circuit => {
+            const displayName = circuit.name
+                .split(' via ')[0]
+                .replace(/^(Circuit de |Boucle de )/i, '');
             const isDone = circuit._isCompleted;
-            const iconName = circuit._iconName;
-
-            const statusIcon = isDone
-                ? `<i data-lucide="check-circle" class="icon-20 lucide icon-ok"></i>`
-                : `<span class="mobile-status-badge">${done}/${total}</span>`;
-
-            const isTested = isCircuitTested(circuit.id);
-            const badgeHtml = circuit.isOfficial
-                ? (isTested
-                    ? '<i data-lucide="shield-check" class="icon-official-star icon-tested lucide" title="Testé sur le terrain"></i>'
-                    : '<i data-lucide="star" class="icon-official-star lucide"></i>')
-                : '';
-
-            const restoIcon = circuit._hasRestaurant
-                ? `<i data-lucide="utensils" class="icon-utensils-meta lucide"></i>`
-                : '';
-
-            const nameClass = circuit.isOfficial
-                ? 'mobile-circuit-name mobile-circuit-name--official'
-                : 'mobile-circuit-name';
-
-            const visitedIcon = isDone ? 'check-circle' : 'circle';
-            const toggleVisitedHtml = `
-                <button type="button" class="mobile-toggle-visited mobile-check-btn ${isDone ? 'done' : 'todo'}" data-id="${circuit.id}" data-visited="${isDone}" aria-label="Marquer comme visité" title="Marquer comme visité">
-                    <i data-lucide="${visitedIcon}" class="icon-24 lucide"></i>
-                </button>
-            `;
+            const isActive = state.activeCircuitId === circuit.id;
+            const isTested = circuit.isOfficial && isCircuitTested(circuit.id);
+            const flag = circuit.isOfficial
+                ? (isTested ? 'verified' : 'official')
+                : 'none';
+            const flagText = flag === 'verified' ? 'OFFICIEL · VÉRIFIÉ'
+                          : flag === 'official' ? 'OFFICIEL'
+                          : '';
+            const kmNum = (circuit._distDisplay || '').replace(/\s*km\s*$/i, '');
 
             html += `
-                <div class="mobile-circuit-card-wrapper">
-                    <div class="mobile-list-item circuit-item-mobile mobile-card-layout" data-id="${circuit.id}" role="button" tabindex="0">
-                        ${toggleVisitedHtml}
-                        <div class="mobile-circuit-info">
-                            <div class="mobile-circuit-name-row">
-                                <span class="${nameClass}">${escapeHtml(displayName)}${badgeHtml}</span>
-                            </div>
-                            <div class="mobile-card-meta">
-                                ${total} POI • ${distDisplay} <i data-lucide="${iconName}" class="icon-map-meta lucide"></i> • ${zoneName}${restoIcon}
-                            </div>
-                        </div>
-                        <div class="mobile-circuit-right"></div>
+                <article class="mc-card${isDone ? ' is-done' : ''}${isActive ? ' is-active' : ''}" data-flag="${flag}" data-id="${circuit.id}" role="button" tabindex="0">
+                    <div class="mc-line1">
+                        <h3 class="mc-title">${escapeHtml(displayName)}</h3>
+                        <button type="button" class="mc-done mobile-toggle-visited" data-id="${circuit.id}" data-visited="${isDone}" aria-label="Marquer comme visité" title="Marquer comme visité">
+                            <i data-lucide="${isDone ? 'check-circle' : 'circle'}"></i>
+                        </button>
                     </div>
-                </div>
+                    <div class="mc-meta">
+                        <div class="mc-stat"><span class="num">${circuit._poiCount}</span><span class="unit">POI</span></div>
+                        <div class="mc-stat"><span class="num">${kmNum}</span><span class="unit">km</span></div>
+                        ${circuit._zoneName ? `<span class="mc-zone">${escapeHtml(circuit._zoneName)}</span>` : ''}
+                        ${circuit._hasRestaurant ? `<span class="mc-resto"><i data-lucide="utensils"></i>Resto</span>` : ''}
+                    </div>
+                    ${flagText ? `<div class="mc-flag"><span class="dot"></span>${flagText}</div>` : ''}
+                </article>
             `;
         });
         html += `</div>`;
     }
 
     html += `</div>`;
-
-    // Header déjà rendu au pass 1 + update in-place du compteur ci-dessus.
-    // Reste à injecter le body dans le main-container scrollable.
     container.innerHTML = sanitizeHTML(html);
 
-    // ─── Ajustement dynamique (overflow réel mesuré) ──────────────────────────
-    // L'estimation `mainEl.clientHeight - 30` peut être imprécise (safe-area,
-    // padding interne, etc.) → on rend, on mesure le débordement réel, et on
-    // retire des cards jusqu'à ne plus déborder. Élimine le tâtonnement entre
-    // devices. Max 5 itérations (sécurité, évite boucle infinie).
-    void mainEl?.offsetHeight;
-    let overflow = (mainEl?.scrollHeight || 0) - (mainEl?.clientHeight || 0);
-    let removed = 0;
-    while (overflow > 5 && itemsPerPage - removed > 1 && removed < 5) {
-        const allCards = container.querySelectorAll('.mobile-circuit-card-wrapper');
-        if (allCards.length === 0) break;
-        allCards[allCards.length - 1].remove();
-        removed++;
-        void mainEl.offsetHeight;
-        overflow = mainEl.scrollHeight - mainEl.clientHeight;
-    }
-    if (removed > 0) {
-        // Recalculer pagination avec le nombre réel de cards qui tiennent
-        itemsPerPage -= removed;
-        totalPages = Math.max(1, Math.ceil(circuitsToDisplay.length / itemsPerPage));
-        // Update compteur "1/X" et disabled state des boutons prev/next
-        if (pageInfoEl) pageInfoEl.textContent = `${currentPage} / ${totalPages}`;
-        if (nextBtnEl) nextBtnEl.toggleAttribute('disabled', currentPage >= totalPages);
-        // Note : les event listeners ci-dessous (next/prev/swipe) lisent
-        // `totalPages` via la closure ; comme on a fait `let totalPages` plus
-        // haut et qu'on le réassigne ici, ils utiliseront la valeur ajustée.
-    }
-
-    // createIcons doit s'appliquer aux deux conteneurs (header-slot + main-container)
-    // pour que les icônes Lucide du header (chevrons pagination) soient rendues.
+    // ─── Icons + event listeners ──────────────────────────────────────────────
     const headerSlot = document.getElementById('mobile-header-slot');
     if (headerSlot) createIcons({ icons: appIcons, root: headerSlot });
     createIcons({ icons: appIcons, root: container });
 
-    // Handler du ✕ sur le chip de filtre POI
+    // Filtres : ouvre la modale unifiée (tri + zone + état + reset)
+    const filterBtn = document.getElementById('mobile-mc-filter-btn');
+    if (filterBtn) filterBtn.addEventListener('click', () => renderMobileFiltersMenu());
+
+    // Chip POI : clear
     const chipClearBtn = document.getElementById('mobile-poi-filter-chip-clear');
     if (chipClearBtn) {
         chipClearBtn.addEventListener('click', (e) => {
@@ -270,51 +178,7 @@ export function renderMobileCircuitsList() {
         });
     }
 
-    // ─── Event listeners — pagination ─────────────────────────────────────────
-
-    const prevBtn = document.getElementById('mobile-prev-page');
-    const nextBtn = document.getElementById('mobile-next-page');
-
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            if (getMobileCurrentPage() > 1) {
-                setMobileCurrentPage(getMobileCurrentPage() - 1);
-                renderMobileCircuitsList();
-            }
-        });
-    }
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            if (getMobileCurrentPage() < totalPages) {
-                setMobileCurrentPage(getMobileCurrentPage() + 1);
-                renderMobileCircuitsList();
-            }
-        });
-    }
-
-    // Swipe gauche/droite pour changer de page
-    const listEl = document.getElementById('mobile-circuits-list');
-    if (listEl) {
-        let swipeStartX = 0;
-        listEl.addEventListener('touchstart', e => { swipeStartX = e.touches[0].clientX; }, { passive: true });
-        listEl.addEventListener('touchend', e => {
-            const delta = swipeStartX - e.changedTouches[0].clientX;
-            if (Math.abs(delta) > 60) {
-                if (delta > 0 && getMobileCurrentPage() < totalPages) {
-                    setMobileCurrentPage(getMobileCurrentPage() + 1);
-                    renderMobileCircuitsList();
-                } else if (delta < 0 && getMobileCurrentPage() > 1) {
-                    setMobileCurrentPage(getMobileCurrentPage() - 1);
-                    renderMobileCircuitsList();
-                }
-            }
-        });
-    }
-
-    // renderMobileToolbar() déjà appelé au pass 1 (avant la mesure).
-
-    // ─── Event listeners — filtres et circuits ────────────────────────────────
-
+    // Bouton « Tout afficher » de l'état « tout terminé »
     const resetBtn = document.getElementById('btn-reset-filter-inline');
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
@@ -324,13 +188,9 @@ export function renderMobileCircuitsList() {
         });
     }
 
-    container.querySelectorAll('.circuit-item-mobile').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            if (e.target.closest('.mobile-download-btn')) {
-                e.stopPropagation();
-                return;
-            }
-
+    // Clic sur une carte : ouvre le circuit (sauf clic sur le toggle « fait »)
+    container.querySelectorAll('.mc-card').forEach(card => {
+        card.addEventListener('click', async (e) => {
             const toggleBtn = e.target.closest('.mobile-toggle-visited');
             if (toggleBtn) {
                 e.stopPropagation();
@@ -342,10 +202,8 @@ export function renderMobileCircuitsList() {
                 }
                 return;
             }
-
             if (e.target.closest('a')) return;
-
-            const id = btn.dataset.id;
+            const id = card.dataset.id;
             pushMobileLevel('c'); // Proactif C7 : pousser entrée avant descente
             setCurrentView('circuit-details'); // Autorise renderMobilePoiList
             await loadCircuitById(id);
@@ -353,139 +211,117 @@ export function renderMobileCircuitsList() {
     });
 }
 
-// ─── Toolbar de tri/filtres ───────────────────────────────────────────────────
+// ─── Modale filtres unifiée (remplace l'ancienne toolbar 5-boutons) ──────────
+// Trois sections : Tri / Zone / État. Footer : bouton « Réinitialiser » qui
+// rétablit les valeurs par défaut. Chaque sélection ferme la modale et
+// re-render la liste.
+function renderMobileFiltersMenu() {
+    const content = document.createElement('div');
+    content.className = 'mobile-filters-menu';
 
-function renderMobileToolbar() {
-    const container = document.getElementById('mobile-toolbar-container');
-    if (!container) return;
+    // ── Section 1 : Tri ────────────────────────────────────────────────
+    const sortSection = document.createElement('div');
+    sortSection.className = 'mobile-filters-section';
+    sortSection.innerHTML = '<h4 class="mobile-filters-section-title">Tri</h4>';
+    const currentSort = getMobileSort();
+    const sortOptions = [
+        { id: 'date_desc',     label: 'Plus récents',           icon: 'arrow-down-narrow-wide' },
+        { id: 'dist_asc',      label: 'Distance croissante',    icon: 'arrow-down-0-1' },
+        { id: 'dist_desc',     label: 'Distance décroissante',  icon: 'arrow-up-1-0' },
+        { id: 'proximity_asc', label: 'Proximité (résidence)',  icon: 'home', requiresHome: true },
+    ];
+    sortOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = `mobile-list-item${currentSort === opt.id ? ' mobile-filters-item--active' : ''}`;
+        btn.innerHTML = `<i data-lucide="${opt.icon}"></i><span>${opt.label}</span>`;
+        btn.onclick = () => {
+            if (opt.requiresHome && !state.homeLocation) {
+                showToast("Définissez votre lieu de résidence dans Mon Espace pour activer ce tri.", 'info', 4500);
+                return;
+            }
+            setMobileSort(opt.id);
+            closeModal();
+            renderMobileCircuitsList();
+        };
+        sortSection.appendChild(btn);
+    });
+    content.appendChild(sortSection);
 
-    container.innerHTML = '';
-    animateContainer(container);
-
-    const toolbar = document.createElement('div');
-    toolbar.id = 'mobile-toolbar';
-    toolbar.className = 'mobile-toolbar';
-    toolbar.style.display = 'flex';
-    toolbar.style.justifyContent = 'space-around';
-
-    const sort = getMobileSort();
-    const proximityActive = sort === 'proximity_asc';
-    const distIcon = sort.startsWith('dist')
-        ? (sort === 'dist_desc' ? 'arrow-up-1-0' : 'arrow-down-0-1')
-        : 'ruler';
-    const zoneActive = !!state.activeFilters.zone;
-
-    toolbar.innerHTML = `
-        <button id="mob-sort-proximity" class="toolbar-btn ${proximityActive ? 'active' : ''}" title="Trier par proximité du lieu de résidence" aria-label="Trier par proximité">
-            <i data-lucide="home"></i>
-        </button>
-        <button id="mob-sort-dist" class="toolbar-btn ${sort.startsWith('dist') ? 'active' : ''}">
-            <i data-lucide="${distIcon}"></i>
-        </button>
-        <button id="mob-filter-zone" class="toolbar-btn ${zoneActive ? 'active' : ''}">
-            <i data-lucide="map-pin"></i>
-        </button>
-        <button id="mob-filter-todo" class="toolbar-btn ${state.filterCompleted ? 'active' : ''}">
-            <i data-lucide="${state.filterCompleted ? 'list-todo' : 'list-checks'}"></i>
-        </button>
-        <button id="mob-reset" class="toolbar-btn">
-            <i data-lucide="rotate-ccw"></i>
-        </button>
-    `;
-
-    container.appendChild(toolbar);
-    createIcons({ icons: appIcons, root: toolbar });
-
-    toolbar.querySelector('#mob-sort-proximity').onclick = () => {
-        if (!state.homeLocation) {
-            showToast(
-                "Définissez votre lieu de résidence dans Mon Espace pour activer ce tri.",
-                'info',
-                4500
-            );
-            return;
-        }
-        setMobileSort('proximity_asc');
-        renderMobileCircuitsList();
-    };
-    toolbar.querySelector('#mob-sort-dist').onclick = () => {
-        setMobileSort(getMobileSort() === 'dist_asc' ? 'dist_desc' : 'dist_asc');
-        renderMobileCircuitsList();
-    };
-    toolbar.querySelector('#mob-filter-zone').onclick = () => {
-        renderMobileZonesMenu();
-    };
-    toolbar.querySelector('#mob-filter-todo').onclick = () => {
-        setFilterCompleted(!state.filterCompleted);
-        renderMobileCircuitsList();
-    };
-    toolbar.querySelector('#mob-reset').onclick = () => {
-        setMobileSort('proximity_asc');
-        setFilterCompleted(false);
-        renderMobileCircuitsList();
-    };
-}
-
-// ─── Sélecteur de zones ───────────────────────────────────────────────────────
-
-function renderMobileZonesMenu() {
-    // Calcul des zones disponibles à partir de l'ensemble des circuits
+    // ── Section 2 : Zone ────────────────────────────────────────────────
     const zonesMap = {};
     const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
-
     allCircuits.forEach(c => {
-        const validPois = c.poiIds
-            .map(id => state.loadedFeatures.find(feat => getPoiId(feat) === id))
+        const validPois = (c.poiIds || [])
+            .map(id => state.loadedFeatures.find(f => getPoiId(f) === id))
             .filter(f => f);
-
         if (validPois.length > 0) {
-            const startPoi = validPois[0];
-            const [lng, lat] = startPoi.geometry.coordinates;
+            const [lng, lat] = validPois[0].geometry.coordinates;
             const z = getZoneFromCoords(lat, lng);
-            if (z) {
-                zonesMap[z] = (zonesMap[z] || 0) + 1;
-            }
+            if (z) zonesMap[z] = (zonesMap[z] || 0) + 1;
         }
     });
-
     const sortedZones = Object.keys(zonesMap).sort();
 
-    const content = document.createElement('div');
-    content.style.display = 'flex';
-    content.style.flexDirection = 'column';
-    content.style.gap = '10px';
-    content.style.maxHeight = '60vh';
-    content.style.overflowY = 'auto';
+    const zoneSection = document.createElement('div');
+    zoneSection.className = 'mobile-filters-section';
+    zoneSection.innerHTML = '<h4 class="mobile-filters-section-title">Zone</h4>';
 
-    const btnAll = document.createElement('button');
-    btnAll.className = 'mobile-list-item';
-    btnAll.innerHTML = `<span>Toutes les zones</span>`;
-    btnAll.onclick = () => {
+    const btnAllZones = document.createElement('button');
+    btnAllZones.className = `mobile-list-item${!state.activeFilters.zone ? ' mobile-filters-item--active' : ''}`;
+    btnAllZones.innerHTML = `<i data-lucide="map-pin"></i><span>Toutes les zones</span>`;
+    btnAllZones.onclick = () => {
         setActiveFilter('zone', null);
-        renderMobileCircuitsList();
         closeModal();
+        renderMobileCircuitsList();
     };
-    content.appendChild(btnAll);
+    zoneSection.appendChild(btnAllZones);
 
     sortedZones.forEach(zone => {
         const btn = document.createElement('button');
-        btn.className = 'mobile-list-item';
-        btn.innerHTML = `<span class="mobile-zone-btn-inner">${escapeHtml(zone)}</span> <span class="mobile-zone-btn-count">${zonesMap[zone]}</span>`;
-        if (state.activeFilters.zone === zone) {
-            btn.classList.add('mobile-zone-btn--active');
-        }
+        btn.className = `mobile-list-item${state.activeFilters.zone === zone ? ' mobile-filters-item--active' : ''}`;
+        btn.innerHTML = `<i data-lucide="map-pin"></i><span class="mobile-zone-btn-inner">${escapeHtml(zone)}</span><span class="mobile-zone-btn-count">${zonesMap[zone]}</span>`;
         btn.onclick = () => {
             setActiveFilter('zone', zone);
-            renderMobileCircuitsList();
             closeModal();
+            renderMobileCircuitsList();
         };
-        content.appendChild(btn);
+        zoneSection.appendChild(btn);
     });
+    content.appendChild(zoneSection);
 
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'btn btn-ghost';
-    closeBtn.textContent = 'Fermer';
-    closeBtn.onclick = () => closeModal();
+    // ── Section 3 : État (À faire uniquement) ──────────────────────────
+    const todoSection = document.createElement('div');
+    todoSection.className = 'mobile-filters-section';
+    todoSection.innerHTML = '<h4 class="mobile-filters-section-title">État</h4>';
+    const btnTodo = document.createElement('button');
+    btnTodo.className = `mobile-list-item${state.filterCompleted ? ' mobile-filters-item--active' : ''}`;
+    btnTodo.innerHTML = `<i data-lucide="${state.filterCompleted ? 'list-checks' : 'list-todo'}"></i><span>${state.filterCompleted ? 'Tout afficher' : 'À faire uniquement'}</span>`;
+    btnTodo.onclick = () => {
+        setFilterCompleted(!state.filterCompleted);
+        closeModal();
+        renderMobileCircuitsList();
+    };
+    todoSection.appendChild(btnTodo);
+    content.appendChild(todoSection);
 
-    showCustomModal("Filtrer par Zone", content, closeBtn);
+    // Footer : bouton Réinitialiser
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'btn btn-ghost';
+    resetBtn.innerHTML = '<i data-lucide="rotate-ccw"></i> Réinitialiser';
+    resetBtn.onclick = () => {
+        setMobileSort('date_desc');
+        setFilterCompleted(false);
+        setActiveFilter('zone', null);
+        closeModal();
+        renderMobileCircuitsList();
+    };
+
+    showCustomModal("Filtres", content, resetBtn);
+
+    // Les icônes Lucide ne sont rendues que lorsque le contenu est dans le DOM
+    // (showCustomModal attache content puis affiche). On hydrate après la frame.
+    requestAnimationFrame(() => {
+        createIcons({ icons: appIcons, root: content });
+        if (resetBtn.isConnected) createIcons({ icons: appIcons, root: resetBtn });
+    });
 }
