@@ -258,6 +258,7 @@ async function applyCircuitHero() {
     revokeCoverObjectUrl();
     cover.innerHTML = '';
     cover.style.removeProperty('--circuit-hero-bg');
+    cover.style.backgroundImage = '';
     delete cover.dataset.bg;
     cover.classList.add('is-empty');
 
@@ -310,10 +311,17 @@ async function applyCircuitHero() {
     }
 
     // Photo trouvée : applique le background, badge compteur, pills zone + étapes.
+    // On set à la fois la CSS var (lisibilité/debug) ET le backgroundImage en
+    // inline-style. Le backgroundImage inline est ce qui est utilisé par le
+    // rendu : les URL en inline-style sont résolues contre le document, alors
+    // qu'en passant par var() depuis une feuille CSS bundlée (assets/main-HASH.css)
+    // le navigateur résout l'URL contre la feuille → `assets/photos/…` 404.
+    // Même pattern que applyHeroBackground() de ui-details.js pour le POI hero.
     cover.classList.remove('is-empty');
     cover.dataset.bg = 'true';
     const safe = String(heroUrl).replace(/['"\\]/g, encodeURIComponent);
     cover.style.setProperty('--circuit-hero-bg', `url("${safe}")`);
+    cover.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
 
     const badge = document.createElement('span');
     badge.className = 'cp-photo-count';
