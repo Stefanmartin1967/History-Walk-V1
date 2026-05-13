@@ -84,6 +84,9 @@ export function renderMobileCircuitsList() {
 
     // ─── Génération HTML — header dans header-slot, body dans main-container ──
 
+    // Header + toolbar dans le header-slot (toolbar incluse car son sticky:top:0
+    // ne fonctionne pas dans un wrapper de hauteur intrinsèque ; en la mettant
+    // dans le header-slot on garantit qu'elle reste visible sans scroll).
     const headerHtml = `
         <div class="mobile-view-header mobile-header-harmonized mobile-circuits-header">
             <button class="action-button mobile-pagination-btn" id="mobile-prev-page" title="Page précédente" aria-label="Page précédente" ${currentPage <= 1 ? 'disabled' : ''}>
@@ -97,10 +100,10 @@ export function renderMobileCircuitsList() {
                 <i data-lucide="chevron-right" class="icon-24"></i>
             </button>
         </div>
+        <div id="mobile-toolbar-container"></div>
     `;
 
     let html = `
-        <div id="mobile-toolbar-container"></div>
         <div class="panel-content mobile-standard-padding mobile-list-container" id="mobile-circuits-list">
     `;
 
