@@ -4,7 +4,6 @@
 import { state, APP_VERSION } from './state.js';
 import { DOM } from './ui-dom.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { showLegalNoticeModal } from './legal-modal.js';
 import { deleteDatabase } from './database.js';
@@ -152,32 +151,6 @@ export function renderMobileMenu() {
 
         const btnToken = document.getElementById('mob-action-admin-config-token');
         if (btnToken) btnToken.addEventListener('click', openControlCenterSettings);
-    }
-}
-
-// ─── QR Code partage de l'application ────────────────────────────────────────
-
-async function handleShareAppClick() {
-    const url = window.location.href.split('?')[0];
-    try {
-        const QRCode = (await import('qrcode')).default;
-        const qrDataUrl = await QRCode.toDataURL(url, {
-            width: 300, margin: 2,
-            color: { dark: "#000000", light: "#ffffff" }
-        });
-
-        const content = `
-            <div class="app-share-qr-container">
-                <p class="app-share-qr-text">Scannez ce code pour installer l'application :</p>
-                <img src="${qrDataUrl}" class="app-share-qr-img">
-                <p class="app-share-qr-url">${url}</p>
-            </div>
-        `;
-
-        showConfirm("Partager l'application", content, "Fermer", null, false).catch(() => {});
-    } catch (err) {
-        console.error(err);
-        showToast("Erreur génération QR Code", "error");
     }
 }
 

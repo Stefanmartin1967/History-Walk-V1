@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.1'; // Pagination mobile : ajustement dynamique d'itemsPerPage par mesure overflow réelle
+export const APP_VERSION = '3.7.2'; // Ménage pré-chantier harmonisation mobile (dead code QR, padding obsolète, fusion 4 couches CSS, refactor inline style)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).

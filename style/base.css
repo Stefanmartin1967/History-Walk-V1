@@ -1545,6 +1545,10 @@ textarea.editable-input {
     color: var(--brand);
 }
 
+.mobile-nav-btn.is-filter-active {
+    color: var(--brand);
+}
+
 
 
 
@@ -2478,12 +2482,6 @@ input[type=range] {
    MOBILE REFACTOR (Safe Append-Only)
    ========================================================================== */
 
-/* Cible 1 : Conteneur de la liste des circuits (remplace padding-bottom: 140px) */
-.mobile-list-container {
-    padding-top: 10px;
-    padding-bottom: 140px !important; /* Force le padding pour eviter le masquage par le dock */
-}
-
 /* Cible 2 : Bouton de téléchargement GPX (remplace margin-right: -16px, calc height, etc.) */
 .mobile-download-btn {
     color: var(--ink-soft);
@@ -2636,97 +2634,78 @@ input[type=range] {
     padding-right: var(--space-md) !important; /* Force match var(--space-md) */
 }
 
-/* === HARMONISATION MOBILE FINAL (USER REQUEST) === */
+/* === HARMONISATION MOBILE (fusion blocs 3.5.x — pré-refonte design) ===
+   Fusion des 4 blocs @media empilés (HARMONISATION FINAL + ALIGNEMENT TOOLBAR
+   + 3.5.2 HEADER/LISTE + 3.5.3 PWA SAFE AREA). Les !important sont retirés
+   sur les classes utilitaires sans conflit connu ; ils sont conservés sur
+   les composants partagés (.mobile-view-header, .mobile-toolbar) et sur le
+   sélecteur ID #mobile-dock — Claude Design pourra les réduire pendant la
+   refonte si non nécessaires.
+
+   Padding bas des listes : juste de la respiration esthétique. Le 100px+safe
+   historique réservait l'espace du dock fixed (avant refonte 3 slots).
+   Maintenant le dock est en flex-shrink:0 donc son espace est déjà réservé
+   par le layout — on n'a plus à compenser dans le contenu. Cause du bug
+   "cards qui glissent" sur Mes Circuits (PR #549/#550). */
 @media (max-width: 768px) {
-    /* 1. Harmonisation Verticale des Conteneurs (Top 10px) */
-    .mobile-list-container,
+    /* Cards & inputs */
+    .mobile-list-item {
+        padding: 12px;
+        border-radius: 12px;
+    }
+    .mobile-search-input {
+        border-radius: 12px;
+    }
+
+    /* Header mobile (notch safe area top + fusion visuelle avec toolbar) */
+    .mobile-view-header {
+        border-bottom: none !important;
+        box-shadow: none !important;
+        padding-top: calc(8px + env(safe-area-inset-top)) !important;
+        padding-bottom: 4px !important;
+        min-height: auto !important;
+        z-index: 102 !important;
+    }
+
+    /* Toolbar : sticky, collée au header, alignée verticalement avec le dock */
+    .mobile-toolbar {
+        padding: 0 0 4px !important;
+        justify-content: space-around !important;
+        border-top: none !important;
+        box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        z-index: 101 !important;
+        position: sticky !important;
+        top: 0 !important;
+        background-color: var(--surface) !important;
+    }
+    .toolbar-btn {
+        flex: 1;
+        width: auto;
+        max-width: none;
+        padding: 8px 4px;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    /* Listes : padding-top harmonisé (8px Mes Circuits, 10px les autres),
+       padding-bottom 16px (respiration esthétique) */
+    .mobile-list-container {
+        padding-top: 8px;
+    }
     .mobile-poi-list-container,
     .mobile-actions-container,
     .mobile-search-container {
-        padding-top: 10px !important;
+        padding-top: 10px;
+    }
+    .mobile-list-container,
+    .mobile-poi-list-container,
+    .mobile-actions-container {
+        padding-bottom: 16px;
     }
 
-    /* 2. Optimisation Largeur : Padding Interne 12px (vs 16px) */
-    .mobile-list-item {
-        padding: 12px !important;
-        border-radius: 12px !important; /* Harmonisation Arrondis */
-    }
-
-    /* Cas spécifique Search Input */
-    .mobile-search-input {
-        border-radius: 12px !important;
-    }
-}
-
-/* === ALIGNEMENT TOOLBAR / DOCK (USER REQUEST) === */
-@media (max-width: 768px) {
-    /* On force la Toolbar à avoir le même padding vertical que le Dock */
-    .mobile-toolbar {
-        padding: 4px 0 !important;
-        justify-content: space-around !important; /* Safety */
-    }
-
-    /* On force les boutons de la Toolbar à se comporter comme ceux du Dock */
-    .toolbar-btn {
-        flex: 1 !important; /* Distribution égale */
-        width: auto !important; /* Overwrite width: 42px */
-        max-width: none !important;
-        padding: 8px 4px !important;
-        height: auto !important; /* Overwrite height: 42px */
-        border-radius: 8px !important; /* Match dock */
-    }
-}
-
-/* === HARMONISATION HEADER/TOOLBAR & LISTE (VERSION 3.5.2) === */
-@media (max-width: 768px) {
-    /* 1. Fusion Visuelle Header / Toolbar */
-    .mobile-view-header {
-        border-bottom: none !important; /* On supprime la ligne de séparation */
-        box-shadow: none !important; /* On supprime l'ombre intermédiaire */
-        padding-bottom: 4px !important; /* On réduit l'espace bas */
-        min-height: auto !important; /* Hauteur naturelle */
-        z-index: 102 !important; /* Au-dessus de la toolbar */
-    }
-
-    .mobile-toolbar {
-        border-top: none !important; /* Pas de bordure haute */
-        box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; /* Ombre uniquement en bas */
-        padding-top: 0 !important; /* Collé au header */
-        z-index: 101 !important;
-        position: sticky !important;
-        top: 0 !important; /* Si on veut que tout colle */
-        background-color: var(--surface) !important; /* Assurer fond blanc */
-    }
-
-    /* 2. Harmonisation Espacement Liste (Basé sur le plus petit : 8px) */
-    .mobile-list-container {
-        padding-top: 8px !important; /* Remplace le 10px précédent pour matcher margin-bottom: 8px */
-    }
-}
-
-/* === OPTIMISATION PWA & SAFE AREA (VERSION 3.5.3) === */
-@media (max-width: 768px) {
-    /* 1. Gestion du Notch (Encoche) en haut */
-    .mobile-view-header {
-        padding-top: calc(8px + env(safe-area-inset-top)) !important;
-        /* On s'assure que le contenu ne colle pas au status bar */
-    }
-
-    /* 2. Gestion de la Home Bar (Barre du bas) */
+    /* Dock : safe area home bar iPhone */
     #mobile-dock {
         padding-bottom: calc(4px + env(safe-area-inset-bottom)) !important;
-        /* Le dock remonte au-dessus de la barre système */
-    }
-
-    /* Padding bas des listes : juste de la respiration esthétique.
-       Le 100px+safe historique réservait l'espace du dock fixed (avant
-       refonte 3 slots). Maintenant le dock est en flex-shrink:0 donc son
-       espace est déjà réservé par le layout — on n'a plus à compenser dans
-       le contenu. Cause du bug "cards qui glissent" sur Mes Circuits. */
-    .mobile-list-container,
-    .mobile-actions-container,
-    .mobile-poi-list-container {
-        padding-bottom: 16px !important;
     }
 }
 
