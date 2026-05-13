@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.4'; // Fix hero circuit : backgroundImage set en inline-style direct (les URL via var() en feuille CSS bundlée résolvent contre la feuille → 404 en prod)
+export const APP_VERSION = '3.7.5'; // Refonte Mes Circuits mobile (PR 2 chantier design) : structure .mc-* (cards riches avec stats pastilles + zone pill + ruban flag), suppression pagination + toolbar 5 boutons, modale filtres unifiée (tri/zone/état/reset)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
