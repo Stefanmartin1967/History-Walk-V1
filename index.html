@@ -364,6 +364,11 @@
         <main id="mobile-main-container" class="mobile-slot-content"></main>
 
         <div id="mobile-footer-slot" class="mobile-slot-footer">
+            <!-- view-footer : container pour les footers spécifiques à une vue
+                 (boutons Partager/GPX, mini-barre POI, etc.). Caché si vide.
+                 Quand rempli, masque automatiquement le #mobile-dock via CSS. -->
+            <div id="mobile-view-footer" class="mobile-view-footer"></div>
+
             <div id="mobile-dock">
                 <nav id="mobile-nav" class="mobile-nav">
                     <button class="mobile-nav-btn" data-view="circuits">

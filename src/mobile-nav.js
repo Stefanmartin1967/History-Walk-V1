@@ -21,6 +21,7 @@ import {
     getAllCircuitsOrdered,
     animateContainer,
     pushMobileLevel,
+    resetMobileSlots,
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
@@ -209,7 +210,14 @@ export function switchMobileView(viewName) {
     container.innerHTML = '';
     animateContainer(container);
 
-    // Dock toujours visible sauf si renderMobilePoiList le masque
+    // Reset des slots dynamiques (header + view-footer) avant chaque switch.
+    // Vider le view-footer restaure automatiquement le dock via CSS
+    // (sélecteur `.mobile-view-footer:not(:empty) ~ #mobile-dock`).
+    resetMobileSlots();
+
+    // Garantie supplémentaire : forcer dock visible (au cas où une vue précédente
+    // l'aurait masqué via dock.style.display = 'none' — pattern legacy à migrer
+    // vers setMobileViewFooter() aux étapes 4 et 5).
     const dock = document.getElementById('mobile-dock');
     if (dock) dock.style.display = 'flex';
 
