@@ -109,7 +109,7 @@ export function renderMobileCircuitsList() {
     let itemsPerPage = Math.max(1, Math.floor((availableHeight + gap) / (itemHeight + gap)));
     if (itemsPerPage < 3) itemsPerPage = 5;
 
-    const totalPages = Math.max(1, Math.ceil(circuitsToDisplay.length / itemsPerPage));
+    let totalPages = Math.max(1, Math.ceil(circuitsToDisplay.length / itemsPerPage));
     let currentPage = getMobileCurrentPage();
     if (currentPage > totalPages) {
         currentPage = totalPages;
@@ -226,6 +226,34 @@ export function renderMobileCircuitsList() {
     // Header déjà rendu au pass 1 + update in-place du compteur ci-dessus.
     // Reste à injecter le body dans le main-container scrollable.
     container.innerHTML = sanitizeHTML(html);
+
+    // ─── Ajustement dynamique (overflow réel mesuré) ──────────────────────────
+    // L'estimation `mainEl.clientHeight - 30` peut être imprécise (safe-area,
+    // padding interne, etc.) → on rend, on mesure le débordement réel, et on
+    // retire des cards jusqu'à ne plus déborder. Élimine le tâtonnement entre
+    // devices. Max 5 itérations (sécurité, évite boucle infinie).
+    void mainEl?.offsetHeight;
+    let overflow = (mainEl?.scrollHeight || 0) - (mainEl?.clientHeight || 0);
+    let removed = 0;
+    while (overflow > 5 && itemsPerPage - removed > 1 && removed < 5) {
+        const allCards = container.querySelectorAll('.mobile-circuit-card-wrapper');
+        if (allCards.length === 0) break;
+        allCards[allCards.length - 1].remove();
+        removed++;
+        void mainEl.offsetHeight;
+        overflow = mainEl.scrollHeight - mainEl.clientHeight;
+    }
+    if (removed > 0) {
+        // Recalculer pagination avec le nombre réel de cards qui tiennent
+        itemsPerPage -= removed;
+        totalPages = Math.max(1, Math.ceil(circuitsToDisplay.length / itemsPerPage));
+        // Update compteur "1/X" et disabled state des boutons prev/next
+        if (pageInfoEl) pageInfoEl.textContent = `${currentPage} / ${totalPages}`;
+        if (nextBtnEl) nextBtnEl.toggleAttribute('disabled', currentPage >= totalPages);
+        // Note : les event listeners ci-dessous (next/prev/swipe) lisent
+        // `totalPages` via la closure ; comme on a fait `let totalPages` plus
+        // haut et qu'on le réassigne ici, ils utiliseront la valeur ajustée.
+    }
 
     // createIcons doit s'appliquer aux deux conteneurs (header-slot + main-container)
     // pour que les icônes Lucide du header (chevrons pagination) soient rendues.
