@@ -65,12 +65,18 @@ export function renderMobileCircuitsList() {
     setAllCircuitsOrdered(circuitsToDisplay); // Mémorise pour le swipe entre circuits
 
     // ─── Pagination dynamique ─────────────────────────────────────────────────
-    // Marge de sécurité (330) calibrée post-refonte 3 slots : header-slot
-    // ~93px + dock 54px + safe-area-bottom + paddings + cards à 80px
-    // = pas de débordement scroll. Valeur précédente (280) laissait passer
-    // ~7-15px d'overflow et le user voyait la 1re carte glisser sous la toolbar.
+    // Mesure RÉELLE de la place dans #mobile-main-container plutôt qu'une
+    // estimation `window.innerHeight - constant`. Le constant précédent (330)
+    // était calibré pour un device particulier ; sur d'autres devices la
+    // marge variait et créait un overflow qui faisait glisser la 1re carte
+    // sous la toolbar (Samsung Stefan, viewport et safe-area différents).
+    //
+    // - 30 = padding-top container (10) + padding-bottom (16) + marge sécu.
+    // Fallback `window.innerHeight - 330` si mainEl pas encore stable au boot.
 
-    const availableHeight = window.innerHeight - 330;
+    const mainEl = document.getElementById('mobile-main-container');
+    const mainHeight = mainEl?.clientHeight || 0;
+    const availableHeight = mainHeight > 100 ? mainHeight - 30 : window.innerHeight - 330;
     const itemHeight = 75;
     const gap = 8;
     let itemsPerPage = Math.max(1, Math.floor((availableHeight + gap) / (itemHeight + gap)));
