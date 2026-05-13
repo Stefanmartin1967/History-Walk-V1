@@ -27,8 +27,7 @@ export function initMobileCircuitsListeners() {
 
 // ─── Liste des circuits ───────────────────────────────────────────────────────
 
-// Bug D (mobile) : filtre POI clearable via chip.
-// Cf. ui-circuit-list.js — même logique de dismissal par POI.
+// Filtre POI clearable via chip (même logique que ui-circuit-list.js).
 let mobilePoiFilterActive = true;
 let mobileLastPoiId = null;
 
@@ -134,7 +133,7 @@ export function renderMobileCircuitsList() {
         <div class="panel-content mobile-standard-padding mobile-list-container" id="mobile-circuits-list">
     `;
 
-    // Bug D (mobile) : chip "Filtré par : [POI] ✕" au-dessus de la liste
+    // Chip "Filtré par : [POI] ✕" au-dessus de la liste
     if (filterPoiId && currentPoiFeature) {
         const poiName = getPoiName(currentPoiFeature);
         html += `
@@ -261,7 +260,7 @@ export function renderMobileCircuitsList() {
     if (headerSlot) createIcons({ icons: appIcons, root: headerSlot });
     createIcons({ icons: appIcons, root: container });
 
-    // Bug D (mobile) : handler du ✕ sur le chip de filtre POI
+    // Handler du ✕ sur le chip de filtre POI
     const chipClearBtn = document.getElementById('mobile-poi-filter-chip-clear');
     if (chipClearBtn) {
         chipClearBtn.addEventListener('click', (e) => {

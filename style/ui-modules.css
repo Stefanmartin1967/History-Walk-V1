@@ -127,7 +127,7 @@
 .btn-toggle-visited.completed { color: var(--ok); }
 .btn-toggle-visited .lucide { width: 24px; height: 24px; }
 
-/* Bug D : chip "Filtré par : [POI] ✕" au-dessus de la liste des circuits */
+/* Chip "Filtré par : [POI] ✕" au-dessus de la liste des circuits */
 .explorer-poi-filter-chip {
     display: flex;
     align-items: center;

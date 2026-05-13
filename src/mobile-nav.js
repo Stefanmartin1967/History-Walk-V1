@@ -163,9 +163,8 @@ export function initMobileMode() {
 
             const iconName = state.filterCompleted ? 'list-check' : 'list';
             const labelText = state.filterCompleted ? 'A faire' : 'Tout';
-            const colorStyle = state.filterCompleted ? 'color:var(--brand);' : '';
 
-            newFilterBtn.style = colorStyle;
+            newFilterBtn.classList.toggle('is-filter-active', state.filterCompleted);
             newFilterBtn.innerHTML = `
                 <i data-lucide="${iconName}"></i>
                 <span>${labelText}</span>
