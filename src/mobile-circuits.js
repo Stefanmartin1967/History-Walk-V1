@@ -65,8 +65,12 @@ export function renderMobileCircuitsList() {
     setAllCircuitsOrdered(circuitsToDisplay); // Mémorise pour le swipe entre circuits
 
     // ─── Pagination dynamique ─────────────────────────────────────────────────
+    // Marge de sécurité (330) calibrée post-refonte 3 slots : header-slot
+    // ~93px + dock 54px + safe-area-bottom + paddings + cards à 80px
+    // = pas de débordement scroll. Valeur précédente (280) laissait passer
+    // ~7-15px d'overflow et le user voyait la 1re carte glisser sous la toolbar.
 
-    const availableHeight = window.innerHeight - 280;
+    const availableHeight = window.innerHeight - 330;
     const itemHeight = 75;
     const gap = 8;
     let itemsPerPage = Math.max(1, Math.floor((availableHeight + gap) / (itemHeight + gap)));
