@@ -1133,15 +1133,11 @@
     padding-right: 16px;
 }
 
-/* Mini-barre mobile : barre fixe en bas du viewport (toujours visible),
-   sans CTA itinéraire (supprimé) ni nav pills (couvertes par swipe horizontal
-   de mobile-nav.js + chevrons inline dans l'eyebrow).
-   `fixed` plutôt que `sticky` pour rester collée même quand on est en haut
-   de la fiche. Le body compense via padding-bottom (cf. .poi-panel.is-mobile
-   .poi-body ci-dessous). */
-/* Refonte étape 5 : la mini-barre n'est plus position:fixed. Elle vit dans
-   #mobile-view-footer (slot footer du #mobile-container) en flex-shrink:0,
-   donc toujours visible en bas du viewport sans hack de positionnement.
+/* Mini-barre mobile : vit dans #mobile-view-footer (slot footer du
+   #mobile-container) en flex-shrink:0, donc toujours visible en bas du
+   viewport sans hack de positionnement (refonte étape 5).
+   Avant : `position: fixed; bottom: 0;` qui souffrait du bug du containing
+   block transform (animation mobileViewEnter). Maintenant en flex naturel.
    Plus de bug "transform fantôme" ni de besoin de réserver de l'espace
    dans le body via padding-bottom. */
 .poi-mobile-quick-bar-wrap {

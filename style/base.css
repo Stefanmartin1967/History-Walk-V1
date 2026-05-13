@@ -2526,11 +2526,10 @@ input[type=range] {
     flex-wrap: wrap;
 }
 
-/* Cible 6 : Conteneur de la liste des POI (remplace flex-grow:1, overflow-y:auto, etc.) */
+/* Container de la liste des POI dans la fiche Liste POIs mobile.
+   Refonte étape 6 : flex-grow / min-height / overflow-y retirés (le scroll
+   est maintenant sur #mobile-main-container parent, pas sur la liste interne). */
 .mobile-poi-list-container {
-    flex-grow: 1;
-    min-height: 0; /* Permet au flex item de rétrécir sous son contenu → footer toujours visible */
-    overflow-y: auto;
     padding-top: 10px;
 }
 

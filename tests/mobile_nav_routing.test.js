@@ -180,10 +180,12 @@ describe('switchMobileView — routing', () => {
         expect(animateContainer).toHaveBeenCalledWith(container);
     });
 
-    it('dock visible (display: flex) après switch', () => {
+    it('resetMobileSlots appelé avant switch (dock auto-restauré via CSS sibling)', async () => {
+        const { resetMobileSlots } = await import('../src/mobile-state.js');
         switchMobileView('actions');
-        const dock = document.getElementById('mobile-dock');
-        expect(dock.style.display).toBe('flex');
+        // resetMobileSlots vide header-slot + view-footer ; le dock revient
+        // automatiquement via le sélecteur CSS `:not(:empty) ~ #mobile-dock`.
+        expect(resetMobileSlots).toHaveBeenCalled();
     });
 
     it('boutons dock : class "active" togglée selon viewName', () => {
