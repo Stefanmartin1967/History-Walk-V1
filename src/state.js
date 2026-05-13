@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.5'; // Refonte Mes Circuits mobile (PR 2 chantier design) : structure .mc-* (cards riches avec stats pastilles + zone pill + ruban flag), suppression pagination + toolbar 5 boutons, modale filtres unifiée (tri/zone/état/reset)
+export const APP_VERSION = '3.7.6'; // Fix .mc-stat : pastilles inline (chiffre + unité dans même pill) au lieu de column num+label dessous → toutes les pills méta (POI/km/zone/resto) ont la même hauteur et s'alignent proprement par le centre
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
