@@ -7,7 +7,16 @@ const _hoisted = vi.hoisted(() => ({ adminToggleCallback: null }));
 
 // --- Mocks (hoisted par vitest) ---
 vi.mock('../src/state.js', () => {
-    const state = { isAdmin: false };
+    // Refonte PR 4 : mobile-menu lit aussi state.loadedFeatures / officialCircuits
+    // / myCircuits / officialCircuitsStatus pour calculer les sous-titres
+    // dynamiques (« X lieux visités · Y circuits complétés »).
+    const state = {
+        isAdmin: false,
+        loadedFeatures: [],
+        officialCircuits: [],
+        myCircuits: [],
+        officialCircuitsStatus: {}
+    };
     return { state, APP_VERSION: '4.2.0' };
 });
 
@@ -63,7 +72,9 @@ vi.mock('../src/user-space.js', () => ({
 }));
 
 vi.mock('../src/theme.js', () => ({
-    cycleTheme: vi.fn()
+    cycleTheme: vi.fn(),
+    getCurrentTheme: vi.fn(() => 'maritime'),
+    THEME_LABELS: { maritime: 'Maritime', desert: 'Désert', oasis: 'Oasis', night: 'Nuit' }
 }));
 
 vi.mock('../src/events.js', () => ({
@@ -80,7 +91,12 @@ vi.mock('../src/events.js', () => ({
 
 vi.mock('../src/mobile-state.js', () => ({
     getCurrentView: vi.fn(() => 'actions'),
-    isMobileView: vi.fn(() => true)
+    isMobileView: vi.fn(() => true),
+    setMobileHeaderSlot: vi.fn((html) => {
+        const slot = document.getElementById('mobile-header-slot');
+        if (slot) slot.innerHTML = html || '';
+    }),
+    clearMobileViewFooter: vi.fn()
 }));
 
 import { state } from '../src/state.js';
@@ -155,7 +171,8 @@ describe('renderMobileMenu — render structure', () => {
 
     it('inclut APP_VERSION dans le footer', () => {
         renderMobileMenu();
-        const footer = document.querySelector('.mobile-version-footer');
+        // Refonte PR 4 : .mobile-version-footer → .menu-version (sections groupées).
+        const footer = document.querySelector('.menu-version');
         expect(footer.textContent).toContain('4.2.0');
     });
 });
