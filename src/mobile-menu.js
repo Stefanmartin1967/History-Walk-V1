@@ -49,7 +49,7 @@ function buildSections(subs) {
             label: 'Mon parcours',
             items: [
                 { id: 'mob-action-stats', ico: 'trophy', label: 'Mon Carnet de Voyage', sub: subs.carnet },
-                { id: 'mob-action-mon-espace', ico: 'briefcase', label: 'Mon Espace', sub: subs.monEspace },
+                { id: 'mob-action-mon-espace', ico: 'luggage', label: 'Mon Espace', sub: subs.monEspace },
             ],
         },
         {
