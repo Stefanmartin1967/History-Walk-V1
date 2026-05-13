@@ -91,10 +91,13 @@ export function renderMobileCircuitsList() {
         <div id="mobile-toolbar-container"></div>
     `;
 
-    // Pass 1 : header provisoire pour avoir la hauteur réelle du main-container.
+    // Pass 1 : header provisoire + toolbar mobile (~50px) AVANT la mesure.
+    // Sans la toolbar matérialisée, mainEl.clientHeight surestime la place
+    // dispo de 50px → 1-2 cards de trop → glissement au scroll.
     setMobileHeaderSlot(sanitizeHTML(buildHeader(1, 1)));
+    renderMobileToolbar(); // remplit #mobile-toolbar-container dans le header-slot
 
-    // Force reflow pour que clientHeight reflète le nouveau header-slot.
+    // Force reflow pour que clientHeight reflète le header-slot complet.
     const mainEl = document.getElementById('mobile-main-container');
     void mainEl?.offsetHeight;
     const availableHeight = (mainEl?.clientHeight || 0) > 100
@@ -118,8 +121,14 @@ export function renderMobileCircuitsList() {
 
     // ─── Génération HTML — body dans main-container ───────────────────────────
 
-    // Pass 2 : header avec les vraies valeurs (compteur final).
-    const headerHtml = buildHeader(currentPage, totalPages);
+    // Pass 2 : update IN-PLACE le compteur + disabled state des prev/next
+    // (PAS de re-render header complet pour ne pas perdre la toolbar déjà rendue).
+    const pageInfoEl = document.getElementById('mobile-page-info');
+    if (pageInfoEl) pageInfoEl.textContent = `${currentPage} / ${totalPages}`;
+    const prevBtnEl = document.getElementById('mobile-prev-page');
+    const nextBtnEl = document.getElementById('mobile-next-page');
+    if (prevBtnEl) prevBtnEl.toggleAttribute('disabled', currentPage <= 1);
+    if (nextBtnEl) nextBtnEl.toggleAttribute('disabled', currentPage >= totalPages);
 
     let html = `
         <div class="panel-content mobile-standard-padding mobile-list-container" id="mobile-circuits-list">
@@ -214,8 +223,8 @@ export function renderMobileCircuitsList() {
 
     html += `</div>`;
 
-    // Header dans le header-slot (refonte étape 3) ; corps dans main-container.
-    setMobileHeaderSlot(sanitizeHTML(headerHtml));
+    // Header déjà rendu au pass 1 + update in-place du compteur ci-dessus.
+    // Reste à injecter le body dans le main-container scrollable.
     container.innerHTML = sanitizeHTML(html);
 
     // createIcons doit s'appliquer aux deux conteneurs (header-slot + main-container)
@@ -275,7 +284,7 @@ export function renderMobileCircuitsList() {
         });
     }
 
-    renderMobileToolbar();
+    // renderMobileToolbar() déjà appelé au pass 1 (avant la mesure).
 
     // ─── Event listeners — filtres et circuits ────────────────────────────────
 
