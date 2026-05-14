@@ -15,7 +15,7 @@ import { deleteDatabase } from './database.js';
 import { startGenericScanner } from './sync.js';
 import { showStatisticsModal } from './statistics.js';
 import { showAdminLoginModal, logoutAdmin } from './admin.js';
-import { openControlCenter, openControlCenterSettings, quickPublish } from './admin-control-center.js';
+import { openControlCenter } from './admin-control-center.js';
 import { openUserSpace } from './user-space.js';
 import { cycleTheme, getCurrentTheme, THEME_LABELS } from './theme.js';
 import { eventBus } from './events.js';
@@ -75,15 +75,15 @@ function buildSections(subs) {
     ];
 
     if (state.isAdmin) {
+        // Section admin réduite à 2 items (followup #5 post-chantier mobile) :
+        // Publier modifs / Data Manager / Scout / Token étaient redondants car
+        // déjà accessibles via le Centre de Contrôle (CC) ou outils PC-only.
+        // Le CC reste le point d'entrée brand-emph vers tout.
         sections.push({
             label: 'Outils admin',
             items: [
                 { id: 'mob-action-admin-login', ico: 'log-out', label: 'Déconnexion Admin', variant: 'danger' },
                 { id: 'mob-action-admin-control-center', ico: 'layout-dashboard', label: 'Centre de Contrôle', sub: subs.cc, variant: 'brand-emph' },
-                { id: 'mob-action-admin-quick-publish', ico: 'upload-cloud', label: 'Publier les modifs' },
-                { id: 'mob-action-admin-datamanager', ico: 'table', label: 'Data Manager' },
-                { id: 'mob-action-admin-scout', ico: 'scan-eye', label: 'Scout (Overpass)' },
-                { id: 'mob-action-admin-config-token', ico: 'key', label: 'Enregistrer token' },
             ],
         });
     }
@@ -182,14 +182,6 @@ export function renderMobileMenu() {
 
     if (state.isAdmin) {
         document.getElementById('mob-action-admin-control-center')?.addEventListener('click', openControlCenter);
-        document.getElementById('mob-action-admin-quick-publish')?.addEventListener('click', quickPublish);
-        document.getElementById('mob-action-admin-datamanager')?.addEventListener('click', () =>
-            window.open('history_walk_datamanager/index.html', '_blank')
-        );
-        document.getElementById('mob-action-admin-scout')?.addEventListener('click', () =>
-            window.open('tools/scout.html', '_blank')
-        );
-        document.getElementById('mob-action-admin-config-token')?.addEventListener('click', openControlCenterSettings);
     }
 }
 
