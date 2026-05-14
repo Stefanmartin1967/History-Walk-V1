@@ -56,9 +56,15 @@ export function calculateStats() {
     const totalPois = state.loadedFeatures.length;
     let visitedPois = 0;
 
-    // Récupération de tous les IDs de POIs appartenant à des circuits terminés
+    // Récupération de tous les IDs de POIs appartenant à des circuits terminés.
+    // Refonte Mon Espace V2 (14/05/2026) : on filtre via la blacklist
+    // `hiddenCircuitIds` — un circuit caché n'entre PAS dans le calcul du Carnet
+    // (ni dans le total des km objectifs, ni dans les POIs marqués via "Fait").
+    // Corrige le bug existant où la sélection Mon Espace était ignorée.
     const completedCircuitPoiIds = new Set();
-    const officialCircuits = state.officialCircuits || [];
+    const hiddenIds = state.hiddenCircuitIds || [];
+    const officialCircuits = (state.officialCircuits || [])
+        .filter(c => !hiddenIds.includes(String(c.id)));
 
     officialCircuits.forEach(c => {
         if (state.officialCircuitsStatus[String(c.id)]) {

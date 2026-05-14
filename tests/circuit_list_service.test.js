@@ -10,7 +10,7 @@ vi.mock('../src/state.js', () => ({
         officialCircuits: [],
         myCircuits: [],
         loadedFeatures: [],
-        selectedOfficialCircuitIds: null, // null = tous les officiels
+        hiddenCircuitIds: [], // [] = tous visibles (refonte Mon Espace V2)
         homeLocation: null
     }
 }));
@@ -66,7 +66,7 @@ describe('circuit-list-service', () => {
         state.officialCircuits = [];
         state.myCircuits = [];
         state.loadedFeatures = [];
-        state.selectedOfficialCircuitIds = null;
+        state.hiddenCircuitIds = [];
         state.homeLocation = null;
         // Valeurs par défaut des mocks après clearAllMocks
         getRealDistance.mockReturnValue(0);
@@ -79,25 +79,38 @@ describe('circuit-list-service', () => {
     // 1. Fusion officiels + locaux (avec filtres de sécurité)
     // ========================================================================
     describe('Fusion officiels + locaux', () => {
-        it('selectedOfficialCircuitIds=null renvoie tous les officiels', () => {
+        it('hiddenCircuitIds=[] renvoie tous les officiels (défaut)', () => {
             state.officialCircuits = [
                 { id: 'o1', name: 'Off1' },
                 { id: 'o2', name: 'Off2' }
             ];
-            state.selectedOfficialCircuitIds = null;
+            state.hiddenCircuitIds = [];
 
             const r = getProcessedCircuits();
 
             expect(r.map(c => c.id).sort()).toEqual(['o1', 'o2']);
         });
 
-        it('selectedOfficialCircuitIds=["o1"] ne garde que les officiels sélectionnés', () => {
+        it('hiddenCircuitIds=["o2"] exclut les officiels cachés (blacklist)', () => {
             state.officialCircuits = [
                 { id: 'o1', name: 'Off1' },
                 { id: 'o2', name: 'Off2' }
             ];
-            state.selectedOfficialCircuitIds = ['o1'];
+            state.hiddenCircuitIds = ['o2'];
             state.myCircuits = [{ id: 'm1', name: 'Mon' }];
+
+            const r = getProcessedCircuits();
+
+            expect(r.map(c => c.id).sort()).toEqual(['m1', 'o1']);
+        });
+
+        it('hiddenCircuitIds cache aussi les circuits perso (refonte V2)', () => {
+            state.officialCircuits = [{ id: 'o1', name: 'Off1' }];
+            state.myCircuits = [
+                { id: 'm1', name: 'Visible' },
+                { id: 'm2', name: 'Caché' }
+            ];
+            state.hiddenCircuitIds = ['m2'];
 
             const r = getProcessedCircuits();
 

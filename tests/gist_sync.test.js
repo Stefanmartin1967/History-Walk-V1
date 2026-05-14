@@ -87,6 +87,8 @@ describe('buildPayload', () => {
     });
 
     it('préserve tous les SYNC_KEYS présents', () => {
+        // 'planifie' retiré des SYNC_KEYS 14/05/2026 (refonte Mon Espace V2) :
+        // valeur calculée à la volée via computePlanifieCounter, plus stockée.
         state.userData = {
             poi1: {
                 vu: true, vuManual: true, visitedByCircuits: ['c1'],
@@ -94,10 +96,12 @@ describe('buildPayload', () => {
             }
         };
         const payload = buildPayload();
+        // planifie est désormais filtré (legacy)
         expect(payload.userData.poi1).toEqual({
             vu: true, vuManual: true, visitedByCircuits: ['c1'],
-            notes: 'hi', incontournable: true, planifie: true
+            notes: 'hi', incontournable: true
         });
+        expect(payload.userData.poi1.planifie).toBeUndefined();
     });
 
     it('enveloppe : mapId, circuitsStatus, testedCircuits, lastSync (ISO), appVersion', () => {

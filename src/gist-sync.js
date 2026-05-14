@@ -46,8 +46,11 @@ function setStatus(status) {
 // ─── SÉRIALISATION ────────────────────────────────────────────────────────────
 
 export function buildPayload() {
-    // On ne sync que les champs utiles (pas les blobs photos)
-    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'incontournable', 'planifie'];
+    // On ne sync que les champs utiles (pas les blobs photos).
+    // 'planifie' retiré 14/05/2026 (refonte Mon Espace V2) : valeur calculée à
+    // la volée via computePlanifieCounter, plus stockée dans userData depuis
+    // 03/05/2026 — clé legacy qui n'envoyait que des `undefined` filtrés.
+    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'incontournable'];
     const filtered = {};
     for (const [poiId, data] of Object.entries(state.userData || {})) {
         const slim = {};
