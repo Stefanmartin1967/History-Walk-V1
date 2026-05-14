@@ -19,6 +19,7 @@ import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { saveAppState } from './database.js';
 import { applyFilters } from './data.js';
+import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
@@ -131,6 +132,7 @@ function initMaskListing() {
             } catch (err) {
                 console.error('[circuit-page-events] saveAppState (réafficher) failed', err);
             }
+            schedulePush();
             eventBus.emit('circuit:list-updated');
             applyFilters();
             showToast('Circuit réaffiché dans la liste.', 'success', 2500);
@@ -147,6 +149,7 @@ function initMaskListing() {
             } catch (err) {
                 console.error('[circuit-page-events] saveAppState (cacher) failed', err);
             }
+            schedulePush();
             eventBus.emit('circuit:list-updated');
             applyFilters();
 
@@ -159,6 +162,7 @@ function initMaskListing() {
                     } catch (err) {
                         console.error('[circuit-page-events] saveAppState undo failed', err);
                     }
+                    schedulePush();
                     eventBus.emit('circuit:list-updated');
                     applyFilters();
                 }

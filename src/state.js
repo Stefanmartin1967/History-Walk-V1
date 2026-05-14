@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.32'; // Refonte Mon Espace V2 — PR4 (polish + sync) : 1) Icônes du toggle Cacher/Réafficher passent de bookmark-x/bookmark à eye-off/eye (paire sémantique universelle, plus claire qu'une métaphore de favori). 2) hiddenCircuitIds est désormais inclus dans le sync Gist (buildPayload + mergeRemoteIntoLocal stratégie UNION, cohérent avec hiddenPoiIds). Les circuits cachés sont préservés entre appareils.
+export const APP_VERSION = '3.7.33'; // Refonte Mon Espace V2 — PR5 (fix trigger sync) : schedulePush() est désormais appelé après chaque modification de state.hiddenCircuitIds (cacher / réafficher / annuler). PR4 incluait le champ dans le payload Gist mais aucun trigger ne déclenchait le push si l'user ne touchait qu'à un circuit (sans modifier un POI). Sync Gist effectivement fonctionnelle pour les circuits cachés.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
