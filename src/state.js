@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.30'; // Refonte Mon Espace V2 — PR2 : câblage UI. Le bouton "Masquer du listing" (renommé "Cacher ce circuit") a désormais un handler : ajoute à hiddenCircuitIds, persiste IndexedDB, toast "Annuler" 5s. Nouveau filtre visibilité (Tout/Cachés/Visibles) dans la sidebar Mes Circuits PC (segmented control, pattern existant). Onglet Mon Espace renommé "Préférences" + icône settings. Filtre + bouton mobile traités en PR3 dédié (chantier harmonisation mobile en cours).
+export const APP_VERSION = '3.7.31'; // Refonte Mon Espace V2 — PR3 : bouton "Cacher ce circuit" devient un TOGGLE. Sur la fiche d'un circuit déjà caché, le bouton devient "Réafficher ce circuit" (icône bookmark-x → bookmark, classe is-hidden-circuit, toast court "Réaffiché"). Handler déplacé de ui-circuit-editor.js vers ui-circuit-page-events.js pour cohérence avec btn-mark-done (même pattern initXxx + updateXxxState + eventBus sync sur circuit:changed/list-updated).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
