@@ -231,20 +231,36 @@ setupOfflineBanner();
 
 import { registerSW } from 'virtual:pwa-register';
 
-// Différenciation boot vs mid-session pour le flow update PWA (followup #3
-// post-chantier mobile). Si onNeedRefresh fire dans les 5s après le chargement,
-// c'est un cold start avec un SW déjà en waiting → on auto-applique silencieusement
-// (Stefan ouvre l'app, pas besoin de cliquer Recharger). Au-delà de 5s, c'est
-// une session active → on garde le prompt classique pour laisser le contrôle
-// à l'utilisateur (important pour les futurs users multi-sessions).
+// Flow update PWA (followup #3 post-chantier mobile, v2). Stratégie en deux
+// couches pour distinguer boot vs mid-session de manière fiable :
+//
+// 1. `onRegistered` détecte un SW déjà en `waiting` à l'enregistrement → ça
+//    veut dire qu'il a été installé pendant une session précédente et attend
+//    qu'on l'active. On force `updateSW(true)` (skipWaiting + reload) →
+//    reload PROPRE qui sert toutes les ressources via le nouveau SW. Évite
+//    le bug « dock absent » observé en v1 : sans ce reload, la page tournait
+//    avec un mix old/new SW pendant la transition, et le CSS du dock était
+//    half-state.
+// 2. `onNeedRefresh` fire quand un nouveau SW arrive PENDANT la session (le
+//    plus souvent : install fini en background mid-session). Garde-fou
+//    `PWA_BOOT_GRACE_MS` au cas où onNeedRefresh fire pendant le boot
+//    (install rapide à l'enregistrement initial) : <5s = silencieux, >5s =
+//    prompt classique (laisse le contrôle au user mid-session).
 const PWA_BOOT_GRACE_MS = 5000;
 const _pwaBootTime = Date.now();
 
 const updateSW = registerSW({
+    onRegistered(registration) {
+        // Cold start avec SW déjà en waiting (session précédente l'avait
+        // installé sans qu'on click Recharger) → on apply tout de suite.
+        if (registration?.waiting) {
+            updateSW(true);
+        }
+    },
     onNeedRefresh() {
         const elapsedSinceBoot = Date.now() - _pwaBootTime;
         if (elapsedSinceBoot < PWA_BOOT_GRACE_MS) {
-            // Cold start avec SW en waiting → auto-apply silencieux.
+            // Install ultra-rapide pendant le boot → auto-apply silencieux.
             updateSW(true);
             return;
         }

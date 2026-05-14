@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.18'; // Followup #3 post-chantier mobile : flow update PWA différencié boot vs mid-session. Si onNeedRefresh fire dans les 5s après le chargement, auto-apply silencieux (cold start avec SW waiting). Au-delà, prompt classique conservé pour le contrôle utilisateur.
+export const APP_VERSION = '3.7.19'; // Followup #3 v2 — fix dock absent post-update PWA. Ajout d'un callback onRegistered qui détecte un SW déjà en waiting à l'enregistrement → force updateSW(true) (skipWaiting + reload propre). Évite la transition CSS half-state qui masquait le dock à la 2ème ouverture après un merge. Le grace timer mid-session de v1 est conservé en garde-fou.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
