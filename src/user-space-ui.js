@@ -13,11 +13,14 @@ import { forceBackup, getBackupStatusForUI } from './backup-auto-local.js';
 let _meOverlay = null;
 let _meEscHandler = null;
 
-// Onglets dans l'ordre validé Stefan : Circuits / Données / Sécurité / Corbeille
+// Onglets dans l'ordre validé Stefan : Préférences / Données / Sécurité / Corbeille
 // (Sécurité passe en 3ᵉ — nouvelle valeur produit Phase 1 backup auto, à
 // rendre plus visible que la Corbeille qui reste l'action la plus ponctuelle.)
+// L'onglet "Préférences" (refonte V2 PR2, 14/05/2026) héberge le lieu de
+// résidence — anciennement "Mes Circuits" avant que la sélection à cocher soit
+// remplacée par le mécanisme "Cacher ce circuit" sur la fiche circuit.
 const TABS = [
-    { id: 'circuits', label: 'Mes Circuits', icon: 'map' },
+    { id: 'circuits', label: 'Préférences', icon: 'settings' },
     { id: 'data',     label: 'Mes Données', icon: 'hard-drive' },
     { id: 'security', label: 'Sécurité',    icon: 'shield' },
     { id: 'trash',    label: 'Corbeille',   icon: 'trash-2' },
@@ -48,7 +51,7 @@ export function openUserSpaceModal(callbacks) {
                      Cachée en desktop par CSS, mise à jour par activateTab(). -->
                 <div class="me-topbar-mobile" aria-hidden="true">
                     <div class="me-topbar-mobile-eyebrow">Mon Espace</div>
-                    <div class="me-topbar-mobile-title" id="me-topbar-mobile-title">Mes Circuits</div>
+                    <div class="me-topbar-mobile-title" id="me-topbar-mobile-title">Préférences</div>
                 </div>
                 <button class="me-close" type="button" id="me-close-btn"
                         aria-label="Fermer Mon Espace" title="Fermer">

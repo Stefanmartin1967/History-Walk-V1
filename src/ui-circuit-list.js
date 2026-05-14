@@ -34,6 +34,11 @@ let filterTypeOfficial = false;
 let filterTypeVerified = false;
 let filterTypeResto    = false;
 let filterCompletion   = 'all'; // 'all' | 'todo' | 'done'
+// Visibilité (refonte Mon Espace V2 PR2, 14/05/2026) :
+//   - 'visible' (défaut) : exclut les circuits dans state.hiddenCircuitIds
+//   - 'hidden'           : affiche uniquement les circuits cachés (mode revue)
+//   - 'all'              : ignore la blacklist (tout afficher)
+let filterVisibility   = 'visible';
 let filterMinKm        = 0;
 let filterMaxKm        = DIST_MAX_KM;
 let searchQuery        = '';
@@ -241,6 +246,21 @@ function renderFilterPanel() {
             </div>
         </div>
 
+        <div class="filter-section">
+            <div class="lbl">Visibilité</div>
+            <div class="fseg" id="mc-fseg-visibility">
+                <button class="${filterVisibility === 'visible' ? 'is-on' : ''}" data-visibility="visible" title="Cacher les circuits que tu as masqués (défaut)">
+                    <i data-lucide="eye"></i>Visibles
+                </button>
+                <button class="${filterVisibility === 'hidden' ? 'is-on' : ''}" data-visibility="hidden" title="Voir uniquement les circuits cachés pour les restaurer">
+                    <i data-lucide="eye-off"></i>Cachés
+                </button>
+                <button class="${filterVisibility === 'all' ? 'is-on' : ''}" data-visibility="all" title="Tout afficher, cachés inclus">
+                    Tout
+                </button>
+            </div>
+        </div>
+
         <div class="filter-pop-foot">
             <button class="filter-reset" id="mc-fp-reset" type="button">
                 <i data-lucide="rotate-ccw"></i>Tout réinitialiser
@@ -279,6 +299,16 @@ function renderFilterPanel() {
     pop.querySelectorAll('.fseg button[data-completion]').forEach(btn => {
         btn.addEventListener('click', () => {
             filterCompletion = btn.dataset.completion;
+            renderFilterPanel();
+            renderExplorerList();
+            renderToolbar();
+        });
+    });
+
+    // Listener segmented Visibilité (data-visibility) — refonte V2 PR2
+    pop.querySelectorAll('.fseg button[data-visibility]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterVisibility = btn.dataset.visibility;
             renderFilterPanel();
             renderExplorerList();
             renderToolbar();
@@ -461,6 +491,7 @@ function resetAllFilters() {
     filterTypeVerified = false;
     filterTypeResto    = false;
     filterCompletion   = 'all';
+    filterVisibility   = 'visible';
     filterMinKm        = 0;
     filterMaxKm        = DIST_MAX_KM;
     currentSort        = 'proximity_asc';
@@ -481,6 +512,7 @@ function countActiveFilters() {
     if (filterTypeVerified) n++;
     if (filterTypeResto)    n++;
     if (filterCompletion !== 'all') n++;
+    if (filterVisibility !== 'visible') n++;
     if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) n++;
     if (currentSort !== 'proximity_asc') n++;
     return n;
@@ -524,7 +556,7 @@ export function renderExplorerList() {
     // Le cas 'done' est filtré par nous (post-service) car le service ne le connaît pas.
     const baseSortMode = currentSort === 'verified_first' ? 'proximity_asc' : currentSort;
     const legacyFilterTodo = filterCompletion === 'todo';
-    let circuits = getProcessedCircuits(baseSortMode, legacyFilterTodo, globalZoneFilter, filterPoiId);
+    let circuits = getProcessedCircuits(baseSortMode, legacyFilterTodo, globalZoneFilter, filterPoiId, filterVisibility);
 
     // Filtre completion 'done' : circuits déjà marqués fait
     if (filterCompletion === 'done') {

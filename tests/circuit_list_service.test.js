@@ -145,6 +145,61 @@ describe('circuit-list-service', () => {
     });
 
     // ========================================================================
+    // 1b. Param visibility (PR2 refonte V2)
+    // ========================================================================
+    describe('Param visibility (PR2)', () => {
+        it("visibility='visible' (défaut) exclut les cachés", () => {
+            state.officialCircuits = [
+                { id: 'o1', name: 'Visible' },
+                { id: 'o2', name: 'Caché' }
+            ];
+            state.hiddenCircuitIds = ['o2'];
+
+            const r = getProcessedCircuits('date_desc', false, null, null, 'visible');
+
+            expect(r.map(c => c.id)).toEqual(['o1']);
+        });
+
+        it("visibility='hidden' affiche UNIQUEMENT les cachés (mode revue)", () => {
+            state.officialCircuits = [
+                { id: 'o1', name: 'Visible' },
+                { id: 'o2', name: 'Caché' }
+            ];
+            state.myCircuits = [
+                { id: 'm1', name: 'Mon Visible' },
+                { id: 'm2', name: 'Mon Caché' }
+            ];
+            state.hiddenCircuitIds = ['o2', 'm2'];
+
+            const r = getProcessedCircuits('date_desc', false, null, null, 'hidden');
+
+            expect(r.map(c => c.id).sort()).toEqual(['m2', 'o2']);
+        });
+
+        it("visibility='all' ignore la blacklist (tout afficher)", () => {
+            state.officialCircuits = [
+                { id: 'o1', name: 'Visible' },
+                { id: 'o2', name: 'Caché' }
+            ];
+            state.myCircuits = [{ id: 'm1', name: 'Mon' }];
+            state.hiddenCircuitIds = ['o2'];
+
+            const r = getProcessedCircuits('date_desc', false, null, null, 'all');
+
+            expect(r.map(c => c.id).sort()).toEqual(['m1', 'o1', 'o2']);
+        });
+
+        it("visibility='hidden' retourne vide si rien n'est caché", () => {
+            state.officialCircuits = [{ id: 'o1', name: 'A' }];
+            state.hiddenCircuitIds = [];
+
+            const r = getProcessedCircuits('date_desc', false, null, null, 'hidden');
+
+            expect(r).toEqual([]);
+        });
+    });
+
+    // ========================================================================
     // 2. Distance — 3 priorités cascadées
     // ========================================================================
     describe('Distance (3 priorités)', () => {

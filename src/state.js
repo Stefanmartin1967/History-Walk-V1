@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.29'; // Refonte Mon Espace V2 — PR1 : refactor whitelist → blacklist. `selectedOfficialCircuitIds` (sélection à cocher) remplacé par `hiddenCircuitIds` (liste des circuits cachés). Filtrage cohérent appliqué dans `computePlanifieCounter`, `getProcessedCircuits` ET `calculateStats` (corrige bug existant : Carnet ignorait la sélection). Nettoyage clé legacy `planifie` du gist-sync. Bouton "Masquer du listing" reste inerte (handler à câbler en PR2).
+export const APP_VERSION = '3.7.30'; // Refonte Mon Espace V2 — PR2 : câblage UI. Le bouton "Masquer du listing" (renommé "Cacher ce circuit") a désormais un handler : ajoute à hiddenCircuitIds, persiste IndexedDB, toast "Annuler" 5s. Nouveau filtre visibilité (Tout/Cachés/Visibles) dans la sidebar Mes Circuits PC (segmented control, pattern existant). Onglet Mon Espace renommé "Préférences" + icône settings. Filtre + bouton mobile traités en PR3 dédié (chantier harmonisation mobile en cours).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
