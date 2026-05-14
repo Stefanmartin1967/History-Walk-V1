@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.22'; // Fix dock caché derrière system bar Android au cold-start PWA post-update. #mobile-container passe de height:100dvh à 100svh — garantit la plus petite hauteur de viewport, donc le dock est toujours dans la zone visible peu importe l'état dynamique du browser. Identifié via diag PR #571 (différence top=752 vs 696 = ~56px = hauteur system bar Samsung). Diag temporaire retiré dans la même PR.
+export const APP_VERSION = '3.7.23'; // PR A rework filtres mobile : recherche fonctionnelle dans Mes Circuits. Le placeholder visuel devient un vrai input qui filtre par nom de circuit OU nom de POI du circuit (réplique PC ui-circuit-list.js). Focus + caret préservés au rerender pour ne pas casser la frappe sur clavier mobile. Pas d'autofocus au mount (cf. PR #563).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).

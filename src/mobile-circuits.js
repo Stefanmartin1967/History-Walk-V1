@@ -44,6 +44,11 @@ let filterMinKm        = 0;
 let filterMaxKm        = DIST_MAX_KM;
 let filterCompletion   = 'all'; // 'all' | 'todo' | 'done'
 
+// Recherche texte dans Mes Circuits (filtre par nom de circuit OU nom d'un POI
+// du circuit, comme PC). PR A post-merge followup : la barre de recherche
+// mobile était un placeholder visuel jusqu'ici. Maintenant câblée fonctionnellement.
+let searchQuery       = '';
+
 // Détection mutation externe de state.filterCompleted (bouton « Filtre » du dock).
 // Quand le dock toggle, on reflète dans filterCompletion (binaire only, pas de 'done').
 let lastSeenStateFilterCompleted = false;
@@ -58,6 +63,13 @@ let sheetEl = null;
 
 export function renderMobileCircuitsList() {
     const container = document.getElementById('mobile-main-container');
+
+    // Capture l'état du focus + caret de la searchbar avant rerender.
+    // setMobileHeaderSlot() remplace le DOM du header → l'input est recréé →
+    // focus perdu. On le restaure à la fin si le user tapait.
+    const activeId = document.activeElement?.id;
+    const searchHadFocus = activeId === 'mobile-mc-search-input';
+    const searchCaretPos = searchHadFocus ? document.activeElement.selectionStart : null;
 
     // Vue Mes Circuits : pas de footer custom → clear le view-footer pour
     // restaurer le dock.
@@ -112,6 +124,22 @@ export function renderMobileCircuitsList() {
         circuitsToDisplay = circuitsToDisplay.filter(c => c._isCompleted);
     }
 
+    // Recherche : matche nom de circuit OU nom d'un POI du circuit (réplique PC).
+    if (searchQuery.trim()) {
+        const q = searchQuery.trim().toLowerCase();
+        circuitsToDisplay = circuitsToDisplay.filter(c => {
+            if ((c.name || '').toLowerCase().includes(q)) return true;
+            if (Array.isArray(c.poiIds)) {
+                return c.poiIds.some(id => {
+                    const f = state.loadedFeatures.find(g => getPoiId(g) === id);
+                    if (!f) return false;
+                    return getPoiName(f).toLowerCase().includes(q);
+                });
+            }
+            return false;
+        });
+    }
+
     // Filtres type (post-service, comme PC)
     if (filterTypeOfficial) circuitsToDisplay = circuitsToDisplay.filter(c => c.isOfficial);
     if (filterTypeVerified) circuitsToDisplay = circuitsToDisplay.filter(c => c.isOfficial && isCircuitTested(c.id));
@@ -147,10 +175,13 @@ export function renderMobileCircuitsList() {
             <div class="m-top-trail"></div>
         </div>
         <div class="mc-search-row">
-            <div class="mc-search" role="search">
+            <label class="mc-search" role="search">
                 <i data-lucide="search"></i>
-                <span class="mc-search-placeholder">Rechercher un circuit ou un POI…</span>
-            </div>
+                <input type="search" id="mobile-mc-search-input" placeholder="Rechercher un circuit ou un POI…" value="${escapeHtml(searchQuery)}" autocomplete="off">
+                <button type="button" class="mc-search-clear ${searchQuery ? '' : 'is-hidden'}" id="mobile-mc-search-clear" aria-label="Effacer la recherche">
+                    <i data-lucide="x"></i>
+                </button>
+            </label>
             <button class="mc-icon-btn" id="mobile-mc-filter-btn" aria-label="Filtres">
                 <i data-lucide="sliders-horizontal"></i>
                 ${n > 0 ? `<span class="badge-n">${n}</span>` : ''}
@@ -237,6 +268,32 @@ export function renderMobileCircuitsList() {
     if (headerSlot) createIcons({ icons: appIcons, root: headerSlot });
     createIcons({ icons: appIcons, root: container });
 
+    // Input recherche : filtre par nom de circuit OU nom d'un POI (réplique PC).
+    // Pas d'autofocus (cf. PR #563 — autofocus déclenche le clavier mobile au
+    // mount, indésirable). Le focus est restauré dans renderMobileCircuitsList
+    // si le user était en train de taper (sinon perte de focus à chaque frappe
+    // car setMobileHeaderSlot remplace le DOM du header).
+    const searchInput = document.getElementById('mobile-mc-search-input');
+    const searchClear = document.getElementById('mobile-mc-search-clear');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value;
+            if (searchClear) searchClear.classList.toggle('is-hidden', !searchQuery);
+            renderMobileCircuitsList();
+        });
+    }
+    if (searchClear) {
+        searchClear.addEventListener('click', (e) => {
+            e.stopPropagation();
+            searchQuery = '';
+            if (searchInput) searchInput.value = '';
+            searchClear.classList.add('is-hidden');
+            renderMobileCircuitsList();
+            // Re-focus l'input après rerender (sinon clavier mobile se ferme).
+            document.getElementById('mobile-mc-search-input')?.focus();
+        });
+    }
+
     // Bouton filtres : ouvre le bottom sheet aligné PC.
     const filterBtn = document.getElementById('mobile-mc-filter-btn');
     if (filterBtn) filterBtn.addEventListener('click', () => openMobileFiltersSheet());
@@ -280,6 +337,18 @@ export function renderMobileCircuitsList() {
             await loadCircuitById(id);
         });
     });
+
+    // Restaure le focus searchbar (et la position du caret) si le user tapait.
+    // setMobileHeaderSlot a recréé l'input → focus naturellement perdu.
+    if (searchHadFocus) {
+        const newInput = document.getElementById('mobile-mc-search-input');
+        if (newInput) {
+            newInput.focus();
+            if (searchCaretPos !== null) {
+                try { newInput.setSelectionRange(searchCaretPos, searchCaretPos); } catch { /* iOS edge */ }
+            }
+        }
+    }
 }
 
 // ─── Compteur de filtres actifs (pour le badge n) ────────────────────────────
