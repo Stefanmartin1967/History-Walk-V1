@@ -409,7 +409,7 @@
 .cc-hero {
     position: relative;
     flex-shrink: 0;
-    height: 188px;
+    height: 200px;
     background: var(--surface-muted);
     background-size: cover;
     background-position: center;
