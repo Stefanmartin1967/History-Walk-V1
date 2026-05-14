@@ -1,9 +1,9 @@
-import { state, updateMyCircuit, setCustomDraftName, setHiddenCircuitIds } from './state.js';
+import { state, updateMyCircuit, setCustomDraftName } from './state.js';
 import { DOM } from './ui-dom.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { applyFilters } from './data.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
-import { saveCircuit, saveAppState } from './database.js';
+import { saveCircuit } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import { showToast } from './toast.js';
 import { showConfirm, showAlert, showPrompt } from './modal.js';
@@ -209,52 +209,9 @@ export function setupCircuitEventListeners() {
         DOM.circuitDescription.addEventListener('input', saveCircuitDraft);
     }
 
-    // 4bis. Bouton CACHER CE CIRCUIT (refonte Mon Espace V2 PR2, 14/05/2026).
-    // Recyclage du bouton "Masquer du listing" précédemment orphelin (index.html:330).
-    // Ajoute le circuit actif à state.hiddenCircuitIds, persiste, refresh sidebar
-    // + carte, et propose un Undo 5s via toast.
-    const btnMaskListing = document.getElementById('btn-mask-listing');
-    if (btnMaskListing) {
-        btnMaskListing.addEventListener('click', async () => {
-            if (!state.activeCircuitId) return;
-            const id = String(state.activeCircuitId);
-
-            const previousHidden = [...(state.hiddenCircuitIds || [])];
-            if (previousHidden.includes(id)) {
-                showToast('Ce circuit est déjà caché.', 'info');
-                return;
-            }
-
-            // Récupère le nom pour le toast (officiels + perso)
-            const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
-            const circuit = allCircuits.find(c => String(c.id) === id);
-            const name = circuit?.name || 'circuit';
-
-            const nextHidden = [...previousHidden, id];
-            setHiddenCircuitIds(nextHidden);
-            try {
-                await saveAppState('hiddenCircuitIds', nextHidden);
-            } catch (err) {
-                console.error('[circuit-editor] saveAppState(hiddenCircuitIds) failed', err);
-            }
-            eventBus.emit('circuit:list-updated');
-            applyFilters();
-
-            showToast(`« ${name} » caché de la liste.`, 'success', 5000, {
-                label: 'Annuler',
-                onClick: async () => {
-                    setHiddenCircuitIds(previousHidden);
-                    try {
-                        await saveAppState('hiddenCircuitIds', previousHidden);
-                    } catch (err) {
-                        console.error('[circuit-editor] saveAppState undo failed', err);
-                    }
-                    eventBus.emit('circuit:list-updated');
-                    applyFilters();
-                }
-            });
-        });
-    }
+    // 4bis. Bouton CACHER CE CIRCUIT → toggle Cacher/Réafficher
+    // Handler + sync visuelle vivent dans ui-circuit-page-events.js (cohérent
+    // avec btn-mark-done qui a le même pattern initXxx + updateXxxState).
 
     // 5. Bouton SUPPRIMER (Poubelle active)
     const btnDelete = document.getElementById('btn-delete-active-circuit');

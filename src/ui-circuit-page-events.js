@@ -13,10 +13,14 @@
  * - Édition inline description (placeholder + double-clic)
  */
 
-import { state, setCustomDraftName } from './state.js';
+import { state, setCustomDraftName, setHiddenCircuitIds } from './state.js';
 import { saveCircuitDraft, isCircuitTested } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
+import { saveAppState } from './database.js';
+import { applyFilters } from './data.js';
+import { showToast } from './toast.js';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
 
 let inited = false;
@@ -27,6 +31,7 @@ export function initCircuitPageEvents() {
 
     initTraceToggle();
     initMarkDone();
+    initMaskListing();
     // initModifyCircuit() : déjà branché par ui-circuit-editor.js via convertToDraft()
     initTransportAccordion();
     initTitleEdit();
@@ -35,7 +40,9 @@ export function initCircuitPageEvents() {
 
     // Sync de l'UI quand l'état change
     eventBus.on('circuit:changed', updateMarkDoneState);
+    eventBus.on('circuit:changed', updateMaskListingState);
     eventBus.on('circuit:list-updated', updateMarkDoneState);
+    eventBus.on('circuit:list-updated', updateMaskListingState);
 }
 
 /* ============================================================
@@ -99,6 +106,84 @@ function updateMarkDoneState() {
     const tested = isCircuitTested(state.activeCircuitId);
     btn.classList.toggle('is-done', tested);
     btn.title = tested ? 'Marqué comme fait' : 'Marquer comme fait';
+}
+
+/* ============================================================
+   3bis. CACHER / RÉAFFICHER LE CIRCUIT (consultation, toggle PR3)
+   ============================================================ */
+
+function initMaskListing() {
+    const btn = document.getElementById('btn-mask-listing');
+    if (!btn) return;
+
+    btn.addEventListener('click', async () => {
+        if (!state.activeCircuitId) return;
+        const id = String(state.activeCircuitId);
+        const previousHidden = [...(state.hiddenCircuitIds || [])];
+        const isCurrentlyHidden = previousHidden.includes(id);
+
+        if (isCurrentlyHidden) {
+            // RÉAFFICHER : retire de la blacklist
+            const nextHidden = previousHidden.filter(x => x !== id);
+            setHiddenCircuitIds(nextHidden);
+            try {
+                await saveAppState('hiddenCircuitIds', nextHidden);
+            } catch (err) {
+                console.error('[circuit-page-events] saveAppState (réafficher) failed', err);
+            }
+            eventBus.emit('circuit:list-updated');
+            applyFilters();
+            showToast('Circuit réaffiché dans la liste.', 'success', 2500);
+        } else {
+            // CACHER : ajoute à la blacklist, propose Undo 5s
+            const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
+            const circuit = allCircuits.find(c => String(c.id) === id);
+            const name = circuit?.name || 'circuit';
+
+            const nextHidden = [...previousHidden, id];
+            setHiddenCircuitIds(nextHidden);
+            try {
+                await saveAppState('hiddenCircuitIds', nextHidden);
+            } catch (err) {
+                console.error('[circuit-page-events] saveAppState (cacher) failed', err);
+            }
+            eventBus.emit('circuit:list-updated');
+            applyFilters();
+
+            showToast(`« ${name} » caché de la liste.`, 'success', 5000, {
+                label: 'Annuler',
+                onClick: async () => {
+                    setHiddenCircuitIds(previousHidden);
+                    try {
+                        await saveAppState('hiddenCircuitIds', previousHidden);
+                    } catch (err) {
+                        console.error('[circuit-page-events] saveAppState undo failed', err);
+                    }
+                    eventBus.emit('circuit:list-updated');
+                    applyFilters();
+                }
+            });
+        }
+    });
+
+    updateMaskListingState();
+}
+
+function updateMaskListingState() {
+    const btn = document.getElementById('btn-mask-listing');
+    if (!btn) return;
+
+    const id = state.activeCircuitId ? String(state.activeCircuitId) : null;
+    const isHidden = id ? (state.hiddenCircuitIds || []).includes(id) : false;
+
+    btn.classList.toggle('is-hidden-circuit', isHidden);
+    btn.title = isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit';
+
+    const icon = btn.querySelector('i[data-lucide]');
+    if (icon) {
+        icon.setAttribute('data-lucide', isHidden ? 'bookmark' : 'bookmark-x');
+        createIcons({ icons: appIcons, root: btn });
+    }
 }
 
 /* ============================================================
