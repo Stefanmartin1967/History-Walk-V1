@@ -47,6 +47,7 @@ import {
 
     // Catégories POI (map.js iconMap + getStepCategory + recherche)
     CircleHelp, Hotel, CarTaxiFront, MoonStar, Bed, Binoculars, Lightbulb,
+    Store, Cake, Droplets, Church,
 
     // UI & layout
     Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
@@ -95,6 +96,7 @@ export const appIcons = {
     Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,
 
     CircleHelp, Hotel, CarTaxiFront, MoonStar, Bed, Binoculars, Lightbulb,
+    Store, Cake, Droplets, Church,
 
     Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,

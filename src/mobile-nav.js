@@ -312,40 +312,58 @@ async function handleAddPoiClick() {
 // matches de getSearchResults). Clic sur une catégorie → résultats de la
 // catégorie cliquée. Pas de section « Récents » (décision Stefan).
 
-const SEARCH_CAT_VARIANTS = {
-    'Mosquée':    ['mosquée', 'mosquee', 'synagogue', 'église', 'eglise'],
-    'Curiosité':  ['curiosité', 'curiosite', 'site historique', 'panorama', 'point de vue'],
-    'Hôtel':      ['hôtel', 'hotel'],
-    'Restaurant': ['restaurant', 'café', 'cafe', 'pâtisserie', 'salon de thé'],
+// Mapping catégorie POI → icône Lucide outline (style cohérent avec le reste
+// du menu mobile : chevron, search…). L'idéal serait d'utiliser les SVG MDI de
+// poi-icons.js (cohérence avec la carte PC), mais le style filled MDI dénote
+// dans le menu — on garde l'outline en attendant. Certaines icônes sont des
+// approximations (Salon de thé / Site religieux / Culture) à revoir.
+// Cf. project_post_chantier_mobile_followups.md.
+const SEARCH_CAT_ICON = {
+    'A définir':            'circle-help',
+    'Café':                 'coffee',
+    'Commerce':             'store',
+    'Culture et tradition': 'landmark',
+    'Curiosité':            'binoculars',
+    'Hôtel':                'bed',
+    'Mosquée':              'moon-star',
+    'Pâtisserie':           'cake',
+    'Photo':                'camera',
+    'Puits':                'droplets',
+    'Restaurant':           'utensils',
+    'Salon de thé':         'coffee',
+    'Site historique':      'landmark',
+    'Site religieux':       'church',
+    'Taxi':                 'car-taxi-front',
 };
 
-function getMobileSearchCatIcon(cat) {
-    const lower = (cat || '').toLowerCase();
-    if (lower === 'mosquée' || lower === 'mosquee') return 'moon-star';
-    if (lower === 'synagogue' || lower === 'église' || lower === 'eglise') return 'landmark';
-    if (lower === 'restaurant') return 'utensils';
-    if (lower === 'café' || lower === 'cafe') return 'coffee';
-    if (lower === 'curiosité' || lower === 'curiosite') return 'binoculars';
-    if (lower === 'hôtel' || lower === 'hotel') return 'bed';
-    if (lower === 'phare') return 'lightbulb';
-    if (lower === 'panorama' || lower === 'point de vue') return 'mountain';
-    if (lower === 'site historique' || lower === 'place historique') return 'landmark';
-    return 'map-pin';
+function getMobileSearchCatIcon(category) {
+    return SEARCH_CAT_ICON[category] || 'map-pin';
 }
 
-function countByCategory(label) {
-    const variants = SEARCH_CAT_VARIANTS[label] || [label.toLowerCase()];
-    return (state.loadedFeatures || []).filter(f => {
-        const cat = (f?.properties?.['Catégorie'] || '').toLowerCase();
-        return variants.includes(cat);
-    }).length;
+// Renvoie la liste de TOUTES les catégories présentes dans state.loadedFeatures
+// (count > 0), triées par count décroissant. Pas de regroupement artificiel —
+// chaque catégorie du iconMap reste séparée (Stefan : « idée du rassemblement
+// pas totalement mauvaise mais à faire par l'admin, pas hardcoded »).
+function getAllCategoriesWithCount() {
+    const counts = new Map();
+    for (const f of state.loadedFeatures || []) {
+        const cat = f?.properties?.userData?.['Catégorie']
+                 || f?.properties?.['Catégorie']
+                 || null;
+        if (!cat) continue;
+        counts.set(cat, (counts.get(cat) || 0) + 1);
+    }
+    return Array.from(counts.entries())
+        .map(([cat, count]) => ({ cat, count }))
+        .sort((a, b) => b.count - a.count);
 }
 
-function getCategoryMatches(label) {
-    const variants = SEARCH_CAT_VARIANTS[label] || [label.toLowerCase()];
+function getCategoryMatches(category) {
     return (state.loadedFeatures || []).filter(f => {
-        const cat = (f?.properties?.['Catégorie'] || '').toLowerCase();
-        return variants.includes(cat);
+        const cat = f?.properties?.userData?.['Catégorie']
+                 || f?.properties?.['Catégorie']
+                 || null;
+        return cat === category;
     });
 }
 
@@ -359,24 +377,22 @@ function highlightSearchTerm(name, term) {
 }
 
 function renderMobileSearchEmpty(container) {
-    const categories = [
-        { id: 'Mosquée',    label: 'Lieux de culte',  icon: 'moon-star',  tone: 'brand' },
-        { id: 'Curiosité',  label: 'Curiosités',      icon: 'binoculars', tone: 'amber' },
-        { id: 'Hôtel',      label: 'Hôtels',          icon: 'bed',        tone: 'muted' },
-        { id: 'Restaurant', label: 'Restos & cafés',  icon: 'utensils',   tone: 'amber' },
-    ];
+    // Toutes les catégories présentes (count > 0), triées par count décroissant.
+    // Pas de regroupement artificiel — chaque catégorie du iconMap (poi-icons.js)
+    // reste séparée. Le regroupement éventuel sera fait par l'admin (Stefan)
+    // via un futur système de groupes (cf. follow-ups post-chantier).
+    const categories = getAllCategoriesWithCount();
 
     let html = '<div class="search-empty-body"><div>';
     html += '<div class="search-section-title">Parcourir par catégorie</div>';
     html += '<div class="search-cat-grid">';
-    categories.forEach(c => {
-        const count = countByCategory(c.id);
-        if (count === 0) return;
+    categories.forEach(({ cat, count }) => {
+        const icon = getMobileSearchCatIcon(cat);
         html += `
-            <button type="button" class="search-cat" data-cat="${escapeHtml(c.id)}">
-                <div class="search-cat-ico ${c.tone}"><i data-lucide="${c.icon}"></i></div>
+            <button type="button" class="search-cat" data-cat="${escapeHtml(cat)}">
+                <div class="search-cat-ico"><i data-lucide="${icon}"></i></div>
                 <div>
-                    <div class="search-cat-label">${escapeHtml(c.label)}</div>
+                    <div class="search-cat-label">${escapeHtml(cat)}</div>
                     <div class="search-cat-count">${count} lieu${count > 1 ? 'x' : ''}</div>
                 </div>
             </button>

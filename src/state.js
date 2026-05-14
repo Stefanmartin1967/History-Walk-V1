@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.10'; // Refonte Recherche mobile (PR 5 chantier design) : état vide avec catégories en grid 2 colonnes + état actif avec highlight <mark> du match. Ajout MoonStar/Bed/Binoculars/Lightbulb à appIcons (fix rétroactif PR 3).
+export const APP_VERSION = '3.7.11'; // PR 5 (Recherche) — itération feedback Stefan : toutes catégories du iconMap séparées (plus de regroupement artificiel), triées par count décroissant. Ajout Store/Cake/Droplets/Church à appIcons.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
