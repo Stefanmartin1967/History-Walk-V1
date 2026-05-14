@@ -250,11 +250,10 @@ export async function displayGeoJSON(geoJSON, mapId) {
 /**
  * Calcule à la volée le nombre de circuits ACTIFS contenant ce POI.
  *
- * Définition métier (validée 03/05/2026) :
- * - Circuit ACTIF = circuit perso non supprimé OU circuit officiel sélectionné dans Mon Espace
- * - state.selectedOfficialCircuitIds === null      → TOUS les officiels comptent (défaut)
- * - state.selectedOfficialCircuitIds === []        → AUCUN officiel ne compte
- * - state.selectedOfficialCircuitIds === [...ids]  → seulement les ids listés
+ * Définition métier (refonte Mon Espace V2, 14/05/2026) :
+ * - Circuit ACTIF = circuit perso non supprimé ET non caché, OU circuit officiel non caché
+ * - state.hiddenCircuitIds = []         → tous visibles (défaut)
+ * - state.hiddenCircuitIds = [...ids]   → ces ids sont exclus (blacklist, officiels + perso)
  *
  * Placée ici (data.js) plutôt que circuit-actions.js pour éviter un cycle d'import :
  * data.js ne peut pas importer circuit-actions.js (qui importe déjà data.js).
@@ -265,15 +264,14 @@ export async function displayGeoJSON(geoJSON, mapId) {
 export function computePlanifieCounter(poiId) {
     if (!poiId) return 0;
 
-    // 1. Circuits officiels effectivement actifs (selon Mon Espace)
-    const allOfficial = state.officialCircuits || [];
-    const selectedIds = state.selectedOfficialCircuitIds;
-    const activeOfficial = selectedIds === null
-        ? allOfficial
-        : allOfficial.filter(c => selectedIds.includes(String(c.id)));
+    const hidden = state.hiddenCircuitIds || [];
+    const isHidden = (c) => hidden.includes(String(c.id));
 
-    // 2. Circuits perso non supprimés
-    const activePerso = (state.myCircuits || []).filter(c => !c.isDeleted);
+    // 1. Circuits officiels non cachés
+    const activeOfficial = (state.officialCircuits || []).filter(c => !isHidden(c));
+
+    // 2. Circuits perso non supprimés et non cachés
+    const activePerso = (state.myCircuits || []).filter(c => !c.isDeleted && !isHidden(c));
 
     // 3. Compter ceux qui contiennent ce POI
     return [...activeOfficial, ...activePerso]

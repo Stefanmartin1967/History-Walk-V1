@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.28'; // Alignement filtre Tri Mes Circuits PC sur mobile : ajout du tri dist_desc (Long) en 4ème case du segmented. « Distance » renommé « Court » (= dist_asc) + nouveau « Long » (= dist_desc). Icônes ruler → arrow-down-0-1 / arrow-up-1-0 pour cohérence avec mobile. Termine le followup #7 du chantier mobile. PC n'avait pas la section Zone (refusée par Stefan car doublon avec filtre topbar) — seul Distance ↓ manquait.
+export const APP_VERSION = '3.7.29'; // Refonte Mon Espace V2 — PR1 : refactor whitelist → blacklist. `selectedOfficialCircuitIds` (sélection à cocher) remplacé par `hiddenCircuitIds` (liste des circuits cachés). Filtrage cohérent appliqué dans `computePlanifieCounter`, `getProcessedCircuits` ET `calculateStats` (corrige bug existant : Carnet ignorait la sélection). Nettoyage clé legacy `planifie` du gist-sync. Bouton "Masquer du listing" reste inerte (handler à câbler en PR2).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
@@ -58,7 +58,10 @@ export const state = {
     filterCompleted: false,
     hasUnexportedChanges: false,
     isAdmin: false, // Activation du "God Mode"
-    selectedOfficialCircuitIds: null, // null = tous affichés, [] = aucun, [...ids] = sélection
+    // Liste blacklist : circuits cachés du listing (officiels + perso confondus).
+    // [] (défaut) = tous visibles. Cohérence : la blacklist filtre la sidebar
+    // Mes Circuits, le compteur planifié des POIs et le calcul du Carnet de voyage.
+    hiddenCircuitIds: [],
     // selectionModeFilters supprimé (point #5 audit Stefan) : le filtre topbar
     // (activeFilters) gère désormais le filtrage en mode normal ET en mode création.
     activeFilters: {
@@ -177,8 +180,8 @@ export function setHiddenPoiIds(ids) {
     state.hiddenPoiIds = ids || [];
 }
 
-export function setSelectedOfficialCircuitIds(ids) {
-    state.selectedOfficialCircuitIds = ids; // null | string[]
+export function setHiddenCircuitIds(ids) {
+    state.hiddenCircuitIds = Array.isArray(ids) ? ids.map(String) : [];
 }
 
 export function setCustomDraftName(name) {

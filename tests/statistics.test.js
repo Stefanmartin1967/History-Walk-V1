@@ -16,7 +16,8 @@ vi.mock('../src/state.js', () => {
             userData: {},
             officialCircuits: [],
             officialCircuitsStatus: {},
-            myCircuits: []
+            myCircuits: [],
+            hiddenCircuitIds: [] // Refonte Mon Espace V2 : blacklist circuits cachés
         },
         POI_CATEGORIES: []
     };
@@ -41,6 +42,7 @@ describe('Statistics System', () => {
         state.officialCircuitsStatus = {};
         state.myCircuits = [];
         state.hiddenPoiIds = []; // Important: Reset hidden POIs
+        state.hiddenCircuitIds = []; // Refonte V2 : Reset blacklist
         vi.resetAllMocks();
     });
 
@@ -314,6 +316,79 @@ describe('Statistics System', () => {
             expect(stats.poiPercent).toBe(100);
             // pctGlobal = 100 → "Lueur d'Éternité" (min 90)
             expect(stats.globalRank.title).toBe("Lueur d'Éternité");
+        });
+    });
+
+    // ------------------------------------------------------------------
+    // Refonte Mon Espace V2 (14/05/2026) : la blacklist `hiddenCircuitIds`
+    // exclut les circuits du calcul du Carnet (corrige bug existant où la
+    // sélection Mon Espace était ignorée par statistics.js).
+    // ------------------------------------------------------------------
+    describe('hiddenCircuitIds blacklist (refonte V2)', () => {
+        it('exclut un circuit caché du total km à parcourir', () => {
+            state.officialCircuits = [
+                { id: 'c1', distance: '10.0 km' },
+                { id: 'c2', distance: '40.0 km' }
+            ];
+            state.hiddenCircuitIds = ['c2']; // c2 caché → sort du dénominateur
+
+            const stats = calculateStats();
+
+            // Seul c1 (10km) compte dans le total disponible
+            expect(stats.totalOfficialKmAvailable).toBe(10);
+            expect(stats.totalOfficialCircuitsAvailable).toBe(1);
+        });
+
+        it('exclut un circuit caché des POIs visités via "Fait"', () => {
+            state.loadedFeatures = [
+                { properties: { HW_ID: 'p1' } },
+                { properties: { HW_ID: 'p2' } },
+                { properties: { HW_ID: 'p3' } }
+            ];
+            state.officialCircuits = [
+                { id: 'c1', distance: '5.0 km', poiIds: ['p1'] },
+                { id: 'c2', distance: '5.0 km', poiIds: ['p2', 'p3'] }
+            ];
+            // Les 2 sont "Fait", mais c2 est caché
+            state.officialCircuitsStatus = { c1: true, c2: true };
+            state.hiddenCircuitIds = ['c2'];
+
+            const stats = calculateStats();
+
+            // Seul p1 (via c1) doit être compté comme visité
+            expect(stats.visitedPois).toBe(1);
+            expect(stats.totalPois).toBe(3);
+        });
+
+        it('hiddenCircuitIds=[] : tous les circuits comptent (défaut)', () => {
+            state.officialCircuits = [
+                { id: 'c1', distance: '10.0 km' },
+                { id: 'c2', distance: '40.0 km' }
+            ];
+            state.hiddenCircuitIds = [];
+
+            const stats = calculateStats();
+
+            expect(stats.totalOfficialKmAvailable).toBe(50);
+            expect(stats.totalOfficialCircuitsAvailable).toBe(2);
+        });
+
+        it('un circuit caché ET "Fait" ne booste pas distancePercent', () => {
+            // Edge case : user fait un circuit puis le cache → progression perdue
+            // (cohérent avec "caché = exclu du Carnet")
+            state.officialCircuits = [
+                { id: 'c1', distance: '10.0 km' },
+                { id: 'c2', distance: '10.0 km' }
+            ];
+            state.officialCircuitsStatus = { c1: true, c2: true };
+            state.hiddenCircuitIds = ['c2'];
+
+            const stats = calculateStats();
+
+            // Seul c1 compte au numérateur ET au dénominateur → 100%
+            expect(stats.distancePercent).toBe(100);
+            expect(stats.userOfficialCircuits).toBe(1);
+            expect(stats.totalOfficialCircuitsAvailable).toBe(1);
         });
     });
 });

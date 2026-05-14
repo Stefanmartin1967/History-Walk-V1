@@ -17,17 +17,19 @@ import L from 'leaflet';
  */
 export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false, filterZone = null, filterPoiId = null) {
     // 1. Data Prep : Fusion des circuits officiels et utilisateur (Sans doublons)
-    const allOfficial = state.officialCircuits || [];
-    // Filtre Mon Espace : null = tous, [] = aucun, [...ids] = sélection utilisateur
-    const selectedIds = state.selectedOfficialCircuitIds;
-    const officialCircuits = selectedIds === null
-        ? allOfficial
-        : allOfficial.filter(c => selectedIds.includes(String(c.id)));
+    // Filtre Mon Espace V2 (refonte 14/05/2026) : blacklist `hiddenCircuitIds`
+    // applique aux deux types (officiels ET perso). Vide = tout visible.
+    const hidden = state.hiddenCircuitIds || [];
+    const isHidden = (c) => hidden.includes(String(c.id));
+    const officialCircuits = (state.officialCircuits || []).filter(c => !isHidden(c));
     const localCircuits = (state.myCircuits || []).filter(c => {
         if (c.isDeleted) return false;
 
         // FILTRE DE SÉCURITÉ : On cache les "Fantômes" (Officiels en double ou Vides)
         if (c.isOfficial) return false; // Un local ne devrait jamais être 'official' (doublon DB)
+
+        // Caché par l'utilisateur (blacklist Mon Espace V2)
+        if (isHidden(c)) return false;
 
         // Vérification si une version officielle existe déjà
         const existsInOfficial = officialCircuits.some(off =>

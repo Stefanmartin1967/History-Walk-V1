@@ -1,29 +1,21 @@
 // user-space.js — Contrôleur "Mon Espace" (côté utilisateur)
-import { state, setSelectedOfficialCircuitIds } from './state.js';
-import { saveAppState, restoreCircuit } from './database.js';
+import { state } from './state.js';
+import { restoreCircuit } from './database.js';
 import { showToast } from './toast.js';
 import { openUserSpaceModal } from './user-space-ui.js';
 import { exportDataForMobilePC, exportFullBackupPC, handleRestoreFile } from './fileManager.js';
 import { renderExplorerList } from './ui-circuit-list.js';
-import { applyFilters } from './data.js';
 
 export function openUserSpace() {
     const callbacks = {
-        setSelection: setCircuitSelection,
+        // setSelection retiré 14/05/2026 (refonte Mon Espace V2 PR1) : la sélection
+        // de circuits via checklist a été remplacée par le bouton "Cacher ce
+        // circuit" (fiche circuit, câblé en PR2) qui pilote state.hiddenCircuitIds.
         exportData: exportUserData,
         restoreData: restoreUserData,
         restoreCircuit: restoreDeletedCircuit,
     };
     openUserSpaceModal(callbacks);
-}
-
-async function setCircuitSelection(ids) {
-    setSelectedOfficialCircuitIds(ids);
-    await saveAppState('selectedOfficialCircuits', ids);
-    renderExplorerList();
-    // Rafraîchir la carte / liste : le compteur planifié des POIs des circuits
-    // (dé)sélectionnés est calculé à la volée via computePlanifieCounter (data.js).
-    applyFilters();
 }
 
 async function exportUserData(includePhotos) {

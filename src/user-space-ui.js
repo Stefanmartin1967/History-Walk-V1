@@ -292,106 +292,15 @@ function attachHomeLocationListeners(container, callbacks) {
     });
 }
 
+// Refonte Mon Espace V2 (14/05/2026 PR1) : la section "Circuits officiels"
+// (checklist + pills Aucun/Tous) a été retirée. La sélection par cochage est
+// remplacée par le bouton "Cacher ce circuit" sur la fiche circuit (câblé en
+// PR2) qui pilote state.hiddenCircuitIds. Cet onglet n'affiche désormais que
+// le hero "Lieu de résidence" — sa structure d'ensemble (label, icône, place
+// dans les TABS) sera retravaillée en PR2.
 function renderCircuitsTab(container, callbacks) {
-    const allOfficial = state.officialCircuits || [];
-
-    if (allOfficial.length === 0) {
-        container.innerHTML = `
-            ${renderHomeLocationSection()}
-            <div class="me-empty">
-                <div class="me-empty-mark"><i data-lucide="wifi-off"></i></div>
-                <p class="me-empty-title">Aucun circuit disponible</p>
-                <p class="me-empty-sub">Les circuits officiels apparaîtront ici une fois chargés.</p>
-            </div>`;
-        createIcons({ icons: appIcons, root: container });
-        attachHomeLocationListeners(container, callbacks);
-        return;
-    }
-
-    const selected = state.selectedOfficialCircuitIds;
-    const selectedSet = selected === null
-        ? new Set(allOfficial.map(c => String(c.id)))
-        : new Set((selected || []).map(String));
-
-    const checkedCount = selectedSet.size;
-
-    container.innerHTML = `
-        ${renderHomeLocationSection()}
-
-        <div class="me-section-h">
-            <div class="me-section-title">
-                Circuits officiels
-                <span class="badge amber" id="ue-circuits-count">${checkedCount} / ${allOfficial.length}</span>
-            </div>
-            <div class="me-section-actions">
-                <button class="me-pill" id="btn-ue-none">Aucun</button>
-                <button class="me-pill" id="btn-ue-all">Tous</button>
-            </div>
-        </div>
-
-        <div class="me-hint">
-            <i data-lucide="info"></i>
-            <span>Les circuits masqués n'apparaissent plus dans la liste, mais leurs POIs restent toujours visibles sur la carte.</span>
-        </div>
-
-        <div class="me-circuits-list">
-            ${allOfficial.map(c => {
-                const isChecked = selectedSet.has(String(c.id));
-                const poiCount = (c.poiIds || []).length;
-                const meta = [
-                    `${poiCount} POI${poiCount > 1 ? 's' : ''}`,
-                    c.zone || null,
-                    c.distance || null
-                ].filter(Boolean).join(' · ');
-                return `
-                <label class="me-card${isChecked ? ' is-checked' : ''}">
-                    <div class="me-card-ico">
-                        <i data-lucide="route"></i>
-                    </div>
-                    <div class="me-card-text">
-                        <span class="me-card-title">${c.name || 'Circuit sans nom'}</span>
-                        <span class="me-card-sub">${meta}</span>
-                    </div>
-                    <div class="me-toggle">
-                        <input type="checkbox" class="me-circuit-check" data-circuit-id="${c.id}" ${isChecked ? 'checked' : ''}>
-                        <span class="me-toggle-track"></span>
-                    </div>
-                </label>`;
-            }).join('')}
-        </div>
-    `;
-
-    const updateCount = () => {
-        const checked = container.querySelectorAll('.me-circuit-check:checked').length;
-        const countEl = document.getElementById('ue-circuits-count');
-        if (countEl) countEl.textContent = `${checked} / ${allOfficial.length}`;
-    };
-
-    document.getElementById('btn-ue-none')?.addEventListener('click', () => {
-        if (callbacks.setSelection) callbacks.setSelection([]);
-        renderCircuitsTab(container, callbacks);
-    });
-
-    document.getElementById('btn-ue-all')?.addEventListener('click', () => {
-        if (callbacks.setSelection) callbacks.setSelection(allOfficial.map(c => String(c.id)));
-        renderCircuitsTab(container, callbacks);
-    });
-
-    container.querySelectorAll('.me-circuit-check').forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            const currentIds = state.selectedOfficialCircuitIds === null
-                ? allOfficial.map(c => String(c.id))
-                : [...(state.selectedOfficialCircuitIds || [])];
-            const id = String(checkbox.dataset.circuitId);
-            const newIds = checkbox.checked
-                ? [...new Set([...currentIds, id])]
-                : currentIds.filter(x => x !== id);
-            if (callbacks.setSelection) callbacks.setSelection(newIds);
-            checkbox.closest('.me-card')?.classList.toggle('is-checked', checkbox.checked);
-            updateCount();
-        });
-    });
-
+    container.innerHTML = renderHomeLocationSection();
+    createIcons({ icons: appIcons, root: container });
     attachHomeLocationListeners(container, callbacks);
 }
 
