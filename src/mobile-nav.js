@@ -508,5 +508,8 @@ export function renderMobileSearch() {
         input.focus();
     });
 
-    input.focus();
+    // PAS de focus auto sur l'input au mount : sur mobile, focus = ouverture
+    // du clavier, qui cache la moitié des catégories. L'utilisateur clique
+    // dans le champ s'il veut taper (focus + clavier alors). Décision UX
+    // Stefan 14/05/2026.
 }
