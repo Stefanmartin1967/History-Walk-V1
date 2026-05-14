@@ -6,6 +6,7 @@
 
 import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiCoordinates, applyFilters } from './data.js';
+import { getIconHtml } from './poi-icons.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance } from './utils.js';
 import { openDetailsPanel } from './ui-details.js';
@@ -23,25 +24,33 @@ export function initMobilePoiListeners() {
     eventBus.on('mobile:render-poi-list', (features) => renderMobilePoiList(features));
 }
 
-// ─── Mapping catégorie → icône + variant couleur pour .cc-step-cat ──────────
+// ─── Variant couleur pour .cc-step-cat selon catégorie ─────────────────────
+// L'icône est récupérée via getIconHtml (iconMap MDI, cohérent avec la carte
+// PC). Le variant ne concerne que le coloris du pill (.amber / .brand / neutre).
+function getStepCategoryVariant(cat) {
+    const lower = (cat || '').toLowerCase();
+    if (lower === 'restaurant' || lower === 'café' || lower === 'cafe'
+        || lower === 'curiosité' || lower === 'curiosite'
+        || lower === 'pâtisserie' || lower === 'patisserie'
+        || lower === 'salon de thé') return 'amber';
+    if (lower === 'mosquée' || lower === 'mosquee'
+        || lower === 'synagogue'
+        || lower === 'église' || lower === 'eglise'
+        || lower === 'site religieux') return 'brand';
+    return '';
+}
 function getStepCategory(feature) {
     const cat = feature?.properties?.['Catégorie']
         || feature?.properties?.userData?.['Catégorie']
         || '';
+    // Resto raccourci en « Resto » sur la timeline, sinon label original.
     const lower = cat.toLowerCase();
-    if (lower === 'restaurant') return { icon: 'utensils', label: 'Resto', variant: 'amber' };
-    if (lower === 'café' || lower === 'cafe') return { icon: 'coffee', label: cat, variant: 'amber' };
-    if (lower === 'curiosité' || lower === 'curiosite') return { icon: 'binoculars', label: cat, variant: 'amber' };
-    if (lower === 'mosquée' || lower === 'mosquee') return { icon: 'moon-star', label: cat, variant: 'brand' };
-    if (lower === 'synagogue') return { icon: 'moon-star', label: cat, variant: 'brand' };
-    if (lower === 'église' || lower === 'eglise') return { icon: 'landmark', label: cat, variant: 'brand' };
-    if (lower === 'hôtel' || lower === 'hotel') return { icon: 'bed', label: cat, variant: '' };
-    if (lower === 'plage') return { icon: 'image', label: cat, variant: '' };
-    if (lower === 'phare') return { icon: 'lightbulb', label: cat, variant: '' };
-    if (lower === 'site historique') return { icon: 'landmark', label: cat, variant: '' };
-    if (lower === 'place' || lower === 'place historique') return { icon: 'landmark', label: cat, variant: '' };
-    if (lower === 'panorama' || lower === 'point de vue') return { icon: 'mountain', label: cat, variant: '' };
-    return { icon: 'map-pin', label: cat || 'Lieu', variant: '' };
+    const label = lower === 'restaurant' ? 'Resto' : (cat || 'Lieu');
+    return {
+        iconHtml: getIconHtml(cat),
+        label,
+        variant: getStepCategoryVariant(cat),
+    };
 }
 
 // ─── Hero photo .cc-hero (mobile) ────────────────────────────────────────────
@@ -162,7 +171,7 @@ function renderSimplePoiList(container, listToDisplay) {
                 <div class="cc-step-num">${isVisited ? '<i data-lucide="check"></i>' : '<i data-lucide="map-pin"></i>'}</div>
                 <div class="cc-step-body">
                     <div class="cc-step-name">${escapeHtml(name)}</div>
-                    <span class="cc-step-cat ${cat.variant}"><i data-lucide="${cat.icon}"></i>${escapeHtml(cat.label)}</span>
+                    <span class="cc-step-cat ${cat.variant}">${cat.iconHtml}${escapeHtml(cat.label)}</span>
                 </div>
                 <span class="cc-step-chev"><i data-lucide="chevron-right"></i></span>
             </a>
@@ -266,7 +275,7 @@ function renderCircuitView(container, listToDisplay) {
                 <div class="cc-step-num">${isVisited ? '<i data-lucide="check"></i>' : (i + 1)}</div>
                 <div class="cc-step-body">
                     <div class="cc-step-name">${escapeHtml(name)}</div>
-                    <span class="cc-step-cat ${cat.variant}"><i data-lucide="${cat.icon}"></i>${escapeHtml(cat.label)}</span>
+                    <span class="cc-step-cat ${cat.variant}">${cat.iconHtml}${escapeHtml(cat.label)}</span>
                 </div>
                 <span class="cc-step-chev"><i data-lucide="chevron-right"></i></span>
             </a>

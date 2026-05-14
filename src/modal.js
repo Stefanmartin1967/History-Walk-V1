@@ -299,21 +299,18 @@ export function showCustomModal(titleText, content, actionsContent = null, custo
     // Migration V2 : utilise openHwModal en interne. Le paramètre customClass
     // est conservé pour rétro-compat mais ignoré (le styling se fait via
     // size/variant du nouveau système).
-    let body = '';
-    if (typeof content === 'string') body = content;
-    else if (content instanceof HTMLElement) body = content.outerHTML;
-
-    let footer = null;
-    if (actionsContent) {
-        if (typeof actionsContent === 'string') footer = actionsContent;
-        else if (actionsContent instanceof HTMLElement) footer = actionsContent.outerHTML;
-    }
-
+    //
+    // On passe content et actionsContent TEL QUEL à openHwModal qui sait
+    // gérer string (innerHTML) ET HTMLElement (appendChild). Le passage par
+    // .outerHTML précédent sérialisait l'HTMLElement en string et perdait les
+    // event handlers attachés via property (.onclick, addEventListener) — bug
+    // observé sur la modale Filtres mobile-circuits (clics sans effet). Voir
+    // PR #560 itération 2.
     return openHwModal({
         size: 'md',
         title: titleText,
-        body,
-        footer,
+        body: content,
+        footer: actionsContent,
     });
 }
 

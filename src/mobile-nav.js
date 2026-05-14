@@ -6,7 +6,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { getIconForFeature } from './poi-icons.js';
+import { getIconForFeature, getIconHtml } from './poi-icons.js';
 import { escapeHtml, sanitizeHTML, isPointInPolygon, getZoneFromCoords } from './utils.js';
 import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
@@ -312,40 +312,30 @@ async function handleAddPoiClick() {
 // matches de getSearchResults). Clic sur une catégorie → résultats de la
 // catégorie cliquée. Pas de section « Récents » (décision Stefan).
 
-const SEARCH_CAT_VARIANTS = {
-    'Mosquée':    ['mosquée', 'mosquee', 'synagogue', 'église', 'eglise'],
-    'Curiosité':  ['curiosité', 'curiosite', 'site historique', 'panorama', 'point de vue'],
-    'Hôtel':      ['hôtel', 'hotel'],
-    'Restaurant': ['restaurant', 'café', 'cafe', 'pâtisserie', 'salon de thé'],
-};
-
-function getMobileSearchCatIcon(cat) {
-    const lower = (cat || '').toLowerCase();
-    if (lower === 'mosquée' || lower === 'mosquee') return 'moon-star';
-    if (lower === 'synagogue' || lower === 'église' || lower === 'eglise') return 'landmark';
-    if (lower === 'restaurant') return 'utensils';
-    if (lower === 'café' || lower === 'cafe') return 'coffee';
-    if (lower === 'curiosité' || lower === 'curiosite') return 'binoculars';
-    if (lower === 'hôtel' || lower === 'hotel') return 'bed';
-    if (lower === 'phare') return 'lightbulb';
-    if (lower === 'panorama' || lower === 'point de vue') return 'mountain';
-    if (lower === 'site historique' || lower === 'place historique') return 'landmark';
-    return 'map-pin';
+// Renvoie la liste de TOUTES les catégories présentes dans state.loadedFeatures
+// (count > 0), triées par count décroissant. Pas de regroupement artificiel —
+// chaque catégorie du iconMap reste séparée (Stefan : « idée du rassemblement
+// pas totalement mauvaise mais à faire par l'admin, pas hardcoded »).
+function getAllCategoriesWithCount() {
+    const counts = new Map();
+    for (const f of state.loadedFeatures || []) {
+        const cat = f?.properties?.userData?.['Catégorie']
+                 || f?.properties?.['Catégorie']
+                 || null;
+        if (!cat) continue;
+        counts.set(cat, (counts.get(cat) || 0) + 1);
+    }
+    return Array.from(counts.entries())
+        .map(([cat, count]) => ({ cat, count }))
+        .sort((a, b) => b.count - a.count);
 }
 
-function countByCategory(label) {
-    const variants = SEARCH_CAT_VARIANTS[label] || [label.toLowerCase()];
+function getCategoryMatches(category) {
     return (state.loadedFeatures || []).filter(f => {
-        const cat = (f?.properties?.['Catégorie'] || '').toLowerCase();
-        return variants.includes(cat);
-    }).length;
-}
-
-function getCategoryMatches(label) {
-    const variants = SEARCH_CAT_VARIANTS[label] || [label.toLowerCase()];
-    return (state.loadedFeatures || []).filter(f => {
-        const cat = (f?.properties?.['Catégorie'] || '').toLowerCase();
-        return variants.includes(cat);
+        const cat = f?.properties?.userData?.['Catégorie']
+                 || f?.properties?.['Catégorie']
+                 || null;
+        return cat === category;
     });
 }
 
@@ -359,24 +349,23 @@ function highlightSearchTerm(name, term) {
 }
 
 function renderMobileSearchEmpty(container) {
-    const categories = [
-        { id: 'Mosquée',    label: 'Lieux de culte',  icon: 'moon-star',  tone: 'brand' },
-        { id: 'Curiosité',  label: 'Curiosités',      icon: 'binoculars', tone: 'amber' },
-        { id: 'Hôtel',      label: 'Hôtels',          icon: 'bed',        tone: 'muted' },
-        { id: 'Restaurant', label: 'Restos & cafés',  icon: 'utensils',   tone: 'amber' },
-    ];
+    // Toutes les catégories présentes (count > 0), triées par count décroissant.
+    // Pas de regroupement artificiel — chaque catégorie du iconMap (poi-icons.js)
+    // reste séparée. Le regroupement éventuel sera fait par l'admin (Stefan)
+    // via un futur système de groupes (cf. follow-ups post-chantier).
+    const categories = getAllCategoriesWithCount();
 
     let html = '<div class="search-empty-body"><div>';
     html += '<div class="search-section-title">Parcourir par catégorie</div>';
     html += '<div class="search-cat-grid">';
-    categories.forEach(c => {
-        const count = countByCategory(c.id);
-        if (count === 0) return;
+    categories.forEach(({ cat, count }) => {
+        // Icône MDI du iconMap (cohérence carte PC ↔ menu Recherche mobile).
+        const iconHtml = getIconHtml(cat);
         html += `
-            <button type="button" class="search-cat" data-cat="${escapeHtml(c.id)}">
-                <div class="search-cat-ico ${c.tone}"><i data-lucide="${c.icon}"></i></div>
+            <button type="button" class="search-cat" data-cat="${escapeHtml(cat)}">
+                <div class="search-cat-ico">${iconHtml}</div>
                 <div>
-                    <div class="search-cat-label">${escapeHtml(c.label)}</div>
+                    <div class="search-cat-label">${escapeHtml(cat)}</div>
                     <div class="search-cat-count">${count} lieu${count > 1 ? 'x' : ''}</div>
                 </div>
             </button>
@@ -429,11 +418,12 @@ function renderMobileSearchResults(container, matches, term) {
             zone = getZoneFromCoords(coords[1], coords[0]) || '';
         }
         const meta = [zone, cat].filter(Boolean).join(' · ');
-        const iconForCat = getMobileSearchCatIcon(cat);
+        // Icône MDI du iconMap (homogène avec la carte PC).
+        const iconHtml = getIconHtml(cat);
         const highlightedName = term ? highlightSearchTerm(name, term) : escapeHtml(name);
         html += `
             <button type="button" class="search-result" data-id="${poiId}">
-                <div class="search-result-ico"><i data-lucide="${iconForCat}"></i></div>
+                <div class="search-result-ico">${iconHtml}</div>
                 <div class="search-result-main">
                     <div class="search-result-name">${highlightedName}</div>
                     ${meta ? `<div class="search-result-meta">${escapeHtml(meta)}</div>` : ''}
