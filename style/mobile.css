@@ -310,12 +310,33 @@
 .filter-sheet-foot {
     padding: 10px 14px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
+    gap: 10px;
     background: var(--surface-muted);
     border-top: 1px solid var(--line);
     flex-shrink: 0;
 }
+
+/* Bouton primary « Voir X circuits » — ferme la sheet quand cliqué (les
+   filtres sont déjà appliqués en live, le bouton sert juste à confirmer/voir). */
+.filter-sheet-apply {
+    background: var(--brand);
+    color: #fff;
+    border: 0;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    line-height: 1.2;
+    box-shadow: 0 1px 3px rgba(2, 12, 27, 0.1);
+    transition: 0.15s;
+    font-variant-numeric: tabular-nums;
+}
+.filter-sheet-apply:hover { filter: brightness(1.05); }
+.filter-sheet-apply:active { transform: translateY(1px); box-shadow: none; }
 
 /* Badge sur le bouton filtres de la toolbar (.mc-icon-btn) */
 .mc-icon-btn { position: relative; }

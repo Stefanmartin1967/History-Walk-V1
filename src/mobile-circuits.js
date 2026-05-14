@@ -24,7 +24,7 @@ import { getProcessedCircuits } from './circuit-list-service.js';
 import { showToast } from './toast.js';
 import {
     getMobileSort, setMobileSort,
-    setCurrentView, setAllCircuitsOrdered,
+    setCurrentView, setAllCircuitsOrdered, getAllCircuitsOrdered,
     pushMobileLevel,
     setMobileHeaderSlot,
     clearMobileViewFooter,
@@ -168,6 +168,10 @@ export function renderMobileCircuitsList() {
     }
 
     setAllCircuitsOrdered(circuitsToDisplay); // Mémorise pour le swipe entre circuits
+
+    // Met à jour le compteur live du bouton « Voir X circuits » de la sheet
+    // si elle est ouverte (sinon no-op).
+    updateSheetApplyCount();
 
     // ─── Header slot : .m-top + .mc-search-row ────────────────────────────────
     // Bouton filtres affiche un badge n quand au moins un filtre est actif.
@@ -428,6 +432,9 @@ function openMobileFiltersSheet() {
                 <button class="filter-reset" id="filter-sheet-reset" type="button">
                     <i data-lucide="rotate-ccw"></i>Tout réinitialiser
                 </button>
+                <button class="filter-sheet-apply" id="filter-sheet-apply" type="button">
+                    Voir <span id="filter-sheet-apply-count">${getAllCircuitsOrdered().length}</span> circuit<span id="filter-sheet-apply-plural">${getAllCircuitsOrdered().length > 1 ? 's' : ''}</span>
+                </button>
             </div>
         </div>
     `;
@@ -444,6 +451,9 @@ function openMobileFiltersSheet() {
     overlay.querySelector('#filter-sheet-reset')?.addEventListener('click', () => {
         resetAllMobileFilters();
     });
+    // Bouton « Voir X circuits » → ferme la sheet (filtres déjà appliqués en
+    // temps réel pendant la sélection, donc rien d'autre à faire ici).
+    overlay.querySelector('#filter-sheet-apply')?.addEventListener('click', closeMobileFiltersSheet);
 
     // Esc ferme aussi
     document.addEventListener('keydown', onEscClose);
@@ -479,6 +489,19 @@ function updateSheetBadge() {
     } else {
         badge.hidden = true;
     }
+}
+
+// Met à jour le compteur live du bouton « Voir X circuits » dans le footer
+// de la sheet. À appeler après chaque modif de filtre (le count est lu depuis
+// getAllCircuitsOrdered qui a été mis à jour par renderMobileCircuitsList).
+function updateSheetApplyCount() {
+    if (!sheetEl) return;
+    const countEl = sheetEl.querySelector('#filter-sheet-apply-count');
+    const pluralEl = sheetEl.querySelector('#filter-sheet-apply-plural');
+    if (!countEl) return;
+    const count = getAllCircuitsOrdered().length;
+    countEl.textContent = String(count);
+    if (pluralEl) pluralEl.textContent = count > 1 ? 's' : '';
 }
 
 function renderFilterSheetBody() {
