@@ -318,6 +318,18 @@
     flex-shrink: 0;
 }
 
+/* « Tout réinitialiser » : renforcé uniquement dans le contexte sheet mobile
+   (sélecteur descendant). Sur PC (.filter-pop-foot), le bouton garde son style
+   discret car il est seul dans son footer (pas de primary à concurrencer).
+   Sur mobile, l'arrivée du primary « Voir X circuits » par PR #577 faisait
+   paraître le reset trop discret par contraste — on remonte sa visibilité
+   sans en faire un bouton plein (préserve la hiérarchie primary/secondary). */
+.filter-sheet-foot .filter-reset {
+    color: var(--ink);
+    font-size: 13.5px;
+    font-weight: 700;
+}
+
 /* Bouton primary « Voir X circuits » — ferme la sheet quand cliqué (les
    filtres sont déjà appliqués en live, le bouton sert juste à confirmer/voir). */
 .filter-sheet-apply {
