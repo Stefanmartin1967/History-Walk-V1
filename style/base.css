@@ -1413,7 +1413,15 @@ textarea.editable-input {
 #mobile-container {
     display: flex !important;
     flex-direction: column !important;
-    height: 100dvh;
+    /* `100svh` (small viewport height) au lieu de `100dvh` (dynamic) : garantit
+       que le viewport est TOUJOURS la plus petite hauteur possible, donc exclut
+       systématiquement la system bar Android et la barre URL browser. Sans ça,
+       au cold-start après un reload SW, Brave/Samsung renvoyait une hauteur
+       dynamique trop grande (incluant la system bar) → dock placé en bas du
+       viewport mais caché derrière la barre de navigation. Bug observé après
+       update PWA (cf. followup #3 + diag PR #571). Avec 100svh, le dock est
+       toujours dans la zone réellement visible, peu importe l'état du browser. */
+    height: 100svh;
     width: 100%;
     background-color: var(--surface-muted);
 }
