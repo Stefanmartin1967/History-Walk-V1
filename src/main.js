@@ -123,6 +123,32 @@ async function initializeApp() {
     // 2. Mode Mobile ou Desktop (UI SETUP ONLY)
     if (isMobileView()) {
         initMobileMode();
+
+        // ────────────────────────────────────────────────────────────
+        // DIAG TEMPORAIRE — à retirer après diagnostic du bug « dock
+        // absent après update PWA ». Affiche au boot mobile une bannière
+        // jaune avec l'état du dock + view-footer pour comprendre pourquoi
+        // le dock disparaît après cold-start post-update. Cf. followup #3
+        // post-chantier mobile (issue persistante malgré PR #569 v2).
+        // ────────────────────────────────────────────────────────────
+        setTimeout(() => {
+            const dock = document.getElementById('mobile-dock');
+            const footer = document.getElementById('mobile-view-footer');
+            const dockDisplay = dock ? getComputedStyle(dock).display : 'N/A';
+            const dockRect = dock?.getBoundingClientRect();
+            const footerEmpty = footer?.childElementCount === 0;
+            const footerSnip = (footer?.innerHTML || '').replace(/\s+/g, ' ').slice(0, 80);
+            const banner = document.createElement('div');
+            banner.id = 'hw-diag-banner';
+            banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#fef3c7;color:#1f2937;padding:8px 10px;font:11px/1.4 ui-monospace,monospace;border-bottom:2px solid #f59e0b;box-shadow:0 2px 8px rgba(0,0,0,.2)';
+            banner.innerHTML = `
+                <div><b>DIAG dock</b> exists=${!!dock} display=<b>${dockDisplay}</b> top=${dockRect ? Math.round(dockRect.top) : '-'} h=${dockRect ? Math.round(dockRect.height) : '-'}</div>
+                <div><b>DIAG footer</b> empty=${footerEmpty} childCount=${footer?.childElementCount ?? 'N/A'}</div>
+                <div style="font-size:10px;color:#6b7280">footer.innerHTML="${footerSnip.replace(/"/g, '&quot;')}"</div>
+                <button onclick="this.parentElement.remove()" style="position:absolute;top:4px;right:6px;background:transparent;border:0;font-size:16px;font-weight:bold;cursor:pointer;color:#92400e">×</button>
+            `;
+            document.body.appendChild(banner);
+        }, 1500);
     } else {
         // UI Setup only (Map init is deferred to loadAndInitializeMap)
         setupDesktopTools();
