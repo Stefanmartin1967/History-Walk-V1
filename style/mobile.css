@@ -30,8 +30,38 @@
     font-size: 14px;
     cursor: text;
 }
-.mc-search svg { width: 16px; height: 16px; flex-shrink: 0; }
-.mc-search-placeholder { color: var(--ink-soft); }
+.mc-search svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--ink-soft); }
+.mc-search input[type="search"] {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    outline: 0;
+    font: inherit;
+    color: var(--ink);
+    padding: 0;
+    /* Retire la croix native Chrome/Safari (on a notre propre bouton clear). */
+    -webkit-appearance: none;
+    appearance: none;
+}
+.mc-search input[type="search"]::-webkit-search-cancel-button { display: none; }
+.mc-search input[type="search"]::placeholder { color: var(--ink-soft); }
+.mc-search-clear {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    border-radius: 6px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+.mc-search-clear:hover { background: rgba(0, 0, 0, 0.05); color: var(--ink); }
+.mc-search-clear.is-hidden { display: none; }
+.mc-search-clear svg { width: 14px; height: 14px; }
 .mc-icon-btn {
     width: 40px;
     height: 40px;
