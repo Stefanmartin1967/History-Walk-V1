@@ -231,8 +231,24 @@ setupOfflineBanner();
 
 import { registerSW } from 'virtual:pwa-register';
 
+// Différenciation boot vs mid-session pour le flow update PWA (followup #3
+// post-chantier mobile). Si onNeedRefresh fire dans les 5s après le chargement,
+// c'est un cold start avec un SW déjà en waiting → on auto-applique silencieusement
+// (Stefan ouvre l'app, pas besoin de cliquer Recharger). Au-delà de 5s, c'est
+// une session active → on garde le prompt classique pour laisser le contrôle
+// à l'utilisateur (important pour les futurs users multi-sessions).
+const PWA_BOOT_GRACE_MS = 5000;
+const _pwaBootTime = Date.now();
+
 const updateSW = registerSW({
     onNeedRefresh() {
+        const elapsedSinceBoot = Date.now() - _pwaBootTime;
+        if (elapsedSinceBoot < PWA_BOOT_GRACE_MS) {
+            // Cold start avec SW en waiting → auto-apply silencieux.
+            updateSW(true);
+            return;
+        }
+        // Mid-session → prompt classique avec bouton Recharger.
         showToast(
             'Mise à jour disponible — rechargez pour l\'appliquer.',
             'info',
