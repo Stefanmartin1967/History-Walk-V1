@@ -49,7 +49,8 @@ vi.mock('../src/poi-icons.js', () => ({
 vi.mock('../src/utils.js', () => ({
     escapeHtml: vi.fn(s => String(s ?? '')),
     sanitizeHTML: vi.fn(s => String(s ?? '')),
-    isPointInPolygon: vi.fn(() => false)
+    isPointInPolygon: vi.fn(() => false),
+    getZoneFromCoords: vi.fn(() => null)
 }));
 
 vi.mock('../src/zones.js', () => ({
@@ -86,7 +87,12 @@ vi.mock('../src/mobile-state.js', () => ({
     animateContainer: vi.fn(),
     pushMobileLevel: vi.fn(),
     resetMobileSlots: vi.fn(),
-    setMobileHeaderSlot: vi.fn(),
+    // setMobileHeaderSlot doit vraiment mettre à jour le DOM dans les tests pour
+    // que renderMobileSearch puisse vérifier que #mobile-search-input est rendu.
+    setMobileHeaderSlot: vi.fn((html) => {
+        const slot = document.getElementById('mobile-header-slot');
+        if (slot) slot.innerHTML = html || '';
+    }),
     clearMobileHeaderSlot: vi.fn(),
     setMobileViewFooter: vi.fn(),
     clearMobileViewFooter: vi.fn()
@@ -119,10 +125,14 @@ import {
     renderMobileSearch
 } from '../src/mobile-nav.js';
 
-// Helper: build the DOM that mobile-nav.js expects
+// Helper: build the DOM that mobile-nav.js expects.
+// Refonte PR 5 : ajout #mobile-header-slot (renderMobileSearch met l'input
+// dans ce slot) et #mobile-view-footer (cleared par les renders).
 function setupMobileDOM() {
     document.body.innerHTML = `
+        <div id="mobile-header-slot"></div>
         <div id="mobile-main-container"></div>
+        <div id="mobile-view-footer"></div>
         <div id="mobile-dock"></div>
         <button class="mobile-nav-btn" data-view="circuits">Circuits</button>
         <button class="mobile-nav-btn" data-view="search">Search</button>
@@ -226,25 +236,31 @@ describe('switchMobileView — pushMobileLevel (Back Android pattern C7)', () =>
 
 // ─────────────────────────────────────────────────────────────────────────────
 describe('renderMobileSearch', () => {
-    it('rend la structure DOM (mobile-search-input + mobile-search-results)', () => {
+    it('rend la structure DOM (#mobile-search-input dans le header-slot + état vide dans main)', () => {
         renderMobileSearch();
+        // Refonte PR 5 : l'input vit dans le header-slot, l'état vide
+        // (catégories) ou résultats dans le main-container.
         expect(document.getElementById('mobile-search-input')).not.toBeNull();
-        expect(document.getElementById('mobile-search-results')).not.toBeNull();
+        const main = document.getElementById('mobile-main-container');
+        // L'état vide rend .search-empty-body (catégories).
+        expect(main.querySelector('.search-empty-body')).not.toBeNull();
     });
 
-    it('input < 2 caractères → résultats vidés (pas d\'appel à getSearchResults)', () => {
+    it('input < 2 caractères → main vidé (pas d\'appel à getSearchResults)', () => {
         renderMobileSearch();
         const input = document.getElementById('mobile-search-input');
-        const results = document.getElementById('mobile-search-results');
-        results.innerHTML = '<div>previous results</div>';
+        const main = document.getElementById('mobile-main-container');
+        // Le state.loadedFeatures est vide → search-empty-body sans catégories,
+        // mais le main n'est pas vide tant que le user tape pas. Quand il
+        // tape 1 char, on attend que le main devienne vide.
         input.value = 'x';
         input.dispatchEvent(new Event('input'));
-        expect(results.innerHTML).toBe('');
+        expect(main.innerHTML).toBe('');
         expect(getSearchResults).not.toHaveBeenCalled();
     });
 
     it('input ≥ 2 caractères → getSearchResults appelé + résultats rendus + click → openDetailsPanel', () => {
-        const fakeFeature = { type: 'Feature', properties: { HW_ID: 'p1', name: 'Foo' } };
+        const fakeFeature = { type: 'Feature', properties: { HW_ID: 'p1', name: 'Foo' }, geometry: { coordinates: [10, 33] } };
         state.loadedFeatures = [fakeFeature];
         getSearchResults.mockReturnValueOnce([fakeFeature]);
 
@@ -254,8 +270,9 @@ describe('renderMobileSearch', () => {
         input.dispatchEvent(new Event('input'));
 
         expect(getSearchResults).toHaveBeenCalledWith('foo');
-        const results = document.getElementById('mobile-search-results');
-        const item = results.querySelector('.result-item');
+        const main = document.getElementById('mobile-main-container');
+        // Refonte PR 5 : .result-item → .search-result.
+        const item = main.querySelector('.search-result');
         expect(item).not.toBeNull();
         expect(item.dataset.id).toBe('p1');
 

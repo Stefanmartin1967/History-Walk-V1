@@ -517,8 +517,194 @@
 .mobile-zone-btn-count { font-weight: bold; color: var(--ink-soft); }
 .mobile-zone-btn--active { border: 2px solid var(--brand); }
 
-/* Search result icon */
-.mobile-search-result-icon { color: var(--brand); display: flex; align-items: center; margin-right: 16px; }
+/* ============================================================
+   RECHERCHE MOBILE — refonte PR 5 chantier design
+   Pattern .search-* : header avec input + bouton clear, état vide
+   = catégories en grid 2 cols, état actif = résultats avec <mark>
+   highlight du match. Pas de "récents" (décision Stefan).
+   ============================================================ */
+.search-bar {
+    padding: 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--surface-muted);
+}
+.search-input {
+    height: 48px;
+    background: var(--surface-muted);
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+}
+.search-input svg {
+    width: 18px;
+    height: 18px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+.search-input input {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    outline: none;
+    font: inherit;
+    font-size: 15px;
+    color: var(--ink);
+}
+.search-input input::placeholder { color: var(--ink-soft); }
+.search-clear {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--line);
+    color: var(--surface);
+    border: 0;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.search-clear svg { width: 12px; height: 12px; color: var(--surface); }
+.search-clear[hidden] { display: none; }
+
+/* État vide : catégories en grid 2 colonnes */
+.search-empty-body {
+    padding: 18px 12px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.search-section-title {
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin: 0 0 8px;
+    padding: 0 4px;
+}
+.search-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+.search-cat {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+}
+.search-cat-ico {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.search-cat-ico svg { width: 16px; height: 16px; }
+.search-cat-ico.amber { background: var(--hw-amber-soft); color: var(--hw-amber); }
+.search-cat-ico.ok { background: var(--ok-soft); color: var(--ok-fg); }
+.search-cat-ico.muted { background: var(--surface-muted); color: var(--ink-soft); }
+.search-cat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+}
+.search-cat-count {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 1px;
+}
+
+/* État "aucun résultat" */
+.search-no-result {
+    text-align: center;
+    color: var(--ink-soft);
+    padding: 32px 16px;
+}
+.search-no-result svg { width: 32px; height: 32px; margin-bottom: 8px; }
+.search-no-result p { margin: 0; font-size: 14px; }
+
+/* État résultats */
+.ms-results {
+    padding: 8px 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.ms-results-count {
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    padding: 6px 4px 2px;
+}
+.search-result {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+}
+.search-result-ico {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.search-result-ico svg { width: 18px; height: 18px; }
+.search-result-main { flex: 1; min-width: 0; }
+.search-result-name {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+}
+.search-result-name mark {
+    background: color-mix(in oklab, var(--brand) 16%, transparent);
+    color: var(--brand-2, var(--brand));
+    padding: 0;
+}
+.search-result-meta {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+.search-result-chev {
+    color: var(--ink-soft);
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+}
+.search-result-chev svg { width: 18px; height: 18px; }
 
 /* ============================================================
    MENU MOBILE — sections groupées (refonte PR 4 chantier design)
