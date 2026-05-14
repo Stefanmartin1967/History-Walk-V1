@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.33'; // Refonte Mon Espace V2 — PR5 (fix trigger sync) : schedulePush() est désormais appelé après chaque modification de state.hiddenCircuitIds (cacher / réafficher / annuler). PR4 incluait le champ dans le payload Gist mais aucun trigger ne déclenchait le push si l'user ne touchait qu'à un circuit (sans modifier un POI). Sync Gist effectivement fonctionnelle pour les circuits cachés.
+export const APP_VERSION = '3.7.34'; // Fix CC admin diff engine — faux positif "TRACE GPS 0 pts → N pts" sur les circuits officiels que l'admin a ouverts dans la session. circuits/<map>.json publié sur GitHub ne contient PAS realTrack (les GPX sont des fichiers séparés chargés lazy via loadCircuitById). prepareDiffData ne diff désormais la trace QUE si remote.realTrack est défini. Bug pré-existant découvert pendant le chantier Mon Espace V2.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
