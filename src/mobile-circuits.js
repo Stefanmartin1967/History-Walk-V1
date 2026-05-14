@@ -124,11 +124,15 @@ export function renderMobileCircuitsList() {
         circuitsToDisplay = circuitsToDisplay.filter(c => c._isCompleted);
     }
 
-    // Recherche : matche nom de circuit OU nom d'un POI du circuit (réplique PC).
+    // Recherche : matche dans le circuit (nom, zone, POIs). Placeholder
+    // « Rechercher dans les circuits… » couvre les 3 cas de façon implicite.
+    // PC a un bug pré-existant (ne matche pas par zone) qu'on n'introduit pas
+    // côté mobile. Cf. PR ultérieure pour fix côté PC (ui-circuit-list.js).
     if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
         circuitsToDisplay = circuitsToDisplay.filter(c => {
             if ((c.name || '').toLowerCase().includes(q)) return true;
+            if ((c._zoneName || '').toLowerCase().includes(q)) return true;
             if (Array.isArray(c.poiIds)) {
                 return c.poiIds.some(id => {
                     const f = state.loadedFeatures.find(g => getPoiId(g) === id);
@@ -177,7 +181,7 @@ export function renderMobileCircuitsList() {
         <div class="mc-search-row">
             <label class="mc-search" role="search">
                 <i data-lucide="search"></i>
-                <input type="search" id="mobile-mc-search-input" placeholder="Rechercher un circuit ou un POI…" value="${escapeHtml(searchQuery)}" autocomplete="off">
+                <input type="search" id="mobile-mc-search-input" placeholder="Rechercher dans les circuits…" value="${escapeHtml(searchQuery)}" autocomplete="off">
                 <button type="button" class="mc-search-clear ${searchQuery ? '' : 'is-hidden'}" id="mobile-mc-search-clear" aria-label="Effacer la recherche">
                     <i data-lucide="x"></i>
                 </button>
