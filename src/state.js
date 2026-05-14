@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.23'; // PR A rework filtres mobile : recherche fonctionnelle dans Mes Circuits. Le placeholder visuel devient un vrai input qui filtre par nom de circuit OU nom de POI du circuit (réplique PC ui-circuit-list.js). Focus + caret préservés au rerender pour ne pas casser la frappe sur clavier mobile. Pas d'autofocus au mount (cf. PR #563).
+export const APP_VERSION = '3.7.24'; // PR A rework filtres mobile : recherche fonctionnelle dans Mes Circuits. Placeholder « Rechercher dans les circuits… » qui matche nom de circuit + zone + nom de POI (3 sources). Focus + caret préservés au rerender pour ne pas casser la frappe sur clavier mobile. Pas d'autofocus au mount (cf. PR #563). Le match par zone n'existe pas encore sur PC (bug pré-existant à fixer dans PR ultérieure).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
