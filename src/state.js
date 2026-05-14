@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.21'; // Mini-PR diagnostic temporaire — bannière jaune visible en haut au boot mobile affichant l'état du dock (#mobile-dock) + view-footer (#mobile-view-footer). À retirer après diagnostic. Objectif : identifier pourquoi le dock est absent après cold-start PWA post-update sans devoir utiliser DevTools sur Brave PWA.
+export const APP_VERSION = '3.7.22'; // Fix dock caché derrière system bar Android au cold-start PWA post-update. #mobile-container passe de height:100dvh à 100svh — garantit la plus petite hauteur de viewport, donc le dock est toujours dans la zone visible peu importe l'état dynamique du browser. Identifié via diag PR #571 (différence top=752 vs 696 = ~56px = hauteur system bar Samsung). Diag temporaire retiré dans la même PR.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
