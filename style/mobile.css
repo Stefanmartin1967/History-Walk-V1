@@ -183,36 +183,213 @@
 .mc-card[data-flag="verified"] .mc-flag { color: var(--ok); }
 .mc-card[data-flag="none"] .mc-flag { display: none; }
 
-/* Modale filtres unifiée (remplace l'ancienne toolbar 5-boutons) */
-.mobile-filters-menu {
+/* ============================================================
+   BOTTOM SHEET FILTRES MOBILE (PR 7 chantier design)
+   Réutilise les classes PC partagées : .filter-section / .lbl /
+   .fchk / .fseg / .fslider* (cf. panels.css). Spécifique mobile :
+   l'overlay + le shell (scrim, sheet, head, body, foot) + la grille
+   Tri 2x2 + la liste Zone scrollable.
+   ============================================================ */
+.filter-sheet-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 12, 27, 0);
+    z-index: 1100;
+    transition: background 0.22s ease;
+    display: flex;
+    align-items: flex-end;
+    pointer-events: none;
+}
+.filter-sheet-scrim.is-open {
+    background: rgba(2, 12, 27, 0.42);
+    pointer-events: auto;
+}
+.filter-sheet {
+    width: 100%;
+    max-height: 88vh;
+    background: var(--surface);
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    box-shadow: 0 -10px 32px rgba(2, 12, 27, 0.22);
+    transform: translateY(100%);
+    transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    max-height: 65vh;
-    overflow-y: auto;
+    overflow: hidden;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
 }
-.mobile-filters-section { display: flex; flex-direction: column; gap: 4px; }
-.mobile-filters-section-title {
-    margin: 0 0 4px;
-    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-    padding: 0 4px;
+.filter-sheet-scrim.is-open .filter-sheet {
+    transform: translateY(0);
 }
-.mobile-filters-section .mobile-list-item {
+.filter-sheet-handle {
+    width: 40px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--line);
+    margin: 8px auto 4px;
+    flex-shrink: 0;
+}
+.filter-sheet-head {
     display: flex;
     align-items: center;
     gap: 10px;
-    text-align: left;
+    padding: 6px 14px 10px;
+    border-bottom: 1px solid var(--surface-muted);
+    flex-shrink: 0;
 }
-.mobile-filters-section .mobile-list-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-.mobile-filters-item--active {
+.filter-sheet-head .ttl {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink);
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.filter-sheet-head .ttl svg { width: 15px; height: 15px; color: var(--ink-soft); }
+.filter-sheet-head .badge-n {
+    background: var(--brand);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+}
+.filter-sheet-head .x {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+.filter-sheet-head .x:hover { background: var(--surface-muted); color: var(--ink); }
+.filter-sheet-head .x svg { width: 16px; height: 16px; }
+
+.filter-sheet-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.filter-sheet-foot {
+    padding: 10px 14px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background: var(--surface-muted);
+    border-top: 1px solid var(--line);
+    flex-shrink: 0;
+}
+
+/* Badge sur le bouton filtres de la toolbar (.mc-icon-btn) */
+.mc-icon-btn { position: relative; }
+.mc-icon-btn .badge-n {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--brand);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+    box-shadow: 0 0 0 2px var(--surface);
+}
+
+/* Tri : grille 2x2 (4 options de tri sur mobile : Proximité / Vérifiés /
+   Court / Long — légèrement plus riche que PC qui n'a que 3 cases.
+   Followup mémorisé : ajouter Distance ↓ sur PC.) */
+.ms-sort-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.ms-sort-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.2;
+    transition: 0.15s;
+}
+.ms-sort-btn:hover { background: var(--surface-muted); }
+.ms-sort-btn.is-on {
     background: var(--brand-soft);
     border-color: var(--brand);
     color: var(--brand-2, var(--brand));
+}
+.ms-sort-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* Zone : liste verticale (zones de Djerba 8+ → scrollable via body) */
+.ms-zone-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.ms-zone-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.15s;
+}
+.ms-zone-item:hover { background: var(--surface-muted); }
+.ms-zone-item.is-on {
+    background: var(--brand-soft);
+    border-color: rgba(59, 130, 246, 0.25);
+    color: var(--ink);
+    font-weight: 600;
+}
+.ms-zone-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+.ms-zone-label svg { width: 14px; height: 14px; color: var(--ink-soft); flex-shrink: 0; }
+.ms-zone-count {
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+.ms-zone-item.is-on .ms-zone-count {
+    background: var(--brand);
+    color: #fff;
 }
 
 /* Icônes méta héritées (encore référencées par certains conteneurs ; le pattern
