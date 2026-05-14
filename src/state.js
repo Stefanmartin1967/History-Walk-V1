@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.16'; // Followup #1 post-chantier mobile : harmonisation hauteur hero Circuit mobile (.cc-hero) avec hero Lieu mobile (.poi-hero) — 188px → 200px (mini-PR finition).
+export const APP_VERSION = '3.7.17'; // Followup #5 post-chantier mobile : section admin du menu mobile réduite de 6 à 2 items (Déconnexion + Centre de Contrôle). Publier modifs / Data Manager / Scout / Token retirés car déjà accessibles via CC ou outils PC-only.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).

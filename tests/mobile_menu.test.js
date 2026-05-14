@@ -152,21 +152,20 @@ describe('renderMobileMenu — render structure', () => {
         renderMobileMenu();
         expect(document.getElementById('mob-action-admin-login')).toBeNull();
         expect(document.getElementById('mob-action-admin-control-center')).toBeNull();
-        expect(document.getElementById('mob-action-admin-quick-publish')).toBeNull();
-        expect(document.getElementById('mob-action-admin-datamanager')).toBeNull();
-        expect(document.getElementById('mob-action-admin-scout')).toBeNull();
-        expect(document.getElementById('mob-action-admin-config-token')).toBeNull();
     });
 
-    it('section admin présente si state.isAdmin', () => {
+    it('section admin présente si state.isAdmin — 2 items (Déconnexion + CC)', () => {
+        // Followup #5 post-chantier mobile : section admin réduite de 6 à 2 items.
+        // Publier modifs / Data Manager / Scout / Token sont retirés (CC = point
+        // d'entrée unique pour ces actions, ou outils PC-only).
         state.isAdmin = true;
         renderMobileMenu();
         expect(document.getElementById('mob-action-admin-login')).not.toBeNull();
         expect(document.getElementById('mob-action-admin-control-center')).not.toBeNull();
-        expect(document.getElementById('mob-action-admin-quick-publish')).not.toBeNull();
-        expect(document.getElementById('mob-action-admin-datamanager')).not.toBeNull();
-        expect(document.getElementById('mob-action-admin-scout')).not.toBeNull();
-        expect(document.getElementById('mob-action-admin-config-token')).not.toBeNull();
+        expect(document.getElementById('mob-action-admin-quick-publish')).toBeNull();
+        expect(document.getElementById('mob-action-admin-datamanager')).toBeNull();
+        expect(document.getElementById('mob-action-admin-scout')).toBeNull();
+        expect(document.getElementById('mob-action-admin-config-token')).toBeNull();
     });
 
     it('inclut APP_VERSION dans le footer', () => {
