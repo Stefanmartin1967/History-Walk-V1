@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.24'; // PR A rework filtres mobile : recherche fonctionnelle dans Mes Circuits. Placeholder « Rechercher dans les circuits… » qui matche nom de circuit + zone + nom de POI (3 sources). Focus + caret préservés au rerender pour ne pas casser la frappe sur clavier mobile. Pas d'autofocus au mount (cf. PR #563). Le match par zone n'existe pas encore sur PC (bug pré-existant à fixer dans PR ultérieure).
+export const APP_VERSION = '3.7.25'; // Fix bug pré-existant searchbar Mes Circuits PC : ne matchait pas par zone, juste par nom de circuit + nom de POI. Ajout d'une ligne dans ui-circuit-list.js pour matcher aussi c._zoneName. Aligne le comportement sur mobile (PR #575). Avant : taper « Arkou » → 1 circuit (par hasard, POI matchait). Après : 4 circuits (les 4 dans la zone Arkou).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).

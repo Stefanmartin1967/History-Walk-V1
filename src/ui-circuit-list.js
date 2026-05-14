@@ -528,11 +528,16 @@ export function renderExplorerList() {
         circuits = circuits.filter(c => c._isCompleted);
     }
 
-    // Recherche : nom de circuit OU nom d'un POI du circuit
+    // Recherche : nom de circuit OU zone OU nom d'un POI du circuit.
+    // Le match par zone a été aligné sur le comportement mobile (PR #575) —
+    // avant, taper « Arkou » ne retournait qu'un circuit (par hasard, un POI
+    // contenait « Arkou » dans son nom), au lieu des 4 circuits effectivement
+    // dans la zone Arkou.
     if (searchQuery.trim()) {
         const q = searchQuery.trim().toLowerCase();
         circuits = circuits.filter(c => {
             if ((c.name || '').toLowerCase().includes(q)) return true;
+            if ((c._zoneName || '').toLowerCase().includes(q)) return true;
             if (Array.isArray(c.poiIds)) {
                 return c.poiIds.some(id => {
                     const f = state.loadedFeatures.find(g => getPoiId(g) === id);
