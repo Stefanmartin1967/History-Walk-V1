@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.13'; // Recherche mobile : pas de focus auto sur l'input au mount (le clavier cachait la moitié des catégories). L'utilisateur clique dans le champ s'il veut taper.
+export const APP_VERSION = '3.7.15'; // PR 7 chantier mobile design — Filtres Mes Circuits : bottom sheet aligné PC (Type / Distance / Tri / Zone / Mon parcours) + variables module-locales (filterTypeOfficial/Verified/Resto, MinKm/MaxKm, Completion tri-state) + filtrage post-getProcessedCircuits + grille Tri 2x2 (Proximité / Vérifiés / Court / Long) + reset global. Mode instant : chaque clic applique, sheet reste ouverte jusqu'à fermeture explicite.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
