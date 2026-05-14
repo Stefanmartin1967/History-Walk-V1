@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.13'; // Recherche mobile : pas de focus auto sur l'input au mount (le clavier cachait la moitié des catégories). L'utilisateur clique dans le champ s'il veut taper.
+export const APP_VERSION = '3.7.14'; // Refonte Modale Nouveau Lieu (PR 6 chantier design — dernière du chantier) : preview GPS visible (pulse animé + coords en temps réel) avant la capture, boutons Annuler / Capturer style .hw-btn, acquisition GPS lancée en parallèle de l'ouverture (plus de toast intermédiaire).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).

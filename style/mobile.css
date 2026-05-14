@@ -518,6 +518,92 @@
 .mobile-zone-btn--active { border: 2px solid var(--brand); }
 
 /* ============================================================
+   MODALE NOUVEAU LIEU — refonte PR 6 chantier design
+   Pattern : preview GPS visible (pulse animé + coords en temps réel)
+   avant de confirmer la capture. .modal-gps card dans .hw-modal-body,
+   boutons .hw-btn (default / primary) dans .hw-modal-footer.
+   ============================================================ */
+.modal-gps {
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.modal-gps-pulse {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--ok-soft);
+    color: var(--ok);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    position: relative;
+}
+.modal-gps-pulse::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--ok);
+    opacity: 0.35;
+    animation: hwpulse 1.4s ease-out infinite;
+}
+@keyframes hwpulse {
+    0%   { transform: scale(0.8); opacity: 0.6; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
+.modal-gps-pulse svg { width: 18px; height: 18px; }
+.modal-gps-body { flex: 1; min-width: 0; }
+.modal-gps-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.modal-gps-coords {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    margin-top: 2px;
+}
+
+/* Boutons modale (générique pour modales mobile-first du chantier).
+   .hw-btn = bouton secondary (Annuler). .hw-btn.primary = action principale. */
+.hw-btn {
+    flex: 1;
+    height: 44px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.hw-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.hw-btn.primary {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
+}
+.hw-btn.primary:hover:not(:disabled) { background: var(--brand-2, var(--brand)); }
+.hw-btn svg { width: 16px; height: 16px; }
+
+/* ============================================================
    RECHERCHE MOBILE — refonte PR 5 chantier design
    Pattern .search-* : header avec input + bouton clear, état vide
    = catégories en grid 2 cols, état actif = résultats avec <mark>
