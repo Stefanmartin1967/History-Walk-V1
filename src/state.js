@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.15'; // PR 7 chantier mobile design — Filtres Mes Circuits : bottom sheet aligné PC (Type / Distance / Tri / Zone / Mon parcours) + variables module-locales (filterTypeOfficial/Verified/Resto, MinKm/MaxKm, Completion tri-state) + filtrage post-getProcessedCircuits + grille Tri 2x2 (Proximité / Vérifiés / Court / Long) + reset global. Mode instant : chaque clic applique, sheet reste ouverte jusqu'à fermeture explicite.
+export const APP_VERSION = '3.7.16'; // Followup #1 post-chantier mobile : harmonisation hauteur hero Circuit mobile (.cc-hero) avec hero Lieu mobile (.poi-hero) — 188px → 200px (mini-PR finition).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
