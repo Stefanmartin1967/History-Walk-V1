@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.19'; // Followup #3 v2 — fix dock absent post-update PWA. Ajout d'un callback onRegistered qui détecte un SW déjà en waiting à l'enregistrement → force updateSW(true) (skipWaiting + reload propre). Évite la transition CSS half-state qui masquait le dock à la 2ème ouverture après un merge. Le grace timer mid-session de v1 est conservé en garde-fou.
+export const APP_VERSION = '3.7.20'; // Mini-PR test du flow update PWA v2 (PR #569). Bump version uniquement pour déclencher un nouveau SW. Protocole : Stefan laisse l'app ouverte pendant le merge → toast Recharger attendu après quelques secondes (mid-session). Si Stefan ferme sans cliquer, à la réouverture v2 doit auto-apply via onRegistered.waiting → reload propre.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
