@@ -211,13 +211,16 @@ function renderFilterPanel() {
         <div class="filter-section">
             <div class="lbl">Tri</div>
             <div class="fseg" id="mc-fseg">
-                <button class="${currentSort === 'proximity_asc' ? 'is-on' : ''}" data-sort="proximity_asc">
+                <button class="${currentSort === 'proximity_asc' ? 'is-on' : ''}" data-sort="proximity_asc" title="Proximité depuis ton lieu de résidence">
                     <i data-lucide="home"></i>Proximité
                 </button>
-                <button class="${currentSort === 'dist_asc' ? 'is-on' : ''}" data-sort="dist_asc">
-                    <i data-lucide="ruler"></i>Distance
+                <button class="${currentSort === 'dist_asc' ? 'is-on' : ''}" data-sort="dist_asc" title="Du plus court au plus long">
+                    <i data-lucide="arrow-down-0-1"></i>Court
                 </button>
-                <button class="${currentSort === 'verified_first' ? 'is-on' : ''}" data-sort="verified_first">
+                <button class="${currentSort === 'dist_desc' ? 'is-on' : ''}" data-sort="dist_desc" title="Du plus long au plus court">
+                    <i data-lucide="arrow-up-1-0"></i>Long
+                </button>
+                <button class="${currentSort === 'verified_first' ? 'is-on' : ''}" data-sort="verified_first" title="Vérifiés d'abord">
                     <i data-lucide="shield-check"></i>Vérifiés
                 </button>
             </div>

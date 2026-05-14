@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.27'; // PR C rework filtres mobile : slider distance style Wikiloc (PC + mobile). Labels min/max statiques sous les handles, toujours visibles. Remplace les bubbles flottantes (qui n'apparaissaient qu'au drag) + l'échelle 0/10/20 + le label haut « X → Y km » redondant. Au départ : labels = bornes (0 km / 20 km) → amplitude max visible implicitement. + restyle « Tout réinitialiser » uniquement dans le contexte sheet mobile (sélecteur descendant) pour rebalancer face au primary « Voir X » de PR B.
+export const APP_VERSION = '3.7.28'; // Alignement filtre Tri Mes Circuits PC sur mobile : ajout du tri dist_desc (Long) en 4ème case du segmented. « Distance » renommé « Court » (= dist_asc) + nouveau « Long » (= dist_desc). Icônes ruler → arrow-down-0-1 / arrow-up-1-0 pour cohérence avec mobile. Termine le followup #7 du chantier mobile. PC n'avait pas la section Zone (refusée par Stefan car doublon avec filtre topbar) — seul Distance ↓ manquait.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
