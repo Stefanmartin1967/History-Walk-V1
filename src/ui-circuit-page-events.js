@@ -181,7 +181,10 @@ function updateMaskListingState() {
 
     const icon = btn.querySelector('i[data-lucide]');
     if (icon) {
-        icon.setAttribute('data-lucide', isHidden ? 'bookmark' : 'bookmark-x');
+        // PR4 (15/05/2026) : paire eye-off (cacher) / eye (réafficher) — plus
+        // sémantique que la paire bookmark-x / bookmark utilisée en PR3 qui
+        // évoquait un favori plutôt qu'une action d'affichage.
+        icon.setAttribute('data-lucide', isHidden ? 'eye' : 'eye-off');
         createIcons({ icons: appIcons, root: btn });
     }
 }

@@ -3,7 +3,7 @@
 // Chaque utilisateur stocke son propre Gist ID dans localStorage.
 // Le token PAT (scope "gist") est partagé avec github-sync.js.
 
-import { state, setTestedCircuit, setOfficialCircuitStatus, setHiddenPoiIds } from './state.js';
+import { state, setTestedCircuit, setOfficialCircuitStatus, setHiddenPoiIds, setHiddenCircuitIds } from './state.js';
 import { getStoredToken } from './github-sync.js';
 import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
@@ -66,6 +66,10 @@ export function buildPayload() {
         // Stratégie merge : UNION (cf. mergeRemoteIntoLocal).
         // Cf. mémoire project_admin_sync_history.md.
         hiddenPoiIds: state.hiddenPoiIds || [],
+        // Ajout 15/05/2026 (refonte Mon Espace V2 PR4) : sync user des circuits
+        // cachés via le bouton "Cacher ce circuit". Stratégie merge : UNION
+        // (cohérent avec hiddenPoiIds, validé Stefan).
+        hiddenCircuitIds: state.hiddenCircuitIds || [],
         lastSync: new Date().toISOString(),
         appVersion: '1.0'
     };
@@ -163,6 +167,18 @@ export function mergeRemoteIntoLocal(remote) {
         const union = Array.from(new Set([...localList, ...remote.hiddenPoiIds]));
         if (union.length !== localList.length) {
             setHiddenPoiIds(union);
+            hiddenChanged = true;
+        }
+    }
+
+    // hiddenCircuitIds : UNION (user peut cacher différents circuits sur PC
+    // vs mobile). Refonte Mon Espace V2 PR4 (15/05/2026) — même stratégie que
+    // hiddenPoiIds, validée par Stefan.
+    if (Array.isArray(remote.hiddenCircuitIds) && remote.hiddenCircuitIds.length > 0) {
+        const localList = Array.isArray(state.hiddenCircuitIds) ? state.hiddenCircuitIds : [];
+        const union = Array.from(new Set([...localList, ...remote.hiddenCircuitIds]));
+        if (union.length !== localList.length) {
+            setHiddenCircuitIds(union);
             hiddenChanged = true;
         }
     }

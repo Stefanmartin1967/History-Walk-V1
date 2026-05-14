@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.31'; // Refonte Mon Espace V2 — PR3 : bouton "Cacher ce circuit" devient un TOGGLE. Sur la fiche d'un circuit déjà caché, le bouton devient "Réafficher ce circuit" (icône bookmark-x → bookmark, classe is-hidden-circuit, toast court "Réaffiché"). Handler déplacé de ui-circuit-editor.js vers ui-circuit-page-events.js pour cohérence avec btn-mark-done (même pattern initXxx + updateXxxState + eventBus sync sur circuit:changed/list-updated).
+export const APP_VERSION = '3.7.32'; // Refonte Mon Espace V2 — PR4 (polish + sync) : 1) Icônes du toggle Cacher/Réafficher passent de bookmark-x/bookmark à eye-off/eye (paire sémantique universelle, plus claire qu'une métaphore de favori). 2) hiddenCircuitIds est désormais inclus dans le sync Gist (buildPayload + mergeRemoteIntoLocal stratégie UNION, cohérent avec hiddenPoiIds). Les circuits cachés sont préservés entre appareils.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
