@@ -183,7 +183,8 @@ export function renderMobileCircuitsList() {
     if (resetBtn) {
         resetBtn.addEventListener('click', () => {
             setFilterCompleted(false);
-            setMobileSort('date_desc');
+            // Default sort cohérent avec le bouton Réinitialiser de la modale Filtres.
+            setMobileSort(state.homeLocation ? 'proximity_asc' : 'dist_asc');
             renderMobileCircuitsList();
         });
     }
@@ -224,8 +225,10 @@ function renderMobileFiltersMenu() {
     sortSection.className = 'mobile-filters-section';
     sortSection.innerHTML = '<h4 class="mobile-filters-section-title">Tri</h4>';
     const currentSort = getMobileSort();
+    // « Plus récents » (date_desc) retiré du menu : option abandonnée côté PC,
+    // on aligne mobile. Le sort interne peut encore être à date_desc (legacy
+    // state persisté), le reset le bascule à proximity/dist selon homeLocation.
     const sortOptions = [
-        { id: 'date_desc',     label: 'Plus récents',           icon: 'arrow-down-narrow-wide' },
         { id: 'dist_asc',      label: 'Distance croissante',    icon: 'arrow-down-0-1' },
         { id: 'dist_desc',     label: 'Distance décroissante',  icon: 'arrow-up-1-0' },
         { id: 'proximity_asc', label: 'Proximité (résidence)',  icon: 'home', requiresHome: true },
@@ -309,7 +312,9 @@ function renderMobileFiltersMenu() {
     resetBtn.className = 'btn btn-ghost';
     resetBtn.innerHTML = '<i data-lucide="rotate-ccw"></i> Réinitialiser';
     resetBtn.onclick = () => {
-        setMobileSort('date_desc');
+        // Default : proximité si homeLocation défini, sinon distance croissante.
+        // (date_desc « Plus récents » a été retiré comme sur PC.)
+        setMobileSort(state.homeLocation ? 'proximity_asc' : 'dist_asc');
         setFilterCompleted(false);
         setActiveFilter('zone', null);
         closeModal();

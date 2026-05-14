@@ -6,7 +6,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { getIconForFeature } from './poi-icons.js';
+import { getIconForFeature, getIconHtml } from './poi-icons.js';
 import { escapeHtml, sanitizeHTML, isPointInPolygon, getZoneFromCoords } from './utils.js';
 import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
@@ -312,34 +312,6 @@ async function handleAddPoiClick() {
 // matches de getSearchResults). Clic sur une catégorie → résultats de la
 // catégorie cliquée. Pas de section « Récents » (décision Stefan).
 
-// Mapping catégorie POI → icône Lucide outline (style cohérent avec le reste
-// du menu mobile : chevron, search…). L'idéal serait d'utiliser les SVG MDI de
-// poi-icons.js (cohérence avec la carte PC), mais le style filled MDI dénote
-// dans le menu — on garde l'outline en attendant. Certaines icônes sont des
-// approximations (Salon de thé / Site religieux / Culture) à revoir.
-// Cf. project_post_chantier_mobile_followups.md.
-const SEARCH_CAT_ICON = {
-    'A définir':            'circle-help',
-    'Café':                 'coffee',
-    'Commerce':             'store',
-    'Culture et tradition': 'landmark',
-    'Curiosité':            'binoculars',
-    'Hôtel':                'bed',
-    'Mosquée':              'moon-star',
-    'Pâtisserie':           'cake',
-    'Photo':                'camera',
-    'Puits':                'droplets',
-    'Restaurant':           'utensils',
-    'Salon de thé':         'coffee',
-    'Site historique':      'landmark',
-    'Site religieux':       'church',
-    'Taxi':                 'car-taxi-front',
-};
-
-function getMobileSearchCatIcon(category) {
-    return SEARCH_CAT_ICON[category] || 'map-pin';
-}
-
 // Renvoie la liste de TOUTES les catégories présentes dans state.loadedFeatures
 // (count > 0), triées par count décroissant. Pas de regroupement artificiel —
 // chaque catégorie du iconMap reste séparée (Stefan : « idée du rassemblement
@@ -387,10 +359,11 @@ function renderMobileSearchEmpty(container) {
     html += '<div class="search-section-title">Parcourir par catégorie</div>';
     html += '<div class="search-cat-grid">';
     categories.forEach(({ cat, count }) => {
-        const icon = getMobileSearchCatIcon(cat);
+        // Icône MDI du iconMap (cohérence carte PC ↔ menu Recherche mobile).
+        const iconHtml = getIconHtml(cat);
         html += `
             <button type="button" class="search-cat" data-cat="${escapeHtml(cat)}">
-                <div class="search-cat-ico"><i data-lucide="${icon}"></i></div>
+                <div class="search-cat-ico">${iconHtml}</div>
                 <div>
                     <div class="search-cat-label">${escapeHtml(cat)}</div>
                     <div class="search-cat-count">${count} lieu${count > 1 ? 'x' : ''}</div>
@@ -445,11 +418,12 @@ function renderMobileSearchResults(container, matches, term) {
             zone = getZoneFromCoords(coords[1], coords[0]) || '';
         }
         const meta = [zone, cat].filter(Boolean).join(' · ');
-        const iconForCat = getMobileSearchCatIcon(cat);
+        // Icône MDI du iconMap (homogène avec la carte PC).
+        const iconHtml = getIconHtml(cat);
         const highlightedName = term ? highlightSearchTerm(name, term) : escapeHtml(name);
         html += `
             <button type="button" class="search-result" data-id="${poiId}">
-                <div class="search-result-ico"><i data-lucide="${iconForCat}"></i></div>
+                <div class="search-result-ico">${iconHtml}</div>
                 <div class="search-result-main">
                     <div class="search-result-name">${highlightedName}</div>
                     ${meta ? `<div class="search-result-meta">${escapeHtml(meta)}</div>` : ''}
