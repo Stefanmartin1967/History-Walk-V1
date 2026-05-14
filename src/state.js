@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.25'; // Fix bug pré-existant searchbar Mes Circuits PC : ne matchait pas par zone, juste par nom de circuit + nom de POI. Ajout d'une ligne dans ui-circuit-list.js pour matcher aussi c._zoneName. Aligne le comportement sur mobile (PR #575). Avant : taper « Arkou » → 1 circuit (par hasard, POI matchait). Après : 4 circuits (les 4 dans la zone Arkou).
+export const APP_VERSION = '3.7.26'; // PR B rework filtres mobile : bouton primary « Voir X circuit(s) » dans le footer de la sheet, à côté de « Tout réinitialiser ». Compteur live (s'actualise à chaque modif de filtre via updateSheetApplyCount appelé en fin de renderMobileCircuitsList). Clic ferme la sheet (filtres déjà appliqués en live). Permet de combiner explicitement plusieurs filtres avant de voir.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
