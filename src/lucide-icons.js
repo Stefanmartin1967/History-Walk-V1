@@ -45,8 +45,8 @@ import {
     Award, Trophy, Star, StarOff, Rocket, Sparkles, Zap, Crown,
     Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,
 
-    // Catégories POI (map.js iconMap)
-    CircleHelp, Hotel, CarTaxiFront,
+    // Catégories POI (map.js iconMap + getStepCategory + recherche)
+    CircleHelp, Hotel, CarTaxiFront, MoonStar, Bed, Binoculars, Lightbulb,
 
     // UI & layout
     Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
@@ -94,7 +94,7 @@ export const appIcons = {
     Award, Trophy, Star, StarOff, Rocket, Sparkles, Zap, Crown,
     Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,
 
-    CircleHelp, Hotel, CarTaxiFront,
+    CircleHelp, Hotel, CarTaxiFront, MoonStar, Bed, Binoculars, Lightbulb,
 
     Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,

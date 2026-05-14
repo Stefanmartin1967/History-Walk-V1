@@ -7,7 +7,7 @@ import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPoiName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getIconForFeature } from './poi-icons.js';
-import { escapeHtml, sanitizeHTML, isPointInPolygon } from './utils.js';
+import { escapeHtml, sanitizeHTML, isPointInPolygon, getZoneFromCoords } from './utils.js';
 import { zonesData } from './zones.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
@@ -22,6 +22,7 @@ import {
     animateContainer,
     pushMobileLevel,
     resetMobileSlots,
+    setMobileHeaderSlot,
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
@@ -303,61 +304,218 @@ async function handleAddPoiClick() {
     );
 }
 
-// ─── Vue Recherche ────────────────────────────────────────────────────────────
+// ─── Vue Recherche (refonte PR 5 chantier design) ────────────────────────────
+// Header dans le slot (.m-top + .search-bar). Body alterne entre 2 états :
+//   - vide  : .search-empty-body avec catégories en grid 2 colonnes
+//   - actif : .search-results avec highlight <mark> du terme tapé
+// Sur input vide → empty state. Sur input non vide → results state (avec
+// matches de getSearchResults). Clic sur une catégorie → résultats de la
+// catégorie cliquée. Pas de section « Récents » (décision Stefan).
+
+const SEARCH_CAT_VARIANTS = {
+    'Mosquée':    ['mosquée', 'mosquee', 'synagogue', 'église', 'eglise'],
+    'Curiosité':  ['curiosité', 'curiosite', 'site historique', 'panorama', 'point de vue'],
+    'Hôtel':      ['hôtel', 'hotel'],
+    'Restaurant': ['restaurant', 'café', 'cafe', 'pâtisserie', 'salon de thé'],
+};
+
+function getMobileSearchCatIcon(cat) {
+    const lower = (cat || '').toLowerCase();
+    if (lower === 'mosquée' || lower === 'mosquee') return 'moon-star';
+    if (lower === 'synagogue' || lower === 'église' || lower === 'eglise') return 'landmark';
+    if (lower === 'restaurant') return 'utensils';
+    if (lower === 'café' || lower === 'cafe') return 'coffee';
+    if (lower === 'curiosité' || lower === 'curiosite') return 'binoculars';
+    if (lower === 'hôtel' || lower === 'hotel') return 'bed';
+    if (lower === 'phare') return 'lightbulb';
+    if (lower === 'panorama' || lower === 'point de vue') return 'mountain';
+    if (lower === 'site historique' || lower === 'place historique') return 'landmark';
+    return 'map-pin';
+}
+
+function countByCategory(label) {
+    const variants = SEARCH_CAT_VARIANTS[label] || [label.toLowerCase()];
+    return (state.loadedFeatures || []).filter(f => {
+        const cat = (f?.properties?.['Catégorie'] || '').toLowerCase();
+        return variants.includes(cat);
+    }).length;
+}
+
+function getCategoryMatches(label) {
+    const variants = SEARCH_CAT_VARIANTS[label] || [label.toLowerCase()];
+    return (state.loadedFeatures || []).filter(f => {
+        const cat = (f?.properties?.['Catégorie'] || '').toLowerCase();
+        return variants.includes(cat);
+    });
+}
+
+function highlightSearchTerm(name, term) {
+    if (!term || term.length < 2) return escapeHtml(name);
+    const lowerName = name.toLowerCase();
+    const lowerTerm = term.toLowerCase();
+    const idx = lowerName.indexOf(lowerTerm);
+    if (idx < 0) return escapeHtml(name);
+    return `${escapeHtml(name.slice(0, idx))}<mark>${escapeHtml(name.slice(idx, idx + term.length))}</mark>${escapeHtml(name.slice(idx + term.length))}`;
+}
+
+function renderMobileSearchEmpty(container) {
+    const categories = [
+        { id: 'Mosquée',    label: 'Lieux de culte',  icon: 'moon-star',  tone: 'brand' },
+        { id: 'Curiosité',  label: 'Curiosités',      icon: 'binoculars', tone: 'amber' },
+        { id: 'Hôtel',      label: 'Hôtels',          icon: 'bed',        tone: 'muted' },
+        { id: 'Restaurant', label: 'Restos & cafés',  icon: 'utensils',   tone: 'amber' },
+    ];
+
+    let html = '<div class="search-empty-body"><div>';
+    html += '<div class="search-section-title">Parcourir par catégorie</div>';
+    html += '<div class="search-cat-grid">';
+    categories.forEach(c => {
+        const count = countByCategory(c.id);
+        if (count === 0) return;
+        html += `
+            <button type="button" class="search-cat" data-cat="${escapeHtml(c.id)}">
+                <div class="search-cat-ico ${c.tone}"><i data-lucide="${c.icon}"></i></div>
+                <div>
+                    <div class="search-cat-label">${escapeHtml(c.label)}</div>
+                    <div class="search-cat-count">${count} lieu${count > 1 ? 'x' : ''}</div>
+                </div>
+            </button>
+        `;
+    });
+    html += '</div></div></div>';
+    container.innerHTML = html;
+    createIcons({ icons: appIcons, root: container });
+
+    container.querySelectorAll('.search-cat').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const cat = btn.dataset.cat;
+            const matches = getCategoryMatches(cat);
+            // Reflète la sélection dans le champ pour cohérence visuelle + clear.
+            const input = document.getElementById('mobile-search-input');
+            const clearBtn = document.getElementById('mobile-search-clear');
+            if (input) input.value = cat;
+            if (clearBtn) clearBtn.hidden = false;
+            // Pas de highlight pour les recherches par catégorie (le terme n'est
+            // pas une sous-chaîne du nom du POI dans le cas général).
+            renderMobileSearchResults(container, matches, null);
+        });
+    });
+}
+
+function renderMobileSearchResults(container, matches, term) {
+    if (!matches || matches.length === 0) {
+        container.innerHTML = `
+            <div class="search-empty-body">
+                <div class="search-no-result">
+                    <i data-lucide="search-x"></i>
+                    <p>Aucun résultat${term ? ` pour « ${escapeHtml(term)} »` : ''}</p>
+                </div>
+            </div>
+        `;
+        // search-x peut ne pas être dans appIcons — fallback en text si manquant
+        createIcons({ icons: appIcons, root: container });
+        return;
+    }
+
+    let html = `<div class="ms-results">`;
+    html += `<div class="search-results-count">${matches.length} résultat${matches.length > 1 ? 's' : ''}</div>`;
+    matches.forEach(f => {
+        const poiId = getPoiId(f);
+        const name = getPoiName(f);
+        const cat = f?.properties?.['Catégorie'] || '';
+        let zone = '';
+        const coords = f?.geometry?.coordinates;
+        if (coords && coords.length >= 2) {
+            zone = getZoneFromCoords(coords[1], coords[0]) || '';
+        }
+        const meta = [zone, cat].filter(Boolean).join(' · ');
+        const iconForCat = getMobileSearchCatIcon(cat);
+        const highlightedName = term ? highlightSearchTerm(name, term) : escapeHtml(name);
+        html += `
+            <button type="button" class="search-result" data-id="${poiId}">
+                <div class="search-result-ico"><i data-lucide="${iconForCat}"></i></div>
+                <div class="search-result-main">
+                    <div class="search-result-name">${highlightedName}</div>
+                    ${meta ? `<div class="search-result-meta">${escapeHtml(meta)}</div>` : ''}
+                </div>
+                <span class="search-result-chev"><i data-lucide="chevron-right"></i></span>
+            </button>
+        `;
+    });
+    html += `</div>`;
+    container.innerHTML = sanitizeHTML(html);
+    createIcons({ icons: appIcons, root: container });
+
+    container.querySelectorAll('.search-result').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const feature = state.loadedFeatures.find(f => getPoiId(f) === btn.dataset.id);
+            const index = state.loadedFeatures.indexOf(feature);
+            if (index > -1) openDetailsPanel(index);
+        });
+    });
+}
 
 export function renderMobileSearch() {
     const container = document.getElementById('mobile-main-container');
+    if (!container) return;
     container.style.display = '';
     container.style.flexDirection = '';
     container.style.overflow = '';
 
-    container.innerHTML = `
-        <div class="mobile-view-header mobile-header-harmonized">
-            <h1>Rechercher</h1>
+    // Vue Recherche : pas de footer custom → clear pour restaurer le dock.
+    const viewFooter = document.getElementById('mobile-view-footer');
+    if (viewFooter) viewFooter.innerHTML = '';
+
+    const headerHtml = `
+        <div class="m-top">
+            <div class="m-top-trail"></div>
+            <div class="m-top-title">Rechercher</div>
+            <div class="m-top-trail"></div>
         </div>
-        <div class="mobile-search mobile-search-container mobile-standard-padding">
-            <div class="mobile-search-wrapper">
-                <i data-lucide="search" class="search-icon mobile-search-icon"></i>
-                <input type="text" id="mobile-search-input" placeholder="Nom du lieu..."
-                    class="mobile-search-input">
+        <div class="search-bar">
+            <div class="search-input">
+                <i data-lucide="search"></i>
+                <input type="text" id="mobile-search-input" placeholder="Nom du lieu, circuit, zone…" autocomplete="off">
+                <button type="button" class="search-clear" id="mobile-search-clear" aria-label="Effacer la recherche" hidden>
+                    <i data-lucide="x"></i>
+                </button>
             </div>
-            <div id="mobile-search-results" class="mobile-list mobile-search-results"></div>
         </div>
     `;
+    setMobileHeaderSlot(headerHtml);
+    const headerSlot = document.getElementById('mobile-header-slot');
+    if (headerSlot) createIcons({ icons: appIcons, root: headerSlot });
+
+    // Empty state initial (catégories)
+    renderMobileSearchEmpty(container);
 
     const input = document.getElementById('mobile-search-input');
-    const resultsContainer = document.getElementById('mobile-search-results');
+    const clearBtn = document.getElementById('mobile-search-clear');
 
     input.addEventListener('input', (e) => {
         const term = e.target.value;
-        if (!term || term.length < 2) {
-            resultsContainer.innerHTML = '';
+        const hasTerm = term.length > 0;
+        clearBtn.hidden = !hasTerm;
+        if (!hasTerm) {
+            renderMobileSearchEmpty(container);
             return;
         }
-
+        // Sous 2 caractères : on n'invoque pas la recherche (bruit) mais on
+        // affiche un état neutre (les catégories disparaissent pour signaler
+        // que l'utilisateur est en train de taper).
+        if (term.length < 2) {
+            container.innerHTML = '';
+            return;
+        }
         const matches = getSearchResults(term);
-        let html = '';
-        matches.forEach(f => {
-            const iconHtml = getIconForFeature(f);
-            html += `
-                <button class="mobile-list-item result-item" data-id="${getPoiId(f)}">
-                    <div class="mobile-search-result-icon">
-                        ${iconHtml}
-                    </div>
-                    <span>${escapeHtml(getPoiName(f))}</span>
-                </button>
-            `;
-        });
-        resultsContainer.innerHTML = sanitizeHTML(html);
-        createIcons({ icons: appIcons, root: resultsContainer });
+        renderMobileSearchResults(container, matches, term);
+    });
 
-        resultsContainer.querySelectorAll('.result-item').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const feature = state.loadedFeatures.find(f => getPoiId(f) === btn.dataset.id);
-                const index = state.loadedFeatures.indexOf(feature);
-                openDetailsPanel(index);
-            });
-        });
+    clearBtn.addEventListener('click', () => {
+        input.value = '';
+        clearBtn.hidden = true;
+        renderMobileSearchEmpty(container);
+        input.focus();
     });
 
     input.focus();
