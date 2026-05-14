@@ -516,6 +516,72 @@ describe('Admin Diff Engine', () => {
             expect(traceChange.old).toBe('10 pts');
             expect(traceChange.new).toBe('20 pts');
         });
+
+        // Bug pré-existant fixé 15/05/2026 : circuits/<map>.json publié sur
+        // GitHub ne contient pas realTrack (chargé lazy via GPX séparé côté
+        // admin). Avant le fix, le diff comparait local.realTrack (rempli après
+        // ouverture de la fiche) à remote.realTrack=undefined (=0 pts) et
+        // générait "0 pts → N pts" comme fausse modification.
+        it("n'émet pas de diff Trace GPS si remote.realTrack est undefined (cas djerba.json publié)", async () => {
+            const makeTrack = (n) => Array.from({ length: n }, (_, i) => [10 + i * 0.01, 11 + i * 0.01]);
+            state.myCircuits = [{
+                id: 'c1', name: 'Circuit',
+                realTrack: makeTrack(343), // chargé localement après ouverture admin
+                poiIds: ['p1']
+            }];
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({
+                    ok: true,
+                    json: async () => ([{
+                        id: 'c1', name: 'Circuit',
+                        // pas de realTrack — comportement du JSON publié réel
+                        poiIds: ['p1']
+                    }])
+                });
+            });
+            const draft = { pendingPois: {}, pendingCircuits: {} };
+
+            const r = await prepareDiffData(draft);
+
+            // Aucun diff Trace GPS, et donc aucun circuit modifié remonté
+            // (puisque les autres champs sont identiques : name, poiIds).
+            const entry = r.circuits.find(c => c.id === 'c1');
+            expect(entry).toBeUndefined();
+        });
+
+        it("garde le diff si remote.realTrack est présent (cas suppression admin réelle)", async () => {
+            // Scenario : remote.realTrack = [...10 pts] est dans le JSON publié
+            // (cas théorique futur ou autre destination). Local a 20 pts.
+            // → diff doit être détecté normalement.
+            const makeTrack = (n) => Array.from({ length: n }, (_, i) => [10 + i * 0.01, 11 + i * 0.01]);
+            state.myCircuits = [{
+                id: 'c1', name: 'Circuit',
+                realTrack: makeTrack(20),
+                poiIds: ['p1']
+            }];
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({
+                    ok: true,
+                    json: async () => ([{
+                        id: 'c1', name: 'Circuit',
+                        realTrack: makeTrack(10),
+                        poiIds: ['p1']
+                    }])
+                });
+            });
+            const draft = { pendingPois: {}, pendingCircuits: {} };
+
+            const r = await prepareDiffData(draft);
+
+            const traceChange = r.circuits[0].changes.find(c => c.key === 'Trace GPS');
+            expect(traceChange).toBeDefined();
+            expect(traceChange.old).toBe('10 pts');
+            expect(traceChange.new).toBe('20 pts');
+        });
     });
 
     // ========================================================================

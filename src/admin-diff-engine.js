@@ -314,16 +314,24 @@ export async function prepareDiffData(adminDraft) {
                 });
             }
 
-            // Comparaison de la trace (Longueur approximative pour détecter un changement)
-            const localLen = local.realTrack ? local.realTrack.length : 0;
-            const remoteLen = remote.realTrack ? remote.realTrack.length : 0;
-            // On tolère une petite différence (compression ou arrondi), mais si écart > 5 points c'est une modif
-            if (Math.abs(localLen - remoteLen) > 5) {
-                changes.push({
-                    key: 'Trace GPS',
-                    old: `${remoteLen} pts`,
-                    new: `${localLen} pts`
-                });
+            // Comparaison de la trace : on ne diff que si remote a publié sa trace.
+            // Le fichier circuits/<map>.json publié sur GitHub ne contient AUCUN
+            // realTrack (les GPX sont des fichiers séparés, chargés lazy côté admin
+            // via loadCircuitById). Sans ce garde, on aurait un faux positif
+            // "0 pts → N pts" sur TOUS les circuits que l'admin a ouverts dans la
+            // session : leur realTrack est rempli en local, alors que remote reste
+            // undefined. Bug pré-existant découvert 15/05/2026.
+            if (remote.realTrack !== undefined) {
+                const localLen = local.realTrack.length; // garanti par le filtre l.279
+                const remoteLen = remote.realTrack.length;
+                // On tolère une petite différence (compression ou arrondi), mais si écart > 5 points c'est une modif
+                if (Math.abs(localLen - remoteLen) > 5) {
+                    changes.push({
+                        key: 'Trace GPS',
+                        old: `${remoteLen} pts`,
+                        new: `${localLen} pts`
+                    });
+                }
             }
 
             if (changes.length > 0) {
