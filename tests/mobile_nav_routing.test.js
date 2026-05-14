@@ -43,7 +43,8 @@ vi.mock('../src/lucide-icons.js', () => ({
 }));
 
 vi.mock('../src/poi-icons.js', () => ({
-    getIconForFeature: vi.fn(() => '<svg class="poi-icon"></svg>')
+    getIconForFeature: vi.fn(() => '<svg class="poi-icon"></svg>'),
+    getIconHtml: vi.fn(() => '<svg class="poi-icon-mdi"></svg>')
 }));
 
 vi.mock('../src/utils.js', () => ({
