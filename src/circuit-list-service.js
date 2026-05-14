@@ -13,23 +13,38 @@ import L from 'leaflet';
  *                            Si homeLocation non défini, fallback silencieux en 'date_desc'.
  * @param {boolean} filterTodo - If true, only show uncompleted circuits
  * @param {string|null} filterZone - If provided, only show circuits in this zone
+ * @param {string|null} filterPoiId - If provided, only show circuits containing this POI
+ * @param {string} visibility - 'visible' (défaut, exclut hiddenCircuitIds) | 'hidden' (seulement
+ *                              les cachés) | 'all' (tout, ignore la blacklist). Refonte V2 PR2.
  * @returns {Array} List of enriched circuit objects
  */
-export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false, filterZone = null, filterPoiId = null) {
+export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false, filterZone = null, filterPoiId = null, visibility = 'visible') {
     // 1. Data Prep : Fusion des circuits officiels et utilisateur (Sans doublons)
     // Filtre Mon Espace V2 (refonte 14/05/2026) : blacklist `hiddenCircuitIds`
-    // applique aux deux types (officiels ET perso). Vide = tout visible.
+    // applique aux deux types (officiels ET perso).
+    //   - 'visible' (défaut)  : on exclut les cachés
+    //   - 'hidden'            : on garde uniquement les cachés (mode revue)
+    //   - 'all'               : on ignore la blacklist (tout afficher)
     const hidden = state.hiddenCircuitIds || [];
     const isHidden = (c) => hidden.includes(String(c.id));
-    const officialCircuits = (state.officialCircuits || []).filter(c => !isHidden(c));
+    let passesVisibility;
+    if (visibility === 'all') {
+        passesVisibility = () => true;
+    } else if (visibility === 'hidden') {
+        passesVisibility = isHidden;
+    } else {
+        passesVisibility = (c) => !isHidden(c);
+    }
+
+    const officialCircuits = (state.officialCircuits || []).filter(passesVisibility);
     const localCircuits = (state.myCircuits || []).filter(c => {
         if (c.isDeleted) return false;
 
         // FILTRE DE SÉCURITÉ : On cache les "Fantômes" (Officiels en double ou Vides)
         if (c.isOfficial) return false; // Un local ne devrait jamais être 'official' (doublon DB)
 
-        // Caché par l'utilisateur (blacklist Mon Espace V2)
-        if (isHidden(c)) return false;
+        // Filtre visibilité (blacklist Mon Espace V2)
+        if (!passesVisibility(c)) return false;
 
         // Vérification si une version officielle existe déjà
         const existsInOfficial = officialCircuits.some(off =>
