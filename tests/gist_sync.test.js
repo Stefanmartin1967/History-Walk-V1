@@ -9,7 +9,9 @@ vi.mock('../src/state.js', () => {
         userData: {},
         loadedFeatures: [],
         officialCircuitsStatus: {},
-        testedCircuits: {}
+        testedCircuits: {},
+        hiddenPoiIds: [],
+        hiddenCircuitIds: []
     };
     return {
         state,
@@ -20,7 +22,9 @@ vi.mock('../src/state.js', () => {
         setOfficialCircuitStatus: vi.fn((cId, val) => {
             if (val) state.officialCircuitsStatus[cId] = true;
             else delete state.officialCircuitsStatus[cId];
-        })
+        }),
+        setHiddenPoiIds: vi.fn((ids) => { state.hiddenPoiIds = Array.isArray(ids) ? ids : []; }),
+        setHiddenCircuitIds: vi.fn((ids) => { state.hiddenCircuitIds = Array.isArray(ids) ? ids : []; })
     };
 });
 
@@ -56,6 +60,8 @@ function resetState() {
     state.loadedFeatures = [];
     state.officialCircuitsStatus = {};
     state.testedCircuits = {};
+    state.hiddenPoiIds = [];
+    state.hiddenCircuitIds = [];
 }
 
 beforeEach(() => {
@@ -125,6 +131,19 @@ describe('buildPayload', () => {
         expect(payload.circuitsStatus).toEqual({});
         expect(payload.testedCircuits).toEqual({});
     });
+
+    // PR4 refonte Mon Espace V2 — sync hiddenCircuitIds
+    it('inclut hiddenCircuitIds dans le payload (refonte V2 PR4)', () => {
+        state.hiddenCircuitIds = ['c1', 'c2'];
+        const payload = buildPayload();
+        expect(payload.hiddenCircuitIds).toEqual(['c1', 'c2']);
+    });
+
+    it('hiddenCircuitIds défaut [] si state vide', () => {
+        state.hiddenCircuitIds = null;
+        const payload = buildPayload();
+        expect(payload.hiddenCircuitIds).toEqual([]);
+    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -135,6 +154,54 @@ describe('mergeRemoteIntoLocal — guards', () => {
 
     it('remote sans userData → { updates: [] }', () => {
         expect(mergeRemoteIntoLocal({ mapId: 'djerba' })).toEqual({ updates: [] });
+    });
+});
+
+// PR4 refonte Mon Espace V2 — merge hiddenCircuitIds (UNION)
+describe('mergeRemoteIntoLocal — hiddenCircuitIds UNION', () => {
+    it('remote ajoute des cachés au local → union', () => {
+        state.hiddenCircuitIds = ['c1'];
+        state.userData = {};
+        const remote = { userData: {}, hiddenCircuitIds: ['c2', 'c3'] };
+        const { hiddenChanged } = mergeRemoteIntoLocal(remote);
+        expect(hiddenChanged).toBe(true);
+        expect([...state.hiddenCircuitIds].sort()).toEqual(['c1', 'c2', 'c3']);
+    });
+
+    it('remote sous-ensemble du local → pas de changement', () => {
+        state.hiddenCircuitIds = ['c1', 'c2'];
+        state.userData = {};
+        const remote = { userData: {}, hiddenCircuitIds: ['c1'] };
+        const { hiddenChanged } = mergeRemoteIntoLocal(remote);
+        expect(hiddenChanged).toBe(false);
+        expect([...state.hiddenCircuitIds].sort()).toEqual(['c1', 'c2']);
+    });
+
+    it('remote vide → pas de changement', () => {
+        state.hiddenCircuitIds = ['c1'];
+        state.userData = {};
+        const remote = { userData: {}, hiddenCircuitIds: [] };
+        const { hiddenChanged } = mergeRemoteIntoLocal(remote);
+        expect(hiddenChanged).toBe(false);
+        expect(state.hiddenCircuitIds).toEqual(['c1']);
+    });
+
+    it('remote absent du champ → pas de crash, pas de changement', () => {
+        state.hiddenCircuitIds = ['c1'];
+        state.userData = {};
+        const remote = { userData: {} }; // sans hiddenCircuitIds
+        const { hiddenChanged } = mergeRemoteIntoLocal(remote);
+        expect(hiddenChanged).toBe(false);
+        expect(state.hiddenCircuitIds).toEqual(['c1']);
+    });
+
+    it('local vide + remote présent → union = remote', () => {
+        state.hiddenCircuitIds = [];
+        state.userData = {};
+        const remote = { userData: {}, hiddenCircuitIds: ['c1', 'c2'] };
+        const { hiddenChanged } = mergeRemoteIntoLocal(remote);
+        expect(hiddenChanged).toBe(true);
+        expect([...state.hiddenCircuitIds].sort()).toEqual(['c1', 'c2']);
     });
 });
 
