@@ -18,8 +18,9 @@ import { saveCircuitDraft, isCircuitTested } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { saveAppState } from './database.js';
-import { applyFilters } from './data.js';
+import { applyFilters, getPoiId } from './data.js';
 import { schedulePush } from './gist-sync.js';
+import { generateAndDownloadGPX } from './gpx.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
@@ -33,6 +34,7 @@ export function initCircuitPageEvents() {
     initTraceToggle();
     initMarkDone();
     initMaskListing();
+    initDownloadGpx();
     // initModifyCircuit() : déjà branché par ui-circuit-editor.js via convertToDraft()
     initTransportAccordion();
     initTitleEdit();
@@ -191,6 +193,55 @@ function updateMaskListingState() {
         icon.setAttribute('data-lucide', isHidden ? 'eye' : 'eye-off');
         createIcons({ icons: appIcons, root: btn });
     }
+}
+
+/* ============================================================
+   3ter. TÉLÉCHARGER GPX (consultation, A3 — 15/05/2026)
+   Câble btn-download-gpx précédemment orphelin. Réutilise
+   generateAndDownloadGPX(gpx.js) qui gère :
+   - Le cas avec realTrack chargé (officiel après loadCircuitById, ou perso)
+   - Le fallback road-snapping si realTrack absent (rare en consultation
+     car la fiche a chargé la trace via loadCircuitById)
+   ============================================================ */
+
+function initDownloadGpx() {
+    const btn = document.getElementById('btn-download-gpx');
+    if (!btn) return;
+
+    btn.addEventListener('click', async () => {
+        if (!state.activeCircuitId) return;
+        const id = String(state.activeCircuitId);
+
+        const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
+        const circuit = allCircuits.find(c => String(c.id) === id);
+        if (!circuit) {
+            showToast('Circuit introuvable.', 'error');
+            return;
+        }
+
+        // Reconstruit l'array de features POIs (même ordre que circuit.poiIds)
+        const features = (circuit.poiIds || [])
+            .map(pid => state.loadedFeatures.find(f => getPoiId(f) === pid))
+            .filter(Boolean);
+
+        if (features.length === 0) {
+            showToast('Aucun POI trouvé pour ce circuit.', 'error');
+            return;
+        }
+
+        try {
+            await generateAndDownloadGPX(
+                features,
+                circuit.id,
+                circuit.name || 'Circuit',
+                circuit.description || '',
+                circuit.realTrack
+            );
+        } catch (err) {
+            console.error('[circuit-page-events] generateAndDownloadGPX failed', err);
+            showToast('Erreur lors du téléchargement du GPX.', 'error');
+        }
+    });
 }
 
 /* ============================================================
