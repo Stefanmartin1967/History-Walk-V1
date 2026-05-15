@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import { applyFilters } from './data.js';
 import { clearCircuit } from './circuit.js';
-import { toggleSelectionMode } from './ui-circuit-editor.js';
+import { toggleCircuitCreationMode } from './ui-circuit-editor.js';
 import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
 import { state } from './state.js';
@@ -373,7 +373,7 @@ export function setupDesktopTools() {
 // ou via welcome-actions au choix d'usage "Créer mon circuit".
 function enterCircuitCreationMode() {
     clearCircuit(false);
-    toggleSelectionMode(true);
+    toggleCircuitCreationMode(true);
     applyFilters();
 }
 
@@ -386,7 +386,7 @@ function enterCircuitCreationMode() {
 // vu en consultation : loadCircuitById met isSelectionModeActive=true comme
 // drapeau « panneau circuit ouvert » détourné). enterCircuitCreationMode est
 // désormais idempotent : clearCircuit(false) reset le brouillon courant puis
-// toggleSelectionMode(true) (re)pose le mode — re-cliquer (+) en mode déjà
+// toggleCircuitCreationMode(true) (re)pose le mode — re-cliquer (+) en mode déjà
 // actif redémarre simplement une création vierge. Le polymorphisme du drapeau
 // sera nettoyé dans une PR refactor dédiée.
 eventBus.on('circuit:create-new', () => {

@@ -5,7 +5,7 @@ import { restoreCircuit, saveAppState } from './database.js';
 import { escapeXml } from './utils.js';
 import { eventBus } from './events.js';
 import { clearCircuit, navigatePoiDetails, loadCircuitById } from './circuit.js';
-import { toggleSelectionMode } from './ui-circuit-editor.js';
+import { toggleCircuitCreationMode } from './ui-circuit-editor.js';
 import { map, clearMarkerHighlights, startMarkerDrag } from './map.js';
 import { isMobileView } from './mobile-state.js';
 import { updatePoiPosition, renderMobilePoiList } from './mobile-poi.js';
@@ -207,7 +207,7 @@ export function initializeDomReferences() {
     });
 
     if (DOM.closeCircuitPanelBtn) {
-        DOM.closeCircuitPanelBtn.addEventListener('click', () => toggleSelectionMode(false));
+        DOM.closeCircuitPanelBtn.addEventListener('click', () => toggleCircuitCreationMode(false));
     }
 
     // Initialisation des sous-modules UI

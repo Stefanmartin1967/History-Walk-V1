@@ -18,12 +18,12 @@ vi.mock('../src/state.js', () => {
         currentCircuitIndex: null,
         customDraftName: null,
         isAdmin: false,
-        isSelectionModeActive: false
+        isCircuitCreationMode: false
     };
     return {
         state,
         MAX_CIRCUIT_POINTS: 15,
-        setSelectionMode: vi.fn(),
+        setCircuitCreationMode: vi.fn(),
         addPoiToCurrentCircuit: vi.fn(f => { state.currentCircuit.push(f); }),
         resetCurrentCircuit: vi.fn(() => { state.currentCircuit = []; }),
         addMyCircuit: vi.fn(),
@@ -132,7 +132,7 @@ function resetState() {
     state.currentCircuitIndex = null;
     state.customDraftName = null;
     state.isAdmin = false;
-    state.isSelectionModeActive = false;
+    state.isCircuitCreationMode = false;
     DOM.circuitDescription = null;
     DOM.circuitTitleText = null;
 }

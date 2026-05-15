@@ -8,7 +8,7 @@ const { sharedState, getPoiIdImpl } = vi.hoisted(() => ({
         loadedFeatures: [],
         hiddenPoiIds: [],
         activeFilters: { vus: 'all', planifies: 'all', verified: 'all', zone: null, categories: [], incontournablesOnly: false, photo: 'all', description: 'all' },
-        isSelectionModeActive: false,
+        isCircuitCreationMode: false,
         selectionModeFilters: { hideVisited: false, hidePlanned: false },
         activeCircuitId: null,
         currentCircuit: null
@@ -67,7 +67,7 @@ vi.mock('../src/data.js', () => ({
         }
         if (s.activeFilters.verified === 'hide' && props.verified) return false;
         if (s.activeFilters.verified === 'only' && !props.verified) return false;
-        if (s.isSelectionModeActive) {
+        if (s.isCircuitCreationMode) {
             if (s.selectionModeFilters?.hideVisited && props.vu) return false;
             if (s.selectionModeFilters?.hidePlanned && (props.planifieCounter || 0) > 0) return false;
         } else {
@@ -105,7 +105,7 @@ describe('getZonesData', () => {
         state.loadedFeatures = [];
         state.hiddenPoiIds = [];
         state.activeFilters = { vus: 'all', planifies: 'all', verified: 'all', zone: null, categories: [] };
-        state.isSelectionModeActive = false;
+        state.isCircuitCreationMode = false;
         state.selectionModeFilters = { hideVisited: false, hidePlanned: false };
         state.activeCircuitId = null;
         state.currentCircuit = null;

@@ -233,12 +233,14 @@ export function handleMarkerClick(feature) {
     clearMarkerHighlights();
 
     // On ajoute au circuit UNIQUEMENT si :
-    //  - Mode sélection actif ET
+    //  - Mode création actif ET
     //  - On est réellement en train d'éditer (brouillon OU admin en mode édition).
-    // Sinon (cas typique : circuit chargé en consultation, isSelectionModeActive=true
-    // posé par loadCircuitById pour l'affichage du panel), on ouvre la fiche du POI.
+    // Refactor PR2 (15/05/2026) : drapeau renommé en isCircuitCreationMode. La
+    // nuance `inEditMode` reste utile pour distinguer création vierge / édition
+    // admin d'un officiel — `convertToDraft` ne met pas (encore) le flag de
+    // création quand l'admin clique « Modifier ».
     const inEditMode = !state.activeCircuitId || state.editingMode;
-    if (state.isSelectionModeActive && inEditMode) {
+    if (state.isCircuitCreationMode && inEditMode) {
         // --- MODE SELECTION (ON) ---
         // On délègue toute la logique (ajout, bouclage, limitation) à addPoiToCircuit
         addPoiToCircuit(feature);

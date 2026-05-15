@@ -13,7 +13,7 @@ vi.mock('../src/state.js', () => {
         currentCircuit: [],
         activeCircuitId: null,
         isAdmin: false,
-        isSelectionModeActive: false,
+        isCircuitCreationMode: false,
         activeFilters: {
             zone: null,
             categories: [],
@@ -120,7 +120,7 @@ function resetState() {
     state.currentCircuit = [];
     state.activeCircuitId = null;
     state.isAdmin = false;
-    state.isSelectionModeActive = false;
+    state.isCircuitCreationMode = false;
     state.activeFilters = {
         zone: null,
         categories: [],
@@ -263,7 +263,7 @@ describe('getFilteredFeatures', () => {
             poi('p1', { userData: { vu: true } }),
             poi('p2', { userData: { vu: false } })
         ];
-        state.isSelectionModeActive = true;
+        state.isCircuitCreationMode = true;
         state.activeFilters.vus = 'hide';
         const r = getFilteredFeatures();
         expect(r.map(f => f.properties.HW_ID)).toEqual(['p2']);
@@ -338,9 +338,9 @@ describe('passesUserFilters', () => {
     // de computePlanifieCounter directement (cf. data_module.test.js plus haut).
 
     it('mode sélection : aucune branche dédiée — activeFilters.vus pilote', () => {
-        // PR #398 : la branche state.isSelectionModeActive a été retirée de
+        // PR #398 : la branche state.isCircuitCreationMode a été retirée de
         // passesUserFilters. activeFilters.vus est la source de vérité unique.
-        state.isSelectionModeActive = true;
+        state.isCircuitCreationMode = true;
         state.activeFilters.vus = 'hide';
         expect(passesUserFilters(poi('p1', { userData: { vu: true } }))).toBe(false);
         // Et inversement : si activeFilters.vus='all', aucune exclusion

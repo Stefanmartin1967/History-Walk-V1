@@ -124,7 +124,7 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
     if (points.length === 0) {
         if (isCreateMode) {
             // Empty state V2 : icône route + invitation à cliquer un POI sur la carte.
-            // En mode création, isSelectionModeActive est ON donc le clic AJOUTE
+            // En mode création, isCircuitCreationMode est ON donc le clic AJOUTE
             // directement le POI au circuit (cf. map.js:handleMarkerClick).
             DOM.circuitStepsList.innerHTML = sanitizeHTML(`
                 <div class="timeline-empty">

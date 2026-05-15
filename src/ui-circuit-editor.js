@@ -12,7 +12,7 @@ import { eventBus } from './events.js';
 import { escapeHtml } from './utils.js';
 
 import {
-    setSelectionMode,
+    setCircuitCreationMode,
     MAX_CIRCUIT_POINTS
 } from './state.js';
 
@@ -29,16 +29,19 @@ import {
 import { getPoiId } from './data.js';
 
 // --- LE BOUTON QUI APPELLE LE MAJORDOME ET GÈRE L'AFFICHAGE ---
-export function toggleSelectionMode(forceValue) {
+// Refactor PR2 (15/05/2026) : renommé depuis toggleSelectionMode. Sémantique
+// stricte : active/désactive le mode CRÉATION de circuit (pas un mode
+// « sélection » générique).
+export function toggleCircuitCreationMode(forceValue) {
     // 1. Le Majordome gère la donnée (L'État)
     if (typeof forceValue === 'boolean') {
-        setSelectionMode(forceValue);
+        setCircuitCreationMode(forceValue);
     } else {
-        setSelectionMode(!state.isSelectionModeActive);
+        setCircuitCreationMode(!state.isCircuitCreationMode);
     }
 
     // 2. Gestion de l'Interface (Panneaux et Lignes)
-    if (state.isSelectionModeActive) {
+    if (state.isCircuitCreationMode) {
         switchSidebarTab('circuit');
         renderCircuitPanel();
     } else {
@@ -153,8 +156,11 @@ export function setupCircuitEventListeners() {
 
     // 0bis. Écoute de l'événement métier → UI (casse le cycle
     // circuit.js → ui-circuit-editor.js qui existait auparavant).
+    // Note PR2 (15/05/2026) : le nom de l'event `circuit:toggle-selection-mode`
+    // est historique. Le mode qu'il pilote est désormais strictement le mode
+    // CRÉATION de circuit (cf. toggleCircuitCreationMode).
     eventBus.on('circuit:toggle-selection-mode', ({ force } = {}) => {
-        toggleSelectionMode(force);
+        toggleCircuitCreationMode(force);
     });
 
     // 0. Bouton PARTAGER
