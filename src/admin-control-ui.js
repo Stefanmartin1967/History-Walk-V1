@@ -593,7 +593,7 @@ export function renderTab(tab, diffData, callbacks) {
                     <p class="cc-empty-sub">Aucune modification locale à publier sur ${mapLabel}. Continue sur le terrain — les nouvelles modifications apparaîtront ici.</p>
                     <div class="cc-empty-actions">
                         <button class="cc-btn-ghost" id="btn-cc-upload-circuit-empty" type="button">
-                            <i data-lucide="upload-cloud"></i> Importer un circuit
+                            <i data-lucide="upload-cloud"></i> Publier un circuit (fichier)
                         </button>
                     </div>
                 </div>
@@ -673,11 +673,11 @@ export function renderTab(tab, diffData, callbacks) {
         // — Outils (cards, secondaires) —
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Importer un circuit GPX ou JSON">
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
                 <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
                 <div class="cc-card-text">
-                    <div class="cc-card-title">Importer un circuit</div>
-                    <div class="cc-card-sub">Depuis un fichier GPX ou JSON</div>
+                    <div class="cc-card-title">Publier un circuit (fichier)</div>
+                    <div class="cc-card-sub">Depuis un fichier GPX</div>
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
@@ -1106,13 +1106,13 @@ function renderUploadCircuitPanel(diffData, callbacks) {
             <button class="cc-back-btn" id="btn-upload-back">
                 <i data-lucide="arrow-left"></i> Dashboard
             </button>
-            <span class="cc-subpanel-title">Ajouter un circuit</span>
+            <span class="cc-subpanel-title">Publier un circuit (fichier)</span>
         </div>
 
         <div class="cc-card cc-card--padded cc-card--block">
             <div class="cc-upload-intro">
                 <i data-lucide="upload-cloud" class="icon-amber cc-upload-icon"></i>
-                <p>Envoyez un fichier de circuit directement sur GitHub.<br>
+                <p>Publiez un fichier GPX directement sur GitHub.<br>
                 <small class="cc-upload-intro-note">Le serveur mettra à jour l'index automatiquement.</small></p>
             </div>
 
@@ -1120,14 +1120,14 @@ function renderUploadCircuitPanel(diffData, callbacks) {
             <input type="text" id="cc-circuit-name" class="settings-input" placeholder="Ex : Circuit du Patrimoine">
 
             <label class="cc-upload-field-label cc-upload-field-label--spaced">
-                Fichier <span class="cc-format-badge">GPX</span> <span class="cc-format-badge">JSON</span>
+                Fichier <span class="cc-format-badge">GPX</span>
             </label>
             <div class="cc-file-drop" id="cc-file-drop">
                 <i data-lucide="file-plus"></i>
                 <span>Cliquer pour choisir un fichier</span>
-                <small>GPX ou JSON uniquement</small>
+                <small>GPX uniquement</small>
             </div>
-            <input type="file" id="cc-file-input" accept=".json,.gpx" class="is-hidden">
+            <input type="file" id="cc-file-input" accept=".gpx" class="is-hidden">
             <div id="cc-file-pill" class="cc-file-pill is-hidden"></div>
 
             <div id="cc-upload-status" class="cc-upload-status is-hidden"></div>

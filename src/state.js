@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.41'; // Cleanup : suppression du bouton legacy "Upload Circuit" (menu admin God Mode) + fonction showGitHubUploadModal (~145 lignes) + tests dédiés (admin_upload_security.test.js). Doublon legacy de "Importer un circuit" (CC admin > Outils + empty state) qui offre la même fonctionnalité avec une UI moderne intégrée. La modale avait été restaurée quand le CC admin ne fonctionnait pas — plus de raison.
+export const APP_VERSION = '3.7.42'; // CC admin : renommage "Importer un circuit" → "Publier un circuit (fichier)" (sémantique honnête — c'est un push vers GitHub, pas un import). Suppression du `.json` du file picker `accept` (uniquement `.gpx` désormais) : aucun code de l'app ne lisait un format JSON de circuit, et un fichier .json uploadé pouvait écraser le JSON des métadonnées officielles (sécurité). Sub-panel renommé en cohérence. Sous-titre adapté.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
