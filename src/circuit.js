@@ -735,6 +735,14 @@ export async function loadCircuitById(id) {
 
     // On force un dernier rafraîchissement des lignes pour être sûr
     notifyCircuitChanged();
+
+    // Fix A7 (15/05/2026) : refresh des boutons d'action de la fiche circuit
+    // (Marqué fait, Cacher/Réafficher) quand l'user bascule entre 2 circuits.
+    // Sans cet emit, updateMarkDoneState / updateMaskListingState ne sont jamais
+    // appelés au switch — les boutons gardaient l'état du circuit précédent.
+    // Bug pré-existant découvert pendant le chantier Mon Espace V2 (audit
+    // Niveau 2 sur circuit:list-updated, 15/05/2026).
+    eventBus.emit('circuit:list-updated');
 }
 
 export async function loadCircuitFromIds(inputString, importedName = null) {
