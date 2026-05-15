@@ -3115,43 +3115,9 @@
 }
 .timeline-empty .activate-cta svg { width: 14px; height: 14px; }
 
-/* ----------- 9. STICKY CTA (consultation mobile uniquement) ----------- */
-.circuit-sticky {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95) 30%);
-    display: none;
-    pointer-events: none;
-    z-index: 5;
-}
-.circuit-sticky .cta-start { pointer-events: auto; }
-/* Affichage mobile uniquement, en consultation */
-@media (max-width: 767px) {
-    #circuit-panel[data-mode="consult"] .circuit-sticky { display: block; }
-    #circuit-panel[data-mode="consult"] .cp-scroll { padding-bottom: 80px; }
-}
-.cta-start {
-    width: 100%;
-    padding: 14px 18px;
-    background: linear-gradient(135deg, var(--brand), var(--brand-2));
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: -0.005em;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 10px 24px -8px rgba(59, 130, 246, 0.55), 0 2px 6px rgba(59, 130, 246, 0.25);
-    font-family: inherit;
-}
-.cta-start svg { width: 18px; height: 18px; }
+/* (Section 9 "STICKY CTA mobile" retirée 15/05/2026 : le bouton "Démarrer le
+   circuit" était orphelin depuis la refonte design — feature "visite guidée
+   pas-à-pas" jamais implémentée. Suppression validée par Stefan, A4.) */
 
 /* L'attribut HTML `hidden` est overridé par display:flex/inline-flex.
    On force le respect de hidden dans le scope du panel Circuit V2. */

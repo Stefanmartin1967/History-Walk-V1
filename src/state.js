@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.35'; // Câble btn-download-gpx (orphelin depuis la refonte design). Le bouton "Télécharger GPX" sur la fiche d'un circuit en consultation déclenche désormais le téléchargement du fichier .gpx (génération via generateAndDownloadGPX de gpx.js, qui gère officiels + perso, road-snapping en fallback). Handler initDownloadGpx ajouté dans ui-circuit-page-events.js (cohérent avec initMarkDone, initMaskListing).
+export const APP_VERSION = '3.7.36'; // Cleanup A4 : suppression du bouton "Démarrer le circuit" (btn-start-circuit) et de son conteneur .circuit-sticky (HTML + CSS). Feature "visite guidée pas-à-pas" jamais implémentée — bouton orphelin depuis la refonte design. Retrait validé par Stefan (pas de GPS suivi du chemin, pas d'usage). ~35 lignes nettoyées au total.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
