@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.38'; // Fix A7 : refresh des boutons "Marqué fait" et "Cacher/Réafficher" quand l'user bascule entre 2 circuits. Bug pré-existant — loadCircuitById n'émettait pas circuit:list-updated, donc les boutons gardaient l'état du circuit précédent. 1 ligne ajoutée à la fin de loadCircuitById (circuit.js:739). Complète A6 qui avait identifié le trou.
+export const APP_VERSION = '3.7.39'; // Fix bouton (+) "Nouveau circuit" de la sidebar Mes Circuits qui devenait inerte après une création/consultation laissée en l'état. Deux fixes complémentaires : 1) clearCircuit CAS 2 (brouillon) émet désormais circuit:toggle-selection-mode {force:false} pour sortir proprement du mode création quand on clique sur la gomme. 2) Listener circuit:create-new (desktopMode.js) ne guard plus sur isSelectionModeActive — enterCircuitCreationMode est idempotent (reset + repose le mode). Fix symptomatique ; un refactor sémantique du drapeau polymorphe `isSelectionModeActive` suivra en PR dédiée.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).

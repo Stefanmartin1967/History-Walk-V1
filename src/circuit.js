@@ -533,6 +533,13 @@ export async function clearCircuit(withConfirmation = true) {
         }
         resetCurrentCircuit();
         setActiveCircuitId(null);
+        // Fix PR1 (15/05/2026) : on sort explicitement du mode création quand
+        // on vide un brouillon. Sans ça, state.isSelectionModeActive restait à
+        // true et le bouton (+) de la sidebar « Mes Circuits » devenait inerte
+        // (cf. guard desktopMode.js). Cohérent avec la sémantique « gomme =
+        // abandon de la création ». Le polymorphisme du drapeau sera nettoyé
+        // dans une PR refactor dédiée.
+        eventBus.emit('circuit:toggle-selection-mode', { force: false });
     }
 
     // NETTOYAGE COMMUN (IMPORTANT pour éviter les fantômes)
