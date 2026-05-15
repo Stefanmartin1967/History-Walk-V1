@@ -301,29 +301,10 @@ function setupAdminListeners() {
         btnControl.parentNode.replaceChild(newControlBtn, btnControl);
         newControlBtn.addEventListener('click', openControlCenter);
 
-        // --- RESTAURATION : Bouton Upload Circuit (Pour envoi GPX) ---
-        let btnUpload = document.getElementById('btn-admin-github-upload');
-        if (!btnUpload) {
-            btnUpload = document.createElement('button');
-            btnUpload.id = 'btn-admin-github-upload';
-            btnUpload.className = 'tools-menu-item';
-            btnUpload.innerHTML = `<i data-lucide="upload-cloud"></i> Upload Circuit`;
-
-            // SECURITY CHECK: Verify parent before insert
-            if (btnControl && btnControl.parentNode === menuContent) {
-                menuContent.insertBefore(btnUpload, btnControl);
-            } else {
-                menuContent.appendChild(btnUpload);
-            }
-            createIcons({ icons: appIcons, root: btnUpload });
-        }
-
-        const newUploadBtn = btnUpload.cloneNode(true);
-        btnUpload.parentNode.replaceChild(newUploadBtn, btnUpload);
-        newUploadBtn.addEventListener('click', showGitHubUploadModal);
-
-        // Nettoyage des anciens boutons s'ils existent (Migration)
-        ['btn-admin-config-github', 'btn-admin-publish-map'].forEach(id => {
+        // Nettoyage des anciens boutons s'ils existent (Migration). Inclut
+        // `btn-admin-github-upload` retiré 15/05/2026 (doublon legacy de
+        // "Importer un circuit" du CC admin > Outils, validé Stefan).
+        ['btn-admin-config-github', 'btn-admin-publish-map', 'btn-admin-github-upload'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.remove();
         });
@@ -460,148 +441,8 @@ function showRankTable() {
 
 // --- GITHUB UPLOAD UI ---
 
-export function showGitHubUploadModal() {
-    // 1. Récupération des éléments de la modale globale
-    const overlay = document.getElementById('custom-modal-overlay');
-    const title = document.getElementById('custom-modal-title');
-    const message = document.getElementById('custom-modal-message');
-    const actions = document.getElementById('custom-modal-actions');
-
-    if (!overlay || !title || !message || !actions) {
-        console.error("Modal elements not found");
-        return;
-    }
-
-    // 2. Configuration du contenu
-    title.textContent = "Mise en ligne GitHub";
-    message.innerHTML = `
-        <div class="admin-form-body">
-            <p>Cette fonction permet d'ajouter un circuit officiel directement sur GitHub.
-                Cela déclenchera automatiquement la mise à jour du site.</p>
-
-            <label class="admin-form-label">Fichier Circuit (.json / .gpx)</label>
-            <input type="file" id="gh-file-input" accept=".json,.gpx" class="admin-form-input">
-
-            <div id="gh-status" class="admin-form-status admin-form-status--info"></div>
-        </div>
-    `;
-
-    // 3. Configuration des boutons
-    actions.innerHTML = ''; // Reset
-
-    // Bouton Annuler
-    const btnCancel = document.createElement('button');
-    btnCancel.className = 'btn btn-ghost';
-    btnCancel.textContent = "Annuler";
-    btnCancel.onclick = () => {
-        overlay.classList.remove('active');
-    };
-
-    // Bouton Envoyer
-    const btnSend = document.createElement('button');
-    btnSend.className = 'btn btn-primary';
-    btnSend.textContent = "Envoyer sur GitHub";
-    btnSend.onclick = async () => {
-        const fileInput = message.querySelector('#gh-file-input');
-        const statusDiv = message.querySelector('#gh-status');
-
-        const token = getStoredToken();
-        const file = fileInput?.files[0];
-
-        if (!token) {
-            statusDiv.textContent = "Token manquant — configurez-le dans Centre de Contrôle → Config.";
-            statusDiv.style.color = "red";
-            return;
-        }
-        if (!file) {
-            statusDiv.textContent = "Erreur: Aucun fichier sélectionné.";
-            statusDiv.style.color = "red";
-            return;
-        }
-
-        // --- SECURITY CHECK ---
-        const allowedExtensions = ['.gpx', '.json'];
-        const fileNameLower = file.name.toLowerCase();
-        const isAllowed = allowedExtensions.some(ext => fileNameLower.endsWith(ext));
-
-        if (!isAllowed) {
-            // Utilisation de la modale custom (showConfirm) pour plus d'élégance
-            // Attention: showConfirm remplace le contenu de la modale actuelle.
-            // On doit donc gérer le flux UX : Si annulé, on revient (idéalement) ou on ferme tout.
-            // Ici, on est déjà DANS une modale. showConfirm va écraser le contenu.
-            // C'est un peu brutal mais acceptable pour une alerte de sécurité.
-            // Le mieux serait de restaurer la modale d'upload si annulé, mais pour l'instant on ferme tout si annulé.
-
-            const warningMsg = `
-                <div class="admin-file-warning-body">
-                    <p>Le fichier <strong>${file.name}</strong> ne semble pas être un circuit (.gpx) ou des données (.json).</p>
-                    <p class="admin-file-warning-danger">⚠️ L'envoi de fichiers exécutables ou inconnus peut compromettre la sécurité de l'application.</p>
-                    <p>Voulez-vous vraiment continuer l'upload ?</p>
-                </div>
-            `;
-
-            const userConfirmed = await showConfirm(
-                "Fichier non standard",
-                warningMsg,
-                "Uploader quand même", // Confirm Label
-                "Annuler",             // Cancel Label
-                true                   // isDanger = true (Red button)
-            );
-
-            if (!userConfirmed) {
-                // Si l'utilisateur annule, la modale showConfirm s'est fermée.
-                // On pourrait rouvrir la modale d'upload ici si on voulait être très poli,
-                // mais pour une action critique annulée, fermer tout est aussi un bon feedback "Retour à la sécurité".
-                showToast("Upload annulé par sécurité.", "info");
-                return;
-            }
-
-            // Si confirmé, on doit rouvrir "virtuellement" le contexte d'upload ou juste continuer ?
-            // showConfirm a fermé la modale. On a perdu le statut "Envoi en cours..." visuel.
-            // On peut réafficher une modale de statut simple.
-            showAlert("Upload en cours", `<div class="admin-upload-loading"><i data-lucide="loader-2" class="spin lucide"></i><br>Envoi du fichier exceptionnel...</div>`, null);
-        }
-
-        statusDiv.textContent = "Envoi en cours...";
-        statusDiv.style.color = "var(--primary)";
-        btnSend.disabled = true;
-
-        try {
-            // Determine path based on file type
-            // The default folder for Djerba circuits is now public/circuits/djerba/
-            const path = `public/circuits/djerba/${file.name}`;
-
-            await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, path, `feat(circuit): Ajout "${file.name}"`);
-
-            // Track in Admin Draft
-            addToDraft('circuit', file.name, { type: 'upload' });
-
-            // --- RETRAIT DE L'AUTOMATISATION INDEX/GEOJSON ---
-            // Conformément à la demande stricte : ON N'ENVOIE QUE LE GPX.
-            // Le serveur (script) s'occupera du reste.
-
-            // On ne recalcule pas les compteurs, on n'envoie pas le GeoJSON maître.
-            // Juste le fichier GPX.
-
-            statusDiv.textContent = "Succès ! Fichier envoyé. Le serveur traitera l'index.";
-            statusDiv.style.color = "green";
-            showToast("Circuit et Carte mis à jour avec succès !", "success");
-
-            setTimeout(() => {
-                overlay.classList.remove('active');
-            }, 2000);
-
-        } catch (error) {
-            console.error(error);
-            statusDiv.textContent = "Erreur: " + error.message;
-            statusDiv.style.color = "red";
-            btnSend.disabled = false;
-        }
-    };
-
-    actions.appendChild(btnCancel);
-    actions.appendChild(btnSend);
-
-    // 4. Affichage
-    overlay.classList.add('active');
-}
+// Fonction showGitHubUploadModal retirée 15/05/2026 — doublon legacy de
+// renderUploadCircuitPanel (CC admin > Outils > "Importer un circuit") qui
+// offre la même fonctionnalité (upload GPX/JSON sur GitHub) avec une UI
+// moderne intégrée. La modale legacy avait été restaurée à l'époque où le
+// CC admin ne fonctionnait pas — plus de raison de la garder.

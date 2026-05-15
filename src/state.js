@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.40'; // Refactor PR2 (suite PR1 #590) : nettoyage du drapeau polymorphe `isSelectionModeActive` qui mélangeait "mode création de circuit" et "panneau circuit ouvert en consultation". Renommé en `isCircuitCreationMode` (sémantique stricte), avec setter `setCircuitCreationMode` et toggle `toggleCircuitCreationMode`. Les usages détournés en consultation (loadCircuitById, loadCircuitFromIds) remplacés par switchSidebarTab + renderCircuitPanel directs. 10 fichiers source + 3 tests touchés. Baseline 692/692.
+export const APP_VERSION = '3.7.41'; // Cleanup : suppression du bouton legacy "Upload Circuit" (menu admin God Mode) + fonction showGitHubUploadModal (~145 lignes) + tests dédiés (admin_upload_security.test.js). Doublon legacy de "Importer un circuit" (CC admin > Outils + empty state) qui offre la même fonctionnalité avec une UI moderne intégrée. La modale avait été restaurée quand le CC admin ne fonctionnait pas — plus de raison.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
