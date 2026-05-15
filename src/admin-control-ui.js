@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStoredToken, getStoredUsername, saveToken, validateToken, uploadFileToGitHub } from './github-sync.js';
+import { exportMasterGeoJSON } from './admin.js';
 import { showToast } from './toast.js';
 // PR 3 — shell custom (admin-cc-overlay), plus de dépendance à openHwModal/closeHwModal.
 // Les imports legacy sont retirés volontairement ; tout passe par openControlCenterModal/closeCCModal.
@@ -671,6 +672,10 @@ export function renderTab(tab, diffData, callbacks) {
         `;
 
         // — Outils (cards, secondaires) —
+        // Refactor 15/05/2026 : section élargie pour centraliser les outils admin
+        // dans le CC admin (remplace le menu admin God Mode qui devient minimal).
+        // 5 cartes : Publier circuit (sub-panel) / Scout (lien externe) / DM (lien
+        // externe) / Exporter Master GeoJSON (action) / Importer carte GeoJSON (action).
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
@@ -678,6 +683,38 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-text">
                     <div class="cc-card-title">Publier un circuit</div>
                     <div class="cc-card-sub">Depuis un fichier GPX</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-scout" aria-label="Ouvrir Scout Overpass dans un nouvel onglet">
+                <div class="cc-card-ico"><i data-lucide="scan-eye"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Scout (Overpass)</div>
+                    <div class="cc-card-sub">Recherche de POIs depuis OpenStreetMap</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="external-link"></i></div>
+            </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-datamanager" aria-label="Ouvrir le Data Manager dans un nouvel onglet">
+                <div class="cc-card-ico"><i data-lucide="database"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Data Manager</div>
+                    <div class="cc-card-sub">Édition tabulaire des POIs et circuits</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="external-link"></i></div>
+            </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-export-master" aria-label="Télécharger le Master GeoJSON">
+                <div class="cc-card-ico"><i data-lucide="download"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Exporter Master GeoJSON</div>
+                    <div class="cc-card-sub">Sauvegarde complète du jeu de données</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-import-geojson" aria-label="Importer une carte GeoJSON locale">
+                <div class="cc-card-ico"><i data-lucide="folder-open"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Importer une carte (GeoJSON)</div>
+                    <div class="cc-card-sub">Charger une carte locale (.geojson / .json)</div>
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
@@ -696,7 +733,7 @@ export function renderTab(tab, diffData, callbacks) {
                 }
             });
 
-            // Outils — Importer un circuit
+            // Outils — Publier un circuit
             const triggerUploadPanel = () => renderUploadCircuitPanel(diffData, callbacks);
             const uploadCard = document.getElementById('btn-cc-upload-circuit-card');
             if (uploadCard) {
@@ -708,6 +745,41 @@ export function renderTab(tab, diffData, callbacks) {
                     }
                 });
             }
+
+            // Outils — Helper générique pour rendre une card cliquable au clavier
+            const bindCardAction = (id, handler) => {
+                const card = document.getElementById(id);
+                if (!card) return;
+                card.addEventListener('click', handler);
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handler();
+                    }
+                });
+            };
+
+            // Outils — Scout (Overpass) : ouvre l'outil dans un nouvel onglet
+            bindCardAction('btn-cc-tool-scout', () => {
+                window.open('tools/scout.html', '_blank', 'noopener');
+            });
+
+            // Outils — Data Manager : ouvre le DM (même repo, sous-dossier)
+            bindCardAction('btn-cc-tool-datamanager', () => {
+                window.open('history_walk_datamanager/index.html', '_blank', 'noopener');
+            });
+
+            // Outils — Exporter Master GeoJSON : action directe (téléchargement)
+            bindCardAction('btn-cc-tool-export-master', () => {
+                exportMasterGeoJSON();
+            });
+
+            // Outils — Importer une carte (GeoJSON) : déclenche le file picker
+            // caché qui appelle handleFileLoad (fileManager.js) au change.
+            bindCardAction('btn-cc-tool-import-geojson', () => {
+                const loader = document.getElementById('geojson-loader');
+                if (loader) loader.click();
+            });
 
             // Stat-cards → goto changes sub-view
             const goChanges = (targetSubview) => {

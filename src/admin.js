@@ -218,43 +218,12 @@ function setupAdminListeners() {
         });
     }
 
-    const btnScout = document.getElementById('btn-admin-scout');
-    if (btnScout) {
-        btnScout.addEventListener('click', () => {
-            window.open('tools/scout.html', '_blank');
-        });
-    }
-
-    // --- NOUVEAU : Bouton Data Manager ---
-    if (menuContent) {
-        let btnDataManager = document.getElementById('btn-admin-datamanager');
-        if (!btnDataManager) {
-             btnDataManager = document.createElement('button');
-             btnDataManager.id = 'btn-admin-datamanager';
-             btnDataManager.className = 'tools-menu-item';
-             btnDataManager.innerHTML = `<i data-lucide="table"></i> Data Manager`;
-
-             // Insérer après Scout
-             if (btnScout && btnScout.parentNode === menuContent) {
-                 menuContent.insertBefore(btnDataManager, btnScout.nextSibling);
-             } else {
-                 menuContent.prepend(btnDataManager);
-             }
-             createIcons({ icons: appIcons, root: btnDataManager });
-        }
-
-        // Listener
-        const newBtnDM = btnDataManager.cloneNode(true);
-        btnDataManager.parentNode.replaceChild(newBtnDM, btnDataManager);
-        newBtnDM.addEventListener('click', () => {
-            window.open('history_walk_datamanager/index.html', '_blank');
-        });
-    }
-
-    const btnExport = document.getElementById('btn-admin-export-master');
-    if (btnExport) {
-        btnExport.addEventListener('click', exportMasterGeoJSON);
-    }
+    // Boutons "Scout", "Data Manager", "Export Master GeoJSON" et
+    // "Importer Carte (GeoJSON)" retirés du menu admin God Mode 15/05/2026 :
+    // déplacés en cartes dans la section Outils du Centre de Contrôle (CC admin).
+    // Une seule porte d'entrée admin pour tous les outils. IDs purgés dans
+    // la liste de nettoyage migration plus bas pour les users avec ancienne
+    // version cachée.
 
     // --- Ajout Dynamique du Bouton RANGS dans le Menu Admin ---
     // menuContent est déjà déclaré plus haut dans la fonction
@@ -301,17 +270,29 @@ function setupAdminListeners() {
         btnControl.parentNode.replaceChild(newControlBtn, btnControl);
         newControlBtn.addEventListener('click', openControlCenter);
 
-        // Nettoyage des anciens boutons s'ils existent (Migration). Inclut
-        // `btn-admin-github-upload` retiré 15/05/2026 (doublon legacy de
-        // "Importer un circuit" du CC admin > Outils, validé Stefan).
-        ['btn-admin-config-github', 'btn-admin-publish-map', 'btn-admin-github-upload'].forEach(id => {
+        // Nettoyage des anciens boutons s'ils existent (Migration). IDs retirés
+        // historiquement pour limiter les boutons résiduels chez les users qui
+        // auraient l'ancienne version cachée par le SW PWA :
+        //   - btn-admin-config-github, btn-admin-publish-map (anciens, pré-CC)
+        //   - btn-admin-github-upload (PR #592 — doublon de "Publier un circuit")
+        //   - btn-admin-scout, btn-admin-export-master, btn-open-geojson,
+        //     btn-admin-datamanager (15/05/2026 — déplacés dans CC admin > Outils)
+        [
+            'btn-admin-config-github',
+            'btn-admin-publish-map',
+            'btn-admin-github-upload',
+            'btn-admin-scout',
+            'btn-admin-export-master',
+            'btn-open-geojson',
+            'btn-admin-datamanager'
+        ].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.remove();
         });
     }
 }
 
-function exportMasterGeoJSON() {
+export function exportMasterGeoJSON() {
     const geojson = generateMasterGeoJSONData();
 
     if (!geojson) {

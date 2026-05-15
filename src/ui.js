@@ -45,7 +45,7 @@ export function initializeDomReferences() {
         'details-panel', 'circuit-panel', 'circuit-steps-list', 'circuit-title-text', 'circuit-title-input', 
         'circuit-description', 'edit-circuit-title-button', 'circuit-poi-count', 'circuit-distance',
         'gpx-importer', 'btn-export-gpx',
-        'btn-import-gpx', 'loader-overlay', 'btn-save-data', 'restore-loader', 'btn-open-geojson',
+        'btn-import-gpx', 'loader-overlay', 'btn-save-data', 'restore-loader',
         'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title',
         'editor-cancel-btn', 'editor-save-btn', 'editor-textarea', 'destination-loader',
         // photo-viewer/viewer-* supprimés : migration V2 vers ui-photo-viewer.openPhotoViewer.

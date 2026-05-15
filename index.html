@@ -139,18 +139,12 @@
                     <span>GOD MODE</span>
                 </button>
                 <div class="tools-menu" id="admin-menu-content">
-                    <button class="tools-menu-item" id="btn-admin-scout">
-                        <i data-lucide="scan-eye"></i> Scout (Overpass)
-                    </button>
-                    <button class="tools-menu-item" id="btn-admin-export-master">
-                        <i data-lucide="database"></i> Export Master GeoJSON
-                    </button>
-                    <!-- Import GeoJSON local (déplacé du menu Outils desktop +
-                         retiré du menu mobile — usage admin/dev uniquement
-                         depuis l'arrivée du sélecteur destination). -->
-                    <button class="tools-menu-item" id="btn-open-geojson">
-                        <i data-lucide="folder-open"></i> Importer Carte (GeoJSON)
-                    </button>
+                    <!-- Section vide au boot : les boutons "Rangs & XP" et
+                         "Centre de Contrôle" sont ajoutés dynamiquement par
+                         admin.js. Les autres outils (Scout, Data Manager,
+                         Export Master, Importer GeoJSON) ont été déplacés en
+                         cartes dans CC admin > Outils (15/05/2026) pour
+                         centraliser tout l'admin sous un seul point d'entrée. -->
                 </div>
             </div>
 

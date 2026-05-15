@@ -551,7 +551,9 @@ export function setupFileListeners() {
         DOM.geojsonLoader.removeEventListener('change', handleFileLoad);
         DOM.geojsonLoader.addEventListener('change', handleFileLoad);
     }
-    if (DOM.btnOpenGeojson) DOM.btnOpenGeojson.addEventListener('click', () => DOM.geojsonLoader.click());
+    // Handler `btn-open-geojson` retiré 15/05/2026 — le bouton n'existe plus
+    // dans le menu admin God Mode (déplacé en carte dans CC admin > Outils).
+    // L'input file caché `geojson-loader` reste actif côté change (parsing).
 
     const btnSaveMobile = document.getElementById('btn-save-mobile');
     if (btnSaveMobile) {
