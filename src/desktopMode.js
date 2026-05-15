@@ -381,7 +381,14 @@ function enterCircuitCreationMode() {
 // création (couplage DOM-DOM évité). Listener enregistré au module-load pour
 // qu'il soit toujours actif — no-op gratuit en mobile puisque mc-btn-new n'y
 // est pas rendu.
+// Fix PR1 (15/05/2026) : le guard « if (isSelectionModeActive) return » a été
+// retiré. Il bloquait le bouton (+) quand le drapeau restait true à tort (cas
+// vu en consultation : loadCircuitById met isSelectionModeActive=true comme
+// drapeau « panneau circuit ouvert » détourné). enterCircuitCreationMode est
+// désormais idempotent : clearCircuit(false) reset le brouillon courant puis
+// toggleSelectionMode(true) (re)pose le mode — re-cliquer (+) en mode déjà
+// actif redémarre simplement une création vierge. Le polymorphisme du drapeau
+// sera nettoyé dans une PR refactor dédiée.
 eventBus.on('circuit:create-new', () => {
-    if (state.isSelectionModeActive) return; // déjà en mode création, no-op
     enterCircuitCreationMode();
 });
