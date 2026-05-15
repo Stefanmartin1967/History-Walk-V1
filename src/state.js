@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.37'; // Cleanup A6 : suppression de btn-toggle-trace (orphelin sémantique — son listener émettait circuit:toggle-trace-visibility sans listener consommateur, donc le clic ne masquait jamais la trace malgré l'apparence d'un bouton câblé). Suppression aussi du listener fantôme circuit:changed (event jamais émis ailleurs dans le code) — les boutons se rafraîchissent désormais uniquement via circuit:list-updated. Validé Stefan : feature sans utilité user.
+export const APP_VERSION = '3.7.38'; // Fix A7 : refresh des boutons "Marqué fait" et "Cacher/Réafficher" quand l'user bascule entre 2 circuits. Bug pré-existant — loadCircuitById n'émettait pas circuit:list-updated, donc les boutons gardaient l'état du circuit précédent. 1 ligne ajoutée à la fin de loadCircuitById (circuit.js:739). Complète A6 qui avait identifié le trou.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
