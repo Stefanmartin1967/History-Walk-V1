@@ -593,7 +593,7 @@ export function renderTab(tab, diffData, callbacks) {
                     <p class="cc-empty-sub">Aucune modification locale à publier sur ${mapLabel}. Continue sur le terrain — les nouvelles modifications apparaîtront ici.</p>
                     <div class="cc-empty-actions">
                         <button class="cc-btn-ghost" id="btn-cc-upload-circuit-empty" type="button">
-                            <i data-lucide="upload-cloud"></i> Publier un circuit (fichier)
+                            <i data-lucide="upload-cloud"></i> Publier un circuit
                         </button>
                     </div>
                 </div>
@@ -676,7 +676,7 @@ export function renderTab(tab, diffData, callbacks) {
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
                 <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
                 <div class="cc-card-text">
-                    <div class="cc-card-title">Publier un circuit (fichier)</div>
+                    <div class="cc-card-title">Publier un circuit</div>
                     <div class="cc-card-sub">Depuis un fichier GPX</div>
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
@@ -1106,7 +1106,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
             <button class="cc-back-btn" id="btn-upload-back">
                 <i data-lucide="arrow-left"></i> Dashboard
             </button>
-            <span class="cc-subpanel-title">Publier un circuit (fichier)</span>
+            <span class="cc-subpanel-title">Publier un circuit</span>
         </div>
 
         <div class="cc-card cc-card--padded cc-card--block">

@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.42'; // CC admin : renommage "Importer un circuit" → "Publier un circuit (fichier)" (sémantique honnête — c'est un push vers GitHub, pas un import). Suppression du `.json` du file picker `accept` (uniquement `.gpx` désormais) : aucun code de l'app ne lisait un format JSON de circuit, et un fichier .json uploadé pouvait écraser le JSON des métadonnées officielles (sécurité). Sub-panel renommé en cohérence. Sous-titre adapté.
+export const APP_VERSION = '3.7.43'; // CC admin : retire "(fichier)" du titre "Publier un circuit (fichier)" — redondant avec le sous-titre "Depuis un fichier GPX" qui porte déjà l'info, deux fois "fichier" en deux lignes inutile (feedback Stefan post-merge PR #593). 3 occurrences corrigées (bouton empty state, card Outils, sub-panel header). Sub-panel garde son intro "Publiez un fichier GPX directement sur GitHub".
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
