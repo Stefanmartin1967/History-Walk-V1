@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.36'; // Cleanup A4 : suppression du bouton "Démarrer le circuit" (btn-start-circuit) et de son conteneur .circuit-sticky (HTML + CSS). Feature "visite guidée pas-à-pas" jamais implémentée — bouton orphelin depuis la refonte design. Retrait validé par Stefan (pas de GPS suivi du chemin, pas d'usage). ~35 lignes nettoyées au total.
+export const APP_VERSION = '3.7.37'; // Cleanup A6 : suppression de btn-toggle-trace (orphelin sémantique — son listener émettait circuit:toggle-trace-visibility sans listener consommateur, donc le clic ne masquait jamais la trace malgré l'apparence d'un bouton câblé). Suppression aussi du listener fantôme circuit:changed (event jamais émis ailleurs dans le code) — les boutons se rafraîchissent désormais uniquement via circuit:list-updated. Validé Stefan : feature sans utilité user.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
