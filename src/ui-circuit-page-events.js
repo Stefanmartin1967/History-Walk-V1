@@ -5,8 +5,9 @@
  *
  * Couvre :
  * - Toggle mode sélection (crosshair button + dismiss banner + empty state CTA)
- * - Toggle trace visible/masquée (eye/eye-off)
  * - Marquer fait (consultation)
+ * - Cacher / Réafficher le circuit (toggle eye-off/eye)
+ * - Télécharger GPX (consultation)
  * - Bascule modifier (consultation perso → création)
  * - Transport accordion (toggle + summary auto)
  * - Édition inline titre (double-clic + bouton crayon)
@@ -31,7 +32,6 @@ export function initCircuitPageEvents() {
     if (inited) return;
     inited = true;
 
-    initTraceToggle();
     initMarkDone();
     initMaskListing();
     initDownloadGpx();
@@ -41,37 +41,22 @@ export function initCircuitPageEvents() {
     initDescriptionEdit();
     initEmptyStateCTA();
 
-    // Sync de l'UI quand l'état change
-    eventBus.on('circuit:changed', updateMarkDoneState);
-    eventBus.on('circuit:changed', updateMaskListingState);
+    // Sync de l'UI quand l'état change. Note : les anciens listeners
+    // `circuit:changed` ont été retirés 15/05/2026 (event jamais émis nulle
+    // part dans le code — listener fantôme). Le refresh des boutons passe
+    // exclusivement par `circuit:list-updated`, qui est largement émis
+    // (chargement de circuit, modification, suppression, mark-done, etc.).
     eventBus.on('circuit:list-updated', updateMarkDoneState);
     eventBus.on('circuit:list-updated', updateMaskListingState);
 }
 
 /* ============================================================
-   1. TOGGLE TRACE VISIBLE
+   (Section "Toggle trace visible/masquée" retirée 15/05/2026 : btn-toggle-trace
+   émettait `circuit:toggle-trace-visibility` mais aucun listener n'écoutait
+   cet event — le clic n'avait aucun effet observable malgré l'apparence d'un
+   bouton câblé. Feature jugée sans utilité par Stefan, supprimée intégralement
+   HTML + handler en cleanup A6.)
    ============================================================ */
-
-function initTraceToggle() {
-    const btn = document.getElementById('btn-toggle-trace');
-    if (!btn) return;
-
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const isOn = btn.classList.toggle('is-on');
-        // Update icon
-        const icon = btn.querySelector('i[data-lucide]');
-        if (icon) {
-            icon.setAttribute('data-lucide', isOn ? 'eye' : 'eye-off');
-            // Re-render lucide for that single icon
-            import('./lucide-icons.js').then(({ createIcons, appIcons }) => {
-                createIcons({ icons: appIcons });
-            });
-        }
-        // Toggle de la trace côté carte
-        eventBus.emit('circuit:toggle-trace-visibility', { visible: isOn });
-    });
-}
 
 /* ============================================================
    3. MARQUER FAIT (consultation)
