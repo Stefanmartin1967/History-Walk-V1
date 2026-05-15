@@ -496,7 +496,7 @@ export function closeDetailsPanel(goBackToList = false) {
              eventBus.emit('mobile:render-circuits-list');
         }
     } else {
-        if (state.isSelectionModeActive) {
+        if (state.isCircuitCreationMode) {
             switchSidebarTab('circuit');
         } else {
             eventBus.emit('ui:render-explorer-list');

@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.39'; // Fix bouton (+) "Nouveau circuit" de la sidebar Mes Circuits qui devenait inerte après une création/consultation laissée en l'état. Deux fixes complémentaires : 1) clearCircuit CAS 2 (brouillon) émet désormais circuit:toggle-selection-mode {force:false} pour sortir proprement du mode création quand on clique sur la gomme. 2) Listener circuit:create-new (desktopMode.js) ne guard plus sur isSelectionModeActive — enterCircuitCreationMode est idempotent (reset + repose le mode). Fix symptomatique ; un refactor sémantique du drapeau polymorphe `isSelectionModeActive` suivra en PR dédiée.
+export const APP_VERSION = '3.7.40'; // Refactor PR2 (suite PR1 #590) : nettoyage du drapeau polymorphe `isSelectionModeActive` qui mélangeait "mode création de circuit" et "panneau circuit ouvert en consultation". Renommé en `isCircuitCreationMode` (sémantique stricte), avec setter `setCircuitCreationMode` et toggle `toggleCircuitCreationMode`. Les usages détournés en consultation (loadCircuitById, loadCircuitFromIds) remplacés par switchSidebarTab + renderCircuitPanel directs. 10 fichiers source + 3 tests touchés. Baseline 692/692.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
@@ -35,7 +35,13 @@ export const state = {
     loadedFeatures: [],
     currentFeatureId: null,
     currentCircuitIndex: null,
-    isSelectionModeActive: false,
+    // Refactor PR2 (15/05/2026) : renommé depuis `isSelectionModeActive`.
+    // Sémantique stricte : true uniquement quand l'user est en train de créer
+    // un circuit (sélection de POIs depuis la carte). Auparavant utilisé aussi
+    // comme drapeau « panneau Circuit ouvert » en consultation — usages
+    // détournés retirés en PR2 au profit de switchSidebarTab + renderCircuitPanel
+    // appelés directement.
+    isCircuitCreationMode: false,
     currentCircuit: [],
     customFeatures: [],
     hiddenPoiIds: [],
@@ -86,9 +92,10 @@ export const state = {
 // À partir de maintenant, les autres fichiers devront utiliser ces fonctions 
 // pour modifier l'état, au lieu de le faire en cachette.
 
-// Gardien pour activer/désactiver le mode Sélection
-export function setSelectionMode(isActive) {
-    state.isSelectionModeActive = isActive;
+// Gardien pour activer/désactiver le mode Création de circuit.
+// Refactor PR2 : renommé depuis setSelectionMode (sémantique stricte).
+export function setCircuitCreationMode(isActive) {
+    state.isCircuitCreationMode = isActive;
 }
 
 // Gardien pour vider le brouillon de circuit

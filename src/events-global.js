@@ -5,7 +5,7 @@
 
 import { clearCircuit } from './circuit.js';
 import { state } from './state.js';
-import { toggleSelectionMode } from './ui-circuit-editor.js';
+import { toggleCircuitCreationMode } from './ui-circuit-editor.js';
 import { showConfirm } from './modal.js';
 
 export function setupGlobalEventListeners() {
@@ -18,10 +18,10 @@ export function setupGlobalEventListeners() {
             if (state.currentCircuit.length > 0) {
                 if (await showConfirm("Fermeture", "Voulez-vous vraiment fermer et effacer le brouillon du circuit ?", "Fermer", "Annuler", true)) {
                     await clearCircuit(false);
-                    toggleSelectionMode(false);
+                    toggleCircuitCreationMode(false);
                 }
             } else {
-                toggleSelectionMode(false);
+                toggleCircuitCreationMode(false);
             }
         });
     }

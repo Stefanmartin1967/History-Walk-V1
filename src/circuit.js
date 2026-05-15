@@ -1,4 +1,4 @@
-import { state, MAX_CIRCUIT_POINTS, setSelectionMode, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode } from './state.js';
+import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode } from './state.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -196,7 +196,9 @@ export async function loadCircuitDraft() {
             }
 
             if (state.currentCircuit.length > 0) {
-                if (!state.isSelectionModeActive) {
+                // Reprise d'un brouillon en cours → on s'assure d'être en mode
+                // création (usage légitime du drapeau, rename PR2).
+                if (!state.isCircuitCreationMode) {
                     eventBus.emit('circuit:toggle-selection-mode', {});
                 } else {
                     renderCircuitPanel();
@@ -720,12 +722,13 @@ export async function loadCircuitById(id) {
     if (isMobileView()) {
         eventBus.emit('mobile:render-poi-list', state.currentCircuit);
     } else {
-        // Active le mode sélection si besoin et rafraîchit le panneau
-        if (!state.isSelectionModeActive) {
-            eventBus.emit('circuit:toggle-selection-mode', { force: true });
-        } else {
-            renderCircuitPanel();
-        }
+        // Refactor PR2 (15/05/2026) : on est en CONSULTATION d'un circuit (pas
+        // en création). Auparavant, on activait abusivement isSelectionModeActive
+        // pour bénéficier des effets de bord (switchSidebarTab + renderCircuitPanel)
+        // — drapeau polymorphe qui causait le bug du bouton (+) inerte.
+        // On appelle désormais directement ces fonctions sans toucher au mode.
+        switchSidebarTab('circuit');
+        renderCircuitPanel();
         applyFilters();
 
         // 5. Centrage Intelligent de la carte
@@ -840,10 +843,12 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
         eventBus.emit('mobile:render-poi-list', state.currentCircuit);
         eventBus.emit('mobile:switch-view', 'circuits');
     } else {
+        // Refactor PR2 (15/05/2026) : loadCircuitFromIds (import QR) charge un
+        // circuit en CONSULTATION. On appelle directement les helpers UI au
+        // lieu d'activer abusivement isSelectionModeActive — cf. note PR2 dans
+        // loadCircuitById.
         renderCircuitPanel();
-        if (!state.isSelectionModeActive) {
-            eventBus.emit('circuit:toggle-selection-mode', { force: true });
-        }
+        switchSidebarTab('circuit');
         applyFilters();
 
         if (state.currentCircuit.length > 0) {
