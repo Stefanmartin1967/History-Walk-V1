@@ -1,5 +1,5 @@
 // state.js
-export const APP_VERSION = '3.7.44'; // Section "Outils" du CC admin élargie : 4 nouvelles cartes (Scout, Data Manager, Exporter Master GeoJSON, Importer une carte GeoJSON) + la carte existante "Publier un circuit" → 5 outils centralisés. Le menu admin God Mode est purgé en conséquence : 4 boutons retirés (btn-admin-scout, btn-admin-export-master, btn-open-geojson statiques + btn-admin-datamanager dynamique), il ne reste que Rangs & XP + Centre de Contrôle. Les 4 IDs ajoutés à la liste de purge migration (boutons résiduels chez users PWA). Cohérence : un seul point d'entrée admin via le CC.
+export const APP_VERSION = '3.7.45'; // Nettoyage CSS : suppression des règles mortes .marker-vip / .marker-visited / .marker-planned dans base.css (~78 lignes) — les décorations marqueur (pentagone jaune incontournable, halos vert visité / bleu planifié) ont été retirées du JS lors de l'audit Stefan #5 car redondantes avec les filtres "Mon parcours". Seul marker-highlight (recherche topbar) reste actif ; son résidu clip-path VIP est purgé.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
