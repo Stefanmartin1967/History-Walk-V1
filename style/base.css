@@ -1828,85 +1828,6 @@ input[type=range] {
 /* --- RESPONSIVE TOPBAR (Adaptation PC Portable) --- */
 /* Règle 2000px supprimée pour toujours afficher les labels */
 
-/* --- LE STYLE DES INCONTOURNABLES (Version Pentagone VIP) --- */
-
-/* 1. On nettoie le conteneur racine pour qu'il soit transparent et géré par Leaflet */
-.leaflet-marker-icon.marker-vip {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    /* On laisse le transform de Leaflet tranquille ! */
-    width: 40px !important;
-    height: 40px !important;
-    margin-left: -20px !important;
-    margin-top: -46px !important;
-    z-index: 1000 !important;
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-    overflow: visible !important;
-}
-
-/* 2. On applique le style Pentagone au wrapper interne */
-.leaflet-marker-icon.marker-vip .hw-icon-wrapper {
-    width: 100%;
-    height: 100%;
-    background: #FEF08A; /* Jaune Pastel (Tailwind Yellow-200) */
-    /* Clip Path Pentagone */
-    clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
-    transform: none; /* Pas de rotation */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* Ombre portée pour le relief (remplace box-shadow qui est coupé) */
-    filter: drop-shadow(0 4px 3px rgba(0,0,0,0.25));
-}
-
-/* 3. On ajuste l'icône */
-.leaflet-marker-icon.marker-vip svg,
-.leaflet-marker-icon.marker-vip i {
-    color: #422006 !important; /* Marron foncé pour contraste */
-    width: 22px !important;
-    height: 22px !important;
-    z-index: 2;
-    transform: none; /* Pas de rotation */
-    padding-top: 5px; /* Léger décalage visuel vers le centre de masse */
-}
-
-/* --- ETATS DES MARQUEURS --- */
-
-.leaflet-marker-icon.marker-visited:not(.marker-vip) {
-    border: 3px solid #10B981 !important; /* Vert */
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
-}
-
-.leaflet-marker-icon.marker-planned:not(.marker-vip) {
-    border: 3px solid #3B82F6 !important; /* Bleu Brand */
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
-}
-
-/* Si VIP est visité ou planifié : Simulation de bordure via Drop Shadow */
-.leaflet-marker-icon.marker-vip.marker-visited .hw-icon-wrapper {
-    background: #FEF08A !important;
-    /* Double shadow pour simuler une bordure nette verte + ombre */
-    filter: drop-shadow(0 0 2px #10B981) drop-shadow(0 0 2px #10B981) drop-shadow(0 4px 3px rgba(0,0,0,0.3));
-}
-.leaflet-marker-icon.marker-vip.marker-planned .hw-icon-wrapper {
-    background: #FEF08A !important;
-    /* Double shadow pour simuler une bordure nette bleue + ombre */
-    filter: drop-shadow(0 0 2px #3B82F6) drop-shadow(0 0 2px #3B82F6) drop-shadow(0 4px 3px rgba(0,0,0,0.3));
-}
-
-/* Sécurité : si les deux classes coexistent, visité (vert) prime sur planifié (bleu) */
-.leaflet-marker-icon.marker-visited.marker-planned:not(.marker-vip) {
-    border: 3px solid #10B981 !important;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3) !important;
-}
-.leaflet-marker-icon.marker-vip.marker-visited.marker-planned .hw-icon-wrapper {
-    filter: drop-shadow(0 0 2px #10B981) drop-shadow(0 0 2px #10B981) drop-shadow(0 4px 3px rgba(0,0,0,0.3)) !important;
-}
-
 /* --- HIGHLIGHT SEARCH --- */
 .leaflet-marker-icon.marker-highlight {
     background: transparent !important;
@@ -1926,7 +1847,6 @@ input[type=range] {
     align-items: center;
     width: 100%;
     height: 100%;
-    clip-path: none !important; /* Force la forme carrée même si VIP */
 }
 
 /* --- HEADER REORGANISE --- */
