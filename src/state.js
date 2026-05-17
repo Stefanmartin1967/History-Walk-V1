@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.46'; // Socle refonte catégorisation (PR 1) : poi-categories.json passe au format enrichi (groupes + catégories structurées + sous-types + état/accès) ; nouveau module src/taxonomy.js (résolveurs, partagé HW/DM). POI_CATEGORIES reste un string[] dérivé en compat → les écrans consommateurs sont inchangés. PR invisible pour l'utilisateur.
+export const APP_VERSION = '3.7.47'; // Filtre groupé (PR 2 catégorisation) : la section "Type de lieu" du panneau de filtres regroupe les catégories par groupe, avec un en-tête de groupe portant une checkbox tri-état (cocher le groupe coche toutes ses catégories ; état indéterminé si sélection partielle). S'appuie sur le résolveur taxonomy.js.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
