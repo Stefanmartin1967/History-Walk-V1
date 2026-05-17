@@ -7,6 +7,7 @@
 // entrée temporaire dans le menu Outils. PR 3 fera la bascule visuelle.
 
 import { state, setActiveFilters, POI_CATEGORIES } from './state.js';
+import { getGroups, getGroupForCategory } from './taxonomy.js';
 import { applyFilters } from './data.js';
 import { getZonesData } from './circuit-actions.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -172,13 +173,43 @@ function populateCategoriesSection() {
     const list = document.getElementById('hw-fp-categories-list');
     if (!list) return;
 
-    const categories = getAvailableCategories();
+    const available = getAvailableCategories();
     const counts = getCategoryCounts();
     const selected = state.activeFilters.categories || [];
 
+    // Répartit les catégories disponibles par groupe (ordre du référentiel
+    // taxonomy.js). Une catégorie hors référentiel tombe dans le bloc "Autres".
+    const groups = getGroups();
+    const buckets = new Map(groups.map(g => [g, []]));
+    const orphans = [];
+    available.forEach(cat => {
+        const g = getGroupForCategory(cat);
+        if (g && buckets.has(g)) buckets.get(g).push(cat);
+        else orphans.push(cat);
+    });
+
     list.innerHTML = '';
-    categories.forEach(cat => {
-        const row = renderCheckbox({
+    groups.forEach(g => renderCategoryGroup(list, g, buckets.get(g), counts, selected));
+    if (orphans.length > 0) renderCategoryGroup(list, 'Autres', orphans, counts, selected);
+}
+
+// Applique une nouvelle sélection de catégories puis re-rend la section :
+// les états des en-têtes de groupe (coché / indéterminé) en dépendent.
+function applyCategoriesFilter(nextCategories) {
+    setActiveFilters({ ...state.activeFilters, categories: nextCategories });
+    applyFilters();
+    populateCategoriesSection();
+    refreshAllMeta();
+    createIcons({ icons: appIcons });
+}
+
+function renderCategoryGroup(list, groupe, cats, counts, selected) {
+    if (!cats || cats.length === 0) return;
+    const block = document.createElement('div');
+    block.className = 'hw-fp-cat-group';
+    block.appendChild(renderGroupHeader(groupe, cats, counts, selected));
+    cats.forEach(cat => {
+        block.appendChild(renderCheckbox({
             label: cat,
             count: counts[cat],
             checked: selected.includes(cat),
@@ -187,15 +218,56 @@ function populateCategoriesSection() {
                 const next = isChecked
                     ? [...current, cat]
                     : current.filter(c => c !== cat);
-                setActiveFilters({ ...state.activeFilters, categories: next });
-                applyFilters();
-                refreshAllMeta();
-                // Refresh checkbox visual state in place
-                row.classList.toggle('is-checked', isChecked);
+                applyCategoriesFilter(next);
             },
-        });
-        list.appendChild(row);
+        }));
     });
+    list.appendChild(block);
+}
+
+// En-tête de groupe : checkbox tri-état. Cocher coche toutes les catégories du
+// groupe, décocher les retire toutes. État indéterminé si sélection partielle.
+function renderGroupHeader(groupe, cats, counts, selected) {
+    const checkedCount = cats.filter(c => selected.includes(c)).length;
+    const allChecked = checkedCount === cats.length;
+    const noneChecked = checkedCount === 0;
+
+    const row = document.createElement('label');
+    row.className = 'hw-fp-cat-group-header'
+        + (allChecked ? ' is-checked' : (noneChecked ? '' : ' is-indeterminate'));
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.checked = allChecked;
+    input.indeterminate = !allChecked && !noneChecked;
+    input.addEventListener('change', () => {
+        const current = state.activeFilters.categories || [];
+        const next = input.checked
+            ? [...new Set([...current, ...cats])]
+            : current.filter(c => !cats.includes(c));
+        applyCategoriesFilter(next);
+    });
+
+    const box = document.createElement('span');
+    box.className = 'hw-fp-checkbox-box';
+    box.innerHTML = '<i data-lucide="check"></i>';
+
+    const labelEl = document.createElement('span');
+    labelEl.className = 'hw-fp-cat-group-label';
+    labelEl.textContent = groupe;
+
+    row.appendChild(input);
+    row.appendChild(box);
+    row.appendChild(labelEl);
+
+    const total = cats.reduce((n, c) => n + (counts[c] || 0), 0);
+    if (total > 0) {
+        const countEl = document.createElement('span');
+        countEl.className = 'hw-fp-checkbox-count';
+        countEl.textContent = String(total);
+        row.appendChild(countEl);
+    }
+    return row;
 }
 
 // ─── Section Mon parcours ─────────────────────────────────────────────────
