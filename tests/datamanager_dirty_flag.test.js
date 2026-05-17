@@ -25,6 +25,8 @@ import {
     deleteFeature,
     undo,
     redo,
+    bulkUpdateFields,
+    getAllFeatures,
     markDmClean,
     markDmDirty,
     clearDmDirty,
@@ -195,6 +197,78 @@ describe('deleteFeature (PR C1)', () => {
 
     it('deleteFeature + undo → flag clean', async () => {
         await deleteFeature(0);
+        undo();
+        expect(isDirty()).toBe(false);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// bulkUpdateFields : assignation sous-type/état en masse (PR4 catégorisation)
+// ─────────────────────────────────────────────────────────────────────────────
+describe('bulkUpdateFields (PR4 catégorisation)', () => {
+    // Objets neufs à chaque test : bulkUpdateFields mute `properties` EN PLACE,
+    // réutiliser une const partagée ferait fuiter les mutations entre tests.
+    function freshFeatures() {
+        return [
+            { type: 'Feature', geometry: { type: 'Point', coordinates: [10, 33] },
+              properties: { 'Nom du site FR': 'Mosquée A', 'Catégorie': 'Mosquée', HW_ID: 'HW-A' } },
+            { type: 'Feature', geometry: { type: 'Point', coordinates: [10.1, 33.1] },
+              properties: { 'Nom du site FR': 'Mosquée B', 'Catégorie': 'Mosquée', HW_ID: 'HW-B' } },
+            { type: 'Feature', geometry: { type: 'Point', coordinates: [10.2, 33.2] },
+              properties: { 'Nom du site FR': 'Mosquée C', 'Catégorie': 'Mosquée', HW_ID: 'HW-C' } },
+        ];
+    }
+
+    beforeEach(() => {
+        _initStateForTests({ type: 'FeatureCollection', features: freshFeatures() });
+    });
+
+    it('applique un champ aux POIs ciblés et laisse les autres intacts', () => {
+        bulkUpdateFields([0, 2], { 'Sous-type': 'À minaret' });
+        const f = getAllFeatures();
+        expect(f[0].properties['Sous-type']).toBe('À minaret');
+        expect(f[2].properties['Sous-type']).toBe('À minaret');
+        expect(f[1].properties['Sous-type']).toBeUndefined();
+    });
+
+    it('applique plusieurs champs en un seul appel', () => {
+        bulkUpdateFields([1], { 'Sous-type': 'Fortifiée', 'État': 'Ruine' });
+        const p = getAllFeatures()[1].properties;
+        expect(p['Sous-type']).toBe('Fortifiée');
+        expect(p['État']).toBe('Ruine');
+    });
+
+    it('ne touche pas un champ laissé vide (— Inchangé —)', () => {
+        bulkUpdateFields([0], { 'Sous-type': 'À coupoles' });
+        bulkUpdateFields([0], { 'Sous-type': '', 'État': 'Restauré' });
+        const p = getAllFeatures()[0].properties;
+        expect(p['Sous-type']).toBe('À coupoles'); // conservé
+        expect(p['État']).toBe('Restauré');
+    });
+
+    it('retourne le nombre de POIs modifiés', () => {
+        expect(bulkUpdateFields([0, 1, 2], { 'État': 'Bon' })).toBe(3);
+    });
+
+    it('ignore les index hors limites sans planter', () => {
+        const n = bulkUpdateFields([0, 99], { 'État': 'Bon' });
+        expect(n).toBe(1);
+        expect(getAllFeatures()[0].properties['État']).toBe('Bon');
+    });
+
+    it('no-op si aucun champ exploitable (retourne 0, flag reste clean)', () => {
+        expect(bulkUpdateFields([0, 1], {})).toBe(0);
+        expect(bulkUpdateFields([0, 1], { 'Sous-type': '' })).toBe(0);
+        expect(isDirty()).toBe(false);
+    });
+
+    it('no-op si aucun index fourni', () => {
+        expect(bulkUpdateFields([], { 'État': 'Bon' })).toBe(0);
+    });
+
+    it('met le flag dirty puis revient clean après undo', () => {
+        bulkUpdateFields([0, 1], { 'Sous-type': 'À minaret' });
+        expect(isDirty()).toBe(true);
         undo();
         expect(isDirty()).toBe(false);
     });
