@@ -4,6 +4,7 @@ import { createIcons, icons } from 'lucide';
 import { parseGps } from './utils.js';
 import { initMap, renderMarkers, focusFeature, startEditMarker, stopEditMarker, moveEditMarker, flyToLocation } from './map.js';
 import { hwConfirm } from '../../src/modal.js';
+import { getSubtypes, getStates, getAccessValues, getAccessDefault } from '../../src/taxonomy.js';
 
 import {
     initStorage, loadGeoJSON, getGeoJSONForExport,
@@ -36,6 +37,12 @@ const modalTitle = document.getElementById('modal-title');
 
 // Inputs Datalists / Selects
 const selCategorie = document.getElementById('categorie-select');
+const selSousType = document.getElementById('soustype-select');
+const selEtat = document.getElementById('etat-select');
+const selAcces = document.getElementById('acces-select');
+const fgSousType = document.getElementById('fg-soustype');
+const fgEtat = document.getElementById('fg-etat');
+const fgAcces = document.getElementById('fg-acces');
 const dlZones = document.getElementById('list-zones');
 
 // État édition
@@ -262,6 +269,11 @@ function openModal(feature = null, index = null) {
     form.reset();
     const currentCategorie = feature?.properties?.['Catégorie'] || '';
     populateDatalists(currentCategorie);
+    populateContextualFields(currentCategorie, feature ? {
+        sousType: feature.properties['Sous-type'],
+        etat: feature.properties['État'],
+        acces: feature.properties['Accès'],
+    } : {});
 
     const photosRow = document.getElementById('photos-readonly-row');
     const photosCount = document.getElementById('photos-count-display');
@@ -399,7 +411,10 @@ form.addEventListener('submit', (e) => {
         prixTND: Number.isFinite(prixTND) ? prixTND : null,
         telephone: form.telephone.value,
         horaires: form.horaires.value,
-        verified: form.verified.checked
+        verified: form.verified.checked,
+        sousType: form.sousType.value,
+        etat: form.etat.value,
+        acces: form.acces.value
     };
 
     const success = saveFeature(formData, currentEditIndex);
@@ -436,6 +451,43 @@ function populateDatalists(currentCategorie = '') {
         dlZones.appendChild(op);
     });
 }
+
+// Peuple Sous-type / État / Accès selon la catégorie. Un champ sans valeur
+// possible pour la catégorie est masqué (un Restaurant n'a ni sous-type, ni
+// état, ni accès — voir taxonomy.js).
+function populateContextualFields(categorie, values = {}) {
+    const destId = getActiveDestinationId();
+    fillContextualSelect(selSousType, fgSousType, getSubtypes(categorie, destId), values.sousType, '— Aucun —');
+    fillContextualSelect(selEtat, fgEtat, getStates(categorie), values.etat, '— Non précisé —');
+    fillContextualSelect(selAcces, fgAcces, getAccessValues(categorie), values.acces, '— Non précisé —');
+}
+
+function fillContextualSelect(select, group, options, currentValue, emptyLabel) {
+    if (!options || options.length === 0) {
+        group.style.display = 'none';
+        select.innerHTML = '';
+        return;
+    }
+    group.style.display = '';
+    select.innerHTML = `<option value="">${emptyLabel}</option>`;
+    options.forEach(o => {
+        const op = document.createElement('option');
+        op.value = o;
+        op.textContent = o;
+        select.appendChild(op);
+    });
+    select.value = (currentValue && options.includes(currentValue)) ? currentValue : '';
+}
+
+// Changement de catégorie : les champs contextuels sont recalculés (les
+// anciennes valeurs ne valent plus pour une autre catégorie). L'accès prend
+// sa valeur par défaut si la nouvelle catégorie en définit une.
+selCategorie.addEventListener('change', () => {
+    const cat = selCategorie.value;
+    populateContextualFields(cat, {});
+    const accesDefaut = getAccessDefault(cat);
+    if (accesDefaut) selAcces.value = accesDefaut;
+});
 
 // --- BUTTONS LISTENERS ---
 // Recharger depuis le serveur (bypass brouillon)
