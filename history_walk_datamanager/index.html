@@ -113,6 +113,35 @@
             </div>
           </div>
 
+          <!-- Barre d'action bulk-edit : apparaît quand ≥1 ligne est cochée.
+               Assigne sous-type / état à plusieurs POIs d'un coup (PR4
+               catégorisation). Les sous-types dépendant de la catégorie, un
+               filtre Catégorie actif est requis (sinon → message d'invite). -->
+          <div id="bulk-bar" class="bulk-bar hidden">
+            <span id="bulk-count" class="bulk-count">0 sélectionné</span>
+            <div id="bulk-fields" class="bulk-fields hidden">
+              <div class="bulk-field" id="bulk-field-soustype">
+                <label for="bulk-soustype">Sous-type</label>
+                <select id="bulk-soustype" class="bulk-select">
+                  <option value="">— Inchangé —</option>
+                </select>
+              </div>
+              <div class="bulk-field" id="bulk-field-etat">
+                <label for="bulk-etat">État</label>
+                <select id="bulk-etat" class="bulk-select">
+                  <option value="">— Inchangé —</option>
+                </select>
+              </div>
+            </div>
+            <p id="bulk-hint" class="bulk-hint">Filtre par catégorie pour assigner un sous-type ou un état.</p>
+            <button id="bulk-apply" class="btn btn-success" type="button" disabled>
+              <i data-lucide="check"></i> <span>Appliquer</span>
+            </button>
+            <button id="bulk-cancel" class="btn-icon" type="button" title="Annuler la sélection">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+
           <table id="data-table"><thead></thead><tbody></tbody></table>
         </div>
 

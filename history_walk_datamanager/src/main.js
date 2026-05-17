@@ -10,13 +10,13 @@ import {
     initStorage, loadGeoJSON, getGeoJSONForExport,
     undo, redo, runMaintenance, getUniqueValues,
     saveFeature, getFeatureByIndex, detectZone,
-    getAllFeatures, getPoiCategories,
+    getAllFeatures, getPoiCategories, bulkUpdateFields,
     getDestinations, getActiveDestinationId, setActiveDestination
 } from './storage.js';
 
 import { publishToGitHub, getStoredToken, saveToken } from './github-sync.js';
 
-import { initTable, renderTableRows, setFilter, refreshToolbarDropdowns, getAdvancedFilterCounts } from './table.js'
+import { initTable, renderTableRows, setFilter, refreshToolbarDropdowns, getAdvancedFilterCounts, getActiveFilters, getSelectedIndices, clearSelection } from './table.js'
 // UI
 const btnLoad = document.getElementById('btn-load');
 const btnSave = document.getElementById('btn-save');
@@ -154,6 +154,7 @@ function initFilterToolbar() {
 
     selCat.addEventListener('change', (e) => {
         setFilter('categorie', e.target.value);
+        refreshBulkBar();
         refreshResetVisibility();
     });
     selZone.addEventListener('change', (e) => {
@@ -196,6 +197,7 @@ function initFilterToolbar() {
             setFilter(key, 'all');
         });
         refreshAdvancedBadge();
+        refreshBulkBar();
         refreshResetVisibility();
     });
 }
@@ -229,6 +231,95 @@ function refreshAdvancedCounts() {
     if (noDesc) noDesc.textContent = `${counts.noDesc} sans`;
     if (notVerified) notVerified.textContent = `${counts.notVerified} non vérifiés`;
 }
+
+// --- BULK-EDIT (PR4 catégorisation) : assignation sous-type/état en masse ---
+const bulkBar = document.getElementById('bulk-bar');
+const bulkCount = document.getElementById('bulk-count');
+const bulkFields = document.getElementById('bulk-fields');
+const bulkHint = document.getElementById('bulk-hint');
+const bulkApply = document.getElementById('bulk-apply');
+const bulkCancel = document.getElementById('bulk-cancel');
+const bulkSelSousType = document.getElementById('bulk-soustype');
+const bulkSelEtat = document.getElementById('bulk-etat');
+const bulkFieldSousType = document.getElementById('bulk-field-soustype');
+const bulkFieldEtat = document.getElementById('bulk-field-etat');
+
+function fillBulkSelect(select, options) {
+    select.innerHTML = '<option value="">— Inchangé —</option>';
+    options.forEach(o => {
+        const op = document.createElement('option');
+        op.value = o;
+        op.textContent = o;
+        select.appendChild(op);
+    });
+}
+
+// Recompose le contenu de la barre selon le filtre Catégorie actif :
+//  - pas de filtre catégorie → message d'invite (les sous-types dépendent
+//    de la catégorie, impossible de les proposer « toutes catégories ») ;
+//  - catégorie sans sous-type ni état (ex: Restaurant) → message dédié ;
+//  - sinon → selects peuplés (un select sans option est masqué).
+function refreshBulkBar() {
+    const cat = getActiveFilters().categorie;
+    if (!cat) {
+        bulkFields.classList.add('hidden');
+        bulkHint.textContent = 'Filtre par catégorie pour assigner un sous-type ou un état.';
+        bulkHint.classList.remove('hidden');
+        bulkApply.disabled = true;
+        return;
+    }
+    const destId = getActiveDestinationId();
+    const subtypes = getSubtypes(cat, destId);
+    const states = getStates(cat);
+    fillBulkSelect(bulkSelSousType, subtypes);
+    fillBulkSelect(bulkSelEtat, states);
+    bulkFieldSousType.classList.toggle('hidden', subtypes.length === 0);
+    bulkFieldEtat.classList.toggle('hidden', states.length === 0);
+
+    if (subtypes.length === 0 && states.length === 0) {
+        bulkFields.classList.add('hidden');
+        bulkHint.textContent = `« ${cat} » n'a ni sous-type ni état à assigner.`;
+        bulkHint.classList.remove('hidden');
+        bulkApply.disabled = true;
+    } else {
+        bulkFields.classList.remove('hidden');
+        bulkHint.classList.add('hidden');
+        bulkApply.disabled = false;
+    }
+}
+
+// La barre apparaît dès qu'une ligne est cochée, se masque quand tout est
+// décoché (table.js émet table:selection-changed à chaque changement).
+document.addEventListener('table:selection-changed', (e) => {
+    const count = e.detail?.count || 0;
+    if (count > 0) {
+        bulkCount.textContent = `${count} sélectionné${count > 1 ? 's' : ''}`;
+        bulkBar.classList.remove('hidden');
+    } else {
+        bulkBar.classList.add('hidden');
+    }
+});
+
+bulkApply.addEventListener('click', () => {
+    const indices = getSelectedIndices();
+    if (indices.length === 0) return;
+    const fields = {};
+    if (bulkSelSousType.value) fields['Sous-type'] = bulkSelSousType.value;
+    if (bulkSelEtat.value) fields['État'] = bulkSelEtat.value;
+    if (Object.keys(fields).length === 0) {
+        updateStatus('error', 'Choisis un sous-type ou un état à appliquer.');
+        return;
+    }
+    bulkUpdateFields(indices, fields);
+    // bulkUpdateFields → refreshUI → renderTableRows : la sélection est vidée
+    // et table:selection-changed (count 0) masque la barre automatiquement.
+    bulkSelSousType.value = '';
+    bulkSelEtat.value = '';
+});
+
+bulkCancel.addEventListener('click', () => clearSelection());
+
+refreshBulkBar();
 
 // Chargement automatique du GeoJSON au démarrage
 (async () => {

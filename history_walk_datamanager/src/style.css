@@ -454,6 +454,56 @@ tr.hidden-row { display: none; }
     background: var(--brand); color: white;
 }
 
+/* --- BULK-EDIT (PR4 catégorisation) : colonne de sélection + barre d'action --- */
+.col-select { width: 40px; text-align: center; }
+.col-select .cell-content { justify-content: center; padding: 0.5rem; }
+.row-select-checkbox,
+.bulk-select-all {
+    width: 16px; height: 16px;
+    cursor: pointer;
+    accent-color: var(--brand);
+}
+
+.bulk-bar {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 10px 14px;
+    padding: 10px 14px;
+    background: var(--brand-soft);
+    border-bottom: 1px solid var(--brand);
+}
+.bulk-bar.hidden { display: none; }
+.bulk-count {
+    font-weight: 700; font-size: 0.9rem;
+    color: var(--brand); white-space: nowrap;
+}
+.bulk-fields {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 10px 14px;
+}
+.bulk-fields.hidden { display: none; }
+.bulk-field { display: flex; align-items: center; gap: 6px; }
+.bulk-field.hidden { display: none; }
+.bulk-field label {
+    font-size: 0.8rem; font-weight: 600;
+    color: var(--ink-soft); white-space: nowrap;
+}
+.bulk-select {
+    padding: 6px 9px;
+    border: 1px solid var(--line); border-radius: 6px;
+    background: var(--surface); color: var(--ink);
+    font: inherit; font-size: 0.85rem; cursor: pointer;
+    min-width: 120px;
+}
+.bulk-select:focus { outline: none; border-color: var(--brand); }
+.bulk-hint {
+    flex: 1; min-width: 150px;
+    font-size: 0.82rem; font-style: italic;
+    color: var(--ink-soft);
+}
+.bulk-hint.hidden { display: none; }
+#bulk-apply { margin-left: auto; }
+.bulk-bar .btn { padding: 0.4rem 0.85rem; font-size: 0.85rem; }
+
 /* Bandeau cross-app warning (DM ↔ HW) — couleurs via tokens hw-amber
    pour suivre le thème automatiquement (PR 3g-2). */
 .cross-app-warn {

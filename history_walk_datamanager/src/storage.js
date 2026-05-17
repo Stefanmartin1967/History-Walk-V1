@@ -401,6 +401,31 @@ export function saveFeature(formData, indexToUpdate = null) {
     return true;
 }
 
+// Bulk-edit (PR4 catégorisation) : applique un même set de champs à plusieurs
+// POIs d'un coup. `indices` = positions dans globalGeoJSON.features ; `fields`
+// = { 'Sous-type': '...', 'État': '...' }. Une clé vide/absente n'est pas
+// touchée (les POIs gardent leur valeur). Retourne le nombre de POIs modifiés.
+export function bulkUpdateFields(indices, fields) {
+    if (!globalGeoJSON || !Array.isArray(indices) || indices.length === 0) return 0;
+    const keys = Object.keys(fields || {}).filter(k => fields[k] !== '' && fields[k] != null);
+    if (keys.length === 0) return 0;
+
+    let count = 0;
+    indices.forEach(idx => {
+        const feature = globalGeoJSON.features[idx];
+        if (!feature) return;
+        keys.forEach(k => { feature.properties[k] = fields[k]; });
+        count++;
+    });
+
+    if (count > 0) {
+        saveStateToHistory(); // historique undo/redo + flag dirty
+        refreshUI();
+        notify("success", `${count} lieu${count > 1 ? 'x' : ''} mis à jour.`);
+    }
+    return count;
+}
+
 export async function deleteFeature(index) {
     if (!globalGeoJSON) return;
     const f = globalGeoJSON.features[index];

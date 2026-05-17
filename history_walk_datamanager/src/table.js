@@ -2,6 +2,7 @@
 import { deleteFeature, getUniqueValues } from './storage.js';
 
 const columnsConfig = [
+    { key: 'select', label: '', widthClass: 'col-select', type: 'select' },
     { key: 'HW_ID', label: 'ID', hidden: true },
     { key: 'verified', label: '✓', widthClass: 'col-verif', type: 'verified' },
     { key: 'Nom du site FR', label: 'Nom', widthClass: 'col-nom', type: 'search' },
@@ -27,6 +28,13 @@ const resultCounter = document.getElementById('result-counter');
 
 let lastFeatures = [];
 
+// Sélection multi-lignes pour le bulk-edit (PR4 catégorisation). Stocke les
+// index dans lastFeatures (= globalGeoJSON.features). Vidée à chaque re-render
+// complet et à chaque changement du filtre Catégorie (les sous-types proposés
+// dans la barre bulk dépendent de la catégorie filtrée).
+const selectedIndices = new Set();
+let headerCheckbox = null;
+
 export function initTable() { renderHeader(); }
 
 function renderHeader() {
@@ -36,17 +44,84 @@ function renderHeader() {
     columnsConfig.forEach(col => {
         if (col.hidden) return;
         const th = document.createElement('th');
-        th.textContent = col.label;
         th.className = col.widthClass || '';
+        if (col.type === 'select') {
+            headerCheckbox = document.createElement('input');
+            headerCheckbox.type = 'checkbox';
+            headerCheckbox.className = 'bulk-select-all';
+            headerCheckbox.title = 'Tout sélectionner (lignes visibles)';
+            headerCheckbox.addEventListener('change', onHeaderCheckboxToggle);
+            th.appendChild(headerCheckbox);
+        } else {
+            th.textContent = col.label;
+        }
         trTitle.appendChild(th);
     });
 
     tableHead.appendChild(trTitle);
 }
 
+// --- SÉLECTION MULTI-LIGNES (bulk-edit PR4) ---
+
+function emitSelectionChanged() {
+    document.dispatchEvent(new CustomEvent('table:selection-changed', {
+        detail: { count: selectedIndices.size }
+    }));
+}
+
+function visibleRowEls() {
+    return [...tableBody.querySelectorAll('tr')].filter(r => r.style.display !== 'none');
+}
+
+// Reflète l'état de la checkbox d'en-tête : cochée si toutes les lignes
+// visibles sont sélectionnées, indéterminée si une partie seulement l'est.
+function refreshHeaderCheckbox() {
+    if (!headerCheckbox) return;
+    const visible = visibleRowEls();
+    const selectedVisible = visible.filter(r => selectedIndices.has(Number(r.dataset.index)));
+    headerCheckbox.checked = visible.length > 0 && selectedVisible.length === visible.length;
+    headerCheckbox.indeterminate = selectedVisible.length > 0 && selectedVisible.length < visible.length;
+}
+
+// La checkbox d'en-tête opère sur les lignes visibles uniquement (cohérent
+// avec un filtre actif : on (dé)sélectionne ce qu'on voit).
+function onHeaderCheckboxToggle() {
+    const select = headerCheckbox.checked;
+    visibleRowEls().forEach(r => {
+        const idx = Number(r.dataset.index);
+        if (select) selectedIndices.add(idx);
+        else selectedIndices.delete(idx);
+        const cb = r.querySelector('.row-select-checkbox');
+        if (cb) cb.checked = select;
+    });
+    refreshHeaderCheckbox();
+    emitSelectionChanged();
+}
+
+function onRowCheckboxToggle(index, checked) {
+    if (checked) selectedIndices.add(index);
+    else selectedIndices.delete(index);
+    refreshHeaderCheckbox();
+    emitSelectionChanged();
+}
+
+export function getSelectedIndices() {
+    return [...selectedIndices];
+}
+
+export function clearSelection() {
+    selectedIndices.clear();
+    tableBody.querySelectorAll('.row-select-checkbox').forEach(cb => { cb.checked = false; });
+    refreshHeaderCheckbox();
+    emitSelectionChanged();
+}
+
 export function setFilter(key, value) {
     if (!(key in activeFilters)) return;
     activeFilters[key] = value;
+    // Changer de catégorie invalide la sélection : les sous-types proposés
+    // dans la barre bulk ne valent que pour la catégorie filtrée.
+    if (key === 'categorie') clearSelection();
     applyFilters();
 }
 
@@ -86,6 +161,8 @@ function passesFilters(props) {
 export function renderTableRows(features) {
     lastFeatures = features;
     tableBody.innerHTML = '';
+    // Re-render complet → la sélection (par index) n'est plus fiable, on repart à zéro.
+    selectedIndices.clear();
     const fragment = document.createDocumentFragment();
 
     features.forEach((feature, index) => {
@@ -96,7 +173,7 @@ export function renderTableRows(features) {
         // toujours visible). Le bouton ✏️ Édit n'est plus nécessaire.
         // On dispatche aussi request:preview pour focuser la carte sur le POI.
         tr.addEventListener('click', (e) => {
-            if (e.target.closest('button, a')) return;
+            if (e.target.closest('button, a, .col-select')) return;
             document.querySelectorAll('#data-table tbody tr').forEach(r => r.classList.remove('row-active'));
             tr.classList.add('row-active');
             document.dispatchEvent(new CustomEvent('request:preview', { detail: { index } }));
@@ -113,7 +190,14 @@ export function renderTableRows(features) {
             const wrapper = document.createElement('div');
             wrapper.className = 'cell-content';
 
-            if (col.type === 'verified') {
+            if (col.type === 'select') {
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.className = 'row-select-checkbox';
+                cb.title = 'Sélectionner pour le bulk-edit';
+                cb.addEventListener('change', () => onRowCheckboxToggle(index, cb.checked));
+                wrapper.appendChild(cb);
+            } else if (col.type === 'verified') {
                 const isVerified = !!props['verified'];
                 const badge = document.createElement('span');
                 badge.className = isVerified ? 'verif-badge verif-yes' : 'verif-badge verif-no';
@@ -152,6 +236,7 @@ export function renderTableRows(features) {
 
     tableBody.appendChild(fragment);
     applyFilters();
+    emitSelectionChanged();
     document.dispatchEvent(new Event('table:rendered'));
 }
 
@@ -177,6 +262,7 @@ function applyFilters() {
     });
     resultCounter.textContent = `${visibleCount} visible(s)`;
     resultCounter.classList.remove('hidden');
+    refreshHeaderCheckbox();
     document.dispatchEvent(new CustomEvent('table:filters-applied', { detail: { visibleCount, total: lastFeatures.length } }));
 }
 
