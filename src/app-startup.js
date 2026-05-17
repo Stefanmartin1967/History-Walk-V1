@@ -1,5 +1,6 @@
 // app-startup.js
 import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setPoiCategories } from './state.js';
+import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -101,12 +102,11 @@ export async function loadPoiCategoriesConfig() {
         const response = await fetch(configUrl);
         if (response.ok) {
             const data = await response.json();
-            if (Array.isArray(data?.categories)) {
-                setPoiCategories(data.categories);
-            }
+            setTaxonomy(data);
+            setPoiCategories(getCategoryLabels());
         }
     } catch (e) {
-        console.warn("[Startup] poi-categories.json indisponible — fallback sur la liste hardcodée.", e);
+        console.warn("[Startup] poi-categories.json indisponible — fallback sur la taxonomie intégrée.", e);
     }
 }
 
