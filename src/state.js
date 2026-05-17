@@ -1,16 +1,14 @@
 // state.js
-export const APP_VERSION = '3.7.45'; // Nettoyage CSS : suppression des règles mortes .marker-vip / .marker-visited / .marker-planned dans base.css (~78 lignes) — les décorations marqueur (pentagone jaune incontournable, halos vert visité / bleu planifié) ont été retirées du JS lors de l'audit Stefan #5 car redondantes avec les filtres "Mon parcours". Seul marker-highlight (recherche topbar) reste actif ; son résidu clip-path VIP est purgé.
+import { getCategoryLabels } from './taxonomy.js';
+
+export const APP_VERSION = '3.7.46'; // Socle refonte catégorisation (PR 1) : poi-categories.json passe au format enrichi (groupes + catégories structurées + sous-types + état/accès) ; nouveau module src/taxonomy.js (résolveurs, partagé HW/DM). POI_CATEGORIES reste un string[] dérivé en compat → les écrans consommateurs sont inchangés. PR invisible pour l'utilisateur.
 export const MAX_CIRCUIT_POINTS = 15;
 
-// Source unique : public/poi-categories.json (chargé async au boot via setPoiCategories).
-// La liste hardcodée ci-dessous est un fallback initial — synchronisée manuellement avec le JSON.
-// Les imports ESM sont des bindings live, donc une réassignation via setPoiCategories
-// est visible côté importeurs sans reload.
-export let POI_CATEGORIES = [
-    "A définir", "Café", "Commerce", "Culture et tradition",
-    "Curiosité", "Hôtel", "Mosquée", "Pâtisserie", "Photo", "Puits",
-    "Restaurant", "Salon de thé", "Site historique", "Site religieux", "Taxi"
-].sort();
+// POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
+// taxonomy.js (source : public/poi-categories.json, chargé async au boot). Le
+// fallback initial vient du FALLBACK intégré à taxonomy.js. Binding ESM live :
+// la réassignation via setPoiCategories est visible côté importeurs sans reload.
+export let POI_CATEGORIES = getCategoryLabels();
 
 export function setPoiCategories(arr) {
     if (!Array.isArray(arr) || arr.length === 0) return;

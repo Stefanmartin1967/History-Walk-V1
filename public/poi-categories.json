@@ -1,20 +1,183 @@
 {
-  "_comment": "Source unique des catégories POI partagée entre HW (app principale) et DM (data manager). Modifier ici puis publier sur GitHub.",
+  "_comment": "Référentiel taxonomie POI, partagé HW (app principale) et DM (data manager). Format enrichi (mai 2026) : groupes + catégories structurées + sous-types + état + accès. La liste plate des libellés de catégories est dérivée de `categories[].label`. Modifier ici puis publier sur GitHub.",
+  "groups": [
+    "Lieux de culte",
+    "Patrimoine & sites",
+    "Culture & curiosités",
+    "Manger",
+    "Boire & goûter",
+    "Services & commodités"
+  ],
   "categories": [
-    "A définir",
-    "Café",
-    "Commerce",
-    "Culture et tradition",
-    "Curiosité",
-    "Hôtel",
-    "Mosquée",
-    "Pâtisserie",
-    "Photo",
-    "Puits",
-    "Restaurant",
-    "Salon de thé",
-    "Site historique",
-    "Site religieux",
-    "Taxi"
+    {
+      "label": "Mosquée",
+      "groupe": "Lieux de culte",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "À minaret", "portee": "générique" },
+        { "label": "À coupoles", "portee": "générique" },
+        { "label": "Fortifiée", "portee": "générique" },
+        { "label": "Générique", "portee": "générique" }
+      ],
+      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Extérieur seulement" }
+    },
+    {
+      "label": "Marabout",
+      "groupe": "Lieux de culte",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Extérieur seulement" }
+    },
+    {
+      "label": "Église",
+      "groupe": "Lieux de culte",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "Catholique", "portee": "générique" },
+        { "label": "Orthodoxe", "portee": "générique" }
+      ],
+      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+    },
+    {
+      "label": "Synagogue",
+      "groupe": "Lieux de culte",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+    },
+    {
+      "label": "Site historique",
+      "groupe": "Patrimoine & sites",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "Fortification", "portee": "générique" },
+        { "label": "Funéraire", "portee": "générique" },
+        { "label": "Archéologique", "portee": "générique" }
+      ],
+      "etats": ["Conservé", "Vestiges partiels", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+    },
+    {
+      "label": "Architecture traditionnelle",
+      "groupe": "Patrimoine & sites",
+      "libelleDerive": true,
+      "sousTypes": [
+        { "label": "Menzel", "portee": ["djerba"] },
+        { "label": "Huilerie", "portee": "générique" },
+        { "label": "Atelier", "portee": "générique" }
+      ],
+      "etats": ["En activité", "Reconverti", "Désaffecté", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Extérieur seulement" }
+    },
+    {
+      "label": "Puits",
+      "groupe": "Patrimoine & sites",
+      "libelleDerive": true,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Culture et tradition",
+      "groupe": "Culture & curiosités",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "Artisanat", "portee": "générique" }
+      ],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Curiosité",
+      "groupe": "Culture & curiosités",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Photo",
+      "groupe": "Culture & curiosités",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Restaurant",
+      "groupe": "Manger",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Café",
+      "groupe": "Boire & goûter",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Salon de thé",
+      "groupe": "Boire & goûter",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Pâtisserie",
+      "groupe": "Boire & goûter",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Hôtel",
+      "groupe": "Services & commodités",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Commerce",
+      "groupe": "Services & commodités",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Taxi",
+      "groupe": "Services & commodités",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "Marché",
+      "groupe": "Services & commodités",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    },
+    {
+      "label": "A définir",
+      "groupe": null,
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": [],
+      "acces": null
+    }
   ]
 }

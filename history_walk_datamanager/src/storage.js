@@ -1,6 +1,7 @@
 // src/storage.js
 import { cleanUrl, generateHWID, isPointInPolygon, parseGps } from './utils.js';
 import { hwConfirm, hwAlert } from '../../src/modal.js';
+import { setTaxonomy, getCategoryLabels } from '../../src/taxonomy.js';
 
 // --- SOURCE DE VÉRITÉ UNIQUE : GitHub ---
 const GITHUB_RAW = 'https://raw.githubusercontent.com/Stefanmartin1967/History-Walk-V1/main';
@@ -182,10 +183,9 @@ async function loadPoiCategories() {
         const response = await fetch(CATEGORIES_URL + '?t=' + Date.now());
         if (response.ok) {
             const data = await response.json();
-            if (Array.isArray(data?.categories)) {
-                poiCategories = [...data.categories].sort();
-                console.log("Catégories chargées :", poiCategories.length);
-            }
+            setTaxonomy(data);
+            poiCategories = getCategoryLabels();
+            console.log("Catégories chargées :", poiCategories.length);
         }
     } catch (e) {
         console.warn("Impossible de charger poi-categories.json — fallback sur valeurs uniques du data.", e);
