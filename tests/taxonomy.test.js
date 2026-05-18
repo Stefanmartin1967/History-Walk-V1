@@ -141,5 +141,8 @@ describe('taxonomy — cohérence du référentiel réel (poi-categories.json)',
         expect(labels).not.toContain('Culture et tradition');
         // un atelier d'artisanat vivant ou en ruine reste « Artisanat » → l'état porte la nuance
         expect(getStates('Artisanat')).toContain('Ruine');
+        // les métiers (poterie, huilerie, tissage) sont des sous-types d'Artisanat, pas des catégories
+        expect(getSubtypes('Artisanat')).toContain('Huilerie');
+        expect(labels).not.toContain('Huilerie');
     });
 });

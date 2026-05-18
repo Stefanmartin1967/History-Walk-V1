@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.48'; // Référentiel taxonomie v2 : 6 groupes finalisés — « Site historique » et « Architecture traditionnelle » promus de catégories en groupes (leurs ex-sous-types fonctionnels deviennent des catégories : Fort, Site funéraire, Site archéologique / Menzel, Huilerie) ; « Manger » + « Boire & goûter » fusionnés ; « Photo » retiré (futur attribut) ; « Culture et tradition » dissoute → Musée + Artisanat. poi-categories.json + FALLBACK taxonomy.js resynchronisés.
+export const APP_VERSION = '3.7.48'; // Référentiel taxonomie v2 : 6 groupes finalisés — « Site historique » et « Architecture traditionnelle » promus de catégories en groupes ; « Manger » + « Boire & goûter » fusionnés ; « Photo » retiré (futur attribut) ; « Culture et tradition » dissoute → Musée + Artisanat ; Huilerie = sous-type d'Artisanat (lieu de production, comme Poterie). poi-categories.json + FALLBACK taxonomy.js resynchronisés.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
