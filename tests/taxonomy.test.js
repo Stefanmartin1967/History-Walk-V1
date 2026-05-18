@@ -123,4 +123,23 @@ describe('taxonomy — cohérence du référentiel réel (poi-categories.json)',
         expect(getSubtypes('Mosquée')).toContain('À coupoles');
         expect(usesDerivedLabel('Puits')).toBe(true);
     });
+
+    it('structure v2 : 6 groupes, ex-catégories promues en groupes, catégories retirées', () => {
+        setTaxonomy(refJson);
+        const groups = getGroups();
+        expect(groups).toHaveLength(6);
+        expect(groups).toContain('Site historique');
+        expect(groups).toContain('Architecture traditionnelle');
+        expect(groups).toContain('Manger & boire');
+        // ex-sous-types fonctionnels promus en catégories
+        expect(getCategoriesInGroup('Site historique')).toContain('Fort');
+        expect(getCategoriesInGroup('Architecture traditionnelle')).toContain('Menzel');
+        // catégories retirées / dissoutes
+        const labels = getCategoryLabels();
+        expect(labels).not.toContain('Photo');
+        expect(labels).not.toContain('Site historique');
+        expect(labels).not.toContain('Culture et tradition');
+        // un atelier d'artisanat vivant ou en ruine reste « Artisanat » → l'état porte la nuance
+        expect(getStates('Artisanat')).toContain('Ruine');
+    });
 });
