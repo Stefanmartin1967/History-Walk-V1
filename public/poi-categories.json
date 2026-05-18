@@ -1,11 +1,11 @@
 {
-  "_comment": "Référentiel taxonomie POI, partagé HW (app principale) et DM (data manager). Format enrichi (mai 2026) : groupes + catégories structurées + sous-types + état + accès. La liste plate des libellés de catégories est dérivée de `categories[].label`. Modifier ici puis publier sur GitHub.",
+  "_comment": "Référentiel taxonomie POI, partagé HW + DM. v2 (mai 2026) — 6 groupes finalisés. Les anciennes catégories « Site historique » et « Architecture traditionnelle » sont devenues des GROUPES ; leurs ex-sous-types fonctionnels sont devenus des catégories. « Manger » + « Boire & goûter » fusionnés en « Manger & boire ». « Photo » retiré (devient un attribut transversal). « Culture et tradition » dissoute (→ Musée + Artisanat). La liste plate des libellés est dérivée de categories[].label. Modifier ici puis publier sur GitHub.",
   "groups": [
     "Lieux de culte",
-    "Patrimoine & sites",
-    "Culture & curiosités",
-    "Manger",
-    "Boire & goûter",
+    "Site historique",
+    "Architecture traditionnelle",
+    "Culture & découvertes",
+    "Manger & boire",
     "Services & commodités"
   ],
   "categories": [
@@ -50,58 +50,68 @@
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
     },
     {
-      "label": "Site historique",
-      "groupe": "Patrimoine & sites",
+      "label": "Fort",
+      "groupe": "Site historique",
       "libelleDerive": false,
-      "sousTypes": [
-        { "label": "Fortification", "portee": "générique" },
-        { "label": "Funéraire", "portee": "générique" },
-        { "label": "Archéologique", "portee": "générique" }
-      ],
+      "sousTypes": [],
       "etats": ["Conservé", "Vestiges partiels", "Ruine"],
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
     },
     {
-      "label": "Architecture traditionnelle",
-      "groupe": "Patrimoine & sites",
+      "label": "Site funéraire",
+      "groupe": "Site historique",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": ["Conservé", "Vestiges partiels", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+    },
+    {
+      "label": "Site archéologique",
+      "groupe": "Site historique",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": ["Conservé", "Vestiges partiels", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+    },
+    {
+      "label": "Menzel",
+      "groupe": "Architecture traditionnelle",
       "libelleDerive": true,
-      "sousTypes": [
-        { "label": "Menzel", "portee": ["djerba"] },
-        { "label": "Huilerie", "portee": "générique" },
-        { "label": "Atelier", "portee": "générique" }
-      ],
+      "sousTypes": [],
       "etats": ["En activité", "Reconverti", "Désaffecté", "Ruine"],
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Extérieur seulement" }
     },
     {
       "label": "Puits",
-      "groupe": "Patrimoine & sites",
+      "groupe": "Architecture traditionnelle",
       "libelleDerive": true,
       "sousTypes": [],
       "etats": [],
       "acces": null
     },
     {
-      "label": "Culture et tradition",
-      "groupe": "Culture & curiosités",
-      "libelleDerive": false,
-      "sousTypes": [
-        { "label": "Artisanat", "portee": "générique" }
-      ],
-      "etats": [],
-      "acces": null
-    },
-    {
-      "label": "Curiosité",
-      "groupe": "Culture & curiosités",
+      "label": "Musée",
+      "groupe": "Culture & découvertes",
       "libelleDerive": false,
       "sousTypes": [],
       "etats": [],
       "acces": null
     },
     {
-      "label": "Photo",
-      "groupe": "Culture & curiosités",
+      "label": "Artisanat",
+      "groupe": "Culture & découvertes",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "Poterie", "portee": "générique" },
+        { "label": "Huilerie", "portee": "générique" },
+        { "label": "Tissage", "portee": "générique" }
+      ],
+      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "acces": null
+    },
+    {
+      "label": "Curiosité",
+      "groupe": "Culture & découvertes",
       "libelleDerive": false,
       "sousTypes": [],
       "etats": [],
@@ -109,7 +119,7 @@
     },
     {
       "label": "Restaurant",
-      "groupe": "Manger",
+      "groupe": "Manger & boire",
       "libelleDerive": false,
       "sousTypes": [],
       "etats": [],
@@ -117,7 +127,7 @@
     },
     {
       "label": "Café",
-      "groupe": "Boire & goûter",
+      "groupe": "Manger & boire",
       "libelleDerive": false,
       "sousTypes": [],
       "etats": [],
@@ -125,7 +135,7 @@
     },
     {
       "label": "Salon de thé",
-      "groupe": "Boire & goûter",
+      "groupe": "Manger & boire",
       "libelleDerive": false,
       "sousTypes": [],
       "etats": [],
@@ -133,7 +143,7 @@
     },
     {
       "label": "Pâtisserie",
-      "groupe": "Boire & goûter",
+      "groupe": "Manger & boire",
       "libelleDerive": false,
       "sousTypes": [],
       "etats": [],

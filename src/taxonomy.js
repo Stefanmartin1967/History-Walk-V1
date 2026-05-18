@@ -5,26 +5,29 @@
 // sans la structure fine). FALLBACK à resynchroniser à la main avec le JSON.
 
 const FALLBACK = {
-    groups: ["Lieux de culte", "Patrimoine & sites", "Culture & curiosités", "Manger", "Boire & goûter", "Services & commodités"],
+    groups: ["Lieux de culte", "Site historique", "Architecture traditionnelle", "Culture & découvertes", "Manger & boire", "Services & commodités"],
     categories: [
         { label: "A définir", groupe: null },
-        { label: "Architecture traditionnelle", groupe: "Patrimoine & sites", libelleDerive: true },
-        { label: "Café", groupe: "Boire & goûter" },
+        { label: "Artisanat", groupe: "Culture & découvertes" },
+        { label: "Café", groupe: "Manger & boire" },
         { label: "Commerce", groupe: "Services & commodités" },
-        { label: "Culture et tradition", groupe: "Culture & curiosités" },
-        { label: "Curiosité", groupe: "Culture & curiosités" },
+        { label: "Curiosité", groupe: "Culture & découvertes" },
         { label: "Église", groupe: "Lieux de culte" },
+        { label: "Fort", groupe: "Site historique" },
         { label: "Hôtel", groupe: "Services & commodités" },
         { label: "Marabout", groupe: "Lieux de culte" },
         { label: "Marché", groupe: "Services & commodités" },
+        { label: "Menzel", groupe: "Architecture traditionnelle", libelleDerive: true },
         { label: "Mosquée", groupe: "Lieux de culte" },
-        { label: "Pâtisserie", groupe: "Boire & goûter" },
-        { label: "Photo", groupe: "Culture & curiosités" },
-        { label: "Puits", groupe: "Patrimoine & sites", libelleDerive: true },
-        { label: "Restaurant", groupe: "Manger" },
-        { label: "Salon de thé", groupe: "Boire & goûter" },
-        { label: "Site historique", groupe: "Patrimoine & sites" },
-        { label: "Synagogue", groupe: "Lieux de culte" }
+        { label: "Musée", groupe: "Culture & découvertes" },
+        { label: "Pâtisserie", groupe: "Manger & boire" },
+        { label: "Puits", groupe: "Architecture traditionnelle", libelleDerive: true },
+        { label: "Restaurant", groupe: "Manger & boire" },
+        { label: "Salon de thé", groupe: "Manger & boire" },
+        { label: "Site archéologique", groupe: "Site historique" },
+        { label: "Site funéraire", groupe: "Site historique" },
+        { label: "Synagogue", groupe: "Lieux de culte" },
+        { label: "Taxi", groupe: "Services & commodités" }
     ]
 };
 
