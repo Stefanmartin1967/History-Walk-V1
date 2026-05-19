@@ -112,21 +112,24 @@
         "Nom du site FR": "Mosquée Ibn Abass",
         "Nom du site arabe": "جامع ابن العباس المعمر",
         "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non accessible",
         "Zone": "Arkou",
         "Description": null,
+        "Description_courte": null,
         "Source": null,
+        "Temps_minutes": null,
+        "Prix_TND": null,
+        "Téléphone": null,
+        "Horaires": null,
+        "verified": false,
         "HW_ID": "HW-01K77WPE671G6V27VYYNMJV2NC",
-        "planifieCounter": 1,
-        "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497287806.jpg",
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497289182.jpg",
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497290453.jpg"
-        ],
-        "visitedByCircuits": [
-          "HW-1771316521571"
-        ],
-        "notes": "J'y ai rencontré Axel"
+        ]
       }
     },
     {
