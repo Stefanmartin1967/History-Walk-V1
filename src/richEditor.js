@@ -12,6 +12,7 @@ import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { showConfirm, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 
 // --- IDs DOM ---
 const DOM_IDS = {
@@ -29,7 +30,10 @@ const DOM_IDS = {
         TIME_H: 'rich-poi-time-h',
         TIME_M: 'rich-poi-time-m',
         PRICE: 'rich-poi-price',
-        SOURCE: 'rich-poi-source'
+        SOURCE: 'rich-poi-source',
+        SUBTYPE: 'rich-poi-subtype',
+        STATE: 'rich-poi-state',
+        ACCESS: 'rich-poi-access'
     },
     BTNS: {
         SAVE: 'btn-save-rich-poi',
@@ -79,6 +83,23 @@ const RICH_POI_BODY_HTML = `
         <div class="input-group">
             <label for="rich-poi-zone">Zone</label>
             <input type="text" id="rich-poi-zone" class="editable-input" placeholder="Ex: Houmt Souk">
+        </div>
+    </div>
+
+    <!-- Bloc taxonomie : Sous-type / État / Accès — contextuels selon la
+         catégorie. Peuplés / affichés / masqués par populateTaxonomySelects(). -->
+    <div class="rich-poi-taxonomy is-hidden" id="rich-poi-taxonomy">
+        <div class="input-group" id="rich-poi-subtype-group">
+            <label for="rich-poi-subtype">Sous-type</label>
+            <select id="rich-poi-subtype" class="editable-input"></select>
+        </div>
+        <div class="input-group" id="rich-poi-state-group">
+            <label for="rich-poi-state">État</label>
+            <select id="rich-poi-state" class="editable-input"></select>
+        </div>
+        <div class="input-group" id="rich-poi-access-group">
+            <label for="rich-poi-access">Accès</label>
+            <select id="rich-poi-access" class="editable-input"></select>
         </div>
     </div>
 
@@ -190,6 +211,9 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.PRICE, "");
         setValue(DOM_IDS.INPUTS.SOURCE, "");
 
+        // Bloc taxonomie : catégorie vide en création → bloc masqué.
+        populateTaxonomySelects("");
+
         // Affichage coords
         const coordsEl = document.getElementById(DOM_IDS.COORDS);
         if (coordsEl) coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
@@ -234,6 +258,12 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.NAME_FR, merged['Nom du site FR'] || merged.name || "");
         setValue(DOM_IDS.INPUTS.NAME_AR, merged['Nom du site arabe'] || "");
         setValue(DOM_IDS.INPUTS.CATEGORY, merged['Catégorie'] || "A définir");
+
+        // Bloc taxonomie : peupler selon la catégorie, puis restaurer les valeurs.
+        populateTaxonomySelects(merged['Catégorie'] || "");
+        setValue(DOM_IDS.INPUTS.SUBTYPE, merged['Sous-type'] || "");
+        setValue(DOM_IDS.INPUTS.STATE, merged['État'] || "");
+        setValue(DOM_IDS.INPUTS.ACCESS, merged['Accès'] || "");
 
         // Recalculate Zone and Lock
         let zoneVal = merged['Zone'] || "";
@@ -438,6 +468,11 @@ function bindModalEvents() {
     // Sauvegarde
     document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', handleSave);
 
+    // Bloc taxonomie : repeupler les 3 selects quand la catégorie change.
+    document.getElementById(DOM_IDS.INPUTS.CATEGORY)?.addEventListener('change', () => {
+        populateTaxonomySelects(getValue(DOM_IDS.INPUTS.CATEGORY));
+    });
+
     // Validation Listeners
     const validationEvents = ['input', 'change'];
     const fieldsToCheck = [DOM_IDS.INPUTS.NAME_FR, DOM_IDS.INPUTS.CATEGORY, DOM_IDS.INPUTS.DESC_LONG, DOM_IDS.INPUTS.SOURCE];
@@ -531,6 +566,40 @@ function populateCategorySelect() {
     }
 }
 
+// Peuple les 3 selects taxonomie (Sous-type / État / Accès) selon la catégorie.
+// Un select sans valeurs pour la catégorie est masqué ; si aucun des 3 n'a de
+// valeurs, le bloc entier disparaît (ex : Restaurant n'a aucun des 3 attributs).
+function populateTaxonomySelects(category) {
+    const block = document.getElementById('rich-poi-taxonomy');
+    if (!block) return;
+    const specs = [
+        { groupId: 'rich-poi-subtype-group', selId: DOM_IDS.INPUTS.SUBTYPE, values: getSubtypes(category) },
+        { groupId: 'rich-poi-state-group',   selId: DOM_IDS.INPUTS.STATE,   values: getStates(category) },
+        { groupId: 'rich-poi-access-group',  selId: DOM_IDS.INPUTS.ACCESS,  values: getAccessValues(category) },
+    ];
+    let anyVisible = false;
+    specs.forEach(({ groupId, selId, values }) => {
+        const group = document.getElementById(groupId);
+        const sel = document.getElementById(selId);
+        if (!group || !sel) return;
+        const hasValues = values.length > 0;
+        group.classList.toggle('is-hidden', !hasValues);
+        if (hasValues) anyVisible = true;
+        sel.innerHTML = '';
+        const blank = document.createElement('option');
+        blank.value = '';
+        blank.textContent = '—';
+        sel.appendChild(blank);
+        values.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v;
+            opt.textContent = v;
+            sel.appendChild(opt);
+        });
+    });
+    block.classList.toggle('is-hidden', !anyVisible);
+}
+
 function setValue(id, val) {
     const el = document.getElementById(id);
     if (el) el.value = val;
@@ -552,6 +621,9 @@ async function handleSave() {
         'Nom du site FR': nameFr,
         'Nom du site arabe': getValue(DOM_IDS.INPUTS.NAME_AR),
         'Catégorie': getValue(DOM_IDS.INPUTS.CATEGORY),
+        'Sous-type': getValue(DOM_IDS.INPUTS.SUBTYPE),
+        'État': getValue(DOM_IDS.INPUTS.STATE),
+        'Accès': getValue(DOM_IDS.INPUTS.ACCESS),
         'Zone': getValue(DOM_IDS.INPUTS.ZONE),
         'Description_courte': getValue(DOM_IDS.INPUTS.DESC_SHORT),
         'description': getValue(DOM_IDS.INPUTS.DESC_LONG),
@@ -708,6 +780,9 @@ function handleEmailSuggestion() {
         'Nom du site FR': getValue(DOM_IDS.INPUTS.NAME_FR),
         'Nom du site arabe': getValue(DOM_IDS.INPUTS.NAME_AR),
         'Catégorie': getValue(DOM_IDS.INPUTS.CATEGORY),
+        'Sous-type': getValue(DOM_IDS.INPUTS.SUBTYPE),
+        'État': getValue(DOM_IDS.INPUTS.STATE),
+        'Accès': getValue(DOM_IDS.INPUTS.ACCESS),
         'Zone': getValue(DOM_IDS.INPUTS.ZONE),
         'Description_courte': getValue(DOM_IDS.INPUTS.DESC_SHORT),
         'description': getValue(DOM_IDS.INPUTS.DESC_LONG),

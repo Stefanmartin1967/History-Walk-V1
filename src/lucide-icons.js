@@ -51,7 +51,7 @@ import {
     // UI & layout
     Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,
-    CalendarClock, Phone, Bookmark, Landmark, Wrench, DoorOpen,
+    CalendarClock, Phone, Bookmark, Landmark, Building, Wrench, DoorOpen,
     Ticket, Table, Package, PackageCheck, Server, ServerCog,
     Luggage, Heart, Coffee, Utensils, Ruler,
 
@@ -98,7 +98,7 @@ export const appIcons = {
 
     Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,
-    CalendarClock, Phone, Bookmark, Landmark, Wrench, DoorOpen,
+    CalendarClock, Phone, Bookmark, Landmark, Building, Wrench, DoorOpen,
     Ticket, Table, Package, PackageCheck, Server, ServerCog,
     Luggage, Heart, Coffee, Utensils, Ruler,
 

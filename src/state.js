@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.49'; // Panneau de filtres repliable : « Type de lieu » ouverte par défaut, ses 6 groupes deviennent repliables (en-tête double-action checkbox/déplier + chevron, halo sur un groupe replié encore actif) ; Localisation + Mon parcours repliées par défaut.
+export const APP_VERSION = '3.7.50'; // Fiche POI : sous-type affiché dans l'eyebrow, pastilles État + Accès dans le hero (repli « Visite libre » masqué si un Accès taxonomie est renseigné). richEditor : bloc « Précisions taxonomie » — 3 menus Sous-type/État/Accès contextuels selon la catégorie.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
