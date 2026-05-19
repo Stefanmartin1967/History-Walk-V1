@@ -561,6 +561,26 @@
 .poi-tag.amber { background: rgba(255,251,235,0.95); color: var(--ink-soft); }
 .poi-tag.brand { background: rgba(240,249,255,0.95); color: var(--brand); }
 .poi-tag svg { width: 11px; height: 11px; }
+
+/* État + Accès — pastilles sémantiques ajoutées dans la rangée de tags du
+   hero. État : pastille à point coloré. Accès : pastille à icône. Couleurs
+   tokenisées (fallback hex en repli). */
+.poi-tag.status { font-weight: 700; }
+.poi-tag.status .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.poi-tag.status.ok        { background: var(--ok-soft, #D1FAE5); color: var(--ok-fg, #047857); }
+.poi-tag.status.ok .dot   { background: var(--ok, #10B981); }
+.poi-tag.status.warn      { background: var(--warn-soft, #FEF3C7); color: var(--warn-fg, #A16207); }
+.poi-tag.status.warn .dot { background: var(--warn, #F59E0B); }
+.poi-tag.status.muted      { background: var(--surface-muted, #F0F4F8); color: var(--ink-soft, #627D98); }
+.poi-tag.status.muted .dot { background: var(--ink-soft, #627D98); }
+.poi-tag.access.ok     { background: var(--brand-soft, #F0F9FF); color: var(--brand-2, var(--brand)); }
+.poi-tag.access.muted  { background: var(--surface-muted, #F0F4F8); color: var(--ink-soft, #627D98); }
+.poi-tag.access.danger { background: var(--danger-soft, #FEE2E2); color: var(--danger-fg, #B91C1C); }
 .poi-photo-count {
     position: absolute;
     top: 12px;
@@ -668,6 +688,19 @@
     color: var(--ink-soft);
     font-weight: 600;
     margin: 0 0 6px;
+}
+/* Sous-type : raffinement de la catégorie, inline dans l'eyebrow. Italique +
+   minuscules pour le distinguer du libellé de catégorie (en majuscules). */
+.poi-eyebrow-subtype {
+    text-transform: none;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--ink);
+}
+.poi-eyebrow-subtype::before {
+    content: "— ";
+    font-style: normal;
+    color: var(--ink-soft);
 }
 .poi-title {
     margin: 0 0 4px;

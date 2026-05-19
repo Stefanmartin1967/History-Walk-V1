@@ -60,6 +60,32 @@ function formatTimeText(h, m) {
     return `${h}h${String(m).padStart(2, '0')}`;
 }
 
+// Classe sémantique d'un état de lieu (pastille du hero). « Ruine » est
+// volontairement neutre (muted), pas « danger » : dans une app de patrimoine,
+// une ruine est un lieu à voir, pas un statut à éviter.
+function stateTagClass(etat) {
+    switch (etat) {
+        case 'En activité':
+        case 'Conservé':
+        case 'Reconverti':
+            return 'ok';
+        case 'Vestiges partiels':
+            return 'warn';
+        default: // Désaffecté, Ruine
+            return 'muted';
+    }
+}
+
+// Classe sémantique + icône Lucide d'une valeur d'accès (pastille du hero).
+function accessTagMeta(acces) {
+    switch (acces) {
+        case 'Intérieur visitable': return { cls: 'ok',     icon: 'door-open' };
+        case 'Extérieur seulement': return { cls: 'muted',  icon: 'building' };
+        case 'Non accessible':      return { cls: 'danger', icon: 'lock' };
+        default:                    return { cls: 'muted',  icon: 'info' };
+    }
+}
+
 function buildHero(opts) {
     const { photos, tagsHtml, hasFullscreenClose } = opts;
     const photoCount = photos.length;
@@ -155,6 +181,12 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const category = (allProps['Catégorie'] || '').trim();
     const showCategory = !!category && category !== 'A définir';
 
+    // Attributs taxonomie (Sous-type / État / Accès) — saisis via le Data
+    // Manager ou le richEditor. Affichés uniquement s'ils sont renseignés.
+    const subtype = (allProps['Sous-type'] || '').trim();
+    const etat = (allProps['État'] || '').trim();
+    const acces = (allProps['Accès'] || '').trim();
+
     // États utilisateur
     const isVu = !!allProps.vu;
     const isIncontournable = !!allProps.incontournable;
@@ -196,9 +228,12 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const notes = (allProps.notes || '').toString();
 
     // Tags hero
+    const accesMeta = acces ? accessTagMeta(acces) : null;
     const tagsHtml = [
         zone ? `<span class="poi-tag brand"><i data-lucide="map-pin"></i>${escapeXml(zone)}</span>` : '',
         showCategory ? `<span class="poi-tag amber"><i data-lucide="landmark"></i>${escapeXml(category)}</span>` : '',
+        etat ? `<span class="poi-tag status ${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
+        accesMeta ? `<span class="poi-tag access ${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
         isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : ''
     ].filter(Boolean).join('');
 
@@ -219,7 +254,10 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // - Si pas de temps de visite ET (prix vide OU prix=0) → "Visite libre" (1 chip englobante)
     // - Sinon → chips renseignées (durée si renseignée, prix payant uniquement, horaires/téléphone si renseignés)
     const isPaid = hasPrice && priceValue > 0;
-    const isFreeAccess = !hasTime && !isPaid;
+    // Le repli calculé « Accès : Visite libre » est supprimé dès qu'un POI a
+    // une valeur d'Accès taxonomie : c'est la pastille du hero qui fait foi
+    // (évite deux « Accès » contradictoires sur la même fiche).
+    const isFreeAccess = !hasTime && !isPaid && !acces;
 
     const facts = [];
     if (isFreeAccess) {
@@ -253,7 +291,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 <div><span class="lab">Téléphone</span><span class="val"><a href="tel:${escapeXml(tel)}">${escapeXml(phone)}</a></span></div>
             </div>`);
     }
-    const practicalSection = `
+    const practicalSection = facts.length === 0 ? '' : `
         <section class="poi-section">
             <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="info"></i>Détails pratiques</span></h3>
             <div class="poi-practical">${facts.join('')}</div>
@@ -314,7 +352,9 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // zone et category sont escapés ; positionText est du HTML safe (chevrons + index).
     const eyebrowParts = [
         zone ? escapeXml(zone) : '',
-        showCategory ? escapeXml(category) : '',
+        showCategory
+            ? escapeXml(category) + (subtype ? ` <span class="poi-eyebrow-subtype">${escapeXml(subtype)}</span>` : '')
+            : '',
         positionText
     ].filter(Boolean);
     const hasEyebrow = eyebrowParts.length > 0;

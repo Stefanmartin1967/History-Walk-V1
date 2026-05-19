@@ -100,6 +100,39 @@ body {
     padding: 10px;
     border-radius: 8px;
 }
+/* Bloc taxonomie (Sous-type / État / Accès) — 3 selects contextuels ajoutés
+   au richEditor après Catégorie/Zone. Encadré ambre + étiquette flottante.
+   Masqué entièrement si la catégorie n'a aucun des 3 attributs (ex: Restaurant). */
+.rich-poi-taxonomy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 8px;
+    background: var(--hw-amber-soft, #FFFBEB);
+    border: 1px solid color-mix(in oklab, var(--hw-amber) 22%, transparent);
+    position: relative;
+}
+.rich-poi-taxonomy::before {
+    content: "Précisions taxonomie";
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--hw-amber);
+    background: var(--surface);
+    padding: 0 6px;
+}
+.rich-poi-taxonomy .input-group {
+    flex: 1 1 120px;
+}
+.rich-poi-taxonomy.is-hidden,
+.rich-poi-taxonomy .input-group.is-hidden {
+    display: none;
+}
 /* Override input-group : colonne (label au-dessus) au lieu du row global */
 .rich-poi-form .input-group {
     flex-direction: column;
