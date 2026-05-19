@@ -20,6 +20,10 @@ const VISIT_OPTIONS = [
     { value: 'only', label: 'Afficher' },
 ];
 
+// État d'ouverture des groupes de « Type de lieu » — repliés par défaut.
+// Set module-level : persiste entre les re-rendus de la section.
+const expandedGroups = new Set();
+
 // ─── Rendu HTML (squelette) ───────────────────────────────────────────────
 
 function buildPanelHtml() {
@@ -43,7 +47,7 @@ function buildPanelHtml() {
                     <span class="hw-fp-select-icon"><i data-lucide="chevron-down"></i></span>
                 </button>
                 <div class="hw-fp-zones-list" id="hw-fp-zones-list"></div>
-            `)}
+            `, { collapsed: true })}
 
             ${buildSection('categories', 'Type de lieu', `
                 <div class="hw-fp-checklist" id="hw-fp-categories-list"></div>
@@ -51,7 +55,7 @@ function buildPanelHtml() {
 
             ${buildSection('parcours', 'Mon parcours', `
                 <div id="hw-fp-parcours-content"></div>
-            `)}
+            `, { collapsed: true })}
 
             ${buildSection('fiche', 'État de la fiche', `
                 <div id="hw-fp-fiche-content"></div>
@@ -205,11 +209,21 @@ function applyCategoriesFilter(nextCategories) {
 
 function renderCategoryGroup(list, groupe, cats, counts, selected) {
     if (!cats || cats.length === 0) return;
+    const checkedCount = cats.filter(c => selected.includes(c)).length;
+    const isOpen = expandedGroups.has(groupe);
+
     const block = document.createElement('div');
-    block.className = 'hw-fp-cat-group';
+    block.className = 'hw-fp-cat-group'
+        + (isOpen ? ' is-open' : '')
+        + (checkedCount > 0 ? ' is-active' : '');
+
     block.appendChild(renderGroupHeader(groupe, cats, counts, selected));
+
+    // Catégories : toujours dans le DOM, masquées par CSS si le groupe est replié.
+    const catsWrap = document.createElement('div');
+    catsWrap.className = 'hw-fp-cat-group-cats';
     cats.forEach(cat => {
-        block.appendChild(renderCheckbox({
+        catsWrap.appendChild(renderCheckbox({
             label: cat,
             count: counts[cat],
             checked: selected.includes(cat),
@@ -222,20 +236,28 @@ function renderCategoryGroup(list, groupe, cats, counts, selected) {
             },
         }));
     });
+    block.appendChild(catsWrap);
     list.appendChild(block);
 }
 
-// En-tête de groupe : checkbox tri-état. Cocher coche toutes les catégories du
-// groupe, décocher les retire toutes. État indéterminé si sélection partielle.
+// En-tête de groupe à double action :
+//  - zone A (label) : checkbox tri-état → coche/décoche tout le groupe.
+//  - zone B (bouton) : reste de la ligne → replie/déplie le groupe.
+// Les deux zones sont des éléments frères : aucun conflit de clic.
 function renderGroupHeader(groupe, cats, counts, selected) {
     const checkedCount = cats.filter(c => selected.includes(c)).length;
     const allChecked = checkedCount === cats.length;
     const noneChecked = checkedCount === 0;
+    const isOpen = expandedGroups.has(groupe);
 
-    const row = document.createElement('label');
+    const row = document.createElement('div');
     row.className = 'hw-fp-cat-group-header'
         + (allChecked ? ' is-checked' : (noneChecked ? '' : ' is-indeterminate'));
 
+    // Zone A — checkbox tri-état
+    const check = document.createElement('label');
+    check.className = 'hw-fp-cat-group-check';
+    check.title = allChecked ? `Tout décocher — ${groupe}` : `Tout cocher — ${groupe}`;
     const input = document.createElement('input');
     input.type = 'checkbox';
     input.checked = allChecked;
@@ -247,26 +269,50 @@ function renderGroupHeader(groupe, cats, counts, selected) {
             : current.filter(c => !cats.includes(c));
         applyCategoriesFilter(next);
     });
-
     const box = document.createElement('span');
     box.className = 'hw-fp-checkbox-box';
     box.innerHTML = '<i data-lucide="check"></i>';
+    check.appendChild(input);
+    check.appendChild(box);
+
+    // Zone B — bouton « replier / déplier »
+    const expandBtn = document.createElement('button');
+    expandBtn.type = 'button';
+    expandBtn.className = 'hw-fp-cat-group-expand';
+    expandBtn.setAttribute('aria-expanded', String(isOpen));
 
     const labelEl = document.createElement('span');
     labelEl.className = 'hw-fp-cat-group-label';
     labelEl.textContent = groupe;
+    expandBtn.appendChild(labelEl);
 
-    row.appendChild(input);
-    row.appendChild(box);
-    row.appendChild(labelEl);
-
-    const total = cats.reduce((n, c) => n + (counts[c] || 0), 0);
-    if (total > 0) {
-        const countEl = document.createElement('span');
-        countEl.className = 'hw-fp-checkbox-count';
+    // Compteur : groupe replié + sélection → « n/total » teinté (le filtre actif
+    // reste visible sans déplier) ; sinon → nombre de catégories, neutre.
+    const total = cats.length;
+    const countEl = document.createElement('span');
+    if (checkedCount > 0 && !isOpen) {
+        countEl.className = 'hw-fp-cat-group-count is-active';
+        countEl.textContent = `${checkedCount}/${total}`;
+    } else {
+        countEl.className = 'hw-fp-cat-group-count';
         countEl.textContent = String(total);
-        row.appendChild(countEl);
     }
+    expandBtn.appendChild(countEl);
+
+    const chevron = document.createElement('span');
+    chevron.className = 'hw-fp-cat-group-chevron';
+    chevron.innerHTML = '<i data-lucide="chevron-down"></i>';
+    expandBtn.appendChild(chevron);
+
+    expandBtn.addEventListener('click', () => {
+        if (expandedGroups.has(groupe)) expandedGroups.delete(groupe);
+        else expandedGroups.add(groupe);
+        populateCategoriesSection();
+        createIcons({ icons: appIcons });
+    });
+
+    row.appendChild(check);
+    row.appendChild(expandBtn);
     return row;
 }
 

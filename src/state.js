@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.48'; // Référentiel taxonomie v2 : 6 groupes finalisés — « Site historique » et « Architecture traditionnelle » promus de catégories en groupes ; « Manger » + « Boire & goûter » fusionnés ; « Photo » retiré (futur attribut) ; « Culture et tradition » dissoute → Musée + Artisanat ; Huilerie = sous-type d'Artisanat (lieu de production, comme Poterie). poi-categories.json + FALLBACK taxonomy.js resynchronisés.
+export const APP_VERSION = '3.7.49'; // Panneau de filtres repliable : « Type de lieu » ouverte par défaut, ses 6 groupes deviennent repliables (en-tête double-action checkbox/déplier + chevron, halo sur un groupe replié encore actif) ; Localisation + Mon parcours repliées par défaut.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

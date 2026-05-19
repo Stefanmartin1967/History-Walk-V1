@@ -343,20 +343,30 @@
     font-size: 12px;
 }
 
-/* ─── Groupes de catégories (filtre groupé) ─── */
-.hw-fp-cat-group + .hw-fp-cat-group {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid var(--line);
+/* ─── Groupes de catégories (filtre groupé, repliables) ─── */
+.hw-fp-cat-group {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
+.hw-fp-cat-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Groupe replié AVEC une sélection active → bordure + halo brand :
+   le filtre reste visible sans avoir à déplier le groupe. */
+.hw-fp-cat-group.is-active:not(.is-open) {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px var(--brand-soft);
+}
+
+/* En-tête de groupe : 2 zones — checkbox (gauche) + bouton « déplier » (reste). */
 .hw-fp-cat-group-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px 4px;
-    cursor: pointer;
-    user-select: none;
 }
 
 .hw-fp-cat-group-header input {
@@ -392,18 +402,96 @@
     background: #fff;
 }
 
+/* Zone A — checkbox : cible large (≥ 44 px de large) pour le tactile. */
+.hw-fp-cat-group-check {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 40px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.hw-fp-cat-group-check:hover {
+    background: var(--surface-muted);
+}
+
+/* Zone B — bouton « replier / déplier » : tout le reste de la ligne. */
+.hw-fp-cat-group-expand {
+    flex-grow: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px 9px 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+}
+
+.hw-fp-cat-group-expand:hover {
+    background: var(--surface-muted);
+}
+
 .hw-fp-cat-group-label {
     flex-grow: 1;
+    min-width: 0;
     color: var(--ink);
     font-weight: 700;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Catégories indentées sous leur en-tête de groupe */
-.hw-fp-cat-group .hw-fp-checkbox {
-    padding-left: 18px;
+/* Compteur de groupe : neutre (nb de catégories) ou actif (n/total teinté). */
+.hw-fp-cat-group-count {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    background: var(--surface-muted);
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.hw-fp-cat-group-count.is-active {
+    color: var(--brand);
+    background: var(--brand-soft);
+}
+
+.hw-fp-cat-group-chevron {
+    flex-shrink: 0;
+    color: var(--ink-soft);
+    display: grid;
+    place-items: center;
+    transform: rotate(-90deg);
+    transition: transform 0.18s ease;
+}
+
+.hw-fp-cat-group-chevron svg {
+    width: 16px;
+    height: 16px;
+}
+
+.hw-fp-cat-group.is-open .hw-fp-cat-group-chevron {
+    transform: rotate(0deg);
+}
+
+/* Catégories du groupe — toujours dans le DOM, masquées si le groupe est replié. */
+.hw-fp-cat-group-cats {
+    padding: 2px 12px 8px 14px;
+    border-top: 1px solid var(--line);
+}
+
+.hw-fp-cat-group:not(.is-open) .hw-fp-cat-group-cats {
+    display: none;
 }
 
 /* ─── Radio group (segmented control — Visités / Planifiés) ─── */
