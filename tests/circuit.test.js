@@ -63,7 +63,14 @@ vi.mock('../src/data.js', () => ({
 
 vi.mock('../src/utils.js', () => ({
     getRealDistance: vi.fn(() => 0),
-    getOrthodromicDistance: vi.fn(() => 0)
+    getOrthodromicDistance: vi.fn(() => 0),
+    // Réimplémentation locale de getPoiProp (cf. src/utils.js).
+    getPoiProp: (feature, key) => {
+        const p = feature?.properties;
+        if (!p) return undefined;
+        const uv = p.userData?.[key];
+        return uv !== undefined ? uv : p[key];
+    }
 }));
 
 vi.mock('../src/database.js', () => ({

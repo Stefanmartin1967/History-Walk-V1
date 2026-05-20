@@ -26,7 +26,15 @@ vi.mock('../src/circuit.js', () => ({
 vi.mock('../src/utils.js', () => ({
     getZoneFromCoords: vi.fn(() => null),
     getRealDistance: vi.fn(() => 0),
-    getOrthodromicDistance: vi.fn(() => 0)
+    getOrthodromicDistance: vi.fn(() => 0),
+    // Réimplémentation locale de getPoiProp (cf. src/utils.js) — userData prime
+    // sur properties, valeurs falsy explicites respectées (!== undefined).
+    getPoiProp: (feature, key) => {
+        const p = feature?.properties;
+        if (!p) return undefined;
+        const uv = p.userData?.[key];
+        return uv !== undefined ? uv : p[key];
+    }
 }));
 
 // Leaflet : seul `L.latLng(lat, lng).distanceTo(...)` est utilisé.

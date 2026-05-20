@@ -8,7 +8,7 @@ import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiCoordinates, applyFilters } from './data.js';
 import { getIconForFeature } from './poi-icons.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance } from './utils.js';
+import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance, getPoiProp } from './utils.js';
 import { openDetailsPanel } from './ui-details.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
 import { clearCircuit, isCircuitCompleted, isCircuitTested, loadCircuitById } from './circuit.js';
@@ -166,7 +166,7 @@ function renderSimplePoiList(container, listToDisplay) {
         const name = getPoiName(feature);
         const poiId = getPoiId(feature);
         const cat = getStepCategory(feature);
-        const isVisited = feature.properties.userData?.vu;
+        const isVisited = getPoiProp(feature, 'vu');
         listHtml += `
             <a class="cc-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
                 <div class="cc-step-num">${isVisited ? '<i data-lucide="check"></i>' : '<i data-lucide="map-pin"></i>'}</div>
@@ -270,7 +270,7 @@ function renderCircuitView(container, listToDisplay) {
         const name = getPoiName(feature);
         const poiId = getPoiId(feature);
         const cat = getStepCategory(feature);
-        const isVisited = feature.properties.userData?.vu;
+        const isVisited = getPoiProp(feature, 'vu');
         stepsHtml += `
             <a class="cc-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
                 <div class="cc-step-num">${isVisited ? '<i data-lucide="check"></i>' : (i + 1)}</div>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp } from '../src/utils.js';
 
 describe('Utils', () => {
     describe('generateHWID', () => {
@@ -171,6 +171,47 @@ describe('Utils', () => {
                 properties: { name: 'Some Place' }
             };
             expect(getPoiId(feature)).toBe(undefined);
+        });
+    });
+
+    describe('getPoiProp — convention userData overlay', () => {
+        it('retourne la valeur de userData si présente (admin overlay prime)', () => {
+            const f = { properties: { 'Catégorie': 'Mosquée', userData: { 'Catégorie': 'Marabout' } } };
+            expect(getPoiProp(f, 'Catégorie')).toBe('Marabout');
+        });
+
+        it('retombe sur properties si userData n\'a pas la clé', () => {
+            const f = { properties: { 'Catégorie': 'Mosquée', userData: { vu: true } } };
+            expect(getPoiProp(f, 'Catégorie')).toBe('Mosquée');
+        });
+
+        it('retombe sur properties si pas de userData du tout', () => {
+            const f = { properties: { 'Catégorie': 'Mosquée' } };
+            expect(getPoiProp(f, 'Catégorie')).toBe('Mosquée');
+        });
+
+        it('respecte les valeurs falsy explicites de userData (false, 0, "")', () => {
+            // Cas critique : admin a explicitement effacé via userData.X = false,
+            // ne doit PAS retomber sur properties.X via un `||` naïf.
+            const f1 = { properties: { vu: true, userData: { vu: false } } };
+            expect(getPoiProp(f1, 'vu')).toBe(false);
+
+            const f2 = { properties: { count: 5, userData: { count: 0 } } };
+            expect(getPoiProp(f2, 'count')).toBe(0);
+
+            const f3 = { properties: { nom: 'X', userData: { nom: '' } } };
+            expect(getPoiProp(f3, 'nom')).toBe('');
+        });
+
+        it('retourne undefined si feature ou properties absent', () => {
+            expect(getPoiProp(null, 'X')).toBeUndefined();
+            expect(getPoiProp({}, 'X')).toBeUndefined();
+            expect(getPoiProp({ properties: null }, 'X')).toBeUndefined();
+        });
+
+        it('retourne undefined si ni userData ni properties n\'ont la clé', () => {
+            const f = { properties: { autre: 1, userData: { encore: 2 } } };
+            expect(getPoiProp(f, 'absente')).toBeUndefined();
         });
     });
 });

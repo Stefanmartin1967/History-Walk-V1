@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { getPoiId } from './data.js';
 import { isCircuitCompleted } from './circuit.js';
-import { getZoneFromCoords, getRealDistance, getOrthodromicDistance } from './utils.js';
+import { getZoneFromCoords, getRealDistance, getOrthodromicDistance, getPoiProp } from './utils.js';
 import L from 'leaflet';
 
 /**
@@ -83,10 +83,9 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
         }
 
         // --- METADATA ---
-        const hasRestaurant = validPois.some(f => {
-            const cat = f.properties['Catégorie'] || f.properties.userData?.Catégorie;
-            return cat === 'Restaurant';
-        });
+        // Convention userData overlay : une recat admin prime — voir
+        // utils.js getPoiProp et isRestaurantPoi dans circuit.js.
+        const hasRestaurant = validPois.some(f => getPoiProp(f, 'Catégorie') === 'Restaurant');
 
         const isCompleted = isCircuitCompleted(c);
 
