@@ -1,7 +1,7 @@
 import { state } from './state.js';
 import { getPoiId, getPoiName } from './utils.js';
 import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
-import { getAllPendingAdminPhotos } from './database.js';
+import { getAllPendingAdminPhotos, savePoiData, deletePoiData } from './database.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
 // Ce fichier concentre exclusivement la logique complexe de comparaison
@@ -15,7 +15,10 @@ export let diffData = {
     // Format enrichi (vs juste un compteur) pour que l'UI puisse afficher la
     // grille de miniatures avec cases à cocher avant publication.
     pendingPhotos: {},
-    stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0 }
+    stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0 },
+    // Snapshot du patrimoine remote (peuplé par prepareDiffData) — utilisé par
+    // purgeOrphanPendingPois pour comparer les userData aux valeurs patrimoine.
+    originalFeatures: []
 };
 
 /**
@@ -124,6 +127,7 @@ export async function prepareDiffData(adminDraft) {
     diffData.circuits = [];
     diffData.testedChanges = { additions: [], removals: [], hasChanges: false, snapshot: {} };
     diffData.pendingPhotos = {};
+    diffData.originalFeatures = originalFeatures;
     diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0 };
 
     // --- A. ANALYSE DES POIS (Via adminDraft + Comparaison directe) ---
@@ -442,4 +446,83 @@ export async function prepareDiffData(adminDraft) {
     }
 
     return diffData;
+}
+
+/**
+ * Purge les entries orphelines de `adminDraft.pendingPois` — i.e. les POIs
+ * pistés comme « modifiés » mais dont le diff réel est vide (changes.length===0).
+ *
+ * Cause typique : richEditor sauvegarde tous les champs dans userData, même
+ * ceux qui matchent le patrimoine. `reconcileLocalChanges` voit alors une
+ * userData « non vide » et crée une entry pendingPois. Mais `prepareDiffData`
+ * compare valeur par valeur et n'incrémente pas stats → le badge dit 1 et le
+ * dashboard dit « Tout est synchronisé ». Bug observé 20/05/2026 par Stefan,
+ * blocait aussi le DM via le flag localStorage `hw_has_unpublished_changes`.
+ *
+ * Cette fonction :
+ *  - Identifie les pendingPois sans représentation dans diffData.pois
+ *    (en ignorant les types `creation`/`delete`/`migration` qui ont une
+ *    sémantique indépendante du diff de valeurs)
+ *  - Retire l'entry de pendingPois
+ *  - Nettoie `state.userData[id]` : supprime les clés non-PERSONAL dont la
+ *    valeur matche le patrimoine (sinon le prochain reconcile recrée l'entry).
+ *    Persiste via savePoiData / deletePoiData.
+ *  - Retourne la liste des IDs purgés (vide si rien à faire).
+ *
+ * À appeler APRÈS `prepareDiffData` (qui peuple diffData.originalFeatures).
+ */
+export async function purgeOrphanPendingPois(adminDraft) {
+    const purged = [];
+    const originalFeatures = diffData.originalFeatures || [];
+    const diffIds = new Set(diffData.pois.map(p => p.id));
+
+    for (const id of Object.keys(adminDraft.pendingPois)) {
+        const entry = adminDraft.pendingPois[id];
+        // Ne pas toucher aux types qui ont leur propre sémantique sans diff de valeurs.
+        if (entry.type === 'creation' || entry.type === 'delete' || entry.type === 'migration') continue;
+        // L'entry produit-elle un diff réel ? Si oui, garder.
+        if (diffIds.has(id)) continue;
+
+        // Orphan détecté. Nettoyer userData pour éviter que reconcileLocalChanges
+        // ne recrée l'entry au prochain boot.
+        const original = originalFeatures.find(f => getPoiId(f) === id);
+        const userData = state.userData && state.userData[id];
+
+        if (userData && original) {
+            const cleaned = { ...userData };
+            for (const key of Object.keys(cleaned)) {
+                if (PERSONAL_KEYS.includes(key)) continue;
+                const origVal = original.properties[key];
+                // Comparaison défensive (String coerce — aligné sur la logique
+                // de prepareDiffData ligne 251 qui fait `String(a) !== String(b)`).
+                if (String(cleaned[key]) === String(origVal)) {
+                    delete cleaned[key];
+                }
+            }
+            // Persister la userData nettoyée
+            const remainingKeys = Object.keys(cleaned);
+            const onlyPersonal = remainingKeys.every(k => PERSONAL_KEYS.includes(k));
+            if (remainingKeys.length === 0 || onlyPersonal) {
+                if (remainingKeys.length === 0) {
+                    await deletePoiData(state.currentMapId, id);
+                    delete state.userData[id];
+                } else {
+                    // Garder les clés personnelles
+                    state.userData[id] = cleaned;
+                    await savePoiData(state.currentMapId, id, cleaned);
+                }
+            } else {
+                // Cas théorique : il reste des clés non-PERSONAL qui ne matchent pas.
+                // Si on est ici, c'est qu'on a un VRAI diff non détecté par
+                // prepareDiffData (bug ou edge case) → on ne purge PAS, on log.
+                console.warn('[CC] orphan suspect — userData a encore des diffs non-PERSONAL:', id, cleaned);
+                continue;
+            }
+        }
+
+        delete adminDraft.pendingPois[id];
+        purged.push(id);
+    }
+
+    return purged;
 }
