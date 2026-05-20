@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.55'; // Audit post-chantiers — PR A : convention userData overlay alignée. Nouveau helper `getPoiProp(feature, key)` dans utils.js (userData prime sur properties, respecte les valeurs falsy explicites). Corrige 3 bugs : pastille « Resto » + détection restau timeline (circuit.js, circuit-list-service.js) qui ignoraient une recat admin ; statut « visité » mobile (mobile-poi.js) qui ne lisait que userData sans fallback patrimoine ; getDisplayName (taxonomy.js) qui ignorait un nom/cat/zone re-saisis via richEditor.
+export const APP_VERSION = '3.7.56'; // Audit post-chantiers — PR B : fix root-cause flake `circuit_actions_deletion.test.js` (7 unhandled rejections → 0). Cause : `recordModification()` fire-and-forget de circuit-actions.js → cascade `getBackupState → saveAppState undefined` car le mock database.js était partiel. Solution : mock complet via nouveau helper `tests/helpers/mocks.js` (createDatabaseMock + createBackupAutoLocalMock). Baseline tests : **723 verts, 0 erreur, 0 flake** (vs 715 + 7 errors).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
