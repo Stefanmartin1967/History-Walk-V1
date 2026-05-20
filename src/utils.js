@@ -239,6 +239,26 @@ export function escapeXml(unsafe) {
 export const escapeHtml = escapeXml;
 
 /**
+ * Lit une propriété d'un POI en respectant la convention `userData` overlay :
+ * l'admin éphémère (userData) prime sur le patrimoine (properties).
+ *
+ * Le merge canonique est `{...properties, ...userData}` (cf. data.js
+ * passesUserFilters + mémoire `reference_flow_donnees_dimensions`). Ce helper
+ * retourne la même valeur pour une clé donnée sans allouer un objet à chaque
+ * appel — utile sur les chemins de rendu fréquents (timeline, marker, fiche).
+ *
+ * Le `!== undefined` est intentionnel : si l'admin a effacé une valeur via
+ * userData (e.g. `userData.vu = false`), cette valeur explicite doit primer
+ * sur le patrimoine — un `||` simple repasserait à `properties.X`.
+ */
+export function getPoiProp(feature, key) {
+    const p = feature?.properties;
+    if (!p) return undefined;
+    const userVal = p.userData?.[key];
+    return userVal !== undefined ? userVal : p[key];
+}
+
+/**
  * Nettoie une chaîne HTML pour prévenir les failles XSS avant l'utilisation de .innerHTML.
  * Ne conserve que les balises et attributs considérés comme sûrs.
  * Cette version basique utilise DOMParser pour supprimer les scripts et les attributs d'événements.

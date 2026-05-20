@@ -92,6 +92,33 @@ describe('taxonomy — résolveurs', () => {
         expect(getDisplayName(f)).toBe('Mosquée');
     });
 
+    it('getDisplayName : userData prime sur properties (admin overlay)', () => {
+        // Admin a renommé le POI via richEditor → userData['Nom du site FR'].
+        // Sans le merge, le nom patrimoine s'affichait.
+        const f = {
+            properties: {
+                'Nom du site FR': 'Ancien nom',
+                'Catégorie': 'Mosquée',
+                userData: { 'Nom du site FR': 'Mosquée Fadhloun' }
+            }
+        };
+        expect(getDisplayName(f)).toBe('Mosquée Fadhloun');
+    });
+
+    it('getDisplayName : userData.Catégorie prime pour le fallback dérivé', () => {
+        // POI sans nom propre → libellé dérivé. Si admin recat en « Puits »
+        // via userData, le libellé doit refléter la nouvelle catégorie.
+        const f = {
+            properties: {
+                'Nom du site FR': '',
+                'Catégorie': 'Mosquée',
+                'Zone': 'Houmt Souk',
+                userData: { 'Catégorie': 'Puits' }
+            }
+        };
+        expect(getDisplayName(f)).toBe('Puits — Houmt Souk');
+    });
+
     it('setTaxonomy ignore une donnée malformée et garde le référentiel courant', () => {
         setTaxonomy(null);
         expect(getCategoryLabels()).toEqual(['Mosquée', 'Puits']);

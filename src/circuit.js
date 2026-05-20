@@ -3,7 +3,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
-import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, escapeXml } from './utils.js';
+import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, escapeXml, getPoiProp } from './utils.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData, getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import * as View from './circuit-view.js';
@@ -482,8 +482,10 @@ function handleCircuitAction(action, index) {
 
 function isRestaurantPoi(poi) {
     if (!poi || !poi.properties) return false;
-    const cat = poi.properties['Catégorie'] || poi.properties.userData?.['Catégorie'];
-    return cat === 'Restaurant';
+    // Convention userData overlay : une recat admin (userData) doit primer sur
+    // la catégorie patrimoine — sinon la pastille « Resto » ne reflète pas
+    // une re-catégorisation faite via richEditor.
+    return getPoiProp(poi, 'Catégorie') === 'Restaurant';
 }
 
 export function generateCircuitName() {

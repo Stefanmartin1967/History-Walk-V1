@@ -100,13 +100,19 @@ export function usesDerivedLabel(label) {
 // Nom à afficher pour un POI : nom propre saisi, sinon libellé dérivé.
 //  - catégorie à libellé dérivé + nom vide → "Catégorie — Zone"
 //  - sinon, nom vide → "Catégorie" seule (jamais fusionnée avec la zone)
+//
+// Convention `userData` overlay : un nom/catégorie/zone modifié par l'admin via
+// richEditor est stocké dans `userData`, qui doit primer sur `properties` (le
+// patrimoine). Le merge est inline ici pour garder ce module feuille (zéro
+// dépendance) — cf. utils.js getPoiProp pour le helper équivalent ailleurs.
 export function getDisplayName(feature) {
     const p = (feature && feature.properties) || {};
-    const nom = (p['Nom du site FR'] || '').trim();
+    const merged = { ...p, ...(p.userData || {}) };
+    const nom = (merged['Nom du site FR'] || '').trim();
     if (nom) return nom;
-    const cat = p['Catégorie'] || 'A définir';
+    const cat = merged['Catégorie'] || 'A définir';
     if (usesDerivedLabel(cat)) {
-        const zone = (p['Zone'] || '').trim();
+        const zone = (merged['Zone'] || '').trim();
         return zone ? `${cat} — ${zone}` : cat;
     }
     return cat;

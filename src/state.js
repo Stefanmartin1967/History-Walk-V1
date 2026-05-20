@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.54'; // Chantier iconification — PR2 : 27 SVGs ocres pleins remplacent les MDI ronds, marker 44 px avec halo blanc CSS (lisibilité sur Voyager + Plan + Satellite), lookup hiérarchique catégorie → sous-type (Mosquée à minaret/à coupoles/fortifiée, Église catholique/orthodoxe, Artisanat huilerie/poterie/tissage/atelier). Légende info-popover bascule 15 → 20 catégories (v2 : ex-catégories englobantes devenues groupes, sous-types fonctionnels promus catégories). Mobile Recherche & timeline circuit : icônes alignées sur la carte PC.
+export const APP_VERSION = '3.7.55'; // Audit post-chantiers — PR A : convention userData overlay alignée. Nouveau helper `getPoiProp(feature, key)` dans utils.js (userData prime sur properties, respecte les valeurs falsy explicites). Corrige 3 bugs : pastille « Resto » + détection restau timeline (circuit.js, circuit-list-service.js) qui ignoraient une recat admin ; statut « visité » mobile (mobile-poi.js) qui ne lisait que userData sans fallback patrimoine ; getDisplayName (taxonomy.js) qui ignorait un nom/cat/zone re-saisis via richEditor.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
