@@ -11,7 +11,7 @@ import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos
 import { uploadPhotoForPoi } from './photo-service.js';
 
 // Nouveaux imports suite au découpage
-import { reconcileLocalChanges, prepareDiffData, diffData } from './admin-diff-engine.js';
+import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, diffData } from './admin-diff-engine.js';
 import { openControlCenterModal, renderTab } from './admin-control-ui.js';
 
 // --- STATE MANAGEMENT (Brouillon) ---
@@ -87,6 +87,20 @@ async function saveDraftAwait(newDraft) {
     }
 }
 
+// Helper : appelle prepareDiffData PUIS purgeOrphanPendingPois. Les entrées
+// pendingPois sans diff réel sont retirées + userData associée nettoyée.
+// Persiste si quelque chose a changé. Voir admin-diff-engine.js
+// purgeOrphanPendingPois pour la justification (bug observé 20/05/2026).
+async function prepareDiffAndPurge() {
+    await prepareDiffData(adminDraft);
+    const purged = await purgeOrphanPendingPois(adminDraft);
+    if (purged.length > 0) {
+        saveDraft(adminDraft);
+        updateButtonBadge();
+        console.log('[CC] purged orphan pendingPois:', purged);
+    }
+}
+
 // --- OUVERTURE DIRECTE ONGLET CONFIG (sans calcul diff) ---
 // --- OUVERTURE DU PANNEAU (Interface + Logique) ---
 // initialTab : onglet affiché en premier ('dashboard' par défaut, 'settings' pour config token)
@@ -109,9 +123,9 @@ export async function openControlCenter(initialTab = 'dashboard') {
 
     openControlCenterModal(diffData, callbacks);
 
-    // 2. Calculer les données (Diff Engine)
+    // 2. Calculer les données (Diff Engine) + purger les orphelins éventuels
     reconcileLocalChanges(adminDraft, saveDraft, updateButtonBadge);
-    await prepareDiffData(adminDraft);
+    await prepareDiffAndPurge();
 
     // 3. Rendre l'onglet demandé
     renderTab(initialTab, diffData, callbacks);
@@ -318,7 +332,7 @@ export function openEditorForPoi(id) {
 
     // Quand l'éditeur se ferme, on rafraîchit l'onglet Modifications
     window.addEventListener('richEditor:closed', async () => {
-        await prepareDiffData(adminDraft);
+        await prepareDiffAndPurge();
         const callbacks = {
             publishChanges,
             toggleDiffDetails,
@@ -371,7 +385,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
         showToast("Photos retirées du brouillon", "info");
 
         try {
-            await prepareDiffData(adminDraft);
+            await prepareDiffAndPurge();
             renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip });
         } catch (e) {
             console.warn('[CC] prepareDiffData/renderTab after photos refuse failed:', e);
@@ -434,7 +448,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
     //    l'empty state s'il ne reste rien). Isolé pour que l'UI déjà
     //    mise à jour ne soit pas perdue si prepareDiffData plante.
     try {
-        await prepareDiffData(adminDraft);
+        await prepareDiffAndPurge();
         renderTab('changes', diffData, { publishChanges });
     } catch (e) {
         console.warn('[CC] prepareDiffData/renderTab after refuse failed:', e);
@@ -446,7 +460,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
 
 export async function quickPublish() {
     reconcileLocalChanges(adminDraft, saveDraft, updateButtonBadge);
-    await prepareDiffData(adminDraft);
+    await prepareDiffAndPurge();
     await publishChanges();
 }
 

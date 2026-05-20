@@ -31,14 +31,17 @@ vi.mock('../src/data.js', () => ({
 }));
 
 vi.mock('../src/database.js', () => ({
-    getAllPendingAdminPhotos: vi.fn(() => Promise.resolve({}))
+    getAllPendingAdminPhotos: vi.fn(() => Promise.resolve({})),
+    savePoiData: vi.fn(() => Promise.resolve()),
+    deletePoiData: vi.fn(() => Promise.resolve())
 }));
 
 import { state } from '../src/state.js';
-import { getAllPendingAdminPhotos } from '../src/database.js';
+import { getAllPendingAdminPhotos, savePoiData, deletePoiData } from '../src/database.js';
 import {
     prepareDiffData,
     reconcileLocalChanges,
+    purgeOrphanPendingPois,
     diffData
 } from '../src/admin-diff-engine.js';
 
@@ -75,6 +78,7 @@ describe('Admin Diff Engine', () => {
         diffData.testedChanges = { additions: [], removals: [], hasChanges: false, snapshot: {} };
         diffData.pendingPhotos = {};
         diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0 };
+        diffData.originalFeatures = [];
 
         global.fetch.mockImplementation(defaultFetchImpl);
         getAllPendingAdminPhotos.mockResolvedValue({});
@@ -755,6 +759,119 @@ describe('Admin Diff Engine', () => {
             expect(r.circuits).toEqual([]);
             expect(r.stats.poisModified).toBe(0);
             expect(r.stats.circuitsModified).toBe(0);
+        });
+    });
+
+    // ========================================================================
+    // purgeOrphanPendingPois — auto-heal des entries pendingPois sans diff réel
+    // (bug observé 20/05/2026 par Stefan : badge=1 vs dashboard=0 ; DM bloqué).
+    // ========================================================================
+    describe('purgeOrphanPendingPois', () => {
+        beforeEach(() => {
+            // Le purge nettoie via savePoiData/deletePoiData — on les surveille.
+            savePoiData.mockClear();
+            deletePoiData.mockClear();
+        });
+
+        it('purge une entry pendingPois sans diff réel + nettoie userData (match patrimoine)', async () => {
+            // Patrimoine : POI avec Catégorie=Mosquée
+            const original = { properties: { HW_ID: 'poi_1', Nom: 'Test', 'Catégorie': 'Mosquée' }, geometry: { coordinates: [10, 33] } };
+            state.loadedFeatures = [{ ...original, properties: { ...original.properties, userData: { 'Catégorie': 'Mosquée' } } }];
+            // userData : admin a "ré-écrit" Catégorie=Mosquée (valeur identique au patrimoine)
+            state.userData = { 'poi_1': { 'Catégorie': 'Mosquée' } };
+            const draft = {
+                pendingPois: { 'poi_1': { type: 'update', timestamp: 1 } },
+                pendingCircuits: {}
+            };
+
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) {
+                    return Promise.resolve({ ok: true, json: async () => ({ features: [original] }) });
+                }
+                return defaultFetchImpl(url);
+            });
+
+            await prepareDiffData(draft);
+            const purged = await purgeOrphanPendingPois(draft);
+
+            expect(purged).toEqual(['poi_1']);
+            expect(draft.pendingPois).toEqual({});
+            // userData devient {} → deletePoiData appelée
+            expect(deletePoiData).toHaveBeenCalledWith('djerba', 'poi_1');
+            expect(state.userData['poi_1']).toBeUndefined();
+        });
+
+        it('garde une entry pendingPois qui a un vrai diff', async () => {
+            const original = { properties: { HW_ID: 'poi_1', Nom: 'Old', 'Catégorie': 'Mosquée' }, geometry: { coordinates: [10, 33] } };
+            state.loadedFeatures = [{ properties: { ...original.properties, userData: { 'Catégorie': 'Marabout' } }, geometry: { coordinates: [10, 33] } }];
+            state.userData = { 'poi_1': { 'Catégorie': 'Marabout' } };
+            const draft = {
+                pendingPois: { 'poi_1': { type: 'update', timestamp: 1 } },
+                pendingCircuits: {}
+            };
+
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) {
+                    return Promise.resolve({ ok: true, json: async () => ({ features: [original] }) });
+                }
+                return defaultFetchImpl(url);
+            });
+
+            await prepareDiffData(draft);
+            const purged = await purgeOrphanPendingPois(draft);
+
+            expect(purged).toEqual([]);
+            expect(draft.pendingPois['poi_1']).toBeDefined();
+        });
+
+        it('ignore les entries `creation` / `delete` / `migration` (sémantique propre)', async () => {
+            state.customFeatures = [{ properties: { HW_ID: 'new_1', Nom: 'New POI' } }];
+            state.loadedFeatures = [{ properties: { HW_ID: 'new_1', Nom: 'New POI' } }];
+            const draft = {
+                pendingPois: {
+                    'new_1': { type: 'creation', timestamp: 1 },
+                    'del_1': { type: 'delete', timestamp: 2 },
+                    'mig_1': { type: 'migration', oldId: 'legacy_x', timestamp: 3 }
+                },
+                pendingCircuits: {}
+            };
+
+            global.fetch.mockImplementation(defaultFetchImpl);
+
+            await prepareDiffData(draft);
+            const purged = await purgeOrphanPendingPois(draft);
+
+            expect(purged).toEqual([]);
+            expect(draft.pendingPois['new_1']).toBeDefined();
+            expect(draft.pendingPois['del_1']).toBeDefined();
+            expect(draft.pendingPois['mig_1']).toBeDefined();
+        });
+
+        it('préserve les clés personnelles de userData après purge', async () => {
+            const original = { properties: { HW_ID: 'poi_1', 'Catégorie': 'Mosquée' }, geometry: { coordinates: [10, 33] } };
+            state.loadedFeatures = [{ ...original, properties: { ...original.properties, userData: { 'Catégorie': 'Mosquée', vu: true } } }];
+            // userData : Catégorie matche patrimoine (à purger) + vu personnel (à garder)
+            state.userData = { 'poi_1': { 'Catégorie': 'Mosquée', vu: true } };
+            const draft = {
+                pendingPois: { 'poi_1': { type: 'update', timestamp: 1 } },
+                pendingCircuits: {}
+            };
+
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) {
+                    return Promise.resolve({ ok: true, json: async () => ({ features: [original] }) });
+                }
+                return defaultFetchImpl(url);
+            });
+
+            await prepareDiffData(draft);
+            const purged = await purgeOrphanPendingPois(draft);
+
+            expect(purged).toEqual(['poi_1']);
+            // userData ne contient plus que la clé personnelle
+            expect(state.userData['poi_1']).toEqual({ vu: true });
+            expect(savePoiData).toHaveBeenCalledWith('djerba', 'poi_1', { vu: true });
+            expect(deletePoiData).not.toHaveBeenCalled();
         });
     });
 });

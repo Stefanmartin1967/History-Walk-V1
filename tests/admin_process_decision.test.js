@@ -111,7 +111,9 @@ vi.mock('../src/photo-service.js', () => ({
 vi.mock('../src/admin-diff-engine.js', () => ({
     reconcileLocalChanges: vi.fn(),
     prepareDiffData: () => h.prepareDiffDataSpy(),
-    diffData: { pois: [], circuits: [], stats: {}, pendingPhotos: {} }
+    // Stub inerte du purge — pas de logique testée ici, juste ne pas crasher.
+    purgeOrphanPendingPois: vi.fn(() => Promise.resolve([])),
+    diffData: { pois: [], circuits: [], stats: {}, pendingPhotos: {}, originalFeatures: [] }
 }));
 
 vi.mock('../src/admin-control-ui.js', () => ({

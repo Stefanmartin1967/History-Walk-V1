@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.57'; // Audit post-chantiers — PR C : algorithme generateHWID unifié HW/DM (alignement DM sur HW). Avant : DM utilisait 36 chars random sans timestamp → IDs non triables, non interchangeables. Après : DM utilise le même format ULID Crockford base32 (10 chars timestamp + 16 chars random). Côté HW : zéro impact (IDs existants restent valides, le format est opaque côté lecteur). Côté DM : les nouveaux POIs créés via Data Manager auront désormais un préfixe timestamp triable.
+export const APP_VERSION = '3.7.58'; // Fix CC Admin : auto-purge des `pendingPois` orphelines (entrées sans diff réel). Bug observé 20/05/2026 : richEditor sauvegarde tous les champs dans userData même ceux qui matchent le patrimoine → `reconcileLocalChanges` crée une entrée pendingPois → mais `prepareDiffData` trouve 0 diff → badge `1` vs dashboard « Tout synchronisé », flag `hw_has_unpublished_changes` localStorage = '1' → DM bloqué avec « brouillon admin non publié ». Nouveau `purgeOrphanPendingPois` retire l'entrée + nettoie les clés userData non-PERSONAL qui matchent patrimoine (sinon le prochain reconcile recrée l'orphelin). Auto-heal au prochain ouverture CC ou edit POI.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
