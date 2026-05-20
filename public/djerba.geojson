@@ -6,6 +6,34 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.98497,
+          33.80196
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test Mosquée du Grand IA Ben Claude",
+        "Nom du site arabe": null,
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Zone": "El Mahboubine",
+        "Description": null,
+        "Description_courte": null,
+        "Source": null,
+        "Temps_minutes": null,
+        "Prix_TND": null,
+        "Téléphone": null,
+        "Horaires": null,
+        "verified": false,
+        "HW_ID": "HW-I0Z2FMWNNAYXUX7WM3CAH7RJC1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           11.046173596441804,
           33.826540531288295
         ]
@@ -19,14 +47,21 @@
         "Source": "https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/",
         "verified": false,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
+        "planifieCounter": 1,
         "lat": 33.826540531288295,
         "lng": 11.046173596441804,
         "Description_courte": "Hôtel au trs bon rapport qualité/Prix",
         "description": "Très bel hôtel 4 *, si vous voulez manger local, des spécialités tunisiennes sont à votre disposition à chaque repas. \nSoirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nC'est notre \"Camp de base\", on y retourne en novembre",
+        "notes": "",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
+        "incontournable": true,
         "Temps_minutes": 60,
+        "visitedByCircuits": [
+          "HW-1771316521571"
+        ],
+        "vu": true,
         "Prix_TND": 0
       }
     },
@@ -47,18 +82,19 @@
         "Description": "Phare dont l'activité a débuté en 1895. En forme de tour tronconique effilée, il est peint en blanc, avec tois bandes rouges. Devenu zone militaire, on ne peut ni l'approcher ni le photographier.",
         "Source": "https://fr.wikipedia.org/wiki/Phare_de_Taguermess",
         "HW_ID": "HW-01K77WPE6722XTDVPGCQTPPBXR",
+        "planifieCounter": 1,
+        "vu": true,
         "lat": 33.82269956652683,
         "lng": 11.042709897308695,
         "Description_courte": "",
         "description": "Phare dont l'activité a débuté en 1895. En forme de tour tronconique effilée, il est peint en blanc, avec trois bandes rouges. Devenu zone militaire, on ne peut ni l'approcher ni le photographier.",
+        "notes": "",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0
+        "visitedByCircuits": [
+          "HW-1771316521571"
+        ]
       }
     },
     {
@@ -73,7 +109,7 @@
       "properties": {
         "Nom du site FR": "Musée Lalla Hadria",
         "Nom du site arabe": "متحف للا حدرية",
-        "Catégorie": "Musée",
+        "Catégorie": "Culture et tradition",
         "Zone": "Arkou",
         "Description": "Faisant partie de Djerba Explore, le musée est composé de quinzes salle thématique et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
         "Source": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Lalla_Hadria",
@@ -82,14 +118,13 @@
         "lng": 11.044993404919456,
         "Description_courte": "",
         "description": "Faisant partie de Djerba Explore, ce musée est composé de quinze salles thématiques et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
+        "notes": "",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0
+        "vuManual": true,
+        "vu": true,
+        "incontournable": false
       }
     },
     {
@@ -110,10 +145,10 @@
         "Accès": "Non accessible",
         "Zone": "Arkou",
         "Description": null,
-        "Description_courte": "",
-        "Source": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
+        "Description_courte": null,
+        "Source": null,
+        "Temps_minutes": null,
+        "Prix_TND": null,
         "Téléphone": null,
         "Horaires": null,
         "verified": false,
@@ -122,8 +157,7 @@
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497287806.jpg",
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497289182.jpg",
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1771497290453.jpg"
-        ],
-        "description": ""
+        ]
       }
     },
     {
@@ -142,7 +176,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P"
+        "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P",
+        "planifieCounter": 1
       }
     },
     {
@@ -160,21 +195,19 @@
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
         "Description": null,
-        "Source": "",
+        "Source": null,
         "HW_ID": "HW-01K77WPE6770BXCP2SW1Z2DTA2",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497320289.jpg",
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497321290.jpg",
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497322560.jpg",
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497323648.jpg"
         ],
-        "Sous-type": "À minaret",
-        "État": "En activité",
-        "Accès": "Non visitable",
-        "Description_courte": "",
-        "description": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0
+        "visitedByCircuits": [
+          "HW-1771316521571"
+        ]
       }
     },
     {
@@ -193,7 +226,9 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE67MSESGPPZ5CAD0XTZ"
+        "HW_ID": "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
+        "planifieCounter": 1,
+        "incontournable": true
       }
     },
     {
@@ -213,6 +248,7 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE68SW9XWBFFCRBWXZYM",
+        "planifieCounter": 1,
         "lat": 33.79811118269014,
         "lng": 11.028802710036706
       }
@@ -233,7 +269,11 @@
         "Zone": "Midoun",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE68SSRHFM5TYYA7F5YF"
+        "HW_ID": "HW-01K77WPE68SSRHFM5TYYA7F5YF",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -253,6 +293,7 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6805D82JWX44QAVVV9",
+        "planifieCounter": 1,
         "lat": 33.793757704808506,
         "lng": 11.021607244300704
       }
@@ -273,7 +314,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE682HMFVV693F7BFA2B"
+        "HW_ID": "HW-01K77WPE682HMFVV693F7BFA2B",
+        "planifieCounter": 1
       }
     },
     {
@@ -292,7 +334,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE68ZXYA0Z9T3QEN0VYW"
+        "HW_ID": "HW-01K77WPE68ZXYA0Z9T3QEN0VYW",
+        "planifieCounter": 1
       }
     },
     {
@@ -311,7 +354,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE686WHQD4VDZT4Y6VK5"
+        "HW_ID": "HW-01K77WPE686WHQD4VDZT4Y6VK5",
+        "planifieCounter": 1
       }
     },
     {
@@ -350,7 +394,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE68FAWKXDY3R89R5KTF"
+        "HW_ID": "HW-01K77WPE68FAWKXDY3R89R5KTF",
+        "planifieCounter": 1
       }
     },
     {
@@ -369,7 +414,11 @@
         "Zone": "Midoun",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE68MMPS9ZVR6XTV9J61"
+        "HW_ID": "HW-01K77WPE68MMPS9ZVR6XTV9J61",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -388,7 +437,11 @@
         "Zone": "Midoun",
         "Description": "Située à Midoun. Egalement appelée Mosquée Ar-Rahman. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE68Q2NTEKRWSPCDZZGE"
+        "HW_ID": "HW-01K77WPE68Q2NTEKRWSPCDZZGE",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -407,7 +460,11 @@
         "Zone": "Arkou",
         "Description": "Egalement appeléée ancienne mosquée de Midoun. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE68JWCXJ0TCG1EDSB7A"
+        "HW_ID": "HW-01K77WPE68JWCXJ0TCG1EDSB7A",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -446,7 +503,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE682TM0N643W207BGNE"
+        "HW_ID": "HW-01K77WPE682TM0N643W207BGNE",
+        "planifieCounter": 1
       }
     },
     {
@@ -465,7 +523,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE69FQZ84EBV7HCETGM2"
+        "HW_ID": "HW-01K77WPE69FQZ84EBV7HCETGM2",
+        "planifieCounter": 1
       }
     },
     {
@@ -484,7 +543,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE69627R8AECX3S372Z3"
+        "HW_ID": "HW-01K77WPE69627R8AECX3S372Z3",
+        "planifieCounter": 1
       }
     },
     {
@@ -504,7 +564,9 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE698R49VRAQ6C6J1XXF",
-        "Description_courte": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance."
+        "Description_courte": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance.",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -543,7 +605,8 @@
         "Zone": "El Mahboubine",
         "Description": "Mosquée datant du 18ème siècle qui aurait été édifiée par Ali Ben Ayed dit Ali HadherBach et non pas par Mahmoud Ben Ayed, comme cela est parfois écrit. Salah Ben Youssef y aurait appris à écrire et à lire le Coran.",
         "Source": "http://palaisbenayed.com/la-mosquee-hadher-bach-%D8%AC%D8%A7%D9%85%D8%B9-%D8%AD%D8%A7%D8%B6%D8%B1-%D8%A8%D8%A7%D8%B4",
-        "HW_ID": "HW-01K77WPE699CBRC4PV1ARJPXKM"
+        "HW_ID": "HW-01K77WPE699CBRC4PV1ARJPXKM",
+        "planifieCounter": 2
       }
     },
     {
@@ -562,7 +625,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE69NZS5NFTFBPG6V291"
+        "HW_ID": "HW-01K77WPE69NZS5NFTFBPG6V291",
+        "planifieCounter": 1
       }
     },
     {
@@ -582,6 +646,8 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE697JA8WM3N71KEFY6S",
+        "planifieCounter": 1,
+        "vu": false,
         "Description_courte": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental.",
         "photos": [
           "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1778273837033.jpg",
@@ -631,6 +697,8 @@
         "Description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge.",
         "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgou\nhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
+        "planifieCounter": 1,
+        "vu": false,
         "photos": [
           "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1778273849257.jpg",
           "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1778273851150.jpg",
@@ -674,7 +742,8 @@
         "Zone": "Arkou",
         "Description": "Pas de nom sur Google Maps ni sur Openstreetmap. A vérifier",
         "Source": null,
-        "HW_ID": "HW-01K77WPE697PHS21NP9P0JGJ6F"
+        "HW_ID": "HW-01K77WPE697PHS21NP9P0JGJ6F",
+        "planifieCounter": 1
       }
     },
     {
@@ -694,6 +763,8 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE69CKZWJHD3JAJT874K",
+        "planifieCounter": 1,
+        "vu": false,
         "photos": [
           "photos/poi_HW-01K77WPE69CKZWJHD3JAJT874K_1778273855055.jpg",
           "photos/poi_HW-01K77WPE69CKZWJHD3JAJT874K_1778273856733.jpg"
@@ -716,7 +787,9 @@
         "Zone": "Sedghaiane",
         "Description": "Mosquée bâtie au 14ème siècle et conçue selon un plan atypique. Outre son rôle religieux, celle-ci servait de seconde ligne de défense après les forts.",
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Fadhloun",
-        "HW_ID": "HW-01K77WPE6A22WXDRBSQ8AEW7BR"
+        "HW_ID": "HW-01K77WPE6A22WXDRBSQ8AEW7BR",
+        "planifieCounter": 1,
+        "vu": false
       }
     },
     {
@@ -735,7 +808,8 @@
         "Zone": "El Mahboubine",
         "Description": "Pas de nom sur Google Maps ni sur Openstreetmap. A vérifier",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6A27VC54MEK4XHGV9V"
+        "HW_ID": "HW-01K77WPE6A27VC54MEK4XHGV9V",
+        "planifieCounter": 1
       }
     },
     {
@@ -754,7 +828,8 @@
         "Zone": "El Mahboubine",
         "Description": "Mosquée construite au début du XXe siècle par Ali El Kateb située dans le village de Mahboubine , nom d'origine arabe signifiant \"Bien aimés\", à 3 kilomètres de Midoun",
         "Source": "https://fr.wikipedia.org/wiki/Mahboubine",
-        "HW_ID": "HW-01K77WPE6A1GRGM843BF4KA3RT"
+        "HW_ID": "HW-01K77WPE6A1GRGM843BF4KA3RT",
+        "planifieCounter": 1
       }
     },
     {
@@ -774,16 +849,15 @@
         "Description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
         "Source": "https://lapresse.tn/2025/08/26/restauree-apres-des-siecles-la-mosquee-al-maazouzine-retrouve-son-eclat-a-djerba/",
         "HW_ID": "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
+        "planifieCounter": 1,
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ],
         "photos": [
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1777701416678.jpg"
         ],
-        "Description_courte": "Mosquée Ibadite restaurée en août 2025",
-        "Sous-type": "À coupoles",
-        "État": "Désaffecté",
-        "Accès": "Intérieur visitable",
-        "description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
-        "Temps_minutes": 0,
-        "Prix_TND": 0
+        "Description_courte": "Mosquée Ibadite restaurée en août 2025"
       }
     },
     {
@@ -841,6 +915,11 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6AS77NE3CRGHPYHJSE",
+        "planifieCounter": 1,
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ],
         "Description_courte": "Mosquée qui se dresse isolée au milieu d’un terrain pierreux planté de quelques oliviers."
       }
     },
@@ -885,7 +964,12 @@
         "Zone": "Mazraia",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6A7EGYFGG7XNYT8AYC"
+        "HW_ID": "HW-01K77WPE6A7EGYFGG7XNYT8AYC",
+        "planifieCounter": 1,
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -923,7 +1007,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6A3AYDG7D68R9A0JBT"
+        "HW_ID": "HW-01K77WPE6A3AYDG7D68R9A0JBT",
+        "planifieCounter": 1
       }
     },
     {
@@ -961,7 +1046,8 @@
         "Zone": "El Mahboubine",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6BNSENDPYVFJT2TW7Y"
+        "HW_ID": "HW-01K77WPE6BNSENDPYVFJT2TW7Y",
+        "planifieCounter": 1
       }
     },
     {
@@ -980,7 +1066,12 @@
         "Zone": "Mazraia",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6BE6FFWWHJH6DSSZQ6"
+        "HW_ID": "HW-01K77WPE6BE6FFWWHJH6DSSZQ6",
+        "planifieCounter": 1,
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -999,7 +1090,12 @@
         "Zone": "Mazraia",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6BE2HDNBY0FSWSNRTH"
+        "HW_ID": "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
+        "planifieCounter": 1,
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -1018,7 +1114,8 @@
         "Zone": "El Mahboubine",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6BZYXKCYCZXB9RG3RP"
+        "HW_ID": "HW-01K77WPE6BZYXKCYCZXB9RG3RP",
+        "planifieCounter": 1
       }
     },
     {
@@ -1056,7 +1153,8 @@
         "Zone": "Arkou",
         "Description": "Egalement nommé Mosquée Toghruit Wadran. Située à Beni Maaguel. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ"
+        "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ",
+        "planifieCounter": 1
       }
     },
     {
@@ -1076,6 +1174,11 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6BAJG9QADZMRDXPWTB",
+        "planifieCounter": 1,
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ],
         "Description_courte": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux."
       }
     },
@@ -1095,7 +1198,8 @@
         "Zone": "Sedghaiane",
         "Description": "Située à Sedghiane. Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6B757BJRXVWKNC8PBD"
+        "HW_ID": "HW-01K77WPE6B757BJRXVWKNC8PBD",
+        "planifieCounter": 1
       }
     },
     {
@@ -1114,7 +1218,8 @@
         "Zone": "Erriadh",
         "Description": "Mosquée en ruines située à Beni Maaguel. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6B07WPJSEPWJAEXM5C"
+        "HW_ID": "HW-01K77WPE6B07WPJSEPWJAEXM5C",
+        "planifieCounter": 0
       }
     },
     {
@@ -1133,7 +1238,12 @@
         "Zone": "Mazraia",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6B49HSRPBACEWDY95T"
+        "HW_ID": "HW-01K77WPE6B49HSRPBACEWDY95T",
+        "planifieCounter": 1,
+        "vu": true,
+        "visitedByCircuits": [
+          "HW-1771320398895"
+        ]
       }
     },
     {
@@ -1171,7 +1281,8 @@
         "Zone": "Beni Maaguel",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6BG5X8YCCG07AEVQY8"
+        "HW_ID": "HW-01K77WPE6BG5X8YCCG07AEVQY8",
+        "planifieCounter": 0
       }
     },
     {
@@ -1209,7 +1320,8 @@
         "Zone": "El Mahboubine",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6BGKED1DHN669J64P7"
+        "HW_ID": "HW-01K77WPE6BGKED1DHN669J64P7",
+        "planifieCounter": 0
       }
     },
     {
@@ -1228,7 +1340,8 @@
         "Zone": "Sedghaiane",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6C4QCW255MDZKT0RHK"
+        "HW_ID": "HW-01K77WPE6C4QCW255MDZKT0RHK",
+        "planifieCounter": 2
       }
     },
     {
@@ -1247,7 +1360,8 @@
         "Zone": "El Mahboubine",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6CVR05TNW29PD4ZT89"
+        "HW_ID": "HW-01K77WPE6CVR05TNW29PD4ZT89",
+        "planifieCounter": 0
       }
     },
     {
@@ -1266,7 +1380,8 @@
         "Zone": "El May",
         "Description": "Située à El Hazem. Nfos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6CBWN7QDW6G4G73RWZ"
+        "HW_ID": "HW-01K77WPE6CBWN7QDW6G4G73RWZ",
+        "planifieCounter": 0
       }
     },
     {
@@ -1285,7 +1400,8 @@
         "Zone": "Sedghaiane",
         "Description": "Egalement connue sous le nom de Mosquée TiyanestMosquée Tiyanest. Située à Sedghiane. Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6CC0RY56ECB2RCTGJP"
+        "HW_ID": "HW-01K77WPE6CC0RY56ECB2RCTGJP",
+        "planifieCounter": 2
       }
     },
     {
@@ -1323,7 +1439,8 @@
         "Zone": "Mazraia",
         "Description": "Située à Ghizen, également appelée Mosquée Said Yamoun. Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6C4WQ1CR342MVCN64V"
+        "HW_ID": "HW-01K77WPE6C4WQ1CR342MVCN64V",
+        "incontournable": true
       }
     },
     {
@@ -1380,7 +1497,8 @@
         "Zone": "Beni Maaguel",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6CP8P9RJP202ZRWJQJ"
+        "HW_ID": "HW-01K77WPE6CP8P9RJP202ZRWJQJ",
+        "planifieCounter": 0
       }
     },
     {
@@ -1475,7 +1593,8 @@
         "Zone": "Beni Maaguel",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6C4GTHCK9Y64EFE8SP"
+        "HW_ID": "HW-01K77WPE6C4GTHCK9Y64EFE8SP",
+        "planifieCounter": 1
       }
     },
     {
@@ -1532,7 +1651,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C"
+        "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C",
+        "planifieCounter": 1
       }
     },
     {
@@ -1571,6 +1691,7 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
+        "planifieCounter": 1,
         "photos": [
           "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1776885080412.jpg",
           "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1776885082239.jpg",
@@ -1595,7 +1716,9 @@
         "Zone": "El May",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6DT0F6KA225EP7PSK9"
+        "HW_ID": "HW-01K77WPE6DT0F6KA225EP7PSK9",
+        "planifieCounter": 1,
+        "incontournable": true
       }
     },
     {
@@ -1614,7 +1737,12 @@
         "Zone": "El May",
         "Description": "Appelé Borj El Ghoula ? Om à véirifier.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6DFDJEFF1NP5V7YWS5"
+        "HW_ID": "HW-01K77WPE6DFDJEFF1NP5V7YWS5",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -1633,7 +1761,8 @@
         "Zone": "El May",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6DAMFCVRGASY61DKJE"
+        "HW_ID": "HW-01K77WPE6DAMFCVRGASY61DKJE",
+        "planifieCounter": 0
       }
     },
     {
@@ -1653,6 +1782,7 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6DWEFD7GCZ7SCRFQA9",
+        "planifieCounter": 1,
         "photos": [
           "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1776885087996.jpg",
           "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1776885089775.jpg",
@@ -1680,6 +1810,7 @@
         "HW_ID": "HW-01K77WPE6DQEKFWMTWZ1A5XH39",
         "Description_courte": "Description pour test",
         "description": "Les nécropoles puniques de Souk El Guebli au sud-est de l’île de Djerba renferment une douzaine de tombes les mieux conservées de toutes les autres tombes antiques dans l’île, découvertes en partie par le Français Ratel Gontrain suite aux premières fouilles effectuées depuis les années 1950, et les autres par Sami Ben Tahar, archéologue chargé de recherche auprès de l’Institut national du patrimoine (INP), grâce aux multiples fouilles entreprises par lui-même depuis 2004.\n\nS’étendant sur une superficie de 5000 m2, ce site archéologique exceptionnel, constitué de caveaux rupestres remontant au IIIe siècle Av. J.-C., est doté d’un plan original dont les parallèles se trouvent en Orient hellénistique et apporte un témoignage spectaculaire sur l’architecture libyco-punique, fruit d’un brassage culturel édifiant entre le substrat autochtone et l’apport phénicien.\n\nLes nombreuses fouilles effectuées sur ce site ont livré un riche mobilier funéraire constitué de poteries et d’artefacts en d’autres matériaux.",
+        "notes": "",
         "timeH": 0,
         "timeM": 0,
         "price": 0
@@ -1701,7 +1832,8 @@
         "Zone": "Sedouikech",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6D5GR4P97YHEN41JNS"
+        "HW_ID": "HW-01K77WPE6D5GR4P97YHEN41JNS",
+        "planifieCounter": 1
       }
     },
     {
@@ -1758,7 +1890,8 @@
         "Zone": "El May",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6D2K1P48SM77XZNYQH"
+        "HW_ID": "HW-01K77WPE6D2K1P48SM77XZNYQH",
+        "planifieCounter": 0
       }
     },
     {
@@ -1777,7 +1910,8 @@
         "Zone": "Sedouikech",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6D6A1W50RR0KNXRAGH"
+        "HW_ID": "HW-01K77WPE6D6A1W50RR0KNXRAGH",
+        "planifieCounter": 1
       }
     },
     {
@@ -1815,7 +1949,8 @@
         "Zone": "El May",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6EPM3A4QJN2D566KZ5"
+        "HW_ID": "HW-01K77WPE6EPM3A4QJN2D566KZ5",
+        "planifieCounter": 1
       }
     },
     {
@@ -1835,6 +1970,7 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6E2G25V2R888QZDP0X",
+        "planifieCounter": 1,
         "photos": [
           "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1776885095070.jpg",
           "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1776885096720.jpg"
@@ -1857,7 +1993,10 @@
         "Zone": "El Groa",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG"
+        "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -1876,7 +2015,10 @@
         "Zone": "El Groa",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB"
+        "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB",
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -1933,7 +2075,8 @@
         "Zone": "Sedouikech",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6EWBD679W4C2QRM2FA"
+        "HW_ID": "HW-01K77WPE6EWBD679W4C2QRM2FA",
+        "planifieCounter": 1
       }
     },
     {
@@ -1952,7 +2095,12 @@
         "Zone": "Robbana",
         "Description": "Située à Robbana. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6EZ7K06GM4HAWDESAE"
+        "HW_ID": "HW-01K77WPE6EZ7K06GM4HAWDESAE",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -2009,7 +2157,8 @@
         "Zone": "El May",
         "Description": "Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6ECJK1CMJKYVNTKGGS"
+        "HW_ID": "HW-01K77WPE6ECJK1CMJKYVNTKGGS",
+        "planifieCounter": 1
       }
     },
     {
@@ -2028,7 +2177,12 @@
         "Zone": "El May",
         "Description": "Située à Robbana. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6E5GCD9QGR33PMXVRP"
+        "HW_ID": "HW-01K77WPE6E5GCD9QGR33PMXVRP",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -2142,7 +2296,12 @@
         "Zone": "Robbana",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6FCK1V446SXD2V5NNK"
+        "HW_ID": "HW-01K77WPE6FCK1V446SXD2V5NNK",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -2161,7 +2320,8 @@
         "Zone": "Erriadh",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4"
+        "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4",
+        "planifieCounter": 1
       }
     },
     {
@@ -2181,7 +2341,11 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": [],
+        "vuManual": true,
+        "visitedByCircuits": [],
         "Description_courte": "Mosquée proche de la mer, à proximité de Goose island djerba où vous pouvez faire diverses activités aquatiques"
       }
     },
@@ -2240,6 +2404,10 @@
         "Description": "Renseignée sous Google Maps mais apparemment, il ne doit rien y subsister, on ne voir rien sur la carte",
         "Source": null,
         "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [],
         "Description_courte": "A vérifier si toujours existante",
         "Prix_TND": 0
       }
@@ -2260,7 +2428,11 @@
         "Zone": "Erriadh",
         "Description": "Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6FZPTQ6J9PK4K8Z3DJ"
+        "HW_ID": "HW-01K77WPE6FZPTQ6J9PK4K8Z3DJ",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -2279,7 +2451,9 @@
         "Zone": "Erriadh",
         "Description": "Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6FKPXGG3JYG58QMES3"
+        "HW_ID": "HW-01K77WPE6FKPXGG3JYG58QMES3",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -2355,7 +2529,10 @@
         "Zone": "Sedghaiane",
         "Description": "Mosquée souterraine, blanchie à la chaux, comme la majorité des mosquées djerbiennes. Elle est située sur un plateau, point plus élevé de l'île à 52 mètre de hauteur et date du 12ème siècle. Les deux coupoles visibles confirment le caractère défensif de cette mosquée.",
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/jemaa-louta-a-djerba-une-mysterieuse-mosquee-souterraine/203375/",
-        "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME"
+        "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME",
+        "planifieCounter": 1,
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -2374,7 +2551,10 @@
         "Zone": "El May",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93"
+        "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93",
+        "incontournable": true,
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -2394,7 +2574,11 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6F1C25NNH5RAR2JPF6",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": [],
+        "vuManual": true,
+        "visitedByCircuits": [],
         "Description_courte": "Mosquée et mausolée malékite de construction récente intégrant le mausolée"
       }
     },
@@ -2434,6 +2618,8 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6G4S44DJQ98414C336",
+        "vu": true,
+        "planifieCounter": 0,
         "Description_courte": "Masquée et mausolée malékite de construction récente intégrant le mausolée"
       }
     },
@@ -2553,6 +2739,10 @@
         "Description": "Principale mosquée Malikite, construite au 15ème siècle. Edifiée au début en tant que madrassa ibadite. Egalement connue sous les noms de mosquée Barrazim, mosquées des étrangers ou Jemaâ Ghorba",
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_%C3%89trangers",
         "HW_ID": "HW-01K77WPE6G6C1H17E6WP518B3J",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [],
         "Description_courte": "Mosquée ibadite devenue malékite construite en 967 de l’hégire, soit en 1560 de notre ère"
       }
     },
@@ -2573,6 +2763,10 @@
         "Description": "Mosquée de forme trapézoïdale fondée en 1674, édifiée en l’honneur du Cheikh Ibrahim Eljomni qui porte d’ailleurs le nom de la mosquée,é puis agrandie en 1721 par la dtynastie Husseinites , galement appelée mosquée Sidi Brahim Jemnii. La Zaouïya Brahima y est associée.",
         "Source": "https://djerba-insolite.com/blog/sidi-brahim-eljomni",
         "HW_ID": "HW-01K77WPE6GQX3PRD8TAKTDRNSZ",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [],
         "Description_courte": "Mosquée, mausolée et medersa (Ecole) coranique constriten en \n1076 de l’hégire, soit 1675 de notre ère"
       }
     },
@@ -2613,6 +2807,10 @@
         "Description": "Mosquée également appelée Jemaâ Ettrouk, construite au 16ème siècle, sous l'impulsion du caïd Ghazi Mustapha Bey. Son minaret, en forme de chandelle est en forme de chandelle. Elle est la seule de l'île dédiée, à l'origine, au rite Hanédisme",
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_Turcs",
         "HW_ID": "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [],
         "Description_courte": "Mosquée hanafite puis malékite construite en 1560 de notre ère"
       }
     },
@@ -2668,18 +2866,16 @@
       "properties": {
         "Nom du site FR": "Église Saint-Joseph de Djerba",
         "Nom du site arabe": "كنيسة القديس يوسف بجربة",
-        "Catégorie": "Église",
+        "Catégorie": "Site religieux",
         "Zone": "Taourit",
         "Description": "Eglise construite en 1848 et agrandie en 1855 ur un terrain appartenant à la famillle Ben Ayed, sous la direction du père capucin Gaétant de Ferrera.",
         "Source": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Joseph_de_Djerba",
         "HW_ID": "HW-01K77WPE6HV1767JVPMV1000YQ",
-        "Description_courte": "Une des rares églises catholique de Djerba",
-        "Sous-type": "Catholique",
-        "État": "En activité",
-        "Accès": "Intérieur visitable",
-        "description": "Eglise construite en 1848 et agrandie en 1855 ur un terrain appartenant à la famillle Ben Ayed, sous la direction du père capucin Gaétant de Ferrera.",
-        "Temps_minutes": 0,
-        "Prix_TND": 0
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [],
+        "Description_courte": "Une des rares églises catholique de Djerba"
       }
     },
     {
@@ -2757,6 +2953,8 @@
         "Description": "La petite église orthodoxe, fondée par Sakillaris Kandinys rappelle la présence grecque en nombre jusqu'aux années 1950. Ceux-ci étaient les descendants des pêcheurs d'éponge et de poulpes qui s'étaient installés à Djerbin à la fin du 19ème siècle. C'est la seule église orthodoxes de l'île, dont la dernière rénovation date de 2019, sous la supervision de Dimitri Mavrothalassitis. L'ensemble du lieu de culte a ainsi été remise à neuf, ainsi que plusieurs icônes.",
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-vingt-deux-mosquees-une-eglise-et-une-synagogue/208839/",
         "HW_ID": "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539382529.jpg",
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539384195.jpg",
@@ -2764,6 +2962,10 @@
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539387144.jpg",
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539388570.jpg",
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1776539389948.jpg"
+        ],
+        "vuManual": true,
+        "visitedByCircuits": [
+          "HW-1771324790804"
         ],
         "Description_courte": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant"
       }
@@ -2804,6 +3006,8 @@
         "Description": "HW sur base de l'article cité en source et analyse des photos et vue satelite actuelle Entre disparition et renaissance d’un lieu sacré Pendant plus de trois siècles, la mosquée Sidi El-Bahri veillait sur la côte de Houmt-Souk, à proximité immédiate de la mer et du vieux cimetière. C’était un petit sanctuaire blanchâtre, au minaret trapu, que les habitants de Djerba considéraient comme un témoin de leur histoire spirituelle et urbaine. Mais le 13 février 2011, en pleine période de transition politique, le site fut frappé par un acte aussi brutal qu’irréparable. Selon les témoins de l’époque, un groupe d’individus s’était présenté sous de fausses identités et avait fait venir deux bulldozers. En quelques heures, la mosquée — qui datait d’au moins trois siècles — fut presque entièrement rasée, ne laissant debout que son minaret, dressé comme le dernier témoin d’une profanation absurde. Deux ans plus tôt, une première tentative de destruction avait déjà été déjouée grâce à l’intervention de l’Institut National du Patrimoine (INP) et de l’Association pour la Sauvegarde de l’île de Djerba. Mais cette fois, aucune autorité n’eut le temps de réagir. L’INP dénonça aussitôt l’événement, rappelant que la mosquée appartenait au patrimoine historique et religieux tunisien, et annonça son intention de poursuivre les responsables pour prévenir toute récidive. Une reconstruction sur les ruines L’histoire aurait pu s’arrêter là, si la communauté locale n’avait pas décidé de rebâtir sur le même lieu. Aujourd’hui, la nouvelle mosquée Sidi El-Bahri, que l’on peut voir sur Google Maps, affiche une silhouette plus récente : une façade lisse, un minaret cylindrique surmonté d’une lanterne verte, et une cour ouverte sur un espace de prière moderne. L’intérieur, lumineux et carrelé, repose sur de solides colonnes blanches et vertes, dans un style typique des mosquées djerbiennes contemporaines. La vue satellite révèle la continuité du cimetière historique autour de l’édifice, comme un fil reliant le passé au présent. Même si la structure ancienne a disparu, le nom et la mémoire de Sidi El-Bahri demeurent, portés par les fidèles qui continuent d’y prier. Mémoire et signification La mosquée actuelle ne remplace pas seulement un bâtiment : elle perpétue un symbole. Ce lieu rappelle à la fois la fragilité du patrimoine et la ténacité d’une communauté qui refuse de voir s’effacer ses repères spirituels. Sidi El-Bahri, figure tutélaire du quartier, reste ainsi honoré à travers une mosquée reconstruite, plus sobre, mais toujours vivante — un rappel discret que la foi, à Djerba, résiste même aux bulldozers. Implantation et contexte La mosquée est située à Houmt-Souk, dans le tissu urbain historique proche de la mer. Son emprise rectangulaire s’inscrit dans une parcelle clairement délimitée par un muret périphérique, bordée à l’est par une voie carrossable et au nord par une zone funéraire. Le cimetière ancien, visible sur les images satellites, témoigne d’une continuité cultuelle très ancienne : il est probable que le site ait conservé la fonction de sanctuaire depuis l’époque médiévale. Organisation générale L’édifice s’articule en deux masses distinctes : – un volume principal, cubique, abritant la salle de prière ; – un avant-corps légèrement surbaissé qui forme la cour d’entrée et relie la salle à la rue. L’ensemble est orienté vers le sud-est, suivant l’axe canonique de la qibla à Djerba (environ 120°). Le minaret Élément le plus remarquable : le minaret cylindrique, à base massive, surmonté d’une lanterne à coupole et d’un éclairage vert nocturne. Sa morphologie rappelle certains minarets tardifs djerbiens reconstruits après 2010 : proportions trapues, assise circulaire plutôt que carrée, et décor sobre. Le fût est enduit d’un crépi fin, sans appareillage apparent — signe d’une maçonnerie récente (béton enduit plutôt que pierre de taille). La coupole principale Sur la toiture, la coupole blanche légèrement ovoïde trahit la volonté de rappeler la typologie des mosquées ibadites anciennes. Elle repose sur un tambour discret, probablement en maçonnerie creuse, et n’affiche pas les fissures ni la patine que l’on trouve sur les coupoles anciennes en chaux-sable. La salle de prière Les photographies intérieures révèlent une structure très régulière : une nef longitudinale à colonnes carrées enduites, plafond plat en dalle, revêtement carrelé bicolore (vert et crème). Ce type d’organisation correspond à une reconstruction post-2000 dans le style fonctionnel moderne, privilégiant la simplicité et la facilité d’entretien. Le mihrab carrelé, encadré d’un bandeau décoratif bleu, évoque une modernisation d’inspiration andalouse plutôt qu’une restitution historique. Environnement immédiat L’aire funéraire alentour est dense et désordonnée : les tombes, visibles depuis le ciel, sont de forme rectangulaire traditionnelle en maçonnerie blanche, disposées sans plan régulier. Cela indique un usage continu du cimetière, probablement antérieur à la reconstruction de la mosquée. À l’ouest et au sud, de petites maisons et bâtiments annexes modernes s’accolent au périmètre, montrant que le quartier a été réinvesti.",
         "Source": "https://www.turess.com/fr/letemps/52984?utm",
         "HW_ID": "HW-01K77WPE6H365AYB72RWY40WZX",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540468098.jpg",
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540469614.jpg",
@@ -2811,6 +3015,10 @@
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540472598.jpg",
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540474070.jpg",
           "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1776540475513.jpg"
+        ],
+        "vuManual": true,
+        "visitedByCircuits": [
+          "HW-1771324790804"
         ],
         "Description_courte": "Dominant la côte nord de Houmt-Souk, la mosquée Sidi El-Bahri se dresse aujourd’hui comme un symbole de résilience. Reconstruite sur les ruines de l’édifice détruit en 2011, elle conserve la mémoire d’un sanctuaire trois fois centenaire dont le minaret seul avait survécu à la démolition. Sa silhouette blanche, son dôme discret et son phare vert rappellent la simplicité des mosquées maritimes djerbiennes. Autour d’elle, les tombes anciennes forment un manteau de silence : le passé veille encore, paisible, au seuil du présent."
       }
@@ -2831,7 +3039,8 @@
         "Zone": "Beni Maaguel",
         "Description": "En théorie Henchir Tala, source d'eau d'où partait l'aqueduc vers Meninx. Abordé dans la source, mais sans grandes indications",
         "Source": "https://fr.wikipedia.org/wiki/Tamazight_de_Djerba",
-        "HW_ID": "HW-01K77WPE6HCCSTW9QXDV73Q1SF"
+        "HW_ID": "HW-01K77WPE6HCCSTW9QXDV73Q1SF",
+        "planifieCounter": 1
       }
     },
     {
@@ -2888,7 +3097,8 @@
         "Zone": "Sedouikech",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6H7K49FQ4NSR5ASHX8"
+        "HW_ID": "HW-01K77WPE6H7K49FQ4NSR5ASHX8",
+        "planifieCounter": 0
       }
     },
     {
@@ -2908,6 +3118,7 @@
         "Description": "La mosquée Bouzid, connue localement sous le nom Jāmiʿ Bouzīd, se trouve à la périphérie sud-ouest de Houmt Souk, dans un environnement semi-rural. C’est une mosquée ibadite de plan sobre, typique de l’architecture djerbienne : murs massifs, coupole unique, minaret conique et cour fermée. Son volume blanc, presque monolithique, se détache sur un sol pierreux ponctué d’oliviers, traduisant une continuité entre la pratique religieuse et le paysage agraire de l’île. L’ensemble, récemment entretenu, conserve l’esprit austère et fonctionnel des lieux de culte ibadites : un espace épuré tourné vers la prière, la lumière et la tranquillité du lieu.",
         "Source": "https://www.facebook.com/photo/?fbid=498602698174992&set=a.100670254634907",
         "HW_ID": "HW-01K77WPE6HPEZNHF6GJF6P582Z",
+        "planifieCounter": 0,
         "Description_courte": "Mosquée de type Ibadite située en milieu semi-rural"
       }
     },
@@ -2947,9 +3158,15 @@
         "Description": "Mosquée de type islamique traditionnel, avec des murs blances éclatant et des touchent de bleu, munie d'un minaret. A l'intérieur, des mosaïques ajoutent au charme de ce lieu de culte.",
         "Source": "https://evendo.com/locations/tunisia/djerba/landmark/mosquee-sidi-bou-said",
         "HW_ID": "HW-01K77WPE6J23YSBPP5PMBBZ23Y",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1776540482752.jpg",
           "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1776540484252.jpg"
+        ],
+        "vuManual": true,
+        "visitedByCircuits": [
+          "HW-1771324790804"
         ]
       }
     },
@@ -2969,7 +3186,11 @@
         "Zone": "Oued Ezzebib",
         "Description": "Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6JDNJ7919QCH1HXSXT"
+        "HW_ID": "HW-01K77WPE6JDNJ7919QCH1HXSXT",
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": true,
+        "vuManual": true
       }
     },
     {
@@ -2988,7 +3209,11 @@
         "Zone": "Sedouikech",
         "Description": "Situé au lieu-dit \"d'El Qantara\", proche du grand large, Meninx est un ancien site romain où les premières fouilles datent de 1881. Il s'étend sur deux kilomètres le long du littoral, sur quelques centaines de mètres en direction de la mer. Aucune visite n'étant organisée, on y flâne un peu au hasard, découvrant au passage : un forum, avec une basilique en son centre, un temps, un amphithéâtre, des thermes, et autres vestiges du passé romain de cette patie de l'île",
         "Source": "https://www.inp2020.tn/2023/03/09/_meninx/",
-        "HW_ID": "HW-01K77WPE6JZQWS751K2WV46RB2"
+        "HW_ID": "HW-01K77WPE6JZQWS751K2WV46RB2",
+        "planifieCounter": 0,
+        "vuManual": true,
+        "vu": true,
+        "incontournable": true
       }
     },
     {
@@ -3007,7 +3232,10 @@
         "Zone": "Sedouikech",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24"
+        "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24",
+        "planifieCounter": 0,
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -3046,10 +3274,14 @@
         "Description": "Infos à rechercher.",
         "Source": null,
         "HW_ID": "HW-01K77WPE6JARCBVAYJCW1B3B14",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": [
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1776540488232.jpg",
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1776540490197.jpg"
-        ]
+        ],
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3068,7 +3300,8 @@
         "Zone": "Sedouikech",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6J38KA6V4M0KDZBJ15"
+        "HW_ID": "HW-01K77WPE6J38KA6V4M0KDZBJ15",
+        "planifieCounter": 0
       }
     },
     {
@@ -3087,7 +3320,10 @@
         "Zone": "Oued Ezzebib",
         "Description": "Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y"
+        "HW_ID": "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y",
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -3106,7 +3342,12 @@
         "Zone": "El Groa",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ"
+        "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJDS3E0D23NTEB3ATM02S8DZ"
+        ],
+        "vu": true
       }
     },
     {
@@ -3144,7 +3385,8 @@
         "Zone": "Sedouikech",
         "Description": "A proximité du port d'El Kantara",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6JDTSE0J7BXJFSCPX4"
+        "HW_ID": "HW-01K77WPE6JDTSE0J7BXJFSCPX4",
+        "planifieCounter": 0
       }
     },
     {
@@ -3163,7 +3405,8 @@
         "Zone": "El Hachene",
         "Description": "Située à Hachene. Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6J53FWBGSMAAVT8PKC"
+        "HW_ID": "HW-01K77WPE6J53FWBGSMAAVT8PKC",
+        "planifieCounter": 0
       }
     },
     {
@@ -3202,7 +3445,9 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6KD37GVA594C0XAQQ0",
-        "Description_courte": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala."
+        "Description_courte": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala.",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -3414,7 +3659,13 @@
         "Zone": "Bou Melel",
         "Description": "Proche de la baie des pêcheurs",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6M5QZM1DZV18R4EDHR"
+        "HW_ID": "HW-01K77WPE6M5QZM1DZV18R4EDHR",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -3452,7 +3703,8 @@
         "Zone": "Guellala",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T"
+        "HW_ID": "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T",
+        "incontournable": true
       }
     },
     {
@@ -3568,7 +3820,8 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6M14K3331NK215THZS",
         "lat": 33.86202557545826,
-        "lng": 10.806473154993117
+        "lng": 10.806473154993117,
+        "planifieCounter": 0
       }
     },
     {
@@ -3588,6 +3841,8 @@
         "Description": "Une des plus ancienne mosquée de Djerba datant du 7ème siècle. Elle a retrouvé son éclat après sa restauration par l'ASSIDJE en collaboration avec l'Association des Architectes de Jerba. Son architecture simle est typique de Djerba. A noter qu'étant entourée de vergers, elle est réputée pour sa production de fruits.",
         "Source": "https://www.flickr.com/photos/44928546@N05/8008665414\nhttps://www.facebook.com/Assidje.org/posts/la-l%C3%A9gendaire-mosqu%C3%A9e-ouelhi-retrouve-son-%C3%A9clat-apr%C3%A8s-avoir-%C3%A9t%C3%A9-pilli%C3%A9e-et-sacca/2453064461400785/",
         "HW_ID": "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": []
       }
     },
@@ -3607,7 +3862,12 @@
         "Zone": "El Groa",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6MK0YGY2RG0RX2XX48"
+        "HW_ID": "HW-01K77WPE6MK0YGY2RG0RX2XX48",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJDS3E0D23NTEB3ATM02S8DZ"
+        ],
+        "vu": true
       }
     },
     {
@@ -3627,6 +3887,8 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6N293MG25FFQBH1G10",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": []
       }
     },
@@ -3647,6 +3909,8 @@
         "Description": "Mosquée contruite par la famille Boulimen au 17ème siècle, à lépoque Husseinites. Elle est située à l'extrémité de Sedghiane. Son architecture, de forme poligonale, se situe à mi-chemin entre les style djerbien modeste et Ottoman.",
         "Source": "https://djerba-insolite.com/blog/boulimen",
         "HW_ID": "HW-01K77WPE6N0ZBXJK23NVJ2MQPX",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": []
       }
     },
@@ -3666,7 +3930,12 @@
         "Zone": "El Groa",
         "Description": "Située à El Groa. Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG"
+        "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJDS3E0D23NTEB3ATM02S8DZ"
+        ],
+        "vu": true
       }
     },
     {
@@ -3685,7 +3954,11 @@
         "Zone": "El Khenensa",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6NGJQHEKJE3M2T5W5Q"
+        "HW_ID": "HW-01K77WPE6NGJQHEKJE3M2T5W5Q",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3704,7 +3977,11 @@
         "Zone": "El Groa",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6NQ35ND0B1DQGT4BQT"
+        "HW_ID": "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3724,6 +4001,8 @@
         "Description": "Mosquée rurale assez isolée, entourée de terrains agricoles, natammet oliveraies.",
         "Source": null,
         "HW_ID": "HW-01K77WPE6N6A0YBFFKMQQNQH0E",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": []
       }
     },
@@ -3743,7 +4022,11 @@
         "Zone": "El Khenensa",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6NGZN849YA6V0EC1R0"
+        "HW_ID": "HW-01K77WPE6NGZN849YA6V0EC1R0",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3787,7 +4070,11 @@
         "Zone": "Mezrene",
         "Description": "Mosquée rurale en ruine, située à Bou Menjel. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6N1D1N6TK82WX52BNM"
+        "HW_ID": "HW-01K77WPE6N1D1N6TK82WX52BNM",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3807,6 +4094,8 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6NJ1X6TBWGCTV85QMM",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": []
       }
     },
@@ -3827,6 +4116,8 @@
         "Description": "Mosquée souterraine ibadite, située à Bou Menjel. Elle fût construite au 10ème siècle. Elle constituait une halte lors de la vérification du système défensif de l'île. Restaurée ont été restaurée en 2018 par par l’Association pour la Sauvegarde de l’Île de Djerba (ASSIDJE), en partenariat avec la fondation Swiss Contact, de même que les mosquées \"Louta\" à Cedouikech et \"Ammi Yathi\" à Guellala.",
         "Source": "https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322https://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba",
         "HW_ID": "HW-01K77WPE6N6HF86MYJNJWFPNSV",
+        "planifieCounter": 1,
+        "vu": true,
         "photos": []
       }
     },
@@ -3846,7 +4137,11 @@
         "Zone": "Mezrene",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8"
+        "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3884,7 +4179,11 @@
         "Zone": "Mezrene",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6NZ91JPSJG4M3A7TNR"
+        "HW_ID": "HW-01K77WPE6NZ91JPSJG4M3A7TNR",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3903,7 +4202,11 @@
         "Zone": "El Groa",
         "Description": "Située près du petit port de pêche",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6ND38ZJ2GFV2K4NRTK"
+        "HW_ID": "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -3923,7 +4226,12 @@
         "Description": "La mosquée Ibn Hadid (ou Ben Hadid) se situe à Ajim, au sud-ouest de Djerba, dans le quartier de Guébeline. Selon le Répertoire des mosquées de Djerba (Palais Ben Ayed, 2021), il s’agit d’une mosquée ibadite wahbite rénovée récemment, anciennement construite. Les images satellite et au sol montrent un édifice rectangulaire enduit de chaux blanche, avec un minaret carré à plusieurs niveaux, restauré dans un état neuf. Le site paraît actif et intégré à la trame urbaine d’Ajim.",
         "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6P1NA9ZF5TF1DK9GD2",
-        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment."
+        "planifieCounter": 1,
+        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment.",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -3943,6 +4251,7 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6PDSWXWVZZR4ZDNXVX",
+        "planifieCounter": 1,
         "Description_courte": "Mosquée ibadite wahbite construite  au 4è siècle de l’hégire, ce qui correspond au 10è siècle de notre ère"
       }
     },
@@ -3982,6 +4291,7 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6PP29CK1JR2H25ACNK",
+        "planifieCounter": 1,
         "Description_courte": "Mosquée ibadite wahbite rénovée, intialement construite sur le site d'un église byzantine."
       }
     },
@@ -4002,7 +4312,12 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6PC9G02W8SX1JZX2HC",
-        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment."
+        "planifieCounter": 1,
+        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment.",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4022,7 +4337,12 @@
         "Description": "Mosquée urbaine, de forme irrégulière, comprenant une école coranique. Sa superficie est de 2500 M². Plusieurs accès permettent d'accéder à la cour qui comporte deux majel (Puits). La salle de prière est située en son centre.",
         "Source": "https://arachne.dainst.org/entity/7043417?fl=20&q=connectedEntities:7343375&resultIndex=1",
         "HW_ID": "HW-01K77WPE6PKFFHK53AA0880TBZ",
-        "Description_courte": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère"
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4042,6 +4362,7 @@
         "Description": "Décrite par chatGPT au départ de l'image sur Wikimedia Commons : L’édifice est blanc à dominante sobre, avec un minaret carré visible, dans un angle du bâtiment. Le bâtiment principal est de plan rectangulaire, à toit plat ou très légèrement incliné (les photos ne montrent pas de grandes coupoles). Le portail d’entrée est modeste, intégré dans le mur extérieur — pas de portails monumentaux visibles. L’ensemble est simple, sans décorations ostentatoires, typique d’une architecture utilitaire du culte, avec des lignes épurées. Le minaret a des proportions relativement élancées par rapport au corps de la mosquée, avec des ouvertures ajourées visibles dans les étages supérieurs. Le bâtiment semble bien entretenu, sans ruines visibles depuis la prise de vue.",
         "Source": "https://fr.wikipedia.org/wiki/Fichier:Mosqu%C3%A9e_Ettouil_01.jpg",
         "HW_ID": "HW-01K77WPE6PG0DA193W44FBQAHQ",
+        "planifieCounter": 1,
         "Description_courte": "Mosquée ibadite wahbite dont la date de construction estimée se situe aux environs du 17ème siècle, entre 1680 et 1720.\nMonument historique classé (INP, 2022)."
       }
     },
@@ -4062,7 +4383,12 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6PGSGH7AWKFRACMNSJ",
-        "Description_courte": "Mosquée ibadite wahbite construite en 1117 de l’hégire, soit 1705 de notre ère"
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée ibadite wahbite construite en 1117 de l’hégire, soit 1705 de notre ère",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4082,7 +4408,12 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6PRETC07TQDNMAG54C",
-        "Description_courte": "Un des lieux de tournage de Star Wars"
+        "planifieCounter": 1,
+        "Description_courte": "Un des lieux de tournage de Star Wars",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4102,7 +4433,12 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6P7XZY555VW8YDAVA0",
-        "Description_courte": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle\n"
+        "planifieCounter": 1,
+        "Description_courte": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle\n",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4122,7 +4458,12 @@
         "Description": "A vérifier sur place",
         "Source": null,
         "HW_ID": "HW-01K77WPE6P30E9MGC3BE3KYHP6",
-        "Description_courte": "A chercher, aucune info sur le net"
+        "planifieCounter": 1,
+        "Description_courte": "A chercher, aucune info sur le net",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4142,6 +4483,7 @@
         "Description": "La mosquée, qui cotoie la mer, a perdu sa fonctione religieuse et sert maintenant d'abri aux pècheurs. Elle a également servi de décor pour la \"Maison de Ben\" (Obi-Wan Kenobi en 1976. Un de ses murs externes est recouvert d'une fresque Invader représentant Obi-Wan-Kenobi",
         "Source": "https://routes.discovertunisia.com/storymap/data/download/Site_08_Mosqu%C3%A9e%20Amghar.pdf",
         "HW_ID": "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
+        "planifieCounter": 1,
         "Description_courte": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs"
       }
     },
@@ -4162,7 +4504,12 @@
         "Description": "Borj Ajim défend un mouillage profond au sud de Djerba et a été édifié au milieu du seizième siècle par Dragut. Fortement armé, ce fort disposait de deux bastions et d'une tobjia, autrement dit une plateforme d'artillerie. Ceci s'explique par le fait qu'Ajim, face au Djorf, est le seul mouillage qui permet le passage de bateaux de grand tonnage.",
         "Source": "https://www.uib.com.tn/accueil/pages-intermediaires/les-forts-de-djerba-un-patrimoine-fragile",
         "HW_ID": "HW-01K77WPE6PGWRVHZ8H8CTQJ06X",
-        "Description_courte": "L'accès est restreint et demande des autorisations"
+        "planifieCounter": 1,
+        "Description_courte": "L'accès est restreint et demande des autorisations",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4181,7 +4528,9 @@
         "Zone": "Taourit",
         "Description": "Mosquée ibadite construite aux environs de l'année 1548 sous l'ordre du Cheikh Abu Afif Saleh bin Yahya bin Sulaiman Samomani. Un des pricnipaux lieux de culte à Houmt Souk. De forme rectangualire, la salle de prières est couverte par pas moins de 42 coupoles. Un minaret surmonté d'un lanterneau, typique de ce type de mosquée est situé sur la droite.",
         "Source": "https://djerba-insolite.com/blog/mosque-el-cheikh",
-        "HW_ID": "HW-01K77WPE6P5C0194DPJWYMX9C1"
+        "HW_ID": "HW-01K77WPE6P5C0194DPJWYMX9C1",
+        "planifieCounter": 0,
+        "vu": true
       }
     },
     {
@@ -4200,7 +4549,9 @@
         "Zone": "Sedghaiane",
         "Description": "Mosquée, ou plutôt Medersa, édifiée en 1785 par Le caïd et Général Hmida Ben Kassem Ben Ayed. A noter, un jeu de piste à télécharger sur le site source.",
         "Source": "http://palaisbenayed.com/mosquee-du-caid-hmida-ben-ayed-%D8%AC%D8%A7%D9%85%D8%B9-%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D8%AF-%D8%AD%D9%85%D9%8A%D8%AF%D8%A9-%D8%A8%D9%86-%D8%B9%D9%8A%D8%A7%D8%AF",
-        "HW_ID": "HW-01K77WPE6P9JFRW9XXGN7P7FPX"
+        "HW_ID": "HW-01K77WPE6P9JFRW9XXGN7P7FPX",
+        "planifieCounter": 1,
+        "vu": false
       }
     },
     {
@@ -4220,6 +4571,10 @@
         "Description": "Nom sur OSM : Mosquée Sidi Yati. A vérifier.",
         "Source": null,
         "HW_ID": "HW-01K77WPE6QJNV1Q83SBNFKC88M",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [],
         "Prix_TND": 0
       }
     },
@@ -4239,7 +4594,8 @@
         "Zone": "El May",
         "Description": "Vue sur l'image satelite de Google Maps. Nom à vérifier",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6QK25S6E6T5BG94JEM"
+        "HW_ID": "HW-01K77WPE6QK25S6E6T5BG94JEM",
+        "planifieCounter": 0
       }
     },
     {
@@ -4258,7 +4614,8 @@
         "Zone": "Midoun",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6QR67710KWTHBD0C6V"
+        "HW_ID": "HW-01K77WPE6QR67710KWTHBD0C6V",
+        "planifieCounter": 1
       }
     },
     {
@@ -4297,6 +4654,10 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6Q0QEE8APATRE5K4MS",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [],
         "Description_courte": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles."
       }
     },
@@ -4316,7 +4677,9 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6QGFPEGPTZ1G59C9FZ"
+        "HW_ID": "HW-01K77WPE6QGFPEGPTZ1G59C9FZ",
+        "planifieCounter": 1,
+        "incontournable": true
       }
     },
     {
@@ -4354,7 +4717,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P"
+        "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P",
+        "planifieCounter": 1
       }
     },
     {
@@ -4393,7 +4757,11 @@
         "Zone": "Erriadh",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD"
+        "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -4432,7 +4800,9 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01K77WPE6QN6S4TSGEZQ6DQGXA"
+        "HW_ID": "HW-01K77WPE6QN6S4TSGEZQ6DQGXA",
+        "planifieCounter": 0,
+        "vu": true
       }
     },
     {
@@ -4451,7 +4821,8 @@
         "Zone": "Beni Maaguel",
         "Description": "Située à Beni Maaguel",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6QE5NJP25N8WEWSR03"
+        "HW_ID": "HW-01K77WPE6QE5NJP25N8WEWSR03",
+        "planifieCounter": 0
       }
     },
     {
@@ -4489,7 +4860,10 @@
         "Zone": "Oued Ezzebib",
         "Description": "Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ"
+        "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
+        "planifieCounter": 1,
+        "visitedByCircuits": [],
+        "vu": false
       }
     },
     {
@@ -4527,7 +4901,8 @@
         "Zone": "Sedouikech",
         "Description": "Infos à rechercher, nom à confirmer.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6R9A1BAASW9SGFA97P"
+        "HW_ID": "HW-01K77WPE6R9A1BAASW9SGFA97P",
+        "planifieCounter": 1
       }
     },
     {
@@ -4546,7 +4921,8 @@
         "Zone": "Sedouikech",
         "Description": "Mosquée de type Ibadite, construite au 19ème siècle. Envisagée mais non retenue comme lieu de tournage de Star Wars (1975). Elle comprend, entre autres, un atelier de tissage",
         "Source": "https://galaxytours.com/starwars-tunisia-recce-sites/bouregba-mosque/",
-        "HW_ID": "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B"
+        "HW_ID": "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B",
+        "planifieCounter": 1
       }
     },
     {
@@ -4566,7 +4942,12 @@
         "Description": null,
         "Source": null,
         "HW_ID": "HW-01K77WPE6RHDAFAXAA92EFT8GY",
-        "Description_courte": "Mosquée malékite construite au 20ème siècle"
+        "planifieCounter": 1,
+        "Description_courte": "Mosquée malékite construite au 20ème siècle",
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -4605,7 +4986,11 @@
         "Zone": "Erriadh",
         "Description": "Egalement appelée Mosquée de l’ʿAguel. La zaouïa Jdi Saïd serait attenante. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6RM4YJB23YX7AD522S"
+        "HW_ID": "HW-01K77WPE6RM4YJB23YX7AD522S",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -4663,6 +5048,8 @@
         "Description": "Infos à rechercher - Correspond à ce qu’OSM/Nominatim associe à Ouled Ali Boulimen – El Groa, et elle apparaît aussi dans certaines cartes locales comme Mosquée Boulimen",
         "Source": null,
         "HW_ID": "HW-01K77WPE6RQNBBQXWYACNJTRAC",
+        "planifieCounter": 0,
+        "vu": true,
         "photos": []
       }
     },
@@ -4682,7 +5069,8 @@
         "Zone": "Sedouikech",
         "Description": "Nom à confirmer. Située à Tmasset. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6RN50H0B51NPN1GECK"
+        "HW_ID": "HW-01K77WPE6RN50H0B51NPN1GECK",
+        "planifieCounter": 1
       }
     },
     {
@@ -4701,7 +5089,12 @@
         "Zone": "Robbana",
         "Description": "Nom provisoire. Située à Robbana. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS"
+        "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -4740,7 +5133,9 @@
         "Zone": "Mazraia",
         "Description": "Située à Mazline. Egalement appelée Jamaa Ben Mazlin. Infos à rechercher",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6S9HZ3NW8MK3ME35XW"
+        "HW_ID": "HW-01K77WPE6S9HZ3NW8MK3ME35XW",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -4759,7 +5154,12 @@
         "Zone": "El Groa",
         "Description": "Site troglodityque, Ghar Mjemmaj à proximité immédiate. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6SYZ3CNCV0GXBV0MYX"
+        "HW_ID": "HW-01K77WPE6SYZ3CNCV0GXBV0MYX",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJDS3E0D23NTEB3ATM02S8DZ"
+        ],
+        "vu": true
       }
     },
     {
@@ -4779,6 +5179,8 @@
         "Description": "Mosquée sans nom sur Google Mapa, située à Mezraya.",
         "Source": null,
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
+        "planifieCounter": 1,
+        "vu": false,
         "Description_courte": "Mosquée ? Marabout ? A voir sur place"
       }
     },
@@ -4862,7 +5264,8 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-AGVY6BXAX7HLGFO3CKDXA9DCML"
+        "HW_ID": "HW-AGVY6BXAX7HLGFO3CKDXA9DCML",
+        "planifieCounter": 1
       }
     },
     {
@@ -4882,6 +5285,7 @@
         "Description": "Mosquée dont il ne reste que peu de traces, proche de la mosquée Al-Qibli",
         "Source": null,
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
+        "planifieCounter": 1,
         "Description_courte": "Quelques vestige de mosquée",
         "Prix_TND": 0
       }
@@ -4902,7 +5306,9 @@
         "Zone": "Sedghaiane",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01KJABRN0J9FDDEKWKYWHQWE3P"
+        "HW_ID": "HW-01KJABRN0J9FDDEKWKYWHQWE3P",
+        "planifieCounter": 0,
+        "vu": true
       }
     },
     {
@@ -4921,7 +5327,8 @@
         "Zone": "Sedouikech",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01KJABRN0KWM7Z2QZ124W3X09R"
+        "HW_ID": "HW-01KJABRN0KWM7Z2QZ124W3X09R",
+        "planifieCounter": 0
       }
     },
     {
@@ -4940,7 +5347,8 @@
         "Zone": "Sedouikech",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01KJABRN0KCKZMYXY1DGZBH05D"
+        "HW_ID": "HW-01KJABRN0KCKZMYXY1DGZBH05D",
+        "planifieCounter": 0
       }
     },
     {
@@ -4974,7 +5382,9 @@
         "Nom du site FR": "Chez Adel",
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "planifieCounter": 1,
+        "notes": "Restaurant de bord de plage"
       }
     },
     {
@@ -5027,7 +5437,9 @@
         "Catégorie": "Restaurant",
         "Zone": "Taourit",
         "lat": 33.87735026737242,
-        "lng": 10.858738124370577
+        "lng": 10.858738124370577,
+        "vu": true,
+        "planifieCounter": 0
       }
     },
     {
@@ -5061,7 +5473,9 @@
         "Nom du site FR": "El Ghorfa",
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
-        "Zone": "Taourit"
+        "Zone": "Taourit",
+        "vu": true,
+        "planifieCounter": 0
       }
     },
     {
@@ -5132,7 +5546,9 @@
         "Nom du site FR": "La paillot de pirate",
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
-        "Zone": "Bou Melel"
+        "Zone": "Bou Melel",
+        "vu": true,
+        "planifieCounter": 0
       }
     },
     {
@@ -5185,7 +5601,8 @@
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
         "Zone": "Arkou",
-        "Description": "Restaurant de bord de plage, face à la mer"
+        "Description": "Restaurant de bord de plage, face à la mer",
+        "planifieCounter": 1
       }
     },
     {
@@ -5236,7 +5653,11 @@
         "Catégorie": "Salon de thé",
         "Zone": "Taourit",
         "HW_ID": "HW-01KJABRN0WMXW7CV3JQJJK9EAV",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5253,7 +5674,13 @@
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0W6KJP2MNXC0GWQJN6",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -5267,19 +5694,16 @@
       },
       "properties": {
         "Nom du site FR": "Ancien atelier de tissage",
-        "Catégorie": "Artisanat",
+        "Catégorie": "Culture et tradition",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0WBFCMMFBGZB582PRH",
         "Description": "Ajouté via Rich Editor",
-        "Nom du site arabe": "",
-        "Sous-type": "Tissage",
-        "État": "Désaffecté",
-        "Accès": "",
-        "Description_courte": "",
-        "description": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "Source": ""
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -5296,7 +5720,13 @@
         "Catégorie": "Commerce",
         "Zone": "Taourit",
         "HW_ID": "HW-01KJABRN0XCGBFRH389WG2S71J",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": [
+          "HW-1771324790804"
+        ]
       }
     },
     {
@@ -5313,7 +5743,13 @@
         "Catégorie": "Restaurant",
         "Zone": "Ajim",
         "HW_ID": "HW-01KJABRN0XJDFFSBSRFDN4PGQ4",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 2,
+        "incontournable": true,
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -5333,7 +5769,11 @@
         "HW_ID": "HW-01KJABRN0XK418GNG8GH5KPT4A",
         "Description": "Ajouté via Rich Editor",
         "lat": 33.7812942328873,
-        "lng": 10.76678663492203
+        "lng": 10.76678663492203,
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5350,7 +5790,11 @@
         "Catégorie": "Taxi",
         "Zone": "Arkou",
         "HW_ID": "HW-01KJABRN0YD2SFB393HG9SRDGW",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 3,
+        "vu": true,
+        "incontournable": true,
+        "notes": ""
       }
     },
     {
@@ -5384,7 +5828,8 @@
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
         "HW_ID": "HW-01KJB1NZSEHQH5M3JRKS72CKRN",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 0
       }
     },
     {
@@ -5418,7 +5863,12 @@
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
         "HW_ID": "HW-01KJMJATZZZRP02QNDTWS3YVK1",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6JB0VDYNFPKV7FQ9RS6R5"
+        ],
+        "vu": true
       }
     },
     {
@@ -5453,7 +5903,11 @@
         "Zone": "Erriadh",
         "Source": "https://fr.wikipedia.org/wiki/Djerbahood",
         "HW_ID": "HW-01KJN6EEH9Z49AMGYJT621WG9N",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5470,7 +5924,12 @@
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
         "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1,
+        "visitedByCircuits": [
+          "HW-01KJX6CXCEHW85C8KCSF95NP3R"
+        ],
+        "vu": true
       }
     },
     {
@@ -5487,7 +5946,9 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJX5XSG18NC03E6900V170QX",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -5521,7 +5982,9 @@
         "Catégorie": "Pâtisserie",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CD2CREMNC3CHCGC44PK80",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "vuManual": true,
+        "vu": true
       }
     },
     {
@@ -5538,7 +6001,11 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CNPZR005431XS160BZ1C4",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "planifieCounter": 1,
+        "vu": true,
+        "vuManual": true,
+        "visitedByCircuits": []
       }
     },
     {
@@ -5666,6 +6133,7 @@
         "Nom du site arabe": "",
         "Description_courte": "",
         "description": "Créé sur le terrain",
+        "notes": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": ""
@@ -5706,6 +6174,7 @@
         "Description": "Créé sur le terrain",
         "HW_ID": "HW-01KMFHDGG11K9M2SEENYB6AM3Q",
         "created_at": "2026-03-24T09:04:38.397Z",
+        "incontournable": true,
         "Prix_TND": 0
       }
     },
