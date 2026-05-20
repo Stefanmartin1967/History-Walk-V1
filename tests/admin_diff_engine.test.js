@@ -847,6 +847,35 @@ describe('Admin Diff Engine', () => {
             expect(draft.pendingPois['mig_1']).toBeDefined();
         });
 
+        it('purge même quand userData contient des champs vides absents du patrimoine (régression 21/05/2026)', async () => {
+            // Bug réel observé : richEditor sauvegarde Téléphone='', Horaires=''
+            // pour un POI dont le patrimoine n'a pas ces champs. prepareDiffData
+            // dit « 0 diff » via le shortcut isDefaultEmpty. L'ancien purge
+            // disait « suspect » et refusait → bug persistait.
+            const original = { properties: { HW_ID: 'poi_1', 'Catégorie': 'Mosquée' }, geometry: { coordinates: [10, 33] } };
+            state.loadedFeatures = [{ ...original, properties: { ...original.properties, userData: { Téléphone: '', Horaires: '', photos: [] } } }];
+            state.userData = { 'poi_1': { Téléphone: '', Horaires: '', photos: [] } };
+            const draft = {
+                pendingPois: { 'poi_1': { type: 'update', timestamp: 1 } },
+                pendingCircuits: {}
+            };
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) {
+                    return Promise.resolve({ ok: true, json: async () => ({ features: [original] }) });
+                }
+                return defaultFetchImpl(url);
+            });
+
+            await prepareDiffData(draft);
+            const purged = await purgeOrphanPendingPois(draft);
+
+            // L'orphelin DOIT être purgé (auparavant ce test cassait → "suspect")
+            expect(purged).toEqual(['poi_1']);
+            expect(draft.pendingPois).toEqual({});
+            expect(state.userData['poi_1']).toBeUndefined();
+            expect(deletePoiData).toHaveBeenCalledWith('djerba', 'poi_1');
+        });
+
         it('préserve les clés personnelles de userData après purge', async () => {
             const original = { properties: { HW_ID: 'poi_1', 'Catégorie': 'Mosquée' }, geometry: { coordinates: [10, 33] } };
             state.loadedFeatures = [{ ...original, properties: { ...original.properties, userData: { 'Catégorie': 'Mosquée', vu: true } } }];

@@ -471,6 +471,30 @@ export async function prepareDiffData(adminDraft) {
  *
  * À appeler APRÈS `prepareDiffData` (qui peuple diffData.originalFeatures).
  */
+/**
+ * Vrai si la valeur userData ne représente PAS un changement par rapport à
+ * la valeur patrimoine. Aligné EXACTEMENT sur la logique de prepareDiffData
+ * (lignes 235-251) — gère `photos` séparément (longueur), et tolère le cas
+ * « patrimoine absent + userData vide » (champ saisi puis effacé dans
+ * richEditor, qui sauvegarde même les chaînes vides).
+ */
+function isNoChangeAgainstOriginal(key, userVal, originalProps) {
+    const origVal = originalProps[key];
+    if (key === 'photos') {
+        const oldLen = (origVal || []).length;
+        const newLen = (userVal || []).length;
+        return oldLen === newLen;
+    }
+    // Cas « default empty » : patrimoine absent + user a '' / 0 / "0" / null.
+    // richEditor sauvegarde les champs vides → sans ce check, ces champs
+    // restent considérés comme diff par mon purge alors que prepareDiffData
+    // les filtre (cf. isDefaultEmpty ligne 250).
+    const isDefaultEmpty = origVal === undefined &&
+        (userVal === '' || userVal === 0 || userVal === '0' || userVal === null);
+    if (isDefaultEmpty) return true;
+    return String(origVal) === String(userVal);
+}
+
 export async function purgeOrphanPendingPois(adminDraft) {
     const purged = [];
     const originalFeatures = diffData.originalFeatures || [];
@@ -480,11 +504,12 @@ export async function purgeOrphanPendingPois(adminDraft) {
         const entry = adminDraft.pendingPois[id];
         // Ne pas toucher aux types qui ont leur propre sémantique sans diff de valeurs.
         if (entry.type === 'creation' || entry.type === 'delete' || entry.type === 'migration') continue;
-        // L'entry produit-elle un diff réel ? Si oui, garder.
+        // L'entry produit-elle un diff réel selon prepareDiffData ? Si oui, garder.
         if (diffIds.has(id)) continue;
 
-        // Orphan détecté. Nettoyer userData pour éviter que reconcileLocalChanges
-        // ne recrée l'entry au prochain boot.
+        // Orphan définitif : prepareDiffData a vu 0 diff. On purge TOUJOURS
+        // pendingPois (sinon le bug rebondit) + on essaie de nettoyer userData
+        // pour empêcher reconcileLocalChanges de recréer l'orphelin au boot suivant.
         const original = originalFeatures.find(f => getPoiId(f) === id);
         const userData = state.userData && state.userData[id];
 
@@ -492,34 +517,28 @@ export async function purgeOrphanPendingPois(adminDraft) {
             const cleaned = { ...userData };
             for (const key of Object.keys(cleaned)) {
                 if (PERSONAL_KEYS.includes(key)) continue;
-                const origVal = original.properties[key];
-                // Comparaison défensive (String coerce — aligné sur la logique
-                // de prepareDiffData ligne 251 qui fait `String(a) !== String(b)`).
-                if (String(cleaned[key]) === String(origVal)) {
+                // Aligné sur prepareDiffData : si la valeur userData ne
+                // représente pas un vrai changement, on retire la clé.
+                if (isNoChangeAgainstOriginal(key, cleaned[key], original.properties)) {
                     delete cleaned[key];
                 }
             }
             // Persister la userData nettoyée
             const remainingKeys = Object.keys(cleaned);
-            const onlyPersonal = remainingKeys.every(k => PERSONAL_KEYS.includes(k));
-            if (remainingKeys.length === 0 || onlyPersonal) {
-                if (remainingKeys.length === 0) {
-                    await deletePoiData(state.currentMapId, id);
-                    delete state.userData[id];
-                } else {
-                    // Garder les clés personnelles
-                    state.userData[id] = cleaned;
-                    await savePoiData(state.currentMapId, id, cleaned);
-                }
+            if (remainingKeys.length === 0) {
+                await deletePoiData(state.currentMapId, id);
+                delete state.userData[id];
             } else {
-                // Cas théorique : il reste des clés non-PERSONAL qui ne matchent pas.
-                // Si on est ici, c'est qu'on a un VRAI diff non détecté par
-                // prepareDiffData (bug ou edge case) → on ne purge PAS, on log.
-                console.warn('[CC] orphan suspect — userData a encore des diffs non-PERSONAL:', id, cleaned);
-                continue;
+                state.userData[id] = cleaned;
+                await savePoiData(state.currentMapId, id, cleaned);
             }
         }
 
+        // TOUJOURS retirer de pendingPois — prepareDiffData a dit « 0 diff »,
+        // l'entry n'a aucune raison de subsister. Si on échoue à nettoyer
+        // userData (edge case), reconcileLocalChanges recréera l'entry à la
+        // prochaine ouverture CC, mais cette purge la retirera à nouveau —
+        // pas de blocage permanent comme avec l'ancien continue/suspect.
         delete adminDraft.pendingPois[id];
         purged.push(id);
     }
