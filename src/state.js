@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.58'; // Fix CC Admin : auto-purge des `pendingPois` orphelines (entrées sans diff réel). Bug observé 20/05/2026 : richEditor sauvegarde tous les champs dans userData même ceux qui matchent le patrimoine → `reconcileLocalChanges` crée une entrée pendingPois → mais `prepareDiffData` trouve 0 diff → badge `1` vs dashboard « Tout synchronisé », flag `hw_has_unpublished_changes` localStorage = '1' → DM bloqué avec « brouillon admin non publié ». Nouveau `purgeOrphanPendingPois` retire l'entrée + nettoie les clés userData non-PERSONAL qui matchent patrimoine (sinon le prochain reconcile recrée l'orphelin). Auto-heal au prochain ouverture CC ou edit POI.
+export const APP_VERSION = '3.7.59'; // Hotfix purge orphelins CC : la version précédente (3.7.58) avait un bug — quand userData contenait des champs vides absents du patrimoine (Téléphone='', Horaires='' saisis puis effacés via richEditor), prepareDiffData filtrait correctement via `isDefaultEmpty`, mais mon purge utilisait une comparaison stricte `String(a)===String(b)` → il marquait l'orphelin comme « suspect » et refusait de purger → la boucle pendingPois→badge→flag→DM bloqué se perpétuait. Fix : la fonction helper `isNoChangeAgainstOriginal` aligne exactement la logique sur prepareDiffData (photos par longueur, isDefaultEmpty pour les champs vides). Et plus important : on RETIRE TOUJOURS de pendingPois quand prepareDiffData a dit 0 diff (avant on bloquait sur la branche « suspect »).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
