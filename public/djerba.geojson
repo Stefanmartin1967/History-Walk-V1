@@ -53,7 +53,12 @@
         "description": "Phare dont l'activité a débuté en 1895. En forme de tour tronconique effilée, il est peint en blanc, avec trois bandes rouges. Devenu zone militaire, on ne peut ni l'approcher ni le photographier.",
         "timeH": 0,
         "timeM": 0,
-        "price": 0
+        "price": 0,
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0
       }
     },
     {
@@ -68,7 +73,7 @@
       "properties": {
         "Nom du site FR": "Musée Lalla Hadria",
         "Nom du site arabe": "متحف للا حدرية",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Musée",
         "Zone": "Arkou",
         "Description": "Faisant partie de Djerba Explore, le musée est composé de quinzes salle thématique et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
         "Source": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Lalla_Hadria",
@@ -79,7 +84,12 @@
         "description": "Faisant partie de Djerba Explore, ce musée est composé de quinze salles thématiques et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
         "timeH": 0,
         "timeM": 0,
-        "price": 0
+        "price": 0,
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0
       }
     },
     {
@@ -150,14 +160,21 @@
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
         "Description": null,
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6770BXCP2SW1Z2DTA2",
         "photos": [
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497320289.jpg",
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497321290.jpg",
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497322560.jpg",
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1771497323648.jpg"
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable",
+        "Description_courte": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0
       }
     },
     {
@@ -760,7 +777,13 @@
         "photos": [
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1777701416678.jpg"
         ],
-        "Description_courte": "Mosquée Ibadite restaurée en août 2025"
+        "Description_courte": "Mosquée Ibadite restaurée en août 2025",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0
       }
     },
     {
