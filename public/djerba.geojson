@@ -6,6 +6,34 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.77862,
+          33.85616
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test 2 de la grande IA Claude le tout puissant",
+        "Nom du site arabe": null,
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": null,
+        "Accès": "Intérieur visitable",
+        "Zone": "Mellita",
+        "Description": null,
+        "Description_courte": "Le meilleur codeur du monde",
+        "Source": null,
+        "Temps_minutes": null,
+        "Prix_TND": null,
+        "Téléphone": null,
+        "Horaires": null,
+        "verified": false,
+        "HW_ID": "HW-UKLJKJNGE2J03JWHTDW3Q7MVM8"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.98497,
           33.80196
         ]
