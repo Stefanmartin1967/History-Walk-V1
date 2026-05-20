@@ -6,6 +6,34 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.990991,
+          33.810779
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test Claude IA HWID",
+        "Nom du site arabe": null,
+        "Catégorie": "Curiosité",
+        "Sous-type": null,
+        "État": null,
+        "Accès": null,
+        "Zone": "Midoun",
+        "Description": null,
+        "Description_courte": null,
+        "Source": null,
+        "Temps_minutes": null,
+        "Prix_TND": null,
+        "Téléphone": null,
+        "Horaires": null,
+        "verified": false,
+        "HW_ID": "HW-01KS3HHSH2AZNJCDHZQ0W8RY93"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.77862,
           33.85616
         ]
