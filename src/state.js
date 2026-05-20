@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.56'; // Audit post-chantiers — PR B : fix root-cause flake `circuit_actions_deletion.test.js` (7 unhandled rejections → 0). Cause : `recordModification()` fire-and-forget de circuit-actions.js → cascade `getBackupState → saveAppState undefined` car le mock database.js était partiel. Solution : mock complet via nouveau helper `tests/helpers/mocks.js` (createDatabaseMock + createBackupAutoLocalMock). Baseline tests : **723 verts, 0 erreur, 0 flake** (vs 715 + 7 errors).
+export const APP_VERSION = '3.7.57'; // Audit post-chantiers — PR C : algorithme generateHWID unifié HW/DM (alignement DM sur HW). Avant : DM utilisait 36 chars random sans timestamp → IDs non triables, non interchangeables. Après : DM utilise le même format ULID Crockford base32 (10 chars timestamp + 16 chars random). Côté HW : zéro impact (IDs existants restent valides, le format est opaque côté lecteur). Côté DM : les nouveaux POIs créés via Data Manager auront désormais un préfixe timestamp triable.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
