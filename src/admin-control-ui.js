@@ -586,26 +586,20 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
             `;
         } else if (totalCount === 0) {
-            // Synced empty state — no hero, just .cc-empty centered
-            container.innerHTML = `
+            // Empty state : hero apaisé (« tout synchronisé »), pas de stats
+            // (toutes à 0, redondant avec le message), MAIS les outils restent
+            // visibles via le flux principal — l'admin doit pouvoir accéder à
+            // DM / Scout / Export / Import même quand le brouillon est vide.
+            // Bug signalé 20/05/2026 : avant, return early ici masquait OUTILS.
+            // Le bouton « Publier un circuit » du hero a été retiré : doublon
+            // avec la card OUTILS « Publier un circuit » désormais visible.
+            heroHtml = `
                 <div class="cc-empty">
                     <div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div>
                     <h3 class="cc-empty-title">Tout est synchronisé.</h3>
                     <p class="cc-empty-sub">Aucune modification locale à publier sur ${mapLabel}. Continue sur le terrain — les nouvelles modifications apparaîtront ici.</p>
-                    <div class="cc-empty-actions">
-                        <button class="cc-btn-ghost" id="btn-cc-upload-circuit-empty" type="button">
-                            <i data-lucide="upload-cloud"></i> Publier un circuit
-                        </button>
-                    </div>
                 </div>
             `;
-            setTimeout(() => {
-                document.getElementById('btn-cc-upload-circuit-empty')?.addEventListener('click',
-                    () => renderUploadCircuitPanel(diffData, callbacks));
-                createIcons({ icons: appIcons, root: container });
-            }, 0);
-            createIcons({ icons: appIcons, root: container });
-            return;
         } else {
             // Pending state hero
             const breakdown = [];
@@ -720,7 +714,9 @@ export function renderTab(tab, diffData, callbacks) {
             </div>
         `;
 
-        container.innerHTML = heroHtml + dmBannerHtml + statsHtml + toolsHtml;
+        // Stats omises en empty state (totalCount=0) : 4 compteurs à 0 sont
+        // redondants avec le hero « tout synchronisé ». OUTILS toujours rendus.
+        container.innerHTML = heroHtml + dmBannerHtml + (totalCount > 0 ? statsHtml : '') + toolsHtml;
 
         setTimeout(() => {
             // Hero CTA — uniquement no-token (variant pending n'a plus de bouton
