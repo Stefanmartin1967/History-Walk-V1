@@ -2645,12 +2645,18 @@
       "properties": {
         "Nom du site FR": "Église Saint-Joseph de Djerba",
         "Nom du site arabe": "كنيسة القديس يوسف بجربة",
-        "Catégorie": "Site religieux",
+        "Catégorie": "Église",
         "Zone": "Taourit",
         "Description": "Eglise construite en 1848 et agrandie en 1855 ur un terrain appartenant à la famillle Ben Ayed, sous la direction du père capucin Gaétant de Ferrera.",
         "Source": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Joseph_de_Djerba",
         "HW_ID": "HW-01K77WPE6HV1767JVPMV1000YQ",
-        "Description_courte": "Une des rares églises catholique de Djerba"
+        "Description_courte": "Une des rares églises catholique de Djerba",
+        "Sous-type": "Catholique",
+        "État": "En activité",
+        "Accès": "Intérieur visitable",
+        "description": "Eglise construite en 1848 et agrandie en 1855 ur un terrain appartenant à la famillle Ben Ayed, sous la direction du père capucin Gaétant de Ferrera.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0
       }
     },
     {
