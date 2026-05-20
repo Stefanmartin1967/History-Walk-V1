@@ -132,7 +132,7 @@ describe('taxonomy — cohérence du référentiel réel (poi-categories.json)',
         expect(groups).toContain('Architecture traditionnelle');
         expect(groups).toContain('Manger & boire');
         // ex-sous-types fonctionnels promus en catégories
-        expect(getCategoriesInGroup('Site historique')).toContain('Fort');
+        expect(getCategoriesInGroup('Site historique')).toContain('Fortification');
         expect(getCategoriesInGroup('Architecture traditionnelle')).toContain('Menzel');
         // catégories retirées / dissoutes
         const labels = getCategoryLabels();

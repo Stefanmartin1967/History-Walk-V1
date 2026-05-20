@@ -50,7 +50,7 @@
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Intérieur visitable" }
     },
     {
-      "label": "Fort",
+      "label": "Fortification",
       "groupe": "Site historique",
       "libelleDerive": false,
       "sousTypes": [],
