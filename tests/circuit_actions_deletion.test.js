@@ -26,15 +26,23 @@ vi.mock('../src/state.js', () => ({
     })
 }));
 
-vi.mock('../src/database.js', () => ({
-    deleteCircuitById: vi.fn(),
-    softDeleteCircuit: vi.fn(() => Promise.resolve()),
-    getAllPoiDataForMap: vi.fn(() => Promise.resolve({})),
-    getAllCircuitsForMap: vi.fn(() => Promise.resolve([])),
-    batchSavePoiData: vi.fn(() => Promise.resolve()),
-    getAppState: vi.fn(),
-    saveCircuit: vi.fn()
-}));
+// Mock database.js via le helper partagé — couvre tous les exports
+// (sinon `recordModification` fire-and-forget de circuit-actions.js déclenche
+// une cascade `getBackupState → saveAppState undefined → TypeError`
+// unhandled-rejection 7×). Root cause du flake documenté avant fix 21/05/2026.
+vi.mock('../src/database.js', async () => {
+    const { createDatabaseMock } = await import('./helpers/mocks.js');
+    return createDatabaseMock();
+});
+
+// Mock backup-auto-local.js : double sécurité. Même si database.js était bien
+// mocké, le module backup-auto-local maintient un singleton `_cache` partagé
+// entre tous les `it` du fichier (8 ici). Court-circuiter ici garantit
+// l'isolation totale (pas d'I/O, pas d'état persistant entre tests).
+vi.mock('../src/backup-auto-local.js', async () => {
+    const { createBackupAutoLocalMock } = await import('./helpers/mocks.js');
+    return createBackupAutoLocalMock();
+});
 
 vi.mock('../src/circuit.js', () => ({
     clearCircuit: vi.fn(() => Promise.resolve()),
