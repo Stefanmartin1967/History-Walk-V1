@@ -6,7 +6,7 @@
 
 import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiCoordinates, applyFilters } from './data.js';
-import { getIconHtml } from './poi-icons.js';
+import { getIconForFeature } from './poi-icons.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance } from './utils.js';
 import { openDetailsPanel } from './ui-details.js';
@@ -25,8 +25,9 @@ export function initMobilePoiListeners() {
 }
 
 // ─── Variant couleur pour .cc-step-cat selon catégorie ─────────────────────
-// L'icône est récupérée via getIconHtml (iconMap MDI, cohérent avec la carte
-// PC). Le variant ne concerne que le coloris du pill (.amber / .brand / neutre).
+// L'icône est récupérée via getIconForFeature (chantier iconification :
+// lookup sous-type-aware, ex. Mosquée à minaret vs à coupoles). Le variant
+// ne concerne que le coloris du pill (.amber / .brand / neutre).
 function getStepCategoryVariant(cat) {
     const lower = (cat || '').toLowerCase();
     if (lower === 'restaurant' || lower === 'café' || lower === 'cafe'
@@ -47,7 +48,7 @@ function getStepCategory(feature) {
     const lower = cat.toLowerCase();
     const label = lower === 'restaurant' ? 'Resto' : (cat || 'Lieu');
     return {
-        iconHtml: getIconHtml(cat),
+        iconHtml: getIconForFeature(feature),
         label,
         variant: getStepCategoryVariant(cat),
     };

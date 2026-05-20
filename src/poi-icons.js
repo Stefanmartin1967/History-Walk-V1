@@ -1,53 +1,422 @@
-// poi-icons.js — module feuille (zéro dépendance)
-// Icônes HTML pour catégories POI, utilisé par map.js + mobile-nav.js + mobile-poi.js.
-// Extrait de map.js (session 24/04) pour casser les edges mobile-nav → map et mobile-poi → map.
+// poi-icons.js — référentiel des icônes POI v2 (handoff #22, 27 icônes ocre).
+// Refonte 20/05/2026 (PR2 chantier iconification) : remplace les icônes MDI
+// legacy par les SVGs custom validés. viewBox 0 0 96 96. Variante OCRE PLEINE
+// pour la carte (markers). Variante outline = PR3 (panneau filtres, fiche).
+//
+// Lookup hiérarchique : Catégorie → Sous-type (si applicable) → SVG.
+// - Mosquée : 4 sous-types (À minaret / À coupoles / Fortifiée / Générique).
+// - Église : 2 sous-types (Catholique / Orthodoxe).
+// - Artisanat : 3 sous-types (Poterie / Huilerie / Tissage) + icône
+//   « Atelier » comme générique de la catégorie (sans sous-type).
+// - Les autres catégories sont mono-niveau.
+//
+// Utilisé par map.js (markers) + mobile-nav.js + mobile-poi.js + info-popover.
 
-// Icônes MDI (Material Design Icons) — style filled, viewBox 0 0 24 24
-const ICON_MDI = (path) => `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">${path}</svg>`;
+// ───── Constantes communes (issues du handoff) ─────
+const G = '<line x1="10" y1="82" x2="86" y2="82" stroke="#C9A876" stroke-width="3.5" fill="none" stroke-linecap="round"/>';
 
-const ICON_MOSQUE_SVG       = ICON_MDI('<path d="M24 7C24 5.9 22 4 22 4S20 5.9 20 7C20 7.7 20.4 8.4 21 8.7V13H19V11C19 10.1 18.3 9.3 17.5 9.1C17.8 8.5 18 7.9 18 7.1C18 5.8 17.4 4.6 16.3 3.9L12 1L7.7 3.8C6.7 4.6 6 5.8 6 7.1C6 7.8 6.2 8.5 6.6 9.1C5.7 9.3 5 10.1 5 11V13H3V8.7C3.6 8.4 4 7.7 4 7C4 5.9 2 4 2 4S0 5.9 0 7C0 7.7 .4 8.4 1 8.7V21H11V17C11 16.5 11.4 16 12 16S13 16.5 13 17V21H23V8.7C23.6 8.4 24 7.7 24 7M8.9 5.5L12 3.4L15.1 5.5C15.7 5.9 16 6.4 16 7.1C16 8.1 15.1 9 14.1 9H9.9C8.9 9 8 8.1 8 7.1C8 6.4 8.3 5.9 8.9 5.5M21 19H15V17C15 15.4 13.6 14 12 14S9 15.4 9 17V19H3V15H7V11H17V15H21V19Z" />');
-const ICON_PRAY_SVG         = ICON_MDI('<path d="M11.43 9.67C11.47 9.78 11.5 9.88 11.5 10V15.22C11.5 15.72 11.31 16.2 10.97 16.57L8.18 19.62L4.78 16.22L6 15L8.8 2.86C8.92 2.36 9.37 2 9.89 2C10.5 2 11 2.5 11 3.11V8.07C10.84 8.03 10.67 8 10.5 8C9.4 8 8.5 8.9 8.5 10V13C8.5 13.28 8.72 13.5 9 13.5S9.5 13.28 9.5 13V10C9.5 9.45 9.95 9 10.5 9C10.69 9 10.85 9.07 11 9.16C11.12 9.23 11.21 9.32 11.3 9.42C11.33 9.46 11.36 9.5 11.38 9.55C11.4 9.59 11.42 9.63 11.43 9.67M2 19L6 22L7.17 20.73L3.72 17.28L2 19M18 15L15.2 2.86C15.08 2.36 14.63 2 14.11 2C13.5 2 13 2.5 13 3.11V8.07C13.16 8.03 13.33 8 13.5 8C14.6 8 15.5 8.9 15.5 10V13C15.5 13.28 15.28 13.5 15 13.5S14.5 13.28 14.5 13V10C14.5 9.45 14.05 9 13.5 9C13.31 9 13.15 9.07 13 9.16C12.88 9.23 12.79 9.32 12.71 9.42C12.68 9.46 12.64 9.5 12.62 9.55C12.6 9.59 12.58 9.63 12.57 9.67C12.53 9.78 12.5 9.88 12.5 10V15.22C12.5 15.72 12.69 16.2 13.03 16.57L15.82 19.62L19.22 16.22L18 15M20.28 17.28L16.83 20.73L18 22L22 19L20.28 17.28Z" />');
-const ICON_COFFEE_SVG       = ICON_MDI('<path d="M2,21V19H20V21H2M20,8V5H18V8H20M20,3A2,2 0 0,1 22,5V8A2,2 0 0,1 20,10H18V13A4,4 0 0,1 14,17H8A4,4 0 0,1 4,13V3H20M16,5H6V13A2,2 0 0,0 8,15H14A2,2 0 0,0 16,13V5Z" />');
-const ICON_TEA_SVG          = ICON_MDI('<path d="M4,19H20V21H4V19M21.4,3.6C21,3.2 20.6,3 20,3H4V13C4,14.1 4.4,15 5.2,15.8C6,16.6 6.9,17 8,17H14C15.1,17 16,16.6 16.8,15.8C17.6,15 18,14.1 18,13V10H20C20.6,10 21,9.8 21.4,9.4C21.8,9 22,8.6 22,8V5C22,4.5 21.8,4 21.4,3.6M16,5V8L16,10V13C16,13.6 15.8,14 15.4,14.4C15,14.8 14.6,15 14,15H8C7.4,15 7,14.8 6.6,14.4C6.2,14 6,13.5 6,13V5H10V6.4L8.2,7.8C8,7.9 8,8.1 8,8.2V12.5C8,12.8 8.2,13 8.5,13H12.5C12.8,13 13,12.8 13,12.5V8.2C13,8 12.9,7.9 12.8,7.8L11,6.4V5H16M20,8H18V5H20V8Z" />');
-const ICON_WATER_WELL_SVG   = ICON_MDI('<path d="M3.62 8H5V15H7V8H11V10H13V8H17V15H19V8H20.61C21.16 8 21.61 7.56 21.61 7C21.61 6.89 21.6 6.78 21.56 6.68L19 2H5L2.72 6.55C2.47 7.04 2.67 7.64 3.16 7.89C3.31 7.96 3.46 8 3.62 8M6.24 4H17.76L18.76 6H5.24L6.24 4M2 16V18H4V22H20V18H22V16H2M18 20H6V18H18V20M13.93 11C14.21 11 14.43 11.22 14.43 11.5C14.43 11.5 14.43 11.54 14.43 11.56L14.05 14.56C14 14.81 13.81 15 13.56 15H10.44C10.19 15 10 14.81 9.95 14.56L9.57 11.56C9.54 11.29 9.73 11.04 10 11C10.03 11 10.05 11 10.07 11H13.93Z" />');
-const ICON_CAKE_SVG         = ICON_MDI('<path d="M12 6C13.11 6 14 5.1 14 4C14 3.62 13.9 3.27 13.71 2.97L12 0L10.29 2.97C10.1 3.27 10 3.62 10 4C10 5.1 10.9 6 12 6M18 9H13V7H11V9H6C4.34 9 3 10.34 3 12V21C3 21.55 3.45 22 4 22H20C20.55 22 21 21.55 21 21V12C21 10.34 19.66 9 18 9M19 20H5V17C5.9 17 6.76 16.63 7.4 16L8.5 14.92L9.56 16C10.87 17.3 13.15 17.29 14.45 16L15.53 14.92L16.6 16C17.24 16.63 18.1 17 19 17V20M19 15.5C18.5 15.5 18 15.3 17.65 14.93L15.5 12.8L13.38 14.93C12.64 15.67 11.35 15.67 10.61 14.93L8.5 12.8L6.34 14.93C6 15.29 5.5 15.5 5 15.5V12C5 11.45 5.45 11 6 11H18C18.55 11 19 11.45 19 12V15.5Z" />');
-const ICON_STORE_SVG        = ICON_MDI('<path d="M18.36 9L18.96 12H5.04L5.64 9H18.36M20 4H4V6H20V4M20 7H4L3 12V14H4V20H14V14H18V20H20V14H21V12L20 7M6 18V14H12V18H6Z" />');
-const ICON_RESTAURANT_SVG   = ICON_MDI('<path d="M11,9H9V2H7V9H5V2H3V9C3,11.12 4.66,12.84 6.75,12.97V22H9.25V12.97C11.34,12.84 13,11.12 13,9V2H11V9M16,6V14H18.5V22H21V2C18.24,2 16,4.24 16,6Z" />');
-const ICON_PILLAR_SVG       = ICON_MDI('<path d="M6,5H18A1,1 0 0,1 19,6A1,1 0 0,1 18,7H6A1,1 0 0,1 5,6A1,1 0 0,1 6,5M21,2V4H3V2H21M15,8H17V22H15V8M7,8H9V22H7V8M11,8H13V22H11V8Z" />');
-const ICON_BINOCULARS_SVG   = ICON_MDI('<path d="M11,6H13V13H11V6M9,20A1,1 0 0,1 8,21H5A1,1 0 0,1 4,20V15L6,6H10V13A1,1 0 0,1 9,14V20M10,5H7V3H10V5M15,20V14A1,1 0 0,1 14,13V6H18L20,15V20A1,1 0 0,1 19,21H16A1,1 0 0,1 15,20M14,5V3H17V5H14Z" />');
-// Variantes "outline" MDI (style raccord avec ICON_MOSQUE_SVG / ICON_PRAY_SVG)
-const ICON_HELP_CIRCLE_SVG  = ICON_MDI('<path d="M11,18H13V16H11V18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z" />');
-const ICON_HOTEL_SVG        = ICON_MDI('<path d="M7,13A3,3 0 0,0 10,10A3,3 0 0,0 7,7A3,3 0 0,0 4,10A3,3 0 0,0 7,13M7,9A1,1 0 0,1 8,10A1,1 0 0,1 7,11A1,1 0 0,1 6,10A1,1 0 0,1 7,9M19,7H11V14H3V5H1V20H3V17H21V20H23V11A4,4 0 0,0 19,7M21,14H13V9H19A2,2 0 0,1 21,11V14Z" />');
-const ICON_CAMERA_SVG       = ICON_MDI('<path d="M4,4H7L9,2H15L17,4H20A2,2 0 0,1 22,6V18A2,2 0 0,1 20,20H4A2,2 0 0,1 2,18V6A2,2 0 0,1 4,4M20,18V6H16.83L15,4H9L7.17,6H4V18H20M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z" />');
-const ICON_TAXI_SVG         = ICON_MDI('<path d="M18.92,6.01C18.72,5.42 18.16,5 17.5,5H15V3H9V5H6.5C5.84,5 5.29,5.42 5.08,6.01L3,12V20A1,1 0 0,0 4,21H5A1,1 0 0,0 6,20V19H18V20A1,1 0 0,0 19,21H20A1,1 0 0,0 21,20V12L18.92,6.01M6.5,16A1.5,1.5 0 0,1 5,14.5A1.5,1.5 0 0,1 6.5,13A1.5,1.5 0 0,1 8,14.5A1.5,1.5 0 0,1 6.5,16M17.5,16A1.5,1.5 0 0,1 16,14.5A1.5,1.5 0 0,1 17.5,13A1.5,1.5 0 0,1 19,14.5A1.5,1.5 0 0,1 17.5,16M5,11L6.5,6.5H17.5L19,11H5Z" />');
-const ICON_MAP_MARKER_SVG   = ICON_MDI('<path d="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2M12,4A5,5 0 0,1 17,9C17,11.61 14.59,14.84 12,18.05C9.41,14.84 7,11.61 7,9A5,5 0 0,1 12,4Z" />');
-
-// Icône SVG personnalisée Lucide (style outline) — conservée pour Culture et tradition
-const ICON_AMPHORA_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v5.632c0 .424-.272.795-.653.982A6 6 0 0 0 6 14c.006 4 3 7 5 8"/><path d="M10 5H8a2 2 0 0 0 0 4h.68"/><path d="M14 2v5.632c0 .424.272.795.652.982A6 6 0 0 1 18 14c0 4-3 7-5 8"/><path d="M14 5h2a2 2 0 0 1 0 4h-.68"/><path d="M18 22H6"/><path d="M9 2h6"/></svg>';
-
-export const iconMap = {
-    'A définir':           ICON_HELP_CIRCLE_SVG,
-    'Café':                ICON_COFFEE_SVG,
-    'Commerce':            ICON_STORE_SVG,
-    'Culture et tradition': ICON_AMPHORA_SVG,
-    'Curiosité':           ICON_BINOCULARS_SVG,
-    'Hôtel':               ICON_HOTEL_SVG,
-    'Mosquée':             ICON_MOSQUE_SVG,
-    'Pâtisserie':          ICON_CAKE_SVG,
-    'Photo':               ICON_CAMERA_SVG,
-    'Puits':               ICON_WATER_WELL_SVG,
-    'Restaurant':          ICON_RESTAURANT_SVG,
-    'Salon de thé':        ICON_TEA_SVG,
-    'Site historique':     ICON_PILLAR_SVG,
-    'Site religieux':      ICON_PRAY_SVG,
-    'Taxi':                ICON_TAXI_SVG
-};
-
-export function getIconHtml(category) {
-    return iconMap[category] || ICON_MAP_MARKER_SVG;
+function door(d) {
+    return '<path d="' + d + '" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>';
 }
 
+// Wrapper SVG. Mode "raw" = strokes seuls, pas de fill par défaut (utilisé pour
+// les icônes qui définissent leur propre palette interne, ex. Site archéo).
+function svgFor(paths, raw) {
+    if (raw) {
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">' +
+            '<g stroke="#3A332C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+            paths + '</g></svg>';
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">' +
+        '<g fill="#C99A5C" stroke="#3A332C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+        paths + '</g></svg>';
+}
+
+// ───── Les 27 icônes (paths inline, wrapper appliqué dynamiquement) ─────
+
+// Lieux de culte — Mosquée (4 sous-types)
+const I_MOSQUEE_MINARET = svgFor(G +
+    '<path d="M6 82 L6 58 L58 58 L58 28 L76 28 L76 82 Z"/>' +
+    '<path d="M8 58 Q8 50 16 50 Q24 50 24 58 Z"/>' +
+    '<path d="M24 58 Q24 50 32 50 Q40 50 40 58 Z"/>' +
+    '<path d="M40 58 Q40 50 48 50 Q56 50 56 58 Z"/>' +
+    door('M28 82 L28 68 Q28 64 34 64 Q40 64 40 68 L40 82 Z') +
+    '<line x1="58" y1="46" x2="76" y2="46" stroke-width="1.6"/>' +
+    '<path d="M64 58 L64 52 Q64 49 67 49 Q70 49 70 52 L70 58 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<rect x="56" y="24" width="22" height="4"/>' +
+    '<rect x="56" y="20" width="4" height="4"/>' +
+    '<rect x="62" y="20" width="4" height="4"/>' +
+    '<rect x="68" y="20" width="4" height="4"/>' +
+    '<rect x="74" y="20" width="4" height="4"/>' +
+    '<rect x="59" y="12" width="16" height="8"/>' +
+    '<rect x="64" y="14" width="6" height="4" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<path d="M59 12 Q59 6 67 6 Q75 6 75 12 Z"/>' +
+    '<line x1="67" y1="6" x2="67" y2="2" stroke-width="2"/>' +
+    '<path d="M65.5 4 A 2 2 0 1 0 68.5 4 A 1.4 1.4 0 1 1 65.5 4 Z"/>'
+);
+
+const I_MOSQUEE_COUPOLES = svgFor(G +
+    '<rect x="14" y="56" width="68" height="26"/>' +
+    '<path d="M24 56 Q24 46 33 46 Q42 46 42 56 Z"/>' +
+    '<path d="M54 56 Q54 46 63 46 Q72 46 72 56 Z"/>' +
+    '<path d="M20 56 Q20 40 33 40 Q46 40 46 56 Z"/>' +
+    '<path d="M50 56 Q50 40 63 40 Q76 40 76 56 Z"/>' +
+    door('M42 82 L42 68 Q42 64 48 64 Q54 64 54 68 L54 82 Z') +
+    '<rect x="20" y="66" width="6" height="6" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="70" y="66" width="6" height="6" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>'
+);
+
+const I_MOSQUEE_FORTIFIEE = svgFor(G +
+    '<rect x="6" y="60" width="36" height="22"/>' +
+    '<path d="M8 60 Q8 52 15 52 Q22 52 22 60 Z"/>' +
+    '<path d="M26 60 Q26 52 33 52 Q40 52 40 60 Z"/>' +
+    '<rect x="42" y="42" width="32" height="40"/>' +
+    '<path d="M74 46 L82 46 L90 82 L74 82 Z"/>' +
+    '<rect x="50" y="14" width="16" height="28"/>' +
+    '<rect x="52" y="7" width="12" height="7"/>' +
+    '<path d="M54 7 Q54 2 58 2 Q62 2 62 7 Z"/>' +
+    '<rect x="54" y="20" width="3" height="7" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="59" y="20" width="3" height="7" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="46" y="52" width="3" height="8" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M53 82 L53 66 Q53 62 58 62 Q63 62 63 66 L63 82 Z')
+);
+
+const I_MOSQUEE_GENERIQUE = svgFor(G +
+    '<rect x="17" y="54" width="46" height="28"/>' +
+    '<path d="M17 54 Q17 24 40 24 Q63 24 63 54 Z"/>' +
+    '<line x1="40" y1="24" x2="40" y2="16" stroke-width="2.2"/>' +
+    '<path d="M40 16 A 4 4 0 1 0 40 8 A 2.8 2.8 0 1 1 40 16 Z"/>' +
+    '<rect x="67" y="32" width="8" height="50"/>' +
+    '<polygon points="65,32 71,18 77,32"/>' +
+    '<rect x="64" y="32" width="14" height="3"/>' +
+    '<line x1="71" y1="18" x2="71" y2="12" stroke-width="1.8"/>' +
+    '<circle cx="71" cy="9" r="2"/>' +
+    door('M34 82 L34 64 Q34 60 40 60 Q46 60 46 64 L46 82 Z') +
+    '<rect x="63" y="54" width="4" height="28"/>'
+);
+
+// Marabout (catégorie mono-niveau du groupe Lieux de culte)
+const I_MARABOUT = svgFor(G +
+    '<rect x="16" y="52" width="64" height="30"/>' +
+    '<path d="M30 52 Q30 32 48 32 Q66 32 66 52 Z"/>' +
+    door('M42 82 L42 64 Q42 60 48 60 Q54 60 54 64 L54 82 Z')
+);
+
+// Lieux de culte — Église (2 sous-types)
+const I_EGLISE_CATHO = svgFor(G +
+    '<path d="M14 82 L14 50 L48 26 L82 50 L82 82 Z"/>' +
+    '<rect x="40" y="18" width="16" height="32"/>' +
+    '<polygon points="38,18 48,10 58,18"/>' +
+    '<line x1="48" y1="2" x2="48" y2="10" stroke-width="2"/>' +
+    '<line x1="44" y1="5" x2="52" y2="5" stroke-width="2"/>' +
+    '<path d="M44 32 L44 28 Q44 24 48 24 Q52 24 52 28 L52 32 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M42 82 L42 64 Q42 60 48 60 Q54 60 54 64 L54 82 Z')
+);
+
+const I_EGLISE_ORTHO = svgFor(G +
+    '<rect x="14" y="42" width="68" height="40"/>' +
+    '<path d="M38 42 Q28 28 48 14 Q68 28 58 42 Z"/>' +
+    '<line x1="48" y1="4" x2="48" y2="14" stroke-width="2"/>' +
+    '<line x1="46" y1="7" x2="50" y2="7" stroke-width="2"/>' +
+    '<line x1="43" y1="10" x2="53" y2="10" stroke-width="2"/>' +
+    '<path d="M14 42 Q10 32 20 24 Q30 32 26 42 Z"/>' +
+    '<line x1="20" y1="18" x2="20" y2="24" stroke-width="2"/>' +
+    '<line x1="18" y1="21" x2="22" y2="21" stroke-width="2"/>' +
+    '<path d="M70 42 Q66 32 76 24 Q86 32 82 42 Z"/>' +
+    '<line x1="76" y1="18" x2="76" y2="24" stroke-width="2"/>' +
+    '<line x1="74" y1="21" x2="78" y2="21" stroke-width="2"/>' +
+    door('M42 82 L42 64 Q42 60 48 60 Q54 60 54 64 L54 82 Z')
+);
+
+// Synagogue
+const I_SYNAGOGUE = svgFor(G +
+    '<rect x="18" y="30" width="60" height="52"/>' +
+    '<rect x="14" y="26" width="68" height="4"/>' +
+    '<circle cx="48" cy="48" r="14" fill="none" stroke-width="2"/>' +
+    '<path d="M 48 36 L 51.46 42 L 58.39 42 L 54.93 48 L 58.39 54 L 51.46 54 L 48 60 L 44.54 54 L 37.61 54 L 41.07 48 L 37.61 42 L 44.54 42 Z M 51.46 42 L 54.93 48 L 51.46 54 L 44.54 54 L 41.07 48 L 44.54 42 Z" fill="#C99A5C" stroke="#3A332C" stroke-width="2" stroke-linejoin="round" fill-rule="evenodd"/>' +
+    door('M42 82 L42 70 Q42 66 48 66 Q54 66 54 70 L54 82 Z')
+);
+
+// Site historique
+const I_FORTIFICATION = svgFor(G +
+    '<rect x="18" y="44" width="60" height="36"/>' +
+    '<rect x="18" y="36" width="10" height="8"/>' +
+    '<rect x="32" y="36" width="10" height="8"/>' +
+    '<rect x="54" y="36" width="10" height="8"/>' +
+    '<rect x="68" y="36" width="10" height="8"/>' +
+    '<rect x="28" y="54" width="4" height="10" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="64" y="54" width="4" height="10" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M40 80 L40 60 Q40 54 48 54 Q56 54 56 60 L56 80 Z')
+);
+
+// Site archéologique — raw (palette pierre #C7B795 / #807055, autonome)
+const I_SITE_ARCHEO = svgFor(
+    '<line x1="10" y1="82" x2="86" y2="82" stroke="#C9A876" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+    '<rect x="34" y="74" width="28" height="8" fill="#C7B795" stroke="#807055" stroke-width="2.5"/>' +
+    '<path d="M40 74 L40 28 L44 26 L46 32 L50 26 L54 30 L56 26 L56 74 Z" fill="#C7B795" stroke="#807055" stroke-width="2.5" stroke-linejoin="round"/>' +
+    '<line x1="44" y1="34" x2="44" y2="72" stroke="#807055" stroke-width="0.9"/>' +
+    '<line x1="52" y1="34" x2="52" y2="72" stroke="#807055" stroke-width="0.9"/>' +
+    '<path d="M14 82 L16 74 L24 74 L28 82 Z" fill="#C7B795" stroke="#807055" stroke-width="2.5" stroke-linejoin="round"/>' +
+    '<ellipse cx="72" cy="80" rx="6" ry="3" fill="#C7B795" stroke="#807055" stroke-width="2"/>' +
+    '<ellipse cx="82" cy="82" rx="3" ry="1.5" fill="#B8A88C" stroke="none"/>',
+    true
+);
+
+// Site funéraire
+const I_SITE_FUNERAIRE = svgFor(G +
+    '<path d="M18 82 L18 60 Q18 52 26 52 Q34 52 34 60 L34 82 Z"/>' +
+    '<path d="M40 82 L40 38 Q40 28 48 28 Q56 28 56 38 L56 82 Z"/>' +
+    '<line x1="42" y1="50" x2="54" y2="50" stroke-width="1.5"/>' +
+    '<line x1="42" y1="60" x2="54" y2="60" stroke-width="1.5"/>' +
+    '<path d="M62 82 L62 56 Q62 48 70 48 Q78 48 78 56 L78 82 Z"/>'
+);
+
+// Architecture traditionnelle
+const I_MENZEL = svgFor(G +
+    '<rect x="10" y="64" width="30" height="18"/>' +
+    '<rect x="40" y="48" width="42" height="34"/>' +
+    '<path d="M48 48 Q48 32 60 32 Q72 32 72 48 Z"/>' +
+    '<rect x="18" y="70" width="7" height="7"/>' +
+    door('M53 82 L53 64 Q53 58 60 58 Q67 58 67 64 L67 82 Z')
+);
+
+const I_PUITS = svgFor(G +
+    '<path d="M16 66 L76 66 L76 82 L16 82 Z"/>' +
+    '<path d="M76 66 L84 58 L84 74 L76 82 Z"/>' +
+    '<path d="M16 66 L76 66 L84 58 L24 58 Z"/>' +
+    '<path d="M30 64 L62 64 L66 60 L36 60 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<path d="M24 58 L24 28 L26 28 L26 22 L29 22 L29 28 L31 28 L31 22 L34 22 L34 28 L36 28 L36 58 Z"/>' +
+    '<path d="M72 58 L72 28 L74 28 L74 22 L77 22 L77 28 L79 28 L79 22 L82 22 L82 28 L84 28 L84 58 Z"/>' +
+    '<rect x="34" y="30" width="40" height="6" rx="1.5" fill="#8B6E50" stroke="#3A332C" stroke-width="1.5"/>' +
+    '<circle cx="48" cy="41" r="5" fill="#8B6E50" stroke="#3A332C" stroke-width="1.5"/>' +
+    '<circle cx="48" cy="41" r="1.5" fill="#5C4538" stroke="none"/>' +
+    '<line x1="48" y1="46" x2="48" y2="56" stroke-width="2"/>' +
+    '<path d="M42 56 L54 56 L52 66 L44 66 Z" fill="#8B6E50" stroke="#3A332C" stroke-width="1.5"/>'
+);
+
+// Artisanat — 3 sous-types + générique « Atelier »
+const I_ARTISANAT_GENERIQUE = svgFor(G +  // = Atelier (silhouette en peigne)
+    '<path d="M6 60 Q14 38 22 60 Q30 38 38 60 Q46 38 54 60 Q62 38 70 60 Q78 38 86 60 L86 82 L6 82 Z"/>' +
+    door('M42 82 L42 70 Q42 66 48 66 Q54 66 54 70 L54 82 Z') +
+    '<rect x="14" y="70" width="3" height="7" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="78" y="70" width="3" height="7" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>'
+);
+
+const I_HUILERIE = svgFor(  // objet (meule), pas de ligne de sol
+    '<path d="M10 82 L10 64 Q10 58 18 58 L78 58 Q86 58 86 64 L86 82 Z"/>' +
+    '<ellipse cx="48" cy="60" rx="32" ry="4" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<rect x="6" y="35" width="84" height="6" rx="1.5" fill="#8B6E50" stroke="#3A332C" stroke-width="1.5"/>' +
+    '<circle cx="48" cy="38" r="20"/>' +
+    '<circle cx="48" cy="38" r="4" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>'
+);
+
+const I_POTERIE = svgFor(  // objet (jarre djerba), pas de ligne de sol
+    '<ellipse cx="48" cy="18" rx="10" ry="3"/>' +
+    '<path d="M38 18 L38 26 Q26 32 24 52 Q22 76 36 82 L60 82 Q74 76 72 52 Q70 32 58 26 L58 18 Z"/>' +
+    '<path d="M28 36 Q16 42 22 56" fill="none" stroke="#3A332C" stroke-width="3" stroke-linecap="round"/>' +
+    '<path d="M68 36 Q80 42 74 56" fill="none" stroke="#3A332C" stroke-width="3" stroke-linecap="round"/>' +
+    '<line x1="30" y1="56" x2="66" y2="56" stroke-width="1.4"/>'
+);
+
+const I_TISSAGE = svgFor(G +
+    '<rect x="10" y="14" width="76" height="7" rx="1" fill="#8B6E50" stroke="#3A332C" stroke-width="1.5"/>' +
+    '<rect x="14" y="21" width="6" height="58"/>' +
+    '<rect x="76" y="21" width="6" height="58"/>' +
+    '<rect x="10" y="68" width="76" height="11" rx="1" fill="#8B6E50" stroke="#3A332C" stroke-width="1.5"/>' +
+    '<line x1="28" y1="22" x2="28" y2="60" stroke-width="1.6"/>' +
+    '<line x1="38" y1="22" x2="38" y2="60" stroke-width="1.6"/>' +
+    '<line x1="48" y1="22" x2="48" y2="60" stroke-width="1.6"/>' +
+    '<line x1="58" y1="22" x2="58" y2="60" stroke-width="1.6"/>' +
+    '<line x1="68" y1="22" x2="68" y2="60" stroke-width="1.6"/>' +
+    '<rect x="22" y="58" width="52" height="10" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<line x1="22" y1="62" x2="74" y2="62" stroke="#C99A5C" stroke-width="1.2"/>' +
+    '<line x1="22" y1="66" x2="74" y2="66" stroke="#C99A5C" stroke-width="1.2"/>'
+);
+
+// Culture & découvertes
+const I_MUSEE = svgFor(G +
+    '<rect x="10" y="72" width="76" height="10"/>' +
+    '<rect x="18" y="34" width="8" height="38"/>' +
+    '<rect x="34" y="34" width="8" height="38"/>' +
+    '<rect x="54" y="34" width="8" height="38"/>' +
+    '<rect x="70" y="34" width="8" height="38"/>' +
+    '<rect x="12" y="28" width="72" height="6"/>' +
+    '<polygon points="12,28 48,10 84,28"/>'
+);
+
+const I_CURIOSITE = svgFor(  // objet (œil + étoile), pas de ligne de sol
+    '<path d="M10 48 Q48 22 86 48 Q48 74 10 48 Z"/>' +
+    '<circle cx="48" cy="48" r="12" fill="#5C4538" stroke="#2C2825" stroke-width="1.5"/>' +
+    '<circle cx="51" cy="44" r="3" fill="#C99A5C" stroke="none"/>' +
+    '<polygon points="76,12 78,20 86,22 78,24 76,32 74,24 66,22 74,20"/>'
+);
+
+// Manger & boire
+const I_RESTAURANT = svgFor(  // objet (couverts), pas de ligne de sol
+    '<path d="M 27 12 L 30 12 L 30 32 L 33 32 L 33 12 L 36 12 L 36 32 L 39 32 L 39 12 L 42 12 L 42 32 L 45 32 L 45 12 L 48 12 L 48 32 Q 47 40 41 46 Q 42 62 40 80 Q 40 84 37.5 84 Q 35 84 35 80 Q 33 62 34 46 Q 28 40 27 32 Z"/>' +
+    '<path d="M58.5 12 Q68 16 68 40 L63.5 40 Q65.5 62 63 82 Q63 84 59.5 84 Q56 84 56 82 Q53.5 62 55.5 40 L55.5 12 Z"/>'
+);
+
+const I_CAFE = svgFor(  // objet (tasse), pas de ligne de sol
+    '<path d="M40 14 Q36 22 40 30" fill="none" stroke="#3A332C" stroke-width="2.6" stroke-linecap="round"/>' +
+    '<path d="M52 14 Q48 22 52 30" fill="none" stroke="#3A332C" stroke-width="2.6" stroke-linecap="round"/>' +
+    '<path d="M28 38 L64 38 L60 66 Q58 74 46 74 Q34 74 32 66 Z"/>' +
+    '<path d="M64 42 Q78 42 78 54 Q78 66 64 66 L64 60 Q72 60 72 54 Q72 48 64 48 Z"/>' +
+    '<ellipse cx="46" cy="78" rx="26" ry="4"/>'
+);
+
+const I_SALON_THE = svgFor(  // objet (théière + verre), pas de ligne de sol
+    '<path d="M14 56 Q14 38 32 38 Q50 38 50 56 Q50 72 32 72 Q14 72 14 56 Z"/>' +
+    '<path d="M24 38 Q24 30 32 30 Q40 30 40 38 Z"/>' +
+    '<circle cx="32" cy="27" r="2.5"/>' +
+    '<path d="M14 50 Q4 46 6 60 Q12 56 16 58 Z"/>' +
+    '<path d="M50 46 Q60 46 60 56 Q60 64 52 64 L52 58 Q54 58 54 56 Q54 52 50 52 Z"/>' +
+    '<path d="M62 40 L84 40 L80 56 Q78 60 80 64 L84 78 L62 78 L66 64 Q68 60 66 56 Z"/>' +
+    '<path d="M67 58 Q72 60 79 58 L80 64 Q72 66 66 64 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>'
+);
+
+const I_PATISSERIE = svgFor(G +
+    '<ellipse cx="48" cy="72" rx="34" ry="5"/>' +
+    '<path d="M14 64 Q14 38 36 36 Q60 32 78 50 Q74 60 60 58 Q44 52 32 58 Q20 64 14 64 Z"/>' +
+    '<circle cx="32" cy="48" r="1.5" fill="#5C4538" stroke="none"/>' +
+    '<circle cx="44" cy="44" r="1.5" fill="#5C4538" stroke="none"/>' +
+    '<circle cx="56" cy="46" r="1.5" fill="#5C4538" stroke="none"/>'
+);
+
+// Services & commodités
+const I_HOTEL = svgFor(G +
+    '<rect x="10" y="38" width="76" height="44"/>' +
+    '<rect x="10" y="34" width="76" height="4"/>' +
+    '<path d="M40 82 L40 60 Q40 52 48 52 Q56 52 56 60 L56 82 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<rect x="18" y="60" width="12" height="14" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="66" y="60" width="12" height="14" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="16" y="42" width="8" height="8" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="30" y="42" width="8" height="8" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="58" y="42" width="8" height="8" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="72" y="42" width="8" height="8" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>'
+);
+
+const I_COMMERCE = svgFor(G +
+    '<rect x="14" y="46" width="68" height="36"/>' +
+    '<path d="M10 46 L86 46 L86 52 Q78 60 70 52 Q62 60 54 52 Q46 60 38 52 Q30 60 22 52 Q14 60 10 52 Z"/>' +
+    '<path d="M46 82 L46 60 Q46 56 52 56 Q58 56 58 60 L58 82 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<rect x="20" y="58" width="20" height="16" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<line x1="30" y1="58" x2="30" y2="74" stroke="#C99A5C" stroke-width="1.4"/>' +
+    '<line x1="20" y1="66" x2="40" y2="66" stroke="#C99A5C" stroke-width="1.4"/>'
+);
+
+const I_TAXI = svgFor(G +
+    '<rect x="38" y="22" width="20" height="10" rx="2"/>' +
+    '<rect x="41" y="25" width="3" height="4" fill="#5C4538" stroke="none"/>' +
+    '<rect x="47" y="25" width="3" height="4" fill="#5C4538" stroke="none"/>' +
+    '<rect x="53" y="25" width="3" height="4" fill="#5C4538" stroke="none"/>' +
+    '<path d="M14 64 Q14 52 24 50 L34 50 L42 36 L54 36 L62 50 L72 50 Q82 52 82 64 L82 70 L14 70 Z"/>' +
+    '<circle cx="28" cy="70" r="8" fill="#5C4538" stroke="#2C2825" stroke-width="1.5"/>' +
+    '<circle cx="68" cy="70" r="8" fill="#5C4538" stroke="#2C2825" stroke-width="1.5"/>' +
+    '<circle cx="28" cy="70" r="2.6" fill="#C99A5C" stroke="none"/>' +
+    '<circle cx="68" cy="70" r="2.6" fill="#C99A5C" stroke="none"/>'
+);
+
+const I_MARCHE = svgFor(G +
+    '<polygon points="10,36 48,18 86,36"/>' +
+    '<rect x="10" y="36" width="76" height="4"/>' +
+    '<rect x="16" y="54" width="64" height="28"/>' +
+    '<line x1="16" y1="68" x2="80" y2="68" stroke-width="1.4"/>' +
+    '<line x1="36" y1="54" x2="36" y2="82" stroke-width="1.4"/>' +
+    '<line x1="60" y1="54" x2="60" y2="82" stroke-width="1.4"/>' +
+    '<circle cx="24" cy="48" r="6" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<circle cx="48" cy="46" r="8" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<circle cx="72" cy="48" r="6" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>'
+);
+
+// Fallback générique — catégorie inconnue / non couverte / « A définir ».
+const I_FALLBACK = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">' +
+    '<circle cx="48" cy="48" r="38" fill="#C99A5C" stroke="#3A332C" stroke-width="2.5"/>' +
+    '<text x="48" y="62" text-anchor="middle" font-size="44" font-family="sans-serif" font-weight="700" fill="#3A332C" stroke="none">?</text>' +
+    '</svg>';
+
+// ───── Lookup hiérarchique ─────
+// Une entrée POI_ICONS est soit :
+//   - une string (icône unique pour la catégorie sans sous-type) ;
+//   - un objet { [sous-type]: svg, _default: svg } pour les catégories à
+//     sous-types. _default est utilisé quand le sous-type est vide ou inconnu.
+const POI_ICONS = {
+    'Mosquée': {
+        'À minaret': I_MOSQUEE_MINARET,
+        'À coupoles': I_MOSQUEE_COUPOLES,
+        'Fortifiée': I_MOSQUEE_FORTIFIEE,
+        'Générique': I_MOSQUEE_GENERIQUE,
+        _default: I_MOSQUEE_GENERIQUE,
+    },
+    'Marabout': I_MARABOUT,
+    'Église': {
+        'Catholique': I_EGLISE_CATHO,
+        'Orthodoxe': I_EGLISE_ORTHO,
+        // Par défaut Catholique : la taxonomie n'a pas de « générique » pour Église.
+        _default: I_EGLISE_CATHO,
+    },
+    'Synagogue': I_SYNAGOGUE,
+    'Fortification': I_FORTIFICATION,
+    'Site funéraire': I_SITE_FUNERAIRE,
+    'Site archéologique': I_SITE_ARCHEO,
+    'Menzel': I_MENZEL,
+    'Puits': I_PUITS,
+    'Artisanat': {
+        'Poterie': I_POTERIE,
+        'Huilerie': I_HUILERIE,
+        'Tissage': I_TISSAGE,
+        // « Atelier » sert d'icône Artisanat générique (cas où le sous-type
+        // n'est pas connu ou laissé vide à la saisie).
+        _default: I_ARTISANAT_GENERIQUE,
+    },
+    'Musée': I_MUSEE,
+    'Curiosité': I_CURIOSITE,
+    'Restaurant': I_RESTAURANT,
+    'Café': I_CAFE,
+    'Salon de thé': I_SALON_THE,
+    'Pâtisserie': I_PATISSERIE,
+    'Hôtel': I_HOTEL,
+    'Commerce': I_COMMERCE,
+    'Taxi': I_TAXI,
+    'Marché': I_MARCHE,
+};
+
+// ───── Exports ─────
+
+/**
+ * Map plate { catégorie → SVG } pour rétro-compatibilité. Pour les catégories
+ * à sous-types, on retient l'icône `_default` (cat-level générique). Utilisé
+ * par les vues qui n'affichent qu'une icône par catégorie (panneau Filtres
+ * listing, grille catégories de la recherche mobile, légende info-popover…).
+ */
+export const iconMap = Object.fromEntries(
+    Object.entries(POI_ICONS).map(([cat, entry]) =>
+        [cat, typeof entry === 'string' ? entry : entry._default]
+    )
+);
+
+/**
+ * Retourne le HTML SVG pour une catégorie + sous-type (optionnel).
+ * - Catégorie inconnue → fallback générique (cercle ocre + ?).
+ * - Catégorie avec sous-types : recherche par sous-type, sinon _default.
+ * - Catégorie mono-niveau : retourne directement le SVG.
+ */
+export function getIconHtml(category, sousType) {
+    const entry = POI_ICONS[category];
+    if (!entry) return I_FALLBACK;
+    if (typeof entry === 'string') return entry;
+    if (sousType && entry[sousType]) return entry[sousType];
+    return entry._default;
+}
+
+/**
+ * Retourne le HTML SVG pour un POI (feature geojson), en lisant catégorie +
+ * sous-type avec priorité aux overrides `userData` sur les `properties`.
+ */
 export function getIconForFeature(feature) {
-    const category = (feature.properties.userData && feature.properties.userData.Catégorie) || feature.properties.Catégorie;
-    return getIconHtml(category);
+    const props = feature.properties || {};
+    const userData = props.userData || {};
+    const category = userData['Catégorie'] || props['Catégorie'];
+    const sousType = userData['Sous-type'] || props['Sous-type'];
+    return getIconHtml(category, sousType);
 }
