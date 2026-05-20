@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.51'; // Finitions chantier taxonomie : hero allégé (statut seul ; zone/catégorie restent dans l'eyebrow, plus de doublon), bloc éditeur dé-ambré (gris neutre comme .rich-poi-section-muted), pastilles État/Accès en pastel léger, « Non accessible » renommé « Non visitable » (parallèle à « Intérieur visitable »).
+export const APP_VERSION = '3.7.52'; // Fix CC Admin Tableau de bord : la section OUTILS (Publier circuit, Scout, Data Manager, Exporter, Importer) reste visible même quand il n'y a aucune modification en attente. Avant : return anticipé sur empty state masquait OUTILS — l'admin perdait l'accès à ces outils tant que le brouillon était vide.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
