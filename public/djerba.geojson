@@ -5244,10 +5244,19 @@
       },
       "properties": {
         "Nom du site FR": "Ancien atelier de tissage",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Artisanat",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0WBFCMMFBGZB582PRH",
-        "Description": "Ajouté via Rich Editor"
+        "Description": "Ajouté via Rich Editor",
+        "Nom du site arabe": "",
+        "Sous-type": "Tissage",
+        "État": "Désaffecté",
+        "Accès": "",
+        "Description_courte": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": ""
       }
     },
     {
