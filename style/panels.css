@@ -562,9 +562,9 @@
 .poi-tag.brand { background: rgba(240,249,255,0.95); color: var(--brand); }
 .poi-tag svg { width: 11px; height: 11px; }
 
-/* État + Accès — pastilles sémantiques ajoutées dans la rangée de tags du
-   hero. État : pastille à point coloré. Accès : pastille à icône. Couleurs
-   tokenisées (fallback hex en repli). */
+/* État + Accès — pastilles sémantiques (hero). État : point coloré. Accès :
+   icône. Fond en pastel léger (token × 50% + blanc), pour s'aligner sur les
+   pastilles zone/catégorie existantes. Texte et point en couleur tokenisée. */
 .poi-tag.status { font-weight: 700; }
 .poi-tag.status .dot {
     width: 7px;
@@ -572,15 +572,15 @@
     border-radius: 50%;
     flex-shrink: 0;
 }
-.poi-tag.status.ok        { background: var(--ok-soft, #D1FAE5); color: var(--ok-fg, #047857); }
+.poi-tag.status.ok        { background: color-mix(in oklab, var(--ok-soft, #D1FAE5) 50%, #fff); color: var(--ok-fg, #047857); }
 .poi-tag.status.ok .dot   { background: var(--ok, #10B981); }
-.poi-tag.status.warn      { background: var(--warn-soft, #FEF3C7); color: var(--warn-fg, #A16207); }
+.poi-tag.status.warn      { background: color-mix(in oklab, var(--warn-soft, #FEF3C7) 50%, #fff); color: var(--warn-fg, #A16207); }
 .poi-tag.status.warn .dot { background: var(--warn, #F59E0B); }
-.poi-tag.status.muted      { background: var(--surface-muted, #F0F4F8); color: var(--ink-soft, #627D98); }
+.poi-tag.status.muted      { background: color-mix(in oklab, var(--surface-muted, #F0F4F8) 50%, #fff); color: var(--ink-soft, #627D98); }
 .poi-tag.status.muted .dot { background: var(--ink-soft, #627D98); }
-.poi-tag.access.ok     { background: var(--brand-soft, #F0F9FF); color: var(--brand-2, var(--brand)); }
-.poi-tag.access.muted  { background: var(--surface-muted, #F0F4F8); color: var(--ink-soft, #627D98); }
-.poi-tag.access.danger { background: var(--danger-soft, #FEE2E2); color: var(--danger-fg, #B91C1C); }
+.poi-tag.access.ok     { background: color-mix(in oklab, var(--brand-soft, #F0F9FF) 50%, #fff); color: var(--brand-2, var(--brand)); }
+.poi-tag.access.muted  { background: color-mix(in oklab, var(--surface-muted, #F0F4F8) 50%, #fff); color: var(--ink-soft, #627D98); }
+.poi-tag.access.danger { background: color-mix(in oklab, var(--danger-soft, #FEE2E2) 50%, #fff); color: var(--danger-fg, #B91C1C); }
 .poi-photo-count {
     position: absolute;
     top: 12px;
