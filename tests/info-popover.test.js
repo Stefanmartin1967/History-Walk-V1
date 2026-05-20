@@ -70,17 +70,20 @@ describe('showInfoPopover — contenu légende', () => {
 });
 
 describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
-    it('contient une section "Catégories de lieux" avec une grille des 15 catégories iconMap', () => {
+    it('contient une section "Catégories de lieux" avec une grille des 20 catégories iconMap', () => {
         showInfoPopover();
         const txt = document.getElementById('info-popover').textContent;
         expect(txt).toContain('Catégories de lieux');
-        // 15 catégories dans iconMap (cf. src/poi-icons.js)
+        // 20 catégories dans iconMap (cf. src/poi-icons.js) — taxonomie v2 :
+        // les ex-catégories englobantes (« Site historique », « Culture et
+        // tradition ») sont devenues des groupes, et les sous-types fonctionnels
+        // (Fortification, Menzel…) sont promus catégories.
         const items = document.querySelectorAll('.info-popover-cat-item');
-        expect(items).toHaveLength(15);
+        expect(items).toHaveLength(20);
         // Vérification de quelques catégories représentatives
         expect(txt).toContain('Restaurant');
         expect(txt).toContain('Mosquée');
-        expect(txt).toContain('Site historique');
+        expect(txt).toContain('Fortification');
     });
 
     it('contient une section "Regroupements" avec 3 samples cluster (vert/jaune/rouge)', () => {

@@ -1307,20 +1307,16 @@ html[data-theme="night"] .menu-item.love .menu-item-icon { background: rgba(219,
     min-width: 0;
 }
 .info-popover-cat-marker {
-    /* Reproduit visuellement le rendu .hw-icon de la carte (cercle + svg) en
-       version compacte 24px (vs 32px sur la carte) — l'utilisateur reconnaît
-       immédiatement la correspondance légende ↔ marker. */
-    width: 24px; height: 24px;
-    background: var(--surface);
-    border: 1.5px solid var(--ink);
-    border-radius: 50%;
+    /* Reproduit le rendu .hw-icon de la carte (chantier iconification 20/05/2026 :
+       icônes ocres pleines, plus de cercle blanc) en version compacte 28px
+       — l'utilisateur reconnaît immédiatement la correspondance légende ↔ marker. */
+    width: 28px; height: 28px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    box-shadow: var(--shadow-soft);
 }
 .info-popover-cat-marker svg {
-    width: 14px; height: 14px;
-    color: var(--ink);
+    width: 100%; height: 100%;
+    display: block;
 }
 .info-popover-cat-name {
     font-size: 0.78rem;

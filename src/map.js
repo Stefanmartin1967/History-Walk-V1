@@ -222,15 +222,21 @@ export function initMapListeners() {
     });
 }
 
-export function createHistoryWalkIcon(category) {
-    const iconHtml = getIconHtml(category);
+// Marker carte HW : icône SVG ocre 44 px, halo blanc CSS pour la lisibilité
+// sur le fond Voyager. Accepte une feature pour faire le lookup sous-type
+// (un marabout fortifié, une mosquée à minaret…). Fallback compat : un
+// string (category) est aussi accepté pour les rares appelants legacy.
+export function createHistoryWalkIcon(featureOrCategory) {
+    const iconHtml = typeof featureOrCategory === 'string'
+        ? getIconHtml(featureOrCategory)
+        : getIconForFeature(featureOrCategory);
 
     return L.divIcon({
         html: `<div class="hw-icon-wrapper">${iconHtml}</div>`,
         className: 'hw-icon',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
+        iconSize: [44, 44],
+        iconAnchor: [22, 44],
+        popupAnchor: [0, -44]
     });
 }
 
@@ -381,8 +387,10 @@ export function refreshMapMarkers(visibleFeatures) {
 
     const tempLayer = L.geoJSON(visibleFeatures, {
         pointToLayer: (feature, latlng) => {
-            const category = (feature.properties.userData && feature.properties.userData.Catégorie) || feature.properties.Catégorie || 'default';
-            const icon = createHistoryWalkIcon(category);
+            // On passe la feature à createHistoryWalkIcon pour qu'elle puisse
+            // résoudre catégorie + sous-type (lookup hiérarchique poi-icons.js)
+            // et tirer l'icône la plus spécifique (ex: Mosquée à minaret).
+            const icon = createHistoryWalkIcon(feature);
 
             // Suppression volontaire des décorations marker-vip/-visited/-planned
             // (audit Stefan #5) : redondantes avec les filtres "Mon parcours",

@@ -509,8 +509,8 @@ function renderMobileSearchResults(container, matches, term) {
             zone = getZoneFromCoords(coords[1], coords[0]) || '';
         }
         const meta = [zone, cat].filter(Boolean).join(' · ');
-        // Icône MDI du iconMap (homogène avec la carte PC).
-        const iconHtml = getIconHtml(cat);
+        // Lookup sous-type-aware (cohérent avec le marqueur carte PC).
+        const iconHtml = getIconForFeature(f);
         const highlightedName = term ? highlightSearchTerm(name, term) : escapeHtml(name);
         html += `
             <button type="button" class="search-result" data-id="${poiId}">

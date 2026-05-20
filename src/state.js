@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.53'; // Préalables chantier iconification : basemap CARTO Voyager ajouté comme couche par défaut (Plan OSM + Satellite Google conservés en alternatives) ; CSP img-src étendue à *.basemaps.cartocdn.com ; mentions légales mises à jour. Référentiel : « Fort » renommé « Fortification » (catégorie Site historique) — 0 POI affecté côté data (rename pur).
+export const APP_VERSION = '3.7.54'; // Chantier iconification — PR2 : 27 SVGs ocres pleins remplacent les MDI ronds, marker 44 px avec halo blanc CSS (lisibilité sur Voyager + Plan + Satellite), lookup hiérarchique catégorie → sous-type (Mosquée à minaret/à coupoles/fortifiée, Église catholique/orthodoxe, Artisanat huilerie/poterie/tissage/atelier). Légende info-popover bascule 15 → 20 catégories (v2 : ex-catégories englobantes devenues groupes, sous-types fonctionnels promus catégories). Mobile Recherche & timeline circuit : icônes alignées sur la carte PC.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
