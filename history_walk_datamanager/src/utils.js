@@ -39,15 +39,42 @@ export function decodeText(text) {
 }
 
 /**
- * Génère un ID aléatoire format HW-XXXXXXXXXXXXXXXXXXXXXXXXXX
+ * Génère un identifiant unique au format HW-ULID (10 chars timestamp + 16 chars random,
+ * alphabet Crockford base32 sans I L O U pour éviter les confusions de lecture).
+ *
+ * IMPORTANT : algorithme aligné sur HW (src/utils.js generateHWID) — les IDs
+ * créés par HW et DM doivent être interchangeables et triables par création
+ * (timestamp préfixe). Toute évolution de l'algo doit être répliquée des deux
+ * côtés (PR C de l'audit 21/05/2026 a unifié les deux algos qui divergeaient :
+ * DM utilisait 36 chars random sans timestamp → IDs non triables).
  */
 export function generateHWID() {
-    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let result = 'HW-';
-    for (let i = 0; i < 26; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    const ENCODING = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+
+    function encodeBase32(number, length) {
+        let str = "";
+        for (let i = length - 1; i >= 0; i--) {
+            str = ENCODING.charAt(number % 32) + str;
+            number = Math.floor(number / 32);
+        }
+        return str;
     }
-    return result;
+
+    function randomChar() {
+        return ENCODING.charAt(Math.floor(Math.random() * 32));
+    }
+
+    // 1. Timestamp (48 bits -> 10 chars)
+    const now = Date.now();
+    const timestampPart = encodeBase32(now, 10);
+
+    // 2. Random (80 bits -> 16 chars)
+    let randomPart = "";
+    for (let i = 0; i < 16; i++) {
+        randomPart += randomChar();
+    }
+
+    return `HW-${timestampPart}${randomPart}`;
 }
 
 /**
