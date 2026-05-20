@@ -81,7 +81,7 @@ function accessTagMeta(acces) {
     switch (acces) {
         case 'Intérieur visitable': return { cls: 'ok',     icon: 'door-open' };
         case 'Extérieur seulement': return { cls: 'muted',  icon: 'building' };
-        case 'Non accessible':      return { cls: 'danger', icon: 'lock' };
+        case 'Non visitable':       return { cls: 'danger', icon: 'lock' };
         default:                    return { cls: 'muted',  icon: 'info' };
     }
 }
@@ -227,11 +227,10 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
 
     const notes = (allProps.notes || '').toString();
 
-    // Tags hero
+    // Tags hero — STATUT uniquement. L'identité (zone, catégorie, sous-type)
+    // est portée par l'eyebrow en dessous ; on ne la double pas sur la photo.
     const accesMeta = acces ? accessTagMeta(acces) : null;
     const tagsHtml = [
-        zone ? `<span class="poi-tag brand"><i data-lucide="map-pin"></i>${escapeXml(zone)}</span>` : '',
-        showCategory ? `<span class="poi-tag amber"><i data-lucide="landmark"></i>${escapeXml(category)}</span>` : '',
         etat ? `<span class="poi-tag status ${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
         accesMeta ? `<span class="poi-tag access ${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
         isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : ''

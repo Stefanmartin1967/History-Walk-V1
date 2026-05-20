@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.50'; // Fiche POI : sous-type affiché dans l'eyebrow, pastilles État + Accès dans le hero (repli « Visite libre » masqué si un Accès taxonomie est renseigné). richEditor : bloc « Précisions taxonomie » — 3 menus Sous-type/État/Accès contextuels selon la catégorie.
+export const APP_VERSION = '3.7.51'; // Finitions chantier taxonomie : hero allégé (statut seul ; zone/catégorie restent dans l'eyebrow, plus de doublon), bloc éditeur dé-ambré (gris neutre comme .rich-poi-section-muted), pastilles État/Accès en pastel léger, « Non accessible » renommé « Non visitable » (parallèle à « Intérieur visitable »).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

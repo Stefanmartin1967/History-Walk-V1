@@ -20,7 +20,7 @@
         { "label": "Générique", "portee": "générique" }
       ],
       "etats": ["En activité", "Désaffecté", "Ruine"],
-      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Extérieur seulement" }
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
     },
     {
       "label": "Marabout",
@@ -28,7 +28,7 @@
       "libelleDerive": false,
       "sousTypes": [],
       "etats": ["En activité", "Désaffecté", "Ruine"],
-      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Extérieur seulement" }
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
     },
     {
       "label": "Église",
@@ -39,7 +39,7 @@
         { "label": "Orthodoxe", "portee": "générique" }
       ],
       "etats": ["En activité", "Désaffecté", "Ruine"],
-      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Intérieur visitable" }
     },
     {
       "label": "Synagogue",
@@ -47,7 +47,7 @@
       "libelleDerive": false,
       "sousTypes": [],
       "etats": ["En activité", "Désaffecté", "Ruine"],
-      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Intérieur visitable" }
     },
     {
       "label": "Fort",
@@ -55,7 +55,7 @@
       "libelleDerive": false,
       "sousTypes": [],
       "etats": ["Conservé", "Vestiges partiels", "Ruine"],
-      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Intérieur visitable" }
     },
     {
       "label": "Site funéraire",
@@ -63,7 +63,7 @@
       "libelleDerive": false,
       "sousTypes": [],
       "etats": ["Conservé", "Vestiges partiels", "Ruine"],
-      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Intérieur visitable" }
     },
     {
       "label": "Site archéologique",
@@ -71,7 +71,7 @@
       "libelleDerive": false,
       "sousTypes": [],
       "etats": ["Conservé", "Vestiges partiels", "Ruine"],
-      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Intérieur visitable" }
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Intérieur visitable" }
     },
     {
       "label": "Menzel",
@@ -79,7 +79,7 @@
       "libelleDerive": true,
       "sousTypes": [],
       "etats": ["En activité", "Reconverti", "Désaffecté", "Ruine"],
-      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non accessible"], "defaut": "Extérieur seulement" }
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
     },
     {
       "label": "Puits",
