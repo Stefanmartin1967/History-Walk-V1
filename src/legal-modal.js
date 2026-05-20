@@ -24,7 +24,9 @@ export function showLegalNoticeModal() {
             préalable est interdite.</p>
 
         <h3>Données cartographiques</h3>
-        <p>Le fond de carte par défaut provient d'<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors,
+        <p>Les fonds de carte « Voyager » (par défaut, rendu par
+            <a href="https://carto.com/" target="_blank" rel="noopener noreferrer">CARTO</a>)
+            et « Plan » utilisent les données d'<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors,
             sous licence ODbL (Open Database License). Ces données restent la propriété de
             leurs contributeurs et ne sont pas couvertes par la licence du présent projet.</p>
         <p>L'application utilise également les

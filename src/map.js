@@ -70,8 +70,16 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
         attribution: '&copy; Google Maps'
     });
 
-    // Ajout de la couche par défaut (Plan)
-    planLayer.addTo(map);
+    // 3. Couche "Voyager" (CARTO) — beige clair, lisible pour les marqueurs
+    //    ocre du chantier iconification. Devient la couche par défaut (20/05/2026).
+    const voyagerLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        subdomains: 'abcd',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
+    });
+
+    // Ajout de la couche par défaut (Voyager — base claire, friendly pour les icônes ocre)
+    voyagerLayer.addTo(map);
 
     // Initialisation du rendu SVG pour les lignes (contourne preferCanvas: true)
     svgRenderer = L.svg({ padding: 0.5 });
@@ -79,6 +87,7 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
 
     // Création du contrôleur de couches
     const baseMaps = {
+        "Voyager": voyagerLayer,
         "Plan": planLayer,
         "Satellite": googleHybridLayer
     };

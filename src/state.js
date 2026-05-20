@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.52'; // Fix CC Admin Tableau de bord : la section OUTILS (Publier circuit, Scout, Data Manager, Exporter, Importer) reste visible même quand il n'y a aucune modification en attente. Avant : return anticipé sur empty state masquait OUTILS — l'admin perdait l'accès à ces outils tant que le brouillon était vide.
+export const APP_VERSION = '3.7.53'; // Préalables chantier iconification : basemap CARTO Voyager ajouté comme couche par défaut (Plan OSM + Satellite Google conservés en alternatives) ; CSP img-src étendue à *.basemaps.cartocdn.com ; mentions légales mises à jour. Référentiel : « Fort » renommé « Fortification » (catégorie Site historique) — 0 POI affecté côté data (rename pur).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
