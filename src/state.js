@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.69'; // Fix crayon « Modifier le titre » du circuit (était inactif). Root cause : mismatch d'ID — le handler de ui-circuit-editor.js ciblait #edit-circuit-title-button (inexistant depuis la refonte V2), et le vrai handler inline (initTitleEdit, #cp-title-edit-btn) ne s'activait qu'en mode création. Fix : le crayon fonctionne désormais aussi en consultation pour l'admin (renommage inline d'un circuit officiel/perso chargé, ID préservé, persisté via saveCircuit). La trace réelle restant intacte (pas de convertToDraft), le CC détecte le changement de nom et peut le publier sans re-tracer. Nettoyé : handler mort + import showPrompt + entrée DOM cache obsolètes.
+export const APP_VERSION = '3.7.70'; // Fix MAJEUR : « Tout publier » publie enfin les circuits nouveaux/modifiés. Avant, publishChanges ne gérait que les SUPPRESSIONS de circuits — créer/renommer un circuit n'était jamais poussé (le bouton manuel « Upload fichier » était le contournement historique). Désormais : pour chaque circuit créé/modifié détecté par le diff, on régénère le GPX (generateGPXString) + commit dans public/circuits/<map>/<nom>.gpx + on met à jour l'index circuits/<map>.json directement (cohérence immédiate, pas de transitoire) ; au renommage on supprime l'ancien GPX. L'Action update-circuits.yml reconfirme l'index (idempotent). Nouveau helper exporté buildCircuitIndexEntry (testé : format aligné sur generate-circuit-index.js). Le crayon de renommage (#622) devient donc réellement publiable de bout en bout.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
