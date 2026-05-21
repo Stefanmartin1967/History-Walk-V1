@@ -6,7 +6,7 @@ import { saveAndExportCircuit } from './circuit-actions.js';
 import { saveCircuit } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import { showToast } from './toast.js';
-import { showConfirm, showAlert, showPrompt } from './modal.js';
+import { showConfirm, showAlert } from './modal.js';
 import { performCircuitDeletion } from './circuit-actions.js';
 import { eventBus } from './events.js';
 import { escapeHtml } from './utils.js';
@@ -247,32 +247,8 @@ export function setupCircuitEventListeners() {
         });
     }
 
-    const btnEditTitle = document.getElementById('edit-circuit-title-button');
-    if (btnEditTitle) {
-        btnEditTitle.addEventListener('click', async () => {
-             const currentTitle = DOM.circuitTitleText ? DOM.circuitTitleText.textContent : "";
-             const newTitle = await showPrompt("Renommer le circuit", "Nouveau titre :", currentTitle);
-
-             if (newTitle !== null && newTitle.trim() !== "") {
-                 const trimmed = newTitle.trim();
-
-                 if (state.activeCircuitId) {
-                     const idx = state.myCircuits.findIndex(c => c.id === state.activeCircuitId);
-                     if (idx > -1) {
-                         const updatedCircuit = { ...state.myCircuits[idx] };
-                         updatedCircuit.name = trimmed;
-                         updateMyCircuit(updatedCircuit);
-                         // SAUVEGARDE PERMANENTE
-                         await saveCircuit(updatedCircuit);
-                         eventBus.emit('circuit:list-updated');
-                     }
-                 } else {
-                     setCustomDraftName(trimmed);
-                 }
-
-                 updateCircuitMetadata();
-                 saveCircuitDraft();
-             }
-        });
-    }
+    // (Renommage du titre : géré par initTitleEdit dans ui-circuit-page-events.js
+    // via l'édition inline sur #cp-title-edit-btn. L'ancien handler ici ciblait
+    // un id #edit-circuit-title-button inexistant depuis la refonte V2 → mort,
+    // retiré 21/05/2026.)
 }
