@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.60'; // Fix DM « delete → edit » + modale openHwModal qui détachait les SVGs. Root cause : src/modal.js createIcons() était appelé sans `root`, re-processant tous les <i data-lucide> du document — donc en re-créant les <svg> existants. Si un click venait juste de partir sur une icône hors modale (genre bouton trash dans la table DM), e.target.isConnected devenait false avant que l'event ne bubble, closest('button') retournait null, et les handlers parents (qui filtrent « ignorer les clics sur boutons ») étaient contournés. Fix root cause : createIcons scopé à overlay. Fix ceinture : stopPropagation sur le delete button du DM.
+export const APP_VERSION = '3.7.61'; // Fix DM « delete ne fait rien » (suite de #613, qui n'avait réglé que le « delete → edit »). Vrai root cause : la cible du clic était la <path> enfant du SVG du bouton ; un re-render lucide (createIcons non scopé, main.js:334 sur table:rendered) détachait la path entre mousedown et click → le click ne remontait plus au bouton → onclick jamais déclenché (reproduit en preview). Fix : pointer-events:none sur les icônes des .icon-btn-shared → la cible du clic est TOUJOURS le bouton (stable, immunisé aux re-renders). + createIcons du DM scopé au conteneur table. NB : changements DM-only, comportement HW inchangé (bump pour cache-bust + traçabilité).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
