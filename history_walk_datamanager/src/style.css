@@ -100,6 +100,18 @@ body {
 .btn-warning { background-color: var(--warn); color: var(--bg-2); }
 .btn-neutral { background-color: var(--line); color: var(--ink); }
 .btn-publish { background-color: #6f42c1; color: #fff; }
+/* Variantes consommées par les modales partagées (hwConfirm, src/modal.js).
+   Le DM a son propre système .btn (texte blanc + variantes brand/ok/warn) mais
+   ne définissait pas ghost/danger → la modale « Supprimer ce lieu ? » rendait
+   du texte blanc sur fond clair (illisible, 21/05/2026). On les ajoute ici au
+   système .btn du DM (pas d'import du buttons.css HW qui clasherait sur .btn). */
+.btn-danger { background-color: var(--danger); color: #fff; }
+.btn-ghost {
+  background-color: transparent;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.btn-ghost:hover:not(:disabled) { background-color: var(--surface-muted); }
 
 .btn:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
 .btn:disabled, .btn-icon:disabled { 

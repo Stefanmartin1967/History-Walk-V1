@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.62'; // VRAI fix DM « delete ne fait rien » : le DM n'importait pas style/modals.css → la modale hwConfirm « Supprimer ce lieu ? » s'ouvrait en position:static / z-index:auto, cachée DANS le flux derrière le DM. Le clic + deleteFeature + ouverture modale marchaient depuis toujours — seul le CSS de positionnement manquait. Intuition de Stefan (« la modale serait cachée derrière le DM ? »). Fix : @import modals.css dans le style.css du DM. NB : #613 (stopPropagation, vrai fix du « delete → edit ») reste utile ; #614 (pointer-events) traitait un non-problème reproduit artificiellement — laissé en place (inoffensif, bonne pratique).
+export const APP_VERSION = '3.7.63'; // DM : boutons de la modale hwConfirm lisibles. #615 (3.7.62) avait rendu la modale visible (import modals.css), mais le DM a son propre système .btn (texte blanc) sans .btn-ghost/.btn-danger → Annuler/Supprimer en texte blanc sur fond clair (illisibles). Fix : ajout des 2 variantes au système .btn du DM (fond --danger + blanc / transparent + --ink + bordure). DM-only, HW inchangé.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
