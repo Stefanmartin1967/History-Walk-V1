@@ -70,19 +70,29 @@ describe('showInfoPopover — contenu légende', () => {
 });
 
 describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
-    it('contient une section "Catégories de lieux" avec une grille des 20 catégories iconMap', () => {
+    it('contient une section "Catégories de lieux" avec les 27 icônes (sous-types inclus)', () => {
         showInfoPopover();
         const txt = document.getElementById('info-popover').textContent;
         expect(txt).toContain('Catégories de lieux');
-        // 20 catégories dans iconMap (cf. src/poi-icons.js) — taxonomie v2 :
-        // les ex-catégories englobantes (« Site historique », « Culture et
-        // tradition ») sont devenues des groupes, et les sous-types fonctionnels
-        // (Fortification, Menzel…) sont promus catégories.
+        // Légende exhaustive (chantier 21/05/2026) : chaque icône distincte est
+        // affichée, sous-types inclus. 17 catégories mono + Mosquée (4) +
+        // Église (2) + Artisanat (4) = 27 entrées (cf. handoff #22).
         const items = document.querySelectorAll('.info-popover-cat-item');
-        expect(items).toHaveLength(20);
-        // Vérification de quelques catégories représentatives
+        expect(items).toHaveLength(27);
+        // Les 3 catégories à sous-types ont un en-tête de sous-groupe dédié.
+        const subgroups = document.querySelectorAll('.info-popover-cat-subgroup');
+        expect(subgroups).toHaveLength(3);
+        const subgroupTitles = Array.from(
+            document.querySelectorAll('.info-popover-cat-subgroup-title')
+        ).map(el => el.textContent);
+        expect(subgroupTitles).toEqual(['Mosquée', 'Église', 'Artisanat']);
+        // Variantes de sous-types représentatives présentes.
+        expect(txt).toContain('À minaret');
+        expect(txt).toContain('Catholique');
+        expect(txt).toContain('Huilerie');
+        expect(txt).toContain('Atelier');
+        // Catégories mono toujours là.
         expect(txt).toContain('Restaurant');
-        expect(txt).toContain('Mosquée');
         expect(txt).toContain('Fortification');
     });
 
