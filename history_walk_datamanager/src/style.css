@@ -115,7 +115,14 @@ body {
     text-decoration: none; 
 }
 .icon-btn-shared:hover { background-color: var(--brand-soft); color: var(--brand); transform: scale(1.1); }
-.icon-btn-shared svg { width: 18px; height: 18px; }
+/* pointer-events: none sur l'icône → la cible du clic est TOUJOURS le bouton,
+   jamais la <path>/<svg> enfant. Fix root cause du bug « delete ne fait rien »
+   (21/05/2026) : lucide re-render les icônes (createIcons), ce qui détache la
+   path cliquée entre mousedown et click → l'event click ne remonte plus au
+   bouton → onclick jamais déclenché. En ciblant le bouton (stable), le clic
+   survit aux re-renders d'icônes. */
+.icon-btn-shared svg { width: 18px; height: 18px; pointer-events: none; }
+.icon-btn-shared i { pointer-events: none; }
 
 .btn-delete:hover { background-color: #fee2e2; color: var(--danger); }
 

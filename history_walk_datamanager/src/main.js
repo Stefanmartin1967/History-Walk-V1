@@ -331,7 +331,13 @@ refreshBulkBar();
     }
 })();
 
-document.addEventListener('table:rendered', () => createIcons({ icons }));
+// Scope au conteneur table : on ne re-render que les icônes fraîchement
+// créées dans le tableau, pas tout le document. Évite de détacher les SVG
+// d'autres parties de l'UI (cf. fix root cause du bug delete 21/05/2026).
+document.addEventListener('table:rendered', () => {
+    const tableRoot = document.getElementById('data-table') || document.body;
+    createIcons({ icons, root: tableRoot });
+});
 document.addEventListener('status:update', (e) => updateStatus(e.detail.type, e.detail.msg));
 
 // --- MODALE LOGIC ---
