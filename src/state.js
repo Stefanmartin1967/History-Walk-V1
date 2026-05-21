@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.65'; // Audit post-chantiers — PR D (nettoyage code mort) : suppression du module orphelin backup-modal.js (0 import) + de generateSyncQR (sync.js, fonction « partager progression QR » jamais appelée) + de l'import mort showConfirm/showAlert dans sync.js. Commentaires obsolètes référençant backup-modal.js nettoyés (ui.js, index.html). NB : plusieurs « morts » de l'audit se sont révélés FAUX à la re-vérif (CSS me-topbar-* utilisées, setupTopbarV2 utilisé) → non touchés. Handlers photo (photo-service.js) vérifiés morts mais différés (retrait fragile sur module critique, faible ROI).
+export const APP_VERSION = '3.7.66'; // Audit post-chantiers — PR E (couverture critique, TESTS ONLY) : +34 tests sur 3 modules sans couverture flaggés à l'audit. zip-store.js (encodeur ZIP pur : CRC32 vs vecteur standard, dosDateTime, structure ZIP — signatures, EOCD, CRC dans header, STORE). tested-sync.js (auto-push tested.json : gardes admin/token/mapId, happy path, échec silencieux, debounce 2s). events-bus.js (routing event→handler : data:filtered mobile/desktop, circuits load/clear/navigate/delete/import, succès/échec suppression). Aucun changement de code de prod. Baseline : 733 → 767 tests verts.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
