@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.64'; // Légende (info-popover) exhaustive : affiche désormais les 27 icônes distinctes, sous-types inclus, au lieu des 20 icônes de catégorie. Layout groupé (Option 2) : 17 catégories mono en grille plate + 3 catégories à sous-types (Mosquée 4, Église 2, Artisanat 4) avec en-tête + variantes. Nouvel export getLegendGroups() dans poi-icons.js (itère POI_ICONS complet au lieu d'iconMap plat). Le générique d'Artisanat (icône atelier, _default distinct) libellé « Atelier ».
+export const APP_VERSION = '3.7.65'; // Audit post-chantiers — PR D (nettoyage code mort) : suppression du module orphelin backup-modal.js (0 import) + de generateSyncQR (sync.js, fonction « partager progression QR » jamais appelée) + de l'import mort showConfirm/showAlert dans sync.js. Commentaires obsolètes référençant backup-modal.js nettoyés (ui.js, index.html). NB : plusieurs « morts » de l'audit se sont révélés FAUX à la re-vérif (CSS me-topbar-* utilisées, setupTopbarV2 utilisé) → non touchés. Handlers photo (photo-service.js) vérifiés morts mais différés (retrait fragile sur module critique, faible ROI).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

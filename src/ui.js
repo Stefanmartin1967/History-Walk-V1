@@ -49,7 +49,6 @@ export function initializeDomReferences() {
         'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title',
         'editor-cancel-btn', 'editor-save-btn', 'editor-textarea', 'destination-loader',
         // photo-viewer/viewer-* supprimés : migration V2 vers ui-photo-viewer.openPhotoViewer.
-        // backup-modal supprimé : migration V2 (cf. backup-modal.js construit à la volée).
         // btn-open-backup-modal / btn-restore-data / btn-open-trash retirés du DOM en
         // PR #514 (cleanup menu Outils). Sauvegarder/Restaurer/Corbeille = via Mon Espace.
         'btn-loop-circuit',
@@ -156,9 +155,7 @@ export function initializeDomReferences() {
 
     // (Listener btnOpenBackupModal retiré 10/05/2026, PR cleanup post-#514 :
     // le bouton Sauvegarder n'existe plus dans le menu Outils. Sauvegarde
-    // accessible uniquement via Mon Espace > Mes Données. La fonction
-    // showBackupModal() reste exportée de backup-modal.js si un autre point
-    // d'entrée la rappelle un jour.)
+    // accessible uniquement via Mon Espace > Mes Données.)
 
     if (DOM.btnMonEspace) {
         DOM.btnMonEspace.addEventListener('click', () => {

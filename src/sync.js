@@ -3,65 +3,7 @@ import { state } from './state.js';
 import { getPoiId, applyFilters, recomputeVu } from './data.js';
 import { batchSavePoiData } from './database.js';
 import { showToast } from './toast.js';
-import { showConfirm, showAlert } from './modal.js';
 import { loadCircuitFromIds } from './circuit.js';
-
-// --- GENERATION (PARTAGER) ---
-
-export async function generateSyncQR() {
-    if (!state.currentMapId) {
-        showToast("Aucune carte chargée.", "error");
-        return;
-    }
-
-    // 1. Récupération des indices des POIs visités
-    const visitedIndices = [];
-    state.loadedFeatures.forEach((feature, index) => {
-        if (feature.properties.userData && feature.properties.userData.vu) {
-            visitedIndices.push(index);
-        }
-    });
-
-    if (visitedIndices.length === 0) {
-        showToast("Aucun lieu visité à partager.", "warning");
-        return;
-    }
-
-    // 2. Construction du Payload Compact
-    const payload = {
-        t: 's', // Type: Sync
-        m: state.currentMapId,
-        v: visitedIndices
-    };
-
-    const jsonString = JSON.stringify(payload);
-
-    // 3. Génération du QR Code
-    try {
-        const QRCode = (await import('qrcode')).default;
-        const url = await QRCode.toDataURL(jsonString, { width: 300, margin: 2, errorCorrectionLevel: 'L' });
-
-        // 4. Affichage Modale
-        const html = `
-            <div class="sync-qr-container">
-                <img src="${url}" class="sync-qr-img">
-                <div class="sync-qr-info">
-                    <p class="sync-visited-count">${visitedIndices.length} lieux visités</p>
-                    <p class="sync-instructions">
-                        Sur l'autre appareil, allez dans <b>Menu > Outils > Scanner</b><br>
-                        pour récupérer cette progression.
-                    </p>
-                </div>
-            </div>
-        `;
-
-        await showAlert("Synchroniser la progression", html, "Fermer");
-
-    } catch (err) {
-        console.error("Erreur QR:", err);
-        showToast("Erreur lors de la génération du QR Code", "error");
-    }
-}
 
 // --- SCANNER GENÉRIQUE ---
 
