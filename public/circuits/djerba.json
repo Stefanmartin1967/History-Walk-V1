@@ -422,5 +422,21 @@
       "HW-01K77WPE68MMPS9ZVR6XTV9J61",
       "HW-01K77WPE68JWCXJ0TCG1EDSB7A"
     ]
+  },
+  {
+    "id": "HW-01KS60VM1NFH78GS0WDVCY562P",
+    "name": "Boucle autour de Mosquée Sidi Abdelkader via Mosquée Khaled Ibn Elwalid",
+    "file": "djerba/Boucle autour de Mosquée Sidi Abdelkader via Mosquée Khaled Ibn Elwalid.gpx",
+    "description": "Circuit généré par History Walk.",
+    "distance": "3.7 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Arkou",
+    "poiIds": [
+      "HW-01K77WPE6805D82JWX44QAVVV9",
+      "HW-01K77WPE68SW9XWBFFCRBWXZYM",
+      "HW-01K77WPE682HMFVV693F7BFA2B",
+      "HW-01K77WPE6805D82JWX44QAVVV9"
+    ]
   }
 ]
