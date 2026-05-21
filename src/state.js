@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.61'; // Fix DM « delete ne fait rien » (suite de #613, qui n'avait réglé que le « delete → edit »). Vrai root cause : la cible du clic était la <path> enfant du SVG du bouton ; un re-render lucide (createIcons non scopé, main.js:334 sur table:rendered) détachait la path entre mousedown et click → le click ne remontait plus au bouton → onclick jamais déclenché (reproduit en preview). Fix : pointer-events:none sur les icônes des .icon-btn-shared → la cible du clic est TOUJOURS le bouton (stable, immunisé aux re-renders). + createIcons du DM scopé au conteneur table. NB : changements DM-only, comportement HW inchangé (bump pour cache-bust + traçabilité).
+export const APP_VERSION = '3.7.62'; // VRAI fix DM « delete ne fait rien » : le DM n'importait pas style/modals.css → la modale hwConfirm « Supprimer ce lieu ? » s'ouvrait en position:static / z-index:auto, cachée DANS le flux derrière le DM. Le clic + deleteFeature + ouverture modale marchaient depuis toujours — seul le CSS de positionnement manquait. Intuition de Stefan (« la modale serait cachée derrière le DM ? »). Fix : @import modals.css dans le style.css du DM. NB : #613 (stopPropagation, vrai fix du « delete → edit ») reste utile ; #614 (pointer-events) traitait un non-problème reproduit artificiellement — laissé en place (inoffensif, bonne pratique).
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

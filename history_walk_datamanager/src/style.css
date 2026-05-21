@@ -2,6 +2,13 @@
 
 @import url("../../style/tokens.css");
 @import url("../../style/components/leaflet-controls.css");
+/* Modales partagées HW/DM (openHwModal/hwConfirm dans src/modal.js). Sans cet
+   import, .hw-modal-overlay rendait en position:static / z-index:auto → la
+   modale de confirmation « Supprimer ce lieu ? » s'ouvrait dans le flux,
+   cachée derrière le DM (bug « delete ne fait rien » 21/05/2026 — la modale
+   s'ouvrait depuis toujours mais sans style). modals.css est self-contained
+   (n'utilise que les tokens importés ci-dessus). */
+@import url("../../style/modals.css");
 
 /* --- 1. VARIABLES & DENSITÉ DM ---
    Tokens design partagés → style/tokens.css (PR 3a).
