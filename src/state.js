@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.59'; // Hotfix purge orphelins CC : la version précédente (3.7.58) avait un bug — quand userData contenait des champs vides absents du patrimoine (Téléphone='', Horaires='' saisis puis effacés via richEditor), prepareDiffData filtrait correctement via `isDefaultEmpty`, mais mon purge utilisait une comparaison stricte `String(a)===String(b)` → il marquait l'orphelin comme « suspect » et refusait de purger → la boucle pendingPois→badge→flag→DM bloqué se perpétuait. Fix : la fonction helper `isNoChangeAgainstOriginal` aligne exactement la logique sur prepareDiffData (photos par longueur, isDefaultEmpty pour les champs vides). Et plus important : on RETIRE TOUJOURS de pendingPois quand prepareDiffData a dit 0 diff (avant on bloquait sur la branche « suspect »).
+export const APP_VERSION = '3.7.60'; // Fix DM « delete → edit » + modale openHwModal qui détachait les SVGs. Root cause : src/modal.js createIcons() était appelé sans `root`, re-processant tous les <i data-lucide> du document — donc en re-créant les <svg> existants. Si un click venait juste de partir sur une icône hors modale (genre bouton trash dans la table DM), e.target.isConnected devenait false avant que l'event ne bubble, closest('button') retournait null, et les handlers parents (qui filtrent « ignorer les clics sur boutons ») étaient contournés. Fix root cause : createIcons scopé à overlay. Fix ceinture : stopPropagation sur le delete button du DM.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
