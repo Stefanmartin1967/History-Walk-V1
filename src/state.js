@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.67'; // Audit post-chantiers — PR F (cycles d'imports admin). Les 2 cycles étaient BÉNINS (imports utilisés uniquement dans des fonctions, jamais au top-level → aucun bug runtime), cassés pour l'hygiène du graphe + éviter un futur bug si quelqu'un ajoute un usage top-level. C1 (admin-control-ui ↔ admin-maintenance) : extraction de setTopbarSubtabs vers un nouveau module feuille admin-cc-topbar.js (importé par les deux). C2 (admin-control-center → admin-control-ui → admin → admin-control-center) : import dynamique de exportMasterGeoJSON dans son handler de bouton (au lieu d'un import statique en tête). Vérifié preview : CC ouvre, onglet Nettoyage rend ses sous-onglets, bouton Export atteint exportMasterGeoJSON.
+export const APP_VERSION = '3.7.68'; // Quick win : migration des 2 derniers dialogues natifs « Windows » vers les modales HW. (1) admin.js exportMasterGeoJSON : prompt() natif → hwPrompt stylé (fonction passée async ; seul caller CC déjà async). (2) tools/scout.html : alert("Le tableau est vide !") → hwAlert. BONUS : Scout ne chargeait pas modals.css → ses modales (hwPrompt token, openHwModal ajout POI) étaient déjà cachées (bug latent, même piège que le DM avant #615) — ajout du <link modals.css> répare aussi ces modales. Vérifié preview : modale export HW + modale Scout rendues fixed/z-index 100000, centrées.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

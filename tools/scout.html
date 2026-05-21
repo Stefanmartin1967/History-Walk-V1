@@ -25,6 +25,11 @@
     <link rel="stylesheet" href="../style/tokens.css" />
     <!-- Système de formulaires unifié .input / .select (PR 3f) -->
     <link rel="stylesheet" href="../style/components/forms.css" />
+    <!-- Modales partagées (openHwModal/hwPrompt/hwAlert de src/modal.js).
+         Sans ce CSS, .hw-modal-overlay rendait en position:static → modales
+         invisibles dans Scout (même piège que le DM, cf. PR #615). Ajouté
+         21/05/2026 avec la migration de l'alert() natif vers hwAlert. -->
+    <link rel="stylesheet" href="../style/modals.css" />
 
     <script src="https://unpkg.com/lucide@0.395.0/dist/umd/lucide.min.js"></script>
     <style>
@@ -210,8 +215,8 @@
          les modales ne s'ouvrent que sur clic utilisateur (bien après le
          chargement initial). -->
     <script type="module">
-        import { openHwModal, closeHwModal, hwPrompt } from '../src/modal.js';
-        window.HW = { openHwModal, closeHwModal, hwPrompt };
+        import { openHwModal, closeHwModal, hwPrompt, hwAlert } from '../src/modal.js';
+        window.HW = { openHwModal, closeHwModal, hwPrompt, hwAlert };
     </script>
 
     <script>
@@ -995,7 +1000,7 @@ out geom;`;
                 });
             });
 
-            if(features.length === 0) return alert("Le tableau est vide !");
+            if(features.length === 0) { window.HW.hwAlert({ title: 'Export impossible', body: 'Le tableau est vide !' }); return; }
 
             const collection = { type: "FeatureCollection", features };
             const blob = new Blob([JSON.stringify(collection, null, 2)], {type: "application/json"});
