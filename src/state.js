@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.66'; // Audit post-chantiers — PR E (couverture critique, TESTS ONLY) : +34 tests sur 3 modules sans couverture flaggés à l'audit. zip-store.js (encodeur ZIP pur : CRC32 vs vecteur standard, dosDateTime, structure ZIP — signatures, EOCD, CRC dans header, STORE). tested-sync.js (auto-push tested.json : gardes admin/token/mapId, happy path, échec silencieux, debounce 2s). events-bus.js (routing event→handler : data:filtered mobile/desktop, circuits load/clear/navigate/delete/import, succès/échec suppression). Aucun changement de code de prod. Baseline : 733 → 767 tests verts.
+export const APP_VERSION = '3.7.67'; // Audit post-chantiers — PR F (cycles d'imports admin). Les 2 cycles étaient BÉNINS (imports utilisés uniquement dans des fonctions, jamais au top-level → aucun bug runtime), cassés pour l'hygiène du graphe + éviter un futur bug si quelqu'un ajoute un usage top-level. C1 (admin-control-ui ↔ admin-maintenance) : extraction de setTopbarSubtabs vers un nouveau module feuille admin-cc-topbar.js (importé par les deux). C2 (admin-control-center → admin-control-ui → admin → admin-control-center) : import dynamique de exportMasterGeoJSON dans son handler de bouton (au lieu d'un import statique en tête). Vérifié preview : CC ouvre, onglet Nettoyage rend ses sous-onglets, bouton Export atteint exportMasterGeoJSON.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

@@ -1,12 +1,15 @@
 import { state } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStoredToken, getStoredUsername, saveToken, validateToken, uploadFileToGitHub } from './github-sync.js';
-import { exportMasterGeoJSON } from './admin.js';
 import { showToast } from './toast.js';
 // PR 3 — shell custom (admin-cc-overlay), plus de dépendance à openHwModal/closeHwModal.
 // Les imports legacy sont retirés volontairement ; tout passe par openControlCenterModal/closeCCModal.
 import { renderMaintenanceTab } from './admin-maintenance.js';
+import { setTopbarSubtabs } from './admin-cc-topbar.js';
 import { GITHUB_OWNER, GITHUB_REPO } from './config.js';
+// NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
+// handler de bouton (cf. carte OUTILS plus bas) pour casser le cycle
+// admin-control-center → admin-control-ui → admin → admin-control-center.
 
 // Ce fichier gère l'affichage (HTML, CSS, Interactions UI) du panneau d'administration
 
@@ -120,35 +123,6 @@ function syncFooterAndNavCount(diffData) {
         } else if (navCount) {
             navCount.remove();
         }
-    }
-}
-
-/**
- * Définit ou efface les sub-tabs dans le topbar (PR 5 — sub-router intégré).
- * Quand `subtabsHTML` est non vide, le topbar passe en mode `--with-tabs`
- * (column flex) et les tabs s'affichent sur une 2e ligne avec border-bottom.
- *
- * @param {string} subtabsHTML — HTML des `<button.cc-subtab>`. '' pour effacer.
- * @param {Function|null} onClick — callback `(view) => void` quand un sub-tab
- *                                  est cliqué. Le view vient de `data-sub`.
- */
-export function setTopbarSubtabs(subtabsHTML, onClick = null) {
-    const topbar = document.getElementById('cc-topbar');
-    const slot = document.getElementById('cc-topbar-subtabs');
-    if (!topbar || !slot) return;
-
-    if (subtabsHTML) {
-        slot.innerHTML = subtabsHTML;
-        topbar.classList.add('cc-topbar--with-tabs');
-        if (onClick) {
-            slot.querySelectorAll('.cc-subtab').forEach(btn => {
-                btn.addEventListener('click', () => onClick(btn.dataset.sub));
-            });
-        }
-        createIcons({ icons: appIcons, root: slot });
-    } else {
-        slot.innerHTML = '';
-        topbar.classList.remove('cc-topbar--with-tabs');
     }
 }
 
@@ -765,8 +739,13 @@ export function renderTab(tab, diffData, callbacks) {
                 window.open('history_walk_datamanager/index.html', '_blank', 'noopener');
             });
 
-            // Outils — Exporter Master GeoJSON : action directe (téléchargement)
-            bindCardAction('btn-cc-tool-export-master', () => {
+            // Outils — Exporter Master GeoJSON : action directe (téléchargement).
+            // Import dynamique de admin.js (au lieu d'un import statique en tête)
+            // pour casser le cycle admin-control-center → admin-control-ui →
+            // admin → admin-control-center. admin.js est déjà chargé à ce stade,
+            // l'import est résolu instantanément (cache module).
+            bindCardAction('btn-cc-tool-export-master', async () => {
+                const { exportMasterGeoJSON } = await import('./admin.js');
                 exportMasterGeoJSON();
             });
 

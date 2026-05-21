@@ -5,7 +5,7 @@ import { deleteCircuitById, restoreCircuit } from './database.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showConfirm } from './modal.js';
-import { setTopbarSubtabs } from './admin-control-ui.js';
+import { setTopbarSubtabs } from './admin-cc-topbar.js';
 
 // PR 6 — Refonte de l'onglet Nettoyage : sub-router 2 onglets (Corbeille locale
 // / Fichiers serveur) intégré au topbar du shell, items en `.cc-card.cc-card--row`
