@@ -149,8 +149,16 @@ export function openHwModal(opts) {
         document.body.appendChild(overlay);
         activeHwOverlay = overlay;
 
-        // Lucide icons + transition active
-        createIcons({ icons: appIcons });
+        // Lucide icons + transition active.
+        // Scoper à `overlay` est CRITIQUE (bug observé 21/05/2026 côté DM) :
+        // sans `root`, createIcons re-process tous les SVGs du document,
+        // détachant les paths/svg existants. Si un click venait juste d'être
+        // déclenché sur un icône hors modale (genre bouton trash dans une
+        // table), e.target.isConnected devient false avant que l'event ne
+        // bubble — closest() retourne null → les handlers parents qui filtrent
+        // « ignorer les clics sur boutons » sont contournés, et le click
+        // s'exécute comme s'il n'avait pas été intercepté.
+        createIcons({ icons: appIcons, root: overlay });
         // Force reflow puis active la classe pour la transition
         // eslint-disable-next-line no-unused-expressions
         overlay.offsetHeight;

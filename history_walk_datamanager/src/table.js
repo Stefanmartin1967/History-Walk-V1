@@ -211,7 +211,14 @@ export function renderTableRows(features) {
                 btnDel.className = 'icon-btn-shared btn-delete';
                 btnDel.innerHTML = `<i data-lucide="trash-2"></i>`;
                 btnDel.title = 'Supprimer';
-                btnDel.onclick = () => deleteFeature(index);
+                // stopPropagation : ceinture en complément du fix root cause
+                // dans src/modal.js (createIcons scopé à overlay). Évite que
+                // le click bubble vers le tr handler qui ouvrirait l'éditeur,
+                // même si une régression future ré-introduit le bug SVG-detach.
+                btnDel.onclick = (e) => {
+                    e.stopPropagation();
+                    deleteFeature(index);
+                };
                 wrapper.appendChild(btnDel);
             } else {
                 const val = props[col.key];
