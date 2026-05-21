@@ -420,3 +420,39 @@ export function getIconForFeature(feature) {
     const sousType = userData['Sous-type'] || props['Sous-type'];
     return getIconHtml(category, sousType);
 }
+
+// Libellés explicites pour le générique (_default) d'une catégorie à sous-types
+// quand il N'EST PAS déjà couvert par un sous-type nommé. Seul Artisanat est
+// concerné aujourd'hui (son _default = l'icône « Atelier », distincte des
+// métiers Poterie/Huilerie/Tissage). Mosquée/Église : leur _default duplique
+// un sous-type nommé (Générique / Catholique) → pas d'entrée générique ajoutée.
+const GENERIC_LABELS = { 'Artisanat': 'Atelier' };
+
+/**
+ * Structure ordonnée pour la légende exhaustive (info-popover) — chaque
+ * catégorie avec TOUTES ses icônes distinctes (sous-types inclus).
+ * Retourne : `[{ category, isMulti, variants: [{ label, svg }] }]`.
+ *  - `isMulti=false` : catégorie mono-icône (variants = 1 entrée = la catégorie).
+ *  - `isMulti=true`  : catégorie à sous-types ; variants = chaque sous-type
+ *    nommé + une entrée générique si le `_default` n'est pas déjà l'un d'eux.
+ * Total des variants sur l'ensemble = 27 (cf. handoff #22).
+ */
+export function getLegendGroups() {
+    return Object.entries(POI_ICONS).map(([category, entry]) => {
+        if (typeof entry === 'string') {
+            return { category, isMulti: false, variants: [{ label: category, svg: entry }] };
+        }
+        const variants = [];
+        const seenSvgs = new Set();
+        for (const [label, svg] of Object.entries(entry)) {
+            if (label === '_default') continue;
+            variants.push({ label, svg });
+            seenSvgs.add(svg);
+        }
+        // Générique distinct (non couvert par un sous-type nommé) → entrée dédiée.
+        if (entry._default && !seenSvgs.has(entry._default)) {
+            variants.push({ label: GENERIC_LABELS[category] || 'Générique', svg: entry._default });
+        }
+        return { category, isMulti: true, variants };
+    });
+}

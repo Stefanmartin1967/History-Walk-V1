@@ -14,7 +14,7 @@
 // Toggle : un clic sur l'icône ouvre, un nouveau clic ferme.
 // Fermeture aussi : clic à l'extérieur, touche Échap.
 
-import { iconMap } from './poi-icons.js';
+import { getLegendGroups } from './poi-icons.js';
 import { eventBus } from './events.js';
 
 const POPOVER_ID = 'info-popover';
@@ -44,14 +44,35 @@ function openPopover() {
     };
     eventBus.on('topbar:popup-opening', _onOtherPopupOpening);
 
-    // Génère dynamiquement la grille des catégories à partir de iconMap (poi-icons.js)
-    // → auto-sync si Stefan ajoute/retire une catégorie sans toucher ce fichier.
-    const categoriesHtml = Object.entries(iconMap).map(([name, svg]) => `
+    // Légende exhaustive (chantier 21/05/2026) : on liste TOUTES les icônes
+    // distinctes, sous-types inclus, à partir de POI_ICONS via getLegendGroups().
+    //  - Catégories mono → grille plate (pas d'en-tête redondant).
+    //  - Catégories à sous-types (Mosquée/Église/Artisanat) → en-tête + variantes.
+    // Auto-sync : ajouter une catégorie/sous-type dans poi-icons.js suffit.
+    const legendGroups = getLegendGroups();
+
+    const itemHtml = (label, svg) => `
         <div class="info-popover-cat-item">
             <div class="info-popover-cat-marker">${svg}</div>
-            <span class="info-popover-cat-name">${name}</span>
+            <span class="info-popover-cat-name">${label}</span>
         </div>
-    `).join('');
+    `;
+
+    const monoHtml = legendGroups
+        .filter(g => !g.isMulti)
+        .map(g => itemHtml(g.category, g.variants[0].svg))
+        .join('');
+
+    const multiHtml = legendGroups
+        .filter(g => g.isMulti)
+        .map(g => `
+            <div class="info-popover-cat-subgroup">
+                <div class="info-popover-cat-subgroup-title">${g.category}</div>
+                <div class="info-popover-cat-grid">
+                    ${g.variants.map(v => itemHtml(v.label, v.svg)).join('')}
+                </div>
+            </div>
+        `).join('');
 
     const popover = document.createElement('div');
     popover.id = POPOVER_ID;
@@ -92,8 +113,9 @@ function openPopover() {
         <div class="info-popover-section">
             <div class="info-popover-section-title">Catégories de lieux</div>
             <div class="info-popover-cat-grid">
-                ${categoriesHtml}
+                ${monoHtml}
             </div>
+            ${multiHtml}
         </div>
 
         <div class="info-popover-section">

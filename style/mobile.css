@@ -1327,6 +1327,21 @@ html[data-theme="night"] .menu-item.love .menu-item-icon { background: rgba(219,
     text-overflow: ellipsis;
 }
 
+/* ── Sous-groupes des catégories à sous-types (chantier légende exhaustive,
+   21/05/2026) : les catégories mono restent dans la grille plate au-dessus ;
+   Mosquée / Église / Artisanat ont un en-tête + leurs variantes en grille. ── */
+.info-popover-cat-subgroup {
+    margin-top: 10px;
+}
+.info-popover-cat-subgroup-title {
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
 /* ── Clusters (PR PC-3 + audit Claude Design) ─────────────────────────────
    Les 3 samples reproduisent les couleurs réelles de Leaflet.markercluster
    par défaut (small / medium / large), que HW n'override pas. Sémantique

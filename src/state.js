@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.63'; // DM : boutons de la modale hwConfirm lisibles. #615 (3.7.62) avait rendu la modale visible (import modals.css), mais le DM a son propre système .btn (texte blanc) sans .btn-ghost/.btn-danger → Annuler/Supprimer en texte blanc sur fond clair (illisibles). Fix : ajout des 2 variantes au système .btn du DM (fond --danger + blanc / transparent + --ink + bordure). DM-only, HW inchangé.
+export const APP_VERSION = '3.7.64'; // Légende (info-popover) exhaustive : affiche désormais les 27 icônes distinctes, sous-types inclus, au lieu des 20 icônes de catégorie. Layout groupé (Option 2) : 17 catégories mono en grille plate + 3 catégories à sous-types (Mosquée 4, Église 2, Artisanat 4) avec en-tête + variantes. Nouvel export getLegendGroups() dans poi-icons.js (itère POI_ICONS complet au lieu d'iconMap plat). Le générique d'Artisanat (icône atelier, _default distinct) libellé « Atelier ».
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
