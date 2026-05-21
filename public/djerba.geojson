@@ -6091,31 +6091,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.9732669,
-          33.8147173
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Nouveau Lieu",
-        "Catégorie": "Café",
-        "Zone": "Midoun",
-        "Description": "Créé sur le terrain",
-        "HW_ID": "HW-01KKK6JJ2HWQJJR363X4HR3SA0",
-        "created_at": "2026-03-13T08:56:25.423Z",
-        "Nom du site arabe": "",
-        "Description_courte": "",
-        "description": "Créé sur le terrain",
-        "notes": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "Source": ""
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.9731949,
           33.8137894
         ]
