@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.68'; // Quick win : migration des 2 derniers dialogues natifs « Windows » vers les modales HW. (1) admin.js exportMasterGeoJSON : prompt() natif → hwPrompt stylé (fonction passée async ; seul caller CC déjà async). (2) tools/scout.html : alert("Le tableau est vide !") → hwAlert. BONUS : Scout ne chargeait pas modals.css → ses modales (hwPrompt token, openHwModal ajout POI) étaient déjà cachées (bug latent, même piège que le DM avant #615) — ajout du <link modals.css> répare aussi ces modales. Vérifié preview : modale export HW + modale Scout rendues fixed/z-index 100000, centrées.
+export const APP_VERSION = '3.7.69'; // Fix crayon « Modifier le titre » du circuit (était inactif). Root cause : mismatch d'ID — le handler de ui-circuit-editor.js ciblait #edit-circuit-title-button (inexistant depuis la refonte V2), et le vrai handler inline (initTitleEdit, #cp-title-edit-btn) ne s'activait qu'en mode création. Fix : le crayon fonctionne désormais aussi en consultation pour l'admin (renommage inline d'un circuit officiel/perso chargé, ID préservé, persisté via saveCircuit). La trace réelle restant intacte (pas de convertToDraft), le CC détecte le changement de nom et peut le publier sans re-tracer. Nettoyé : handler mort + import showPrompt + entrée DOM cache obsolètes.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

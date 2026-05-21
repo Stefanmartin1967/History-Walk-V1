@@ -14,11 +14,11 @@
  * - Édition inline description (placeholder + double-clic)
  */
 
-import { state, setCustomDraftName, setHiddenCircuitIds } from './state.js';
+import { state, setCustomDraftName, setHiddenCircuitIds, updateMyCircuit, setOfficialCircuits } from './state.js';
 import { saveCircuitDraft, isCircuitTested } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
-import { saveAppState } from './database.js';
+import { saveAppState, saveCircuit } from './database.js';
 import { applyFilters, getPoiId } from './data.js';
 import { schedulePush } from './gist-sync.js';
 import { generateAndDownloadGPX } from './gpx.js';
@@ -267,6 +267,36 @@ function initTransportAccordion() {
    6. ÉDITION INLINE TITRE (double-clic + bouton crayon)
    ============================================================ */
 
+// Renomme un circuit DÉJÀ CHARGÉ (consultation) en préservant son ID. Persiste
+// dans la bonne liste (officiel ou perso) + IDB, puis rafraîchit la liste.
+// La trace réelle reste intacte (on ne passe pas par convertToDraft) → le CC
+// Admin détecte le changement de nom et peut le publier sans re-tracer.
+async function renameLoadedCircuit(id, name) {
+    const trimmed = (name || '').trim();
+    if (!trimmed) return; // un circuit chargé garde toujours un nom
+
+    const offIdx = (state.officialCircuits || []).findIndex(c => c.id === id);
+    if (offIdx > -1) {
+        const updated = { ...state.officialCircuits[offIdx], name: trimmed };
+        const list = [...state.officialCircuits];
+        list[offIdx] = updated;
+        setOfficialCircuits(list);
+        await saveCircuit(updated);
+        eventBus.emit('circuit:list-updated');
+        showToast('Circuit renommé.', 'success', 1500);
+        return;
+    }
+
+    const myIdx = (state.myCircuits || []).findIndex(c => c.id === id);
+    if (myIdx > -1) {
+        const updated = { ...state.myCircuits[myIdx], name: trimmed };
+        updateMyCircuit(updated);
+        await saveCircuit(updated);
+        eventBus.emit('circuit:list-updated');
+        showToast('Circuit renommé.', 'success', 1500);
+    }
+}
+
 function initTitleEdit() {
     const titleEl = document.getElementById('circuit-title-text');
     const editBtn = document.getElementById('cp-title-edit-btn');
@@ -274,9 +304,13 @@ function initTitleEdit() {
 
     const enterEdit = (e) => {
         if (e) e.preventDefault();
-        // Mode création uniquement
         const panel = document.getElementById('circuit-panel');
-        if (panel?.getAttribute('data-mode') !== 'create') return;
+        const mode = panel?.getAttribute('data-mode');
+        // Édition autorisée : en création (brouillon), OU en consultation pour
+        // l'admin (renommage inline d'un officiel/perso chargé, sans re-tracer).
+        const isCreate = mode === 'create';
+        const isAdminConsult = mode === 'consult' && state.isAdmin && !!state.activeCircuitId;
+        if (!isCreate && !isAdminConsult) return;
         if (titleEl.tagName === 'INPUT') return; // Déjà en édition
 
         const currentText = titleEl.classList.contains('is-empty') ? '' : titleEl.textContent;
@@ -291,7 +325,11 @@ function initTitleEdit() {
         input.select();
 
         const finish = (cancel = false) => {
-            const newValue = cancel ? currentText : input.value.trim();
+            let newValue = cancel ? currentText : input.value.trim();
+            // En consultation, un nom vide n'est pas autorisé (le circuit chargé
+            // garde son nom) → on retombe sur l'ancien.
+            if (!isCreate && !newValue) newValue = currentText;
+
             const h2 = document.createElement('h2');
             h2.id = 'circuit-title-text';
             h2.className = 'cp-title' + (newValue ? '' : ' is-empty');
@@ -300,8 +338,13 @@ function initTitleEdit() {
             input.replaceWith(h2);
 
             if (!cancel && newValue !== currentText) {
-                setCustomDraftName(newValue || null);
-                saveCircuitDraft();
+                if (isCreate) {
+                    setCustomDraftName(newValue || null);
+                    saveCircuitDraft();
+                } else {
+                    // Consultation admin : renommage du circuit chargé (même ID).
+                    renameLoadedCircuit(state.activeCircuitId, newValue);
+                }
             }
         };
 

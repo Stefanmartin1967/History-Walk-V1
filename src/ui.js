@@ -43,7 +43,7 @@ export function initializeDomReferences() {
     const ids = [
         'geojson-loader', 'search-input', 'search-results', 'right-sidebar', 'sidebar-tabs',
         'details-panel', 'circuit-panel', 'circuit-steps-list', 'circuit-title-text', 'circuit-title-input', 
-        'circuit-description', 'edit-circuit-title-button', 'circuit-poi-count', 'circuit-distance',
+        'circuit-description', 'circuit-poi-count', 'circuit-distance',
         'gpx-importer', 'btn-export-gpx',
         'btn-import-gpx', 'loader-overlay', 'btn-save-data', 'restore-loader',
         'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title',
