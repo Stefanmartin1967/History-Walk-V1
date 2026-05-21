@@ -1,5 +1,6 @@
 import { state, setUserData } from './state.js';
-import { getPoiId } from './utils.js';
+import { getPoiId, getRealDistance } from './utils.js';
+import { generateGPXString } from './gpx.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { generateMasterGeoJSONData } from './admin-geojson.js';
@@ -13,6 +14,34 @@ import { uploadPhotoForPoi } from './photo-service.js';
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, diffData } from './admin-diff-engine.js';
 import { openControlCenterModal, renderTab } from './admin-control-ui.js';
+
+/**
+ * Construit l'entrée d'index circuit (circuits/<map>.json) à partir d'un circuit
+ * local + ses features POI résolues. Doit matcher le format produit par
+ * scripts/generate-circuit-index.js (l'Action update-circuits.yml régénère
+ * l'index canonique ; cette version client donne une cohérence immédiate, et
+ * l'Action reconfirme — idempotent). Champs alignés sur le script :
+ *  - distance : Haversine sur realTrack /1000, "X.X km" (getRealDistance = même calcul)
+ *  - zone : Zone du 1er POI (le script fait pareil en priorité 1)
+ *  - description : constante (le script lit le <desc> de metadata, hardcodé par generateGPXString)
+ * Exporté pour test unitaire.
+ */
+export function buildCircuitIndexEntry(circuit, features, mapId) {
+    const distance = (getRealDistance(circuit) / 1000).toFixed(1) + ' km';
+    const entry = {
+        id: circuit.id,
+        name: circuit.name,
+        file: `${mapId}/${circuit.name}.gpx`,
+        description: 'Circuit généré par History Walk.',
+        distance,
+        isOfficial: true,
+        hasRealTrack: true,
+        zone: features[0]?.properties?.Zone || undefined,
+        poiIds: circuit.poiIds || [],
+    };
+    if (!entry.zone) delete entry.zone;
+    return entry;
+}
 
 // --- STATE MANAGEMENT (Brouillon) ---
 const DRAFT_IDB_KEY = 'adminDraft';
@@ -608,23 +637,83 @@ async function publishChanges() {
             }
         }
 
-        // Gestion des suppressions de fichiers circuits
-        const circuitsToDelete = diffData.circuits.filter(c => c.status === 'SUPPRESSION' || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION')));
-
-        if (circuitsToDelete.length > 0) {
-            for (const c of circuitsToDelete) {
+        // ─── PUBLICATION DES CIRCUITS (nouveaux / modifiés / supprimés) ───
+        // Vraie solution (21/05/2026, cf. project_circuit_publish_chantier) :
+        // « Tout publier » ne publiait historiquement AUCUN circuit nouveau/modifié
+        // (seulement les suppressions) — le bouton manuel « Upload fichier » était
+        // le contournement. Ici on commit le GPX ET on met à jour l'index
+        // circuits/<map>.json directement → cohérence immédiate (plus de
+        // transitoire ~40s où le CC re-flague le circuit). L'Action
+        // update-circuits.yml régénère ensuite l'index canonique depuis les GPX
+        // (idempotent) = filet de sécurité + source de vérité finale.
+        const circuitChanges = diffData.circuits || [];
+        if (circuitChanges.length > 0) {
+            try {
+                // Index distant courant (base pour upsert / suppression).
+                let index = [];
                 try {
-                    const indexUrl = `${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}`;
-                    const remoteIndex = await fetch(indexUrl).then(r => r.json());
-                    const target = remoteIndex.find(r => String(r.id) === String(c.id));
+                    const r = await fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
+                    if (r.ok) index = await r.json();
+                } catch (_) { /* index vide si fetch échoue */ }
+                if (!Array.isArray(index)) index = [];
 
-                    if (target && target.file) {
-                        const path = `public/circuits/${target.file}`;
-                        await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, path, `feat(circuit): Suppression "${c.name}"`);
+                const allLocal = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
+                let indexDirty = false;
+
+                for (const c of circuitChanges) {
+                    const isDeletion = c.isDeletion
+                        || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION'));
+
+                    if (isDeletion) {
+                        const entry = index.find(e => String(e.id) === String(c.id));
+                        if (entry?.file) {
+                            try { await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, `public/circuits/${entry.file}`, `feat(circuit): Suppression "${c.name}"`); }
+                            catch (e) { console.warn('[CC] suppression GPX échec:', c.name, e); }
+                        }
+                        index = index.filter(e => String(e.id) !== String(c.id));
+                        indexDirty = true;
+                        continue;
                     }
-                } catch (err) {
-                    console.warn(`[Admin] Impossible de supprimer le fichier pour ${c.name}:`, err);
+
+                    // Création / modification : nécessite un realTrack (garanti par le diff engine).
+                    const local = allLocal.find(x => String(x.id) === String(c.id));
+                    if (!local || !local.realTrack || local.realTrack.length === 0) continue;
+
+                    const features = (local.poiIds || [])
+                        .map(pid => state.loadedFeatures.find(f => getPoiId(f) === pid))
+                        .filter(Boolean);
+
+                    const oldEntry = index.find(e => String(e.id) === String(local.id));
+                    const isNew = !oldEntry;
+
+                    // 1. Commit du GPX (nom de fichier = nom du circuit).
+                    const gpxStr = generateGPXString(features, local.id, local.name, local.description || '', local.realTrack);
+                    const gpxFile = new File([gpxStr], `${local.name}.gpx`, { type: 'application/gpx+xml' });
+                    const gpxPath = `public/circuits/${mapId}/${local.name}.gpx`;
+                    await uploadFileToGitHub(gpxFile, token, GITHUB_OWNER, GITHUB_REPO, gpxPath, `feat(circuit): ${isNew ? 'Ajout' : 'MAJ'} "${local.name}"`);
+
+                    // 2. Renommage → supprimer l'ancien fichier GPX (sinon doublon dans l'index régénéré).
+                    if (oldEntry?.file && oldEntry.file !== `${mapId}/${local.name}.gpx`) {
+                        try { await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, `public/circuits/${oldEntry.file}`, `feat(circuit): renommage — retrait ancien fichier`); }
+                        catch (e) { console.warn('[CC] suppression ancien GPX échec:', oldEntry.file, e); }
+                    }
+
+                    // 3. Upsert de l'entrée d'index (préserve `transport` existant).
+                    const newEntry = buildCircuitIndexEntry(local, features, mapId);
+                    if (oldEntry?.transport) newEntry.transport = oldEntry.transport;
+                    const i = index.findIndex(e => String(e.id) === String(local.id));
+                    if (i > -1) index[i] = newEntry; else index.push(newEntry);
+                    indexDirty = true;
                 }
+
+                // 4. Commit de l'index mis à jour (cohérence immédiate).
+                if (indexDirty) {
+                    const idxFile = new File([JSON.stringify(index, null, 2)], `${mapId}.json`, { type: 'application/json' });
+                    await uploadFileToGitHub(idxFile, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.circuits(mapId), `feat(circuit): MAJ index ${mapId}`);
+                }
+            } catch (err) {
+                console.warn('[CC] Publication circuits échouée (POI/photos OK):', err);
+                showToast("Circuits non publiés (le reste OK) — réessayez", "warning", 5000);
             }
         }
 
