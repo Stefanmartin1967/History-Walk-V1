@@ -3,7 +3,7 @@ import { eventBus } from './events.js';
 import { downloadFile, getPoiId } from './utils.js';
 import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui-utils.js';
-import { showAlert, showConfirm, openHwModal } from './modal.js';
+import { showAlert, showConfirm, openHwModal, hwPrompt } from './modal.js';
 import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
@@ -292,7 +292,7 @@ function setupAdminListeners() {
     }
 }
 
-export function exportMasterGeoJSON() {
+export async function exportMasterGeoJSON() {
     const geojson = generateMasterGeoJSONData();
 
     if (!geojson) {
@@ -300,7 +300,14 @@ export function exportMasterGeoJSON() {
         return;
     }
 
-    const filename = prompt("Nom du fichier à exporter :", `djerba-master-${Date.now()}.geojson`);
+    // Modale HW (hwPrompt) au lieu du prompt() natif « Windows » (migration
+    // 21/05/2026). Retourne null si l'admin annule → early-return conservé.
+    const filename = await hwPrompt({
+        title: 'Exporter Master GeoJSON',
+        body: 'Nom du fichier à exporter :',
+        defaultValue: `djerba-master-${Date.now()}.geojson`,
+        confirmLabel: 'Exporter',
+    });
     if (!filename) return;
 
     try {
