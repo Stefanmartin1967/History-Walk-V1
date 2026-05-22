@@ -16,12 +16,24 @@ vi.mock('../src/data.js', () => ({ getPoiId: (f) => f?.properties?.HW_ID, getPoi
 vi.mock('../src/circuit.js', () => ({ loadCircuitById: vi.fn(), generateCircuitName: vi.fn() }));
 vi.mock('../src/database.js', () => ({ getAppState: vi.fn(), saveCircuit: vi.fn() }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
-vi.mock('../src/utils.js', () => ({ downloadFile: vi.fn(), escapeXml: (s) => (s == null ? '' : String(s)), generateHWID: vi.fn() }));
+vi.mock('../src/utils.js', () => ({
+    downloadFile: vi.fn(),
+    escapeXml: (s) => (s == null ? '' : String(s)),
+    generateHWID: vi.fn(),
+    // Reproduit fidèlement la convention overlay (userData prime, !== undefined).
+    getPoiProp: (f, key) => {
+        const u = f?.properties?.userData?.[key];
+        return u !== undefined ? u : f?.properties?.[key];
+    },
+}));
 vi.mock('../src/map.js', () => ({ updatePolylines: vi.fn() }));
 
 import { generateGPXString } from '../src/gpx.js';
 
-const poi = (id, lon, lat, nom) => ({ properties: { HW_ID: id, Nom: nom }, geometry: { coordinates: [lon, lat] } });
+const poi = (id, lon, lat, nom, accessPoint) => ({
+    properties: { HW_ID: id, Nom: nom, ...(accessPoint !== undefined ? { accessPoint } : {}) },
+    geometry: { coordinates: [lon, lat] },
+});
 
 // Extrait les <trkpt lat=".." lon=".."> dans l'ordre → renvoie [[lon, lat], …].
 function parseTrkpts(gpx) {
@@ -62,5 +74,43 @@ describe('generateGPXString — Cas B (vol d\'oiseau) : <trkpt> = vraies coords 
         const trkpts = parseTrkpts(gpx);
         expect(trkpts).toEqual([[11.0, 33.0], [11.05, 33.05], [11.1, 33.1]]);
         expect(trkpts.length).toBe(3); // 3 points de trace ≠ 2 POIs → bien realTrack
+    });
+});
+
+describe('generateGPXString — Cas B : point d\'accès (accessPoint) comme ancre de tracé', () => {
+    const wptsOf = (gpx) => [...gpx.matchAll(/<wpt lat="([^"]+)" lon="([^"]+)"/g)].map(m => [parseFloat(m[2]), parseFloat(m[1])]);
+
+    it('utilise accessPoint comme <trkpt> quand il est défini (POI hors voie)', () => {
+        // POI sur un bâtiment ; accessPoint posé sur la route voisine.
+        const circuit = [poi('A', 11.000, 33.000, 'Mosquée isolée', [11.005, 33.002])];
+        const gpx = generateGPXString(circuit, 'HW-X', 'C', 'd');
+
+        expect(parseTrkpts(gpx)).toEqual([[11.005, 33.002]]); // trkpt = point d'accès (sur la route)
+        expect(wptsOf(gpx)).toEqual([[11.000, 33.000]]);       // wpt = vrai POI (marqueur sur le bâtiment)
+    });
+
+    it('lit accessPoint depuis l\'overlay userData (prime sur properties)', () => {
+        const circuit = [{
+            properties: { HW_ID: 'A', Nom: 'X', userData: { accessPoint: [11.009, 33.004] } },
+            geometry: { coordinates: [11.000, 33.000] },
+        }];
+        const gpx = generateGPXString(circuit, 'HW-X', 'C', 'd');
+        expect(parseTrkpts(gpx)).toEqual([[11.009, 33.004]]);
+    });
+
+    it('retombe sur les coords du POI si accessPoint absent ou invalide', () => {
+        const circuit = [
+            poi('A', 11.0, 33.0, 'A'),                 // absent
+            poi('B', 11.1, 33.1, 'B', [11.2]),         // longueur invalide
+            poi('C', 11.3, 33.3, 'C', ['x', 'y']),     // non numérique
+            poi('D', 11.4, 33.4, 'D', [11.45, 33.42]), // valide
+        ];
+        const gpx = generateGPXString(circuit, 'HW-X', 'C', 'd');
+        expect(parseTrkpts(gpx)).toEqual([
+            [11.0, 33.0],   // fallback (absent)
+            [11.1, 33.1],   // fallback (longueur)
+            [11.3, 33.3],   // fallback (non numérique)
+            [11.45, 33.42], // accessPoint valide
+        ]);
     });
 });

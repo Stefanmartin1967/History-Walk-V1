@@ -4,7 +4,7 @@ import { getPoiId, getPoiName } from './data.js';
 import { loadCircuitById, generateCircuitName } from './circuit.js';
 import { getAppState, saveCircuit } from './database.js';
 import { showToast } from './toast.js';
-import { downloadFile, escapeXml, generateHWID } from './utils.js';
+import { downloadFile, escapeXml, generateHWID, getPoiProp } from './utils.js';
 import { updatePolylines } from './map.js';
 
 // --- HELPER : Analyse de proximité ---
@@ -67,15 +67,30 @@ function findFeaturesOnTrack(trackCoords, features, threshold = 0.0006) {
 // ─── GÉNÉRATION GPX ──────────────────────────────────────────────────────────
 
 /**
+ * Ancre de tracé d'un POI pour les <trkpt> du « vol d'oiseau » (Cas B).
+ * Renvoie le POINT D'ACCÈS au tracé (`accessPoint`, [lon, lat]) s'il est défini
+ * et valide, sinon les coordonnées réelles du POI. Le point d'accès est un champ
+ * public OPTIONNEL posé par l'admin sur la voie la plus proche, pour les POI
+ * « hors voie » (bâtiment isolé) : GPX Studio peut alors router jusqu'à un point
+ * réellement sur une route, sans ignorer le POI. Le <wpt> (marqueur), lui, reste
+ * TOUJOURS sur les vraies coordonnées du POI.
+ */
+function trackAnchorOf(feature) {
+    const ap = getPoiProp(feature, 'accessPoint');
+    if (Array.isArray(ap) && ap.length === 2 && Number.isFinite(ap[0]) && Number.isFinite(ap[1])) {
+        return ap; // [lon, lat]
+    }
+    return feature.geometry.coordinates; // [lon, lat]
+}
+
+/**
  * Génère la chaîne GPX.
  *  - Cas A (realTrack fourni) : <trkpt> = trace réelle (importée de GPX Studio).
- *  - Cas B (pas de realTrack) : <trkpt> = coordonnées RÉELLES des POIs (lignes
- *    droites « vol d'oiseau »). On NE pré-snappe PLUS sur la route. L'ancien snap
- *    OSRM (profil VOITURE) déplaçait chaque point sur la route carrossable la plus
- *    proche → pour un POI en retrait/sur un sentier, l'ancre atterrissait à côté,
- *    et GPX Studio, qui s'ancre sur ces <trkpt>, routait en IGNORANT le POI. En
- *    gardant les vraies coords, GPX Studio s'ancre pile sur les POIs et route
- *    correctement à partir de là (c'est lui qui colle aux voies, pas nous).
+ *  - Cas B (pas de realTrack) : <trkpt> = ancre de tracé de chaque POI
+ *    (cf. trackAnchorOf : point d'accès si défini, sinon coords réelles). Lignes
+ *    droites « vol d'oiseau » qu'on affine ensuite dans GPX Studio. Pas de
+ *    pré-snap routier (l'ancien snap OSRM voiture décalait l'ancre hors du POI et
+ *    faisait ignorer le POI par GPX Studio).
  */
 export function generateGPXString(circuit, id, name, description, realTrack = null) {
     // <wpt> : toujours les coordonnées réelles du POI (repère visuel fidèle)
@@ -105,9 +120,9 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
             `<trkpt lat="${coord[0]}" lon="${coord[1]}"><ele>0</ele></trkpt>`
         ).join('\n      ');
     } else {
-        // Cas B : Tracé direct POI→POI aux coordonnées RÉELLES des POIs (pas de
-        // pré-snap routier — cf. doc de la fonction). GPX Studio routera ensuite.
-        const coords = circuit.map(f => f.geometry.coordinates); // [lon, lat]
+        // Cas B : Tracé direct POI→POI. Ancre de chaque POI = son point d'accès
+        // au tracé s'il existe, sinon ses coords réelles (cf. trackAnchorOf).
+        const coords = circuit.map(f => trackAnchorOf(f)); // [lon, lat]
         trackpointsXML = coords.map(([lon, lat]) =>
             `<trkpt lat="${lat}" lon="${lon}"><ele>0</ele></trkpt>`
         ).join('\n      ');
