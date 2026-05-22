@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.70'; // Fix MAJEUR : « Tout publier » publie enfin les circuits nouveaux/modifiés. Avant, publishChanges ne gérait que les SUPPRESSIONS de circuits — créer/renommer un circuit n'était jamais poussé (le bouton manuel « Upload fichier » était le contournement historique). Désormais : pour chaque circuit créé/modifié détecté par le diff, on régénère le GPX (generateGPXString) + commit dans public/circuits/<map>/<nom>.gpx + on met à jour l'index circuits/<map>.json directement (cohérence immédiate, pas de transitoire) ; au renommage on supprime l'ancien GPX. L'Action update-circuits.yml reconfirme l'index (idempotent). Nouveau helper exporté buildCircuitIndexEntry (testé : format aligné sur generate-circuit-index.js). Le crayon de renommage (#622) devient donc réellement publiable de bout en bout.
+export const APP_VERSION = '3.7.71'; // Fix : circuits en BOUCLE détectés à tort comme « modifiés » en permanence dans le CC. Cause : generate-circuit-index.js dédoublonne les POIs (Set) → une boucle [A,B,C,A] (étape 1 = étape de retour) devient [A,B,C] dans l'index, alors que le circuit local garde 4 poiIds → le diff engine comparait 4 ≠ 3. Fix : comparaison des poiIds DÉDOUBLONNÉS dans le diff engine (admin-diff-engine.js) + buildCircuitIndexEntry dédoublonne aussi (index client = index Action). NB : le « NOUVEAU » transitoire après publication = lag de propagation raw.githubusercontent.com (~min), se résorbe seul une fois l'index propagé.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

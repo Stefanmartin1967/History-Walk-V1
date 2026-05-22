@@ -78,4 +78,13 @@ describe('buildCircuitIndexEntry — format index circuit', () => {
         const e = buildCircuitIndexEntry({ id: 'i', name: 'Mon Circuit', poiIds: [] }, [], 'hammamet');
         expect(e.file).toBe('hammamet/Mon Circuit.gpx');
     });
+
+    it('dédoublonne les poiIds (circuit en boucle) pour matcher l\'Action', () => {
+        // Boucle : étape 1 = étape 4 (retour au départ) → poiIds [A,B,C,A].
+        // generate-circuit-index.js dédoublonne via Set → [A,B,C]. On aligne.
+        const e = buildCircuitIndexEntry(
+            { id: 'i', name: 'Boucle', poiIds: ['A', 'B', 'C', 'A'] }, [], 'djerba'
+        );
+        expect(e.poiIds).toEqual(['A', 'B', 'C']);
+    });
 });

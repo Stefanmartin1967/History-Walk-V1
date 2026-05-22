@@ -231,6 +231,46 @@ describe('Admin Diff Engine', () => {
             expect(result.circuits[0].isCreation).toBe(true);
         });
 
+        it('NE signale PAS un circuit en boucle comme modifié (poiIds dédoublonnés)', async () => {
+            // Bug 21/05/2026 : l'index distant (régénéré par l'Action) dédoublonne
+            // les POIs → une boucle [A,B,C,A] devient [A,B,C]. Sans dédoublonnage
+            // côté diff, le circuit était signalé « modifié » en permanence.
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([
+                    { id: 'loop1', name: 'Boucle', poiIds: ['A', 'B', 'C'] }
+                ]) });
+            });
+            state.officialCircuits = [{
+                id: 'loop1', name: 'Boucle', poiIds: ['A', 'B', 'C', 'A'], // étape 1 = étape 4 (retour)
+                realTrack: [[10.1, 11.2], [10.2, 11.3]]
+            }];
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(result.circuits.length).toBe(0); // [A,B,C,A] dédoublonné = [A,B,C] = remote
+        });
+
+        it('signale BIEN un vrai changement d\'étapes (POI ajouté)', async () => {
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([
+                    { id: 'c5', name: 'C', poiIds: ['A', 'B', 'C'] }
+                ]) });
+            });
+            state.officialCircuits = [{
+                id: 'c5', name: 'C', poiIds: ['A', 'B', 'C', 'D'], // vrai ajout de D
+                realTrack: [[10.1, 11.2], [10.2, 11.3]]
+            }];
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(result.circuits.length).toBe(1);
+            expect(result.circuits[0].changes.some(ch => ch.key === 'Étapes')).toBe(true);
+        });
+
         it('DOIT proposer la suppression d\'un circuit effacé localement (Ghost Prevention)', async () => {
             global.fetch.mockImplementation((url) => {
                 if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
