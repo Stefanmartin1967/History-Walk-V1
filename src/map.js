@@ -57,7 +57,13 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     // 1. Couche "Plan" (OpenStreetMap) - Très léger
     const planLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-        maxZoom: 19
+        // Google Satellite monte à z20, pas OSM/Voyager (tuiles jusqu'à z19). Sans
+        // alignement, ces couches se GRISAIENT dans le contrôle de calques dès qu'on
+        // zoomait à z20 (impossible de revenir en OSM/Voyager au zoom de pose d'un
+        // point d'accès). Fix : maxNativeZoom=19 (tuiles agrandies au-delà) +
+        // maxZoom=20 (couche sélectionnable sur toute la plage). Idem Voyager.
+        maxNativeZoom: 19,
+        maxZoom: 20
     });
 
     // 2. Couche "Satellite Hybride" (Google Maps) - Le meilleur compromis
@@ -73,7 +79,8 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     // 3. Couche "Voyager" (CARTO) — beige clair, lisible pour les marqueurs
     //    ocre du chantier iconification. Devient la couche par défaut (20/05/2026).
     const voyagerLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
+        maxNativeZoom: 19, // tuiles Voyager jusqu'à z19, agrandies au-delà (cf. planLayer : évite le grisé à z20)
+        maxZoom: 20,
         subdomains: 'abcd',
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
     });
