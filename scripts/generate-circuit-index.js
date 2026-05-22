@@ -308,11 +308,23 @@ function findPOIsOnTrack(trackPoints, poiFeatures, priorityIds = []) {
         }
     });
 
-    // Sort POIs by their position along the track (index)
-    matchedPOIs.sort((a, b) => a.index - b.index);
-
-    // Dedup (keep first occurrence if multiple - though IDs are unique in matchedPOIs logic above? No, distinct objects pushed)
-    // Actually loop iterates nearbyPOIs once, so no duplicate pushes for same POI.
+    // ORDRE CANONIQUE = ordre des waypoints (= ordre de sélection de l'admin).
+    // generateGPXString écrit les <wpt> dans l'ordre de circuit.poiIds, et
+    // matchWaypointsToPois renvoie priorityIds dans ce même ordre (dédoublonné,
+    // 1re occurrence). On préserve donc cet ordre, AU LIEU de trier par position
+    // sur le tracé.
+    //
+    // Pourquoi pas le tri par tracé : c'était un VESTIGE de l'ancienne découverte
+    // par PROXIMITÉ (le script ramassait tous les POIs proches du tracé, sans
+    // ordre intrinsèque → il fallait les trier géométriquement). Depuis qu'on ne
+    // garde QUE les waypoints (commit « Disable proximity-based POI discovery »),
+    // ces POIs ont déjà leur ordre — le tri par tracé ne faisait plus que le
+    // casser, notamment pour les circuits en BOUCLE : le POI de départ, présent
+    // au début ET à la fin du tracé, voyait son point le plus proche tomber à la
+    // fin et se retrouvait trié en dernier. Conséquences : l'index ne
+    // correspondait plus à l'ordre local (faux positif « modifié » permanent dans
+    // le CC admin) et la boucle s'affichait en démarrant au mauvais POI côté user.
+    matchedPOIs.sort((a, b) => priorityIds.indexOf(a.id) - priorityIds.indexOf(b.id));
 
     return matchedPOIs.map(p => p.id);
 }
@@ -521,5 +533,6 @@ if (require.main === module) {
 module.exports = {
     extractWaypoints,
     extractTrackPoints,
-    unescapeXml
+    unescapeXml,
+    findPOIsOnTrack
 };
