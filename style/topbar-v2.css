@@ -212,6 +212,20 @@
     color: var(--ink-soft);
 }
 
+/* Badge admin-only : destination en brouillon (non publiée pour les users). */
+.hw-dest-item-badge {
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--warn-soft);
+    color: var(--warn-fg);
+}
+
 .hw-dest-item-check {
     color: var(--brand);
     flex-shrink: 0;

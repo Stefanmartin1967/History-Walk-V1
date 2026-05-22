@@ -3,6 +3,7 @@
   "maps": {
     "djerba": {
       "name": "Djerba",
+      "status": "published",
       "file": "djerba.geojson",
       "circuitsFile": "circuits/djerba.json",
       "zonesFile": "djerba-zones.geojson",
@@ -27,6 +28,7 @@
     },
     "hammamet": {
       "name": "Hammamet",
+      "status": "draft",
       "file": "hammamet.geojson",
       "circuitsFile": "circuits/hammamet.json",
       "zonesFile": "hammamet-zones.geojson",

@@ -239,6 +239,17 @@ export function escapeXml(unsafe) {
 export const escapeHtml = escapeXml;
 
 /**
+ * Une destination est « publiée » (visible par tous) uniquement si son champ
+ * `status` vaut explicitement "published". Tout le reste (status "draft",
+ * absent, ou valeur inconnue) est traité comme un brouillon : visible admin
+ * seulement. Défaut volontairement défensif — un nouveau dump Scout reste
+ * invisible tant qu'il n'a pas été explicitement officialisé.
+ */
+export function isDestinationPublished(dest) {
+    return dest?.status === 'published';
+}
+
+/**
  * Lit une propriété d'un POI en respectant la convention `userData` overlay :
  * l'admin éphémère (userData) prime sur le patrimoine (properties).
  *

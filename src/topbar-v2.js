@@ -15,6 +15,7 @@ import { openUserSpace } from './user-space.js';
 import { showWelcomeAgain } from './welcome.js';
 import { setTheme, getCurrentTheme, THEMES, THEME_LABELS } from './theme.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { isDestinationPublished } from './utils.js';
 
 const FILTERS_BTN_ID = 'hw-topbar-filters-btn';
 const FILTERS_LABEL_ID = 'hw-topbar-filters-label';
@@ -145,6 +146,11 @@ export function renderDestinationMenu(destinations, activeMapId) {
     const entries = Object.entries(maps);
     if (entries.length === 0) return;
 
+    const isAdmin = state.isAdmin;
+    // Badge admin-only signalant une destination non encore publiée (brouillon).
+    const draftBadge = (dest) => (isAdmin && !isDestinationPublished(dest))
+        ? '<span class="hw-dest-item-badge">Brouillon</span>' : '';
+
     // Met à jour la pastille du sélecteur (drapeau + nom de la dest active)
     const activeDest = maps[activeMapId];
     if (activeDest) {
@@ -166,6 +172,7 @@ export function renderDestinationMenu(destinations, activeMapId) {
                 <span class="hw-dest-item-info">
                     <span class="hw-dest-item-name">${escapeHtml(activeDest.name || activeMapId)}</span>
                     <span class="hw-dest-item-sub">${escapeHtml(country)}</span>
+                    ${draftBadge(activeDest)}
                 </span>
                 <span class="hw-dest-item-check"><i data-lucide="check"></i></span>
             </button>
@@ -173,7 +180,8 @@ export function renderDestinationMenu(destinations, activeMapId) {
     }
 
     // Les autres
-    const others = entries.filter(([id]) => id !== activeMapId);
+    const others = entries.filter(([id, dest]) =>
+        id !== activeMapId && (isAdmin || isDestinationPublished(dest)));
     if (others.length > 0) {
         html.push('<div class="hw-dest-menu-section-title is-divided">Autres destinations</div>');
         for (const [id, dest] of others) {
@@ -185,6 +193,7 @@ export function renderDestinationMenu(destinations, activeMapId) {
                     <span class="hw-dest-item-info">
                         <span class="hw-dest-item-name">${escapeHtml(dest.name || id)}</span>
                         <span class="hw-dest-item-sub">${escapeHtml(country)}</span>
+                        ${draftBadge(dest)}
                     </span>
                 </button>
             `);
