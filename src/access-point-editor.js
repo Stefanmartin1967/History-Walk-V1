@@ -107,7 +107,10 @@ export function startAccessPointPlacement(feature) {
     map.getContainer().appendChild(_toolbar);
 
     map.panTo(start, { animate: true });
-    showToast('Pose le drapeau sur la voie la plus proche (clic ou glisser). Astuce : passe en calque OSM pour voir les routes.', 'info', 6000);
+    // Pas de toast d'instruction : la barre de pose (persistante) porte déjà la
+    // consigne « pose le drapeau sur la voie la plus proche ». Le fond par défaut
+    // (Voyager) montre les routes ; l'admin bascule via le contrôle de calques
+    // existant si besoin (satellite pour le bâti, OSM pour les voies routables).
 }
 
 async function onSave() {
