@@ -185,8 +185,9 @@ function updateMaskListingState() {
    Câble btn-download-gpx précédemment orphelin. Réutilise
    generateAndDownloadGPX(gpx.js) qui gère :
    - Le cas avec realTrack chargé (officiel après loadCircuitById, ou perso)
-   - Le fallback road-snapping si realTrack absent (rare en consultation
-     car la fiche a chargé la trace via loadCircuitById)
+   - Le cas « vol d'oiseau » si realTrack absent (rare en consultation car la
+     fiche a chargé la trace via loadCircuitById) : <trkpt> aux vraies coords
+     des POIs, GPX Studio route ensuite (plus de pré-snap routier)
    ============================================================ */
 
 function initDownloadGpx() {

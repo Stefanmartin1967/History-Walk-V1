@@ -64,45 +64,20 @@ function findFeaturesOnTrack(trackCoords, features, threshold = 0.0006) {
     return detected.map(d => d.feature);
 }
 
-// ─── OSRM SNAPPING ───────────────────────────────────────────────────────────
-
-/**
- * Snappe un point [lon, lat] sur la route la plus proche via OSRM.
- * Retourne [lon, lat] snappé, ou les coordonnées d'origine en cas d'erreur.
- */
-async function snapToNearestRoad(lon, lat) {
-    try {
-        const res = await fetch(
-            `https://router.project-osrm.org/nearest/v1/driving/${lon},${lat}?number=1`,
-            { signal: AbortSignal.timeout(4000) }
-        );
-        if (!res.ok) return [lon, lat];
-        const data = await res.json();
-        if (data.waypoints?.[0]?.location) return data.waypoints[0].location; // [lon, lat]
-    } catch (e) {
-        // Timeout ou réseau → fallback silencieux
-    }
-    return [lon, lat];
-}
-
-/**
- * Snappe tous les POIs d'un circuit en parallèle.
- * Retourne un tableau de [lon, lat] dans le même ordre que circuit[].
- */
-async function snapCircuitToRoads(circuit) {
-    return Promise.all(
-        circuit.map(f => snapToNearestRoad(f.geometry.coordinates[0], f.geometry.coordinates[1]))
-    );
-}
-
 // ─── GÉNÉRATION GPX ──────────────────────────────────────────────────────────
 
 /**
  * Génère la chaîne GPX.
- * @param {Array} snappedCoords  - [[lon,lat], …] coordonnées snappées pour les <trkpt> (Cas B).
- *                                 Si null, utilise les coordonnées réelles des POIs.
+ *  - Cas A (realTrack fourni) : <trkpt> = trace réelle (importée de GPX Studio).
+ *  - Cas B (pas de realTrack) : <trkpt> = coordonnées RÉELLES des POIs (lignes
+ *    droites « vol d'oiseau »). On NE pré-snappe PLUS sur la route. L'ancien snap
+ *    OSRM (profil VOITURE) déplaçait chaque point sur la route carrossable la plus
+ *    proche → pour un POI en retrait/sur un sentier, l'ancre atterrissait à côté,
+ *    et GPX Studio, qui s'ancre sur ces <trkpt>, routait en IGNORANT le POI. En
+ *    gardant les vraies coords, GPX Studio s'ancre pile sur les POIs et route
+ *    correctement à partir de là (c'est lui qui colle aux voies, pas nous).
  */
-export function generateGPXString(circuit, id, name, description, realTrack = null, snappedCoords = null) {
+export function generateGPXString(circuit, id, name, description, realTrack = null) {
     // <wpt> : toujours les coordonnées réelles du POI (repère visuel fidèle)
     const waypointsXML = circuit.map(feature => {
         const poiName = escapeXml(getPoiName(feature));
@@ -130,8 +105,9 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
             `<trkpt lat="${coord[0]}" lon="${coord[1]}"><ele>0</ele></trkpt>`
         ).join('\n      ');
     } else {
-        // Cas B : Tracé direct POI→POI → on utilise les coords snappées si disponibles
-        const coords = snappedCoords || circuit.map(f => f.geometry.coordinates); // [lon, lat]
+        // Cas B : Tracé direct POI→POI aux coordonnées RÉELLES des POIs (pas de
+        // pré-snap routier — cf. doc de la fonction). GPX Studio routera ensuite.
+        const coords = circuit.map(f => f.geometry.coordinates); // [lon, lat]
         trackpointsXML = coords.map(([lon, lat]) =>
             `<trkpt lat="${lat}" lon="${lon}"><ele>0</ele></trkpt>`
         ).join('\n      ');
@@ -151,20 +127,11 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
 }
 
 export async function generateAndDownloadGPX(circuit, id, name, description, realTrack = null) {
-    let snappedCoords = null;
-
-    // Snapping uniquement en Cas B (pas de trace réelle importée)
-    if (!realTrack || realTrack.length === 0) {
-        showToast('Calcul du tracé routier…', 'info', 5000);
-        try {
-            snappedCoords = await snapCircuitToRoads(circuit);
-        } catch (e) {
-            // Fallback silencieux : on génère sans snapping
-            snappedCoords = null;
-        }
-    }
-
-    const gpxContent = generateGPXString(circuit, id, name, description, realTrack, snappedCoords);
+    // Plus de pré-snap routier (l'ancien snap OSRM profil voiture décalait les
+    // <trkpt> hors des POIs → GPX Studio routait en ignorant le POI). En Cas B,
+    // generateGPXString écrit désormais les vraies coords des POIs ; GPX Studio
+    // se charge du routage piéton à partir de ces ancres.
+    const gpxContent = generateGPXString(circuit, id, name, description, realTrack);
     downloadFile(`${name}.gpx`, gpxContent, 'application/gpx+xml');
     showToast('GPX exporté ✓', 'success', 2500);
 }
