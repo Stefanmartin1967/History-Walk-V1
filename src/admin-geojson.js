@@ -41,6 +41,14 @@ export function generateMasterGeoJSONData(excludedIds = []) {
                 properties.photos = properties.photos.filter(p => !p.startsWith('data:image'));
             }
 
+            // Point d'accès au tracé : on ne publie qu'un couple [lon, lat] valide.
+            // Un accessPoint absent ou retiré (null via l'overlay) ne doit pas
+            // laisser de résidu (`accessPoint: null`) dans le geojson public.
+            const ap = properties.accessPoint;
+            if (!Array.isArray(ap) || ap.length !== 2 || !Number.isFinite(ap[0]) || !Number.isFinite(ap[1])) {
+                delete properties.accessPoint;
+            }
+
             delete properties._leaflet_id;
 
             return {

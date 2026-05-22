@@ -250,6 +250,20 @@ export async function prepareDiffData(adminDraft) {
                 return;
             }
 
+            // Point d'accès au tracé : affichage lisible (lat, lon) ou « — » si
+            // absent/retiré. Détecte pose / déplacement / retrait.
+            if (key === 'accessPoint') {
+                const fmt = (v) => (Array.isArray(v) && v.length === 2 && Number.isFinite(v[0]) && Number.isFinite(v[1]))
+                    ? `${v[1].toFixed(5)}, ${v[0].toFixed(5)}` // [lon,lat] → affiché (lat, lon)
+                    : '—';
+                const oldF = fmt(oldVal);
+                const newF = fmt(newVal);
+                if (oldF !== newF) {
+                    changes.push({ key: 'Point d\'accès', old: oldF, new: newF });
+                }
+                return;
+            }
+
             // Simple equality check — ignore undefined→0/null/"" (champs vides par défaut)
             const isDefaultEmpty = oldVal === undefined && (newVal === "" || newVal === 0 || newVal === "0" || newVal === null);
             if (String(oldVal) !== String(newVal) && !isDefaultEmpty) {

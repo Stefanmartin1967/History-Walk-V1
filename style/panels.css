@@ -562,6 +562,46 @@
 .poi-tag.brand { background: rgba(240,249,255,0.95); color: var(--brand); }
 .poi-tag svg { width: 11px; height: 11px; }
 
+/* ===== Point d'accès au tracé (admin) — chip fiche + drapeau carte + barre =====
+   Geste de pose dans access-point-editor.js. POI hors voie → l'admin pose un
+   drapeau sur la voie la plus proche, qui sert d'ancre <trkpt> à l'export. */
+.poi-tag--access-point { background: rgba(192,57,43,0.12); color: #a23226; }
+
+/* Drapeau draggable (Leaflet divIcon) posé pendant le mode de pose. */
+.hw-access-flag { background: transparent; border: 0; }
+.hw-access-flag .hw-access-flag-pole {
+    position: absolute; left: 2px; bottom: 0; width: 2px; height: 24px;
+    background: #7a1f17; border-radius: 1px;
+}
+.hw-access-flag .hw-access-flag-banner {
+    position: absolute; left: 4px; top: 0; width: 16px; height: 11px;
+    background: #c0392b; border-radius: 1px 2px 2px 1px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+
+/* Barre flottante d'actions pendant la pose (ancrée dans le conteneur carte). */
+.hw-access-toolbar {
+    position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
+    z-index: 1000; display: flex; align-items: center; gap: 14px;
+    max-width: calc(100% - 24px);
+    padding: 10px 14px; border-radius: 14px;
+    background: var(--bg, #1f3a5f); color: #fff;
+    box-shadow: var(--shadow, 0 6px 24px rgba(0,0,0,0.25));
+    border: 1px solid rgba(255,255,255,0.12);
+    font-size: 13px;
+}
+.hw-access-toolbar-text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+.hw-access-toolbar-text strong { font-weight: 700; }
+.hw-access-toolbar-text span { opacity: 0.85; font-size: 12px; }
+.hw-access-toolbar-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.hw-access-btn {
+    border: 1px solid rgba(255,255,255,0.4); background: transparent; color: #fff;
+    padding: 7px 12px; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.hw-access-btn:hover { background: rgba(255,255,255,0.12); }
+.hw-access-btn--primary { background: #fff; color: var(--bg, #1f3a5f); border-color: #fff; }
+.hw-access-btn--primary:hover { background: rgba(255,255,255,0.9); }
+
 /* État + Accès — pastilles sémantiques (hero). État : point coloré. Accès :
    icône. Fond en pastel léger (token × 50% + blanc), pour s'aligner sur les
    pastilles zone/catégorie existantes. Texte et point en couleur tokenisée. */
