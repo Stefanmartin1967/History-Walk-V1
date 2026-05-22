@@ -46,12 +46,15 @@ function getCategoryDisplay(feature) {
 function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
     const poiName = getPoiName(feature);
     const cat = getCategoryDisplay(feature);
-    // Mode édition possible si :
-    //  - brouillon (pas d'activeCircuitId), OU
-    //  - circuit perso chargé (édition libre), OU
-    //  - admin a cliqué "Modifier" sur officiel/vérifié (state.editingMode).
+    // Mode édition (poignée + boutons) UNIQUEMENT si :
+    //  - brouillon en cours (pas d'activeCircuitId), OU
+    //  - on a cliqué "Modifier" (state.editingMode).
+    // Doit rester ALIGNÉ avec applyCircuitMode (isConsult = activeCircuitId &&
+    // !editingMode) : sinon un perso enregistré rend 4 éléments dans une grille
+    // de consultation à 2 colonnes → nom en mot-par-mot + boutons mal placés.
+    // Un perso simplement consulté s'affiche donc épuré, comme un officiel ;
+    // on l'édite via le bouton "Modifier le circuit".
     const isCreate = !state.activeCircuitId
-        || (state.activeCircuitId && !isOfficial)
         || state.editingMode;
 
     const a = document.createElement('a');
