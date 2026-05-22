@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint } from '../src/utils.js';
 
 describe('Utils', () => {
     describe('generateHWID', () => {
@@ -212,6 +212,32 @@ describe('Utils', () => {
         it('retourne undefined si ni userData ni properties n\'ont la clé', () => {
             const f = { properties: { autre: 1, userData: { encore: 2 } } };
             expect(getPoiProp(f, 'absente')).toBeUndefined();
+        });
+    });
+
+    describe('getAccessPoint — point d\'accès au tracé', () => {
+        const feat = (props) => ({ properties: props });
+
+        it('retourne [lon,lat] si défini et valide dans properties', () => {
+            expect(getAccessPoint(feat({ accessPoint: [11.02, 33.79] }))).toEqual([11.02, 33.79]);
+        });
+        it('lit depuis l\'overlay userData (prime sur properties)', () => {
+            const f = feat({ accessPoint: [1, 2], userData: { accessPoint: [11.5, 33.5] } });
+            expect(getAccessPoint(f)).toEqual([11.5, 33.5]);
+        });
+        it('retourne null si absent', () => {
+            expect(getAccessPoint(feat({}))).toBeNull();
+            expect(getAccessPoint(feat({ userData: {} }))).toBeNull();
+        });
+        it('retourne null si invalide (null / longueur / non numérique / NaN)', () => {
+            expect(getAccessPoint(feat({ accessPoint: null }))).toBeNull();
+            expect(getAccessPoint(feat({ accessPoint: [11.0] }))).toBeNull();
+            expect(getAccessPoint(feat({ accessPoint: ['a', 'b'] }))).toBeNull();
+            expect(getAccessPoint(feat({ accessPoint: [NaN, 33] }))).toBeNull();
+        });
+        it('null dans userData prime et invalide le patrimoine publié (retrait)', () => {
+            const f = feat({ accessPoint: [11.02, 33.79], userData: { accessPoint: null } });
+            expect(getAccessPoint(f)).toBeNull();
         });
     });
 });

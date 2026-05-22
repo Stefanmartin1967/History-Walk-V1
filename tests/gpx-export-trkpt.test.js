@@ -20,10 +20,11 @@ vi.mock('../src/utils.js', () => ({
     downloadFile: vi.fn(),
     escapeXml: (s) => (s == null ? '' : String(s)),
     generateHWID: vi.fn(),
-    // Reproduit fidèlement la convention overlay (userData prime, !== undefined).
-    getPoiProp: (f, key) => {
-        const u = f?.properties?.userData?.[key];
-        return u !== undefined ? u : f?.properties?.[key];
+    // Reproduit getAccessPoint : overlay userData (prime) + validation [lon,lat].
+    getAccessPoint: (f) => {
+        const u = f?.properties?.userData?.accessPoint;
+        const ap = u !== undefined ? u : f?.properties?.accessPoint;
+        return (Array.isArray(ap) && ap.length === 2 && Number.isFinite(ap[0]) && Number.isFinite(ap[1])) ? ap : null;
     },
 }));
 vi.mock('../src/map.js', () => ({ updatePolylines: vi.fn() }));

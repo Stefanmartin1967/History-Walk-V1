@@ -259,6 +259,23 @@ export function getPoiProp(feature, key) {
 }
 
 /**
+ * Point d'accès au tracé d'un POI : champ public OPTIONNEL `accessPoint` =
+ * [lon, lat], posé par l'admin sur la voie la plus proche pour les POI « hors
+ * voie » (bâtiment isolé). Renvoie le couple [lon, lat] s'il est défini et
+ * valide (tableau de 2 nombres finis), sinon null. Lu via getPoiProp (overlay).
+ * Source unique partagée : gpx.js (ancre de tracé) + access-point-editor.js
+ * (pré-remplissage du drapeau). NE déplace JAMAIS le POI : le marqueur reste sur
+ * geometry.coordinates ; seul le <trkpt> du « vol d'oiseau » utilise ce point.
+ */
+export function getAccessPoint(feature) {
+    const ap = getPoiProp(feature, 'accessPoint');
+    if (Array.isArray(ap) && ap.length === 2 && Number.isFinite(ap[0]) && Number.isFinite(ap[1])) {
+        return ap; // [lon, lat]
+    }
+    return null;
+}
+
+/**
  * Nettoie une chaîne HTML pour prévenir les failles XSS avant l'utilisation de .innerHTML.
  * Ne conserve que les balises et attributs considérés comme sûrs.
  * Cette version basique utilise DOMParser pour supprimer les scripts et les attributs d'événements.

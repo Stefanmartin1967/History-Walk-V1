@@ -4,7 +4,7 @@ import { getPoiId, getPoiName } from './data.js';
 import { loadCircuitById, generateCircuitName } from './circuit.js';
 import { getAppState, saveCircuit } from './database.js';
 import { showToast } from './toast.js';
-import { downloadFile, escapeXml, generateHWID, getPoiProp } from './utils.js';
+import { downloadFile, escapeXml, generateHWID, getAccessPoint } from './utils.js';
 import { updatePolylines } from './map.js';
 
 // --- HELPER : Analyse de proximité ---
@@ -76,11 +76,7 @@ function findFeaturesOnTrack(trackCoords, features, threshold = 0.0006) {
  * TOUJOURS sur les vraies coordonnées du POI.
  */
 function trackAnchorOf(feature) {
-    const ap = getPoiProp(feature, 'accessPoint');
-    if (Array.isArray(ap) && ap.length === 2 && Number.isFinite(ap[0]) && Number.isFinite(ap[1])) {
-        return ap; // [lon, lat]
-    }
-    return feature.geometry.coordinates; // [lon, lat]
+    return getAccessPoint(feature) || feature.geometry.coordinates; // [lon, lat]
 }
 
 /**

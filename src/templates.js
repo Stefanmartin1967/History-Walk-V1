@@ -1,6 +1,6 @@
 // templates.js
 import { getPoiName } from './data.js';
-import { escapeXml } from './utils.js';
+import { escapeXml, getAccessPoint } from './utils.js';
 import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
 
@@ -150,6 +150,14 @@ function buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile }) {
                <i data-lucide="move"></i>Déplacer le marqueur
            </button>`;
 
+    // Admin + desktop uniquement : pose du « point d'accès au tracé » (drapeau
+    // carte pour les POI hors voie). Mobile exclu (geste de précision carte).
+    const accessPointItem = (!isMobile && state.isAdmin)
+        ? `<button class="poi-pop-item" role="menuitem" id="btn-set-access-point" type="button">
+               <i data-lucide="map-pin-plus"></i>Point d'accès au tracé
+           </button>`
+        : '';
+
     return `
         <div class="poi-kebab-pop is-hidden" id="poi-tools-pop" role="menu" aria-label="Outils du lieu">
             <button class="poi-pop-item" role="menuitem" id="${langId}" type="button"
@@ -161,6 +169,7 @@ function buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile }) {
                 <i data-lucide="file-text"></i>Description GPX
             </button>
             ${positionItem}
+            ${accessPointItem}
             <div class="poi-pop-sep" role="separator"></div>
             <button class="poi-pop-item poi-pop-item--danger" role="menuitem" id="btn-soft-delete" type="button">
                 <i data-lucide="trash-2"></i>Supprimer
@@ -233,7 +242,9 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const tagsHtml = [
         etat ? `<span class="poi-tag status ${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
         accesMeta ? `<span class="poi-tag access ${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
-        isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : ''
+        isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : '',
+        // Admin only : indique qu'un point d'accès au tracé est défini (POI hors voie).
+        (state.isAdmin && getAccessPoint(feature)) ? `<span class="poi-tag poi-tag--access-point"><i data-lucide="map-pin-plus"></i>Point d'accès</span>` : ''
     ].filter(Boolean).join('');
 
     // Section Description

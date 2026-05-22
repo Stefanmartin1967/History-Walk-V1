@@ -12,6 +12,7 @@ import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
+import { startAccessPointPlacement } from './access-point-editor.js';
 
 export function initUiDetailsListeners() {
     eventBus.on('poi:open-details', ({ featureId, circuitIndex = null }) => openDetailsPanel(featureId, circuitIndex));
@@ -329,6 +330,15 @@ function setupDetailsEventListeners(poiId) {
                      }
                  }
              });
+        });
+    }
+
+    // --- Bouton "Point d'accès au tracé" (admin desktop — pose d'un drapeau) ---
+    const accessPtBtn = document.getElementById('btn-set-access-point');
+    if (accessPtBtn) {
+        accessPtBtn.addEventListener('click', () => {
+            const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+            if (feature) startAccessPointPlacement(feature);
         });
     }
 
