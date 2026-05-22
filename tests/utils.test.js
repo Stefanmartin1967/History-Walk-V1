@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished } from '../src/utils.js';
 
 describe('Utils', () => {
     describe('generateHWID', () => {
@@ -238,6 +238,29 @@ describe('Utils', () => {
         it('null dans userData prime et invalide le patrimoine publié (retrait)', () => {
             const f = feat({ accessPoint: [11.02, 33.79], userData: { accessPoint: null } });
             expect(getAccessPoint(f)).toBeNull();
+        });
+    });
+
+    describe('isDestinationPublished — visibilité brouillon/publié', () => {
+        it('vrai uniquement si status === "published"', () => {
+            expect(isDestinationPublished({ status: 'published' })).toBe(true);
+        });
+
+        it('faux pour un brouillon explicite', () => {
+            expect(isDestinationPublished({ status: 'draft' })).toBe(false);
+        });
+
+        it('faux si le champ status est absent (défaut défensif = brouillon)', () => {
+            expect(isDestinationPublished({ name: 'Hammamet' })).toBe(false);
+        });
+
+        it('faux pour une valeur de status inconnue', () => {
+            expect(isDestinationPublished({ status: 'wip' })).toBe(false);
+        });
+
+        it('faux (sans planter) si dest est null/undefined', () => {
+            expect(isDestinationPublished(null)).toBe(false);
+            expect(isDestinationPublished(undefined)).toBe(false);
         });
     });
 });

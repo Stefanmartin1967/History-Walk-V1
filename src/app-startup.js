@@ -14,6 +14,7 @@ import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';
 import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
+import { isDestinationPublished } from './utils.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
 // btn-open-backup-modal et btn-restore-data n'existent plus dans le DOM
@@ -143,6 +144,21 @@ export async function loadAndInitializeMap() {
             activeMapId = lsMapId;
         } else if (state.destinations.activeMapId) {
             activeMapId = state.destinations.activeMapId;
+        }
+
+        // Garde brouillon : un user non-admin ne doit jamais booter sur une
+        // destination non publiée (URL ?map=hammamet partagée, ou clé
+        // hw_active_dest héritée d'une session admin). Repli sur la destination
+        // par défaut publiée (sinon la 1ʳᵉ publiée trouvée). L'admin garde tout.
+        if (!state.isAdmin && !isDestinationPublished(state.destinations.maps[activeMapId])) {
+            const fallback = state.destinations.activeMapId;
+            if (fallback && isDestinationPublished(state.destinations.maps[fallback])) {
+                activeMapId = fallback;
+            } else {
+                const firstPublished = Object.keys(state.destinations.maps)
+                    .find(id => isDestinationPublished(state.destinations.maps[id]));
+                if (firstPublished) activeMapId = firstPublished;
+            }
         }
         // Synchronise le localStorage avec le choix final → si Stefan ouvre
         // le DM ensuite, il prendra la même destination active.
