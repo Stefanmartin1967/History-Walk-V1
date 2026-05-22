@@ -299,12 +299,17 @@ export async function prepareDiffData(adminDraft) {
 
             // Comparaison simple des champs clés
             if (local.name !== remote.name) changes.push({ key: 'Nom', old: remote.name, new: local.name });
-            if ((local.description || '') !== (remote.description || '')) {
-                // On ignore les diffs vides vs null/undefined
-                if(local.description || remote.description) {
-                     changes.push({ key: 'Description', old: '...', new: '...' }); // Simplifié pour l'affichage
-                }
-            }
+
+            // PAS de comparaison de DESCRIPTION : elle ne fait pas l'aller-retour
+            // via le pipeline GPX → index. generate-circuit-index.js lit le <desc>
+            // des <metadata> du GPX, hardcodé par generateGPXString à la constante
+            // « Circuit généré par History Walk. » → l'index distant porte TOUJOURS
+            // cette chaîne. En local, circuit-actions.js appose la signature
+            // « (Créé par History Walk) » à la description saisie. Les deux ne
+            // peuvent donc jamais coïncider : differ la description signalait à tort
+            // une « modification » PERMANENTE sur tout circuit publié (faux positif
+            // observé 21/05/2026, jumeau du bug poiIds en boucle). La description
+            // n'étant pas un champ publiable côté circuit, on ne la diff pas.
 
             // Comparaison des étapes (ordre + contenu), sur poiIds DÉDOUBLONNÉS.
             // L'index distant est régénéré par generate-circuit-index.js qui
