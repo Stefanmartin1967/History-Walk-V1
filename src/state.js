@@ -1,7 +1,7 @@
 // state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.71'; // Fix : circuits en BOUCLE détectés à tort comme « modifiés » en permanence dans le CC. Cause : generate-circuit-index.js dédoublonne les POIs (Set) → une boucle [A,B,C,A] (étape 1 = étape de retour) devient [A,B,C] dans l'index, alors que le circuit local garde 4 poiIds → le diff engine comparait 4 ≠ 3. Fix : comparaison des poiIds DÉDOUBLONNÉS dans le diff engine (admin-diff-engine.js) + buildCircuitIndexEntry dédoublonne aussi (index client = index Action). NB : le « NOUVEAU » transitoire après publication = lag de propagation raw.githubusercontent.com (~min), se résorbe seul une fois l'index propagé.
+export const APP_VERSION = '3.7.72'; // Fix (jumeau du #624) : circuits détectés à tort comme « modifiés » sur une simple différence de DESCRIPTION. Cause : la description ne fait pas l'aller-retour via le pipeline GPX → index. generate-circuit-index.js lit le <desc> des metadata GPX, hardcodé par generateGPXString à « Circuit généré par History Walk. » → l'index distant porte TOUJOURS cette constante, tandis qu'en local circuit-actions.js appose la signature « (Créé par History Walk) ». Les deux ne coïncident jamais → faux positif permanent. Fix : on retire la comparaison de description du diff circuit (admin-diff-engine.js). La description n'est pas un champ publiable côté circuit.
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel

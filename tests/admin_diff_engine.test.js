@@ -271,6 +271,32 @@ describe('Admin Diff Engine', () => {
             expect(result.circuits[0].changes.some(ch => ch.key === 'Étapes')).toBe(true);
         });
 
+        it('NE signale PAS un circuit comme modifié sur une simple différence de description', async () => {
+            // Bug 21/05/2026 (jumeau du bug poiIds en boucle) : la description ne
+            // fait pas l'aller-retour via le pipeline GPX → index. L'index distant
+            // porte TOUJOURS la constante hardcodée « Circuit généré par History
+            // Walk. » (lue dans le <desc> des metadata GPX), tandis qu'en local
+            // circuit-actions.js appose la signature « (Créé par History Walk) ».
+            // Les deux ne coïncident jamais → differ la description signalait à tort
+            // une « modification » permanente. La description n'est plus diffée.
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([
+                    { id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'], description: 'Circuit généré par History Walk.' }
+                ]) });
+            });
+            state.officialCircuits = [{
+                id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'], // name + poiIds identiques
+                description: 'Une jolie balade le long de la côte.\n\n(Créé par History Walk)', // desc locale différente
+                realTrack: [[10.1, 11.2], [10.2, 11.3]]
+            }];
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(result.circuits.length).toBe(0); // description ignorée → aucun diff
+        });
+
         it('DOIT proposer la suppression d\'un circuit effacé localement (Ghost Prevention)', async () => {
             global.fetch.mockImplementation((url) => {
                 if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
