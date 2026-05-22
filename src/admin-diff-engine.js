@@ -306,15 +306,23 @@ export async function prepareDiffData(adminDraft) {
                 }
             }
 
-            // Comparaison des étapes (Ordre et Contenu)
-            const localIds = (local.poiIds || []).join(',');
-            const remoteIds = (remote.poiIds || []).join(',');
+            // Comparaison des étapes (ordre + contenu), sur poiIds DÉDOUBLONNÉS.
+            // L'index distant est régénéré par generate-circuit-index.js qui
+            // dédoublonne les POIs (Set) → un circuit en BOUCLE (étape 1 = étape
+            // N, ex. retour au point de départ) a N poiIds en local mais N-1
+            // dans l'index. Sans dédoublonnage, le diff signalerait à tort une
+            // « modification » permanente sur tout circuit en boucle (bug
+            // observé 21/05/2026). On compare donc les séquences uniques
+            // (1re occurrence préservée), ce qui matche le comportement du script.
+            const dedup = (ids) => [...new Set(ids || [])];
+            const localIds = dedup(local.poiIds).join(',');
+            const remoteIds = dedup(remote.poiIds).join(',');
 
             if (localIds !== remoteIds) {
                 changes.push({
                     key: 'Étapes',
-                    old: `${(remote.poiIds || []).length} étapes`,
-                    new: `${(local.poiIds || []).length} étapes`
+                    old: `${dedup(remote.poiIds).length} étapes`,
+                    new: `${dedup(local.poiIds).length} étapes`
                 });
             }
 

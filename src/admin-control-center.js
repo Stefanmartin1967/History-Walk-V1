@@ -28,6 +28,10 @@ import { openControlCenterModal, renderTab } from './admin-control-ui.js';
  */
 export function buildCircuitIndexEntry(circuit, features, mapId) {
     const distance = (getRealDistance(circuit) / 1000).toFixed(1) + ' km';
+    // poiIds dédoublonnés (1re occurrence) pour matcher generate-circuit-index.js
+    // (qui dédoublonne via Set). Sinon un circuit en boucle aurait des poiIds
+    // différents entre l'index client et celui régénéré par l'Action.
+    const poiIds = [...new Set(circuit.poiIds || [])];
     const entry = {
         id: circuit.id,
         name: circuit.name,
@@ -37,7 +41,7 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
         isOfficial: true,
         hasRealTrack: true,
         zone: features[0]?.properties?.Zone || undefined,
-        poiIds: circuit.poiIds || [],
+        poiIds,
     };
     if (!entry.zone) delete entry.zone;
     return entry;
