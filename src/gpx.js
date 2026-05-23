@@ -8,7 +8,8 @@ import { downloadFile, escapeXml, generateHWID, getAccessPoint } from './utils.j
 import { updatePolylines } from './map.js';
 
 // --- HELPER : Analyse de proximité ---
-function findFeaturesOnTrack(trackCoords, features, threshold = 0.0006) {
+// Exporté pour tests unitaires (fonction pure : géométrie sur tableaux de coords).
+export function findFeaturesOnTrack(trackCoords, features, threshold = 0.0006) {
     const detected = [];
 
     // Pour chaque lieu chargé, on regarde s'il est proche de la trace
