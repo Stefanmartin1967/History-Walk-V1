@@ -45,7 +45,11 @@ vi.mock('../src/database.js', () => ({
     saveAppState: vi.fn(),
     savePoiData: vi.fn(),
     saveCircuit: vi.fn(),
-    clearStore: vi.fn()
+    clearStore: vi.fn(),
+    getAllPoiPhotosForMap: vi.fn(async () => []),
+    savePoiPhotos: vi.fn(async () => {}),
+    blobToBase64: vi.fn(async () => 'data:image/jpeg;base64,MOCKDATA'),
+    base64ToBlob: vi.fn((b64) => new Blob([b64], { type: 'image/jpeg' }))
 }));
 
 vi.mock('../src/gpx.js', () => ({
@@ -71,13 +75,15 @@ vi.mock('../src/modal.js', () => ({
 
 import { state } from '../src/state.js';
 import { showToast } from '../src/toast.js';
+import { getAllPoiPhotosForMap, savePoiPhotos, savePoiData, base64ToBlob } from '../src/database.js';
 import {
     getActionLabel,
     cleanDataForExport,
     isValidBackup,
     prepareExportData,
     recordSupportClick,
-    saveUserData
+    saveUserData,
+    restoreBackup
 } from '../src/fileManager.js';
 
 function resetState() {
@@ -230,8 +236,12 @@ describe('isValidBackup', () => {
         expect(isValidBackup({ ...validMinimal, hiddenPoiIds: {} })).toBe(false);
     });
 
-    it('rejette testedCircuits si non-array', () => {
-        expect(isValidBackup({ ...validMinimal, testedCircuits: {} })).toBe(false);
+    it('accepte testedCircuits en objet (format runtime) ou en tableau, rejette null/primitive', () => {
+        expect(isValidBackup({ ...validMinimal, testedCircuits: {} })).toBe(true);
+        expect(isValidBackup({ ...validMinimal, testedCircuits: { c1: true } })).toBe(true);
+        expect(isValidBackup({ ...validMinimal, testedCircuits: ['c1'] })).toBe(true);
+        expect(isValidBackup({ ...validMinimal, testedCircuits: null })).toBe(false);
+        expect(isValidBackup({ ...validMinimal, testedCircuits: 'x' })).toBe(false);
     });
 
     it('rejette officialCircuitsStatus si non-objet (array, null, primitive)', () => {
@@ -296,7 +306,7 @@ describe('prepareExportData', () => {
         expect(feat.properties.userData.photos).toBeUndefined();
     });
 
-    it('préserve les photos quand includePhotos = true', async () => {
+    it('conserve les photos « légères » (URLs) dans userData racine, jamais dans le geojson', async () => {
         state.currentMapId = 'djerba';
         state.loadedFeatures = [
             { type: 'Feature', properties: { HW_ID: 'p1' }, geometry: null }
@@ -304,8 +314,49 @@ describe('prepareExportData', () => {
         state.userData = { p1: { vu: true, photos: ['photo1.jpg'] } };
 
         const data = await prepareExportData(true);
-        const feat = data.baseGeoJSON.features[0];
-        expect(feat.properties.userData.photos).toEqual(['photo1.jpg']);
+        // Plus de duplication des photos dans le geojson
+        expect(data.baseGeoJSON.features[0].properties.userData.photos).toBeUndefined();
+        // Les références légères (non base64) sont conservées dans le bloc racine
+        expect(data.userData.p1.photos).toEqual(['photo1.jpg']);
+        expect(data.userData.p1.vu).toBe(true);
+    });
+
+    it('encode les photos Blob (store poiPhotos) en base64 dans userData racine en mode FULL', async () => {
+        state.currentMapId = 'djerba';
+        state.loadedFeatures = [
+            { type: 'Feature', properties: { HW_ID: 'p1' }, geometry: null }
+        ];
+        state.userData = { p1: { vu: true } };
+        getAllPoiPhotosForMap.mockResolvedValueOnce([
+            { mapId: 'djerba', poiId: 'p1', photos: [{ id: 'a', blob: new Blob(['x']) }] }
+        ]);
+
+        const data = await prepareExportData(true);
+        expect(getAllPoiPhotosForMap).toHaveBeenCalledWith('djerba');
+        expect(data.userData.p1.photos).toEqual(['data:image/jpeg;base64,MOCKDATA']);
+        // Jamais dupliqué dans le geojson
+        expect(data.baseGeoJSON.features[0].properties.userData.photos).toBeUndefined();
+    });
+
+    it('n\'encode aucune photo Blob en mode LITE (includePhotos = false)', async () => {
+        state.currentMapId = 'djerba';
+        state.userData = { p1: { vu: true } };
+
+        const data = await prepareExportData(false);
+        expect(getAllPoiPhotosForMap).not.toHaveBeenCalled();
+        expect(data.userData.p1.photos).toBeUndefined();
+    });
+
+    it('inclut un POI qui a des photos Blob mais aucune note (FULL)', async () => {
+        state.currentMapId = 'djerba';
+        state.loadedFeatures = [];
+        state.userData = {}; // aucune note
+        getAllPoiPhotosForMap.mockResolvedValueOnce([
+            { mapId: 'djerba', poiId: 'p9', photos: [{ id: 'b', blob: new Blob(['y']) }] }
+        ]);
+
+        const data = await prepareExportData(true);
+        expect(data.userData.p9.photos).toEqual(['data:image/jpeg;base64,MOCKDATA']);
     });
 
     it('fusionne les userData dans properties.userData de chaque feature', async () => {
@@ -385,5 +436,45 @@ describe('saveUserData', () => {
         URL.revokeObjectURL = vi.fn();
 
         await expect(saveUserData(false)).resolves.toBeUndefined();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('restoreBackup (photos)', () => {
+    it('décode les photos base64 vers le store poiPhotos (Blob) et nettoie userData', async () => {
+        const json = {
+            backupVersion: '3.0',
+            mapId: 'djerba',
+            userData: {
+                p1: { vu: true, photos: ['data:image/jpeg;base64,AAA', 'photos/admin.jpg'] }
+            }
+        };
+
+        await restoreBackup(json);
+
+        // Les base64 redeviennent des Blobs dans le store poiPhotos
+        expect(savePoiPhotos).toHaveBeenCalledTimes(1);
+        const [mapId, poiId, blobs] = savePoiPhotos.mock.calls[0];
+        expect(mapId).toBe('djerba');
+        expect(poiId).toBe('p1');
+        expect(blobs).toHaveLength(1);
+        expect(blobs[0].blob).toBeInstanceOf(Blob);
+        expect(base64ToBlob).toHaveBeenCalledWith('data:image/jpeg;base64,AAA');
+
+        // poiUserData ne conserve que les références légères (URL), plus aucun base64
+        const call = savePoiData.mock.calls.find(c => c[1] === 'p1');
+        expect(call[2].photos).toEqual(['photos/admin.jpg']);
+        expect(call[2].vu).toBe(true);
+    });
+
+    it('ne touche pas au store poiPhotos quand il n\'y a aucune photo base64', async () => {
+        const json = {
+            backupVersion: '3.0',
+            mapId: 'djerba',
+            userData: { p1: { vu: true } }
+        };
+
+        await restoreBackup(json);
+        expect(savePoiPhotos).not.toHaveBeenCalled();
     });
 });

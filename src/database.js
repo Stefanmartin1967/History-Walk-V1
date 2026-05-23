@@ -5,13 +5,24 @@ import { showAlert } from './modal.js';
 const DB_VERSION = 6;
 
 // Helper: convert a base64 data-URL string to a Blob
-function base64ToBlob(base64) {
+export function base64ToBlob(base64) {
     const [header, data] = base64.split(',');
     const mime = (header.match(/:(.*?);/) || [])[1] || 'image/jpeg';
     const binary = atob(data);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     return new Blob([bytes], { type: mime });
+}
+
+// Helper: convert a Blob to a base64 data-URL string (inverse de base64ToBlob).
+// Utilisé à l'export pour sérialiser les photos (le JSON ne peut pas porter un Blob).
+export function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
+    });
 }
 // Singleton promise pour la connexion IDB.
 // Un seul `indexedDB.open()` en vol à la fois — les appels concurrents partagent
