@@ -1,17 +1,29 @@
 /* style/me-userspace.css — Mon Espace (côté user)
-   Refonte design suite handoff Claude Design 10/05/2026.
-   Cousin du CC Admin : mêmes tokens, même grammaire de composants, mais
-   ambre HW comme accent identitaire (au lieu du cobalt CC), radius-lg sur
-   les cards, hero plat amber-soft, pas de sidebar — tabs horizontales.
-   La logique métier (callbacks user-space.js) et les IDs DOM testés ne
-   bougent pas — voir mapping classes documenté dans le handoff §13. */
+   Refonte V3 (handoff Claude Design 23/05/2026).
+
+   Évolutions clés vs V2 :
+   - 2 onglets uniquement : Sauvegarde + Corbeille (au lieu de 4).
+   - Accent = thème : on bascule --hw-amber → --cta-bg / --brand sur
+     tabs actifs, hero, toggles, hovers, badges. Cohérent avec CC Admin.
+   - Onglet Sauvegarde allégé (V3.1, 23/05) : Sauvegarder (Légère/Complète
+     + bouton adaptatif télécharger/partager), Restaurer, statut backup auto
+     en footnote. Partager fusionné dans Sauvegarder ; Forcer + Sync retirés.
+   - Onglet Corbeille : actions Restaurer (neutre) + Supprimer (destructif)
+     avec confirmation.
+
+   Le shell custom (overlay/modale/tabs ARIA, mobile plein écran) est
+   conservé. Voir handoff §02. */
 
 /* ============================================================
    Variables locales (pas de pollution tokens.css)
    ============================================================ */
 .me-overlay {
-    --me-modal-w: min(760px, 92vw);
+    --me-modal-w: min(720px, 92vw);
     --me-modal-h: min(82vh, 720px);
+    --me-accent:       var(--cta-bg);
+    --me-accent-fg:    var(--cta-fg);
+    --me-accent-soft:  color-mix(in oklab, var(--cta-bg) 12%, var(--surface));
+    --me-accent-line:  color-mix(in oklab, var(--cta-bg) 35%, var(--line));
 }
 
 /* ============================================================
@@ -60,10 +72,11 @@
 .me-topbar-mark {
     width: 36px; height: 36px;
     border-radius: var(--radius-lg);
-    background: var(--hw-amber-soft);
-    color: var(--hw-amber);
+    background: var(--me-accent-soft);
+    color: var(--me-accent);
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+    border: 1px solid var(--me-accent-line);
 }
 .me-topbar-mark i[data-lucide] { width: 18px; height: 18px; }
 .me-topbar-text { min-width: 0; }
@@ -135,8 +148,8 @@
     border-radius: var(--radius-sm);
 }
 .me-tab.is-active {
-    color: var(--hw-amber);
-    border-bottom-color: var(--hw-amber);
+    color: var(--me-accent);
+    border-bottom-color: var(--me-accent);
     font-weight: 700;
 }
 .me-tab i[data-lucide] { width: 14px; height: 14px; flex-shrink: 0; }
@@ -149,8 +162,8 @@
     font-weight: 600;
 }
 .me-tab.is-active .count {
-    background: var(--hw-amber-soft);
-    color: var(--hw-amber);
+    background: var(--me-accent-soft);
+    color: var(--me-accent);
 }
 
 /* — Body & scroll — */
@@ -162,369 +175,142 @@
 .me-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 
 /* ============================================================
-   Section header (titre + actions Tous/Aucun)
+   Layout vertical des sections (onglet Sauvegarde)
    ============================================================ */
-.me-section-h {
-    display: flex; align-items: center; justify-content: space-between;
-    margin: 6px 0 10px;
+.me-stack { display: flex; flex-direction: column; gap: 20px; }
+
+.me-block {
+    display: flex; flex-direction: column;
+    gap: 10px;
 }
-.me-section-title {
+.me-block-head {
+    display: flex; align-items: baseline; gap: 10px;
+    justify-content: space-between;
+}
+.me-block-title {
     font-family: var(--font-family-mono);
     font-size: 11px; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase;
+    letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--ink-soft);
-    display: flex; align-items: center; gap: 8px;
-}
-.me-section-title .badge {
-    font-family: "Inter", sans-serif;
-    text-transform: none; letter-spacing: 0;
-    background: var(--hw-amber-soft); color: var(--hw-amber);
-    font-size: 11px; padding: 2px 8px;
-    border-radius: var(--radius-pill);
-    font-weight: 700;
-}
-.me-section-title .badge.amber { background: var(--hw-amber-soft); color: var(--hw-amber); }
-.me-section-title .badge.red { background: var(--danger-soft); color: var(--danger-fg); }
-.me-section-title .badge.green { background: var(--ok-soft); color: var(--ok-fg); }
-.me-section-actions { display: flex; gap: 6px; }
-
-.me-pill {
-    padding: 5px 11px;
-    border: 1px solid var(--line);
-    background: var(--surface); color: var(--ink-soft);
-    border-radius: var(--radius-pill);
-    font-family: inherit;
-    font-size: 11.5px; font-weight: 600;
-    cursor: pointer;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-.me-pill:hover {
-    border-color: var(--hw-amber);
-    color: var(--hw-amber);
-    background: var(--hw-amber-soft);
-}
-.me-pill:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-
-/* ============================================================
-   Hero (lieu de résidence)
-   ============================================================ */
-.me-hero {
-    background: var(--hw-amber-soft);
-    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
-    border-radius: var(--radius-lg);
-    padding: 18px 22px;
-    margin-bottom: var(--space-lg);
-    display: flex; align-items: center; gap: 18px;
-}
-.me-hero.is-set {
-    background: var(--ok-soft);
-    border-color: color-mix(in oklab, var(--ok) 35%, transparent);
-}
-.me-hero-mark {
-    width: 48px; height: 48px;
-    border-radius: var(--radius-lg);
-    background: var(--surface);
-    color: var(--hw-amber);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
-}
-.me-hero.is-set .me-hero-mark {
-    color: var(--ok-fg);
-    border-color: color-mix(in oklab, var(--ok) 35%, transparent);
-}
-.me-hero-mark i[data-lucide] { width: 22px; height: 22px; }
-.me-hero-text { flex: 1; min-width: 0; }
-.me-hero-eyebrow {
-    font-family: var(--font-family-mono);
-    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--hw-amber);
-    margin-bottom: 3px;
-}
-.me-hero.is-set .me-hero-eyebrow { color: var(--ok-fg); }
-.me-hero-title {
-    font-family: "Inter", system-ui, sans-serif;
-    font-size: 16px; font-weight: 700;
-    line-height: 1.25; color: var(--ink);
     margin: 0;
+    white-space: nowrap;
 }
-.me-hero-coords {
-    font-family: var(--font-family-mono);
-    font-size: 14px; font-weight: 600;
+/* Variante "dominante" : titre Sauvegarder plus grand pour casser la
+   hiérarchie avec Restaurer (qui reste en JetBrains Mono petit). */
+.me-block-title-lg {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    text-transform: none;
     color: var(--ink);
 }
-.me-hero-sub {
-    font-size: 12.5px; color: var(--ink-soft);
-    margin-top: 3px;
-}
-.me-hero-actions { display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0; }
-.me-hero-cta {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--surface);
-    color: var(--hw-amber);
-    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
-    padding: 8px 14px;
-    border-radius: var(--radius-md);
-    font-family: inherit;
-    font-size: 12.5px; font-weight: 600;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-}
-.me-hero-cta:hover {
-    background: color-mix(in oklab, var(--hw-amber-soft) 60%, var(--surface));
-    border-color: var(--hw-amber);
-}
-.me-hero-cta:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.me-hero-cta i[data-lucide] { width: 13px; height: 13px; }
-.me-hero.is-set .me-hero-cta { color: var(--ok-fg); border-color: color-mix(in oklab, var(--ok) 35%, transparent); }
-.me-hero.is-set .me-hero-cta:hover { background: color-mix(in oklab, var(--ok-soft) 60%, var(--surface)); border-color: var(--ok); }
-
-/* Hero "vide" : invitatif pour définir le lieu */
-.me-hero-hint {
+/* Le bloc "hero" Sauvegarder écarte un peu son contenu pour respirer */
+.me-block-hero { gap: 12px; }
+.me-block-hero .me-block-desc { font-size: 13.5px; }
+.me-block-desc {
     font-size: 13px; line-height: 1.5;
     color: var(--ink-soft);
-    margin: 0 0 10px;
+    margin: 0 0 4px;
+    max-width: 56ch;
 }
-
-/* ============================================================
-   Hint banner (info neutre)
-   ============================================================ */
-.me-hint {
-    display: flex; gap: 10px;
-    padding: 10px 14px;
-    margin-bottom: 14px;
-    background: var(--surface-muted);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    font-size: 12.5px; line-height: 1.45;
-    color: var(--ink-soft);
-}
-.me-hint i[data-lucide] {
-    width: 14px; height: 14px;
-    flex-shrink: 0; margin-top: 2px;
-    color: var(--ink-soft);
-}
-.me-hint--spaced { margin-top: 16px; }
-
-/* ============================================================
-   Card (circuits + trash items)
-   ============================================================ */
-.me-card {
-    display: flex; align-items: center; gap: 14px;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    padding: 14px 16px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: border-color 0.15s ease, background 0.15s ease;
-}
-.me-card:hover {
-    border-color: color-mix(in oklab, var(--hw-amber) 50%, var(--line));
-    background: color-mix(in oklab, var(--hw-amber-soft) 30%, var(--surface));
-}
-/* Focus visible en navigation clavier : la checkbox interne est opacity:0,
-   donc sans :focus-within la card ne montre aucun signal de focus quand
-   l'utilisateur Tab dessus. Ne s'active pas au clic souris. */
-.me-card:focus-within {
-    box-shadow: var(--focus-ring);
-    border-color: var(--hw-amber);
-}
-.me-card.is-checked {
-    background: var(--hw-amber-soft);
-    border-color: color-mix(in oklab, var(--hw-amber) 40%, var(--line));
-}
-.me-card-ico {
-    width: 36px; height: 36px;
-    border-radius: var(--radius-md);
-    background: var(--surface-muted);
-    color: var(--ink-soft);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-}
-.me-card.is-checked .me-card-ico {
-    background: var(--surface);
-    color: var(--hw-amber);
-    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
-}
-.me-card-ico i[data-lucide] { width: 17px; height: 17px; }
-.me-card-ico.muted { background: var(--surface-muted); color: var(--ink-soft); }
-.me-card-text { flex: 1; min-width: 0; }
-.me-card-title {
-    font-size: 13.5px; font-weight: 700; color: var(--ink);
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-.me-card-sub {
-    font-size: 12px; color: var(--ink-soft);
-    margin-top: 2px;
-}
-
-/* ============================================================
-   Toggle switch (circuit on/off)
-   ============================================================ */
-.me-toggle {
-    position: relative;
-    width: 38px; height: 22px;
-    flex-shrink: 0;
-}
-.me-toggle input[type="checkbox"] {
-    opacity: 0; position: absolute; inset: 0;
-    width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1;
-}
-.me-toggle-track {
-    position: absolute; inset: 0;
-    background: var(--line);
+.me-block-status {
+    font-family: var(--font-family-mono);
+    font-size: 10.5px; font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
     border-radius: var(--radius-pill);
-    transition: background 0.2s;
-    pointer-events: none;
 }
-.me-toggle-track::after {
-    content: ''; position: absolute;
-    left: 3px; top: 3px;
-    width: 16px; height: 16px;
-    border-radius: 50%;
-    background: var(--surface);
-    transition: transform 0.2s;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+.me-block-status.on {
+    background: var(--ok-soft);
+    color: var(--ok-fg);
 }
-.me-toggle input:checked ~ .me-toggle-track { background: var(--hw-amber); }
-.me-toggle input:checked ~ .me-toggle-track::after { transform: translateX(16px); }
-.me-toggle input:focus-visible ~ .me-toggle-track {
-    box-shadow: var(--focus-ring);
+.me-block-status.soon {
+    background: var(--surface-muted);
+    color: var(--ink-soft);
 }
 
 /* ============================================================
-   Onglet Données : grid 2 cols + cards
+   Choix de sauvegarde : 2 options nommées (radio cards)
    ============================================================ */
-.me-data-grid {
+.me-choice {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
 }
-.me-data-card {
+.me-choice-card {
+    position: relative;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
-    padding: 18px;
+    padding: 14px 16px 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
     display: flex; flex-direction: column;
-    gap: 10px;
-    min-height: 180px;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    gap: 6px;
 }
-.me-data-card:hover {
-    border-color: color-mix(in oklab, var(--hw-amber) 50%, var(--line));
-    box-shadow: var(--shadow-card);
+.me-choice-card input[type="radio"] {
+    position: absolute; opacity: 0; pointer-events: none;
+    width: 0; height: 0;
 }
-.me-data-card-ico {
-    width: 38px; height: 38px;
-    border-radius: var(--radius-md);
-    background: var(--hw-amber-soft);
-    color: var(--hw-amber);
-    display: flex; align-items: center; justify-content: center;
+.me-choice-card:hover {
+    border-color: var(--me-accent-line);
+}
+.me-choice-card.is-selected {
+    border-color: var(--me-accent);
+    background: var(--me-accent-soft);
+    box-shadow: 0 0 0 1px var(--me-accent) inset;
+}
+.me-choice-radio {
+    position: absolute; top: 12px; right: 12px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid var(--line);
+    background: var(--surface);
+    transition: border-color 0.15s, background 0.15s;
+}
+.me-choice-card.is-selected .me-choice-radio {
+    border-color: var(--me-accent);
+    background: var(--me-accent);
+    box-shadow: inset 0 0 0 3px var(--surface);
+}
+.me-choice-card:focus-within {
+    box-shadow: var(--focus-ring);
+}
+.me-choice-name {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    padding-right: 28px; /* ne passe pas sous le radio */
+}
+.me-choice-name i[data-lucide] {
+    width: 16px; height: 16px;
+    color: var(--me-accent);
     flex-shrink: 0;
 }
-.me-data-card-ico.info {
-    background: var(--info-soft);
-    color: var(--info-fg);
-}
-.me-data-card-ico i[data-lucide] { width: 18px; height: 18px; }
-.me-data-card-title {
-    font-size: 14px; font-weight: 700; color: var(--ink);
-    margin: 0;
-}
-.me-data-card-desc {
+.me-choice-desc {
     font-size: 12.5px; line-height: 1.45;
     color: var(--ink-soft);
     margin: 0;
-    flex: 1;
 }
-
-/* Custom checkbox (Inclure les photos) — natif caché */
-.me-cb {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12px; color: var(--ink);
-    cursor: pointer;
-    user-select: none;
-}
-.me-cb input[type="checkbox"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-    width: 0; height: 0;
-}
-.me-cb-box {
-    width: 14px; height: 14px;
-    border-radius: 3px;
-    border: 1.5px solid var(--line);
-    background: var(--surface);
-    position: relative;
-    flex-shrink: 0;
-    transition: background 0.15s, border-color 0.15s;
-}
-.me-cb input:checked ~ .me-cb-box {
-    background: var(--hw-amber-soft);
-    border-color: var(--hw-amber);
-}
-.me-cb-box::after {
-    content: '✓';
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--hw-amber);
-    font-size: 10px; font-weight: 700; line-height: 1;
-    opacity: 0;
-    transition: opacity 0.15s;
-}
-.me-cb input:checked ~ .me-cb-box::after { opacity: 1; }
-.me-cb input:focus-visible ~ .me-cb-box { box-shadow: var(--focus-ring); }
-
-/* CTA standard */
-.me-btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    width: 100%;
-    padding: 10px 14px;
-    border: none;
-    border-radius: var(--radius-md);
-    font-family: inherit;
-    font-size: 13px; font-weight: 700;
-    cursor: pointer;
-    transition: opacity 0.15s, background 0.15s, transform 0.15s, border-color 0.15s;
-    margin-top: auto;
-    text-align: center;
-}
-.me-btn i[data-lucide] { width: 14px; height: 14px; }
-.me-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.me-btn.primary {
-    background: var(--cta-bg);
-    color: var(--cta-fg);
-}
-.me-btn.primary:hover { opacity: 0.92; transform: translateY(-1px); }
-.me-btn.secondary {
-    background: var(--surface);
+.me-choice-size {
+    margin-top: 4px;
+    font-family: var(--font-family-mono);
+    font-size: 11.5px; font-weight: 600;
     color: var(--ink);
-    border: 1px solid var(--line);
 }
-.me-btn.secondary:hover {
-    background: var(--surface-muted);
-    border-color: color-mix(in oklab, var(--ink-soft) 30%, var(--line));
+.me-choice-size em {
+    font-style: normal;
+    color: var(--ink-soft);
+    font-weight: 500;
 }
-.me-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 /* ============================================================
-   Onglet Sécurité (cards modulaires)
+   Status card (auto-backup, partage, sync)
    ============================================================ */
-.me-sec {
-    display: flex; flex-direction: column;
-    gap: 10px;
-}
-.me-sec-intro {
-    margin: 0 0 4px;
-    font-size: 13px; line-height: 1.5;
-    color: var(--ink-soft);
-}
-.me-sec-card {
+.me-status-card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
@@ -532,100 +318,198 @@
     display: flex; flex-direction: column;
     gap: 8px;
 }
-.me-sec-card.active {
-    background: var(--ok-soft);
-    border-color: color-mix(in oklab, var(--ok) 35%, var(--line));
+.me-status-card.is-soon {
+    opacity: 0.55;
+    background: var(--surface-muted);
 }
-.me-sec-card.soon { opacity: 0.55; }
-.me-sec-head {
+.me-status-row {
     display: flex; align-items: center; gap: 10px;
-    margin-bottom: 4px;
 }
-.me-sec-head i[data-lucide] {
-    width: 18px; height: 18px;
-    color: var(--ink-soft);
+.me-status-ico {
+    width: 32px; height: 32px;
+    border-radius: var(--radius-md);
+    background: var(--me-accent-soft);
+    color: var(--me-accent);
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
+    border: 1px solid var(--me-accent-line);
 }
-.me-sec-card.active .me-sec-head i[data-lucide] { color: var(--ok-fg); }
-.me-sec-title {
-    flex: 1;
+.me-status-card.is-soon .me-status-ico {
+    background: var(--surface);
+    color: var(--ink-soft);
+    border-color: var(--line);
+}
+.me-status-ico i[data-lucide] { width: 16px; height: 16px; }
+.me-status-text { flex: 1; min-width: 0; }
+.me-status-title {
     font-size: 13.5px; font-weight: 700;
     color: var(--ink);
+    margin: 0;
+    line-height: 1.25;
 }
-.me-sec-status {
-    font-size: 10.5px; font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 2px 8px;
-    border-radius: var(--radius-pill);
+.me-status-sub {
+    font-size: 12.5px; color: var(--ink-soft);
+    margin-top: 2px;
 }
-.me-sec-status.on { background: var(--ok-fg); color: var(--surface); }
-.me-sec-status.soon {
-    background: var(--surface-muted);
+.me-status-sub strong { color: var(--ink); font-weight: 600; }
+.me-status-hint {
+    font-size: 12px; line-height: 1.5;
     color: var(--ink-soft);
+    margin: 0;
 }
-.me-sec-stat {
-    font-size: 13px; color: var(--ink);
-}
-.me-sec-stat strong { font-weight: 700; }
-.me-sec-stat.sub {
-    font-size: 12px; color: var(--ink-soft);
-}
-.me-sec-hint {
-    margin-top: 4px;
-    font-size: 12px; line-height: 1.45;
-    color: var(--ink-soft);
-}
-.me-sec-actions {
+.me-status-actions {
     display: flex; gap: 8px;
-    margin-top: 10px;
     flex-wrap: wrap;
-}
-.me-sec-actions .me-btn {
-    width: auto;
-    padding: 8px 14px;
-    font-size: 12.5px;
-    margin-top: 0;
+    margin-top: 4px;
 }
 
 /* ============================================================
-   Onglet Corbeille (trash items + restore pill)
+   Boutons standardisés
+   ============================================================ */
+.me-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    padding: 9px 14px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.15s, transform 0.15s, border-color 0.15s, color 0.15s;
+    text-align: center;
+}
+.me-btn i[data-lucide] { width: 14px; height: 14px; }
+.me-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.me-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+.me-btn.primary {
+    background: var(--me-accent);
+    color: var(--me-accent-fg);
+}
+.me-btn.primary:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+
+/* secondary = action neutre (Restaurer, Forcer backup, Partager). Pas de vert. */
+.me-btn.secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+}
+.me-btn.secondary:hover:not(:disabled) {
+    background: var(--surface-muted);
+    border-color: color-mix(in oklab, var(--ink-soft) 30%, var(--line));
+}
+
+/* ghost = action discrète sur status card claire */
+.me-btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--line);
+}
+.me-btn.ghost:hover:not(:disabled) {
+    background: var(--surface-muted);
+}
+
+/* danger = supprimer définitivement */
+.me-btn.danger {
+    background: var(--surface);
+    color: var(--danger-fg);
+    border-color: color-mix(in oklab, var(--danger-fg) 35%, var(--line));
+}
+.me-btn.danger:hover:not(:disabled) {
+    background: var(--danger-soft);
+    border-color: var(--danger-fg);
+}
+.me-btn.danger-solid {
+    background: var(--danger-bg, var(--danger-fg));
+    color: var(--cta-fg);
+    border-color: transparent;
+}
+.me-btn.danger-solid:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
+
+/* Sauvegarder = CTA principal, pleine largeur */
+.me-btn.block { width: 100%; }
+
+/* Bouton « Télécharger » adaptatif : label/icône swap desktop ↔ mobile.
+   Sur device réel : @media query. Dans la maquette, l'attribut
+   host[data-viewport="mobile"] sur l'ancêtre force le swap. */
+.me-btn-on-desktop { display: inline-flex; align-items: center; gap: 7px; }
+.me-btn-on-mobile  { display: none; align-items: center; gap: 7px; }
+@media (max-width: 767px) {
+    .me-btn-on-desktop { display: none; }
+    .me-btn-on-mobile  { display: inline-flex; }
+}
+
+/* ============================================================
+   Footnote — ligne de statut discrète (backup auto)
+   ============================================================ */
+.me-footnote {
+    display: flex; align-items: center; gap: 8px;
+    margin: 4px 0 0;
+    padding: 12px 14px 0;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px; line-height: 1.5;
+    color: var(--ink-soft);
+}
+.me-footnote i[data-lucide] {
+    width: 14px; height: 14px;
+    color: var(--me-accent);
+    flex-shrink: 0;
+}
+.me-footnote strong {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+/* ============================================================
+   Onglet Corbeille
    ============================================================ */
 .me-trash {
     display: flex; flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 .me-trash-item {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: 12px 14px;
-    display: flex; align-items: center;
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
     gap: 12px;
-    transition: opacity 0.4s ease;
+    align-items: center;
+    transition: opacity 0.4s ease, border-color 0.15s;
 }
-.me-trash-restore {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 6px 13px;
-    background: var(--ok-soft);
-    color: var(--ok-fg);
-    border: 1px solid color-mix(in oklab, var(--ok) 40%, var(--surface));
-    border-radius: var(--radius-pill);
-    font-family: inherit;
-    font-size: 12px; font-weight: 700;
-    cursor: pointer;
+.me-trash-item:hover { border-color: color-mix(in oklab, var(--ink-soft) 25%, var(--line)); }
+.me-trash-item.is-restoring { opacity: 0.5; pointer-events: none; }
+.me-trash-ico {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-md);
+    background: var(--surface-muted);
+    color: var(--ink-soft);
+    display: flex; align-items: center; justify-content: center;
+}
+.me-trash-ico i[data-lucide] { width: 17px; height: 17px; }
+.me-trash-text { min-width: 0; }
+.me-trash-title {
+    font-size: 13.5px; font-weight: 700; color: var(--ink);
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.me-trash-meta {
+    font-size: 12px; color: var(--ink-soft);
+    margin-top: 2px;
+}
+.me-trash-actions {
+    display: flex; align-items: center; gap: 6px;
     flex-shrink: 0;
-    transition: background 0.15s, transform 0.15s;
 }
-.me-trash-restore:hover {
-    background: color-mix(in oklab, var(--ok-soft) 70%, var(--ok));
-    transform: translateY(-1px);
+.me-trash-actions .me-btn {
+    padding: 7px 12px;
+    font-size: 12px;
 }
-.me-trash-restore:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.me-trash-restore i[data-lucide] { width: 13px; height: 13px; }
 
 /* ============================================================
-   Empty states
+   Empty state
    ============================================================ */
 .me-empty {
     padding: 48px 20px;
@@ -637,13 +521,10 @@
     width: 64px; height: 64px;
     margin: 0 auto 14px;
     border-radius: var(--radius-lg);
-    background: var(--surface-muted);
-    color: var(--ink-soft);
+    background: var(--me-accent-soft);
+    color: var(--me-accent);
+    border: 1px solid var(--me-accent-line);
     display: flex; align-items: center; justify-content: center;
-}
-.me-empty-mark.green {
-    background: var(--ok-soft);
-    color: var(--ok-fg);
 }
 .me-empty-mark i[data-lucide] { width: 28px; height: 28px; }
 .me-empty-title {
@@ -659,7 +540,84 @@
 }
 
 /* ============================================================
-   MOBILE (< 768px) : plein écran, tabs scrollables, grille 1 col
+   Hint banner (info neutre)
+   ============================================================ */
+.me-hint {
+    display: flex; gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    font-size: 12.5px; line-height: 1.45;
+    color: var(--ink-soft);
+}
+.me-hint i[data-lucide] {
+    width: 14px; height: 14px;
+    flex-shrink: 0; margin-top: 2px;
+    color: var(--ink-soft);
+}
+
+/* ============================================================
+   Confirm dialog (suppression définitive)
+   ============================================================ */
+.me-confirm-overlay {
+    position: absolute; inset: 0;
+    background: color-mix(in srgb, var(--scrim) 60%, transparent);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+.me-confirm-overlay.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.me-confirm {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    padding: 22px 22px 18px;
+    max-width: 420px;
+    width: 100%;
+    transform: scale(0.96);
+    transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.3, 1.1);
+}
+.me-confirm-overlay.is-active .me-confirm { transform: scale(1); }
+.me-confirm-head {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 12px;
+}
+.me-confirm-ico {
+    width: 40px; height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--danger-soft);
+    color: var(--danger-fg);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.me-confirm-ico i[data-lucide] { width: 20px; height: 20px; }
+.me-confirm-title {
+    font-size: 16px; font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+}
+.me-confirm-body {
+    font-size: 13px; line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+}
+.me-confirm-body strong { color: var(--ink); font-weight: 600; }
+.me-confirm-actions {
+    display: flex; gap: 8px; justify-content: flex-end;
+}
+
+/* ============================================================
+   MOBILE (< 768px) : plein écran
    ============================================================ */
 @media (max-width: 767px) {
     .me-overlay {
@@ -668,111 +626,79 @@
     .me-modal {
         width: 100vw;
         height: 100vh;
-        height: 100dvh; /* ios safe area : prendre la dynamic viewport quand dispo */
+        height: 100dvh;
         max-width: none;
         border-radius: 0;
         border: none;
         box-shadow: none;
     }
 
-    /* Topbar : on cache la brand desktop, on affiche le titre dynamique mobile */
-    .me-topbar {
-        padding: 14px 16px 0;
-    }
+    .me-topbar { padding: 14px 16px 0; }
     .me-topbar-brand { display: none; }
     .me-topbar-mobile { display: block; flex: 1; min-width: 0; }
     .me-close { width: 36px; height: 36px; }
 
-    /* Tabs scrollables horizontalement, sans scrollbar visible */
     .me-tabs {
         padding: 12px 14px 0;
         overflow-x: auto;
         scrollbar-width: none;
-        scroll-snap-type: x proximity;
-        scroll-padding-inline: 14px;
     }
     .me-tabs::-webkit-scrollbar { display: none; }
     .me-tab {
-        scroll-snap-align: start;
         padding: 10px 12px;
         flex-shrink: 0;
     }
 
-    .me-body {
-        padding: 16px 14px 24px;
-    }
+    .me-body { padding: 16px 14px 24px; }
+    .me-stack { gap: 18px; }
 
-    /* Hero compact */
-    .me-hero {
-        padding: 14px 16px;
-        gap: 14px;
+    /* Choix Légère/Complète : empilé sur mobile */
+    .me-choice { grid-template-columns: 1fr; }
+
+    /* Status card : actions empilées (full width) */
+    .me-status-actions .me-btn { flex: 1; min-width: 0; }
+
+    /* Trash item : actions sur 2ᵉ ligne */
+    .me-trash-item {
+        grid-template-columns: 36px 1fr;
+        gap: 10px 12px;
+    }
+    .me-trash-actions {
+        grid-column: 1 / -1;
+        margin-top: 4px;
+        gap: 8px;
+    }
+    .me-trash-actions .me-btn { flex: 1; }
+
+    /* Hero Sauvegarder : titre légèrement réduit pour économiser le vertical */
+    .me-block-title-lg { font-size: 17px; }
+
+    /* Status card (Restaurer) : pile le bouton sous le texte pour éviter
+       que le titre wrape sur 3 lignes en concurrence avec un bouton large. */
+    .me-status-row {
         flex-wrap: wrap;
     }
-    .me-hero-mark { width: 40px; height: 40px; border-radius: var(--radius-md); }
-    .me-hero-mark i[data-lucide] { width: 18px; height: 18px; }
-    .me-hero-title { font-size: 15px; }
-    .me-hero-coords { font-size: 13px; }
-    .me-hero-sub { font-size: 12px; }
-    .me-hero-actions {
-        width: 100%;
-        margin-top: 4px;
+    .me-status-row .me-status-text { flex: 1 1 60%; min-width: 0; }
+    .me-status-row .me-btn {
+        flex: 0 0 auto;
+        margin-left: auto;
     }
-    .me-hero-cta { flex: 1; justify-content: center; }
+    /* Au-dessous d'une certaine largeur de status-card, on empile. */
+    .me-status-card .me-btn { width: 100%; }
+    .me-status-card .me-status-text { flex-basis: 100%; }
+    .me-status-card .me-status-ico { align-self: flex-start; }
 
-    /* Section header compact */
-    .me-section-h { margin: 10px 0 8px; }
-    .me-section-title { font-size: 10.5px; }
-
-    /* Cards : padding et touch target augmentés */
-    .me-card {
-        padding: 12px 14px;
-        gap: 12px;
-    }
-    .me-card-title { font-size: 13px; }
-    .me-card-sub { font-size: 11.5px; }
-
-    /* Toggle plus large pour le tap (cible 44px sur le label entier) */
-    .me-toggle {
-        width: 44px; height: 24px;
-    }
-    .me-toggle-track::after {
-        width: 18px; height: 18px;
-        top: 3px; left: 3px;
-    }
-    .me-toggle input:checked ~ .me-toggle-track::after {
-        transform: translateX(20px);
-    }
-
-    /* Pills : touch target min 32px */
-    .me-pill { padding: 7px 12px; font-size: 11.5px; }
-
-    /* Données : grille 1 col */
-    .me-data-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-    .me-data-card {
-        padding: 16px;
-        min-height: 0;
-    }
-
-    /* Sécurité : padding card légèrement réduit */
-    .me-sec-card { padding: 12px 14px; }
-
-    /* Trash items */
-    .me-trash-item { padding: 10px 12px; }
-    .me-trash-restore { padding: 7px 12px; font-size: 11.5px; }
-
-    /* Empty states : moins de padding vertical */
     .me-empty { padding: 36px 16px; }
     .me-empty-mark { width: 56px; height: 56px; margin-bottom: 12px; }
     .me-empty-mark i[data-lucide] { width: 24px; height: 24px; }
     .me-empty-title { font-size: 16px; }
+
+    .me-confirm { padding: 20px 18px 16px; }
+    .me-confirm-actions { flex-direction: column-reverse; }
+    .me-confirm-actions .me-btn { width: 100%; }
 }
 
-/* ============================================================
-   Util : caché visuellement mais accessible aux lecteurs d'écran
-   ============================================================ */
+/* Util : caché visuellement mais accessible aux lecteurs d'écran */
 .me-sr-only {
     position: absolute;
     width: 1px; height: 1px;

@@ -127,6 +127,16 @@ export async function forceBackup() {
 }
 
 /**
+ * Réinitialise le compteur d'auto-backup (count=0, lastTimestamp=now).
+ * Appelé après une sauvegarde MANUELLE réussie (« Sauvegarder » de Mon Espace) :
+ * l'utilisateur vient de produire un backup à jour, donc inutile que l'auto-backup
+ * se redéclenche peu après. Évite le doublon (refonte Mon Espace V3, 23/05/2026).
+ */
+export async function resetBackupCounter() {
+    await persistBackupState({ count: 0, lastTimestamp: Date.now() });
+}
+
+/**
  * Statut courant pour l'affichage dans l'onglet Sécurité.
  * @returns {Promise<{count: number, lastDate: Date|null, daysSince: number|null}>}
  */
