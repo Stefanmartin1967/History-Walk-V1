@@ -4,7 +4,7 @@ import { getPoiId, displayGeoJSON } from './data.js';
 import { DOM } from './ui-dom.js';
 import { closeDetailsPanel } from './ui-details.js';
 import { showToast } from './toast.js';
-import { saveAppState, savePoiData, saveCircuit, clearStore } from './database.js';
+import { saveAppState, savePoiData, saveCircuit, clearStore, getAllPoiPhotosForMap, savePoiPhotos, blobToBase64, base64ToBlob } from './database.js';
 import { processImportedGpx } from './gpx.js';
 // Import pour contrôler la vue mobile
 import { isMobileView } from './mobile-state.js';
@@ -154,11 +154,13 @@ export async function saveUserData(forceFullMode = false) {
     if (!state.currentMapId) return showToast("Aucune carte chargée.", "error");
 
     const includePhotos = forceFullMode;
+    const mapId = state.currentMapId;
+    const photosByPoi = includePhotos ? await collectPhotosAsBase64(mapId) : {};
 
     const exportData = cleanDataForExport({
         backupVersion: state.appVersion || "3.0",
         date: new Date().toISOString(),
-        mapId: state.currentMapId,
+        mapId,
         baseGeoJSON: {
             type: "FeatureCollection",
             features: state.loadedFeatures.map(f => {
@@ -167,26 +169,19 @@ export async function saveUserData(forceFullMode = false) {
                 if (state.userData[poiId]) {
                     featureClone.properties.userData = JSON.parse(JSON.stringify(state.userData[poiId]));
                 }
-                if (!includePhotos && featureClone.properties.userData && featureClone.properties.userData.photos) {
-                    featureClone.properties.userData.photos = [];
+                // Les photos vivent dans le bloc userData racine — jamais dupliquées ici.
+                if (featureClone.properties.userData) {
+                    delete featureClone.properties.userData.photos;
                 }
                 return featureClone;
             })
         },
-        userData: JSON.parse(JSON.stringify(state.userData)), 
+        userData: buildRootUserData(includePhotos, photosByPoi),
         myCircuits: state.myCircuits,
         hiddenPoiIds: state.hiddenPoiIds,
         officialCircuitsStatus: state.officialCircuitsStatus || {},
         testedCircuits: state.testedCircuits || {}
     });
-
-    if (!includePhotos) {
-        for (const key in exportData.userData) {
-            if (exportData.userData[key].photos) {
-                exportData.userData[key].photos = [];
-            }
-        }
-    }
 
     const mode = includePhotos ? 'FULL_MASTER' : 'LITE_Mobile';
     const now = new Date();
@@ -284,10 +279,14 @@ export function isValidBackup(json) {
         return false;
     }
 
-    // testedCircuits (tableau si présent)
-    if (json.testedCircuits !== undefined && !Array.isArray(json.testedCircuits)) {
-        console.warn("[Validation] testedCircuits invalide (doit être un tableau).");
-        return false;
+    // testedCircuits (objet OU tableau si présent). Le runtime + l'export
+    // produisent un objet { circuitId: bool } ; on tolère aussi un tableau pour
+    // d'anciens backups. Rejet uniquement si null ou primitive.
+    if (json.testedCircuits !== undefined) {
+        if (typeof json.testedCircuits !== 'object' || json.testedCircuits === null) {
+            console.warn("[Validation] testedCircuits invalide (doit être un objet ou un tableau).");
+            return false;
+        }
     }
 
     // officialCircuitsStatus (objet si présent)
@@ -309,7 +308,7 @@ export function isValidBackup(json) {
     return true;
 }
 
-async function restoreBackup(json) {
+export async function restoreBackup(json) {
     try {
         showToast("Restauration intelligente en cours...", "info");
 
@@ -318,10 +317,26 @@ async function restoreBackup(json) {
         await saveAppState('lastMapId', mapId);
 
         // 1. Restaurer les données utilisateur (Notes, Visites, Positions modifiées)
+        //    Les photos perso arrivent en base64 dans userData.photos (cf. export) :
+        //    on les redécode en Blob vers le store poiPhotos, et poiUserData ne
+        //    conserve que les références légères (URLs/chemins admin).
         if (json.userData) {
             setUserData(json.userData);
             for (const [id, data] of Object.entries(state.userData)) {
-                await savePoiData(mapId, id, data);
+                const allPhotos = Array.isArray(data.photos) ? data.photos : [];
+                const base64Photos = allPhotos.filter(p => typeof p === 'string' && p.startsWith('data:'));
+                if (base64Photos.length > 0) {
+                    const blobs = base64Photos.map((b64, i) => ({
+                        id: `restored_${id}_${i}_${Date.now()}`,
+                        blob: base64ToBlob(b64)
+                    }));
+                    await savePoiPhotos(mapId, id, blobs);
+                }
+                const lightPhotos = allPhotos.filter(p => typeof p === 'string' && !p.startsWith('data:'));
+                const cleanData = { ...data };
+                if (lightPhotos.length > 0) cleanData.photos = lightPhotos;
+                else delete cleanData.photos;
+                await savePoiData(mapId, id, cleanData);
             }
         }
 
@@ -471,34 +486,78 @@ export function cleanDataForExport(obj) {
     return obj;
 }
 
+/**
+ * Récupère toutes les photos perso (Blobs du store poiPhotos) d'une carte et
+ * les encode en base64 pour la sérialisation JSON. Le runtime conserve les Blobs
+ * (compacts) ; seul le fichier d'échange porte du base64 (un JSON ne peut pas
+ * transporter un Blob binaire).
+ * @returns {Promise<Object<string, string[]>>} map { poiId: [dataURL, ...] }
+ */
+async function collectPhotosAsBase64(mapId) {
+    const entries = await getAllPoiPhotosForMap(mapId);
+    const result = {};
+    for (const entry of entries) {
+        if (entry?.poiId && Array.isArray(entry.photos) && entry.photos.length > 0) {
+            result[entry.poiId] = await Promise.all(
+                entry.photos.map(p => blobToBase64(p.blob))
+            );
+        }
+    }
+    return result;
+}
+
+/**
+ * Construit le bloc `userData` racine du backup. Repart des photos « légères »
+ * déjà présentes dans userData (URLs/chemins admin, conservés) et ajoute les
+ * photos perso encodées en base64 uniquement quand includePhotos est vrai.
+ * Itère sur l'union userData ∪ photosByPoi pour ne pas oublier un POI qui a des
+ * photos mais aucune note.
+ */
+function buildRootUserData(includePhotos, photosByPoi) {
+    const out = {};
+    const poiIds = new Set([
+        ...Object.keys(state.userData || {}),
+        ...(includePhotos ? Object.keys(photosByPoi) : [])
+    ]);
+    for (const poiId of poiIds) {
+        const data = (state.userData && state.userData[poiId]) || {};
+        const clean = { ...data };
+        const lightPhotos = (Array.isArray(data.photos) ? data.photos : [])
+            .filter(p => typeof p === 'string' && !p.startsWith('data:'));
+        const base64Photos = includePhotos ? (photosByPoi[poiId] || []) : [];
+        const merged = [...lightPhotos, ...base64Photos];
+        if (merged.length > 0) clean.photos = merged;
+        else delete clean.photos;
+        out[poiId] = clean;
+    }
+    return out;
+}
+
 export async function prepareExportData(includePhotos = false) {
+    const mapId = state.currentMapId || 'djerba';
+    const photosByPoi = includePhotos ? await collectPhotosAsBase64(mapId) : {};
+
     const geojson = {
         type: 'FeatureCollection',
         features: state.loadedFeatures.map(f => {
             const poiId = getPoiId(f);
-            const userData = state.userData[poiId] || {};
-            const finalUserData = { ...userData };
-            if (!includePhotos) delete finalUserData.photos;
-
+            const finalUserData = { ...(state.userData[poiId] || {}) };
+            // Les photos vivent dans le bloc userData racine (seul relu à l'import) ;
+            // on ne les duplique jamais dans le geojson.
+            delete finalUserData.photos;
             return {
                 ...f,
-                properties: { 
-                    ...f.properties, 
-                    userData: finalUserData 
-                }
+                properties: { ...f.properties, userData: finalUserData }
             };
         })
     };
 
-    // On retourne le format "Carton avec étiquette" attendu par la Fusion
-
-    // On retourne le format "Carton avec étiquette" attendu par la Fusion
     const exportData = {
         backupVersion: "3.0",
-        mapId: state.currentMapId || 'djerba',
+        mapId,
         date: new Date().toISOString(),
         baseGeoJSON: geojson,
-        userData: state.userData || {},
+        userData: buildRootUserData(includePhotos, photosByPoi),
         myCircuits: state.myCircuits || [],
         hiddenPoiIds: state.hiddenPoiIds || [],
         officialCircuitsStatus: state.officialCircuitsStatus || {},
@@ -506,7 +565,6 @@ export async function prepareExportData(includePhotos = false) {
     };
 
     return cleanDataForExport(exportData);
-
 }
 
 /**
