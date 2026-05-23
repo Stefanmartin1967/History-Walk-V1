@@ -68,7 +68,7 @@ export const ADMIN_WATERMARK_TEXT = '© Stefan Martin — History Walk';
  * + texte blanc semi-transparent, taille de police adaptative à la largeur
  * de l'image (max 12px, sinon ~width/65) pour rester lisible sans dominer.
  */
-function applyWatermark(ctx, canvasWidth, canvasHeight, text) {
+export function applyWatermark(ctx, canvasWidth, canvasHeight, text) {
     const fontSize = Math.max(12, Math.round(canvasWidth / 65));
     const padding = Math.max(10, Math.round(fontSize * 0.8));
 

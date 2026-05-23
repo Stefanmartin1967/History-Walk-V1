@@ -17,6 +17,7 @@ import {
 import { showToast } from './toast.js';
 import { showPrompt, openHwModal, closeHwModal } from './modal.js';
 import { createZipBlob } from './zip-store.js';
+import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
 
 let activeResolve = null;
 let activeObjectUrls = [];
@@ -574,7 +575,14 @@ function compressFileToBlob(file, maxWidth = 1600, quality = 0.88) {
                     }
                     canvas.width = w;
                     canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    // Watermark admin : même logique que compressImage (photo-service).
+                    // Sans ça, l'import GPS — chemin de production principal de l'admin —
+                    // publiait des photos SANS watermark, alors que la grille en mettait.
+                    if (state.isAdmin) {
+                        applyWatermark(ctx, w, h, ADMIN_WATERMARK_TEXT);
+                    }
                     canvas.toBlob(
                         (blob) => {
                             if (blob) resolve(blob);

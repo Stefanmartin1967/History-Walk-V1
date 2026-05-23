@@ -17,7 +17,7 @@ vi.mock('../src/ui-dom.js', () => ({
     DOM: {}
 }));
 
-import { validatePhotoFile, MAX_PHOTO_SIZE_BYTES, compressImage, ADMIN_WATERMARK_TEXT } from '../src/photo-service.js';
+import { validatePhotoFile, MAX_PHOTO_SIZE_BYTES, compressImage, ADMIN_WATERMARK_TEXT, applyWatermark } from '../src/photo-service.js';
 
 describe('validatePhotoFile', () => {
     it('accepte un File JPEG sous le cap', () => {
@@ -92,12 +92,37 @@ describe('compressImage — validation en entrée', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Watermark admin — la branche canvas ne peut pas tourner sous jsdom
-// (canvas.toBlob non implémenté). Validation visuelle réelle via smoke test
-// live sur l'app. Ici on vérifie juste l'export du texte attendu.
+// Watermark admin — la chaîne complète compressImage→canvas.toBlob ne tourne pas
+// sous jsdom (toBlob non implémenté). Mais applyWatermark, elle, opère sur un ctx :
+// on la teste en isolation avec un ctx mocké. Le rendu visuel réel reste validé
+// par smoke test live. applyWatermark est la SOURCE UNIQUE du watermark, partagée
+// par compressImage (grille) et compressFileToBlob (import GPS) — cf. fix v3.7.88.
 // ─────────────────────────────────────────────────────────────────────────────
 describe('ADMIN_WATERMARK_TEXT', () => {
     it('exporte le texte exact "© Stefan Martin — History Walk"', () => {
         expect(ADMIN_WATERMARK_TEXT).toBe('© Stefan Martin — History Walk');
+    });
+});
+
+describe('applyWatermark', () => {
+    it('est exportée (source unique réutilisée par la grille et le chemin GPS)', () => {
+        expect(typeof applyWatermark).toBe('function');
+    });
+
+    it('dessine le texte deux fois (ombre + texte principal) puis save/restore le ctx', () => {
+        const ctx = {
+            save: vi.fn(),
+            restore: vi.fn(),
+            fillText: vi.fn(),
+            font: '',
+            textAlign: '',
+            textBaseline: '',
+            fillStyle: '',
+        };
+        applyWatermark(ctx, 650, 400, ADMIN_WATERMARK_TEXT);
+        expect(ctx.save).toHaveBeenCalledTimes(1);
+        expect(ctx.restore).toHaveBeenCalledTimes(1);
+        expect(ctx.fillText).toHaveBeenCalledTimes(2);
+        expect(ctx.fillText).toHaveBeenCalledWith(ADMIN_WATERMARK_TEXT, expect.any(Number), expect.any(Number));
     });
 });
