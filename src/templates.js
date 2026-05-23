@@ -233,6 +233,9 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const hasPhone = phone !== '';
     const hours = (allProps['Horaires'] || allProps.horaires || '').trim();
     const hasHours = hours !== '';
+    // Lien Facebook : on n'autorise QUE http(s) en href (bloque javascript:, data:…).
+    const fbRaw = (allProps['Facebook'] || '').trim();
+    const facebookUrl = /^https?:\/\//i.test(fbRaw) ? fbRaw : '';
 
     const notes = (allProps.notes || '').toString();
 
@@ -299,6 +302,13 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="poi-fact">
                 <div class="ico"><i data-lucide="phone"></i></div>
                 <div><span class="lab">Téléphone</span><span class="val"><a href="tel:${escapeXml(tel)}">${escapeXml(phone)}</a></span></div>
+            </div>`);
+    }
+    if (facebookUrl) {
+        facts.push(`
+            <div class="poi-fact">
+                <div class="ico"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5z"/></svg></div>
+                <div><span class="lab">Facebook</span><span class="val"><a href="${escapeXml(facebookUrl)}" target="_blank" rel="noopener noreferrer">Voir sur Facebook</a></span></div>
             </div>`);
     }
     const practicalSection = facts.length === 0 ? '' : `

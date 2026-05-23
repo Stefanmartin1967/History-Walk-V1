@@ -33,7 +33,10 @@ const DOM_IDS = {
         SOURCE: 'rich-poi-source',
         SUBTYPE: 'rich-poi-subtype',
         STATE: 'rich-poi-state',
-        ACCESS: 'rich-poi-access'
+        ACCESS: 'rich-poi-access',
+        PHONE: 'rich-poi-phone',
+        HOURS: 'rich-poi-hours',
+        FACEBOOK: 'rich-poi-facebook'
     },
     BTNS: {
         SAVE: 'btn-save-rich-poi',
@@ -126,6 +129,18 @@ const RICH_POI_BODY_HTML = `
             <label for="rich-poi-price">Prix (TND)</label>
             <input type="number" id="rich-poi-price" class="editable-input" placeholder="0" step="0.5">
         </div>
+        <div class="input-group">
+            <label for="rich-poi-phone">Téléphone</label>
+            <input type="tel" id="rich-poi-phone" class="editable-input" placeholder="+216 ...">
+        </div>
+        <div class="input-group">
+            <label for="rich-poi-hours">Horaires</label>
+            <input type="text" id="rich-poi-hours" class="editable-input" placeholder="Ex : 09h-18h">
+        </div>
+        <div class="input-group">
+            <label for="rich-poi-facebook">Facebook</label>
+            <input type="url" id="rich-poi-facebook" class="editable-input" placeholder="https://facebook.com/...">
+        </div>
     </div>
 
     <!-- Source & Notes -->
@@ -210,6 +225,9 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.TIME_M, "");
         setValue(DOM_IDS.INPUTS.PRICE, "");
         setValue(DOM_IDS.INPUTS.SOURCE, "");
+        setValue(DOM_IDS.INPUTS.PHONE, "");
+        setValue(DOM_IDS.INPUTS.HOURS, "");
+        setValue(DOM_IDS.INPUTS.FACEBOOK, "");
 
         // Bloc taxonomie : catégorie vide en création → bloc masqué.
         populateTaxonomySelects("");
@@ -289,6 +307,9 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.PRICE, Number.isFinite(price) ? price : "");
 
         setValue(DOM_IDS.INPUTS.SOURCE, merged.Source || "");
+        setValue(DOM_IDS.INPUTS.PHONE, merged['Téléphone'] || merged.telephone || "");
+        setValue(DOM_IDS.INPUTS.HOURS, merged['Horaires'] || merged.horaires || "");
+        setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
 
         // Affichage coords
         const coordsEl = document.getElementById(DOM_IDS.COORDS);
@@ -630,7 +651,10 @@ async function handleSave() {
         'notes': getValue(DOM_IDS.INPUTS.NOTES),
         'Temps_minutes': (parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0) * 60 + (parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0),
         'Prix_TND': parseFloat(getValue(DOM_IDS.INPUTS.PRICE)) || 0,
-        'Source': getValue(DOM_IDS.INPUTS.SOURCE)
+        'Source': getValue(DOM_IDS.INPUTS.SOURCE),
+        'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
+        'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
+        'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK)
     };
 
     // Prompt for suggestion (Workflow update)
@@ -789,7 +813,10 @@ function handleEmailSuggestion() {
         'notes': getValue(DOM_IDS.INPUTS.NOTES),
         'Temps_minutes': (parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0) * 60 + (parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0),
         'Prix_TND': parseFloat(getValue(DOM_IDS.INPUTS.PRICE)) || 0,
-        'Source': getValue(DOM_IDS.INPUTS.SOURCE)
+        'Source': getValue(DOM_IDS.INPUTS.SOURCE),
+        'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
+        'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
+        'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK)
     };
 
     const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Inconnue';
