@@ -2,8 +2,7 @@
 import L from 'leaflet';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
-import { state, setGhostMarker, setCurrentFeatureId, setPoiFilterFromSearch } from './state.js';
-import { eventBus } from './events.js';
+import { state, setGhostMarker } from './state.js';
 import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
 import { map, clearMarkerHighlights } from './map.js';
 import { getSearchResults } from './search.js';
@@ -68,20 +67,11 @@ export function setupSearch() {
                         circuitIndex = state.currentCircuit.findIndex(f => getPoiId(f) === targetId);
                     }
 
-                    // UX : si on est sur l'onglet Mes Circuits, on RESTE dessus
-                    // et on filtre la liste par ce POI (chip "Filtré par : [POI]"
-                    // déjà géré par renderExplorerList via state.currentFeatureId).
-                    // Sur les autres onglets (ou onglet inconnu), on ouvre la fiche Lieu.
-                    const activeTab = document.querySelector('.sidebar-panel.active')?.dataset.panel;
-                    if (activeTab === 'explorer') {
-                        // Marqueur : ce changement de POI vient de la searchbar,
-                        // donc on active le filtre POI sur la liste des circuits.
-                        setPoiFilterFromSearch(true);
-                        setCurrentFeatureId(globalIndex);
-                        eventBus.emit('circuit:list-updated');
-                    } else {
-                        openDetailsPanel(globalIndex, circuitIndex !== -1 ? circuitIndex : null);
-                    }
+                    // Recherche POI → on ouvre la fiche Lieu (focus logique sur le
+                    // lieu cherché) ET on filtre « Mes Circuits » par ce POI : le 3e
+                    // argument fromSearch=true garde poiFilterFromSearch actif, donc
+                    // le chip « Filtré par : [POI] » s'affiche sur la liste des circuits.
+                    openDetailsPanel(globalIndex, circuitIndex !== -1 ? circuitIndex : null, true);
                 }
             });
             fragment.appendChild(resultBtn);

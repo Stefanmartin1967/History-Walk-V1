@@ -412,7 +412,7 @@ function setupDetailsEventListeners(poiId) {
 
 // --- OUVERTURE/FERMETURE ---
 
-export function openDetailsPanel(featureId, circuitIndex = null) {
+export function openDetailsPanel(featureId, circuitIndex = null, fromSearch = false) {
     if (featureId === undefined || featureId < 0) return;
     if (!isMobileView()) eventBus.emit('map:close-popup');
 
@@ -432,10 +432,10 @@ export function openDetailsPanel(featureId, circuitIndex = null) {
         pushMobileLevel('p');
     }
 
-    // Reset le flag : ce changement de POI ne vient PAS de la searchbar
-    // (clic carte / marker / timeline). Le filtre POI sur la liste des
-    // circuits ne doit donc pas s'activer.
-    setPoiFilterFromSearch(false);
+    // Filtre POI sur la liste « Mes Circuits » : actif UNIQUEMENT quand
+    // l'ouverture vient de la searchbar (fromSearch=true). Un clic carte /
+    // marker / timeline (fromSearch=false) ne doit PAS filtrer les circuits.
+    setPoiFilterFromSearch(fromSearch);
     setCurrentFeatureId(featureId);
     setCurrentCircuitIndex(circuitIndex);
 
