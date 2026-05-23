@@ -1044,7 +1044,11 @@
         "Zone": "Arkou",
         "Description": "Egalement nommé Mosquée Toghruit Wadran. Située à Beni Maaguel. Infos à rechercher.",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ"
+        "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ",
+        "photos": [
+          "photos/poi_HW-01K77WPE6B2CT1A4B58N917MXQ_1779539486277.jpg",
+          "photos/poi_HW-01K77WPE6B2CT1A4B58N917MXQ_1779539487835.jpg"
+        ]
       }
     },
     {
@@ -1520,7 +1524,12 @@
         "Zone": "Arkou",
         "Description": null,
         "Source": null,
-        "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C"
+        "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C",
+        "photos": [
+          "photos/poi_HW-01KJABRN0DWM059C795C8SSD8C_1779539489485.jpg",
+          "photos/poi_HW-01KJABRN0DWM059C795C8SSD8C_1779539491193.jpg",
+          "photos/poi_HW-01KJABRN0DWM059C795C8SSD8C_1779539492908.jpg"
+        ]
       }
     },
     {
@@ -5617,7 +5626,18 @@
         "Description": null,
         "HW_ID": "HW-01KKEDW0GVVT7GVF4YS991G1CK",
         "created_at": "2026-03-11T12:27:43.000Z",
-        "Prix_TND": 0
+        "Prix_TND": 0,
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Description_courte": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Source": "",
+        "Téléphone": "+216 55 512 556",
+        "Horaires": "",
+        "Facebook": "https://www.facebook.com/restaurantchezmoktar"
       }
     },
     {
