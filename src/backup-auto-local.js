@@ -31,6 +31,12 @@ let _cache = null;
 // plusieurs backups en parallèle).
 let _backupInProgress = false;
 
+// Référence au dernier trigger lancé en arrière-plan par recordModification
+// (non-awaité côté prod). Exposée aux tests via _flushAutoBackupForTests() pour
+// l'attendre de façon DÉTERMINISTE — sinon ce trigger fuit entre tests (il se
+// termine pendant le test suivant → appel saveUserData parasite → flake).
+let _pendingTrigger = Promise.resolve();
+
 async function getBackupState() {
     if (_cache) return _cache;
     const stored = await getAppState(STATE_KEY);
@@ -58,8 +64,9 @@ export async function recordModification() {
     s.count = (s.count || 0) + 1;
     await persistBackupState(s);
 
-    // Vérifie sans bloquer la modif en cours (pas await sur le trigger).
-    void checkAndTriggerAutoBackup();
+    // Vérifie sans bloquer la modif en cours (pas d'await sur le trigger).
+    // On garde la référence (pour un flush déterministe en test), sans l'awaiter.
+    _pendingTrigger = checkAndTriggerAutoBackup();
 }
 
 /**
@@ -136,9 +143,28 @@ export async function getBackupStatusForUI() {
     };
 }
 
-/** Test-only : reset le cache mémoire (utilisé en setup vitest). */
+/**
+ * Test-only : reset TOUT l'état module (utilisé en setup vitest).
+ * Doit remettre à zéro chaque singleton module — `_cache` ET le mutex
+ * `_backupInProgress`. Sinon, comme `recordModification` déclenche
+ * `checkAndTriggerAutoBackup()` sans `await` (void), un test qui se termine
+ * pendant que ce trigger est en vol pouvait laisser `_backupInProgress = true`
+ * et contaminer les tests suivants (backups qui bail au guard l.71) → flake.
+ */
 export function _resetCacheForTests() {
     _cache = null;
+    _backupInProgress = false;
+    _pendingTrigger = Promise.resolve();
+}
+
+/**
+ * Test-only : attend la fin du dernier auto-backup déclenché en arrière-plan
+ * par recordModification. Permet aux tests un drainage déterministe au lieu
+ * d'un `setTimeout` approximatif (fragile sous charge), et évite que ce trigger
+ * fuite dans le test suivant.
+ */
+export function _flushAutoBackupForTests() {
+    return _pendingTrigger;
 }
 
 /** Test-only : retourne le cache courant (sans I/O IDB). */

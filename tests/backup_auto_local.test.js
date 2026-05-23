@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // ============================================================================
 // backup-auto-local — Phase 1, Couche 1 (protection données user)
@@ -44,6 +44,7 @@ import {
     getBackupStatusForUI,
     _resetCacheForTests,
     _getCacheForTests,
+    _flushAutoBackupForTests,
 } from '../src/backup-auto-local.js';
 
 const STATE_KEY = 'backup_auto_local_state';
@@ -55,6 +56,12 @@ beforeEach(() => {
     h.appStateStore.clear();
     h.mockState.isAdmin = false;
     _resetCacheForTests();
+});
+
+afterEach(async () => {
+    // Draine le trigger lancé en arrière-plan par recordModification, pour qu'il
+    // ne se termine pas pendant le test suivant (cause racine du flake).
+    await _flushAutoBackupForTests();
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -70,9 +77,9 @@ describe('recordModification', () => {
 
     it('cumul des appels successifs', async () => {
         for (let i = 0; i < 5; i++) await recordModification();
-        // recordModification déclenche aussi checkAndTriggerAutoBackup en
-        // arrière-plan ; on attend la microtask pour qu'il termine
-        await new Promise(r => setTimeout(r, 5));
+        // recordModification déclenche checkAndTriggerAutoBackup en arrière-plan ;
+        // on attend sa fin de façon déterministe (plus de setTimeout fragile).
+        await _flushAutoBackupForTests();
         expect(h.appStateStore.get(STATE_KEY).count).toBe(5);
         expect(h.saveUserDataSpy).not.toHaveBeenCalled();
     });
@@ -85,7 +92,7 @@ describe('recordModification', () => {
 
     it('déclenche un auto-backup au seuil de 10 modifs', async () => {
         for (let i = 0; i < 10; i++) await recordModification();
-        await new Promise(r => setTimeout(r, 30));
+        await _flushAutoBackupForTests();
 
         expect(h.saveUserDataSpy).toHaveBeenCalledTimes(1);
         expect(h.saveUserDataSpy).toHaveBeenCalledWith(false); // mode LITE
