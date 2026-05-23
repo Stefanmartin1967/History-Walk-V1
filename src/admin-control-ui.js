@@ -6,7 +6,7 @@ import { showToast } from './toast.js';
 // Les imports legacy sont retirés volontairement ; tout passe par openControlCenterModal/closeCCModal.
 import { renderMaintenanceTab } from './admin-maintenance.js';
 import { setTopbarSubtabs } from './admin-cc-topbar.js';
-import { GITHUB_OWNER, GITHUB_REPO } from './config.js';
+import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 // NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
 // handler de bouton (cf. carte OUTILS plus bas) pour casser le cycle
 // admin-control-center → admin-control-ui → admin → admin-control-center.
@@ -1227,7 +1227,8 @@ function renderUploadCircuitPanel(diffData, callbacks) {
         const commitMsg = circuitName
             ? `feat(circuit): Ajout "${circuitName}"`
             : `feat(circuit): Ajout "${file.name}"`;
-        const path = `public/circuits/djerba/${file.name}`;
+        const mapId = state.currentMapId || 'djerba';
+        const path = GITHUB_PATHS.circuitFile(mapId, file.name);
 
         submitBtn.disabled = true;
         statusDiv.style.display = 'flex';
