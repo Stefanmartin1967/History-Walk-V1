@@ -401,6 +401,7 @@ function openModal(feature = null, index = null) {
         form.prixTND.value = Number.isFinite(p['Prix_TND']) ? p['Prix_TND'] : '';
         form.telephone.value = p['Téléphone'] || p['telephone'] || '';
         form.horaires.value = p['Horaires'] || p['horaires'] || '';
+        form.facebook.value = p['Facebook'] || '';
         form.verified.checked = !!p['verified'];
 
         if (Array.isArray(p.photos) && p.photos.length > 0) {
@@ -508,6 +509,7 @@ form.addEventListener('submit', (e) => {
         prixTND: Number.isFinite(prixTND) ? prixTND : null,
         telephone: form.telephone.value,
         horaires: form.horaires.value,
+        facebook: form.facebook.value,
         verified: form.verified.checked,
         sousType: form.sousType.value,
         etat: form.etat.value,

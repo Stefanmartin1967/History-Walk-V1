@@ -369,6 +369,7 @@ export function saveFeature(formData, indexToUpdate = null) {
         "Prix_TND": formData.prixTND,
         "Téléphone": formData.telephone || null,
         "Horaires": formData.horaires || null,
+        "Facebook": formData.facebook || null,
         "verified": formData.verified || false,
         "HW_ID": existing?.HW_ID ?? generateHWID()
     };
