@@ -844,55 +844,75 @@ async function generateAndDownloadZip(clusters, albumName) {
 
 function buildClusterSection(cluster, index) {
     const section = document.createElement('section');
-    section.className = 'photo-batch-cluster';
+    section.className = 'pb-cluster';
     section.dataset.clusterId = cluster.id;
     section.dataset.clusterIndex = String(index);
 
-    if (cluster.type === 'OUT_POI') section.classList.add('out-poi');
+    const hasNearbyPoi = cluster.nearbyPois && cluster.nearbyPois.length > 0;
+    const hasAbsoluteNearest = !!cluster.absoluteNearest;
+    const isOutPoiType = cluster.type === 'OUT_POI';
+    // Orphelin = pas de POI rattaché MAIS un POI proche connu (→ on peut Rattacher).
+    // Hors POI pur = aucun POI cible (détaché manuellement / aucun POI chargé).
+    const isOrphan = isOutPoiType && hasAbsoluteNearest && !cluster.savedAsNewPoi;
+    const isPureOut = isOutPoiType && !hasAbsoluteNearest && !cluster.savedAsNewPoi;
+    if (isOrphan) section.classList.add('is-orphan');
+    if (isPureOut) section.classList.add('is-out-poi');
 
-    // Header
-    const header = document.createElement('div');
-    header.className = 'photo-batch-cluster-header';
+    // --- HEAD (sticky) ---
+    const head = document.createElement('div');
+    head.className = 'pb-cluster-head';
 
-    const titleBlock = document.createElement('div');
-    titleBlock.className = 'photo-batch-cluster-title-block';
+    const headBlock = document.createElement('div');
+    headBlock.className = 'pb-cluster-head-block';
 
-    const title = document.createElement('h3');
-    title.className = 'photo-batch-cluster-title';
+    // Titre éditable (customName prioritaire sur le nom auto)
+    const title = document.createElement('h2');
+    title.className = 'pb-cluster-title';
     title.contentEditable = 'true';
     title.spellcheck = false;
-
-    const subtitle = document.createElement('p');
-    subtitle.className = 'photo-batch-cluster-subtitle';
-
-    // Résout le nom affiché : customName prioritaire sur auto
     const autoName = resolveAutoName(cluster);
     title.textContent = cluster.customName || autoName;
 
-    // Sous-titre contextuel
-    // Priorité : savedAsNewPoi (feedback post-création) > nearbyPois (POI rattaché) >
-    //           absoluteNearest (info "plus proche") > générique.
-    // Même sur OUT_POI, on veut afficher le POI le plus proche s'il existe — ça aide
-    // l'utilisateur à décider s'il rattache ou s'il crée un nouveau lieu.
+    // Sous-titre = métadonnées (dot + segments séparés par « · »).
+    const sub = document.createElement('div');
+    sub.className = 'pb-cluster-sub';
+    const photoWord = `${cluster.photos.length} photo(s)`;
+    const segs = [];
     if (cluster.savedAsNewPoi) {
-        // Cluster bascule après "Créer un lieu" : feedback explicite, évite le
-        // "POI proche à 0 m" générique qui serait techniquement correct mais peu parlant.
-        subtitle.textContent = `Nouveau lieu créé — ${cluster.photos.length} photo(s) enregistrée(s)`;
+        segs.push('Nouveau lieu créé', photoWord);
         section.dataset.suggestedPoiId = getPoiId(cluster.nearbyPois[0].feature) || '';
-    } else if (cluster.nearbyPois && cluster.nearbyPois.length > 0) {
+    } else if (hasNearbyPoi) {
         const best = cluster.nearbyPois[0];
-        subtitle.textContent = `POI proche à ${Math.round(best.dist)} m — ${cluster.photos.length} photo(s)`;
+        segs.push(`POI rattaché · ${Math.round(best.dist)} m`, photoWord);
         section.dataset.suggestedPoiId = getPoiId(best.feature) || '';
-    } else if (cluster.absoluteNearest) {
+    } else if (hasAbsoluteNearest) {
         const n = cluster.absoluteNearest;
-        subtitle.textContent = `Plus proche : ${getPoiName(n.feature) || '(sans nom)'} à ${Math.round(n.dist)} m — ${cluster.photos.length} photo(s)`;
+        segs.push(`Plus proche : ${getPoiName(n.feature) || '(sans nom)'} · ${Math.round(n.dist)} m`, photoWord);
         section.dataset.suggestedPoiId = '';
     } else {
-        subtitle.textContent = `${cluster.photos.length} photo(s) — aucun POI chargé à proximité`;
+        segs.push('Sans POI cible', photoWord);
         section.dataset.suggestedPoiId = '';
     }
+    const selCount = cluster.selectedPhotoIds.size;
+    if (selCount > 0) segs.push(`${selCount} cochée(s)`);
 
-    // Handlers du renommage
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.setAttribute('aria-hidden', 'true');
+    sub.appendChild(dot);
+    segs.forEach((seg, i) => {
+        if (i > 0) {
+            const sep = document.createElement('span');
+            sep.className = 'sep';
+            sep.textContent = '·';
+            sub.appendChild(sep);
+        }
+        const s = document.createElement('span');
+        s.textContent = seg;
+        sub.appendChild(s);
+    });
+
+    // Handlers du renommage (inchangés)
     title.addEventListener('focus', () => selectAllText(title));
     title.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') { e.preventDefault(); title.blur(); }
@@ -909,22 +929,28 @@ function buildClusterSection(cluster, index) {
         if (changed) renderBody();
     });
 
-    titleBlock.appendChild(title);
-    titleBlock.appendChild(subtitle);
+    headBlock.appendChild(title);
+    headBlock.appendChild(sub);
+    head.appendChild(headBlock);
 
-    // Barre d'actions (rattacher / créer / comparer)
+    // Badge Orphelin / Hors POI (pas sur un cluster rattaché)
+    if (isOrphan || isPureOut) {
+        const badge = document.createElement('span');
+        badge.className = 'pb-cluster-badge';
+        badge.textContent = isOrphan ? 'Orphelin' : 'Hors POI';
+        head.appendChild(badge);
+    }
+
+    // Barre d'actions (rattacher / créer / comparer / ZIP)
     const actions = document.createElement('div');
-    actions.className = 'photo-batch-cluster-actions';
+    actions.className = 'pb-cluster-actions';
 
-    const hasNearbyPoi = cluster.nearbyPois && cluster.nearbyPois.length > 0;
-    const hasAbsoluteNearest = !!cluster.absoluteNearest;
-
-    // Rattacher au POI le plus proche : visible sur tout cluster sans POI rattaché
-    // (POI orphelin OU OUT_POI) si un absoluteNearest existe. Utile pour POI à >100m.
+    // Rattacher au POI le plus proche (cluster sans POI rattaché mais avec absoluteNearest)
     if (!hasNearbyPoi && hasAbsoluteNearest) {
         const nearestName = getPoiName(cluster.absoluteNearest.feature) || 'ce POI';
         const attachBtn = document.createElement('button');
-        attachBtn.className = 'photo-batch-cluster-btn';
+        attachBtn.className = 'pb-act';
+        attachBtn.type = 'button';
         attachBtn.innerHTML = `<i data-lucide="link"></i><span>Rattacher à ${nearestName}</span>`;
         attachBtn.title = `Rattacher ces photos au POI le plus proche (${Math.round(cluster.absoluteNearest.dist)} m)`;
         attachBtn.addEventListener('click', (e) => {
@@ -934,13 +960,11 @@ function buildClusterSection(cluster, index) {
         actions.appendChild(attachBtn);
     }
 
-    // Créer un nouveau lieu : visible sur tout cluster sans POI rattaché.
-    // OUT_POI couvre deux cas d'usage symétriques :
-    //  - vraiment pas un POI (panorama, végétation) → l'utilisateur ignore le bouton
-    //  - POI "à créer" découvert pendant la balade → l'utilisateur clique
+    // Créer un nouveau lieu (tout cluster sans POI rattaché)
     if (!hasNearbyPoi) {
         const createBtn = document.createElement('button');
-        createBtn.className = 'photo-batch-cluster-btn photo-batch-cluster-create-btn';
+        createBtn.className = 'pb-act';
+        createBtn.type = 'button';
         createBtn.innerHTML = '<i data-lucide="map-pin-plus"></i><span>Créer un lieu</span>';
         createBtn.title = 'Créer un nouveau POI avec ces photos';
         createBtn.addEventListener('click', (e) => {
@@ -950,16 +974,15 @@ function buildClusterSection(cluster, index) {
         actions.appendChild(createBtn);
     }
 
-    // Voir / Comparer (visible toujours, désactivé si 0 sélection)
+    // Voir / Comparer (action primaire, désactivée si 0 sélection)
     const compareBtn = document.createElement('button');
-    compareBtn.className = 'photo-batch-cluster-btn photo-batch-cluster-compare-btn';
-    const selCount = cluster.selectedPhotoIds.size;
+    compareBtn.className = 'pb-act is-primary pb-compare-btn';
+    compareBtn.type = 'button';
     compareBtn.disabled = selCount === 0;
-    const compareLabel = selCount === 1 ? 'Voir (1)'
-        : selCount >= 2 ? `Comparer (${selCount})`
+    const compareLabel = selCount >= 2 ? `Comparer (${selCount})`
+        : selCount === 1 ? 'Comparer (1)'
         : 'Voir / Comparer';
-    const compareIcon = selCount === 1 ? 'maximize-2' : 'layout-grid';
-    compareBtn.innerHTML = `<i data-lucide="${compareIcon}"></i><span>${compareLabel}</span>`;
+    compareBtn.innerHTML = `<i data-lucide="layout-grid"></i><span>${compareLabel}</span>`;
     compareBtn.title = 'Sélectionnez 1 à 4 photos pour les voir en grand';
     compareBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -967,11 +990,12 @@ function buildClusterSection(cluster, index) {
     });
     actions.appendChild(compareBtn);
 
-    // Export ZIP de ce groupe (toujours visible si au moins 1 photo)
+    // Export ZIP de ce groupe — icône download (= disque, ≠ « Enregistrer » dans l'app)
     const zipGroupBtn = document.createElement('button');
-    zipGroupBtn.className = 'photo-batch-cluster-btn photo-batch-cluster-zip-btn';
+    zipGroupBtn.className = 'pb-act is-icon';
+    zipGroupBtn.type = 'button';
     zipGroupBtn.disabled = cluster.photos.length === 0;
-    zipGroupBtn.innerHTML = '<i data-lucide="save"></i>';
+    zipGroupBtn.innerHTML = '<i data-lucide="download"></i>';
     zipGroupBtn.title = `Télécharger ce groupe en ZIP (${cluster.photos.length} photo(s))`;
     zipGroupBtn.setAttribute('aria-label', 'Télécharger ce groupe en ZIP');
     zipGroupBtn.addEventListener('click', (e) => {
@@ -980,38 +1004,28 @@ function buildClusterSection(cluster, index) {
     });
     actions.appendChild(zipGroupBtn);
 
-    titleBlock.appendChild(actions);
+    head.appendChild(actions);
+    section.appendChild(head);
 
-    header.appendChild(titleBlock);
-    // Badge "Hors POI" uniquement (le compteur "Groupe N" est redondant maintenant
-    // que le titre amber est plus présent + le compteur global est en subheader).
-    if (cluster.type === 'OUT_POI') {
-        const badge = document.createElement('span');
-        badge.className = 'photo-batch-cluster-badge out-poi';
-        badge.textContent = 'Hors POI';
-        header.appendChild(badge);
-    }
-    section.appendChild(header);
-
-    // Grid Sortable
+    // --- GRID Sortable ---
     const grid = document.createElement('div');
-    grid.className = 'photo-batch-thumb-grid';
+    grid.className = 'pb-grid';
     grid.dataset.clusterId = cluster.id;
 
     cluster.photos.forEach((item) => {
         grid.appendChild(buildPhotoCard(item, cluster));
     });
 
-    // Sortable sur chaque grid (filter : on ne drag pas depuis les boutons ou le contenteditable)
+    // Sortable (filter : on ne drag pas depuis les boutons, la pastille ou le label)
     new Sortable(grid, {
         group: 'photo-batch-shared',
         animation: 150,
-        ghostClass: 'photo-batch-thumb-ghost',
-        chosenClass: 'photo-batch-thumb-chosen',
-        dragClass: 'photo-batch-thumb-drag',
+        ghostClass: 'is-ghost',
+        chosenClass: 'is-chosen',
+        dragClass: 'is-dragging',
         delay: 80,
         delayOnTouchOnly: true,
-        filter: '.photo-batch-thumb-action, .photo-batch-thumb-delete, .photo-batch-thumb-label',
+        filter: '.pb-pick, .pb-thumb-btn, .pb-thumb-label, .pb-thumb-pencil',
         preventOnFilter: false,
         onStart: () => { ignoreNextClick = true; },
         onEnd: (evt) => {
@@ -1026,68 +1040,69 @@ function buildClusterSection(cluster, index) {
 }
 
 function buildPhotoCard(item, cluster) {
-    const thumb = document.createElement('div');
-    thumb.className = 'photo-batch-thumb';
+    const thumb = document.createElement('article');
+    thumb.className = 'pb-thumb';
     thumb.dataset.photoId = item.id;
     if (cluster.selectedPhotoIds.has(item.id)) {
-        thumb.classList.add('selected');
+        thumb.classList.add('is-selected');
     }
 
-    // Clic sur la vignette = toggle sélection (ignoré si drag Sortable vient de se terminer)
-    thumb.addEventListener('click', (e) => {
+    // Toggle sélection partagé (pastille + corps de vignette)
+    const doToggle = () => {
         if (ignoreNextClick) return;
-        // Ignorer les clics provenant des boutons/label (ils ont leur propre handler)
-        if (e.target.closest('.photo-batch-thumb-action, .photo-batch-thumb-delete, .photo-batch-thumb-label')) return;
         const ok = togglePhotoSelection(cluster, item.id);
         if (!ok) {
-            // Toast visuel léger : on flashe brièvement l'outline rouge via une classe
+            // Max 4 atteint : flash rouge bref
             thumb.animate([
                 { outline: '3px solid #991B1B', outlineOffset: '-3px' },
                 { outline: '0 solid transparent', outlineOffset: '0' }
             ], { duration: 400 });
             return;
         }
-        // Mise à jour visuelle ciblée sans re-render complet (garde le scroll/focus)
-        thumb.classList.toggle('selected', cluster.selectedPhotoIds.has(item.id));
+        thumb.classList.toggle('is-selected', cluster.selectedPhotoIds.has(item.id));
         updateClusterCompareBtn(cluster);
+        updateHeaderCounts();
+    };
+
+    // Clic sur le corps de la vignette = toggle (sauf sur pastille / boutons / label)
+    thumb.addEventListener('click', (e) => {
+        if (e.target.closest('.pb-pick, .pb-thumb-btn, .pb-thumb-label, .pb-thumb-pencil')) return;
+        doToggle();
     });
 
     const img = document.createElement('img');
+    img.className = 'pb-thumb-img';
     img.alt = item.file?.name || 'Photo';
     img.loading = 'lazy';
     img.draggable = false;
-
     if (item.base64) {
         img.src = item.base64;
     } else if (item.file) {
-        resizeImage(item.file, 200)
+        resizeImage(item.file, 320)
             .then(dataUrl => { img.src = dataUrl; })
             .catch(() => { img.alt = 'Erreur miniature'; });
     }
     thumb.appendChild(img);
 
-    // Badge check (visible uniquement via .selected)
-    const checkBadge = document.createElement('span');
-    checkBadge.className = 'photo-batch-thumb-check';
-    checkBadge.innerHTML = '<i data-lucide="check"></i>';
-    thumb.appendChild(checkBadge);
-
-    // Bouton "Supprimer" (poubelle) — toujours visible
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'photo-batch-thumb-delete';
-    deleteBtn.title = 'Supprimer cette photo';
-    deleteBtn.setAttribute('aria-label', 'Supprimer');
-    deleteBtn.innerHTML = '<i data-lucide="trash-2"></i>';
-    deleteBtn.addEventListener('click', (e) => {
+    // Pastille de sélection — coche permanente (affordance explicite)
+    const pick = document.createElement('button');
+    pick.className = 'pb-pick';
+    pick.type = 'button';
+    pick.setAttribute('aria-label', 'Sélectionner pour comparer');
+    pick.innerHTML = '<i data-lucide="check"></i>';
+    pick.addEventListener('click', (e) => {
         e.stopPropagation();
-        deletePhoto(item.id);
+        doToggle();
     });
-    thumb.appendChild(deleteBtn);
+    thumb.appendChild(pick);
 
-    // Bouton "Extraire vers Hors POI" (sauf déjà dans OUT_POI)
+    // Actions par photo (top-right) : extraire + supprimer
+    const acts = document.createElement('div');
+    acts.className = 'pb-thumb-acts';
     if (cluster.type !== 'OUT_POI') {
         const extractBtn = document.createElement('button');
-        extractBtn.className = 'photo-batch-thumb-action';
+        extractBtn.className = 'pb-thumb-btn';
+        extractBtn.type = 'button';
         extractBtn.title = 'Extraire vers Hors POI';
         extractBtn.setAttribute('aria-label', 'Extraire vers Hors POI');
         extractBtn.innerHTML = '<i data-lucide="route"></i>';
@@ -1095,12 +1110,24 @@ function buildPhotoCard(item, cluster) {
             e.stopPropagation();
             extractToOutPoi(item.id);
         });
-        thumb.appendChild(extractBtn);
+        acts.appendChild(extractBtn);
     }
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'pb-thumb-btn is-danger';
+    deleteBtn.type = 'button';
+    deleteBtn.title = 'Supprimer cette photo';
+    deleteBtn.setAttribute('aria-label', 'Supprimer');
+    deleteBtn.innerHTML = '<i data-lucide="trash-2"></i>';
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deletePhoto(item.id);
+    });
+    acts.appendChild(deleteBtn);
+    thumb.appendChild(acts);
 
-    // Nom fichier (label bas) — éditable pour personnaliser le nom ZIP
+    // Label bas éditable — nom de fichier ZIP (feature préservée)
     const label = document.createElement('span');
-    label.className = 'photo-batch-thumb-label';
+    label.className = 'pb-thumb-label';
     label.contentEditable = 'true';
     label.spellcheck = false;
     label.textContent = item.customName || resolvePhotoAutoName(cluster, item);
@@ -1116,6 +1143,13 @@ function buildPhotoCard(item, cluster) {
         if (!text) label.textContent = base;
     });
     thumb.appendChild(label);
+
+    // Crayon décoratif (hint d'édition du nom) — hors flux du contenteditable
+    const pencil = document.createElement('span');
+    pencil.className = 'pb-thumb-pencil';
+    pencil.setAttribute('aria-hidden', 'true');
+    pencil.innerHTML = '<i data-lucide="pencil"></i>';
+    thumb.appendChild(pencil);
 
     return thumb;
 }
@@ -1136,37 +1170,59 @@ function renderBody() {
         });
     }
 
-    createIcons({ icons: appIcons });
+    createIcons({ icons: appIcons, root: body });
 }
 
 function updateHeaderCounts() {
+    if (!modalState) return;
     const total = modalState.clusters.reduce((s, c) => s + c.photos.length, 0);
+    const groups = modalState.clusters.length;
+    const outPoi = modalState.clusters.filter(c => c.type === 'OUT_POI').length;
+    const selected = modalState.clusters.reduce((s, c) => s + (c.selectedPhotoIds?.size || 0), 0);
+
     const sub = document.getElementById('photo-batch-header-subtitle');
-    if (sub) sub.textContent = `${total} photo(s) · ${modalState.clusters.length} groupe(s)`;
+    if (sub) sub.textContent = `${total} photo(s) · ${groups} groupe(s)`;
+
+    // Compteurs détaillés du footer
+    const info = document.getElementById('photo-batch-footer-info');
+    if (info) {
+        info.innerHTML = `<b>${total}</b> photos · <b>${groups}</b> groupes`
+            + (outPoi > 0 ? ` · <b>${outPoi}</b> hors POI` : '')
+            + (selected > 0 ? ` · <b>${selected}</b> sélectionnée(s)` : '');
+    }
+
+    // Pill "sélection" dans le header (visible seulement si sélection > 0)
+    const pill = document.getElementById('photo-batch-sel-pill');
+    if (pill) {
+        pill.classList.toggle('is-visible', selected > 0);
+        const txt = pill.querySelector('.pb-pill-text');
+        if (txt) txt.textContent = `${selected} sélectionnée(s) pour comparer`;
+    }
+
     // Le bouton "Enregistrer" dépend de la présence de clusters rattachés à un POI.
     updateFooterButtons();
 }
 
 // Met à jour le bouton "Voir / Comparer" d'un cluster sans re-render complet
 function updateClusterCompareBtn(cluster) {
-    const section = document.querySelector(`.photo-batch-cluster[data-cluster-id="${cluster.id}"]`);
+    const section = document.querySelector(`.pb-cluster[data-cluster-id="${cluster.id}"]`);
     if (!section) return;
-    const btn = section.querySelector('.photo-batch-cluster-compare-btn');
+    const btn = section.querySelector('.pb-compare-btn');
     if (!btn) return;
     const n = cluster.selectedPhotoIds.size;
     btn.disabled = n === 0;
-    const label = n === 1 ? 'Voir (1)' : n >= 2 ? `Comparer (${n})` : 'Voir / Comparer';
-    const icon = n === 1 ? 'maximize-2' : 'layout-grid';
-    btn.innerHTML = `<i data-lucide="${icon}"></i><span>${label}</span>`;
-    createIcons({ icons: appIcons });
+    const label = n >= 2 ? `Comparer (${n})` : n === 1 ? 'Comparer (1)' : 'Voir / Comparer';
+    btn.innerHTML = `<i data-lucide="layout-grid"></i><span>${label}</span>`;
+    createIcons({ icons: appIcons, root: btn });
 }
 
 /**
- * Ouvre le modal batch photos avec drag-drop (Phase 2).
- * Migré sur le système hw-modal V2 : openHwModal({ size: 'xl', subheader,
- * body, footer }). La logique métier (Sortable, lightbox, save, ZIP, créer
- * POI, etc.) est inchangée. La hint admin/user et le compteur dynamique
- * passent en subheader. ESC géré manuellement pour laisser priorité à la
+ * Ouvre le modal batch photos avec drag-drop.
+ * Refonte PLEIN ÉCRAN (handoff Claude Design) : openHwModal({ size: 'xl',
+ * body, footer }) + classe `.is-photo-batch` posée sur l'overlay après
+ * ouverture (cf. bind). Les compteurs / hint / pill sélection sont injectés
+ * dans le header. La logique métier (Sortable, lightbox, save, ZIP, créer
+ * POI, etc.) est inchangée. ESC géré manuellement pour laisser priorité à la
  * lightbox.
  *
  * @param {Array} enrichedClusters — Array of { photos, center, nearbyPois, absoluteNearest }
@@ -1182,30 +1238,27 @@ export function openPhotoBatchModal(enrichedClusters) {
             ? 'Mode admin — enregistrement en attente de publication CC'
             : 'Enregistrer rattache les photos aux POI ; le ZIP inclut tout';
 
-        const subheader = `
-            <div class="photo-batch-subheader">
-                <span class="photo-batch-counts" id="photo-batch-header-subtitle"></span>
-                <span class="photo-batch-hint">${hintText}</span>
-            </div>
-        `;
-
-        const body = `<div id="photo-batch-body" class="photo-batch-body"></div>`;
+        // Pas de subheader : les compteurs / hint / pill sont injectés dans le
+        // header plein écran après ouverture (cf. bind ci-dessous).
+        const body = `<div id="photo-batch-body" class="pb-body"></div>`;
 
         const footer = `
-            <button class="btn btn-ghost" id="photo-batch-btn-close" type="button">Fermer</button>
-            <button class="btn btn-ghost" id="photo-batch-btn-zip" type="button" title="Exporter toutes les photos en ZIP">
-                <i data-lucide="archive"></i><span>ZIP</span>
-            </button>
-            <button class="btn btn-primary" id="photo-batch-btn-save" type="button">
-                <i data-lucide="save"></i><span>Enregistrer</span>
-            </button>
+            <div class="pb-footer-info" id="photo-batch-footer-info"></div>
+            <div class="pb-footer-actions">
+                <button class="btn btn-ghost" id="photo-batch-btn-close" type="button">Fermer</button>
+                <button class="btn btn-secondary" id="photo-batch-btn-zip" type="button" title="Exporter toutes les photos en archive ZIP sur le disque">
+                    <i data-lucide="download"></i><span>Télécharger ZIP</span>
+                </button>
+                <button class="btn btn-primary" id="photo-batch-btn-save" type="button" title="Enregistrer les photos rattachées dans l'application">
+                    <i data-lucide="cloud-upload"></i><span>Enregistrer</span>
+                </button>
+            </div>
         `;
 
         const promise = openHwModal({
             size: 'xl',
             icon: 'images',
             title: 'Traitement photos',
-            subheader,
             body,
             footer,
             // Pas de fermeture spontanée : workflow long, beaucoup d'état mutable.
@@ -1218,8 +1271,27 @@ export function openPhotoBatchModal(enrichedClusters) {
         setTimeout(() => {
             // Marqueur sur l'overlay pour que handleCreatePoi puisse le masquer/restaurer
             // (RichEditor est en z-index 4000, < modale V2 100000 : il faut hide la modale).
+            // + classe .is-photo-batch (plein écran) : ajoutée après openHwModal, comme
+            // .is-photo-viewer (le moteur de modale ne prend pas de classe custom).
             const overlayEl = document.querySelector('.hw-modal-overlay.is-active');
-            if (overlayEl) overlayEl.id = 'photo-batch-overlay';
+            if (overlayEl) {
+                overlayEl.id = 'photo-batch-overlay';
+                overlayEl.classList.add('is-photo-batch');
+
+                // Extras du header (compteurs / pill sélection / hint) injectés dans le
+                // .hw-modal-header rendu par openHwModal (icône + titre + croix), avant la croix.
+                const headerEl = overlayEl.querySelector('.hw-modal-header');
+                const closeBtn = headerEl ? headerEl.querySelector('.hw-modal-close') : null;
+                if (headerEl && closeBtn) {
+                    closeBtn.insertAdjacentHTML('beforebegin', `
+                        <span class="pb-header-counts" id="photo-batch-header-subtitle"></span>
+                        <span class="pb-header-spacer"></span>
+                        <span class="pb-header-pill" id="photo-batch-sel-pill"><i data-lucide="check"></i><span class="pb-pill-text"></span></span>
+                        <span class="pb-header-hint">${hintText}</span>
+                    `);
+                    createIcons({ icons: appIcons, root: headerEl });
+                }
+            }
 
             const btnClose = document.getElementById('photo-batch-btn-close');
             const btnZip = document.getElementById('photo-batch-btn-zip');
