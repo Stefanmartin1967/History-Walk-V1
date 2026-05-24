@@ -73,20 +73,20 @@ export function openPhotoViewer(photos, startIndex = 0) {
         <div class="hw-photo-viewer${isSingle ? ' is-single' : ''}" data-zoom="1">
             <div class="hw-pv-stage" id="hw-pv-stage">
                 <img class="hw-pv-img" id="hw-pv-img" alt="Photo" draggable="false">
-            </div>
 
-            <div class="hw-pv-topright">
-                <button class="hw-pv-btn" id="hw-pv-fullscreen" type="button" aria-label="Plein écran"><i data-lucide="maximize"></i></button>
-                <button class="hw-pv-btn" id="hw-pv-close" type="button" aria-label="Fermer"><i data-lucide="x"></i></button>
-            </div>
+                <div class="hw-pv-topright">
+                    <button class="hw-pv-btn" id="hw-pv-fullscreen" type="button" aria-label="Plein écran"><i data-lucide="maximize"></i></button>
+                    <button class="hw-pv-btn" id="hw-pv-close" type="button" aria-label="Fermer"><i data-lucide="x"></i></button>
+                </div>
 
-            <button class="hw-pv-btn is-lg hw-pv-nav is-prev" id="hw-pv-prev" type="button" aria-label="Photo précédente"><i data-lucide="chevron-left"></i></button>
-            <button class="hw-pv-btn is-lg hw-pv-nav is-next" id="hw-pv-next" type="button" aria-label="Photo suivante"><i data-lucide="chevron-right"></i></button>
+                <button class="hw-pv-btn is-lg hw-pv-nav is-prev" id="hw-pv-prev" type="button" aria-label="Photo précédente"><i data-lucide="chevron-left"></i></button>
+                <button class="hw-pv-btn is-lg hw-pv-nav is-next" id="hw-pv-next" type="button" aria-label="Photo suivante"><i data-lucide="chevron-right"></i></button>
 
-            <div class="hw-pv-zoom" role="group" aria-label="Zoom">
-                <button class="hw-pv-btn" id="hw-pv-zoom-in" type="button" aria-label="Agrandir"><i data-lucide="zoom-in"></i></button>
-                <button class="hw-pv-btn" id="hw-pv-zoom-out" type="button" aria-label="Réduire"><i data-lucide="zoom-out"></i></button>
-                <button class="hw-pv-btn" id="hw-pv-zoom-reset" type="button" aria-label="Réinitialiser le zoom"><i data-lucide="rotate-ccw"></i></button>
+                <div class="hw-pv-zoom" role="group" aria-label="Zoom">
+                    <button class="hw-pv-btn" id="hw-pv-zoom-in" type="button" aria-label="Agrandir"><i data-lucide="zoom-in"></i></button>
+                    <button class="hw-pv-btn" id="hw-pv-zoom-out" type="button" aria-label="Réduire"><i data-lucide="zoom-out"></i></button>
+                    <button class="hw-pv-btn" id="hw-pv-zoom-reset" type="button" aria-label="Réinitialiser le zoom"><i data-lucide="rotate-ccw"></i></button>
+                </div>
             </div>
 
             <div class="hw-pv-strip" id="hw-pv-strip" aria-label="Pellicule des photos"></div>
@@ -338,6 +338,7 @@ function bindGestures() {
     }, { passive: false });
 
     stageEl.addEventListener('dblclick', (e) => {
+        if (e.target.closest('.hw-pv-btn')) return;
         e.preventDefault();
         toggleZoom(e.clientX, e.clientY);
     });
@@ -351,6 +352,9 @@ function bindGestures() {
 function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
 
 function onPointerDown(e) {
+    // Les contrôles flottants vivent dans la stage : ne pas démarrer un
+    // pan/swipe/pinch quand on appuie sur un bouton.
+    if (e.target.closest('.hw-pv-btn')) return;
     stageEl.setPointerCapture?.(e.pointerId);
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
