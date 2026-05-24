@@ -511,10 +511,12 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     background: transparent;
     padding: 0;
     flex: 1;
+    /* Le .hw-modal-body de base plafonne à max-height:70vh (60vh mobile) → c'est
+       CE qui bridait le viewer à ~70 % de hauteur (vide sous la bande). On libère. */
+    max-height: none;
     overflow: hidden;
     display: flex;
-    /* stretch : .hw-photo-viewer remplit le body (ses enfants sont en absolute). */
-    align-items: stretch;
+    align-items: stretch;       /* .hw-photo-viewer (flex-column) remplit le body */
     justify-content: stretch;
 }
 
