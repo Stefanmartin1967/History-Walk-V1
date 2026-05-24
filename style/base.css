@@ -181,6 +181,21 @@ body {
     padding: 8px 0;
 }
 
+/* Mobile : paires repliées en 1 colonne (standard formulaire mobile).
+   Indispensable car la grille 1fr 1fr déborde sinon : les <input>/<select>
+   gardent leur min-width intrinsèque (min-width:auto) et refusent de
+   rétrécir. Le repli aligne aussi toutes les rangées sur la pleine largeur,
+   y compris la taxonomie (flex-wrap) qui sinon ne tombe pas pile sous Cat/Zone. */
+@media (max-width: 600px) {
+    .rich-poi-row-2col,
+    .rich-poi-section-muted {
+        grid-template-columns: 1fr;
+    }
+    .rich-poi-taxonomy .input-group {
+        flex: 1 1 100%;
+    }
+}
+
 /* ======================== STYLES PC ============================ */
 
 .topbar {
