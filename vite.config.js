@@ -30,6 +30,11 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webp}'],
         // Limite élevée pour les grandes images (badges, gamification : jusqu'à ~8 MB)
         maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
+        // Les .gpx (partage/téléchargement de circuit) ne doivent PAS être happés
+        // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
+        // vers …/circuits/x.gpx) sert l'app (index.html) au lieu du fichier, et HW
+        // s'ouvre sur « Mes Circuits » vide. On les laisse passer au réseau.
+        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i],
         runtimeCaching: [
           {
             // GeoJSON : NetworkFirst — données éditoriales qui évoluent
