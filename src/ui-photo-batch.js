@@ -278,7 +278,7 @@ function setHeaderMode(mode, cluster) {
         const name = cluster.customName || resolveAutoName(cluster);
         if (iconEl) iconEl.innerHTML = '<i data-lucide="layout-grid"></i>';
         if (titleEl) titleEl.innerHTML = `Comparer <em>· ${escapeHtml(name)}</em>`;
-        if (hintEl) hintEl.textContent = "Tapez une vignette pour remplir l'emplacement actif";
+        if (hintEl) hintEl.textContent = "Tapez une vignette pour l'ajouter à la comparaison (jusqu'à 4)";
     } else {
         if (iconEl) iconEl.innerHTML = '<i data-lucide="images"></i>';
         if (titleEl) titleEl.textContent = 'Traitement photos';
@@ -328,9 +328,24 @@ function focusPelliculeTap(pid) {
     if (!f) return;
     const existing = f.slots.indexOf(pid);
     if (existing !== -1) {
+        // Déjà affichée → on rend simplement son emplacement actif.
         f.activeSlot = existing;
     } else {
-        f.slots[f.activeSlot] = pid;
+        // Pas encore affichée : on l'AJOUTE (jusqu'à 4 emplacements) au lieu de
+        // remplacer. 1) un emplacement vide → on le remplit ; 2) sinon, si on
+        // peut agrandir (< 4) → nouvel emplacement ; 3) sinon (4 pleins) →
+        // remplace l'emplacement actif.
+        const emptyIdx = f.slots.findIndex(s => !s);
+        if (emptyIdx !== -1) {
+            f.slots[emptyIdx] = pid;
+            f.activeSlot = emptyIdx;
+        } else if (f.slotCount < 4) {
+            f.slotCount += 1;
+            f.slots.push(pid);
+            f.activeSlot = f.slotCount - 1;
+        } else {
+            f.slots[f.activeSlot] = pid;
+        }
     }
     renderBody();
 }
@@ -455,7 +470,7 @@ function buildPellicule(cluster) {
     const head = document.createElement('div');
     head.className = 'pb-pellicule-head';
     head.innerHTML = `<span>Pellicule</span><span class="sep">·</span><span><b>${cluster.photos.length}</b> photo(s)</span>`
-        + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette remplit l'emplacement actif</span>`;
+        + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette l'ajoute (jusqu'à 4) ; au-delà, remplace l'emplacement actif</span>`;
     wrap.appendChild(head);
 
     const track = document.createElement('div');
