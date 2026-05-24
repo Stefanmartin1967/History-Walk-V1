@@ -275,29 +275,6 @@
 }
 .pb-thumb:active { cursor: grabbing; }
 .pb-thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-.pb-thumb.is-selected { border-color: var(--cta-bg); box-shadow: 0 0 0 2px var(--cta-bg), 0 8px 20px rgba(0,0,0,.10); }
-
-/* Pastille de sélection — coche permanente (translucide → CTA au clic) */
-.pb-pick {
-    position: absolute;
-    top: 8px; left: 8px;
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: rgba(20,20,22,0.45);
-    border: 2px solid rgba(255,255,255,0.85);
-    color: transparent;
-    display: grid; place-items: center;
-    cursor: pointer;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    box-shadow: 0 2px 6px rgba(0,0,0,.35);
-    transition: background 0.12s, transform 0.12s, color 0.12s, border-color 0.12s;
-    z-index: 3;
-    padding: 0;
-}
-.pb-pick svg { width: 14px; height: 14px; stroke-width: 3; }
-.pb-pick:hover { background: rgba(20,20,22,0.75); transform: scale(1.05); }
-.pb-thumb.is-selected .pb-pick { background: var(--cta-bg); border-color: var(--cta-fg); color: var(--cta-fg); }
 
 /* Actions par photo — top-right : extraire + supprimer */
 .pb-thumb-acts {
@@ -432,194 +409,324 @@
 }
 
 /* ============================================================
-   LIGHTBOX (Voir / Comparer) — inchangée fonctionnellement.
-   Passe AU-DESSUS de la modale V2 (overlay z-index 100000).
-   Accents ambre résiduels remplacés par tokens theme-aware.
+   MODE FOCUS / COMPARER — in-place dans la modale plein écran
+   ------------------------------------------------------------
+   Remplace l'ancienne lightbox (overlay noir, supprimée). Clic « Comparer »
+   sur un groupe → `.is-focus` sur l'overlay + `.is-focused` sur le groupe :
+   les autres groupes sont masqués, celui-ci prend toute la hauteur et passe
+   en mode comparaison. Tout reste sur surface/tokens HW — pas de noir, pas
+   de transparence. Theme-aware, zéro ambre.
    ============================================================ */
-.photo-batch-lightbox {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.97);
-    z-index: 100002;
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s, visibility 0.2s;
-}
-.photo-batch-lightbox.active { opacity: 1; visibility: visible; }
 
-.photo-batch-lightbox-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 20px;
-    color: white;
-    flex-shrink: 0;
-}
-.photo-batch-lightbox-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin: 0;
-}
-.photo-batch-lightbox-close {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s;
-}
-.photo-batch-lightbox-close:hover { background: rgba(255, 255, 255, 0.15); }
-.photo-batch-lightbox-close .lucide { width: 20px; height: 20px; }
-
-.photo-batch-lightbox-grid {
-    flex: 1;
-    display: grid;
-    gap: 12px;
-    padding: 8px 20px 20px;
-    min-height: 0;
-    grid-auto-rows: 1fr;
-}
-.photo-batch-lightbox-grid[data-count="1"] { grid-template-columns: 1fr; }
-.photo-batch-lightbox-grid[data-count="2"],
-.photo-batch-lightbox-grid[data-count="3"],
-.photo-batch-lightbox-grid[data-count="4"] {
-    grid-template-columns: 1fr 1fr;
-}
-.photo-batch-lightbox-cell {
-    position: relative;
-    min-height: 0;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.photo-batch-lightbox-cell img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    border-radius: 6px;
-    display: block;
-}
-.photo-batch-lightbox-cell-bar {
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 6px 10px;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border-radius: 8px;
-    pointer-events: auto;
-}
-.photo-batch-lightbox-cell-name {
-    flex: 1;
-    min-width: 0;
-    color: white;
-    font-size: 0.78rem;
+/* Titre header en focus : « Comparer » + contexte cluster en ink-soft */
+.is-photo-batch .hw-modal-title em {
+    font-style: normal;
+    color: var(--ink-soft);
     font-weight: 500;
-    padding: 4px 8px;
-    border-radius: 4px;
-    background: transparent;
-    outline: none;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 17px;
+    letter-spacing: 0;
     white-space: nowrap;
-    cursor: text;
-    border: 1px solid transparent;
-    transition: background 0.12s, border-color 0.12s;
 }
-.photo-batch-lightbox-cell-name:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-.photo-batch-lightbox-cell-name:focus {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: var(--brand);
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-}
-.photo-batch-lightbox-cell-actions {
-    display: flex;
+
+/* En focus : le body ne scrolle pas (la carte focus gère son overflow) */
+.is-photo-batch.is-focus .hw-modal-body { padding-bottom: var(--space-lg); overflow: hidden; }
+.is-photo-batch .pb-body { flex: 1; min-height: 0; }
+
+/* Masquer les autres groupes ; le groupe focalisé remplit la hauteur. */
+.is-photo-batch.is-focus .pb-cluster:not(.is-focused) { display: none; }
+.is-photo-batch.is-focus .pb-cluster.is-focused { flex: 1; min-height: 0; }
+.pb-cluster.is-focused .pb-cluster-head { position: relative; }
+
+/* Bouton « Vue d'ensemble » (retour) — chip ghost à gauche du head focus */
+.pb-focus-back {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
+    height: 32px;
+    padding: 0 12px 0 8px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
     flex-shrink: 0;
 }
-.photo-batch-lightbox-cell-btn {
-    width: 32px;
+.pb-focus-back svg { width: 16px; height: 16px; stroke-width: 2.2; }
+.pb-focus-back:hover { background: var(--surface-muted); border-color: var(--ink-soft); }
+
+/* Sélecteur du nombre d'emplacements (2 / 3 / 4) — segmenté, tokens HW */
+.pb-slots {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
     height: 32px;
-    border-radius: 50%;
-    border: none;
+    padding: 3px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface-muted);
+    flex-shrink: 0;
+}
+.pb-slots button {
+    min-width: 28px;
+    height: 24px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+.pb-slots button:hover { color: var(--ink); }
+.pb-slots button.is-on { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+.pb-slots button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Corps de la carte focus : compare grid + pellicule */
+.pb-focus-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--surface);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    overflow: hidden;
+}
+
+/* --- COMPARE GRID (2 / 3 / 4 emplacements) --- */
+.pb-compare {
+    flex: 1;
+    display: grid;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    min-height: 0;
+    background: var(--surface);
+}
+.pb-compare[data-count="2"] { grid-template-columns: 1fr 1fr; }
+.pb-compare[data-count="3"] { grid-template-columns: 1fr 1fr 1fr; }
+.pb-compare[data-count="4"] { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+.pb-compare-cell {
+    position: relative;
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+.pb-compare-cell:hover { border-color: color-mix(in oklab, var(--cta-bg) 40%, var(--line)); }
+.pb-compare-cell.is-active { border-color: var(--cta-bg); box-shadow: 0 0 0 2px var(--cta-bg); }
+
+/* Zone image : photo en contain sur surface-muted (bandes lisibles pour
+   les ratios portrait sans recourir à du noir). */
+.pb-compare-photo {
+    flex: 1;
+    position: relative;
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    transition: background 0.15s, transform 0.15s;
+    padding: var(--space-md);
 }
-.photo-batch-lightbox-cell-btn .lucide { width: 16px; height: 16px; stroke-width: 2.5; }
-.photo-batch-lightbox-cell-btn:hover { transform: scale(1.1); }
-
-.photo-batch-lightbox-cell-btn.validate { background: rgba(22, 163, 74, 0.88); }
-.photo-batch-lightbox-cell-btn.validate:hover { background: #15803D; }
-
-.photo-batch-lightbox-cell-btn.extract { background: rgba(120, 53, 15, 0.85); }
-.photo-batch-lightbox-cell-btn.extract:hover { background: #78350F; }
-
-.photo-batch-lightbox-cell-btn.delete { background: rgba(185, 28, 28, 0.88); }
-.photo-batch-lightbox-cell-btn.delete:hover { background: #7F1D1D; }
-
-/* Pellicule de pagination (cluster > 4 photos) */
-.photo-batch-lightbox-strip {
-    flex-shrink: 0;
-    display: flex;
-    gap: 8px;
-    padding: 10px 20px 16px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-}
-.photo-batch-lightbox-strip::-webkit-scrollbar { height: 6px; }
-.photo-batch-lightbox-strip::-webkit-scrollbar-track { background: transparent; }
-.photo-batch-lightbox-strip::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 3px; }
-.photo-batch-lightbox-strip-thumb {
-    flex-shrink: 0;
-    width: 72px;
-    height: 72px;
-    border-radius: 6px;
-    overflow: hidden;
-    border: 2px solid transparent;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 0;
-    cursor: pointer;
-    opacity: 0.55;
-    transition: opacity 0.15s, border-color 0.15s, transform 0.15s;
-}
-.photo-batch-lightbox-strip-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.pb-compare-photo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
     display: block;
 }
-.photo-batch-lightbox-strip-thumb:hover {
-    opacity: 1;
-    transform: scale(1.05);
+
+/* Chip « Emplacement actif » sur la cellule active */
+.pb-compare-flag {
+    position: absolute;
+    top: 10px; left: 10px;
+    display: none;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 10px;
+    border-radius: var(--radius-pill);
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    font-family: var(--font-family-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    z-index: 2;
+    box-shadow: 0 2px 8px color-mix(in oklab, var(--cta-bg) 35%, transparent);
 }
-.photo-batch-lightbox-strip-thumb.selected {
-    opacity: 1;
-    border-color: var(--brand);
-    box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand) 35%, transparent);
+.pb-compare-flag svg { width: 11px; height: 11px; stroke-width: 3; }
+.pb-compare-cell.is-active .pb-compare-flag { display: inline-flex; }
+
+/* Index « n / N » (repère neutre, toutes cellules) */
+.pb-compare-idx {
+    position: absolute;
+    top: 10px; right: 10px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 9px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--ink) 84%, transparent);
+    color: var(--surface);
+    font-family: var(--font-family-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    z-index: 2;
+}
+.pb-compare-cell.is-active .pb-compare-idx { opacity: 0.3; }
+
+/* Toolbar bas : nom éditable + actions (surface claire, pas d'overlay noir) */
+.pb-compare-toolbar {
+    flex-shrink: 0;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    min-width: 0;
+}
+.pb-compare-name {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 5px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    outline: none;
+    cursor: text;
+    transition: background 0.12s, border-color 0.12s;
+}
+.pb-compare-name:hover { background: var(--surface-muted); }
+.pb-compare-name:focus { background: var(--surface-muted); border-color: var(--ink-soft); white-space: normal; text-overflow: clip; }
+.pb-compare-acts { display: flex; gap: 4px; flex-shrink: 0; }
+.pb-compare-btn {
+    width: 30px; height: 30px;
+    padding: 0;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    display: grid; place-items: center;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.pb-compare-btn svg { width: 14px; height: 14px; stroke-width: 2.2; }
+.pb-compare-btn:hover { background: var(--surface-muted); color: var(--ink); border-color: var(--ink-soft); }
+.pb-compare-btn.is-danger:hover { background: var(--danger-soft); color: var(--danger-fg); border-color: var(--danger-fg); }
+
+/* Cellule vide (emplacement ouvert non rempli) */
+.pb-compare-cell.is-empty { background: var(--surface); border-style: dashed; cursor: pointer; }
+.pb-compare-cell.is-empty .pb-compare-photo {
+    color: var(--ink-soft);
+    font-size: 13px;
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+    padding: var(--space-lg);
+}
+.pb-compare-cell.is-empty .pb-compare-photo svg { width: 28px; height: 28px; opacity: 0.5; stroke-width: 1.6; }
+
+/* --- PELLICULE (claire, harmonisée) --- */
+.pb-pellicule {
+    flex-shrink: 0;
+    background: var(--surface-muted);
+    border-top: 1px solid var(--line);
+    padding: 12px var(--space-lg) 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.pb-pellicule-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-family-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    white-space: nowrap;
+    flex-wrap: wrap;
+}
+.pb-pellicule-head b { color: var(--ink); font-weight: 700; }
+.pb-pellicule-head .sep { opacity: 0.4; }
+.pb-pellicule-hint {
+    font-family: var(--font-family-base);
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+}
+.pb-pellicule-track {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--ink) 20%, transparent) transparent;
+}
+.pb-pellicule-track::-webkit-scrollbar { height: 8px; }
+.pb-pellicule-track::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--ink) 20%, transparent); border-radius: 4px; }
+.pb-pellicule-thumb {
+    position: relative;
+    flex-shrink: 0;
+    width: 88px; height: 88px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    overflow: hidden;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
+}
+.pb-pellicule-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pb-pellicule-thumb:hover { transform: translateY(-2px); border-color: var(--ink-soft); box-shadow: 0 6px 14px rgba(0,0,0,.06); }
+.pb-pellicule-thumb.is-in-slot { border-color: var(--cta-bg); box-shadow: 0 0 0 2px var(--cta-bg); }
+.pb-pellicule-thumb .slot-num {
+    position: absolute;
+    bottom: 4px; right: 4px;
+    min-width: 18px; height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    font-family: var(--font-family-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive focus : 2 colonnes max sur étroit */
+@media (max-width: 768px) {
+    .pb-compare[data-count="3"],
+    .pb-compare[data-count="4"] { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .pb-focus-back span { display: none; }
+    .pb-pellicule-thumb { width: 72px; height: 72px; }
 }
