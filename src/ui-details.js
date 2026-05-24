@@ -100,12 +100,10 @@ async function hydrateHeroFromBlobs(poiId) {
 
     createIcons({ icons: appIcons, root: hero });
 
-    // Le clic sur le hero (gérée par setupHeroClick) early-return si pas
-    // .has-photo. Comme la classe vient d'être ajoutée, on rebind ici.
-    hero.addEventListener('click', (e) => {
-        if (e.target.closest('.poi-back-pill')) return;
-        openPhotoGrid(poiId);
-    });
+    // Pas de rebind ici : le listener posé par setupHeroClick teste .has-photo
+    // AU MOMENT du clic. On vient d'ajouter .has-photo → ce clic ouvrira donc le
+    // viewer de consultation (et non la grille). Supprime aussi le double-listener
+    // qui existait avant (setupHeroClick + ce bloc liaient tous deux le hero).
 }
 
 // Kebab + popover : remplace l'ancien drawer (PC) et bottom-sheet (mobile).
@@ -240,14 +238,66 @@ function setupNotesAutosave(poiId) {
     });
 }
 
+// Rassemble TOUTES les photos consultables d'un POI pour le viewer : URLs
+// publiées/draft d'abord (urls[0] = la photo affichée par le hero), puis blobs
+// locaux (pending admin / perso user) en objectURL. Retourne { urls, revoke } —
+// l'appelant DOIT appeler revoke() à la fermeture du viewer (libère les objectURL).
+async function collectPoiPhotoUrls(poiId) {
+    const objectUrls = [];
+    const urls = [];
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+
+    const pool = [
+        ...(feature?.properties?.photos || []),
+        ...(feature?.properties?.userData?.photos || []),
+    ];
+    const seen = new Set();
+    for (const p of pool) {
+        if (typeof p !== 'string' || p.startsWith('data:') || seen.has(p)) continue;
+        seen.add(p);
+        urls.push(p);
+    }
+
+    const mapId = state.currentMapId;
+    if (mapId && poiId) {
+        const items = state.isAdmin
+            ? await getPendingAdminPhotos(mapId, poiId)
+            : await getPoiPhotos(mapId, poiId);
+        for (const item of (items || [])) {
+            if (item?.blob) {
+                const u = URL.createObjectURL(item.blob);
+                objectUrls.push(u);
+                urls.push(u);
+            }
+        }
+    }
+
+    return { urls, revoke: () => objectUrls.forEach(u => URL.revokeObjectURL(u)) };
+}
+
+// Ouvre le viewer de consultation depuis le hero (import dynamique : évite un
+// cycle ui-details ↔ ui-photo-viewer, comme le fait déjà ui-photo-grid).
+async function openHeroViewer(poiId) {
+    const { urls, revoke } = await collectPoiPhotoUrls(poiId);
+    if (urls.length === 0) { revoke(); return; }
+    const { openPhotoViewer } = await import('./ui-photo-viewer.js');
+    openPhotoViewer(urls, 0).finally(revoke);
+}
+
 function setupHeroClick(poiId) {
     const hero = document.getElementById('poi-hero');
     if (!hero) return;
-    // Hero avec photo : clic ouvre la grid (galerie). Hero vide marqué
-    // .is-clickable (F1) : clic ouvre aussi la grid en upload direct.
+    // Hero AVEC photo → viewer de CONSULTATION. Hero VIDE (.is-clickable, F1) →
+    // grille d'édition pour AJOUTER une photo (on ne consulte pas zéro photo).
+    // On teste .has-photo AU CLIC : hydrateHeroFromBlobs peut faire passer un
+    // hero is-empty → has-photo après le rendu.
     if (!hero.classList.contains('has-photo') && !hero.classList.contains('is-clickable')) return;
     const handleOpen = async (e) => {
         if (e.target.closest('.poi-back-pill')) return;
+        if (hero.classList.contains('has-photo')) {
+            openHeroViewer(poiId);
+            return;
+        }
         const result = await openPhotoGrid(poiId);
         if (result?.saved) refreshCurrentDetailsPanel();
     };
