@@ -32,7 +32,13 @@ export function updateAppTitle(mapId) {
 
 export async function loadOfficialCircuits() {
     const mapId = state.currentMapId || 'djerba';
-    const circuitsUrl = `./circuits/${mapId}.json`;
+    // BASE_URL (chemin FIXE), pas un chemin relatif : si l'app est lancée à une
+    // URL profonde (ex. scan d'un QR de partage …/circuits/x.gpx qui ouvre la
+    // PWA), un './circuits/...' se résoudrait en …/circuits/circuits/...json →
+    // 404 → « Mes Circuits » vide. Aligné sur les autres loaders (destinations,
+    // catégories, geojson).
+    const baseUrl = import.meta.env?.BASE_URL || './';
+    const circuitsUrl = `${baseUrl}circuits/${mapId}.json`;
 
     // Le SW gère NetworkFirst avec fallback cache (timeout 8s) — pas besoin de double-fetch
     let officials = [];
