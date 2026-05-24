@@ -695,8 +695,7 @@ async function executeCreate(data) {
         geometry: { type: "Point", coordinates: [lng, lat] },
         properties: {
             ...data,
-            "HW_ID": newPoiId,
-            "Description": "Ajouté via Rich Editor"
+            "HW_ID": newPoiId
         }
     };
 
