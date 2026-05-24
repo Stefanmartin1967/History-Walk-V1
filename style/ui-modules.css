@@ -169,12 +169,9 @@
    UI-CIRCUIT-EDITOR.JS — Partage / QR Circuit
    ================================================ */
 
-.circuit-share-container { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; text-align: center; }
+.circuit-share-container { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; text-align: center; }
 .circuit-qr-img { width: 200px; height: 200px; border-radius: 10px; border: 1px solid var(--line); }
-.circuit-share-hint { text-align: center; color: var(--ink-soft); font-size: 14px; margin: 0; padding: 0; width: 100%; }
-.circuit-share-name { font-size: 14px; font-weight: bold; color: var(--ink); word-break: break-word; text-align: center; width: 100%; margin: 0; padding: 0; }
-.circuit-gpx-container { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.btn-gpx-download { text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; padding: 10px 20px; border-radius: 20px; font-weight: 600; font-size: 14px; }
+.circuit-share-name { font-size: 15px; font-weight: 600; color: var(--ink); word-break: break-word; text-align: center; width: 100%; margin: 0; padding: 0; line-height: 1.4; }
 .circuit-no-gpx-msg { text-align: center; padding: 20px; color: var(--ink-soft); }
 
 /* ================================================

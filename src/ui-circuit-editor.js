@@ -6,7 +6,7 @@ import { saveAndExportCircuit } from './circuit-actions.js';
 import { saveCircuit } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import { showToast } from './toast.js';
-import { showConfirm, showAlert } from './modal.js';
+import { showConfirm, openHwModal } from './modal.js';
 import { performCircuitDeletion } from './circuit-actions.js';
 import { eventBus } from './events.js';
 import { escapeHtml } from './utils.js';
@@ -105,12 +105,11 @@ export async function generateCircuitQR() {
 
         const htmlContent = `
             <div class="circuit-share-container">
-                <img src="${qrApp}" class="circuit-qr-img">
-                <p class="circuit-share-hint">Partager ce circuit avec un autre appareil.</p>
+                <img src="${qrApp}" class="circuit-qr-img" alt="QR code du circuit">
                 <div class="circuit-share-name">${escapeHtml(circuitName)}</div>
             </div>
         `;
-        await showAlert("Partager le circuit", htmlContent, "Fermer");
+        await openHwModal({ size: 'sm', title: '', body: htmlContent, footer: false });
 
     } else {
         // --- PC: Affichage Compact (GPX Uniquement) ---
@@ -131,23 +130,22 @@ export async function generateCircuitQR() {
             }
 
             const htmlContent = `
-                <div class="circuit-gpx-container">
-                    <img src="${qrGpx}" class="circuit-qr-img">
-                    <a href="${gpxUrl}" download class="action-button primary btn-gpx-download">
-                        <i data-lucide="download"></i> Télécharger le circuit
-                    </a>
+                <div class="circuit-share-container">
+                    <img src="${qrGpx}" class="circuit-qr-img" alt="QR code du circuit">
+                    <div class="circuit-share-name">${escapeHtml(circuitName)}</div>
                 </div>
             `;
 
-            await showAlert(escapeHtml(displayTitle), htmlContent, "Fermer");
+            await openHwModal({ size: 'sm', title: '', body: htmlContent, footer: false });
 
         } else {
             // Pas de GPX disponible
-             await showAlert(
-                 escapeHtml(displayTitle),
-                 `<div class="circuit-no-gpx-msg">Ce circuit ne dispose pas de fichier GPX téléchargeable.</div>`,
-                 "Fermer"
-             );
+             await openHwModal({
+                 size: 'sm',
+                 title: escapeHtml(displayTitle),
+                 body: `<div class="circuit-no-gpx-msg">Ce circuit ne dispose pas de fichier GPX téléchargeable.</div>`,
+                 footer: false
+             });
         }
     }
 }
