@@ -135,6 +135,13 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     height: 18px;
 }
 
+/* Modale sans titre (ex. Partager QR) : header réduit à la croix seule —
+   pas de filet de séparation ni d'espace vide au-dessus du contenu. */
+.hw-modal-header:has(.hw-modal-title:empty) {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
 /* ===== Subheader (zone fixe sous le header — typiquement tabs) ===== */
 .hw-modal-subheader {
     flex-shrink: 0;
