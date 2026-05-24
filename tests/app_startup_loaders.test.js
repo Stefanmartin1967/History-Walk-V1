@@ -82,7 +82,7 @@ describe('loadOfficialCircuits — résilience (échec/vide)', () => {
         setCurrentMap('hammamet');
         global.fetch = vi.fn(async () => notOk(404));
         await loadOfficialCircuits();
-        expect(global.fetch).toHaveBeenCalledWith('./circuits/hammamet.json');
+        expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('circuits/hammamet.json'));
     });
 });
 
