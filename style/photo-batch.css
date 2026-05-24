@@ -1,368 +1,441 @@
-/* ================================================
-   UI-PHOTO-BATCH.JS — Modale "Traitement photos"
-   Migrée sur le système hw-modal V2 (size: xl). Header/footer/overlay
-   gérés par hw-modal-*. Restent ici les styles internes (subheader,
-   clusters, photos, lightbox).
-   ================================================ */
+/* ============================================================
+   UI-PHOTO-BATCH.JS — Modale « Traitement photos » PLEIN ÉCRAN
+   ------------------------------------------------------------
+   Refonte plein écran (handoff Claude Design, mai 2026).
+   Classe dédiée `.is-photo-batch`, posée sur `.hw-modal-overlay`
+   après openHwModal — même principe que `.is-photo-viewer` (FIGÉ,
+   non touché ici) : libère padding/bg/max-height, modale 100vw/100vh.
+   SEULE différence avec le viewer : on GARDE header + footer
+   (chrome fonctionnel — workflow long de production).
+   Tokens HW theme-aware uniquement (style/tokens.css). Aucun ambre.
+   ============================================================ */
 
-/* --- SUBHEADER (compteurs + hint) --- */
-.photo-batch-subheader {
+/* --- OVERLAY plein écran --- */
+.hw-modal-overlay.is-photo-batch {
+    padding: 0;
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 10px 0;
-    font-size: 13px;
 }
-.photo-batch-counts {
-    font-family: "JetBrains Mono", monospace;
+.hw-modal-overlay.is-photo-batch .hw-modal {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- HEADER (chrome openHwModal + extras injectés en JS) --- */
+.is-photo-batch .hw-modal-header {
+    height: 64px;
+    flex-shrink: 0;
+    padding: 0 var(--space-lg);
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    background: var(--surface);
+}
+.is-photo-batch .hw-modal-icon {
+    width: 36px; height: 36px;
+    margin: 0;
+    border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--cta-bg) 12%, var(--surface));
+    color: var(--cta-bg);
+    display: grid; place-items: center;
+    flex-shrink: 0;
+}
+.is-photo-batch .hw-modal-icon svg { width: 18px; height: 18px; stroke-width: 2; }
+.is-photo-batch .hw-modal-title {
+    flex: 0 0 auto;
+    font-size: 20px;
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1;
+    margin: 0;
+}
+.is-photo-batch .pb-header-counts {
+    font-family: var(--font-family-mono);
     font-size: 12px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--ink-soft);
     font-weight: 600;
+    white-space: nowrap;
 }
-.photo-batch-hint {
-    font-style: italic;
-    color: var(--ink-soft);
+.is-photo-batch .pb-header-spacer { flex: 1; }
+.is-photo-batch .pb-header-pill {
+    display: none;            /* affiché par JS (.is-visible) si sélection > 0 */
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--cta-bg) 12%, var(--surface));
+    color: var(--cta-bg);
+    font-size: 12.5px; font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+}
+.is-photo-batch .pb-header-pill.is-visible { display: inline-flex; }
+.is-photo-batch .pb-header-pill svg { width: 14px; height: 14px; stroke-width: 2.5; }
+.is-photo-batch .pb-header-hint {
     font-size: 12.5px;
-    text-align: right;
+    color: var(--ink-soft);
+    font-style: italic;
+    white-space: nowrap;
 }
-
-/* --- BODY : la modale V2 fournit overflow-y et flex. Ici on règle
-   juste le layout vertical des clusters et le fond. --- */
-.hw-modal-body:has(#photo-batch-body) {
+.is-photo-batch .hw-modal-close {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    flex-shrink: 0;
+}
+.is-photo-batch .hw-modal-close:hover {
     background: var(--surface-muted);
-    padding: 16px 20px;
+    color: var(--ink);
+    border-color: var(--ink-soft);
 }
-.photo-batch-body {
+.is-photo-batch .hw-modal-close svg { width: 18px; height: 18px; stroke-width: 2; }
+
+/* --- BODY plein écran ---
+   Sélecteur à 4 classes (.is-photo-batch .hw-modal.is-xl .hw-modal-body) :
+   il FAUT battre `.hw-modal.is-xl .hw-modal-body { max-height: 75vh }` de
+   photo-grid.css (3 classes, @importé AVANT photo-batch.css → on ne peut pas
+   gagner l'égalité par l'ordre). C'est CE plafond 75vh qui laissait une bande
+   vide en bas et empêchait le vrai plein écran. */
+.is-photo-batch .hw-modal.is-xl .hw-modal-body {
+    max-height: none;
+    flex: 1;
+    min-height: 0;
+    background: var(--surface-muted);
+    padding: var(--space-lg);
+    padding-bottom: var(--space-xl);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+.is-photo-batch .pb-body {
+    /* Pleine largeur quel que soit l'écran (ultrawide 3440px inclus) : PAS de
+       max-width — la grille .pb-grid adapte le nombre de colonnes (auto-fill). */
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: var(--space-md);
 }
 
-/* --- CLUSTER SECTION --- */
-.photo-batch-cluster {
+/* --- CLUSTER (groupe) — carte, header sticky --- */
+.pb-cluster {
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 18px 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.2s, border-color 0.2s;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: visible;
 }
-.photo-batch-cluster:hover {
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-    border-color: #F1C97B;
-}
+.pb-cluster:hover { border-color: color-mix(in oklab, var(--cta-bg) 30%, var(--line)); }
 
-.photo-batch-cluster-header {
+/* Header NON sticky (et opaque) : un header sticky semi-transparent laissait
+   transparaître les photos au scroll (« bandeau au milieu ») et deux headers
+   se chevauchaient au passage d'un groupe à l'autre. Il défile avec son groupe. */
+.pb-cluster-head {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 14px;
-    gap: 12px;
+    align-items: center;
+    gap: var(--space-md);
+    padding: 14px var(--space-lg);
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
-.photo-batch-cluster-title-block { flex: 1; min-width: 0; }
+.pb-cluster-head-block { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
 
-/* Titre cluster : override les styles V2 `.hw-modal-body h3` (label de
-   section uppercase 11px avec trait `::before`) — inadapté pour un titre
-   éditable. On adopte le look "badge pill amber" : présence visuelle forte,
-   look distinct du texte body, contentEditable préservé. */
-.photo-batch-cluster-title {
-    /* Reset h3 V2 */
-    display: inline-block;
-    margin: 0;
-    font-family: 'Inter', system-ui, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    /* Look badge */
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: var(--hw-amber, #D97706);
-    background: var(--hw-amber-soft, #FFFBEB);
-    border: 1px solid transparent;
-    border-radius: 50px;
-    padding: 6px 14px;
+/* Titre éditable — inline texte ink, PAS de pastille ambre */
+.pb-cluster-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 0 -8px;
+    padding: 3px 8px;
     max-width: 100%;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    line-height: 1.3;
+    border-radius: var(--radius-sm);
+    cursor: text;
+    outline: none;
+    border: 1px solid transparent;
+    transition: background 0.12s, border-color 0.12s;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    cursor: text;
-    transition: border-color 0.15s, background 0.15s;
 }
-.photo-batch-cluster-title::before {
-    /* Annule la barre `::before` injectée par .hw-modal-body h3 */
-    display: none !important;
-}
-.photo-batch-cluster-title:hover {
-    border-color: var(--hw-amber, #D97706);
-}
-.photo-batch-cluster-title:focus {
-    outline: none;
-    background: var(--surface);
-    border-color: var(--hw-amber, #D97706);
-    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
-}
-.photo-batch-cluster.out-poi .photo-batch-cluster-title {
-    color: var(--ink-soft);
-    background: var(--surface-muted);
-}
-.photo-batch-cluster-subtitle {
-    margin: 3px 0 0 0;
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--ink-soft);
-    opacity: 0.75;
-}
-.photo-batch-cluster-badge {
-    background: var(--hw-amber-soft);
-    color: var(--hw-amber, #D97706);
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    padding: 5px 11px;
-    border-radius: 50px;
-    flex-shrink: 0;
-}
-.photo-batch-cluster-badge.out-poi {
-    background: var(--surface-muted);
-    color: var(--ink-soft);
-}
+.pb-cluster-title::before { content: '▸'; flex-shrink: 0; opacity: 0.45; font-weight: 500; }
+.pb-cluster-title:hover { background: var(--surface-muted); }
+.pb-cluster-title:focus { background: var(--surface-muted); border-color: var(--ink-soft); white-space: normal; text-overflow: clip; }
 
-/* Cluster Hors POI : fond et bordure plus neutres */
-.photo-batch-cluster.out-poi {
-    background: var(--surface-muted);
-    border-color: var(--line);
-    border-style: dashed;
-}
-.photo-batch-cluster.out-poi:hover {
-    border-color: var(--ink-soft);
-}
-
-/* --- THUMBNAIL GRID --- */
-.photo-batch-thumb-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+/* Sous-titre — métadonnées (mono + caps) */
+.pb-cluster-sub {
+    display: flex;
+    align-items: center;
     gap: 10px;
+    font-family: var(--font-family-mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    font-weight: 600;
+    padding-left: 19px;
+    min-width: 0;
 }
-.photo-batch-thumb {
+.pb-cluster-sub .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cta-bg); flex-shrink: 0; }
+.pb-cluster-sub .sep { opacity: 0.4; }
+.pb-cluster.is-orphan .pb-cluster-sub .dot { background: var(--warn-fg); }
+.pb-cluster.is-out-poi .pb-cluster-sub .dot { background: var(--ink-soft); opacity: 0.5; }
+
+/* Badge Orphelin / Hors POI — neutre, pas ambre */
+.pb-cluster-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 11px; font-weight: 700;
+    font-family: var(--font-family-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+}
+.pb-cluster.is-orphan .pb-cluster-badge { background: var(--warn-soft); color: var(--warn-fg); border-color: transparent; }
+
+.pb-cluster-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+/* Boutons d'action du header de cluster (variantes ghost / primary) */
+.pb-act {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+.pb-act svg { width: 14px; height: 14px; stroke-width: 2.2; flex-shrink: 0; }
+.pb-act:hover:not(:disabled) { background: var(--surface-muted); border-color: var(--ink-soft); }
+.pb-act:disabled { opacity: 0.4; cursor: not-allowed; }
+.pb-act.is-icon { width: 32px; padding: 0; justify-content: center; }
+.pb-act.is-primary { background: var(--cta-bg); color: var(--cta-fg); border-color: var(--cta-bg); }
+.pb-act.is-primary:hover:not(:disabled) { filter: brightness(1.06); }
+
+/* Cluster « Hors POI » — neutre / pointillé */
+.pb-cluster.is-out-poi { background: var(--surface-muted); border-style: dashed; border-color: var(--line); }
+.pb-cluster.is-out-poi .pb-cluster-head { background: var(--surface-muted); }
+.pb-cluster.is-out-poi .pb-cluster-title { color: var(--ink-soft); }
+
+/* --- GRILLE de vignettes (220px : ~3.4× plus grandes que l'ancien 120px) --- */
+.pb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    padding: var(--space-md) var(--space-lg) var(--space-lg);
+    min-height: 90px;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.pb-thumb {
     position: relative;
     aspect-ratio: 1;
     background: var(--surface-muted);
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     overflow: hidden;
     cursor: grab;
-    transition: transform 0.15s, box-shadow 0.15s;
+    transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
 }
-.photo-batch-thumb:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+.pb-thumb:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklab, var(--cta-bg) 40%, var(--line));
+    box-shadow: 0 8px 20px rgba(0,0,0,.07), 0 2px 6px rgba(0,0,0,.04);
 }
-.photo-batch-thumb:active { cursor: grabbing; }
+.pb-thumb:active { cursor: grabbing; }
+.pb-thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.pb-thumb.is-selected { border-color: var(--cta-bg); box-shadow: 0 0 0 2px var(--cta-bg), 0 8px 20px rgba(0,0,0,.10); }
 
-/* Sortable drag states */
-.photo-batch-thumb-ghost {
-    opacity: 0.35;
-    background: var(--hw-amber-soft);
-}
-.photo-batch-thumb-chosen {
-    box-shadow: 0 0 0 2px var(--hw-amber, #D97706);
-}
-.photo-batch-thumb-drag {
-    transform: rotate(2deg);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
-}
-
-/* Cible de drop */
-.photo-batch-thumb-grid {
-    min-height: 60px;
-    padding: 4px;
-    border-radius: 10px;
-    transition: background 0.15s;
-}
-
-/* Bouton "Extraire vers Hors POI" — toujours visible (inspiré Photo-Manager) */
-.photo-batch-thumb-action {
+/* Pastille de sélection — coche permanente (translucide → CTA au clic) */
+.pb-pick {
     position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 26px;
-    height: 26px;
+    top: 8px; left: 8px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(20,20,22,0.45);
+    border: 2px solid rgba(255,255,255,0.85);
+    color: transparent;
+    display: grid; place-items: center;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0,0,0,.35);
+    transition: background 0.12s, transform 0.12s, color 0.12s, border-color 0.12s;
+    z-index: 3;
+    padding: 0;
+}
+.pb-pick svg { width: 14px; height: 14px; stroke-width: 3; }
+.pb-pick:hover { background: rgba(20,20,22,0.75); transform: scale(1.05); }
+.pb-thumb.is-selected .pb-pick { background: var(--cta-bg); border-color: var(--cta-fg); color: var(--cta-fg); }
+
+/* Actions par photo — top-right : extraire + supprimer */
+.pb-thumb-acts {
+    position: absolute;
+    top: 8px; right: 8px;
+    display: flex;
+    gap: 6px;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.pb-thumb:hover .pb-thumb-acts,
+.pb-thumb:focus-within .pb-thumb-acts { opacity: 1; }
+.pb-thumb-btn {
+    width: 26px; height: 26px;
     padding: 0;
     border-radius: 50%;
-    border: none;
-    background: var(--cta-bg);
-    color: var(--cta-fg);
+    border: 1px solid rgba(255,255,255,0.75);
+    background: rgba(20,20,22,0.55);
+    color: #fff;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, transform 0.15s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    z-index: 2;
+    display: grid; place-items: center;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0,0,0,.35);
+    transition: background 0.12s, transform 0.12s;
 }
-.photo-batch-thumb-action:hover {
-    background: #B45309;
-    transform: scale(1.1);
-}
-.photo-batch-thumb-action svg,
-.photo-batch-thumb-action .lucide {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.5;
-}
+.pb-thumb-btn svg { width: 14px; height: 14px; stroke-width: 2.5; }
+.pb-thumb-btn:hover { transform: scale(1.06); }
+.pb-thumb-btn.is-danger:hover { background: var(--danger-bg); border-color: #fff; }
 
-/* Bouton "Supprimer" (poubelle) — toujours visible, top-left */
-.photo-batch-thumb-delete {
-    position: absolute;
-    top: 6px;
-    left: 6px;
-    width: 26px;
-    height: 26px;
-    padding: 0;
-    border-radius: 50%;
-    border: none;
-    background: rgba(69, 26, 3, 0.82);
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.15s, transform 0.15s;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    z-index: 2;
-}
-.photo-batch-thumb-delete:hover {
-    background: #991B1B;
-    transform: scale(1.1);
-}
-.photo-batch-thumb-delete svg,
-.photo-batch-thumb-delete .lucide {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.5;
-}
-
-.photo-batch-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-.photo-batch-thumb-label {
+/* Label éditable bas — nom de fichier ZIP (feature préservée) */
+.pb-thumb-label {
     position: absolute;
     left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
-    color: white;
-    font-size: 0.7rem;
-    font-weight: 500;
-    padding: 12px 6px 5px;
+    padding: 22px 26px 8px 10px;
+    background: linear-gradient(to top, rgba(0,0,0,.78), rgba(0,0,0,.45) 60%, transparent);
+    color: #fff;
+    font-family: var(--font-family-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     outline: none;
     cursor: text;
+    border: 1px solid transparent;
+    z-index: 2;
 }
-.photo-batch-thumb-label:focus {
-    background: rgba(0, 0, 0, 0.92);
-    overflow: visible;
+.pb-thumb-label:focus {
+    background: rgba(0,0,0,.92);
+    border-color: var(--brand);
     white-space: normal;
     word-break: break-all;
-    box-shadow: inset 0 0 0 2px var(--hw-amber, #D97706);
+    text-overflow: clip;
 }
-
-/* Titre cluster éditable : styles définis plus haut (look badge pill amber).
-   Le `:focus` autorise le wrap pour pouvoir voir le titre complet en édition. */
-.photo-batch-cluster-title:focus {
-    white-space: normal;
-}
-
-/* Boutons d'action du header de cluster (créer, rattacher, comparer) */
-.photo-batch-cluster-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
-}
-.photo-batch-cluster-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--hw-amber, #D97706);
-    background: var(--hw-amber-soft);
-    border: 1px solid var(--hw-amber);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-.photo-batch-cluster-btn:hover:not(:disabled) {
-    background: var(--cta-bg);
-    color: var(--cta-fg);
-    border-color: var(--cta-bg);
-}
-.photo-batch-cluster-btn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-}
-.photo-batch-cluster-btn svg,
-.photo-batch-cluster-btn .lucide {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.2;
-}
-/* Alias rétro-compatible pour les tests existants */
-.photo-batch-cluster-create-btn { /* idem boutons cluster */ }
-
-/* Bouton ZIP par groupe : icon-only, plus compact */
-.photo-batch-cluster-zip-btn {
-    padding: 6px 8px;
-    min-width: 32px;
-    justify-content: center;
-}
-.photo-batch-cluster-zip-btn svg,
-.photo-batch-cluster-zip-btn .lucide {
-    width: 16px;
-    height: 16px;
-}
-
-/* Vignette sélectionnée (liseré amber épais + check badge) */
-.photo-batch-thumb.selected {
-    outline: 3px solid var(--hw-amber, #D97706);
-    outline-offset: -3px;
-}
-.photo-batch-thumb-check {
+.pb-thumb-pencil {
     position: absolute;
-    bottom: 6px;
-    right: 6px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--cta-bg);
-    color: var(--cta-fg);
-    display: none;
+    right: 8px; bottom: 7px;
+    width: 12px; height: 12px;
+    color: #fff;
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 3;
+}
+.pb-thumb-pencil svg { width: 12px; height: 12px; }
+
+/* --- FOOTER — Fermer / Télécharger ZIP / Enregistrer --- */
+.is-photo-batch .hw-modal-footer {
+    height: 72px;
+    flex-shrink: 0;
+    padding: 0 var(--space-lg);
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+}
+.pb-footer-info {
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    white-space: nowrap;
+}
+.pb-footer-info b { color: var(--ink); font-weight: 700; }
+.pb-footer-actions { display: flex; align-items: center; gap: var(--space-sm); }
+
+/* --- ÉTAT DRAG / DROP --- */
+.pb-cluster.is-drop-target { border-color: var(--cta-bg); border-style: solid; }
+.pb-cluster.is-drop-target .pb-grid {
+    background: color-mix(in oklab, var(--cta-bg) 6%, var(--surface));
+    box-shadow: inset 0 0 0 2px var(--cta-bg);
+}
+.pb-thumb.is-ghost { opacity: 0.4; }
+.pb-thumb.is-dragging { transform: rotate(2deg); box-shadow: 0 16px 32px rgba(0,0,0,.22); }
+.pb-thumb.is-chosen { box-shadow: 0 0 0 2px var(--cta-bg); }
+
+/* --- EMPTY STATE --- */
+.photo-batch-empty {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-    z-index: 2;
-    pointer-events: none;
+    padding: 80px 20px;
+    color: var(--ink-soft);
+    opacity: 0.6;
+    text-align: center;
 }
-.photo-batch-thumb.selected .photo-batch-thumb-check {
-    display: flex;
-}
-.photo-batch-thumb-check svg,
-.photo-batch-thumb-check .lucide {
-    width: 14px;
-    height: 14px;
-    stroke-width: 3;
+.photo-batch-empty .lucide { width: 48px; height: 48px; margin-bottom: 12px; }
+.photo-batch-empty p { margin: 0; font-weight: 500; }
+
+/* --- RESPONSIVE (PC prioritaire ; mobile dégradé proprement) --- */
+@media (max-width: 768px) {
+    .is-photo-batch .hw-modal-header { gap: var(--space-sm); padding: 0 var(--space-md); }
+    .is-photo-batch .pb-header-counts,
+    .is-photo-batch .pb-header-hint { display: none; }
+    .is-photo-batch .hw-modal-body { padding: var(--space-md); }
+    .pb-cluster-head { flex-wrap: wrap; }
+    .pb-cluster-actions { width: 100%; flex-wrap: wrap; }
+    .pb-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+        padding: var(--space-sm) var(--space-md) var(--space-md);
+    }
+    .is-photo-batch .hw-modal-footer { height: auto; padding: 10px var(--space-md); flex-wrap: wrap; gap: var(--space-sm); }
+    .pb-footer-info { display: none; }
 }
 
-/* --- LIGHTBOX (Voir / Comparer) --- */
-/* Lightbox : doit passer AU-DESSUS de la modale V2 (overlay z-index 100000). */
+/* ============================================================
+   LIGHTBOX (Voir / Comparer) — inchangée fonctionnellement.
+   Passe AU-DESSUS de la modale V2 (overlay z-index 100000).
+   Accents ambre résiduels remplacés par tokens theme-aware.
+   ============================================================ */
 .photo-batch-lightbox {
     position: fixed;
     inset: 0;
@@ -413,7 +486,6 @@
     min-height: 0;
     grid-auto-rows: 1fr;
 }
-/* 1 photo → plein écran ; 2-4 photos → 2 colonnes équilibrées (auto-flow pour la 3e/4e) */
 .photo-batch-lightbox-grid[data-count="1"] { grid-template-columns: 1fr; }
 .photo-batch-lightbox-grid[data-count="2"],
 .photo-batch-lightbox-grid[data-count="3"],
@@ -435,7 +507,6 @@
     border-radius: 6px;
     display: block;
 }
-/* Bandeau d'actions en overlay bas : [nom éditable] [✓] [⇄] [🗑] */
 .photo-batch-lightbox-cell-bar {
     position: absolute;
     left: 8px;
@@ -475,7 +546,7 @@
 }
 .photo-batch-lightbox-cell-name:focus {
     background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(251, 191, 36, 0.8);
+    border-color: var(--brand);
     white-space: normal;
     overflow: visible;
     text-overflow: clip;
@@ -549,38 +620,6 @@
 }
 .photo-batch-lightbox-strip-thumb.selected {
     opacity: 1;
-    border-color: #F59E0B;
-    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35);
-}
-
-/* --- EMPTY STATE --- */
-.photo-batch-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 20px;
-    color: var(--ink-soft);
-    opacity: 0.6;
-    text-align: center;
-}
-.photo-batch-empty .lucide {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 12px;
-}
-.photo-batch-empty p { margin: 0; font-weight: 500; }
-
-/* Footer/boutons : fournis par hw-modal-footer + .btn V2. Le bouton
-   "Enregistrer" disabled est géré par .btn:disabled générique
-   (cf. modals.css). */
-
-/* --- RESPONSIVE (tablette, même si desktop-only c'est plus propre) --- */
-@media (max-width: 768px) {
-    .photo-batch-subheader { flex-direction: column; align-items: flex-start; gap: 4px; }
-    .photo-batch-hint { text-align: left; }
-    .photo-batch-thumb-grid {
-        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-        gap: 8px;
-    }
+    border-color: var(--brand);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand) 35%, transparent);
 }

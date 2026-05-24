@@ -123,7 +123,9 @@ export async function handleDesktopPhotoImport(filesList) {
         for (const cluster of expandedClusters) {
             for (const item of cluster) {
                 if (!item.base64) {
-                    try { item.base64 = await resizeImage(item.file, 200); }
+                    // 320px (≥ ~225px d'affichage en grille plein écran) → vignettes
+                    // nettes sans alourdir l'import. Sert aussi la pellicule de la lightbox.
+                    try { item.base64 = await resizeImage(item.file, 320); }
                     catch (e) { console.error("Pré-calcul base64:", e); }
                 }
             }
