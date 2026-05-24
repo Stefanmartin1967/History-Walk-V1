@@ -16,7 +16,7 @@ import {
 
     // Interface
     X, XCircle, Check, CheckCircle, CheckCircle2, Circle,
-    Plus, PlusCircle, Minus, Move, Maximize2, Link,
+    Plus, PlusCircle, Minus, Move, Maximize, Maximize2, ZoomIn, ZoomOut, Link,
     Eye, EyeOff, Lock, LogIn, LogOut,
     Settings, LayoutDashboard, LayoutGrid, List, ListChecks, ListTodo,
     Search, Filter,
@@ -71,7 +71,7 @@ export const appIcons = {
     RotateCcw, RefreshCw, Repeat, LocateFixed, Locate, Home,
 
     X, XCircle, Check, CheckCircle, CheckCircle2, Circle,
-    Plus, PlusCircle, Minus, Move, Maximize2, Link,
+    Plus, PlusCircle, Minus, Move, Maximize, Maximize2, ZoomIn, ZoomOut, Link,
     Eye, EyeOff, Lock, LogIn, LogOut,
     Settings, LayoutDashboard, LayoutGrid, List, ListChecks, ListTodo,
     Search, Filter,
