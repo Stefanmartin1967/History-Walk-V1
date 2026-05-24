@@ -518,7 +518,7 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     justify-content: stretch;
 }
 
-/* ── Conteneur viewer — fond noir opaque, capte les gestes ── */
+/* ── Conteneur viewer — colonne : [zone photo] + [bande vignettes] ── */
 .hw-photo-viewer {
     position: relative;
     width: 100%;
@@ -527,11 +527,17 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     overflow: hidden;
     user-select: none;
     touch-action: none; /* contrôle total des gestes (zoom/pan/swipe) */
+    display: flex;
+    flex-direction: column;
 }
 
+/* Zone photo : prend toute la hauteur dispo AU-DESSUS de la bande. Contient
+   l'image + les contrôles flottants (top-right / nav / zoom). */
 .hw-pv-stage {
-    position: absolute;
-    inset: 0;
+    position: relative;
+    flex: 1;
+    min-height: 0;     /* indispensable : laisse la zone céder la place à la bande */
+    overflow: hidden;  /* clippe l'image zoomée */
     cursor: zoom-in;
 }
 .hw-photo-viewer:not([data-zoom="1"]) .hw-pv-stage { cursor: grab; }
@@ -607,18 +613,18 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
 .hw-pv-zoom {
     position: absolute;
     right: 24px;
-    bottom: 122px;            /* 100px pellicule + 22px de respiration */
+    bottom: 24px;            /* bas de la ZONE PHOTO (la pellicule est une bande à part, dessous) */
     display: flex;
     flex-direction: column;
     gap: 10px;
     z-index: 4;
 }
-.hw-photo-viewer.is-single .hw-pv-zoom { bottom: 24px; }
 
-/* ── Pellicule : centrée si peu, scrollable si beaucoup ── */
+/* ── Pellicule : BANDE SÉPARÉE sous la zone photo (zones empilées, façon Wikiloc).
+   Pas un overlay → la photo ne passe JAMAIS derrière les vignettes (robuste
+   portrait). Centrée si peu, pleine largeur + scroll si beaucoup. ── */
 .hw-pv-strip {
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
+    flex-shrink: 0;
     height: 100px;
     display: flex;
     align-items: center;
@@ -628,8 +634,8 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     overflow-x: auto;
     overflow-y: hidden;
     scrollbar-width: none;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-    z-index: 2;
+    background: #000;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
     -webkit-overflow-scrolling: touch;
 }
 .hw-pv-strip::-webkit-scrollbar { display: none; }
@@ -675,12 +681,13 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
 
 /* ── Mode plein écran : chrome minimal (tout masqué sauf les flèches) ── */
 .hw-photo-viewer.is-fullscreen .hw-pv-topright,
-.hw-photo-viewer.is-fullscreen .hw-pv-zoom,
-.hw-photo-viewer.is-fullscreen .hw-pv-strip {
+.hw-photo-viewer.is-fullscreen .hw-pv-zoom {
     opacity: 0;
     pointer-events: none;
     transition: opacity 200ms;
 }
+/* La bande disparaît → la zone photo prend TOUTE la hauteur de l'écran. */
+.hw-photo-viewer.is-fullscreen .hw-pv-strip { display: none; }
 
 /* ── Responsive mobile ── */
 @media (max-width: 700px) {
@@ -691,8 +698,7 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     .hw-pv-topright { top: 14px; right: 14px; gap: 8px; }
     .hw-pv-nav.is-prev { left: 12px; }
     .hw-pv-nav.is-next { right: 12px; }
-    .hw-pv-zoom { right: 12px; bottom: 100px; gap: 8px; }
-    .hw-photo-viewer.is-single .hw-pv-zoom { bottom: 12px; }
+    .hw-pv-zoom { right: 12px; bottom: 16px; gap: 8px; }
     .hw-pv-strip { height: 84px; padding: 10px 14px 12px; gap: 8px; }
     .hw-pv-strip-thumb { width: 58px; height: 58px; }
 }
