@@ -377,7 +377,6 @@ async function handleAddPoiClick() {
             "Nom du site FR": "Nouveau Lieu",
             "Catégorie": "A définir",
             "Zone": detectedZone,
-            "Description": "Créé sur le terrain",
             "HW_ID": newPoiId,
             "created_at": new Date().toISOString()
         }
