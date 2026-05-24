@@ -488,7 +488,7 @@ html[data-theme="desert"] .hw-modal-overlay.is-photo-viewer,
 html[data-theme="oasis"] .hw-modal-overlay.is-photo-viewer,
 html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     padding: 0;
-    background: rgba(0, 0, 0, 0.95);
+    background: #000;          /* noir OPAQUE — aucune transparence ni blur derrière */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 }
@@ -503,43 +503,30 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     display: flex;
     flex-direction: column;
 }
-.hw-modal-overlay.is-photo-viewer .hw-modal-header {
-    background: transparent;
-    border-bottom: none;
-    flex-shrink: 0;
-    color: white;
-}
-.hw-modal-overlay.is-photo-viewer .hw-modal-title {
-    color: white;
-    font-family: var(--font-family-mono);
-    font-size: 22px;
-    letter-spacing: 0.02em;
-}
-.hw-modal-overlay.is-photo-viewer .hw-modal-close { color: white; }
-.hw-modal-overlay.is-photo-viewer .hw-modal-close:hover {
-    background: rgba(255, 255, 255, 0.15);
-}
+/* Header hw-modal MASQUÉ : viewer immersif, image bord à bord. Compteur retiré
+   (la pellicule montre déjà position + nombre) ; fermeture via la pastille
+   flottante .hw-pv-topright (cf. ui-photo-viewer.js). */
+.hw-modal-overlay.is-photo-viewer .hw-modal-header { display: none; }
 .hw-modal-overlay.is-photo-viewer .hw-modal-body {
     background: transparent;
     padding: 0;
     flex: 1;
     overflow: hidden;
     display: flex;
-    /* stretch (et non center) : .hw-photo-viewer n'a que des enfants en
-       position:absolute (stage/nav/zoom/strip), donc 0 contenu en flux. Avec
-       center il s'effondrait à hauteur 0. stretch le force à remplir le body. */
+    /* stretch : .hw-photo-viewer remplit le body (ses enfants sont en absolute). */
     align-items: stretch;
     justify-content: stretch;
 }
 
-/* ── Conteneur viewer (porte l'état zoom + capte les gestes) ── */
+/* ── Conteneur viewer — fond noir opaque, capte les gestes ── */
 .hw-photo-viewer {
     position: relative;
     width: 100%;
     height: 100%;
+    background: #000;
     overflow: hidden;
     user-select: none;
-    touch-action: none; /* on prend le contrôle total des gestes (zoom/pan/swipe) */
+    touch-action: none; /* contrôle total des gestes (zoom/pan/swipe) */
 }
 
 .hw-pv-stage {
@@ -551,10 +538,9 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
 .hw-photo-viewer.is-panning .hw-pv-stage { cursor: grabbing; }
 
 .hw-pv-img {
-    /* Absolu + inset:0 dans la stage : la boîte image = EXACTEMENT la stage, donc
-       aucun débord possible. (En flux, height:100% se résolvait contre 100vh et non
-       contre la stage → l'image dépassait et n'affichait que son haut.) object-fit:
-       contain letterbox l'image dedans : tous ratios (portrait/paysage), zéro crop. */
+    /* Absolu + inset:0 : la boîte image = EXACTEMENT la stage, aucun débord
+       possible. (En flux, height:100% se résolvait contre 100vh, pas la stage →
+       portrait rogné.) object-fit:contain letterbox tous ratios, zéro crop. */
     position: absolute;
     top: 0;
     left: 0;
@@ -563,147 +549,150 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     object-fit: contain;
     display: block;
     transform-origin: center center;
-    transition: transform 180ms cubic-bezier(.2, .8, .2, 1);
+    transition: transform 220ms cubic-bezier(.2, .8, .2, 1), opacity 180ms;
     will-change: transform;
 }
 .hw-photo-viewer.is-panning .hw-pv-img { transition: none; }
+.hw-pv-stage.is-loading .hw-pv-img { opacity: 0.4; }
 
-/* ── Navigation (flèches) ── */
+/* ── Système de contrôle flottant unifié : pastilles rondes « glass ».
+   Halo noir fort = lisibilité sur photo TRÈS claire ; blur = voile sur fonds
+   chargés. Partagé par fermer / plein écran / nav / zoom. ── */
+.hw-pv-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(20, 20, 22, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.6);
+    transition: background 160ms, border-color 160ms, transform 160ms;
+}
+.hw-pv-btn:hover { background: rgba(0, 0, 0, 0.78); border-color: rgba(255, 255, 255, 0.32); }
+.hw-pv-btn:active { transform: scale(0.94); }
+.hw-pv-btn:focus-visible { outline: none; box-shadow: var(--focus-ring), 0 6px 20px rgba(0, 0, 0, 0.45); }
+.hw-pv-btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.hw-pv-btn .lucide { width: 20px; height: 20px; stroke-width: 2; }
+.hw-pv-btn.is-lg { width: 56px; height: 56px; }
+.hw-pv-btn.is-lg .lucide { width: 24px; height: 24px; }
+
+/* ── Top-right : plein écran + fermer ── */
+.hw-pv-topright {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 4;
+}
+
+/* ── Navigation (positionnement ; le style vient de .hw-pv-btn.is-lg) ── */
 .hw-pv-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: rgba(0, 0, 0, 0.45);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    color: #fff;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
     z-index: 3;
-    transition: background 150ms, border-color 150ms;
 }
-.hw-pv-nav:hover { background: rgba(0, 0, 0, 0.7); border-color: rgba(255, 255, 255, 0.35); }
-.hw-pv-nav:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .hw-pv-nav.is-prev { left: 24px; }
 .hw-pv-nav.is-next { right: 24px; }
-.hw-pv-nav .lucide { width: 22px; height: 22px; stroke-width: 2.5; }
 .hw-photo-viewer.is-single .hw-pv-nav { display: none; }
 
-/* ── Cluster zoom ── */
+/* ── Zoom : 3 pastilles rondes empilées, AUCUN boîtier ── */
 .hw-pv-zoom {
     position: absolute;
     right: 24px;
-    bottom: 116px; /* au-dessus de la pellicule (100px + 16px gap) */
+    bottom: 122px;            /* 100px pellicule + 22px de respiration */
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    gap: 2px;
-    padding: 6px;
-    background: rgba(0, 0, 0, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: var(--radius-md);
-    z-index: 3;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    gap: 10px;
+    z-index: 4;
 }
-.hw-photo-viewer.is-single .hw-pv-zoom { bottom: 24px; } /* pas de pellicule */
+.hw-photo-viewer.is-single .hw-pv-zoom { bottom: 24px; }
 
-.hw-pv-zoom-btn {
-    width: 44px;
-    height: 44px;
-    border-radius: 6px;
-    background: transparent;
-    border: 0;
-    color: #fff;
-    font-family: var(--font-family-mono);
-    font-size: 20px;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    transition: background 120ms;
-}
-.hw-pv-zoom-btn:hover { background: rgba(255, 255, 255, 0.12); }
-.hw-pv-zoom-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.hw-pv-zoom-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.hw-pv-zoom-btn .lucide { width: 18px; height: 18px; }
-
-.hw-pv-zoom-level {
-    font-family: var(--font-family-mono);
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.85);
-    text-align: center;
-    padding: 4px 0;
-    cursor: pointer;
-    border-top: 1px solid rgba(255, 255, 255, 0.14);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-}
-
-/* ── Pellicule de vignettes ── */
+/* ── Pellicule : centrée si peu, scrollable si beaucoup ── */
 .hw-pv-strip {
     position: absolute;
     left: 0; right: 0; bottom: 0;
+    height: 100px;
     display: flex;
-    gap: 8px;
-    padding: 12px 20px 16px;
+    align-items: center;
+    justify-content: center;   /* peu de photos → centrées */
+    gap: 10px;
+    padding: 14px 24px 18px;
     overflow-x: auto;
     overflow-y: hidden;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.65), transparent);
+    scrollbar-width: none;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
     z-index: 2;
+    -webkit-overflow-scrolling: touch;
 }
-.hw-pv-strip::-webkit-scrollbar { height: 6px; }
-.hw-pv-strip::-webkit-scrollbar-track { background: transparent; }
-.hw-pv-strip::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 3px; }
+.hw-pv-strip::-webkit-scrollbar { display: none; }
+.hw-pv-strip.is-overflow { justify-content: flex-start; } /* déborde → scroll naturel */
 
 .hw-pv-strip-thumb {
     flex-shrink: 0;
     width: 72px;
     height: 72px;
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
     border: 2px solid transparent;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     padding: 0;
     cursor: pointer;
     opacity: 0.55;
-    transition: opacity 150ms, border-color 150ms, transform 150ms, box-shadow 150ms;
+    transition: opacity 160ms, border-color 160ms, transform 160ms, box-shadow 160ms;
 }
 .hw-pv-strip-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hw-pv-strip-thumb:hover { opacity: 1; transform: scale(1.05); }
+.hw-pv-strip-thumb:hover { opacity: 0.95; transform: translateY(-2px); }
 .hw-pv-strip-thumb.is-active {
     opacity: 1;
     border-color: var(--brand);
-    box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand) 35%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--brand) 35%, transparent), 0 6px 14px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
 }
-.hw-pv-strip-thumb:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.hw-pv-strip-thumb:focus-visible { outline: none; box-shadow: var(--focus-ring), 0 6px 14px rgba(0, 0, 0, 0.5); }
 .hw-photo-viewer.is-single .hw-pv-strip { display: none; }
 
-/* ── Loading ── */
+/* ── Loading spinner (centré sur la stage) ── */
 .hw-pv-stage.is-loading::after {
     content: "";
     position: absolute;
     top: 50%; left: 50%;
     width: 56px; height: 56px;
+    margin: -28px 0 0 -28px;
     border-radius: 50%;
-    border: 3px solid rgba(255, 255, 255, 0.16);
+    border: 3px solid rgba(255, 255, 255, 0.14);
     border-top-color: var(--brand);
-    transform: translate(-50%, -50%);
     animation: hw-pv-spin 800ms linear infinite;
 }
-@keyframes hw-pv-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
-.hw-pv-stage.is-loading .hw-pv-img { opacity: 0.4; }
+@keyframes hw-pv-spin { to { transform: rotate(360deg); } }
 
-/* ── Responsive ── */
+/* ── Mode plein écran : chrome minimal (tout masqué sauf les flèches) ── */
+.hw-photo-viewer.is-fullscreen .hw-pv-topright,
+.hw-photo-viewer.is-fullscreen .hw-pv-zoom,
+.hw-photo-viewer.is-fullscreen .hw-pv-strip {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms;
+}
+
+/* ── Responsive mobile ── */
 @media (max-width: 700px) {
-    .hw-pv-nav { width: 44px; height: 44px; }
+    .hw-pv-btn { width: 40px; height: 40px; }
+    .hw-pv-btn .lucide { width: 18px; height: 18px; }
+    .hw-pv-btn.is-lg { width: 44px; height: 44px; }
+    .hw-pv-btn.is-lg .lucide { width: 20px; height: 20px; }
+    .hw-pv-topright { top: 14px; right: 14px; gap: 8px; }
     .hw-pv-nav.is-prev { left: 12px; }
     .hw-pv-nav.is-next { right: 12px; }
-    .hw-pv-zoom { right: 12px; bottom: 104px; }
+    .hw-pv-zoom { right: 12px; bottom: 100px; gap: 8px; }
     .hw-photo-viewer.is-single .hw-pv-zoom { bottom: 12px; }
-    .hw-pv-strip { padding: 8px 12px 12px; gap: 6px; }
-    .hw-pv-strip-thumb { width: 56px; height: 56px; }
+    .hw-pv-strip { height: 84px; padding: 10px 14px 12px; gap: 8px; }
+    .hw-pv-strip-thumb { width: 58px; height: 58px; }
 }

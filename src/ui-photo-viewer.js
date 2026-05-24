@@ -1,45 +1,45 @@
 // ui-photo-viewer.js
-// Viewer photo de CONSULTATION — plein écran, immersif, zoom/pan + pellicule.
-// Variante hw-modal (.hw-modal-overlay.is-photo-viewer). UN seul viewer partagé
-// par tous les points d'entrée de consultation (hero d'une fiche, vignettes de
-// la grille d'édition). AUCUNE action d'édition ici (handoff "viewer de
-// consultation"). API openPhotoViewer(photos, startIndex) préservée.
+// Viewer photo de CONSULTATION — plein écran, immersif, chrome flottant épuré.
+// Refonte chrome (handoff Claude Design) : fond noir opaque, header retiré (pas de
+// compteur), boutons ronds « glass » unifiés (fermer / plein écran / nav / zoom),
+// zoom = 3 pastilles (in/out/reset), vrai plein écran (API Fullscreen) qui masque
+// tout sauf les flèches, pellicule centrée/scrollable. AUCUNE action d'édition.
+// API openPhotoViewer(photos, startIndex) préservée.
 
-import { openHwModal } from './modal.js';
+import { openHwModal, closeHwModal } from './modal.js';
 import { setCurrentPhotos, currentPhotoList, currentPhotoIndex } from './photo-service.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 // ── Constantes zoom ──
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 4;
-const ZOOM_STEPS = [1, 1.6, 2.6, 4];   // paliers boutons + double-tap
-const ZOOM_WHEEL_FACTOR = 0.0015;       // sensibilité molette
+const ZOOM_STEPS = [1, 1.6, 2.6, 4];
+const ZOOM_WHEEL_FACTOR = 0.0015;
 const DOUBLE_TAP_MS = 300;
 const DOUBLE_TAP_DIST = 30;
 const SWIPE_MIN = 50;
 
-// ── État par ouverture (réinitialisé à chaque open) ──
+// ── État par ouverture ──
 let zoom = { level: 1, tx: 0, ty: 0 };
-let activePointers = new Map();  // pointerId → { x, y }
-let pinchStart = null;           // { dist, level }
-let panStart = null;             // { x, y, tx, ty }
-let swipeStart = null;           // { x, y } — seulement à level 1
+let activePointers = new Map();
+let pinchStart = null;
+let panStart = null;
+let swipeStart = null;
 let lastTapTime = 0;
 let lastTapPos = { x: 0, y: 0 };
 
-// Listeners au niveau document (à retirer à la fermeture — ils survivent au DOM).
-// Les listeners posés sur la stage meurent avec l'élément quand la modale ferme.
+// Listeners document (à retirer à la fermeture). Les listeners sur la stage
+// meurent avec l'élément quand la modale ferme.
 let docListeners = [];
 
-// ── Refs DOM (résolues au mount) ──
-let viewerEl = null, stageEl = null, imgEl = null, stripEl = null;
-let zoomLevelEl = null, zoomInBtn = null, zoomOutBtn = null;
+// ── Refs DOM ──
+let overlayEl = null, viewerEl = null, stageEl = null, imgEl = null, stripEl = null;
+let zoomInBtn = null, zoomOutBtn = null;
 
 function addDocListener(type, fn, opts) {
     document.addEventListener(type, fn, opts);
     docListeners.push({ type, fn, opts });
 }
-
 function clearDocListeners() {
     docListeners.forEach(({ type, fn, opts }) => document.removeEventListener(type, fn, opts));
     docListeners = [];
@@ -52,13 +52,13 @@ function resetState() {
     panStart = null;
     swipeStart = null;
     lastTapTime = 0;
-    viewerEl = stageEl = imgEl = stripEl = null;
-    zoomLevelEl = zoomInBtn = zoomOutBtn = null;
+    overlayEl = viewerEl = stageEl = imgEl = stripEl = null;
+    zoomInBtn = zoomOutBtn = null;
 }
 
 /**
  * Ouvre le viewer photo de consultation.
- * @param {string[]} photos - URLs / objectURLs des photos.
+ * @param {string[]} photos - URLs / objectURLs.
  * @param {number} startIndex - index initial (défaut 0).
  * @returns {Promise<void>} - résout à la fermeture.
  */
@@ -71,19 +71,22 @@ export function openPhotoViewer(photos, startIndex = 0) {
 
     const body = `
         <div class="hw-photo-viewer${isSingle ? ' is-single' : ''}" data-zoom="1">
-            <button class="hw-pv-nav is-prev" id="hw-pv-prev" type="button" aria-label="Photo précédente"><i data-lucide="chevron-left"></i></button>
-
             <div class="hw-pv-stage" id="hw-pv-stage">
                 <img class="hw-pv-img" id="hw-pv-img" alt="Photo" draggable="false">
             </div>
 
-            <button class="hw-pv-nav is-next" id="hw-pv-next" type="button" aria-label="Photo suivante"><i data-lucide="chevron-right"></i></button>
+            <div class="hw-pv-topright">
+                <button class="hw-pv-btn" id="hw-pv-fullscreen" type="button" aria-label="Plein écran"><i data-lucide="maximize"></i></button>
+                <button class="hw-pv-btn" id="hw-pv-close" type="button" aria-label="Fermer"><i data-lucide="x"></i></button>
+            </div>
+
+            <button class="hw-pv-btn is-lg hw-pv-nav is-prev" id="hw-pv-prev" type="button" aria-label="Photo précédente"><i data-lucide="chevron-left"></i></button>
+            <button class="hw-pv-btn is-lg hw-pv-nav is-next" id="hw-pv-next" type="button" aria-label="Photo suivante"><i data-lucide="chevron-right"></i></button>
 
             <div class="hw-pv-zoom" role="group" aria-label="Zoom">
-                <button class="hw-pv-zoom-btn" id="hw-pv-zoom-in" type="button" aria-label="Agrandir">+</button>
-                <span class="hw-pv-zoom-level" id="hw-pv-zoom-level" aria-live="polite">100%</span>
-                <button class="hw-pv-zoom-btn" id="hw-pv-zoom-out" type="button" aria-label="Réduire">&minus;</button>
-                <button class="hw-pv-zoom-btn" id="hw-pv-zoom-fit" type="button" aria-label="Ajuster"><i data-lucide="maximize-2"></i></button>
+                <button class="hw-pv-btn" id="hw-pv-zoom-in" type="button" aria-label="Agrandir"><i data-lucide="zoom-in"></i></button>
+                <button class="hw-pv-btn" id="hw-pv-zoom-out" type="button" aria-label="Réduire"><i data-lucide="zoom-out"></i></button>
+                <button class="hw-pv-btn" id="hw-pv-zoom-reset" type="button" aria-label="Réinitialiser le zoom"><i data-lucide="rotate-ccw"></i></button>
             </div>
 
             <div class="hw-pv-strip" id="hw-pv-strip" aria-label="Pellicule des photos"></div>
@@ -92,17 +95,16 @@ export function openPhotoViewer(photos, startIndex = 0) {
 
     const promise = openHwModal({
         size: 'xl',
-        title: getViewerTitle(),
+        title: 'Photo',   // header masqué en CSS (.is-photo-viewer) — titre non affiché
         body,
-        footer: false, // info-only : la croix du header est l'unique fermeture explicite
+        footer: false,
     });
 
-    // Mount après injection DOM (hw-modal ajoute .is-active après reflow).
     setTimeout(() => mount(), 30);
 
-    // Esc / clic backdrop : gérés nativement par hw-modal. On nettoie juste nos
-    // listeners document à la fermeture (quelle qu'en soit la cause).
     promise.finally(() => {
+        // Sortir du plein écran si on ferme depuis là
+        if (document.fullscreenElement) { try { document.exitFullscreen(); } catch (_) {} }
         clearDocListeners();
         resetState();
     });
@@ -111,15 +113,14 @@ export function openPhotoViewer(photos, startIndex = 0) {
 }
 
 function mount() {
-    const overlay = document.querySelector('.hw-modal-overlay.is-active');
-    if (overlay) overlay.classList.add('is-photo-viewer');
+    overlayEl = document.querySelector('.hw-modal-overlay.is-active');
+    if (overlayEl) overlayEl.classList.add('is-photo-viewer');
 
     viewerEl = document.querySelector('.hw-modal-overlay.is-photo-viewer .hw-photo-viewer');
     if (!viewerEl) return;
     stageEl = viewerEl.querySelector('#hw-pv-stage');
     imgEl = viewerEl.querySelector('#hw-pv-img');
     stripEl = viewerEl.querySelector('#hw-pv-strip');
-    zoomLevelEl = viewerEl.querySelector('#hw-pv-zoom-level');
     zoomInBtn = viewerEl.querySelector('#hw-pv-zoom-in');
     zoomOutBtn = viewerEl.querySelector('#hw-pv-zoom-out');
 
@@ -128,6 +129,7 @@ function mount() {
     buildStrip();
     bindNavigation();
     bindZoomButtons();
+    bindChrome();      // fermer + plein écran
     bindGestures();
     bindKeyboard();
 
@@ -146,18 +148,8 @@ function renderCurrentPhoto() {
     imgEl.onerror = () => { if (stageEl) stageEl.classList.remove('is-loading'); };
     imgEl.src = url;
 
-    resetZoom();        // chaque changement de photo réinitialise le zoom
-    updateTitle();
+    resetZoom();
     setActiveThumb();
-}
-
-function updateTitle() {
-    const titleEl = document.querySelector('.hw-modal-overlay.is-photo-viewer .hw-modal-title');
-    if (titleEl) titleEl.textContent = getViewerTitle();
-}
-
-function getViewerTitle() {
-    return `Photo ${currentPhotoIndex + 1} / ${currentPhotoList.length}`;
 }
 
 // ── Navigation ──
@@ -171,7 +163,6 @@ function bindNavigation() {
     });
 }
 
-// Wraparound géré localement (évite la dépendance au side-effect DOM de changePhoto).
 function goBy(delta) {
     const len = currentPhotoList.length;
     if (len <= 1) return;
@@ -195,6 +186,35 @@ function bindKeyboard() {
     });
 }
 
+// ── Chrome : fermer + plein écran ──
+
+function bindChrome() {
+    viewerEl.querySelector('#hw-pv-close')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (document.fullscreenElement) { try { document.exitFullscreen(); } catch (_) {} }
+        closeHwModal();
+    });
+    viewerEl.querySelector('#hw-pv-fullscreen')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFullscreen();
+    });
+    // La classe .is-fullscreen (chrome minimal) suit l'état réel du Fullscreen API,
+    // pour que Échap (sortie native) ramène aussi le chrome.
+    addDocListener('fullscreenchange', () => {
+        const fs = !!document.fullscreenElement;
+        viewerEl?.classList.toggle('is-fullscreen', fs);
+    });
+}
+
+function toggleFullscreen() {
+    if (document.fullscreenElement) {
+        try { document.exitFullscreen(); } catch (_) {}
+    } else {
+        const target = overlayEl || viewerEl;
+        try { target?.requestFullscreen?.(); } catch (_) {}
+    }
+}
+
 // ── Pellicule ──
 
 function buildStrip() {
@@ -206,12 +226,23 @@ function buildStrip() {
         thumb.className = 'hw-pv-strip-thumb';
         thumb.dataset.index = String(i);
         thumb.setAttribute('aria-label', `Photo ${i + 1}`);
+        if (i === currentPhotoIndex) thumb.classList.add('is-active');
         const img = document.createElement('img');
         img.src = url;
         img.alt = '';
         thumb.appendChild(img);
         thumb.addEventListener('click', () => goTo(i));
         stripEl.appendChild(thumb);
+    });
+    // Débordement → flex-start (le scroll horizontal s'engage naturellement).
+    requestAnimationFrame(() => {
+        if (!stripEl) return;
+        const overflows = stripEl.scrollWidth > stripEl.clientWidth + 1;
+        stripEl.classList.toggle('is-overflow', overflows);
+        if (overflows) {
+            stripEl.querySelector('.hw-pv-strip-thumb.is-active')
+                ?.scrollIntoView({ inline: 'center', block: 'nearest' });
+        }
     });
 }
 
@@ -220,7 +251,9 @@ function setActiveThumb() {
     stripEl.querySelectorAll('.hw-pv-strip-thumb').forEach((t, i) => {
         const active = i === currentPhotoIndex;
         t.classList.toggle('is-active', active);
-        if (active) t.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+        if (active && stripEl.classList.contains('is-overflow')) {
+            t.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+        }
     });
 }
 
@@ -230,7 +263,6 @@ function applyTransform() {
     if (!imgEl || !viewerEl) return;
     imgEl.style.transform = `translate(${zoom.tx}px, ${zoom.ty}px) scale(${zoom.level})`;
     viewerEl.dataset.zoom = zoom.level === 1 ? '1' : 'zoomed';
-    if (zoomLevelEl) zoomLevelEl.textContent = `${Math.round(zoom.level * 100)}%`;
     if (zoomOutBtn) zoomOutBtn.disabled = zoom.level <= ZOOM_MIN;
     if (zoomInBtn) zoomInBtn.disabled = zoom.level >= ZOOM_MAX;
 }
@@ -244,7 +276,6 @@ function clampLevel(l) {
     return Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, l));
 }
 
-// Contraint le pan pour que l'image ne sorte pas plus que sa moitié hors-cadre.
 function clampPan() {
     if (!stageEl || !imgEl) return;
     const s = stageEl.getBoundingClientRect();
@@ -255,7 +286,6 @@ function clampPan() {
     zoom.ty = Math.max(-maxY, Math.min(maxY, zoom.ty));
 }
 
-// Zoom centré sur un point écran (curseur / midpoint pinch) : (px,py) reste fixe.
 function zoomAtPoint(newLevel, clientX, clientY) {
     newLevel = clampLevel(newLevel);
     if (stageEl) {
@@ -277,14 +307,13 @@ function stageCenter() {
     return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 }
 
-// Passe au palier ZOOM_STEPS suivant/précédent, centré (sur un point ou le centre).
-function stepZoom(dir, atX, atY) {
+function stepZoom(dir) {
     const cur = zoom.level;
     const target = dir > 0
         ? (ZOOM_STEPS.find(s => s > cur + 0.001) ?? ZOOM_MAX)
         : ([...ZOOM_STEPS].reverse().find(s => s < cur - 0.001) ?? ZOOM_MIN);
     const c = stageCenter();
-    zoomAtPoint(target, atX ?? c.x, atY ?? c.y);
+    zoomAtPoint(target, c.x, c.y);
 }
 
 function toggleZoom(clientX, clientY) {
@@ -295,22 +324,19 @@ function toggleZoom(clientX, clientY) {
 function bindZoomButtons() {
     zoomInBtn?.addEventListener('click', (e) => { e.stopPropagation(); stepZoom(1); });
     zoomOutBtn?.addEventListener('click', (e) => { e.stopPropagation(); stepZoom(-1); });
-    viewerEl.querySelector('#hw-pv-zoom-fit')?.addEventListener('click', (e) => { e.stopPropagation(); resetZoom(); });
-    zoomLevelEl?.addEventListener('click', (e) => { e.stopPropagation(); resetZoom(); });
+    viewerEl.querySelector('#hw-pv-zoom-reset')?.addEventListener('click', (e) => { e.stopPropagation(); resetZoom(); });
 }
 
-// ── Gestes (Pointer Events unifient souris / tactile / stylet) ──
+// ── Gestes (Pointer Events) ──
 
 function bindGestures() {
     if (!stageEl) return;
 
-    // Molette → zoom centré curseur
     stageEl.addEventListener('wheel', (e) => {
         e.preventDefault();
         zoomAtPoint(zoom.level + (-e.deltaY * ZOOM_WHEEL_FACTOR), e.clientX, e.clientY);
     }, { passive: false });
 
-    // Double-clic souris → toggle zoom (le tactile passe par le double-tap)
     stageEl.addEventListener('dblclick', (e) => {
         e.preventDefault();
         toggleZoom(e.clientX, e.clientY);
@@ -328,7 +354,6 @@ function onPointerDown(e) {
     stageEl.setPointerCapture?.(e.pointerId);
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
-    // 2 doigts → démarrer pinch
     if (activePointers.size === 2) {
         const [a, b] = [...activePointers.values()];
         pinchStart = { dist: dist(a, b), level: zoom.level };
@@ -337,7 +362,6 @@ function onPointerDown(e) {
         return;
     }
 
-    // Double-tap tactile (le double-clic souris est géré séparément)
     const now = Date.now();
     if (e.pointerType !== 'mouse'
         && now - lastTapTime < DOUBLE_TAP_MS
@@ -365,7 +389,6 @@ function onPointerMove(e) {
     if (!activePointers.has(e.pointerId)) return;
     activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
 
-    // Pinch (2 doigts)
     if (activePointers.size === 2 && pinchStart) {
         const [a, b] = [...activePointers.values()];
         const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
@@ -373,14 +396,12 @@ function onPointerMove(e) {
         return;
     }
 
-    // Pan (1 doigt, zoomé)
     if (panStart && zoom.level > 1) {
         zoom.tx = panStart.tx + (e.clientX - panStart.x);
         zoom.ty = panStart.ty + (e.clientY - panStart.y);
         clampPan();
         applyTransform();
     }
-    // À level 1 : on ne bouge rien, la décision swipe se prend au pointerup.
 }
 
 function onPointerUp(e) {
