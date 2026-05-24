@@ -110,6 +110,7 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     letter-spacing: -0.01em;
     line-height: 1.2;
     color: var(--ink);
+    text-wrap: balance;
 }
 .hw-modal-close {
     width: 32px;
@@ -203,9 +204,8 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     font-size: 12px;
 }
 
-/* Body en is-sm : centré (alerts, prompts, confirms courts) */
+/* Body en is-sm (alerts, prompts, confirms) : padding resserré, texte aligné à gauche comme les autres tailles */
 .hw-modal.is-sm .hw-modal-body {
-    text-align: center;
     padding: 24px 24px 20px;
 }
 .hw-modal.is-sm .hw-modal-body p { margin: 0 0 4px; }
