@@ -73,7 +73,7 @@
       "properties": {
         "Nom du site FR": "Musée Lalla Hadria",
         "Nom du site arabe": "متحف للا حدرية",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Musée",
         "Zone": "Arkou",
         "Description": "Faisant partie de Djerba Explore, le musée est composé de quinzes salle thématique et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
         "Source": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Lalla_Hadria",
@@ -84,7 +84,15 @@
         "description": "Faisant partie de Djerba Explore, ce musée est composé de quinze salles thématiques et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
         "timeH": 0,
         "timeM": 0,
-        "price": 0
+        "price": 0,
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
