@@ -61,7 +61,6 @@ function normalizeClusters(enriched) {
             center: c.center,
             nearbyPois: c.nearbyPois,
             absoluteNearest: c.absoluteNearest,
-            selectedPhotoIds: new Set()
         };
     });
 }
@@ -115,7 +114,6 @@ function deletePhoto(photoId) {
     if (!loc) return;
 
     loc.cluster.photos.splice(loc.idx, 1);
-    loc.cluster.selectedPhotoIds?.delete(photoId);
     modalState.clusters = modalState.clusters.filter(c => c.photos.length > 0);
 
     renderBody();
@@ -247,244 +245,348 @@ function handleAttachToNearest(cluster) {
     updateHeaderCounts();
 }
 
-// Toggle sélection d'une photo au sein de son cluster (max 4 par cluster)
-function togglePhotoSelection(cluster, photoId) {
-    if (cluster.selectedPhotoIds.has(photoId)) {
-        cluster.selectedPhotoIds.delete(photoId);
+// ============================================================
+// MODE FOCUS / COMPARER (remplace l'ancienne lightbox plein écran noire)
+// Clic « Comparer » sur un groupe → la modale bascule en mode focus : les
+// autres groupes sont masqués, ce groupe passe en grand (2-4 emplacements +
+// pellicule). In-place, sur surface/tokens HW — aucun overlay noir.
+// ============================================================
+let focusObjectUrls = [];
+
+function releaseFocusUrls() {
+    focusObjectUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch (_) {} });
+    focusObjectUrls = [];
+}
+
+function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+}
+
+function getFocusedCluster() {
+    if (!modalState || !modalState.focus) return null;
+    return modalState.clusters.find(c => c.id === modalState.focus.clusterId) || null;
+}
+
+// Bascule le header (icône + titre + hint) entre overview et focus.
+function setHeaderMode(mode, cluster) {
+    const overlay = document.getElementById('photo-batch-overlay');
+    if (!overlay) return;
+    const iconEl = overlay.querySelector('.hw-modal-icon');
+    const titleEl = overlay.querySelector('.hw-modal-title');
+    const hintEl = overlay.querySelector('.pb-header-hint');
+    if (mode === 'focus' && cluster) {
+        const name = cluster.customName || resolveAutoName(cluster);
+        if (iconEl) iconEl.innerHTML = '<i data-lucide="layout-grid"></i>';
+        if (titleEl) titleEl.innerHTML = `Comparer <em>· ${escapeHtml(name)}</em>`;
+        if (hintEl) hintEl.textContent = "Tapez une vignette pour remplir l'emplacement actif";
     } else {
-        if (cluster.selectedPhotoIds.size >= 4) {
-            // Max atteint : on ne peut pas en cocher plus
-            return false;
+        if (iconEl) iconEl.innerHTML = '<i data-lucide="images"></i>';
+        if (titleEl) titleEl.textContent = 'Traitement photos';
+        if (hintEl) hintEl.textContent = state.isAdmin
+            ? 'Mode admin — enregistrement en attente de publication CC'
+            : 'Enregistrer rattache les photos aux POI ; le ZIP inclut tout';
+    }
+    if (iconEl) createIcons({ icons: appIcons, root: iconEl });
+    updateHeaderCounts();
+}
+
+// Entre en mode focus pour un cluster : 2 emplacements par défaut.
+function enterFocus(cluster) {
+    const slotCount = 2;
+    const slots = [];
+    for (let i = 0; i < slotCount; i++) slots.push(cluster.photos[i] ? cluster.photos[i].id : null);
+    modalState.focus = { clusterId: cluster.id, slotCount, slots, activeSlot: 0 };
+    const overlay = document.getElementById('photo-batch-overlay');
+    if (overlay) overlay.classList.add('is-focus');
+    setHeaderMode('focus', cluster);
+    renderBody();
+}
+
+// Quitte le focus → retour à la vue d'ensemble.
+function exitFocus() {
+    if (!modalState || !modalState.focus) return;
+    releaseFocusUrls();
+    modalState.focus = null;
+    const overlay = document.getElementById('photo-batch-overlay');
+    if (overlay) overlay.classList.remove('is-focus');
+    setHeaderMode('overview');
+    renderBody();
+}
+
+// Change le nombre d'emplacements (2 / 3 / 4).
+function setSlotCount(n) {
+    if (!modalState || !modalState.focus) return;
+    modalState.focus.slotCount = n;
+    if (modalState.focus.activeSlot >= n) modalState.focus.activeSlot = n - 1;
+    renderBody();
+}
+
+// Tap d'une vignette de la pellicule → remplit l'emplacement actif (ou
+// rend actif l'emplacement qui contient déjà cette photo).
+function focusPelliculeTap(pid) {
+    const f = modalState.focus;
+    if (!f) return;
+    const existing = f.slots.indexOf(pid);
+    if (existing !== -1) {
+        f.activeSlot = existing;
+    } else {
+        f.slots[f.activeSlot] = pid;
+    }
+    renderBody();
+}
+
+// Supprimer / Détacher depuis le focus : on vide l'emplacement puis on
+// délègue à la logique existante (qui re-render via renderBody).
+function focusDelete(pid, slotIndex) {
+    if (modalState.focus) modalState.focus.slots[slotIndex] = null;
+    deletePhoto(pid);
+}
+function focusDetach(pid, slotIndex) {
+    if (modalState.focus) modalState.focus.slots[slotIndex] = null;
+    extractToOutPoi(pid);
+}
+
+// Construit une cellule de comparaison (emplacement i).
+function buildCompareCell(cluster, i) {
+    const f = modalState.focus;
+    const pid = f.slots[i];
+    const photo = pid ? cluster.photos.find(p => p.id === pid) : null;
+
+    const cell = document.createElement('article');
+    cell.className = 'pb-compare-cell' + (i === f.activeSlot ? ' is-active' : '') + (photo ? '' : ' is-empty');
+    cell.dataset.slot = String(i);
+    if (photo) cell.dataset.photoId = photo.id;
+
+    const idx = document.createElement('span');
+    idx.className = 'pb-compare-idx';
+    idx.textContent = `${i + 1} / ${f.slotCount}`;
+    cell.appendChild(idx);
+
+    const flag = document.createElement('span');
+    flag.className = 'pb-compare-flag';
+    flag.innerHTML = '<i data-lucide="crosshair"></i><span>Emplacement actif</span>';
+    cell.appendChild(flag);
+
+    const photoZone = document.createElement('div');
+    photoZone.className = 'pb-compare-photo';
+    if (photo) {
+        const img = document.createElement('img');
+        img.alt = photo.customName || resolvePhotoAutoName(cluster, photo);
+        if (photo.file) {
+            const url = URL.createObjectURL(photo.file);
+            focusObjectUrls.push(url);
+            img.src = url;
+        } else if (photo.base64) {
+            img.src = photo.base64;
         }
-        cluster.selectedPhotoIds.add(photoId);
+        photoZone.appendChild(img);
+    } else {
+        photoZone.innerHTML = '<i data-lucide="image"></i><span>Choisissez une photo dans la pellicule</span>';
     }
-    return true;
+    cell.appendChild(photoZone);
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'pb-compare-toolbar';
+    const name = document.createElement('span');
+    name.className = 'pb-compare-name';
+    if (photo) {
+        name.contentEditable = 'true';
+        name.spellcheck = false;
+        name.textContent = photo.customName || resolvePhotoAutoName(cluster, photo);
+        name.addEventListener('mousedown', (e) => e.stopPropagation());
+        name.addEventListener('click', (e) => e.stopPropagation());
+        name.addEventListener('focus', () => selectAllText(name));
+        name.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); name.blur(); }
+            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); name.blur(); }
+        });
+        name.addEventListener('blur', () => {
+            const text = name.textContent.trim();
+            const base = resolvePhotoAutoName(cluster, photo);
+            photo.customName = (text && text !== base) ? text : null;
+            if (!text) name.textContent = base;
+        });
+    } else {
+        name.textContent = '— vide —';
+        name.style.color = 'var(--ink-soft)';
+    }
+    toolbar.appendChild(name);
+
+    const acts = document.createElement('div');
+    acts.className = 'pb-compare-acts';
+    if (photo && cluster.type !== 'OUT_POI') {
+        const ex = document.createElement('button');
+        ex.className = 'pb-compare-btn';
+        ex.type = 'button';
+        ex.title = 'Détacher cette photo vers « Hors POI »';
+        ex.setAttribute('aria-label', 'Détacher');
+        ex.innerHTML = '<i data-lucide="route"></i>';
+        ex.addEventListener('click', (e) => { e.stopPropagation(); focusDetach(photo.id, i); });
+        acts.appendChild(ex);
+    }
+    const del = document.createElement('button');
+    del.className = 'pb-compare-btn is-danger';
+    del.type = 'button';
+    del.title = 'Supprimer cette photo';
+    del.setAttribute('aria-label', 'Supprimer');
+    del.innerHTML = '<i data-lucide="trash-2"></i>';
+    del.disabled = !photo;
+    del.addEventListener('click', (e) => { e.stopPropagation(); if (photo) focusDelete(photo.id, i); });
+    acts.appendChild(del);
+    toolbar.appendChild(acts);
+    cell.appendChild(toolbar);
+
+    // Clic sur la cellule → emplacement actif (hors boutons / nom éditable)
+    cell.addEventListener('click', (e) => {
+        if (e.target.closest('.pb-compare-btn, [contenteditable]')) return;
+        f.activeSlot = i;
+        renderBody();
+    });
+
+    return cell;
 }
 
-// Ouvre la lightbox "Voir / Comparer" pour les photos sélectionnées d'un cluster.
-// 1 photo → plein écran single ; 2-4 photos → grid adaptative.
-let lightboxKeydown = null;
-function closeLightbox() {
-    const lb = document.getElementById('photo-batch-lightbox');
-    if (lb) {
-        lb.classList.remove('active');
-        setTimeout(() => lb.remove(), 200);
-    }
-    if (lightboxKeydown) {
-        document.removeEventListener('keydown', lightboxKeydown);
-        lightboxKeydown = null;
-    }
-}
+// Construit la pellicule (toutes les photos du cluster, claire).
+function buildPellicule(cluster) {
+    const f = modalState.focus;
+    const wrap = document.createElement('div');
+    wrap.className = 'pb-pellicule';
 
-function openLightbox(cluster) {
-    const photoIds = [...cluster.selectedPhotoIds];
-    if (photoIds.length === 0 || photoIds.length > 4) return;
+    const head = document.createElement('div');
+    head.className = 'pb-pellicule-head';
+    head.innerHTML = `<span>Pellicule</span><span class="sep">·</span><span><b>${cluster.photos.length}</b> photo(s)</span>`
+        + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette remplit l'emplacement actif</span>`;
+    wrap.appendChild(head);
 
-    // Résoudre les photo objects dans l'ordre du cluster (pas l'ordre de sélection)
-    const photos = cluster.photos.filter(p => cluster.selectedPhotoIds.has(p.id));
-    const count = photos.length;
+    const track = document.createElement('div');
+    track.className = 'pb-pellicule-track';
 
-    // Retirer lightbox précédente si besoin
-    document.getElementById('photo-batch-lightbox')?.remove();
+    const slotByPid = {};
+    f.slots.forEach((pid, i) => { if (pid) slotByPid[pid] = i + 1; });
 
-    const lb = document.createElement('div');
-    lb.id = 'photo-batch-lightbox';
-    lb.className = 'photo-batch-lightbox';
-
-    const header = document.createElement('div');
-    header.className = 'photo-batch-lightbox-header';
-    const h = document.createElement('p');
-    h.className = 'photo-batch-lightbox-title';
-    h.textContent = count === 1 ? 'Voir' : `Comparer (${count})`;
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'photo-batch-lightbox-close';
-    closeBtn.setAttribute('aria-label', 'Fermer');
-    closeBtn.innerHTML = '<i data-lucide="x"></i>';
-    closeBtn.addEventListener('click', closeLightbox);
-    header.appendChild(h);
-    header.appendChild(closeBtn);
-
-    const grid = document.createElement('div');
-    grid.className = 'photo-batch-lightbox-grid';
-    grid.dataset.count = String(count);
-
-    photos.forEach(item => {
-        const cell = document.createElement('div');
-        cell.className = 'photo-batch-lightbox-cell';
+    cluster.photos.forEach(p => {
+        const thumb = document.createElement('button');
+        thumb.className = 'pb-pellicule-thumb';
+        thumb.type = 'button';
+        thumb.dataset.photoId = p.id;
+        thumb.title = p.customName || resolvePhotoAutoName(cluster, p);
+        const slot = slotByPid[p.id];
+        if (slot) thumb.classList.add('is-in-slot');
 
         const img = document.createElement('img');
-        img.alt = item.file?.name || 'Photo';
-        // Priorité : File original (pleine qualité) > base64 vignette (fallback admin review)
-        // Le base64 pré-calculé à l'import est compressé à 200px pour la thumbnail,
-        // donc inutilisable pour une vraie comparaison visuelle.
-        if (item.file) {
-            const url = URL.createObjectURL(item.file);
-            activeObjectUrls.push(url);
-            img.src = url;
-        } else if (item.base64) {
-            img.src = item.base64;
-        }
-        cell.appendChild(img);
+        img.alt = '';
+        if (p.base64) img.src = p.base64;
+        else if (p.file) resizeImage(p.file, 160).then(d => { img.src = d; }).catch(() => {});
+        thumb.appendChild(img);
 
-        // Bandeau d'actions en overlay bas : [nom éditable] [✓ valider] [⇄ détacher] [🗑 supprimer]
-        const actionBar = document.createElement('div');
-        actionBar.className = 'photo-batch-lightbox-cell-bar';
-
-        const nameInput = document.createElement('span');
-        nameInput.className = 'photo-batch-lightbox-cell-name';
-        nameInput.contentEditable = 'true';
-        nameInput.spellcheck = false;
-        nameInput.textContent = item.customName || resolvePhotoAutoName(cluster, item);
-        nameInput.addEventListener('mousedown', (e) => e.stopPropagation());
-        nameInput.addEventListener('focus', () => selectAllText(nameInput));
-        nameInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') { e.preventDefault(); nameInput.blur(); }
-            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); nameInput.blur(); }
-        });
-        nameInput.addEventListener('blur', () => {
-            const text = nameInput.textContent.trim();
-            const base = resolvePhotoAutoName(cluster, item);
-            const newCustom = (text && text !== base) ? text : null;
-            const changed = newCustom !== item.customName;
-            item.customName = newCustom;
-            if (!text) nameInput.textContent = base;
-            // Re-render la modale en arrière-plan pour synchroniser le label miniature
-            // (invisible car couvert par le lightbox, mais à jour à la fermeture).
-            if (changed) renderBody();
-        });
-        actionBar.appendChild(nameInput);
-
-        const btnGroup = document.createElement('div');
-        btnGroup.className = 'photo-batch-lightbox-cell-actions';
-
-        // ✓ Valider — retire de la sélection (la photo reste dans le cluster)
-        const validateBtn = document.createElement('button');
-        validateBtn.className = 'photo-batch-lightbox-cell-btn validate';
-        validateBtn.title = 'Valider (retirer de la comparaison)';
-        validateBtn.setAttribute('aria-label', 'Valider');
-        validateBtn.innerHTML = '<i data-lucide="check"></i>';
-        validateBtn.addEventListener('click', () => {
-            cluster.selectedPhotoIds.delete(item.id);
-            if (cluster.selectedPhotoIds.size === 0) {
-                renderBody();
-                updateHeaderCounts();
-                closeLightbox();
-            } else {
-                renderBody();
-                updateHeaderCounts();
-                openLightbox(cluster);
-            }
-        });
-        btnGroup.appendChild(validateBtn);
-
-        // ⇄ Détacher — extrait vers nouveau OUT_POI, on reste dans le lightbox
-        if (cluster.type !== 'OUT_POI') {
-            const extractBtn = document.createElement('button');
-            extractBtn.className = 'photo-batch-lightbox-cell-btn extract';
-            extractBtn.title = 'Détacher vers Hors POI';
-            extractBtn.setAttribute('aria-label', 'Détacher');
-            extractBtn.innerHTML = '<i data-lucide="route"></i>';
-            extractBtn.addEventListener('click', () => {
-                cluster.selectedPhotoIds.delete(item.id);
-                extractToOutPoi(item.id);
-                if (cluster.selectedPhotoIds.size === 0 && cluster.photos.length === 0) {
-                    closeLightbox();
-                } else if (cluster.selectedPhotoIds.size === 0) {
-                    closeLightbox();
-                } else {
-                    openLightbox(cluster);
-                }
-            });
-            btnGroup.appendChild(extractBtn);
+        if (slot) {
+            const num = document.createElement('span');
+            num.className = 'slot-num';
+            num.textContent = String(slot);
+            thumb.appendChild(num);
         }
 
-        // 🗑 Supprimer — supprime la photo du cluster
-        const delBtn = document.createElement('button');
-        delBtn.className = 'photo-batch-lightbox-cell-btn delete';
-        delBtn.title = 'Supprimer cette photo';
-        delBtn.setAttribute('aria-label', 'Supprimer');
-        delBtn.innerHTML = '<i data-lucide="trash-2"></i>';
-        delBtn.addEventListener('click', () => {
-            cluster.selectedPhotoIds.delete(item.id);
-            deletePhoto(item.id);
-            if (cluster.selectedPhotoIds.size === 0) {
-                closeLightbox();
-            } else {
-                openLightbox(cluster);
-            }
-        });
-        btnGroup.appendChild(delBtn);
-
-        actionBar.appendChild(btnGroup);
-        cell.appendChild(actionBar);
-
-        grid.appendChild(cell);
+        thumb.addEventListener('click', () => focusPelliculeTap(p.id));
+        track.appendChild(thumb);
     });
 
-    lb.appendChild(header);
-    lb.appendChild(grid);
+    wrap.appendChild(track);
+    return wrap;
+}
 
-    // Pellicule de pagination : si le cluster a plus de photos que la sélection affichée,
-    // on propose une bande de vignettes pour swap sans revenir à la modale.
-    if (cluster.photos.length > count) {
-        const strip = document.createElement('div');
-        strip.className = 'photo-batch-lightbox-strip';
+// Construit la section d'un cluster en mode focus (compare + pellicule).
+function renderFocus(cluster) {
+    releaseFocusUrls();  // révoque les objectURL du rendu focus précédent
+    const f = modalState.focus;
 
-        cluster.photos.forEach(p => {
-            const thumb = document.createElement('button');
-            thumb.className = 'photo-batch-lightbox-strip-thumb';
-            if (cluster.selectedPhotoIds.has(p.id)) thumb.classList.add('selected');
-            thumb.title = p.customName || resolvePhotoAutoName(cluster, p);
+    // Réconcilie les emplacements avec les photos actuelles du cluster.
+    const byId = new Map(cluster.photos.map(p => [p.id, p]));
+    f.slots = f.slots.slice(0, f.slotCount);
+    while (f.slots.length < f.slotCount) f.slots.push(null);
+    f.slots = f.slots.map(pid => (pid && byId.has(pid)) ? pid : null);
+    if (f.activeSlot >= f.slotCount) f.activeSlot = f.slotCount - 1;
+    if (f.activeSlot < 0) f.activeSlot = 0;
 
-            const tImg = document.createElement('img');
-            tImg.alt = '';
-            if (p.base64) {
-                tImg.src = p.base64;
-            } else if (p.file) {
-                resizeImage(p.file, 120)
-                    .then(dataUrl => { tImg.src = dataUrl; })
-                    .catch(() => {});
-            }
-            thumb.appendChild(tImg);
+    const section = document.createElement('section');
+    section.className = 'pb-cluster is-focused';
+    section.dataset.clusterId = cluster.id;
 
-            thumb.addEventListener('click', () => {
-                if (cluster.selectedPhotoIds.has(p.id)) {
-                    // Déjà dans la comparaison → retirer (équivalent ✓ valider)
-                    if (cluster.selectedPhotoIds.size <= 1) return; // garde au moins 1
-                    cluster.selectedPhotoIds.delete(p.id);
-                } else {
-                    // Ajouter : si déjà 4, retirer la plus ancienne (FIFO)
-                    if (cluster.selectedPhotoIds.size >= 4) {
-                        const oldest = cluster.selectedPhotoIds.values().next().value;
-                        cluster.selectedPhotoIds.delete(oldest);
-                    }
-                    cluster.selectedPhotoIds.add(p.id);
-                }
-                renderBody();
-                updateHeaderCounts();
-                openLightbox(cluster);
-            });
+    // --- HEAD : retour + titre + sélecteur 2/3/4 + ZIP ---
+    const head = document.createElement('div');
+    head.className = 'pb-cluster-head';
 
-            strip.appendChild(thumb);
-        });
+    const back = document.createElement('button');
+    back.className = 'pb-focus-back';
+    back.type = 'button';
+    back.title = "Revenir à la vue d'ensemble (Échap)";
+    back.innerHTML = '<i data-lucide="arrow-left"></i><span>Vue d\'ensemble</span>';
+    back.addEventListener('click', () => exitFocus());
+    head.appendChild(back);
 
-        lb.appendChild(strip);
-    }
-
-    document.body.appendChild(lb);
-
-    lightboxKeydown = (e) => {
-        if (e.key === 'Escape') {
-            e.stopPropagation();
-            closeLightbox();
-        }
-    };
-    document.addEventListener('keydown', lightboxKeydown);
-
-    requestAnimationFrame(() => {
-        lb.classList.add('active');
-        createIcons({ icons: appIcons });
+    const headBlock = document.createElement('div');
+    headBlock.className = 'pb-cluster-head-block';
+    const title = document.createElement('h2');
+    title.className = 'pb-cluster-title';
+    title.contentEditable = 'true';
+    title.spellcheck = false;
+    title.textContent = cluster.customName || resolveAutoName(cluster);
+    title.addEventListener('focus', () => selectAllText(title));
+    title.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); title.blur(); } });
+    title.addEventListener('blur', () => {
+        const text = title.textContent.trim();
+        const base = resolveAutoName(cluster);
+        cluster.customName = (text && text !== base) ? text : null;
+        if (!text) title.textContent = base;
+        setHeaderMode('focus', cluster);
     });
+    const sub = document.createElement('div');
+    sub.className = 'pb-cluster-sub';
+    const filled = f.slots.filter(Boolean).length;
+    const dot = document.createElement('span'); dot.className = 'dot'; dot.setAttribute('aria-hidden', 'true');
+    const s1 = document.createElement('span'); s1.textContent = `${cluster.photos.length} photo(s)`;
+    const sep = document.createElement('span'); sep.className = 'sep'; sep.textContent = '·';
+    const s2 = document.createElement('span'); s2.textContent = `${filled} affichée(s)`;
+    sub.append(dot, s1, sep, s2);
+    headBlock.append(title, sub);
+    head.appendChild(headBlock);
+
+    const slotsCtl = document.createElement('div');
+    slotsCtl.className = 'pb-slots';
+    [2, 3, 4].forEach(n => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = String(n);
+        if (n === f.slotCount) b.classList.add('is-on');
+        b.title = `${n} photos côte à côte`;
+        b.addEventListener('click', () => { if (n !== f.slotCount) setSlotCount(n); });
+        slotsCtl.appendChild(b);
+    });
+    head.appendChild(slotsCtl);
+
+    const zipBtn = document.createElement('button');
+    zipBtn.className = 'pb-act is-icon';
+    zipBtn.type = 'button';
+    zipBtn.innerHTML = '<i data-lucide="download"></i>';
+    zipBtn.title = `Télécharger ce groupe en ZIP (${cluster.photos.length} photo(s))`;
+    zipBtn.setAttribute('aria-label', 'Télécharger ce groupe en ZIP');
+    zipBtn.addEventListener('click', (e) => { e.stopPropagation(); handleExportClusterZip(cluster); });
+    head.appendChild(zipBtn);
+
+    section.appendChild(head);
+
+    // --- FOCUS BODY : compare + pellicule ---
+    const fbody = document.createElement('div');
+    fbody.className = 'pb-focus-body';
+
+    const compare = document.createElement('div');
+    compare.className = 'pb-compare';
+    compare.dataset.count = String(f.slotCount);
+    for (let i = 0; i < f.slotCount; i++) compare.appendChild(buildCompareCell(cluster, i));
+    fbody.appendChild(compare);
+
+    fbody.appendChild(buildPellicule(cluster));
+    section.appendChild(fbody);
+    return section;
 }
 
 // Déplacement drag-drop : met à jour l'état à partir du DOM post-Sortable
@@ -503,9 +605,6 @@ function handleMoveEnd(evt) {
     const [photo] = loc.cluster.photos.splice(loc.idx, 1);
     target.photos.splice(newIndex, 0, photo);
 
-    // La photo change de cluster : purger la sélection du cluster source (si présente)
-    loc.cluster.selectedPhotoIds?.delete(photoId);
-
     // Les clusters POI vides disparaissent ; les clusters OUT_POI vides aussi
     modalState.clusters = modalState.clusters.filter(c => c.photos.length > 0);
 
@@ -521,7 +620,6 @@ function extractToOutPoi(photoId) {
     const { cluster, idx } = loc;
     const gIndex = modalState.clusters.indexOf(cluster);
     const [photo] = cluster.photos.splice(idx, 1);
-    cluster.selectedPhotoIds?.delete(photoId);
 
     const newOut = {
         id: uid('c'),
@@ -530,7 +628,6 @@ function extractToOutPoi(photoId) {
         center: null,
         nearbyPois: [],
         absoluteNearest: null,
-        selectedPhotoIds: new Set()
     };
 
     if (cluster.photos.length === 0) {
@@ -893,9 +990,6 @@ function buildClusterSection(cluster, index) {
         segs.push('Sans POI cible', photoWord);
         section.dataset.suggestedPoiId = '';
     }
-    const selCount = cluster.selectedPhotoIds.size;
-    if (selCount > 0) segs.push(`${selCount} cochée(s)`);
-
     const dot = document.createElement('span');
     dot.className = 'dot';
     dot.setAttribute('aria-hidden', 'true');
@@ -974,19 +1068,16 @@ function buildClusterSection(cluster, index) {
         actions.appendChild(createBtn);
     }
 
-    // Voir / Comparer (action primaire, désactivée si 0 sélection)
+    // Comparer → ouvre le mode focus in-place (toujours actif si ≥ 1 photo)
     const compareBtn = document.createElement('button');
-    compareBtn.className = 'pb-act is-primary pb-compare-btn';
+    compareBtn.className = 'pb-act is-primary';
     compareBtn.type = 'button';
-    compareBtn.disabled = selCount === 0;
-    const compareLabel = selCount >= 2 ? `Comparer (${selCount})`
-        : selCount === 1 ? 'Comparer (1)'
-        : 'Voir / Comparer';
-    compareBtn.innerHTML = `<i data-lucide="layout-grid"></i><span>${compareLabel}</span>`;
-    compareBtn.title = 'Sélectionnez 1 à 4 photos pour les voir en grand';
+    compareBtn.disabled = cluster.photos.length === 0;
+    compareBtn.innerHTML = '<i data-lucide="layout-grid"></i><span>Comparer</span>';
+    compareBtn.title = 'Comparer les photos de ce groupe';
     compareBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        openLightbox(cluster);
+        enterFocus(cluster);
     });
     actions.appendChild(compareBtn);
 
@@ -1025,7 +1116,7 @@ function buildClusterSection(cluster, index) {
         dragClass: 'is-dragging',
         delay: 80,
         delayOnTouchOnly: true,
-        filter: '.pb-pick, .pb-thumb-btn, .pb-thumb-label, .pb-thumb-pencil',
+        filter: '.pb-thumb-btn, .pb-thumb-label, .pb-thumb-pencil',
         preventOnFilter: false,
         onStart: () => { ignoreNextClick = true; },
         onEnd: (evt) => {
@@ -1043,32 +1134,6 @@ function buildPhotoCard(item, cluster) {
     const thumb = document.createElement('article');
     thumb.className = 'pb-thumb';
     thumb.dataset.photoId = item.id;
-    if (cluster.selectedPhotoIds.has(item.id)) {
-        thumb.classList.add('is-selected');
-    }
-
-    // Toggle sélection partagé (pastille + corps de vignette)
-    const doToggle = () => {
-        if (ignoreNextClick) return;
-        const ok = togglePhotoSelection(cluster, item.id);
-        if (!ok) {
-            // Max 4 atteint : flash rouge bref
-            thumb.animate([
-                { outline: '3px solid #991B1B', outlineOffset: '-3px' },
-                { outline: '0 solid transparent', outlineOffset: '0' }
-            ], { duration: 400 });
-            return;
-        }
-        thumb.classList.toggle('is-selected', cluster.selectedPhotoIds.has(item.id));
-        updateClusterCompareBtn(cluster);
-        updateHeaderCounts();
-    };
-
-    // Clic sur le corps de la vignette = toggle (sauf sur pastille / boutons / label)
-    thumb.addEventListener('click', (e) => {
-        if (e.target.closest('.pb-pick, .pb-thumb-btn, .pb-thumb-label, .pb-thumb-pencil')) return;
-        doToggle();
-    });
 
     const img = document.createElement('img');
     img.className = 'pb-thumb-img';
@@ -1083,18 +1148,6 @@ function buildPhotoCard(item, cluster) {
             .catch(() => { img.alt = 'Erreur miniature'; });
     }
     thumb.appendChild(img);
-
-    // Pastille de sélection — coche permanente (affordance explicite)
-    const pick = document.createElement('button');
-    pick.className = 'pb-pick';
-    pick.type = 'button';
-    pick.setAttribute('aria-label', 'Sélectionner pour comparer');
-    pick.innerHTML = '<i data-lucide="check"></i>';
-    pick.addEventListener('click', (e) => {
-        e.stopPropagation();
-        doToggle();
-    });
-    thumb.appendChild(pick);
 
     // Actions par photo (top-right) : extraire + supprimer
     const acts = document.createElement('div');
@@ -1157,8 +1210,20 @@ function buildPhotoCard(item, cluster) {
 function renderBody() {
     const body = document.getElementById('photo-batch-body');
     if (!body) return;
-    body.innerHTML = '';
 
+    // Mode focus : ne rendre que le cluster focalisé. S'il a disparu (toutes
+    // ses photos supprimées/détachées) → retour automatique à la vue d'ensemble.
+    if (modalState.focus) {
+        const fc = getFocusedCluster();
+        if (!fc) { exitFocus(); return; }
+        body.innerHTML = '';
+        body.appendChild(renderFocus(fc));
+        createIcons({ icons: appIcons, root: body });
+        updateHeaderCounts();
+        return;
+    }
+
+    body.innerHTML = '';
     if (modalState.clusters.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'photo-batch-empty';
@@ -1178,42 +1243,26 @@ function updateHeaderCounts() {
     const total = modalState.clusters.reduce((s, c) => s + c.photos.length, 0);
     const groups = modalState.clusters.length;
     const outPoi = modalState.clusters.filter(c => c.type === 'OUT_POI').length;
-    const selected = modalState.clusters.reduce((s, c) => s + (c.selectedPhotoIds?.size || 0), 0);
 
     const sub = document.getElementById('photo-batch-header-subtitle');
-    if (sub) sub.textContent = `${total} photo(s) · ${groups} groupe(s)`;
+    if (sub) {
+        if (modalState.focus) {
+            const fc = getFocusedCluster();
+            sub.textContent = `${modalState.focus.slotCount} emplacement(s) · ${fc ? fc.photos.length : 0} photo(s)`;
+        } else {
+            sub.textContent = `${total} photo(s) · ${groups} groupe(s)`;
+        }
+    }
 
-    // Compteurs détaillés du footer
+    // Compteurs détaillés du footer (toujours le total global)
     const info = document.getElementById('photo-batch-footer-info');
     if (info) {
         info.innerHTML = `<b>${total}</b> photos · <b>${groups}</b> groupes`
-            + (outPoi > 0 ? ` · <b>${outPoi}</b> hors POI` : '')
-            + (selected > 0 ? ` · <b>${selected}</b> sélectionnée(s)` : '');
-    }
-
-    // Pill "sélection" dans le header (visible seulement si sélection > 0)
-    const pill = document.getElementById('photo-batch-sel-pill');
-    if (pill) {
-        pill.classList.toggle('is-visible', selected > 0);
-        const txt = pill.querySelector('.pb-pill-text');
-        if (txt) txt.textContent = `${selected} sélectionnée(s) pour comparer`;
+            + (outPoi > 0 ? ` · <b>${outPoi}</b> hors POI` : '');
     }
 
     // Le bouton "Enregistrer" dépend de la présence de clusters rattachés à un POI.
     updateFooterButtons();
-}
-
-// Met à jour le bouton "Voir / Comparer" d'un cluster sans re-render complet
-function updateClusterCompareBtn(cluster) {
-    const section = document.querySelector(`.pb-cluster[data-cluster-id="${cluster.id}"]`);
-    if (!section) return;
-    const btn = section.querySelector('.pb-compare-btn');
-    if (!btn) return;
-    const n = cluster.selectedPhotoIds.size;
-    btn.disabled = n === 0;
-    const label = n >= 2 ? `Comparer (${n})` : n === 1 ? 'Comparer (1)' : 'Voir / Comparer';
-    btn.innerHTML = `<i data-lucide="layout-grid"></i><span>${label}</span>`;
-    createIcons({ icons: appIcons, root: btn });
 }
 
 /**
@@ -1221,9 +1270,9 @@ function updateClusterCompareBtn(cluster) {
  * Refonte PLEIN ÉCRAN (handoff Claude Design) : openHwModal({ size: 'xl',
  * body, footer }) + classe `.is-photo-batch` posée sur l'overlay après
  * ouverture (cf. bind). Les compteurs / hint / pill sélection sont injectés
- * dans le header. La logique métier (Sortable, lightbox, save, ZIP, créer
- * POI, etc.) est inchangée. ESC géré manuellement pour laisser priorité à la
- * lightbox.
+ * dans le header. La logique métier (Sortable, save, ZIP, créer POI, etc.) est
+ * inchangée. Le « Comparer » d'un groupe bascule en mode focus in-place
+ * (renderFocus). ESC : retour focus → overview, sinon fermeture.
  *
  * @param {Array} enrichedClusters — Array of { photos, center, nearbyPois, absoluteNearest }
  * @returns {Promise<null>} — resolve(null) à la fermeture
@@ -1286,7 +1335,6 @@ export function openPhotoBatchModal(enrichedClusters) {
                     closeBtn.insertAdjacentHTML('beforebegin', `
                         <span class="pb-header-counts" id="photo-batch-header-subtitle"></span>
                         <span class="pb-header-spacer"></span>
-                        <span class="pb-header-pill" id="photo-batch-sel-pill"><i data-lucide="check"></i><span class="pb-pill-text"></span></span>
                         <span class="pb-header-hint">${hintText}</span>
                     `);
                     createIcons({ icons: appIcons, root: headerEl });
@@ -1304,11 +1352,10 @@ export function openPhotoBatchModal(enrichedClusters) {
             renderBody();
         }, 30);
 
-        // ESC handler custom : la lightbox a priorité (sa fermeture appelle son
-        // propre cleanup). Si pas de lightbox ouverte, ESC ferme la modale.
+        // ESC : en mode focus → retour à la vue d'ensemble ; sinon → ferme la modale.
         keydownHandler = (e) => {
             if (e.key !== 'Escape') return;
-            if (document.getElementById('photo-batch-lightbox')) return;
+            if (modalState && modalState.focus) { exitFocus(); return; }
             closeModal(null);
         };
         document.addEventListener('keydown', keydownHandler);
@@ -1320,6 +1367,7 @@ export function openPhotoBatchModal(enrichedClusters) {
                 keydownHandler = null;
             }
             releaseObjectUrls();
+            releaseFocusUrls();
             modalState = null;
             if (activeResolve) {
                 const r = activeResolve;
