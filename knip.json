@@ -1,0 +1,16 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": [
+    "public/theme-bootstrap.js",
+    "public/zones-viewer.html",
+    "tools/scout.html",
+    "scripts/**/*.{js,mjs}",
+    "tests/**/*.js",
+    "history_walk_datamanager/src/main.js",
+    "history_walk_datamanager/vite.config.js"
+  ],
+  "project": [
+    "src/**/*.js",
+    "history_walk_datamanager/src/**/*.js"
+  ]
+}
