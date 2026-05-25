@@ -5,7 +5,7 @@ const CIRCUITS_DIR = path.join(__dirname, '../public/circuits');
 const MAP_GEOJSON_PATH = path.join(__dirname, '../public/map.geojson');
 const DESTINATIONS_PATH = path.join(__dirname, '../public/destinations.json');
 const PUBLIC_DIR = path.join(__dirname, '../public');
-const HISTORY_WALK_URL = 'https://stefanmartin1967.github.io/history-walk/';
+const HISTORY_WALK_URL = 'https://heripia.com/';
 
 function getTimestampId() {
     return `HW-${Date.now()}`;

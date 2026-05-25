@@ -1,0 +1,3 @@
+# Temporaire (phase de peaufinage) — à RETIRER au lancement public de Heripia.
+User-agent: *
+Disallow: /

@@ -768,7 +768,7 @@ export function renderTab(tab, diffData, callbacks) {
             // DM banner → ouvre le DM dans nouvel onglet
             const openDm = () => {
                 const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-                const url = isDev ? 'http://localhost:5175/' : '/History-Walk-V1/history_walk_datamanager/';
+                const url = isDev ? 'http://localhost:5175/' : '/history_walk_datamanager/';
                 window.open(url, '_blank');
             };
             document.getElementById('btn-goto-dm')?.addEventListener('click', openDm);

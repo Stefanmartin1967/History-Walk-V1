@@ -194,7 +194,7 @@ export async function saveAndExportCircuit() {
     const transportData = (draft && draft.transport) ? draft.transport : {};
 
     // --- MODIFICATION V2 : AJOUT SIGNATURE AUTOMATIQUE ---
-    const signature = "\n\nCircuit généré par Heripia.";
+    const signature = "\n\nCircuit généré par Heripia — heripia.com";
     if (!description.includes("History Walk") && !description.includes("Heripia")) {
         description += signature;
     }

@@ -36,7 +36,7 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
         id: circuit.id,
         name: circuit.name,
         file: `${mapId}/${circuit.name}.gpx`,
-        description: 'Circuit généré par Heripia.',
+        description: 'Circuit généré par Heripia — heripia.com',
         distance,
         isOfficial: true,
         hasRealTrack: true,

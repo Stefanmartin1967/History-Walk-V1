@@ -55,7 +55,7 @@ describe('buildCircuitIndexEntry — format index circuit', () => {
         expect(e.poiIds).toEqual(['p1', 'p2']);
         // Le script lit le <desc> de metadata (hardcodé par generateGPXString),
         // donc l'index porte toujours cette constante (pas la desc perso).
-        expect(e.description).toBe('Circuit généré par Heripia.');
+        expect(e.description).toBe('Circuit généré par Heripia — heripia.com');
     });
 
     it('formate la distance en km à 1 décimale', () => {

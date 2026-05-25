@@ -129,8 +129,8 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
     const metadataXML = `
     <metadata>
         <name>${escapeXml(name)}</name>
-        <desc>Circuit généré par Heripia.</desc>
-        <link href="https://stefanmartin1967.github.io/history-walk/">
+        <desc>Circuit généré par Heripia — heripia.com</desc>
+        <link href="https://heripia.com/">
             <text>Heripia [HW-ID:${id}]</text>
         </link>
     </metadata>`;
