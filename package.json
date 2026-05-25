@@ -1,7 +1,7 @@
 {
   "name": "history-walk",
   "version": "1.0.0",
-  "description": "PWA de guide touristique interactif pour Djerba : cartographie Leaflet, circuits personnalisés, mode hors-ligne, CC Admin et Mon Espace.",
+  "description": "PWA de guide touristique interactif du patrimoine : cartographie Leaflet, circuits personnalisés, mode hors-ligne, CC Admin et Mon Espace.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://overpass.private.coffee https://api.github.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <title>History Walk - Module Scout</title>
+    <title>Heripia - Module Scout</title>
     <link rel="icon" type="image/png" href="../icons/icon-192.png" />
 
     <!-- Bootstrap thème : lit localStorage 'hw_theme' (clé partagée HW/DM)
@@ -1096,7 +1096,7 @@ out geom;`;
         async function showTokenModal() {
             const token = await window.HW.hwPrompt({
                 title: 'Token GitHub requis',
-                body: 'Personal Access Token avec scope <code>repo</code>. Stocké dans IndexedDB (partagé avec History Walk et le Data Manager).',
+                body: 'Personal Access Token avec scope <code>repo</code>. Stocké dans IndexedDB (partagé avec Heripia et le Data Manager).',
                 placeholder: 'ghp_…',
                 inputType: 'password',
                 confirmLabel: 'Confirmer',

@@ -23,7 +23,7 @@ import { isDestinationPublished } from './utils.js';
 export function updateAppTitle(mapId) {
     if (!mapId) return;
     const mapName = mapId.charAt(0).toUpperCase() + mapId.slice(1);
-    document.title = `History Walk - ${mapName}`;
+    document.title = `Heripia - ${mapName}`;
     // PR 3 (refonte topbar) : le titre #app-title a été remplacé par le
     // sélecteur de destination. Le nom de la destination active y figure.
     const destName = document.getElementById('hw-dest-selector-name');
