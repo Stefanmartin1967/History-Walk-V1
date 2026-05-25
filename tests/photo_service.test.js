@@ -99,8 +99,8 @@ describe('compressImage — validation en entrée', () => {
 // par compressImage (grille) et compressFileToBlob (import GPS) — cf. fix v3.7.88.
 // ─────────────────────────────────────────────────────────────────────────────
 describe('ADMIN_WATERMARK_TEXT', () => {
-    it('exporte le texte exact "© Stefan Martin — History Walk"', () => {
-        expect(ADMIN_WATERMARK_TEXT).toBe('© Stefan Martin — History Walk');
+    it('exporte le texte exact "© Stefan Martin — Heripia"', () => {
+        expect(ADMIN_WATERMARK_TEXT).toBe('© Stefan Martin — Heripia');
     });
 });
 

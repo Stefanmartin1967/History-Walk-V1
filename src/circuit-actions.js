@@ -194,8 +194,8 @@ export async function saveAndExportCircuit() {
     const transportData = (draft && draft.transport) ? draft.transport : {};
 
     // --- MODIFICATION V2 : AJOUT SIGNATURE AUTOMATIQUE ---
-    const signature = "\n\n(Créé par History Walk)";
-    if (!description.includes("History Walk")) {
+    const signature = "\n\n(Créé par Heripia)";
+    if (!description.includes("History Walk") && !description.includes("Heripia")) {
         description += signature;
     }
     // ----------------------------------------------------

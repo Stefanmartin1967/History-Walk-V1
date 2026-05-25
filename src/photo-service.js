@@ -49,7 +49,7 @@ export const MAX_PHOTO_SIZE_BYTES = 50 * 1024 * 1024;
  * admin (cf. compressImage). Sert de dissuadeur en complément du LICENSE et
  * d'un éventuel dépôt i-DEPOT — ce n'est pas une protection cryptographique.
  */
-export const ADMIN_WATERMARK_TEXT = '© Stefan Martin — History Walk';
+export const ADMIN_WATERMARK_TEXT = '© Stefan Martin — Heripia';
 
 /**
  * Applique un watermark texte en bas à droite du canvas. Style : ombre noire
