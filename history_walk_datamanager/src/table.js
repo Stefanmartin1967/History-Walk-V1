@@ -270,7 +270,6 @@ function applyFilters() {
     resultCounter.textContent = `${visibleCount} visible(s)`;
     resultCounter.classList.remove('hidden');
     refreshHeaderCheckbox();
-    document.dispatchEvent(new CustomEvent('table:filters-applied', { detail: { visibleCount, total: lastFeatures.length } }));
 }
 
 // Peupler les dropdowns Catégorie / Zone côté toolbar (appelé depuis main.js)

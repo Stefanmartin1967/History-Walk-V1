@@ -164,11 +164,6 @@ export async function openControlCenter(initialTab = 'dashboard') {
     renderTab(initialTab, diffData, callbacks);
 }
 
-// Raccourci : ouvre directement l'onglet Réglages (token GitHub)
-export function openControlCenterSettings() {
-    openControlCenter('settings');
-}
-
 // --- ACTIONS GLOBALES ---
 
 export const toggleDiffDetails = (id) => {

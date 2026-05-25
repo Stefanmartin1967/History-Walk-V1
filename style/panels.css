@@ -2648,20 +2648,6 @@
 #circuit-panel[data-mode="create"] .circuit-desc .desc-text:hover {
     background: var(--surface-muted);
 }
-.circuit-desc .read-more {
-    background: none;
-    border: 0;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--brand-2);
-    padding: 4px 0 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-}
-.circuit-desc .read-more svg { width: 11px; height: 11px; }
 
 /* Description placeholder (création, vide) */
 .circuit-desc .desc-placeholder {

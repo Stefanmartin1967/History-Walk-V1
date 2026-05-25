@@ -70,20 +70,6 @@
     white-space: nowrap;
 }
 .is-photo-batch .pb-header-spacer { flex: 1; }
-.is-photo-batch .pb-header-pill {
-    display: none;            /* affiché par JS (.is-visible) si sélection > 0 */
-    align-items: center;
-    gap: 6px;
-    padding: 5px 11px;
-    border-radius: var(--radius-pill);
-    background: color-mix(in oklab, var(--cta-bg) 12%, var(--surface));
-    color: var(--cta-bg);
-    font-size: 12.5px; font-weight: 600;
-    line-height: 1;
-    white-space: nowrap;
-}
-.is-photo-batch .pb-header-pill.is-visible { display: inline-flex; }
-.is-photo-batch .pb-header-pill svg { width: 14px; height: 14px; stroke-width: 2.5; }
 .is-photo-batch .pb-header-hint {
     font-size: 12.5px;
     color: var(--ink-soft);
@@ -368,11 +354,6 @@
 .pb-footer-actions { display: flex; align-items: center; gap: var(--space-sm); }
 
 /* --- ÉTAT DRAG / DROP --- */
-.pb-cluster.is-drop-target { border-color: var(--cta-bg); border-style: solid; }
-.pb-cluster.is-drop-target .pb-grid {
-    background: color-mix(in oklab, var(--cta-bg) 6%, var(--surface));
-    box-shadow: inset 0 0 0 2px var(--cta-bg);
-}
 .pb-thumb.is-ghost { opacity: 0.4; }
 .pb-thumb.is-dragging { transform: rotate(2deg); box-shadow: 0 16px 32px rgba(0,0,0,.22); }
 .pb-thumb.is-chosen { box-shadow: 0 0 0 2px var(--cta-bg); }

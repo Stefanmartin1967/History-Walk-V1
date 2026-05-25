@@ -25,10 +25,6 @@ let _poiLatLng = null;  // [lat, lng] du POI (fixe)
 let _poiId = null;
 let _hadAccessPoint = false;
 
-export function isPlacingAccessPoint() {
-    return _marker !== null;
-}
-
 function flagIcon() {
     return L.divIcon({
         className: 'hw-access-flag',
