@@ -1,0 +1,27 @@
+name: Qualité (tests + knip)
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupération du code
+        uses: actions/checkout@v6
+      - name: Installation de Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: 'npm'
+      - name: Installation des dépendances
+        run: npm install
+      - name: Tests unitaires (vitest)
+        run: npx vitest run --exclude '**/.claude/**'
+      - name: Détection de code mort (knip)
+        run: npm run knip
