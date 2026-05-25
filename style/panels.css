@@ -214,28 +214,27 @@
 }
 /* --- TOPBAR BMC BUTTON (Soutenir le site) --- */
 #btn-bmc-topbar {
-    background-color: #FEF08A; /* Pastel Yellow (Yellow-200) */
-    color: #422006; /* Dark Brown Text for Contrast */
-    border: 1px solid #FDE047; /* Slightly darker border */
+    background-color: var(--hw-amber-soft); /* tinte ambre theme-aware (discret) */
+    color: var(--hw-amber);
+    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
     font-weight: 700;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-card);
     transition: all 0.2s ease;
     flex-shrink: 0; /* Important: Ne pas écraser */
     margin-right: 8px; /* Espace avec le bouton Outils */
 }
 
 #btn-bmc-topbar svg {
-    color: #e91e63; /* Pink Heart */
-    fill: #e91e63;
+    color: var(--hw-amber);
+    fill: var(--hw-amber);
     width: 20px;
     height: 20px;
 }
 
 #btn-bmc-topbar:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-    filter: brightness(0.98); /* Slight dim on hover */
-    background-color: #FDE047; /* Yellow-300 */
+    box-shadow: var(--shadow-soft);
+    background-color: color-mix(in oklab, var(--hw-amber) 18%, var(--surface));
 }
 
 /* RESPONSIVE: On small PC screens, hide text but keep icon */
@@ -288,9 +287,9 @@
 
 /* 4 & 5 & 6. Bouton Jaune, taille réduite et espacement */
 #btn-contrib-bmc {
-    background-color: #FEF08A !important; /* Jaune identique à la topbar */
-    border: 1px solid #FDE047 !important;
-    color: #422006 !important;
+    background-color: var(--hw-amber-soft) !important; /* tinte ambre theme-aware (cf. topbar) */
+    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent) !important;
+    color: var(--hw-amber) !important;
     font-weight: 700;
     font-size: 15px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
