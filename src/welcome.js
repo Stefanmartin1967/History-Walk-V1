@@ -128,7 +128,7 @@ function showWelcome({ firstLaunch }) {
     overlay.innerHTML = `
         <div class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title">
             <h2 class="welcome-modal-title" id="welcome-modal-title">Que voulez-vous faire ?</h2>
-            <p class="welcome-modal-subtitle">Bienvenue sur History Walk</p>
+            <p class="welcome-modal-subtitle">Bienvenue sur Heripia</p>
 
             <div class="welcome-cards" id="welcome-cards"></div>
 

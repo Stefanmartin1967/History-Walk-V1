@@ -161,7 +161,7 @@ export async function displayGeoJSON(geoJSON, mapId) {
     // 0. Mise à jour de l'Identité (Titre de la page)
     if (mapId) {
         const formattedName = mapId.charAt(0).toUpperCase() + mapId.slice(1);
-        document.title = `History Walk - ${formattedName}`;
+        document.title = `Heripia - ${formattedName}`;
     }
     
     // 1. Récupération des données sauvegardées (Cachés, Notes, Ajouts manuels)

@@ -14,7 +14,7 @@ const COPYRIGHT_HOLDER = 'Stefan Martin';
 
 export function showLegalNoticeModal() {
     const body = `
-        <p>© ${COPYRIGHT_YEAR} ${COPYRIGHT_HOLDER} — History Walk.<br>
+        <p>© ${COPYRIGHT_YEAR} ${COPYRIGHT_HOLDER} — Heripia.<br>
             Tous droits réservés.</p>
 
         <h3>Propriété intellectuelle</h3>

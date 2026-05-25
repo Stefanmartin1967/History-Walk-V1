@@ -133,7 +133,7 @@ export async function publishToGitHub(geojson, fileName, onStatus) {
     if (localStorage.getItem('hw_has_unpublished_changes') === '1') {
         const ok = await hwConfirm({
             title: '⚠️ Brouillon admin non publié',
-            body: 'History Walk a un brouillon admin non publié.<br><br>'
+            body: 'Heripia a un brouillon admin non publié.<br><br>'
                 + 'Si tu publies depuis le DM maintenant, les modifs HW en attente '
                 + 'pourraient être écrasées au prochain refresh côté HW.<br><br>'
                 + 'Veux-tu vraiment continuer ?',

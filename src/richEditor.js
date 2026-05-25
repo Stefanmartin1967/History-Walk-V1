@@ -821,7 +821,7 @@ function handleEmailSuggestion() {
     const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Inconnue';
     const poiName = data['Nom du site FR'] || 'Lieu';
 
-    const subject = encodeURIComponent(`History Walk - Modification [${mapName}] : ${poiName}`);
+    const subject = encodeURIComponent(`Heripia - Modification [${mapName}] : ${poiName}`);
 
     const bodyText = `Bonjour,\n\nVoici une suggestion de modification pour le lieu "${poiName}" sur la carte ${mapName}.\n\nDonnées JSON :\n${JSON.stringify(data, null, 2)}\n\nCordialement,`;
     const body = encodeURIComponent(bodyText);

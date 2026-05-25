@@ -141,7 +141,7 @@ export function renderMobileMenu() {
         });
         html += '</div></section>';
     });
-    html += `<div class="menu-version">History Walk Mobile v${APP_VERSION}</div>`;
+    html += `<div class="menu-version">Heripia Mobile v${APP_VERSION}</div>`;
     html += '</div>';
 
     container.innerHTML = html;

@@ -540,7 +540,7 @@ function renderFilterSheetBody() {
                 <span class="ico-leading brand"><i data-lucide="badge-check"></i></span>
                 <span class="lab-text">
                     <span class="lab-main">Officiels uniquement</span>
-                    <span class="lab-hint">Circuits édités par l'équipe History Walk</span>
+                    <span class="lab-hint">Circuits édités par l'équipe Heripia</span>
                 </span>
                 <span class="box"><i data-lucide="check"></i></span>
             </button>
