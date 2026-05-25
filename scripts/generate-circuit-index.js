@@ -429,7 +429,7 @@ function processDirectory(mapId, zones, destinations) {
             // INJECT ID into file
             const linkTag = `
     <link href="${HISTORY_WALK_URL}">
-      <text>History Walk [HW-ID:${id}]</text>
+      <text>Heripia [HW-ID:${id}]</text>
     </link>`;
 
             if (content.includes('<metadata>')) {

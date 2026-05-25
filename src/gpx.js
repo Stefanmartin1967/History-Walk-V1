@@ -129,13 +129,13 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
     const metadataXML = `
     <metadata>
         <name>${escapeXml(name)}</name>
-        <desc>Circuit généré par History Walk.</desc>
+        <desc>Circuit généré par Heripia.</desc>
         <link href="https://stefanmartin1967.github.io/history-walk/">
-            <text>History Walk [HW-ID:${id}]</text>
+            <text>Heripia [HW-ID:${id}]</text>
         </link>
     </metadata>`;
 
-    return `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="History Walk ${APP_VERSION}" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">${metadataXML}${waypointsXML}<trk><name>${escapeXml(name)}</name><desc><![CDATA[${description}]]></desc><trkseg>${trackpointsXML}</trkseg></trk></gpx>`;
+    return `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Heripia ${APP_VERSION}" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">${metadataXML}${waypointsXML}<trk><name>${escapeXml(name)}</name><desc><![CDATA[${description}]]></desc><trkseg>${trackpointsXML}</trkseg></trk></gpx>`;
 }
 
 export async function generateAndDownloadGPX(circuit, id, name, description, realTrack = null) {
