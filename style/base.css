@@ -1024,8 +1024,6 @@ textarea.editable-input {
 }
 
 .circuit-title-container .circuit-tested-badge { margin-left: 6px; }
-.circuit-title-container .circuit-toggle-tested-btn { color: var(--ink-soft); }
-.circuit-title-container .circuit-toggle-tested-btn.tested { color: #2e7d32; }
 
 .header-controls {
     display: grid;
