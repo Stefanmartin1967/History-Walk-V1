@@ -603,8 +603,7 @@ export function setupFileListeners() {
     }
     // (Listener btnRestoreData retiré 10/05/2026, PR cleanup post-#514 : le
     // bouton Restaurer n'existe plus dans le menu Outils. Restauration via
-    // Mon Espace > Mes Données. La fonction openRestoreModal() reste exportée
-    // de ui-modals.js si un autre point d'entrée la rappelle un jour.)
+    // Mon Espace > Mes Données.)
     if (DOM.geojsonLoader) {
         DOM.geojsonLoader.removeEventListener('change', handleFileLoad);
         DOM.geojsonLoader.addEventListener('change', handleFileLoad);
