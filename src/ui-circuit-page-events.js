@@ -14,13 +14,13 @@
  * - Édition inline description (placeholder + double-clic)
  */
 
-import { state, setCustomDraftName, setHiddenCircuitIds, updateMyCircuit, setOfficialCircuits } from './state.js';
+import { state, setCustomDraftName, updateMyCircuit, setOfficialCircuits } from './state.js';
 import { saveCircuitDraft, isCircuitTested } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
-import { saveAppState, saveCircuit } from './database.js';
-import { applyFilters, getPoiId } from './data.js';
-import { schedulePush } from './gist-sync.js';
+import { saveCircuit } from './database.js';
+import { getPoiId } from './data.js';
+import { setCircuitHidden } from './circuit-actions.js';
 import { generateAndDownloadGPX } from './gpx.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -107,52 +107,20 @@ function initMaskListing() {
     btn.addEventListener('click', async () => {
         if (!state.activeCircuitId) return;
         const id = String(state.activeCircuitId);
-        const previousHidden = [...(state.hiddenCircuitIds || [])];
-        const isCurrentlyHidden = previousHidden.includes(id);
+        const isCurrentlyHidden = (state.hiddenCircuitIds || []).includes(id);
 
         if (isCurrentlyHidden) {
-            // RÉAFFICHER : retire de la blacklist
-            const nextHidden = previousHidden.filter(x => x !== id);
-            setHiddenCircuitIds(nextHidden);
-            try {
-                await saveAppState('hiddenCircuitIds', nextHidden);
-            } catch (err) {
-                console.error('[circuit-page-events] saveAppState (réafficher) failed', err);
-            }
-            schedulePush();
-            eventBus.emit('circuit:list-updated');
-            applyFilters();
+            await setCircuitHidden(id, false);
             showToast('Circuit réaffiché dans la liste.', 'success', 2500);
         } else {
-            // CACHER : ajoute à la blacklist, propose Undo 5s
             const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
             const circuit = allCircuits.find(c => String(c.id) === id);
             const name = circuit?.name || 'circuit';
 
-            const nextHidden = [...previousHidden, id];
-            setHiddenCircuitIds(nextHidden);
-            try {
-                await saveAppState('hiddenCircuitIds', nextHidden);
-            } catch (err) {
-                console.error('[circuit-page-events] saveAppState (cacher) failed', err);
-            }
-            schedulePush();
-            eventBus.emit('circuit:list-updated');
-            applyFilters();
-
+            await setCircuitHidden(id, true);
             showToast(`« ${name} » caché de la liste.`, 'success', 5000, {
                 label: 'Annuler',
-                onClick: async () => {
-                    setHiddenCircuitIds(previousHidden);
-                    try {
-                        await saveAppState('hiddenCircuitIds', previousHidden);
-                    } catch (err) {
-                        console.error('[circuit-page-events] saveAppState undo failed', err);
-                    }
-                    schedulePush();
-                    eventBus.emit('circuit:list-updated');
-                    applyFilters();
-                }
+                onClick: () => setCircuitHidden(id, false)
             });
         }
     });
