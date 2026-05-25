@@ -3,17 +3,13 @@
 // Remplace photo-manager.js + photo-upload.js.
 //
 // Sections :
-//   1. État viewer       — currentPhotoList, currentPhotoIndex, setCurrentPhotos, changePhoto
+//   1. État viewer       — currentPhotoList, currentPhotoIndex, setCurrentPhotos
 //   2. Compression       — compressImage, generatePhotoId, validatePhotoFile
-//   3. CRUD local (Blob) — handlePhotoUpload, handlePhotoDeletion, handleAllPhotosDeletion
-//   4. Upload GitHub     — uploadPhotoForPoi (admin uniquement)
+//   3. Upload GitHub     — uploadPhotoForPoi (admin uniquement)
 
-import { DOM } from './ui-dom.js';
 import { state } from './state.js';
-import { getPoiPhotos, savePoiPhotos, deletePoiPhotos } from './database.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
-import { showToast } from './toast.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. ÉTAT VIEWER
@@ -26,14 +22,6 @@ export let currentPhotoIndex = 0;
 export function setCurrentPhotos(list, index) {
     currentPhotoList = list;
     currentPhotoIndex = index;
-}
-
-export function changePhoto(direction) {
-    if (!currentPhotoList || currentPhotoList.length <= 1) return;
-    currentPhotoIndex += direction;
-    if (currentPhotoIndex >= currentPhotoList.length) currentPhotoIndex = 0;
-    if (currentPhotoIndex < 0) currentPhotoIndex = currentPhotoList.length - 1;
-    if (DOM.viewerImg) DOM.viewerImg.src = currentPhotoList[currentPhotoIndex];
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -167,67 +155,7 @@ export function generatePhotoId() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 3. CRUD LOCAL (Blob → poiPhotos store)
-// ─────────────────────────────────────────────────────────────────────────────
-
-/**
- * Ajoute de nouvelles photos pour un POI : compression → Blob → store dédié.
- * Pré-filtre via validatePhotoFile (MIME image/* + cap taille). Toaste les rejets.
- */
-export async function handlePhotoUpload(poiId, files) {
-    const mapId = state.currentMapId;
-    const existing = await getPoiPhotos(mapId, poiId);
-    const newItems = [];
-    let rejected = 0;
-
-    for (const file of files) {
-        const validation = validatePhotoFile(file);
-        if (!validation.valid) {
-            console.warn(`Photo rejetée (${file?.name || 'sans nom'}) :`, validation.reason);
-            rejected++;
-            continue;
-        }
-        try {
-            const blob = await compressImage(file);
-            newItems.push({ id: generatePhotoId(), blob });
-        } catch (err) {
-            console.error("Erreur compression image", err);
-            rejected++;
-        }
-    }
-
-    if (rejected > 0) {
-        showToast(`${rejected} photo(s) ignorée(s) (format ou taille invalide).`, 'warning');
-    }
-
-    if (newItems.length === 0) return { success: false };
-
-    await savePoiPhotos(mapId, poiId, [...existing, ...newItems]);
-    return { success: true, count: newItems.length };
-}
-
-/**
- * Supprime une photo par son index dans la liste du POI.
- */
-export async function handlePhotoDeletion(poiId, index) {
-    const mapId = state.currentMapId;
-    const photos = await getPoiPhotos(mapId, poiId);
-    if (index < 0 || index >= photos.length) return false;
-
-    await savePoiPhotos(mapId, poiId, photos.filter((_, i) => i !== index));
-    return true;
-}
-
-/**
- * Supprime toutes les photos d'un POI.
- */
-export async function handleAllPhotosDeletion(poiId) {
-    await deletePoiPhotos(state.currentMapId, poiId);
-    return true;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 4. UPLOAD GITHUB (admin uniquement)
+// 3. UPLOAD GITHUB (admin uniquement)
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
