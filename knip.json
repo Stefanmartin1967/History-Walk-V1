@@ -1,5 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreExportsUsedInFile": true,
+  "ignoreDependencies": ["playwright"],
+  "rules": { "duplicates": "off" },
   "entry": [
     "public/theme-bootstrap.js",
     "public/zones-viewer.html",

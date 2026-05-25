@@ -316,6 +316,7 @@ export async function deleteCircuitById(id) {
     });
 }
 
+/** @public API de reset complet — conservée délibérément (pas d'appelant actuel). */
 export async function clearAllUserData() {
     try {
         const db = await initDB();
@@ -472,6 +473,7 @@ export async function savePoiPhotos(mapId, poiId, photos) {
 
 /**
  * Supprime toutes les photos d'un POI.
+ * @public Primitive d'API conservée délibérément (pas d'appelant actuel).
  */
 export async function deletePoiPhotos(mapId, poiId) {
     const db = await initDB();

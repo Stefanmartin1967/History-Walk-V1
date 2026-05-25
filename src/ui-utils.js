@@ -17,6 +17,7 @@ export function closeAllDropdowns() {
 
 // --- ESTIMATION TAILLE SAUVEGARDE ---
 
+/** @public Lié au backup auto (chantier parqué) — conservée délibérément. */
 export async function updateBackupSizeEstimates() {
     // 1. Calcul taille JSON (Lite) — ne contient plus les photos (stockées dans poiPhotos)
     const liteData = {
