@@ -590,14 +590,14 @@ function renderFilterSheetBody() {
                 <button class="ms-sort-btn ${currentSort === 'proximity_asc' ? 'is-on' : ''}" data-sort="proximity_asc" type="button">
                     <i data-lucide="home"></i><span>Proximité</span>
                 </button>
-                <button class="ms-sort-btn ${currentSort === 'verified_first' ? 'is-on' : ''}" data-sort="verified_first" type="button">
-                    <i data-lucide="shield-check"></i><span>Vérifiés</span>
-                </button>
                 <button class="ms-sort-btn ${currentSort === 'dist_asc' ? 'is-on' : ''}" data-sort="dist_asc" type="button">
-                    <i data-lucide="arrow-down-0-1"></i><span>Du plus court</span>
+                    <i data-lucide="arrow-down-0-1"></i><span>Court</span>
                 </button>
                 <button class="ms-sort-btn ${currentSort === 'dist_desc' ? 'is-on' : ''}" data-sort="dist_desc" type="button">
-                    <i data-lucide="arrow-up-1-0"></i><span>Du plus long</span>
+                    <i data-lucide="arrow-up-1-0"></i><span>Long</span>
+                </button>
+                <button class="ms-sort-btn ${currentSort === 'verified_first' ? 'is-on' : ''}" data-sort="verified_first" type="button">
+                    <i data-lucide="shield-check"></i><span>Vérifiés</span>
                 </button>
             </div>
             ${state.homeLocation && currentSort === 'proximity_asc' ? `
