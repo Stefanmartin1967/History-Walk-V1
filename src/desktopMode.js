@@ -237,7 +237,11 @@ export async function addPhotosToPoi(feature, clusterItems) {
                 const binary = atob(data);
                 const bytes = new Uint8Array(binary.length);
                 for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-                blob = new Blob([bytes], { type: mime });
+                const rawBlob = new Blob([bytes], { type: mime });
+                // Admin : on repasse par compressImage pour appliquer le watermark
+                // (parité avec le chemin item.file). Sans ça, ce fallback sortait
+                // un Blob NON watermarké.
+                blob = state.isAdmin ? await compressImage(rawBlob) : rawBlob;
             } else {
                 continue;
             }
