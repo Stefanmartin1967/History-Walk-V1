@@ -62,8 +62,7 @@ vi.mock('../src/admin.js', () => ({
 }));
 
 vi.mock('../src/admin-control-center.js', () => ({
-    openControlCenter: vi.fn(),
-    quickPublish: vi.fn()
+    openControlCenter: vi.fn()
 }));
 
 vi.mock('../src/user-space.js', () => ({

@@ -484,14 +484,6 @@ export const processDecision = async (id, decision, scope = 'poi') => {
 };
 
 
-// --- PUBLICATION RAPIDE (sans ouvrir la CC modale) ---
-
-export async function quickPublish() {
-    reconcileLocalChanges(adminDraft, saveDraft, updateButtonBadge);
-    await prepareDiffAndPurge();
-    await publishChanges();
-}
-
 // --- GESTION DE LA PUBLICATION ET SYNCHRONISATION ---
 
 async function publishChanges() {

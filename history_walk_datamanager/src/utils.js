@@ -34,10 +34,6 @@ export function parseGps(gpsString) {
     return { lat, lon };
 }
 
-export function decodeText(text) {
-    try { return decodeURIComponent(text); } catch (e) { return text; }
-}
-
 /**
  * Génère un identifiant unique au format HW-ULID (10 chars timestamp + 16 chars random,
  * alphabet Crockford base32 sans I L O U pour éviter les confusions de lecture).

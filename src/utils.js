@@ -236,6 +236,7 @@ export function escapeXml(unsafe) {
     }[c]));
 }
 
+/** @public Alias sémantique de escapeXml (échappement HTML), importé par de nombreux modules. */
 export const escapeHtml = escapeXml;
 
 /**
