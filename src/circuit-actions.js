@@ -1,7 +1,7 @@
 
 // circuit-actions.js
-import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits } from './state.js';
-import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit } from './database.js';
+import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds } from './state.js';
+import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit, saveAppState } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
 import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters } from './data.js';
 import { isMobileView } from './mobile-state.js';
@@ -13,6 +13,35 @@ import { DOM } from './ui-dom.js';
 import { getStoredToken } from './github-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
 import { recordModification } from './backup-auto-local.js';
+import { schedulePush } from './gist-sync.js';
+import { eventBus } from './events.js';
+
+/**
+ * Mutation partagée « cacher / réafficher » un circuit (Mon Espace V2,
+ * blacklist hiddenCircuitIds). Utilisée par la page circuit (PC) et la liste
+ * mobile (Phase 1c). Persiste, programme la sync Gist, notifie la liste et
+ * réapplique les filtres. La couche UI gère son propre toast/undo.
+ * @param {string|number} id - ID du circuit
+ * @param {boolean} hidden - true = cacher, false = réafficher
+ * @returns {Promise<string[]>} la nouvelle blacklist
+ */
+export async function setCircuitHidden(id, hidden) {
+    const sid = String(id);
+    const current = [...(state.hiddenCircuitIds || [])];
+    const next = hidden
+        ? (current.includes(sid) ? current : [...current, sid])
+        : current.filter(x => x !== sid);
+    setHiddenCircuitIds(next);
+    try {
+        await saveAppState('hiddenCircuitIds', next);
+    } catch (err) {
+        console.error('[circuit-actions] saveAppState (hiddenCircuitIds) a échoué', err);
+    }
+    schedulePush();
+    eventBus.emit('circuit:list-updated');
+    applyFilters();
+    return next;
+}
 
 /**
  * B1 — Détection de doublon à la source : compare la signature `poiIds` du

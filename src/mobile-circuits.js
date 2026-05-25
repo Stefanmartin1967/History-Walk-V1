@@ -19,9 +19,10 @@ import { getPoiId, getPoiName } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { isCircuitTested, loadCircuitById } from './circuit.js';
-import { handleCircuitVisitedToggle } from './circuit-actions.js';
+import { handleCircuitVisitedToggle, setCircuitHidden } from './circuit-actions.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { openStartPointModal } from './start-point.js';
+import { showToast } from './toast.js';
 import {
     getMobileSort, setMobileSort,
     setCurrentView, setAllCircuitsOrdered, getAllCircuitsOrdered,
@@ -43,6 +44,7 @@ let filterTypeResto    = false;
 let filterMinKm        = 0;
 let filterMaxKm        = DIST_MAX_KM;
 let filterCompletion   = 'all'; // 'all' | 'todo' | 'done'
+let filterVisibility   = 'visible'; // 'visible' | 'hidden' | 'all' (Phase 1c — réplique PC)
 
 // Recherche texte dans Mes Circuits (filtre par nom de circuit OU nom d'un POI
 // du circuit, comme PC). PR A post-merge followup : la barre de recherche
@@ -116,7 +118,8 @@ export function renderMobileCircuitsList() {
         baseSortMode,
         legacyFilterTodo,
         state.activeFilters.zone || null,
-        filterPoiId
+        filterPoiId,
+        filterVisibility
     );
 
     // Filtre completion 'done' : circuits déjà marqués fait (post-service)
@@ -238,6 +241,7 @@ export function renderMobileCircuitsList() {
                 .replace(/^(Circuit de |Boucle de )/i, '');
             const isDone = circuit._isCompleted;
             const isActive = state.activeCircuitId === circuit.id;
+            const isHidden = (state.hiddenCircuitIds || []).includes(String(circuit.id));
             const isTested = circuit.isOfficial && isCircuitTested(circuit.id);
             const flag = circuit.isOfficial
                 ? (isTested ? 'verified' : 'official')
@@ -251,6 +255,9 @@ export function renderMobileCircuitsList() {
                 <article class="mc-card${isDone ? ' is-done' : ''}${isActive ? ' is-active' : ''}" data-flag="${flag}" data-id="${circuit.id}" role="button" tabindex="0">
                     <div class="mc-line1">
                         <h3 class="mc-title">${escapeHtml(displayName)}</h3>
+                        <button type="button" class="mc-hide mobile-toggle-hidden" data-id="${circuit.id}" data-hidden="${isHidden}" data-name="${escapeHtml(displayName)}" aria-label="${isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit'}" title="${isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit'}">
+                            <i data-lucide="${isHidden ? 'eye' : 'eye-off'}"></i>
+                        </button>
                         <button type="button" class="mc-done mobile-toggle-visited" data-id="${circuit.id}" data-visited="${isDone}" aria-label="Marquer comme visité" title="Marquer comme visité">
                             <i data-lucide="${isDone ? 'check-circle' : 'circle'}"></i>
                         </button>
@@ -338,6 +345,24 @@ export function renderMobileCircuitsList() {
                 }
                 return;
             }
+            const hideBtn = e.target.closest('.mobile-toggle-hidden');
+            if (hideBtn) {
+                e.stopPropagation();
+                const id = hideBtn.dataset.id;
+                const wasHidden = hideBtn.dataset.hidden === 'true';
+                const name = hideBtn.dataset.name || 'circuit';
+                await setCircuitHidden(id, !wasHidden);
+                if (wasHidden) {
+                    showToast('Circuit réaffiché dans la liste.', 'success', 2500);
+                } else {
+                    showToast(`« ${name} » caché de la liste.`, 'success', 5000, {
+                        label: 'Annuler',
+                        onClick: () => setCircuitHidden(id, false)
+                    });
+                }
+                renderMobileCircuitsList();
+                return;
+            }
             if (e.target.closest('a')) return;
             const id = card.dataset.id;
             pushMobileLevel('c'); // Proactif C7 : pousser entrée avant descente
@@ -366,6 +391,7 @@ function countActiveFilters() {
     if (filterTypeVerified) n++;
     if (filterTypeResto)    n++;
     if (filterCompletion !== 'all') n++;
+    if (filterVisibility !== 'visible') n++;
     if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) n++;
     if (state.activeFilters?.zone) n++;
     // Le tri par défaut dépend de homeLocation : 'proximity_asc' si défini, sinon
@@ -398,6 +424,7 @@ function resetAllMobileFilters() {
     filterMinKm        = 0;
     filterMaxKm        = DIST_MAX_KM;
     filterCompletion   = 'all';
+    filterVisibility   = 'visible';
     setFilterCompleted(false);
     lastSeenStateFilterCompleted = false;
     setMobileSort(state.homeLocation ? 'proximity_asc' : 'dist_asc');
@@ -635,6 +662,22 @@ function renderFilterSheetBody() {
                 </button>
             </div>
         </div>
+
+        <!-- Visibilité (Phase 1c) -->
+        <div class="filter-section">
+            <div class="lbl">Visibilité</div>
+            <div class="fseg" id="ms-fseg-visibility">
+                <button class="${filterVisibility === 'visible' ? 'is-on' : ''}" data-visibility="visible" type="button" title="Masquer les circuits que tu as cachés (défaut)">
+                    <i data-lucide="eye"></i>Visibles
+                </button>
+                <button class="${filterVisibility === 'hidden' ? 'is-on' : ''}" data-visibility="hidden" type="button" title="Voir uniquement les circuits cachés pour les réafficher">
+                    <i data-lucide="eye-off"></i>Cachés
+                </button>
+                <button class="${filterVisibility === 'all' ? 'is-on' : ''}" data-visibility="all" type="button">
+                    Tout
+                </button>
+            </div>
+        </div>
     `;
 
     createIcons({ icons: appIcons, root: body });
@@ -691,6 +734,15 @@ function renderFilterSheetBody() {
             filterCompletion = btn.dataset.completion;
             setFilterCompleted(filterCompletion === 'todo');
             lastSeenStateFilterCompleted = (filterCompletion === 'todo');
+            renderFilterSheetBody();
+            renderMobileCircuitsList();
+        });
+    });
+
+    // Visibilité (segmented) — Phase 1c
+    body.querySelectorAll('#ms-fseg-visibility button[data-visibility]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterVisibility = btn.dataset.visibility;
             renderFilterSheetBody();
             renderMobileCircuitsList();
         });
