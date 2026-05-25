@@ -17,7 +17,6 @@ const GIST_FILE_NAME = 'history_walk_userdata.json';
 const PUSH_DEBOUNCE_MS = 3000;
 
 let _pushTimer = null;
-let _syncStatus = 'idle'; // 'idle' | 'pushing' | 'pulling' | 'error'
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -30,17 +29,6 @@ function getHeaders(token) {
         'Accept': 'application/vnd.github.v3+json',
         'Content-Type': 'application/json'
     };
-}
-
-function setStatus(status) {
-    _syncStatus = status;
-    const el = document.getElementById('gist-sync-indicator');
-    if (!el) return;
-    const icons = { idle: '☁', pushing: '↑', pulling: '↓', error: '⚠' };
-    const titles = { idle: 'Sync Gist OK', pushing: 'Envoi...', pulling: 'Réception...', error: 'Erreur sync Gist' };
-    el.textContent = icons[status] || '☁';
-    el.title = titles[status] || '';
-    el.className = `gist-sync-indicator gist-sync-${status}`;
 }
 
 // ─── SÉRIALISATION ────────────────────────────────────────────────────────────
@@ -278,12 +266,10 @@ export async function pullFromGist() {
     }
 
     try {
-        setStatus('pulling');
         const remote = await fetchGist(token, gistId);
 
         // Guard : ne pas merger une carte différente
         if (remote.mapId && remote.mapId !== state.currentMapId) {
-            setStatus('idle');
             return;
         }
 
@@ -311,10 +297,8 @@ export async function pullFromGist() {
             showToast(`Sync Gist : ${parts.join(' + ')} mis à jour.`, 'info', 3000);
         }
 
-        setStatus('idle');
     } catch (e) {
         console.warn('[GistSync] Pull failed:', e.message);
-        setStatus('error');
     }
 }
 
@@ -327,7 +311,6 @@ export async function pushToGist() {
     if (!token) return;
 
     try {
-        setStatus('pushing');
         const payload = buildPayload();
         let gistId = getGistId();
 
@@ -355,10 +338,8 @@ export async function pushToGist() {
             }
         }
 
-        setStatus('idle');
     } catch (e) {
         console.warn('[GistSync] Push failed:', e.message);
-        setStatus('error');
     }
 }
 
@@ -373,29 +354,3 @@ export function schedulePush() {
     }, PUSH_DEBOUNCE_MS);
 }
 
-/**
- * Injecte l'indicateur de sync dans l'UI (à appeler une seule fois au démarrage).
- * L'indicateur se place dans la barre admin existante.
- */
-export function injectSyncIndicator() {
-    if (document.getElementById('gist-sync-indicator')) return;
-    const el = document.createElement('span');
-    el.id = 'gist-sync-indicator';
-    el.className = 'gist-sync-indicator gist-sync-idle';
-    el.textContent = '☁';
-    el.title = 'Sync Gist';
-    el.style.cursor = 'pointer';
-    el.addEventListener('click', async () => {
-        const token = getStoredToken();
-        if (!token) {
-            showToast('Configurez votre token GitHub dans les paramètres.', 'warning');
-            return;
-        }
-        await pushToGist();
-        showToast('Sync manuelle envoyée.', 'info', 2000);
-    });
-
-    // Insérer dans la barre admin si elle existe, sinon dans le header
-    const adminBar = document.querySelector('.admin-topbar, .app-header .actions, header');
-    if (adminBar) adminBar.appendChild(el);
-}

@@ -12,7 +12,7 @@ import { loadCircuitDraft } from './circuit.js';
 import { updateCurrencyUnits } from './circuit-view.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';
-import { pullFromGist, injectSyncIndicator } from './gist-sync.js';
+import { pullFromGist } from './gist-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
 import { isDestinationPublished } from './utils.js';
 
@@ -402,7 +402,6 @@ export async function loadAndInitializeMap() {
         });
     });
 
-    // Gist sync : pull après chargement complet + injecter indicateur
-    injectSyncIndicator();
+    // Gist sync : pull après chargement complet
     pullFromGist();
 }

@@ -16,7 +16,7 @@ vi.mock('../src/modal.js', () => ({ showAlert: vi.fn(), showConfirm: vi.fn() }))
 vi.mock('../src/statistics.js', () => ({ ANIMAL_RANKS: [], MATERIAL_RANKS: [], GLOBAL_RANKS: [] }));
 vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} }));
 vi.mock('../src/github-sync.js', () => ({ uploadFileToGitHub: vi.fn(), getStoredToken: vi.fn() }));
-vi.mock('../src/gist-sync.js', () => ({ pullFromGist: vi.fn(), injectSyncIndicator: vi.fn() }));
+vi.mock('../src/gist-sync.js', () => ({ pullFromGist: vi.fn() }));
 vi.mock('../src/config.js', () => ({
     GITHUB_OWNER: 'test', GITHUB_REPO: 'test',
     RAW_BASE: 'http://test', GITHUB_PATHS: {}
