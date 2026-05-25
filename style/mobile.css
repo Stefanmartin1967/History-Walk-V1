@@ -455,11 +455,6 @@
     color: #fff;
 }
 
-/* Icônes méta héritées (encore référencées par certains conteneurs ; le pattern
-   .mc-* n'utilise plus ces classes mais on les garde le temps de la transition). */
-.icon-official-star { color: var(--brand); width: 14px; height: 14px; margin-left: 5px; fill: var(--brand); }
-.icon-utensils-meta { width: 14px; height: 14px; margin-left: 4px; vertical-align: text-bottom; }
-.icon-map-meta { width: 14px; height: 14px; margin: 0 4px; }
 .icon-check-visited { width: 20px; height: 20px; margin-left: 5px; color: var(--ok); stroke-width: 3; }
 
 /* ============================================================
