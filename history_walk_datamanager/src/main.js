@@ -111,7 +111,7 @@ maybeShowCrossAppWarn();
 
 document.getElementById('btn-goto-hw')?.addEventListener('click', () => {
     const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-    const url = isDev ? 'http://localhost:5173/History-Walk-V1/' : '/History-Walk-V1/';
+    const url = isDev ? 'http://localhost:5173/' : '/';
     window.open(url, '_blank');
 });
 document.getElementById('btn-dismiss-warn')?.addEventListener('click', () => {

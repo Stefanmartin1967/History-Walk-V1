@@ -4,7 +4,7 @@ import { resolve } from 'path'; // 1. Ajout de l'import pour gérer les chemins
 
 export default defineConfig({
   // Le nom exact de votre dépôt GitHub
-  base: '/History-Walk-V1/',
+  base: '/',
 
   plugins: [
     // En dev seulement : Vite HMR injecte des styles inline qui frappent la CSP stricte.
@@ -20,8 +20,8 @@ export default defineConfig({
     },
     VitePWA({
       registerType: 'prompt',
-      base: '/History-Walk-V1/',
-      scope: '/History-Walk-V1/',
+      base: '/',
+      scope: '/',
 
       manifest: false, // On utilise public/manifest.json manuellement
       workbox: {

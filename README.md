@@ -2,7 +2,7 @@
 
 PWA (Progressive Web App) de guide touristique interactif pour Djerba, extensible à d'autres destinations. Permet de consulter des points d'intérêt sur une carte, de créer et suivre des circuits personnalisés, avec fonctionnement hors-ligne complet.
 
-Version en production : https://stefanoworld.github.io/History-Walk-V1/
+Version en production : https://heripia.com/
 
 ## Fonctionnalités
 
@@ -37,7 +37,7 @@ npm install
 npm run dev
 ```
 
-L'application s'ouvre sur `http://localhost:5173/History-Walk-V1/`.
+L'application s'ouvre sur `http://localhost:5173/`.
 
 ## Scripts
 

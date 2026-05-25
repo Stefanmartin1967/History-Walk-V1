@@ -206,7 +206,7 @@ function renderCircuitView(container, listToDisplay) {
 
     const title = (circuit.name || '').split(' via ')[0].replace(/^(Circuit de |Boucle de )/i, '');
     const fullName = circuit.name || 'Circuit';
-    const description = circuit.description || 'Circuit généré par Heripia.';
+    const description = circuit.description || 'Circuit généré par Heripia — heripia.com';
     const isCompleted = isCircuitCompleted(circuit);
     const isTested = circuit.isOfficial && isCircuitTested(circuit.id);
     const flag = circuit.isOfficial

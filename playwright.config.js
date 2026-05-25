@@ -6,7 +6,7 @@ export default defineConfig({
   snapshotDir: './tests/visual/snapshots',
 
   use: {
-    baseURL: 'http://localhost:5173/History-Walk-V1/',
+    baseURL: 'http://localhost:5173/',
     screenshot: 'only-on-failure',
   },
 
@@ -31,7 +31,7 @@ export default defineConfig({
 
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:5173/History-Walk-V1/',
+    url: 'http://localhost:5173/',
     reuseExistingServer: true,
   },
 });
