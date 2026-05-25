@@ -2510,13 +2510,6 @@ input[type=range] {
     color: var(--danger);
 }
 
-/* Cible 11 : Icône Coeur BMC (remplace color:#e91e63, margin-left:auto, fill:#e91e63) */
-.bmc-heart-icon {
-    color: #e91e63;
-    margin-left: auto;
-    fill: #e91e63;
-}
-
 /* Cible 12 : Mobile Search View (padding:16px) */
 .mobile-search-container {
     padding: var(--space-md);
