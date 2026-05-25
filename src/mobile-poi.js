@@ -12,7 +12,7 @@ import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance,
 import { openDetailsPanel } from './ui-details.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
 import { clearCircuit, isCircuitCompleted, isCircuitTested, loadCircuitById } from './circuit.js';
-import { handleCircuitVisitedToggle } from './circuit-actions.js';
+import { handleCircuitVisitedToggle, setCircuitHidden } from './circuit-actions.js';
 import { showToast } from './toast.js';
 import { animateContainer, getCurrentView, getAllCircuitsOrdered, setMobileHeaderSlot, setMobileViewFooter } from './mobile-state.js';
 import { switchMobileView } from './mobile-nav.js';
@@ -264,6 +264,8 @@ function renderCircuitView(container, listToDisplay) {
         ? `<a class="cc-act" id="cc-act-gpx" href="./circuits/${gpxFile}" download aria-label="Télécharger GPX" title="Télécharger GPX"><i data-lucide="download"></i></a>`
         : `<button class="cc-act" disabled aria-label="GPX non disponible" title="GPX non disponible pour les circuits perso"><i data-lucide="download"></i></button>`;
 
+    const isHidden = (state.hiddenCircuitIds || []).includes(String(circuit.id));
+
     // Steps timeline
     let stepsHtml = '';
     listToDisplay.forEach((feature, i) => {
@@ -309,6 +311,9 @@ function renderCircuitView(container, listToDisplay) {
             <button class="cc-act ${isCompleted ? 'is-done' : ''}" id="cc-act-done" aria-label="Marquer comme fait" title="${isCompleted ? 'Décocher fait' : 'Marquer comme fait'}">
                 <i data-lucide="${isCompleted ? 'check-circle' : 'circle'}"></i>
             </button>
+            <button class="cc-act ${isHidden ? 'is-hidden-circuit' : ''}" id="cc-act-hide" aria-label="${isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit'}" title="${isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit'}">
+                <i data-lucide="${isHidden ? 'eye' : 'eye-off'}"></i>
+            </button>
         </div>
         <div class="cc-timeline-wrap">
             <div class="cc-timeline-cap">
@@ -352,6 +357,20 @@ function renderCircuitView(container, listToDisplay) {
     document.getElementById('cc-act-done')?.addEventListener('click', async () => {
         const result = await handleCircuitVisitedToggle(circuit.id, isCompleted);
         if (result?.success !== false) renderMobilePoiList(listToDisplay);
+    });
+
+    document.getElementById('cc-act-hide')?.addEventListener('click', async () => {
+        const wasHidden = (state.hiddenCircuitIds || []).includes(String(circuit.id));
+        await setCircuitHidden(circuit.id, !wasHidden);
+        if (wasHidden) {
+            showToast('Circuit réaffiché dans la liste.', 'success', 2500);
+        } else {
+            showToast(`« ${fullName} » caché de la liste.`, 'success', 5000, {
+                label: 'Annuler',
+                onClick: () => setCircuitHidden(circuit.id, false)
+            });
+        }
+        renderMobilePoiList(listToDisplay);
     });
 
     container.querySelectorAll('.cc-step').forEach(step => {
