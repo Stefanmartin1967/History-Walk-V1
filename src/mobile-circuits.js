@@ -21,7 +21,7 @@ import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { isCircuitTested, loadCircuitById } from './circuit.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
-import { showToast } from './toast.js';
+import { openStartPointModal } from './start-point.js';
 import {
     getMobileSort, setMobileSort,
     setCurrentView, setAllCircuitsOrdered, getAllCircuitsOrdered,
@@ -596,6 +596,12 @@ function renderFilterSheetBody() {
                     <i data-lucide="arrow-up-1-0"></i><span>Du plus long</span>
                 </button>
             </div>
+            ${state.homeLocation && currentSort === 'proximity_asc' ? `
+            <div class="sp-hint">
+                <i data-lucide="locate-fixed"></i>
+                <span>Depuis <strong>${escapeHtml(state.homeLocation.label || 'lieu défini')}</strong></span>
+                <button type="button" class="sp-edit" id="ms-sp-edit">modifier</button>
+            </div>` : ''}
         </div>
 
         <!-- Zone -->
@@ -646,20 +652,28 @@ function renderFilterSheetBody() {
 
     // Sort grid
     body.querySelectorAll('.ms-sort-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const v = btn.dataset.sort;
             if (v === 'proximity_asc' && !state.homeLocation) {
-                showToast(
-                    "Définis ton lieu de résidence dans Mon Espace pour activer ce tri.",
-                    'info', 4500
-                );
-                return;
+                // Pas de point de départ → on le fait définir (GPS ou lieu de l'app).
+                const home = await openStartPointModal();
+                if (!home) return; // annulé → on ne change pas le tri
             }
             setMobileSort(v);
             renderFilterSheetBody();
             renderMobileCircuitsList();
         });
     });
+
+    // Lien « modifier » du point de départ (affiché sous le tri Proximité).
+    const spEditBtn = body.querySelector('#ms-sp-edit');
+    if (spEditBtn) {
+        spEditBtn.addEventListener('click', async () => {
+            await openStartPointModal();
+            renderFilterSheetBody();
+            renderMobileCircuitsList();
+        });
+    }
 
     // Zone list
     body.querySelectorAll('.ms-zone-item').forEach(btn => {

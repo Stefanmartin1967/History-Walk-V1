@@ -711,3 +711,119 @@ html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
     .hw-pv-strip { height: 84px; padding: 10px 14px 12px; gap: 8px; }
     .hw-pv-strip-thumb { width: 58px; height: 58px; }
 }
+
+/* ============================================================
+   POINT DE DÉPART (start-point.js) — modale du tri « Proximité ».
+   Deux voies : position GPS ou choix d'un lieu de l'app. Tokens only.
+   ============================================================ */
+.sp-modal { display: flex; flex-direction: column; gap: 12px; }
+
+.sp-current {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--surface-muted);
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+.sp-current-label { color: var(--ink); }
+.sp-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--danger);
+    font-size: 0.85rem;
+    padding: 4px 6px;
+    border-radius: 8px;
+}
+.sp-clear:hover { background: var(--surface); }
+.sp-clear i { width: 15px; height: 15px; }
+
+.sp-gps { width: 100%; justify-content: center; gap: 8px; }
+.sp-gps i { width: 18px; height: 18px; }
+
+.sp-or {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-soft);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.sp-or::before, .sp-or::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+.sp-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+}
+.sp-search:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+.sp-search i { width: 16px; height: 16px; color: var(--ink-soft); flex-shrink: 0; }
+.sp-search-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: none;
+    color: var(--ink);
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.sp-results {
+    display: flex;
+    flex-direction: column;
+    max-height: 240px;
+    overflow-y: auto;
+}
+.sp-result {
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--ink);
+    font-size: 0.92rem;
+}
+.sp-result:hover { background: var(--brand-soft); color: var(--brand); }
+.sp-result:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.sp-empty { color: var(--ink-soft); font-size: 0.88rem; padding: 8px 4px; margin: 0; }
+
+/* Ligne « Depuis <lieu> · modifier » sous le segment Tri (PC + mobile). */
+.sp-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+}
+.sp-hint i { width: 14px; height: 14px; flex-shrink: 0; }
+.sp-hint strong { color: var(--ink); font-weight: 600; }
+.sp-edit {
+    margin-left: auto;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--brand);
+    font-size: 0.82rem;
+    text-decoration: underline;
+    padding: 2px 4px;
+}
+.sp-edit:hover { text-decoration: none; }

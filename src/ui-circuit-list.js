@@ -23,7 +23,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId, getPoiName } from './data.js';
-import { showToast } from './toast.js';
+import { openStartPointModal } from './start-point.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { isMobileView } from './mobile-state.js';
 
@@ -216,7 +216,7 @@ function renderFilterPanel() {
         <div class="filter-section">
             <div class="lbl">Tri</div>
             <div class="fseg" id="mc-fseg">
-                <button class="${currentSort === 'proximity_asc' ? 'is-on' : ''}" data-sort="proximity_asc" title="Proximité depuis ton lieu de résidence">
+                <button class="${currentSort === 'proximity_asc' ? 'is-on' : ''}" data-sort="proximity_asc" title="Proximité depuis ton point de départ">
                     <i data-lucide="home"></i>Proximité
                 </button>
                 <button class="${currentSort === 'dist_asc' ? 'is-on' : ''}" data-sort="dist_asc" title="Du plus court au plus long">
@@ -229,6 +229,12 @@ function renderFilterPanel() {
                     <i data-lucide="shield-check"></i>Vérifiés
                 </button>
             </div>
+            ${state.homeLocation && currentSort === 'proximity_asc' ? `
+            <div class="sp-hint">
+                <i data-lucide="locate-fixed"></i>
+                <span>Depuis <strong>${escapeXml(state.homeLocation.label || 'lieu défini')}</strong></span>
+                <button type="button" class="sp-edit" id="mc-sp-edit">modifier</button>
+            </div>` : ''}
         </div>
 
         <div class="filter-section">
@@ -279,14 +285,12 @@ function renderFilterPanel() {
 
     // Listener segmented Tri (data-sort)
     pop.querySelectorAll('.fseg button[data-sort]').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const v = btn.dataset.sort;
             if (v === 'proximity_asc' && !state.homeLocation) {
-                showToast(
-                    "Définissez votre lieu de résidence dans Mon Espace pour activer ce tri.",
-                    'info', 4500
-                );
-                return;
+                // Pas de point de départ → on le fait définir (GPS ou lieu de l'app).
+                const home = await openStartPointModal();
+                if (!home) return; // annulé → on ne change pas le tri
             }
             currentSort = v;
             renderFilterPanel();
@@ -294,6 +298,17 @@ function renderFilterPanel() {
             renderToolbar();
         });
     });
+
+    // Lien « modifier » du point de départ (affiché sous le tri Proximité).
+    const spEditBtn = pop.querySelector('#mc-sp-edit');
+    if (spEditBtn) {
+        spEditBtn.addEventListener('click', async () => {
+            await openStartPointModal();
+            renderFilterPanel();
+            renderExplorerList();
+            renderToolbar();
+        });
+    }
 
     // Listener segmented Mon parcours (data-completion)
     pop.querySelectorAll('.fseg button[data-completion]').forEach(btn => {
