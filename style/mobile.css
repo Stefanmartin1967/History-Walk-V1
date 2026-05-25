@@ -144,23 +144,6 @@
 .mc-done svg { width: 22px; height: 22px; stroke-width: 2; }
 .mc-card.is-done .mc-done { color: var(--ok); }
 .mc-card.is-done .mc-title { color: var(--ink-soft); }
-/* Bouton Cacher/Réafficher sur la carte (Phase 1c) — même gabarit que .mc-done */
-.mc-hide {
-    flex-shrink: 0;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: transparent;
-    border: 0;
-    color: var(--ink-soft);
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    margin-top: -2px;
-}
-.mc-hide svg { width: 19px; height: 19px; stroke-width: 2; }
-.mc-hide:hover { color: var(--ink); }
-.mc-hide[data-hidden="true"] { color: var(--brand); }
 .mc-meta {
     display: flex;
     align-items: center;
@@ -641,6 +624,7 @@
     border-color: rgba(59, 130, 246, 0.25);
 }
 .cc-act.is-done { color: var(--ok); }
+.cc-act.is-hidden-circuit { color: var(--brand); }
 .cc-act:disabled { opacity: 0.35; cursor: not-allowed; }
 .cc-act svg { width: 20px; height: 20px; }
 
