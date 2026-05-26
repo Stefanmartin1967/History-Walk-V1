@@ -2,8 +2,8 @@
   "name": "Heripia",
   "short_name": "Heripia",
   "id": "history-walk-v1",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "display_override": [
     "window-controls-overlay",
