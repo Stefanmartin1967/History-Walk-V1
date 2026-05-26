@@ -1,3 +1,12 @@
 # Temporaire (phase de peaufinage) — à RETIRER au lancement public de Heripia.
+# Exception : on autorise uniquement les robots de Facebook afin que les liens
+# partagés sur Facebook/Messenger affichent un aperçu (Open Graph). Le reste du
+# web (Google, etc.) reste bloqué tant que le site n'est pas lancé publiquement.
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
 User-agent: *
 Disallow: /
