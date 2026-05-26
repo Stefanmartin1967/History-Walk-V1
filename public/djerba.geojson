@@ -3393,8 +3393,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.863513,
-          33.710324
+          10.86177572607994,
+          33.70679340842852
         ]
       },
       "properties": {
@@ -3404,7 +3404,13 @@
         "Zone": "Guellala",
         "Description": "Mosquée de type Ibadite, enduite de chaux blanc. Elle a été édifiée au 10ème siècle et rénovée en 1995. Elle surplombe la côte Sud-Ouest dans la localité d'El Fâhmîne. Proche des Mosquése Boumsour et/ou Mosquée Mizwar",
         "Source": "https://www.djerba-insolite.com/blog/sidi-yati",
-        "HW_ID": "HW-01K77WPE6M06HKCT56J0P2HVZZ"
+        "HW_ID": "HW-01K77WPE6M06HKCT56J0P2HVZZ",
+        "lat": 33.70679340842852,
+        "lng": 10.86177572607994,
+        "accessPoint": [
+          10.861944705247879,
+          33.70686592559519
+        ]
       }
     },
     {
@@ -4151,9 +4157,18 @@
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
         "Description": "Nom sur OSM : Mosquée Sidi Yati. A vérifier.",
-        "Source": null,
+        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6QJNV1Q83SBNFKC88M",
-        "Prix_TND": 0
+        "Prix_TND": 0,
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable",
+        "Description_courte": "",
+        "description": "Mosquée Sidi Yati dit Nasser selon le répertoire de mosquées de Jalel Fatallah",
+        "Temps_minutes": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
