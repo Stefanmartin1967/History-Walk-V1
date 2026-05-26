@@ -303,14 +303,19 @@ export function sanitizeHTML(html) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
 
     // Supprimer toutes les balises <script>
-    const scripts = doc.querySelectorAll('script');
-    scripts.forEach(script => script.remove());
+    doc.querySelectorAll('script').forEach(script => script.remove());
 
-    // Ne pas supprimer les attributs 'on...' car l'application s'appuie sur des onClick inline
-    // On se contente de supprimer les balises <script> et de nettoyer les href javascript
-    const elements = doc.body.querySelectorAll('a');
-    elements.forEach(el => {
-        if (el.getAttribute('href') && el.getAttribute('href').trim().toLowerCase().startsWith('javascript:')) {
+    // Défense en profondeur (en complément de la CSP stricte, sans 'unsafe-inline') :
+    // retirer tout gestionnaire d'événement inline (on*) sur n'importe quel élément
+    // et neutraliser les href javascript:.
+    doc.body.querySelectorAll('*').forEach(el => {
+        [...el.attributes].forEach(attr => {
+            if (attr.name.toLowerCase().startsWith('on')) {
+                el.removeAttribute(attr.name);
+            }
+        });
+        const href = el.getAttribute('href');
+        if (href && href.trim().toLowerCase().startsWith('javascript:')) {
             el.removeAttribute('href');
         }
     });
