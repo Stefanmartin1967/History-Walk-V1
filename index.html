@@ -41,9 +41,9 @@
          pour éviter le FOUC maritime au démarrage (cf. theme-bootstrap.js). -->
     <script src="theme-bootstrap.js"></script>
 
-    <!-- Préchargement de l'image de splash (~45 KB) en parallèle du CSS pour
-         qu'elle soit prête avant le 1er paint du #hw-boot-splash. -->
-    <link rel="preload" as="image" href="splash-bg.webp" type="image/webp">
+    <!-- Préchargement du logo de splash (mascotte furet) pour qu'il soit prêt
+         dès le 1er paint du #hw-boot-splash. -->
+    <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
     <link rel="stylesheet" href="style.css?v=7.41">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
@@ -65,9 +65,10 @@
     <!-- Splash de boot : masque l'app pendant l'initialisation pour éviter
          tout flash visible (FOUC thème, saut de carte, POI=0 brièvement,
          etc.). Retiré quand l'app est prête via html[hw-ready] (cf. main.js
-         à la fin de loadAndInitializeMap). Couleur de fond = var(--bg) qui
-         suit data-theme appliqué par theme-bootstrap.js. -->
+         à la fin de loadAndInitializeMap). Visuel neutre multi-destinations :
+         la mascotte furet (= l'icône) + un spinner, sur fond crème de marque. -->
     <div id="hw-boot-splash" aria-hidden="true">
+        <img class="hw-boot-logo" src="icons/icon-512-maskable.png" alt="" width="180" height="180">
         <div class="hw-boot-spinner"></div>
     </div>
 
