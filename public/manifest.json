@@ -1,7 +1,9 @@
 {
   "name": "Heripia",
   "short_name": "Heripia",
+  "description": "Découverte du patrimoine culturel et historique à pied : circuits de visite, cartes interactives et lieux d'intérêt.",
   "id": "history-walk-v1",
+  "categories": ["travel", "education", "navigation"],
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
