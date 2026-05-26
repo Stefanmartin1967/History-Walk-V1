@@ -306,11 +306,27 @@ export function sanitizeHTML(html) {
     const scripts = doc.querySelectorAll('script');
     scripts.forEach(script => script.remove());
 
-    // Ne pas supprimer les attributs 'on...' car l'application s'appuie sur des onClick inline
-    // On se contente de supprimer les balises <script> et de nettoyer les href javascript
-    const elements = doc.body.querySelectorAll('a');
-    elements.forEach(el => {
-        if (el.getAttribute('href') && el.getAttribute('href').trim().toLowerCase().startsWith('javascript:')) {
+    // Suppression systématique de tous les attributs d'événements (on*)
+    // car l'application utilise exclusivement la délégation d'événements ou
+    // l'attachement via JS (.addEventListener, .onclick). Les attributs inline
+    // sont interdits par la CSP et dangereux.
+    const allElements = doc.body.querySelectorAll('*');
+    allElements.forEach(el => {
+        // Copie des noms d'attributs pour éviter les problèmes de collection "live"
+        // lors de la suppression.
+        const attrNames = Array.from(el.attributes).map(a => a.name);
+        for (const name of attrNames) {
+            if (name.toLowerCase().startsWith('on')) {
+                el.removeAttribute(name);
+            }
+        }
+    });
+
+    // Nettoyage des URI javascript: dans les liens
+    const links = doc.body.querySelectorAll('a');
+    links.forEach(el => {
+        const href = el.getAttribute('href');
+        if (href && href.trim().toLowerCase().startsWith('javascript:')) {
             el.removeAttribute('href');
         }
     });
