@@ -124,6 +124,9 @@ function buildPoiQuickBar() {
             <button class="poi-quick-btn" id="open-gmaps-btn" type="button" title="Vérifier sur Google Maps" aria-label="Vérifier sur Google Maps">
                 <i data-lucide="map-pin"></i>Maps
             </button>
+            <button class="poi-quick-btn" id="open-osm-btn" type="button" title="Voir sur OpenStreetMap" aria-label="Voir sur OpenStreetMap">
+                <i data-lucide="map"></i>OSM
+            </button>
             <button class="poi-quick-btn" id="btn-global-edit" type="button" title="Modifier le lieu" aria-label="Modifier le lieu">
                 <i data-lucide="pencil"></i>Éditer
             </button>

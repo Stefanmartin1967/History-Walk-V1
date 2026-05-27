@@ -350,6 +350,20 @@ function setupDetailsEventListeners(poiId) {
         });
     }
 
+    // --- Bouton "Voir sur OpenStreetMap" ---
+    const osmBtn = document.getElementById('open-osm-btn');
+    if (osmBtn) {
+        osmBtn.addEventListener('click', () => {
+            const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+            if (feature && feature.geometry && feature.geometry.coordinates) {
+                const [lng, lat] = feature.geometry.coordinates;
+                window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`, '_blank', 'noopener,noreferrer');
+            } else {
+                showToast('Coordonnées introuvables.', 'error');
+            }
+        });
+    }
+
     // --- Bouton "Déplacer marqueur" (PC drag pin) ---
     const moveMarkerBtn = document.getElementById('btn-move-marker');
     if (moveMarkerBtn) {
