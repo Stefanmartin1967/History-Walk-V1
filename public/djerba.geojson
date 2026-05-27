@@ -5664,6 +5664,29 @@
         "HW_ID": "HW-01KPMX8RZ41MX6DCFWGA4HZKJA",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.045721399722222,
+          33.796201499999995
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Puits",
+        "Catégorie": "Puits",
+        "Zone": "Arkou",
+        "Description_courte": "Puits",
+        "description": "Puits  près du phare",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "HW_ID": "HW-01KSN3EG5SFSXYXYZD6RSB4AC3",
+        "photos": [
+          "photos/poi_HW-01KSN3EG5SFSXYXYZD6RSB4AC3_1779898564877.jpg"
+        ]
+      }
     }
   ]
 }
