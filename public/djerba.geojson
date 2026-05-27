@@ -5664,27 +5664,6 @@
         "HW_ID": "HW-01KPMX8RZ41MX6DCFWGA4HZKJA",
         "Description": "Ajouté via Rich Editor"
       }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          11.045721399722222,
-          33.796201499999995
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Puits",
-        "Catégorie": "Puits",
-        "Zone": "Arkou",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "HW_ID": "HW-01KSN3SAHK8PY1QAZDWDXE042V",
-        "photos": [
-          "photos/poi_HW-01KSN3SAHK8PY1QAZDWDXE042V_1779906512661.jpg"
-        ]
-      }
     }
   ]
 }
