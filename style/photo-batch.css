@@ -229,6 +229,9 @@
 .pb-act.is-primary { background: var(--cta-bg); color: var(--cta-fg); border-color: var(--cta-bg); }
 .pb-act.is-primary:hover:not(:disabled) { filter: brightness(1.06); }
 
+/* Sélecteur de lieu (réassignation d'un groupe à un POI proche) — hérite de .pb-act */
+.pb-poi-select { max-width: 240px; padding-right: 8px; }
+
 /* Cluster « Hors POI » — neutre / pointillé */
 .pb-cluster.is-out-poi { background: var(--surface-muted); border-style: dashed; border-color: var(--line); }
 .pb-cluster.is-out-poi .pb-cluster-head { background: var(--surface-muted); }
@@ -489,6 +492,7 @@
     min-height: 0;
     background: var(--surface);
 }
+.pb-compare[data-count="1"] { grid-template-columns: 1fr; }
 .pb-compare[data-count="2"] { grid-template-columns: 1fr 1fr; }
 .pb-compare[data-count="3"] { grid-template-columns: 1fr 1fr 1fr; }
 .pb-compare[data-count="4"] { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
