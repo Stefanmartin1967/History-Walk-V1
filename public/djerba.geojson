@@ -105,26 +105,28 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ibn Abass",
+        "Nom du site FR": "Mosquée Ibn Abbas",
         "Nom du site arabe": "جامع ابن العباس المعمر",
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non accessible",
+        "Accès": "",
         "Zone": "Arkou",
         "Description": null,
-        "Description_courte": null,
-        "Source": null,
-        "Temps_minutes": null,
-        "Prix_TND": null,
-        "Téléphone": null,
-        "Horaires": null,
+        "Description_courte": "",
+        "Source": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
         "verified": false,
         "HW_ID": "HW-01K77WPE671G6V27VYYNMJV2NC",
         "photos": [
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1779896245496.jpg",
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1779896247537.jpg"
-        ]
+        ],
+        "description": "",
+        "Facebook": ""
       }
     },
     {
