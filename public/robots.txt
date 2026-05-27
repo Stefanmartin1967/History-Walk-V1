@@ -1,12 +1,17 @@
-# Temporaire (phase de peaufinage) — à RETIRER au lancement public de Heripia.
-# Exception : on autorise uniquement les robots de Facebook afin que les liens
-# partagés sur Facebook/Messenger affichent un aperçu (Open Graph). Le reste du
-# web (Google, etc.) reste bloqué tant que le site n'est pas lancé publiquement.
-User-agent: facebookexternalhit
-Allow: /
-
-User-agent: Facebot
-Allow: /
-
+# Heripia — robots.txt
+#
+# Accès LIBRE pour tous les robots. Le site reste hors des moteurs de recherche
+# grâce à la balise <meta name="robots" content="noindex, nofollow"> (index.html),
+# PAS via un Disallow.
+#
+# Pourquoi pas de Disallow :
+#  - un Disallow empêche le robot de LIRE le noindex (Google peut alors lister
+#    l'URL sans en voir le contenu) -> le noindex seul est plus efficace ;
+#  - surtout, un Disallow bloquait les aperçus de partage social : Facebook
+#    respecte le robots.txt ET le met en cache tres longtemps (~24 h+, sans
+#    moyen de forcer le rafraichissement) -> apercus casses et imprevisibles
+#    (403 "robots.txt block" dans le Sharing Debugger malgre l'exception FB).
+#
+# Au lancement public : retirer le <meta noindex> (ce fichier peut rester tel quel).
 User-agent: *
-Disallow: /
+Disallow:
