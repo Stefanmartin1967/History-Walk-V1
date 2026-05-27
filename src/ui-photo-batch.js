@@ -4,7 +4,7 @@
 // Les phases suivantes ajouteront la publication, le ZIP et le nouveau lieu.
 
 import Sortable from 'sortablejs';
-import { resizeImage } from './utils.js';
+import { resizeImage, calculateDistance } from './utils.js';
 import { getPoiName, getPoiId } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { state } from './state.js';
@@ -15,7 +15,7 @@ import {
     getPendingAdminPhotos,
 } from './database.js';
 import { showToast } from './toast.js';
-import { showPrompt, openHwModal, closeHwModal } from './modal.js';
+import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
 import { createZipBlob } from './zip-store.js';
 import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
 
@@ -159,10 +159,12 @@ async function handleCreatePoi(cluster) {
         return;
     }
 
-    // Masque la modale photo-batch le temps du RichEditor
-    const overlay = document.getElementById('photo-batch-overlay');
-    const prevDisplay = overlay?.style.display;
-    if (overlay) overlay.style.display = 'none';
+    // Suspend la modale photo-batch le temps du RichEditor. On NE peut PAS
+    // juste la masquer (display:none) : l'openHwModal du RichEditor applique sa
+    // garde anti-empilement (closeHwModal sur l'activeHwOverlay) et DÉTRUIRAIT
+    // la modale photo (cluster perdu, fenêtre fermée). suspendHwModal la détache
+    // du système V2 → openHwModal ne la touche plus ; resumeHwModal la restaure.
+    suspendHwModal();
 
     // Promise qui résout à la fermeture du RichEditor (succès OU annulation)
     const result = await new Promise((resolve) => {
@@ -185,7 +187,7 @@ async function handleCreatePoi(cluster) {
 
     // Restaure photo-batch (succès OU annulation — on ne ferme plus automatiquement :
     // le cluster reste visible, l'utilisateur décide de ZIPer / Save / Fermer à son rythme).
-    if (overlay) overlay.style.display = prevDisplay || 'flex';
+    resumeHwModal();
 
     if (result.created) {
         // Le POI et ses photos viennent d'être persistés par RichEditor.executeCreate
@@ -214,12 +216,11 @@ async function handleCreatePoi(cluster) {
     }
 }
 
-// Rattache un cluster au POI le plus proche connu (absoluteNearest).
-// Si un autre cluster porte déjà ce POI, on fusionne les deux.
-function handleAttachToNearest(cluster) {
-    if (!cluster.absoluteNearest) return;
-    const newPoi = cluster.absoluteNearest;
-    const newPoiId = getPoiId(newPoi.feature);
+// Rattache un cluster à un POI donné ({ feature, dist }).
+// Si un autre cluster porte déjà ce POI comme cible, on fusionne les deux.
+function attachClusterToPoi(cluster, poi) {
+    if (!poi || !poi.feature) return;
+    const newPoiId = getPoiId(poi.feature);
 
     // Cherche un cluster existant portant déjà ce POI
     const existing = modalState.clusters.find(c => {
@@ -236,13 +237,39 @@ function handleAttachToNearest(cluster) {
         // Bascule OUT_POI → POI : le cluster a désormais un POI cible, il doit pouvoir
         // être enregistré (handleSave filtre sur type === 'POI' && nearbyPois non vide).
         cluster.type = 'POI';
-        cluster.nearbyPois = [newPoi];
+        cluster.nearbyPois = [poi];
         cluster.absoluteNearest = null;
         cluster.customName = null;
     }
 
     renderBody();
     updateHeaderCounts();
+}
+
+// Rattache un cluster au POI le plus proche connu (absoluteNearest).
+function handleAttachToNearest(cluster) {
+    if (!cluster.absoluteNearest) return;
+    attachClusterToPoi(cluster, cluster.absoluteNearest);
+}
+
+// Candidats de rattachement calculés EN DIRECT depuis state.loadedFeatures :
+// tous les POIs visibles dans `radius` m du centre du cluster, triés par distance.
+// Recalculé au render → inclut les POIs créés APRÈS l'import (« Créer un lieu »
+// pour un voisin), contrairement à nearbyPois qui est figé à l'import.
+function getNearbyPoiCandidates(cluster, radius = 150) {
+    const center = getClusterCenter(cluster);
+    if (!center) return [];
+    const out = [];
+    state.loadedFeatures.forEach(feature => {
+        const pId = getPoiId(feature);
+        if (state.hiddenPoiIds && state.hiddenPoiIds.includes(pId)) return;
+        if (!feature.geometry || !feature.geometry.coordinates) return;
+        const [fLng, fLat] = feature.geometry.coordinates;
+        const dist = calculateDistance(center.lat, center.lng, fLat, fLng);
+        if (dist <= radius) out.push({ feature, dist });
+    });
+    out.sort((a, b) => a.dist - b.dist);
+    return out;
 }
 
 // ============================================================
@@ -350,15 +377,55 @@ function focusPelliculeTap(pid) {
     renderBody();
 }
 
-// Supprimer / Détacher depuis le focus : on vide l'emplacement puis on
-// délègue à la logique existante (qui re-render via renderBody).
-function focusDelete(pid, slotIndex) {
-    if (modalState.focus) modalState.focus.slots[slotIndex] = null;
-    deletePhoto(pid);
+// Première photo du cluster non affichée (hors `excludePid`), dans l'ordre de
+// la pellicule. Sert à l'auto-avance : remplir un emplacement libéré.
+function nextPhotoForSlot(cluster, excludePid) {
+    const shown = new Set(modalState.focus.slots.filter(Boolean));
+    for (const p of cluster.photos) {
+        if (p.id === excludePid) continue;
+        if (!shown.has(p.id)) return p.id;
+    }
+    return null;
 }
-function focusDetach(pid, slotIndex) {
-    if (modalState.focus) modalState.focus.slots[slotIndex] = null;
-    extractToOutPoi(pid);
+
+// Réduit l'emplacement `slotIndex` (collapse) : la place est libérée, les
+// cellules restantes reflowent. Plancher à 1 emplacement.
+function collapseSlot(slotIndex) {
+    const f = modalState.focus;
+    f.slots.splice(slotIndex, 1);
+    f.slotCount = Math.max(1, f.slotCount - 1);
+    if (f.activeSlot > slotIndex) f.activeSlot -= 1;
+    if (f.activeSlot >= f.slotCount) f.activeSlot = f.slotCount - 1;
+    if (f.activeSlot < 0) f.activeSlot = 0;
+}
+
+// Retire la photo de l'emplacement `slotIndex`. `mode` décide du sort de la photo :
+//   'delete' → supprimée du cluster ; 'detach' → déplacée vers « Hors POI » ;
+//   'hide'   → conservée (retirée de l'affichage, re-cliquable en pellicule).
+// delete / hide : AUTO-AVANCE → la photo suivante non affichée glisse dans
+// l'emplacement (garde le même nombre de vignettes pour un tri rapide) ; s'il
+// n'y a plus de suivante, l'emplacement est réduit (collapse).
+// detach : collapse direct (le détachement peut scinder le groupe → pas d'avance).
+function removeFromComparison(slotIndex, mode) {
+    const f = modalState.focus;
+    if (!f) return;
+    const cluster = getFocusedCluster();
+    if (!cluster) return;
+    const pid = f.slots[slotIndex];
+
+    if (mode === 'detach') {
+        collapseSlot(slotIndex);
+        if (pid) { extractToOutPoi(pid); return; } // re-render interne
+        renderBody();
+        return;
+    }
+
+    const next = nextPhotoForSlot(cluster, pid);
+    if (next) f.slots[slotIndex] = next;
+    else collapseSlot(slotIndex);
+
+    if (mode === 'delete' && pid) { deletePhoto(pid); return; } // re-render interne
+    renderBody(); // 'hide' : la photo reste dans le cluster
 }
 
 // Construit une cellule de comparaison (emplacement i).
@@ -429,6 +496,17 @@ function buildCompareCell(cluster, i) {
 
     const acts = document.createElement('div');
     acts.className = 'pb-compare-acts';
+    // Retirer de l'affichage (non destructif) : libère l'emplacement, garde la photo.
+    if (photo) {
+        const hide = document.createElement('button');
+        hide.className = 'pb-compare-btn';
+        hide.type = 'button';
+        hide.title = "Retirer de l'affichage (sans supprimer la photo)";
+        hide.setAttribute('aria-label', "Retirer de l'affichage");
+        hide.innerHTML = '<i data-lucide="eye-off"></i>';
+        hide.addEventListener('click', (e) => { e.stopPropagation(); removeFromComparison(i, 'hide'); });
+        acts.appendChild(hide);
+    }
     if (photo && cluster.type !== 'OUT_POI') {
         const ex = document.createElement('button');
         ex.className = 'pb-compare-btn';
@@ -436,7 +514,7 @@ function buildCompareCell(cluster, i) {
         ex.title = 'Détacher cette photo vers « Hors POI »';
         ex.setAttribute('aria-label', 'Détacher');
         ex.innerHTML = '<i data-lucide="route"></i>';
-        ex.addEventListener('click', (e) => { e.stopPropagation(); focusDetach(photo.id, i); });
+        ex.addEventListener('click', (e) => { e.stopPropagation(); removeFromComparison(i, 'detach'); });
         acts.appendChild(ex);
     }
     const del = document.createElement('button');
@@ -446,7 +524,7 @@ function buildCompareCell(cluster, i) {
     del.setAttribute('aria-label', 'Supprimer');
     del.innerHTML = '<i data-lucide="trash-2"></i>';
     del.disabled = !photo;
-    del.addEventListener('click', (e) => { e.stopPropagation(); if (photo) focusDelete(photo.id, i); });
+    del.addEventListener('click', (e) => { e.stopPropagation(); if (photo) removeFromComparison(i, 'delete'); });
     acts.appendChild(del);
     toolbar.appendChild(acts);
     cell.appendChild(toolbar);
@@ -1081,6 +1159,39 @@ function buildClusterSection(cluster, index) {
             handleCreatePoi(cluster);
         });
         actions.appendChild(createBtn);
+    }
+
+    // Sélecteur de lieu : sur un groupe rattaché, permet de RÉASSIGNER le groupe
+    // à un autre POI proche (le « plus proche » auto se trompe quand 2 POIs sont
+    // collés — ex. mosquée/puits face à face). Candidats calculés en direct →
+    // inclut les POIs créés après l'import. Affiché seulement s'il y a un choix.
+    if (cluster.type !== 'OUT_POI' && hasNearbyPoi) {
+        const candidates = getNearbyPoiCandidates(cluster);
+        const currentId = getPoiId(cluster.nearbyPois[0].feature);
+        // Garantit la présence du POI courant dans la liste (même hors rayon).
+        if (!candidates.some(c => getPoiId(c.feature) === currentId)) {
+            candidates.unshift(cluster.nearbyPois[0]);
+        }
+        if (candidates.length >= 2) {
+            const select = document.createElement('select');
+            select.className = 'pb-act pb-poi-select';
+            select.title = 'Changer le lieu de rattachement de ce groupe';
+            candidates.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = getPoiId(c.feature);
+                opt.textContent = `${getPoiName(c.feature) || '(sans nom)'} · ${Math.round(c.dist)} m`;
+                if (opt.value === currentId) opt.selected = true;
+                select.appendChild(opt);
+            });
+            select.addEventListener('click', (e) => e.stopPropagation());
+            select.addEventListener('change', (e) => {
+                e.stopPropagation();
+                if (select.value === currentId) return;
+                const chosen = candidates.find(c => getPoiId(c.feature) === select.value);
+                if (chosen) attachClusterToPoi(cluster, chosen);
+            });
+            actions.appendChild(select);
+        }
     }
 
     // Comparer → ouvre le mode focus in-place (toujours actif si ≥ 1 photo)
