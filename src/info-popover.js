@@ -33,7 +33,7 @@ export function showInfoPopover() {
 }
 
 function openPopover() {
-    const anchor = document.getElementById('btn-legend');
+    const anchor = (document.getElementById('leaflet-btn-legend') || document.getElementById('btn-legend'));
     if (!anchor) return;
 
     // Coordination popups topbar (cf. fix #6 PR R3) : avise les autres,
@@ -166,7 +166,7 @@ function closePopover() {
 
 function onOutsideClick(e) {
     const popover = document.getElementById(POPOVER_ID);
-    const anchor = document.getElementById('btn-legend');
+    const anchor = (document.getElementById('leaflet-btn-legend') || document.getElementById('btn-legend'));
     if (!popover) return;
     if (popover.contains(e.target)) return;
     if (anchor && anchor.contains(e.target)) return; // l'anchor gère son toggle

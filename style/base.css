@@ -278,24 +278,24 @@ body {
 
 #search-input {
     width: 100%;
-    height: 42px; /* Harmonized height */
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, .18);
-    background-color: rgba(255, 255, 255, .10);
+    height: 42px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--on-brand-soft-border);
+    background-color: var(--on-brand-soft);
     padding: 0 16px 0 48px;
-    color: white;
-    font-size: 16px; /* Texte plus grand */
-    transition: all .2s ease;
+    color: var(--on-brand-fg);
+    font-size: 16px;
+    transition: background-color .15s ease, border-color .15s ease;
 }
 
 #search-input::placeholder {
-    color: #9eacba;
+    color: rgba(255, 255, 255, 0.55);
 }
 
 #search-input:focus {
     outline: none;
-    background-color: rgba(255, 255, 255, .14);
-    border-color: var(--brand);
+    background-color: var(--on-brand-strong);
+    border-color: var(--on-brand-strong-border);
 }
 
 .search-results {
@@ -343,16 +343,16 @@ body {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    height: 42px; /* Harmonized height */
+    height: 42px;
     padding: 0 12px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, .10);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, .18);
+    border-radius: var(--radius-md);
+    background: var(--on-brand-soft);
+    color: var(--on-brand-fg);
+    border: 1px solid var(--on-brand-soft-border);
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
-    transition: all .18s ease;
+    transition: background-color .15s ease, border-color .15s ease;
     white-space: nowrap;
 }
 
@@ -400,12 +400,12 @@ body {
 
 
 .topbar .btn:hover:not(:disabled) {
-    transform: translateY(-1px);
-    background: rgba(255, 255, 255, .14);
+    background: var(--on-brand-strong);
+    border-color: var(--on-brand-strong-border);
 }
 
 .topbar .btn.active {
-    background: var(--cta-bg);
+    background: var(--brand);
     color: var(--cta-fg);
     border-color: transparent;
 }
@@ -413,14 +413,13 @@ body {
 .topbar .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
-    background-color: rgba(255, 255, 255, .05);
+    background-color: var(--on-brand-soft);
 }
 
 .separator {
     height: 24px;
     width: 1px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--on-brand-strong);
     margin: 0 4px;
 }
 

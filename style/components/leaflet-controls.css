@@ -1,92 +1,106 @@
-/* style/components/leaflet-controls.css — Leaflet UI harmonisée HW/DM (PR 3g-2)
-   Override des contrôles Leaflet par défaut pour s'aligner sur l'identité HW :
-   - Boutons (zoom + layers toggle) en 44x44, fond `--bg` thématique, texte blanc
-   - Bordures 12px de radius, ombre `--shadow` thématique
-   - Icône layers : Lucide blanche via mask CSS (pas l'icône PNG par défaut)
-   - Hover : fond `--bg-2` (assombri) + léger translateY
+/* style/components/leaflet-controls.css — Leaflet UI harmonisée HW/DM
+   Refonte « raft doux » (PR harmonisation PC) : les contrôles carte parlent
+   désormais le même langage que la sidebar droite (cartes blanches, ombre
+   douce, bordure --line, séparateurs internes).
+
+   Groupes (ordre topleft) :
+     1. Zoom + / Zoom −     (.leaflet-control-zoom)
+     2. Sélecteur de couches (.leaflet-control-layers)
+     3. Recentrer la vue    (ResetViewControl, custom)
+     4. Légende             (LegendControl, custom — déplacée depuis la topbar)
 
    Importé par HW (style/base.css) et DM (history_walk_datamanager/src/style.css).
-   Avant PR 3g-2, ces styles étaient dupliqués dans les 2 fichiers.
-
-   Note : les `!important` sont nécessaires pour overrider les styles par
-   défaut de Leaflet (qui sont parfois plus spécifiques).
+   Les !important restent nécessaires pour overrider les styles par défaut
+   de Leaflet.
 */
 
-/* ===== Boutons de la barre Leaflet (zoom + layers toggle) ===== */
+/* ===== Boutons unitaires (zoom, layers toggle, custom) ===== */
 .leaflet-bar a,
 .leaflet-control-layers-toggle {
     width: 44px !important;
     height: 44px !important;
     line-height: 44px !important;
-    font-size: 24px !important;
-    border-radius: 12px !important;
-    box-shadow: var(--shadow) !important;
-    border: 1px solid var(--line) !important;
-    background-color: var(--bg) !important; /* THEME COLOR */
-    color: #fff !important; /* Always white for contrast on theme bg */
+    font-size: 22px !important;
+    background-color: var(--surface) !important;
+    color: var(--ink-soft) !important;
+    border: none !important;
+    box-shadow: none !important;
     display: flex !important;
     align-items: center;
     justify-content: center;
-    margin-bottom: 8px !important; /* Space between buttons */
-    transition: background-color 0.2s, transform 0.1s;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .leaflet-bar a:hover,
 .leaflet-control-layers-toggle:hover {
-    background-color: var(--bg-2) !important; /* Darker theme color on hover */
-    transform: translateY(-1px);
+    background-color: var(--surface-muted) !important;
+    color: var(--ink) !important;
 }
 
-/* ===== Conteneur .leaflet-bar : pas de bordures par défaut ===== */
+/* ===== Conteneur .leaflet-bar : carte douce (raft) ===== */
 .leaflet-bar {
-    box-shadow: none !important;
-    border: none !important;
+    background: var(--surface) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-soft) !important;
+    overflow: hidden;
 }
 
-.leaflet-bar a:first-child {
-    border-bottom-left-radius: 12px !important;
-    border-bottom-right-radius: 12px !important;
+/* Séparateur interne fin entre boutons groupés (zoom +/−) */
+.leaflet-bar a + a {
+    border-top: 1px solid var(--line) !important;
 }
 
+/* Override des border-radius par enfant : le conteneur gère le radius */
+.leaflet-bar a:first-child,
 .leaflet-bar a:last-child {
-    border-top-left-radius: 12px !important;
-    border-top-right-radius: 12px !important;
+    border-radius: 0 !important;
 }
 
-/* Zoom icons specific styling */
+/* Zoom : police plus marquée pour les +/− */
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-    font-weight: bold !important;
+    font-weight: 600 !important;
+}
+
+/* ===== Espacement entre groupes du raft ===== */
+.leaflet-top .leaflet-control {
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+}
+
+.leaflet-top.leaflet-left .leaflet-control:first-child {
+    margin-top: 10px !important;
 }
 
 /* ===== Layers control (toggle + menu déplié) ===== */
 .leaflet-control-layers {
-    border: none !important;
-    box-shadow: none !important;
-    background: transparent !important;
-    border-radius: 12px !important;
-    margin-top: 8px !important; /* Harmonized spacing (was auto/large) */
+    background: var(--surface) !important;
+    border: 1px solid var(--line) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-soft) !important;
+    overflow: hidden;
 }
 
-/* Ajustement spécifique pour réduire l'écart si le zoom est juste au-dessus */
-.leaflet-top .leaflet-control {
-    margin-top: 0 !important;
-    margin-bottom: 8px !important;
+/* Toggle replié : juste le bouton à l'icône, dans la même carte */
+.leaflet-control-layers-toggle {
+    border-radius: 0 !important;
 }
 
-/* Menu déplié (THEMED INVERTED) */
+/* Menu déplié : surface claire cohérente avec le reste du raft */
 .leaflet-control-layers-expanded {
-    background-color: var(--bg) !important; /* Theme Background */
-    color: #fff !important; /* White Text */
-    padding: 12px 16px !important;
-    box-shadow: var(--shadow) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background-color: var(--surface) !important;
+    color: var(--ink) !important;
+    padding: 10px 14px !important;
+    box-shadow: var(--shadow-soft) !important;
+    border: none !important;
+    border-radius: var(--radius-lg) !important;
     min-width: 150px;
 }
 
 .leaflet-control-layers-selector {
-    accent-color: var(--brand); /* Checkbox color */
-    transform: scale(1.2);
+    accent-color: var(--brand);
+    transform: scale(1.1);
     margin-right: 8px;
 }
 
@@ -95,21 +109,33 @@
     align-items: center;
     font-size: 14px;
     font-weight: 500;
+    color: var(--ink);
     margin-bottom: 6px;
     cursor: pointer;
 }
 
-/* ===== Icône layers : Lucide blanche via mask CSS ===== */
+.leaflet-control-layers-base label:last-child {
+    margin-bottom: 0;
+}
+
+/* ===== Icône layers : Lucide via mask CSS (suit la couleur du texte) ===== */
 .leaflet-control-layers-toggle {
-    background-image: none !important; /* Remove default icon */
+    background-image: none !important;
 }
 
 .leaflet-control-layers-toggle::after {
     content: '';
     display: block;
-    width: 24px;
-    height: 24px;
-    background-color: #fff; /* Icon white on theme bg */
+    width: 22px;
+    height: 22px;
+    background-color: currentColor; /* suit color (--ink-soft, ou --ink au hover) */
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E") no-repeat center;
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E") no-repeat center;
+}
+
+/* ===== Icônes Lucide injectées dans les boutons custom (Reset, Légende) ===== */
+.leaflet-control-custom svg {
+    width: 22px;
+    height: 22px;
+    stroke-width: 2;
 }
