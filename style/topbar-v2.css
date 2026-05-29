@@ -12,13 +12,13 @@
     gap: 10px;
     height: 46px;
     padding: 0 14px 0 12px;
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     background: var(--on-brand-soft);
     border: 1px solid var(--on-brand-soft-border);
     color: var(--on-brand-fg);
     cursor: pointer;
     font-family: inherit;
-    transition: background 0.12s, border-color 0.12s;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .hw-dest-selector:hover,
@@ -86,6 +86,7 @@
 .hw-topbar-filters-btn.is-active {
     background: var(--brand);
     border-color: transparent;
+    color: var(--cta-fg);
 }
 
 /* ─── Séparateurs verticaux entre clusters ─── */

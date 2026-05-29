@@ -45,7 +45,7 @@
          dès le 1er paint du #hw-boot-splash. -->
     <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css?v=7.43">
+    <link rel="stylesheet" href="style.css?v=7.44">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
          Lien direct car les @imports CSS dans style.css sont cachés par Vite en
          dev — voir note historique sur le boot splash en bas de style.css. -->
@@ -135,10 +135,8 @@
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
 
-            <!-- Cluster "découverte/préférences" : Légende, Visite guidée, Thème -->
-            <button class="btn" id="btn-legend" title="Légende" aria-label="Légende"><i
-                    data-lucide="book-open"></i></button>
-
+            <!-- Cluster "découverte/préférences" : Visite guidée, Thème
+                 (Légende déplacée dans les contrôles de carte — PR harmonisation PC) -->
             <button class="btn" id="btn-tour" title="Visite guidée"
                     aria-label="Visite guidée"><i data-lucide="compass"></i></button>
 

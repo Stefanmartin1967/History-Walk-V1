@@ -4,7 +4,6 @@
 // et aucune souscription eventBus ici.
 
 import { DOM } from './ui-dom.js';
-import { showInfoPopover } from './info-popover.js';
 import { setupSearch } from './searchManager.js';
 import { setupTabs } from './ui-sidebar.js';
 
@@ -15,7 +14,9 @@ import { setupTabs } from './ui-sidebar.js';
 // (cf. topbar-v2.js).
 
 export function setupDesktopUIListeners() {
-    document.getElementById('btn-legend')?.addEventListener('click', () => showInfoPopover());
+    // Légende : le bouton vit désormais dans les contrôles de carte Leaflet
+    // (cf. LegendControl dans map.js — PR harmonisation PC). Le listener click
+    // est attaché directement sur le link Leaflet au moment de sa création.
 
     document.addEventListener('click', (e) => {
         if (!e.target.closest('#btn-tools-menu') && !e.target.closest('#tools-menu-content')) {

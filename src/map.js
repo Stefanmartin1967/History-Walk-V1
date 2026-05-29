@@ -11,6 +11,7 @@ import { getPoiId, getPoiName } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { saveAppState } from './database.js';
 import { iconMap, getIconHtml, getIconForFeature } from './poi-icons.js';
+import { showInfoPopover } from './info-popover.js';
 
 export { iconMap, getIconHtml, getIconForFeature };
 
@@ -110,21 +111,11 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
         onAdd: function(mapInstance) {
             const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
             const link = L.DomUtil.create('a', 'leaflet-control-custom', container);
-
-            // Style de base pour ressembler aux boutons Leaflet
             link.href = '#';
-            link.title = "Réinitialiser la vue";
+            link.title = "Recentrer la vue";
             link.role = "button";
-            link.style.width = '44px';
-            link.style.height = '44px';
-            link.style.backgroundColor = 'var(--bg)';
-            link.style.color = '#fff';
-            link.style.display = 'flex';
-            link.style.alignItems = 'center';
-            link.style.justifyContent = 'center';
-            link.style.cursor = 'pointer';
-
-            // Icône Lucide "Rotate CCW"
+            link.setAttribute('aria-label', 'Recentrer la vue');
+            // Style hérité de leaflet-controls.css (raft doux).
             link.innerHTML = `<i data-lucide="rotate-ccw"></i>`;
 
             link.onclick = function(e) {
@@ -137,6 +128,28 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     });
 
     map.addControl(new ResetViewControl());
+
+    // --- BOUTON LÉGENDE (déplacé depuis la topbar — PR harmonisation PC) ---
+    const LegendControl = L.Control.extend({
+        options: { position: 'topleft' },
+        onAdd: function() {
+            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+            const link = L.DomUtil.create('a', 'leaflet-control-custom', container);
+            link.href = '#';
+            link.id = 'leaflet-btn-legend';
+            link.title = 'Légende';
+            link.role = 'button';
+            link.setAttribute('aria-label', 'Légende');
+            link.innerHTML = '<i data-lucide="book-open"></i>';
+            L.DomEvent.disableClickPropagation(container);
+            link.onclick = function(e) {
+                e.preventDefault();
+                showInfoPopover();
+            };
+            return container;
+        }
+    });
+    map.addControl(new LegendControl());
 
     // Initialisation des icônes après ajout
     createIcons({ icons: appIcons });

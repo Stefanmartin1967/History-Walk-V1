@@ -53,7 +53,8 @@ export function initializeDomReferences() {
         // PR #514 (cleanup menu Outils). Sauvegarder/Restaurer/Corbeille = via Mon Espace.
         'btn-loop-circuit',
         'btn-clear-circuit', 'close-circuit-panel-btn',
-        'btn-legend',
+        // 'btn-legend' retiré : la Légende vit maintenant dans les contrôles
+        // de carte Leaflet (cf. LegendControl dans map.js, PR harmonisation PC).
         'btn-bmc', 'btn-tools-menu', 'btn-bmc-topbar', 'btn-mon-espace'
     ];
     
