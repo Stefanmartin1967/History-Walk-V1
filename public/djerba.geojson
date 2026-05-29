@@ -190,8 +190,21 @@
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
         "Description": null,
-        "Source": null,
-        "HW_ID": "HW-01K77WPE67MSESGPPZ5CAD0XTZ"
+        "Source": "",
+        "HW_ID": "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable",
+        "Description_courte": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "photos": [
+          "photos/poi_HW-01K77WPE67MSESGPPZ5CAD0XTZ_1780085038744.jpg"
+        ]
       }
     },
     {
