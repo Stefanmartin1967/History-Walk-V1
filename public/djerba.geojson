@@ -4986,25 +4986,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.858738124370577,
-          33.87735026737242
-        ]
-      },
-      "properties": {
-        "HW_ID": "HW-01KJABRN0QGX8HD03AXFE2BMA6",
-        "Nom du site FR": "El Ghorfa",
-        "Nom du site AR": "",
-        "Catégorie": "Restaurant",
-        "Zone": "Taourit",
-        "lat": 33.87735026737242,
-        "lng": 10.858738124370577
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.988039374351503,
           33.83242273106209
         ]
