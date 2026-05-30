@@ -1258,18 +1258,18 @@ function buildClusterSection(cluster, index) {
     if (hasNearbyPoi) {
         const verifyFeature = cluster.nearbyPois[0].feature;
         const mapsBtn = document.createElement('button');
-        mapsBtn.className = 'pb-act is-icon';
+        mapsBtn.className = 'pb-act is-maplink';
         mapsBtn.type = 'button';
-        mapsBtn.innerHTML = '<i data-lucide="map-pin"></i>';
+        mapsBtn.innerHTML = '<i data-lucide="map-pin"></i><span>Maps</span>';
         mapsBtn.title = 'Vérifier ce lieu sur Google Maps';
         mapsBtn.setAttribute('aria-label', 'Vérifier sur Google Maps');
         mapsBtn.addEventListener('click', (e) => { e.stopPropagation(); openPoiOnMap(verifyFeature, 'gmaps'); });
         actions.appendChild(mapsBtn);
 
         const osmBtn = document.createElement('button');
-        osmBtn.className = 'pb-act is-icon';
+        osmBtn.className = 'pb-act is-maplink';
         osmBtn.type = 'button';
-        osmBtn.innerHTML = '<i data-lucide="map"></i>';
+        osmBtn.innerHTML = '<i data-lucide="map"></i><span>OSM</span>';
         osmBtn.title = 'Vérifier ce lieu sur OpenStreetMap';
         osmBtn.setAttribute('aria-label', 'Vérifier sur OpenStreetMap');
         osmBtn.addEventListener('click', (e) => { e.stopPropagation(); openPoiOnMap(verifyFeature, 'osm'); });

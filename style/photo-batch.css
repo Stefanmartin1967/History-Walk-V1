@@ -229,6 +229,13 @@
 .pb-act.is-primary { background: var(--cta-bg); color: var(--cta-fg); border-color: var(--cta-bg); }
 .pb-act.is-primary:hover:not(:disabled) { filter: brightness(1.06); }
 
+/* Boutons « lien carte » Maps / OSM (vérifier le lieu rattaché) — même langage
+   visuel que la mini-barre de la fiche Lieu (.poi-quick-btn) : icône bleue, et
+   au survol bordure + texte bleus. Hauteur 32px conservée (cohérence de la barre
+   du groupe, où sélecteur/Comparer/ZIP font tous 32px). */
+.pb-act.is-maplink svg { color: var(--brand); }
+.pb-act.is-maplink:hover:not(:disabled) { border-color: var(--brand); color: var(--brand); background: var(--surface-muted); }
+
 /* Sélecteur de lieu (réassignation d'un groupe à un POI proche) — hérite de .pb-act */
 .pb-poi-select { max-width: 240px; padding-right: 8px; }
 
