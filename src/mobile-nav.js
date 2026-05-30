@@ -26,7 +26,7 @@ import {
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
-import { isFollowActive, stopFollow } from './mobile-follow.js';
+import { isFollowActive, followBack } from './mobile-follow.js';
 
 // ─── Bouton Retour Android (pattern proactif) ────────────────────────────────
 // Chaque navigation descendante (clic sur circuit, ouverture POI, bouton
@@ -52,9 +52,10 @@ export function onHwBack() {
     if (!isMobileView()) return;
 
     // Niveau « suivi immersif » : le Back (et la croix, qui fait history.back())
-    // quittent le suivi en priorité, sans toucher à la vue circuit sous-jacente.
+    // ferme d'abord le bottom sheet POI s'il est ouvert, sinon quitte le suivi —
+    // sans toucher à la vue circuit sous-jacente.
     if (isFollowActive()) {
-        stopFollow();
+        followBack();
         return;
     }
 
