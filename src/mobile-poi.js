@@ -13,6 +13,7 @@ import { openDetailsPanel } from './ui-details.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
 import { clearCircuit, isCircuitCompleted, isCircuitTested, loadCircuitById } from './circuit.js';
 import { handleCircuitVisitedToggle, setCircuitHidden } from './circuit-actions.js';
+import { startFollow, circuitHasTrace } from './mobile-follow.js';
 import { showToast } from './toast.js';
 import { animateContainer, getCurrentView, getAllCircuitsOrdered, setMobileHeaderSlot, setMobileViewFooter } from './mobile-state.js';
 import { switchMobileView } from './mobile-nav.js';
@@ -303,6 +304,18 @@ function renderCircuitView(container, listToDisplay) {
         <div class="cc-desc">
             <p class="cc-desc-text">${escapeHtml(description)}</p>
         </div>
+        ${circuitHasTrace(circuit) ? `
+        <div class="suivre-wrap">
+            <button class="btn-suivre" id="btn-suivre-circuit" type="button">
+                <i data-lucide="navigation"></i> Suivre ce circuit
+            </button>
+        </div>
+        ` : `
+        <div class="no-trace">
+            <i data-lucide="info"></i>
+            <span>Pas de trace GPS pour ce circuit — le suivi en marchant n'est pas disponible.</span>
+        </div>
+        `}
         <div class="cc-actions">
             <button class="cc-act" id="cc-act-share" aria-label="Partager le circuit" title="Partager le circuit">
                 <i data-lucide="qr-code"></i>
@@ -349,6 +362,10 @@ function renderCircuitView(container, listToDisplay) {
 
     document.getElementById('cc-pager-prev')?.addEventListener('click', () => navigateCircuit(-1));
     document.getElementById('cc-pager-next')?.addEventListener('click', () => navigateCircuit(1));
+
+    document.getElementById('btn-suivre-circuit')?.addEventListener('click', () => {
+        startFollow();
+    });
 
     document.getElementById('cc-act-share')?.addEventListener('click', async () => {
         await generateCircuitQR();
