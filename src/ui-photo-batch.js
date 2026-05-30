@@ -718,9 +718,17 @@ function renderFocus(cluster) {
     const fbody = document.createElement('div');
     fbody.className = 'pb-focus-body';
 
+    // Grille cols × rows : rangées CSS `1fr` (posées via --pb-cols/--pb-rows) →
+    // chaque photo bornée par la HAUTEUR de sa cellule (fix « photo coupée /
+    // grille qui scrolle » : sans --pb-rows, les cellules au-delà de la 1re
+    // rangée tombaient en rangées auto-height → débordement + pellicule
+    // repoussée sous la ligne de flottaison).
     const compare = document.createElement('div');
     compare.className = 'pb-compare';
     compare.dataset.count = String(f.slotCount);
+    const grid = gridForSlots(f.slotCount);
+    compare.style.setProperty('--pb-cols', String(grid.cols));
+    compare.style.setProperty('--pb-rows', String(grid.rows));
     for (let i = 0; i < f.slotCount; i++) compare.appendChild(buildCompareCell(cluster, i));
     fbody.appendChild(compare);
 

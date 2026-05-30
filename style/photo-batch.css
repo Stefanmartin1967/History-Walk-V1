@@ -412,14 +412,33 @@
     white-space: nowrap;
 }
 
-/* En focus : le body ne scrolle pas (la carte focus gère son overflow) */
-.is-photo-batch.is-focus .hw-modal-body { padding-bottom: var(--space-lg); overflow: hidden; }
+/* En focus : chaîne flex height-bounded de bout en bout pour que le groupe
+   focalisé tienne EXACTEMENT dans la hauteur de la modale → la pellicule (bas,
+   flex-shrink:0) reste toujours visible sans scroll, et la grille de comparaison
+   est bornée par la hauteur (photos jamais coupées).
+   Sélecteur à 5 classes (.is-photo-batch.is-focus .hw-modal.is-xl .hw-modal-body)
+   pour battre la règle plein écran à 4 classes (sinon overflow-y:auto l'emporte
+   et le body re-scrolle). */
+.is-photo-batch.is-focus .hw-modal.is-xl .hw-modal-body {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;            /* pas de scroll en focus : tout doit tenir */
+    padding-bottom: var(--space-lg);
+}
 .is-photo-batch .pb-body { flex: 1; min-height: 0; }
 
 /* Masquer les autres groupes ; le groupe focalisé remplit la hauteur. */
 .is-photo-batch.is-focus .pb-cluster:not(.is-focused) { display: none; }
-.is-photo-batch.is-focus .pb-cluster.is-focused { flex: 1; min-height: 0; }
-.pb-cluster.is-focused .pb-cluster-head { position: relative; }
+/* display:flex column : sans ça, le .pb-cluster (display:block) ne laissait pas
+   son .pb-focus-body (flex:1) se borner → la grille prenait la hauteur naturelle
+   des images et débordait, repoussant la pellicule hors écran. */
+.is-photo-batch.is-focus .pb-cluster.is-focused {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+.pb-cluster.is-focused .pb-cluster-head { position: relative; flex-shrink: 0; }
 
 /* Bouton « Vue d'ensemble » (retour) — chip ghost à gauche du head focus */
 .pb-focus-back {
