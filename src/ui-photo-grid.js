@@ -450,7 +450,7 @@ async function handleSave() {
             // ─── Mode Utilisateur : sauvegarde blobs dans poiPhotos ───
             const blobItems = currentGridPhotos
                 .filter(p => p.blob)
-                .map(p => ({ id: p.id || generatePhotoId(), blob: p.blob }));
+                .map(p => ({ id: p.id || generatePhotoId(), blob: p.blob, srcHash: p.srcHash || undefined }));
 
             await savePoiPhotos(state.currentMapId, currentGridPoiId, blobItems);
             showToast("Sauvegarde effectuée.", "success");
