@@ -472,6 +472,30 @@ export async function savePoiPhotos(mapId, poiId, photos) {
 }
 
 /**
+ * Tous les srcHash des photos user déjà stockées pour la carte (tous POIs
+ * confondus). Sert à la déduplication à l'import (dédup 2-local) : une photo
+ * dont le hash y figure déjà ne sera pas réimportée. Set vide si rien.
+ * @param {string} mapId
+ * @returns {Promise<Set<string>>}
+ */
+export async function getAllPoiPhotoHashes(mapId) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('poiPhotos', 'readonly');
+        const req = tx.objectStore('poiPhotos').index('mapId_index').getAll(mapId);
+        req.onsuccess = () => {
+            const hashes = new Set();
+            for (const entry of req.result || []) {
+                for (const p of entry.photos || []) {
+                    if (p.srcHash) hashes.add(p.srcHash);
+                }
+            }
+            resolve(hashes);
+        };
+        req.onerror = (e) => reject(e.target.error);
+    }));
+}
+
+/**
  * Supprime toutes les photos d'un POI.
  * @public Primitive d'API conservée délibérément (pas d'appelant actuel).
  */
@@ -506,6 +530,23 @@ export async function getPendingAdminPhotos(mapId, poiId) {
 /** Map complète des photos pending pour la carte courante. */
 export async function getAllPendingAdminPhotos(mapId) {
     return (await getAppState(pendingAdminPhotosKey(mapId))) || {};
+}
+
+/**
+ * Tous les srcHash des photos admin en attente (tous POIs). Pendant admin de
+ * getAllPoiPhotoHashes pour la dédup à l'import (dédup 2-local). Set vide si rien.
+ * @param {string} mapId
+ * @returns {Promise<Set<string>>}
+ */
+export async function getAllPendingAdminPhotoHashes(mapId) {
+    const all = await getAllPendingAdminPhotos(mapId);
+    const hashes = new Set();
+    for (const list of Object.values(all)) {
+        for (const p of list || []) {
+            if (p.srcHash) hashes.add(p.srcHash);
+        }
+    }
+    return hashes;
 }
 
 /** Remplace les photos pending d'un POI (array vide = suppression). */

@@ -428,6 +428,8 @@ async function handleSave() {
                     pendingItems.push({
                         id: photo.id || generatePhotoId(),
                         blob: photo.blob,
+                        // Préserve le srcHash (dédup import) s'il existe déjà.
+                        srcHash: photo.srcHash || undefined,
                     });
                 } else if (photo.src) {
                     keptUrls.push(photo.src);
@@ -448,7 +450,7 @@ async function handleSave() {
             // ─── Mode Utilisateur : sauvegarde blobs dans poiPhotos ───
             const blobItems = currentGridPhotos
                 .filter(p => p.blob)
-                .map(p => ({ id: p.id || generatePhotoId(), blob: p.blob }));
+                .map(p => ({ id: p.id || generatePhotoId(), blob: p.blob, srcHash: p.srcHash || undefined }));
 
             await savePoiPhotos(state.currentMapId, currentGridPoiId, blobItems);
             showToast("Sauvegarde effectuée.", "success");

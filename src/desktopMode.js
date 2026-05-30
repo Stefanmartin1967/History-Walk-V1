@@ -5,13 +5,13 @@ import { toggleCircuitCreationMode } from './ui-circuit-editor.js';
 import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
 import { state } from './state.js';
-import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos } from './database.js';
+import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos, getAllPoiPhotoHashes, getAllPendingAdminPhotoHashes } from './database.js';
 import { compressImage, generatePhotoId } from './photo-service.js';
 import { logModification } from './logger.js';
 import { DOM } from './ui-dom.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
-import { getExifLocation, resizeImage } from './utils.js';
+import { getExifLocation, resizeImage, sha256OfFile } from './utils.js';
 import { clusterPhotos } from './photo-clustering.js';
 import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
@@ -72,10 +72,39 @@ export async function handleDesktopPhotoImport(filesList) {
             }
         }
 
-        const validItems = filesData.filter(f => f.hasGps);
-        if (validItems.length === 0) {
+        const withGps = filesData.filter(f => f.hasGps);
+        if (withGps.length === 0) {
              if (loader) loader.style.display = 'none';
              return showToast("Aucune coordonnée GPS trouvée dans ces photos.", 'error');
+        }
+
+        // --- ETAPE 1.5 : DÉDUPLICATION PAR HASH (dédup 2-local) ---
+        // Hash du fichier ORIGINAL (jamais du blob compressé). On écarte pour de
+        // bon : (a) les doublons à l'intérieur de cet import, (b) les photos dont
+        // le hash est déjà stocké en local (poiPhotos user / pendingAdminPhotos).
+        // Ne couvre pas les photos déjà publiées sur GitHub (hash absent en
+        // local) — limite assumée (cf. mémoire : option 2-complet parquée).
+        const existingHashes = state.isAdmin
+            ? await getAllPendingAdminPhotoHashes(state.currentMapId)
+            : await getAllPoiPhotoHashes(state.currentMapId);
+        const seenThisImport = new Set();
+        const validItems = [];
+        let skippedDuplicates = 0;
+        for (const item of withGps) {
+            item.srcHash = await sha256OfFile(item.file);
+            // Hash indisponible (contexte non sécurisé, fichier illisible) → on
+            // ne déduplique pas plutôt que de risquer d'écarter une photo unique.
+            if (item.srcHash && (seenThisImport.has(item.srcHash) || existingHashes.has(item.srcHash))) {
+                skippedDuplicates++;
+                continue;
+            }
+            if (item.srcHash) seenThisImport.add(item.srcHash);
+            validItems.push(item);
+        }
+
+        if (validItems.length === 0) {
+            if (loader) loader.style.display = 'none';
+            return showToast(`${skippedDuplicates} doublon(s) ignoré(s) — rien de nouveau à importer.`, 'info', 5000);
         }
 
         // --- ETAPE 2 : PRÉ-CALCUL BASE64 (thumbnails) ---
@@ -105,6 +134,11 @@ export async function handleDesktopPhotoImport(filesList) {
 
         if (loader) loader.style.display = 'none';
 
+        // Récap doublons écartés (option (a) : silencieux à l'unité, total annoncé).
+        if (skippedDuplicates > 0) {
+            showToast(`${skippedDuplicates} doublon(s) déjà importé(s) — ignoré(s).`, 'info', 5000);
+        }
+
         // --- ETAPE 4 : OUVERTURE DU MODAL BATCH ---
         await openPhotoBatchModal(enrichedClusters);
 
@@ -132,7 +166,9 @@ export async function addPhotosToPoi(feature, clusterItems) {
     const existingPhotos = state.isAdmin
         ? await getPendingAdminPhotos(mapId, poiId)
         : await getPoiPhotos(mapId, poiId);
-    const existingSizes = new Set(existingPhotos.map(p => p.blob.size));
+    // Dédup par HASH du fichier ORIGINAL (srcHash) — remplace l'ancienne dédup
+    // par taille de blob compressé, qui était approximative (tolérance ±1%).
+    const existingHashes = new Set(existingPhotos.map(p => p.srcHash).filter(Boolean));
 
     let added = 0;
     let duplicates = 0;
@@ -140,6 +176,14 @@ export async function addPhotosToPoi(feature, clusterItems) {
 
     for (const item of clusterItems) {
         try {
+            // srcHash de l'original : fourni par l'import, sinon calculé ici (cas
+            // d'un appelant direct). Hash du File brut, jamais du blob compressé.
+            const srcHash = item.srcHash || (item.file ? await sha256OfFile(item.file) : null);
+            if (srcHash && existingHashes.has(srcHash)) {
+                duplicates++;
+                continue;
+            }
+
             // Priorité : File original → compressImage (pleine qualité, ~1200px).
             // Fallback base64 uniquement si File absent (cas legacy/admin review).
             // ⚠️ Avant : on prenait base64 d'abord, mais ui-photo-batch pré-calcule
@@ -164,18 +208,9 @@ export async function addPhotosToPoi(feature, clusterItems) {
                 continue;
             }
 
-            // Détection doublon par taille (approximation fiable après compression déterministe)
-            const isDuplicate = [...existingSizes].some(
-                s => Math.abs(s - blob.size) <= Math.max(s * 0.01, 512)
-            );
-
-            if (isDuplicate) {
-                duplicates++;
-            } else {
-                existingSizes.add(blob.size);
-                newItems.push({ id: generatePhotoId(), blob });
-                added++;
-            }
+            if (srcHash) existingHashes.add(srcHash);
+            newItems.push({ id: generatePhotoId(), blob, srcHash: srcHash || undefined });
+            added++;
         } catch (err) {
             console.error("Erreur lors de l'ajout photo:", err);
         }
