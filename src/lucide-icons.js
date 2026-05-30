@@ -48,6 +48,9 @@ import {
     // Catégories POI (map.js iconMap)
     CircleHelp, Hotel, CarTaxiFront,
 
+    // Suivi GPS mobile (wake lock chip)
+    Sun,
+
     // UI & layout
     Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,
@@ -95,6 +98,8 @@ export const appIcons = {
     Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,
 
     CircleHelp, Hotel, CarTaxiFront,
+
+    Sun,
 
     Pencil, Edit3, Printer, Palette, Languages, Paperclip, BookOpen,
     Clock, Calendar, CalendarCheck, CalendarOff, CalendarArrowUp, CalendarArrowDown,
