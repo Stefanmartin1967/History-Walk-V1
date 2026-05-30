@@ -317,9 +317,45 @@ function setHeaderMode(mode, cluster) {
     updateHeaderCounts();
 }
 
-// Entre en mode focus pour un cluster : 2 emplacements par défaut.
+// Nombre max d'emplacements côte à côte (sélecteur + auto). Au-delà, les photos
+// deviennent trop petites pour comparer utilement.
+const MAX_COMPARE_SLOTS = 6;
+
+// Défaut adaptatif à l'entrée : on remplit ce que la largeur d'écran permet
+// d'afficher confortablement (cellule cible ~600 px), borné par MAX et par le
+// nombre réel de photos. Demi-écran ≈ 2, 3440 plein écran ≈ 5. Sur écran large
+// on montre donc directement plusieurs photos au lieu d'en étirer 2 (cf. retour
+// Stefan : « garder la taille de photo + plus de photos côte à côte »).
+function defaultCompareSlots(photoCount) {
+    const w = window.innerWidth || 1280;
+    const byWidth = Math.max(2, Math.min(MAX_COMPARE_SLOTS, Math.floor(w / 600)));
+    return Math.min(byWidth, Math.max(1, photoCount));
+}
+
+// Disposition cols × rows pour n emplacements : une seule rangée jusqu'à 4, puis
+// 2 rangées (5→3×2, 6→3×2). Plus de rangées = photos plus hautes donc plus
+// grandes pour les ratios paysage, plutôt qu'une longue file qui les rétrécit.
+function gridForSlots(n) {
+    if (n <= 4) return { cols: Math.max(1, n), rows: 1 };
+    const cols = Math.ceil(n / 2);
+    return { cols, rows: 2 };
+}
+
+// Remplit les emplacements null avec les premières photos du cluster non encore
+// affichées (dans l'ordre de la pellicule). Évite les emplacements vides quand
+// on agrandit le nombre de colonnes (bug : cliquer 3/4 ajoutait des cases vides).
+function fillEmptySlots(cluster, f) {
+    const shown = new Set(f.slots.filter(Boolean));
+    for (let i = 0; i < f.slots.length; i++) {
+        if (f.slots[i]) continue;
+        const next = cluster.photos.find(p => !shown.has(p.id));
+        if (next) { f.slots[i] = next.id; shown.add(next.id); }
+    }
+}
+
+// Entre en mode focus pour un cluster : nb d'emplacements adaptatif (rempli).
 function enterFocus(cluster) {
-    const slotCount = 2;
+    const slotCount = defaultCompareSlots(cluster.photos.length);
     const slots = [];
     for (let i = 0; i < slotCount; i++) slots.push(cluster.photos[i] ? cluster.photos[i].id : null);
     modalState.focus = { clusterId: cluster.id, slotCount, slots, activeSlot: 0 };
@@ -340,11 +376,18 @@ function exitFocus() {
     renderBody();
 }
 
-// Change le nombre d'emplacements (2 / 3 / 4).
+// Change le nombre d'emplacements (2 → MAX_COMPARE_SLOTS). En AGRANDISSANT, on
+// remplit les nouveaux emplacements avec des photos non affichées (au lieu de
+// laisser des cases vides) ; en réduisant, on tronque.
 function setSlotCount(n) {
     if (!modalState || !modalState.focus) return;
-    modalState.focus.slotCount = n;
-    if (modalState.focus.activeSlot >= n) modalState.focus.activeSlot = n - 1;
+    const f = modalState.focus;
+    const cluster = getFocusedCluster();
+    f.slotCount = n;
+    f.slots = f.slots.slice(0, n);
+    while (f.slots.length < n) f.slots.push(null);
+    if (cluster) fillEmptySlots(cluster, f);
+    if (f.activeSlot >= n) f.activeSlot = n - 1;
     renderBody();
 }
 
@@ -366,7 +409,7 @@ function focusPelliculeTap(pid) {
         if (emptyIdx !== -1) {
             f.slots[emptyIdx] = pid;
             f.activeSlot = emptyIdx;
-        } else if (f.slotCount < 4) {
+        } else if (f.slotCount < MAX_COMPARE_SLOTS) {
             f.slotCount += 1;
             f.slots.push(pid);
             f.activeSlot = f.slotCount - 1;
@@ -643,18 +686,22 @@ function renderFocus(cluster) {
     headBlock.append(title, sub);
     head.appendChild(headBlock);
 
-    const slotsCtl = document.createElement('div');
-    slotsCtl.className = 'pb-slots';
-    [2, 3, 4].forEach(n => {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.textContent = String(n);
-        if (n === f.slotCount) b.classList.add('is-on');
-        b.title = `${n} photos côte à côte`;
-        b.addEventListener('click', () => { if (n !== f.slotCount) setSlotCount(n); });
-        slotsCtl.appendChild(b);
-    });
-    head.appendChild(slotsCtl);
+    // Sélecteur 2 → min(6, nb photos). Masqué si ≤ 2 photos (rien à choisir).
+    const maxOpt = Math.min(MAX_COMPARE_SLOTS, cluster.photos.length);
+    if (maxOpt >= 3) {
+        const slotsCtl = document.createElement('div');
+        slotsCtl.className = 'pb-slots';
+        for (let n = 2; n <= maxOpt; n++) {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = String(n);
+            if (n === f.slotCount) b.classList.add('is-on');
+            b.title = `${n} photos côte à côte`;
+            b.addEventListener('click', () => { if (n !== f.slotCount) setSlotCount(n); });
+            slotsCtl.appendChild(b);
+        }
+        head.appendChild(slotsCtl);
+    }
 
     const zipBtn = document.createElement('button');
     zipBtn.className = 'pb-act is-icon';
