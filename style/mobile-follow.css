@@ -35,6 +35,11 @@
    ============================================================ */
 .follow-ui { position: absolute; inset: 0; z-index: 1200; pointer-events: none; }
 .follow-ui > * { pointer-events: auto; }
+/* L'attribut [hidden] doit l'emporter : les éléments à bascule (toast
+   d'acquisition, invite GPS, puce wake-lock) portent une classe qui fixe
+   `display:flex/inline-flex` — ce qui, sans ça, écraserait le `display:none`
+   par défaut de [hidden] et les laisserait visibles en permanence. */
+.follow-ui [hidden] { display: none !important; }
 
 .follow-top {
     position: absolute;
@@ -92,8 +97,12 @@
 .follow-ctl button + button { border-top: 1px solid var(--line); }
 .follow-ctl button:active { background: var(--surface-muted); color: var(--ink); }
 .follow-ctl button svg { width: 22px; height: 22px; }
-/* groupe bas-droite (le bouton « recentrer sur moi » viendra en PR2) */
-.follow-ctl-zoom { bottom: calc(28px + env(safe-area-inset-bottom, 0)); }
+/* Rafts bas-droite : « recentrer sur moi » (bas, sous le pouce) + zoom au-dessus. */
+.follow-ctl-locate { bottom: calc(28px + env(safe-area-inset-bottom, 0)); }
+.follow-ctl-zoom { bottom: calc(92px + env(safe-area-inset-bottom, 0)); }
+/* Bouton recentrer : icône cobalt (couleur « device location », cf. point bleu). */
+.follow-ctl .is-locate { color: var(--gps); }
+.follow-ctl .is-locate:active { background: var(--surface-muted); }
 
 /* ============================================================
    4. CTA « Suivre ce circuit » (fiche circuit mobile)
@@ -119,3 +128,101 @@
 }
 .no-trace svg { width: 17px; height: 17px; color: var(--ink-soft); flex-shrink: 0; }
 .no-trace span { font-size: 12px; color: var(--ink-soft); line-height: 1.35; }
+
+/* ============================================================
+   5. POINT BLEU GPS (PR2) — point + halo façon Google/Wikiloc
+   ============================================================
+   Couleur « device location » VOLONTAIREMENT hors-thème : cobalt vif + anneau
+   blanc épais pour se détacher du tracé bleu --brand (#3B82F6, plus clair) —
+   garde-fou anti « bouillie bleu-sur-bleu » en thème maritime. Issu du handoff
+   Claude Design. Le puck est un L.divIcon (boîte 84×84 centrée sur la position). */
+:root {
+    --gps: #1A73E8;
+    --gps-deep: #1257C6;
+    --gps-halo: rgba(26, 115, 232, 0.22);
+}
+/* Override du fond/bordure blancs par défaut de .leaflet-div-icon. */
+.gps-marker { background: transparent !important; border: 0 !important; }
+.gps-marker .gps-puck { position: relative; width: 84px; height: 84px; pointer-events: none; }
+.gps-marker .gps-halo {
+    position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(circle, var(--gps-halo) 0%, rgba(26,115,232,0.10) 45%, transparent 72%);
+}
+.gps-marker .gps-pulse {
+    position: absolute; left: 50%; top: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--gps); opacity: .35;
+    transform: translate(-50%, -50%);
+    animation: gpsPulse 2.4s ease-out infinite;
+}
+@keyframes gpsPulse {
+    0%   { transform: translate(-50%, -50%) scale(.5); opacity: .5; }
+    100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+}
+.gps-marker .gps-dot {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--gps); border: 3px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.4), 0 0 0 1px rgba(18,87,198,.35);
+}
+@media (prefers-reduced-motion: reduce) {
+    .gps-marker .gps-pulse { animation: none; opacity: 0; }
+}
+
+/* ============================================================
+   6. WAKE-LOCK CHIP (écran maintenu allumé) — discret, dans le header
+   ============================================================ */
+.wake-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 4px;
+    font-size: 10.5px; font-weight: 600; color: var(--ink-soft);
+}
+.wake-chip svg { width: 12px; height: 12px; color: var(--ok-fg, var(--ok)); }
+
+/* ============================================================
+   7. ÉTATS GPS — acquisition (toast) & refusé/indisponible (invite)
+   ============================================================ */
+.acq-toast {
+    position: absolute; left: 12px; right: 12px;
+    top: calc(96px + env(safe-area-inset-top, 0)); z-index: 1200;
+    margin: 0 auto; max-width: 280px;
+    background: rgba(16, 42, 67, .92); color: #fff;
+    border-radius: var(--radius-pill, 999px); padding: 9px 16px;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    font-size: 12.5px; font-weight: 600;
+    box-shadow: 0 8px 22px rgba(2, 12, 27, .3);
+}
+.acq-spin {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, .3); border-top-color: #fff;
+    animation: acqSpin .8s linear infinite;
+}
+@keyframes acqSpin { to { transform: rotate(360deg); } }
+
+.gps-invite {
+    position: absolute; left: 12px; right: 12px;
+    bottom: calc(26px + env(safe-area-inset-bottom, 0)); z-index: 1200;
+    background: rgba(255, 255, 255, .97);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(2, 12, 27, .18);
+    padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+}
+.gps-invite-ico {
+    flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px;
+    background: var(--warn-soft, #FEF3C7); color: var(--warn-fg, #A16207);
+    display: grid; place-items: center;
+}
+.gps-invite-ico svg { width: 19px; height: 19px; }
+.gps-invite-body { flex: 1; min-width: 0; }
+.gps-invite-t { font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.25; }
+.gps-invite-s { font-size: 11.5px; color: var(--ink-soft); line-height: 1.35; margin-top: 1px; }
+.gps-invite-btn {
+    flex-shrink: 0; align-self: stretch;
+    border: 0; border-radius: 10px; padding: 0 14px;
+    background: var(--brand); color: #fff;
+    font-family: inherit; font-size: 12.5px; font-weight: 700;
+    cursor: pointer; white-space: nowrap;
+}
+.gps-invite-btn:active { filter: brightness(0.95); }
