@@ -4,7 +4,7 @@
 // Les phases suivantes ajouteront la publication, le ZIP et le nouveau lieu.
 
 import Sortable from 'sortablejs';
-import { resizeImage, calculateDistance } from './utils.js';
+import { resizeImage, calculateDistance, openPoiOnMap } from './utils.js';
 import { getPoiName, getPoiId } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { state } from './state.js';

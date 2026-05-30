@@ -336,31 +336,19 @@ function setupDetailsEventListeners(poiId) {
     setupEyebrowNav();
     setupGpxDescToggle();
 
-    // --- Bouton "Vérifier sur Google Maps" (lookup, ancien open-gmaps-btn) ---
+    // --- Boutons "Voir sur Maps / OSM" (par coordonnées, cf. openPoiOnMap) ---
     const gmapsBtn = document.getElementById('open-gmaps-btn');
     if (gmapsBtn) {
         gmapsBtn.addEventListener('click', () => {
             const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-            if (feature && feature.geometry && feature.geometry.coordinates) {
-                const [lng, lat] = feature.geometry.coordinates;
-                window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank', 'noopener,noreferrer');
-            } else {
-                showToast('Coordonnées introuvables.', 'error');
-            }
+            if (!openPoiOnMap(feature, 'gmaps')) showToast('Coordonnées introuvables.', 'error');
         });
     }
-
-    // --- Bouton "Voir sur OpenStreetMap" ---
     const osmBtn = document.getElementById('open-osm-btn');
     if (osmBtn) {
         osmBtn.addEventListener('click', () => {
             const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-            if (feature && feature.geometry && feature.geometry.coordinates) {
-                const [lng, lat] = feature.geometry.coordinates;
-                window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`, '_blank', 'noopener,noreferrer');
-            } else {
-                showToast('Coordonnées introuvables.', 'error');
-            }
+            if (!openPoiOnMap(feature, 'osm')) showToast('Coordonnées introuvables.', 'error');
         });
     }
 
