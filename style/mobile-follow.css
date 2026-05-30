@@ -1,0 +1,121 @@
+/* style/mobile-follow.css
+   Chantier « Suivi de circuit sur mobile » — PR1 (mode immersif).
+   Révèle #map en plein écran sur mobile et pose le header minimal (titre +
+   croix) + les contrôles de zoom. Le point bleu GPS (PR2) et le bottom sheet
+   POI (PR3) viendront s'ajouter. Posé sur les tokens existants (style/tokens.css)
+   pour une intégration native — issu du handoff Claude Design (Lot 1). */
+
+/* ============================================================
+   1. RÉVÉLATION DE LA CARTE PLEIN ÉCRAN (mobile uniquement)
+   ============================================================
+   Sur mobile, base.css force #map { display:none !important } et affiche
+   #mobile-container. Quand le suivi est actif, on inverse : #map en fixed
+   plein écran, #mobile-container masqué. La spécificité (1,1,1) + !important
+   bat la règle (#map) de base.css. */
+@media (max-width: 768px) {
+    body.follow-active #map {
+        display: block !important;
+        position: fixed !important;
+        inset: 0 !important;
+        top: 0 !important;
+        z-index: 1100 !important;
+    }
+    body.follow-active #mobile-container {
+        display: none !important;
+    }
+    /* Les contrôles Leaflet par défaut (zoom/calques/légende en haut-gauche)
+       sont remplacés par notre UI de suivi pendant le mode immersif. */
+    body.follow-active .leaflet-control-container {
+        display: none !important;
+    }
+}
+
+/* ============================================================
+   2. HEADER IMMERSIF (titre + croix)
+   ============================================================ */
+.follow-ui { position: absolute; inset: 0; z-index: 1200; pointer-events: none; }
+.follow-ui > * { pointer-events: auto; }
+
+.follow-top {
+    position: absolute;
+    top: env(safe-area-inset-top, 0);
+    left: 0; right: 0;
+    padding: 10px 12px;
+    display: flex; align-items: flex-start; gap: 10px;
+}
+.follow-title-card {
+    flex: 1; min-width: 0;
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    border-radius: var(--radius-lg, 14px);
+    box-shadow: 0 4px 14px rgba(2, 12, 27, .16);
+    padding: 9px 12px;
+}
+.follow-eyebrow {
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+}
+.follow-eyebrow svg { width: 12px; height: 12px; }
+.follow-title {
+    font-size: 15px; font-weight: 700; color: var(--ink); line-height: 1.15;
+    letter-spacing: -.01em; margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.follow-close {
+    flex-shrink: 0; width: 44px; height: 44px; border-radius: var(--radius-lg, 14px);
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    box-shadow: 0 4px 14px rgba(2, 12, 27, .16);
+    border: 0; color: var(--ink);
+    display: grid; place-items: center; cursor: pointer;
+}
+.follow-close svg { width: 20px; height: 20px; }
+
+/* ============================================================
+   3. CONTRÔLES CARTE (zoom) — raft clair, cf. leaflet-controls.css
+   ============================================================ */
+.follow-ctl {
+    position: absolute; right: 12px; z-index: 1200;
+    display: flex; flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg, 14px);
+    box-shadow: var(--shadow, 0 8px 24px rgba(2, 12, 27, .12));
+    overflow: hidden;
+}
+.follow-ctl button {
+    width: 48px; height: 48px; border: 0; background: var(--surface);
+    color: var(--ink-soft); display: grid; place-items: center; cursor: pointer;
+    font-family: inherit;
+}
+.follow-ctl button + button { border-top: 1px solid var(--line); }
+.follow-ctl button:active { background: var(--surface-muted); color: var(--ink); }
+.follow-ctl button svg { width: 22px; height: 22px; }
+/* groupe bas-droite (le bouton « recentrer sur moi » viendra en PR2) */
+.follow-ctl-zoom { bottom: calc(28px + env(safe-area-inset-bottom, 0)); }
+
+/* ============================================================
+   4. CTA « Suivre ce circuit » (fiche circuit mobile)
+   ============================================================
+   Inséré sous la description, au-dessus de la barre d'actions (.cc-actions).
+   Affiché seulement si le circuit a une trace ; sinon, note discrète. */
+.suivre-wrap { padding: 2px 16px 12px; background: var(--surface); }
+.btn-suivre {
+    width: 100%; height: 52px; border: 0; border-radius: 12px; cursor: pointer;
+    font-family: inherit;
+    background: var(--cta-bg); color: var(--cta-fg, #fff);
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    font-size: 15.5px; font-weight: 700;
+    box-shadow: 0 6px 18px -6px color-mix(in oklab, var(--cta-bg) 70%, transparent);
+}
+.btn-suivre svg { width: 20px; height: 20px; }
+.btn-suivre:active { filter: brightness(0.95); }
+
+.no-trace {
+    margin: 2px 16px 12px; padding: 11px 13px; border-radius: 12px;
+    background: var(--surface-muted); border: 1px dashed var(--line);
+    display: flex; align-items: center; gap: 10px;
+}
+.no-trace svg { width: 17px; height: 17px; color: var(--ink-soft); flex-shrink: 0; }
+.no-trace span { font-size: 12px; color: var(--ink-soft); line-height: 1.35; }
