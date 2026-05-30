@@ -6,6 +6,7 @@
 import Sortable from 'sortablejs';
 import { resizeImage, calculateDistance, openPoiOnMap } from './utils.js';
 import { getPoiName, getPoiId } from './data.js';
+import { getSearchResults } from './search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { state } from './state.js';
 import {
@@ -61,6 +62,7 @@ function normalizeClusters(enriched) {
             center: c.center,
             nearbyPois: c.nearbyPois,
             absoluteNearest: c.absoluteNearest,
+            noGps: !!c.noGps,
         };
     });
 }
@@ -78,6 +80,7 @@ function findPhotoLocation(photoId) {
 
 // Nom auto d'un cluster selon son type et ses POI proches
 function resolveAutoName(cluster) {
+    if (cluster.noGps) return 'Sans GPS';
     if (cluster.type === 'OUT_POI') return 'Hors POI';
     if (cluster.nearbyPois && cluster.nearbyPois.length > 0) {
         return getPoiName(cluster.nearbyPois[0].feature) || 'Lieu sans nom';
@@ -240,6 +243,7 @@ function attachClusterToPoi(cluster, poi) {
         cluster.nearbyPois = [poi];
         cluster.absoluteNearest = null;
         cluster.customName = null;
+        cluster.noGps = false; // rattaché à un lieu → ce n'est plus un groupe « Sans GPS »
     }
 
     renderBody();
@@ -250,6 +254,77 @@ function attachClusterToPoi(cluster, poi) {
 function handleAttachToNearest(cluster) {
     if (!cluster.absoluteNearest) return;
     attachClusterToPoi(cluster, cluster.absoluteNearest);
+}
+
+// Rattache un groupe « Sans GPS » à un POI existant choisi via une recherche.
+// Sans coordonnées, c'est la seule voie de rattachement. On suspend la modale
+// photo-batch le temps du picker (même garde anti-empilement que « Créer un
+// lieu » / le RichEditor), puis on la restaure et on rattache.
+async function handleAttachViaSearch(cluster) {
+    suspendHwModal();
+    let feature = null;
+    try {
+        feature = await openPoiPickerModal();
+    } finally {
+        resumeHwModal();
+    }
+    if (feature) {
+        // dist:0 — rattachement manuel (la distance n'a pas de sens sans coords).
+        attachClusterToPoi(cluster, { feature, dist: 0 });
+    }
+}
+
+// Petite modale de recherche de POI (réutilise le style .sp-* de start-point).
+// Résout avec la feature choisie, ou null si annulé/fermé. À ouvrir entre
+// suspendHwModal()/resumeHwModal() — elle passe par openHwModal (stacking interdit).
+function openPoiPickerModal() {
+    const body = document.createElement('div');
+    body.className = 'sp-modal';
+    body.innerHTML = `
+        <label class="sp-search">
+            <i data-lucide="search"></i>
+            <input type="search" class="sp-search-input" placeholder="Rechercher un lieu…" autocomplete="off">
+        </label>
+        <div class="sp-results"></div>
+    `;
+    const input = body.querySelector('.sp-search-input');
+    const results = body.querySelector('.sp-results');
+
+    const renderResults = (query) => {
+        results.innerHTML = '';
+        const found = getSearchResults(query);
+        if (found.length === 0) {
+            if (query.trim().length > 0) {
+                const empty = document.createElement('p');
+                empty.className = 'sp-empty';
+                empty.textContent = 'Aucun lieu ne correspond.';
+                results.appendChild(empty);
+            }
+            return;
+        }
+        const frag = document.createDocumentFragment();
+        found.slice(0, 30).forEach(f => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'sp-result';
+            btn.textContent = getPoiName(f) || '(sans nom)';
+            btn.addEventListener('click', () => closeHwModal({ feature: f }));
+            frag.appendChild(btn);
+        });
+        results.appendChild(frag);
+    };
+
+    input.addEventListener('input', () => renderResults(input.value));
+
+    const p = openHwModal({
+        size: 'sm',
+        icon: 'link',
+        title: 'Rattacher à un lieu',
+        body,
+        footer: false,
+    });
+    setTimeout(() => { try { input.focus(); } catch (_) {} }, 50);
+    return p.then(result => (result && result.feature) ? result.feature : null);
 }
 
 // Candidats de rattachement calculés EN DIRECT depuis state.loadedFeatures :
@@ -1138,7 +1213,7 @@ function buildClusterSection(cluster, index) {
         segs.push(`Plus proche : ${getPoiName(n.feature) || '(sans nom)'} · ${Math.round(n.dist)} m`, photoWord);
         section.dataset.suggestedPoiId = '';
     } else {
-        segs.push('Sans POI cible', photoWord);
+        segs.push(cluster.noGps ? 'À rattacher à un lieu' : 'Sans POI cible', photoWord);
         section.dataset.suggestedPoiId = '';
     }
     const dot = document.createElement('span');
@@ -1182,7 +1257,7 @@ function buildClusterSection(cluster, index) {
     if (isOrphan || isPureOut) {
         const badge = document.createElement('span');
         badge.className = 'pb-cluster-badge';
-        badge.textContent = isOrphan ? 'Orphelin' : 'Hors POI';
+        badge.textContent = cluster.noGps ? 'Sans GPS' : (isOrphan ? 'Orphelin' : 'Hors POI');
         head.appendChild(badge);
     }
 
@@ -1205,8 +1280,9 @@ function buildClusterSection(cluster, index) {
         actions.appendChild(attachBtn);
     }
 
-    // Créer un nouveau lieu (tout cluster sans POI rattaché)
-    if (!hasNearbyPoi) {
+    // Créer un nouveau lieu (cluster sans POI rattaché ET avec des coordonnées —
+    // un groupe « Sans GPS » n'a pas de position : on ne peut pas créer de POI).
+    if (!hasNearbyPoi && !cluster.noGps) {
         const createBtn = document.createElement('button');
         createBtn.className = 'pb-act';
         createBtn.type = 'button';
@@ -1217,6 +1293,22 @@ function buildClusterSection(cluster, index) {
             handleCreatePoi(cluster);
         });
         actions.appendChild(createBtn);
+    }
+
+    // Sans GPS : pas de coordonnées → ni « créer un lieu » (besoin d'une position
+    // carte) ni « rattacher au plus proche » (pas de distance). Seule voie :
+    // rattacher à la main à un POI existant, choisi par recherche.
+    if (cluster.noGps) {
+        const linkBtn = document.createElement('button');
+        linkBtn.className = 'pb-act';
+        linkBtn.type = 'button';
+        linkBtn.innerHTML = '<i data-lucide="link"></i><span>Rattacher à un lieu…</span>';
+        linkBtn.title = 'Choisir un lieu existant auquel rattacher ces photos';
+        linkBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleAttachViaSearch(cluster);
+        });
+        actions.appendChild(linkBtn);
     }
 
     // Sélecteur de lieu : sur un groupe rattaché, permet de RÉASSIGNER le groupe
