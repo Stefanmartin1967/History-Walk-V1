@@ -371,43 +371,6 @@ export function clusterByLocation(items, distanceThreshold = 50) {
     return clusters;
 }
 
-export function filterOutliers(items) {
-    // Need at least 3 items to calculate meaningful stats for outliers
-    if (!items || items.length < 3) return { main: items, outliers: [] };
-
-    const coords = items.map(i => i.coords);
-    const center = calculateBarycenter(coords);
-
-    // Calculate distances to center
-    const distances = items.map(i => {
-        const dist = calculateDistance(center.lat, center.lng, i.coords.lat, i.coords.lng);
-        return { item: i, dist };
-    });
-
-    const sumDist = distances.reduce((acc, curr) => acc + curr.dist, 0);
-    const meanDist = sumDist / items.length;
-
-    const variance = distances.reduce((acc, curr) => acc + Math.pow(curr.dist - meanDist, 2), 0) / items.length;
-    const stdDev = Math.sqrt(variance);
-
-    // Threshold: Mean + 2 * StdDev
-    // Min threshold 50m (same as clustering radius) to avoid splitting tight groups
-    const threshold = Math.max(meanDist + 2 * stdDev, 50);
-
-    const main = [];
-    const outliers = [];
-
-    distances.forEach(d => {
-        if (d.dist > threshold) {
-            outliers.push(d.item);
-        } else {
-            main.push(d.item);
-        }
-    });
-
-    return { main, outliers };
-}
-
 /**
  * Calcule le nouveau temps pour un POI (Heures/Minutes)
  */

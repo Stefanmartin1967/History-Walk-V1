@@ -12,7 +12,7 @@ import { DOM } from './ui-dom.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
 import { getExifLocation, resizeImage } from './utils.js';
-import { clusterPhotos, DEFAULT_CLUSTER_METHOD } from './photo-clustering.js';
+import { clusterPhotos } from './photo-clustering.js';
 import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
@@ -89,13 +89,12 @@ export async function handleDesktopPhotoImport(filesList) {
             }
         }
 
-        // --- ETAPE 3 : GROUPEMENT (cf. photo-clustering.js) ---
-        // Méthode par défaut 'by-poi' (1 groupe = POI le plus proche). La modale
-        // expose un switch admin pour comparer en direct avec 'proximity'
-        // (transitif 80 m, historique) sur le MÊME import — d'où le passage de
-        // validItems à la modale.
+        // --- ETAPE 3 : GROUPEMENT « par lieu » (cf. photo-clustering.js) ---
+        // 1 groupe = POI le plus proche (≤120 m) ; photos sans POI proche →
+        // groupes « trajet ». Sépare les lieux proches par identité, pas par
+        // distance (corrige le chaînage en ville).
         const enrichedClusters = clusterPhotos(
-            validItems, state.loadedFeatures, DEFAULT_CLUSTER_METHOD, state.hiddenPoiIds
+            validItems, state.loadedFeatures, state.hiddenPoiIds
         );
 
         // Centrage carte sur le 1er cluster (UX visuelle, non bloquant)
@@ -107,7 +106,7 @@ export async function handleDesktopPhotoImport(filesList) {
         if (loader) loader.style.display = 'none';
 
         // --- ETAPE 4 : OUVERTURE DU MODAL BATCH ---
-        await openPhotoBatchModal(enrichedClusters, validItems);
+        await openPhotoBatchModal(enrichedClusters);
 
     } catch (error) {
         if (loader) loader.style.display = 'none';

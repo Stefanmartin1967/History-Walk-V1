@@ -1,24 +1,22 @@
 // photo-clustering.js
 // Groupement des photos importées (par GPS) en clusters, pour la modale
-// « Traitement photos ». DEUX méthodes, comparables via un switch (admin) :
+// « Traitement photos ».
 //
-//   • 'proximity' (historique) — clustering transitif photo↔photo à 80 m
-//     (clusterByLocation + filterOutliers + fusion par POI le plus proche).
-//     Défaut chaîne : en ville, une rafale de photos espacées de <80 m fusionne
-//     en un méga-cluster traversant des centaines de mètres → mauvais nom.
+// Méthode « par lieu » : chaque photo est rattachée au POI le plus proche
+// (≤ POI_RADIUS). Un cluster = un POI. Les photos sans POI proche retombent sur
+// un clustering de proximité (vraies photos de « trajet »). Sépare nettement
+// « photos du café » de « photos de l'église » même à faible distance, car le
+// découpage suit l'IDENTITÉ du lieu, pas la distance — contrairement à l'ancien
+// clustering transitif photo↔photo qui chaînait en ville (rafale de photos
+// espacées de <80 m → méga-cluster traversant plusieurs lieux, mal nommé).
+// Validé par Stefan sur ses photos (30/05/2026) ; la méthode « proximité »
+// concurrente et son switch de comparaison ont été retirés après ce choix.
 //
-//   • 'by-poi' (nouveau, défaut) — chaque photo est rattachée au POI le plus
-//     proche (≤ POI_RADIUS). Un cluster = un POI. Les photos sans POI proche
-//     retombent sur un clustering de proximité (vraies photos de « trajet »).
-//     Sépare nettement « photos du café » de « photos de l'église » même à
-//     faible distance, car le découpage suit l'IDENTITÉ du lieu, pas la distance.
+// Sortie : tableau de clusters { photos, center, nearbyPois, absoluteNearest } —
+// la forme attendue par ui-photo-batch.normalizeClusters. nearbyPois[0] pilote
+// le nom auto ET la cible d'enregistrement : le POI d'ancrage y est en tête.
 //
-// Sortie commune : tableau de clusters { photos, center, nearbyPois,
-// absoluteNearest } — la forme attendue par ui-photo-batch.normalizeClusters.
-// nearbyPois[0] pilote le nom auto ET la cible d'enregistrement : en 'by-poi'
-// on garantit que le POI d'ancrage y est en tête.
-//
-// Fonctions PURES (POIs passés en paramètre) → testées dans
+// Fonction PURE (POIs passés en paramètre) → testée dans
 // tests/photo_clustering.test.js. La dérive GPS en médina reste irréductible :
 // aucune méthode n'est parfaite, d'où le dropdown de correction de la modale.
 
@@ -26,16 +24,12 @@ import {
     calculateDistance,
     calculateBarycenter,
     clusterByLocation,
-    filterOutliers,
     getPoiId,
 } from './utils.js';
 
-export const CLUSTER_METHODS = ['by-poi', 'proximity'];
-export const DEFAULT_CLUSTER_METHOD = 'by-poi';
-
-const PROXIMITY_RADIUS = 80; // m — clustering transitif photo↔photo (historique)
-const POI_RADIUS = 120;      // m — « ce POI est le lieu de la photo » ('by-poi')
-const NEARBY_RADIUS = 100;   // m — POIs listés dans nearbyPois (les deux méthodes)
+const POI_RADIUS = 120;     // m — « ce POI est le lieu de la photo »
+const TRAJET_RADIUS = 80;   // m — regroupement des photos « trajet » (sans POI)
+const NEARBY_RADIUS = 100;  // m — POIs listés dans nearbyPois (candidats proches)
 
 function visiblePoiFeatures(features, hiddenPoiIds) {
     const hidden = hiddenPoiIds || [];
@@ -45,8 +39,8 @@ function visiblePoiFeatures(features, hiddenPoiIds) {
 }
 
 // Enrichit un groupe de photos : barycentre + POIs proches (≤ NEARBY_RADIUS,
-// triés) + POI absolu le plus proche. Si `anchorFeature` est fourni (méthode
-// 'by-poi'), il est forcé en tête de nearbyPois (= nom + cible d'enregistrement).
+// triés) + POI absolu le plus proche. Si `anchorFeature` est fourni (groupe
+// rattaché à un POI), il est forcé en tête de nearbyPois (= nom + cible save).
 function enrichGroup(photos, features, hiddenPoiIds, anchorFeature = null) {
     const center = calculateBarycenter(photos.map(p => p.coords));
     const visible = visiblePoiFeatures(features, hiddenPoiIds);
@@ -94,48 +88,23 @@ function chronoSort(clusters) {
     return clusters;
 }
 
-// Fusionne les clusters de proximité qui ont le même POI le plus proche
-// (nearbyPois[0]) — déplacé depuis desktopMode (méthode historique).
-function mergeBySamePoi(clusters) {
-    const byPoi = new Map();
-    const result = [];
-    for (const c of clusters) {
-        const best = c.nearbyPois?.[0];
-        const key = best && getPoiId(best.feature);
-        if (!key) { result.push(c); continue; }
-        if (byPoi.has(key)) {
-            const prev = byPoi.get(key);
-            prev.photos = prev.photos.concat(c.photos);
-            if (best.dist < prev.nearbyPois[0].dist) prev.nearbyPois = c.nearbyPois;
-        } else {
-            byPoi.set(key, c);
-            result.push(c);
-        }
-    }
-    return result;
-}
+/**
+ * Groupe des photos en clusters enrichis : 1 groupe = POI le plus proche
+ * (≤ 120 m) ; photos sans POI proche → groupes « trajet » (proximité 80 m).
+ * @param {Array<{coords:{lat:number,lng:number}, date?:number}>} photos
+ * @param {Array} features  POIs (features GeoJSON)
+ * @param {string[]} [hiddenPoiIds]
+ * @returns {Array<{photos, center, nearbyPois, absoluteNearest}>}
+ */
+export function clusterPhotos(photos, features, hiddenPoiIds = []) {
+    const valid = (photos || []).filter(p => p && p.coords && typeof p.coords.lat === 'number');
+    if (valid.length === 0) return [];
 
-// Méthode historique : transitif 80 m + outliers + fusion par POI.
-function groupByProximity(photos, features, hiddenPoiIds) {
-    const clusters = clusterByLocation(photos, PROXIMITY_RADIUS);
-    const expanded = [];
-    for (const c of clusters) {
-        const { main, outliers } = filterOutliers(c);
-        if (main.length > 0) expanded.push(main);
-        if (outliers.length > 0) expanded.push(outliers);
-    }
-    const enriched = expanded.map(g => enrichGroup(g, features, hiddenPoiIds));
-    return mergeBySamePoi(enriched);
-}
-
-// Méthode 'by-poi' : 1 cluster = 1 POI le plus proche (≤ POI_RADIUS).
-// Les photos sans POI proche → clustering de proximité (trajet).
-function groupByPoi(photos, features, hiddenPoiIds) {
     const visible = visiblePoiFeatures(features, hiddenPoiIds);
     const byPoi = new Map(); // poiId -> { feature, photos: [] }
     const leftover = [];
 
-    for (const photo of photos) {
+    for (const photo of valid) {
         let nearest = null;
         let minDist = Infinity;
         for (const f of visible) {
@@ -152,32 +121,14 @@ function groupByPoi(photos, features, hiddenPoiIds) {
         }
     }
 
-    const enriched = [];
+    const clusters = [];
     for (const { feature, photos: grouped } of byPoi.values()) {
-        enriched.push(enrichGroup(grouped, features, hiddenPoiIds, feature));
+        clusters.push(enrichGroup(grouped, features, hiddenPoiIds, feature));
     }
     // Photos de trajet (aucun POI dans POI_RADIUS) : regroupées par proximité.
-    if (leftover.length > 0) {
-        for (const c of clusterByLocation(leftover, PROXIMITY_RADIUS)) {
-            enriched.push(enrichGroup(c, features, hiddenPoiIds));
-        }
+    for (const c of clusterByLocation(leftover, TRAJET_RADIUS)) {
+        clusters.push(enrichGroup(c, features, hiddenPoiIds));
     }
-    return enriched;
-}
 
-/**
- * Groupe des photos en clusters enrichis selon la méthode choisie.
- * @param {Array<{coords:{lat:number,lng:number}, date?:number}>} photos
- * @param {Array} features  POIs (features GeoJSON)
- * @param {'by-poi'|'proximity'} [method]
- * @param {string[]} [hiddenPoiIds]
- * @returns {Array<{photos, center, nearbyPois, absoluteNearest}>}
- */
-export function clusterPhotos(photos, features, method = DEFAULT_CLUSTER_METHOD, hiddenPoiIds = []) {
-    const valid = (photos || []).filter(p => p && p.coords && typeof p.coords.lat === 'number');
-    if (valid.length === 0) return [];
-    const clusters = method === 'proximity'
-        ? groupByProximity(valid, features, hiddenPoiIds)
-        : groupByPoi(valid, features, hiddenPoiIds);
     return chronoSort(clusters);
 }
