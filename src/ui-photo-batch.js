@@ -919,7 +919,10 @@ async function handleSave() {
                     .filter(p => p.file && !p.alreadySaved)
                     .map(async (p) => ({
                         id: p.id,
-                        blob: await compressFileToBlob(p.file)
+                        blob: await compressFileToBlob(p.file),
+                        // srcHash = hash du fichier ORIGINAL (posé à l'import) →
+                        // permet la dédup au prochain import (dédup 2-local).
+                        srcHash: p.srcHash || undefined,
                     }))
             );
             if (blobItems.length === 0) continue;

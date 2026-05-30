@@ -428,6 +428,8 @@ async function handleSave() {
                     pendingItems.push({
                         id: photo.id || generatePhotoId(),
                         blob: photo.blob,
+                        // Préserve le srcHash (dédup import) s'il existe déjà.
+                        srcHash: photo.srcHash || undefined,
                     });
                 } else if (photo.src) {
                     keptUrls.push(photo.src);

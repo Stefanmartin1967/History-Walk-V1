@@ -40,6 +40,32 @@ export function getPoiId(feature) {
     return feature.properties.HW_ID || feature.id;
 }
 
+/**
+ * Empreinte SHA-256 (hex) du CONTENU d'un fichier/blob.
+ * Sert à dédupliquer les photos à l'import : on hashe TOUJOURS le fichier
+ * ORIGINAL (jamais le blob compressé/watermarké, sinon on comparerait du
+ * compressé à du non-compressé → faux négatifs). Le `srcHash` ainsi obtenu est
+ * stocké à côté de chaque photo sauvée (poiPhotos / pendingAdminPhotos) et
+ * comparé au hash d'un nouvel import pour bloquer les doublons (cf.
+ * reference_photo_import_clustering / dédup 2-local).
+ * @param {Blob|File} file
+ * @returns {Promise<string|null>} hex minuscule, ou null si indisponible
+ */
+export async function sha256OfFile(file) {
+    try {
+        if (!file || typeof file.arrayBuffer !== 'function') return null;
+        if (!globalThis.crypto?.subtle) return null; // contexte non sécurisé
+        const buf = await file.arrayBuffer();
+        const digest = await crypto.subtle.digest('SHA-256', buf);
+        return Array.from(new Uint8Array(digest))
+            .map(b => b.toString(16).padStart(2, '0'))
+            .join('');
+    } catch (e) {
+        console.warn('[sha256OfFile] échec, dédup ignorée pour ce fichier:', e?.message);
+        return null;
+    }
+}
+
 export function getPoiName(feature) {
     if (!feature || !feature.properties) return "Lieu sans nom";
     const props = feature.properties;
