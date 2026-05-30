@@ -11,7 +11,8 @@ import { logModification } from './logger.js';
 import { DOM } from './ui-dom.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
-import { getExifLocation, calculateDistance, resizeImage, getZoneFromCoords, clusterByLocation, calculateBarycenter, filterOutliers } from './utils.js';
+import { getExifLocation, resizeImage } from './utils.js';
+import { clusterPhotos, DEFAULT_CLUSTER_METHOD } from './photo-clustering.js';
 import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
@@ -43,37 +44,6 @@ export function enableDesktopCreationMode() {
             createDraftMarker(lat, lng, map);
         }
     });
-}
-
-// Fusionne les clusters qui ont le même POI proche (nearbyPois[0]) et pas encore de renommage.
-// Le POI le plus proche "gagne" : on garde le plus petit dist, et on recalcule le barycentre.
-function mergeClustersBySamePoi(clusters) {
-    const byPoi = new Map(); // poiId -> cluster fusionné
-    const result = [];
-
-    for (const c of clusters) {
-        const bestPoi = c.nearbyPois?.[0];
-        if (!bestPoi) {
-            // "Aucun POI proche" : on ne fusionne pas ces clusters
-            result.push(c);
-            continue;
-        }
-        const key = getPoiId(bestPoi.feature);
-        if (!key) { result.push(c); continue; }
-
-        if (byPoi.has(key)) {
-            const prev = byPoi.get(key);
-            prev.photos = prev.photos.concat(c.photos);
-            // Garde le POI le plus proche
-            if (bestPoi.dist < prev.nearbyPois[0].dist) {
-                prev.nearbyPois = c.nearbyPois;
-            }
-        } else {
-            byPoi.set(key, c);
-            result.push(c);
-        }
-    }
-    return result;
 }
 
 // --- FONCTION D'IMPORT AVEC CLUSTERING ET DÉTECTION ---
@@ -108,87 +78,36 @@ export async function handleDesktopPhotoImport(filesList) {
              return showToast("Aucune coordonnée GPS trouvée dans ces photos.", 'error');
         }
 
-        // --- ETAPE 2 : CLUSTERING (80m) ---
-        const clusters = clusterByLocation(validItems, 80);
-
-        // --- ETAPE 3 : FILTER OUTLIERS (expansion des clusters) ---
-        const expandedClusters = [];
-        for (const c of clusters) {
-            const { main, outliers } = filterOutliers(c);
-            if (main.length > 0) expandedClusters.push(main);
-            if (outliers.length > 0) expandedClusters.push(outliers);
-        }
-
-        // --- ETAPE 4 : PRÉ-CALCUL BASE64 (thumbnails) ---
-        for (const cluster of expandedClusters) {
-            for (const item of cluster) {
-                if (!item.base64) {
-                    // 320px (≥ ~225px d'affichage en grille plein écran) → vignettes
-                    // nettes sans alourdir l'import. Sert aussi la pellicule de la lightbox.
-                    try { item.base64 = await resizeImage(item.file, 320); }
-                    catch (e) { console.error("Pré-calcul base64:", e); }
-                }
+        // --- ETAPE 2 : PRÉ-CALCUL BASE64 (thumbnails) ---
+        // 320px (≥ ~225px d'affichage en grille plein écran) → vignettes nettes
+        // sans alourdir l'import. Sert aussi la pellicule de la lightbox. Fait à
+        // plat sur les items (les clusters référencent les mêmes objets).
+        for (const item of validItems) {
+            if (!item.base64) {
+                try { item.base64 = await resizeImage(item.file, 320); }
+                catch (e) { console.error("Pré-calcul base64:", e); }
             }
         }
 
-        // --- ETAPE 5 : ENRICHISSEMENT (center + nearbyPois + absoluteNearest) ---
-        let enrichedClusters = expandedClusters.map(cluster => {
-            const center = calculateBarycenter(cluster.map(c => c.coords));
-
-            const nearbyPois = [];
-            let absoluteNearest = null;
-            let minDist = Infinity;
-
-            state.loadedFeatures.forEach(feature => {
-                const pId = getPoiId(feature);
-                if (state.hiddenPoiIds && state.hiddenPoiIds.includes(pId)) return;
-                if (!feature.geometry || !feature.geometry.coordinates) return;
-
-                const [fLng, fLat] = feature.geometry.coordinates;
-                const dist = calculateDistance(center.lat, center.lng, fLat, fLng);
-
-                if (dist < 100) nearbyPois.push({ feature, dist });
-                if (dist < minDist) {
-                    minDist = dist;
-                    absoluteNearest = { feature, dist };
-                }
-            });
-
-            nearbyPois.sort((a, b) => a.dist - b.dist);
-
-            return {
-                photos: cluster,
-                center,
-                nearbyPois,
-                absoluteNearest: nearbyPois.length === 0 ? absoluteNearest : null
-            };
-        });
-
-        // --- ETAPE 5.5 : FUSION de clusters avec le même POI le plus proche ---
-        enrichedClusters = mergeClustersBySamePoi(enrichedClusters);
-
-        // --- ETAPE 5.6 : TRI CHRONOLOGIQUE ---
-        // À l'intérieur d'un cluster : photos par date croissante
-        // Puis les clusters : par date la plus ancienne
-        enrichedClusters.forEach(c => {
-            c.photos.sort((a, b) => (a.date || 0) - (b.date || 0));
-        });
-        enrichedClusters.sort((a, b) => {
-            const da = a.photos[0]?.date || 0;
-            const db = b.photos[0]?.date || 0;
-            return da - db;
-        });
+        // --- ETAPE 3 : GROUPEMENT (cf. photo-clustering.js) ---
+        // Méthode par défaut 'by-poi' (1 groupe = POI le plus proche). La modale
+        // expose un switch admin pour comparer en direct avec 'proximity'
+        // (transitif 80 m, historique) sur le MÊME import — d'où le passage de
+        // validItems à la modale.
+        const enrichedClusters = clusterPhotos(
+            validItems, state.loadedFeatures, DEFAULT_CLUSTER_METHOD, state.hiddenPoiIds
+        );
 
         // Centrage carte sur le 1er cluster (UX visuelle, non bloquant)
-        if (map && enrichedClusters.length > 0) {
+        if (map && enrichedClusters.length > 0 && enrichedClusters[0].center) {
             const firstCenter = enrichedClusters[0].center;
             map.flyTo([firstCenter.lat, firstCenter.lng], 14, { duration: 0.8 });
         }
 
         if (loader) loader.style.display = 'none';
 
-        // --- ETAPE 6 : OUVERTURE DU MODAL BATCH (Phase 1 : read-only) ---
-        await openPhotoBatchModal(enrichedClusters);
+        // --- ETAPE 4 : OUVERTURE DU MODAL BATCH ---
+        await openPhotoBatchModal(enrichedClusters, validItems);
 
     } catch (error) {
         if (loader) loader.style.display = 'none';
