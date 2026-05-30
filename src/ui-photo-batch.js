@@ -4,7 +4,7 @@
 // Les phases suivantes ajouteront la publication, le ZIP et le nouveau lieu.
 
 import Sortable from 'sortablejs';
-import { resizeImage, calculateDistance } from './utils.js';
+import { resizeImage, calculateDistance, openPoiOnMap } from './utils.js';
 import { getPoiName, getPoiId } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { state } from './state.js';
@@ -1250,6 +1250,30 @@ function buildClusterSection(cluster, index) {
             });
             actions.appendChild(select);
         }
+    }
+
+    // Vérifier le lieu rattaché sur Maps / OSM (par COORDONNÉES — pour
+    // confirmer/corriger le nom du POI suggéré). Affiché seulement si un POI
+    // est rattaché (sinon rien à vérifier ; on utilise Rattacher/Créer).
+    if (hasNearbyPoi) {
+        const verifyFeature = cluster.nearbyPois[0].feature;
+        const mapsBtn = document.createElement('button');
+        mapsBtn.className = 'pb-act is-icon';
+        mapsBtn.type = 'button';
+        mapsBtn.innerHTML = '<i data-lucide="map-pin"></i>';
+        mapsBtn.title = 'Vérifier ce lieu sur Google Maps';
+        mapsBtn.setAttribute('aria-label', 'Vérifier sur Google Maps');
+        mapsBtn.addEventListener('click', (e) => { e.stopPropagation(); openPoiOnMap(verifyFeature, 'gmaps'); });
+        actions.appendChild(mapsBtn);
+
+        const osmBtn = document.createElement('button');
+        osmBtn.className = 'pb-act is-icon';
+        osmBtn.type = 'button';
+        osmBtn.innerHTML = '<i data-lucide="map"></i>';
+        osmBtn.title = 'Vérifier ce lieu sur OpenStreetMap';
+        osmBtn.setAttribute('aria-label', 'Vérifier sur OpenStreetMap');
+        osmBtn.addEventListener('click', (e) => { e.stopPropagation(); openPoiOnMap(verifyFeature, 'osm'); });
+        actions.appendChild(osmBtn);
     }
 
     // Comparer → ouvre le mode focus in-place (toujours actif si ≥ 1 photo)

@@ -73,6 +73,26 @@ export function getPoiName(feature) {
     return userData.custom_title || userData['Nom du site FR'] || props['Nom du site FR'] || userData['Nom du site arabe'] || props['Nom du site AR'] || props.name || "Lieu inconnu";
 }
 
+/**
+ * Ouvre la position d'un POI sur Google Maps ou OpenStreetMap, PAR COORDONNÉES
+ * (jamais par nom : si le nom est erroné, une recherche textuelle renverrait du
+ * vide ou un mauvais lieu). Réutilisé par la fiche POI (mini-bar) et l'import
+ * photo (vérifier le lieu rattaché à un groupe).
+ * @param {object} feature feature GeoJSON (geometry.coordinates = [lng, lat])
+ * @param {'gmaps'|'osm'} [provider]
+ * @returns {boolean} false si coordonnées indisponibles
+ */
+export function openPoiOnMap(feature, provider = 'gmaps') {
+    const coords = feature?.geometry?.coordinates;
+    if (!Array.isArray(coords) || coords.length < 2) return false;
+    const [lng, lat] = coords;
+    const url = provider === 'osm'
+        ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`
+        : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    return true;
+}
+
 export function downloadFile(filename, content, mimeType) {
     const blob = new Blob([content], { type: mimeType });
     const a = document.createElement('a');
