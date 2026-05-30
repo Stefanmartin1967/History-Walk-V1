@@ -18,7 +18,6 @@ import { showToast } from './toast.js';
 import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
 import { createZipBlob } from './zip-store.js';
 import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
-import { clusterPhotos, CLUSTER_METHODS, DEFAULT_CLUSTER_METHOD } from './photo-clustering.js';
 
 let activeResolve = null;
 let activeObjectUrls = [];
@@ -1365,38 +1364,6 @@ function renderBody() {
     createIcons({ icons: appIcons, root: body });
 }
 
-// Bascule la méthode de groupement et re-cluster en direct depuis rawPhotos.
-// Outil de comparaison (admin) : on repart d'un découpage propre, donc le mode
-// focus et les éventuels édits (renommages, détachements) sont réinitialisés —
-// attendu, le switch s'utilise juste après l'import pour choisir la méthode.
-function setClusterMethod(method) {
-    if (!modalState || !CLUSTER_METHODS.includes(method)) return;
-    if (modalState.method === method) return;
-    if (!modalState.rawPhotos) return;
-
-    modalState.method = method;
-    if (modalState.focus) {
-        releaseFocusUrls();
-        modalState.focus = null;
-        const overlay = document.getElementById('photo-batch-overlay');
-        if (overlay) overlay.classList.remove('is-focus');
-    }
-    const enriched = clusterPhotos(modalState.rawPhotos, state.loadedFeatures, method, state.hiddenPoiIds);
-    modalState.clusters = normalizeClusters(enriched);
-    setHeaderMode('overview');
-    renderBody();
-    updateHeaderCounts();
-    updateMethodSwitchUI();
-}
-
-function updateMethodSwitchUI() {
-    const sw = document.getElementById('photo-batch-method');
-    if (!sw || !modalState) return;
-    sw.querySelectorAll('button[data-method]').forEach(b => {
-        b.classList.toggle('is-on', b.dataset.method === modalState.method);
-    });
-}
-
 function updateHeaderCounts() {
     if (!modalState) return;
     const total = modalState.clusters.reduce((s, c) => s + c.photos.length, 0);
@@ -1436,17 +1403,10 @@ function updateHeaderCounts() {
  * @param {Array} enrichedClusters — Array of { photos, center, nearbyPois, absoluteNearest }
  * @returns {Promise<null>} — resolve(null) à la fermeture
  */
-export function openPhotoBatchModal(enrichedClusters, rawPhotos = null) {
+export function openPhotoBatchModal(enrichedClusters) {
     return new Promise((resolve) => {
         activeResolve = resolve;
-        // rawPhotos (items {coords,date,file,base64}) : source immuable de l'import,
-        // gardée pour permettre au switch de groupement de re-cluster en direct
-        // sans réimporter (cf. setClusterMethod). Absente → pas de switch.
-        modalState = {
-            clusters: normalizeClusters(enrichedClusters),
-            method: DEFAULT_CLUSTER_METHOD,
-            rawPhotos: Array.isArray(rawPhotos) ? rawPhotos : null,
-        };
+        modalState = { clusters: normalizeClusters(enrichedClusters) };
 
         const isAdmin = state.isAdmin;
         const hintText = isAdmin
@@ -1498,30 +1458,12 @@ export function openPhotoBatchModal(enrichedClusters, rawPhotos = null) {
                 const headerEl = overlayEl.querySelector('.hw-modal-header');
                 const closeBtn = headerEl ? headerEl.querySelector('.hw-modal-close') : null;
                 if (headerEl && closeBtn) {
-                    // Switch de groupement (admin + import re-clusterable) : outil de
-                    // comparaison « Par lieu » ↔ « Proximité » sur le même import.
-                    const showSwitch = state.isAdmin && !!modalState.rawPhotos;
-                    const switchHtml = showSwitch ? `
-                        <span class="pb-method-switch" id="photo-batch-method" role="group" aria-label="Méthode de groupement des photos">
-                            <span class="pb-method-label">Groupement</span>
-                            <button type="button" data-method="by-poi">Par lieu</button>
-                            <button type="button" data-method="proximity">Proximité</button>
-                        </span>` : '';
                     closeBtn.insertAdjacentHTML('beforebegin', `
-                        ${switchHtml}
                         <span class="pb-header-counts" id="photo-batch-header-subtitle"></span>
                         <span class="pb-header-spacer"></span>
                         <span class="pb-header-hint">${hintText}</span>
                     `);
                     createIcons({ icons: appIcons, root: headerEl });
-
-                    if (showSwitch) {
-                        const sw = document.getElementById('photo-batch-method');
-                        sw?.querySelectorAll('button[data-method]').forEach(b => {
-                            b.addEventListener('click', () => setClusterMethod(b.dataset.method));
-                        });
-                        updateMethodSwitchUI();
-                    }
                 }
             }
 
