@@ -103,6 +103,9 @@
 /* Bouton recentrer : icône cobalt (couleur « device location », cf. point bleu). */
 .follow-ctl .is-locate { color: var(--gps); }
 .follow-ctl .is-locate:active { background: var(--surface-muted); }
+/* Quand le bottom sheet POI est ouvert, on masque les rafts de contrôles
+   (ils tomberaient derrière/sous le sheet) pour garder l'écran lisible. */
+.follow-ui.has-sheet .follow-ctl { display: none; }
 
 /* ============================================================
    4. CTA « Suivre ce circuit » (fiche circuit mobile)
@@ -226,3 +229,89 @@
     cursor: pointer; white-space: nowrap;
 }
 .gps-invite-btn:active { filter: brightness(0.95); }
+
+/* ============================================================
+   8. MARQUEUR POI VISITÉ (PR3) — atténué + pastille verte de coche
+   ============================================================
+   Le marqueur ne DISPARAÎT pas quand il est coché visité (le masquage des
+   visités = Lot 2) : on l'atténue et on pose une pastille de coche verte,
+   même langage que la timeline (.cc-step.is-done). */
+.hw-icon.hw-mk-done .hw-icon-wrapper { opacity: .5; }
+.hw-icon.hw-mk-done::after {
+    content: ""; position: absolute; top: -2px; right: -2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--ok, #10B981);
+    box-shadow: 0 0 0 2px #fff;
+    /* petite coche en SVG inline (currentColor blanc) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: center;
+}
+
+/* ============================================================
+   9. BOTTOM SHEET D'APERÇU POI (PR3, variante A : compact, photo à gauche)
+   ============================================================
+   Mi-hauteur : la carte + le tracé + le point bleu restent visibles au-dessus.
+   Posé sur les tokens existants (handoff Claude Design, classes .pv-*). */
+.pv-sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 1300;
+    background: var(--surface);
+    border-top-left-radius: 20px; border-top-right-radius: 20px;
+    box-shadow: 0 -12px 34px rgba(2, 12, 27, .22);
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0));
+    display: flex; flex-direction: column;
+    animation: pvSheetUp .22s cubic-bezier(.2, .7, .3, 1);
+}
+@keyframes pvSheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .pv-sheet { animation: none; } }
+
+/* Poignée cliquable (toute la zone = fermer) */
+.pv-handle-row {
+    border: 0; background: transparent; cursor: pointer;
+    width: 100%; padding: 10px 0 4px; display: grid; place-items: center;
+}
+.pv-handle { width: 40px; height: 4px; border-radius: 999px; background: var(--line); }
+
+.pv-row { display: flex; gap: 12px; padding: 4px 16px 6px; }
+.pv-photo {
+    flex-shrink: 0; width: 84px; height: 84px; border-radius: 12px; overflow: hidden;
+    background: var(--surface-muted); position: relative;
+}
+.pv-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pv-photo-ph { width: 100%; height: 100%; display: grid; place-items: center; color: var(--ink-soft); opacity: .5; }
+.pv-photo-ph svg { width: 26px; height: 26px; }
+.pv-body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pv-eyebrow {
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600;
+}
+.pv-name {
+    font-size: 17px; font-weight: 700; color: var(--ink); line-height: 1.2;
+    letter-spacing: -.01em; margin: 3px 0 4px;
+}
+.pv-excerpt {
+    font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); margin: 0;
+    display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
+    -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.pv-actions { display: flex; align-items: center; gap: 10px; padding: 8px 16px 4px; }
+.pv-visited {
+    flex: 1; height: 46px; border-radius: 12px; cursor: pointer; font-family: inherit;
+    font-size: 13.5px; font-weight: 700;
+    border: 1.5px solid var(--line); background: var(--surface); color: var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.pv-visited svg { width: 18px; height: 18px; }
+.pv-visited.is-done {
+    background: var(--ok-soft); border-color: var(--ok); color: var(--ok-fg, var(--ok));
+}
+.pv-visited.is-done svg { color: var(--ok); }
+.pv-visited:active { filter: brightness(0.97); }
+.pv-fiche {
+    flex-shrink: 0; height: 46px; padding: 0 16px; border-radius: 12px; cursor: pointer;
+    font-family: inherit; font-size: 13px; font-weight: 700;
+    color: var(--brand-2, var(--brand)); background: var(--brand-soft); border: 0;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+.pv-fiche svg { width: 16px; height: 16px; }
+.pv-fiche:active { filter: brightness(0.97); }

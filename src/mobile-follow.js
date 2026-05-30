@@ -1,5 +1,5 @@
 // mobile-follow.js
-// Chantier « Suivi de circuit sur mobile » — PR1 (mode immersif) + PR2 (GPS).
+// Chantier « Suivi de circuit sur mobile » — PR1 (immersif) + PR2 (GPS) + PR3 (POI).
 //
 // Sur mobile, #map est masqué par CSS (base.css : display:none) au profit des
 // vues-listes (#mobile-container), ET la carte Leaflet n'est même PAS
@@ -10,23 +10,26 @@
 // vue sur le tracé réel du circuit actif.
 //
 // PR1 : « voir le tracé en plein écran ».
-// PR2 : point bleu temps réel (watchPosition) + bouton « recentrer sur moi » +
-//       Screen Wake Lock (écran maintenu allumé) + états GPS (acquisition /
-//       refusé). PAS de turn-by-turn ni routing — on montre juste où on est sur
-//       le tracé donné. Écran éteint / arrière-plan = hors scope (limite PWA :
-//       watchPosition est gelé, le Wake Lock relâché ; on ré-acquiert au retour).
-// PR3 ajoutera le bottom sheet d'aperçu POI + les marqueurs cliquables.
+// PR2 : point bleu temps réel (watchPosition) + « recentrer sur moi » + Screen
+//       Wake Lock + états GPS (acquisition / refusé).
+// PR3 : marqueurs POI du circuit CLIQUABLES + bottom sheet d'aperçu à mi-hauteur
+//       (photo + nom + extrait + toggle « visité » + lien « fiche complète »).
+//       Le toggle « visité » écrit userData.vu (vuManual) ; le lieu ne disparaît
+//       PAS de la carte (le masquage des visités = Lot 2). PAS de turn-by-turn.
 //
 // Le tracé est dessiné par le listener `circuit:updated` de map.js (enregistré
 // par initMap) : après init, on (ré)émet notifyCircuitChanged pour le tracer.
 
 import L from 'leaflet';
-import { map, initMap } from './map.js';
+import { map, initMap, createHistoryWalkIcon } from './map.js';
 import { state } from './state.js';
 import { eventBus } from './events.js';
 import { notifyCircuitChanged } from './circuit.js';
+import { updatePoiData } from './data.js';
+import { getPoiPhotos } from './database.js';
+import { openDetailsPanel } from './ui-details.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { escapeHtml, getZoneFromCoords } from './utils.js';
+import { escapeHtml, getZoneFromCoords, getPoiId, getPoiName, getPoiProp } from './utils.js';
 import { pushMobileLevel } from './mobile-state.js';
 import { showToast } from './toast.js';
 
@@ -41,6 +44,13 @@ let _lastLatLng = null;  // [lat, lng] de la dernière position connue
 let _hadFix = false;     // a-t-on déjà reçu au moins une position ?
 let _didInitialRecenter = false; // recentrage auto une seule fois (1er fix)
 let _visHandler = null;  // handler visibilitychange (ré-acquisition Wake Lock)
+
+// --- État POI / bottom sheet (PR3) ---
+let _poiLayer = null;        // L.layerGroup des marqueurs POI cliquables
+let _poiMarkers = new Map(); // poiId -> { marker, feature, idx }
+let _sheetEl = null;         // élément DOM du bottom sheet (null = fermé)
+let _sheetPoiId = null;      // poiId affiché dans le sheet
+let _sheetObjUrl = null;     // objectURL d'une photo locale (à révoquer)
 
 export function isFollowActive() {
     return _active;
@@ -129,8 +139,7 @@ function buildOverlay(circuit) {
     createIcons({ icons: appIcons, root: overlay });
 
     // La croix pop l'entrée d'historique #follow → popstate → onHwBack →
-    // stopFollow. Même chemin que le Back Android (sortie unique, pas de
-    // double teardown).
+    // followBack(). Même chemin que le Back Android (sortie unique).
     overlay.querySelector('#follow-close').addEventListener('click', () => history.back());
     overlay.querySelector('#follow-zoom-in').addEventListener('click', () => map.zoomIn());
     overlay.querySelector('#follow-zoom-out').addEventListener('click', () => map.zoomOut());
@@ -145,7 +154,171 @@ function buildOverlay(circuit) {
     return overlay;
 }
 
-// ─── POINT BLEU GPS ───────────────────────────────────────────────────────────
+// ─── MARQUEURS POI CLIQUABLES (PR3) ───────────────────────────────────────────
+
+function buildPoiMarkers() {
+    _poiLayer = L.layerGroup().addTo(map);
+    _poiMarkers.clear();
+
+    (state.currentCircuit || []).forEach((feature, idx) => {
+        const coords = feature?.geometry?.coordinates;
+        if (!coords) return;
+        const poiId = getPoiId(feature);
+        const marker = L.marker([coords[1], coords[0]], {
+            icon: createHistoryWalkIcon(feature),
+            title: getPoiName(feature),
+        });
+        marker.on('click', () => openPoiSheet(poiId));
+        marker.addTo(_poiLayer);
+        _poiMarkers.set(poiId, { marker, feature, idx });
+        applyMarkerVisited(poiId);
+    });
+}
+
+// Reflète l'état « visité » sur le marqueur (atténué + pastille verte). Le
+// marqueur ne DISPARAÎT pas (le masquage des visités = Lot 2).
+function applyMarkerVisited(poiId) {
+    const entry = _poiMarkers.get(poiId);
+    if (!entry) return;
+    const el = entry.marker.getElement();
+    if (!el) return; // pas encore rendu → re-tenté au prochain openPoiSheet
+    const done = !!getPoiProp(entry.feature, 'vu');
+    el.classList.toggle('hw-mk-done', done);
+}
+
+function removePoiMarkers() {
+    if (_poiLayer) { _poiLayer.remove(); _poiLayer = null; }
+    _poiMarkers.clear();
+}
+
+// ─── BOTTOM SHEET D'APERÇU POI (PR3, variante A : compact, photo à gauche) ────
+
+function revokeSheetObjUrl() {
+    if (_sheetObjUrl) { URL.revokeObjectURL(_sheetObjUrl); _sheetObjUrl = null; }
+}
+
+function sheetMarkup(feature, idx) {
+    const total = (state.currentCircuit || []).length;
+    const cat = (getPoiProp(feature, 'Catégorie') || 'Lieu').toString();
+    const excerpt = (getPoiProp(feature, 'Description_courte')
+        || getPoiProp(feature, 'description')
+        || getPoiProp(feature, 'Description') || '').toString().trim();
+    const isVu = !!getPoiProp(feature, 'vu');
+    const published = feature?.properties?.photos;
+    const photoUrl = Array.isArray(published) && published.length > 0 ? published[0] : null;
+
+    return `
+        <button type="button" class="pv-handle-row" id="pv-close" aria-label="Fermer l'aperçu">
+            <span class="pv-handle"></span>
+        </button>
+        <div class="pv-row">
+            <div class="pv-photo" id="pv-photo">
+                ${photoUrl
+                    ? `<img src="${escapeHtml(photoUrl)}" alt="" loading="lazy">`
+                    : `<div class="pv-photo-ph"><i data-lucide="image"></i></div>`}
+            </div>
+            <div class="pv-body">
+                <span class="pv-eyebrow">ÉTAPE ${idx + 1}${total ? ` / ${total}` : ''} · ${escapeHtml(cat.toUpperCase())}</span>
+                <div class="pv-name">${escapeHtml(getPoiName(feature))}</div>
+                ${excerpt ? `<p class="pv-excerpt">${escapeHtml(excerpt)}</p>` : ''}
+            </div>
+        </div>
+        <div class="pv-actions">
+            <button type="button" class="pv-visited ${isVu ? 'is-done' : ''}" id="pv-visited">
+                <i data-lucide="${isVu ? 'check-circle' : 'circle'}"></i>
+                <span>${isVu ? 'Visité' : 'Marquer visité'}</span>
+            </button>
+            <button type="button" class="pv-fiche" id="pv-fiche">
+                Fiche <i data-lucide="arrow-right"></i>
+            </button>
+        </div>
+    `;
+}
+
+function openPoiSheet(poiId) {
+    const entry = _poiMarkers.get(poiId);
+    if (!entry || !_overlay) return;
+    const { feature, idx } = entry;
+    _sheetPoiId = poiId;
+    revokeSheetObjUrl();
+
+    const firstOpen = !_sheetEl;
+    if (!_sheetEl) {
+        _sheetEl = document.createElement('div');
+        _sheetEl.className = 'pv-sheet';
+        _overlay.appendChild(_sheetEl);
+        _overlay.classList.add('has-sheet'); // masque les rafts de contrôles
+    }
+    _sheetEl.innerHTML = sheetMarkup(feature, idx);
+    createIcons({ icons: appIcons, root: _sheetEl });
+
+    _sheetEl.querySelector('#pv-close').addEventListener('click', () => history.back());
+    _sheetEl.querySelector('#pv-visited').addEventListener('click', () => toggleVisited(poiId));
+    _sheetEl.querySelector('#pv-fiche').addEventListener('click', () => exitToFiche(poiId));
+
+    // Photo locale (perso/admin) si aucune photo publiée — hydratation async.
+    if (!feature?.properties?.photos?.length) hydrateLocalPhoto(poiId);
+
+    // Le marqueur tapé se place dans la moitié haute (visible au-dessus du sheet).
+    const c = feature.geometry.coordinates;
+    map.panTo([c[1], c[0]], { animate: true, duration: 0.4 });
+
+    // Une seule entrée d'historique pour le sheet (réouverture = swap de contenu).
+    if (firstOpen) pushMobileLevel('sheet');
+}
+
+async function hydrateLocalPhoto(poiId) {
+    const mapId = state.currentMapId;
+    if (!mapId) return;
+    let items = [];
+    try { items = await getPoiPhotos(mapId, poiId); } catch (_) { return; }
+    // Le sheet a pu être fermé ou avoir changé de POI pendant l'await.
+    if (!_sheetEl || _sheetPoiId !== poiId) return;
+    if (!items || !items.length || !items[0]?.blob) return;
+    revokeSheetObjUrl();
+    _sheetObjUrl = URL.createObjectURL(items[0].blob);
+    const ph = _sheetEl.querySelector('#pv-photo');
+    if (ph) ph.innerHTML = `<img src="${_sheetObjUrl}" alt="">`;
+}
+
+async function toggleVisited(poiId) {
+    const entry = _poiMarkers.get(poiId);
+    if (!entry) return;
+    const next = !getPoiProp(entry.feature, 'vu');
+    await updatePoiData(poiId, 'vu', next); // écrit vuManual + recompute vu
+    // Feedback immédiat in-place (pas d'auto-fermeture ni d'auto-avance ;
+    // le lieu reste sur la carte — masquage = Lot 2).
+    if (_sheetEl && _sheetPoiId === poiId) {
+        const btn = _sheetEl.querySelector('#pv-visited');
+        if (btn) {
+            btn.classList.toggle('is-done', next);
+            btn.innerHTML = `<i data-lucide="${next ? 'check-circle' : 'circle'}"></i><span>${next ? 'Visité' : 'Marquer visité'}</span>`;
+            createIcons({ icons: appIcons, root: btn });
+        }
+    }
+    applyMarkerVisited(poiId);
+}
+
+// « Voir la fiche complète » : on QUITTE le suivi (la fiche détaillée se rend
+// dans #mobile-container, masqué pendant le suivi) puis on l'ouvre. Le retour
+// se fera vers la fiche circuit (comportement standard de openDetailsPanel).
+function exitToFiche(poiId) {
+    const globalIndex = state.loadedFeatures.findIndex(f => getPoiId(f) === poiId);
+    if (globalIndex < 0) { showToast('Fiche introuvable.', 'error'); return; }
+    closeSheetInternal();
+    stopFollow();
+    openDetailsPanel(globalIndex);
+}
+
+function closeSheetInternal() {
+    revokeSheetObjUrl();
+    if (_sheetEl && _sheetEl.parentNode) _sheetEl.parentNode.removeChild(_sheetEl);
+    _sheetEl = null;
+    _sheetPoiId = null;
+    if (_overlay) _overlay.classList.remove('has-sheet');
+}
+
+// ─── POINT BLEU GPS (PR2) ─────────────────────────────────────────────────────
 
 function gpsPuckIcon() {
     // divIcon centré (iconAnchor = centre de la boîte 84×84 = le halo). Le point
@@ -163,9 +336,9 @@ function updatePuck(latlng) {
     if (!_gpsMarker) {
         _gpsMarker = L.marker(latlng, {
             icon: gpsPuckIcon(),
-            interactive: false,   // ne capte pas les clics (POI cliquables = PR3)
+            interactive: false,   // ne capte pas les clics (laisse les POI cliquables)
             keyboard: false,
-            zIndexOffset: 1000,   // au-dessus du tracé et des futurs marqueurs POI
+            zIndexOffset: 1000,   // au-dessus du tracé et des marqueurs POI
         }).addTo(map);
     } else {
         _gpsMarker.setLatLng(latlng);
@@ -293,6 +466,7 @@ export function startFollow() {
     }
 
     _overlay = buildOverlay(circuit);
+    buildPoiMarkers(); // marqueurs POI cliquables (PR3)
 
     // Entrée d'historique : le Back Android (et la croix) quittent le suivi
     // au lieu de revenir à la liste des circuits.
@@ -304,6 +478,8 @@ export function startFollow() {
     requestAnimationFrame(() => {
         if (!_active || !map) return;
         map.invalidateSize();
+        // Les marqueurs sont rendus : on peut appliquer l'état « visité ».
+        _poiMarkers.forEach((_v, poiId) => applyMarkerVisited(poiId));
         const points = getFitPoints(circuit);
         if (points.length > 0) {
             eventBus.emit('map:fit-bounds-to-points', {
@@ -324,9 +500,21 @@ export function startFollow() {
     document.addEventListener('visibilitychange', _visHandler);
 }
 
+// Point d'entrée unique du Back/croix pendant le suivi : si un sheet POI est
+// ouvert, on le ferme d'abord ; sinon on quitte le suivi. (Appelé par
+// mobile-nav.onHwBack, déclenché par le pop de l'entrée d'historique.)
+export function followBack() {
+    if (_sheetEl) { closeSheetInternal(); return; }
+    stopFollow();
+}
+
 export function stopFollow() {
     if (!_active) return;
     _active = false;
+
+    // Sheet + marqueurs POI (PR3)
+    closeSheetInternal();
+    removePoiMarkers();
 
     // GPS + Wake Lock teardown (PR2)
     stopWatch();
