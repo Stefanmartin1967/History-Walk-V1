@@ -483,19 +483,21 @@
     overflow: hidden;
 }
 
-/* --- COMPARE GRID (2 / 3 / 4 emplacements) --- */
+/* --- COMPARE GRID (cols × rows pilotés par variables JS) ---
+   Les rangées sont en `1fr` (et non `auto`) : c'est ce qui BORNE chaque photo
+   par la hauteur disponible. Sans ça, sur grand écran la rangée prenait la
+   hauteur naturelle de l'image → débordement (« on ne voit que 50% »). cols/rows
+   sont posés par renderFocus (gridForSlots). */
 .pb-compare {
     flex: 1;
     display: grid;
+    grid-template-columns: repeat(var(--pb-cols, 2), 1fr);
+    grid-template-rows: repeat(var(--pb-rows, 1), 1fr);
     gap: var(--space-md);
     padding: var(--space-lg);
     min-height: 0;
     background: var(--surface);
 }
-.pb-compare[data-count="1"] { grid-template-columns: 1fr; }
-.pb-compare[data-count="2"] { grid-template-columns: 1fr 1fr; }
-.pb-compare[data-count="3"] { grid-template-columns: 1fr 1fr 1fr; }
-.pb-compare[data-count="4"] { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
 
 .pb-compare-cell {
     position: relative;
@@ -710,8 +712,9 @@
 
 /* Responsive focus : 2 colonnes max sur étroit */
 @media (max-width: 768px) {
-    .pb-compare[data-count="3"],
-    .pb-compare[data-count="4"] { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    /* Mobile : 2 colonnes max, rangées 1fr auto (autant que nécessaire) — la
+       hauteur reste bornée par rangée. */
+    .pb-compare { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: 1fr; }
     .pb-focus-back span { display: none; }
     .pb-pellicule-thumb { width: 72px; height: 72px; }
 }
