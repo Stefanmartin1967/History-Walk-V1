@@ -366,6 +366,11 @@ function setGpsState(stateName) {
     const invite = _overlay.querySelector('#follow-invite');
     if (acq) acq.hidden = stateName !== 'acquiring';
     if (invite) invite.hidden = stateName !== 'denied';
+    // L'invite GPS (refusé) occupe le coin bas → masque les rafts de contrôles
+    // pour éviter qu'ils chevauchent le bouton « Autoriser ». De toute façon,
+    // sans position il n'y a pas de point bleu à recentrer ni d'intérêt au zoom
+    // dans ce cas transitoire. (Même logique que `.has-sheet`.)
+    _overlay.classList.toggle('has-invite', stateName === 'denied');
     // Le point bleu n'a de sens qu'en 'live' (on a une position).
     if (stateName !== 'live') removePuck();
 }
