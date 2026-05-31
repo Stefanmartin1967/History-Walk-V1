@@ -229,6 +229,13 @@
 .pb-act.is-primary { background: var(--cta-bg); color: var(--cta-fg); border-color: var(--cta-bg); }
 .pb-act.is-primary:hover:not(:disabled) { filter: brightness(1.06); }
 
+/* État « Enregistré » du bouton de save par groupe (point 5) : vert discret et
+   inerte. On neutralise l'opacity 0.4 du :disabled générique pour garder le
+   libellé lisible (le bouton est désactivé exprès, pas indisponible). */
+.pb-act.is-saved { background: var(--ok-soft); color: var(--ok-fg); border-color: transparent; }
+.pb-act.is-saved:disabled { opacity: 1; cursor: default; }
+.pb-act.is-saved svg { color: var(--ok-fg); }
+
 /* Boutons « lien carte » Maps / OSM (vérifier le lieu rattaché) — même langage
    visuel que la mini-barre de la fiche Lieu (.poi-quick-btn) : icône bleue, et
    au survol bordure + texte bleus. Hauteur 32px conservée (cohérence de la barre
