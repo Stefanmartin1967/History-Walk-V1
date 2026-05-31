@@ -294,7 +294,7 @@ export const RichEditor = {
         if (zoneInput) zoneInput.disabled = true;
 
         setValue(DOM_IDS.INPUTS.DESC_SHORT, merged['Description_courte'] || "");
-        setValue(DOM_IDS.INPUTS.DESC_LONG, merged['description'] || merged.Description || "");
+        setValue(DOM_IDS.INPUTS.DESC_LONG, merged['description'] || "");
         setValue(DOM_IDS.INPUTS.NOTES, merged['notes'] || "");
 
         // Temps : Temps_minutes (number) → décomposé en h + m

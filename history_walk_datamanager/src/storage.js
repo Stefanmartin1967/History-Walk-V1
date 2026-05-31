@@ -362,7 +362,7 @@ export function saveFeature(formData, indexToUpdate = null) {
         "État": formData.etat || null,
         "Accès": formData.acces || null,
         "Zone": formData.zone || null,
-        "Description": formData.description || null,
+        "description": formData.description || null,
         "Description_courte": formData.descCourte || null,
         "Source": formData.source || null,
         "Temps_minutes": formData.tempsMinutes,
@@ -472,7 +472,7 @@ export function runMaintenance() {
         if(oldUrl !== clean) { f.properties['Source'] = clean; cUrl++; }
         
         // 2. Structure : S'assurer que les champs vides sont bien null (rétroactif)
-        if (f.properties['Description'] === "") f.properties['Description'] = null;
+        if (f.properties['description'] === "") f.properties['description'] = null;
         if (f.properties['Source'] === "") f.properties['Source'] = null;
         if (f.properties['Catégorie'] === "") f.properties['Catégorie'] = null;
         if (f.properties['Zone'] === "") f.properties['Zone'] = null;

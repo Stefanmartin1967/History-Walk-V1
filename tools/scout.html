@@ -681,7 +681,7 @@ out geom;`;
 
             // 7. Description
             const tdDesc = document.createElement('td');
-            tdDesc.appendChild(createTextarea(data['Description'], "Courte description..."));
+            tdDesc.appendChild(createTextarea(data['description'], "Courte description..."));
             tr.appendChild(tdDesc);
 
             // 8. Source
@@ -914,7 +914,7 @@ out geom;`;
                         "Nom du site arabe": nameAr,
                         "Catégorie": getHwCategory(t),
                         "Zone": detectZone(lat, lon),
-                        "Description": t.description || "",
+                        "description": t.description || "",
                         "Source": "",
                         "Coordonnées GPS": `${lat}, ${lon}`,
                         "HW_ID": generateHWID()
@@ -990,7 +990,7 @@ out geom;`;
                         // (GeoJSON standard, écrit ci-dessus). Plus de champs
                         // textuels Coordonnées GPS / Latitude / Longitude
                         // depuis le cleanup 06/05/2026.
-                        "Description": desc,
+                        "description": desc,
                         "Source": src,
                         "Temps de visite": null,
                         "Prix d'entrée": null,
@@ -1228,7 +1228,7 @@ out geom;`;
                     properties: {
                         'Nom du site FR': nom, 'Nom du site arabe': nomAr,
                         'Catégorie': cat, 'Zone': zone,
-                        'Description': desc, 'Source': src,
+                        'description': desc, 'Source': src,
                         'Temps de visite': null, 'Prix d\'entrée': null,
                         'Description_courte': null, 'HW_ID': id
                     }

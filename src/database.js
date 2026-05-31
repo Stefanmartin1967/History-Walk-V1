@@ -200,6 +200,44 @@ export async function getAllPoiDataForMap(mapId) {
     }));
 }
 
+/**
+ * Migration one-shot : pour chaque entrée du store `poiUserData` d'une carte,
+ * normalise la clé `Description` (capital) en `description` (lowercase).
+ *   - les 2 cases coexistent → lowercase a la priorité, capital supprimée
+ *   - capital seule           → renommée en lowercase
+ * Idempotente. Retourne le nombre d'entrées modifiées.
+ *
+ * Pourquoi ICI et pas en mémoire seule : si on normalise juste `state.userData`
+ * sans toucher le store, le prochain `savePoiData` fera `{...existing, ...data}`
+ * qui ressort la clé `Description` du store → migration annulée. Il faut écrire
+ * la version normalisée au store, en remplaçant l'entrée entière (pas un merge).
+ */
+export async function normalizeDescriptionCaseInPoiData(mapId) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('poiUserData', 'readwrite');
+        const store = tx.objectStore('poiUserData');
+        const req = store.index('mapId_index').openCursor(mapId);
+        let migrated = 0;
+        req.onsuccess = (e) => {
+            const cursor = e.target.result;
+            if (!cursor) return; // fin du curseur → tx.oncomplete prend le relais
+            const v = cursor.value;
+            if (v && typeof v === 'object' && 'Description' in v) {
+                if (!('description' in v) || v.description == null) {
+                    v.description = v.Description;
+                }
+                delete v.Description;
+                cursor.update(v);
+                migrated++;
+            }
+            cursor.continue();
+        };
+        req.onerror = (e) => reject(e.target.error);
+        tx.oncomplete = () => resolve(migrated);
+        tx.onerror = (e) => reject(e.target.error);
+    }));
+}
+
 export async function savePoiData(mapId, poiId, data) {
     return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('poiUserData', 'readwrite');
