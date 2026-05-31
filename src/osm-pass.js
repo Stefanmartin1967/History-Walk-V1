@@ -284,7 +284,6 @@ function setupCurrentPoi() {
     if (!item || !item.feature) return;
 
     const [lon, lat] = item.feature.geometry.coordinates;
-    map.flyTo([lat, lon], 18, { duration: 0.6 });
 
     // Drapeau visible si on a un accessPoint connu OU une suggestion OSM cachée
     // (status='osm'/'moved') ; sinon pas de drapeau (POI failed sans suggestion).
@@ -307,6 +306,22 @@ function setupCurrentPoi() {
             const ll = _marker.getLatLng();
             _line.setLatLngs([[lat, lon], [ll.lat, ll.lng]]);
         });
+        // Cadrage qui GARANTIT que POI ET drapeau sont visibles ensemble.
+        // flyTo(POI, 18) zoomait trop fort et pouvait laisser le drapeau hors
+        // viewport quand la voie OSM était à 50-150 m (bug attrapé par Stefan
+        // sur Rym Beach / Mosquée Trojette pendant le test de la PR #710).
+        // Padding généreux pour ne pas coller aux bords (panneau gauche +
+        // barre d'action en bas).
+        const bounds = L.latLngBounds([[lat, lon], [apLat, apLon]]);
+        map.flyToBounds(bounds, {
+            paddingTopLeft: [380, 80],   // panneau 340px + marge
+            paddingBottomRight: [80, 140], // barre d'action ~120px
+            maxZoom: 18,
+            duration: 0.6,
+        });
+    } else {
+        // Pas de drapeau (POI failed sans suggestion) : on cadre juste sur le POI.
+        map.flyTo([lat, lon], 18, { duration: 0.6 });
     }
 }
 

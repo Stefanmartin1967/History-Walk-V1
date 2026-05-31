@@ -25,20 +25,16 @@ body.osm-pass-active #right-sidebar {
     z-index: 1500;       /* > sidebar HW V2 (1002), < modales (2000) */
     display: grid;
     grid-template-columns: 340px 1fr;
-    pointer-events: none; /* la carte au centre reste visible mais l'overlay
-                             ne bloque pas par défaut — les enfants .auto-on
-                             ré-activent leurs interactions individuellement */
+    pointer-events: none; /* la carte au centre reste interactive (zoom/pan
+                             Leaflet) ; seuls le panneau et la barre d'action
+                             interceptent les events via pointer-events:auto */
 }
 
-/* Voile transparent qui INTERCEPTE les clics sur la zone carte (empêche de
-   sélectionner un autre POI pendant la passe). Sans masquer visuellement. */
-.osm-pass-overlay::after {
-    content: "";
-    grid-column: 2;
-    grid-row: 1;
-    pointer-events: auto;
-    /* invisible mais clickable — bloque les events vers la carte */
-}
+/* NB : pas de voile bloquant sur la zone carte — pour ne pas neutraliser le
+   zoom et le pan natif Leaflet (bug attrapé par Stefan sur PR #710). Si
+   l'admin clique un marker pendant la passe, openDetailsPanel se déclenche
+   mais rend dans la sidebar HW V2 (masquée via body.osm-pass-active) → effet
+   visuel nul, la passe continue normalement. */
 
 /* ============================================================
    2. PANNEAU LATÉRAL GAUCHE (liste + progression + filtres)
