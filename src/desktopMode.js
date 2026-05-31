@@ -12,6 +12,7 @@ import { DOM } from './ui-dom.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
 import { getExifLocation, resizeImage, sha256OfFile, openCoordsOnMap } from './utils.js';
+import { createIcons, appIcons } from './lucide-icons.js';
 import { clusterPhotos } from './photo-clustering.js';
 import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
@@ -307,6 +308,10 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
         }
         desktopDraftMarker = null;
     });
+
+    // Les <i data-lucide> du popup doivent être convertis en SVG avant que
+    // Leaflet ne les enchâsse (ils ne reçoivent pas de scan global).
+    createIcons({ icons: appIcons, root: popupContent });
 
     desktopDraftMarker.bindPopup(popupContent, { minWidth: 200, closeOnClick: false }).openPopup();
 
