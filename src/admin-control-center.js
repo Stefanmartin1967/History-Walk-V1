@@ -7,13 +7,13 @@ import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { showToast } from './toast.js';
-import { showConfirm, closeModal } from './modal.js';
+import { showConfirm } from './modal.js';
 import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData } from './database.js';
 import { uploadPhotoForPoi } from './photo-service.js';
 
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, diffData } from './admin-diff-engine.js';
-import { openControlCenterModal, renderTab } from './admin-control-ui.js';
+import { openControlCenterModal, renderTab, closeCCModal } from './admin-control-ui.js';
 
 /**
  * Construit l'entrée d'index circuit (circuits/<map>.json) à partir d'un circuit
@@ -515,10 +515,17 @@ async function publishChanges() {
     if (!ok) return;
 
     const btn = document.getElementById('btn-cc-publish');
+    // Affiche l'étape en cours dans le bouton (spinner + libellé court). Permet
+    // à l'admin de voir où en est la publication sur un gros lot (photos
+    // séquentielles + circuits) au lieu d'un « Envoi... » statique.
+    const setBtnLabel = (label) => {
+        if (!btn) return;
+        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> ${label}`;
+        createIcons({ icons: appIcons, root: btn });
+    };
     if (btn) {
         btn.disabled = true;
-        btn.innerHTML = `<i data-lucide="loader-2" class="spin"></i> Envoi...`;
-        createIcons({ icons: appIcons, root: btn });
+        setBtnLabel('Envoi…');
     }
 
     try {
@@ -538,6 +545,9 @@ async function publishChanges() {
 
         const pendingMap = diffData.pendingPhotos || {};
         const pendingPoiIds = Object.keys(pendingMap);
+        // Total des photos publiables (déjà calculé par le diff engine) — sert
+        // de dénominateur à la progression « Photos N/M ».
+        const totalPhotosToPublish = diffData.stats?.pendingPhotoCount || 0;
 
         if (pendingPoiIds.length > 0) {
             for (const poiId of pendingPoiIds) {
@@ -553,6 +563,7 @@ async function publishChanges() {
                 const successIds = [];
                 // Séquentiel : évite les conflits de commit parallèles sur main.
                 for (const item of toPublish) {
+                    if (totalPhotosToPublish > 0) setBtnLabel(`Photos ${uploadedPhotoCount + failedPhotoCount + 1}/${totalPhotosToPublish}`);
                     try {
                         const file = new File([item.blob], 'photo.jpg', { type: 'image/jpeg' });
                         const url = await uploadPhotoForPoi(file, poiId);
@@ -590,6 +601,7 @@ async function publishChanges() {
         }
 
         // ─── 2. GÉNÉRATION + UPLOAD DU GEOJSON ───
+        setBtnLabel('Géojson…');
         // Collect IDs to delete
         const idsToDelete = Object.keys(adminDraft.pendingPois).filter(id => adminDraft.pendingPois[id].type === 'delete');
 
@@ -612,6 +624,7 @@ async function publishChanges() {
         // Publication du statut "vérifié" (testedCircuits) si changements détectés.
         // Fichier public lu par tous les users au boot pour afficher le bouclier vert.
         if (diffData.testedChanges && diffData.testedChanges.hasChanges) {
+            setBtnLabel('Statut vérifié…');
             try {
                 const testedPayload = diffData.testedChanges.snapshot || {};
                 const testedBlob = new Blob([JSON.stringify(testedPayload, null, 2)], { type: 'application/json' });
@@ -640,6 +653,7 @@ async function publishChanges() {
         const circuitChanges = diffData.circuits || [];
         if (circuitChanges.length > 0) {
             try {
+                let circuitProgress = 0;
                 // Index distant courant (base pour upsert / suppression).
                 let index = [];
                 try {
@@ -652,6 +666,8 @@ async function publishChanges() {
                 let indexDirty = false;
 
                 for (const c of circuitChanges) {
+                    circuitProgress++;
+                    setBtnLabel(`Circuits ${circuitProgress}/${circuitChanges.length}`);
                     const isDeletion = c.isDeletion
                         || (c.changes && c.changes.some(ch => ch.key === 'STATUT' && ch.new === 'SUPPRESSION'));
 
@@ -718,6 +734,7 @@ async function publishChanges() {
         const toastKind = failedPhotoCount > 0 ? 'warning' : 'success';
         showToast(toastMsg, toastKind, failedPhotoCount > 0 ? 6000 : 3500);
 
+        setBtnLabel('Nettoyage…');
         adminDraft = { pendingPois: {}, pendingCircuits: {} };
         // AWAIT : même raison que Ignorer — garantir que le draft vide est
         // persisté avant tout F5 éventuel.
@@ -765,7 +782,11 @@ async function publishChanges() {
             console.warn('[CC] Purge SW cache failed:', e);
         }
 
-        closeModal();
+        // Le CC utilise son propre shell custom .admin-cc-overlay (refonte PR 3),
+        // pas la modale legacy ni V2 → closeModal() de modal.js était un no-op
+        // (bug : le CC restait ouvert après publication réussie). closeCCModal
+        // est la fermeture dédiée (révoque les blob URLs, retire le DOM, etc.).
+        closeCCModal();
 
     } catch (e) {
         console.error(e);
