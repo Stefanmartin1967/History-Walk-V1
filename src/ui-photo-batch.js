@@ -4,7 +4,7 @@
 // Les phases suivantes ajouteront la publication, le ZIP et le nouveau lieu.
 
 import Sortable from 'sortablejs';
-import { resizeImage, calculateDistance, openPoiOnMap } from './utils.js';
+import { resizeImage, calculateDistance, openPoiOnMap, openCoordsOnMap } from './utils.js';
 import { getPoiName, getPoiId } from './data.js';
 import { getSearchResults } from './search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -1381,27 +1381,42 @@ function buildClusterSection(cluster, index) {
         }
     }
 
-    // Vérifier le lieu rattaché sur Maps / OSM (par COORDONNÉES — pour
-    // confirmer/corriger le nom du POI suggéré). Affiché seulement si un POI
-    // est rattaché (sinon rien à vérifier ; on utilise Rattacher/Créer).
-    if (hasNearbyPoi) {
-        const verifyFeature = cluster.nearbyPois[0].feature;
+    // Maps / OSM (par COORDONNÉES — jamais par nom).
+    //   - Rattaché : ouvre les coords du POI suggéré (vérifier/corriger le nom).
+    //   - Orphelin / Hors POI : ouvre le BARYCENTRE des photos (= leurs EXIF) →
+    //     répond à « où l'app pense que cette photo se trouve » (diagnostic
+    //     quand le POI proposé est étrangement loin de la photo réelle).
+    //   - Sans GPS : pas de coords → pas de boutons.
+    const photoCenter = !hasNearbyPoi && !cluster.noGps ? getClusterCenter(cluster) : null;
+    if (hasNearbyPoi || photoCenter) {
+        const isPhotoPos = !hasNearbyPoi;
+        const gmapsTitle = isPhotoPos
+            ? 'Voir la position de la photo sur Google Maps'
+            : 'Vérifier ce lieu sur Google Maps';
+        const osmTitle = isPhotoPos
+            ? 'Voir la position de la photo sur OpenStreetMap'
+            : 'Vérifier ce lieu sur OpenStreetMap';
+        const open = (provider) => {
+            if (isPhotoPos) openCoordsOnMap(photoCenter.lat, photoCenter.lng, provider);
+            else openPoiOnMap(cluster.nearbyPois[0].feature, provider);
+        };
+
         const mapsBtn = document.createElement('button');
         mapsBtn.className = 'pb-act is-maplink';
         mapsBtn.type = 'button';
         mapsBtn.innerHTML = '<i data-lucide="map-pin"></i><span>Maps</span>';
-        mapsBtn.title = 'Vérifier ce lieu sur Google Maps';
-        mapsBtn.setAttribute('aria-label', 'Vérifier sur Google Maps');
-        mapsBtn.addEventListener('click', (e) => { e.stopPropagation(); openPoiOnMap(verifyFeature, 'gmaps'); });
+        mapsBtn.title = gmapsTitle;
+        mapsBtn.setAttribute('aria-label', gmapsTitle);
+        mapsBtn.addEventListener('click', (e) => { e.stopPropagation(); open('gmaps'); });
         actions.appendChild(mapsBtn);
 
         const osmBtn = document.createElement('button');
         osmBtn.className = 'pb-act is-maplink';
         osmBtn.type = 'button';
         osmBtn.innerHTML = '<i data-lucide="map"></i><span>OSM</span>';
-        osmBtn.title = 'Vérifier ce lieu sur OpenStreetMap';
-        osmBtn.setAttribute('aria-label', 'Vérifier sur OpenStreetMap');
-        osmBtn.addEventListener('click', (e) => { e.stopPropagation(); openPoiOnMap(verifyFeature, 'osm'); });
+        osmBtn.title = osmTitle;
+        osmBtn.setAttribute('aria-label', osmTitle);
+        osmBtn.addEventListener('click', (e) => { e.stopPropagation(); open('osm'); });
         actions.appendChild(osmBtn);
     }
 

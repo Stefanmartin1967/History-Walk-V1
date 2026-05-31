@@ -74,6 +74,26 @@ export function getPoiName(feature) {
 }
 
 /**
+ * Ouvre une position (lat/lng) sur Google Maps ou OpenStreetMap. Helper bas
+ * niveau réutilisé par openPoiOnMap (par POI) et par l'import photo (par
+ * barycentre EXIF d'un groupe orphelin — diagnostic « où l'app a positionné
+ * cette photo »).
+ * @param {number} lat
+ * @param {number} lng
+ * @param {'gmaps'|'osm'} [provider]
+ * @returns {boolean} false si coords invalides
+ */
+export function openCoordsOnMap(lat, lng, provider = 'gmaps') {
+    if (typeof lat !== 'number' || typeof lng !== 'number'
+        || !Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+    const url = provider === 'osm'
+        ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`
+        : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+    return true;
+}
+
+/**
  * Ouvre la position d'un POI sur Google Maps ou OpenStreetMap, PAR COORDONNÉES
  * (jamais par nom : si le nom est erroné, une recherche textuelle renverrait du
  * vide ou un mauvais lieu). Réutilisé par la fiche POI (mini-bar) et l'import
@@ -86,11 +106,7 @@ export function openPoiOnMap(feature, provider = 'gmaps') {
     const coords = feature?.geometry?.coordinates;
     if (!Array.isArray(coords) || coords.length < 2) return false;
     const [lng, lat] = coords;
-    const url = provider === 'osm'
-        ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`
-        : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
-    return true;
+    return openCoordsOnMap(lat, lng, provider);
 }
 
 export function downloadFile(filename, content, mimeType) {
