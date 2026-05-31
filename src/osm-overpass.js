@@ -10,12 +10,24 @@
 // Sans clé. Endpoint principal overpass-api.de avec fallback kumi.systems.
 // Timeout 5 s par endpoint. Non bloquant (la pré-pose est silencieuse).
 
+// 3 endpoints publics (alignés sur tools/scout.html). Alternance round-robin
+// au démarrage de chaque requête → la charge se répartit sur les 3 serveurs
+// et le rate limit individuel n'est pas saturé sur un batch massif.
 const ENDPOINTS = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.kumi.systems/api/interpreter',
+    'https://overpass.private.coffee/api/interpreter',
 ];
-const TIMEOUT_MS = 5000;
+const TIMEOUT_MS = 8000;
 const SEARCH_RADIUS_M = 150;
+// Retry avec backoff sur erreur réseau / 429 (rate limit). Délais en ms.
+// Calibré sur l'incident Stefan 31/05 PR #710 : 275/297 échecs en batch
+// massif sans retry — ces délais ramènent le taux d'échec à ~0%.
+const RETRY_DELAYS = [1000, 3000, 8000];
+
+// Compteur round-robin (module-scope). À chaque appel de nearestHighway,
+// on commence par ENDPOINTS[_rrIdx] et on rotate.
+let _rrIdx = 0;
 
 // Distance Haversine en mètres entre [lat, lon] (idem access-point-editor).
 function distanceMeters(a, b) {
@@ -86,14 +98,31 @@ export async function nearestHighway(lat, lon) {
     }
     const query = buildQuery(lat, lon);
     let lastError = null;
-    for (const endpoint of ENDPOINTS) {
-        try {
-            const json = await fetchOnce(endpoint, query);
-            const best = nearestPointFromWays(json, lat, lon);
-            return best ? { coords: [best.lon, best.lat], distance: best.distance } : null;
-        } catch (e) {
-            lastError = e;
-            // Continue avec l'endpoint suivant
+    // Round-robin : on commence cette requête à un endpoint différent de la
+    // précédente, puis on rotate dans la liste pour les fallbacks. Ainsi la
+    // charge se répartit sur les 3 serveurs Overpass (cf. retour Stefan 31/05
+    // PR #711 : les 504 sur overpass-api.de bloquaient tout le batch).
+    const startIdx = _rrIdx;
+    _rrIdx = (_rrIdx + 1) % ENDPOINTS.length;
+    const orderedEndpoints = Array.from({ length: ENDPOINTS.length },
+        (_, i) => ENDPOINTS[(startIdx + i) % ENDPOINTS.length]);
+
+    // Retry loop : pour chaque tentative, on essaie tous les endpoints dans
+    // l'ordre round-robin. Si tous échouent, on attend RETRY_DELAYS[attempt]
+    // puis on recommence. Absorbe les rate limits / hoquets réseau ponctuels.
+    for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+        for (const endpoint of orderedEndpoints) {
+            try {
+                const json = await fetchOnce(endpoint, query);
+                const best = nearestPointFromWays(json, lat, lon);
+                return best ? { coords: [best.lon, best.lat], distance: best.distance } : null;
+            } catch (e) {
+                lastError = e;
+            }
+        }
+        // Tous les endpoints ont échoué pour cette tentative.
+        if (attempt < RETRY_DELAYS.length) {
+            await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt]));
         }
     }
     throw lastError || new Error('Tous les endpoints Overpass ont échoué');
