@@ -246,13 +246,31 @@ export function initMapListeners() {
 // sur le fond Voyager. Accepte une feature pour faire le lookup sous-type
 // (un marabout fortifié, une mosquée à minaret…). Fallback compat : un
 // string (category) est aussi accepté pour les rares appelants legacy.
+//
+// PR 3/5 chantier point d'accès v2 : ajout d'une pastille ambre .hw-poi-flagdot
+// sur le marqueur si le POI a `accessPointStatus='failed'` (Overpass échoué à
+// la création) ET qu'on est admin. Visuel discret qui repère « ce POI attend
+// son drapeau » directement sur la carte normale, en complément de la passe
+// globale qui les liste.
 export function createHistoryWalkIcon(featureOrCategory) {
     const iconHtml = typeof featureOrCategory === 'string'
         ? getIconHtml(featureOrCategory)
         : getIconForFeature(featureOrCategory);
 
+    // Pastille « non-évalué » : admin uniquement, et seulement si la feature
+    // porte effectivement le status 'failed' (lookup userData prioritaire).
+    let flagDotHtml = '';
+    if (state.isAdmin && typeof featureOrCategory !== 'string') {
+        const f = featureOrCategory;
+        const status = f?.properties?.userData?.accessPointStatus
+                    ?? f?.properties?.accessPointStatus;
+        if (status === 'failed') {
+            flagDotHtml = '<span class="hw-poi-flagdot" title="Drapeau d\'accès à reprendre"></span>';
+        }
+    }
+
     return L.divIcon({
-        html: `<div class="hw-icon-wrapper">${iconHtml}</div>`,
+        html: `<div class="hw-icon-wrapper">${iconHtml}${flagDotHtml}</div>`,
         className: 'hw-icon',
         iconSize: [44, 44],
         iconAnchor: [22, 44],

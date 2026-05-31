@@ -686,6 +686,14 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-osm-pass" aria-label="Passe drapeaux OSM — revue des POI off-route">
+                <div class="cc-card-ico"><i data-lucide="flag"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Passe drapeaux OSM</div>
+                    <div class="cc-card-sub">Revue des POI off-route + pré-pose Overpass</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
         `;
 
         // Stats omises en empty state (totalCount=0) : 4 compteurs à 0 sont
@@ -754,6 +762,16 @@ export function renderTab(tab, diffData, callbacks) {
             bindCardAction('btn-cc-tool-import-geojson', () => {
                 const loader = document.getElementById('geojson-loader');
                 if (loader) loader.click();
+            });
+
+            // Outils — Passe drapeaux OSM (PR 3/5 chantier point d'accès v2)
+            // Ferme le CC puis lance le mode plein-écran (panneau gauche + carte
+            // + barre d'action). La sidebar HW V2 est masquée le temps de la
+            // session via body.osm-pass-active.
+            bindCardAction('btn-cc-tool-osm-pass', async () => {
+                closeCCModal();
+                const { startOsmPass } = await import('./osm-pass.js');
+                startOsmPass();
             });
 
             // Stat-cards → goto changes sub-view
