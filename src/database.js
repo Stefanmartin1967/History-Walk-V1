@@ -2,7 +2,7 @@
 const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
 
-const DB_VERSION = 6;
+const DB_VERSION = 8;
 
 // Helper: convert a base64 data-URL string to a Blob
 export function base64ToBlob(base64) {
@@ -93,6 +93,17 @@ export function initDB() {
             // 5. Photos utilisateur (Blobs natifs — séparé de poiUserData pour alléger les exports)
             if (!tempDb.objectStoreNames.contains('poiPhotos')) {
                 tempDb.createObjectStore('poiPhotos', { keyPath: ['mapId', 'poiId'] })
+                      .createIndex('mapId_index', 'mapId', { unique: false });
+            }
+
+            // 6. Cache OSM nearest-way (chantier point d'accès v2, 31/05/2026)
+            // Réponse Overpass mise en cache par POI pour éviter de re-fetch :
+            // - à la création silencieuse depuis richEditor,
+            // - au clic « Pré-poser via OSM » dans la barre unitaire,
+            // - à la passe globale (PR3).
+            // Pas de TTL : l'admin re-déclenche manuellement si OSM a évolué.
+            if (!tempDb.objectStoreNames.contains('osmNearestWay')) {
+                tempDb.createObjectStore('osmNearestWay', { keyPath: ['mapId', 'poiId'] })
                       .createIndex('mapId_index', 'mapId', { unique: false });
             }
         };
@@ -677,4 +688,40 @@ export async function clearStore(storeName) {
     } catch (err) {
         return Promise.reject(err);
     }
+}
+
+// === Cache OSM nearest-way (chantier point d'accès v2, PR 2/5) =================
+// Persiste la réponse Overpass {coords, distance} par POI pour éviter de re-fetch.
+// Pas de TTL — l'admin re-déclenche manuellement via le bouton « Pré-poser via
+// OSM » si OSM a évolué. Clé composée [mapId, poiId] comme poiUserData/poiPhotos.
+
+export async function getCachedNearestWay(mapId, poiId) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('osmNearestWay', 'readonly');
+        const req = tx.objectStore('osmNearestWay').get([mapId, poiId]);
+        req.onsuccess = () => {
+            const r = req.result;
+            // Retourne { coords:[lon,lat], distance:m, fetchedAt:ms } ou null.
+            resolve(r ? { coords: r.coords, distance: r.distance, fetchedAt: r.fetchedAt } : null);
+        };
+        req.onerror = (e) => reject(e.target.error);
+    }));
+}
+
+export async function setCachedNearestWay(mapId, poiId, payload) {
+    // payload = { coords:[lon,lat]|null, distance:number|null, fetchedAt?:number }
+    // coords/distance peuvent être null si Overpass a trouvé « aucune voie dans le rayon ».
+    const record = {
+        mapId,
+        poiId,
+        coords: payload.coords ?? null,
+        distance: payload.distance ?? null,
+        fetchedAt: payload.fetchedAt ?? Date.now(),
+    };
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('osmNearestWay', 'readwrite');
+        const req = tx.objectStore('osmNearestWay').put(record);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+    }));
 }

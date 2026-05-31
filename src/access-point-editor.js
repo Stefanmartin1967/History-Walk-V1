@@ -23,7 +23,9 @@ import { map } from './map.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { getAccessPoint, escapeXml } from './utils.js';
 import { showToast } from './toast.js';
+import { showConfirm } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { prepoSeAccessPoint, getAccessPointStatus } from './access-point.js';
 
 let _marker = null;     // drapeau draggable
 let _line = null;       // ligne POI → drapeau
@@ -32,19 +34,29 @@ let _measureEl = null;  // <b> où l'on injecte l'écart live (m)
 let _onMapClick = null;
 let _poiLatLng = null;  // [lat, lng] du POI (fixe)
 let _poiId = null;
+let _poiFeature = null; // référence pour le bouton « Pré-poser via OSM »
 let _hadAccessPoint = false;
+let _prepopBtn = null;  // bouton « Pré-poser via OSM »
+let _flagState = 'moved'; // 'osm' | 'moved' — couleur courante du drapeau
 
-function flagIcon() {
-    // Structure .hw-flag (refonte v2) — mât + fanion + ancre au sol via ::after.
-    // Modifier --moved : vert (drapeau posé manuellement par l'admin). En PR2,
-    // les drapeaux pré-posés par OSM utiliseront --osm (orange) selon le champ
-    // accessPointSource ; ici on est dans le geste manuel exclusivement.
+function flagIcon(state) {
+    // Couleur selon source : 'osm' = orange (pré-posé), 'moved' = vert (admin).
+    // PR2 introduit le champ accessPointStatus ; le drapeau hérite de cette
+    // valeur à l'ouverture, et bascule en 'moved' dès que l'admin drag (cf.
+    // _marker.on('drag', ...) plus bas).
+    const modifier = state === 'osm' ? 'hw-flag--osm' : 'hw-flag--moved';
     return L.divIcon({
-        className: 'hw-flag hw-flag--moved',
+        className: 'hw-flag ' + modifier,
         html: '<span class="hw-flag-mast"></span><span class="hw-flag-banner"></span>',
         iconSize: [22, 30],
         iconAnchor: [3, 30], // pointe du mât en bas-gauche
     });
+}
+
+function setFlagState(newState) {
+    if (!_marker || newState === _flagState) return;
+    _flagState = newState;
+    _marker.setIcon(flagIcon(newState));
 }
 
 // Haversine — distance en mètres entre deux points [lat, lng]. Utilisée pour
@@ -81,15 +93,20 @@ function teardown() {
     if (_toolbar && _toolbar.parentNode) { _toolbar.parentNode.removeChild(_toolbar); }
     _toolbar = null;
     _measureEl = null;
+    _prepopBtn = null;
     _poiId = null;
     _poiLatLng = null;
+    _poiFeature = null;
     _hadAccessPoint = false;
+    _flagState = 'moved';
 }
 
 function buildToolbar(feature) {
     // Barre redesignée (.ap-bar) — Variante A du handoff Design.
     // Structure : pastille icône + titre/consigne + mesure live + actions.
-    // Pas de bouton « Pré-poser via OSM » en PR1 (arrive en PR2 avec Overpass).
+    // PR 2/5 : ajout du bouton « Pré-poser via OSM » (à gauche). Direct si
+    // pas de drapeau OU drapeau orange OSM ; modale de confirmation si vert
+    // déplacé manuellement (évite d'écraser un ajustement humain).
     const bar = document.createElement('div');
     bar.className = 'ap-bar';
     const name = escapeXml(getPoiName(feature) || 'ce lieu');
@@ -103,6 +120,9 @@ function buildToolbar(feature) {
             <span class="ap-measure">Écart <b data-measure>—</b></span>
         </div>
         <div class="ap-bar-actions">
+            <button type="button" class="ap-bar-btn" data-act="prepop">
+                <i data-lucide="sparkles"></i> Pré-poser via OSM
+            </button>
             <span class="grow"></span>
             <button type="button" class="ap-bar-btn" data-act="erase">Effacer</button>
             <button type="button" class="ap-bar-btn" data-act="cancel">Annuler</button>
@@ -117,6 +137,8 @@ function buildToolbar(feature) {
     bar.querySelector('[data-act="save"]').addEventListener('click', onSave);
     bar.querySelector('[data-act="erase"]').addEventListener('click', onErase);
     bar.querySelector('[data-act="cancel"]').addEventListener('click', teardown);
+    _prepopBtn = bar.querySelector('[data-act="prepop"]');
+    _prepopBtn.addEventListener('click', onPrepop);
     _measureEl = bar.querySelector('[data-measure]');
     return bar;
 }
@@ -126,6 +148,7 @@ export function startAccessPointPlacement(feature) {
     teardown(); // sécurité : ferme une éventuelle session précédente
 
     _poiId = getPoiId(feature);
+    _poiFeature = feature;
     const [poiLon, poiLat] = feature.geometry.coordinates;
     _poiLatLng = [poiLat, poiLon];
 
@@ -133,16 +156,24 @@ export function startAccessPointPlacement(feature) {
     _hadAccessPoint = !!existing;
     const start = existing ? [existing[1], existing[0]] : [poiLat, poiLon];
 
-    _marker = L.marker(start, { draggable: true, icon: flagIcon(), zIndexOffset: 1200 }).addTo(map);
+    // Couleur initiale : orange si status='osm', vert sinon (legacy,
+    // 'moved', undefined, ou pas de drapeau). Le drag bascule en 'moved'.
+    const initialStatus = getAccessPointStatus(feature);
+    _flagState = initialStatus === 'osm' ? 'osm' : 'moved';
+
+    _marker = L.marker(start, { draggable: true, icon: flagIcon(_flagState), zIndexOffset: 1200 }).addTo(map);
     _line = L.polyline([_poiLatLng, start], {
         color: '#c0392b', weight: 2, dashArray: '5,8', opacity: 0.9, interactive: false,
     }).addTo(map);
 
-    _marker.on('drag', redrawLine);
+    // Drag = geste manuel → bascule visuelle vers vert (moved). Le status data
+    // n'est écrit qu'au Save (onSave écrit 'moved').
+    _marker.on('drag', () => { setFlagState('moved'); redrawLine(); });
     _marker.on('dragend', redrawLine);
 
-    // Clic sur la carte « vide » = (re)place le drapeau à cet endroit.
-    _onMapClick = (e) => { _marker.setLatLng(e.latlng); redrawLine(); };
+    // Clic sur la carte « vide » = (re)place le drapeau à cet endroit (geste
+    // manuel → bascule en moved/vert).
+    _onMapClick = (e) => { _marker.setLatLng(e.latlng); setFlagState('moved'); redrawLine(); };
     map.on('click', _onMapClick);
 
     _toolbar = buildToolbar(feature);
@@ -166,10 +197,64 @@ async function onSave() {
     if (!_marker || !_poiId) return;
     const { lat, lng } = _marker.getLatLng();
     const poiId = _poiId;
+    // Si l'admin n'a rien touché (drapeau initial = orange OSM intact), on
+    // garde 'osm'. Dès qu'il a bougé le drapeau, _flagState passe à 'moved'.
+    const newStatus = _flagState === 'osm' ? 'osm' : 'moved';
     teardown();
     // Format [lon, lat] (cohérent avec geometry.coordinates et gpx.js).
+    // updatePoiData affiche déjà un toast « Enregistré » par appel ; on
+    // appelle 2× (accessPoint + accessPointStatus) — toast 2× ici est OK
+    // car geste explicite et bref. La version silencieuse de la pré-pose
+    // (writeAccessPointSilent) est dans access-point.js pour la création POI.
     await updatePoiData(poiId, 'accessPoint', [lng, lat]);
-    // updatePoiData affiche déjà un toast « Enregistré ».
+    await updatePoiData(poiId, 'accessPointStatus', newStatus);
+}
+
+async function onPrepop() {
+    if (!_poiFeature || !_prepopBtn) return;
+    // Confirmation seulement si on s'apprête à ÉCRASER un drapeau déplacé
+    // manuellement par l'admin (vert). Pas de drapeau OU orange OSM = direct.
+    if (_flagState === 'moved' && _hadAccessPoint) {
+        const ok = await showConfirm(
+            'Remplacer le drapeau',
+            'Le drapeau actuel a été ajusté manuellement. Le remplacer par la suggestion OSM ?',
+            'Remplacer',
+            'Annuler',
+            false
+        );
+        if (!ok) return;
+    }
+    // UI loading.
+    _prepopBtn.disabled = true;
+    const oldHtml = _prepopBtn.innerHTML;
+    _prepopBtn.innerHTML = '<i data-lucide="loader-2"></i> Recherche…';
+    createIcons({ icons: appIcons, attrs: { 'stroke-width': 2 }, nameAttr: 'data-lucide' });
+    try {
+        // force:true → re-fetch même si cache (l'admin demande une fraîche
+        // suggestion ; les drapeaux silencieux/passe globale utilisent le cache).
+        const result = await prepoSeAccessPoint(_poiFeature, { force: true });
+        if (result.status === 'osm' && result.coords) {
+            // Place le drapeau sur la suggestion OSM. État = osm (orange).
+            _marker.setLatLng([result.coords[1], result.coords[0]]);
+            setFlagState('osm');
+            _hadAccessPoint = true;
+            redrawLine();
+            showToast(`Drapeau posé sur la voie · ${Math.round(result.distance)} m`, 'success', 2500);
+        } else if (result.status === 'on-track') {
+            showToast(`POI déjà sur la voie (${Math.round(result.distance)} m). Pas de drapeau nécessaire.`, 'info', 3500);
+        } else if (result.status === 'failed') {
+            showToast('Aucune voie OSM trouvée dans le rayon — à reprendre plus tard.', 'warning', 4000);
+        }
+    } catch (e) {
+        console.error('[access-point] Pré-pose OSM échouée:', e);
+        showToast('Échec de la recherche OSM (réseau ?). À reprendre plus tard.', 'warning', 4000);
+    } finally {
+        if (_prepopBtn) {
+            _prepopBtn.disabled = false;
+            _prepopBtn.innerHTML = oldHtml;
+            createIcons({ icons: appIcons, attrs: { 'stroke-width': 2 }, nameAttr: 'data-lucide' });
+        }
+    }
 }
 
 async function onErase() {
