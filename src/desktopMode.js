@@ -72,13 +72,10 @@ export async function handleDesktopPhotoImport(filesList) {
             }
         }
 
-        const withGps = filesData.filter(f => f.hasGps);
-        if (withGps.length === 0) {
-             if (loader) loader.style.display = 'none';
-             return showToast("Aucune coordonnée GPS trouvée dans ces photos.", 'error');
-        }
-
         // --- ETAPE 1.5 : DÉDUPLICATION PAR HASH (dédup 2-local) ---
+        // S'applique à TOUTES les photos (avec ou sans GPS). Les photos sans
+        // EXIF GPS (typiquement des images du net) ne sont plus jetées : elles
+        // suivent leur propre chemin plus bas (groupe « Sans GPS »).
         // Hash du fichier ORIGINAL (jamais du blob compressé). On écarte pour de
         // bon : (a) les doublons à l'intérieur de cet import, (b) les photos dont
         // le hash est déjà stocké en local (poiPhotos user / pendingAdminPhotos).
@@ -90,7 +87,7 @@ export async function handleDesktopPhotoImport(filesList) {
         const seenThisImport = new Set();
         const validItems = [];
         let skippedDuplicates = 0;
-        for (const item of withGps) {
+        for (const item of filesData) {
             item.srcHash = await sha256OfFile(item.file);
             // Hash indisponible (contexte non sécurisé, fichier illisible) → on
             // ne déduplique pas plutôt que de risquer d'écarter une photo unique.
@@ -121,10 +118,29 @@ export async function handleDesktopPhotoImport(filesList) {
         // --- ETAPE 3 : GROUPEMENT « par lieu » (cf. photo-clustering.js) ---
         // 1 groupe = POI le plus proche (≤120 m) ; photos sans POI proche →
         // groupes « trajet ». Sépare les lieux proches par identité, pas par
-        // distance (corrige le chaînage en ville).
+        // distance (corrige le chaînage en ville). Seules les photos AVEC GPS
+        // sont groupables par position.
+        const gpsItems = validItems.filter(it => it.hasGps);
+        const noGpsItems = validItems.filter(it => !it.hasGps);
+
         const enrichedClusters = clusterPhotos(
-            validItems, state.loadedFeatures, state.hiddenPoiIds
+            gpsItems, state.loadedFeatures, state.hiddenPoiIds
         );
+
+        // Photos SANS GPS (souvent des images du net, sans EXIF) : impossible de
+        // deviner le lieu → un seul groupe « Sans GPS » placé EN BAS de la liste,
+        // à rattacher à la main à un POI existant via la recherche (cf.
+        // ui-photo-batch « Rattacher à un lieu… »). center=null → ni groupable,
+        // ni « créable » (pas de position carte pour un nouveau POI).
+        if (noGpsItems.length > 0) {
+            enrichedClusters.push({
+                photos: noGpsItems,
+                center: null,
+                nearbyPois: [],
+                absoluteNearest: null,
+                noGps: true,
+            });
+        }
 
         // Centrage carte sur le 1er cluster (UX visuelle, non bloquant)
         if (map && enrichedClusters.length > 0 && enrichedClusters[0].center) {
@@ -137,6 +153,12 @@ export async function handleDesktopPhotoImport(filesList) {
         // Récap doublons écartés (option (a) : silencieux à l'unité, total annoncé).
         if (skippedDuplicates > 0) {
             showToast(`${skippedDuplicates} doublon(s) déjà importé(s) — ignoré(s).`, 'info', 5000);
+        }
+
+        // Photos sans GPS → on signale le groupe (placé en bas) pour qu'il ne
+        // passe pas inaperçu (but de la feature : ne plus les jeter en silence).
+        if (noGpsItems.length > 0) {
+            showToast(`${noGpsItems.length} photo(s) sans GPS — groupe « Sans GPS » en bas, à rattacher à un lieu.`, 'info', 6000);
         }
 
         // --- ETAPE 4 : OUVERTURE DU MODAL BATCH ---
