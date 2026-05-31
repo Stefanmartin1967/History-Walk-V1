@@ -295,12 +295,15 @@
     display: flex;
     gap: 6px;
     margin-bottom: 6px;
+    justify-content: center;
 }
 .ghost-popup-link {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
-    padding: 3px 8px;
+    min-width: 72px;
+    padding: 3px 10px;
     font-size: 12px;
     line-height: 1.2;
     color: var(--brand);

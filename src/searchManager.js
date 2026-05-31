@@ -7,6 +7,7 @@ import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils ro
 import { map, clearMarkerHighlights } from './map.js';
 import { getSearchResults } from './search.js';
 import { openCoordsOnMap } from './utils.js';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 export function setupSearch() {
     const query = DOM.searchInput.value;
@@ -146,6 +147,11 @@ export function setupSmartSearch() {
                             openCoordsOnMap(cLat, cLng, btn.dataset.provider);
                         });
                     });
+
+                    // Convertit les <i data-lucide> en SVG avant binding (sinon
+                    // le scan global ne les attrape pas et la boîte de 12px
+                    // reste vide → décalage à gauche du texte).
+                    createIcons({ icons: appIcons, root: popupContent });
 
                     // 4. Binding Popup
                     marker.bindPopup(popupContent, { minWidth: 200, closeOnClick: false }).openPopup();
