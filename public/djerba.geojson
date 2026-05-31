@@ -5571,10 +5571,30 @@
         "Catégorie": "Mosquée",
         "Sous-type": "Générique",
         "Zone": "El Groa",
-        "description": "Mosquée découvert sur carte.\nNom et existence à confirmer sur place",
+        "description": "Mosquée découvert sur carte.\nNom et existence à confirmer",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "HW_ID": "HW-01KSZ2SGB3GCGB3RG8946MGTZG",
+        "HW_ID": "HW-01KSZ2SGB3GCGB3RG8946MGTZG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.79668756421055,
+          33.82968729768248
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Bou Saïd",
+        "Catégorie": "Mosquée",
+        "Sous-type": "Générique",
+        "Zone": "El Hachene",
+        "description": "Mosquée trouvée sur carte.\nVérifier nom et existence sur place",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "HW_ID": "HW-01KSZ6CRQ5J5JJ14EW8X7R8H21",
         "Nom du site arabe": "",
         "État": "",
         "Accès": "",
