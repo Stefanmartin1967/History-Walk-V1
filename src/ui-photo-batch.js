@@ -949,7 +949,49 @@ function updateFooterButtons() {
         : 'Rattache au moins un cluster à un POI pour activer';
 }
 
-// Handler principal : compresse, merge avec l'existant, écrit en DB (split admin/user).
+// Sauve UN cluster rattaché : compresse ses photos non encore sauvées, merge en
+// DB (split admin/user), puis les flague `alreadySaved`. Retourne le nombre de
+// photos écrites (0 si rien). Ne touche PAS au DOM ni à la modale — le caller
+// (save global du footer OU save par groupe) décide du feedback. Source unique
+// de la logique d'enregistrement → pas de divergence entre les deux chemins.
+async function saveCluster(cluster, mapId) {
+    const poiId = getPoiId(cluster.nearbyPois[0].feature);
+    if (!poiId) return 0;
+
+    // On exclut les photos alreadySaved (déjà persistées via "Créer un lieu" →
+    // addPhotosToPoi, ou un précédent « Enregistrer ce lieu »). Évite de
+    // recompresser ; la dédup par id couvrirait de toute façon.
+    const blobItems = await Promise.all(
+        cluster.photos
+            .filter(p => p.file && !p.alreadySaved)
+            .map(async (p) => ({
+                id: p.id,
+                blob: await compressFileToBlob(p.file),
+                // srcHash = hash du fichier ORIGINAL (posé à l'import) →
+                // permet la dédup au prochain import (dédup 2-local).
+                srcHash: p.srcHash || undefined,
+            }))
+    );
+    if (blobItems.length === 0) return 0;
+
+    // Merge avec l'existant en DB (dédup par id)
+    if (state.isAdmin) {
+        const existing = await getPendingAdminPhotos(mapId, poiId) || [];
+        const merged = dedupById([...existing, ...blobItems]);
+        await setPendingAdminPhotos(mapId, poiId, merged);
+    } else {
+        const existing = await getPoiPhotos(mapId, poiId) || [];
+        const merged = dedupById([...existing, ...blobItems]);
+        await savePoiPhotos(mapId, poiId, merged);
+    }
+
+    // Flague les photos écrites → le bouton « Enregistrer ce lieu » passe à
+    // l'état « Enregistré » et un save global ultérieur ne les re-traite pas.
+    cluster.photos.forEach(p => { if (p.file && !p.alreadySaved) p.alreadySaved = true; });
+    return blobItems.length;
+}
+
+// Handler principal (footer) : enregistre TOUS les groupes rattachés puis ferme.
 async function handleSave() {
     if (!modalState || !modalState.clusters) return;
     const saveBtn = document.getElementById('photo-batch-btn-save');
@@ -981,39 +1023,7 @@ async function handleSave() {
 
         let totalPhotos = 0;
         for (const cluster of poiClusters) {
-            const poiId = getPoiId(cluster.nearbyPois[0].feature);
-            if (!poiId) continue;
-
-            // Compression en parallèle pour ce cluster.
-            // On exclut les photos alreadySaved (déjà persistées via "Créer un lieu" →
-            // addPhotosToPoi). Sinon double-save : les deux chemins de compression produisent
-            // des tailles légèrement différentes → la dédup par taille dans addPhotosToPoi
-            // ne les reconnaîtrait pas comme doublons.
-            const blobItems = await Promise.all(
-                cluster.photos
-                    .filter(p => p.file && !p.alreadySaved)
-                    .map(async (p) => ({
-                        id: p.id,
-                        blob: await compressFileToBlob(p.file),
-                        // srcHash = hash du fichier ORIGINAL (posé à l'import) →
-                        // permet la dédup au prochain import (dédup 2-local).
-                        srcHash: p.srcHash || undefined,
-                    }))
-            );
-            if (blobItems.length === 0) continue;
-
-            // Merge avec l'existant en DB (dédup par id)
-            if (state.isAdmin) {
-                const existing = await getPendingAdminPhotos(mapId, poiId) || [];
-                const merged = dedupById([...existing, ...blobItems]);
-                await setPendingAdminPhotos(mapId, poiId, merged);
-            } else {
-                const existing = await getPoiPhotos(mapId, poiId) || [];
-                const merged = dedupById([...existing, ...blobItems]);
-                await savePoiPhotos(mapId, poiId, merged);
-            }
-
-            totalPhotos += blobItems.length;
+            totalPhotos += await saveCluster(cluster, mapId);
         }
 
         const modeSuffix = state.isAdmin ? ' (en attente CC)' : '';
@@ -1032,6 +1042,33 @@ async function handleSave() {
         showToast('Erreur enregistrement : ' + (e.message || e), 'error');
         if (saveBtn) saveBtn.disabled = false;
         if (zipBtn) zipBtn.disabled = false;
+    }
+}
+
+// Enregistre UN SEUL groupe (bouton « Enregistrer ce lieu ») SANS fermer la
+// modale → permet de valider les lieux un par un en continuant le tri. Le
+// re-render (finally) grise le bouton si sauvé, ou le restaure si erreur/rien.
+async function handleSaveCluster(cluster) {
+    const mapId = state.currentMapId;
+    if (!mapId) { showToast('Aucune carte active.', 'error'); renderBody(); return; }
+    if (!cluster.nearbyPois || cluster.nearbyPois.length === 0) { renderBody(); return; }
+
+    try {
+        const n = await saveCluster(cluster, mapId);
+        if (n === 0) {
+            showToast('Rien à enregistrer pour ce lieu.', 'info');
+            return;
+        }
+        const name = getPoiName(cluster.nearbyPois[0].feature) || 'Lieu';
+        const modeSuffix = state.isAdmin ? ' (en attente CC)' : '';
+        showToast(`${name} — ${n} photo(s) enregistrée(s)${modeSuffix}.`, 'success');
+        updateHeaderCounts();
+        updateFooterButtons(); // le save global reflète qu'il reste moins à sauver
+    } catch (e) {
+        console.error('[photo-batch] handleSaveCluster error', e);
+        showToast('Erreur enregistrement : ' + (e.message || e), 'error');
+    } finally {
+        renderBody();
     }
 }
 
@@ -1366,6 +1403,32 @@ function buildClusterSection(cluster, index) {
         osmBtn.setAttribute('aria-label', 'Vérifier sur OpenStreetMap');
         osmBtn.addEventListener('click', (e) => { e.stopPropagation(); openPoiOnMap(verifyFeature, 'osm'); });
         actions.appendChild(osmBtn);
+    }
+
+    // Enregistrer CE lieu (sans fermer la modale) → tri lieu par lieu. Seulement
+    // sur un groupe rattaché à un POI ; un groupe « Créer un lieu » (savedAsNewPoi)
+    // a déjà ses photos persistées. Quand tout est sauvé, le bouton passe à un
+    // état vert inerte « Enregistré » (grisé, demande Stefan).
+    if (hasNearbyPoi && cluster.type !== 'OUT_POI' && !cluster.savedAsNewPoi) {
+        const hasUnsaved = cluster.photos.some(p => p.file && !p.alreadySaved);
+        const saveOneBtn = document.createElement('button');
+        saveOneBtn.type = 'button';
+        if (hasUnsaved) {
+            saveOneBtn.className = 'pb-act';
+            saveOneBtn.innerHTML = '<i data-lucide="cloud-upload"></i><span>Enregistrer ce lieu</span>';
+            saveOneBtn.title = 'Enregistrer les photos de ce lieu (sans fermer la fenêtre)';
+            saveOneBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                saveOneBtn.disabled = true; // anti double-clic le temps du save
+                handleSaveCluster(cluster);
+            });
+        } else {
+            saveOneBtn.className = 'pb-act is-saved';
+            saveOneBtn.disabled = true;
+            saveOneBtn.innerHTML = '<i data-lucide="check"></i><span>Enregistré</span>';
+            saveOneBtn.title = 'Photos de ce lieu déjà enregistrées';
+        }
+        actions.appendChild(saveOneBtn);
     }
 
     // Comparer → ouvre le mode focus in-place (toujours actif si ≥ 1 photo)
