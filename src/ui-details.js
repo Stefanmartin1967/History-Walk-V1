@@ -495,6 +495,11 @@ export function openDetailsPanel(featureId, circuitIndex = null, fromSearch = fa
     setCurrentFeatureId(featureId);
     setCurrentCircuitIndex(circuitIndex);
 
+    // Notifie les modules qui suivent le POI courant (ex : access-point-editor
+    // qui ferme sa barre de pose si on bascule sur un autre POI, sinon la
+    // barre reste figée sur l'ancien POI — bug signalé par Stefan sur PR #708).
+    eventBus.emit('details-panel:opened', { poiId: getPoiId(feature) });
+
     // Injection du HTML — révoque l'objectURL du hero précédent (évite leak).
     revokeHeroObjectUrl();
     const targetPanel = isMobileView() ? DOM.mobileMainContainer : DOM.detailsPanel;
@@ -554,6 +559,10 @@ export function closeDetailsPanel(goBackToList = false) {
     }
 
     setCurrentFeatureId(null);
+
+    // Pair de l'émission dans openDetailsPanel : cf. access-point-editor qui
+    // ferme sa barre de pose dès que la fiche du POI cible n'est plus active.
+    eventBus.emit('details-panel:closed');
 
     if (isMobileView()) {
         if (goBackToList && state.activeCircuitId) {
