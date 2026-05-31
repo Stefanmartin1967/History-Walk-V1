@@ -6,6 +6,7 @@ import { state, setGhostMarker } from './state.js';
 import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
 import { map, clearMarkerHighlights } from './map.js';
 import { getSearchResults } from './search.js';
+import { openCoordsOnMap } from './utils.js';
 
 export function setupSearch() {
     const query = DOM.searchInput.value;
@@ -123,12 +124,28 @@ export function setupSmartSearch() {
 
                     popupContent.innerHTML = `
                         <div class="ghost-popup-title">Nouveau Lieu ?</div>
-                        <div id="ghost-marker-coords" class="ghost-popup-coords">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
+                        <div class="ghost-popup-links">
+                            <button type="button" class="ghost-popup-link" data-provider="gmaps">
+                                <i data-lucide="map-pin"></i><span>Maps</span>
+                            </button>
+                            <button type="button" class="ghost-popup-link" data-provider="osm">
+                                <i data-lucide="map"></i><span>OSM</span>
+                            </button>
+                        </div>
                         <div class="ghost-popup-hint">Glissez pour ajuster</div>
                         <button id="btn-create-poi-ghost" class="action-btn ghost-popup-btn">
                             Valider cette position
                         </button>
                     `;
+                    // Boutons Maps/OSM : lisent la position COURANTE du marqueur
+                    // au clic — pas besoin de re-binder après drag.
+                    popupContent.querySelectorAll('.ghost-popup-link').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const { lat: cLat, lng: cLng } = marker.getLatLng();
+                            openCoordsOnMap(cLat, cLng, btn.dataset.provider);
+                        });
+                    });
 
                     // 4. Binding Popup
                     marker.bindPopup(popupContent, { minWidth: 200, closeOnClick: false }).openPopup();
@@ -143,12 +160,8 @@ export function setupSmartSearch() {
 
                     marker.on('dragend', () => {
                         isDragging = false;
-
-                        // Update coords display
-                        const { lat, lng } = marker.getLatLng();
-                        const coordsEl = popupContent.querySelector('#ghost-marker-coords');
-                        if (coordsEl) coordsEl.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-
+                        // Boutons Maps/OSM lisent marker.getLatLng() à la volée,
+                        // rien à rafraîchir ici. On rouvre juste la popup.
                         setTimeout(() => {
                             if (state.ghostMarker) state.ghostMarker.openPopup();
                         }, 100);
