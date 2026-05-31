@@ -438,7 +438,13 @@ function setupDetailsEventListeners(poiId) {
              if (!feature) return;
              const props = feature.properties || {};
              const userData = props.userData || {};
-             const textToRead = userData.description || props.Description || userData.Description || 'Pas de description.';
+             // Aligné sur ce que la fiche AFFICHE (templates.js buildDetailsPanelHtml) :
+             // userData prioritaire sur props, et on accepte `description` (richEditor
+             // & DM, lowercase) ET `Description` (geojson source, capital). Le précédent
+             // chemin oubliait `props.description` → TTS silencieux sur tout POI créé
+             // après bascule rich editor / DM (signalé par Stefan sur Mosquée al-Ahjar).
+             const all = { ...props, ...userData };
+             const textToRead = (all.description || all.Description || '').trim() || 'Pas de description.';
              speakText(textToRead, btn);
         });
     });
