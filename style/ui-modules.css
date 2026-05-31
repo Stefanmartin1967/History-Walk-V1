@@ -285,9 +285,40 @@
     justify-content: center;
 }
 .ghost-popup-title   { font-weight: bold; margin-bottom: 5px; }
-.ghost-popup-coords  { font-size: 11px; color: #888; margin-bottom: 5px; }
 .ghost-popup-hint    { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; }
 .ghost-popup-btn     { background: var(--cta-bg); color: var(--cta-fg); padding: 4px 8px; font-size: 12px; cursor: pointer; margin: 0 auto; }
+
+/* Boutons Maps / OSM dans la popup "Nouveau Lieu ?" (clic droit carte +
+   recherche par coordonnées). Remplacent l'ancienne ligne de coords texte
+   (qu'il fallait sélectionner-copier pour aller vérifier ailleurs). */
+.ghost-popup-links {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+.ghost-popup-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    font-size: 12px;
+    line-height: 1.2;
+    color: var(--brand);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color .15s, color .15s, background .15s;
+}
+.ghost-popup-link:hover {
+    border-color: var(--brand);
+    background: var(--surface-muted);
+}
+.ghost-popup-link i {
+    width: 12px;
+    height: 12px;
+    flex-shrink: 0;
+}
 
 /* ================================================
    SYNC.JS — QR Sync & Scanner

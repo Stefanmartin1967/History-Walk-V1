@@ -11,7 +11,7 @@ import { logModification } from './logger.js';
 import { DOM } from './ui-dom.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
-import { getExifLocation, resizeImage, sha256OfFile } from './utils.js';
+import { getExifLocation, resizeImage, sha256OfFile, openCoordsOnMap } from './utils.js';
 import { clusterPhotos } from './photo-clustering.js';
 import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
@@ -272,12 +272,28 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
     popupContent.className = 'ghost-popup';
     popupContent.innerHTML = `
         <div class="ghost-popup-title">Nouveau Lieu ?</div>
-        <div id="desktop-draft-coords" class="ghost-popup-coords">${lat.toFixed(5)}, ${lng.toFixed(5)}</div>
+        <div class="ghost-popup-links">
+            <button type="button" class="ghost-popup-link" data-provider="gmaps">
+                <i data-lucide="map-pin"></i><span>Maps</span>
+            </button>
+            <button type="button" class="ghost-popup-link" data-provider="osm">
+                <i data-lucide="map"></i><span>OSM</span>
+            </button>
+        </div>
         <div class="ghost-popup-hint">Glissez pour ajuster.</div>
         <button id="btn-validate-desktop-poi" class="action-btn ghost-popup-btn">
             Valider cette position
         </button>
     `;
+    // Les boutons lisent la position COURANTE du marqueur au moment du clic
+    // (donc inutile de re-binder après drag : la coord est toujours fraîche).
+    popupContent.querySelectorAll('.ghost-popup-link').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const { lat: cLat, lng: cLng } = desktopDraftMarker.getLatLng();
+            openCoordsOnMap(cLat, cLng, btn.dataset.provider);
+        });
+    });
 
     const validateBtn = popupContent.querySelector('#btn-validate-desktop-poi');
     
@@ -315,13 +331,9 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
 
     desktopDraftMarker.on('dragend', () => {
         isDragging = false;
-
-        // Update coords display
-        const { lat, lng } = desktopDraftMarker.getLatLng();
-        const coordsEl = popupContent.querySelector('#desktop-draft-coords');
-        if (coordsEl) coordsEl.textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-
-        // On rouvre la popup à la nouvelle position
+        // Les boutons Maps/OSM lisent la position du marqueur à la volée
+        // (handler ci-dessus), donc rien à rafraîchir ici. On rouvre juste
+        // la popup à la nouvelle position.
         setTimeout(() => {
             if (desktopDraftMarker) desktopDraftMarker.openPopup();
         }, 100);
