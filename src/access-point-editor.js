@@ -26,6 +26,7 @@ import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { prepoSeAccessPoint, getAccessPointStatus } from './access-point.js';
+import { eventBus } from './events.js';
 
 let _marker = null;     // drapeau draggable
 let _line = null;       // ligne POI → drapeau
@@ -268,3 +269,14 @@ async function onErase() {
     await updatePoiData(poiId, 'accessPoint', null);
     showToast('Point d’accès retiré.', 'info', 2500);
 }
+
+// Auto-teardown quand l'admin bascule sur un autre POI ou ferme la fiche
+// (bug signalé sur PR #708 : la barre restait figée sur l'ancien POI).
+// Module importé statiquement par ui-details, ces listeners sont posés
+// dès le boot — ils ne font rien tant qu'aucune session n'est active.
+eventBus.on('details-panel:opened', ({ poiId }) => {
+    if (_poiId && _poiId !== poiId) teardown();
+});
+eventBus.on('details-panel:closed', () => {
+    if (_poiId) teardown();
+});
