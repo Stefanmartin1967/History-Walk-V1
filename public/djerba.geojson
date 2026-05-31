@@ -5667,6 +5667,26 @@
         "HW_ID": "HW-01KPMX8RZ41MX6DCFWGA4HZKJA",
         "Description": "Ajouté via Rich Editor"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.780361107562532,
+          33.85219834343568
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée al-Ahjar",
+        "Catégorie": "Mosquée",
+        "Sous-type": "Générique",
+        "Zone": "Mellita",
+        "description": "Mosquée sans infos, trouvée sur la carte.\nNom et existence à vérifier",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "HW_ID": "HW-01KSYPS0Y31P1851B57BEQVP73"
+      }
     }
   ]
 }
