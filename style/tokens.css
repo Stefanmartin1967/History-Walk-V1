@@ -45,6 +45,7 @@
 
   /* — Sémantiques fixes (light → mêmes 4 thèmes) — */
   --ok:        #10B981;
+  --success:   #10B981;   /* alias intent : succès / état positif */
   --warn:      #F59E0B;
   --danger:    #EF4444;
 
@@ -100,6 +101,13 @@ html[data-theme="maritime"] {
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
 
+  /* — Drapeaux d'accès au tracé (cf. access-point-editor.js, chantier v2 31/05/2026).
+     Orange = pré-posé OSM · Vert = déplacé manuellement · Rouge = cadenassé.
+     Hex Design retenus pour maritime (--brand bleu = pas de collision). */
+  --flag-osm:    #D97706;
+  --flag-moved:  #15803D;
+  --flag-locked: #B0271F;
+
   /* Scrim : voile coloré thématique sous les overlays/modales (anciennement
      hardcodé en rgba dans admin-cc.css). Teinte au bleu nuit en maritime. */
   --scrim: rgba(13, 59, 102, 0.6);
@@ -143,6 +151,12 @@ html[data-theme="desert"] {
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
 
+  /* — Drapeaux : --brand désert est ORANGE (#E88C32) → on décale flag-osm
+     vers une teinte plus rouille/brun pour éviter la collision visuelle. */
+  --flag-osm:    #B45309;   /* rouille saturée, distinct du brand orange */
+  --flag-moved:  #15803D;   /* vert OK (brand orange) */
+  --flag-locked: #991B1B;   /* rouge plus saturé que --danger-fg #9A2820 */
+
   /* Scrim : voile orangé pour le désert. */
   --scrim: rgba(120, 53, 15, 0.55);
 
@@ -184,6 +198,12 @@ html[data-theme="oasis"] {
 
   --hw-amber:      #D97706;
   --hw-amber-soft: #FFFBEB;
+
+  /* — Drapeaux : --brand oasis est VERT (#34D399) → on décale flag-moved
+     vers un vert foncé/forêt pour éviter la collision avec le brand. */
+  --flag-osm:    #D97706;   /* orange OK (brand vert) */
+  --flag-moved:  #166534;   /* vert foncé/forêt, distinct du brand vert clair */
+  --flag-locked: #B0271F;   /* rouge OK */
 
   /* Scrim : voile vert profond pour l'oasis. */
   --scrim: rgba(5, 71, 55, 0.55);
@@ -229,6 +249,12 @@ html[data-theme="night"] {
 
   --hw-amber:      #FBBF24;
   --hw-amber-soft: color-mix(in oklab, var(--hw-amber) 14%, var(--surface));
+
+  /* — Drapeaux : couleurs éclaircies pour rester lisibles sur fond sombre.
+     Mêmes intentions (orange/vert/rouge) mais saturation/luminosité montées. */
+  --flag-osm:    #FB923C;   /* orange clair, lisible sur bleu nuit */
+  --flag-moved:  #4ADE80;   /* vert clair, distinct du brand bleu */
+  --flag-locked: #F87171;   /* rouge clair (= --danger night) */
 
   /* Scrim : voile presque noir pour le night, avec une pointe de bleu nuit. */
   --scrim: rgba(2, 8, 18, 0.7);
