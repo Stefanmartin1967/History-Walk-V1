@@ -1,0 +1,302 @@
+/* style/osm-pass.css — Mode « Passe globale OSM » (admin) — PR 3/5 chantier
+   drapeaux d'accès v2. Reprend le pattern Variante A du handoff Claude Design :
+   panneau latéral gauche (liste POI scrollable + progression + filtres) + carte
+   centrale (la carte Leaflet existante, visible derrière l'overlay) + barre
+   d'action ancrée en bas. Lancé depuis le CC, ferme le CC, restaure la sidebar
+   HW V2 à la sortie.
+
+   Pattern overlay z-index : on ne touche pas au DOM de la sidebar HW V2 ; on la
+   masque visuellement via body.osm-pass-active + on superpose notre panneau.
+   Pointer-events bloqués sur le fond pour empêcher l'admin d'interagir avec la
+   carte (sélectionner un autre POI, ouvrir une fiche) pendant la passe. */
+
+/* ============================================================
+   1. OVERLAY + BLOCAGE INTERACTIONS DE LA CARTE
+   ============================================================ */
+body.osm-pass-active .right-sidebar,
+body.osm-pass-active .hw-sidebar,
+body.osm-pass-active #right-sidebar {
+    display: none !important;
+}
+
+.osm-pass-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;       /* > sidebar HW V2 (1002), < modales (2000) */
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    pointer-events: none; /* la carte au centre reste interactive (zoom/pan
+                             Leaflet) ; seuls le panneau et la barre d'action
+                             interceptent les events via pointer-events:auto */
+}
+
+/* NB : pas de voile bloquant sur la zone carte — pour ne pas neutraliser le
+   zoom et le pan natif Leaflet (bug attrapé par Stefan sur PR #710). Si
+   l'admin clique un marker pendant la passe, openDetailsPanel se déclenche
+   mais rend dans la sidebar HW V2 (masquée via body.osm-pass-active) → effet
+   visuel nul, la passe continue normalement. */
+
+/* ============================================================
+   2. PANNEAU LATÉRAL GAUCHE (liste + progression + filtres)
+   ============================================================ */
+.osm-pass-side {
+    grid-column: 1;
+    grid-row: 1;
+    pointer-events: auto;
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* indispensable pour que .osm-pass-list scroll */
+}
+
+.osm-pass-head {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in oklab, var(--brand) 6%, var(--surface));
+}
+.osm-pass-head h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+}
+.osm-pass-head h3 svg { width: 18px; height: 18px; color: var(--brand-2); }
+.osm-pass-head .sub {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--ink-soft);
+}
+
+.osm-pass-progress {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--line);
+}
+.osm-pass-progress-bar {
+    height: 6px; border-radius: 3px;
+    background: var(--line);
+    overflow: hidden;
+}
+.osm-pass-progress-bar > i {
+    display: block; height: 100%;
+    background: var(--brand);
+    border-radius: 3px;
+    transition: width 200ms ease;
+}
+.osm-pass-progress-txt {
+    display: flex; justify-content: space-between;
+    margin-top: 6px;
+    font-size: 11.5px; color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+}
+.osm-pass-progress-txt b { color: var(--ink); font-weight: 700; }
+
+.osm-pass-filters {
+    display: flex; gap: 4px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-muted);
+    overflow-x: auto;
+}
+.osm-pass-filter {
+    flex-shrink: 0;
+    padding: 5px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.osm-pass-filter.is-active {
+    background: var(--brand);
+    color: var(--cta-fg);
+    border-color: var(--brand);
+}
+.osm-pass-filter:hover:not(.is-active) {
+    background: color-mix(in oklab, var(--brand) 6%, var(--surface));
+}
+
+.osm-pass-search {
+    margin: 10px 14px;
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 13px;
+    width: calc(100% - 28px);
+}
+.osm-pass-search:focus {
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-color: var(--brand);
+}
+
+/* — Liste scrollable des POI à traiter — */
+.osm-pass-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 8px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 0;
+    list-style: none;
+    margin: 0;
+}
+.osm-pass-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+.osm-pass-item:hover { background: color-mix(in oklab, var(--ink) 4%, transparent); }
+.osm-pass-item.is-current {
+    background: var(--surface);
+    border-color: var(--brand);
+    box-shadow: var(--shadow-card);
+}
+.osm-pass-item.is-done .osm-pass-item-nm { color: var(--ink-soft); }
+.osm-pass-item-nm {
+    flex: 1; min-width: 0;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.osm-pass-item-st {
+    flex-shrink: 0;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--line);
+    border: 1.5px solid var(--ink-soft);
+    box-sizing: border-box;
+}
+.osm-pass-item-st.is-osm    { background: var(--flag-osm);    border-color: var(--flag-osm); }
+.osm-pass-item-st.is-moved  { background: var(--flag-moved);  border-color: var(--flag-moved); }
+.osm-pass-item-st.is-failed { background: var(--warn);        border-color: var(--warn); }
+.osm-pass-item-st.is-pending { background: var(--ink-soft); border-color: var(--ink-soft); }
+
+.osm-pass-empty {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+}
+
+/* ============================================================
+   3. BARRE D'ACTION ANCRÉE EN BAS DE LA CARTE
+   ============================================================ */
+.osm-pass-actionbar {
+    grid-column: 2;
+    grid-row: 1;
+    pointer-events: auto;
+    align-self: end;
+    justify-self: center;
+    margin-bottom: 24px;
+    max-width: calc(100% - 48px);
+    background: var(--bg);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px;
+}
+.osm-pass-actionbar .meta {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.75);
+    margin-right: 8px;
+    max-width: 240px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.osm-pass-actionbar .meta b { color: #fff; font-weight: 700; }
+.osm-pass-actionbar .sep {
+    width: 1px; height: 22px;
+    background: rgba(255,255,255,0.18);
+}
+.osm-pass-btn {
+    border: 1px solid rgba(255,255,255,0.4);
+    background: transparent; color: #fff;
+    padding: 8px 14px; border-radius: 9px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    min-height: 36px;
+    display: inline-flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+}
+.osm-pass-btn:hover { background: rgba(255,255,255,0.12); }
+.osm-pass-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.osm-pass-btn--primary {
+    background: #fff; color: var(--bg, #0D3B66);
+    border-color: #fff;
+}
+.osm-pass-btn--primary:hover { background: rgba(255,255,255,0.9); }
+.osm-pass-btn svg { width: 14px; height: 14px; }
+
+/* Bouton « Quitter la passe » en haut-droite de la zone carte. */
+.osm-pass-quit {
+    grid-column: 2;
+    grid-row: 1;
+    pointer-events: auto;
+    align-self: start;
+    justify-self: end;
+    margin: 16px;
+    padding: 8px 14px;
+    border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.94);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+    font-size: 12.5px; font-weight: 600;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.osm-pass-quit:hover { background: var(--surface); }
+.osm-pass-quit svg { width: 14px; height: 14px; color: var(--ink-soft); }
+
+/* Bandeau « Évaluation Overpass en cours… » pendant le batch initial. */
+.osm-pass-loading {
+    grid-column: 2;
+    grid-row: 1;
+    pointer-events: auto;
+    align-self: center;
+    justify-self: center;
+    padding: 16px 24px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-modal);
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13.5px; color: var(--ink);
+}
+.osm-pass-loading .spin {
+    width: 18px; height: 18px;
+    border: 2px solid color-mix(in oklab, var(--brand) 30%, transparent);
+    border-top-color: var(--brand);
+    border-radius: 50%;
+    animation: ospSpin 0.7s linear infinite;
+}
+@keyframes ospSpin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   4. NIGHT — overrides .osm-pass-btn primary (cf. fix PR #707)
+   ============================================================ */
+html[data-theme="night"] .osm-pass-btn--primary {
+    color: var(--bg); /* sombre sur fond #fff = lisible */
+}
+
+/* ============================================================
+   5. RESPONSIVE — desktop only (création/passe inutile sur mobile)
+   ============================================================ */
+@media (max-width: 900px) {
+    .osm-pass-overlay {
+        grid-template-columns: 280px 1fr;
+    }
+    .osm-pass-actionbar { font-size: 12px; padding: 10px 12px; gap: 8px; }
+    .osm-pass-actionbar .meta { max-width: 150px; }
+}
