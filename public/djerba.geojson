@@ -5638,12 +5638,26 @@
         "Zone": "El Groa",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "HW_ID": "HW-01KSZ84TKYA3R6E5Y2C4FXX4FE",
-        "accessPoint": [
-          10.7885137,
-          33.8132291
-        ],
-        "accessPointStatus": "osm"
+        "HW_ID": "HW-01KSZ84TKYA3R6E5Y2C4FXX4FE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.783553123474121,
+          33.881425319556016
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test 3",
+        "Catégorie": "Curiosité",
+        "Zone": "Mellita",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "HW_ID": "HW-01KSZ8DPAZ93N6WSXDK76R9YM2",
+        "accessPointStatus": "failed"
       }
     }
   ]
