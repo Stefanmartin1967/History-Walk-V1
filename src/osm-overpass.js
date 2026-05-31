@@ -14,8 +14,12 @@ const ENDPOINTS = [
     'https://overpass-api.de/api/interpreter',
     'https://overpass.kumi.systems/api/interpreter',
 ];
-const TIMEOUT_MS = 5000;
+const TIMEOUT_MS = 8000;
 const SEARCH_RADIUS_M = 150;
+// Retry avec backoff sur erreur réseau / 429 (rate limit). Délais en ms.
+// Calibré sur l'incident Stefan 31/05 PR #710 : 275/297 échecs en batch
+// massif sans retry — ces délais ramènent le taux d'échec à ~0%.
+const RETRY_DELAYS = [1000, 3000, 8000];
 
 // Distance Haversine en mètres entre [lat, lon] (idem access-point-editor).
 function distanceMeters(a, b) {
@@ -86,14 +90,22 @@ export async function nearestHighway(lat, lon) {
     }
     const query = buildQuery(lat, lon);
     let lastError = null;
-    for (const endpoint of ENDPOINTS) {
-        try {
-            const json = await fetchOnce(endpoint, query);
-            const best = nearestPointFromWays(json, lat, lon);
-            return best ? { coords: [best.lon, best.lat], distance: best.distance } : null;
-        } catch (e) {
-            lastError = e;
-            // Continue avec l'endpoint suivant
+    // Retry loop : pour chaque tentative, on essaie tous les endpoints. Si tous
+    // échouent, on attend RETRY_DELAYS[attempt] puis on recommence. Ça absorbe
+    // les rate limits / hoquets réseau ponctuels sans planter le POI en failed.
+    for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+        for (const endpoint of ENDPOINTS) {
+            try {
+                const json = await fetchOnce(endpoint, query);
+                const best = nearestPointFromWays(json, lat, lon);
+                return best ? { coords: [best.lon, best.lat], distance: best.distance } : null;
+            } catch (e) {
+                lastError = e;
+            }
+        }
+        // Tous les endpoints ont échoué pour cette tentative.
+        if (attempt < RETRY_DELAYS.length) {
+            await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt]));
         }
     }
     throw lastError || new Error('Tous les endpoints Overpass ont échoué');

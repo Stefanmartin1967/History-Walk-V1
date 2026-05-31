@@ -89,30 +89,39 @@ function buildItems() {
 // === Batch Overpass initial pour les status=undefined =========================
 
 async function runInitialBatch() {
-    const toEvaluate = _items.filter(it => it.status === undefined);
+    // Re-tente aussi les status='failed' à chaque ouverture de passe : un POI
+    // qui a raté Overpass (rate limit / réseau) lors d'un batch précédent a
+    // une nouvelle chance. Les undefined sont les POI jamais évalués (legacy).
+    const toEvaluate = _items.filter(it => it.status === undefined || it.status === 'failed');
     if (toEvaluate.length === 0) return;
 
     _isLoading = true;
     updateLoadingBanner(0, toEvaluate.length);
 
-    const CONCURRENCY = 3;
+    // Séquentiel + petit délai pour respecter le soft rate limit Overpass
+    // (incident PR #710 : concurrency 3 sans délai → 275/297 échecs sur Djerba).
+    // 297 POI à ~700ms moyen + 250ms = ~5 min, mais one-shot par destination.
+    const INTER_REQUEST_DELAY_MS = 250;
     let done = 0;
-    const queue = [...toEvaluate];
-    const workers = Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
-        while (queue.length) {
-            const it = queue.shift();
-            try {
-                const r = await prepoSeAccessPoint(it.feature);
-                it.status = r.status;
-                it.distance = r.distance;
-            } catch (e) {
-                it.status = 'failed';
-            }
-            done++;
-            updateLoadingBanner(done, toEvaluate.length);
+    for (const it of toEvaluate) {
+        try {
+            // force:true pour les status='failed' → ignore le cache (qui est
+            // soit absent soit obsolète sur un échec antérieur). Pour les
+            // undefined, le cache est vide aussi mais force:false suffit.
+            const useForce = it.status === 'failed';
+            const r = await prepoSeAccessPoint(it.feature, { force: useForce });
+            it.status = r.status;
+            it.distance = r.distance;
+        } catch (e) {
+            it.status = 'failed';
         }
-    });
-    await Promise.all(workers);
+        done++;
+        updateLoadingBanner(done, toEvaluate.length);
+        // Petit délai pour ne pas marteler Overpass (sauf après le dernier).
+        if (done < toEvaluate.length) {
+            await new Promise(r => setTimeout(r, INTER_REQUEST_DELAY_MS));
+        }
+    }
 
     // Retire les 'on-track' (nouvellement classés en voie) du tableau de travail
     _items = _items.filter(it => it.status !== 'on-track');
