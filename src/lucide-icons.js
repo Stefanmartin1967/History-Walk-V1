@@ -61,6 +61,9 @@ import {
     // Sidebar V2 (refonte Mes Circuits — PR B)
     SlidersHorizontal, MoreVertical, BadgeCheck, Scale,
 
+    // Point d'accès au tracé v2 (chantier drapeaux 31/05/2026)
+    Flag,
+
     // Onglet Circuit V2 (refonte avril 2026 — consultation + création)
     Crosshair, GripVertical, Eraser, ExternalLink, Share2, BookmarkX,
 
@@ -110,4 +113,6 @@ export const appIcons = {
     SlidersHorizontal, MoreVertical, BadgeCheck, Scale,
 
     Crosshair, GripVertical, Eraser, ExternalLink, Share2, BookmarkX,
+
+    Flag,
 };

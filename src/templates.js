@@ -157,7 +157,7 @@ function buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile }) {
     // carte pour les POI hors voie). Mobile exclu (geste de précision carte).
     const accessPointItem = (!isMobile && state.isAdmin)
         ? `<button class="poi-pop-item" role="menuitem" id="btn-set-access-point" type="button">
-               <i data-lucide="map-pin-plus"></i>Point d'accès au tracé
+               <i data-lucide="flag"></i>Point d'accès au tracé
            </button>`
         : '';
 
@@ -254,7 +254,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         accesMeta ? `<span class="poi-tag access ${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
         isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : '',
         // Admin only : indique qu'un point d'accès au tracé est défini (POI hors voie).
-        (state.isAdmin && getAccessPoint(feature)) ? `<span class="poi-tag poi-tag--access-point"><i data-lucide="map-pin-plus"></i>Point d'accès</span>` : ''
+        (state.isAdmin && getAccessPoint(feature)) ? `<span class="poi-tag poi-tag--access-point"><i data-lucide="flag"></i>Point d'accès</span>` : ''
     ].filter(Boolean).join('');
 
     // Section Description

@@ -563,43 +563,186 @@
 
 /* ===== Point d'accès au tracé (admin) — chip fiche + drapeau carte + barre =====
    Geste de pose dans access-point-editor.js. POI hors voie → l'admin pose un
-   drapeau sur la voie la plus proche, qui sert d'ancre <trkpt> à l'export. */
-.poi-tag--access-point { background: rgba(192,57,43,0.12); color: #a23226; }
+   drapeau sur la voie la plus proche, qui sert d'ancre <trkpt> à l'export.
+   Refonte visuelle v2 (PR 1/5 — 31/05/2026) issue du handoff Claude Design :
+   palette à 3 couleurs sémantiques (--flag-osm/-moved/-locked) + 2 transitoires
+   (pending/error). CSS prêt pour PR2+ même si seul --moved est utilisé en PR1
+   (faute de champ accessPointSource — tous les drapeaux existants = manuels). */
 
-/* Drapeau draggable (Leaflet divIcon) posé pendant le mode de pose. */
-.hw-access-flag { background: transparent; border: 0; }
-.hw-access-flag .hw-access-flag-pole {
-    position: absolute; left: 2px; bottom: 0; width: 2px; height: 24px;
-    background: #7a1f17; border-radius: 1px;
-}
-.hw-access-flag .hw-access-flag-banner {
-    position: absolute; left: 4px; top: 0; width: 16px; height: 11px;
-    background: #c0392b; border-radius: 1px 2px 2px 1px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+/* — Chip de fiche POI « Point d'accès défini ». Vert par défaut en PR1
+   (la couleur par état viendra avec le champ source en PR2). */
+.poi-tag--access-point {
+    background: color-mix(in oklab, var(--flag-moved) 14%, transparent);
+    color: var(--flag-moved);
 }
 
-/* Barre flottante d'actions pendant la pose (ancrée dans le conteneur carte). */
-.hw-access-toolbar {
-    position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
-    z-index: 1000; display: flex; align-items: center; gap: 14px;
-    max-width: calc(100% - 24px);
-    padding: 10px 14px; border-radius: 14px;
-    background: var(--bg, #1f3a5f); color: #fff;
-    box-shadow: var(--shadow, 0 6px 24px rgba(0,0,0,0.25));
+/* === Drapeau (Leaflet divIcon) — forme v1 conservée, palette v2 ===
+   Forme : mât (3px) + fanion (18×13) + nœud d'ancrage au sol.
+   La pointe du mât est l'ANCRE (iconAnchor [3, 26] dans flagIcon()). */
+.hw-flag {
+    background: transparent;
+    border: 0;
+    cursor: grab;
+}
+.hw-flag.leaflet-zoom-animated { transition: transform 250ms ease; }
+.hw-flag .hw-flag-mast {
+    position: absolute; left: 3px; bottom: 0;
+    width: 3px; height: 30px; border-radius: 1.5px;
+    background: var(--flag-mast, #7a4a0c);
+}
+.hw-flag .hw-flag-banner {
+    position: absolute; left: 6px; top: 0;
+    width: 18px; height: 13px;
+    border-radius: 1px 3px 3px 1px;
+    background: var(--flag-color, var(--flag-moved));
+    box-shadow: 0 1px 3px rgba(0,0,0,0.32);
+}
+/* Nœud d'ancrage au sol — rend la pointe lisible sur fond chargé. */
+.hw-flag::after {
+    content: ""; position: absolute; left: 4.5px; bottom: -2px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--flag-mast, #7a4a0c);
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.85);
+}
+
+/* — États couleur (modifiers, override --flag-color + --flag-mast) — */
+.hw-flag--osm {
+    --flag-color: var(--flag-osm);
+    --flag-mast: color-mix(in oklab, var(--flag-osm) 70%, #000);
+}
+.hw-flag--moved {
+    --flag-color: var(--flag-moved);
+    --flag-mast: color-mix(in oklab, var(--flag-moved) 70%, #000);
+}
+.hw-flag--locked {
+    --flag-color: var(--flag-locked);
+    --flag-mast: color-mix(in oklab, var(--flag-locked) 70%, #000);
+    cursor: not-allowed;
+}
+
+/* — Pending (Overpass en cours, PR2+) : fanion hachuré + spinner — */
+.hw-flag--pending { cursor: default; }
+.hw-flag--pending .hw-flag-banner {
+    background: repeating-linear-gradient(45deg,
+        color-mix(in oklab, var(--flag-osm) 55%, #fff) 0 4px,
+        color-mix(in oklab, var(--flag-osm) 25%, #fff) 4px 8px);
+    box-shadow: none; opacity: 0.9;
+    animation: hwFlagPulse 1.2s ease-in-out infinite;
+}
+.hw-flag--pending .hw-flag-mast {
+    background: color-mix(in oklab, var(--flag-osm) 45%, #999);
+}
+@keyframes hwFlagPulse { 0%,100% { opacity: 0.55; } 50% { opacity: 1; } }
+.hw-flag-spin {
+    position: absolute; left: 50%; top: -16px; transform: translateX(-50%);
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid color-mix(in oklab, var(--flag-osm) 30%, transparent);
+    border-top-color: var(--flag-osm);
+    animation: hwFlagSpin 0.7s linear infinite;
+}
+@keyframes hwFlagSpin { to { transform: translateX(-50%) rotate(360deg); } }
+
+/* — Error (échec Overpass, PR2+) : contour rouge pointillé — */
+.hw-flag--error .hw-flag-banner {
+    background: transparent;
+    border: 1.5px dashed var(--danger);
+    box-shadow: none;
+}
+.hw-flag--error .hw-flag-mast { background: var(--danger); }
+
+/* — Badge cadenas (Traitement B handoff, PR4) — pastille en pied de mât — */
+.hw-flag-lock {
+    position: absolute; left: 13px; top: 8px;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: color-mix(in oklab, var(--flag-locked) 70%, #000);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 0 1.5px var(--surface), var(--shadow-card);
+    z-index: 2;
+}
+.hw-flag-lock svg { width: 9px; height: 9px; }
+
+/* — Drapeau survolé / sélectionné (active) — — */
+.hw-flag.is-active .hw-flag-banner {
+    box-shadow: 0 0 0 2px #fff, 0 2px 6px rgba(0,0,0,0.4);
+}
+
+/* === Barre d'action unitaire (fiche POI) — redesign v2 (Variante A handoff) ===
+   Ancrée en bas de la carte, fond sombre (héritage v1), structurée :
+   pastille icône + titre/consigne + mesure d'écart live + actions. */
+.ap-bar {
+    position: absolute; left: 12px; right: 12px; bottom: 12px;
+    z-index: 1000;
+    background: var(--bg, #0D3B66);
+    color: #fff;
     border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--radius-lg, 14px);
+    box-shadow: var(--shadow-modal, 0 12px 40px rgba(0,0,0,0.3));
+    overflow: hidden;
     font-size: 13px;
+    max-width: calc(100% - 24px);
+    margin: 0 auto;
 }
-.hw-access-toolbar-text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
-.hw-access-toolbar-text strong { font-weight: 700; }
-.hw-access-toolbar-text span { opacity: 0.85; font-size: 12px; }
-.hw-access-toolbar-actions { display: flex; gap: 8px; flex-shrink: 0; }
-.hw-access-btn {
-    border: 1px solid rgba(255,255,255,0.4); background: transparent; color: #fff;
-    padding: 7px 12px; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer;
+.ap-bar-head {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 16px;
 }
-.hw-access-btn:hover { background: rgba(255,255,255,0.12); }
-.hw-access-btn--primary { background: #fff; color: var(--bg, #1f3a5f); border-color: #fff; }
-.hw-access-btn--primary:hover { background: rgba(255,255,255,0.9); }
+.ap-bar-mark {
+    flex-shrink: 0; width: 34px; height: 34px;
+    border-radius: var(--radius-md, 10px);
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+}
+.ap-bar-mark svg { width: 18px; height: 18px; }
+.ap-bar-txt { min-width: 0; flex: 1; }
+.ap-bar-txt h5 {
+    margin: 0; font-size: 14px; font-weight: 700; color: #fff;
+}
+.ap-bar-txt p {
+    margin: 3px 0 0; font-size: 12.5px; line-height: 1.4;
+    color: rgba(255,255,255,0.75);
+}
+.ap-measure {
+    display: inline-flex; align-items: center; gap: 6px;
+    flex-shrink: 0;
+    font-family: var(--font-family-mono, ui-monospace, monospace);
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+    white-space: nowrap;
+    padding-top: 2px;
+}
+.ap-measure b { color: #fff; font-weight: 700; }
+.ap-bar-actions {
+    display: flex; gap: 8px; padding: 12px 16px;
+    border-top: 1px solid rgba(255,255,255,0.10);
+    background: rgba(0,0,0,0.18);
+    flex-wrap: wrap;
+}
+.ap-bar-actions .grow { flex: 1; }
+.ap-bar-btn {
+    border: 1px solid rgba(255,255,255,0.4);
+    background: transparent; color: #fff;
+    padding: 8px 14px; border-radius: 9px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    min-height: 36px;
+    display: inline-flex; align-items: center; gap: 6px;
+}
+.ap-bar-btn:hover { background: rgba(255,255,255,0.12); }
+.ap-bar-btn--primary {
+    background: #fff; color: var(--bg, #0D3B66);
+    border-color: #fff;
+}
+.ap-bar-btn--primary:hover { background: rgba(255,255,255,0.9); }
+.ap-bar-btn svg { width: 14px; height: 14px; }
+
+/* Adaptation petits écrans — la barre prend toute la largeur dispo. */
+@media (max-width: 640px) {
+    .ap-bar-head { flex-wrap: wrap; }
+    .ap-measure { width: 100%; padding-top: 6px; }
+    .ap-bar-actions { padding: 10px 12px; }
+    .ap-bar-btn { padding: 7px 11px; font-size: 12.5px; }
+}
 
 /* État + Accès — pastilles sémantiques (hero). État : point coloré. Accès :
    icône. Fond en pastel léger (token × 50% + blanc), pour s'aligner sur les

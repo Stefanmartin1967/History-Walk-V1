@@ -11,33 +11,67 @@
 // IMPORTANT : on ne touche JAMAIS au marqueur ni aux coordonnées réelles du POI
 // (≠ « Déplacer le marqueur » qui, lui, mute geometry.coordinates). Le <wpt>
 // reste sur le vrai lieu ; seul le champ accessPoint est écrit.
+//
+// Refonte visuelle v2 (PR 1/5 — 31/05/2026, handoff Claude Design) :
+//  - Drapeau classes .hw-flag + .hw-flag--moved (forme v1, palette nouvelle).
+//    Tous les drapeaux posés via cet éditeur s'affichent en VERT (déplacé
+//    manuellement). La distinction OSM/déplacé via champ source viendra en PR2.
+//  - Barre d'action redesignée (.ap-bar) : pastille icône + titre + consigne +
+//    mesure d'écart LIVE pendant le drag + actions structurées.
 import L from 'leaflet';
 import { map } from './map.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { getAccessPoint, escapeXml } from './utils.js';
 import { showToast } from './toast.js';
+import { createIcons, appIcons } from './lucide-icons.js';
 
 let _marker = null;     // drapeau draggable
 let _line = null;       // ligne POI → drapeau
 let _toolbar = null;    // barre flottante Enregistrer/Effacer/Annuler
+let _measureEl = null;  // <b> où l'on injecte l'écart live (m)
 let _onMapClick = null;
 let _poiLatLng = null;  // [lat, lng] du POI (fixe)
 let _poiId = null;
 let _hadAccessPoint = false;
 
 function flagIcon() {
+    // Structure .hw-flag (refonte v2) — mât + fanion + ancre au sol via ::after.
+    // Modifier --moved : vert (drapeau posé manuellement par l'admin). En PR2,
+    // les drapeaux pré-posés par OSM utiliseront --osm (orange) selon le champ
+    // accessPointSource ; ici on est dans le geste manuel exclusivement.
     return L.divIcon({
-        className: 'hw-access-flag',
-        html: '<span class="hw-access-flag-pole"></span><span class="hw-access-flag-banner"></span>',
-        iconSize: [28, 28],
-        iconAnchor: [3, 26], // pointe du mât en bas-gauche
+        className: 'hw-flag hw-flag--moved',
+        html: '<span class="hw-flag-mast"></span><span class="hw-flag-banner"></span>',
+        iconSize: [22, 30],
+        iconAnchor: [3, 30], // pointe du mât en bas-gauche
     });
+}
+
+// Haversine — distance en mètres entre deux points [lat, lng]. Utilisée pour
+// la mesure d'écart live affichée dans la barre pendant le drag.
+function distanceMeters(a, b) {
+    const R = 6371000;
+    const toRad = (d) => d * Math.PI / 180;
+    const dLat = toRad(b[0] - a[0]);
+    const dLng = toRad(b[1] - a[1]);
+    const lat1 = toRad(a[0]);
+    const lat2 = toRad(b[0]);
+    const h = Math.sin(dLat/2)**2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+function updateMeasure() {
+    if (!_marker || !_measureEl || !_poiLatLng) return;
+    const { lat, lng } = _marker.getLatLng();
+    const m = distanceMeters(_poiLatLng, [lat, lng]);
+    _measureEl.textContent = m < 10 ? m.toFixed(1) + ' m' : Math.round(m) + ' m';
 }
 
 function redrawLine() {
     if (!_marker || !_line) return;
     const { lat, lng } = _marker.getLatLng();
     _line.setLatLngs([_poiLatLng, [lat, lng]]);
+    updateMeasure();
 }
 
 function teardown() {
@@ -46,24 +80,35 @@ function teardown() {
     if (_line) { _line.remove(); _line = null; }
     if (_toolbar && _toolbar.parentNode) { _toolbar.parentNode.removeChild(_toolbar); }
     _toolbar = null;
+    _measureEl = null;
     _poiId = null;
     _poiLatLng = null;
     _hadAccessPoint = false;
 }
 
 function buildToolbar(feature) {
+    // Barre redesignée (.ap-bar) — Variante A du handoff Design.
+    // Structure : pastille icône + titre/consigne + mesure live + actions.
+    // Pas de bouton « Pré-poser via OSM » en PR1 (arrive en PR2 avec Overpass).
     const bar = document.createElement('div');
-    bar.className = 'hw-access-toolbar';
+    bar.className = 'ap-bar';
     const name = escapeXml(getPoiName(feature) || 'ce lieu');
     bar.innerHTML = `
-        <div class="hw-access-toolbar-text">
-            <strong>Point d'accès au tracé</strong>
-            <span>${name} — pose le drapeau sur la voie la plus proche</span>
+        <div class="ap-bar-head">
+            <div class="ap-bar-mark"><i data-lucide="flag"></i></div>
+            <div class="ap-bar-txt">
+                <h5>Point d'accès au tracé</h5>
+                <p>${name} — glisse le drapeau sur la voie la plus proche.</p>
+            </div>
+            <span class="ap-measure">Écart <b data-measure>—</b></span>
         </div>
-        <div class="hw-access-toolbar-actions">
-            <button type="button" class="hw-access-btn hw-access-btn--primary" data-act="save">Enregistrer</button>
-            <button type="button" class="hw-access-btn" data-act="erase">Effacer</button>
-            <button type="button" class="hw-access-btn" data-act="cancel">Annuler</button>
+        <div class="ap-bar-actions">
+            <span class="grow"></span>
+            <button type="button" class="ap-bar-btn" data-act="erase">Effacer</button>
+            <button type="button" class="ap-bar-btn" data-act="cancel">Annuler</button>
+            <button type="button" class="ap-bar-btn ap-bar-btn--primary" data-act="save">
+                <i data-lucide="check"></i> Enregistrer
+            </button>
         </div>`;
     // Les clics sur la barre ne doivent pas atteindre la carte (sinon ils
     // déplaceraient le drapeau).
@@ -72,6 +117,7 @@ function buildToolbar(feature) {
     bar.querySelector('[data-act="save"]').addEventListener('click', onSave);
     bar.querySelector('[data-act="erase"]').addEventListener('click', onErase);
     bar.querySelector('[data-act="cancel"]').addEventListener('click', teardown);
+    _measureEl = bar.querySelector('[data-measure]');
     return bar;
 }
 
@@ -102,11 +148,18 @@ export function startAccessPointPlacement(feature) {
     _toolbar = buildToolbar(feature);
     map.getContainer().appendChild(_toolbar);
 
+    // Render des icônes Lucide injectées dans la barre (flag, check).
+    createIcons({ icons: appIcons, attrs: { 'stroke-width': 2 }, nameAttr: 'data-lucide' });
+
+    // Première mise à jour de la mesure (drapeau démarre sur le POI = 0 m, ou
+    // à l'emplacement du drapeau existant = écart effectif).
+    updateMeasure();
+
     map.panTo(start, { animate: true });
     // Pas de toast d'instruction : la barre de pose (persistante) porte déjà la
-    // consigne « pose le drapeau sur la voie la plus proche ». Le fond par défaut
-    // (Voyager) montre les routes ; l'admin bascule via le contrôle de calques
-    // existant si besoin (satellite pour le bâti, OSM pour les voies routables).
+    // consigne « glisse le drapeau sur la voie la plus proche ». Le fond par
+    // défaut (Voyager) montre les routes ; l'admin bascule via le contrôle de
+    // calques existant si besoin (satellite pour le bâti).
 }
 
 async function onSave() {
