@@ -20,13 +20,13 @@
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
         "lat": 33.826540531288295,
         "lng": 11.046173596441804,
-        "Description_courte": "Hôtel au trs bon rapport qualité/Prix",
         "description": "Très bel hôtel 4 *, si vous voulez manger local, des spécialités tunisiennes sont à votre disposition à chaque repas. \nSoirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nC'est notre \"Camp de base\", on y retourne en novembre",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
         "Temps_minutes": 60,
-        "Prix_TND": 0
+        "Prix_TND": 0,
+        "info_gpx": "Hôtel au trs bon rapport qualité/Prix"
       }
     },
     {
@@ -47,7 +47,6 @@
         "HW_ID": "HW-01K77WPE6722XTDVPGCQTPPBXR",
         "lat": 33.82269956652683,
         "lng": 11.042709897308695,
-        "Description_courte": "",
         "description": "Phare dont l'activité a débuté en 1895. En forme de tour tronconique effilée, il est peint en blanc, avec trois bandes rouges. Devenu zone militaire, on ne peut ni l'approcher ni le photographier.",
         "timeH": 0,
         "timeM": 0,
@@ -56,7 +55,8 @@
         "État": "",
         "Accès": "",
         "Temps_minutes": 0,
-        "Prix_TND": 0
+        "Prix_TND": 0,
+        "info_gpx": ""
       }
     },
     {
@@ -77,7 +77,6 @@
         "HW_ID": "HW-01K77WPE67RMBHZ4JFG7PXTCRT",
         "lat": 33.81974876092748,
         "lng": 11.044993404919456,
-        "Description_courte": "",
         "description": "Faisant partie de Djerba Explore, ce musée est composé de quinze salles thématiques et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
         "timeH": 0,
         "timeM": 0,
@@ -89,7 +88,8 @@
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "info_gpx": ""
       }
     },
     {
@@ -109,7 +109,6 @@
         "État": "En activité",
         "Accès": "",
         "Zone": "Arkou",
-        "Description_courte": "",
         "Source": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -122,7 +121,8 @@
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1779896247537.jpg"
         ],
         "description": "",
-        "Facebook": ""
+        "Facebook": "",
+        "info_gpx": ""
       }
     },
     {
@@ -163,10 +163,10 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
-        "Description_courte": "",
         "description": "",
         "Temps_minutes": 0,
-        "Prix_TND": 0
+        "Prix_TND": 0,
+        "info_gpx": ""
       }
     },
     {
@@ -188,7 +188,6 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
-        "Description_courte": "",
         "description": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -197,7 +196,8 @@
         "Facebook": "",
         "photos": [
           "photos/poi_HW-01K77WPE67MSESGPPZ5CAD0XTZ_1780085038744.jpg"
-        ]
+        ],
+        "info_gpx": ""
       }
     },
     {
@@ -328,7 +328,7 @@
         "Zone": "Midoun",
         "Source": null,
         "HW_ID": "HW-01K77WPE68SW5H9AGP366WDFHH",
-        "Description_courte": "La Mosquée Kbess est un édifice composite mêlant architecture traditionnelle djerbienne et ajouts contemporains.\nSa coupole blanche et son minaret géométrique en font un repère visuel important à l’entrée sud de Mezraya."
+        "info_gpx": "La Mosquée Kbess est un édifice composite mêlant architecture traditionnelle djerbienne et ajouts contemporains.\nSa coupole blanche et son minaret géométrique en font un repère visuel important à l’entrée sud de Mezraya."
       }
     },
     {
@@ -421,7 +421,7 @@
         "Zone": "Midoun",
         "Source": null,
         "HW_ID": "HW-01K77WPE68HB12PE5Y0ZGTGJ3X",
-        "Description_courte": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions."
+        "info_gpx": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions."
       }
     },
     {
@@ -494,7 +494,7 @@
         "Zone": "Midoun",
         "Source": null,
         "HW_ID": "HW-01K77WPE698R49VRAQ6C6J1XXF",
-        "Description_courte": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance."
+        "info_gpx": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance."
       }
     },
     {
@@ -513,7 +513,7 @@
         "Zone": "Midoun",
         "Source": null,
         "HW_ID": "HW-01K77WPE69R3QRREC9E9W0S5V4",
-        "Description_courte": "Mosquée qui témoigne rare de la continuité du style vernaculaire djerbien, où architecture, spiritualité et paysage forment une unité indissociable."
+        "info_gpx": "Mosquée qui témoigne rare de la continuité du style vernaculaire djerbien, où architecture, spiritualité et paysage forment une unité indissociable."
       }
     },
     {
@@ -569,8 +569,8 @@
         "Zone": "Midoun",
         "Source": null,
         "HW_ID": "HW-01K77WPE697JA8WM3N71KEFY6S",
-        "Description_courte": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental.",
-        "photos": []
+        "photos": [],
+        "info_gpx": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental."
       }
     },
     {
@@ -589,8 +589,8 @@
         "Zone": "Mazraia",
         "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/",
         "HW_ID": "HW-01K77WPE69Z6P5WA0YY1ETQ5XB",
-        "Description_courte": "Mosquée unique en son genre, non seulement pour son architecture troglodytique mais aussi pour son rôle historique dans le système de défense de l’île.",
-        "description": "Mosquée de forme irrégulière, composée d'une salle de prière troglodytique, d'une salle funéraire et d'une citerne. Un petit esaclier étroit nous amène dans la salle de prière. L'intérieur est divisé en deux, la partie ouest couverte par une coupole et son mur sud est orné d'une niche de mihrab. A l'ouest, on découvre la salle funéraire couvert de de coupole à trompes. Elle a été restaurée à deux reprises, en 2005 par les habitants et en 2006 par l'Institut National du Patrmoine et est classé au patrimoine mondial de l'UNESCO."
+        "description": "Mosquée de forme irrégulière, composée d'une salle de prière troglodytique, d'une salle funéraire et d'une citerne. Un petit esaclier étroit nous amène dans la salle de prière. L'intérieur est divisé en deux, la partie ouest couverte par une coupole et son mur sud est orné d'une niche de mihrab. A l'ouest, on découvre la salle funéraire couvert de de coupole à trompes. Elle a été restaurée à deux reprises, en 2005 par les habitants et en 2006 par l'Institut National du Patrmoine et est classé au patrimoine mondial de l'UNESCO.",
+        "info_gpx": "Mosquée unique en son genre, non seulement pour son architecture troglodytique mais aussi pour son rôle historique dans le système de défense de l’île."
       }
     },
     {
@@ -629,8 +629,8 @@
         "Zone": "Mazraia",
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-beaute-immaculee-de-mosquee-sellaouati/187481/",
         "HW_ID": "HW-01K77WPE69KD9K0SES4DYYWZQA",
-        "Description_courte": "Mosquée massive au minaret carré qui se cache derrière les oliviers.\nCe sanctuaire immaculé continue de recevoir les fidèles et, parfois, de simples curieux.",
-        "description": "Mosquée massive au minaret carré dont la construction remonterait au 16ème siècle, à l'arrivée du clan des Sellaouates. La légende raconte que ceux-ci ont commencé par creuser un puits avant de décider d'y établir leur culte. Ils virent un signe divin dans la découverte d'une colonne de marbre qui sortaient du sol et décidèrent de l'incorporer à leur mosquée. A leur arrivée le lendemain de sa construction, la porte était close sans être munie de serrure ni de loquet. Une femme vénérable reconnue pour sa sagesse leur conseilla de faire acte de charité. Ce qui fût fait, avant d'émietter un dernier pain devant la mosquée qui leur fût enfin accessible."
+        "description": "Mosquée massive au minaret carré dont la construction remonterait au 16ème siècle, à l'arrivée du clan des Sellaouates. La légende raconte que ceux-ci ont commencé par creuser un puits avant de décider d'y établir leur culte. Ils virent un signe divin dans la découverte d'une colonne de marbre qui sortaient du sol et décidèrent de l'incorporer à leur mosquée. A leur arrivée le lendemain de sa construction, la porte était close sans être munie de serrure ni de loquet. Une femme vénérable reconnue pour sa sagesse leur conseilla de faire acte de charité. Ce qui fût fait, avant d'émietter un dernier pain devant la mosquée qui leur fût enfin accessible.",
+        "info_gpx": "Mosquée massive au minaret carré qui se cache derrière les oliviers.\nCe sanctuaire immaculé continue de recevoir les fidèles et, parfois, de simples curieux."
       }
     },
     {
@@ -745,8 +745,8 @@
         "Source": "https://lapresse.tn/2025/08/26/restauree-apres-des-siecles-la-mosquee-al-maazouzine-retrouve-son-eclat-a-djerba/",
         "HW_ID": "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
         "photos": [],
-        "Description_courte": "Mosquée Ibadite restaurée en août 2025",
-        "description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine."
+        "description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
+        "info_gpx": "Mosquée Ibadite restaurée en août 2025"
       }
     },
     {
@@ -802,7 +802,7 @@
         "Zone": "Mazraia",
         "Source": null,
         "HW_ID": "HW-01K77WPE6AS77NE3CRGHPYHJSE",
-        "Description_courte": "Mosquée qui se dresse isolée au milieu d’un terrain pierreux planté de quelques oliviers."
+        "info_gpx": "Mosquée qui se dresse isolée au milieu d’un terrain pierreux planté de quelques oliviers."
       }
     },
     {
@@ -819,7 +819,6 @@
         "Nom du site arabe": "منارة أجير",
         "Catégorie": "Curiosité",
         "Zone": "Arkou",
-        "Description_courte": null,
         "Source": null,
         "Temps_minutes": null,
         "Prix_TND": null,
@@ -827,7 +826,8 @@
         "Horaires": null,
         "verified": false,
         "HW_ID": "HW-01K77WPE6AB83SMA3RRSYH0SK9",
-        "description": "Fait partie du circuit invaders"
+        "description": "Fait partie du circuit invaders",
+        "info_gpx": null
       }
     },
     {
@@ -1030,7 +1030,7 @@
         "Zone": "Mazraia",
         "Source": null,
         "HW_ID": "HW-01K77WPE6BAJG9QADZMRDXPWTB",
-        "Description_courte": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux."
+        "info_gpx": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux."
       }
     },
     {
@@ -1603,11 +1603,11 @@
         "Zone": "Sedouikech",
         "Source": "https://kapitalis.com/tunisie/2015/07/28/djerba-les-necropoles-puniques-saccagees-pillees-et-profanees/",
         "HW_ID": "HW-01K77WPE6DQEKFWMTWZ1A5XH39",
-        "Description_courte": "Description pour test",
         "description": "Les nécropoles puniques de Souk El Guebli au sud-est de l’île de Djerba renferment une douzaine de tombes les mieux conservées de toutes les autres tombes antiques dans l’île, découvertes en partie par le Français Ratel Gontrain suite aux premières fouilles effectuées depuis les années 1950, et les autres par Sami Ben Tahar, archéologue chargé de recherche auprès de l’Institut national du patrimoine (INP), grâce aux multiples fouilles entreprises par lui-même depuis 2004.\n\nS’étendant sur une superficie de 5000 m2, ce site archéologique exceptionnel, constitué de caveaux rupestres remontant au IIIe siècle Av. J.-C., est doté d’un plan original dont les parallèles se trouvent en Orient hellénistique et apporte un témoignage spectaculaire sur l’architecture libyco-punique, fruit d’un brassage culturel édifiant entre le substrat autochtone et l’apport phénicien.\n\nLes nombreuses fouilles effectuées sur ce site ont livré un riche mobilier funéraire constitué de poteries et d’artefacts en d’autres matériaux.",
         "timeH": 0,
         "timeM": 0,
-        "price": 0
+        "price": 0,
+        "info_gpx": "Description pour test"
       }
     },
     {
@@ -2085,7 +2085,7 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
         "photos": [],
-        "Description_courte": "Mosquée proche de la mer, à proximité de Goose island djerba où vous pouvez faire diverses activités aquatiques"
+        "info_gpx": "Mosquée proche de la mer, à proximité de Goose island djerba où vous pouvez faire diverses activités aquatiques"
       }
     },
     {
@@ -2141,9 +2141,9 @@
         "Zone": "Erriadh",
         "Source": null,
         "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB",
-        "Description_courte": "A vérifier si toujours existante",
         "Prix_TND": 0,
-        "description": "Renseignée sous Google Maps mais apparemment, il ne doit rien y subsister, on ne voir rien sur la carte"
+        "description": "Renseignée sous Google Maps mais apparemment, il ne doit rien y subsister, on ne voir rien sur la carte",
+        "info_gpx": "A vérifier si toujours existante"
       }
     },
     {
@@ -2294,7 +2294,7 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6F1C25NNH5RAR2JPF6",
         "photos": [],
-        "Description_courte": "Mosquée et mausolée malékite de construction récente intégrant le mausolée"
+        "info_gpx": "Mosquée et mausolée malékite de construction récente intégrant le mausolée"
       }
     },
     {
@@ -2331,7 +2331,7 @@
         "Zone": "Taourit",
         "Source": null,
         "HW_ID": "HW-01K77WPE6G4S44DJQ98414C336",
-        "Description_courte": "Masquée et mausolée malékite de construction récente intégrant le mausolée"
+        "info_gpx": "Masquée et mausolée malékite de construction récente intégrant le mausolée"
       }
     },
     {
@@ -2369,8 +2369,8 @@
         "Zone": "Taourit",
         "Source": "https://www.facebook.com/Amis.Tunisie/posts/mosqu%C3%A9e-ibrahim-al-charef-taouritla-mosqu%C3%A9e-ibrahim-al-charef-est-consid%C3%A9r%C3%A9e-com/1104312605062607/",
         "HW_ID": "HW-01K77WPE6GX5J8BG85Y7V1ZXKS",
-        "Description_courte": "Mosquée mausolée malékite au style ottoman construite au 19è siècle de notre ère, restaurée en 1991",
-        "description": "La mosquée Sidi Ibrahim Al-Charef est considérée comme l’un des monuments historiques majeurs de Houmt Souk. Elle fut à l’origine un établissement d’enseignement religieux complet fondé par le savant Sidi Ibrahim Al-Jamni, avant de se réduire à une simple école coranique (kuttab) consacrée à la mémorisation du Coran. L’édifice a connu de nombreuses transformations et extensions : Une partie de la cour intérieure et des annexes a été agrandie pour répondre aux besoins du quartier, certaines maisons voisines ont été intégrées au complexe, le mausolée de Sidi Ibrahim Al-Charef lui-même est devenu un lieu de prière fréquenté par les habitants du secteur. L’ensemble comporte une salle de prière couverte d’arcs et de voûtes blanches, décorée de carreaux verts vernissés typiques des édifices djerbiens, un minaret blanc élancé à base carrée, un portail monumental en arc outrepassé, surmonté d’une plaque portant le nom de la mosquée."
+        "description": "La mosquée Sidi Ibrahim Al-Charef est considérée comme l’un des monuments historiques majeurs de Houmt Souk. Elle fut à l’origine un établissement d’enseignement religieux complet fondé par le savant Sidi Ibrahim Al-Jamni, avant de se réduire à une simple école coranique (kuttab) consacrée à la mémorisation du Coran. L’édifice a connu de nombreuses transformations et extensions : Une partie de la cour intérieure et des annexes a été agrandie pour répondre aux besoins du quartier, certaines maisons voisines ont été intégrées au complexe, le mausolée de Sidi Ibrahim Al-Charef lui-même est devenu un lieu de prière fréquenté par les habitants du secteur. L’ensemble comporte une salle de prière couverte d’arcs et de voûtes blanches, décorée de carreaux verts vernissés typiques des édifices djerbiens, un minaret blanc élancé à base carrée, un portail monumental en arc outrepassé, surmonté d’une plaque portant le nom de la mosquée.",
+        "info_gpx": "Mosquée mausolée malékite au style ottoman construite au 19è siècle de notre ère, restaurée en 1991"
       }
     },
     {
@@ -2427,10 +2427,10 @@
         "Zone": "Taourit",
         "Source": "https://www.patrimoinedetunisie.com.tn/musees/musee-du-patrimoine-traditionnel-de-djerba/apercu/",
         "HW_ID": "HW-01K77WPE6G6JHJFHW35MKZBZEW",
-        "Description_courte": "Musée du Patrimoine de Djerba, ouvert de 09h30 à 16h30. Prix d'entrée pour les non résidents : 8Dt",
         "Temps_minutes": 180,
         "Prix_TND": 8,
-        "description": "Musée du Patrimoine Traditionnel de Djerba inauguré en 2018. La zaouïa qui abritait anciennement le musée a été restaurée et réaffectée en centre d'orientation du patrimoine. Le musée présente le patrimoine Djerbien sous diverses formes telles que architecture, agriculture, pêche, poterie, etc. ... Il offre à la visite une dimension participative et permet de mieux comprendre le riche passé de 'île."
+        "description": "Musée du Patrimoine Traditionnel de Djerba inauguré en 2018. La zaouïa qui abritait anciennement le musée a été restaurée et réaffectée en centre d'orientation du patrimoine. Le musée présente le patrimoine Djerbien sous diverses formes telles que architecture, agriculture, pêche, poterie, etc. ... Il offre à la visite une dimension participative et permet de mieux comprendre le riche passé de 'île.",
+        "info_gpx": "Musée du Patrimoine de Djerba, ouvert de 09h30 à 16h30. Prix d'entrée pour les non résidents : 8Dt"
       }
     },
     {
@@ -2449,8 +2449,8 @@
         "Zone": "Taourit",
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_%C3%89trangers",
         "HW_ID": "HW-01K77WPE6G6C1H17E6WP518B3J",
-        "Description_courte": "Mosquée ibadite devenue malékite construite en 967 de l’hégire, soit en 1560 de notre ère",
-        "description": "Principale mosquée Malikite, construite au 15ème siècle. Edifiée au début en tant que madrassa ibadite. Egalement connue sous les noms de mosquée Barrazim, mosquées des étrangers ou Jemaâ Ghorba"
+        "description": "Principale mosquée Malikite, construite au 15ème siècle. Edifiée au début en tant que madrassa ibadite. Egalement connue sous les noms de mosquée Barrazim, mosquées des étrangers ou Jemaâ Ghorba",
+        "info_gpx": "Mosquée ibadite devenue malékite construite en 967 de l’hégire, soit en 1560 de notre ère"
       }
     },
     {
@@ -2469,8 +2469,8 @@
         "Zone": "Taourit",
         "Source": "https://djerba-insolite.com/blog/sidi-brahim-eljomni",
         "HW_ID": "HW-01K77WPE6GQX3PRD8TAKTDRNSZ",
-        "Description_courte": "Mosquée, mausolée et medersa (Ecole) coranique constriten en \n1076 de l’hégire, soit 1675 de notre ère",
-        "description": "Mosquée de forme trapézoïdale fondée en 1674, édifiée en l’honneur du Cheikh Ibrahim Eljomni qui porte d’ailleurs le nom de la mosquée,é puis agrandie en 1721 par la dtynastie Husseinites , galement appelée mosquée Sidi Brahim Jemnii. La Zaouïya Brahima y est associée."
+        "description": "Mosquée de forme trapézoïdale fondée en 1674, édifiée en l’honneur du Cheikh Ibrahim Eljomni qui porte d’ailleurs le nom de la mosquée,é puis agrandie en 1721 par la dtynastie Husseinites , galement appelée mosquée Sidi Brahim Jemnii. La Zaouïya Brahima y est associée.",
+        "info_gpx": "Mosquée, mausolée et medersa (Ecole) coranique constriten en \n1076 de l’hégire, soit 1675 de notre ère"
       }
     },
     {
@@ -2489,8 +2489,8 @@
         "Zone": "El Jouamaa",
         "Source": null,
         "HW_ID": "HW-01K77WPE6GJ0DN3APAMA1JCFV8",
-        "Description_courte": "Mosquée Mausolée construite au 18è siècle de notre ère",
-        "description": "Mosquée mausolée, infos à rechercher sur place. Aurait apparemment été réaffectée."
+        "description": "Mosquée mausolée, infos à rechercher sur place. Aurait apparemment été réaffectée.",
+        "info_gpx": "Mosquée Mausolée construite au 18è siècle de notre ère"
       }
     },
     {
@@ -2509,8 +2509,8 @@
         "Zone": "Taourit",
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_Turcs",
         "HW_ID": "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
-        "Description_courte": "Mosquée hanafite puis malékite construite en 1560 de notre ère",
-        "description": "Mosquée également appelée Jemaâ Ettrouk, construite au 16ème siècle, sous l'impulsion du caïd Ghazi Mustapha Bey. Son minaret, en forme de chandelle est en forme de chandelle. Elle est la seule de l'île dédiée, à l'origine, au rite Hanédisme"
+        "description": "Mosquée également appelée Jemaâ Ettrouk, construite au 16ème siècle, sous l'impulsion du caïd Ghazi Mustapha Bey. Son minaret, en forme de chandelle est en forme de chandelle. Elle est la seule de l'île dédiée, à l'origine, au rite Hanédisme",
+        "info_gpx": "Mosquée hanafite puis malékite construite en 1560 de notre ère"
       }
     },
     {
@@ -2529,7 +2529,7 @@
         "Zone": "El Jouamaa",
         "Source": null,
         "HW_ID": "HW-01K77WPE6GJMBZYBJGZZAWQDYZ",
-        "Description_courte": "Mosquée mausolée malékite 1054 de l’hégire, soit 1643 de notre ère"
+        "info_gpx": "Mosquée mausolée malékite 1054 de l’hégire, soit 1643 de notre ère"
       }
     },
     {
@@ -2548,8 +2548,8 @@
         "Zone": "Taourit",
         "Source": "https://fr.wikipedia.org/wiki/Borj_El_Kebir_(Houmt_Souk)",
         "HW_ID": "HW-01K77WPE6H4XSK53CW38Q81RWP",
-        "Description_courte": "Un des plus beau monument historique de Djerba, ayant été le siège de nombreuses batailles",
-        "description": "Egalement appelé Fort El Ghazi Mustapha, ce fort est le plus grand, le plus visité et le mieux conservé de Djerba. Sa construction, enviagée dès 1392 a été ordonnée en 1432. Le site du fort était, à l'origine, l'ancienne ville romaine de girba. Il fut le témoin de nombreuses batailles, dont une qui vit le corsaire Dragut en prendre le commandement. Il s'ensuivra une période de commandement corsaire de plusieurs siècles. Il mesure 68 mètres de long et 53 mètres de largeur, avec des murailles haute de 10 mètres pour une épaisseur variant de 120 à 150 cmDe formes rectangulaires, munis de tours, il représente l'un des repères de l'architecture défensive de l'île On y entre par une porte comportant un pont-levis donnant accès à une vestibule s'ouvrant sur la cour intérieure."
+        "description": "Egalement appelé Fort El Ghazi Mustapha, ce fort est le plus grand, le plus visité et le mieux conservé de Djerba. Sa construction, enviagée dès 1392 a été ordonnée en 1432. Le site du fort était, à l'origine, l'ancienne ville romaine de girba. Il fut le témoin de nombreuses batailles, dont une qui vit le corsaire Dragut en prendre le commandement. Il s'ensuivra une période de commandement corsaire de plusieurs siècles. Il mesure 68 mètres de long et 53 mètres de largeur, avec des murailles haute de 10 mètres pour une épaisseur variant de 120 à 150 cmDe formes rectangulaires, munis de tours, il représente l'un des repères de l'architecture défensive de l'île On y entre par une porte comportant un pont-levis donnant accès à une vestibule s'ouvrant sur la cour intérieure.",
+        "info_gpx": "Un des plus beau monument historique de Djerba, ayant été le siège de nombreuses batailles"
       }
     },
     {
@@ -2568,7 +2568,6 @@
         "Zone": "Taourit",
         "Source": "https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Joseph_de_Djerba",
         "HW_ID": "HW-01K77WPE6HV1767JVPMV1000YQ",
-        "Description_courte": "Une des rares églises catholique de Djerba",
         "Sous-type": "Catholique",
         "État": "En activité",
         "Accès": "Intérieur visitable",
@@ -2577,7 +2576,8 @@
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "info_gpx": "Une des rares églises catholique de Djerba"
       }
     },
     {
@@ -2596,7 +2596,7 @@
         "Zone": "Essouani",
         "Source": null,
         "HW_ID": "HW-01K77WPE6HCR84JJZ3E1PQRRQ9",
-        "Description_courte": "Mosquée située au sud-est de Houmt Souk"
+        "info_gpx": "Mosquée située au sud-est de Houmt Souk"
       }
     },
     {
@@ -2653,8 +2653,8 @@
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-vingt-deux-mosquees-une-eglise-et-une-synagogue/208839/",
         "HW_ID": "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
         "photos": [],
-        "Description_courte": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant",
-        "description": "La petite église orthodoxe, fondée par Sakillaris Kandinys rappelle la présence grecque en nombre jusqu'aux années 1950. Ceux-ci étaient les descendants des pêcheurs d'éponge et de poulpes qui s'étaient installés à Djerbin à la fin du 19ème siècle. C'est la seule église orthodoxes de l'île, dont la dernière rénovation date de 2019, sous la supervision de Dimitri Mavrothalassitis. L'ensemble du lieu de culte a ainsi été remise à neuf, ainsi que plusieurs icônes."
+        "description": "La petite église orthodoxe, fondée par Sakillaris Kandinys rappelle la présence grecque en nombre jusqu'aux années 1950. Ceux-ci étaient les descendants des pêcheurs d'éponge et de poulpes qui s'étaient installés à Djerbin à la fin du 19ème siècle. C'est la seule église orthodoxes de l'île, dont la dernière rénovation date de 2019, sous la supervision de Dimitri Mavrothalassitis. L'ensemble du lieu de culte a ainsi été remise à neuf, ainsi que plusieurs icônes.",
+        "info_gpx": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant"
       }
     },
     {
@@ -2693,8 +2693,8 @@
         "Source": "https://www.turess.com/fr/letemps/52984?utm",
         "HW_ID": "HW-01K77WPE6H365AYB72RWY40WZX",
         "photos": [],
-        "Description_courte": "Dominant la côte nord de Houmt-Souk, la mosquée Sidi El-Bahri se dresse aujourd’hui comme un symbole de résilience. Reconstruite sur les ruines de l’édifice détruit en 2011, elle conserve la mémoire d’un sanctuaire trois fois centenaire dont le minaret seul avait survécu à la démolition. Sa silhouette blanche, son dôme discret et son phare vert rappellent la simplicité des mosquées maritimes djerbiennes. Autour d’elle, les tombes anciennes forment un manteau de silence : le passé veille encore, paisible, au seuil du présent.",
-        "description": "HW sur base de l'article cité en source et analyse des photos et vue satelite actuelle Entre disparition et renaissance d’un lieu sacré Pendant plus de trois siècles, la mosquée Sidi El-Bahri veillait sur la côte de Houmt-Souk, à proximité immédiate de la mer et du vieux cimetière. C’était un petit sanctuaire blanchâtre, au minaret trapu, que les habitants de Djerba considéraient comme un témoin de leur histoire spirituelle et urbaine. Mais le 13 février 2011, en pleine période de transition politique, le site fut frappé par un acte aussi brutal qu’irréparable. Selon les témoins de l’époque, un groupe d’individus s’était présenté sous de fausses identités et avait fait venir deux bulldozers. En quelques heures, la mosquée — qui datait d’au moins trois siècles — fut presque entièrement rasée, ne laissant debout que son minaret, dressé comme le dernier témoin d’une profanation absurde. Deux ans plus tôt, une première tentative de destruction avait déjà été déjouée grâce à l’intervention de l’Institut National du Patrimoine (INP) et de l’Association pour la Sauvegarde de l’île de Djerba. Mais cette fois, aucune autorité n’eut le temps de réagir. L’INP dénonça aussitôt l’événement, rappelant que la mosquée appartenait au patrimoine historique et religieux tunisien, et annonça son intention de poursuivre les responsables pour prévenir toute récidive. Une reconstruction sur les ruines L’histoire aurait pu s’arrêter là, si la communauté locale n’avait pas décidé de rebâtir sur le même lieu. Aujourd’hui, la nouvelle mosquée Sidi El-Bahri, que l’on peut voir sur Google Maps, affiche une silhouette plus récente : une façade lisse, un minaret cylindrique surmonté d’une lanterne verte, et une cour ouverte sur un espace de prière moderne. L’intérieur, lumineux et carrelé, repose sur de solides colonnes blanches et vertes, dans un style typique des mosquées djerbiennes contemporaines. La vue satellite révèle la continuité du cimetière historique autour de l’édifice, comme un fil reliant le passé au présent. Même si la structure ancienne a disparu, le nom et la mémoire de Sidi El-Bahri demeurent, portés par les fidèles qui continuent d’y prier. Mémoire et signification La mosquée actuelle ne remplace pas seulement un bâtiment : elle perpétue un symbole. Ce lieu rappelle à la fois la fragilité du patrimoine et la ténacité d’une communauté qui refuse de voir s’effacer ses repères spirituels. Sidi El-Bahri, figure tutélaire du quartier, reste ainsi honoré à travers une mosquée reconstruite, plus sobre, mais toujours vivante — un rappel discret que la foi, à Djerba, résiste même aux bulldozers. Implantation et contexte La mosquée est située à Houmt-Souk, dans le tissu urbain historique proche de la mer. Son emprise rectangulaire s’inscrit dans une parcelle clairement délimitée par un muret périphérique, bordée à l’est par une voie carrossable et au nord par une zone funéraire. Le cimetière ancien, visible sur les images satellites, témoigne d’une continuité cultuelle très ancienne : il est probable que le site ait conservé la fonction de sanctuaire depuis l’époque médiévale. Organisation générale L’édifice s’articule en deux masses distinctes : – un volume principal, cubique, abritant la salle de prière ; – un avant-corps légèrement surbaissé qui forme la cour d’entrée et relie la salle à la rue. L’ensemble est orienté vers le sud-est, suivant l’axe canonique de la qibla à Djerba (environ 120°). Le minaret Élément le plus remarquable : le minaret cylindrique, à base massive, surmonté d’une lanterne à coupole et d’un éclairage vert nocturne. Sa morphologie rappelle certains minarets tardifs djerbiens reconstruits après 2010 : proportions trapues, assise circulaire plutôt que carrée, et décor sobre. Le fût est enduit d’un crépi fin, sans appareillage apparent — signe d’une maçonnerie récente (béton enduit plutôt que pierre de taille). La coupole principale Sur la toiture, la coupole blanche légèrement ovoïde trahit la volonté de rappeler la typologie des mosquées ibadites anciennes. Elle repose sur un tambour discret, probablement en maçonnerie creuse, et n’affiche pas les fissures ni la patine que l’on trouve sur les coupoles anciennes en chaux-sable. La salle de prière Les photographies intérieures révèlent une structure très régulière : une nef longitudinale à colonnes carrées enduites, plafond plat en dalle, revêtement carrelé bicolore (vert et crème). Ce type d’organisation correspond à une reconstruction post-2000 dans le style fonctionnel moderne, privilégiant la simplicité et la facilité d’entretien. Le mihrab carrelé, encadré d’un bandeau décoratif bleu, évoque une modernisation d’inspiration andalouse plutôt qu’une restitution historique. Environnement immédiat L’aire funéraire alentour est dense et désordonnée : les tombes, visibles depuis le ciel, sont de forme rectangulaire traditionnelle en maçonnerie blanche, disposées sans plan régulier. Cela indique un usage continu du cimetière, probablement antérieur à la reconstruction de la mosquée. À l’ouest et au sud, de petites maisons et bâtiments annexes modernes s’accolent au périmètre, montrant que le quartier a été réinvesti."
+        "description": "HW sur base de l'article cité en source et analyse des photos et vue satelite actuelle Entre disparition et renaissance d’un lieu sacré Pendant plus de trois siècles, la mosquée Sidi El-Bahri veillait sur la côte de Houmt-Souk, à proximité immédiate de la mer et du vieux cimetière. C’était un petit sanctuaire blanchâtre, au minaret trapu, que les habitants de Djerba considéraient comme un témoin de leur histoire spirituelle et urbaine. Mais le 13 février 2011, en pleine période de transition politique, le site fut frappé par un acte aussi brutal qu’irréparable. Selon les témoins de l’époque, un groupe d’individus s’était présenté sous de fausses identités et avait fait venir deux bulldozers. En quelques heures, la mosquée — qui datait d’au moins trois siècles — fut presque entièrement rasée, ne laissant debout que son minaret, dressé comme le dernier témoin d’une profanation absurde. Deux ans plus tôt, une première tentative de destruction avait déjà été déjouée grâce à l’intervention de l’Institut National du Patrimoine (INP) et de l’Association pour la Sauvegarde de l’île de Djerba. Mais cette fois, aucune autorité n’eut le temps de réagir. L’INP dénonça aussitôt l’événement, rappelant que la mosquée appartenait au patrimoine historique et religieux tunisien, et annonça son intention de poursuivre les responsables pour prévenir toute récidive. Une reconstruction sur les ruines L’histoire aurait pu s’arrêter là, si la communauté locale n’avait pas décidé de rebâtir sur le même lieu. Aujourd’hui, la nouvelle mosquée Sidi El-Bahri, que l’on peut voir sur Google Maps, affiche une silhouette plus récente : une façade lisse, un minaret cylindrique surmonté d’une lanterne verte, et une cour ouverte sur un espace de prière moderne. L’intérieur, lumineux et carrelé, repose sur de solides colonnes blanches et vertes, dans un style typique des mosquées djerbiennes contemporaines. La vue satellite révèle la continuité du cimetière historique autour de l’édifice, comme un fil reliant le passé au présent. Même si la structure ancienne a disparu, le nom et la mémoire de Sidi El-Bahri demeurent, portés par les fidèles qui continuent d’y prier. Mémoire et signification La mosquée actuelle ne remplace pas seulement un bâtiment : elle perpétue un symbole. Ce lieu rappelle à la fois la fragilité du patrimoine et la ténacité d’une communauté qui refuse de voir s’effacer ses repères spirituels. Sidi El-Bahri, figure tutélaire du quartier, reste ainsi honoré à travers une mosquée reconstruite, plus sobre, mais toujours vivante — un rappel discret que la foi, à Djerba, résiste même aux bulldozers. Implantation et contexte La mosquée est située à Houmt-Souk, dans le tissu urbain historique proche de la mer. Son emprise rectangulaire s’inscrit dans une parcelle clairement délimitée par un muret périphérique, bordée à l’est par une voie carrossable et au nord par une zone funéraire. Le cimetière ancien, visible sur les images satellites, témoigne d’une continuité cultuelle très ancienne : il est probable que le site ait conservé la fonction de sanctuaire depuis l’époque médiévale. Organisation générale L’édifice s’articule en deux masses distinctes : – un volume principal, cubique, abritant la salle de prière ; – un avant-corps légèrement surbaissé qui forme la cour d’entrée et relie la salle à la rue. L’ensemble est orienté vers le sud-est, suivant l’axe canonique de la qibla à Djerba (environ 120°). Le minaret Élément le plus remarquable : le minaret cylindrique, à base massive, surmonté d’une lanterne à coupole et d’un éclairage vert nocturne. Sa morphologie rappelle certains minarets tardifs djerbiens reconstruits après 2010 : proportions trapues, assise circulaire plutôt que carrée, et décor sobre. Le fût est enduit d’un crépi fin, sans appareillage apparent — signe d’une maçonnerie récente (béton enduit plutôt que pierre de taille). La coupole principale Sur la toiture, la coupole blanche légèrement ovoïde trahit la volonté de rappeler la typologie des mosquées ibadites anciennes. Elle repose sur un tambour discret, probablement en maçonnerie creuse, et n’affiche pas les fissures ni la patine que l’on trouve sur les coupoles anciennes en chaux-sable. La salle de prière Les photographies intérieures révèlent une structure très régulière : une nef longitudinale à colonnes carrées enduites, plafond plat en dalle, revêtement carrelé bicolore (vert et crème). Ce type d’organisation correspond à une reconstruction post-2000 dans le style fonctionnel moderne, privilégiant la simplicité et la facilité d’entretien. Le mihrab carrelé, encadré d’un bandeau décoratif bleu, évoque une modernisation d’inspiration andalouse plutôt qu’une restitution historique. Environnement immédiat L’aire funéraire alentour est dense et désordonnée : les tombes, visibles depuis le ciel, sont de forme rectangulaire traditionnelle en maçonnerie blanche, disposées sans plan régulier. Cela indique un usage continu du cimetière, probablement antérieur à la reconstruction de la mosquée. À l’ouest et au sud, de petites maisons et bâtiments annexes modernes s’accolent au périmètre, montrant que le quartier a été réinvesti.",
+        "info_gpx": "Dominant la côte nord de Houmt-Souk, la mosquée Sidi El-Bahri se dresse aujourd’hui comme un symbole de résilience. Reconstruite sur les ruines de l’édifice détruit en 2011, elle conserve la mémoire d’un sanctuaire trois fois centenaire dont le minaret seul avait survécu à la démolition. Sa silhouette blanche, son dôme discret et son phare vert rappellent la simplicité des mosquées maritimes djerbiennes. Autour d’elle, les tombes anciennes forment un manteau de silence : le passé veille encore, paisible, au seuil du présent."
       }
     },
     {
@@ -2787,8 +2787,8 @@
         "Zone": "El Jouamaa",
         "Source": "https://www.facebook.com/photo/?fbid=498602698174992&set=a.100670254634907",
         "HW_ID": "HW-01K77WPE6HPEZNHF6GJF6P582Z",
-        "Description_courte": "Mosquée de type Ibadite située en milieu semi-rural",
-        "description": "La mosquée Bouzid, connue localement sous le nom Jāmiʿ Bouzīd, se trouve à la périphérie sud-ouest de Houmt Souk, dans un environnement semi-rural. C’est une mosquée ibadite de plan sobre, typique de l’architecture djerbienne : murs massifs, coupole unique, minaret conique et cour fermée. Son volume blanc, presque monolithique, se détache sur un sol pierreux ponctué d’oliviers, traduisant une continuité entre la pratique religieuse et le paysage agraire de l’île. L’ensemble, récemment entretenu, conserve l’esprit austère et fonctionnel des lieux de culte ibadites : un espace épuré tourné vers la prière, la lumière et la tranquillité du lieu."
+        "description": "La mosquée Bouzid, connue localement sous le nom Jāmiʿ Bouzīd, se trouve à la périphérie sud-ouest de Houmt Souk, dans un environnement semi-rural. C’est une mosquée ibadite de plan sobre, typique de l’architecture djerbienne : murs massifs, coupole unique, minaret conique et cour fermée. Son volume blanc, presque monolithique, se détache sur un sol pierreux ponctué d’oliviers, traduisant une continuité entre la pratique religieuse et le paysage agraire de l’île. L’ensemble, récemment entretenu, conserve l’esprit austère et fonctionnel des lieux de culte ibadites : un espace épuré tourné vers la prière, la lumière et la tranquillité du lieu.",
+        "info_gpx": "Mosquée de type Ibadite située en milieu semi-rural"
       }
     },
     {
@@ -3071,7 +3071,7 @@
         "Zone": "Guellala",
         "Source": null,
         "HW_ID": "HW-01K77WPE6KD37GVA594C0XAQQ0",
-        "Description_courte": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala."
+        "info_gpx": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala."
       }
     },
     {
@@ -3090,8 +3090,8 @@
         "Zone": "Guellala",
         "Source": null,
         "HW_ID": "HW-01K77WPE6KC7BYPZ2982MZ1BQ6",
-        "Description_courte": "Plusieurs potiers dans la rue, flânerie recommandée",
-        "description": "Voir également : Poterie Habib Ben Mahmoud à 150 mètres"
+        "description": "Voir également : Poterie Habib Ben Mahmoud à 150 mètres",
+        "info_gpx": "Plusieurs potiers dans la rue, flânerie recommandée"
       }
     },
     {
@@ -3620,7 +3620,6 @@
         "Nom du site arabe": "برج العقرب",
         "Catégorie": "Site historique",
         "Zone": "Guellala",
-        "Description_courte": null,
         "Source": "https://www.misk.art/lire/un-monument-en-quelques-mots-2%C2%A0-la-l%C3%A9gende-de-borj-el-agreb",
         "Temps_minutes": null,
         "Prix_TND": null,
@@ -3628,7 +3627,8 @@
         "Horaires": null,
         "verified": false,
         "HW_ID": "HW-01K77WPE6N1VXNG3MVD2QPQFQV",
-        "description": "Fort, en ruines, présentant la particularité d'être construit en pleine mer. Pourrait être lié à la construction du Borj Kebir en 1284, il est cité pour la première fois en 1432. Rares sont les infos à son sujet, auxquelles se mélange une légende de scorpion décimant les enfants d'un prince."
+        "description": "Fort, en ruines, présentant la particularité d'être construit en pleine mer. Pourrait être lié à la construction du Borj Kebir en 1284, il est cité pour la première fois en 1432. Rares sont les infos à son sujet, auxquelles se mélange une légende de scorpion décimant les enfants d'un prince.",
+        "info_gpx": null
       }
     },
     {
@@ -3778,8 +3778,8 @@
         "Zone": "Ajim",
         "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6P1NA9ZF5TF1DK9GD2",
-        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment.",
-        "description": "La mosquée Ibn Hadid (ou Ben Hadid) se situe à Ajim, au sud-ouest de Djerba, dans le quartier de Guébeline. Selon le Répertoire des mosquées de Djerba (Palais Ben Ayed, 2021), il s’agit d’une mosquée ibadite wahbite rénovée récemment, anciennement construite. Les images satellite et au sol montrent un édifice rectangulaire enduit de chaux blanche, avec un minaret carré à plusieurs niveaux, restauré dans un état neuf. Le site paraît actif et intégré à la trame urbaine d’Ajim."
+        "description": "La mosquée Ibn Hadid (ou Ben Hadid) se situe à Ajim, au sud-ouest de Djerba, dans le quartier de Guébeline. Selon le Répertoire des mosquées de Djerba (Palais Ben Ayed, 2021), il s’agit d’une mosquée ibadite wahbite rénovée récemment, anciennement construite. Les images satellite et au sol montrent un édifice rectangulaire enduit de chaux blanche, avec un minaret carré à plusieurs niveaux, restauré dans un état neuf. Le site paraît actif et intégré à la trame urbaine d’Ajim.",
+        "info_gpx": "Ancienne mosquée ibadite wahbite rénovée récemment."
       }
     },
     {
@@ -3798,7 +3798,7 @@
         "Zone": "Ajim",
         "Source": null,
         "HW_ID": "HW-01K77WPE6PDSWXWVZZR4ZDNXVX",
-        "Description_courte": "Mosquée ibadite wahbite construite  au 4è siècle de l’hégire, ce qui correspond au 10è siècle de notre ère"
+        "info_gpx": "Mosquée ibadite wahbite construite  au 4è siècle de l’hégire, ce qui correspond au 10è siècle de notre ère"
       }
     },
     {
@@ -3836,7 +3836,7 @@
         "Zone": "Ajim",
         "Source": null,
         "HW_ID": "HW-01K77WPE6PP29CK1JR2H25ACNK",
-        "Description_courte": "Mosquée ibadite wahbite rénovée, intialement construite sur le site d'un église byzantine."
+        "info_gpx": "Mosquée ibadite wahbite rénovée, intialement construite sur le site d'un église byzantine."
       }
     },
     {
@@ -3855,7 +3855,7 @@
         "Zone": "Ajim",
         "Source": null,
         "HW_ID": "HW-01K77WPE6PC9G02W8SX1JZX2HC",
-        "Description_courte": "Ancienne mosquée ibadite wahbite rénovée récemment."
+        "info_gpx": "Ancienne mosquée ibadite wahbite rénovée récemment."
       }
     },
     {
@@ -3874,8 +3874,8 @@
         "Zone": "Ajim",
         "Source": "https://arachne.dainst.org/entity/7043417?fl=20&q=connectedEntities:7343375&resultIndex=1",
         "HW_ID": "HW-01K77WPE6PKFFHK53AA0880TBZ",
-        "Description_courte": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère",
-        "description": "Mosquée urbaine, de forme irrégulière, comprenant une école coranique. Sa superficie est de 2500 M². Plusieurs accès permettent d'accéder à la cour qui comporte deux majel (Puits). La salle de prière est située en son centre."
+        "description": "Mosquée urbaine, de forme irrégulière, comprenant une école coranique. Sa superficie est de 2500 M². Plusieurs accès permettent d'accéder à la cour qui comporte deux majel (Puits). La salle de prière est située en son centre.",
+        "info_gpx": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère"
       }
     },
     {
@@ -3894,8 +3894,8 @@
         "Zone": "Ajim",
         "Source": "https://fr.wikipedia.org/wiki/Fichier:Mosqu%C3%A9e_Ettouil_01.jpg",
         "HW_ID": "HW-01K77WPE6PG0DA193W44FBQAHQ",
-        "Description_courte": "Mosquée ibadite wahbite dont la date de construction estimée se situe aux environs du 17ème siècle, entre 1680 et 1720.\nMonument historique classé (INP, 2022).",
-        "description": "Décrite par chatGPT au départ de l'image sur Wikimedia Commons : L’édifice est blanc à dominante sobre, avec un minaret carré visible, dans un angle du bâtiment. Le bâtiment principal est de plan rectangulaire, à toit plat ou très légèrement incliné (les photos ne montrent pas de grandes coupoles). Le portail d’entrée est modeste, intégré dans le mur extérieur — pas de portails monumentaux visibles. L’ensemble est simple, sans décorations ostentatoires, typique d’une architecture utilitaire du culte, avec des lignes épurées. Le minaret a des proportions relativement élancées par rapport au corps de la mosquée, avec des ouvertures ajourées visibles dans les étages supérieurs. Le bâtiment semble bien entretenu, sans ruines visibles depuis la prise de vue."
+        "description": "Décrite par chatGPT au départ de l'image sur Wikimedia Commons : L’édifice est blanc à dominante sobre, avec un minaret carré visible, dans un angle du bâtiment. Le bâtiment principal est de plan rectangulaire, à toit plat ou très légèrement incliné (les photos ne montrent pas de grandes coupoles). Le portail d’entrée est modeste, intégré dans le mur extérieur — pas de portails monumentaux visibles. L’ensemble est simple, sans décorations ostentatoires, typique d’une architecture utilitaire du culte, avec des lignes épurées. Le minaret a des proportions relativement élancées par rapport au corps de la mosquée, avec des ouvertures ajourées visibles dans les étages supérieurs. Le bâtiment semble bien entretenu, sans ruines visibles depuis la prise de vue.",
+        "info_gpx": "Mosquée ibadite wahbite dont la date de construction estimée se situe aux environs du 17ème siècle, entre 1680 et 1720.\nMonument historique classé (INP, 2022)."
       }
     },
     {
@@ -3914,7 +3914,7 @@
         "Zone": "Ajim",
         "Source": null,
         "HW_ID": "HW-01K77WPE6PGSGH7AWKFRACMNSJ",
-        "Description_courte": "Mosquée ibadite wahbite construite en 1117 de l’hégire, soit 1705 de notre ère"
+        "info_gpx": "Mosquée ibadite wahbite construite en 1117 de l’hégire, soit 1705 de notre ère"
       }
     },
     {
@@ -3933,7 +3933,7 @@
         "Zone": "Ajim",
         "Source": null,
         "HW_ID": "HW-01K77WPE6PRETC07TQDNMAG54C",
-        "Description_courte": "Un des lieux de tournage de Star Wars"
+        "info_gpx": "Un des lieux de tournage de Star Wars"
       }
     },
     {
@@ -3952,7 +3952,7 @@
         "Zone": "Ajim",
         "Source": null,
         "HW_ID": "HW-01K77WPE6P7XZY555VW8YDAVA0",
-        "Description_courte": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle\n"
+        "info_gpx": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle\n"
       }
     },
     {
@@ -3971,8 +3971,8 @@
         "Zone": "Ajim",
         "Source": null,
         "HW_ID": "HW-01K77WPE6P30E9MGC3BE3KYHP6",
-        "Description_courte": "A chercher, aucune info sur le net",
-        "description": "A vérifier sur place"
+        "description": "A vérifier sur place",
+        "info_gpx": "A chercher, aucune info sur le net"
       }
     },
     {
@@ -3991,8 +3991,8 @@
         "Zone": "Ajim",
         "Source": "https://routes.discovertunisia.com/storymap/data/download/Site_08_Mosqu%C3%A9e%20Amghar.pdf",
         "HW_ID": "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
-        "Description_courte": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs",
-        "description": "La mosquée, qui cotoie la mer, a perdu sa fonctione religieuse et sert maintenant d'abri aux pècheurs. Elle a également servi de décor pour la \"Maison de Ben\" (Obi-Wan Kenobi en 1976. Un de ses murs externes est recouvert d'une fresque Invader représentant Obi-Wan-Kenobi"
+        "description": "La mosquée, qui cotoie la mer, a perdu sa fonctione religieuse et sert maintenant d'abri aux pècheurs. Elle a également servi de décor pour la \"Maison de Ben\" (Obi-Wan Kenobi en 1976. Un de ses murs externes est recouvert d'une fresque Invader représentant Obi-Wan-Kenobi",
+        "info_gpx": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs"
       }
     },
     {
@@ -4011,8 +4011,8 @@
         "Zone": "Ajim",
         "Source": "https://www.uib.com.tn/accueil/pages-intermediaires/les-forts-de-djerba-un-patrimoine-fragile",
         "HW_ID": "HW-01K77WPE6PGWRVHZ8H8CTQJ06X",
-        "Description_courte": "L'accès est restreint et demande des autorisations",
-        "description": "Borj Ajim défend un mouillage profond au sud de Djerba et a été édifié au milieu du seizième siècle par Dragut. Fortement armé, ce fort disposait de deux bastions et d'une tobjia, autrement dit une plateforme d'artillerie. Ceci s'explique par le fait qu'Ajim, face au Djorf, est le seul mouillage qui permet le passage de bateaux de grand tonnage."
+        "description": "Borj Ajim défend un mouillage profond au sud de Djerba et a été édifié au milieu du seizième siècle par Dragut. Fortement armé, ce fort disposait de deux bastions et d'une tobjia, autrement dit une plateforme d'artillerie. Ceci s'explique par le fait qu'Ajim, face au Djorf, est le seul mouillage qui permet le passage de bateaux de grand tonnage.",
+        "info_gpx": "L'accès est restreint et demande des autorisations"
       }
     },
     {
@@ -4073,7 +4073,6 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
-        "Description_courte": "",
         "description": "Mosquée Sidi Yati dit Nasser selon le répertoire de mosquées de Jalel Fatallah",
         "Temps_minutes": 0,
         "Téléphone": "",
@@ -4082,7 +4081,8 @@
         "accessPoint": [
           11.016926765441895,
           33.816923154274846
-        ]
+        ],
+        "info_gpx": ""
       }
     },
     {
@@ -4157,7 +4157,7 @@
         "Zone": "Midoun",
         "Source": null,
         "HW_ID": "HW-01K77WPE6Q0QEE8APATRE5K4MS",
-        "Description_courte": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles."
+        "info_gpx": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles."
       }
     },
     {
@@ -4231,8 +4231,8 @@
         "Zone": "Taourit",
         "Source": "https://flamingo-djerba.com/lieux-a-visiter.html",
         "HW_ID": "HW-01K77WPE6Q670Z1X2VY3ZKFP8E",
-        "Description_courte": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones",
-        "description": "À l’extrémité du port de pêche de Houmt Souk, une statue en béton blanc représente une sirène brandissant une coquille, tournée vers la mer. Connue localement sous le nom de La Sirène de Djerba, l’œuvre est également référencée dans les guides anglophones comme Ulysses’s Mermaid. Installée sur un socle circulaire à proximité du phare, cette sculpture sert de repère maritime et photographique pour les visiteurs du port. Son emplacement n’est pas anodin : il évoque le lien millénaire entre Djerba et la mer, ainsi que la légende d’Ulysse, souvent associée à l’île depuis l’Antiquité. La statue actuelle, de facture contemporaine, est visible sur les images satellites depuis le début des années 2000. Elle a été réalisée en ciment peint et pierre reconstituée, sans signature connue, probablement à l’initiative municipale dans le cadre d’un aménagement touristique du front de mer. Du quai, on aperçoit la sirène se détachant sur le bleu de la Méditerranée, entre les barques de pêche et les goélands : un symbole discret mais bien ancré de la Djerba maritime, oscillant entre mythologie grecque et fierté insulaire."
+        "description": "À l’extrémité du port de pêche de Houmt Souk, une statue en béton blanc représente une sirène brandissant une coquille, tournée vers la mer. Connue localement sous le nom de La Sirène de Djerba, l’œuvre est également référencée dans les guides anglophones comme Ulysses’s Mermaid. Installée sur un socle circulaire à proximité du phare, cette sculpture sert de repère maritime et photographique pour les visiteurs du port. Son emplacement n’est pas anodin : il évoque le lien millénaire entre Djerba et la mer, ainsi que la légende d’Ulysse, souvent associée à l’île depuis l’Antiquité. La statue actuelle, de facture contemporaine, est visible sur les images satellites depuis le début des années 2000. Elle a été réalisée en ciment peint et pierre reconstituée, sans signature connue, probablement à l’initiative municipale dans le cadre d’un aménagement touristique du front de mer. Du quai, on aperçoit la sirène se détachant sur le bleu de la Méditerranée, entre les barques de pêche et les goélands : un symbole discret mais bien ancré de la Djerba maritime, oscillant entre mythologie grecque et fierté insulaire.",
+        "info_gpx": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones"
       }
     },
     {
@@ -4269,8 +4269,8 @@
         "Zone": "Taourit",
         "Source": "https://guide-voyage-tunisie.com/le-port-et-la-marina/",
         "HW_ID": "HW-01K77WPE6Q38XR19W8H70JP4AK",
-        "Description_courte": "Port de pêche, criée aux poissons, cafés et restaurant, sans oublier le point de départ d'excursions en bâteau pirate",
-        "description": "Le port de pêche de Houmt Souk est le cœur battant de l'activité maritime de la région. La criée aux poissons, dont la tradition remonte à plusieurs siècles, est une expérience à vivre. Juste à côté, on trouve la Marina où le charme traditionnel rencontre la modernité. On y trouve, outre des restaurants et café pittoresques, le départ d'excursion en bâteau piratepirates"
+        "description": "Le port de pêche de Houmt Souk est le cœur battant de l'activité maritime de la région. La criée aux poissons, dont la tradition remonte à plusieurs siècles, est une expérience à vivre. Juste à côté, on trouve la Marina où le charme traditionnel rencontre la modernité. On y trouve, outre des restaurants et café pittoresques, le départ d'excursion en bâteau piratepirates",
+        "info_gpx": "Port de pêche, criée aux poissons, cafés et restaurant, sans oublier le point de départ d'excursions en bâteau pirate"
       }
     },
     {
@@ -4421,7 +4421,7 @@
         "Zone": "Ajim",
         "Source": null,
         "HW_ID": "HW-01K77WPE6RHDAFAXAA92EFT8GY",
-        "Description_courte": "Mosquée malékite construite au 20ème siècle"
+        "info_gpx": "Mosquée malékite construite au 20ème siècle"
       }
     },
     {
@@ -4440,8 +4440,8 @@
         "Zone": "Mazraia",
         "Source": "https://fr.wikipedia.org/wiki/Mezraya",
         "HW_ID": "HW-01K77WPE6RCC0S7XMA08ES9BDD",
-        "Description_courte": "Egalement connue sous le nom de mosquée Sidi Ghrib dont l'architecture évoque la période de transition entre les modèles ruraux à coupoles multiples et cellesplus organisées des mosquées centrales.",
-        "description": "La mosquée Haouari, également connue sous le nom de mosquée Sidi Ghrib, se situe à Mezraya, non loin de la route reliant Midoun au littoral. D’après la tradition rapportée par Wikipédia, elle aurait été fondée par le cheikh Ilyes Haouari, un savant ayant passé une partie de sa jeunesse à l’étranger, ce qui expliquerait le surnom de Sidi Ghrib — littéralement “le saint venu de loin”. Vue du ciel, la mosquée forme un vaste complexe à plusieurs cours et annexes, typique des mosquées communautaires ibadites de Djerba. On distingue nettement une grande salle de prière couverte de coupoles hémisphériques alignées en files régulières — douze au total, selon la lecture satellite —, un plan qui évoque la période de transition entre les modèles ruraux à coupoles multiples et les architectures plus organisées des mosquées centrales. Les façades extérieures, entièrement chaulées de blanc, se détachent sous le ciel bleu, tandis que les portes et fenêtres peintes en bleu vif rappellent la palette traditionnelle de Djerba. Le minaret, élancé et carré, domine la cour principale, surmonté d’un petit lanternon pyramidal — une signature visuelle des mosquées djerbiennes restaurées au XXème siècle. À l’intérieur, la forêt d’arcs brisés soutenant les coupoles forme un espace rythmé, à la fois sobre et majestueux. Les revêtements de sol tressés et les boiseries basses renforcent le caractère à la fois ancien et vivant du lieu. Enfin, la présence d’un cimetière attenant, visible à l’est, et d’une zaouïa ou école coranique voisine souligne l’importance du site comme centre spirituel historique de la communauté de Mezraya."
+        "description": "La mosquée Haouari, également connue sous le nom de mosquée Sidi Ghrib, se situe à Mezraya, non loin de la route reliant Midoun au littoral. D’après la tradition rapportée par Wikipédia, elle aurait été fondée par le cheikh Ilyes Haouari, un savant ayant passé une partie de sa jeunesse à l’étranger, ce qui expliquerait le surnom de Sidi Ghrib — littéralement “le saint venu de loin”. Vue du ciel, la mosquée forme un vaste complexe à plusieurs cours et annexes, typique des mosquées communautaires ibadites de Djerba. On distingue nettement une grande salle de prière couverte de coupoles hémisphériques alignées en files régulières — douze au total, selon la lecture satellite —, un plan qui évoque la période de transition entre les modèles ruraux à coupoles multiples et les architectures plus organisées des mosquées centrales. Les façades extérieures, entièrement chaulées de blanc, se détachent sous le ciel bleu, tandis que les portes et fenêtres peintes en bleu vif rappellent la palette traditionnelle de Djerba. Le minaret, élancé et carré, domine la cour principale, surmonté d’un petit lanternon pyramidal — une signature visuelle des mosquées djerbiennes restaurées au XXème siècle. À l’intérieur, la forêt d’arcs brisés soutenant les coupoles forme un espace rythmé, à la fois sobre et majestueux. Les revêtements de sol tressés et les boiseries basses renforcent le caractère à la fois ancien et vivant du lieu. Enfin, la présence d’un cimetière attenant, visible à l’est, et d’une zaouïa ou école coranique voisine souligne l’importance du site comme centre spirituel historique de la communauté de Mezraya.",
+        "info_gpx": "Egalement connue sous le nom de mosquée Sidi Ghrib dont l'architecture évoque la période de transition entre les modèles ruraux à coupoles multiples et cellesplus organisées des mosquées centrales."
       }
     },
     {
@@ -4575,7 +4575,7 @@
         "Zone": "Mazraia",
         "Source": null,
         "HW_ID": "HW-01K77WPE6SGS36CX14YZ6N38ZG",
-        "Description_courte": "Petit édifice isolé, implanté sur une légère élévation du terrain, à proximité d’un axe secondaire. Sa morphologie évoque les mosquées rurales djerbiennes à plan simple et fonctionnel."
+        "info_gpx": "Petit édifice isolé, implanté sur une légère élévation du terrain, à proximité d’un axe secondaire. Sa morphologie évoque les mosquées rurales djerbiennes à plan simple et fonctionnel."
       }
     },
     {
@@ -4632,8 +4632,8 @@
         "Zone": "Sedghaiane",
         "Source": null,
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
-        "Description_courte": "Mosquée ? Marabout ? A voir sur place",
-        "description": "Mosquée sans nom sur Google Mapa, située à Mezraya."
+        "description": "Mosquée sans nom sur Google Mapa, située à Mezraya.",
+        "info_gpx": "Mosquée ? Marabout ? A voir sur place"
       }
     },
     {
@@ -4669,7 +4669,6 @@
         "Nom du site arabe": "جامع تغليصه",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Description_courte": "Mosquée située sur un petit ilot. Accessible par la piste menant aux pêcheries modèles de Djerba, juste avant la langue de sable sud.",
         "Source": null,
         "Temps_minutes": null,
         "Prix_TND": null,
@@ -4677,7 +4676,8 @@
         "Horaires": null,
         "verified": false,
         "HW_ID": "HW-01K77WPE6SQ294ZTDM1HZ3ASFR",
-        "description": "Ancienne mosquée Ibadite, en ruine, située sur un ilot accessible à pied."
+        "description": "Ancienne mosquée Ibadite, en ruine, située sur un ilot accessible à pied.",
+        "info_gpx": "Mosquée située sur un petit ilot. Accessible par la piste menant aux pêcheries modèles de Djerba, juste avant la langue de sable sud."
       }
     },
     {
@@ -4696,8 +4696,8 @@
         "Zone": "Taourit",
         "Source": "https://fr.wikipedia.org/wiki/Bataille_de_Djerba",
         "HW_ID": "HW-4KDVBOTPXFYVRIW9IEE46G09VG",
-        "Description_courte": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits",
-        "description": "Obélisque édifié en 1906 à l'emplacement de la Tour des crânes, également nommée Borj-Er-Rous Celle-ci avait été érigée par Dragut suite à la bataille entre Ottomans et les forces chrétiennes le 11 mai 1560. Elle fût détruite en 1840 sur ordre de Ahmed Ier, bey de Tunis. Les restes humains fûrent enterrés dans le cimetière catholique de Houmt Souk."
+        "description": "Obélisque édifié en 1906 à l'emplacement de la Tour des crânes, également nommée Borj-Er-Rous Celle-ci avait été érigée par Dragut suite à la bataille entre Ottomans et les forces chrétiennes le 11 mai 1560. Elle fût détruite en 1840 sur ordre de Ahmed Ier, bey de Tunis. Les restes humains fûrent enterrés dans le cimetière catholique de Houmt Souk.",
+        "info_gpx": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits"
       }
     },
     {
@@ -4734,9 +4734,9 @@
         "Zone": "Arkou",
         "Source": null,
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
-        "Description_courte": "Quelques vestige de mosquée",
         "Prix_TND": 0,
-        "description": "Mosquée dont il ne reste que peu de traces, proche de la mosquée Al-Qibli"
+        "description": "Mosquée dont il ne reste que peu de traces, proche de la mosquée Al-Qibli",
+        "info_gpx": "Quelques vestige de mosquée"
       }
     },
     {
@@ -5470,13 +5470,13 @@
         "Sous-type": "",
         "État": "",
         "Accès": "",
-        "Description_courte": "",
         "description": "",
         "Temps_minutes": 0,
         "Source": "",
         "Téléphone": "+216 55 512 556",
         "Horaires": "",
-        "Facebook": "https://www.facebook.com/restaurantchezmoktar"
+        "Facebook": "https://www.facebook.com/restaurantchezmoktar",
+        "info_gpx": ""
       }
     },
     {

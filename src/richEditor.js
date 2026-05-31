@@ -293,7 +293,7 @@ export const RichEditor = {
         const zoneInput = document.getElementById(DOM_IDS.INPUTS.ZONE);
         if (zoneInput) zoneInput.disabled = true;
 
-        setValue(DOM_IDS.INPUTS.DESC_SHORT, merged['Description_courte'] || "");
+        setValue(DOM_IDS.INPUTS.DESC_SHORT, merged['info_gpx'] || "");
         setValue(DOM_IDS.INPUTS.DESC_LONG, merged['description'] || "");
         setValue(DOM_IDS.INPUTS.NOTES, merged['notes'] || "");
 
@@ -646,7 +646,7 @@ async function handleSave() {
         'État': getValue(DOM_IDS.INPUTS.STATE),
         'Accès': getValue(DOM_IDS.INPUTS.ACCESS),
         'Zone': getValue(DOM_IDS.INPUTS.ZONE),
-        'Description_courte': getValue(DOM_IDS.INPUTS.DESC_SHORT),
+        'info_gpx': getValue(DOM_IDS.INPUTS.DESC_SHORT),
         'description': getValue(DOM_IDS.INPUTS.DESC_LONG),
         'notes': getValue(DOM_IDS.INPUTS.NOTES),
         'Temps_minutes': (parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0) * 60 + (parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0),
@@ -807,7 +807,7 @@ function handleEmailSuggestion() {
         'État': getValue(DOM_IDS.INPUTS.STATE),
         'Accès': getValue(DOM_IDS.INPUTS.ACCESS),
         'Zone': getValue(DOM_IDS.INPUTS.ZONE),
-        'Description_courte': getValue(DOM_IDS.INPUTS.DESC_SHORT),
+        'info_gpx': getValue(DOM_IDS.INPUTS.DESC_SHORT),
         'description': getValue(DOM_IDS.INPUTS.DESC_LONG),
         'notes': getValue(DOM_IDS.INPUTS.NOTES),
         'Temps_minutes': (parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0) * 60 + (parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0),

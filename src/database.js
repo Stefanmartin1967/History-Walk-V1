@@ -238,6 +238,42 @@ export async function normalizeDescriptionCaseInPoiData(mapId) {
     }));
 }
 
+/**
+ * Migration one-shot : renomme `Description_courte` → `info_gpx` dans le
+ * store `poiUserData` d'une carte. Même pattern que normalizeDescriptionCase :
+ * curseur transactionnel, write-back via cursor.update, idempotente.
+ *
+ * `info_gpx` est la nouvelle clé canonique pour le texte qui voyage dans le
+ * <desc> des waypoints du GPX exporté (cf. gpx.js). L'ancien nom partageait
+ * son préfixe avec `description` → confusion. Le case lowercase suit la
+ * trajectoire de la PR #704.
+ */
+export async function renameDescriptionCourteToInfoGpxInPoiData(mapId) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('poiUserData', 'readwrite');
+        const store = tx.objectStore('poiUserData');
+        const req = store.index('mapId_index').openCursor(mapId);
+        let migrated = 0;
+        req.onsuccess = (e) => {
+            const cursor = e.target.result;
+            if (!cursor) return;
+            const v = cursor.value;
+            if (v && typeof v === 'object' && 'Description_courte' in v) {
+                if (!('info_gpx' in v) || v.info_gpx == null) {
+                    v.info_gpx = v.Description_courte;
+                }
+                delete v.Description_courte;
+                cursor.update(v);
+                migrated++;
+            }
+            cursor.continue();
+        };
+        req.onerror = (e) => reject(e.target.error);
+        tx.oncomplete = () => resolve(migrated);
+        tx.onerror = (e) => reject(e.target.error);
+    }));
+}
+
 export async function savePoiData(mapId, poiId, data) {
     return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('poiUserData', 'readwrite');

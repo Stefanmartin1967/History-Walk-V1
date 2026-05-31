@@ -140,7 +140,7 @@ export function getAdvancedFilterCounts() {
 }
 
 function hasDescription(props) {
-    const d = (props.description || props.Description_courte || '').trim();
+    const d = (props.description || props.info_gpx || '').trim();
     return d !== '';
 }
 

@@ -9,7 +9,8 @@ import {
     getAppState,
     saveAppState,
     saveCircuit,
-    normalizeDescriptionCaseInPoiData
+    normalizeDescriptionCaseInPoiData,
+    renameDescriptionCourteToInfoGpxInPoiData
 } from './database.js';
 import { logModification } from './logger.js';
 import { schedulePush } from './gist-sync.js';
@@ -175,6 +176,12 @@ export async function displayGeoJSON(geoJSON, mapId) {
     try { await normalizeDescriptionCaseInPoiData(mapId); }
     catch (e) { console.warn('[data] normalizeDescriptionCaseInPoiData failed:', e); }
 
+    // Migration one-shot : renomme `Description_courte` → `info_gpx` dans le
+    // store `poiUserData`. Même pattern + même raison qu'au-dessus. Cf.
+    // chantier renommage info_gpx (PR à venir).
+    try { await renameDescriptionCourteToInfoGpxInPoiData(mapId); }
+    catch (e) { console.warn('[data] renameDescriptionCourteToInfoGpxInPoiData failed:', e); }
+
     // Récupération globale (legacy/backup) et spécifique à la carte
     const appStateUserData = await getAppState('userData') || {};
     const mapUserData = await getAllPoiDataForMap(mapId) || {};
@@ -196,16 +203,25 @@ export async function displayGeoJSON(geoJSON, mapId) {
     }
 
     // Migration : normalise `Description` (capital) → `description` (lowercase)
-    // sur les entrées issues d'appState/backup (le store poiUserData a déjà
-    // été normalisé en amont). Si quelque chose change, on persiste appState
-    // pour ne pas avoir à le refaire au prochain boot.
+    // ET renomme `Description_courte` → `info_gpx` sur les entrées issues
+    // d'appState/backup (le store poiUserData a déjà été normalisé en amont).
+    // Si quelque chose change, on persiste appState pour ne pas avoir à le
+    // refaire au prochain boot.
     let appStateDirty = false;
     for (const data of Object.values(storedUserData)) {
-        if (data && typeof data === 'object' && 'Description' in data) {
+        if (!data || typeof data !== 'object') continue;
+        if ('Description' in data) {
             if (!('description' in data) || data.description == null) {
                 data.description = data.Description;
             }
             delete data.Description;
+            appStateDirty = true;
+        }
+        if ('Description_courte' in data) {
+            if (!('info_gpx' in data) || data.info_gpx == null) {
+                data.info_gpx = data.Description_courte;
+            }
+            delete data.Description_courte;
             appStateDirty = true;
         }
     }
@@ -217,17 +233,26 @@ export async function displayGeoJSON(geoJSON, mapId) {
     const storedCustomFeatures = (await getAppState(`customPois_${mapId}`)) || [];
 
     // Migration : `customFeatures[i].properties.Description` → `.description`
-    // (POIs créés via richEditor stockent déjà en lowercase, mais un backup
-    // restauré ou un POI venant du DM peut porter la clé capital). Persiste
-    // si touché — même règle d'idempotence.
+    // ET `.Description_courte` → `.info_gpx` (POIs créés via richEditor
+    // stockent déjà en lowercase, mais un backup restauré ou un POI venant
+    // du DM/scout peut porter les anciennes clés). Persiste si touché — même
+    // règle d'idempotence.
     let customDirty = false;
     for (const f of storedCustomFeatures) {
         const p = f?.properties;
-        if (p && 'Description' in p) {
+        if (!p) continue;
+        if ('Description' in p) {
             if (!('description' in p) || p.description == null) {
                 p.description = p.Description;
             }
             delete p.Description;
+            customDirty = true;
+        }
+        if ('Description_courte' in p) {
+            if (!('info_gpx' in p) || p.info_gpx == null) {
+                p.info_gpx = p.Description_courte;
+            }
+            delete p.Description_courte;
             customDirty = true;
         }
     }
