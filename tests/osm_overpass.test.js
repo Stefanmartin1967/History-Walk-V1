@@ -137,7 +137,7 @@ describe('osm-overpass — nearestHighway (fetch mocké)', () => {
     it('throws si TOUS les endpoints échouent (après retries)', async () => {
         global.fetch = vi.fn().mockRejectedValue(new Error('Network down'));
         await expect(nearestHighway(0, 0)).rejects.toThrow();
-        // 4 tentatives (1 initiale + 3 retries) × 2 endpoints = 8 appels.
-        expect(global.fetch).toHaveBeenCalledTimes(8);
+        // 4 tentatives (1 initiale + 3 retries) × 3 endpoints = 12 appels.
+        expect(global.fetch).toHaveBeenCalledTimes(12);
     }, 20000); // Timeout 20s : couvre les 3 backoffs cumulés (1+3+8=12s).
 });
