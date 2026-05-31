@@ -2,13 +2,14 @@
 // --- 1. IMPORTS ---
 import { state, setCurrentMap, setLoadedFeatures, setCustomFeatures, setHiddenPoiIds, setUserData } from './state.js';
 import { eventBus } from './events.js';
-import { 
-    getAllPoiDataForMap, 
-    getAllCircuitsForMap, 
-    savePoiData, 
-    getAppState, 
+import {
+    getAllPoiDataForMap,
+    getAllCircuitsForMap,
+    savePoiData,
+    getAppState,
     saveAppState,
-    saveCircuit
+    saveCircuit,
+    normalizeDescriptionCaseInPoiData
 } from './database.js';
 import { logModification } from './logger.js';
 import { schedulePush } from './gist-sync.js';
@@ -167,6 +168,13 @@ export async function displayGeoJSON(geoJSON, mapId) {
     // 1. Récupération des données sauvegardées (Cachés, Notes, Ajouts manuels)
     setHiddenPoiIds((await getAppState(`hiddenPois_${mapId}`)) || []);
 
+    // Migration one-shot : normalise toute clé `Description` (capital) en
+    // `description` (lowercase) dans le store `poiUserData` AVANT lecture, pour
+    // que la fusion en mémoire parte d'une base déjà normalisée. Idempotente
+    // (no-op si déjà tout en lowercase). Cf. chantier unification description.
+    try { await normalizeDescriptionCaseInPoiData(mapId); }
+    catch (e) { console.warn('[data] normalizeDescriptionCaseInPoiData failed:', e); }
+
     // Récupération globale (legacy/backup) et spécifique à la carte
     const appStateUserData = await getAppState('userData') || {};
     const mapUserData = await getAllPoiDataForMap(mapId) || {};
@@ -187,7 +195,46 @@ export async function displayGeoJSON(geoJSON, mapId) {
         }
     }
 
+    // Migration : normalise `Description` (capital) → `description` (lowercase)
+    // sur les entrées issues d'appState/backup (le store poiUserData a déjà
+    // été normalisé en amont). Si quelque chose change, on persiste appState
+    // pour ne pas avoir à le refaire au prochain boot.
+    let appStateDirty = false;
+    for (const data of Object.values(storedUserData)) {
+        if (data && typeof data === 'object' && 'Description' in data) {
+            if (!('description' in data) || data.description == null) {
+                data.description = data.Description;
+            }
+            delete data.Description;
+            appStateDirty = true;
+        }
+    }
+    if (appStateDirty) {
+        try { await saveAppState('userData', storedUserData); }
+        catch (e) { console.warn('[data] saveAppState userData (post-normalize) failed:', e); }
+    }
+
     const storedCustomFeatures = (await getAppState(`customPois_${mapId}`)) || [];
+
+    // Migration : `customFeatures[i].properties.Description` → `.description`
+    // (POIs créés via richEditor stockent déjà en lowercase, mais un backup
+    // restauré ou un POI venant du DM peut porter la clé capital). Persiste
+    // si touché — même règle d'idempotence.
+    let customDirty = false;
+    for (const f of storedCustomFeatures) {
+        const p = f?.properties;
+        if (p && 'Description' in p) {
+            if (!('description' in p) || p.description == null) {
+                p.description = p.Description;
+            }
+            delete p.Description;
+            customDirty = true;
+        }
+    }
+    if (customDirty) {
+        try { await saveAppState(`customPois_${mapId}`, storedCustomFeatures); }
+        catch (e) { console.warn('[data] saveAppState customPois (post-normalize) failed:', e); }
+    }
     
     setCustomFeatures(storedCustomFeatures || []);
 
@@ -333,7 +380,7 @@ function hasPhotos(props) {
 }
 
 function hasDescription(props) {
-    const longDesc = (props.description || props.Description || '').trim();
+    const longDesc = (props.description || '').trim();
     return longDesc !== '';
 }
 

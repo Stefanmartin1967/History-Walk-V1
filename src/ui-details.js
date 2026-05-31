@@ -438,13 +438,11 @@ function setupDetailsEventListeners(poiId) {
              if (!feature) return;
              const props = feature.properties || {};
              const userData = props.userData || {};
-             // Aligné sur ce que la fiche AFFICHE (templates.js buildDetailsPanelHtml) :
-             // userData prioritaire sur props, et on accepte `description` (richEditor
-             // & DM, lowercase) ET `Description` (geojson source, capital). Le précédent
-             // chemin oubliait `props.description` → TTS silencieux sur tout POI créé
-             // après bascule rich editor / DM (signalé par Stefan sur Mosquée al-Ahjar).
+             // Clé canonique depuis l'unification : `description` lowercase
+             // (cf. scripts/migrate-description-case.mjs + migration runtime
+             // data.js). userData prioritaire sur props comme partout.
              const all = { ...props, ...userData };
-             const textToRead = (all.description || all.Description || '').trim() || 'Pas de description.';
+             const textToRead = (all.description || '').trim() || 'Pas de description.';
              speakText(textToRead, btn);
         });
     });

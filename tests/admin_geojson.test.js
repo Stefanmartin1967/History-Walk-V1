@@ -61,14 +61,14 @@ describe('admin-geojson — generateMasterGeoJSONData', () => {
         state.loadedFeatures = [buildFeature('poi_1', {
             Nom: 'Site A',
             'Catégorie': 'monument',
-            Description: 'Texte',
+            description: 'Texte',
             verified: true
         }, { vu: true, notes: 'priv' })];
 
         const props = generateMasterGeoJSONData().features[0].properties;
         expect(props.Nom).toBe('Site A');
         expect(props['Catégorie']).toBe('monument');
-        expect(props.Description).toBe('Texte');
+        expect(props.description).toBe('Texte');
         expect(props.verified).toBe(true);
         expect(props.HW_ID).toBe('poi_1');
     });
@@ -113,10 +113,10 @@ describe('admin-geojson — generateMasterGeoJSONData', () => {
     });
 
     it('ne contient plus la propriété userData (flatten effectué)', () => {
-        state.loadedFeatures = [buildFeature('poi_1', { Nom: 'Test' }, { Description: 'x' })];
+        state.loadedFeatures = [buildFeature('poi_1', { Nom: 'Test' }, { description: 'x' })];
         const props = generateMasterGeoJSONData().features[0].properties;
         expect('userData' in props).toBe(false);
-        expect(props.Description).toBe('x');
+        expect(props.description).toBe('x');
     });
 
     it('régression A1 : un POI marqué incontournable (perso) ne fuit pas dans le geojson', () => {

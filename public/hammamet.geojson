@@ -15,12 +15,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFYZYRC4PG9QH45Y49FH9"
+        "HW_ID": "HW-01KR1XFYZYRC4PG9QH45Y49FH9",
+        "description": ""
       }
     },
     {
@@ -37,12 +37,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0006R3A3WYPY2X8AMR"
+        "HW_ID": "HW-01KR1XFZ0006R3A3WYPY2X8AMR",
+        "description": ""
       }
     },
     {
@@ -59,12 +59,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ02RGH870SY75DA13BJ"
+        "HW_ID": "HW-01KR1XFZ02RGH870SY75DA13BJ",
+        "description": ""
       }
     },
     {
@@ -81,12 +81,12 @@
         "Nom du site arabe": "مدينة الحمامات العتيقة",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ03PQR4DW2C3XRK81MM"
+        "HW_ID": "HW-01KR1XFZ03PQR4DW2C3XRK81MM",
+        "description": ""
       }
     },
     {
@@ -103,12 +103,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ05PD2KBK72TYK17A07"
+        "HW_ID": "HW-01KR1XFZ05PD2KBK72TYK17A07",
+        "description": ""
       }
     },
     {
@@ -125,12 +125,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "El Mrezga",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ07QS934TY3WVP9VEQT"
+        "HW_ID": "HW-01KR1XFZ07QS934TY3WVP9VEQT",
+        "description": ""
       }
     },
     {
@@ -147,12 +147,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ08X3ZY6RRJ7NFQM7NH"
+        "HW_ID": "HW-01KR1XFZ08X3ZY6RRJ7NFQM7NH",
+        "description": ""
       }
     },
     {
@@ -169,12 +169,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0AWXTBA0Q989ATXHVA"
+        "HW_ID": "HW-01KR1XFZ0AWXTBA0Q989ATXHVA",
+        "description": ""
       }
     },
     {
@@ -191,12 +191,12 @@
         "Nom du site arabe": "يوسف مسجد سيدي",
         "Catégorie": "Mosquée",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0B3D0R2VY05KJWZ44C"
+        "HW_ID": "HW-01KR1XFZ0B3D0R2VY05KJWZ44C",
+        "description": ""
       }
     },
     {
@@ -213,12 +213,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site religieux",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0DKT0E8AXQB8ER8BJJ"
+        "HW_ID": "HW-01KR1XFZ0DKT0E8AXQB8ER8BJJ",
+        "description": ""
       }
     },
     {
@@ -235,12 +235,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Neapolis",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0FBTKVWJ4W1DTKC3F9"
+        "HW_ID": "HW-01KR1XFZ0FBTKVWJ4W1DTKC3F9",
+        "description": ""
       }
     },
     {
@@ -257,12 +257,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "El Mrezga",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0GRVVYWX2A5EC6SM0T"
+        "HW_ID": "HW-01KR1XFZ0GRVVYWX2A5EC6SM0T",
+        "description": ""
       }
     },
     {
@@ -279,12 +279,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0JG2D0HVX4BTMYHZX8"
+        "HW_ID": "HW-01KR1XFZ0JG2D0HVX4BTMYHZX8",
+        "description": ""
       }
     },
     {
@@ -301,12 +301,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "El Mrezga",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0M26AQNAYMZEV8WNS8"
+        "HW_ID": "HW-01KR1XFZ0M26AQNAYMZEV8WNS8",
+        "description": ""
       }
     },
     {
@@ -323,12 +323,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0PGTCHQ4FVN603YTDF"
+        "HW_ID": "HW-01KR1XFZ0PGTCHQ4FVN603YTDF",
+        "description": ""
       }
     },
     {
@@ -345,12 +345,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "El Mrezga",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0R7FW36MM22MTTPF2W"
+        "HW_ID": "HW-01KR1XFZ0R7FW36MM22MTTPF2W",
+        "description": ""
       }
     },
     {
@@ -367,12 +367,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0TDX42BTP9SDX4DR7V"
+        "HW_ID": "HW-01KR1XFZ0TDX42BTP9SDX4DR7V",
+        "description": ""
       }
     },
     {
@@ -389,12 +389,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0WAVZA7TJQCQ744SVB"
+        "HW_ID": "HW-01KR1XFZ0WAVZA7TJQCQ744SVB",
+        "description": ""
       }
     },
     {
@@ -411,12 +411,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ0X8F4XZNV0EE9VZMK9"
+        "HW_ID": "HW-01KR1XFZ0X8F4XZNV0EE9VZMK9",
+        "description": ""
       }
     },
     {
@@ -433,12 +433,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ12JH5EZ45X18VA1VGK"
+        "HW_ID": "HW-01KR1XFZ12JH5EZ45X18VA1VGK",
+        "description": ""
       }
     },
     {
@@ -455,12 +455,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ15NK01D0E43F1XD82E"
+        "HW_ID": "HW-01KR1XFZ15NK01D0E43F1XD82E",
+        "description": ""
       }
     },
     {
@@ -477,12 +477,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ17MVQ01W9NH6ZW691R"
+        "HW_ID": "HW-01KR1XFZ17MVQ01W9NH6ZW691R",
+        "description": ""
       }
     },
     {
@@ -499,12 +499,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1913353H30VQWZ3FKJ"
+        "HW_ID": "HW-01KR1XFZ1913353H30VQWZ3FKJ",
+        "description": ""
       }
     },
     {
@@ -521,12 +521,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1B96TAPATTFSNDHYXR"
+        "HW_ID": "HW-01KR1XFZ1B96TAPATTFSNDHYXR",
+        "description": ""
       }
     },
     {
@@ -543,12 +543,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1DJ5APQFMXZ24B6WS7"
+        "HW_ID": "HW-01KR1XFZ1DJ5APQFMXZ24B6WS7",
+        "description": ""
       }
     },
     {
@@ -565,12 +565,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1FQTDN2H2HBXKDKBP8"
+        "HW_ID": "HW-01KR1XFZ1FQTDN2H2HBXKDKBP8",
+        "description": ""
       }
     },
     {
@@ -587,12 +587,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Hammamet Ouest",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1HADY6JPTHTDPV33T9"
+        "HW_ID": "HW-01KR1XFZ1HADY6JPTHTDPV33T9",
+        "description": ""
       }
     },
     {
@@ -609,12 +609,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Yasmine Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1M2NDAHZJ0DAR5AFJ5"
+        "HW_ID": "HW-01KR1XFZ1M2NDAHZJ0DAR5AFJ5",
+        "description": ""
       }
     },
     {
@@ -631,12 +631,12 @@
         "Nom du site arabe": "قصبة",
         "Catégorie": "Site historique",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1PQZSANBFHVG4A1W5F"
+        "HW_ID": "HW-01KR1XFZ1PQZSANBFHVG4A1W5F",
+        "description": ""
       }
     },
     {
@@ -653,12 +653,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1R88EC3V1AZYFAEGGZ"
+        "HW_ID": "HW-01KR1XFZ1R88EC3V1AZYFAEGGZ",
+        "description": ""
       }
     },
     {
@@ -675,12 +675,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1TJ17C6FM2S488QV38"
+        "HW_ID": "HW-01KR1XFZ1TJ17C6FM2S488QV38",
+        "description": ""
       }
     },
     {
@@ -697,12 +697,12 @@
         "Nom du site arabe": "المسجد الكبير",
         "Catégorie": "Mosquée",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1XK4ECVS82DXGXZHH7"
+        "HW_ID": "HW-01KR1XFZ1XK4ECVS82DXGXZHH7",
+        "description": ""
       }
     },
     {
@@ -719,12 +719,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ1ZQZ276871P3X4ZB5S"
+        "HW_ID": "HW-01KR1XFZ1ZQZ276871P3X4ZB5S",
+        "description": ""
       }
     },
     {
@@ -741,12 +741,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ21Q9B4C7TMWXA7A4C0"
+        "HW_ID": "HW-01KR1XFZ21Q9B4C7TMWXA7A4C0",
+        "description": ""
       }
     },
     {
@@ -763,12 +763,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2AM3GEFCD4VHC31TAW"
+        "HW_ID": "HW-01KR1XFZ2AM3GEFCD4VHC31TAW",
+        "description": ""
       }
     },
     {
@@ -785,12 +785,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2B6571EKA786B6BGGF"
+        "HW_ID": "HW-01KR1XFZ2B6571EKA786B6BGGF",
+        "description": ""
       }
     },
     {
@@ -807,12 +807,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2D5RF1MYEQYMW0SR0P"
+        "HW_ID": "HW-01KR1XFZ2D5RF1MYEQYMW0SR0P",
+        "description": ""
       }
     },
     {
@@ -829,12 +829,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2FEAPRFFC5VG50ED96"
+        "HW_ID": "HW-01KR1XFZ2FEAPRFFC5VG50ED96",
+        "description": ""
       }
     },
     {
@@ -851,12 +851,12 @@
         "Nom du site arabe": "جامع الغفران",
         "Catégorie": "Mosquée",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2GHAPQ4H58XE3ZS7DM"
+        "HW_ID": "HW-01KR1XFZ2GHAPQ4H58XE3ZS7DM",
+        "description": ""
       }
     },
     {
@@ -873,12 +873,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2JVPX5WV3ZY0H3B5QV"
+        "HW_ID": "HW-01KR1XFZ2JVPX5WV3ZY0H3B5QV",
+        "description": ""
       }
     },
     {
@@ -895,12 +895,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2MJERBV4CGCNQ9ACA7"
+        "HW_ID": "HW-01KR1XFZ2MJERBV4CGCNQ9ACA7",
+        "description": ""
       }
     },
     {
@@ -917,12 +917,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2P7EJVCBZGV0XZ2AGS"
+        "HW_ID": "HW-01KR1XFZ2P7EJVCBZGV0XZ2AGS",
+        "description": ""
       }
     },
     {
@@ -939,12 +939,12 @@
         "Nom du site arabe": "منازل للكراء",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Ouest",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2R1E80F39KPQKHFAY5"
+        "HW_ID": "HW-01KR1XFZ2R1E80F39KPQKHFAY5",
+        "description": ""
       }
     },
     {
@@ -961,12 +961,12 @@
         "Nom du site arabe": "",
         "Catégorie": "A définir",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2T09FPK9VQWX25X4EQ"
+        "HW_ID": "HW-01KR1XFZ2T09FPK9VQWX25X4EQ",
+        "description": ""
       }
     },
     {
@@ -983,12 +983,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2W0B6KD3EBW2BJZ7QB"
+        "HW_ID": "HW-01KR1XFZ2W0B6KD3EBW2BJZ7QB",
+        "description": ""
       }
     },
     {
@@ -1005,12 +1005,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ2YEF35MYB665AVXQMT"
+        "HW_ID": "HW-01KR1XFZ2YEF35MYB665AVXQMT",
+        "description": ""
       }
     },
     {
@@ -1027,12 +1027,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ308X7JR5XNJ2SPW75S"
+        "HW_ID": "HW-01KR1XFZ308X7JR5XNJ2SPW75S",
+        "description": ""
       }
     },
     {
@@ -1049,12 +1049,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ32C7VDVWJF7VWMX006"
+        "HW_ID": "HW-01KR1XFZ32C7VDVWJF7VWMX006",
+        "description": ""
       }
     },
     {
@@ -1071,12 +1071,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Manaret El Hammamet",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ34YXKHRW2DY39HSEHM"
+        "HW_ID": "HW-01KR1XFZ34YXKHRW2DY39HSEHM",
+        "description": ""
       }
     },
     {
@@ -1093,12 +1093,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Site historique",
         "Zone": "Latrach",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ37VY4K76MTEVSTPX44"
+        "HW_ID": "HW-01KR1XFZ37VY4K76MTEVSTPX44",
+        "description": ""
       }
     },
     {
@@ -1115,12 +1115,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ39RC5JJS5XK9ZB7FXX"
+        "HW_ID": "HW-01KR1XFZ39RC5JJS5XK9ZB7FXX",
+        "description": ""
       }
     },
     {
@@ -1137,12 +1137,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Nord",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ3B8A46BJXQY4S237FD"
+        "HW_ID": "HW-01KR1XFZ3B8A46BJXQY4S237FD",
+        "description": ""
       }
     },
     {
@@ -1159,12 +1159,12 @@
         "Nom du site arabe": "",
         "Catégorie": "Curiosité",
         "Zone": "Hammamet Est",
-        "Description": "",
         "Source": "",
         "Temps de visite": null,
         "Prix d'entrée": null,
         "Description_courte": null,
-        "HW_ID": "HW-01KR1XFZ3DDZ6YK2TC1TQBN8YT"
+        "HW_ID": "HW-01KR1XFZ3DDZ6YK2TC1TQBN8YT",
+        "description": ""
       }
     }
   ]

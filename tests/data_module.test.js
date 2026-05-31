@@ -577,9 +577,9 @@ describe('updatePoiData', () => {
         ['incontournable', true],
         ['verified', true],
         // Filtres "État de la fiche" (refonte Claude Design) : photos / description
+        // (clé canonique : `description` lowercase, depuis l'unification).
         ['photos', ['url']],
         ['description', 'Long texte'],
-        ['Description', 'Long texte capitalisé'],
     ])('emit data:filtered (via applyFilters) si key="%s" affecte les filtres', async (key, value) => {
         await updatePoiData('p1', key, value);
         expect(eventBus.emit).toHaveBeenCalledWith('data:filtered', expect.anything());

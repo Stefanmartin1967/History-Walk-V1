@@ -206,8 +206,10 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // Photos
     const photos = Array.isArray(allProps.photos) ? allProps.photos : [];
 
-    // Description longue (override userData prioritaire)
-    const longDesc = (allProps.description || allProps.Description || '').trim();
+    // Description longue (override userData prioritaire). La clé canonique est
+    // `description` lowercase depuis l'unification (cf. chantier unification
+    // PR à venir + migration scripts/migrate-description-case.mjs).
+    const longDesc = (allProps.description || '').trim();
     const hasLongDesc = longDesc !== '';
 
     // Description GPX (Wikiloc)
