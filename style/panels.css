@@ -720,7 +720,10 @@
     flex-wrap: wrap;
 }
 .ap-bar-actions .grow { flex: 1; }
-.ap-bar-btn {
+/* Spécificité préfixée par .ap-bar pour battre l'override global du thème
+   night (html[data-theme="night"] button { color: var(--ink) }, base.css)
+   qui forçait #F3F4F6 sur le bouton primary → blanc-sur-blanc illisible. */
+.ap-bar .ap-bar-btn {
     border: 1px solid rgba(255,255,255,0.4);
     background: transparent; color: #fff;
     padding: 8px 14px; border-radius: 9px;
@@ -728,13 +731,13 @@
     min-height: 36px;
     display: inline-flex; align-items: center; gap: 6px;
 }
-.ap-bar-btn:hover { background: rgba(255,255,255,0.12); }
-.ap-bar-btn--primary {
+.ap-bar .ap-bar-btn:hover { background: rgba(255,255,255,0.12); }
+.ap-bar .ap-bar-btn--primary {
     background: #fff; color: var(--bg, #0D3B66);
     border-color: #fff;
 }
-.ap-bar-btn--primary:hover { background: rgba(255,255,255,0.9); }
-.ap-bar-btn svg { width: 14px; height: 14px; }
+.ap-bar .ap-bar-btn--primary:hover { background: rgba(255,255,255,0.9); }
+.ap-bar .ap-bar-btn svg { width: 14px; height: 14px; }
 
 /* Adaptation petits écrans — la barre prend toute la largeur dispo. */
 @media (max-width: 640px) {
