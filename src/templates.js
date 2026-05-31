@@ -3,6 +3,7 @@ import { getPoiName } from './data.js';
 import { escapeXml, getAccessPoint } from './utils.js';
 import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
+import { getAccessPointStatus } from './access-point.js';
 
 // Devise de la destination active. Seul consommateur : buildDetailsPanelHtml ci-dessous.
 function getCurrentCurrency() {
@@ -254,7 +255,22 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         accesMeta ? `<span class="poi-tag access ${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
         isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : '',
         // Admin only : indique qu'un point d'accès au tracé est défini (POI hors voie).
-        (state.isAdmin && getAccessPoint(feature)) ? `<span class="poi-tag poi-tag--access-point"><i data-lucide="flag"></i>Point d'accès</span>` : ''
+        // Admin only : chip qui reflète le status du point d'accès. Couleurs :
+        // orange (osm) / vert (moved) / ambre (failed). Affichée si drapeau posé
+        // OU si une tentative Overpass a échoué (status='failed' sans drapeau).
+        (() => {
+            if (!state.isAdmin) return '';
+            const status = getAccessPointStatus(feature);
+            const hasFlag = !!getAccessPoint(feature);
+            if (!hasFlag && status !== 'failed') return '';
+            // Variante visuelle (osm | moved | failed). Legacy (drapeau présent
+            // mais status absent) → 'moved' par défaut (cohérent avec PR1).
+            const variant = status === 'osm' ? 'is-osm'
+                          : status === 'failed' ? 'is-failed'
+                          : 'is-moved';
+            const label = status === 'failed' ? 'À évaluer' : 'Point d\'accès';
+            return `<span class="poi-tag poi-tag--access-point ${variant}"><i data-lucide="flag"></i>${label}</span>`;
+        })()
     ].filter(Boolean).join('');
 
     // Section Description

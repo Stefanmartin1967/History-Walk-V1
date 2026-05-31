@@ -732,6 +732,31 @@ async function executeCreate(data) {
     currentFeatureId = actualId;
 
     showToast("POI créé et enregistré localement.", "success");
+
+    // PR 2/5 chantier point d'accès v2 : pré-pose silencieuse à la création
+    // (admin uniquement). Overpass async non bloquant — l'utilisateur a déjà
+    // vu son POI créé ; le drapeau (orange/on-track/failed) se matérialise
+    // dans la seconde qui suit. Échec → toast warning + status='failed'.
+    if (state.isAdmin) {
+        void schedulePrepoSe(newFeature);
+    }
+}
+
+// Pré-pose Overpass à la création (silencieuse, fire-and-forget). On laisse
+// executeCreate se résoudre tout de suite ; ce helper s'exécute en arrière
+// plan et toast UNIQUEMENT en cas d'échec.
+async function schedulePrepoSe(feature) {
+    try {
+        const { prepoSeAccessPoint } = await import('./access-point.js');
+        const result = await prepoSeAccessPoint(feature);
+        if (result.status === 'failed') {
+            showToast("Drapeau d'accès à poser plus tard (OSM injoignable).", 'warning', 4000);
+        }
+        // 'osm' / 'on-track' = silencieux par design (cf. brief Design).
+    } catch (e) {
+        // Faute grave (ex : feature invalide) — log mais ne casse pas la création.
+        console.error('[richEditor] Pré-pose accessPoint échouée:', e);
+    }
 }
 
 async function executeEdit(data) {

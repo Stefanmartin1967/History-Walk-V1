@@ -569,11 +569,35 @@
    (pending/error). CSS prêt pour PR2+ même si seul --moved est utilisé en PR1
    (faute de champ accessPointSource — tous les drapeaux existants = manuels). */
 
-/* — Chip de fiche POI « Point d'accès défini ». Vert par défaut en PR1
-   (la couleur par état viendra avec le champ source en PR2). */
+/* — Chip de fiche POI « Point d'accès défini ». Couleur selon le status
+   (PR 2/5) : orange OSM, vert déplacé, ambre failed. Vert par défaut
+   (compat legacy / status non posé). */
 .poi-tag--access-point {
     background: color-mix(in oklab, var(--flag-moved) 14%, transparent);
     color: var(--flag-moved);
+}
+.poi-tag--access-point.is-osm {
+    background: color-mix(in oklab, var(--flag-osm) 14%, transparent);
+    color: var(--flag-osm);
+}
+.poi-tag--access-point.is-moved {
+    background: color-mix(in oklab, var(--flag-moved) 14%, transparent);
+    color: var(--flag-moved);
+}
+.poi-tag--access-point.is-failed {
+    background: color-mix(in oklab, var(--warn) 14%, transparent);
+    color: var(--warn-fg);
+}
+
+/* — Pastille « non-évalué » accrochée au marqueur POI quand Overpass a
+   échoué (status='failed'). PR2 : CSS prêt, consommé par la PR3 (passe
+   globale) qui aura besoin de repérer ces POI sur la carte. */
+.hw-poi-flagdot {
+    position: absolute; right: -2px; top: 0; z-index: 5;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: var(--warn);
+    border: 2px solid var(--surface);
+    box-shadow: var(--shadow-card);
 }
 
 /* === Drapeau (Leaflet divIcon) — forme v1 conservée, palette v2 ===
