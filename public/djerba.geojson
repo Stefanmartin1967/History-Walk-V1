@@ -5571,10 +5571,18 @@
         "Catégorie": "Mosquée",
         "Sous-type": "Générique",
         "Zone": "El Groa",
-        "description": "Mosquée découvert sur carte.\nNom et existence à confirmer",
+        "description": "Mosquée découvert sur carte.\nNom et existence à confirmer sur place",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "HW_ID": "HW-01KSZ2SGB3GCGB3RG8946MGTZG"
+        "HW_ID": "HW-01KSZ2SGB3GCGB3RG8946MGTZG",
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     }
   ]
