@@ -390,9 +390,14 @@ function openModal(feature = null, index = null) {
         else updateGpsLinks(null, null);
         form.categorie.value = p['Catégorie'] || '';
         form.zone.value = p['Zone'] || '';
-        form.description.value = p['Description'] || '';
+        // `description` (lowercase) depuis l'unification PR #704. Fallback sur
+        // `Description` capital pour les caches localStorage du DM antérieurs
+        // à la migration (le DM ne refetch pas automatiquement).
+        form.description.value = p['description'] || p['Description'] || '';
         form.source.value = p['Source'] || '';
-        form.descCourte.value = p['Description_courte'] || '';
+        // `info_gpx` (lowercase) depuis le renommage. Fallback sur
+        // `Description_courte` pour les caches DM stale (même raison).
+        form.descCourte.value = p['info_gpx'] || p['Description_courte'] || '';
         form.nomArabe.value = p['Nom du site arabe'] || '';
         // Temps_minutes (number) → décomposé en h + min pour le form
         const totalMin = Number.isFinite(p['Temps_minutes']) ? p['Temps_minutes'] : null;

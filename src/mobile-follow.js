@@ -200,7 +200,7 @@ function revokeSheetObjUrl() {
 function sheetMarkup(feature, idx) {
     const total = (state.currentCircuit || []).length;
     const cat = (getPoiProp(feature, 'Catégorie') || 'Lieu').toString();
-    const excerpt = (getPoiProp(feature, 'Description_courte')
+    const excerpt = (getPoiProp(feature, 'info_gpx')
         || getPoiProp(feature, 'description') || '').toString().trim();
     const isVu = !!getPoiProp(feature, 'vu');
     const published = feature?.properties?.photos;

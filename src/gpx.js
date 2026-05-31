@@ -93,7 +93,10 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
     // <wpt> : toujours les coordonnées réelles du POI (repère visuel fidèle)
     const waypointsXML = circuit.map(feature => {
         const poiName = escapeXml(getPoiName(feature));
-        const desc = escapeXml(feature.properties.userData?.Description_courte || feature.properties.Description_courte || '');
+        // `info_gpx` (lowercase) depuis le renommage de Description_courte —
+        // c'est ce texte qui voyage dans le <desc> du waypoint, visible côté
+        // Wikiloc / GPX Studio. userData prioritaire sur properties.
+        const desc = escapeXml(feature.properties.userData?.info_gpx || feature.properties.info_gpx || '');
         const sourceUrl = feature.properties.userData?.Source || feature.properties.Source || '';
         let linkXML = '';
         if (sourceUrl && sourceUrl.trim().startsWith('http')) {

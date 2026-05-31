@@ -212,8 +212,10 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const longDesc = (allProps.description || '').trim();
     const hasLongDesc = longDesc !== '';
 
-    // Description GPX (Wikiloc)
-    const gpxDesc = (allProps.Description_courte || '').trim();
+    // Info GPX (texte exporté dans le <desc> des waypoints — visible côté
+    // Wikiloc / GPX Studio). Clé canonique `info_gpx` lowercase depuis le
+    // renommage de Description_courte.
+    const gpxDesc = (allProps.info_gpx || '').trim();
     const hasGpxDesc = gpxDesc !== '';
 
     // Détails pratiques (Temps_minutes / Prix_TND : numbers depuis PR 5 chantier DM)

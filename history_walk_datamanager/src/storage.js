@@ -363,7 +363,7 @@ export function saveFeature(formData, indexToUpdate = null) {
         "Accès": formData.acces || null,
         "Zone": formData.zone || null,
         "description": formData.description || null,
-        "Description_courte": formData.descCourte || null,
+        "info_gpx": formData.descCourte || null,
         "Source": formData.source || null,
         "Temps_minutes": formData.tempsMinutes,
         "Prix_TND": formData.prixTND,
