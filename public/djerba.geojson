@@ -5604,6 +5604,47 @@
         "Horaires": "",
         "Facebook": ""
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.789892162426874,
+          33.81302423292531
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test",
+        "Catégorie": "Curiosité",
+        "Zone": "El Groa",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "HW_ID": "HW-01KSZ81TV7Y5RYT2NGZX7MRT5Y"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.788846852485348,
+          33.813064596487344
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Test console suppression",
+        "Catégorie": "Curiosité",
+        "Zone": "El Groa",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "HW_ID": "HW-01KSZ84TKYA3R6E5Y2C4FXX4FE",
+        "accessPoint": [
+          10.7885137,
+          33.8132291
+        ],
+        "accessPointStatus": "osm"
+      }
     }
   ]
 }
