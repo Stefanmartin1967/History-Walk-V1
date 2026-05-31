@@ -297,7 +297,11 @@
     margin-bottom: 6px;
     justify-content: center;
 }
-.ghost-popup-link {
+/* Sélecteur .ghost-popup .ghost-popup-link (et pas juste .ghost-popup-link)
+   pour battre la règle base.css `html[data-theme="night"] button { color }`
+   en spécificité (0,2,0 vs 0,1,2). Sinon en mode nuit, le bouton hérite de
+   --ink (gris clair) et devient invisible sur le fond blanc du popup. */
+.ghost-popup .ghost-popup-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -306,16 +310,18 @@
     padding: 3px 10px;
     font-size: 12px;
     line-height: 1.2;
-    color: var(--brand);
+    /* Le popup Leaflet a un fond blanc fixe (pas thémé) → couleurs choisies
+       pour rester lisibles sur blanc dans les 4 thèmes. --cta-bg est toujours
+       foncé (navy / brun / vert / navy), --brand ne l'est pas (clair en nuit). */
+    color: var(--cta-bg);
     background: transparent;
-    border: 1px solid var(--line);
+    border: 1px solid var(--cta-bg);
     border-radius: 999px;
     cursor: pointer;
-    transition: border-color .15s, color .15s, background .15s;
+    transition: background .15s;
 }
-.ghost-popup-link:hover {
-    border-color: var(--brand);
-    background: var(--surface-muted);
+.ghost-popup .ghost-popup-link:hover {
+    background: rgba(0, 0, 0, .05);
 }
 .ghost-popup-link i {
     width: 12px;
