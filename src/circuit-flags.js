@@ -205,13 +205,21 @@ function ensureFlag(feature) {
     _flags.set(poiId, entry);
 
     if (!isLocked) {
+        // Pendant le drag : on update SEULEMENT la ligne et les coords.
+        // Surtout PAS setIcon() ici : changer le divIcon recrée l'élément DOM
+        // sous-jacent → Leaflet perd la référence draggable → le drag s'arrête
+        // au premier pixel (bug attrapé par Stefan post #715 : « il devient vert
+        // dès que je clique dessus, impossible de le déplacer »). La bascule
+        // visuelle vers --moved se fait au dragend, une fois.
         marker.on('drag', () => {
             const ll = marker.getLatLng();
-            entry.isDirty = true;
             entry.newCoords = [ll.lng, ll.lat];
-            entry.status = 'moved'; // bascule visuelle vert
-            marker.setIcon(flagIcon('moved', false));
             line.setLatLngs([entry.poiAnchor, [ll.lat, ll.lng]]);
+        });
+        marker.on('dragend', () => {
+            entry.isDirty = true;
+            entry.status = 'moved';
+            marker.setIcon(flagIcon('moved', false));
         });
     }
 }
