@@ -198,6 +198,12 @@ body.osm-pass-active #right-sidebar {
     align-self: end;
     justify-self: center;
     margin-bottom: 24px;
+    /* Largeur STABLE : la barre ne rétrécit plus selon la longueur du nom POI
+       (retour Stefan post #711 : la barre changeait de taille à chaque POI,
+       gênant). min-width 720px = assez pour accueillir « POI 999/999 · <nom
+       tronqué à 320px> » + sep + 4 boutons sans débordement. max-width
+       (existant) garantit qu'on ne déborde pas sur la zone carte. */
+    min-width: 720px;
     max-width: calc(100% - 48px);
     background: var(--bg);
     color: #fff;
@@ -211,8 +217,12 @@ body.osm-pass-active #right-sidebar {
 .osm-pass-actionbar .meta {
     font-size: 12.5px;
     color: rgba(255,255,255,0.75);
-    margin-right: 8px;
-    max-width: 240px;
+    margin-right: auto; /* pousse les actions à droite, accroche les boutons au bord */
+    /* max-width élargi 240→320 pour laisser passer plus de noms en entier
+       (la majorité des « Mosquée … » de Djerba tient). Au-delà : ellipsis +
+       tooltip natif (title attribute, posé dans osm-pass.js renderActionBar).
+       Hover = nom complet visible. */
+    max-width: 320px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .osm-pass-actionbar .meta b { color: #fff; font-weight: 700; }
@@ -303,6 +313,9 @@ html[data-theme="night"] .osm-pass-quit {
     .osm-pass-overlay {
         grid-template-columns: 280px 1fr;
     }
-    .osm-pass-actionbar { font-size: 12px; padding: 10px 12px; gap: 8px; }
-    .osm-pass-actionbar .meta { max-width: 150px; }
+    .osm-pass-actionbar {
+        font-size: 12px; padding: 10px 12px; gap: 8px;
+        min-width: auto; /* écran étroit : laisse la barre s'adapter */
+    }
+    .osm-pass-actionbar .meta { max-width: 180px; }
 }
