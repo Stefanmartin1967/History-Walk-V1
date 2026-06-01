@@ -242,8 +242,11 @@ function renderActionBar() {
     const name = escapeXml(getPoiName(item.feature) || 'POI');
     const total = _items.length;
     const distLabel = item.distance != null ? ` · ${Math.round(item.distance)} m` : '';
+    // title="..." : tooltip natif au hover quand le nom est tronqué par l'ellipsis
+    // CSS (.osm-pass-actionbar .meta max-width 320px). Retour Stefan post #711.
+    const fullTitle = `POI ${_currentIdx + 1}/${total} · ${getPoiName(item.feature) || 'POI'}${distLabel}`;
     bar.innerHTML = `
-        <span class="meta">POI <b>${_currentIdx + 1}/${total}</b> · ${name}${distLabel}</span>
+        <span class="meta" title="${escapeXml(fullTitle)}">POI <b>${_currentIdx + 1}/${total}</b> · ${name}${distLabel}</span>
         <span class="sep"></span>
         <button class="osm-pass-btn" data-act="keep">Conserver</button>
         <button class="osm-pass-btn" data-act="replace"><i data-lucide="sparkles"></i> Remplacer par OSM</button>
