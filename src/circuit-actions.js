@@ -1,6 +1,6 @@
 
 // circuit-actions.js
-import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds } from './state.js';
+import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode } from './state.js';
 import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit, saveAppState } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
 import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters } from './data.js';
@@ -308,6 +308,25 @@ export async function saveAndExportCircuit() {
         }
 
         setHasUnexportedChanges(true); // FLAG CHANGEMENT
+
+        // Fix UX (signalé par Stefan post #716) : après save d'un circuit
+        // (création OU édition), on REPASSE en mode consultation pour que
+        // le panneau affiche le bouton « Éditer » (crayon, data-show=
+        // consult-perso). Sans ça, le circuit reste en mode create après
+        // save → bouton crayon invisible → l'admin doit retourner sur
+        // « Mes Circuits » + rouvrir le circuit pour pouvoir l'éditer.
+        // Sécurité : on désactive aussi editingMode (fin de session édition).
+        setCircuitCreationMode(false);
+        setEditingMode(false);
+        // Re-render le panneau circuit pour que data-mode passe en 'consult'
+        // (sinon le DOM garde 'create' jusqu'au prochain reload du circuit).
+        try {
+            const { applyCircuitMode } = await import('./circuit-view.js');
+            applyCircuitMode();
+        } catch (e) {
+            console.error('[circuit-actions] applyCircuitMode failed after save:', e);
+        }
+
         // Compteur planifié calculé à la volée → applyFilters suffit pour rafraîchir
         applyFilters();
         await generateAndDownloadGPX(state.currentCircuit, circuitToSave.id, circuitToSave.name, circuitToSave.description, circuitToSave.realTrack);

@@ -1,4 +1,4 @@
-import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode } from './state.js';
+import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode } from './state.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -630,6 +630,13 @@ export function convertToDraft({ preserveId = false } = {}) {
         // non-draggables, à modifier depuis la fiche POI).
         import('./circuit-flags.js').then(m => m.markEditingStart(state.currentCircuit || []));
         setEditingMode(true);
+        // Fix bug pré-existant (signalé par Stefan post #715) : en édition admin,
+        // cliquer un POI ouvrait la fiche au lieu de l'ajouter au circuit. Cause :
+        // map.js handleMarkerClick teste `state.isCircuitCreationMode && inEditMode`
+        // mais convertToDraft ne posait QUE editingMode=true (commentaire map.js:294
+        // « pas encore »). On active explicitement le flag de création pour que le
+        // clic POI ajoute au circuit comme en création vierge.
+        setCircuitCreationMode(true);
     } else {
         // Mode user lambda : ancien comportement (oublie ID + ajoute "(modifié)")
         setActiveCircuitId(null);
