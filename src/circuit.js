@@ -13,6 +13,11 @@ import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
 import { pushToGist } from './gist-sync.js';
 import { schedulePushTestedToGitHub } from './tested-sync.js';
+// Import statique de side-effect : pose le listener window 'circuit:updated'
+// dès le boot pour synchroniser les drapeaux d'accès en mode création/édition
+// (PR 4/5 chantier drapeaux v2). Sans cet import, le listener ne se poserait
+// qu'au premier appel dynamique (markEditingStart ou commitDirtyFlags), trop tard.
+import './circuit-flags.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -620,6 +625,10 @@ export function convertToDraft({ preserveId = false } = {}) {
         });
         // Active le flag : applyCircuitMode forcera 'create' tant qu'il est true
         // (et sera reset automatiquement au prochain setActiveCircuitId).
+        // PR 4/5 chantier drapeaux v2 : snapshot des POI préexistants AVANT
+        // d'entrer en édition (règle cadenas — leurs drapeaux seront rouges
+        // non-draggables, à modifier depuis la fiche POI).
+        import('./circuit-flags.js').then(m => m.markEditingStart(state.currentCircuit || []));
         setEditingMode(true);
     } else {
         // Mode user lambda : ancien comportement (oublie ID + ajoute "(modifié)")

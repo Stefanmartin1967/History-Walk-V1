@@ -295,6 +295,18 @@ export async function saveAndExportCircuit() {
 
     try {
         await saveCircuit(circuitToSave);
+
+        // PR 4/5 chantier drapeaux v2 : persiste les drapeaux d'accès déplacés
+        // manuellement pendant la session (drag in-place). Aucun effet si pas
+        // de drapeau dirty (cas usuel). Import dynamique pour ne pas créer un
+        // cycle module ↔ data via state.
+        try {
+            const { commitDirtyFlags } = await import('./circuit-flags.js');
+            await commitDirtyFlags();
+        } catch (e) {
+            console.error('[circuit-actions] commitDirtyFlags failed:', e);
+        }
+
         setHasUnexportedChanges(true); // FLAG CHANGEMENT
         // Compteur planifié calculé à la volée → applyFilters suffit pour rafraîchir
         applyFilters();
