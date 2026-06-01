@@ -246,6 +246,107 @@
 /* Sélecteur de lieu (réassignation d'un groupe à un POI proche) — hérite de .pb-act */
 .pb-poi-select { max-width: 240px; padding-right: 8px; }
 
+/* Bouton « Catégoriser » avec badge orange si POI mal catégorisé (A définir OU
+   sous-type requis manquant). Repérage au scroll en phase enrichissement (90%
+   des POIs à corriger). Petit pastille --warn en haut-droite, comme un point
+   de notification. */
+.pb-act.is-warn { position: relative; }
+.pb-act.is-warn::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--warn-fg, #B45309);
+    box-shadow: 0 0 0 1.5px var(--surface);
+}
+
+/* Popover de catégorisation au batch (chantier enrichissement 01/06/2026).
+   Ancrée par JS sous le bouton « Catégoriser ». 4 selects empilés + footer
+   actions. Ferme sur Échap / clic dehors / Annuler. Z-index au-dessus de
+   l'overlay V2 (100000) — sinon la popover se rend sous la modale. */
+.pb-cat-popover {
+    position: fixed;
+    z-index: 100010;
+    width: 280px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg, 12px);
+    box-shadow: var(--shadow-lg, 0 10px 30px rgba(0,0,0,0.25));
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow: hidden;
+    font-family: inherit;
+}
+.pb-cat-pop-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--line);
+}
+.pb-cat-pop-title {
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+.pb-cat-pop-close {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--ink-soft);
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm, 6px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.pb-cat-pop-close:hover { background: var(--surface-muted); color: var(--ink); }
+.pb-cat-pop-close svg { width: 14px; height: 14px; }
+.pb-cat-pop-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px;
+}
+.pb-cat-field { display: flex; flex-direction: column; gap: 4px; }
+.pb-cat-field > span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.pb-cat-field select {
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md, 8px);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+.pb-cat-field select:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 2px var(--brand-soft, rgba(0,0,0,0.06));
+}
+.pb-cat-pop-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 14px;
+    border-top: 1px solid var(--line);
+    background: var(--surface-muted);
+}
+
 /* Cluster « Hors POI » — neutre / pointillé */
 .pb-cluster.is-out-poi { background: var(--surface-muted); border-style: dashed; border-color: var(--line); }
 .pb-cluster.is-out-poi .pb-cluster-head { background: var(--surface-muted); }

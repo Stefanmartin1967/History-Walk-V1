@@ -4,7 +4,7 @@
 // Les phases suivantes ajouteront la publication, le ZIP et le nouveau lieu.
 
 import Sortable from 'sortablejs';
-import { resizeImage, calculateDistance, openPoiOnMap, openCoordsOnMap } from './utils.js';
+import { resizeImage, calculateDistance, openPoiOnMap, openCoordsOnMap, getPoiProp, isPoiMalCategorized } from './utils.js';
 import { getPoiName, getPoiId } from './data.js';
 import { getSearchResults } from './search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -14,11 +14,14 @@ import {
     setPendingAdminPhotos,
     getPoiPhotos,
     getPendingAdminPhotos,
+    savePoiData,
 } from './database.js';
 import { showToast } from './toast.js';
 import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
 import { createZipBlob } from './zip-store.js';
 import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
+import { getCategoryLabels, getSubtypes, getStates, getAccessValues } from './taxonomy.js';
+import { eventBus } from './events.js';
 
 let activeResolve = null;
 let activeObjectUrls = [];
@@ -217,6 +220,268 @@ async function handleCreatePoi(cluster) {
         updateHeaderCounts();
         updateFooterButtons();
     }
+}
+
+// === Catégorisation au batch (chantier enrichissement photo 01/06/2026) ===
+// Deux boutons sur la barre cluster pour les POIs rattachés :
+//   - « Catégoriser » → popover compacte 4 selects (cf. openCategorizationPopover)
+//   - « Éditer la fiche » → ouvre le RichEditor complet (cf. handleEditPoi)
+// Photos sous les yeux = bon moment pour catégoriser ET pour décrire les POIs
+// marquants. Deux rythmes assumés : batch rapide vs édition riche, au choix
+// pour chaque POI.
+
+// (isPoiMalCategorized vit dans utils.js pour rester testable sans jsdom.)
+
+// Tooltip du bouton « Catégoriser » : montre la cat courante (ou un appel à
+// catégoriser) — repérable au survol même sans cliquer.
+function categorizeTooltip(feature) {
+    if (isPoiMalCategorized(feature)) return 'Non catégorisé — cliquer pour définir';
+    const parts = ['Catégorie : ' + getPoiProp(feature, 'Catégorie')];
+    const st = getPoiProp(feature, 'Sous-type');
+    if (st) parts.push(st);
+    return parts.join(' · ');
+}
+
+// Persiste un batch de champs taxonomie sur un POI (Catégorie / Sous-type /
+// État / Accès). Pattern atomique réutilisé de executeEdit (richEditor.js) :
+// userData merge → savePoiData unique → event admin:poi-edited unique →
+// schedulePush unique → applyFilters + refresh markers. Évite les 4 toasts
+// successifs de updatePoiData(key,value) appelée en série.
+async function saveTaxonomyBatch(poiId, fields) {
+    if (!state.userData[poiId]) state.userData[poiId] = {};
+    Object.assign(state.userData[poiId], fields);
+
+    // Rebind invariant : feature.properties.userData === state.userData[poiId]
+    // (cf. architecture_decisions invariant userData).
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    if (feature) feature.properties.userData = state.userData[poiId];
+
+    await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
+
+    if (state.isAdmin) {
+        // Notifie le CC Admin (alimente la diff) — découplage par eventBus.
+        eventBus.emit('admin:poi-edited', { id: poiId, type: 'update' });
+    }
+
+    // Sync Gist debounced + refresh affichage carte (catégorie change → icône
+    // change → la passe markers doit redessiner). Import dynamique anti-cycle.
+    const dataMod = await import('./data.js');
+    if (typeof dataMod.schedulePush === 'function') dataMod.schedulePush();
+    dataMod.applyFilters();
+    const mapMod = await import('./map.js');
+    mapMod.refreshMapMarkers(dataMod.getFilteredFeatures());
+}
+
+// Ouvre une popover compacte ancrée sur `anchorEl` avec 4 selects (Catégorie,
+// Sous-type, État, Accès). Préremplie avec les valeurs actuelles du POI (y
+// compris déjà catégorisé — pour permettre une correction). Enregistre via
+// saveTaxonomyBatch puis appelle onSaved() pour rafraîchir le badge du bouton.
+function openCategorizationPopover(feature, anchorEl, onSaved) {
+    // Ferme une popover éventuellement déjà ouverte (toggle si rebouton).
+    const existing = document.querySelector('.pb-cat-popover');
+    if (existing) {
+        existing.remove();
+        document.removeEventListener('keydown', existing._escHandler);
+        document.removeEventListener('mousedown', existing._outsideHandler);
+        return;
+    }
+
+    const poiId = getPoiId(feature);
+    const initial = {
+        cat: getPoiProp(feature, 'Catégorie') || '',
+        sub: getPoiProp(feature, 'Sous-type') || '',
+        etat: getPoiProp(feature, 'État') || '',
+        acces: getPoiProp(feature, 'Accès') || '',
+    };
+
+    const pop = document.createElement('div');
+    pop.className = 'pb-cat-popover';
+    pop.setAttribute('role', 'dialog');
+    pop.setAttribute('aria-label', 'Catégoriser le lieu');
+    pop.innerHTML = `
+        <div class="pb-cat-pop-head">
+            <span class="pb-cat-pop-title">Catégoriser</span>
+            <button type="button" class="pb-cat-pop-close" aria-label="Fermer"><i data-lucide="x"></i></button>
+        </div>
+        <div class="pb-cat-pop-body">
+            <label class="pb-cat-field">
+                <span>Catégorie</span>
+                <select data-field="cat"></select>
+            </label>
+            <label class="pb-cat-field" data-group="sub">
+                <span>Sous-type</span>
+                <select data-field="sub"></select>
+            </label>
+            <label class="pb-cat-field" data-group="etat">
+                <span>État</span>
+                <select data-field="etat"></select>
+            </label>
+            <label class="pb-cat-field" data-group="acces">
+                <span>Accès</span>
+                <select data-field="acces"></select>
+            </label>
+        </div>
+        <div class="pb-cat-pop-footer">
+            <button type="button" class="pb-act" data-action="cancel">Annuler</button>
+            <button type="button" class="pb-act is-primary" data-action="save"><i data-lucide="save"></i><span>Enregistrer</span></button>
+        </div>
+    `;
+    document.body.appendChild(pop);
+
+    const selCat = pop.querySelector('[data-field="cat"]');
+    const selSub = pop.querySelector('[data-field="sub"]');
+    const selEtat = pop.querySelector('[data-field="etat"]');
+    const selAcces = pop.querySelector('[data-field="acces"]');
+
+    // Peuple la catégorie (toutes sauf « Autre » non standard ; on garde « A définir »
+    // pour permettre de revenir en arrière si besoin admin).
+    selCat.innerHTML = '<option value="">— Choisir —</option>';
+    getCategoryLabels().filter(c => c !== 'Autre').forEach(c => {
+        const o = document.createElement('option');
+        o.value = c; o.textContent = c;
+        if (c === initial.cat) o.selected = true;
+        selCat.appendChild(o);
+    });
+
+    function fillContextual(cat) {
+        // Sous-type
+        const subs = cat ? getSubtypes(cat) : [];
+        const groupSub = pop.querySelector('[data-group="sub"]');
+        groupSub.style.display = subs.length ? '' : 'none';
+        selSub.innerHTML = '<option value="">—</option>';
+        subs.forEach(v => {
+            const o = document.createElement('option');
+            o.value = v; o.textContent = v;
+            if (v === initial.sub) o.selected = true;
+            selSub.appendChild(o);
+        });
+        // État
+        const etats = cat ? getStates(cat) : [];
+        const groupEtat = pop.querySelector('[data-group="etat"]');
+        groupEtat.style.display = etats.length ? '' : 'none';
+        selEtat.innerHTML = '<option value="">—</option>';
+        etats.forEach(v => {
+            const o = document.createElement('option');
+            o.value = v; o.textContent = v;
+            if (v === initial.etat) o.selected = true;
+            selEtat.appendChild(o);
+        });
+        // Accès
+        const accs = cat ? getAccessValues(cat) : [];
+        const groupAcc = pop.querySelector('[data-group="acces"]');
+        groupAcc.style.display = accs.length ? '' : 'none';
+        selAcces.innerHTML = '<option value="">—</option>';
+        accs.forEach(v => {
+            const o = document.createElement('option');
+            o.value = v; o.textContent = v;
+            if (v === initial.acces) o.selected = true;
+            selAcces.appendChild(o);
+        });
+    }
+    fillContextual(initial.cat);
+
+    // Changement de catégorie → reset l'état du POI (les sous-types changent).
+    // On efface la sélection initiale des contextuels au changement de cat.
+    selCat.addEventListener('change', () => {
+        initial.sub = ''; initial.etat = ''; initial.acces = '';
+        fillContextual(selCat.value);
+    });
+
+    // Position : sous l'ancre, aligné à droite si la popover dépasse.
+    const rect = anchorEl.getBoundingClientRect();
+    const POP_W = 280;
+    let left = rect.left;
+    if (left + POP_W > window.innerWidth - 12) left = Math.max(12, window.innerWidth - POP_W - 12);
+    pop.style.left = left + 'px';
+    pop.style.top = (rect.bottom + 6) + 'px';
+
+    function close() {
+        pop.remove();
+        document.removeEventListener('keydown', escHandler);
+        document.removeEventListener('mousedown', outsideHandler);
+    }
+    const escHandler = (e) => { if (e.key === 'Escape') close(); };
+    const outsideHandler = (e) => {
+        if (!pop.contains(e.target) && e.target !== anchorEl && !anchorEl.contains(e.target)) close();
+    };
+    pop._escHandler = escHandler;
+    pop._outsideHandler = outsideHandler;
+    document.addEventListener('keydown', escHandler);
+    document.addEventListener('mousedown', outsideHandler);
+
+    pop.querySelector('[data-action=cancel]').addEventListener('click', close);
+    pop.querySelector('.pb-cat-pop-close').addEventListener('click', close);
+
+    pop.querySelector('[data-action=save]').addEventListener('click', async () => {
+        const next = {
+            'Catégorie': selCat.value || '',
+            'Sous-type': selSub.value || '',
+            'État': selEtat.value || '',
+            'Accès': selAcces.value || '',
+        };
+        // Diff : ne persister que les champs qui ont VRAIMENT changé (évite de
+        // polluer la diff CC Admin avec des « non-changements »).
+        const before = {
+            'Catégorie': getPoiProp(feature, 'Catégorie') || '',
+            'Sous-type': getPoiProp(feature, 'Sous-type') || '',
+            'État': getPoiProp(feature, 'État') || '',
+            'Accès': getPoiProp(feature, 'Accès') || '',
+        };
+        const diff = {};
+        Object.keys(next).forEach(k => {
+            if (next[k] !== before[k]) diff[k] = next[k];
+        });
+        if (Object.keys(diff).length === 0) {
+            close();
+            return;
+        }
+        try {
+            await saveTaxonomyBatch(poiId, diff);
+            showToast('Catégorisé', 'success', 1500);
+            close();
+            if (typeof onSaved === 'function') onSaved();
+        } catch (e) {
+            console.error('[photo-batch] save catégorisation échoué', e);
+            showToast('Échec de l\'enregistrement', 'error');
+        }
+    });
+
+    createIcons({ icons: appIcons });
+}
+
+// Ouvre le RichEditor sur un POI existant depuis la modale photo-batch. Suspend
+// la modale (cf. handleCreatePoi : openHwModal du RichEditor détruirait
+// l'activeHwOverlay sinon), écoute richEditor:closed, restaure. À la fermeture
+// on rafraîchit la modale pour MAJ le badge orange du bouton « Catégoriser »
+// (si l'utilisateur a catégorisé via le RichEditor).
+async function handleEditPoi(feature) {
+    const poiId = getPoiId(feature);
+    if (!poiId) {
+        showToast('POI introuvable', 'error');
+        return;
+    }
+    suspendHwModal();
+
+    await new Promise((resolve) => {
+        const onClose = () => {
+            window.removeEventListener('richEditor:closed', onClose);
+            resolve();
+        };
+        window.addEventListener('richEditor:closed', onClose);
+
+        import('./richEditor.js').then(({ RichEditor }) => {
+            RichEditor.openForEdit(poiId);
+        }).catch((err) => {
+            console.error('[photo-batch] échec import RichEditor', err);
+            window.removeEventListener('richEditor:closed', onClose);
+            resolve();
+        });
+    });
+
+    resumeHwModal();
+    // Rafraîchit la modale (badge orange du bouton Catégoriser, libellé du
+    // tooltip si la cat a changé).
+    renderBody();
 }
 
 // Rattache un cluster à un POI donné ({ feature, dist }).
@@ -1418,6 +1683,41 @@ function buildClusterSection(cluster, index) {
         osmBtn.setAttribute('aria-label', osmTitle);
         osmBtn.addEventListener('click', (e) => { e.stopPropagation(); open('osm'); });
         actions.appendChild(osmBtn);
+    }
+
+    // Catégoriser (popover compacte 4 selects) + Éditer la fiche (RichEditor
+    // complet). Sur tout cluster rattaché à un POI existant — chantier
+    // enrichissement 01/06/2026. Le bouton « Catégoriser » porte un badge orange
+    // si le POI est mal catégorisé (cf. isPoiMalCategorized).
+    if (hasNearbyPoi && cluster.type !== 'OUT_POI') {
+        const poiFeature = cluster.nearbyPois[0].feature;
+
+        const catBtn = document.createElement('button');
+        catBtn.className = 'pb-act';
+        catBtn.type = 'button';
+        if (isPoiMalCategorized(poiFeature)) catBtn.classList.add('is-warn');
+        catBtn.innerHTML = '<i data-lucide="tags"></i><span>Catégoriser</span>';
+        catBtn.title = categorizeTooltip(poiFeature);
+        catBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openCategorizationPopover(poiFeature, catBtn, () => {
+                // Refresh badge + tooltip in-place (pas de full re-render).
+                catBtn.classList.toggle('is-warn', isPoiMalCategorized(poiFeature));
+                catBtn.title = categorizeTooltip(poiFeature);
+            });
+        });
+        actions.appendChild(catBtn);
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'pb-act';
+        editBtn.type = 'button';
+        editBtn.innerHTML = '<i data-lucide="pencil"></i><span>Éditer la fiche</span>';
+        editBtn.title = 'Ouvrir l\'éditeur complet (description, source, horaires…)';
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleEditPoi(poiFeature);
+        });
+        actions.appendChild(editBtn);
     }
 
     // Enregistrer CE lieu (sans fermer la modale) → tri lieu par lieu. Seulement
