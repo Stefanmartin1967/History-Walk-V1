@@ -2541,7 +2541,10 @@
           10.8801516,
           33.8776383
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -2789,7 +2792,10 @@
           10.8689335,
           33.8762636
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -2977,7 +2983,10 @@
           10.8612059,
           33.8764916
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable"
       }
     },
     {
@@ -3052,7 +3061,10 @@
           10.8592574,
           33.8779304
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -4908,7 +4920,10 @@
           10.8566537,
           33.8776151
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable"
       }
     },
     {
