@@ -35,6 +35,7 @@ export function initCircuitPageEvents() {
     initMarkDone();
     initMaskListing();
     initDownloadGpx();
+    initGpxStudioConsultVisibility();
     // initModifyCircuit() : déjà branché par ui-circuit-editor.js via convertToDraft()
     initTransportAccordion();
     initTitleEdit();
@@ -48,6 +49,11 @@ export function initCircuitPageEvents() {
     // (chargement de circuit, modification, suppression, mark-done, etc.).
     eventBus.on('circuit:list-updated', updateMarkDoneState);
     eventBus.on('circuit:list-updated', updateMaskListingState);
+    // Bouton « Ouvrir dans GPX Studio » consult : à toggler dès qu'un circuit
+    // change d'état (réel ↔ vol d'oiseau). circuit:updated est aussi émis sur
+    // chaque ajout/retrait de POI mais c'est OK (lecture cheap d'un attribut).
+    eventBus.on('circuit:list-updated', updateGpxStudioConsultVisibility);
+    window.addEventListener('circuit:updated', updateGpxStudioConsultVisibility);
 }
 
 /* ============================================================
@@ -196,6 +202,45 @@ function initDownloadGpx() {
             showToast('Erreur lors du téléchargement du GPX.', 'error');
         }
     });
+}
+
+/* ============================================================
+   3quater. OUVRIR DANS GPX STUDIO (consultation, conditionnel vol d'oiseau)
+   PR 5/5 chantier drapeaux v2 — remet le lien disparu d'une refonte
+   antérieure (cf. reference_no_gpx_studio_link). Visible UNIQUEMENT si le
+   circuit en consultation n'a pas de realTrack (= vol d'oiseau à router).
+   Le bouton est un <a href="https://gpx.studio/fr/app" target="_blank">,
+   pas besoin de handler click — juste toggle de visibilité.
+
+   GPX Studio reste un outil EXTERNE (pas d'intégration logicielle, cf.
+   reference_no_gpx_studio_link). L'admin télécharge son GPX via le bouton
+   voisin « Télécharger GPX » puis le drag-and-drop dans GPX Studio.
+   ============================================================ */
+
+function initGpxStudioConsultVisibility() {
+    // Setup initial : caché par défaut (is-hidden dans le HTML).
+    updateGpxStudioConsultVisibility();
+}
+
+function updateGpxStudioConsultVisibility() {
+    const btn = document.getElementById('btn-open-gpx-studio-consult');
+    if (!btn) return;
+
+    // Visible UNIQUEMENT en consultation d'un circuit actif sans realTrack.
+    // Hors consultation, data-show="consult" + le CSS du panneau circuit
+    // gèrent déjà le hiding via data-mode. Mais on garantit is-hidden si
+    // realTrack présent (cas où data-show="consult" serait actif).
+    let shouldHide = true;
+    if (state.activeCircuitId) {
+        const id = String(state.activeCircuitId);
+        const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
+        const circuit = allCircuits.find(c => String(c.id) === id);
+        // Vol d'oiseau = realTrack absent ou vide → on AFFICHE le bouton.
+        if (circuit && (!circuit.realTrack || circuit.realTrack.length === 0)) {
+            shouldHide = false;
+        }
+    }
+    btn.classList.toggle('is-hidden', shouldHide);
 }
 
 /* ============================================================
