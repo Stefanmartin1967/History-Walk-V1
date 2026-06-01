@@ -284,10 +284,16 @@ body.osm-pass-active #right-sidebar {
 @keyframes ospSpin { to { transform: rotate(360deg); } }
 
 /* ============================================================
-   4. NIGHT — overrides .osm-pass-btn primary (cf. fix PR #707)
+   4. NIGHT — overrides pour boutons sur fond clair (cf. fix PR #707)
    ============================================================ */
-html[data-theme="night"] .osm-pass-btn--primary {
-    color: var(--bg); /* sombre sur fond #fff = lisible */
+/* Tous nos boutons sur fond clair (presque blanc) en night : la règle globale
+   base.css `html[data-theme="night"] button { color: var(--ink) }` force
+   #F3F4F6 (clair) → quasi-invisible sur fond clair. Override targeté pour
+   restaurer une color sombre lisible. Inclut .osm-pass-quit (raft glass haut-
+   droite, signalé par Stefan post #711). */
+html[data-theme="night"] .osm-pass-btn--primary,
+html[data-theme="night"] .osm-pass-quit {
+    color: var(--bg); /* sombre dans les 4 thèmes = lisible sur fond #fff */
 }
 
 /* ============================================================
