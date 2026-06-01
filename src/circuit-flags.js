@@ -118,8 +118,13 @@ export function getDirtyCount() {
  * (POI retirés du circuit), conserve les autres tels quels (préserve dirty).
  */
 function syncFlags() {
-    // Si pas en mode création ou circuit vide → teardown complet.
-    if (!state.isCircuitCreationMode || !state.currentCircuit || state.currentCircuit.length === 0) {
+    // Le module s'active SOIT en création vierge (isCircuitCreationMode), SOIT
+    // en édition d'un circuit existant (editingMode). convertToDraft met
+    // editingMode=true mais NE met PAS isCircuitCreationMode=true (cf. note
+    // historique map.js:294), donc tester les deux est nécessaire — sinon les
+    // drapeaux restent invisibles en édition (bug attrapé par Stefan post #714).
+    const active = state.isCircuitCreationMode || state.editingMode;
+    if (!active || !state.currentCircuit || state.currentCircuit.length === 0) {
         teardownAllFlags();
         return;
     }
