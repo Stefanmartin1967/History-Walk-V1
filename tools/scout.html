@@ -139,16 +139,24 @@
             </div>
         </div>
 
-        <!-- BBOX — toujours visible. Read-only quand destination connue
-             (calculée depuis l'enveloppe des zones du fichier zones.geojson). -->
-        <div id="bbox-group" style="margin-bottom: 15px;">
+        <!-- ZONE DE RECHERCHE : centre + rayon (remplace les 4 coordonnées bbox).
+             En destination connue : centre = barycentre des zones, rayon =
+             demi-diagonale de l'enveloppe, read-only (modifiable si tu veux
+             resserrer). En mode manuel : centre rempli par Nominatim, rayon
+             par défaut dérivé de la boundingbox renvoyée. -->
+        <div id="center-group" style="margin-bottom: 15px;">
             <div class="row" style="align-items: flex-end;">
-                <div class="col"><label>Sud</label><input type="number" id="bbox-south" step="any" placeholder="33.62"></div>
-                <div class="col"><label>Ouest</label><input type="number" id="bbox-west" step="any" placeholder="10.72"></div>
-                <div class="col"><label>Nord</label><input type="number" id="bbox-north" step="any" placeholder="33.91"></div>
-                <div class="col"><label>Est</label><input type="number" id="bbox-east" step="any" placeholder="11.06"></div>
+                <div class="col" style="flex: 3;">
+                    <label>Centre (lieu de référence)</label>
+                    <input type="text" id="center-name" placeholder="Ex: Houmt Souk, Djerba…">
+                </div>
+                <div class="col" style="flex: 1;">
+                    <label>Rayon (km)</label>
+                    <input type="number" id="radius-km" min="1" step="1" placeholder="5">
+                </div>
             </div>
-            <div id="bbox-info" style="margin-top:6px; font-size:12px; color:#64748b; min-height:18px;"></div>
+            <div id="center-coords" style="margin-top:6px; font-size:12px; color:#64748b; min-height:16px;"></div>
+            <div id="center-info" style="margin-top:2px; font-size:12px; color:#64748b; min-height:18px;"></div>
         </div>
 
         <!-- FILTRES -->
@@ -229,12 +237,11 @@
             btnGeocode: document.getElementById('btn-geocode'),
             destSelect: document.getElementById('destination-select'),
             manualSearch: document.getElementById('manual-search-group'),
-            bboxInfo: document.getElementById('bbox-info'),
+            centerName: document.getElementById('center-name'),
+            centerCoords: document.getElementById('center-coords'),
+            centerInfo: document.getElementById('center-info'),
+            radiusKm: document.getElementById('radius-km'),
             locName: document.getElementById('location-name'),
-            bboxSouth: document.getElementById('bbox-south'),
-            bboxWest: document.getElementById('bbox-west'),
-            bboxNorth: document.getElementById('bbox-north'),
-            bboxEast: document.getElementById('bbox-east'),
             filters: document.querySelectorAll('.filter-item input'),
             resultsArea: document.getElementById('results-area'),
             tbody: document.querySelector('#data-table tbody'),
@@ -243,14 +250,16 @@
             saveStatus: document.getElementById('save-status'),
         };
 
-        // Toggle des inputs bbox (read-only en mode destination connue,
-        // éditables en mode manuel)
-        function setBboxReadOnly(readonly) {
-            for (const inp of [DOM.bboxSouth, DOM.bboxWest, DOM.bboxNorth, DOM.bboxEast]) {
-                inp.readOnly = readonly;
-                inp.style.background = readonly ? '#f1f5f9' : '';
-                inp.style.color = readonly ? '#475569' : '';
-            }
+        // Toggle des inputs centre + rayon (read-only en mode destination
+        // connue, éditables en mode manuel). Le nom du centre reste lisible mais
+        // non éditable en mode connu (c'est le nom de la destination). Le rayon
+        // reste modifiable dans les deux modes pour permettre de resserrer la
+        // requête Overpass à la main.
+        function setCenterReadOnly(readonly) {
+            DOM.centerName.readOnly = readonly;
+            DOM.centerName.style.background = readonly ? '#f1f5f9' : '';
+            DOM.centerName.style.color = readonly ? '#475569' : '';
+            // Le rayon reste éditable des deux côtés (resserrer si besoin).
         }
 
         // --- CHARGEMENT DES DESTINATIONS ---
@@ -291,16 +300,16 @@
                 DOM.manualSearch.classList.remove('hidden');
                 zonesGeoJSON = null; // mode manuel : pas de zones (autodetect désactivé)
                 existingPois = []; // mode manuel = nouvelle destination, rien à déduper
-                setBboxReadOnly(false);
-                DOM.bboxInfo.textContent = 'Mode manuel — saisis la bbox directement ou via la recherche Nominatim.';
-                // Vide la bbox pour repartir de zéro
-                DOM.bboxSouth.value = '';
-                DOM.bboxWest.value  = '';
-                DOM.bboxNorth.value = '';
-                DOM.bboxEast.value  = '';
+                setCenterReadOnly(false);
+                DOM.centerInfo.textContent = 'Mode manuel — renseigne un lieu, puis le rayon en km.';
+                // Reset des champs pour repartir de zéro
+                DOM.centerName.value = '';
+                DOM.centerCoords.textContent = '';
+                DOM.radiusKm.value = '';
+                _centerLat = NaN; _centerLon = NaN;
             } else {
                 DOM.manualSearch.classList.add('hidden');
-                setBboxReadOnly(true);
+                setCenterReadOnly(true);
                 // En parallèle : zones (pour bbox + detectZone) + data existant
                 // (pour dédup au moissonnage). Tous deux race-proofés via leurs
                 // promesses respectives (`_loadZonesPromise` / `_loadExistingPromise`).
@@ -308,6 +317,12 @@
                 loadExistingPoisFor(val);
             }
         });
+
+        // État du centre courant : lat/lon ne sont pas dans le DOM (juste
+        // affichés en read-only via centerCoords). On les conserve ici pour les
+        // lire au moment du fetch. Initialisés via loadZonesFor / geocode /
+        // saisie manuelle (parsing de centerName si lat,lon collé).
+        let _centerLat = NaN, _centerLon = NaN;
 
         // --- UTILS ---
 
@@ -363,19 +378,55 @@
             return Math.round(dLat * dLon);
         }
 
+        // À partir d'une enveloppe {south,west,north,east} : centre = barycentre
+        // de l'enveloppe ; rayon = demi-diagonale (couvre tous les coins),
+        // arrondi vers le haut au km supérieur — entier voulu côté UX
+        // (cf. discussion 01/06/2026 : pas de décimales sur le rayon).
+        function computeCenterAndRadius(envelope) {
+            const lat = (envelope.south + envelope.north) / 2;
+            const lon = (envelope.west + envelope.east) / 2;
+            const dLatKm = (envelope.north - envelope.south) / 2 * 111;
+            const dLonKm = (envelope.east - envelope.west) / 2 * 111 * Math.cos(lat * Math.PI / 180);
+            const radiusKm = Math.max(1, Math.ceil(Math.sqrt(dLatKm * dLatKm + dLonKm * dLonKm)));
+            return { lat, lon, radiusKm };
+        }
+
+        // Bbox circonscrite à un cercle (lat, lon, radiusKm) — utilisée pour
+        // `fetchZonesViaOverpass` qui ne sait pas requêter une relation admin
+        // par `around:` (Overpass : `around` ne marche que sur des nodes/ways
+        // proches). On encadre le cercle d'un carré, ça englobe toutes les
+        // zones admin qui touchent le cercle.
+        function bboxFromCircle(lat, lon, radiusKm) {
+            const dLat = radiusKm / 111;
+            const dLon = radiusKm / (111 * Math.cos(lat * Math.PI / 180));
+            return { south: lat - dLat, west: lon - dLon, north: lat + dLat, east: lon + dLon };
+        }
+
+        // Rafraîchit l'affichage read-only des coordonnées du centre (sous le
+        // champ texte) + met à jour l'état interne (_centerLat/_centerLon).
+        function setCenter(lat, lon) {
+            _centerLat = lat;
+            _centerLon = lon;
+            DOM.centerCoords.textContent = isFinite(lat) && isFinite(lon)
+                ? `lat ${lat.toFixed(6)}, lon ${lon.toFixed(6)}`
+                : '';
+        }
+
         // Promesse en vol pour `loadZonesFor` : permet au bouton "Lancer" de
         // l'attendre si l'utilisateur clique avant que le chargement ne soit fini
         // (évite la race condition au changement de destination).
         let _loadZonesPromise = null;
 
-        function fillBboxFromBounds(dest, reason) {
+        // Remplit centre + rayon à partir du fallback dest.bounds (utilisé
+        // quand il n'y a pas de fichier zones, ou erreur de chargement).
+        function fillCenterFromBounds(dest, reason) {
             if (!dest?.bounds) return false;
             const [[south, west], [north, east]] = dest.bounds;
-            DOM.bboxSouth.value = south;
-            DOM.bboxWest.value  = west;
-            DOM.bboxNorth.value = north;
-            DOM.bboxEast.value  = east;
-            DOM.bboxInfo.textContent = `Bbox depuis destinations.json (${reason}).`;
+            const { lat, lon, radiusKm } = computeCenterAndRadius({ south, west, north, east });
+            DOM.centerName.value = dest.name || '';
+            setCenter(lat, lon);
+            DOM.radiusKm.value = String(radiusKm);
+            DOM.centerInfo.textContent = `Centre + rayon depuis destinations.json (${reason}).`;
             return true;
         }
 
@@ -383,10 +434,10 @@
             _loadZonesPromise = (async () => {
                 zonesGeoJSON = null;
                 const dest = destinationsData[destId];
-                DOM.bboxInfo.textContent = '';
+                DOM.centerInfo.textContent = '';
 
                 if (!dest?.zonesFile) {
-                    fillBboxFromBounds(dest, 'pas de zones disponibles');
+                    fillCenterFromBounds(dest, 'pas de zones disponibles');
                     return;
                 }
 
@@ -396,24 +447,23 @@
                 try {
                     const res = await fetch(`../${dest.zonesFile}?t=${Date.now()}`);
                     if (!res.ok) {
-                        fillBboxFromBounds(dest, `fichier zones absent (HTTP ${res.status})`);
+                        fillCenterFromBounds(dest, `fichier zones absent (HTTP ${res.status})`);
                         return;
                     }
                     zonesGeoJSON = await res.json();
                     const env = computeZonesEnvelope(zonesGeoJSON);
                     if (!env) {
-                        fillBboxFromBounds(dest, 'zones vides');
+                        fillCenterFromBounds(dest, 'zones vides');
                         return;
                     }
-                    DOM.bboxSouth.value = env.south.toFixed(6);
-                    DOM.bboxWest.value  = env.west.toFixed(6);
-                    DOM.bboxNorth.value = env.north.toFixed(6);
-                    DOM.bboxEast.value  = env.east.toFixed(6);
+                    const { lat, lon, radiusKm } = computeCenterAndRadius(env);
+                    DOM.centerName.value = dest.name || '';
+                    setCenter(lat, lon);
+                    DOM.radiusKm.value = String(radiusKm);
                     const n = zonesGeoJSON.features.length;
-                    const km2 = bboxAreaKm2(env);
-                    DOM.bboxInfo.textContent = `Bbox = enveloppe des ${n} zones (~${km2} km²) — couvre tous les polygones du fichier zones.geojson, y compris leurs débordements.`;
+                    DOM.centerInfo.textContent = `Centre = barycentre des ${n} zones, rayon = demi-diagonale de l'enveloppe.`;
                 } catch(e) {
-                    fillBboxFromBounds(dest, `erreur chargement zones : ${e.message || e}`);
+                    fillCenterFromBounds(dest, `erreur chargement zones : ${e.message || e}`);
                 }
             })();
             return _loadZonesPromise;
@@ -717,22 +767,29 @@ out geom;`;
             DOM.tbody.lastElementChild.scrollIntoView({ behavior: 'smooth' });
         };
 
-        // --- GEOCODING (mode manuel) → retourne {south,west,north,east} ou null ---
-        async function geocodeToBox(query) {
+        // --- GEOCODING (mode manuel) → renvoie {lat, lon, radiusKm} ou null.
+        // Nominatim donne `lat`, `lon`, et `boundingbox`. On dérive le rayon par
+        // défaut comme la demi-diagonale de cette boundingbox — l'utilisateur
+        // peut le resserrer ensuite. Met à jour les 3 champs UI (centerName,
+        // centerCoords via setCenter, radiusKm).
+        async function geocodeToCenter(query) {
             DOM.btnGeocode.innerHTML = '<span class="spinner"></span>';
             try {
                 const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`);
                 const data = await res.json();
                 if (data.length === 0) { showStatus('warning', '⚠️ Aucun résultat Nominatim pour cette recherche.'); return null; }
+                const hit = data[0];
+                const lat = parseFloat(hit.lat);
+                const lon = parseFloat(hit.lon);
                 // boundingbox Nominatim : ["south","north","west","east"]
-                const [s, n, w, e] = data[0].boundingbox;
-                const box = { south: parseFloat(s), west: parseFloat(w), north: parseFloat(n), east: parseFloat(e) };
-                DOM.bboxSouth.value = box.south.toFixed(6);
-                DOM.bboxWest.value  = box.west.toFixed(6);
-                DOM.bboxNorth.value = box.north.toFixed(6);
-                DOM.bboxEast.value  = box.east.toFixed(6);
-                showStatus('success', `✅ Zone : ${data[0].display_name.split(',').slice(0,2).join(',')}`);
-                return box;
+                const [s, n, w, e] = hit.boundingbox.map(parseFloat);
+                const { radiusKm } = computeCenterAndRadius({ south: s, west: w, north: n, east: e });
+                const label = hit.display_name.split(',').slice(0, 2).join(',');
+                DOM.centerName.value = label;
+                setCenter(lat, lon);
+                DOM.radiusKm.value = String(radiusKm);
+                showStatus('success', `✅ Centre : ${label} · rayon par défaut ${radiusKm} km`);
+                return { lat, lon, radiusKm };
             } catch (err) {
                 showStatus('error', '❌ Erreur Nominatim : ' + err.message);
                 return null;
@@ -742,7 +799,7 @@ out geom;`;
             }
         }
 
-        DOM.btnGeocode.onclick = () => geocodeToBox(DOM.locName.value.trim());
+        DOM.btnGeocode.onclick = () => geocodeToCenter(DOM.locName.value.trim());
 
         // --- STATUS HELPER ---
         const statusEl = document.getElementById('fetch-status');
@@ -755,15 +812,14 @@ out geom;`;
 
         // --- FETCHING ---
         DOM.btnFetch.onclick = async () => {
-            let south, west, north, east;
             const selectedDest = DOM.destSelect.value;
             const isManual = (selectedDest === '__manual__' || !destinationsData[selectedDest]);
 
-            // Race-proof : si destination connue + bbox vide + chargement zones
-            // en cours, on attend qu'il finisse avant de valider la bbox.
+            // Race-proof : si destination connue + centre vide + chargement zones
+            // en cours, on attend qu'il finisse avant de valider.
             if (!isManual && _loadZonesPromise) {
-                const bboxEmpty = !DOM.bboxSouth.value || !DOM.bboxWest.value || !DOM.bboxNorth.value || !DOM.bboxEast.value;
-                if (bboxEmpty) {
+                const centerEmpty = !isFinite(_centerLat) || !isFinite(_centerLon) || !DOM.radiusKm.value;
+                if (centerEmpty) {
                     showStatus('loading', '⏳ Chargement des zones en cours…');
                     await _loadZonesPromise;
                 }
@@ -775,31 +831,21 @@ out geom;`;
                 await _loadExistingPromise;
             }
 
-            // Mode manuel : auto-geocoder si bbox vide mais nom renseigné
+            // Mode manuel : auto-geocoder si centre vide mais nom renseigné
             if (isManual) {
-                const bboxEmpty = [DOM.bboxSouth.value, DOM.bboxWest.value, DOM.bboxNorth.value, DOM.bboxEast.value].some(v => v.toString().trim() === '');
-                if (bboxEmpty && DOM.locName.value.trim()) {
-                    const box = await geocodeToBox(DOM.locName.value.trim());
-                    if (!box) { DOM.btnFetch.disabled = false; return; }
-                    ({ south, west, north, east } = box);
-                    DOM.bboxSouth.value = south.toFixed(6);
-                    DOM.bboxWest.value  = west.toFixed(6);
-                    DOM.bboxNorth.value = north.toFixed(6);
-                    DOM.bboxEast.value  = east.toFixed(6);
+                const centerEmpty = !isFinite(_centerLat) || !isFinite(_centerLon);
+                if (centerEmpty && DOM.locName.value.trim()) {
+                    const c = await geocodeToCenter(DOM.locName.value.trim());
+                    if (!c) { DOM.btnFetch.disabled = false; return; }
                 }
             }
 
-            // Lire depuis les inputs (remplis par loadZonesFor pour destinations
-            // connues, ou par l'utilisateur / Nominatim en mode manuel)
-            if (south === undefined) {
-                south = parseFloat(DOM.bboxSouth.value);
-                west  = parseFloat(DOM.bboxWest.value);
-                north = parseFloat(DOM.bboxNorth.value);
-                east  = parseFloat(DOM.bboxEast.value);
-            }
+            const centerLat = _centerLat;
+            const centerLon = _centerLon;
+            const radiusKm = parseInt(DOM.radiusKm.value, 10);
 
-            if ([south, west, north, east].some(isNaN)) {
-                showStatus('error', '⚠️ Zone non définie. Sélectionnez une destination ou renseignez le nom.');
+            if (!isFinite(centerLat) || !isFinite(centerLon) || !isFinite(radiusKm) || radiusKm < 1) {
+                showStatus('error', '⚠️ Centre ou rayon non défini. Sélectionnez une destination ou renseignez le lieu + rayon.');
                 return;
             }
 
@@ -813,8 +859,9 @@ out geom;`;
             const sinceDate = document.getElementById('newer-since').value;
             const newerFilter = sinceDate ? `["newer"="${sinceDate}"]` : '';
 
-            // Bbox Overpass : (south,west,north,east)
-            const bbox = `(${south},${west},${north},${east})`;
+            // Overpass `around:radius,lat,lon` — radius en MÈTRES.
+            const radiusM = radiusKm * 1000;
+            const bbox = `(around:${radiusM},${centerLat},${centerLon})`;
 
             // `nwr` = node + way + relation. Beaucoup de mosquées/sites historiques
             // sont mappés comme way (bâtiment) sur OSM, pas comme node. Sans nwr,
@@ -842,22 +889,24 @@ out geom;`;
             const query = `[out:json][timeout:60];(${clauses.join('')});out center;`;
 
             // Mode "Nouvelle destination" : avant le moissonnage POIs, on récupère
-            // les zones admin OSM dans la bbox via Overpass pour activer la
-            // détection de zone sur les POIs scoutés (sinon colonne Zone vide).
+            // les zones admin OSM via Overpass pour activer la détection de zone
+            // sur les POIs scoutés. Overpass ne sait pas faire `around:` sur des
+            // relations admin → on dérive un carré circonscrit au cercle.
             // Pour les destinations connues, zonesGeoJSON est déjà chargé via
             // loadZonesFor() (fichier {dest}-zones.geojson).
             if (isManual && !zonesGeoJSON) {
                 showStatus('loading', '⏳ Récupération des zones admin OSM…');
                 try {
-                    const zones = await fetchZonesViaOverpass({ south, west, north, east });
+                    const zonesBbox = bboxFromCircle(centerLat, centerLon, radiusKm);
+                    const zones = await fetchZonesViaOverpass(zonesBbox);
                     if (zones?.features?.length) {
                         zonesGeoJSON = zones;
-                        DOM.bboxInfo.textContent = `${zones.features.length} zones admin OSM chargées (admin_level=6).`;
+                        DOM.centerInfo.textContent = `${zones.features.length} zones admin OSM chargées (admin_level=6).`;
                     } else {
-                        DOM.bboxInfo.textContent = 'Aucune zone admin OSM trouvée — la colonne Zone restera vide.';
+                        DOM.centerInfo.textContent = 'Aucune zone admin OSM trouvée — la colonne Zone restera vide.';
                     }
                 } catch (e) {
-                    DOM.bboxInfo.textContent = `Zones non récupérées (${e.message || e}) — la colonne Zone restera vide.`;
+                    DOM.centerInfo.textContent = `Zones non récupérées (${e.message || e}) — la colonne Zone restera vide.`;
                 }
             }
 
@@ -1308,21 +1357,24 @@ out geom;`;
                 const destFile = await ghGetFile('public/destinations.json', token);
                 const destJson = destFile ? JSON.parse(destFile.content) : { activeMapId: destId, maps: {} };
                 destJson.maps = destJson.maps || {};
+                // Reconstruit la bbox depuis le cercle (carré circonscrit) pour
+                // remplir le champ `bounds` historique de destinations.json — le
+                // reste de l'app (HW, DM) lit toujours `bounds`, on ne casse pas
+                // la compat. `startView.center` = directement le centre.
+                const radiusKmSave = parseInt(DOM.radiusKm.value, 10) || 5;
+                const saveBbox = bboxFromCircle(_centerLat, _centerLon, radiusKmSave);
                 destJson.maps[destId] = {
                     name: destName,
                     file: `${destId}.geojson`,
                     circuitsFile: `circuits/${destId}.json`,
                     zonesFile: `${destId}-zones.geojson`,
                     bounds: [
-                        [parseFloat(DOM.bboxSouth.value), parseFloat(DOM.bboxWest.value)],
-                        [parseFloat(DOM.bboxNorth.value), parseFloat(DOM.bboxEast.value)]
+                        [saveBbox.south, saveBbox.west],
+                        [saveBbox.north, saveBbox.east]
                     ],
                     currency: 'EUR',
                     startView: {
-                        center: [
-                            (parseFloat(DOM.bboxSouth.value) + parseFloat(DOM.bboxNorth.value)) / 2,
-                            (parseFloat(DOM.bboxWest.value)  + parseFloat(DOM.bboxEast.value))  / 2
-                        ],
+                        center: [_centerLat, _centerLon],
                         zoom: 11.5
                     }
                 };

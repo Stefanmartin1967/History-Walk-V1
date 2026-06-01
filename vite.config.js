@@ -34,7 +34,9 @@ export default defineConfig({
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
         // vers …/circuits/x.gpx) sert l'app (index.html) au lieu du fichier, et HW
         // s'ouvre sur « Mes Circuits » vide. On les laisse passer au réseau.
-        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i],
+        // Idem pour tools/* : `window.open('tools/scout.html')` doit servir le
+        // vrai HTML du Scout, pas être redirigé vers l'app (bug constaté 01/06).
+        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i, /\/tools\//i],
         runtimeCaching: [
           {
             // GeoJSON : NetworkFirst — données éditoriales qui évoluent
