@@ -1,5 +1,6 @@
 // utils.js
 import { zonesData } from './zones.js';
+import { getSubtypes } from './taxonomy.js';
 
 /**
  * Génère un identifiant unique au format HW-ULID
@@ -330,6 +331,21 @@ export function getPoiProp(feature, key) {
     if (!p) return undefined;
     const userVal = p.userData?.[key];
     return userVal !== undefined ? userVal : p[key];
+}
+
+/**
+ * True si le POI est mal catégorisé : aucune Catégorie, ou « A définir », ou
+ * catégorie avec sous-types disponibles ET Sous-type vide. Utilisé pour le
+ * badge orange du bouton « Catégoriser » de la modale d'import photo (chantier
+ * enrichissement 01/06/2026). État/Accès NON considérés (secondaires — leur
+ * absence ne signale pas un POI « pas catégorisé »).
+ */
+export function isPoiMalCategorized(feature) {
+    const cat = getPoiProp(feature, 'Catégorie');
+    if (!cat || cat === 'A définir') return true;
+    const subtypes = getSubtypes(cat);
+    if (subtypes.length > 0 && !getPoiProp(feature, 'Sous-type')) return true;
+    return false;
 }
 
 /**

@@ -67,6 +67,9 @@ import {
     // Onglet Circuit V2 (refonte avril 2026 — consultation + création)
     Crosshair, GripVertical, Eraser, ExternalLink, Share2, BookmarkX,
 
+    // Catégorisation au batch (modale import photo, 01/06/2026)
+    Tags,
+
 } from 'lucide';
 
 export { createIcons };
@@ -115,4 +118,6 @@ export const appIcons = {
     Crosshair, GripVertical, Eraser, ExternalLink, Share2, BookmarkX,
 
     Flag,
+
+    Tags,
 };
