@@ -30,6 +30,9 @@ import {
 const POI_RADIUS = 120;     // m — « ce POI est le lieu de la photo »
 const TRAJET_RADIUS = 80;   // m — regroupement des photos « trajet » (sans POI)
 const NEARBY_RADIUS = 100;  // m — POIs listés dans nearbyPois (candidats proches)
+const SUGGEST_RADIUS = 300; // m — plafond de la suggestion « plus proche » (au-delà,
+                            //     on ne propose plus de lieu : suggérer un POI à 1 km
+                            //     serait trompeur). Cf. badge « À rattacher ».
 
 function visiblePoiFeatures(features, hiddenPoiIds) {
     const hidden = hiddenPoiIds || [];
@@ -72,11 +75,16 @@ function enrichGroup(photos, features, hiddenPoiIds, anchorFeature = null) {
         };
     }
 
+    // Suggestion « plus proche » seulement si le POI est à portée raisonnable
+    // (≤ SUGGEST_RADIUS). Au-delà → pas de suggestion (groupe « Hors POI » pur).
+    const suggested = (absoluteNearest && absoluteNearest.dist <= SUGGEST_RADIUS)
+        ? absoluteNearest : null;
+
     return {
         photos,
         center,
         nearbyPois,
-        absoluteNearest: nearbyPois.length === 0 ? absoluteNearest : null,
+        absoluteNearest: nearbyPois.length === 0 ? suggested : null,
     };
 }
 

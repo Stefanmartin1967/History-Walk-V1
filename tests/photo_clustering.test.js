@@ -37,7 +37,7 @@ describe('clusterPhotos — groupement par lieu (1 groupe = POI le plus proche)'
         expect(clusters[0].nearbyPois[0].feature.properties.HW_ID).toBe('eglise');
     });
 
-    it('une photo sans POI dans le rayon (120 m) part en groupe « trajet »', () => {
+    it('une photo loin de tout (> plafond 300 m) part en « trajet » SANS suggestion', () => {
         const photos = [
             photo(33.8800, 10.8570, 1),       // café
             photo(33.8700, 10.8400, 2),       // loin de tout (>1 km)
@@ -46,7 +46,21 @@ describe('clusterPhotos — groupement par lieu (1 groupe = POI le plus proche)'
         expect(clusters).toHaveLength(2);
         const trajet = clusters.find(c => c.nearbyPois.length === 0);
         expect(trajet).toBeTruthy();
-        expect(trajet.absoluteNearest).toBeTruthy(); // le POI le plus proche reste connu
+        // Au-delà du plafond de suggestion (300 m), on ne propose plus de lieu :
+        // suggérer un POI à 1 km serait trompeur.
+        expect(trajet.absoluteNearest).toBeNull();
+    });
+
+    it('une photo à portée (> 120 m mais ≤ 300 m) garde la suggestion « plus proche »', () => {
+        const photos = [
+            photo(33.8800, 10.8570, 1),       // café (groupe rattaché)
+            photo(33.8800, 10.8600, 2),       // ~220 m de l'église → trajet, mais ≤ 300 m
+        ];
+        const clusters = clusterPhotos(photos, [CAFE, EGLISE]);
+        const trajet = clusters.find(c => c.nearbyPois.length === 0);
+        expect(trajet).toBeTruthy();
+        expect(trajet.absoluteNearest).toBeTruthy();
+        expect(trajet.absoluteNearest.dist).toBeLessThanOrEqual(300);
     });
 
     it('regroupe toutes les photos d’un même lieu, peu importe l’ordre', () => {
