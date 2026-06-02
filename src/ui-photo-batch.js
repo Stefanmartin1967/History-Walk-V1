@@ -1538,6 +1538,15 @@ function buildClusterSection(cluster, index) {
     const head = document.createElement('div');
     head.className = 'pb-cluster-head';
 
+    // Poignée de réordonnancement (drag) — handle du Sortable de niveau groupe
+    // (cf. renderBody). Réordonner les groupes renumérote les noms auto (NN - … - PP).
+    const dragHandle = document.createElement('span');
+    dragHandle.className = 'pb-cluster-drag';
+    dragHandle.setAttribute('aria-label', 'Glisser pour réordonner ce groupe');
+    dragHandle.title = 'Glisser pour réordonner ce groupe';
+    dragHandle.innerHTML = '<i data-lucide="grip-vertical"></i>';
+    head.appendChild(dragHandle);
+
     const headBlock = document.createElement('div');
     headBlock.className = 'pb-cluster-head-block';
 
@@ -1962,9 +1971,41 @@ function renderBody() {
         modalState.clusters.forEach((cluster, idx) => {
             body.appendChild(buildClusterSection(cluster, idx));
         });
+        // Réordonnancement des GROUPES par glisser-déposer (handle = poignée du
+        // head). Sortable distinct de celui des photos ('photo-batch-shared') →
+        // pas d'interférence ; le drag ne démarre QUE depuis .pb-cluster-drag.
+        new Sortable(body, {
+            group: 'photo-batch-clusters',
+            draggable: '.pb-cluster',
+            handle: '.pb-cluster-drag',
+            animation: 150,
+            ghostClass: 'is-ghost',
+            chosenClass: 'is-chosen',
+            dragClass: 'is-dragging',
+            onStart: () => { ignoreNextClick = true; },
+            onEnd: (evt) => {
+                handleClusterMoveEnd(evt);
+                setTimeout(() => { ignoreNextClick = false; }, 0);
+            }
+        });
     }
 
     createIcons({ icons: appIcons, root: body });
+}
+
+// Réordonnancement des groupes (drag du head) : réaligne modalState.clusters sur
+// l'ordre du DOM puis re-render. Les noms auto (NN - base - PP) suivent le nouvel
+// ordre puisque NN = position du cluster.
+function handleClusterMoveEnd(evt) {
+    if (evt.oldIndex === evt.newIndex) return;
+    const order = [...evt.to.querySelectorAll(':scope > .pb-cluster')].map(el => el.dataset.clusterId);
+    const byId = new Map(modalState.clusters.map(c => [c.id, c]));
+    const reordered = order.map(id => byId.get(id)).filter(Boolean);
+    // Garde-fou : si le mapping perd des clusters, on n'écrase pas l'état.
+    if (reordered.length !== modalState.clusters.length) { renderBody(); return; }
+    modalState.clusters = reordered;
+    renderBody();
+    updateHeaderCounts();
 }
 
 function updateHeaderCounts() {
