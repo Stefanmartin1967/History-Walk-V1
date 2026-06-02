@@ -27,7 +27,7 @@ import {
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
 
     // Carte & circuit
-    Map, MapPin, MapPinOff, MapPinPlus, Route, Globe, Compass, Navigation,
+    Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation,
 
     // Médias
     Camera, Image, ImageOff, ImagePlus, ImageDown, ImageUp,
@@ -89,7 +89,7 @@ export const appIcons = {
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
 
-    Map, MapPin, MapPinOff, MapPinPlus, Route, Globe, Compass, Navigation,
+    Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation,
 
     Camera, Image, ImageOff, ImagePlus, ImageDown, ImageUp,
     Mic, MicOff, Volume2, Play,
