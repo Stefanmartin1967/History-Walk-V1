@@ -688,7 +688,8 @@ function fillEmptySlots(cluster, f) {
     const shown = new Set(f.slots.filter(Boolean));
     for (let i = 0; i < f.slots.length; i++) {
         if (f.slots[i]) continue;
-        const next = cluster.photos.find(p => !shown.has(p.id));
+        // Les masquées de la session ne remplissent pas non plus les cases vides.
+        const next = cluster.photos.find(p => !shown.has(p.id) && !(f.hidden && f.hidden.has(p.id)));
         if (next) { f.slots[i] = next.id; shown.add(next.id); }
     }
 }
@@ -698,7 +699,12 @@ function enterFocus(cluster) {
     const slotCount = defaultCompareSlots(cluster.photos.length);
     const slots = [];
     for (let i = 0; i < slotCount; i++) slots.push(cluster.photos[i] ? cluster.photos[i].id : null);
-    modalState.focus = { clusterId: cluster.id, slotCount, slots, activeSlot: 0 };
+    // `hidden` : photos masquées (œil barré) PENDANT cette session de comparaison.
+    // Elles sont exclues de l'auto-avance et du remplissage auto (ne « reviennent »
+    // plus toutes seules), mais restent dans le cluster et re-cliquables dans la
+    // pellicule (grisées). Réinitialisé à chaque entrée en focus → réouvrir la
+    // comparaison réaffiche toutes les photos.
+    modalState.focus = { clusterId: cluster.id, slotCount, slots, activeSlot: 0, hidden: new Set() };
     const overlay = document.getElementById('photo-batch-overlay');
     if (overlay) overlay.classList.add('is-focus');
     setHeaderMode('focus', cluster);
@@ -736,6 +742,9 @@ function setSlotCount(n) {
 function focusPelliculeTap(pid) {
     const f = modalState.focus;
     if (!f) return;
+    // Taper une vignette masquée la « réveille » : on l'enlève des masquées de la
+    // session (clic = action explicite de l'utilisateur, on respecte son intention).
+    if (f.hidden) f.hidden.delete(pid);
     const existing = f.slots.indexOf(pid);
     if (existing !== -1) {
         // Déjà affichée → on rend simplement son emplacement actif.
@@ -763,9 +772,11 @@ function focusPelliculeTap(pid) {
 // Première photo du cluster non affichée (hors `excludePid`), dans l'ordre de
 // la pellicule. Sert à l'auto-avance : remplir un emplacement libéré.
 function nextPhotoForSlot(cluster, excludePid) {
-    const shown = new Set(modalState.focus.slots.filter(Boolean));
+    const f = modalState.focus;
+    const shown = new Set(f.slots.filter(Boolean));
     for (const p of cluster.photos) {
         if (p.id === excludePid) continue;
+        if (f.hidden && f.hidden.has(p.id)) continue; // masquée → ne revient pas seule
         if (!shown.has(p.id)) return p.id;
     }
     return null;
@@ -803,12 +814,16 @@ function removeFromComparison(slotIndex, mode) {
         return;
     }
 
+    // Œil barré : on mémorise la photo comme masquée pour cette session → elle
+    // ne sera plus rappelée par l'auto-avance ni le remplissage auto (cf. #6).
+    if (mode === 'hide' && pid) f.hidden.add(pid);
+
     const next = nextPhotoForSlot(cluster, pid);
     if (next) f.slots[slotIndex] = next;
     else collapseSlot(slotIndex);
 
     if (mode === 'delete' && pid) { deletePhoto(pid); return; } // re-render interne
-    renderBody(); // 'hide' : la photo reste dans le cluster
+    renderBody(); // 'hide' : la photo reste dans le cluster (masquée)
 }
 
 // Construit une cellule de comparaison (emplacement i).
@@ -928,9 +943,11 @@ function buildPellicule(cluster) {
     const wrap = document.createElement('div');
     wrap.className = 'pb-pellicule';
 
+    const hiddenCount = f.hidden ? f.hidden.size : 0;
     const head = document.createElement('div');
     head.className = 'pb-pellicule-head';
     head.innerHTML = `<span>Pellicule</span><span class="sep">·</span><span><b>${cluster.photos.length}</b> photo(s)</span>`
+        + (hiddenCount ? `<span class="sep">·</span><span class="pb-pellicule-hidden"><b>${hiddenCount}</b> masquée(s)</span>` : '')
         + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette l'ajoute (jusqu'à 6) ; au-delà, remplace l'emplacement actif</span>`;
     wrap.appendChild(head);
 
@@ -945,9 +962,13 @@ function buildPellicule(cluster) {
         thumb.className = 'pb-pellicule-thumb';
         thumb.type = 'button';
         thumb.dataset.photoId = p.id;
-        thumb.title = p.customName || resolvePhotoAutoName(cluster, p);
         const slot = slotByPid[p.id];
         if (slot) thumb.classList.add('is-in-slot');
+        const isHidden = f.hidden && f.hidden.has(p.id);
+        if (isHidden) thumb.classList.add('is-hidden');
+        thumb.title = isHidden
+            ? 'Masquée — cliquer pour la réafficher dans la comparaison'
+            : (p.customName || resolvePhotoAutoName(cluster, p));
 
         const img = document.createElement('img');
         img.alt = '';
@@ -987,17 +1008,11 @@ function renderFocus(cluster) {
     section.className = 'pb-cluster is-focused';
     section.dataset.clusterId = cluster.id;
 
-    // --- HEAD : retour + titre + sélecteur 2/3/4 + ZIP ---
+    // --- HEAD : titre + sélecteur 2..6 ---
+    // (Le retour à la vue d'ensemble passe par le footer « Fermer la comparaison »
+    //  et Échap ; le ZIP du groupe par le footer « Télécharger ce groupe ».)
     const head = document.createElement('div');
     head.className = 'pb-cluster-head';
-
-    const back = document.createElement('button');
-    back.className = 'pb-focus-back';
-    back.type = 'button';
-    back.title = "Revenir à la vue d'ensemble (Échap)";
-    back.innerHTML = '<i data-lucide="arrow-left"></i><span>Vue d\'ensemble</span>';
-    back.addEventListener('click', () => exitFocus());
-    head.appendChild(back);
 
     const headBlock = document.createElement('div');
     headBlock.className = 'pb-cluster-head-block';
