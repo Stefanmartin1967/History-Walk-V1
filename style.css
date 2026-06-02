@@ -27,6 +27,7 @@
 @import "./style/modals.css";
 @import "./style/mobile-follow.css";
 @import "./style/osm-pass.css";
+@import "./style/help.css";
 
 /* ============================================================
    BOOT SPLASH — Couvre l'app pendant l'initialisation

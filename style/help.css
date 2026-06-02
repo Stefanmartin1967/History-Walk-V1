@@ -1,0 +1,346 @@
+/* style/help.css
+   ============================================================================
+   Patron d'aide contextuelle « ? » — styles partagés (cf. src/help-popover.js).
+   Tout est basé sur les tokens HW (tokens.css) → cohérent sur les 4 thèmes
+   (maritime / désert / oasis / night) sans surcharge par thème.
+
+   Surfaces :
+     .help-dot       — petit « ? » inline (à côté d'un concept)
+     .help-trigger   — « ? » global d'en-tête de vue (ouvre le drawer)
+     .help-pop       — mini-popover inline (ancré)
+     .help-drawer    — panneau d'aide structuré (glisse depuis la droite)
+
+   Variantes de densité / ton : [data-help-variant="sobre|accentue|compact"]
+   (posé en JS sur .help-pop / .help-drawer).
+   ============================================================================ */
+
+/* Au-dessus de la modale (.hw-modal-overlay = 100000) et de .pb-cat-popover
+   (100010). Le drawer < le popover inline (un « ? » peut vivre dans le drawer). */
+:root {
+    --help-z-drawer: 100020;
+    --help-z-pop: 100040;
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+   DÉCLENCHEURS
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* « ? » inline discret : cercle ink-soft qui s'éclaire (brand) au survol. */
+.help-dot {
+    -webkit-appearance: none; appearance: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; padding: 0;
+    flex-shrink: 0;
+    border: 1px solid color-mix(in oklab, var(--ink-soft) 45%, transparent);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    vertical-align: middle;
+    transition: color .15s, border-color .15s, background .15s;
+}
+.help-dot--sm { width: 16px; height: 16px; }
+.help-dot svg { width: 11px; height: 11px; stroke-width: 2.25; display: block; }
+.help-dot--sm svg { width: 10px; height: 10px; }
+.help-dot:hover,
+.help-dot[aria-expanded="true"] {
+    color: var(--brand-2);
+    border-color: color-mix(in oklab, var(--brand) 55%, transparent);
+    background: color-mix(in oklab, var(--brand) 12%, transparent);
+}
+.help-dot:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* « ? » global d'en-tête : bouton icône carré (aligné sur .btn-icon HW). */
+.help-trigger {
+    -webkit-appearance: none; appearance: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 36px; padding: 0; width: 36px;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-family: var(--font-family-base);
+    font-size: 13px; font-weight: var(--font-weight-semibold);
+    transition: color .15s, border-color .15s, background .15s;
+}
+.help-trigger--text { width: auto; padding: 0 12px 0 10px; }
+.help-trigger svg { width: 18px; height: 18px; stroke-width: 2; }
+.help-trigger:hover,
+.help-trigger[aria-expanded="true"] {
+    color: var(--brand-2);
+    border-color: color-mix(in oklab, var(--brand) 50%, var(--line));
+    background: color-mix(in oklab, var(--brand) 8%, var(--surface));
+}
+.help-trigger:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ────────────────────────────────────────────────────────────────────────
+   MINI-POPOVER INLINE
+   ──────────────────────────────────────────────────────────────────────── */
+.help-pop {
+    position: fixed;
+    z-index: var(--help-z-pop);
+    width: 300px; max-width: calc(100vw - 20px);
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    transform-origin: top center;
+    overflow: hidden;
+    /* État ouvert = défaut (visible) ; l'entrée s'anime au montage via
+       @keyframes — aucun toggle de classe différé requis (fiable partout).
+       fill-mode forwards : hors animation, l'élément garde son style de base
+       (ouvert/visible) — jamais bloqué hors-écran. */
+    animation: help-pop-in .16s ease forwards;
+}
+.help-pop.is-above { transform-origin: bottom center; animation-name: help-pop-in-above; }
+.help-pop.help-closing { animation: help-pop-out .14s ease forwards; }
+@keyframes help-pop-in { from { opacity: 0; transform: translateY(-4px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes help-pop-in-above { from { opacity: 0; transform: translateY(4px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes help-pop-out { to { opacity: 0; transform: translateY(-2px) scale(.99); } }
+
+.help-pop-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-sm);
+    padding: 10px 10px 10px 14px;
+    border-bottom: 1px solid var(--line);
+}
+.help-pop-title {
+    font-size: 12px; font-weight: var(--font-weight-bold);
+    color: var(--ink-soft);
+    text-transform: uppercase; letter-spacing: .05em;
+}
+.help-pop-close {
+    -webkit-appearance: none; appearance: none;
+    width: 26px; height: 26px; flex-shrink: 0;
+    display: grid; place-items: center;
+    border: 0; border-radius: var(--radius-sm);
+    background: transparent; color: var(--ink-soft); cursor: pointer;
+    transition: background .15s, color .15s;
+}
+.help-pop-close:hover { background: var(--surface-muted); color: var(--ink); }
+.help-pop-close:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.help-pop-close svg { width: 15px; height: 15px; }
+.help-pop-body { padding: 12px 14px 14px; }
+.help-pop-body > :first-child { margin-top: 0; }
+.help-pop-body > :last-child { margin-bottom: 0; }
+
+/* Flèche du popover (positionnée en JS via left). */
+.help-pop-arrow {
+    position: absolute; top: -7px; width: 13px; height: 13px;
+    background: var(--surface);
+    border-left: 1px solid var(--line);
+    border-top: 1px solid var(--line);
+    transform: translateX(-50%) rotate(45deg);
+}
+.help-pop.is-above .help-pop-arrow {
+    top: auto; bottom: -7px;
+    border-left: 0; border-top: 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+   DRAWER (panneau d'aide structuré, depuis la droite)
+   ──────────────────────────────────────────────────────────────────────── */
+.help-drawer-scrim {
+    position: fixed; inset: 0;
+    z-index: calc(var(--help-z-drawer) - 1);
+    background: color-mix(in oklab, var(--bg-2) 60%, transparent);
+    animation: help-fade-in .2s ease forwards;
+}
+.help-drawer-scrim.help-closing { animation: help-fade-out .2s ease forwards; }
+@keyframes help-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes help-fade-out { to { opacity: 0; } }
+
+.help-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0;
+    z-index: var(--help-z-drawer);
+    width: min(440px, 92vw);
+    display: flex; flex-direction: column;
+    background: var(--surface);
+    color: var(--ink);
+    border-left: 1px solid var(--line);
+    box-shadow: var(--shadow-modal);
+    font-family: var(--font-family-base);
+    /* Ouvert par défaut ; entrée animée au montage (cf. .help-pop). */
+    animation: help-drawer-in .26s cubic-bezier(.22,.61,.36,1) forwards;
+}
+.help-drawer.help-closing { animation: help-drawer-out .22s cubic-bezier(.55,0,.67,.5) forwards; }
+@keyframes help-drawer-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+@keyframes help-drawer-out { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+.help-drawer-head {
+    flex-shrink: 0;
+    position: relative;
+    padding: var(--space-md) var(--space-lg);
+    padding-right: 56px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+}
+.help-drawer-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--brand-2);
+    font-size: 11px; font-weight: var(--font-weight-bold);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-bottom: 4px;
+}
+.help-drawer-eyebrow svg { width: 13px; height: 13px; stroke-width: 2.25; }
+.help-drawer-title {
+    margin: 0;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -.01em;
+    line-height: var(--line-height-tight);
+    color: var(--ink);
+}
+.help-drawer-close {
+    -webkit-appearance: none; appearance: none;
+    position: absolute; top: var(--space-md); right: var(--space-md);
+    width: 32px; height: 32px;
+    display: grid; place-items: center;
+    border: 1px solid var(--line); border-radius: var(--radius-md);
+    background: var(--surface); color: var(--ink-soft); cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.help-drawer-close:hover { background: var(--surface-muted); color: var(--ink); border-color: var(--ink-soft); }
+.help-drawer-close:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.help-drawer-close svg { width: 17px; height: 17px; }
+
+.help-drawer-body {
+    flex: 1; min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding: var(--space-lg);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+   CONTENU (commun popover ↔ drawer)
+   ──────────────────────────────────────────────────────────────────────── */
+.help-pop-body p, .help-drawer-body p { margin: 0 0 .6em; }
+.help-pop-body strong, .help-drawer-body strong { font-weight: var(--font-weight-semibold); color: var(--ink); }
+.help-muted { color: var(--ink-soft); }
+
+.help-lead {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-base);
+    color: var(--ink);
+    margin: 0 0 var(--space-md);
+}
+
+/* Schéma mental : chips + flèches. */
+.help-flow {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    padding: 12px;
+    margin: 0 0 var(--space-lg);
+    background: var(--surface-muted);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+}
+.help-flow-step {
+    display: inline-block;
+    padding: 5px 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-size: 12.5px; font-weight: var(--font-weight-medium);
+    color: var(--ink);
+}
+.help-flow-arrow { color: var(--brand-2); font-weight: 700; }
+
+/* Sections du guide. */
+.help-section { padding: var(--space-md) 0; border-top: 1px solid var(--line); }
+.help-section:first-of-type { border-top: 0; padding-top: 0; }
+.help-section-title {
+    margin: 0 0 8px;
+    font-size: 12px; font-weight: var(--font-weight-bold);
+    text-transform: uppercase; letter-spacing: .05em;
+    color: var(--brand-2);
+}
+.help-section[data-tone="warn"] .help-section-title { color: var(--hw-amber); }
+.help-section-body > :first-child { margin-top: 0; }
+.help-section-body > :last-child { margin-bottom: 0; }
+
+.help-list { margin: 0; padding-left: 1.15em; }
+.help-list li { margin: 0 0 .45em; }
+.help-list li::marker { color: var(--ink-soft); }
+
+/* Encadré d'avertissement / mise en garde. */
+.help-callout {
+    margin: 10px 0 0;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid color-mix(in oklab, var(--hw-amber) 35%, var(--line));
+    background: var(--hw-amber-soft);
+    color: var(--ink);
+    font-size: 13.5px; line-height: var(--line-height-base);
+}
+.help-callout strong { color: var(--ink); }
+
+.help-footnote {
+    margin: var(--space-lg) 0 0;
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--line);
+    font-size: 13px; color: var(--ink-soft);
+}
+
+/* ────────────────────────────────────────────────────────────────────────
+   VARIANTES (densité / ton)
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* B — Accentué : en-tête teinté brand, plus présent. */
+.help-pop[data-help-variant="accentue"] .help-pop-head,
+.help-drawer[data-help-variant="accentue"] .help-drawer-head {
+    background: color-mix(in oklab, var(--brand) 10%, var(--surface));
+    border-bottom-color: color-mix(in oklab, var(--brand) 30%, var(--line));
+}
+.help-pop[data-help-variant="accentue"] .help-pop-title { color: var(--brand-2); }
+.help-pop[data-help-variant="accentue"],
+.help-drawer[data-help-variant="accentue"] {
+    border-color: color-mix(in oklab, var(--brand) 28%, var(--line));
+}
+
+/* C — Compact : densité resserrée pour contextes chargés. */
+.help-pop[data-help-variant="compact"] { width: 268px; font-size: 13.5px; }
+.help-pop[data-help-variant="compact"] .help-pop-head { padding: 7px 8px 7px 12px; }
+.help-pop[data-help-variant="compact"] .help-pop-body { padding: 9px 12px 11px; }
+.help-drawer[data-help-variant="compact"] .help-drawer-body { padding: var(--space-md); font-size: 13.5px; line-height: var(--line-height-base); }
+.help-drawer[data-help-variant="compact"] .help-section { padding: 10px 0; }
+.help-drawer[data-help-variant="compact"] .help-flow { padding: 9px; margin-bottom: var(--space-md); }
+
+/* ────────────────────────────────────────────────────────────────────────
+   RESPONSIVE — mobile « encyclopédique » : drawer en feuille plein écran.
+   .help-force-mobile permet de forcer ce rendu en démo sur desktop.
+   ──────────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+    .help-drawer {
+        width: 100vw; left: 0;
+        border-left: 0;
+        animation-name: help-drawer-in-y;
+    }
+    .help-drawer.help-closing { animation-name: help-drawer-out-y; }
+    .help-pop { width: calc(100vw - 20px); }
+}
+@keyframes help-drawer-in-y { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes help-drawer-out-y { from { transform: translateY(0); } to { transform: translateY(100%); } }
+
+.help-force-mobile .help-drawer,
+.help-drawer.help-force-mobile {
+    width: 100vw; left: 0; right: 0;
+    border-left: 0;
+    animation-name: help-drawer-in-y;
+}
+.help-force-mobile .help-drawer.help-closing,
+.help-drawer.help-force-mobile.help-closing { animation-name: help-drawer-out-y; }
+
+@media (prefers-reduced-motion: reduce) {
+    .help-pop, .help-drawer, .help-drawer-scrim { animation-duration: .01ms; }
+}

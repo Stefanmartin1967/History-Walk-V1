@@ -76,6 +76,20 @@
     font-style: italic;
     white-space: nowrap;
 }
+/* Indicateur de format accepté + son ancre d'aide « ? » HEIC. */
+.is-photo-batch .pb-header-format {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-family-mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    white-space: nowrap;
+}
+.is-photo-batch .pb-header-format b { color: var(--ink); font-weight: 700; }
+/* Le « ? » global d'en-tête s'aligne sur les autres extras. */
+.is-photo-batch #photo-batch-help-global { display: inline-flex; align-items: center; }
 .is-photo-batch .hw-modal-close {
     width: 36px; height: 36px;
     border-radius: var(--radius-md);

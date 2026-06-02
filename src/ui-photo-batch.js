@@ -22,6 +22,13 @@ import { createZipBlob } from './zip-store.js';
 import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
 import { getCategoryLabels, getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { eventBus } from './events.js';
+import { configureHelp, helpButton, helpInline, closeHelp } from './help-popover.js';
+import { GUIDE_IMPORT, HELP_FORMAT, HELP_DISTANCE, HELP_SANS_GPS } from './help-content.js';
+
+// Patron d'aide « ? » (réutilisable) : on branche le rendu d'icônes sur le
+// système Lucide de l'app, une seule fois. L'icône « ? » = circle-help (déjà
+// dans appIcons). configureHelp est idempotent.
+configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
 
 let activeResolve = null;
 let activeObjectUrls = [];
@@ -1694,6 +1701,9 @@ function buildClusterSection(cluster, index) {
         segs.push(cluster.noGps ? 'À rattacher à un lieu' : 'Sans POI cible', photoWord);
         section.dataset.suggestedPoiId = '';
     }
+    // Aide « ? » 120 m : seulement sur le segment « POI rattaché · X m »
+    // (cas hasNearbyPoi hors « Nouveau lieu créé »), porté par le 1er segment.
+    const showDistHelp = hasNearbyPoi && !cluster.savedAsNewPoi;
     const dot = document.createElement('span');
     dot.className = 'dot';
     dot.setAttribute('aria-hidden', 'true');
@@ -1708,6 +1718,7 @@ function buildClusterSection(cluster, index) {
         const s = document.createElement('span');
         s.textContent = seg;
         sub.appendChild(s);
+        if (i === 0 && showDistHelp) s.append(' ', helpInline(HELP_DISTANCE, { size: 'sm' }));
     });
 
     // Handlers du renommage (inchangés)
@@ -1736,6 +1747,8 @@ function buildClusterSection(cluster, index) {
         const badge = document.createElement('span');
         badge.className = 'pb-cluster-badge';
         badge.textContent = cluster.noGps ? 'Sans GPS' : (isOrphan ? 'Orphelin' : 'Hors POI');
+        // Aide « ? » Position (GPS) sur le badge « Sans GPS ».
+        if (cluster.noGps) badge.append(' ', helpInline(HELP_SANS_GPS, { size: 'sm' }));
         head.appendChild(badge);
     }
 
@@ -2225,10 +2238,17 @@ export function openPhotoBatchModal(enrichedClusters) {
                 const closeBtn = headerEl ? headerEl.querySelector('.hw-modal-close') : null;
                 if (headerEl && closeBtn) {
                     closeBtn.insertAdjacentHTML('beforebegin', `
+                        <span id="photo-batch-help-global"></span>
                         <span class="pb-header-counts" id="photo-batch-header-subtitle"></span>
                         <span class="pb-header-spacer"></span>
+                        <span class="pb-header-format"><b>JPEG</b><span id="photo-batch-help-heic"></span></span>
                         <span class="pb-header-hint">${hintText}</span>
                     `);
+                    // Aide « ? » : panneau global (guide d'import) + ancre HEIC (format).
+                    const helpGlobalSlot = document.getElementById('photo-batch-help-global');
+                    if (helpGlobalSlot) helpGlobalSlot.append(helpButton(GUIDE_IMPORT, { label: 'Aide : importer des photos' }));
+                    const helpHeicSlot = document.getElementById('photo-batch-help-heic');
+                    if (helpHeicSlot) helpHeicSlot.append(helpInline(HELP_FORMAT, { size: 'sm' }));
                     createIcons({ icons: appIcons, root: headerEl });
                 }
             }
@@ -2316,6 +2336,7 @@ export function openPhotoBatchModal(enrichedClusters) {
                 document.removeEventListener('keydown', keydownHandler);
                 keydownHandler = null;
             }
+            closeHelp(); // referme un éventuel panneau/popover d'aide resté ouvert
             releaseObjectUrls();
             releaseFocusUrls();
             modalState = null;
