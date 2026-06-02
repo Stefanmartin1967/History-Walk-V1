@@ -645,7 +645,7 @@ function setHeaderMode(mode, cluster) {
         const name = cluster.customName || resolveAutoName(cluster);
         if (iconEl) iconEl.innerHTML = '<i data-lucide="layout-grid"></i>';
         if (titleEl) titleEl.innerHTML = `Comparer <em>· ${escapeHtml(name)}</em>`;
-        if (hintEl) hintEl.textContent = "Tapez une vignette pour l'ajouter à la comparaison (jusqu'à 4)";
+        if (hintEl) hintEl.textContent = "Tapez une vignette pour l'ajouter à la comparaison (jusqu'à 6)";
     } else {
         if (iconEl) iconEl.innerHTML = '<i data-lucide="images"></i>';
         if (titleEl) titleEl.textContent = 'Traitement photos';
@@ -741,9 +741,9 @@ function focusPelliculeTap(pid) {
         // Déjà affichée → on rend simplement son emplacement actif.
         f.activeSlot = existing;
     } else {
-        // Pas encore affichée : on l'AJOUTE (jusqu'à 4 emplacements) au lieu de
+        // Pas encore affichée : on l'AJOUTE (jusqu'à MAX_COMPARE_SLOTS) au lieu de
         // remplacer. 1) un emplacement vide → on le remplit ; 2) sinon, si on
-        // peut agrandir (< 4) → nouvel emplacement ; 3) sinon (4 pleins) →
+        // peut agrandir (< MAX) → nouvel emplacement ; 3) sinon (MAX pleins) →
         // remplace l'emplacement actif.
         const emptyIdx = f.slots.findIndex(s => !s);
         if (emptyIdx !== -1) {
@@ -931,7 +931,7 @@ function buildPellicule(cluster) {
     const head = document.createElement('div');
     head.className = 'pb-pellicule-head';
     head.innerHTML = `<span>Pellicule</span><span class="sep">·</span><span><b>${cluster.photos.length}</b> photo(s)</span>`
-        + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette l'ajoute (jusqu'à 4) ; au-delà, remplace l'emplacement actif</span>`;
+        + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette l'ajoute (jusqu'à 6) ; au-delà, remplace l'emplacement actif</span>`;
     wrap.appendChild(head);
 
     const track = document.createElement('div');
@@ -1043,15 +1043,9 @@ function renderFocus(cluster) {
         head.appendChild(slotsCtl);
     }
 
-    const zipBtn = document.createElement('button');
-    zipBtn.className = 'pb-act is-icon';
-    zipBtn.type = 'button';
-    zipBtn.innerHTML = '<i data-lucide="download"></i>';
-    zipBtn.title = `Télécharger ce groupe en ZIP (${cluster.photos.length} photo(s))`;
-    zipBtn.setAttribute('aria-label', 'Télécharger ce groupe en ZIP');
-    zipBtn.addEventListener('click', (e) => { e.stopPropagation(); handleExportClusterZip(cluster); });
-    head.appendChild(zipBtn);
-
+    // Le ZIP de CE groupe vit désormais dans le footer (« Télécharger ce
+    // groupe »), comme l'enregistrement par lieu → actions groupées au même
+    // endroit en mode Comparer (cf. point #8 : footer scopé au groupe).
     section.appendChild(head);
 
     // --- FOCUS BODY : compare + pellicule ---
@@ -1201,17 +1195,59 @@ function dedupById(items) {
 // ayant au moins une photo PAS encore sauvée (un cluster savedAsNewPoi a toutes ses photos
 // déjà persistées via addPhotosToPoi, inutile d'activer Enregistrer pour lui).
 function updateFooterButtons() {
+    if (!modalState) return;
     const saveBtn = document.getElementById('photo-batch-btn-save');
-    if (!saveBtn || !modalState) return;
-    const hasAttached = modalState.clusters.some(c =>
-        c.type !== 'OUT_POI' &&
-        c.nearbyPois && c.nearbyPois.length > 0 &&
-        c.photos.some(p => !p.alreadySaved)
-    );
-    saveBtn.disabled = !hasAttached;
-    saveBtn.title = hasAttached
-        ? 'Enregistrer les photos rattachées à un POI'
-        : 'Rattache au moins un cluster à un POI pour activer';
+    const zipBtn = document.getElementById('photo-batch-btn-zip');
+    const closeBtn = document.getElementById('photo-batch-btn-close');
+    const saveLabel = saveBtn ? saveBtn.querySelector('span') : null;
+    const zipLabel = zipBtn ? zipBtn.querySelector('span') : null;
+
+    // --- Mode Comparer : footer scopé au GROUPE focalisé ---
+    if (modalState.focus) {
+        const cluster = getFocusedCluster();
+        if (closeBtn) {
+            closeBtn.textContent = 'Fermer la comparaison';
+            closeBtn.title = "Revenir à la vue d'ensemble (les photos ne sont pas perdues)";
+        }
+        if (zipBtn && zipLabel) {
+            zipLabel.textContent = 'Télécharger ce groupe';
+            zipBtn.title = `Télécharger ce groupe en ZIP (${cluster ? cluster.photos.length : 0} photo(s))`;
+        }
+        if (saveBtn && saveLabel) {
+            const attached = !!(cluster && cluster.type !== 'OUT_POI'
+                && cluster.nearbyPois && cluster.nearbyPois.length > 0);
+            const hasUnsaved = attached && cluster.photos.some(p => p.file && !p.alreadySaved);
+            saveLabel.textContent = 'Enregistrer ce lieu';
+            saveBtn.disabled = !hasUnsaved;
+            saveBtn.title = hasUnsaved
+                ? 'Enregistrer les photos de ce lieu (sans fermer la fenêtre)'
+                : (attached ? 'Photos de ce lieu déjà enregistrées'
+                            : 'Rattache ce groupe à un POI pour activer');
+        }
+        return;
+    }
+
+    // --- Vue d'ensemble : footer global ---
+    if (closeBtn) {
+        closeBtn.textContent = 'Fermer';
+        closeBtn.title = '';
+    }
+    if (zipBtn && zipLabel) {
+        zipLabel.textContent = 'Télécharger ZIP';
+        zipBtn.title = 'Exporter toutes les photos en archive ZIP sur le disque';
+    }
+    if (saveBtn && saveLabel) {
+        const hasAttached = modalState.clusters.some(c =>
+            c.type !== 'OUT_POI' &&
+            c.nearbyPois && c.nearbyPois.length > 0 &&
+            c.photos.some(p => !p.alreadySaved)
+        );
+        saveLabel.textContent = 'Enregistrer';
+        saveBtn.disabled = !hasAttached;
+        saveBtn.title = hasAttached
+            ? 'Enregistrer les photos rattachées à un POI'
+            : 'Rattache au moins un cluster à un POI pour activer';
+    }
 }
 
 // Sauve UN cluster rattaché : compresse ses photos non encore sauvées, merge en
@@ -2022,9 +2058,30 @@ export function openPhotoBatchModal(enrichedClusters) {
             const btnClose = document.getElementById('photo-batch-btn-close');
             const btnZip = document.getElementById('photo-batch-btn-zip');
             const btnSave = document.getElementById('photo-batch-btn-save');
-            if (btnClose) btnClose.addEventListener('click', () => closeModal(null));
-            if (btnZip) btnZip.addEventListener('click', handleExportZip);
-            if (btnSave) btnSave.addEventListener('click', handleSave);
+            // En mode Comparer, les boutons du footer agissent sur le GROUPE
+            // focalisé (jamais sur l'ensemble) → évite un « Enregistrer tout » ou
+            // une fermeture de session par mégarde. updateFooterButtons() ajuste
+            // libellés / titres / état disabled selon le mode.
+            if (btnClose) btnClose.addEventListener('click', () => {
+                if (modalState && modalState.focus) { exitFocus(); return; }
+                closeModal(null);
+            });
+            if (btnZip) btnZip.addEventListener('click', () => {
+                if (modalState && modalState.focus) {
+                    const c = getFocusedCluster();
+                    if (c) handleExportClusterZip(c);
+                    return;
+                }
+                handleExportZip();
+            });
+            if (btnSave) btnSave.addEventListener('click', () => {
+                if (modalState && modalState.focus) {
+                    const c = getFocusedCluster();
+                    if (c) handleSaveCluster(c);
+                    return;
+                }
+                handleSave();
+            });
 
             updateHeaderCounts();
             renderBody();
