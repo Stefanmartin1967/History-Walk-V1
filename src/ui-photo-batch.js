@@ -697,7 +697,7 @@ function setHeaderMode(mode, cluster) {
         if (hintEl) hintEl.textContent = "Tapez une vignette pour l'ajouter à la comparaison (jusqu'à 6)";
     } else {
         if (iconEl) iconEl.innerHTML = '<i data-lucide="images"></i>';
-        if (titleEl) titleEl.textContent = 'Traitement photos';
+        if (titleEl) titleEl.textContent = 'Organiser les photos';
         if (hintEl) hintEl.textContent = state.isAdmin
             ? 'Mode admin — enregistrement en attente de publication CC'
             : 'Enregistrer rattache les photos aux POI ; le ZIP inclut tout';
@@ -1692,12 +1692,16 @@ function buildClusterSection(cluster, index) {
     const hasNearbyPoi = cluster.nearbyPois && cluster.nearbyPois.length > 0;
     const hasAbsoluteNearest = !!cluster.absoluteNearest;
     const isOutPoiType = cluster.type === 'OUT_POI';
-    // Orphelin = pas de POI rattaché MAIS un POI proche connu (→ on peut Rattacher).
-    // Hors POI pur = aucun POI cible (détaché manuellement / aucun POI chargé).
-    const isOrphan = isOutPoiType && hasAbsoluteNearest && !cluster.savedAsNewPoi;
-    const isPureOut = isOutPoiType && !hasAbsoluteNearest && !cluster.savedAsNewPoi;
-    if (isOrphan) section.classList.add('is-orphan');
-    if (isPureOut) section.classList.add('is-out-poi');
+    // Deux états « non rattaché » :
+    //  - needsAttach (action requise → accent AMBRE, badge « À rattacher ») :
+    //    soit Sans GPS (aucune position → rattacher à la main), soit un lieu
+    //    connu est à portée raisonnable (≤ SUGGEST_RADIUS, cf. clustering).
+    //  - isPlainOut (« Hors POI » neutre) : a une position mais aucun lieu connu
+    //    à portée → vraie photo de trajet.
+    const needsAttach = isOutPoiType && !cluster.savedAsNewPoi && (cluster.noGps || hasAbsoluteNearest);
+    const isPlainOut = isOutPoiType && !cluster.savedAsNewPoi && !cluster.noGps && !hasAbsoluteNearest;
+    if (needsAttach) section.classList.add('is-orphan');  // accent ambre = à traiter
+    if (isPlainOut) section.classList.add('is-out-poi');
 
     // --- HEAD (sticky) ---
     const head = document.createElement('div');
@@ -1784,12 +1788,12 @@ function buildClusterSection(cluster, index) {
     headBlock.appendChild(sub);
     head.appendChild(headBlock);
 
-    // Badge Orphelin / Hors POI (pas sur un cluster rattaché)
-    if (isOrphan || isPureOut) {
+    // Badge : « À rattacher » (ambre, action requise) ou « Hors POI » (neutre).
+    if (needsAttach || isPlainOut) {
         const badge = document.createElement('span');
         badge.className = 'pb-cluster-badge';
-        badge.textContent = cluster.noGps ? 'Sans GPS' : (isOrphan ? 'Orphelin' : 'Hors POI');
-        // Aide « ? » Position (GPS) sur le badge « Sans GPS ».
+        badge.textContent = needsAttach ? 'À rattacher' : 'Hors POI';
+        // Aide « ? » Position (GPS) sur un groupe Sans GPS.
         if (cluster.noGps) badge.append(' ', helpInline(HELP_SANS_GPS, { size: 'sm' }));
         head.appendChild(badge);
     }
@@ -1828,10 +1832,11 @@ function buildClusterSection(cluster, index) {
         actions.appendChild(createBtn);
     }
 
-    // Sans GPS : pas de coordonnées → ni « créer un lieu » (besoin d'une position
-    // carte) ni « rattacher au plus proche » (pas de distance). Seule voie :
-    // rattacher à la main à un POI existant, choisi par recherche.
-    if (cluster.noGps) {
+    // Rattacher à un lieu existant choisi par RECHERCHE — pour TOUT groupe non
+    // rattaché (Sans GPS, mais aussi orphelins / Hors POI). C'est la seule voie
+    // pour choisir un AUTRE lieu que le plus proche (ex. 250 m de A mais c'est B
+    // à 280 m qu'on a photographié), et pour les Sans GPS (aucune position).
+    if (isOutPoiType && !cluster.savedAsNewPoi) {
         const linkBtn = document.createElement('button');
         linkBtn.className = 'pb-act';
         linkBtn.type = 'button';
@@ -2254,7 +2259,7 @@ export function openPhotoBatchModal(enrichedClusters) {
         const promise = openHwModal({
             size: 'xl',
             icon: 'images',
-            title: 'Traitement photos',
+            title: 'Organiser les photos',
             body,
             footer,
             // Pas de fermeture spontanée : workflow long, beaucoup d'état mutable.
