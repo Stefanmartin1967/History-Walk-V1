@@ -1527,17 +1527,34 @@ function buildZipEntries(clusters) {
     return entries;
 }
 
+// Demande le nom d'album via showPrompt SANS fermer la modale photo-batch.
+// showPrompt ouvre une modale V2 ; sans précaution, openHwModal applique sa
+// garde anti-empilement (closeHwModal sur l'overlay actif) et FERMERAIT la
+// modale photo-batch → modalState nullifié, ZIP global en échec silencieux
+// (bug : « Valider » ne faisait rien, alors que le ZIP d'un seul groupe
+// marchait car il capturait son cluster avant l'await). On suspend la modale le
+// temps du prompt puis on la restaure (même pattern que handleCreatePoi).
+async function promptAlbumName(defaultName) {
+    suspendHwModal();
+    try {
+        return await showPrompt("Nom d'album", "Nom d'album :", defaultName);
+    } finally {
+        resumeHwModal();
+    }
+}
+
 // Handler global : ZIP de tous les clusters, nom d'album par défaut = generateCircuitName-like.
 async function handleExportZip() {
     if (!modalState || !modalState.clusters || modalState.clusters.length === 0) {
         showToast('Aucune photo à exporter.', 'info');
         return;
     }
-    const defaultName = buildDefaultAlbumName(modalState.clusters);
-    const album = await showPrompt("Nom d'album", "Nom d'album :", defaultName);
+    const clusters = modalState.clusters; // capturé avant l'await (défensif)
+    const defaultName = buildDefaultAlbumName(clusters);
+    const album = await promptAlbumName(defaultName);
     if (!album) return; // Annulé → rien
 
-    await generateAndDownloadZip(modalState.clusters, album);
+    await generateAndDownloadZip(clusters, album);
 }
 
 // Handler par cluster : ZIP d'un seul groupe, nom d'album par défaut = nom du cluster.
@@ -1547,7 +1564,7 @@ async function handleExportClusterZip(cluster) {
         return;
     }
     const defaultName = cluster.customName || resolveAutoName(cluster);
-    const album = await showPrompt("Nom d'album", "Nom d'album :", defaultName);
+    const album = await promptAlbumName(defaultName);
     if (!album) return;
 
     await generateAndDownloadZip([cluster], album);
