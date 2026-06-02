@@ -139,6 +139,28 @@
 }
 .pb-cluster-head-block { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
 
+/* Poignée de réordonnancement des groupes (drag) */
+.pb-cluster-drag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 32px;
+    margin-left: -4px;
+    color: var(--ink-soft);
+    cursor: grab;
+    border-radius: var(--radius-sm);
+    transition: color 0.15s, background 0.15s;
+    touch-action: none;
+}
+.pb-cluster-drag:hover { color: var(--ink); background: var(--surface-muted); }
+.pb-cluster-drag:active { cursor: grabbing; }
+.pb-cluster-drag svg { width: 18px; height: 18px; }
+/* Pendant le drag d'un groupe : ghost discret */
+.pb-cluster.is-ghost { opacity: 0.5; }
+.pb-cluster.is-chosen { box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+
 /* Titre éditable — inline texte ink, PAS de pastille ambre */
 .pb-cluster-title {
     display: inline-flex;
