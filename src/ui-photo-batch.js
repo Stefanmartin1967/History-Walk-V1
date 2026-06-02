@@ -905,13 +905,17 @@ function buildCompareCell(cluster, i) {
         hide.addEventListener('click', (e) => { e.stopPropagation(); removeFromComparison(i, 'hide'); });
         acts.appendChild(hide);
     }
-    if (photo && cluster.type !== 'OUT_POI') {
+    // Détacher : vers « Hors POI » depuis un groupe POI ; OU scinder un groupe
+    // « Hors POI » en un nouveau groupe Hors POI (≥ 2 photos requises, sinon
+    // no-op) → permet d'avoir plusieurs groupes Hors POI consécutifs (#3).
+    if (photo && (cluster.type !== 'OUT_POI' || cluster.photos.length > 1)) {
+        const isOut = cluster.type === 'OUT_POI';
         const ex = document.createElement('button');
         ex.className = 'pb-compare-btn';
         ex.type = 'button';
-        ex.title = 'Détacher cette photo vers « Hors POI »';
-        ex.setAttribute('aria-label', 'Détacher');
-        ex.innerHTML = '<i data-lucide="route"></i>';
+        ex.title = isOut ? 'Séparer dans un nouveau groupe « Hors POI »' : 'Détacher cette photo vers « Hors POI »';
+        ex.setAttribute('aria-label', isOut ? 'Séparer' : 'Détacher');
+        ex.innerHTML = isOut ? '<i data-lucide="split"></i>' : '<i data-lucide="route"></i>';
         ex.addEventListener('click', (e) => { e.stopPropagation(); removeFromComparison(i, 'detach'); });
         acts.appendChild(ex);
     }
@@ -948,7 +952,7 @@ function buildPellicule(cluster) {
     head.className = 'pb-pellicule-head';
     head.innerHTML = `<span>Pellicule</span><span class="sep">·</span><span><b>${cluster.photos.length}</b> photo(s)</span>`
         + (hiddenCount ? `<span class="sep">·</span><span class="pb-pellicule-hidden"><b>${hiddenCount}</b> masquée(s)</span>` : '')
-        + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette l'ajoute (jusqu'à 6) ; au-delà, remplace l'emplacement actif</span>`;
+        + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette l'ajoute (jusqu'à 6) ; au-delà, remplace l'emplacement actif · glisser pour réordonner</span>`;
     wrap.appendChild(head);
 
     const track = document.createElement('div');
@@ -983,12 +987,45 @@ function buildPellicule(cluster) {
             thumb.appendChild(num);
         }
 
-        thumb.addEventListener('click', () => focusPelliculeTap(p.id));
+        // Guard ignoreNextClick : après un drag (réordonnancement), Sortable émet
+        // un click synthétique qu'on ne veut pas interpréter comme un tap.
+        thumb.addEventListener('click', () => { if (ignoreNextClick) return; focusPelliculeTap(p.id); });
         track.appendChild(thumb);
+    });
+
+    // Réordonnancement des vignettes par glisser-déposer (#2). Reordonne
+    // cluster.photos → met à jour l'ordre de la pellicule et la numérotation PP.
+    new Sortable(track, {
+        animation: 150,
+        draggable: '.pb-pellicule-thumb',
+        ghostClass: 'is-ghost',
+        chosenClass: 'is-chosen',
+        delay: 80,
+        delayOnTouchOnly: true,
+        onStart: () => { ignoreNextClick = true; },
+        onEnd: (evt) => {
+            handlePelliculeReorder(evt);
+            setTimeout(() => { ignoreNextClick = false; }, 0);
+        }
     });
 
     wrap.appendChild(track);
     return wrap;
+}
+
+// Réordonnancement de la pellicule (drag d'une vignette) : réaligne
+// cluster.photos sur l'ordre du DOM puis re-render (slots reconciliés par id,
+// numérotation PP mise à jour).
+function handlePelliculeReorder(evt) {
+    if (evt.oldIndex === evt.newIndex) return;
+    const cluster = getFocusedCluster();
+    if (!cluster) return;
+    const order = [...evt.to.querySelectorAll(':scope > .pb-pellicule-thumb')].map(el => el.dataset.photoId);
+    const byId = new Map(cluster.photos.map(p => [p.id, p]));
+    const reordered = order.map(id => byId.get(id)).filter(Boolean);
+    if (reordered.length !== cluster.photos.length) { renderBody(); return; }
+    cluster.photos = reordered;
+    renderBody();
 }
 
 // Construit la section d'un cluster en mode focus (compare + pellicule).
@@ -1966,16 +2003,19 @@ function buildPhotoCard(item, cluster) {
     }
     thumb.appendChild(img);
 
-    // Actions par photo (top-right) : extraire + supprimer
+    // Actions par photo (top-right) : extraire/scinder + supprimer.
+    // Groupe POI → extraire vers Hors POI. Groupe Hors POI (≥ 2 photos) →
+    // scinder dans un nouveau groupe Hors POI (plusieurs Hors POI à la suite, #3).
     const acts = document.createElement('div');
     acts.className = 'pb-thumb-acts';
-    if (cluster.type !== 'OUT_POI') {
+    if (cluster.type !== 'OUT_POI' || cluster.photos.length > 1) {
+        const isOut = cluster.type === 'OUT_POI';
         const extractBtn = document.createElement('button');
         extractBtn.className = 'pb-thumb-btn';
         extractBtn.type = 'button';
-        extractBtn.title = 'Extraire vers Hors POI';
-        extractBtn.setAttribute('aria-label', 'Extraire vers Hors POI');
-        extractBtn.innerHTML = '<i data-lucide="route"></i>';
+        extractBtn.title = isOut ? 'Séparer dans un nouveau groupe Hors POI' : 'Extraire vers Hors POI';
+        extractBtn.setAttribute('aria-label', extractBtn.title);
+        extractBtn.innerHTML = isOut ? '<i data-lucide="split"></i>' : '<i data-lucide="route"></i>';
         extractBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             extractToOutPoi(item.id);

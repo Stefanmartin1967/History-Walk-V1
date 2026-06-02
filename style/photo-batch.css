@@ -837,6 +837,9 @@
 .pb-pellicule-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pb-pellicule-thumb:hover { transform: translateY(-2px); border-color: var(--ink-soft); box-shadow: 0 6px 14px rgba(0,0,0,.06); }
 .pb-pellicule-thumb.is-in-slot { border-color: var(--cta-bg); box-shadow: 0 0 0 2px var(--cta-bg); }
+/* Réordonnancement par glisser-déposer (#2) : ghost discret pendant le drag. */
+.pb-pellicule-thumb.is-ghost { opacity: 0.4; }
+.pb-pellicule-thumb.is-chosen { box-shadow: 0 6px 16px rgba(0,0,0,.18); }
 /* Masquée pour la session (œil barré) : grisée mais re-cliquable pour la réafficher. */
 .pb-pellicule-thumb.is-hidden { opacity: 0.4; border-style: dashed; }
 .pb-pellicule-thumb.is-hidden img { filter: grayscale(0.8); }
