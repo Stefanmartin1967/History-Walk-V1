@@ -115,6 +115,14 @@
     gap: var(--space-md);
 }
 
+/* Glisser-déposer de fichiers depuis l'explorateur (#7) : surbrillance du corps. */
+#photo-batch-overlay.is-drop-active .pb-body {
+    outline: 3px dashed var(--cta-bg);
+    outline-offset: -8px;
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--cta-bg) 6%, transparent);
+}
+
 /* --- CLUSTER (groupe) — carte, header sticky --- */
 .pb-cluster {
     background: var(--surface);

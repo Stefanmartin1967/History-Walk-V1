@@ -1214,8 +1214,12 @@ function updateFooterButtons() {
     const saveBtn = document.getElementById('photo-batch-btn-save');
     const zipBtn = document.getElementById('photo-batch-btn-zip');
     const closeBtn = document.getElementById('photo-batch-btn-close');
+    const addBtn = document.getElementById('photo-batch-btn-add');
     const saveLabel = saveBtn ? saveBtn.querySelector('span') : null;
     const zipLabel = zipBtn ? zipBtn.querySelector('span') : null;
+
+    // « Ajouter des photos » = action globale → masquée en mode Comparer.
+    if (addBtn) addBtn.style.display = modalState.focus ? 'none' : '';
 
     // --- Mode Comparer : footer scopé au GROUPE focalisé ---
     if (modalState.focus) {
@@ -1385,6 +1389,64 @@ async function handleSaveCluster(cluster) {
         showToast('Erreur enregistrement : ' + (e.message || e), 'error');
     } finally {
         renderBody();
+    }
+}
+
+// --- AJOUTER DES PHOTOS EN COURS (#7) ---
+// Rejoue le pipeline d'import (EXIF → dédup → clustering) sur de nouveaux
+// fichiers et AJOUTE les groupes obtenus à la fin, sans toucher au travail en
+// cours (titres, rattachements, ordre…). Déclenché par le bouton « Ajouter des
+// photos » ou un glisser-déposer de fichiers depuis l'explorateur.
+async function handleAddMorePhotos(fileList) {
+    const files = Array.from(fileList || []).filter(f => f && f.type && f.type.startsWith('image/'));
+    if (!modalState || files.length === 0) {
+        if (modalState && fileList && fileList.length) showToast('Seules des images peuvent être ajoutées.', 'info');
+        return;
+    }
+    const addBtn = document.getElementById('photo-batch-btn-add');
+    const addLabel = addBtn ? addBtn.querySelector('span') : null;
+    const prevLabel = addLabel ? addLabel.textContent : null;
+    if (addBtn) addBtn.disabled = true;
+    if (addLabel) addLabel.textContent = 'Ajout…';
+    try {
+        // Dédup AUSSI contre les photos déjà ouvertes dans la modale (pas que la
+        // base) → ré-importer un fichier déjà présent ne le duplique pas.
+        const extraHashes = new Set();
+        modalState.clusters.forEach(c => c.photos.forEach(p => { if (p.srcHash) extraHashes.add(p.srcHash); }));
+
+        // Import dynamique : desktopMode importe ui-photo-batch en statique →
+        // dynamique ici pour ne pas (re)créer le cycle. Module déjà chargé.
+        const { buildEnrichedClustersFromFiles } = await import('./desktopMode.js');
+        const { enrichedClusters, skippedDuplicates, noGpsCount } =
+            await buildEnrichedClustersFromFiles(files, { extraHashes });
+
+        if (enrichedClusters.length === 0) {
+            showToast(skippedDuplicates > 0
+                ? `${skippedDuplicates} doublon(s) déjà présent(s) — rien ajouté.`
+                : 'Rien de nouveau à ajouter.', 'info', 5000);
+            return;
+        }
+
+        const added = normalizeClusters(enrichedClusters);
+        modalState.clusters.push(...added);
+        // Si on était en Comparer, on revient à la vue d'ensemble pour voir les
+        // nouveaux groupes (exitFocus re-render). Sinon on re-render directement.
+        if (modalState.focus) exitFocus();
+        else { renderBody(); updateHeaderCounts(); }
+
+        const nNew = added.reduce((s, c) => s + c.photos.length, 0);
+        let msg = `${nNew} photo(s) ajoutée(s) dans ${added.length} groupe(s).`;
+        if (skippedDuplicates > 0) msg += ` ${skippedDuplicates} doublon(s) ignoré(s).`;
+        showToast(msg, 'success', 5000);
+        if (noGpsCount > 0) {
+            showToast(`${noGpsCount} sans GPS — groupe « Sans GPS » en bas, à rattacher à un lieu.`, 'info', 6000);
+        }
+    } catch (e) {
+        console.error('[photo-batch] handleAddMorePhotos', e);
+        showToast("Erreur lors de l'ajout : " + (e.message || e), 'error');
+    } finally {
+        if (addBtn) addBtn.disabled = false;
+        if (addLabel && prevLabel != null) addLabel.textContent = prevLabel;
     }
 }
 
@@ -2064,6 +2126,9 @@ export function openPhotoBatchModal(enrichedClusters) {
         const footer = `
             <div class="pb-footer-info" id="photo-batch-footer-info"></div>
             <div class="pb-footer-actions">
+                <button class="btn btn-ghost" id="photo-batch-btn-add" type="button" title="Ajouter d'autres photos sans fermer la fenêtre (ou glissez-les depuis l'explorateur)">
+                    <i data-lucide="image-plus"></i><span>Ajouter des photos</span>
+                </button>
                 <button class="btn btn-ghost" id="photo-batch-btn-close" type="button">Fermer</button>
                 <button class="btn btn-secondary" id="photo-batch-btn-zip" type="button" title="Exporter toutes les photos en archive ZIP sur le disque">
                     <i data-lucide="download"></i><span>Télécharger ZIP</span>
@@ -2138,6 +2203,43 @@ export function openPhotoBatchModal(enrichedClusters) {
                 }
                 handleSave();
             });
+
+            // « Ajouter des photos » (#7) : input fichier caché + glisser-déposer
+            // de fichiers depuis l'explorateur. L'input et les écouteurs vivent sur
+            // l'overlay → retirés automatiquement à la fermeture (overlay détruit).
+            const btnAdd = document.getElementById('photo-batch-btn-add');
+            if (btnAdd && overlayEl) {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.multiple = true;
+                fileInput.style.display = 'none';
+                fileInput.id = 'photo-batch-file-input';
+                overlayEl.appendChild(fileInput);
+                fileInput.addEventListener('change', () => {
+                    handleAddMorePhotos(fileInput.files);
+                    fileInput.value = ''; // permet de re-sélectionner les mêmes fichiers
+                });
+                btnAdd.addEventListener('click', () => fileInput.click());
+
+                // Glisser-déposer de FICHIERS OS (≠ drag interne Sortable, qui ne
+                // porte pas le type 'Files') → on n'intercepte que les fichiers.
+                const hasFiles = (e) => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+                overlayEl.addEventListener('dragover', (e) => {
+                    if (!hasFiles(e)) return;
+                    e.preventDefault();
+                    overlayEl.classList.add('is-drop-active');
+                });
+                overlayEl.addEventListener('dragleave', (e) => {
+                    if (e.target === overlayEl) overlayEl.classList.remove('is-drop-active');
+                });
+                overlayEl.addEventListener('drop', (e) => {
+                    if (!hasFiles(e)) return;
+                    e.preventDefault();
+                    overlayEl.classList.remove('is-drop-active');
+                    handleAddMorePhotos(e.dataTransfer.files);
+                });
+            }
 
             updateHeaderCounts();
             renderBody();
