@@ -564,12 +564,6 @@ function attachClusterToPoi(cluster, poi) {
     updateHeaderCounts();
 }
 
-// Rattache un cluster au POI le plus proche connu (absoluteNearest).
-function handleAttachToNearest(cluster) {
-    if (!cluster.absoluteNearest) return;
-    attachClusterToPoi(cluster, cluster.absoluteNearest);
-}
-
 // Rattache un groupe « Sans GPS » à un POI existant choisi via une recherche.
 // Sans coordonnées, c'est la seule voie de rattachement. On suspend la modale
 // photo-batch le temps du picker (même garde anti-empilement que « Créer un
@@ -645,7 +639,7 @@ function openPoiPickerModal() {
 // tous les POIs visibles dans `radius` m du centre du cluster, triés par distance.
 // Recalculé au render → inclut les POIs créés APRÈS l'import (« Créer un lieu »
 // pour un voisin), contrairement à nearbyPois qui est figé à l'import.
-function getNearbyPoiCandidates(cluster, radius = 150) {
+function getNearbyPoiCandidates(cluster, radius = 300) {
     const center = getClusterCenter(cluster);
     if (!center) return [];
     const out = [];
@@ -1698,8 +1692,15 @@ function buildClusterSection(cluster, index) {
     //    connu est à portée raisonnable (≤ SUGGEST_RADIUS, cf. clustering).
     //  - isPlainOut (« Hors POI » neutre) : a une position mais aucun lieu connu
     //    à portée → vraie photo de trajet.
-    const needsAttach = isOutPoiType && !cluster.savedAsNewPoi && (cluster.noGps || hasAbsoluteNearest);
-    const isPlainOut = isOutPoiType && !cluster.savedAsNewPoi && !cluster.noGps && !hasAbsoluteNearest;
+    // Candidats de rattachement (lieux ≤ 300 m), calculés EN DIRECT depuis les
+    // coords des photos → marche aussi pour une photo détachée (center null).
+    // Calculés une seule fois : réutilisés par le badge ET le menu déroulant.
+    const attachCandidates = (isOutPoiType && !cluster.savedAsNewPoi && !cluster.noGps)
+        ? getNearbyPoiCandidates(cluster) : [];
+    const needsAttach = isOutPoiType && !cluster.savedAsNewPoi
+        && (cluster.noGps || hasAbsoluteNearest || attachCandidates.length > 0);
+    const isPlainOut = isOutPoiType && !cluster.savedAsNewPoi
+        && !cluster.noGps && !hasAbsoluteNearest && attachCandidates.length === 0;
     if (needsAttach) section.classList.add('is-orphan');  // accent ambre = à traiter
     if (isPlainOut) section.classList.add('is-out-poi');
 
@@ -1802,19 +1803,53 @@ function buildClusterSection(cluster, index) {
     const actions = document.createElement('div');
     actions.className = 'pb-cluster-actions';
 
-    // Rattacher au POI le plus proche (cluster sans POI rattaché mais avec absoluteNearest)
-    if (!hasNearbyPoi && hasAbsoluteNearest) {
-        const nearestName = getPoiName(cluster.absoluteNearest.feature) || 'ce POI';
-        const attachBtn = document.createElement('button');
-        attachBtn.className = 'pb-act';
-        attachBtn.type = 'button';
-        attachBtn.innerHTML = `<i data-lucide="link"></i><span>Rattacher à ${nearestName}</span>`;
-        attachBtn.title = `Rattacher ces photos au POI le plus proche (${Math.round(cluster.absoluteNearest.dist)} m)`;
-        attachBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            handleAttachToNearest(cluster);
-        });
-        actions.appendChild(attachBtn);
+    // Rattachement à un lieu existant — UN SEUL contrôle dynamique (groupes non
+    // rattachés) :
+    //  - s'il y a des lieux à portée (≤ 300 m) → menu déroulant : tous les lieux
+    //    triés par distance + « Autre lieu (rechercher)… » ;
+    //  - sinon → bouton recherche (Sans GPS, ou rien à proximité).
+    // getNearbyPoiCandidates calcule le centre depuis les coords des photos →
+    // marche aussi pour une photo DÉTACHÉE d'un POI (center=null mais coords
+    // présentes) : elle retrouve donc ses suggestions de lieu.
+    if (isOutPoiType && !cluster.savedAsNewPoi) {
+        const candidates = attachCandidates; // déjà calculés (cf. needsAttach)
+        if (candidates.length >= 1) {
+            const select = document.createElement('select');
+            select.className = 'pb-act pb-poi-select';
+            select.title = 'Rattacher ces photos à un lieu';
+            const ph = document.createElement('option');
+            ph.value = ''; ph.disabled = true; ph.selected = true;
+            ph.textContent = 'Rattacher à un lieu…';
+            select.appendChild(ph);
+            candidates.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = getPoiId(c.feature);
+                opt.textContent = `${getPoiName(c.feature) || '(sans nom)'} · ${Math.round(c.dist)} m`;
+                select.appendChild(opt);
+            });
+            const searchOpt = document.createElement('option');
+            searchOpt.value = '__search';
+            searchOpt.textContent = 'Autre lieu (rechercher)…';
+            select.appendChild(searchOpt);
+            select.addEventListener('click', (e) => e.stopPropagation());
+            select.addEventListener('change', (e) => {
+                e.stopPropagation();
+                const val = select.value;
+                select.selectedIndex = 0; // ré-arme le placeholder (si recherche annulée)
+                if (val === '__search') { handleAttachViaSearch(cluster); return; }
+                const chosen = candidates.find(c => getPoiId(c.feature) === val);
+                if (chosen) attachClusterToPoi(cluster, chosen);
+            });
+            actions.appendChild(select);
+        } else {
+            const linkBtn = document.createElement('button');
+            linkBtn.className = 'pb-act';
+            linkBtn.type = 'button';
+            linkBtn.innerHTML = '<i data-lucide="link"></i><span>Rattacher à un lieu…</span>';
+            linkBtn.title = 'Choisir un lieu existant auquel rattacher ces photos';
+            linkBtn.addEventListener('click', (e) => { e.stopPropagation(); handleAttachViaSearch(cluster); });
+            actions.appendChild(linkBtn);
+        }
     }
 
     // Créer un nouveau lieu (cluster sans POI rattaché ET avec des coordonnées —
@@ -1830,23 +1865,6 @@ function buildClusterSection(cluster, index) {
             handleCreatePoi(cluster);
         });
         actions.appendChild(createBtn);
-    }
-
-    // Rattacher à un lieu existant choisi par RECHERCHE — pour TOUT groupe non
-    // rattaché (Sans GPS, mais aussi orphelins / Hors POI). C'est la seule voie
-    // pour choisir un AUTRE lieu que le plus proche (ex. 250 m de A mais c'est B
-    // à 280 m qu'on a photographié), et pour les Sans GPS (aucune position).
-    if (isOutPoiType && !cluster.savedAsNewPoi) {
-        const linkBtn = document.createElement('button');
-        linkBtn.className = 'pb-act';
-        linkBtn.type = 'button';
-        linkBtn.innerHTML = '<i data-lucide="link"></i><span>Rattacher à un lieu…</span>';
-        linkBtn.title = 'Choisir un lieu existant auquel rattacher ces photos';
-        linkBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            handleAttachViaSearch(cluster);
-        });
-        actions.appendChild(linkBtn);
     }
 
     // Sélecteur de lieu : sur un groupe rattaché, permet de RÉASSIGNER le groupe
