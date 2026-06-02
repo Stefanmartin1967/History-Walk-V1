@@ -23,7 +23,7 @@ import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
 import { getCategoryLabels, getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { eventBus } from './events.js';
 import { configureHelp, helpButton, helpInline, closeHelp } from './help-popover.js';
-import { GUIDE_IMPORT, HELP_FORMAT, HELP_DISTANCE, HELP_SANS_GPS } from './help-content.js';
+import { GUIDE_IMPORT, HELP_FORMAT, HELP_DISTANCE, HELP_HORS_POI, HELP_CREATE, HELP_NAMING, HELP_COMPARE } from './help-content.js';
 
 // Patron d'aide « ? » (réutilisable) : on branche le rendu d'icônes sur le
 // système Lucide de l'app, une seule fois. L'icône « ? » = circle-help (déjà
@@ -132,7 +132,7 @@ function findPhotoLocation(photoId) {
 
 // Nom auto d'un cluster selon son type et ses POI proches
 function resolveAutoName(cluster) {
-    if (cluster.noGps) return 'Sans GPS';
+    if (cluster.noGps) return 'Sans position';
     if (cluster.type === 'OUT_POI') return 'Hors POI';
     if (cluster.nearbyPois && cluster.nearbyPois.length > 0) {
         return getPoiName(cluster.nearbyPois[0].feature) || 'Lieu sans nom';
@@ -1118,7 +1118,11 @@ function renderFocus(cluster) {
     const sep = document.createElement('span'); sep.className = 'sep'; sep.textContent = '·';
     const s2 = document.createElement('span'); s2.textContent = `${filled} affichée(s)`;
     sub.append(dot, s1, sep, s2);
-    headBlock.append(title, sub);
+    // Titre + « ? » « Choisir les meilleures photos » (aide de la fenêtre Comparer).
+    const titleRow = document.createElement('div');
+    titleRow.style.cssText = 'display:flex; align-items:center; gap:6px; min-width:0;';
+    titleRow.append(title, helpInline(HELP_COMPARE, { size: 'sm' }));
+    headBlock.append(titleRow, sub);
     head.appendChild(headBlock);
 
     // Sélecteur 2 → min(6, nb photos). Masqué si ≤ 2 photos (rien à choisir).
@@ -1785,7 +1789,13 @@ function buildClusterSection(cluster, index) {
         if (changed) renderBody();
     });
 
-    headBlock.appendChild(title);
+    // Titre + « ? » « Nommer pour ordonner » sur une même ligne (le « ? » n'est
+    // pas dans le titre éditable → pas capturé par contentEditable).
+    const titleRow = document.createElement('div');
+    titleRow.style.cssText = 'display:flex; align-items:center; gap:6px; min-width:0;';
+    titleRow.appendChild(title);
+    titleRow.appendChild(helpInline(HELP_NAMING, { size: 'sm' }));
+    headBlock.appendChild(titleRow);
     headBlock.appendChild(sub);
     head.appendChild(headBlock);
 
@@ -1794,8 +1804,8 @@ function buildClusterSection(cluster, index) {
         const badge = document.createElement('span');
         badge.className = 'pb-cluster-badge';
         badge.textContent = needsAttach ? 'À rattacher' : 'Hors POI';
-        // Aide « ? » Position (GPS) sur un groupe Sans GPS.
-        if (cluster.noGps) badge.append(' ', helpInline(HELP_SANS_GPS, { size: 'sm' }));
+        // Aide « ? » : « Hors POI » / « À rattacher » (+ avertissement « non enregistré »).
+        badge.append(' ', helpInline(HELP_HORS_POI, { size: 'sm' }));
         head.appendChild(badge);
     }
 
@@ -1865,6 +1875,7 @@ function buildClusterSection(cluster, index) {
             handleCreatePoi(cluster);
         });
         actions.appendChild(createBtn);
+        actions.appendChild(helpInline(HELP_CREATE, { size: 'sm' }));
     }
 
     // Sélecteur de lieu : sur un groupe rattaché, permet de RÉASSIGNER le groupe
