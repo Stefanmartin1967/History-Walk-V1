@@ -17,7 +17,7 @@ import {
     savePoiData,
 } from './database.js';
 import { showToast } from './toast.js';
-import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
+import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal, hwConfirm } from './modal.js';
 import { createZipBlob } from './zip-store.js';
 import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
 import { getCategoryLabels, getSubtypes, getStates, getAccessValues } from './taxonomy.js';
@@ -53,6 +53,48 @@ function closeModal(result = null) {
     // keydown handler, modalState reset, resolve(result)) se fait dans le
     // .then() de openPhotoBatchModal. closeHwModal passe la valeur au resolve.
     closeHwModal(result);
+}
+
+// --- GARDE-FOU FERMETURE (#A : ne pas perdre un tri en silence) ---
+// Y a-t-il du tri non enregistré dans l'app ? (≥ 1 photo pas encore alreadySaved).
+// Le ZIP ne compte PAS comme « enregistré » : c'est un backup disque, l'organisation
+// en cours reste transitoire tant qu'on n'a pas « Enregistré » dans l'app.
+function hasUnsavedSession() {
+    return !!(modalState && modalState.clusters
+        && modalState.clusters.some(c => c.photos.some(p => !p.alreadySaved)));
+}
+
+// beforeunload dédié à la modale d'import (≠ flag global state.hasUnexportedChanges :
+// on évite d'écraser un « non publié » applicatif réel). Couvre rafraîchir /
+// fermer l'onglet pendant un tri. Retiré à la fermeture de la modale.
+function importBeforeUnload(e) {
+    if (hasUnsavedSession()) { e.preventDefault(); e.returnValue = ''; }
+}
+
+// Fermeture demandée (croix, bouton Fermer, Échap) : confirme si du tri serait
+// perdu. suspend/resume autour de hwConfirm (sinon openHwModal fermerait la
+// modale d'import par sa garde anti-empilement — cf. correctif ZIP).
+let closeGuardBusy = false;
+async function requestClose() {
+    if (closeGuardBusy) return;
+    if (!hasUnsavedSession()) { closeModal(null); return; }
+    closeGuardBusy = true;
+    suspendHwModal();
+    let ok = false;
+    try {
+        ok = await hwConfirm({
+            title: 'Fermer sans enregistrer ?',
+            body: "Des photos de ce tri ne sont pas encore enregistrées dans l'application. "
+                + "Si vous fermez, ce tri sera perdu. (Un ZIP déjà téléchargé reste, lui, sur votre disque.)",
+            confirmLabel: 'Fermer sans enregistrer',
+            cancelLabel: 'Continuer le tri',
+            danger: true,
+        });
+    } finally {
+        resumeHwModal();
+        closeGuardBusy = false;
+    }
+    if (ok) closeModal(null);
 }
 
 // Normalise les clusters entrants : ajoute id, type, et id sur chaque photo
@@ -2232,6 +2274,18 @@ export function openPhotoBatchModal(enrichedClusters) {
                 overlayEl.id = 'photo-batch-overlay';
                 overlayEl.classList.add('is-photo-batch');
 
+                // Garde-fou sur la croix V2 : on intercepte le clic en phase de
+                // CAPTURE (avant le handler par défaut de modal.js qui ferme) →
+                // si du tri n'est pas enregistré, on passe par requestClose().
+                overlayEl.addEventListener('click', (e) => {
+                    const x = e.target.closest('.hw-modal-close, [data-hw-modal-action="close"]');
+                    if (!x) return;
+                    if (!hasUnsavedSession()) return; // rien à perdre → fermeture par défaut
+                    e.preventDefault();
+                    e.stopPropagation();
+                    requestClose();
+                }, true);
+
                 // Extras du header (compteurs / pill sélection / hint) injectés dans le
                 // .hw-modal-header rendu par openHwModal (icône + titre + croix), avant la croix.
                 const headerEl = overlayEl.querySelector('.hw-modal-header');
@@ -2262,7 +2316,7 @@ export function openPhotoBatchModal(enrichedClusters) {
             // libellés / titres / état disabled selon le mode.
             if (btnClose) btnClose.addEventListener('click', () => {
                 if (modalState && modalState.focus) { exitFocus(); return; }
-                closeModal(null);
+                requestClose();
             });
             if (btnZip) btnZip.addEventListener('click', () => {
                 if (modalState && modalState.focus) {
@@ -2322,13 +2376,15 @@ export function openPhotoBatchModal(enrichedClusters) {
             renderBody();
         }, 30);
 
-        // ESC : en mode focus → retour à la vue d'ensemble ; sinon → ferme la modale.
+        // ESC : en mode focus → retour à la vue d'ensemble ; sinon → fermeture
+        // gardée (confirme si tri non enregistré).
         keydownHandler = (e) => {
             if (e.key !== 'Escape') return;
             if (modalState && modalState.focus) { exitFocus(); return; }
-            closeModal(null);
+            requestClose();
         };
         document.addEventListener('keydown', keydownHandler);
+        window.addEventListener('beforeunload', importBeforeUnload);
 
         // Cleanup à la fermeture (peu importe : croix V2, bouton Fermer, ESC)
         promise.then((result) => {
@@ -2336,6 +2392,7 @@ export function openPhotoBatchModal(enrichedClusters) {
                 document.removeEventListener('keydown', keydownHandler);
                 keydownHandler = null;
             }
+            window.removeEventListener('beforeunload', importBeforeUnload);
             closeHelp(); // referme un éventuel panneau/popover d'aide resté ouvert
             releaseObjectUrls();
             releaseFocusUrls();
