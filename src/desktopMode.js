@@ -163,7 +163,7 @@ export async function handleDesktopPhotoImport(filesList) {
         }
         // Photos sans GPS → on signale le groupe (placé en bas).
         if (noGpsCount > 0) {
-            showToast(`${noGpsCount} photo(s) sans GPS — groupe « Sans GPS » en bas, à rattacher à un lieu.`, 'info', 6000);
+            showToast(`${noGpsCount} photo(s) sans position — groupe « Sans position » en bas, à rattacher à un lieu.`, 'info', 6000);
         }
 
         // --- OUVERTURE DU MODAL BATCH ---
