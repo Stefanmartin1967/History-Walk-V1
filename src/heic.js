@@ -11,9 +11,16 @@
 // préserve PAS l'EXIF dans le JPEG produit. Le hash de dédup se prend aussi
 // sur l'original (HEIC = octets stables → dédup fiable d'un ré-import).
 //
-// La bibliothèque heic2any (libheif wasm, ~lourde) est importée
+// La bibliothèque (libheif WebAssembly via heic-to, ~lourde) est importée
 // DYNAMIQUEMENT, uniquement quand un HEIC est réellement rencontré → aucun
 // surpoids de bundle pour les imports JPEG classiques.
+//
+// Choix de la lib : `heic-to/csp` (et non heic2any). heic2any repose sur asm.js
+// + `new Function`, ce qui imposerait `'unsafe-eval'` dans la CSP (ouverture de
+// TOUT le script-src). Le build `heic-to/csp` est compilé pour la CSP : libheif
+// en WebAssembly, SANS `new Function`/`eval`. Il ne requiert donc que
+// `'wasm-unsafe-eval'` (directive étroite : autorise seulement la compilation
+// wasm) + `worker-src 'self' blob:` (le décodage tourne dans un Web Worker).
 
 /**
  * Vrai si le fichier est un HEIC/HEIF. Le MIME est peu fiable (Chrome renvoie
@@ -36,9 +43,9 @@ export function isHeicFile(file) {
  * @returns {Promise<File>}
  */
 export async function convertHeicToJpeg(file, quality = 0.92) {
-    const { default: heic2any } = await import('heic2any');
-    const result = await heic2any({ blob: file, toType: 'image/jpeg', quality });
-    // heic2any peut renvoyer un Blob ou un tableau de Blobs (HEIC multi-images).
+    const { heicTo } = await import('heic-to/csp');
+    const result = await heicTo({ blob: file, type: 'image/jpeg', quality });
+    // heicTo renvoie un Blob (canvas.toBlob) ; on tolère un tableau par sûreté.
     const blob = Array.isArray(result) ? result[0] : result;
     const name = (file.name || 'photo').replace(/\.(heic|heif)$/i, '') + '.jpg';
     return new File([blob], name, { type: 'image/jpeg' });
