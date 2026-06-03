@@ -1274,7 +1274,7 @@ async function openCropPhoto(photoId) {
 
     const footer = `
         <button class="btn btn-ghost" data-hw-modal-action="close" type="button">Annuler</button>
-        <button class="btn btn-primary" id="pb-crop-apply" type="button"><i data-lucide="crop"></i><span>Valider le rognage</span></button>
+        <button class="btn btn-primary" id="pb-crop-apply" type="button"><i data-lucide="crop"></i><span>Rogner</span></button>
     `;
 
     let cropper = null;
