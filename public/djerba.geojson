@@ -894,7 +894,10 @@
         "photos": [],
         "description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
-        "accessPointStatus": "on-track"
+        "accessPointStatus": "on-track",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable"
       }
     },
     {
@@ -965,7 +968,10 @@
           10.9531788,
           33.8435566
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable"
       }
     },
     {
@@ -1014,7 +1020,10 @@
           10.9547205,
           33.8513384
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -1131,7 +1140,10 @@
           10.9450346,
           33.845715
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable"
       }
     },
     {
@@ -1154,7 +1166,10 @@
           10.9454083,
           33.8509123
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -1241,7 +1256,10 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6BAJG9QADZMRDXPWTB",
         "info_gpx": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux.",
-        "accessPointStatus": "on-track"
+        "accessPointStatus": "on-track",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable"
       }
     },
     {
@@ -1312,7 +1330,10 @@
           10.9333783,
           33.8437296
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable"
       }
     },
     {
@@ -3266,7 +3287,7 @@
       "properties": {
         "Nom du site FR": "Église Grecque Orthodoxe Saint-Nicolas",
         "Nom du site arabe": "كنيسة القديس نيقولاوس الأرثوذكسية اليونانية",
-        "Catégorie": "Site religieux",
+        "Catégorie": "Église",
         "Zone": "Taourit",
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-vingt-deux-mosquees-une-eglise-et-une-synagogue/208839/",
         "HW_ID": "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
@@ -3277,7 +3298,15 @@
           10.8562017,
           33.8848144
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "Orthodoxe",
+        "État": "En activité",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -6950,15 +6979,7 @@
         "description": "Vieux bâtiment djerbien dont l’usage originel est inconnu",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "HW_ID": "HW-01KT5X81RV34Z59D259TYBBCNT",
-        "accessPoint": [
-          10.7959212,
-          33.7942191
-        ],
-        "accessPointStatus": "osm",
-        "photos": [
-          "photos/poi_HW-01KT5X81RV34Z59D259TYBBCNT_1780463656132.jpg"
-        ]
+        "HW_ID": "HW-01KT5X81RV34Z59D259TYBBCNT"
       }
     }
   ]
