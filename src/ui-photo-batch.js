@@ -688,7 +688,7 @@ function setHeaderMode(mode, cluster) {
         const name = cluster.customName || resolveAutoName(cluster);
         if (iconEl) iconEl.innerHTML = '<i data-lucide="layout-grid"></i>';
         if (titleEl) titleEl.innerHTML = `Comparer <em>· ${escapeHtml(name)}</em>`;
-        if (hintEl) hintEl.textContent = "Tapez une vignette pour l'ajouter à la comparaison (jusqu'à 6)";
+        if (hintEl) hintEl.textContent = "Cliquez une vignette pour la placer dans l'emplacement actif";
     } else {
         if (iconEl) iconEl.innerHTML = '<i data-lucide="images"></i>';
         if (titleEl) titleEl.textContent = 'Organiser les photos';
@@ -790,24 +790,15 @@ function focusPelliculeTap(pid) {
     if (f.hidden) f.hidden.delete(pid);
     const existing = f.slots.indexOf(pid);
     if (existing !== -1) {
-        // Déjà affichée → on rend simplement son emplacement actif.
+        // Déjà affichée → on rend simplement son emplacement actif (pas de doublon).
         f.activeSlot = existing;
     } else {
-        // Pas encore affichée : on l'AJOUTE (jusqu'à MAX_COMPARE_SLOTS) au lieu de
-        // remplacer. 1) un emplacement vide → on le remplit ; 2) sinon, si on
-        // peut agrandir (< MAX) → nouvel emplacement ; 3) sinon (MAX pleins) →
-        // remplace l'emplacement actif.
-        const emptyIdx = f.slots.findIndex(s => !s);
-        if (emptyIdx !== -1) {
-            f.slots[emptyIdx] = pid;
-            f.activeSlot = emptyIdx;
-        } else if (f.slotCount < MAX_COMPARE_SLOTS) {
-            f.slotCount += 1;
-            f.slots.push(pid);
-            f.activeSlot = f.slotCount - 1;
-        } else {
-            f.slots[f.activeSlot] = pid;
-        }
+        // Place la photo dans l'emplacement ACTIF (remplace son contenu), puis fait
+        // avancer l'emplacement actif au suivant (cyclique). Le nombre d'emplacements
+        // est fixé par le sélecteur 2..6 — taper n'agrandit plus la grille.
+        if (f.activeSlot < 0 || f.activeSlot >= f.slotCount) f.activeSlot = 0;
+        f.slots[f.activeSlot] = pid;
+        f.activeSlot = (f.activeSlot + 1) % f.slotCount;
     }
     renderBody();
 }
@@ -995,7 +986,7 @@ function buildPellicule(cluster) {
     head.className = 'pb-pellicule-head';
     head.innerHTML = `<span>Pellicule</span><span class="sep">·</span><span><b>${cluster.photos.length}</b> photo(s)</span>`
         + (hiddenCount ? `<span class="sep">·</span><span class="pb-pellicule-hidden"><b>${hiddenCount}</b> masquée(s)</span>` : '')
-        + `<span class="sep">·</span><span class="pb-pellicule-hint">Taper une vignette l'ajoute (jusqu'à 6) ; au-delà, remplace l'emplacement actif · glisser pour réordonner</span>`;
+        + `<span class="sep">·</span><span class="pb-pellicule-hint">Cliquez une vignette pour la placer dans l'emplacement actif · glissez pour réordonner</span>`;
     wrap.appendChild(head);
 
     const track = document.createElement('div');
