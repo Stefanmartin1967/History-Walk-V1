@@ -12,9 +12,8 @@
 
 // — Fragments « Préparer ses photos » (réutilisés : format + position) —
 const BLOC_FORMAT = `
-    <p><strong>JPEG.</strong> <span class="help-muted">(iPhone en HEIC → régler sur
-    « Le plus compatible », ou convertir en JPEG.)</span></p>
-    <p class="help-muted">Le support HEIC est une limite temporaire, prévu plus tard.</p>`;
+    <p><strong>JPEG et HEIC.</strong> <span class="help-muted">Heripia accepte les deux :
+    les photos HEIC d'iPhone sont converties automatiquement à l'import.</span></p>`;
 
 const BLOC_POSITION = `
     <p>Activez la <strong>localisation de votre appareil photo</strong>
@@ -120,7 +119,7 @@ export const GUIDE_IMPORT = {
         chaque groupe, puis vous <strong>Enregistrez</strong> le résultat dans Heripia,
         <strong>et/ou</strong> vous <strong>Téléchargez</strong> un ZIP sur votre disque.`,
     schema: [
-        'Vos photos <span class="help-muted">(JPEG)</span>',
+        'Vos photos <span class="help-muted">(JPEG ou HEIC)</span>',
         'regroupées par lieu',
         'vérifier / ajuster',
         'Enregistrer <span class="help-muted">•</span> Télécharger',
@@ -128,15 +127,16 @@ export const GUIDE_IMPORT = {
     sections: [
         {
             heading: '0 · Avant de commencer',
-            html: `<p>Format : <strong>JPEG</strong>. Vérifiez que vos photos contiennent
-                bien leur <strong>position</strong> → voir « Préparer ses photos ».</p>`,
+            html: `<p>Format : <strong>JPEG ou HEIC</strong> <span class="help-muted">(le
+                HEIC d'iPhone est converti automatiquement)</span>. Vérifiez que vos photos
+                contiennent bien leur <strong>position</strong> → voir « Préparer ses photos ».</p>`,
         },
         {
             heading: '1 · Ouvrir l\'import',
             html: `<p>Menu <strong>Outils → « import photos »</strong> (ou la carte
                 « Importer photos GPS » de la visite guidée). Choisissez un lot de photos
-                <strong>.jpg</strong> : Heripia lit leur position et ouvre la
-                <strong>fenêtre d'organisation</strong>.</p>`,
+                <strong>.jpg</strong> ou <strong>.heic</strong> : Heripia lit leur position et
+                ouvre la <strong>fenêtre d'organisation</strong>.</p>`,
         },
         {
             heading: '2 · Comprendre les groupes',

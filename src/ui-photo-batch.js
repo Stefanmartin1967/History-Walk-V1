@@ -23,6 +23,7 @@ import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
 import { getCategoryLabels, getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { eventBus } from './events.js';
 import { configureHelp, helpButton, helpInline, closeHelp } from './help-popover.js';
+import { isHeicFile } from './heic.js';
 import { GUIDE_IMPORT, HELP_FORMAT, HELP_DISTANCE, HELP_HORS_POI, HELP_CREATE, HELP_NAMING, HELP_COMPARE } from './help-content.js';
 
 // Patron d'aide « ? » (réutilisable) : on branche le rendu d'icônes sur le
@@ -1473,7 +1474,9 @@ async function handleSaveCluster(cluster) {
 // cours (titres, rattachements, ordre…). Déclenché par le bouton « Ajouter des
 // photos » ou un glisser-déposer de fichiers depuis l'explorateur.
 async function handleAddMorePhotos(fileList) {
-    const files = Array.from(fileList || []).filter(f => f && f.type && f.type.startsWith('image/'));
+    // Un HEIC a souvent un MIME vide (Chrome) → on l'accepte aussi par
+    // extension (isHeicFile), sinon il serait rejeté avant conversion.
+    const files = Array.from(fileList || []).filter(f => f && ((f.type && f.type.startsWith('image/')) || isHeicFile(f)));
     if (!modalState || files.length === 0) {
         if (modalState && fileList && fileList.length) showToast('Seules des images peuvent être ajoutées.', 'info');
         return;
@@ -2331,7 +2334,7 @@ export function openPhotoBatchModal(enrichedClusters) {
                         <span id="photo-batch-help-global"></span>
                         <span class="pb-header-counts" id="photo-batch-header-subtitle"></span>
                         <span class="pb-header-spacer"></span>
-                        <span class="pb-header-format"><b>JPEG</b><span id="photo-batch-help-heic"></span></span>
+                        <span class="pb-header-format"><b>JPEG · HEIC</b><span id="photo-batch-help-heic"></span></span>
                         <span class="pb-header-hint">${hintText}</span>
                     `);
                     // Aide « ? » : panneau global (guide d'import) + ancre HEIC (format).
@@ -2378,7 +2381,7 @@ export function openPhotoBatchModal(enrichedClusters) {
             if (btnAdd && overlayEl) {
                 const fileInput = document.createElement('input');
                 fileInput.type = 'file';
-                fileInput.accept = 'image/*';
+                fileInput.accept = 'image/*,.heic,.heif';
                 fileInput.multiple = true;
                 fileInput.style.display = 'none';
                 fileInput.id = 'photo-batch-file-input';
