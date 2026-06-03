@@ -1344,6 +1344,47 @@ textarea.editable-input {
     animation: spin 1s linear infinite;
 }
 
+/* Bloc de progression de l'import (spinner + libellé + compteur + barre).
+   Les sous-éléments ne s'affichent QUE quand l'overlay porte .is-progress
+   (sinon le spinner de boot reste seul). */
+.loader-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+}
+.loader-overlay:not(.is-progress) .loader-label,
+.loader-overlay:not(.is-progress) .loader-count,
+.loader-overlay:not(.is-progress) .loader-bar { display: none; }
+.loader-label {
+    color: #fff;
+    font-family: var(--font-family-base);
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+}
+.loader-count {
+    color: rgba(255, 255, 255, 0.85);
+    font-family: var(--font-family-mono);
+    font-size: 15px;
+    letter-spacing: 0.04em;
+}
+.loader-bar {
+    width: 280px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.25);
+    overflow: hidden;
+}
+.loader-bar-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: #fff;
+    border-radius: 999px;
+    transition: width 0.18s ease;
+}
+
 @keyframes spin {
     to {
         transform: rotate(360deg);
