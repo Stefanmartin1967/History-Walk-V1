@@ -3025,16 +3025,20 @@
         "Source": "https://djerba-insolite.com/blog/sidi-brahim-eljomni",
         "HW_ID": "HW-01K77WPE6GQX3PRD8TAKTDRNSZ",
         "description": "Mosquée de forme trapézoïdale fondée en 1674, édifiée en l’honneur du Cheikh Ibrahim Eljomni qui porte d’ailleurs le nom de la mosquée,é puis agrandie en 1721 par la dtynastie Husseinites , galement appelée mosquée Sidi Brahim Jemnii. La Zaouïya Brahima y est associée.",
-        "info_gpx": "Mosquée, mausolée et medersa (Ecole) coranique constriten en \n1076 de l’hégire, soit 1675 de notre ère",
+        "info_gpx": "Mosquée, mausolée et medersa (Ecole) coranique constriten en 1076 de l’hégire, soit 1675 de notre ère",
         "accessPoint": [
           10.8598429,
           33.8774647
         ],
         "accessPointStatus": "osm",
-        "photos": [
-          "photos/poi_HW-01K77WPE6GQX3PRD8TAKTDRNSZ_1780460072681.jpg",
-          "photos/poi_HW-01K77WPE6GQX3PRD8TAKTDRNSZ_1780460074316.jpg"
-        ]
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Non visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -4232,13 +4236,28 @@
         "Zone": "Oued Ezzebib",
         "Source": "https://www.flickr.com/photos/44928546@N05/8008665414\nhttps://www.facebook.com/Assidje.org/posts/la-l%C3%A9gendaire-mosqu%C3%A9e-ouelhi-retrouve-son-%C3%A9clat-apr%C3%A8s-avoir-%C3%A9t%C3%A9-pilli%C3%A9e-et-sacca/2453064461400785/",
         "HW_ID": "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463657931.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463659759.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463661691.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463664064.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463666308.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463668656.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463670245.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463671916.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463673901.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463675621.jpg",
+          "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463677378.jpg"
+        ],
         "description": "Une des plus ancienne mosquée de Djerba datant du 7ème siècle. Elle a retrouvé son éclat après sa restauration par l'ASSIDJE en collaboration avec l'Association des Architectes de Jerba. Son architecture simle est typique de Djerba. A noter qu'étant entourée de vergers, elle est réputée pour sa production de fruits.",
         "accessPoint": [
           10.8055248,
           33.7901335
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable"
       }
     },
     {
@@ -4280,12 +4299,20 @@
         "Zone": "El Groa",
         "Source": null,
         "HW_ID": "HW-01K77WPE6N293MG25FFQBH1G10",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6N293MG25FFQBH1G10_1780463679410.jpg",
+          "photos/poi_HW-01K77WPE6N293MG25FFQBH1G10_1780463681409.jpg",
+          "photos/poi_HW-01K77WPE6N293MG25FFQBH1G10_1780463683130.jpg",
+          "photos/poi_HW-01K77WPE6N293MG25FFQBH1G10_1780463684888.jpg"
+        ],
         "accessPoint": [
           10.7982967,
           33.7895453
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable"
       }
     },
     {
@@ -4304,13 +4331,24 @@
         "Zone": "El Groa",
         "Source": "https://djerba-insolite.com/blog/boulimen",
         "HW_ID": "HW-01K77WPE6N0ZBXJK23NVJ2MQPX",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463686754.jpg",
+          "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463688510.jpg",
+          "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463690663.jpg",
+          "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463692467.jpg",
+          "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463694615.jpg",
+          "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463696128.jpg",
+          "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463697853.jpg"
+        ],
         "description": "Mosquée contruite par la famille Boulimen au 17ème siècle, à lépoque Husseinites. Elle est située à l'extrémité de Sedghiane. Son architecture, de forme poligonale, se situe à mi-chemin entre les style djerbien modeste et Ottoman.",
         "accessPoint": [
           10.7924829,
           33.7944996
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable"
       }
     },
     {
@@ -4399,13 +4437,20 @@
         "Zone": "El Groa",
         "Source": null,
         "HW_ID": "HW-01K77WPE6N6A0YBFFKMQQNQH0E",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6N6A0YBFFKMQQNQH0E_1780463699852.jpg",
+          "photos/poi_HW-01K77WPE6N6A0YBFFKMQQNQH0E_1780463702056.jpg",
+          "photos/poi_HW-01K77WPE6N6A0YBFFKMQQNQH0E_1780463703961.jpg"
+        ],
         "description": "Mosquée rurale assez isolée, entourée de terrains agricoles, natammet oliveraies.",
         "accessPoint": [
           10.7858502,
           33.7929511
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -4497,12 +4542,19 @@
         "Zone": "El Groa",
         "Source": null,
         "HW_ID": "HW-01K77WPE6NJ1X6TBWGCTV85QMM",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6NJ1X6TBWGCTV85QMM_1780463710154.jpg",
+          "photos/poi_HW-01K77WPE6NJ1X6TBWGCTV85QMM_1780463711868.jpg",
+          "photos/poi_HW-01K77WPE6NJ1X6TBWGCTV85QMM_1780463713816.jpg"
+        ],
         "accessPoint": [
           10.7753053,
           33.7888202
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable"
       }
     },
     {
@@ -4521,13 +4573,26 @@
         "Zone": "Mezrene",
         "Source": "https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322https://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba",
         "HW_ID": "HW-01K77WPE6N6HF86MYJNJWFPNSV",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463716033.jpg",
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463717569.jpg",
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463719245.jpg",
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463721015.jpg",
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463722670.jpg",
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463724633.jpg",
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463726451.jpg",
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463728168.jpg",
+          "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463729983.jpg"
+        ],
         "description": "Mosquée souterraine ibadite, située à Bou Menjel. Elle fût construite au 10ème siècle. Elle constituait une halte lors de la vérification du système défensif de l'île. Restaurée ont été restaurée en 2018 par par l’Association pour la Sauvegarde de l’Île de Djerba (ASSIDJE), en partenariat avec la fondation Swiss Contact, de même que les mosquées \"Louta\" à Cedouikech et \"Ammi Yathi\" à Guellala.",
         "accessPoint": [
           10.770476,
           33.7881479
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable"
       }
     },
     {
@@ -5549,13 +5614,19 @@
         "Zone": "El Groa",
         "Source": null,
         "HW_ID": "HW-01K77WPE6RQNBBQXWYACNJTRAC",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6RQNBBQXWYACNJTRAC_1780463706184.jpg",
+          "photos/poi_HW-01K77WPE6RQNBBQXWYACNJTRAC_1780463708451.jpg"
+        ],
         "description": "Infos à rechercher - Correspond à ce qu’OSM/Nominatim associe à Ouled Ali Boulimen – El Groa, et elle apparaît aussi dans certaines cartes locales comme Mosquée Boulimen",
         "accessPoint": [
           10.7746607,
           33.7875455
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable"
       }
     },
     {
@@ -6860,6 +6931,34 @@
           33.8297704
         ],
         "accessPointStatus": "osm"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.795551099999999,
+          33.7943852
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Vieux bâtiment djerbien",
+        "Catégorie": "Curiosité",
+        "Zone": "El Groa",
+        "info_gpx": "Vieux bâtiment djerbien",
+        "description": "Vieux bâtiment djerbien dont l’usage originel est inconnu",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "HW_ID": "HW-01KT5X81RV34Z59D259TYBBCNT",
+        "accessPoint": [
+          10.7959212,
+          33.7942191
+        ],
+        "accessPointStatus": "osm",
+        "photos": [
+          "photos/poi_HW-01KT5X81RV34Z59D259TYBBCNT_1780463656132.jpg"
+        ]
       }
     }
   ]
