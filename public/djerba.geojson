@@ -2535,7 +2535,12 @@
         "Zone": "Fatou",
         "Source": null,
         "HW_ID": "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6F9K1DFXDYCR7CPAWN_1780460043930.jpg",
+          "photos/poi_HW-01K77WPE6F9K1DFXDYCR7CPAWN_1780460045647.jpg",
+          "photos/poi_HW-01K77WPE6F9K1DFXDYCR7CPAWN_1780460047697.jpg",
+          "photos/poi_HW-01K77WPE6F9K1DFXDYCR7CPAWN_1780460049813.jpg"
+        ],
         "info_gpx": "Mosquée proche de la mer, à proximité de Goose island djerba où vous pouvez faire diverses activités aquatiques",
         "accessPoint": [
           10.8801516,
@@ -2786,7 +2791,13 @@
         "Zone": "Taourit",
         "Source": null,
         "HW_ID": "HW-01K77WPE6F1C25NNH5RAR2JPF6",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460051591.jpg",
+          "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460053809.jpg",
+          "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460055461.jpg",
+          "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460057552.jpg",
+          "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460059572.jpg"
+        ],
         "info_gpx": "Mosquée et mausolée malékite de construction récente intégrant le mausolée",
         "accessPoint": [
           10.8689335,
@@ -2986,7 +2997,15 @@
         "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non visitable"
+        "Accès": "Non visitable",
+        "photos": [
+          "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460061464.jpg",
+          "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460063041.jpg",
+          "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460065070.jpg",
+          "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460066884.jpg",
+          "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460068770.jpg",
+          "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460070707.jpg"
+        ]
       }
     },
     {
@@ -3011,7 +3030,11 @@
           10.8598429,
           33.8774647
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "photos": [
+          "photos/poi_HW-01K77WPE6GQX3PRD8TAKTDRNSZ_1780460072681.jpg",
+          "photos/poi_HW-01K77WPE6GQX3PRD8TAKTDRNSZ_1780460074316.jpg"
+        ]
       }
     },
     {
@@ -3064,7 +3087,13 @@
         "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Extérieur seulement"
+        "Accès": "Extérieur seulement",
+        "photos": [
+          "photos/poi_HW-01K77WPE6G6RDSP8C7C5WQVJCN_1780460076111.jpg",
+          "photos/poi_HW-01K77WPE6G6RDSP8C7C5WQVJCN_1780460077892.jpg",
+          "photos/poi_HW-01K77WPE6G6RDSP8C7C5WQVJCN_1780460079911.jpg",
+          "photos/poi_HW-01K77WPE6G6RDSP8C7C5WQVJCN_1780460081557.jpg"
+        ]
       }
     },
     {
@@ -3146,7 +3175,12 @@
           10.8581684,
           33.8782554
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "photos": [
+          "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460104623.jpg",
+          "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460106288.jpg",
+          "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460108153.jpg"
+        ]
       }
     },
     {
@@ -4923,7 +4957,13 @@
         "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non visitable"
+        "Accès": "Non visitable",
+        "photos": [
+          "photos/poi_HW-01K77WPE6P5C0194DPJWYMX9C1_1780460097295.jpg",
+          "photos/poi_HW-01K77WPE6P5C0194DPJWYMX9C1_1780460099085.jpg",
+          "photos/poi_HW-01K77WPE6P5C0194DPJWYMX9C1_1780460100832.jpg",
+          "photos/poi_HW-01K77WPE6P5C0194DPJWYMX9C1_1780460102865.jpg"
+        ]
       }
     },
     {
@@ -6190,7 +6230,16 @@
         "Zone": "Taourit",
         "HW_ID": "HW-01KJABRN0WMXW7CV3JQJJK9EAV",
         "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "accessPointStatus": "on-track",
+        "photos": [
+          "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460083574.jpg",
+          "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460085717.jpg",
+          "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460087617.jpg",
+          "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460089351.jpg",
+          "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460091438.jpg",
+          "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460093374.jpg",
+          "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460095486.jpg"
+        ]
       }
     },
     {
