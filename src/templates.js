@@ -1,6 +1,6 @@
 // templates.js
 import { getPoiName } from './data.js';
-import { escapeXml, getAccessPoint } from './utils.js';
+import { escapeXml } from './utils.js';
 import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
@@ -254,22 +254,15 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         etat ? `<span class="poi-tag status ${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
         accesMeta ? `<span class="poi-tag access ${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
         isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : '',
-        // Admin only : indique qu'un point d'accès au tracé est défini (POI hors voie).
-        // Admin only : chip qui reflète le status du point d'accès. Couleurs :
-        // orange (osm) / vert (moved) / ambre (failed). Affichée si drapeau posé
-        // OU si une tentative Overpass a échoué (status='failed' sans drapeau).
+        // Admin only : chip « À évaluer » UNIQUEMENT quand le point d'accès a
+        // échoué (status='failed') → signal d'action. On n'affiche plus le chip
+        // pour un point d'accès normal (osm/moved) : quasi tous les POI en ont un
+        // désormais, c'était du bruit (retour Stefan 03/06). L'action « Point
+        // d'accès au tracé » reste dans le menu kebab.
         (() => {
             if (!state.isAdmin) return '';
-            const status = getAccessPointStatus(feature);
-            const hasFlag = !!getAccessPoint(feature);
-            if (!hasFlag && status !== 'failed') return '';
-            // Variante visuelle (osm | moved | failed). Legacy (drapeau présent
-            // mais status absent) → 'moved' par défaut (cohérent avec PR1).
-            const variant = status === 'osm' ? 'is-osm'
-                          : status === 'failed' ? 'is-failed'
-                          : 'is-moved';
-            const label = status === 'failed' ? 'À évaluer' : 'Point d\'accès';
-            return `<span class="poi-tag poi-tag--access-point ${variant}"><i data-lucide="flag"></i>${label}</span>`;
+            if (getAccessPointStatus(feature) !== 'failed') return '';
+            return `<span class="poi-tag poi-tag--access-point is-failed"><i data-lucide="flag"></i>À évaluer</span>`;
         })()
     ].filter(Boolean).join('');
 
