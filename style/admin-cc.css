@@ -243,6 +243,9 @@
 }
 .cc-btn-cta:hover:not(:disabled) { filter: brightness(1.06); }
 .cc-btn-cta:disabled { opacity: 0.4; cursor: not-allowed; }
+/* Compteur de publication « Photos N/M » : chiffres à chasse fixe → le bouton
+   ne s'élargit pas au fil du compteur (combiné au padding espace-chiffre U+2007). */
+#btn-cc-publish { font-variant-numeric: tabular-nums; }
 .cc-btn-cta i[data-lucide] { width: 16px; height: 16px; }
 .cc-btn-cta--inline { padding: 0 18px; }
 

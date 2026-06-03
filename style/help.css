@@ -25,28 +25,30 @@
    DÉCLENCHEURS
    ──────────────────────────────────────────────────────────────────────── */
 
-/* « ? » inline discret : cercle ink-soft qui s'éclaire (brand) au survol. */
+/* « ? » inline : pastille pleine (surface) + « ? » ink marqué → lisible sur tout
+   fond (en-tête crème, badge ambre, grille blanche). S'éclaire (brand) au survol. */
 .help-dot {
     -webkit-appearance: none; appearance: none;
     display: inline-flex; align-items: center; justify-content: center;
-    width: 18px; height: 18px; padding: 0;
+    width: 20px; height: 20px; padding: 0;
     flex-shrink: 0;
-    border: 1px solid color-mix(in oklab, var(--ink-soft) 45%, transparent);
+    border: 1px solid var(--line);
     border-radius: var(--radius-pill);
-    background: transparent;
-    color: var(--ink-soft);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.10);
     cursor: pointer;
     vertical-align: middle;
     transition: color .15s, border-color .15s, background .15s;
 }
-.help-dot--sm { width: 16px; height: 16px; }
-.help-dot svg { width: 11px; height: 11px; stroke-width: 2.25; display: block; }
-.help-dot--sm svg { width: 10px; height: 10px; }
+.help-dot--sm { width: 18px; height: 18px; }
+.help-dot svg { width: 13px; height: 13px; stroke-width: 2.6; display: block; }
+.help-dot--sm svg { width: 12px; height: 12px; }
 .help-dot:hover,
 .help-dot[aria-expanded="true"] {
     color: var(--brand-2);
-    border-color: color-mix(in oklab, var(--brand) 55%, transparent);
-    background: color-mix(in oklab, var(--brand) 12%, transparent);
+    border-color: color-mix(in oklab, var(--brand) 55%, var(--line));
+    background: color-mix(in oklab, var(--brand) 12%, var(--surface));
 }
 .help-dot:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
