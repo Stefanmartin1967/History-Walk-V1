@@ -2148,6 +2148,17 @@ function renderBody() {
     const body = document.getElementById('photo-batch-body');
     if (!body) return;
 
+    // `#photo-batch-body` PERSISTE entre les rendus (créé une seule fois à
+    // l'ouverture, on ne fait que vider son innerHTML). Or on (re)crée un
+    // `new Sortable(body, …)` (réordonnancement des groupes) à CHAQUE rendu en
+    // vue d'ensemble. SortableJS ne nettoie pas l'instance précédente
+    // (`el[expando] = this` + ré-attache pointerdown/mousedown/touchstart sans
+    // off()) → les écouteurs s'empilaient à chaque rendu (fuite). On détruit
+    // donc l'instance du rendu précédent avant tout : un seul Sortable vivant
+    // à la fois, plus d'accumulation. (Les Sortables des grilles/pellicule sont
+    // sur des éléments recréés à chaque rendu → pas concernés.)
+    Sortable.get(body)?.destroy();
+
     // Mode focus : ne rendre que le cluster focalisé. S'il a disparu (toutes
     // ses photos supprimées/détachées) → retour automatique à la vue d'ensemble.
     if (modalState.focus) {
