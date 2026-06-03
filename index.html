@@ -45,7 +45,7 @@
          dès le 1er paint du #hw-boot-splash. -->
     <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css?v=7.72">
+    <link rel="stylesheet" href="style.css?v=7.73">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
          Lien direct car les @imports CSS dans style.css sont cachés par Vite en
          dev — voir note historique sur le boot splash en bas de style.css. -->
@@ -442,7 +442,12 @@
     <input type="file" id="gpx-importer" accept=".gpx" class="is-hidden">
     <input type="file" id="destination-loader" class="is-hidden">
     <div id="loader-overlay" class="loader-overlay is-hidden">
-        <div class="loader-spinner"></div>
+        <div class="loader-box">
+            <div class="loader-spinner"></div>
+            <div class="loader-label" id="loader-label"></div>
+            <div class="loader-count" id="loader-count"></div>
+            <div class="loader-bar"><span class="loader-bar-fill" id="loader-bar-fill"></span></div>
+        </div>
     </div>
     <div id="toast-container" class="toast-container"></div>
 

@@ -8,7 +8,6 @@ import { state } from './state.js';
 import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos, getAllPoiPhotoHashes, getAllPendingAdminPhotoHashes } from './database.js';
 import { compressImage, generatePhotoId } from './photo-service.js';
 import { logModification } from './logger.js';
-import { DOM } from './ui-dom.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
 import { getExifLocation, resizeImage, sha256OfFile, openCoordsOnMap } from './utils.js';
@@ -53,68 +52,68 @@ export function enableDesktopCreationMode() {
 // photos » dans la modale ouverte (cf. ui-photo-batch).
 // `extraHashes` : srcHash déjà présents (ex. photos actuellement dans la modale)
 // à traiter comme doublons en plus de ceux stockés en base.
+// `onProgress` : callback de progression — { phase:'photos', done, total } pendant
+// le traitement photo par photo, puis { phase:'cluster' } au regroupement.
 // Retourne { enrichedClusters, skippedDuplicates, noGpsCount }.
-export async function buildEnrichedClustersFromFiles(files, { extraHashes = null } = {}) {
-    // --- ETAPE 1 : EXTRACTION GPS + DATE ---
-    const filesData = [];
-    for (let file of files) {
-        try {
-            const meta = await getExifLocation(file);
-            filesData.push({ file, coords: { lat: meta.lat, lng: meta.lng }, date: meta.date, hasGps: true });
-        } catch (e) {
-            console.warn(`[Import] Pas de GPS pour ${file.name}:`, e.message);
-            filesData.push({ file, coords: null, date: null, hasGps: false });
-        }
-    }
-
-    // --- ETAPE 1.5 : DÉDUPLICATION PAR HASH (dédup 2-local) ---
-    // S'applique à TOUTES les photos (avec ou sans GPS). Hash du fichier ORIGINAL
-    // (jamais du blob compressé). On écarte : (a) les doublons internes à cet
-    // import, (b) les hash déjà stockés en local (poiPhotos user /
-    // pendingAdminPhotos), (c) les hash passés via extraHashes (photos déjà
-    // ouvertes dans la modale → un ré-import du même fichier ne duplique pas).
+export async function buildEnrichedClustersFromFiles(files, { extraHashes = null, onProgress = null } = {}) {
+    // Hash déjà connus (dédup 2-local) : base locale + éventuels extraHashes.
     const existingHashes = state.isAdmin
         ? await getAllPendingAdminPhotoHashes(state.currentMapId)
         : await getAllPoiPhotoHashes(state.currentMapId);
     if (extraHashes) extraHashes.forEach(h => { if (h) existingHashes.add(h); });
+
+    // --- TRAITEMENT PHOTO PAR PHOTO (une seule passe → progression simple) ---
+    // Pour chaque fichier : position (EXIF) → hash original (dédup) → aperçu base64.
+    // Une seule boucle = un compteur de progression propre (1..N).
     const seenThisImport = new Set();
     const validItems = [];
     let skippedDuplicates = 0;
-    for (const item of filesData) {
-        item.srcHash = await sha256OfFile(item.file);
-        // Hash indisponible (contexte non sécurisé, fichier illisible) → on
-        // ne déduplique pas plutôt que de risquer d'écarter une photo unique.
-        if (item.srcHash && (seenThisImport.has(item.srcHash) || existingHashes.has(item.srcHash))) {
-            skippedDuplicates++;
-            continue;
+    const total = files.length;
+    let i = 0;
+    for (const file of files) {
+        i++;
+        if (onProgress) onProgress({ phase: 'photos', done: i, total });
+
+        // 1) Position (EXIF) + date. Sans EXIF → photo « sans position ».
+        let coords = null, date = null, hasGps = false;
+        try {
+            const meta = await getExifLocation(file);
+            coords = { lat: meta.lat, lng: meta.lng };
+            date = meta.date;
+            hasGps = true;
+        } catch (e) {
+            console.warn(`[Import] Pas de position pour ${file.name}:`, e.message);
         }
-        if (item.srcHash) seenThisImport.add(item.srcHash);
-        validItems.push(item);
+
+        // 2) Hash du fichier ORIGINAL (dédup). Hash indisponible → on ne déduplique
+        //    pas plutôt que de risquer d'écarter une photo unique.
+        const srcHash = await sha256OfFile(file);
+        if (srcHash && (seenThisImport.has(srcHash) || existingHashes.has(srcHash))) {
+            skippedDuplicates++;
+            continue; // doublon → pas d'aperçu inutile
+        }
+        if (srcHash) seenThisImport.add(srcHash);
+
+        // 3) Aperçu base64 (320px) — vignettes nettes + pellicule lightbox.
+        let base64;
+        try { base64 = await resizeImage(file, 320); }
+        catch (e) { console.error('Pré-calcul base64:', e); }
+
+        validItems.push({ file, coords, date, hasGps, srcHash, base64 });
     }
 
     if (validItems.length === 0) {
         return { enrichedClusters: [], skippedDuplicates, noGpsCount: 0 };
     }
 
-    // --- ETAPE 2 : PRÉ-CALCUL BASE64 (thumbnails) ---
-    // 320px (≥ ~225px d'affichage en grille plein écran) → vignettes nettes
-    // sans alourdir l'import. Sert aussi la pellicule de la lightbox.
-    for (const item of validItems) {
-        if (!item.base64) {
-            try { item.base64 = await resizeImage(item.file, 320); }
-            catch (e) { console.error("Pré-calcul base64:", e); }
-        }
-    }
-
-    // --- ETAPE 3 : GROUPEMENT « par lieu » (cf. photo-clustering.js) ---
-    // 1 groupe = POI le plus proche (≤120 m) ; photos sans POI proche → groupes
-    // « trajet ». Seules les photos AVEC GPS sont groupables par position.
+    // --- GROUPEMENT « par lieu » (cf. photo-clustering.js) ---
+    if (onProgress) onProgress({ phase: 'cluster' });
     const gpsItems = validItems.filter(it => it.hasGps);
     const noGpsItems = validItems.filter(it => !it.hasGps);
 
     const enrichedClusters = clusterPhotos(gpsItems, state.loadedFeatures, state.hiddenPoiIds);
 
-    // Photos SANS GPS : un seul groupe « Sans GPS » en bas, à rattacher à la main.
+    // Photos SANS position : un seul groupe « Sans position » en bas, à rattacher.
     if (noGpsItems.length > 0) {
         enrichedClusters.push({
             photos: noGpsItems,
@@ -137,15 +136,43 @@ export async function handleDesktopPhotoImport(filesList) {
         return;
     }
 
-    const loader = (DOM && DOM.loaderOverlay) ? DOM.loaderOverlay : null;
-    if (loader) loader.style.display = 'flex';
+    // Overlay de progression. ⚠️ Toggle via la classe .is-hidden (et non
+    // style.display) : .is-hidden porte `display:none !important`, qu'un inline
+    // ne peut pas surcharger (bug : le loader ne s'affichait jamais à l'import).
+    // .is-progress révèle libellé + compteur + barre (le spinner de boot reste seul).
+    const loaderEl = document.getElementById('loader-overlay');
+    const labelEl = document.getElementById('loader-label');
+    const countEl = document.getElementById('loader-count');
+    const barEl = document.getElementById('loader-bar-fill');
+    const showLoader = () => {
+        if (loaderEl) { loaderEl.classList.add('is-progress'); loaderEl.classList.remove('is-hidden'); }
+    };
+    const hideLoader = () => {
+        if (loaderEl) { loaderEl.classList.add('is-hidden'); loaderEl.classList.remove('is-progress'); }
+        if (barEl) barEl.style.width = '0%';
+        if (countEl) countEl.textContent = '';
+        if (labelEl) labelEl.textContent = '';
+    };
+    const onProgress = ({ phase, done, total }) => {
+        if (phase === 'cluster') {
+            if (labelEl) labelEl.textContent = 'Regroupement par lieu…';
+            if (countEl) countEl.textContent = '';
+            if (barEl) barEl.style.width = '100%';
+            return;
+        }
+        if (labelEl) labelEl.textContent = 'Traitement des photos…';
+        if (countEl) countEl.textContent = total ? `${done} / ${total}` : '';
+        if (barEl && total) barEl.style.width = `${Math.round((done / total) * 100)}%`;
+    };
+
+    showLoader();
 
     try {
         const { enrichedClusters, skippedDuplicates, noGpsCount } =
-            await buildEnrichedClustersFromFiles(files);
+            await buildEnrichedClustersFromFiles(files, { onProgress });
 
         if (enrichedClusters.length === 0) {
-            if (loader) loader.style.display = 'none';
+            hideLoader();
             return showToast(`${skippedDuplicates} doublon(s) ignoré(s) — rien de nouveau à importer.`, 'info', 5000);
         }
 
@@ -155,7 +182,7 @@ export async function handleDesktopPhotoImport(filesList) {
             map.flyTo([firstCenter.lat, firstCenter.lng], 14, { duration: 0.8 });
         }
 
-        if (loader) loader.style.display = 'none';
+        hideLoader();
 
         // Récap doublons écartés (option (a) : silencieux à l'unité, total annoncé).
         if (skippedDuplicates > 0) {
@@ -170,7 +197,7 @@ export async function handleDesktopPhotoImport(filesList) {
         await openPhotoBatchModal(enrichedClusters);
 
     } catch (error) {
-        if (loader) loader.style.display = 'none';
+        hideLoader();
         console.error(">>> ERREUR IMPORT :", error);
         showToast("Erreur lors du traitement : " + error.message, 'error');
     }
