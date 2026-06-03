@@ -13,6 +13,7 @@ import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
 import { getExifLocation, resizeImage, sha256OfFile, openCoordsOnMap } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { clusterPhotos } from './photo-clustering.js';
+import { isHeicFile, convertHeicToJpeg } from './heic.js';
 import { showToast } from './toast.js';
 import { showPhotoSelectionModal } from './photo-import-ui.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
@@ -94,12 +95,24 @@ export async function buildEnrichedClustersFromFiles(files, { extraHashes = null
         }
         if (srcHash) seenThisImport.add(srcHash);
 
+        // 2b) HEIC/HEIF (iPhone) → JPEG AVANT tout traitement pixel : Chrome/
+        //     Firefox/Edge ne décodent pas le HEIC en canvas (cf. heic.js).
+        //     L'EXIF (1) et le hash (2) ont été pris sur l'ORIGINAL → GPS
+        //     préservé + dédup stable. En cas d'échec : on garde l'original
+        //     (vignette cassée parlante) plutôt que d'écarter la photo en
+        //     silence.
+        let workFile = file;
+        if (isHeicFile(file)) {
+            try { workFile = await convertHeicToJpeg(file); }
+            catch (e) { console.error(`[Import] Conversion HEIC échouée pour ${file.name}:`, e); }
+        }
+
         // 3) Aperçu base64 (320px) — vignettes nettes + pellicule lightbox.
         let base64;
-        try { base64 = await resizeImage(file, 320); }
+        try { base64 = await resizeImage(workFile, 320); }
         catch (e) { console.error('Pré-calcul base64:', e); }
 
-        validItems.push({ file, coords, date, hasGps, srcHash, base64 });
+        validItems.push({ file: workFile, coords, date, hasGps, srcHash, base64 });
     }
 
     if (validItems.length === 0) {
