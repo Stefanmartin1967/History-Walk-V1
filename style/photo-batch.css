@@ -883,3 +883,18 @@
     .pb-compare { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: 1fr; }
     .pb-pellicule-thumb { width: 72px; height: 72px; }
 }
+
+/* === Rognage (cropperjs) — modale « Rogner la photo » ===
+   cropperjs masque l'<img> d'origine et crée son propre conteneur dimensionné
+   sur la taille RENDUE de l'image → on borne la hauteur de l'image pour que
+   tout le cadre tienne dans la modale. */
+.pb-crop-wrap {
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.pb-crop-wrap img {
+    display: block;
+    max-width: 100%;
+    max-height: 68vh;
+}
