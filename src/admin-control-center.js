@@ -563,7 +563,13 @@ async function publishChanges() {
                 const successIds = [];
                 // Séquentiel : évite les conflits de commit parallèles sur main.
                 for (const item of toPublish) {
-                    if (totalPhotosToPublish > 0) setBtnLabel(`Photos ${uploadedPhotoCount + failedPhotoCount + 1}/${totalPhotosToPublish}`);
+                    if (totalPhotosToPublish > 0) {
+                        // Numéro courant padé (espace chiffre U+2007) à la largeur du
+                        // total → le libellé ne s'élargit pas au fil du compteur.
+                        const cur = String(uploadedPhotoCount + failedPhotoCount + 1)
+                            .padStart(String(totalPhotosToPublish).length, ' ');
+                        setBtnLabel(`Photos ${cur}/${totalPhotosToPublish}`);
+                    }
                     try {
                         const file = new File([item.blob], 'photo.jpg', { type: 'image/jpeg' });
                         const url = await uploadPhotoForPoi(file, poiId);

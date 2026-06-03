@@ -160,7 +160,7 @@ export async function handleDesktopPhotoImport(filesList) {
             if (barEl) barEl.style.width = '100%';
             return;
         }
-        if (labelEl) labelEl.textContent = 'Traitement des photos…';
+        if (labelEl) labelEl.textContent = 'Import des photos…';
         if (countEl) countEl.textContent = total ? `${done} / ${total}` : '';
         if (barEl && total) barEl.style.width = `${Math.round((done / total) * 100)}%`;
     };
