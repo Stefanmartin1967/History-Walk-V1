@@ -573,3 +573,30 @@ export async function purgeOrphanPendingPois(adminDraft) {
 
     return purged;
 }
+
+/**
+ * Symétrique de purgeOrphanPendingPois, pour les CIRCUITS.
+ * Un `pendingCircuits[id]` qui ne produit AUCUN diff réel (absent de
+ * diffData.circuits après prepareDiffData) est un orphelin : typiquement un
+ * circuit déjà publié mais resté flaggé dans le brouillon (la publication hors
+ * « Tout publier » ne réinitialise pas le draft). reconcileLocalChanges ne
+ * retire un pendingCircuit que s'il n'existe plus / sans tracé — JAMAIS sur la
+ * seule absence de diff. Résultat sans cette purge : le badge du CC reste > 0
+ * alors que le tableau de bord affiche « synchronisé » (bug observé 03/06/2026 :
+ * badge=1 / CC vide après publication d'un circuit). Les créations et
+ * modifications réelles sont, elles, présentes dans diffData.circuits → gardées.
+ * Pas de userData à nettoyer : l'état d'un circuit vit dans state.myCircuits.
+ * @param {{pendingCircuits?: Object}} adminDraft
+ * @returns {string[]} ids des circuits purgés
+ */
+export function purgeOrphanPendingCircuits(adminDraft) {
+    const purged = [];
+    if (!adminDraft || !adminDraft.pendingCircuits) return purged;
+    const diffIds = new Set((diffData.circuits || []).map(c => String(c.id)));
+    for (const id of Object.keys(adminDraft.pendingCircuits)) {
+        if (diffIds.has(String(id))) continue; // vrai diff → on garde
+        delete adminDraft.pendingCircuits[id];
+        purged.push(id);
+    }
+    return purged;
+}

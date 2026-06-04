@@ -113,6 +113,7 @@ vi.mock('../src/admin-diff-engine.js', () => ({
     prepareDiffData: () => h.prepareDiffDataSpy(),
     // Stub inerte du purge — pas de logique testée ici, juste ne pas crasher.
     purgeOrphanPendingPois: vi.fn(() => Promise.resolve([])),
+    purgeOrphanPendingCircuits: vi.fn(() => []),
     diffData: { pois: [], circuits: [], stats: {}, pendingPhotos: {}, originalFeatures: [] }
 }));
 

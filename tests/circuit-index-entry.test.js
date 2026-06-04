@@ -30,7 +30,7 @@ vi.mock('../src/database.js', () => ({
 }));
 vi.mock('../src/photo-service.js', () => ({ uploadPhotoForPoi: vi.fn() }));
 vi.mock('../src/admin-diff-engine.js', () => ({
-    reconcileLocalChanges: vi.fn(), prepareDiffData: vi.fn(), purgeOrphanPendingPois: vi.fn(),
+    reconcileLocalChanges: vi.fn(), prepareDiffData: vi.fn(), purgeOrphanPendingPois: vi.fn(), purgeOrphanPendingCircuits: vi.fn(() => []),
     diffData: { pois: [], circuits: [], stats: {}, pendingPhotos: {}, originalFeatures: [] },
 }));
 vi.mock('../src/admin-control-ui.js', () => ({ openControlCenterModal: vi.fn(), renderTab: vi.fn() }));
