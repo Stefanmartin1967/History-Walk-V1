@@ -505,24 +505,14 @@ export function generateCircuitName() {
     const startPoi = getPoiName(pool[0]);
     const endPoi = getPoiName(pool[pool.length - 1]);
 
-    let middlePoi = "";
-    if (pool.length > 2) {
-        const middleIndex = Math.floor((pool.length - 1) / 2);
-        middlePoi = getPoiName(pool[middleIndex]);
-    }
-
+    // Nom auto = uniquement les extrémités. Le « via [milieu] » historique
+    // allongeait le nom sans réelle valeur : le milieu était purement positionnel
+    // (index du milieu), pas un point remarquable, et les étapes intermédiaires
+    // sont déjà listées dans la fiche du circuit. Retiré le 03/06/2026.
     if (getPoiId(pool[0]) === getPoiId(pool[pool.length - 1])) {
-        if (middlePoi && startPoi !== middlePoi) {
-            return `Boucle autour de ${startPoi} via ${middlePoi}`;
-        }
         return `Boucle autour de ${startPoi}`;
     }
-    else {
-        if (middlePoi) {
-            return `Circuit de ${startPoi} à ${endPoi} via ${middlePoi}`;
-        }
-        return `Circuit de ${startPoi} à ${endPoi}`;
-    }
+    return `Circuit de ${startPoi} à ${endPoi}`;
 }
 
 // --- FONCTION POUR VIDER LE BROUILLON (Version Majordome + UI) ---
