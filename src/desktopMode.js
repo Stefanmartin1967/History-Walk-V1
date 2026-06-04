@@ -1,6 +1,6 @@
 import L from 'leaflet';
 import { applyFilters } from './data.js';
-import { clearCircuit } from './circuit.js';
+import { clearCircuit, cancelPendingCircuitLoad } from './circuit.js';
 import { toggleCircuitCreationMode } from './ui-circuit-editor.js';
 import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
@@ -414,6 +414,10 @@ export function setupDesktopTools() {
 // de filtrage. Appelé via l'event `circuit:create-new` (émis par la sidebar V2)
 // ou via welcome-actions au choix d'usage "Créer mon circuit".
 function enterCircuitCreationMode() {
+    // Invalide un loadCircuitById en cours (fetch GPX d'un circuit officiel) :
+    // sans ça, sa fin écraserait le brouillon vierge avec le circuit consulté
+    // (nom/POIs résiduels — bug 03/06/2026).
+    cancelPendingCircuitLoad();
     clearCircuit(false);
     toggleCircuitCreationMode(true);
     applyFilters();

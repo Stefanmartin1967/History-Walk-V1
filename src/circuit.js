@@ -641,7 +641,17 @@ export function convertToDraft({ preserveId = false } = {}) {
     notifyCircuitChanged(); // Force le passage à la ligne bleue (vol d'oiseau)
 }
 
+// Garde anti-course (bug 03/06/2026) : loadCircuitById fait un fetch GPX lent
+// pour les circuits officiels (lazy-load de la trace). Si l'utilisateur lance
+// une création (bouton +) — ou un autre chargement — PENDANT ce fetch, la fin
+// de loadCircuitById se ré-exécutait APRÈS le reset et réimposait l'état du
+// circuit consulté (nom + POIs + activeCircuitId qui revenaient). Chaque
+// chargement prend un jeton ; on abandonne sa fin si un autre l'a supplanté.
+let pendingCircuitLoadSeq = 0;
+export function cancelPendingCircuitLoad() { pendingCircuitLoadSeq++; }
+
 export async function loadCircuitById(id) {
+    const loadToken = ++pendingCircuitLoadSeq;
     // Sanitization: Ensure ID is a string for strict equality checks
     id = String(id);
 
@@ -711,6 +721,11 @@ export async function loadCircuitById(id) {
             showToast("Erreur de chargement du tracé GPX (hors-ligne ?).", "error");
         }
     }
+
+    // Garde anti-course : si une création (ou un autre chargement) est survenue
+    // pendant le fetch GPX ci-dessus, on abandonne — sinon on écraserait l'état
+    // fraîchement réinitialisé avec le circuit consulté.
+    if (loadToken !== pendingCircuitLoadSeq) return;
 
     // 1. Nettoyage de l'ancien état (sans confirmation)
     await clearCircuit(false);
