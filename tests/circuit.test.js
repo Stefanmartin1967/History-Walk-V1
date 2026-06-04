@@ -234,9 +234,9 @@ describe('generateCircuitName', () => {
         expect(generateCircuitName()).toBe('Circuit de A à B');
     });
 
-    it('retourne "Circuit de A à B via M" pour 3+ POIs distincts', () => {
+    it('retourne "Circuit de A à B" pour 3+ POIs distincts (sans « via »)', () => {
         state.currentCircuit = [poi('p1', 'A'), poi('p2', 'M'), poi('p3', 'B')];
-        expect(generateCircuitName()).toBe('Circuit de A à B via M');
+        expect(generateCircuitName()).toBe('Circuit de A à B');
     });
 
     it('retourne "Boucle autour de X" si départ === arrivée et pas de milieu distinct', () => {
@@ -244,9 +244,9 @@ describe('generateCircuitName', () => {
         expect(generateCircuitName()).toBe('Boucle autour de A');
     });
 
-    it('retourne "Boucle autour de A via M" si départ === arrivée avec milieu différent', () => {
+    it('retourne "Boucle autour de A" si départ === arrivée (3+ POIs, sans « via »)', () => {
         state.currentCircuit = [poi('p1', 'A'), poi('p2', 'M'), poi('p1', 'A')];
-        expect(generateCircuitName()).toBe('Boucle autour de A via M');
+        expect(generateCircuitName()).toBe('Boucle autour de A');
     });
 
     it('retombe sur "Boucle autour de A" si milieu = départ', () => {
