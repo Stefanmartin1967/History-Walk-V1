@@ -236,7 +236,6 @@ export function renderMobileCircuitsList() {
         html += `<div class="mc-list">`;
         circuitsToDisplay.forEach(circuit => {
             const displayName = circuit.name
-                .split(' via ')[0]
                 .replace(/^(Circuit de |Boucle de )/i, '');
             const isDone = circuit._isCompleted;
             const isActive = state.activeCircuitId === circuit.id;

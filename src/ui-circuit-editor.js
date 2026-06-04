@@ -80,7 +80,7 @@ export async function generateCircuitQR() {
     }
 
     const circuitName = activeCircuit ? activeCircuit.name : generateCircuitName();
-    const displayTitle = circuitName.split(' via ')[0]; // TRONCATURE
+    const displayTitle = circuitName;
 
     // --- MODE PC: RATIONALISATION DU PARTAGE ---
     // Si c'est un officiel avec fichier GPX, on affiche le lien de téléchargement direct.
