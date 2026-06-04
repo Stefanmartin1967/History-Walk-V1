@@ -2952,7 +2952,10 @@
           10.8579108,
           33.8164536
         ],
-        "accessPointStatus": "osm"
+        "accessPointStatus": "osm",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Non visitable"
       }
     },
     {
