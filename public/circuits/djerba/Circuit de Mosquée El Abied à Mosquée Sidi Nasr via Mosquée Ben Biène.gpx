@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="History Walk 3.5.7" schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxpx="http://www.garmin.com/xmlschemas/PowerExtension/v1" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
+<gpx version="1.1" creator="Heripia 3.5.7" schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxpx="http://www.garmin.com/xmlschemas/PowerExtension/v1" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
   <metadata>
-    <name>Circuit de Mosquée El Abied à Mosquée Sidi Nasr via Mosquée Ben Biène</name>
-    <desc>Circuit généré par History Walk.</desc>
+    <name>Circuit de Mosquée El Abied à Mosquée Sidi Nasr</name>
+    <desc>Circuit généré par Heripia — heripia.com</desc>
     <author>
       <name>gpx.studio</name>
       <link href="https://gpx.studio"/>
     </author>
-    <link href="https://stefanmartin1967.github.io/history-walk/">
-      <text>History Walk [HW-ID:HW-01KJDS3E0D23NTEB3ATM02S8DZ]</text>
+    <link href="https://heripia.com/">
+      <text>Heripia [HW-ID:HW-01KJDS3E0D23NTEB3ATM02S8DZ]</text>
     </link>
   
-    <link href="https://stefanmartin1967.github.io/history-walk/">
-      <text>History Walk [HW-ID:HW-1772136688189]</text>
+    <link href="https://heripia.com/">
+      <text>Heripia [HW-ID:HW-1772136688189]</text>
     </link>
   </metadata>
   <wpt lat="33.818806" lon="10.827722">
@@ -28,10 +28,10 @@
     <name>Mosquée Sidi Nasr</name>
   </wpt>
   <trk>
-    <name>Circuit de Mosquée El Abied à Mosquée Sidi Nasr via Mosquée Ben Biène</name>
+    <name>Circuit de Mosquée El Abied à Mosquée Sidi Nasr</name>
     <desc>
 
-(Créé par History Walk)</desc>
+(Créé par Heripia)</desc>
     <trkseg>
       <trkpt lat="33.818748" lon="10.827758">
         <ele>12.25</ele>

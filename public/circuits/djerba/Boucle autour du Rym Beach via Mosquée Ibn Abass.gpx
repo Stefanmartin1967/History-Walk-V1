@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="History Walk 3.7.70" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Heripia 3.7.70" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
     <metadata>
-        <name>Boucle autour du Rym Beach via Mosquée Ibn Abass</name>
-        <desc>Circuit généré par History Walk.</desc>
-        <link href="https://stefanmartin1967.github.io/history-walk/">
-            <text>History Walk [HW-ID:HW-1771316521571]</text>
+        <name>Boucle autour du Rym Beach</name>
+        <desc>Circuit généré par Heripia — heripia.com</desc>
+        <link href="https://heripia.com/">
+            <text>Heripia [HW-ID:HW-1771316521571]</text>
         </link>
     </metadata>
     <wpt lat="33.826540531288295" lon="11.046173596441804">
@@ -27,7 +27,7 @@
     <wpt lat="33.819583" lon="11.025722">
       <name>Mosquée Ben Tanfouss</name>
       <desc></desc>
-    </wpt><trk><name>Boucle autour du Rym Beach via Mosquée Ibn Abass</name><desc><![CDATA[Circuit généré par History Walk.]]></desc><trkseg><trkpt lat="33.826714" lon="11.045855"><ele>0</ele></trkpt>
+    </wpt><trk><name>Boucle autour du Rym Beach</name><desc><![CDATA[Circuit généré par Heripia — heripia.com]]></desc><trkseg><trkpt lat="33.826714" lon="11.045855"><ele>0</ele></trkpt>
       <trkpt lat="33.82656" lon="11.046012"><ele>0</ele></trkpt>
       <trkpt lat="33.82652" lon="11.046044"><ele>0</ele></trkpt>
       <trkpt lat="33.826458" lon="11.046053"><ele>0</ele></trkpt>
