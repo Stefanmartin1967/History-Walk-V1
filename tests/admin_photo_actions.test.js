@@ -88,6 +88,7 @@ vi.mock('../src/photo-service.js', () => ({ uploadPhotoForPoi: vi.fn() }));
 vi.mock('../src/admin-diff-engine.js', () => ({
     reconcileLocalChanges: vi.fn(),
     prepareDiffData: vi.fn(() => Promise.resolve()),
+    purgeOrphanPendingCircuits: vi.fn(() => []),
     diffData: { pois: [], circuits: [], stats: { pendingPhotoCount: 0 }, pendingPhotos: {} }
 }));
 

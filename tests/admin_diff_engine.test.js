@@ -42,6 +42,7 @@ import {
     prepareDiffData,
     reconcileLocalChanges,
     purgeOrphanPendingPois,
+    purgeOrphanPendingCircuits,
     diffData
 } from '../src/admin-diff-engine.js';
 
@@ -967,6 +968,45 @@ describe('Admin Diff Engine', () => {
             expect(state.userData['poi_1']).toEqual({ vu: true });
             expect(savePoiData).toHaveBeenCalledWith('djerba', 'poi_1', { vu: true });
             expect(deletePoiData).not.toHaveBeenCalled();
+        });
+    });
+
+    // ========================================================================
+    // purgeOrphanPendingCircuits — auto-heal des pendingCircuits sans diff réel
+    // (bug observé 03/06/2026 : badge=1 / CC vide après publication d'un circuit).
+    // La fonction ne lit que diffData.circuits → testable en isolation.
+    // ========================================================================
+    describe('purgeOrphanPendingCircuits', () => {
+        it('purge un pendingCircuit sans diff réel (circuit déjà publié)', () => {
+            diffData.circuits = []; // prepareDiffData n'a vu aucune différence
+            const draft = { pendingPois: {}, pendingCircuits: { 'c1': { timestamp: 1 } } };
+            const purged = purgeOrphanPendingCircuits(draft);
+            expect(purged).toEqual(['c1']);
+            expect(draft.pendingCircuits).toEqual({});
+        });
+
+        it('garde un pendingCircuit qui a un vrai diff', () => {
+            diffData.circuits = [{ id: 'c1', name: 'X', changes: [{ key: 'Nom', old: 'A', new: 'B' }] }];
+            const draft = { pendingPois: {}, pendingCircuits: { 'c1': { timestamp: 1 }, 'c2': { timestamp: 2 } } };
+            const purged = purgeOrphanPendingCircuits(draft);
+            expect(purged).toEqual(['c2']);          // c2 orphelin → purgé
+            expect(draft.pendingCircuits['c1']).toBeDefined(); // c1 a un diff → gardé
+            expect(draft.pendingCircuits['c2']).toBeUndefined();
+        });
+
+        it('normalise les ids string/number (match via String)', () => {
+            diffData.circuits = [{ id: 123, name: 'X', changes: [{ key: 'Nom' }] }];
+            const draft = { pendingPois: {}, pendingCircuits: { '123': { timestamp: 1 } } };
+            const purged = purgeOrphanPendingCircuits(draft);
+            expect(purged).toEqual([]);
+            expect(draft.pendingCircuits['123']).toBeDefined();
+        });
+
+        it('tolère un brouillon vide / sans pendingCircuits', () => {
+            diffData.circuits = [];
+            expect(purgeOrphanPendingCircuits({ pendingPois: {}, pendingCircuits: {} })).toEqual([]);
+            expect(purgeOrphanPendingCircuits({})).toEqual([]);
+            expect(purgeOrphanPendingCircuits(null)).toEqual([]);
         });
     });
 });

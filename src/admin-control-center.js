@@ -12,7 +12,7 @@ import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos
 import { uploadPhotoForPoi } from './photo-service.js';
 
 // Nouveaux imports suite au découpage
-import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, diffData } from './admin-diff-engine.js';
+import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, purgeOrphanPendingCircuits, diffData } from './admin-diff-engine.js';
 import { openControlCenterModal, renderTab, closeCCModal } from './admin-control-ui.js';
 
 /**
@@ -126,11 +126,13 @@ async function saveDraftAwait(newDraft) {
 // purgeOrphanPendingPois pour la justification (bug observé 20/05/2026).
 async function prepareDiffAndPurge() {
     await prepareDiffData(adminDraft);
-    const purged = await purgeOrphanPendingPois(adminDraft);
-    if (purged.length > 0) {
+    const purgedPois = await purgeOrphanPendingPois(adminDraft);
+    const purgedCircuits = purgeOrphanPendingCircuits(adminDraft);
+    if (purgedPois.length > 0 || purgedCircuits.length > 0) {
         saveDraft(adminDraft);
         updateButtonBadge();
-        console.log('[CC] purged orphan pendingPois:', purged);
+        if (purgedPois.length > 0) console.log('[CC] purged orphan pendingPois:', purgedPois);
+        if (purgedCircuits.length > 0) console.log('[CC] purged orphan pendingCircuits:', purgedCircuits);
     }
 }
 
