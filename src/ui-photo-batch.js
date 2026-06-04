@@ -4,7 +4,7 @@
 // Les phases suivantes ajouteront la publication, le ZIP et le nouveau lieu.
 
 import Sortable from 'sortablejs';
-import { resizeImage, calculateDistance, openPoiOnMap, openCoordsOnMap, getPoiProp, isPoiMalCategorized } from './utils.js';
+import { resizeImage, calculateDistance, openPoiOnMap, openCoordsOnMap, getPoiProp, isPoiMalCategorized, sha256OfFile } from './utils.js';
 import { getPoiName, getPoiId } from './data.js';
 import { getSearchResults } from './search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -940,6 +940,17 @@ function buildCompareCell(cluster, i) {
         hide.addEventListener('click', (e) => { e.stopPropagation(); removeFromComparison(i, 'hide'); });
         acts.appendChild(hide);
     }
+    // Rogner : recadrage libre (remplace la copie de travail, original disque intact).
+    if (photo) {
+        const crop = document.createElement('button');
+        crop.className = 'pb-compare-btn';
+        crop.type = 'button';
+        crop.title = 'Rogner cette photo';
+        crop.setAttribute('aria-label', 'Rogner');
+        crop.innerHTML = '<i data-lucide="crop"></i>';
+        crop.addEventListener('click', (e) => { e.stopPropagation(); openCropPhoto(photo.id); });
+        acts.appendChild(crop);
+    }
     // Détacher : vers « Hors POI » depuis un groupe POI ; OU scinder un groupe
     // « Hors POI » en un nouveau groupe Hors POI (≥ 2 photos requises, sinon
     // no-op) → permet d'avoir plusieurs groupes Hors POI consécutifs (#3).
@@ -1221,6 +1232,106 @@ function extractToOutPoi(photoId) {
 
     renderBody();
     updateHeaderCounts();
+}
+
+// Rognage d'une photo (recadrage libre via cropperjs). La version rognée
+// REMPLACE la copie de travail (fichier + aperçu + hash) ; le fichier original
+// sur le disque de l'utilisateur n'est pas touché, et le GPS est déjà lu à
+// l'import (stocké sur la photo) donc préservé. Disponible en grille ET en
+// Comparer. cropperjs (JS + CSS) est importé DYNAMIQUEMENT → aucun surpoids de
+// bundle si on ne rogne jamais. La modale photo-batch est suspendue le temps du
+// rognage (anti-empilement V2, cf. handleCreatePoi).
+async function openCropPhoto(photoId) {
+    const loc = findPhotoLocation(photoId);
+    if (!loc) return;
+    const photo = loc.cluster.photos.find(p => p.id === photoId);
+    if (!photo || !photo.file) {
+        showToast("Cette photo n'est pas disponible pour le rognage.", 'error');
+        return;
+    }
+
+    let Cropper;
+    try {
+        const [mod] = await Promise.all([
+            import('cropperjs'),
+            import('cropperjs/dist/cropper.css'),
+        ]);
+        Cropper = mod.default;
+    } catch (e) {
+        console.error('[photo-batch] chargement cropperjs', e);
+        showToast("Impossible de charger l'outil de rognage.", 'error');
+        return;
+    }
+
+    const objectUrl = URL.createObjectURL(photo.file);
+    const bodyEl = document.createElement('div');
+    bodyEl.className = 'pb-crop-wrap';
+    const img = document.createElement('img');
+    img.id = 'pb-crop-img';
+    img.src = objectUrl;
+    img.alt = '';
+    bodyEl.appendChild(img);
+
+    const footer = `
+        <button class="btn btn-ghost" data-hw-modal-action="close" type="button">Annuler</button>
+        <button class="btn btn-primary" id="pb-crop-apply" type="button"><i data-lucide="crop"></i><span>Rogner</span></button>
+    `;
+
+    let cropper = null;
+    let resultBlob = null;
+
+    suspendHwModal();
+    const closed = openHwModal({
+        size: 'xl',
+        icon: 'crop',
+        title: 'Rogner la photo',
+        body: bodyEl,
+        footer,
+        closeOnBackdrop: false,
+    });
+
+    // Init du cropper + câblage « Valider » après injection du DOM de la modale.
+    setTimeout(() => {
+        const imgEl = document.getElementById('pb-crop-img');
+        if (!imgEl) return;
+        cropper = new Cropper(imgEl, {
+            viewMode: 1,
+            autoCropArea: 1,
+            background: false,
+            movable: false,
+            zoomable: false,
+            zoomOnWheel: false,
+            rotatable: false,
+            scalable: false,
+        });
+        const applyBtn = document.getElementById('pb-crop-apply');
+        if (applyBtn) applyBtn.addEventListener('click', () => {
+            const canvas = cropper.getCroppedCanvas({ maxWidth: 4096, maxHeight: 4096, imageSmoothingQuality: 'high' });
+            if (!canvas) { closeHwModal(); return; }
+            canvas.toBlob((blob) => { resultBlob = blob; closeHwModal(); }, 'image/jpeg', 0.92);
+        });
+    }, 50);
+
+    await closed;
+
+    if (cropper) cropper.destroy();
+    URL.revokeObjectURL(objectUrl);
+    resumeHwModal();
+
+    if (!resultBlob) return; // annulé
+
+    // Remplace la copie de travail (l'original disque reste intact).
+    const name = (photo.file && photo.file.name) || 'photo.jpg';
+    const cropped = new File([resultBlob], name, { type: 'image/jpeg' });
+    photo.file = cropped;
+    photo.cropped = true;
+    try { photo.base64 = await resizeImage(cropped, 320); }
+    catch (e) { console.error('[photo-batch] aperçu post-rognage', e); }
+    try { photo.srcHash = await sha256OfFile(cropped); }
+    catch (e) { /* dédup best-effort */ }
+
+    renderBody();
+    showToast('Photo rognée.', 'success');
 }
 
 // --- ENREGISTREMENT ---
@@ -2105,6 +2216,18 @@ function buildPhotoCard(item, cluster) {
         });
         acts.appendChild(extractBtn);
     }
+    const cropBtn = document.createElement('button');
+    cropBtn.className = 'pb-thumb-btn';
+    cropBtn.type = 'button';
+    cropBtn.title = 'Rogner cette photo';
+    cropBtn.setAttribute('aria-label', 'Rogner');
+    cropBtn.innerHTML = '<i data-lucide="crop"></i>';
+    cropBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openCropPhoto(item.id);
+    });
+    acts.appendChild(cropBtn);
+
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'pb-thumb-btn is-danger';
     deleteBtn.type = 'button';

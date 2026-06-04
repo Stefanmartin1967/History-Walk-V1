@@ -70,6 +70,9 @@ import {
     // Catégorisation au batch (modale import photo, 01/06/2026)
     Tags,
 
+    // Rognage photo (modale import, 03/06/2026)
+    Crop,
+
 } from 'lucide';
 
 export { createIcons };
@@ -120,4 +123,6 @@ export const appIcons = {
     Flag,
 
     Tags,
+
+    Crop,
 };
