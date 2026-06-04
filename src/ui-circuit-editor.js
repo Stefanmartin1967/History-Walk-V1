@@ -2,8 +2,8 @@ import { state, updateMyCircuit, setCustomDraftName } from './state.js';
 import { DOM } from './ui-dom.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { applyFilters } from './data.js';
-import { saveAndExportCircuit } from './circuit-actions.js';
 import { saveCircuit } from './database.js';
+import { generateAndDownloadGPX } from './gpx.js';
 import { isMobileView } from './mobile-state.js';
 import { showToast } from './toast.js';
 import { showConfirm, openHwModal } from './modal.js';
@@ -167,9 +167,29 @@ export function setupCircuitEventListeners() {
         btnShare.addEventListener('click', generateCircuitQR);
     }
 
-    // 1. Bouton EXPORTER GPX
-    eventBus.on('request-export-gpx', () => {
-        saveAndExportCircuit();
+    // 1. Bouton EXPORTER GPX — téléchargement explicite du circuit courant
+    // (tracé réel BRouter si présent, sinon vol d'oiseau). La SAUVEGARDE, elle,
+    // se fait via « Tracer l'itinéraire » (modèle routing in-app, 04/06/2026).
+    eventBus.on('request-export-gpx', async () => {
+        if (state.currentCircuit.length === 0) {
+            showToast('Aucun lieu à exporter.', 'warning');
+            return;
+        }
+        const active = state.myCircuits.find(c => c.id === state.activeCircuitId);
+        const name = (DOM.circuitTitleText && DOM.circuitTitleText.textContent.trim())
+            || generateCircuitName();
+        try {
+            await generateAndDownloadGPX(
+                state.currentCircuit,
+                state.activeCircuitId || name,
+                name,
+                '',
+                active ? active.realTrack : null
+            );
+        } catch (e) {
+            console.error('[circuit-editor] export GPX failed', e);
+            showToast("Erreur lors de l'export GPX.", 'error');
+        }
     });
 
     // 2. Bouton IMPORTER GPX
