@@ -94,7 +94,7 @@ export const HELP_COMPARE = {
         <ul class="help-list">
             <li>cliquez sur une vignette de la pellicule pour l'afficher ; glissez pour
                 réordonner ;</li>
-            <li>pour une photo : <strong>Masquer</strong> (œil) ·
+            <li>pour une photo : <strong>Masquer</strong> (œil) · <strong>Rogner</strong> ·
                 <strong>Détacher / Séparer</strong> · <strong>Supprimer</strong> ;</li>
             <li>en bas, les boutons agissent <strong>sur ce groupe</strong> : Fermer la
                 comparaison · Télécharger ce groupe · Enregistrer ce lieu.</li>
@@ -169,7 +169,11 @@ export const GUIDE_IMPORT = {
                 <p>Pour une photo : <strong>Extraire vers Hors POI</strong>
                 <span class="help-muted">(icône route)</span> — ou, dans un groupe Hors POI,
                 <strong>Séparer</strong> <span class="help-muted">(icône split)</span> ·
-                <strong>Supprimer</strong>.</p>`,
+                <strong>Supprimer</strong>.</p>
+                <p><strong>Rogner</strong> <span class="help-muted">(icône recadrage)</span> :
+                recadrer une photo pour couper un bord gênant ; la version rognée remplace
+                l'originale dans Heripia. <span class="help-muted">Votre fichier d'origine sur le
+                disque n'est pas modifié, et la position (GPS) est conservée.</span></p>`,
         },
         {
             heading: '4 · Comparer (tri fin)',
@@ -178,7 +182,7 @@ export const GUIDE_IMPORT = {
                 <ul class="help-list">
                     <li>la <strong>pellicule</strong> (en bas) montre toutes les photos :
                         cliquez sur une vignette pour l'afficher · glissez pour réordonner ;</li>
-                    <li>pour une photo : <strong>Masquer</strong> (œil) ·
+                    <li>pour une photo : <strong>Masquer</strong> (œil) · <strong>Rogner</strong> ·
                         <strong>Détacher / Séparer</strong> · <strong>Supprimer</strong> ;</li>
                     <li>en bas, les boutons agissent <strong>sur ce groupe</strong> : Fermer
                         la comparaison · Télécharger ce groupe · Enregistrer ce lieu.</li>
