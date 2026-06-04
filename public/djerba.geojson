@@ -891,7 +891,15 @@
         "Zone": "Mazraia",
         "Source": "https://lapresse.tn/2025/08/26/restauree-apres-des-siecles-la-mosquee-al-maazouzine-retrouve-son-eclat-a-djerba/",
         "HW_ID": "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563624639.jpg",
+          "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563626705.jpg",
+          "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563628720.jpg",
+          "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563630850.jpg",
+          "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563632454.jpg",
+          "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563634489.jpg",
+          "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563636230.jpg"
+        ],
         "description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
         "accessPointStatus": "on-track",
@@ -971,7 +979,16 @@
         "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Ruine",
-        "Accès": "Intérieur visitable"
+        "Accès": "Intérieur visitable",
+        "photos": [
+          "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563638082.jpg",
+          "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563639836.jpg",
+          "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563641896.jpg",
+          "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563643931.jpg",
+          "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563646211.jpg",
+          "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563648261.jpg",
+          "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563650075.jpg"
+        ]
       }
     },
     {
@@ -1023,7 +1040,15 @@
         "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Extérieur seulement"
+        "Accès": "Extérieur seulement",
+        "photos": [
+          "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563703603.jpg",
+          "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563705415.jpg",
+          "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563707309.jpg",
+          "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563709031.jpg",
+          "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563710742.jpg",
+          "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563712485.jpg"
+        ]
       }
     },
     {
@@ -1143,7 +1168,13 @@
         "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Ruine",
-        "Accès": "Intérieur visitable"
+        "Accès": "Intérieur visitable",
+        "photos": [
+          "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563652127.jpg",
+          "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563653961.jpg",
+          "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563655921.jpg",
+          "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563658090.jpg"
+        ]
       }
     },
     {
@@ -1169,7 +1200,15 @@
         "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "En activité",
-        "Accès": "Extérieur seulement"
+        "Accès": "Extérieur seulement",
+        "photos": [
+          "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563691455.jpg",
+          "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563693514.jpg",
+          "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563695641.jpg",
+          "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563697632.jpg",
+          "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563699516.jpg",
+          "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563701545.jpg"
+        ]
       }
     },
     {
@@ -1259,7 +1298,16 @@
         "accessPointStatus": "on-track",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
-        "Accès": "Intérieur visitable"
+        "Accès": "Intérieur visitable",
+        "photos": [
+          "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563660612.jpg",
+          "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563662542.jpg",
+          "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563664666.jpg",
+          "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563666264.jpg",
+          "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563669095.jpg",
+          "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563671128.jpg",
+          "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563673468.jpg"
+        ]
       }
     },
     {
@@ -1333,7 +1381,17 @@
         "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
-        "Accès": "Intérieur visitable"
+        "Accès": "Intérieur visitable",
+        "photos": [
+          "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563675856.jpg",
+          "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563677648.jpg",
+          "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563679444.jpg",
+          "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563681743.jpg",
+          "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563683833.jpg",
+          "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563685770.jpg",
+          "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563687391.jpg",
+          "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563689214.jpg"
+        ]
       }
     },
     {
