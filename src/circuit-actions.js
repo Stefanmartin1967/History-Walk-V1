@@ -8,7 +8,6 @@ import { isMobileView } from './mobile-state.js';
 import { showConfirm } from './modal.js';
 import { showToast } from './toast.js';
 import { generateHWID } from './utils.js';
-import { generateAndDownloadGPX } from './gpx.js';
 import { DOM } from './ui-dom.js';
 import { getStoredToken } from './github-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
@@ -205,7 +204,12 @@ export function getZonesData() {
 // volée par computePlanifieCounter() (data.js), évitant les bugs de désynchronisation
 // (cf. mémoire project_planifie_counter_definition.md).
 
-export async function saveAndExportCircuit() {
+// Sauvegarde le circuit courant (brouillon → « Mes Circuits »). Depuis le
+// chantier routing in-app (04/06/2026), elle NE télécharge plus de GPX
+// automatiquement (l'export est explicite) et accepte un `realTrack` calculé
+// par BRouter. `stayInCreation` : appelée par « Tracer » → on reste en mode
+// création pour ajuster/re-tracer (sinon on repasse en consultation).
+export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false } = {}) {
     if (state.currentCircuit.length === 0) return;
 
     // 1. Détermination du nom : Priorité à l'interface (User) sur la génération auto
@@ -274,6 +278,11 @@ export async function saveAndExportCircuit() {
         setActiveCircuitId(newId);
     }
 
+    // Tracé réel calculé par BRouter (routing in-app) : pose / écrase le
+    // realTrack du circuit (création comme édition). Sans argument, on garde
+    // l'état existant (réimport GPX, ou brouillon vol d'oiseau).
+    if (realTrack && realTrack.length > 0) circuitToSave.realTrack = realTrack;
+
     // B1 — Vérification anti-doublon à la source (admin uniquement, skip silencieux
     // si pas de token / offline). Mieux qu'une détection post-hoc dans Nettoyage :
     // l'admin est alerté AVANT de polluer le repo.
@@ -309,27 +318,26 @@ export async function saveAndExportCircuit() {
 
         setHasUnexportedChanges(true); // FLAG CHANGEMENT
 
-        // Fix UX (signalé par Stefan post #716) : après save d'un circuit
-        // (création OU édition), on REPASSE en mode consultation pour que
-        // le panneau affiche le bouton « Éditer » (crayon, data-show=
-        // consult-perso). Sans ça, le circuit reste en mode create après
-        // save → bouton crayon invisible → l'admin doit retourner sur
-        // « Mes Circuits » + rouvrir le circuit pour pouvoir l'éditer.
-        // Sécurité : on désactive aussi editingMode (fin de session édition).
-        setCircuitCreationMode(false);
-        setEditingMode(false);
-        // Re-render le panneau circuit pour que data-mode passe en 'consult'
-        // (sinon le DOM garde 'create' jusqu'au prochain reload du circuit).
-        try {
-            const { applyCircuitMode } = await import('./circuit-view.js');
-            applyCircuitMode();
-        } catch (e) {
-            console.error('[circuit-actions] applyCircuitMode failed after save:', e);
+        // Fix UX (post #716) : après une sauvegarde CLASSIQUE, on repasse en
+        // consultation pour afficher le bouton « Éditer ». MAIS en mode
+        // « Tracer » (stayInCreation), on RESTE en création pour permettre
+        // d'ajuster / re-tracer l'itinéraire juste après.
+        if (!stayInCreation) {
+            setCircuitCreationMode(false);
+            setEditingMode(false);
+            // Re-render le panneau pour que data-mode passe en 'consult'.
+            try {
+                const { applyCircuitMode } = await import('./circuit-view.js');
+                applyCircuitMode();
+            } catch (e) {
+                console.error('[circuit-actions] applyCircuitMode failed after save:', e);
+            }
         }
 
         // Compteur planifié calculé à la volée → applyFilters suffit pour rafraîchir
         applyFilters();
-        await generateAndDownloadGPX(state.currentCircuit, circuitToSave.id, circuitToSave.name, circuitToSave.description, circuitToSave.realTrack);
+        // Plus de téléchargement GPX automatique (modèle routing in-app, validé
+        // 04/06/2026) : l'export GPX est désormais une action explicite.
         showToast(`Circuit "${circuitToSave.name}" sauvegardé !`, 'success');
         // [USER] Compte la création/modif du circuit pour l'auto-backup local.
         void recordModification();

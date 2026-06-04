@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.google.com https://*.basemaps.cartocdn.com https://raw.githubusercontent.com https://stefanmartin1967.github.io; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.tile.openstreetmap.org https://*.google.com https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://overpass.private.coffee; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self'; img-src 'self' data: blob: https://*.tile.openstreetmap.org https://*.google.com https://*.basemaps.cartocdn.com https://raw.githubusercontent.com https://stefanmartin1967.github.io; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://*.tile.openstreetmap.org https://*.google.com https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://overpass.private.coffee https://brouter.de; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="robots" content="noindex, nofollow">
     <title>Heripia — le patrimoine culturel à explorer à pied</title>
@@ -331,6 +331,9 @@
                         </div>
                     </div>
 
+                    <!-- 4bis. BLOC TRACÉ (routing in-app BRouter, rendu par ui-circuit-routing.js) -->
+                    <div class="trace-block" id="circuit-trace-block" data-show="create"></div>
+
                     <!-- 5. TOP BAR ACTIONS -->
                     <div class="circuit-actions" id="circuit-actions">
                         <!-- Boucler (création) -->
@@ -340,7 +343,7 @@
                         <!-- GPX Studio (création) -->
                         <a class="cp-act" id="btn-open-gpx-studio" href="https://gpx.studio/fr/app" target="_blank" rel="noopener" title="Ouvrir GPX Studio" data-show="create"><i data-lucide="external-link"></i></a>
                         <!-- Sauver + Exporter GPX (création) -->
-                        <button class="cp-act" id="btn-export-gpx" title="Sauver + exporter GPX" data-show="create"><i data-lucide="download"></i></button>
+                        <button class="cp-act" id="btn-export-gpx" title="Exporter le GPX" data-show="create"><i data-lucide="download"></i></button>
                         <!-- Partager (consultation) -->
                         <button class="cp-act" id="btn-share-circuit" title="Partager" data-show="consult"><i data-lucide="share-2"></i></button>
                         <!-- Télécharger GPX (consultation) -->

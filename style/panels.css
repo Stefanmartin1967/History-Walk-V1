@@ -2964,6 +2964,71 @@
     flex-shrink: 0;
 }
 
+/* ----------- 4bis. BLOC TRACÉ (routing in-app BRouter) -----------
+   Rendu par ui-circuit-routing.js dans #circuit-trace-block. Réutilise les
+   tokens sémantiques (handoff Claude Design 04/06/2026). */
+.trace-block { padding: 14px 20px 4px; }
+
+/* CTA primaire « Tracer l'itinéraire » */
+.btn-trace {
+    width: 100%; border: 0; cursor: pointer;
+    height: 50px; border-radius: var(--radius-md);
+    background: var(--cta-bg); color: var(--cta-fg);
+    font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 8px 18px -8px color-mix(in oklab, var(--cta-bg) 70%, transparent);
+    transition: filter 0.15s, transform 0.12s;
+}
+.btn-trace:hover { filter: brightness(0.95); }
+.btn-trace:active { transform: translateY(1px); }
+.btn-trace svg { width: 19px; height: 19px; }
+.btn-trace:disabled { opacity: 0.7; cursor: progress; }
+.btn-trace .spin {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2.5px solid rgba(255, 255, 255, 0.35); border-top-color: #fff;
+    animation: brouterSpin 0.7s linear infinite;
+}
+@keyframes brouterSpin { to { transform: rotate(360deg); } }
+.trace-hint {
+    margin: 8px 2px 0; font-size: 12px; line-height: 1.45; color: var(--ink-soft);
+    display: flex; gap: 7px; align-items: flex-start;
+}
+.trace-hint svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* Carte d'état du tracé (après calcul) */
+.trace-status {
+    border: 1px solid var(--line); border-radius: var(--radius-md);
+    background: var(--surface); overflow: hidden; box-shadow: var(--shadow-card);
+}
+.trace-status-head { display: flex; align-items: center; gap: 11px; padding: 13px 14px; }
+.trace-status-ico {
+    width: 38px; height: 38px; border-radius: var(--radius-md);
+    display: grid; place-items: center; flex-shrink: 0;
+    background: color-mix(in oklab, var(--brand) 12%, var(--surface)); color: var(--brand-2);
+}
+.trace-status-ico svg { width: 20px; height: 20px; }
+.trace-status-txt { flex: 1; min-width: 0; }
+.trace-status-txt h4 {
+    margin: 0; font-size: 14px; font-weight: 700; color: var(--ink);
+    display: flex; align-items: center; gap: 7px;
+}
+.trace-status-txt p { margin: 3px 0 0; font-size: 12px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.trace-pill {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.02em;
+    padding: 2px 8px; border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--brand) 14%, var(--surface)); color: var(--brand-2);
+}
+.trace-status-actions { display: flex; gap: 8px; padding: 0 14px 13px; }
+.btn-retrace {
+    flex: 1; border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft);
+    height: 38px; border-radius: var(--radius-md); cursor: pointer;
+    font-size: 13px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    transition: background 0.15s, color 0.15s;
+}
+.btn-retrace:hover { background: var(--surface-muted); color: var(--ink); }
+.btn-retrace svg { width: 15px; height: 15px; }
+
 /* ----------- 5. TOP BAR ACTIONS ----------- */
 .circuit-actions {
     position: sticky;

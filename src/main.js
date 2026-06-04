@@ -35,6 +35,7 @@ import { initInstallBanner } from './install-pwa-banner.js';
 import { initUiModalsListeners } from './ui-modals.js';
 import { initCircuitListeners, loadCircuitFromIds } from './circuit.js';
 import { initCircuitPageEvents } from './ui-circuit-page-events.js';
+import { initCircuitRoutingUI } from './ui-circuit-routing.js';
 import { initUiDetailsListeners } from './ui-details.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
@@ -132,6 +133,7 @@ async function initializeApp() {
     // 3. Tour de contrôle et événements (AVANT le chargement de la carte pour s'assurer que data:filtered est capté)
     setupEventBusListeners();
     setupCircuitEventListeners();
+    initCircuitRoutingUI();
     setupFilterPanel();
     setupTopbarV2();
     document.getElementById('btn-legal-notice')?.addEventListener('click', () => {
