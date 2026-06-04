@@ -3129,9 +3129,12 @@
     text-decoration: none;
     color: inherit;
 }
-/* Création : handle + num + body + actions */
+/* Création : handle + num + body. Les actions sont SUPERPOSÉES (position absolue),
+   donc pas de colonne dédiée : sinon la colonne `auto` réservait ~80px en
+   permanence alors que les boutons sont invisibles hors survol → le nom était
+   comprimé sur 3 lignes inutilement. */
 #circuit-panel[data-mode="create"] .timeline-step {
-    grid-template-columns: 18px 32px 1fr auto;
+    grid-template-columns: 18px 32px 1fr;
     gap: 10px;
     align-items: center;
     padding: 10px 12px;
@@ -3241,12 +3244,22 @@
 
 /* Actions par étape (création) */
 .step-actions {
+    /* Superposées en haut-droite (création) : n'occupent aucune largeur en flux
+       → le nom de l'étape garde toute la place (comme en consultation).
+       Apparaissent au survol, sur un fond pour rester lisibles par-dessus le nom. */
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
     gap: 1px;
+    padding: 2px;
+    border-radius: 9px;
+    background: var(--surface-muted);
+    box-shadow: 0 1px 4px rgba(20, 42, 67, 0.12);
     opacity: 0;
     transition: opacity 0.15s;
-    flex-shrink: 0;
 }
 .timeline-step:hover .step-actions { opacity: 1; }
 .step-actions .sa-btn {
