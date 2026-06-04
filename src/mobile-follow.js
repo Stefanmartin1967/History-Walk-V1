@@ -86,7 +86,7 @@ function getFitPoints(circuit) {
 function buildOverlay(circuit) {
     const container = map.getContainer();
 
-    const title = (circuit.name || 'Circuit').split(' via ')[0]
+    const title = (circuit.name || 'Circuit')
         .replace(/^(Circuit de |Boucle de |Boucle autour du )/i, '');
 
     // Zone du point de départ du tracé (eyebrow « SUIVI · HOUMT SOUK »).

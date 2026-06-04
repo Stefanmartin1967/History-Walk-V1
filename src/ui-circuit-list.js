@@ -694,7 +694,7 @@ function pickEmptyHint() {
 }
 
 function createCircuitCard(c) {
-    let displayName = (c.name || '').split(' via ')[0];
+    let displayName = (c.name || '');
     displayName = displayName.replace(/^(Circuit de |Boucle de )/i, '');
 
     const isCompleted = c._isCompleted;

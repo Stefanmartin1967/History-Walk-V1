@@ -205,7 +205,7 @@ function renderCircuitView(container, listToDisplay) {
         return;
     }
 
-    const title = (circuit.name || '').split(' via ')[0].replace(/^(Circuit de |Boucle de )/i, '');
+    const title = (circuit.name || '').replace(/^(Circuit de |Boucle de )/i, '');
     const fullName = circuit.name || 'Circuit';
     const description = circuit.description || 'Circuit généré par Heripia — heripia.com';
     const isCompleted = isCircuitCompleted(circuit);
