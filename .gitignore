@@ -4,3 +4,6 @@ dist
 .claude/
 *.log
 test-results/
+
+# Captures/vidéos locales (hors app)
+GPX studio/
