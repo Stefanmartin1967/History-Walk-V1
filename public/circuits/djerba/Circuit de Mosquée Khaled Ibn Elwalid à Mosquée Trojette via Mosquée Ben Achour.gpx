@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="History Walk 3.5.7" schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxpx="http://www.garmin.com/xmlschemas/PowerExtension/v1" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
+<gpx version="1.1" creator="Heripia 3.5.7" schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd http://www.garmin.com/xmlschemas/PowerExtension/v1 http://www.garmin.com/xmlschemas/PowerExtensionv1.xsd http://www.topografix.com/GPX/gpx_style/0/2 http://www.topografix.com/GPX/gpx_style/0/2/gpx_style.xsd" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxpx="http://www.garmin.com/xmlschemas/PowerExtension/v1" xmlns:gpx_style="http://www.topografix.com/GPX/gpx_style/0/2">
   <metadata>
-    <name>Circuit de Mosquée Khaled Ibn Elwalid à Mosquée Trojette via Mosquée Ben Achour</name>
-    <desc>Circuit généré par History Walk.</desc>
+    <name>Circuit de Mosquée Khaled Ibn Elwalid à Mosquée Trojette</name>
+    <desc>Circuit généré par Heripia — heripia.com</desc>
     <author>
       <name>gpx.studio</name>
       <link href="https://gpx.studio"/>
     </author>
-    <link href="https://stefanmartin1967.github.io/history-walk/">
-      <text>History Walk [HW-ID:HW-01KJDVBC1BAE500WVSY9WJ7E3K]</text>
+    <link href="https://heripia.com/">
+      <text>Heripia [HW-ID:HW-01KJDVBC1BAE500WVSY9WJ7E3K]</text>
     </link>
   
-    <link href="https://stefanmartin1967.github.io/history-walk/">
-      <text>History Walk [HW-ID:HW-1772139072899]</text>
+    <link href="https://heripia.com/">
+      <text>Heripia [HW-ID:HW-1772139072899]</text>
     </link>
   </metadata>
   <wpt lat="33.79811118269014" lon="11.028802710036706">
@@ -34,10 +34,10 @@
     <name>Mosquée Trojette</name>
   </wpt>
   <trk>
-    <name>Circuit de Mosquée Khaled Ibn Elwalid à Mosquée Trojette via Mosquée Ben Achour</name>
+    <name>Circuit de Mosquée Khaled Ibn Elwalid à Mosquée Trojette</name>
     <desc>
 
-(Créé par History Walk)</desc>
+(Créé par Heripia)</desc>
     <trkseg>
       <trkpt lat="33.798148" lon="11.028783">
         <ele>14.5</ele>
