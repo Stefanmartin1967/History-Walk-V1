@@ -175,6 +175,17 @@
     fill: none !important;
 }
 
+/* Calque de référence (PR3) — trace GPX importée, guide visuel en fond.
+   Pointillé gris FIN, distinct du vol d'oiseau (rouge) et du segment en échec
+   (gris tirets larges). N'entre pas dans le tracé. */
+.route-reference-layer {
+    stroke: var(--ink-soft) !important;
+    stroke-width: 3px !important;
+    stroke-dasharray: 2 7 !important;
+    opacity: 0.55 !important;
+    fill: none !important;
+}
+
 /* Migration V2 : la modale "Carnet de Voyage" (statistics.js) utilise
    désormais openHwModal({ size: 'md' }) — la classe .gamification-modal
    et son override max-width n'ont plus d'utilité. */
@@ -3088,6 +3099,30 @@
 }
 .fail-note .fn-link svg { width: 13px; height: 13px; }
 .fail-note .fn-link.muted { color: var(--ink-soft); }
+
+/* Calque de référence (chip) — un GPX guide (Wikiloc…) chargé en fond (PR3) */
+.layer-chip {
+    margin: 10px 0 2px; display: flex; align-items: center; gap: 9px;
+    padding: 9px 12px; border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--ink) 4%, var(--surface));
+    border: 1px dashed var(--line); font-size: 12.5px;
+}
+.layer-chip .lc-dot {
+    width: 22px; height: 4px; border-radius: 2px; flex-shrink: 0;
+    background: repeating-linear-gradient(90deg, var(--ink-soft) 0 4px, transparent 4px 8px);
+    opacity: 0.7;
+}
+.layer-chip .lc-txt { flex: 1; min-width: 0; color: var(--ink); font-weight: 600; }
+.layer-chip .lc-txt small {
+    display: block; font-weight: 500; color: var(--ink-soft); font-size: 11px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.layer-chip .lc-remove {
+    border: 0; background: transparent; color: var(--ink-soft); cursor: pointer; flex-shrink: 0;
+    width: 26px; height: 26px; border-radius: var(--radius-sm); display: grid; place-items: center;
+}
+.layer-chip .lc-remove:hover { background: var(--surface-muted); color: var(--danger-fg); }
+.layer-chip .lc-remove svg { width: 15px; height: 15px; }
 
 /* ----------- 5. TOP BAR ACTIONS ----------- */
 .circuit-actions {

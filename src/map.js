@@ -412,6 +412,33 @@ export function updatePolylines() {
     }
 }
 
+// --- CALQUE DE RÉFÉRENCE (PR3) ---
+// Trace importée (Wikiloc…) affichée en fond comme GUIDE VISUEL. N'entre PAS
+// dans le tracé du circuit (purement décoratif, en session). Pointillé gris
+// (.route-reference-layer), non interactif, sous les marqueurs.
+let referenceLayerPolyline = null;
+
+export function drawReferenceLayer(latlngs) {
+    clearReferenceLayer();
+    if (!Array.isArray(latlngs) || latlngs.length < 2 || !map) return;
+    referenceLayerPolyline = L.polyline(latlngs, {
+        className: 'route-reference-layer',
+        interactive: false,
+        renderer: svgRenderer,
+    }).addTo(map);
+}
+
+export function clearReferenceLayer() {
+    if (referenceLayerPolyline) { referenceLayerPolyline.remove(); referenceLayerPolyline = null; }
+}
+
+// Cadre la carte sur le calque (après import) pour qu'on le voie tout de suite.
+export function fitReferenceLayer() {
+    if (referenceLayerPolyline && map) {
+        map.fitBounds(referenceLayerPolyline.getBounds(), { padding: [50, 50] });
+    }
+}
+
 // --- LE PEINTRE DE POINTS (Reçoit les données déjà filtrées) ---
 export function refreshMapMarkers(visibleFeatures) {
     if (!map) return;
