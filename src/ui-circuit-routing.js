@@ -25,6 +25,12 @@ import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { configureHelp, helpInline } from './help-popover.js';
+import { HELP_TRACER, HELP_CALQUE, HELP_STALE, HELP_WAYPOINT } from './help-content.js';
+
+// Aide « ? » inline du bloc tracé : le patron rend l'icône via createIcons
+// (idempotent — déjà configuré par ui-circuit-list / ui-photo-batch).
+configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
 
 const BLOCK_ID = 'circuit-trace-block';
 let tracing = false; // calcul BRouter en cours (évite les doubles clics)
@@ -86,6 +92,7 @@ export function updateTraceBlock() {
         el.innerHTML = chip; // 0-1 POI : juste le calque s'il est chargé
     }
     createIcons({ icons: appIcons, root: el });
+    attachTraceHelp(el);
     updateRefButton();
 }
 
@@ -97,6 +104,24 @@ function updateRefButton() {
     btn.title = hasReferenceLayer()
         ? `Calque : ${referenceLayerName()}${isReferenceVisible() ? '' : ' (masqué)'}`
         : 'Calque de référence (guide Wikiloc…)';
+}
+
+// Pose les « ? » contextuels du bloc tracé selon l'état rendu : chaque ancre
+// n'apparaît que si son élément est présent. Ré-appelé à chaque updateTraceBlock
+// (le bloc est re-rendu par innerHTML → les boutons sont recréés à chaque fois).
+function attachTraceHelp(el) {
+    const hint = el.querySelector('.trace-hint');
+    if (hint) hint.appendChild(helpInline(HELP_TRACER, { size: 'sm' }));
+
+    const stalePill = [...el.querySelectorAll('.trace-pill')]
+        .find(p => /séquence modifiée/i.test(p.textContent || ''));
+    if (stalePill) stalePill.insertAdjacentElement('afterend', helpInline(HELP_STALE, { size: 'sm' }));
+
+    const failH5 = el.querySelector('.fail-note h5');
+    if (failH5) failH5.appendChild(helpInline(HELP_WAYPOINT, { size: 'sm' }));
+
+    const lcTxt = el.querySelector('.layer-chip .lc-txt');
+    if (lcTxt) lcTxt.appendChild(helpInline(HELP_CALQUE, { size: 'sm' }));
 }
 
 // Menu « Plus » (⋮) — items = [{act,icon,t,d} | {sep:true}].
