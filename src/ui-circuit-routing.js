@@ -1,21 +1,28 @@
 // ui-circuit-routing.js — UI du routing in-app (BRouter) dans le panneau circuit.
 //
 // Rend le « bloc tracé » (#circuit-trace-block) selon l'état du circuit en
-// création/édition :
-//   • < 2 POIs           → rien
-//   • ≥ 2 POIs, pas tracé → CTA primaire « Tracer l'itinéraire »
-//   • tracé réel présent  → carte d'état + « Re-tracer l'itinéraire »
+// création/édition. UN seul bouton d'itinéraire contextuel (fusion validée
+// 05/06/2026) :
+//   • < 2 POIs            → rien
+//   • ≥ 2 POIs, pas tracé → CTA « Tracer l'itinéraire » (auto-route BRouter)
+//   • tracé réel présent  → carte d'état + « Éditer l'itinéraire » (focus mode)
+//   • tracé PÉRIMÉ        → la séquence de POIs a changé → « Re-tracer » (le tracé
+//                           est conservé mais signalé « à mettre à jour »)
 //
-// « Tracer » appelle BRouter (circuit-routing.js), pose le realTrack et
-// sauvegarde le circuit (en restant en mode création pour ajuster). Le vol
-// d'oiseau reste le repli si BRouter échoue. Handoff Claude Design 04/06/2026.
+// « Tracer » route le circuit SEGMENT PAR SEGMENT (circuit-routing.js), pose le
+// realTrack et sauvegarde (en restant en création). Un segment non routable
+// retombe en ligne droite (échec partiel) → note furet + segment pointillé.
+// « Éditer l'itinéraire » ouvre le focus mode niveau 2 (circuit-focus.js).
+// Handoff Claude Design 04/06/2026 + modèle cycle de vie du tracé 05/06/2026.
 import { state } from './state.js';
 import { routeCircuit } from './circuit-routing.js';
+import { enterCircuitFocus, refreshFailOverlay } from './circuit-focus.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
-import { renderCircuitPanel } from './circuit.js';
+import { renderCircuitPanel, currentPoiKey } from './circuit.js';
 import { updatePolylines } from './map.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
+import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 const BLOCK_ID = 'circuit-trace-block';
@@ -25,11 +32,26 @@ function inCreation() {
     return state.isCircuitCreationMode || state.editingMode;
 }
 function activeCircuit() {
-    return state.myCircuits.find(c => c.id === state.activeCircuitId) || null;
+    if (!state.activeCircuitId) return null;
+    // Les 2 listes : un officiel édité (convertToDraft) reste accessible côté
+    // tracé même s'il n'est pas (encore) dans myCircuits.
+    return [...(state.officialCircuits || []), ...(state.myCircuits || [])]
+        .find(c => c.id === state.activeCircuitId) || null;
 }
 function hasRealTrack() {
     const c = activeCircuit();
     return !!(c && Array.isArray(c.realTrack) && c.realTrack.length >= 2);
+}
+// Segments en échec connus de la SESSION courante (Tracer/focus). Vide sur un
+// circuit simplement chargé (l'état d'échec n'est pas persisté → « trace finale seule »).
+function failedCount() {
+    const segs = state.routeSegments;
+    return Array.isArray(segs) ? segs.filter(s => s && !s.ok).length : 0;
+}
+// Tracé PÉRIMÉ : il existe mais la séquence de POIs a changé depuis qu'il a été
+// posé (state.routeBasisKey, posé au Tracer / à l'entrée en édition).
+function isStale() {
+    return hasRealTrack() && state.routeBasisKey != null && currentPoiKey() !== state.routeBasisKey;
 }
 
 export function updateTraceBlock() {
@@ -48,22 +70,7 @@ export function updateTraceBlock() {
     }
 
     if (hasRealTrack()) {
-        const distTxt = (document.getElementById('circuit-distance')?.textContent || '').trim();
-        el.innerHTML = `
-            <div class="trace-status">
-                <div class="trace-status-head">
-                    <div class="trace-status-ico"><i data-lucide="check-circle-2"></i></div>
-                    <div class="trace-status-txt">
-                        <h4>Itinéraire tracé <span class="trace-pill">Tracé réel</span></h4>
-                        <p>${distTxt ? distTxt + ' · ' : ''}suit les chemins piétons</p>
-                    </div>
-                </div>
-                <div class="trace-status-actions">
-                    <button class="btn-retrace" id="btn-retrace" type="button">
-                        <i data-lucide="repeat"></i> Re-tracer l'itinéraire
-                    </button>
-                </div>
-            </div>`;
+        el.innerHTML = traceStatusHtml();
     } else if ((state.currentCircuit ? state.currentCircuit.length : 0) >= 2) {
         el.innerHTML = `
             <button class="btn-trace" id="btn-trace" type="button">
@@ -80,6 +87,93 @@ export function updateTraceBlock() {
     createIcons({ icons: appIcons, root: el });
 }
 
+// Menu « Plus » (⋮) — items = [{act,icon,t,d} | {sep:true}].
+function morePopHtml(items) {
+    const rows = items.map(it => it.sep
+        ? '<div class="mp-sep"></div>'
+        : `<button class="mp-item" type="button" data-act="${it.act}"><i data-lucide="${it.icon}"></i>` +
+          `<span><span class="mp-t">${it.t}</span><span class="mp-d">${it.d}</span></span></button>`).join('');
+    return `
+        <div class="trace-more">
+            <button class="btn-more" id="btn-more" type="button" title="Plus d'actions"><i data-lucide="more-vertical"></i></button>
+            <div class="more-pop" id="more-pop">${rows}</div>
+        </div>`;
+}
+
+const MP_GPX = { act: 'gpx', icon: 'external-link', t: 'Affiner dans GPX Studio', d: "Repli : montages spéciaux dans l'outil externe" };
+const MP_EXPORT = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: 'Fichier .gpx du tracé réel' };
+
+// Carte d'état du tracé, selon 3 cas : périmé / échec partiel / OK.
+function traceStatusHtml() {
+    const distTxt = (document.getElementById('circuit-distance')?.textContent || '').trim();
+
+    // ① Tracé PÉRIMÉ : la séquence de POIs a changé → re-tracer (le tracé est conservé).
+    if (isStale()) {
+        return `
+        <div class="trace-status is-warn">
+            <div class="trace-status-head">
+                <div class="trace-status-ico"><i data-lucide="alert-triangle"></i></div>
+                <div class="trace-status-txt">
+                    <h4>Tracé à mettre à jour <span class="trace-pill">séquence modifiée</span></h4>
+                    <p>La liste des lieux a changé — re-tracez pour mettre l'itinéraire à jour.</p>
+                </div>
+            </div>
+            <div class="trace-status-actions">
+                <button class="btn-adjust" id="btn-retrace-stale" type="button">
+                    <i data-lucide="repeat"></i> Re-tracer l'itinéraire
+                </button>
+                ${morePopHtml([
+                    { act: 'edit', icon: 'move', t: "Éditer l'itinéraire", d: 'Ajuster le tracé actuel sans re-tracer' },
+                    { sep: true }, MP_GPX, MP_EXPORT,
+                ])}
+            </div>
+        </div>`;
+    }
+
+    // ② Échec partiel (un/des segment(s) en ligne droite) · ③ Tracé OK.
+    const nFail = failedCount();
+    const warn = nFail > 0;
+    const failTxt = nFail > 1 ? `${nFail} segments droits` : '1 segment droit';
+    const subFail = nFail > 1 ? ` — sauf ${nFail} passages` : ' — sauf un passage';
+    return `
+        <div class="trace-status${warn ? ' is-warn' : ''}">
+            <div class="trace-status-head">
+                <div class="trace-status-ico"><i data-lucide="${warn ? 'info' : 'check-circle-2'}"></i></div>
+                <div class="trace-status-txt">
+                    <h4>${warn ? 'Tracé presque complet' : 'Itinéraire tracé'}
+                        <span class="trace-pill">${warn ? failTxt : 'Tracé réel'}</span></h4>
+                    <p>${distTxt ? distTxt + ' · ' : ''}suit les chemins piétons${warn ? subFail : ''}</p>
+                </div>
+            </div>
+            <div class="trace-status-actions">
+                <button class="btn-adjust" id="btn-adjust" type="button">
+                    <i data-lucide="move"></i> Éditer l'itinéraire
+                </button>
+                ${morePopHtml([
+                    { act: 'retrace', icon: 'repeat', t: "Re-tracer l'itinéraire", d: 'Recalcule depuis la séquence de POIs' },
+                    { sep: true }, MP_GPX, MP_EXPORT,
+                ])}
+            </div>
+        </div>
+        ${warn ? failNote() : ''}`;
+}
+
+// Note furet « un passage est resté en ligne droite » (échec partiel).
+function failNote() {
+    return `
+        <div class="fail-note">
+            <img class="furet-mini" src="icons/icon-512-maskable.png" alt="">
+            <div class="fn-body">
+                <h5>Un passage est resté en ligne droite</h5>
+                <p>BRouter n'a pas pu tracer un segment — il reste en ligne droite. Ajoutez un point de passage pour le guider, ou affinez dans GPX Studio.</p>
+                <div class="fn-actions">
+                    <button class="fn-link" type="button" data-act="fix"><i data-lucide="waypoints"></i> Ajouter un point de passage</button>
+                    <button class="fn-link muted" type="button" data-act="gpx"><i data-lucide="external-link"></i> GPX Studio</button>
+                </div>
+            </div>
+        </div>`;
+}
+
 async function runTrace() {
     if (tracing) return;
     if (!state.currentCircuit || state.currentCircuit.length < 2) {
@@ -90,13 +184,18 @@ async function runTrace() {
     updateTraceBlock(); // spinner
 
     try {
-        const { realTrack } = await routeCircuit(state.currentCircuit);
+        const { realTrack, segments } = await routeCircuit(state.currentCircuit);
+        state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
+        state.routeBasisKey = currentPoiKey(); // le tracé correspond à cette séquence
         // Sauvegarde le circuit AVEC son tracé réel, en restant en création.
         await saveAndExportCircuit(realTrack, { stayInCreation: true });
         tracing = false;
         updatePolylines();    // dessine le tracé bleu (real-track-polyline)
+        refreshFailOverlay(); // segments en échec en pointillé (le cas échéant)
         renderCircuitPanel(); // breadcrumb (distance réelle) + déclenche updateTraceBlock via 'circuit:updated'
-        showToast('Itinéraire tracé ✓', 'success');
+        const nFail = failedCount();
+        if (nFail > 0) showToast(`Tracé calculé — ${nFail > 1 ? nFail + ' passages' : '1 passage'} en ligne droite`, 'info');
+        else showToast('Itinéraire tracé ✓', 'success');
     } catch (e) {
         tracing = false;
         console.error('[routing] runTrace a échoué :', e);
@@ -114,15 +213,54 @@ async function confirmRetrace() {
     if (ok) runTrace();
 }
 
+// Ouvre GPX Studio via l'ancre existante (deeplink conditionnel, cf.
+// reference_no_gpx_studio_link) ; repli sur l'URL directe si absente.
+function openGpxStudio() {
+    const a = document.getElementById('btn-open-gpx-studio-consult');
+    if (a) a.click();
+    else window.open('https://gpx.studio/fr/app', '_blank', 'noopener');
+}
+
+function closeMorePop() {
+    document.getElementById('more-pop')?.classList.remove('open');
+}
+
 export function initCircuitRoutingUI() {
     const el = document.getElementById(BLOCK_ID);
     if (el) {
         // Délégation : le conteneur est stable, seul son innerHTML est re-rendu.
         el.addEventListener('click', (e) => {
-            if (e.target.closest('#btn-trace')) runTrace();
-            else if (e.target.closest('#btn-retrace')) confirmRetrace();
+            if (e.target.closest('#btn-trace')) { runTrace(); return; }
+            if (e.target.closest('#btn-adjust')) { enterCircuitFocus(); return; }
+            // Tracé périmé : re-tracer directement (mise à jour attendue, pas de
+            // confirmation « Remplacer ? » qui n'aurait pas de sens ici).
+            if (e.target.closest('#btn-retrace-stale')) { runTrace(); return; }
+            if (e.target.closest('#btn-more')) {
+                e.stopPropagation();
+                document.getElementById('more-pop')?.classList.toggle('open');
+                return;
+            }
+            const mp = e.target.closest('.mp-item');
+            if (mp) {
+                closeMorePop();
+                const act = mp.dataset.act;
+                if (act === 'retrace') confirmRetrace();
+                else if (act === 'edit') enterCircuitFocus();
+                else if (act === 'export') eventBus.emit('request-export-gpx');
+                else if (act === 'gpx') openGpxStudio();
+                return;
+            }
+            const fn = e.target.closest('.fn-link');
+            if (fn) {
+                if (fn.dataset.act === 'fix') enterCircuitFocus();
+                else if (fn.dataset.act === 'gpx') openGpxStudio();
+            }
         });
     }
+    // Ferme le menu « Plus » au clic extérieur.
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.trace-more')) closeMorePop();
+    });
     // Re-render à chaque changement du circuit (ajout/retrait POI, chargement,
     // tracé). notifyCircuitChanged() émet 'circuit:updated' sur window.
     window.addEventListener('circuit:updated', updateTraceBlock);

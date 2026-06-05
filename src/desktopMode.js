@@ -38,6 +38,9 @@ export function enableDesktopCreationMode() {
     if (!map) return;
     RichEditor.init(); // Initialisation des écouteurs de la modale riche
     map.on('contextmenu', (e) => {
+        // En focus mode « Éditer l'itinéraire » (niveau 2), le clic droit ne doit
+        // PAS créer un POI : la carte sert à poser des points de passage.
+        if (state.circuitFocusActive) return;
         const { lat, lng } = e.latlng;
         if (desktopDraftMarker) {
             desktopDraftMarker.setLatLng(e.latlng);

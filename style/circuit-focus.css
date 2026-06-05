@@ -1,0 +1,192 @@
+/* style/circuit-focus.css — Focus mode « Ajuster le tracé » (routing in-app
+   niveau 2 / PR2). Plein écran dédié calqué sur la passe drapeaux OSM
+   (body.circuit-focus-active masque la sidebar, l'overlay superpose un rail
+   latéral + une barre d'action ancrée en bas + un bouton « Quitter »).
+
+   Styles portés du handoff Claude Design (04/06/2026), mappés sur les vrais
+   tokens Heripia (style/tokens.css). La couleur des points de passage =
+   var(--brand-2) (thème-aware, distincte du tracé bleu --brand).
+
+   Pattern overlay (cf. osm-pass.css) : conteneur pointer-events:none pour
+   laisser la carte Leaflet interactive (drag des waypoints, clic du tracé) ;
+   seuls le rail, la barre et le bouton interceptent les events. */
+
+/* ============================================================
+   1. MASQUAGE SIDEBAR + OVERLAY
+   ============================================================ */
+body.circuit-focus-active .right-sidebar,
+body.circuit-focus-active .hw-sidebar,
+body.circuit-focus-active #right-sidebar {
+    display: none !important;
+}
+
+.circuit-focus-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;        /* > sidebar HW V2 (1002), < modales (2000) */
+    pointer-events: none; /* la carte reste interactive ; rail/barre/quit en auto */
+}
+
+/* ============================================================
+   2. RAIL LATÉRAL (séquence POIs + points de passage)
+   ============================================================ */
+.focus-rail {
+    position: absolute; top: 0; left: 0; bottom: 0; width: 312px;
+    pointer-events: auto;
+    background: var(--surface); border-right: 1px solid var(--line);
+    box-shadow: var(--shadow); z-index: 30;
+    display: flex; flex-direction: column; min-height: 0;
+}
+.focus-rail-head {
+    padding: 15px 18px; border-bottom: 1px solid var(--line);
+    background: color-mix(in oklab, var(--brand) 6%, var(--surface));
+}
+.focus-rail-head .eyebrow {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--brand-2);
+}
+.focus-rail-head h3 {
+    margin: 5px 0 0; font-size: 16px; font-weight: 700; color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+}
+.focus-rail-head h3 svg { width: 17px; height: 17px; color: var(--brand-2); }
+.focus-rail-head p { margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
+
+.focus-seq { flex: 1; overflow-y: auto; padding: 10px 12px; min-height: 0; }
+.focus-seq-cap {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-soft); padding: 4px 6px 8px;
+}
+.seq-item {
+    display: flex; align-items: center; gap: 10px; padding: 7px 8px;
+    border-radius: var(--radius-md); position: relative;
+}
+.seq-item:not(:last-child)::before {
+    content: ""; position: absolute; left: 20px; top: 32px; height: calc(100% - 18px);
+    width: 2px; background: var(--line);
+}
+.seq-item.is-wp { padding-left: 8px; }
+.seq-dot {
+    width: 26px; height: 26px; flex-shrink: 0; z-index: 1;
+    display: grid; place-items: center; font-size: 12px; font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+.seq-dot.poi {
+    border-radius: 50%; background: var(--hw-amber-soft); color: var(--hw-amber);
+    border: 1.5px solid color-mix(in oklab, var(--hw-amber) 40%, transparent);
+}
+.seq-dot.wp {
+    border-radius: 50%; background: var(--surface);
+    border: 3px solid var(--brand-2);
+    width: 18px; height: 18px;
+}
+.seq-name {
+    flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.seq-item.is-wp .seq-name { color: var(--ink-soft); font-style: italic; font-weight: 500; }
+.seq-del {
+    border: 0; background: transparent; color: var(--ink-soft); cursor: pointer;
+    width: 26px; height: 26px; border-radius: var(--radius-sm); display: none; place-items: center; flex-shrink: 0;
+}
+.seq-item.is-wp:hover .seq-del { display: grid; }
+.seq-del:hover { background: var(--danger-soft); color: var(--danger-fg); }
+.seq-del svg { width: 14px; height: 14px; }
+
+.focus-rail-foot { padding: 12px 16px; border-top: 1px solid var(--line); }
+.focus-rail-foot .add-tip {
+    display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px;
+    line-height: 1.45; color: var(--ink-soft); margin-bottom: 11px;
+}
+.focus-rail-foot .add-tip svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; color: var(--brand-2); }
+.btn-done {
+    width: 100%; height: 44px; border: 0; border-radius: var(--radius-md);
+    background: var(--cta-bg); color: var(--cta-fg); cursor: pointer;
+    font-size: 14px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-done:hover { filter: brightness(0.95); }
+.btn-done svg { width: 16px; height: 16px; }
+
+/* ============================================================
+   3. BOUTON QUITTER (haut-droite carte)
+   ============================================================ */
+.focus-quit {
+    position: absolute; top: 16px; right: 16px; z-index: 30; pointer-events: auto;
+    display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px;
+    border-radius: var(--radius-pill); background: color-mix(in oklab, var(--surface) 94%, transparent);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow-card);
+    font-size: 12.5px; font-weight: 600; cursor: pointer;
+}
+.focus-quit:hover { background: var(--surface); }
+.focus-quit svg { width: 14px; height: 14px; color: var(--ink-soft); }
+
+/* ============================================================
+   4. BARRE D'ACTION ANCRÉE EN BAS (langage passe drapeaux / .ap-bar)
+   ============================================================ */
+.focus-bar {
+    position: absolute; left: calc(312px + (100% - 312px) / 2); bottom: 26px;
+    transform: translateX(-50%); z-index: 30; pointer-events: auto;
+    min-width: 560px; max-width: calc(100% - 360px);
+    background: var(--bg); color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.14); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal); overflow: hidden;
+}
+.focus-bar-main { display: flex; align-items: center; gap: 13px; padding: 13px 16px; }
+.focus-bar-mark {
+    width: 36px; height: 36px; border-radius: var(--radius-md); flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.1); display: grid; place-items: center;
+}
+.focus-bar-mark svg { width: 18px; height: 18px; }
+.focus-bar-txt { flex: 1; min-width: 0; }
+.focus-bar-txt h5 { margin: 0; font-size: 13.5px; font-weight: 700; }
+.focus-bar-txt p { margin: 2px 0 0; font-size: 12px; color: rgba(255, 255, 255, 0.72); line-height: 1.4; }
+.focus-measure {
+    display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+    font-family: var(--font-family-mono); font-size: 12px; color: rgba(255, 255, 255, 0.85);
+    white-space: nowrap;
+}
+.focus-measure b { color: #fff; font-weight: 700; }
+.focus-measure .spin {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff;
+    animation: brouterSpin 0.7s linear infinite;
+}
+.focus-bar-sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.18); }
+.fb-btn {
+    border: 1px solid rgba(255, 255, 255, 0.4); background: transparent; color: #fff;
+    padding: 9px 15px; border-radius: 9px; font-size: 13px; font-weight: 600;
+    cursor: pointer; min-height: 38px; display: inline-flex; align-items: center; gap: 7px;
+    white-space: nowrap; transition: background 0.15s;
+}
+.fb-btn:hover { background: rgba(255, 255, 255, 0.12); }
+.fb-btn.is-active { background: #fff; color: var(--bg); border-color: #fff; }
+.fb-btn svg { width: 15px; height: 15px; }
+
+/* ============================================================
+   5. CARTE — segment en échec + marqueur waypoint + curseur ajout
+   ============================================================ */
+/* Segment non routable retombé en ligne droite (échec partiel) */
+.route-fail-segment {
+    stroke: var(--ink-soft) !important;
+    stroke-width: 3.5px !important;
+    stroke-dasharray: 7 8 !important;
+    opacity: 0.6 !important;
+    fill: none !important;
+}
+
+/* Marqueur point de passage (anneau brand-2, draggable) */
+.wp-marker { background: none; border: 0; }
+.wp-marker .wp-ring {
+    display: block; width: 18px; height: 18px; box-sizing: border-box;
+    border-radius: 50%; background: var(--surface);
+    border: 3px solid var(--brand-2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    cursor: grab;
+}
+.wp-marker .wp-ring:active { cursor: grabbing; }
+
+/* Curseur « ajouter un point » quand le mode est actif (sur la zone carte) */
+body.circuit-focus-active.circuit-focus-add .leaflet-container { cursor: crosshair; }
+body.circuit-focus-active.circuit-focus-add .real-track-polyline { cursor: crosshair; }
