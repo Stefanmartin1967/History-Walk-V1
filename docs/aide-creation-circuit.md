@@ -98,17 +98,32 @@ pourrez toujours réordonner et **re-tracer**.
 
 ---
 
-## Les ancres « ? » contextuelles (PR2 — pour mémoire)
+## Les ancres « ? » contextuelles du bloc tracé — LIVRÉ (PR2)
 
-À poser plus tard sur le bloc tracé (rendu dynamique) :
+Petits « ? » inline posés par `attachTraceHelp` (`ui-circuit-routing.js`), chacun
+n'apparaissant **que dans l'état où il a du sens** (le bloc tracé est re-rendu à chaque
+changement → ré-attachés à chaque rendu).
 
-| Ancre | Emplacement | Contenu |
-|-------|-------------|---------|
-| **Tracer l'itinéraire** | bouton / hint du bloc tracé | BRouter + chemins piétons + vol d'oiseau |
-| **Calque de référence** | chip / bouton calque | guide visuel ≠ tracé du circuit |
-| **Tracé à mettre à jour** | pastille « séquence modifiée » | pourquoi re-tracer |
-| **Point de passage** | note « segment droit » | guider un passage non tracé |
-| *(panneau global)* | « ? » de Mes Circuits | le guide complet (ci-dessus) |
+**« ? » Tracer** — sur le hint « BRouter suit les chemins piétons… »
+> **Tracer l'itinéraire** — BRouter calcule un chemin qui **suit les voies piétonnes**
+> (rues, sentiers). Il remplace le trait **« à vol d'oiseau »** (la ligne droite entre vos
+> lieux) par une **trace réellement marchable**, et donne la **vraie distance**.
+
+**« ? » Calque** — sur le chip « Calque de référence »
+> **Calque de référence** — Une trace GPX (Wikiloc, GPS…) affichée **en fond**, comme
+> **guide visuel**. Elle **n'entre pas** dans le tracé de votre circuit — juste un **repère**.
+
+**« ? » À mettre à jour** — sur la pastille « séquence modifiée »
+> **Tracé à mettre à jour** — Vous avez **changé les lieux** (ajout, retrait ou ordre)
+> depuis le dernier tracé. Le tracé affiché ne correspond **plus** à la liste actuelle →
+> cliquez **« Re-tracer l'itinéraire »**.
+
+**« ? » Segment droit** — sur la note « Un passage est resté en ligne droite »
+> **Segment en ligne droite** — BRouter n'a pas trouvé de chemin pour **un passage** : il
+> le laisse en **ligne droite**. Ajoutez un **point de passage** (« Éditer l'itinéraire »
+> → cliquer sur la carte) pour le guider, ou affinez dans **GPX Studio**.
+
+*(Le panneau global « ? » de la toolbar Mes Circuits ouvre le guide complet, § ci-dessus.)*
 
 ---
 

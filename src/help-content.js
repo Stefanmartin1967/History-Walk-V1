@@ -225,6 +225,48 @@ export const GUIDE_IMPORT = {
 // et en preview). Mêmes conventions de rédaction que ci-dessus.
 // ============================================================================
 
+/* === ANCRE — « ? » sur le hint « Tracer l'itinéraire » (bloc tracé) === */
+export const HELP_TRACER = {
+    title: 'Tracer l\'itinéraire',
+    html: `
+        <p><strong>BRouter</strong> calcule un chemin qui <strong>suit les voies
+        piétonnes</strong> <span class="help-muted">(rues, sentiers)</span>.</p>
+        <p>Il remplace le trait <strong>« à vol d'oiseau »</strong> (la ligne droite entre
+        vos lieux) par une <strong>trace réellement marchable</strong>, et donne la
+        <strong>vraie distance</strong>.</p>`,
+};
+
+/* === ANCRE — « ? » sur le chip « Calque de référence » === */
+export const HELP_CALQUE = {
+    title: 'Calque de référence',
+    html: `
+        <p>Une trace GPX <span class="help-muted">(Wikiloc, GPS…)</span> affichée
+        <strong>en fond</strong>, comme <strong>guide visuel</strong>.</p>
+        <p>Elle <strong>n'entre pas</strong> dans le tracé de votre circuit — elle vous sert
+        juste de <strong>repère</strong> pendant que vous le construisez.</p>`,
+};
+
+/* === ANCRE — « ? » sur la pastille « séquence modifiée » (tracé périmé) === */
+export const HELP_STALE = {
+    title: 'Tracé à mettre à jour',
+    html: `
+        <p>Vous avez <strong>changé les lieux</strong> <span class="help-muted">(ajout,
+        retrait ou ordre)</span> depuis le dernier tracé.</p>
+        <p>Le tracé affiché ne correspond donc <strong>plus</strong> à la liste actuelle.
+        Cliquez <strong>« Re-tracer l'itinéraire »</strong> pour le recalculer.</p>`,
+};
+
+/* === ANCRE — « ? » sur la note « Un passage est resté en ligne droite » === */
+export const HELP_WAYPOINT = {
+    title: 'Segment en ligne droite',
+    html: `
+        <p>BRouter n'a pas trouvé de chemin pour <strong>un passage</strong> : il le laisse
+        en <strong>ligne droite</strong>.</p>
+        <p>Ajoutez un <strong>point de passage</strong> <span class="help-muted">(« Éditer
+        l'itinéraire » → cliquer sur la carte)</span> pour le guider, ou affinez dans
+        <strong>GPX Studio</strong>.</p>`,
+};
+
 /* === PANNEAU GLOBAL — le guide « Créer un circuit » (parcours complet) ===
    Posé sur le « ? » de la toolbar « Mes Circuits » (à côté de « Nouveau
    circuit ») → découvrable avant même de commencer un circuit. */
