@@ -26,6 +26,12 @@ import { applyFilters, getPoiId, getPoiName } from './data.js';
 import { openStartPointModal } from './start-point.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { isMobileView } from './mobile-state.js';
+import { configureHelp, helpButton } from './help-popover.js';
+import { GUIDE_CIRCUIT } from './help-content.js';
+
+// Aide « ? » : le patron rend l'icône circle-help via createIcons. Idempotent
+// (déjà appelé par ui-photo-batch.js) → aucun effet de doublon.
+configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
 
 // ─── État local ───────────────────────────────────────────────────────────
 const DIST_MAX_KM = 20;
@@ -110,6 +116,13 @@ function renderToolbar() {
         </button>` : ''}
     `;
     createIcons({ icons: appIcons, root: toolbar });
+
+    // Aide « ? » : guide « Créer un circuit », posé à côté de « Nouveau circuit »
+    // (la toolbar est re-rendue à chaque appel → on ré-insère le bouton à chaque fois).
+    const newBtnForHelp = document.getElementById('mc-btn-new');
+    if (newBtnForHelp) {
+        newBtnForHelp.insertAdjacentElement('afterend', helpButton(GUIDE_CIRCUIT, { label: 'Aide : créer un circuit' }));
+    }
 
     // Recherche temps réel
     const input = document.getElementById('mc-search-input');

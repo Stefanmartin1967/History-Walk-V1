@@ -218,3 +218,132 @@ export const GUIDE_IMPORT = {
     footnote: `Astuce : activez la localisation de votre appareil photo <em>avant de
         partir</em> — c'est elle qui place vos photos toutes seules sur la carte.`,
 };
+
+// ============================================================================
+// Contenu d'aide « Créer un circuit ».
+// Source unique : docs/aide-creation-circuit.md (libellés vérifiés dans le code
+// et en preview). Mêmes conventions de rédaction que ci-dessus.
+// ============================================================================
+
+/* === PANNEAU GLOBAL — le guide « Créer un circuit » (parcours complet) ===
+   Posé sur le « ? » de la toolbar « Mes Circuits » (à côté de « Nouveau
+   circuit ») → découvrable avant même de commencer un circuit. */
+export const GUIDE_CIRCUIT = {
+    title: 'Créer un circuit',
+    intro: `Un circuit, c'est une suite de <strong>lieux</strong> reliés par un
+        <strong>itinéraire</strong>. Vous choisissez les lieux sur la carte, vous les mettez
+        dans l'ordre, puis Heripia <strong>trace l'itinéraire</strong> qui suit les chemins.
+        Votre travail est enregistré au fur et à mesure — rien à valider pour ne pas le perdre.`,
+    schema: [
+        'Choisir les lieux',
+        'Les ordonner <span class="help-muted">(étapes)</span>',
+        'Tracer l\'itinéraire',
+        'Brouillon <span class="help-muted">auto-sauvegardé</span>',
+    ],
+    sections: [
+        {
+            heading: `0 · Ce qu'est un circuit`,
+            html: `<p>Une suite de <strong>lieux</strong> (les <strong>étapes</strong>,
+                numérotées 1, 2, 3…) et un <strong>itinéraire</strong> qui les relie. Un lieu
+                est un <strong>point d'intérêt</strong> — Heripia l'abrège « <strong>POI</strong> »
+                à l'écran <span class="help-muted">(par exemple le compteur « 3&nbsp;POIs »)</span>.</p>
+                <p>Tant que vous construisez le circuit, il reste un <strong>brouillon ·
+                auto-sauvegardé</strong> : vous pouvez fermer Heripia et le retrouver intact.</p>`,
+        },
+        {
+            heading: `1 · Démarrer`,
+            html: `<p>Onglet <strong>Mes Circuits → « Nouveau circuit »</strong> (le
+                <strong>+</strong>). Heripia ouvre un circuit vierge et passe la carte en
+                <strong>mode création</strong>.</p>`,
+        },
+        {
+            heading: `2 · Ajouter les lieux`,
+            html: `<p><strong>Cliquez un lieu sur la carte</strong> : il rejoint le circuit
+                <span class="help-muted">(« Commençons par le premier lieu »)</span>. Chaque lieu
+                ajouté devient une <strong>étape</strong> numérotée.</p>
+                <ul class="help-list">
+                    <li><strong>Réordonner</strong> : glissez-déposez une étape
+                        <span class="help-muted">(ou les flèches « Monter » / « Descendre »)</span>.</li>
+                    <li><strong>Retirer</strong> une étape : <strong>« Retirer du circuit »</strong>
+                        <span class="help-muted">(la corbeille)</span>.</li>
+                    <li>Au passage, Heripia <strong>nomme le circuit tout seul</strong> et met à
+                        jour le <strong>nombre de lieux</strong> et la <strong>distance</strong>.</li>
+                </ul>`,
+        },
+        {
+            heading: `3 · Personnaliser le nom, décrire`,
+            html: `<ul class="help-list">
+                    <li><strong>Nom automatique</strong> : Heripia nomme le circuit d'après vos
+                        lieux et le <strong>met à jour à chaque ajout</strong>
+                        <span class="help-muted">— « Départ de … » (un seul lieu), « Circuit de … à … »
+                        (plusieurs lieux), « Boucle autour de … » (si le départ = l'arrivée)</span>.</li>
+                    <li><strong>Votre propre titre</strong> <span class="help-muted">(facultatif)</span> :
+                        le <strong>crayon</strong> <span class="help-muted">(ou un double-clic sur le
+                        titre)</span> ouvre un champ ; tapez, <strong>Entrée</strong>. Votre titre
+                        <strong>remplace</strong> le nom automatique.</li>
+                    <li><strong>Description</strong> : cliquez <strong>« Ajouter une description… »</strong>,
+                        écrivez ; enregistré dès que vous <strong>sortez du champ</strong>.</li>
+                    <li><strong>Transport</strong> <span class="help-muted">(repliable)</span> : temps
+                        <span class="help-muted">(min)</span> et/ou coût de l'<strong>aller</strong> et
+                        du <strong>retour</strong>.</li>
+                </ul>`,
+        },
+        {
+            heading: `4 · Tracer l'itinéraire`,
+            html: `<p>Dès <strong>2 lieux</strong>, le bouton <strong>« Tracer l'itinéraire »</strong>
+                apparaît.</p>
+                <p>Heripia route le circuit avec <strong>BRouter</strong>, qui <strong>suit les
+                chemins piétons</strong> : il transforme le trait « à vol d'oiseau » en
+                <strong>trace réellement marchable</strong>. Résultat : <strong>« Itinéraire
+                tracé »</strong> et la <strong>distance réelle</strong>.</p>
+                <p class="help-muted">C'est « Tracer l'itinéraire » qui enregistre le circuit avec
+                son tracé.</p>`,
+        },
+        {
+            heading: `5 · Ajuster le tracé`,
+            html: `<ul class="help-list">
+                    <li><strong>« Éditer l'itinéraire »</strong> : ajoutez des <strong>points de
+                        passage</strong> <span class="help-muted">(cliquez sur la carte)</span> pour
+                        guider le tracé ; déplacez-les. Seul le segment touché est recalculé.</li>
+                    <li><strong>« Tracé presque complet »</strong> : un <strong>segment droit</strong>
+                        est un passage que BRouter n'a pas su tracer — il reste en ligne droite.
+                        Ajoutez-y un <strong>point de passage</strong> pour le guider.</li>
+                    <li><strong>« Re-tracer l'itinéraire »</strong> : si vous changez les lieux après
+                        coup, le tracé est signalé <strong>« séquence modifiée »</strong>
+                        <span class="help-muted">(« Tracé à mettre à jour »)</span>. Re-tracez pour
+                        le remettre à jour.</li>
+                </ul>`,
+        },
+        {
+            heading: `6 · Apporter ou afficher une trace existante`,
+            html: `<ul class="help-list">
+                    <li><strong>« Importer un GPX »</strong> : apporte une trace GPX
+                        <span class="help-muted">(Wikiloc, GPS…)</span> <strong>comme itinéraire du
+                        circuit</strong>.</li>
+                    <li><strong>« Calque de référence »</strong> : affiche une trace GPX <strong>en
+                        fond, comme guide visuel</strong>. Elle <strong>n'entre pas</strong> dans le
+                        tracé — elle vous sert juste de repère.</li>
+                    <li><strong>« Boucler le circuit »</strong> : ajoute le <strong>premier lieu en
+                        dernière étape</strong> (retour au départ).</li>
+                    <li><strong>« Affiner dans GPX Studio »</strong> : outil externe, pour les montages
+                        spéciaux <span class="help-muted">(option, pas une obligation)</span>.</li>
+                </ul>`,
+        },
+        {
+            heading: `7 · Enregistrer et retrouver le circuit`,
+            html: `<ul class="help-list">
+                    <li><strong>Brouillon auto-sauvegardé</strong> en continu → le circuit vit dans
+                        <strong>Mes Circuits</strong>.</li>
+                    <li><strong>« Exporter le GPX »</strong> : crée un <strong>fichier .gpx</strong> sur
+                        votre disque <span class="help-muted">(sauvegarde ou partage)</span>, en dehors
+                        d'Heripia.</li>
+                    <li><strong>« Vider le brouillon »</strong> : repartir de zéro.</li>
+                </ul>
+                <p class="help-muted">Vos circuits restent <strong>sur cet appareil</strong>. Pour les
+                emporter sur un autre appareil ou ne pas les perdre, <strong>sauvegardez vos
+                données</strong> depuis <strong>Mon Espace</strong>.</p>`,
+        },
+    ],
+    footnote: `Astuce : posez d'abord tous les lieux dans l'ordre, puis <strong>tracez à la
+        fin</strong>. Vous pourrez toujours réordonner et <strong>re-tracer</strong>.`,
+};
