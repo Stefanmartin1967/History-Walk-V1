@@ -18,12 +18,15 @@ vi.mock('../src/state.js', () => {
         currentCircuitIndex: null,
         customDraftName: null,
         isAdmin: false,
-        isCircuitCreationMode: false
+        isCircuitCreationMode: false,
+        editingMode: false,
+        routeBasisKey: null
     };
     return {
         state,
         MAX_CIRCUIT_POINTS: 15,
         setCircuitCreationMode: vi.fn(),
+        setEditingMode: vi.fn(v => { state.editingMode = v; }),
         addPoiToCurrentCircuit: vi.fn(f => { state.currentCircuit.push(f); }),
         resetCurrentCircuit: vi.fn(() => { state.currentCircuit = []; }),
         addMyCircuit: vi.fn(),
@@ -106,6 +109,10 @@ vi.mock('../src/gist-sync.js', () => ({
     pushToGist: vi.fn()
 }));
 
+vi.mock('../src/circuit-flags.js', () => ({
+    markEditingStart: vi.fn()
+}));
+
 import { state, setOfficialCircuitStatus, setTestedCircuit, addMyCircuit, setCurrentCircuit, setActiveCircuitId } from '../src/state.js';
 import { DOM } from '../src/ui-dom.js';
 import { showToast } from '../src/toast.js';
@@ -140,6 +147,8 @@ function resetState() {
     state.customDraftName = null;
     state.isAdmin = false;
     state.isCircuitCreationMode = false;
+    state.editingMode = false;
+    state.routeBasisKey = null;
     DOM.circuitDescription = null;
     DOM.circuitTitleText = null;
 }
@@ -322,6 +331,35 @@ describe('convertToDraft', () => {
             expect.stringContaining('Mode édition'),
             'info'
         );
+    });
+
+    it('admin (preserveId) : CONSERVE le tracé réel et mémorise la base de péremption', () => {
+        // Routing in-app : éditer ne jette plus le tracé (avant : realTrack=null).
+        state.isAdmin = true;
+        state.activeCircuitId = 'c1';
+        state.currentCircuit = [poi('A'), poi('B'), poi('C')];
+        state.myCircuits = [{ id: 'c1', name: 'Mon Circuit', poiIds: ['A', 'B', 'C'], realTrack: [[1, 2], [3, 4], [5, 6]] }];
+        DOM.circuitTitleText = { textContent: 'Mon Circuit' };
+
+        convertToDraft({ preserveId: true });
+
+        expect(state.activeCircuitId).toBe('c1');          // ID préservé (mise à jour en place)
+        expect(state.myCircuits[0].realTrack).toHaveLength(3); // tracé CONSERVÉ
+        expect(state.routeBasisKey).toBe('A|B|C');         // base = séquence courante
+        expect(state.editingMode).toBe(true);              // reste en mode 'create'
+    });
+
+    it('admin (preserveId) sans tracé : pas de base de péremption', () => {
+        state.isAdmin = true;
+        state.activeCircuitId = 'c2';
+        state.currentCircuit = [poi('A'), poi('B')];
+        state.myCircuits = [{ id: 'c2', name: 'Sans tracé', poiIds: ['A', 'B'], realTrack: null }];
+        DOM.circuitTitleText = { textContent: 'Sans tracé' };
+
+        convertToDraft({ preserveId: true });
+
+        expect(state.routeBasisKey).toBeNull();
+        expect(state.editingMode).toBe(true);
     });
 });
 

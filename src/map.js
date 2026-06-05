@@ -227,10 +227,11 @@ export function initMapListeners() {
         const isCompleted = isCircuitCompleted(activeCircuit);
 
         // 3. Choix du tracé (Réel prioritaire sur Vol d'oiseau).
-        // Exception : en mode édition admin, on force le vol d'oiseau même si
-        // une realTrack existe encore (state.editingMode = true → on est en
-        // train de modifier les POIs, la trace réelle n'est plus pertinente).
-        if (activeCircuit?.realTrack && !state.editingMode) {
+        // Routing in-app (05/06/2026) : éditer ne jette plus le tracé. On affiche
+        // donc le tracé réel même en édition, SAUF s'il est PÉRIMÉ (la séquence de
+        // POIs a changé depuis qu'il a été posé → on retombe sur le vol d'oiseau
+        // pour signaler qu'il faut re-tracer). Avant : `!state.editingMode`.
+        if (activeCircuit?.realTrack && !isRouteStale(points)) {
             drawLineOnMap(activeCircuit.realTrack, true, isCompleted);
         } else {
             const coords = points.map(f => [
@@ -283,6 +284,10 @@ export function handleMarkerClick(feature) {
     // Cela évite d'ajouter le point au circuit alors qu'on veut juste valider sa position
     if (state.draggingMarkerId === getPoiId(feature)) return;
 
+    // En focus mode « Ajuster le tracé » (niveau 2), la carte sert à poser des
+    // points de passage, PAS à modifier la séquence : on ignore le clic POI.
+    if (state.circuitFocusActive) return;
+
     clearMarkerHighlights();
 
     // On ajoute au circuit UNIQUEMENT si :
@@ -317,6 +322,16 @@ export function clearMarkerHighlights() {
             }
         });
     }
+}
+
+// Tracé PÉRIMÉ : un realTrack existe mais la séquence de POIs (ordonnée) a changé
+// depuis qu'il a été posé (state.routeBasisKey, posé au Tracer / à l'entrée en
+// édition). Dans ce cas on préfère afficher le vol d'oiseau (le tracé bleu ne
+// correspond plus aux lieux). routeBasisKey null ⇒ jamais périmé.
+function isRouteStale(features) {
+    if (state.routeBasisKey == null) return false;
+    const key = (features || []).map(getPoiId).join('|');
+    return key !== state.routeBasisKey;
 }
 
 export function clearMapLines() {
@@ -378,7 +393,7 @@ export function updatePolylines() {
 
     const isCompleted = isCircuitCompleted(activeCircuitData);
 
-    if (activeCircuitData && activeCircuitData.realTrack) {
+    if (activeCircuitData && activeCircuitData.realTrack && !isRouteStale(state.currentCircuit)) {
         const className = isCompleted ? 'real-track-polyline-done' : 'real-track-polyline';
         setRealTrackPolyline(L.polyline(activeCircuitData.realTrack, {
             className: className,

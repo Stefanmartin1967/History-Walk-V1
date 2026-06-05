@@ -17,8 +17,30 @@ export const DEFAULT_PROFILE = 'hiking-beta'; // profil rando piéton validé su
 
 // Ancre de routage d'un POI : point d'accès au tracé si défini/valide, sinon
 // coordonnées réelles du POI. Renvoie [lon, lat].
-function anchorOf(feature) {
+export function anchorOf(feature) {
     return getAccessPoint(feature) || feature.geometry.coordinates;
+}
+
+function isValidLonLat(a) {
+    return Array.isArray(a) && a.length >= 2 && Number.isFinite(a[0]) && Number.isFinite(a[1]);
+}
+
+// Distance haversine (km) le long d'une polyligne [[lat, lon], …]. Sert au
+// repli « ligne droite » d'un segment non routable (échec partiel).
+function polylineKm(latLngs) {
+    const R = 6371;
+    const toRad = (d) => d * Math.PI / 180;
+    let km = 0;
+    for (let i = 1; i < latLngs.length; i++) {
+        const [la1, lo1] = latLngs[i - 1];
+        const [la2, lo2] = latLngs[i];
+        const dLat = toRad(la2 - la1);
+        const dLon = toRad(lo2 - lo1);
+        const h = Math.sin(dLat / 2) ** 2 +
+            Math.cos(toRad(la1)) * Math.cos(toRad(la2)) * Math.sin(dLon / 2) ** 2;
+        km += 2 * R * Math.asin(Math.sqrt(h));
+    }
+    return km;
 }
 
 // Sérialise une liste de points [lon, lat] au format `lonlats` de BRouter.
@@ -74,15 +96,131 @@ export async function routePoints(points, profile = DEFAULT_PROFILE) {
 }
 
 /**
- * Route un circuit décrit par sa séquence ordonnée de features POI.
- * L'ancre de chaque POI = `accessPoint || coordonnées réelles`.
- * @param {Object[]} features  Features POI dans l'ordre du circuit.
+ * Route UN segment (couple de POIs consécutifs + points de passage éventuels)
+ * via BRouter. Sur échec (réseau, tronçon non cartographié…), retombe en
+ * **ligne droite** entre les vias — l'« échec partiel » du niveau 2 : le
+ * circuit reste traçable, le segment est juste signalé.
+ * @param {number[][]} vias  Liste ordonnée [lon, lat] (ancre départ, …waypoints, ancre arrivée).
  * @param {string} [profile]
- * @returns {Promise<{realTrack: number[][], distanceKm: number, durationMin: number}>}
+ * @returns {Promise<{ok: boolean, coords: number[][], distanceKm: number, durationMin: number}>}
+ *   `coords` au format [[lat, lon], …].
  */
-export async function routeCircuit(features, profile = DEFAULT_PROFILE) {
-    const anchors = (features || [])
-        .map(anchorOf)
-        .filter(a => Array.isArray(a) && a.length >= 2 && Number.isFinite(a[0]) && Number.isFinite(a[1]));
-    return routePoints(anchors, profile);
+async function routeSegment(vias, profile = DEFAULT_PROFILE) {
+    try {
+        const { realTrack, distanceKm, durationMin } = await routePoints(vias, profile);
+        return { ok: true, coords: realTrack, distanceKm, durationMin };
+    } catch (e) {
+        // Repli ligne droite : on garde la séquence des vias telle quelle.
+        const coords = vias.map(([lon, lat]) => [lat, lon]);
+        return { ok: false, coords, distanceKm: polylineKm(coords), durationMin: 0 };
+    }
+}
+
+// Construit la liste des vias [lon, lat] d'un segment i : ancre du POI i, puis
+// les points de passage de ce segment (dans l'ordre), puis ancre du POI i+1.
+function segmentVias(anchors, waypointsBySeg, i) {
+    const wps = (waypointsBySeg[i] || [])
+        .map(w => [w.lng, w.lat])
+        .filter(isValidLonLat);
+    return [anchors[i], ...wps, anchors[i + 1]];
+}
+
+// Concatène les coords des segments en un realTrack continu [[lat, lon], …].
+// On retire le 1ᵉʳ point de chaque segment après le 1ᵉʳ (= jonction dupliquée
+// avec la fin du segment précédent).
+export function buildRealTrack(segments) {
+    const out = [];
+    segments.forEach((seg, i) => {
+        const c = seg.coords || [];
+        out.push(...(i === 0 ? c : c.slice(1)));
+    });
+    return out;
+}
+
+export function segmentsDistanceKm(segments) {
+    return segments.reduce((sum, s) => sum + (s.distanceKm || 0), 0);
+}
+
+/**
+ * Route un circuit segment par segment (1 appel BRouter par couple de POIs
+ * consécutifs). Permet d'isoler un segment en échec et de ne re-router que le
+ * segment touché en édition (niveau 2).
+ * @param {Object[]} features  Features POI dans l'ordre du circuit.
+ * @param {Object} [waypointsBySeg]  { [indexSegment]: [{lat, lng}] } — points de passage.
+ * @param {string} [profile]
+ * @returns {Promise<{realTrack: number[][], distanceKm: number, durationMin: number,
+ *   segments: {coords:number[][], ok:boolean, distanceKm:number}[], failedSegments: number[]}>}
+ */
+export async function routeCircuit(features, waypointsBySeg = {}, profile = DEFAULT_PROFILE) {
+    const anchors = (features || []).map(anchorOf).filter(isValidLonLat);
+    if (anchors.length < 2) {
+        throw new Error('Au moins 2 lieux sont nécessaires pour tracer un itinéraire.');
+    }
+    const tasks = [];
+    for (let i = 0; i < anchors.length - 1; i++) {
+        tasks.push(routeSegment(segmentVias(anchors, waypointsBySeg, i), profile));
+    }
+    const segments = await Promise.all(tasks);
+    const failedSegments = segments.map((s, i) => (s.ok ? -1 : i)).filter(i => i >= 0);
+    return {
+        realTrack: buildRealTrack(segments),
+        distanceKm: segmentsDistanceKm(segments),
+        durationMin: segments.reduce((sum, s) => sum + (s.durationMin || 0), 0),
+        segments,
+        failedSegments,
+    };
+}
+
+/**
+ * Re-route UN seul segment (édition niveau 2 : ajout / déplacement / suppression
+ * d'un point de passage). Renvoie l'entrée `segment` prête à remplacer
+ * `state.routeSegments[i]`.
+ * @param {Object[]} features  Séquence complète des POIs du circuit.
+ * @param {number} i  Index du segment (POI i → POI i+1).
+ * @param {Object} waypointsBySeg  { [indexSegment]: [{lat, lng}] }.
+ * @param {string} [profile]
+ */
+export async function routeOneSegment(features, i, waypointsBySeg = {}, profile = DEFAULT_PROFILE) {
+    const anchors = (features || []).map(anchorOf).filter(isValidLonLat);
+    return routeSegment(segmentVias(anchors, waypointsBySeg, i), profile);
+}
+
+// Trouve l'index du point de `track` ([[lat, lon], …]) le plus proche de
+// l'ancre [lon, lat]. Sert à re-découper un realTrack sauvegardé en segments.
+function nearestIndex(track, anchorLonLat, from = 0) {
+    const [alon, alat] = anchorLonLat;
+    let best = from, bestD = Infinity;
+    for (let k = from; k < track.length; k++) {
+        const [lat, lon] = track[k];
+        const d = (lat - alat) ** 2 + (lon - alon) ** 2;
+        if (d < bestD) { bestD = d; best = k; }
+    }
+    return best;
+}
+
+/**
+ * Re-découpe un realTrack DÉJÀ sauvegardé ([[lat, lon], …]) en segments POI→POI,
+ * sans re-router — préserve la géométrie sauvegardée (y compris d'éventuels
+ * ajustements GPX Studio ou points de passage d'une session précédente).
+ * Utilisé à l'entrée du focus mode sur un circuit chargé.
+ * @returns {{coords:number[][], ok:boolean, distanceKm:number}[]} (length = nPOIs - 1)
+ */
+export function splitTrackByAnchors(realTrack, features) {
+    const anchors = (features || []).map(anchorOf).filter(isValidLonLat);
+    const n = anchors.length;
+    if (n < 2 || !Array.isArray(realTrack) || realTrack.length < 2) return [];
+
+    // Index sur le tracé le plus proche de chaque ancre, monotone croissant.
+    const cut = [0];
+    for (let i = 1; i < n - 1; i++) {
+        cut.push(nearestIndex(realTrack, anchors[i], cut[i - 1]));
+    }
+    cut.push(realTrack.length - 1);
+
+    const segments = [];
+    for (let i = 0; i < n - 1; i++) {
+        const coords = realTrack.slice(cut[i], cut[i + 1] + 1);
+        segments.push({ coords, ok: true, distanceKm: polylineKm(coords) });
+    }
+    return segments;
 }

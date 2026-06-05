@@ -577,19 +577,28 @@ export function initCircuitListeners() {
 // circuit.js
 
 /**
+ * Clé ordonnée des poiIds du circuit courant. Sert à détecter qu'un tracé est
+ * PÉRIMÉ : si la séquence change depuis qu'il a été posé, on garde le tracé mais
+ * on affiche le badge « à re-tracer » (cf. updateTraceBlock).
+ */
+export function currentPoiKey() {
+    return (state.currentCircuit || []).map(getPoiId).join('|');
+}
+
+/**
  * Bascule un circuit chargé en mode édition.
  *
  * Deux comportements selon le contexte :
  *  - User lambda (preserveId=false) : oublie l'ID, ajoute " (modifié)" au titre
  *    → la sauvegarde créera un nouveau circuit (safety, l'original n'est pas touché)
- *  - Admin (preserveId=true) : préserve l'ID, reset trace réelle (vol d'oiseau),
- *    retire le statut "Vérifié" si présent (un POI ajouté n'est pas visité)
- *    → la sauvegarde met à jour le circuit existant (admin maintient son contenu)
+ *  - Admin (preserveId=true) : préserve l'ID et CONSERVE la trace réelle, retire
+ *    le statut "Vérifié" si présent → la sauvegarde met à jour le circuit existant.
  *
- * Décisions Stefan 03/05/2026 :
- *  - Q1 : tracé orthodromique au passage en édition (realTrack = null)
- *  - Q2 : titre auto re-calculé à la sauvegarde (laissé tel quel ici)
- *  - Q3 : statut "Vérifié" retiré automatiquement
+ * Décisions Stefan :
+ *  - 03/05/2026 (Q3) : statut "Vérifié" retiré automatiquement à l'édition.
+ *  - 05/06/2026 : le tracé réel est CONSERVÉ en édition (avant : realTrack=null,
+ *    réflexe hérité de l'ère GPX Studio). Routing in-app oblige : éditer ne jette
+ *    plus le tracé ; il devient « à re-tracer » seulement si la séquence change.
  *
  * @param {Object} [opts]
  * @param {boolean} [opts.preserveId=false] - Si true ET state.isAdmin, garde l'ID actif.
@@ -606,13 +615,14 @@ export function convertToDraft({ preserveId = false } = {}) {
         if (state.testedCircuits && state.testedCircuits[id]) {
             setTestedCircuit(id, false);
         }
-        // Q1 : reset trace réelle dans les DEUX listes (officialCircuits + myCircuits)
-        // Le circuit peut exister en doublon (résidu de tests, sync). On nettoie partout
-        // pour que map.js (qui cherche d'abord dans myCircuits) trouve realTrack=null.
-        [(state.officialCircuits || []), (state.myCircuits || [])].forEach(list => {
-            const c = list.find(x => x.id === id);
-            if (c) c.realTrack = null;
-        });
+        // Routing in-app : on CONSERVE le tracé réel à l'édition (avant on le
+        // forçait à null → vol d'oiseau, réflexe GPX Studio). On mémorise la
+        // séquence de POIs actuelle comme « base » : si elle change ensuite,
+        // updateTraceBlock affiche le badge « à re-tracer » (le tracé reste mais
+        // devient périmé). Si le circuit n'a pas de tracé, pas de base.
+        const hasTrack = [(state.officialCircuits || []), (state.myCircuits || [])]
+            .some(list => { const c = list.find(x => x.id === id); return !!(c && Array.isArray(c.realTrack) && c.realTrack.length >= 2); });
+        state.routeBasisKey = hasTrack ? currentPoiKey() : null;
         // Active le flag : applyCircuitMode forcera 'create' tant qu'il est true
         // (et sera reset automatiquement au prochain setActiveCircuitId).
         // PR 4/5 chantier drapeaux v2 : snapshot des POI préexistants AVANT
@@ -638,7 +648,7 @@ export function convertToDraft({ preserveId = false } = {}) {
     showToast("Mode édition activé. Vous pouvez maintenant modifier ce circuit.", "info");
 
     renderCircuitPanel();
-    notifyCircuitChanged(); // Force le passage à la ligne bleue (vol d'oiseau)
+    notifyCircuitChanged(); // Redessine le tracé (conservé) + rafraîchit le bloc tracé
 }
 
 // Garde anti-course (bug 03/06/2026) : loadCircuitById fait un fetch GPX lent

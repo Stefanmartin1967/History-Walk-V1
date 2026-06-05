@@ -332,6 +332,21 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
             } catch (e) {
                 console.error('[circuit-actions] applyCircuitMode failed after save:', e);
             }
+        } else {
+            // Mode « Tracer / Ajuster » : le circuit vient d'être créé/sauvé donc
+            // activeCircuitId est posé, MAIS la session de création continue. Sans
+            // ça, applyCircuitMode (via le listener 'circuit:updated') bascule en
+            // 'consult' et masque le bloc tracé (#circuit-trace-block,
+            // data-show="create") → « Ajuster le tracé » devient invisible.
+            // editingMode=true garde le panneau en 'create' (même mécanisme que
+            // « Modifier ») ; il est reset au prochain setActiveCircuitId.
+            setEditingMode(true);
+            try {
+                const { applyCircuitMode } = await import('./circuit-view.js');
+                applyCircuitMode();
+            } catch (e) {
+                console.error('[circuit-actions] applyCircuitMode failed (stayInCreation):', e);
+            }
         }
 
         // Compteur planifié calculé à la volée → applyFilters suffit pour rafraîchir

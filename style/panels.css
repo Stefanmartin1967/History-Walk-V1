@@ -3019,15 +3019,75 @@
     background: color-mix(in oklab, var(--brand) 14%, var(--surface)); color: var(--brand-2);
 }
 .trace-status-actions { display: flex; gap: 8px; padding: 0 14px 13px; }
-.btn-retrace {
-    flex: 1; border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft);
-    height: 38px; border-radius: var(--radius-md); cursor: pointer;
+
+/* Action primaire « Ajuster le tracé » (ouvre le focus mode / niveau 2) */
+.btn-adjust {
+    flex: 1; border: 1px solid color-mix(in oklab, var(--brand) 35%, var(--line));
+    background: var(--brand-soft); color: var(--brand-2);
+    height: 40px; border-radius: var(--radius-md); cursor: pointer;
     font-size: 13px; font-weight: 700;
     display: inline-flex; align-items: center; justify-content: center; gap: 7px;
-    transition: background 0.15s, color 0.15s;
+    transition: background 0.15s;
 }
-.btn-retrace:hover { background: var(--surface-muted); color: var(--ink); }
-.btn-retrace svg { width: 15px; height: 15px; }
+.btn-adjust:hover { background: color-mix(in oklab, var(--brand) 16%, var(--surface)); }
+.btn-adjust svg { width: 15px; height: 15px; }
+
+/* Menu « Plus » : Re-tracer / Exporter GPX / Affiner dans GPX Studio */
+.trace-more { position: relative; flex-shrink: 0; }
+.btn-more {
+    width: 40px; height: 40px; border-radius: var(--radius-md);
+    border: 1px solid var(--line); background: var(--surface);
+    color: var(--ink-soft); cursor: pointer; display: grid; place-items: center;
+}
+.btn-more:hover { background: var(--surface-muted); color: var(--ink); }
+.btn-more svg { width: 17px; height: 17px; }
+.more-pop {
+    position: absolute; right: 0; bottom: calc(100% + 6px);
+    width: 250px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-modal); padding: 6px; z-index: 40;
+    display: none; flex-direction: column; gap: 2px;
+}
+.more-pop.open { display: flex; }
+.more-pop .mp-item {
+    display: flex; align-items: flex-start; gap: 10px; padding: 9px 10px;
+    border: 0; background: transparent; cursor: pointer; text-align: left;
+    border-radius: var(--radius-sm); color: var(--ink); width: 100%;
+}
+.more-pop .mp-item:hover { background: var(--surface-muted); }
+.more-pop .mp-item svg { width: 16px; height: 16px; color: var(--ink-soft); flex-shrink: 0; margin-top: 1px; }
+.more-pop .mp-item .mp-t { font-size: 13px; font-weight: 600; display: block; }
+.more-pop .mp-item .mp-d { font-size: 11px; color: var(--ink-soft); display: block; margin-top: 1px; line-height: 1.35; }
+.more-pop .mp-sep { height: 1px; background: var(--line); margin: 4px 2px; }
+
+/* Variante « échec partiel » du statut (registre info, jamais alarmant) */
+.trace-status.is-warn .trace-status-ico {
+    background: color-mix(in oklab, var(--warn) 16%, var(--surface)); color: var(--warn-fg);
+}
+.trace-status.is-warn .trace-pill { background: var(--warn-soft); color: var(--warn-fg); }
+
+/* Note furet : un segment est resté en ligne droite (échec de routage) */
+.fail-note {
+    margin: 12px 0 2px; display: flex; gap: 11px; align-items: flex-start;
+    padding: 12px 13px; border-radius: var(--radius-md);
+    background: var(--info-soft);
+    border: 1px solid color-mix(in oklab, var(--info-fg) 22%, transparent);
+}
+.fail-note .furet-mini {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    object-fit: cover; box-shadow: var(--shadow-card); border: 1.5px solid var(--surface);
+}
+.fail-note .fn-body { min-width: 0; }
+.fail-note .fn-body h5 { margin: 0; font-size: 12.5px; font-weight: 700; color: var(--info-fg); }
+.fail-note .fn-body p { margin: 3px 0 0; font-size: 12px; line-height: 1.5; color: var(--ink); }
+.fail-note .fn-actions { display: flex; gap: 8px; margin-top: 9px; }
+.fail-note .fn-link {
+    border: 0; background: transparent; cursor: pointer; padding: 0;
+    font-size: 12px; font-weight: 700; color: var(--brand-2);
+    display: inline-flex; align-items: center; gap: 5px;
+}
+.fail-note .fn-link svg { width: 13px; height: 13px; }
+.fail-note .fn-link.muted { color: var(--ink-soft); }
 
 /* ----------- 5. TOP BAR ACTIONS ----------- */
 .circuit-actions {
