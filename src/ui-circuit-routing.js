@@ -211,9 +211,15 @@ async function runTrace() {
     try {
         const { realTrack, segments } = await routeCircuit(state.currentCircuit);
         state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
-        state.routeBasisKey = currentPoiKey(); // le tracé correspond à cette séquence
         // Sauvegarde le circuit AVEC son tracé réel, en restant en création.
         await saveAndExportCircuit(realTrack, { stayInCreation: true });
+        // Base de péremption posée APRÈS la sauvegarde : sur un 1er tracé,
+        // saveAndExportCircuit crée le circuit et appelle setActiveCircuitId(), qui
+        // remet routeBasisKey à null (state.js:212). La poser AVANT la rendait
+        // inopérante → le badge « à re-tracer » / « séquence modifiée » ne sortait
+        // jamais quand on changeait les lieux après coup. Même ordre que
+        // circuit-focus.js (pose après l'édition du tracé).
+        state.routeBasisKey = currentPoiKey(); // le tracé correspond à cette séquence
         tracing = false;
         updatePolylines();    // dessine le tracé bleu (real-track-polyline)
         refreshFailOverlay(); // segments en échec en pointillé (le cas échéant)
