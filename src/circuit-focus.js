@@ -26,6 +26,7 @@ import {
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
 import { getPoiName } from './data.js';
+import { toggleReferenceLayer, isReferenceVisible } from './circuit-reference-layer.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -223,8 +224,12 @@ function renderBar() {
             <button class="fb-btn ${_addMode ? 'is-active' : ''}" type="button" id="fb-add">
                 <i data-lucide="waypoints"></i> ${_addMode ? 'Clic carte actif' : 'Ajouter un point'}
             </button>
+            <button class="fb-btn ${isReferenceVisible() ? 'is-active' : ''}" type="button" id="fb-layer">
+                <i data-lucide="layers"></i> Calque
+            </button>
         </div>`;
     bar.querySelector('#fb-add').addEventListener('click', toggleAdd);
+    bar.querySelector('#fb-layer').addEventListener('click', () => toggleReferenceLayer(renderBar));
     createIcons({ icons: appIcons, root: bar });
 }
 

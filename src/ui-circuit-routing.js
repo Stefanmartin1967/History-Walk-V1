@@ -17,6 +17,7 @@
 import { state } from './state.js';
 import { routeCircuit } from './circuit-routing.js';
 import { enterCircuitFocus, refreshFailOverlay } from './circuit-focus.js';
+import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
 import { updatePolylines } from './map.js';
@@ -59,18 +60,19 @@ export function updateTraceBlock() {
     if (!el) return;
 
     // Le bloc tracé n'a de sens qu'en création / édition.
-    if (!inCreation()) { el.innerHTML = ''; return; }
+    if (!inCreation()) { el.innerHTML = ''; updateRefButton(); return; }
+
+    // Le chip « Calque de référence » s'affiche dans TOUS les états dès qu'un
+    // calque est chargé (même à 0 POI : il guide la construction du circuit).
+    const chip = referenceChipHtml();
 
     if (tracing) {
         el.innerHTML = `
             <button class="btn-trace" disabled>
                 <span class="spin"></span><span>BRouter calcule l'itinéraire…</span>
-            </button>`;
-        return;
-    }
-
-    if (hasRealTrack()) {
-        el.innerHTML = traceStatusHtml();
+            </button>` + chip;
+    } else if (hasRealTrack()) {
+        el.innerHTML = traceStatusHtml() + chip;
     } else if ((state.currentCircuit ? state.currentCircuit.length : 0) >= 2) {
         el.innerHTML = `
             <button class="btn-trace" id="btn-trace" type="button">
@@ -79,12 +81,22 @@ export function updateTraceBlock() {
             <p class="trace-hint">
                 <i data-lucide="info"></i>
                 <span>BRouter suit les chemins piétons pour transformer le vol d'oiseau en trace marchable.</span>
-            </p>`;
+            </p>` + chip;
     } else {
-        el.innerHTML = '';
-        return;
+        el.innerHTML = chip; // 0-1 POI : juste le calque s'il est chargé
     }
     createIcons({ icons: appIcons, root: el });
+    updateRefButton();
+}
+
+// Synchronise le bouton « Calque » de la barre d'actions (état actif + tooltip).
+function updateRefButton() {
+    const btn = document.getElementById('btn-reference-layer');
+    if (!btn) return;
+    btn.classList.toggle('is-on', isReferenceVisible()); // .cp-act.is-on = teinte brand
+    btn.title = hasReferenceLayer()
+        ? `Calque : ${referenceLayerName()}${isReferenceVisible() ? '' : ' (masqué)'}`
+        : 'Calque de référence (guide Wikiloc…)';
 }
 
 // Menu « Plus » (⋮) — items = [{act,icon,t,d} | {sep:true}].
@@ -102,6 +114,19 @@ function morePopHtml(items) {
 
 const MP_GPX = { act: 'gpx', icon: 'external-link', t: 'Affiner dans GPX Studio', d: "Repli : montages spéciaux dans l'outil externe" };
 const MP_EXPORT = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: 'Fichier .gpx du tracé réel' };
+
+const escHtml = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// Chip « Calque de référence » (sous la carte d'état), si un GPX guide est chargé.
+function referenceChipHtml() {
+    if (!hasReferenceLayer()) return '';
+    return `
+        <div class="layer-chip">
+            <span class="lc-dot"></span>
+            <span class="lc-txt">Calque de référence<small>${escHtml(referenceLayerName())} · guide visuel</small></span>
+            <button class="lc-remove" id="lc-remove" type="button" title="Retirer le calque"><i data-lucide="x"></i></button>
+        </div>`;
+}
 
 // Carte d'état du tracé, selon 3 cas : périmé / échec partiel / OK.
 function traceStatusHtml() {
@@ -240,6 +265,7 @@ export function initCircuitRoutingUI() {
                 document.getElementById('more-pop')?.classList.toggle('open');
                 return;
             }
+            if (e.target.closest('#lc-remove')) { removeReferenceLayer(updateTraceBlock); return; }
             const mp = e.target.closest('.mp-item');
             if (mp) {
                 closeMorePop();
@@ -257,6 +283,12 @@ export function initCircuitRoutingUI() {
             }
         });
     }
+    // Bouton « Calque de référence » de la barre d'actions (toujours visible en
+    // création, même à 0 POI) : importe un GPX guide, ou bascule sa visibilité
+    // s'il est déjà chargé. Le retrait définitif se fait via le ✕ du chip.
+    const refBtn = document.getElementById('btn-reference-layer');
+    if (refBtn) refBtn.addEventListener('click', () => toggleReferenceLayer(updateTraceBlock));
+
     // Ferme le menu « Plus » au clic extérieur.
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.trace-more')) closeMorePop();

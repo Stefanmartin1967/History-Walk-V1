@@ -29,6 +29,7 @@ import {
     // Carte & circuit
     Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation,
     Waypoints, // points de passage (routing in-app niveau 2)
+    Layers,    // calque de référence (routing in-app PR3)
 
     // Médias
     Camera, Image, ImageOff, ImagePlus, ImageDown, ImageUp,
@@ -93,7 +94,7 @@ export const appIcons = {
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
 
-    Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation, Waypoints,
+    Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation, Waypoints, Layers,
 
     Camera, Image, ImageOff, ImagePlus, ImageDown, ImageUp,
     Mic, MicOff, Volume2, Play,
