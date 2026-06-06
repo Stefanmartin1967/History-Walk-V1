@@ -336,21 +336,30 @@ function setupGpxDescToggle() {
 }
 
 function setupHelpButton() {
-    // Insère un « ? » discret À LA FIN DU h2 du titre POI → reste sur la même
-    // ligne que le nom. Avant (PR #764) : `insertAdjacentElement('afterend')`
-    // posait le bouton sur une ligne en dessous (h2 = block) — UX cassée
-    // signalée par Stefan le 06/06/2026. Le panneau est re-rendu à chaque
-    // ouverture → on ré-insère le bouton à chaque fois.
+    // Place le « ? » À DROITE DU TITRE à position FIXE quelle que soit la
+    // longueur du titre (validé Stefan le 06/06/2026 — option B).
+    // Solution : wrapper flex space-between autour du h2 → titre à gauche,
+    // « ? » à droite. align-items flex-start pour que le « ? » reste aligné
+    // sur la première ligne quand le titre wrap sur deux lignes.
+    // Le panneau est re-rendu à chaque ouverture → on ré-insère le wrapper
+    // à chaque fois.
     const titleEl = document.getElementById('panel-title-fr')
         || document.getElementById('mobile-title-fr');
-    if (titleEl) {
-        const btn = helpButton(GUIDE_LIRE_LIEU, {
-            label: 'Aide : lire la fiche d\'un lieu',
-        });
-        btn.style.marginLeft = '0.5em';
-        btn.style.verticalAlign = 'middle';
-        titleEl.appendChild(btn);
-    }
+    if (!titleEl) return;
+
+    const btn = helpButton(GUIDE_LIRE_LIEU, {
+        label: 'Aide : lire la fiche d\'un lieu',
+    });
+
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.justifyContent = 'space-between';
+    wrapper.style.alignItems = 'flex-start';
+    wrapper.style.gap = '0.5em';
+
+    titleEl.parentNode.insertBefore(wrapper, titleEl);
+    wrapper.appendChild(titleEl);
+    wrapper.appendChild(btn);
 }
 
 function setupDetailsEventListeners(poiId) {
