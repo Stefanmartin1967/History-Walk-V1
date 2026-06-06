@@ -49,13 +49,14 @@ export function initializeDomReferences() {
         'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title',
         'editor-cancel-btn', 'editor-save-btn', 'editor-textarea', 'destination-loader',
         // photo-viewer/viewer-* supprimés : migration V2 vers ui-photo-viewer.openPhotoViewer.
-        // btn-open-backup-modal / btn-restore-data / btn-open-trash retirés du DOM en
-        // PR #514 (cleanup menu Outils). Sauvegarder/Restaurer/Corbeille = via Mon Espace.
+        // btn-restore-data / btn-open-trash retirés du DOM en PR #514 (cleanup menu
+        // Outils). Bouton « Sauvegarder » réintroduit en PR2 dissolution Mon Espace
+        // (06/06/2026) — cf. btn-tools-backup ci-dessous.
         'btn-loop-circuit',
         'btn-clear-circuit', 'close-circuit-panel-btn',
         // 'btn-legend' retiré : la Légende vit maintenant dans les contrôles
         // de carte Leaflet (cf. LegendControl dans map.js, PR harmonisation PC).
-        'btn-bmc', 'btn-tools-menu', 'btn-bmc-topbar', 'btn-mon-espace'
+        'btn-bmc', 'btn-tools-menu', 'btn-bmc-topbar'
     ];
     
     // Récupération sécurisée des éléments
@@ -154,12 +155,11 @@ export function initializeDomReferences() {
         });
     }
 
-    // (Listener btnOpenBackupModal retiré 10/05/2026, PR cleanup post-#514 :
-    // le bouton Sauvegarder n'existe plus dans le menu Outils. Sauvegarde
-    // accessible uniquement via Mon Espace > Mes Données.)
-
-    if (DOM.btnMonEspace) {
-        DOM.btnMonEspace.addEventListener('click', () => {
+    // Bouton « Sauvegarder » du menu Outils (PR2 dissolution Mon Espace,
+    // 06/06/2026) — point d'entrée PC vers la modale de sauvegarde.
+    const btnToolsBackup = document.getElementById('btn-tools-backup');
+    if (btnToolsBackup) {
+        btnToolsBackup.addEventListener('click', () => {
             import('./user-space.js').then(({ openUserSpace }) => openUserSpace());
             closeAllDropdowns();
         });
@@ -167,7 +167,8 @@ export function initializeDomReferences() {
 
     // (Listener btnOpenTrash retiré 10/05/2026, PR cleanup post-#514 :
     // le bouton Corbeille n'existe plus dans le menu Outils. Corbeille
-    // accessible uniquement via Mon Espace > Corbeille.)
+    // accessible désormais via le bouton « Corbeille (n) » de « Mes circuits »
+    // — cf. PR1 dissolution Mon Espace, src/circuit-trash-ui.js.)
 
     if (DOM.btnBmc) {
         DOM.btnBmc.addEventListener('click', () => {

@@ -129,15 +129,19 @@ afterEach(() => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 describe('renderMobileMenu — render structure', () => {
-    it('rend les 6 boutons standards (non-admin) — Mon Espace point d\'entrée unique, GeoJSON déplacé en GOD MODE', () => {
+    it('rend les 6 boutons standards (non-admin) — Sauvegarder dans Outils (PR2 dissolution Mon Espace), GeoJSON déplacé en GOD MODE', () => {
         renderMobileMenu();
         expect(document.getElementById('mob-action-stats')).not.toBeNull();
-        expect(document.getElementById('mob-action-mon-espace')).not.toBeNull();
+        expect(document.getElementById('mob-action-backup')).not.toBeNull();
         expect(document.getElementById('mob-action-scan')).not.toBeNull();
         expect(document.getElementById('mob-action-reset')).not.toBeNull();
         expect(document.getElementById('mob-action-theme')).not.toBeNull();
         expect(document.getElementById('mob-action-bmc')).not.toBeNull();
-        // Sauvegarder/Restaurer retirés du menu mobile principal (option A, PR #511).
+        // Mon Espace retiré en PR2 dissolution (06/06/2026) — la Sauvegarde
+        // a migré dans la section Outils sous l'id `mob-action-backup`.
+        expect(document.getElementById('mob-action-mon-espace')).toBeNull();
+        // Sauvegarder/Restaurer historiques retirés du menu mobile (option A, PR #511) —
+        // toujours valable : pas de bouton dédié `mob-action-save`/`mob-action-restore`.
         expect(document.getElementById('mob-action-save')).toBeNull();
         expect(document.getElementById('mob-action-restore')).toBeNull();
         // Charger Destination (GeoJSON) retiré du menu mobile (PR PC-1) :
@@ -188,9 +192,9 @@ describe('renderMobileMenu — listeners boutons standards', () => {
         expect(startGenericScanner).toHaveBeenCalled();
     });
 
-    it('click "Mon Espace" → openUserSpace()', () => {
+    it('click "Sauvegarder" → openUserSpace()', () => {
         renderMobileMenu();
-        document.getElementById('mob-action-mon-espace').click();
+        document.getElementById('mob-action-backup').click();
         expect(openUserSpace).toHaveBeenCalled();
     });
 
