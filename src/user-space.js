@@ -1,21 +1,18 @@
 // user-space.js — Contrôleur "Mon Espace" (côté utilisateur)
-import { state } from './state.js';
-import { restoreCircuit, deleteCircuitById } from './database.js';
-import { showToast } from './toast.js';
+// Étape intermédiaire dissolution (PR1, 06/06/2026) : la Corbeille a migré dans
+// circuit-trash-ui.js (point d'entrée = bouton dans la sidebar Mes circuits).
+// Mon Espace ne porte plus que la Sauvegarde (voir user-space-ui.js).
+
 import { openUserSpaceModal } from './user-space-ui.js';
 import { exportDataForMobilePC, exportFullBackupPC, handleRestoreFile, saveUserData } from './fileManager.js';
-import { renderExplorerList } from './ui-circuit-list.js';
 import { isMobileView } from './mobile-state.js';
 import { resetBackupCounter } from './backup-auto-local.js';
 
 export function openUserSpace() {
-    const callbacks = {
+    openUserSpaceModal({
         exportData: exportUserData,
         restoreData: restoreUserData,
-        restoreCircuit: restoreDeletedCircuit,
-        permanentlyDeleteCircuit,
-    };
-    openUserSpaceModal(callbacks);
+    });
 }
 
 /**
@@ -43,33 +40,4 @@ async function exportUserData(mode) {
 
 function restoreUserData(event) {
     handleRestoreFile(event);
-}
-
-async function restoreDeletedCircuit(circuitId) {
-    const circuit = (state.myCircuits || []).find(c => String(c.id) === String(circuitId));
-    await restoreCircuit(circuitId);
-    if (circuit) {
-        circuit.isDeleted = false;
-        showToast(`Circuit "${circuit.name || 'Sans nom'}" restauré.`, 'success');
-        renderExplorerList();
-    }
-}
-
-/**
- * Suppression DÉFINITIVE d'un circuit de la corbeille (refonte Mon Espace V3).
- * Purge l'enregistrement IndexedDB + retire du state. N'affecte JAMAIS les POIs
- * (un circuit n'est qu'une liste d'IDs — cf. règle absolue du chantier).
- */
-async function permanentlyDeleteCircuit(circuitId) {
-    const circuit = (state.myCircuits || []).find(c => String(c.id) === String(circuitId));
-    try {
-        await deleteCircuitById(circuitId);
-        const idx = (state.myCircuits || []).findIndex(c => String(c.id) === String(circuitId));
-        if (idx >= 0) state.myCircuits.splice(idx, 1);
-        showToast(`Circuit "${circuit?.name || 'Sans nom'}" supprimé définitivement.`, 'info');
-        renderExplorerList();
-    } catch (err) {
-        console.error('[user-space] permanent delete failed', err);
-        showToast("Impossible de supprimer le circuit.", 'error');
-    }
 }

@@ -28,6 +28,7 @@ import { switchSidebarTab } from './ui-sidebar.js';
 import { isMobileView } from './mobile-state.js';
 import { configureHelp, helpButton } from './help-popover.js';
 import { GUIDE_CIRCUIT } from './help-content.js';
+import { openCircuitTrash, getTrashedCount } from './circuit-trash-ui.js';
 
 // Aide « ? » : le patron rend l'icône circle-help via createIcons. Idempotent
 // (déjà appelé par ui-photo-batch.js) → aucun effet de doublon.
@@ -94,6 +95,7 @@ function renderToolbar() {
 
     const n = countActiveFilters();
     const filtersBtnClass = filterOpen ? 'is-active' : '';
+    const trashCount = getTrashedCount();
 
     toolbar.innerHTML = `
         <label class="mc-search">
@@ -110,6 +112,11 @@ function renderToolbar() {
         <button class="mc-tool-btn" id="mc-btn-new" title="Nouveau circuit" aria-label="Nouveau circuit">
             <i data-lucide="plus"></i>
         </button>
+        ${trashCount > 0 ? `
+        <button class="mc-tool-btn" id="mc-btn-trash" title="Corbeille (${trashCount})" aria-label="Corbeille (${trashCount} circuit${trashCount > 1 ? 's' : ''} supprimé${trashCount > 1 ? 's' : ''})">
+            <i data-lucide="trash-2"></i>
+            <span class="badge-n">${trashCount}</span>
+        </button>` : ''}
         ${isMobileView() ? `
         <button class="mc-tool-btn" id="mc-btn-close" title="Cacher le panneau" aria-label="Cacher le panneau">
             <i data-lucide="x"></i>
@@ -153,6 +160,7 @@ function renderToolbar() {
         // un event que desktopMode écoute pour entrer en mode création.
         eventBus.emit('circuit:create-new');
     });
+    document.getElementById('mc-btn-trash')?.addEventListener('click', () => openCircuitTrash());
     document.getElementById('mc-btn-close')?.addEventListener('click', () => {
         const sidebar = document.getElementById('right-sidebar');
         if (sidebar) sidebar.style.display = 'none';
