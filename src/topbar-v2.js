@@ -11,7 +11,6 @@
 import { state } from './state.js';
 import { eventBus } from './events.js';
 import { toggleFilterPanel } from './filter-panel.js';
-import { openUserSpace } from './user-space.js';
 import { showWelcomeAgain } from './welcome.js';
 import { setTheme, getCurrentTheme, THEMES, THEME_LABELS } from './theme.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -320,12 +319,9 @@ function setupThemeDropdown() {
     });
 }
 
-// ─── Boutons directs topbar Mon Espace + Visite guidée (PR PC-2) ────────────
-
-function setupMonEspaceButton() {
-    const btn = document.getElementById('btn-mon-espace-topbar');
-    if (btn) btn.addEventListener('click', () => openUserSpace());
-}
+// ─── Boutons directs topbar (Visite guidée) ─────────────────────────────────
+// Le bouton « Mon Espace » topbar a été retiré en PR2 dissolution (06/06/2026) —
+// la Sauvegarde a migré dans le menu Outils, cf. ui.js btn-tools-backup.
 
 function setupTourButton() {
     const btn = document.getElementById('btn-tour');
@@ -371,8 +367,7 @@ export function setupTopbarV2() {
     // Dropdown des destinations (PR 4)
     setupDestinationMenu();
 
-    // Boutons directs topbar (PR PC-2 — promotion : Mon Espace, Thème, Visite)
-    setupMonEspaceButton();
+    // Boutons directs topbar (PR PC-2 — Thème, Visite ; Mon Espace retiré en PR2 dissolution)
     setupTourButton();
     setupThemeDropdown();
 

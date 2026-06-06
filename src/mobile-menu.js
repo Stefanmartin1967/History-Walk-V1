@@ -33,7 +33,7 @@ function computeSubtitles() {
     const plural = (n, s, p) => `${n} ${n === 1 || n === 0 ? s : p}`;
     return {
         carnet: `${plural(visitedPois, 'lieu visité', 'lieux visités')} · ${plural(completedCircuits, 'circuit complété', 'circuits complétés')}`,
-        monEspace: 'Profil & sauvegardes',
+        backup: 'Légère (partage) ou Complète (locale)',
         scan: 'QR code partagé par un autre voyageur',
         reset: 'Supprime carnet & circuits hors-ligne',
         theme: `Actuel : ${currentThemeLabel}`,
@@ -49,13 +49,13 @@ function buildSections(subs) {
             label: 'Mon parcours',
             items: [
                 { id: 'mob-action-stats', ico: 'trophy', label: 'Mon Carnet de Voyage', sub: subs.carnet },
-                { id: 'mob-action-mon-espace', ico: 'luggage', label: 'Mon Espace', sub: subs.monEspace },
             ],
         },
         {
             label: 'Outils',
             items: [
                 { id: 'mob-action-scan', ico: 'scan-line', label: 'Scanner un circuit', sub: subs.scan },
+                { id: 'mob-action-backup', ico: 'hard-drive', label: 'Sauvegarder', sub: subs.backup },
                 { id: 'mob-action-reset', ico: 'trash-2', label: 'Vider les données locales', sub: subs.reset, variant: 'danger' },
             ],
         },
@@ -153,7 +153,7 @@ export function renderMobileMenu() {
 
     // ─── Event listeners ─────────────────────────────────────────────────────
     document.getElementById('mob-action-stats')?.addEventListener('click', () => showStatisticsModal());
-    document.getElementById('mob-action-mon-espace')?.addEventListener('click', () => openUserSpace());
+    document.getElementById('mob-action-backup')?.addEventListener('click', () => openUserSpace());
     document.getElementById('mob-action-scan')?.addEventListener('click', () => startGenericScanner());
     document.getElementById('mob-action-reset')?.addEventListener('click', async () => {
         if (await showConfirm(

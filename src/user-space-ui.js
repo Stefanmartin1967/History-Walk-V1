@@ -14,6 +14,7 @@ import { state } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getBackupStatusForUI } from './backup-auto-local.js';
 import { getAllPoiPhotosForMap } from './database.js';
+import { isMobileView } from './mobile-state.js';
 
 // Shell singleton — un seul "Mon Espace" ouvert à la fois.
 let _meOverlay = null;
@@ -144,6 +145,15 @@ async function renderBackup(container, callbacks) {
     if (!_meOverlay) return;
     const completeNote = photoWeight ? ` · ${photoWeight} de photos` : '';
 
+    // Libellé adaptatif du bouton d'action (PR2 dissolution Mon Espace) :
+    // - Légère sur mobile  → Web Share natif (« Enregistrer · Partager »)
+    // - Légère sur PC      → téléchargement classique (« Télécharger »)
+    // - Complète partout   → téléchargement classique (« Télécharger »)
+    //   La Complète ne déclenche JAMAIS Web Share : justification dans user-space.js.
+    const shareOnMobile = (sel === 'light' && isMobileView());
+    const btnIcon = shareOnMobile ? 'share-2' : 'download';
+    const btnLabel = shareOnMobile ? 'Enregistrer · Partager' : 'Télécharger';
+
     container.innerHTML = `
 <div class="me-stack">
 
@@ -174,8 +184,7 @@ async function renderBackup(container, callbacks) {
     </div>
 
     <button class="me-btn primary block" id="btn-ue-backup" type="button">
-      <span class="me-btn-on-desktop"><i data-lucide="download"></i> Télécharger</span>
-      <span class="me-btn-on-mobile"><i data-lucide="share-2"></i> Enregistrer · Partager</span>
+      <i data-lucide="${btnIcon}"></i> ${btnLabel}
     </button>
   </section>
 

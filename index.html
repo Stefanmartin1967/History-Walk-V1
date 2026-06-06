@@ -159,11 +159,9 @@
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
 
-            <!-- Cluster "espace user" : Mon Espace + Outils -->
-            <button class="btn" id="btn-mon-espace-topbar" title="Mon Espace"
-                    aria-label="Mon Espace"><i data-lucide="luggage"></i></button>
-
-            <div class="hw-topbar-separator" aria-hidden="true"></div>
+            <!-- (Bouton « Mon Espace » topbar retiré en PR2 dissolution Mon Espace,
+                 06/06/2026 : la Sauvegarde a migré dans le menu Outils ci-dessous,
+                 la Corbeille dans « Mes circuits ». PR3 supprimera la modale.) -->
 
             <!-- GOD MODE TOOLS -->
             <div class="tools-dropdown-container is-hidden" id="admin-tools-container">
@@ -193,6 +191,9 @@
                     <button class="tools-menu-item" id="btn-import-photos">
                         <i data-lucide="image-up"></i> Importer des photos
                     </button>
+                    <button class="tools-menu-item" id="btn-tools-backup">
+                        <i data-lucide="hard-drive"></i> Sauvegarder
+                    </button>
                     <button class="tools-menu-item" id="btn-sync-scan">
                         <i data-lucide="scan-line"></i> Scanner (Synchro/Circuit)
                     </button>
@@ -200,11 +201,10 @@
                         <i data-lucide="qr-code"></i> Partager Progression
                     </button>
 
-                    <!-- Section "Gestion" supprimée (PR PC-1, 10/05/2026) :
-                         Sauvegarder + Restaurer + Corbeille font doublon avec
-                         Mon Espace > Mes Données et Mon Espace > Corbeille.
-                         Cohérence cross-plateforme avec le menu mobile (option A
-                         déjà appliquée en PR #511). -->
+                    <!-- (Réintroduction du bouton « Sauvegarder » en PR2
+                         dissolution Mon Espace, 06/06/2026 : la modale qui s'y
+                         ouvre vit toujours en `user-space.js` — PR3 la sortira
+                         de son shell « Mon Espace ».) -->
 
                     <!-- Section "Préférences" supprimée (PR PC-2, 10/05/2026) :
                          le bouton Thème est désormais en topbar avec dropdown
