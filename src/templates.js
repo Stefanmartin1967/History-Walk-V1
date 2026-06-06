@@ -170,7 +170,7 @@ function buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile }) {
             </button>
             <button class="poi-pop-item" role="menuitem" id="${gpxId}" type="button"
                     aria-disabled="${hasGpxDesc ? 'false' : 'true'}">
-                <i data-lucide="file-text"></i>Description GPX
+                <i data-lucide="file-text"></i>Info GPX
             </button>
             ${positionItem}
             ${accessPointItem}
@@ -274,7 +274,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // Section GPX (cachée par défaut, ouverte par bouton tiroir)
     const gpxSection = hasGpxDesc
         ? `<section class="poi-section poi-gpx-section is-hidden" id="${mobile ? 'mobile-section-gpx-desc' : 'section-gpx-desc'}">
-              <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="file-text"></i>Description GPX</span></h3>
+              <h3 class="poi-section-title"><span class="ttl-text"><i data-lucide="file-text"></i>Info GPX</span></h3>
               <p class="poi-desc" id="${mobile ? '' : 'panel-short-desc-display'}">${escapeXml(gpxDesc).replace(/\n/g, '<br>')}</p>
            </section>`
         : '';
@@ -344,7 +344,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 </div>
                 <div class="poi-toggle amber ${isIncontournable ? 'is-on' : ''}" data-toggle="incontournable" id="poi-toggle-incontournable">
                     <i class="poi-toggle-icon" data-lucide="${isIncontournable ? 'star' : 'star-off'}"></i>
-                    <div class="lab-text">Incontournable<span class="lab-hint">${isIncontournable ? 'Mis en avant sur la carte' : 'Mettre en avant sur la carte'}</span></div>
+                    <div class="lab-text">Incontournable<span class="lab-hint">Ignore les filtres visités/planifiés</span></div>
                 </div>
                 <textarea class="poi-notes-area" id="poi-notes-area" placeholder="Mes notes : impressions, conseils, photos manquantes…">${escapeXml(notes)}</textarea>
             </div>

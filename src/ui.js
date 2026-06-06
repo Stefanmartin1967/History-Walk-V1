@@ -91,39 +91,14 @@ export function initializeDomReferences() {
         });
     }
 
-    // --- TOGGLE DESCRIPTION GPX (INTELLIGENT) ---
-    const toggleGpxBtn = document.getElementById('btn-toggle-gpx-desc') || document.getElementById('mobile-btn-toggle-gpx-desc');
-    const gpxSection = document.getElementById('section-gpx-desc') || document.getElementById('mobile-section-gpx-desc');
-
-    // Détection du contenu (PC/Mobile)
-    const shortDescText = document.getElementById('panel-short-desc-display')?.textContent ||
-                          gpxSection?.querySelector('.short-text')?.textContent || "";
-
-    const hasGpxDesc = shortDescText && shortDescText.trim() !== "";
-
-    if (toggleGpxBtn && gpxSection) {
-        // État Initial Intelligent
-        if (hasGpxDesc) {
-            // Si rempli : Bouton Bleu, Section Visible
-            toggleGpxBtn.style.color = "var(--brand)";
-            toggleGpxBtn.style.opacity = "1";
-            gpxSection.style.display = "flex"; // Flex car .detail-section est flex
-        } else {
-            // Si vide : Bouton Gris/Transparent, Section Masquée
-            toggleGpxBtn.style.color = "var(--ink-soft)";
-            toggleGpxBtn.style.opacity = "0.5";
-            gpxSection.style.display = "none";
-        }
-
-        toggleGpxBtn.addEventListener('click', () => {
-            const isVisible = gpxSection.style.display !== 'none';
-            if (isVisible) {
-                gpxSection.style.setProperty('display', 'none', 'important');
-            } else {
-                gpxSection.style.setProperty('display', 'flex', 'important');
-            }
-        });
-    }
+    // (Bloc « TOGGLE DESCRIPTION GPX (INTELLIGENT) » retiré 06/06/2026, PR1
+    // fiche lieu. Il forçait `display:flex` au boot et créait un DOUBLE BINDING
+    // avec setupGpxDescToggle dans ui-details.js → le toggle ne basculait plus
+    // (Stefan a observé : « ça ne bascule pas »). Comportement attendu désormais
+    // (option B2) : section Info GPX MASQUÉE par défaut via `is-hidden` du
+    // template, ouverte/fermée via le toggle propre du kebab. L'état « disabled »
+    // du bouton kebab quand le POI n'a pas d'info GPX est déjà géré par
+    // `aria-disabled` dans le template — pas besoin d'override en JS.)
 
     // --- EXPORT LOGIC WITH CONTRIBUTION MODAL ---
     if (DOM.btnExportGpx) {
