@@ -681,3 +681,134 @@ export const GUIDE_MES_CIRCUITS = {
     footnote: `Astuce : le tri <strong>Proximité</strong> se base sur votre <strong>lieu de
         résidence</strong> — vous pouvez le modifier à tout moment depuis le panneau Filtres.`,
 };
+
+// ============================================================================
+// Contenu d'aide « Lire la fiche d'un lieu ».
+// Posé sur un « ? » à côté du titre du POI dans le panneau de détails
+// (sidebar onglet « Lieu » sur PC, mobile-container sur mobile).
+// Sources libellés vérifiées dans templates.js (hero, eyebrow, mini-barre,
+// kebab, sections Description / Info GPX / Détails pratiques / Mon suivi),
+// ui-details.js (toggles, TTS), filter-panel.js (« Lieux visités/planifiés »),
+// data.js (deletePoi : masquage officiels / vraie suppression perso).
+// Conventions Stefan respectées : « Heripia », verbes neutres, dialogue
+// itéré avec Stefan le 06/06/2026 (zéro discordance).
+// ============================================================================
+
+export const GUIDE_LIRE_LIEU = {
+    title: 'Lire la fiche d\'un lieu',
+    intro: `La fiche d'un lieu rassemble tout ce qu'Heripia sait de ce point d'intérêt —
+        photos, descriptions, infos pratiques — et vous permet de <strong>marquer votre
+        passage</strong>, <strong>laisser des notes</strong>, ou <strong>basculer
+        ailleurs</strong> <span class="help-muted">(Google, Maps, fiche d'édition…)</span>.`,
+    schema: [
+        'Découvrir',
+        'Marquer <span class="help-muted">(visité / incontournable)</span>',
+        'Agir <span class="help-muted">(Google, Maps, Éditer)</span>',
+        'Plus d\'actions <span class="help-muted">(kebab)</span>',
+    ],
+    sections: [
+        {
+            heading: `1 · Les repères en haut`,
+            html: `<ul class="help-list">
+                    <li><strong>Photo principale</strong> : la première photo du lieu.
+                        <strong>Cliquez sur la photo</strong> pour ouvrir le viewer plein écran
+                        et voir toutes les photos. Si aucune photo, cliquez la zone pour
+                        <strong>en ajouter une</strong>.</li>
+                    <li><strong>Tags sur la photo</strong> : état du lieu
+                        <span class="help-muted">(ex. ouvert, en ruine)</span>, accès
+                        <span class="help-muted">(libre, payant…)</span>, et l'étoile
+                        <strong>Incontournable</strong> si vous l'avez marqué.</li>
+                    <li><strong>Eyebrow</strong> au-dessus du titre : la <strong>zone</strong>,
+                        la <strong>catégorie</strong>
+                        <span class="help-muted">(et le sous-type si renseigné)</span>. Si vous
+                        avez ouvert le lieu <strong>depuis la liste des étapes d'un circuit</strong>,
+                        deux <strong>chevrons</strong> <span class="help-muted">(◀ ▶)</span>
+                        encadrent un compteur d'étape <span class="help-muted">(« 3 / 12 »)</span>
+                        pour naviguer d'un POI à l'autre.</li>
+                </ul>`,
+        },
+        {
+            heading: `2 · Lire et écouter la description`,
+            html: `<ul class="help-list">
+                    <li><strong>Description</strong> : ce qu'il y a à savoir sur le lieu, avec sa
+                        <strong>source</strong> en bas.</li>
+                    <li>L'icône <strong>haut-parleur</strong> lit la description
+                        <strong>à voix haute</strong>.</li>
+                    <li><strong>Info GPX</strong> <span class="help-muted">(dans le kebab)</span> :
+                        un texte court qui apparaît dans <strong>votre application de marche</strong>
+                        quand vous exportez le GPX du circuit.</li>
+                </ul>`,
+        },
+        {
+            heading: `3 · Détails pratiques`,
+            html: `<p>Section adaptative qui affiche uniquement les infos renseignées :</p>
+                <ul class="help-list">
+                    <li><strong>Durée de visite</strong>, <strong>Prix d'entrée</strong>,
+                        <strong>Horaires</strong>, <strong>Téléphone</strong>
+                        <span class="help-muted">(cliquable pour appeler)</span>,
+                        <strong>Facebook</strong> <span class="help-muted">(lien vers la page)</span>.</li>
+                    <li>Si rien n'est renseigné et qu'aucun accès payant n'est défini, Heripia
+                        affiche simplement <strong>« Visite libre »</strong>.</li>
+                </ul>`,
+        },
+        {
+            heading: `4 · Suivre votre passage`,
+            html: `<p>Deux marqueurs personnels et une zone libre pour vos notes.</p>
+                <ul class="help-list">
+                    <li><strong>Visité</strong> : à cocher après votre passage sur place. Sert
+                        principalement de <strong>filtre</strong> dans le panneau Filtres
+                        <span class="help-muted">(« Lieux visités »)</span> — utile pour
+                        <strong>ne pas re-inclure</strong> des lieux déjà vus dans un prochain
+                        circuit. Alimente aussi votre <strong>Carnet de Voyage</strong>.</li>
+                    <li><strong>Incontournable</strong> : marque un lieu que vous voulez
+                        <strong>toujours voir sur la carte</strong>, même quand vous filtrez par
+                        lieux visités ou planifiés.</li>
+                    <li><strong>Mes notes</strong> : champ libre pour vos impressions, conseils,
+                        photos manquantes… <strong>Restent sur votre appareil</strong> — pensez à
+                        sauvegarder via <strong>Outils&nbsp;&gt; Sauvegarder</strong>.</li>
+                </ul>
+                <p class="help-muted">Marquer un lieu Incontournable n'ajoute <strong>pas</strong>
+                de pastille spéciale sur la carte <span class="help-muted">(c'était le cas avant,
+                plus depuis)</span> — c'est désormais un marqueur <strong>privé</strong> qui ne
+                sert qu'au filtre.</p>`,
+        },
+        {
+            heading: `5 · Actions rapides depuis la fiche`,
+            html: `<p>Mini-barre en bas de la fiche, <strong>identique sur PC et mobile</strong> :</p>
+                <ul class="help-list">
+                    <li><strong>Google</strong> : recherche web sur le nom du lieu.</li>
+                    <li><strong>Maps</strong> : ouvre Google Maps centré sur le lieu.</li>
+                    <li><strong>OSM</strong> : ouvre OpenStreetMap au même endroit.</li>
+                    <li><strong>Éditer</strong> : ouvre la fiche d'édition complète pour modifier
+                        le nom, la description, la catégorie… <strong>Vos modifications restent
+                        sur votre appareil.</strong></li>
+                </ul>`,
+        },
+        {
+            heading: `6 · Plus d'actions (le menu « kebab »)`,
+            html: `<p>Les trois points à droite de la mini-barre ouvrent un menu avec :</p>
+                <ul class="help-list">
+                    <li><strong>Titre en arabe</strong> : bascule l'affichage du titre arabe si
+                        le lieu en a un.</li>
+                    <li><strong>Info GPX</strong> : ouvre/masque la section Info GPX
+                        <span class="help-muted">(désactivé si le lieu n'a pas d'info GPX)</span>.</li>
+                    <li><strong>Déplacer le marqueur</strong> <span class="help-muted">(PC)</span>
+                        ou <strong>Capturer ma position</strong> <span class="help-muted">(mobile)</span> :
+                        pour rectifier la position du lieu sur la carte.</li>
+                    <li><strong>Supprimer</strong> : se comporte différemment selon le type de
+                        lieu.<br>
+                        — Pour <strong>vos lieux</strong> : ils sont vraiment supprimés.<br>
+                        — Pour les <strong>officiels</strong> : ils sont juste
+                        <strong>masqués</strong> de votre version
+                        <span class="help-muted">(ils appartiennent au patrimoine partagé par
+                        Heripia)</span>. Pour les revoir : filtre <strong>Visibilité</strong> du
+                        panneau Filtres.</li>
+                </ul>`,
+        },
+    ],
+    footnote: `Astuce : la fiche peut contenir des <strong>erreurs</strong> ou être
+        <strong>incomplète</strong> — la documentation locale est parfois mince.
+        <strong>Enrichissez</strong>, corrigez ce qui vous semble faux : vos changements
+        restent sur votre appareil. Seule garantie à 95&nbsp;% : ce <strong>lieu existe
+        vraiment</strong>.`,
+};

@@ -13,6 +13,13 @@ import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
+import { configureHelp, helpButton } from './help-popover.js';
+import { GUIDE_LIRE_LIEU } from './help-content.js';
+
+// Aide « ? » général de la fiche d'un lieu : le patron rend l'icône via createIcons.
+// Idempotent (configureHelp est déjà appelé par ui-photo-batch et ui-circuit-list ;
+// double appel inoffensif — on garde la trace ici pour si ces modules disparaissent).
+configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
 
 export function initUiDetailsListeners() {
     eventBus.on('poi:open-details', ({ featureId, circuitIndex = null }) => openDetailsPanel(featureId, circuitIndex));
@@ -328,6 +335,19 @@ function setupGpxDescToggle() {
     });
 }
 
+function setupHelpButton() {
+    // Insère un « ? » discret après le titre du POI. Le panneau est re-rendu à
+    // chaque ouverture de fiche → on ré-insère le bouton à chaque fois (idem
+    // pattern ui-circuit-list, richEditor, ui-photo-batch).
+    const titleEl = document.getElementById('panel-title-fr')
+        || document.getElementById('mobile-title-fr');
+    if (titleEl) {
+        titleEl.insertAdjacentElement('afterend', helpButton(GUIDE_LIRE_LIEU, {
+            label: 'Aide : lire la fiche d\'un lieu',
+        }));
+    }
+}
+
 function setupDetailsEventListeners(poiId) {
     setupSuiviToggles(poiId);
     setupNotesAutosave(poiId);
@@ -335,6 +355,7 @@ function setupDetailsEventListeners(poiId) {
     setupKebab();
     setupEyebrowNav();
     setupGpxDescToggle();
+    setupHelpButton();
 
     // --- Boutons "Voir sur Maps / OSM" (par coordonnées, cf. openPoiOnMap) ---
     const gmapsBtn = document.getElementById('open-gmaps-btn');
