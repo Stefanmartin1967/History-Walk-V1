@@ -1,178 +1,22 @@
-/* style/me-userspace.css — Mon Espace (côté user)
-   Refonte V3 (handoff Claude Design 23/05/2026).
-
-   Évolutions clés vs V2 :
-   - 2 onglets uniquement : Sauvegarde + Corbeille (au lieu de 4).
-   - Accent = thème : on bascule --hw-amber → --cta-bg / --brand sur
-     tabs actifs, hero, toggles, hovers, badges. Cohérent avec CC Admin.
-   - Onglet Sauvegarde allégé (V3.1, 23/05) : Sauvegarder (Légère/Complète
-     + bouton adaptatif télécharger/partager), Restaurer, statut backup auto
-     en footnote. Partager fusionné dans Sauvegarder ; Forcer + Sync retirés.
-   - Onglet Corbeille : actions Restaurer (neutre) + Supprimer (destructif)
-     avec confirmation.
-
-   Le shell custom (overlay/modale/tabs ARIA, mobile plein écran) est
-   conservé. Voir handoff §02. */
+/* style/me-userspace.css — Classes de contenu partagées (modale Sauvegarder
+   + modale Corbeille). Origine : refonte V3 Mon Espace (handoff Claude Design
+   23/05/2026, avec passion).
+   PR3 dissolution (06/06/2026) : Mon Espace a été dissous. Le shell custom
+   `.me-overlay` / `.me-modal` / `.me-topbar` / `.me-tabs` a disparu — les
+   classes `.me-*` qui survivent ici sont des éléments de contenu réutilisables,
+   maintenant injectés dans le shell V2 partagé `openHwModal` (cf. modal.js).
+   Le préfixe `.me-` est conservé pour ne pas multiplier les Edit de PR ; il
+   peut être considéré comme « Modal Elements » plutôt que « Mon Espace ». */
 
 /* ============================================================
-   Variables locales (pas de pollution tokens.css)
+   Variables locales — exposées sur le shell V2 (où les .me-* vivent)
    ============================================================ */
-.me-overlay {
-    --me-modal-w: min(720px, 92vw);
-    --me-modal-h: min(82vh, 720px);
+.hw-modal-overlay {
     --me-accent:       var(--cta-bg);
     --me-accent-fg:    var(--cta-fg);
     --me-accent-soft:  color-mix(in oklab, var(--cta-bg) 12%, var(--surface));
     --me-accent-line:  color-mix(in oklab, var(--cta-bg) 35%, var(--line));
 }
-
-/* ============================================================
-   SHELL : overlay + modale
-   ============================================================ */
-.me-overlay {
-    position: fixed; inset: 0;
-    background: color-mix(in srgb, var(--scrim) 75%, transparent);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    z-index: var(--z-modal, 2000);
-    display: flex; align-items: center; justify-content: center;
-    padding: 16px;
-    opacity: 0; visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s;
-}
-.me-overlay.is-active { opacity: 1; visibility: visible; }
-
-.me-modal {
-    width: var(--me-modal-w);
-    height: var(--me-modal-h);
-    background: var(--surface);
-    color: var(--ink);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-modal);
-    overflow: hidden;
-    transform: scale(0.96);
-    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1.1);
-    font-family: "Inter", system-ui, sans-serif;
-    display: flex; flex-direction: column;
-}
-.me-overlay.is-active .me-modal { transform: scale(1); }
-
-/* — Topbar — */
-.me-topbar {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 18px 26px 0;
-    background: var(--surface);
-    flex-shrink: 0;
-}
-.me-topbar-brand {
-    display: flex; align-items: center; gap: 12px;
-    min-width: 0;
-}
-.me-topbar-mark {
-    width: 36px; height: 36px;
-    border-radius: var(--radius-lg);
-    background: var(--me-accent-soft);
-    color: var(--me-accent);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    border: 1px solid var(--me-accent-line);
-}
-.me-topbar-mark i[data-lucide] { width: 18px; height: 18px; }
-.me-topbar-text { min-width: 0; }
-.me-topbar-title {
-    font-family: "Inter", system-ui, sans-serif;
-    font-size: 17px; font-weight: 700;
-    line-height: 1.15; color: var(--ink);
-    margin: 0;
-}
-.me-topbar-sub {
-    font-size: 12px; color: var(--ink-soft);
-    margin-top: 2px;
-}
-.me-close {
-    width: 32px; height: 32px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--line);
-    background: var(--surface);
-    color: var(--ink-soft);
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
-    flex-shrink: 0;
-    font-family: inherit;
-}
-.me-close:hover { background: var(--surface-muted); color: var(--ink); }
-.me-close:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-.me-close i[data-lucide] { width: 16px; height: 16px; }
-
-/* — Variante topbar mobile (cachée par défaut, activée en media query) — */
-.me-topbar-mobile { display: none; }
-.me-topbar-mobile-eyebrow {
-    font-family: var(--font-family-mono);
-    font-size: 10px; letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    margin-bottom: 1px;
-}
-.me-topbar-mobile-title {
-    font-family: "Inter", system-ui, sans-serif;
-    font-size: 17px; font-weight: 700;
-    line-height: 1.1; color: var(--ink);
-}
-
-/* — Tabs accessibles (role="tablist") — */
-.me-tabs {
-    display: flex; gap: 2px;
-    padding: 14px 22px 0;
-    border-bottom: 1px solid var(--line);
-    flex-shrink: 0;
-}
-.me-tab {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 10px 14px;
-    border: none; background: transparent;
-    border-bottom: 2px solid transparent;
-    font-family: inherit;
-    font-size: 13px; font-weight: 600;
-    color: var(--ink-soft);
-    cursor: pointer;
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
-    margin-bottom: -1px;
-    white-space: nowrap;
-}
-.me-tab:hover { color: var(--ink); }
-.me-tab:focus-visible {
-    outline: none;
-    box-shadow: var(--focus-ring);
-    border-radius: var(--radius-sm);
-}
-.me-tab.is-active {
-    color: var(--me-accent);
-    border-bottom-color: var(--me-accent);
-    font-weight: 700;
-}
-.me-tab i[data-lucide] { width: 14px; height: 14px; flex-shrink: 0; }
-.me-tab .count {
-    margin-left: 2px;
-    background: var(--surface-muted); color: var(--ink-soft);
-    font-size: 11px;
-    padding: 1px 7px;
-    border-radius: var(--radius-pill);
-    font-weight: 600;
-}
-.me-tab.is-active .count {
-    background: var(--me-accent-soft);
-    color: var(--me-accent);
-}
-
-/* — Body & scroll — */
-.me-body {
-    flex: 1; overflow-y: auto;
-    padding: 22px 26px;
-}
-.me-body::-webkit-scrollbar { width: 4px; }
-.me-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
 
 /* ============================================================
    Layout vertical des sections (onglet Sauvegarde)
@@ -427,16 +271,9 @@
 
 /* Sauvegarder = CTA principal, pleine largeur */
 .me-btn.block { width: 100%; }
-
-/* Bouton « Télécharger » adaptatif : label/icône swap desktop ↔ mobile.
-   Sur device réel : @media query. Dans la maquette, l'attribut
-   host[data-viewport="mobile"] sur l'ancêtre force le swap. */
-.me-btn-on-desktop { display: inline-flex; align-items: center; gap: 7px; }
-.me-btn-on-mobile  { display: none; align-items: center; gap: 7px; }
-@media (max-width: 767px) {
-    .me-btn-on-desktop { display: none; }
-    .me-btn-on-mobile  { display: inline-flex; }
-}
+/* (Classes .me-btn-on-desktop / .me-btn-on-mobile retirées en PR2 :
+   le libellé du bouton de sauvegarde est désormais injecté dynamiquement
+   en JS — cf. save-modal-ui.js renderBody.) */
 
 /* ============================================================
    Footnote — ligne de statut discrète (backup auto)
@@ -617,39 +454,11 @@
 }
 
 /* ============================================================
-   MOBILE (< 768px) : plein écran
+   MOBILE (< 768px) — adaptations des éléments de contenu uniquement.
+   (Le shell mobile plein écran est désormais géré par le système V2
+   `.hw-modal-overlay` dans modals.css.)
    ============================================================ */
 @media (max-width: 767px) {
-    .me-overlay {
-        padding: 0;
-    }
-    .me-modal {
-        width: 100vw;
-        height: 100vh;
-        height: 100dvh;
-        max-width: none;
-        border-radius: 0;
-        border: none;
-        box-shadow: none;
-    }
-
-    .me-topbar { padding: 14px 16px 0; }
-    .me-topbar-brand { display: none; }
-    .me-topbar-mobile { display: block; flex: 1; min-width: 0; }
-    .me-close { width: 36px; height: 36px; }
-
-    .me-tabs {
-        padding: 12px 14px 0;
-        overflow-x: auto;
-        scrollbar-width: none;
-    }
-    .me-tabs::-webkit-scrollbar { display: none; }
-    .me-tab {
-        padding: 10px 12px;
-        flex-shrink: 0;
-    }
-
-    .me-body { padding: 16px 14px 24px; }
     .me-stack { gap: 18px; }
 
     /* Choix Légère/Complète : empilé sur mobile */

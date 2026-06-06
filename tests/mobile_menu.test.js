@@ -65,8 +65,8 @@ vi.mock('../src/admin-control-center.js', () => ({
     openControlCenter: vi.fn()
 }));
 
-vi.mock('../src/user-space.js', () => ({
-    openUserSpace: vi.fn()
+vi.mock('../src/save-modal-ui.js', () => ({
+    openSaveModal: vi.fn()
 }));
 
 vi.mock('../src/theme.js', () => ({
@@ -105,7 +105,7 @@ import { deleteDatabase } from '../src/database.js';
 import { showConfirm } from '../src/modal.js';
 import { showAdminLoginModal, logoutAdmin } from '../src/admin.js';
 import { openControlCenter } from '../src/admin-control-center.js';
-import { openUserSpace } from '../src/user-space.js';
+import { openSaveModal } from '../src/save-modal-ui.js';
 import { eventBus } from '../src/events.js';
 import { getCurrentView, isMobileView } from '../src/mobile-state.js';
 import { renderMobileMenu } from '../src/mobile-menu.js';
@@ -192,10 +192,10 @@ describe('renderMobileMenu — listeners boutons standards', () => {
         expect(startGenericScanner).toHaveBeenCalled();
     });
 
-    it('click "Sauvegarder" → openUserSpace()', () => {
+    it('click "Sauvegarder" → openSaveModal()', () => {
         renderMobileMenu();
         document.getElementById('mob-action-backup').click();
-        expect(openUserSpace).toHaveBeenCalled();
+        expect(openSaveModal).toHaveBeenCalled();
     });
 
     it('click "Vider données" confirmé → deleteDatabase appelé (reload ignoré : jsdom)', async () => {
