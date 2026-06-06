@@ -65,11 +65,11 @@ const ICON_X = '<i data-lucide="x"></i>';
 /* --------------------------------------------------------------------------
    Singleton : un seul popover/drawer ouvert à la fois
    -------------------------------------------------------------------------- */
-let _open = null;  // { el, trigger, kind, cleanup }
+let _open = null;  // { el, trigger, kind, cleanup, onClose }
 
 function closeOpen(returnFocus = true) {
     if (!_open) return;
-    const { el, trigger, cleanup } = _open;
+    const { el, trigger, cleanup, onClose } = _open;
     cleanup && cleanup();
     el.classList.add('help-closing');
     const node = el;
@@ -79,6 +79,9 @@ function closeOpen(returnFocus = true) {
         try { trigger.focus({ preventScroll: true }); } catch (_) { trigger.focus(); }
     }
     _open = null;
+    // Hook de fermeture (ex. onboarding : lancer une action APRÈS lecture du guide).
+    // Appelé après _open=null pour éviter toute réentrance.
+    if (typeof onClose === 'function') { try { onClose(); } catch (_) { /* noop */ } }
 }
 
 export function closeHelp() { closeOpen(false); }
@@ -353,6 +356,7 @@ export function openHelpPanel(opts, trigger = null) {
 
     _open = {
         el: drawer, trigger, kind: 'drawer',
+        onClose: typeof opts.onClose === 'function' ? opts.onClose : null,
         cleanup: () => {
             document.removeEventListener('keydown', onKey, true);
             scrim.classList.add('help-closing');
