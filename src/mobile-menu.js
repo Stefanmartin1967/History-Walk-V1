@@ -16,7 +16,7 @@ import { startGenericScanner } from './sync.js';
 import { showStatisticsModal } from './statistics.js';
 import { showAdminLoginModal, logoutAdmin } from './admin.js';
 import { openControlCenter } from './admin-control-center.js';
-import { openUserSpace } from './user-space.js';
+import { openSaveModal } from './save-modal-ui.js';
 import { cycleTheme, getCurrentTheme, THEME_LABELS } from './theme.js';
 import { eventBus } from './events.js';
 import { getCurrentView, isMobileView, setMobileHeaderSlot, clearMobileViewFooter } from './mobile-state.js';
@@ -153,7 +153,7 @@ export function renderMobileMenu() {
 
     // ─── Event listeners ─────────────────────────────────────────────────────
     document.getElementById('mob-action-stats')?.addEventListener('click', () => showStatisticsModal());
-    document.getElementById('mob-action-backup')?.addEventListener('click', () => openUserSpace());
+    document.getElementById('mob-action-backup')?.addEventListener('click', () => openSaveModal());
     document.getElementById('mob-action-scan')?.addEventListener('click', () => startGenericScanner());
     document.getElementById('mob-action-reset')?.addEventListener('click', async () => {
         if (await showConfirm(

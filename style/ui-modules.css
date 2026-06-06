@@ -503,10 +503,9 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    TABS theme-aware (.ue-tabs / .ue-tab)
    Composant historiquement partagé HW/CC. Aujourd'hui utilisé uniquement par
-   le modal admin "Stats classement" (cf. src/admin.js → showRankTable). Mon
-   Espace utilise désormais .me-tabs (style/me-userspace.css). Conservé ici
-   tant qu'admin.js le consomme — peut être migré en .me-tabs ou factorisé en
-   composant dédié (style/components/tabs.css) lors d'une prochaine itération.
+   le modal admin "Stats classement" (cf. src/admin.js → showRankTable).
+   Conservé ici tant qu'admin.js le consomme — peut être factorisé en composant
+   dédié (style/components/tabs.css) lors d'une prochaine itération.
    ═══════════════════════════════════════════════════════════════════════════ */
 .ue-tabs {
     display: flex;

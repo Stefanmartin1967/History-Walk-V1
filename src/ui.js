@@ -155,12 +155,13 @@ export function initializeDomReferences() {
         });
     }
 
-    // Bouton « Sauvegarder » du menu Outils (PR2 dissolution Mon Espace,
-    // 06/06/2026) — point d'entrée PC vers la modale de sauvegarde.
+    // Bouton « Sauvegarder » du menu Outils — point d'entrée PC vers la
+    // modale de sauvegarde (PR3 dissolution Mon Espace : openSaveModal V2
+    // via openHwModal, remplace l'ancien openUserSpace).
     const btnToolsBackup = document.getElementById('btn-tools-backup');
     if (btnToolsBackup) {
         btnToolsBackup.addEventListener('click', () => {
-            import('./user-space.js').then(({ openUserSpace }) => openUserSpace());
+            import('./save-modal-ui.js').then(({ openSaveModal }) => openSaveModal());
             closeAllDropdowns();
         });
     }
