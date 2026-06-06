@@ -13,6 +13,11 @@ import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { showConfirm, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getSubtypes, getStates, getAccessValues } from './taxonomy.js';
+import { configureHelp, helpButton } from './help-popover.js';
+import { GUIDE_LIEU } from './help-content.js';
+
+// Aide « ? » : le patron rend l'icône via createIcons (idempotent).
+configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
 
 // --- IDs DOM ---
 const DOM_IDS = {
@@ -543,6 +548,15 @@ function showModal() {
     bindModalEvents();
     populateCategorySelect();
     createIcons({ icons: appIcons });
+
+    // Aide « ? » : guide « Créer ou éditer un lieu », inséré dans le header de la
+    // modale (avant la croix), comme l'aide d'import photo. Le header est recréé à
+    // chaque ouverture → on (ré)insère à chaque showModal.
+    const headerEl = document.querySelector('.hw-modal-overlay.is-active .hw-modal-header');
+    const closeBtn = headerEl?.querySelector('.hw-modal-close');
+    if (headerEl && closeBtn && !headerEl.querySelector('.help-trigger')) {
+        closeBtn.insertAdjacentElement('beforebegin', helpButton(GUIDE_LIEU, { label: 'Aide : créer ou éditer un lieu' }));
+    }
 }
 
 function updateSaveButtonState() {

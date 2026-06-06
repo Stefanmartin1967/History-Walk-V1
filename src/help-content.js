@@ -389,3 +389,121 @@ export const GUIDE_CIRCUIT = {
     footnote: `Astuce : posez d'abord tous les lieux dans l'ordre, puis <strong>tracez à la
         fin</strong>. Vous pourrez toujours réordonner et <strong>re-tracer</strong>.`,
 };
+
+// ============================================================================
+// Contenu d'aide « Créer ou éditer un lieu ».
+// Source unique : docs/aide-creation-edition-lieu.md (libellés + valeurs de
+// taxonomie vérifiés dans le code et en preview). Mêmes conventions.
+// ============================================================================
+
+/* === PANNEAU GLOBAL — le guide « Créer ou éditer un lieu » ===
+   Posé sur le « ? » du header de la modale richEditor (« Nouveau Lieu » /
+   « Éditer le Lieu »). La découvrabilité du clic droit relève d'un autre
+   chantier (« Vue d'ensemble »). */
+export const GUIDE_LIEU = {
+    title: 'Créer ou éditer un lieu',
+    intro: `Chaque lieu a une <strong>fiche</strong> : nom, catégorie, descriptions, infos
+        pratiques, position. Vous <strong>créez</strong> un nouveau lieu, ou vous
+        <strong>enrichissez</strong> un lieu existant. Tout est enregistré dans votre
+        version d'Heripia.`,
+    schema: [
+        'Clic droit <span class="help-muted">(ou « Éditer »)</span>',
+        'Remplir la fiche',
+        'Enregistrer',
+    ],
+    sections: [
+        {
+            heading: `0 · La fiche d'un lieu`,
+            html: `<p>Un lieu se décrit par une <strong>fiche</strong>. Deux façons d'y
+                arriver : <strong>créer</strong> un nouveau lieu, ou <strong>éditer</strong>
+                un lieu déjà présent. C'est le <strong>même formulaire</strong> dans les deux
+                cas.</p>`,
+        },
+        {
+            heading: `1 · Créer un lieu`,
+            html: `<p><strong>Cliquez droit</strong> à l'endroit voulu sur la carte. Un
+                marqueur apparaît avec la question <strong>« Nouveau Lieu ? »</strong> :</p>
+                <ul class="help-list">
+                    <li><strong>glissez</strong> le marqueur pour ajuster la position ;</li>
+                    <li><em>Maps</em> et <em>OSM</em> ouvrent l'endroit pour <strong>vérifier</strong> ;</li>
+                    <li>cliquez <strong>« Valider cette position »</strong> → la fiche
+                        <strong>« Nouveau Lieu »</strong> s'ouvre.</li>
+                </ul>
+                <p class="help-muted">Deux autres entrées mènent à la même fiche : la
+                <strong>recherche</strong> d'un lieu encore absent, et « Créer un lieu » à
+                l'import photo.</p>`,
+        },
+        {
+            heading: `2 · Éditer un lieu`,
+            html: `<p>Sur la fiche d'un lieu, le bouton <strong>« Éditer »</strong> ouvre le
+                formulaire <strong>« Éditer le Lieu »</strong> (mêmes champs, déjà remplis).</p>`,
+        },
+        {
+            heading: `3 · L'essentiel pour enregistrer`,
+            html: `<p>Deux champs suffisent à enregistrer :</p>
+                <ul class="help-list">
+                    <li><strong>Nom (FR)</strong> — obligatoire ;</li>
+                    <li><strong>Catégorie</strong> — à choisir <span class="help-muted">(« Choisir une catégorie… »)</span>.</li>
+                </ul>
+                <p>Tant qu'il manque l'un des deux, <strong>« Enregistrer »</strong> reste
+                <strong>grisé</strong>. La <strong>Zone</strong> <span class="help-muted">(Houmt
+                Souk, Midoun…)</span> se remplit <strong>toute seule</strong> d'après la
+                position — non modifiable.</p>`,
+        },
+        {
+            heading: `4 · Catégorie et précisions`,
+            html: `<p>Choisir la <strong>Catégorie</strong> fait apparaître, selon le type de
+                lieu, jusqu'à trois précisions :</p>
+                <ul class="help-list">
+                    <li><strong>Sous-type</strong> — la variante du lieu. <span class="help-muted">Quand
+                        la catégorie en propose (Mosquée, Église, Artisanat), il choisit aussi
+                        l'icône sur la carte : une mosquée à minaret, à coupoles ou fortifiée
+                        n'a pas le même pictogramme.</span></li>
+                    <li><strong>État</strong> — par exemple <em>En activité</em>,
+                        <em>Désaffecté</em>, <em>Ruine</em>.</li>
+                    <li><strong>Accès</strong> — <em>Intérieur visitable</em>, <em>Extérieur
+                        seulement</em> ou <em>Non visitable</em>.</li>
+                </ul>
+                <p class="help-muted">Ces champs restent masqués tant qu'aucune catégorie n'est
+                choisie ; les valeurs dépendent de la catégorie.</p>`,
+        },
+        {
+            heading: `5 · Décrire`,
+            html: `<ul class="help-list">
+                    <li><strong>Description courte</strong> — un <strong>résumé</strong>
+                        <span class="help-muted">(il apparaît dans la liste)</span>.</li>
+                    <li><strong>Description complète</strong> — le texte détaillé du lieu.</li>
+                </ul>`,
+        },
+        {
+            heading: `6 · Infos pratiques`,
+            html: `<p>Pour enrichir la fiche <span class="help-muted">(facultatif)</span> :
+                <strong>temps de visite</strong>, <strong>prix</strong> (en TND),
+                <strong>téléphone</strong>, <strong>horaires</strong>, <strong>Facebook</strong>.</p>`,
+        },
+        {
+            heading: `7 · Source et notes`,
+            html: `<ul class="help-list">
+                    <li><strong>Source</strong> — d'où vient l'information
+                        <span class="help-muted">(un lien et/ou un texte)</span>.</li>
+                    <li><strong>Notes</strong> — vos remarques personnelles.</li>
+                </ul>`,
+        },
+        {
+            heading: `8 · Position et enregistrer`,
+            html: `<ul class="help-list">
+                    <li><strong>« Déplacer »</strong> <span class="help-muted">(en bas de la
+                        fiche)</span> : réajuster le point sur la carte ; les coordonnées GPS
+                        s'affichent à côté.</li>
+                    <li><strong>« Enregistrer »</strong> : le lieu rejoint <strong>votre
+                        version</strong> d'Heripia. <strong>« Annuler »</strong> ferme sans
+                        rien garder.</li>
+                </ul>
+                <p class="help-muted">En édition, les flèches <strong>Précédent / Suivant</strong>
+                passent d'un lieu à l'autre quand le lieu fait partie d'un circuit affiché.</p>`,
+        },
+    ],
+    footnote: `Astuce : un clic droit <strong>n'importe où</strong> sur la carte crée un lieu
+        à cet endroit — ajustez-le ensuite par glisser, ou avec « Déplacer ». Vos lieux restent
+        sur cet appareil : pour les sauvegarder, passez par <strong>Mon Espace</strong>.`,
+};
