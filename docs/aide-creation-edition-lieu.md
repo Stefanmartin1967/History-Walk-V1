@@ -64,15 +64,17 @@ Choisir la **Catégorie** fait apparaître, selon le type de lieu, jusqu'à troi
 dépendent de la catégorie.)*
 
 ### 5 · Décrire
-- **Description courte** — un **résumé** *(il apparaît dans la liste)*.
-- **Description complète** — le texte détaillé du lieu.
+- **Description courte** — le texte qui voyage dans le **GPX** : il s'affiche dans les
+  **applications de marche** *(Wikiloc, Komoot, Visorando…)*. *Inutile en usage Heripia seul.*
+- **Description complète** — le texte détaillé du lieu, affiché sur sa fiche.
 
 ### 6 · Infos pratiques *(facultatif)*
 Pour enrichir la fiche : **temps de visite**, **prix** *(en TND)*, **téléphone**,
 **horaires**, **Facebook**. À remplir si vous les connaissez.
 
 ### 7 · Source et notes
-- **Source** — d'où vient l'information *(un lien et/ou un texte)*.
+- **Source** — **mention obligatoire** : d'où vient l'information, à pouvoir consulter
+  *(un lien et/ou un texte)*.
 - **Notes** — vos remarques personnelles.
 
 ### 8 · Position et enregistrer
@@ -91,17 +93,28 @@ par **Mon Espace** (comme pour vos circuits).*
 
 ---
 
-## Les ancres « ? » contextuelles (PR2 — pour mémoire)
+## Les ancres « ? » contextuelles du formulaire — LIVRÉ (PR2)
 
-À poser sur le formulaire :
+Petits « ? » inline (`attachFieldHelp`, `richEditor.js`) à côté de 4 labels :
 
-| Ancre | Emplacement | Contenu |
-|-------|-------------|---------|
-| **Zone** | label « Zone » (verrouillé) | se remplit d'après la position, non modifiable |
-| **Catégorie / taxonomie** | label « Catégorie » | débloque Sous-type / État / Accès |
-| **Description courte** | label « Description Courte » | c'est le résumé vu dans la liste |
-| **Source** | label « Source » | d'où vient l'info (lien ou texte) |
-| *(panneau global)* | « ? » du header | le guide complet (ci-dessus) |
+**« ? » Zone** — La zone se remplit **automatiquement** selon la position du lieu —
+**non modifiable**. *Déplacez le point pour la changer. Découpage d'après OpenStreetMap.*
+
+**« ? » Catégorie** — Classe le lieu et choisit son **icône**. Débloque **Sous-type /
+État / Accès**. *Pour Mosquée, Église, Artisanat, le sous-type précise l'icône (à minaret,
+à coupoles…).*
+
+**« ? » Description courte** — Ce texte s'affiche dans les **applications de marche**
+*(Wikiloc, Komoot, Visorando…)* via le GPX. *Inutile en usage Heripia seul.*
+
+**« ? » Source** — **Mention obligatoire** : d'où vient l'information, à pouvoir
+**consulter** *(un lien et/ou un texte)*.
+
+> **Parqué (hors aide)** : le `<link>` Source est bien dans le GPX (`gpx.js`, si la source
+> commence par `http`) mais **souvent ignoré** par les applis de marche — Wikiloc n'a pas
+> de champ « lien ». Idées à trancher plus tard : (a) doubler le lien dans la description du
+> point ; (b) blocage « source obligatoire » (la validation est désactivée dans
+> `updateSaveButtonState`).
 
 ---
 

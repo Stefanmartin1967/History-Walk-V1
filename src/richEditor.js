@@ -13,8 +13,8 @@ import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { showConfirm, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getSubtypes, getStates, getAccessValues } from './taxonomy.js';
-import { configureHelp, helpButton } from './help-popover.js';
-import { GUIDE_LIEU } from './help-content.js';
+import { configureHelp, helpButton, helpInline } from './help-popover.js';
+import { GUIDE_LIEU, HELP_LIEU_ZONE, HELP_LIEU_CATEGORIE, HELP_LIEU_DESC_COURTE, HELP_LIEU_SOURCE } from './help-content.js';
 
 // Aide « ? » : le patron rend l'icône via createIcons (idempotent).
 configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
@@ -557,6 +557,24 @@ function showModal() {
     if (headerEl && closeBtn && !headerEl.querySelector('.help-trigger')) {
         closeBtn.insertAdjacentElement('beforebegin', helpButton(GUIDE_LIEU, { label: 'Aide : créer ou éditer un lieu' }));
     }
+    attachFieldHelp();
+}
+
+// Pose les « ? » inline à côté de 4 labels du formulaire (Zone, Catégorie,
+// Description courte, Source). Appelée à chaque showModal (formulaire recréé).
+function attachFieldHelp() {
+    const root = document.querySelector('.hw-modal-overlay.is-active');
+    if (!root) return;
+    const put = (forId, opts) => {
+        const label = root.querySelector(`label[for="${forId}"]`);
+        if (label && !label.querySelector('.help-dot')) {
+            label.append(' ', helpInline(opts, { size: 'sm' }));
+        }
+    };
+    put('rich-poi-zone', HELP_LIEU_ZONE);
+    put('rich-poi-category', HELP_LIEU_CATEGORIE);
+    put('rich-poi-desc-short', HELP_LIEU_DESC_COURTE);
+    put('rich-poi-source', HELP_LIEU_SOURCE);
 }
 
 function updateSaveButtonState() {

@@ -396,6 +396,44 @@ export const GUIDE_CIRCUIT = {
 // taxonomie vérifiés dans le code et en preview). Mêmes conventions.
 // ============================================================================
 
+/* === ANCRE — « ? » sur le label « Zone » === */
+export const HELP_LIEU_ZONE = {
+    title: 'Zone',
+    html: `
+        <p>La zone se remplit <strong>automatiquement</strong> selon la position du lieu —
+        <strong>non modifiable</strong>. <span class="help-muted">Déplacez le point pour la
+        changer.</span></p>
+        <p class="help-muted">Découpage d'après OpenStreetMap.</p>`,
+};
+
+/* === ANCRE — « ? » sur le label « Catégorie » === */
+export const HELP_LIEU_CATEGORIE = {
+    title: 'Catégorie',
+    html: `
+        <p>La catégorie <strong>classe</strong> le lieu et choisit son <strong>icône</strong>
+        sur la carte. Elle débloque aussi <strong>Sous-type</strong>, <strong>État</strong> et
+        <strong>Accès</strong>.</p>
+        <p class="help-muted">Pour quelques catégories (Mosquée, Église, Artisanat), le
+        sous-type précise l'icône : à minaret, à coupoles…</p>`,
+};
+
+/* === ANCRE — « ? » sur le label « Description Courte » === */
+export const HELP_LIEU_DESC_COURTE = {
+    title: 'Description courte',
+    html: `
+        <p>Ce texte s'affiche dans les <strong>applications de marche</strong>
+        <span class="help-muted">(Wikiloc, Komoot, Visorando…)</span>, via le GPX du circuit.</p>
+        <p class="help-muted">Inutile si vous utilisez Heripia seul.</p>`,
+};
+
+/* === ANCRE — « ? » sur le label « Source » === */
+export const HELP_LIEU_SOURCE = {
+    title: 'Source',
+    html: `
+        <p><strong>Mention obligatoire</strong> : d'où vient l'information, à pouvoir
+        <strong>consulter</strong> <span class="help-muted">(un lien et/ou un texte)</span>.</p>`,
+};
+
 /* === PANNEAU GLOBAL — le guide « Créer ou éditer un lieu » ===
    Posé sur le « ? » du header de la modale richEditor (« Nouveau Lieu » /
    « Éditer le Lieu »). La découvrabilité du clic droit relève d'un autre
@@ -470,9 +508,12 @@ export const GUIDE_LIEU = {
         {
             heading: `5 · Décrire`,
             html: `<ul class="help-list">
-                    <li><strong>Description courte</strong> — un <strong>résumé</strong>
-                        <span class="help-muted">(il apparaît dans la liste)</span>.</li>
-                    <li><strong>Description complète</strong> — le texte détaillé du lieu.</li>
+                    <li><strong>Description courte</strong> — le texte qui voyage dans le
+                        <strong>GPX</strong> : il s'affiche dans les <strong>applications de
+                        marche</strong> <span class="help-muted">(Wikiloc, Komoot, Visorando…)</span>.
+                        <span class="help-muted">Inutile en usage Heripia seul.</span></li>
+                    <li><strong>Description complète</strong> — le texte détaillé du lieu,
+                        affiché sur sa fiche.</li>
                 </ul>`,
         },
         {
@@ -484,8 +525,9 @@ export const GUIDE_LIEU = {
         {
             heading: `7 · Source et notes`,
             html: `<ul class="help-list">
-                    <li><strong>Source</strong> — d'où vient l'information
-                        <span class="help-muted">(un lien et/ou un texte)</span>.</li>
+                    <li><strong>Source</strong> — <strong>mention obligatoire</strong> : d'où
+                        vient l'information, à pouvoir consulter <span class="help-muted">(un
+                        lien et/ou un texte)</span>.</li>
                     <li><strong>Notes</strong> — vos remarques personnelles.</li>
                 </ul>`,
         },
