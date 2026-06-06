@@ -128,9 +128,10 @@ export async function forceBackup() {
 
 /**
  * Réinitialise le compteur d'auto-backup (count=0, lastTimestamp=now).
- * Appelé après une sauvegarde MANUELLE réussie (« Sauvegarder » de Mon Espace) :
+ * Appelé après une sauvegarde MANUELLE réussie (Outils > Sauvegarder) :
  * l'utilisateur vient de produire un backup à jour, donc inutile que l'auto-backup
- * se redéclenche peu après. Évite le doublon (refonte Mon Espace V3, 23/05/2026).
+ * se redéclenche peu après. Évite le doublon (introduit avec la refonte Mon Espace
+ * V3 23/05/2026 ; modale Sauvegarder désormais dans save-modal-ui.js).
  */
 export async function resetBackupCounter() {
     await persistBackupState({ count: 0, lastTimestamp: Date.now() });
