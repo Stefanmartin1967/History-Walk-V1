@@ -400,9 +400,8 @@ export const GUIDE_CIRCUIT = {
 export const HELP_LIEU_ZONE = {
     title: 'Zone',
     html: `
-        <p>La zone se remplit <strong>automatiquement</strong> selon la position du lieu —
-        <strong>non modifiable</strong>. <span class="help-muted">Déplacez le point pour la
-        changer.</span></p>
+        <p>La zone se remplit <strong>automatiquement</strong> d'après la position du lieu —
+        c'est le <strong>secteur</strong> où il se trouve. <strong>Non modifiable.</strong></p>
         <p class="help-muted">Découpage d'après OpenStreetMap.</p>`,
 };
 

@@ -97,8 +97,8 @@ par **Mon Espace** (comme pour vos circuits).*
 
 Petits « ? » inline (`attachFieldHelp`, `richEditor.js`) à côté de 4 labels :
 
-**« ? » Zone** — La zone se remplit **automatiquement** selon la position du lieu —
-**non modifiable**. *Déplacez le point pour la changer. Découpage d'après OpenStreetMap.*
+**« ? » Zone** — La zone se remplit **automatiquement** d'après la position du lieu —
+c'est le **secteur** où il se trouve. **Non modifiable.** *Découpage d'après OpenStreetMap.*
 
 **« ? » Catégorie** — Classe le lieu et choisit son **icône**. Débloque **Sous-type /
 État / Accès**. *Pour Mosquée, Église, Artisanat, le sous-type précise l'icône (à minaret,
