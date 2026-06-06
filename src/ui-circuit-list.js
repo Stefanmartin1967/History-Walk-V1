@@ -27,7 +27,7 @@ import { openStartPointModal } from './start-point.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { isMobileView } from './mobile-state.js';
 import { configureHelp, helpButton } from './help-popover.js';
-import { GUIDE_CIRCUIT } from './help-content.js';
+import { GUIDE_CIRCUIT, GUIDE_MES_CIRCUITS } from './help-content.js';
 import { openCircuitTrash, getTrashedCount } from './circuit-trash-ui.js';
 
 // Aide « ? » : le patron rend l'icône circle-help via createIcons. Idempotent
@@ -124,12 +124,21 @@ function renderToolbar() {
     `;
     createIcons({ icons: appIcons, root: toolbar });
 
-    // Aide « ? » : guide « Créer un circuit », posé à côté de « Nouveau circuit »
-    // (la toolbar est re-rendue à chaque appel → on ré-insère le bouton à chaque fois).
+    // Aide « ? » : deux portes distinctes (cf. discussion 06/06/2026, contre l'option onglets).
+    // - À côté de « Nouveau circuit » → guide ACTION « Créer un circuit » (GUIDE_CIRCUIT).
+    // - À l'extrême droite de la toolbar → guide LECTURE/GESTION « Utiliser Mes circuits »
+    //   (GUIDE_MES_CIRCUITS). Position extrême pour minimiser le bruit visuel du double « ? ».
+    // La toolbar est re-rendue à chaque appel → on ré-insère les boutons à chaque fois.
     const newBtnForHelp = document.getElementById('mc-btn-new');
     if (newBtnForHelp) {
         newBtnForHelp.insertAdjacentElement('afterend', helpButton(GUIDE_CIRCUIT, { label: 'Aide : créer un circuit' }));
     }
+    const generalHelpBtn = helpButton(GUIDE_MES_CIRCUITS, { label: 'Aide : utiliser Mes circuits' });
+    // Placé en TÊTE de toolbar : la Search prend l'espace flex au milieu, donc
+    // « ? général » se retrouve à l'extrême gauche, séparé du « ? créer un circuit »
+    // (à droite, collé à « Nouveau ») par toute la largeur de la search. Évite le
+    // double « ? » collé — cf. discussion 06/06/2026.
+    toolbar.insertBefore(generalHelpBtn, toolbar.firstChild);
 
     // Recherche temps réel
     const input = document.getElementById('mc-search-input');

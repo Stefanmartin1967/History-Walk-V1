@@ -548,3 +548,136 @@ export const GUIDE_LIEU = {
         à cet endroit — ajustez-le ensuite par glisser, ou avec « Déplacer ». Vos lieux restent
         sur cet appareil : pour les sauvegarder, passez par <strong>Outils&nbsp;&gt; Sauvegarder</strong>.`,
 };
+
+// ============================================================================
+// Contenu d'aide « Utiliser Mes circuits ».
+// Posé sur un « ? » général de la toolbar « Mes Circuits » (lecture/gestion) —
+// distinct du « ? Créer un circuit » (action) déjà câblé à côté de « Nouveau ».
+// Sources libellés : ui-circuit-list.js (toolbar/filtres/tri/visibilité),
+// circuit-actions.js (Tout cocher), circuit.js (verified = badge éditorial),
+// circuit-trash-ui.js (Corbeille), mobile-follow.js (Suivre — encore en test).
+// Conventions Stefan respectées : « Heripia », verbes neutres en sections
+// communes (« activez »), « cliquez » en PC-only (§5), « touchez » en mobile (§6).
+// ============================================================================
+
+export const GUIDE_MES_CIRCUITS = {
+    title: 'Utiliser Mes circuits',
+    intro: `Le panneau <strong>Mes Circuits</strong> liste tous les circuits — ceux édités
+        par Heripia et ceux que vous créez. Vous pouvez les <strong>filtrer</strong>, les
+        <strong>trier</strong>, marquer ceux que vous avez faits, <strong>cacher</strong> ceux
+        qui ne vous intéressent pas et <strong>supprimer</strong> ceux que vous avez créés.`,
+    schema: [
+        'Trouver',
+        'Suivre <span class="help-muted">(À faire / Fait)</span>',
+        'Cacher ou supprimer',
+        'Récupérer <span class="help-muted">(corbeille / filtres)</span>',
+    ],
+    sections: [
+        {
+            heading: `1 · Trouver un circuit qui vous parle`,
+            html: `<ul class="help-list">
+                    <li><strong>Rechercher</strong> : tapez le nom d'un <strong>lieu</strong>
+                        qui vous intéresse pour voir tous les circuits qui y passent.
+                        <span class="help-muted">(La recherche fonctionne aussi sur le nom
+                        du circuit lui-même.)</span></li>
+                    <li><strong>Filtres</strong> <span class="help-muted">(icône à curseurs)</span> :
+                        ouvre le panneau de filtres — <strong>Type</strong>
+                        <span class="help-muted">(Officiels uniquement, Vérifiés sur le terrain,
+                        Avec restaurant en fin)</span> et <strong>Distance</strong>.</li>
+                    <li><strong>Tri</strong> : <strong>Proximité</strong>
+                        <span class="help-muted">(depuis votre lieu de résidence)</span>,
+                        <strong>Court</strong>, <strong>Long</strong>, ou <strong>Vérifiés</strong>
+                        d'abord. Quand vous choisissez Proximité pour la première fois, Heripia
+                        vous demande votre <strong>lieu de résidence</strong>.</li>
+                </ul>`,
+        },
+        {
+            heading: `2 · Suivre votre parcours`,
+            html: `<ul class="help-list">
+                    <li><strong>Marquer un circuit fait</strong> : activez le <strong>cercle</strong>
+                        à droite de la carte du circuit, ou cochez <strong>« Fait »</strong> sur
+                        sa fiche complète. Heripia vous propose <strong>« Tout cocher »</strong>
+                        dans une petite fenêtre — confirmez et <strong>tous les lieux du circuit
+                        sont d'un coup marqués comme visités</strong>. Si vous <strong>Annulez</strong>,
+                        le circuit n'est pas considéré comme fait.</li>
+                    <li><strong>Filtre « Mon parcours »</strong> : laissez <strong>Tout</strong>,
+                        ou affichez seulement ce qui vous reste <strong>À faire</strong>, ou ce
+                        que vous avez déjà <strong>Fait</strong>.</li>
+                </ul>`,
+        },
+        {
+            heading: `3 · Officiels ou les vôtres`,
+            html: `<p>Deux familles de circuits cohabitent :</p>
+                <ul class="help-list">
+                    <li><strong>OFFICIEL</strong> : édité par l'équipe Heripia.</li>
+                    <li><strong>VÉRIFIÉ</strong> : sous-ensemble des officiels que l'équipe
+                        Heripia a <strong>testés à pied</strong>.</li>
+                    <li><strong>Vos circuits</strong> : ceux que vous créez, sans badge.</li>
+                </ul>
+                <p class="help-muted">Le badge <strong>Resto</strong> repère les circuits qui
+                se terminent près d'un restaurant.</p>`,
+        },
+        {
+            heading: `4 · Cacher ou supprimer`,
+            html: `<p>Deux gestes pour deux situations différentes.</p>
+                <ul class="help-list">
+                    <li><strong>Cacher</strong> <span class="help-muted">(œil barré)</span> —
+                        pour les <strong>officiels</strong> qui ne vous intéressent pas. Vous ne
+                        pouvez pas les supprimer <span class="help-muted">(ils appartiennent au
+                        patrimoine partagé par Heripia)</span>, mais vous pouvez les masquer.
+                        Le bouton est un <strong>toggle</strong> : un clic pour cacher, un clic
+                        pour réafficher.<br>
+                        → Pour retrouver vos circuits cachés : <strong>Filtres &gt; Visibilité
+                        &gt; Cachés</strong>. Ils réapparaissent dans la liste avec leur œil
+                        barré actif <span class="help-muted">(infobulle « Réafficher ce
+                        circuit »)</span> — un clic les remet en visible.</li>
+                    <li><strong>Supprimer</strong> <span class="help-muted">(poubelle)</span> —
+                        pour <strong>vos circuits</strong>. Le circuit part en
+                        <strong>Corbeille</strong> <span class="help-muted">(vous pouvez encore
+                        le récupérer ou le purger définitivement)</span>.<br>
+                        → Bouton <strong>Corbeille (n)</strong> dans la toolbar de Mes Circuits
+                        <span class="help-muted">(visible seulement quand il y a quelque chose
+                        dedans)</span>.</li>
+                </ul>`,
+        },
+        {
+            heading: `5 · Depuis la fiche d'un circuit`,
+            html: `<p>Quel que soit le circuit, vous trouvez sur sa fiche :</p>
+                <ul class="help-list">
+                    <li><strong>Partager</strong> <span class="help-muted">(icône lien)</span> :
+                        envoie le circuit <span class="help-muted">(QR ou lien selon la
+                        plateforme)</span>.</li>
+                    <li><strong>Télécharger le GPX</strong> <span class="help-muted">(icône
+                        flèche bas)</span> : enregistre un fichier <strong>.gpx</strong> sur
+                        votre appareil — utile pour le rouvrir dans une autre application de
+                        marche.</li>
+                </ul>
+                <p><strong>Sur PC</strong>, pour <strong>vos propres circuits</strong>, vous
+                avez en plus :</p>
+                <ul class="help-list">
+                    <li><strong>Modifier</strong> : ré-éditer la liste des lieux, le titre
+                        <span class="help-muted">(double-clic ou crayon)</span>, la
+                        description.</li>
+                    <li><strong>Supprimer</strong> <span class="help-muted">(poubelle)</span> :
+                        envoie le circuit en Corbeille.</li>
+                </ul>
+                <p class="help-muted">Les officiels ne sont pas modifiables. La modification du
+                titre et de la description n'est pas encore disponible sur mobile.</p>`,
+        },
+        {
+            heading: `6 · Sur mobile — suivre votre circuit en marchant`,
+            html: `<p>Ouvrez un circuit qui a un <strong>itinéraire tracé</strong> et touchez
+                <strong>« Suivre »</strong> : Heripia passe en <strong>carte plein écran</strong>
+                avec le tracé et votre position GPS.</p>
+                <p><strong>⚠️ Encore en test.</strong> Le suivi fonctionne, mais nous n'avons
+                pas terminé toutes les vérifications terrain. <strong>Gardez votre application
+                de marche habituelle ouverte en parallèle</strong> — Heripia n'est pas (encore)
+                un substitut.</p>
+                <p><strong>À activer côté téléphone</strong> : la <strong>localisation</strong>.
+                Sans elle, pas de point bleu pendant le suivi — et vos photos prises pendant la
+                marche ne pourront pas être associées automatiquement aux lieux ensuite.</p>`,
+        },
+    ],
+    footnote: `Astuce : le tri <strong>Proximité</strong> se base sur votre <strong>lieu de
+        résidence</strong> — vous pouvez le modifier à tout moment depuis le panneau Filtres.`,
+};
