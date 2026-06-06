@@ -12,7 +12,7 @@
 //
 // Choix possibles :
 //   - discover : onglet Mes Circuits (état par défaut, l'utilisateur explore)
-//   - import   : onglet Mes Circuits (idem ; filtrage fin via Mon Espace)
+//   - import   : onglet Mes Circuits (idem ; filtrage fin via le panneau Filtres)
 //   - create   : onglet Circuit + guide « Créer un circuit »
 //   - photos   : guide « Importer des photos », puis import à la fermeture
 //                (carte « photos » présente en mode "revoir" uniquement)

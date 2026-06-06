@@ -1,6 +1,6 @@
 // welcome.js
 // Onboarding par choix d'usage. Affiché au 1er démarrage et à la demande
-// (bouton "Visite guidée" du popover Informations / lien dans Mon Espace).
+// (bouton "Visite guidée" du popover Informations).
 //
 // 1er démarrage : 3 cartes (Découvrir / Créer / Importer)
 // Mode "revoir" : 4 cartes (les 3 + Importer photos GPS)
@@ -89,7 +89,7 @@ function buildCardsFirstLaunch() {
             id: 'import',
             svg: SVG_BOOK,
             title: 'Voir les circuits existants',
-            subtitle: 'Je m\'inspire des circuits, je filtre dans Mon Espace'
+            subtitle: 'Je m\'inspire des circuits, je filtre selon mes envies'
         },
         {
             id: 'create',

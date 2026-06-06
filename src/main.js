@@ -176,7 +176,8 @@ async function initializeApp() {
             setTheme(savedTheme);
         }
 
-        // Lieu de résidence pour le tri par proximité (défini dans Mon Espace)
+        // Lieu de résidence pour le tri par proximité (défini via start-point.js
+        // lors du choix du tri « Proximité » dans Mes circuits)
         const savedHome = await getAppState('homeLocation');
         if (savedHome && typeof savedHome.lat === 'number' && typeof savedHome.lng === 'number') {
             setHomeLocation(savedHome);

@@ -18,7 +18,8 @@ import { isDestinationPublished } from './utils.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
 // btn-open-backup-modal et btn-restore-data n'existent plus dans le DOM
-// — Sauvegarder/Restaurer sont accessibles uniquement via Mon Espace > Mes Données.)
+// — Sauvegarder/Restaurer sont accessibles via Outils > Sauvegarder
+// (PR3 dissolution Mon Espace, 06/06/2026 — cf. save-modal-ui.js).)
 
 export function updateAppTitle(mapId) {
     if (!mapId) return;
