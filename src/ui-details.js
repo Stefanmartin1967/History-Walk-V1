@@ -336,15 +336,19 @@ function setupGpxDescToggle() {
 }
 
 function setupHelpButton() {
-    // Insère un « ? » discret après le titre du POI. Le panneau est re-rendu à
-    // chaque ouverture de fiche → on ré-insère le bouton à chaque fois (idem
-    // pattern ui-circuit-list, richEditor, ui-photo-batch).
+    // Insère un « ? » discret À LA FIN DU h2 du titre POI → reste sur la même
+    // ligne que le nom (vs. afterend qui le posait en bloc sur une ligne en
+    // dessous — UX cassée signalée par Stefan le 06/06/2026). Le panneau est
+    // re-rendu à chaque ouverture → on ré-insère le bouton à chaque fois.
     const titleEl = document.getElementById('panel-title-fr')
         || document.getElementById('mobile-title-fr');
     if (titleEl) {
-        titleEl.insertAdjacentElement('afterend', helpButton(GUIDE_LIRE_LIEU, {
+        const btn = helpButton(GUIDE_LIRE_LIEU, {
             label: 'Aide : lire la fiche d\'un lieu',
-        }));
+        });
+        btn.style.marginLeft = '0.5em';
+        btn.style.verticalAlign = 'middle';
+        titleEl.appendChild(btn);
     }
 }
 
