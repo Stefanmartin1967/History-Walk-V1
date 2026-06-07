@@ -319,14 +319,19 @@ describe('convertToDraft', () => {
         expect(showToast).not.toHaveBeenCalled();
     });
 
-    it('reset activeCircuitId, ajoute "(modifié)" au titre, toast info', () => {
+    it('reset activeCircuitId, pose customDraftName "(modifié)", toast info', () => {
+        // Depuis le fix bug 2 du 07/06/2026 : le nom modifié est persisté via
+        // setCustomDraftName (state) plutôt qu'écrit dans textContent
+        // directement — sinon renderCircuitPanel l'écrasait avec
+        // generateCircuitName. textContent reste donc la valeur d'origine ;
+        // c'est customDraftName qui porte le suffixe « (modifié) ».
         state.activeCircuitId = 'c1';
         DOM.circuitTitleText = { textContent: 'Mon Circuit' };
 
         convertToDraft();
 
         expect(state.activeCircuitId).toBeNull();
-        expect(DOM.circuitTitleText.textContent).toBe('Mon Circuit (modifié)');
+        expect(state.customDraftName).toBe('Mon Circuit (modifié)');
         expect(showToast).toHaveBeenCalledWith(
             expect.stringContaining('Mode édition'),
             'info'
