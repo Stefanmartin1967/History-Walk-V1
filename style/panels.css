@@ -2614,6 +2614,15 @@
     background-image: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), var(--circuit-hero-bg);
 }
 
+/* Cover cliquable (le circuit a des photos) → ouvre la galerie agrégée.
+   Affordance : curseur + renfort du badge « X photos » au survol. */
+.circuit-cover.is-clickable { cursor: pointer; }
+.circuit-cover.is-clickable:hover .cp-photo-count { background: rgba(0, 0, 0, 0.82); }
+.circuit-cover.is-clickable:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -2px;
+}
+
 /* Cover fallback (aucune photo dans le circuit) — motif topo subtil. */
 .circuit-cover.is-empty {
     background:

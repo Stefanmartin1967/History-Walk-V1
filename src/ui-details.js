@@ -249,7 +249,8 @@ function setupNotesAutosave(poiId) {
 // publiées/draft d'abord (urls[0] = la photo affichée par le hero), puis blobs
 // locaux (pending admin / perso user) en objectURL. Retourne { urls, revoke } —
 // l'appelant DOIT appeler revoke() à la fermeture du viewer (libère les objectURL).
-async function collectPoiPhotoUrls(poiId) {
+// Exportée : circuit.js l'enchaîne sur tous les POIs pour la galerie de circuit.
+export async function collectPoiPhotoUrls(poiId) {
     const objectUrls = [];
     const urls = [];
     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
