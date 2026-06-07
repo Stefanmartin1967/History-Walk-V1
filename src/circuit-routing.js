@@ -209,9 +209,12 @@ export async function routeCircuit(features, waypointsBySeg = {}, profile = DEFA
  * @param {number} i  Index du segment (POI i → POI i+1).
  * @param {Object} waypointsBySeg  { [indexSegment]: [{lat, lng}] }.
  * @param {string} [profile]
+ * @param {Object} [anchorOverrides]  { [indexPOI]: [lon, lat] } — ancres déplacées
+ *   EN SESSION (drapeaux d'accès glissés en focus, non encore persistés) qui
+ *   priment sur l'accessPoint enregistré, pour re-router sur la position live.
  */
-export async function routeOneSegment(features, i, waypointsBySeg = {}, profile = DEFAULT_PROFILE) {
-    const anchors = (features || []).map(anchorOf).filter(isValidLonLat);
+export async function routeOneSegment(features, i, waypointsBySeg = {}, profile = DEFAULT_PROFILE, anchorOverrides = {}) {
+    const anchors = (features || []).map((f, idx) => anchorOverrides[idx] || anchorOf(f)).filter(isValidLonLat);
     return routeSegment(segmentVias(anchors, waypointsBySeg, i), profile);
 }
 
