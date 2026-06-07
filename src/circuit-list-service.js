@@ -83,8 +83,8 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
         }
 
         // --- METADATA ---
-        // Convention userData overlay : une recat admin prime — voir
-        // utils.js getPoiProp et isRestaurantPoi dans circuit.js.
+        // Convention userData overlay : une recat admin (userData) prime sur la
+        // catégorie patrimoine, via getPoiProp.
         const hasRestaurant = validPois.some(f => getPoiProp(f, 'Catégorie') === 'Restaurant');
 
         const isCompleted = isCircuitCompleted(c);
