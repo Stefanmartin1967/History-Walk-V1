@@ -2770,6 +2770,12 @@
 .cp-title-wrap:hover .cp-title-edit { opacity: 1; }
 .cp-title-edit:hover { background: var(--surface-muted); color: var(--brand-2); }
 .cp-title-edit svg { width: 13px; height: 13px; }
+/* Mobile : pas de hover → on rend le crayon TOUJOURS visible (bug 3 chantier
+   aide fiche lieu, 07/06/2026). Sinon impossible d'éditer le titre depuis un
+   appareil tactile (le double-clic n'est pas un geste mobile naturel). */
+@media (max-width: 767px) {
+    .cp-title-edit { opacity: 1; }
+}
 .cp-title-input {
     width: 100%;
     border: 0;

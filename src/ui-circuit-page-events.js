@@ -411,7 +411,13 @@ function initDescriptionEdit() {
     };
 
     if (placeholder) placeholder.addEventListener('click', enterEdit);
-    if (display) display.addEventListener('dblclick', enterEdit);
+    if (display) {
+        display.addEventListener('dblclick', enterEdit);
+        // Bug 3 (07/06/2026) : sur mobile, le dblclick n'est pas un geste
+        // naturel → on ajoute aussi un simple click. enterEdit teste de toute
+        // façon `data-mode === 'create'` donc pas d'effet en consultation.
+        display.addEventListener('click', enterEdit);
+    }
 
     textarea.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
