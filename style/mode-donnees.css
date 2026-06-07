@@ -150,3 +150,38 @@ body.mode-donnees-active #map { top: 0 !important; right: 0 !important; }
 /* Footer RichEditor (Annuler ghost + Enregistrer primary) : Annuler à gauche,
    Enregistrer poussé à droite (le footer partagé n'a pas de spacer). */
 .md-drawer-foot .btn-ghost { margin-right: auto; }
+
+/* ============================================================
+   5. FILTRES « ÉTAT DE LA FICHE » dans le rail (réunif A3c)
+   Portés de la maquette Design. Tri-états Tous / Masquer / Afficher par axe.
+   ============================================================ */
+.md-filters { border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.md-filters-head {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    padding: 10px 12px; background: var(--surface-muted); border: 0; cursor: pointer;
+    font: inherit; text-align: left;
+}
+.md-filters-head .ti {
+    font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink);
+    flex: 1;
+}
+.md-filters-head .ic { color: var(--ink-soft); display: flex; }
+.md-filters-head .ic svg { width: 15px; height: 15px; }
+.md-filters-head .badge-active {
+    font-size: 10px; font-weight: 700; color: #fff; background: var(--brand);
+    padding: 2px 7px; border-radius: var(--radius-pill);
+}
+.md-filters-body { padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
+.md-filters-body[hidden] { display: none; } /* .md-filters-body est en flex → override de [hidden] */
+.tri { display: flex; align-items: center; gap: 9px; padding: 5px 0; }
+.tri .nm { font-size: 13px; color: var(--ink); flex: 1; display: flex; align-items: center; gap: 7px; }
+.tri .nm svg { width: 14px; height: 14px; color: var(--ink-soft); }
+.tri-seg { display: inline-flex; background: var(--surface-muted); padding: 2px; border-radius: 8px; gap: 1px; }
+.tri-seg button {
+    border: 0; background: transparent; cursor: pointer; font: inherit;
+    font-size: 11px; font-weight: 600; color: var(--ink-soft);
+    padding: 4px 9px; border-radius: 6px;
+}
+.tri-seg button.is-on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
+.tri-seg button.is-on.show { color: var(--ok-fg); }
+.tri-seg button.is-on.hide { color: var(--danger-fg); }
