@@ -1,6 +1,6 @@
 import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode } from './state.js';
 import { DOM } from './ui-dom.js';
-import { openDetailsPanel } from './ui-details.js';
+import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
 import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, escapeXml, getPoiProp } from './utils.js';
@@ -258,6 +258,53 @@ function revokeCoverObjectUrl() {
     }
 }
 
+// Galerie agrégée du circuit : toutes les photos de tous les POIs, dans l'ordre
+// des étapes. Réutilise collectPoiPhotoUrls (même collecte publiées/draft/blobs
+// que le viewer d'un POI), concatène, puis ouvre le viewer plein écran. Les
+// objectURL des blobs sont révoqués à la fermeture (revoke de chaque POI).
+async function openCircuitGallery() {
+    const circuit = state.currentCircuit;
+    if (!circuit || circuit.length === 0) return;
+
+    const allUrls = [];
+    const revokers = [];
+    for (const poi of circuit) {
+        const poiId = getPoiId(poi);
+        if (!poiId) continue;
+        const { urls, revoke } = await collectPoiPhotoUrls(poiId);
+        if (urls.length) allUrls.push(...urls);
+        revokers.push(revoke);
+    }
+    const revokeAll = () => revokers.forEach(r => r());
+    if (allUrls.length === 0) { revokeAll(); return; }
+
+    const { openPhotoViewer } = await import('./ui-photo-viewer.js');
+    openPhotoViewer(allUrls, 0).finally(revokeAll);
+}
+
+// Active/désactive l'affordance « cliquer le cover → galerie ». Idempotent
+// (onclick/onkeydown sont des propriétés, pas d'empilement de listeners au
+// re-render). Désactivé quand le cover est vide (aucune photo).
+function setCoverClickable(cover, on) {
+    if (on) {
+        cover.classList.add('is-clickable');
+        cover.setAttribute('role', 'button');
+        cover.setAttribute('tabindex', '0');
+        cover.setAttribute('aria-label', 'Voir les photos du circuit');
+        cover.onclick = openCircuitGallery;
+        cover.onkeydown = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCircuitGallery(); }
+        };
+    } else {
+        cover.classList.remove('is-clickable');
+        cover.removeAttribute('role');
+        cover.removeAttribute('tabindex');
+        cover.removeAttribute('aria-label');
+        cover.onclick = null;
+        cover.onkeydown = null;
+    }
+}
+
 async function applyCircuitHero() {
     const cover = document.getElementById('circuit-cover');
     if (!cover) return;
@@ -268,6 +315,7 @@ async function applyCircuitHero() {
     cover.style.backgroundImage = '';
     delete cover.dataset.bg;
     cover.classList.add('is-empty');
+    setCoverClickable(cover, false);
 
     const circuit = state.currentCircuit;
     if (!circuit || circuit.length === 0) {
@@ -326,6 +374,7 @@ async function applyCircuitHero() {
     // Même pattern que applyHeroBackground() de ui-details.js pour le POI hero.
     cover.classList.remove('is-empty');
     cover.dataset.bg = 'true';
+    setCoverClickable(cover, true);
     const safe = String(heroUrl).replace(/['"\\]/g, encodeURIComponent);
     cover.style.setProperty('--circuit-hero-bg', `url("${safe}")`);
     cover.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
