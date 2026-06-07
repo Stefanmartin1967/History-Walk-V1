@@ -1398,6 +1398,12 @@
     background: var(--surface);
     border-top: 1px solid var(--surface-muted);
     box-shadow: 0 -8px 20px -12px rgba(20,42,67,0.15);
+    /* Ancre de positionnement pour le popover kebab (.poi-kebab-pop ;
+       absolute → cherche le 1er ancêtre positionné). Sans ça sur mobile,
+       le popover utilisait <body> et se rendait à y=-183 (hors écran),
+       symptôme « le kebab ne s'ouvre pas » signalé par Stefan le 06/06/2026.
+       Sur PC, .poi-footer joue ce rôle (cf. plus haut). */
+    position: relative;
 }
 /* Sur mobile, la mini-barre garde 44px mais les boutons sont compactés
    à font-size 12.5px (place serrée sur 320-360px). */
