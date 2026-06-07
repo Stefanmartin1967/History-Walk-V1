@@ -1,0 +1,111 @@
+/* style/mode-donnees.css — Mode « Données » (admin). Réunif A3a : coquille
+   plein-écran = modebar (haut) + rail gauche (recherche + liste POI) + VRAIE
+   carte Heripia dessous. Styles .md-* portés de la maquette Design
+   (reunification.css), tokens app uniquement.
+
+   Pattern overlay (cf. osm-pass.css) : pointer-events:none → la carte reste
+   interactive ; seuls la modebar et le rail interceptent les events. La topbar
+   et la sidebar HW sont masquées le temps du mode → carte plein écran. */
+
+/* ============================================================
+   1. PLEIN ÉCRAN : masque topbar + sidebar, carte étendue
+   ============================================================ */
+body.mode-donnees-active .topbar,
+body.mode-donnees-active .right-sidebar,
+body.mode-donnees-active .hw-sidebar,
+body.mode-donnees-active #right-sidebar { display: none !important; }
+
+body.mode-donnees-active #map { top: 0 !important; right: 0 !important; }
+
+.mode-donnees-overlay {
+    position: fixed; inset: 0; z-index: 1500; /* > sidebar (1002), < modales (2000) */
+    pointer-events: none; /* carte interactive dessous ; modebar + rail en auto */
+}
+
+/* ============================================================
+   2. MODEBAR (signal « atelier données »), pleine largeur en haut
+   ============================================================ */
+.mode-donnees-overlay .md-modebar {
+    position: absolute; left: 0; right: 0; top: 0; height: 46px;
+    display: flex; align-items: center; gap: 12px; padding: 0 14px;
+    background: linear-gradient(180deg, var(--bg), var(--bg-2, var(--bg)));
+    color: #fff; box-shadow: var(--shadow); pointer-events: auto;
+}
+.md-modebar .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 14px; }
+.md-modebar .brand svg { width: 17px; height: 17px; color: color-mix(in oklab, var(--brand) 60%, #fff); }
+.md-modebar .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.22);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+}
+.md-modebar .pill svg { width: 12px; height: 12px; }
+.md-modebar .pill.md-pill-admin { background: rgba(220, 70, 70, 0.22); border-color: rgba(255, 120, 120, 0.4); }
+.md-modebar .spacer { margin-left: auto; }
+.md-modebar .quit {
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+    padding: 6px 12px; border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff; font: inherit; font-size: 12.5px; font-weight: 600;
+}
+.md-modebar .quit:hover { background: rgba(255, 255, 255, 0.16); }
+.md-modebar .quit svg { width: 14px; height: 14px; }
+
+/* ============================================================
+   3. RAIL GAUCHE (destination + recherche + liste)
+   ============================================================ */
+.mode-donnees-overlay .md-rail {
+    position: absolute; left: 12px; top: 58px; bottom: 12px; width: 330px;
+    display: flex; flex-direction: column; pointer-events: auto;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
+}
+.md-rail-head { padding: 12px 12px 10px; border-bottom: 1px solid var(--line); }
+
+.dest-sel {
+    width: 100%; display: flex; align-items: center; gap: 10px;
+    padding: 9px 11px; border-radius: var(--radius-md);
+    border: 1px solid var(--line); background: var(--surface-muted);
+    cursor: pointer; text-align: left; font: inherit;
+}
+.dest-sel:disabled { cursor: default; opacity: 0.92; }
+.dest-sel .ic { color: var(--brand-2); display: flex; }
+.dest-sel .ic svg { width: 18px; height: 18px; }
+.dest-sel .nm { display: block; font-size: 14px; font-weight: 700; color: var(--ink); }
+.dest-sel .ct { display: block; font-size: 11.5px; color: var(--ink-soft); margin-top: 1px; }
+.dest-sel .chev { margin-left: auto; color: var(--ink-soft); display: flex; }
+.dest-sel .chev svg { width: 16px; height: 16px; }
+
+.md-tools { display: flex; gap: 8px; margin-top: 10px; }
+.md-search { flex: 1; position: relative; display: flex; align-items: center; }
+.md-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--ink-soft); }
+.md-search input {
+    width: 100%; height: 36px; border-radius: var(--radius-md);
+    border: 1px solid var(--line); background: var(--surface-muted);
+    padding: 0 10px 0 32px; font: inherit; font-size: 13px; color: var(--ink);
+    box-sizing: border-box;
+}
+.md-search input::placeholder { color: var(--ink-soft); }
+
+.md-list { flex: 1; overflow: auto; padding: 6px; display: flex; flex-direction: column; gap: 2px; min-height: 0; }
+.md-empty { padding: 26px 14px; text-align: center; font-size: 12.5px; color: var(--ink-soft); }
+.md-poi {
+    display: flex; align-items: center; gap: 10px; padding: 8px 9px;
+    border-radius: var(--radius-md); border: 1px solid transparent; cursor: pointer;
+}
+.md-poi:hover { background: color-mix(in oklab, var(--ink) 4%, transparent); }
+.md-poi.is-current { background: var(--brand-soft); border-color: var(--brand); box-shadow: var(--shadow-card); }
+.md-poi-ic { flex-shrink: 0; width: 30px; height: 30px; display: grid; place-items: center; color: var(--brand-2); }
+.md-poi-ic svg { width: 18px; height: 18px; }
+.md-poi-tx { min-width: 0; flex: 1; }
+.md-poi-tx .nm { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.md-poi-tx .mt { font-size: 11px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; margin-top: 1px; }
+.md-poi-tx .mt .verif { color: var(--ok-fg); display: inline-flex; align-items: center; gap: 3px; }
+.md-poi-tx .mt .verif svg { width: 11px; height: 11px; }
+
+.md-rail-foot {
+    padding: 9px 12px; border-top: 1px solid var(--line); background: var(--surface-muted);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11.5px; color: var(--ink-soft);
+}
+.md-rail-foot b { color: var(--ink); }

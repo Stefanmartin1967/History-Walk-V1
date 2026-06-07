@@ -694,6 +694,14 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-mode-donnees" aria-label="Mode Données — éditer les lieux sur la vraie carte">
+                <div class="cc-card-ico"><i data-lucide="sliders-horizontal"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Mode Données</div>
+                    <div class="cc-card-sub">Éditer les lieux sur la vraie carte (liste + carte)</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
         `;
 
         // Stats omises en empty state (totalCount=0) : 4 compteurs à 0 sont
@@ -772,6 +780,14 @@ export function renderTab(tab, diffData, callbacks) {
                 closeCCModal();
                 const { startOsmPass } = await import('./osm-pass.js');
                 startOsmPass();
+            });
+
+            // Outils — Mode Données (réunif A3a) : mode plein-écran admin (liste +
+            // vraie carte ; RichEditor en tiroir = A3b, filtres/destination = A3c).
+            bindCardAction('btn-cc-tool-mode-donnees', async () => {
+                closeCCModal();
+                const { startModeDonnees } = await import('./mode-donnees.js');
+                startModeDonnees();
             });
 
             // Stat-cards → goto changes sub-view
