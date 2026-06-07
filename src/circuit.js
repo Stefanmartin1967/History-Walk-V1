@@ -638,11 +638,16 @@ export function convertToDraft({ preserveId = false } = {}) {
         // clic POI ajoute au circuit comme en création vierge.
         setCircuitCreationMode(true);
     } else {
-        // Mode user lambda : ancien comportement (oublie ID + ajoute "(modifié)")
+        // Mode user lambda : oublie ID + ajoute "(modifié)" au nom.
+        // /!\ Capturer le nom AVANT setActiveCircuitId — et passer par
+        // setCustomDraftName plutôt que de muter textContent directement :
+        // renderCircuitPanel() ré-écrit le titre depuis state.customDraftName
+        // || generateCircuitName() (cf. ligne 414), donc l'ancien append à
+        // textContent était immédiatement écrasé (= le "(modifié)" disparaissait).
+        // Bug 2 chantier aide fiche lieu, fixé le 07/06/2026.
+        const originalName = DOM.circuitTitleText?.textContent || generateCircuitName();
         setActiveCircuitId(null);
-        if (DOM.circuitTitleText) {
-            DOM.circuitTitleText.textContent += " (modifié)";
-        }
+        setCustomDraftName(originalName + " (modifié)");
     }
 
     showToast("Mode édition activé. Vous pouvez maintenant modifier ce circuit.", "info");
