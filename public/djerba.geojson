@@ -7042,30 +7042,6 @@
         "Prix_TND": 0,
         "HW_ID": "HW-01KT5X81RV34Z59D259TYBBCNT"
       }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.839993427082025,
-          33.80584072659683
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Test",
-        "Catégorie": "Curiosité",
-        "Zone": "El Groa",
-        "info_gpx": "Ajout POI pendant création circuit",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "HW_ID": "HW-01KTC1R2SGGX1BW832XMD4T5CF",
-        "accessPoint": [
-          10.8397977,
-          33.8054894
-        ],
-        "accessPointStatus": "osm"
-      }
     }
   ]
 }
