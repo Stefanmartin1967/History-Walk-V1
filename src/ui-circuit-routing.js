@@ -234,10 +234,10 @@ async function runTrace() {
     updateTraceBlock(); // spinner
 
     try {
-        const { realTrack, segments } = await routeCircuit(state.currentCircuit);
+        const { realTrack, segments, ascend } = await routeCircuit(state.currentCircuit);
         state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
-        // Sauvegarde le circuit AVEC son tracé réel, en restant en création.
-        await saveAndExportCircuit(realTrack, { stayInCreation: true });
+        // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
+        await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend });
         // Base de péremption posée APRÈS la sauvegarde : sur un 1er tracé,
         // saveAndExportCircuit crée le circuit et appelle setActiveCircuitId(), qui
         // remet routeBasisKey à null (state.js:212). La poser AVANT la rendait

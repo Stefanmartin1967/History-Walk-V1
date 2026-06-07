@@ -491,6 +491,14 @@ export function updateCircuitMetadata(updateTitle = true) {
         description = DOM.circuitDescription.value;
     }
 
+    // D+ (dénivelé positif) BRouter du circuit actif, si stocké (tracé in-app).
+    // Cherché dans myCircuits ET officialCircuits (un officiel tracé par l'admin
+    // le porte aussi). null ou 0 → non affiché.
+    const activeAny = activeCircuitData
+        || (state.officialCircuits || []).find(c => c.id === state.activeCircuitId);
+    const ascend = (activeAny && Number.isFinite(activeAny.ascend) && activeAny.ascend > 0)
+        ? activeAny.ascend : null;
+
     // 2. ENVOI À LA VUE (On ne touche plus au DOM ici)
     View.updateCircuitHeader({
         countText: `${state.currentCircuit.length}/${MAX_CIRCUIT_POINTS}`,
@@ -505,6 +513,7 @@ export function updateCircuitMetadata(updateTitle = true) {
         zoneName,
         description,
         isRealTrack,
+        ascend,
     });
 }
 

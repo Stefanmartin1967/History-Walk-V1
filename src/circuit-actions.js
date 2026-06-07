@@ -209,7 +209,7 @@ export function getZonesData() {
 // automatiquement (l'export est explicite) et accepte un `realTrack` calculé
 // par BRouter. `stayInCreation` : appelée par « Tracer » → on reste en mode
 // création pour ajuster/re-tracer (sinon on repasse en consultation).
-export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false } = {}) {
+export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false, ascend = null } = {}) {
     if (state.currentCircuit.length === 0) return;
 
     // 1. Détermination du nom : Priorité à l'interface (User) sur la génération auto
@@ -281,7 +281,14 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
     // Tracé réel calculé par BRouter (routing in-app) : pose / écrase le
     // realTrack du circuit (création comme édition). Sans argument, on garde
     // l'état existant (réimport GPX, ou brouillon vol d'oiseau).
-    if (realTrack && realTrack.length > 0) circuitToSave.realTrack = realTrack;
+    if (realTrack && realTrack.length > 0) {
+        circuitToSave.realTrack = realTrack;
+        // D+ (dénivelé positif) BRouter associé à ce tracé. null = BRouter muet
+        // ou non fourni → l'affichage masque la métrique. Lié au realTrack : un
+        // re-tracé met à jour les deux ; un réimport GPX (realTrack absent) garde
+        // l'ascend existant.
+        circuitToSave.ascend = Number.isFinite(ascend) ? ascend : null;
+    }
 
     // B1 — Vérification anti-doublon à la source (admin uniquement, skip silencieux
     // si pas de token / offline). Mieux qu'une détection post-hoc dans Nettoyage :

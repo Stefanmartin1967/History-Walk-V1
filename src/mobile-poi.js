@@ -243,6 +243,11 @@ function renderCircuitView(container, listToDisplay) {
     else totalDistance = getOrthodromicDistance(state.currentCircuit);
     const kmDisplay = (totalDistance / 1000).toFixed(1);
 
+    // D+ (dénivelé positif) BRouter si stocké pour ce circuit (tracé in-app).
+    // null ou 0 → non affiché (miroir PC).
+    const ascendM = (Number.isFinite(circuit.ascend) && circuit.ascend > 0) ? circuit.ascend : null;
+    const denivHtml = ascendM ? `<span class="sep">·</span><span>D+ ${ascendM} M</span>` : '';
+
     // Position dans la liste ordonnée (pour chevrons « < n/total > »)
     const ordered = getAllCircuitsOrdered();
     const idx = ordered.findIndex(c => c.id === state.activeCircuitId);
@@ -309,6 +314,7 @@ function renderCircuitView(container, listToDisplay) {
                 ${zoneName ? `<span>${escapeHtml(zoneName.toUpperCase())}</span><span class="sep">·</span>` : ''}
                 <span>${poiCount} POIS</span><span class="sep">·</span>
                 <span>${kmDisplay} KM</span>
+                ${denivHtml}
                 ${pagerHtml}
             </div>
             <h1 class="cc-title">${escapeHtml(fullName)}</h1>
