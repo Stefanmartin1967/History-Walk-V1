@@ -15,6 +15,7 @@ import { getPoiId, getPoiName } from './data.js';
 import { escapeXml } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
+import { RichEditor } from './richEditor.js';
 
 let _overlay = null;
 let _items = [];        // features de la destination courante (triées par nom)
@@ -22,6 +23,7 @@ let _search = '';
 let _currentId = null;  // POI sélectionné
 let _highlight = null;  // cercle de surlignage temporaire sur la carte
 let _isOpen = false;
+let _onEditorClosed = null; // handler 'richEditor:closed' → rafraîchit la liste
 
 function destLabel() {
     const id = state.currentMapId || '';
@@ -75,6 +77,9 @@ function renderShell() {
         _search = e.target.value;
         renderList();
     });
+    // A3b : à la fermeture du tiroir d'édition, rafraîchir la liste (méta à jour).
+    _onEditorClosed = () => renderList();
+    window.addEventListener('richEditor:closed', _onEditorClosed);
     createIcons({ icons: appIcons, root: _overlay });
 }
 
@@ -112,9 +117,14 @@ function updateCounts(shown) {
     if (ct) ct.textContent = `${total} lieu${total > 1 ? 'x' : ''}`;
 }
 
-function selectPoi(id) {
+async function selectPoi(id) {
     const f = _items.find(x => getPoiId(x) === id);
     if (!f || !f.geometry) return;
+    // A3b : édition EN PLACE dans le tiroir droit. openForEdit confirme si des
+    // modifs non enregistrées existent sur un autre lieu → false si annulé : on
+    // ne bascule alors ni la sélection ni la carte.
+    const ok = await RichEditor.openForEdit(id, { host: 'drawer' });
+    if (ok === false) return;
     _currentId = id;
     const [lon, lat] = f.geometry.coordinates;
     if (_highlight) { _highlight.remove(); _highlight = null; }
@@ -128,6 +138,8 @@ function selectPoi(id) {
 
 function stopModeDonnees() {
     if (!_isOpen) return;
+    RichEditor.discardDrawer(); // ferme un éventuel tiroir d'édition ouvert
+    if (_onEditorClosed) { window.removeEventListener('richEditor:closed', _onEditorClosed); _onEditorClosed = null; }
     if (_highlight) { _highlight.remove(); _highlight = null; }
     if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
     _overlay = null;
