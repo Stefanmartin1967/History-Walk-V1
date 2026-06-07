@@ -1,0 +1,148 @@
+// mode-donnees.js — Mode « Données » (admin). Réunif A3a : coquille plein-écran.
+//
+// Successeur in-app du Data Manager. Calqué sur osm-pass.js : overlay
+// pointer-events:none (la VRAIE carte Heripia reste interactive dessous), modebar
+// (haut) + rail gauche (recherche + liste des POI). Lancé depuis le Control
+// Center, gated state.isAdmin. Sortie via « Quitter le mode ».
+//
+// A3a = SQUELETTE : liste + carte + recentrage/surlignage au clic. À venir :
+// RichEditor en tiroir droit (A3b) ; filtres « ÉTAT DE LA FICHE » + sélecteur de
+// destination (A3c). Zéro écriture/push à ce stade.
+import L from 'leaflet';
+import { map } from './map.js';
+import { state } from './state.js';
+import { getPoiId, getPoiName } from './data.js';
+import { escapeXml } from './utils.js';
+import { createIcons, appIcons } from './lucide-icons.js';
+import { showToast } from './toast.js';
+
+let _overlay = null;
+let _items = [];        // features de la destination courante (triées par nom)
+let _search = '';
+let _currentId = null;  // POI sélectionné
+let _highlight = null;  // cercle de surlignage temporaire sur la carte
+let _isOpen = false;
+
+function destLabel() {
+    const id = state.currentMapId || '';
+    return id ? id.charAt(0).toUpperCase() + id.slice(1) : 'Carte courante';
+}
+
+function buildItems() {
+    return (state.loadedFeatures || []).slice()
+        .sort((a, b) => (getPoiName(a) || '').localeCompare(getPoiName(b) || '', 'fr'));
+}
+
+function visibleItems() {
+    const s = _search.trim().toLowerCase();
+    if (!s) return _items;
+    return _items.filter(f => (getPoiName(f) || '').toLowerCase().includes(s));
+}
+
+function renderShell() {
+    _overlay = document.createElement('div');
+    _overlay.className = 'mode-donnees-overlay';
+    _overlay.innerHTML = `
+        <div class="md-modebar">
+            <span class="brand"><i data-lucide="database"></i>Heripia</span>
+            <span class="pill"><i data-lucide="sliders-horizontal"></i>Mode Données</span>
+            <span class="pill md-pill-admin"><i data-lucide="shield-alert"></i>Admin</span>
+            <span class="spacer"></span>
+            <button class="quit" type="button" data-md-quit><i data-lucide="x"></i>Quitter le mode</button>
+        </div>
+        <aside class="md-rail">
+            <div class="md-rail-head">
+                <button class="dest-sel" type="button" disabled title="Changer de destination — à venir (A3c)">
+                    <span class="ic"><i data-lucide="map"></i></span>
+                    <span><span class="nm">${escapeXml(destLabel())}</span><span class="ct" data-md-count></span></span>
+                    <span class="chev"><i data-lucide="chevron-down"></i></span>
+                </button>
+                <div class="md-tools">
+                    <label class="md-search"><i data-lucide="search"></i><input type="search" placeholder="Rechercher un lieu…" data-md-search></label>
+                </div>
+            </div>
+            <div class="md-list" data-md-list></div>
+            <div class="md-rail-foot"><span data-md-foot></span></div>
+        </aside>
+    `;
+    document.body.appendChild(_overlay);
+    document.body.classList.add('mode-donnees-active');
+    // La carte passe en plein écran derrière l'overlay → resynchroniser Leaflet.
+    setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 60);
+
+    _overlay.querySelector('[data-md-quit]').addEventListener('click', stopModeDonnees);
+    _overlay.querySelector('[data-md-search]').addEventListener('input', (e) => {
+        _search = e.target.value;
+        renderList();
+    });
+    createIcons({ icons: appIcons, root: _overlay });
+}
+
+function renderList() {
+    const list = _overlay?.querySelector('[data-md-list]');
+    if (!list) return;
+    const items = visibleItems();
+    if (!items.length) {
+        list.innerHTML = `<div class="md-empty">Aucun lieu ne correspond.</div>`;
+    } else {
+        list.innerHTML = items.map(f => {
+            const id = getPoiId(f);
+            const props = f.properties || {};
+            const name = escapeXml(getPoiName(f) || 'Lieu sans nom');
+            const cat = escapeXml(props['Catégorie'] || '—');
+            const verif = props.verified || props.userData?.verified;
+            const meta = `${verif ? '<span class="verif"><i data-lucide="badge-check"></i>Vérifié</span> · ' : ''}${cat}`;
+            return `<div class="md-poi${id === _currentId ? ' is-current' : ''}" data-id="${escapeXml(id)}">
+                <span class="md-poi-ic"><i data-lucide="map-pin"></i></span>
+                <span class="md-poi-tx"><span class="nm">${name}</span><span class="mt">${meta}</span></span>
+            </div>`;
+        }).join('');
+        list.querySelectorAll('.md-poi').forEach(el =>
+            el.addEventListener('click', () => selectPoi(el.dataset.id)));
+    }
+    createIcons({ icons: appIcons, root: list });
+    updateCounts(items.length);
+}
+
+function updateCounts(shown) {
+    const total = _items.length;
+    const foot = _overlay?.querySelector('[data-md-foot]');
+    const ct = _overlay?.querySelector('[data-md-count]');
+    if (foot) foot.innerHTML = `<b>${shown}</b> affiché${shown > 1 ? 's' : ''} · ${total} au total`;
+    if (ct) ct.textContent = `${total} lieu${total > 1 ? 'x' : ''}`;
+}
+
+function selectPoi(id) {
+    const f = _items.find(x => getPoiId(x) === id);
+    if (!f || !f.geometry) return;
+    _currentId = id;
+    const [lon, lat] = f.geometry.coordinates;
+    if (_highlight) { _highlight.remove(); _highlight = null; }
+    _highlight = L.circleMarker([lat, lon], {
+        radius: 18, color: '#1f6feb', weight: 3,
+        fillColor: '#1f6feb', fillOpacity: 0.12, interactive: false,
+    }).addTo(map);
+    map.flyTo([lat, lon], Math.max(map.getZoom(), 16), { duration: 0.5 });
+    renderList(); // re-marque .is-current
+}
+
+function stopModeDonnees() {
+    if (!_isOpen) return;
+    if (_highlight) { _highlight.remove(); _highlight = null; }
+    if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
+    _overlay = null;
+    document.body.classList.remove('mode-donnees-active');
+    setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 60);
+    _items = []; _search = ''; _currentId = null; _isOpen = false;
+}
+
+// Point d'entrée publique — appelé par le bouton « Mode Données » du Control Center.
+export function startModeDonnees() {
+    if (_isOpen) return;
+    if (!state.isAdmin) { showToast("Outil réservé à l'admin.", 'warning', 3000); return; }
+    if (!state.currentMapId) { showToast('Aucune destination active.', 'warning', 3000); return; }
+    _isOpen = true;
+    _items = buildItems();
+    renderShell();
+    renderList();
+}
