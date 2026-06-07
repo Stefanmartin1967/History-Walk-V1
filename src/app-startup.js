@@ -279,15 +279,21 @@ export async function loadAndInitializeMap() {
         setTestedCircuits(loadedTested);
 
         // Fetch du statut "vérifié" public (publié par admin via Control Center).
-        // Le public écrase le local pour que tous les users voient la même chose.
-        // 404 attendu avant la 1re publication → fallback silencieux.
+        // AUTORITÉ SERVEUR : le fichier publié est la SEULE source de vérité du
+        // « vérifié » → on REMPLACE le local (pas de fusion). Une fusion
+        // `{...local, ...public}` n'ôtait jamais une clé absente du serveur → un
+        // vérifié retiré par l'admin restait collé À VIE côté user (et obligeait à
+        // vider la DB). Le remplacement fait propager les RETRAITS. Sûr car le
+        // local ne contient que ce qui vient des publications passées (le user
+        // n'est pas admin). Si le fetch échoue (offline / 404 avant 1re
+        // publication) → on garde le dernier local connu (fallback ligne ~279).
         try {
             const testedUrl = `${RAW_BASE}/${GITHUB_PATHS.tested(activeMapId)}?t=${Date.now()}`;
             const respTested = await fetch(testedUrl);
             if (respTested.ok) {
                 const publicTested = await respTested.json();
                 if (publicTested && typeof publicTested === 'object') {
-                    setTestedCircuits({ ...state.testedCircuits, ...publicTested });
+                    setTestedCircuits(publicTested);
                     await saveAppState(`tested_circuits_${activeMapId}`, state.testedCircuits);
                 }
             }

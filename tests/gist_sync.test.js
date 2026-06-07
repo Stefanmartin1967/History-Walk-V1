@@ -110,14 +110,14 @@ describe('buildPayload', () => {
         expect(payload.userData.poi1.planifie).toBeUndefined();
     });
 
-    it('enveloppe : mapId, circuitsStatus, testedCircuits, lastSync (ISO), appVersion', () => {
+    it('enveloppe : mapId, circuitsStatus, lastSync (ISO), appVersion — testedCircuits RETIRÉ', () => {
         state.currentMapId = 'djerba';
         state.officialCircuitsStatus = { c1: true };
         state.testedCircuits = { c2: true };
         const payload = buildPayload();
         expect(payload.mapId).toBe('djerba');
         expect(payload.circuitsStatus).toEqual({ c1: true });
-        expect(payload.testedCircuits).toEqual({ c2: true });
+        expect(payload.testedCircuits).toBeUndefined(); // retiré du Gist (autorité serveur, 07/06)
         expect(payload.appVersion).toBe('1.0');
         expect(payload.lastSync).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
     });
@@ -129,7 +129,6 @@ describe('buildPayload', () => {
         const payload = buildPayload();
         expect(payload.userData).toEqual({});
         expect(payload.circuitsStatus).toEqual({});
-        expect(payload.testedCircuits).toEqual({});
     });
 
     // PR4 refonte Mon Espace V2 — sync hiddenCircuitIds
@@ -312,19 +311,14 @@ describe('mergeRemoteIntoLocal — incontournable & circuits', () => {
         expect(setOfficialCircuitStatus).toHaveBeenCalledWith('c1', true);
     });
 
-    it('testedCircuits : remote true → setter appelé (ajout)', () => {
-        const remote = { userData: {}, testedCircuits: { c1: true } };
-        const { circuitsChanged } = mergeRemoteIntoLocal(remote);
-        expect(circuitsChanged).toBe(true);
-        expect(setTestedCircuit).toHaveBeenCalledWith('c1', true);
-    });
-
-    it('testedCircuits : absent du remote → setter appelé (retrait)', () => {
+    it('testedCircuits : NON synchronisé via le Gist (autorité serveur) — ni ajout ni retrait', () => {
         state.testedCircuits = { c2: true };
         const remote = { userData: {}, testedCircuits: { c1: true } };
-        const { circuitsChanged } = mergeRemoteIntoLocal(remote);
-        expect(circuitsChanged).toBe(true);
-        expect(setTestedCircuit).toHaveBeenCalledWith('c2', false);
+        mergeRemoteIntoLocal(remote);
+        // Le « vérifié » n'est plus touché par le Gist (07/06) : autorité = fichier
+        // serveur appliqué au boot. Donc aucun appel + état local inchangé.
+        expect(setTestedCircuit).not.toHaveBeenCalled();
+        expect(state.testedCircuits).toEqual({ c2: true });
     });
 });
 
