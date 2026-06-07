@@ -17,7 +17,7 @@
 import { state } from './state.js';
 import { routeCircuit } from './circuit-routing.js';
 import { enterCircuitFocus, refreshFailOverlay } from './circuit-focus.js';
-import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName } from './circuit-reference-layer.js';
+import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName, showTraceAsReference } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { handleExportWithContribution } from './fileManager.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
@@ -231,6 +231,11 @@ async function runTrace() {
         showToast('Ajoutez au moins 2 lieux pour tracer un itinéraire.', 'warning');
         return;
     }
+    // Point 5 : capture l'ANCIEN tracé (copie) AVANT qu'il soit écrasé, pour
+    // l'afficher en calque (comparaison avant/après) après le re-tracé.
+    const prevCircuit = activeCircuit();
+    const prevTrack = (prevCircuit && Array.isArray(prevCircuit.realTrack) && prevCircuit.realTrack.length >= 2)
+        ? prevCircuit.realTrack.slice() : null;
     tracing = true;
     updateTraceBlock(); // spinner
 
@@ -239,6 +244,9 @@ async function runTrace() {
         state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
         // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
         await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend });
+        // Point 5 : montre l'ancien tracé en calque de référence (avant/après),
+        // sauf si un calque importé est déjà chargé (garde-fou dans la fonction).
+        if (prevTrack) showTraceAsReference(prevTrack, 'Tracé précédent');
         // Base de péremption posée APRÈS la sauvegarde : sur un 1er tracé,
         // saveAndExportCircuit crée le circuit et appelle setActiveCircuitId(), qui
         // remet routeBasisKey à null (state.js:212). La poser AVANT la rendait

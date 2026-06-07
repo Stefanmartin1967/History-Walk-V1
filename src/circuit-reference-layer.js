@@ -65,6 +65,20 @@ export function importReferenceGpx(onDone) {
     input.click();
 }
 
+// Affiche un tracé [[lat,lon],…] comme calque de référence — ex. l'ANCIEN tracé
+// d'un circuit juste avant un re-tracé, pour comparer « avant → après » sans le
+// geste manuel export GPX → import (point 5). Réutilise le rendu magenta.
+// Garde-fou : n'écrase PAS un calque IMPORTÉ manuellement (Wikiloc en guide) ;
+// remplace en revanche un précédent « Tracé précédent » auto (re-tracés
+// successifs → toujours l'avant-dernier). Renvoie true si le calque a été posé.
+export function showTraceAsReference(latlngs, name) {
+    if (!Array.isArray(latlngs) || latlngs.length < 2) return false;
+    if (state.referenceLayer && !state.referenceLayer.autoPrevious) return false;
+    state.referenceLayer = { name: name || 'Tracé précédent', latlngs: latlngs.slice(), visible: true, autoPrevious: true };
+    refreshMap();
+    return true;
+}
+
 export function removeReferenceLayer(onDone) {
     state.referenceLayer = null;
     clearReferenceLayer();
