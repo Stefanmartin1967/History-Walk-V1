@@ -109,3 +109,44 @@ body.mode-donnees-active #map { top: 0 !important; right: 0 !important; }
     font-size: 11.5px; color: var(--ink-soft);
 }
 .md-rail-foot b { color: var(--ink); }
+
+/* ============================================================
+   4. TIROIR DROIT = RichEditor en place (réunif A3b)
+   Le RichEditor monte son formulaire (mêmes IDs) dans ce conteneur au lieu de
+   openHwModal. Le corps du formulaire est stylé par .rich-poi-form (base.css).
+   ============================================================ */
+.mode-donnees-overlay .md-drawer {
+    position: absolute; right: 12px; top: 58px; bottom: 12px; width: 430px;
+    display: flex; flex-direction: column; pointer-events: auto;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); overflow: hidden;
+}
+.md-drawer-head {
+    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+}
+.md-drawer-head .ic {
+    width: 30px; height: 30px; border-radius: var(--radius-md);
+    background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; flex-shrink: 0;
+}
+.md-drawer-head .ic svg { width: 17px; height: 17px; }
+.md-drawer-head h4 { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); }
+.md-drawer-head .sub { font-size: 11.5px; color: var(--ink-soft); margin-top: 1px; }
+.md-drawer-head .nav { margin-left: auto; display: flex; gap: 4px; }
+.md-iconbtn {
+    width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink-soft); cursor: pointer;
+    display: grid; place-items: center;
+}
+.md-iconbtn:hover { background: var(--surface-muted); color: var(--ink); }
+.md-iconbtn svg { width: 15px; height: 15px; }
+.md-drawer-body { flex: 1; overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 13px; }
+/* Le corps scrolle, il ne comprime pas ses enfants (cf. .fiche-status en overflow:hidden). */
+.md-drawer-body > * { flex-shrink: 0; }
+.md-drawer-foot {
+    padding: 11px 14px; border-top: 1px solid var(--line); background: var(--surface-muted);
+    display: flex; align-items: center; gap: 10px;
+}
+/* Footer RichEditor (Annuler ghost + Enregistrer primary) : Annuler à gauche,
+   Enregistrer poussé à droite (le footer partagé n'a pas de spacer). */
+.md-drawer-foot .btn-ghost { margin-right: auto; }

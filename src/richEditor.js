@@ -61,6 +61,11 @@ let currentFeatureId = null; // Pour le mode EDIT
 let currentDraftCoords = null; // Pour le mode CREATE
 let currentPhotos = []; // Pour le mode CREATE (import photos)
 let isDirty = false;
+// Réunif A3b : hôte de montage du formulaire — 'modal' (openHwModal, fiche
+// classique) ou 'drawer' (tiroir droit ancré dans le Mode Données). Le corps du
+// formulaire (RICH_POI_BODY_HTML) et ses IDs sont identiques dans les deux cas.
+let _host = 'modal';
+let _drawerEl = null;
 
 // HTML du formulaire (body de la modale V2). IDs préservés à l'identique
 // pour que toute la logique métier (setValue/getValue/handleSave/executeCreate
@@ -216,6 +221,7 @@ export const RichEditor = {
      * @param {Array} photos (Optionnel) Liste des photos importées
      */
     openForCreate: (lat, lng, photos = []) => {
+        _host = 'modal'; // la création passe toujours par la modale classique
         currentMode = 'CREATE';
         currentDraftCoords = { lat, lng };
         currentPhotos = photos;
@@ -271,13 +277,21 @@ export const RichEditor = {
      * Ouvre la modale en mode ÉDITION
      * @param {string} poiId ID du POI (HW-...)
      */
-    openForEdit: (poiId) => {
+    openForEdit: async (poiId, opts = {}) => {
         // Recherche du feature
         const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
         if (!feature) {
             showToast("Erreur : POI introuvable.", "error");
-            return;
+            return false;
         }
+
+        // Réunif A3b : un tiroir déjà ouvert avec des modifs non enregistrées →
+        // confirmer avant de basculer sur un autre lieu (pas de perte silencieuse).
+        if (_drawerEl && isDirty) {
+            const ok = await showConfirm("Modifications non enregistrées", "Changer de lieu sans enregistrer ?", "Changer", "Annuler", true);
+            if (!ok) return false;
+        }
+        _host = (opts && opts.host === 'drawer') ? 'drawer' : 'modal';
 
         currentMode = 'EDIT';
         currentFeatureId = poiId;
@@ -332,6 +346,10 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
         setVerified(!!merged.verified);
 
+        // Tiroir (Mode Données) : sous-titre = nom du lieu en cours d'édition.
+        const drawerSub = _drawerEl && _drawerEl.querySelector('[data-rich-drawer-sub]');
+        if (drawerSub) drawerSub.textContent = merged['Nom du site FR'] || merged.name || '';
+
         // Affichage coords
         const coordsEl = document.getElementById(DOM_IDS.COORDS);
         if (coordsEl && feature.geometry) {
@@ -343,6 +361,7 @@ export const RichEditor = {
         isDirty = false;
         updateSaveButtonState();
         document.getElementById(DOM_IDS.INPUTS.NAME_FR)?.focus();
+        return true;
     },
 
     close: async () => {
@@ -359,10 +378,24 @@ export const RichEditor = {
         // Migration V2 : closeHwModal au lieu de toggle .is-hidden. L'event
         // richEditor:closed est dispatch après la fermeture (les listeners
         // peuvent assumer que la modale n'est plus dans le DOM).
-        closeHwModal();
+        if (_host === 'drawer') {
+            teardownDrawer();
+            _host = 'modal';
+        } else {
+            closeHwModal();
+        }
         window.dispatchEvent(new CustomEvent('richEditor:closed', {
             detail: { poiId: currentFeatureId, mode: currentMode, created: wasCreated }
         }));
+    },
+
+    // Réunif A3b : ferme sans confirmation un tiroir éventuellement ouvert (appelé
+    // par le Mode Données à sa sortie). No-op si aucun tiroir.
+    discardDrawer: () => {
+        if (!_drawerEl) return;
+        teardownDrawer();
+        _host = 'modal';
+        isDirty = false;
     }
 };
 
@@ -553,42 +586,73 @@ function bindModalEvents() {
 function showModal() {
     isDirty = false; // Reset on open
 
-    // Migration V2 : crée la modale via openHwModal. Le titre + l'icône sont
-    // passés en options (au lieu de l'h2 statique). Le close (croix/Escape)
-    // déclenche directement la fermeture sans confirm — pour conserver le
-    // contrôle isDirty, on laisse le bouton "Annuler" gérer ça via close().
     const isCreate = currentMode === 'CREATE';
-    openHwModal({
-        size: 'lg',
-        icon: isCreate ? 'map-pin-plus' : 'edit-3',
-        title: isCreate ? 'Nouveau Lieu' : 'Éditer le Lieu',
-        subheader: RICH_POI_SUBHEADER_HTML,
-        body: RICH_POI_BODY_HTML,
-        footer: RICH_POI_FOOTER_HTML,
-        // closeOnBackdrop: true par défaut — formulaire long, on évite la perte
-        closeOnBackdrop: false,
-    });
+    if (_host === 'drawer') {
+        // Réunif A3b : montage en TIROIR droit (Mode Données) — MÊME formulaire,
+        // MÊMES IDs ; seul le conteneur change (pas de openHwModal/backdrop).
+        mountDrawer(isCreate);
+    } else {
+        // Migration V2 : crée la modale via openHwModal. Le close (croix/Escape)
+        // ferme directement ; le bouton "Annuler" gère le contrôle isDirty via close().
+        openHwModal({
+            size: 'lg',
+            icon: isCreate ? 'map-pin-plus' : 'edit-3',
+            title: isCreate ? 'Nouveau Lieu' : 'Éditer le Lieu',
+            subheader: RICH_POI_SUBHEADER_HTML,
+            body: RICH_POI_BODY_HTML,
+            footer: RICH_POI_FOOTER_HTML,
+            closeOnBackdrop: false,
+        });
+    }
 
-    // DOM prêt après openHwModal (synchrone). Bind + remplissage.
+    // DOM prêt (synchrone dans les deux cas). Bind + remplissage.
     bindModalEvents();
     populateCategorySelect();
     createIcons({ icons: appIcons });
 
-    // Aide « ? » : guide « Créer ou éditer un lieu », inséré dans le header de la
-    // modale (avant la croix), comme l'aide d'import photo. Le header est recréé à
-    // chaque ouverture → on (ré)insère à chaque showModal.
-    const headerEl = document.querySelector('.hw-modal-overlay.is-active .hw-modal-header');
-    const closeBtn = headerEl?.querySelector('.hw-modal-close');
-    if (headerEl && closeBtn && !headerEl.querySelector('.help-trigger')) {
-        closeBtn.insertAdjacentElement('beforebegin', helpButton(GUIDE_LIEU, { label: 'Aide : créer ou éditer un lieu' }));
+    // Aide « ? » header — uniquement en modale (le tiroir n'a pas de header modale).
+    if (_host !== 'drawer') {
+        const headerEl = document.querySelector('.hw-modal-overlay.is-active .hw-modal-header');
+        const closeBtn = headerEl?.querySelector('.hw-modal-close');
+        if (headerEl && closeBtn && !headerEl.querySelector('.help-trigger')) {
+            closeBtn.insertAdjacentElement('beforebegin', helpButton(GUIDE_LIEU, { label: 'Aide : créer ou éditer un lieu' }));
+        }
     }
     attachFieldHelp();
+}
+
+// Réunif A3b : monte le formulaire RichEditor dans un tiroir droit (Mode Données).
+// Réutilise tel quel subheader/body/footer (mêmes IDs → bind/populate inchangés) ;
+// seul le conteneur diffère. Ancré dans l'overlay du Mode Données.
+function mountDrawer(isCreate) {
+    teardownDrawer(); // un seul tiroir à la fois
+    const drawer = document.createElement('aside');
+    drawer.className = 'md-drawer';
+    drawer.innerHTML = `
+        <div class="md-drawer-head">
+            <span class="ic"><i data-lucide="${isCreate ? 'map-pin-plus' : 'edit-3'}"></i></span>
+            <div><h4>${isCreate ? 'Nouveau lieu' : 'Éditer le lieu'}</h4><div class="sub" data-rich-drawer-sub></div></div>
+            <span class="nav">
+                <button class="md-iconbtn" type="button" id="close-rich-poi-drawer" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>
+            </span>
+        </div>
+        <div class="md-drawer-body">${RICH_POI_SUBHEADER_HTML}${RICH_POI_BODY_HTML}</div>
+        <div class="md-drawer-foot">${RICH_POI_FOOTER_HTML}</div>`;
+    const mount = document.querySelector('.mode-donnees-overlay') || document.body;
+    mount.appendChild(drawer);
+    _drawerEl = drawer;
+    drawer.querySelector('#close-rich-poi-drawer').addEventListener('click', () => RichEditor.close());
+}
+
+function teardownDrawer() {
+    if (_drawerEl && _drawerEl.parentNode) _drawerEl.parentNode.removeChild(_drawerEl);
+    _drawerEl = null;
 }
 
 // Pose les « ? » inline à côté de 4 labels du formulaire (Zone, Catégorie,
 // Description courte, Source). Appelée à chaque showModal (formulaire recréé).
 function attachFieldHelp() {
-    const root = document.querySelector('.hw-modal-overlay.is-active');
+    const root = document.querySelector('.hw-modal-overlay.is-active') || _drawerEl;
     if (!root) return;
     const put = (forId, opts) => {
         const label = root.querySelector(`label[for="${forId}"]`);
