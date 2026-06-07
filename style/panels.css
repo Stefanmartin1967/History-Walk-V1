@@ -177,12 +177,15 @@
 
 /* Calque de référence (PR3) — trace GPX importée, guide visuel en fond.
    Pointillé gris FIN, distinct du vol d'oiseau (rouge) et du segment en échec
-   (gris tirets larges). N'entre pas dans le tracé. */
+   (violet tireté, distinct du tracé). N'entre pas dans le tracé. */
 .route-reference-layer {
-    stroke: var(--ink-soft) !important;
-    stroke-width: 3px !important;
-    stroke-dasharray: 2 7 !important;
-    opacity: 0.55 !important;
+    /* Renforcé 07/06/2026 (avant : gris clair `--ink-soft` opacity .55 + mini-
+       pointillés 2/7 → quasi invisible). Violet distinct du bleu du tracé BRouter
+       et de l'ocre des POIs ; tireté net + opaque pour la comparaison réel/routé. */
+    stroke: #7c3aed !important;
+    stroke-width: 4px !important;
+    stroke-dasharray: 8 6 !important;
+    opacity: 0.85 !important;
     fill: none !important;
 }
 

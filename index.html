@@ -45,7 +45,7 @@
          dès le 1er paint du #hw-boot-splash. -->
     <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css?v=7.81">
+    <link rel="stylesheet" href="style.css?v=7.82">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
          Lien direct car les @imports CSS dans style.css sont cachés par Vite en
          dev — voir note historique sur le boot splash en bas de style.css. -->
@@ -344,8 +344,9 @@
                         <button class="cp-act" id="btn-import-gpx" title="Importer un GPX" data-show="create"><i data-lucide="upload-cloud"></i></button>
                         <!-- Calque de référence (création) : GPX guide en fond (Wikiloc…), n'entre pas dans le tracé -->
                         <button class="cp-act" id="btn-reference-layer" title="Calque de référence (guide Wikiloc…)" data-show="create"><i data-lucide="layers"></i></button>
-                        <!-- GPX Studio (création) -->
-                        <a class="cp-act" id="btn-open-gpx-studio" href="https://gpx.studio/fr/app" target="_blank" rel="noopener" title="Ouvrir GPX Studio" data-show="create"><i data-lucide="external-link"></i></a>
+                        <!-- GPX Studio (création) RETIRÉ 07/06/2026 : doublon avec « Affiner dans
+                             GPX Studio » du menu ⋮ du bloc tracé (openGpxStudio). En consultation,
+                             l'accès reste via #btn-open-gpx-studio-consult ci-dessous. -->
                         <!-- Sauver + Exporter GPX (création) -->
                         <button class="cp-act" id="btn-export-gpx" title="Exporter le GPX" data-show="create"><i data-lucide="download"></i></button>
                         <!-- Partager (consultation) -->
