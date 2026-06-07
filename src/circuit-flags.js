@@ -110,6 +110,59 @@ export function getDirtyCount() {
     return n;
 }
 
+// === API focus « Éditer l'itinéraire » =========================================
+// Le focus (circuit-focus.js) déverrouille les drapeaux et re-route les segments
+// sur leur position glissée AVANT tout commit. Ces 3 helpers exposent l'état des
+// drapeaux à la session focus sans dupliquer le rendu ni la persistance.
+
+/**
+ * Ancres déplacées (drapeaux glissés) NON encore persistées : { [poiId]: [lon,lat] }.
+ * Le focus s'en sert comme OVERRIDE d'ancre pour re-router les segments sur la
+ * position live du drapeau avant tout commit (cf. routeOneSegment).
+ */
+export function getDraggedAnchors() {
+    const out = {};
+    for (const [poiId, f] of _flags) {
+        if (f.isDirty && Array.isArray(f.newCoords)) out[poiId] = f.newCoords;
+    }
+    return out;
+}
+
+/**
+ * Annule les déplacements de drapeaux de la session (focus « Quitter ») : remet
+ * chaque drapeau dirty à sa position/couleur d'origine et efface le dirty (donc
+ * commitDirtyFlags ne persistera rien).
+ */
+export function revertDraggedFlags() {
+    for (const [, f] of _flags) {
+        if (!f.isDirty) continue;
+        f.newCoords = f.baseCoords;
+        f.status = f.baseStatus;
+        f.isDirty = false;
+        if (f.marker && Array.isArray(f.baseCoords)) {
+            const [lon, lat] = f.baseCoords;
+            f.marker.setLatLng([lat, lon]);
+            if (f.line) f.line.setLatLngs([f.poiAnchor, [lat, lon]]);
+            f.marker.setIcon(flagIcon(f.baseStatus, f.isLocked));
+        }
+    }
+}
+
+/**
+ * Re-rend les drapeaux (retire les markers + re-sync) SANS toucher au snapshot
+ * cadenas (_initialPoiIds, que teardownAllFlags effacerait). Utilisé par le focus
+ * à l'entrée (recalcule le verrou → déverrouillé) et à la sortie (re-verrouille
+ * les POI préexistants d'un officiel édité).
+ */
+export function resyncFlags() {
+    for (const [, f] of _flags) {
+        if (f.marker) f.marker.remove();
+        if (f.line) f.line.remove();
+    }
+    _flags.clear();
+    syncFlags();
+}
+
 // === Logique de rendu ==========================================================
 
 /**
@@ -162,8 +215,12 @@ function ensureFlag(feature) {
     if (!ap) return;
 
     const status = getAccessPointStatus(feature) || 'moved';
-    // Règle cadenas : préexistant en édition → rouge non-draggable.
-    const isLocked = state.editingMode === true && _initialPoiIds.has(poiId);
+    // Règle cadenas : préexistant en édition → rouge non-draggable. EXCEPTION en
+    // focus « Éditer l'itinéraire » : on déverrouille pour laisser l'admin ajuster
+    // où le circuit raccroche au réseau routable (validé 07/06 — risque de
+    // déplacement accidentel jugé négligeable). resyncFlags() recalcule ce verrou
+    // à l'entrée/sortie du focus.
+    const isLocked = state.editingMode === true && _initialPoiIds.has(poiId) && !state.circuitFocusActive;
     const effectiveStatus = isLocked ? 'locked' : status;
 
     const [apLon, apLat] = ap;
@@ -200,6 +257,8 @@ function ensureFlag(feature) {
         isLocked,
         isDirty: false,
         newCoords: [apLon, apLat],
+        baseCoords: [apLon, apLat], // position d'origine — restaurée par revertDraggedFlags (Quitter focus)
+        baseStatus: status,         // couleur d'origine — restaurée au revert
         poiAnchor: [poiLat, poiLon], // pour redessiner la ligne au drag
     };
     _flags.set(poiId, entry);
@@ -220,6 +279,10 @@ function ensureFlag(feature) {
             entry.isDirty = true;
             entry.status = 'moved';
             marker.setIcon(flagIcon('moved', false));
+            // En focus « Éditer l'itinéraire » : prévient circuit-focus pour qu'il
+            // re-route les segments bordant ce POI sur la nouvelle position (lue en
+            // live via getDraggedAnchors → routeOneSegment). Hors focus : no-op.
+            if (state.circuitFocusActive) eventBus.emit('circuit-flag:moved', { poiId });
         });
     }
 }

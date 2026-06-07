@@ -25,11 +25,13 @@ import {
 } from './circuit-routing.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
-import { getPoiName } from './data.js';
+import { getPoiName, getPoiId } from './data.js';
+import { getDraggedAnchors, revertDraggedFlags, resyncFlags } from './circuit-flags.js';
 import { toggleReferenceLayer, isReferenceVisible } from './circuit-reference-layer.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { eventBus } from './events.js';
 
 let _overlay = null;   // conteneur rail + barre + bouton quitter
 let _segLayer = null;  // L.layerGroup des polylignes de segment (+ hit-lines)
@@ -69,9 +71,21 @@ function projT(p, a, b) {
     return ((p[0] - a[0]) * abx + (p[1] - a[1]) * aby) / len2;
 }
 
+// Ancres déplacées en session (drapeaux d'accès glissés en focus), indexées par
+// position de POI : { [idx]: [lon, lat] }. Priment sur l'accessPoint enregistré
+// pour que le re-route (et l'ordre des points de passage) suive la position LIVE
+// du drapeau — cf. routeOneSegment / anchorOf.
+function anchorOverrides() {
+    const dragged = getDraggedAnchors(); // { [poiId]: [lon, lat] }
+    const out = {};
+    features().forEach((f, idx) => { const id = getPoiId(f); if (dragged[id]) out[idx] = dragged[id]; });
+    return out;
+}
+
 // Regroupe state.draftWaypoints par segment, ordonnés le long de la corde.
 function waypointsBySeg() {
-    const anchors = features().map(anchorOf);
+    const ov = anchorOverrides();
+    const anchors = features().map((f, idx) => ov[idx] || anchorOf(f));
     const bySeg = {};
     (state.draftWaypoints || []).forEach(w => { (bySeg[w.seg] = bySeg[w.seg] || []).push(w); });
     Object.keys(bySeg).forEach(s => {
@@ -154,7 +168,7 @@ async function rerouteSegment(i) {
     _rerouting++;
     renderBar();
     try {
-        const seg = await routeOneSegment(features(), i, waypointsBySeg());
+        const seg = await routeOneSegment(features(), i, waypointsBySeg(), undefined, anchorOverrides());
         state.routeSegments[i] = seg;
     } catch (e) {
         console.error('[focus] re-route segment', i, e);
@@ -165,6 +179,20 @@ async function rerouteSegment(i) {
     drawWaypoints();
     renderRail();
     renderBar();
+}
+
+// Un drapeau d'accès a été glissé EN FOCUS (event 'circuit-flag:moved', émis par
+// circuit-flags) → re-route les segments qui bordent ce POI : le POI d'index idx
+// borde le segment idx-1 (POI précédent → lui) et le segment idx (lui → suivant).
+// La position live du drapeau est lue via anchorOverrides() dans rerouteSegment.
+function onFlagMoved(poiId) {
+    if (!state.circuitFocusActive) return;
+    const feats = features();
+    const idx = feats.findIndex(f => getPoiId(f) === poiId);
+    if (idx < 0) return;
+    _dirty = true;
+    if (idx > 0) rerouteSegment(idx - 1);
+    if (idx < feats.length - 1) rerouteSegment(idx);
 }
 
 // ---------- Rendu rail + barre ----------
@@ -278,6 +306,7 @@ export function enterCircuitFocus() {
 
     drawSegments();
     drawWaypoints();
+    resyncFlags(); // re-rend les drapeaux d'accès DÉVERROUILLÉS pour l'édition en focus
     renderRail();
     renderBar();
     createIcons({ icons: appIcons, root: _overlay });
@@ -309,13 +338,15 @@ async function requestQuit() {
     if (_dirty) {
         const ok = await showConfirm(
             'Abandonner les ajustements ?',
-            'Les points de passage de cette session seront perdus et le tracé reviendra à sa version enregistrée.',
+            'Les points de passage et déplacements de drapeaux de cette session seront perdus, et le tracé reviendra à sa version enregistrée.',
             'Abandonner', "Continuer l'ajustement", false
         );
         if (!ok) return;
     }
-    // Le realTrack du circuit n'a pas été touché (sauvegarde uniquement à
-    // « Terminer ») → on restaure le découpage d'entrée pour le rendu post-sortie.
+    // Annule les drapeaux glissés dans la session (remet position + couleur) AVANT
+    // de restaurer le tracé : ni l'accessPoint ni le realTrack ne sont touchés
+    // (sauvegarde uniquement à « Terminer »).
+    revertDraggedFlags();
     state.routeSegments = _snapshot;
     teardown({ keepSegments: true });
 }
@@ -336,6 +367,7 @@ function teardown({ keepSegments = false } = {}) {
     updatePolylines();      // redessine la polyligne realTrack normale
     refreshFailOverlay();   // ré-affiche les segments en échec en pointillé
     renderCircuitPanel();   // restaure le panneau (déclenche updateTraceBlock)
+    resyncFlags();          // re-verrouille les drapeaux préexistants (focus terminé)
 }
 
 // Overlay des segments en échec HORS focus (pointillé gris sur le tracé bleu).
@@ -352,3 +384,9 @@ export function refreshFailOverlay() {
         }
     });
 }
+
+// Écoute (posée au boot) : un drapeau d'accès glissé EN FOCUS → re-route les
+// segments bordant son POI. onFlagMoved est guardé par circuitFocusActive → no-op
+// hors focus (en édition normale, glisser un drapeau ne re-route rien ; il est
+// persisté au save circuit comme avant via commitDirtyFlags).
+eventBus.on('circuit-flag:moved', ({ poiId }) => onFlagMoved(poiId));
