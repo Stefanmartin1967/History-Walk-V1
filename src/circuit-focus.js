@@ -21,7 +21,7 @@ import L from 'leaflet';
 import { state } from './state.js';
 import { map, updatePolylines, clearMapLines } from './map.js';
 import {
-    anchorOf, routeOneSegment, splitTrackByAnchors, buildRealTrack, segmentsDistanceKm,
+    anchorOf, routeOneSegment, splitTrackByAnchors, buildRealTrack, segmentsDistanceKm, segmentsAscend,
 } from './circuit-routing.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
@@ -288,9 +288,18 @@ async function finish() {
     const segs = state.routeSegments;
     if (!Array.isArray(segs) || !segs.length) { teardown({ keepSegments: true }); return; }
     const realTrack = buildRealTrack(segs);
-    // Réutilise le flux PR1 : pose le realTrack et reste en création (pour
+    // D+ : si TOUS les segments ont un dénivelé connu (cas où ils ont été
+    // (re)routés par BRouter), on recalcule le total. Sinon — édition partielle :
+    // des segments viennent du re-découpage de la trace enregistrée (sans
+    // altitude) — on PRÉSERVE le D+ existant plutôt que de le fausser (somme
+    // partielle) ou de l'effacer. Un nudge de waypoint change le total de façon
+    // négligeable ; un vrai changement passe par « Re-tracer » (flux PR1 complet).
+    const existing = activeCircuit();
+    const existingAscend = Number.isFinite(existing?.ascend) ? existing.ascend : null;
+    const ascend = segs.every(s => Number.isFinite(s.ascend)) ? segmentsAscend(segs) : existingAscend;
+    // Réutilise le flux PR1 : pose le realTrack (+ D+) et reste en création (pour
     // continuer d'ajuster / re-tracer ensuite).
-    await saveAndExportCircuit(realTrack, { stayInCreation: true });
+    await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend });
     state.routeBasisKey = currentPoiKey(); // le tracé édité correspond à cette séquence
     teardown({ keepSegments: true });
 }
