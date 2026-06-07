@@ -19,6 +19,7 @@ import { routeCircuit } from './circuit-routing.js';
 import { enterCircuitFocus, refreshFailOverlay } from './circuit-focus.js';
 import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
+import { handleExportWithContribution } from './fileManager.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
 import { updatePolylines } from './map.js';
 import { showToast } from './toast.js';
@@ -303,7 +304,7 @@ export function initCircuitRoutingUI() {
                 const act = mp.dataset.act;
                 if (act === 'retrace') confirmRetrace();
                 else if (act === 'edit') enterCircuitFocus();
-                else if (act === 'export') eventBus.emit('request-export-gpx');
+                else if (act === 'export') handleExportWithContribution('gpx', () => eventBus.emit('request-export-gpx'));
                 else if (act === 'gpx') openGpxStudio();
                 return;
             }
