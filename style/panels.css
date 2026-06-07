@@ -3028,9 +3028,15 @@
 .trace-hint svg { width: 14px; height: 14px; flex-shrink: 0; margin-top: 1px; }
 
 /* Carte d'état du tracé (après calcul) */
+/* overflow: VISIBLE (pas hidden) — sinon le menu ⋮ « Plus » (.more-pop, qui
+   s'ouvre vers le haut via bottom:100%) est ROGNÉ par cette carte : « Re-tracer
+   l'itinéraire » et « Affiner dans GPX Studio » devenaient invisibles/incliquables
+   (seul le dernier item, « Exporter le GPX », dépassait dans la zone visible).
+   Le popover est display:none quand fermé → visible n'a aucun effet hors
+   ouverture (zéro régression sur la carte). Bug trouvé 07/06/2026. */
 .trace-status {
     border: 1px solid var(--line); border-radius: var(--radius-md);
-    background: var(--surface); overflow: hidden; box-shadow: var(--shadow-card);
+    background: var(--surface); overflow: visible; box-shadow: var(--shadow-card);
 }
 .trace-status-head { display: flex; align-items: center; gap: 11px; padding: 13px 14px; }
 .trace-status-ico {
