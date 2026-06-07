@@ -41,6 +41,8 @@ let _addMode = false;  // « Ajouter un point » actif → clic du tracé = inse
 let _dirty = false;    // un point a été posé/déplacé/supprimé dans la session
 let _rerouting = 0;    // nb de re-routes BRouter en cours (spinner barre)
 let _snapshot = null;  // copie de routeSegments à l'entrée (annulation « Quitter »)
+let _ghostLayer = null;      // L.layerGroup des fantômes (segments d'origine modifiés)
+let _editedSegs = new Set(); // index des segments modifiés dans la session → fantôme
 
 // ---------- Helpers ----------
 function features() { return state.currentCircuit || []; }
@@ -110,6 +112,21 @@ function drawSegments() {
     });
 }
 
+// Fantôme du segment remplacé (item 3) : pour chaque segment MODIFIÉ dans la
+// session, dessine sa géométrie d'ORIGINE (snapshot d'entrée du focus) en
+// pointillé, SOUS le tracé courant, pour visualiser le « avant → après ».
+function drawGhosts() {
+    if (!_ghostLayer) return;
+    _ghostLayer.clearLayers();
+    const snap = _snapshot || [];
+    _editedSegs.forEach((i) => {
+        const seg = snap[i];
+        if (seg && Array.isArray(seg.coords) && seg.coords.length >= 2) {
+            _ghostLayer.addLayer(L.polyline(seg.coords, { className: 'route-ghost-segment', interactive: false }));
+        }
+    });
+}
+
 // Segment le plus proche d'un point cliqué (nearest-vertex) — pour rattacher un
 // nouveau point de passage au bon tronçon POI→POI.
 function nearestSegmentIndex(latlng) {
@@ -165,6 +182,7 @@ function removeWaypoint(id) {
 // segment ok:false en ligne droite).
 async function rerouteSegment(i) {
     if (!Array.isArray(state.routeSegments)) return;
+    _editedSegs.add(i); // segment modifié → affiche le fantôme de son origine
     _rerouting++;
     renderBar();
     try {
@@ -176,6 +194,7 @@ async function rerouteSegment(i) {
         _rerouting = Math.max(0, _rerouting - 1);
     }
     drawSegments();
+    drawGhosts();
     drawWaypoints();
     renderRail();
     renderBar();
@@ -288,7 +307,7 @@ export function enterCircuitFocus() {
     }
     _snapshot = JSON.parse(JSON.stringify(state.routeSegments));
     state.draftWaypoints = [];
-    _addMode = false; _dirty = false; _rerouting = 0;
+    _addMode = false; _dirty = false; _rerouting = 0; _editedSegs = new Set();
 
     // On dessine par segment → on retire TOUTES les polylignes globales (vol
     // d'oiseau + tracé réel) pour ne pas superposer du rouge sous nos segments.
@@ -304,7 +323,9 @@ export function enterCircuitFocus() {
     document.body.appendChild(_overlay);
     _overlay.querySelector('#focus-quit').addEventListener('click', requestQuit);
 
+    _ghostLayer = L.layerGroup().addTo(map); // fantômes SOUS les segments (ajouté avant eux)
     drawSegments();
+    drawGhosts();
     drawWaypoints();
     resyncFlags(); // re-rend les drapeaux d'accès DÉVERROUILLÉS pour l'édition en focus
     renderRail();
@@ -356,11 +377,12 @@ function teardown({ keepSegments = false } = {}) {
     document.body.classList.remove('circuit-focus-active', 'circuit-focus-add');
     map.off('click', onAddClick); // coupe le mode ajout (clic carte)
     state.draftWaypoints = [];
-    _addMode = false; _dirty = false; _rerouting = 0; _snapshot = null;
+    _addMode = false; _dirty = false; _rerouting = 0; _snapshot = null; _editedSegs = new Set();
     if (!keepSegments) state.routeSegments = null;
 
     if (_segLayer) { _segLayer.remove(); _segLayer = null; }
     if (_wpLayer) { _wpLayer.remove(); _wpLayer = null; }
+    if (_ghostLayer) { _ghostLayer.remove(); _ghostLayer = null; }
     if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
     _overlay = null;
 

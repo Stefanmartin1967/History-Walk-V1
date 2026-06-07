@@ -176,6 +176,18 @@ body.circuit-focus-active #right-sidebar {
     fill: none !important;
 }
 
+/* Fantôme du segment remplacé (item 3) — géométrie d'ORIGINE (snapshot d'entrée du
+   focus) d'un segment modifié, en fond pour le « avant → après ». Pointillé CYAN :
+   distinct du tracé courant (bleu/vert), du calque de référence (magenta) et du
+   segment en échec (gris). Non interactif, sous les segments. Couleur ajustable. */
+.route-ghost-segment {
+    stroke: #06b6d4 !important;
+    stroke-width: 3px !important;
+    stroke-dasharray: 5 6 !important;
+    opacity: 0.75 !important;
+    fill: none !important;
+}
+
 /* Marqueur point de passage (anneau brand-2, draggable) */
 .wp-marker { background: none; border: 0; }
 .wp-marker .wp-ring {
