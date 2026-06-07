@@ -25,6 +25,24 @@ function isValidLonLat(a) {
     return Array.isArray(a) && a.length >= 2 && Number.isFinite(a[0]) && Number.isFinite(a[1]);
 }
 
+// Dénivelé positif (D+, mètres) renvoyé par BRouter dans les `properties` du
+// geojson. Clé canonique « filtered ascend » (AVEC un espace) = ascension lissée,
+// débruitée des artefacts SRTM (valeur recommandée par BRouter) ; repli
+// « plain-ascend » (brut, avec tiret). Valeurs = chaînes → Number(). BRouter ne
+// fournit pas de « descend » dans le geojson → on n'expose que le D+.
+// Réf : https://brouter.de/brouter/elevation.html
+function pickAscend(props) {
+    if (!props) return null;
+    for (const key of ['filtered ascend', 'plain-ascend']) {
+        const raw = props[key];
+        if (raw != null && raw !== '') {
+            const n = Number(raw);
+            if (Number.isFinite(n)) return Math.round(n);
+        }
+    }
+    return null;
+}
+
 // Distance haversine (km) le long d'une polyligne [[lat, lon], …]. Sert au
 // repli « ligne droite » d'un segment non routable (échec partiel).
 function polylineKm(latLngs) {
@@ -91,8 +109,9 @@ export async function routePoints(points, profile = DEFAULT_PROFILE) {
     const props = feat.properties || {};
     const distanceKm = props['track-length'] ? (+props['track-length']) / 1000 : 0;
     const durationMin = props['total-time'] ? Math.round((+props['total-time']) / 60) : 0;
+    const ascend = pickAscend(props);
 
-    return { realTrack, distanceKm, durationMin };
+    return { realTrack, distanceKm, durationMin, ascend };
 }
 
 /**
@@ -107,12 +126,12 @@ export async function routePoints(points, profile = DEFAULT_PROFILE) {
  */
 async function routeSegment(vias, profile = DEFAULT_PROFILE) {
     try {
-        const { realTrack, distanceKm, durationMin } = await routePoints(vias, profile);
-        return { ok: true, coords: realTrack, distanceKm, durationMin };
+        const { realTrack, distanceKm, durationMin, ascend } = await routePoints(vias, profile);
+        return { ok: true, coords: realTrack, distanceKm, durationMin, ascend };
     } catch (e) {
         // Repli ligne droite : on garde la séquence des vias telle quelle.
         const coords = vias.map(([lon, lat]) => [lat, lon]);
-        return { ok: false, coords, distanceKm: polylineKm(coords), durationMin: 0 };
+        return { ok: false, coords, distanceKm: polylineKm(coords), durationMin: 0, ascend: null };
     }
 }
 
@@ -141,6 +160,16 @@ export function segmentsDistanceKm(segments) {
     return segments.reduce((sum, s) => sum + (s.distanceKm || 0), 0);
 }
 
+// Dénivelé positif (D+) total = somme des `ascend` des segments routés. Renvoie
+// null si AUCUN segment n'a de donnée d'altitude (BRouter muet) — à distinguer
+// d'un vrai 0 (terrain plat). Les segments en échec (ligne droite, ascend null)
+// sont exclus de la somme.
+export function segmentsAscend(segments) {
+    const vals = (segments || []).map(s => s.ascend).filter(a => Number.isFinite(a));
+    if (vals.length === 0) return null;
+    return vals.reduce((sum, a) => sum + a, 0);
+}
+
 /**
  * Route un circuit segment par segment (1 appel BRouter par couple de POIs
  * consécutifs). Permet d'isoler un segment en échec et de ne re-router que le
@@ -166,6 +195,7 @@ export async function routeCircuit(features, waypointsBySeg = {}, profile = DEFA
         realTrack: buildRealTrack(segments),
         distanceKm: segmentsDistanceKm(segments),
         durationMin: segments.reduce((sum, s) => sum + (s.durationMin || 0), 0),
+        ascend: segmentsAscend(segments),
         segments,
         failedSegments,
     };

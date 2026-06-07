@@ -287,6 +287,17 @@ export function updateCircuitHeader(data) {
     if (DOM.circuitDistance) {
         DOM.circuitDistance.textContent = data.distanceText || '0 km';
     }
+    // Dénivelé positif (D+) — affiché seulement si BRouter l'a renvoyé pour ce
+    // circuit (tracé in-app). Sinon masqué (séparateur compris).
+    const denivEl = document.getElementById('circuit-denivele');
+    const denivSep = document.getElementById('cp-denivele-sep');
+    if (denivEl) {
+        const a = data.ascend;
+        const show = Number.isFinite(a) && a > 0;
+        denivEl.textContent = show ? `D+ ${a} m` : '';
+        denivEl.hidden = !show;
+        if (denivSep) denivSep.hidden = !show;
+    }
 
     // 4. Titre — placeholder "Sans titre" en italique si pas de vrai titre
     if (DOM.circuitTitleText) {
