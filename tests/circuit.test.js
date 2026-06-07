@@ -263,6 +263,15 @@ describe('generateCircuitName', () => {
         state.currentCircuit = [poi('p1', 'A'), poi('p2', 'X'), poi('p1', 'A'), poi('p3', 'Y'), poi('p1', 'A')];
         expect(generateCircuitName()).toBe('Boucle autour de A');
     });
+
+    it('inclut un restaurant en extrémité (exclusion resto retirée le 07/06)', () => {
+        // Un circuit qui finit à un resto DOIT le nommer ainsi : le nom décrit le
+        // parcours réel. Avant, le resto était exclu → on nommait d'après une
+        // étape du milieu (trompeur).
+        const resto = { type: 'Feature', properties: { HW_ID: 'r1', name: 'Chez Adel', 'Catégorie': 'Restaurant' }, geometry: null };
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'M'), resto];
+        expect(generateCircuitName()).toBe('Circuit de A à Chez Adel');
+    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

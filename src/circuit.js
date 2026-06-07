@@ -3,7 +3,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
-import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, escapeXml, getPoiProp } from './utils.js';
+import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, escapeXml } from './utils.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData, getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import * as View from './circuit-view.js';
@@ -544,31 +544,23 @@ function handleCircuitAction(action, index) {
     renderCircuitPanel();
 }
 
-function isRestaurantPoi(poi) {
-    if (!poi || !poi.properties) return false;
-    // Convention userData overlay : une recat admin (userData) doit primer sur
-    // la catégorie patrimoine — sinon la pastille « Resto » ne reflète pas
-    // une re-catégorisation faite via richEditor.
-    return getPoiProp(poi, 'Catégorie') === 'Restaurant';
-}
-
 export function generateCircuitName() {
     if (state.currentCircuit.length === 0) return "Nouveau Circuit";
     if (state.currentCircuit.length === 1) return `Départ de ${getPoiName(state.currentCircuit[0])}`;
 
-    // App patrimoniale : on nomme avec des POIs patrimoniaux, pas un resto.
-    // Le resto apparaît déjà via la pastille "Resto" sur la carte du circuit.
-    const heritage = state.currentCircuit.filter(p => !isRestaurantPoi(p));
-    const pool = heritage.length >= 1 ? heritage : state.currentCircuit;
+    // Nom auto = extrémités LITTÉRALES du parcours (1ʳᵉ → dernière étape), quel
+    // que soit leur type. Deux simplifications successives :
+    //  - 03/06/2026 : retrait du « via [milieu] » (milieu purement positionnel,
+    //    déjà listé dans la fiche, sans valeur dans le nom).
+    //  - 07/06/2026 : retrait de l'exclusion des restaurants. Le nom doit décrire
+    //    où va RÉELLEMENT la balade : finir à un resto est une extrémité légitime
+    //    et informative. L'exclure nommait le circuit d'après une étape du milieu
+    //    (ex. « à El Haddada » alors qu'on finit à Chez Adel) → trompeur.
+    const circuit = state.currentCircuit;
+    const startPoi = getPoiName(circuit[0]);
+    const endPoi = getPoiName(circuit[circuit.length - 1]);
 
-    const startPoi = getPoiName(pool[0]);
-    const endPoi = getPoiName(pool[pool.length - 1]);
-
-    // Nom auto = uniquement les extrémités. Le « via [milieu] » historique
-    // allongeait le nom sans réelle valeur : le milieu était purement positionnel
-    // (index du milieu), pas un point remarquable, et les étapes intermédiaires
-    // sont déjà listées dans la fiche du circuit. Retiré le 03/06/2026.
-    if (getPoiId(pool[0]) === getPoiId(pool[pool.length - 1])) {
+    if (getPoiId(circuit[0]) === getPoiId(circuit[circuit.length - 1])) {
         return `Boucle autour de ${startPoi}`;
     }
     return `Circuit de ${startPoi} à ${endPoi}`;
