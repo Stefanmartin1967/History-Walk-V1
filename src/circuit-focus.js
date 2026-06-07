@@ -25,7 +25,7 @@ import {
 } from './circuit-routing.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
-import { getPoiName, getPoiId } from './data.js';
+import { getPoiId } from './data.js';
 import { getDraggedAnchors, revertDraggedFlags, resyncFlags } from './circuit-flags.js';
 import { toggleReferenceLayer, isReferenceVisible } from './circuit-reference-layer.js';
 import { showToast } from './toast.js';
@@ -52,7 +52,6 @@ function activeCircuit() {
     return [...(state.officialCircuits || []), ...(state.myCircuits || [])]
         .find(c => c.id === state.activeCircuitId) || null;
 }
-function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function genId() { return 'wp_' + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36); }
 function fmtKm(km) { return km ? km.toFixed(1).replace('.', ',') + ' km' : '—'; }
 
@@ -157,6 +156,7 @@ function drawWaypoints() {
         // Position live pendant le drag (le segment se redessine au dragend).
         m.on('drag', () => { const ll = m.getLatLng(); w.lat = ll.lat; w.lng = ll.lng; });
         m.on('dragend', () => { const ll = m.getLatLng(); w.lat = ll.lat; w.lng = ll.lng; _dirty = true; rerouteSegment(w.seg); });
+        m.on('click', () => removeWaypoint(w.id)); // clic = retirer (Leaflet annule le click après un drag)
         _wpLayer.addLayer(m);
     });
 }
@@ -196,7 +196,6 @@ async function rerouteSegment(i) {
     drawSegments();
     drawGhosts();
     drawWaypoints();
-    renderRail();
     renderBar();
 }
 
@@ -214,57 +213,22 @@ function onFlagMoved(poiId) {
     if (idx < feats.length - 1) rerouteSegment(idx);
 }
 
-// ---------- Rendu rail + barre ----------
-function renderRail() {
-    const rail = _overlay && _overlay.querySelector('.focus-rail');
-    if (!rail) return;
-    const feats = features();
-    const bySeg = waypointsBySeg();
-    let wpCount = 0, seq = '';
-    feats.forEach((p, s) => {
-        const name = esc(getPoiName(p) || `Lieu ${s + 1}`);
-        seq += `<div class="seq-item"><span class="seq-dot poi">${s + 1}</span><span class="seq-name">${name}</span></div>`;
-        if (s < feats.length - 1) {
-            (bySeg[s] || []).forEach(w => {
-                wpCount++;
-                seq += `<div class="seq-item is-wp"><span class="seq-dot wp"></span>` +
-                    `<span class="seq-name">Point de passage</span>` +
-                    `<button class="seq-del" type="button" data-del="${w.id}" title="Supprimer ce point"><i data-lucide="trash-2"></i></button></div>`;
-            });
-        }
-    });
-    rail.innerHTML = `
-        <div class="focus-rail-head">
-            <div class="eyebrow">Édition du tracé</div>
-            <h3><i data-lucide="waypoints"></i> Points de passage</h3>
-            <p>Posez des points pour guider BRouter — éviter un détour, suivre un parcours précis. Le tracé se recalcule à chaque geste.</p>
-        </div>
-        <div class="focus-seq">
-            <div class="focus-seq-cap">Séquence · ${wpCount} point${wpCount > 1 ? 's' : ''} de passage</div>
-            ${seq}
-        </div>
-        <div class="focus-rail-foot">
-            <div class="add-tip"><i data-lucide="waypoints"></i><span>Activez « Ajouter un point », cliquez la carte le long du tracé pour insérer ; glissez un point pour l'ajuster.</span></div>
-            <button class="btn-done" type="button" id="focus-done"><i data-lucide="check"></i> Terminer</button>
-        </div>`;
-    rail.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => removeWaypoint(b.dataset.del)));
-    rail.querySelector('#focus-done').addEventListener('click', finish);
-    createIcons({ icons: appIcons, root: rail });
-}
-
+// ---------- Rendu de la barre d'action flottante ----------
 function renderBar() {
     const bar = _overlay && _overlay.querySelector('.focus-bar');
     if (!bar) return;
     const distTxt = fmtKm(state.routeSegments ? segmentsDistanceKm(state.routeSegments) : 0);
+    const wpCount = (state.draftWaypoints || []).length;
+    const wpTxt = wpCount ? ` · <b>${wpCount}</b> point${wpCount > 1 ? 's' : ''} de passage` : '';
     const measure = _rerouting
         ? '<span class="spin"></span> Calcul…'
-        : `Distance <b>${distTxt}</b>`;
+        : `Distance <b>${distTxt}</b>${wpTxt}`;
     bar.innerHTML = `
         <div class="focus-bar-main">
             <div class="focus-bar-mark"><i data-lucide="navigation"></i></div>
             <div class="focus-bar-txt">
-                <h5>Tracé réel actif</h5>
-                <p>${_addMode ? 'Cliquez la carte le long du tracé pour poser un point' : 'Glissez un point pour ajuster le tracé'}</p>
+                <h5>Édition du tracé</h5>
+                <p>${_addMode ? 'Cliquez la carte le long du tracé pour poser un point' : 'Glissez un point pour l\'ajuster · cliquez-le pour le retirer'}</p>
             </div>
             <span class="focus-measure">${measure}</span>
             <span class="focus-bar-sep"></span>
@@ -274,9 +238,14 @@ function renderBar() {
             <button class="fb-btn ${isReferenceVisible() ? 'is-active' : ''}" type="button" id="fb-layer">
                 <i data-lucide="layers"></i> Calque
             </button>
+            <span class="focus-bar-sep"></span>
+            <button class="fb-btn" type="button" id="fb-quit"><i data-lucide="x"></i> Annuler</button>
+            <button class="fb-btn fb-cta" type="button" id="fb-done"><i data-lucide="check"></i> Terminer</button>
         </div>`;
     bar.querySelector('#fb-add').addEventListener('click', toggleAdd);
     bar.querySelector('#fb-layer').addEventListener('click', () => toggleReferenceLayer(renderBar));
+    bar.querySelector('#fb-done').addEventListener('click', finish);
+    bar.querySelector('#fb-quit').addEventListener('click', requestQuit);
     createIcons({ icons: appIcons, root: bar });
 }
 
@@ -314,23 +283,23 @@ export function enterCircuitFocus() {
     clearMapLines();
     if (_failLayer) { _failLayer.remove(); _failLayer = null; }
 
+    // Réunif A2 : plus de rail séparé ni de plein écran — l'édition se fait « en
+    // place ». Le panneau Circuit (ÉTAPES) reste la liste de séquence ; l'overlay
+    // ne porte que la barre d'action flottante (seule elle intercepte les events).
     _overlay = document.createElement('div');
     _overlay.className = 'circuit-focus-overlay';
-    _overlay.innerHTML = `
-        <aside class="focus-rail"></aside>
-        <div class="focus-bar"></div>
-        <button class="focus-quit" type="button" id="focus-quit"><i data-lucide="x"></i> Quitter l'ajustement</button>`;
+    _overlay.innerHTML = `<div class="focus-bar"></div>`;
     document.body.appendChild(_overlay);
-    _overlay.querySelector('#focus-quit').addEventListener('click', requestQuit);
 
     _ghostLayer = L.layerGroup().addTo(map); // fantômes SOUS les segments (ajouté avant eux)
     drawSegments();
     drawGhosts();
     drawWaypoints();
     resyncFlags(); // re-rend les drapeaux d'accès DÉVERROUILLÉS pour l'édition en focus
-    renderRail();
     renderBar();
     createIcons({ icons: appIcons, root: _overlay });
+    // Le panneau Circuit reflète « édition du tracé en cours » (updateTraceBlock).
+    window.dispatchEvent(new CustomEvent('circuit:updated'));
 }
 
 // « Terminer » : sauvegarde le realTrack (concat des segments) et sort.

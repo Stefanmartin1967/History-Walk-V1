@@ -1,134 +1,30 @@
-/* style/circuit-focus.css — Focus mode « Ajuster le tracé » (routing in-app
-   niveau 2 / PR2). Plein écran dédié calqué sur la passe drapeaux OSM
-   (body.circuit-focus-active masque la sidebar, l'overlay superpose un rail
-   latéral + une barre d'action ancrée en bas + un bouton « Quitter »).
+/* style/circuit-focus.css — Édition du tracé « Ajuster l'itinéraire » (routing
+   in-app niveau 2). Réunif A2 (07/06/2026) : l'édition se fait « EN PLACE » — la
+   sidebar Circuit RESTE visible (ses ÉTAPES = la liste de séquence, plus de rail
+   séparé qui la dupliquait, plus de plein écran). L'overlay ne porte que la barre
+   d'action flottante au-dessus de la carte.
 
-   Styles portés du handoff Claude Design (04/06/2026), mappés sur les vrais
-   tokens Heripia (style/tokens.css). La couleur des points de passage =
-   var(--brand-2) (thème-aware, distincte du tracé bleu --brand).
-
-   Pattern overlay (cf. osm-pass.css) : conteneur pointer-events:none pour
-   laisser la carte Leaflet interactive (drag des waypoints, clic du tracé) ;
-   seuls le rail, la barre et le bouton interceptent les events. */
+   Pattern overlay (cf. osm-pass.css) : conteneur pointer-events:none pour laisser
+   la carte Leaflet interactive (drag/clic des waypoints) ; seule la barre
+   intercepte les events. Couleur des points de passage = var(--brand-2). */
 
 /* ============================================================
-   1. MASQUAGE SIDEBAR + OVERLAY
+   1. OVERLAY (carte ET sidebar restent interactives dessous)
    ============================================================ */
-body.circuit-focus-active .right-sidebar,
-body.circuit-focus-active .hw-sidebar,
-body.circuit-focus-active #right-sidebar {
-    display: none !important;
-}
-
 .circuit-focus-overlay {
     position: fixed;
     inset: 0;
     z-index: 1500;        /* > sidebar HW V2 (1002), < modales (2000) */
-    pointer-events: none; /* la carte reste interactive ; rail/barre/quit en auto */
+    pointer-events: none; /* carte + sidebar restent interactives ; seule la barre est en auto */
 }
 
 /* ============================================================
-   2. RAIL LATÉRAL (séquence POIs + points de passage)
-   ============================================================ */
-.focus-rail {
-    position: absolute; top: 0; left: 0; bottom: 0; width: 312px;
-    pointer-events: auto;
-    background: var(--surface); border-right: 1px solid var(--line);
-    box-shadow: var(--shadow); z-index: 30;
-    display: flex; flex-direction: column; min-height: 0;
-}
-.focus-rail-head {
-    padding: 15px 18px; border-bottom: 1px solid var(--line);
-    background: color-mix(in oklab, var(--brand) 6%, var(--surface));
-}
-.focus-rail-head .eyebrow {
-    font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--brand-2);
-}
-.focus-rail-head h3 {
-    margin: 5px 0 0; font-size: 16px; font-weight: 700; color: var(--ink);
-    display: flex; align-items: center; gap: 8px;
-}
-.focus-rail-head h3 svg { width: 17px; height: 17px; color: var(--brand-2); }
-.focus-rail-head p { margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
-
-.focus-seq { flex: 1; overflow-y: auto; padding: 10px 12px; min-height: 0; }
-.focus-seq-cap {
-    font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--ink-soft); padding: 4px 6px 8px;
-}
-.seq-item {
-    display: flex; align-items: center; gap: 10px; padding: 7px 8px;
-    border-radius: var(--radius-md); position: relative;
-}
-.seq-item:not(:last-child)::before {
-    content: ""; position: absolute; left: 20px; top: 32px; height: calc(100% - 18px);
-    width: 2px; background: var(--line);
-}
-.seq-item.is-wp { padding-left: 8px; }
-.seq-dot {
-    width: 26px; height: 26px; flex-shrink: 0; z-index: 1;
-    display: grid; place-items: center; font-size: 12px; font-weight: 800;
-    font-variant-numeric: tabular-nums;
-}
-.seq-dot.poi {
-    border-radius: 50%; background: var(--hw-amber-soft); color: var(--hw-amber);
-    border: 1.5px solid color-mix(in oklab, var(--hw-amber) 40%, transparent);
-}
-.seq-dot.wp {
-    border-radius: 50%; background: var(--surface);
-    border: 3px solid var(--brand-2);
-    width: 18px; height: 18px;
-}
-.seq-name {
-    flex: 1; min-width: 0; font-size: 13px; font-weight: 600; color: var(--ink);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.seq-item.is-wp .seq-name { color: var(--ink-soft); font-style: italic; font-weight: 500; }
-.seq-del {
-    border: 0; background: transparent; color: var(--ink-soft); cursor: pointer;
-    width: 26px; height: 26px; border-radius: var(--radius-sm); display: none; place-items: center; flex-shrink: 0;
-}
-.seq-item.is-wp:hover .seq-del { display: grid; }
-.seq-del:hover { background: var(--danger-soft); color: var(--danger-fg); }
-.seq-del svg { width: 14px; height: 14px; }
-
-.focus-rail-foot { padding: 12px 16px; border-top: 1px solid var(--line); }
-.focus-rail-foot .add-tip {
-    display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px;
-    line-height: 1.45; color: var(--ink-soft); margin-bottom: 11px;
-}
-.focus-rail-foot .add-tip svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; color: var(--brand-2); }
-.btn-done {
-    width: 100%; height: 44px; border: 0; border-radius: var(--radius-md);
-    background: var(--cta-bg); color: var(--cta-fg); cursor: pointer;
-    font-size: 14px; font-weight: 700;
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-}
-.btn-done:hover { filter: brightness(0.95); }
-.btn-done svg { width: 16px; height: 16px; }
-
-/* ============================================================
-   3. BOUTON QUITTER (haut-droite carte)
-   ============================================================ */
-.focus-quit {
-    position: absolute; top: 16px; right: 16px; z-index: 30; pointer-events: auto;
-    display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px;
-    border-radius: var(--radius-pill); background: color-mix(in oklab, var(--surface) 94%, transparent);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow-card);
-    font-size: 12.5px; font-weight: 600; cursor: pointer;
-}
-.focus-quit:hover { background: var(--surface); }
-.focus-quit svg { width: 14px; height: 14px; color: var(--ink-soft); }
-
-/* ============================================================
-   4. BARRE D'ACTION ANCRÉE EN BAS (langage passe drapeaux / .ap-bar)
+   2. BARRE D'ACTION FLOTTANTE (centrée sur la zone carte, à gauche de la sidebar)
    ============================================================ */
 .focus-bar {
-    position: absolute; left: calc(312px + (100% - 312px) / 2); bottom: 26px;
+    position: absolute; left: calc((100% - var(--sidebar-width)) / 2); bottom: 26px;
     transform: translateX(-50%); z-index: 30; pointer-events: auto;
-    min-width: 560px; max-width: calc(100% - 360px);
+    min-width: 560px; max-width: calc(100% - var(--sidebar-width) - 48px);
     background: var(--bg); color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.14); border-radius: var(--radius-lg);
     box-shadow: var(--shadow-modal); overflow: hidden;
@@ -162,10 +58,22 @@ body.circuit-focus-active #right-sidebar {
 }
 .fb-btn:hover { background: rgba(255, 255, 255, 0.12); }
 .fb-btn.is-active { background: #fff; color: var(--bg); border-color: #fff; }
+.fb-btn.fb-cta { background: var(--cta-bg); color: var(--cta-fg); border-color: transparent; }
+.fb-btn.fb-cta:hover { background: var(--cta-bg); filter: brightness(0.92); }
 .fb-btn svg { width: 15px; height: 15px; }
 
 /* ============================================================
-   5. CARTE — segment en échec + marqueur waypoint + curseur ajout
+   3. PANNEAU CIRCUIT — état « édition du tracé en cours »
+   (carte d'état rendue par ui-circuit-routing à la place du bouton « Éditer »)
+   ============================================================ */
+.trace-status.is-editing {
+    border-color: color-mix(in oklab, var(--brand) 35%, var(--line));
+    background: color-mix(in oklab, var(--brand) 5%, var(--surface));
+}
+.trace-status.is-editing .trace-status-ico { color: var(--brand-2); }
+
+/* ============================================================
+   4. CARTE — segment en échec + marqueur waypoint + curseur ajout
    ============================================================ */
 /* Segment non routable retombé en ligne droite (échec partiel) */
 .route-fail-segment {
@@ -176,10 +84,9 @@ body.circuit-focus-active #right-sidebar {
     fill: none !important;
 }
 
-/* Fantôme du segment remplacé (item 3) — géométrie d'ORIGINE (snapshot d'entrée du
-   focus) d'un segment modifié, en fond pour le « avant → après ». Pointillé CYAN :
-   distinct du tracé courant (bleu/vert), du calque de référence (magenta) et du
-   segment en échec (gris). Non interactif, sous les segments. Couleur ajustable. */
+/* Fantôme du segment remplacé — géométrie d'ORIGINE (snapshot d'entrée du focus)
+   d'un segment modifié, en fond pour le « avant → après ». Pointillé CYAN :
+   distinct du tracé courant, du calque de référence et du segment en échec. */
 .route-ghost-segment {
     stroke: #06b6d4 !important;
     stroke-width: 3px !important;
@@ -188,7 +95,7 @@ body.circuit-focus-active #right-sidebar {
     fill: none !important;
 }
 
-/* Marqueur point de passage (anneau brand-2, draggable) */
+/* Marqueur point de passage (anneau brand-2 ; glisser = ajuster, cliquer = retirer) */
 .wp-marker { background: none; border: 0; }
 .wp-marker .wp-ring {
     display: block; width: 18px; height: 18px; box-sizing: border-box;

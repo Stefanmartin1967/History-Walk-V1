@@ -73,7 +73,20 @@ export function updateTraceBlock() {
     // calque est chargé (même à 0 POI : il guide la construction du circuit).
     const chip = referenceChipHtml();
 
-    if (tracing) {
+    if (state.circuitFocusActive) {
+        // Réunif A2 : édition du tracé « en place » → pas de bouton « Éditer »
+        // redondant ; le panneau indique l'état, la barre flottante pilote.
+        el.innerHTML = `
+            <div class="trace-status is-editing">
+                <div class="trace-status-head">
+                    <div class="trace-status-ico"><i data-lucide="waypoints"></i></div>
+                    <div class="trace-status-txt">
+                        <h4>Édition du tracé en cours</h4>
+                        <p>Ajustez l'itinéraire sur la carte ; terminez ou annulez depuis la barre en bas.</p>
+                    </div>
+                </div>
+            </div>` + chip;
+    } else if (tracing) {
         el.innerHTML = `
             <button class="btn-trace" disabled>
                 <span class="spin"></span><span>BRouter calcule l'itinéraire…</span>
