@@ -262,7 +262,8 @@ function revokeCoverObjectUrl() {
 // des étapes. Réutilise collectPoiPhotoUrls (même collecte publiées/draft/blobs
 // que le viewer d'un POI), concatène, puis ouvre le viewer plein écran. Les
 // objectURL des blobs sont révoqués à la fermeture (revoke de chaque POI).
-async function openCircuitGallery() {
+// Exportée : réutilisée par le hero de l'onglet Circuit mobile (mobile-poi.js).
+export async function openCircuitGallery() {
     const circuit = state.currentCircuit;
     if (!circuit || circuit.length === 0) return;
 

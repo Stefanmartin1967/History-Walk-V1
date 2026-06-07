@@ -11,7 +11,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance, getPoiProp } from './utils.js';
 import { openDetailsPanel } from './ui-details.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
-import { clearCircuit, isCircuitCompleted, isCircuitTested, loadCircuitById } from './circuit.js';
+import { clearCircuit, isCircuitCompleted, isCircuitTested, loadCircuitById, openCircuitGallery } from './circuit.js';
 import { handleCircuitVisitedToggle, setCircuitHidden } from './circuit-actions.js';
 import { startFollow, circuitHasTrace } from './mobile-follow.js';
 import { showToast } from './toast.js';
@@ -108,6 +108,19 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
 
     hero.classList.remove('is-empty');
     hero.dataset.bg = 'true';
+
+    // Hero cliquable → galerie agrégée du circuit (miroir PC). Le #mobile-cc-hero
+    // est recréé à chaque rendu (container.innerHTML) et n'arrive ici que si une
+    // photo existe → pas de branche « off » nécessaire (cas vide = reste is-empty).
+    hero.classList.add('is-clickable');
+    hero.setAttribute('role', 'button');
+    hero.setAttribute('tabindex', '0');
+    hero.setAttribute('aria-label', 'Voir les photos du circuit');
+    hero.onclick = openCircuitGallery;
+    hero.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCircuitGallery(); }
+    };
+
     const safe = String(heroUrl).replace(/['"\\]/g, encodeURIComponent);
     hero.style.setProperty('--cc-hero-bg', `url("${safe}")`);
     // L'inline-style backgroundImage est crucial : sans lui les URL via var()
