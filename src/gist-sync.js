@@ -3,7 +3,7 @@
 // Chaque utilisateur stocke son propre Gist ID dans localStorage.
 // Le token PAT (scope "gist") est partagé avec github-sync.js.
 
-import { state, setTestedCircuit, setOfficialCircuitStatus, setHiddenPoiIds, setHiddenCircuitIds } from './state.js';
+import { state, setOfficialCircuitStatus, setHiddenPoiIds, setHiddenCircuitIds } from './state.js';
 import { getStoredToken } from './github-sync.js';
 import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
@@ -49,7 +49,10 @@ export function buildPayload() {
         mapId: state.currentMapId,
         userData: filtered,
         circuitsStatus: state.officialCircuitsStatus || {},
-        testedCircuits: state.testedCircuits || {},
+        // testedCircuits (« vérifié ») RETIRÉ du Gist (07/06/2026) : statut
+        // AUTORITAIRE publié par l'admin sur GitHub (tested_<map>.json), pas une
+        // préférence par-appareil. Le Gist (par-user, à la traîne) ne doit pas en
+        // être une 2ᵉ source, sinon un Gist périmé ré-écrase l'autorité serveur.
         // Ajout 03/05/2026 : sync admin des POIs masqués entre appareils.
         // Stratégie merge : UNION (cf. mergeRemoteIntoLocal).
         // Cf. mémoire project_admin_sync_history.md.
@@ -130,21 +133,9 @@ export function mergeRemoteIntoLocal(remote) {
         }
     }
 
-    // testedCircuits : true gagne (admin → tous appareils)
-    const remoteTested = remote.testedCircuits || {};
-    for (const [cId, val] of Object.entries(remoteTested)) {
-        if (val === true && !state.testedCircuits[cId]) {
-            setTestedCircuit(cId, true);
-            circuitsChanged = true;
-        }
-    }
-    // Retraits : si absent du remote, on retire du local
-    for (const cId of Object.keys(state.testedCircuits)) {
-        if (!remoteTested[cId]) {
-            setTestedCircuit(cId, false);
-            circuitsChanged = true;
-        }
-    }
+    // testedCircuits (« vérifié ») n'est PLUS synchronisé via le Gist : autorité
+    // serveur (tested_<map>.json), appliquée au boot (app-startup.js). Le retirer
+    // ici évite qu'un Gist périmé ré-injecte un vérifié retiré côté serveur.
 
     // hiddenPoiIds : UNION (admin peut masquer différents POIs sur PC vs mobile).
     // Cf. mémoire project_admin_sync_history.md — décision Stefan 03/05/2026
@@ -280,7 +271,6 @@ export async function pullFromGist() {
         }
         if (circuitsChanged) {
             await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
-            await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
         }
         if (hiddenChanged) {
             // Persistance même clé que data.js et admin-control-center.js
