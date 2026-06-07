@@ -26,7 +26,6 @@ import { RichEditor } from './richEditor.js';
 // post-#514 : aucun usage actif dans ui.js après retrait du listener btnOpenTrash.
 // requestSoftDelete reste utilisée dans ui-modals.js uniquement.)
 import { switchSidebarTab } from './ui-sidebar.js'; // Imported for use inside ui.js functions
-import { handleExportWithContribution } from './fileManager.js';
 import { showStatisticsModal } from './statistics.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { DOM } from './ui-dom.js';
@@ -44,7 +43,7 @@ export function initializeDomReferences() {
         'geojson-loader', 'search-input', 'search-results', 'right-sidebar', 'sidebar-tabs',
         'details-panel', 'circuit-panel', 'circuit-steps-list', 'circuit-title-text', 'circuit-title-input', 
         'circuit-description', 'circuit-poi-count', 'circuit-distance',
-        'gpx-importer', 'btn-export-gpx',
+        'gpx-importer',
         'btn-import-gpx', 'loader-overlay', 'btn-save-data', 'restore-loader',
         'mobile-container', 'mobile-main-container', 'mobile-nav', 'fullscreen-editor', 'editor-title',
         'editor-cancel-btn', 'editor-save-btn', 'editor-textarea', 'destination-loader',
@@ -100,35 +99,10 @@ export function initializeDomReferences() {
     // du bouton kebab quand le POI n'a pas d'info GPX est déjà géré par
     // `aria-disabled` dans le template — pas besoin d'override en JS.)
 
-    // --- EXPORT LOGIC WITH CONTRIBUTION MODAL ---
-    if (DOM.btnExportGpx) {
-        DOM.btnExportGpx.addEventListener('click', async () => {
-            if (DOM.btnExportGpx.disabled) return;
-            handleExportWithContribution('gpx', () => {
-                // Original logic trigger
-                // Note: The logic for GPX export is handled in main.js or circuit.js usually
-                // But looking at codebase, main.js sets up listener on DOM.btnExportGpx too.
-                // We need to Intercept it.
-                // Since main.js is likely already loaded, this listener adds to it.
-                // We should prevent Default if we want to stop immediate download?
-                // Actually, the best way is to let the main logic be callable or manage it here.
-                // However, main.js has the logic.
-                // To avoid complexity, we can assume the user clicked "Exporter" in the modal.
-                // But we need to BLOCK the original click if we want to show modal first.
-                // We can't easily block another listener added elsewhere unless we use capture or remove it.
-                // Strategy: We will dispatch a custom event 'ui:request-export-gpx' and move the logic from main.js to listen to that,
-                // OR we check state here.
-
-                // Simpler: Trigger the hidden export logic.
-                // If main.js listens to click, we can't easily stop it.
-                // We'll rely on a check in the actual export function or move the logic here.
-                // Let's look at main.js later to refactor. For now let's set up the modal.
-
-                // Assuming we can proceed:
-                eventBus.emit('request-export-gpx');
-            });
-        });
-    }
+    // (Export GPX : l'ancien handler du bouton barre #btn-export-gpx a été RETIRÉ
+    // le 07/06/2026 — doublon avec l'item « Exporter le GPX » du menu ⋮ du bloc
+    // tracé. C'est désormais ce dernier qui appelle handleExportWithContribution
+    // puis émet 'request-export-gpx' — cf. ui-circuit-routing.js.)
 
     // Bouton « Sauvegarder » du menu Outils — point d'entrée PC vers la
     // modale de sauvegarde (PR3 dissolution Mon Espace : openSaveModal V2

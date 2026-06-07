@@ -372,12 +372,6 @@ export function updateControlButtons(uiState) {
         btnLoop.classList.toggle('is-disabled', uiState.cannotLoop);
     }
 
-    // Sauver+Exporter désactivé si vide
-    const btnExport = document.getElementById('btn-export-gpx');
-    if (btnExport) {
-        btnExport.classList.toggle('is-disabled', uiState.isEmpty);
-    }
-
     // Importer GPX désactivé si vide (besoin d'un circuit pour matcher la trace)
     const btnImport = document.getElementById('btn-import-gpx');
     if (btnImport) {
