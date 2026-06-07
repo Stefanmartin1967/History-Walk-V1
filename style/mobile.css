@@ -480,6 +480,14 @@
 .cc-hero[data-bg] {
     background-image: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45)), var(--cc-hero-bg);
 }
+/* Hero cliquable (le circuit a des photos) → galerie agrégée (miroir PC).
+   Tactile : pas de :hover → feedback au :active sur le badge ; focus clavier. */
+.cc-hero.is-clickable { cursor: pointer; }
+.cc-hero.is-clickable:active .cc-photo-count { background: rgba(0, 0, 0, 0.82); }
+.cc-hero.is-clickable:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -2px;
+}
 /* Fallback : motif topo subtil quand aucune photo dispo */
 .cc-hero.is-empty {
     background:
