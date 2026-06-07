@@ -181,6 +181,70 @@ body {
     padding: 8px 0;
 }
 
+/* Bandeau « Statut de la fiche » en tête du formulaire (réunification, Lot A).
+   Regroupe les méta-statuts de la FICHE — Vérifié pour l'instant ; le cycle de
+   vie Candidat/Curé s'y ajoutera au Lot C. Distinct de la taxonomie (méta-LIEU).
+   Repris des maquettes Design (reunification.css), tokens app uniquement. */
+.fiche-status {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: color-mix(in oklab, var(--surface-muted) 60%, var(--surface));
+    overflow: hidden;
+}
+.fiche-status-hd {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+}
+.fiche-status-hd svg { width: 13px; height: 13px; }
+.fiche-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+}
+.fiche-row .lbl { display: flex; flex-direction: column; gap: 1px; }
+.fiche-row .lbl .t { font-size: 13px; font-weight: 600; color: var(--ink); }
+.fiche-row .lbl .h { font-size: 11px; color: var(--ink-soft); }
+.fiche-row .ctl { margin-left: auto; }
+
+/* Interrupteur Vérifié — scopé .fiche-status pour ne jamais entrer en collision
+   avec d'autres usages de .sw (ex. futur handle .scout-handle.sw du Lot B). */
+.fiche-status .sw {
+    --sw-on: var(--ok-fg);
+    position: relative;
+    flex-shrink: 0;
+    width: 38px;
+    height: 22px;
+    border-radius: var(--radius-pill);
+    background: var(--line);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.16s ease;
+}
+.fiche-status .sw::after {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.16s ease;
+}
+.fiche-status .sw.is-on { background: var(--sw-on); }
+.fiche-status .sw.is-on::after { transform: translateX(16px); }
+
 /* Mobile : paires repliées en 1 colonne (standard formulaire mobile).
    Indispensable car la grille 1fr 1fr déborde sinon : les <input>/<select>
    gardent leur min-width intrinsèque (min-width:auto) et refusent de

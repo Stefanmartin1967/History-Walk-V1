@@ -52,7 +52,8 @@ const DOM_IDS = {
         NEXT: 'btn-rich-next',
         MOVE: 'btn-rich-move-marker'
     },
-    NAV_CONTROLS: 'rich-poi-nav-controls'
+    NAV_CONTROLS: 'rich-poi-nav-controls',
+    VERIFIED: 'rich-poi-verified'
 };
 
 let currentMode = 'CREATE'; // 'CREATE' | 'EDIT'
@@ -68,6 +69,19 @@ let isDirty = false;
 // inputs, etc.) qui étaient préfixées `#rich-poi-modal` avant la migration.
 const RICH_POI_BODY_HTML = `
 <div class="rich-poi-form">
+    <!-- Bandeau « Statut de la fiche » (réunification, Lot A) : porte le toggle
+         Vérifié, en tête du formulaire. Méta-FICHE (≠ taxonomie État/Accès qui
+         décrit le LIEU). Le cycle de vie Candidat/Curé viendra ici au Lot C. -->
+    <div class="fiche-status">
+        <div class="fiche-status-hd"><i data-lucide="badge-check"></i>Statut de la fiche</div>
+        <div class="fiche-row">
+            <span class="lbl"><span class="t">Vérifié</span><span class="h">La fiche a été relue et validée</span></span>
+            <span class="ctl">
+                <button class="sw" id="rich-poi-verified" type="button" role="switch" aria-checked="false" aria-label="Vérifié"></button>
+            </span>
+        </div>
+    </div>
+
     <!-- Ligne 1 : Noms -->
     <div class="rich-poi-row-2col">
         <div class="input-group">
@@ -233,6 +247,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.PHONE, "");
         setValue(DOM_IDS.INPUTS.HOURS, "");
         setValue(DOM_IDS.INPUTS.FACEBOOK, "");
+        setVerified(false);
 
         // Bloc taxonomie : catégorie vide en création → bloc masqué.
         populateTaxonomySelects("");
@@ -315,6 +330,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.PHONE, merged['Téléphone'] || merged.telephone || "");
         setValue(DOM_IDS.INPUTS.HOURS, merged['Horaires'] || merged.horaires || "");
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
+        setVerified(!!merged.verified);
 
         // Affichage coords
         const coordsEl = document.getElementById(DOM_IDS.COORDS);
@@ -494,6 +510,15 @@ function bindModalEvents() {
     // Sauvegarde
     document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', handleSave);
 
+    // Toggle « Vérifié » (bouton-switch, hors boucle INPUTS car pas de .value)
+    document.getElementById(DOM_IDS.VERIFIED)?.addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        const on = !btn.classList.contains('is-on');
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-checked', String(on));
+        isDirty = true;
+    });
+
     // Bloc taxonomie : repeupler les 3 selects quand la catégorie change.
     document.getElementById(DOM_IDS.INPUTS.CATEGORY)?.addEventListener('change', () => {
         populateTaxonomySelects(getValue(DOM_IDS.INPUTS.CATEGORY));
@@ -663,6 +688,19 @@ function getValue(id) {
     return el ? el.value.trim() : "";
 }
 
+// Toggle « Vérifié » : bouton-switch (pas un <input>, donc hors setValue/getValue
+// qui lisent .value). L'état est porté par la classe .is-on + aria-checked.
+function setVerified(val) {
+    const el = document.getElementById(DOM_IDS.VERIFIED);
+    if (!el) return;
+    el.classList.toggle('is-on', !!val);
+    el.setAttribute('aria-checked', String(!!val));
+}
+function getVerified() {
+    const el = document.getElementById(DOM_IDS.VERIFIED);
+    return !!(el && el.classList.contains('is-on'));
+}
+
 async function handleSave() {
     const nameFr = getValue(DOM_IDS.INPUTS.NAME_FR);
     if (!nameFr) {
@@ -686,7 +724,8 @@ async function handleSave() {
         'Source': getValue(DOM_IDS.INPUTS.SOURCE),
         'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
-        'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK)
+        'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
+        'verified': getVerified()
     };
 
     // Prompt for suggestion (Workflow update)
@@ -872,7 +911,8 @@ function handleEmailSuggestion() {
         'Source': getValue(DOM_IDS.INPUTS.SOURCE),
         'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
-        'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK)
+        'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
+        'verified': getVerified()
     };
 
     const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Inconnue';
