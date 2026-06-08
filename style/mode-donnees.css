@@ -1,83 +1,53 @@
-/* style/mode-donnees.css — Mode « Données » (admin). Réunif A3a : coquille
-   plein-écran = modebar (haut) + rail gauche (recherche + liste POI) + VRAIE
-   carte Heripia dessous. Styles .md-* portés de la maquette Design
-   (reunification.css), tokens app uniquement.
-
-   Pattern overlay (cf. osm-pass.css) : pointer-events:none → la carte reste
-   interactive ; seuls la modebar et le rail interceptent les events. La topbar
-   et la sidebar HW sont masquées le temps du mode → carte plein écran. */
+/* style/mode-donnees.css — Mode « Données » (admin). Réunif A3 (coquille v2, A3d).
+   La TOPBAR Heripia est CONSERVÉE (sélecteur destination + Filtres + thème) ; on
+   ne masque QUE la sidebar droite. L'overlay ajoute un rail gauche (en-tête Mode
+   Données/Quitter + recherche + liste) + un tiroir droit (RichEditor, A3b). La
+   vraie carte reste interactive dessous. Styles .md-* portés de la maquette,
+   tokens app uniquement. Pattern overlay : pointer-events:none → carte
+   interactive ; rail + tiroir interceptent les events (pointer-events:auto). */
 
 /* ============================================================
-   1. PLEIN ÉCRAN : masque topbar + sidebar, carte étendue
+   1. Sidebar masquée (la TOPBAR reste), carte étendue à droite
    ============================================================ */
-body.mode-donnees-active .topbar,
 body.mode-donnees-active .right-sidebar,
 body.mode-donnees-active .hw-sidebar,
 body.mode-donnees-active #right-sidebar { display: none !important; }
 
-body.mode-donnees-active #map { top: 0 !important; right: 0 !important; }
+/* Sidebar masquée → la carte prend toute la largeur (sous la topbar, top:72px). */
+body.mode-donnees-active #map { right: 0 !important; }
 
 .mode-donnees-overlay {
     position: fixed; inset: 0; z-index: 1500; /* > sidebar (1002), < modales (2000) */
-    pointer-events: none; /* carte interactive dessous ; modebar + rail en auto */
+    pointer-events: none; /* carte interactive dessous ; rail + tiroir en auto */
 }
 
 /* ============================================================
-   2. MODEBAR (signal « atelier données »), pleine largeur en haut
-   ============================================================ */
-.mode-donnees-overlay .md-modebar {
-    position: absolute; left: 0; right: 0; top: 0; height: 46px;
-    display: flex; align-items: center; gap: 12px; padding: 0 14px;
-    background: linear-gradient(180deg, var(--bg), var(--bg-2, var(--bg)));
-    color: #fff; box-shadow: var(--shadow); pointer-events: auto;
-}
-.md-modebar .brand { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 14px; }
-.md-modebar .brand svg { width: 17px; height: 17px; color: color-mix(in oklab, var(--brand) 60%, #fff); }
-.md-modebar .pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 3px 10px; border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.22);
-    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
-}
-.md-modebar .pill svg { width: 12px; height: 12px; }
-.md-modebar .pill.md-pill-admin { background: rgba(220, 70, 70, 0.22); border-color: rgba(255, 120, 120, 0.4); }
-.md-modebar .spacer { margin-left: auto; }
-.md-modebar .quit {
-    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
-    padding: 6px 12px; border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.18);
-    color: #fff; font: inherit; font-size: 12.5px; font-weight: 600;
-}
-.md-modebar .quit:hover { background: rgba(255, 255, 255, 0.16); }
-.md-modebar .quit svg { width: 14px; height: 14px; }
-
-/* ============================================================
-   3. RAIL GAUCHE (destination + recherche + liste)
+   2. RAIL GAUCHE (en-tête Mode Données/Quitter + recherche + liste)
+   Ancré sous la topbar (72px).
    ============================================================ */
 .mode-donnees-overlay .md-rail {
-    position: absolute; left: 12px; top: 58px; bottom: 12px; width: 330px;
+    position: absolute; left: 12px; top: 84px; bottom: 12px; width: 330px;
     display: flex; flex-direction: column; pointer-events: auto;
     background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
 }
 .md-rail-head { padding: 12px 12px 10px; border-bottom: 1px solid var(--line); }
-
-.dest-sel {
-    width: 100%; display: flex; align-items: center; gap: 10px;
-    padding: 9px 11px; border-radius: var(--radius-md);
-    border: 1px solid var(--line); background: var(--surface-muted);
-    cursor: pointer; text-align: left; font: inherit;
+.md-rail-title { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.md-mode-badge {
+    flex: 1; display: inline-flex; align-items: center; gap: 7px;
+    font-size: 13px; font-weight: 700; color: var(--ink);
 }
-.dest-sel:disabled { cursor: default; opacity: 0.92; }
-.dest-sel .ic { color: var(--brand-2); display: flex; }
-.dest-sel .ic svg { width: 18px; height: 18px; }
-.dest-sel .nm { display: block; font-size: 14px; font-weight: 700; color: var(--ink); }
-.dest-sel .ct { display: block; font-size: 11.5px; color: var(--ink-soft); margin-top: 1px; }
-.dest-sel .chev { margin-left: auto; color: var(--ink-soft); display: flex; }
-.dest-sel .chev svg { width: 16px; height: 16px; }
+.md-mode-badge svg { width: 16px; height: 16px; color: var(--brand-2); }
+.md-quit {
+    display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+    padding: 6px 11px; border-radius: var(--radius-md);
+    border: 1px solid var(--line); background: var(--surface-muted);
+    color: var(--ink-soft); font: inherit; font-size: 12.5px; font-weight: 600;
+}
+.md-quit:hover { background: var(--surface); color: var(--ink); }
+.md-quit svg { width: 14px; height: 14px; }
 
-.md-tools { display: flex; gap: 8px; margin-top: 10px; }
-.md-search { flex: 1; position: relative; display: flex; align-items: center; }
+.md-search { position: relative; display: flex; align-items: center; }
 .md-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--ink-soft); }
 .md-search input {
     width: 100%; height: 36px; border-radius: var(--radius-md);
@@ -102,7 +72,6 @@ body.mode-donnees-active #map { top: 0 !important; right: 0 !important; }
 .md-poi-tx .mt { font-size: 11px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px; margin-top: 1px; }
 .md-poi-tx .mt .verif { color: var(--ok-fg); display: inline-flex; align-items: center; gap: 3px; }
 .md-poi-tx .mt .verif svg { width: 11px; height: 11px; }
-
 .md-rail-foot {
     padding: 9px 12px; border-top: 1px solid var(--line); background: var(--surface-muted);
     display: flex; align-items: center; justify-content: space-between;
@@ -111,12 +80,11 @@ body.mode-donnees-active #map { top: 0 !important; right: 0 !important; }
 .md-rail-foot b { color: var(--ink); }
 
 /* ============================================================
-   4. TIROIR DROIT = RichEditor en place (réunif A3b)
-   Le RichEditor monte son formulaire (mêmes IDs) dans ce conteneur au lieu de
-   openHwModal. Le corps du formulaire est stylé par .rich-poi-form (base.css).
+   3. TIROIR DROIT = RichEditor en place (A3b) — sous la topbar
+   Le RichEditor monte son formulaire (mêmes IDs) ici au lieu de openHwModal.
    ============================================================ */
 .mode-donnees-overlay .md-drawer {
-    position: absolute; right: 12px; top: 58px; bottom: 12px; width: 430px;
+    position: absolute; right: 12px; top: 84px; bottom: 12px; width: 430px;
     display: flex; flex-direction: column; pointer-events: auto;
     background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); overflow: hidden;
@@ -141,47 +109,9 @@ body.mode-donnees-active #map { top: 0 !important; right: 0 !important; }
 .md-iconbtn:hover { background: var(--surface-muted); color: var(--ink); }
 .md-iconbtn svg { width: 15px; height: 15px; }
 .md-drawer-body { flex: 1; overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 13px; }
-/* Le corps scrolle, il ne comprime pas ses enfants (cf. .fiche-status en overflow:hidden). */
 .md-drawer-body > * { flex-shrink: 0; }
 .md-drawer-foot {
     padding: 11px 14px; border-top: 1px solid var(--line); background: var(--surface-muted);
     display: flex; align-items: center; gap: 10px;
 }
-/* Footer RichEditor (Annuler ghost + Enregistrer primary) : Annuler à gauche,
-   Enregistrer poussé à droite (le footer partagé n'a pas de spacer). */
-.md-drawer-foot .btn-ghost { margin-right: auto; }
-
-/* ============================================================
-   5. FILTRES « ÉTAT DE LA FICHE » dans le rail (réunif A3c)
-   Portés de la maquette Design. Tri-états Tous / Masquer / Afficher par axe.
-   ============================================================ */
-.md-filters { border-bottom: 1px solid var(--line); flex-shrink: 0; }
-.md-filters-head {
-    display: flex; align-items: center; gap: 8px; width: 100%;
-    padding: 10px 12px; background: var(--surface-muted); border: 0; cursor: pointer;
-    font: inherit; text-align: left;
-}
-.md-filters-head .ti {
-    font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--ink);
-    flex: 1;
-}
-.md-filters-head .ic { color: var(--ink-soft); display: flex; }
-.md-filters-head .ic svg { width: 15px; height: 15px; }
-.md-filters-head .badge-active {
-    font-size: 10px; font-weight: 700; color: #fff; background: var(--brand);
-    padding: 2px 7px; border-radius: var(--radius-pill);
-}
-.md-filters-body { padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 2px; }
-.md-filters-body[hidden] { display: none; } /* .md-filters-body est en flex → override de [hidden] */
-.tri { display: flex; align-items: center; gap: 9px; padding: 5px 0; }
-.tri .nm { font-size: 13px; color: var(--ink); flex: 1; display: flex; align-items: center; gap: 7px; }
-.tri .nm svg { width: 14px; height: 14px; color: var(--ink-soft); }
-.tri-seg { display: inline-flex; background: var(--surface-muted); padding: 2px; border-radius: 8px; gap: 1px; }
-.tri-seg button {
-    border: 0; background: transparent; cursor: pointer; font: inherit;
-    font-size: 11px; font-weight: 600; color: var(--ink-soft);
-    padding: 4px 9px; border-radius: 6px;
-}
-.tri-seg button.is-on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
-.tri-seg button.is-on.show { color: var(--ok-fg); }
-.tri-seg button.is-on.hide { color: var(--danger-fg); }
+.md-drawer-foot .btn-ghost { margin-right: auto; } /* Annuler à gauche, Enregistrer à droite */
