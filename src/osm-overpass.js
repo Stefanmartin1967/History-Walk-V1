@@ -46,9 +46,9 @@ function buildQuery(lat, lon) {
     return `[out:json][timeout:10];way["highway"](around:${SEARCH_RADIUS_M},${lat},${lon});out geom;`;
 }
 
-async function fetchOnce(endpoint, query) {
+async function fetchOnce(endpoint, query, timeoutMs) {
     const controller = new AbortController();
-    const tid = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    const tid = setTimeout(() => controller.abort(), timeoutMs);
     try {
         const res = await fetch(endpoint, {
             method: 'POST',
@@ -61,6 +61,45 @@ async function fetchOnce(endpoint, query) {
     } finally {
         clearTimeout(tid);
     }
+}
+
+/**
+ * Exécute une requête Overpass arbitraire et renvoie le JSON parsé. Round-robin
+ * sur les 3 mirrors + retry/backoff (mutualisé avec nearestHighway — leçon #711
+ * anti-504). Réutilisé par le Scout in-app (réunif B2) pour la moisson bbox.
+ *
+ * @param {string} query - corps Overpass QL (ex. `[out:json];(...);out center;`)
+ * @param {{timeoutMs?: number}} [opts] - timeout par endpoint (défaut TIMEOUT_MS).
+ *        Le Scout passe un timeout généreux (~30 s) : une bbox large est lente,
+ *        et l'abort court du Scout standalone causait des « serveurs expirés ».
+ * @returns {Promise<object>} le JSON Overpass (`{elements: [...]}`)
+ * @throws {Error} si tous les endpoints échouent sur toutes les tentatives.
+ */
+export async function fetchOverpassJson(query, { timeoutMs = TIMEOUT_MS, retries = RETRY_DELAYS.length } = {}) {
+    let lastError = null;
+    // Round-robin : commence à un endpoint différent de la requête précédente,
+    // puis rotate pour les fallbacks (répartit la charge sur les 3 serveurs).
+    const startIdx = _rrIdx;
+    _rrIdx = (_rrIdx + 1) % ENDPOINTS.length;
+    const orderedEndpoints = Array.from({ length: ENDPOINTS.length },
+        (_, i) => ENDPOINTS[(startIdx + i) % ENDPOINTS.length]);
+
+    // nearestHighway (batch silencieux) garde le retry agressif par défaut ; le
+    // Scout (interactif) passe retries:0 → un seul passage sur les 3 mirrors,
+    // échec rapide → l'admin re-scanne lui-même plutôt que d'attendre des minutes.
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        for (const endpoint of orderedEndpoints) {
+            try {
+                return await fetchOnce(endpoint, query, timeoutMs);
+            } catch (e) {
+                lastError = e;
+            }
+        }
+        if (attempt < retries) {
+            await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt]));
+        }
+    }
+    throw lastError || new Error('Tous les endpoints Overpass ont échoué');
 }
 
 // Parcourt les `way.geometry` (liste de {lat, lon}), retourne le noeud le
@@ -96,36 +135,11 @@ export async function nearestHighway(lat, lon) {
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
         throw new Error('lat/lon invalides');
     }
-    const query = buildQuery(lat, lon);
-    let lastError = null;
-    // Round-robin : on commence cette requête à un endpoint différent de la
-    // précédente, puis on rotate dans la liste pour les fallbacks. Ainsi la
-    // charge se répartit sur les 3 serveurs Overpass (cf. retour Stefan 31/05
-    // PR #711 : les 504 sur overpass-api.de bloquaient tout le batch).
-    const startIdx = _rrIdx;
-    _rrIdx = (_rrIdx + 1) % ENDPOINTS.length;
-    const orderedEndpoints = Array.from({ length: ENDPOINTS.length },
-        (_, i) => ENDPOINTS[(startIdx + i) % ENDPOINTS.length]);
-
-    // Retry loop : pour chaque tentative, on essaie tous les endpoints dans
-    // l'ordre round-robin. Si tous échouent, on attend RETRY_DELAYS[attempt]
-    // puis on recommence. Absorbe les rate limits / hoquets réseau ponctuels.
-    for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
-        for (const endpoint of orderedEndpoints) {
-            try {
-                const json = await fetchOnce(endpoint, query);
-                const best = nearestPointFromWays(json, lat, lon);
-                return best ? { coords: [best.lon, best.lat], distance: best.distance } : null;
-            } catch (e) {
-                lastError = e;
-            }
-        }
-        // Tous les endpoints ont échoué pour cette tentative.
-        if (attempt < RETRY_DELAYS.length) {
-            await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt]));
-        }
-    }
-    throw lastError || new Error('Tous les endpoints Overpass ont échoué');
+    // Round-robin + retry/backoff mutualisés (cf. retour Stefan 31/05 PR #711 :
+    // les 504 sur overpass-api.de bloquaient tout le batch).
+    const json = await fetchOverpassJson(buildQuery(lat, lon));
+    const best = nearestPointFromWays(json, lat, lon);
+    return best ? { coords: [best.lon, best.lat], distance: best.distance } : null;
 }
 
 // Exporté pour tests.
