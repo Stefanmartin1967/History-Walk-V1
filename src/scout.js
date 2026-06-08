@@ -39,7 +39,9 @@ let _geocoded = false;          // mode Nouvelle : une recherche Nominatim a-t-e
 
 const MIN_PX = 46;              // taille mini de la boîte à l'écran (poignées utilisables)
 const DEDUP_M = 50;             // un candidat à < 50 m d'un POI existant = doublon (règle #472)
-const TILE_KM = 5;              // côté max d'une tuile de moisson ; au-delà la boîte se découpe (réunif B2c)
+const TILE_KM = 25;             // côté max d'une tuile (km). Djerba (~18 km) tient en 1 passe — comme
+                                // l'ancien Scout (1 bbox). Le découpage ne sert que pour des boîtes
+                                // VRAIMENT vastes (multi-destinations). Réunif B2c, relevé 5→25.
 const MAX_TILES = 36;           // garde-fou : au-delà, zone trop vaste → on refuse
 
 // Catégories de moisson (clés alignées sur les clauses Overpass + libellés UI).
