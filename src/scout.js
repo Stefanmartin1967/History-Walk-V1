@@ -36,8 +36,9 @@ let _scanning = false;
 let _geocoded = false;          // mode Nouvelle : une recherche Nominatim a-t-elle volé la carte ?
 
 const MIN_PX = 46;              // taille mini de la boîte à l'écran (poignées utilisables)
-const BIG_KM2 = 14;             // au-delà : avertissement « Overpass lent »
 const DEDUP_M = 50;             // un candidat à < 50 m d'un POI existant = doublon (règle #472)
+const TILE_KM = 5;              // côté max d'une tuile de moisson ; au-delà la boîte se découpe (réunif B2c)
+const MAX_TILES = 36;           // garde-fou : au-delà, zone trop vaste → on refuse
 
 // Catégories de moisson (clés alignées sur les clauses Overpass + libellés UI).
 // Cochées par défaut : Religion / Histoire / Culture (comme la maquette).
@@ -124,6 +125,30 @@ function boxKm(b) {
     };
 }
 
+// Découpe en grille de tuiles ≲ TILE_KM de côté (réunif B2c) : Overpass encaisse
+// mieux plusieurs petites bbox qu'une grosse. 1 tuile si la boîte est déjà petite.
+function tileGrid(b) {
+    const { wKm, hKm } = boxKm(b);
+    const cols = Math.max(1, Math.ceil(wKm / TILE_KM));
+    const rows = Math.max(1, Math.ceil(hKm / TILE_KM));
+    return { cols, rows, count: cols * rows };
+}
+function computeTiles(b) {
+    const { cols, rows } = tileGrid(b);
+    const dLat = (b.north - b.south) / rows;
+    const dLon = (b.east - b.west) / cols;
+    const tiles = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            tiles.push({
+                north: b.north - r * dLat, south: b.north - (r + 1) * dLat,
+                west: b.west + c * dLon, east: b.west + (c + 1) * dLon,
+            });
+        }
+    }
+    return tiles;
+}
+
 // ── Rendu ─────────────────────────────────────────────────────────────────────
 function render() {
     if (!_boxEl || !_box) return;
@@ -150,16 +175,19 @@ function positionCandidates() {
 
 function updateReadout() {
     const { wKm, hKm } = boxKm(_box);
-    const big = (wKm * hKm) > BIG_KM2;
+    const tiles = tileGrid(_box).count;
+    const tooVast = tiles > MAX_TILES;
     const dimtxt = _overlay?.querySelector('[data-scout-dimtxt]');
-    if (dimtxt) dimtxt.innerHTML = `${wKm.toFixed(1)} × ${hKm.toFixed(1)} km${big ? ' <span class="warn">⚠</span>' : ''}`;
+    if (dimtxt) dimtxt.innerHTML = `${wKm.toFixed(1)} × ${hKm.toFixed(1)} km${tooVast ? ' <span class="warn">⚠</span>' : ''}`;
     const note = _overlay?.querySelector('[data-scout-note]');
     const notetxt = _overlay?.querySelector('[data-scout-notetxt]');
     if (note && notetxt) {
-        note.classList.toggle('is-warn', big);
-        notetxt.textContent = big
-            ? 'Boîte large : la moisson Overpass risque d’être lente. Réduis-la, ou découpe en plusieurs passes.'
-            : 'Overpass peut être lent sur une grande zone. Garde la boîte raisonnablement petite — tu pourras repasser à côté.';
+        note.classList.toggle('is-warn', tooVast);
+        notetxt.textContent = tooVast
+            ? `Zone très vaste (${tiles} parties) : réduis la boîte, ou scoute en plusieurs fois.`
+            : tiles > 1
+                ? `Grande zone : la moisson se fera en ${tiles} parties, l’une après l’autre.`
+                : 'Au-delà d’une certaine taille, la moisson se découpe automatiquement en parties.';
     }
 }
 
@@ -308,6 +336,8 @@ function clearCandidates() {
     _candidates = [];
 }
 function renderCandidates() {
+    // Idempotent (rendu progressif tuile par tuile) : on repart des pastilles à zéro.
+    _overlay.querySelectorAll('.scout-cand').forEach(el => el.remove());
     for (const c of _candidates) {
         const el = document.createElement('span');
         el.className = 'scout-cand' + (c.dup ? ' dup' : '');
@@ -343,35 +373,54 @@ function showLoading(on, sub) {
 async function scan() {
     if (_scanning || !_box) return;
     if (_categories.size === 0) { showToast('Sélectionne au moins une catégorie.', 'warning', 3000); return; }
+    const tiles = computeTiles(_box);
+    if (tiles.length > MAX_TILES) {
+        showToast(`Zone trop vaste (${tiles.length} parties). Réduis la boîte ou scoute en plusieurs fois.`, 'warning', 4500);
+        return;
+    }
+    const multi = tiles.length > 1;
     _scanning = true; syncScanEnabled();
-    showLoading(true, 'Interrogation d’Overpass…');
+    clearCandidates();
+    const seen = new Set();   // dédup inter-tuiles (POI à cheval sur 2 bbox) par id OSM
+    const all = [];
+    let failed = 0;
+    showLoading(true, multi ? `Moisson 1/${tiles.length}…` : 'Interrogation d’Overpass…');
     try {
-        // Interactif → échec rapide (un passage sur les 3 mirrors, pas de retry
-        // agressif) : si Overpass rame, l'admin re-scanne plutôt que d'attendre.
-        const json = await fetchOverpassJson(buildQuery(_box, _categories), { timeoutMs: 25000, retries: 0 });
-        const els = (json && json.elements) || [];
-        clearCandidates();
-        const seen = new Set();
-        const cands = [];
-        for (const el of els) {
-            const lat = el.lat ?? el.center?.lat;
-            const lon = el.lon ?? el.center?.lon;
-            if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-            const key = el.type + '/' + el.id;
-            if (seen.has(key)) continue;
-            seen.add(key);
-            const tags = el.tags || {};
-            const cat = getHwCategory(tags);
-            cands.push({ lat, lon, cat, unknown: !cat, dup: isAlreadyInData(lat, lon), name: tags.name || tags['name:fr'] || '' });
+        // Séquentiel (une tuile à la fois) : poli pour Overpass, le round-robin
+        // répartit sur les 3 mirrors, et chaque petite bbox passe vite.
+        for (let i = 0; i < tiles.length; i++) {
+            if (!_isOpen) return; // quitté entre deux tuiles
+            if (multi) showLoading(true, `Moisson ${i + 1}/${tiles.length}… (${all.length} trouvés)`);
+            let json = null;
+            // Échec rapide par tuile (retries:0) ; une tuile qui plante ne tue pas le scan.
+            try { json = await fetchOverpassJson(buildQuery(tiles[i], _categories), { timeoutMs: 25000, retries: 0 }); }
+            catch (e) { failed++; continue; }
+            if (!_isOpen) return; // quitté pendant la requête
+            for (const el of (json.elements || [])) {
+                const lat = el.lat ?? el.center?.lat;
+                const lon = el.lon ?? el.center?.lon;
+                if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+                const key = el.type + '/' + el.id;
+                if (seen.has(key)) continue;
+                seen.add(key);
+                const tags = el.tags || {};
+                const cat = getHwCategory(tags);
+                all.push({ lat, lon, cat, unknown: !cat, dup: isAlreadyInData(lat, lon), name: tags.name || tags['name:fr'] || '' });
+            }
+            _candidates = all;
+            renderCandidates(); // rendu progressif : les pastilles apparaissent tuile par tuile
+            refreshRecap();
         }
-        _candidates = cands;
         _scannedBounds = { ..._box };
-        renderCandidates();
-        refreshRecap();
-        const net = cands.filter(c => inBox(c) && !c.dup).length;
-        showToast(`${cands.length} objet${cands.length > 1 ? 's' : ''} OSM · ${net} nouveau${net > 1 ? 'x' : ''} à importer.`, 'success', 3000);
-    } catch (e) {
-        showToast('Overpass indisponible (timeout/erreur). Réduis la boîte ou réessaie.', 'error', 4500);
+        refreshRecap(); // badge final : les refresh en boucle tournaient avant que _scannedBounds soit posé
+        const net = all.filter(c => inBox(c) && !c.dup).length;
+        if (failed === tiles.length) {
+            showToast(multi ? 'Overpass indisponible sur toutes les parties. Réessaie.' : 'Overpass indisponible (timeout/erreur). Réessaie ou réduis la boîte.', 'error', 4500);
+        } else if (failed) {
+            showToast(`${all.length} objets · ${net} nouveaux. ⚠ ${failed}/${tiles.length} partie(s) échouée(s) — re-scanne pour compléter.`, 'warning', 5000);
+        } else {
+            showToast(`${all.length} objet${all.length > 1 ? 's' : ''} OSM · ${net} nouveau${net > 1 ? 'x' : ''} à importer.`, 'success', 3000);
+        }
     } finally {
         _scanning = false; syncScanEnabled();
         showLoading(false);
