@@ -11,7 +11,7 @@
 import L from 'leaflet';
 import { map } from './map.js';
 import { state } from './state.js';
-import { getPoiId, getPoiName } from './data.js';
+import { getPoiId, getPoiName, hasPhotos, hasDescription } from './data.js';
 import { escapeXml } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
@@ -20,6 +20,8 @@ import { RichEditor } from './richEditor.js';
 let _overlay = null;
 let _items = [];        // features de la destination courante (triées par nom)
 let _search = '';
+let _filters = { verified: 'all', photo: 'all', description: 'all' }; // 'all' | 'hide' | 'only'
+let _filtersOpen = true;
 let _currentId = null;  // POI sélectionné
 let _highlight = null;  // cercle de surlignage temporaire sur la carte
 let _isOpen = false;
@@ -35,10 +37,68 @@ function buildItems() {
         .sort((a, b) => (getPoiName(a) || '').localeCompare(getPoiName(b) || '', 'fr'));
 }
 
+// Filtres « ÉTAT DE LA FICHE » — mêmes axes / même sémantique que
+// passesUserFilters (data.js) : 'all' = pas de filtre, 'hide' = cache ceux qui
+// ONT la prop, 'only' = ne garde QUE ceux qui l'ont.
+function matchesFilters(f) {
+    const p = { ...f.properties, ...(f.properties && f.properties.userData) };
+    if (_filters.verified === 'hide' && p.verified) return false;
+    if (_filters.verified === 'only' && !p.verified) return false;
+    if (_filters.photo === 'hide' && hasPhotos(p)) return false;
+    if (_filters.photo === 'only' && !hasPhotos(p)) return false;
+    if (_filters.description === 'hide' && hasDescription(p)) return false;
+    if (_filters.description === 'only' && !hasDescription(p)) return false;
+    return true;
+}
+
 function visibleItems() {
     const s = _search.trim().toLowerCase();
-    if (!s) return _items;
-    return _items.filter(f => (getPoiName(f) || '').toLowerCase().includes(s));
+    return _items.filter(f => {
+        if (s && !(getPoiName(f) || '').toLowerCase().includes(s)) return false;
+        return matchesFilters(f);
+    });
+}
+
+// Section « ÉTAT DE LA FICHE » repliable dans le rail (réunif A3c). Tri-états
+// Tous/Masquer/Afficher par axe ; re-rendue à chaque changement (états + badge).
+function renderFilters() {
+    const box = _overlay && _overlay.querySelector('[data-md-filters]');
+    if (!box) return;
+    const active = ['verified', 'photo', 'description'].filter(k => _filters[k] !== 'all').length;
+    const triRow = (key, icon, label) => {
+        const v = _filters[key];
+        return `<div class="tri"><span class="nm"><i data-lucide="${icon}"></i>${label}</span>
+            <span class="tri-seg" data-md-tri="${key}">
+                <button type="button" data-v="all" class="${v === 'all' ? 'is-on' : ''}">Tous</button>
+                <button type="button" data-v="hide" class="${v === 'hide' ? 'is-on hide' : ''}">Masquer</button>
+                <button type="button" data-v="only" class="${v === 'only' ? 'is-on show' : ''}">Afficher</button>
+            </span></div>`;
+    };
+    box.innerHTML = `
+        <button class="md-filters-head" type="button" data-md-filters-toggle>
+            <span class="ic"><i data-lucide="filter"></i></span>
+            <span class="ti">État de la fiche</span>
+            ${active ? `<span class="badge-active">${active}</span>` : ''}
+            <span class="ic"><i data-lucide="${_filtersOpen ? 'chevron-up' : 'chevron-down'}"></i></span>
+        </button>
+        <div class="md-filters-body"${_filtersOpen ? '' : ' hidden'}>
+            ${triRow('verified', 'badge-check', 'Vérifiés')}
+            ${triRow('photo', 'image', 'Avec photo')}
+            ${triRow('description', 'file-text', 'Avec description')}
+        </div>`;
+    box.querySelector('[data-md-filters-toggle]').addEventListener('click', () => {
+        _filtersOpen = !_filtersOpen;
+        renderFilters();
+    });
+    box.querySelectorAll('[data-md-tri]').forEach(seg => {
+        const key = seg.dataset.mdTri;
+        seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+            _filters[key] = b.dataset.v;
+            renderFilters();
+            renderList();
+        }));
+    });
+    createIcons({ icons: appIcons, root: box });
 }
 
 function renderShell() {
@@ -54,7 +114,7 @@ function renderShell() {
         </div>
         <aside class="md-rail">
             <div class="md-rail-head">
-                <button class="dest-sel" type="button" disabled title="Changer de destination — à venir (A3c)">
+                <button class="dest-sel" type="button" disabled title="Changer de destination — à venir (A3d)">
                     <span class="ic"><i data-lucide="map"></i></span>
                     <span><span class="nm">${escapeXml(destLabel())}</span><span class="ct" data-md-count></span></span>
                     <span class="chev"><i data-lucide="chevron-down"></i></span>
@@ -63,6 +123,7 @@ function renderShell() {
                     <label class="md-search"><i data-lucide="search"></i><input type="search" placeholder="Rechercher un lieu…" data-md-search></label>
                 </div>
             </div>
+            <div class="md-filters" data-md-filters></div>
             <div class="md-list" data-md-list></div>
             <div class="md-rail-foot"><span data-md-foot></span></div>
         </aside>
@@ -80,6 +141,7 @@ function renderShell() {
     // A3b : à la fermeture du tiroir d'édition, rafraîchir la liste (méta à jour).
     _onEditorClosed = () => renderList();
     window.addEventListener('richEditor:closed', _onEditorClosed);
+    renderFilters();
     createIcons({ icons: appIcons, root: _overlay });
 }
 
@@ -146,6 +208,7 @@ function stopModeDonnees() {
     document.body.classList.remove('mode-donnees-active');
     setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 60);
     _items = []; _search = ''; _currentId = null; _isOpen = false;
+    _filters = { verified: 'all', photo: 'all', description: 'all' }; _filtersOpen = true;
 }
 
 // Point d'entrée publique — appelé par le bouton « Mode Données » du Control Center.
