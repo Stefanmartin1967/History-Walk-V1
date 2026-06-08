@@ -602,7 +602,7 @@ export function isPendingPoi(poiId) {
     return !!(feature && feature.properties && feature.properties._pending);
 }
 
-export async function addPoiFeature(feature) {
+export async function addPoiFeature(feature, { draft = true } = {}) {
 
 
     // 1. Ajout à la liste en mémoire vive (pour affichage immédiat)
@@ -633,8 +633,10 @@ export async function addPoiFeature(feature) {
     // 3. Rafraîchissement de la carte pour afficher le nouveau point
     applyFilters();
 
-    // [ADMIN] Tracking
-    if (state.isAdmin) {
+    // [ADMIN] Tracking. draft:false pour les candidats Scout (réunif C1) : un
+    // candidat « à curer » n'est pas publiable tant qu'il n'est pas validé →
+    // on ne le met pas au brouillon de publication.
+    if (state.isAdmin && draft) {
         addToDraft('poi', id, { type: 'creation' });
     }
 
