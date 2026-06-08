@@ -117,6 +117,28 @@ body.scout-active #map { top: 0 !important; right: 0 !important; }
 .scout-panel .dest-sel .nm { display: block; font-size: 13px; font-weight: 600; }
 .scout-panel .dest-sel .ct { display: block; font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
 
+/* Recherche Nominatim (mode Nouvelle, réunif B2b) */
+.scout-search { display: flex; gap: 6px; }
+.scout-search input {
+    flex: 1; min-width: 0; height: 36px; border-radius: var(--radius-md);
+    border: 1px solid var(--line); background: var(--surface-muted);
+    padding: 0 10px; font: inherit; font-size: 13px; color: var(--ink); box-sizing: border-box;
+}
+.scout-search input::placeholder { color: var(--ink-soft); }
+.scout-search-btn {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: var(--radius-md);
+    border: 1px solid var(--brand); background: var(--brand); color: #fff;
+    display: grid; place-items: center; cursor: pointer;
+}
+.scout-search-btn:hover { background: var(--brand-2); border-color: var(--brand-2); }
+.scout-search-btn:disabled { opacity: .55; cursor: default; }
+.scout-search-btn svg { width: 16px; height: 16px; }
+.scout-found { margin-top: 7px; font-size: 12px; color: var(--ink-soft); line-height: 1.35; }
+/* Le toggle Repasse/Nouvelle masque l'un OU l'autre via [hidden] : il doit
+   l'emporter sur le display:flex de .dest-sel / .scout-search (sinon les deux
+   restent affichés — l'attribut hidden seul perd contre display:flex). */
+.scout-panel .dest-sel[hidden], .scout-search[hidden] { display: none !important; }
+
 /* mode d'entrée : nouvelle destination vs repasse */
 .scout-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .scout-mode-opt {

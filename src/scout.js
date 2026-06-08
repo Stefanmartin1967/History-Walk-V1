@@ -33,6 +33,7 @@ let _categories = null;         // Set des clés de catégorie cochées
 let _candidates = [];           // résultats du dernier scan : {lat,lon,cat,unknown,dup,name,_el}
 let _scannedBounds = null;      // bounds de la boîte au moment du scan (détection « zone modifiée »)
 let _scanning = false;
+let _geocoded = false;          // mode Nouvelle : une recherche Nominatim a-t-elle volé la carte ?
 
 const MIN_PX = 46;              // taille mini de la boîte à l'écran (poignées utilisables)
 const BIG_KM2 = 14;             // au-delà : avertissement « Overpass lent »
@@ -233,10 +234,62 @@ function setMode(m) {
     _boxEl?.classList.toggle('is-repasse', m === 'repasse');
     const destmode = _overlay?.querySelector('[data-scout-destmode]');
     if (destmode) destmode.textContent = m === 'repasse' ? 'publiée · repasse' : 'nouveau brouillon';
+    // Repasse : dest. publiée courante (lecture seule) ; Nouvelle : recherche Nominatim.
+    const repasseEl = _overlay?.querySelector('[data-scout-dest-repasse]');
+    const newEl = _overlay?.querySelector('[data-scout-dest-new]');
+    if (repasseEl) repasseEl.hidden = (m !== 'repasse');
+    if (newEl) newEl.hidden = (m !== 'new');
+    // Changement de contexte → on oublie le scan précédent.
+    _geocoded = false;
+    const fl = _overlay?.querySelector('[data-scout-found-label]');
+    if (fl) { fl.hidden = true; fl.textContent = ''; }
+    clearCandidates();
+    _scannedBounds = null;
+    refreshRecap();
+    syncScanEnabled();
 }
 function syncScanEnabled() {
     const btn = _overlay?.querySelector('[data-scout-scan]');
-    if (btn) btn.disabled = (_categories.size === 0) || _scanning;
+    // En mode Nouvelle, on attend une recherche (sinon la boîte est encore sur
+    // la destination active) → Scanner reste désactivé tant qu'on n'a pas volé.
+    if (btn) btn.disabled = (_categories.size === 0) || _scanning || (_mode === 'new' && !_geocoded);
+}
+
+// Mode Nouvelle (réunif B2b) : géocode un lieu via Nominatim → vole la carte
+// dessus → recentre la boîte. PAS de persistance (créer le brouillon de
+// destination = Lot C) : on prévisualise/scoute juste une zone neuve.
+async function geocodeAndFly(query) {
+    query = (query || '').trim();
+    if (!query) return;
+    const btn = _overlay?.querySelector('[data-scout-search-btn]');
+    if (btn) btn.disabled = true;
+    try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        if (!Array.isArray(data) || !data.length) { showToast(`Aucun lieu trouvé pour « ${query} ».`, 'warning', 3500); return; }
+        const hit = data[0];
+        const lat = parseFloat(hit.lat), lon = parseFloat(hit.lon);
+        const bb = (hit.boundingbox || []).map(parseFloat); // [south, north, west, east]
+        if (bb.length === 4 && bb.every(Number.isFinite)) {
+            map.fitBounds([[bb[0], bb[2]], [bb[1], bb[3]]], { maxZoom: 16, animate: false });
+        } else if (Number.isFinite(lat) && Number.isFinite(lon)) {
+            map.setView([lat, lon], 14, { animate: false });
+        } else {
+            showToast('Réponse Nominatim inattendue.', 'error', 3000); return;
+        }
+        // Zone neuve → on oublie le scan précédent + on recentre la boîte dessus.
+        clearCandidates();
+        _scannedBounds = null;
+        resetBox();
+        _geocoded = true;
+        syncScanEnabled();
+        const fl = _overlay?.querySelector('[data-scout-found-label]');
+        if (fl) { fl.hidden = false; fl.textContent = '📍 ' + (hit.display_name || query).split(',').slice(0, 2).join(','); }
+    } catch (e) {
+        showToast('Recherche indisponible (Nominatim). Réessaie.', 'error', 3500);
+    } finally {
+        if (btn) btn.disabled = false;
+    }
 }
 
 // ── Boîte par défaut ───────────────────────────────────────────────────────────
@@ -353,10 +406,15 @@ function renderShell() {
             <div class="scout-panel-bd">
                 <div>
                     <label class="scout-lbl">Destination</label>
-                    <button class="dest-sel" type="button" disabled>
+                    <button class="dest-sel" data-scout-dest-repasse type="button" disabled>
                         <span class="ic"><i data-lucide="map"></i></span>
                         <span style="flex:1"><span class="nm" data-scout-destname>—</span><span class="ct" data-scout-destmode>publiée · repasse</span></span>
                     </button>
+                    <div class="scout-search" data-scout-dest-new hidden>
+                        <input type="search" data-scout-search placeholder="Lieu : hôtel, ville, site…" autocomplete="off">
+                        <button class="scout-search-btn" data-scout-search-btn type="button" title="Rechercher" aria-label="Rechercher le lieu"><i data-lucide="search"></i></button>
+                    </div>
+                    <div class="scout-found" data-scout-found-label hidden></div>
                 </div>
                 <div>
                     <label class="scout-lbl">Type de moisson</label>
@@ -403,9 +461,13 @@ function renderShell() {
             if (cb.checked) _categories.add(cb.dataset.scoutCat); else _categories.delete(cb.dataset.scoutCat);
             syncScanEnabled();
         }));
+    const searchInput = _overlay.querySelector('[data-scout-search]');
+    _overlay.querySelector('[data-scout-search-btn]')?.addEventListener('click', () => geocodeAndFly(searchInput?.value));
+    searchInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); geocodeAndFly(searchInput.value); } });
     _boxEl.addEventListener('pointerdown', onPointerDown);
     _onMapMove = () => render();
     map.on('move zoom zoomanim resize', _onMapMove);
+    syncScanEnabled();
 
     createIcons({ icons: appIcons, root: _overlay });
 }
@@ -419,6 +481,7 @@ export function startScout() {
     _mode = 'repasse';
     _candidates = [];
     _scannedBounds = null;
+    _geocoded = false;
     renderShell();
 }
 
