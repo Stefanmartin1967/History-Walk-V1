@@ -400,11 +400,11 @@ export function passesUserFilters(feature) {
     return true;
 }
 
-export function hasPhotos(props) {
+function hasPhotos(props) {
     return Array.isArray(props.photos) && props.photos.length > 0;
 }
 
-export function hasDescription(props) {
+function hasDescription(props) {
     const longDesc = (props.description || '').trim();
     return longDesc !== '';
 }
