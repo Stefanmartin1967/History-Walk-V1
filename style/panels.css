@@ -614,6 +614,15 @@
     border: 2px solid var(--surface);
     box-shadow: var(--shadow-card);
 }
+/* Réunif C1b : pastille « à curer » sur un candidat Scout (admin). Coin opposé
+   au flagdot (haut-gauche), teinte ambre, pour repérer la file de tri. */
+.hw-poi-canddot {
+    position: absolute; left: -2px; top: 0; z-index: 5;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--hw-amber, #D97706);
+    border: 2px solid var(--surface);
+    box-shadow: var(--shadow-card);
+}
 
 /* === Drapeau (Leaflet divIcon) — forme v1 conservée, palette v2 ===
    Forme : mât (3px) + fanion (18×13) + nœud d'ancrage au sol.
