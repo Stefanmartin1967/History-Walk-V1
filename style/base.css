@@ -161,18 +161,33 @@ body {
     width: 50px;
     text-align: center;
 }
-/* GPS footer interne au body (bouton "Déplacer" + coords) */
+/* GPS footer interne au body (bouton "Déplacer" + coords + liens carte) */
 .rich-poi-gps-footer {
     font-size: 12px;
     color: var(--ink-soft);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px 10px;
     padding-top: 6px;
     border-top: 1px dashed var(--line);
     margin-top: 4px;
 }
+/* Liens carte Maps/OSM du pied GPS (réunif A3f) — même langage visuel que la
+   mini-barre de la fiche (.poi-quick-btn) mais compact (28px). */
+.rich-poi-map-links { display: inline-flex; align-items: center; gap: 6px; }
+.rich-maplink {
+    display: inline-flex; align-items: center; gap: 5px;
+    height: 28px; padding: 0 9px;
+    border: 1px solid var(--line); border-radius: var(--radius-md, 8px);
+    background: var(--surface); color: var(--ink-soft);
+    font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+}
+.rich-maplink svg { width: 14px; height: 14px; color: var(--brand); stroke-width: 2.2; }
+.rich-maplink:hover { background: var(--surface-muted); border-color: var(--brand); color: var(--brand); }
+.rich-maplink:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 /* Subheader nav controls (prev/next dans circuit) */
 .rich-poi-nav-controls {
     display: flex;
