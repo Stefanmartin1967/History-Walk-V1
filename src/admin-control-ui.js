@@ -654,13 +654,13 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-scout" aria-label="Ouvrir Scout Overpass dans un nouvel onglet">
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-scout" aria-label="Scout — capturer une zone OSM sur la vraie carte">
                 <div class="cc-card-ico"><i data-lucide="scan-eye"></i></div>
                 <div class="cc-card-text">
                     <div class="cc-card-title">Scout (Overpass)</div>
-                    <div class="cc-card-sub">Recherche de POIs depuis OpenStreetMap</div>
+                    <div class="cc-card-sub">Capturer une zone sur la carte (OpenStreetMap)</div>
                 </div>
-                <div class="cc-card-meta"><i data-lucide="external-link"></i></div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-datamanager" aria-label="Ouvrir le Data Manager dans un nouvel onglet">
                 <div class="cc-card-ico"><i data-lucide="database"></i></div>
@@ -745,9 +745,13 @@ export function renderTab(tab, diffData, callbacks) {
                 });
             };
 
-            // Outils — Scout (Overpass) : ouvre l'outil dans un nouvel onglet
-            bindCardAction('btn-cc-tool-scout', () => {
-                window.open('tools/scout.html', '_blank', 'noopener');
+            // Outils — Scout (réunif Lot B) : mode plein-écran in-app (boîte bbox
+            // sur la vraie carte + moisson Overpass). Remplace l'ancien onglet
+            // séparé tools/scout.html (supprimé en Lot C).
+            bindCardAction('btn-cc-tool-scout', async () => {
+                closeCCModal();
+                const { startScout } = await import('./scout.js');
+                startScout();
             });
 
             // Outils — Data Manager : ouvre le DM (même repo, sous-dossier)

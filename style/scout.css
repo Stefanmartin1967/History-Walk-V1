@@ -1,0 +1,155 @@
+/* style/scout.css — Scout in-app (admin). Réunification Lot B.
+   B1 = coquille + boîte bbox (8 poignées) déplaçable/redimensionnable + cote km.
+   Successeur in-app de tools/scout.html. Mode FOCALISÉ : on masque la topbar ET
+   la sidebar, on assombrit la carte (box-shadow de la boîte) → l'attention va sur
+   la zone à capturer. Overlay pointer-events:none (carte pannable dessous) ; la
+   boîte + le panneau interceptent les events. Styles .scout-* portés de la
+   maquette (handoff réunif), tokens app uniquement. Moisson Overpass = B2,
+   capture candidats = B3. */
+
+/* ============================================================
+   1. Mode focalisé : topbar + sidebar masquées, carte plein écran
+   ============================================================ */
+body.scout-active .right-sidebar,
+body.scout-active .hw-sidebar,
+body.scout-active #right-sidebar { display: none !important; }
+body.scout-active .topbar { display: none !important; }
+/* Carte en plein écran le temps de la session (topbar masquée → top:0). */
+body.scout-active #map { top: 0 !important; right: 0 !important; }
+
+.scout-overlay {
+    position: fixed; inset: 0; z-index: 1500; /* > sidebar, < modales (2000) */
+    pointer-events: none; /* carte pannable dessous ; boîte + panneau en auto */
+}
+
+/* ============================================================
+   2. BOÎTE SCOUT (rectangle de moisson sur la carte) — portée maquette §7.
+   Positionnée en px (viewport) par scout.js via projection Leaflet ; ancrée
+   géographiquement (suit pan/zoom). Le box-shadow assombrit tout autour.
+   ============================================================ */
+.scout-overlay .scout-box {
+    position: absolute; z-index: 8; pointer-events: auto; cursor: move; touch-action: none;
+    border: 2px dashed var(--brand-2);
+    background: color-mix(in oklab, var(--brand) 9%, transparent);
+    box-shadow: 0 0 0 9999px color-mix(in oklab, var(--bg) 32%, transparent);
+    border-radius: 3px;
+}
+.scout-overlay .scout-box.is-repasse {
+    border-color: var(--hw-amber);
+    background: color-mix(in oklab, var(--hw-amber) 9%, transparent);
+}
+/* poignées de redimensionnement (8) */
+.scout-handle {
+    position: absolute; width: 13px; height: 13px; border-radius: 3px;
+    background: var(--surface); border: 2px solid var(--brand-2);
+    box-shadow: var(--shadow-card); pointer-events: auto;
+}
+.scout-box.is-repasse .scout-handle { border-color: var(--hw-amber); }
+.scout-handle.nw { left: -7px; top: -7px; cursor: nwse-resize; }
+.scout-handle.ne { right: -7px; top: -7px; cursor: nesw-resize; }
+.scout-handle.sw { left: -7px; bottom: -7px; cursor: nesw-resize; }
+.scout-handle.se { right: -7px; bottom: -7px; cursor: nwse-resize; }
+.scout-handle.n  { left: 50%; top: -7px; transform: translateX(-50%); cursor: ns-resize; }
+.scout-handle.s  { left: 50%; bottom: -7px; transform: translateX(-50%); cursor: ns-resize; }
+.scout-handle.e  { right: -7px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
+.scout-handle.w  { left: -7px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
+/* étiquette dimensions (au-dessus de la boîte) */
+.scout-dim {
+    position: absolute; left: 50%; top: -13px; transform: translate(-50%, -100%);
+    padding: 4px 10px; border-radius: var(--radius-pill);
+    background: var(--bg); color: #fff; font-size: 11px; font-weight: 600;
+    font-family: var(--font-family-mono); white-space: nowrap;
+    box-shadow: var(--shadow); display: inline-flex; align-items: center; gap: 7px;
+    pointer-events: none;
+}
+.scout-dim svg { width: 13px; height: 13px; }
+.scout-box.is-repasse .scout-dim { background: var(--hw-amber); color: var(--bg-2); }
+.scout-dim .warn { color: var(--warn); font-weight: 700; }
+.scout-box.is-repasse .scout-dim .warn { color: var(--bg-2); }
+/* compteur de candidats (sous la boîte) — rempli en B2 */
+.scout-count {
+    position: absolute; left: 50%; bottom: -13px; transform: translate(-50%, 100%);
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 12px; border-radius: var(--radius-pill);
+    background: var(--surface); border: 1px solid var(--line);
+    box-shadow: var(--shadow); font-size: 12px; font-weight: 600; color: var(--ink);
+    white-space: nowrap; pointer-events: none;
+}
+.scout-count b { color: var(--brand-2); }
+.scout-count svg { width: 14px; height: 14px; color: var(--brand-2); }
+
+/* ============================================================
+   3. PANNEAU LATÉRAL Scout (gauche) — porté maquette §7
+   ============================================================ */
+.scout-overlay .scout-panel {
+    position: absolute; left: 12px; top: 12px; bottom: 12px; z-index: 11; width: 330px;
+    pointer-events: auto;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
+    display: flex; flex-direction: column;
+}
+.scout-panel-hd { padding: 13px 14px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.scout-panel-hd .ic { width: 30px; height: 30px; border-radius: var(--radius-md); background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; flex-shrink: 0; }
+.scout-panel-hd .ic svg { width: 17px; height: 17px; }
+.scout-panel-hd h4 { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); }
+.scout-panel-hd .sub { font-size: 11.5px; color: var(--ink-soft); margin-top: 1px; }
+.scout-quit {
+    display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+    padding: 6px 10px; border-radius: var(--radius-md);
+    border: 1px solid var(--line); background: var(--surface);
+    color: var(--ink-soft); font: inherit; font-size: 12px; font-weight: 600;
+}
+.scout-quit:hover { background: var(--surface-muted); color: var(--ink); }
+.scout-quit svg { width: 14px; height: 14px; }
+.scout-panel-bd { flex: 1; overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+.scout-panel-bd > * { flex-shrink: 0; }
+.scout-panel-ft { padding: 12px 14px; border-top: 1px solid var(--line); background: var(--surface-muted); display: flex; gap: 9px; }
+.scout-lbl { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); display: block; margin-bottom: 6px; }
+
+/* sélecteur de destination (lecture seule en B1 : montre la dest. courante) */
+.scout-panel .dest-sel {
+    width: 100%; display: flex; align-items: center; gap: 9px; text-align: left;
+    padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius-md);
+    background: var(--surface); color: var(--ink); font: inherit; cursor: default;
+}
+.scout-panel .dest-sel .ic { width: 26px; height: 26px; border-radius: var(--radius-md); background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; flex-shrink: 0; }
+.scout-panel .dest-sel .ic svg { width: 15px; height: 15px; }
+.scout-panel .dest-sel .nm { display: block; font-size: 13px; font-weight: 600; }
+.scout-panel .dest-sel .ct { display: block; font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
+
+/* mode d'entrée : nouvelle destination vs repasse */
+.scout-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.scout-mode-opt {
+    border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: 10px; cursor: pointer; background: var(--surface);
+    display: flex; flex-direction: column; gap: 4px;
+}
+.scout-mode-opt .top { display: flex; align-items: center; gap: 7px; }
+.scout-mode-opt .top svg { width: 15px; height: 15px; color: var(--ink-soft); }
+.scout-mode-opt .top .t { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.scout-mode-opt .h { font-size: 11px; color: var(--ink-soft); line-height: 1.35; }
+.scout-mode-opt.is-on { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 0 0 1px var(--brand); }
+.scout-mode-opt.is-on.repasse { border-color: var(--hw-amber); background: var(--hw-amber-soft); box-shadow: 0 0 0 1px var(--hw-amber); }
+.scout-mode-opt.is-on.repasse .top svg { color: var(--hw-amber); }
+
+/* récap de moisson (chiffres) — rempli en B2 */
+.scout-recap { display: flex; flex-direction: column; gap: 7px; }
+.scout-recap .rr { display: flex; align-items: center; gap: 9px; font-size: 12.5px; }
+.scout-recap .rr .k { color: var(--ink-soft); flex: 1; display: flex; align-items: center; gap: 7px; }
+.scout-recap .rr .k svg { width: 14px; height: 14px; }
+.scout-recap .rr .v { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; }
+.scout-recap .rr.cand .v { color: var(--brand-2); }
+.scout-recap .rr.dup .v { color: var(--ink-soft); }
+.scout-recap .rr.scout-recap-net { border-top: 1px dashed var(--line); padding-top: 9px; }
+.scout-recap .rr.scout-recap-net .k { font-weight: 600; color: var(--ink); }
+.scout-recap .rr.scout-recap-net .v { color: var(--brand-2); }
+
+/* note Overpass (lenteur) — passe en warn si la boîte est trop grande (scout.js) */
+.scout-note {
+    display: flex; gap: 9px; padding: 10px 12px; border-radius: var(--radius-md);
+    background: var(--info-soft); border: 1px solid color-mix(in oklab, var(--brand) 22%, transparent);
+    font-size: 11.5px; line-height: 1.45; color: var(--ink);
+}
+.scout-note svg { width: 15px; height: 15px; color: var(--cta-bg); flex-shrink: 0; margin-top: 1px; }
+.scout-note.is-warn { background: var(--warn-soft, color-mix(in oklab, var(--warn) 12%, var(--surface))); border-color: color-mix(in oklab, var(--warn) 32%, transparent); }
+.scout-note.is-warn svg { color: var(--warn-fg, var(--warn)); }
