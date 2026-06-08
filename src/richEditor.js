@@ -4,7 +4,7 @@ import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded } from './data.js';
 import { eventBus } from './events.js';
-import { getZoneFromCoords } from './utils.js';
+import { getZoneFromCoords, openCoordsOnMap } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState, savePoiData } from './database.js';
 import { logModification } from './logger.js';
@@ -177,12 +177,16 @@ const RICH_POI_BODY_HTML = `
         <textarea id="rich-poi-notes" class="editable-input" rows="2"></textarea>
     </div>
 
-    <!-- GPS footer : déplacer + coords -->
+    <!-- GPS footer : déplacer + coords + liens carte (réunif A3f) -->
     <div class="rich-poi-gps-footer">
         <button id="btn-rich-move-marker" class="btn btn-ghost" title="Déplacer le marqueur" aria-label="Déplacer le marqueur" type="button">
             <i data-lucide="move"></i><span>Déplacer</span>
         </button>
         <span>📍 GPS : <span id="rich-poi-coords">...</span></span>
+        <span class="rich-poi-map-links">
+            <button id="btn-rich-open-gmaps" class="rich-maplink" type="button" title="Voir sur Google Maps" aria-label="Voir sur Google Maps"><i data-lucide="map-pin"></i>Maps</button>
+            <button id="btn-rich-open-osm" class="rich-maplink" type="button" title="Voir sur OpenStreetMap" aria-label="Voir sur OpenStreetMap"><i data-lucide="map"></i>OSM</button>
+        </span>
     </div>
 </div>
 `;
@@ -406,6 +410,29 @@ eventBus.on('richEditor:open-for-edit', (id) => RichEditor.openForEdit(id));
 
 // --- PRIVATE HELPERS ---
 
+// Coordonnées courantes du lieu édité (réunif A3f) : currentDraftCoords si défini
+// (mode CREATE, ou après un « Déplacer » en EDIT), sinon la géométrie du feature.
+function getCurrentEditorCoords() {
+    if (currentDraftCoords && Number.isFinite(currentDraftCoords.lat) && Number.isFinite(currentDraftCoords.lng)) {
+        return { lat: currentDraftCoords.lat, lng: currentDraftCoords.lng };
+    }
+    if (currentFeatureId) {
+        const f = state.loadedFeatures.find(x => getPoiId(x) === currentFeatureId);
+        const c = f?.geometry?.coordinates;
+        if (Array.isArray(c) && Number.isFinite(c[0]) && Number.isFinite(c[1])) {
+            return { lat: c[1], lng: c[0] };
+        }
+    }
+    return null;
+}
+
+// Ouvre la position courante du lieu sur Google Maps / OSM (réunif A3f, parité DM).
+function openEditorCoordsOnMap(provider) {
+    const c = getCurrentEditorCoords();
+    if (!c) { showToast("Position du lieu indisponible.", "warning"); return; }
+    openCoordsOnMap(c.lat, c.lng, provider);
+}
+
 async function handleMove() {
     // Migration V2 : on suspend la modale (cachée + détachée du système V2).
     // Indispensable car showConfirm ouvre une modale V2 par-dessus, et le
@@ -539,6 +566,10 @@ function bindModalEvents() {
 
     // Move Marker
     document.getElementById(DOM_IDS.BTNS.MOVE)?.addEventListener('click', handleMove);
+
+    // Liens carte Maps/OSM (réunif A3f) — ouvrent la position courante du lieu.
+    document.getElementById('btn-rich-open-gmaps')?.addEventListener('click', () => openEditorCoordsOnMap('gmaps'));
+    document.getElementById('btn-rich-open-osm')?.addEventListener('click', () => openEditorCoordsOnMap('osm'));
 
     // Sauvegarde
     document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', handleSave);

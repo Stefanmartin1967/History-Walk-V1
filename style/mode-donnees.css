@@ -126,3 +126,41 @@ body.mode-donnees-active #map { right: 0 !important; }
    du rail (left 354 = 12 + 330 + 12), au-dessus de l'overlay.
    ============================================================ */
 body.mode-donnees-active .hw-filter-panel { left: 354px !important; z-index: 1600 !important; }
+
+/* ============================================================
+   5. Contrôles carte Leaflet — décalés à droite du rail (réunif A3f)
+   Zoom (map.js:54), sélecteur de couches (map.js:103), Recentrer et Légende
+   sont TOUS en position 'topleft' → le rail (330px) les masquait. On décale
+   toute la pile top-left juste à droite du rail (354 = 12 + 330 + 12). Donne
+   enfin accès au fond « Plan » (libellés de rues, absents de Voyager).
+   ============================================================ */
+body.mode-donnees-active .leaflet-top.leaflet-left { left: 354px; }
+
+/* ============================================================
+   6. Surlignage du POI sélectionné = épingle « qui tombe » (réunif A3f, n°3)
+   divIcon ancré (0,0) sur le point GPS ; le CSS remonte l'épingle AU-DESSUS de
+   l'icône du POI (ancrée bas-centre) → pas de décalage. Couleur = marque de l'app.
+   ============================================================ */
+.md-pin-highlight { background: transparent !important; border: 0 !important; pointer-events: none; }
+.md-pin { position: absolute; left: 0; top: 0; width: 34px; transform: translate(-50%, -46px); pointer-events: none; }
+.md-pin-i {
+    transform: translateY(-100%); transform-origin: center bottom;
+    animation: md-pin-drop 1.05s cubic-bezier(.2, .85, .3, 1) both,
+               md-pin-bob 2.4s ease-in-out 1.05s infinite;
+}
+.md-pin-i svg { display: block; filter: drop-shadow(0 4px 5px rgba(0, 0, 0, .4)); }
+@keyframes md-pin-drop {
+    0%   { transform: translateY(-100%) translateY(-70px) scale(.85); opacity: 0; }
+    55%  { transform: translateY(-100%) scale(1); opacity: 1; }
+    70%  { transform: translateY(-100%) translateY(7px); }
+    85%  { transform: translateY(-100%); }
+    100% { transform: translateY(-100%); }
+}
+@keyframes md-pin-bob {
+    0%, 100% { transform: translateY(-100%); }
+    50%      { transform: translateY(calc(-100% - 9px)); }
+}
+/* Respecte la préférence « moins d'animations ». */
+@media (prefers-reduced-motion: reduce) {
+    .md-pin-i { animation: none; }
+}

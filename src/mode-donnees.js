@@ -108,6 +108,23 @@ function updateCounts(shown) {
     if (foot) foot.innerHTML = `<b>${shown}</b> affiché${shown > 1 ? 's' : ''} · ${total} au total`;
 }
 
+// A3f : icône du surlignage = épingle (teardrop) aux couleurs de l'app. divIcon
+// ancré (0,0) sur le point GPS ; le CSS (.md-pin) la remonte AU-DESSUS de l'icône
+// du POI (ancrée bas-centre) → pas de décalage, et anime la chute + le rebond.
+function buildHighlightIcon() {
+    return L.divIcon({
+        className: 'md-pin-highlight',
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
+        html: `<div class="md-pin"><div class="md-pin-i">
+            <svg width="34" height="46" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M12 0C5.4 0 0 5.4 0 12c0 8.4 12 20 12 20s12-11.6 12-20C24 5.4 18.6 0 12 0z" fill="var(--brand)" stroke="#fff" stroke-width="2"/>
+                <circle cx="12" cy="12" r="4.4" fill="#fff"/>
+            </svg>
+        </div></div>`,
+    });
+}
+
 async function selectPoi(id) {
     const f = _items.find(x => getPoiId(x) === id);
     if (!f || !f.geometry) return;
@@ -119,9 +136,10 @@ async function selectPoi(id) {
     _currentId = id;
     const [lon, lat] = f.geometry.coordinates;
     if (_highlight) { _highlight.remove(); _highlight = null; }
-    _highlight = L.circleMarker([lat, lon], {
-        radius: 18, color: '#1f6feb', weight: 3,
-        fillColor: '#1f6feb', fillOpacity: 0.12, interactive: false,
+    // A3f : surlignage = épingle « qui tombe » (recréée à chaque sélection pour
+    // rejouer l'animation). zIndexOffset → passe au-dessus des marqueurs voisins.
+    _highlight = L.marker([lat, lon], {
+        icon: buildHighlightIcon(), interactive: false, keyboard: false, zIndexOffset: 1000,
     }).addTo(map);
     map.flyTo([lat, lon], Math.max(map.getZoom(), 16), { duration: 0.5 });
     renderList(); // re-marque .is-current
