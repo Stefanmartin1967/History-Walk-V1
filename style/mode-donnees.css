@@ -23,14 +23,14 @@ body.mode-donnees-active #map { right: 0 !important; }
 
 /* ============================================================
    2. RAIL GAUCHE (en-tête Mode Données/Quitter + recherche + liste)
-   Ancré sous la topbar (72px).
+   Ancré sous la topbar (léger interstice, coins arrondis).
    ============================================================ */
 .mode-donnees-overlay .md-rail {
-    position: absolute; left: 12px; top: 72px; bottom: 12px; width: 330px;
+    position: absolute; left: 12px; top: 78px; bottom: 12px; width: 330px;
     display: flex; flex-direction: column; pointer-events: auto;
     background: var(--surface); border: 1px solid var(--line);
-    /* Collé sous la topbar (pas d'interstice) → coins hauts droits ; bas arrondis. */
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
+    /* Coins arrondis conservés (l'harmonie topbar ↔ en-tête du rail = chantier dédié). */
+    border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
 }
 /* En-tête : bande sombre harmonisée avec la topbar (réunif A3e #1). */
 .md-rail-head {
@@ -88,10 +88,10 @@ body.mode-donnees-active #map { right: 0 !important; }
    Le RichEditor monte son formulaire (mêmes IDs) ici au lieu de openHwModal.
    ============================================================ */
 .mode-donnees-overlay .md-drawer {
-    position: absolute; right: 12px; top: 72px; bottom: 12px; width: 430px;
+    position: absolute; right: 12px; top: 78px; bottom: 12px; width: 430px;
     display: flex; flex-direction: column; pointer-events: auto;
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg); box-shadow: var(--shadow-modal); overflow: hidden;
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); overflow: hidden;
 }
 .md-drawer-head {
     display: flex; align-items: center; gap: 10px; padding: 12px 14px;
