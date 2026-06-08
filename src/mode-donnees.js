@@ -17,6 +17,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { RichEditor } from './richEditor.js';
 import { eventBus } from './events.js';
+import { getIconForFeature } from './poi-icons.js';
 
 let _overlay = null;
 let _items = [];        // POI affichés = features filtrées (topbar) triées par nom
@@ -46,10 +47,10 @@ function renderShell() {
     _overlay.innerHTML = `
         <aside class="md-rail">
             <div class="md-rail-head">
-                <div class="md-rail-title">
-                    <span class="md-mode-badge"><i data-lucide="sliders-horizontal"></i>Mode Données</span>
-                    <button class="md-quit" type="button" data-md-quit><i data-lucide="x"></i>Quitter</button>
-                </div>
+                <span class="md-mode-badge"><i data-lucide="database"></i>Mode Données</span>
+                <button class="md-quit" type="button" data-md-quit><i data-lucide="x"></i>Quitter</button>
+            </div>
+            <div class="md-rail-search">
                 <label class="md-search"><i data-lucide="search"></i><input type="search" placeholder="Rechercher un lieu…" data-md-search></label>
             </div>
             <div class="md-list" data-md-list></div>
@@ -90,7 +91,7 @@ function renderList() {
             const verif = props.verified || props.userData?.verified;
             const meta = `${verif ? '<span class="verif"><i data-lucide="badge-check"></i>Vérifié</span> · ' : ''}${cat}`;
             return `<div class="md-poi${id === _currentId ? ' is-current' : ''}" data-id="${escapeXml(id)}">
-                <span class="md-poi-ic"><i data-lucide="map-pin"></i></span>
+                <span class="md-poi-ic">${getIconForFeature(f)}</span>
                 <span class="md-poi-tx"><span class="nm">${name}</span><span class="mt">${meta}</span></span>
             </div>`;
         }).join('');

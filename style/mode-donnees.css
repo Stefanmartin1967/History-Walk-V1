@@ -26,26 +26,29 @@ body.mode-donnees-active #map { right: 0 !important; }
    Ancré sous la topbar (72px).
    ============================================================ */
 .mode-donnees-overlay .md-rail {
-    position: absolute; left: 12px; top: 84px; bottom: 12px; width: 330px;
+    position: absolute; left: 12px; top: 78px; bottom: 12px; width: 330px;
     display: flex; flex-direction: column; pointer-events: auto;
     background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
 }
-.md-rail-head { padding: 12px 12px 10px; border-bottom: 1px solid var(--line); }
-.md-rail-title { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-.md-mode-badge {
-    flex: 1; display: inline-flex; align-items: center; gap: 7px;
-    font-size: 13px; font-weight: 700; color: var(--ink);
+/* En-tête : bande sombre harmonisée avec la topbar (réunif A3e #1). */
+.md-rail-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 14px; border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--bg), var(--bg-2)); color: #fff;
 }
-.md-mode-badge svg { width: 16px; height: 16px; color: var(--brand-2); }
+.md-mode-badge { flex: 1; display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 700; color: #fff; }
+.md-mode-badge svg { width: 16px; height: 16px; color: color-mix(in oklab, var(--brand) 55%, #fff); }
 .md-quit {
     display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
     padding: 6px 11px; border-radius: var(--radius-md);
-    border: 1px solid var(--line); background: var(--surface-muted);
-    color: var(--ink-soft); font: inherit; font-size: 12.5px; font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(255, 255, 255, 0.1);
+    color: #fff; font: inherit; font-size: 12.5px; font-weight: 600;
 }
-.md-quit:hover { background: var(--surface); color: var(--ink); }
+.md-quit:hover { background: rgba(255, 255, 255, 0.18); }
 .md-quit svg { width: 14px; height: 14px; }
+/* Recherche : sous l'en-tête sombre, sur fond clair. */
+.md-rail-search { padding: 10px 12px; border-bottom: 1px solid var(--line); }
 
 .md-search { position: relative; display: flex; align-items: center; }
 .md-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--ink-soft); }
@@ -57,7 +60,7 @@ body.mode-donnees-active #map { right: 0 !important; }
 }
 .md-search input::placeholder { color: var(--ink-soft); }
 
-.md-list { flex: 1; overflow: auto; padding: 6px; display: flex; flex-direction: column; gap: 2px; min-height: 0; }
+.md-list { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px; display: flex; flex-direction: column; gap: 2px; min-height: 0; }
 .md-empty { padding: 26px 14px; text-align: center; font-size: 12.5px; color: var(--ink-soft); }
 .md-poi {
     display: flex; align-items: center; gap: 10px; padding: 8px 9px;
@@ -84,7 +87,7 @@ body.mode-donnees-active #map { right: 0 !important; }
    Le RichEditor monte son formulaire (mêmes IDs) ici au lieu de openHwModal.
    ============================================================ */
 .mode-donnees-overlay .md-drawer {
-    position: absolute; right: 12px; top: 84px; bottom: 12px; width: 430px;
+    position: absolute; right: 12px; top: 78px; bottom: 12px; width: 430px;
     display: flex; flex-direction: column; pointer-events: auto;
     background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); overflow: hidden;
@@ -115,3 +118,10 @@ body.mode-donnees-active #map { right: 0 !important; }
     display: flex; align-items: center; gap: 10px;
 }
 .md-drawer-foot .btn-ghost { margin-right: auto; } /* Annuler à gauche, Enregistrer à droite */
+
+/* ============================================================
+   4. Panneau Filtres de la topbar — VISIBLE en Mode Données (réunif A3e, #6)
+   Sinon caché derrière l'overlay (z-1500) + le rail. On le pose juste à droite
+   du rail (left 354 = 12 + 330 + 12), au-dessus de l'overlay.
+   ============================================================ */
+body.mode-donnees-active .hw-filter-panel { left: 354px !important; z-index: 1600 !important; }
