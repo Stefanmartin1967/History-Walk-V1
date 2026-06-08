@@ -31,6 +31,9 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
     // 1. Réconciliation des CRÉATIONS (Lieux ajoutés manuellement)
     if (state.customFeatures && state.customFeatures.length > 0) {
         state.customFeatures.forEach(f => {
+            // Réunif C1 : un candidat Scout (« à curer ») n'est PAS publiable tant
+            // qu'il n'a pas été validé (flag `candidate` retiré) → jamais au brouillon.
+            if (f.properties && f.properties.candidate) return;
             const id = getPoiId(f);
             if (!adminDraft.pendingPois[id]) {
                 adminDraft.pendingPois[id] = { type: 'creation', timestamp: Date.now() };
@@ -136,6 +139,10 @@ export async function prepareDiffData(adminDraft) {
     pendingIds.forEach(id => {
         const current = state.loadedFeatures.find(f => getPoiId(f) === id);
         const original = originalFeatures.find(f => getPoiId(f) === id);
+
+        // Réunif C1 : ceinture+bretelles — un candidat « à curer » ne part JAMAIS
+        // dans le diff/publication, même s'il s'est retrouvé dans pendingPois.
+        if (current && current.properties && current.properties.candidate) return;
 
         // Cas spécial : Suppression
         if (adminDraft.pendingPois[id].type === 'delete') {

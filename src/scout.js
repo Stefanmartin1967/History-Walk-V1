@@ -21,6 +21,8 @@ import { state } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { fetchOverpassJson } from './osm-overpass.js';
+import { addPoiFeature } from './data.js';
+import { getZoneFromCoords } from './utils.js';
 
 let _overlay = null;
 let _boxEl = null;
@@ -37,7 +39,9 @@ let _geocoded = false;          // mode Nouvelle : une recherche Nominatim a-t-e
 
 const MIN_PX = 46;              // taille mini de la boîte à l'écran (poignées utilisables)
 const DEDUP_M = 50;             // un candidat à < 50 m d'un POI existant = doublon (règle #472)
-const TILE_KM = 5;              // côté max d'une tuile de moisson ; au-delà la boîte se découpe (réunif B2c)
+const TILE_KM = 25;             // côté max d'une tuile (km). Djerba (~18 km) tient en 1 passe — comme
+                                // l'ancien Scout (1 bbox). Le découpage ne sert que pour des boîtes
+                                // VRAIMENT vastes (multi-destinations). Réunif B2c, relevé 5→25.
 const MAX_TILES = 36;           // garde-fou : au-delà, zone trop vaste → on refuse
 
 // Catégories de moisson (clés alignées sur les clauses Overpass + libellés UI).
@@ -213,6 +217,7 @@ function refreshRecap() {
         else if (!boxWithin(_scannedBounds)) counttxt.textContent = 'zone modifiée · re-scanner';
         else counttxt.textContent = `${found} candidat${found > 1 ? 's' : ''}${dup ? ` · ${dup} doublon${dup > 1 ? 's' : ''}` : ''}`;
     }
+    updatePrimary();
 }
 
 // ── Drag / resize (pixels) ───────────────────────────────────────────────────
@@ -274,13 +279,29 @@ function setMode(m) {
     clearCandidates();
     _scannedBounds = null;
     refreshRecap();
-    syncScanEnabled();
+    updatePrimary();
 }
-function syncScanEnabled() {
-    const btn = _overlay?.querySelector('[data-scout-scan]');
-    // En mode Nouvelle, on attend une recherche (sinon la boîte est encore sur
-    // la destination active) → Scanner reste désactivé tant qu'on n'a pas volé.
-    if (btn) btn.disabled = (_categories.size === 0) || _scanning || (_mode === 'new' && !_geocoded);
+// Bouton primaire = machine à états : « Scanner la zone » par défaut ; après un
+// scan frais avec des nouveaux dans la boîte → « Capturer N lieux » (réunif C1).
+function updatePrimary() {
+    const btn = _overlay?.querySelector('[data-scout-primary]');
+    if (!btn) return;
+    const label = btn.querySelector('[data-scout-primary-txt]');
+    let found = 0, dup = 0;
+    for (const c of _candidates) { if (inBox(c)) { found++; if (c.dup) dup++; } }
+    const net = found - dup;
+    const fresh = !!_scannedBounds && boxWithin(_scannedBounds);
+    if (fresh && net > 0 && !_scanning) {
+        btn.dataset.action = 'capture';
+        if (label) label.textContent = `Capturer ${net} lieu${net > 1 ? 'x' : ''}`;
+        btn.disabled = false;
+    } else {
+        btn.dataset.action = 'scan';
+        if (label) label.textContent = 'Scanner la zone';
+        // Mode Nouvelle : Scanner désactivé tant qu'aucune recherche n'a volé
+        // la carte (sinon la boîte est encore sur la destination active).
+        btn.disabled = (_categories.size === 0) || _scanning || (_mode === 'new' && !_geocoded);
+    }
 }
 
 // Mode Nouvelle (réunif B2b) : géocode un lieu via Nominatim → vole la carte
@@ -310,7 +331,7 @@ async function geocodeAndFly(query) {
         _scannedBounds = null;
         resetBox();
         _geocoded = true;
-        syncScanEnabled();
+        updatePrimary();
         const fl = _overlay?.querySelector('[data-scout-found-label]');
         if (fl) { fl.hidden = false; fl.textContent = '📍 ' + (hit.display_name || query).split(',').slice(0, 2).join(','); }
     } catch (e) {
@@ -379,7 +400,7 @@ async function scan() {
         return;
     }
     const multi = tiles.length > 1;
-    _scanning = true; syncScanEnabled();
+    _scanning = true; updatePrimary();
     clearCandidates();
     const seen = new Set();   // dédup inter-tuiles (POI à cheval sur 2 bbox) par id OSM
     const all = [];
@@ -422,9 +443,39 @@ async function scan() {
             showToast(`${all.length} objet${all.length > 1 ? 's' : ''} OSM · ${net} nouveau${net > 1 ? 'x' : ''} à importer.`, 'success', 3000);
         }
     } finally {
-        _scanning = false; syncScanEnabled();
+        _scanning = false; updatePrimary();
         showLoading(false);
     }
+}
+
+// Réunif C1 : « Capturer » → les candidats non-doublons dans la boîte deviennent
+// des POIs PERSISTANTS `candidate:true` (IndexedDB admin, via addPoiFeature).
+// draft:false → jamais poussés tant que non validés (le tri = C1b). Repasse =
+// destination existante (la nouvelle destination = chantier à part).
+async function capture() {
+    if (_scanning) return;
+    const fresh = !!_scannedBounds && boxWithin(_scannedBounds);
+    const toCapture = _candidates.filter(c => inBox(c) && !c.dup);
+    if (!fresh || !toCapture.length) return;
+    const n = toCapture.length;
+    for (const c of toCapture) {
+        await addPoiFeature({
+            type: 'Feature',
+            geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
+            properties: {
+                'Nom du site FR': c.name || '',
+                'Catégorie': c.cat || 'À définir',
+                Zone: getZoneFromCoords(c.lat, c.lon) || '',
+                candidate: true,
+            },
+        }, { draft: false });
+    }
+    // Les candidats deviennent de vrais marqueurs sur la carte → on retire les
+    // pastilles éphémères et on repart « à zéro » pour un éventuel nouveau scan.
+    clearCandidates();
+    _scannedBounds = null;
+    refreshRecap();
+    showToast(`${n} lieu${n > 1 ? 'x' : ''} capturé${n > 1 ? 's' : ''} en candidat${n > 1 ? 's' : ''} — à curer (tri à venir).`, 'success', 3800);
 }
 
 // ── Shell ─────────────────────────────────────────────────────────────────────
@@ -488,7 +539,7 @@ function renderShell() {
             </div>
             <div class="scout-panel-ft">
                 <button class="btn btn-ghost" type="button" data-scout-reset style="flex:1;justify-content:center"><i data-lucide="rotate-ccw"></i>Réinit.</button>
-                <button class="btn btn-primary" type="button" data-scout-scan style="flex:1.5;justify-content:center"><i data-lucide="scan-eye"></i>Scanner la zone</button>
+                <button class="btn btn-primary" type="button" data-scout-primary style="flex:1.5;justify-content:center"><i data-lucide="scan-eye"></i><span data-scout-primary-txt>Scanner la zone</span></button>
             </div>
         </aside>
         <div class="scout-loading" data-scout-loading style="display:none"><span class="spin"></span><div><div style="font-weight:600">Moisson en cours…</div><div style="font-size:11.5px;color:var(--ink-soft)" data-scout-loadingsub>Interrogation d’Overpass…</div></div></div>
@@ -502,13 +553,15 @@ function renderShell() {
     _overlay.querySelector('[data-scout-destname]').textContent = destName();
     _overlay.querySelector('[data-scout-quit]').addEventListener('click', stopScout);
     _overlay.querySelector('[data-scout-reset]').addEventListener('click', resetBox);
-    _overlay.querySelector('[data-scout-scan]').addEventListener('click', scan);
+    _overlay.querySelector('[data-scout-primary]').addEventListener('click', (e) => {
+        (e.currentTarget.dataset.action === 'capture') ? capture() : scan();
+    });
     _overlay.querySelectorAll('[data-scout-mode]').forEach(el =>
         el.addEventListener('click', () => setMode(el.dataset.scoutMode)));
     _overlay.querySelectorAll('[data-scout-cat]').forEach(cb =>
         cb.addEventListener('change', () => {
             if (cb.checked) _categories.add(cb.dataset.scoutCat); else _categories.delete(cb.dataset.scoutCat);
-            syncScanEnabled();
+            updatePrimary();
         }));
     const searchInput = _overlay.querySelector('[data-scout-search]');
     _overlay.querySelector('[data-scout-search-btn]')?.addEventListener('click', () => geocodeAndFly(searchInput?.value));
@@ -516,7 +569,7 @@ function renderShell() {
     _boxEl.addEventListener('pointerdown', onPointerDown);
     _onMapMove = () => render();
     map.on('move zoom zoomanim resize', _onMapMove);
-    syncScanEnabled();
+    updatePrimary();
 
     createIcons({ icons: appIcons, root: _overlay });
 }
