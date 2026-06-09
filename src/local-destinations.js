@@ -4,9 +4,10 @@
 // sur GitHub). On les scoute + cure en local ; la publication (push GitHub) est
 // une étape séparée et explicite (C2b).
 //
-// C2a-1b (ici) = côté LECTURE/BOOT : fusionner les brouillons dans la liste des
-// destinations + servir leur geojson depuis l'IndexedDB. La CRÉATION
-// (createLocalDraftDestination, appelée par le Scout) arrive en C2a-2.
+// C2a-1b = côté LECTURE/BOOT : fusionner les brouillons dans la liste des
+// destinations + servir leur geojson depuis l'IndexedDB.
+// C2a-2 = côté CRÉATION : createLocalDraftDestination (appelé par le Scout en mode
+// « Nouvelle ») + makeUniqueDestId.
 //
 // Stockage (store appState) :
 //   - 'draftDestinations'   : { [id]: entrée destination (status:'draft', custom:true) }
@@ -17,7 +18,7 @@
 // filtre du sélecteur topbar) les masquent aux non-admins. De toute façon un
 // non-admin (autre appareil) n'a aucun brouillon dans SON IndexedDB.
 import { state } from './state.js';
-import { getAppState } from './database.js';
+import { getAppState, saveAppState } from './database.js';
 
 // Interne : la map { id: entrée } des brouillons locaux.
 async function getDraftDestinations() {
@@ -54,4 +55,31 @@ export async function mergeLocalDraftDestinations() {
         if (existing && !existing.custom) continue; // ne pas masquer une vraie dest publiée
         state.destinations.maps[id] = { ...entry, status: 'draft', custom: true };
     }
+}
+
+// Forge un id de destination unique à partir d'un nom (slug sans accents), sans
+// collision avec une dest publiée NI un autre brouillon. (C2a-2, Scout.)
+export async function makeUniqueDestId(name) {
+    const base = (name || 'destination')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // enlève les accents
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+        .slice(0, 40) || 'destination';
+    const taken = new Set([
+        ...Object.keys(state.destinations?.maps || {}),
+        ...Object.keys(await getDraftDestinations()),
+    ]);
+    if (!taken.has(base)) return base;
+    let i = 2;
+    while (taken.has(`${base}-${i}`)) i++;
+    return `${base}-${i}`;
+}
+
+// Crée un brouillon de destination LOCAL : entrée + geojson (POIs candidats) +
+// zones. Tout en IndexedDB, aucune écriture GitHub. (C2a-2, Scout mode Nouvelle.)
+export async function createLocalDraftDestination(id, entry, geojson, zones) {
+    const drafts = await getDraftDestinations();
+    drafts[id] = { ...entry, status: 'draft', custom: true };
+    await saveAppState('draftDestinations', drafts);
+    await saveAppState(`draftGeoJSON_${id}`, geojson || { type: 'FeatureCollection', features: [] });
+    await saveAppState(`draftZones_${id}`, zones || { type: 'FeatureCollection', features: [] });
 }
