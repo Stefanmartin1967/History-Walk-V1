@@ -2,6 +2,7 @@
 import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setPoiCategories } from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
+import { mergeLocalDraftDestinations, getDraftGeoJSON } from './local-destinations.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -101,6 +102,9 @@ export async function loadDestinationsConfig() {
     if (config) {
         setDestinations(config);
     }
+    // Réunif C2a-1b : ajoute les destinations BROUILLON locales (IndexedDB admin)
+    // à la liste. status:'draft' → masquées aux non-admins par les gardes existantes.
+    await mergeLocalDraftDestinations();
 }
 
 // Zones (quartiers OSM) de la destination ACTIVE — réunif : remplace l'ancien
@@ -221,31 +225,30 @@ export async function loadAndInitializeMap() {
 
     // 2. Chargement des données (GeoJSON)
     let geojsonData = null;
-    let fileName = `${activeMapId}.geojson`;
-    if (state.destinations?.maps[activeMapId]?.file) {
-        fileName = state.destinations.maps[activeMapId].file;
-    }
+    const activeDest = state.destinations?.maps?.[activeMapId];
 
     if (DOM.loaderOverlay) DOM.loaderOverlay.classList.remove('is-hidden');
 
-    try {
-        // Cache-bust : sans ça, le navigateur peut servir une version HTTP-cachée
-        // du geojson jusqu'à plusieurs minutes après une publication admin. Le SW
-        // en NetworkFirst ne protège pas contre le cache HTTP amont. Résultat :
-        // la session admin voyait ses propres modifs "réapparaître" dans le CC
-        // car le diff engine fetchait raw.githubusercontent (frais) tandis que
-        // l'app servait une version stale de GH Pages.
-        const resp = await fetch(`${baseUrl}${fileName}?t=${Date.now()}`, { cache: 'reload' });
-        if(resp.ok) geojsonData = await resp.json();
-    } catch(e) {
-        // Fallback offline
-        const lastMapId = await getAppState('lastMapId');
-        const lastGeoJSON = await getAppState('lastGeoJSON');
-        if (lastMapId === activeMapId && lastGeoJSON) {
-            geojsonData = lastGeoJSON;
-            console.warn("Chargement hors-ligne (fallback)");
-        } else {
-            console.error("Erreur download map", e);
+    if (activeDest?.custom) {
+        // Réunif C2a-1b : brouillon LOCAL → POIs depuis l'IndexedDB (pas de fetch).
+        geojsonData = await getDraftGeoJSON(activeMapId);
+    } else {
+        const fileName = activeDest?.file || `${activeMapId}.geojson`;
+        try {
+            // Cache-bust : le SW NetworkFirst ne protège pas du cache HTTP amont ;
+            // sans ?t=, l'app pouvait servir un geojson stale après publication admin.
+            const resp = await fetch(`${baseUrl}${fileName}?t=${Date.now()}`, { cache: 'reload' });
+            if(resp.ok) geojsonData = await resp.json();
+        } catch(e) {
+            // Fallback offline
+            const lastMapId = await getAppState('lastMapId');
+            const lastGeoJSON = await getAppState('lastGeoJSON');
+            if (lastMapId === activeMapId && lastGeoJSON) {
+                geojsonData = lastGeoJSON;
+                console.warn("Chargement hors-ligne (fallback)");
+            } else {
+                console.error("Erreur download map", e);
+            }
         }
     }
 
