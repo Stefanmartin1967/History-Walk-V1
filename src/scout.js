@@ -25,6 +25,7 @@ import { addPoiFeature } from './data.js';
 import { getZoneFromCoords, generateHWID } from './utils.js';
 import { hwPrompt } from './modal.js';
 import { createLocalDraftDestination, makeUniqueDestId } from './local-destinations.js';
+import { fetchZonesAuto, zoneNameForPoint } from './osm-zones.js';
 
 let _overlay = null;
 let _boxEl = null;
@@ -40,6 +41,7 @@ let _scanning = false;
 let _geocoded = false;          // mode Nouvelle : une recherche Nominatim a-t-elle volé la carte ?
 let _geoBBox = null;            // mode Nouvelle : bbox [[s,w],[n,e]] du lieu géocodé → bounds du brouillon
 let _geoName = '';              // mode Nouvelle : nom du lieu géocodé → pré-remplit le nom de la destination
+let _geoCountry = '';           // mode Nouvelle : code pays ISO (Nominatim) → niveau admin des zones OSM
 
 const MIN_PX = 46;              // taille mini de la boîte à l'écran (poignées utilisables)
 const DEDUP_M = 50;             // un candidat à < 50 m d'un POI existant = doublon (règle #472)
@@ -278,7 +280,7 @@ function setMode(m) {
     if (newEl) newEl.hidden = (m !== 'new');
     // Changement de contexte → on oublie le scan précédent.
     _geocoded = false;
-    _geoBBox = null; _geoName = '';
+    _geoBBox = null; _geoName = ''; _geoCountry = '';
     const fl = _overlay?.querySelector('[data-scout-found-label]');
     if (fl) { fl.hidden = true; fl.textContent = ''; }
     clearCandidates();
@@ -318,13 +320,14 @@ async function geocodeAndFly(query) {
     const btn = _overlay?.querySelector('[data-scout-search-btn]');
     if (btn) btn.disabled = true;
     try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&q=${encodeURIComponent(query)}`);
         const data = await res.json();
         if (!Array.isArray(data) || !data.length) { showToast(`Aucun lieu trouvé pour « ${query} ».`, 'warning', 3500); return; }
         const hit = data[0];
         const lat = parseFloat(hit.lat), lon = parseFloat(hit.lon);
         const bb = (hit.boundingbox || []).map(parseFloat); // [south, north, west, east]
         _geoName = hit.display_name || query;
+        _geoCountry = hit.address?.country_code || '';
         if (bb.length === 4 && bb.every(Number.isFinite)) {
             _geoBBox = [[bb[0], bb[2]], [bb[1], bb[3]]]; // [[s,w],[n,e]] → bounds du futur brouillon
             map.fitBounds([[bb[0], bb[2]], [bb[1], bb[3]]], { maxZoom: 16, animate: false });
@@ -490,9 +493,9 @@ async function capture() {
 
 // Mode Nouvelle (réunif C2a-2) : « Capturer » crée une DESTINATION BROUILLON
 // locale (entrée + candidats candidate:true) au lieu d'alimenter la dest active,
-// puis bascule dessus (rechargement ?map={id} → boot C2a-1b vérifié). Les zones
-// OSM arrivent en C2a-2b (les candidats ont Zone vide en attendant). Tout en
-// local : aucune écriture GitHub.
+// récupère ses ZONES admin OSM (C2a-2b, niveau déduit du pays géocodé) + en
+// déduit la Zone de chaque candidat, puis bascule dessus (rechargement ?map={id}
+// → boot C2a-1b vérifié). Tout en local : aucune écriture GitHub.
 async function captureAsNewDestination(toCapture) {
     const n = toCapture.length;
     const suggested = (_geoName || '').split(',')[0].trim();
@@ -508,6 +511,7 @@ async function captureAsNewDestination(toCapture) {
     if (!trimmed) { showToast('Nom vide — création annulée.', 'warning', 3000); return; }
 
     const id = await makeUniqueDestId(trimmed);
+    const bbox = _geoBBox || [[_box.south, _box.west], [_box.north, _box.east]];
     const features = toCapture.map(c => ({
         type: 'Feature',
         geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
@@ -515,24 +519,34 @@ async function captureAsNewDestination(toCapture) {
             HW_ID: generateHWID(),
             'Nom du site FR': c.name || '',
             'Catégorie': c.cat || 'À définir',
-            Zone: '',                                // posée en C2a-2b (zones OSM)
+            Zone: '',                                // affectée ci-dessous si des zones OSM existent
             candidate: true,
         },
     }));
+
+    // Zones admin OSM (réunif C2a-2b) : niveau déduit du pays géocodé, avec repli
+    // si la 1ʳᵉ passe est vide. Échec/timeout → zones vides, la création continue
+    // (non bloquant — les zones se complètent plus tard si besoin).
+    showLoading(true, 'Zones administratives (OSM)…');
+    let zones = { type: 'FeatureCollection', features: [] };
+    try { zones = await fetchZonesAuto(bbox, _geoCountry); } catch (_) {}
+    showLoading(false);
+    if (zones.features.length) {
+        for (const f of features) {
+            f.properties.Zone = zoneNameForPoint(f.geometry.coordinates[1], f.geometry.coordinates[0], zones);
+        }
+    }
+
     const center = map.getCenter();
     const entry = {
         name: trimmed,
-        bounds: _geoBBox || [[_box.south, _box.west], [_box.north, _box.east]],
+        bounds: bbox,
         startView: { center: [center.lat, center.lng], zoom: map.getZoom() },
         currency: '',
         file: null, zonesFile: null, circuitsFile: null,
     };
     try {
-        await createLocalDraftDestination(
-            id, entry,
-            { type: 'FeatureCollection', features },
-            { type: 'FeatureCollection', features: [] },
-        );
+        await createLocalDraftDestination(id, entry, { type: 'FeatureCollection', features }, zones);
     } catch (e) {
         showToast('Échec de la création du brouillon.', 'error', 4000);
         return;
@@ -540,7 +554,8 @@ async function captureAsNewDestination(toCapture) {
     // Bascule : on mémorise le choix puis on recharge sur le brouillon (le boot
     // C2a-1b le fusionne + charge ses POIs depuis l'IDB ; admin déjà connecté).
     try { localStorage.setItem('hw_active_dest', id); } catch (_) {}
-    showToast(`Destination « ${trimmed} » créée (${n} candidat${n > 1 ? 's' : ''}). Bascule en cours…`, 'success', 2600);
+    const zTxt = zones.features.length ? ` · ${zones.features.length} zone${zones.features.length > 1 ? 's' : ''}` : '';
+    showToast(`Destination « ${trimmed} » créée (${n} candidat${n > 1 ? 's' : ''}${zTxt}). Bascule en cours…`, 'success', 2600);
     setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(id)}`; }, 650);
 }
 
@@ -650,7 +665,7 @@ export function startScout() {
     _candidates = [];
     _scannedBounds = null;
     _geocoded = false;
-    _geoBBox = null; _geoName = '';
+    _geoBBox = null; _geoName = ''; _geoCountry = '';
     renderShell();
 }
 
