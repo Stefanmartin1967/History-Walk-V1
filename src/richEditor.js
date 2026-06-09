@@ -5,7 +5,7 @@ import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded } from './data.js';
 import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap } from './utils.js';
-import { addPoiFeature } from './data.js';
+import { addPoiFeature, applyFilters } from './data.js';
 import { saveAppState, savePoiData } from './database.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
@@ -83,6 +83,13 @@ const RICH_POI_BODY_HTML = `
             <span class="lbl"><span class="t">Vérifié</span><span class="h">La fiche a été relue et validée</span></span>
             <span class="ctl">
                 <button class="sw" id="rich-poi-verified" type="button" role="switch" aria-checked="false" aria-label="Vérifié"></button>
+            </span>
+        </div>
+        <!-- Candidat « à curer » (réunif C1b) : visible seulement pour un candidat Scout. -->
+        <div class="fiche-row" id="rich-poi-candidate-row" hidden>
+            <span class="lbl"><span class="t">Candidat à curer</span><span class="h">Trouvé par Scout — à valider pour le rendre publiable</span></span>
+            <span class="ctl">
+                <button class="fiche-curate-btn" id="rich-poi-curate" type="button"><i data-lucide="check"></i>Valider</button>
             </span>
         </div>
     </div>
@@ -258,6 +265,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.HOURS, "");
         setValue(DOM_IDS.INPUTS.FACEBOOK, "");
         setVerified(false);
+        { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = true; }
 
         // Bloc taxonomie : catégorie vide en création → bloc masqué.
         populateTaxonomySelects("");
@@ -349,6 +357,8 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.HOURS, merged['Horaires'] || merged.horaires || "");
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
         setVerified(!!merged.verified);
+        // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
+        { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = !merged.candidate; }
 
         // Tiroir (Mode Données) : sous-titre = nom du lieu en cours d'édition.
         const drawerSub = _drawerEl && _drawerEl.querySelector('[data-rich-drawer-sub]');
@@ -583,6 +593,9 @@ function bindModalEvents() {
         isDirty = true;
     });
 
+    // Réunif C1b : « Valider » un candidat → retire le flag → publiable.
+    document.getElementById('rich-poi-curate')?.addEventListener('click', curateCandidate);
+
     // Bloc taxonomie : repeupler les 3 selects quand la catégorie change.
     document.getElementById(DOM_IDS.INPUTS.CATEGORY)?.addEventListener('change', () => {
         populateTaxonomySelects(getValue(DOM_IDS.INPUTS.CATEGORY));
@@ -790,6 +803,22 @@ function setVerified(val) {
     if (!el) return;
     el.classList.toggle('is-on', !!val);
     el.setAttribute('aria-checked', String(!!val));
+}
+
+// Réunif C1b : « curer » un candidat = retirer le flag `candidate`. Le POI (un
+// customFeature) redevient une création normale → publiable (reconcileLocalChanges
+// le pistera). Persiste customPois ; rafraîchit carte + liste « à curer ».
+async function curateCandidate() {
+    if (currentMode !== 'EDIT' || !currentFeatureId) return;
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === currentFeatureId);
+    if (!feature || !feature.properties || !feature.properties.candidate) return;
+    delete feature.properties.candidate;
+    await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures || []);
+    const row = document.getElementById('rich-poi-candidate-row');
+    if (row) row.hidden = true;
+    isDirty = true;
+    applyFilters(); // le marqueur perd le badge « à curer » + sort du filtre « à curer »
+    showToast('Lieu validé — sort de la file « à curer », devient publiable.', 'success', 3500);
 }
 function getVerified() {
     const el = document.getElementById(DOM_IDS.VERIFIED);

@@ -373,6 +373,9 @@ export function passesUserFilters(feature) {
     // 3-states : 'all' (pas de filtre) | 'hide' (cache ceux qui ont la prop) | 'only' (n'affiche que ceux qui ont la prop).
     if (f.verified === 'hide' && props.verified) return false;
     if (f.verified === 'only' && !props.verified) return false;
+    // Candidat « à curer » (réunif C1) : 'only' = file de tri (n'affiche que les candidats).
+    if (f.candidate === 'hide' && props.candidate) return false;
+    if (f.candidate === 'only' && !props.candidate) return false;
     if (f.incontournablesOnly && !props.incontournable) return false;
     if (f.photo === 'hide' && hasPhotos(props)) return false;
     if (f.photo === 'only' && !hasPhotos(props)) return false;
@@ -460,7 +463,7 @@ export function recomputeVu(userData) {
 const FILTER_AFFECTING_KEYS = new Set([
     'Catégorie', 'Zone',
     'vu', 'vuManual',
-    'incontournable', 'verified',
+    'incontournable', 'verified', 'candidate',
     // Filtres "État de la fiche" (refonte Claude Design) : photos absentes
     // / description absente. Modif d'une de ces props peut changer la
     // visibilité si filter photo / description est actif.

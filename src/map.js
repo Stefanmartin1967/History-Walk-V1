@@ -268,6 +268,10 @@ export function createHistoryWalkIcon(featureOrCategory) {
         if (status === 'failed') {
             flagDotHtml = '<span class="hw-poi-flagdot" title="Drapeau d\'accès à reprendre"></span>';
         }
+        // Réunif C1b : badge « à curer » sur un candidat Scout (admin uniquement).
+        if (f?.properties?.candidate) {
+            flagDotHtml += '<span class="hw-poi-canddot" title="Candidat à curer (Scout)"></span>';
+        }
     }
 
     return L.divIcon({

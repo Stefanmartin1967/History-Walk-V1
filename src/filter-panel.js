@@ -367,6 +367,9 @@ function populateFicheSection() {
 
     const fiche = [
         { key: 'verified',    label: 'Lieux vérifiés'         },
+        // Réunif C1 : « à curer » = candidats Scout, admin uniquement (les users
+        // n'ont pas de candidats ; libellé sans sens pour eux).
+        ...(state.isAdmin ? [{ key: 'candidate', label: 'Lieux à curer' }] : []),
         { key: 'photo',       label: 'Lieux avec photo'       },
         { key: 'description', label: 'Lieux avec description' },
     ];
@@ -481,6 +484,7 @@ function isSectionActive(id) {
                                   || (f.planifies && f.planifies !== 'all')
                                   || !!f.incontournablesOnly;
         case 'fiche':        return (f.verified && f.verified !== 'all')
+                                  || (f.candidate && f.candidate !== 'all')
                                   || (f.photo && f.photo !== 'all')
                                   || (f.description && f.description !== 'all');
         default:             return false;
@@ -535,6 +539,7 @@ function resetAll() {
         vus: 'all',
         planifies: 'all',
         verified: 'all',
+        candidate: 'all',
         photo: 'all',
         description: 'all',
         incontournablesOnly: false,
