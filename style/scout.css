@@ -194,14 +194,25 @@ body.scout-active #map { top: 0 !important; right: 0 !important; }
 .scout-cat { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink); cursor: pointer; }
 .scout-cat input { width: 15px; height: 15px; accent-color: var(--brand); cursor: pointer; flex-shrink: 0; }
 
-/* overlay « moisson en cours » (centré sur la carte, bloque le temps du fetch) */
+/* overlay « moisson en cours » (centré sur la carte, bloque le temps du fetch).
+   Masqué par défaut via la CLASSE .is-on (toggle JS) — surtout PAS via un
+   style="display:none" inline, bloqué par la CSP de prod (style-src 'self') :
+   sinon l'overlay reste visible en permanence et fait croire à une moisson. */
 .scout-overlay .scout-loading {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 12;
     pointer-events: auto;
-    display: flex; align-items: center; gap: 13px; padding: 16px 22px;
+    display: none; align-items: center; gap: 13px; padding: 16px 22px;
     background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); font-size: 13.5px; color: var(--ink);
 }
+.scout-overlay .scout-loading.is-on { display: flex; }
+.scout-loading-title { font-weight: 600; }
+.scout-loading-sub { font-size: 11.5px; color: var(--ink-soft); }
+/* Mises en page anciennement en style="" inline (retirées : CSP style-src 'self'). */
+.scout-panel-hd .scout-hd-main { flex: 1; }
+.scout-panel .dest-sel .scout-dest-main { flex: 1; min-width: 0; }
+.scout-panel-ft .scout-ft-btn { flex: 1; justify-content: center; }
+.scout-panel-ft .scout-ft-btn--primary { flex: 1.5; }
 .scout-loading .spin {
     width: 19px; height: 19px; border-radius: 50%;
     border: 2px solid color-mix(in oklab, var(--brand) 30%, transparent); border-top-color: var(--brand);
