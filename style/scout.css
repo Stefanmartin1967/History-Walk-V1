@@ -34,6 +34,20 @@ body.scout-active #map { top: 0 !important; right: 0 !important; }
     box-shadow: 0 0 0 9999px color-mix(in oklab, var(--bg) 32%, transparent);
     border-radius: 3px;
 }
+.scout-overlay .scout-box.is-hidden { display: none; }   /* réunif peaufinage : pas de boîte tant qu'on n'a pas tracé */
+/* Couche de tracé : capte le clic-glisse pour DESSINER la boîte, tant qu'aucune
+   n'existe (.is-on). z-index 6 = sous la boîte (8) et le panneau (11) → le panneau
+   reste cliquable, et la boîte (une fois tracée) redevient déplaçable. */
+.scout-overlay .scout-draw { position: absolute; inset: 0; z-index: 6; pointer-events: none; display: none; }
+.scout-overlay .scout-draw.is-on { display: block; pointer-events: auto; cursor: crosshair; }
+.scout-draw-hint {
+    position: absolute; left: 50%; top: 14%; transform: translateX(-50%);
+    display: inline-flex; align-items: center; gap: 8px; pointer-events: none;
+    padding: 9px 15px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow-modal);
+    font-size: 13px; color: var(--ink); white-space: nowrap;
+}
+.scout-draw-hint svg { width: 16px; height: 16px; color: var(--brand); }
 .scout-overlay .scout-box.is-repasse {
     border-color: var(--hw-amber);
     background: color-mix(in oklab, var(--hw-amber) 9%, transparent);
@@ -186,7 +200,6 @@ body.scout-active #map { top: 0 !important; right: 0 !important; }
     transform: translate(-50%, -50%); border-radius: 50%; pointer-events: none;
     background: var(--brand); border: 2px solid #fff; box-shadow: var(--shadow-card);
 }
-.scout-overlay .scout-cand.dup { background: var(--ink-soft); }   /* doublon écarté = gris */
 .scout-overlay .scout-cand.out { opacity: 0.32; }                 /* hors boîte = estompé */
 
 /* cases à cocher Catégories (panneau) */

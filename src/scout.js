@@ -34,6 +34,8 @@ let _mode = 'repasse';          // 'new' | 'repasse'
 let _box = null;                // { north, south, east, west } — source de vérité
 let _drag = null;               // état drag/resize en cours
 let _onMapMove = null;          // resync boîte + pastilles sur pan/zoom
+let _drawLayer = null;          // couche de tracé (active tant qu'aucune boîte n'existe)
+let _drawStart = null;          // point de départ (px) du tracé de la boîte au glisser
 let _categories = null;         // Set des clés de catégorie cochées
 let _candidates = [];           // résultats du dernier scan : {lat,lon,cat,unknown,dup,name,_el}
 let _scannedBounds = null;      // bounds de la boîte au moment du scan (détection « zone modifiée »)
@@ -161,13 +163,19 @@ function computeTiles(b) {
 
 // ── Rendu ─────────────────────────────────────────────────────────────────────
 function render() {
-    if (!_boxEl || !_box) return;
-    const rect = geoToViewportRect(_box);
-    _boxEl.style.left = rect.left + 'px';
-    _boxEl.style.top = rect.top + 'px';
-    _boxEl.style.width = rect.w + 'px';
-    _boxEl.style.height = rect.h + 'px';
-    positionCandidates();
+    if (!_boxEl) return;
+    const hasBox = !!_box;
+    // Pas de boîte → boîte masquée + couche de tracé active (l'admin la dessine).
+    _boxEl.classList.toggle('is-hidden', !hasBox);
+    if (_drawLayer) _drawLayer.classList.toggle('is-on', !hasBox);
+    if (hasBox) {
+        const rect = geoToViewportRect(_box);
+        _boxEl.style.left = rect.left + 'px';
+        _boxEl.style.top = rect.top + 'px';
+        _boxEl.style.width = rect.w + 'px';
+        _boxEl.style.height = rect.h + 'px';
+        positionCandidates();
+    }
     updateReadout();
     refreshRecap();
 }
@@ -184,6 +192,8 @@ function positionCandidates() {
 }
 
 function updateReadout() {
+    const dimEl = _overlay?.querySelector('[data-scout-dimtxt]');
+    if (!_box) { if (dimEl) dimEl.textContent = '—'; return; }
     const { wKm, hKm } = boxKm(_box);
     const tiles = tileGrid(_box).count;
     const tooVast = tiles > MAX_TILES;
@@ -265,6 +275,46 @@ function onPointerUp() {
     document.removeEventListener('pointerup', onPointerUp);
 }
 
+// ── Tracé de la boîte au glisser (réunif peaufinage) ───────────────────────────
+// Pas de boîte par défaut : l'admin la dessine sur la carte. `_drawLayer` ne
+// capture les pointeurs QUE tant qu'aucune boîte n'existe (.is-on) ; une fois la
+// boîte tracée, elle s'efface → carte pannable + boîte déplaçable normalement.
+function onDrawDown(e) {
+    if (_box) return;
+    e.preventDefault();
+    _drawStart = { x: e.clientX, y: e.clientY };
+    map.dragging.disable();
+    try { _drawLayer.setPointerCapture(e.pointerId); } catch (_) {}
+    document.addEventListener('pointermove', onDrawMove);
+    document.addEventListener('pointerup', onDrawUp);
+}
+function onDrawMove(e) {
+    if (!_drawStart) return;
+    const r = mapRect();
+    let left = Math.min(_drawStart.x, e.clientX), top = Math.min(_drawStart.y, e.clientY);
+    let w = Math.abs(e.clientX - _drawStart.x), h = Math.abs(e.clientY - _drawStart.y);
+    left = Math.max(r.left, left); top = Math.max(r.top, top);
+    w = Math.min(w, r.right - left); h = Math.min(h, r.bottom - top);
+    _box = viewportRectToGeo({ left, top, w, h });
+    // Aperçu direct : on montre la boîte sans masquer la couche (capture en cours).
+    _boxEl.classList.remove('is-hidden');
+    _boxEl.style.left = left + 'px'; _boxEl.style.top = top + 'px';
+    _boxEl.style.width = w + 'px'; _boxEl.style.height = h + 'px';
+    updateReadout();
+}
+function onDrawUp() {
+    document.removeEventListener('pointermove', onDrawMove);
+    document.removeEventListener('pointerup', onDrawUp);
+    map.dragging.enable();
+    _drawStart = null;
+    if (_box) {
+        const rect = geoToViewportRect(_box);
+        if (rect.w < MIN_PX || rect.h < MIN_PX) _box = null; // glisser trop court → annulé
+    }
+    render();          // boîte valide → affichée + couche masquée ; sinon → couche réactivée
+    updatePrimary();
+}
+
 // ── Mode + catégories ─────────────────────────────────────────────────────────
 function setMode(m) {
     _mode = m;
@@ -307,7 +357,7 @@ function updatePrimary() {
         if (label) label.textContent = 'Scanner la zone';
         // Mode Nouvelle : Scanner désactivé tant qu'aucune recherche n'a volé
         // la carte (sinon la boîte est encore sur la destination active).
-        btn.disabled = (_categories.size === 0) || _scanning || (_mode === 'new' && !_geocoded);
+        btn.disabled = (_categories.size === 0) || _scanning || !_box || (_mode === 'new' && !_geocoded);
     }
 }
 
@@ -337,10 +387,8 @@ async function geocodeAndFly(query) {
         } else {
             showToast('Réponse Nominatim inattendue.', 'error', 3000); return;
         }
-        // Zone neuve → on oublie le scan précédent + on recentre la boîte dessus.
-        clearCandidates();
-        _scannedBounds = null;
-        resetBox();
+        // Zone neuve → on oublie le scan + la boîte (l'admin la retrace sur la zone).
+        clearBox();
         _geocoded = true;
         updatePrimary();
         const fl = _overlay?.querySelector('[data-scout-found-label]');
@@ -352,14 +400,13 @@ async function geocodeAndFly(query) {
     }
 }
 
-// ── Boîte par défaut ───────────────────────────────────────────────────────────
-function defaultBox() {
-    const r = mapRect();
-    return viewportRectToGeo({ left: r.left + r.width * 0.33, top: r.top + r.height * 0.28, w: r.width * 0.34, h: r.height * 0.40 });
-}
-function resetBox() {
-    _box = defaultBox();
-    render();
+// ── Boîte effacée → mode tracé (l'admin la dessine au glisser) ─────────────────
+function clearBox() {
+    _box = null;
+    clearCandidates();
+    _scannedBounds = null;
+    render();          // → boîte masquée + couche de tracé active
+    updatePrimary();
 }
 
 // ── Pastilles candidates ──────────────────────────────────────────────────────
@@ -371,9 +418,12 @@ function renderCandidates() {
     // Idempotent (rendu progressif tuile par tuile) : on repart des pastilles à zéro.
     _overlay.querySelectorAll('.scout-cand').forEach(el => el.remove());
     for (const c of _candidates) {
+        // Réunif peaufinage : on n'affiche QUE les nouveaux. Les doublons restent
+        // comptés dans le récap mais ne sont plus tracés (ils encombraient la carte).
+        if (c.dup) { c._el = null; continue; }
         const el = document.createElement('span');
-        el.className = 'scout-cand' + (c.dup ? ' dup' : '');
-        el.title = c.unknown ? 'Catégorie non devinée' : (c.cat || '') + (c.dup ? ' (doublon)' : '');
+        el.className = 'scout-cand';
+        el.title = c.unknown ? 'Catégorie non devinée' : (c.cat || '');
         c._el = el;
         _overlay.appendChild(el);
     }
@@ -415,41 +465,55 @@ async function scan() {
     clearCandidates();
     const seen = new Set();   // dédup inter-tuiles (POI à cheval sur 2 bbox) par id OSM
     const all = [];
-    let failed = 0;
     showLoading(true, multi ? `Moisson 1/${tiles.length}…` : 'Interrogation d’Overpass…');
+    let pending = tiles.map((t, i) => ({ t, i }));  // tuiles restant à scanner
+    let attempt = 0;
+    const MAX_ATTEMPTS = 3;                          // re-tente AUTO les parties en échec (3 essais)
     try {
-        // Séquentiel (une tuile à la fois) : poli pour Overpass, le round-robin
-        // répartit sur les 3 mirrors, et chaque petite bbox passe vite.
-        for (let i = 0; i < tiles.length; i++) {
-            if (!_isOpen) return; // quitté entre deux tuiles
-            if (multi) showLoading(true, `Moisson ${i + 1}/${tiles.length}… (${all.length} trouvés)`);
-            let json = null;
-            // Échec rapide par tuile (retries:0) ; une tuile qui plante ne tue pas le scan.
-            try { json = await fetchOverpassJson(buildQuery(tiles[i], _categories), { timeoutMs: 25000, retries: 0 }); }
-            catch (e) { failed++; continue; }
-            if (!_isOpen) return; // quitté pendant la requête
-            for (const el of (json.elements || [])) {
-                const lat = el.lat ?? el.center?.lat;
-                const lon = el.lon ?? el.center?.lon;
-                if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-                const key = el.type + '/' + el.id;
-                if (seen.has(key)) continue;
-                seen.add(key);
-                const tags = el.tags || {};
-                const cat = getHwCategory(tags);
-                all.push({ lat, lon, cat, unknown: !cat, dup: isAlreadyInData(lat, lon), name: tags.name || tags['name:fr'] || '' });
+        // Séquentiel (une tuile à la fois) : poli pour Overpass (round-robin 3 mirrors).
+        // Les tuiles en échec sont re-tentées automatiquement (jusqu'à 3 passes), avec
+        // une pause entre chaque ; les tuiles réussies sont conservées (all/seen persistent).
+        while (pending.length && attempt < MAX_ATTEMPTS) {
+            attempt++;
+            if (attempt > 1) {
+                showLoading(true, `Nouvel essai des parties en échec (${pending.length})…`);
+                await new Promise(r => setTimeout(r, 1500)); // pause : laisse Overpass respirer
+                if (!_isOpen) return;
             }
-            _candidates = all;
-            renderCandidates(); // rendu progressif : les pastilles apparaissent tuile par tuile
-            refreshRecap();
+            const stillFailed = [];
+            for (const { t, i } of pending) {
+                if (!_isOpen) return; // quitté entre deux tuiles
+                if (multi) showLoading(true, `Moisson ${i + 1}/${tiles.length}… (${all.length} trouvés)`);
+                let json = null;
+                // Échec rapide par tuile (retries:0) ; on la retentera à la passe suivante.
+                try { json = await fetchOverpassJson(buildQuery(t, _categories), { timeoutMs: 25000, retries: 0 }); }
+                catch (e) { stillFailed.push({ t, i }); continue; }
+                if (!_isOpen) return; // quitté pendant la requête
+                for (const el of (json.elements || [])) {
+                    const lat = el.lat ?? el.center?.lat;
+                    const lon = el.lon ?? el.center?.lon;
+                    if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
+                    const key = el.type + '/' + el.id;
+                    if (seen.has(key)) continue;
+                    seen.add(key);
+                    const tags = el.tags || {};
+                    const cat = getHwCategory(tags);
+                    all.push({ lat, lon, cat, unknown: !cat, dup: isAlreadyInData(lat, lon), name: tags.name || tags['name:fr'] || '' });
+                }
+                _candidates = all;
+                renderCandidates(); // rendu progressif : les pastilles apparaissent tuile par tuile
+                refreshRecap();
+            }
+            pending = stillFailed; // on ne retente QUE les tuiles encore en échec
         }
         _scannedBounds = { ..._box };
         refreshRecap(); // badge final : les refresh en boucle tournaient avant que _scannedBounds soit posé
         const net = all.filter(c => inBox(c) && !c.dup).length;
+        const failed = pending.length;
         if (failed === tiles.length) {
             showToast(multi ? 'Overpass indisponible sur toutes les parties. Réessaie.' : 'Overpass indisponible (timeout/erreur). Réessaie ou réduis la boîte.', 'error', 4500);
         } else if (failed) {
-            showToast(`${all.length} objets · ${net} nouveaux. ⚠ ${failed}/${tiles.length} partie(s) échouée(s) — re-scanne pour compléter.`, 'warning', 5000);
+            showToast(`${all.length} objets · ${net} nouveaux. ⚠ ${failed}/${tiles.length} partie(s) toujours en échec après ${MAX_ATTEMPTS} essais — réduis la boîte ou réessaie.`, 'warning', 5500);
         } else {
             showToast(`${all.length} objet${all.length > 1 ? 's' : ''} OSM · ${net} nouveau${net > 1 ? 'x' : ''} à importer.`, 'success', 3000);
         }
@@ -578,6 +642,7 @@ function renderShell() {
             <span class="scout-handle e" data-h="e"></span><span class="scout-handle w" data-h="w"></span>
             <span class="scout-count"><i data-lucide="scan-eye"></i><span data-scout-counttxt>—</span></span>
         </div>
+        <div class="scout-draw" data-scout-draw><span class="scout-draw-hint"><i data-lucide="crop"></i>Trace ta zone : clique-glisse sur la carte</span></div>
         <aside class="scout-panel">
             <div class="scout-panel-hd">
                 <span class="ic"><i data-lucide="scan-eye"></i></span>
@@ -628,12 +693,15 @@ function renderShell() {
     document.body.appendChild(_overlay);
     document.body.classList.add('scout-active');
     _boxEl = _overlay.querySelector('[data-scout-box]');
+    _drawLayer = _overlay.querySelector('[data-scout-draw]');
 
-    setTimeout(() => { try { map.invalidateSize(); } catch (_) {} resetBox(); }, 80);
+    // Pas de boîte au départ : on (re)cale la carte puis render() → boîte masquée
+    // + couche de tracé active (l'admin dessine sa zone au glisser).
+    setTimeout(() => { try { map.invalidateSize(); } catch (_) {} render(); }, 80);
 
     _overlay.querySelector('[data-scout-destname]').textContent = destName();
     _overlay.querySelector('[data-scout-quit]').addEventListener('click', stopScout);
-    _overlay.querySelector('[data-scout-reset]').addEventListener('click', resetBox);
+    _overlay.querySelector('[data-scout-reset]').addEventListener('click', clearBox);
     _overlay.querySelector('[data-scout-primary]').addEventListener('click', (e) => {
         (e.currentTarget.dataset.action === 'capture') ? capture() : scan();
     });
@@ -648,6 +716,7 @@ function renderShell() {
     _overlay.querySelector('[data-scout-search-btn]')?.addEventListener('click', () => geocodeAndFly(searchInput?.value));
     searchInput?.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); geocodeAndFly(searchInput.value); } });
     _boxEl.addEventListener('pointerdown', onPointerDown);
+    _drawLayer.addEventListener('pointerdown', onDrawDown);
     _onMapMove = () => render();
     map.on('move zoom zoomanim resize', _onMapMove);
     updatePrimary();
@@ -672,10 +741,11 @@ export function startScout() {
 export function stopScout() {
     if (!_isOpen) return;
     if (_drag) onPointerUp();
+    if (_drawStart) onDrawUp(); // tracé en cours → on clôt proprement (retire les listeners)
     if (_onMapMove) { map.off('move zoom zoomanim resize', _onMapMove); _onMapMove = null; }
     clearCandidates();
     if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
-    _overlay = null; _boxEl = null; _box = null; _scannedBounds = null;
+    _overlay = null; _boxEl = null; _drawLayer = null; _box = null; _scannedBounds = null;
     document.body.classList.remove('scout-active');
     setTimeout(() => { try { map.invalidateSize(); } catch (_) {} }, 80);
     _isOpen = false; _scanning = false;
