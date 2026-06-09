@@ -398,7 +398,7 @@ function buildQuery(b, cats) {
 function showLoading(on, sub) {
     const el = _overlay?.querySelector('[data-scout-loading]');
     if (!el) return;
-    el.style.display = on ? 'flex' : 'none';
+    el.classList.toggle('is-on', on); // classe (CSP-safe) — l'overlay n'a plus de style inline
     if (on && sub) { const s = el.querySelector('[data-scout-loadingsub]'); if (s) s.textContent = sub; }
 }
 
@@ -581,7 +581,7 @@ function renderShell() {
         <aside class="scout-panel">
             <div class="scout-panel-hd">
                 <span class="ic"><i data-lucide="scan-eye"></i></span>
-                <div style="flex:1"><h4>Capturer une zone</h4><div class="sub">Moisson OpenStreetMap</div></div>
+                <div class="scout-hd-main"><h4>Capturer une zone</h4><div class="sub">Moisson OpenStreetMap</div></div>
                 <button class="scout-quit" type="button" data-scout-quit><i data-lucide="x"></i>Quitter</button>
             </div>
             <div class="scout-panel-bd">
@@ -589,7 +589,7 @@ function renderShell() {
                     <label class="scout-lbl">Destination</label>
                     <button class="dest-sel" data-scout-dest-repasse type="button" disabled>
                         <span class="ic"><i data-lucide="map"></i></span>
-                        <span style="flex:1"><span class="nm" data-scout-destname>—</span><span class="ct" data-scout-destmode>publiée · repasse</span></span>
+                        <span class="scout-dest-main"><span class="nm" data-scout-destname>—</span><span class="ct" data-scout-destmode>publiée · repasse</span></span>
                     </button>
                     <div class="scout-search" data-scout-dest-new hidden>
                         <input type="search" data-scout-search placeholder="Lieu : hôtel, ville, site…" autocomplete="off">
@@ -619,11 +619,11 @@ function renderShell() {
                 <div class="scout-note" data-scout-note><i data-lucide="info"></i><span data-scout-notetxt>Overpass peut être lent sur une grande zone. Garde la boîte raisonnablement petite — tu pourras repasser à côté.</span></div>
             </div>
             <div class="scout-panel-ft">
-                <button class="btn btn-ghost" type="button" data-scout-reset style="flex:1;justify-content:center"><i data-lucide="rotate-ccw"></i>Réinit.</button>
-                <button class="btn btn-primary" type="button" data-scout-primary style="flex:1.5;justify-content:center"><i data-lucide="scan-eye"></i><span data-scout-primary-txt>Scanner la zone</span></button>
+                <button class="btn btn-ghost scout-ft-btn" type="button" data-scout-reset><i data-lucide="rotate-ccw"></i>Réinit.</button>
+                <button class="btn btn-primary scout-ft-btn scout-ft-btn--primary" type="button" data-scout-primary><i data-lucide="scan-eye"></i><span data-scout-primary-txt>Scanner la zone</span></button>
             </div>
         </aside>
-        <div class="scout-loading" data-scout-loading style="display:none"><span class="spin"></span><div><div style="font-weight:600">Moisson en cours…</div><div style="font-size:11.5px;color:var(--ink-soft)" data-scout-loadingsub>Interrogation d’Overpass…</div></div></div>
+        <div class="scout-loading" data-scout-loading><span class="spin"></span><div><div class="scout-loading-title">Moisson en cours…</div><div class="scout-loading-sub" data-scout-loadingsub>Interrogation d’Overpass…</div></div></div>
     `;
     document.body.appendChild(_overlay);
     document.body.classList.add('scout-active');
