@@ -1,6 +1,7 @@
 // app-startup.js
 import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setPoiCategories } from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
+import { setZonesData } from './zones.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -99,6 +100,34 @@ export async function loadDestinationsConfig() {
 
     if (config) {
         setDestinations(config);
+    }
+}
+
+// Zones (quartiers OSM) de la destination ACTIVE — réunif : remplace l'ancien
+// zones.js codé en dur (Djerba only) par un chargement PAR destination.
+//   - publiée : fetch public/{dest}-zones.geojson (+ cache offline `lastZones_`) ;
+//   - brouillon local : IndexedDB (clé draftZones_{id}).
+// Échec/absence → zones vides → getZoneFromCoords renvoie « A définir » (sûr).
+async function loadZonesForActive(mapId, dest) {
+    try {
+        if (dest?.custom) {
+            const z = await getAppState(`draftZones_${mapId}`);
+            setZonesData(z || { type: 'FeatureCollection', features: [] });
+            return;
+        }
+        const baseUrl = import.meta.env?.BASE_URL || './';
+        const zonesFile = dest?.zonesFile || `${mapId}-zones.geojson`;
+        const resp = await fetch(`${baseUrl}${zonesFile}?t=${Date.now()}`, { cache: 'reload' });
+        if (resp.ok) {
+            const z = await resp.json();
+            setZonesData(z);
+            try { await saveAppState(`lastZones_${mapId}`, z); } catch (e) {}
+            return;
+        }
+        throw new Error(`zones HTTP ${resp.status}`);
+    } catch (e) {
+        const cached = await getAppState(`lastZones_${mapId}`);
+        setZonesData(cached || { type: 'FeatureCollection', features: [] });
     }
 }
 
@@ -219,6 +248,10 @@ export async function loadAndInitializeMap() {
             console.error("Erreur download map", e);
         }
     }
+
+    // Zones de la destination active (réunif) : chargement dynamique par dest
+    // (fetch {dest}-zones.geojson, ou IndexedDB pour un brouillon local).
+    await loadZonesForActive(activeMapId, state.destinations?.maps?.[activeMapId]);
 
     if (!geojsonData) {
         showToast("Impossible de charger la carte.", 'error');
