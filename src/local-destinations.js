@@ -18,10 +18,10 @@
 // filtre du sélecteur topbar) les masquent aux non-admins. De toute façon un
 // non-admin (autre appareil) n'a aucun brouillon dans SON IndexedDB.
 import { state } from './state.js';
-import { getAppState, saveAppState } from './database.js';
+import { getAppState, saveAppState, deleteAppState } from './database.js';
 
-// Interne : la map { id: entrée } des brouillons locaux.
-async function getDraftDestinations() {
+// La map { id: entrée } des brouillons locaux. Exportée pour C2b (publication).
+export async function getDraftDestinations() {
     return (await getAppState('draftDestinations')) || {};
 }
 
@@ -50,10 +50,22 @@ export async function mergeLocalDraftDestinations() {
     if (!drafts || !Object.keys(drafts).length) return;
     if (!state.destinations) state.destinations = { activeMapId: 'djerba', maps: {} };
     if (!state.destinations.maps) state.destinations.maps = {};
+    const supersededByGitHub = [];
     for (const [id, entry] of Object.entries(drafts)) {
         const existing = state.destinations.maps[id];
-        if (existing && !existing.custom) continue; // ne pas masquer une vraie dest publiée
+        if (existing && !existing.custom) {
+            // Une vraie dest (GitHub) porte cet id → GitHub gagne (on ne masque pas
+            // une dest publiée). Si c'est NOTRE brouillon publié (C2b) désormais
+            // déployé sur GitHub Pages, on nettoie sa copie locale devenue inutile.
+            // Un id qui collisionne sans drapeau publishedToGitHub est laissé tel quel.
+            if (entry.publishedToGitHub) supersededByGitHub.push(id);
+            continue;
+        }
         state.destinations.maps[id] = { ...entry, status: 'draft', custom: true };
+    }
+    // Nettoyage HORS boucle (removeLocalDraft réécrit draftDestinations). Best-effort.
+    for (const id of supersededByGitHub) {
+        try { await removeLocalDraft(id); } catch (e) { /* ignore */ }
     }
 }
 
@@ -82,4 +94,40 @@ export async function createLocalDraftDestination(id, entry, geojson, zones) {
     await saveAppState('draftDestinations', drafts);
     await saveAppState(`draftGeoJSON_${id}`, geojson || { type: 'FeatureCollection', features: [] });
     await saveAppState(`draftZones_${id}`, zones || { type: 'FeatureCollection', features: [] });
+}
+
+// Zones (OSM) d'un brouillon local — lues à la publication GitHub (C2b).
+// IndexedDB en échec → collection vide (pas de crash).
+export async function getDraftZones(id) {
+    try {
+        return (await getAppState(`draftZones_${id}`)) || { type: 'FeatureCollection', features: [] };
+    } catch (e) {
+        return { type: 'FeatureCollection', features: [] };
+    }
+}
+
+// Retire un brouillon LOCAL (entrée + geojson + zones) une fois sa version GitHub
+// détectée live (C2b) : la copie locale n'a plus lieu d'être. Interne (appelé par
+// mergeLocalDraftDestinations). Best-effort sur les clés annexes (un résidu
+// draftGeoJSON_/draftZones_ orphelin est inoffensif).
+async function removeLocalDraft(id) {
+    const drafts = await getDraftDestinations();
+    if (drafts[id]) {
+        delete drafts[id];
+        await saveAppState('draftDestinations', drafts);
+    }
+    try { await deleteAppState(`draftGeoJSON_${id}`); } catch (e) { /* best-effort */ }
+    try { await deleteAppState(`draftZones_${id}`); } catch (e) { /* best-effort */ }
+}
+
+// Marque un brouillon local comme PUBLIÉ sur GitHub (C2b) SANS le supprimer : tant
+// que GitHub Pages n'a pas redéployé (~1-2 min), la copie locale reste la source
+// affichée sur cet appareil (reload compris). mergeLocalDraftDestinations nettoie
+// la copie locale au 1er boot où la version GitHub (entrée non-custom) est détectée.
+export async function markLocalDraftPublished(id) {
+    const drafts = await getDraftDestinations();
+    if (drafts[id]) {
+        drafts[id] = { ...drafts[id], publishedToGitHub: true };
+        await saveAppState('draftDestinations', drafts);
+    }
 }

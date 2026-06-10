@@ -14,10 +14,12 @@ export const RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GIT
 /** Chemins standardisés dans le dépôt */
 export const GITHUB_PATHS = {
     geojson:     (mapId)    => `public/${mapId}.geojson`,
+    zones:       (mapId)    => `public/${mapId}-zones.geojson`,
     circuits:    (mapId)    => `public/circuits/${mapId}.json`,
     circuitFile: (mapId, filename) => `public/circuits/${mapId}/${filename}`,
     photo:       (filename) => `public/photos/${filename}`,
     tested:      (mapId)    => `public/circuits/tested_${mapId}.json`,
+    destinations: ()        => `public/destinations.json`,
 };
 
 /**

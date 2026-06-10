@@ -644,8 +644,24 @@ export function renderTab(tab, diffData, callbacks) {
         // dans le CC admin (remplace le menu admin God Mode qui devient minimal).
         // 5 cartes : Publier circuit (sub-panel) / Scout (lien externe) / DM (lien
         // externe) / Exporter Master GeoJSON (action) / Importer carte GeoJSON (action).
+        // C2b — carte de publication visible UNIQUEMENT sur un brouillon LOCAL
+        // (créé via le Scout « Nouvelle », pas encore poussé sur GitHub). custom:true
+        // est posé par mergeLocalDraftDestinations ; absent sur une dest GitHub.
+        const activeDest = state.destinations?.maps?.[state.currentMapId];
+        const isLocalDraft = activeDest?.custom === true;
+        const publishDraftCardHtml = isLocalDraft ? `
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-publish-draft" aria-label="Publier ce brouillon de destination sur GitHub (multi-appareils)">
+                <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Publier en brouillon GitHub</div>
+                    <div class="cc-card-sub">Brouillon local (cet appareil) → le rendre multi-appareils</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>` : '';
+
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
+            ${publishDraftCardHtml}
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
                 <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
                 <div class="cc-card-text">
@@ -752,6 +768,50 @@ export function renderTab(tab, diffData, callbacks) {
                 closeCCModal();
                 const { startScout } = await import('./scout.js');
                 startScout();
+            });
+
+            // Outils — Publier en brouillon GitHub (C2b) : visible seulement sur un
+            // brouillon LOCAL. Pousse 4 fichiers en status:"draft" (multi-appareils,
+            // comme Hammamet). « Officialiser » (draft→published) viendra plus tard.
+            bindCardAction('btn-cc-tool-publish-draft', async () => {
+                const mapId = state.currentMapId;
+                const dest = state.destinations?.maps?.[mapId];
+                if (!dest?.custom) {
+                    showToast('Cette action ne concerne qu\'un brouillon local.', 'warning', 3500);
+                    return;
+                }
+                const { getDraftGeoJSON } = await import('./local-destinations.js');
+                const n = (await getDraftGeoJSON(mapId)).features?.length || 0;
+                if (n === 0) {
+                    showToast('Ce brouillon ne contient aucun lieu à publier.', 'warning', 3500);
+                    return;
+                }
+                const { hwConfirm, hwAlert } = await import('./modal.js');
+                closeCCModal(); // fermer le CC avant les modales (évite l'empilement)
+                const ok = await hwConfirm({
+                    title: 'Publier en brouillon GitHub',
+                    body: `<p>Publier <strong>${dest.name}</strong> en brouillon sur GitHub ?</p>`
+                        + `<p>${n} lieu(x) seront poussés en statut <em>brouillon</em> — visible par l'admin seulement, et accessible depuis tous tes appareils. Tu pourras « Officialiser » plus tard.</p>`,
+                    confirmLabel: 'Publier',
+                    cancelLabel: 'Annuler',
+                });
+                if (!ok) return;
+                showToast('Publication sur GitHub en cours…', 'info', 8000);
+                try {
+                    const { publishDraftToGitHub } = await import('./publish-destination.js');
+                    const res = await publishDraftToGitHub(mapId);
+                    await hwAlert({
+                        title: 'Brouillon publié ✓',
+                        body: `<p><strong>${res.name}</strong> est publiée en brouillon sur GitHub (${res.pois} lieu(x)).</p>`
+                            + `<p>Accessible depuis tes autres appareils d'ici 1 à 2 min (déploiement GitHub Pages). Sur cet appareil, tu continues à la voir normalement.</p>`,
+                    });
+                } catch (e) {
+                    await hwAlert({
+                        title: 'Échec de la publication',
+                        body: `<p>La publication n'a pas abouti :</p><p><em>${e.message}</em></p>`
+                            + `<p>Ton brouillon local est intact — tu peux réessayer.</p>`,
+                    });
+                }
             });
 
             // Outils — Data Manager : ouvre le DM (même repo, sous-dossier)
