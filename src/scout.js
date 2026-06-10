@@ -498,7 +498,12 @@ async function scan() {
                     seen.add(key);
                     const tags = el.tags || {};
                     const cat = getHwCategory(tags);
-                    all.push({ lat, lon, cat, unknown: !cat, dup: isAlreadyInData(lat, lon), name: tags.name || tags['name:fr'] || '' });
+                    // Doublon si < 50 m d'un POI EXISTANT (règle #472) OU d'un candidat
+                    // déjà retenu dans CE scan : OSM a parfois 2 entrées au même lieu
+                    // (ex. mosquée dédoublée). On garde la 1ʳᵉ, on écarte la 2ᵉ.
+                    const dup = isAlreadyInData(lat, lon)
+                        || all.some(c => !c.dup && haversineM(lat, lon, c.lat, c.lon) < DEDUP_M);
+                    all.push({ lat, lon, cat, unknown: !cat, dup, name: tags.name || tags['name:fr'] || '' });
                 }
                 _candidates = all;
                 renderCandidates(); // rendu progressif : les pastilles apparaissent tuile par tuile

@@ -566,6 +566,7 @@ export function openFilterPanel() {
     const panel = document.getElementById(PANEL_ID);
     if (!panel) return;
     panel.classList.add('is-open');
+    document.body.classList.add('hw-filter-open'); // décale les contrôles carte (Mode Données, CSS)
     populateCategoriesSection();
     populateParcoursSection();
     populateFicheSection();
@@ -576,6 +577,7 @@ export function openFilterPanel() {
 
 export function closeFilterPanel() {
     document.getElementById(PANEL_ID)?.classList.remove('is-open');
+    document.body.classList.remove('hw-filter-open');
     closeZonesList();
 }
 

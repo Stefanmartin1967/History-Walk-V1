@@ -6,7 +6,7 @@ import { isMobileView, pushMobileLevel, animateContainer, setMobileHeaderSlot, s
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
-import { sanitizeHTML } from './utils.js';
+import { sanitizeHTML, openPoiOnMap } from './utils.js';
 import { openPhotoGrid } from './ui-photo-grid.js';
 import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
