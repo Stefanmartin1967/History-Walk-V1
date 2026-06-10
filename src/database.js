@@ -193,6 +193,15 @@ export async function saveAppState(key, value) {
     }));
 }
 
+export async function deleteAppState(key) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const transaction = db.transaction('appState', 'readwrite');
+        const request = transaction.objectStore('appState').delete(key);
+        request.onsuccess = () => resolve();
+        request.onerror = (event) => reject(event.target.error);
+    }));
+}
+
 export async function getAllPoiDataForMap(mapId) {
     return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('poiUserData', 'readonly');
