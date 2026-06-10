@@ -135,6 +135,10 @@ body.mode-donnees-active .hw-filter-panel { left: 354px !important; z-index: 160
    enfin accès au fond « Plan » (libellés de rues, absents de Voyager).
    ============================================================ */
 body.mode-donnees-active .leaflet-top.leaflet-left { left: 354px; }
+/* Panneau Filtres ouvert (lui aussi posé à left 354, z 1600) → il masquait les
+   contrôles. On les bascule au bord DROIT (clair du rail ET du panneau Filtres).
+   `hw-filter-open` posé sur <body> par filter-panel.js (open/closeFilterPanel). */
+body.mode-donnees-active.hw-filter-open .leaflet-top.leaflet-left { left: auto; right: 12px; }
 
 /* ============================================================
    6. Surlignage du POI sélectionné = épingle « qui tombe » (réunif A3f, n°3)

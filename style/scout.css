@@ -22,6 +22,11 @@ body.scout-active #map { top: 0 !important; right: 0 !important; }
     pointer-events: none; /* carte pannable dessous ; boîte + panneau en auto */
 }
 
+/* Contrôles carte Leaflet (zoom, couches, recentrer, légende) — TOUS en topleft :
+   le panneau Scout (left 12, largeur 330) les masquait. On décale la pile à droite
+   du panneau (354 = 12 + 330 + 12), comme en Mode Données. */
+body.scout-active .leaflet-top.leaflet-left { left: 354px; }
+
 /* ============================================================
    2. BOÎTE SCOUT (rectangle de moisson sur la carte) — portée maquette §7.
    Positionnée en px (viewport) par scout.js via projection Leaflet ; ancrée
