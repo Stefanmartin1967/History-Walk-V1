@@ -405,11 +405,10 @@ export async function loadAndInitializeMap() {
         enableDesktopCreationMode();
 
         try {
+            // displayGeoJSON se termine déjà par applyFilters() → PAS de second
+            // appel ici (P3 : évitait une 2ᵉ construction complète des marqueurs
+            // au boot, dos à dos avec la première).
             await displayGeoJSON(geojsonData, activeMapId);
-
-            // Compteur planifié calculé à la volée par computePlanifieCounter (data.js)
-            // Refresh UI avec les filtres
-            applyFilters();
 
             // Cadrage carte au boot : on fait confiance au startView défini
             // dans destinations.json (utilisé par L.map à la création) et on

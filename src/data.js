@@ -333,22 +333,36 @@ export async function displayGeoJSON(geoJSON, mapId) {
  * @param {string} poiId - HW_ID du POI
  * @returns {number} - Nombre de circuits actifs contenant ce POI
  */
-export function computePlanifieCounter(poiId) {
-    if (!poiId) return 0;
-
+// Circuits ACTIFS = officiels non cachés + perso non supprimés non cachés.
+// Source unique pour computePlanifieCounter et buildPlannedPoiSet (P4).
+function getActiveCircuits() {
     const hidden = state.hiddenCircuitIds || [];
     const isHidden = (c) => hidden.includes(String(c.id));
-
-    // 1. Circuits officiels non cachés
     const activeOfficial = (state.officialCircuits || []).filter(c => !isHidden(c));
-
-    // 2. Circuits perso non supprimés et non cachés
     const activePerso = (state.myCircuits || []).filter(c => !c.isDeleted && !isHidden(c));
+    return [...activeOfficial, ...activePerso];
+}
 
-    // 3. Compter ceux qui contiennent ce POI
-    return [...activeOfficial, ...activePerso]
+export function computePlanifieCounter(poiId) {
+    if (!poiId) return 0;
+    return getActiveCircuits()
         .filter(c => Array.isArray(c.poiIds) && c.poiIds.includes(poiId))
         .length;
+}
+
+/**
+ * Ensemble des POI présents dans AU MOINS un circuit actif. Construit UNE fois
+ * par passe de filtrage (P4) : remplace l'appel computePlanifieCounter O(circuits)
+ * par POI (→ O(N×M) par filtre, ×2 avec les zones) par une construction O(M) +
+ * consultation O(1). À 1000 POI × dizaines de circuits, c'est le cœur du gain.
+ * @returns {Set<string>} HW_IDs planifiés
+ */
+export function buildPlannedPoiSet() {
+    const set = new Set();
+    for (const c of getActiveCircuits()) {
+        if (Array.isArray(c.poiIds)) for (const id of c.poiIds) set.add(id);
+    }
+    return set;
 }
 
 // --- 1. LE TAMIS PUR (Le Cerveau) ---
@@ -360,7 +374,7 @@ export function computePlanifieCounter(poiId) {
 // Ne traite PAS les filtres structurels (zone, catégorie multi). Réutilisée par
 // getFilteredFeatures et getZonesData pour garantir la cohérence du compteur de
 // zones avec les POI réellement affichés.
-export function passesUserFilters(feature) {
+export function passesUserFilters(feature, plannedSet = null) {
     if (!feature) return false;
     const props = { ...feature.properties, ...feature.properties.userData };
     const poiId = getPoiId(feature);
@@ -395,10 +409,14 @@ export function passesUserFilters(feature) {
     // en mode création de circuit.
     if (f.vus === 'hide' && props.vu) return false;
     if (f.vus === 'only' && !props.vu) return false;
-    // Calcul à la volée du compteur planifié (évite la désync stockée)
-    const isPlanned = computePlanifieCounter(props.HW_ID) > 0;
-    if (f.planifies === 'hide' && isPlanned) return false;
-    if (f.planifies === 'only' && !isPlanned) return false;
+    // Filtre Planifiés — évalué SEULEMENT s'il est actif (P4 : sinon on balayait
+    // tous les circuits pour CHAQUE POI, même filtre éteint = cas courant). Set
+    // pré-construit par la passe de filtrage quand fourni ; sinon repli ponctuel.
+    if (f.planifies === 'hide' || f.planifies === 'only') {
+        const isPlanned = plannedSet ? plannedSet.has(poiId) : computePlanifieCounter(poiId) > 0;
+        if (f.planifies === 'hide' && isPlanned) return false;
+        if (f.planifies === 'only' && !isPlanned) return false;
+    }
 
     return true;
 }
@@ -430,8 +448,12 @@ export function passesStructuralFilters(feature, { skipZone = false } = {}) {
 // Il ne fait que du tri mathématique en mémoire. Il ne touche pas à la carte.
 export function getFilteredFeatures() {
     if (!state.loadedFeatures) return [];
+    // Set planifiés construit UNE fois pour toute la passe (P4), uniquement si le
+    // filtre Planifiés est actif.
+    const pf = state.activeFilters.planifies;
+    const plannedSet = (pf === 'hide' || pf === 'only') ? buildPlannedPoiSet() : null;
     return state.loadedFeatures.filter(feature =>
-        passesStructuralFilters(feature) && passesUserFilters(feature)
+        passesStructuralFilters(feature) && passesUserFilters(feature, plannedSet)
     );
 }
 

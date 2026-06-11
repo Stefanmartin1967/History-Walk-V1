@@ -495,7 +495,12 @@ export function refreshMapMarkers(visibleFeatures) {
         }
     });
     
-    tempLayer.eachLayer(layer => state.geojsonLayer.addLayer(layer));
+    // Ajout EN MASSE (P3) : addLayers (pluriel) active le chunkedLoading de
+    // markercluster. L'ancien addLayer un-par-un dans la boucle le neutralisait
+    // → chemin le plus lent à chaque filtre. Invisible à 294 POI, coûteux à 1000.
+    const markers = [];
+    tempLayer.eachLayer(layer => markers.push(layer));
+    state.geojsonLayer.addLayers(markers);
 
     if (state.activeFilters.zone && state.geojsonLayer.getLayers().length > 0) {
         const bounds = state.geojsonLayer.getBounds();
