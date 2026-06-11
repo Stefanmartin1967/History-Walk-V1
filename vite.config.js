@@ -28,8 +28,9 @@ export default defineConfig({
         // Les fichiers .geojson sont exclus du precache (CacheFirst trop agressif)
         // et gérés en NetworkFirst via runtimeCaching ci-dessous.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webp}'],
-        // Limite élevée pour les grandes images (badges, gamification : jusqu'à ~8 MB)
-        maximumFileSizeToCacheInBytes: 20 * 1024 * 1024,
+        // og-image.png (720 KB) : utilisée par les scrapers sociaux, inutile hors-ligne
+        globIgnores: ['**/og-image.png'],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Les .gpx (partage/téléchargement de circuit) ne doivent PAS être happés
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
         // vers …/circuits/x.gpx) sert l'app (index.html) au lieu du fichier, et HW

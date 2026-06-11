@@ -163,6 +163,11 @@ async function initializeApp() {
     try {
         await initDB();
 
+        // Demande à l'OS de ne jamais évincer l'IndexedDB de Heripia sous pression
+        // mémoire. Sans ça, un navigateur peut supprimer silencieusement photos et
+        // POIs perso en cas de stockage faible (comportement observé sur Android).
+        navigator.storage?.persist?.();
+
         // P3.2 : charger le PAT GitHub depuis IndexedDB (avec migration
         // automatique depuis l'ancien localStorage['github_pat']). Doit
         // s'exécuter avant toute opération admin/sync qui lit le token.
