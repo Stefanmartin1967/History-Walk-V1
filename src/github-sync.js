@@ -16,6 +16,7 @@
 //   - saveToken(token) : sync vis-à-vis du cache, persiste l'IDB en arrière-plan.
 
 import { getAppState, saveAppState } from './database.js';
+import { fetchWithTimeout } from './net.js';
 
 const STORAGE_KEY_TOKEN = 'github_pat';
 const STORAGE_KEY_USERNAME = 'github_username';
@@ -131,7 +132,7 @@ export async function validateToken(token) {
     }
     let response;
     try {
-        response = await fetch('https://api.github.com/user', {
+        response = await fetchWithTimeout('https://api.github.com/user', {
             headers: {
                 'Authorization': `token ${clean}`,
                 'Accept': 'application/vnd.github.v3+json'
@@ -208,7 +209,7 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
     // 2. Vérifier si le fichier existe déjà pour récupérer son SHA (nécessaire pour update)
     let sha = null;
     try {
-        const checkResponse = await fetch(apiUrl, {
+        const checkResponse = await fetchWithTimeout(apiUrl, {
             headers: {
                 'Authorization': `token ${token}`,
                 'Accept': 'application/vnd.github.v3+json'
@@ -234,7 +235,7 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
     }
 
     // 4. Envoyer la requête PUT
-    const response = await fetch(apiUrl, {
+    const response = await fetchWithTimeout(apiUrl, {
         method: 'PUT',
         headers: {
             'Authorization': `token ${token}`,
@@ -266,7 +267,7 @@ export async function deleteFileFromGitHub(token, owner, repo, path, message) {
     // 1. Récupérer le SHA du fichier (obligatoire pour DELETE)
     let sha = null;
     try {
-        const checkResponse = await fetch(apiUrl, {
+        const checkResponse = await fetchWithTimeout(apiUrl, {
             headers: {
                 'Authorization': `token ${token}`,
                 'Accept': 'application/vnd.github.v3+json'
@@ -288,7 +289,7 @@ export async function deleteFileFromGitHub(token, owner, repo, path, message) {
         sha: sha
     };
 
-    const response = await fetch(apiUrl, {
+    const response = await fetchWithTimeout(apiUrl, {
         method: 'DELETE',
         headers: {
             'Authorization': `token ${token}`,

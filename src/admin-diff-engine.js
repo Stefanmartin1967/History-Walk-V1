@@ -1,4 +1,5 @@
 import { state } from './state.js';
+import { fetchWithTimeout } from './net.js';
 import { getPoiId, getPoiName } from './utils.js';
 import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, savePoiData, deletePoiData } from './database.js';
@@ -106,9 +107,9 @@ export async function prepareDiffData(adminDraft) {
     // 1. Fetch Remote Data (POIs + Circuits + Tested)
     try {
         const [respGeo, respCirc, respTested] = await Promise.all([
-            fetch(`${RAW_BASE}/${GITHUB_PATHS.geojson(mapId)}?t=${timestamp}`),
-            fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`),
-            fetch(`${RAW_BASE}/${GITHUB_PATHS.tested(mapId)}?t=${timestamp}`)
+            fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.geojson(mapId)}?t=${timestamp}`),
+            fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`),
+            fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.tested(mapId)}?t=${timestamp}`)
         ]);
 
         if (respGeo.ok) {

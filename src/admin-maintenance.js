@@ -1,4 +1,5 @@
 import { state, removeMyCircuit } from './state.js';
+import { fetchWithTimeout } from './net.js';
 import { getStoredToken, deleteFileFromGitHub } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { deleteCircuitById, restoreCircuit } from './database.js';
@@ -27,7 +28,7 @@ async function fetchServerCircuits() {
     const url = `${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`;
 
     try {
-        const response = await fetch(url);
+        const response = await fetchWithTimeout(url);
         if (!response.ok) throw new Error("Impossible de charger circuits.json");
         return await response.json();
     } catch (e) {

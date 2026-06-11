@@ -1,6 +1,7 @@
 
 // circuit-actions.js
 import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode } from './state.js';
+import { fetchWithTimeout } from './net.js';
 import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit, saveAppState } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
 import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters } from './data.js';
@@ -63,7 +64,7 @@ export async function checkCircuitDuplicate(poiIds, excludeId = null) {
 
     const mapId = state.currentMapId || 'djerba';
     try {
-        const res = await fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
+        const res = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
         if (!res.ok) return null;
         const remote = await res.json();
         const sig = poiIds.join('|');

@@ -11,6 +11,7 @@
 // statique d'Heripia. Online-only : la création de circuit se fait sur PC, le
 // vol d'oiseau reste le repli hors-ligne / si BRouter est indisponible.
 import { getAccessPoint } from './utils.js';
+import { fetchWithTimeout } from './net.js';
 
 const BROUTER_URL = 'https://brouter.de/brouter';
 export const DEFAULT_PROFILE = 'hiking-beta'; // profil rando piéton validé sur Djerba
@@ -82,7 +83,9 @@ export async function routePoints(points, profile = DEFAULT_PROFILE) {
 
     let resp;
     try {
-        resp = await fetch(url);
+        // 20 s : un routage long (nombreux points) peut être plus lent qu'une API
+        // classique, mais ne doit pas pendre indéfiniment sur un serveur muet.
+        resp = await fetchWithTimeout(url, {}, 20000);
     } catch (e) {
         throw new Error('BRouter est injoignable — vérifiez la connexion internet.');
     }

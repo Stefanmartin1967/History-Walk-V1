@@ -9,6 +9,7 @@ import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
 import { savePoiData, batchSavePoiData, saveAppState } from './database.js';
 import { eventBus } from './events.js';
+import { fetchWithTimeout } from './net.js';
 
 const GIST_ID_KEY    = 'hw_gist_id';
 const GIST_FILE_NAME = 'history_walk_userdata.json';
@@ -175,7 +176,7 @@ export function mergeRemoteIntoLocal(remote) {
 // ─── API GIST ─────────────────────────────────────────────────────────────────
 
 async function fetchGist(token, gistId) {
-    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+    const res = await fetchWithTimeout(`https://api.github.com/gists/${gistId}`, {
         headers: getHeaders(token)
     });
     if (!res.ok) throw new Error(`Gist fetch failed: ${res.status}`);
@@ -197,7 +198,7 @@ async function fetchGist(token, gistId) {
  */
 async function discoverGistId(token) {
     try {
-        const res = await fetch('https://api.github.com/gists?per_page=100', {
+        const res = await fetchWithTimeout('https://api.github.com/gists?per_page=100', {
             headers: getHeaders(token)
         });
         if (!res.ok) {
@@ -217,7 +218,7 @@ async function discoverGistId(token) {
 }
 
 async function createGist(token, payload) {
-    const res = await fetch('https://api.github.com/gists', {
+    const res = await fetchWithTimeout('https://api.github.com/gists', {
         method: 'POST',
         headers: getHeaders(token),
         body: JSON.stringify({
@@ -232,7 +233,7 @@ async function createGist(token, payload) {
 }
 
 async function updateGist(token, gistId, payload) {
-    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+    const res = await fetchWithTimeout(`https://api.github.com/gists/${gistId}`, {
         method: 'PATCH',
         headers: getHeaders(token),
         body: JSON.stringify({
