@@ -17,7 +17,34 @@ vi.mock('../src/ui-dom.js', () => ({
     DOM: {}
 }));
 
-import { validatePhotoFile, MAX_PHOTO_SIZE_BYTES, compressImage, ADMIN_WATERMARK_TEXT, applyWatermark } from '../src/photo-service.js';
+import {
+    validatePhotoFile, MAX_PHOTO_SIZE_BYTES, compressImage, ADMIN_WATERMARK_TEXT, applyWatermark,
+    PUBLISH_COMPRESSION, ADMIN_COMPRESSION, USER_COMPRESSION,
+} from '../src/photo-service.js';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Profils de compression — décision du 11/06/2026 (comparateur sur vraies photos).
+// Ces tests verrouillent la décision : un changement de profil doit être un choix
+// explicite (modifier le test), pas une dérive au détour d'un refactor.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('Profils de compression', () => {
+    it('PUBLISH_COMPRESSION = 1080 px (plus petit côté) · JPEG 75 % (décision 11/06/2026)', () => {
+        expect(PUBLISH_COMPRESSION).toEqual({ targetMinSize: 1080, quality: 0.75 });
+    });
+
+    it('la grille admin (OPTIMIZED) suit le profil de publication — un seul profil publié', () => {
+        expect(ADMIN_COMPRESSION.OPTIMIZED.targetMinSize).toBe(PUBLISH_COMPRESSION.targetMinSize);
+        expect(ADMIN_COMPRESSION.OPTIMIZED.quality).toBe(PUBLISH_COMPRESSION.quality);
+    });
+
+    it('ORIGINAL reste un échappatoire pleine qualité (natif, JPEG 95 %)', () => {
+        expect(ADMIN_COMPRESSION.ORIGINAL).toMatchObject({ targetMinSize: 0, quality: 0.95 });
+    });
+
+    it('USER_COMPRESSION (photos perso IndexedDB) inchangé : 1200 px · JPEG 80 %', () => {
+        expect(USER_COMPRESSION).toEqual({ targetMinSize: 1200, quality: 0.8 });
+    });
+});
 
 describe('validatePhotoFile', () => {
     it('accepte un File JPEG sous le cap', () => {
@@ -95,8 +122,9 @@ describe('compressImage — validation en entrée', () => {
 // Watermark admin — la chaîne complète compressImage→canvas.toBlob ne tourne pas
 // sous jsdom (toBlob non implémenté). Mais applyWatermark, elle, opère sur un ctx :
 // on la teste en isolation avec un ctx mocké. Le rendu visuel réel reste validé
-// par smoke test live. applyWatermark est la SOURCE UNIQUE du watermark, partagée
-// par compressImage (grille) et compressFileToBlob (import GPS) — cf. fix v3.7.88.
+// par smoke test live. applyWatermark est la SOURCE UNIQUE du watermark, consommée
+// par compressImage — l'UNIQUE encodeur depuis la fusion de compressFileToBlob
+// (import GPS) du 11/06/2026 ; cf. fix v3.7.88 pour l'historique.
 // ─────────────────────────────────────────────────────────────────────────────
 describe('ADMIN_WATERMARK_TEXT', () => {
     it('exporte le texte exact "© Stefan Martin — Heripia"', () => {

@@ -19,7 +19,7 @@ import {
 import { showToast } from './toast.js';
 import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal, hwConfirm } from './modal.js';
 import { createZipBlob } from './zip-store.js';
-import { applyWatermark, ADMIN_WATERMARK_TEXT } from './photo-service.js';
+import { compressImage, PUBLISH_COMPRESSION } from './photo-service.js';
 import { getCategoryLabels, getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { eventBus } from './events.js';
 import { configureHelp, helpButton, helpInline, closeHelp } from './help-popover.js';
@@ -255,8 +255,8 @@ async function handleCreatePoi(cluster) {
         //   2. Feedback visuel : l'utilisateur voit que son action a pris effet (le cluster
         //      bascule de "Hors POI" à "Groupe N", subtitle "Nouveau lieu créé — …").
         // On flag chaque photo `alreadySaved: true` pour que handleSave ne tente pas un
-        // double-save (compressImage vs compressFileToBlob produisent des blobs légèrement
-        // différents — la dédup par taille dans addPhotosToPoi ne les détecterait pas).
+        // double-save (un re-encodage produirait un blob non identique — la dédup par
+        // taille dans addPhotosToPoi ne le détecterait pas).
         const newFeature = state.loadedFeatures.find(f => getPoiId(f) === result.poiId);
         if (newFeature) {
             cluster.type = 'POI';
@@ -1336,53 +1336,10 @@ async function openCropPhoto(photoId) {
 
 // --- ENREGISTREMENT ---
 
-// Compression différée : File original → Blob JPEG (via canvas.toBlob, pas de fetch(dataURL)).
-// NOTE : on utilise toBlob directement plutôt que resizeImage+fetch, car fetch() sur une
-// data: URL échoue dans certains contextes (sandbox, CSP strict) avec "TypeError: Failed to fetch".
-function compressFileToBlob(file, maxWidth = 1600, quality = 0.88) {
-    return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error('Timeout compression image')), 15000);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                clearTimeout(timer);
-                try {
-                    const canvas = document.createElement('canvas');
-                    let w = img.width, h = img.height;
-                    if (w > maxWidth) {
-                        h = Math.round(h * (maxWidth / w));
-                        w = maxWidth;
-                    }
-                    canvas.width = w;
-                    canvas.height = h;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, w, h);
-                    // Watermark admin : même logique que compressImage (photo-service).
-                    // Sans ça, l'import GPS — chemin de production principal de l'admin —
-                    // publiait des photos SANS watermark, alors que la grille en mettait.
-                    if (state.isAdmin) {
-                        applyWatermark(ctx, w, h, ADMIN_WATERMARK_TEXT);
-                    }
-                    canvas.toBlob(
-                        (blob) => {
-                            if (blob) resolve(blob);
-                            else reject(new Error('canvas.toBlob a renvoyé null'));
-                        },
-                        'image/jpeg',
-                        quality
-                    );
-                } catch (err) {
-                    reject(err);
-                }
-            };
-            img.onerror = () => { clearTimeout(timer); reject(new Error('Image invalide')); };
-            img.src = e.target.result;
-        };
-        reader.onerror = () => { clearTimeout(timer); reject(new Error('Erreur lecture fichier')); };
-        reader.readAsDataURL(file);
-    });
-}
+// (compressFileToBlob supprimée le 11/06/2026 : l'import GPS passe désormais par
+// compressImage (photo-service) avec PUBLISH_COMPRESSION — un seul encodeur, un
+// seul profil de publication, watermark inclus. Son filet anti-blocage 15 s a
+// été transféré dans compressImage à la fusion.)
 
 // Dédup par id dans un tableau d'items { id, blob } (garde la dernière occurrence)
 function dedupById(items) {
@@ -1473,7 +1430,7 @@ async function saveCluster(cluster, mapId) {
             .filter(p => p.file && !p.alreadySaved)
             .map(async (p) => ({
                 id: p.id,
-                blob: await compressFileToBlob(p.file),
+                blob: await compressImage(p.file, PUBLISH_COMPRESSION.targetMinSize, PUBLISH_COMPRESSION.quality),
                 // srcHash = hash du fichier ORIGINAL (posé à l'import) →
                 // permet la dédup au prochain import (dédup 2-local).
                 srcHash: p.srcHash || undefined,
