@@ -6,7 +6,7 @@ import { map } from './map.js';
 import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
 import { state } from './state.js';
 import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos, getAllPoiPhotoHashes, getAllPendingAdminPhotoHashes } from './database.js';
-import { compressImage, generatePhotoId } from './photo-service.js';
+import { compressImage, generatePhotoId, PUBLISH_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
 import { logModification } from './logger.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
@@ -244,6 +244,10 @@ export async function addPhotosToPoi(feature, clusterItems) {
     let duplicates = 0;
     const newItems = [...existingPhotos];
 
+    // Profil de compression : admin = profil de PUBLICATION (ces blobs partent
+    // sur GitHub via pendingAdminPhotos) ; user = profil perso (IndexedDB locale).
+    const profile = state.isAdmin ? PUBLISH_COMPRESSION : USER_COMPRESSION;
+
     for (const item of clusterItems) {
         try {
             // srcHash de l'original : fourni par l'import, sinon calculé ici (cas
@@ -254,14 +258,14 @@ export async function addPhotosToPoi(feature, clusterItems) {
                 continue;
             }
 
-            // Priorité : File original → compressImage (pleine qualité, ~1200px).
+            // Priorité : File original → compressImage (profil ci-dessus).
             // Fallback base64 uniquement si File absent (cas legacy/admin review).
             // ⚠️ Avant : on prenait base64 d'abord, mais ui-photo-batch pré-calcule
             // une thumbnail à 200px pour l'affichage — utiliser cette base64 donnait
             // des photos 200px sauvegardées en base (qualité dégradée).
             let blob;
             if (item.file) {
-                blob = await compressImage(item.file);
+                blob = await compressImage(item.file, profile.targetMinSize, profile.quality);
             } else if (item.base64) {
                 // Conversion manuelle : fetch(data:...) bloqué par CSP connect-src
                 const [header, data] = item.base64.split(',');
@@ -273,7 +277,7 @@ export async function addPhotosToPoi(feature, clusterItems) {
                 // Admin : on repasse par compressImage pour appliquer le watermark
                 // (parité avec le chemin item.file). Sans ça, ce fallback sortait
                 // un Blob NON watermarké.
-                blob = state.isAdmin ? await compressImage(rawBlob) : rawBlob;
+                blob = state.isAdmin ? await compressImage(rawBlob, profile.targetMinSize, profile.quality) : rawBlob;
             } else {
                 continue;
             }

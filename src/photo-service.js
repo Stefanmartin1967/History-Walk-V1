@@ -29,13 +29,29 @@ export function setCurrentPhotos(list, index) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Profils de compression disponibles pour l'admin.
- * - OPTIMIZED : redimentionne à 1920px, JPEG 85 % — bon compromis web.
- * - ORIGINAL  : résolution native, JPEG 95 % — quasi sans perte, taille maximale.
+ * Profils de compression.
+ *
+ * PUBLISH_COMPRESSION — LE profil unique de publication admin (photos poussées
+ * dans public/photos/). Décision 11/06/2026, mesures comparateur sur vraies
+ * photos publiées avec cet encodeur : ≈ −55/−65 % vs le stock historique
+ * (produit par l'ex-compressFileToBlob 1600 px/q0.88 d'ui-photo-batch, fusionné
+ * ici le même jour). Plus petit côté 1080 px = plein écran mobile (~1080 px) et
+ * quasi 1:1 sur PC Full HD (paysage 1440×1080). NE PAS réintroduire un second
+ * profil de publication : l'hétérogénéité du stock pré-06/2026 venait de
+ * 3 chemins de compression concurrents.
+ *
+ * ADMIN_COMPRESSION — profils de la grille per-POI admin : OPTIMIZED suit
+ * PUBLISH_COMPRESSION (même objet de base) ; ORIGINAL (natif, JPEG 95 %) reste
+ * pour les cas exceptionnels via le toggle « Pleine qualité ».
+ *
+ * USER_COMPRESSION — photos perso (IndexedDB locale), INCHANGÉ volontairement :
+ * pas de contrainte d'hébergement côté user (décision 11/06/2026).
  */
+export const PUBLISH_COMPRESSION = { targetMinSize: 1080, quality: 0.75 };
+
 export const ADMIN_COMPRESSION = {
-    OPTIMIZED: { targetMinSize: 1920, quality: 0.85, label: 'Optimisée' },
-    ORIGINAL:  { targetMinSize: 0,    quality: 0.95, label: 'Pleine qualité' },
+    OPTIMIZED: { ...PUBLISH_COMPRESSION, label: 'Optimisée' },
+    ORIGINAL:  { targetMinSize: 0, quality: 0.95, label: 'Pleine qualité' },
 };
 
 /** Profil de compression par défaut pour les photos utilisateur. */
@@ -108,14 +124,19 @@ export function compressImage(file, targetMinSize = 1200, quality = 0.8) {
             reject(new Error(validation.reason));
             return;
         }
+        // Filet anti-blocage (hérité de l'ex-compressFileToBlob, fusion 11/06/2026) :
+        // un FileReader/Image qui ne rend jamais la main ne doit pas geler
+        // l'enregistrement d'un groupe entier de photos.
+        const timer = setTimeout(() => reject(new Error('Timeout compression image')), 15000);
         const reader = new FileReader();
-        reader.onerror = reject;
+        reader.onerror = (e) => { clearTimeout(timer); reject(e); };
         reader.readAsDataURL(file);
         reader.onload = (event) => {
             const img = new Image();
-            img.onerror = reject;
+            img.onerror = (e) => { clearTimeout(timer); reject(e); };
             img.src = event.target.result;
             img.onload = () => {
+                clearTimeout(timer);
                 const canvas = document.createElement('canvas');
                 let width = img.width;
                 let height = img.height;
