@@ -66,6 +66,48 @@ export default defineConfig({
               },
             },
           },
+          {
+            // Tuiles de carte (OSM « Plan », CARTO « Voyager » par défaut, Google
+            // « Satellite ») : CacheFirst — une tuile vue une fois reste dispo hors
+            // ligne. C'est ce qui permet le « pack terrain » PASSIF : on prépare un
+            // circuit chez soi (les tuiles de la zone se chargent) → sur le terrain
+            // elles sont déjà là, carte lisible même sans réseau. Cf. map.js.
+            //
+            // ⚠ Les tuiles sont chargées par Leaflet via <img> SANS crossorigin →
+            // requêtes no-cors → réponses OPAQUES (status 0). Workbox ne met en
+            // cache que les 200 par défaut : sans `statuses: [0, 200]` le cache
+            // resterait VIDE en silence. Revers : une réponse opaque est « paddée »
+            // à ~7 Mo dans la comptabilité du quota (taille réelle stockée = petite)
+            // → maxEntries volontairement modéré + purgeOnQuotaError pour que ce
+            // cache s'auto-purge sous pression plutôt que d'évincer les autres.
+            urlPattern: /^https:\/\/(?:[a-c]\.tile\.openstreetmap\.org|[a-d]\.basemaps\.cartocdn\.com|mt[0-3]\.google\.com)\//,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'map-tiles',
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: {
+                maxEntries: 256,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 jours
+                purgeOnQuotaError: true,
+              },
+            },
+          },
+          {
+            // Photos de POI (same-origin /photos/*.jpg, servies par GitHub Pages) :
+            // CacheFirst. Réponses 200 classiques (pas opaques) → pas de padding
+            // quota. Une fois une fiche consultée, ses photos restent hors ligne.
+            urlPattern: /\/photos\/[^?]+\.jpg(\?.*)?$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'poi-photos',
+              cacheableResponse: { statuses: [0, 200] },
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 jours
+                purgeOnQuotaError: true,
+              },
+            },
+          },
         ],
       }
     })
