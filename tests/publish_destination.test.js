@@ -1,8 +1,15 @@
 // @vitest-environment jsdom
 //
 // C2b — publishDraftToGitHub : on teste la LOGIQUE (validation, lecture/modif de
-// destinations.json, ordre + chemins des 4 push, purge des clés perso) en moquant
+// destinations.json, ordre + chemins des 4 push, contenu publié) en moquant
 // uploadFileToGitHub + le brouillon local. AUCUN push réel vers GitHub.
+//
+// Fix audit R1 (11/06/2026) : le geojson publié vient de generateMasterGeoJSONData
+// (état AFFICHÉ : state.loadedFeatures + overlay userData), plus du snapshot
+// draftGeoJSON_{id} figé à la création. On utilise ici le VRAI générateur
+// (admin-geojson.js, pur) sur un state peuplé — le test couvre donc le contrat
+// complet : capture incluse, curation appliquée, suppression exclue, clés perso
+// purgées.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -12,7 +19,6 @@ vi.mock('../src/github-sync.js', () => ({
 }));
 vi.mock('../src/local-destinations.js', () => ({
     getDraftDestinations: vi.fn(),
-    getDraftGeoJSON: vi.fn(),
     getDraftZones: vi.fn(),
     markLocalDraftPublished: vi.fn(async () => {}),
 }));
@@ -20,8 +26,9 @@ vi.mock('../src/local-destinations.js', () => ({
 import { publishDraftToGitHub } from '../src/publish-destination.js';
 import { getStoredToken, uploadFileToGitHub } from '../src/github-sync.js';
 import {
-    getDraftDestinations, getDraftGeoJSON, getDraftZones, markLocalDraftPublished,
+    getDraftDestinations, getDraftZones, markLocalDraftPublished,
 } from '../src/local-destinations.js';
+import { state } from '../src/state.js';
 
 // destinations.json tel que renvoyé par la Contents API (content = base64 UTF-8).
 function stubDestFetch(json) {
@@ -36,6 +43,43 @@ const BASE_DEST = {
     activeMapId: 'djerba',
     maps: { djerba: { name: 'Djerba', status: 'published', file: 'djerba.geojson' } },
 };
+
+// L'état AFFICHÉ de la destination active : le scénario exact du bug R1.
+// — Pont : candidat du snapshot de création, RENOMMÉ ensuite via l'overlay
+//   userData (curation, convention #608) + clés perso à purger.
+// — Fontaine : POI CAPTURÉ APRÈS la création (absent du snapshot draftGeoJSON_).
+// — Vieille citerne : SUPPRIMÉE après la création (userData._deleted).
+function makeLoadedFeatures() {
+    return [
+        {
+            type: 'Feature',
+            properties: {
+                HW_ID: 'HW-01TESTPONT0000000000000001',
+                'Nom du site FR': 'Pont', 'Catégorie': 'patrimoine', candidate: true,
+                vu: true,
+                userData: { 'Nom du site FR': 'Pont des Soupirs', notes: 'perso' },
+            },
+            geometry: { type: 'Point', coordinates: [12.35, 45.45] },
+        },
+        {
+            type: 'Feature',
+            properties: {
+                HW_ID: 'HW-01TESTFONTAINE000000000001',
+                'Nom du site FR': 'Fontaine', 'Catégorie': 'patrimoine', candidate: true,
+            },
+            geometry: { type: 'Point', coordinates: [12.36, 45.46] },
+        },
+        {
+            type: 'Feature',
+            properties: {
+                HW_ID: 'HW-01TESTCITERNE000000000001',
+                'Nom du site FR': 'Vieille citerne', 'Catégorie': 'patrimoine', candidate: true,
+                userData: { _deleted: true },
+            },
+            geometry: { type: 'Point', coordinates: [12.37, 45.47] },
+        },
+    ];
+}
 
 // jsdom File hérite de Blob → .text() ; fallback FileReader au cas où.
 async function fileText(file) {
@@ -58,19 +102,14 @@ beforeEach(() => {
             file: null, zonesFile: null, circuitsFile: null,
         },
     });
-    getDraftGeoJSON.mockResolvedValue({
-        type: 'FeatureCollection',
-        features: [{
-            type: 'Feature',
-            properties: { 'Nom du site FR': 'Pont', 'Catégorie': 'patrimoine', candidate: true, vu: true, notes: 'perso' },
-            geometry: { type: 'Point', coordinates: [12.35, 45.45] },
-        }],
-    });
     getDraftZones.mockResolvedValue({
         type: 'FeatureCollection',
         features: [{ type: 'Feature', properties: { name: 'Zone A' }, geometry: { type: 'Polygon', coordinates: [] } }],
     });
     stubDestFetch(BASE_DEST);
+    // Le brouillon est la destination ACTIVE, avec son état affiché.
+    state.currentMapId = 'venise';
+    state.loadedFeatures = makeLoadedFeatures();
 });
 
 describe('publishDraftToGitHub — C2b', () => {
@@ -84,7 +123,8 @@ describe('publishDraftToGitHub — C2b', () => {
             'public/circuits/venise.json',
             'public/destinations.json',
         ]);
-        expect(res).toMatchObject({ id: 'venise', name: 'Venise', pois: 1, zones: 1 });
+        // 2 lieux publiés (la citerne supprimée est exclue), pas 1 (snapshot) ni 3.
+        expect(res).toMatchObject({ id: 'venise', name: 'Venise', pois: 2, zones: 1 });
         expect(markLocalDraftPublished).toHaveBeenCalledWith('venise');
     });
 
@@ -101,14 +141,29 @@ describe('publishDraftToGitHub — C2b', () => {
         expect(json.maps.djerba.status).toBe('published'); // intact
     });
 
-    it('retire les clés personnelles mais conserve candidate:true', async () => {
+    it('publie l\'état AFFICHÉ : capture incluse, curation appliquée, suppression exclue (fix R1)', async () => {
         await publishDraftToGitHub('venise');
         const geoFile = uploadFileToGitHub.mock.calls[0][0];
-        const props = JSON.parse(await fileText(geoFile)).features[0].properties;
-        expect(props.vu).toBeUndefined();
-        expect(props.notes).toBeUndefined();
-        expect(props.candidate).toBe(true);
-        expect(props['Nom du site FR']).toBe('Pont');
+        const features = JSON.parse(await fileText(geoFile)).features;
+
+        const names = features.map((f) => f.properties['Nom du site FR']);
+        expect(names).toContain('Pont des Soupirs');   // curation (rename overlay) appliquée
+        expect(names).toContain('Fontaine');           // capture post-création incluse
+        expect(names).not.toContain('Pont');           // l'ancien nom n'a pas survécu
+        expect(names).not.toContain('Vieille citerne'); // supprimé → exclu
+        expect(features).toHaveLength(2);
+    });
+
+    it('purge les clés personnelles et l\'overlay, conserve candidate:true et HW_ID', async () => {
+        await publishDraftToGitHub('venise');
+        const geoFile = uploadFileToGitHub.mock.calls[0][0];
+        const pont = JSON.parse(await fileText(geoFile)).features
+            .find((f) => f.properties['Nom du site FR'] === 'Pont des Soupirs');
+        expect(pont.properties.vu).toBeUndefined();        // PERSONAL_KEY (directe)
+        expect(pont.properties.notes).toBeUndefined();     // PERSONAL_KEY (via overlay)
+        expect(pont.properties.userData).toBeUndefined();  // overlay aplati, jamais publié
+        expect(pont.properties.candidate).toBe(true);
+        expect(pont.properties.HW_ID).toBe('HW-01TESTPONT0000000000000001');
     });
 
     it('l\'index des circuits est un tableau vide', async () => {
@@ -123,8 +178,24 @@ describe('publishDraftToGitHub — C2b', () => {
         expect(uploadFileToGitHub).not.toHaveBeenCalled();
     });
 
-    it('refuse un brouillon vide (aucun push)', async () => {
-        getDraftGeoJSON.mockResolvedValue({ type: 'FeatureCollection', features: [] });
+    it('refuse si le brouillon n\'est pas la destination active (aucun push)', async () => {
+        state.currentMapId = 'djerba'; // l'admin a basculé ailleurs
+        await expect(publishDraftToGitHub('venise')).rejects.toThrow(/destination active/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+
+    it('refuse un état vide (aucun push)', async () => {
+        state.loadedFeatures = [];
+        await expect(publishDraftToGitHub('venise')).rejects.toThrow(/aucun lieu/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+
+    it('refuse si tous les lieux sont supprimés (aucun push)', async () => {
+        state.loadedFeatures = [{
+            type: 'Feature',
+            properties: { HW_ID: 'HW-01TESTX0000000000000000001', 'Nom du site FR': 'X', userData: { _deleted: true } },
+            geometry: { type: 'Point', coordinates: [12.35, 45.45] },
+        }];
         await expect(publishDraftToGitHub('venise')).rejects.toThrow(/aucun lieu/i);
         expect(uploadFileToGitHub).not.toHaveBeenCalled();
     });

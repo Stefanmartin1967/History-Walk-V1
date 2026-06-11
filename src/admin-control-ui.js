@@ -780,8 +780,10 @@ export function renderTab(tab, diffData, callbacks) {
                     showToast('Cette action ne concerne qu\'un brouillon local.', 'warning', 3500);
                     return;
                 }
-                const { getDraftGeoJSON } = await import('./local-destinations.js');
-                const n = (await getDraftGeoJSON(mapId)).features?.length || 0;
+                // Même générateur que le push (publish-destination.js) : le compte
+                // affiché = le compte publié (état AFFICHÉ, pas le snapshot de création).
+                const { generateMasterGeoJSONData } = await import('./admin-geojson.js');
+                const n = generateMasterGeoJSONData()?.features?.length || 0;
                 if (n === 0) {
                     showToast('Ce brouillon ne contient aucun lieu à publier.', 'warning', 3500);
                     return;
