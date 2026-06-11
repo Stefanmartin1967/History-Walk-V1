@@ -7,6 +7,7 @@ import { showToast } from './toast.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
 import { setTopbarSubtabs } from './admin-cc-topbar.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
+import { escapeXml } from './utils.js';
 // NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
 // handler de bouton (cf. carte OUTILS plus bas) pour casser le cycle
 // admin-control-center → admin-control-ui → admin → admin-control-center.
@@ -804,13 +805,13 @@ export function renderTab(tab, diffData, callbacks) {
                     const res = await publishDraftToGitHub(mapId);
                     await hwAlert({
                         title: 'Brouillon publié ✓',
-                        body: `<p><strong>${res.name}</strong> est publiée en brouillon sur GitHub (${res.pois} lieu(x)).</p>`
+                        body: `<p><strong>${escapeXml(res.name)}</strong> est publiée en brouillon sur GitHub (${res.pois} lieu(x)).</p>`
                             + `<p>Accessible depuis tes autres appareils d'ici 1 à 2 min (déploiement GitHub Pages). Sur cet appareil, tu continues à la voir normalement.</p>`,
                     });
                 } catch (e) {
                     await hwAlert({
                         title: 'Échec de la publication',
-                        body: `<p>La publication n'a pas abouti :</p><p><em>${e.message}</em></p>`
+                        body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
                             + `<p>Ton brouillon local est intact — tu peux réessayer.</p>`,
                     });
                 }
@@ -1191,7 +1192,7 @@ function renderItemGroup(title, items, kind, opts) {
         const headerHtml = `
             <div class="cc-diff-head">
                 <span class="cc-diff-tag ${tagClass}">${tagLabels[kind] || tagLabels.mod}</span>
-                <div class="cc-diff-name">${item.name}</div>
+                <div class="cc-diff-name">${escapeXml(item.name)}</div>
                 <div class="cc-diff-actions">
                     ${showEdit ? `<button class="cc-diff-btn cc-diff-btn--primary" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour vérifier avant publication">
                         <i data-lucide="edit-3"></i> Réviser
@@ -1219,11 +1220,11 @@ function renderItemGroup(title, items, kind, opts) {
             </div>`;
         } else if (item.changes && item.changes.length > 0) {
             const rows = item.changes.map(c => `
-                <div class="cc-diff-key">${c.key}</div>
+                <div class="cc-diff-key">${escapeXml(c.key)}</div>
                 <div class="cc-diff-val">
                     ${c.old !== undefined && c.old !== null && c.old !== ''
-                        ? `<div class="cc-diff-old">${c.old}</div>` : ''}
-                    <div class="cc-diff-new">${c.new !== undefined ? c.new : '—'}</div>
+                        ? `<div class="cc-diff-old">${escapeXml(c.old)}</div>` : ''}
+                    <div class="cc-diff-new">${c.new !== undefined ? escapeXml(c.new) : '—'}</div>
                 </div>
             `).join('');
             bodyHtml = `<div class="cc-diff-body">${rows}</div>`;

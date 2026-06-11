@@ -48,7 +48,7 @@ export function renderSource(allProps) {
         const fullUrl = firstLine.startsWith('http') ? firstLine : `https://${firstLine}`;
         new URL(fullUrl);
         const domain = new URL(fullUrl).hostname.replace(/^www\./, '');
-        return `<div class="poi-source-link">Source : <a href="${fullUrl}" target="_blank" rel="noopener noreferrer">${domain}</a></div>`;
+        return `<div class="poi-source-link">Source : <a href="${escapeXml(fullUrl)}" target="_blank" rel="noopener noreferrer">${escapeXml(domain)}</a></div>`;
     } catch (_) {
         return `<div class="poi-source-link">Source : <span>${escapeXml(firstLine)}</span></div>`;
     }
