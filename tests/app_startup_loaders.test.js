@@ -82,7 +82,11 @@ describe('loadOfficialCircuits — résilience (échec/vide)', () => {
         setCurrentMap('hammamet');
         global.fetch = vi.fn(async () => notOk(404));
         await loadOfficialCircuits();
-        expect(global.fetch).toHaveBeenCalledWith(expect.stringContaining('circuits/hammamet.json'));
+        // 2e arg = { signal } injecté par fetchWithTimeout (audit R3) — l'URL reste l'attendu.
+        expect(global.fetch).toHaveBeenCalledWith(
+            expect.stringContaining('circuits/hammamet.json'),
+            expect.objectContaining({ signal: expect.any(AbortSignal) }),
+        );
     });
 });
 

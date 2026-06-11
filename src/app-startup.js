@@ -15,6 +15,7 @@ import { updateCurrencyUnits } from './circuit-view.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';
 import { pullFromGist, initGistReconnectSync } from './gist-sync.js';
+import { fetchWithTimeout } from './net.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
 import { isDestinationPublished } from './utils.js';
 
@@ -46,7 +47,7 @@ export async function loadOfficialCircuits() {
     // Le SW gère NetworkFirst avec fallback cache (timeout 8s) — pas besoin de double-fetch
     let officials = [];
     try {
-        const response = await fetch(circuitsUrl);
+        const response = await fetchWithTimeout(circuitsUrl);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         officials = await response.json();
     } catch (e) {
@@ -91,7 +92,7 @@ export async function loadDestinationsConfig() {
     // Le SW gère NetworkFirst avec fallback cache (timeout 8s) — pas besoin de double-fetch
     let config = null;
     try {
-        const response = await fetch(configUrl);
+        const response = await fetchWithTimeout(configUrl);
         if (response.ok) {
             config = await response.json();
         }
@@ -121,7 +122,7 @@ async function loadZonesForActive(mapId, dest) {
         }
         const baseUrl = import.meta.env?.BASE_URL || './';
         const zonesFile = dest?.zonesFile || `${mapId}-zones.geojson`;
-        const resp = await fetch(`${baseUrl}${zonesFile}?t=${Date.now()}`, { cache: 'reload' });
+        const resp = await fetchWithTimeout(`${baseUrl}${zonesFile}?t=${Date.now()}`, { cache: 'reload' });
         if (resp.ok) {
             const z = await resp.json();
             setZonesData(z);
@@ -140,7 +141,7 @@ export async function loadPoiCategoriesConfig() {
     const configUrl = baseUrl + 'poi-categories.json';
 
     try {
-        const response = await fetch(configUrl);
+        const response = await fetchWithTimeout(configUrl);
         if (response.ok) {
             const data = await response.json();
             setTaxonomy(data);
@@ -237,7 +238,7 @@ export async function loadAndInitializeMap() {
         try {
             // Cache-bust : le SW NetworkFirst ne protège pas du cache HTTP amont ;
             // sans ?t=, l'app pouvait servir un geojson stale après publication admin.
-            const resp = await fetch(`${baseUrl}${fileName}?t=${Date.now()}`, { cache: 'reload' });
+            const resp = await fetchWithTimeout(`${baseUrl}${fileName}?t=${Date.now()}`, { cache: 'reload' });
             if(resp.ok) geojsonData = await resp.json();
         } catch(e) {
             // Fallback offline
@@ -325,7 +326,7 @@ export async function loadAndInitializeMap() {
         // publication) → on garde le dernier local connu (fallback ligne ~279).
         try {
             const testedUrl = `${RAW_BASE}/${GITHUB_PATHS.tested(activeMapId)}?t=${Date.now()}`;
-            const respTested = await fetch(testedUrl);
+            const respTested = await fetchWithTimeout(testedUrl);
             if (respTested.ok) {
                 const publicTested = await respTested.json();
                 if (publicTested && typeof publicTested === 'object') {

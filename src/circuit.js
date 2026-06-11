@@ -1,4 +1,5 @@
 import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode } from './state.js';
+import { fetchWithTimeout } from './net.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -737,7 +738,7 @@ export async function loadCircuitById(id) {
         try {
             // Correction URL : encodage pour gérer les espaces et apostrophes
             const safeUrl = `./circuits/${circuitToLoad.file.split('/').map(encodeURIComponent).join('/')}`;
-            const response = await fetch(safeUrl);
+            const response = await fetchWithTimeout(safeUrl);
             if (response.ok) {
                 const text = await response.text();
                 const parser = new DOMParser();

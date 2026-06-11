@@ -25,6 +25,7 @@
 // Les candidats (candidate:true) sont CONSERVÉS : un brouillon admin-only les
 // garde sans souci ; leur curation se fera à l'« Officialiser » (draft→published).
 import { state } from './state.js';
+import { fetchWithTimeout } from './net.js';
 import { getDraftDestinations, getDraftZones, markLocalDraftPublished } from './local-destinations.js';
 import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { getStoredToken, uploadFileToGitHub } from './github-sync.js';
@@ -41,7 +42,7 @@ function jsonFile(obj, name) {
 // minuscule (< 2 Ko) donc jamais tronqué par la limite 1 Mo de l'API.
 async function fetchDestinationsJson(token) {
     const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATHS.destinations()}`;
-    const res = await fetch(url, {
+    const res = await fetchWithTimeout(url, {
         headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' },
         cache: 'no-store',
     });

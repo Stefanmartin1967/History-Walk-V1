@@ -17,6 +17,7 @@
 // projetée en pixels (viewport) à chaque rendu → elle suit le pan/zoom. Idem
 // pour les pastilles candidates.
 import { map } from './map.js';
+import { fetchWithTimeout } from './net.js';
 import { state } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
@@ -370,7 +371,7 @@ async function geocodeAndFly(query) {
     const btn = _overlay?.querySelector('[data-scout-search-btn]');
     if (btn) btn.disabled = true;
     try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&q=${encodeURIComponent(query)}`);
+        const res = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&q=${encodeURIComponent(query)}`);
         const data = await res.json();
         if (!Array.isArray(data) || !data.length) { showToast(`Aucun lieu trouvé pour « ${query} ».`, 'warning', 3500); return; }
         const hit = data[0];

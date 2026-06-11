@@ -1,4 +1,5 @@
 import { state, setUserData } from './state.js';
+import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance } from './utils.js';
 import { generateGPXString } from './gpx.js';
 import { eventBus } from './events.js';
@@ -665,7 +666,7 @@ async function publishChanges() {
                 // Index distant courant (base pour upsert / suppression).
                 let index = [];
                 try {
-                    const r = await fetch(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
+                    const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
                     if (r.ok) index = await r.json();
                 } catch (_) { /* index vide si fetch échoue */ }
                 if (!Array.isArray(index)) index = [];
