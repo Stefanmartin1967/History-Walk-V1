@@ -122,7 +122,11 @@ async function loadZonesForActive(mapId, dest) {
         }
         const baseUrl = import.meta.env?.BASE_URL || './';
         const zonesFile = dest?.zonesFile || `${mapId}-zones.geojson`;
-        const resp = await fetchWithTimeout(`${baseUrl}${zonesFile}?t=${Date.now()}`, { cache: 'reload' });
+        // Pas de ?t=Date.now() (audit P2) : une URL unique à chaque boot empêchait
+        // le SW NetworkFirst de retrouver son entrée en cache hors-ligne. `cache:
+        // 'reload'` suffit à la fraîcheur (ignore le cache HTTP navigateur ; GitHub
+        // Pages purge son CDN au déploiement). URL stable → cache hors-ligne réparé.
+        const resp = await fetchWithTimeout(`${baseUrl}${zonesFile}`, { cache: 'reload' });
         if (resp.ok) {
             const z = await resp.json();
             setZonesData(z);
@@ -236,9 +240,14 @@ export async function loadAndInitializeMap() {
     } else {
         const fileName = activeDest?.file || `${activeMapId}.geojson`;
         try {
-            // Cache-bust : le SW NetworkFirst ne protège pas du cache HTTP amont ;
-            // sans ?t=, l'app pouvait servir un geojson stale après publication admin.
-            const resp = await fetchWithTimeout(`${baseUrl}${fileName}?t=${Date.now()}`, { cache: 'reload' });
+            // Pas de ?t=Date.now() (audit P2) : ce cache-buster donnait une URL
+            // unique à chaque boot, donc le SW NetworkFirst (#809) ne retrouvait
+            // jamais son entrée en cache hors-ligne — fatal sur MOBILE, qui ne
+            // sauvegarde pas lastGeoJSON en IndexedDB (cf. plus bas). `cache:
+            // 'reload'` assure la fraîcheur (ignore le cache HTTP navigateur ;
+            // GitHub Pages purge son CDN à chaque déploiement après publication).
+            // URL stable → le SW sert le geojson hors-ligne, mobile inclus.
+            const resp = await fetchWithTimeout(`${baseUrl}${fileName}`, { cache: 'reload' });
             if(resp.ok) geojsonData = await resp.json();
         } catch(e) {
             // Fallback offline
