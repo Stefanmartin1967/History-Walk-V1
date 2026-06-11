@@ -14,7 +14,7 @@ import { loadCircuitDraft } from './circuit.js';
 import { updateCurrencyUnits } from './circuit-view.js';
 import { enableDesktopCreationMode } from './desktopMode.js';
 import { eventBus } from './events.js';
-import { pullFromGist } from './gist-sync.js';
+import { pullFromGist, initGistReconnectSync } from './gist-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
 import { isDestinationPublished } from './utils.js';
 
@@ -445,6 +445,8 @@ export async function loadAndInitializeMap() {
         });
     });
 
-    // Gist sync : pull après chargement complet
+    // Gist sync : pull après chargement complet, puis armer le retry au retour
+    // du réseau (un push tenté hors-ligne sera rejoué à l'event 'online').
     pullFromGist();
+    initGistReconnectSync();
 }
