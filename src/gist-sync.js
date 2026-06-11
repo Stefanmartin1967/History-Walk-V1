@@ -18,6 +18,13 @@ const PUSH_DEBOUNCE_MS = 3000;
 
 let _pushTimer = null;
 
+// Sync « en attente » : passe à true quand un push n'a pas pu être confirmé
+// (hors-ligne, ou échec réseau en cours de route). L'event 'online' le rejoue
+// alors (cf. initGistReconnectSync). C'est ce qui rend VRAIE la réassurance
+// « vos modifications restent enregistrées et repartiront au retour du réseau ».
+let _pendingPush = false;
+let _reconnectBound = false;
+
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
 function getGistId()   { return localStorage.getItem(GIST_ID_KEY) || null; }
@@ -300,6 +307,14 @@ export async function pushToGist() {
     const token = getStoredToken();
     if (!token) return;
 
+    // Hors-ligne : inutile de lancer un fetch voué à l'échec. On mémorise que la
+    // sync est en attente — l'event 'online' la rejouera (initGistReconnectSync).
+    // (navigator.onLine peut être absent sous certains environnements de test.)
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        _pendingPush = true;
+        return;
+    }
+
     try {
         const payload = buildPayload();
         let gistId = getGistId();
@@ -328,7 +343,12 @@ export async function pushToGist() {
             }
         }
 
+        _pendingPush = false; // push confirmé → plus rien en attente
+
     } catch (e) {
+        // Échec (réseau coupé en cours, 5xx, rate-limit…) : on garde la sync en
+        // attente pour la rejouer au prochain retour de connectivité.
+        _pendingPush = true;
         console.warn('[GistSync] Push failed:', e.message);
     }
 }
@@ -342,5 +362,18 @@ export function schedulePush() {
         pushToGist();
         _pushTimer = null;
     }, PUSH_DEBOUNCE_MS);
+}
+
+/**
+ * Rejoue le push Gist au retour de la connectivité s'il en restait un en attente.
+ * Idempotent : on n'attache l'écouteur 'online' qu'une seule fois. À appeler une
+ * fois au boot (cf. app-startup.js, après pullFromGist).
+ */
+export function initGistReconnectSync() {
+    if (_reconnectBound) return;
+    _reconnectBound = true;
+    window.addEventListener('online', () => {
+        if (_pendingPush) pushToGist();
+    });
 }
 

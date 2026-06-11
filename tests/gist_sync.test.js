@@ -52,7 +52,7 @@ vi.mock('../src/events.js', () => ({
 
 import { state, setTestedCircuit, setOfficialCircuitStatus } from '../src/state.js';
 import { getStoredToken } from '../src/github-sync.js';
-import { buildPayload, mergeRemoteIntoLocal, schedulePush } from '../src/gist-sync.js';
+import { buildPayload, mergeRemoteIntoLocal, schedulePush, pushToGist, initGistReconnectSync } from '../src/gist-sync.js';
 
 function resetState() {
     state.currentMapId = 'djerba';
@@ -376,6 +376,49 @@ describe('schedulePush', () => {
         await vi.advanceTimersByTimeAsync(2000);
         expect(global.fetch).not.toHaveBeenCalled();
         await vi.advanceTimersByTimeAsync(1100);
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Audit R2 (11/06/2026) : la promesse du bandeau hors-ligne (« vos modifications
+// repartent au retour du réseau ») doit être VRAIE. Un push tenté hors-ligne ne
+// gaspille pas un fetch voué à l'échec ; il est marqué en attente et rejoué à
+// l'event 'online'.
+describe('retry au retour du réseau (offline → online)', () => {
+    let onLineValue;
+
+    beforeEach(() => {
+        global.fetch = vi.fn(() => Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve({ id: 'gist-abc', files: {} })
+        }));
+        vi.mocked(getStoredToken).mockReturnValue('fake-token');
+        localStorage.setItem('hw_gist_id', 'gist-existing'); // → branche updateGist (PATCH)
+        onLineValue = true;
+        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => onLineValue });
+    });
+
+    afterEach(() => {
+        delete global.fetch;
+    });
+
+    it('hors-ligne : aucun fetch tenté (push voué à l\'échec évité)', async () => {
+        onLineValue = false;
+        await pushToGist();
+        expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    it('au retour online, le push en attente est rejoué (1 PATCH)', async () => {
+        initGistReconnectSync();
+        onLineValue = false;
+        await pushToGist();                       // marque pending, n'appelle pas fetch
+        expect(global.fetch).not.toHaveBeenCalled();
+
+        onLineValue = true;
+        window.dispatchEvent(new Event('online')); // rejoue pushToGist
+        await Promise.resolve();
+        await Promise.resolve();
         expect(global.fetch).toHaveBeenCalledTimes(1);
     });
 });
