@@ -48,7 +48,7 @@ vi.mock('../src/toast.js', () => ({
 }));
 
 import { state } from '../src/state.js';
-import { computePlanifieCounter } from '../src/data.js';
+import { computePlanifieCounter, buildPlannedPoiSet } from '../src/data.js';
 
 describe('computePlanifieCounter (blacklist refonte V2)', () => {
     beforeEach(() => {
@@ -130,5 +130,48 @@ describe('computePlanifieCounter (blacklist refonte V2)', () => {
         ];
 
         expect(computePlanifieCounter('p1')).toBe(1);
+    });
+});
+
+// ============================================================================
+// buildPlannedPoiSet (P4, 11/06/2026) — version « ensemble » de la même logique
+// de circuits actifs : un Set des POI planifiés, construit une fois par passe de
+// filtrage. Doit appliquer EXACTEMENT les mêmes exclusions que computePlanifieCounter.
+// ============================================================================
+describe('buildPlannedPoiSet (perf P4)', () => {
+    beforeEach(() => {
+        state.officialCircuits = [];
+        state.myCircuits = [];
+        state.hiddenCircuitIds = [];
+    });
+
+    it('aucun circuit → Set vide', () => {
+        expect(buildPlannedPoiSet().size).toBe(0);
+    });
+
+    it('réunit les POI des officiels + perso actifs (sans doublon)', () => {
+        state.officialCircuits = [{ id: 'o1', poiIds: ['p1', 'p2'] }, { id: 'o2', poiIds: ['p1'] }];
+        state.myCircuits = [{ id: 'm1', poiIds: ['p3'] }];
+        const set = buildPlannedPoiSet();
+        expect([...set].sort()).toEqual(['p1', 'p2', 'p3']); // p1 dédupliqué
+        expect(set.has('p1')).toBe(true);
+        expect(set.has('p4')).toBe(false);
+    });
+
+    it('exclut perso supprimés et circuits cachés (officiels + perso)', () => {
+        state.officialCircuits = [{ id: 'o1', poiIds: ['p1'] }, { id: 'o2', poiIds: ['p2'] }];
+        state.myCircuits = [{ id: 'm1', poiIds: ['p3'] }, { id: 'm2', poiIds: ['p4'], isDeleted: true }];
+        state.hiddenCircuitIds = ['o2'];
+        const set = buildPlannedPoiSet();
+        expect([...set].sort()).toEqual(['p1', 'p3']); // p2 caché, p4 supprimé
+    });
+
+    it('cohérent avec computePlanifieCounter (même définition de circuit actif)', () => {
+        state.officialCircuits = [{ id: 'o1', poiIds: ['p1'] }, { id: 1, poiIds: ['p2'] }];
+        state.hiddenCircuitIds = ['1']; // String vs number → o(id:1) caché
+        const set = buildPlannedPoiSet();
+        expect(set.has('p1')).toBe(true);
+        expect(set.has('p2')).toBe(false);
+        expect(computePlanifieCounter('p2')).toBe(0); // même exclusion
     });
 });

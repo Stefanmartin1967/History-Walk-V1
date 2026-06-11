@@ -45,6 +45,10 @@ vi.mock('../src/circuit.js', () => ({
 vi.mock('../src/data.js', () => ({
     applyFilters: vi.fn(),
     getPoiId: getPoiIdImpl,
+    // P4 : getZonesData l'appelle pour pré-construire le Set planifiés. Le
+    // passesUserFilters mocké ci-dessous ignore ce Set (il lit props.planifieCounter)
+    // → un stub vide suffit, l'import doit juste se résoudre.
+    buildPlannedPoiSet: () => new Set(),
     passesStructuralFilters(feature, { skipZone = false } = {}) {
         if (!feature) return false;
         const props = { ...feature.properties, ...feature.properties.userData };

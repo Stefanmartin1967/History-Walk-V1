@@ -4,7 +4,7 @@ import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexpor
 import { fetchWithTimeout } from './net.js';
 import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit, saveAppState } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
-import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters } from './data.js';
+import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters, buildPlannedPoiSet } from './data.js';
 import { isMobileView } from './mobile-state.js';
 import { showConfirm } from './modal.js';
 import { showToast } from './toast.js';
@@ -176,8 +176,11 @@ export async function handleCircuitVisitedToggle(circuitId, currentStatus) {
 export function getZonesData() {
     if (!state.loadedFeatures || state.loadedFeatures.length === 0) return null;
 
+    // Set planifiés construit UNE fois pour la passe (P4), seulement si actif.
+    const pf = state.activeFilters.planifies;
+    const plannedSet = (pf === 'hide' || pf === 'only') ? buildPlannedPoiSet() : null;
     const preFilteredFeatures = state.loadedFeatures.filter(f =>
-        passesStructuralFilters(f, { skipZone: true }) && passesUserFilters(f)
+        passesStructuralFilters(f, { skipZone: true }) && passesUserFilters(f, plannedSet)
     );
 
     const zoneCounts = preFilteredFeatures.reduce((acc, feature) => {
