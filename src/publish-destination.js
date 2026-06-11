@@ -12,11 +12,23 @@
 // destinations.json EN DERNIER : si un push casse en route, destinations.json
 // n'est pas touché → aucune entrée ne pointe vers un fichier manquant.
 //
+// SOURCE DU GEOJSON (fix 11/06/2026, audit R1) : on publie CE QUE L'ADMIN VOIT
+// (state.loadedFeatures via generateMasterGeoJSONData — le même générateur que
+// « Tout publier » du CC et l'Export Master), PAS le snapshot draftGeoJSON_{id}.
+// Ce snapshot n'est écrit qu'À LA CRÉATION du brouillon ; tout le travail
+// ultérieur vit dans 3 canaux qu'il ignore : captures (customPois_{id}),
+// curation rename/recat (overlay userData, convention #608) et suppressions
+// (userData._deleted). Publier le snapshot = brouillon amputé et non curé sur
+// l'autre appareil. generateMasterGeoJSONData fusionne/aplatit tout ça et purge
+// déjà PERSONAL_KEYS, photos base64 et accessPoint invalides.
+//
 // Les candidats (candidate:true) sont CONSERVÉS : un brouillon admin-only les
 // garde sans souci ; leur curation se fera à l'« Officialiser » (draft→published).
-import { getDraftDestinations, getDraftGeoJSON, getDraftZones, markLocalDraftPublished } from './local-destinations.js';
+import { state } from './state.js';
+import { getDraftDestinations, getDraftZones, markLocalDraftPublished } from './local-destinations.js';
+import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { getStoredToken, uploadFileToGitHub } from './github-sync.js';
-import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
+import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 
 // Emballe un objet en File JSON indenté (uploadFileToGitHub lit un File → base64
 // UTF-8 via FileReader, donc les accents passent correctement).
@@ -40,19 +52,6 @@ async function fetchDestinationsJson(token) {
     return JSON.parse(new TextDecoder('utf-8').decode(bytes));
 }
 
-// Retire les clés personnelles (Dim 3, PERSONAL_KEYS) de chaque feature — jamais
-// poussées dans la source publique. Les candidats (candidate:true) restent.
-function sanitizeFeatures(geo) {
-    return {
-        type: 'FeatureCollection',
-        features: (geo.features || []).map((f) => {
-            const props = { ...(f.properties || {}) };
-            for (const k of PERSONAL_KEYS) delete props[k];
-            return { ...f, properties: props };
-        }),
-    };
-}
-
 /**
  * Publie un brouillon LOCAL sur GitHub en status:"draft" (multi-appareils).
  * Lève une Error explicite si un pré-requis manque ou si un push échoue ; le
@@ -70,8 +69,15 @@ export async function publishDraftToGitHub(id, onProgress = () => {}) {
     const entry = drafts[id];
     if (!entry) throw new Error('Ce brouillon est introuvable en local.');
 
-    const geo = await getDraftGeoJSON(id);
-    if (!geo.features || geo.features.length === 0) {
+    // generateMasterGeoJSONData lit state.loadedFeatures = la destination ACTIVE.
+    // L'UI ne propose la publication que sur celle-ci ; ce garde protège tout
+    // appel programmatique futur (« Officialiser »…) d'une publication croisée.
+    if (id !== state.currentMapId) {
+        throw new Error('Ce brouillon n\'est pas la destination active — basculez dessus avant de publier.');
+    }
+
+    const geo = generateMasterGeoJSONData();
+    if (!geo || !geo.features || geo.features.length === 0) {
         throw new Error('Ce brouillon ne contient aucun lieu — rien à publier.');
     }
     const zones = await getDraftZones(id);
@@ -96,13 +102,12 @@ export async function publishDraftToGitHub(id, onProgress = () => {}) {
         startView: entry.startView,
     };
 
-    const cleanGeo = sanitizeFeatures(geo);
     const cleanZones = { type: 'FeatureCollection', features: zones.features || [] };
     const label = entry.name || id;
 
     // — 4. Push : données D'ABORD, destinations.json EN DERNIER —
     onProgress('Publication des lieux…');
-    await uploadFileToGitHub(jsonFile(cleanGeo, `${id}.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+    await uploadFileToGitHub(jsonFile(geo, `${id}.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
         GITHUB_PATHS.geojson(id), `feat(dest): brouillon « ${label} » — lieux`);
 
     onProgress('Publication des zones…');
@@ -124,5 +129,5 @@ export async function publishDraftToGitHub(id, onProgress = () => {}) {
     // la nettoiera au 1er boot où la version GitHub sera détectée live.
     await markLocalDraftPublished(id);
 
-    return { id, name: label, pois: cleanGeo.features.length, zones: cleanZones.features.length };
+    return { id, name: label, pois: geo.features.length, zones: cleanZones.features.length };
 }
