@@ -6,7 +6,7 @@
 
 import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiCoordinates, applyFilters } from './data.js';
-import { getIconForFeature } from './poi-icons.js';
+import { getStepCategoryDisplay } from './poi-icons.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance, getPoiProp } from './utils.js';
 import { openDetailsPanel } from './ui-details.js';
@@ -25,35 +25,9 @@ export function initMobilePoiListeners() {
     eventBus.on('mobile:render-poi-list', (features) => renderMobilePoiList(features));
 }
 
-// ─── Variant couleur pour .cc-step-cat selon catégorie ─────────────────────
-// L'icône est récupérée via getIconForFeature (chantier iconification :
-// lookup sous-type-aware, ex. Mosquée à minaret vs à coupoles). Le variant
-// ne concerne que le coloris du pill (.amber / .brand / neutre).
-function getStepCategoryVariant(cat) {
-    const lower = (cat || '').toLowerCase();
-    if (lower === 'restaurant' || lower === 'café' || lower === 'cafe'
-        || lower === 'curiosité' || lower === 'curiosite'
-        || lower === 'pâtisserie' || lower === 'patisserie'
-        || lower === 'salon de thé') return 'amber';
-    if (lower === 'mosquée' || lower === 'mosquee'
-        || lower === 'synagogue'
-        || lower === 'église' || lower === 'eglise'
-        || lower === 'site religieux') return 'brand';
-    return '';
-}
-function getStepCategory(feature) {
-    const cat = feature?.properties?.['Catégorie']
-        || feature?.properties?.userData?.['Catégorie']
-        || '';
-    // Resto raccourci en « Resto » sur la timeline, sinon label original.
-    const lower = cat.toLowerCase();
-    const label = lower === 'restaurant' ? 'Resto' : (cat || 'Lieu');
-    return {
-        iconHtml: getIconForFeature(feature),
-        label,
-        variant: getStepCategoryVariant(cat),
-    };
-}
+// Pastille catégorie d'étape : logique extraite vers poi-icons.js
+// (getStepCategoryDisplay, 12/06/2026) pour être partagée avec la timeline
+// PC (circuit-view.js).
 
 // ─── Hero photo .cc-hero (mobile) ────────────────────────────────────────────
 // Logique miroir d'applyCircuitHero (circuit.js, PC) mais opère sur l'élément
@@ -179,7 +153,7 @@ function renderSimplePoiList(container, listToDisplay) {
     listToDisplay.forEach(feature => {
         const name = getPoiName(feature);
         const poiId = getPoiId(feature);
-        const cat = getStepCategory(feature);
+        const cat = getStepCategoryDisplay(feature);
         const isVisited = getPoiProp(feature, 'vu');
         listHtml += `
             <a class="cc-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
@@ -290,7 +264,7 @@ function renderCircuitView(container, listToDisplay) {
     listToDisplay.forEach((feature, i) => {
         const name = getPoiName(feature);
         const poiId = getPoiId(feature);
-        const cat = getStepCategory(feature);
+        const cat = getStepCategoryDisplay(feature);
         const isVisited = getPoiProp(feature, 'vu');
         stepsHtml += `
             <a class="cc-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
