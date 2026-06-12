@@ -36,7 +36,11 @@ export default defineConfig({
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
         // vers …/circuits/x.gpx) sert l'app (index.html) au lieu du fichier, et HW
         // s'ouvre sur « Mes Circuits » vide. On les laisse passer au réseau.
-        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i],
+        // Idem pour /lieux/ : pages SEO statiques générées post-build (hook
+        // npm postbuild → scripts/generate-poi-pages.mjs), servies par le
+        // réseau — sinon un utilisateur avec l'app installée qui clique un
+        // lien Google recevrait index.html au lieu de la page du lieu.
+        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i, /^\/lieux\//],
         runtimeCaching: [
           {
             // GeoJSON : NetworkFirst — données éditoriales qui évoluent

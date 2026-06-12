@@ -210,6 +210,20 @@ export function initMapListeners() {
         if (!map || !points || points.length === 0) return;
         map.flyToBounds(L.latLngBounds(points), options);
     });
+    // Deep-link ?poi= (pages SEO statiques) : centre la carte sur le lieu et
+    // le met en valeur — même geste que la sélection d'un résultat de recherche
+    // (searchManager.js), exposé en événement car main.js ne doit pas importer
+    // la carte directement.
+    eventBus.on('map:focus-poi', ({ poiId, zoom = 16 }) => {
+        if (!map || !state.geojsonLayer) return;
+        clearMarkerHighlights();
+        state.geojsonLayer.eachLayer(layer => {
+            if (layer.feature && getPoiId(layer.feature) === poiId) {
+                map.flyTo(layer.getLatLng(), zoom);
+                layer.getElement()?.classList.add('marker-highlight');
+            }
+        });
+    });
 
     window.addEventListener('circuit:updated', (e) => {
         const { points, activeId } = e.detail;
