@@ -783,8 +783,9 @@ export function renderTab(tab, diffData, callbacks) {
                 }
                 // Même générateur que le push (publish-destination.js) : le compte
                 // affiché = le compte publié (état AFFICHÉ, pas le snapshot de création).
+                // keepCandidates:true → on compte aussi les candidats, comme le push brouillon.
                 const { generateMasterGeoJSONData } = await import('./admin-geojson.js');
-                const n = generateMasterGeoJSONData()?.features?.length || 0;
+                const n = generateMasterGeoJSONData([], { keepCandidates: true })?.features?.length || 0;
                 if (n === 0) {
                     showToast('Ce brouillon ne contient aucun lieu à publier.', 'warning', 3500);
                     return;

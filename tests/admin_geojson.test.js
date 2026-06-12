@@ -126,4 +126,35 @@ describe('admin-geojson — generateMasterGeoJSONData', () => {
         const props = generateMasterGeoJSONData().features[0].properties;
         expect('incontournable' in props).toBe(false);
     });
+
+    it('réunif : exclut par défaut un candidat Scout non curé (pas de fuite publique)', () => {
+        state.loadedFeatures = [
+            buildFeature('poi_reel', { Nom: 'Réel' }),
+            buildFeature('poi_cand', { Nom: 'Candidat', candidate: true })
+        ];
+        const ids = generateMasterGeoJSONData().features.map(f => f.properties.HW_ID);
+        expect(ids).toContain('poi_reel');
+        expect(ids).not.toContain('poi_cand');
+    });
+
+    it('réunif : keepCandidates:true (brouillon GitHub) conserve les candidats', () => {
+        state.loadedFeatures = [
+            buildFeature('poi_reel', { Nom: 'Réel' }),
+            buildFeature('poi_cand', { Nom: 'Candidat', candidate: true })
+        ];
+        const ids = generateMasterGeoJSONData([], { keepCandidates: true })
+            .features.map(f => f.properties.HW_ID);
+        expect(ids).toContain('poi_reel');
+        expect(ids).toContain('poi_cand');
+    });
+
+    it('réunif : excludedIds et exclusion candidat se combinent', () => {
+        state.loadedFeatures = [
+            buildFeature('a', { Nom: 'A' }),
+            buildFeature('b', { Nom: 'B' }),
+            buildFeature('c', { Nom: 'C', candidate: true })
+        ];
+        const ids = generateMasterGeoJSONData(['a']).features.map(f => f.properties.HW_ID);
+        expect(ids).toEqual(['b']); // 'a' exclu explicitement, 'c' candidat exclu par défaut
+    });
 });
