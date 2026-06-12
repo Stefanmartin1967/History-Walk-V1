@@ -12,6 +12,10 @@ let activeResolve = null;
 let activeHwOverlay = null;
 let activeHwResolve = null;
 let activeHwEscapeHandler = null;
+// Piège de focus + restitution (audit AC1, patron help-popover) :
+// handler Tab global + élément qui avait le focus à l'ouverture.
+let activeHwTrapHandler = null;
+let activeHwOpener = null;
 
 // Modale temporairement mise en pause (cf. suspendHwModal/resumeHwModal).
 // Permet de cacher une modale V2 le temps d'ouvrir une autre modale V2 (ex:
@@ -20,6 +24,34 @@ let activeHwEscapeHandler = null;
 let suspendedHwOverlay = null;
 let suspendedHwResolve = null;
 let suspendedHwEscapeHandler = null;
+let suspendedHwTrapHandler = null;
+let suspendedHwOpener = null;
+
+// Compteur pour les id uniques d'aria-labelledby (titre de modale).
+let hwModalUid = 0;
+
+// Sélecteur des éléments focusables (même liste que help-popover.js).
+const HW_FOCUSABLE = 'a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])';
+
+/**
+ * Focusables visibles d'un conteneur. Le filtre offsetParent écarte les
+ * éléments cachés (display:none) — il vide aussi la liste sous jsdom (pas de
+ * layout), où les chemins de repli prennent le relais.
+ */
+function hwFocusables(container) {
+    return [...container.querySelectorAll(HW_FOCUSABLE)].filter(el => el.offsetParent !== null);
+}
+
+/** Boucle le Tab à l'intérieur de la modale (copié de help-popover.js). */
+function trapHwFocus(container, e) {
+    const items = hwFocusables(container);
+    if (!items.length) return;
+    const first = items[0], last = items[items.length - 1];
+    // Focus sorti de la modale (ou jamais entré) → on le ramène au début.
+    if (!container.contains(document.activeElement)) { e.preventDefault(); first.focus(); return; }
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+}
 
 /**
  * Ouvre une modale du système V2 (hw-modal).
@@ -55,8 +87,15 @@ export function openHwModal(opts) {
     } = opts || {};
 
     return new Promise((resolve) => {
-        // Nettoie une éventuelle modale V2 ouverte (stacking interdit)
-        if (activeHwOverlay) closeHwModal();
+        // Restitution du focus (AC1) : on capture l'élément actif AVANT le
+        // nettoyage de stacking. Si ce focus vivait dans la modale qu'on
+        // remplace (chaînage A→B), on hérite de l'ouvreur de A.
+        let opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        if (activeHwOverlay) {
+            if (opener && activeHwOverlay.contains(opener)) opener = activeHwOpener;
+            closeHwModal();
+        }
+        activeHwOpener = opener;
 
         activeHwResolve = resolve;
 
@@ -84,11 +123,12 @@ export function openHwModal(opts) {
             ? `<div class="hw-modal-subheader"></div>`
             : '';
 
+        const titleId = `hw-modal-title-${++hwModalUid}`;
         overlay.innerHTML = `
-            <div class="hw-modal ${sizeCls}${variantCls}">
+            <div class="hw-modal ${sizeCls}${variantCls}" role="dialog" aria-modal="true" aria-labelledby="${titleId}">
                 <header class="hw-modal-header">
                     ${iconHtml}
-                    <h2 class="hw-modal-title">${escapeText(title)}</h2>
+                    <h2 class="hw-modal-title" id="${titleId}">${escapeText(title)}</h2>
                     <button class="hw-modal-close" type="button" aria-label="Fermer" data-hw-modal-action="close">
                         <i data-lucide="x"></i>
                     </button>
@@ -163,6 +203,37 @@ export function openHwModal(opts) {
         // eslint-disable-next-line no-unused-expressions
         overlay.offsetHeight;
         overlay.classList.add('is-active');
+
+        // Piège de focus (AC1) : Tab boucle dans la modale. Handler global
+        // (le focus peut être n'importe où au moment du Tab), retiré à la
+        // fermeture/suspension comme l'escape handler.
+        const modalEl = overlay.querySelector('.hw-modal');
+        activeHwTrapHandler = (e) => {
+            if (e.key === 'Tab') trapHwFocus(modalEl, e);
+        };
+        document.addEventListener('keydown', activeHwTrapHandler);
+
+        // Focus initial : 1er focusable du body/footer (input d'un prompt,
+        // bouton Annuler d'un confirm…), sinon la croix de fermeture.
+        const applyInitialFocus = () => {
+            if (activeHwOverlay !== overlay) return;              // fermée/remplacée entre-temps
+            if (modalEl.contains(document.activeElement)) return; // déjà dedans (clic utilisateur)
+            const focusables = hwFocusables(modalEl);
+            const closeBtn = modalEl.querySelector('.hw-modal-close');
+            const target = focusables.find(el => el !== closeBtn) || closeBtn;
+            if (target) {
+                try { target.focus({ preventScroll: true }); } catch { target.focus(); }
+            }
+        };
+        applyInitialFocus();
+        // L'overlay est en visibility:hidden → visible par transition : au
+        // moment de l'appel synchrone la transition n'a pas démarré, l'élément
+        // n'est pas focusable et le navigateur REFUSE le focus en silence
+        // (observé en preview). Double rAF = après le 1er rendu, visibility
+        // est visible → on rejoue. (Sous jsdom le focus synchrone suffit.)
+        if (typeof requestAnimationFrame === 'function') {
+            requestAnimationFrame(() => requestAnimationFrame(applyInitialFocus));
+        }
     });
 }
 
@@ -177,6 +248,10 @@ export function closeHwModal(value) {
         document.removeEventListener('keydown', activeHwEscapeHandler);
         activeHwEscapeHandler = null;
     }
+    if (activeHwTrapHandler) {
+        document.removeEventListener('keydown', activeHwTrapHandler);
+        activeHwTrapHandler = null;
+    }
     activeHwOverlay.classList.remove('is-active');
     const overlay = activeHwOverlay;
     activeHwOverlay = null;
@@ -184,6 +259,14 @@ export function closeHwModal(value) {
     setTimeout(() => {
         overlay.remove();
     }, 300);
+    // Restitution du focus (AC1) : retour sur l'élément qui a ouvert la
+    // modale, s'il est toujours dans le document. Sans ça, le focus tombe
+    // sur <body> et un utilisateur clavier repart de zéro.
+    const opener = activeHwOpener;
+    activeHwOpener = null;
+    if (opener && opener.isConnected) {
+        try { opener.focus({ preventScroll: true }); } catch { /* élément non focusable devenu inerte — tant pis */ }
+    }
     if (activeHwResolve) {
         const resolve = activeHwResolve;
         activeHwResolve = null;
@@ -204,13 +287,20 @@ export function suspendHwModal() {
     if (activeHwEscapeHandler) {
         document.removeEventListener('keydown', activeHwEscapeHandler);
     }
+    if (activeHwTrapHandler) {
+        document.removeEventListener('keydown', activeHwTrapHandler);
+    }
     suspendedHwOverlay = activeHwOverlay;
     suspendedHwResolve = activeHwResolve;
     suspendedHwEscapeHandler = activeHwEscapeHandler;
+    suspendedHwTrapHandler = activeHwTrapHandler;
+    suspendedHwOpener = activeHwOpener;
     // Détache du système V2 → la prochaine openHwModal ne fermera pas la modale
     activeHwOverlay = null;
     activeHwResolve = null;
     activeHwEscapeHandler = null;
+    activeHwTrapHandler = null;
+    activeHwOpener = null;
 }
 
 /**
@@ -229,18 +319,27 @@ export function resumeHwModal() {
         suspendedHwOverlay = null;
         suspendedHwResolve = null;
         suspendedHwEscapeHandler = null;
+        suspendedHwTrapHandler = null;
+        suspendedHwOpener = null;
         return;
     }
     // Restauration : réinjecte dans le système V2
     activeHwOverlay = suspendedHwOverlay;
     activeHwResolve = suspendedHwResolve;
     activeHwEscapeHandler = suspendedHwEscapeHandler;
+    activeHwTrapHandler = suspendedHwTrapHandler;
+    activeHwOpener = suspendedHwOpener;
     suspendedHwOverlay = null;
     suspendedHwResolve = null;
     suspendedHwEscapeHandler = null;
+    suspendedHwTrapHandler = null;
+    suspendedHwOpener = null;
     activeHwOverlay.style.display = '';
     if (activeHwEscapeHandler) {
         document.addEventListener('keydown', activeHwEscapeHandler);
+    }
+    if (activeHwTrapHandler) {
+        document.addEventListener('keydown', activeHwTrapHandler);
     }
 }
 

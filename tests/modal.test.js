@@ -188,6 +188,88 @@ describe('showPrompt', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Accessibilité AC1 (audit Vague 4 PR3) : rôle dialogue + restitution du focus.
+// Le CYCLAGE du Tab (trapHwFocus) n'est pas testable sous jsdom (offsetParent
+// toujours null → liste des focusables vide) : il est vérifié en preview.
+describe('accessibilité modale (AC1)', () => {
+    it('la modale porte role="dialog", aria-modal et un aria-labelledby qui pointe le titre', async () => {
+        const p = showConfirm('Titre accessible', 'M');
+        const modal = document.querySelector('.hw-modal');
+        expect(modal.getAttribute('role')).toBe('dialog');
+        expect(modal.getAttribute('aria-modal')).toBe('true');
+        const labelledby = modal.getAttribute('aria-labelledby');
+        expect(labelledby).toBeTruthy();
+        const titleEl = document.getElementById(labelledby);
+        expect(titleEl).toBeTruthy();
+        expect(titleEl.textContent).toBe('Titre accessible');
+        document.querySelector('[data-confirm-action="cancel"]').click();
+        await p;
+    });
+
+    it('chaque modale a un id de titre unique (pas de collision aria-labelledby)', async () => {
+        // NB : l'overlay fermé reste 300ms dans le DOM (transition) → on cible
+        // toujours la modale ACTIVE, pas la première du document.
+        const activeModal = () => document.querySelector('.hw-modal-overlay.is-active .hw-modal');
+        const p1 = showConfirm('A', 'M');
+        const id1 = activeModal().getAttribute('aria-labelledby');
+        document.querySelector('.hw-modal-overlay.is-active [data-confirm-action="cancel"]').click();
+        await p1;
+        const p2 = showConfirm('B', 'M');
+        const id2 = activeModal().getAttribute('aria-labelledby');
+        document.querySelector('.hw-modal-overlay.is-active [data-confirm-action="cancel"]').click();
+        await p2;
+        expect(id1).not.toBe(id2);
+    });
+
+    it('à l\'ouverture, le focus entre dans la modale (repli croix sous jsdom)', async () => {
+        const p = showConfirm('T', 'M');
+        const modal = document.querySelector('.hw-modal');
+        expect(modal.contains(document.activeElement)).toBe(true);
+        document.querySelector('[data-confirm-action="cancel"]').click();
+        await p;
+    });
+
+    it('à la fermeture, le focus revient sur l\'élément qui a ouvert la modale', async () => {
+        const btn = document.createElement('button');
+        btn.id = 'opener-btn';
+        document.body.appendChild(btn);
+        btn.focus();
+        expect(document.activeElement).toBe(btn);
+        const p = showConfirm('T', 'M');
+        expect(document.activeElement).not.toBe(btn);
+        document.querySelector('[data-confirm-action="cancel"]').click();
+        await p;
+        expect(document.activeElement).toBe(btn);
+    });
+
+    it('ouvreur disparu entre-temps → fermeture sans throw, focus non restauré', async () => {
+        const btn = document.createElement('button');
+        document.body.appendChild(btn);
+        btn.focus();
+        const p = showConfirm('T', 'M');
+        btn.remove();
+        expect(() => document.querySelector('[data-confirm-action="cancel"]').click()).not.toThrow();
+        await p;
+        expect(document.activeElement).not.toBe(btn);
+    });
+
+    it('chaînage A→B : fermer B restitue le focus à l\'ouvreur initial (hérité)', async () => {
+        const btn = document.createElement('button');
+        btn.id = 'origin';
+        document.body.appendChild(btn);
+        btn.focus();
+        const pA = showConfirm('A', 'M');
+        // B s'ouvre pendant que A est active (stacking interdit → A fermée).
+        // Le focus vit dans A → B doit hériter de l'ouvreur de A (le bouton).
+        const pB = showConfirm('B', 'M');
+        await pA; // A a été résolue par le remplacement
+        document.querySelector('[data-confirm-action="cancel"]').click();
+        await pB;
+        expect(document.activeElement).toBe(btn);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 describe('showAlert', () => {
     it('retourne une Promise', async () => {
         const p = showAlert('T', 'M');
