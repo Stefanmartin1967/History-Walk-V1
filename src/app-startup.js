@@ -130,7 +130,17 @@ async function loadZonesForActive(mapId, dest) {
         if (resp.ok) {
             const z = await resp.json();
             setZonesData(z);
-            try { await saveAppState(`lastZones_${mapId}`, z); } catch (e) {}
+            // P6 (audit) : ne réécrire la copie hors-ligne que si le fichier a
+            // changé (ETag GitHub Pages). Sans etag (mock, proxy) → on écrit
+            // comme avant (sûr). L'etag vit dans le même store que la copie :
+            // vider la base invalide les deux ensemble.
+            try {
+                const etag = resp.headers?.get?.('etag') || null;
+                if (!etag || (await getAppState(`lastZones_etag_${mapId}`)) !== etag) {
+                    await saveAppState(`lastZones_${mapId}`, z);
+                    await saveAppState(`lastZones_etag_${mapId}`, etag);
+                }
+            } catch (e) {}
             return;
         }
         throw new Error(`zones HTTP ${resp.status}`);
@@ -138,6 +148,19 @@ async function loadZonesForActive(mapId, dest) {
         const cached = await getAppState(`lastZones_${mapId}`);
         setZonesData(cached || { type: 'FeatureCollection', features: [] });
     }
+}
+
+// P6 (audit) : la copie de secours hors-ligne (~1,2 Mo) était réécrite en
+// IndexedDB à CHAQUE démarrage, même inchangée. On mémorise « destination|ETag »
+// de la dernière copie écrite : identique → écriture sautée. Sans etag (brouillon
+// local, mock de test, proxy qui le strippe) ou différent → on écrit comme avant
+// (sûr). L'etag vit dans le même store appState que la copie : vider la base
+// invalide les deux ensemble.
+async function saveGeoJSONBackup(mapId, data, etag) {
+    const key = etag ? `${mapId}|${etag}` : null;
+    if (key && (await getAppState('lastGeoJSON_etag')) === key) return;
+    await saveAppState('lastGeoJSON', data);
+    await saveAppState('lastGeoJSON_etag', key);
 }
 
 export async function loadPoiCategoriesConfig() {
@@ -230,6 +253,8 @@ export async function loadAndInitializeMap() {
 
     // 2. Chargement des données (GeoJSON)
     let geojsonData = null;
+    let geojsonEtag = null;        // ETag de la réponse fraîche (P6, cf. saveGeoJSONBackup)
+    let geojsonFromCache = false;  // true si geojsonData VIENT de lastGeoJSON → ne pas le réécrire
     const activeDest = state.destinations?.maps?.[activeMapId];
 
     if (DOM.loaderOverlay) DOM.loaderOverlay.classList.remove('is-hidden');
@@ -253,12 +278,14 @@ export async function loadAndInitializeMap() {
             // restait null et le boot s'arrêtait sur « Impossible de charger ».
             if (!resp.ok) throw new Error(`geojson HTTP ${resp.status}`);
             geojsonData = await resp.json();
+            geojsonEtag = resp.headers?.get?.('etag') || null;
         } catch(e) {
             // Fallback offline
             const lastMapId = await getAppState('lastMapId');
             const lastGeoJSON = await getAppState('lastGeoJSON');
             if (lastMapId === activeMapId && lastGeoJSON) {
                 geojsonData = lastGeoJSON;
+                geojsonFromCache = true;
                 console.warn("Chargement hors-ligne (fallback)");
             } else {
                 console.error("Erreur download map", e);
@@ -280,7 +307,7 @@ export async function loadAndInitializeMap() {
     setCurrentMap(activeMapId);
     updateAppTitle(activeMapId);
     await saveAppState('lastMapId', activeMapId);
-    if (!isMobileView()) await saveAppState('lastGeoJSON', geojsonData);
+    if (!isMobileView() && !geojsonFromCache) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag);
 
     // 4. Chargement User Data & Circuits (Smart Merge)
     try {
@@ -395,7 +422,7 @@ export async function loadAndInitializeMap() {
         });
 
         // Compteur planifié calculé à la volée par computePlanifieCounter (data.js) — plus de recalc à faire ici
-        await saveAppState('lastGeoJSON', geojsonData); // Mobile cache specific
+        if (!geojsonFromCache) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag); // Mobile cache specific
         switchMobileView('circuits');
     } else {
         // CORRECTION: On doit aussi peupler loadedFeatures sur Desktop
