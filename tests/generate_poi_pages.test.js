@@ -9,7 +9,7 @@ import {
     assignSlugs,
     metaDescription,
     getLatLng,
-    safeSourceUrl,
+    safeSource,
     renderPoiPage,
     renderSitemap,
     MIN_DESCRIPTION_CHARS,
@@ -85,12 +85,13 @@ describe('getLatLng', () => {
     });
 });
 
-describe('safeSourceUrl', () => {
-    it('http(s) uniquement (leçon S4)', () => {
-        expect(safeSourceUrl('https://example.com/x')).toBe('https://example.com/x');
-        expect(safeSourceUrl('javascript:alert(1)')).toBeNull();
-        expect(safeSourceUrl('ftp://x')).toBeNull();
-        expect(safeSourceUrl('')).toBeNull();
+describe('safeSource', () => {
+    it('http(s) uniquement (leçon S4), domaine sans www.', () => {
+        expect(safeSource('https://www.example.com/x?y=1')).toEqual({ url: 'https://www.example.com/x?y=1', domain: 'example.com' });
+        expect(safeSource('https://djerba.holiday/page-tres-longue/')).toEqual({ url: 'https://djerba.holiday/page-tres-longue/', domain: 'djerba.holiday' });
+        expect(safeSource('javascript:alert(1)')).toBeNull();
+        expect(safeSource('ftp://x')).toBeNull();
+        expect(safeSource('')).toBeNull();
     });
 });
 
@@ -137,9 +138,13 @@ describe('renderPoiPage', () => {
         expect(stale).not.toContain('<img class="photo"');
     });
 
-    it('source absente si pas http(s)', () => {
+    it('source : domaine affiché (pas l\'URL brute), absente si pas http(s)', () => {
         expect(render({ Source: 'javascript:alert(1)' })).not.toContain('class="source"');
-        expect(render({ Source: 'https://djerba.holiday/x' })).toContain('class="source"');
+        const html = render({ Source: 'https://www.djerba.holiday/page-longue/x' });
+        expect(html).toContain('class="source"');
+        expect(html).toContain('>djerba.holiday</a>');               // libellé = domaine
+        expect(html).toContain('href="https://www.djerba.holiday/page-longue/x"'); // href = URL complète
+        expect(html).not.toContain('>https://www.djerba.holiday/page-longue/x</a>');
     });
 
     it('description multi-lignes → paragraphes', () => {

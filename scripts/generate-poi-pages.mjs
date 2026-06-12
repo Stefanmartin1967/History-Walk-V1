@@ -98,11 +98,19 @@ export function getLatLng(feature) {
     return (typeof lat === 'number' && typeof lng === 'number') ? [lat, lng] : null;
 }
 
-/** Lien Source uniquement si http(s) — même garde que renderSource côté app
- *  (leçon audit S4 : jamais d'URL non vérifiée dans un href). */
-export function safeSourceUrl(source) {
-    const url = String(source ?? '').trim();
-    return /^https?:\/\//i.test(url) ? url : null;
+/** Lien Source — {url, domain} si http(s) valide, sinon null. Comme renderSource
+ *  côté app (templates.js) : on affiche le DOMAINE sans `www.` (l'URL brute est
+ *  illisible), pas l'URL complète. Garde http(s) only (leçon audit S4 : jamais
+ *  d'URL non vérifiée dans un href). */
+export function safeSource(source) {
+    const raw = String(source ?? '').split('\n')[0].trim();
+    if (!/^https?:\/\//i.test(raw)) return null;
+    try {
+        const url = new URL(raw);
+        return { url: url.href, domain: url.hostname.replace(/^www\./, '') };
+    } catch {
+        return null;
+    }
 }
 
 // ─── Rendu ───────────────────────────────────────────────────────────────────
@@ -121,7 +129,7 @@ h1{margin:0;font-size:1.9rem;line-height:1.25}
 dl{background:var(--surface);border-radius:12px;padding:16px 20px;margin-top:16px;display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
 dt{color:var(--ink-soft);font-weight:600}dd{margin:0}
 .cta{display:block;text-align:center;background:var(--brand);color:#fff;text-decoration:none;font-weight:700;padding:14px 24px;border-radius:12px;margin-top:24px}
-.source{color:var(--ink-soft);font-size:.85rem;margin-top:16px;word-break:break-all}
+.source{color:var(--ink-soft);font-size:.85rem;margin-top:16px}
 footer{text-align:center;color:var(--ink-soft);font-size:.85rem;padding:24px 20px}
 `.trim();
 
@@ -138,7 +146,7 @@ export function renderPoiPage({ feature, slug, mapId, mapName, prelaunch = PRELA
     const horaires = (p.Horaires || '').trim();
     const telephone = (p['Téléphone'] || '').trim();
     const latLng = getLatLng(feature);
-    const sourceUrl = safeSourceUrl(p.Source);
+    const source = safeSource(p.Source);
 
     const pageUrl = `${SITE_ORIGIN}/lieux/${mapId}/${slug}/`;
     const photoRel = (p.photos || []).find(ph => photoExists(ph));
@@ -204,7 +212,7 @@ ${nameAr ? `    <p class="name-ar" dir="rtl" lang="ar">${escapeHtml(nameAr)}</p>
       ${descHtml}
     </div>
 ${infos.length ? `    <dl>\n${infos.map(([k, v]) => `      <dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('\n')}\n    </dl>\n` : ''}    <a class="cta" href="/?poi=${encodeURIComponent(p.HW_ID)}">Voir sur la carte Heripia</a>
-${sourceUrl ? `    <p class="source">Source : <a href="${escapeHtml(sourceUrl)}" rel="nofollow noopener" target="_blank">${escapeHtml(sourceUrl)}</a></p>\n` : ''}  </main>
+${source ? `    <p class="source">Source : <a href="${escapeHtml(source.url)}" rel="nofollow noopener" target="_blank">${escapeHtml(source.domain)}</a></p>\n` : ''}  </main>
   <footer>© Heripia — découverte du patrimoine à pied</footer>
 </body>
 </html>
