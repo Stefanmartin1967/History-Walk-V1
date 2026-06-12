@@ -120,7 +120,7 @@
         <div class="topbar-center">
             <div class="search-container">
                 <i data-lucide="search" class="search-icon"></i>
-                <input type="search" id="search-input" placeholder="Rechercher un lieu...">
+                <input type="search" id="search-input" placeholder="Rechercher un lieu..." aria-label="Rechercher un lieu">
                 <div class="search-results is-hidden" id="search-results"></div>
             </div>
         </div>
@@ -404,28 +404,28 @@
             <div id="mobile-view-footer" class="mobile-view-footer"></div>
 
             <div id="mobile-dock">
-                <nav id="mobile-nav" class="mobile-nav">
-                    <button class="mobile-nav-btn" data-view="circuits">
+                <nav id="mobile-nav" class="mobile-nav" aria-label="Navigation principale">
+                    <button class="mobile-nav-btn" data-view="circuits" aria-label="Circuits">
                         <i data-lucide="route"></i>
                         <span>Circuits</span>
                     </button>
 
-                    <button class="mobile-nav-btn" data-view="search">
+                    <button class="mobile-nav-btn" data-view="search" aria-label="Rechercher">
                         <i data-lucide="search"></i>
                         <span>Rech.</span>
                     </button>
 
-                    <button class="mobile-nav-btn" id="btn-mobile-filter">
+                    <button class="mobile-nav-btn" id="btn-mobile-filter" aria-label="Filtres">
                         <i data-lucide="list"></i>
                         <span>Filtre</span>
                     </button>
 
-                    <button class="mobile-nav-btn" data-view="add-poi">
+                    <button class="mobile-nav-btn" data-view="add-poi" aria-label="Ajouter un lieu">
                         <i data-lucide="plus-circle"></i>
                         <span>Ajout</span>
                     </button>
 
-                    <button class="mobile-nav-btn" data-view="actions">
+                    <button class="mobile-nav-btn" data-view="actions" aria-label="Menu">
                         <i data-lucide="settings"></i>
                         <span>Menu</span>
                     </button>
@@ -458,7 +458,9 @@
             <div class="loader-bar"><span class="loader-bar-fill" id="loader-bar-fill"></span></div>
         </div>
     </div>
-    <div id="toast-container" class="toast-container"></div>
+    <!-- aria-live : les toasts sont annoncés aux lecteurs d'écran (audit AC5).
+         polite par défaut ; les erreurs portent role="alert" (cf. toast.js). -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
     <!-- Photo viewer (lightbox) : migration V2 — désormais géré par
          ui-photo-viewer.js via openHwModal({ size:'xl', body:..., footer:false }).

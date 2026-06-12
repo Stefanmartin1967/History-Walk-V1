@@ -8,6 +8,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 
 // --- STATE ---
 let currentGridPoiId = null;
+let currentGridPoiName = '';
 // Chaque entrée : { id, objectUrl, blob, isNew } pour photos locales (Blob)
 //                 { id: null, src, isNew: false }  pour photos serveur (URL string admin)
 let currentGridPhotos = [];
@@ -41,6 +42,7 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
         }
 
         const poiName = feature ? getPoiName(feature) : "Nouveau Lieu";
+        currentGridPoiName = poiName;
         const isAdmin = state.isAdmin;
 
         const subheader = `
@@ -295,6 +297,7 @@ function renderGrid() {
 
         const img = document.createElement('img');
         img.src = displaySrc;
+        img.alt = `Photo ${index + 1} — ${currentGridPoiName}`;
 
         // Badge "NEW" pour les photos fraîchement ajoutées
         if (photo.isNew) {

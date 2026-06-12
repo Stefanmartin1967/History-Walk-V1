@@ -345,6 +345,17 @@ export function renderMobileCircuitsList() {
             setCurrentView('circuit-details'); // Autorise renderMobilePoiList
             await loadCircuitById(id);
         });
+        // La carte porte role="button" mais n'avait pas de handler clavier
+        // (audit AC8 — patron à moitié câblé) : Enter/Espace = clic.
+        card.addEventListener('keydown', (e) => {
+            // Seulement si le focus est sur la carte elle-même : un Enter sur
+            // le toggle « fait » interne doit garder son activation native.
+            if (e.target !== card) return;
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                card.click();
+            }
+        });
     });
 
     // Restaure le focus searchbar (et la position du caret) si le user tapait.
