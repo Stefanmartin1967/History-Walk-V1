@@ -1505,7 +1505,9 @@ textarea.editable-input {
     gap: 10px;
     opacity: 0;
     transform: translateX(100%);
-    animation: slideIn 0.3s forwards, fadeOut 0.5s 3.5s forwards;
+    /* Délai du fadeOut piloté par toast.js (--toast-fade-delay = duration-500ms,
+       audit AC5) : l'ancien 3.5s figé neutralisait toute durée > 4s. */
+    animation: slideIn 0.3s forwards, fadeOut 0.5s var(--toast-fade-delay, 3.5s) forwards;
 }
 
 .toast svg {
@@ -1527,20 +1529,22 @@ textarea.editable-input {
     white-space: nowrap;
 }
 
+/* Fonds foncés *-bg (audit AC5) : le blanc sur --ok/--warn/--brand clairs
+   tombait à 2.1-2.5:1 — illisible dehors. Les *-bg passent tous l'AA. */
 .toast.toast-success {
-    background-color: var(--ok);
+    background-color: var(--ok-bg);
 }
 
 .toast.toast-error {
-    background-color: var(--danger);
+    background-color: var(--danger-bg);
 }
 
 .toast.toast-warning {
-    background-color: var(--warn);
+    background-color: var(--warn-bg);
 }
 
 .toast.toast-info {
-    background-color: var(--brand);
+    background-color: var(--info-bg);
 }
 
 @keyframes slideIn {
@@ -1694,7 +1698,9 @@ textarea.editable-input {
     color: var(--ink-soft);
     font-size: 12px;
     flex: 1;
-    padding: 8px 4px;
+    /* 12px + icône 24px + 12px = cible tactile 48px (audit AC6, dock à 40px).
+       Compensé par .mobile-nav padding 10→6px : hauteur de bandeau inchangée. */
+    padding: 12px 4px;
     border-radius: 8px;
 }
 
@@ -2554,7 +2560,8 @@ input[type=range] {
     .mobile-nav {
         display: flex !important;
         width: 100%;
-        padding: 10px 0;
+        /* 10px → 6px : compense le padding 12px des boutons (cible 48px, AC6). */
+        padding: 6px 0;
         justify-content: space-around;
     }
 

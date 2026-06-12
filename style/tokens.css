@@ -78,7 +78,9 @@ html[data-theme="maritime"] {
   --surface:       #FFFFFF;
   --surface-muted: #F0F4F8;
   --ink:           #102A43;
-  --ink-soft:      #627D98;
+  /* ink-soft foncé #627D98→#587088 (audit AC3) : 5.14:1 sur surface,
+     4.65:1 sur surface-muted — seuil AA 4.5:1 atteint, teinte conservée. */
+  --ink-soft:      #587088;
   --line:          #D9E2EC;
 
   --brand:      #3B82F6;
@@ -90,11 +92,16 @@ html[data-theme="maritime"] {
   --ok-bg:      #15803D;
   --warn-soft:  #FEF3C7;
   --warn-fg:    #A16207;
+  /* warn-bg/info-bg (audit AC5) : fonds foncés pour texte blanc — toasts.
+     Blanc sur warn-bg = 5.02:1, sur info-bg = 6.7:1 (AA). Identiques sur
+     les 4 thèmes, comme ok-bg/danger-bg. */
+  --warn-bg:    #B45309;
   --danger-soft: #FEE2E2;
   --danger-fg:  #B91C1C;
   --danger-bg:  #B91C1C;
   --info-soft:  #DBEAFE;
   --info-fg:    #1E40AF;
+  --info-bg:    #1D4ED8;
   --cta-bg:     #1D4ED8;
   --cta-fg:     #FFFFFF;
 
@@ -128,7 +135,8 @@ html[data-theme="desert"] {
   --surface:       #FFF8F0;
   --surface-muted: #F5EFE6;
   --ink:           #3A210E;
-  --ink-soft:      #8A6F5E;
+  /* ink-soft foncé #8A6F5E→#816858 (audit AC3) : 4.92:1 / 4.53:1 (AA). */
+  --ink-soft:      #816858;
   --line:          #E0D5C7;
 
   --brand:      #E88C32;
@@ -140,11 +148,13 @@ html[data-theme="desert"] {
   --ok-bg:      #15803D;
   --warn-soft:  #FAEADD;
   --warn-fg:    #A2570F;
+  --warn-bg:    #B45309;
   --danger-soft: #FBE0DA;
   --danger-fg:  #9A2820;
   --danger-bg:  #B91C1C;
   --info-soft:  #E2EAF5;
   --info-fg:    #1E3A8A;
+  --info-bg:    #1D4ED8;
   --cta-bg:     #A2570F;
   --cta-fg:     #FFFFFF;
 
@@ -176,7 +186,8 @@ html[data-theme="oasis"] {
   --surface:       #F0FDF4;
   --surface-muted: #E6F7EB;
   --ink:           #064E3B;
-  --ink-soft:      #528C7C;
+  /* ink-soft foncé #528C7C→#457568 (audit AC3) : 5.02:1 / 4.72:1 (AA). */
+  --ink-soft:      #457568;
   --line:          #CCE8D8;
 
   --brand:      #34D399;
@@ -188,11 +199,13 @@ html[data-theme="oasis"] {
   --ok-bg:      #15803D;
   --warn-soft:  #FEF3C7;
   --warn-fg:    #A16207;
+  --warn-bg:    #B45309;
   --danger-soft: #FEE2E2;
   --danger-fg:  #B91C1C;
   --danger-bg:  #B91C1C;
   --info-soft:  #DBEAFE;
   --info-fg:    #1E40AF;
+  --info-bg:    #1D4ED8;
   --cta-bg:     #047857;
   --cta-fg:     #FFFFFF;
 
@@ -238,12 +251,14 @@ html[data-theme="night"] {
   --warn:       #FACC15;
   --warn-soft:  #3F2C0A;
   --warn-fg:    #FBBF24;
+  --warn-bg:    #B45309;
   --danger:     #F87171;
   --danger-soft: #3A1414;
   --danger-fg:  #FCA5A5;
   --danger-bg:  #B91C1C;
   --info-soft:  #0E2654;
   --info-fg:    #93C5FD;
+  --info-bg:    #1D4ED8;
   --cta-bg:     #1D4ED8;
   --cta-fg:     #FFFFFF;
 

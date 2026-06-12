@@ -653,7 +653,18 @@
     cursor: pointer;
     display: grid;
     place-items: center;
+    position: relative;
 }
+/* Cible tactile 44px (audit AC6) sans grossir le visuel : zone de toucher
+   étendue par pseudo-élément (hit-slop). 28+2×8=44 ; eyebrow 20+2×12=44.
+   Pas de chevauchement : le compteur n/total entre les 2 chevrons est plus
+   large que l'extension. */
+.cc-pager-btn::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+}
+.cc-pager.in-eyebrow .cc-pager-btn::after { inset: -12px; }
 .cc-pager-btn:hover { background: var(--surface-muted); color: var(--ink); }
 .cc-pager-btn:disabled { opacity: 0.3; pointer-events: none; }
 .cc-pager-btn svg { width: 14px; height: 14px; }

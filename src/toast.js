@@ -34,10 +34,15 @@ export function showToast(message, type = 'info', duration = 4000, action = null
         toast.appendChild(btn);
     }
 
+    // Durée honorée via variable CSS (audit AC5) : le délai 3.5s figé dans
+    // base.css neutralisait tout `duration` > 4s. CSSOM (.style.setProperty),
+    // compatible CSP prod.
+    toast.style.setProperty('--toast-fade-delay', `${Math.max(duration - 500, 300)}ms`);
     container.appendChild(toast);
 
-    setTimeout(() => {
-        toast.style.animation = 'fadeOut 0.5s forwards';
-        toast.addEventListener('animationend', () => toast.remove());
-    }, duration - 500);
+    // Retrait par minuterie, PAS sur animationend : les animations CSS
+    // n'avancent pas quand la page n'est pas rendue (onglet caché) — des
+    // toasts zombies s'accumuleraient. Le fadeOut CSS est purement visuel
+    // et se termine pile à `duration` (delay + 0.5s).
+    setTimeout(() => toast.remove(), Math.max(duration, 800));
 }
