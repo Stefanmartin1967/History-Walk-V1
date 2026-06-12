@@ -132,7 +132,8 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
             try {
                 await batchSavePoiData(state.currentMapId, updates);
                 // Refresh des marqueurs (couleur peut changer dans les 2 sens)
-                import('./data.js').then(({ applyFilters }) => applyFilters());
+                import('./data.js').then(({ applyFilters }) => applyFilters())
+                    .catch(e => console.warn('[circuit] import data.js échoué (déploiement en cours ?) :', e));
                 // Push Gist (événement important)
                 pushToGist();
             } catch (e) {
@@ -680,7 +681,8 @@ export function convertToDraft({ preserveId = false } = {}) {
         // PR 4/5 chantier drapeaux v2 : snapshot des POI préexistants AVANT
         // d'entrer en édition (règle cadenas — leurs drapeaux seront rouges
         // non-draggables, à modifier depuis la fiche POI).
-        import('./circuit-flags.js').then(m => m.markEditingStart(state.currentCircuit || []));
+        import('./circuit-flags.js').then(m => m.markEditingStart(state.currentCircuit || []))
+            .catch(e => console.warn('[circuit] import circuit-flags.js échoué (déploiement en cours ?) :', e));
         setEditingMode(true);
         // Fix bug pré-existant (signalé par Stefan post #715) : en édition admin,
         // cliquer un POI ouvrait la fiche au lieu de l'ajouter au circuit. Cause :

@@ -309,7 +309,7 @@ function renderGrid() {
             import('./ui-photo-viewer.js').then(m => {
                 const photos = currentGridPhotos.map(p => p.objectUrl || p.src);
                 m.openPhotoViewer(photos, index);
-            });
+            }).catch(() => showToast("Chargement impossible — actualise l'application.", 'error', 4000));
         };
 
         // --- Actions ---
