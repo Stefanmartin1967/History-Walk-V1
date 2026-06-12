@@ -36,7 +36,8 @@ import { initUiModalsListeners } from './ui-modals.js';
 import { initCircuitListeners, loadCircuitFromIds } from './circuit.js';
 import { initCircuitPageEvents } from './ui-circuit-page-events.js';
 import { initCircuitRoutingUI } from './ui-circuit-routing.js';
-import { initUiDetailsListeners } from './ui-details.js';
+import { initUiDetailsListeners, openDetailsPanel } from './ui-details.js';
+import { eventBus } from './events.js';
 import { setupFileListeners } from './fileManager.js';
 import { setupSmartSearch } from './searchManager.js';
 import { setupDesktopTools } from './desktopMode.js';
@@ -215,11 +216,28 @@ async function initializeApp() {
     const urlParams = new URLSearchParams(window.location.search);
     const importIds = urlParams.get('import');
     const importName = urlParams.get('name');
+    const poiParam = urlParams.get('poi');
     if (importIds) {
         const newUrl = window.location.origin + window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
         setTimeout(() => {
             loadCircuitFromIds(importIds, importName);
+        }, 500);
+    } else if (poiParam) {
+        // Deep-link ?poi=HW_ID — bouton « Voir sur la carte Heripia » des pages
+        // SEO statiques (scripts/generate-poi-pages.mjs). Ouvre la fiche du
+        // lieu et centre la carte dessus. Même patron que ?import= ci-dessus
+        // (URL nettoyée, délai pour laisser la carte finir son rendu).
+        const newUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+        setTimeout(() => {
+            const index = state.loadedFeatures.findIndex(f => getPoiId(f) === poiParam);
+            if (index > -1) {
+                openDetailsPanel(index);
+                eventBus.emit('map:focus-poi', { poiId: poiParam });
+            } else {
+                showToast('Lieu introuvable dans cette destination.', 'warning');
+            }
         }, 500);
     }
 }
