@@ -53,6 +53,7 @@ L'application s'ouvre sur `http://localhost:5173/`.
 | `npm run test` | Tests Vitest |
 | `npm run knip` | Détection de code mort |
 | `npm run update-circuits` | Régénère l'index des circuits officiels |
+| `npm run screenshots` | Régénère les screenshots du manifest PWA (serveur dev requis) |
 
 Le déploiement sur GitHub Pages est automatisé via GitHub Actions (pas de `npm run deploy`).
 
