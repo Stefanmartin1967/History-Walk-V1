@@ -1,17 +1,25 @@
-// scout.js — Scout in-app (admin). Réunification Lot B.
+// scout.js — Scout in-app (admin). Réunification Lot B + flux inversé v2.
 //
 // Successeur in-app de tools/scout.html (supprimé en Lot C). Mode FOCALISÉ plein
 // écran : topbar + sidebar masquées, vraie carte assombrie, panneau gauche + une
 // BOÎTE bbox déplaçable/redimensionnable (8 poignées) sur la carte. Gated isAdmin.
 //
-// Découpage :
-//   B1 — coquille + boîte + cote km live.
-//   B2 (ici) — MOISSON : cases catégories + « Scanner » → requête Overpass bbox
-//        (osm-overpass.js mutualisé) → mapping OSM→taxo + dédup vs data chargé →
-//        pastilles candidates + récap (candidats/devinés/doublons/nouveaux).
-//        Ajuster la boîte re-filtre les candidats déjà récupérés EN DIRECT
-//        (sans re-requêter) ; sortir de la zone scannée → invite à re-scanner.
-//   B2b — nouvelle zone (recherche Nominatim → flyTo). B3 — capture en candidats.
+// FLUX INVERSÉ (v2, validé 12/06/2026) : on crée la destination AVANT de la
+// scouter. L'ancien toggle Nouvelle/Repasse faisait bifurquer la CAPTURE selon
+// un état invisible — une capture « repasse » avec la carte sur Hammamet
+// injectait 50 lieux dans Djerba. Désormais :
+//   1. « Nouvelle destination… » (panneau) = recherche Nominatim → brouillon
+//      local VIDE (createDestinationDraft) → bascule dessus (?map={id}) ;
+//   2. le Scout moissonne TOUJOURS la destination active — les captures passent
+//      par addPoiFeature → customPois_{id}, le canal canonique lu par la
+//      publication (cf. publish-destination.js) ; autant de passes qu'on veut ;
+//   3. garde-fou : une boîte qui ne touche pas les bounds de la destination
+//      active bloque le scan (cible quasi sûrement erronée).
+//
+// MOISSON : cases catégories + « Scanner » → requête Overpass bbox
+// (osm-overpass.js mutualisé) → mapping OSM→taxo + dédup vs data chargé →
+// pastilles candidates + récap. Ajuster la boîte re-filtre les candidats EN
+// DIRECT (sans re-requêter) ; sortir de la zone scannée → invite à re-scanner.
 //
 // La boîte est stockée en COORDONNÉES (bounds lat/lng) = source de vérité, et
 // projetée en pixels (viewport) à chaque rendu → elle suit le pan/zoom. Idem
@@ -23,15 +31,14 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { fetchOverpassJson } from './osm-overpass.js';
 import { addPoiFeature } from './data.js';
-import { getZoneFromCoords, generateHWID } from './utils.js';
+import { getZoneFromCoords, isDestinationPublished } from './utils.js';
 import { hwPrompt } from './modal.js';
 import { createLocalDraftDestination, makeUniqueDestId } from './local-destinations.js';
-import { fetchZonesAuto, zoneNameForPoint } from './osm-zones.js';
+import { fetchZonesAuto } from './osm-zones.js';
 
 let _overlay = null;
 let _boxEl = null;
 let _isOpen = false;
-let _mode = 'repasse';          // 'new' | 'repasse'
 let _box = null;                // { north, south, east, west } — source de vérité
 let _drag = null;               // état drag/resize en cours
 let _onMapMove = null;          // resync boîte + pastilles sur pan/zoom
@@ -42,10 +49,10 @@ let _categories = null;         // Set des clés de catégorie cochées
 let _candidates = [];           // résultats du dernier scan : {lat,lon,cat,unknown,dup,name,_el}
 let _scannedBounds = null;      // bounds de la boîte au moment du scan (détection « zone modifiée »)
 let _scanning = false;
-let _geocoded = false;          // mode Nouvelle : une recherche Nominatim a-t-elle volé la carte ?
-let _geoBBox = null;            // mode Nouvelle : bbox [[s,w],[n,e]] du lieu géocodé → bounds du brouillon
-let _geoName = '';              // mode Nouvelle : nom du lieu géocodé → pré-remplit le nom de la destination
-let _geoCountry = '';           // mode Nouvelle : code pays ISO (Nominatim) → niveau admin des zones OSM
+let _geocoded = false;          // création : une recherche Nominatim a-t-elle volé la carte ?
+let _geoBBox = null;            // création : bbox [[s,w],[n,e]] du lieu géocodé → bounds du brouillon
+let _geoName = '';              // création : nom du lieu géocodé → pré-remplit le nom de la destination
+let _geoCountry = '';           // création : code pays ISO (Nominatim) → niveau admin des zones OSM
 
 const MIN_PX = 46;              // taille mini de la boîte à l'écran (poignées utilisables)
 const MIN_VIEW_KM = 25;         // fenêtre mini après géocodage : de quoi tracer une boîte de 25 km
@@ -129,6 +136,15 @@ function inBox(c) {
 function boxWithin(outer) {
     return outer && _box && _box.north <= outer.north && _box.south >= outer.south
         && _box.west >= outer.west && _box.east <= outer.east;
+}
+// La boîte touche-t-elle les bounds [[s,w],[n,e]] de la destination active ?
+// Bounds illisibles (vieille entrée sans bounds…) → true : pas de garde plutôt
+// qu'un faux blocage. Chevauchement PARTIEL accepté (étendre une dest est légitime).
+function boxIntersectsBounds(b, bounds) {
+    if (!Array.isArray(bounds) || !Array.isArray(bounds[0]) || !Array.isArray(bounds[1])) return true;
+    const s = bounds[0][0], w = bounds[0][1], n = bounds[1][0], e = bounds[1][1];
+    if (![s, w, n, e].every(Number.isFinite)) return true;
+    return b.south <= n && b.north >= s && b.west <= e && b.east >= w;
 }
 
 // ── Cote (km) ───────────────────────────────────────────────────────────────
@@ -336,29 +352,28 @@ function onDrawUp() {
     updatePrimary();
 }
 
-// ── Mode + catégories ─────────────────────────────────────────────────────────
-function setMode(m) {
-    _mode = m;
-    _overlay?.querySelector('[data-scout-mode="new"]')?.classList.toggle('is-on', m === 'new');
-    _overlay?.querySelector('[data-scout-mode="repasse"]')?.classList.toggle('is-on', m === 'repasse');
-    _boxEl?.classList.toggle('is-repasse', m === 'repasse');
-    const destmode = _overlay?.querySelector('[data-scout-destmode]');
-    if (destmode) destmode.textContent = m === 'repasse' ? 'publiée · repasse' : 'nouveau brouillon';
-    // Repasse : dest. publiée courante (lecture seule) ; Nouvelle : recherche Nominatim.
-    const repasseEl = _overlay?.querySelector('[data-scout-dest-repasse]');
-    const newEl = _overlay?.querySelector('[data-scout-dest-new]');
-    if (repasseEl) repasseEl.hidden = (m !== 'repasse');
-    if (newEl) newEl.hidden = (m !== 'new');
-    // Changement de contexte → on oublie le scan précédent.
+// ── Formulaire « Nouvelle destination… » (Scout v2) ──────────────────────────
+// Ouvre/ferme le sous-formulaire de création (recherche Nominatim + « Créer »).
+// Fermer réinitialise le contexte géocodé — la carte reste où elle est (inoffensif).
+function setNewDestFormOpen(open) {
+    const form = _overlay?.querySelector('[data-scout-newdest]');
+    const toggle = _overlay?.querySelector('[data-scout-newdest-toggle]');
+    if (form) form.hidden = !open;
+    if (toggle) toggle.hidden = open;
+    if (open) {
+        _overlay?.querySelector('[data-scout-search]')?.focus();
+        return;
+    }
     _geocoded = false;
     _geoBBox = null; _geoName = ''; _geoCountry = '';
+    const input = _overlay?.querySelector('[data-scout-search]');
+    if (input) input.value = '';
     const fl = _overlay?.querySelector('[data-scout-found-label]');
     if (fl) { fl.hidden = true; fl.textContent = ''; }
-    clearCandidates();
-    _scannedBounds = null;
-    refreshRecap();
-    updatePrimary();
+    const create = _overlay?.querySelector('[data-scout-newdest-create]');
+    if (create) create.disabled = true;
 }
+
 // Bouton primaire = machine à états : « Scanner la zone » par défaut ; après un
 // scan frais avec des nouveaux dans la boîte → « Capturer N lieux » (réunif C1).
 function updatePrimary() {
@@ -376,9 +391,7 @@ function updatePrimary() {
     } else {
         btn.dataset.action = 'scan';
         if (label) label.textContent = 'Scanner la zone';
-        // Mode Nouvelle : Scanner désactivé tant qu'aucune recherche n'a volé
-        // la carte (sinon la boîte est encore sur la destination active).
-        btn.disabled = (_categories.size === 0) || _scanning || !_box || (_mode === 'new' && !_geocoded);
+        btn.disabled = (_categories.size === 0) || _scanning || !_box;
     }
 }
 
@@ -394,9 +407,9 @@ function minViewBounds(south, north, west, east) {
     return [[south - padLat, west - padLon], [north + padLat, east + padLon]];
 }
 
-// Mode Nouvelle (réunif B2b) : géocode un lieu via Nominatim → vole la carte
-// dessus → recentre la boîte. Mémorise le lieu (nom + bbox) pour pré-remplir la
-// création du brouillon de destination au moment de « Capturer » (C2a-2).
+// Formulaire « Nouvelle destination… » (réunif B2b → Scout v2) : géocode un lieu
+// via Nominatim → vole la carte dessus. Mémorise le lieu (nom + bbox + pays) pour
+// pré-remplir la création du brouillon (createDestinationDraft).
 async function geocodeAndFly(query) {
     query = (query || '').trim();
     if (!query) return;
@@ -426,6 +439,8 @@ async function geocodeAndFly(query) {
         updatePrimary();
         const fl = _overlay?.querySelector('[data-scout-found-label]');
         if (fl) { fl.hidden = false; fl.textContent = '📍 ' + _geoName.split(',').slice(0, 2).join(','); }
+        const create = _overlay?.querySelector('[data-scout-newdest-create]');
+        if (create) create.disabled = false;
     } catch (e) {
         showToast('Recherche indisponible (Nominatim). Réessaie.', 'error', 3500);
     } finally {
@@ -490,6 +505,15 @@ function showLoading(on, sub) {
 async function scan() {
     if (_scanning || !_box) return;
     if (_categories.size === 0) { showToast('Sélectionne au moins une catégorie.', 'warning', 3000); return; }
+    // Garde-fou géographique (Scout v2) : une boîte qui ne touche pas la
+    // destination active = cible quasi sûrement erronée (leçon du test Hammamet :
+    // 50 lieux capturés à 400 km injectés dans Djerba). On bloque en indiquant
+    // le bon geste — le chevauchement partiel reste accepté.
+    const destBounds = state.destinations?.maps?.[state.currentMapId]?.bounds;
+    if (!boxIntersectsBounds(_box, destBounds)) {
+        showToast(`La boîte est hors de « ${destName()} ». Pour scouter un autre endroit, crée d'abord sa destination (« Nouvelle destination… »).`, 'warning', 6000);
+        return;
+    }
     const tiles = computeTiles(_box);
     if (tiles.length > MAX_TILES) {
         showToast(`Zone trop vaste (${tiles.length} parties). Réduis la boîte ou scoute en plusieurs fois.`, 'warning', 4500);
@@ -563,17 +587,16 @@ async function scan() {
     }
 }
 
-// Réunif C1 : « Capturer » → les candidats non-doublons dans la boîte deviennent
-// des POIs PERSISTANTS `candidate:true` (IndexedDB admin, via addPoiFeature).
+// Réunif C1 + Scout v2 : « Capturer » → les candidats non-doublons dans la boîte
+// deviennent des POIs PERSISTANTS `candidate:true` de la DESTINATION ACTIVE
+// (addPoiFeature → customPois_{id}, le canal canonique lu par la publication,
+// cf. publish-destination.js — valable pour une dest publiée COMME un brouillon).
 // draft:false → jamais poussés tant que non validés (le tri = C1b).
-//   - Repasse  : alimente la destination active (existante).
-//   - Nouvelle : crée une destination BROUILLON locale (C2a-2, voir ci-dessous).
 async function capture() {
     if (_scanning) return;
     const fresh = !!_scannedBounds && boxWithin(_scannedBounds);
     const toCapture = _candidates.filter(c => inBox(c) && !c.dup);
     if (!fresh || !toCapture.length) return;
-    if (_mode === 'new') { await captureAsNewDestination(toCapture); return; }
     const n = toCapture.length;
     let saved = 0;
     try {
@@ -610,17 +633,19 @@ async function capture() {
     showToast(`${n} lieu${n > 1 ? 'x' : ''} capturé${n > 1 ? 's' : ''} en candidat${n > 1 ? 's' : ''} — à curer (tri à venir).`, 'success', 3800);
 }
 
-// Mode Nouvelle (réunif C2a-2) : « Capturer » crée une DESTINATION BROUILLON
-// locale (entrée + candidats candidate:true) au lieu d'alimenter la dest active,
-// récupère ses ZONES admin OSM (C2a-2b, niveau déduit du pays géocodé) + en
-// déduit la Zone de chaque candidat, puis bascule dessus (rechargement ?map={id}
-// → boot C2a-1b vérifié). Tout en local : aucune écriture GitHub.
-async function captureAsNewDestination(toCapture) {
-    const n = toCapture.length;
+// Scout v2 (flux inversé) : crée une DESTINATION BROUILLON locale VIDE — aucun
+// POI, les lieux arrivent ensuite par les captures sur la destination devenue
+// active. Récupère les ZONES admin OSM (C2a-2b, niveau déduit du pays géocodé)
+// puis bascule dessus (rechargement ?map={id} → boot C2a-1b). Tout en local :
+// aucune écriture GitHub. Bounds = fenêtre élargie à MIN_VIEW_KM autour du lieu
+// géocodé : la bbox Nominatim d'une ville (son bâti) est trop serrée pour le
+// cadrage d'une destination qui s'étendra autour.
+async function createDestinationDraft() {
+    if (!_geocoded) return;
     const suggested = (_geoName || '').split(',')[0].trim();
     const name = await hwPrompt({
         title: 'Nouvelle destination',
-        body: `Créer un brouillon local avec <strong>${n} lieu${n > 1 ? 'x' : ''}</strong>. Nom de la destination :`,
+        body: 'Créer un brouillon local <strong>vide</strong> — tu scoutes ses lieux juste après, dessus. Nom de la destination :',
         defaultValue: suggested,
         placeholder: 'ex. Varna, Sozopol, Trapani…',
         confirmLabel: 'Créer le brouillon',
@@ -630,42 +655,27 @@ async function captureAsNewDestination(toCapture) {
     if (!trimmed) { showToast('Nom vide — création annulée.', 'warning', 3000); return; }
 
     const id = await makeUniqueDestId(trimmed);
-    const bbox = _geoBBox || [[_box.south, _box.west], [_box.north, _box.east]];
-    const features = toCapture.map(c => ({
-        type: 'Feature',
-        geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
-        properties: {
-            HW_ID: generateHWID(),
-            'Nom du site FR': c.name || '',
-            'Catégorie': c.cat || 'À définir',
-            Zone: '',                                // affectée ci-dessous si des zones OSM existent
-            candidate: true,
-        },
-    }));
+    const raw = _geoBBox || (() => { const c = map.getCenter(); return [[c.lat, c.lng], [c.lat, c.lng]]; })();
+    const bounds = minViewBounds(raw[0][0], raw[1][0], raw[0][1], raw[1][1]);
 
     // Zones admin OSM (réunif C2a-2b) : niveau déduit du pays géocodé, avec repli
     // si la 1ʳᵉ passe est vide. Échec/timeout → zones vides, la création continue
     // (non bloquant — les zones se complètent plus tard si besoin).
     showLoading(true, 'Zones administratives (OSM)…');
     let zones = { type: 'FeatureCollection', features: [] };
-    try { zones = await fetchZonesAuto(bbox, _geoCountry); } catch (_) {}
+    try { zones = await fetchZonesAuto(bounds, _geoCountry); } catch (_) {}
     showLoading(false);
-    if (zones.features.length) {
-        for (const f of features) {
-            f.properties.Zone = zoneNameForPoint(f.geometry.coordinates[1], f.geometry.coordinates[0], zones);
-        }
-    }
 
     const center = map.getCenter();
     const entry = {
         name: trimmed,
-        bounds: bbox,
+        bounds,
         startView: { center: [center.lat, center.lng], zoom: map.getZoom() },
         currency: '',
         file: null, zonesFile: null, circuitsFile: null,
     };
     try {
-        await createLocalDraftDestination(id, entry, { type: 'FeatureCollection', features }, zones);
+        await createLocalDraftDestination(id, entry, { type: 'FeatureCollection', features: [] }, zones);
     } catch (e) {
         showToast('Échec de la création du brouillon.', 'error', 4000);
         return;
@@ -673,8 +683,8 @@ async function captureAsNewDestination(toCapture) {
     // Bascule : on mémorise le choix puis on recharge sur le brouillon (le boot
     // C2a-1b le fusionne + charge ses POIs depuis l'IDB ; admin déjà connecté).
     try { localStorage.setItem('hw_active_dest', id); } catch (_) {}
-    const zTxt = zones.features.length ? ` · ${zones.features.length} zone${zones.features.length > 1 ? 's' : ''}` : '';
-    showToast(`Destination « ${trimmed} » créée (${n} candidat${n > 1 ? 's' : ''}${zTxt}). Bascule en cours…`, 'success', 2600);
+    const zTxt = zones.features.length ? ` · ${zones.features.length} zone${zones.features.length > 1 ? 's' : ''} OSM` : '';
+    showToast(`Destination « ${trimmed} » créée${zTxt}. Bascule — relance le Scout pour la remplir.`, 'success', 3200);
     setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(id)}`; }, 650);
 }
 
@@ -689,7 +699,7 @@ function renderShell() {
     _overlay = document.createElement('div');
     _overlay.className = 'scout-overlay';
     _overlay.innerHTML = `
-        <div class="scout-box is-repasse" data-scout-box>
+        <div class="scout-box" data-scout-box>
             <span class="scout-dim"><i data-lucide="crop"></i><span data-scout-dimtxt>—</span></span>
             <span class="scout-handle nw" data-h="nw"></span><span class="scout-handle ne" data-h="ne"></span>
             <span class="scout-handle sw" data-h="sw"></span><span class="scout-handle se" data-h="se"></span>
@@ -707,21 +717,21 @@ function renderShell() {
             <div class="scout-panel-bd">
                 <div>
                     <label class="scout-lbl">Destination</label>
-                    <button class="dest-sel" data-scout-dest-repasse type="button" disabled>
+                    <button class="dest-sel" type="button" disabled>
                         <span class="ic"><i data-lucide="map"></i></span>
-                        <span class="scout-dest-main"><span class="nm" data-scout-destname>—</span><span class="ct" data-scout-destmode>publiée · repasse</span></span>
+                        <span class="scout-dest-main"><span class="nm" data-scout-destname>—</span><span class="ct" data-scout-deststatus>—</span></span>
                     </button>
-                    <div class="scout-search" data-scout-dest-new hidden>
-                        <input type="search" data-scout-search placeholder="Lieu : hôtel, ville, site…" autocomplete="off">
-                        <button class="scout-search-btn" data-scout-search-btn type="button" title="Rechercher" aria-label="Rechercher le lieu"><i data-lucide="search"></i></button>
-                    </div>
-                    <div class="scout-found" data-scout-found-label hidden></div>
-                </div>
-                <div>
-                    <label class="scout-lbl">Type de moisson</label>
-                    <div class="scout-mode">
-                        <div class="scout-mode-opt" data-scout-mode="new"><div class="top"><i data-lucide="map-pin"></i><span class="t">Nouvelle</span></div><div class="h">Zone vierge — première moisson</div></div>
-                        <div class="scout-mode-opt is-on repasse" data-scout-mode="repasse"><div class="top"><i data-lucide="refresh-cw"></i><span class="t">Repasse</span></div><div class="h">Compléter une dest. existante</div></div>
+                    <button class="btn btn-ghost scout-newdest-btn" type="button" data-scout-newdest-toggle><i data-lucide="map-pin"></i>Nouvelle destination…</button>
+                    <div class="scout-newdest" data-scout-newdest hidden>
+                        <div class="scout-search">
+                            <input type="search" data-scout-search placeholder="Ville, région, île…" autocomplete="off">
+                            <button class="scout-search-btn" data-scout-search-btn type="button" title="Rechercher" aria-label="Rechercher le lieu"><i data-lucide="search"></i></button>
+                        </div>
+                        <div class="scout-found" data-scout-found-label hidden></div>
+                        <div class="scout-newdest-actions">
+                            <button class="btn btn-ghost" type="button" data-scout-newdest-cancel>Annuler</button>
+                            <button class="btn btn-primary" type="button" data-scout-newdest-create disabled><i data-lucide="plus"></i>Créer le brouillon</button>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -760,6 +770,10 @@ function renderShell() {
     setTimeout(() => { try { map.invalidateSize(); } catch (_) {} render(); }, 80);
 
     _overlay.querySelector('[data-scout-destname]').textContent = destName();
+    // Statut de la dest active : publiée / brouillon local (IDB) / brouillon GitHub.
+    const activeDest = state.destinations?.maps?.[state.currentMapId];
+    _overlay.querySelector('[data-scout-deststatus]').textContent =
+        isDestinationPublished(activeDest) ? 'publiée' : (activeDest?.custom ? 'brouillon local' : 'brouillon GitHub');
     _overlay.querySelector('[data-scout-quit]').addEventListener('click', stopScout);
     _overlay.querySelector('[data-scout-reset]').addEventListener('click', clearBox);
     // Boîte posée → « Retracer » (efface + ré-arme) ; sinon toggle armer/annuler.
@@ -770,8 +784,9 @@ function renderShell() {
     _overlay.querySelector('[data-scout-primary]').addEventListener('click', (e) => {
         (e.currentTarget.dataset.action === 'capture') ? capture() : scan();
     });
-    _overlay.querySelectorAll('[data-scout-mode]').forEach(el =>
-        el.addEventListener('click', () => setMode(el.dataset.scoutMode)));
+    _overlay.querySelector('[data-scout-newdest-toggle]').addEventListener('click', () => setNewDestFormOpen(true));
+    _overlay.querySelector('[data-scout-newdest-cancel]').addEventListener('click', () => setNewDestFormOpen(false));
+    _overlay.querySelector('[data-scout-newdest-create]').addEventListener('click', createDestinationDraft);
     _overlay.querySelectorAll('[data-scout-cat]').forEach(cb =>
         cb.addEventListener('change', () => {
             if (cb.checked) _categories.add(cb.dataset.scoutCat); else _categories.delete(cb.dataset.scoutCat);
@@ -796,7 +811,6 @@ export function startScout() {
     if (!state.isAdmin) { showToast("Outil réservé à l'admin.", 'warning', 3000); return; }
     if (!state.currentMapId) { showToast('Aucune destination active.', 'warning', 3000); return; }
     _isOpen = true;
-    _mode = 'repasse';
     _candidates = [];
     _scannedBounds = null;
     _drawArmed = false;
