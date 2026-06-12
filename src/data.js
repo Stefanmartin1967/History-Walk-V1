@@ -15,7 +15,7 @@ import {
 import { logModification } from './logger.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
-import { getPoiId, getPoiName, generateHWID, getZoneFromCoords } from './utils.js';
+import { getPoiId, getPoiName, generateHWID, getZoneFromCoords, isCandidate } from './utils.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
 import { getDomainFromUrl } from './url-utils.js';
 import { PERSONAL_KEYS } from './config.js';
@@ -388,8 +388,8 @@ export function passesUserFilters(feature, plannedSet = null) {
     if (f.verified === 'hide' && props.verified) return false;
     if (f.verified === 'only' && !props.verified) return false;
     // Candidat « à curer » (réunif C1) : 'only' = file de tri (n'affiche que les candidats).
-    if (f.candidate === 'hide' && props.candidate) return false;
-    if (f.candidate === 'only' && !props.candidate) return false;
+    if (f.candidate === 'hide' && isCandidate(feature)) return false;
+    if (f.candidate === 'only' && !isCandidate(feature)) return false;
     if (f.incontournablesOnly && !props.incontournable) return false;
     if (f.photo === 'hide' && hasPhotos(props)) return false;
     if (f.photo === 'only' && !hasPhotos(props)) return false;

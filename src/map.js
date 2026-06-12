@@ -8,6 +8,7 @@ import { openDetailsPanel } from './ui-details.js';
 import { eventBus } from './events.js';
 import { showToast } from './toast.js';
 import { getPoiId, getPoiName } from './data.js';
+import { isCandidate } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { saveAppState } from './database.js';
 import { iconMap, getIconHtml, getIconForFeature } from './poi-icons.js';
@@ -269,7 +270,9 @@ export function createHistoryWalkIcon(featureOrCategory) {
             flagDotHtml = '<span class="hw-poi-flagdot" title="Drapeau d\'accès à reprendre"></span>';
         }
         // Réunif C1b : badge « à curer » sur un candidat Scout (admin uniquement).
-        if (f?.properties?.candidate) {
+        // isCandidate (overlay) → le badge disparaît après curation, même pour un
+        // candidat de base issu d'un brouillon GitHub (userData.candidate=false).
+        if (isCandidate(f)) {
             flagDotHtml += '<span class="hw-poi-canddot" title="Candidat à curer (Scout)"></span>';
         }
     }

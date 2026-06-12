@@ -4,7 +4,7 @@
 // Aucune dépendance DOM / UI : pure transformation de données.
 
 import { state } from './state.js';
-import { getPoiId } from './utils.js';
+import { getPoiId, isCandidate } from './utils.js';
 import { PERSONAL_KEYS } from './config.js';
 
 // `keepCandidates` : faut-il laisser passer les candidats Scout non curés
@@ -26,7 +26,10 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
              const id = getPoiId(f);
              if (excludedIds.includes(id)) return false;
              if (f.properties.userData && f.properties.userData._deleted) return false;
-             if (!keepCandidates && f.properties.candidate) return false;
+             // isCandidate (overlay) et non properties.candidate brut : un candidat de
+             // base CURÉ (userData.candidate=false) n'est PLUS un candidat → il doit
+             // être publié (la clé candidate:false résiduelle est retirée plus bas).
+             if (!keepCandidates && isCandidate(f)) return false;
              return true;
         })
         .map(f => {
@@ -37,6 +40,12 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
                 Object.assign(properties, properties.userData);
                 delete properties.userData;
             }
+
+            // Réunif PR1 : un candidat de base curé porte candidate:false (via overlay
+            // userData) → on retire la clé pour un geojson propre. Un candidat NON curé
+            // garde candidate:true (et n'arrive ici que sur le chemin keepCandidates,
+            // i.e. un brouillon admin-only ; ailleurs il est exclu en amont).
+            if (properties.candidate === false) delete properties.candidate;
 
             // Blindage : l'ID unifié ne doit pas être écrasé par une vieille valeur dans userData.
             if (standardizedHWID) {

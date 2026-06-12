@@ -496,6 +496,50 @@ describe('Admin Diff Engine', () => {
             expect(idChange.old).toBe('legacy_id');
             expect(idChange.new).toBe('new_id');
         });
+
+        it('réunif PR1 : curation d\'un candidat de base → change « Curation » (pas skippé)', async () => {
+            // Brouillon GitHub : le candidat est publié avec candidate:true (remote).
+            // La curation pose userData.candidate=false → isCandidate(current)=false donc
+            // la garde ne le saute plus, et le diff affiche « Candidat à curer → Validé ».
+            const remotePoi = {
+                type: 'Feature',
+                properties: { HW_ID: 'cand_1', 'Nom du site FR': 'Mosquée X', candidate: true },
+                geometry: { type: 'Point', coordinates: [10, 20] }
+            };
+            state.loadedFeatures = [{
+                type: 'Feature',
+                properties: { HW_ID: 'cand_1', 'Nom du site FR': 'Mosquée X', candidate: true, userData: { candidate: false } },
+                geometry: { type: 'Point', coordinates: [10, 20] }
+            }];
+            state.userData = { cand_1: { candidate: false } };
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [remotePoi] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([]) });
+            });
+            const draft = { pendingPois: { cand_1: { type: 'update' } }, pendingCircuits: {} };
+
+            const r = await prepareDiffData(draft);
+
+            expect(r.pois.length).toBe(1);
+            const cur = r.pois[0].changes.find(c => c.key === 'Curation');
+            expect(cur).toBeDefined();
+            expect(cur.old).toBe('Candidat à curer');
+            expect(cur.new).toBe('Validé');
+        });
+
+        it('réunif : un candidat NON curé reste exclu du diff (ceinture+bretelles)', async () => {
+            state.loadedFeatures = [{
+                type: 'Feature',
+                properties: { HW_ID: 'cand_2', 'Nom du site FR': 'Y', candidate: true, userData: {} },
+                geometry: { type: 'Point', coordinates: [10, 20] }
+            }];
+            const draft = { pendingPois: { cand_2: { type: 'update' } }, pendingCircuits: {} };
+
+            const r = await prepareDiffData(draft);
+
+            expect(r.pois.find(p => p.id === 'cand_2')).toBeUndefined();
+        });
     });
 
     // ========================================================================
