@@ -1425,17 +1425,32 @@ async function saveCluster(cluster, mapId) {
     // On exclut les photos alreadySaved (déjà persistées via "Créer un lieu" →
     // addPhotosToPoi, ou un précédent « Enregistrer ce lieu »). Évite de
     // recompresser ; la dédup par id couvrirait de toute façon.
-    const blobItems = await Promise.all(
-        cluster.photos
-            .filter(p => p.file && !p.alreadySaved)
-            .map(async (p) => ({
-                id: p.id,
-                blob: await compressImage(p.file, PUBLISH_COMPRESSION.targetMinSize, PUBLISH_COMPRESSION.quality),
-                // srcHash = hash du fichier ORIGINAL (posé à l'import) →
-                // permet la dédup au prochain import (dédup 2-local).
-                srcHash: p.srcHash || undefined,
-            }))
-    );
+    const toCompress = cluster.photos.filter(p => p.file && !p.alreadySaved);
+    // P5 (audit) : compresser 20-30 photos de 12 Mpx toutes EN MÊME TEMPS
+    // (Promise.all direct) créait un pic mémoire transitoire de plusieurs
+    // centaines de Mo (un décodage + canvas plein format par photo) — risque
+    // de fermeture d'onglet sur mobile modeste. Plafond : 3 simultanées, via
+    // un mini-pool (3 workers qui piochent dans la file ; l'ordre est préservé
+    // par l'écriture indexée).
+    const MAX_PARALLEL_COMPRESSIONS = 3;
+    const blobItems = new Array(toCompress.length);
+    let nextIdx = 0;
+    await Promise.all(Array.from(
+        { length: Math.min(MAX_PARALLEL_COMPRESSIONS, toCompress.length) },
+        async () => {
+            while (nextIdx < toCompress.length) {
+                const i = nextIdx++;
+                const p = toCompress[i];
+                blobItems[i] = {
+                    id: p.id,
+                    blob: await compressImage(p.file, PUBLISH_COMPRESSION.targetMinSize, PUBLISH_COMPRESSION.quality),
+                    // srcHash = hash du fichier ORIGINAL (posé à l'import) →
+                    // permet la dédup au prochain import (dédup 2-local).
+                    srcHash: p.srcHash || undefined,
+                };
+            }
+        }
+    ));
     if (blobItems.length === 0) return 0;
 
     // Merge avec l'existant en DB (dédup par id)
