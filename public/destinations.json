@@ -25,31 +25,6 @@
         ],
         "zoom": 12
       }
-    },
-    "hammamet": {
-      "name": "Hammamet",
-      "status": "draft",
-      "file": "hammamet.geojson",
-      "circuitsFile": "circuits/hammamet.json",
-      "zonesFile": "hammamet-zones.geojson",
-      "bounds": [
-        [
-          36.308445,
-          10.494454
-        ],
-        [
-          36.494119,
-          10.685636
-        ]
-      ],
-      "currency": "EUR",
-      "startView": {
-        "center": [
-          36.401281999999995,
-          10.590045
-        ],
-        "zoom": 11.5
-      }
     }
   }
 }
