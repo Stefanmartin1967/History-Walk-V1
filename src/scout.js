@@ -35,7 +35,8 @@ let _mode = 'repasse';          // 'new' | 'repasse'
 let _box = null;                // { north, south, east, west } — source de vérité
 let _drag = null;               // état drag/resize en cours
 let _onMapMove = null;          // resync boîte + pastilles sur pan/zoom
-let _drawLayer = null;          // couche de tracé (active tant qu'aucune boîte n'existe)
+let _drawLayer = null;          // couche de tracé (armée par le bouton « Tracer la zone »)
+let _drawArmed = false;         // tracé armé ? (false = navigation libre : pan/zoom/contrôles)
 let _drawStart = null;          // point de départ (px) du tracé de la boîte au glisser
 let _categories = null;         // Set des clés de catégorie cochées
 let _candidates = [];           // résultats du dernier scan : {lat,lon,cat,unknown,dup,name,_el}
@@ -47,6 +48,7 @@ let _geoName = '';              // mode Nouvelle : nom du lieu géocodé → pr�
 let _geoCountry = '';           // mode Nouvelle : code pays ISO (Nominatim) → niveau admin des zones OSM
 
 const MIN_PX = 46;              // taille mini de la boîte à l'écran (poignées utilisables)
+const MIN_VIEW_KM = 25;         // fenêtre mini après géocodage : de quoi tracer une boîte de 25 km
 const DEDUP_M = 50;             // un candidat à < 50 m d'un POI existant = doublon (règle #472)
 const TILE_KM = 25;             // côté max d'une tuile (km). Djerba (~18 km) tient en 1 passe — comme
                                 // l'ancien Scout (1 bbox). Le découpage ne sert que pour des boîtes
@@ -166,9 +168,11 @@ function computeTiles(b) {
 function render() {
     if (!_boxEl) return;
     const hasBox = !!_box;
-    // Pas de boîte → boîte masquée + couche de tracé active (l'admin la dessine).
+    // Pas de boîte → boîte masquée. La couche de tracé n'est active QUE si
+    // l'admin a armé le tracé (bouton « Tracer la zone ») : par défaut la
+    // carte reste navigable (pan/zoom/contrôles Leaflet cliquables).
     _boxEl.classList.toggle('is-hidden', !hasBox);
-    if (_drawLayer) _drawLayer.classList.toggle('is-on', !hasBox);
+    if (_drawLayer) _drawLayer.classList.toggle('is-on', !hasBox && _drawArmed);
     if (hasBox) {
         const rect = geoToViewportRect(_box);
         _boxEl.style.left = rect.left + 'px';
@@ -277,9 +281,23 @@ function onPointerUp() {
 }
 
 // ── Tracé de la boîte au glisser (réunif peaufinage) ───────────────────────────
-// Pas de boîte par défaut : l'admin la dessine sur la carte. `_drawLayer` ne
-// capture les pointeurs QUE tant qu'aucune boîte n'existe (.is-on) ; une fois la
-// boîte tracée, elle s'efface → carte pannable + boîte déplaçable normalement.
+// Pas de boîte par défaut, et pas de tracé armé d'office : plein écran, la couche
+// de tracé masquait les contrôles Leaflet et bloquait pan/zoom — impossible de
+// cadrer la carte AVANT de dessiner. L'admin arme le tracé via le bouton
+// « Tracer la zone » du panneau ; une fois la boîte posée, la couche se désarme
+// → carte pannable + boîte déplaçable normalement.
+function setDrawArmed(on) {
+    _drawArmed = on;
+    render();          // (dés)active la couche de tracé selon _drawArmed
+    updateTraceBtn();
+}
+function updateTraceBtn() {
+    const btn = _overlay?.querySelector('[data-scout-trace]');
+    if (!btn) return;
+    btn.classList.toggle('is-armed', _drawArmed && !_box);
+    const txt = btn.querySelector('[data-scout-trace-txt]');
+    if (txt) txt.textContent = _box ? 'Retracer la zone' : (_drawArmed ? 'Annuler le tracé' : 'Tracer la zone');
+}
 function onDrawDown(e) {
     if (_box) return;
     e.preventDefault();
@@ -310,9 +328,11 @@ function onDrawUp() {
     _drawStart = null;
     if (_box) {
         const rect = geoToViewportRect(_box);
-        if (rect.w < MIN_PX || rect.h < MIN_PX) _box = null; // glisser trop court → annulé
+        if (rect.w < MIN_PX || rect.h < MIN_PX) _box = null; // glisser trop court → annulé (on reste armé)
+        else _drawArmed = false; // boîte posée → désarmé (navigation libre, ajustement par poignées)
     }
-    render();          // boîte valide → affichée + couche masquée ; sinon → couche réactivée
+    render();          // boîte valide → affichée + couche masquée ; sinon → couche toujours armée
+    updateTraceBtn();
     updatePrimary();
 }
 
@@ -362,6 +382,18 @@ function updatePrimary() {
     }
 }
 
+// La bbox Nominatim d'une ville est serrée (le bâti) → vue trop zoomée pour
+// tracer une boîte de moisson autour. On garantit une fenêtre d'au moins
+// MIN_VIEW_KM de côté, centrée sur le lieu — la bbox d'origine reste celle
+// mémorisée pour les bounds du futur brouillon (_geoBBox).
+function minViewBounds(south, north, west, east) {
+    const latMid = (south + north) / 2;
+    const kmPerLat = 111, kmPerLon = 111 * Math.cos(latMid * Math.PI / 180);
+    const padLat = Math.max(0, MIN_VIEW_KM - (north - south) * kmPerLat) / kmPerLat / 2;
+    const padLon = Math.max(0, MIN_VIEW_KM - (east - west) * kmPerLon) / kmPerLon / 2;
+    return [[south - padLat, west - padLon], [north + padLat, east + padLon]];
+}
+
 // Mode Nouvelle (réunif B2b) : géocode un lieu via Nominatim → vole la carte
 // dessus → recentre la boîte. Mémorise le lieu (nom + bbox) pour pré-remplir la
 // création du brouillon de destination au moment de « Capturer » (C2a-2).
@@ -381,10 +413,10 @@ async function geocodeAndFly(query) {
         _geoCountry = hit.address?.country_code || '';
         if (bb.length === 4 && bb.every(Number.isFinite)) {
             _geoBBox = [[bb[0], bb[2]], [bb[1], bb[3]]]; // [[s,w],[n,e]] → bounds du futur brouillon
-            map.fitBounds([[bb[0], bb[2]], [bb[1], bb[3]]], { maxZoom: 16, animate: false });
+            map.fitBounds(minViewBounds(bb[0], bb[1], bb[2], bb[3]), { animate: false });
         } else if (Number.isFinite(lat) && Number.isFinite(lon)) {
             _geoBBox = null;
-            map.setView([lat, lon], 14, { animate: false });
+            map.fitBounds(minViewBounds(lat, lat, lon, lon), { animate: false });
         } else {
             showToast('Réponse Nominatim inattendue.', 'error', 3000); return;
         }
@@ -401,12 +433,14 @@ async function geocodeAndFly(query) {
     }
 }
 
-// ── Boîte effacée → mode tracé (l'admin la dessine au glisser) ─────────────────
+// ── Boîte effacée → navigation libre (re-tracer = bouton « Tracer la zone ») ───
 function clearBox() {
     _box = null;
+    _drawArmed = false;
     clearCandidates();
     _scannedBounds = null;
-    render();          // → boîte masquée + couche de tracé active
+    render();          // → boîte masquée, couche de tracé désarmée
+    updateTraceBtn();
     updatePrimary();
 }
 
@@ -691,6 +725,10 @@ function renderShell() {
                     </div>
                 </div>
                 <div>
+                    <label class="scout-lbl">Zone à moissonner</label>
+                    <button class="btn btn-secondary scout-trace-btn" type="button" data-scout-trace><i data-lucide="crop"></i><span data-scout-trace-txt>Tracer la zone</span></button>
+                </div>
+                <div>
                     <label class="scout-lbl">Catégories à moissonner</label>
                     <div class="scout-cats">
                         ${CATEGORIES.map(c => `<label class="scout-cat"><input type="checkbox" data-scout-cat="${c.key}"${c.on ? ' checked' : ''}><span>${c.label}</span></label>`).join('')}
@@ -716,13 +754,19 @@ function renderShell() {
     _boxEl = _overlay.querySelector('[data-scout-box]');
     _drawLayer = _overlay.querySelector('[data-scout-draw]');
 
-    // Pas de boîte au départ : on (re)cale la carte puis render() → boîte masquée
-    // + couche de tracé active (l'admin dessine sa zone au glisser).
+    // Pas de boîte au départ : on (re)cale la carte puis render() → boîte masquée,
+    // navigation libre. L'admin cadre sa zone (pan/zoom) puis arme le tracé via
+    // le bouton « Tracer la zone ».
     setTimeout(() => { try { map.invalidateSize(); } catch (_) {} render(); }, 80);
 
     _overlay.querySelector('[data-scout-destname]').textContent = destName();
     _overlay.querySelector('[data-scout-quit]').addEventListener('click', stopScout);
     _overlay.querySelector('[data-scout-reset]').addEventListener('click', clearBox);
+    // Boîte posée → « Retracer » (efface + ré-arme) ; sinon toggle armer/annuler.
+    _overlay.querySelector('[data-scout-trace]').addEventListener('click', () => {
+        if (_box) { clearBox(); setDrawArmed(true); }
+        else setDrawArmed(!_drawArmed);
+    });
     _overlay.querySelector('[data-scout-primary]').addEventListener('click', (e) => {
         (e.currentTarget.dataset.action === 'capture') ? capture() : scan();
     });
@@ -740,6 +784,7 @@ function renderShell() {
     _drawLayer.addEventListener('pointerdown', onDrawDown);
     _onMapMove = () => render();
     map.on('move zoom zoomanim resize', _onMapMove);
+    updateTraceBtn();
     updatePrimary();
 
     createIcons({ icons: appIcons, root: _overlay });
@@ -754,6 +799,7 @@ export function startScout() {
     _mode = 'repasse';
     _candidates = [];
     _scannedBounds = null;
+    _drawArmed = false;
     _geocoded = false;
     _geoBBox = null; _geoName = ''; _geoCountry = '';
     renderShell();
@@ -766,7 +812,7 @@ export function stopScout() {
     if (_onMapMove) { map.off('move zoom zoomanim resize', _onMapMove); _onMapMove = null; }
     clearCandidates();
     if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
-    _overlay = null; _boxEl = null; _drawLayer = null; _box = null; _scannedBounds = null;
+    _overlay = null; _boxEl = null; _drawLayer = null; _box = null; _scannedBounds = null; _drawArmed = false;
     document.body.classList.remove('scout-active');
     setTimeout(() => { try { map.invalidateSize(); } catch (_) {} }, 80);
     _isOpen = false; _scanning = false;

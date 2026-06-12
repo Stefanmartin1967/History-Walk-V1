@@ -40,9 +40,12 @@ body.scout-active .leaflet-top.leaflet-left { left: 354px; }
     border-radius: 3px;
 }
 .scout-overlay .scout-box.is-hidden { display: none; }   /* réunif peaufinage : pas de boîte tant qu'on n'a pas tracé */
-/* Couche de tracé : capte le clic-glisse pour DESSINER la boîte, tant qu'aucune
-   n'existe (.is-on). z-index 6 = sous la boîte (8) et le panneau (11) → le panneau
-   reste cliquable, et la boîte (une fois tracée) redevient déplaçable. */
+/* Couche de tracé : capte le clic-glisse pour DESSINER la boîte. Armée (.is-on)
+   par le bouton « Tracer la zone » du panneau — plus jamais d'office : plein
+   écran elle masque les contrôles Leaflet et bloque pan/zoom, or il faut pouvoir
+   cadrer la carte AVANT de tracer. z-index 6 = sous la boîte (8) et le panneau
+   (11) → le panneau reste cliquable, et la boîte (une fois tracée) redevient
+   déplaçable. */
 .scout-overlay .scout-draw { position: absolute; inset: 0; z-index: 6; pointer-events: none; display: none; }
 .scout-overlay .scout-draw.is-on { display: block; pointer-events: auto; cursor: crosshair; }
 .scout-draw-hint {
@@ -157,6 +160,13 @@ body.scout-active .leaflet-top.leaflet-left { left: 354px; }
    l'emporter sur le display:flex de .dest-sel / .scout-search (sinon les deux
    restent affichés — l'attribut hidden seul perd contre display:flex). */
 .scout-panel .dest-sel[hidden], .scout-search[hidden] { display: none !important; }
+
+/* Bouton « Tracer la zone » : arme la couche de tracé. is-armed = tracé en
+   cours (re-cliquer annule et rend la navigation). */
+.scout-panel .scout-trace-btn { width: 100%; justify-content: center; }
+.scout-panel .scout-trace-btn.is-armed {
+    border-color: var(--brand); color: var(--brand); background: var(--brand-soft);
+}
 
 /* mode d'entrée : nouvelle destination vs repasse */
 .scout-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
