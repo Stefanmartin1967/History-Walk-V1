@@ -42,6 +42,7 @@ let _wakeLock = null;    // sentinelle Screen Wake Lock
 let _gpsMarker = null;   // marqueur Leaflet « point bleu »
 let _lastLatLng = null;  // [lat, lng] de la dernière position connue
 let _hadFix = false;     // a-t-on déjà reçu au moins une position ?
+let _gpsErrStreak = 0;   // échecs GPS consécutifs après le 1er fix (audit R4)
 let _didInitialRecenter = false; // recentrage auto une seule fois (1er fix)
 let _visHandler = null;  // handler visibilitychange (ré-acquisition Wake Lock)
 
@@ -148,6 +149,7 @@ function buildOverlay(circuit) {
     // avait seulement écarté la demande ; ré-échec immédiat si blocage dur).
     overlay.querySelector('#follow-invite-btn').addEventListener('click', () => {
         _hadFix = false;
+        _gpsErrStreak = 0;
         startWatch();
     });
 
@@ -376,6 +378,7 @@ function setGpsState(stateName) {
 
 function onPosition(pos) {
     _hadFix = true;
+    _gpsErrStreak = 0;
     const ll = [pos.coords.latitude, pos.coords.longitude];
     _lastLatLng = ll;
     setGpsState('live');
@@ -390,12 +393,30 @@ function onPosition(pos) {
     }
 }
 
+// Seuil de pertes consécutives avant de réafficher « Recherche du signal GPS… ».
+// watchPosition a un timeout de 15 s → 3 échecs ≈ 45 s sans position : au-delà,
+// laisser le point bleu figé ferait croire au marcheur qu'il est encore « là ».
+const GPS_LOSS_STREAK = 3;
+
 function onGpsError(err) {
+    if (!_hadFix) {
+        console.warn('[follow] GPS indisponible :', err?.code, err?.message);
+        setGpsState('denied');
+        return;
+    }
+    // Permission révoquée EN COURS de suivi : plus aucun fix ne reviendra →
+    // l'invite « Autoriser » est le seul état honnête (et son bouton relance).
+    if (err?.code === 1) {
+        setGpsState('denied');
+        return;
+    }
     // Erreur transitoire après un 1er fix (perte momentanée) : on garde le
-    // dernier point affiché, on ne bascule pas en « refusé ».
-    if (_hadFix) return;
-    console.warn('[follow] GPS indisponible :', err?.code, err?.message);
-    setGpsState('denied');
+    // dernier point affiché. Mais une perte LONGUE (ruelle couverte, GPS coupé)
+    // figerait le point bleu en silence (audit R4) → au-delà du seuil, on
+    // réaffiche « Recherche… » et on retire le point obsolète ; le prochain
+    // fix (onPosition) rebascule en live et remet le point.
+    _gpsErrStreak++;
+    if (_gpsErrStreak >= GPS_LOSS_STREAK) setGpsState('acquiring');
 }
 
 function startWatch() {
@@ -495,6 +516,7 @@ export function startFollow() {
 
     // GPS + Wake Lock (PR2)
     _hadFix = false;
+    _gpsErrStreak = 0;
     _didInitialRecenter = false;
     startWatch();
     requestWakeLock();
@@ -527,6 +549,7 @@ export function stopFollow() {
     if (_visHandler) { document.removeEventListener('visibilitychange', _visHandler); _visHandler = null; }
     _lastLatLng = null;
     _hadFix = false;
+    _gpsErrStreak = 0;
     _didInitialRecenter = false;
 
     document.body.classList.remove('follow-active');
