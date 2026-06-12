@@ -6,14 +6,10 @@
   "entry": [
     "public/theme-bootstrap.js",
     "public/zones-viewer.html",
-    "tools/scout.html",
     "scripts/**/*.{js,mjs}",
-    "tests/**/*.js",
-    "history_walk_datamanager/src/main.js",
-    "history_walk_datamanager/vite.config.js"
+    "tests/**/*.js"
   ],
   "project": [
-    "src/**/*.js",
-    "history_walk_datamanager/src/**/*.js"
+    "src/**/*.js"
   ]
 }

@@ -615,10 +615,10 @@ html[data-theme="night"] .cc-hero {
 .cc-hero--ok      .cc-hero-mark { background: var(--ok-soft);   color: var(--ok-fg); }
 .cc-hero--no-token .cc-hero-mark { background: var(--danger-soft); color: var(--danger-fg); }
 
-/* — Stats grid (4 colonnes data-viz cliquables) — */
+/* — Stats grid (3 colonnes data-viz cliquables : Lieux / Photos / Circuits) — */
 .cc-stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-bottom: var(--space-md);
 }
@@ -790,11 +790,6 @@ html[data-theme="night"] .cc-hero {
     line-height: 1.45;
 }
 .cc-banner i[data-lucide] { flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; }
-.cc-banner-link {
-    background: none; border: none; padding: 0;
-    cursor: pointer; font: inherit; color: inherit;
-    font-weight: 700; text-decoration: underline;
-}
 .cc-banner--warn   { background: var(--warn-soft);   color: var(--warn-fg); }
 .cc-banner--danger { background: var(--danger-soft); color: var(--danger-fg); }
 .cc-banner--info   { background: var(--info-soft);   color: var(--info-fg); }

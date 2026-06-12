@@ -539,8 +539,6 @@ export function renderTab(tab, diffData, callbacks) {
         // Inclus dans le total ; sub-text affiché dans la carte CIRCUITS (pas Lieux).
         const totalCount = poisModified + circuitsModified + pendingPhotoCount + testedChanged;
         const hasToken = !!getStoredToken();
-        const dmHasUnpublished = localStorage.getItem('dm_has_unpublished_changes') === '1';
-        const dmDraftCount = dmHasUnpublished ? 1 : 0;
         const mapId = state.currentMapId || 'djerba';
         const mapLabel = mapId.charAt(0).toUpperCase() + mapId.slice(1);
 
@@ -598,14 +596,6 @@ export function renderTab(tab, diffData, callbacks) {
             `;
         }
 
-        // — DM banner (warn, conditionnel) —
-        const dmBannerHtml = dmHasUnpublished
-            ? `<div class="cc-banner cc-banner--warn">
-                <i data-lucide="alert-triangle"></i>
-                <div>Le Data Manager a un brouillon non publié. Publie-le d'abord pour éviter d'écraser tes modifs. <button class="cc-banner-link" id="btn-goto-dm" type="button">Ouvrir le DM</button></div>
-              </div>`
-            : '';
-
         // — Stats grid (4 colonnes) —
         const statsHtml = `
             <div class="cc-stats">
@@ -631,11 +621,6 @@ export function renderTab(tab, diffData, callbacks) {
                                     ? `${testedChanged} statut${testedChanged > 1 ? 's' : ''} testé${testedChanged > 1 ? 's' : ''}`
                                     : 'Aucun changement'
                     }</span>
-                </button>
-                <button class="cc-stat${dmHasUnpublished ? ' is-info' : ''}" type="button" id="btn-cc-stat-drafts" title="Brouillons depuis le Data Manager">
-                    <span class="cc-stat-head"><i data-lucide="file-edit"></i> Brouillons</span>
-                    <span class="cc-stat-val">${dmDraftCount}</span>
-                    <span class="cc-stat-trend">${dmHasUnpublished ? 'DM non publié' : 'Aucun brouillon'}</span>
                 </button>
             </div>
         `;
@@ -694,14 +679,6 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-datamanager" aria-label="Ouvrir le Data Manager dans un nouvel onglet">
-                <div class="cc-card-ico"><i data-lucide="database"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Data Manager</div>
-                    <div class="cc-card-sub">Édition tabulaire des POIs et circuits</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="external-link"></i></div>
-            </div>
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-export-master" aria-label="Télécharger le Master GeoJSON">
                 <div class="cc-card-ico"><i data-lucide="download"></i></div>
                 <div class="cc-card-text">
@@ -738,7 +715,7 @@ export function renderTab(tab, diffData, callbacks) {
 
         // Stats omises en empty state (totalCount=0) : 4 compteurs à 0 sont
         // redondants avec le hero « tout synchronisé ». OUTILS toujours rendus.
-        container.innerHTML = heroHtml + dmBannerHtml + (totalCount > 0 ? statsHtml : '') + toolsHtml;
+        container.innerHTML = heroHtml + (totalCount > 0 ? statsHtml : '') + toolsHtml;
 
         setTimeout(() => {
             // Hero CTA — uniquement no-token (variant pending n'a plus de bouton
@@ -881,11 +858,6 @@ export function renderTab(tab, diffData, callbacks) {
                 }
             });
 
-            // Outils — Data Manager : ouvre le DM (même repo, sous-dossier)
-            bindCardAction('btn-cc-tool-datamanager', () => {
-                window.open('history_walk_datamanager/index.html', '_blank', 'noopener');
-            });
-
             // Outils — Exporter Master GeoJSON : action directe (téléchargement).
             // Import dynamique de admin.js (au lieu d'un import statique en tête)
             // pour casser le cycle admin-control-center → admin-control-ui →
@@ -930,18 +902,6 @@ export function renderTab(tab, diffData, callbacks) {
                 el.onclick = () => goChanges(el.dataset.targetSubview);
             });
 
-            // DM banner → ouvre le DM dans nouvel onglet
-            const openDm = () => {
-                const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-                const url = isDev ? 'http://localhost:5175/' : '/history_walk_datamanager/';
-                window.open(url, '_blank');
-            };
-            document.getElementById('btn-goto-dm')?.addEventListener('click', openDm);
-
-            // Brouillons stat → ouvre le DM si non publié
-            document.getElementById('btn-cc-stat-drafts')?.addEventListener('click', () => {
-                if (dmHasUnpublished) openDm();
-            });
         }, 0);
     } else if (tab === 'changes') {
         // PR 5 — Sub-router intégré au topbar (.cc-subtabs), groupes typés
