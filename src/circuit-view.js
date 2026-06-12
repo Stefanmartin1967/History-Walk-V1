@@ -6,37 +6,15 @@ import { state, setCurrentCircuit } from './state.js';
 import { sanitizeHTML, escapeXml } from './utils.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { getStepCategoryDisplay } from './poi-icons.js';
 import Sortable from 'sortablejs';
 
-/**
- * Mappe une catégorie POI vers une icône lucide + variante de couleur pour
- * la pastille step-cat. Defaut : map-pin (générique, gris).
- */
-function getCategoryDisplay(feature) {
-    const cat = feature?.properties?.['Catégorie']
-        || feature?.properties?.userData?.['Catégorie']
-        || '';
-
-    const lower = cat.toLowerCase();
-    // Cohérence avec Mes Circuits : pastilles toutes en gris (--surface-muted) par défaut.
-    // Seuls resto et café gardent l'ambre (cohérent avec la pastille "Resto" de Mes Circuits).
-    if (lower === 'restaurant') return { icon: 'utensils', label: 'Restaurant', cls: 'amber' };
-    if (lower === 'café' || lower === 'cafe') return { icon: 'coffee', label: cat, cls: 'amber' };
-    if (lower === 'mosquée' || lower === 'mosquee') return { icon: 'moon-star', label: cat, cls: '' };
-    if (lower === 'synagogue') return { icon: 'moon-star', label: cat, cls: '' };
-    if (lower === 'église' || lower === 'eglise') return { icon: 'landmark', label: cat, cls: '' };
-    if (lower === 'fontaine') return { icon: 'droplets', label: cat, cls: '' };
-    if (lower === 'place' || lower === 'place historique') return { icon: 'landmark', label: cat, cls: '' };
-    if (lower === 'forteresse' || lower === 'borj' || lower === 'tour de guet') return { icon: 'castle', label: cat, cls: '' };
-    if (lower === 'panorama' || lower === 'point de vue') return { icon: 'mountain', label: cat, cls: '' };
-    if (lower === 'plage') return { icon: 'image', label: cat, cls: '' };
-    if (lower === 'marché' || lower === 'marche' || lower === 'souk') return { icon: 'shopping-cart', label: cat, cls: '' };
-    if (lower === 'phare') return { icon: 'lightbulb', label: cat, cls: '' };
-    if (lower === 'caravansérail' || lower === 'fondouk' || lower === 'quartier') return { icon: 'building', label: cat, cls: '' };
-    if (lower === 'artisanat') return { icon: 'wrench', label: cat, cls: '' };
-    if (lower === 'nature' || lower === 'palmeraie') return { icon: 'sprout', label: cat, cls: '' };
-    return { icon: 'map-pin', label: cat || 'Lieu', cls: '' };
-}
+// Pastille catégorie d'étape (.step-cat) : icône du pack POI officiel +
+// label + variante de pastille via getStepCategoryDisplay (poi-icons.js) —
+// même source que la carte, la timeline mobile et la légende, sous-types
+// inclus. Remplace l'ancien mapping Lucide local resté sur la taxonomie v1
+// (« Borj », « Caravansérail »… ; 'moon-star' absent d'appIcons → icône
+// invisible + warning console en boucle).
 
 /**
  * Génère une étape de timeline V2.
@@ -45,7 +23,7 @@ function getCategoryDisplay(feature) {
  */
 function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
     const poiName = getPoiName(feature);
-    const cat = getCategoryDisplay(feature);
+    const cat = getStepCategoryDisplay(feature);
     // Mode édition (poignée + boutons) UNIQUEMENT si :
     //  - brouillon en cours (pas d'activeCircuitId), OU
     //  - on a cliqué "Modifier" (state.editingMode).
@@ -71,7 +49,7 @@ function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
     html += `<div class="step-num">${index + 1}</div>`;
     html += `<div class="step-body">`;
     html += `<div class="step-name">${escapeXml(poiName)}</div>`;
-    html += `<span class="step-cat${cat.cls ? ' ' + cat.cls : ''}"><i data-lucide="${cat.icon}"></i>${escapeXml(cat.label)}</span>`;
+    html += `<span class="step-cat${cat.variant ? ' ' + cat.variant : ''}">${cat.iconHtml}${escapeXml(cat.label)}</span>`;
     html += `</div>`;
 
     if (isCreate) {

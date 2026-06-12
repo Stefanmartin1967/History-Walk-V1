@@ -421,6 +421,35 @@ export function getIconForFeature(feature) {
     return getIconHtml(category, sousType);
 }
 
+/**
+ * Pastille catégorie d'une étape de timeline circuit (PC .step-cat + mobile
+ * .cc-step-cat). Source UNIQUE : icône du pack via getIconForFeature
+ * (sous-type-aware) + label + variante de couleur du pill.
+ * Extrait de mobile-poi.js (12/06/2026) pour servir aussi circuit-view.js,
+ * qui gardait un mapping Lucide parallèle resté sur la taxonomie v1
+ * (moon-star absent d'appIcons → icône invisible).
+ * Le label lit userData AVANT properties, comme le lookup d'icône — sinon un
+ * POI recatégorisé (userData) montre la nouvelle icône avec l'ancien label.
+ * @returns {{iconHtml: string, label: string, variant: ''|'amber'|'brand'}}
+ */
+export function getStepCategoryDisplay(feature) {
+    const props = feature?.properties || {};
+    const cat = props.userData?.['Catégorie'] || props['Catégorie'] || '';
+    const lower = cat.toLowerCase();
+    // Resto raccourci en « Resto » sur la timeline, sinon label original.
+    const label = lower === 'restaurant' ? 'Resto' : (cat || 'Lieu');
+    let variant = '';
+    if (lower === 'restaurant' || lower === 'café' || lower === 'cafe'
+        || lower === 'curiosité' || lower === 'curiosite'
+        || lower === 'pâtisserie' || lower === 'patisserie'
+        || lower === 'salon de thé') variant = 'amber';
+    else if (lower === 'mosquée' || lower === 'mosquee'
+        || lower === 'synagogue'
+        || lower === 'église' || lower === 'eglise'
+        || lower === 'site religieux') variant = 'brand';
+    return { iconHtml: getIconForFeature(feature), label, variant };
+}
+
 // Libellés explicites pour le générique (_default) d'une catégorie à sous-types
 // quand il N'EST PAS déjà couvert par un sous-type nommé. Seul Artisanat est
 // concerné aujourd'hui (son _default = l'icône « Atelier », distincte des
