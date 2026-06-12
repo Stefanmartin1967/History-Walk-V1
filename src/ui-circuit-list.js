@@ -744,11 +744,26 @@ function createCircuitCard(c) {
     card.className = `va-card${isActive ? ' is-active' : ''}${isCompleted ? ' is-done' : ''}`;
     card.dataset.id = c.id;
     card.dataset.flag = flag;
+    // Ouvrable au clavier (audit AC8) — idiome maison role="button" + tabindex
+    // (cf. cc-card admin, hero fiche POI).
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', `Ouvrir le circuit ${displayName}`);
 
-    card.addEventListener('click', (e) => {
+    const openCard = (e) => {
         if (e.target.closest('.va-done')) return;
         eventBus.emit('circuit:request-load', c.id);
         switchSidebarTab('circuit');
+    };
+    card.addEventListener('click', openCard);
+    card.addEventListener('keydown', (e) => {
+        // Seulement si le focus est sur la carte elle-même : un Enter sur le
+        // bouton « fait » interne doit garder son activation native.
+        if (e.target !== card) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openCard(e);
+        }
     });
 
     // Ligne 1 — titre + toggle "fait"

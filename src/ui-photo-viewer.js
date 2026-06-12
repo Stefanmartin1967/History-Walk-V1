@@ -147,6 +147,9 @@ function renderCurrentPhoto() {
     imgEl.onload = () => { if (stageEl) stageEl.classList.remove('is-loading'); };
     imgEl.onerror = () => { if (stageEl) stageEl.classList.remove('is-loading'); };
     imgEl.src = url;
+    // alt informatif (audit AC8) — attribut sémantique pur, zéro effet de rendu
+    // (viewer par ailleurs gelé, cf. mémoire #642-645).
+    imgEl.alt = `Photo ${currentPhotoIndex + 1} sur ${currentPhotoList.length}`;
 
     resetZoom();
     setActiveThumb();

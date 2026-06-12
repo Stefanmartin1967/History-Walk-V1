@@ -7,6 +7,9 @@ export function showToast(message, type = 'info', duration = 4000, action = null
 
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
+    // Annonce lecteur d'écran (audit AC5) : les erreurs interrompent (alert),
+    // le reste passe par la file polie (status, hérite du aria-live du conteneur).
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
 
     let iconSvg = '';
     // Définition des icônes spécifiques aux notifications
