@@ -173,7 +173,7 @@ async function handleSyncPayload(payload) {
              import('./events.js').then(({ eventBus }) => {
                  eventBus.emit('data:filtered', state.loadedFeatures); // Force refresh
                  eventBus.emit('circuit:list-updated');
-             });
+             }).catch(e => console.warn('[sync] import events.js échoué (déploiement en cours ?) :', e));
 
         } catch (e) {
             console.error("Erreur sauvegarde sync:", e);

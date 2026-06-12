@@ -423,7 +423,8 @@ export async function processImportedGpx(file, circuitId) {
                         }
 
                         // IMPORTANT : On notifie la liste pour mettre à jour l'icône (Oiseau -> Pieds)
-                        import('./events.js').then(({ eventBus }) => eventBus.emit('circuit:list-updated'));
+                        import('./events.js').then(({ eventBus }) => eventBus.emit('circuit:list-updated'))
+                            .catch(e => console.warn('[gpx] import events.js échoué (déploiement en cours ?) :', e));
 
                         resolve();
                     } else {

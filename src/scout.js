@@ -541,17 +541,32 @@ async function capture() {
     if (!fresh || !toCapture.length) return;
     if (_mode === 'new') { await captureAsNewDestination(toCapture); return; }
     const n = toCapture.length;
-    for (const c of toCapture) {
-        await addPoiFeature({
-            type: 'Feature',
-            geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
-            properties: {
-                'Nom du site FR': c.name || '',
-                'Catégorie': c.cat || 'À définir',
-                Zone: getZoneFromCoords(c.lat, c.lon) || '',
-                candidate: true,
-            },
-        }, { draft: false });
+    let saved = 0;
+    try {
+        for (const c of toCapture) {
+            await addPoiFeature({
+                type: 'Feature',
+                geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
+                properties: {
+                    'Nom du site FR': c.name || '',
+                    'Catégorie': c.cat || 'À définir',
+                    Zone: getZoneFromCoords(c.lat, c.lon) || '',
+                    candidate: true,
+                },
+            }, { draft: false });
+            saved++;
+        }
+    } catch (e) {
+        // Échec d'écriture en cours de boucle (IndexedDB pleine/fermée — audit
+        // R5) : sans ce catch la capture partielle était MUETTE. On nettoie
+        // comme en succès (un re-scan re-marquera les déjà-écrits en doublons,
+        // donc pas de double capture) mais on dit la vérité.
+        console.warn('[scout] capture interrompue :', e);
+        clearCandidates();
+        _scannedBounds = null;
+        refreshRecap();
+        showToast(`Capture interrompue : ${saved}/${n} lieu(x) enregistré(s). Relance un scan pour capturer le reste.`, 'error', 5000);
+        return;
     }
     // Les candidats deviennent de vrais marqueurs sur la carte → on retire les
     // pastilles éphémères et on repart « à zéro » pour un éventuel nouveau scan.

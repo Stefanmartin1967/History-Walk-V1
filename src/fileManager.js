@@ -73,7 +73,7 @@ export function handleExportWithContribution(actionType, proceedCallback) {
     import('./lucide-icons.js').then(({ createIcons, appIcons }) => {
         const modalBody = document.querySelector('.hw-modal-overlay.is-active .hw-modal-body');
         if (modalBody) createIcons({ icons: appIcons, root: modalBody });
-    });
+    }).catch(e => console.warn('[fileManager] import lucide-icons.js échoué (déploiement en cours ?) :', e));
 
     if (bmcBtn) {
         bmcBtn.onclick = () => {
@@ -130,7 +130,8 @@ export function handleFileLoad(event) {
                     // Desktop: Rendu Carte
                     await displayGeoJSON(json, mapName);
                     // On cadre la vue sur la nouvelle carte
-                    import('./map.js').then(m => m.fitMapToContent());
+                    import('./map.js').then(m => m.fitMapToContent())
+                        .catch(e => console.warn('[fileManager] import map.js échoué (déploiement en cours ?) :', e));
                 }
             } 
             // Cas 2 : Backup

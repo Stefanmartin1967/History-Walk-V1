@@ -792,10 +792,11 @@ export function renderTab(tab, diffData, callbacks) {
                     cancelLabel: 'Annuler',
                 });
                 if (!ok) return;
-                showToast('Publication sur GitHub en cours…', 'info', 8000);
                 try {
                     const { publishDraftToGitHub } = await import('./publish-destination.js');
-                    const res = await publishDraftToGitHub(mapId);
+                    // onProgress branché (audit R5) : l'admin voit chaque étape
+                    // du push au lieu d'un toast statique de 8 s.
+                    const res = await publishDraftToGitHub(mapId, (msg) => showToast(msg, 'info', 2500));
                     await hwAlert({
                         title: 'Brouillon publié ✓',
                         body: `<p><strong>${escapeXml(res.name)}</strong> est publiée en brouillon sur GitHub (${res.pois} lieu(x)).</p>`
@@ -836,10 +837,11 @@ export function renderTab(tab, diffData, callbacks) {
                     cancelLabel: 'Annuler',
                 });
                 if (!ok) return;
-                showToast('Officialisation en cours…', 'info', 8000);
                 try {
                     const { officializeDestination } = await import('./publish-destination.js');
-                    const res = await officializeDestination(mapId);
+                    // onProgress branché (audit R5) — même logique que la
+                    // publication de brouillon ci-dessus.
+                    const res = await officializeDestination(mapId, (msg) => showToast(msg, 'info', 2500));
                     const keptNote = res.candidatesKept > 0
                         ? `<p>${res.candidatesKept} lieu(x) à curer gardé(s) en local — ils réapparaîtront pour curation et ne sont pas publics.</p>`
                         : '';

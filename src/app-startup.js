@@ -248,7 +248,11 @@ export async function loadAndInitializeMap() {
             // GitHub Pages purge son CDN à chaque déploiement après publication).
             // URL stable → le SW sert le geojson hors-ligne, mobile inclus.
             const resp = await fetchWithTimeout(`${baseUrl}${fileName}`, { cache: 'reload' });
-            if(resp.ok) geojsonData = await resp.json();
+            // Une réponse en erreur (500 du CDN…) doit déclencher le MÊME repli
+            // hors-ligne qu'un échec réseau (audit R5) — avant, geojsonData
+            // restait null et le boot s'arrêtait sur « Impossible de charger ».
+            if (!resp.ok) throw new Error(`geojson HTTP ${resp.status}`);
+            geojsonData = await resp.json();
         } catch(e) {
             // Fallback offline
             const lastMapId = await getAppState('lastMapId');

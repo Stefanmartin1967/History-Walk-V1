@@ -110,7 +110,10 @@ export function initializeDomReferences() {
     const btnToolsBackup = document.getElementById('btn-tools-backup');
     if (btnToolsBackup) {
         btnToolsBackup.addEventListener('click', () => {
-            import('./save-modal-ui.js').then(({ openSaveModal }) => openSaveModal());
+            // .catch (audit R5) : chunk manquant juste après un déploiement →
+            // sans lui, le clic ne faisait RIEN, en silence.
+            import('./save-modal-ui.js').then(({ openSaveModal }) => openSaveModal())
+                .catch(() => showToast("Chargement impossible — actualise l'application.", 'error', 4000));
             closeAllDropdowns();
         });
     }
@@ -130,6 +133,10 @@ export function initializeDomReferences() {
         DOM.btnBmcTopbar.addEventListener('click', () => {
             import('./fileManager.js').then(({ recordSupportClick }) => {
                 recordSupportClick(); // Enregistre le clic pour ne plus embêter l'utilisateur
+                window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+            }).catch(() => {
+                // L'enregistrement du clic est secondaire — on honore au moins
+                // l'intention (ouvrir la page de soutien). Audit R5.
                 window.open('https://www.buymeacoffee.com/history_walk', '_blank');
             });
         });
