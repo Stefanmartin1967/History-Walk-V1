@@ -65,10 +65,8 @@ src/                Code applicatif (60 modules)
   ...
 circuits/           Circuits officiels par destination (JSON)
 public/             Assets statiques, manifest PWA
-tools/scout.html    Outil de scouting de POIs
 scripts/            Scripts Node (génération d'index, etc.)
 tests/              Tests Vitest + Playwright
-history_walk_datamanager/   Sous-projet séparé (gestionnaire de données)
 ```
 
 ## Destinations

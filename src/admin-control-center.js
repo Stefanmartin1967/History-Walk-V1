@@ -496,19 +496,6 @@ async function publishChanges() {
         return;
     }
 
-    // Garde-fou cross-app (UX-4) : alerter si le DM a un brouillon non publié.
-    // Publier HW maintenant écraserait le geojson distant et le DM verrait au
-    // prochain refresh une version sans ses modifs en attente.
-    if (localStorage.getItem('dm_has_unpublished_changes') === '1') {
-        const okCross = await showConfirm(
-            "Brouillon DM en attente",
-            "Le Data Manager a un brouillon non publié. Si tu publies HW maintenant, les modifs DM en attente pourraient être écrasées au prochain refresh du DM.\n\nVeux-tu vraiment continuer ?",
-            "Continuer",
-            "Annuler"
-        );
-        if (!okCross) return;
-    }
-
     const ok = await showConfirm(
         "Publication GitHub",
         "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",

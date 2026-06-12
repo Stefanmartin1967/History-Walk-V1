@@ -35,9 +35,7 @@ export default defineConfig({
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
         // vers …/circuits/x.gpx) sert l'app (index.html) au lieu du fichier, et HW
         // s'ouvre sur « Mes Circuits » vide. On les laisse passer au réseau.
-        // Idem pour tools/* : `window.open('tools/scout.html')` doit servir le
-        // vrai HTML du Scout, pas être redirigé vers l'app (bug constaté 01/06).
-        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i, /\/tools\//i],
+        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i],
         runtimeCaching: [
           {
             // GeoJSON : NetworkFirst — données éditoriales qui évoluent
@@ -113,13 +111,13 @@ export default defineConfig({
     })
   ],
 
-  // 2. AJOUT : Configuration multi-pages pour Rollup
+  // Réunification (12/06/2026) : le Scout et le Data Manager autonomes ont été
+  // supprimés (remplacés par le Scout in-app et le Mode Données). Plus qu'une
+  // seule entrée — l'app principale.
   build: {
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        scout: resolve(__dirname, 'tools/scout.html'),
-        datamanager: resolve(__dirname, 'history_walk_datamanager/index.html'),
       },
     },
   },

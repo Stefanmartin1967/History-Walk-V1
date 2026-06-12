@@ -9,7 +9,7 @@
      3. Recentrer la vue    (ResetViewControl, custom)
      4. Légende             (LegendControl, custom — déplacée depuis la topbar)
 
-   Importé par HW (style/base.css) et DM (history_walk_datamanager/src/style.css).
+   Importé par HW (style/base.css).
    Les !important restent nécessaires pour overrider les styles par défaut
    de Leaflet.
 */
