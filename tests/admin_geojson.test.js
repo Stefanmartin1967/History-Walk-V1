@@ -15,7 +15,13 @@ vi.mock('../src/state.js', () => ({
 }));
 
 vi.mock('../src/utils.js', () => ({
-    getPoiId: (f) => f.properties.HW_ID || f.id
+    getPoiId: (f) => f.properties.HW_ID || f.id,
+    // Réplique de l'overlay userData : userData.candidate prime sur properties.candidate.
+    isCandidate: (f) => {
+        const ud = f?.properties?.userData;
+        const v = (ud && ud.candidate !== undefined) ? ud.candidate : f?.properties?.candidate;
+        return !!v;
+    }
 }));
 
 import { state } from '../src/state.js';
@@ -146,6 +152,19 @@ describe('admin-geojson — generateMasterGeoJSONData', () => {
             .features.map(f => f.properties.HW_ID);
         expect(ids).toContain('poi_reel');
         expect(ids).toContain('poi_cand');
+    });
+
+    it('réunif PR1 : un candidat de base CURÉ (userData.candidate=false) est publié SANS la clé candidate', () => {
+        // Brouillon GitHub : le candidat est un feature de base (candidate:true) ;
+        // la curation pose userData.candidate=false. isCandidate=false → il est gardé
+        // (pas exclu), et la clé candidate:false résiduelle est retirée après le merge.
+        state.loadedFeatures = [
+            buildFeature('poi_cure', { Nom: 'Curé', candidate: true }, { candidate: false })
+        ];
+        const result = generateMasterGeoJSONData(); // keepCandidates:false (défaut)
+        const ids = result.features.map(f => f.properties.HW_ID);
+        expect(ids).toContain('poi_cure');
+        expect('candidate' in result.features[0].properties).toBe(false);
     });
 
     it('réunif : excludedIds et exclusion candidat se combinent', () => {

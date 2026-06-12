@@ -1,6 +1,6 @@
 import { state } from './state.js';
 import { fetchWithTimeout } from './net.js';
-import { getPoiId, getPoiName } from './utils.js';
+import { getPoiId, getPoiName, isCandidate } from './utils.js';
 import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, savePoiData, deletePoiData } from './database.js';
 
@@ -33,8 +33,9 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
     if (state.customFeatures && state.customFeatures.length > 0) {
         state.customFeatures.forEach(f => {
             // Réunif C1 : un candidat Scout (« à curer ») n'est PAS publiable tant
-            // qu'il n'a pas été validé (flag `candidate` retiré) → jamais au brouillon.
-            if (f.properties && f.properties.candidate) return;
+            // qu'il n'a pas été validé → jamais au brouillon. isCandidate lit l'overlay
+            // (curation = userData.candidate=false) pour couvrir le cas brouillon GitHub.
+            if (isCandidate(f)) return;
             const id = getPoiId(f);
             if (!adminDraft.pendingPois[id]) {
                 adminDraft.pendingPois[id] = { type: 'creation', timestamp: Date.now() };
@@ -143,7 +144,7 @@ export async function prepareDiffData(adminDraft) {
 
         // Réunif C1 : ceinture+bretelles — un candidat « à curer » ne part JAMAIS
         // dans le diff/publication, même s'il s'est retrouvé dans pendingPois.
-        if (current && current.properties && current.properties.candidate) return;
+        if (current && isCandidate(current)) return;
 
         // Cas spécial : Suppression
         if (adminDraft.pendingPois[id].type === 'delete') {
@@ -269,6 +270,17 @@ export async function prepareDiffData(adminDraft) {
                 const newF = fmt(newVal);
                 if (oldF !== newF) {
                     changes.push({ key: 'Point d\'accès', old: oldF, new: newF });
+                }
+                return;
+            }
+
+            // Curation Scout (réunif) : un candidat de base (brouillon GitHub) validé
+            // porte userData.candidate=false sur un patrimoine candidate:true. On compte
+            // bien la modification (sinon purgeOrphanPendingPois la purgerait → « rien à
+            // publier ») mais on l'affiche en clair plutôt qu'en `candidate: true → false`.
+            if (key === 'candidate') {
+                if (oldVal && !newVal) {
+                    changes.push({ key: 'Curation', old: 'Candidat à curer', new: 'Validé' });
                 }
                 return;
             }

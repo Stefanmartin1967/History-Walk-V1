@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished, isCandidate } from '../src/utils.js';
 
 describe('Utils', () => {
     describe('generateHWID', () => {
@@ -212,6 +212,28 @@ describe('Utils', () => {
         it('retourne undefined si ni userData ni properties n\'ont la clé', () => {
             const f = { properties: { autre: 1, userData: { encore: 2 } } };
             expect(getPoiProp(f, 'absente')).toBeUndefined();
+        });
+    });
+
+    describe('isCandidate — candidat Scout « à curer » (overlay userData)', () => {
+        it('true pour un candidat de base (properties.candidate)', () => {
+            expect(isCandidate({ properties: { candidate: true } })).toBe(true);
+        });
+
+        it('false par défaut (ni patrimoine ni overlay)', () => {
+            expect(isCandidate({ properties: { Nom: 'X' } })).toBe(false);
+        });
+
+        it('curation : userData.candidate=false PRIME sur le patrimoine candidate:true', () => {
+            // Cas brouillon GitHub : le candidat est un feature de BASE (candidate:true),
+            // la curation pose userData.candidate=false → ne doit PLUS être un candidat.
+            const f = { properties: { candidate: true, userData: { candidate: false } } };
+            expect(isCandidate(f)).toBe(false);
+        });
+
+        it('robuste si feature/properties absent', () => {
+            expect(isCandidate(null)).toBe(false);
+            expect(isCandidate({})).toBe(false);
         });
     });
 

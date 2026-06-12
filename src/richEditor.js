@@ -4,7 +4,7 @@ import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded } from './data.js';
 import { eventBus } from './events.js';
-import { getZoneFromCoords, openCoordsOnMap } from './utils.js';
+import { getZoneFromCoords, openCoordsOnMap, isCandidate } from './utils.js';
 import { addPoiFeature, applyFilters } from './data.js';
 import { saveAppState, savePoiData } from './database.js';
 import { logModification } from './logger.js';
@@ -358,7 +358,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
         setVerified(!!merged.verified);
         // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
-        { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = !merged.candidate; }
+        { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = !isCandidate(feature); }
 
         // Tiroir (Mode Données) : sous-titre = nom du lieu en cours d'édition.
         const drawerSub = _drawerEl && _drawerEl.querySelector('[data-rich-drawer-sub]');
@@ -805,15 +805,38 @@ function setVerified(val) {
     el.setAttribute('aria-checked', String(!!val));
 }
 
-// Réunif C1b : « curer » un candidat = retirer le flag `candidate`. Le POI (un
-// customFeature) redevient une création normale → publiable (reconcileLocalChanges
-// le pistera). Persiste customPois ; rafraîchit carte + liste « à curer ».
+// Réunif C1b/PR1 : « curer » un candidat = retirer le flag `candidate` → le POI
+// devient publiable. Deux origines possibles, deux voies de persistance :
+//
+//  • customFeature (capture locale PAS ENCORE poussée sur GitHub) : le candidat
+//    EST dans state.customFeatures → retirer le flag de base + persister customPois
+//    suffit (reconcileLocalChanges le pistera comme création).
+//
+//  • feature de BASE (brouillon GitHub, multi-appareils) : il n'est pas dans
+//    customFeatures et le geojson GitHub le réinjecte à chaque boot → retirer le
+//    flag en mémoire ne survit pas. La curation passe par l'overlay userData
+//    (seule voie persistante pour un feature de base), exactement comme une
+//    édition (executeEdit) : userData.candidate=false PRIME sur le patrimoine
+//    candidate:true (via isCandidate), le diff la piste en 'update', « Tout
+//    publier » repousse le geojson et admin-geojson retire la clé → geojson propre.
 async function curateCandidate() {
     if (currentMode !== 'EDIT' || !currentFeatureId) return;
-    const feature = state.loadedFeatures.find(f => getPoiId(f) === currentFeatureId);
-    if (!feature || !feature.properties || !feature.properties.candidate) return;
-    delete feature.properties.candidate;
-    await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures || []);
+    const poiId = currentFeatureId;
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    if (!feature || !isCandidate(feature)) return;
+
+    const isCustom = (state.customFeatures || []).some(f => getPoiId(f) === poiId);
+    if (isCustom) {
+        delete feature.properties.candidate;
+        await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures || []);
+    } else {
+        if (!state.userData[poiId]) state.userData[poiId] = {};
+        state.userData[poiId].candidate = false;
+        feature.properties.userData = state.userData[poiId];
+        await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
+        eventBus.emit('admin:poi-edited', { id: poiId, type: 'update' });
+    }
+
     const row = document.getElementById('rich-poi-candidate-row');
     if (row) row.hidden = true;
     isDirty = true;

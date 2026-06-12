@@ -334,6 +334,24 @@ export function getPoiProp(feature, key) {
 }
 
 /**
+ * True si le POI est un candidat Scout « à curer » — capturé automatiquement
+ * (Overpass) mais pas encore validé par l'admin.
+ *
+ * SOURCE UNIQUE pour les 5 lecteurs du flag (filtre data.js, badge marqueur
+ * map.js, ligne « à curer » du RichEditor, 2 gardes du diff engine). Lit via
+ * getPoiProp (overlay userData) : une curation pose `userData.candidate = false`
+ * qui PRIME sur le patrimoine `candidate:true`. C'est indispensable pour un
+ * candidat issu d'un BROUILLON GitHub, où il est un feature de BASE (re-fetché
+ * du geojson à chaque boot, donc `properties.candidate` reste true) : seul
+ * l'overlay userData persiste la curation. Sans ce point d'entrée commun, le
+ * badge et le diff (qui lisaient `properties.candidate` brut) ré-affichaient le
+ * candidat comme « à curer » après reboot.
+ */
+export function isCandidate(feature) {
+    return !!getPoiProp(feature, 'candidate');
+}
+
+/**
  * True si le POI est mal catégorisé : aucune Catégorie, ou « A définir », ou
  * catégorie avec sous-types disponibles ET Sous-type vide. Utilisé pour le
  * badge orange du bouton « Catégoriser » de la modale d'import photo (chantier
