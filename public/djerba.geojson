@@ -2900,11 +2900,22 @@
       "properties": {
         "Nom du site FR": "La Synagogue de la Ghriba",
         "Nom du site arabe": "كنيس الغريبة",
-        "Catégorie": "Site religieux",
+        "Catégorie": "Synagogue",
         "Zone": "Erriadh",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6GA20S9G7CF10EAFSW",
-        "accessPointStatus": "on-track"
+        "accessPointStatus": "on-track",
+        "Sous-type": "",
+        "État": "En activité",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
