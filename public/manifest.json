@@ -3,6 +3,8 @@
   "short_name": "Heripia",
   "description": "Découverte du patrimoine culturel et historique à pied : circuits de visite, cartes interactives et lieux d'intérêt.",
   "id": "history-walk-v1",
+  "lang": "fr",
+  "dir": "ltr",
   "categories": ["travel", "education", "navigation"],
   "start_url": "/",
   "scope": "/",
@@ -39,6 +41,29 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/desktop-carte.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Carte interactive des lieux patrimoniaux"
+    },
+    {
+      "src": "screenshots/mobile-circuits.png",
+      "sizes": "780x1688",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Les circuits de visite à suivre à pied"
+    },
+    {
+      "src": "screenshots/mobile-suivi.png",
+      "sizes": "780x1688",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Suivi de circuit sur le terrain, position en temps réel"
     }
   ]
 }

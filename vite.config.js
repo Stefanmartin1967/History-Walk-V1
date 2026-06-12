@@ -28,8 +28,9 @@ export default defineConfig({
         // Les fichiers .geojson sont exclus du precache (CacheFirst trop agressif)
         // et gérés en NetworkFirst via runtimeCaching ci-dessous.
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webp}'],
-        // og-image.png (720 KB) : utilisée par les scrapers sociaux, inutile hors-ligne
-        globIgnores: ['**/og-image.png'],
+        // og-image.png (720 KB) : utilisée par les scrapers sociaux, inutile hors-ligne.
+        // screenshots/ : fiche d'installation PWA uniquement, inutile hors-ligne.
+        globIgnores: ['**/og-image.png', '**/screenshots/**'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Les .gpx (partage/téléchargement de circuit) ne doivent PAS être happés
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe

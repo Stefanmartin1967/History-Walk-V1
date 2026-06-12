@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <!-- Outil admin déployé avec le site : ne doit jamais être indexé, même
+       après le retrait du noindex de l'app au lancement public (audit SEO2). -->
+  <meta name="robots" content="noindex, nofollow">
   <title>Zones Viewer</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>

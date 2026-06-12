@@ -7,6 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "update-circuits": "node scripts/generate-circuit-index.js",
+    "screenshots": "node scripts/capture-screenshots.mjs",
     "test": "vitest",
     "knip": "knip"
   },
