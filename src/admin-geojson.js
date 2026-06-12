@@ -7,7 +7,16 @@ import { state } from './state.js';
 import { getPoiId } from './utils.js';
 import { PERSONAL_KEYS } from './config.js';
 
-export function generateMasterGeoJSONData(excludedIds = []) {
+// `keepCandidates` : faut-il laisser passer les candidats Scout non curés
+// (`properties.candidate`) ? Défaut = false (sûr) → ils sont EXCLUS. Un candidat
+// ne voyage QUE dans le geojson d'un brouillon (status:draft, admin-only), où
+// l'appelant passe explicitement keepCandidates:true. C'est la 4e couche du
+// garde-fou candidat : les 3 autres (draft:false, reconcileLocalChanges,
+// prepareDiffData) ne protègent que le DIFF, alors que ce générateur régénère le
+// geojson ENTIER depuis state.loadedFeatures → sans cette exclusion, un candidat
+// capturé en « Repasse » sur une destination publiée fuirait dans sa source
+// publique au prochain « Tout publier ».
+export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = false } = {}) {
     if (!state.loadedFeatures || state.loadedFeatures.length === 0) {
         return null;
     }
@@ -17,6 +26,7 @@ export function generateMasterGeoJSONData(excludedIds = []) {
              const id = getPoiId(f);
              if (excludedIds.includes(id)) return false;
              if (f.properties.userData && f.properties.userData._deleted) return false;
+             if (!keepCandidates && f.properties.candidate) return false;
              return true;
         })
         .map(f => {

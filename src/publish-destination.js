@@ -77,7 +77,9 @@ export async function publishDraftToGitHub(id, onProgress = () => {}) {
         throw new Error('Ce brouillon n\'est pas la destination active — basculez dessus avant de publier.');
     }
 
-    const geo = generateMasterGeoJSONData();
+    // Brouillon GitHub (status:draft, admin-only) : on GARDE les candidats Scout
+    // non curés — ils voyagent exprès pour être curés sur l'autre appareil.
+    const geo = generateMasterGeoJSONData([], { keepCandidates: true });
     if (!geo || !geo.features || geo.features.length === 0) {
         throw new Error('Ce brouillon ne contient aucun lieu — rien à publier.');
     }

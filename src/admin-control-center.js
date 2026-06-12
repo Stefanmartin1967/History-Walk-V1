@@ -1,6 +1,6 @@
 import { state, setUserData } from './state.js';
 import { fetchWithTimeout } from './net.js';
-import { getPoiId, getRealDistance } from './utils.js';
+import { getPoiId, getRealDistance, isDestinationPublished } from './utils.js';
 import { generateGPXString } from './gpx.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -614,7 +614,12 @@ async function publishChanges() {
         // Collect IDs to delete
         const idsToDelete = Object.keys(adminDraft.pendingPois).filter(id => adminDraft.pendingPois[id].type === 'delete');
 
-        const geojson = generateMasterGeoJSONData(idsToDelete);
+        // Cible PUBLIÉE → on exclut les candidats Scout non curés (pas de fuite vers
+        // la source publique) ; cible BROUILLON (status:draft, admin-only) → on les
+        // garde (ils s'y curent ensuite). Cible inconnue → exclusion (sûr).
+        const activeDest = state.destinations?.maps?.[mapId];
+        const keepCandidates = !!activeDest && !isDestinationPublished(activeDest);
+        const geojson = generateMasterGeoJSONData(idsToDelete, { keepCandidates });
         if (!geojson) throw new Error("Erreur données GeoJSON");
         const filename = `${mapId}.geojson`;
         const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/geo+json' });
