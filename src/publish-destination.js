@@ -24,12 +24,14 @@
 //
 // Les candidats (candidate:true) sont CONSERVÉS : un brouillon admin-only les
 // garde sans souci ; leur curation se fera à l'« Officialiser » (draft→published).
-import { state } from './state.js';
+import { state, setCustomFeatures } from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { getDraftDestinations, getDraftZones, markLocalDraftPublished } from './local-destinations.js';
 import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { getStoredToken, uploadFileToGitHub } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
+import { isCandidate, getPoiId } from './utils.js';
+import { saveAppState } from './database.js';
 
 // Emballe un objet en File JSON indenté (uploadFileToGitHub lit un File → base64
 // UTF-8 via FileReader, donc les accents passent correctement).
@@ -133,4 +135,90 @@ export async function publishDraftToGitHub(id, onProgress = () => {}) {
     await markLocalDraftPublished(id);
 
     return { id, name: label, pois: geo.features.length, zones: cleanZones.features.length };
+}
+
+/**
+ * « Officialiser » une destination : passe son entrée destinations.json de
+ * status:"draft" à "published" (visible par TOUS) sur GitHub. Étape SÉPARÉE et
+ * plus tardive que C2b (« Publier en brouillon GitHub ») : ici la destination
+ * existe DÉJÀ sur GitHub en brouillon (Hammamet, ou une dest scoutée déjà
+ * poussée) et on la rend publique.
+ *
+ * GARDE-FOU CANDIDAT (option C, validée 12/06) : un candidat Scout NON curé ne
+ * doit jamais devenir public. On :
+ *   1. PRÉSERVE les candidats restants en local (customPois_{id}) → après
+ *      l'officialisation ils réapparaissent au boot comme customFeatures
+ *      candidate:true sur la dest publiée (état C1a « Repasse »), curables à
+ *      loisir ; une fois curés, « Tout publier » les publie (et #816 garde les
+ *      non-curés hors du public).
+ *   2. Pousse le geojson public SANS les candidats (generateMasterGeoJSONData,
+ *      keepCandidates:false par défaut → isCandidate exclut les non-curés).
+ *
+ * On re-pousse TOUJOURS le geojson (pas seulement s'il reste des candidats) :
+ * une curation locale pas encore « Tout publiée » laisserait sinon des
+ * candidate:true sur GitHub au moment du flip. C'est donc l'état de CET appareil
+ * qui devient la vérité publiée → officialise depuis l'appareil à jour.
+ *
+ * destinations.json est lu FRAIS via Contents API (jamais Pages, cf. C2b) ;
+ * geojson D'ABORD, destinations.json EN DERNIER (pas de dest publiée pointant un
+ * geojson non poussé si le 1er échoue).
+ *
+ * @param {string} id  id de la destination active (brouillon GitHub)
+ * @param {(msg:string)=>void} [onProgress]
+ * @returns {Promise<{id:string, name:string, pois:number, candidatesKept:number}>}
+ */
+export async function officializeDestination(id, onProgress = () => {}) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Aucun token GitHub connecté (onglet Connexion du Centre de Contrôle).');
+
+    // generateMasterGeoJSONData lit la destination ACTIVE (state.loadedFeatures).
+    if (id !== state.currentMapId) {
+        throw new Error('Cette destination n\'est pas active — basculez dessus avant de l\'officialiser.');
+    }
+
+    // — 1. Lecture fraîche de destinations.json sur GitHub —
+    onProgress('Lecture de la liste des destinations…');
+    const dest = await fetchDestinationsJson(token);
+    const entry = dest.maps && dest.maps[id];
+    if (!entry) {
+        throw new Error('Cette destination n\'existe pas encore sur GitHub — publie-la d\'abord en brouillon.');
+    }
+    if (entry.status === 'published') {
+        throw new Error('Cette destination est déjà officialisée.');
+    }
+
+    // — 2. Garde-fou candidat : préserver en local AVANT de pousser le geojson épuré —
+    const candidates = (state.loadedFeatures || []).filter(isCandidate);
+    if (candidates.length > 0) {
+        onProgress('Mise de côté des lieux encore à curer…');
+        // Fusion par HW_ID avec les customFeatures déjà présents (capture locale).
+        const byId = new Map((state.customFeatures || []).map((f) => [getPoiId(f), f]));
+        candidates.forEach((f) => byId.set(getPoiId(f), f));
+        const mergedCustom = [...byId.values()];
+        setCustomFeatures(mergedCustom);
+        await saveAppState(`customPois_${id}`, mergedCustom);
+    }
+
+    // — 3. Geojson public SANS candidats (keepCandidates:false par défaut) —
+    onProgress('Publication des lieux…');
+    const geo = generateMasterGeoJSONData();
+    if (!geo || !geo.features) throw new Error('Erreur données GeoJSON.');
+    const label = entry.name || id;
+    await uploadFileToGitHub(jsonFile(geo, `${id}.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.geojson(id), `feat(dest): officialisation « ${label} » — lieux`);
+
+    // — 4. Flip status → published + push destinations.json (EN DERNIER) —
+    onProgress('Officialisation…');
+    entry.status = 'published';
+    await uploadFileToGitHub(jsonFile(dest, 'destinations.json'), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.destinations(), `feat(dest): officialisation « ${label} »`);
+
+    // — 5. Reflet local immédiat : la dest active devient « publiée » côté UI
+    // (badge « Brouillon » retiré). Les AUTRES appareils la verront après le
+    // redéploiement GitHub Pages (~1-2 min).
+    if (state.destinations?.maps?.[id]) {
+        state.destinations.maps[id].status = 'published';
+    }
+
+    return { id, name: label, pois: geo.features.length, candidatesKept: candidates.length };
 }

@@ -660,9 +660,24 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>` : '';
 
+        // « Officialiser » (réunif) : visible UNIQUEMENT sur un brouillon GITHUB
+        // (status:"draft" et PAS un brouillon local custom — donc Hammamet, ou une
+        // dest scoutée déjà poussée). Flip draft→published = la rendre visible de tous.
+        const isGitHubDraft = activeDest && !activeDest.custom && activeDest.status === 'draft';
+        const officializeCardHtml = isGitHubDraft ? `
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-officialize" aria-label="Officialiser cette destination (la rendre visible de tous)">
+                <div class="cc-card-ico"><i data-lucide="globe"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Officialiser cette destination</div>
+                    <div class="cc-card-sub">Brouillon GitHub → publiée (visible de tous)</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>` : '';
+
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
             ${publishDraftCardHtml}
+            ${officializeCardHtml}
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
                 <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
                 <div class="cc-card-text">
@@ -814,6 +829,54 @@ export function renderTab(tab, diffData, callbacks) {
                         title: 'Échec de la publication',
                         body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
                             + `<p>Ton brouillon local est intact — tu peux réessayer.</p>`,
+                    });
+                }
+            });
+
+            // Outils — Officialiser (réunif) : visible seulement sur un brouillon
+            // GitHub. Flip draft→published + push du geojson épuré (candidats non
+            // curés écartés du public mais PRÉSERVÉS en local, cf. officializeDestination).
+            bindCardAction('btn-cc-tool-officialize', async () => {
+                const mapId = state.currentMapId;
+                const dest = state.destinations?.maps?.[mapId];
+                if (!dest || dest.custom || dest.status !== 'draft') {
+                    showToast('Cette action ne concerne qu\'un brouillon GitHub.', 'warning', 3500);
+                    return;
+                }
+                const { isCandidate } = await import('./utils.js');
+                const candCount = (state.loadedFeatures || []).filter(isCandidate).length;
+                const { hwConfirm, hwAlert } = await import('./modal.js');
+                closeCCModal();
+                const candNote = candCount > 0
+                    ? `<p><strong>${candCount} lieu(x) encore à curer</strong> seront mis de côté (gardés en local pour les curer plus tard) et <em>n'apparaîtront pas</em> au public.</p>`
+                    : '';
+                const ok = await hwConfirm({
+                    title: 'Officialiser la destination',
+                    body: `<p>Rendre <strong>${escapeXml(dest.name)}</strong> <em>visible de tous</em> ?</p>`
+                        + candNote
+                        + `<p>Publie depuis l'appareil où la curation est à jour — c'est son état qui devient la version publique.</p>`,
+                    confirmLabel: 'Officialiser',
+                    cancelLabel: 'Annuler',
+                });
+                if (!ok) return;
+                showToast('Officialisation en cours…', 'info', 8000);
+                try {
+                    const { officializeDestination } = await import('./publish-destination.js');
+                    const res = await officializeDestination(mapId);
+                    const keptNote = res.candidatesKept > 0
+                        ? `<p>${res.candidatesKept} lieu(x) à curer gardé(s) en local — ils réapparaîtront pour curation et ne sont pas publics.</p>`
+                        : '';
+                    await hwAlert({
+                        title: 'Destination officialisée ✓',
+                        body: `<p><strong>${escapeXml(res.name)}</strong> est désormais publiée (${res.pois} lieu(x)).</p>`
+                            + keptNote
+                            + `<p>Visible de tous d'ici 1 à 2 min (déploiement GitHub Pages).</p>`,
+                    });
+                } catch (e) {
+                    await hwAlert({
+                        title: 'Échec de l\'officialisation',
+                        body: `<p>L'officialisation n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
+                            + `<p>Rien n'a changé pour le public — tu peux réessayer.</p>`,
                     });
                 }
             });

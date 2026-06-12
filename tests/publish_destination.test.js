@@ -22,8 +22,13 @@ vi.mock('../src/local-destinations.js', () => ({
     getDraftZones: vi.fn(),
     markLocalDraftPublished: vi.fn(async () => {}),
 }));
+vi.mock('../src/database.js', () => ({
+    saveAppState: vi.fn(async () => {}),
+    getAppState: vi.fn(async () => null),
+}));
 
-import { publishDraftToGitHub } from '../src/publish-destination.js';
+import { publishDraftToGitHub, officializeDestination } from '../src/publish-destination.js';
+import { saveAppState } from '../src/database.js';
 import { getStoredToken, uploadFileToGitHub } from '../src/github-sync.js';
 import {
     getDraftDestinations, getDraftZones, markLocalDraftPublished,
@@ -210,5 +215,105 @@ describe('publishDraftToGitHub — C2b', () => {
         stubDestFetch({ activeMapId: 'djerba', maps: { venise: { name: 'Venise', status: 'draft' } } });
         await expect(publishDraftToGitHub('venise')).resolves.toMatchObject({ id: 'venise' });
         expect(uploadFileToGitHub).toHaveBeenCalledTimes(4);
+    });
+});
+
+// ── Officialiser (réunif) : draft→published + garde-fou candidat (option C) ──
+const GH_DRAFT_DEST = {
+    activeMapId: 'djerba',
+    maps: {
+        djerba: { name: 'Djerba', status: 'published', file: 'djerba.geojson' },
+        venise: { name: 'Venise', status: 'draft', file: 'venise.geojson', zonesFile: 'venise-zones.geojson', circuitsFile: 'circuits/venise.json' },
+    },
+};
+
+// Mix réaliste : 1 lieu curé (publiable) + 1 candidat non curé (à écarter du public).
+function makeOfficializeFeatures() {
+    return [
+        {
+            type: 'Feature',
+            properties: { HW_ID: 'HW-CURATED0000000000000000001', 'Nom du site FR': 'Musée', 'Catégorie': 'patrimoine' },
+            geometry: { type: 'Point', coordinates: [12.3, 45.4] },
+        },
+        {
+            type: 'Feature',
+            properties: { HW_ID: 'HW-CAND00000000000000000000001', 'Nom du site FR': 'Ruine OSM', 'Catégorie': 'patrimoine', candidate: true },
+            geometry: { type: 'Point', coordinates: [12.4, 45.5] },
+        },
+    ];
+}
+
+describe('officializeDestination — réunif (draft→published)', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        getStoredToken.mockReturnValue('ghp_test');
+        stubDestFetch(GH_DRAFT_DEST);
+        state.currentMapId = 'venise';
+        state.customFeatures = [];
+        state.destinations = { activeMapId: 'venise', maps: { venise: { name: 'Venise', status: 'draft' } } };
+        state.loadedFeatures = makeOfficializeFeatures();
+    });
+
+    it('pousse geojson PUIS destinations.json, flip status:"published", djerba intact', async () => {
+        const res = await officializeDestination('venise');
+        const paths = uploadFileToGitHub.mock.calls.map((c) => c[4]);
+        expect(paths).toEqual(['public/venise.geojson', 'public/destinations.json']);
+
+        const destFile = uploadFileToGitHub.mock.calls[1][0];
+        const json = JSON.parse(await fileText(destFile));
+        expect(json.maps.venise.status).toBe('published');
+        expect(json.maps.djerba.status).toBe('published'); // intact
+        expect(res).toMatchObject({ id: 'venise', name: 'Venise', pois: 1, candidatesKept: 1 });
+    });
+
+    it('garde-fou candidat : geojson public SANS le candidat, candidat PRÉSERVÉ en customPois', async () => {
+        await officializeDestination('venise');
+        const geoFile = uploadFileToGitHub.mock.calls[0][0];
+        const names = JSON.parse(await fileText(geoFile)).features.map((f) => f.properties['Nom du site FR']);
+        expect(names).toEqual(['Musée']);            // curé publié
+        expect(names).not.toContain('Ruine OSM');    // candidat écarté du public
+
+        // Préservé en local (customPois_venise) pour curation ultérieure.
+        const call = saveAppState.mock.calls.find((c) => c[0] === 'customPois_venise');
+        expect(call).toBeDefined();
+        const savedIds = call[1].map((f) => f.properties.HW_ID);
+        expect(savedIds).toContain('HW-CAND00000000000000000000001');
+        expect(state.customFeatures.map((f) => f.properties.HW_ID)).toContain('HW-CAND00000000000000000000001');
+    });
+
+    it('reflète le statut « published » en mémoire (badge Brouillon retiré)', async () => {
+        await officializeDestination('venise');
+        expect(state.destinations.maps.venise.status).toBe('published');
+    });
+
+    it('sans candidat : pas d\'écriture customPois, candidatesKept=0', async () => {
+        state.loadedFeatures = [makeOfficializeFeatures()[0]]; // Musée seul
+        const res = await officializeDestination('venise');
+        expect(res.candidatesKept).toBe(0);
+        expect(saveAppState.mock.calls.find((c) => c[0] === 'customPois_venise')).toBeUndefined();
+    });
+
+    it('refuse sans token (aucun push)', async () => {
+        getStoredToken.mockReturnValue(null);
+        await expect(officializeDestination('venise')).rejects.toThrow(/token/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+
+    it('refuse si la destination n\'est pas active (aucun push)', async () => {
+        state.currentMapId = 'djerba';
+        await expect(officializeDestination('venise')).rejects.toThrow(/active/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+
+    it('refuse si déjà officialisée sur GitHub (aucun push)', async () => {
+        stubDestFetch({ activeMapId: 'djerba', maps: { venise: { name: 'Venise', status: 'published' } } });
+        await expect(officializeDestination('venise')).rejects.toThrow(/déjà officialisée/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+
+    it('refuse si la destination est absente de destinations.json sur GitHub (aucun push)', async () => {
+        stubDestFetch({ activeMapId: 'djerba', maps: { djerba: { name: 'Djerba', status: 'published' } } });
+        await expect(officializeDestination('venise')).rejects.toThrow(/n'existe pas/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
     });
 });
