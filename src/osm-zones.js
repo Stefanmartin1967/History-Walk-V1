@@ -5,7 +5,6 @@
 // admin) ; même forme de sortie que public/{dest}-zones.geojson (name/osm_id/
 // admin_level), donc consommable tel quel par getZoneFromCoords/loadZonesForActive.
 import { fetchOverpassJson } from './osm-overpass.js';
-import { isPointInPolygon } from './utils.js';
 
 // admin_level par défaut selon le pays (code ISO Nominatim). La Tunisie utilise 6
 // (délégations/communes) ; la plupart des autres pays = 8. On tente d'abord ce
@@ -96,15 +95,3 @@ export async function fetchZonesAuto(bbox, countryCode) {
     return { type: 'FeatureCollection', features: [] };
 }
 
-// Nom de la zone contenant le point (lat, lon), ou '' si aucune. Même primitive
-// que getZoneFromCoords (utils.isPointInPolygon, point [lng,lat]) → cohérence
-// avec la détection de zone de l'app, mais sur une collection PASSÉE en argument
-// (les zones du brouillon, pas le zonesData global de la dest active).
-export function zoneNameForPoint(lat, lon, zonesFC) {
-    const point = [lon, lat];
-    for (const f of (zonesFC?.features || [])) {
-        const poly = f.geometry?.coordinates?.[0];
-        if (poly && isPointInPolygon(point, poly)) return f.properties?.name || '';
-    }
-    return '';
-}

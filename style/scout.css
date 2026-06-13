@@ -56,17 +56,12 @@ body.scout-active .leaflet-top.leaflet-left { left: 354px; }
     font-size: 13px; color: var(--ink); white-space: nowrap;
 }
 .scout-draw-hint svg { width: 16px; height: 16px; color: var(--brand); }
-.scout-overlay .scout-box.is-repasse {
-    border-color: var(--hw-amber);
-    background: color-mix(in oklab, var(--hw-amber) 9%, transparent);
-}
 /* poignées de redimensionnement (8) */
 .scout-handle {
     position: absolute; width: 13px; height: 13px; border-radius: 3px;
     background: var(--surface); border: 2px solid var(--brand-2);
     box-shadow: var(--shadow-card); pointer-events: auto;
 }
-.scout-box.is-repasse .scout-handle { border-color: var(--hw-amber); }
 .scout-handle.nw { left: -7px; top: -7px; cursor: nwse-resize; }
 .scout-handle.ne { right: -7px; top: -7px; cursor: nesw-resize; }
 .scout-handle.sw { left: -7px; bottom: -7px; cursor: nesw-resize; }
@@ -85,9 +80,7 @@ body.scout-active .leaflet-top.leaflet-left { left: 354px; }
     pointer-events: none;
 }
 .scout-dim svg { width: 13px; height: 13px; }
-.scout-box.is-repasse .scout-dim { background: var(--hw-amber); color: var(--bg-2); }
 .scout-dim .warn { color: var(--warn); font-weight: 700; }
-.scout-box.is-repasse .scout-dim .warn { color: var(--bg-2); }
 /* compteur de candidats (sous la boîte) — rempli en B2 */
 .scout-count {
     position: absolute; left: 50%; bottom: -13px; transform: translate(-50%, 100%);
@@ -128,7 +121,8 @@ body.scout-active .leaflet-top.leaflet-left { left: 354px; }
 .scout-panel-ft { padding: 12px 14px; border-top: 1px solid var(--line); background: var(--surface-muted); display: flex; gap: 9px; }
 .scout-lbl { font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft); display: block; margin-bottom: 6px; }
 
-/* sélecteur de destination (lecture seule en B1 : montre la dest. courante) */
+/* sélecteur de destination (lecture seule : montre la dest. courante, que le
+   Scout moissonne TOUJOURS — flux inversé v2, plus de toggle Nouvelle/Repasse) */
 .scout-panel .dest-sel {
     width: 100%; display: flex; align-items: center; gap: 9px; text-align: left;
     padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius-md);
@@ -156,10 +150,17 @@ body.scout-active .leaflet-top.leaflet-left { left: 354px; }
 .scout-search-btn:disabled { opacity: .55; cursor: default; }
 .scout-search-btn svg { width: 16px; height: 16px; }
 .scout-found { margin-top: 7px; font-size: 12px; color: var(--ink-soft); line-height: 1.35; }
-/* Le toggle Repasse/Nouvelle masque l'un OU l'autre via [hidden] : il doit
-   l'emporter sur le display:flex de .dest-sel / .scout-search (sinon les deux
-   restent affichés — l'attribut hidden seul perd contre display:flex). */
-.scout-panel .dest-sel[hidden], .scout-search[hidden] { display: none !important; }
+
+/* Formulaire « Nouvelle destination… » (flux inversé v2) : replié par défaut
+   derrière son bouton ; recherche Nominatim + Annuler/Créer le brouillon.
+   [hidden] doit l'emporter sur les display flex posés ici. */
+.scout-newdest-btn { width: 100%; justify-content: center; margin-top: 8px; }
+.scout-newdest-btn[hidden] { display: none !important; }
+.scout-newdest { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.scout-newdest[hidden] { display: none !important; }
+.scout-newdest-actions { display: flex; gap: 8px; }
+.scout-newdest-actions .btn { flex: 1; justify-content: center; }
+.scout-newdest-actions .btn-primary { flex: 1.4; }
 
 /* Bouton « Tracer la zone » : arme la couche de tracé. is-armed = tracé en
    cours (re-cliquer annule et rend la navigation). */
@@ -167,21 +168,6 @@ body.scout-active .leaflet-top.leaflet-left { left: 354px; }
 .scout-panel .scout-trace-btn.is-armed {
     border-color: var(--brand); color: var(--brand); background: var(--brand-soft);
 }
-
-/* mode d'entrée : nouvelle destination vs repasse */
-.scout-mode { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.scout-mode-opt {
-    border: 1px solid var(--line); border-radius: var(--radius-md);
-    padding: 10px; cursor: pointer; background: var(--surface);
-    display: flex; flex-direction: column; gap: 4px;
-}
-.scout-mode-opt .top { display: flex; align-items: center; gap: 7px; }
-.scout-mode-opt .top svg { width: 15px; height: 15px; color: var(--ink-soft); }
-.scout-mode-opt .top .t { font-size: 12.5px; font-weight: 700; color: var(--ink); }
-.scout-mode-opt .h { font-size: 11px; color: var(--ink-soft); line-height: 1.35; }
-.scout-mode-opt.is-on { border-color: var(--brand); background: var(--brand-soft); box-shadow: 0 0 0 1px var(--brand); }
-.scout-mode-opt.is-on.repasse { border-color: var(--hw-amber); background: var(--hw-amber-soft); box-shadow: 0 0 0 1px var(--hw-amber); }
-.scout-mode-opt.is-on.repasse .top svg { color: var(--hw-amber); }
 
 /* récap de moisson (chiffres) — rempli en B2 */
 .scout-recap { display: flex; flex-direction: column; gap: 7px; }
