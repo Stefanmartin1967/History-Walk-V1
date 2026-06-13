@@ -1,282 +1,382 @@
-/* style/tokens.css — Design tokens partagés HW / DM / Scout
-   Source de vérité unique. Ne pas dupliquer ces valeurs ailleurs. */
+/* style/tokens.css — Heripia · « Plein soleil / papier méditerranéen »
+   ============================================================
+   Source de vérité unique des tokens. Ne pas dupliquer ces valeurs ailleurs.
+
+   Refonte cohérence design (chantier 13/06/2026) : on ÉTEND ce fichier au
+   design system « Plein soleil ». Les 4 thèmes deviennent 4 MOMENTS sur l'axe
+   de la lumière du jour (matin / plein-soleil / ombre / nuit). Plein soleil
+   est le DÉFAUT (terrain). Séparation par FILET d'encre (pas d'ombre au soleil).
+
+   Compat : tous les noms de tokens HISTORIQUES (--bg, --surface, --line,
+   --brand-2, --shadow, --hw-amber, --cta-*, --font-family-base…) restent
+   définis, en ALIAS PARESSEUX vers les nouveaux tokens (var() est résolu au
+   point d'usage → un alias en :root suit le moment courant). Aucun consommateur
+   existant ne casse ; la migration des couches se fait pattern par pattern.
+   ============================================================ */
 
 /* ============================================================
-   1. TOKENS NEUTRES (mêmes valeurs dans tous les thèmes)
+   1. RAMPES DE BASE (fixes — identiques sur les 4 moments)
    ============================================================ */
 :root {
-  /* — Spacings (multiples de 4, échelle resserrée) — */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  /* Note : 12px reste utilisable en valeur brute si vraiment nécessaire ;
-     on n'introduit pas --space-sm-plus tant que le besoin n'est pas avéré. */
+  /* — Terracotta : la marque — */
+  --terracotta-50:  #FBEDE7;
+  --terracotta-100: #F3D3C5;
+  --terracotta-300: #E08C6E;
+  --terracotta-500: #C75B39;   /* BRAND — terre cuite méditerranéenne */
+  --terracotta-600: #B04A2C;
+  --terracotta-700: #8E3A22;   /* terracotta « encre » : texte/icône sur papier */
 
-  /* — Border radius — */
-  --radius-sm:   6px;   /* badges, inputs, selects */
-  --radius-md:  10px;   /* boutons, cards */
-  --radius-lg:  14px;   /* modales, gros panneaux */
-  --radius-pill: 9999px; /* pastilles full-rounded */
+  /* — Azur : liens · sélection · GPS — */
+  --azur-50:  #E3F0F5;
+  --azur-100: #BFDDE9;
+  --azur-400: #3897BE;
+  --azur-500: #1C7FA8;
+  --azur-600: #166684;
+  --azur-700: #114F66;
 
-  /* — Typo — */
-  --font-family-base: system-ui, -apple-system, BlinkMacSystemFont,
-                      "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-  --font-family-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --font-size-xs:   12px;  /* captions, footers */
-  --font-size-sm:   13px;  /* DM body, labels */
-  --font-size-base: 15px;  /* HW body */
-  --font-size-lg:   17px;  /* sous-titres */
-  --font-size-xl:   20px;  /* titres de panneau */
-  --font-size-2xl:  24px;  /* titre app */
+  /* — Olive : nature · vérifié — */
+  --olive-50:  #EEF0E2;
+  --olive-100: #D8DDBF;
+  --olive-400: #8A9B57;
+  --olive-500: #6B7B3F;
+  --olive-600: #56682F;
+  --olive-700: #43521F;
+
+  /* — Sépia : petites capitales / métadonnées du cartel — */
+  --sepia-400: #9B7B4A;
+  --sepia-500: #7A5A34;
+  --sepia-600: #6E5128;
+
+  /* — Sable & encre chaude : neutres papier — */
+  --sand-0:   #FFFDF8;
+  --sand-50:  #FBF4E8;   /* surface plein soleil (pas blanc pur) */
+  --sand-100: #F2E8D6;
+  --sand-200: #E9DCC7;
+  --sand-300: #DCCBB0;
+  --warm-ink-900: #1A1611;  /* encre la plus dense — ~16:1 sur sable */
+  --warm-ink-700: #3B352B;
+  --warm-ink-500: #574E3F;  /* encre douce — ~7:1 AAA sur sable */
+  --warm-ink-300: #6E6552;  /* encre faible — ~5.3:1 (≥ AA : hints + grand texte) */
+
+  /* — Sémantiques minérales (fond *-bg prévu pour texte blanc, AA) — */
+  --ok-500:     #5E7836;   --ok-bg:     #4A6029;   --ok-50:     #EBF0DC;
+  --warn-500:   #C2861E;   --warn-bg:   #946017;   --warn-50:   #F7ECD2;
+  --danger-500: #B23A2E;   --danger-bg: #8E2D23;   --danger-50: #F5DDD8;
+  --info-500:   #1C7FA8;   --info-bg:   #166684;   --info-50:   #E3F0F5;
+
+  /* — Drapeaux d'accès au tracé (réchauffés, anti-collision brand) — */
+  --flag-osm:    #C2861E;   /* ocre */
+  --flag-moved:  #5E7836;   /* olive */
+  --flag-locked: #B23A2E;   /* terre brûlée */
+}
+
+/* ============================================================
+   2. TYPOGRAPHIE (fixe)
+   ============================================================ */
+:root {
+  /* Spectral (serif patrimoine) sera self-host dans une PR dédiée ; repli
+     Georgia/serif crédible en attendant (décision F l'autorise). */
+  --font-serif: 'Spectral', Georgia, 'Times New Roman', serif;
+  --font-sans:  system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                Roboto, 'Helvetica Neue', sans-serif;
+  --font-mono:  ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  /* alias historiques */
+  --font-family-base: var(--font-sans);
+  --font-family-mono: var(--font-mono);
+
+  /* Échelle (demi-pixels bannis). xs..2xl historiques conservés ; 3xl/hero ajoutés. */
+  --font-size-xs:   12px;
+  --font-size-sm:   13px;
+  --font-size-base: 15px;
+  --font-size-lg:   17px;   /* activé */
+  --font-size-xl:   20px;
+  --font-size-2xl:  24px;
+  --font-size-3xl:  34px;   /* nom de destination (serif) */
+  --font-size-hero: 46px;   /* hero / wordmark (serif) */
+
   --font-weight-regular:  400;
   --font-weight-medium:   500;
   --font-weight-semibold: 600;
   --font-weight-bold:     700;
+  /* alias courts (composants DS) */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+
   --line-height-tight:   1.2;
   --line-height-base:    1.4;
   --line-height-relaxed: 1.6;
+  --leading-tight:   var(--line-height-tight);
+  --leading-snug:    1.3;
+  --leading-base:    var(--line-height-base);
+  --leading-relaxed: var(--line-height-relaxed);
 
-  /* — Hauteurs de contrôles standards — */
-  --control-h-sm: 32px;  /* boutons icônes, .btn-sm */
-  --control-h-md: 42px;  /* topbar HW, inputs, boutons standards */
-  --control-h-lg: 48px;  /* CTA proéminents */
+  /* Petites capitales sépia (métadonnées cartel) */
+  --smallcaps-size:     11px;
+  --smallcaps-tracking: 0.14em;
+  --smallcaps-weight:   600;
+  --smallcaps-color:    var(--sepia-600);
+}
 
-  /* — Sémantiques fixes (light → mêmes 4 thèmes) — */
-  --ok:        #10B981;
-  --success:   #10B981;   /* alias intent : succès / état positif */
-  --warn:      #F59E0B;
-  --danger:    #EF4444;
+/* ============================================================
+   3. FORME · ESPACE · TRACÉ · MOUVEMENT (fixes)
+   ============================================================ */
+:root {
+  /* Espace (échelle historique conservée pour cette PR ; « resserré »
+     appliqué dans une passe densité dédiée). */
+  --space-2xs: 2px;
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
 
-  /* — Z-index ladder — */
+  /* Rayons — échelle architecturale courte (0 / 3 / 6 / 10 / 14 / pill) */
+  --radius-0:    0px;
+  --radius-xs:   3px;
+  --radius-sm:   6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-pill: 9999px;
+
+  /* Filet d'encre (géométrie ; la COULEUR dépend du moment via --filet) */
+  --filet-width:        1px;
+  --filet-strong-width: 2px;
+  --liseret-width:      3px;   /* liseré terracotta du cartel */
+
+  /* Hauteurs de contrôle — cibles tactiles ≥ 44px (audit AC6) */
+  --control-h-sm: 36px;
+  --control-h-md: 44px;
+  --control-h-lg: 52px;
+  --tap-min: 44px;
+
+  /* Tracé & GPS (épais ≥ 2px, lisible au soleil) */
+  --trace-width:       5px;
+  --trace-color:       var(--azur-500);
+  --trace-done-color:  var(--olive-500);
+  --trace-done-width:  5px;
+  --trace-stale-color: var(--terracotta-500);
+  --trace-stale-width: 4px;
+  --trace-ref-color:   var(--sepia-500);
+  --gps-dot:  var(--azur-500);
+  --gps-ring: #FFFFFF;
+  --marker-stroke: 2px;
+
+  /* Z-index ladder */
+  --z-base:     0;
   --z-dropdown: 1000;
   --z-sidebar:  1002;
   --z-topbar:   1005;
+  --z-overlay:  1900;
   --z-modal:    2000;
   --z-toast:    2100;
 
-  /* — "On brand" : couleurs translucides pour les éléments interactifs
-     posés sur le fond brand foncé (--bg) de la topbar. Identiques sur
-     les 4 thèmes car --bg est foncé partout (bleu nuit, brun, vert
-     profond, noir). Effet "verre dépoli" cohérent cross-thème.
-     Utilisés par style/topbar-v2.css. — */
-  --on-brand-fg:           #FFFFFF;                        /* texte blanc */
-  --on-brand-soft:         rgba(255, 255, 255, 0.06);      /* fond bouton normal */
-  --on-brand-soft-border:  rgba(255, 255, 255, 0.14);      /* bordure bouton normal */
-  --on-brand-strong:       rgba(255, 255, 255, 0.18);      /* fond hover / séparateur */
-  --on-brand-strong-border:rgba(255, 255, 255, 0.35);      /* bordure hover */
+  /* Mouvement — sobre, pas de bounce */
+  --ease-out:   cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-inout: cubic-bezier(0.45, 0, 0.2, 1);
+  --dur-fast:   0.14s;
+  --dur-base:   0.22s;
+  --dur-slow:   0.4s;   /* bascule de moment (« la lumière tourne ») */
 }
 
 /* ============================================================
-   2. THÈME MARITIME (par défaut)
+   4. ALIAS HISTORIQUES → nouveaux tokens (résolus par moment)
+   ------------------------------------------------------------
+   var() est résolu au point d'usage : ces alias en :root suivent
+   donc le moment courant (le token cible est redéfini par moment).
    ============================================================ */
+:root {
+  --bg:            var(--brand-surface-bg);
+  --bg-2:          var(--paper-2);
+  --surface:       var(--paper);
+  --surface-muted: var(--paper-2);
+  /* --ink, --ink-soft : mêmes noms, définis par moment (pas d'alias) */
+  --line:          var(--filet);
+
+  --brand-2:       var(--terracotta-600);
+  --cta-bg:        var(--brand);
+  --cta-fg:        var(--on-brand-fg);
+  --hw-amber:      var(--warn-500);
+  --hw-amber-soft: var(--warn-50);
+
+  --ok:       var(--ok-500);
+  --success:  var(--ok-500);
+  --warn:     var(--warn-500);
+  --danger:   var(--danger-500);
+
+  --shadow:      var(--shadow-panel);
+  --shadow-soft: var(--shadow-card);
+}
+
+/* ============================================================
+   5. LES 4 MOMENTS (axe lumière)
+   ============================================================ */
+
+/* — PLEIN SOLEIL — défaut · plein cagnard (sable chaud, encre dense, contraste max) — */
 :root,
-html[data-theme="maritime"] {
-  --bg:            #0D3B66;
-  --bg-2:          #062B4D;
-  --surface:       #FFFFFF;
-  --surface-muted: #F0F4F8;
-  --ink:           #102A43;
-  /* ink-soft foncé #627D98→#587088 (audit AC3) : 5.14:1 sur surface,
-     4.65:1 sur surface-muted — seuil AA 4.5:1 atteint, teinte conservée. */
-  --ink-soft:      #587088;
-  --line:          #D9E2EC;
-
-  --brand:      #3B82F6;
-  --brand-soft: #F0F9FF;
-  --brand-2:    #2563EB;
-
-  --ok-soft:    #D1FAE5;
-  --ok-fg:      #15803D;
-  --ok-bg:      #15803D;
-  --warn-soft:  #FEF3C7;
-  --warn-fg:    #A16207;
-  /* warn-bg/info-bg (audit AC5) : fonds foncés pour texte blanc — toasts.
-     Blanc sur warn-bg = 5.02:1, sur info-bg = 6.7:1 (AA). Identiques sur
-     les 4 thèmes, comme ok-bg/danger-bg. */
-  --warn-bg:    #B45309;
-  --danger-soft: #FEE2E2;
-  --danger-fg:  #B91C1C;
-  --danger-bg:  #B91C1C;
-  --info-soft:  #DBEAFE;
-  --info-fg:    #1E40AF;
-  --info-bg:    #1D4ED8;
-  --cta-bg:     #1D4ED8;
-  --cta-fg:     #FFFFFF;
-
-  --hw-amber:      #D97706;
-  --hw-amber-soft: #FFFBEB;
-
-  /* — Drapeaux d'accès au tracé (cf. access-point-editor.js, chantier v2 31/05/2026).
-     Orange = pré-posé OSM · Vert = déplacé manuellement · Rouge = cadenassé.
-     Hex Design retenus pour maritime (--brand bleu = pas de collision). */
-  --flag-osm:    #D97706;
-  --flag-moved:  #15803D;
-  --flag-locked: #B0271F;
-
-  /* Scrim : voile coloré thématique sous les overlays/modales (anciennement
-     hardcodé en rgba dans admin-cc.css). Teinte au bleu nuit en maritime. */
-  --scrim: rgba(13, 59, 102, 0.6);
-
-  --shadow:       0 8px 24px rgba(2, 12, 27, .10), 0 2px 8px rgba(2, 12, 27, .06);
-  --shadow-soft:  0 4px 12px rgba(100, 116, 139, .10);
-  --shadow-card:  0 1px 2px rgba(20, 33, 43, .04), 0 1px 1px rgba(20, 33, 43, .03);
-  --shadow-modal: 0 40px 100px -20px rgba(0, 0, 0, .20), 0 16px 40px -16px rgba(0, 0, 0, .12);
-  --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
+html[data-theme="plein-soleil"] {
+  color-scheme: light;
+  --paper:        var(--sand-50);
+  --paper-2:      var(--sand-100);
+  --paper-raised: var(--sand-0);
+  --ink:       var(--warm-ink-900);
+  --ink-soft:  var(--warm-ink-500);
+  --ink-faint: var(--warm-ink-300);
+  --filet:        rgba(26, 22, 17, 0.18);
+  --filet-strong: rgba(26, 22, 17, 0.36);
+  --border-filet:        var(--filet-width) solid var(--filet);
+  --border-filet-strong: var(--filet-strong-width) solid var(--filet-strong);
+  --brand:      var(--terracotta-500);
+  --brand-ink:  var(--terracotta-700);
+  --brand-soft: var(--terracotta-50);
+  --on-brand-fg: #FFFFFF;
+  --link:      var(--azur-700);
+  --link-fill: var(--azur-500);
+  --verified:  var(--olive-700);
+  --selection: color-mix(in oklab, var(--azur-500) 22%, var(--paper));
+  --ok-fg:     var(--olive-700);   --ok-soft:     var(--ok-50);
+  --warn-fg:   var(--warn-bg);     --warn-soft:   var(--warn-50);
+  --danger-fg: var(--danger-bg);   --danger-soft: var(--danger-50);
+  --info-fg:   var(--azur-700);    --info-soft:   var(--info-50);
+  --brand-surface-bg: var(--paper);
+  --brand-surface-fg: var(--ink);
+  --on-brand-soft:          rgba(26, 22, 17, 0.05);
+  --on-brand-soft-border:   var(--filet);
+  --on-brand-strong:        rgba(26, 22, 17, 0.10);
+  --on-brand-strong-border: var(--filet-strong);
+  --shadow-card:  0 0 0 var(--filet-width) var(--filet);
+  --shadow-panel: 0 0 0 var(--filet-width) var(--filet);
+  --shadow-modal: 0 18px 50px -24px rgba(26, 22, 17, 0.34), 0 0 0 var(--filet-width) var(--filet);
+  --shadow-pop:   0 10px 30px -18px rgba(26, 22, 17, 0.30), 0 0 0 var(--filet-width) var(--filet);
+  --scrim: rgba(26, 22, 17, 0.36);
+  --focus-ring: 0 0 0 3px color-mix(in oklab, var(--azur-500) 48%, transparent);
+  --glass-blur: 0px;
+  --glass-bg:   var(--paper-raised);
 }
 
-/* ============================================================
-   3. THÈME DESERT
-   ============================================================ */
-html[data-theme="desert"] {
-  --bg:            #7A5230;
-  --bg-2:          #5E3D20;
-  --surface:       #FFF8F0;
-  --surface-muted: #F5EFE6;
-  --ink:           #3A210E;
-  /* ink-soft foncé #8A6F5E→#816858 (audit AC3) : 4.92:1 / 4.53:1 (AA). */
-  --ink-soft:      #816858;
-  --line:          #E0D5C7;
-
-  --brand:      #E88C32;
-  --brand-soft: #FAEADD;
-  --brand-2:    #C46F1C;
-
-  --ok-soft:    #D1FAE5;
-  --ok-fg:      #3F6B2A;
-  --ok-bg:      #15803D;
-  --warn-soft:  #FAEADD;
-  --warn-fg:    #A2570F;
-  --warn-bg:    #B45309;
-  --danger-soft: #FBE0DA;
-  --danger-fg:  #9A2820;
-  --danger-bg:  #B91C1C;
-  --info-soft:  #E2EAF5;
-  --info-fg:    #1E3A8A;
-  --info-bg:    #1D4ED8;
-  --cta-bg:     #A2570F;
-  --cta-fg:     #FFFFFF;
-
-  --hw-amber:      #D97706;
-  --hw-amber-soft: #FFFBEB;
-
-  /* — Drapeaux : --brand désert est ORANGE (#E88C32) → on décale flag-osm
-     vers une teinte plus rouille/brun pour éviter la collision visuelle. */
-  --flag-osm:    #B45309;   /* rouille saturée, distinct du brand orange */
-  --flag-moved:  #15803D;   /* vert OK (brand orange) */
-  --flag-locked: #991B1B;   /* rouge plus saturé que --danger-fg #9A2820 */
-
-  /* Scrim : voile orangé pour le désert. */
-  --scrim: rgba(120, 53, 15, 0.55);
-
-  --shadow:       0 8px 24px rgba(60, 30, 10, .12), 0 2px 8px rgba(60, 30, 10, .06);
-  --shadow-soft:  0 4px 12px rgba(138, 111, 94, .12);
-  --shadow-card:  0 1px 2px rgba(60, 30, 10, .04), 0 1px 1px rgba(60, 30, 10, .03);
-  --shadow-modal: 0 40px 100px -20px rgba(60, 30, 10, .22), 0 16px 40px -16px rgba(60, 30, 10, .14);
-  --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
+/* — MATIN — réveil / planification (papier frais, contraste doux) — */
+html[data-theme="matin"] {
+  color-scheme: light;
+  --paper:        #FCF9F4;
+  --paper-2:      #F1EEE4;
+  --paper-raised: #FFFFFF;
+  --ink:       #2A251D;
+  --ink-soft:  #645B4C;
+  --ink-faint: #756B59;
+  --filet:        rgba(42, 37, 29, 0.11);
+  --filet-strong: rgba(42, 37, 29, 0.22);
+  --border-filet:        var(--filet-width) solid var(--filet);
+  --border-filet-strong: var(--filet-strong-width) solid var(--filet-strong);
+  --brand:      var(--terracotta-500);
+  --brand-ink:  var(--terracotta-700);
+  --brand-soft: var(--terracotta-50);
+  --on-brand-fg: #FFFFFF;
+  --link:      var(--azur-700);
+  --link-fill: var(--azur-500);
+  --verified:  var(--olive-700);
+  --selection: color-mix(in oklab, var(--azur-500) 16%, var(--paper));
+  --ok-fg:     var(--olive-700);   --ok-soft:     var(--ok-50);
+  --warn-fg:   var(--warn-bg);     --warn-soft:   var(--warn-50);
+  --danger-fg: var(--danger-bg);   --danger-soft: var(--danger-50);
+  --info-fg:   var(--azur-700);    --info-soft:   var(--info-50);
+  --brand-surface-bg: var(--paper);
+  --brand-surface-fg: var(--ink);
+  --on-brand-soft:          rgba(42, 37, 29, 0.035);
+  --on-brand-soft-border:   var(--filet);
+  --on-brand-strong:        rgba(42, 37, 29, 0.08);
+  --on-brand-strong-border: var(--filet-strong);
+  --shadow-card:  0 0 0 var(--filet-width) var(--filet);
+  --shadow-panel: 0 1px 2px rgba(42, 37, 29, 0.05), 0 0 0 var(--filet-width) var(--filet);
+  --shadow-modal: 0 20px 56px -26px rgba(42, 37, 29, 0.24), 0 0 0 var(--filet-width) var(--filet);
+  --shadow-pop:   0 12px 32px -20px rgba(42, 37, 29, 0.20), 0 0 0 var(--filet-width) var(--filet);
+  --scrim: rgba(42, 37, 29, 0.26);
+  --focus-ring: 0 0 0 3px color-mix(in oklab, var(--azur-500) 42%, transparent);
+  --glass-blur: 0px;
+  --glass-bg:   var(--paper-raised);
 }
 
-/* ============================================================
-   4. THÈME OASIS
-   ============================================================ */
-html[data-theme="oasis"] {
-  --bg:            #065F46;
-  --bg-2:          #054D39;
-  --surface:       #F0FDF4;
-  --surface-muted: #E6F7EB;
-  --ink:           #064E3B;
-  /* ink-soft foncé #528C7C→#457568 (audit AC3) : 5.02:1 / 4.72:1 (AA). */
-  --ink-soft:      #457568;
-  --line:          #CCE8D8;
-
-  --brand:      #34D399;
-  --brand-soft: #D1FAE5;
-  --brand-2:    #059669;
-
-  --ok-soft:    #D1FAE5;
-  --ok-fg:      #047857;
-  --ok-bg:      #15803D;
-  --warn-soft:  #FEF3C7;
-  --warn-fg:    #A16207;
-  --warn-bg:    #B45309;
-  --danger-soft: #FEE2E2;
-  --danger-fg:  #B91C1C;
-  --danger-bg:  #B91C1C;
-  --info-soft:  #DBEAFE;
-  --info-fg:    #1E40AF;
-  --info-bg:    #1D4ED8;
-  --cta-bg:     #047857;
-  --cta-fg:     #FFFFFF;
-
-  --hw-amber:      #D97706;
-  --hw-amber-soft: #FFFBEB;
-
-  /* — Drapeaux : --brand oasis est VERT (#34D399) → on décale flag-moved
-     vers un vert foncé/forêt pour éviter la collision avec le brand. */
-  --flag-osm:    #D97706;   /* orange OK (brand vert) */
-  --flag-moved:  #166534;   /* vert foncé/forêt, distinct du brand vert clair */
-  --flag-locked: #B0271F;   /* rouge OK */
-
-  /* Scrim : voile vert profond pour l'oasis. */
-  --scrim: rgba(5, 71, 55, 0.55);
-
-  --shadow:       0 8px 24px rgba(6, 78, 59, .12), 0 2px 8px rgba(6, 78, 59, .06);
-  --shadow-soft:  0 4px 12px rgba(82, 140, 124, .12);
-  --shadow-card:  0 1px 2px rgba(6, 78, 59, .04), 0 1px 1px rgba(6, 78, 59, .03);
-  --shadow-modal: 0 40px 100px -20px rgba(6, 78, 59, .22), 0 16px 40px -16px rgba(6, 78, 59, .14);
-  --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
+/* — OMBRE — fin d'après-midi à l'ombre (papier olive reposé, neutre toute destination) — */
+html[data-theme="ombre"] {
+  color-scheme: light;
+  --paper:        #EFEFE0;
+  --paper-2:      #E5E6D2;
+  --paper-raised: #F8F8EE;
+  --ink:       #232318;
+  --ink-soft:  #545440;
+  --ink-faint: #6A6952;
+  --filet:        rgba(35, 35, 24, 0.16);
+  --filet-strong: rgba(35, 35, 24, 0.32);
+  --border-filet:        var(--filet-width) solid var(--filet);
+  --border-filet-strong: var(--filet-strong-width) solid var(--filet-strong);
+  --brand:      var(--terracotta-600);
+  --brand-ink:  var(--terracotta-700);
+  --brand-soft: #F0E0D2;
+  --on-brand-fg: #FFFFFF;
+  --link:      var(--azur-700);
+  --link-fill: var(--azur-600);
+  --verified:  var(--olive-700);
+  --selection: color-mix(in oklab, var(--olive-500) 22%, var(--paper));
+  --ok-fg:     var(--olive-700);   --ok-soft:     #E2E8C9;
+  --warn-fg:   var(--warn-bg);     --warn-soft:   #F0E6C8;
+  --danger-fg: var(--danger-bg);   --danger-soft: #EFD6CE;
+  --info-fg:   var(--azur-700);    --info-soft:   #DCE9EC;
+  --brand-surface-bg: var(--paper);
+  --brand-surface-fg: var(--ink);
+  --on-brand-soft:          rgba(35, 35, 24, 0.05);
+  --on-brand-soft-border:   var(--filet);
+  --on-brand-strong:        rgba(35, 35, 24, 0.11);
+  --on-brand-strong-border: var(--filet-strong);
+  --shadow-card:  0 0 0 var(--filet-width) var(--filet);
+  --shadow-panel: 0 0 0 var(--filet-width) var(--filet);
+  --shadow-modal: 0 18px 50px -24px rgba(35, 35, 24, 0.30), 0 0 0 var(--filet-width) var(--filet);
+  --shadow-pop:   0 10px 30px -18px rgba(35, 35, 24, 0.26), 0 0 0 var(--filet-width) var(--filet);
+  --scrim: rgba(35, 35, 24, 0.34);
+  --focus-ring: 0 0 0 3px color-mix(in oklab, var(--olive-500) 48%, transparent);
+  --glass-blur: 0px;
+  --glass-bg:   var(--paper-raised);
 }
 
-/* ============================================================
-   5. THÈME NIGHT (dark)
-   ============================================================ */
-html[data-theme="night"] {
-  --bg:            #111827;
-  --bg-2:          #000000;
-  --surface:       #1F2937;
-  --surface-muted: #2A3441;
-  --ink:           #F3F4F6;
-  --ink-soft:      #CBD5E1;
-  --line:          #4B5563;
-
-  --brand:      #60A5FA;
-  --brand-soft: #1E3A8A;
-  --brand-2:    #93C5FD;
-
-  --ok:         #34D399;
-  --ok-soft:    #064E3B;
-  --ok-fg:      #86EFAC;
-  --ok-bg:      #15803D;
-  --warn:       #FACC15;
-  --warn-soft:  #3F2C0A;
-  --warn-fg:    #FBBF24;
-  --warn-bg:    #B45309;
-  --danger:     #F87171;
-  --danger-soft: #3A1414;
-  --danger-fg:  #FCA5A5;
-  --danger-bg:  #B91C1C;
-  --info-soft:  #0E2654;
-  --info-fg:    #93C5FD;
-  --info-bg:    #1D4ED8;
-  --cta-bg:     #1D4ED8;
-  --cta-fg:     #FFFFFF;
-
-  --hw-amber:      #FBBF24;
-  --hw-amber-soft: color-mix(in oklab, var(--hw-amber) 14%, var(--surface));
-
-  /* — Drapeaux : couleurs éclaircies pour rester lisibles sur fond sombre.
-     Mêmes intentions (orange/vert/rouge) mais saturation/luminosité montées. */
-  --flag-osm:    #FB923C;   /* orange clair, lisible sur bleu nuit */
-  --flag-moved:  #4ADE80;   /* vert clair, distinct du brand bleu */
-  --flag-locked: #F87171;   /* rouge clair (= --danger night) */
-
-  /* Scrim : voile presque noir pour le night, avec une pointe de bleu nuit. */
-  --scrim: rgba(2, 8, 18, 0.7);
-
-  --shadow:       0 8px 24px rgba(0, 0, 0, .50), 0 2px 8px rgba(0, 0, 0, .35);
-  --shadow-soft:  0 4px 12px rgba(0, 0, 0, .35);
-  --shadow-card:  0 1px 0 rgba(0, 0, 0, .4);
-  --shadow-modal: 0 40px 100px -20px rgba(0, 0, 0, .60), 0 16px 40px -16px rgba(0, 0, 0, .40);
-  --focus-ring:  0 0 0 3px color-mix(in oklab, var(--brand) 40%, transparent);
+/* — NUIT — soir + éco batterie OLED (encre claire sur noir chaud).
+     Le verre dépoli + les vraies ombres ne survivent QUE là. — */
+html[data-theme="nuit"] {
+  color-scheme: dark;
+  --paper:        #1B1712;
+  --paper-2:      #241F18;
+  --paper-raised: #221C15;
+  --bg-deep:      #14110D;
+  --ink:       #ECE3D4;
+  --ink-soft:  #B6AB97;
+  --ink-faint: #8E836F;
+  --filet:        rgba(236, 227, 212, 0.15);
+  --filet-strong: rgba(236, 227, 212, 0.30);
+  --border-filet:        var(--filet-width) solid var(--filet);
+  --border-filet-strong: var(--filet-strong-width) solid var(--filet-strong);
+  --brand:      var(--terracotta-500);
+  --brand-ink:  var(--terracotta-300);
+  --brand-soft: rgba(199, 91, 57, 0.18);
+  --on-brand-fg: #FFFFFF;
+  --link:      #6CB8D6;
+  --link-fill: var(--azur-400);
+  --verified:  #A6BA6F;
+  --selection: color-mix(in oklab, var(--azur-400) 30%, var(--paper));
+  --ok-fg:     #A6BA6F;   --ok-soft:     rgba(94, 120, 54, 0.22);
+  --warn-fg:   #E0AE55;   --warn-soft:   rgba(194, 134, 30, 0.20);
+  --danger-fg: #E08478;   --danger-soft: rgba(178, 58, 46, 0.24);
+  --info-fg:   #6CB8D6;   --info-soft:   rgba(28, 127, 168, 0.22);
+  --brand-surface-bg: var(--bg-deep);
+  --brand-surface-fg: var(--ink);
+  --on-brand-soft:          rgba(236, 227, 212, 0.06);
+  --on-brand-soft-border:   rgba(236, 227, 212, 0.14);
+  --on-brand-strong:        rgba(236, 227, 212, 0.16);
+  --on-brand-strong-border: rgba(236, 227, 212, 0.30);
+  --shadow-card:  0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-panel: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-modal: 0 32px 80px -20px rgba(0, 0, 0, 0.7), 0 0 0 var(--filet-width) var(--filet);
+  --shadow-pop:   0 16px 40px -16px rgba(0, 0, 0, 0.6);
+  --scrim: rgba(8, 6, 4, 0.72);
+  --focus-ring: 0 0 0 3px color-mix(in oklab, var(--azur-400) 55%, transparent);
+  --glass-blur: 12px;
+  --glass-bg:   rgba(27, 23, 18, 0.72);
 }

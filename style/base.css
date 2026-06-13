@@ -13,10 +13,10 @@
 }
 
 /* Force la couleur sur tous les éléments de formulaire et boutons en mode nuit */
-html[data-theme="night"] input,
-html[data-theme="night"] textarea,
-html[data-theme="night"] select,
-html[data-theme="night"] button {
+html[data-theme="nuit"] input,
+html[data-theme="nuit"] textarea,
+html[data-theme="nuit"] select,
+html[data-theme="nuit"] button {
     color: var(--ink);
 }
 
@@ -300,10 +300,13 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    color: #fff;
-    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
-    box-shadow: var(--shadow);
-    z-index: 1005;
+    /* Lisière dissoute (refonte « plein soleil ») : même papier que la carte,
+       séparée par un simple filet d'encre — ni dégradé, ni #fff dur, ni ombre
+       de carte flottante. En Nuit, --brand-surface-bg redevient une bande sombre. */
+    color: var(--brand-surface-fg);
+    background: var(--brand-surface-bg);
+    border-bottom: var(--border-filet-strong);
+    z-index: var(--z-topbar);
 }
 
 /* PR 8 (Hybride v10) : sur desktop, la topbar s'arrête au bord de la sidebar
@@ -340,13 +343,7 @@ body {
     flex-shrink: 0;
 }
 
-.app-title {
-    font-size: 24px; /* Plus lisible */
-    font-weight: 700;
-    color: #fff;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
+/* .app-title supprimé — remplacé par .hw-dest-selector (refonte lisière 13/06/2026). */
 
 .search-container {
     position: relative;
@@ -361,7 +358,7 @@ body {
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #9eacba;
+    color: var(--ink-faint);
     width: 24px; /* Icone plus grande */
     height: 24px;
     pointer-events: none;
@@ -369,24 +366,24 @@ body {
 
 #search-input {
     width: 100%;
-    height: 42px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--on-brand-soft-border);
-    background-color: var(--on-brand-soft);
+    height: 44px;
+    border-radius: var(--radius-sm);
+    border: var(--border-filet);
+    background-color: transparent;
     padding: 0 16px 0 48px;
-    color: var(--on-brand-fg);
+    color: var(--ink);
     font-size: 16px;
     transition: background-color .15s ease, border-color .15s ease;
 }
 
 #search-input::placeholder {
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--ink-faint);
 }
 
 #search-input:focus {
     outline: none;
-    background-color: var(--on-brand-strong);
-    border-color: var(--on-brand-strong-border);
+    background-color: var(--paper-raised);
+    border-color: var(--filet-strong);
 }
 
 .search-results {
@@ -434,22 +431,23 @@ body {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    height: 42px;
+    height: 44px;
     padding: 0 12px;
-    border-radius: var(--radius-md);
-    background: var(--on-brand-soft);
-    color: var(--on-brand-fg);
-    border: 1px solid var(--on-brand-soft-border);
+    border-radius: var(--radius-sm);
+    /* Sans fond (façon Maps) : glyphes d'encre nus, le fond n'apparaît qu'au survol. */
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid transparent;
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
-    transition: background-color .15s ease, border-color .15s ease;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
     white-space: nowrap;
 }
 
 .topbar .btn svg {
-    width: 24px; /* Icone plus grande */
-    height: 24px;
+    width: 22px;
+    height: 22px;
 }
 
 .explorer-item-action {
@@ -491,8 +489,9 @@ body {
 
 
 .topbar .btn:hover:not(:disabled) {
-    background: var(--on-brand-strong);
-    border-color: var(--on-brand-strong-border);
+    background: var(--on-brand-soft);
+    border-color: var(--on-brand-soft-border);
+    color: var(--ink);
 }
 
 .topbar .btn.active {
@@ -507,48 +506,8 @@ body {
     background-color: var(--on-brand-soft);
 }
 
-.separator {
-    height: 24px;
-    width: 1px;
-    background-color: var(--on-brand-strong);
-    margin: 0 4px;
-}
-
-.zones-container {
-    position: relative;
-}
-
-.zones-menu {
-    display: none;
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    background-color: var(--surface);
-    color: var(--ink);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-    z-index: 2000;
-    max-height: 300px;
-    overflow-y: auto;
-    border: 1px solid var(--line);
-    min-width: 200px;
-}
-
-.zones-menu button {
-    display: block;
-    width: 100%;
-    padding: 10px 15px;
-    background: none;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-    font-size: 15px;
-    color: var(--ink);
-}
-
-.zones-menu button:hover {
-    background-color: var(--surface-muted);
-}
+/* .separator / .zones-container / .zones-menu supprimés — reliquats morts absents
+   du markup (remplacés par .hw-topbar-separator). Refonte lisière 13/06/2026. */
 
 #map {
     position: absolute;
@@ -2453,7 +2412,7 @@ input[type=range] {
 /* --- CONSOLIDATED MOBILE STYLES (16px Harmonization) --- */
 @media (max-width: 768px) {
     :root,
-    html[data-theme="maritime"] {
+    html[data-theme="plein-soleil"] {
         --space-md: 8px; /* Force maritime au même spacing que les autres thèmes sur mobile */
     }
 
