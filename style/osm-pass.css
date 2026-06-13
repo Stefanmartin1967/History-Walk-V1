@@ -205,9 +205,9 @@ body.osm-pass-active #right-sidebar {
        (existant) garantit qu'on ne déborde pas sur la zone carte. */
     min-width: 720px;
     max-width: calc(100% - 48px);
-    background: var(--bg);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--brand-surface-bg);
+    color: var(--brand-surface-fg);
+    border: 1px solid var(--on-brand-soft);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-modal);
     padding: 12px 16px;
@@ -216,7 +216,7 @@ body.osm-pass-active #right-sidebar {
 }
 .osm-pass-actionbar .meta {
     font-size: 12.5px;
-    color: rgba(255,255,255,0.75);
+    color: var(--ink-soft);
     margin-right: auto; /* pousse les actions à droite, accroche les boutons au bord */
     /* max-width élargi 240→320 pour laisser passer plus de noms en entier
        (la majorité des « Mosquée … » de Djerba tient). Au-delà : ellipsis +
@@ -225,27 +225,27 @@ body.osm-pass-active #right-sidebar {
     max-width: 320px;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.osm-pass-actionbar .meta b { color: #fff; font-weight: 700; }
+.osm-pass-actionbar .meta b { color: var(--brand-surface-fg); font-weight: 700; }
 .osm-pass-actionbar .sep {
     width: 1px; height: 22px;
-    background: rgba(255,255,255,0.18);
+    background: var(--on-brand-soft-border);
 }
 .osm-pass-btn {
-    border: 1px solid rgba(255,255,255,0.4);
-    background: transparent; color: #fff;
+    border: 1px solid var(--on-brand-strong-border);
+    background: transparent; color: var(--brand-surface-fg);
     padding: 8px 14px; border-radius: 9px;
     font-size: 13px; font-weight: 600; cursor: pointer;
     min-height: 36px;
     display: inline-flex; align-items: center; gap: 6px;
     white-space: nowrap;
 }
-.osm-pass-btn:hover { background: rgba(255,255,255,0.12); }
+.osm-pass-btn:hover { background: var(--on-brand-soft); }
 .osm-pass-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .osm-pass-btn--primary {
-    background: #fff; color: var(--bg, #0D3B66);
-    border-color: #fff;
+    background: var(--brand-surface-fg); color: var(--brand-surface-bg);
+    border-color: var(--brand-surface-fg);
 }
-.osm-pass-btn--primary:hover { background: rgba(255,255,255,0.9); }
+.osm-pass-btn--primary:hover { background: var(--brand-surface-fg); }
 .osm-pass-btn svg { width: 14px; height: 14px; }
 
 /* Bouton « Quitter la passe » en haut-droite de la zone carte. */
@@ -294,16 +294,16 @@ body.osm-pass-active #right-sidebar {
 @keyframes ospSpin { to { transform: rotate(360deg); } }
 
 /* ============================================================
-   4. NIGHT — overrides pour boutons sur fond clair (cf. fix PR #707)
+   4. NUIT (night) — overrides pour boutons sur fond clair (cf. fix PR #707)
    ============================================================ */
-/* Tous nos boutons sur fond clair (presque blanc) en night : la règle globale
-   base.css `html[data-theme="night"] button { color: var(--ink) }` force
-   #F3F4F6 (clair) → quasi-invisible sur fond clair. Override targeté pour
+/* Tous nos boutons sur fond clair (presque blanc) en nuit (night) : la règle
+   globale base.css `html[data-theme="nuit"] button { color: var(--ink) }`
+   force #F3F4F6 (clair) → quasi-invisible sur fond clair. Override targeté pour
    restaurer une color sombre lisible. Inclut .osm-pass-quit (raft glass haut-
    droite, signalé par Stefan post #711). */
-html[data-theme="night"] .osm-pass-btn--primary,
-html[data-theme="night"] .osm-pass-quit {
-    color: var(--bg); /* sombre dans les 4 thèmes = lisible sur fond #fff */
+html[data-theme="nuit"] .osm-pass-btn--primary,
+html[data-theme="nuit"] .osm-pass-quit {
+    color: var(--brand-surface-bg); /* sombre dans les 4 thèmes = lisible sur fond clair */
 }
 
 /* ============================================================

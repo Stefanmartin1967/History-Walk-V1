@@ -1124,7 +1124,7 @@
 .menu-item.love .menu-item-icon { background: #FCE7F3; color: #DB2777; }
 .menu-item.love .menu-item-trail { color: #DB2777; }
 .menu-item.love .menu-item-trail svg { fill: #DB2777; }
-html[data-theme="night"] .menu-item.love .menu-item-icon { background: rgba(219, 39, 119, 0.18); }
+html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 39, 119, 0.18); }
 .menu-item.brand-emph .menu-item-icon { background: var(--brand); color: #fff; }
 .menu-item.brand-emph .menu-item-label { color: var(--brand-2, var(--brand)); }
 
@@ -1426,8 +1426,8 @@ html[data-theme="night"] .menu-item.love .menu-item-icon { background: rgba(219,
 .m-top {
     flex-shrink: 0;
     padding: 10px 12px;
-    background: #fff;
-    border-bottom: 1px solid var(--surface-muted);
+    background: var(--brand-surface-bg);
+    border-bottom: 1px solid var(--border-filet);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -1469,7 +1469,7 @@ html[data-theme="night"] .menu-item.love .menu-item-icon { background: rgba(219,
 .m-sticky-bar {
     flex-shrink: 0;
     padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-    background: #fff;
-    border-top: 1px solid var(--surface-muted);
+    background: var(--paper-raised);
+    border-top: 1px solid var(--border-filet);
     box-shadow: 0 -8px 20px -12px rgba(20, 42, 67, 0.18);
 }
