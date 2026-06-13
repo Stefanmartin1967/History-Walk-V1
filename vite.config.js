@@ -83,7 +83,7 @@ export default defineConfig({
             // à ~7 Mo dans la comptabilité du quota (taille réelle stockée = petite)
             // → maxEntries volontairement modéré + purgeOnQuotaError pour que ce
             // cache s'auto-purge sous pression plutôt que d'évincer les autres.
-            urlPattern: /^https:\/\/(?:[a-c]\.tile\.openstreetmap\.org|[a-d]\.basemaps\.cartocdn\.com|mt[0-3]\.google\.com)\//,
+            urlPattern: /^https:\/\/(?:[a-c]\.tile\.openstreetmap\.org|[a-c]\.tile\.openstreetmap\.fr|[a-d]\.basemaps\.cartocdn\.com|mt[0-3]\.google\.com)\//,
             handler: 'CacheFirst',
             options: {
               cacheName: 'map-tiles',
