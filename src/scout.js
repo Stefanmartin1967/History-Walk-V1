@@ -682,10 +682,12 @@ async function createDestinationDraft() {
     }
     // Bascule : on mémorise le choix puis on recharge sur le brouillon (le boot
     // C2a-1b le fusionne + charge ses POIs depuis l'IDB ; admin déjà connecté).
+    // `&scout=1` → le boot rouvre le Scout DESSUS automatiquement (main.js, patron
+    // ?poi=) : l'admin enchaîne la moisson sans rouvrir l'outil à la main.
     try { localStorage.setItem('hw_active_dest', id); } catch (_) {}
     const zTxt = zones.features.length ? ` · ${zones.features.length} zone${zones.features.length > 1 ? 's' : ''} OSM` : '';
-    showToast(`Destination « ${trimmed} » créée${zTxt}. Bascule — relance le Scout pour la remplir.`, 'success', 3200);
-    setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(id)}`; }, 650);
+    showToast(`Destination « ${trimmed} » créée${zTxt}. Bascule — le Scout rouvre dessus pour la remplir.`, 'success', 3200);
+    setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(id)}&scout=1`; }, 650);
 }
 
 // ── Shell ─────────────────────────────────────────────────────────────────────
