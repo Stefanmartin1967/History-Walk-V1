@@ -217,6 +217,7 @@ async function initializeApp() {
     const importIds = urlParams.get('import');
     const importName = urlParams.get('name');
     const poiParam = urlParams.get('poi');
+    const scoutResume = urlParams.get('scout');
     if (importIds) {
         const newUrl = window.location.origin + window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
@@ -239,6 +240,23 @@ async function initializeApp() {
                 showToast('Lieu introuvable dans cette destination.', 'warning');
             }
         }, 500);
+    } else if (scoutResume) {
+        // Réouverture auto du Scout après création d'une destination : scout.js
+        // (createDestinationDraft) bascule en ?map={id}&scout=1 → on rouvre l'outil
+        // DESSUS pour éviter à l'admin de le relancer à la main sur son brouillon
+        // vide. Même patron que ?poi= (URL nettoyée, délai pour laisser la carte
+        // finir). Desktop + admin only : le Scout n'existe pas sur mobile, et
+        // startScout regarde de toute façon state.isAdmin / currentMapId.
+        const newUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+        if (!isMobileView() && state.isAdmin) {
+            setTimeout(async () => {
+                try {
+                    const { startScout } = await import('./scout.js');
+                    startScout();
+                } catch (e) { console.warn('[Startup] réouverture Scout impossible', e); }
+            }, 500);
+        }
     }
 }
 
