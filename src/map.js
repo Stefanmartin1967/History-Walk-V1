@@ -87,6 +87,19 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
     });
 
+    // 4. Couche "Plan (FR)" (OSM France) — même rendu que Plan, mais le style
+    //    osmfr privilégie l'étiquette `name:fr` quand elle existe → noms en
+    //    français là où OSM les renseigne (utile en Tunisie ex-protectorat, où
+    //    le `name` local est en arabe). Tuiles jusqu'à z19 (maxNativeZoom=19,
+    //    agrandies au-delà — même garde anti-grisé z20 que Plan/Voyager).
+    //    Domaine ajouté à la CSP img-src/connect-src + au cache SW (vite.config).
+    const planFrLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+        maxNativeZoom: 19,
+        maxZoom: 20,
+        subdomains: 'abc',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors — rendu <a href="https://www.openstreetmap.fr/">OSM France</a>'
+    });
+
     // Ajout de la couche par défaut (Voyager — base claire, friendly pour les icônes ocre)
     voyagerLayer.addTo(map);
 
@@ -98,6 +111,7 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     const baseMaps = {
         "Voyager": voyagerLayer,
         "Plan": planLayer,
+        "Plan (FR)": planFrLayer,
         "Satellite": googleHybridLayer
     };
 
