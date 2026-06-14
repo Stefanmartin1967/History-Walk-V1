@@ -1237,8 +1237,8 @@
 .poi-mobile-back svg { width: 18px; height: 18px; }
 .poi-mobile-title-wrap { flex: 1; min-width: 0; }
 /* Bloc identité dans le header mobile sticky : réutilise les classes cartel
-   (.cartel-eyebrow / .cartel-title serif / .cartel-title-ar) en version
-   COMPACTE — titre + sous-titre arabe sur une ligne ellipsée, header dense.
+   (.cartel-eyebrow / .cartel-title serif) en version COMPACTE — titre serif sur
+   une ligne ellipsée, header dense.
    Spécificité 2 classes → l'emporte sur la base 1-classe de cartel.css. */
 .poi-mobile-header .cartel-eyebrow { font-size: 9px; gap: 6px; margin: 0; }
 .poi-mobile-header .cartel-utility { min-height: 0; margin-bottom: 4px; }
@@ -1252,13 +1252,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.poi-mobile-header .cartel-title-ar {
-    font-size: 13px;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+/* (.poi-mobile-header .cartel-title-ar retiré — plus de sous-titre arabe, cf. cartel.css.) */
 
 /* Padding contenu de fiche POI mobile : vit dans #mobile-main-container.
    Cible le body POI mobile qui a data-poi-id (vs. PC qui n'a pas cet attribut). */

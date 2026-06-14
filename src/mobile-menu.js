@@ -18,6 +18,7 @@ import { showAdminLoginModal, logoutAdmin } from './admin.js';
 import { openControlCenter } from './admin-control-center.js';
 import { openSaveModal } from './save-modal-ui.js';
 import { cycleTheme, getCurrentTheme, THEME_LABELS } from './theme.js';
+import { getCurrentPatrimonialLang, setPatrimonialLang } from './patrimonial-names.js';
 import { eventBus } from './events.js';
 import { getCurrentView, isMobileView, setMobileHeaderSlot, clearMobileViewFooter } from './mobile-state.js';
 
@@ -29,6 +30,7 @@ function computeSubtitles() {
     const myCompleted = (state.myCircuits || []).filter(c => c.isCompleted === true).length;
     const completedCircuits = officialCompleted + myCompleted;
     const currentThemeLabel = THEME_LABELS[getCurrentTheme()] || 'Maritime';
+    const currentNamesLabel = getCurrentPatrimonialLang() === 'ar' ? 'Arabe' : 'Français';
 
     const plural = (n, s, p) => `${n} ${n === 1 || n === 0 ? s : p}`;
     return {
@@ -37,6 +39,7 @@ function computeSubtitles() {
         scan: 'QR code partagé par un autre voyageur',
         reset: 'Supprime carnet & circuits hors-ligne',
         theme: `Actuel : ${currentThemeLabel}`,
+        names: `Actuel : ${currentNamesLabel}`,
         bmc: 'Soutenir le projet',
         cc: 'Tableau de bord opérations',
     };
@@ -63,6 +66,7 @@ function buildSections(subs) {
             label: 'Préférences',
             items: [
                 { id: 'mob-action-theme', ico: 'palette', label: 'Changer Thème', sub: subs.theme },
+                { id: 'mob-action-names', ico: 'languages', label: 'Langue des noms', sub: subs.names },
             ],
         },
         {
@@ -168,6 +172,12 @@ export function renderMobileMenu() {
     document.getElementById('mob-action-theme')?.addEventListener('click', () => {
         cycleTheme();
         // Re-render pour rafraîchir le sous-titre « Actuel : <thème> ».
+        renderMobileMenu();
+    });
+    document.getElementById('mob-action-names')?.addEventListener('click', () => {
+        // FR ⇄ AR (réglage GLOBAL — équivalent mobile du segmenté topbar PC).
+        setPatrimonialLang(getCurrentPatrimonialLang() === 'ar' ? 'fr' : 'ar');
+        // Re-render pour rafraîchir le sous-titre « Actuel : <langue> ».
         renderMobileMenu();
     });
     document.getElementById('mob-action-bmc')?.addEventListener('click', () => {

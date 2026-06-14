@@ -318,3 +318,36 @@
     outline: none;
     box-shadow: var(--focus-ring);
 }
+
+/* Bascule GLOBALE de langue des noms (FR ⇄ AR) — jumelle de .hw-moment-toggle,
+   à côté du moment dans la topbar. Périmètre = noms patrimoniaux des lieux. */
+.names-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    background: var(--on-brand-soft);
+    border: 1px solid var(--on-brand-soft-border);
+    border-radius: var(--radius-pill);
+}
+.names-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 36px;
+    padding: 0 11px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--brand-surface-fg);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+.names-btn:hover:not([aria-pressed="true"]) { background: var(--on-brand-soft); }
+.names-btn[aria-pressed="true"] { background: var(--brand); color: var(--on-brand-fg); }
+.names-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.names-btn .scr { font-family: var(--font-serif); font-size: var(--font-size-base); line-height: 1; }

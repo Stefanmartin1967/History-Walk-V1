@@ -45,7 +45,7 @@
          dès le 1er paint du #hw-boot-splash. -->
     <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css?v=8.14">
+    <link rel="stylesheet" href="style.css?v=8.15">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
          Lien direct car les @imports CSS dans style.css sont cachés par Vite en
          dev — voir note historique sur le boot splash en bas de style.css. -->
@@ -153,6 +153,16 @@
                         title="Ombre" aria-label="Ombre" aria-pressed="false"><span aria-hidden="true">🌿</span></button>
                 <button type="button" class="hw-moment-seg" data-theme="nuit"
                         title="Nuit" aria-label="Nuit" aria-pressed="false"><span aria-hidden="true">🌙</span></button>
+            </div>
+
+            <!-- Bascule globale de langue des NOMS patrimoniaux (FR ⇄ AR) — à côté
+                 du moment : les 2 conditions de lecture (lumière + langue). Câblée
+                 par topbar-v2.js setupNamesToggle. Périmètre = noms de lieux only. -->
+            <div class="names-toggle" role="group" aria-label="Langue des noms de lieux">
+                <button type="button" class="names-btn" data-lang="fr"
+                        title="Noms en français" aria-label="Noms en français" aria-pressed="true">FR</button>
+                <button type="button" class="names-btn" data-lang="ar"
+                        title="الأسماء بالعربية" aria-label="Noms en arabe" aria-pressed="false"><span class="scr">ع</span></button>
             </div>
 
             <!-- Bouton plein écran (Fullscreen API). État/icône pilotés par

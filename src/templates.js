@@ -1,5 +1,6 @@
 // templates.js
-import { getPoiName } from './data.js';
+import { getPoiName, getPatrimonialName } from './data.js';
+import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 import { escapeXml } from './utils.js';
 import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
@@ -183,7 +184,7 @@ function buildPoiKebabMenu({ hasGpxDesc, isMobile }) {
 
 export function buildDetailsPanelHtml(feature, circuitIndex) {
     const allProps = { ...feature.properties, ...feature.properties.userData };
-    const poiName = getPoiName(feature);
+    const poiName = getPatrimonialName(feature); // nom affiché = selon la langue choisie
     const inCircuit = circuitIndex !== null;
     const mobile = isMobileView();
 
@@ -401,9 +402,11 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     ].filter(Boolean);
     const eyebrowTextHtml = eyebrowTextParts.join('<span class="sep">·</span>');
     // Rangée utilitaire (v3) : eyebrow (zone · catégorie) à gauche ; à droite,
-    // DÉ-EMPILÉES du titre, la nav circuit (positionText) + l'aide « ? »
-    // (.cartel-help, câblée au patron d'aide par ui-details setupHelpButton).
-    // La bascule de nom (.cartel-namebtn) arrive au chantier i18n.
+    // dé-empilées du titre : la nav circuit (positionText) et l'aide « ? »
+    // (.cartel-help). La langue des noms est un réglage GLOBAL (topbar sur PC,
+    // menu sur mobile) — pas de bascule par fiche.
+    const curLang = getCurrentPatrimonialLang();
+    const titleIsAr = hasAr && curLang === 'ar'; // titre réellement affiché en arabe → dir RTL
     const helpBtnHtml = `<button class="cartel-help" type="button" aria-label="Aide : lire la fiche d'un lieu"><i data-lucide="circle-help"></i></button>`;
     const utilityHtml = `<div class="cartel-utility">${eyebrowTextParts.length ? `<p class="cartel-eyebrow">${eyebrowTextHtml}</p>` : ''}<div class="cartel-utility-actions">${positionText}${helpBtnHtml}</div></div>`;
 
@@ -419,8 +422,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 <div class="poi-body">
                     <div class="cartel-head">
                         ${utilityHtml}
-                        <h2 class="cartel-title" id="panel-title-fr">${escapeXml(poiName)}</h2>
-                        ${hasAr ? `<p class="cartel-title-ar" id="panel-title-ar" dir="rtl">${escapeXml(arName)}</p>` : ''}
+                        <h2 class="cartel-title" id="panel-title-fr"${titleIsAr ? ' dir="rtl"' : ''}>${escapeXml(poiName)}</h2>
                         ${statusHtml}
                     </div>
                     ${descSection}
@@ -449,8 +451,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 <div class="poi-mobile-header-row">
                     <div class="poi-mobile-title-wrap">
                         ${utilityHtml}
-                        <h1 class="cartel-title" id="mobile-title-fr">${escapeXml(poiName)}</h1>
-                        ${hasAr ? `<p class="cartel-title-ar" id="mobile-title-ar" dir="rtl">${escapeXml(arName)}</p>` : ''}
+                        <h1 class="cartel-title" id="mobile-title-fr"${titleIsAr ? ' dir="rtl"' : ''}>${escapeXml(poiName)}</h1>
                         ${statusHtml}
                     </div>
                     <button class="poi-mobile-back" id="details-close-btn" title="Fermer la fiche" aria-label="Fermer la fiche"><i data-lucide="x"></i></button>
