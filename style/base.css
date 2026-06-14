@@ -305,7 +305,7 @@ body {
        de carte flottante. En Nuit, --brand-surface-bg redevient une bande sombre. */
     color: var(--brand-surface-fg);
     background: var(--brand-surface-bg);
-    border-bottom: var(--border-filet-strong);
+    border-bottom: var(--border-filet);
     z-index: var(--z-topbar);
 }
 
@@ -596,7 +596,7 @@ body {
     /* Harmonisé avec la lisière : même papier que le topbar → bande du haut
        continue d'un bord à l'autre (fin du deux-tons). */
     background-color: var(--brand-surface-bg);
-    border-bottom: var(--border-filet-strong);
+    border-bottom: var(--border-filet);
     height: 72px; /* Aligné avec la topbar PR 8 */
     padding: 12px;
     flex-shrink: 0;
