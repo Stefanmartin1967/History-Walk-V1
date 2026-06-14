@@ -399,8 +399,13 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             ? `<span>${escapeXml(category)}${subtype ? ` <span class="subtype">${escapeXml(subtype)}</span>` : ''}</span>`
             : ''
     ].filter(Boolean);
-    const eyebrowHtml = eyebrowTextParts.join('<span class="sep">·</span>') + positionText;
-    const hasEyebrow = eyebrowTextParts.length > 0 || Boolean(positionText);
+    const eyebrowTextHtml = eyebrowTextParts.join('<span class="sep">·</span>');
+    // Rangée utilitaire (v3) : eyebrow (zone · catégorie) à gauche ; à droite,
+    // DÉ-EMPILÉES du titre, la nav circuit (positionText) + l'aide « ? »
+    // (.cartel-help, câblée au patron d'aide par ui-details setupHelpButton).
+    // La bascule de nom (.cartel-namebtn) arrive au chantier i18n.
+    const helpBtnHtml = `<button class="cartel-help" type="button" aria-label="Aide : lire la fiche d'un lieu"><i data-lucide="circle-help"></i></button>`;
+    const utilityHtml = `<div class="cartel-utility">${eyebrowTextParts.length ? `<p class="cartel-eyebrow">${eyebrowTextHtml}</p>` : ''}<div class="cartel-utility-actions">${positionText}${helpBtnHtml}</div></div>`;
 
     // ========== TEMPLATE DESKTOP ==========
     if (!mobile) {
@@ -413,7 +418,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                 ${heroHtml}
                 <div class="poi-body">
                     <div class="cartel-head">
-                        ${hasEyebrow ? `<p class="cartel-eyebrow">${eyebrowHtml}</p>` : ''}
+                        ${utilityHtml}
                         <h2 class="cartel-title" id="panel-title-fr">${escapeXml(poiName)}</h2>
                         ${hasAr ? `<p class="cartel-title-ar" id="panel-title-ar" dir="rtl">${escapeXml(arName)}</p>` : ''}
                         ${statusHtml}
@@ -443,7 +448,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="poi-mobile-header" data-poi-id="${dataPoiId}">
                 <div class="poi-mobile-header-row">
                     <div class="poi-mobile-title-wrap">
-                        ${hasEyebrow ? `<div class="cartel-eyebrow">${eyebrowHtml}</div>` : ''}
+                        ${utilityHtml}
                         <h1 class="cartel-title" id="mobile-title-fr">${escapeXml(poiName)}</h1>
                         ${hasAr ? `<p class="cartel-title-ar" id="mobile-title-ar" dir="rtl">${escapeXml(arName)}</p>` : ''}
                         ${statusHtml}
