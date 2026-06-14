@@ -3058,6 +3058,21 @@ input[type=range] {
         height: 32px;
     }
 
+    /* Recherche + bascule de moment : compactées pour tenir dans la topbar 40px
+       (sinon elles dépassaient VERS LE BAS en PWA installée / WCO — la topbar y
+       fait 40px mais ces 2 éléments restaient à 44px). */
+    .topbar #search-input {
+        height: 32px;
+    }
+    .topbar .hw-moment-toggle {
+        padding: 2px;
+    }
+    .topbar .hw-moment-seg {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+
     /* Sidebar tabs : alignées avec la topbar 40px */
     .sidebar-tabs {
         height: 40px;
