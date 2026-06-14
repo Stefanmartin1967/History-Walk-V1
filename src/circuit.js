@@ -321,9 +321,33 @@ async function applyCircuitHero() {
     setCoverClickable(cover, false);
 
     const circuit = state.currentCircuit;
-    if (!circuit || circuit.length === 0) {
-        cover.innerHTML = '<div class="empty-glyph"><i data-lucide="route"></i></div>';
+
+    // Puces papier zone + étapes : lisibles sur photo claire comme sombre, et
+    // posées MÊME sans photo (cf. renderEmptyCover). Vide tant qu'il n'y a pas
+    // d'étape. Remplace les anciennes .cp-pill translucides (blanc-sur-blanc).
+    const buildCoverTags = () => {
+        if (!circuit || circuit.length === 0) return '';
+        const coords = circuit[0]?.geometry?.coordinates;
+        const zone = (coords && coords.length >= 2) ? (getZoneFromCoords(coords[1], coords[0]) || null) : null;
+        let html = '';
+        if (zone) html += `<span class="cartel-chip"><i data-lucide="map-pin"></i>${escapeXml(zone)}</span>`;
+        html += `<span class="cartel-chip"><i data-lucide="route"></i>${circuit.length} étape${circuit.length > 1 ? 's' : ''}</span>`;
+        return html;
+    };
+
+    // Cover sans photo : plaque de papier gravé (façon hero de fiche POI) +
+    // libellé + les puces zone/étapes. Fini le glyphe nu sur motif froid.
+    const renderEmptyCover = (label) => {
+        const tags = buildCoverTags();
+        cover.innerHTML =
+            `<div class="empty-plate"><div class="empty-icon"><i data-lucide="route"></i></div>`
+            + `<div class="empty-label">${label}</div></div>`
+            + (tags ? `<div class="cp-cover-tags">${tags}</div>` : '');
         createIcons({ icons: appIcons, root: cover });
+    };
+
+    if (!circuit || circuit.length === 0) {
+        renderEmptyCover('Aucune étape');
         return;
     }
 
@@ -363,8 +387,7 @@ async function applyCircuitHero() {
     }
 
     if (!heroUrl) {
-        cover.innerHTML = '<div class="empty-glyph"><i data-lucide="route"></i></div>';
-        createIcons({ icons: appIcons, root: cover });
+        renderEmptyCover('Ajouter une photo');
         return;
     }
 
@@ -387,19 +410,9 @@ async function applyCircuitHero() {
     badge.innerHTML = `<i data-lucide="image"></i>${totalPhotoCount} ${totalPhotoCount > 1 ? 'photos' : 'photo'}`;
     cover.appendChild(badge);
 
-    const zone = (() => {
-        const coords = circuit[0]?.geometry?.coordinates;
-        if (!coords || coords.length < 2) return null;
-        const [lng, lat] = coords;
-        return getZoneFromCoords(lat, lng) || null;
-    })();
-
     const tags = document.createElement('div');
     tags.className = 'cp-cover-tags';
-    let tagsHtml = '';
-    if (zone) tagsHtml += `<span class="cp-pill"><i data-lucide="map-pin"></i>${escapeXml(zone)}</span>`;
-    tagsHtml += `<span class="cp-pill"><i data-lucide="route"></i>${circuit.length} étape${circuit.length > 1 ? 's' : ''}</span>`;
-    tags.innerHTML = tagsHtml;
+    tags.innerHTML = buildCoverTags();
     cover.appendChild(tags);
 
     createIcons({ icons: appIcons, root: cover });
