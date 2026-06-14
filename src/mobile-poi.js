@@ -47,22 +47,13 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
 
     revokeMobileHeroObjectUrl();
 
-    // Puces papier zone + étapes (miroir PC) : lisibles sur photo, et posées
-    // même sans photo. cartel-chip remplace .cc-pill translucide (illisible).
-    const buildTags = () => {
-        let html = '';
-        if (zoneName) html += `<span class="cartel-chip"><i data-lucide="map-pin"></i>${escapeHtml(zoneName)}</span>`;
-        if (etapeCount) html += `<span class="cartel-chip"><i data-lucide="route"></i>${etapeCount} étape${etapeCount > 1 ? 's' : ''}</span>`;
-        return html;
-    };
-    // Hero sans photo : plaque de papier gravé + libellé + les puces (CSS partagé
-    // .empty-plate, façon fiche POI). Fini le glyphe nu sur motif froid.
+    // Hero sans photo : plaque de papier gravé + libellé (CSS partagé .empty-plate,
+    // façon fiche POI). La métadonnée (zone · étapes · km) vit dans le cartel
+    // sous la photo (.cc-eyebrow), pas en doublon ici — Option A (redondance).
     const renderEmpty = (label) => {
-        const tags = buildTags();
         hero.innerHTML =
             `<div class="empty-plate"><div class="empty-icon"><i data-lucide="route"></i></div>`
-            + `<div class="empty-label">${label}</div></div>`
-            + (tags ? `<div class="cc-hero-tags">${tags}</div>` : '');
+            + `<div class="empty-label">${label}</div></div>`;
         createIcons({ icons: appIcons, root: hero });
     };
 
@@ -129,11 +120,6 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
     badge.className = 'cc-photo-count';
     badge.innerHTML = `<i data-lucide="image"></i>${totalPhotoCount} ${totalPhotoCount > 1 ? 'photos' : 'photo'}`;
     hero.appendChild(badge);
-
-    const tags = document.createElement('div');
-    tags.className = 'cc-hero-tags';
-    tags.innerHTML = buildTags();
-    hero.appendChild(tags);
 
     createIcons({ icons: appIcons, root: hero });
 }
