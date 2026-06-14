@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { getPoiId, getPoiName, deletePoi } from './data.js';
+import { getPoiId, getPatrimonialName, deletePoi } from './data.js';
 import { showConfirm } from './modal.js';
 import { closeDetailsPanel } from './ui-details.js';
 import { isMobileView } from './mobile-state.js';
@@ -21,7 +21,7 @@ export async function requestSoftDelete(idOrIndex) {
 
     let poiId;
     try { poiId = getPoiId(feature); } catch (e) { poiId = feature.properties.HW_ID || feature.id; }
-    const poiName = getPoiName(feature);
+    const poiName = getPatrimonialName(feature);
 
     const msg = isMobileView()
         ? `ATTENTION !\n\nVoulez-vous vraiment placer "${poiName}" dans la corbeille ?`

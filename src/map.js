@@ -7,7 +7,7 @@ import { addPoiToCircuit, isCircuitCompleted } from './circuit.js';
 import { openDetailsPanel } from './ui-details.js';
 import { eventBus } from './events.js';
 import { showToast } from './toast.js';
-import { getPoiId, getPoiName } from './data.js';
+import { getPoiId, getPatrimonialName } from './data.js';
 import { isCandidate } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { saveAppState } from './database.js';
@@ -515,7 +515,7 @@ export function refreshMapMarkers(visibleFeatures) {
 
             const marker = L.marker(latlng, {
                 icon: icon,
-                title: getPoiName(feature) // Tooltip natif au survol
+                title: getPatrimonialName(feature) // Tooltip natif au survol (suit la langue des noms)
             });
             
             marker.on('click', (e) => {

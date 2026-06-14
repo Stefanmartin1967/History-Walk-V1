@@ -1,7 +1,7 @@
 // circuit-view.js — V2 Onglet Circuit (consultation + création)
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
-import { getPoiName, getPoiId } from './data.js';
+import { getPatrimonialName, getPoiId } from './data.js';
 import { state, setCurrentCircuit } from './state.js';
 import { sanitizeHTML, escapeXml } from './utils.js';
 import { showToast } from './toast.js';
@@ -22,7 +22,7 @@ import Sortable from 'sortablejs';
  * En création : handle + num + body + cat + actions (chevrons + remove)
  */
 function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
-    const poiName = getPoiName(feature);
+    const poiName = getPatrimonialName(feature);
     const cat = getStepCategoryDisplay(feature);
     // Mode édition (poignée + boutons) UNIQUEMENT si :
     //  - brouillon en cours (pas d'activeCircuitId), OU

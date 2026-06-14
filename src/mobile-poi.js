@@ -5,7 +5,7 @@
 // Le sticky bar bas Partager/GPX a disparu (actions absorbées par .cc-actions).
 
 import { state } from './state.js';
-import { getPoiId, getPoiName, updatePoiCoordinates, applyFilters } from './data.js';
+import { getPoiId, getPatrimonialName, updatePoiCoordinates, applyFilters } from './data.js';
 import { getStepCategoryDisplay } from './poi-icons.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance, getPoiProp } from './utils.js';
@@ -155,7 +155,7 @@ function renderSimplePoiList(container, listToDisplay) {
 
     let listHtml = '';
     listToDisplay.forEach(feature => {
-        const name = getPoiName(feature);
+        const name = getPatrimonialName(feature);
         const poiId = getPoiId(feature);
         const cat = getStepCategoryDisplay(feature);
         const isVisited = getPoiProp(feature, 'vu');
@@ -266,7 +266,7 @@ function renderCircuitView(container, listToDisplay) {
     // Steps timeline
     let stepsHtml = '';
     listToDisplay.forEach((feature, i) => {
-        const name = getPoiName(feature);
+        const name = getPatrimonialName(feature);
         const poiId = getPoiId(feature);
         const cat = getStepCategoryDisplay(feature);
         const isVisited = getPoiProp(feature, 'vu');

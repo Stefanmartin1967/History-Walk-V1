@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { getPoiId, getPoiName, updatePoiData } from './data.js';
+import { getPoiId, getPatrimonialName, updatePoiData } from './data.js';
 import { showToast } from './toast.js';
 import { showConfirm, openHwModal, closeHwModal } from './modal.js';
 import { compressImage, generatePhotoId, ADMIN_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
@@ -41,7 +41,7 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
             return;
         }
 
-        const poiName = feature ? getPoiName(feature) : "Nouveau Lieu";
+        const poiName = feature ? getPatrimonialName(feature) : "Nouveau Lieu";
         currentGridPoiName = poiName;
         const isAdmin = state.isAdmin;
 
