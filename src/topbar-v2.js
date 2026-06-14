@@ -300,7 +300,7 @@ function setupNamesToggle() {
             updateNamesToggleActive();
         });
     });
-    // Resync quand la langue change ailleurs (pilule .cartel-namebtn de la fiche).
+    // Resync quand la langue change ailleurs (menu mobile, restauration au boot).
     eventBus.on('patrimony:lang-changed', updateNamesToggleActive);
     updateNamesToggleActive();
 }

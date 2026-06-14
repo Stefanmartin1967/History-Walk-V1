@@ -133,8 +133,8 @@
     text-wrap: pretty;
 }
 /* (.cartel-title-ar retiré — chantier i18n : plus de sous-titre arabe permanent.
-   Le titre unique porte le nom dans la langue choisie (bascule globale FR/AR),
-   avec dir="rtl" en mode AR ; l'autre nom s'atteint via .cartel-namebtn.) */
+   Le titre unique porte le nom dans la langue choisie (réglage global FR/AR :
+   segmenté topbar sur PC, menu sur mobile), avec dir="rtl" en mode AR.) */
 /* Compteur position-circuit ‹ 3 / 12 › + chevrons, poussé à droite de l'eyebrow. */
 .cartel-nav { display: inline-flex; align-items: center; gap: 2px; }
 .cartel-nav-chev {

@@ -402,17 +402,13 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     ].filter(Boolean);
     const eyebrowTextHtml = eyebrowTextParts.join('<span class="sep">·</span>');
     // Rangée utilitaire (v3) : eyebrow (zone · catégorie) à gauche ; à droite,
-    // dé-empilées du titre : la nav circuit (positionText), la bascule de nom
-    // FR↔AR (.cartel-namebtn — seulement si le lieu a un nom arabe ; affiche le
-    // glyphe de la langue CIBLE ; câblée à la pref globale par ui-details), et
-    // l'aide « ? » (.cartel-help).
+    // dé-empilées du titre : la nav circuit (positionText) et l'aide « ? »
+    // (.cartel-help). La langue des noms est un réglage GLOBAL (topbar sur PC,
+    // menu sur mobile) — pas de bascule par fiche.
     const curLang = getCurrentPatrimonialLang();
     const titleIsAr = hasAr && curLang === 'ar'; // titre réellement affiché en arabe → dir RTL
-    const nameBtnHtml = hasAr
-        ? `<button class="cartel-namebtn" type="button" title="${curLang === 'ar' ? 'Voir le nom en français' : 'Voir le nom en arabe'}" aria-label="${curLang === 'ar' ? 'Voir le nom en français' : 'Voir le nom en arabe'}"><i data-lucide="languages"></i><span class="scr">${curLang === 'ar' ? 'FR' : 'ع'}</span></button>`
-        : '';
     const helpBtnHtml = `<button class="cartel-help" type="button" aria-label="Aide : lire la fiche d'un lieu"><i data-lucide="circle-help"></i></button>`;
-    const utilityHtml = `<div class="cartel-utility">${eyebrowTextParts.length ? `<p class="cartel-eyebrow">${eyebrowTextHtml}</p>` : ''}<div class="cartel-utility-actions">${positionText}${nameBtnHtml}${helpBtnHtml}</div></div>`;
+    const utilityHtml = `<div class="cartel-utility">${eyebrowTextParts.length ? `<p class="cartel-eyebrow">${eyebrowTextHtml}</p>` : ''}<div class="cartel-utility-actions">${positionText}${helpBtnHtml}</div></div>`;
 
     // ========== TEMPLATE DESKTOP ==========
     if (!mobile) {
