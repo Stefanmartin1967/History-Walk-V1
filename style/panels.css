@@ -826,13 +826,17 @@
     align-items: center;
     justify-content: center;
 }
-.poi-hero.is-empty .empty-plate {
+/* Plaque « papier gravé » partagée par tous les héros/covers vides (fiche POI
+   .poi-hero, cover de circuit PC .circuit-cover, hero circuit mobile .cc-hero).
+   Chaque conteneur .is-empty fournit son fond gravé + le centrage ; ces classes
+   ne portent que le contenu (icône en cartouche papier + libellé sépia). */
+.empty-plate {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--space-sm);
 }
-.poi-hero.is-empty .empty-icon {
+.empty-icon {
     width: 56px;
     height: 56px;
     border-radius: var(--radius-md);
@@ -842,8 +846,8 @@
     color: var(--ink-soft);
     border: var(--border-filet);
 }
-.poi-hero.is-empty .empty-icon svg { width: 28px; height: 28px; }
-.poi-hero.is-empty .empty-label {
+.empty-icon svg { width: 28px; height: 28px; }
+.empty-label {
     font-family: var(--font-sans);
     font-size: var(--smallcaps-size);
     font-weight: var(--smallcaps-weight);
@@ -2592,31 +2596,24 @@
 /* Cover cliquable (le circuit a des photos) → ouvre la galerie agrégée.
    Affordance : curseur + renfort du badge « X photos » au survol. */
 .circuit-cover.is-clickable { cursor: pointer; }
-.circuit-cover.is-clickable:hover .cp-photo-count { background: rgba(0, 0, 0, 0.82); }
+.circuit-cover.is-clickable:hover .cp-photo-count { background: var(--paper-raised); }
 .circuit-cover.is-clickable:focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: -2px;
 }
 
-/* Cover fallback (aucune photo dans le circuit) — motif topo subtil. */
+/* Cover vide (aucune photo dans le circuit) : même plaque de papier gravé que
+   le hero de fiche (.empty-plate/.empty-icon/.empty-label partagés), pas le
+   motif froid d'avant. Les pills zone/étapes RESTENT (cf. applyCircuitHero). */
 .circuit-cover.is-empty {
     background:
-        radial-gradient(circle at 30% 40%, var(--brand-soft) 0%, transparent 55%),
-        radial-gradient(circle at 75% 70%, color-mix(in oklab, var(--brand) 25%, var(--surface)) 0%, transparent 60%),
-        repeating-radial-gradient(circle at 50% 50%, transparent 0 22px, color-mix(in oklab, var(--brand) 6%, transparent) 22px 23px),
-        var(--surface);
+        repeating-radial-gradient(circle at 64% 116%,
+            transparent 0 26px,
+            color-mix(in oklab, var(--ink) 5%, transparent) 26px 27px),
+        radial-gradient(120% 90% at 50% -10%, var(--paper-raised) 0%, var(--paper-2) 70%);
     display: flex;
     align-items: center;
     justify-content: center;
-}
-.circuit-cover.is-empty .empty-glyph {
-    color: var(--brand);
-    opacity: 0.65;
-}
-.circuit-cover.is-empty .empty-glyph svg {
-    width: 64px;
-    height: 64px;
-    stroke-width: 1.5;
 }
 
 /* Cover overlays */
@@ -2624,16 +2621,17 @@
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(0, 0, 0, 0.55);
-    color: #fff;
+    background: var(--paper);
+    color: var(--ink);
+    border: var(--border-filet-strong);
+    box-shadow: var(--shadow-card);
     padding: 4px 9px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 600;
+    border-radius: var(--radius-xs);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    backdrop-filter: blur(8px);
 }
 .cp-photo-count svg { width: 12px; height: 12px; }
 .cp-cover-tags {
@@ -2644,22 +2642,8 @@
     gap: 6px;
     flex-wrap: wrap;
 }
-.cp-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 4px 9px;
-    border-radius: 999px;
-    font-size: 11.5px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    background: rgba(240, 244, 248, 0.92);
-    color: var(--ink);
-    backdrop-filter: blur(6px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
-}
-.cp-pill svg { width: 11px; height: 11px; }
-.cp-pill.amber { background: rgba(255, 251, 235, 0.95); color: var(--hw-amber); }
+/* (.cp-pill retiré — les pills zone/étapes du cover sont passées en puces papier
+   .cartel-chip, style/cartel.css, lisibles sur photo claire comme sombre.) */
 
 /* ----------- 2. IDENTITÉ ----------- */
 .circuit-ident { padding: 14px 18px 8px; }

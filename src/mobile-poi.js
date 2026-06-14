@@ -43,9 +43,30 @@ function revokeMobileHeroObjectUrl() {
 }
 
 async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
-    if (!hero || !circuit || circuit.length === 0) return;
+    if (!hero) return;
 
     revokeMobileHeroObjectUrl();
+
+    // Puces papier zone + étapes (miroir PC) : lisibles sur photo, et posées
+    // même sans photo. cartel-chip remplace .cc-pill translucide (illisible).
+    const buildTags = () => {
+        let html = '';
+        if (zoneName) html += `<span class="cartel-chip"><i data-lucide="map-pin"></i>${escapeHtml(zoneName)}</span>`;
+        if (etapeCount) html += `<span class="cartel-chip"><i data-lucide="route"></i>${etapeCount} étape${etapeCount > 1 ? 's' : ''}</span>`;
+        return html;
+    };
+    // Hero sans photo : plaque de papier gravé + libellé + les puces (CSS partagé
+    // .empty-plate, façon fiche POI). Fini le glyphe nu sur motif froid.
+    const renderEmpty = (label) => {
+        const tags = buildTags();
+        hero.innerHTML =
+            `<div class="empty-plate"><div class="empty-icon"><i data-lucide="route"></i></div>`
+            + `<div class="empty-label">${label}</div></div>`
+            + (tags ? `<div class="cc-hero-tags">${tags}</div>` : '');
+        createIcons({ icons: appIcons, root: hero });
+    };
+
+    if (!circuit || circuit.length === 0) { renderEmpty('Aucune étape'); return; }
 
     let heroUrl = null;
     let totalPhotoCount = 0;
@@ -78,7 +99,7 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
         }
     }
 
-    if (!heroUrl) return; // reste en .is-empty (glyphe + motif topo)
+    if (!heroUrl) { renderEmpty('Ajouter une photo'); return; }
 
     hero.classList.remove('is-empty');
     hero.dataset.bg = 'true';
@@ -111,10 +132,7 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
 
     const tags = document.createElement('div');
     tags.className = 'cc-hero-tags';
-    let tagsHtml = '';
-    if (zoneName) tagsHtml += `<span class="cc-pill"><i data-lucide="map-pin"></i>${escapeHtml(zoneName)}</span>`;
-    tagsHtml += `<span class="cc-pill"><i data-lucide="route"></i>${etapeCount} étape${etapeCount > 1 ? 's' : ''}</span>`;
-    tags.innerHTML = tagsHtml;
+    tags.innerHTML = buildTags();
     hero.appendChild(tags);
 
     createIcons({ icons: appIcons, root: hero });
@@ -281,7 +299,7 @@ function renderCircuitView(container, listToDisplay) {
     // Body : hero + ident + desc + actions + timeline
     container.innerHTML = `
         <div class="cc-hero is-empty" id="mobile-cc-hero">
-            <div class="cc-hero-glyph"><i data-lucide="route"></i></div>
+            <div class="empty-plate"><div class="empty-icon"><i data-lucide="route"></i></div></div>
         </div>
         <div class="cc-ident">
             <div class="cc-eyebrow">
