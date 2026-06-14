@@ -34,9 +34,13 @@
     width: 30px;
     height: 30px;
     background: var(--brand);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     flex-shrink: 0;
-    font-size: 18px;
+    /* Code pays 2 lettres (TN/MA) — rendu cohérent cross-plateforme, blanc sur terracotta. */
+    color: var(--on-brand-fg);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
 .hw-dest-selector-text {
@@ -166,7 +170,16 @@
 }
 
 .hw-dest-item-flag {
-    font-size: 22px;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    background: var(--brand);
+    border-radius: var(--radius-sm);
+    color: var(--on-brand-fg);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     flex-shrink: 0;
 }
 

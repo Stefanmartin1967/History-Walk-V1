@@ -593,7 +593,10 @@ body {
 .sidebar-tabs {
     display: flex;
     gap: 4px;
-    background-color: var(--surface-muted);
+    /* Harmonisé avec la lisière : même papier que le topbar → bande du haut
+       continue d'un bord à l'autre (fin du deux-tons). */
+    background-color: var(--brand-surface-bg);
+    border-bottom: var(--border-filet-strong);
     height: 72px; /* Aligné avec la topbar PR 8 */
     padding: 12px;
     flex-shrink: 0;
@@ -621,10 +624,10 @@ body {
 .tab-button:hover { color: var(--ink); }
 
 .tab-button.active {
-    background-color: var(--surface);
+    background-color: var(--paper-raised);
     color: var(--ink);
     font-weight: 600;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-card);
 }
 
 .tab-button .count {

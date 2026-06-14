@@ -122,17 +122,35 @@ function setupDestinationMenu() {
 // override `country` dans destinations.json. Pour l'instant : Tunisie ou
 // Maroc ou autre selon la lat/lon. Si on ouvre d'autres pays, ajouter un
 // champ explicite `country` + `flag` dans destinations.json.
+// Convertit un drapeau émoji (indicateurs régionaux 🇹🇳) en code pays 2 lettres ("TN").
+function flagToCode(flag) {
+    if (!flag) return '';
+    const cps = [...flag].map(ch => ch.codePointAt(0));
+    if (cps.length >= 2 && cps[0] >= 0x1F1E6 && cps[0] <= 0x1F1FF) {
+        return cps.slice(0, 2).map(cp => String.fromCharCode(cp - 0x1F1E6 + 65)).join('');
+    }
+    return '';
+}
+
+// Déduit { pays, drapeau, code 2 lettres }. On AFFICHE le `code` (carré terracotta)
+// plutôt que l'émoji-drapeau, dont le rendu varie selon la plateforme (Windows ne
+// dessine pas les drapeaux émoji → il affiche « TN », incohérent avec mobile/Mac).
 function inferCountryAndFlag(dest) {
-    if (dest?.country && dest?.flag) return { country: dest.country, flag: dest.flag };
+    if (dest?.country && dest?.flag) {
+        return { country: dest.country, flag: dest.flag,
+                 code: dest.code || flagToCode(dest.flag) || dest.country.slice(0, 2).toUpperCase() };
+    }
     const center = dest?.startView?.center;
     if (Array.isArray(center) && center.length === 2) {
         const [lat, lon] = center;
         // Tunisie
-        if (lat >= 30 && lat <= 38 && lon >= 7 && lon <= 12) return { country: 'Tunisie', flag: '🇹🇳' };
+        if (lat >= 30 && lat <= 38 && lon >= 7 && lon <= 12) return { country: 'Tunisie', flag: '🇹🇳', code: 'TN' };
         // Maroc
-        if (lat >= 27 && lat <= 36 && lon >= -14 && lon <= 0) return { country: 'Maroc', flag: '🇲🇦' };
+        if (lat >= 27 && lat <= 36 && lon >= -14 && lon <= 0) return { country: 'Maroc', flag: '🇲🇦', code: 'MA' };
     }
-    return { country: dest?.country || '', flag: dest?.flag || '🌍' };
+    const country = dest?.country || '';
+    return { country, flag: dest?.flag || '🌍',
+             code: dest?.code || flagToCode(dest?.flag) || (country ? country.slice(0, 2).toUpperCase() : '··') };
 }
 
 export function renderDestinationMenu(destinations, activeMapId) {
@@ -153,9 +171,9 @@ export function renderDestinationMenu(destinations, activeMapId) {
     // Met à jour la pastille du sélecteur (drapeau + nom de la dest active)
     const activeDest = maps[activeMapId];
     if (activeDest) {
-        const { flag } = inferCountryAndFlag(activeDest);
+        const { code } = inferCountryAndFlag(activeDest);
         if (selectorName) selectorName.textContent = activeDest.name || activeMapId;
-        if (selectorFlagEl) selectorFlagEl.textContent = flag;
+        if (selectorFlagEl) selectorFlagEl.textContent = code;
     }
 
     // Génère le HTML du menu : entrée active en premier, puis les autres.
@@ -163,11 +181,11 @@ export function renderDestinationMenu(destinations, activeMapId) {
 
     // Active en premier
     if (activeDest) {
-        const { country, flag } = inferCountryAndFlag(activeDest);
+        const { country, code } = inferCountryAndFlag(activeDest);
         html.push(`
             <button type="button" class="hw-dest-item is-active" role="menuitemradio"
                     aria-checked="true" data-dest="${activeMapId}">
-                <span class="hw-dest-item-flag">${flag}</span>
+                <span class="hw-dest-item-flag">${code}</span>
                 <span class="hw-dest-item-info">
                     <span class="hw-dest-item-name">${escapeHtml(activeDest.name || activeMapId)}</span>
                     <span class="hw-dest-item-sub">${escapeHtml(country)}</span>
@@ -184,11 +202,11 @@ export function renderDestinationMenu(destinations, activeMapId) {
     if (others.length > 0) {
         html.push('<div class="hw-dest-menu-section-title is-divided">Autres destinations</div>');
         for (const [id, dest] of others) {
-            const { country, flag } = inferCountryAndFlag(dest);
+            const { country, code } = inferCountryAndFlag(dest);
             html.push(`
                 <button type="button" class="hw-dest-item" role="menuitemradio"
                         aria-checked="false" data-dest="${id}">
-                    <span class="hw-dest-item-flag">${flag}</span>
+                    <span class="hw-dest-item-flag">${code}</span>
                     <span class="hw-dest-item-info">
                         <span class="hw-dest-item-name">${escapeHtml(dest.name || id)}</span>
                         <span class="hw-dest-item-sub">${escapeHtml(country)}</span>
