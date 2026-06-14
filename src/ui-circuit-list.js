@@ -661,7 +661,7 @@ export function renderExplorerList() {
         chip.className = 'mc-poi-chip';
         chip.innerHTML = `
             <i data-lucide="map-pin"></i>
-            <span>Filtré par <strong>${escapeXml(poiName)}</strong></span>
+            <span>Filtré par <strong dir="auto">${escapeXml(poiName)}</strong></span>
             <button type="button" class="clear" title="Retirer" aria-label="Retirer le filtre">
                 <i data-lucide="x"></i>
             </button>
