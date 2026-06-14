@@ -220,7 +220,7 @@ function sheetMarkup(feature, idx) {
             </div>
             <div class="pv-body">
                 <span class="pv-eyebrow">ÉTAPE ${idx + 1}${total ? ` / ${total}` : ''} · ${escapeHtml(cat.toUpperCase())}</span>
-                <div class="pv-name">${escapeHtml(getPatrimonialName(feature))}</div>
+                <div class="pv-name" dir="auto">${escapeHtml(getPatrimonialName(feature))}</div>
                 ${excerpt ? `<p class="pv-excerpt">${escapeHtml(excerpt)}</p>` : ''}
             </div>
         </div>

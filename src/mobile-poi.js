@@ -163,7 +163,7 @@ function renderSimplePoiList(container, listToDisplay) {
             <a class="cc-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
                 <div class="cc-step-num">${isVisited ? '<i data-lucide="check"></i>' : '<i data-lucide="map-pin"></i>'}</div>
                 <div class="cc-step-body">
-                    <div class="cc-step-name">${escapeHtml(name)}</div>
+                    <div class="cc-step-name" dir="auto">${escapeHtml(name)}</div>
                     <span class="cc-step-cat ${cat.variant}">${cat.iconHtml}${escapeHtml(cat.label)}</span>
                 </div>
                 <span class="cc-step-chev"><i data-lucide="chevron-right"></i></span>
@@ -274,7 +274,7 @@ function renderCircuitView(container, listToDisplay) {
             <a class="cc-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
                 <div class="cc-step-num">${isVisited ? '<i data-lucide="check"></i>' : (i + 1)}</div>
                 <div class="cc-step-body">
-                    <div class="cc-step-name">${escapeHtml(name)}</div>
+                    <div class="cc-step-name" dir="auto">${escapeHtml(name)}</div>
                     <span class="cc-step-cat ${cat.variant}">${cat.iconHtml}${escapeHtml(cat.label)}</span>
                 </div>
                 <span class="cc-step-chev"><i data-lucide="chevron-right"></i></span>

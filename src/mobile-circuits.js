@@ -209,7 +209,7 @@ export function renderMobileCircuitsList() {
         html += `
             <div class="explorer-poi-filter-chip" id="mobile-poi-filter-chip">
                 <i data-lucide="map-pin" class="icon-16"></i>
-                <span class="explorer-poi-filter-chip-label">Filtré par : <strong>${escapeHtml(poiName)}</strong></span>
+                <span class="explorer-poi-filter-chip-label">Filtré par : <strong dir="auto">${escapeHtml(poiName)}</strong></span>
                 <button type="button" class="explorer-poi-filter-chip-clear" id="mobile-poi-filter-chip-clear" title="Retirer le filtre" aria-label="Retirer le filtre">
                     <i data-lucide="x" class="icon-16"></i>
                 </button>

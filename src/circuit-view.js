@@ -48,7 +48,7 @@ function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
 
     html += `<div class="step-num">${index + 1}</div>`;
     html += `<div class="step-body">`;
-    html += `<div class="step-name">${escapeXml(poiName)}</div>`;
+    html += `<div class="step-name" dir="auto">${escapeXml(poiName)}</div>`;
     html += `<span class="step-cat${cat.variant ? ' ' + cat.variant : ''}">${cat.iconHtml}${escapeXml(cat.label)}</span>`;
     html += `</div>`;
 
