@@ -17,6 +17,7 @@
 
 @import "./style/base.css";
 @import "./style/panels.css";
+@import "./style/cartel.css";
 @import "./style/photo-grid.css";
 @import "./style/photo-batch.css";
 @import "./style/ui-modules.css";

@@ -93,24 +93,30 @@ function buildHero(opts) {
     const closeBtn = hasFullscreenClose
         ? `<button class="poi-back-pill" id="close-details-button" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>`
         : '';
+    // Épingles de STATUT (puces papier) — affichées AVEC et SANS photo : le
+    // statut ne disparaît jamais (cartel, résout l'ancien trou « pas de photo »).
+    const pins = tagsHtml ? `<div class="poi-hero-overlay"><div class="poi-hero-tags">${tagsHtml}</div></div>` : '';
 
     if (photoCount > 0) {
         // Le background-image est appliqué côté JS (CSSOM) pour rester CSP-safe
         return `
             <div class="poi-hero has-photo" id="poi-hero" data-bg-url="${escapeXml(photos[0])}">
                 ${closeBtn}
-                ${photoCount > 0 ? `<span class="poi-photo-count"><i data-lucide="image"></i>${photoCount} ${photoCount > 1 ? 'photos' : 'photo'}</span>` : ''}
-                ${tagsHtml ? `<div class="poi-hero-overlay"><div class="poi-hero-tags">${tagsHtml}</div></div>` : ''}
+                <span class="poi-photo-count"><i data-lucide="image"></i>${photoCount} ${photoCount > 1 ? 'photos' : 'photo'}</span>
+                ${pins}
             </div>`;
     }
 
-    // F1 : hero vide cliquable. Le label invite à ajouter une photo,
-    // le clic est branché par setupHeroClick (ouvre la photo grid).
+    // Hero vide cliquable : plaque de papier gravé + invite à ajouter une photo
+    // (clic branché par setupHeroClick). Les épingles de statut RESTENT.
     return `
         <div class="poi-hero is-empty is-clickable" id="poi-hero" role="button" tabindex="0" aria-label="Ajouter une photo">
             ${closeBtn}
-            <div class="empty-icon"><i data-lucide="image-plus"></i></div>
-            <span class="empty-label">Cliquer pour ajouter une photo</span>
+            <div class="empty-plate">
+                <div class="empty-icon"><i data-lucide="image-plus"></i></div>
+                <span class="empty-label">Ajouter une photo</span>
+            </div>
+            ${pins}
         </div>`;
 }
 
@@ -251,9 +257,9 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // est portée par l'eyebrow en dessous ; on ne la double pas sur la photo.
     const accesMeta = acces ? accessTagMeta(acces) : null;
     const tagsHtml = [
-        etat ? `<span class="poi-tag status ${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
-        accesMeta ? `<span class="poi-tag access ${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
-        isIncontournable ? `<span class="poi-tag"><i data-lucide="star"></i>Incontournable</span>` : '',
+        etat ? `<span class="cartel-chip cartel-chip--${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
+        accesMeta ? `<span class="cartel-chip cartel-chip--${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
+        isIncontournable ? `<span class="cartel-chip cartel-chip--brand"><i data-lucide="star"></i>Incontournable</span>` : '',
         // Admin only : chip « À évaluer » UNIQUEMENT quand le point d'accès a
         // échoué (status='failed') → signal d'action. On n'affiche plus le chip
         // pour un point d'accès normal (osm/moved) : quasi tous les POI en ont un
@@ -262,7 +268,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         (() => {
             if (!state.isAdmin) return '';
             if (getAccessPointStatus(feature) !== 'failed') return '';
-            return `<span class="poi-tag poi-tag--access-point is-failed"><i data-lucide="flag"></i>À évaluer</span>`;
+            return `<span class="cartel-chip cartel-chip--warn"><i data-lucide="flag"></i>À évaluer</span>`;
         })()
     ].filter(Boolean).join('');
 
