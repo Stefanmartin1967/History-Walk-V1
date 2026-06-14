@@ -1240,8 +1240,11 @@
    (.cartel-eyebrow / .cartel-title serif / .cartel-title-ar) en version
    COMPACTE — titre + sous-titre arabe sur une ligne ellipsée, header dense.
    Spécificité 2 classes → l'emporte sur la base 1-classe de cartel.css. */
-.poi-mobile-header .cartel-eyebrow { font-size: 9px; gap: 6px; margin: 0 0 1px; }
+.poi-mobile-header .cartel-eyebrow { font-size: 9px; gap: 6px; margin: 0; }
+.poi-mobile-header .cartel-utility { min-height: 0; margin-bottom: 4px; }
 .poi-mobile-header .cartel-nav-chev { width: 22px; height: 22px; }
+.poi-mobile-header .cartel-help { width: 24px; height: 24px; }
+.poi-mobile-header .cartel-help svg { width: 14px; height: 14px; }
 .poi-mobile-header .cartel-title {
     font-size: 16px;
     line-height: 1.2;

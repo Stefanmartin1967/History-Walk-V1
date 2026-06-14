@@ -62,6 +62,41 @@
        en border-top au prochain lot ; cohérent avec .poi-section pour l'instant). */
     border-bottom: 1px solid var(--surface-muted);
 }
+/* Rangée utilitaire (v3) : eyebrow à gauche, affordances (nav · aide) poussées
+   à droite — dé-empilées du titre. */
+.cartel-utility {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    min-height: 28px;
+    margin-bottom: var(--space-sm);
+}
+.cartel-utility-actions {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+/* Aide « ? » du cartel — miroir du patron .help-trigger (câblée par attachHelp). */
+.cartel-help {
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border: var(--border-filet);
+    border-radius: var(--radius-md);
+    background: var(--paper-raised);
+    color: var(--ink-soft);
+    cursor: pointer;
+}
+.cartel-help:hover,
+.cartel-help[aria-expanded="true"] {
+    color: var(--brand-ink);
+    border-color: var(--filet-strong);
+    background: var(--brand-soft);
+}
+.cartel-help svg { width: 16px; height: 16px; }
 .cartel-eyebrow {
     font-family: var(--font-sans);
     font-size: var(--smallcaps-size);
@@ -69,7 +104,8 @@
     letter-spacing: var(--smallcaps-tracking);
     text-transform: uppercase;
     color: var(--sepia-600);
-    margin: 0 0 var(--space-sm);
+    margin: 0;
+    min-width: 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -105,7 +141,7 @@
     margin: 4px 0 0;
 }
 /* Compteur position-circuit ‹ 3 / 12 › + chevrons, poussé à droite de l'eyebrow. */
-.cartel-nav { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; }
+.cartel-nav { display: inline-flex; align-items: center; gap: 2px; }
 .cartel-nav-chev {
     width: 26px;
     height: 26px;
@@ -124,6 +160,7 @@
     font-size: var(--font-size-sm);
     font-weight: var(--weight-semibold);
     color: var(--ink-soft);
+    padding: 0 2px;
 }
 
 /* ─────────────────── COMPTEUR PHOTOS + LIGNE D'ÉTAT (v3) ───────────────────
