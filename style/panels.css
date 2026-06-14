@@ -2634,16 +2634,9 @@
     gap: 5px;
 }
 .cp-photo-count svg { width: 12px; height: 12px; }
-.cp-cover-tags {
-    position: absolute;
-    bottom: 12px;
-    left: 14px;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-/* (.cp-pill retiré — les pills zone/étapes du cover sont passées en puces papier
-   .cartel-chip, style/cartel.css, lisibles sur photo claire comme sombre.) */
+/* (Option A : le cover ne porte AUCUNE pill de métadonnée — zone/étapes/km
+   vivent dans le cartel/eyebrow sous la photo, sans doublon. .cp-cover-tags
+   et .cp-pill retirés ; le cover ne garde que le compteur « N photos ».) */
 
 /* ----------- 2. IDENTITÉ ----------- */
 .circuit-ident { padding: 14px 18px 8px; }

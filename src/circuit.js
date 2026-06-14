@@ -4,7 +4,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
-import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, escapeXml } from './utils.js';
+import { getRealDistance, getOrthodromicDistance, getZoneFromCoords } from './utils.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData, getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import * as View from './circuit-view.js';
@@ -322,27 +322,13 @@ async function applyCircuitHero() {
 
     const circuit = state.currentCircuit;
 
-    // Puces papier zone + étapes : lisibles sur photo claire comme sombre, et
-    // posées MÊME sans photo (cf. renderEmptyCover). Vide tant qu'il n'y a pas
-    // d'étape. Remplace les anciennes .cp-pill translucides (blanc-sur-blanc).
-    const buildCoverTags = () => {
-        if (!circuit || circuit.length === 0) return '';
-        const coords = circuit[0]?.geometry?.coordinates;
-        const zone = (coords && coords.length >= 2) ? (getZoneFromCoords(coords[1], coords[0]) || null) : null;
-        let html = '';
-        if (zone) html += `<span class="cartel-chip"><i data-lucide="map-pin"></i>${escapeXml(zone)}</span>`;
-        html += `<span class="cartel-chip"><i data-lucide="route"></i>${circuit.length} étape${circuit.length > 1 ? 's' : ''}</span>`;
-        return html;
-    };
-
     // Cover sans photo : plaque de papier gravé (façon hero de fiche POI) +
-    // libellé + les puces zone/étapes. Fini le glyphe nu sur motif froid.
+    // libellé. La métadonnée (zone · étapes · km) vit dans le cartel sous la
+    // photo (eyebrow), pas en doublon ici — décision Option A (redondance).
     const renderEmptyCover = (label) => {
-        const tags = buildCoverTags();
         cover.innerHTML =
             `<div class="empty-plate"><div class="empty-icon"><i data-lucide="route"></i></div>`
-            + `<div class="empty-label">${label}</div></div>`
-            + (tags ? `<div class="cp-cover-tags">${tags}</div>` : '');
+            + `<div class="empty-label">${label}</div></div>`;
         createIcons({ icons: appIcons, root: cover });
     };
 
@@ -391,7 +377,8 @@ async function applyCircuitHero() {
         return;
     }
 
-    // Photo trouvée : applique le background, badge compteur, pills zone + étapes.
+    // Photo trouvée : applique le background + badge compteur (« N photos »).
+    // La zone/le nombre d'étapes ne sont PAS répétés ici (cartel/eyebrow dessous).
     // On set à la fois la CSS var (lisibilité/debug) ET le backgroundImage en
     // inline-style. Le backgroundImage inline est ce qui est utilisé par le
     // rendu : les URL en inline-style sont résolues contre le document, alors
@@ -409,11 +396,6 @@ async function applyCircuitHero() {
     badge.className = 'cp-photo-count';
     badge.innerHTML = `<i data-lucide="image"></i>${totalPhotoCount} ${totalPhotoCount > 1 ? 'photos' : 'photo'}`;
     cover.appendChild(badge);
-
-    const tags = document.createElement('div');
-    tags.className = 'cp-cover-tags';
-    tags.innerHTML = buildCoverTags();
-    cover.appendChild(tags);
 
     createIcons({ icons: appIcons, root: cover });
 }

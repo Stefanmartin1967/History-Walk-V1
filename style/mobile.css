@@ -518,16 +518,9 @@
     gap: 5px;
 }
 .cc-photo-count svg { width: 12px; height: 12px; }
-.cc-hero-tags {
-    position: absolute;
-    bottom: 10px;
-    left: 12px;
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-/* (.cc-pill retiré — passées en puces papier .cartel-chip, style/cartel.css,
-   miroir mobile du cover PC.) */
+/* (Option A : le hero ne porte AUCUNE pill de métadonnée — zone/étapes/km
+   vivent dans le cartel/eyebrow (.cc-eyebrow) sous la photo, sans doublon.
+   .cc-hero-tags et .cc-pill retirés ; reste le compteur « N photos ».) */
 
 /* Identité (eyebrow + titre + flag) */
 .cc-ident {
