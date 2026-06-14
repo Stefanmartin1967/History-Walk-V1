@@ -20,10 +20,29 @@ import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-cente
 import { getDomainFromUrl } from './url-utils.js';
 import { PERSONAL_KEYS } from './config.js';
 import { recordModification } from './backup-auto-local.js';
+import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 
 // --- UTILITAIRES ---
 
 export { getPoiId, getPoiName, checkAndApplyMigrations, getDomainFromUrl };
+
+// Nom patrimonial AFFICHÉ selon la préférence de langue (FR ⇄ AR). En AR : renvoie
+// le nom arabe du lieu s'il existe (repli FR sinon) ; un renommage explicite
+// (custom_title) prime toujours. NE PAS utiliser pour les clés internes
+// (tri/dédup/recherche-index) qui restent sur getPoiName (FR stable).
+export function getPatrimonialName(feature, lang) {
+    const resolved = lang || getCurrentPatrimonialLang();
+    if (resolved === 'ar' && feature && feature.properties) {
+        const props = feature.properties;
+        const userData = props.userData || {};
+        if (!userData.custom_title) {
+            const ar = userData['Nom du site arabe'] || props['Nom du site arabe']
+                || userData['Nom du site AR'] || props['Nom du site AR'];
+            if (ar && ar.trim()) return ar;
+        }
+    }
+    return getPoiName(feature);
+}
 
 // --- GESTION DES MIGRATIONS D'ID (ADMIN) ---
 

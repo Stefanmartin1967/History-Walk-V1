@@ -1,5 +1,6 @@
 import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch } from './state.js';
-import { getPoiId, getPoiName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
+import { getPoiId, getPoiName, getPatrimonialName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
+import { setPatrimonialLang, getCurrentPatrimonialLang } from './patrimonial-names.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
 import { isMobileView, pushMobileLevel, animateContainer, setMobileHeaderSlot, setMobileViewFooter } from './mobile-state.js';
@@ -52,6 +53,11 @@ function refreshCurrentDetailsPanel() {
     if (id === null || id === undefined) return;
     openDetailsPanel(id, state.currentCircuitIndex);
 }
+
+// Re-render la fiche ouverte quand la langue des noms change (bascule topbar OU
+// pilule .cartel-namebtn). Listener UNIQUE (module importé une fois). Sans fiche
+// ouverte → refreshCurrentDetailsPanel sort tôt (no-op).
+eventBus.on('patrimony:lang-changed', refreshCurrentDetailsPanel);
 
 // Tracking de l'objectURL utilisé par le hero pour pouvoir le révoquer au prochain render.
 let activeHeroObjectUrl = null;
@@ -428,15 +434,23 @@ function setupDetailsEventListeners(poiId) {
         btn.addEventListener('click', () => {
              const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
              if (feature) {
-                 const name = getPoiName(feature);
+                 const name = getPatrimonialName(feature);
                  const query = encodeURIComponent(name);
                  window.open(`https://www.google.com/search?q=${query}`, '_blank', 'noopener,noreferrer');
              }
         });
     });
 
-    // (Toggle FR/AR retiré — lot Cartel : le titre arabe est désormais un
-    // sous-titre permanent sous le titre FR, plus de bascule à câbler.)
+    // --- Bascule de nom FR/AR de la fiche (.cartel-namebtn) → pilote la pref
+    // GLOBALE de langue des noms (présente seulement si le lieu a un nom arabe).
+    // Le flip émet 'patrimony:lang-changed' → re-render de la fiche (listener
+    // module) + resync du segmenté topbar.
+    const nameBtn = document.querySelector('.cartel-namebtn');
+    if (nameBtn) {
+        nameBtn.addEventListener('click', () => {
+            setPatrimonialLang(getCurrentPatrimonialLang() === 'ar' ? 'fr' : 'ar');
+        });
+    }
 
     // --- TTS lecture description ---
     const speakBtns = document.querySelectorAll('.speak-btn');

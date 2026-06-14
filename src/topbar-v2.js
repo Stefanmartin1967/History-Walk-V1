@@ -13,6 +13,7 @@ import { eventBus } from './events.js';
 import { toggleFilterPanel } from './filter-panel.js';
 import { showWelcomeAgain } from './welcome.js';
 import { setTheme, getCurrentTheme } from './theme.js';
+import { getCurrentPatrimonialLang, setPatrimonialLang } from './patrimonial-names.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { isDestinationPublished } from './utils.js';
 
@@ -276,6 +277,34 @@ function setupMomentToggle() {
     updateMomentToggleActive();
 }
 
+// ─── Bascule de langue des noms (FR ⇄ AR) : segmenté persistant `.names-toggle`,
+// jumeau du moment. DIFFÉRENCE : changer de langue doit re-rendre les noms déjà
+// affichés → setPatrimonialLang émet 'patrimony:lang-changed' (écouté par
+// ui-details pour rafraîchir la fiche, et ici pour resync le segmenté). ─────────
+function updateNamesToggleActive() {
+    const current = getCurrentPatrimonialLang();
+    document.querySelectorAll('.names-btn').forEach(btn => {
+        const on = btn.dataset.lang === current;
+        btn.classList.toggle('is-active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+}
+
+function setupNamesToggle() {
+    const toggle = document.querySelector('.names-toggle');
+    if (!toggle) return;
+    toggle.querySelectorAll('.names-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.dataset.lang;
+            if (lang && lang !== getCurrentPatrimonialLang()) setPatrimonialLang(lang);
+            updateNamesToggleActive();
+        });
+    });
+    // Resync quand la langue change ailleurs (pilule .cartel-namebtn de la fiche).
+    eventBus.on('patrimony:lang-changed', updateNamesToggleActive);
+    updateNamesToggleActive();
+}
+
 // ─── Boutons directs topbar (Visite guidée) ─────────────────────────────────
 // Le bouton « Mon Espace » topbar a été retiré en PR2 dissolution (06/06/2026) —
 // la Sauvegarde a migré dans le menu Outils, cf. ui.js btn-tools-backup.
@@ -327,6 +356,7 @@ export function setupTopbarV2() {
     // Boutons directs topbar (PR PC-2 — Thème, Visite ; Mon Espace retiré en PR2 dissolution)
     setupTourButton();
     setupMomentToggle();
+    setupNamesToggle();
 
     // Coordination popups topbar : 1 seul ouvert à la fois (cf. fix #6).
     setupTopbarPopupCoordination();

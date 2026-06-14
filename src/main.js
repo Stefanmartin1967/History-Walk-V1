@@ -182,6 +182,15 @@ async function initializeApp() {
             setTheme(savedTheme);
         }
 
+        // Langue des noms patrimoniaux (FR ⇄ AR) — restaure la copie durable.
+        // Le module patrimonial-names s'initialise déjà depuis localStorage ;
+        // ceci couvre la restauration depuis une sauvegarde sur un nouvel appareil.
+        const savedLang = await getAppState('currentPatrimonialLang');
+        if (savedLang === 'ar' || savedLang === 'fr') {
+            const { setPatrimonialLang } = await import('./patrimonial-names.js');
+            setPatrimonialLang(savedLang);
+        }
+
         // Lieu de résidence pour le tri par proximité (défini via start-point.js
         // lors du choix du tri « Proximité » dans Mes circuits)
         const savedHome = await getAppState('homeLocation');
