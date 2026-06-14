@@ -149,8 +149,7 @@ function buildPoiQuickBar() {
 
 // Popover du kebab — items secondaires : Arabe · Desc. GPX · Position · Supprimer.
 // IDs identiques à l'ancien menu pour réutiliser tous les handlers existants.
-function buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile }) {
-    const langId = isMobile ? 'mobile-btn-toggle-lang' : 'btn-toggle-lang';
+function buildPoiKebabMenu({ hasGpxDesc, isMobile }) {
     const gpxId  = isMobile ? 'mobile-btn-toggle-gpx-desc' : 'btn-toggle-gpx-desc';
     const positionItem = isMobile
         ? `<button class="poi-pop-item" role="menuitem" id="mobile-move-poi-btn" type="button">
@@ -170,10 +169,6 @@ function buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile }) {
 
     return `
         <div class="poi-kebab-pop is-hidden" id="poi-tools-pop" role="menu" aria-label="Outils du lieu">
-            <button class="poi-pop-item" role="menuitem" id="${langId}" type="button"
-                    aria-disabled="${hasAr ? 'false' : 'true'}">
-                <i data-lucide="languages"></i>Titre en arabe
-            </button>
             <button class="poi-pop-item" role="menuitem" id="${gpxId}" type="button"
                     aria-disabled="${hasGpxDesc ? 'false' : 'true'}">
                 <i data-lucide="file-text"></i>Info GPX
@@ -372,13 +367,13 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const isFirst = inCircuit && circuitIndex === 0;
     const isLast = inCircuit && state.currentCircuit && circuitIndex === state.currentCircuit.length - 1;
     const positionText = inCircuit && state.currentCircuit
-        ? `<span class="poi-eyebrow-nav">
-              <button class="poi-eyebrow-chev" id="poi-eyebrow-prev" type="button"
+        ? `<span class="cartel-nav">
+              <button class="cartel-nav-chev" id="poi-eyebrow-prev" type="button"
                       title="POI précédent" aria-label="POI précédent" ${isFirst ? 'disabled' : ''}>
                   <i data-lucide="chevron-left"></i>
               </button>
-              <span class="poi-eyebrow-pos">${circuitIndex + 1} / ${state.currentCircuit.length}</span>
-              <button class="poi-eyebrow-chev" id="poi-eyebrow-next" type="button"
+              <span class="cartel-nav-pos">${circuitIndex + 1} / ${state.currentCircuit.length}</span>
+              <button class="cartel-nav-chev" id="poi-eyebrow-next" type="button"
                       title="POI suivant" aria-label="POI suivant" ${isLast ? 'disabled' : ''}>
                   <i data-lucide="chevron-right"></i>
               </button>
@@ -388,18 +383,21 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // Mini-barre + popover kebab — communs PC + mobile.
     // Le kebab vit dans la mini-barre sur les deux (cohérence PC/mobile).
     const quickBarHtml = buildPoiQuickBar({ withKebab: true });
-    const kebabPopover = buildPoiKebabMenu({ hasAr, hasGpxDesc, isMobile: mobile });
+    const kebabPopover = buildPoiKebabMenu({ hasGpxDesc, isMobile: mobile });
 
     // Eyebrow contextuel partagé PC/mobile.
     // zone et category sont escapés ; positionText est du HTML safe (chevrons + index).
-    const eyebrowParts = [
-        zone ? escapeXml(zone) : '',
+    // Eyebrow du cartel : zone · catégorie (— sous-type), en <span> séparés par
+    // un filet « · », + la nav in-circuit (positionText = .cartel-nav, poussée à
+    // droite). Les <span> permettent de colorer .sep et .subtype indépendamment.
+    const eyebrowTextParts = [
+        zone ? `<span>${escapeXml(zone)}</span>` : '',
         showCategory
-            ? escapeXml(category) + (subtype ? ` <span class="poi-eyebrow-subtype">${escapeXml(subtype)}</span>` : '')
-            : '',
-        positionText
+            ? `<span>${escapeXml(category)}${subtype ? ` <span class="subtype">${escapeXml(subtype)}</span>` : ''}</span>`
+            : ''
     ].filter(Boolean);
-    const hasEyebrow = eyebrowParts.length > 0;
+    const eyebrowHtml = eyebrowTextParts.join('<span class="sep">·</span>') + positionText;
+    const hasEyebrow = eyebrowTextParts.length > 0 || Boolean(positionText);
 
     // ========== TEMPLATE DESKTOP ==========
     if (!mobile) {
@@ -411,10 +409,10 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="poi-panel" data-poi-id="${escapeXml(feature.properties.HW_ID || '')}">
                 ${heroHtml}
                 <div class="poi-body">
-                    <div class="poi-title-block">
-                        ${hasEyebrow ? `<div class="poi-eyebrow">${eyebrowParts.join(' · ')}</div>` : ''}
-                        <h2 class="poi-title" id="panel-title-fr">${escapeXml(poiName)}</h2>
-                        ${hasAr ? `<h2 class="poi-title poi-subtitle-ar is-hidden" id="panel-title-ar" dir="rtl">${escapeXml(arName)}</h2>` : ''}
+                    <div class="cartel-head">
+                        ${hasEyebrow ? `<p class="cartel-eyebrow">${eyebrowHtml}</p>` : ''}
+                        <h2 class="cartel-title" id="panel-title-fr">${escapeXml(poiName)}</h2>
+                        ${hasAr ? `<p class="cartel-title-ar" id="panel-title-ar" dir="rtl">${escapeXml(arName)}</p>` : ''}
                     </div>
                     ${descSection}
                     ${gpxSection}
@@ -441,9 +439,9 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div class="poi-mobile-header" data-poi-id="${dataPoiId}">
                 <div class="poi-mobile-header-row">
                     <div class="poi-mobile-title-wrap">
-                        ${hasEyebrow ? `<div class="poi-mobile-cap">${eyebrowParts.join(' · ')}</div>` : ''}
-                        <h1 class="poi-mobile-title" id="mobile-title-fr">${escapeXml(poiName)}</h1>
-                        ${hasAr ? `<h1 class="poi-mobile-title is-hidden" id="mobile-title-ar" dir="rtl">${escapeXml(arName)}</h1>` : ''}
+                        ${hasEyebrow ? `<div class="cartel-eyebrow">${eyebrowHtml}</div>` : ''}
+                        <h1 class="cartel-title" id="mobile-title-fr">${escapeXml(poiName)}</h1>
+                        ${hasAr ? `<p class="cartel-title-ar" id="mobile-title-ar" dir="rtl">${escapeXml(arName)}</p>` : ''}
                     </div>
                     <button class="poi-mobile-back" id="details-close-btn" title="Fermer la fiche" aria-label="Fermer la fiche"><i data-lucide="x"></i></button>
                 </div>

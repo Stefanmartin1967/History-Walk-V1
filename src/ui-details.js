@@ -453,18 +453,8 @@ function setupDetailsEventListeners(poiId) {
         });
     });
 
-    // --- Toggle FR / AR ---
-    const toggleLangBtn = document.getElementById('btn-toggle-lang') || document.getElementById('mobile-btn-toggle-lang');
-    if (toggleLangBtn && !toggleLangBtn.disabled) {
-        toggleLangBtn.addEventListener('click', () => {
-            const fr = document.getElementById('panel-title-fr') || document.getElementById('mobile-title-fr');
-            const ar = document.getElementById('panel-title-ar') || document.getElementById('mobile-title-ar');
-            if (fr && ar) {
-                fr.classList.toggle('is-hidden');
-                ar.classList.toggle('is-hidden');
-            }
-        });
-    }
+    // (Toggle FR/AR retiré — lot Cartel : le titre arabe est désormais un
+    // sous-titre permanent sous le titre FR, plus de bascule à câbler.)
 
     // --- TTS lecture description ---
     const speakBtns = document.querySelectorAll('.speak-btn');
