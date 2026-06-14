@@ -88,27 +88,27 @@ function accessTagMeta(acces) {
 }
 
 function buildHero(opts) {
-    const { photos, tagsHtml, hasFullscreenClose } = opts;
+    const { photos, hasFullscreenClose } = opts;
     const photoCount = photos.length;
     const closeBtn = hasFullscreenClose
         ? `<button class="poi-back-pill" id="close-details-button" title="Fermer" aria-label="Fermer"><i data-lucide="x"></i></button>`
         : '';
-    // Épingles de STATUT (puces papier) — affichées AVEC et SANS photo : le
-    // statut ne disparaît jamais (cartel, résout l'ancien trou « pas de photo »).
-    const pins = tagsHtml ? `<div class="poi-hero-overlay"><div class="poi-hero-tags">${tagsHtml}</div></div>` : '';
+    // v3 : le hero ne porte PLUS de statut (descendu dans le cartel, .cartel-status).
+    // Il ne reste que la photo + le compteur (puce papier .cartel-chip), ou la
+    // plaque « Ajouter une photo » à vide.
+    const count = `<span class="cartel-hero-count"><span class="cartel-chip cartel-chip--muted"><i data-lucide="image"></i>${photoCount} ${photoCount > 1 ? 'photos' : 'photo'}</span></span>`;
 
     if (photoCount > 0) {
         // Le background-image est appliqué côté JS (CSSOM) pour rester CSP-safe
         return `
             <div class="poi-hero has-photo" id="poi-hero" data-bg-url="${escapeXml(photos[0])}">
                 ${closeBtn}
-                <span class="poi-photo-count"><i data-lucide="image"></i>${photoCount} ${photoCount > 1 ? 'photos' : 'photo'}</span>
-                ${pins}
+                ${count}
             </div>`;
     }
 
     // Hero vide cliquable : plaque de papier gravé + invite à ajouter une photo
-    // (clic branché par setupHeroClick). Les épingles de statut RESTENT.
+    // (clic branché par setupHeroClick).
     return `
         <div class="poi-hero is-empty is-clickable" id="poi-hero" role="button" tabindex="0" aria-label="Ajouter une photo">
             ${closeBtn}
@@ -116,7 +116,6 @@ function buildHero(opts) {
                 <div class="empty-icon"><i data-lucide="image-plus"></i></div>
                 <span class="empty-label">Ajouter une photo</span>
             </div>
-            ${pins}
         </div>`;
 }
 
@@ -248,24 +247,28 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
 
     const notes = (allProps.notes || '').toString();
 
-    // Tags hero — STATUT uniquement. L'identité (zone, catégorie, sous-type)
-    // est portée par l'eyebrow en dessous ; on ne la double pas sur la photo.
+    // Ligne d'état du cartel (v3) — le STATUT descend de la photo vers le cartel,
+    // sous le titre (.cartel-status). L'identité (zone, catégorie) reste portée
+    // par l'eyebrow ; on ne double rien sur la photo. État · Accès ·
+    // Incontournable · (admin) « À évaluer ».
     const accesMeta = acces ? accessTagMeta(acces) : null;
-    const tagsHtml = [
-        etat ? `<span class="cartel-chip cartel-chip--${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
-        accesMeta ? `<span class="cartel-chip cartel-chip--${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
-        isIncontournable ? `<span class="cartel-chip cartel-chip--brand"><i data-lucide="star"></i>Incontournable</span>` : '',
-        // Admin only : chip « À évaluer » UNIQUEMENT quand le point d'accès a
-        // échoué (status='failed') → signal d'action. On n'affiche plus le chip
-        // pour un point d'accès normal (osm/moved) : quasi tous les POI en ont un
-        // désormais, c'était du bruit (retour Stefan 03/06). L'action « Point
-        // d'accès au tracé » reste dans le menu kebab.
+    const statusItems = [
+        etat ? `<span class="cartel-status-item cartel-status-item--${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
+        accesMeta ? `<span class="cartel-status-item cartel-status-item--${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
+        isIncontournable ? `<span class="cartel-status-item cartel-status-item--brand"><i data-lucide="star"></i>Incontournable</span>` : '',
+        // Admin only : « À évaluer » UNIQUEMENT quand le point d'accès a échoué
+        // (status='failed') → signal d'action. Pas pour un point d'accès normal
+        // (osm/moved) : quasi tous en ont un, c'était du bruit (retour Stefan
+        // 03/06). L'action « Point d'accès au tracé » reste dans le kebab.
         (() => {
             if (!state.isAdmin) return '';
             if (getAccessPointStatus(feature) !== 'failed') return '';
-            return `<span class="cartel-chip cartel-chip--warn"><i data-lucide="flag"></i>À évaluer</span>`;
+            return `<span class="cartel-status-item cartel-status-item--warn"><i data-lucide="flag"></i>À évaluer</span>`;
         })()
-    ].filter(Boolean).join('');
+    ].filter(Boolean);
+    const statusHtml = statusItems.length
+        ? `<div class="cartel-status">${statusItems.join('<span class="cartel-status-sep"></span>')}</div>`
+        : '';
 
     // Section Description
     const descBlock = hasLongDesc
@@ -403,7 +406,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     if (!mobile) {
         // PC : pas de croix de fermeture (audit Stefan #2 : la nav se fait
         // via les onglets sidebar, croix redondante).
-        const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: false });
+        const heroHtml = buildHero({ photos, hasFullscreenClose: false });
 
         return `
             <div class="poi-panel" data-poi-id="${escapeXml(feature.properties.HW_ID || '')}">
@@ -413,6 +416,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                         ${hasEyebrow ? `<p class="cartel-eyebrow">${eyebrowHtml}</p>` : ''}
                         <h2 class="cartel-title" id="panel-title-fr">${escapeXml(poiName)}</h2>
                         ${hasAr ? `<p class="cartel-title-ar" id="panel-title-ar" dir="rtl">${escapeXml(arName)}</p>` : ''}
+                        ${statusHtml}
                     </div>
                     ${descSection}
                     ${gpxSection}
@@ -431,7 +435,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // openDetailsPanel mobile (ui-details.js) puisse rendre dans les 3 slots
     // du #mobile-container. Plus de wrapper .poi-panel.is-mobile (le contenu
     // est éclaté dans header-slot / main-container / view-footer-slot).
-    const heroHtml = buildHero({ photos, tagsHtml, hasFullscreenClose: false });
+    const heroHtml = buildHero({ photos, hasFullscreenClose: false });
     const dataPoiId = escapeXml(feature.properties.HW_ID || '');
 
     return {
@@ -442,6 +446,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                         ${hasEyebrow ? `<div class="cartel-eyebrow">${eyebrowHtml}</div>` : ''}
                         <h1 class="cartel-title" id="mobile-title-fr">${escapeXml(poiName)}</h1>
                         ${hasAr ? `<p class="cartel-title-ar" id="mobile-title-ar" dir="rtl">${escapeXml(arName)}</p>` : ''}
+                        ${statusHtml}
                     </div>
                     <button class="poi-mobile-back" id="details-close-btn" title="Fermer la fiche" aria-label="Fermer la fiche"><i data-lucide="x"></i></button>
                 </div>

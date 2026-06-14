@@ -117,8 +117,8 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
     hero.innerHTML = '';
 
     const badge = document.createElement('span');
-    badge.className = 'cc-photo-count';
-    badge.innerHTML = `<i data-lucide="image"></i>${totalPhotoCount} ${totalPhotoCount > 1 ? 'photos' : 'photo'}`;
+    badge.className = 'cartel-hero-count';
+    badge.innerHTML = `<span class="cartel-chip cartel-chip--muted"><i data-lucide="image"></i>${totalPhotoCount} ${totalPhotoCount > 1 ? 'photos' : 'photo'}</span>`;
     hero.appendChild(badge);
 
     createIcons({ icons: appIcons, root: hero });

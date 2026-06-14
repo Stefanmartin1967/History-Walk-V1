@@ -483,7 +483,7 @@
 /* Hero cliquable (le circuit a des photos) → galerie agrégée (miroir PC).
    Tactile : pas de :hover → feedback au :active sur le badge ; focus clavier. */
 .cc-hero.is-clickable { cursor: pointer; }
-.cc-hero.is-clickable:active .cc-photo-count { background: var(--paper-raised); }
+.cc-hero.is-clickable:active .cartel-chip { background: var(--paper-raised); }
 .cc-hero.is-clickable:focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: -2px;
@@ -501,23 +501,8 @@
     align-items: center;
     justify-content: center;
 }
-.cc-photo-count {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--paper);
-    color: var(--ink);
-    border: var(--border-filet-strong);
-    box-shadow: var(--shadow-card);
-    padding: 4px 9px;
-    border-radius: var(--radius-xs);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-semibold);
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-.cc-photo-count svg { width: 12px; height: 12px; }
+/* (.cc-photo-count retiré — le compteur consomme .cartel-hero-count +
+   .cartel-chip, style/cartel.css, comme la fiche POI et le cover PC.) */
 /* (Option A : le hero ne porte AUCUNE pill de métadonnée — zone/étapes/km
    vivent dans le cartel/eyebrow (.cc-eyebrow) sous la photo, sans doublon.
    .cc-hero-tags et .cc-pill retirés ; reste le compteur « N photos ».) */

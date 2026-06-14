@@ -20,7 +20,7 @@
     background: var(--paper);
     color: var(--ink);
     border: var(--border-filet-strong);
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-md);
     font-family: var(--font-sans);
     font-size: var(--font-size-sm);
     font-weight: var(--weight-semibold);
@@ -124,4 +124,56 @@
     font-size: var(--font-size-sm);
     font-weight: var(--weight-semibold);
     color: var(--ink-soft);
+}
+
+/* ─────────────────── COMPTEUR PHOTOS + LIGNE D'ÉTAT (v3) ───────────────────
+   Le hero ne porte PLUS que le compteur de photos (puce papier .cartel-chip,
+   coins doux --radius-md), positionné par .cartel-hero-count. Le STATUT
+   (État · Accès · Incontournable · « À évaluer ») DESCEND de la photo vers le
+   cartel = une ligne d'état nette sous le titre (encre sur papier, pastille/
+   icône sémantique). Le cover de circuit consomme la MÊME .cartel-hero-count. */
+.cartel-hero-count {
+    position: absolute;
+    top: var(--space-md);
+    right: var(--space-md);
+    z-index: 2;
+}
+.cartel-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: var(--space-md);
+}
+.cartel-status-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--ink);
+}
+.cartel-status-item .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-pill);
+    background: var(--ink-faint);
+    flex-shrink: 0;
+}
+.cartel-status-item svg { width: 15px; height: 15px; color: var(--ink-soft); flex-shrink: 0; }
+/* La couleur sémantique va sur la pastille (items à dot) ET l'icône (items à svg). */
+.cartel-status-item--ok     .dot { background: var(--ok-fg); }
+.cartel-status-item--ok     svg  { color: var(--ok-fg); }
+.cartel-status-item--warn   .dot { background: var(--warn-fg); }
+.cartel-status-item--warn   svg  { color: var(--warn-fg); }
+.cartel-status-item--danger .dot { background: var(--danger-fg); }
+.cartel-status-item--danger svg  { color: var(--danger-fg); }
+.cartel-status-item--brand  .dot { background: var(--brand); }
+.cartel-status-item--brand  svg  { color: var(--brand-ink); }
+.cartel-status-item--muted  .dot { background: var(--ink-faint); }
+.cartel-status-sep {
+    width: var(--filet-width);
+    height: 14px;
+    background: var(--filet-strong);
+    flex-shrink: 0;
 }

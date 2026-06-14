@@ -393,8 +393,8 @@ async function applyCircuitHero() {
     cover.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
 
     const badge = document.createElement('span');
-    badge.className = 'cp-photo-count';
-    badge.innerHTML = `<i data-lucide="image"></i>${totalPhotoCount} ${totalPhotoCount > 1 ? 'photos' : 'photo'}`;
+    badge.className = 'cartel-hero-count';
+    badge.innerHTML = `<span class="cartel-chip cartel-chip--muted"><i data-lucide="image"></i>${totalPhotoCount} ${totalPhotoCount > 1 ? 'photos' : 'photo'}</span>`;
     cover.appendChild(badge);
 
     createIcons({ icons: appIcons, root: cover });
