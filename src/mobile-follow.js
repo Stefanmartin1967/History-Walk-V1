@@ -25,11 +25,11 @@ import { map, initMap, createHistoryWalkIcon } from './map.js';
 import { state } from './state.js';
 import { eventBus } from './events.js';
 import { notifyCircuitChanged } from './circuit.js';
-import { updatePoiData } from './data.js';
+import { updatePoiData, getPatrimonialName } from './data.js';
 import { getPoiPhotos } from './database.js';
 import { openDetailsPanel } from './ui-details.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { escapeHtml, getZoneFromCoords, getPoiId, getPoiName, getPoiProp } from './utils.js';
+import { escapeHtml, getZoneFromCoords, getPoiId, getPoiProp } from './utils.js';
 import { pushMobileLevel } from './mobile-state.js';
 import { showToast } from './toast.js';
 
@@ -168,7 +168,7 @@ function buildPoiMarkers() {
         const poiId = getPoiId(feature);
         const marker = L.marker([coords[1], coords[0]], {
             icon: createHistoryWalkIcon(feature),
-            title: getPoiName(feature),
+            title: getPatrimonialName(feature),
         });
         marker.on('click', () => openPoiSheet(poiId));
         marker.addTo(_poiLayer);
@@ -220,7 +220,7 @@ function sheetMarkup(feature, idx) {
             </div>
             <div class="pv-body">
                 <span class="pv-eyebrow">ÉTAPE ${idx + 1}${total ? ` / ${total}` : ''} · ${escapeHtml(cat.toUpperCase())}</span>
-                <div class="pv-name">${escapeHtml(getPoiName(feature))}</div>
+                <div class="pv-name">${escapeHtml(getPatrimonialName(feature))}</div>
                 ${excerpt ? `<p class="pv-excerpt">${escapeHtml(excerpt)}</p>` : ''}
             </div>
         </div>

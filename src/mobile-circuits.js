@@ -15,7 +15,7 @@
 // Pont vers state.filterCompleted pour préserver le shortcut "dock Filtre" mobile.
 
 import { state, setActiveFilter, setFilterCompleted } from './state.js';
-import { getPoiId, getPoiName } from './data.js';
+import { getPoiId, getPoiName, getPatrimonialName } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { isCircuitTested, loadCircuitById } from './circuit.js';
@@ -205,7 +205,7 @@ export function renderMobileCircuitsList() {
 
     // Chip « Filtré par : [POI] ✕ » au-dessus de la liste
     if (filterPoiId && currentPoiFeature) {
-        const poiName = getPoiName(currentPoiFeature);
+        const poiName = getPatrimonialName(currentPoiFeature);
         html += `
             <div class="explorer-poi-filter-chip" id="mobile-poi-filter-chip">
                 <i data-lucide="map-pin" class="icon-16"></i>

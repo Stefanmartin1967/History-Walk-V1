@@ -22,7 +22,7 @@ import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
-import { applyFilters, getPoiId, getPoiName } from './data.js';
+import { applyFilters, getPoiId, getPoiName, getPatrimonialName } from './data.js';
 import { openStartPointModal } from './start-point.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { isMobileView } from './mobile-state.js';
@@ -656,7 +656,7 @@ export function renderExplorerList() {
 
     // Chip POI courant (dismissable)
     if (filterPoiId && currentPoiFeature) {
-        const poiName = getPoiName(currentPoiFeature);
+        const poiName = getPatrimonialName(currentPoiFeature);
         const chip = document.createElement('div');
         chip.className = 'mc-poi-chip';
         chip.innerHTML = `
@@ -680,7 +680,7 @@ export function renderExplorerList() {
         // sinon le message "Vous n'avez pas encore de circuit" s'affichait à tort.
         const hasActiveFilters = countActiveFilters() > 0 || !!searchQuery.trim() || !!filterPoiId;
         const hint = filterPoiId && currentPoiFeature
-            ? `Aucun circuit ne contient <strong>${escapeXml(getPoiName(currentPoiFeature))}</strong>. Retire le filtre pour tout voir.`
+            ? `Aucun circuit ne contient <strong>${escapeXml(getPatrimonialName(currentPoiFeature))}</strong>. Retire le filtre pour tout voir.`
             : pickEmptyHint();
         const empty = document.createElement('div');
         empty.className = 'va-empty';
