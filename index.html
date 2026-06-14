@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr" data-theme="maritime">
+<html lang="fr" data-theme="plein-soleil">
 
 <head>
     <meta charset="UTF-8">
@@ -45,14 +45,14 @@
          dès le 1er paint du #hw-boot-splash. -->
     <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css?v=7.99">
+    <link rel="stylesheet" href="style.css?v=8.6">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
          Lien direct car les @imports CSS dans style.css sont cachés par Vite en
          dev — voir note historique sur le boot splash en bas de style.css. -->
     <link rel="stylesheet" href="style/me-userspace.css?v=5">
     <link rel="icon" type="image/png" href="icons/icon-192.png" />
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0D3B66">
+    <meta name="theme-color" content="#FBF4E8">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <!-- Status bar style for iOS: black-translucent allows content to go under the status bar -->
@@ -140,15 +140,19 @@
             <button class="btn" id="btn-tour" title="Visite guidée"
                     aria-label="Visite guidée"><i data-lucide="compass"></i></button>
 
-            <!-- Bouton Thème : ouvre un dropdown avec preview des 4 thèmes
-                 (cf. topbar-v2.js setupThemeDropdown). Le dropdown est rendu
-                 dynamiquement (pas dans le HTML statique). -->
-            <div class="hw-theme-dropdown-container">
-                <button class="btn" type="button" id="btn-theme-topbar"
-                        title="Changer de thème" aria-label="Changer de thème"
-                        aria-haspopup="true" aria-expanded="false"
-                        aria-controls="hw-theme-menu"><i data-lucide="palette"></i></button>
-                <div class="hw-theme-menu" id="hw-theme-menu" role="menu" hidden></div>
+            <!-- Bascule de moment (segmenté persistant) : 4 moments en émojis,
+                 toujours visibles dans la lisière (affordance persistante, pas un
+                 popup). Câblé par topbar-v2.js setupMomentToggle. Remplace l'ancien
+                 dropdown thème. -->
+            <div class="hw-moment-toggle" role="group" aria-label="Moment de la journée">
+                <button type="button" class="hw-moment-seg" data-theme="matin"
+                        title="Matin" aria-label="Matin" aria-pressed="false"><span aria-hidden="true">🌅</span></button>
+                <button type="button" class="hw-moment-seg" data-theme="plein-soleil"
+                        title="Plein soleil" aria-label="Plein soleil" aria-pressed="false"><span aria-hidden="true">☀️</span></button>
+                <button type="button" class="hw-moment-seg" data-theme="ombre"
+                        title="Ombre" aria-label="Ombre" aria-pressed="false"><span aria-hidden="true">🌿</span></button>
+                <button type="button" class="hw-moment-seg" data-theme="nuit"
+                        title="Nuit" aria-label="Nuit" aria-pressed="false"><span aria-hidden="true">🌙</span></button>
             </div>
 
             <!-- Bouton plein écran (Fullscreen API). État/icône pilotés par

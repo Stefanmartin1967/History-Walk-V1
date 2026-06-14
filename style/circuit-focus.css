@@ -25,39 +25,39 @@
     position: absolute; left: calc((100% - var(--sidebar-width)) / 2); bottom: 26px;
     transform: translateX(-50%); z-index: 30; pointer-events: auto;
     min-width: 560px; max-width: calc(100% - var(--sidebar-width) - 48px);
-    background: var(--bg); color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.14); border-radius: var(--radius-lg);
+    background: var(--brand-surface-bg); color: var(--brand-surface-fg);
+    border: 1px solid var(--on-brand-soft-border); border-radius: var(--radius-lg);
     box-shadow: var(--shadow-modal); overflow: hidden;
 }
 .focus-bar-main { display: flex; align-items: center; gap: 13px; padding: 13px 16px; }
 .focus-bar-mark {
     width: 36px; height: 36px; border-radius: var(--radius-md); flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.1); display: grid; place-items: center;
+    background: var(--on-brand-soft); display: grid; place-items: center;
 }
 .focus-bar-mark svg { width: 18px; height: 18px; }
 .focus-bar-txt { flex: 1; min-width: 0; }
 .focus-bar-txt h5 { margin: 0; font-size: 13.5px; font-weight: 700; }
-.focus-bar-txt p { margin: 2px 0 0; font-size: 12px; color: rgba(255, 255, 255, 0.72); line-height: 1.4; }
+.focus-bar-txt p { margin: 2px 0 0; font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
 .focus-measure {
     display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
-    font-family: var(--font-family-mono); font-size: 12px; color: rgba(255, 255, 255, 0.85);
+    font-family: var(--font-family-mono); font-size: 12px; color: var(--ink-soft);
     white-space: nowrap;
 }
-.focus-measure b { color: #fff; font-weight: 700; }
+.focus-measure b { color: var(--brand-surface-fg); font-weight: 700; }
 .focus-measure .spin {
     width: 14px; height: 14px; border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff;
+    border: 2px solid var(--on-brand-soft-border); border-top-color: var(--brand-surface-fg);
     animation: brouterSpin 0.7s linear infinite;
 }
-.focus-bar-sep { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.18); }
+.focus-bar-sep { width: 1px; height: 24px; background: var(--on-brand-soft-border); }
 .fb-btn {
-    border: 1px solid rgba(255, 255, 255, 0.4); background: transparent; color: #fff;
+    border: 1px solid var(--on-brand-strong-border); background: transparent; color: var(--brand-surface-fg);
     padding: 9px 15px; border-radius: 9px; font-size: 13px; font-weight: 600;
     cursor: pointer; min-height: 38px; display: inline-flex; align-items: center; gap: 7px;
     white-space: nowrap; transition: background 0.15s;
 }
-.fb-btn:hover { background: rgba(255, 255, 255, 0.12); }
-.fb-btn.is-active { background: #fff; color: var(--bg); border-color: #fff; }
+.fb-btn:hover { background: var(--on-brand-strong); }
+.fb-btn.is-active { background: var(--brand-surface-fg); color: var(--brand-surface-bg); border-color: var(--brand-surface-fg); }
 .fb-btn.fb-cta { background: var(--cta-bg); color: var(--cta-fg); border-color: transparent; }
 .fb-btn.fb-cta:hover { background: var(--cta-bg); filter: brightness(0.92); }
 .fb-btn svg { width: 15px; height: 15px; }

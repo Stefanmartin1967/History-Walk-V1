@@ -721,9 +721,9 @@
 .ap-bar {
     position: absolute; left: 12px; right: 12px; bottom: 12px;
     z-index: 1000;
-    background: var(--bg, #0D3B66);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--brand-surface-bg);
+    color: var(--brand-surface-fg);
+    border: 1px solid var(--on-brand-soft-border);
     border-radius: var(--radius-lg, 14px);
     box-shadow: var(--shadow-modal, 0 12px 40px rgba(0,0,0,0.3));
     overflow: hidden;
@@ -738,32 +738,32 @@
 .ap-bar-mark {
     flex-shrink: 0; width: 34px; height: 34px;
     border-radius: var(--radius-md, 10px);
-    background: rgba(255,255,255,0.10);
-    color: #fff;
+    background: var(--on-brand-soft);
+    color: var(--brand-surface-fg);
     display: flex; align-items: center; justify-content: center;
 }
 .ap-bar-mark svg { width: 18px; height: 18px; }
 .ap-bar-txt { min-width: 0; flex: 1; }
 .ap-bar-txt h5 {
-    margin: 0; font-size: 14px; font-weight: 700; color: #fff;
+    margin: 0; font-size: 14px; font-weight: 700; color: var(--brand-surface-fg);
 }
 .ap-bar-txt p {
     margin: 3px 0 0; font-size: 12.5px; line-height: 1.4;
-    color: rgba(255,255,255,0.75);
+    color: var(--ink-soft);
 }
 .ap-measure {
     display: inline-flex; align-items: center; gap: 6px;
     flex-shrink: 0;
     font-family: var(--font-family-mono, ui-monospace, monospace);
     font-size: 12px;
-    color: rgba(255,255,255,0.85);
+    color: var(--ink-soft);
     white-space: nowrap;
     padding-top: 2px;
 }
-.ap-measure b { color: #fff; font-weight: 700; }
+.ap-measure b { color: var(--brand-surface-fg); font-weight: 700; }
 .ap-bar-actions {
     display: flex; gap: 8px; padding: 12px 16px;
-    border-top: 1px solid rgba(255,255,255,0.10);
+    border-top: 1px solid var(--on-brand-soft-border);
     background: rgba(0,0,0,0.18);
     flex-wrap: wrap;
 }
@@ -772,19 +772,19 @@
    night (html[data-theme="night"] button { color: var(--ink) }, base.css)
    qui forçait #F3F4F6 sur le bouton primary → blanc-sur-blanc illisible. */
 .ap-bar .ap-bar-btn {
-    border: 1px solid rgba(255,255,255,0.4);
-    background: transparent; color: #fff;
+    border: 1px solid var(--on-brand-strong-border);
+    background: transparent; color: var(--brand-surface-fg);
     padding: 8px 14px; border-radius: 9px;
     font-size: 13px; font-weight: 600; cursor: pointer;
     min-height: 36px;
     display: inline-flex; align-items: center; gap: 6px;
 }
-.ap-bar .ap-bar-btn:hover { background: rgba(255,255,255,0.12); }
+.ap-bar .ap-bar-btn:hover { background: var(--on-brand-soft); }
 .ap-bar .ap-bar-btn--primary {
-    background: #fff; color: var(--bg, #0D3B66);
-    border-color: #fff;
+    background: var(--brand-surface-fg); color: var(--brand-surface-bg);
+    border-color: var(--brand-surface-fg);
 }
-.ap-bar .ap-bar-btn--primary:hover { background: rgba(255,255,255,0.9); }
+.ap-bar .ap-bar-btn--primary:hover { background: var(--brand-surface-fg); }
 .ap-bar .ap-bar-btn svg { width: 14px; height: 14px; }
 
 /* Adaptation petits écrans — la barre prend toute la largeur dispo. */
@@ -1915,7 +1915,7 @@
 
 /* ─── Liste cartes (Variante A) ─── */
 .va-list {
-    padding: 12px 12px 16px;
+    padding: 12px 8px 16px; /* gutter resserré (8px) — cartes plus larges */
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -3283,13 +3283,13 @@
 
 /* ----------- 7. TIMELINE POIs ----------- */
 .circuit-timeline {
-    padding: 14px 12px 24px;
+    padding: 14px 8px 24px; /* gutter resserré (8px) — cartes plus larges */
     display: flex;
     flex-direction: column;
     gap: 8px;
     position: relative;
 }
-#circuit-panel[data-mode="consult"] .circuit-timeline { padding: 14px 16px 24px; }
+#circuit-panel[data-mode="consult"] .circuit-timeline { padding: 14px 8px 24px; }
 .circuit-timeline-cap {
     font-family: "JetBrains Mono", monospace;
     font-size: 10.5px;

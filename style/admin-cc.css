@@ -583,7 +583,7 @@
 /* Sur night, l'écart de luminance --surface ↔ --surface-muted crée une bande
    visible — on aplatit en gardant la teinte muted. Les 3 autres thèmes
    conservent le gradient. */
-html[data-theme="night"] .cc-hero {
+html[data-theme="nuit"] .cc-hero {
     background: var(--surface-muted);
 }
 .cc-hero-mark {

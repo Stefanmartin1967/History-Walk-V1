@@ -1,27 +1,30 @@
 // theme-bootstrap.js
-// Script blocking chargé dans <head> AVANT le CSS pour appliquer le thème
-// utilisateur dès le premier paint (évite le FOUC maritime → desert/oasis/night).
+// Script blocking chargé dans <head> AVANT le CSS pour poser data-theme dès le
+// premier paint (anti-FOUC). Refonte « plein soleil » : 4 MOMENTS (matin /
+// plein-soleil / ombre / nuit), DÉFAUT couplé à prefers-color-scheme, et
+// migration des anciens noms de thèmes (maritime/desert/oasis/night).
 //
-// Source de vérité long terme = IndexedDB (cf. main.js:setupThemeSelector).
-// On miroir le thème dans localStorage à chaque save pour pouvoir le lire
-// ici de manière synchrone — IndexedDB est async et arriverait trop tard.
-//
-// On met à jour 2 choses :
-//   1. <html data-theme> → contrôle les vars CSS (couleurs app, topbar, sidebar)
-//   2. <meta name="theme-color"> → contrôle la titlebar Chrome en mode PWA installé
+// Source de vérité long terme = IndexedDB (cf. theme.js / main.js). On miroir le
+// moment dans localStorage à chaque save pour le lire ici de façon synchrone.
 (function () {
-    var THEME_COLORS = {
-        maritime: '#0D3B66',
-        desert: '#7a5230',
-        oasis: '#065f46',
-        night: '#111827',
-    };
+    var COLORS = { matin: '#FCF9F4', 'plein-soleil': '#FBF4E8', ombre: '#EFEFE0', nuit: '#14110D' };
+    var LEGACY = { maritime: 'plein-soleil', desert: 'matin', oasis: 'ombre', night: 'nuit' };
+    function norm(t) {
+        if (!t) return null;
+        if (COLORS[t]) return t;
+        if (LEGACY[t]) return LEGACY[t];
+        return null;
+    }
     try {
-        var t = localStorage.getItem('hw_theme');
-        if (t && THEME_COLORS[t]) {
-            document.documentElement.setAttribute('data-theme', t);
-            var meta = document.querySelector('meta[name="theme-color"]');
-            if (meta) meta.setAttribute('content', THEME_COLORS[t]);
-        }
-    } catch (e) { /* localStorage indisponible (mode privé strict) → fallback HTML */ }
+        var raw = localStorage.getItem('hw_theme');
+        var stored = norm(raw);
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // Choix explicite de l'utilisateur > défaut OS (nuit si sombre, sinon plein soleil).
+        var moment = stored || (prefersDark ? 'nuit' : 'plein-soleil');
+        document.documentElement.setAttribute('data-theme', moment);
+        // Migration persistante : un ancien nom stocké est réécrit en moment.
+        if (stored && stored !== raw) { try { localStorage.setItem('hw_theme', stored); } catch (e) {} }
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta && COLORS[moment]) meta.setAttribute('content', COLORS[moment]);
+    } catch (e) { /* localStorage indispo (mode privé) → fallback HTML data-theme="plein-soleil" */ }
 })();

@@ -28,7 +28,7 @@
 .hw-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(13, 59, 102, 0.6); /* teinte bleu nuit, override par thème night */
+    background: var(--scrim); /* voile thématique par moment (tokens.css) */
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
     z-index: 100000;
@@ -44,9 +44,7 @@
     opacity: 1;
     visibility: visible;
 }
-html[data-theme="desert"] .hw-modal-overlay { background: rgba(120, 53, 15, 0.55); }
-html[data-theme="oasis"] .hw-modal-overlay { background: rgba(5, 71, 55, 0.55); }
-html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
+/* Voiles par moment retirés — .hw-modal-overlay consomme var(--scrim) (tokens.css). */
 
 /* ===== Container modal ===== */
 .hw-modal {
@@ -261,7 +259,7 @@ html[data-theme="night"] .hw-modal-overlay { background: rgba(2, 8, 18, 0.7); }
     background: rgba(239, 68, 68, 0.1); /* fallback si --danger-soft pas défini */
     color: var(--danger);
 }
-html[data-theme="night"] .hw-modal.is-danger .hw-modal-icon {
+html[data-theme="nuit"] .hw-modal.is-danger .hw-modal-icon {
     background: #3B1A1A;
 }
 .hw-modal.is-danger .hw-modal-title { color: var(--danger); }
@@ -280,7 +278,7 @@ html[data-theme="night"] .hw-modal.is-danger .hw-modal-icon {
     background: rgba(255, 255, 255, 0.7);
     z-index: 5;
 }
-html[data-theme="night"] .hw-modal.is-loading .hw-modal-body::after {
+html[data-theme="nuit"] .hw-modal.is-loading .hw-modal-body::after {
     background: rgba(26, 36, 51, 0.75);
 }
 .hw-modal.is-loading .hw-modal-body .hw-loader {
@@ -340,7 +338,7 @@ html[data-theme="night"] .hw-modal.is-loading .hw-modal-body::after {
     border-color: var(--danger);
     color: var(--danger);
 }
-html[data-theme="night"] .hw-banner.is-error {
+html[data-theme="nuit"] .hw-banner.is-error {
     background: #3B1A1A;
 }
 .hw-banner.is-success {
@@ -491,9 +489,9 @@ html[data-theme="night"] .hw-banner.is-error {
    ajoutée dynamiquement par ui-photo-viewer.js après openHwModal.
    ============================================================ */
 .hw-modal-overlay.is-photo-viewer,
-html[data-theme="desert"] .hw-modal-overlay.is-photo-viewer,
-html[data-theme="oasis"] .hw-modal-overlay.is-photo-viewer,
-html[data-theme="night"] .hw-modal-overlay.is-photo-viewer {
+html[data-theme="matin"] .hw-modal-overlay.is-photo-viewer,
+html[data-theme="ombre"] .hw-modal-overlay.is-photo-viewer,
+html[data-theme="nuit"] .hw-modal-overlay.is-photo-viewer {
     padding: 0;
     background: #000;          /* noir OPAQUE — aucune transparence ni blur derrière */
     backdrop-filter: none;

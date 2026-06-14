@@ -1,57 +1,71 @@
 // theme.js
-// Module dédié au switch de thème (refonte topbar PC-2, 10/05/2026).
-// Extrait de main.js pour pouvoir être appelé depuis le bouton topbar dropdown
-// (`topbar-v2.js`) et le bouton mobile (`mobile-menu.js`) sans dupliquer la
-// logique. Les 4 thèmes sont définis dans `style/tokens.css`.
+// Bascule des 4 MOMENTS (refonte « plein soleil / papier méditerranéen », 13/06/2026).
+// Les moments sont définis dans style/tokens.css : matin / plein-soleil / ombre / nuit
+// (axe de la lumière du jour — un arc de journée de marche). Appelé depuis le dropdown
+// topbar (`topbar-v2.js`) et le bouton mobile (`mobile-menu.js`).
 
 import { saveAppState } from './database.js';
 
-export const THEMES = ['maritime', 'desert', 'oasis', 'night'];
+export const THEMES = ['matin', 'plein-soleil', 'ombre', 'nuit'];
 
 export const THEME_LABELS = {
-    maritime: 'Maritime',
-    desert: 'Désert',
-    oasis: 'Oasis',
-    night: 'Nuit',
+    matin: 'Matin',
+    'plein-soleil': 'Plein soleil',
+    ombre: 'Ombre',
+    nuit: 'Nuit',
 };
 
-// Couleur principale par thème (utilisée pour la meta theme-color du browser
-// — barre d'adresse, status bar mobile PWA, title bar Windows standalone).
+// Couleur principale par moment (meta theme-color — barre d'adresse, status bar
+// mobile PWA, titlebar Windows standalone). En clair = papier ; en nuit = noir chaud.
 const THEME_COLORS = {
-    maritime: '#0D3B66',
-    desert: '#7a5230',
-    oasis: '#065f46',
-    night: '#111827',
+    matin: '#FCF9F4',
+    'plein-soleil': '#FBF4E8',
+    ombre: '#EFEFE0',
+    nuit: '#14110D',
 };
+
+// Migration des anciens noms (maritime/desert/oasis/night) → 4 moments, pour ne
+// pas perdre la préférence des utilisateurs existants (IndexedDB + localStorage).
+const LEGACY_MOMENTS = {
+    maritime: 'plein-soleil',
+    desert: 'matin',
+    oasis: 'ombre',
+    night: 'nuit',
+};
+
+function normalizeMoment(value) {
+    if (!value) return null;
+    if (THEME_LABELS[value]) return value;
+    if (LEGACY_MOMENTS[value]) return LEGACY_MOMENTS[value];
+    return null;
+}
 
 export function getCurrentTheme() {
-    return document.documentElement.getAttribute('data-theme') || 'maritime';
+    return normalizeMoment(document.documentElement.getAttribute('data-theme')) || 'plein-soleil';
 }
 
 function applyThemeColor(theme) {
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', THEME_COLORS[theme] || THEME_COLORS.maritime);
+    if (meta) meta.setAttribute('content', THEME_COLORS[theme] || THEME_COLORS['plein-soleil']);
 }
 
 /**
- * Applique le thème (DOM + persistance IndexedDB + miroir localStorage pour
- * theme-bootstrap.js + meta theme-color). Idempotent — peut être appelé
- * sans risque même si le thème est déjà actif.
+ * Applique le moment (DOM + persistance IndexedDB + miroir localStorage pour
+ * theme-bootstrap.js + meta theme-color). Idempotent. Migre un ancien nom reçu.
  */
 export function setTheme(theme) {
-    if (!THEMES.includes(theme)) return;
-    document.documentElement.setAttribute('data-theme', theme);
-    saveAppState('currentTheme', theme);
-    // Mirror localStorage pour que theme-bootstrap.js (script blocking dans
-    // <head>) puisse l'appliquer dès le 1er paint au prochain F5.
-    try { localStorage.setItem('hw_theme', theme); } catch (_) {}
-    applyThemeColor(theme);
+    const moment = normalizeMoment(theme);
+    if (!moment) return;
+    document.documentElement.setAttribute('data-theme', moment);
+    saveAppState('currentTheme', moment);
+    // Miroir localStorage pour que theme-bootstrap.js l'applique au 1er paint au prochain F5.
+    try { localStorage.setItem('hw_theme', moment); } catch (_) {}
+    applyThemeColor(moment);
 }
 
 /**
- * Cycle au thème suivant : maritime → desert → oasis → night → maritime.
- * Utilisé par le bouton mobile (cycle simple) et tout fallback qui n'a pas
- * de UI de sélection visuelle.
+ * Cycle au moment suivant : matin → plein-soleil → ombre → nuit → matin
+ * (l'arc de la journée). Utilisé par le bouton mobile (cycle simple).
  */
 export function cycleTheme() {
     const current = getCurrentTheme();
@@ -60,8 +74,8 @@ export function cycleTheme() {
     setTheme(next);
 }
 
-// Init au boot — applique la meta theme-color pour le thème déjà défini par
-// theme-bootstrap.js (l'attribut data-theme est déjà sur <html> avant ce module).
+// Init au boot — applique la meta theme-color pour le moment déjà posé sur <html>
+// par theme-bootstrap.js (avant ce module).
 export function initThemeColorMeta() {
     applyThemeColor(getCurrentTheme());
 }

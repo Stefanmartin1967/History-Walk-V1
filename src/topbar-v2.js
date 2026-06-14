@@ -12,7 +12,7 @@ import { state } from './state.js';
 import { eventBus } from './events.js';
 import { toggleFilterPanel } from './filter-panel.js';
 import { showWelcomeAgain } from './welcome.js';
-import { setTheme, getCurrentTheme, THEMES, THEME_LABELS } from './theme.js';
+import { setTheme, getCurrentTheme } from './theme.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { isDestinationPublished } from './utils.js';
 
@@ -20,8 +20,7 @@ const FILTERS_BTN_ID = 'hw-topbar-filters-btn';
 const FILTERS_LABEL_ID = 'hw-topbar-filters-label';
 const DEST_SELECTOR_ID = 'hw-dest-selector';
 const DEST_MENU_ID = 'hw-dest-menu';
-const THEME_BTN_ID = 'btn-theme-topbar';
-const THEME_MENU_ID = 'hw-theme-menu';
+// Bascule de moment : segmenté persistant `.hw-moment-toggle` (plus de dropdown thème).
 
 function isSectionActive(id) {
     const f = state.activeFilters || {};
@@ -122,17 +121,35 @@ function setupDestinationMenu() {
 // override `country` dans destinations.json. Pour l'instant : Tunisie ou
 // Maroc ou autre selon la lat/lon. Si on ouvre d'autres pays, ajouter un
 // champ explicite `country` + `flag` dans destinations.json.
+// Convertit un drapeau émoji (indicateurs régionaux 🇹🇳) en code pays 2 lettres ("TN").
+function flagToCode(flag) {
+    if (!flag) return '';
+    const cps = [...flag].map(ch => ch.codePointAt(0));
+    if (cps.length >= 2 && cps[0] >= 0x1F1E6 && cps[0] <= 0x1F1FF) {
+        return cps.slice(0, 2).map(cp => String.fromCharCode(cp - 0x1F1E6 + 65)).join('');
+    }
+    return '';
+}
+
+// Déduit { pays, drapeau, code 2 lettres }. On AFFICHE le `code` (carré terracotta)
+// plutôt que l'émoji-drapeau, dont le rendu varie selon la plateforme (Windows ne
+// dessine pas les drapeaux émoji → il affiche « TN », incohérent avec mobile/Mac).
 function inferCountryAndFlag(dest) {
-    if (dest?.country && dest?.flag) return { country: dest.country, flag: dest.flag };
+    if (dest?.country && dest?.flag) {
+        return { country: dest.country, flag: dest.flag,
+                 code: dest.code || flagToCode(dest.flag) || dest.country.slice(0, 2).toUpperCase() };
+    }
     const center = dest?.startView?.center;
     if (Array.isArray(center) && center.length === 2) {
         const [lat, lon] = center;
         // Tunisie
-        if (lat >= 30 && lat <= 38 && lon >= 7 && lon <= 12) return { country: 'Tunisie', flag: '🇹🇳' };
+        if (lat >= 30 && lat <= 38 && lon >= 7 && lon <= 12) return { country: 'Tunisie', flag: '🇹🇳', code: 'TN' };
         // Maroc
-        if (lat >= 27 && lat <= 36 && lon >= -14 && lon <= 0) return { country: 'Maroc', flag: '🇲🇦' };
+        if (lat >= 27 && lat <= 36 && lon >= -14 && lon <= 0) return { country: 'Maroc', flag: '🇲🇦', code: 'MA' };
     }
-    return { country: dest?.country || '', flag: dest?.flag || '🌍' };
+    const country = dest?.country || '';
+    return { country, flag: dest?.flag || '🌍',
+             code: dest?.code || flagToCode(dest?.flag) || (country ? country.slice(0, 2).toUpperCase() : '··') };
 }
 
 export function renderDestinationMenu(destinations, activeMapId) {
@@ -153,9 +170,9 @@ export function renderDestinationMenu(destinations, activeMapId) {
     // Met à jour la pastille du sélecteur (drapeau + nom de la dest active)
     const activeDest = maps[activeMapId];
     if (activeDest) {
-        const { flag } = inferCountryAndFlag(activeDest);
+        const { code } = inferCountryAndFlag(activeDest);
         if (selectorName) selectorName.textContent = activeDest.name || activeMapId;
-        if (selectorFlagEl) selectorFlagEl.textContent = flag;
+        if (selectorFlagEl) selectorFlagEl.textContent = code;
     }
 
     // Génère le HTML du menu : entrée active en premier, puis les autres.
@@ -163,11 +180,11 @@ export function renderDestinationMenu(destinations, activeMapId) {
 
     // Active en premier
     if (activeDest) {
-        const { country, flag } = inferCountryAndFlag(activeDest);
+        const { country, code } = inferCountryAndFlag(activeDest);
         html.push(`
             <button type="button" class="hw-dest-item is-active" role="menuitemradio"
                     aria-checked="true" data-dest="${activeMapId}">
-                <span class="hw-dest-item-flag">${flag}</span>
+                <span class="hw-dest-item-flag">${code}</span>
                 <span class="hw-dest-item-info">
                     <span class="hw-dest-item-name">${escapeHtml(activeDest.name || activeMapId)}</span>
                     <span class="hw-dest-item-sub">${escapeHtml(country)}</span>
@@ -184,11 +201,11 @@ export function renderDestinationMenu(destinations, activeMapId) {
     if (others.length > 0) {
         html.push('<div class="hw-dest-menu-section-title is-divided">Autres destinations</div>');
         for (const [id, dest] of others) {
-            const { country, flag } = inferCountryAndFlag(dest);
+            const { country, code } = inferCountryAndFlag(dest);
             html.push(`
                 <button type="button" class="hw-dest-item" role="menuitemradio"
                         aria-checked="false" data-dest="${id}">
-                    <span class="hw-dest-item-flag">${flag}</span>
+                    <span class="hw-dest-item-flag">${code}</span>
                     <span class="hw-dest-item-info">
                         <span class="hw-dest-item-name">${escapeHtml(dest.name || id)}</span>
                         <span class="hw-dest-item-sub">${escapeHtml(country)}</span>
@@ -232,91 +249,31 @@ function escapeHtml(s) {
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-// ─── Dropdown thème (PR PC-2) ──────────────────────────────────────────────
+// ─── Bascule de moment (segmenté persistant) ───────────────────────────────
+// Remplace le dropdown thème : 4 moments (Matin / Plein soleil / Ombre / Nuit)
+// en émojis, toujours visibles dans la lisière (affordance persistante, jamais
+// un toast/popup). Émojis voulus pour la chaleur ; Lucide reste aux contrôles.
 
-function setThemeMenuOpen(open) {
-    const menu = document.getElementById(THEME_MENU_ID);
-    const btn = document.getElementById(THEME_BTN_ID);
-    if (!menu || !btn) return;
-    if (open) {
-        // Avise les autres popups topbar de se fermer (cf. setupTopbarPopupCoordination).
-        eventBus.emit('topbar:popup-opening', { id: 'theme' });
-        renderThemeMenu();
-        menu.removeAttribute('hidden');
-        btn.setAttribute('aria-expanded', 'true');
-    } else {
-        menu.setAttribute('hidden', '');
-        btn.setAttribute('aria-expanded', 'false');
-    }
-}
-
-function isThemeMenuOpen() {
-    const menu = document.getElementById(THEME_MENU_ID);
-    return !!menu && !menu.hasAttribute('hidden');
-}
-
-function toggleThemeMenu() {
-    setThemeMenuOpen(!isThemeMenuOpen());
-}
-
-function renderThemeMenu() {
-    const menu = document.getElementById(THEME_MENU_ID);
-    if (!menu) return;
+function updateMomentToggleActive() {
     const current = getCurrentTheme();
+    document.querySelectorAll('.hw-moment-seg').forEach(seg => {
+        const on = seg.dataset.theme === current;
+        seg.classList.toggle('is-active', on);
+        seg.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+}
 
-    menu.innerHTML = `
-        <div class="hw-theme-menu-title">Thème</div>
-        ${THEMES.map(theme => `
-            <button type="button" class="hw-theme-item${theme === current ? ' is-active' : ''}"
-                    role="menuitemradio" aria-checked="${theme === current ? 'true' : 'false'}"
-                    data-theme="${theme}">
-                <span class="hw-theme-swatch hw-theme-swatch--${theme}" aria-hidden="true"></span>
-                <span class="hw-theme-name">${THEME_LABELS[theme] || theme}</span>
-                ${theme === current ? '<span class="hw-theme-check"><i data-lucide="check"></i></span>' : ''}
-            </button>
-        `).join('')}
-    `;
-
-    // Render icons (check)
-    if (window.lucide && typeof window.lucide.createIcons === 'function') {
-        window.lucide.createIcons({ root: menu });
-    } else {
-        createIcons({ icons: appIcons, root: menu });
-    }
-
-    // Bind clicks
-    menu.querySelectorAll('.hw-theme-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const theme = item.dataset.theme;
+function setupMomentToggle() {
+    const toggle = document.querySelector('.hw-moment-toggle');
+    if (!toggle) return;
+    toggle.querySelectorAll('.hw-moment-seg').forEach(seg => {
+        seg.addEventListener('click', () => {
+            const theme = seg.dataset.theme;
             if (theme && theme !== getCurrentTheme()) setTheme(theme);
-            setThemeMenuOpen(false);
+            updateMomentToggleActive();
         });
     });
-}
-
-function setupThemeDropdown() {
-    const btn = document.getElementById(THEME_BTN_ID);
-    const menu = document.getElementById(THEME_MENU_ID);
-    if (!btn || !menu) return;
-
-    btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleThemeMenu();
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!isThemeMenuOpen()) return;
-        if (e.target.closest(`#${THEME_BTN_ID}`)) return;
-        if (e.target.closest(`#${THEME_MENU_ID}`)) return;
-        setThemeMenuOpen(false);
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && isThemeMenuOpen()) {
-            setThemeMenuOpen(false);
-            btn.focus();
-        }
-    });
+    updateMomentToggleActive();
 }
 
 // ─── Boutons directs topbar (Visite guidée) ─────────────────────────────────
@@ -338,7 +295,7 @@ function setupTourButton() {
 function setupTopbarPopupCoordination() {
     eventBus.on('topbar:popup-opening', ({ id }) => {
         if (id !== 'dest' && isDestMenuOpen()) setDestMenuOpen(false);
-        if (id !== 'theme' && isThemeMenuOpen()) setThemeMenuOpen(false);
+        // (le thème est désormais un segmenté persistant `.hw-moment-toggle`, pas un popup)
         // Les autres popups (info-popover, tools, god-mode) gèrent leur propre
         // listener — voir info-popover.js et events-desktop.js.
     });
@@ -369,7 +326,7 @@ export function setupTopbarV2() {
 
     // Boutons directs topbar (PR PC-2 — Thème, Visite ; Mon Espace retiré en PR2 dissolution)
     setupTourButton();
-    setupThemeDropdown();
+    setupMomentToggle();
 
     // Coordination popups topbar : 1 seul ouvert à la fois (cf. fix #6).
     setupTopbarPopupCoordination();
