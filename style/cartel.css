@@ -1,0 +1,51 @@
+/* style/cartel.css — Le « Cartel » (étiquette de musée) sur les écrans de fiche.
+   ============================================================================
+   Chantier cohérence design — lot Cartel. PR-A : LA PUCE PAPIER (.cartel-chip),
+   qui remplace les pills translucides du hero (blanc-sur-blanc illisible sur
+   photo claire). Le fichier s'étoffera aux PRs suivantes (bloc identité serif,
+   sections, timeline en mini-cartels, popup, page SEO).
+   100 % classes, piloté par les tokens (style/tokens.css → suit les 4 moments).
+   ============================================================================ */
+
+/* ───────────────────────── LA PUCE « CARTEL » ─────────────────────────
+   Le geste qui résout la lisibilité du hero (problèmes A + C) : une petite
+   étiquette de PAPIER opaque + filet d'encre — pas de verre, pas de blanc
+   translucide. La couleur n'est portée que par la pastille (.dot) ou l'icône,
+   jamais par le fond → calme et lisible sur une photo claire COMME sombre. */
+.cartel-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    background: var(--paper);
+    color: var(--ink);
+    border: var(--border-filet-strong);
+    border-radius: var(--radius-xs);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+    box-shadow: var(--shadow-card);
+}
+.cartel-chip svg { width: 13px; height: 13px; flex-shrink: 0; }
+.cartel-chip .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: var(--radius-pill);
+    background: var(--ink-faint);
+    flex-shrink: 0;
+}
+/* Variantes : la couleur va sur la pastille (fond) et l'icône (trait), pas sur
+   le corps de la puce. */
+.cartel-chip--ok     .dot { background: var(--ok-fg); }
+.cartel-chip--ok     svg  { color: var(--ok-fg); }
+.cartel-chip--warn   .dot { background: var(--warn-fg); }
+.cartel-chip--warn   svg  { color: var(--warn-fg); }
+.cartel-chip--danger .dot { background: var(--danger-fg); }
+.cartel-chip--danger svg  { color: var(--danger-fg); }
+.cartel-chip--brand  .dot { background: var(--brand-ink); }
+.cartel-chip--brand  svg  { color: var(--brand-ink); }
+.cartel-chip--info   .dot { background: var(--link); }
+.cartel-chip--info   svg  { color: var(--link); }
+.cartel-chip--muted  .dot { background: var(--ink-faint); }

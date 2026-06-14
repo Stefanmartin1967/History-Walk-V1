@@ -533,48 +533,41 @@
     font-family: 'Inter', system-ui, sans-serif;
 }
 
-/* HERO photo (en-tête visuel) */
+/* HERO de fiche POI (cartel) — la « vitrine » papier. */
 .poi-hero {
     position: relative;
     height: 200px;
     flex-shrink: 0;
-    background: #dfe6ed;
+    background: var(--paper-2);
     background-size: cover;
     background-position: center;
     overflow: hidden;
 }
+/* Photo + SCRIM d'encre du moment (léger, pose les épingles sans noircir la
+   photo). La vraie garantie de lisibilité reste les puces papier (.cartel-chip). */
 .poi-hero[data-bg] {
-    background-image: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), var(--poi-hero-bg);
+    background-image:
+        linear-gradient(180deg,
+            color-mix(in oklab, var(--ink) 18%, transparent) 0%,
+            transparent 30%,
+            transparent 55%,
+            color-mix(in oklab, var(--ink) 40%, transparent) 100%),
+        var(--poi-hero-bg);
 }
 .poi-hero.has-photo { cursor: pointer; }
+/* Conteneur des épingles, bas-gauche (le scrim est porté par .poi-hero[data-bg]). */
 .poi-hero-overlay {
     position: absolute;
     inset: auto 0 0 0;
-    padding: 14px 20px;
-    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.55));
-    color: #fff;
+    padding: var(--space-md);
 }
 .poi-hero-tags {
     display: flex;
-    gap: 6px;
+    gap: var(--space-xs);
     flex-wrap: wrap;
 }
-.poi-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(255,255,255,0.92);
-    color: var(--ink);
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
-.poi-tag.amber { background: rgba(255,251,235,0.95); color: var(--ink-soft); }
-.poi-tag.brand { background: rgba(240,249,255,0.95); color: var(--brand); }
-.poi-tag svg { width: 11px; height: 11px; }
+/* (.poi-tag retiré — les pills translucides du hero sont passées en puces
+   papier .cartel-chip, style/cartel.css.) */
 
 /* ===== Point d'accès au tracé (admin) — chip fiche + drapeau carte + barre =====
    Geste de pose dans access-point-editor.js. POI hors voie → l'admin pose un
@@ -584,25 +577,8 @@
    (pending/error). CSS prêt pour PR2+ même si seul --moved est utilisé en PR1
    (faute de champ accessPointSource — tous les drapeaux existants = manuels). */
 
-/* — Chip de fiche POI « Point d'accès défini ». Couleur selon le status
-   (PR 2/5) : orange OSM, vert déplacé, ambre failed. Vert par défaut
-   (compat legacy / status non posé). */
-.poi-tag--access-point {
-    background: color-mix(in oklab, var(--flag-moved) 14%, transparent);
-    color: var(--flag-moved);
-}
-.poi-tag--access-point.is-osm {
-    background: color-mix(in oklab, var(--flag-osm) 14%, transparent);
-    color: var(--flag-osm);
-}
-.poi-tag--access-point.is-moved {
-    background: color-mix(in oklab, var(--flag-moved) 14%, transparent);
-    color: var(--flag-moved);
-}
-.poi-tag--access-point.is-failed {
-    background: color-mix(in oklab, var(--warn) 14%, transparent);
-    color: var(--warn-fg);
-}
+/* (.poi-tag--access-point retiré — la chip fiche « À évaluer » est passée en
+   .cartel-chip--warn ; les drapeaux carte/barre restent .hw-flag ci-dessous.) */
 
 /* — Pastille « non-évalué » accrochée au marqueur POI quand Overpass a
    échoué (status='failed'). PR2 : CSS prêt, consommé par la PR3 (passe
@@ -795,104 +771,90 @@
     .ap-bar-btn { padding: 7px 11px; font-size: 12.5px; }
 }
 
-/* État + Accès — pastilles sémantiques (hero). État : point coloré. Accès :
-   icône. Fond en pastel léger (token × 50% + blanc), pour s'aligner sur les
-   pastilles zone/catégorie existantes. Texte et point en couleur tokenisée. */
-.poi-tag.status { font-weight: 700; }
-.poi-tag.status .dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-.poi-tag.status.ok        { background: color-mix(in oklab, var(--ok-soft, #D1FAE5) 50%, #fff); color: var(--ok-fg, #047857); }
-.poi-tag.status.ok .dot   { background: var(--ok, #10B981); }
-.poi-tag.status.warn      { background: color-mix(in oklab, var(--warn-soft, #FEF3C7) 50%, #fff); color: var(--warn-fg, #A16207); }
-.poi-tag.status.warn .dot { background: var(--warn, #F59E0B); }
-.poi-tag.status.muted      { background: color-mix(in oklab, var(--surface-muted, #F0F4F8) 50%, #fff); color: var(--ink-soft, #627D98); }
-.poi-tag.status.muted .dot { background: var(--ink-soft, #627D98); }
-.poi-tag.access.ok     { background: color-mix(in oklab, var(--brand-soft, #F0F9FF) 50%, #fff); color: var(--brand-2, var(--brand)); }
-.poi-tag.access.muted  { background: color-mix(in oklab, var(--surface-muted, #F0F4F8) 50%, #fff); color: var(--ink-soft, #627D98); }
-.poi-tag.access.danger { background: color-mix(in oklab, var(--danger-soft, #FEE2E2) 50%, #fff); color: var(--danger-fg, #B91C1C); }
+/* (.poi-tag.status / .poi-tag.access retirés — migrés vers
+   .cartel-chip--ok / --warn / --muted / --danger, style/cartel.css.) */
+/* Compteur de photos, haut-droite — même grammaire papier que les épingles. */
 .poi-photo-count {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(0,0,0,0.55);
-    color: #fff;
+    top: var(--space-md);
+    right: var(--space-md);
+    background: var(--paper);
+    color: var(--ink);
+    border: var(--border-filet-strong);
+    box-shadow: var(--shadow-card);
     padding: 4px 9px;
-    border-radius: 8px;
-    font-size: 11px;
-    font-weight: 600;
+    border-radius: var(--radius-xs);
+    font-size: var(--font-size-sm);
+    font-weight: var(--weight-semibold);
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
 }
 .poi-photo-count svg { width: 12px; height: 12px; }
 .poi-back-pill {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.95);
+    top: var(--space-md);
+    left: var(--space-md);
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-pill);
+    background: var(--paper);
     color: var(--ink);
     display: grid;
     place-items: center;
     cursor: pointer;
-    /* Double shadow : porte (close) + ring (contraste sur photos claires/ciel) */
-    box-shadow:
-        0 2px 8px rgba(0,0,0,0.35),
-        0 0 0 1px rgba(0,0,0,0.05);
-    border: none;
-    z-index: 2;
-    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    border: var(--border-filet);
+    box-shadow: var(--shadow-card);
+    z-index: 3;
+    transition: background 0.15s, transform 0.15s;
 }
 .poi-back-pill:hover {
-    background: var(--surface);
+    background: var(--paper-raised);
     transform: scale(1.05);
-    box-shadow:
-        0 4px 12px rgba(0,0,0,0.4),
-        0 0 0 1px rgba(0,0,0,0.05);
 }
 .poi-back-pill svg { width: 18px; height: 18px; }
 
-/* Hero state vide (pas de photo) */
+/* Hero VIDE (pas de photo) : plaque de papier gravé (motif topo discret au
+   filet), pas un trou. Les épingles de statut RESTENT (cartel). */
 .poi-hero.is-empty {
-    background: repeating-linear-gradient(135deg, #eef2f6 0 12px, #e2e8f0 12px 24px);
+    background:
+        repeating-radial-gradient(circle at 64% 116%,
+            transparent 0 26px,
+            color-mix(in oklab, var(--ink) 5%, transparent) 26px 27px),
+        radial-gradient(120% 90% at 50% -10%, var(--paper-raised) 0%, var(--paper-2) 70%);
     display: flex;
     align-items: center;
     justify-content: center;
 }
+.poi-hero.is-empty .empty-plate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+}
 .poi-hero.is-empty .empty-icon {
     width: 56px;
     height: 56px;
-    border-radius: 16px;
-    background: rgba(255,255,255,0.85);
+    border-radius: var(--radius-md);
+    background: var(--paper-raised);
     display: grid;
     place-items: center;
     color: var(--ink-soft);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border: var(--border-filet);
 }
 .poi-hero.is-empty .empty-icon svg { width: 28px; height: 28px; }
 .poi-hero.is-empty .empty-label {
-    position: absolute;
-    bottom: 14px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 10px;
-    letter-spacing: 0.12em;
+    font-family: var(--font-sans);
+    font-size: var(--smallcaps-size);
+    font-weight: var(--smallcaps-weight);
+    letter-spacing: var(--smallcaps-tracking);
     text-transform: uppercase;
-    color: var(--ink-soft);
+    color: var(--sepia-500);
 }
 /* F1 : hero vide cliquable (admin sans photo, ouvre la grid en upload direct) */
 .poi-hero.is-empty.is-clickable { cursor: pointer; transition: filter 0.15s; }
 .poi-hero.is-empty.is-clickable:hover { filter: brightness(0.97); }
-.poi-hero.is-empty.is-clickable:hover .empty-icon { color: var(--brand); }
+.poi-hero.is-empty.is-clickable:hover .empty-icon { color: var(--brand); border-color: var(--brand); }
 .poi-hero.is-empty.is-clickable:focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: -2px;
