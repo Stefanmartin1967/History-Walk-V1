@@ -12,7 +12,7 @@
 import { state, setHomeLocation } from './state.js';
 import { saveAppState } from './database.js';
 import { openHwModal, closeHwModal } from './modal.js';
-import { getPoiName } from './data.js';
+import { getPoiName, getPoiId, getPatrimonialName } from './data.js';
 import { getSearchResults } from './search.js';
 import { showToast } from './toast.js';
 
@@ -29,8 +29,17 @@ async function persistHome(home) {
 }
 
 // Libellé du point de départ courant (pour l'affichage sous le tri), ou null.
+// Si le départ est un POI (poiId stocké), son nom suit la langue affichée — résolu
+// à la volée via getPatrimonialName. Repli sur le label figé (GPS « Ma position »,
+// ou POI désormais absent de loadedFeatures).
 export function getStartPointLabel() {
-    return state.homeLocation?.label || null;
+    const home = state.homeLocation;
+    if (!home) return null;
+    if (home.poiId) {
+        const feature = (state.loadedFeatures || []).find(f => getPoiId(f) === home.poiId);
+        if (feature) return getPatrimonialName(feature);
+    }
+    return home.label || null;
 }
 
 // Construit l'objet point de départ depuis un POI. Les coordonnées GeoJSON sont
@@ -41,7 +50,7 @@ export function buildHomeFromFeature(feature) {
     if (!Array.isArray(coords) || coords.length < 2) return null;
     const [lng, lat] = coords;
     if (typeof lat !== 'number' || typeof lng !== 'number') return null;
-    return { lat, lng, label: getPoiName(feature), savedAt: Date.now() };
+    return { lat, lng, poiId: getPoiId(feature), label: getPoiName(feature), savedAt: Date.now() };
 }
 
 function renderResults(container, query) {
@@ -122,7 +131,7 @@ function buildBody() {
     if (state.homeLocation) {
         const current = container.querySelector('.sp-current');
         current.hidden = false;
-        const label = state.homeLocation.label || 'Lieu défini';
+        const label = getStartPointLabel() || 'Lieu défini';
         container.querySelector('.sp-current-label').textContent = `Départ actuel : ${label}`;
         container.querySelector('.sp-clear').addEventListener('click', () => {
             closeHwModal({ clear: true });

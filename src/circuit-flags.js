@@ -30,7 +30,7 @@
 import L from 'leaflet';
 import { map } from './map.js';
 import { state } from './state.js';
-import { getPoiId, getPoiName, updatePoiData } from './data.js';
+import { getPoiId, updatePoiData } from './data.js';
 import { getAccessPoint } from './utils.js';
 import { getAccessPointStatus } from './access-point.js';
 import { showToast } from './toast.js';

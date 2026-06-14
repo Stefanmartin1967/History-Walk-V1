@@ -28,8 +28,9 @@ export { getPoiId, getPoiName, checkAndApplyMigrations, getDomainFromUrl };
 
 // Nom patrimonial AFFICHÉ selon la préférence de langue (FR ⇄ AR). En AR : renvoie
 // le nom arabe du lieu s'il existe (repli FR sinon) ; un renommage explicite
-// (custom_title) prime toujours. NE PAS utiliser pour les clés internes
-// (tri/dédup/recherche-index) qui restent sur getPoiName (FR stable).
+// (custom_title) prime toujours. Pour la RECHERCHE, ne PAS utiliser ça (chercher
+// ≠ afficher) → getSearchableNames, qui matche toutes les variantes. Pour la DÉDUP
+// et les clés stables, rester sur getPoiName (FR stable).
 export function getPatrimonialName(feature, lang) {
     const resolved = lang || getCurrentPatrimonialLang();
     if (resolved === 'ar' && feature && feature.properties) {
@@ -42,6 +43,23 @@ export function getPatrimonialName(feature, lang) {
         }
     }
     return getPoiName(feature);
+}
+
+// Toutes les variantes de nom d'un POI (custom + FR + arabe + AR + brut), non vides,
+// pour une recherche AGNOSTIQUE à la langue : on doit retrouver un lieu en tapant
+// son nom FR OU arabe, quel que soit le réglage d'affichage (chercher ≠ afficher).
+// À utiliser pour le MATCHING uniquement, jamais pour l'affichage.
+export function getSearchableNames(feature) {
+    if (!feature || !feature.properties) return [];
+    const props = feature.properties;
+    const userData = props.userData || {};
+    return [
+        userData.custom_title,
+        userData['Nom du site FR'], props['Nom du site FR'],
+        userData['Nom du site arabe'], props['Nom du site arabe'],
+        userData['Nom du site AR'], props['Nom du site AR'],
+        props.name,
+    ].filter(n => typeof n === 'string' && n.trim());
 }
 
 // --- GESTION DES MIGRATIONS D'ID (ADMIN) ---

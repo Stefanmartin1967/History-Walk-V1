@@ -1,5 +1,5 @@
 import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch } from './state.js';
-import { getPoiId, getPoiName, getPatrimonialName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
+import { getPoiId, getPatrimonialName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
 import { isMobileView, pushMobileLevel, animateContainer, setMobileHeaderSlot, setMobileViewFooter } from './mobile-state.js';

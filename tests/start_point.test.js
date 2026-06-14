@@ -1,3 +1,6 @@
+// @vitest-environment jsdom
+// (jsdom requis : start-point.js importe search.js → patrimonial-names.js, qui
+// touche document.documentElement au chargement du module.)
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Dépendances DOM / IndexedDB / icônes mockées : on ne teste ici que la
@@ -8,6 +11,9 @@ vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/data.js', () => ({
     getPoiName: (f) => f?.properties?.Nom || 'Sans nom',
     getPoiId: (f) => f?.properties?.HW_ID,
+    // Nom « affiché » mocké : préfixe distinctif pour vérifier que le libellé est
+    // bien résolu à la volée (et non figé depuis label).
+    getPatrimonialName: (f) => 'AFF:' + (f?.properties?.Nom || ''),
 }));
 
 import { buildHomeFromFeature, getStartPointLabel } from '../src/start-point.js';
@@ -20,9 +26,9 @@ const poi = (nom, lng, lat) => ({
 });
 
 describe('start-point — buildHomeFromFeature', () => {
-    it('remet les coordonnées GeoJSON [lng,lat] dans l\'ordre {lat,lng}', () => {
+    it('remet les coordonnées GeoJSON [lng,lat] dans l\'ordre {lat,lng} + stocke poiId', () => {
         const home = buildHomeFromFeature(poi('Borj El Kébir', 10.8413, 33.8762));
-        expect(home).toMatchObject({ lat: 33.8762, lng: 10.8413, label: 'Borj El Kébir' });
+        expect(home).toMatchObject({ lat: 33.8762, lng: 10.8413, label: 'Borj El Kébir', poiId: 'x' });
         expect(typeof home.savedAt).toBe('number');
     });
 
@@ -40,11 +46,25 @@ describe('start-point — buildHomeFromFeature', () => {
 });
 
 describe('start-point — getStartPointLabel', () => {
-    beforeEach(() => { state.homeLocation = null; });
+    beforeEach(() => { state.homeLocation = null; state.loadedFeatures = []; });
 
-    it('renvoie le libellé du point défini', () => {
+    it('point GPS (sans poiId) : renvoie le libellé figé', () => {
         state.homeLocation = { lat: 1, lng: 2, label: 'Ma position' };
         expect(getStartPointLabel()).toBe('Ma position');
+    });
+
+    it('point POI : résout le nom à la volée (suit la langue affichée)', () => {
+        const f = poi('Borj El Kébir', 10.8, 33.8); // HW_ID 'x'
+        state.loadedFeatures = [f];
+        state.homeLocation = { lat: 33.8, lng: 10.8, poiId: 'x', label: 'Borj El Kébir' };
+        // getPatrimonialName mocké → préfixe 'AFF:' : prouve qu'on ne lit PAS label.
+        expect(getStartPointLabel()).toBe('AFF:Borj El Kébir');
+    });
+
+    it('point POI absent de loadedFeatures : repli sur le libellé figé', () => {
+        state.loadedFeatures = [];
+        state.homeLocation = { lat: 1, lng: 2, poiId: 'disparu', label: 'Ancien lieu' };
+        expect(getStartPointLabel()).toBe('Ancien lieu');
     });
 
     it('renvoie null sans point défini', () => {
@@ -52,7 +72,7 @@ describe('start-point — getStartPointLabel', () => {
         expect(getStartPointLabel()).toBeNull();
     });
 
-    it('renvoie null si le point n\'a pas de libellé', () => {
+    it('renvoie null si le point n\'a ni poiId ni libellé', () => {
         state.homeLocation = { lat: 1, lng: 2 };
         expect(getStartPointLabel()).toBeNull();
     });
