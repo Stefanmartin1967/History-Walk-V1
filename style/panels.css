@@ -555,17 +555,8 @@
         var(--poi-hero-bg);
 }
 .poi-hero.has-photo { cursor: pointer; }
-/* Conteneur des épingles, bas-gauche (le scrim est porté par .poi-hero[data-bg]). */
-.poi-hero-overlay {
-    position: absolute;
-    inset: auto 0 0 0;
-    padding: var(--space-md);
-}
-.poi-hero-tags {
-    display: flex;
-    gap: var(--space-xs);
-    flex-wrap: wrap;
-}
+/* (.poi-hero-overlay / .poi-hero-tags retirés — v3 : le hero ne porte plus
+   d'épingles de statut ; le statut descend dans le cartel, .cartel-status.) */
 /* (.poi-tag retiré — les pills translucides du hero sont passées en puces
    papier .cartel-chip, style/cartel.css.) */
 
@@ -773,24 +764,8 @@
 
 /* (.poi-tag.status / .poi-tag.access retirés — migrés vers
    .cartel-chip--ok / --warn / --muted / --danger, style/cartel.css.) */
-/* Compteur de photos, haut-droite — même grammaire papier que les épingles. */
-.poi-photo-count {
-    position: absolute;
-    top: var(--space-md);
-    right: var(--space-md);
-    background: var(--paper);
-    color: var(--ink);
-    border: var(--border-filet-strong);
-    box-shadow: var(--shadow-card);
-    padding: 4px 9px;
-    border-radius: var(--radius-xs);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-semibold);
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-.poi-photo-count svg { width: 12px; height: 12px; }
+/* (.poi-photo-count retiré — le compteur est désormais une puce papier
+   .cartel-chip dans .cartel-hero-count, style/cartel.css.) */
 .poi-back-pill {
     position: absolute;
     top: var(--space-md);
@@ -2520,7 +2495,7 @@
 /* Cover cliquable (le circuit a des photos) → ouvre la galerie agrégée.
    Affordance : curseur + renfort du badge « X photos » au survol. */
 .circuit-cover.is-clickable { cursor: pointer; }
-.circuit-cover.is-clickable:hover .cp-photo-count { background: var(--paper-raised); }
+.circuit-cover.is-clickable:hover .cartel-chip { background: var(--paper-raised); }
 .circuit-cover.is-clickable:focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: -2px;
@@ -2541,23 +2516,8 @@
 }
 
 /* Cover overlays */
-.cp-photo-count {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--paper);
-    color: var(--ink);
-    border: var(--border-filet-strong);
-    box-shadow: var(--shadow-card);
-    padding: 4px 9px;
-    border-radius: var(--radius-xs);
-    font-size: var(--font-size-sm);
-    font-weight: var(--weight-semibold);
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-}
-.cp-photo-count svg { width: 12px; height: 12px; }
+/* (.cp-photo-count retiré — le compteur du cover consomme .cartel-hero-count
+   + .cartel-chip, style/cartel.css, comme la fiche POI.) */
 /* (Option A : le cover ne porte AUCUNE pill de métadonnée — zone/étapes/km
    vivent dans le cartel/eyebrow sous la photo, sans doublon. .cp-cover-tags
    et .cp-pill retirés ; le cover ne garde que le compteur « N photos ».) */
