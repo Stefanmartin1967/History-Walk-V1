@@ -876,46 +876,9 @@
 .poi-body::-webkit-scrollbar { width: 6px; }
 .poi-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
 
-.poi-title-block {
-    padding: 18px 24px 14px;
-    border-bottom: 1px solid var(--surface-muted);
-}
-.poi-eyebrow {
-    font-size: 11px;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-    margin: 0 0 6px;
-}
-/* Sous-type : raffinement de la catégorie, inline dans l'eyebrow. Italique +
-   minuscules pour le distinguer du libellé de catégorie (en majuscules). */
-.poi-eyebrow-subtype {
-    text-transform: none;
-    font-style: italic;
-    font-weight: 500;
-    color: var(--ink);
-}
-.poi-eyebrow-subtype::before {
-    content: "— ";
-    font-style: normal;
-    color: var(--ink-soft);
-}
-.poi-title {
-    margin: 0 0 4px;
-    font-size: 22px;
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    color: var(--ink);
-}
-.poi-subtitle-ar {
-    margin: 0;
-    font-size: 14px;
-    color: var(--ink-soft);
-    direction: rtl;
-    text-align: right;
-}
+/* (.poi-title-block / .poi-eyebrow / .poi-eyebrow-subtype / .poi-title /
+   .poi-subtitle-ar migrés vers le bloc identité du cartel — .cartel-head /
+   .cartel-eyebrow / .cartel-title / .cartel-title-ar, dans style/cartel.css.) */
 
 /* Sections */
 .poi-section {
@@ -1259,49 +1222,8 @@
 }
 .poi-pop-item--danger:hover svg { color: var(--danger-fg, var(--danger)); }
 
-/* Eyebrow nav — chevrons inline ‹ 3/12 › quand POI in circuit.
-   Remplace .poi-nav-row PC + .poi-nav-pill mobile. */
-.poi-eyebrow-nav {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    vertical-align: middle;
-}
-.poi-eyebrow-chev {
-    display: inline-grid;
-    place-items: center;
-    width: 22px;
-    height: 22px;
-    border: none;
-    background: transparent;
-    border-radius: 6px;
-    color: var(--ink-soft);
-    cursor: pointer;
-    padding: 0;
-    transition: background 0.12s, color 0.12s;
-}
-.poi-eyebrow-chev:hover:not(:disabled) {
-    background: var(--surface-muted);
-    color: var(--brand);
-}
-.poi-eyebrow-chev:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-}
-.poi-eyebrow-chev svg {
-    width: 14px;
-    height: 14px;
-    stroke-width: 2.2;
-}
-.poi-eyebrow-chev:focus-visible {
-    outline: 2px solid var(--brand);
-    outline-offset: 1px;
-}
-.poi-eyebrow-pos {
-    font-variant-numeric: tabular-nums;
-    font-weight: 700;
-    color: var(--ink);
-}
+/* (Eyebrow nav ‹ 3/12 › migré vers .cartel-nav / .cartel-nav-chev /
+   .cartel-nav-pos, dans style/cartel.css.) */
 
 /* Mobile : flex column qui occupe au minimum la hauteur du conteneur scrollable
    #mobile-main-container. Le body grandit pour pousser la CTA bar en bas vraiment.
@@ -1339,19 +1261,22 @@
 }
 .poi-mobile-back svg { width: 18px; height: 18px; }
 .poi-mobile-title-wrap { flex: 1; min-width: 0; }
-.poi-mobile-cap {
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    margin-bottom: 1px;
-}
-.poi-mobile-title {
-    margin: 0;
-    font-size: 15px;
-    font-weight: 700;
+/* Bloc identité dans le header mobile sticky : réutilise les classes cartel
+   (.cartel-eyebrow / .cartel-title serif / .cartel-title-ar) en version
+   COMPACTE — titre + sous-titre arabe sur une ligne ellipsée, header dense.
+   Spécificité 2 classes → l'emporte sur la base 1-classe de cartel.css. */
+.poi-mobile-header .cartel-eyebrow { font-size: 9px; gap: 6px; margin: 0 0 1px; }
+.poi-mobile-header .cartel-nav-chev { width: 22px; height: 22px; }
+.poi-mobile-header .cartel-title {
+    font-size: 16px;
     line-height: 1.2;
-    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.poi-mobile-header .cartel-title-ar {
+    font-size: 13px;
+    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1359,8 +1284,7 @@
 
 /* Padding contenu de fiche POI mobile : vit dans #mobile-main-container.
    Cible le body POI mobile qui a data-poi-id (vs. PC qui n'a pas cet attribut). */
-.poi-body[data-poi-id] .poi-section,
-.poi-body[data-poi-id] .poi-title-block {
+.poi-body[data-poi-id] .poi-section {
     padding-left: 16px;
     padding-right: 16px;
 }
