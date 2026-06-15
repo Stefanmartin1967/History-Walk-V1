@@ -285,10 +285,8 @@ export const GUIDE_CIRCUIT = {
     sections: [
         {
             heading: `0 · Ce qu'est un circuit`,
-            html: `<p>Une suite de <strong>lieux</strong> (les <strong>étapes</strong>,
-                numérotées 1, 2, 3…) et un <strong>itinéraire</strong> qui les relie. Un lieu
-                est un <strong>point d'intérêt</strong> — Heripia l'abrège « <strong>POI</strong> »
-                à l'écran <span class="help-muted">(par exemple le compteur « 3&nbsp;POIs »)</span>.</p>
+            html: `<p>Une suite de <strong>lieux</strong> (numérotés 1, 2, 3…) et un
+                <strong>itinéraire</strong> qui les relie.</p>
                 <p>Tant que vous construisez le circuit, il reste un <strong>brouillon ·
                 auto-sauvegardé</strong> : vous pouvez fermer Heripia et le retrouver intact.</p>`,
         },

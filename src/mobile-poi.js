@@ -290,7 +290,7 @@ function renderCircuitView(container, listToDisplay) {
         <div class="cc-ident">
             <div class="cc-eyebrow">
                 ${zoneName ? `<span>${escapeHtml(zoneName.toUpperCase())}</span><span class="sep">·</span>` : ''}
-                <span>${poiCount} POIS</span><span class="sep">·</span>
+                <span>${poiCount} LIEUX</span><span class="sep">·</span>
                 <span>${kmDisplay} KM</span>
                 ${denivHtml}
                 ${pagerHtml}
@@ -326,10 +326,6 @@ function renderCircuitView(container, listToDisplay) {
             </button>
         </div>
         <div class="cc-timeline-wrap">
-            <div class="cc-timeline-cap">
-                <span>ÉTAPES</span>
-                <span>${poiCount} POIS</span>
-            </div>
             ${stepsHtml}
         </div>
     `;

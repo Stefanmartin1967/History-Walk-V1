@@ -76,7 +76,7 @@ function renderBody() {
           <div class="me-trash-ico"><i data-lucide="route"></i></div>
           <div class="me-trash-text">
             <p class="me-trash-title">${safeName}</p>
-            <p class="me-trash-meta">${n} POI${n > 1 ? 's' : ''} · supprimé</p>
+            <p class="me-trash-meta">${n} lieu${n > 1 ? 'x' : ''} · supprimé</p>
           </div>
           <div class="me-trash-actions">
             <button class="me-btn secondary" data-action="restore" data-id="${c.id}" type="button">

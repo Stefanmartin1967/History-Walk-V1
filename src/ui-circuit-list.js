@@ -800,7 +800,7 @@ function createCircuitCard(c) {
     // Ligne 2 — méta : POI / km en stack pastille + zone en pastille subtile
     const distKm = ((c._dist || 0) / 1000).toFixed(1).replace('.', ',');
     const metaPieces = [
-        `<span class="va-stat"><span class="num">${c._poiCount}</span><span class="unit">POI</span></span>`,
+        `<span class="va-stat"><span class="num">${c._poiCount}</span><span class="unit">lieu${c._poiCount > 1 ? 'x' : ''}</span></span>`,
         `<span class="va-stat"><span class="num">${distKm}</span><span class="unit">km</span></span>`,
     ];
     if (c._zoneName) {

@@ -3110,26 +3110,6 @@
     position: relative;
 }
 #circuit-panel[data-mode="consult"] .circuit-timeline { padding: 14px 8px 24px; }
-.circuit-timeline-cap {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-    margin: 0 0 8px;
-    padding-left: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-#circuit-panel[data-mode="create"] .circuit-timeline-cap { padding-left: 54px; }
-.circuit-timeline-cap .progress,
-.circuit-timeline-cap .count {
-    font-variant-numeric: tabular-nums;
-    color: var(--ink);
-}
-
 /* Chaque étape = mini-carte façon Mes Circuits Variante A
    (background blanc, border, padding, radius). Pas de connecteur vertical :
    les cartes sont séparées par le gap de .circuit-timeline. */

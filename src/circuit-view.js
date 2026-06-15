@@ -115,15 +115,11 @@ export function renderCircuitList(points, callbacks, isOfficial = false) {
                 </div>
             `);
         } else {
-            DOM.circuitStepsList.innerHTML = `<p class="empty-list-info">Aucun POI dans ce circuit.</p>`;
+            DOM.circuitStepsList.innerHTML = `<p class="empty-list-info">Aucun lieu dans ce circuit.</p>`;
         }
     } else {
-        // Étapes header
-        const cap = document.createElement('div');
-        cap.className = 'circuit-timeline-cap';
-        cap.innerHTML = sanitizeHTML(`<span>Étapes</span><span class="count">${points.length} POI${points.length > 1 ? 's' : ''}</span>`);
-        DOM.circuitStepsList.appendChild(cap);
-
+        // Plus d'en-tête « Étapes » : le compteur vit dans l'eyebrow du cartel
+        // (zone · N lieux · km) et la liste numérotée se suffit à elle-même.
         points.forEach((feature, index) => {
             const stepEl = createStepElement(feature, index, points.length, callbacks, isOfficial);
             DOM.circuitStepsList.appendChild(stepEl);
@@ -164,26 +160,19 @@ function initTimelineDrag() {
         chosenClass: 'is-dragging',
         ghostClass: 'sortable-ghost',
         dragClass: 'sortable-drag',
-        // Empêche le drag sur la cap (.circuit-timeline-cap) et l'empty state
-        filter: '.circuit-timeline-cap, .timeline-empty',
+        // Empêche le drag sur l'empty state (la liste ne contient que des étapes)
+        filter: '.timeline-empty',
         preventOnFilter: false,
         onEnd: async (evt) => {
             const oldIdx = evt.oldIndex;
             const newIdx = evt.newIndex;
             if (oldIdx === undefined || newIdx === undefined || oldIdx === newIdx) return;
 
-            // Compense le décalage du cap (premier child = .circuit-timeline-cap)
-            // Si le cap est inclus dans les indices, ajuster.
-            const cap = DOM.circuitStepsList.querySelector('.circuit-timeline-cap');
-            const capIdx = cap ? Array.from(DOM.circuitStepsList.children).indexOf(cap) : -1;
-
-            const adjOld = capIdx !== -1 && oldIdx > capIdx ? oldIdx - 1 : oldIdx;
-            const adjNew = capIdx !== -1 && newIdx > capIdx ? newIdx - 1 : newIdx;
-
-            // Réordonne state.currentCircuit
+            // La liste ne contient plus que des étapes (en-tête « Étapes »
+            // retiré) → les index Sortable correspondent directement au circuit.
             const arr = [...state.currentCircuit];
-            const [moved] = arr.splice(adjOld, 1);
-            arr.splice(adjNew, 0, moved);
+            const [moved] = arr.splice(oldIdx, 1);
+            arr.splice(newIdx, 0, moved);
             setCurrentCircuit(arr);
 
             // Sauvegarde brouillon + re-render (renumérote les steps) via le
@@ -260,7 +249,7 @@ export function updateCircuitHeader(data) {
     }
     if (DOM.circuitPoiCount) {
         const n = state.currentCircuit.length;
-        DOM.circuitPoiCount.textContent = `${n} POI${n > 1 ? 's' : ''}`;
+        DOM.circuitPoiCount.textContent = `${n} lieu${n > 1 ? 'x' : ''}`;
     }
     if (DOM.circuitDistance) {
         DOM.circuitDistance.textContent = data.distanceText || '0 km';
