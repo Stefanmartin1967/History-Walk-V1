@@ -1,0 +1,1321 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.2999417,
+          36.3444486
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKBYS4HVC8KM3A761DGK1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3003805,
+          36.3453959
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKBZ7A8B90W0DKPJE4TSE"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.301693,
+          36.3455094
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKBZNWNPY99FWMM59T5EY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3029293,
+          36.4548731
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Haounet Zit",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKBZZ3ZD73T9HSYYK79WB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.513276,
+          36.476213
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jebel Latrach - Haouanet",
+        "Catégorie": "Site historique",
+        "Zone": "Latrach",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC0BQ0Z22847JN8YKQHG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4500925,
+          36.338507
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع الرحمة بسيدي سعيد",
+        "Catégorie": "Mosquée",
+        "Zone": "Sidi Said",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC0QMB2F7P0M3J4FAF46"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5616218,
+          36.3933267
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Pupput",
+        "Catégorie": "Site historique",
+        "Zone": "Manaret El Hammamet",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC12EMT91GA9A2CNV0WV"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3370555,
+          36.3379033
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Errahma",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "HW_ID": "HW-01KV0EKC1D8FZ2K5343P0JEKCR",
+        "Nom du site arabe": "جامع الرحمة",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.2997992,
+          36.3449576
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC20NYNSEHK56S0GJ05H"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7362439,
+          36.4506766
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Nabeul Museum",
+        "Catégorie": "Culture et tradition",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC2DQG8WET4SAEVZM470"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7211538,
+          36.4612842
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Bir Challouf",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC31ECFY68RASB56PQHP"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7383473,
+          36.455691
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al-Karma",
+        "Catégorie": "Mosquée",
+        "Zone": "El Asouak",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC3ERMHJWZZ07KH8YC4X"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7816316,
+          36.4680997
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC3WZMYDJY51JHV66NF3"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7744969,
+          36.4631471
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Fadhel Ben Achour",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC48HEV7BJ1JGACRK6FB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.780827,
+          36.4670946
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC4KH0MXZXS9JFBGCJ3M"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7850005,
+          36.4693119
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC4Y84KCZM43KXKZPS40"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7879885,
+          36.4559257
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC5E3GGE2T73D1AMT25Q"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.756559,
+          36.4526875
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع القدس",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC60BY991669B75MWMWX"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6135913,
+          36.3943987
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "المسجد الكبير",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Est",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC6BW1CZM4K2KTW54S0J"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6175029,
+          36.4054052
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع الغفران",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Est",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC6QHVMCDXAHGPBZ8WQB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6096312,
+          36.4103855
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Ihsen",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Nord",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC78HG349CZXRFHVSP06"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6209599,
+          36.4014338
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Salem",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Est",
+        "HW_ID": "HW-01KV0EKC7PV6A2K2K2MDWJ8C6B",
+        "Nom du site arabe": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6144926,
+          36.3947446
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Est",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC819B0W4A310AFWPAJK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7356379,
+          36.4512951
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "الجرة",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC8PMMDP7K38BXVE1T4W"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7373354,
+          36.4517367
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ibn Khaldoun",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC940Q8DQEABFBSQWV7Y"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7315132,
+          36.4527653
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Les Oranges",
+        "Catégorie": "Site historique",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC9FEXF8J241G6NS21YJ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7810626,
+          36.4693803
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "La Jarre",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKC9TDXCJ2QWGW4SB8ZPM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6303823,
+          36.4050921
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Statue d'un Soldat Martyr",
+        "Catégorie": "Curiosité",
+        "Zone": "Hammamet Est",
+        "HW_ID": "HW-01KV0EKCA4D81XKB9PMAT8GABF",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7424742,
+          36.4576993
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "سوق الهجن",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCAJ967FPZ0R3NHBP8WB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7489724,
+          36.4660871
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "سيدي الفهري",
+        "Catégorie": "Mosquée",
+        "Zone": "Dar Chaabane",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCAZ6K83TN5CTPEX3RY4"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7516632,
+          36.4657869
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع طارق ابن زياد",
+        "Catégorie": "Mosquée",
+        "Zone": "Dar Chaabane",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCB9K5PZTK8AAYGEEK13"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7315711,
+          36.4498498
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع الكونية",
+        "Catégorie": "Mosquée",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCBXDV866PH72M3QP4WS"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7324831,
+          36.4558924
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع السلام",
+        "Catégorie": "Mosquée",
+        "Zone": "El Asouak",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCCBH9A3RNE1T70GXR44"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7863999,
+          36.5194839
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCCQ44W6W1QZGF9C3ESM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6766083,
+          36.504936
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد عين كميشة",
+        "Catégorie": "Mosquée",
+        "Zone": "Hedi Chaker",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCD3XX9261YR4BH83ZZK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7235322,
+          36.4551034
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع سيدي عاشور",
+        "Catégorie": "Mosquée",
+        "Zone": "Bir Challouf",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCDGX8RX2J8ZBTW6Q1GF"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7182003,
+          36.4403641
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "الموقع الاثري نيابوليس",
+        "Catégorie": "Site historique",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCDZG0R32C0GA92BW9JC"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7169025,
+          36.4396639
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Néapolis",
+        "Catégorie": "Site historique",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCEA2WVAPC3G7ZKGW4VP"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7175027,
+          36.438867
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Néapolis",
+        "Catégorie": "Site historique",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCENEXBV6PVKSTNJS81T"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7193784,
+          36.440632
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Néapolis",
+        "Catégorie": "Site historique",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCFAH7B1CHVFHH03SMS1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8067422,
+          36.4650076
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Gofrane",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCFS8VFBWX08M57H5J9B"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8031085,
+          36.4646214
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCG523ARQJVT047CJXMK"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7476408,
+          36.4600179
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع الأنصار",
+        "Catégorie": "Mosquée",
+        "Zone": "Dar Chaabane",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCGH6Z3SEKDGEVMZXNZG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7189237,
+          36.446747
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée de Oued Souhil",
+        "Catégorie": "Mosquée",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCGXT0X93K13YZKDXNMM"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7296453,
+          36.4398748
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Sliman",
+        "Catégorie": "Mosquée",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCHCZ4ENKQSWS0HQX66N"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7338912,
+          36.4573998
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Rbat",
+        "Catégorie": "Mosquée",
+        "Zone": "El Asouak",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCHQE565K90BC2SP3TKQ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7353803,
+          36.4544671
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "مسجد السبيتة",
+        "Catégorie": "Mosquée",
+        "Zone": "El Asouak",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCJCTG49GH44XB0NPSJD"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7389934,
+          36.4565103
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Eglise de Nabeul",
+        "Catégorie": "Église",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCJSP4MCWE6ABP6AEZWE",
+        "Nom du site arabe": "",
+        "Sous-type": "Catholique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7116709,
+          36.4388424
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع سيدي محرصي",
+        "Catégorie": "Mosquée",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCK8SWA9ST8HT632FVZT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7267985,
+          36.4573281
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée EL FALEH Nabeul",
+        "Catégorie": "Mosquée",
+        "Zone": "Bir Challouf",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCKMDN585Z9MT2AJFTJ9"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7363631,
+          36.4567892
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Grande Mosquée de Nabeul",
+        "Catégorie": "Mosquée",
+        "Zone": "El Asouak",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCM0TC0W3S14WBE42ATY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7450194,
+          36.4511229
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al-Rahma",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCMDFPVB5CCYH18GFN5D"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6905621,
+          36.4464193
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع أبو بكر الصديق",
+        "Catégorie": "Mosquée",
+        "Zone": "Neapolis",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCMW89D3DJFYQF1PDVCY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7369368,
+          36.4582073
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Boujèlèbia",
+        "Catégorie": "Mosquée",
+        "Zone": "El Asouak",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCNGECNHQ5HD91N5AJK1"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7362122,
+          36.4555709
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée SIDI ABDELKADER Nabeul",
+        "Catégorie": "Mosquée",
+        "Zone": "El Asouak",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCNWF25GA995TV9C2FWZ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7817064,
+          36.4699136
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Place de L'Indépendance",
+        "Catégorie": "Site historique",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCP8HABWBC5ESDYHT32A"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7800216,
+          36.4682595
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Market Mosquée",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCPR22D1Z2WWHHY615RB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6150324,
+          36.3957909
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Youssef",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Est",
+        "HW_ID": "HW-01KV0EKCQ7JA7BHMBDY6VD287R",
+        "Nom du site arabe": "يوسف مسجد سيدي",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6176637,
+          36.3948144
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Eglise d'Hammamet",
+        "Catégorie": "Église",
+        "Zone": "Hammamet Est",
+        "HW_ID": "HW-01KV0EKCQRTQ0SBDWARW32GAV2",
+        "Nom du site arabe": "",
+        "Sous-type": "Catholique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "Église du Bienheureux Antoine Neyrot d'Hammamet",
+        "description": "Église catholique d'Hammamet, placée sous le patronage du Bienheureux Antoine Neyrot, dominicain lapidé à Tunis en 1460 et dont les reliques furent transférées de Turin à Hammamet.\nLe bâtiment actuel a été inauguré le 27 octobre 1968. Il succède à une première église, bénie en 1909 et inspirée de la primatiale de Carthage, qui fut cédée au gouvernement tunisien après l'indépendance puis démolie pour laisser place à la poste. La paroisse d'Hammamet, elle, remonte à 1884.\nLa communauté chrétienne d'Hammamet est restée modeste — environ 195 personnes recensées en 1925 — mais l'église demeure vivante aujourd'hui, avec des messes célébrées en plusieurs langues.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "https://fr.wikipedia.org/wiki/%C3%89glise_du_Bienheureux_Antoine_Neyrot_d%27Hammamet",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6726918,
+          36.4284094
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquee Al Ikhlass Mreaga",
+        "Catégorie": "Mosquée",
+        "Zone": "El Mrezga",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCR47B7VRJ7ER6WVMKEB"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6548571,
+          36.4182511
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquee El Fath",
+        "Catégorie": "Mosquée",
+        "Zone": "El Mrezga",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCRKD5E1G39EQJCWRQMQ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6329367,
+          36.4085182
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al Ber",
+        "Catégorie": "Mosquée",
+        "Zone": "Hammamet Nord",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCS0MWNPB19FB5S56TPZ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7480503,
+          36.4663783
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Grande Mosquée de Dar Chaabane",
+        "Catégorie": "Mosquée",
+        "Zone": "Dar Chaabane",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCSCRTQKFD5NPSQ2TQB4"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7898808,
+          36.4730258
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Hors zone",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCST8T9DK21HX08PC4PF"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7341455,
+          36.4538697
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "قوس نابل",
+        "Catégorie": "Site historique",
+        "Zone": "El Asouak",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCT96B14W67QY0AK9YTJ"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7483344,
+          36.4676418
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "جامع سيدي الشريف",
+        "Catégorie": "Mosquée",
+        "Zone": "Dar Chaabane",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCTQHTG726G5NTR3C1EV"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7494079,
+          36.4655226
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "Zone": "Dar Chaabane",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCV5HSDTVRKA5EM4S56G"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6469965,
+          36.4528367
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Nord",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCVTNRS0BN9XMMSTHBKA"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6479862,
+          36.4527559
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Nord",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCWB3J3SV6X1BHJ6RB7P"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6489597,
+          36.4506168
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site historique",
+        "Zone": "Hammamet Nord",
+        "candidate": true,
+        "HW_ID": "HW-01KV0EKCWRFT27BKBY53F1MDCY"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6123709,
+          36.3945431
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Fort de Hammamet",
+        "Catégorie": "Fortification",
+        "Zone": "Hammamet Est",
+        "HW_ID": "HW-01KV0EKCX5KQMAN03K5FTFZFNT",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "Conservé",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.557212233543396,
+          36.39014053732575
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "SplashWorld AQI Venus Beach",
+        "Catégorie": "Hôtel",
+        "Zone": "Manaret El Hammamet",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "HW_ID": "HW-01KV15K1HVXPF56HWR0MVNJD2V",
+        "accessPoint": [
+          10.5576233,
+          36.3902501
+        ],
+        "accessPointStatus": "osm"
+      }
+    }
+  ]
+}
