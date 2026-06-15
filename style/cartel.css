@@ -226,7 +226,7 @@
     background: var(--paper-raised);
     border: var(--border-filet);
     border-left: var(--liseret-width) solid transparent;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-lg);
     min-height: 56px;
     text-decoration: none;
     color: inherit;
@@ -239,7 +239,7 @@
     height: 34px;
     display: grid;
     place-items: center;
-    border: var(--border-filet-strong);
+    border: var(--border-filet);
     border-radius: var(--radius-pill);
     background: var(--paper);
     color: var(--ink);
