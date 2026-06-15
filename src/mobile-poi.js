@@ -5,7 +5,7 @@
 // Le sticky bar bas Partager/GPX a disparu (actions absorbées par .cc-actions).
 
 import { state } from './state.js';
-import { getPoiId, getPatrimonialName, updatePoiCoordinates, applyFilters } from './data.js';
+import { getPoiId, getPatrimonialName, updatePoiCoordinates, applyFilters, isCategoryInName } from './data.js';
 import { getStepCategoryDisplay } from './poi-icons.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance, getPoiProp } from './utils.js';
@@ -159,14 +159,15 @@ function renderSimplePoiList(container, listToDisplay) {
         const poiId = getPoiId(feature);
         const cat = getStepCategoryDisplay(feature);
         const isVisited = getPoiProp(feature, 'vu');
+        const showCat = !isCategoryInName(feature, cat.label);
         listHtml += `
-            <a class="cc-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
-                <div class="cc-step-num">${isVisited ? '<i data-lucide="check"></i>' : '<i data-lucide="map-pin"></i>'}</div>
-                <div class="cc-step-body">
-                    <div class="cc-step-name" dir="auto">${escapeHtml(name)}</div>
-                    <span class="cc-step-cat ${cat.variant}">${cat.iconHtml}${escapeHtml(cat.label)}</span>
-                </div>
-                <span class="cc-step-chev"><i data-lucide="chevron-right"></i></span>
+            <a class="cartel-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
+                <span class="cartel-step-num">${isVisited ? '<i data-lucide="check"></i>' : '<i data-lucide="map-pin"></i>'}</span>
+                <span class="cartel-step-body">
+                    <span class="cartel-step-name" dir="auto">${escapeHtml(name)}</span>
+                    ${showCat ? `<span class="cartel-step-cat">${escapeHtml(cat.label)}</span>` : ''}
+                </span>
+                <span class="cartel-step-chev"><i data-lucide="chevron-right"></i></span>
             </a>
         `;
     });
@@ -176,7 +177,7 @@ function renderSimplePoiList(container, listToDisplay) {
     const headerSlot = document.getElementById('mobile-header-slot');
     if (headerSlot) createIcons({ icons: appIcons, root: headerSlot });
 
-    container.querySelectorAll('.cc-step').forEach(step => {
+    container.querySelectorAll('.cartel-step').forEach(step => {
         step.addEventListener('click', (e) => {
             e.preventDefault();
             const poiId = step.dataset.poiId;
@@ -270,14 +271,15 @@ function renderCircuitView(container, listToDisplay) {
         const poiId = getPoiId(feature);
         const cat = getStepCategoryDisplay(feature);
         const isVisited = getPoiProp(feature, 'vu');
+        const showCat = !isCategoryInName(feature, cat.label);
         stepsHtml += `
-            <a class="cc-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
-                <div class="cc-step-num">${isVisited ? '<i data-lucide="check"></i>' : (i + 1)}</div>
-                <div class="cc-step-body">
-                    <div class="cc-step-name" dir="auto">${escapeHtml(name)}</div>
-                    <span class="cc-step-cat ${cat.variant}">${cat.iconHtml}${escapeHtml(cat.label)}</span>
-                </div>
-                <span class="cc-step-chev"><i data-lucide="chevron-right"></i></span>
+            <a class="cartel-step ${isVisited ? 'is-done' : ''}" data-poi-id="${poiId}" href="#">
+                <span class="cartel-step-num">${isVisited ? '<i data-lucide="check"></i>' : (i + 1)}</span>
+                <span class="cartel-step-body">
+                    <span class="cartel-step-name" dir="auto">${escapeHtml(name)}</span>
+                    ${showCat ? `<span class="cartel-step-cat">${escapeHtml(cat.label)}</span>` : ''}
+                </span>
+                <span class="cartel-step-chev"><i data-lucide="chevron-right"></i></span>
             </a>
         `;
     });
@@ -383,7 +385,7 @@ function renderCircuitView(container, listToDisplay) {
         renderMobilePoiList(listToDisplay);
     });
 
-    container.querySelectorAll('.cc-step').forEach(step => {
+    container.querySelectorAll('.cartel-step').forEach(step => {
         step.addEventListener('click', (e) => {
             e.preventDefault();
             const poiId = step.dataset.poiId;

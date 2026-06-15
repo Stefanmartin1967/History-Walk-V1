@@ -1,20 +1,18 @@
 // circuit-view.js — V2 Onglet Circuit (consultation + création)
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
-import { getPatrimonialName, getPoiId } from './data.js';
+import { getPatrimonialName, getPoiId, isCategoryInName } from './data.js';
 import { state, setCurrentCircuit } from './state.js';
-import { sanitizeHTML, escapeXml } from './utils.js';
+import { sanitizeHTML, escapeXml, getPoiProp } from './utils.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStepCategoryDisplay } from './poi-icons.js';
 import Sortable from 'sortablejs';
 
-// Pastille catégorie d'étape (.step-cat) : icône du pack POI officiel +
-// label + variante de pastille via getStepCategoryDisplay (poi-icons.js) —
-// même source que la carte, la timeline mobile et la légende, sous-types
-// inclus. Remplace l'ancien mapping Lucide local resté sur la taxonomie v1
-// (« Borj », « Caravansérail »… ; 'moon-star' absent d'appIcons → icône
-// invisible + warning console en boucle).
+// Catégorie d'étape : label via getStepCategoryDisplay (poi-icons.js), même
+// source que la carte et la légende (sous-types inclus). Affichée en eyebrow
+// sépia (.cartel-step-cat) SEULEMENT si absente du nom (isCategoryInName) — donc
+// un circuit de mosquées n'écrit pas « Mosquée » sur chaque « Mosquée X ».
 
 /**
  * Génère une étape de timeline V2.
@@ -24,6 +22,10 @@ import Sortable from 'sortablejs';
 function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
     const poiName = getPatrimonialName(feature);
     const cat = getStepCategoryDisplay(feature);
+    const isVisited = getPoiProp(feature, 'vu');
+    // Catégorie affichée SEULEMENT si absente du nom (cf. isCategoryInName) : un
+    // circuit de mosquées n'affiche pas « Mosquée » sur chaque « Mosquée X ».
+    const showCat = !isCategoryInName(feature, cat.label);
     // Mode édition (poignée + boutons) UNIQUEMENT si :
     //  - brouillon en cours (pas d'activeCircuitId), OU
     //  - on a cliqué "Modifier" (state.editingMode).
@@ -36,7 +38,7 @@ function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
         || state.editingMode;
 
     const a = document.createElement('a');
-    a.className = 'timeline-step';
+    a.className = 'cartel-step' + (isVisited ? ' is-done' : '');
     a.href = '#';
     a.dataset.index = String(index);
 
@@ -46,11 +48,11 @@ function createStepElement(feature, index, totalPoints, callbacks, isOfficial) {
         html += `<span class="step-handle" title="Faire glisser pour réordonner"><i data-lucide="grip-vertical"></i></span>`;
     }
 
-    html += `<div class="step-num">${index + 1}</div>`;
-    html += `<div class="step-body">`;
-    html += `<div class="step-name" dir="auto">${escapeXml(poiName)}</div>`;
-    html += `<span class="step-cat${cat.variant ? ' ' + cat.variant : ''}">${cat.iconHtml}${escapeXml(cat.label)}</span>`;
-    html += `</div>`;
+    html += `<span class="cartel-step-num">${isVisited ? '<i data-lucide="check"></i>' : (index + 1)}</span>`;
+    html += `<span class="cartel-step-body">`;
+    html += `<span class="cartel-step-name" dir="auto">${escapeXml(poiName)}</span>`;
+    if (showCat) html += `<span class="cartel-step-cat">${escapeXml(cat.label)}</span>`;
+    html += `</span>`;
 
     if (isCreate) {
         const upDisabled = index === 0 ? 'is-disabled' : '';
