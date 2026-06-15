@@ -62,6 +62,19 @@ export function getSearchableNames(feature) {
     ].filter(n => typeof n === 'string' && n.trim());
 }
 
+// Vrai si le libellé de catégorie apparaît DÉJÀ dans une variante de nom du POI
+// (FR/arabe, insensible casse + accents) → la catégorie est redondante avec le nom
+// (ex. « Mosquée » sur « Mosquée Ben Hadid » / « جامع … ») et se masque dans les
+// listes d'étapes. Sous-chaîne simple, pas de synonymes (« Café » ≠ « Restaurant »
+// l'afficherait — voulu). Réutilise getSearchableNames → couvre les deux langues.
+export function isCategoryInName(feature, categoryLabel) {
+    if (!categoryLabel) return false;
+    const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
+    const cat = norm(categoryLabel);
+    if (!cat) return false;
+    return getSearchableNames(feature).some((n) => norm(n).includes(cat));
+}
+
 // --- GESTION DES MIGRATIONS D'ID (ADMIN) ---
 
 // Migration des IDs legacy (gen_*, custom_*, hors format HW-ULID) vers HW-ULID.

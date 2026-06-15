@@ -240,7 +240,7 @@
    ============================================================
    Le marqueur ne DISPARAÎT pas quand il est coché visité (le masquage des
    visités = Lot 2) : on l'atténue et on pose une pastille de coche verte,
-   même langage que la timeline (.cc-step.is-done). */
+   même langage que la timeline (.cartel-step.is-done). */
 .hw-icon.hw-mk-done .hw-icon-wrapper { opacity: .5; }
 .hw-icon.hw-mk-done::after {
     content: ""; position: absolute; top: -2px; right: -2px;

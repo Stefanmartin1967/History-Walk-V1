@@ -422,8 +422,8 @@ export function getIconForFeature(feature) {
 }
 
 /**
- * Pastille catégorie d'une étape de timeline circuit (PC .step-cat + mobile
- * .cc-step-cat). Source UNIQUE : icône du pack via getIconForFeature
+ * Catégorie d'une étape de timeline circuit (eyebrow .cartel-step-cat, PC +
+ * mobile). Source UNIQUE : icône du pack via getIconForFeature
  * (sous-type-aware) + label + variante de couleur du pill.
  * Extrait de mobile-poi.js (12/06/2026) pour servir aussi circuit-view.js,
  * qui gardait un mapping Lucide parallèle resté sur la taxonomie v1
