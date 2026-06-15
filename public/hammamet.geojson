@@ -227,11 +227,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "La grande mosquée",
         "Catégorie": "Mosquée",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKC3WZMYDJY51JHV66NF3"
+        "HW_ID": "HW-01KV0EKC3WZMYDJY51JHV66NF3",
+        "Nom du site arabe": "الجامع الكبير",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Traduction du nom arabe - A vérifier",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -278,11 +290,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Mosquée Al Nozha",
         "Catégorie": "Mosquée",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKC4Y84KCZM43KXKZPS40"
+        "HW_ID": "HW-01KV0EKC4Y84KCZM43KXKZPS40",
+        "Nom du site arabe": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -478,10 +502,22 @@
       },
       "properties": {
         "Nom du site FR": "La Jarre",
-        "Catégorie": "Site historique",
+        "Catégorie": "Curiosité",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKC9TDXCJ2QWGW4SB8ZPM"
+        "HW_ID": "HW-01KV0EKC9TDXCJ2QWGW4SB8ZPM",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Lieu trouvé sur OSM à vérifier",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -608,11 +644,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Mosquée Knayes",
         "Catégorie": "Mosquée",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKCCQ44W6W1QZGF9C3ESM"
+        "HW_ID": "HW-01KV0EKCCQ44W6W1QZGF9C3ESM",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -727,11 +775,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Gofrane",
+        "Nom du site FR": "Mosquée El Ghofrane",
         "Catégorie": "Mosquée",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKCFS8VFBWX08M57H5J9B"
+        "HW_ID": "HW-01KV0EKCFS8VFBWX08M57H5J9B",
+        "Nom du site arabe": "جامع الغُفران",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -744,11 +804,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Mosquée Taouba",
         "Catégorie": "Mosquée",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKCG523ARQJVT047CJXMK"
+        "HW_ID": "HW-01KV0EKCG523ARQJVT047CJXMK",
+        "Nom du site arabe": "جامع التوبة",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -996,10 +1068,22 @@
       },
       "properties": {
         "Nom du site FR": "Place de L'Indépendance",
-        "Catégorie": "Site historique",
+        "Catégorie": "Curiosité",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKCP8HABWBC5ESDYHT32A"
+        "HW_ID": "HW-01KV0EKCP8HABWBC5ESDYHT32A",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Vérifier l'existence d'un monument de l'indépendance",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -1012,11 +1096,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Market Mosquée",
+        "Nom du site FR": "Mosquée du marché",
         "Catégorie": "Mosquée",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKCPR22D1Z2WWHHY615RB"
+        "HW_ID": "HW-01KV0EKCPR22D1Z2WWHHY615RB",
+        "Nom du site arabe": "جامع السوق",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Google Maps et OSM affiche Market Mosquée, à vérifier",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -1155,11 +1251,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Mosquée du repentir",
         "Catégorie": "Mosquée",
         "Zone": "Hors zone",
-        "candidate": true,
-        "HW_ID": "HW-01KV0EKCST8T9DK21HX08PC4PF"
+        "HW_ID": "HW-01KV0EKCST8T9DK21HX08PC4PF",
+        "Nom du site arabe": "جامع التوبة",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Traduction du nom arabe - A vérifier",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
@@ -1313,6 +1421,32 @@
         "accessPoint": [
           10.5576233,
           36.3902501
+        ],
+        "accessPointStatus": "osm"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.780623753471914,
+          36.46964873436894
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Massoud",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Zone": "Hors zone",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "HW_ID": "HW-01KV603SFE7RHDZTV4JPAE0JNP",
+        "accessPoint": [
+          10.7808012,
+          36.4696133
         ],
         "accessPointStatus": "osm"
       }
