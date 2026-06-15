@@ -3,7 +3,7 @@ import { applyFilters } from './data.js';
 import { clearCircuit, cancelPendingCircuitLoad } from './circuit.js';
 import { toggleCircuitCreationMode } from './ui-circuit-editor.js';
 import { map } from './map.js';
-import { addPoiFeature, getPoiId, getPoiName, updatePoiData } from './data.js';
+import { addPoiFeature, getPoiId, updatePoiData } from './data.js';
 import { state } from './state.js';
 import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos, getAllPoiPhotoHashes, getAllPendingAdminPhotoHashes } from './database.js';
 import { compressImage, generatePhotoId, PUBLISH_COMPRESSION, USER_COMPRESSION } from './photo-service.js';

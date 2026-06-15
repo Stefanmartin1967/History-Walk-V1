@@ -3,7 +3,7 @@ import L from 'leaflet';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { state, setGhostMarker } from './state.js';
-import { getPoiName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
+import { getPatrimonialName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
 import { map, clearMarkerHighlights } from './map.js';
 import { getSearchResults } from './search.js';
 import { openCoordsOnMap } from './utils.js';
@@ -35,7 +35,7 @@ export function setupSearch() {
         // On limite à 50 résultats pour ne pas surcharger
         results.slice(0, 50).forEach(feature => {
             const resultBtn = document.createElement('button');
-            resultBtn.textContent = getPoiName(feature); // Utilise le nom intelligent (custom > officiel)
+            resultBtn.textContent = getPatrimonialName(feature); // Nom dans la langue affichée (custom > officiel)
 
             resultBtn.addEventListener('click', () => {
                 // Reset de la barre de recherche

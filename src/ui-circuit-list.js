@@ -22,8 +22,8 @@ import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
-import { applyFilters, getPoiId, getPoiName, getPatrimonialName } from './data.js';
-import { openStartPointModal } from './start-point.js';
+import { applyFilters, getPoiId, getPatrimonialName, getSearchableNames } from './data.js';
+import { openStartPointModal, getStartPointLabel } from './start-point.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { isMobileView } from './mobile-state.js';
 import { configureHelp, helpButton } from './help-popover.js';
@@ -262,7 +262,7 @@ function renderFilterPanel() {
             ${state.homeLocation && currentSort === 'proximity_asc' ? `
             <div class="sp-hint">
                 <i data-lucide="locate-fixed"></i>
-                <span>Depuis <strong>${escapeXml(state.homeLocation.label || 'lieu défini')}</strong></span>
+                <span>Depuis <strong dir="auto">${escapeXml(getStartPointLabel() || 'lieu défini')}</strong></span>
                 <button type="button" class="sp-edit" id="mc-sp-edit">modifier</button>
             </div>` : ''}
         </div>
@@ -622,7 +622,7 @@ export function renderExplorerList() {
                 return c.poiIds.some(id => {
                     const f = state.loadedFeatures.find(g => getPoiId(g) === id);
                     if (!f) return false;
-                    return getPoiName(f).toLowerCase().includes(q);
+                    return getSearchableNames(f).some(n => n.toLowerCase().includes(q));
                 });
             }
             return false;

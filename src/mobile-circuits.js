@@ -15,7 +15,7 @@
 // Pont vers state.filterCompleted pour préserver le shortcut "dock Filtre" mobile.
 
 import { state, setActiveFilter, setFilterCompleted } from './state.js';
-import { getPoiId, getPoiName, getPatrimonialName } from './data.js';
+import { getPoiId, getPatrimonialName, getSearchableNames } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { isCircuitTested, loadCircuitById } from './circuit.js';
@@ -139,7 +139,7 @@ export function renderMobileCircuitsList() {
                 return c.poiIds.some(id => {
                     const f = state.loadedFeatures.find(g => getPoiId(g) === id);
                     if (!f) return false;
-                    return getPoiName(f).toLowerCase().includes(q);
+                    return getSearchableNames(f).some(n => n.toLowerCase().includes(q));
                 });
             }
             return false;

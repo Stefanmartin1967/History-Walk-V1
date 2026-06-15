@@ -4,7 +4,7 @@
 import { state, setFilterCompleted } from './state.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
-import { getPoiId, getPoiName, addPoiFeature, addPendingPoiFeature } from './data.js';
+import { getPoiId, getPatrimonialName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getIconForFeature, getIconHtml } from './poi-icons.js';
 import { escapeHtml, sanitizeHTML, isPointInPolygon, getZoneFromCoords } from './utils.js';
@@ -509,7 +509,7 @@ function renderMobileSearchResults(container, matches, term) {
     html += `<div class="search-results-count">${matches.length} résultat${matches.length > 1 ? 's' : ''}</div>`;
     matches.forEach(f => {
         const poiId = getPoiId(f);
-        const name = getPoiName(f);
+        const name = getPatrimonialName(f);
         const cat = f?.properties?.['Catégorie'] || '';
         let zone = '';
         const coords = f?.geometry?.coordinates;

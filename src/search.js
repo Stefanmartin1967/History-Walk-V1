@@ -1,10 +1,15 @@
 // search.js
 import { state } from './state.js';
-import { getPoiId, getPoiName } from './data.js';
+import { getPoiId, getPatrimonialName, getSearchableNames } from './data.js';
+import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 
 /**
  * Filtre les POIs chargés en fonction d'une requête textuelle.
- * Prend en compte le nom officiel, le nom personnalisé et les filtres de visibilité (POI cachés).
+ *
+ * Recherche AGNOSTIQUE à la langue : le matching porte sur TOUTES les variantes
+ * de nom (FR, arabe, custom — getSearchableNames), donc on retrouve un lieu en
+ * tapant son nom FR OU arabe quel que soit le réglage d'affichage (chercher ≠
+ * afficher). Le tri, lui, suit la langue affichée (collation locale).
  *
  * @param {string} query - Le texte recherché (sera mis en minuscules).
  * @param {Array} features - La liste des features à filtrer (par défaut state.loadedFeatures).
@@ -23,16 +28,14 @@ export function getSearchResults(query, features = state.loadedFeatures) {
             return false;
         }
 
-        // Recherche sur le nom affiché (qui prend en compte les modifications utilisateur)
-        const displayedName = getPoiName(f).toLowerCase();
-
-        return displayedName.includes(normalizedQuery);
+        // Matche n'importe quelle variante de nom (FR, arabe, custom).
+        return getSearchableNames(f).some(n => n.toLowerCase().includes(normalizedQuery));
     });
 
-    // Tri par ordre alphabétique en fonction du nom du lieu
-    return filteredFeatures.sort((a, b) => {
-        const nameA = getPoiName(a);
-        const nameB = getPoiName(b);
-        return nameA.localeCompare(nameB, 'fr', { sensitivity: 'base' });
-    });
+    // Tri alphabétique dans la langue AFFICHÉE (collation arabe en AR, française
+    // sinon) → l'ordre suit ce que l'utilisateur lit.
+    const locale = getCurrentPatrimonialLang() === 'ar' ? 'ar' : 'fr';
+    return filteredFeatures.sort((a, b) =>
+        getPatrimonialName(a).localeCompare(getPatrimonialName(b), locale, { sensitivity: 'base' })
+    );
 }

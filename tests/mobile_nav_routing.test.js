@@ -33,6 +33,7 @@ vi.mock('../src/ui-details.js', () => ({
 vi.mock('../src/data.js', () => ({
     getPoiId: vi.fn(f => f?.properties?.HW_ID || f?.id),
     getPoiName: vi.fn(f => f?.properties?.name || 'Unknown'),
+    getPatrimonialName: vi.fn(f => f?.properties?.name || 'Unknown'),
     addPoiFeature: vi.fn(),
     addPendingPoiFeature: vi.fn()
 }));

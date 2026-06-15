@@ -1,5 +1,5 @@
 // templates.js
-import { getPoiName, getPatrimonialName } from './data.js';
+import { getPatrimonialName } from './data.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 import { escapeXml } from './utils.js';
 import { state } from './state.js';
