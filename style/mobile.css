@@ -662,19 +662,6 @@
 
 /* Timeline steps */
 .cc-timeline-wrap { padding: 12px 12px 20px; }
-.cc-timeline-cap {
-    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-soft);
-    font-weight: 600;
-    margin: 0 4px 8px;
-    padding-left: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
 .cc-step {
     display: grid;
     grid-template-columns: 32px 1fr auto;
