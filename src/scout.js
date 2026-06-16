@@ -33,8 +33,9 @@ import { fetchOverpassJson } from './osm-overpass.js';
 import { addPoiFeature } from './data.js';
 import { getZoneFromCoords, isDestinationPublished } from './utils.js';
 import { hwPrompt } from './modal.js';
-import { createLocalDraftDestination, makeUniqueDestId } from './local-destinations.js';
+import { createLocalDraftDestination, makeUniqueDestId, saveDraftZones } from './local-destinations.js';
 import { fetchZonesAuto } from './osm-zones.js';
+import { zonesData, setZonesData } from './zones.js';
 import { getStoredToken } from './github-sync.js';
 
 let _overlay = null;
@@ -598,6 +599,33 @@ async function capture() {
     const fresh = !!_scannedBounds && boxWithin(_scannedBounds);
     const toCapture = _candidates.filter(c => inBox(c) && !c.dup);
     if (!fresh || !toCapture.length) return;
+
+    // Garde-fou zonage (PR B) : ÉTENDRE les zones OSM à la boîte de capture AVANT
+    // d'assigner `Zone` aux POIs (getZoneFromCoords lit le binding live `zonesData`).
+    // Sans ça, les captures hors de la bbox des zones de la destination (souvent plus
+    // serrée que le cadre scouté) tombent « Hors zone ». try/catch SÉPARÉ et NON
+    // bloquant : un échec réseau Overpass ne doit pas empêcher la capture.
+    if (_box) {
+        try {
+            const bbox = [[_box.south, _box.west], [_box.north, _box.east]];
+            const country = _geoCountry || state.destinations?.maps?.[state.currentMapId]?.country || '';
+            const fc = await fetchZonesAuto(bbox, country);
+            const seen = new Set((zonesData.features || []).map(f => f.properties?.osm_id).filter(v => v != null));
+            const added = (fc.features || []).filter(f => f.properties?.osm_id == null || !seen.has(f.properties.osm_id));
+            if (added.length) {
+                const merged = { type: 'FeatureCollection', features: [...(zonesData.features || []), ...added] };
+                setZonesData(merged);
+                // Brouillon LOCAL → persister les zones étendues (dest GitHub : le fichier
+                // {id}-zones.geojson reste la vérité, géré par « Recalculer les zones »).
+                if (state.destinations?.maps?.[state.currentMapId]?.custom) {
+                    try { await saveDraftZones(state.currentMapId, merged); } catch (_) { /* best-effort */ }
+                }
+            }
+        } catch (e) {
+            console.warn('[scout] extension des zones à la boîte de capture échouée :', e);
+        }
+    }
+
     const n = toCapture.length;
     let saved = 0;
     try {
@@ -681,6 +709,7 @@ async function createDestinationDraft() {
         bounds,
         startView: { center: [center.lat, center.lng], zoom: map.getZoom() },
         currency: '',
+        country: _geoCountry || '',   // code pays ISO → niveau admin des zones OSM (re-scan/recalcul)
         file: null, zonesFile: null, circuitsFile: null,
     };
     try {

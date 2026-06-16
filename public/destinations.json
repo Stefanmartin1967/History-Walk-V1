@@ -18,6 +18,7 @@
         ]
       ],
       "currency": "TND",
+      "country": "tn",
       "startView": {
         "center": [
           33.77478,
@@ -43,6 +44,7 @@
         ]
       ],
       "currency": "",
+      "country": "tn",
       "startView": {
         "center": [
           36.40407835575572,
