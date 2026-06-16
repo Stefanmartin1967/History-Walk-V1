@@ -1197,10 +1197,22 @@
       },
       "properties": {
         "Nom du site FR": "Fort de Hammamet",
-        "Catégorie": "Site historique",
+        "Catégorie": "Fortification",
         "Zone": "Hammamet Est",
-        "candidate": true,
-        "HW_ID": "HW-01KV8KQBMAB95ATRSJR3WZEPJD"
+        "HW_ID": "HW-01KV8KQBMAB95ATRSJR3WZEPJD",
+        "Nom du site arabe": "حصن الحمّامات",
+        "Sous-type": "",
+        "État": "Conservé",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "Forteresse côtière dominant l'angle sud de la médina, face à la Méditerranée. Le site défend le littoral depuis le haut Moyen Âge : un premier ribat y est édifié vers le IXe-Xe siècle, dans une série de postes côtiers contre les razzias. La kasbah actuelle s'est construite par superpositions successives, sur l'emplacement d'un fort du XIIe siècle, lors des campagnes de fortification hafsides des XIIIe au XVe siècles — une phase de construction étant traditionnellement datée de 1474, sous Hamouda Bel Hadj Fraj.\nAyant perdu toute vocation militaire, le fort se visite aujourd'hui : on monte sur les remparts pour un panorama à 360° sur la médina, la mer et les plages.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false
       }
     },
     {
