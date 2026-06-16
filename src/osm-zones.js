@@ -67,10 +67,18 @@ async function fetchZonesForBBox(bbox, adminLevel) {
         if (!outerWays.length) continue;
         const rings = assembleRings(outerWays);
         if (!rings.length) continue;
-        rings.sort((a, b) => b.length - a.length); // multipolygone → on garde le plus grand anneau
         const t = rel.tags || {};
         const name = t['name:fr'] || t['name:en'] || t.name || `(sans nom #${rel.id})`;
         const nameAr = t['name:ar'] || t.name || '';
+        // Une relation admin multi-parties (commune morcelée, îles…) produit
+        // plusieurs anneaux disjoints. On les CONSERVE TOUS : un seul → Polygon ;
+        // plusieurs → MultiPolygon (chaque anneau = anneau extérieur de son
+        // sous-polygone), pour que getZoneFromCoords couvre chaque morceau (un POI
+        // dans une petite partie ne doit pas tomber « Hors zone »). assembleRings ne
+        // consomme que les ways role=outer → pas de trous à modéliser.
+        const geometry = rings.length === 1
+            ? { type: 'Polygon', coordinates: [rings[0]] }
+            : { type: 'MultiPolygon', coordinates: rings.map(r => [r]) };
         features.push({
             type: 'Feature',
             properties: {
@@ -79,7 +87,7 @@ async function fetchZonesForBBox(bbox, adminLevel) {
                 osm_id: rel.id,
                 admin_level: t.admin_level,
             },
-            geometry: { type: 'Polygon', coordinates: [rings[0]] },
+            geometry,
         });
     }
     return { type: 'FeatureCollection', features };
