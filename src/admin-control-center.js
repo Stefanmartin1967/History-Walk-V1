@@ -1,4 +1,4 @@
-import { state, setUserData } from './state.js';
+import { state, setUserData, setCustomFeatures } from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished } from './utils.js';
 import { generateGPXString } from './gpx.js';
@@ -763,6 +763,25 @@ async function publishChanges() {
                 await deletePoiData(cleanupMapId, poiId);
             } catch (e) {
                 console.warn('[CC] deletePoiData failed:', poiId, e);
+            }
+        }
+
+        // GRADUATION des POIs CUSTOM publiés (fix curation Scout) : un POI capturé/créé
+        // en local, une fois publié, vit désormais dans le geojson de BASE (GitHub).
+        // S'il restait dans customPois_{id}, sa version locale ÉCRASERAIT la version
+        // GitHub à la fusion (« custom gagne », data.js) ET reconcileLocalChanges le
+        // re-marquerait 'creation' à chaque boot → badge fantôme permanent. On le sort
+        // donc de customFeatures + customPois_{id}. Les candidats NON curés ne sont pas
+        // dans diffData.pois (exclus du diff) → ils restent locaux, intacts.
+        // (Les ids viennent d'être poussés avec succès → garantis présents sur GitHub ;
+        // seul un transitoire de déploiement Pages ~1-2 min peut différer leur réaffichage.)
+        const publishedIds = new Set((diffData.pois || []).map(p => String(p.id)));
+        const customBefore = (state.customFeatures || []).length;
+        if (customBefore > 0 && publishedIds.size > 0) {
+            const remainingCustom = state.customFeatures.filter(f => !publishedIds.has(String(getPoiId(f))));
+            if (remainingCustom.length !== customBefore) {
+                setCustomFeatures(remainingCustom);
+                await saveAppState(`customPois_${cleanupMapId}`, remainingCustom);
             }
         }
 
