@@ -104,6 +104,7 @@ export async function publishDraftToGitHub(id, onProgress = () => {}) {
         zonesFile: `${id}-zones.geojson`,
         bounds: entry.bounds,
         currency: entry.currency || '',
+        country: entry.country || '',
         startView: entry.startView,
     };
 
@@ -182,6 +183,7 @@ export async function registerDraftDestinationOnGitHub(id, entry, onProgress = (
         zonesFile: `${id}-zones.geojson`,
         bounds: entry.bounds,
         currency: entry.currency || '',
+        country: entry.country || '',
         startView: entry.startView,
     };
 

@@ -106,6 +106,14 @@ export async function getDraftZones(id) {
     }
 }
 
+// Met à jour les zones (OSM) d'un brouillon LOCAL en IndexedDB. Le Scout étend les
+// zones à la boîte de capture (cf. scout.js capture) ; cette persistance les conserve
+// au reload pour un brouillon local. Une dest GitHub a, elle, son fichier
+// {id}-zones.geojson comme source de vérité (mis à jour par « Recalculer les zones »).
+export async function saveDraftZones(id, zones) {
+    await saveAppState(`draftZones_${id}`, zones || { type: 'FeatureCollection', features: [] });
+}
+
 // Retire un brouillon LOCAL (entrée + geojson + zones) une fois sa version GitHub
 // détectée live (C2b) : la copie locale n'a plus lieu d'être. Interne (appelé par
 // mergeLocalDraftDestinations). Best-effort sur les clés annexes (un résidu
