@@ -277,14 +277,30 @@ export function getZoneFromCoords(lat, lng) {
     
     // On boucle sur tous les quartiers (Houmt Souk, Erriadh...)
     for (const feature of zonesData.features) {
-        const polygon = feature.geometry.coordinates[0]; 
-        
+        const geom = feature.geometry;
+        if (!geom || !geom.coordinates) continue;
+
+        // Polygon : coordinates[0] = anneau extérieur (tableau de points).
+        // MultiPolygon (fréquent pour les limites admin OSM morcelées) :
+        // coordinates = [sous-polygones], chaque sous-polygone étant
+        // [anneau extérieur, trou1, ...] → on teste coordinates[i][0].
+        let hit = false;
+        if (geom.type === 'MultiPolygon') {
+            for (const poly of geom.coordinates) {
+                const outerRing = poly && poly[0];
+                if (outerRing && isPointInPolygon(point, outerRing)) { hit = true; break; }
+            }
+        } else { // Polygon (et défaut historique)
+            const outerRing = geom.coordinates[0];
+            if (outerRing && isPointInPolygon(point, outerRing)) hit = true;
+        }
+
         // On utilise la fonction isPointInPolygon qui existe déjà dans votre fichier !
-        if (isPointInPolygon(point, polygon)) { 
-            return feature.properties.name; 
+        if (hit) {
+            return feature.properties.name;
         }
     }
-    return "Hors zone"; 
+    return "Hors zone";
 }
 
 export function escapeXml(unsafe) {

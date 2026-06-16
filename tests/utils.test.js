@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished, isCandidate } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished, isCandidate, getZoneFromCoords } from '../src/utils.js';
+import { setZonesData } from '../src/zones.js';
 
 describe('Utils', () => {
     describe('generateHWID', () => {
@@ -284,5 +285,42 @@ describe('Utils', () => {
             expect(isDestinationPublished(null)).toBe(false);
             expect(isDestinationPublished(undefined)).toBe(false);
         });
+    });
+});
+
+describe('getZoneFromCoords — Polygon & MultiPolygon', () => {
+    // Carré [x0,y0]-[x1,y1] en coordonnées GeoJSON [lng,lat], anneau fermé.
+    const square = (x0, y0, x1, y1) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]];
+
+    it('Polygon : matche un point dans l\'anneau extérieur, "Hors zone" sinon', () => {
+        setZonesData({ type: 'FeatureCollection', features: [
+            { type: 'Feature', properties: { name: 'Quartier A' }, geometry: { type: 'Polygon', coordinates: [square(0, 0, 10, 10)] } },
+        ] });
+        // getZoneFromCoords(lat, lng) → point = [lng, lat]
+        expect(getZoneFromCoords(5, 5)).toBe('Quartier A');
+        expect(getZoneFromCoords(50, 50)).toBe('Hors zone');
+    });
+
+    it('MultiPolygon : matche un point dans le 2e sous-polygone (régression du bug coordinates[0])', () => {
+        setZonesData({ type: 'FeatureCollection', features: [
+            { type: 'Feature', properties: { name: 'Délégation morcelée' }, geometry: {
+                type: 'MultiPolygon',
+                coordinates: [
+                    [square(0, 0, 10, 10)],     // partie 1
+                    [square(20, 20, 30, 30)],   // partie 2 — IGNORÉE par l'ancien code (coordinates[0])
+                ],
+            } },
+        ] });
+        expect(getZoneFromCoords(5, 5)).toBe('Délégation morcelée');    // partie 1
+        expect(getZoneFromCoords(25, 25)).toBe('Délégation morcelée');  // partie 2 → AVANT le fix : "Hors zone"
+        expect(getZoneFromCoords(15, 15)).toBe('Hors zone');            // entre les deux parties
+    });
+
+    it('ne plante pas sur une feature sans géométrie (garde défensive)', () => {
+        setZonesData({ type: 'FeatureCollection', features: [
+            { type: 'Feature', properties: { name: 'X' } }, // pas de geometry
+            { type: 'Feature', properties: { name: 'Quartier A' }, geometry: { type: 'Polygon', coordinates: [square(0, 0, 10, 10)] } },
+        ] });
+        expect(getZoneFromCoords(5, 5)).toBe('Quartier A');
     });
 });
