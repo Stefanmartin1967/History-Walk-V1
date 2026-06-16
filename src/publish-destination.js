@@ -299,3 +299,27 @@ export async function officializeDestination(id, onProgress = () => {}) {
 
     return { id, name: label, pois: geo.features.length, candidatesKept: candidates.length };
 }
+
+/**
+ * Pousse le fichier {id}-zones.geojson sur GitHub (PR C « Recalculer les zones »).
+ * « Tout publier » ne pousse JAMAIS les zones (seulement geojson/circuits/photos),
+ * d'où cette fonction dédiée — miroir d'un upload zones de publishDraftToGitHub.
+ * On ne touche PAS destinations.json : l'entrée pointe déjà vers ce fichier (zonesFile).
+ *
+ * @param {string} id  id de la destination (brouillon GitHub ou publiée)
+ * @param {{type:string, features:Array}} zones  FeatureCollection des zones à pousser
+ * @param {(msg:string)=>void} [onProgress]
+ * @returns {Promise<{id:string, zones:number}>}
+ */
+export async function pushDestinationZones(id, zones, onProgress = () => {}) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Aucun token GitHub connecté (onglet Connexion du Centre de Contrôle).');
+
+    const cleanZones = { type: 'FeatureCollection', features: zones?.features || [] };
+
+    onProgress('Publication des zones…');
+    await uploadFileToGitHub(jsonFile(cleanZones, `${id}-zones.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.zones(id), `chore(zones): recalcul des quartiers « ${id} »`);
+
+    return { id, zones: cleanZones.features.length };
+}

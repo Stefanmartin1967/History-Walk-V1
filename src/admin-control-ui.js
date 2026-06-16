@@ -679,6 +679,14 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-recalc-zones" aria-label="Recalculer les quartiers (zones) de cette destination">
+                <div class="cc-card-ico"><i data-lucide="layers"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Recalculer les zones</div>
+                    <div class="cc-card-sub">Compléter les quartiers OSM + re-zoner les lieux « Hors zone »</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-export-master" aria-label="Télécharger le Master GeoJSON">
                 <div class="cc-card-ico"><i data-lucide="download"></i></div>
                 <div class="cc-card-text">
@@ -761,6 +769,90 @@ export function renderTab(tab, diffData, callbacks) {
                 closeCCModal();
                 const { startScout } = await import('./scout.js');
                 startScout();
+            });
+
+            // Outils — Recalculer les zones (PR C chantier re-zonage). Répare une
+            // destination déjà scoutée dont des POIs sont « Hors zone » (zones OSM
+            // récupérées sur une bbox trop serrée à la création). Complète les
+            // quartiers OSM sur l'étendue RÉELLE des POIs, ré-affecte la Zone des POIs
+            // concernés (overlay → diff CC), pousse {id}-zones.geojson sur GitHub (un
+            // brouillon LOCAL persiste ses zones en IndexedDB). Les nouvelles Zones
+            // des POIs partent au prochain « Tout publier » (le fichier zones n'y est
+            // jamais inclus, d'où le push dédié).
+            bindCardAction('btn-cc-tool-recalc-zones', async () => {
+                const mapId = state.currentMapId;
+                const dest = state.destinations?.maps?.[mapId];
+                if (!dest) {
+                    showToast('Aucune destination active.', 'warning', 3500);
+                    return;
+                }
+                if (!(state.loadedFeatures || []).length) {
+                    showToast('Cette destination ne contient aucun lieu à re-zoner.', 'warning', 3500);
+                    return;
+                }
+                const isLocalDraft = dest.custom === true;
+                // Un brouillon GitHub / une dest publiée pousse le fichier de zones →
+                // token requis (et « Tout publier » l'exige de toute façon). Un brouillon
+                // local persiste ses zones en IndexedDB → pas de token.
+                if (!isLocalDraft && !getStoredToken()) {
+                    showToast('Connecte ton token GitHub (onglet Connexion) pour pousser les zones recalculées.', 'warning', 4500);
+                    return;
+                }
+                const { hwConfirm, hwAlert } = await import('./modal.js');
+                closeCCModal();
+                const pushNote = isLocalDraft
+                    ? '<p>Les zones seront enregistrées sur cet appareil (brouillon local).</p>'
+                    : '<p>Le fichier des quartiers sera poussé sur GitHub. Les nouveaux quartiers des lieux partiront, eux, au prochain <strong>« Tout publier »</strong>.</p>';
+                const ok = await hwConfirm({
+                    title: 'Recalculer les zones',
+                    body: `<p>Recalculer les quartiers de <strong>${escapeXml(dest.name || mapId)}</strong> ?</p>`
+                        + '<p>Heripia récupère les quartiers OpenStreetMap sur l\'étendue réelle des lieux, complète ceux qui manquaient, puis ré-affecte la zone des lieux concernés (les lieux déjà bien zonés ne bougent pas).</p>'
+                        + pushNote,
+                    confirmLabel: 'Recalculer',
+                    cancelLabel: 'Annuler',
+                });
+                if (!ok) return;
+                try {
+                    showToast('Récupération des quartiers OpenStreetMap…', 'info', 4000);
+                    const { recalcActiveDestinationZones } = await import('./recalc-zones.js');
+                    const res = await recalcActiveDestinationZones();
+
+                    // Push du fichier de zones UNIQUEMENT si le jeu a changé (zonesAdded > 0) :
+                    // un re-recalcul sur une dest déjà complète ne doit pas créer un commit
+                    // identique. Un brouillon LOCAL a déjà persisté ses zones dans le recalc.
+                    let pushedNote = '';
+                    if (res.isLocalDraft) {
+                        pushedNote = '<p>Quartiers enregistrés sur cet appareil ✓</p>';
+                    } else if (res.zonesAdded > 0) {
+                        const { pushDestinationZones } = await import('./publish-destination.js');
+                        await pushDestinationZones(res.mapId, res.zones, (msg) => showToast(msg, 'info', 2500));
+                        pushedNote = '<p>Fichier des quartiers poussé sur GitHub ✓</p>';
+                    } else {
+                        pushedNote = '<p>Aucun nouveau quartier à pousser (jeu déjà complet).</p>';
+                    }
+
+                    const resolvedNote = res.resolvedHorsZone > 0
+                        ? ` — dont <strong>${res.resolvedHorsZone}</strong> « Hors zone » qui ont retrouvé un quartier`
+                        : '';
+                    const finalNote = res.isLocalDraft
+                        ? '<p>Pense à <strong>« Publier en brouillon GitHub »</strong> pour propager les nouvelles zones.</p>'
+                        : (res.rezoned > 0
+                            ? '<p>Clique sur <strong>« Tout publier »</strong> pour publier les nouvelles zones des lieux.</p>'
+                            : '');
+                    await hwAlert({
+                        title: 'Zones recalculées ✓',
+                        body: `<p><strong>${res.rezoned}</strong> lieu(x) re-zoné(s)${resolvedNote}.</p>`
+                            + `<p>${res.zonesAdded} quartier(s) ajouté(s) (${res.zonesTotal} au total).</p>`
+                            + pushedNote
+                            + finalNote,
+                    });
+                } catch (e) {
+                    await hwAlert({
+                        title: 'Échec du recalcul',
+                        body: `<p>Le recalcul des zones n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
+                            + '<p>Rien n\'a été publié — tu peux réessayer.</p>',
+                    });
+                }
             });
 
             // Outils — Publier en brouillon GitHub (C2b) : visible seulement sur un
