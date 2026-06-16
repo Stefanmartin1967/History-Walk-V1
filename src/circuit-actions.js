@@ -8,7 +8,7 @@ import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters, bui
 import { isMobileView } from './mobile-state.js';
 import { showConfirm } from './modal.js';
 import { showToast } from './toast.js';
-import { generateHWID } from './utils.js';
+import { generateHWID, getPoiProp } from './utils.js';
 import { DOM } from './ui-dom.js';
 import { getStoredToken } from './github-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
@@ -184,7 +184,12 @@ export function getZonesData() {
     );
 
     const zoneCounts = preFilteredFeatures.reduce((acc, feature) => {
-        const zone = feature.properties.Zone;
+        // getPoiProp (overlay userData prioritaire) et non properties.Zone brut :
+        // une Zone modifiée via overlay (curation richEditor, recalcul des zones PR C)
+        // doit se refléter dans le compteur — cohérent avec passesStructuralFilters qui
+        // filtre déjà sur { ...properties, ...userData } (sinon : count « Hors zone »
+        // alors que le POI est re-zoné et que le filtre Zone le range ailleurs).
+        const zone = getPoiProp(feature, 'Zone');
         if (zone) acc[zone] = (acc[zone] || 0) + 1;
         return acc;
     }, {});
