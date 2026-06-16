@@ -25,31 +25,6 @@
         ],
         "zoom": 12
       }
-    },
-    "hammamet": {
-      "name": "Hammamet",
-      "status": "draft",
-      "file": "hammamet.geojson",
-      "circuitsFile": "circuits/hammamet.json",
-      "zonesFile": "hammamet-zones.geojson",
-      "bounds": [
-        [
-          36.28867,
-          10.25924
-        ],
-        [
-          36.53401,
-          10.8473
-        ]
-      ],
-      "currency": "TND",
-      "startView": {
-        "center": [
-          36.4,
-          10.6
-        ],
-        "zoom": 12
-      }
     }
   }
 }
