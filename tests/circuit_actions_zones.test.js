@@ -84,7 +84,16 @@ vi.mock('../src/data.js', () => ({
 vi.mock('../src/mobile-state.js', () => ({ isMobileView: vi.fn(() => false) }));
 vi.mock('../src/modal.js', () => ({ showConfirm: vi.fn() }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
-vi.mock('../src/utils.js', () => ({ generateHWID: vi.fn(() => 'HW-TEST') }));
+vi.mock('../src/utils.js', () => ({
+    generateHWID: vi.fn(() => 'HW-TEST'),
+    // overlay userData prioritaire sur properties (réplique l'impl réelle).
+    getPoiProp: (feature, key) => {
+        const p = feature?.properties;
+        if (!p) return undefined;
+        const userVal = p.userData?.[key];
+        return userVal !== undefined ? userVal : p[key];
+    },
+}));
 vi.mock('../src/gpx.js', () => ({ generateAndDownloadGPX: vi.fn() }));
 vi.mock('../src/ui.js', () => ({ DOM: {} }));
 
@@ -178,6 +187,20 @@ describe('getZonesData', () => {
             const r = getZonesData();
             expect(r.zoneCounts).toEqual({ Nord: 1 });
             expect(r.totalVisible).toBe(3); // les 3 features passent le filtre, mais 2 n'entrent pas dans le comptage par zone
+        });
+
+        // Régression PR C : le compteur lit la Zone via l'overlay userData (getPoiProp),
+        // pas properties.Zone brut. Un POI re-zoné par « Recalculer les zones » (overlay
+        // userData.Zone) doit compter dans sa NOUVELLE zone, pas dans « Hors zone ».
+        it('compte la Zone de l\'overlay userData (re-zonage), pas la Zone brute', () => {
+            state.loadedFeatures = [
+                makeFeature('A', 'Hors zone', { userData: { Zone: 'Neapolis' } }),
+                makeFeature('B', 'Hors zone', { userData: { Zone: 'Beni Khiar' } }),
+                makeFeature('C', 'Neapolis'), // déjà bon, pas d'overlay
+            ];
+            const r = getZonesData();
+            expect(r.zoneCounts).toEqual({ Neapolis: 2, 'Beni Khiar': 1 });
+            expect(r.zoneCounts['Hors zone']).toBeUndefined();
         });
     });
 
