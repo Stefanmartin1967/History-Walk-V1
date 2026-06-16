@@ -6,6 +6,10 @@
 
 ---
 
+- GARDE-FOU FLUX DESTINATION — AUTO-ENREGISTREMENT À LA CRÉATION + BLOCAGE SANS TOKEN (v3.7.289) — Tue l'état « brouillon LOCAL seul » qui a causé les geojson orphelins / curation perdue (cas Hammamet). Créer une destination via le Scout l'**enregistre immédiatement sur GitHub** en `status:"draft"` : nouvelle fonction `registerDraftDestinationOnGitHub(id, entry)` (`publish-destination.js`), **id-keyée** et SANS les gardes `state.currentMapId` / `loadedFeatures` / « 0 lieu » de `publishDraftToGitHub` (un brouillon neuf a un geojson VIDE, c'est voulu — on le remplit ensuite par Scout + « Tout publier »). Pousse, données d'abord et destinations.json EN DERNIER (invariant anti-orphelin) : `{id}.geojson` (vide) + `{id}-zones.geojson` + `circuits/{id}.json` + `destinations.json`. Appelée à la fin de `createDestinationDraft` (`scout.js`), **awaitée AVANT le reload** (sinon la navigation interrompt le push), puis `markLocalDraftPublished`. **Blocage si pas de token** : `createDestinationDraft` refuse (toast) AVANT toute écriture IndexedDB si `!getStoredToken()`. Échec réseau → repli sur brouillon local + avertissement (carte « Publier en brouillon GitHub » du CC pour retenter). 1ère pièce du chantier garde-fous (suite : blocage « Tout publier » sur état incohérent, action « Supprimer une destination »). Aucun changement CSS. vitest verts (969), esbuild OK.
+
+---
+
 - DESIGN / CARTEL — MINI-CARTELS : coins adoucis (suivi #850) (v3.7.288) — Retour Stefan : les étapes rendaient « carré ». Le handoff avait redescendu le rayon de la carte d'étape à `--radius-sm` (6px) ; la démo validée (et l'ancienne timeline) étaient à **14px**. Correction : `.cartel-step` `border-radius` → **`--radius-lg`** (14px) + bordure de la pastille numéro allégée (`--border-filet-strong` 2px → `--border-filet` 1px) pour retrouver la douceur de la démo. CSS pur, `cartel.css`. `index.html` : `style.css?v=8.18`. Vérifié en preview PC + mobile. vitest verts, knip 0.
 
 ---

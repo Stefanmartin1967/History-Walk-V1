@@ -26,7 +26,7 @@
 // garde sans souci ; leur curation se fera à l'« Officialiser » (draft→published).
 import { state, setCustomFeatures } from './state.js';
 import { fetchWithTimeout } from './net.js';
-import { getDraftDestinations, getDraftZones, markLocalDraftPublished } from './local-destinations.js';
+import { getDraftDestinations, getDraftGeoJSON, getDraftZones, markLocalDraftPublished } from './local-destinations.js';
 import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { getStoredToken, uploadFileToGitHub } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
@@ -135,6 +135,81 @@ export async function publishDraftToGitHub(id, onProgress = () => {}) {
     await markLocalDraftPublished(id);
 
     return { id, name: label, pois: geo.features.length, zones: cleanZones.features.length };
+}
+
+/**
+ * ENREGISTRE un brouillon de destination sur GitHub DÈS SA CRÉATION (auto-register,
+ * garde-fou flux destination 15/06/2026). Contrairement à publishDraftToGitHub, cette
+ * fonction est PUREMENT id-keyée : elle ne lit PAS state.loadedFeatures et n'exige NI
+ * que la destination soit active (state.currentMapId), NI qu'elle contienne des lieux.
+ * Une destination fraîchement créée a un geojson VIDE — c'est volontaire : on l'enregistre
+ * vide, puis on la remplit par Scout + « Tout publier ».
+ *
+ * But : TUER l'état « brouillon LOCAL seul » (source des geojson orphelins / curation
+ * perdue). Appelée à la fin de createDestinationDraft (scout.js), AVANT le reload.
+ * Pousse, DANS CET ORDRE (données d'abord, destinations.json EN DERNIER — même invariant
+ * que publishDraftToGitHub) : {id}.geojson (vide), {id}-zones.geojson, circuits/{id}.json
+ * (index vide), puis destinations.json (entrée status:"draft").
+ *
+ * @param {string} id  id du brouillon local (déjà écrit en IndexedDB par createLocalDraftDestination)
+ * @param {object} entry  l'entrée destination (name, bounds, startView, currency)
+ * @param {(msg:string)=>void} [onProgress]
+ * @returns {Promise<{id:string, name:string}>}
+ */
+export async function registerDraftDestinationOnGitHub(id, entry, onProgress = () => {}) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Aucun token GitHub connecté (onglet Connexion du Centre de Contrôle).');
+
+    // Snapshot id-keyé depuis l'IndexedDB (PAS state.loadedFeatures). À la création le
+    // geojson est vide ; getDraftGeoJSON/getDraftZones renvoient une FeatureCollection
+    // vide par défaut → aucun garde « 0 lieu » ici (contrairement à publishDraftToGitHub).
+    const geo = await getDraftGeoJSON(id);
+    const zones = await getDraftZones(id);
+
+    onProgress('Lecture de la liste des destinations…');
+    const dest = await fetchDestinationsJson(token);
+    if (!dest.maps) dest.maps = {};
+    if (dest.maps[id] && dest.maps[id].status !== 'draft') {
+        throw new Error(`Une destination « ${id} » est déjà publiée sur GitHub — enregistrement annulé.`);
+    }
+
+    const label = entry.name || id;
+    dest.maps[id] = {
+        name: label,
+        status: 'draft',
+        file: `${id}.geojson`,
+        circuitsFile: `circuits/${id}.json`,
+        zonesFile: `${id}-zones.geojson`,
+        bounds: entry.bounds,
+        currency: entry.currency || '',
+        startView: entry.startView,
+    };
+
+    const cleanGeo = { type: 'FeatureCollection', features: geo?.features || [] };
+    const cleanZones = { type: 'FeatureCollection', features: zones?.features || [] };
+
+    onProgress('Enregistrement des lieux…');
+    await uploadFileToGitHub(jsonFile(cleanGeo, `${id}.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.geojson(id), `feat(dest): création du brouillon « ${label} » — lieux`);
+
+    onProgress('Enregistrement des zones…');
+    await uploadFileToGitHub(jsonFile(cleanZones, `${id}-zones.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.zones(id), `feat(dest): brouillon « ${label} » — zones`);
+
+    onProgress('Création de l\'index des circuits…');
+    await uploadFileToGitHub(jsonFile([], `${id}.json`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.circuits(id), `feat(dest): brouillon « ${label} » — index circuits`);
+
+    onProgress('Mise à jour de la liste des destinations…');
+    await uploadFileToGitHub(jsonFile(dest, 'destinations.json'), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.destinations(), `feat(dest): enregistrement du brouillon « ${label} »`);
+
+    // Comme publishDraftToGitHub : on GARDE la copie locale (latence GitHub Pages ~1-2 min)
+    // et on la marque publiée → mergeLocalDraftDestinations la nettoiera au 1er boot où la
+    // version GitHub (entrée non-custom) sera détectée live.
+    await markLocalDraftPublished(id);
+
+    return { id, name: label };
 }
 
 /**
