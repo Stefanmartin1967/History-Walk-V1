@@ -1,5 +1,5 @@
 // utils.js
-import { zonesData } from './zones.js';
+import { zonesData, zoneCacheGet, zoneCacheSet } from './zones.js';
 import { getSubtypes } from './taxonomy.js';
 
 /**
@@ -270,10 +270,16 @@ export function isPointInPolygon(point, vs) {
 }
 
 // --- DÉTECTEUR DE ZONE AUTOMATIQUE ---
+// Jeu de zones absent OU VIDE → « A définir ». Le test `.length === 0` est crucial :
+// un échec de chargement de {dest}-zones.geojson laisse `features: []` (tableau VIDE
+// mais TRUTHY) → sans ce garde, la boucle ne matchait rien et renvoyait « Hors zone »
+// pour TOUS les POIs (bug : un réseau coupé = tout « Hors zone »). Désormais on
+// renvoie « A définir » (neutre), et getDerivedZone/deriveZoneSafe retombent en plus
+// sur la valeur stockée.
 export function getZoneFromCoords(lat, lng) {
-    if (!zonesData || !zonesData.features) return "A définir";
+    if (!zonesData || !zonesData.features || zonesData.features.length === 0) return "A définir";
 
-    const point = [lng, lat]; 
+    const point = [lng, lat];
     
     // On boucle sur tous les quartiers (Houmt Souk, Erriadh...)
     for (const feature of zonesData.features) {
@@ -301,6 +307,48 @@ export function getZoneFromCoords(lat, lng) {
         }
     }
     return "Hors zone";
+}
+
+// --- ZONE DÉRIVÉE À LA VOLÉE (dégel de Zone, 17/06/2026) ---
+// La `Zone` d'un POI n'est plus une valeur GELÉE à la capture : elle se DÉRIVE de
+// la position + du jeu de quartiers courant (zonesData), comme planifieCounter.
+// Effet : compléter/pousser le fichier {dest}-zones.geojson re-zone tout le monde
+// automatiquement au prochain chargement, sans « Recalculer » ni « Tout publier ».
+
+// Dérive la zone d'une position MAIS retombe sur `storedZone` si le jeu de quartiers
+// n'est pas chargé (échec réseau → features:[]). Garde-fou anti « tout Hors zone » :
+// on ne fabrique JAMAIS « Hors zone » quand on ne sait pas (zones absentes). Utilisée
+// au publish (admin-geojson) pour cuire une Zone fraîche sans risque.
+export function deriveZoneSafe(lat, lng, storedZone) {
+    if (!zonesData || !zonesData.features || zonesData.features.length === 0) return storedZone;
+    return getZoneFromCoords(lat, lng);
+}
+
+// Zone EFFECTIVE d'un POI pour l'affichage / le filtre / le comptage. Dérive depuis
+// les coordonnées quand les quartiers sont chargés, sinon repli sur la valeur stockée
+// (overlay userData prioritaire via getPoiProp). Mémoïsée par id (cache vidé par
+// setZonesData au changement de jeu de zones, et par deleteZoneCacheEntry au
+// déplacement d'un POI) car le filtre l'appelle par POI à chaque applyFilters.
+export function getDerivedZone(feature) {
+    if (!feature) return '';
+    const id = getPoiId(feature);
+    if (id != null) {
+        const hit = zoneCacheGet(id);
+        if (hit !== undefined) return hit;
+    }
+    const stored = getPoiProp(feature, 'Zone') || '';
+    const c = feature.geometry && feature.geometry.coordinates; // [lng, lat]
+    let zone;
+    if (!Array.isArray(c) || c.length < 2 || !Number.isFinite(c[0]) || !Number.isFinite(c[1])) {
+        zone = stored;
+    } else {
+        zone = deriveZoneSafe(c[1], c[0], stored);
+    }
+    // On ne met en cache que les valeurs RÉELLEMENT dérivées (zones chargées) : une
+    // valeur de repli (zones absentes) ne doit pas se figer, elle se recalculera dès
+    // que setZonesData aura peuplé les quartiers (et vidé le cache).
+    if (id != null && zonesData.features && zonesData.features.length > 0) zoneCacheSet(id, zone);
+    return zone;
 }
 
 export function escapeXml(unsafe) {

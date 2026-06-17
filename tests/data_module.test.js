@@ -66,7 +66,17 @@ vi.mock('../src/utils.js', () => ({
     getPoiId: vi.fn(f => f?.properties?.HW_ID || f?.id),
     getPoiName: vi.fn(f => f?.properties?.name || 'Unknown'),
     generateHWID: vi.fn(() => `HW-${String(++_hwidCounter).padStart(26, '0')}`),
-    getZoneFromCoords: vi.fn(() => 'TestZone')
+    // Dégel de Zone : passesStructuralFilters lit désormais getDerivedZone (et non la
+    // valeur stockée). Le mock réplique son repli (zones non chargées → valeur stockée
+    // overlay-aware), suffisant pour les tests de filtre par zone.
+    getDerivedZone: vi.fn(f => (f?.properties?.userData?.Zone ?? f?.properties?.Zone) || ''),
+    isCandidate: vi.fn(() => false)
+}));
+
+// Dégel de Zone : le déplacement d'un POI invalide le cache de zone dérivée au lieu
+// de figer la zone. On mocke zones.js pour espionner deleteZoneCacheEntry.
+vi.mock('../src/zones.js', () => ({
+    deleteZoneCacheEntry: vi.fn()
 }));
 
 vi.mock('../src/admin-control-center.js', () => ({
@@ -86,7 +96,7 @@ import { schedulePush } from '../src/gist-sync.js';
 import { showToast } from '../src/toast.js';
 import { logModification } from '../src/logger.js';
 import { eventBus } from '../src/events.js';
-import { getZoneFromCoords } from '../src/utils.js';
+import { deleteZoneCacheEntry } from '../src/zones.js';
 import {
     recomputeVu,
     getFilteredFeatures,
@@ -680,13 +690,16 @@ describe('updatePoiCoordinates', () => {
         expect(f.geometry.coordinates).toEqual([10.7, 36.5]);
     });
 
-    it('recalcule la Zone via getZoneFromCoords et la met sur properties.Zone', async () => {
-        const f = poi('p1');
+    it('déplacement : met à jour les coords et NE FIGE PLUS la Zone (dégel) — invalide le cache', async () => {
+        const f = poi('p1', { Zone: 'AncienneZone' });
         state.loadedFeatures = [f];
-        getZoneFromCoords.mockReturnValueOnce('NewZone');
         await updatePoiCoordinates('p1', 36.5, 10.7);
-        expect(getZoneFromCoords).toHaveBeenCalledWith(36.5, 10.7);
-        expect(f.properties.Zone).toBe('NewZone');
+        // Coordonnées mises à jour ([lng, lat]).
+        expect(f.geometry.coordinates).toEqual([10.7, 36.5]);
+        // Dégel : la Zone n'est PLUS gelée sur le POI (elle se dérivera des coords).
+        expect(f.properties.Zone).toBe('AncienneZone'); // inchangée, pas réécrite
+        // Le cache de zone dérivée de ce POI est invalidé.
+        expect(deleteZoneCacheEntry).toHaveBeenCalledWith('p1');
     });
 
     it('met à jour customFeatures et persiste customPois si POI custom', async () => {

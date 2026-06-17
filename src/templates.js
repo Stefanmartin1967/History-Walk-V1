@@ -1,7 +1,7 @@
 // templates.js
 import { getPatrimonialName } from './data.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
-import { escapeXml } from './utils.js';
+import { escapeXml, getDerivedZone } from './utils.js';
 import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
@@ -191,7 +191,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // Identité
     const arName = allProps['Nom du site arabe'] || allProps['Nom du site AR'] || '';
     const hasAr = !!arName && arName.trim() !== '';
-    const zone = (allProps.Zone || '').trim();
+    const zone = (getDerivedZone(feature) || '').trim();
     const category = (allProps['Catégorie'] || '').trim();
     const showCategory = !!category && category !== 'A définir';
 

@@ -862,7 +862,9 @@ async function handleSave() {
         'Sous-type': getValue(DOM_IDS.INPUTS.SUBTYPE),
         'État': getValue(DOM_IDS.INPUTS.STATE),
         'Accès': getValue(DOM_IDS.INPUTS.ACCESS),
-        'Zone': getValue(DOM_IDS.INPUTS.ZONE),
+        // Dégel de Zone : on ne PERSISTE plus la zone (elle se dérive des coordonnées).
+        // L'input ZONE reste affiché en lecture seule (rempli par getZoneFromCoords à
+        // l'ouverture) à titre informatif, mais n'entre plus dans les données sauvées.
         'info_gpx': getValue(DOM_IDS.INPUTS.DESC_SHORT),
         'description': getValue(DOM_IDS.INPUTS.DESC_LONG),
         'notes': getValue(DOM_IDS.INPUTS.NOTES),

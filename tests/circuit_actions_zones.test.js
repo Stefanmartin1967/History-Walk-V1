@@ -86,12 +86,15 @@ vi.mock('../src/modal.js', () => ({ showConfirm: vi.fn() }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/utils.js', () => ({
     generateHWID: vi.fn(() => 'HW-TEST'),
-    // overlay userData prioritaire sur properties (réplique l'impl réelle).
-    getPoiProp: (feature, key) => {
+    // Dégel de Zone : getZonesData compte désormais getDerivedZone(feature). Les
+    // features du test n'ont pas de géométrie ET zonesData n'est pas chargé → le
+    // helper réel retombe sur la valeur stockée (overlay userData prioritaire). Le
+    // mock réplique exactement ce repli.
+    getDerivedZone: (feature) => {
         const p = feature?.properties;
-        if (!p) return undefined;
-        const userVal = p.userData?.[key];
-        return userVal !== undefined ? userVal : p[key];
+        if (!p) return '';
+        const v = p.userData?.Zone !== undefined ? p.userData.Zone : p.Zone;
+        return (v || '').toString();
     },
 }));
 vi.mock('../src/gpx.js', () => ({ generateAndDownloadGPX: vi.fn() }));

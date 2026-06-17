@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished, isCandidate, getZoneFromCoords } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished, isCandidate, getZoneFromCoords, getDerivedZone, deriveZoneSafe } from '../src/utils.js';
 import { setZonesData } from '../src/zones.js';
 
 describe('Utils', () => {
@@ -322,5 +322,55 @@ describe('getZoneFromCoords — Polygon & MultiPolygon', () => {
             { type: 'Feature', properties: { name: 'Quartier A' }, geometry: { type: 'Polygon', coordinates: [square(0, 0, 10, 10)] } },
         ] });
         expect(getZoneFromCoords(5, 5)).toBe('Quartier A');
+    });
+
+    it('jeu de zones VIDE → "A définir" (PAS "Hors zone") — garde anti tout-Hors-zone', () => {
+        // Régression du bug critique : features:[] est TRUTHY → l'ancien `!features`
+        // ne gardait pas → boucle vide → "Hors zone" pour TOUS. Le `.length === 0`
+        // renvoie désormais "A définir" (neutre) sur un échec de chargement des zones.
+        setZonesData({ type: 'FeatureCollection', features: [] });
+        expect(getZoneFromCoords(5, 5)).toBe('A définir');
+    });
+});
+
+describe('getDerivedZone & deriveZoneSafe — dégel de Zone', () => {
+    const square = (x0, y0, x1, y1) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1], [x0, y0]];
+    const feat = (id, lng, lat, props = {}) => ({ type: 'Feature', properties: { HW_ID: id, ...props }, geometry: { type: 'Point', coordinates: [lng, lat] } });
+    const oneZone = (name) => ({ type: 'FeatureCollection', features: [
+        { type: 'Feature', properties: { name }, geometry: { type: 'Polygon', coordinates: [square(0, 0, 10, 10)] } },
+    ] });
+
+    it('dérive le quartier depuis les coordonnées quand les zones sont chargées', () => {
+        setZonesData(oneZone('Quartier A'));
+        expect(getDerivedZone(feat('p1', 5, 5))).toBe('Quartier A');
+        expect(getDerivedZone(feat('p2', 50, 50))).toBe('Hors zone');
+    });
+
+    it('IGNORE la valeur stockée quand les zones sont chargées (but du dégel)', () => {
+        setZonesData(oneZone('Quartier A'));
+        // Zone stockée périmée + overlay → on dérive quand même de la position.
+        const f = feat('p3', 5, 5, { Zone: 'VieuxQuartier', userData: { Zone: 'Autre' } });
+        expect(getDerivedZone(f)).toBe('Quartier A');
+    });
+
+    it('zones VIDES → repli sur la valeur stockée (overlay prioritaire), jamais "Hors zone" fabriqué', () => {
+        setZonesData({ type: 'FeatureCollection', features: [] });
+        expect(getDerivedZone(feat('p4', 5, 5, { Zone: 'QuartierStocké' }))).toBe('QuartierStocké');
+        expect(getDerivedZone(feat('p5', 5, 5, { Zone: 'Base', userData: { Zone: 'Overlay' } }))).toBe('Overlay');
+    });
+
+    it('le cache se met à jour quand setZonesData change le jeu de quartiers', () => {
+        setZonesData(oneZone('Quartier A'));
+        const f = feat('p6', 5, 5);
+        expect(getDerivedZone(f)).toBe('Quartier A'); // mis en cache
+        setZonesData(oneZone('Quartier B')); // même carré, renommé → setZonesData vide le cache
+        expect(getDerivedZone(f)).toBe('Quartier B'); // re-dérivé, pas la valeur en cache
+    });
+
+    it('deriveZoneSafe : zones chargées → dérive ; zones vides → renvoie storedZone', () => {
+        setZonesData(oneZone('Quartier A'));
+        expect(deriveZoneSafe(5, 5, 'fallback')).toBe('Quartier A');
+        setZonesData({ type: 'FeatureCollection', features: [] });
+        expect(deriveZoneSafe(5, 5, 'fallback')).toBe('fallback');
     });
 });
