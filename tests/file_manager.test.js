@@ -73,9 +73,18 @@ vi.mock('../src/modal.js', () => ({
     closeModal: vi.fn()
 }));
 
+vi.mock('../src/local-destinations.js', () => ({
+    getDraftZones: vi.fn(async () => ({
+        type: 'FeatureCollection',
+        features: [{ type: 'Feature', properties: { name: 'Quartier A' }, geometry: null }]
+    })),
+    createLocalDraftDestination: vi.fn(async () => {})
+}));
+
 import { state } from '../src/state.js';
 import { showToast } from '../src/toast.js';
-import { getAllPoiPhotosForMap, savePoiPhotos, savePoiData, base64ToBlob } from '../src/database.js';
+import { getAllPoiPhotosForMap, savePoiPhotos, savePoiData, base64ToBlob, saveAppState } from '../src/database.js';
+import { getDraftZones, createLocalDraftDestination } from '../src/local-destinations.js';
 import {
     getActionLabel,
     cleanDataForExport,
@@ -96,6 +105,7 @@ function resetState() {
     state.officialCircuitsStatus = {};
     state.testedCircuits = {};
     state.isAdmin = false;
+    state.destinations = { activeMapId: 'djerba', maps: {} };
 }
 
 beforeEach(() => {
@@ -476,5 +486,77 @@ describe('restoreBackup (photos)', () => {
 
         await restoreBackup(json);
         expect(savePoiPhotos).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('sauvegarde d\'un brouillon local (Option A)', () => {
+    it('joint draftDestination + draftZones quand la dest active est un brouillon local', async () => {
+        state.currentMapId = 'venise';
+        state.destinations = { activeMapId: 'djerba', maps: {
+            venise: { name: 'Venise', custom: true, status: 'draft', bounds: [[1, 2], [3, 4]] }
+        } };
+        const data = await prepareExportData(false);
+        expect(data.draftDestination).toMatchObject({ name: 'Venise', custom: true });
+        expect(getDraftZones).toHaveBeenCalledWith('venise');
+        expect(data.draftZones.features).toHaveLength(1);
+    });
+
+    it('n\'ajoute PAS draftDestination/draftZones sur une destination publiée', async () => {
+        state.currentMapId = 'djerba';
+        state.destinations = { activeMapId: 'djerba', maps: {
+            djerba: { name: 'Djerba', status: 'published' }
+        } };
+        const data = await prepareExportData(false);
+        expect(data.draftDestination).toBeUndefined();
+        expect(data.draftZones).toBeUndefined();
+        expect(getDraftZones).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('restoreBackup — brouillon local (Option A)', () => {
+    const draftBackup = () => ({
+        backupVersion: '3.0',
+        mapId: 'venise',
+        draftDestination: { name: 'Venise', custom: true, status: 'draft', bounds: [[1, 2], [3, 4]] },
+        draftZones: { type: 'FeatureCollection', features: [{ type: 'Feature', properties: { name: 'Q' }, geometry: null }] },
+        baseGeoJSON: { type: 'FeatureCollection', features: [
+            { type: 'Feature', properties: { HW_ID: 'HW-01TESTCAPTURE0000000000001', 'Nom du site FR': 'Capture Scout' }, geometry: null }
+        ] }
+    });
+
+    it('recrée le brouillon (entrée + zones + geojson base vide)', async () => {
+        await restoreBackup(draftBackup());
+        expect(createLocalDraftDestination).toHaveBeenCalledTimes(1);
+        const [id, entry, geo, zones] = createLocalDraftDestination.mock.calls[0];
+        expect(id).toBe('venise');
+        expect(entry).toMatchObject({ name: 'Venise', custom: true });
+        expect(geo).toEqual({ type: 'FeatureCollection', features: [] });
+        expect(zones.features).toHaveLength(1);
+    });
+
+    it('restaure TOUS les lieux en customPois (captures HW-ULID incluses)', async () => {
+        await restoreBackup(draftBackup());
+        const call = saveAppState.mock.calls.find((c) => c[0] === 'customPois_venise');
+        expect(call).toBeDefined();
+        expect(call[1].map((f) => f.properties.HW_ID)).toContain('HW-01TESTCAPTURE0000000000001');
+    });
+
+    it('bascule hw_active_dest sur le brouillon restauré', async () => {
+        await restoreBackup(draftBackup());
+        expect(localStorage.getItem('hw_active_dest')).toBe('venise');
+    });
+
+    it('un backup de dest publiée (sans draftDestination) ne recrée aucun brouillon et garde le filtre HW-PC-/auto_', async () => {
+        await restoreBackup({
+            backupVersion: '3.0', mapId: 'djerba',
+            baseGeoJSON: { type: 'FeatureCollection', features: [
+                { type: 'Feature', properties: { HW_ID: 'HW-01TESTCAPTURE0000000000001' }, geometry: null }
+            ] }
+        });
+        expect(createLocalDraftDestination).not.toHaveBeenCalled();
+        // un HW-ULID sur une dest publiée n'est pas un custom POI → pas restauré
+        expect(saveAppState.mock.calls.find((c) => c[0] === 'customPois_djerba')).toBeUndefined();
     });
 });
