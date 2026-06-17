@@ -14,6 +14,17 @@ import { escapeXml } from './utils.js';
 
 // Ce fichier gère l'affichage (HTML, CSS, Interactions UI) du panneau d'administration
 
+// Compteur de publication (source UNIQUE) — somme des 4 deltas du diff : POI modifiés
+// + circuits modifiés + photos admin en attente + circuits « Fait » non publiés. Pilote
+// le badge nav ET l'état actif/inactif du bouton « Tout publier ». Factorisé pour éviter
+// la dérive badge↔bouton (formule auparavant copiée à 3 endroits).
+function computePublishCount(stats = {}) {
+    return (stats.poisModified || 0)
+         + (stats.circuitsModified || 0)
+         + (stats.pendingPhotoCount || 0)
+         + (stats.testedChanged || 0);
+}
+
 // B2 — État du sub-router de l'onglet Modifications.
 // 3 sous-vues : Lieux (POI texte/coords) / Photos (grille pending) / Circuits.
 // Persistant entre les renders du même onglet, reset implicite à 'lieux' au prochain
@@ -91,10 +102,7 @@ function syncFooterAndNavCount(diffData) {
     // à 0 — il ne réapparaît que si le push auto a échoué (network, rate limit).
     // Inclus dans le total et affiché en sub-text de la carte CIRCUITS.
     const stats = (diffData && diffData.stats) || {};
-    const totalCount = (stats.poisModified      || 0)
-                     + (stats.circuitsModified  || 0)
-                     + (stats.pendingPhotoCount || 0)
-                     + (stats.testedChanged     || 0);
+    const totalCount = computePublishCount(stats);
 
     const btn = overlay.querySelector('#btn-cc-publish');
     if (btn) {
@@ -158,10 +166,7 @@ export function openControlCenterModal(diffData, callbacks) {
     const username = getStoredUsername();
 
     const stats = diffData.stats || {};
-    const totalCount = (stats.poisModified || 0)
-                     + (stats.circuitsModified || 0)
-                     + (stats.testedChanged || 0)
-                     + (stats.pendingPhotoCount || 0);
+    const totalCount = computePublishCount(stats);
     const changesCountHtml = totalCount > 0
         ? `<span class="cc-nav-count">${totalCount}</span>`
         : '';
@@ -537,7 +542,7 @@ export function renderTab(tab, diffData, callbacks) {
         // de publication serveur. Avec l'auto-publish (tested-sync.js), normalement
         // toujours 0 — n'apparaît que si le push auto a échoué (filet de sécurité).
         // Inclus dans le total ; sub-text affiché dans la carte CIRCUITS (pas Lieux).
-        const totalCount = poisModified + circuitsModified + pendingPhotoCount + testedChanged;
+        const totalCount = computePublishCount(stats);
         const hasToken = !!getStoredToken();
         const mapId = state.currentMapId || 'djerba';
         const mapLabel = mapId.charAt(0).toUpperCase() + mapId.slice(1);

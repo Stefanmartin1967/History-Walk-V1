@@ -812,7 +812,7 @@ function setVerified(val) {
 //    EST dans state.customFeatures → retirer le flag de base + persister customPois
 //    suffit (reconcileLocalChanges le pistera comme création).
 //
-//  • feature de BASE (brouillon GitHub, multi-appareils) : il n'est pas dans
+//  • feature de BASE (POI venant du geojson publié) : il n'est pas dans
 //    customFeatures et le geojson GitHub le réinjecte à chaque boot → retirer le
 //    flag en mémoire ne survit pas. La curation passe par l'overlay userData
 //    (seule voie persistante pour un feature de base), exactement comme une

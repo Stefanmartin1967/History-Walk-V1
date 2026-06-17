@@ -854,10 +854,12 @@ function renderShell() {
     }, 80);
 
     _overlay.querySelector('[data-scout-destname]').textContent = destName();
-    // Statut de la dest active : publiée / brouillon local (IDB) / brouillon GitHub.
+    // Statut de la dest active (modèle 2-phases Option A) : publiée, sinon brouillon
+    // LOCAL (IDB). Plus de « brouillon GitHub » intermédiaire — une dest non publiée
+    // sur laquelle on scoute est forcément un brouillon local (custom).
     const activeDest = state.destinations?.maps?.[state.currentMapId];
     _overlay.querySelector('[data-scout-deststatus]').textContent =
-        isDestinationPublished(activeDest) ? 'publiée' : (activeDest?.custom ? 'brouillon local' : 'brouillon GitHub');
+        isDestinationPublished(activeDest) ? 'publiée' : 'brouillon local';
     _overlay.querySelector('[data-scout-quit]').addEventListener('click', stopScout);
     _overlay.querySelector('[data-scout-reset]').addEventListener('click', clearBox);
     // Boîte posée → « Retracer » (efface + ré-arme) ; sinon toggle armer/annuler.

@@ -1,26 +1,29 @@
 // src/local-destinations.js
-// Destinations BROUILLON locales (réunif C2a) — créées par le Scout en mode
-// « Nouvelle », stockées dans l'IndexedDB admin (PAS dans destinations.json, PAS
-// sur GitHub). On les scoute + cure en local ; la publication (push GitHub) est
-// une étape séparée et explicite (C2b).
+// Destinations BROUILLON locales (modèle 2-phases, Option A) — créées par le Scout
+// (« Nouvelle destination »), stockées dans l'IndexedDB admin (PAS dans
+// destinations.json, PAS sur GitHub). On les scoute + cure 100% en local ; la
+// publication (publishDestination → 1er et seul push GitHub en status:"published")
+// est une étape séparée et explicite. Un brouillon ne quitte jamais l'appareil avant
+// publication (la sauvegarde l'embarque pour parer un plantage DB, cf. fileManager.js).
 //
-// C2a-1b = côté LECTURE/BOOT : fusionner les brouillons dans la liste des
-// destinations + servir leur geojson depuis l'IndexedDB.
-// C2a-2 = côté CRÉATION : createLocalDraftDestination (appelé par le Scout en mode
-// « Nouvelle ») + makeUniqueDestId.
+// LECTURE/BOOT : mergeLocalDraftDestinations fusionne les brouillons dans la liste des
+// destinations ; app-startup sert leur geojson depuis l'IndexedDB.
+// CRÉATION : createLocalDraftDestination (appelé par le Scout) + makeUniqueDestId.
 //
 // Stockage (store appState) :
 //   - 'draftDestinations'   : { [id]: entrée destination (status:'draft', custom:true) }
-//   - 'draftGeoJSON_{id}'   : FeatureCollection des POIs (candidate:true)
+//   - 'draftGeoJSON_{id}'   : FeatureCollection de BASE, écrite VIDE à la création — les
+//                             lieux scoutés vivent dans 'customPois_{id}' (canal de
+//                             capture/publication) ; ce store reste le fond vide.
 //   - 'draftZones_{id}'     : FeatureCollection des zones (OSM) — lue par loadZonesForActive
 //
-// Visibilité : status:'draft' → les gardes EXISTANTES (boot app-startup.js:160 +
-// filtre du sélecteur topbar) les masquent aux non-admins. De toute façon un
-// non-admin (autre appareil) n'a aucun brouillon dans SON IndexedDB.
+// Visibilité : status:'draft' → les gardes EXISTANTES (boot app-startup.js + filtre du
+// sélecteur topbar) les masquent aux non-admins ; et un brouillon Option A n'est de
+// toute façon PAS sur le repo public (il n'y arrive qu'à la publication).
 import { state } from './state.js';
 import { getAppState, saveAppState, deleteAppState, deleteAllMapData } from './database.js';
 
-// La map { id: entrée } des brouillons locaux. Exportée pour C2b (publication).
+// La map { id: entrée } des brouillons locaux. Exportée pour la publication.
 export async function getDraftDestinations() {
     return (await getAppState('draftDestinations')) || {};
 }
@@ -55,7 +58,7 @@ export async function mergeLocalDraftDestinations() {
         const existing = state.destinations.maps[id];
         if (existing && !existing.custom) {
             // Une vraie dest (GitHub) porte cet id → GitHub gagne (on ne masque pas
-            // une dest publiée). Si c'est NOTRE brouillon publié (C2b) désormais
+            // une dest publiée). Si c'est NOTRE brouillon publié désormais
             // déployé sur GitHub Pages, on nettoie sa copie locale devenue inutile.
             // Un id qui collisionne sans drapeau publishedToGitHub est laissé tel quel.
             if (entry.publishedToGitHub) supersededByGitHub.push(id);
@@ -96,7 +99,7 @@ export async function createLocalDraftDestination(id, entry, geojson, zones) {
     await saveAppState(`draftZones_${id}`, zones || { type: 'FeatureCollection', features: [] });
 }
 
-// Zones (OSM) d'un brouillon local — lues à la publication GitHub (C2b).
+// Zones (OSM) d'un brouillon local — lues à la publication (publishDestination).
 // IndexedDB en échec → collection vide (pas de crash).
 export async function getDraftZones(id) {
     try {
@@ -115,7 +118,7 @@ export async function saveDraftZones(id, zones) {
 }
 
 // Retire un brouillon LOCAL (entrée + geojson + zones) une fois sa version GitHub
-// détectée live (C2b) : la copie locale n'a plus lieu d'être. Interne (appelé par
+// détectée live : la copie locale n'a plus lieu d'être. Interne (appelé par
 // mergeLocalDraftDestinations). Best-effort sur les clés annexes (un résidu
 // draftGeoJSON_/draftZones_ orphelin est inoffensif).
 async function removeLocalDraft(id) {
@@ -155,7 +158,7 @@ export async function deleteLocalDraftDestination(id) {
     if (state.destinations?.maps?.[id]) delete state.destinations.maps[id];
 }
 
-// Marque un brouillon local comme PUBLIÉ sur GitHub (C2b) SANS le supprimer : tant
+// Marque un brouillon local comme PUBLIÉ sur GitHub SANS le supprimer : tant
 // que GitHub Pages n'a pas redéployé (~1-2 min), la copie locale reste la source
 // affichée sur cet appareil (reload compris). mergeLocalDraftDestinations nettoie
 // la copie locale au 1er boot où la version GitHub (entrée non-custom) est détectée.
