@@ -371,7 +371,7 @@ export const escapeHtml = escapeXml;
  * `status` vaut explicitement "published". Tout le reste (status "draft",
  * absent, ou valeur inconnue) est traité comme un brouillon : visible admin
  * seulement. Défaut volontairement défensif — un nouveau dump Scout reste
- * invisible tant qu'il n'a pas été explicitement officialisé.
+ * invisible tant qu'il n'a pas été explicitement publié.
  */
 export function isDestinationPublished(dest) {
     return dest?.status === 'published';

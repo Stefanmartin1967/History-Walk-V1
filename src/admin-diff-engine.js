@@ -34,7 +34,7 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
         state.customFeatures.forEach(f => {
             // Réunif C1 : un candidat Scout (« à curer ») n'est PAS publiable tant
             // qu'il n'a pas été validé → jamais au brouillon. isCandidate lit l'overlay
-            // (curation = userData.candidate=false) pour couvrir le cas brouillon GitHub.
+            // (curation = userData.candidate=false) pour couvrir un candidat porté par une feature de base.
             if (isCandidate(f)) return;
             const id = getPoiId(f);
             if (!adminDraft.pendingPois[id]) {
@@ -274,7 +274,7 @@ export async function prepareDiffData(adminDraft) {
                 return;
             }
 
-            // Curation Scout (réunif) : un candidat de base (brouillon GitHub) validé
+            // Curation Scout (réunif) : un candidat porté par une feature de base, validé,
             // porte userData.candidate=false sur un patrimoine candidate:true. On compte
             // bien la modification (sinon purgeOrphanPendingPois la purgerait → « rien à
             // publier ») mais on l'affiche en clair plutôt qu'en `candidate: true → false`.
