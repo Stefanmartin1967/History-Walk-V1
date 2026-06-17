@@ -630,39 +630,25 @@ export function renderTab(tab, diffData, callbacks) {
         // dans le CC admin (remplace le menu admin God Mode qui devient minimal).
         // 5 cartes : Publier circuit (sub-panel) / Scout (lien externe) / DM (lien
         // externe) / Exporter Master GeoJSON (action) / Importer carte GeoJSON (action).
-        // C2b — carte de publication visible UNIQUEMENT sur un brouillon LOCAL
-        // (créé via le Scout « Nouvelle », pas encore poussé sur GitHub). custom:true
-        // est posé par mergeLocalDraftDestinations ; absent sur une dest GitHub.
+        // Modèle 2-phases (Option A) — carte de publication visible UNIQUEMENT sur un
+        // brouillon LOCAL (créé via le Scout « Nouvelle », jamais poussé sur GitHub).
+        // custom:true est posé par mergeLocalDraftDestinations ; absent sur une dest
+        // publiée. Un seul geste : brouillon local → publiée (visible de tous).
         const activeDest = state.destinations?.maps?.[state.currentMapId];
         const isLocalDraft = activeDest?.custom === true;
-        const publishDraftCardHtml = isLocalDraft ? `
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-publish-draft" aria-label="Publier ce brouillon de destination sur GitHub (multi-appareils)">
-                <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Publier en brouillon GitHub</div>
-                    <div class="cc-card-sub">Brouillon local (cet appareil) → le rendre multi-appareils</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>` : '';
-
-        // « Officialiser » (réunif) : visible UNIQUEMENT sur un brouillon GITHUB
-        // (status:"draft" et PAS un brouillon local custom — donc Hammamet, ou une
-        // dest scoutée déjà poussée). Flip draft→published = la rendre visible de tous.
-        const isGitHubDraft = activeDest && !activeDest.custom && activeDest.status === 'draft';
-        const officializeCardHtml = isGitHubDraft ? `
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-officialize" aria-label="Officialiser cette destination (la rendre visible de tous)">
+        const publishCardHtml = isLocalDraft ? `
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-publish-dest" aria-label="Publier cette destination (la rendre visible de tous)">
                 <div class="cc-card-ico"><i data-lucide="globe"></i></div>
                 <div class="cc-card-text">
-                    <div class="cc-card-title">Officialiser cette destination</div>
-                    <div class="cc-card-sub">Brouillon GitHub → publiée (visible de tous)</div>
+                    <div class="cc-card-title">Publier cette destination</div>
+                    <div class="cc-card-sub">Brouillon local → publiée (visible de tous)</div>
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>` : '';
 
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
-            ${publishDraftCardHtml}
-            ${officializeCardHtml}
+            ${publishCardHtml}
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
                 <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
                 <div class="cc-card-text">
@@ -849,99 +835,60 @@ export function renderTab(tab, diffData, callbacks) {
                 }
             });
 
-            // Outils — Publier en brouillon GitHub (C2b) : visible seulement sur un
-            // brouillon LOCAL. Pousse 4 fichiers en status:"draft" (multi-appareils,
-            // comme Hammamet). « Officialiser » (draft→published) viendra plus tard.
-            bindCardAction('btn-cc-tool-publish-draft', async () => {
+            // Outils — Publier cette destination (modèle 2-phases, Option A) : visible
+            // seulement sur un brouillon LOCAL. 1er et SEUL push → status:"published"
+            // (candidats non curés écartés du public mais PRÉSERVÉS en local).
+            bindCardAction('btn-cc-tool-publish-dest', async () => {
                 const mapId = state.currentMapId;
                 const dest = state.destinations?.maps?.[mapId];
                 if (!dest?.custom) {
                     showToast('Cette action ne concerne qu\'un brouillon local.', 'warning', 3500);
                     return;
                 }
-                // Même générateur que le push (publish-destination.js) : le compte
-                // affiché = le compte publié (état AFFICHÉ, pas le snapshot de création).
-                // keepCandidates:true → on compte aussi les candidats, comme le push brouillon.
+                // Même générateur que le push : le compte affiché = le compte publié.
+                // keepCandidates:false → seuls les lieux CURÉS comptent (les candidats
+                // non curés sont écartés du public, comme à la publication).
                 const { generateMasterGeoJSONData } = await import('./admin-geojson.js');
-                const n = generateMasterGeoJSONData([], { keepCandidates: true })?.features?.length || 0;
+                const { isCandidate } = await import('./utils.js');
+                const n = generateMasterGeoJSONData([], { keepCandidates: false })?.features?.length || 0;
+                const candCount = (state.loadedFeatures || []).filter(isCandidate).length;
                 if (n === 0) {
-                    showToast('Ce brouillon ne contient aucun lieu à publier.', 'warning', 3500);
+                    showToast('Aucun lieu curé à publier — valide au moins un lieu (« Valider ») d\'abord.', 'warning', 4500);
                     return;
                 }
                 const { hwConfirm, hwAlert } = await import('./modal.js');
                 closeCCModal(); // fermer le CC avant les modales (évite l'empilement)
+                const candNote = candCount > 0
+                    ? `<p><strong>${candCount} lieu(x) encore à curer</strong> seront gardés en local (pour les curer plus tard) et <em>n'apparaîtront pas</em> au public.</p>`
+                    : '';
                 const ok = await hwConfirm({
-                    title: 'Publier en brouillon GitHub',
-                    body: `<p>Publier <strong>${dest.name}</strong> en brouillon sur GitHub ?</p>`
-                        + `<p>${n} lieu(x) seront poussés en statut <em>brouillon</em> — visible par l'admin seulement, et accessible depuis tous tes appareils. Tu pourras « Officialiser » plus tard.</p>`,
+                    title: 'Publier la destination',
+                    body: `<p>Rendre <strong>${escapeXml(dest.name)}</strong> <em>visible de tous</em> ?</p>`
+                        + `<p>${n} lieu(x) curé(s) seront publiés sur GitHub.</p>`
+                        + candNote
+                        + `<p>Tu publies depuis cet appareil — c'est son état qui devient la version publique.</p>`,
                     confirmLabel: 'Publier',
                     cancelLabel: 'Annuler',
                 });
                 if (!ok) return;
                 try {
-                    const { publishDraftToGitHub } = await import('./publish-destination.js');
-                    // onProgress branché (audit R5) : l'admin voit chaque étape
-                    // du push au lieu d'un toast statique de 8 s.
-                    const res = await publishDraftToGitHub(mapId, (msg) => showToast(msg, 'info', 2500));
-                    await hwAlert({
-                        title: 'Brouillon publié ✓',
-                        body: `<p><strong>${escapeXml(res.name)}</strong> est publiée en brouillon sur GitHub (${res.pois} lieu(x)).</p>`
-                            + `<p>Accessible depuis tes autres appareils d'ici 1 à 2 min (déploiement GitHub Pages). Sur cet appareil, tu continues à la voir normalement.</p>`,
-                    });
-                } catch (e) {
-                    await hwAlert({
-                        title: 'Échec de la publication',
-                        body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
-                            + `<p>Ton brouillon local est intact — tu peux réessayer.</p>`,
-                    });
-                }
-            });
-
-            // Outils — Officialiser (réunif) : visible seulement sur un brouillon
-            // GitHub. Flip draft→published + push du geojson épuré (candidats non
-            // curés écartés du public mais PRÉSERVÉS en local, cf. officializeDestination).
-            bindCardAction('btn-cc-tool-officialize', async () => {
-                const mapId = state.currentMapId;
-                const dest = state.destinations?.maps?.[mapId];
-                if (!dest || dest.custom || dest.status !== 'draft') {
-                    showToast('Cette action ne concerne qu\'un brouillon GitHub.', 'warning', 3500);
-                    return;
-                }
-                const { isCandidate } = await import('./utils.js');
-                const candCount = (state.loadedFeatures || []).filter(isCandidate).length;
-                const { hwConfirm, hwAlert } = await import('./modal.js');
-                closeCCModal();
-                const candNote = candCount > 0
-                    ? `<p><strong>${candCount} lieu(x) encore à curer</strong> seront mis de côté (gardés en local pour les curer plus tard) et <em>n'apparaîtront pas</em> au public.</p>`
-                    : '';
-                const ok = await hwConfirm({
-                    title: 'Officialiser la destination',
-                    body: `<p>Rendre <strong>${escapeXml(dest.name)}</strong> <em>visible de tous</em> ?</p>`
-                        + candNote
-                        + `<p>Publie depuis l'appareil où la curation est à jour — c'est son état qui devient la version publique.</p>`,
-                    confirmLabel: 'Officialiser',
-                    cancelLabel: 'Annuler',
-                });
-                if (!ok) return;
-                try {
-                    const { officializeDestination } = await import('./publish-destination.js');
-                    // onProgress branché (audit R5) — même logique que la
-                    // publication de brouillon ci-dessus.
-                    const res = await officializeDestination(mapId, (msg) => showToast(msg, 'info', 2500));
+                    const { publishDestination } = await import('./publish-destination.js');
+                    // onProgress branché (audit R5) : l'admin voit chaque étape du push.
+                    const res = await publishDestination(mapId, (msg) => showToast(msg, 'info', 2500));
                     const keptNote = res.candidatesKept > 0
                         ? `<p>${res.candidatesKept} lieu(x) à curer gardé(s) en local — ils réapparaîtront pour curation et ne sont pas publics.</p>`
                         : '';
                     await hwAlert({
-                        title: 'Destination officialisée ✓',
+                        title: 'Destination publiée ✓',
                         body: `<p><strong>${escapeXml(res.name)}</strong> est désormais publiée (${res.pois} lieu(x)).</p>`
                             + keptNote
                             + `<p>Visible de tous d'ici 1 à 2 min (déploiement GitHub Pages).</p>`,
                     });
                 } catch (e) {
                     await hwAlert({
-                        title: 'Échec de l\'officialisation',
-                        body: `<p>L'officialisation n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
-                            + `<p>Rien n'a changé pour le public — tu peux réessayer.</p>`,
+                        title: 'Échec de la publication',
+                        body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
+                            + `<p>Ton brouillon local est intact — tu peux réessayer.</p>`,
                     });
                 }
             });

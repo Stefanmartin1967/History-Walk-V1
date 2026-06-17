@@ -36,7 +36,6 @@ import { hwPrompt } from './modal.js';
 import { createLocalDraftDestination, makeUniqueDestId, saveDraftZones } from './local-destinations.js';
 import { fetchZonesAuto } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
-import { getStoredToken } from './github-sync.js';
 
 let _overlay = null;
 let _boxEl = null;
@@ -709,14 +708,9 @@ async function capture() {
 // cadrage d'une destination qui s'étendra autour.
 async function createDestinationDraft() {
     if (!_geocoded) return;
-    // Garde-fou flux destination (15/06/2026) : pas de token GitHub → pas de création.
-    // L'auto-enregistrement ci-dessous EXIGE un token ; sans lui on retomberait dans
-    // l'état « brouillon local seul » qu'on cherche justement à éliminer. On bloque AVANT
-    // toute écriture IndexedDB pour ne pas laisser de brouillon local orphelin.
-    if (!getStoredToken()) {
-        showToast('Connecte un token GitHub (Centre de Contrôle › Connexion) avant de créer une destination.', 'warning', 5000);
-        return;
-    }
+    // Modèle 2-phases (Option A, 17/06/2026) : la création est 100% LOCALE — aucune
+    // écriture GitHub, donc aucun token requis. La destination reste un brouillon
+    // local (admin-only) jusqu'à « Publier cette destination » (Centre de Contrôle).
     const suggested = (_geoName || '').split(',')[0].trim();
     const name = await hwPrompt({
         title: 'Nouvelle destination',
@@ -757,37 +751,16 @@ async function createDestinationDraft() {
         return;
     }
 
-    // AUTO-ENREGISTREMENT GitHub (garde-fou flux destination 15/06/2026) : on enregistre
-    // la destination sur GitHub DÈS la création (entrée destinations.json status:"draft"
-    // + geojson vide + zones + index circuits). Tue l'état « brouillon local seul » qui a
-    // causé les geojson orphelins / curation perdue. await OBLIGATOIRE avant le reload —
-    // sinon la navigation interromprait le push de destinations.json.
-    let registered = false;
-    showLoading(true, 'Enregistrement de la destination sur GitHub…');
-    try {
-        const { registerDraftDestinationOnGitHub } = await import('./publish-destination.js');
-        await registerDraftDestinationOnGitHub(id, entry, (msg) => showLoading(true, msg));
-        registered = true;
-    } catch (e) {
-        // Échec réseau/API : le brouillon LOCAL existe toujours → au reload il s'affiche
-        // comme brouillon local et la carte « Publier en brouillon GitHub » du CC permet
-        // de retenter. On prévient explicitement (pas un simple toast oubliable).
-        console.warn('[Scout] auto-enregistrement GitHub échoué :', e);
-    }
-    showLoading(false);
-
     // Bascule : on mémorise le choix puis on recharge sur le brouillon (le boot
     // C2a-1b le fusionne + charge ses POIs depuis l'IDB ; admin déjà connecté).
     // `&scout=1` → le boot rouvre le Scout DESSUS automatiquement (main.js, patron
     // ?poi=) : l'admin enchaîne la moisson sans rouvrir l'outil à la main.
+    // MODÈLE 2-PHASES (Option A) : RIEN n'est poussé sur GitHub ici — le brouillon
+    // reste 100% local jusqu'à « Publier cette destination ».
     try { localStorage.setItem('hw_active_dest', id); } catch (_) {}
     const zTxt = zones.features.length ? ` · ${zones.features.length} zone${zones.features.length > 1 ? 's' : ''} OSM` : '';
-    if (registered) {
-        showToast(`Destination « ${trimmed} » créée et enregistrée sur GitHub${zTxt}. Bascule — le Scout rouvre dessus pour la remplir.`, 'success', 3200);
-    } else {
-        showToast(`Destination « ${trimmed} » créée en local${zTxt}, mais l'enregistrement GitHub a échoué — publie-la depuis le Centre de Contrôle (« Publier en brouillon GitHub ») dès que possible.`, 'warning', 7000);
-    }
-    setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(id)}&scout=1`; }, registered ? 650 : 1800);
+    showToast(`Destination « ${trimmed} » créée en local${zTxt}. Bascule — le Scout rouvre dessus pour la remplir.`, 'success', 3200);
+    setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(id)}&scout=1`; }, 650);
 }
 
 // ── Shell ─────────────────────────────────────────────────────────────────────
