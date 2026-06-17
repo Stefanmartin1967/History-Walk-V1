@@ -496,6 +496,17 @@ async function publishChanges() {
         return;
     }
 
+    // Garde modèle 2-phases (Option A) : « Tout publier » régénère et pousse le
+    // {id}.geojson, mais NE crée PAS l'entrée destinations.json. Sur un brouillon
+    // LOCAL (custom, jamais enregistré sur GitHub) ça produirait un geojson ORPHELIN
+    // (piège historique Hammamet). La 1ʳᵉ mise en ligne d'un brouillon passe par
+    // « Publier cette destination » (Outils), qui pousse les 4 fichiers ensemble.
+    const activeDest = state.destinations?.maps?.[state.currentMapId];
+    if (activeDest?.custom) {
+        showToast('Brouillon local : utilise « Publier cette destination » (Outils) pour le mettre en ligne.', 'warning', 5000);
+        return;
+    }
+
     const ok = await showConfirm(
         "Publication GitHub",
         "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
