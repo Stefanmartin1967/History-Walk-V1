@@ -7,7 +7,7 @@ import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPatrimonialName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getIconForFeature, getIconHtml } from './poi-icons.js';
-import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
+import { escapeHtml, sanitizeHTML, getZoneFromCoords, getPoiProp } from './utils.js';
 import { showToast } from './toast.js';
 import { showConfirm, openHwModal, closeModal } from './modal.js';
 import { getSearchResults } from './search.js';
@@ -500,7 +500,10 @@ function renderMobileSearchResults(container, matches, term) {
     matches.forEach(f => {
         const poiId = getPoiId(f);
         const name = getPatrimonialName(f);
-        const cat = f?.properties?.['Catégorie'] || '';
+        // getPoiProp (overlay-aware) : un POI recatégorisé via l'overlay doit afficher
+        // sa nouvelle catégorie dans la méta du résultat (cohérent avec la grille
+        // « Parcourir par catégorie » du même écran).
+        const cat = getPoiProp(f, 'Catégorie') || '';
         let zone = '';
         const coords = f?.geometry?.coordinates;
         if (coords && coords.length >= 2) {

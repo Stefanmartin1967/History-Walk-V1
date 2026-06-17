@@ -52,7 +52,9 @@ vi.mock('../src/utils.js', () => ({
     escapeHtml: vi.fn(s => String(s ?? '')),
     sanitizeHTML: vi.fn(s => String(s ?? '')),
     isPointInPolygon: vi.fn(() => false),
-    getZoneFromCoords: vi.fn(() => null)
+    getZoneFromCoords: vi.fn(() => null),
+    // overlay-aware : la méta du résultat de recherche lit la catégorie via getPoiProp.
+    getPoiProp: vi.fn((f, k) => (f?.properties?.userData?.[k] ?? f?.properties?.[k]))
 }));
 
 vi.mock('../src/zones.js', () => ({
