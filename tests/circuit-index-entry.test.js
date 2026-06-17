@@ -11,6 +11,13 @@ vi.mock('../src/state.js', () => ({ state: {}, setUserData: vi.fn() }));
 vi.mock('../src/utils.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID,
     getRealDistance: () => h.realDistance,
+    // Dégel de Zone : buildCircuitIndexEntry lit la zone du 1er POI via getDerivedZone.
+    // En test (zones non chargées) il retombe sur la valeur stockée (overlay-aware).
+    getDerivedZone: (f) => {
+        const p = f?.properties;
+        const v = p?.userData?.Zone !== undefined ? p.userData.Zone : p?.Zone;
+        return (v || '').toString();
+    },
 }));
 vi.mock('../src/gpx.js', () => ({ generateGPXString: vi.fn(() => '<gpx/>') }));
 vi.mock('../src/events.js', () => ({ eventBus: { on: vi.fn(), emit: vi.fn(), off: vi.fn() } }));

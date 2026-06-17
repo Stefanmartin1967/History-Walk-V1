@@ -21,7 +21,11 @@ vi.mock('../src/utils.js', () => ({
         const ud = f?.properties?.userData;
         const v = (ud && ud.candidate !== undefined) ? ud.candidate : f?.properties?.candidate;
         return !!v;
-    }
+    },
+    // Dégel de Zone : generateMasterGeoJSONData cuit une Zone fraîche au publish via
+    // deriveZoneSafe. En test (zones non chargées) on renvoie la valeur stockée → la
+    // cuisson est un no-op, les assertions existantes restent valides.
+    deriveZoneSafe: (_lat, _lng, stored) => stored,
 }));
 
 import { state } from '../src/state.js';

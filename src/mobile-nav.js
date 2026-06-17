@@ -7,8 +7,7 @@ import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { getPoiId, getPatrimonialName, addPoiFeature, addPendingPoiFeature } from './data.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getIconForFeature, getIconHtml } from './poi-icons.js';
-import { escapeHtml, sanitizeHTML, isPointInPolygon, getZoneFromCoords } from './utils.js';
-import { zonesData } from './zones.js';
+import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { showToast } from './toast.js';
 import { showConfirm, openHwModal, closeModal } from './modal.js';
 import { getSearchResults } from './search.js';
@@ -365,19 +364,11 @@ async function handleAddPoiClick() {
     const { latitude, longitude } = position;
     const newPoiId = `HW-MOB-${Date.now()}`;
 
-    // Détection automatique de la zone via les polygones
-    let detectedZone = "Hors Zone";
-    if (zonesData && zonesData.features) {
-        for (const feature of zonesData.features) {
-            if (feature.geometry && feature.geometry.type === "Polygon") {
-                const polygonCoords = feature.geometry.coordinates[0];
-                if (isPointInPolygon([longitude, latitude], polygonCoords)) {
-                    detectedZone = feature.properties.name;
-                    break;
-                }
-            }
-        }
-    }
+    // Dégel de Zone : on ne FIGE plus le quartier dans le POI — il se dérive de la
+    // position partout (getDerivedZone). On le calcule juste pour le toast informatif,
+    // via getZoneFromCoords (qui gère Polygon ET MultiPolygon, contrairement à l'ancien
+    // point-dans-polygone inline qui ne voyait que les Polygon → faux « Hors Zone »).
+    const detectedZone = getZoneFromCoords(latitude, longitude);
 
     const newFeature = {
         type: "Feature",
@@ -385,7 +376,6 @@ async function handleAddPoiClick() {
         properties: {
             "Nom du site FR": "Nouveau Lieu",
             "Catégorie": "A définir",
-            "Zone": detectedZone,
             "HW_ID": newPoiId,
             "created_at": new Date().toISOString()
         }

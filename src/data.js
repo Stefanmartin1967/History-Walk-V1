@@ -15,7 +15,8 @@ import {
 import { logModification } from './logger.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
-import { getPoiId, getPoiName, generateHWID, getZoneFromCoords, isCandidate } from './utils.js';
+import { getPoiId, getPoiName, generateHWID, getDerivedZone, isCandidate } from './utils.js';
+import { deleteZoneCacheEntry } from './zones.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
 import { getDomainFromUrl } from './url-utils.js';
 import { PERSONAL_KEYS } from './config.js';
@@ -488,7 +489,7 @@ export function passesStructuralFilters(feature, { skipZone = false } = {}) {
     if (!feature) return false;
     const props = { ...feature.properties, ...feature.properties.userData };
 
-    if (!skipZone && state.activeFilters.zone && props.Zone !== state.activeFilters.zone) return false;
+    if (!skipZone && state.activeFilters.zone && getDerivedZone(feature) !== state.activeFilters.zone) return false;
     if (state.activeFilters.categories && state.activeFilters.categories.length > 0) {
         if (!state.activeFilters.categories.includes(props['Catégorie'])) return false;
     }
@@ -748,9 +749,10 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
     if (feature) {
         feature.geometry.coordinates = [lng, lat];
         feature.properties.userData = state.userData[poiId];
-        // Recalcul automatique de la zone
-        const newZone = getZoneFromCoords(lat, lng);
-        if (newZone) feature.properties.Zone = newZone;
+        // Dégel de Zone : on ne FIGE plus la zone au déplacement — elle se dérive
+        // désormais des coordonnées (getDerivedZone). On invalide juste le cache de
+        // ce POI pour que la prochaine lecture recalcule depuis la nouvelle position.
+        deleteZoneCacheEntry(poiId);
     }
 
     // Gestion de la persistance (Custom vs Officiel)

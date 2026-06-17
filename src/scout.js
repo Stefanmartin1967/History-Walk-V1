@@ -31,7 +31,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { fetchOverpassJson } from './osm-overpass.js';
 import { addPoiFeature } from './data.js';
-import { getZoneFromCoords, isDestinationPublished } from './utils.js';
+import { isDestinationPublished } from './utils.js';
 import { hwPrompt } from './modal.js';
 import { createLocalDraftDestination, makeUniqueDestId, saveDraftZones } from './local-destinations.js';
 import { fetchZonesAuto } from './osm-zones.js';
@@ -600,11 +600,12 @@ async function capture() {
     const toCapture = _candidates.filter(c => inBox(c) && !c.dup);
     if (!fresh || !toCapture.length) return;
 
-    // Garde-fou zonage (PR B) : ÉTENDRE les zones OSM à la boîte de capture AVANT
-    // d'assigner `Zone` aux POIs (getZoneFromCoords lit le binding live `zonesData`).
-    // Sans ça, les captures hors de la bbox des zones de la destination (souvent plus
-    // serrée que le cadre scouté) tombent « Hors zone ». try/catch SÉPARÉ et NON
-    // bloquant : un échec réseau Overpass ne doit pas empêcher la capture.
+    // Garde-fou zonage (PR B) : ÉTENDRE les zones OSM à la boîte de capture. La Zone
+    // d'un POI se dérive désormais à la volée (dégel, getDerivedZone) du jeu de
+    // quartiers `zonesData` — donc compléter ce jeu ici suffit à ce que les captures
+    // hors de la bbox (souvent plus serrée que le cadre scouté) ne tombent pas « Hors
+    // zone ». try/catch SÉPARÉ et NON bloquant : un échec réseau Overpass ne doit pas
+    // empêcher la capture.
     if (_box) {
         try {
             const bbox = [[_box.south, _box.west], [_box.north, _box.east]];
@@ -616,7 +617,7 @@ async function capture() {
                 const merged = { type: 'FeatureCollection', features: [...(zonesData.features || []), ...added] };
                 setZonesData(merged);
                 // Brouillon LOCAL → persister les zones étendues (dest GitHub : le fichier
-                // {id}-zones.geojson reste la vérité, géré par « Recalculer les zones »).
+                // {id}-zones.geojson reste la vérité, géré par « Compléter les quartiers »).
                 if (state.destinations?.maps?.[state.currentMapId]?.custom) {
                     try { await saveDraftZones(state.currentMapId, merged); } catch (_) { /* best-effort */ }
                 }
@@ -636,7 +637,9 @@ async function capture() {
                 properties: {
                     'Nom du site FR': c.name || '',
                     'Catégorie': c.cat || 'À définir',
-                    Zone: getZoneFromCoords(c.lat, c.lon) || '',
+                    // Dégel de Zone : on ne fige plus le quartier à la capture — il se
+                    // dérive de la position (getDerivedZone). L'extension du fichier de
+                    // zones ci-dessus reste nécessaire pour QUE la dérivation matche.
                     candidate: true,
                 },
             }, { draft: false });

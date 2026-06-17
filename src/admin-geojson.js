@@ -4,7 +4,7 @@
 // Aucune dépendance DOM / UI : pure transformation de données.
 
 import { state } from './state.js';
-import { getPoiId, isCandidate } from './utils.js';
+import { getPoiId, isCandidate, deriveZoneSafe } from './utils.js';
 import { PERSONAL_KEYS } from './config.js';
 
 // `keepCandidates` : faut-il laisser passer les candidats Scout non curés
@@ -39,6 +39,17 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
             if (properties.userData) {
                 Object.assign(properties, properties.userData);
                 delete properties.userData;
+            }
+
+            // Dégel de Zone : on cuit une Zone FRAÎCHE (dérivée des coordonnées sur le
+            // jeu de quartiers courant) dans le geojson public, pour qu'un visiteur
+            // dont le fetch des quartiers échoue garde quand même une Zone correcte
+            // (filet de robustesse). deriveZoneSafe NE recalcule PAS si zonesData est
+            // vide → on conserve alors la valeur déjà aplatie (jamais « Hors zone »
+            // fabriqué en masse). Le visiteur, lui, re-dérive de toute façon à la volée.
+            const coords = f.geometry && f.geometry.coordinates; // [lng, lat]
+            if (Array.isArray(coords) && coords.length >= 2) {
+                properties.Zone = deriveZoneSafe(coords[1], coords[0], properties.Zone);
             }
 
             // Réunif PR1 : un candidat de base curé porte candidate:false (via overlay

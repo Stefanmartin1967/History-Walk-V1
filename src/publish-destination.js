@@ -301,7 +301,7 @@ export async function officializeDestination(id, onProgress = () => {}) {
 }
 
 /**
- * Pousse le fichier {id}-zones.geojson sur GitHub (PR C « Recalculer les zones »).
+ * Pousse le fichier {id}-zones.geojson sur GitHub (« Compléter les quartiers »).
  * « Tout publier » ne pousse JAMAIS les zones (seulement geojson/circuits/photos),
  * d'où cette fonction dédiée — miroir d'un upload zones de publishDraftToGitHub.
  * On ne touche PAS destinations.json : l'entrée pointe déjà vers ce fichier (zonesFile).
@@ -319,7 +319,7 @@ export async function pushDestinationZones(id, zones, onProgress = () => {}) {
 
     onProgress('Publication des zones…');
     await uploadFileToGitHub(jsonFile(cleanZones, `${id}-zones.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
-        GITHUB_PATHS.zones(id), `chore(zones): recalcul des quartiers « ${id} »`);
+        GITHUB_PATHS.zones(id), `chore(zones): complète les quartiers « ${id} »`);
 
     return { id, zones: cleanZones.features.length };
 }

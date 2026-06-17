@@ -1,6 +1,6 @@
 import { state, setUserData, setCustomFeatures } from './state.js';
 import { fetchWithTimeout } from './net.js';
-import { getPoiId, getRealDistance, isDestinationPublished } from './utils.js';
+import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -41,7 +41,7 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
         distance,
         isOfficial: true,
         hasRealTrack: true,
-        zone: features[0]?.properties?.Zone || undefined,
+        zone: (features[0] && getDerivedZone(features[0])) || undefined,
         poiIds,
     };
     if (!entry.zone) delete entry.zone;
