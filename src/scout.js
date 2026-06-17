@@ -115,6 +115,37 @@ function viewportRectToGeo(rect) {
     return { north: nw.lat, west: nw.lng, south: se.lat, east: se.lng };
 }
 
+// ── « Boîte de la destination » : mémorisée par mapId ─────────────────────────
+// La boîte de scout est PERSISTÉE (localStorage, par destination) et RESTAURÉE aux
+// réouvertures → on re-scoute la même zone (nouvelles catégories, lieux récemment
+// cartographiés…) ou on l'AGRANDIT aux poignées sans rien perdre (le scan
+// dédoublonne l'existant, règle #472). Préférence locale (par appareil), comme
+// hw_active_dest. Pas de boîte sauvée → boîte par défaut centrée → « Scanner » actif
+// d'emblée (avant : « Scanner » grisé tant qu'on n'avait pas tracé à la main).
+function boxStorageKey() { return `scout_box_${state.currentMapId}`; }
+function persistBox() {
+    try {
+        const k = boxStorageKey();
+        if (_box) localStorage.setItem(k, JSON.stringify(_box));
+        else localStorage.removeItem(k);
+    } catch (_) { /* quota / navigation privée : best-effort */ }
+}
+function loadSavedBox() {
+    try {
+        const b = JSON.parse(localStorage.getItem(boxStorageKey()) || 'null');
+        if (b && ['north', 'south', 'east', 'west'].every(k => Number.isFinite(b[k]))) return b;
+    } catch (_) { /* JSON corrompu → on ignore */ }
+    return null;
+}
+// Boîte par défaut = portion centrale (~60 %) de la vue courante. À la profondeur de
+// zoom d'une destination ça tient en 1 tuile ; une vue très dézoomée serait de toute
+// façon refusée par le garde MAX_TILES de scan().
+function defaultBox() {
+    const r = mapRect();
+    const w = r.width * 0.6, h = r.height * 0.6;
+    return viewportRectToGeo({ left: r.left + (r.width - w) / 2, top: r.top + (r.height - h) / 2, w, h });
+}
+
 // ── Géométrie / dédup ────────────────────────────────────────────────────────
 function haversineM(aLat, aLon, bLat, bLon) {
     const R = 6371000, toRad = (d) => d * Math.PI / 180;
@@ -296,6 +327,7 @@ function onPointerUp() {
     map.dragging.enable();
     document.removeEventListener('pointermove', onPointerMove);
     document.removeEventListener('pointerup', onPointerUp);
+    persistBox(); // boîte redimensionnée/déplacée → mémoriser pour la destination
 }
 
 // ── Tracé de la boîte au glisser (réunif peaufinage) ───────────────────────────
@@ -352,6 +384,7 @@ function onDrawUp() {
     render();          // boîte valide → affichée + couche masquée ; sinon → couche toujours armée
     updateTraceBtn();
     updatePrimary();
+    persistBox();      // nouvelle boîte tracée (ou annulée) → mémoriser pour la destination
 }
 
 // ── Formulaire « Nouvelle destination… » (Scout v2) ──────────────────────────
@@ -456,6 +489,7 @@ function clearBox() {
     _drawArmed = false;
     clearCandidates();
     _scannedBounds = null;
+    persistBox();      // « Retracer » : on oublie la boîte mémorisée (une nouvelle suivra)
     render();          // → boîte masquée, couche de tracé désarmée
     updateTraceBtn();
     updatePrimary();
@@ -573,6 +607,7 @@ async function scan() {
             pending = stillFailed; // on ne retente QUE les tuiles encore en échec
         }
         _scannedBounds = { ..._box };
+        persistBox();   // la boîte scannée devient la « boîte de la destination » (mémorisée)
         refreshRecap(); // badge final : les refresh en boucle tournaient avant que _scannedBounds soit posé
         const net = all.filter(c => inBox(c) && !c.dup).length;
         const failed = pending.length;
@@ -831,10 +866,19 @@ function renderShell() {
     _boxEl = _overlay.querySelector('[data-scout-box]');
     _drawLayer = _overlay.querySelector('[data-scout-draw]');
 
-    // Pas de boîte au départ : on (re)cale la carte puis render() → boîte masquée,
-    // navigation libre. L'admin cadre sa zone (pan/zoom) puis arme le tracé via
-    // le bouton « Tracer la zone ».
-    setTimeout(() => { try { map.invalidateSize(); } catch (_) {} render(); }, 80);
+    // On (re)cale la carte puis on POSE une boîte : la « boîte de la destination »
+    // mémorisée (dernier scan) si elle est encore dans la destination, sinon une
+    // boîte par défaut centrée sur la vue → « Scanner la zone » est actif tout de
+    // suite (ajustable aux poignées, ou « Retracer » pour une autre zone). La carte
+    // reste pannable autour de la boîte.
+    setTimeout(() => {
+        try { map.invalidateSize(); } catch (_) {}
+        const destBounds = state.destinations?.maps?.[state.currentMapId]?.bounds;
+        const saved = loadSavedBox();
+        _box = (saved && boxIntersectsBounds(saved, destBounds)) ? saved : defaultBox();
+        render();
+        updatePrimary();
+    }, 80);
 
     _overlay.querySelector('[data-scout-destname]').textContent = destName();
     // Statut de la dest active : publiée / brouillon local (IDB) / brouillon GitHub.
