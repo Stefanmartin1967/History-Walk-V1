@@ -18,7 +18,7 @@
 // filtre du sélecteur topbar) les masquent aux non-admins. De toute façon un
 // non-admin (autre appareil) n'a aucun brouillon dans SON IndexedDB.
 import { state } from './state.js';
-import { getAppState, saveAppState, deleteAppState } from './database.js';
+import { getAppState, saveAppState, deleteAppState, deleteAllMapData } from './database.js';
 
 // La map { id: entrée } des brouillons locaux. Exportée pour C2b (publication).
 export async function getDraftDestinations() {
@@ -126,6 +126,33 @@ async function removeLocalDraft(id) {
     }
     try { await deleteAppState(`draftGeoJSON_${id}`); } catch (e) { /* best-effort */ }
     try { await deleteAppState(`draftZones_${id}`); } catch (e) { /* best-effort */ }
+}
+
+// Supprime DÉFINITIVEMENT un brouillon LOCAL de destination (Option A). Un brouillon
+// ne vit JAMAIS sur GitHub (modèle 2-phases) → suppression 100% locale, pas de token.
+// Purge : l'entrée (clé retirée de draftDestinations) + son geojson + ses zones + ses
+// captures (customPois) + les caches zones offline + TOUTES les données IDB indexées
+// par mapId (userData/curation, circuits perso, photos blob, cache OSM) + la boîte de
+// scan localStorage. Best-effort sur les clés annexes (un résidu est inoffensif).
+// L'appelant (UI) bascule hw_active_dest puis recharge pour repartir propre.
+export async function deleteLocalDraftDestination(id) {
+    if (!id) return;
+    // 1. Entrée brouillon : retirer la clé de la map draftDestinations.
+    const drafts = await getDraftDestinations();
+    if (drafts[id]) {
+        delete drafts[id];
+        await saveAppState('draftDestinations', drafts);
+    }
+    // 2. Clés appState dédiées à cette carte.
+    for (const key of [`draftGeoJSON_${id}`, `draftZones_${id}`, `customPois_${id}`, `lastZones_${id}`, `lastZones_etag_${id}`]) {
+        try { await deleteAppState(key); } catch (e) { /* best-effort */ }
+    }
+    // 3. Toutes les données IDB de la carte (poiUserData, savedCircuits, poiPhotos, osmNearestWay).
+    try { await deleteAllMapData(id); } catch (e) { /* best-effort */ }
+    // 4. Préférence locale (boîte de scan Scout).
+    try { localStorage.removeItem(`scout_box_${id}`); } catch (e) { /* ignore */ }
+    // 5. Reflet mémoire immédiat : retirer la dest de la liste en cours (avant reload).
+    if (state.destinations?.maps?.[id]) delete state.destinations.maps[id];
 }
 
 // Marque un brouillon local comme PUBLIÉ sur GitHub (C2b) SANS le supprimer : tant

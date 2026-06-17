@@ -646,6 +646,19 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>` : '';
 
+        // Suppression d'un brouillon LOCAL (Option A) — visible UNIQUEMENT sur un
+        // brouillon local (custom). Action destructive (placée en dernier, style danger).
+        // Purge 100% locale, pas de GitHub : une dest publiée n'est PAS supprimable ici.
+        const deleteCardHtml = isLocalDraft ? `
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-delete-dest" aria-label="Supprimer ce brouillon de destination (définitif, local)">
+                <div class="cc-card-ico cc-card-ico--danger"><i data-lucide="trash-2"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Supprimer cette destination</div>
+                    <div class="cc-card-sub">Brouillon local — suppression définitive (cet appareil)</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>` : '';
+
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
             ${publishCardHtml}
@@ -705,6 +718,7 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
+            ${deleteCardHtml}
         `;
 
         // Stats omises en empty state (totalCount=0) : 4 compteurs à 0 sont
@@ -889,6 +903,44 @@ export function renderTab(tab, diffData, callbacks) {
                         title: 'Échec de la publication',
                         body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
                             + `<p>Ton brouillon local est intact — tu peux réessayer.</p>`,
+                    });
+                }
+            });
+
+            // Outils — Supprimer cette destination (Option A) : visible seulement sur
+            // un brouillon LOCAL. Purge 100% locale (deleteLocalDraftDestination) puis
+            // bascule sur la dest publiée par défaut + reload. Pas de GitHub, pas de token.
+            bindCardAction('btn-cc-tool-delete-dest', async () => {
+                const mapId = state.currentMapId;
+                const dest = state.destinations?.maps?.[mapId];
+                if (!dest?.custom) {
+                    showToast('Seul un brouillon local peut être supprimé ici.', 'warning', 3500);
+                    return;
+                }
+                const name = dest.name || mapId;
+                const fallback = state.destinations?.activeMapId || 'djerba';
+                const { hwConfirm, hwAlert } = await import('./modal.js');
+                closeCCModal();
+                const ok = await hwConfirm({
+                    title: 'Supprimer la destination',
+                    body: `<p>Supprimer définitivement le brouillon <strong>${escapeXml(name)}</strong> ?</p>`
+                        + `<p>Tous ses lieux scoutés/curés, circuits, photos et zones (sur cet appareil) seront effacés. <strong>Action irréversible.</strong></p>`
+                        + `<p>Astuce : fais d'abord une <em>Sauvegarde</em> si tu veux pouvoir le restaurer.</p>`,
+                    confirmLabel: 'Supprimer',
+                    cancelLabel: 'Annuler',
+                });
+                if (!ok) return;
+                try {
+                    const { deleteLocalDraftDestination } = await import('./local-destinations.js');
+                    await deleteLocalDraftDestination(mapId);
+                    try { localStorage.setItem('hw_active_dest', fallback); } catch (_) {}
+                    showToast(`Brouillon « ${name} » supprimé.`, 'success', 2500);
+                    // Bascule sur la dest publiée par défaut + reload → état propre.
+                    setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(fallback)}`; }, 700);
+                } catch (e) {
+                    await hwAlert({
+                        title: 'Échec de la suppression',
+                        body: `<p>La suppression n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`,
                     });
                 }
             });
