@@ -410,6 +410,33 @@ export async function deleteCircuitById(id) {
     });
 }
 
+/**
+ * Supprime TOUTES les entrées d'une carte dans les stores indexés par mapId :
+ * poiUserData (curation/notes), savedCircuits (circuits perso), poiPhotos (blobs)
+ * et osmNearestWay (cache OSM). Utilisé par la suppression d'un brouillon LOCAL de
+ * destination (local-destinations.deleteLocalDraftDestination). Une seule
+ * transaction multi-stores ; chaque store a un index 'mapId_index'.
+ * @param {string} mapId
+ * @returns {Promise<{poiUserData:number, savedCircuits:number, poiPhotos:number, osmNearestWay:number}>}
+ */
+export async function deleteAllMapData(mapId) {
+    const STORES = ['poiUserData', 'savedCircuits', 'poiPhotos', 'osmNearestWay'];
+    return withRetry(db => new Promise((resolve, reject) => {
+        const counts = { poiUserData: 0, savedCircuits: 0, poiPhotos: 0, osmNearestWay: 0 };
+        const tx = db.transaction(STORES, 'readwrite');
+        tx.oncomplete = () => resolve(counts);
+        tx.onerror = (e) => reject(e.target.error);
+        tx.onabort = (e) => reject(e.target.error || new Error('deleteAllMapData aborted'));
+        for (const name of STORES) {
+            const req = tx.objectStore(name).index('mapId_index').openCursor(IDBKeyRange.only(mapId));
+            req.onsuccess = (ev) => {
+                const cur = ev.target.result;
+                if (cur) { cur.delete(); counts[name]++; cur.continue(); }
+            };
+        }
+    }));
+}
+
 /** @public API de reset complet — conservée délibérément (pas d'appelant actuel). */
 export async function clearAllUserData() {
     try {
