@@ -4,7 +4,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
-import { getRealDistance, getOrthodromicDistance, getZoneFromCoords } from './utils.js';
+import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, getPoiProp } from './utils.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData, getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { isMobileView } from './mobile-state.js';
 import * as View from './circuit-view.js';
@@ -340,9 +340,11 @@ async function applyCircuitHero() {
     let heroUrl = null;
     let totalPhotoCount = 0;
 
-    // Passe 1 : URLs publiées (properties.photos). Compte aussi le total.
+    // Passe 1 : photos (getPoiProp = overlay userData prioritaire). Compte aussi le
+    // total. Lire properties.photos brut ratait les photos curées via l'overlay
+    // (ajout par URL au CC) tant que le geojson n'était pas republié+rechargé.
     for (const poi of circuit) {
-        const published = poi?.properties?.photos;
+        const published = getPoiProp(poi, 'photos');
         if (Array.isArray(published) && published.length > 0) {
             totalPhotoCount += published.length;
             if (!heroUrl) heroUrl = published[0];

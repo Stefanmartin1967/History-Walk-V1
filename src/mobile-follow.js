@@ -205,7 +205,9 @@ function sheetMarkup(feature, idx) {
     const excerpt = (getPoiProp(feature, 'info_gpx')
         || getPoiProp(feature, 'description') || '').toString().trim();
     const isVu = !!getPoiProp(feature, 'vu');
-    const published = feature?.properties?.photos;
+    // getPoiProp (overlay-aware) comme cat/excerpt/vu ci-dessus : une photo curée via
+    // l'overlay userData s'affichait en placeholder avec la lecture brute.
+    const published = getPoiProp(feature, 'photos');
     const photoUrl = Array.isArray(published) && published.length > 0 ? published[0] : null;
 
     return `
@@ -258,7 +260,9 @@ function openPoiSheet(poiId) {
     _sheetEl.querySelector('#pv-fiche').addEventListener('click', () => exitToFiche(poiId));
 
     // Photo locale (perso/admin) si aucune photo publiée — hydratation async.
-    if (!feature?.properties?.photos?.length) hydrateLocalPhoto(poiId);
+    // getPoiProp (overlay-aware), cohérent avec la vignette ci-dessus : on n'hydrate
+    // depuis l'IDB que s'il n'y a vraiment aucune photo (ni publiée ni curée overlay).
+    if (!getPoiProp(feature, 'photos')?.length) hydrateLocalPhoto(poiId);
 
     // Le marqueur tapé se place dans la moitié haute (visible au-dessus du sheet).
     const c = feature.geometry.coordinates;

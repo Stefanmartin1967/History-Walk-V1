@@ -12,7 +12,7 @@ import L from 'leaflet';
 import { map } from './map.js';
 import { state } from './state.js';
 import { getPoiId, getPoiName, getFilteredFeatures } from './data.js';
-import { escapeXml } from './utils.js';
+import { escapeXml, getPoiProp } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { RichEditor } from './richEditor.js';
@@ -85,10 +85,13 @@ function renderList() {
     } else {
         list.innerHTML = items.map(f => {
             const id = getPoiId(f);
-            const props = f.properties || {};
             const name = escapeXml(getPoiName(f) || 'Lieu sans nom');
-            const cat = escapeXml(props['Catégorie'] || '—');
-            const verif = props.verified || props.userData?.verified;
+            // getPoiProp (overlay userData prioritaire) et non properties brut : une
+            // catégorie recatégorisée / un POI dé-vérifié via l'overlay doit se refléter
+            // ici. Le `||` de l'ancien `props.verified || userData?.verified` empêchait
+            // un override `false` (base true) de retirer le badge → getPoiProp le gère.
+            const cat = escapeXml(getPoiProp(f, 'Catégorie') || '—');
+            const verif = getPoiProp(f, 'verified');
             const meta = `${verif ? '<span class="verif"><i data-lucide="badge-check"></i>Vérifié</span> · ' : ''}${cat}`;
             return `<div class="md-poi${id === _currentId ? ' is-current' : ''}" data-id="${escapeXml(id)}">
                 <span class="md-poi-ic">${getIconForFeature(f)}</span>

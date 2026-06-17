@@ -63,7 +63,9 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
     let totalPhotoCount = 0;
 
     for (const poi of circuit) {
-        const published = poi?.properties?.photos;
+        // getPoiProp (overlay-aware) : prend en compte les photos curées via l'overlay
+        // userData (ajout par URL au CC) avant republication du geojson.
+        const published = getPoiProp(poi, 'photos');
         if (Array.isArray(published) && published.length > 0) {
             totalPhotoCount += published.length;
             if (!heroUrl) heroUrl = published[0];
