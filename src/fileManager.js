@@ -11,6 +11,7 @@ import { isMobileView } from './mobile-state.js';
 import { eventBus } from './events.js';
 import { downloadFile } from './utils.js';
 import { showCustomModal, closeModal } from './modal.js';
+import { getDraftZones, createLocalDraftDestination } from './local-destinations.js';
 
 /**
  * Enregistre le fait que l'utilisateur a cliqué sur le bouton de support.
@@ -151,6 +152,18 @@ export function handleFileLoad(event) {
 }
 
 // --- SAUVEGARDE (EXPORT) - INCHANGÉ ---
+// Option A — si la destination active est un BROUILLON LOCAL (custom), joindre sa
+// définition + ses quartiers au backup. Sans ça, un brouillon n'existe que dans
+// l'IndexedDB de cet appareil (sa data GitHub n'existe pas — modèle 2-phases) :
+// un plantage DB le perdrait. draftDestination est minuscule ; draftZones est inclus
+// dans TOUS les backups (restauration toujours complète). No-op sur une dest publiée.
+async function attachLocalDraft(exportData, mapId) {
+    const dest = state.destinations?.maps?.[mapId];
+    if (!dest?.custom) return;
+    exportData.draftDestination = { ...dest };
+    exportData.draftZones = await getDraftZones(mapId);
+}
+
 export async function saveUserData(forceFullMode = false) {
     if (!state.currentMapId) return showToast("Aucune carte chargée.", "error");
 
@@ -183,6 +196,7 @@ export async function saveUserData(forceFullMode = false) {
         officialCircuitsStatus: state.officialCircuitsStatus || {},
         testedCircuits: state.testedCircuits || {}
     });
+    await attachLocalDraft(exportData, mapId);
 
     const mode = includePhotos ? 'FULL_MASTER' : 'LITE_Mobile';
     const now = new Date();
@@ -341,13 +355,19 @@ export async function restoreBackup(json) {
             }
         }
 
-        // 2. Extraire et Restaurer les Lieux Créés (Custom POIs)
-        // On identifie les POIs créés par l'utilisateur grâce à leur ID (HW-PC-...) ou import (auto_)
+        // 2. Extraire et Restaurer les Lieux Créés (Custom POIs).
+        // Dest publiée : seuls les POIs créés à la main (HW-PC-) ou importés (auto_).
+        // Brouillon LOCAL (Option A) : TOUS ses lieux sont custom — les captures Scout
+        // ont un id HW-ULID (hors du filtre HW-PC-/auto_) ; sans ce cas un brouillon
+        // restauré perdrait ses lieux.
+        const isDraftRestore = !!json.draftDestination;
         if (json.baseGeoJSON && json.baseGeoJSON.features) {
-            const customFeatures = json.baseGeoJSON.features.filter(f => {
-                const id = f.properties.HW_ID || f.id || "";
-                return id.startsWith("HW-PC-") || id.startsWith("auto_");
-            });
+            const customFeatures = isDraftRestore
+                ? json.baseGeoJSON.features
+                : json.baseGeoJSON.features.filter(f => {
+                    const id = f.properties.HW_ID || f.id || "";
+                    return id.startsWith("HW-PC-") || id.startsWith("auto_");
+                });
 
             if (customFeatures.length > 0) {
                 await saveAppState(`customPois_${mapId}`, customFeatures);
@@ -382,9 +402,19 @@ export async function restoreBackup(json) {
             await saveAppState(`tested_circuits_${mapId}`, json.testedCircuits);
         }
 
-        // 7. REDÉMARRAGE POUR FUSION PROPRE
+        // 7. BROUILLON LOCAL (Option A) : recréer sa définition. Elle n'existe que dans
+        // la sauvegarde — un brouillon ne vit jamais sur GitHub. On (re)pose l'entrée
+        // draftDestinations + ses quartiers + un geojson base vide (les lieux sont déjà
+        // en customPois, step 2), et on bascule dessus pour que le reload l'affiche.
+        if (json.draftDestination) {
+            const zones = json.draftZones || { type: 'FeatureCollection', features: [] };
+            await createLocalDraftDestination(mapId, json.draftDestination, { type: 'FeatureCollection', features: [] }, zones);
+            try { localStorage.setItem('hw_active_dest', mapId); } catch (_) { /* ignore */ }
+        }
+
+        // 8. REDÉMARRAGE POUR FUSION PROPRE
         // On recharge la page pour que l'application :
-        // - Charge le dernier GeoJSON officiel depuis le serveur
+        // - Charge le dernier GeoJSON officiel depuis le serveur (ou l'IDB pour un brouillon)
         // - Applique les userData restaurés (dont les déplacements)
         // - Ajoute les customPois restaurés
         // - Masque les hiddenPois restaurés
@@ -565,7 +595,9 @@ export async function prepareExportData(includePhotos = false) {
         testedCircuits: state.testedCircuits || {}
     };
 
-    return cleanDataForExport(exportData);
+    const cleaned = cleanDataForExport(exportData);
+    await attachLocalDraft(cleaned, mapId);
+    return cleaned;
 }
 
 /**
