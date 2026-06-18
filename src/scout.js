@@ -36,6 +36,7 @@ import { hwPrompt } from './modal.js';
 import { createLocalDraftDestination, makeUniqueDestId, saveDraftZones } from './local-destinations.js';
 import { fetchZonesAuto } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
+import { getHwCategory } from './scout-categories.js';
 
 let _overlay = null;
 let _boxEl = null;
@@ -76,27 +77,8 @@ const CATEGORIES = [
     { key: 'public', label: 'Services Publics', on: false },
 ];
 
-// OSM tag → catégorie Heripia (porté de tools/scout.html).
-const HW_MAPPING = {
-    place_of_worship: 'Mosquée', museum: 'Culture et tradition',
-    fort: 'Site historique', castle: 'Site historique', ruins: 'Site historique',
-    archaeological_site: 'Site historique', hotel: 'Hôtel', guest_house: 'Hôtel',
-    restaurant: 'Restaurant', cafe: 'Restaurant', theme_park: 'Curiosité',
-    zoo: 'Curiosité', viewpoint: 'Curiosité', artwork: 'Curiosité',
-    attraction: 'Curiosité', monument: 'Site historique', memorial: 'Site historique',
-};
-function getHwCategory(tags) {
-    if (tags.building === 'mosque') return 'Mosquée';
-    if (tags.building === 'synagogue') return 'Site religieux';
-    if (tags.building === 'church') return 'Site religieux';
-    if (tags.amenity === 'place_of_worship') {
-        if (tags.religion === 'muslim') return 'Mosquée';
-        if (tags.religion === 'christian' || tags.religion === 'jewish') return 'Site religieux';
-        return 'Mosquée';
-    }
-    const raw = tags.historic || tags.tourism || tags.amenity || tags.leisure;
-    return HW_MAPPING[raw] || null; // null = catégorie non devinée
-}
+// OSM tag → catégorie Heripia : getHwCategory, extrait dans le module feuille
+// ./scout-categories.js (taxonomie v2, testable seul).
 
 // ── Projection coords ↔ pixels viewport ─────────────────────────────────────
 function mapRect() { return map.getContainer().getBoundingClientRect(); }
@@ -670,7 +652,7 @@ async function capture() {
                 geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
                 properties: {
                     'Nom du site FR': c.name || '',
-                    'Catégorie': c.cat || 'À définir',
+                    'Catégorie': c.cat || 'A définir',
                     // Dégel de Zone : on ne fige plus le quartier à la capture — il se
                     // dérive de la position (getDerivedZone). L'extension du fichier de
                     // zones ci-dessus reste nécessaire pour QUE la dérivation matche.
