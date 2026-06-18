@@ -6,7 +6,8 @@ import { getPoiId, commitPendingPoiIfNeeded } from './data.js';
 import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate } from './utils.js';
 import { addPoiFeature, applyFilters } from './data.js';
-import { saveAppState, savePoiData, deletePoiData } from './database.js';
+import { saveAppState, savePoiData } from './database.js';
+import { persistPoiEdit } from './poi-persistence.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
@@ -982,50 +983,11 @@ async function schedulePrepoSe(feature) {
 async function executeEdit(data) {
     const poiId = currentFeatureId;
 
-    // Un POI de BASE / officiel garde le modèle d'overlay `userData` (patrimoine) :
-    // userData prime sur properties à l'affichage (getPoiProp) et est aplati dans le
-    // geojson à la publication. MAIS un POI CUSTOM (capturé par le Scout / créé en
-    // local) n'a PAS de patrimoine de base à surcoucher : ses éditions DOIVENT
-    // s'écrire dans le POI lui-même (feature.properties + customPois_{id}). Les mettre
-    // dans userData laissait des properties BRUTES qui, une fois l'overlay effacé à la
-    // publication, MASQUAIENT la version curée de GitHub au reload (la fusion « custom
-    // gagne » remet le POI brut par-dessus) — et le diff voulait alors revenir en arrière.
-    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-    const isCustom = (state.customFeatures || []).some(f => getPoiId(f) === poiId);
-
-    if (isCustom && feature) {
-        Object.assign(feature.properties, data);
-        // Champ vidé ("" / null) → on retire la clé (parité avec executeCreate) ;
-        // les valeurs false / 0 (verified, Temps_minutes, Prix_TND) sont conservées.
-        Object.keys(data).forEach(k => {
-            if (feature.properties[k] === '' || feature.properties[k] === null) {
-                delete feature.properties[k];
-            }
-        });
-        // Purge un éventuel overlay userData résiduel pour ce POI : getPoiProp lit
-        // l'overlay EN PREMIER, donc un userData obsolète masquerait les nouvelles
-        // properties qu'on vient d'écrire.
-        if (state.userData[poiId]) {
-            delete state.userData[poiId];
-            await saveAppState('userData', state.userData);
-            try { await deletePoiData(state.currentMapId, poiId); } catch (_) { /* best-effort */ }
-        }
-        delete feature.properties.userData;
-        // Réplique dans le tableau custom (même référence en général ; défensif sinon).
-        const cIdx = (state.customFeatures || []).findIndex(f => getPoiId(f) === poiId);
-        if (cIdx !== -1) state.customFeatures[cIdx].properties = feature.properties;
-        await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
-        await saveAppState('lastGeoJSON', { type: 'FeatureCollection', features: state.loadedFeatures });
-    } else {
-        // POI de base / officiel : overlay userData INCHANGÉ.
-        if (!state.userData[poiId]) state.userData[poiId] = {};
-        Object.assign(state.userData[poiId], data);
-        // Rebind feature.properties.userData au cas où une opération antérieure
-        // (ex: recalculatePlannedCountersForMap) aurait cassé la référence (spread au
-        // lieu d'alias) → sinon modif persistée mais panel Détails lit l'ancienne copie.
-        if (feature) feature.properties.userData = state.userData[poiId];
-        await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
-    }
+    // Persistance custom-vs-base (overlay userData pour un POI de base, properties +
+    // customPois_{id} pour un POI custom) déléguée au helper feuille partagé avec
+    // ui-photo-batch.saveTaxonomyBatch — anti-dérive entre les 2 éditeurs. Détail de
+    // la règle (et du revert de curation qu'elle évite) : voir poi-persistence.js.
+    await persistPoiEdit(poiId, data);
 
     // Si c'est un POI "pending" (création mobile en attente), on finalise la persistance
     // du GeoJSON maintenant que l'utilisateur a rempli la fiche via le Rich Editor.

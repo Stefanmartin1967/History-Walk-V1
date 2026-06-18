@@ -14,8 +14,8 @@ import {
     setPendingAdminPhotos,
     getPoiPhotos,
     getPendingAdminPhotos,
-    savePoiData,
 } from './database.js';
+import { persistPoiEdit } from './poi-persistence.js';
 import { showToast } from './toast.js';
 import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal, hwConfirm } from './modal.js';
 import { createZipBlob } from './zip-store.js';
@@ -293,20 +293,14 @@ function categorizeTooltip(feature) {
 }
 
 // Persiste un batch de champs taxonomie sur un POI (Catégorie / Sous-type /
-// État / Accès). Pattern atomique réutilisé de executeEdit (richEditor.js) :
-// userData merge → savePoiData unique → event admin:poi-edited unique →
-// schedulePush unique → applyFilters + refresh markers. Évite les 4 toasts
-// successifs de updatePoiData(key,value) appelée en série.
+// État / Accès). Persistance déléguée au helper feuille partagé persistPoiEdit
+// (commun avec richEditor.executeEdit) → route custom-vs-base correctement : un
+// POI capturé (Scout) s'écrit dans properties + customPois_{id} (PAS dans
+// l'overlay userData), sinon la curation est revertée au reload. Puis : event
+// admin:poi-edited unique → schedulePush unique → applyFilters + refresh markers.
+// Évite les 4 toasts successifs de updatePoiData(key,value) appelée en série.
 async function saveTaxonomyBatch(poiId, fields) {
-    if (!state.userData[poiId]) state.userData[poiId] = {};
-    Object.assign(state.userData[poiId], fields);
-
-    // Rebind invariant : feature.properties.userData === state.userData[poiId]
-    // (cf. architecture_decisions invariant userData).
-    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-    if (feature) feature.properties.userData = state.userData[poiId];
-
-    await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
+    await persistPoiEdit(poiId, fields);
 
     if (state.isAdmin) {
         // Notifie le CC Admin (alimente la diff) — découplage par eventBus.
