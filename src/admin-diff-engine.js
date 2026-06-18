@@ -148,9 +148,15 @@ export async function prepareDiffData(adminDraft) {
 
         // Cas spécial : Suppression
         if (adminDraft.pendingPois[id].type === 'delete') {
+            // Une suppression n'a de sens que si le POI existe SUR GITHUB
+            // (originalFeatures). Un POI jamais publié (candidat scout supprimé au
+            // tri, custom local non gradué) n'a rien à supprimer côté dépôt →
+            // entrée fantôme : on l'ignore (sinon « SUPPRESSION / Inconnu » pollue
+            // le CC). purgeOrphanPendingPois retire ensuite l'entrée pour de bon.
+            if (!original) return;
             diffData.pois.push({
                 id: id,
-                name: current ? getPoiName(current) : (original ? getPoiName(original) : 'Inconnu'),
+                name: current ? getPoiName(current) : getPoiName(original),
                 changes: [{ key: 'STATUT', old: 'Actif', new: 'SUPPRESSION' }],
                 isDeletion: true
             });
@@ -551,7 +557,18 @@ export async function purgeOrphanPendingPois(adminDraft) {
     for (const id of Object.keys(adminDraft.pendingPois)) {
         const entry = adminDraft.pendingPois[id];
         // Ne pas toucher aux types qui ont leur propre sémantique sans diff de valeurs.
-        if (entry.type === 'creation' || entry.type === 'delete' || entry.type === 'migration') continue;
+        if (entry.type === 'creation' || entry.type === 'migration') continue;
+        // Suppression : une entrée sans original GitHub est un FANTÔME (POI jamais
+        // publié — candidat supprimé au tri, custom local) → rien à supprimer côté
+        // dépôt, on la purge. Une suppression d'un POI réellement publié reste
+        // légitime → on la garde (prepareDiffData l'a déjà surfacée).
+        if (entry.type === 'delete') {
+            if (!originalFeatures.find(f => getPoiId(f) === id)) {
+                delete adminDraft.pendingPois[id];
+                purged.push(id);
+            }
+            continue;
+        }
         // L'entry produit-elle un diff réel selon prepareDiffData ? Si oui, garder.
         if (diffIds.has(id)) continue;
 

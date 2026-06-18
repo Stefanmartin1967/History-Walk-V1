@@ -97,6 +97,7 @@ import { showToast } from '../src/toast.js';
 import { logModification } from '../src/logger.js';
 import { eventBus } from '../src/events.js';
 import { deleteZoneCacheEntry } from '../src/zones.js';
+import { isCandidate } from '../src/utils.js';
 import {
     recomputeVu,
     getFilteredFeatures,
@@ -778,6 +779,25 @@ describe('deletePoi', () => {
 
         expect(addToDraft).toHaveBeenCalledWith('poi', 'p1', { type: 'delete' });
         expect(f.properties.userData._deleted).toBe(true);
+    });
+
+    it('admin + CANDIDAT : retrait local SANS intention de suppression GitHub (anti-fantôme CC)', async () => {
+        // Un candidat scout n'est jamais publié → pas d'original GitHub. Enregistrer
+        // une intention de suppression créerait une entrée fantôme « SUPPRESSION /
+        // Inconnu » dans le CC. On ne doit donc PAS appeler addToDraft ni poser _deleted.
+        const f = poi('cand_1', { candidate: true });
+        state.loadedFeatures = [f];
+        state.customFeatures = [f];
+        state.isAdmin = true;
+        isCandidate.mockReturnValueOnce(true);
+
+        await deletePoi('cand_1');
+
+        expect(addToDraft).not.toHaveBeenCalled();
+        expect(f.properties.userData?._deleted).toBeUndefined();
+        // Retrait local effectif (customFeatures + hiddenPoiIds).
+        expect(state.customFeatures.find(x => x.properties.HW_ID === 'cand_1')).toBeUndefined();
+        expect(state.hiddenPoiIds).toContain('cand_1');
     });
 
     it('emit data:filtered (via applyFilters) après suppression', async () => {
