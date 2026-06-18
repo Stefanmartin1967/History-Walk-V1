@@ -802,14 +802,21 @@ export async function deletePoi(poiId) {
 
     // 3. Admin Tracking (Pour suppression définitive sur le serveur)
     if (state.isAdmin) {
-        // On marque l'intention de suppression
-        addToDraft('poi', poiId, { type: 'delete' });
-
-        // On marque aussi l'objet en mémoire pour l'exporteur
         const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-        if (feature) {
-            if (!feature.properties.userData) feature.properties.userData = {};
-            feature.properties.userData._deleted = true;
+        // Un CANDIDAT (scout non curé) n'est JAMAIS publié → il n'existe pas sur
+        // GitHub : enregistrer une intention de suppression créerait une entrée
+        // FANTÔME (« SUPPRESSION / Inconnu ») dans le Centre de Contrôle alors
+        // qu'il n'y a rien à supprimer côté dépôt. On se contente du retrait local
+        // (hiddenPoiIds + customFeatures ci-dessus). Filet côté diff : la garde
+        // « pas d'original GitHub » d'admin-diff-engine (prepareDiffData).
+        if (!(feature && isCandidate(feature))) {
+            // On marque l'intention de suppression
+            addToDraft('poi', poiId, { type: 'delete' });
+            // On marque aussi l'objet en mémoire pour l'exporteur
+            if (feature) {
+                if (!feature.properties.userData) feature.properties.userData = {};
+                feature.properties.userData._deleted = true;
+            }
         }
     }
 

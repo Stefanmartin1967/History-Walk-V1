@@ -349,6 +349,33 @@ describe('Admin Diff Engine', () => {
     // 3. prepareDiffData — Changes sur POIs
     // ========================================================================
     describe('prepareDiffData — POIs', () => {
+        it('ignore une suppression sans original GitHub (POI jamais publié → pas de « SUPPRESSION / Inconnu »)', async () => {
+            const draft = { pendingPois: { 'ghost_1': { type: 'delete', timestamp: 1 } }, pendingCircuits: {} };
+            global.fetch.mockImplementation(defaultFetchImpl); // geojson vide → pas d'original
+
+            const r = await prepareDiffData(draft);
+
+            expect(r.pois.find(p => p.id === 'ghost_1')).toBeUndefined();
+            expect(r.stats.poisModified).toBe(0);
+        });
+
+        it('surface une suppression d\'un POI réellement publié sur GitHub (non-régression)', async () => {
+            const draft = { pendingPois: { 'real_1': { type: 'delete', timestamp: 1 } }, pendingCircuits: {} };
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) {
+                    return Promise.resolve({ ok: true, json: async () => ({ features: [{ properties: { HW_ID: 'real_1', Nom: 'Publié' } }] }) });
+                }
+                return defaultFetchImpl(url);
+            });
+
+            const r = await prepareDiffData(draft);
+
+            const d = r.pois.find(p => p.id === 'real_1');
+            expect(d).toBeDefined();
+            expect(d.isDeletion).toBe(true);
+            expect(r.stats.poisModified).toBe(1);
+        });
+
         it('détecte un changement de Position (coordonnées différentes)', async () => {
             const remotePoi = {
                 type: 'Feature',
@@ -935,7 +962,7 @@ describe('Admin Diff Engine', () => {
             expect(draft.pendingPois['poi_1']).toBeDefined();
         });
 
-        it('ignore les entries `creation` / `delete` / `migration` (sémantique propre)', async () => {
+        it('ignore les entries `creation` / `migration` + `delete` LÉGITIME (POI sur GitHub)', async () => {
             state.customFeatures = [{ properties: { HW_ID: 'new_1', Nom: 'New POI' } }];
             state.loadedFeatures = [{ properties: { HW_ID: 'new_1', Nom: 'New POI' } }];
             const draft = {
@@ -946,8 +973,13 @@ describe('Admin Diff Engine', () => {
                 },
                 pendingCircuits: {}
             };
-
-            global.fetch.mockImplementation(defaultFetchImpl);
+            // del_1 existe SUR GITHUB → suppression légitime, préservée par la purge.
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) {
+                    return Promise.resolve({ ok: true, json: async () => ({ features: [{ properties: { HW_ID: 'del_1', Nom: 'Old POI' } }] }) });
+                }
+                return defaultFetchImpl(url);
+            });
 
             await prepareDiffData(draft);
             const purged = await purgeOrphanPendingPois(draft);
@@ -956,6 +988,20 @@ describe('Admin Diff Engine', () => {
             expect(draft.pendingPois['new_1']).toBeDefined();
             expect(draft.pendingPois['del_1']).toBeDefined();
             expect(draft.pendingPois['mig_1']).toBeDefined();
+        });
+
+        it('purge une suppression FANTÔME (delete sans original GitHub — candidat supprimé au tri)', async () => {
+            const draft = {
+                pendingPois: { 'ghost_1': { type: 'delete', timestamp: 1 } },
+                pendingCircuits: {}
+            };
+            global.fetch.mockImplementation(defaultFetchImpl); // geojson vide → ghost_1 absent de GitHub
+
+            await prepareDiffData(draft);
+            const purged = await purgeOrphanPendingPois(draft);
+
+            expect(purged).toEqual(['ghost_1']);
+            expect(draft.pendingPois['ghost_1']).toBeUndefined();
         });
 
         it('purge même quand userData contient des champs vides absents du patrimoine (régression 21/05/2026)', async () => {
