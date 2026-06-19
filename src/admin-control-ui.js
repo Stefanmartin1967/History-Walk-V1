@@ -633,50 +633,18 @@ export function renderTab(tab, diffData, callbacks) {
         // — Outils (cards, secondaires) —
         // Refactor 15/05/2026 : section élargie pour centraliser les outils admin
         // dans le CC admin (remplace le menu admin God Mode qui devient minimal).
-        // 5 cartes : Publier circuit (sub-panel) / Scout (lien externe) / DM (lien
-        // externe) / Exporter Master GeoJSON (action) / Importer carte GeoJSON (action).
-        // Modèle 2-phases (Option A) — carte de publication visible UNIQUEMENT sur un
-        // brouillon LOCAL (créé via le Scout « Nouvelle », jamais poussé sur GitHub).
-        // custom:true est posé par mergeLocalDraftDestinations ; absent sur une dest
-        // publiée. Un seul geste : brouillon local → publiée (visible de tous).
+        // MODÈLE C — cartes d'une destination NON publiée (brouillon GitHub) :
+        // « Rendre publique » (bascule status:draft → published) et « Supprimer »
+        // (deleteDraftGhCardHtml, plus bas). Plus de carte legacy « brouillon local »
+        // (Option A retirée). Un brouillon modèle C a status:'draft' et pas de flag custom.
         const activeDest = state.destinations?.maps?.[state.currentMapId];
-        const isLocalDraft = activeDest?.custom === true;
-        const publishCardHtml = isLocalDraft ? `
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-publish-dest" aria-label="Publier cette destination (la rendre visible de tous)">
-                <div class="cc-card-ico"><i data-lucide="globe"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Publier cette destination</div>
-                    <div class="cc-card-sub">Brouillon local → publiée (visible de tous)</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>` : '';
-
-        // MODÈLE C (bascule PR-4) — « Rendre publique » : visible sur toute destination
-        // NON publiée (status≠published), indépendamment du flag local `custom`. La
-        // curation a déjà été poussée par « Tout publier » ; ce geste ne fait que
-        // basculer status:draft → published (un micro-push de destinations.json).
-        // `&& !custom` : exclusion mutuelle avec la carte legacy « Publier cette
-        // destination » (gatée custom===true). Un brouillon modèle C a custom:false.
-        const isDraftDest = !!activeDest && activeDest.status !== 'published' && !activeDest.custom;
+        const isDraftDest = !!activeDest && activeDest.status !== 'published';
         const makePublicCardHtml = isDraftDest ? `
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-publish-public" aria-label="Rendre cette destination publique (visible de tous)">
                 <div class="cc-card-ico"><i data-lucide="globe"></i></div>
                 <div class="cc-card-text">
                     <div class="cc-card-title">Rendre publique</div>
                     <div class="cc-card-sub">Brouillon → visible de tous</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>` : '';
-
-        // Suppression d'un brouillon LOCAL (Option A) — visible UNIQUEMENT sur un
-        // brouillon local (custom). Action destructive (placée en dernier, style danger).
-        // Purge 100% locale, pas de GitHub : une dest publiée n'est PAS supprimable ici.
-        const deleteCardHtml = isLocalDraft ? `
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-delete-dest" aria-label="Supprimer ce brouillon de destination (définitif, local)">
-                <div class="cc-card-ico cc-card-ico--danger"><i data-lucide="trash-2"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Supprimer cette destination</div>
-                    <div class="cc-card-sub">Brouillon local — suppression définitive (cet appareil)</div>
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>` : '';
@@ -698,7 +666,6 @@ export function renderTab(tab, diffData, callbacks) {
 
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
-            ${publishCardHtml}
             ${makePublicCardHtml}
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
                 <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
@@ -756,7 +723,6 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
-            ${deleteCardHtml}
             ${deleteDraftGhCardHtml}
         `;
 
@@ -888,64 +854,6 @@ export function renderTab(tab, diffData, callbacks) {
                 }
             });
 
-            // Outils — Publier cette destination (modèle 2-phases, Option A) : visible
-            // seulement sur un brouillon LOCAL. 1er et SEUL push → status:"published"
-            // (candidats non curés écartés du public mais PRÉSERVÉS en local).
-            bindCardAction('btn-cc-tool-publish-dest', async () => {
-                const mapId = state.currentMapId;
-                const dest = state.destinations?.maps?.[mapId];
-                if (!dest?.custom) {
-                    showToast('Cette action ne concerne qu\'un brouillon local.', 'warning', 3500);
-                    return;
-                }
-                // Même générateur que le push : le compte affiché = le compte publié.
-                // keepCandidates:false → seuls les lieux CURÉS comptent (les candidats
-                // non curés sont écartés du public, comme à la publication).
-                const { generateMasterGeoJSONData } = await import('./admin-geojson.js');
-                const { isCandidate } = await import('./utils.js');
-                const n = generateMasterGeoJSONData([], { keepCandidates: false })?.features?.length || 0;
-                const candCount = (state.loadedFeatures || []).filter(isCandidate).length;
-                if (n === 0) {
-                    showToast('Aucun lieu curé à publier — valide au moins un lieu (« Valider ») d\'abord.', 'warning', 4500);
-                    return;
-                }
-                const { hwConfirm, hwAlert } = await import('./modal.js');
-                closeCCModal(); // fermer le CC avant les modales (évite l'empilement)
-                const candNote = candCount > 0
-                    ? `<p><strong>${candCount} lieu(x) encore à curer</strong> seront gardés en local (pour les curer plus tard) et <em>n'apparaîtront pas</em> au public.</p>`
-                    : '';
-                const ok = await hwConfirm({
-                    title: 'Publier la destination',
-                    body: `<p>Rendre <strong>${escapeXml(dest.name)}</strong> <em>visible de tous</em> ?</p>`
-                        + `<p>${n} lieu(x) curé(s) seront publiés sur GitHub.</p>`
-                        + candNote
-                        + `<p>Tu publies depuis cet appareil — c'est son état qui devient la version publique.</p>`,
-                    confirmLabel: 'Publier',
-                    cancelLabel: 'Annuler',
-                });
-                if (!ok) return;
-                try {
-                    const { publishDestination } = await import('./publish-destination.js');
-                    // onProgress branché (audit R5) : l'admin voit chaque étape du push.
-                    const res = await publishDestination(mapId, (msg) => showToast(msg, 'info', 2500));
-                    const keptNote = res.candidatesKept > 0
-                        ? `<p>${res.candidatesKept} lieu(x) à curer gardé(s) en local — ils réapparaîtront pour curation et ne sont pas publics.</p>`
-                        : '';
-                    await hwAlert({
-                        title: 'Destination publiée ✓',
-                        body: `<p><strong>${escapeXml(res.name)}</strong> est désormais publiée (${res.pois} lieu(x)).</p>`
-                            + keptNote
-                            + `<p>Visible de tous d'ici 1 à 2 min (déploiement GitHub Pages).</p>`,
-                    });
-                } catch (e) {
-                    await hwAlert({
-                        title: 'Échec de la publication',
-                        body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
-                            + `<p>Ton brouillon local est intact — tu peux réessayer.</p>`,
-                    });
-                }
-            });
-
             // Outils — « Rendre publique » (MODÈLE C) : bascule status:draft → published
             // (setDestinationPublished, un micro-push de destinations.json). Visible sur
             // toute destination non publiée. La curation a déjà été poussée par « Tout
@@ -999,44 +907,6 @@ export function renderTab(tab, diffData, callbacks) {
                         title: 'Échec de la publication',
                         body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
                             + `<p>Rien n'a changé — tu peux réessayer.</p>`,
-                    });
-                }
-            });
-
-            // Outils — Supprimer cette destination (Option A) : visible seulement sur
-            // un brouillon LOCAL. Purge 100% locale (deleteLocalDraftDestination) puis
-            // bascule sur la dest publiée par défaut + reload. Pas de GitHub, pas de token.
-            bindCardAction('btn-cc-tool-delete-dest', async () => {
-                const mapId = state.currentMapId;
-                const dest = state.destinations?.maps?.[mapId];
-                if (!dest?.custom) {
-                    showToast('Seul un brouillon local peut être supprimé ici.', 'warning', 3500);
-                    return;
-                }
-                const name = dest.name || mapId;
-                const fallback = state.destinations?.activeMapId || 'djerba';
-                const { hwConfirm, hwAlert } = await import('./modal.js');
-                closeCCModal();
-                const ok = await hwConfirm({
-                    title: 'Supprimer la destination',
-                    body: `<p>Supprimer définitivement le brouillon <strong>${escapeXml(name)}</strong> ?</p>`
-                        + `<p>Tous ses lieux scoutés/curés, circuits, photos et zones (sur cet appareil) seront effacés. <strong>Action irréversible.</strong></p>`
-                        + `<p>Astuce : fais d'abord une <em>Sauvegarde</em> si tu veux pouvoir le restaurer.</p>`,
-                    confirmLabel: 'Supprimer',
-                    cancelLabel: 'Annuler',
-                });
-                if (!ok) return;
-                try {
-                    const { deleteLocalDraftDestination } = await import('./local-destinations.js');
-                    await deleteLocalDraftDestination(mapId);
-                    try { localStorage.setItem('hw_active_dest', fallback); } catch (_) {}
-                    showToast(`Brouillon « ${name} » supprimé.`, 'success', 2500);
-                    // Bascule sur la dest publiée par défaut + reload → état propre.
-                    setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(fallback)}`; }, 700);
-                } catch (e) {
-                    await hwAlert({
-                        title: 'Échec de la suppression',
-                        body: `<p>La suppression n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`,
                     });
                 }
             });
