@@ -2757,7 +2757,7 @@
     padding: 2px 8px; border-radius: var(--radius-pill);
     background: color-mix(in oklab, var(--brand) 14%, var(--surface)); color: var(--brand-2);
 }
-.trace-status-actions { display: flex; gap: 8px; padding: 0 14px 13px; }
+.trace-status-actions { display: flex; align-items: center; gap: 8px; padding: 0 14px 13px; }
 
 /* Action primaire « Ajuster le tracé » (ouvre le focus mode / niveau 2) */
 .btn-adjust {

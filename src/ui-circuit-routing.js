@@ -94,10 +94,16 @@ export function updateTraceBlock() {
     } else if (hasRealTrack()) {
         el.innerHTML = traceStatusHtml() + chip;
     } else if ((state.currentCircuit ? state.currentCircuit.length : 0) >= 2) {
+        // Le ⋮ surface l'export AVANT le tracé BRouter : sans realTrack, le GPX
+        // retombe sur le vol d'oiseau (régression du retrait du download auto #748,
+        // qui ne laissait l'export que dans l'état tracé). Handlers déjà câblés.
         el.innerHTML = `
-            <button class="btn-trace" id="btn-trace" type="button">
-                <i data-lucide="navigation"></i><span>Tracer l'itinéraire</span>
-            </button>
+            <div class="trace-status-actions">
+                <button class="btn-trace" id="btn-trace" type="button">
+                    <i data-lucide="navigation"></i><span>Tracer l'itinéraire</span>
+                </button>
+                ${morePopHtml([MP_EXPORT_RAW, MP_GPX])}
+            </div>
             <p class="trace-hint">
                 <i data-lucide="info"></i>
                 <span>BRouter suit les chemins piétons pour transformer le vol d'oiseau en trace marchable.</span>
@@ -153,6 +159,9 @@ function morePopHtml(items) {
 
 const MP_GPX = { act: 'gpx', icon: 'external-link', t: 'Affiner dans GPX Studio', d: "Repli : montages spéciaux dans l'outil externe" };
 const MP_EXPORT = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: 'Fichier .gpx du tracé réel' };
+// Variante pré-tracé : sans realTrack, l'export retombe sur le vol d'oiseau
+// (lignes droites entre les lieux) — cf. ui-circuit-editor 'request-export-gpx'.
+const MP_EXPORT_RAW = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: "Vol d'oiseau (avant le tracé BRouter)" };
 
 const escHtml = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
