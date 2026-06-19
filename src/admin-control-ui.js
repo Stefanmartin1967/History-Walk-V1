@@ -651,6 +651,23 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>` : '';
 
+        // MODÈLE C (bascule PR-4) — « Rendre publique » : visible sur toute destination
+        // NON publiée (status≠published), indépendamment du flag local `custom`. La
+        // curation a déjà été poussée par « Tout publier » ; ce geste ne fait que
+        // basculer status:draft → published (un micro-push de destinations.json).
+        // `&& !custom` : exclusion mutuelle avec la carte legacy « Publier cette
+        // destination » (gatée custom===true). Un brouillon modèle C a custom:false.
+        const isDraftDest = !!activeDest && activeDest.status !== 'published' && !activeDest.custom;
+        const makePublicCardHtml = isDraftDest ? `
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-publish-public" aria-label="Rendre cette destination publique (visible de tous)">
+                <div class="cc-card-ico"><i data-lucide="globe"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Rendre publique</div>
+                    <div class="cc-card-sub">Brouillon → visible de tous</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>` : '';
+
         // Suppression d'un brouillon LOCAL (Option A) — visible UNIQUEMENT sur un
         // brouillon local (custom). Action destructive (placée en dernier, style danger).
         // Purge 100% locale, pas de GitHub : une dest publiée n'est PAS supprimable ici.
@@ -667,6 +684,7 @@ export function renderTab(tab, diffData, callbacks) {
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
             ${publishCardHtml}
+            ${makePublicCardHtml}
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
                 <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
                 <div class="cc-card-text">
@@ -908,6 +926,63 @@ export function renderTab(tab, diffData, callbacks) {
                         title: 'Échec de la publication',
                         body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
                             + `<p>Ton brouillon local est intact — tu peux réessayer.</p>`,
+                    });
+                }
+            });
+
+            // Outils — « Rendre publique » (MODÈLE C) : bascule status:draft → published
+            // (setDestinationPublished, un micro-push de destinations.json). Visible sur
+            // toute destination non publiée. La curation a déjà été poussée par « Tout
+            // publier » ; ici on ne fait que la rendre visible de tous.
+            bindCardAction('btn-cc-tool-publish-public', async () => {
+                const mapId = state.currentMapId;
+                const dest = state.destinations?.maps?.[mapId];
+                if (!dest || dest.status === 'published') {
+                    showToast('Cette destination est déjà publique.', 'warning', 3500);
+                    return;
+                }
+                // Même générateur que le push : le compte affiché = le compte publié.
+                // keepCandidates:false → seuls les lieux CURÉS comptent (candidats écartés).
+                const { generateMasterGeoJSONData } = await import('./admin-geojson.js');
+                const { isCandidate } = await import('./utils.js');
+                const n = generateMasterGeoJSONData([], { keepCandidates: false })?.features?.length || 0;
+                const candCount = (state.loadedFeatures || []).filter(isCandidate).length;
+                if (n === 0) {
+                    showToast('Aucun lieu curé à publier — valide au moins un lieu (« Valider ») d\'abord.', 'warning', 4500);
+                    return;
+                }
+                const { hwConfirm, hwAlert } = await import('./modal.js');
+                closeCCModal(); // fermer le CC avant les modales (évite l'empilement)
+                const candNote = candCount > 0
+                    ? `<p><strong>${candCount} lieu(x) encore à curer</strong> resteront privés (gardés en local pour les curer plus tard).</p>`
+                    : '';
+                const ok = await hwConfirm({
+                    title: 'Rendre publique',
+                    body: `<p>Rendre <strong>${escapeXml(dest.name || mapId)}</strong> <em>visible de tous</em> ?</p>`
+                        + `<p>${n} lieu(x) curé(s) seront publiés.</p>`
+                        + candNote
+                        + `<p>Astuce : fais « Tout publier » avant si tu veux aussi publier circuits et photos.</p>`,
+                    confirmLabel: 'Rendre publique',
+                    cancelLabel: 'Annuler',
+                });
+                if (!ok) return;
+                try {
+                    const { setDestinationPublished } = await import('./publish-destination.js');
+                    const res = await setDestinationPublished(mapId, (msg) => showToast(msg, 'info', 2500));
+                    const keptNote = res.candidatesKept > 0
+                        ? `<p>${res.candidatesKept} lieu(x) à curer gardé(s) en local (non publics).</p>`
+                        : '';
+                    await hwAlert({
+                        title: 'Destination publiée ✓',
+                        body: `<p><strong>${escapeXml(res.name)}</strong> est désormais publique (${res.pois} lieu(x)).</p>`
+                            + keptNote
+                            + `<p>Visible de tous d'ici 1 à 2 min (déploiement GitHub Pages).</p>`,
+                    });
+                } catch (e) {
+                    await hwAlert({
+                        title: 'Échec de la publication',
+                        body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
+                            + `<p>Rien n'a changé — tu peux réessayer.</p>`,
                     });
                 }
             });
