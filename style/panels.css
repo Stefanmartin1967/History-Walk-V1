@@ -565,8 +565,8 @@
    drapeau sur la voie la plus proche, qui sert d'ancre <trkpt> à l'export.
    Refonte visuelle v2 (PR 1/5 — 31/05/2026) issue du handoff Claude Design :
    palette à 3 couleurs sémantiques (--flag-osm/-moved/-locked) + 2 transitoires
-   (pending/error). CSS prêt pour PR2+ même si seul --moved est utilisé en PR1
-   (faute de champ accessPointSource — tous les drapeaux existants = manuels). */
+   (pending/error). Les 3 modifiers sont actifs depuis PR2/PR4 — la couleur dérive
+   du champ `accessPointStatus` (osm/moved/locked). */
 
 /* (.poi-tag--access-point retiré — la chip fiche « À évaluer » est passée en
    .cartel-chip--warn ; les drapeaux carte/barre restent .hw-flag ci-dessous.) */
@@ -593,7 +593,7 @@
 
 /* === Drapeau (Leaflet divIcon) — forme v1 conservée, palette v2 ===
    Forme : mât (3px) + fanion (18×13) + nœud d'ancrage au sol.
-   La pointe du mât est l'ANCRE (iconAnchor [3, 26] dans flagIcon()). */
+   La pointe du mât est l'ANCRE (iconAnchor [3, 30] dans flagIcon()). */
 .hw-flag {
     background: transparent;
     border: 0;

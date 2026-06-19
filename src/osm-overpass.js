@@ -8,7 +8,7 @@
 // acceptable au rayon visé, plus simple, suffisant pour le pré-pose).
 //
 // Sans clé. Endpoint principal overpass-api.de avec fallback kumi.systems.
-// Timeout 5 s par endpoint. Non bloquant (la pré-pose est silencieuse).
+// Timeout 8 s par endpoint et par tentative. Non bloquant (la pré-pose est silencieuse).
 
 // 3 endpoints publics (alignés sur tools/scout.html). Alternance round-robin
 // au démarrage de chaque requête → la charge se répartit sur les 3 serveurs
