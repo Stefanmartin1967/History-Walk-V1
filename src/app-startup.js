@@ -2,7 +2,6 @@
 import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setPoiCategories } from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
-import { mergeLocalDraftDestinations, getDraftGeoJSON } from './local-destinations.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -121,23 +120,15 @@ export async function loadDestinationsConfig() {
         }
     }
 
-    // Legacy Option A : brouillons LOCAUX (IndexedDB). En modèle C il n'en existe plus
-    // (création = GitHub direct) ; conservé en PR-4a, retiré en PR-4b.
-    await mergeLocalDraftDestinations();
 }
 
 // Zones (quartiers OSM) de la destination ACTIVE — réunif : remplace l'ancien
-// zones.js codé en dur (Djerba only) par un chargement PAR destination.
-//   - publiée : fetch public/{dest}-zones.geojson (+ cache offline `lastZones_`) ;
-//   - brouillon local : IndexedDB (clé draftZones_{id}).
-// Échec/absence → zones vides → getZoneFromCoords renvoie « A définir » (sûr).
+// zones.js codé en dur (Djerba only) par un chargement PAR destination. Modèle C :
+// toute destination (publiée ou brouillon) a son {dest}-zones.geojson sur GitHub —
+// publiée via Pages, brouillon via RAW frais (admin). Échec/absence → zones vides
+// → getZoneFromCoords renvoie « A définir » (sûr).
 async function loadZonesForActive(mapId, dest) {
     try {
-        if (dest?.custom) {
-            const z = await getAppState(`draftZones_${mapId}`);
-            setZonesData(z || { type: 'FeatureCollection', features: [] });
-            return;
-        }
         const baseUrl = import.meta.env?.BASE_URL || './';
         const zonesFile = dest?.zonesFile || `${mapId}-zones.geojson`;
         // MODÈLE C : admin sur un BROUILLON → zones depuis le repo FRAIS (RAW), car
@@ -281,10 +272,9 @@ export async function loadAndInitializeMap() {
 
     if (DOM.loaderOverlay) DOM.loaderOverlay.classList.remove('is-hidden');
 
-    if (activeDest?.custom) {
-        // Réunif C2a-1b : brouillon LOCAL → POIs depuis l'IndexedDB (pas de fetch).
-        geojsonData = await getDraftGeoJSON(activeMapId);
-    } else {
+    // MODÈLE C : toute destination (publiée OU brouillon) vit sur GitHub → on fetch
+    // toujours son geojson (plus de branche IndexedDB locale).
+    {
         const fileName = activeDest?.file || `${activeMapId}.geojson`;
         // MODÈLE C : admin sur un BROUILLON (status≠published) → lire le repo FRAIS
         // (RAW, cache-busté comme le diff engine), car Pages lag de ~1-2 min après
@@ -325,8 +315,8 @@ export async function loadAndInitializeMap() {
         }
     }
 
-    // Zones de la destination active (réunif) : chargement dynamique par dest
-    // (fetch {dest}-zones.geojson, ou IndexedDB pour un brouillon local).
+    // Zones de la destination active : chargement par dest (fetch {dest}-zones.geojson —
+    // Pages si publiée, RAW frais si brouillon admin).
     await loadZonesForActive(activeMapId, state.destinations?.maps?.[activeMapId]);
 
     if (!geojsonData) {

@@ -1,82 +1,35 @@
 // src/local-destinations.js
-// Destinations BROUILLON locales (modèle 2-phases, Option A) — créées par le Scout
-// (« Nouvelle destination »), stockées dans l'IndexedDB admin (PAS dans
-// destinations.json, PAS sur GitHub). On les scoute + cure 100% en local ; la
-// publication (publishDestination → 1er et seul push GitHub en status:"published")
-// est une étape séparée et explicite. Un brouillon ne quitte jamais l'appareil avant
-// publication (la sauvegarde l'embarque pour parer un plantage DB, cf. fileManager.js).
+// MODÈLE C (bascule destinations) : une destination vit TOUJOURS sur GitHub
+// (création GitHub-first, cf. publish-destination.registerDraftDestinationOnGitHub).
+// Il n'y a PLUS de brouillon « local-only ». Ce module ne conserve donc que :
+//   - getDraftDestinations / makeUniqueDestId : lecture du store legacy + suggestion
+//     d'id unique (l'unicité réelle est garantie par le throw réseau de la création) ;
+//   - deleteLocalDraftDestination : purge des données LOCALES d'une carte (appelée
+//     par la suppression GitHub d'un brouillon, pour nettoyer l'appareil) ;
+//   - createLocalDraftDestination / getDraftZones / saveDraftZones : helpers LEGACY
+//     encore utilisés transitoirement (restoreBackup, attachLocalDraft, extension de
+//     zones du Scout/recalc). RETIRÉS en PR-4b-2b avec le reste du sous-système local.
 //
-// LECTURE/BOOT : mergeLocalDraftDestinations fusionne les brouillons dans la liste des
-// destinations ; app-startup sert leur geojson depuis l'IndexedDB.
-// CRÉATION : createLocalDraftDestination (appelé par le Scout) + makeUniqueDestId.
-//
-// Stockage (store appState) :
-//   - 'draftDestinations'   : { [id]: entrée destination (status:'draft', custom:true) }
-//   - 'draftGeoJSON_{id}'   : FeatureCollection de BASE, écrite VIDE à la création — les
-//                             lieux scoutés vivent dans 'customPois_{id}' (canal de
-//                             capture/publication) ; ce store reste le fond vide.
-//   - 'draftZones_{id}'     : FeatureCollection des zones (OSM) — lue par loadZonesForActive
-//
-// Visibilité : status:'draft' → les gardes EXISTANTES (boot app-startup.js + filtre du
-// sélecteur topbar) les masquent aux non-admins ; et un brouillon Option A n'est de
-// toute façon PAS sur le repo public (il n'y arrive qu'à la publication).
+// Le merge au boot (mergeLocalDraftDestinations), le service du geojson local
+// (getDraftGeoJSON) et le marquage de publication (markLocalDraftPublished) ont été
+// RETIRÉS en PR-4b-2a (modèle C : le boot lit GitHub, pas l'IndexedDB).
 import { state } from './state.js';
 import { getAppState, saveAppState, deleteAppState, deleteAllMapData } from './database.js';
 
-// La map { id: entrée } des brouillons locaux. Exportée pour la publication.
+// La map { id: entrée } des brouillons locaux legacy (store appState). Lue par
+// makeUniqueDestId et deleteLocalDraftDestination. En modèle C elle est normalement
+// vide (purge one-shot des résidus prévue en 4b-2b).
 export async function getDraftDestinations() {
     return (await getAppState('draftDestinations')) || {};
 }
 
-// POIs d'un brouillon local (servi à la place du fetch GitHub par app-startup).
-// IndexedDB indisponible/en échec → collection vide (pas de crash au boot).
-export async function getDraftGeoJSON(id) {
-    try {
-        return (await getAppState(`draftGeoJSON_${id}`)) || { type: 'FeatureCollection', features: [] };
-    } catch (e) {
-        return { type: 'FeatureCollection', features: [] };
-    }
-}
-
-// Fusionne les brouillons locaux dans state.destinations.maps (au boot, juste
-// après setDestinations). Inconditionnel : leur status:'draft' suffit à les
-// masquer aux non-admins via les gardes existantes. On n'écrase jamais une
-// destination publiée du même id (sécurité). IndexedDB indisponible/en échec
-// (test, SSR…) → aucun brouillon, le boot continue normalement.
-export async function mergeLocalDraftDestinations() {
-    let drafts;
-    try {
-        drafts = await getDraftDestinations();
-    } catch (e) {
-        return;
-    }
-    if (!drafts || !Object.keys(drafts).length) return;
-    if (!state.destinations) state.destinations = { activeMapId: 'djerba', maps: {} };
-    if (!state.destinations.maps) state.destinations.maps = {};
-    const supersededByGitHub = [];
-    for (const [id, entry] of Object.entries(drafts)) {
-        const existing = state.destinations.maps[id];
-        if (existing && !existing.custom) {
-            // Une vraie dest (GitHub) porte cet id → GitHub gagne (on ne masque pas
-            // une dest publiée). Si c'est NOTRE brouillon publié désormais
-            // déployé sur GitHub Pages, on nettoie sa copie locale devenue inutile.
-            // Un id qui collisionne sans drapeau publishedToGitHub est laissé tel quel.
-            if (entry.publishedToGitHub) supersededByGitHub.push(id);
-            continue;
-        }
-        state.destinations.maps[id] = { ...entry, status: 'draft', custom: true };
-    }
-    // Nettoyage HORS boucle (removeLocalDraft réécrit draftDestinations). Best-effort.
-    for (const id of supersededByGitHub) {
-        try { await removeLocalDraft(id); } catch (e) { /* ignore */ }
-    }
-}
-
-// Forge un id de destination unique à partir d'un nom (slug sans accents), sans
-// collision avec une dest publiée NI un autre brouillon. (C2a-2, Scout.)
+// Forge un id de destination unique à partir d'un nom (slug sans accents). Suggéreur :
+// l'unicité réelle est vérifiée à la création GitHub (registerDraftDestinationOnGitHub
+// lit destinations.json frais et refuse un id existant). On évite quand même une
+// collision évidente avec une dest connue (mémoire) ou un résidu local.
 export async function makeUniqueDestId(name) {
     const base = (name || 'destination')
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')   // enlève les accents
+        .normalize('NFD').replace(/[̀-ͯ]/g, '')   // enlève les accents
         .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
         .slice(0, 40) || 'destination';
     const taken = new Set([
@@ -89,8 +42,8 @@ export async function makeUniqueDestId(name) {
     return `${base}-${i}`;
 }
 
-// Crée un brouillon de destination LOCAL : entrée + geojson (POIs candidats) +
-// zones. Tout en IndexedDB, aucune écriture GitHub. (C2a-2, Scout mode Nouvelle.)
+// LEGACY (retiré en 4b-2b) — recrée une entrée brouillon locale. Encore appelé par
+// fileManager.restoreBackup (restauration d'anciens backups). Tout en IndexedDB.
 export async function createLocalDraftDestination(id, entry, geojson, zones) {
     const drafts = await getDraftDestinations();
     drafts[id] = { ...entry, status: 'draft', custom: true };
@@ -99,8 +52,8 @@ export async function createLocalDraftDestination(id, entry, geojson, zones) {
     await saveAppState(`draftZones_${id}`, zones || { type: 'FeatureCollection', features: [] });
 }
 
-// Zones (OSM) d'un brouillon local — lues à la publication (publishDestination).
-// IndexedDB en échec → collection vide (pas de crash).
+// LEGACY (retiré en 4b-2b) — zones (OSM) d'un brouillon local. Encore lu par
+// fileManager.attachLocalDraft (sauvegarde). IndexedDB en échec → collection vide.
 export async function getDraftZones(id) {
     try {
         return (await getAppState(`draftZones_${id}`)) || { type: 'FeatureCollection', features: [] };
@@ -109,38 +62,22 @@ export async function getDraftZones(id) {
     }
 }
 
-// Met à jour les zones (OSM) d'un brouillon LOCAL en IndexedDB. Le Scout étend les
-// zones à la boîte de capture (cf. scout.js capture) ; cette persistance les conserve
-// au reload pour un brouillon local. Une dest GitHub a, elle, son fichier
-// {id}-zones.geojson comme source de vérité (mis à jour par « Compléter les quartiers »).
+// LEGACY (retiré en 4b-2b) — persiste les zones étendues. Encore appelé par
+// scout.js (capture) et recalc-zones.js dans leurs branches `custom` (mortes pour un
+// brouillon modèle C, custom:false).
 export async function saveDraftZones(id, zones) {
     await saveAppState(`draftZones_${id}`, zones || { type: 'FeatureCollection', features: [] });
 }
 
-// Retire un brouillon LOCAL (entrée + geojson + zones) une fois sa version GitHub
-// détectée live : la copie locale n'a plus lieu d'être. Interne (appelé par
-// mergeLocalDraftDestinations). Best-effort sur les clés annexes (un résidu
-// draftGeoJSON_/draftZones_ orphelin est inoffensif).
-async function removeLocalDraft(id) {
-    const drafts = await getDraftDestinations();
-    if (drafts[id]) {
-        delete drafts[id];
-        await saveAppState('draftDestinations', drafts);
-    }
-    try { await deleteAppState(`draftGeoJSON_${id}`); } catch (e) { /* best-effort */ }
-    try { await deleteAppState(`draftZones_${id}`); } catch (e) { /* best-effort */ }
-}
-
-// Supprime DÉFINITIVEMENT un brouillon LOCAL de destination (Option A). Un brouillon
-// ne vit JAMAIS sur GitHub (modèle 2-phases) → suppression 100% locale, pas de token.
-// Purge : l'entrée (clé retirée de draftDestinations) + son geojson + ses zones + ses
-// captures (customPois) + les caches zones offline + TOUTES les données IDB indexées
-// par mapId (userData/curation, circuits perso, photos blob, cache OSM) + la boîte de
-// scan localStorage. Best-effort sur les clés annexes (un résidu est inoffensif).
-// L'appelant (UI) bascule hw_active_dest puis recharge pour repartir propre.
+// Purge des données LOCALES d'une carte (appelée par la suppression GitHub d'un
+// brouillon, admin-control-ui : deleteDraftFromGitHub puis purge locale). Retire :
+// l'entrée legacy draftDestinations (si résidu) + son geojson/zones + ses captures
+// (customPois) + les caches zones offline + TOUTES les données IDB indexées par mapId
+// (userData/curation, circuits perso, photos blob, cache OSM) + la boîte de scan.
+// Best-effort sur les clés annexes (un résidu est inoffensif).
 export async function deleteLocalDraftDestination(id) {
     if (!id) return;
-    // 1. Entrée brouillon : retirer la clé de la map draftDestinations.
+    // 1. Entrée brouillon legacy : retirer la clé si elle existe (résidu).
     const drafts = await getDraftDestinations();
     if (drafts[id]) {
         delete drafts[id];
@@ -156,16 +93,4 @@ export async function deleteLocalDraftDestination(id) {
     try { localStorage.removeItem(`scout_box_${id}`); } catch (e) { /* ignore */ }
     // 5. Reflet mémoire immédiat : retirer la dest de la liste en cours (avant reload).
     if (state.destinations?.maps?.[id]) delete state.destinations.maps[id];
-}
-
-// Marque un brouillon local comme PUBLIÉ sur GitHub SANS le supprimer : tant
-// que GitHub Pages n'a pas redéployé (~1-2 min), la copie locale reste la source
-// affichée sur cet appareil (reload compris). mergeLocalDraftDestinations nettoie
-// la copie locale au 1er boot où la version GitHub (entrée non-custom) est détectée.
-export async function markLocalDraftPublished(id) {
-    const drafts = await getDraftDestinations();
-    if (drafts[id]) {
-        drafts[id] = { ...drafts[id], publishedToGitHub: true };
-        await saveAppState('draftDestinations', drafts);
-    }
 }
