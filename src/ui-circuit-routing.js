@@ -28,6 +28,7 @@ import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { configureHelp, helpInline } from './help-popover.js';
 import { HELP_TRACER, HELP_CALQUE, HELP_STALE, HELP_WAYPOINT } from './help-content.js';
+import { getActiveCircuit } from './circuit-lookup.js';
 
 // Aide « ? » inline du bloc tracé : le patron rend l'icône via createIcons
 // (idempotent — déjà configuré par ui-circuit-list / ui-photo-batch).
@@ -40,11 +41,10 @@ function inCreation() {
     return state.isCircuitCreationMode || state.editingMode;
 }
 function activeCircuit() {
-    if (!state.activeCircuitId) return null;
-    // Les 2 listes : un officiel édité (convertToDraft) reste accessible côté
-    // tracé même s'il n'est pas (encore) dans myCircuits.
-    return [...(state.officialCircuits || []), ...(state.myCircuits || [])]
-        .find(c => c.id === state.activeCircuitId) || null;
+    // Résolution centralisée (circuit-lookup) : actif dans les 2 listes. Un
+    // officiel édité (convertToDraft) reste accessible côté tracé même s'il
+    // n'est pas (encore) dans myCircuits.
+    return getActiveCircuit();
 }
 function hasRealTrack() {
     const c = activeCircuit();

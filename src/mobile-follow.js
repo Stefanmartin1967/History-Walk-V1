@@ -32,6 +32,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, getZoneFromCoords, getPoiId, getPoiProp } from './utils.js';
 import { pushMobileLevel } from './mobile-state.js';
 import { showToast } from './toast.js';
+import { getActiveCircuit } from './circuit-lookup.js';
 
 let _overlay = null;     // header + contrôles, montés dans le conteneur Leaflet
 let _active = false;
@@ -64,14 +65,6 @@ export function isFollowActive() {
 export function circuitHasTrace(circuit) {
     return !!(circuit && (circuit.file ||
         (Array.isArray(circuit.realTrack) && circuit.realTrack.length > 0)));
-}
-
-function getActiveCircuit() {
-    const id = state.activeCircuitId;
-    if (!id) return null;
-    return state.myCircuits.find(c => c.id === id)
-        || state.officialCircuits?.find(c => c.id === id)
-        || null;
 }
 
 // Points de cadrage : le tracé réel s'il existe, sinon les POIs du circuit

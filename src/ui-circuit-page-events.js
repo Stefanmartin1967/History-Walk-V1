@@ -25,6 +25,7 @@ import { generateAndDownloadGPX } from './gpx.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
+import { getActiveCircuit } from './circuit-lookup.js';
 
 let inited = false;
 
@@ -119,8 +120,7 @@ function initMaskListing() {
             await setCircuitHidden(id, false);
             showToast('Circuit réaffiché dans la liste.', 'success', 2500);
         } else {
-            const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
-            const circuit = allCircuits.find(c => String(c.id) === id);
+            const circuit = getActiveCircuit();
             const name = circuit?.name || 'circuit';
 
             await setCircuitHidden(id, true);
@@ -170,10 +170,8 @@ function initDownloadGpx() {
 
     btn.addEventListener('click', async () => {
         if (!state.activeCircuitId) return;
-        const id = String(state.activeCircuitId);
 
-        const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
-        const circuit = allCircuits.find(c => String(c.id) === id);
+        const circuit = getActiveCircuit();
         if (!circuit) {
             showToast('Circuit introuvable.', 'error');
             return;
@@ -232,9 +230,7 @@ function updateGpxStudioConsultVisibility() {
     // realTrack présent (cas où data-show="consult" serait actif).
     let shouldHide = true;
     if (state.activeCircuitId) {
-        const id = String(state.activeCircuitId);
-        const allCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
-        const circuit = allCircuits.find(c => String(c.id) === id);
+        const circuit = getActiveCircuit();
         // Vol d'oiseau = realTrack absent ou vide → on AFFICHE le bouton.
         if (circuit && (!circuit.realTrack || circuit.realTrack.length === 0)) {
             shouldHide = false;
