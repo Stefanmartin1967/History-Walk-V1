@@ -13,6 +13,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { saveAppState } from './database.js';
 import { iconMap, getIconHtml, getIconForFeature } from './poi-icons.js';
 import { showInfoPopover } from './info-popover.js';
+import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
 
 export { iconMap, getIconHtml, getIconForFeature };
 
@@ -248,10 +249,7 @@ export function initMapListeners() {
         if (points.length < 2) return;
 
         // 2. On récupère les infos fraîches depuis le state (Locaux OU Officiels)
-        let activeCircuit = state.myCircuits.find(c => c.id === activeId);
-        if (!activeCircuit && state.officialCircuits) {
-            activeCircuit = state.officialCircuits.find(c => c.id === activeId);
-        }
+        const activeCircuit = findCircuitById(activeId);
 
         const isCompleted = isCircuitCompleted(activeCircuit);
 
@@ -421,10 +419,7 @@ export function updatePolylines() {
     if (!state.currentCircuit || state.currentCircuit.length < 2) return;
 
     // Récupération du circuit (Local ou Officiel)
-    let activeCircuitData = state.myCircuits.find(c => c.id === state.activeCircuitId);
-    if (!activeCircuitData && state.officialCircuits) {
-        activeCircuitData = state.officialCircuits.find(c => c.id === state.activeCircuitId);
-    }
+    const activeCircuitData = getActiveCircuit();
 
     const isCompleted = isCircuitCompleted(activeCircuitData);
 

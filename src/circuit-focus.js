@@ -32,6 +32,7 @@ import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
+import { getActiveCircuit } from './circuit-lookup.js';
 
 let _overlay = null;   // conteneur rail + barre + bouton quitter
 let _segLayer = null;  // L.layerGroup des polylignes de segment (+ hit-lines)
@@ -47,11 +48,6 @@ let _editedSegs = new Set(); // index des segments modifiés dans la session →
 // ---------- Helpers ----------
 function features() { return state.currentCircuit || []; }
 function inCreation() { return state.isCircuitCreationMode || state.editingMode; }
-function activeCircuit() {
-    if (!state.activeCircuitId) return null;
-    return [...(state.officialCircuits || []), ...(state.myCircuits || [])]
-        .find(c => c.id === state.activeCircuitId) || null;
-}
 function genId() { return 'wp_' + Date.now().toString(36) + Math.floor(Math.random() * 1e6).toString(36); }
 function fmtKm(km) { return km ? km.toFixed(1).replace('.', ',') + ' km' : '—'; }
 
@@ -262,7 +258,7 @@ export function enterCircuitFocus() {
     if (state.circuitFocusActive) return;
     const feats = features();
     if (feats.length < 2) { showToast('Ajoutez au moins 2 lieux pour ajuster le tracé.', 'warning'); return; }
-    const circuit = activeCircuit();
+    const circuit = getActiveCircuit();
     if (!circuit) return;
 
     state.circuitFocusActive = true;
@@ -313,7 +309,7 @@ async function finish() {
     // altitude) — on PRÉSERVE le D+ existant plutôt que de le fausser (somme
     // partielle) ou de l'effacer. Un nudge de waypoint change le total de façon
     // négligeable ; un vrai changement passe par « Re-tracer » (flux PR1 complet).
-    const existing = activeCircuit();
+    const existing = getActiveCircuit();
     const existingAscend = Number.isFinite(existing?.ascend) ? existing.ascend : null;
     const ascend = segs.every(s => Number.isFinite(s.ascend)) ? segmentsAscend(segs) : existingAscend;
     // Réutilise le flux PR1 : pose le realTrack (+ D+) et reste en création (pour

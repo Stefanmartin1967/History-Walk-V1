@@ -21,6 +21,7 @@ import { schedulePushTestedToGitHub } from './tested-sync.js';
 // microtask, APRÈS notifyCircuitChanged (rendu des drapeaux) → snapshot cadenas
 // trop tard, drapeaux des POI préexistants non verrouillés (fix v3.7.308).
 import { markEditingStart } from './circuit-flags.js';
+import { getActiveCircuit } from './circuit-lookup.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -495,8 +496,7 @@ export function updateCircuitMetadata(updateTitle = true) {
     // D+ (dénivelé positif) BRouter du circuit actif, si stocké (tracé in-app).
     // Cherché dans myCircuits ET officialCircuits (un officiel tracé par l'admin
     // le porte aussi). null ou 0 → non affiché.
-    const activeAny = activeCircuitData
-        || (state.officialCircuits || []).find(c => c.id === state.activeCircuitId);
+    const activeAny = activeCircuitData || getActiveCircuit();
     const ascend = (activeAny && Number.isFinite(activeAny.ascend) && activeAny.ascend > 0)
         ? activeAny.ascend : null;
 

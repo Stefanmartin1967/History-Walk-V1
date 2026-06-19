@@ -19,6 +19,7 @@ import { animateContainer, getCurrentView, getAllCircuitsOrdered, setMobileHeade
 import { switchMobileView } from './mobile-nav.js';
 import { eventBus } from './events.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
+import { getActiveCircuit } from './circuit-lookup.js';
 
 export function initMobilePoiListeners() {
     eventBus.on('mobile:update-poi-position', (poiId) => updatePoiPosition(poiId));
@@ -192,8 +193,7 @@ function renderSimplePoiList(container, listToDisplay) {
 
 // ─── Vue Circuit (cible PC-02) ─────────────────────────────────────────────
 function renderCircuitView(container, listToDisplay) {
-    const circuit = state.myCircuits.find(c => c.id === state.activeCircuitId)
-        || state.officialCircuits?.find(c => c.id === state.activeCircuitId);
+    const circuit = getActiveCircuit();
     if (!circuit) {
         renderSimplePoiList(container, listToDisplay);
         return;
