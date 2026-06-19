@@ -38,4 +38,5 @@ export const PERSONAL_KEYS = [
     'planifie',            // legacy — plus stocké depuis 03/05/2026 (calculé à la volée), filet anti-leak data historique
     'planifieCounter',     // legacy — idem `planifie`, calculé via computePlanifieCounter()
     'hidden',              // POI masqué côté user
+    'accessPointStatus',   // état de travail du drapeau (osm/moved/locked/on-track/failed) — admin only, dérivé de accessPoint ; ne pas publier ni diffuser (seul lecteur map.js est gardé isAdmin + userData-first)
 ];

@@ -276,6 +276,13 @@ function updateProgress() {
 // === Navigation ================================================================
 
 function jumpTo(idx) {
+    if (_isLoading) {
+        // Pendant le batch Overpass initial, _items est encore en cours de
+        // (ré)assignation → naviguer maintenant figerait un index obsolète
+        // (risque : un « Conserver » écrirait sur le mauvais POI). On bloque.
+        showToast('Évaluation OSM en cours…', 'info', 2000);
+        return;
+    }
     if (_dirty) {
         // Modifs en cours sur le POI courant — pour ne pas perdre, on prompt.
         // Garde simple : on annule la nav (l'admin doit cliquer Conserver/Effacer
