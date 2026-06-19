@@ -681,6 +681,21 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>` : '';
 
+        // MODÈLE C (PR-4b-1) — suppression d'un brouillon GitHub : visible sur un
+        // brouillon modèle C (status≠published && !custom, exclusion mutuelle avec la
+        // carte legacy ci-dessus). Supprime sur GitHub (deleteDraftFromGitHub : entrée
+        // retirée EN PREMIER) PUIS purge locale (deleteLocalDraftDestination). Réservé
+        // aux brouillons — une dest publiée n'est pas supprimable (D1). Style danger, en dernier.
+        const deleteDraftGhCardHtml = isDraftDest ? `
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-delete-dest-gh" aria-label="Supprimer ce brouillon de destination (définitif, GitHub + local)">
+                <div class="cc-card-ico cc-card-ico--danger"><i data-lucide="trash-2"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Supprimer cette destination</div>
+                    <div class="cc-card-sub">Brouillon — suppression définitive (GitHub + cet appareil)</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>` : '';
+
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
             ${publishCardHtml}
@@ -742,6 +757,7 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
             ${deleteCardHtml}
+            ${deleteDraftGhCardHtml}
         `;
 
         // Stats omises en empty state (totalCount=0) : 4 compteurs à 0 sont
@@ -1021,6 +1037,48 @@ export function renderTab(tab, diffData, callbacks) {
                     await hwAlert({
                         title: 'Échec de la suppression',
                         body: `<p>La suppression n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`,
+                    });
+                }
+            });
+
+            // Outils — « Supprimer cette destination » (MODÈLE C, PR-4b-1) : brouillon
+            // GitHub. Supprime sur GitHub (deleteDraftFromGitHub : entrée EN PREMIER, puis
+            // fichiers) PUIS purge les données LOCALES (deleteLocalDraftDestination), puis
+            // bascule sur la dest publiée par défaut + reload. Réservé aux brouillons (D1).
+            bindCardAction('btn-cc-tool-delete-dest-gh', async () => {
+                const mapId = state.currentMapId;
+                const dest = state.destinations?.maps?.[mapId];
+                if (!dest || dest.status === 'published') {
+                    showToast('Une destination publiée ne peut pas être supprimée ici.', 'warning', 3500);
+                    return;
+                }
+                const name = dest.name || mapId;
+                const fallback = state.destinations?.activeMapId || 'djerba';
+                const { hwConfirm, hwAlert } = await import('./modal.js');
+                closeCCModal();
+                const ok = await hwConfirm({
+                    title: 'Supprimer la destination',
+                    body: `<p>Supprimer définitivement le brouillon <strong>${escapeXml(name)}</strong> ?</p>`
+                        + `<p>La destination sera <strong>retirée de GitHub</strong> (elle disparaît pour tous) et <strong>toutes ses données locales</strong> (lieux scoutés/curés, circuits, photos, zones) seront effacées. <strong>Action irréversible.</strong></p>`
+                        + `<p>Astuce : fais d'abord une <em>Sauvegarde</em> si tu veux pouvoir le restaurer.</p>`,
+                    confirmLabel: 'Supprimer',
+                    cancelLabel: 'Annuler',
+                });
+                if (!ok) return;
+                try {
+                    const { deleteDraftFromGitHub } = await import('./publish-destination.js');
+                    await deleteDraftFromGitHub(mapId, (msg) => showToast(msg, 'info', 2500));
+                    // Purge locale (customPois, userData, circuits, photos, zones, scan box).
+                    const { deleteLocalDraftDestination } = await import('./local-destinations.js');
+                    await deleteLocalDraftDestination(mapId);
+                    try { localStorage.setItem('hw_active_dest', fallback); } catch (_) {}
+                    showToast(`Brouillon « ${name} » supprimé.`, 'success', 2500);
+                    setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(fallback)}`; }, 700);
+                } catch (e) {
+                    await hwAlert({
+                        title: 'Échec de la suppression',
+                        body: `<p>La suppression n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
+                            + `<p>Rien (ou peu) n'a été supprimé — tu peux réessayer.</p>`,
                     });
                 }
             });

@@ -29,7 +29,7 @@ import { state, setCustomFeatures } from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { getDraftDestinations, getDraftZones, markLocalDraftPublished } from './local-destinations.js';
 import { generateMasterGeoJSONData } from './admin-geojson.js';
-import { getStoredToken, uploadFileToGitHub } from './github-sync.js';
+import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { isCandidate, getPoiId } from './utils.js';
 import { saveAppState } from './database.js';
@@ -321,4 +321,58 @@ export async function setDestinationPublished(id, onProgress = () => {}) {
         state.destinations.maps[id].custom = false;
     }
     return { id, name: label, pois: geo.features.length, candidatesKept: candidates.length };
+}
+
+/**
+ * Supprime un BROUILLON de destination de GitHub (modèle C, PR-4b-1). Réservé aux
+ * brouillons (status:'draft') — une dest PUBLIÉE n'est jamais supprimée ici
+ * (décision D1). ORDRE ANTI-ORPHELIN INVERSE de la création : on retire l'entrée
+ * `destinations.json` EN PREMIER (plus aucun client ne pointe vers les fichiers),
+ * PUIS on supprime {id}.geojson / {id}-zones.geojson / circuits/{id}.json (best-
+ * effort : un fichier déjà absent ne bloque pas). La purge des données LOCALES
+ * (customPois, userData, photos, zones, scan box) est faite par l'appelant via
+ * deleteLocalDraftDestination. No-op GitHub si l'id n'est pas (ou plus) sur GitHub
+ * (résidu purement local) → l'appelant fait quand même la purge locale.
+ *
+ * @param {string} id
+ * @param {(msg:string)=>void} [onProgress]
+ * @returns {Promise<{id:string, name?:string, removedFromGitHub:boolean}>}
+ */
+export async function deleteDraftFromGitHub(id, onProgress = () => {}) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Aucun token GitHub connecté (onglet Connexion du Centre de Contrôle).');
+
+    onProgress('Lecture de la liste des destinations…');
+    const dest = await fetchDestinationsJson(token);
+    const entry = dest.maps?.[id];
+    if (!entry) return { id, removedFromGitHub: false }; // pas sur GitHub (résidu local)
+    if (entry.status === 'published') {
+        throw new Error('Une destination publiée ne peut pas être supprimée ici.');
+    }
+
+    const label = entry.name || id;
+    // 1. Entrée EN PREMIER (dès qu'elle disparaît, plus rien ne pointe vers les fichiers).
+    delete dest.maps[id];
+    onProgress('Retrait de la liste des destinations…');
+    await uploadFileToGitHub(jsonFile(dest, 'destinations.json'), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.destinations(), `chore(dest): suppression du brouillon « ${label} »`);
+
+    // 2. Fichiers de la carte (best-effort : 404 « déjà absent » = normal, on ignore).
+    //    On inclut tested_{id}.json : un brouillon a pu le pousser si un circuit a été
+    //    marqué « Fait » pendant la phase brouillon (tested-sync n'a pas de garde
+    //    published). DETTE 4b-2 : les GPX par-circuit (circuits/{id}/*.gpx) et les
+    //    photos à plat (public/photos/poi_*.jpg, non namespacées par mapId) ne sont PAS
+    //    supprimés ici — ils deviennent des orphelins INERTES (aucun pointeur après
+    //    retrait de l'entrée + index, boot sûr). Nettoyage repo complet prévu en 4b-2.
+    onProgress('Suppression des fichiers de la destination…');
+    for (const path of [GITHUB_PATHS.geojson(id), GITHUB_PATHS.zones(id), GITHUB_PATHS.circuits(id), GITHUB_PATHS.tested(id)]) {
+        try {
+            await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, path, `chore(dest): suppression « ${label} » — ${path}`);
+        } catch (e) {
+            console.warn(`[deleteDraft] suppression ${path} échouée (peut-être déjà absent) :`, e);
+        }
+    }
+
+    if (state.destinations?.maps?.[id]) delete state.destinations.maps[id];
+    return { id, name: label, removedFromGitHub: true };
 }
