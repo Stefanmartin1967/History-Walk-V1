@@ -16,6 +16,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('../src/github-sync.js', () => ({
     getStoredToken: vi.fn(() => 'ghp_test'),
     uploadFileToGitHub: vi.fn(async () => ({ ok: true })),
+    deleteFileFromGitHub: vi.fn(async () => ({ ok: true })),
 }));
 vi.mock('../src/local-destinations.js', () => ({
     getDraftDestinations: vi.fn(),
@@ -27,9 +28,9 @@ vi.mock('../src/database.js', () => ({
     getAppState: vi.fn(async () => null),
 }));
 
-import { publishDestination, registerDraftDestinationOnGitHub, setDestinationPublished } from '../src/publish-destination.js';
+import { publishDestination, registerDraftDestinationOnGitHub, setDestinationPublished, deleteDraftFromGitHub } from '../src/publish-destination.js';
 import { saveAppState } from '../src/database.js';
-import { getStoredToken, uploadFileToGitHub } from '../src/github-sync.js';
+import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub } from '../src/github-sync.js';
 import {
     getDraftDestinations, getDraftZones, markLocalDraftPublished,
 } from '../src/local-destinations.js';
@@ -365,5 +366,63 @@ describe('setDestinationPublished — « Rendre publique » (draft → published
         stubDestFetch({ activeMapId: 'djerba', maps: { sozopol: { name: 'Sozopol', status: 'published' } } });
         await expect(setDestinationPublished('sozopol')).rejects.toThrow(/déjà publiée/i);
         expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+});
+
+describe('deleteDraftFromGitHub — suppression d\'un brouillon GitHub (PR-4b-1)', () => {
+    it('retire l\'entrée destinations.json EN PREMIER, puis supprime les fichiers (geojson/zones/index/tested)', async () => {
+        stubDestFetch({ activeMapId: 'djerba', maps: { djerba: { status: 'published' }, sozopol: { name: 'Sozopol', status: 'draft' } } });
+        const res = await deleteDraftFromGitHub('sozopol');
+
+        // 1 push destinations.json (sans l'entrée sozopol).
+        expect(uploadFileToGitHub).toHaveBeenCalledTimes(1);
+        expect(uploadFileToGitHub.mock.calls[0][4]).toBe('public/destinations.json');
+        const dest = JSON.parse(await fileText(uploadFileToGitHub.mock.calls[0][0]));
+        expect(dest.maps.sozopol).toBeUndefined();
+        expect(dest.maps.djerba).toBeDefined(); // intact
+
+        // Suppressions de fichiers, APRÈS le push de destinations.json. tested_{id}.json
+        // inclus (un brouillon a pu le pousser via un circuit marqué « Fait »).
+        const delPaths = deleteFileFromGitHub.mock.calls.map((c) => c[3]);
+        expect(delPaths).toEqual([
+            'public/sozopol.geojson',
+            'public/sozopol-zones.geojson',
+            'public/circuits/sozopol.json',
+            'public/circuits/tested_sozopol.json',
+        ]);
+        // Ordre : destinations.json (upload) AVANT toute suppression de fichier.
+        expect(uploadFileToGitHub.mock.invocationCallOrder[0])
+            .toBeLessThan(deleteFileFromGitHub.mock.invocationCallOrder[0]);
+        expect(res).toMatchObject({ id: 'sozopol', name: 'Sozopol', removedFromGitHub: true });
+    });
+
+    it('refuse de supprimer une destination PUBLIÉE (aucun push/suppression)', async () => {
+        stubDestFetch({ activeMapId: 'djerba', maps: { djerba: { name: 'Djerba', status: 'published' } } });
+        await expect(deleteDraftFromGitHub('djerba')).rejects.toThrow(/publiée/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+        expect(deleteFileFromGitHub).not.toHaveBeenCalled();
+    });
+
+    it('no-op GitHub si l\'id n\'est pas sur GitHub (résidu purement local)', async () => {
+        stubDestFetch({ activeMapId: 'djerba', maps: { djerba: { status: 'published' } } });
+        const res = await deleteDraftFromGitHub('hammamet');
+        expect(res).toEqual({ id: 'hammamet', removedFromGitHub: false });
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+        expect(deleteFileFromGitHub).not.toHaveBeenCalled();
+    });
+
+    it('refuse sans token (aucun push/suppression)', async () => {
+        getStoredToken.mockReturnValue(null);
+        await expect(deleteDraftFromGitHub('sozopol')).rejects.toThrow(/token/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+        expect(deleteFileFromGitHub).not.toHaveBeenCalled();
+    });
+
+    it('une suppression de fichier en échec ne bloque pas (best-effort)', async () => {
+        stubDestFetch({ activeMapId: 'djerba', maps: { sozopol: { name: 'Sozopol', status: 'draft' } } });
+        deleteFileFromGitHub.mockRejectedValueOnce(new Error('404 not found'));
+        const res = await deleteDraftFromGitHub('sozopol');
+        expect(res.removedFromGitHub).toBe(true); // l'entrée a bien été retirée
+        expect(deleteFileFromGitHub).toHaveBeenCalledTimes(4); // on tente les 4 malgré l'échec du 1er
     });
 });
