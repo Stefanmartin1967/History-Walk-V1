@@ -14,11 +14,13 @@ import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
 import { pushToGist } from './gist-sync.js';
 import { schedulePushTestedToGitHub } from './tested-sync.js';
-// Import statique de side-effect : pose le listener window 'circuit:updated'
-// dès le boot pour synchroniser les drapeaux d'accès en mode création/édition
-// (PR 4/5 chantier drapeaux v2). Sans cet import, le listener ne se poserait
-// qu'au premier appel dynamique (markEditingStart ou commitDirtyFlags), trop tard.
-import './circuit-flags.js';
+// Import statique : pose le listener window 'circuit:updated' dès le boot pour
+// synchroniser les drapeaux d'accès en mode création/édition (PR 4/5 chantier
+// drapeaux v2), ET expose markEditingStart pour l'appeler SYNCHRONIQUEMENT à
+// l'entrée en édition. L'ancien import dynamique exécutait markEditingStart en
+// microtask, APRÈS notifyCircuitChanged (rendu des drapeaux) → snapshot cadenas
+// trop tard, drapeaux des POI préexistants non verrouillés (fix v3.7.308).
+import { markEditingStart } from './circuit-flags.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -678,8 +680,7 @@ export function convertToDraft({ preserveId = false } = {}) {
         // PR 4/5 chantier drapeaux v2 : snapshot des POI préexistants AVANT
         // d'entrer en édition (règle cadenas — leurs drapeaux seront rouges
         // non-draggables, à modifier depuis la fiche POI).
-        import('./circuit-flags.js').then(m => m.markEditingStart(state.currentCircuit || []))
-            .catch(e => console.warn('[circuit] import circuit-flags.js échoué (déploiement en cours ?) :', e));
+        markEditingStart(state.currentCircuit || []);
         setEditingMode(true);
         // Fix bug pré-existant (signalé par Stefan post #715) : en édition admin,
         // cliquer un POI ouvrait la fiche au lieu de l'ajouter au circuit. Cause :

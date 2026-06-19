@@ -34,6 +34,7 @@ import { getPoiId, updatePoiData } from './data.js';
 import { getAccessPoint } from './utils.js';
 import { getAccessPointStatus } from './access-point.js';
 import { showToast } from './toast.js';
+import { eventBus } from './events.js';
 
 // === État du module ============================================================
 // _flags : Map<poiId, { marker, line, status, isLocked, isDirty, newCoords }>
