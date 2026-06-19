@@ -136,3 +136,31 @@ describe('circuit-flags — dragend du drapeau en focus (régression import even
         }
     });
 });
+
+describe('circuit-flags — getDirtyCount (drapeaux glissés non enregistrés)', () => {
+    beforeEach(() => { vi.resetModules(); });
+
+    const feat = (id, lon) => ({
+        properties: { HW_ID: id, accessPoint: [lon, 33] },
+        geometry: { coordinates: [lon + 0.001, 33.001] },
+    });
+
+    it('compte les drapeaux isDirty non verrouillés, ignore les verrouillés', async () => {
+        const mod = await import('../src/circuit-flags.js');
+        mod._internals.ensureFlag(feat('P1', 10));
+        expect(mod.getDirtyCount()).toBe(0); // créé mais pas encore glissé
+
+        mod._internals._flags.get('P1').isDirty = true;
+        expect(mod.getDirtyCount()).toBe(1);
+
+        // un drapeau VERROUILLÉ (cadenas) glissé ne doit PAS compter
+        mod._internals.ensureFlag(feat('P2', 11));
+        const e2 = mod._internals._flags.get('P2');
+        e2.isDirty = true;
+        e2.isLocked = true;
+        expect(mod.getDirtyCount()).toBe(1);
+
+        mod.teardownAllFlags();
+        expect(mod.getDirtyCount()).toBe(0);
+    });
+});

@@ -20,7 +20,7 @@ import { schedulePushTestedToGitHub } from './tested-sync.js';
 // l'entrée en édition. L'ancien import dynamique exécutait markEditingStart en
 // microtask, APRÈS notifyCircuitChanged (rendu des drapeaux) → snapshot cadenas
 // trop tard, drapeaux des POI préexistants non verrouillés (fix v3.7.308).
-import { markEditingStart } from './circuit-flags.js';
+import { markEditingStart, getDirtyCount } from './circuit-flags.js';
 import { getActiveCircuit } from './circuit-lookup.js';
 
 export function isCircuitTested(circuitId) {
@@ -580,7 +580,17 @@ export async function clearCircuit(withConfirmation = true) {
         // CAS 2 : On est en mode Brouillon (Modification en cours)
         const hasPoints = state.currentCircuit.length > 0;
         if (withConfirmation && hasPoints) {
-            if (!await showConfirm("Réinitialiser", "Voulez-vous vraiment réinitialiser ce brouillon ?", "Réinitialiser", "Annuler", true)) return;
+            // Enrichit la confirmation si l'admin a glissé des drapeaux d'accès
+            // (hors focus) non encore enregistrés : teardownAllFlags (déclenché
+            // par toggle-selection-mode ci-dessous) les abandonnerait en silence.
+            const dirtyFlags = getDirtyCount();
+            let msg = "Voulez-vous vraiment réinitialiser ce brouillon ?";
+            if (dirtyFlags > 0) {
+                msg += dirtyFlags > 1
+                    ? ` ${dirtyFlags} déplacements de drapeau non enregistrés seront perdus.`
+                    : ` 1 déplacement de drapeau non enregistré sera perdu.`;
+            }
+            if (!await showConfirm("Réinitialiser", msg, "Réinitialiser", "Annuler", true)) return;
         }
         resetCurrentCircuit();
         setActiveCircuitId(null);
