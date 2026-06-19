@@ -33,10 +33,12 @@ import { fetchOverpassJson } from './osm-overpass.js';
 import { addPoiFeature } from './data.js';
 import { isDestinationPublished } from './utils.js';
 import { hwPrompt } from './modal.js';
-import { createLocalDraftDestination, makeUniqueDestId, saveDraftZones } from './local-destinations.js';
+import { makeUniqueDestId, saveDraftZones } from './local-destinations.js';
 import { fetchZonesAuto } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
 import { getHwCategory } from './scout-categories.js';
+import { getStoredToken } from './github-sync.js';
+import { registerDraftDestinationOnGitHub } from './publish-destination.js';
 
 let _overlay = null;
 let _boxEl = null;
@@ -632,8 +634,13 @@ async function capture() {
             if (added.length) {
                 const merged = { type: 'FeatureCollection', features: [...(zonesData.features || []), ...added] };
                 setZonesData(merged);
-                // Brouillon LOCAL → persister les zones étendues (dest GitHub : le fichier
-                // {id}-zones.geojson reste la vérité, géré par « Compléter les quartiers »).
+                // L'extension est posée EN MÉMOIRE (setZonesData ci-dessus). Persistance :
+                //  - dest GitHub (modèle C, custom:false) → via « Compléter les quartiers »
+                //    (pushDestinationZones → {id}-zones.geojson). L'extension faite ici est
+                //    donc ÉPHÉMÈRE jusqu'à ce geste : on NE pousse PAS par capture (sinon la
+                //    moisson Scout serait trop bavarde sur GitHub). Perdue si reload avant.
+                //  - brouillon LOCAL legacy (custom:true) → cache IndexedDB. Branche retirée
+                //    en PR-4b avec le reste du sous-système local.
                 if (state.destinations?.maps?.[state.currentMapId]?.custom) {
                     try { await saveDraftZones(state.currentMapId, merged); } catch (_) { /* best-effort */ }
                 }
@@ -683,20 +690,25 @@ async function capture() {
 
 // Scout v2 (flux inversé) : crée une DESTINATION BROUILLON locale VIDE — aucun
 // POI, les lieux arrivent ensuite par les captures sur la destination devenue
-// active. Récupère les ZONES admin OSM (C2a-2b, niveau déduit du pays géocodé)
-// puis bascule dessus (rechargement ?map={id} → boot C2a-1b). Tout en local :
-// aucune écriture GitHub. Bounds = fenêtre élargie à MIN_VIEW_KM autour du lieu
-// géocodé : la bbox Nominatim d'une ville (son bâti) est trop serrée pour le
+// active. Récupère les ZONES admin OSM (niveau déduit du pays géocodé) puis bascule
+// dessus (rechargement ?map={id}). MODÈLE C : la création POUSSE directement sur
+// GitHub (entrée status:'draft' + geojson vide + zones + index circuits) ; le boot
+// admin relit l'API GitHub fraîche. Bounds = fenêtre élargie à MIN_VIEW_KM autour du
+// lieu géocodé : la bbox Nominatim d'une ville (son bâti) est trop serrée pour le
 // cadrage d'une destination qui s'étendra autour.
 async function createDestinationDraft() {
     if (!_geocoded) return;
-    // Modèle 2-phases (Option A, 17/06/2026) : la création est 100% LOCALE — aucune
-    // écriture GitHub, donc aucun token requis. La destination reste un brouillon
-    // local (admin-only) jusqu'à « Publier cette destination » (Centre de Contrôle).
+    // MODÈLE C : la création écrit sur GitHub (entrée draft + fichiers) → token REQUIS.
+    // On garde AVANT de demander le nom et de moissonner les zones, pour ne pas faire
+    // saisir/attendre l'admin pour rien.
+    if (!getStoredToken()) {
+        showToast('Connecte ton token GitHub (Centre de Contrôle › Connexion) pour créer une destination.', 'warning', 4500);
+        return;
+    }
     const suggested = (_geoName || '').split(',')[0].trim();
     const name = await hwPrompt({
         title: 'Nouvelle destination',
-        body: 'Créer un brouillon local <strong>vide</strong> — tu scoutes ses lieux juste après, dessus. Nom de la destination :',
+        body: 'Créer une destination <strong>vide</strong> (brouillon, masquée du public) — tu scoutes ses lieux juste après, dessus. Nom de la destination :',
         defaultValue: suggested,
         placeholder: 'ex. Varna, Sozopol, Trapani…',
         confirmLabel: 'Créer le brouillon',
@@ -709,9 +721,8 @@ async function createDestinationDraft() {
     const raw = _geoBBox || (() => { const c = map.getCenter(); return [[c.lat, c.lng], [c.lat, c.lng]]; })();
     const bounds = minViewBounds(raw[0][0], raw[1][0], raw[0][1], raw[1][1]);
 
-    // Zones admin OSM (réunif C2a-2b) : niveau déduit du pays géocodé, avec repli
-    // si la 1ʳᵉ passe est vide. Échec/timeout → zones vides, la création continue
-    // (non bloquant — les zones se complètent plus tard si besoin).
+    // Zones admin OSM : niveau déduit du pays géocodé. Échec/timeout → zones vides,
+    // la création continue (non bloquant — complétables via « Compléter les quartiers »).
     showLoading(true, 'Zones administratives (OSM)…');
     let zones = { type: 'FeatureCollection', features: [] };
     try { zones = await fetchZonesAuto(bounds, _geoCountry); } catch (_) {}
@@ -724,24 +735,33 @@ async function createDestinationDraft() {
         startView: { center: [center.lat, center.lng], zoom: map.getZoom() },
         currency: '',
         country: _geoCountry || '',   // code pays ISO → niveau admin des zones OSM (re-scan/recalcul)
-        file: null, zonesFile: null, circuitsFile: null,
     };
+
+    // Push GitHub ATOMIQUE : registerDraftDestinationOnGitHub pousse les données puis
+    // destinations.json EN DERNIER (anti-orphelin). On ne reflète l'état en mémoire et
+    // on ne bascule QU'EN CAS DE SUCCÈS COMPLET → l'état mémoire ne diverge jamais de
+    // GitHub (pas de zombie, pas d'écriture IndexedDB locale). Échec → on s'arrête net.
+    showLoading(true, 'Création sur GitHub…');
+    let res;
     try {
-        await createLocalDraftDestination(id, entry, { type: 'FeatureCollection', features: [] }, zones);
+        res = await registerDraftDestinationOnGitHub(id, entry, zones, (msg) => showLoading(true, msg));
     } catch (e) {
-        showToast('Échec de la création du brouillon.', 'error', 4000);
+        showLoading(false);
+        showToast(`Échec de la création sur GitHub : ${e.message}`, 'error', 5000);
         return;
     }
+    showLoading(false);
 
-    // Bascule : on mémorise le choix puis on recharge sur le brouillon (le boot
-    // C2a-1b le fusionne + charge ses POIs depuis l'IDB ; admin déjà connecté).
-    // `&scout=1` → le boot rouvre le Scout DESSUS automatiquement (main.js, patron
-    // ?poi=) : l'admin enchaîne la moisson sans rouvrir l'outil à la main.
-    // MODÈLE 2-PHASES (Option A) : RIEN n'est poussé sur GitHub ici — le brouillon
-    // reste 100% local jusqu'à « Publier cette destination ».
+    // Reflet mémoire immédiat (avant reload). `&scout=1` → le boot rouvre le Scout
+    // DESSUS (main.js, patron ?poi=) ; le boot admin relit l'API GitHub fraîche (A1)
+    // → la dest apparaît sans attendre le redéploiement Pages (~1-2 min).
+    if (!state.destinations) state.destinations = { activeMapId: 'djerba', maps: {} };
+    if (!state.destinations.maps) state.destinations.maps = {};
+    state.destinations.maps[id] = { ...res.entry, custom: false };
+
     try { localStorage.setItem('hw_active_dest', id); } catch (_) {}
     const zTxt = zones.features.length ? ` · ${zones.features.length} zone${zones.features.length > 1 ? 's' : ''} OSM` : '';
-    showToast(`Destination « ${trimmed} » créée en local${zTxt}. Bascule — le Scout rouvre dessus pour la remplir.`, 'success', 3200);
+    showToast(`Destination « ${trimmed} » créée${zTxt}. Bascule — le Scout rouvre dessus pour la remplir.`, 'success', 3200);
     setTimeout(() => { location.href = `${location.pathname}?map=${encodeURIComponent(id)}&scout=1`; }, 650);
 }
 

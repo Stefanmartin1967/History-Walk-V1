@@ -43,7 +43,7 @@ function jsonFile(obj, name) {
 // Lit le destinations.json ACTUEL sur GitHub (contenu frais via la Contents API,
 // no-store) → base de la modification (read → add → write). destinations.json est
 // minuscule (< 2 Ko) donc jamais tronqué par la limite 1 Mo de l'API.
-async function fetchDestinationsJson(token) {
+export async function fetchDestinationsJson(token) {
     const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATHS.destinations()}`;
     const res = await fetchWithTimeout(url, {
         headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' },
@@ -57,6 +57,11 @@ async function fetchDestinationsJson(token) {
 }
 
 /**
+ * @deprecated MODÈLE C (PR-4) : remplacé par registerDraftDestinationOnGitHub
+ * (création) + « Tout publier » (curation) + setDestinationPublished (« Rendre
+ * publique »). Conservé dormant en PR-4a (filet + tests) ; RETIRÉ en PR-4b avec le
+ * reste du sous-système brouillon-local. Ne plus câbler de nouvel appelant.
+ *
  * Publie un brouillon LOCAL de destination sur GitHub en status:"published" — le
  * 1er et SEUL push (modèle 2-phases, Option A). La destination passe directement
  * de « brouillon local admin-only » à « publiée, visible de tous ».
@@ -180,4 +185,140 @@ export async function pushDestinationZones(id, zones, onProgress = () => {}) {
         GITHUB_PATHS.zones(id), `chore(zones): complète les quartiers « ${id} »`);
 
     return { id, zones: cleanZones.features.length };
+}
+
+// ── MODÈLE C (bascule PR-4) ──────────────────────────────────────────────────
+// Une destination est TOUJOURS une entrée GitHub ; `status:'draft'` la masque des
+// non-admins (gardes de boot + sélecteur). Le brouillon n'a plus de vie locale.
+//   - registerDraftDestinationOnGitHub : création (push immédiat, status:'draft') ;
+//   - setDestinationPublished : « Rendre publique » = bascule draft → published.
+// La CURATION passe par « Tout publier » (admin-control-center), pas par ici.
+
+/**
+ * Crée une destination BROUILLON directement sur GitHub (modèle C) — l'entrée
+ * status:'draft', un geojson VIDE, les zones et un index circuits vide. La data
+ * d'abord, `destinations.json` EN DERNIER : si un push casse en route, aucune
+ * entrée ne pointe vers un fichier manquant (anti-orphelin). Lecture fraîche de
+ * destinations.json (Contents API) → l'unicité de l'id est garantie par le réseau
+ * (makeUniqueDestId n'est qu'un suggérateur, basé sur la vue Pages possiblement
+ * périmée). Token requis (création = écriture distante).
+ *
+ * @param {string} id  id unique de la destination
+ * @param {{name?:string, bounds:any, startView:any, currency?:string, country?:string}} entry
+ * @param {{type?:string, features?:Array}} [zones]  zones OSM moissonnées à la création
+ * @param {(msg:string)=>void} [onProgress]
+ * @returns {Promise<{id:string, name:string, entry:object}>}
+ */
+export async function registerDraftDestinationOnGitHub(id, entry, zones, onProgress = () => {}) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Aucun token GitHub connecté (onglet Connexion du Centre de Contrôle).');
+
+    onProgress('Lecture de la liste des destinations…');
+    const dest = await fetchDestinationsJson(token);
+    if (!dest.maps) dest.maps = {};
+    if (dest.maps[id]) throw new Error(`Une destination « ${id} » existe déjà sur GitHub.`);
+
+    const label = entry.name || id;
+    const cleanZones = { type: 'FeatureCollection', features: zones?.features || [] };
+
+    // Entrée status:'draft' — schéma identique à une dest publiée, chemins canoniques.
+    const newEntry = {
+        name: label,
+        status: 'draft',
+        file: `${id}.geojson`,
+        circuitsFile: `circuits/${id}.json`,
+        zonesFile: `${id}-zones.geojson`,
+        bounds: entry.bounds,
+        currency: entry.currency || '',
+        country: entry.country || '',
+        startView: entry.startView,
+    };
+    dest.maps[id] = newEntry;
+
+    // INVARIANT anti-orphelin : données D'ABORD, destinations.json EN DERNIER.
+    onProgress('Création de la carte (lieux vides)…');
+    await uploadFileToGitHub(jsonFile({ type: 'FeatureCollection', features: [] }, `${id}.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.geojson(id), `feat(dest): brouillon « ${label} » — lieux (vide)`);
+
+    onProgress('Création des quartiers…');
+    await uploadFileToGitHub(jsonFile(cleanZones, `${id}-zones.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.zones(id), `feat(dest): brouillon « ${label} » — zones`);
+
+    onProgress('Création de l\'index des circuits…');
+    await uploadFileToGitHub(jsonFile([], `${id}.json`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.circuits(id), `feat(dest): brouillon « ${label} » — index circuits`);
+
+    onProgress('Mise à jour de la liste des destinations…');
+    await uploadFileToGitHub(jsonFile(dest, 'destinations.json'), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.destinations(), `feat(dest): nouveau brouillon « ${label} »`);
+
+    return { id, name: label, entry: newEntry };
+}
+
+/**
+ * « Rendre publique » (modèle C, D2) — fait passer une destination de status:'draft'
+ * à status:'published'. Ce N'EST PAS un simple flip de status : « Tout publier » sur
+ * un brouillon GARDE les candidats Scout non curés dans le geojson distant (admin-
+ * only, voulu). Les rendre publics serait une FUITE. Donc « Rendre publique » REPUSHE
+ * un geojson ÉPURÉ (keepCandidates:false, candidats mis de côté en local) PUIS bascule
+ * le status — le geojson EN PREMIER, destinations.json (la visibilité) EN DERNIER.
+ * Refuse s'il n'y a aucun lieu CURÉ à publier (évite une dest publique à 0 lieu).
+ *
+ * Doit être la destination ACTIVE (le geojson est régénéré depuis l'état affiché,
+ * generateMasterGeoJSONData lit state.loadedFeatures). Circuits/photos restent du
+ * ressort de « Tout publier » (à faire pendant la curation).
+ *
+ * @param {string} id
+ * @param {(msg:string)=>void} [onProgress]
+ * @returns {Promise<{id:string, name:string, pois:number, candidatesKept:number}>}
+ */
+export async function setDestinationPublished(id, onProgress = () => {}) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Aucun token GitHub connecté (onglet Connexion du Centre de Contrôle).');
+    // generateMasterGeoJSONData lit la dest ACTIVE → on exige qu'elle le soit.
+    if (id !== state.currentMapId) {
+        throw new Error('Cette destination n\'est pas active — basculez dessus avant de la rendre publique.');
+    }
+
+    onProgress('Lecture de la liste des destinations…');
+    const dest = await fetchDestinationsJson(token);
+    const entry = dest.maps?.[id];
+    if (!entry) throw new Error('Cette destination est introuvable sur GitHub.');
+    if (entry.status === 'published') throw new Error(`« ${entry.name || id} » est déjà publiée.`);
+
+    // Garde-fou candidat : mettre de côté les candidats non curés en local AVANT de
+    // pousser le geojson public épuré (ils restent curables ensuite). Identique au
+    // garde-fou de publishDestination.
+    const candidates = (state.loadedFeatures || []).filter(isCandidate);
+    if (candidates.length > 0) {
+        onProgress('Mise de côté des lieux encore à curer…');
+        const byId = new Map((state.customFeatures || []).map((f) => [getPoiId(f), f]));
+        candidates.forEach((f) => byId.set(getPoiId(f), f));
+        const mergedCustom = [...byId.values()];
+        setCustomFeatures(mergedCustom);
+        await saveAppState(`customPois_${id}`, mergedCustom);
+    }
+
+    // Geojson PUBLIC sans candidats. Refus si 0 lieu curé (pas de dest publique vide).
+    const geo = generateMasterGeoJSONData([], { keepCandidates: false });
+    if (!geo || !geo.features || geo.features.length === 0) {
+        throw new Error('Aucun lieu curé à publier — valide au moins un lieu (« Valider ») avant de rendre la destination publique.');
+    }
+
+    entry.status = 'published';
+    const label = entry.name || id;
+
+    // Push : geojson épuré D'ABORD, destinations.json (la visibilité) EN DERNIER.
+    onProgress('Publication des lieux…');
+    await uploadFileToGitHub(jsonFile(geo, `${id}.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.geojson(id), `feat(dest): publication « ${label} » — lieux`);
+    onProgress('Mise à jour de la liste des destinations…');
+    await uploadFileToGitHub(jsonFile(dest, 'destinations.json'), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.destinations(), `feat(dest): publication de « ${label} »`);
+
+    if (state.destinations?.maps?.[id]) {
+        state.destinations.maps[id].status = 'published';
+        state.destinations.maps[id].custom = false;
+    }
+    return { id, name: label, pois: geo.features.length, candidatesKept: candidates.length };
 }

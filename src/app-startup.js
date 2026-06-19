@@ -17,6 +17,8 @@ import { eventBus } from './events.js';
 import { pullFromGist, initGistReconnectSync } from './gist-sync.js';
 import { fetchWithTimeout } from './net.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
+import { getStoredToken } from './github-sync.js';
+import { fetchDestinationsJson } from './publish-destination.js';
 import { isDestinationPublished } from './utils.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
@@ -103,8 +105,24 @@ export async function loadDestinationsConfig() {
     if (config) {
         setDestinations(config);
     }
-    // Réunif C2a-1b : ajoute les destinations BROUILLON locales (IndexedDB admin)
-    // à la liste. status:'draft' → masquées aux non-admins par les gardes existantes.
+
+    // MODÈLE C : pour l'ADMIN (token présent), relire destinations.json FRAIS via la
+    // Contents API (no-store) et l'appliquer PAR-DESSUS la version Pages — qui lag de
+    // ~1-2 min après création/publication d'une destination. Un non-admin n'a pas de
+    // token → lit Pages seul → ne voit JAMAIS un brouillon fraîchement créé (garde de
+    // confidentialité préservée). Échec API → on garde la version Pages (sûr).
+    const token = getStoredToken();
+    if (token) {
+        try {
+            const fresh = await fetchDestinationsJson(token);
+            if (fresh && fresh.maps) setDestinations(fresh);
+        } catch (e) {
+            console.warn('[Startup] Lecture fraîche de destinations.json (admin) échouée — repli Pages.', e);
+        }
+    }
+
+    // Legacy Option A : brouillons LOCAUX (IndexedDB). En modèle C il n'en existe plus
+    // (création = GitHub direct) ; conservé en PR-4a, retiré en PR-4b.
     await mergeLocalDraftDestinations();
 }
 
@@ -122,11 +140,15 @@ async function loadZonesForActive(mapId, dest) {
         }
         const baseUrl = import.meta.env?.BASE_URL || './';
         const zonesFile = dest?.zonesFile || `${mapId}-zones.geojson`;
-        // Pas de ?t=Date.now() (audit P2) : une URL unique à chaque boot empêchait
-        // le SW NetworkFirst de retrouver son entrée en cache hors-ligne. `cache:
-        // 'reload'` suffit à la fraîcheur (ignore le cache HTTP navigateur ; GitHub
-        // Pages purge son CDN au déploiement). URL stable → cache hors-ligne réparé.
-        const resp = await fetchWithTimeout(`${baseUrl}${zonesFile}`, { cache: 'reload' });
+        // MODÈLE C : admin sur un BROUILLON → zones depuis le repo FRAIS (RAW), car
+        // Pages lag après création. Dest publiée → Pages inchangé (URL stable, cache
+        // SW). Pas de ?t=Date.now() côté Pages (audit P2) : une URL unique à chaque
+        // boot empêchait le SW NetworkFirst de retrouver son cache hors-ligne. `cache:
+        // 'reload'` suffit à la fraîcheur. URL stable → cache hors-ligne réparé.
+        const adminDraft = !!getStoredToken() && dest && dest.status !== 'published';
+        const resp = adminDraft
+            ? await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.zones(mapId)}?t=${Date.now()}`, { cache: 'reload' })
+            : await fetchWithTimeout(`${baseUrl}${zonesFile}`, { cache: 'reload' });
         if (resp.ok) {
             const z = await resp.json();
             setZonesData(z);
@@ -264,6 +286,12 @@ export async function loadAndInitializeMap() {
         geojsonData = await getDraftGeoJSON(activeMapId);
     } else {
         const fileName = activeDest?.file || `${activeMapId}.geojson`;
+        // MODÈLE C : admin sur un BROUILLON (status≠published) → lire le repo FRAIS
+        // (RAW, cache-busté comme le diff engine), car Pages lag de ~1-2 min après
+        // création/curation → sinon 404 « Impossible de charger la carte » juste après
+        // création. Dest PUBLIÉE (Djerba) → chemin Pages inchangé (URL stable = cache
+        // SW hors-ligne préservé, audit P2). RAW n'a pas la limite 1 Mo de la Contents API.
+        const adminDraft = !!getStoredToken() && activeDest && activeDest.status !== 'published';
         try {
             // Pas de ?t=Date.now() (audit P2) : ce cache-buster donnait une URL
             // unique à chaque boot, donc le SW NetworkFirst (#809) ne retrouvait
@@ -272,13 +300,17 @@ export async function loadAndInitializeMap() {
             // 'reload'` assure la fraîcheur (ignore le cache HTTP navigateur ;
             // GitHub Pages purge son CDN à chaque déploiement après publication).
             // URL stable → le SW sert le geojson hors-ligne, mobile inclus.
-            const resp = await fetchWithTimeout(`${baseUrl}${fileName}`, { cache: 'reload' });
+            const resp = adminDraft
+                ? await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.geojson(activeMapId)}?t=${Date.now()}`, { cache: 'reload' })
+                : await fetchWithTimeout(`${baseUrl}${fileName}`, { cache: 'reload' });
             // Une réponse en erreur (500 du CDN…) doit déclencher le MÊME repli
             // hors-ligne qu'un échec réseau (audit R5) — avant, geojsonData
             // restait null et le boot s'arrêtait sur « Impossible de charger ».
             if (!resp.ok) throw new Error(`geojson HTTP ${resp.status}`);
             geojsonData = await resp.json();
-            geojsonEtag = resp.headers?.get?.('etag') || null;
+            // RAW cache-busté = pas d'ETag exploitable. De toute façon le cache
+            // hors-ligne n'est PAS écrit pour un brouillon (cf. saveGeoJSONBackup gardé).
+            geojsonEtag = adminDraft ? null : (resp.headers?.get?.('etag') || null);
         } catch(e) {
             // Fallback offline
             const lastMapId = await getAppState('lastMapId');
@@ -307,7 +339,11 @@ export async function loadAndInitializeMap() {
     setCurrentMap(activeMapId);
     updateAppTitle(activeMapId);
     await saveAppState('lastMapId', activeMapId);
-    if (!isMobileView() && !geojsonFromCache) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag);
+    // Cache hors-ligne (desktop, slot global unique) : seulement pour une dest
+    // PUBLIÉE. Un BROUILLON (geojson lu en RAW, parfois vide en cours de curation)
+    // ne doit pas écraser le cache offline de la dest publiée par défaut.
+    const isDraftActive = !!activeDest && activeDest.status !== 'published';
+    if (!isMobileView() && !geojsonFromCache && !isDraftActive) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag);
 
     // 4. Chargement User Data & Circuits (Smart Merge)
     try {
@@ -422,7 +458,7 @@ export async function loadAndInitializeMap() {
         });
 
         // Compteur planifié calculé à la volée par computePlanifieCounter (data.js) — plus de recalc à faire ici
-        if (!geojsonFromCache) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag); // Mobile cache specific
+        if (!geojsonFromCache && !isDraftActive) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag); // Mobile cache specific (pas pour un brouillon)
         switchMobileView('circuits');
     } else {
         // CORRECTION: On doit aussi peupler loadedFeatures sur Desktop

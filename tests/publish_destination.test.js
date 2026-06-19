@@ -27,7 +27,7 @@ vi.mock('../src/database.js', () => ({
     getAppState: vi.fn(async () => null),
 }));
 
-import { publishDestination } from '../src/publish-destination.js';
+import { publishDestination, registerDraftDestinationOnGitHub, setDestinationPublished } from '../src/publish-destination.js';
 import { saveAppState } from '../src/database.js';
 import { getStoredToken, uploadFileToGitHub } from '../src/github-sync.js';
 import {
@@ -242,6 +242,128 @@ describe('publishDestination — modèle 2-phases (brouillon local → publiée)
     it('refuse si l\'id est déjà PUBLIÉ sur GitHub (aucun push)', async () => {
         stubDestFetch({ activeMapId: 'djerba', maps: { venise: { name: 'Venise', status: 'published' } } });
         await expect(publishDestination('venise')).rejects.toThrow(/déjà publiée/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+});
+
+// ── MODÈLE C (PR-4a) ─────────────────────────────────────────────────────────
+describe('registerDraftDestinationOnGitHub — création GitHub-first (status:draft)', () => {
+    const ENTRY = {
+        name: 'Sozopol', bounds: [[42.4, 27.6], [42.5, 27.8]],
+        startView: { center: [42.42, 27.7], zoom: 13 }, currency: '', country: 'bg',
+    };
+    const ZONES = { type: 'FeatureCollection', features: [{ type: 'Feature', properties: { name: 'Z1' }, geometry: { type: 'Polygon', coordinates: [] } }] };
+
+    it('pousse 4 fichiers : geojson → zones → index circuits → destinations.json EN DERNIER', async () => {
+        stubDestFetch(BASE_DEST); // ne contient que djerba
+        await registerDraftDestinationOnGitHub('sozopol', ENTRY, ZONES);
+        expect(uploadFileToGitHub).toHaveBeenCalledTimes(4);
+        const paths = uploadFileToGitHub.mock.calls.map((c) => c[4]);
+        expect(paths).toEqual([
+            'public/sozopol.geojson',
+            'public/sozopol-zones.geojson',
+            'public/circuits/sozopol.json',
+            'public/destinations.json',
+        ]);
+    });
+
+    it('le geojson poussé est VIDE et l\'entrée destinations.json est status:draft (schéma complet)', async () => {
+        stubDestFetch(BASE_DEST);
+        await registerDraftDestinationOnGitHub('sozopol', ENTRY, ZONES);
+        const geo = JSON.parse(await fileText(uploadFileToGitHub.mock.calls[0][0]));
+        expect(geo.features).toEqual([]);
+        const dest = JSON.parse(await fileText(uploadFileToGitHub.mock.calls[3][0]));
+        expect(dest.maps.djerba).toBeDefined(); // intact
+        expect(dest.maps.sozopol).toMatchObject({
+            name: 'Sozopol', status: 'draft',
+            file: 'sozopol.geojson', circuitsFile: 'circuits/sozopol.json', zonesFile: 'sozopol-zones.geojson',
+            country: 'bg',
+        });
+    });
+
+    it('retourne { id, name, entry } avec l\'entrée draft construite', async () => {
+        stubDestFetch(BASE_DEST);
+        const res = await registerDraftDestinationOnGitHub('sozopol', ENTRY, ZONES);
+        expect(res).toMatchObject({ id: 'sozopol', name: 'Sozopol' });
+        expect(res.entry.status).toBe('draft');
+    });
+
+    it('refuse sans token (aucun push)', async () => {
+        getStoredToken.mockReturnValue(null);
+        await expect(registerDraftDestinationOnGitHub('sozopol', ENTRY, ZONES)).rejects.toThrow(/token/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+
+    it('refuse si l\'id existe DÉJÀ sur GitHub (collision réseau — filet d\'unicité)', async () => {
+        stubDestFetch({ activeMapId: 'djerba', maps: { djerba: { status: 'published' }, sozopol: { status: 'draft' } } });
+        await expect(registerDraftDestinationOnGitHub('sozopol', ENTRY, ZONES)).rejects.toThrow(/existe déjà/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+});
+
+describe('setDestinationPublished — « Rendre publique » (draft → published)', () => {
+    beforeEach(() => {
+        // La dest à publier est ACTIVE, avec son état affiché (lieux curés + candidat).
+        state.currentMapId = 'sozopol';
+        state.customFeatures = [];
+        state.loadedFeatures = makeDraftFeatures();
+        state.destinations = { activeMapId: 'sozopol', maps: { sozopol: { name: 'Sozopol', status: 'draft' } } };
+        stubDestFetch({ activeMapId: 'djerba', maps: { djerba: { status: 'published' }, sozopol: { name: 'Sozopol', status: 'draft' } } });
+    });
+
+    it('pousse le geojson ÉPURÉ (candidats exclus) PUIS destinations.json (status flip)', async () => {
+        const res = await setDestinationPublished('sozopol');
+        expect(uploadFileToGitHub).toHaveBeenCalledTimes(2);
+        const paths = uploadFileToGitHub.mock.calls.map((c) => c[4]);
+        expect(paths).toEqual(['public/sozopol.geojson', 'public/destinations.json']); // geojson AVANT destinations.json
+        const geo = JSON.parse(await fileText(uploadFileToGitHub.mock.calls[0][0]));
+        const names = geo.features.map((f) => f.properties['Nom du site FR']);
+        expect(names).toContain('Pont des Soupirs'); // curé (overlay) → publié
+        expect(names).toContain('Fontaine');         // curé → publié
+        expect(names).not.toContain('Ruine OSM');     // candidat non curé → EXCLU
+        expect(names).not.toContain('Vieille citerne'); // supprimé → exclu
+        const dest = JSON.parse(await fileText(uploadFileToGitHub.mock.calls[1][0]));
+        expect(dest.maps.sozopol.status).toBe('published');
+        expect(res).toMatchObject({ id: 'sozopol', name: 'Sozopol', pois: 2, candidatesKept: 1 });
+    });
+
+    it('met de côté les candidats non curés en local (customPois) avant publication', async () => {
+        await setDestinationPublished('sozopol');
+        expect(saveAppState).toHaveBeenCalledWith('customPois_sozopol', expect.arrayContaining([
+            expect.objectContaining({ properties: expect.objectContaining({ HW_ID: 'HW-01TESTRUINE0000000000000001' }) }),
+        ]));
+    });
+
+    it('reflet mémoire : status=published ET custom=false', async () => {
+        state.destinations.maps.sozopol.custom = true; // résidu éventuel
+        await setDestinationPublished('sozopol');
+        expect(state.destinations.maps.sozopol.status).toBe('published');
+        expect(state.destinations.maps.sozopol.custom).toBe(false);
+    });
+
+    it('refuse si la destination n\'est pas active (aucun push)', async () => {
+        state.currentMapId = 'djerba';
+        await expect(setDestinationPublished('sozopol')).rejects.toThrow(/active/i);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    });
+
+    it('refuse s\'il n\'y a aucun lieu CURÉ (évite une dest publique à 0 lieu)', async () => {
+        // Que des candidats non curés + un supprimé → 0 lieu publiable.
+        state.loadedFeatures = makeDraftFeatures().filter((f) =>
+            ['HW-01TESTRUINE0000000000000001', 'HW-01TESTCITERNE000000000001'].includes(f.properties.HW_ID));
+        await expect(setDestinationPublished('sozopol')).rejects.toThrow(/aucun lieu/i);
+    });
+
+    it('refuse sans token / si introuvable / si déjà publiée (aucun push)', async () => {
+        getStoredToken.mockReturnValue(null);
+        await expect(setDestinationPublished('sozopol')).rejects.toThrow(/token/i);
+
+        getStoredToken.mockReturnValue('ghp_test');
+        stubDestFetch({ activeMapId: 'djerba', maps: { djerba: { status: 'published' } } });
+        await expect(setDestinationPublished('sozopol')).rejects.toThrow(/introuvable/i);
+
+        stubDestFetch({ activeMapId: 'djerba', maps: { sozopol: { name: 'Sozopol', status: 'published' } } });
+        await expect(setDestinationPublished('sozopol')).rejects.toThrow(/déjà publiée/i);
         expect(uploadFileToGitHub).not.toHaveBeenCalled();
     });
 });
