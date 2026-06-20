@@ -6,6 +6,7 @@
 // La topbar actuelle reste intacte — l'ouverture du panneau se fait via une
 // entrée temporaire dans le menu Outils. PR 3 fera la bascule visuelle.
 
+import L from 'leaflet';
 import { state, setActiveFilters, POI_CATEGORIES } from './state.js';
 import { getGroups, getGroupForCategory } from './taxonomy.js';
 import { applyFilters } from './data.js';
@@ -595,6 +596,14 @@ export function setupFilterPanel() {
 
     panel.innerHTML = buildPanelHtml();
     createIcons({ icons: appIcons });
+
+    // Le panneau est un overlay en position:absolute DANS le conteneur Leaflet :
+    // sans ça, la molette au-dessus du corps scrollable (.hw-fp-body) ou de la
+    // liste des zones (.hw-fp-zones-list) remonte jusqu'à la carte et la
+    // zoome/dézoome au lieu de faire défiler la liste. Attaché au panneau racine
+    // (les events wheel des enfants y remontent) — survit aux re-rendus de
+    // innerHTML car posé sur l'élément stable. Même pattern qu'access-point-editor.
+    L.DomEvent.disableScrollPropagation(panel);
 
     panel.querySelector('#hw-fp-close')?.addEventListener('click', closeFilterPanel);
 
