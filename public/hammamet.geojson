@@ -1319,9 +1319,12 @@
       },
       "properties": {
         "Nom du site FR": "Place de L'Indépendance",
-        "Catégorie": "A définir",
-        "candidate": true,
+        "Catégorie": "Curiosité",
         "HW_ID": "HW-01KVGFQ44RX91820NSCKNFFYSE",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": true,
         "Zone": "Beni Khiar"
       }
     },
@@ -1672,6 +1675,108 @@
         "accessPoint": [
           10.3106924,
           36.3453708
+        ],
+        "Zone": "Bou Achir"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.357961654663088,
+          36.332741657013344
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Barrage Ermal",
+        "Catégorie": "Curiosité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "HW_ID": "HW-01KVJTTEV7PYV9A6DH1FAMZWQZ",
+        "lat": 36.332741657013344,
+        "lng": 10.357961654663088,
+        "Zone": "Bou Achir"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.350995957851412,
+          36.32722504055143
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ancient temple romain de Oued Rmel",
+        "Catégorie": "Site archéologique",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "HW_ID": "HW-01KVJWASJ4294GEK77SY4W58GR",
+        "accessPoint": [
+          10.3508954,
+          36.3270003
+        ],
+        "lat": 36.32722504055143,
+        "lng": 10.350995957851412,
+        "Zone": "Bou Achir"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.352402385134127,
+          36.32629162368733
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ancienne huilerie romaine",
+        "Catégorie": "Site archéologique",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVJX42GPNDA5JF6N93QAPN3E",
+        "accessPoint": [
+          10.3522137,
+          36.3261652
+        ],
+        "lat": 36.32629162368733,
+        "lng": 10.352402385134127,
+        "Zone": "Bou Achir"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.35255163908005,
+          36.32629908368299
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Site archéologique de Oued Rmel",
+        "Catégorie": "Site archéologique",
+        "État": "Vestiges partiels",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVJX8F5WV8YMQYGQMGB1FXR3",
+        "accessPoint": [
+          10.3522137,
+          36.3261652
         ],
         "Zone": "Bou Achir"
       }
