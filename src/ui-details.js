@@ -427,6 +427,15 @@ function setupDetailsEventListeners(poiId) {
         });
     }
 
+    // --- Bouton "Drapeau à ma position" (admin mobile — pose GPS du point d'accès) ---
+    // La confirmation se fait APRÈS la capture GPS (montre la position) dans le handler.
+    const flagBtnMobile = document.getElementById('mobile-set-access-point-btn');
+    if (flagBtnMobile) {
+        flagBtnMobile.addEventListener('click', () => {
+            eventBus.emit('mobile:set-access-point', poiId);
+        });
+    }
+
     // --- Bouton recherche Google ---
     const searchBtns = document.querySelectorAll('.btn-web-search, #btn-web-search');
     searchBtns.forEach(btn => {

@@ -159,13 +159,17 @@ function buildPoiKebabMenu({ hasGpxDesc, isMobile }) {
                <i data-lucide="move"></i>Déplacer le marqueur
            </button>`;
 
-    // Admin + desktop uniquement : pose du « point d'accès au tracé » (drapeau
-    // carte pour les POI hors voie). Mobile exclu (geste de précision carte).
-    const accessPointItem = (!isMobile && state.isAdmin)
-        ? `<button class="poi-pop-item" role="menuitem" id="btn-set-access-point" type="button">
-               <i data-lucide="flag"></i>Point d'accès au tracé
+    // Admin : pose du « point d'accès au tracé » (drapeau pour les POI hors voie).
+    // PC = pose carte de précision (drag/clic) ; mobile = pose à la position GPS
+    // de l'admin sur le terrain (Option A, 19/06 — pas d'UI carte au doigt).
+    const accessPointItem = !state.isAdmin ? ''
+        : isMobile
+        ? `<button class="poi-pop-item" role="menuitem" id="mobile-set-access-point-btn" type="button">
+               <i data-lucide="flag"></i>Drapeau à ma position
            </button>`
-        : '';
+        : `<button class="poi-pop-item" role="menuitem" id="btn-set-access-point" type="button">
+               <i data-lucide="flag"></i>Point d'accès au tracé
+           </button>`;
 
     return `
         <div class="poi-kebab-pop is-hidden" id="poi-tools-pop" role="menu" aria-label="Outils du lieu">

@@ -196,4 +196,26 @@ describe('access-point — eraseAccessPoint (Option A : Effacer = re-proposable)
         await eraseAccessPoint('');
         expect(savePoiData).not.toHaveBeenCalled();
     });
+
+    it("setAccessPointAt pose le drapeau aux coords + statut 'moved'", async () => {
+        const { setAccessPointAt, getAccessPointStatus } = await import('../src/access-point.js');
+        const feature = { properties: { HW_ID: 'POIz', userData: {} } };
+        state.userData.POIz = feature.properties.userData;
+        state.loadedFeatures = [feature];
+
+        await setAccessPointAt('POIz', 10.95, 33.81);
+
+        expect(state.userData.POIz.accessPoint).toEqual([10.95, 33.81]);
+        expect(state.userData.POIz.accessPointStatus).toBe('moved');
+        expect(getAccessPointStatus(feature)).toBe('moved');
+        expect(savePoiData).toHaveBeenCalled();
+    });
+
+    it('setAccessPointAt no-op si poiId falsy ou coords invalides', async () => {
+        const { setAccessPointAt } = await import('../src/access-point.js');
+        await setAccessPointAt(null, 10, 33);
+        await setAccessPointAt('POI', NaN, 33);
+        await setAccessPointAt('POI', 10, undefined);
+        expect(savePoiData).not.toHaveBeenCalled();
+    });
 });

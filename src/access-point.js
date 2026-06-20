@@ -157,3 +157,19 @@ export async function eraseAccessPoint(poiId) {
     // statut ci-dessus) et n'émet qu'UN toast « Enregistré ».
     await updatePoiData(poiId, 'accessPoint', null);
 }
+
+/**
+ * Pose MANUELLE du drapeau à des coordonnées données (= statut 'moved', vert).
+ * Utilisé par le geste mobile « Drapeau à ma position GPS ». Même écriture que
+ * la pose éditeur/passe (accessPoint + statut), via le pattern d'eraseAccessPoint :
+ * statut admin-local posé en direct + accessPoint par updatePoiData (tracké CC).
+ * @param {string} poiId
+ * @param {number} lon
+ * @param {number} lat
+ */
+export async function setAccessPointAt(poiId, lon, lat) {
+    if (!poiId || !Number.isFinite(lon) || !Number.isFinite(lat)) return;
+    if (!state.userData[poiId]) state.userData[poiId] = {};
+    state.userData[poiId].accessPointStatus = 'moved';
+    await updatePoiData(poiId, 'accessPoint', [lon, lat]);
+}

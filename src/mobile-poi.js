@@ -20,9 +20,12 @@ import { switchMobileView } from './mobile-nav.js';
 import { eventBus } from './events.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { getActiveCircuit } from './circuit-lookup.js';
+import { showConfirm } from './modal.js';
+import { setAccessPointAt } from './access-point.js';
 
 export function initMobilePoiListeners() {
     eventBus.on('mobile:update-poi-position', (poiId) => updatePoiPosition(poiId));
+    eventBus.on('mobile:set-access-point', (poiId) => setAccessPointToCurrentPosition(poiId));
     eventBus.on('mobile:render-poi-list', (features) => renderMobilePoiList(features));
 }
 
@@ -441,6 +444,33 @@ export function updatePoiPosition(poiId) {
                     }
                 }
             );
+        },
+        (err) => showToast("Erreur GPS : " + err.message, "error"),
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
+}
+
+// ─── Pose du drapeau d'accès à la position GPS (admin mobile) ────────────────
+// Décision Stefan 19/06 (Option A) : sur mobile, pas d'UI carte de précision —
+// l'admin est sur le terrain, on capture sa position GPS et on pose le drapeau
+// là. Confirmation AVANT écriture (montre la position + la précision capturées).
+export function setAccessPointToCurrentPosition(poiId) {
+    if (!navigator.geolocation) return showToast("GPS non supporté", "error");
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    if (!feature) return showToast("POI introuvable", "error");
+
+    navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+            const { latitude, longitude, accuracy } = pos.coords;
+            const acc = Number.isFinite(accuracy) ? ` (précision ±${Math.round(accuracy)} m)` : '';
+            const ok = await showConfirm(
+                "Poser le drapeau d'accès",
+                `À votre position GPS actuelle${acc} : ${latitude.toFixed(5)}, ${longitude.toFixed(5)}. Vous pourrez l'ajuster sur PC ensuite.`,
+                "Poser le drapeau", "Annuler", false
+            );
+            if (!ok) return;
+            // setAccessPointAt écrit accessPoint + statut 'moved' (+ toast « Enregistré »).
+            await setAccessPointAt(poiId, longitude, latitude);
         },
         (err) => showToast("Erreur GPS : " + err.message, "error"),
         { enableHighAccuracy: true, timeout: 10000 }
