@@ -691,11 +691,11 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-clear-rejected" aria-label="Vider les rejets de curation Scout de cette destination">
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-rejected-trash" aria-label="Corbeille des rejets de curation Scout de cette destination">
                 <div class="cc-card-ico"><i data-lucide="trash-2"></i></div>
                 <div class="cc-card-text">
-                    <div class="cc-card-title">Vider les rejets</div>
-                    <div class="cc-card-sub">Réinitialiser les objets OSM rejetés (re-proposés au prochain scan)</div>
+                    <div class="cc-card-title">Corbeille des rejets</div>
+                    <div class="cc-card-sub">Restaurer un candidat rejeté, ou tout vider (re-proposés au scan)</div>
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
@@ -862,55 +862,19 @@ export function renderTab(tab, diffData, callbacks) {
                 }
             });
 
-            // Outils — « Vider les rejets » (chantier rejets/corbeille, soupape PR-1) :
-            // efface tous les tombstones de curation Scout ({dest}-rejected.json) → les
-            // objets OSM rejetés seront de nouveau proposés au prochain scan. Vue par-item
-            // (restaurer un seul) = corbeille PR-2 ; ici on ne propose que le vidage global.
-            bindCardAction('btn-cc-tool-clear-rejected', async () => {
-                const mapId = state.currentMapId;
-                const dest = state.destinations?.maps?.[mapId];
+            // Outils — « Corbeille des rejets » (chantier rejets, PR-2) : ouvre la modale
+            // qui liste les tombstones de curation Scout ({dest}-rejected.json), avec
+            // RESTAURATION par item (re-crée le candidat depuis l'instantané, sans
+            // re-scan) + « Tout vider » (bulk, ex-soupape PR-1, désormais dans la modale).
+            bindCardAction('btn-cc-tool-rejected-trash', async () => {
+                const dest = state.destinations?.maps?.[state.currentMapId];
                 if (!dest) {
                     showToast('Aucune destination active.', 'warning', 3500);
                     return;
                 }
-                const { rejectedData, setRejectedData, rejectedCount } = await import('./rejected.js');
-                const n = rejectedCount();
-                if (!n) {
-                    showToast('Aucun objet rejeté pour cette destination.', 'info', 3000);
-                    return;
-                }
-                if (!getStoredToken()) {
-                    showToast('Connecte ton token GitHub (onglet Connexion) pour pousser.', 'warning', 4500);
-                    return;
-                }
-                const { hwConfirm, hwAlert } = await import('./modal.js');
                 closeCCModal();
-                const ok = await hwConfirm({
-                    title: 'Vider les rejets',
-                    body: `<p>Réinitialiser les <strong>${n}</strong> objet(s) OSM rejeté(s) de <strong>${escapeXml(dest.name || mapId)}</strong> ?</p>`
-                        + '<p>Ils seront de nouveau proposés au prochain scan de la zone.</p>',
-                    confirmLabel: 'Vider',
-                    cancelLabel: 'Annuler',
-                });
-                if (!ok) return;
-                const snapshot = { ...rejectedData }; // pour restaurer en mémoire si le push échoue
-                try {
-                    setRejectedData({});
-                    const { pushDestinationRejected } = await import('./publish-destination.js');
-                    await pushDestinationRejected(mapId, {}, (msg) => showToast(msg, 'info', 2500));
-                    await hwAlert({
-                        title: 'Rejets vidés ✓',
-                        body: `<p>Les <strong>${n}</strong> rejet(s) ont été effacés.</p>`
-                            + '<p>Recharge l\'app après le déploiement GitHub Pages (~1-2 min).</p>',
-                    });
-                } catch (e) {
-                    setRejectedData(snapshot); // rollback mémoire : on n'a pas réussi à pousser
-                    await hwAlert({
-                        title: 'Échec',
-                        body: `<p>Le vidage des rejets n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
-                            + '<p>Rien n\'a été publié.</p>',
-                    });
-                }
+                const { openRejectedTrash } = await import('./rejected-trash-ui.js');
+                openRejectedTrash();
             });
 
             // Outils — « Rendre publique » (MODÈLE C) : bascule status:draft → published

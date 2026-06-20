@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { rejectedData, setRejectedData, isRejected, addRejected, rejectedCount } from '../src/rejected.js';
+import { rejectedData, setRejectedData, isRejected, addRejected, removeRejected, rejectedCount } from '../src/rejected.js';
 
 const rec = (ref, extra = {}) => ({ osm_ref: ref, name: 'X', category: 'Y', lat: 1, lng: 2, rejectedAt: 0, ...extra });
 
@@ -52,6 +52,22 @@ describe('rejected — store des tombstones de curation Scout', () => {
             addRejected(rec('node/7', { name: 'B' }));
             expect(rejectedCount()).toBe(1);
             expect(rejectedData['node/7'].name).toBe('B');
+        });
+    });
+
+    describe('removeRejected (restauration depuis la corbeille)', () => {
+        it('retire un rejet ciblé, garde les autres', () => {
+            setRejectedData({ 'node/1': rec('node/1'), 'node/2': rec('node/2') });
+            removeRejected('node/1');
+            expect(isRejected('node/1')).toBe(false);
+            expect(isRejected('node/2')).toBe(true);
+            expect(rejectedCount()).toBe(1);
+        });
+        it('no-op si absent ou référence vide', () => {
+            setRejectedData({ 'node/1': rec('node/1') });
+            removeRejected('node/9');
+            removeRejected('');
+            expect(rejectedCount()).toBe(1);
         });
     });
 });

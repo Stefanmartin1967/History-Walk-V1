@@ -36,6 +36,11 @@ export function addRejected(record) {
     if (record && record.osm_ref) rejectedData[record.osm_ref] = record;
 }
 
+// Retire un rejet (restauration depuis la corbeille). No-op si absent/référence vide.
+export function removeRejected(osmRef) {
+    if (osmRef) delete rejectedData[osmRef];
+}
+
 // Nombre de rejets de la destination courante (badge corbeille / soupape « Vider »).
 export function rejectedCount() {
     return Object.keys(rejectedData).length;
