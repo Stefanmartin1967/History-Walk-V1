@@ -795,10 +795,12 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "La Jarre",
-        "Catégorie": "A définir",
-        "candidate": true,
+        "Nom du site FR": "Monument de la Fechka",
+        "Catégorie": "Curiosité",
         "HW_ID": "HW-01KVGFQ3JX2JX6K3YW8M072ZM5",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Beni Khiar"
       }
     },
