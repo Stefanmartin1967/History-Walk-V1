@@ -351,10 +351,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Nabeul Museum",
+        "Nom du site FR": "Musée Néapolis",
         "Catégorie": "Musée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ36KCAHEN8AJSS7WQSSV",
+        "Nom du site arabe": "المتحف الأثري بنابل",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Al Hadaek"
       }
     },
@@ -409,8 +412,13 @@
       "properties": {
         "Nom du site FR": "Mosquée Fadhel Ben Achour",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ38DGT4D4RCFAY3NMVT9",
+        "Nom du site arabe": "جامع الفاضل بن عاشور",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Beni Khiar"
       }
     },
@@ -690,10 +698,12 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Ibn Khaldoun",
-        "Catégorie": "A définir",
-        "candidate": true,
+        "Nom du site FR": "Statue Ibn Khaldoun",
+        "Catégorie": "Curiosité",
         "HW_ID": "HW-01KVGFQ3GZ6PKCKP3VDJM6D1AK",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Al Hadaek"
       }
     },
@@ -811,10 +821,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "سوق الهجن",
-        "Catégorie": "A définir",
-        "candidate": true,
+        "Nom du site FR": "Ancien marché aux dromadaires",
+        "Catégorie": "Curiosité",
         "HW_ID": "HW-01KVGFQ3KV139M8TC6DEJXSE8K",
+        "Nom du site arabe": "سوق الهجن",
+        "description": "Ancien marché aux dromadaires, aujourd'hui grand marché hebdomadaire du vendredi — artisanat et bétail ; les dromadaires en ont disparu.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Al Hadaek"
       }
     },
@@ -1115,7 +1129,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Eglise de Nabeul",
+        "Nom du site FR": "Église de Nabeul",
         "Catégorie": "Église",
         "HW_ID": "HW-01KVGFQ40MKT2Q398XDAHS4SYQ",
         "Sous-type": "Catholique",
@@ -1123,6 +1137,14 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
+        "Nom du site arabe": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Al Hadaek"
       }
     },
@@ -1177,8 +1199,11 @@
       "properties": {
         "Nom du site FR": "Mosquée Al-Rahma",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ42ZMHGVNTBWM6H3BXKJ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "Source": "Pas de trace sur Maps",
         "Zone": "Al Hadaek"
       }
     },
