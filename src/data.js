@@ -1,6 +1,6 @@
 // data.js
 // --- 1. IMPORTS ---
-import { state, setCurrentMap, setLoadedFeatures, setCustomFeatures, setHiddenPoiIds, setUserData } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setCustomFeatures, setHiddenPoiIds, setUserData, setActiveFilter } from './state.js';
 import { eventBus } from './events.js';
 import {
     getAllPoiDataForMap,
@@ -497,24 +497,50 @@ export function passesStructuralFilters(feature, { skipZone = false } = {}) {
 }
 
 // Il ne fait que du tri mathématique en mémoire. Il ne touche pas à la carte.
-export function getFilteredFeatures() {
+// `skipZone` (P2) : applique tous les filtres SAUF la zone — sert à la sonde
+// d'auto-reset (« sans la zone, y aurait-il des POI ? »).
+export function getFilteredFeatures({ skipZone = false } = {}) {
     if (!state.loadedFeatures) return [];
     // Set planifiés construit UNE fois pour toute la passe (P4), uniquement si le
     // filtre Planifiés est actif.
     const pf = state.activeFilters.planifies;
     const plannedSet = (pf === 'hide' || pf === 'only') ? buildPlannedPoiSet() : null;
     return state.loadedFeatures.filter(feature =>
-        passesStructuralFilters(feature) && passesUserFilters(feature, plannedSet)
+        passesStructuralFilters(feature, { skipZone }) && passesUserFilters(feature, plannedSet)
     );
 }
 
 // --- 2. LE DISTRIBUTEUR ---
+// P2 — garde anti-récursion. setActiveFilter ne déclenche aucun listener réactif
+// (état = objet nu), donc l'auto-reset ci-dessous ne reboucle pas ; ce flag est une
+// ceinture+bretelles contre une régression future (ex. si applyFilters était un jour
+// rappelé par un watcher d'état).
+let _autoResettingZone = false;
+
 export function applyFilters() {
+    if (_autoResettingZone) return;
+
     // 1. On passe les données au Tamis
-    const visibleFeatures = getFilteredFeatures();
+    let visibleFeatures = getFilteredFeatures();
+
+    // P2 — Auto-reset du filtre Zone : si une zone est filtrée et qu'elle ne contient
+    // plus AUCUN POI visible (dernier POI supprimé/déplacé/recatégorisé hors zone),
+    // mais qu'il existe des POI ailleurs (la zone est bien le coupable, pas un autre
+    // filtre), on revient à « Toutes les zones » — sinon l'utilisateur reste face à une
+    // liste/carte vide sans comprendre. On ne touche QUE la zone. Le panneau Filtres se
+    // réaffiche tout seul (« Toutes les zones ») via son propre listener data:filtered.
+    if (state.activeFilters.zone && visibleFeatures.length === 0
+        && getFilteredFeatures({ skipZone: true }).length > 0) {
+        _autoResettingZone = true;
+        try {
+            setActiveFilter('zone', null);
+        } finally {
+            _autoResettingZone = false;
+        }
+        visibleFeatures = getFilteredFeatures();
+    }
 
     // 2. On envoie le signal
-
     // On notifie le reste de l'application que les données filtrées sont prêtes
     eventBus.emit('data:filtered', visibleFeatures);
 }

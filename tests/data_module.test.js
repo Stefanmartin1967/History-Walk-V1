@@ -32,7 +32,8 @@ vi.mock('../src/state.js', () => {
         setLoadedFeatures: vi.fn(arr => { state.loadedFeatures = arr; }),
         setCustomFeatures: vi.fn(arr => { state.customFeatures = arr; }),
         setHiddenPoiIds: vi.fn(arr => { state.hiddenPoiIds = arr; }),
-        setUserData: vi.fn(d => { state.userData = d; })
+        setUserData: vi.fn(d => { state.userData = d; }),
+        setActiveFilter: vi.fn((k, v) => { state.activeFilters[k] = v; })
     };
 });
 
@@ -100,6 +101,7 @@ import { deleteZoneCacheEntry } from '../src/zones.js';
 import { isCandidate } from '../src/utils.js';
 import {
     recomputeVu,
+    applyFilters,
     getFilteredFeatures,
     passesUserFilters,
     passesStructuralFilters,
@@ -148,6 +150,48 @@ function resetState() {
 beforeEach(() => {
     resetState();
     vi.clearAllMocks();
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('applyFilters — P2 auto-reset du filtre Zone vidée', () => {
+    const lastFiltered = () => {
+        const calls = eventBus.emit.mock.calls.filter(c => c[0] === 'data:filtered');
+        return calls.length ? calls[calls.length - 1][1] : null;
+    };
+
+    it('reset la zone à null quand elle est vide MAIS que des POI existent ailleurs', () => {
+        state.loadedFeatures = [poi('b', { Zone: 'B' })]; // aucun POI en zone A
+        state.activeFilters.zone = 'A';
+        applyFilters();
+        expect(state.activeFilters.zone).toBe(null);
+        // émet le jeu recalculé (toutes zones → b visible), une seule fois côté résultat
+        expect(lastFiltered().map(f => f.properties.HW_ID)).toEqual(['b']);
+    });
+
+    it('NE reset PAS si la zone filtrée contient encore des POI', () => {
+        state.loadedFeatures = [poi('a', { Zone: 'A' }), poi('b', { Zone: 'B' })];
+        state.activeFilters.zone = 'A';
+        applyFilters();
+        expect(state.activeFilters.zone).toBe('A');
+        expect(lastFiltered().map(f => f.properties.HW_ID)).toEqual(['a']);
+    });
+
+    it('NE reset PAS quand le vide vient d\'un AUTRE filtre (sans zone ce serait vide aussi)', () => {
+        state.loadedFeatures = [poi('a', { Zone: 'A', 'Catégorie': 'Musée' }), poi('b', { Zone: 'B', 'Catégorie': 'Musée' })];
+        state.activeFilters.zone = 'A';
+        state.activeFilters.categories = ['Fortification']; // ne matche rien
+        applyFilters();
+        expect(state.activeFilters.zone).toBe('A'); // la zone n'est pas le coupable
+        expect(lastFiltered()).toEqual([]);
+    });
+
+    it('NE reset rien quand aucune zone n\'est filtrée (résultat vide global)', () => {
+        state.loadedFeatures = [];
+        state.activeFilters.zone = null;
+        applyFilters();
+        expect(state.activeFilters.zone).toBe(null);
+        expect(lastFiltered()).toEqual([]);
+    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

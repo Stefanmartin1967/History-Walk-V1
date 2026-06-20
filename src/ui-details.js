@@ -23,6 +23,26 @@ configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) })
 
 export function initUiDetailsListeners() {
     eventBus.on('poi:open-details', ({ featureId, circuitIndex = null }) => openDetailsPanel(featureId, circuitIndex));
+
+    // P4 — Désélection du POI consulté quand il sort du jeu filtré (on filtre une
+    // autre zone, ou un filtre catégorie/vu/etc. l'exclut) : laisser la fiche ouverte
+    // au-dessus d'une carte/liste qui ne contient plus ce POI est incohérent. Test
+    // générique (couvre TOUS les filtres) : le POI consulté est-il encore dans les
+    // features émises ? closeDetailsPanel(false) couvre desktop ET mobile (il branche
+    // en interne). Garde-fous : rien si aucun POI consulté ; on NE ferme PAS un POI en
+    // cours de création (pending) — un changement de filtre ne doit pas annuler la
+    // création. Un POI de circuit actif reste visible (court-circuit passesUserFilters)
+    // → naturellement non fermé. (Listener ici plutôt que dans events-bus pour éviter
+    // un import events-bus → ui-details → modal qui casserait les tests events-bus.)
+    eventBus.on('data:filtered', (visibleFeatures) => {
+        const idx = state.currentFeatureId;
+        if (idx === null || idx === undefined) return;
+        const current = state.loadedFeatures[idx];
+        if (!current) return;
+        const poiId = getPoiId(current);
+        if (isPendingPoi(poiId)) return;
+        if (!visibleFeatures.some(f => getPoiId(f) === poiId)) closeDetailsPanel(false);
+    });
 }
 
 function setupGlobalEditButton(poiId) {
