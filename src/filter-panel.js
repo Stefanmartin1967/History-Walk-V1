@@ -369,8 +369,12 @@ function populateFicheSection() {
     const fiche = [
         { key: 'verified',    label: 'Lieux vérifiés'         },
         // Réunif C1 : « à curer » = candidats Scout, admin uniquement (les users
-        // n'ont pas de candidats ; libellé sans sens pour eux).
-        ...(state.isAdmin ? [{ key: 'candidate', label: 'Lieux à curer' }] : []),
+        // n'ont pas de candidats ; libellé sans sens pour eux). P8 : « Introuvable
+        // sur la carte » = file de revue admin (lieux non situables sur Maps/OSM).
+        ...(state.isAdmin ? [
+            { key: 'candidate', label: 'Lieux à curer' },
+            { key: 'introuvableCarte', label: 'Introuvable sur la carte' },
+        ] : []),
         { key: 'photo',       label: 'Lieux avec photo'       },
         { key: 'description', label: 'Lieux avec description' },
     ];
@@ -486,6 +490,7 @@ function isSectionActive(id) {
                                   || !!f.incontournablesOnly;
         case 'fiche':        return (f.verified && f.verified !== 'all')
                                   || (f.candidate && f.candidate !== 'all')
+                                  || (f.introuvableCarte && f.introuvableCarte !== 'all')
                                   || (f.photo && f.photo !== 'all')
                                   || (f.description && f.description !== 'all');
         default:             return false;
