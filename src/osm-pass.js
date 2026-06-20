@@ -32,6 +32,7 @@ let _marker = null;        // drapeau Leaflet sur la carte (draggable)
 let _line = null;          // ligne pointillée POI → drapeau
 let _dirty = false;        // modifs non sauvées sur _currentIdx
 let _draggedState = null;  // 'osm' | 'moved' courant (couleur visuelle)
+let _onMapClick = null;    // handler clic-carte (pose manuelle d'un POI 'failed')
 let _isLoading = false;
 let _isOpen = false;
 
@@ -241,12 +242,16 @@ function renderActionBar() {
     }
     const name = escapeXml(getPoiName(item.feature) || 'POI');
     const total = _items.length;
-    const distLabel = item.distance != null ? ` · ${Math.round(item.distance)} m` : '';
+    const hasFlag = !!getAccessPoint(item.feature);
+    const distLabel = hasFlag && item.distance != null ? ` · ${Math.round(item.distance)} m` : '';
+    // POI sans suggestion ('failed') : indice de pose manuelle (drapeau draggable +
+    // clic-carte posés par setupCurrentPoi). « Conserver » enregistre la position.
+    const hint = !hasFlag ? ' · aucune suggestion — cliquez/glissez sur la carte pour poser le drapeau' : '';
     // title="..." : tooltip natif au hover quand le nom est tronqué par l'ellipsis
     // CSS (.osm-pass-actionbar .meta max-width 320px). Retour Stefan post #711.
     const fullTitle = `POI ${_currentIdx + 1}/${total} · ${getPoiName(item.feature) || 'POI'}${distLabel}`;
     bar.innerHTML = `
-        <span class="meta" title="${escapeXml(fullTitle)}">POI <b>${_currentIdx + 1}/${total}</b> · ${name}${distLabel}</span>
+        <span class="meta" title="${escapeXml(fullTitle)}">POI <b>${_currentIdx + 1}/${total}</b> · ${name}${distLabel}${hint}</span>
         <span class="sep"></span>
         <button class="osm-pass-btn" data-act="keep">Conserver</button>
         <button class="osm-pass-btn" data-act="replace"><i data-lucide="sparkles"></i> Remplacer par OSM</button>
@@ -339,7 +344,28 @@ function setupCurrentPoi() {
             duration: 0.6,
         });
     } else {
-        // Pas de drapeau (POI failed sans suggestion) : on cadre juste sur le POI.
+        // POI 'failed' (aucune suggestion OSM) : pose MANUELLE sans quitter la passe.
+        // On pose un drapeau draggable SUR le POI + on active le clic-carte ; l'admin
+        // le glisse/clique vers la voie, puis « Conserver » l'enregistre (onKeep voit
+        // _dirty). Même geste que la fiche (access-point-editor).
+        _draggedState = 'moved';
+        _marker = L.marker([lat, lon], {
+            draggable: true,
+            icon: flagIcon('moved'),
+            zIndexOffset: 1200,
+        }).addTo(map);
+        _line = L.polyline([[lat, lon], [lat, lon]], {
+            color: '#c0392b', weight: 2, dashArray: '5,8', opacity: 0.9, interactive: false,
+        }).addTo(map);
+        const reflect = () => {
+            _dirty = true;
+            const ll = _marker.getLatLng();
+            _line.setLatLngs([[lat, lon], [ll.lat, ll.lng]]);
+        };
+        _marker.on('drag', reflect);
+        // Clic sur la carte = (re)place le drapeau à cet endroit.
+        _onMapClick = (e) => { _marker.setLatLng(e.latlng); reflect(); };
+        map.on('click', _onMapClick);
         map.flyTo([lat, lon], 18, { duration: 0.6 });
     }
 }
@@ -355,6 +381,7 @@ function flagIcon(state) {
 }
 
 function teardownMarker() {
+    if (_onMapClick) { map.off('click', _onMapClick); _onMapClick = null; }
     if (_marker) { _marker.remove(); _marker = null; }
     if (_line) { _line.remove(); _line = null; }
     _dirty = false;
