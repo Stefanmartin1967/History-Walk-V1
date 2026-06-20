@@ -393,10 +393,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Grande Mosquée de Beni Khiar",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ37Z9M6QD0MFJ8KH975Z",
+        "Nom du site arabe": "الجامع الكبير",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Beni Khiar"
       }
     },
@@ -432,10 +437,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Mosquée du Lac",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ38XAXV21MCTYCTY8VAW",
+        "Nom du site arabe": "جامع البحيرة",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Beni Khiar"
       }
     },
@@ -1294,10 +1304,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Market Mosquée",
+        "Nom du site FR": "Mosquée du Marché",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ456YHGPAKPCS2A8A99J",
+        "Nom du site arabe": "جامع السوق",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Beni Khiar"
       }
     },
