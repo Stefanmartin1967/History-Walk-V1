@@ -108,15 +108,21 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.2999417,
-          36.3444486
+          10.300403277816873,
+          36.34466344164818
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Bains romains de Segermes",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ2ZNADD5V8AKC2NZE6VT",
+        "État": "Vestiges partiels",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "lat": 36.34466344164818,
+        "lng": 10.300403277816873,
         "Zone": "Bou Achir"
       }
     },
@@ -125,15 +131,21 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.3003805,
-          36.3453959
+          10.30102438743569,
+          36.345287852540324
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Forum romain de Segermes",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ2ZY8QEFVDZ574MDYBG4",
+        "État": "Conservé",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "lat": 36.345287852540324,
+        "lng": 10.30102438743569,
         "Zone": "Bou Achir"
       }
     },
@@ -142,15 +154,21 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.301693,
-          36.3455094
+          10.30150773213943,
+          36.34486656381335
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Ancienne basilique de Segermes",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ30A5P373CGBXAW7BKXQ",
+        "État": "Vestiges partiels",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "lat": 36.34486656381335,
+        "lng": 10.30150773213943,
         "Zone": "Bou Achir"
       }
     },
@@ -283,10 +301,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "جامع الرحمة",
+        "Nom du site FR": "Mosquée ar-Raḥma",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ34WDBYQPB1FNNRPV87D",
+        "Nom du site arabe": "جامع الرحمة",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Bou Achir"
       }
     },
@@ -295,15 +318,21 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.2997992,
-          36.3449576
+          10.300564392717614,
+          36.34518064982155
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Temple romain de Segermes",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ35CQNW52NKDQVSF2EEK",
+        "État": "Vestiges partiels",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "lat": 36.34518064982155,
+        "lng": 10.300564392717614,
         "Zone": "Bou Achir"
       }
     },
@@ -1620,6 +1649,31 @@
           36.53328
         ],
         "Zone": "Ain Tebournok"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.310213586901764,
+          36.3453796770748
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Site archéologique de Segermes",
+        "Catégorie": "Site archéologique",
+        "État": "Vestiges partiels",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "HW_ID": "HW-01KVJT0ZR3FZ8D45Q5Q7NADJ5R",
+        "accessPoint": [
+          10.3106924,
+          36.3453708
+        ],
+        "Zone": "Bou Achir"
       }
     }
   ]
