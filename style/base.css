@@ -263,14 +263,6 @@ body {
    [hidden] doit l'emporter sur le display:flex de .fiche-row. */
 .fiche-row[hidden] { display: none !important; }
 #rich-poi-candidate-row .lbl .t { color: var(--hw-amber, #D97706); }
-.fiche-curate-btn {
-    display: inline-flex; align-items: center; gap: 5px;
-    height: 30px; padding: 0 12px; border-radius: var(--radius-md, 8px);
-    border: 1px solid var(--brand); background: var(--brand); color: #fff;
-    font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer;
-}
-.fiche-curate-btn:hover { background: var(--brand-2); border-color: var(--brand-2); }
-.fiche-curate-btn svg { width: 14px; height: 14px; }
 
 /* Mobile : paires repliées en 1 colonne (standard formulaire mobile).
    Indispensable car la grille 1fr 1fr déborde sinon : les <input>/<select>

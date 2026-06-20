@@ -49,6 +49,17 @@ describe('persistPoiEdit — POI de BASE (overlay userData)', () => {
         // La catégorie NE doit PAS être écrite dans properties (réservé au custom).
         expect(f.properties['Catégorie']).toBeUndefined();
     });
+
+    it('P7 — fold `candidate:false` (base) : écrit dans l\'overlay userData', async () => {
+        const f = poi('base_cand', { candidate: true });
+        state.loadedFeatures = [f];
+        state.customFeatures = [];
+
+        await persistPoiEdit('base_cand', { 'Catégorie': 'Mosquée', candidate: false });
+
+        expect(state.userData['base_cand'].candidate).toBe(false);
+        expect(savePoiData).toHaveBeenCalledWith('djerba', 'base_cand', state.userData['base_cand']);
+    });
 });
 
 describe('persistPoiEdit — POI CUSTOM (properties + customPois, overlay purgé)', () => {
@@ -106,6 +117,21 @@ describe('persistPoiEdit — POI CUSTOM (properties + customPois, overlay purgé
         // intégralement (les photos/accessPoint/vu survivent).
         expect(f.properties.userData).toBe(state.userData['HW-CUST-3']);
         expect(savePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-3', state.userData['HW-CUST-3']);
+    });
+
+    it('P7 — fold `candidate:false` (custom) : conservé dans properties (≠ vide), POI plus candidat', async () => {
+        // « Valider & enregistrer » route candidate:false via le dict data. Pour un
+        // custom, false n'est PAS retiré (≠ "" / null) → properties.candidate=false →
+        // isCandidate false ; admin-geojson retire la clé `=== false` à la publication.
+        const f = poi('HW-CUST-5', { candidate: true, 'Catégorie': 'A définir' });
+        state.loadedFeatures = [f];
+        state.customFeatures = [f];
+
+        await persistPoiEdit('HW-CUST-5', { 'Catégorie': 'Musée', candidate: false });
+
+        expect(f.properties.candidate).toBe(false); // conservé (≠ delete)
+        expect(f.properties['Catégorie']).toBe('Musée');
+        expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', state.customFeatures);
     });
 
     it('overlay MIXTE : retire la clé taxonomie du store (REPLACE, pas merge) → pas de revert au reload', async () => {
