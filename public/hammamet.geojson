@@ -117,7 +117,7 @@
         "Catégorie": "Site archéologique",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ2ZNADD5V8AKC2NZE6VT",
-        "Zone": "Hors zone"
+        "Zone": "Bou Achir"
       }
     },
     {
@@ -134,7 +134,7 @@
         "Catégorie": "Site archéologique",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ2ZY8QEFVDZ574MDYBG4",
-        "Zone": "Hors zone"
+        "Zone": "Bou Achir"
       }
     },
     {
@@ -151,7 +151,7 @@
         "Catégorie": "Site archéologique",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ30A5P373CGBXAW7BKXQ",
-        "Zone": "Hors zone"
+        "Zone": "Bou Achir"
       }
     },
     {
@@ -287,7 +287,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ34WDBYQPB1FNNRPV87D",
-        "Zone": "Hors zone"
+        "Zone": "Bou Achir"
       }
     },
     {
@@ -304,7 +304,7 @@
         "Catégorie": "Site archéologique",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ35CQNW52NKDQVSF2EEK",
-        "Zone": "Hors zone"
+        "Zone": "Bou Achir"
       }
     },
     {
@@ -355,7 +355,7 @@
         "Catégorie": "Musée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ36KCAHEN8AJSS7WQSSV",
-        "Zone": "Hors zone"
+        "Zone": "Al Hadaek"
       }
     },
     {
@@ -394,7 +394,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ37Z9M6QD0MFJ8KH975Z",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -411,7 +411,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ38DGT4D4RCFAY3NMVT9",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -428,7 +428,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ38XAXV21MCTYCTY8VAW",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -445,7 +445,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ39AC1GD3Y41S3PPQSMM",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -462,7 +462,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ39SJ695PJN7GZGWM54E",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -475,10 +475,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "المسجد الكبير",
+        "Nom du site FR": "La grande mosquée d'Hammamet",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3APXTVNMK76TNBZZ6X5",
+        "Nom du site arabe": "المسجد الكبير",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Hammamet Est"
       }
     },
@@ -568,10 +573,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "جامع الغفران",
+        "Nom du site FR": "Mosquée Al Ghoufrane",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3CS15CEBCJGKWHYMR2A",
+        "Nom du site arabe": "جامع الغفران",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Hammamet Est"
       }
     },
@@ -602,10 +612,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "mosquée El Salem",
+        "Nom du site FR": "Mosquée El Salem",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3DMAJD4K6JDHG72KME3",
+        "Nom du site arabe": "مسجد السلام",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Hammamet Est"
       }
     },
@@ -619,10 +634,12 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "A définir",
-        "candidate": true,
+        "Nom du site FR": "Tour blanche",
+        "Catégorie": "Curiosité",
         "HW_ID": "HW-01KVGFQ3EM1CNEH3W0W1RWTN1Q",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Hammamet Est"
       }
     },
@@ -636,11 +653,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "الجرة",
-        "Catégorie": "A définir",
-        "candidate": true,
+        "Nom du site FR": "La Jarre",
+        "Catégorie": "Curiosité",
         "HW_ID": "HW-01KVGFQ3F2TCD7TN02JB7ZERX7",
-        "Zone": "Hors zone"
+        "Nom du site arabe": "الجرة",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "Zone": "Al Hadaek"
       }
     },
     {
@@ -674,7 +694,7 @@
         "Catégorie": "A définir",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ3GZ6PKCKP3VDJM6D1AK",
-        "Zone": "Hors zone"
+        "Zone": "Al Hadaek"
       }
     },
     {
@@ -759,7 +779,7 @@
         "Catégorie": "A définir",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ3JX2JX6K3YW8M072ZM5",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -773,9 +793,11 @@
       },
       "properties": {
         "Nom du site FR": "Statue d'un Soldat Martyr",
-        "Catégorie": "A définir",
-        "candidate": true,
+        "Catégorie": "Curiosité",
         "HW_ID": "HW-01KVGFQ3KD5YVGSZZZ2TFAX6Q8",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Hammamet Est"
       }
     },
@@ -793,7 +815,7 @@
         "Catégorie": "A définir",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ3KV139M8TC6DEJXSE8K",
-        "Zone": "Hors zone"
+        "Zone": "Al Hadaek"
       }
     },
     {
@@ -923,10 +945,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "مدينة الحمامات العتيقة",
+        "Nom du site FR": "Ancienne Médina d'Hammamet",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3QT4HFRMT2VMEVDY6E5",
+        "Nom du site arabe": "مدينة الحمامات العتيقة",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Hammamet Est"
       }
     },
@@ -1092,9 +1117,13 @@
       "properties": {
         "Nom du site FR": "Eglise de Nabeul",
         "Catégorie": "Église",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ40MKT2Q398XDAHS4SYQ",
-        "Zone": "Hors zone"
+        "Sous-type": "Catholique",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "Zone": "Al Hadaek"
       }
     },
     {
@@ -1150,7 +1179,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ42ZMHGVNTBWM6H3BXKJ",
-        "Zone": "Hors zone"
+        "Zone": "Al Hadaek"
       }
     },
     {
@@ -1227,7 +1256,7 @@
         "Catégorie": "A définir",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ44RX91820NSCKNFFYSE",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -1244,7 +1273,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ456YHGPAKPCS2A8A99J",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -1257,10 +1286,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "يوسف مسجد سيدي",
+        "Nom du site FR": "Mosquée Sidi Youssef",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ45RSW4N393J2HFVXM15",
+        "Nom du site arabe": "يوسف مسجد سيدي",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Hammamet Est"
       }
     },
@@ -1276,8 +1310,14 @@
       "properties": {
         "Nom du site FR": "Church of Hammamet",
         "Catégorie": "Église",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ46BBNBGGANVFVM9J1F9",
+        "Sous-type": "Catholique",
+        "État": "En activité",
+        "Accès": "Intérieur visitable",
+        "description": "Église catholique d'Hammamet, placée sous le patronage du Bienheureux Antoine Neyrot, dominicain lapidé à Tunis en 1460 et dont les reliques furent transférées de Turin à Hammamet.\nLe bâtiment actuel a été inauguré le 27 octobre 1968. Il succède à une première église, bénie en 1909 et inspirée de la primatiale de Carthage, qui fut cédée au gouvernement tunisien après l'indépendance puis démolie pour laisser place à la poste. La paroisse d'Hammamet, elle, remonte à 1884.\nLa communauté chrétienne d'Hammamet est restée modeste — environ 195 personnes recensées en 1925 — mais l'église demeure vivante aujourd'hui, avec des messes célébrées en plusieurs langues.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
         "Zone": "Hammamet Est"
       }
     },
@@ -1314,7 +1354,6 @@
       "properties": {
         "Nom du site FR": "Mosquee El Fath",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ477FJWV0CPP1FJNNT2Y",
         "Nom du site arabe": "مسجد الفتح",
         "Sous-type": "À minaret",
@@ -1377,7 +1416,7 @@
         "Catégorie": "Mosquée",
         "candidate": true,
         "HW_ID": "HW-01KVGFQ493H4BNQPT7VHXV1TPB",
-        "Zone": "Hors zone"
+        "Zone": "Beni Khiar"
       }
     },
     {
@@ -1513,7 +1552,6 @@
           10.5566633,
           36.3902987
         ],
-        "accessPointStatus": "osm",
         "Zone": "Manaret El Hammamet"
       }
     },
@@ -1539,7 +1577,6 @@
           10.4572262,
           36.53328
         ],
-        "accessPointStatus": "osm",
         "Zone": "Ain Tebournok"
       }
     }
