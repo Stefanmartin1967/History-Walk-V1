@@ -35,7 +35,7 @@ vi.mock('../src/utils.js', () => ({
         const props = feature.properties;
         const ud = props.userData || {};
         return ud.custom_title || ud['Nom du site FR'] || props['Nom du site FR']
-            || ud['Nom du site arabe'] || props['Nom du site AR'] || props.name || 'Lieu inconnu';
+            || ud['Nom du site arabe'] || props['Nom du site arabe'] || props['Nom du site AR'] || props.name || 'Lieu inconnu';
     },
     generateHWID: vi.fn(() => 'HW-' + '0'.repeat(26)),
     getZoneFromCoords: vi.fn(() => 'Zone'),

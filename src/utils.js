@@ -71,7 +71,11 @@ export function getPoiName(feature) {
     if (!feature || !feature.properties) return "Lieu sans nom";
     const props = feature.properties;
     const userData = props.userData || {};
-    return userData.custom_title || userData['Nom du site FR'] || props['Nom du site FR'] || userData['Nom du site arabe'] || props['Nom du site AR'] || props.name || "Lieu inconnu";
+    // Dernier recours AR : on lit la clé canonique `Nom du site arabe` (écrite par
+    // l'éditeur + le Scout) AVANT la variante historique `Nom du site AR` — sinon un
+    // POI arabe-seul (FR vide, fréquent depuis le routage P5) afficherait « Lieu
+    // inconnu » en mode FR au lieu de son nom arabe.
+    return userData.custom_title || userData['Nom du site FR'] || props['Nom du site FR'] || userData['Nom du site arabe'] || props['Nom du site arabe'] || props['Nom du site AR'] || props.name || "Lieu inconnu";
 }
 
 /**

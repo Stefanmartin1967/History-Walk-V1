@@ -36,7 +36,7 @@ import { hwPrompt } from './modal.js';
 import { makeUniqueDestId, saveDraftZones } from './local-destinations.js';
 import { fetchZonesAuto } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
-import { getHwCategory } from './scout-categories.js';
+import { getHwCategory, resolveOsmNames } from './scout-categories.js';
 import { getStoredToken } from './github-sync.js';
 import { registerDraftDestinationOnGitHub } from './publish-destination.js';
 
@@ -50,7 +50,7 @@ let _drawLayer = null;          // couche de tracé (armée par le bouton « Tra
 let _drawArmed = false;         // tracé armé ? (false = navigation libre : pan/zoom/contrôles)
 let _drawStart = null;          // point de départ (px) du tracé de la boîte au glisser
 let _categories = null;         // Set des clés de catégorie cochées
-let _candidates = [];           // résultats du dernier scan : {lat,lon,cat,unknown,dup,name,_el}
+let _candidates = [];           // résultats du dernier scan : {lat,lon,cat,unknown,dup,nameFr,nameAr,_el}
 let _scannedBounds = null;      // bounds de la boîte au moment du scan (détection « zone modifiée »)
 let _scanning = false;
 let _geocoded = false;          // création : une recherche Nominatim a-t-elle volé la carte ?
@@ -581,7 +581,10 @@ async function scan() {
                     // (ex. mosquée dédoublée). On garde la 1ʳᵉ, on écarte la 2ᵉ.
                     const dup = isAlreadyInData(lat, lon)
                         || all.some(c => !c.dup && haversineM(lat, lon, c.lat, c.lon) < DEDUP_M);
-                    all.push({ lat, lon, cat, unknown: !cat, dup, name: tags.name || tags['name:fr'] || '' });
+                    // P5 — routage FR/AR du nom OSM (évite qu'un nom arabe atterrisse
+                    // dans le champ français). Logique pure testée dans scout-categories.
+                    const { nameFr, nameAr } = resolveOsmNames(tags);
+                    all.push({ lat, lon, cat, unknown: !cat, dup, nameFr, nameAr });
                 }
                 _candidates = all;
                 renderCandidates(); // rendu progressif : les pastilles apparaissent tuile par tuile
@@ -658,7 +661,9 @@ async function capture() {
                 type: 'Feature',
                 geometry: { type: 'Point', coordinates: [c.lon, c.lat] },
                 properties: {
-                    'Nom du site FR': c.name || '',
+                    'Nom du site FR': c.nameFr || '',
+                    // P5 : clé arabe écrite seulement si présente (geojson propre).
+                    ...(c.nameAr ? { 'Nom du site arabe': c.nameAr } : {}),
                     'Catégorie': c.cat || 'A définir',
                     // Dégel de Zone : on ne fige plus le quartier à la capture — il se
                     // dérive de la position (getDerivedZone). L'extension du fichier de
