@@ -36,6 +36,7 @@ import { hwPrompt } from './modal.js';
 import { makeUniqueDestId, saveDraftZones } from './local-destinations.js';
 import { fetchZonesAuto } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
+import { isRejected } from './rejected.js';
 import { getHwCategory, resolveOsmNames } from './scout-categories.js';
 import { getStoredToken } from './github-sync.js';
 import { registerDraftDestinationOnGitHub, pushDestinationZones } from './publish-destination.js';
@@ -552,6 +553,7 @@ async function scan() {
     clearCandidates();
     const seen = new Set();   // dédup inter-tuiles (POI à cheval sur 2 bbox) par id OSM
     const all = [];
+    let rejectedSkipped = 0;  // objets déjà rejetés (corbeille) ignorés — transparence au récap
     showLoading(true, multi ? `Moisson 1/${tiles.length}…` : 'Interrogation d’Overpass…');
     let pending = tiles.map((t, i) => ({ t, i }));  // tuiles restant à scanner
     let attempt = 0;
@@ -583,6 +585,11 @@ async function scan() {
                     const key = el.type + '/' + el.id;
                     if (seen.has(key)) continue;
                     seen.add(key);
+                    // Tombstone de curation : objet déjà REJETÉ (supprimé puis poussé
+                    // dans {dest}-rejected.json) → on ne le re-propose PAS (sinon le
+                    // re-scan le ressort comme neuf). Compté pour le dire au récap
+                    // (pas de masquage silencieux ; restauration via la corbeille).
+                    if (isRejected(key)) { rejectedSkipped++; continue; }
                     const tags = el.tags || {};
                     const cat = getHwCategory(tags);
                     // Doublon si < 50 m d'un POI EXISTANT (règle #472) OU d'un candidat
@@ -593,7 +600,10 @@ async function scan() {
                     // P5 — routage FR/AR du nom OSM (évite qu'un nom arabe atterrisse
                     // dans le champ français). Logique pure testée dans scout-categories.
                     const { nameFr, nameAr } = resolveOsmNames(tags);
-                    all.push({ lat, lon, cat, unknown: !cat, dup, nameFr, nameAr });
+                    // osmRef = identité OSM stable (« node/123 ») portée jusqu'au POI
+                    // capturé → permet de tombstoner le bon objet à la suppression et
+                    // de le skipper au re-scan (chantier rejets/corbeille).
+                    all.push({ lat, lon, cat, unknown: !cat, dup, nameFr, nameAr, osmRef: key });
                 }
                 _candidates = all;
                 renderCandidates(); // rendu progressif : les pastilles apparaissent tuile par tuile
@@ -606,12 +616,17 @@ async function scan() {
         refreshRecap(); // badge final : les refresh en boucle tournaient avant que _scannedBounds soit posé
         const net = all.filter(c => inBox(c) && !c.dup).length;
         const failed = pending.length;
+        // Transparence : on dit combien d'objets déjà rejetés (corbeille) ont été
+        // ignorés, pour que l'admin ne se demande pas pourquoi un lieu attendu manque.
+        const rej = rejectedSkipped
+            ? ` · ${rejectedSkipped} déjà rejeté${rejectedSkipped > 1 ? 's' : ''} ignoré${rejectedSkipped > 1 ? 's' : ''}`
+            : '';
         if (failed === tiles.length) {
             showToast(multi ? 'Overpass indisponible sur toutes les parties. Réessaie.' : 'Overpass indisponible (timeout/erreur). Réessaie ou réduis la boîte.', 'error', 4500);
         } else if (failed) {
-            showToast(`${all.length} objets · ${net} nouveaux. ⚠ ${failed}/${tiles.length} partie(s) toujours en échec après ${MAX_ATTEMPTS} essais — réduis la boîte ou réessaie.`, 'warning', 5500);
+            showToast(`${all.length} objets · ${net} nouveaux${rej}. ⚠ ${failed}/${tiles.length} partie(s) toujours en échec après ${MAX_ATTEMPTS} essais — réduis la boîte ou réessaie.`, 'warning', 5500);
         } else {
-            showToast(`${all.length} objet${all.length > 1 ? 's' : ''} OSM · ${net} nouveau${net > 1 ? 'x' : ''} à importer.`, 'success', 3000);
+            showToast(`${all.length} objet${all.length > 1 ? 's' : ''} OSM · ${net} nouveau${net > 1 ? 'x' : ''} à importer${rej}.`, 'success', 3000);
         }
     } finally {
         _scanning = false; updatePrimary();
@@ -690,6 +705,10 @@ async function capture() {
                     // P5 : clé arabe écrite seulement si présente (geojson propre).
                     ...(c.nameAr ? { 'Nom du site arabe': c.nameAr } : {}),
                     'Catégorie': c.cat || 'A définir',
+                    // osm_ref : identité OSM stable conservée → si l'admin supprime ce
+                    // candidat, on tombstone le BON objet (rejected.js) pour qu'il ne
+                    // soit pas re-proposé au re-scan. Écrit seulement si présent.
+                    ...(c.osmRef ? { osm_ref: c.osmRef } : {}),
                     // Dégel de Zone : on ne fige plus le quartier à la capture — il se
                     // dérive de la position (getDerivedZone). L'extension du fichier de
                     // zones ci-dessus reste nécessaire pour QUE la dérivation matche.

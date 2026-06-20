@@ -15,7 +15,8 @@ import {
 import { logModification } from './logger.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
-import { getPoiId, getPoiName, generateHWID, getDerivedZone, isCandidate } from './utils.js';
+import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate } from './utils.js';
+import { addRejected, rejectedData } from './rejected.js';
 import { deleteZoneCacheEntry } from './zones.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
 import { getDomainFromUrl } from './url-utils.js';
@@ -833,6 +834,34 @@ export async function deletePoi(poiId) {
     // 3. Admin Tracking (Pour suppression définitive sur le serveur)
     if (state.isAdmin) {
         const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+
+        // Tombstone de curation (chantier rejets) : si le POI vient d'OSM (osm_ref
+        // porté à la capture), on enregistre son REJET pour que le re-scan ne le
+        // re-propose pas (sinon, plus dans les données, il revient comme neuf). Cas
+        // courant = candidats supprimés en curation. Un POI créé à la main (sans
+        // osm_ref) n'est pas tombstoné. On garde un instantané (nom/cat/coords) pour
+        // afficher et restaurer depuis la corbeille (PR-2) sans re-scanner.
+        const osmRef = feature?.properties?.osm_ref;
+        if (osmRef) {
+            const coords = feature.geometry?.coordinates || [];
+            addRejected({
+                osm_ref: osmRef,
+                name: getPoiName(feature) || '',
+                nameAr: feature.properties?.['Nom du site arabe'] || '',
+                category: getPoiProp(feature, 'Catégorie') || '',
+                lng: Number(coords[0]),
+                lat: Number(coords[1]),
+                rejectedAt: Date.now(),
+            });
+            // Push best-effort du fichier rejets (full-file idempotent). Token requis :
+            // pushDestinationRejected le vérifie et jette sinon → .catch garde le rejet
+            // EN MÉMOIRE (dédup de la session) ; il partira au prochain rejet/restauration
+            // ou via la corbeille. Fire-and-forget : la suppression reste instantanée.
+            import('./publish-destination.js')
+                .then(({ pushDestinationRejected }) => pushDestinationRejected(state.currentMapId, rejectedData))
+                .catch(e => console.warn('[data] push des rejets échoué (gardé en mémoire) :', e));
+        }
+
         // Un CANDIDAT (scout non curé) n'est JAMAIS publié → il n'existe pas sur
         // GitHub : enregistrer une intention de suppression créerait une entrée
         // FANTÔME (« SUPPRESSION / Inconnu ») dans le Centre de Contrôle alors

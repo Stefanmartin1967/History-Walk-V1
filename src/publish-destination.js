@@ -8,7 +8,8 @@
 //     destinations.json status:published ; la curation est poussée par « Tout publier ») ;
 //   - deleteDraftFromGitHub : suppression d'un brouillon (entrée EN PREMIER = ordre
 //     INVERSE, puis fichiers ; brouillons only) ;
-//   - pushDestinationZones : « Compléter les quartiers » (zones seules).
+//   - pushDestinationZones : « Compléter les quartiers » (zones seules) ;
+//   - pushDestinationRejected : tombstones de curation Scout ({id}-rejected.json).
 //
 // Pousse via uploadFileToGitHub (github-sync.js, Contents API, 1 PUT/fichier, gère
 // le SHA create/update). INVARIANT ANTI-ORPHELIN : à la création/publication,
@@ -72,6 +73,32 @@ export async function pushDestinationZones(id, zones, onProgress = () => {}) {
         GITHUB_PATHS.zones(id), `chore(zones): complète les quartiers « ${id} »`);
 
     return { id, zones: cleanZones.features.length };
+}
+
+/**
+ * Pousse le fichier {id}-rejected.json sur GitHub (tombstones de curation Scout —
+ * objets OSM rejetés, cf. rejected.js). Poussé à la suppression d'un candidat
+ * (data.js deletePoi) et à la restauration/vidage (corbeille PR-2). On ne touche PAS
+ * destinations.json (le fichier rejets est chargé par convention `{id}-rejected.json`,
+ * pas via une clé d'entrée). Absence du fichier = aucun rejet (sûr).
+ *
+ * @param {string} id  id de la destination
+ * @param {Object} rejected  map osm_ref → instantané (forme de rejected.js)
+ * @param {(msg:string)=>void} [onProgress]
+ * @returns {Promise<{id:string, rejected:number}>}
+ */
+export async function pushDestinationRejected(id, rejected, onProgress = () => {}) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Aucun token GitHub connecté (onglet Connexion du Centre de Contrôle).');
+
+    const clean = (rejected && typeof rejected === 'object' && !Array.isArray(rejected)) ? rejected : {};
+    const n = Object.keys(clean).length;
+
+    onProgress('Publication des rejets…');
+    await uploadFileToGitHub(jsonFile(clean, `${id}-rejected.json`), token, GITHUB_OWNER, GITHUB_REPO,
+        GITHUB_PATHS.rejected(id), `chore(rejets): ${n} objet(s) OSM rejeté(s) « ${id} »`);
+
+    return { id, rejected: n };
 }
 
 // ── MODÈLE C (bascule PR-4) ──────────────────────────────────────────────────
