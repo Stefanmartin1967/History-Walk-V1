@@ -5,8 +5,8 @@ import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded } from './data.js';
 import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate } from './utils.js';
-import { addPoiFeature, applyFilters } from './data.js';
-import { saveAppState, savePoiData } from './database.js';
+import { addPoiFeature } from './data.js';
+import { saveAppState } from './database.js';
 import { persistPoiEdit } from './poi-persistence.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
@@ -46,6 +46,7 @@ const DOM_IDS = {
     },
     BTNS: {
         SAVE: 'btn-save-rich-poi',
+        VALIDATE_SAVE: 'btn-validate-save-rich-poi',
         CANCEL: 'btn-cancel-rich-poi',
         CLOSE: 'close-rich-poi-modal',
         EMAIL: 'btn-suggest-email',
@@ -86,12 +87,12 @@ const RICH_POI_BODY_HTML = `
                 <button class="sw" id="rich-poi-verified" type="button" role="switch" aria-checked="false" aria-label="Vérifié"></button>
             </span>
         </div>
-        <!-- Candidat « à curer » (réunif C1b) : visible seulement pour un candidat Scout. -->
+        <!-- Candidat « à curer » (réunif C1b) : visible seulement pour un candidat Scout.
+             P7 : plus de bouton « Valider » ici — la validation se fait au footer via
+             « Valider & enregistrer » (1 geste = enrichir + rendre publiable). La ligne
+             reste un indicateur de statut (cohérent avec le toggle « Vérifié »). -->
         <div class="fiche-row" id="rich-poi-candidate-row" hidden>
-            <span class="lbl"><span class="t">Candidat à curer</span><span class="h">Trouvé par Scout — à valider pour le rendre publiable</span></span>
-            <span class="ctl">
-                <button class="fiche-curate-btn" id="rich-poi-curate" type="button"><i data-lucide="check"></i>Valider</button>
-            </span>
+            <span class="lbl"><span class="t">Candidat à curer</span><span class="h">Trouvé par Scout — « Valider &amp; enregistrer » pour le rendre publiable</span></span>
         </div>
     </div>
 
@@ -208,11 +209,18 @@ const RICH_POI_SUBHEADER_HTML = `
     </div>
 `;
 
-// Footer : Annuler (ghost) + Enregistrer (primary, désactivable via updateSaveButtonState)
+// Footer : Annuler (ghost) + Enregistrer (primary, désactivable via updateSaveButtonState).
+// P7 : pour un candidat Scout (EDIT), updateCandidateFooter() révèle « Valider &
+// enregistrer » (primaire, 1 geste = enrichir + publiable) et rétrograde
+// « Enregistrer » en secondaire « (garder à curer) ». Les deux boutons partagent le
+// même garde-fou de validité (nom + catégorie) via updateSaveButtonState.
 const RICH_POI_FOOTER_HTML = `
     <button id="btn-cancel-rich-poi" class="btn btn-ghost" type="button">Annuler</button>
     <button id="btn-save-rich-poi" class="btn btn-primary" type="button">
         <i data-lucide="save"></i><span>Enregistrer</span>
+    </button>
+    <button id="btn-validate-save-rich-poi" class="btn btn-primary" type="button" hidden>
+        <i data-lucide="check"></i><span>Valider &amp; enregistrer</span>
     </button>
 `;
 
@@ -267,6 +275,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.FACEBOOK, "");
         setVerified(false);
         { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = true; }
+        updateCandidateFooter(false); // création : footer « Enregistrer » standard
 
         // Bloc taxonomie : catégorie vide en création → bloc masqué.
         populateTaxonomySelects("");
@@ -359,7 +368,10 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
         setVerified(!!merged.verified);
         // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
-        { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = !isCandidate(feature); }
+        // P7 : et le footer bascule en mode candidat (« Valider & enregistrer »).
+        { const cand = isCandidate(feature);
+          const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = !cand;
+          updateCandidateFooter(cand); }
 
         // Tiroir (Mode Données) : sous-titre = nom du lieu en cours d'édition.
         const drawerSub = _drawerEl && _drawerEl.querySelector('[data-rich-drawer-sub]');
@@ -582,8 +594,10 @@ function bindModalEvents() {
     document.getElementById('btn-rich-open-gmaps')?.addEventListener('click', () => openEditorCoordsOnMap('gmaps'));
     document.getElementById('btn-rich-open-osm')?.addEventListener('click', () => openEditorCoordsOnMap('osm'));
 
-    // Sauvegarde
-    document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', handleSave);
+    // Sauvegarde. P7 : « Enregistrer » garde l'éventuel flag candidat ;
+    // « Valider & enregistrer » le retire dans la foulée (handleSave(true)).
+    document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', () => handleSave(false));
+    document.getElementById(DOM_IDS.BTNS.VALIDATE_SAVE)?.addEventListener('click', () => handleSave(true));
 
     // Toggle « Vérifié » (bouton-switch, hors boucle INPUTS car pas de .value)
     document.getElementById(DOM_IDS.VERIFIED)?.addEventListener('click', (e) => {
@@ -593,9 +607,6 @@ function bindModalEvents() {
         btn.setAttribute('aria-checked', String(on));
         isDirty = true;
     });
-
-    // Réunif C1b : « Valider » un candidat → retire le flag → publiable.
-    document.getElementById('rich-poi-curate')?.addEventListener('click', curateCandidate);
 
     // Bloc taxonomie : repeupler les 3 selects quand la catégorie change.
     document.getElementById(DOM_IDS.INPUTS.CATEGORY)?.addEventListener('change', () => {
@@ -714,28 +725,50 @@ function attachFieldHelp() {
 function updateSaveButtonState() {
     const saveBtn = document.getElementById(DOM_IDS.BTNS.SAVE);
     if (!saveBtn) return;
+    const validateBtn = document.getElementById(DOM_IDS.BTNS.VALIDATE_SAVE);
 
     const name = getValue(DOM_IDS.INPUTS.NAME_FR);
     const cat = getValue(DOM_IDS.INPUTS.CATEGORY);
-    const desc = getValue(DOM_IDS.INPUTS.DESC_LONG);
-    const source = getValue(DOM_IDS.INPUTS.SOURCE);
 
     let error = null;
     if (!name) error = "Le nom est obligatoire";
     else if (!cat || cat === "A définir") error = "Veuillez sélectionner une catégorie";
     // else if (desc && !source) error = "Source non remplie (obligatoire avec description)"; // Désactivé pour assouplir la validation
 
-    if (error) {
-        saveBtn.disabled = true;
-        saveBtn.title = error;
-        saveBtn.style.opacity = '0.5';
-        saveBtn.style.cursor = 'not-allowed';
+    // P7 : même garde-fou pour « Enregistrer » ET « Valider & enregistrer » — on ne
+    // peut pas valider (rendre publiable) un candidat sans nom ni catégorie.
+    const apply = (btn, okTitle) => {
+        if (!btn) return;
+        btn.disabled = !!error;
+        btn.title = error || okTitle;
+        btn.style.opacity = error ? '0.5' : '1';
+        btn.style.cursor = error ? 'not-allowed' : 'pointer';
+    };
+    apply(saveBtn, saveBtn.querySelector('span')?.textContent || "Enregistrer");
+    apply(validateBtn, "Valider & enregistrer");
+}
+
+// P7 — bascule le footer selon que le POI édité est un candidat Scout (EDIT) :
+//   candidat → « Valider & enregistrer » (primaire) + « Enregistrer (garder à curer) »
+//             (secondaire, pour sauver un enrichissement partiel sans publier) ;
+//   sinon    → « Enregistrer » seul (primaire). Idempotent (rappelé à chaque ouverture).
+function updateCandidateFooter(isCand) {
+    const saveBtn = document.getElementById(DOM_IDS.BTNS.SAVE);
+    const validateBtn = document.getElementById(DOM_IDS.BTNS.VALIDATE_SAVE);
+    if (!saveBtn || !validateBtn) return;
+    const saveLabel = saveBtn.querySelector('span');
+    if (isCand) {
+        validateBtn.hidden = false;
+        saveBtn.classList.remove('btn-primary');
+        saveBtn.classList.add('btn-secondary');
+        if (saveLabel) saveLabel.textContent = 'Enregistrer (garder à curer)';
     } else {
-        saveBtn.disabled = false;
-        saveBtn.title = "Enregistrer";
-        saveBtn.style.opacity = '1';
-        saveBtn.style.cursor = 'pointer';
+        validateBtn.hidden = true;
+        saveBtn.classList.remove('btn-secondary');
+        saveBtn.classList.add('btn-primary');
+        if (saveLabel) saveLabel.textContent = 'Enregistrer';
     }
+    updateSaveButtonState(); // resync l'état désactivé des deux boutons
 }
 
 // Migration V2 : le titre est passé à openHwModal (plus de DOM_IDS.TITLE).
@@ -806,50 +839,14 @@ function setVerified(val) {
     el.setAttribute('aria-checked', String(!!val));
 }
 
-// Réunif C1b/PR1 : « curer » un candidat = retirer le flag `candidate` → le POI
-// devient publiable. Deux origines possibles, deux voies de persistance :
-//
-//  • customFeature (capture locale PAS ENCORE poussée sur GitHub) : le candidat
-//    EST dans state.customFeatures → retirer le flag de base + persister customPois
-//    suffit (reconcileLocalChanges le pistera comme création).
-//
-//  • feature de BASE (POI venant du geojson publié) : il n'est pas dans
-//    customFeatures et le geojson GitHub le réinjecte à chaque boot → retirer le
-//    flag en mémoire ne survit pas. La curation passe par l'overlay userData
-//    (seule voie persistante pour un feature de base), exactement comme une
-//    édition (executeEdit) : userData.candidate=false PRIME sur le patrimoine
-//    candidate:true (via isCandidate), le diff la piste en 'update', « Tout
-//    publier » repousse le geojson et admin-geojson retire la clé → geojson propre.
-async function curateCandidate() {
-    if (currentMode !== 'EDIT' || !currentFeatureId) return;
-    const poiId = currentFeatureId;
-    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-    if (!feature || !isCandidate(feature)) return;
-
-    const isCustom = (state.customFeatures || []).some(f => getPoiId(f) === poiId);
-    if (isCustom) {
-        delete feature.properties.candidate;
-        await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures || []);
-    } else {
-        if (!state.userData[poiId]) state.userData[poiId] = {};
-        state.userData[poiId].candidate = false;
-        feature.properties.userData = state.userData[poiId];
-        await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
-        eventBus.emit('admin:poi-edited', { id: poiId, type: 'update' });
-    }
-
-    const row = document.getElementById('rich-poi-candidate-row');
-    if (row) row.hidden = true;
-    isDirty = true;
-    applyFilters(); // le marqueur perd le badge « à curer » + sort du filtre « à curer »
-    showToast('Lieu validé — sort de la file « à curer », devient publiable.', 'success', 3500);
-}
 function getVerified() {
     const el = document.getElementById(DOM_IDS.VERIFIED);
     return !!(el && el.classList.contains('is-on'));
 }
 
-async function handleSave() {
+// P7 : `validate=true` (bouton « Valider & enregistrer ») retire le flag candidat
+// dans la même écriture que l'enrichissement. `false` (« Enregistrer ») le conserve.
+async function handleSave(validate = false) {
     const nameFr = getValue(DOM_IDS.INPUTS.NAME_FR);
     if (!nameFr) {
         showToast("Le nom est obligatoire.", "warning");
@@ -878,6 +875,16 @@ async function handleSave() {
         'verified': getVerified()
     };
 
+    // P7 — « Valider & enregistrer » : on retire le flag candidat dans la foulée.
+    // Folder `candidate:false` dans `data` → persistPoiEdit le route correctement
+    // pour custom (properties, false conservé) ET base (overlay userData) ; à la
+    // publication admin-geojson retire la clé `=== false` → geojson propre. Une
+    // seule écriture, plus de double action « Valider » puis « Enregistrer ».
+    if (validate && currentMode === 'EDIT' && currentFeatureId) {
+        const feature = state.loadedFeatures.find(f => getPoiId(f) === currentFeatureId);
+        if (feature && isCandidate(feature)) data.candidate = false;
+    }
+
     // Prompt for suggestion (Workflow update)
     const isNew = currentMode === 'CREATE';
     const msg = isNew
@@ -896,7 +903,7 @@ async function handleSave() {
         if (currentMode === 'CREATE') {
             await executeCreate(data);
         } else {
-            await executeEdit(data);
+            await executeEdit(data, validate);
         }
     } catch (e) {
         console.error('[RichEditor] Échec sauvegarde:', e);
@@ -980,7 +987,7 @@ async function schedulePrepoSe(feature) {
     }
 }
 
-async function executeEdit(data) {
+async function executeEdit(data, validated = false) {
     const poiId = currentFeatureId;
 
     // Persistance custom-vs-base (overlay userData pour un POI de base, properties +
@@ -1005,7 +1012,9 @@ async function executeEdit(data) {
         // On passe par le bus pour éviter un import circulaire
         // (richEditor ← admin-control-center ← richEditor).
         eventBus.emit('admin:poi-edited', { id: poiId, type: 'update' });
-        showToast("Modification enregistrée localement.", "success");
+        showToast(validated
+            ? "Lieu validé et enregistré — sort de la file « à curer », devient publiable."
+            : "Modification enregistrée localement.", "success", validated ? 3500 : undefined);
     }
 
     // Force le rafraîchissement des marqueurs Leaflet avec la nouvelle catégorie
