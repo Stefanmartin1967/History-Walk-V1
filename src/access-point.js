@@ -13,7 +13,7 @@
 //
 // Cf. project_offroad_poi_track_snapping pour le rationale complet.
 import { state } from './state.js';
-import { getPoiId } from './data.js';
+import { getPoiId, updatePoiData } from './data.js';
 import { getCachedNearestWay, setCachedNearestWay, savePoiData } from './database.js';
 import { nearestHighway } from './osm-overpass.js';
 import { schedulePush } from './gist-sync.js';
@@ -133,4 +133,27 @@ export async function prepoSeAccessPoint(feature, opts = {}) {
 
     await writeAccessPointSilent(poiId, response.coords, 'osm');
     return { status: 'osm', coords: response.coords, distance: response.distance };
+}
+
+/**
+ * « Effacer » le drapeau d'un POI (Option A, décision Stefan 19/06/2026) : retire
+ * le drapeau et marque le POI « à reprendre ». Le statut 'failed' est le SEUL qui
+ * (a) prime sur un accessPointStatus déjà publié dans le geojson, (b) garde le POI
+ * dans la passe globale (shouldIncludeInPass), (c) ne ment pas en prétendant qu'un
+ * drapeau existe (osm/moved). → le POI redevient RE-PROPOSABLE (la passe le
+ * ré-évalue à sa prochaine ouverture). Source UNIQUE appelée par la fiche POI
+ * (access-point-editor) ET la passe globale (osm-pass) : fin de leur divergence
+ * (la fiche laissait un statut orphelin osm/moved, la passe forçait 'on-track').
+ * @param {string} poiId
+ */
+export async function eraseAccessPoint(poiId) {
+    if (!poiId) return;
+    // Statut admin-local (PERSONAL_KEYS → ni tracking CC ni toast voulu) : posé en
+    // direct dans userData, il sera sauvé EN MÊME TEMPS que accessPoint ci-dessous.
+    if (!state.userData[poiId]) state.userData[poiId] = {};
+    state.userData[poiId].accessPointStatus = 'failed';
+    // accessPoint=null via updatePoiData : tracké pour le Centre de Contrôle (champ
+    // publiable), prime sur le patrimoine, sauve TOUT le userData (donc aussi le
+    // statut ci-dessus) et n'émet qu'UN toast « Enregistré ».
+    await updatePoiData(poiId, 'accessPoint', null);
 }

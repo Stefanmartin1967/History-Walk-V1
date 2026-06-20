@@ -17,7 +17,7 @@ import { map } from './map.js';
 import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { getAccessPoint, escapeXml } from './utils.js';
-import { getAccessPointStatus, prepoSeAccessPoint } from './access-point.js';
+import { getAccessPointStatus, prepoSeAccessPoint, eraseAccessPoint } from './access-point.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
@@ -408,12 +408,14 @@ async function onReplace() {
 async function onErase() {
     const item = _items[_currentIdx];
     if (!item) return;
-    await updatePoiData(getPoiId(item.feature), 'accessPoint', null);
-    await updatePoiData(getPoiId(item.feature), 'accessPointStatus', 'on-track');
-    item.status = 'on-track';
+    // Effacer (Option A) = retire le drapeau + statut 'failed' (re-proposable),
+    // au lieu de l'ancien 'on-track' qui sortait le POI de la passe pour toujours.
+    await eraseAccessPoint(getPoiId(item.feature));
+    item.status = 'failed';
     _dirty = false;
-    showToast('Drapeau retiré · POI considéré sur voie.', 'info', 2500);
-    // L'item passe en 'on-track' → on le retire de la liste de travail.
+    showToast('Drapeau retiré · à reprendre.', 'info', 2500);
+    // L'item quitte la liste de TRAVAIL de cette session ; il reviendra (status
+    // 'failed') à la prochaine ouverture de la passe, ré-évalué par OSM.
     _items.splice(_currentIdx, 1);
     if (_currentIdx >= _items.length) _currentIdx = _items.length - 1;
     if (_currentIdx < 0) { finishPass(); return; }

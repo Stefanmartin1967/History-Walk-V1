@@ -25,7 +25,7 @@ import { getAccessPoint, escapeXml } from './utils.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { prepoSeAccessPoint, getAccessPointStatus } from './access-point.js';
+import { prepoSeAccessPoint, getAccessPointStatus, eraseAccessPoint } from './access-point.js';
 import { eventBus } from './events.js';
 
 let _marker = null;     // drapeau draggable
@@ -263,10 +263,10 @@ async function onErase() {
     const had = _hadAccessPoint;
     teardown();
     if (!poiId || !had) return; // rien à retirer → on ferme simplement
-    // null (et non undefined) : une valeur explicite dans userData PRIME sur le
-    // patrimoine publié (cf. getPoiProp). admin-geojson retire le null au publish
-    // → le geojson ne porte pas de `accessPoint: null` résiduel.
-    await updatePoiData(poiId, 'accessPoint', null);
+    // Effacer (Option A) = retire le drapeau + statut 'failed' (re-proposable).
+    // Helper partagé avec la passe globale pour ne plus diverger. accessPoint=null
+    // prime sur le patrimoine ; admin-geojson retire le null résiduel au publish.
+    await eraseAccessPoint(poiId);
     showToast('Point d’accès retiré.', 'info', 2500);
 }
 
