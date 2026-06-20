@@ -55,7 +55,8 @@ const DOM_IDS = {
         MOVE: 'btn-rich-move-marker'
     },
     NAV_CONTROLS: 'rich-poi-nav-controls',
-    VERIFIED: 'rich-poi-verified'
+    VERIFIED: 'rich-poi-verified',
+    MAP_MISSING: 'rich-poi-mapmissing'
 };
 
 let currentMode = 'CREATE'; // 'CREATE' | 'EDIT'
@@ -85,6 +86,14 @@ const RICH_POI_BODY_HTML = `
             <span class="lbl"><span class="t">Vérifié</span><span class="h">La fiche a été relue et validée</span></span>
             <span class="ctl">
                 <button class="sw" id="rich-poi-verified" type="button" role="switch" aria-checked="false" aria-label="Vérifié"></button>
+            </span>
+        </div>
+        <!-- P8 : lieu non situable sur Maps/OSM (donnée OSM périmée, coords douteuses).
+             Publié AVEC une alerte « Localisation à confirmer » dans la fiche (templates.js). -->
+        <div class="fiche-row">
+            <span class="lbl"><span class="t">Introuvable sur la carte</span><span class="h">Lieu non situé sur Maps/OSM — publié avec une alerte « Localisation à confirmer »</span></span>
+            <span class="ctl">
+                <button class="sw" id="rich-poi-mapmissing" type="button" role="switch" aria-checked="false" aria-label="Introuvable sur la carte"></button>
             </span>
         </div>
         <!-- Candidat « à curer » (réunif C1b) : visible seulement pour un candidat Scout.
@@ -274,6 +283,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.HOURS, "");
         setValue(DOM_IDS.INPUTS.FACEBOOK, "");
         setVerified(false);
+        setMapMissing(false);
         { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = true; }
         updateCandidateFooter(false); // création : footer « Enregistrer » standard
 
@@ -367,6 +377,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.HOURS, merged['Horaires'] || merged.horaires || "");
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
         setVerified(!!merged.verified);
+        setMapMissing(!!merged.introuvableCarte);
         // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
         // P7 : et le footer bascule en mode candidat (« Valider & enregistrer »).
         { const cand = isCandidate(feature);
@@ -601,6 +612,15 @@ function bindModalEvents() {
 
     // Toggle « Vérifié » (bouton-switch, hors boucle INPUTS car pas de .value)
     document.getElementById(DOM_IDS.VERIFIED)?.addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        const on = !btn.classList.contains('is-on');
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-checked', String(on));
+        isDirty = true;
+    });
+
+    // P8 — Toggle « Introuvable sur la carte » (même mécanique bouton-switch).
+    document.getElementById(DOM_IDS.MAP_MISSING)?.addEventListener('click', (e) => {
         const btn = e.currentTarget;
         const on = !btn.classList.contains('is-on');
         btn.classList.toggle('is-on', on);
@@ -844,6 +864,20 @@ function getVerified() {
     return !!(el && el.classList.contains('is-on'));
 }
 
+// P8 — flag « Introuvable sur la carte » (clé interne `introuvableCarte`), même
+// mécanique bouton-switch que Vérifié.
+function setMapMissing(val) {
+    const el = document.getElementById(DOM_IDS.MAP_MISSING);
+    if (!el) return;
+    el.classList.toggle('is-on', !!val);
+    el.setAttribute('aria-checked', String(!!val));
+}
+
+function getMapMissing() {
+    const el = document.getElementById(DOM_IDS.MAP_MISSING);
+    return !!(el && el.classList.contains('is-on'));
+}
+
 // P7 : `validate=true` (bouton « Valider & enregistrer ») retire le flag candidat
 // dans la même écriture que l'enrichissement. `false` (« Enregistrer ») le conserve.
 async function handleSave(validate = false) {
@@ -872,7 +906,8 @@ async function handleSave(validate = false) {
         'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
-        'verified': getVerified()
+        'verified': getVerified(),
+        'introuvableCarte': getMapMissing()
     };
 
     // P7 — « Valider & enregistrer » : on retire le flag candidat dans la foulée.
@@ -1067,7 +1102,8 @@ function handleEmailSuggestion() {
         'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
-        'verified': getVerified()
+        'verified': getVerified(),
+        'introuvableCarte': getMapMissing()
     };
 
     const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Inconnue';

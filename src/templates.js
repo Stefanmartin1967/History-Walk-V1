@@ -261,6 +261,11 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         etat ? `<span class="cartel-status-item cartel-status-item--${stateTagClass(etat)}"><span class="dot"></span>${escapeXml(etat)}</span>` : '',
         accesMeta ? `<span class="cartel-status-item cartel-status-item--${accesMeta.cls}"><i data-lucide="${accesMeta.icon}"></i>${escapeXml(acces)}</span>` : '',
         isIncontournable ? `<span class="cartel-status-item cartel-status-item--brand"><i data-lucide="star"></i>Incontournable</span>` : '',
+        // P8 — alerte PUBLIÉE (admin ET visiteur) : lieu non situable sur Maps/OSM
+        // (flag `introuvableCarte`, posé en curation). Réutilise le style d'alerte
+        // existant (--warn). Le visiteur est ainsi prévenu que la position peut être
+        // approximative, sans qu'on cache le lieu.
+        allProps.introuvableCarte ? `<span class="cartel-status-item cartel-status-item--warn"><i data-lucide="map-pin-off"></i>Localisation à confirmer</span>` : '',
         // Admin only : « À évaluer » UNIQUEMENT quand le point d'accès a échoué
         // (status='failed') → signal d'action. Pas pour un point d'accès normal
         // (osm/moved) : quasi tous en ont un, c'était du bruit (retour Stefan

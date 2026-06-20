@@ -140,6 +140,8 @@ function resetState() {
         vus: 'all',
         planifies: 'all',
         verified: 'all',
+        candidate: 'all',
+        introuvableCarte: 'all',
         photo: 'all',
         description: 'all',
         incontournablesOnly: false
@@ -413,6 +415,18 @@ describe('passesUserFilters', () => {
         state.activeFilters.verified = 'only';
         expect(passesUserFilters(poi('p1', { verified: true }))).toBe(true);
         expect(passesUserFilters(poi('p2', { verified: false }))).toBe(false);
+    });
+
+    it('P8 : introuvableCarte=only n\'affiche que les lieux flaggés', () => {
+        state.activeFilters.introuvableCarte = 'only';
+        expect(passesUserFilters(poi('p1', { introuvableCarte: true }))).toBe(true);
+        expect(passesUserFilters(poi('p2', {}))).toBe(false);
+    });
+
+    it('P8 : introuvableCarte=hide exclut les lieux flaggés', () => {
+        state.activeFilters.introuvableCarte = 'hide';
+        expect(passesUserFilters(poi('p1', { introuvableCarte: true }))).toBe(false);
+        expect(passesUserFilters(poi('p2', {}))).toBe(true);
     });
 
     it('admin : photo=only n\'affiche que les POIs avec photo', () => {
