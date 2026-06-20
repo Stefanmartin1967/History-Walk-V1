@@ -2,7 +2,7 @@
 import L from 'leaflet';
 import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
-import { getPoiId, commitPendingPoiIfNeeded } from './data.js';
+import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates } from './data.js';
 import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate } from './utils.js';
 import { addPoiFeature } from './data.js';
@@ -989,6 +989,18 @@ async function schedulePrepoSe(feature) {
 
 async function executeEdit(data, validated = false) {
     const poiId = currentFeatureId;
+
+    // Position déplacée pendant l'édition (« Déplacer » → currentDraftCoords) : on la
+    // persiste AVANT les champs, via le MÊME helper canonique que le drag carte
+    // (updatePoiCoordinates : userData.lat/lng pour un POI de base — rejoué au boot —,
+    // customPois pour un custom). Avant ce fix, executeEdit ne lisait JAMAIS
+    // currentDraftCoords → la position revenait à l'original au « Enregistrer » (perte
+    // de donnée silencieuse). En tête pour que le lastGeoJSON sauvé par persistPoiEdit
+    // (branche custom) capture la nouvelle géométrie. En mode EDIT, currentDraftCoords
+    // est null sauf déplacement confirmé (openForEdit le réinitialise).
+    if (currentDraftCoords) {
+        await updatePoiCoordinates(poiId, currentDraftCoords.lat, currentDraftCoords.lng);
+    }
 
     // Persistance custom-vs-base (overlay userData pour un POI de base, properties +
     // customPois_{id} pour un POI custom) déléguée au helper feuille partagé avec
