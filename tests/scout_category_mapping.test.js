@@ -39,6 +39,15 @@ const OSM_SAMPLES = [
     { tourism: 'guest_house' },
     { amenity: 'parking' },                       // non mappé → null
     {},                                           // aucun tag → null
+    // P1 Niveau 1 — patrimoine élargi
+    { historic: 'fortress' }, { historic: 'citadel' }, { historic: 'city_gate' },
+    { historic: 'citywalls' }, { historic: 'bastion' },
+    { historic: 'tomb' }, { historic: 'mausoleum' }, { historic: 'tumulus' },
+    { historic: 'tower' },                        // ambigu (défensif ou non) → null
+    { historic: 'palace' }, { historic: 'monastery' }, { historic: 'aqueduct' }, // → null (triage)
+    { man_made: 'water_well' }, { man_made: 'lighthouse' },
+    { man_made: 'windmill' }, { man_made: 'watermill' },
+    { craft: 'pottery' }, { craft: 'weaving' }, { shop: 'pottery' },
 ];
 
 describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () => {
@@ -94,6 +103,38 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
             const cat = getHwCategory(tags);
             expect(broken.has(cat)).toBe(false);
         }
+    });
+
+    // P1 Niveau 1 — couverture patrimoniale élargie.
+    it('ouvrages défensifs élargis → Fortification', () => {
+        for (const v of ['fortress', 'citadel', 'city_gate', 'citywalls', 'bastion']) {
+            expect(getHwCategory({ historic: v }), v).toBe('Fortification');
+        }
+    });
+    it('sépultures → Site funéraire (catégorie jusque-là jamais moissonnée)', () => {
+        for (const v of ['tomb', 'mausoleum', 'tumulus']) {
+            expect(getHwCategory({ historic: v }), v).toBe('Site funéraire');
+        }
+    });
+    it('patrimoine technique man_made → Puits / Curiosité', () => {
+        expect(getHwCategory({ man_made: 'water_well' })).toBe('Puits');
+        expect(getHwCategory({ man_made: 'lighthouse' })).toBe('Curiosité');
+        expect(getHwCategory({ man_made: 'windmill' })).toBe('Curiosité');
+        expect(getHwCategory({ man_made: 'watermill' })).toBe('Curiosité');
+    });
+    it('artisanat traditionnel → Artisanat', () => {
+        expect(getHwCategory({ craft: 'pottery' })).toBe('Artisanat');
+        expect(getHwCategory({ craft: 'weaving' })).toBe('Artisanat');
+        expect(getHwCategory({ shop: 'pottery' })).toBe('Artisanat');
+    });
+    it('valeurs historic ambiguës moissonnées → null (triage « A définir »)', () => {
+        for (const v of ['tower', 'palace', 'monastery', 'aqueduct', 'manor', 'wayside_shrine', 'heritage']) {
+            expect(getHwCategory({ historic: v }), v).toBeNull();
+        }
+    });
+    it('un lieu de culte prime sur un man_made co-tagué', () => {
+        // ex. minaret tagué man_made=tower + amenity=place_of_worship → reste Mosquée
+        expect(getHwCategory({ amenity: 'place_of_worship', religion: 'muslim', man_made: 'tower' })).toBe('Mosquée');
     });
 });
 
