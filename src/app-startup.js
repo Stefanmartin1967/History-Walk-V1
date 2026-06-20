@@ -2,6 +2,7 @@
 import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setPoiCategories } from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
+import { setRejectedData } from './rejected.js';
 import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -163,6 +164,36 @@ async function loadZonesForActive(mapId, dest) {
     }
 }
 
+// Rejets de curation Scout (tombstones OSM) de la destination ACTIVE — même schéma de
+// chargement que les zones : {dest}-rejected.json sur GitHub (Pages si publiée, RAW
+// frais si brouillon admin). Absence du fichier (dest jamais curée) → 404 → rejets
+// vides (sûr : rien n'est masqué au scan). Sert au dédup du Scout et à la corbeille.
+async function loadRejectedForActive(mapId, dest) {
+    try {
+        const baseUrl = import.meta.env?.BASE_URL || './';
+        const adminDraft = !!getStoredToken() && dest && dest.status !== 'published';
+        const resp = adminDraft
+            ? await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.rejected(mapId)}?t=${Date.now()}`, { cache: 'reload' })
+            : await fetchWithTimeout(`${baseUrl}${mapId}-rejected.json`, { cache: 'reload' });
+        if (resp.ok) {
+            const r = await resp.json();
+            setRejectedData(r);
+            try {
+                const etag = resp.headers?.get?.('etag') || null;
+                if (!etag || (await getAppState(`lastRejected_etag_${mapId}`)) !== etag) {
+                    await saveAppState(`lastRejected_${mapId}`, r);
+                    await saveAppState(`lastRejected_etag_${mapId}`, etag);
+                }
+            } catch (e) {}
+            return;
+        }
+        throw new Error(`rejected HTTP ${resp.status}`);
+    } catch (e) {
+        const cached = await getAppState(`lastRejected_${mapId}`);
+        setRejectedData(cached || {});
+    }
+}
+
 // P6 (audit) : la copie de secours hors-ligne (~1,2 Mo) était réécrite en
 // IndexedDB à CHAQUE démarrage, même inchangée. On mémorise « destination|ETag »
 // de la dernière copie écrite : identique → écriture sautée. Sans etag (brouillon
@@ -318,6 +349,8 @@ export async function loadAndInitializeMap() {
     // Zones de la destination active : chargement par dest (fetch {dest}-zones.geojson —
     // Pages si publiée, RAW frais si brouillon admin).
     await loadZonesForActive(activeMapId, state.destinations?.maps?.[activeMapId]);
+    // Rejets de curation Scout (tombstones OSM) de la dest active → dédup du re-scan.
+    await loadRejectedForActive(activeMapId, state.destinations?.maps?.[activeMapId]);
 
     if (!geojsonData) {
         showToast("Impossible de charger la carte.", 'error');

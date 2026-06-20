@@ -15,6 +15,7 @@ export const RAW_BASE = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GIT
 export const GITHUB_PATHS = {
     geojson:     (mapId)    => `public/${mapId}.geojson`,
     zones:       (mapId)    => `public/${mapId}-zones.geojson`,
+    rejected:    (mapId)    => `public/${mapId}-rejected.json`,
     circuits:    (mapId)    => `public/circuits/${mapId}.json`,
     circuitFile: (mapId, filename) => `public/circuits/${mapId}/${filename}`,
     photo:       (filename) => `public/photos/${filename}`,
