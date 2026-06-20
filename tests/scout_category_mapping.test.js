@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setTaxonomy, getCategoryLabels } from '../src/taxonomy.js';
 import refJson from '../public/poi-categories.json';
-import { getHwCategory, HW_MAPPING } from '../src/scout-categories.js';
+import { getHwCategory, HW_MAPPING, isArabicText, resolveOsmNames } from '../src/scout-categories.js';
 
 // PR-1 (modèle C) : garde-fou de la classe de bug #2 de l'audit — le mapping de
 // catégories du Scout était figé sur la taxonomie PRÉ-v2 ('Site historique',
@@ -94,5 +94,57 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
             const cat = getHwCategory(tags);
             expect(broken.has(cat)).toBe(false);
         }
+    });
+});
+
+// P5 — routage du nom OSM vers le bon champ FR/AR (un nom en arabe ne doit PAS
+// finir dans « Nom du site FR »).
+describe('scout-categories — isArabicText', () => {
+    it('détecte l’écriture arabe (bloc + formes de présentation)', () => {
+        expect(isArabicText('جامع الرحمة')).toBe(true);
+        expect(isArabicText('الموقع الاثري نيابوليس')).toBe(true);
+        expect(isArabicText('ﻷ')).toBe(true);            // forme de présentation (lam-alef)
+    });
+    it('est false pour le latin, les chiffres, le vide et le non-string', () => {
+        expect(isArabicText('Mosquée Bazin')).toBe(false);
+        expect(isArabicText('Borj El Kébir')).toBe(false);
+        expect(isArabicText('12345')).toBe(false);
+        expect(isArabicText('')).toBe(false);
+        expect(isArabicText(null)).toBe(false);
+        expect(isArabicText(undefined)).toBe(false);
+    });
+    it('est true dès qu’un caractère arabe est présent (mixte)', () => {
+        expect(isArabicText('Mosquée جامع')).toBe(true);
+    });
+});
+
+describe('scout-categories — resolveOsmNames (routage FR/AR)', () => {
+    it('name:fr + name:ar → chacun dans son champ', () => {
+        expect(resolveOsmNames({ 'name:fr': 'Mosquée Bazin', 'name:ar': 'جامع بازين' }))
+            .toEqual({ nameFr: 'Mosquée Bazin', nameAr: 'جامع بازين' });
+    });
+    it('name:fr seul + name brut arabe → FR explicite, AR depuis le brut', () => {
+        expect(resolveOsmNames({ 'name:fr': 'Grande Mosquée', name: 'جامع الرحمة' }))
+            .toEqual({ nameFr: 'Grande Mosquée', nameAr: 'جامع الرحمة' });
+    });
+    it('name brut latin seul → FR (le bug ne se produit pas pour le latin)', () => {
+        expect(resolveOsmNames({ name: 'Borj El Kébir' }))
+            .toEqual({ nameFr: 'Borj El Kébir', nameAr: '' });
+    });
+    it('BUG P5 : name brut arabe seul → AR, FR vide (jamais d’arabe en FR)', () => {
+        expect(resolveOsmNames({ name: 'جامع الكونية' }))
+            .toEqual({ nameFr: '', nameAr: 'جامع الكونية' });
+    });
+    it('name:ar seul → AR, FR vide', () => {
+        expect(resolveOsmNames({ 'name:ar': 'جامع سيدي محرصي' }))
+            .toEqual({ nameFr: '', nameAr: 'جامع سيدي محرصي' });
+    });
+    it('aucun tag de nom → deux champs vides (candidat sans nom, à compléter)', () => {
+        expect(resolveOsmNames({})).toEqual({ nameFr: '', nameAr: '' });
+        expect(resolveOsmNames({ amenity: 'place_of_worship' })).toEqual({ nameFr: '', nameAr: '' });
+    });
+    it('trim les valeurs', () => {
+        expect(resolveOsmNames({ 'name:fr': '  Fort  ', 'name:ar': '  جامع  ' }))
+            .toEqual({ nameFr: 'Fort', nameAr: 'جامع' });
     });
 });
