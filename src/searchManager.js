@@ -148,6 +148,23 @@ export function setupSmartSearch() {
                         });
                     });
 
+                    // Bouton « Valider cette position » : lié DIRECTEMENT sur l'élément
+                    // popup (comme les liens Maps/OSM ci-dessus, et comme le flux clic-droit
+                    // de desktopMode), AVANT bindPopup/openPopup. L'ancien binding via
+                    // 'popupopen' était posé APRÈS le openPopup() initial → le handler
+                    // n'existait qu'à la RÉ-ouverture (donc après un drag) : c'était le bug
+                    // « je ne peux valider que si je déplace le marqueur ». La position est
+                    // lue au clic (toujours fraîche, post-drag éventuel).
+                    popupContent.querySelector('#btn-create-poi-ghost')?.addEventListener('click', async () => {
+                        const { RichEditor } = await import('./richEditor.js');
+                        const { lat: cLat, lng: cLng } = marker.getLatLng();
+                        RichEditor.openForCreate(cLat, cLng);
+                        if (state.ghostMarker) {
+                            state.ghostMarker.remove();
+                            setGhostMarker(null);
+                        }
+                    });
+
                     // Convertit les <i data-lucide> en SVG avant binding (sinon
                     // le scan global ne les attrape pas et la boîte de 12px
                     // reste vide → décalage à gauche du texte).
@@ -171,26 +188,6 @@ export function setupSmartSearch() {
                         setTimeout(() => {
                             if (state.ghostMarker) state.ghostMarker.openPopup();
                         }, 100);
-                    });
-
-                    // 5. Listener sur le bouton (via l'événement popupopen)
-                    marker.on('popupopen', () => {
-                        const btn = document.getElementById('btn-create-poi-ghost');
-                        if (btn) {
-                            btn.addEventListener('click', async () => {
-                                // Import dynamique de RichEditor
-                                const { RichEditor } = await import('./richEditor.js');
-                                // Récupération dynamique de la position (post-drag)
-                                const currentPos = marker.getLatLng();
-                                RichEditor.openForCreate(currentPos.lat, currentPos.lng);
-
-                                // On supprime le marqueur fantôme une fois l'éditeur ouvert
-                                if (state.ghostMarker) {
-                                    state.ghostMarker.remove();
-                                    setGhostMarker(null);
-                                }
-                            });
-                        }
                     });
 
                     // 6. Suppression uniquement si la popup est fermée explicitement (pas par un drag)
