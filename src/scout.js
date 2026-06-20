@@ -67,15 +67,18 @@ const TILE_KM = 25;             // côté max d'une tuile (km). Djerba (~18 km) 
 const MAX_TILES = 36;           // garde-fou : au-delà, zone trop vaste → on refuse
 
 // Catégories de moisson (clés alignées sur les clauses Overpass + libellés UI).
-// Cochées par défaut : Religion / Histoire / Culture (comme la maquette).
+// Cochées par défaut : Lieux de culte / Patrimoine historique / Musées & culture.
+// P1 : libellés neutres multi-pays (l'ancien « Religion (Mosquées) » était trop
+// typé — la requête capte déjà toutes les confessions). « Tourisme / Art » et
+// « Loisirs / Parcs » fusionnés en « Tourisme & loisirs » (ils moissonnaient tous
+// deux vers la même catégorie « Curiosité »).
 const CATEGORIES = [
-    { key: 'religion', label: 'Religion (Mosquées)', on: true },
-    { key: 'history', label: 'Histoire (Forts, Ruines)', on: true },
-    { key: 'museum', label: 'Culture (Musées)', on: true },
+    { key: 'religion', label: 'Lieux de culte', on: true },
+    { key: 'history', label: 'Patrimoine historique', on: true },
+    { key: 'museum', label: 'Musées & culture', on: true },
     { key: 'hotel', label: 'Hôtels', on: false },
     { key: 'restaurant', label: 'Restos / Cafés', on: false },
-    { key: 'leisure', label: 'Loisirs / Parcs', on: false },
-    { key: 'tourism', label: 'Tourisme / Art', on: false },
+    { key: 'tourism', label: 'Tourisme & loisirs', on: false },
     { key: 'public', label: 'Services Publics', on: false },
 ];
 
@@ -504,12 +507,18 @@ function buildQuery(b, cats) {
     const bb = `(${b.south},${b.west},${b.north},${b.east})`;
     const c = [];
     if (cats.has('religion')) { c.push(`nwr["amenity"="place_of_worship"]${bb};`); c.push(`way["building"~"mosque|church|synagogue"]${bb};`); }
-    if (cats.has('history')) c.push(`nwr["historic"~"fort|castle|ruins|archaeological_site|monument|memorial"]${bb};`);
-    if (cats.has('museum')) c.push(`nwr["tourism"="museum"]${bb};`);
+    // P1 Niveau 1 : « Patrimoine historique » élargi (ouvrages défensifs, sites
+    // funéraires, palais/monastères/aqueducs…) + patrimoine technique (`man_made`).
+    if (cats.has('history')) {
+        c.push(`nwr["historic"~"fort|castle|fortress|citadel|city_gate|citywalls|bastion|tower|archaeological_site|ruins|tomb|tumulus|mausoleum|monument|memorial|aqueduct|monastery|palace|manor|wayside_shrine|heritage"]${bb};`);
+        c.push(`nwr["man_made"~"lighthouse|windmill|watermill|water_well"]${bb};`);
+    }
+    // « Musées & culture » : musées + artisanat traditionnel (poterie/tissage).
+    if (cats.has('museum')) { c.push(`nwr["tourism"="museum"]${bb};`); c.push(`nwr["craft"~"pottery|weaving"]${bb};`); c.push(`nwr["shop"="pottery"]${bb};`); }
     if (cats.has('hotel')) c.push(`nwr["tourism"~"hotel|guest_house|hostel"]${bb};`);
     if (cats.has('restaurant')) c.push(`nwr["amenity"~"restaurant|cafe"]${bb};`);
-    if (cats.has('leisure')) { c.push(`nwr["leisure"~"park|water_park"]${bb};`); c.push(`nwr["tourism"~"theme_park|zoo|aquarium"]${bb};`); }
-    if (cats.has('tourism')) c.push(`nwr["tourism"~"viewpoint|artwork|attraction|gallery"]${bb};`);
+    // « Tourisme & loisirs » = ex « Tourisme / Art » + ex « Loisirs / Parcs » fusionnés.
+    if (cats.has('tourism')) { c.push(`nwr["tourism"~"viewpoint|artwork|attraction|gallery|theme_park|zoo|aquarium"]${bb};`); c.push(`nwr["leisure"~"park|water_park"]${bb};`); }
     if (cats.has('public')) c.push(`nwr["amenity"~"townhall|police|post_office|library"]${bb};`);
     return `[out:json][timeout:60];(${c.join('')});out center;`;
 }

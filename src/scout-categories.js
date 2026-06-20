@@ -14,9 +14,14 @@
 
 // OSM (historic / tourism / amenity / leisure) → catégorie-feuille v2.
 export const HW_MAPPING = {
-    // Site historique
-    fort: 'Fortification', castle: 'Fortification',
+    // Site historique (P1 Niveau 1 : whitelist élargie au patrimoine bâti net —
+    // ouvrages défensifs + sites funéraires. Les valeurs hors liste mais moissonnées
+    // — palais, monastère, aqueduc, tour, monument, mémorial… — tombent volontairement
+    // sur null → « A définir » → triage manuel, plutôt qu'une catégorie devinée à tort.)
+    fort: 'Fortification', castle: 'Fortification', fortress: 'Fortification',
+    citadel: 'Fortification', city_gate: 'Fortification', citywalls: 'Fortification', bastion: 'Fortification',
     archaeological_site: 'Site archéologique', ruins: 'Site archéologique',
+    tomb: 'Site funéraire', mausoleum: 'Site funéraire', tumulus: 'Site funéraire',
     // Culture & découvertes
     museum: 'Musée',
     theme_park: 'Curiosité', zoo: 'Curiosité', viewpoint: 'Curiosité',
@@ -63,6 +68,11 @@ export function getHwCategory(tags = {}) {
         if (tags.religion === 'jewish') return 'Synagogue';
         return null;   // religion inconnue → triage manuel (app multi-pays, plus de défaut « Mosquée »)
     }
+    // Patrimoine technique / vernaculaire (P1 Niveau 1) — clés hors `raw` ci-dessous,
+    // traitées en amont. Branchent des catégories de la taxo jusque-là jamais moissonnées :
+    if (tags.man_made === 'water_well') return 'Puits';
+    if (tags.man_made === 'lighthouse' || tags.man_made === 'windmill' || tags.man_made === 'watermill') return 'Curiosité';
+    if (tags.craft === 'pottery' || tags.craft === 'weaving' || tags.shop === 'pottery') return 'Artisanat';
     const raw = tags.historic || tags.tourism || tags.amenity || tags.leisure;
     return HW_MAPPING[raw] || null; // null = catégorie non devinée (candidat « inconnu »)
 }
