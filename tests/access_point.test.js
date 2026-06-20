@@ -143,3 +143,57 @@ describe('access-point — prepoSeAccessPoint (mocks complets)', () => {
             .rejects.toThrow('Feature POI invalide');
     });
 });
+
+describe('access-point — eraseAccessPoint (Option A : Effacer = re-proposable)', () => {
+    let state, savePoiData;
+
+    beforeEach(async () => {
+        vi.resetModules();
+        const stateMod = await import('../src/state.js');
+        state = stateMod.state;
+        state.userData = {};
+        state.currentMapId = 'djerba';
+        state.loadedFeatures = [];
+        state.isAdmin = false; // évite addToDraft (tracking CC) — hors périmètre du test unitaire
+        savePoiData = vi.fn().mockResolvedValue(undefined);
+        vi.doMock('../src/database.js', () => ({
+            getCachedNearestWay: vi.fn().mockResolvedValue(null),
+            setCachedNearestWay: vi.fn().mockResolvedValue(undefined),
+            savePoiData,
+        }));
+        vi.doMock('../src/gist-sync.js', () => ({ schedulePush: vi.fn() }));
+        vi.doMock('../src/toast.js', () => ({ showToast: vi.fn() }));
+        // updatePoiData → recordModification (backup-auto-local) lit getAppState :
+        // on neutralise ce fire-and-forget pour éviter un rejet non géré post-test.
+        vi.doMock('../src/backup-auto-local.js', () => ({ recordModification: vi.fn() }));
+    });
+    afterEach(() => {
+        vi.doUnmock('../src/database.js');
+        vi.doUnmock('../src/gist-sync.js');
+        vi.doUnmock('../src/toast.js');
+        vi.doUnmock('../src/backup-auto-local.js');
+    });
+
+    it("retire le drapeau (accessPoint=null) et écrit le statut 'failed'", async () => {
+        const { eraseAccessPoint, getAccessPointStatus } = await import('../src/access-point.js');
+        // POI portant un drapeau OSM
+        state.userData.POIx = { accessPoint: [10.9, 33.8], accessPointStatus: 'osm' };
+        const feature = { properties: { HW_ID: 'POIx', userData: state.userData.POIx } };
+        state.loadedFeatures = [feature];
+
+        await eraseAccessPoint('POIx');
+
+        expect(state.userData.POIx.accessPoint).toBeNull();
+        expect(state.userData.POIx.accessPointStatus).toBe('failed');
+        // 'failed' (≠ 'on-track' de l'ancien code) = le POI reste à reprendre.
+        expect(getAccessPointStatus(feature)).toBe('failed');
+        expect(savePoiData).toHaveBeenCalled();
+    });
+
+    it('no-op si poiId falsy (ne sauve rien)', async () => {
+        const { eraseAccessPoint } = await import('../src/access-point.js');
+        await eraseAccessPoint(null);
+        await eraseAccessPoint('');
+        expect(savePoiData).not.toHaveBeenCalled();
+    });
+});
