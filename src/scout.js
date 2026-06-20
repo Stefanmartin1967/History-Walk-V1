@@ -38,7 +38,7 @@ import { fetchZonesAuto } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
 import { getHwCategory, resolveOsmNames } from './scout-categories.js';
 import { getStoredToken } from './github-sync.js';
-import { registerDraftDestinationOnGitHub } from './publish-destination.js';
+import { registerDraftDestinationOnGitHub, pushDestinationZones } from './publish-destination.js';
 
 let _overlay = null;
 let _boxEl = null;
@@ -646,15 +646,31 @@ async function capture() {
             if (added.length) {
                 const merged = { type: 'FeatureCollection', features: [...(zonesData.features || []), ...added] };
                 setZonesData(merged);
-                // L'extension est posée EN MÉMOIRE (setZonesData ci-dessus). Persistance :
-                //  - dest GitHub (modèle C, custom:false) → via « Compléter les quartiers »
-                //    (pushDestinationZones → {id}-zones.geojson). L'extension faite ici est
-                //    donc ÉPHÉMÈRE jusqu'à ce geste : on NE pousse PAS par capture (sinon la
-                //    moisson Scout serait trop bavarde sur GitHub). Perdue si reload avant.
-                //  - brouillon LOCAL legacy (custom:true) → cache IndexedDB. Branche retirée
-                //    en PR-4b avec le reste du sous-système local.
-                if (state.destinations?.maps?.[state.currentMapId]?.custom) {
+                // PERSISTANCE DURABLE DES QUARTIERS (P9) — « les quartiers suivent les
+                // POI dès la capture ». La création ne pousse les quartiers que pour un
+                // halo de ~25 km autour de la ville (MIN_VIEW_KM) ; une dest qui s'étale
+                // au-delà laissait sa couronne de POI « Hors zone » au reload (admin ET
+                // visiteur). On rend donc l'extension durable TOUT DE SUITE, GARDÉE PAR
+                // LE DELTA (`added.length` — on est déjà dedans) :
+                //   • re-scouter d'AUTRES catégories sur le MÊME cadre → quartiers déjà
+                //     connus → `added` vide → on ne ré-entre pas ici → AUCUN push. Donc
+                //     #push = #zones DISTINCTES capturées, pas #captures : pas « bavard »
+                //     malgré le push à la capture (l'ancien refus de pousser supposait un
+                //     push inconditionnel).
+                //   • dest GitHub (modèle C, custom:false) → push {id}-zones.geojson
+                //     (token requis ; en scout on est toujours connecté — créer/publier
+                //     l'exigent déjà). Échec/sans token → extension gardée en RAM, le
+                //     bouton « Compléter les quartiers » reste le secours.
+                //   • brouillon LOCAL legacy (custom:true) → cache IndexedDB.
+                const isCustom = state.destinations?.maps?.[state.currentMapId]?.custom === true;
+                if (isCustom) {
                     try { await saveDraftZones(state.currentMapId, merged); } catch (_) { /* best-effort */ }
+                } else if (getStoredToken()) {
+                    try {
+                        await pushDestinationZones(state.currentMapId, merged);
+                    } catch (e) {
+                        console.warn('[scout] push des quartiers à la capture échoué (extension gardée en RAM) :', e);
+                    }
                 }
             }
         } catch (e) {
