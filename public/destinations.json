@@ -29,7 +29,7 @@
     },
     "hammamet": {
       "name": "Hammamet",
-      "status": "draft",
+      "status": "published",
       "file": "hammamet.geojson",
       "circuitsFile": "circuits/hammamet.json",
       "zonesFile": "hammamet-zones.geojson",
