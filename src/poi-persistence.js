@@ -77,7 +77,7 @@ export async function persistPoiEdit(poiId, data) {
         const cIdx = (state.customFeatures || []).findIndex(f => getPoiId(f) === poiId);
         if (cIdx !== -1) state.customFeatures[cIdx].properties = feature.properties;
         await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
-        await saveAppState('lastGeoJSON', { type: 'FeatureCollection', features: state.loadedFeatures });
+        await saveAppState(`lastGeoJSON_${state.currentMapId}`, { type: 'FeatureCollection', features: state.loadedFeatures });
     } else {
         // POI de base / officiel : overlay userData.
         if (!state.userData[poiId]) state.userData[poiId] = {};

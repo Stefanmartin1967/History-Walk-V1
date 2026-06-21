@@ -973,7 +973,7 @@ async function executeCreate(data) {
     // addPoiFeature régénère HW_ID en HW-ULID (29 chars). On lit l'ID
     // définitif depuis le feature muté, pas depuis la variable locale.
     const actualId = newFeature.properties.HW_ID;
-    await saveAppState('lastGeoJSON', { type: 'FeatureCollection', features: state.loadedFeatures });
+    await saveAppState(`lastGeoJSON_${state.currentMapId}`, { type: 'FeatureCollection', features: state.loadedFeatures });
 
     // Si photos en attente (Import Photo Desktop).
     // L'attachement (addPhotosToPoi) vit dans desktopMode ; on passe par l'event-bus
