@@ -28,10 +28,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Disused Tank",
+        "Nom du site FR": "Vieux Tank",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ2XWWX74M0WTYF31E0SB",
+        "description": "Attention, terrain militaire, voir s'il est toujours en activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Sidi Ejdidi"
       }
     },
@@ -45,10 +49,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Disused Tank",
+        "Nom du site FR": "Vieux Tank",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ2Y7MQQ87Z5024Q7M8D4",
+        "description": "Attention, terrain militaire",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Sidi Ejdidi"
       }
     },
@@ -62,10 +70,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Disused Tank",
+        "Nom du site FR": "Vieux Tank",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ2YN61AY7XWF04GG32MN",
+        "description": "Attention, terrain militaire",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Sidi Ejdidi"
       }
     },
@@ -79,10 +91,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Point de vue d'El Monchar",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ2Z1CVZYFA9V3SAGE0KP",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Sidi Ejdidi"
       }
     },
@@ -96,10 +111,15 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Point de vue",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ2ZBEBBEB5WM9TV04BVB",
+        "description": "Semble être une tour panoramique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Vérifier sur place ce qui se trouve là",
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Sidi Ejdidi"
       }
     },
@@ -262,15 +282,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.513276,
-          36.476213
+          10.51340773701668,
+          36.4764711011162
         ]
       },
       "properties": {
-        "Nom du site FR": "Jebel Latrach - Haouanet",
+        "Nom du site FR": "Ruines Puniques de Jebel Sidi Latrach",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3372NT7TFQWT5HC46XS",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "lat": 36.4764711011162,
+        "lng": 10.51340773701668,
         "Zone": "Latrach"
       }
     },
@@ -296,12 +323,12 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.3370555,
-          36.3379033
+          10.337114185094835,
+          36.33789165905702
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée ar-Raḥma",
+        "Nom du site FR": "Mosquée Ar Raḥma",
         "Catégorie": "Mosquée",
         "HW_ID": "HW-01KVGFQ34WDBYQPB1FNNRPV87D",
         "Nom du site arabe": "جامع الرحمة",
@@ -310,7 +337,17 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Bou Achir"
+        "Zone": "Bou Achir",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Mosquée de la Miséricorde — Bou Achir",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "introuvableCarte": false,
+        "lat": 36.33789165905702,
+        "lng": 10.337114185094835
       }
     },
     {
@@ -341,15 +378,20 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.6193816,
-          36.42147
+          10.619359412316815,
+          36.42071817400521
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Point de vue panoramique",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ35VG96RBBM9P8PM8HD1",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "lat": 36.42071817400521,
+        "lng": 10.619359412316815,
         "Zone": "Hammamet Nord"
       }
     },
@@ -483,15 +525,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.7850005,
-          36.4693119
+          10.785095393657686,
+          36.4689446968409
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Mosquée al Nozha",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ39AC1GD3Y41S3PPQSMM",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "lat": 36.4689446968409,
+        "lng": 10.785095393657686,
         "Zone": "Beni Khiar"
       }
     },
@@ -505,10 +554,16 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Mosquée Sidi Amor",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ39SJ695PJN7GZGWM54E",
+        "Nom du site arabe": "جامع سيدي عمر",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Beni Khiar"
       }
     },
@@ -637,15 +692,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.6096312,
-          36.4103855
+          10.609862549146108,
+          36.410253700358936
         ]
       },
       "properties": {
         "Nom du site FR": "Mosquée El Ihsen",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3D79PYBAV9KRMBDERY0",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "lat": 36.410253700358936,
+        "lng": 10.609862549146108,
         "Zone": "Hammamet Nord"
       }
     },
@@ -1443,15 +1505,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.6329367,
-          36.4085182
+          10.632906854152681,
+          36.40846430936416
         ]
       },
       "properties": {
         "Nom du site FR": "Mosquée Al Ber",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ482QVNFCE2WNVT5C7PJ",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "lat": 36.40846430936416,
+        "lng": 10.632906854152681,
         "Zone": "Hammamet Nord"
       }
     },
@@ -1486,10 +1555,16 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Mosquée du Repentir",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ493H4BNQPT7VHXV1TPB",
+        "Nom du site arabe": "جامع التوبة",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Beni Khiar"
       }
     },
@@ -1565,10 +1640,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Ruines indéterminées",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ4BACJ72N5YB41GS4K4R",
+        "description": "Ruines à vérifier sur place",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Hammamet Nord"
       }
     },
@@ -1582,10 +1661,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Ruines indéterminée",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ4BTWDM9T8E90BVHECBH",
+        "description": "Ruines à vérifier sur place",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Hammamet Nord"
       }
     },
@@ -1599,10 +1682,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Ruines",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ4CGZDYJKP3YVFKXRKMM",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Hammamet Nord"
       }
     },
@@ -1779,6 +1865,83 @@
           36.3261652
         ],
         "Zone": "Bou Achir"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.385722517967224,
+          36.394044213722346
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée de Bent el Jedidi",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVN0GRX1WQ64T07BDZFV6XD9",
+        "accessPoint": [
+          10.3857373,
+          36.3939276
+        ],
+        "Zone": "Sidi Ejdidi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.435929515016536,
+          36.3800138189368
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Site Historique Aradi Sidi Jedidi",
+        "Catégorie": "Site archéologique",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVN18SDPF4Z9RC5YNJ053V7E",
+        "accessPoint": [
+          10.4366626,
+          36.3795069
+        ],
+        "Zone": "Sidi Ejdidi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.436880499026953,
+          36.38393862174432
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Vieux tank",
+        "Catégorie": "Curiosité",
+        "description": "Attention, terrain militaire",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVN1C9GWSD43R6QM2QZSH1N0",
+        "accessPoint": [
+          10.4365179,
+          36.3842079
+        ],
+        "Zone": "Sidi Ejdidi"
       }
     }
   ]
