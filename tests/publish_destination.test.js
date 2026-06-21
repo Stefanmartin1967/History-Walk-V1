@@ -104,6 +104,7 @@ beforeEach(() => {
     // Destination ACTIVE, avec son état affiché (les describes spécifiques l'écrasent).
     state.currentMapId = 'venise';
     state.customFeatures = [];
+    state.hiddenPoiIds = [];
     state.destinations = { activeMapId: 'venise', maps: { venise: { name: 'Venise', status: 'draft' } } };
     state.loadedFeatures = makeDraftFeatures();
 });
@@ -194,6 +195,22 @@ describe('setDestinationPublished — « Rendre publique » (draft → published
         expect(saveAppState).toHaveBeenCalledWith('customPois_sozopol', expect.arrayContaining([
             expect.objectContaining({ properties: expect.objectContaining({ HW_ID: 'HW-01TESTRUINE0000000000000001' }) }),
         ]));
+    });
+
+    it('exclut un candidat SUPPRIMÉ (hiddenPoiIds) de la mise de côté — pas de résurrection au reload', async () => {
+        // « Ruine OSM » (candidat) a été SUPPRIMÉE en curation → masquée via hiddenPoiIds
+        // sans être retirée de loadedFeatures (deletePoi). Sans le garde, la mise de côté
+        // la ré-injecterait dans customPois → elle ressusciterait « à curer » au reload.
+        state.hiddenPoiIds = ['HW-01TESTRUINE0000000000000001'];
+        const res = await setDestinationPublished('sozopol');
+        // Le seul candidat étant supprimé → aucune mise de côté (pas d'écriture customPois).
+        const customCall = saveAppState.mock.calls.find((c) => c[0] === 'customPois_sozopol');
+        const setAsideIds = customCall ? customCall[1].map((f) => f.properties.HW_ID) : [];
+        expect(setAsideIds).not.toContain('HW-01TESTRUINE0000000000000001');
+        expect(res.candidatesKept).toBe(0);
+        // Toujours absente du geojson public (candidat → épuré dans tous les cas).
+        const geo = JSON.parse(await fileText(uploadFileToGitHub.mock.calls[0][0]));
+        expect(geo.features.map((f) => f.properties['Nom du site FR'])).not.toContain('Ruine OSM');
     });
 
     it('reflet mémoire : status=published ET custom=false', async () => {
