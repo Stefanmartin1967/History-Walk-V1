@@ -6,23 +6,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.4727971,
-          36.5098955
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ2XNE83262T0A9HX9D3N",
-        "Zone": "Latrach"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.4313653,
           36.3770331
         ]
@@ -197,23 +180,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.4219181,
-          36.4648472
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ30QH1E82YKEE0WSX45D",
-        "Zone": "Sidi Ejdidi"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.5347265,
           36.3688994
         ]
@@ -227,40 +193,6 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Manaret El Hammamet"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.5335239,
-          36.3658548
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "New Medina",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ31FPAQ0111FM2HDRXR1",
-        "Zone": "Manaret El Hammamet"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.5345396,
-          36.3680714
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "King Kong",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ32HAB39WPB1HVR6BZT6",
         "Zone": "Manaret El Hammamet"
       }
     },
@@ -407,23 +339,6 @@
         "introuvableCarte": false,
         "lat": 36.42071817400521,
         "lng": 10.619359412316815,
-        "Zone": "Hammamet Nord"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.6197599,
-          36.4220631
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ36699Y86YXNHTGHGY0V",
         "Zone": "Hammamet Nord"
       }
     },
@@ -630,23 +545,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.6146842,
-          36.3936926
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3BDHGMJC9BBF04T2146",
-        "Zone": "Hammamet Est"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.6119883,
           36.3946915
         ]
@@ -843,57 +741,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.7261269,
-          36.4402698
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Plage Loued",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3H8SFYWRQRJHPQ2WM1E",
-        "Zone": "Neapolis"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.7296416,
-          36.4401661
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Sidi Slimane",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3HV5CWF65E4BSK6G0Y8",
-        "Zone": "Neapolis"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.7171798,
-          36.43814
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Plage Jasmin",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3JBRX7DQ91NH80ZHSF2",
-        "Zone": "Neapolis"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.7315132,
           36.4527653
         ]
@@ -966,40 +813,6 @@
         "Prix_TND": 0,
         "verified": false,
         "Zone": "Al Hadaek"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.6142829,
-          36.3941172
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Barberous",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3M9WMRKAMJA78XG6J9C",
-        "Zone": "Hammamet Est"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.6495988,
-          36.4035184
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Private Beach - La Badira",
-        "Catégorie": "Curiosité",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3MRH7KSQF8XFP83MB62",
-        "Zone": "Hammamet Nord"
       }
     },
     {
@@ -1107,57 +920,6 @@
         "Prix_TND": 0,
         "verified": false,
         "Zone": "Hammamet Est"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.7182003,
-          36.4403641
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "الموقع الاثري نيابوليس",
-        "Catégorie": "Site archéologique",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3VAMYVQDM3DCJS2NBCT",
-        "Zone": "Neapolis"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.7169025,
-          36.4396639
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Néapolis",
-        "Catégorie": "Site archéologique",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3VTRMFEZ5X2QAM11NA7",
-        "Zone": "Neapolis"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.7175027,
-          36.438867
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Néapolis",
-        "Catégorie": "Site archéologique",
-        "candidate": true,
-        "HW_ID": "HW-01KVGFQ3W78C8C226WZC533X4X",
-        "Zone": "Neapolis"
       }
     },
     {
