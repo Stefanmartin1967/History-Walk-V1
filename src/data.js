@@ -665,7 +665,7 @@ export async function commitPendingPoiIfNeeded(poiId) {
     delete feature.properties._pending;
 
     await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
-    await saveAppState('lastGeoJSON', {
+    await saveAppState(`lastGeoJSON_${state.currentMapId}`, {
         type: 'FeatureCollection',
         features: state.loadedFeatures
     });

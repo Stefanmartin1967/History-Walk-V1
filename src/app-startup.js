@@ -3,7 +3,7 @@ import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCirc
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
-import { getAppState, saveAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
+import { getAppState, saveAppState, deleteAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
 import { isMobileView } from './mobile-state.js';
@@ -200,11 +200,16 @@ async function loadRejectedForActive(mapId, dest) {
 // local, mock de test, proxy qui le strippe) ou différent → on écrit comme avant
 // (sûr). L'etag vit dans le même store appState que la copie : vider la base
 // invalide les deux ensemble.
+//
+// Cache PAR DESTINATION (lastGeoJSON_<mapId> / lastGeoJSON_etag_<mapId>), aligné sur
+// lastZones_/lastRejected_ : plus de slot global unique. Chaque destination (publiée
+// OU brouillon) a son propre cache offline → un brouillon en curation (Hammamet) ne
+// peut plus écraser celui de la dest publiée par défaut.
 async function saveGeoJSONBackup(mapId, data, etag) {
     const key = etag ? `${mapId}|${etag}` : null;
-    if (key && (await getAppState('lastGeoJSON_etag')) === key) return;
-    await saveAppState('lastGeoJSON', data);
-    await saveAppState('lastGeoJSON_etag', key);
+    if (key && (await getAppState(`lastGeoJSON_etag_${mapId}`)) === key) return;
+    await saveAppState(`lastGeoJSON_${mapId}`, data);
+    await saveAppState(`lastGeoJSON_etag_${mapId}`, key);
 }
 
 export async function loadPoiCategoriesConfig() {
@@ -301,6 +306,12 @@ export async function loadAndInitializeMap() {
     let geojsonFromCache = false;  // true si geojsonData VIENT de lastGeoJSON → ne pas le réécrire
     const activeDest = state.destinations?.maps?.[activeMapId];
 
+    // Legacy : avant le cache par-destination (v3.7.328), le geojson offline vivait
+    // dans un slot GLOBAL unique. Purge one-shot best-effort de ces clés orphelines
+    // (plus aucun lecteur) pour ne pas laisser ~1,2 Mo morts dans l'IndexedDB.
+    deleteAppState('lastGeoJSON').catch(() => {});
+    deleteAppState('lastGeoJSON_etag').catch(() => {});
+
     if (DOM.loaderOverlay) DOM.loaderOverlay.classList.remove('is-hidden');
 
     // MODÈLE C : toute destination (publiée OU brouillon) vit sur GitHub → on fetch
@@ -333,11 +344,13 @@ export async function loadAndInitializeMap() {
             // hors-ligne n'est PAS écrit pour un brouillon (cf. saveGeoJSONBackup gardé).
             geojsonEtag = adminDraft ? null : (resp.headers?.get?.('etag') || null);
         } catch(e) {
-            // Fallback offline
-            const lastMapId = await getAppState('lastMapId');
-            const lastGeoJSON = await getAppState('lastGeoJSON');
-            if (lastMapId === activeMapId && lastGeoJSON) {
-                geojsonData = lastGeoJSON;
+            // Fallback offline : on relit le cache PAR DESTINATION (lastGeoJSON_<mapId>).
+            // La clé encode déjà la destination → plus besoin de comparer lastMapId.
+            // Un BROUILLON (Hammamet en curation) boote ainsi hors-ligne en mode admin,
+            // indispensable pour le test terrain (réseau mobile instable).
+            const cached = await getAppState(`lastGeoJSON_${activeMapId}`);
+            if (cached) {
+                geojsonData = cached;
                 geojsonFromCache = true;
                 console.warn("Chargement hors-ligne (fallback)");
             } else {
@@ -362,11 +375,13 @@ export async function loadAndInitializeMap() {
     setCurrentMap(activeMapId);
     updateAppTitle(activeMapId);
     await saveAppState('lastMapId', activeMapId);
-    // Cache hors-ligne (desktop, slot global unique) : seulement pour une dest
-    // PUBLIÉE. Un BROUILLON (geojson lu en RAW, parfois vide en cours de curation)
-    // ne doit pas écraser le cache offline de la dest publiée par défaut.
-    const isDraftActive = !!activeDest && activeDest.status !== 'published';
-    if (!isMobileView() && !geojsonFromCache && !isDraftActive) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag);
+    // Cache hors-ligne PAR DESTINATION : écrit AUSSI pour les BROUILLONS (Hammamet en
+    // curation) afin qu'ils bootent hors-ligne en admin. La clé par-destination
+    // (lastGeoJSON_<mapId>) évite tout écrasement croisé — plus de slot global.
+    // Garde « features non vide » : on ne fige pas un geojson vide/partiel lu en RAW
+    // pendant la curation (sinon un boot hors-ligne ouvrirait une carte vide).
+    const hasFeatures = Array.isArray(geojsonData?.features) && geojsonData.features.length > 0;
+    if (!isMobileView() && !geojsonFromCache && hasFeatures) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag);
 
     // 4. Chargement User Data & Circuits (Smart Merge)
     try {
@@ -468,7 +483,13 @@ export async function loadAndInitializeMap() {
         // --- MERGE CUSTOM POIS (MOBILE) ---
         const customPois = await getAppState(`customPois_${activeMapId}`) || [];
         if (customPois.length > 0) {
-            setLoadedFeatures([...state.loadedFeatures, ...customPois]);
+            // Dédup par ID : le cache offline (lastGeoJSON_<mapId>) peut DÉJÀ contenir
+            // des POIs custom (les chemins d'édition y persistent loadedFeatures entier),
+            // donc on ne ré-ajoute que les customs absents — sinon doublons de marqueurs
+            // au boot hors-ligne. (Le boot desktop déduplique déjà via Map, cf. data.js.)
+            const existingIds = new Set(state.loadedFeatures.map(getPoiId));
+            const freshCustoms = customPois.filter(f => !existingIds.has(getPoiId(f)));
+            setLoadedFeatures([...state.loadedFeatures, ...freshCustoms]);
             setCustomFeatures(customPois);
         }
 
@@ -481,7 +502,7 @@ export async function loadAndInitializeMap() {
         });
 
         // Compteur planifié calculé à la volée par computePlanifieCounter (data.js) — plus de recalc à faire ici
-        if (!geojsonFromCache && !isDraftActive) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag); // Mobile cache specific (pas pour un brouillon)
+        if (!geojsonFromCache && hasFeatures) await saveGeoJSONBackup(activeMapId, geojsonData, geojsonEtag); // Mobile : cache par-destination (brouillons inclus, cf. plus haut)
         switchMobileView('circuits');
     } else {
         // CORRECTION: On doit aussi peupler loadedFeatures sur Desktop

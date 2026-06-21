@@ -84,7 +84,7 @@ export async function deleteLocalDraftDestination(id) {
         await saveAppState('draftDestinations', drafts);
     }
     // 2. Clés appState dédiées à cette carte.
-    for (const key of [`draftGeoJSON_${id}`, `draftZones_${id}`, `customPois_${id}`, `lastZones_${id}`, `lastZones_etag_${id}`]) {
+    for (const key of [`draftGeoJSON_${id}`, `draftZones_${id}`, `customPois_${id}`, `lastGeoJSON_${id}`, `lastGeoJSON_etag_${id}`, `lastZones_${id}`, `lastZones_etag_${id}`]) {
         try { await deleteAppState(key); } catch (e) { /* best-effort */ }
     }
     // 3. Toutes les données IDB de la carte (poiUserData, savedCircuits, poiPhotos, osmNearestWay).

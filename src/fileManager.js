@@ -125,7 +125,7 @@ export function handleFileLoad(event) {
                     setLoadedFeatures(json.features || []);
                     setCurrentMap(mapName);
                     await saveAppState('lastMapId', mapName);
-                    await saveAppState('lastGeoJSON', json);
+                    await saveAppState(`lastGeoJSON_${mapName}`, json);
                     eventBus.emit('mobile:switch-view', 'circuits');
                 } else {
                     // Desktop: Rendu Carte

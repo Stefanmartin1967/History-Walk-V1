@@ -46,6 +46,7 @@ describe('deleteLocalDraftDestination — suppression brouillon local (Option A)
         const deleted = deleteAppState.mock.calls.map((c) => c[0]);
         expect(deleted).toEqual(expect.arrayContaining([
             'draftGeoJSON_hammamet', 'draftZones_hammamet', 'customPois_hammamet',
+            'lastGeoJSON_hammamet', 'lastGeoJSON_etag_hammamet',
             'lastZones_hammamet', 'lastZones_etag_hammamet',
         ]));
     });

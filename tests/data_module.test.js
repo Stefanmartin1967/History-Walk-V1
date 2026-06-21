@@ -543,7 +543,7 @@ describe('commitPendingPoiIfNeeded', () => {
 
         expect(f.properties._pending).toBeUndefined();
         expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', state.customFeatures);
-        expect(saveAppState).toHaveBeenCalledWith('lastGeoJSON', expect.objectContaining({
+        expect(saveAppState).toHaveBeenCalledWith('lastGeoJSON_djerba', expect.objectContaining({
             type: 'FeatureCollection',
             features: expect.arrayContaining([f])
         }));
