@@ -7,6 +7,13 @@ import {
     loadOfficialCircuits,
 } from '../src/app-startup.js';
 
+// IndexedDB indispo en jsdom : on mocke le store appState (cache offline de la config).
+vi.mock('../src/database.js', () => ({
+    getAppState: vi.fn(async () => null),
+    saveAppState: vi.fn(async () => {}),
+}));
+import { getAppState, saveAppState } from '../src/database.js';
+
 // Helpers de réponse fetch
 const okJson = (data) => ({ ok: true, json: async () => data });
 const notOk = (status = 404) => ({ ok: false, status, json: async () => ({}) });
@@ -16,6 +23,8 @@ beforeEach(() => {
     // Silence les console.error/warn défensifs des loaders (bruit attendu).
     vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(console, 'warn').mockImplementation(() => {});
+    getAppState.mockReset(); getAppState.mockResolvedValue(null);
+    saveAppState.mockReset(); saveAppState.mockResolvedValue(undefined);
 });
 
 afterEach(() => {
@@ -54,6 +63,31 @@ describe('loadDestinationsConfig', () => {
         global.fetch = vi.fn(async () => badJson());
         await expect(loadDestinationsConfig()).resolves.toBeUndefined();
         expect(state.destinations.activeMapId).toBe('sentinelle3');
+    });
+
+    it('config valide → persiste lastDestinations (copie de secours hors-ligne)', async () => {
+        const cfg = { activeMapId: 'testdest', maps: { testdest: { name: 'Test' } } };
+        global.fetch = vi.fn(async () => okJson(cfg));
+        await loadDestinationsConfig();
+        expect(saveAppState).toHaveBeenCalledWith('lastDestinations', cfg);
+    });
+
+    it('fetch échoue + cache présent → fallback lastDestinations (boot hors-ligne à froid)', async () => {
+        setDestinations({ activeMapId: 'djerba', maps: {} });
+        const cached = { activeMapId: 'hammamet', maps: { hammamet: { name: 'Hammamet', status: 'published' } } };
+        getAppState.mockResolvedValueOnce(cached); // 1er appel = le fallback
+        global.fetch = vi.fn(async () => { throw new Error('offline'); });
+        await loadDestinationsConfig();
+        expect(state.destinations.activeMapId).toBe('hammamet'); // la dest active survit hors-ligne
+        expect(saveAppState).not.toHaveBeenCalled(); // ne ré-écrit pas le cache avec lui-même
+    });
+
+    it('fetch échoue + cache absent → état inchangé (1er boot hors-ligne)', async () => {
+        setDestinations({ activeMapId: 'sentinelle4', maps: {} });
+        getAppState.mockResolvedValue(null);
+        global.fetch = vi.fn(async () => { throw new Error('offline'); });
+        await loadDestinationsConfig();
+        expect(state.destinations.activeMapId).toBe('sentinelle4');
     });
 });
 
