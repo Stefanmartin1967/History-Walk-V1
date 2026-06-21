@@ -899,10 +899,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Les Oranges",
-        "Catégorie": "A définir",
-        "candidate": true,
+        "Nom du site FR": "Monument du Methred",
+        "Catégorie": "Curiosité",
         "HW_ID": "HW-01KVGFQ3JM9FT40WXYAVT20VWJ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Neapolis"
       }
     },
@@ -1053,10 +1056,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "جامع الكونية",
+        "Nom du site FR": "Mosquée Ettakwa",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3PBFPK8XJFAFZ1VH72K",
+        "Nom du site arabe": "جامع الكونية",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Neapolis"
       }
     },
@@ -1158,15 +1165,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.7193784,
-          36.440632
+          10.717871580554675,
+          36.44141441199846
         ]
       },
       "properties": {
-        "Nom du site FR": "Néapolis",
+        "Nom du site FR": "Site Archéologique de Néapolis",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3WPGNB2G41FKA7RB4V9",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "lat": 36.44141441199846,
+        "lng": 10.717871580554675,
         "Zone": "Neapolis"
       }
     },
@@ -1203,8 +1217,13 @@
       "properties": {
         "Nom du site FR": "Mosquée de Oued Souhil",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ3YXTXYHHWCZP75H0VXZ",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Neapolis"
       }
     },
@@ -1356,10 +1375,16 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "جامع أبو بكر الصديق",
+        "Nom du site FR": "Mosquée Abu Bakr al SiddiK",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ43928TZKJJCKGVM75CD",
+        "Nom du site arabe": "جامع أبو بكر الصديق",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Neapolis"
       }
     },
