@@ -202,7 +202,13 @@ export async function setDestinationPublished(id, onProgress = () => {}) {
 
     // Garde-fou candidat : mettre de côté les candidats non curés en local AVANT de
     // pousser le geojson public épuré (ils restent curables ensuite).
-    const candidates = (state.loadedFeatures || []).filter(isCandidate);
+    // Garde hiddenPoiIds (comme le filtre, data.js:435) : un candidat SUPPRIMÉ est masqué
+    // via hiddenPoiIds SANS être retiré de loadedFeatures (deletePoi). Sans ce garde, la
+    // mise de côté RESSUSCITE en local les candidats supprimés (ils reviendraient « à
+    // curer » au reload au lieu de disparaître avec la publication épurée).
+    const candidates = (state.loadedFeatures || []).filter(
+        (f) => isCandidate(f) && !(state.hiddenPoiIds || []).includes(getPoiId(f))
+    );
     if (candidates.length > 0) {
         onProgress('Mise de côté des lieux encore à curer…');
         const byId = new Map((state.customFeatures || []).map((f) => [getPoiId(f), f]));

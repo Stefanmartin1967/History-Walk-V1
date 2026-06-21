@@ -891,9 +891,14 @@ export function renderTab(tab, diffData, callbacks) {
                 // Même générateur que le push : le compte affiché = le compte publié.
                 // keepCandidates:false → seuls les lieux CURÉS comptent (candidats écartés).
                 const { generateMasterGeoJSONData } = await import('./admin-geojson.js');
-                const { isCandidate } = await import('./utils.js');
+                const { isCandidate, getPoiId } = await import('./utils.js');
                 const n = generateMasterGeoJSONData([], { keepCandidates: false })?.features?.length || 0;
-                const candCount = (state.loadedFeatures || []).filter(isCandidate).length;
+                // Garde hiddenPoiIds (comme le filtre, data.js:435) : un candidat SUPPRIMÉ
+                // (masqué via hiddenPoiIds par deletePoi sans être retiré de loadedFeatures)
+                // ne doit PAS compter dans « lieux à curer ».
+                const candCount = (state.loadedFeatures || []).filter(
+                    (f) => isCandidate(f) && !(state.hiddenPoiIds || []).includes(getPoiId(f))
+                ).length;
                 if (n === 0) {
                     showToast('Aucun lieu curé à publier — valide au moins un lieu (« Valider ») d\'abord.', 'warning', 4500);
                     return;
