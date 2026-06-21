@@ -2079,6 +2079,33 @@
         ],
         "Zone": "Neapolis"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.72379050109433,
+          36.455262568740544
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Achour",
+        "Nom du site arabe": "مسجد سيدي عاشور",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVNEQKR0JGY6XKK3BXM6SMSD",
+        "accessPoint": [
+          10.7239349,
+          36.4554487
+        ],
+        "Zone": "Bir Challouf"
+      }
     }
   ]
 }
