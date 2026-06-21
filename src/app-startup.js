@@ -46,10 +46,12 @@ export async function loadOfficialCircuits() {
     const baseUrl = import.meta.env?.BASE_URL || './';
     const circuitsUrl = `${baseUrl}circuits/${mapId}.json`;
 
-    // Le SW gère NetworkFirst avec fallback cache (timeout 8s) — pas besoin de double-fetch
+    // SW NetworkFirst 'app-data' + fallback cache (circuits/*.json est exclu du
+    // précache, cf. vite.config.js globIgnores — même raison que destinations.json).
+    // cache:'reload' force la fraîcheur si le SW est contourné.
     let officials = [];
     try {
-        const response = await fetchWithTimeout(circuitsUrl);
+        const response = await fetchWithTimeout(circuitsUrl, { cache: 'reload' });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         officials = await response.json();
     } catch (e) {
@@ -91,10 +93,14 @@ export async function loadDestinationsConfig() {
     const baseUrl = import.meta.env?.BASE_URL || './';
     const configUrl = baseUrl + 'destinations.json';
 
-    // Le SW gère NetworkFirst avec fallback cache (timeout 8s) — pas besoin de double-fetch
+    // SW NetworkFirst 'app-data' + fallback cache (destinations.json est exclu du
+    // précache, cf. vite.config.js globIgnores). cache:'reload' = ceinture-bretelles :
+    // si le SW est vidé/contourné, on force une revalidation réseau (sinon le cache
+    // HTTP navigateur peut resservir l'ancienne config). Sans danger hors-ligne :
+    // n'affecte que le cache HTTP, pas la Cache Storage du SW.
     let config = null;
     try {
-        const response = await fetchWithTimeout(configUrl);
+        const response = await fetchWithTimeout(configUrl, { cache: 'reload' });
         if (response.ok) {
             config = await response.json();
         }

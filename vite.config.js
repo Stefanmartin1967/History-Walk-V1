@@ -30,7 +30,15 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webp}'],
         // og-image.png (720 KB) : utilisée par les scrapers sociaux, inutile hors-ligne.
         // screenshots/ : fiche d'installation PWA uniquement, inutile hors-ligne.
-        globIgnores: ['**/og-image.png', '**/screenshots/**'],
+        //
+        // destinations.json + circuits/*.json : EXCLUS du précache. Étant des .json,
+        // ils étaient happés par globPatterns → précachés (CacheFirst figé à la build),
+        // et le précache GAGNE sur le NetworkFirst ci-dessous → la config restait
+        // PÉRIMÉE jusqu'à activation d'un nouveau SW (bug observé : nouvelle vue
+        // d'ouverture/devise non vues après déploiement). En les ignorant, ils tombent
+        // sur le NetworkFirst 'app-data' (même traitement que .geojson) → frais à chaque
+        // boot online, fallback cache hors-ligne.
+        globIgnores: ['**/og-image.png', '**/screenshots/**', '**/destinations.json', '**/circuits/*.json'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Les .gpx (partage/téléchargement de circuit) ne doivent PAS être happés
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
