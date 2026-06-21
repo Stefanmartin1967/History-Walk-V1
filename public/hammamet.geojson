@@ -40,7 +40,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Sidi Ejdidi"
+        "Zone": "Sidi Ejdidi",
+        "accessPoint": [
+          10.4317594,
+          36.3788063
+        ]
       }
     },
     {
@@ -103,7 +107,11 @@
         "Source": "Vérifier sur place ce qui se trouve là",
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Sidi Ejdidi"
+        "Zone": "Sidi Ejdidi",
+        "accessPoint": [
+          10.3964377,
+          36.3890376
+        ]
       }
     },
     {
@@ -126,7 +134,11 @@
         "verified": false,
         "lat": 36.34466344164818,
         "lng": 10.300403277816873,
-        "Zone": "Bou Achir"
+        "Zone": "Bou Achir",
+        "accessPoint": [
+          10.30107,
+          36.3443066
+        ]
       }
     },
     {
@@ -149,7 +161,11 @@
         "verified": false,
         "lat": 36.345287852540324,
         "lng": 10.30102438743569,
-        "Zone": "Bou Achir"
+        "Zone": "Bou Achir",
+        "accessPoint": [
+          10.3012683,
+          36.345365
+        ]
       }
     },
     {
@@ -172,7 +188,11 @@
         "verified": false,
         "lat": 36.34486656381335,
         "lng": 10.30150773213943,
-        "Zone": "Bou Achir"
+        "Zone": "Bou Achir",
+        "accessPoint": [
+          10.30135,
+          36.3449283
+        ]
       }
     },
     {
@@ -193,7 +213,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Manaret El Hammamet"
+        "Zone": "Manaret El Hammamet",
+        "accessPoint": [
+          10.5347549,
+          36.3687431
+        ]
       }
     },
     {
@@ -214,7 +238,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Manaret El Hammamet"
+        "Zone": "Manaret El Hammamet",
+        "accessPoint": [
+          10.5355516,
+          36.3683592
+        ]
       }
     },
     {
@@ -238,7 +266,11 @@
         "introuvableCarte": false,
         "lat": 36.4764711011162,
         "lng": 10.51340773701668,
-        "Zone": "Latrach"
+        "Zone": "Latrach",
+        "accessPoint": [
+          10.5132603,
+          36.4761892
+        ]
       }
     },
     {
@@ -262,7 +294,11 @@
         "introuvableCarte": false,
         "lat": 36.393972964748016,
         "lng": 10.560991466045381,
-        "Zone": "Manaret El Hammamet"
+        "Zone": "Manaret El Hammamet",
+        "accessPoint": [
+          10.5607766,
+          36.3944855
+        ]
       }
     },
     {
@@ -294,7 +330,11 @@
         "Facebook": "",
         "introuvableCarte": false,
         "lat": 36.33789165905702,
-        "lng": 10.337114185094835
+        "lng": 10.337114185094835,
+        "accessPoint": [
+          10.3368586,
+          36.3381052
+        ]
       }
     },
     {
@@ -317,7 +357,11 @@
         "verified": false,
         "lat": 36.34518064982155,
         "lng": 10.300564392717614,
-        "Zone": "Bou Achir"
+        "Zone": "Bou Achir",
+        "accessPoint": [
+          10.3012883,
+          36.3452517
+        ]
       }
     },
     {
@@ -359,7 +403,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Al Hadaek"
+        "Zone": "Al Hadaek",
+        "accessPoint": [
+          10.7361915,
+          36.4504455
+        ]
       }
     },
     {
@@ -381,7 +429,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "El Asouak"
+        "Zone": "El Asouak",
+        "accessPoint": [
+          10.738497,
+          36.4555703
+        ]
       }
     },
     {
@@ -403,7 +455,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Beni Khiar"
+        "Zone": "Beni Khiar",
+        "accessPoint": [
+          10.7817191,
+          36.4681639
+        ]
       }
     },
     {
@@ -425,7 +481,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Beni Khiar"
+        "Zone": "Beni Khiar",
+        "accessPoint": [
+          10.7747829,
+          36.4633649
+        ]
       }
     },
     {
@@ -447,7 +507,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Beni Khiar"
+        "Zone": "Beni Khiar",
+        "accessPoint": [
+          10.7807226,
+          36.4670166
+        ]
       }
     },
     {
@@ -471,7 +535,11 @@
         "introuvableCarte": false,
         "lat": 36.4689446968409,
         "lng": 10.785095393657686,
-        "Zone": "Beni Khiar"
+        "Zone": "Beni Khiar",
+        "accessPoint": [
+          10.7850122,
+          36.4688056
+        ]
       }
     },
     {
@@ -494,7 +562,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Beni Khiar"
+        "Zone": "Beni Khiar",
+        "accessPoint": [
+          10.7879992,
+          36.4561193
+        ]
       }
     },
     {
@@ -516,7 +588,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Hammamet Est"
+        "Zone": "Hammamet Est",
+        "accessPoint": [
+          10.6136502,
+          36.3945153
+        ]
       }
     },
     {
@@ -537,7 +613,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Hammamet Est"
+        "Zone": "Hammamet Est",
+        "accessPoint": [
+          10.6126604,
+          36.3943858
+        ]
       }
     },
     {
@@ -556,7 +636,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Hammamet Est"
+        "Zone": "Hammamet Est",
+        "accessPoint": [
+          10.6118856,
+          36.3947982
+        ]
       }
     },
     {
@@ -597,7 +681,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Hammamet Est"
+        "Zone": "Hammamet Est",
+        "accessPoint": [
+          10.6173246,
+          36.4053158
+        ]
       }
     },
     {
@@ -621,7 +709,11 @@
         "introuvableCarte": false,
         "lat": 36.410253700358936,
         "lng": 10.609862549146108,
-        "Zone": "Hammamet Nord"
+        "Zone": "Hammamet Nord",
+        "accessPoint": [
+          10.6098372,
+          36.4100898
+        ]
       }
     },
     {
@@ -643,7 +735,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Hammamet Est"
+        "Zone": "Hammamet Est",
+        "accessPoint": [
+          10.6206371,
+          36.4016308
+        ]
       }
     },
     {
@@ -662,7 +758,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Hammamet Est"
+        "Zone": "Hammamet Est",
+        "accessPoint": [
+          10.6145874,
+          36.3951248
+        ]
       }
     },
     {
@@ -714,7 +814,11 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "accessPoint": [
+          10.7031595,
+          36.432377
+        ]
       }
     },
     {
@@ -812,7 +916,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Al Hadaek"
+        "Zone": "Al Hadaek",
+        "accessPoint": [
+          10.7424469,
+          36.4575572
+        ]
       }
     },
     {
@@ -834,7 +942,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Dar Chaabane"
+        "Zone": "Dar Chaabane",
+        "accessPoint": [
+          10.7489262,
+          36.465992
+        ]
       }
     },
     {
@@ -856,7 +968,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Dar Chaabane"
+        "Zone": "Dar Chaabane",
+        "accessPoint": [
+          10.7519101,
+          36.4657022
+        ]
       }
     },
     {
@@ -877,7 +993,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Neapolis"
+        "Zone": "Neapolis",
+        "accessPoint": [
+          10.7314811,
+          36.4496079
+        ]
       }
     },
     {
@@ -899,7 +1019,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "El Asouak"
+        "Zone": "El Asouak",
+        "accessPoint": [
+          10.7327566,
+          36.4560333
+        ]
       }
     },
     {
@@ -964,7 +1088,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Dar Chaabane"
+        "Zone": "Dar Chaabane",
+        "accessPoint": [
+          10.7474906,
+          36.4598758
+        ]
       }
     },
     {
@@ -986,7 +1114,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Neapolis"
+        "Zone": "Neapolis",
+        "accessPoint": [
+          10.7192511,
+          36.4467106
+        ]
       }
     },
     {
@@ -1008,7 +1140,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "El Asouak"
+        "Zone": "El Asouak",
+        "accessPoint": [
+          10.7340042,
+          36.4574179
+        ]
       }
     },
     {
@@ -1030,7 +1166,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "El Asouak"
+        "Zone": "El Asouak",
+        "accessPoint": [
+          10.735181,
+          36.4542144
+        ]
       }
     },
     {
@@ -1059,7 +1199,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Al Hadaek"
+        "Zone": "Al Hadaek",
+        "accessPoint": [
+          10.7387134,
+          36.456627
+        ]
       }
     },
     {
@@ -1082,7 +1226,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Neapolis"
+        "Zone": "Neapolis",
+        "accessPoint": [
+          10.7115385,
+          36.4385739
+        ]
       }
     },
     {
@@ -1104,7 +1252,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "El Asouak"
+        "Zone": "El Asouak",
+        "accessPoint": [
+          10.7366574,
+          36.456841
+        ]
       }
     },
     {
@@ -1124,7 +1276,11 @@
         "Prix_TND": 0,
         "verified": false,
         "Source": "Pas de trace sur Maps",
-        "Zone": "Al Hadaek"
+        "Zone": "Al Hadaek",
+        "accessPoint": [
+          10.7452465,
+          36.4510333
+        ]
       }
     },
     {
@@ -1147,7 +1303,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Neapolis"
+        "Zone": "Neapolis",
+        "accessPoint": [
+          10.6909164,
+          36.4464657
+        ]
       }
     },
     {
@@ -1168,7 +1328,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "El Asouak"
+        "Zone": "El Asouak",
+        "accessPoint": [
+          10.7371107,
+          36.4581847
+        ]
       }
     },
     {
@@ -1190,7 +1354,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "El Asouak"
+        "Zone": "El Asouak",
+        "accessPoint": [
+          10.7361579,
+          36.4558381
+        ]
       }
     },
     {
@@ -1210,7 +1378,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": true,
-        "Zone": "Beni Khiar"
+        "Zone": "Beni Khiar",
+        "accessPoint": [
+          10.7814408,
+          36.4698754
+        ]
       }
     },
     {
@@ -1232,7 +1404,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Beni Khiar"
+        "Zone": "Beni Khiar",
+        "accessPoint": [
+          10.7798315,
+          36.468207
+        ]
       }
     },
     {
@@ -1254,7 +1430,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Hammamet Est"
+        "Zone": "Hammamet Est",
+        "accessPoint": [
+          10.615267,
+          36.3958109
+        ]
       }
     },
     {
@@ -1277,7 +1457,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Hammamet Est"
+        "Zone": "Hammamet Est",
+        "accessPoint": [
+          10.6173702,
+          36.3948182
+        ]
       }
     },
     {
@@ -1298,7 +1482,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "El Mrezga"
+        "Zone": "El Mrezga",
+        "accessPoint": [
+          10.6720765,
+          36.4281758
+        ]
       }
     },
     {
@@ -1320,6 +1508,10 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
+        "accessPoint": [
+          10.6553871,
+          36.418162
+        ],
         "Zone": "El Mrezga"
       }
     },
@@ -1344,7 +1536,11 @@
         "introuvableCarte": false,
         "lat": 36.40846430936416,
         "lng": 10.632906854152681,
-        "Zone": "Hammamet Nord"
+        "Zone": "Hammamet Nord",
+        "accessPoint": [
+          10.6329766,
+          36.408303
+        ]
       }
     },
     {
@@ -1365,7 +1561,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Dar Chaabane"
+        "Zone": "Dar Chaabane",
+        "accessPoint": [
+          10.7481439,
+          36.4665353
+        ]
       }
     },
     {
@@ -1388,7 +1588,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Beni Khiar"
+        "Zone": "Beni Khiar",
+        "accessPoint": [
+          10.7902729,
+          36.4730211
+        ]
       }
     },
     {
@@ -1430,7 +1634,11 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "Zone": "Dar Chaabane"
+        "Zone": "Dar Chaabane",
+        "accessPoint": [
+          10.748389,
+          36.4675011
+        ]
       }
     },
     {
@@ -1471,7 +1679,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Hammamet Nord"
+        "Zone": "Hammamet Nord",
+        "accessPoint": [
+          10.6475329,
+          36.4530152
+        ]
       }
     },
     {
@@ -1492,7 +1704,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Hammamet Nord"
+        "Zone": "Hammamet Nord",
+        "accessPoint": [
+          10.6476241,
+          36.452739
+        ]
       }
     },
     {
@@ -1512,7 +1728,11 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Hammamet Nord"
+        "Zone": "Hammamet Nord",
+        "accessPoint": [
+          10.6489652,
+          36.4508013
+        ]
       }
     },
     {
@@ -1867,6 +2087,84 @@
           36.4554487
         ],
         "Zone": "Bir Challouf"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.483274566515178,
+          36.529457621213325
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ex-Chapelle",
+        "Catégorie": "Curiosité",
+        "description": "Ex-Chapelle sur Maps",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVNNX4R614G7RT3DXQK5P33H",
+        "accessPoint": [
+          10.484808683395388,
+          36.527294814546245
+        ],
+        "lat": 36.529457621213325,
+        "lng": 10.483274566515178,
+        "Zone": "Ain Tebournok"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.49148738384247,
+          36.533223960178226
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Barrage Masri",
+        "Catégorie": "Curiosité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVNPBQMC7GT5407MR2H8DRJR",
+        "accessPoint": [
+          10.4917071,
+          36.5338309
+        ],
+        "Zone": "Ain Tebournok"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.537887961607131,
+          36.37906442651327
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Bilal",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "description": "Inaugurée en mars 2024",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVNWAYW90WTFD6HTC2KDE6AB",
+        "accessPoint": [
+          10.5381162,
+          36.3789434
+        ],
+        "Zone": "Manaret El Hammamet"
       }
     }
   ]
