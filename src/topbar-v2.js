@@ -10,6 +10,7 @@
 
 import { state } from './state.js';
 import { eventBus } from './events.js';
+import { switchActiveDestination } from './destination-switch.js';
 import { toggleFilterPanel } from './filter-panel.js';
 import { showWelcomeAgain } from './welcome.js';
 import { setTheme, getCurrentTheme } from './theme.js';
@@ -233,13 +234,9 @@ export function renderDestinationMenu(destinations, activeMapId) {
                 setDestMenuOpen(false);
                 return;
             }
-            // Synchronise le localStorage avant le reload → le DM, ouvert
-            // ensuite, prendra automatiquement la même destination active.
-            try { localStorage.setItem('hw_active_dest', targetId); } catch (e) { /* ignore */ }
-            // Reload avec param ?map=… (consommé par loadAndInitializeMap au boot)
-            const url = new URL(window.location.href);
-            url.searchParams.set('map', targetId);
-            window.location.href = url.toString();
+            // Bascule partagée avec le sélecteur mobile (localStorage hw_active_dest
+            // — lu aussi par le DM — + reload ?map= consommé au boot).
+            switchActiveDestination(targetId);
         });
     });
 }

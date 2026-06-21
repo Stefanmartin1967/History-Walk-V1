@@ -16,6 +16,7 @@ import { startGenericScanner } from './sync.js';
 import { showStatisticsModal } from './statistics.js';
 import { showAdminLoginModal, logoutAdmin } from './admin.js';
 import { openControlCenter } from './admin-control-center.js';
+import { openDestinationSheet } from './mobile-destinations.js';
 import { openSaveModal } from './save-modal-ui.js';
 import { cycleTheme, getCurrentTheme, THEME_LABELS } from './theme.js';
 import { getCurrentPatrimonialLang, setPatrimonialLang } from './patrimonial-names.js';
@@ -32,6 +33,8 @@ function computeSubtitles() {
     const currentThemeLabel = THEME_LABELS[getCurrentTheme()] || 'Maritime';
     const currentNamesLabel = getCurrentPatrimonialLang() === 'ar' ? 'Arabe' : 'Français';
 
+    const activeDestName = state.destinations?.maps?.[state.currentMapId]?.name || state.currentMapId || '—';
+
     const plural = (n, s, p) => `${n} ${n === 1 || n === 0 ? s : p}`;
     return {
         carnet: `${plural(visitedPois, 'lieu visité', 'lieux visités')} · ${plural(completedCircuits, 'circuit complété', 'circuits complétés')}`,
@@ -42,6 +45,7 @@ function computeSubtitles() {
         names: `Actuel : ${currentNamesLabel}`,
         bmc: 'Soutenir le projet',
         cc: 'Tableau de bord opérations',
+        destSwitch: `Active : ${activeDestName}`,
     };
 }
 
@@ -86,6 +90,7 @@ function buildSections(subs) {
         sections.push({
             label: 'Outils admin',
             items: [
+                { id: 'mob-action-switch-dest', ico: 'map', label: 'Changer de destination', sub: subs.destSwitch },
                 { id: 'mob-action-admin-login', ico: 'log-out', label: 'Déconnexion Admin', variant: 'danger' },
                 { id: 'mob-action-admin-control-center', ico: 'layout-dashboard', label: 'Centre de Contrôle', sub: subs.cc, variant: 'brand-emph' },
             ],
@@ -191,6 +196,7 @@ export function renderMobileMenu() {
     });
 
     if (state.isAdmin) {
+        document.getElementById('mob-action-switch-dest')?.addEventListener('click', () => openDestinationSheet());
         document.getElementById('mob-action-admin-control-center')?.addEventListener('click', openControlCenter);
     }
 }
