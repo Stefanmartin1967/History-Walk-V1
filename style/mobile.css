@@ -220,7 +220,10 @@
    l'overlay + le shell (scrim, sheet, head, body, foot) + la grille
    Tri 2x2 + la liste Zone scrollable.
    ============================================================ */
-.filter-sheet-scrim {
+/* Shell bottom-sheet mobile. Classes historiques `.filter-sheet-*` + alias neutres
+   `.hw-sheet-*` (base reutilisable : selecteur de destination, etc.) sur LES MEMES
+   regles (zero duplication de styles, le filtre reste intact). */
+.filter-sheet-scrim, .hw-sheet-scrim {
     position: fixed;
     inset: 0;
     background: rgba(2, 12, 27, 0);
@@ -230,11 +233,11 @@
     align-items: flex-end;
     pointer-events: none;
 }
-.filter-sheet-scrim.is-open {
+.filter-sheet-scrim.is-open, .hw-sheet-scrim.is-open {
     background: rgba(2, 12, 27, 0.42);
     pointer-events: auto;
 }
-.filter-sheet {
+.filter-sheet, .hw-sheet {
     width: 100%;
     max-height: 88vh;
     background: var(--surface);
@@ -248,10 +251,10 @@
     overflow: hidden;
     padding-bottom: max(8px, env(safe-area-inset-bottom));
 }
-.filter-sheet-scrim.is-open .filter-sheet {
+.filter-sheet-scrim.is-open .filter-sheet, .hw-sheet-scrim.is-open .hw-sheet {
     transform: translateY(0);
 }
-.filter-sheet-handle {
+.filter-sheet-handle, .hw-sheet-handle {
     width: 40px;
     height: 4px;
     border-radius: 999px;
@@ -259,7 +262,7 @@
     margin: 8px auto 4px;
     flex-shrink: 0;
 }
-.filter-sheet-head {
+.filter-sheet-head, .hw-sheet-head {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -267,7 +270,7 @@
     border-bottom: 1px solid var(--surface-muted);
     flex-shrink: 0;
 }
-.filter-sheet-head .ttl {
+.filter-sheet-head .ttl, .hw-sheet-head .ttl {
     font-size: 14.5px;
     font-weight: 700;
     color: var(--ink);
@@ -276,7 +279,7 @@
     align-items: center;
     gap: 8px;
 }
-.filter-sheet-head .ttl svg { width: 15px; height: 15px; color: var(--ink-soft); }
+.filter-sheet-head .ttl svg, .hw-sheet-head .ttl svg { width: 15px; height: 15px; color: var(--ink-soft); }
 .filter-sheet-head .badge-n {
     background: var(--brand);
     color: #fff;
@@ -286,7 +289,7 @@
     border-radius: 999px;
     letter-spacing: 0.02em;
 }
-.filter-sheet-head .x {
+.filter-sheet-head .x, .hw-sheet-head .x {
     width: 32px;
     height: 32px;
     border-radius: 10px;
@@ -297,15 +300,47 @@
     display: grid;
     place-items: center;
 }
-.filter-sheet-head .x:hover { background: var(--surface-muted); color: var(--ink); }
-.filter-sheet-head .x svg { width: 16px; height: 16px; }
+.filter-sheet-head .x:hover, .hw-sheet-head .x:hover { background: var(--surface-muted); color: var(--ink); }
+.filter-sheet-head .x svg, .hw-sheet-head .x svg { width: 16px; height: 16px; }
 
-.filter-sheet-body {
+.filter-sheet-body, .hw-sheet-body {
     flex: 1 1 auto;
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
 }
+
+/* Lignes de destination dans la sheet (selecteur de destination mobile, admin). */
+.dest-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    border-bottom: 1px solid var(--surface-muted);
+}
+.dest-row:active { background: var(--surface-muted); }
+.dest-row.is-active { background: var(--surface-muted); }
+.dest-row-flag { font-size: 22px; line-height: 1; flex-shrink: 0; }
+.dest-row-info { flex: 1 1 auto; min-width: 0; }
+.dest-row-name { font-size: 15px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+.dest-row-sub { font-size: 12px; color: var(--ink-soft); margin-top: 1px; }
+.dest-row-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--brand);
+    border: 1px solid var(--brand);
+    border-radius: 999px;
+    padding: 1px 6px;
+}
+.dest-row-check { flex-shrink: 0; color: var(--brand); display: grid; place-items: center; }
+.dest-row-check svg { width: 18px; height: 18px; }
 
 .filter-sheet-foot {
     padding: 10px 14px;
