@@ -108,8 +108,27 @@ export async function loadDestinationsConfig() {
         console.error("[Startup] Erreur chargement destinations.json.", e);
     }
 
+    // Fallback hors-ligne : réseau coupé OU cache SW froid/évincé → on relit la
+    // dernière config connue en IndexedDB. Sans ce filet, config reste null → repli
+    // sur Djerba codé en dur (activeMapId par défaut) → une dest non-Djerba (Hammamet)
+    // ne boote PAS hors-ligne à froid. Miroir de lastZones_/lastGeoJSON_ (#893, qui
+    // couvrent le CONTENU) — ici on couvre la CONFIG, qui n'avait aucun filet.
+    let fromCache = false;
+    if (!config) {
+        try {
+            const cached = await getAppState('lastDestinations');
+            if (cached && cached.maps) {
+                config = cached;
+                fromCache = true;
+                console.warn('[Startup] destinations.json servi depuis le cache hors-ligne.');
+            }
+        } catch (e) { /* IDB indispo (mode privé, quota) → repli codé en dur, pas de crash boot */ }
+    }
+
     if (config) {
         setDestinations(config);
+        // Persiste la copie de secours hors-ligne (best-effort ; sauf si elle EN vient déjà).
+        if (!fromCache) { try { await saveAppState('lastDestinations', config); } catch (e) {} }
     }
 
     // MODÈLE C : pour l'ADMIN (token présent), relire destinations.json FRAIS via la
@@ -121,7 +140,10 @@ export async function loadDestinationsConfig() {
     if (token) {
         try {
             const fresh = await fetchDestinationsJson(token);
-            if (fresh && fresh.maps) setDestinations(fresh);
+            if (fresh && fresh.maps) {
+                setDestinations(fresh);
+                try { await saveAppState('lastDestinations', fresh); } catch (e) {} // version la plus fraîche → cache offline
+            }
         } catch (e) {
             console.warn('[Startup] Lecture fraîche de destinations.json (admin) échouée — repli Pages.', e);
         }
