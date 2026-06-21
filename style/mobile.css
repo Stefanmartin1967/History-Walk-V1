@@ -534,6 +534,47 @@
     letter-spacing: -0.01em;
     color: var(--ink);
 }
+/* Bug 3 — renommage inline du titre (consultation mobile, admin) : crayon + input. */
+.cc-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.cc-title-row .cc-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.cc-title-edit {
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    margin: 0 0 6px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    background: var(--surface-2, rgba(0, 0, 0, 0.05));
+    color: var(--ink);
+    cursor: pointer;
+}
+.cc-title-edit i { width: 16px; height: 16px; }
+.cc-title-edit:active { transform: scale(0.94); }
+.cc-title-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0 0 6px;
+    padding: 4px 8px;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--accent, #c8852a);
+    border-radius: 8px;
+}
 .cc-flag {
     font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     font-size: 10.5px;

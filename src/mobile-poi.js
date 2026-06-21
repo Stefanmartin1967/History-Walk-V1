@@ -214,6 +214,13 @@ function renderCircuitView(container, listToDisplay) {
                   : flag === 'official' ? 'OFFICIEL'
                   : '';
 
+    // Bug 3 (parité mobile) : renommage inline du titre en CONSULTATION, réservé à
+    // l'ADMIN (miroir strict du PC : `isCreate || isAdminConsult` → ici on n'a que la
+    // consultation, donc admin seul ; un user ne renomme pas un circuit chargé). La
+    // description reste NON éditable (PC = création seule, et le mobile n'a pas de
+    // création de circuit). Crayon explicite (pas de dblclic au doigt).
+    const canEditTitle = state.isAdmin && !!state.activeCircuitId;
+
     // Métadonnées eyebrow (zone, POIs, km)
     let zoneName = '';
     const firstPoi = listToDisplay[0] || state.currentCircuit[0];
@@ -302,7 +309,10 @@ function renderCircuitView(container, listToDisplay) {
                 ${denivHtml}
                 ${pagerHtml}
             </div>
-            <h1 class="cc-title">${escapeHtml(fullName)}</h1>
+            <div class="cc-title-row">
+                <h1 class="cc-title" dir="auto">${escapeHtml(fullName)}</h1>
+                ${canEditTitle ? `<button class="cc-title-edit" id="cc-title-edit-btn" type="button" aria-label="Renommer le circuit" title="Renommer le circuit"><i data-lucide="pencil"></i></button>` : ''}
+            </div>
             ${flagText ? `<span class="cc-flag" data-flag="${flag}"><span class="dot"></span>${flagText}</span>` : ''}
         </div>
         <div class="cc-desc">
@@ -390,6 +400,8 @@ function renderCircuitView(container, listToDisplay) {
         renderMobilePoiList(listToDisplay);
     });
 
+    document.getElementById('cc-title-edit-btn')?.addEventListener('click', () => enterMobileTitleEdit(listToDisplay));
+
     container.querySelectorAll('.cartel-step').forEach(step => {
         step.addEventListener('click', (e) => {
             e.preventDefault();
@@ -399,6 +411,48 @@ function renderCircuitView(container, listToDisplay) {
             if (index > -1) openDetailsPanel(index);
         });
     });
+}
+
+// Bug 3 — renommage inline du titre du circuit chargé (consultation mobile, admin).
+// Remplace le <h1.cc-title> par un input, valide à Entrée/blur via la fonction PC
+// éprouvée renameLoadedCircuit (officiel + perso, save + event), Échap annule. Un
+// re-render (renderMobilePoiList) restaure le <h1> ET met le header à jour (le titre
+// est affiché à deux endroits : .cc-title et .m-top-title).
+function enterMobileTitleEdit(listToDisplay) {
+    const h1 = document.querySelector('.cc-title');
+    if (!h1 || document.querySelector('.cc-title-input')) return; // absent ou déjà en édition
+
+    const current = h1.textContent;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = current;
+    input.className = 'cc-title-input';
+    input.setAttribute('aria-label', 'Renommer le circuit');
+    h1.replaceWith(input);
+    input.focus();
+    input.select();
+
+    let done = false;
+    const finish = async (cancel) => {
+        if (done) return; // Entrée puis blur ne doivent valider qu'une fois
+        done = true;
+        const val = cancel ? current : input.value.trim();
+        if (!cancel && val && val !== current && state.activeCircuitId) {
+            try {
+                const { renameLoadedCircuit } = await import('./ui-circuit-page-events.js');
+                await renameLoadedCircuit(state.activeCircuitId, val);
+            } catch (e) {
+                console.warn('[mobile] renommage du circuit échoué :', e);
+            }
+        }
+        renderMobilePoiList(listToDisplay); // restaure le h1 + header à jour
+    };
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); finish(false); }
+        else if (e.key === 'Escape') { e.preventDefault(); finish(true); }
+    });
+    input.addEventListener('blur', () => finish(false));
 }
 
 // ─── Entry point ─────────────────────────────────────────────────────────────

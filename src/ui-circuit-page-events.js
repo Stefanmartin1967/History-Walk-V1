@@ -281,7 +281,7 @@ function initTransportAccordion() {
 // dans la bonne liste (officiel ou perso) + IDB, puis rafraîchit la liste.
 // La trace réelle reste intacte (on ne passe pas par convertToDraft) → le CC
 // Admin détecte le changement de nom et peut le publier sans re-tracer.
-async function renameLoadedCircuit(id, name) {
+export async function renameLoadedCircuit(id, name) {
     const trimmed = (name || '').trim();
     if (!trimmed) return; // un circuit chargé garde toujours un nom
 
