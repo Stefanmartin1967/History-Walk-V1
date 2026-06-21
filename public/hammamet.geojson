@@ -221,8 +221,12 @@
       "properties": {
         "Nom du site FR": "Carthage Land",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ30YX61FPFG7D23W6SD2",
+        "description": "Parc d'attraction",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Manaret El Hammamet"
       }
     },
@@ -270,10 +274,14 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Les Elephants Carthage-Land",
+        "Nom du site FR": "Les éléphants d'Hannibal",
         "Catégorie": "Curiosité",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ32WHW3W2XWH40SF656C",
+        "description": "Statue d'éléphant",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Manaret El Hammamet"
       }
     },
@@ -306,15 +314,22 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.5616218,
-          36.3933267
+          10.560991466045381,
+          36.393972964748016
         ]
       },
       "properties": {
-        "Nom du site FR": "Pupput",
+        "Nom du site FR": "Site archéologique de Pupput",
         "Catégorie": "Site archéologique",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ34EMYGTZ4DNQSSQVB7D",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "lat": 36.393972964748016,
+        "lng": 10.560991466045381,
         "Zone": "Manaret El Hammamet"
       }
     },
@@ -777,16 +792,31 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.6990534,
-          36.4314469
+          10.703156590461731,
+          36.43215520793591
         ]
       },
       "properties": {
-        "Nom du site FR": "Sidi Mahrsi",
-        "Catégorie": "Curiosité",
-        "candidate": true,
+        "Nom du site FR": "Mausolée Sidi El-Mahersi",
+        "Catégorie": "Marabout",
         "HW_ID": "HW-01KVGFQ3GGCPS137899YWVCD0D",
-        "Zone": "Neapolis"
+        "Zone": "Neapolis",
+        "lat": 36.43215520793591,
+        "lng": 10.703156590461731,
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1261,10 +1291,16 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "جامع سيدي محرصي",
+        "Nom du site FR": "Mosquée Sidi Mahrsi",
         "Catégorie": "Mosquée",
-        "candidate": true,
         "HW_ID": "HW-01KVGFQ413626YMDH1NTYQ8PGA",
+        "Nom du site arabe": "جامع سيدي محرصي",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
         "Zone": "Neapolis"
       }
     },
@@ -1942,6 +1978,81 @@
           36.3842079
         ],
         "Zone": "Sidi Ejdidi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.504132375499873,
+          36.46604881999358
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée de Latrach",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVN5XERYQ7KVCHG82MXC43W1",
+        "accessPoint": [
+          10.5040173,
+          36.4659227
+        ],
+        "Zone": "Latrach"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.533293982045407,
+          36.367525710635114
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Medina de Yasmine",
+        "Catégorie": "Commerce",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVN7PXZFZ6ABAR3TDPWFXHWA",
+        "accessPoint": [
+          10.5322069,
+          36.367881
+        ],
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.729575008153917,
+          36.43974667992818
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Slimene",
+        "Catégorie": "Marabout",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVNC82G01FDDYVJBRMVMXGDE",
+        "accessPoint": [
+          10.7297374,
+          36.4399772
+        ],
+        "Zone": "Neapolis"
       }
     }
   ]
