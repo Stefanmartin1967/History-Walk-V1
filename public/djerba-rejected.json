@@ -16,5 +16,14 @@
     "lng": 10.7353823,
     "lat": 33.6770491,
     "rejectedAt": 1782110527287
+  },
+  "node/9843640696": {
+    "osm_ref": "node/9843640696",
+    "name": "Mosquée El Jorf",
+    "nameAr": "",
+    "category": "Mosquée",
+    "lng": 10.7323441,
+    "lat": 33.6965293,
+    "rejectedAt": 1782110536766
   }
 }
