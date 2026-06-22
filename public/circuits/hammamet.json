@@ -1,1 +1,95 @@
-[]
+[
+  {
+    "id": "HW-01KVR5Z72RDV6GXG0HVWMQRXN0",
+    "name": "Circuit de Site archéologique de Oued Rmel à Forum romain de Segermes",
+    "file": "hammamet/Circuit de Site archéologique de Oued Rmel à Forum romain de Segermes.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "7.3 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Bou Achir",
+    "poiIds": [
+      "HW-01KVJX8F5WV8YMQYGQMGB1FXR3",
+      "HW-01KVJX42GPNDA5JF6N93QAPN3E",
+      "HW-01KVJWASJ4294GEK77SY4W58GR",
+      "HW-01KVGFQ34WDBYQPB1FNNRPV87D",
+      "HW-01KVJT0ZR3FZ8D45Q5Q7NADJ5R",
+      "HW-01KVGFQ30A5P373CGBXAW7BKXQ",
+      "HW-01KVGFQ2ZNADD5V8AKC2NZE6VT",
+      "HW-01KVGFQ35CQNW52NKDQVSF2EEK",
+      "HW-01KVGFQ2ZY8QEFVDZ574MDYBG4"
+    ]
+  },
+  {
+    "id": "HW-01KVR6T565KS5Y9VS01WT0RZH7",
+    "name": "Circuit de SplashWorld AQI Venus Beach à Medina de Yasmine",
+    "file": "hammamet/Circuit de SplashWorld AQI Venus Beach à Medina de Yasmine.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "9.9 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Manaret El Hammamet",
+    "poiIds": [
+      "HW-01KVGHDV4WT8NHR74PM7F6ETVJ",
+      "HW-01KVNWAYW90WTFD6HTC2KDE6AB",
+      "HW-01KVGFQ32WHW3W2XWH40SF656C",
+      "HW-01KVGFQ30YX61FPFG7D23W6SD2",
+      "HW-01KVN7PXZFZ6ABAR3TDPWFXHWA"
+    ]
+  },
+  {
+    "id": "HW-01KVR7454BNBMRV9C3K445R50P",
+    "name": "Circuit de Vieux tank à Point de vue d'El Monchar",
+    "file": "hammamet/Circuit de Vieux tank à Point de vue d'El Monchar.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "4.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Sidi Ejdidi",
+    "poiIds": [
+      "HW-01KVN1C9GWSD43R6QM2QZSH1N0",
+      "HW-01KVN18SDPF4Z9RC5YNJ053V7E",
+      "HW-01KVGFQ2XWWX74M0WTYF31E0SB",
+      "HW-01KVGFQ2Y7MQQ87Z5024Q7M8D4",
+      "HW-01KVGFQ2YN61AY7XWF04GG32MN",
+      "HW-01KVGFQ2Z1CVZYFA9V3SAGE0KP"
+    ]
+  },
+  {
+    "id": "HW-01KVR7EJQWVCS6BQHD994HPP9D",
+    "name": "Circuit de Beb Haouara à Mosquée El Ihsen",
+    "file": "hammamet/Circuit de Beb Haouara à Mosquée El Ihsen.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "4.5 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Hammamet Est",
+    "poiIds": [
+      "HW-01KVGFQ3CCBFH9VAW1SB97FXFY",
+      "HW-01KVGFQ3QT4HFRMT2VMEVDY6E5",
+      "HW-01KVGFQ3B43K9GHMB6N5D7GARA",
+      "HW-01KVGFQ3APXTVNMK76TNBZZ6X5",
+      "HW-01KVGFQ45RSW4N393J2HFVXM15",
+      "HW-01KVGFQ46BBNBGGANVFVM9J1F9",
+      "HW-01KVGFQ3DMAJD4K6JDHG72KME3",
+      "HW-01KVGFQ3CS15CEBCJGKWHYMR2A",
+      "HW-01KVGFQ3D79PYBAV9KRMBDERY0"
+    ]
+  },
+  {
+    "id": "HW-01KVR7M4N0TF0ZZ22ZA0GKYVBH",
+    "name": "Circuit de Mausolée Sidi El-Mahersi à Mausolée Sidi Slimene",
+    "file": "hammamet/Circuit de Mausolée Sidi El-Mahersi à Mausolée Sidi Slimene.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "4.3 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Neapolis",
+    "poiIds": [
+      "HW-01KVGFQ3GGCPS137899YWVCD0D",
+      "HW-01KVGFQ413626YMDH1NTYQ8PGA",
+      "HW-01KVGFQ3WPGNB2G41FKA7RB4V9",
+      "HW-01KVNC82G01FDDYVJBRMVMXGDE"
+    ]
+  }
+]
