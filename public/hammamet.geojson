@@ -1907,7 +1907,15 @@
           10.3522137,
           36.3261652
         ],
-        "Zone": "Bou Achir"
+        "Zone": "Bou Achir",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -2164,6 +2172,28 @@
           10.5381162,
           36.3789434
         ],
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.515611171722414,
+          36.41670670855367
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Hamed",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVR6RWKAYHF6AF4N1C6RSRGC",
         "Zone": "Manaret El Hammamet"
       }
     }
