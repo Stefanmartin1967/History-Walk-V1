@@ -106,5 +106,30 @@
       "HW-01KVGJMWR9H0J9VTXNHX3HYCES",
       "HW-01KVTR7HS71J3ZBFZDVNDWGM1Q"
     ]
+  },
+  {
+    "id": "HW-01KVTS75A7GFYG8DDWD6QQ4WRW",
+    "name": "Circuit de Monument du Methred à Musée Néapolis",
+    "file": "hammamet/Circuit de Monument du Methred à Musée Néapolis.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "4.0 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Neapolis",
+    "poiIds": [
+      "HW-01KVGFQ3JM9FT40WXYAVT20VWJ",
+      "HW-01KVGFQ49NVVA7KPJ3WBDPJ96N",
+      "HW-01KVGFQ406S61R1QA7RX7ZS68H",
+      "HW-01KVGFQ3PTAC23FA49V207VC6X",
+      "HW-01KVGFQ3ZPC69A0X0CMT8WT154",
+      "HW-01KVGFQ43S0P7CYN5FXMD6BBTS",
+      "HW-01KVGFQ428QPZADR7X665AQG16",
+      "HW-01KVGFQ449NNV0D8ZS15168CYA",
+      "HW-01KVGFQ40MKT2Q398XDAHS4SYQ",
+      "HW-01KVGFQ37FS1Q4TP04CAR1X7QB",
+      "HW-01KVGFQ3GZ6PKCKP3VDJM6D1AK",
+      "HW-01KVGFQ3F2TCD7TN02JB7ZERX7",
+      "HW-01KVGFQ36KCAHEN8AJSS7WQSSV"
+    ]
   }
 ]
