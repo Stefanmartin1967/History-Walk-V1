@@ -91,5 +91,20 @@
       "HW-01KVGFQ3WPGNB2G41FKA7RB4V9",
       "HW-01KVNC82G01FDDYVJBRMVMXGDE"
     ]
+  },
+  {
+    "id": "HW-01KVTR93MNFGENQPQ3A8F5DY2P",
+    "name": "Circuit de Ksar Faouara à Mosquée des Sept Oueds",
+    "file": "hammamet/Circuit de Ksar Faouara à Mosquée des Sept Oueds.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "5.5 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Jbal Trif",
+    "poiIds": [
+      "HW-01KVTR3DFPKMQHEWBKBGSAHBX8",
+      "HW-01KVGJMWR9H0J9VTXNHX3HYCES",
+      "HW-01KVTR7HS71J3ZBFZDVNDWGM1Q"
+    ]
   }
 ]
