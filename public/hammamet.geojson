@@ -2196,6 +2196,53 @@
         "HW_ID": "HW-01KVR6RWKAYHF6AF4N1C6RSRGC",
         "Zone": "Manaret El Hammamet"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.43605735466924,
+          36.51676568027411
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ksar Faouara",
+        "Catégorie": "Fortification",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVTR3DFPKMQHEWBKBGSAHBX8",
+        "accessPoint": [
+          10.4358543,
+          36.5165917
+        ],
+        "Zone": "Jbal Trif"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.453616543906545,
+          36.5490664485716
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée des Sept Oueds",
+        "Nom du site arabe": "جامع سبعة وديان",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KVTR7HS71J3ZBFZDVNDWGM1Q",
+        "Zone": "Ain Tebournok"
+      }
     }
   ]
 }
