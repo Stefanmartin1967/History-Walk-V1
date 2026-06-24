@@ -46,6 +46,8 @@ let _hadFix = false;     // a-t-on déjà reçu au moins une position ?
 let _gpsErrStreak = 0;   // échecs GPS consécutifs après le 1er fix (audit R4)
 let _didInitialRecenter = false; // recentrage auto une seule fois (1er fix)
 let _visHandler = null;  // handler visibilitychange (ré-acquisition Wake Lock)
+let _followMode = true;  // mode-follow : la carte garde le point bleu en vue (désengagé au pan manuel, ré-engagé par « Recentrer »)
+let _dragHandler = null; // handler dragstart (désengage le mode-follow quand l'utilisateur pane à la main)
 
 // --- État POI / bottom sheet (PR3) ---
 let _poiLayer = null;        // L.layerGroup des marqueurs POI cliquables
@@ -353,6 +355,8 @@ function recenterOnGps() {
         showToast('Position pas encore disponible…', 'info', 2000);
         return;
     }
+    // Ré-engage le mode-follow (un pan manuel l'avait désengagé) + recentre.
+    _followMode = true;
     map.flyTo(_lastLatLng, Math.max(map.getZoom(), 16), { animate: true, duration: 0.5 });
 }
 
@@ -381,12 +385,22 @@ function onPosition(pos) {
     setGpsState('live');
     updatePuck(ll);
 
-    // Recentrage automatique UNE SEULE FOIS, au 1er fix : « voilà où tu es ».
-    // Ensuite, le point bouge mais la carte ne se déplace plus toute seule (la
-    // recentre reste à la demande, via le bouton) — pas de carte qui sautille.
+    // Recentrage automatique au 1er fix : « voilà où tu es » (zoom-in + flyTo).
     if (!_didInitialRecenter) {
         _didInitialRecenter = true;
         map.flyTo(ll, Math.max(map.getZoom(), 16), { animate: true, duration: 0.6 });
+        return;
+    }
+
+    // Mode-follow : la carte garde le point bleu en vue pendant la marche. Pour
+    // NE PAS avoir une « carte qui sautille » (raison du design initial), on ne
+    // recentre QUE lorsque le point quitte la zone centrale (~50 % du milieu de
+    // l'écran), par un panTo doux. Le pan manuel désengage `_followMode` (handler
+    // dragstart, posé dans startFollow) ; le bouton « Recentrer » le ré-engage.
+    // Suspendu tant qu'un sheet POI est ouvert (`!_sheetEl`) : sinon un fix GPS
+    // bougerait la carte sous le panneau (annulerait son recadrage en moitié haute).
+    if (_followMode && !_sheetEl && map.getBounds && !map.getBounds().pad(-0.25).contains(ll)) {
+        map.panTo(ll, { animate: true, duration: 0.5 });
     }
 }
 
@@ -515,6 +529,13 @@ export function startFollow() {
     _hadFix = false;
     _gpsErrStreak = 0;
     _didInitialRecenter = false;
+    // Mode-follow ON par défaut ; un pan manuel le désengage (regarder autour
+    // sans que la carte ne resaute sur le point), le bouton « Recentrer » le
+    // ré-engage. Les panTo/flyTo programmatiques NE déclenchent PAS 'dragstart'
+    // (Leaflet : dragstart = geste utilisateur) → pas d'auto-désengagement.
+    _followMode = true;
+    _dragHandler = () => { _followMode = false; };
+    map.on('dragstart', _dragHandler);
     startWatch();
     requestWakeLock();
     _visHandler = () => {
@@ -544,6 +565,9 @@ export function stopFollow() {
     releaseWakeLock();
     removePuck();
     if (_visHandler) { document.removeEventListener('visibilitychange', _visHandler); _visHandler = null; }
+    if (_dragHandler && map) { map.off('dragstart', _dragHandler); }
+    _dragHandler = null;
+    _followMode = true;
     _lastLatLng = null;
     _hadFix = false;
     _gpsErrStreak = 0;
