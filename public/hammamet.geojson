@@ -2243,6 +2243,99 @@
         "HW_ID": "HW-01KVTR7HS71J3ZBFZDVNDWGM1Q",
         "Zone": "Ain Tebournok"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7211538,
+          36.4612842
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée de la Conquête",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/1859406777",
+        "HW_ID": "HW-01KW2QM3G0E2CAP6JPMHPK8NYH",
+        "Nom du site arabe": "جامع الفتح",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Bir Challouf"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.751911,
+          36.4662247
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "imetière El Fehri",
+        "Nom du site arabe": "مقبرة الفهري",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "node/8488822770",
+        "HW_ID": "HW-01KW2QM43ARCE5618B4M1FT1PZ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Dar Chaabane"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7470309,
+          36.4701491
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Cimetière de Dar Chaâbane",
+        "Nom du site arabe": "مقبرة دار شعبان",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "node/8488822771",
+        "HW_ID": "HW-01KW2QM441CF7W04TRGCZA4HS4",
+        "État": "Conservé",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Dar Chaabane"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7267985,
+          36.4573281
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Faleh",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/662750803",
+        "HW_ID": "HW-01KW2QM4QMRR1PD2NK2RSDRXTA",
+        "Nom du site arabe": "جامع الفلاح بنابل",
+        "Sous-type": "Générique",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Bir Challouf"
+      }
     }
   ]
 }
