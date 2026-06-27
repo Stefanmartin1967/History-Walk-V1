@@ -7,5 +7,14 @@
     "lng": 10.7334719,
     "lat": 36.4534496,
     "rejectedAt": 1782505816724
+  },
+  "node/7635711647": {
+    "osm_ref": "node/7635711647",
+    "name": "Galaxy Ceramics",
+    "nameAr": "",
+    "category": "Artisanat",
+    "lng": 10.745577,
+    "lat": 36.4555674,
+    "rejectedAt": 1782556693005
   }
 }
