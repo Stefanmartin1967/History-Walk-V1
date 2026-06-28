@@ -758,17 +758,29 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosque Khazroun",
+        "Nom du site FR": "Mosquée Mrabet Messaoud",
         "Nom du site arabe": "جامع خزرون",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE69CKZWJHD3JAJT874K",
         "photos": [],
         "accessPoint": [
           10.9646197,
           33.8148676
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
