@@ -14,7 +14,7 @@
         "Nom du site FR": "Rym Beach",
         "Nom du site arabe": "فندق سيبل ريم بيتش جربة",
         "Catégorie": "Hôtel",
-        "Zone": "Taguermess",
+        "Zone": "Midoun",
         "Source": "https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/",
         "verified": false,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
@@ -30,8 +30,7 @@
         "accessPoint": [
           11.0460436,
           33.8265196
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -65,8 +64,7 @@
         "accessPoint": [
           11.0423462,
           33.822925
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -103,8 +101,7 @@
         "accessPoint": [
           11.04491,
           33.8196337
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -141,8 +138,7 @@
         "accessPoint": [
           11.0358487,
           33.8186371
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -160,8 +156,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
         "Source": null,
-        "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P"
       }
     },
     {
@@ -191,8 +186,7 @@
         "accessPoint": [
           11.0257881,
           33.8197908
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -227,8 +221,7 @@
         "accessPoint": [
           11.0455855,
           33.796363
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -248,8 +241,7 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE68SW9XWBFFCRBWXZYM",
         "lat": 33.79811118269014,
-        "lng": 11.028802710036706,
-        "accessPointStatus": "on-track"
+        "lng": 11.028802710036706
       }
     },
     {
@@ -267,8 +259,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
         "Source": null,
-        "HW_ID": "HW-01K77WPE68SSRHFM5TYYA7F5YF",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE68SSRHFM5TYYA7F5YF"
       }
     },
     {
@@ -292,8 +283,7 @@
         "accessPoint": [
           11.0216903,
           33.7936715
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -315,8 +305,7 @@
         "accessPoint": [
           11.0336465,
           33.7879604
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -338,8 +327,7 @@
         "accessPoint": [
           11.0055406,
           33.8025503
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -361,8 +349,7 @@
         "accessPoint": [
           11.0361056,
           33.7846231
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -385,8 +372,7 @@
         "accessPoint": [
           10.9907226,
           33.8352705
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -408,8 +394,7 @@
         "accessPoint": [
           11.02898,
           33.7836535
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -431,8 +416,7 @@
         "accessPoint": [
           10.9918059,
           33.8104952
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -455,8 +439,7 @@
         "accessPoint": [
           10.9906779,
           33.8106229
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -479,8 +462,7 @@
         "accessPoint": [
           10.9910994,
           33.8064118
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -499,8 +481,7 @@
         "Zone": "Midoun",
         "Source": null,
         "HW_ID": "HW-01K77WPE68HB12PE5Y0ZGTGJ3X",
-        "info_gpx": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions.",
-        "accessPointStatus": "on-track"
+        "info_gpx": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions."
       }
     },
     {
@@ -522,8 +503,7 @@
         "accessPoint": [
           10.9952391,
           33.7943411
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -545,8 +525,7 @@
         "accessPoint": [
           11.0057377,
           33.7853426
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -568,8 +547,7 @@
         "accessPoint": [
           11.0104164,
           33.7821456
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -592,8 +570,7 @@
         "accessPoint": [
           10.9804333,
           33.8352579
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -616,8 +593,7 @@
         "accessPoint": [
           10.9777822,
           33.8283293
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -640,8 +616,7 @@
         "accessPoint": [
           10.9845895,
           33.8017228
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -659,8 +634,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
         "Source": null,
-        "HW_ID": "HW-01K77WPE69NZS5NFTFBPG6V291",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE69NZS5NFTFBPG6V291"
       }
     },
     {
@@ -684,8 +658,7 @@
         "accessPoint": [
           10.9771006,
           33.8156947
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -709,8 +682,7 @@
         "accessPoint": [
           10.9833026,
           33.8556771
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -730,8 +702,7 @@
         "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgou\nhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
         "photos": [],
-        "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge.",
-        "accessPointStatus": "on-track"
+        "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge."
       }
     },
     {
@@ -751,8 +722,7 @@
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-beaute-immaculee-de-mosquee-sellaouati/187481/",
         "HW_ID": "HW-01K77WPE69KD9K0SES4DYYWZQA",
         "description": "Mosquée massive au minaret carré dont la construction remonterait au 16ème siècle, à l'arrivée du clan des Sellaouates. La légende raconte que ceux-ci ont commencé par creuser un puits avant de décider d'y établir leur culte. Ils virent un signe divin dans la découverte d'une colonne de marbre qui sortaient du sol et décidèrent de l'incorporer à leur mosquée. A leur arrivée le lendemain de sa construction, la porte était close sans être munie de serrure ni de loquet. Une femme vénérable reconnue pour sa sagesse leur conseilla de faire acte de charité. Ce qui fût fait, avant d'émietter un dernier pain devant la mosquée qui leur fût enfin accessible.",
-        "info_gpx": "Mosquée massive au minaret carré qui se cache derrière les oliviers.\nCe sanctuaire immaculé continue de recevoir les fidèles et, parfois, de simples curieux.",
-        "accessPointStatus": "on-track"
+        "info_gpx": "Mosquée massive au minaret carré qui se cache derrière les oliviers.\nCe sanctuaire immaculé continue de recevoir les fidèles et, parfois, de simples curieux."
       }
     },
     {
@@ -775,8 +745,7 @@
         "accessPoint": [
           11.0174196,
           33.7635807
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -799,8 +768,7 @@
         "accessPoint": [
           10.9646197,
           33.8148676
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -823,8 +791,7 @@
         "accessPoint": [
           10.9596461,
           33.8247249
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -847,8 +814,7 @@
         "accessPoint": [
           10.9698519,
           33.7918562
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -871,8 +837,7 @@
         "accessPoint": [
           10.9644008,
           33.7965158
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -902,7 +867,6 @@
         ],
         "description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
-        "accessPointStatus": "on-track",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Intérieur visitable"
@@ -928,8 +892,7 @@
         "accessPoint": [
           10.8485645,
           33.8758148
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -951,8 +914,7 @@
         "accessPoint": [
           10.968449,
           33.7853315
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -976,7 +938,6 @@
           10.9531788,
           33.8435566
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Ruine",
         "Accès": "Intérieur visitable",
@@ -1004,7 +965,7 @@
         "Nom du site FR": "Phare Aghir",
         "Nom du site arabe": "منارة أجير",
         "Catégorie": "Curiosité",
-        "Zone": "Arkou",
+        "Zone": "Hors zone",
         "Source": null,
         "Temps_minutes": null,
         "Prix_TND": null,
@@ -1013,8 +974,7 @@
         "verified": false,
         "HW_ID": "HW-01K77WPE6AB83SMA3RRSYH0SK9",
         "description": "Fait partie du circuit invaders",
-        "info_gpx": null,
-        "accessPointStatus": "on-track"
+        "info_gpx": null
       }
     },
     {
@@ -1037,7 +997,6 @@
           10.9547205,
           33.8513384
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -1071,8 +1030,7 @@
         "accessPoint": [
           10.9734601,
           33.7760461
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1094,8 +1052,7 @@
         "accessPoint": [
           10.9847207,
           33.7667882
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1118,8 +1075,7 @@
         "accessPoint": [
           10.9639214,
           33.8679716
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1141,8 +1097,7 @@
         "accessPoint": [
           10.9488709,
           33.8112548
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1165,7 +1120,6 @@
           10.9450346,
           33.845715
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Ruine",
         "Accès": "Intérieur visitable",
@@ -1197,7 +1151,6 @@
           10.9454083,
           33.8509123
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -1230,8 +1183,7 @@
         "accessPoint": [
           10.9514246,
           33.7919722
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1249,8 +1201,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6BDX79P55JZDF0G5SB",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6BDX79P55JZDF0G5SB"
       }
     },
     {
@@ -1263,19 +1214,29 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Wadran",
+        "Nom du site FR": "Mosquée Ouedrane",
         "Nom du site arabe": "جامع ودران",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ",
         "photos": [],
-        "description": "Egalement nommé Mosquée Toghruit Wadran. Située à Beni Maaguel. Infos à rechercher.",
+        "description": "Située dans le quartier Ouedrane, faisant partie de Beni Maaguel",
         "accessPoint": [
           10.9687378,
           33.7628852
         ],
-        "accessPointStatus": "osm"
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1295,7 +1256,6 @@
         "Source": null,
         "HW_ID": "HW-01K77WPE6BAJG9QADZMRDXPWTB",
         "info_gpx": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux.",
-        "accessPointStatus": "on-track",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Intérieur visitable",
@@ -1330,8 +1290,7 @@
         "accessPoint": [
           10.9364298,
           33.8113486
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1354,8 +1313,7 @@
         "accessPoint": [
           10.8385653,
           33.8471866
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1378,7 +1336,6 @@
           10.9333783,
           33.8437296
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Intérieur visitable",
@@ -1414,8 +1371,7 @@
         "accessPoint": [
           10.9397628,
           33.8665012
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1437,8 +1393,7 @@
         "accessPoint": [
           10.9557632,
           33.765369
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1460,8 +1415,7 @@
         "accessPoint": [
           10.9324732,
           33.8584054
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1479,8 +1433,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6BGKED1DHN669J64P7",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6BGKED1DHN669J64P7"
       }
     },
     {
@@ -1502,8 +1455,7 @@
         "accessPoint": [
           10.9234103,
           33.8142651
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1525,8 +1477,7 @@
         "accessPoint": [
           10.9352142,
           33.7802619
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1549,8 +1500,7 @@
         "accessPoint": [
           10.9237394,
           33.7912288
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1573,8 +1523,7 @@
         "accessPoint": [
           10.9154682,
           33.8141086
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1596,8 +1545,7 @@
         "accessPoint": [
           10.9222509,
           33.8744937
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1620,8 +1568,7 @@
         "accessPoint": [
           10.9170463,
           33.8648617
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1643,8 +1590,7 @@
         "accessPoint": [
           10.9103468,
           33.8391814
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1667,8 +1613,7 @@
         "accessPoint": [
           10.9094212,
           33.8277085
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1690,8 +1635,7 @@
         "accessPoint": [
           10.9423118,
           33.7516329
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1714,8 +1658,7 @@
         "accessPoint": [
           10.9057398,
           33.8337328
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1737,8 +1680,7 @@
         "accessPoint": [
           10.9057886,
           33.8392845
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1756,8 +1698,7 @@
         "Catégorie": "Site historique",
         "Zone": "Mazraia",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6CT3DF98CMH3E04Y6K",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6CT3DF98CMH3E04Y6K"
       }
     },
     {
@@ -1779,8 +1720,7 @@
         "accessPoint": [
           10.9049725,
           33.8517692
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1802,8 +1742,7 @@
         "accessPoint": [
           10.9413313,
           33.7462125
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1825,8 +1764,7 @@
         "accessPoint": [
           10.8994232,
           33.8201064
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1849,8 +1787,7 @@
         "accessPoint": [
           10.9090045,
           33.8724573
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1869,8 +1806,7 @@
         "Zone": "Arkou",
         "Source": null,
         "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C",
-        "photos": [],
-        "accessPointStatus": "on-track"
+        "photos": []
       }
     },
     {
@@ -1893,8 +1829,7 @@
         "accessPoint": [
           10.9091334,
           33.8733383
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1917,8 +1852,7 @@
         "accessPoint": [
           10.9004411,
           33.8089489
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1940,8 +1874,7 @@
         "accessPoint": [
           10.9010878,
           33.8008763
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1964,8 +1897,7 @@
         "accessPoint": [
           10.9144948,
           33.7697583
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -1983,8 +1915,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6DAMFCVRGASY61DKJE",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6DAMFCVRGASY61DKJE"
       }
     },
     {
@@ -2007,8 +1938,7 @@
         "accessPoint": [
           10.8978775,
           33.811705
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2035,8 +1965,7 @@
         "accessPoint": [
           10.9534144,
           33.727391
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2058,8 +1987,7 @@
         "accessPoint": [
           10.9236889,
           33.7516386
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2082,8 +2010,7 @@
         "accessPoint": [
           10.8940869,
           33.8464794
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2105,8 +2032,7 @@
         "accessPoint": [
           10.896678,
           33.8599397
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2128,8 +2054,7 @@
         "accessPoint": [
           10.8976703,
           33.7924149
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2151,8 +2076,7 @@
         "accessPoint": [
           10.9369488,
           33.7373274
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2175,8 +2099,7 @@
         "accessPoint": [
           10.8905029,
           33.8345642
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2194,8 +2117,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6EPM3A4QJN2D566KZ5",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6EPM3A4QJN2D566KZ5"
       }
     },
     {
@@ -2214,8 +2136,7 @@
         "Zone": "El May",
         "Source": null,
         "HW_ID": "HW-01K77WPE6E2G25V2R888QZDP0X",
-        "photos": [],
-        "accessPointStatus": "on-track"
+        "photos": []
       }
     },
     {
@@ -2237,8 +2158,7 @@
         "accessPoint": [
           10.8304717,
           33.8049072
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2256,8 +2176,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
         "Source": null,
-        "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB"
       }
     },
     {
@@ -2275,8 +2194,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6EGHYR09XESQ3285RK",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6EGHYR09XESQ3285RK"
       }
     },
     {
@@ -2298,8 +2216,7 @@
         "accessPoint": [
           10.8937202,
           33.8692664
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2321,8 +2238,7 @@
         "accessPoint": [
           10.9200337,
           33.7441043
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2345,8 +2261,7 @@
         "accessPoint": [
           10.9007785,
           33.7693165
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2368,8 +2283,7 @@
         "accessPoint": [
           10.8821201,
           33.8269727
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2387,8 +2301,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6E249JWGGTZMC3XMHH",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6E249JWGGTZMC3XMHH"
       }
     },
     {
@@ -2411,8 +2324,7 @@
         "accessPoint": [
           10.8831518,
           33.8020596
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2435,8 +2347,7 @@
         "accessPoint": [
           10.8897413,
           33.7813717
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2459,8 +2370,7 @@
         "accessPoint": [
           10.8775527,
           33.8397283
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2482,8 +2392,7 @@
         "accessPoint": [
           10.8831231,
           33.8704775
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2505,8 +2414,7 @@
         "accessPoint": [
           10.9250778,
           33.7272571
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2529,8 +2437,7 @@
         "accessPoint": [
           10.936537,
           33.7165796
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2552,8 +2459,7 @@
         "accessPoint": [
           10.8708438,
           33.8306945
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2575,8 +2481,7 @@
         "accessPoint": [
           10.8840206,
           33.7721033
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2594,8 +2499,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4"
       }
     },
     {
@@ -2625,7 +2529,6 @@
           10.8801516,
           33.8776383
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement"
@@ -2646,8 +2549,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6FQSGQH7Q843BCXE8K",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6FQSGQH7Q843BCXE8K"
       }
     },
     {
@@ -2670,8 +2572,7 @@
         "accessPoint": [
           10.8757808,
           33.8695585
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2692,8 +2593,7 @@
         "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB",
         "Prix_TND": 0,
         "description": "Renseignée sous Google Maps mais apparemment, il ne doit rien y subsister, on ne voir rien sur la carte",
-        "info_gpx": "A vérifier si toujours existante",
-        "accessPointStatus": "on-track"
+        "info_gpx": "A vérifier si toujours existante"
       }
     },
     {
@@ -2716,8 +2616,7 @@
         "accessPoint": [
           10.8672065,
           33.8227592
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2740,8 +2639,7 @@
         "accessPoint": [
           10.871419,
           33.7956853
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2763,8 +2661,7 @@
         "accessPoint": [
           10.8644347,
           33.8355902
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2787,8 +2684,7 @@
         "accessPoint": [
           10.8802612,
           33.76517
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2811,8 +2707,7 @@
         "accessPoint": [
           10.9739393,
           33.6837382
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2831,8 +2726,7 @@
         "Zone": "Sedghaiane",
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/jemaa-louta-a-djerba-une-mysterieuse-mosquee-souterraine/203375/",
         "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME",
-        "description": "Mosquée souterraine, blanchie à la chaux, comme la majorité des mosquées djerbiennes. Elle est située sur un plateau, point plus élevé de l'île à 52 mètre de hauteur et date du 12ème siècle. Les deux coupoles visibles confirment le caractère défensif de cette mosquée.",
-        "accessPointStatus": "on-track"
+        "description": "Mosquée souterraine, blanchie à la chaux, comme la majorité des mosquées djerbiennes. Elle est située sur un plateau, point plus élevé de l'île à 52 mètre de hauteur et date du 12ème siècle. Les deux coupoles visibles confirment le caractère défensif de cette mosquée."
       }
     },
     {
@@ -2850,8 +2744,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93"
       }
     },
     {
@@ -2882,7 +2775,6 @@
           10.8689335,
           33.8762636
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement"
@@ -2904,7 +2796,6 @@
         "Zone": "Erriadh",
         "Source": "",
         "HW_ID": "HW-01K77WPE6GA20S9G7CF10EAFSW",
-        "accessPointStatus": "on-track",
         "Sous-type": "",
         "État": "En activité",
         "Accès": "Intérieur visitable",
@@ -2938,8 +2829,7 @@
         "accessPoint": [
           10.8663127,
           33.8743055
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -2963,7 +2853,6 @@
           10.8579108,
           33.8164536
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable"
@@ -2990,8 +2879,7 @@
         "accessPoint": [
           10.8630578,
           33.8724627
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3014,8 +2902,7 @@
         "accessPoint": [
           10.8551004,
           33.8489333
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3034,8 +2921,7 @@
         "Zone": "Erriadh",
         "Source": null,
         "HW_ID": "HW-01K77WPE6GCJG1C7RFFRYEK7B3",
-        "description": "Située à Tarhdimess. Infos à rechercher.",
-        "accessPointStatus": "on-track"
+        "description": "Située à Tarhdimess. Infos à rechercher."
       }
     },
     {
@@ -3061,8 +2947,7 @@
         "accessPoint": [
           10.8626588,
           33.8798619
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3087,7 +2972,6 @@
           10.8612059,
           33.8764916
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
@@ -3123,7 +3007,6 @@
           10.8598429,
           33.8774647
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "En activité",
         "Accès": "Non visitable",
@@ -3155,8 +3038,7 @@
         "accessPoint": [
           10.8575526,
           33.8734699
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3181,7 +3063,6 @@
           10.8592574,
           33.8779304
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -3213,8 +3094,7 @@
         "accessPoint": [
           10.8571898,
           33.8724474
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3238,8 +3118,7 @@
         "accessPoint": [
           10.8606827,
           33.8844047
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3272,7 +3151,6 @@
           10.8581684,
           33.8782554
         ],
-        "accessPointStatus": "osm",
         "photos": [
           "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460104623.jpg",
           "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460106288.jpg",
@@ -3300,8 +3178,7 @@
         "accessPoint": [
           10.8517081,
           33.8603782
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3324,8 +3201,7 @@
         "accessPoint": [
           10.8485472,
           33.8063976
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3343,8 +3219,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6H6EYA6VQDR7SPKG7T",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6H6EYA6VQDR7SPKG7T"
       }
     },
     {
@@ -3370,7 +3245,6 @@
           10.8562017,
           33.8848144
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "Orthodoxe",
         "État": "En activité",
         "Accès": "Intérieur visitable",
@@ -3401,8 +3275,7 @@
         "accessPoint": [
           10.8832044,
           33.7288972
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3427,8 +3300,7 @@
         "accessPoint": [
           10.8541492,
           33.8808998
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3447,8 +3319,7 @@
         "Zone": "Beni Maaguel",
         "Source": "https://fr.wikipedia.org/wiki/Tamazight_de_Djerba",
         "HW_ID": "HW-01K77WPE6HCCSTW9QXDV73Q1SF",
-        "description": "En théorie Henchir Tala, source d'eau d'où partait l'aqueduc vers Meninx. Abordé dans la source, mais sans grandes indications",
-        "accessPointStatus": "on-track"
+        "description": "En théorie Henchir Tala, source d'eau d'où partait l'aqueduc vers Meninx. Abordé dans la source, mais sans grandes indications"
       }
     },
     {
@@ -3467,8 +3338,7 @@
         "Zone": "Sedouikech",
         "Source": null,
         "HW_ID": "HW-01K77WPE6HN8AD9RQQTGD38K99",
-        "description": "Située à Ouirsighen. Infos à rechercher",
-        "accessPointStatus": "on-track"
+        "description": "Située à Ouirsighen. Infos à rechercher"
       }
     },
     {
@@ -3486,8 +3356,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6HTHPF05JHNVACW732",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6HTHPF05JHNVACW732"
       }
     },
     {
@@ -3509,8 +3378,7 @@
         "accessPoint": [
           10.9274093,
           33.6895611
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3534,8 +3402,7 @@
         "accessPoint": [
           10.8448892,
           33.8624925
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3558,8 +3425,7 @@
         "accessPoint": [
           10.8451514,
           33.8727573
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3583,8 +3449,7 @@
         "accessPoint": [
           10.8474973,
           33.8814155
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3607,8 +3472,7 @@
         "accessPoint": [
           10.8429768,
           33.7843144
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3631,8 +3495,7 @@
         "accessPoint": [
           10.9246926,
           33.6909912
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3654,8 +3517,7 @@
         "accessPoint": [
           10.9034857,
           33.6965003
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3677,8 +3539,7 @@
         "accessPoint": [
           10.8654683,
           33.7325359
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3702,8 +3563,7 @@
         "accessPoint": [
           10.8406426,
           33.8794958
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3725,8 +3585,7 @@
         "accessPoint": [
           10.9144158,
           33.6862955
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3745,8 +3604,7 @@
         "Zone": "Oued Ezzebib",
         "Source": null,
         "HW_ID": "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y",
-        "description": "Infos à rechercher",
-        "accessPointStatus": "on-track"
+        "description": "Infos à rechercher"
       }
     },
     {
@@ -3764,8 +3622,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ"
       }
     },
     {
@@ -3788,8 +3645,7 @@
         "accessPoint": [
           10.8459748,
           33.7534283
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3812,8 +3668,7 @@
         "accessPoint": [
           10.9159435,
           33.6802306
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3836,8 +3691,7 @@
         "accessPoint": [
           10.8249716,
           33.8496705
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3860,8 +3714,7 @@
         "accessPoint": [
           10.8570288,
           33.7282002
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3884,8 +3737,7 @@
         "accessPoint": [
           10.8847422,
           33.6975387
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3909,8 +3761,7 @@
         "accessPoint": [
           10.8538377,
           33.7295097
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3933,8 +3784,7 @@
         "accessPoint": [
           10.859695,
           33.7220593
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3956,8 +3806,7 @@
         "accessPoint": [
           10.8594174,
           33.7196624
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -3982,8 +3831,7 @@
         "accessPoint": [
           10.8210776,
           33.861825
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4001,8 +3849,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
         "Source": null,
-        "HW_ID": "HW-01KJABRN0HW8QW8YRNXWWWA8WB",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01KJABRN0HW8QW8YRNXWWWA8WB"
       }
     },
     {
@@ -4025,8 +3872,7 @@
         "accessPoint": [
           10.8544958,
           33.7237636
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4048,8 +3894,7 @@
         "accessPoint": [
           10.843934,
           33.7361869
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4071,8 +3916,7 @@
         "accessPoint": [
           10.8639726,
           33.7109742
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4094,8 +3938,7 @@
         "accessPoint": [
           10.8639085,
           33.710186
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4113,8 +3956,7 @@
         "Catégorie": "Culture et tradition",
         "Zone": "Guellala",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6KANR1XY901X5NCZAT",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6KANR1XY901X5NCZAT"
       }
     },
     {
@@ -4137,8 +3979,7 @@
         "accessPoint": [
           10.8272392,
           33.8958473
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4156,8 +3997,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6MEFR0X3WG50GNT8RS",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6MEFR0X3WG50GNT8RS"
       }
     },
     {
@@ -4179,8 +4019,7 @@
         "accessPoint": [
           10.8741957,
           33.6950803
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4201,8 +4040,7 @@
         "HW_ID": "HW-01K77WPE6M06HKCT56J0P2HVZZ",
         "lat": 33.70679340842852,
         "lng": 10.86177572607994,
-        "description": "Mosquée de type Ibadite, enduite de chaux blanc. Elle a été édifiée au 10ème siècle et rénovée en 1995. Elle surplombe la côte Sud-Ouest dans la localité d'El Fâhmîne. Proche des Mosquése Boumsour et/ou Mosquée Mizwar",
-        "accessPointStatus": "on-track"
+        "description": "Mosquée de type Ibadite, enduite de chaux blanc. Elle a été édifiée au 10ème siècle et rénovée en 1995. Elle surplombe la côte Sud-Ouest dans la localité d'El Fâhmîne. Proche des Mosquése Boumsour et/ou Mosquée Mizwar"
       }
     },
     {
@@ -4225,8 +4063,7 @@
         "accessPoint": [
           10.8253812,
           33.7577127
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4249,8 +4086,7 @@
         "accessPoint": [
           10.844098,
           33.7223341
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4272,8 +4108,7 @@
         "accessPoint": [
           10.836803,
           33.7326844
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4291,8 +4126,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El Hachene",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6MTFTPQQCESF5JYJSJ",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6MTFTPQQCESF5JYJSJ"
       }
     },
     {
@@ -4317,8 +4151,7 @@
         "accessPoint": [
           10.8063801,
           33.8621606
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4355,7 +4188,6 @@
           10.8055248,
           33.7901335
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Intérieur visitable"
@@ -4380,8 +4212,7 @@
         "accessPoint": [
           10.8000404,
           33.8023306
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4410,7 +4241,6 @@
           10.7982967,
           33.7895453
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Intérieur visitable"
@@ -4446,7 +4276,6 @@
           10.7924829,
           33.7944996
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable"
@@ -4472,8 +4301,7 @@
         "accessPoint": [
           10.7889798,
           33.8121126
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4495,8 +4323,7 @@
         "accessPoint": [
           10.7982961,
           33.7681932
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4518,8 +4345,7 @@
         "accessPoint": [
           10.7947227,
           33.7770939
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4548,7 +4374,6 @@
           10.7858502,
           33.7929511
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement"
@@ -4573,8 +4398,7 @@
         "accessPoint": [
           10.7908846,
           33.7581386
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4590,7 +4414,7 @@
         "Nom du site FR": "Borj el Agreb",
         "Nom du site arabe": "برج العقرب",
         "Catégorie": "Site historique",
-        "Zone": "Guellala",
+        "Zone": "Hors zone",
         "Source": "https://www.misk.art/lire/un-monument-en-quelques-mots-2%C2%A0-la-l%C3%A9gende-de-borj-el-agreb",
         "Temps_minutes": null,
         "Prix_TND": null,
@@ -4599,8 +4423,7 @@
         "verified": false,
         "HW_ID": "HW-01K77WPE6N1VXNG3MVD2QPQFQV",
         "description": "Fort, en ruines, présentant la particularité d'être construit en pleine mer. Pourrait être lié à la construction du Borj Kebir en 1284, il est cité pour la première fois en 1432. Rares sont les infos à son sujet, auxquelles se mélange une légende de scorpion décimant les enfants d'un prince.",
-        "info_gpx": null,
-        "accessPointStatus": "failed"
+        "info_gpx": null
       }
     },
     {
@@ -4623,8 +4446,7 @@
         "accessPoint": [
           10.7813346,
           33.7759207
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4652,7 +4474,6 @@
           10.7753053,
           33.7888202
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable"
@@ -4690,7 +4511,6 @@
           10.770476,
           33.7881479
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Intérieur visitable"
@@ -4711,8 +4531,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8"
       }
     },
     {
@@ -4734,8 +4553,7 @@
         "accessPoint": [
           10.8870941,
           33.6329283
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4757,8 +4575,7 @@
         "accessPoint": [
           10.7747087,
           33.7591194
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4781,8 +4598,7 @@
         "accessPoint": [
           10.7483738,
           33.8314687
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4806,8 +4622,7 @@
         "accessPoint": [
           10.7741466,
           33.7215143
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4830,8 +4645,7 @@
         "accessPoint": [
           10.7664568,
           33.7279203
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4854,8 +4668,7 @@
         "accessPoint": [
           10.7467654,
           33.8868677
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4878,8 +4691,7 @@
         "accessPoint": [
           10.7591099,
           33.7336023
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4902,8 +4714,7 @@
         "accessPoint": [
           10.7596042,
           33.7150917
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4927,8 +4738,7 @@
         "accessPoint": [
           10.7563595,
           33.7211752
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4952,8 +4762,7 @@
         "accessPoint": [
           10.7477664,
           33.7358913
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -4976,8 +4785,7 @@
         "accessPoint": [
           10.7513859,
           33.7253274
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5000,8 +4808,7 @@
         "accessPoint": [
           10.7499187,
           33.7239626
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5024,8 +4831,7 @@
         "accessPoint": [
           10.7486388,
           33.724285
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5049,8 +4855,7 @@
         "accessPoint": [
           10.7446046,
           33.7205176
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5070,8 +4875,7 @@
         "Source": "https://routes.discovertunisia.com/storymap/data/download/Site_08_Mosqu%C3%A9e%20Amghar.pdf",
         "HW_ID": "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
         "description": "La mosquée, qui cotoie la mer, a perdu sa fonctione religieuse et sert maintenant d'abri aux pècheurs. Elle a également servi de décor pour la \"Maison de Ben\" (Obi-Wan Kenobi en 1976. Un de ses murs externes est recouvert d'une fresque Invader représentant Obi-Wan-Kenobi",
-        "info_gpx": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs",
-        "accessPointStatus": "on-track"
+        "info_gpx": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs"
       }
     },
     {
@@ -5095,8 +4899,7 @@
         "accessPoint": [
           10.7443497,
           33.7197495
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5120,7 +4923,6 @@
           10.8566537,
           33.8776151
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
@@ -5152,8 +4954,7 @@
         "accessPoint": [
           10.9458679,
           33.8203182
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5185,8 +4986,7 @@
           11.0169281,
           33.8169265
         ],
-        "info_gpx": "",
-        "accessPointStatus": "osm"
+        "info_gpx": ""
       }
     },
     {
@@ -5209,8 +5009,7 @@
         "accessPoint": [
           10.9423444,
           33.7961877
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5232,8 +5031,7 @@
         "accessPoint": [
           10.9756422,
           33.8037744
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5256,8 +5054,7 @@
         "accessPoint": [
           10.9384042,
           33.7183089
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5280,8 +5077,7 @@
         "accessPoint": [
           10.9938779,
           33.8221935
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5303,8 +5099,7 @@
         "accessPoint": [
           11.0168106,
           33.8026537
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5323,8 +5118,7 @@
         "Zone": "Sedouikech",
         "Source": null,
         "HW_ID": "HW-01K77WPE6Q8F3RTEJT1892FPNK",
-        "description": "Trace d'un bâtiment sans nom sur OSM. A confirmer.",
-        "accessPointStatus": "failed"
+        "description": "Trace d'un bâtiment sans nom sur OSM. A confirmer."
       }
     },
     {
@@ -5346,8 +5140,7 @@
         "accessPoint": [
           11.0134285,
           33.8053256
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5367,8 +5160,7 @@
         "Source": "https://flamingo-djerba.com/lieux-a-visiter.html",
         "HW_ID": "HW-01K77WPE6Q670Z1X2VY3ZKFP8E",
         "description": "À l’extrémité du port de pêche de Houmt Souk, une statue en béton blanc représente une sirène brandissant une coquille, tournée vers la mer. Connue localement sous le nom de La Sirène de Djerba, l’œuvre est également référencée dans les guides anglophones comme Ulysses’s Mermaid. Installée sur un socle circulaire à proximité du phare, cette sculpture sert de repère maritime et photographique pour les visiteurs du port. Son emplacement n’est pas anodin : il évoque le lien millénaire entre Djerba et la mer, ainsi que la légende d’Ulysse, souvent associée à l’île depuis l’Antiquité. La statue actuelle, de facture contemporaine, est visible sur les images satellites depuis le début des années 2000. Elle a été réalisée en ciment peint et pierre reconstituée, sans signature connue, probablement à l’initiative municipale dans le cadre d’un aménagement touristique du front de mer. Du quai, on aperçoit la sirène se détachant sur le bleu de la Méditerranée, entre les barques de pêche et les goélands : un symbole discret mais bien ancré de la Djerba maritime, oscillant entre mythologie grecque et fierté insulaire.",
-        "info_gpx": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones",
-        "accessPointStatus": "on-track"
+        "info_gpx": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones"
       }
     },
     {
@@ -5386,8 +5178,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "Source": null,
-        "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD"
       }
     },
     {
@@ -5411,8 +5202,7 @@
         "accessPoint": [
           10.8571019,
           33.8880073
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5434,8 +5224,7 @@
         "accessPoint": [
           10.9913968,
           33.8081675
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5458,8 +5247,7 @@
         "accessPoint": [
           10.9523365,
           33.7594956
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5478,8 +5266,7 @@
         "Zone": "Mazraia",
         "Source": null,
         "HW_ID": "HW-01K77WPE6QEKDE45N0B9HGYZ0W",
-        "description": "Sutuées à Ghizen. Infos à rechercher.",
-        "accessPointStatus": "on-track"
+        "description": "Sutuées à Ghizen. Infos à rechercher."
       }
     },
     {
@@ -5502,8 +5289,7 @@
         "accessPoint": [
           10.8248572,
           33.7915205
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5526,8 +5312,7 @@
         "accessPoint": [
           10.9613696,
           33.7477279
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5550,8 +5335,7 @@
         "accessPoint": [
           10.9170677,
           33.7510099
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5574,8 +5358,7 @@
         "accessPoint": [
           10.9207942,
           33.7465823
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5598,8 +5381,7 @@
         "accessPoint": [
           10.7477899,
           33.7245839
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5623,8 +5405,7 @@
         "accessPoint": [
           10.9674979,
           33.8507302
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5647,8 +5428,7 @@
         "accessPoint": [
           10.8522613,
           33.8280272
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5671,8 +5451,7 @@
         "accessPoint": [
           10.9249925,
           33.7126979
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5695,8 +5474,7 @@
         "accessPoint": [
           10.8658956,
           33.8652906
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5724,7 +5502,6 @@
           10.7746607,
           33.7875455
         ],
-        "accessPointStatus": "osm",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable"
@@ -5750,8 +5527,7 @@
         "accessPoint": [
           10.9114672,
           33.746505
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5774,8 +5550,7 @@
         "accessPoint": [
           10.8931267,
           33.7813377
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5798,8 +5573,7 @@
         "accessPoint": [
           10.9384443,
           33.8579363
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5822,8 +5596,7 @@
         "accessPoint": [
           10.902384,
           33.8542592
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5846,8 +5619,7 @@
         "accessPoint": [
           10.8164416,
           33.8118132
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5871,8 +5643,7 @@
         "accessPoint": [
           10.9463809,
           33.8241266
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5895,8 +5666,7 @@
         "accessPoint": [
           10.9460662,
           33.8555339
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5912,7 +5682,7 @@
         "Nom du site FR": "Mosquée Teghlissa",
         "Nom du site arabe": "جامع تغليصه",
         "Catégorie": "Mosquée",
-        "Zone": "Ajim",
+        "Zone": "Hors zone",
         "Source": null,
         "Temps_minutes": null,
         "Prix_TND": null,
@@ -5921,8 +5691,7 @@
         "verified": false,
         "HW_ID": "HW-01K77WPE6SQ294ZTDM1HZ3ASFR",
         "description": "Ancienne mosquée Ibadite, en ruine, située sur un ilot accessible à pied.",
-        "info_gpx": "Mosquée située sur un petit ilot. Accessible par la piste menant aux pêcheries modèles de Djerba, juste avant la langue de sable sud.",
-        "accessPointStatus": "failed"
+        "info_gpx": "Mosquée située sur un petit ilot. Accessible par la piste menant aux pêcheries modèles de Djerba, juste avant la langue de sable sud."
       }
     },
     {
@@ -5942,8 +5711,7 @@
         "Source": "https://fr.wikipedia.org/wiki/Bataille_de_Djerba",
         "HW_ID": "HW-4KDVBOTPXFYVRIW9IEE46G09VG",
         "description": "Obélisque édifié en 1906 à l'emplacement de la Tour des crânes, également nommée Borj-Er-Rous Celle-ci avait été érigée par Dragut suite à la bataille entre Ottomans et les forces chrétiennes le 11 mai 1560. Elle fût détruite en 1840 sur ordre de Ahmed Ier, bey de Tunis. Les restes humains fûrent enterrés dans le cimetière catholique de Houmt Souk.",
-        "info_gpx": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits",
-        "accessPointStatus": "on-track"
+        "info_gpx": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits"
       }
     },
     {
@@ -5965,8 +5733,7 @@
         "accessPoint": [
           10.9997186,
           33.7916307
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -5991,8 +5758,7 @@
         "accessPoint": [
           10.9902354,
           33.7600274
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6014,8 +5780,7 @@
         "accessPoint": [
           10.9537821,
           33.8209444
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6037,8 +5802,7 @@
         "accessPoint": [
           10.9242885,
           33.6869877
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6060,8 +5824,7 @@
         "accessPoint": [
           10.9255748,
           33.6879057
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6078,8 +5841,7 @@
         "Nom du site FR": "Restaurant Cobry",
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
-        "Zone": "Guellala",
-        "accessPointStatus": "on-track"
+        "Zone": "Guellala"
       }
     },
     {
@@ -6100,8 +5862,7 @@
         "accessPoint": [
           11.0378186,
           33.7733675
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6122,8 +5883,7 @@
         "accessPoint": [
           10.9925433,
           33.8378757
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6144,8 +5904,7 @@
         "accessPoint": [
           11.0195931,
           33.8162554
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6166,8 +5925,7 @@
         "accessPoint": [
           10.9881225,
           33.8322534
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6188,8 +5946,7 @@
         "accessPoint": [
           10.8587348,
           33.8773293
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6211,8 +5968,7 @@
         "accessPoint": [
           10.9913599,
           33.8352935
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6234,8 +5990,7 @@
         "accessPoint": [
           10.9900547,
           33.8072706
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6253,8 +6008,7 @@
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
         "Zone": "Mazraia",
-        "description": "Restaurant situé face à la mer",
-        "accessPointStatus": "on-track"
+        "description": "Restaurant situé face à la mer"
       }
     },
     {
@@ -6275,8 +6029,7 @@
         "accessPoint": [
           10.8554444,
           33.8853137
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6297,8 +6050,7 @@
         "accessPoint": [
           10.9857569,
           33.8516914
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6320,8 +6072,7 @@
         "accessPoint": [
           11.0583524,
           33.7886538
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6343,8 +6094,7 @@
         "accessPoint": [
           11.0137902,
           33.7569462
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6365,8 +6115,7 @@
         "accessPoint": [
           10.9932058,
           33.8091595
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6383,8 +6132,7 @@
         "Nom du site FR": "Restaurant Grill La Perla",
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
-        "Zone": "Midoun",
-        "accessPointStatus": "on-track"
+        "Zone": "Midoun"
       }
     },
     {
@@ -6402,7 +6150,6 @@
         "Zone": "Taourit",
         "HW_ID": "HW-01KJABRN0WMXW7CV3JQJJK9EAV",
         "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track",
         "photos": [
           "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460083574.jpg",
           "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460085717.jpg",
@@ -6428,8 +6175,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0W6KJP2MNXC0GWQJN6",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6446,8 +6192,7 @@
         "Catégorie": "Culture et tradition",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0WBFCMMFBGZB582PRH",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6464,8 +6209,7 @@
         "Catégorie": "Commerce",
         "Zone": "Taourit",
         "HW_ID": "HW-01KJABRN0XCGBFRH389WG2S71J",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6486,8 +6230,7 @@
         "accessPoint": [
           10.7449649,
           33.720926
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6511,8 +6254,7 @@
         "accessPoint": [
           10.7669336,
           33.781026
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6529,8 +6271,7 @@
         "Catégorie": "Taxi",
         "Zone": "Arkou",
         "HW_ID": "HW-01KJABRN0YD2SFB393HG9SRDGW",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6547,8 +6288,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJABRN0Y687FFD0EF2SYPZ3Q",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6565,8 +6305,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
         "HW_ID": "HW-01KJB1NZSEHQH5M3JRKS72CKRN",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6583,8 +6322,7 @@
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "HW_ID": "HW-01KJM8X5EEAHXPBF1YNSEA19F1",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6601,8 +6339,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
         "HW_ID": "HW-01KJMJATZZZRP02QNDTWS3YVK1",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6623,8 +6360,7 @@
         "accessPoint": [
           10.7618903,
           33.7013321
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6642,8 +6378,7 @@
         "Zone": "Erriadh",
         "Source": "https://fr.wikipedia.org/wiki/Djerbahood",
         "HW_ID": "HW-01KJN6EEH9Z49AMGYJT621WG9N",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6664,8 +6399,7 @@
         "accessPoint": [
           10.8951752,
           33.7703173
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6682,8 +6416,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJX5XSG18NC03E6900V170QX",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6704,8 +6437,7 @@
         "accessPoint": [
           10.9719775,
           33.7582922
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6726,8 +6458,7 @@
         "accessPoint": [
           10.860118,
           33.8186892
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6744,8 +6475,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CNPZR005431XS160BZ1C4",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6762,8 +6492,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CWX2YWAJSWA4NYT64CD4R",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6780,8 +6509,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1D2ZKZRKM1G6011V2WJ9BX",
-        "description": "Ajouté via Rich Editor",
-        "accessPointStatus": "on-track"
+        "description": "Ajouté via Rich Editor"
       }
     },
     {
@@ -6800,8 +6528,7 @@
         "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
         "created_at": "2026-03-11T14:18:04.014Z",
         "Prix_TND": 0,
-        "description": "Mosquée découverte lors de notre randonnée \nNom à vérifier \nMosquée Errahma  Kahil: la miséricorde",
-        "accessPointStatus": "on-track"
+        "description": "Mosquée découverte lors de notre randonnée \nNom à vérifier \nMosquée Errahma  Kahil: la miséricorde"
       }
     },
     {
@@ -6822,8 +6549,7 @@
         "accessPoint": [
           10.9727629,
           33.8140752
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6844,8 +6570,7 @@
         "accessPoint": [
           10.9902964,
           33.7601163
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6878,8 +6603,7 @@
         "accessPoint": [
           10.9897697,
           33.8054331
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6902,8 +6626,7 @@
         "accessPoint": [
           10.9735112,
           33.8137871
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6926,8 +6649,7 @@
         "accessPoint": [
           10.9917544,
           33.8082721
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6947,8 +6669,7 @@
         "timeH": 0,
         "timeM": 0,
         "price": 0,
-        "HW_ID": "HW-01KPMX8RZ41MX6DCFWGA4HZKJA",
-        "accessPointStatus": "on-track"
+        "HW_ID": "HW-01KPMX8RZ41MX6DCFWGA4HZKJA"
       }
     },
     {
@@ -6972,8 +6693,7 @@
         "accessPoint": [
           10.780887,
           33.8520049
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -6997,8 +6717,7 @@
         "accessPoint": [
           10.7642627,
           33.8377351
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
@@ -7030,8 +6749,7 @@
         "accessPoint": [
           10.7965901,
           33.8297704
-        ],
-        "accessPointStatus": "osm"
+        ]
       }
     },
     {
