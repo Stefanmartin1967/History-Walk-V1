@@ -735,17 +735,28 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Maamoura",
+        "Nom du site FR": "Mosquée AsSalam",
         "Nom du site arabe": "مسجد المعمورة",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE697PHS21NP9P0JGJ6F",
-        "description": "Pas de nom sur Google Maps ni sur Openstreetmap. A vérifier",
+        "description": "",
         "accessPoint": [
           11.0174196,
           33.7635807
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
