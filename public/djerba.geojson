@@ -3594,21 +3594,35 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.913919,
-          33.686191
+          10.913947876157037,
+          33.68584439152305
         ]
       },
       "properties": {
         "Nom du site FR": "Amphithéâtre Romain de Meninx",
         "Nom du site arabe": "المدرج الروماني بالمنينكس",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "https://fr.wikipedia.org/wiki/Meninx",
         "HW_ID": "HW-01K77WPE6J38KA6V4M0KDZBJ15",
         "accessPoint": [
           10.9144158,
           33.6862955
-        ]
+        ],
+        "lat": 33.68584439152305,
+        "lng": 10.913947876157037,
+        "Sous-type": "",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
