@@ -1865,11 +1865,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Kharroubi",
+        "Nom du site FR": "Mosquée Kharoubi",
         "Nom du site arabe": "جامع الخروبي",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": "",
+        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
         "photos": [],
         "accessPoint": [
@@ -1880,7 +1880,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Ancienne mosquée abandonnée en ruines",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
