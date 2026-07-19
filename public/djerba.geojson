@@ -1865,17 +1865,29 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Kharoubi",
+        "Nom du site FR": "Mosquée Kharroubi",
         "Nom du site arabe": "جامع الخروبي",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
         "photos": [],
         "accessPoint": [
           10.9004411,
           33.8089489
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6807,6 +6819,31 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "HW_ID": "HW-01KT5X81RV34Z59D259TYBBCNT"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.041112197671366,
+          33.77853230385428
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Royal Karthago",
+        "Catégorie": "Hôtel",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Facebook": "https://www.facebook.com/groups/462902758394980",
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KXP2AKY70DAS5VDGK9TT1646",
+        "accessPoint": [
+          11.040977,
+          33.7786463
+        ],
+        "Zone": "Arkou"
       }
     }
   ]
