@@ -5016,7 +5016,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Yati de Midoun",
+        "Nom du site FR": "Mosquée Ennasr",
         "Nom du site arabe": "مسجد سيدي سفيان",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
@@ -5026,7 +5026,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
-        "description": "Mosquée Sidi Yati dit Nasser selon le répertoire de mosquées de Jalel Fatallah",
+        "description": "Mosquée Yati dit Nasser selon le répertoire de mosquées de Jalel Fatallah",
         "Temps_minutes": 0,
         "Téléphone": "",
         "Horaires": "",
@@ -5035,7 +5035,9 @@
           11.0169281,
           33.8169265
         ],
-        "info_gpx": ""
+        "info_gpx": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
