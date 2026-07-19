@@ -1869,7 +1869,7 @@
         "Nom du site arabe": "جامع الخروبي",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "",
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
         "photos": [],
         "accessPoint": [
@@ -1880,13 +1880,13 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Ancienne mosquée abandonnée en ruines",
+        "description": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false
       }
     },
