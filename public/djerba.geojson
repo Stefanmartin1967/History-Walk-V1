@@ -3591,7 +3591,7 @@
         "Nom du site arabe": "جامع سيدي مساهل",
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6JARCBVAYJCW1B3B14",
         "photos": [
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650020228.jpg",
@@ -3599,14 +3599,22 @@
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650023829.jpg",
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650025226.jpg"
         ],
-        "description": "Infos à rechercher.",
+        "description": "",
         "accessPoint": [
           10.8406426,
           33.8794958
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Extérieur seulement"
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
