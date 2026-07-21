@@ -3593,12 +3593,20 @@
         "Zone": "Bou Melel",
         "Source": null,
         "HW_ID": "HW-01K77WPE6JARCBVAYJCW1B3B14",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650020228.jpg",
+          "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650022233.jpg",
+          "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650023829.jpg",
+          "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650025226.jpg"
+        ],
         "description": "Infos à rechercher.",
         "accessPoint": [
           10.8406426,
           33.8794958
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement"
       }
     },
     {
