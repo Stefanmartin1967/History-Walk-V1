@@ -1865,22 +1865,22 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Kharoubi",
+        "Nom du site FR": "Mosquée Kharroubi",
         "Nom du site arabe": "جامع الخروبي",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": "",
+        "Source": "https://www.openstreetmap.org/way/1364140400",
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
         "photos": [],
         "accessPoint": [
           10.9004411,
           33.8089489
         ],
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
-        "info_gpx": "",
-        "description": "",
+        "Sous-type": "Générique",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "Ruine de la mosquée Kharroubi",
+        "description": "Ruines d'une petite mosquée en pierre calcaire de l'époque médiévale (Réparations ultérieures évidentes, fragment in situ d'une colonne romaine antique de seconde main)",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
@@ -3599,7 +3599,7 @@
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650023829.jpg",
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650025226.jpg"
         ],
-        "description": "",
+        "description": "Infos à rechercher.",
         "accessPoint": [
           10.8406426,
           33.8794958
@@ -3613,7 +3613,7 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false
       }
     },
