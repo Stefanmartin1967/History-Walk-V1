@@ -1871,7 +1871,13 @@
         "Zone": "El May",
         "Source": "https://www.openstreetmap.org/way/1364140400",
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1784831479801.jpg",
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1784831481777.jpg",
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1784831483279.jpg",
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1784831484930.jpg",
+          "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1784831486626.jpg"
+        ],
         "accessPoint": [
           10.9004411,
           33.8089489
