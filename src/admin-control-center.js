@@ -587,6 +587,13 @@ async function publishChanges() {
                     if (!newUserData[poiId]) newUserData[poiId] = {};
                     newUserData[poiId].photos = mergedUrls;
                     setUserData(newUserData);
+
+                    // Sync indispensable : generateMasterGeoJSONData lit
+                    // feature.properties.userData (pas state.userData directement).
+                    // Sans ce rebind, les URLs fraîches restent invisibles du geojson
+                    // publié bien que uploadées avec succès sur GitHub.
+                    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+                    if (feature) feature.properties.userData = newUserData[poiId];
                 }
 
                 // Photos restantes dans pendingAdminPhotos :
@@ -827,6 +834,8 @@ async function publishChanges() {
 
 
 // --- EXPORTS POUR COMPATIBILITÉ ET TESTS ---
+
+export { publishChanges };
 
 export function getAdminDraft() {
     return adminDraft;
