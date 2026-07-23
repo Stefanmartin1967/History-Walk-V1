@@ -507,7 +507,7 @@ function setupDetailsEventListeners(poiId) {
 
 // --- OUVERTURE/FERMETURE ---
 
-export function openDetailsPanel(featureId, circuitIndex = null, fromSearch = false) {
+export function openDetailsPanel(featureId, circuitIndex = null, fromSearch = false, opts = {}) {
     if (featureId === undefined || featureId < 0) return;
     if (!isMobileView()) eventBus.emit('map:close-popup');
 
@@ -524,7 +524,16 @@ export function openDetailsPanel(featureId, circuitIndex = null, fromSearch = fa
     // Proactif Back Android (C7)
     const isFreshOpen = state.currentFeatureId === null;
     if (isFreshOpen && isMobileView()) {
-        pushMobileLevel('p');
+        if (opts.replaceLevel) {
+            // Ouverture « fiche complète » depuis le suivi : on REMPLACE l'entrée
+            // #sheet courante par #p au lieu d'empiler (cf. mobile-follow.exitToFiche).
+            // La pile reste [.., #follow, #p] → un seul Back repop #follow et
+            // reprend le suivi, sans entrées orphelines qui videraient le circuit.
+            try { history.replaceState({ hwLevel: 'p' }, '', '#p'); }
+            catch (_) { pushMobileLevel('p'); }
+        } else {
+            pushMobileLevel('p');
+        }
     }
 
     // Filtre POI sur la liste « Mes Circuits » : actif UNIQUEMENT quand

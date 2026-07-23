@@ -25,7 +25,7 @@ import {
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
-import { isFollowActive, followBack } from './mobile-follow.js';
+import { isFollowActive, followBack, getResumeFollowCircuitId, resumeFollow } from './mobile-follow.js';
 
 // ─── Bouton Retour Android (pattern proactif) ────────────────────────────────
 // Chaque navigation descendante (clic sur circuit, ouverture POI, bouton
@@ -49,6 +49,24 @@ export function onHwBack() {
     setTimeout(() => { _backHandled = false; }, 100);
 
     if (!isMobileView()) return;
+
+    // Reprise du suivi : Back depuis une fiche ouverte via « Voir la fiche
+    // complète » PENDANT un suivi. exitToFiche a mémorisé le circuit et remplacé
+    // l'entrée #sheet par #p → ce Back repop l'entrée #follow : on relance la
+    // marche là où on l'a laissée (une fiche = une parenthèse), au lieu de
+    // retomber sur la liste. À traiter AVANT la branche « POI ouvert » (la fiche
+    // est encore ouverte : currentFeatureId non nul).
+    const resumeId = getResumeFollowCircuitId();
+    if (resumeId && state.currentFeatureId !== null) {
+        // Ferme proprement la fiche : re-render la liste des POI du circuit dans
+        // #mobile-container (masqué sous le suivi) → à la sortie ULTÉRIEURE du
+        // suivi, on y retrouve le circuit et non une fiche périmée. Capturer
+        // resumeId AVANT (closeDetailsPanel émet 'details-panel:closed' qui efface
+        // le flag interne) et le passer explicitement à resumeFollow.
+        closeDetailsPanel(true);
+        resumeFollow(resumeId);
+        return;
+    }
 
     // Niveau « suivi immersif » : le Back (et la croix, qui fait history.back())
     // ferme d'abord le bottom sheet POI s'il est ouvert, sinon quitte le suivi —

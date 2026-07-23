@@ -22,7 +22,7 @@
 
 import L from 'leaflet';
 import { map, initMap, createHistoryWalkIcon } from './map.js';
-import { state } from './state.js';
+import { state, setActiveCircuitId } from './state.js';
 import { eventBus } from './events.js';
 import { notifyCircuitChanged } from './circuit.js';
 import { updatePoiData, getPatrimonialName } from './data.js';
@@ -55,6 +55,15 @@ let _poiMarkers = new Map(); // poiId -> { marker, feature, idx }
 let _sheetEl = null;         // élément DOM du bottom sheet (null = fermé)
 let _sheetPoiId = null;      // poiId affiché dans le sheet
 let _sheetObjUrl = null;     // objectURL d'une photo locale (à révoquer)
+
+// « Voir la fiche complète » quitte le suivi pour afficher la fiche détaillée
+// (rendue dans #mobile-container, masqué pendant le suivi). On mémorise ici le
+// circuit suivi : le Back depuis cette fiche RELANCE la marche là où on l'a
+// laissée (une fiche = une parenthèse, pas une sortie). Consommé par
+// resumeFollow() ; annulé par toute fermeture NORMALE de la fiche (event
+// 'details-panel:closed', cf. abonnement en bas de module).
+let _resumeFollowCircuitId = null;
+export function getResumeFollowCircuitId() { return _resumeFollowCircuitId; }
 
 export function isFollowActive() {
     return _active;
@@ -300,14 +309,35 @@ async function toggleVisited(poiId) {
 }
 
 // « Voir la fiche complète » : on QUITTE le suivi (la fiche détaillée se rend
-// dans #mobile-container, masqué pendant le suivi) puis on l'ouvre. Le retour
-// se fera vers la fiche circuit (comportement standard de openDetailsPanel).
+// dans #mobile-container, masqué pendant le suivi) puis on l'ouvre. Le Back
+// depuis la fiche RELANCE le suivi (cf. _resumeFollowCircuitId + onHwBack) au
+// lieu de retomber sur la liste des circuits.
 function exitToFiche(poiId) {
     const globalIndex = state.loadedFeatures.findIndex(f => getPoiId(f) === poiId);
     if (globalIndex < 0) { showToast('Fiche introuvable.', 'error'); return; }
+    const circuitId = state.activeCircuitId;
     closeSheetInternal();
     stopFollow();
-    openDetailsPanel(globalIndex);
+    // Mémorise APRÈS stopFollow (qui ne touche pas au flag) : le Back relancera
+    // la marche. La fiche REMPLACE l'entrée #sheet (replaceLevel) au lieu d'en
+    // empiler une → la pile reste [.., #follow, #p], un seul Back repop #follow
+    // et reprend le suivi (sinon les entrées #follow/#sheet orphelines faisaient
+    // vider le circuit au retour).
+    _resumeFollowCircuitId = circuitId;
+    openDetailsPanel(globalIndex, null, false, { replaceLevel: location.hash === '#sheet' });
+}
+
+// Relance le suivi mémorisé par exitToFiche, SANS re-pousser d'entrée
+// d'historique (on vient de repop l'entrée #follow existante). Appelé par
+// onHwBack au Back depuis la fiche.
+export function resumeFollow(explicitId) {
+    // id explicite quand l'appelant (onHwBack) a déjà fermé la fiche via
+    // closeDetailsPanel → 'details-panel:closed' a effacé le flag interne.
+    const id = explicitId || _resumeFollowCircuitId;
+    _resumeFollowCircuitId = null;
+    if (!id) return;
+    if (state.activeCircuitId !== id) setActiveCircuitId(id);
+    startFollow({ skipHistory: true });
 }
 
 function closeSheetInternal() {
@@ -476,7 +506,7 @@ function setWakeChip(on) {
 
 // ─── CYCLE DE VIE DU SUIVI ────────────────────────────────────────────────────
 
-export function startFollow() {
+export function startFollow(opts = {}) {
     if (_active) return;
     const circuit = getActiveCircuit();
     if (!circuitHasTrace(circuit)) return; // garde-fou : pas de plein écran vide
@@ -505,8 +535,10 @@ export function startFollow() {
     buildPoiMarkers(); // marqueurs POI cliquables (PR3)
 
     // Entrée d'historique : le Back Android (et la croix) quittent le suivi
-    // au lieu de revenir à la liste des circuits.
-    pushMobileLevel('follow');
+    // au lieu de revenir à la liste des circuits. À la REPRISE depuis une fiche
+    // (resumeFollow), on vient de repop l'entrée #follow existante → ne pas en
+    // empiler une nouvelle (skipHistory).
+    if (!opts.skipHistory) pushMobileLevel('follow');
 
     // Resync de la taille interne Leaflet (le conteneur vient de passer de
     // display:none à plein écran) puis cadrage sur le tracé, au frame suivant
@@ -581,3 +613,11 @@ export function stopFollow() {
     // figé au prochain affichage.
     requestAnimationFrame(() => { if (map) map.invalidateSize(); });
 }
+
+// Anti-fuite : toute fermeture NORMALE de la fiche (bouton X, ou Back non-repris)
+// passe par closeDetailsPanel → 'details-panel:closed' → annule une reprise de
+// suivi en attente. La reprise (resumeFollow) ne passe PAS par closeDetailsPanel
+// (elle remet currentFeatureId à null directement) → n'émet pas cet event, son
+// flag survit jusqu'à sa consommation. Empêche un flag résiduel de relancer un
+// suivi lors d'un Back depuis une fiche ouverte plus tard par un autre chemin.
+eventBus.on('details-panel:closed', () => { _resumeFollowCircuitId = null; });
