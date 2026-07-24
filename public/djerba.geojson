@@ -697,23 +697,12 @@
       "properties": {
         "Nom du site FR": "Henchir Bourgou",
         "Nom du site arabe": "هنشير بورقو",
-        "Catégorie": "Site archéologique",
+        "Catégorie": "Site historique",
         "Zone": "Midoun",
-        "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgouhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
+        "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgou\nhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
         "photos": [],
-        "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge.",
-        "Sous-type": "",
-        "État": "Conservé",
-        "Accès": "Extérieur seulement",
-        "info_gpx": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "Téléphone": "",
-        "Horaires": "",
-        "Facebook": "",
-        "verified": false,
-        "introuvableCarte": false
+        "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge."
       }
     },
     {
@@ -6650,11 +6639,24 @@
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
         "HW_ID": "HW-01KKVHNCEZHNGRPZ5XGAF9V0N3",
-        "description": "Ajouté via Rich Editor",
+        "description": "",
         "accessPoint": [
           10.9902964,
           33.7601163
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
