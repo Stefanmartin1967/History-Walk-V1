@@ -697,12 +697,23 @@
       "properties": {
         "Nom du site FR": "Henchir Bourgou",
         "Nom du site arabe": "هنشير بورقو",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "Midoun",
-        "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgou\nhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
+        "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgouhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
         "photos": [],
-        "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge."
+        "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge.",
+        "Sous-type": "",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1313,29 +1324,6 @@
         "accessPoint": [
           10.9364298,
           33.8113486
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.83872,
-          33.84727
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée El Guebli",
-        "Nom du site arabe": "مسجد القبلى",
-        "Catégorie": "Mosquée",
-        "Zone": "Erriadh",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6B07WPJSEPWJAEXM5C",
-        "description": "Mosquée en ruines située à Beni Maaguel. Infos à rechercher.",
-        "accessPoint": [
-          10.8385653,
-          33.8471866
         ]
       }
     },
@@ -6248,7 +6236,20 @@
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0W6KJP2MNXC0GWQJN6",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6323,11 +6324,23 @@
         "HW_ID": "HW-01KJABRN0XK418GNG8GH5KPT4A",
         "lat": 33.7812942328873,
         "lng": 10.76678663492203,
-        "description": "Ajouté via Rich Editor",
+        "description": "",
         "accessPoint": [
           10.7669336,
           33.781026
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6352,8 +6365,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.843874194703359,
-          33.8426735461855
+          10.84358528258597,
+          33.84303341184757
         ]
       },
       "properties": {
@@ -6361,7 +6374,22 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJABRN0Y687FFD0EF2SYPZ3Q",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "lat": 33.84303341184757,
+        "lng": 10.84358528258597,
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6378,7 +6406,20 @@
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
         "HW_ID": "HW-01KJB1NZSEHQH5M3JRKS72CKRN",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6395,7 +6436,20 @@
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "HW_ID": "HW-01KJM8X5EEAHXPBF1YNSEA19F1",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6412,7 +6466,20 @@
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
         "HW_ID": "HW-01KJMJATZZZRP02QNDTWS3YVK1",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6468,11 +6535,24 @@
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
         "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
-        "description": "Ajouté via Rich Editor",
+        "description": "",
         "accessPoint": [
           10.8951752,
           33.7703173
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6489,7 +6569,20 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJX5XSG18NC03E6900V170QX",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6506,11 +6599,24 @@
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
         "HW_ID": "HW-01KJZ4D50T7NQJ187MJ21YDR20",
-        "description": "Ajouté via Rich Editor",
+        "description": "",
         "accessPoint": [
           10.9719775,
           33.7582922
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6548,7 +6654,20 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CNPZR005431XS160BZ1C4",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6556,8 +6675,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.827390776515733,
-          33.83429771914028
+          10.826873181401124,
+          33.83428778491142
         ]
       },
       "properties": {
@@ -6565,24 +6684,22 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CWX2YWAJSWA4NYT64CD4R",
-        "description": "Ajouté via Rich Editor"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.82615065425977,
-          33.83403027422525
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Massoura",
-        "Catégorie": "Mosquée",
-        "Zone": "Erriadh",
-        "HW_ID": "HW-01KK1D2ZKZRKM1G6011V2WJ9BX",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "lat": 33.83428778491142,
+        "lng": 10.826873181401124
       }
     },
     {
@@ -6618,11 +6735,24 @@
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
         "HW_ID": "HW-01KKS462NFDJ7E80WSWZ9TK9R7",
-        "description": "Ajouté via Rich Editor",
+        "description": "",
         "accessPoint": [
           10.9727629,
           33.8140752
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6708,11 +6838,23 @@
         "HW_ID": "HW-01KM2QY8VXPF72S6D9NAZ0AZ43",
         "created_at": "2026-03-19T09:48:31.484Z",
         "Prix_TND": 0,
-        "description": "Créé sur le terrain",
+        "description": "",
         "accessPoint": [
           10.9735112,
           33.8137871
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
