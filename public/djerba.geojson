@@ -6276,10 +6276,23 @@
       },
       "properties": {
         "Nom du site FR": "Ancien atelier de tissage",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Curiosité",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0WBFCMMFBGZB582PRH",
-        "description": "Ajouté via Rich Editor"
+        "description": "",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6548,11 +6561,24 @@
         "Catégorie": "Curiosité",
         "Zone": "Ajim",
         "HW_ID": "HW-01KJMJFS86CYM1JHB958Y33CZ0",
-        "description": "Ajouté via Rich Editor",
+        "description": "",
         "accessPoint": [
           10.7618903,
           33.7013321
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
