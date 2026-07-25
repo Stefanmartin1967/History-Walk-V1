@@ -3961,21 +3961,35 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.863614,
-          33.710643
+          10.863619407618103,
+          33.71050850467812
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Boumsour",
+        "Nom du site FR": "Mosquée Boumessouer (Nouvelle)",
         "Nom du site arabe": "جامع بومسور",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "https://www.openstreetmap.org/way/386328373",
         "HW_ID": "HW-01K77WPE6KT8VGFJTHK03SWPZR",
         "accessPoint": [
           10.8639726,
           33.7109742
-        ]
+        ],
+        "lat": 33.71050850467812,
+        "lng": 10.863619407618103,
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Mosquée récente, construite en remplacement de l'ancienne Boumessouer voisine, aujourd'hui abandonnée. \n(Source : Jalel Fathallah #207)\nPetr Jenč - OpenStreetMap, 2025",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3983,21 +3997,35 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.863732,
-          33.710255
+          10.86332666195451,
+          33.71001473442526
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Mizwar",
+        "Nom du site FR": "Mosquée Boumessouer (Ancienne)",
         "Nom du site arabe": "جامع مزوار",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "https://www.openstreetmap.org/way/386328366",
         "HW_ID": "HW-01K77WPE6KQ3W8ZNZCKYQ3G9DB",
         "accessPoint": [
           10.8639085,
           33.710186
-        ]
+        ],
+        "lat": 33.71001473442526,
+        "lng": 10.86332666195451,
+        "Sous-type": "À minaret",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Ancienne mosquée ibadite wahbite, aujourd'hui abandonnée, remplacée par une nouvelle mosquée adjacente. (Source : répertoire Jalel Fathallah, #207)",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": true,
+        "introuvableCarte": false
       }
     },
     {
