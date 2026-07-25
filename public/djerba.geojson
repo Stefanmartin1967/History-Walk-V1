@@ -4006,7 +4006,7 @@
         "Nom du site arabe": "جامع مزوار",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": "https://www.openstreetmap.org/way/386328366",
+        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6KQ3W8ZNZCKYQ3G9DB",
         "accessPoint": [
           10.8639085,
@@ -4018,14 +4018,15 @@
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Ancienne mosquée ibadite wahbite, aujourd'hui abandonnée, remplacée par une nouvelle mosquée adjacente. (Source : répertoire Jalel Fathallah, #207)",
+        "description": "Ancienne mosquée ibadite wahbite, aujourd'hui abandonnée, remplacée par une nouvelle mosquée adjacente. Source : Répertoire Jalel Fathallah, #207",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": true,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/386328366"
       }
     },
     {
