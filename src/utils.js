@@ -99,15 +99,54 @@ export function openCoordsOnMap(lat, lng, provider = 'gmaps') {
 }
 
 /**
- * Ouvre la position d'un POI sur Google Maps ou OpenStreetMap, PAR COORDONNÉES
- * (jamais par nom : si le nom est erroné, une recherche textuelle renverrait du
- * vide ou un mauvais lieu). Réutilisé par la fiche POI (mini-bar) et l'import
- * photo (vérifier le lieu rattaché à un groupe).
+ * Normalise une référence d'objet OSM vers la forme canonique « type/id ».
+ * Accepte ce que l'admin colle naturellement : l'URL complète de la page OSM
+ * (avec ou sans query/hash) ou déjà « way/123 ». Retourne '' si non
+ * reconnaissable — on ne devine JAMAIS un id à partir d'un texte libre.
+ * @param {string} value
+ * @returns {string} « way/386328373 » ou ''
+ */
+export function normalizeOsmRef(value) {
+    if (typeof value !== 'string') return '';
+    const m = value.trim().match(/(node|way|relation)\/(\d+)/i);
+    return m ? `${m[1].toLowerCase()}/${m[2]}` : '';
+}
+
+/**
+ * URL de la page d'un objet OSM à partir de sa référence « type/id ».
+ * @param {string} osmRef
+ * @returns {string|null} null si la référence est absente/invalide
+ */
+export function osmObjectUrl(osmRef) {
+    const ref = normalizeOsmRef(osmRef);
+    return ref ? `https://www.openstreetmap.org/${ref}` : null;
+}
+
+/**
+ * Ouvre la position d'un POI sur Google Maps ou OpenStreetMap.
+ *
+ * OSM : si le POI porte un `osm_ref` (identité de l'objet), on ouvre la PAGE DE
+ * L'OBJET — bien plus utile que l'épingle : tags, historique, contributeur (le
+ * geste de vérification du data). Sinon, repli sur les coordonnées : le bouton
+ * n'est donc jamais cassé. Lecture via getPoiProp car `osm_ref` est éditable →
+ * l'overlay userData doit primer tant que la modif n'est pas publiée.
+ *
+ * Maps et le repli OSM restent PAR COORDONNÉES (jamais par nom : si le nom est
+ * erroné, une recherche textuelle renverrait du vide ou un mauvais lieu).
+ * Réutilisé par la fiche POI (mini-bar) et l'import photo (vérifier le lieu
+ * rattaché à un groupe).
  * @param {object} feature feature GeoJSON (geometry.coordinates = [lng, lat])
  * @param {'gmaps'|'osm'} [provider]
  * @returns {boolean} false si coordonnées indisponibles
  */
 export function openPoiOnMap(feature, provider = 'gmaps') {
+    if (provider === 'osm') {
+        const url = osmObjectUrl(getPoiProp(feature, 'osm_ref'));
+        if (url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+            return true;
+        }
+    }
     const coords = feature?.geometry?.coordinates;
     if (!Array.isArray(coords) || coords.length < 2) return false;
     const [lng, lat] = coords;
