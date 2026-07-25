@@ -251,6 +251,7 @@ export async function prepareDiffData(adminDraft) {
             if (key === 'Prix_TND') displayKey = 'Prix (TND)';
             if (key === 'description') displayKey = 'Description';
             if (key === 'info_gpx') displayKey = 'Info GPX';
+            if (key === 'osm_ref') displayKey = 'Objet OSM';
 
             if (key === 'photos') {
                 const oldLen = (oldVal || []).length;
