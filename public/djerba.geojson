@@ -7263,13 +7263,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Marabout Bouziri",
+        "Nom du site FR": "Mausolée Fkih Kacem El Bouziri",
         "Catégorie": "Marabout",
         "Accès": "Extérieur seulement",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1088303850",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "HW_ID": "HW-01KYFCTHGZ0XS4W7SAXKGCMSAV",
         "État": "En activité",
@@ -7277,7 +7277,14 @@
         "photos": [
           "photos/poi_HW-01KYFCTHGZ0XS4W7SAXKGCMSAV_1785075907721.jpg"
         ],
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "Source": "https://www.facebook.com/groups/736766449779695/posts/9523791204410465",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     }
   ]
