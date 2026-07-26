@@ -489,6 +489,28 @@ export const processDecision = async (id, decision, scope = 'poi') => {
 
 // --- GESTION DE LA PUBLICATION ET SYNCHRONISATION ---
 
+/**
+ * Préambule d'alerte du dialogue de publication : liste les champs dont le
+ * contenu déjà publié va être VIDÉ ou nettement RACCOURCI (marqués `loss` par le
+ * diff engine). Retourne '' quand il n'y a rien à signaler — le dialogue reste
+ * alors exactement celui d'avant, pour que l'alerte garde sa valeur de signal.
+ * @returns {string}
+ */
+export function buildPublishWarning() {
+    const lignes = [];
+    (diffData.pois || []).forEach(p => {
+        const pertes = (p.changes || []).filter(c => c.loss);
+        if (!pertes.length) return;
+        const details = pertes.map(c => c.loss === 'cleared'
+            ? `${c.key} (vidé)`
+            : `${c.key} (raccourci)`).join(', ');
+        lignes.push(`• ${p.name} — ${details}`);
+    });
+    if (!lignes.length) return '';
+    return `⚠️ Cette publication retire du contenu déjà en ligne :\n${lignes.join('\n')}\n\n`
+         + `Vérifiez que c'est voulu (une valeur peut revenir en arrière si la fiche a été rouverte sur un état ancien).\n\n`;
+}
+
 async function publishChanges() {
     const token = getStoredToken();
     if (!token) {
@@ -501,9 +523,14 @@ async function publishChanges() {
     // (registerDraftDestinationOnGitHub à la création) → le {id}.geojson poussé n'est
     // jamais orphelin. L'ancien garde « brouillon local » (Option A) est retiré.
 
+    // Garde-fou perte de contenu : le diff affiche fidèlement les champs modifiés,
+    // mais un champ vidé ou raccourci par mégarde (état local périmé, saisie
+    // écrasée) y ressemble à une correction voulue — perte constatée le 26/07 sur
+    // « Mosquée de Midoun ». On les REMONTE ici, au seul moment où l'admin décide,
+    // en les nommant. Pas de blocage : l'effacement peut être volontaire.
     const ok = await showConfirm(
         "Publication GitHub",
-        "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
+        buildPublishWarning() + "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
         "Publier",
         "Annuler"
     );
