@@ -5279,11 +5279,32 @@
         "Nom du site arabe": "جامع بوزيري",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P",
         "accessPoint": [
           11.0134285,
           33.8053256
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1426153008",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "photos": [
+          "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092204125.jpg",
+          "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092205784.jpg",
+          "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092207589.jpg",
+          "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092209018.jpg",
+          "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092210542.jpg",
+          "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092211944.jpg"
         ]
       }
     },
