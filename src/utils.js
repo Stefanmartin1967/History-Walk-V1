@@ -91,9 +91,16 @@ export function getPoiName(feature) {
 export function openCoordsOnMap(lat, lng, provider = 'gmaps') {
     if (typeof lat !== 'number' || typeof lng !== 'number'
         || !Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+    // Google Maps en VUE SATELLITE zoom 19 : la question posée par tous les
+    // appelants (fiche POI, éditeur, marqueur fantôme, position d'une photo) est
+    // « qu'y a-t-il physiquement à ces coordonnées ? ». Le plan ne répond pas ;
+    // l'imagerie, oui — c'est le geste de vérification d'existence du patrimoine.
+    // Contrepartie assumée : `map_action=map` ne pose pas d'épingle (l'API Maps
+    // ne combine pas marqueur et fond satellite) → le point est au CENTRE exact
+    // de l'écran, ce que le zoom 19 rend sans ambiguïté.
     const url = provider === 'osm'
         ? `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=18/${lat}/${lng}`
-        : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+        : `https://www.google.com/maps/@?api=1&map_action=map&center=${lat},${lng}&zoom=19&basemap=satellite`;
     window.open(url, '_blank', 'noopener,noreferrer');
     return true;
 }

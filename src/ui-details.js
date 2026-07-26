@@ -1,4 +1,4 @@
-import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch } from './state.js';
+import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch, getActiveDestinationName } from './state.js';
 import { getPoiId, getPatrimonialName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
@@ -462,8 +462,14 @@ function setupDetailsEventListeners(poiId) {
         btn.addEventListener('click', () => {
              const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
              if (feature) {
-                 const name = getPatrimonialName(feature);
-                 const query = encodeURIComponent(name);
+                 // Contextualisé par la DESTINATION ACTIVE (jamais un nom en dur) :
+                 // « Mosquée Sidi Yati » seul ramène des homonymes ailleurs dans le
+                 // monde arabe ; « … Djerba » cible le bon lieu. Repli sans suffixe
+                 // si la destination est inconnue — mieux vaut une recherche large
+                 // qu'une requête polluée par un mot parasite.
+                 const terms = [getPatrimonialName(feature), getActiveDestinationName()]
+                     .filter(Boolean).join(' ');
+                 const query = encodeURIComponent(terms);
                  window.open(`https://www.google.com/search?q=${query}`, '_blank', 'noopener,noreferrer');
              }
         });

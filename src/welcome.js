@@ -9,14 +9,12 @@
 // Le câblage de chaque choix sur l'état de l'app est géré ailleurs.
 
 import { eventBus } from './events.js';
-import { state } from './state.js';
+import { state, getActiveDestinationName } from './state.js';
 
 const WELCOME_KEY = 'hw_welcome_seen';
 
-function getActiveDestinationName() {
-    const id = state.currentMapId || state.destinations?.activeMapId;
-    return state.destinations?.maps?.[id]?.name || 'la destination';
-}
+// Repli propre à l'UI : une phrase doit rester lisible même destination inconnue.
+const destinationLabel = () => getActiveDestinationName() || 'la destination';
 
 const SVG_COMPASS = `
 <svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +80,7 @@ function buildCardsFirstLaunch() {
         {
             id: 'discover',
             svg: SVG_COMPASS,
-            title: `Découvrir ${getActiveDestinationName()}`,
+            title: `Découvrir ${destinationLabel()}`,
             subtitle: 'Je flâne, je regarde ce qui existe'
         },
         {

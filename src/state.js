@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.336'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.337'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
@@ -122,6 +122,21 @@ export function resetCurrentCircuit() {
 // Gardien pour changer de carte/zone
 export function setCurrentMap(mapId) {
     state.currentMapId = mapId;
+}
+
+/**
+ * Nom affichable de la destination active (« Djerba », « Hammamet »…), lu depuis
+ * destinations.json. Sélecteur partagé : sert à contextualiser ce qui sort de
+ * l'app (recherche web) et les libellés d'accueil.
+ *
+ * Retourne '' si inconnu — JAMAIS un nom en dur : l'app est multi-destination,
+ * et un « Djerba » codé en dur suivrait silencieusement l'utilisateur à Hammamet.
+ * Aux appelants de choisir leur repli (texte d'UI vs requête à ne pas polluer).
+ * @returns {string}
+ */
+export function getActiveDestinationName() {
+    const id = state.currentMapId || state.destinations?.activeMapId;
+    return state.destinations?.maps?.[id]?.name || '';
 }
 
 // Gardien pour définir les points d'intérêt chargés (features)
