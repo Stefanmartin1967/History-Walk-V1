@@ -5267,12 +5267,25 @@
         "Nom du site arabe": "جامع بوزيري",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P",
         "accessPoint": [
           11.0134285,
           33.8053256
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7224,6 +7237,33 @@
         "accessPoint": [
           11.040977,
           33.7786463
+        ],
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.013568799722222,
+          33.80533069972222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Marabout Bouziri",
+        "Catégorie": "Marabout",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1088303850",
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KYFCTHGZ0XS4W7SAXKGCMSAV",
+        "État": "En activité",
+        "description": "Marabout proche de la mosquée Bouziri",
+        "photos": [
+          "photos/poi_HW-01KYFCTHGZ0XS4W7SAXKGCMSAV_1785075907721.jpg"
         ],
         "Zone": "Arkou"
       }
