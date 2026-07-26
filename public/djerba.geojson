@@ -7252,6 +7252,33 @@
         ],
         "Zone": "Arkou"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.01386,
+          33.80474
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Marabout Bouziri",
+        "Catégorie": "Marabout",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1088303850",
+        "verified": false,
+        "introuvableCarte": false,
+        "HW_ID": "HW-01KYFCTHGZ0XS4W7SAXKGCMSAV",
+        "État": "En activité",
+        "description": "Marabout proche de la mosquée Bouziri",
+        "photos": [
+          "photos/poi_HW-01KYFCTHGZ0XS4W7SAXKGCMSAV_1785075907721.jpg"
+        ],
+        "Zone": "Arkou"
+      }
     }
   ]
 }
