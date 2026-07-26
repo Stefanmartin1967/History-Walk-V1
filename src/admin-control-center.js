@@ -6,7 +6,7 @@ import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
-import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
+import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData } from './database.js';
@@ -781,14 +781,55 @@ async function publishChanges() {
         await saveDraftAwait(adminDraft);
         updateButtonBadge();
 
-        // Clean local userData for published POIs (mémoire + IDB)
+        // ─── ALIGNEMENT DE L'ÉTAT MÉMOIRE SUR CE QUI VIENT D'ÊTRE PUBLIÉ ───
+        //
+        // Ce qui est publié devient le PATRIMOINE : on aplatit l'overlay dans
+        // feature.properties, puis on le retire. Sans cet alignement, deux vues
+        // de la même donnée divergeaient après publication :
+        //   — la fiche lit `feature.properties.userData` (conservé) → valeurs neuves
+        //   — le RichEditor lit `state.userData[id]` (vidé)         → valeurs d'AVANT
+        // L'admin rouvrait donc la fiche sur du périmé, corrigeait un champ, et
+        // son enregistrement republiait l'ancien contenu par-dessus le neuf.
+        // Deux pertes constatées le 26/07 (Mosquée de Midoun, Marabout Bouziri).
+        //
+        // Deux garde-fous :
+        //   — les clés PERSO ne sont jamais publiées (purgées du geojson par
+        //     generateMasterGeoJSONData) → elles RESTENT en overlay, sinon publier
+        //     effacerait le « visité » et les notes de l'utilisateur.
+        //   — les SUPPRESSIONS ne sont pas aplaties : c'est `userData._deleted` qui
+        //     exclut le POI du geojson ; le fondre dans properties le ferait
+        //     réapparaître à la publication suivante.
         const newUserData = { ...state.userData };
         const poisToDeleteFromIdb = [];
         diffData.pois.forEach(p => {
-             if (newUserData[p.id]) {
-                 delete newUserData[p.id];
-                 poisToDeleteFromIdb.push(p.id);
-             }
+            const overlay = newUserData[p.id];
+            if (!overlay) return;
+            const feature = state.loadedFeatures.find(f => getPoiId(f) === p.id);
+
+            if (p.isDeletion) {
+                delete newUserData[p.id];
+                poisToDeleteFromIdb.push(p.id);
+                return;
+            }
+
+            const personal = {};
+            Object.entries(overlay).forEach(([key, value]) => {
+                if (PERSONAL_KEYS.includes(key)) personal[key] = value;
+                else if (feature) feature.properties[key] = value;
+            });
+
+            if (Object.keys(personal).length > 0) {
+                newUserData[p.id] = personal;
+            } else {
+                delete newUserData[p.id];
+                poisToDeleteFromIdb.push(p.id);
+            }
+
+            // Rebind : fiche et éditeur doivent lire le même overlay.
+            if (feature) {
+                if (newUserData[p.id]) feature.properties.userData = newUserData[p.id];
+                else delete feature.properties.userData;
+            }
         });
         setUserData(newUserData);
         await saveAppState('userData', state.userData);
