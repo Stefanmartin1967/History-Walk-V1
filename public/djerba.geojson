@@ -453,16 +453,28 @@
       },
       "properties": {
         "Nom du site FR": "Ancienne Mosquée de Midoun",
-        "Nom du site arabe": "جامع مدنين",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE68JWCXJ0TCG1EDSB7A",
         "description": "Egalement appeléée ancienne mosquée de Midoun. Infos à rechercher.",
         "accessPoint": [
           10.9910994,
           33.8064118
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
