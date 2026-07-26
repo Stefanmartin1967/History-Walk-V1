@@ -858,15 +858,27 @@
       "properties": {
         "Nom du site FR": "Marabout Sidi Saïd",
         "Nom du site arabe": "جدي سعيد",
-        "Catégorie": "Mosquée",
+        "Catégorie": "Marabout",
         "Zone": "El Mahboubine",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6A27VC54MEK4XHGV9V",
         "description": "Pas de nom sur Google Maps ni sur Openstreetmap. A vérifier",
         "accessPoint": [
           10.9698519,
           33.7918562
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5267,25 +5279,12 @@
         "Nom du site arabe": "جامع بوزيري",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "",
+        "Source": null,
         "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P",
         "accessPoint": [
           11.0134285,
           33.8053256
-        ],
-        "Sous-type": "À minaret",
-        "État": "En activité",
-        "Accès": "Extérieur seulement",
-        "info_gpx": "",
-        "description": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "osm_ref": "",
-        "Téléphone": "",
-        "Horaires": "",
-        "Facebook": "",
-        "verified": false,
-        "introuvableCarte": false
+        ]
       }
     },
     {
@@ -5803,15 +5802,27 @@
       "properties": {
         "Nom du site FR": "Marabout Cheikh Yahia El Izmartni",
         "Nom du site arabe": "الشيخ يحيى الإزمرتني",
-        "Catégorie": "Mosquée",
+        "Catégorie": "Marabout",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6SJ6F4XB4CC3W6YNSG",
         "description": "Marabout. A vérifier.",
         "accessPoint": [
           10.9460662,
           33.8555339
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6919,7 +6930,7 @@
       },
       "properties": {
         "Nom du site FR": "Marabout Marmoura",
-        "Catégorie": "Mosquée",
+        "Catégorie": "Marabout",
         "Zone": "Midoun",
         "HW_ID": "HW-01KKS462NFDJ7E80WSWZ9TK9R7",
         "description": "",
@@ -6939,7 +6950,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": ""
       }
     },
     {
@@ -7237,33 +7249,6 @@
         "accessPoint": [
           11.040977,
           33.7786463
-        ],
-        "Zone": "Arkou"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          11.013568799722222,
-          33.80533069972222
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Marabout Bouziri",
-        "Catégorie": "Marabout",
-        "Accès": "Extérieur seulement",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "osm_ref": "way/1088303850",
-        "verified": false,
-        "introuvableCarte": false,
-        "HW_ID": "HW-01KYFCTHGZ0XS4W7SAXKGCMSAV",
-        "État": "En activité",
-        "description": "Marabout proche de la mosquée Bouziri",
-        "photos": [
-          "photos/poi_HW-01KYFCTHGZ0XS4W7SAXKGCMSAV_1785075907721.jpg"
         ],
         "Zone": "Arkou"
       }
