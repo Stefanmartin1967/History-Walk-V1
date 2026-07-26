@@ -4995,9 +4995,9 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Fort Borj Ajim",
+        "Nom du site FR": "Borj Ajim",
         "Nom du site arabe": "مرسى و برج أجيم",
-        "Catégorie": "Site historique",
+        "Catégorie": "Fortification",
         "Zone": "Ajim",
         "Source": "https://www.uib.com.tn/accueil/pages-intermediaires/les-forts-de-djerba-un-patrimoine-fragile",
         "HW_ID": "HW-01K77WPE6PGWRVHZ8H8CTQJ06X",
@@ -5006,7 +5006,18 @@
         "accessPoint": [
           10.7443497,
           33.7197495
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/10713396283",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
