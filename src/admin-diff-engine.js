@@ -16,7 +16,7 @@ export let diffData = {
     // Format enrichi (vs juste un compteur) pour que l'UI puisse afficher la
     // grille de miniatures avec cases à cocher avant publication.
     pendingPhotos: {},
-    stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0 },
+    stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0 },
     // Snapshot du patrimoine remote (peuplé par prepareDiffData) — utilisé par
     // purgeOrphanPendingPois pour comparer les userData aux valeurs patrimoine.
     originalFeatures: []
@@ -133,7 +133,7 @@ export async function prepareDiffData(adminDraft) {
     diffData.testedChanges = { additions: [], removals: [], hasChanges: false, snapshot: {} };
     diffData.pendingPhotos = {};
     diffData.originalFeatures = originalFeatures;
-    diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0 };
+    diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0 };
 
     // --- A. ANALYSE DES POIS (Via adminDraft + Comparaison directe) ---
     const pendingIds = Object.keys(adminDraft.pendingPois);
@@ -305,6 +305,7 @@ export async function prepareDiffData(adminDraft) {
         });
 
         if (changes.length > 0) {
+            annotateLosses(changes);
             diffData.pois.push({
                 id: id,
                 name: getPoiName(current),
@@ -526,6 +527,43 @@ export async function prepareDiffData(adminDraft) {
  *
  * À appeler APRÈS `prepareDiffData` (qui peuple diffData.originalFeatures).
  */
+// Seuil de « raccourcissement significatif » : en dessous, c'est une reformulation
+// ou une coquille corrigée, pas une perte. 20 caractères ≈ une demi-phrase.
+const LOSS_SHRINK_CHARS = 20;
+
+/**
+ * Marque les changements qui FONT PERDRE du contenu déjà publié, pour qu'ils ne
+ * ressemblent plus visuellement à une correction voulue.
+ *
+ * Pourquoi : le diff affiche fidèlement tous les champs modifiés, mais un champ
+ * revenu en arrière (état local périmé, champ vidé par mégarde) s'affiche comme
+ * n'importe quelle autre modification — perte silencieuse observée le 26/07 sur
+ * « Mosquée de Midoun » (description raccourcie + Source vidée, publiées sans
+ * être vues). On ne peut pas DEVINER l'intention de l'admin ; on peut en
+ * revanche isoler les deux cas où du contenu disparaît :
+ *   - `cleared`   : un champ rempli devient vide
+ *   - `shortened` : le texte perd au moins LOSS_SHRINK_CHARS caractères
+ * Une correction de même longueur (« مدنين » → « ميدون ») ne déclenche RIEN,
+ * un enrichissement non plus → le signal reste rare, donc lisible.
+ *
+ * Mute `changes` (ajoute `loss`) et incrémente diffData.stats.contentLosses.
+ * @param {Array<{key:string, old:*, new:*}>} changes
+ */
+export function annotateLosses(changes) {
+    const asText = (v) => (v === undefined || v === null || v === '—') ? '' : String(v).trim();
+    changes.forEach(c => {
+        // `photos` est déjà résumé en « N photo(s) » et les suppressions de
+        // photos passent par la grille dédiée → hors périmètre.
+        if (c.rawKey === 'photos') return;
+        const oldText = asText(c.old);
+        const newText = asText(c.new);
+        if (!oldText) return;                     // champ vide au départ : rien à perdre
+        if (!newText) c.loss = 'cleared';
+        else if (oldText.length - newText.length >= LOSS_SHRINK_CHARS) c.loss = 'shortened';
+        if (c.loss) diffData.stats.contentLosses++;
+    });
+}
+
 /**
  * Vrai si la valeur userData ne représente PAS un changement par rapport à
  * la valeur patrimoine. Aligné EXACTEMENT sur la logique de prepareDiffData
