@@ -41,18 +41,33 @@ export const ICONS = {
     move: `<i data-lucide="move" class="icon-sm"></i>`
 };
 
+// Le champ Source accepte une URL OU du texte libre (« Répertoire Jalel
+// Fathallah, #207 », « Martine Gendron — groupe mosquées de djerba »). On ne peut
+// PAS s'en remettre à `new URL()` pour trancher : le parseur des navigateurs
+// n'échoue quasiment jamais — `https://martine gendron` devient un lien vers
+// « martine%20gendron », et une phrase accentuée un hostname punycode illisible
+// (xn--…). Le repli texte du catch était donc du code mort côté Chrome.
+// D'où ce test de forme explicite, avant toute construction d'URL. Exporté pour
+// être testé directement : un test qui passerait par `new URL()` mesurerait le
+// parseur de l'environnement (Node/jsdom rejette, Chrome accepte) et non la règle.
+export function looksLikeUrl(value) {
+    if (/^https?:\/\//i.test(value)) return true;
+    // Domaine nu : aucun espace, un point, puis un TLD alphabétique.
+    return /^[^\s/]+\.[a-z]{2,}(?:[/?#]|$)/i.test(value);
+}
+
 export function renderSource(allProps) {
     const sourceString = allProps.Source;
     if (!sourceString || typeof sourceString !== 'string' || sourceString.trim() === '') return '';
     const firstLine = sourceString.split('\n')[0].trim();
-    try {
-        const fullUrl = firstLine.startsWith('http') ? firstLine : `https://${firstLine}`;
-        new URL(fullUrl);
-        const domain = new URL(fullUrl).hostname.replace(/^www\./, '');
-        return `<div class="poi-source-link">Source : <a href="${escapeXml(fullUrl)}" target="_blank" rel="noopener noreferrer">${escapeXml(domain)}</a></div>`;
-    } catch (_) {
-        return `<div class="poi-source-link">Source : <span>${escapeXml(firstLine)}</span></div>`;
+    if (looksLikeUrl(firstLine)) {
+        try {
+            const fullUrl = firstLine.startsWith('http') ? firstLine : `https://${firstLine}`;
+            const domain = new URL(fullUrl).hostname.replace(/^www\./, '');
+            return `<div class="poi-source-link">Source : <a href="${escapeXml(fullUrl)}" target="_blank" rel="noopener noreferrer">${escapeXml(domain)}</a></div>`;
+        } catch (_) { /* URL malformée malgré tout → affichage texte ci-dessous */ }
     }
+    return `<div class="poi-source-link">Source : <span>${escapeXml(firstLine)}</span></div>`;
 }
 
 function formatTimeText(h, m) {
