@@ -60,6 +60,52 @@ describe('looksLikeUrl — ce qui EST une URL', () => {
     });
 });
 
+describe('renderSource — forme « Texte | URL »', () => {
+    it('le texte devient le libellé du lien', () => {
+        const html = rendu('Jalel Fathallah, « Mosquée Bouziri » | https://www.youtube.com/watch?v=QIpMeR9OnDQ');
+        expect(html).toContain('href="https://www.youtube.com/watch?v=QIpMeR9OnDQ"');
+        expect(html).toContain('Jalel Fathallah');
+        expect(html).not.toContain('>youtube.com</a>'); // plus le domaine nu
+    });
+
+    it('accepte un domaine nu à droite et lui ajoute le schéma', () => {
+        const html = rendu('Répertoire des mosquées | palaisbenayed.com/doc.pdf');
+        expect(html).toContain('href="https://palaisbenayed.com/doc.pdf"');
+        expect(html).toContain('>Répertoire des mosquées</a>');
+    });
+
+    it('tolère les espaces autour du séparateur', () => {
+        expect(rendu('Wikipédia|https://fr.wikipedia.org/wiki/Djerba')).toContain('>Wikipédia</a>');
+    });
+
+    it('coupe au DERNIER séparateur — un libellé peut contenir une barre', () => {
+        const html = rendu('Jalel | répertoire | https://exemple.org/a');
+        expect(html).toContain('href="https://exemple.org/a"');
+        expect(html).toContain('>Jalel | répertoire</a>');
+    });
+
+    it("échappe le libellé (pas d'injection dans le lien)", () => {
+        const html = rendu('<img src=x onerror=alert(1)> | https://exemple.org');
+        expect(html).not.toContain('<img');
+        expect(html).toContain('href="https://exemple.org"');
+    });
+
+    it.each([
+        ['Martine Gendron | témoignage oral'],   // droite pas une URL
+        ['| https://exemple.org'],               // libellé vide
+        ['Relevé sur place | mai 2026'],
+    ])('« %s » reste du texte intégral (rien de masqué)', (saisie) => {
+        const html = rendu(saisie);
+        expect(estUnLien(html)).toBe(false);
+        expect(html).toContain(saisie.replace(/&/g, '&amp;'));
+    });
+
+    it("RÉGRESSION : sans séparateur, le comportement d'avant est inchangé", () => {
+        expect(rendu('https://exemple.org/a')).toContain('>exemple.org</a>');
+        expect(rendu('martine gendron')).toContain('<span>martine gendron</span>');
+    });
+});
+
 describe('renderSource — rendu', () => {
     it('RÉGRESSION : un nom de personne s\'affiche en texte, pas en lien', () => {
         const html = rendu('martine gendron');

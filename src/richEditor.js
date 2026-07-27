@@ -188,8 +188,8 @@ const RICH_POI_BODY_HTML = `
 
     <!-- Source & Notes -->
     <div class="input-group">
-        <label for="rich-poi-source">Source (URL ou Texte)</label>
-        <input type="text" id="rich-poi-source" class="editable-input" placeholder="https://...">
+        <label for="rich-poi-source">Source (Texte, URL, ou « Texte | URL »)</label>
+        <input type="text" id="rich-poi-source" class="editable-input" placeholder="Auteur, titre | https://...">
     </div>
     <div class="input-group">
         <label for="rich-poi-osm-ref">Objet OSM</label>

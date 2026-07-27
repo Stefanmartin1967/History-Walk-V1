@@ -427,8 +427,14 @@ export const HELP_LIEU_DESC_COURTE = {
 export const HELP_LIEU_SOURCE = {
     title: 'Source',
     html: `
-        <p><strong>Mention obligatoire</strong> : d'où vient l'information, à pouvoir
-        <strong>consulter</strong> <span class="help-muted">(un lien et/ou un texte)</span>.</p>`,
+        <p>D'où vient l'information, et où la <strong>consulter</strong>. Trois formes :</p>
+        <p>• <strong>Un texte</strong> <span class="help-muted">(« Jalel Fathallah, répertoire #331 »)</span>.<br>
+        • <strong>Un lien</strong> — la fiche affiche le nom du site.<br>
+        • <strong>Texte | URL</strong> — le texte devient le lien.</p>
+        <p>La troisième forme est la meilleure : elle <strong>nomme l'auteur</strong> et
+        reste cliquable.</p>
+        <p>Un lieu que vous documentez vous-même n'a pas de source externe : laissez le
+        champ vide.</p>`,
 };
 
 /* === PANNEAU GLOBAL — le guide « Créer ou éditer un lieu » ===

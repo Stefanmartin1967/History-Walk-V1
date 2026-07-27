@@ -56,18 +56,52 @@ export function looksLikeUrl(value) {
     return /^[^\s/]+\.[a-z]{2,}(?:[/?#]|$)/i.test(value);
 }
 
+/**
+ * Découpe une saisie « Libellé | URL ». Le séparateur est le DERNIER `|` : un
+ * libellé de source peut contenir une barre verticale, une URL non (elle serait
+ * percent-encodée). Retourne null si la forme n'est pas celle-là — auquel cas
+ * l'appelant retombe sur le comportement « URL seule ou texte seul ».
+ */
+function splitLabelledSource(value) {
+    const i = value.lastIndexOf('|');
+    if (i === -1) return null;
+    const label = value.slice(0, i).trim();
+    const url = value.slice(i + 1).trim();
+    if (!label || !looksLikeUrl(url)) return null;
+    return { label, url };
+}
+
+/** Ajoute le schéma manquant d'un domaine nu, et rend le lien. Null si l'URL casse. */
+function sourceLink(url, label) {
+    try {
+        const full = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+        const texte = label || new URL(full).hostname.replace(/^www\./, '');
+        return `<a href="${escapeXml(full)}" target="_blank" rel="noopener noreferrer">${escapeXml(texte)}</a>`;
+    } catch (_) {
+        return null; // URL malformée malgré looksLikeUrl → l'appelant affiche du texte
+    }
+}
+
 export function renderSource(allProps) {
     const sourceString = allProps.Source;
     if (!sourceString || typeof sourceString !== 'string' || sourceString.trim() === '') return '';
     const firstLine = sourceString.split('\n')[0].trim();
-    if (looksLikeUrl(firstLine)) {
-        try {
-            const fullUrl = firstLine.startsWith('http') ? firstLine : `https://${firstLine}`;
-            const domain = new URL(fullUrl).hostname.replace(/^www\./, '');
-            return `<div class="poi-source-link">Source : <a href="${escapeXml(fullUrl)}" target="_blank" rel="noopener noreferrer">${escapeXml(domain)}</a></div>`;
-        } catch (_) { /* URL malformée malgré tout → affichage texte ci-dessous */ }
+    const enveloppe = (contenu) => `<div class="poi-source-link">Source : ${contenu}</div>`;
+
+    // Forme « Libellé | URL » : citer correctement une source, c'est nommer son
+    // auteur ET pouvoir y aller. Un domaine nu comme libellé (« youtube.com »)
+    // perd l'auteur ; un texte seul perd le lien.
+    const labellisee = splitLabelledSource(firstLine);
+    if (labellisee) {
+        const lien = sourceLink(labellisee.url, labellisee.label);
+        if (lien) return enveloppe(lien);
     }
-    return `<div class="poi-source-link">Source : <span>${escapeXml(firstLine)}</span></div>`;
+
+    if (looksLikeUrl(firstLine)) {
+        const lien = sourceLink(firstLine, null);
+        if (lien) return enveloppe(lien);
+    }
+    return enveloppe(`<span>${escapeXml(firstLine)}</span>`);
 }
 
 function formatTimeText(h, m) {
