@@ -4827,13 +4827,25 @@
         "Nom du site arabe": "مسجد بوبارنوس",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 270\nhttp://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6PC9G02W8SX1JZX2HC",
-        "info_gpx": "Ancienne mosquée ibadite wahbite rénovée récemment.",
+        "info_gpx": "Ancienne mosquée ibadite wahbite reconstruite récemment",
         "accessPoint": [
           10.7596042,
           33.7150917
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "La mosquée du quartier Guebleine, à Ajim.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 270 et la donne pour ancienne : une mosquée ibadite wahbite, reconstruite récemment.\n\nBlanchie à la chaux, ouverte par une longue galerie d'arcades et flanquée d'un minaret, elle domine un terrain dégagé à l'écart du bourg. Elle est toujours en activité.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13431415774",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": true,
+        "introuvableCarte": false
       }
     },
     {
@@ -5945,11 +5957,7 @@
         "Horaires": "",
         "Facebook": "",
         "verified": true,
-        "introuvableCarte": false,
-        "photos": [
-          "photos/poi_HW-PWQM8ZZC2LR7PF4UTX73MGTM21_1785352994376.jpg",
-          "photos/poi_HW-PWQM8ZZC2LR7PF4UTX73MGTM21_1785352996212.jpg"
-        ]
+        "introuvableCarte": false
       }
     },
     {
