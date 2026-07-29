@@ -5945,7 +5945,11 @@
         "Horaires": "",
         "Facebook": "",
         "verified": true,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "photos": [
+          "photos/poi_HW-PWQM8ZZC2LR7PF4UTX73MGTM21_1785352994376.jpg",
+          "photos/poi_HW-PWQM8ZZC2LR7PF4UTX73MGTM21_1785352996212.jpg"
+        ]
       }
     },
     {
