@@ -5927,15 +5927,25 @@
         "Nom du site arabe": "جامع القبلي",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 301 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
         "Prix_TND": 0,
-        "description": "Mosquée dont il ne reste que peu de traces, proche de la mosquée Al-Qibli",
-        "info_gpx": "Quelques vestige de mosquée",
+        "description": "Un poste de garde et sa mosquée, aujourd'hui en ruines, dans l'arrière-pays d'Arkou.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 301 sous le nom de « Mosquée Hajar », sur la côte d'Arkou, et la donne pour ancienne. Son nom arabe, جامع الحجر, signifie « mosquée de la Pierre ». Un relevé archéologique porté sur OpenStreetMap en 2025 la nomme El Haran.\n\nSur place, il ne subsiste qu'une excavation creusée dans la roche calcaire, en contrebas d'un terrain caillouteux planté d'oliviers, à un kilomètre du rivage. Ce que cette cavité abritait — la mosquée elle-même, une citerne, une carrière — ne se lit plus.\n\nLe creux sert aujourd'hui de décharge sauvage.\n\nPetr Jenč - OpenStreetMap, 2025",
+        "info_gpx": "Quelques vestige à l'origine indéterminée",
         "accessPoint": [
           10.9902354,
           33.7600274
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "Temps_minutes": 0,
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6939,40 +6949,6 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": ""
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.990643799304964,
-          33.75990418754944
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée Al-Qibli",
-        "Catégorie": "Mosquée",
-        "Zone": "Arkou",
-        "HW_ID": "HW-01KKVHNCEZHNGRPZ5XGAF9V0N3",
-        "description": "",
-        "accessPoint": [
-          10.9902964,
-          33.7601163
-        ],
-        "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
-        "info_gpx": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "Source": "",
-        "Téléphone": "",
-        "Horaires": "",
-        "Facebook": "",
-        "verified": false,
-        "introuvableCarte": false
       }
     },
     {
