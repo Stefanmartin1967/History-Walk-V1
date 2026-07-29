@@ -28,6 +28,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { parseSources } from '../src/source-format.mjs';
 
 export const PRELAUNCH = true;
 export const SITE_ORIGIN = 'https://heripia.com';
@@ -98,19 +99,27 @@ export function getLatLng(feature) {
     return (typeof lat === 'number' && typeof lng === 'number') ? [lat, lng] : null;
 }
 
-/** Lien Source — {url, domain} si http(s) valide, sinon null. Comme renderSource
- *  côté app (templates.js) : on affiche le DOMAINE sans `www.` (l'URL brute est
- *  illisible), pas l'URL complète. Garde http(s) only (leçon audit S4 : jamais
- *  d'URL non vérifiée dans un href). */
-export function safeSource(source) {
-    const raw = String(source ?? '').split('\n')[0].trim();
-    if (!/^https?:\/\//i.test(raw)) return null;
-    try {
-        const url = new URL(raw);
-        return { url: url.href, domain: url.hostname.replace(/^www\./, '') };
-    } catch {
-        return null;
+/** Bloc « Source(s) » de la page — chaîne vide si le champ est vide.
+ *
+ *  L'analyse du champ est partagée avec l'app (src/source-format.mjs) : cette
+ *  page avait sa propre lecture, qui ne reconnaissait que l'URL nue et laissait
+ *  donc tomber le texte libre ET la forme « Libellé | URL ». Un lieu sourcé
+ *  « Jalel Fathallah | https://… » perdait toute mention de sa source ici.
+ *
+ *  Sécurité — leçon audit S4, jamais d'URL non vérifiée dans un href : `url`
+ *  ne peut être que http(s), `parseSources` ne construisant de lien qu'à partir
+ *  d'une chaîne en `https?://` ou d'un domaine nu qu'elle préfixe en `https://`.
+ *  Le `nofollow` reste propre aux pages indexables (l'app ne le met pas). */
+export function sourcesHtml(source) {
+    const sources = parseSources(source == null ? '' : String(source));
+    if (!sources.length) return '';
+    const rendu = ({ text, url }) => url
+        ? `<a href="${escapeHtml(url)}" rel="nofollow noopener" target="_blank">${escapeHtml(text)}</a>`
+        : escapeHtml(text);
+    if (sources.length === 1) {
+        return `    <p class="source">Source : ${rendu(sources[0])}</p>\n`;
     }
+    return `    <p class="source">Sources :<br>${sources.map(rendu).join('<br>')}</p>\n`;
 }
 
 // ─── Rendu ───────────────────────────────────────────────────────────────────
@@ -146,7 +155,7 @@ export function renderPoiPage({ feature, slug, mapId, mapName, prelaunch = PRELA
     const horaires = (p.Horaires || '').trim();
     const telephone = (p['Téléphone'] || '').trim();
     const latLng = getLatLng(feature);
-    const source = safeSource(p.Source);
+    const sourceBlock = sourcesHtml(p.Source);
 
     const pageUrl = `${SITE_ORIGIN}/lieux/${mapId}/${slug}/`;
     const photoRel = (p.photos || []).find(ph => photoExists(ph));
@@ -212,7 +221,7 @@ ${nameAr ? `    <p class="name-ar" dir="rtl" lang="ar">${escapeHtml(nameAr)}</p>
       ${descHtml}
     </div>
 ${infos.length ? `    <dl>\n${infos.map(([k, v]) => `      <dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('\n')}\n    </dl>\n` : ''}    <a class="cta" href="/?poi=${encodeURIComponent(p.HW_ID)}">Voir sur la carte Heripia</a>
-${source ? `    <p class="source">Source : <a href="${escapeHtml(source.url)}" rel="nofollow noopener" target="_blank">${escapeHtml(source.domain)}</a></p>\n` : ''}  </main>
+${sourceBlock}  </main>
   <footer>© Heripia — découverte du patrimoine à pied</footer>
 </body>
 </html>
