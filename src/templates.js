@@ -5,6 +5,7 @@ import { escapeXml, getDerivedZone } from './utils.js';
 import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
+import { parseSources } from './source-format.mjs';
 
 // Devise de la destination active. Seul consommateur : buildDetailsPanelHtml ci-dessous.
 function getCurrentCurrency() {
@@ -41,67 +42,32 @@ export const ICONS = {
     move: `<i data-lucide="move" class="icon-sm"></i>`
 };
 
-// Le champ Source accepte une URL OU du texte libre (« Répertoire Jalel
-// Fathallah, #207 », « Martine Gendron — groupe mosquées de djerba »). On ne peut
-// PAS s'en remettre à `new URL()` pour trancher : le parseur des navigateurs
-// n'échoue quasiment jamais — `https://martine gendron` devient un lien vers
-// « martine%20gendron », et une phrase accentuée un hostname punycode illisible
-// (xn--…). Le repli texte du catch était donc du code mort côté Chrome.
-// D'où ce test de forme explicite, avant toute construction d'URL. Exporté pour
-// être testé directement : un test qui passerait par `new URL()` mesurerait le
-// parseur de l'environnement (Node/jsdom rejette, Chrome accepte) et non la règle.
-export function looksLikeUrl(value) {
-    if (/^https?:\/\//i.test(value)) return true;
-    // Domaine nu : aucun espace, un point, puis un TLD alphabétique.
-    return /^[^\s/]+\.[a-z]{2,}(?:[/?#]|$)/i.test(value);
-}
+// Les formes acceptées par le champ Source (texte, URL, « Libellé | URL », et
+// UNE SOURCE PAR LIGNE) sont décrites et analysées dans ./source-format.mjs,
+// partagé avec le générateur de pages SEO. Ici on ne fait que du HTML.
 
 /**
- * Découpe une saisie « Libellé | URL ». Le séparateur est le DERNIER `|` : un
- * libellé de source peut contenir une barre verticale, une URL non (elle serait
- * percent-encodée). Retourne null si la forme n'est pas celle-là — auquel cas
- * l'appelant retombe sur le comportement « URL seule ou texte seul ».
+ * Bloc « Source(s) » sous la description.
+ *
+ * Une seule source → rendu inchangé, sur une ligne (« Source : X ») : c'est le
+ * cas de 56 des 57 lieux sourcés de Djerba, on ne bouge pas leur fiche d'un
+ * pixel. Deux ou plus → « Sources : » puis une ligne par source. Pas de puces :
+ * le bloc est petit et discret (11px, ink-soft), et une liste à puces rendrait
+ * le cas courant à une source orphelin.
  */
-function splitLabelledSource(value) {
-    const i = value.lastIndexOf('|');
-    if (i === -1) return null;
-    const label = value.slice(0, i).trim();
-    const url = value.slice(i + 1).trim();
-    if (!label || !looksLikeUrl(url)) return null;
-    return { label, url };
-}
-
-/** Ajoute le schéma manquant d'un domaine nu, et rend le lien. Null si l'URL casse. */
-function sourceLink(url, label) {
-    try {
-        const full = /^https?:\/\//i.test(url) ? url : `https://${url}`;
-        const texte = label || new URL(full).hostname.replace(/^www\./, '');
-        return `<a href="${escapeXml(full)}" target="_blank" rel="noopener noreferrer">${escapeXml(texte)}</a>`;
-    } catch (_) {
-        return null; // URL malformée malgré looksLikeUrl → l'appelant affiche du texte
-    }
-}
-
 export function renderSource(allProps) {
-    const sourceString = allProps.Source;
-    if (!sourceString || typeof sourceString !== 'string' || sourceString.trim() === '') return '';
-    const firstLine = sourceString.split('\n')[0].trim();
-    const enveloppe = (contenu) => `<div class="poi-source-link">Source : ${contenu}</div>`;
+    const sources = parseSources(allProps.Source);
+    if (!sources.length) return '';
 
-    // Forme « Libellé | URL » : citer correctement une source, c'est nommer son
-    // auteur ET pouvoir y aller. Un domaine nu comme libellé (« youtube.com »)
-    // perd l'auteur ; un texte seul perd le lien.
-    const labellisee = splitLabelledSource(firstLine);
-    if (labellisee) {
-        const lien = sourceLink(labellisee.url, labellisee.label);
-        if (lien) return enveloppe(lien);
-    }
+    const rendu = ({ text, url }) => url
+        ? `<a href="${escapeXml(url)}" target="_blank" rel="noopener noreferrer">${escapeXml(text)}</a>`
+        : `<span>${escapeXml(text)}</span>`;
 
-    if (looksLikeUrl(firstLine)) {
-        const lien = sourceLink(firstLine, null);
-        if (lien) return enveloppe(lien);
+    if (sources.length === 1) {
+        return `<div class="poi-source-link">Source : ${rendu(sources[0])}</div>`;
     }
-    return enveloppe(`<span>${escapeXml(firstLine)}</span>`);
+    const lignes = sources.map(s => `<div class="poi-source-item">${rendu(s)}</div>`).join('');
+    return `<div class="poi-source-link">Sources :${lignes}</div>`;
 }
 
 function formatTimeText(h, m) {

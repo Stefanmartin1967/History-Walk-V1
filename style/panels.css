@@ -920,6 +920,12 @@
     text-underline-offset: 2px;
 }
 .poi-source-link a:hover { color: var(--brand); }
+/* Multi-source : « Sources : » puis une ligne par source, légèrement décalées
+   pour les rattacher à leur étiquette. Pas de puces (cf. renderSource). */
+.poi-source-item {
+    margin-top: 2px;
+    padding-left: 10px;
+}
 
 /* Description GPX (toggle hidden by default) */
 .poi-gpx-section {

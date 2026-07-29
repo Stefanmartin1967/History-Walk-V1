@@ -425,7 +425,7 @@ export const HELP_LIEU_DESC_COURTE = {
 
 /* === ANCRE — « ? » sur le label « Source » === */
 export const HELP_LIEU_SOURCE = {
-    title: 'Source',
+    title: 'Sources',
     html: `
         <p>D'où vient l'information, et où la <strong>consulter</strong>. Trois formes :</p>
         <p>• <strong>Un texte</strong> <span class="help-muted">(« Jalel Fathallah, répertoire #331 »)</span>.<br>
@@ -433,6 +433,8 @@ export const HELP_LIEU_SOURCE = {
         • <strong>Texte | URL</strong> — le texte devient le lien.</p>
         <p>La troisième forme est la meilleure : elle <strong>nomme l'auteur</strong> et
         reste cliquable.</p>
+        <p><strong>Plusieurs sources ?</strong> Écrivez-en <strong>une par ligne</strong> —
+        la fiche les affiche toutes.</p>
         <p>Un lieu que vous documentez vous-même n'a pas de source externe : laissez le
         champ vide.</p>`,
 };
@@ -526,11 +528,12 @@ export const GUIDE_LIEU = {
                 <strong>téléphone</strong>, <strong>horaires</strong>, <strong>Facebook</strong>.</p>`,
         },
         {
-            heading: `7 · Source et notes`,
+            heading: `7 · Sources et notes`,
             html: `<ul class="help-list">
-                    <li><strong>Source</strong> — <strong>mention obligatoire</strong> : d'où
-                        vient l'information, à pouvoir consulter <span class="help-muted">(un
-                        lien et/ou un texte)</span>.</li>
+                    <li><strong>Sources</strong> — d'où vient l'information, à pouvoir
+                        consulter <span class="help-muted">(un lien et/ou un texte)</span>.
+                        <strong>Une par ligne</strong> s'il y en a plusieurs. Facultatif :
+                        un lieu que vous documentez vous-même n'a pas de source externe.</li>
                     <li><strong>Notes</strong> — vos remarques personnelles.</li>
                 </ul>`,
         },

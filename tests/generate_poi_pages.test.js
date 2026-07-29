@@ -9,7 +9,7 @@ import {
     assignSlugs,
     metaDescription,
     getLatLng,
-    safeSource,
+    sourcesHtml,
     renderPoiPage,
     renderSitemap,
     MIN_DESCRIPTION_CHARS,
@@ -85,13 +85,50 @@ describe('getLatLng', () => {
     });
 });
 
-describe('safeSource', () => {
-    it('http(s) uniquement (leçon S4), domaine sans www.', () => {
-        expect(safeSource('https://www.example.com/x?y=1')).toEqual({ url: 'https://www.example.com/x?y=1', domain: 'example.com' });
-        expect(safeSource('https://djerba.holiday/page-tres-longue/')).toEqual({ url: 'https://djerba.holiday/page-tres-longue/', domain: 'djerba.holiday' });
-        expect(safeSource('javascript:alert(1)')).toBeNull();
-        expect(safeSource('ftp://x')).toBeNull();
-        expect(safeSource('')).toBeNull();
+describe('sourcesHtml', () => {
+    it('URL seule : lien vers le domaine sans www., nofollow', () => {
+        const html = sourcesHtml('https://www.example.com/x?y=1');
+        expect(html).toContain('href="https://www.example.com/x?y=1"');
+        expect(html).toContain('>example.com</a>');
+        expect(html).toContain('rel="nofollow noopener"');
+        expect(html).toContain('Source :');
+    });
+
+    it('jamais d\'href non http(s) (leçon S4)', () => {
+        expect(sourcesHtml('javascript:alert(1)')).not.toContain('<a ');
+        expect(sourcesHtml('ftp://x')).not.toContain('<a ');
+    });
+
+    it('rien à afficher pour un champ vide', () => {
+        expect(sourcesHtml('')).toBe('');
+        expect(sourcesHtml(null)).toBe('');
+        expect(sourcesHtml(undefined)).toBe('');
+    });
+
+    // Le trou que ce module ferme : ces deux formes ne s'affichaient PAS du tout
+    // sur la page statique, alors que l'app les rendait correctement.
+    it('RÉGRESSION #908 : « Libellé | URL » n\'est plus perdu', () => {
+        const html = sourcesHtml('Jalel Fathallah, répertoire n° 331 | https://palaisbenayed.com/doc.pdf');
+        expect(html).toContain('href="https://palaisbenayed.com/doc.pdf"');
+        expect(html).toContain('Jalel Fathallah, répertoire n° 331');
+    });
+
+    it('RÉGRESSION : le texte seul s\'affiche, sans lien', () => {
+        const html = sourcesHtml('Relevé sur place, novembre 2026');
+        expect(html).toContain('Relevé sur place, novembre 2026');
+        expect(html).not.toContain('<a ');
+    });
+
+    it('multi-lignes : « Sources : » et toutes les lignes', () => {
+        const html = sourcesHtml('https://exemple.org/a\nTémoignage d\'un habitant\nJalel | https://exemple.org/b');
+        expect(html).toContain('Sources :');
+        expect(html).toContain('href="https://exemple.org/a"');
+        expect(html).toContain('Témoignage d&#39;un habitant');
+        expect(html).toContain('>Jalel</a>');
+    });
+
+    it('échappe le HTML du texte libre', () => {
+        expect(sourcesHtml('<script>x</script>')).not.toContain('<script>');
     });
 });
 
@@ -138,8 +175,12 @@ describe('renderPoiPage', () => {
         expect(stale).not.toContain('<img class="photo"');
     });
 
-    it('source : domaine affiché (pas l\'URL brute), absente si pas http(s)', () => {
-        expect(render({ Source: 'javascript:alert(1)' })).not.toContain('class="source"');
+    it('source : domaine affiché (pas l\'URL brute), jamais de lien hors http(s)', () => {
+        // Une source non-URL n'est plus escamotée : elle s'affiche en TEXTE,
+        // comme dans l'app — mais sans href, donc sans schéma exotique.
+        const suspect = render({ Source: 'javascript:alert(1)' });
+        expect(suspect).toContain('class="source"');
+        expect(suspect).not.toContain('href="javascript:');
         const html = render({ Source: 'https://www.djerba.holiday/page-longue/x' });
         expect(html).toContain('class="source"');
         expect(html).toContain('>djerba.holiday</a>');               // libellé = domaine
