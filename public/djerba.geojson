@@ -429,17 +429,29 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Alrahmen ",
+        "Nom du site FR": "Mosquée Alrahmen",
         "Nom du site arabe": "جامع الرحمن",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE68Q2NTEKRWSPCDZZGE",
         "description": "Située à Midoun. Egalement appelée Mosquée Ar-Rahman. Infos à rechercher.",
         "accessPoint": [
           10.9906779,
           33.8106229
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/367588586",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1221,7 +1233,7 @@
         "Nom du site arabe": "جامع أمي زايد",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A2%D9%85%D9%8A+%D8%B2%D8%A7%D9%8A%D8%AF%E2%80%AD/@33.8509462,10.9454712,315m/data=!3m1!1e3!4m6!3m5!1s0x13aaa30ba663f749:0x5a1ef95743e14078!8m2!3d33.8509184!4d10.9456959!16s%2Fg%2F11p655n5mh?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
         "accessPoint": [
           10.9454083,
@@ -1237,7 +1249,17 @@
           "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563697632.jpg",
           "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563699516.jpg",
           "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563701545.jpg"
-        ]
+        ],
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/484881572",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5076,10 +5098,21 @@
         "Nom du site arabe": "مسجد أمغار",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": "https://routes.discovertunisia.com/storymap/data/download/Site_08_Mosqu%C3%A9e%20Amghar.pdf",
+        "Source": "https://routes.discovertunisia.com/storymap/data/download/Site_08_Mosqu%C3%A9e%20Amghar.pdf\nhttps://www.google.com/maps/place/Amghar+Mosque/@33.7409541,10.7357658,3a,75y,90t/data=!3m8!1e2!3m6!1sCIABIhBKmREtL2Afq3BwJXPiL5nK!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWnhsZqwkMxPPwAeDoi1o0c_HdTGt7qRSzdwxT9f0nRQEFduMIsAzFKRvQL-2Q1Tt5r_4bK33yeDYVPE9VQjO25sJWmCNp55PHnx4LwZPjcK24sMc_NUGhj2qaWiP4UONekqOsjno3PgVgnf%3Dw114-h86-k-no!7i9248!8i6936!4m7!3m6!1s0x13aab70803dfa01f:0x5823bc900440e6c0!8m2!3d33.7408392!4d10.7349705!10e5!16s%2Fg%2F11sh1xkfgn?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
         "description": "La mosquée, qui cotoie la mer, a perdu sa fonctione religieuse et sert maintenant d'abri aux pècheurs. Elle a également servi de décor pour la \"Maison de Ben\" (Obi-Wan Kenobi en 1976. Un de ses murs externes est recouvert d'une fresque Invader représentant Obi-Wan-Kenobi",
-        "info_gpx": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs"
+        "info_gpx": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/180722237",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
