@@ -493,13 +493,25 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosque Othmane Ibn Affenne",
+        "Nom du site FR": "Mosquée Othmane Ibn Affenne",
         "Nom du site arabe": "جامع عثمان بن عفان",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "https://www.google.com/maps/place/Mosque+Othmane+Ibn+affenne/@33.844083,10.984167,315m/data=!3m1!1e3!4m6!3m5!1s0x13aa99e55bb24835:0x7aa8e80fe99ca8b6!8m2!3d33.8441514!4d10.9845428!16s%2Fg%2F11t5b9y2cq?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE68HB12PE5Y0ZGTGJ3X",
-        "info_gpx": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions."
+        "info_gpx": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions.",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1822,13 +1834,25 @@
         "Nom du site arabe": "جامع سمعان",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "https://www.google.com/maps/place/Mosqu%C3%A9e+Sidi+Sma%C3%A2n/@33.872816,10.9092173,3a,96.9y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgID-xKeeJA!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWmfGHnOtjUaRjYXgeZ5xsIeZbGdhurBiOdLGQpMRXwWsOW-mcwjtpeILS4-Zq1FpW1CvOIXCLV4yWF2mD2gBteN-0RzvXcIBbTqMooUOniuMlrNKCaB-LPrAGr9Ei72bV1V9eda%3Dw114-h86-k-no!7i960!8i720!4m16!1m8!3m7!1s0x13aaa36b89f08a93:0xce77e4daf59da1c1!2sAncienne+Mosqu%C3%A9e+Sidi+Ismail!8m2!3d33.8735681!4d10.9090493!10e5!16s%2Fg%2F11f03nr56t!3m6!1s0x13aaa36b91b97f6b:0xb9f1c4d6e41f7c2c!8m2!3d33.872816!4d10.9092172!10e5!16s%2Fg%2F11g9szqyy3?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE6D46D9BH4QCBXE331N",
-        "description": "Infos à rechercher.",
+        "description": "Pas de minaret, 2 mihrabs visibles en façades.\nIbadite wahbite (réseau côtier défensif)\nN°41 — Sidi Ismaël — Ghizen — Poste de garde, mausolée et mosquée — 9è siècle de l'hégire / 15è siècle ap. J.-C. Une nouvelle mosquée fut construite en face de l'ancienne au 21è siècle. La nouvelle est récente.",
         "accessPoint": [
           10.9090045,
           33.8724573
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/386969600",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1864,13 +1888,25 @@
         "Nom du site arabe": "جامع سيدي اسماعيل غيزان",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "https://www.google.com/maps/place/Ancienne+Mosqu%C3%A9e+Sidi+Ismail/@33.8733967,10.9089885,314m/data=!3m1!1e3!4m6!3m5!1s0x13aaa36b89f08a93:0xce77e4daf59da1c1!8m2!3d33.8735681!4d10.9090493!16s%2Fg%2F11f03nr56t?entry=ttu&g_ep=EgoyMDI2MDcyNy4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE6DRTH3M3NHYQJSR1NE",
         "description": "Rénovée pour devenir le siège de l'Association Architectes Jerba",
         "accessPoint": [
           10.9091334,
           33.8733383
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "Désaffecté",
+        "Accès": "Non visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12214699821",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3571,12 +3607,25 @@
         "Nom du site arabe": "جامع الحارة",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "https://www.google.com/maps/place/Jamaa+al+H%C3%A2ra+%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%AD%D8%A7%D8%B1%D8%A9%E2%80%AD/@33.69646,10.903181,315m/data=!3m1!1e3!4m6!3m5!1s0x13aabf40985ac13f:0xd3ee1e4857ca49fe!8m2!3d33.6962456!4d10.9031594!16s%2Fg%2F11pvg9vgkx?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24",
         "accessPoint": [
           10.9034857,
           33.6965003
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/386836031",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3912,7 +3961,7 @@
         "Nom du site arabe": "جامع الكبير",
         "Catégorie": "Mosquée",
         "Zone": "El Hachene",
-        "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/",
+        "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/\nhttps://www.google.com/maps/place/Mosqu%C3%A9e+Aboumessouer/@33.8624683,10.8210562,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgICHyuWcXA!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWkPO1oxKD2nKegOXYfRkV9kNty9ZOUDAesJULeVkYX3OiQqKDG5X7wSEzAHO1K6tT4WI7no_795KIlBerBd_ta2L2BidNEREbeyG8Z5FOvmT2vaVPvaSzjLqBwsjG2zb7JBs_Y%3Dw86-h114-k-no!7i3024!8i4032!4m7!3m6!1s0x13aaa548356aaaab:0x9c9d39182d610709!8m2!3d33.8622019!4d10.8212507!10e5!16s%2Fg%2F11txmz4fyb?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
         "lat": 33.86191783421097,
         "lng": 10.821201358600382,
@@ -3920,7 +3969,19 @@
         "accessPoint": [
           10.8210776,
           33.861825
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/671576720",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5182,12 +5243,25 @@
         "Nom du site arabe": "مسجد الهداية",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "https://www.google.com/maps/place/AlHidaya/@33.803611,10.975806,315m/data=!3m1!1e3!4m6!3m5!1s0x13aabd00d6f92f21:0xb522dcad424fbddd!8m2!3d33.8036507!4d10.9757896!16s%2Fg%2F11sthwq0nd?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE6QR67710KWTHBD0C6V",
         "accessPoint": [
           10.9756422,
           33.8037744
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990311532",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5227,13 +5301,25 @@
         "Nom du site arabe": "مسجد سيدي سفيان",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "https://www.google.com/maps/place/Mosque+Sidi+Sofiane/@33.8221406,10.9942838,223m/data=!3m1!1e3!4m6!3m5!1s0x13aa97ef2da478d3:0x1d63f8f47c259bf4!8m2!3d33.8220829!4d10.9942359!16s%2Fg%2F11f3zfpd4p?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "HW_ID": "HW-01K77WPE6Q0QEE8APATRE5K4MS",
         "info_gpx": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles.",
         "accessPoint": [
           10.9938779,
           33.8221935
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1001070700",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6893,20 +6979,21 @@
         "HW_ID": "HW-01KK1CWX2YWAJSWA4NYT64CD4R",
         "description": "",
         "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%AA%D9%82%D9%88%D9%89%E2%80%AD/@33.8343787,10.8268589,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgICJg7DJrwE!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWk2Yt-VXSfpZ4rSbgk5YPtZ8unjgsAWJFfxRue7ZFZauVYHskfAIHBzw5lOxIlHXxSOz5U_VluMn8qXt3h0uZT7jc8TrZPT52K38Ora8-wFLp_phWNHcR_BOmQAWvRedF9HBKgy1A%3Dw114-h86-k-no!7i4624!8i3472!4m7!3m6!1s0x13aabb063373ede1:0x5625d3a51d48a3a7!8m2!3d33.8342511!4d10.8270517!10e5!16s%2Fg%2F11s65j3v1z?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
         "lat": 33.83428778491142,
-        "lng": 10.826873181401124
+        "lng": 10.826873181401124,
+        "osm_ref": "node/13516776102"
       }
     },
     {
@@ -7115,7 +7202,7 @@
       "properties": {
         "Nom du site FR": "Mosquée al-Ahjar",
         "Catégorie": "Mosquée",
-        "Sous-type": "Générique",
+        "Sous-type": "À minaret",
         "Zone": "Mellita",
         "description": "Mosquée sans infos, trouvée sur la carte.\nNom et existence à vérifier",
         "Temps_minutes": 0,
@@ -7124,7 +7211,18 @@
         "accessPoint": [
           10.780887,
           33.8520049
-        ]
+        ],
+        "Nom du site arabe": "",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Source": "https://www.google.com/maps/place/%D9%85%D8%B3%D8%AC%D8%AF+%D8%A7%D9%84%D8%A5%D8%AD%D8%B3%D8%A7%D9%86%E2%80%AD/@33.8522985,10.7803708,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgID99PmqSg!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWnUju2mmcSP1XD7igo4Q46R5Lbb6vm-ViAiy4lYuylw8p2Gw_Ko2wTWuEzrgq-pDzt5dlJU5EKh00hP3TpeqGMq3lk78sK6CRzVBiXARpxQlLqc9f5DlK7qdHs9Nb-qkqq3TqLI%3Dw86-h114-k-no!7i1536!8i2040!4m7!3m6!1s0x13aab1002dba88df:0x47d08e1e879ca798!8m2!3d33.8520528!4d10.7803465!10e5!16s%2Fg%2F11vwd75bvy?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7139,7 +7237,7 @@
       "properties": {
         "Nom du site FR": "Mosquée al-Baraka",
         "Catégorie": "Mosquée",
-        "Sous-type": "Générique",
+        "Sous-type": "À minaret",
         "Zone": "El Groa",
         "description": "Mosquée découvert sur carte.\nNom et existence à confirmer",
         "Temps_minutes": 0,
@@ -7148,7 +7246,18 @@
         "accessPoint": [
           10.7642627,
           33.8377351
-        ]
+        ],
+        "Nom du site arabe": "",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Source": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%A8%D8%B1%D9%83%D8%A9%E2%80%AD/@33.8378461,10.764613,315m/data=!3m1!1e3!4m6!3m5!1s0x13aab1be6f4bf7f9:0x278d3004972b4f67!8m2!3d33.8377932!4d10.7646959!16s%2Fg%2F11s5wrc42l?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
