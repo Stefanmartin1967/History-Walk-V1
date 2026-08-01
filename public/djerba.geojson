@@ -6052,14 +6052,28 @@
       "properties": {
         "Nom du site FR": "Mausolée Omi Mené",
         "Nom du site arabe": "قبر أمي منى",
-        "Catégorie": "Mosquée",
+        "Catégorie": "Marabout",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-AGVY6BXAX7HLGFO3CKDXA9DCML",
         "accessPoint": [
           10.9997186,
           33.7916307
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13143718421",
+        "maps_ref": "https://www.google.com/maps/place/Mausol%C3%A9e+omi+men%C3%A9/@33.791639,10.999861,315m/data=!3m1!1e3!4m6!3m5!1s0x13aa976067237b2b:0xaa47b46a70464be6!8m2!3d33.7917334!4d10.9998954!16s%2Fg%2F11v1bltl1x?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
