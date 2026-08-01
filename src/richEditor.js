@@ -8,6 +8,7 @@ import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmOb
 import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
 import { persistPoiEdit } from './poi-persistence.js';
+import { schedulePush } from './gist-sync.js';
 import { logModification } from './logger.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
@@ -1071,6 +1072,14 @@ async function executeEdit(data, validated = false) {
     // ui-photo-batch.saveTaxonomyBatch — anti-dérive entre les 2 éditeurs. Détail de
     // la règle (et du revert de curation qu'elle évite) : voir poi-persistence.js.
     await persistPoiEdit(poiId, data);
+
+    // Sync Gist des champs personnels (notes, entre autres) — persistPoiEdit ne fait
+    // QUE la persistance (cf. son en-tête), le push Gist reste la responsabilité de
+    // l'appelant. Avant ce fix (01/08/2026), ce call manquait ici : une note écrite
+    // via le Rich Editor s'enregistrait bien en local mais ne partait JAMAIS vers le
+    // Gist — l'autre éditeur de POI (ui-photo-batch.saveTaxonomyBatch) l'appelle déjà
+    // après son propre persistPoiEdit, ce qui a permis de repérer l'absence ici.
+    schedulePush();
 
     // Si c'est un POI "pending" (création mobile en attente), on finalise la persistance
     // du GeoJSON maintenant que l'utilisateur a rempli la fiche via le Rich Editor.
