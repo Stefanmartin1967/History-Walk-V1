@@ -4,7 +4,7 @@ import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates } from './data.js';
 import { eventBus } from './events.js';
-import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl } from './utils.js';
+import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
 import { persistPoiEdit } from './poi-persistence.js';
@@ -38,6 +38,7 @@ const DOM_IDS = {
         PRICE: 'rich-poi-price',
         SOURCE: 'rich-poi-source',
         OSM_REF: 'rich-poi-osm-ref',
+        MAPS_REF: 'rich-poi-maps-ref',
         SUBTYPE: 'rich-poi-subtype',
         STATE: 'rich-poi-state',
         ACCESS: 'rich-poi-access',
@@ -194,6 +195,10 @@ const RICH_POI_BODY_HTML = `
     <div class="input-group">
         <label for="rich-poi-osm-ref">Objet OSM</label>
         <input type="text" id="rich-poi-osm-ref" class="editable-input" placeholder="Coller l'URL OSM du lieu (ou way/123)">
+    </div>
+    <div class="input-group">
+        <label for="rich-poi-maps-ref">Lien Google Maps</label>
+        <input type="url" id="rich-poi-maps-ref" class="editable-input" placeholder="Collez le lien du lieu (bouton Partager sur Maps)">
     </div>
     <div class="input-group">
         <label for="rich-poi-notes">Notes</label>
@@ -379,6 +384,7 @@ export const RichEditor = {
 
         setValue(DOM_IDS.INPUTS.SOURCE, merged.Source || "");
         setValue(DOM_IDS.INPUTS.OSM_REF, merged.osm_ref || "");
+        setValue(DOM_IDS.INPUTS.MAPS_REF, merged.maps_ref || "");
         setValue(DOM_IDS.INPUTS.PHONE, merged['Téléphone'] || merged.telephone || "");
         setValue(DOM_IDS.INPUTS.HOURS, merged['Horaires'] || merged.horaires || "");
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
@@ -468,11 +474,15 @@ function getCurrentEditorCoords() {
 
 // Ouvre la position courante du lieu sur Google Maps / OSM (réunif A3f, parité DM).
 function openEditorCoordsOnMap(provider) {
-    // OSM : on lit l'input EN DIRECT (pas la feature) — l'admin vient peut-être
-    // de coller la référence sans avoir encore enregistré, et le geste naturel
+    // On lit l'input EN DIRECT (pas la feature) — l'admin vient peut-être de
+    // coller la référence sans avoir encore enregistré, et le geste naturel
     // est de vérifier ce qu'il a collé. Repli coordonnées si vide/invalide.
     if (provider === 'osm') {
         const url = osmObjectUrl(getValue(DOM_IDS.INPUTS.OSM_REF));
+        if (url) { window.open(url, '_blank', 'noopener,noreferrer'); return; }
+    }
+    if (provider === 'gmaps') {
+        const url = mapsPlaceUrl(getValue(DOM_IDS.INPUTS.MAPS_REF));
         if (url) { window.open(url, '_blank', 'noopener,noreferrer'); return; }
     }
     const c = getCurrentEditorCoords();
@@ -918,6 +928,10 @@ async function handleSave(validate = false) {
         'Source': getValue(DOM_IDS.INPUTS.SOURCE),
         // Normalisé en « type/id » : l'admin colle l'URL OSM, on stocke l'identité.
         'osm_ref': normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF)),
+        // Pas de normalisation possible ici (formats Maps trop variables) : on
+        // stocke le lien tel que collé, la garde http(s) s'applique à l'ouverture
+        // (mapsPlaceUrl, cf. utils.js).
+        'maps_ref': getValue(DOM_IDS.INPUTS.MAPS_REF).trim(),
         'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
@@ -1116,6 +1130,7 @@ function handleEmailSuggestion() {
         'Source': getValue(DOM_IDS.INPUTS.SOURCE),
         // Normalisé en « type/id » : l'admin colle l'URL OSM, on stocke l'identité.
         'osm_ref': normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF)),
+        'maps_ref': getValue(DOM_IDS.INPUTS.MAPS_REF).trim(),
         'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
