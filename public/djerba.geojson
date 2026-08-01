@@ -433,9 +433,9 @@
         "Nom du site arabe": "جامع الرحمن",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 296 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68Q2NTEKRWSPCDZZGE",
-        "description": "Située à Midoun. Egalement appelée Mosquée Ar-Rahman. Infos à rechercher.",
+        "description": "Située à Midoun. Egalement appelée Mosquée Ar-Rahman. Infos à rechercher.\n296 Mosquée Errahmen. « Clément ». Centre de Midoun. Mosquée malékite rénovée. Ancienne.",
         "accessPoint": [
           10.9906779,
           33.8106229
@@ -451,7 +451,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/Mosqu%C3%A9e+Alrahmen/@33.8107512,10.9909776,157m/data=!3m1!1e3!4m6!3m5!1s0x13aa97db5bf0cc4b:0xfe8ae1464e169586!8m2!3d33.8108282!4d10.9909084!16s%2Fg%2F11byz6lhc_?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -1910,9 +1911,9 @@
         "Nom du site arabe": "جامع سيدي اسماعيل غيزان",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "https://www.google.com/maps/place/Ancienne+Mosqu%C3%A9e+Sidi+Ismail/@33.8733967,10.9089885,314m/data=!3m1!1e3!4m6!3m5!1s0x13aaa36b89f08a93:0xce77e4daf59da1c1!8m2!3d33.8735681!4d10.9090493!16s%2Fg%2F11f03nr56t?entry=ttu&g_ep=EgoyMDI2MDcyNy4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "Répertoire J. Fathallah, n° 41 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DRTH3M3NHYQJSR1NE",
-        "description": "Rénovée pour devenir le siège de l'Association Architectes Jerba",
+        "description": "Rénovée pour devenir le siège de l'Association Architectes Jerba\nSidi Ismaël Ghizen. Poste de garde, mausolée et mosquée. 9ᵉ siècle de l'hégire / 15ᵉ siècle ap. J.-C. Une nouvelle mosquée fut construite en face de l'ancienne au 21ᵉ siècle. La nouvelle est récente.",
         "accessPoint": [
           10.9091334,
           33.8733383
@@ -1928,7 +1929,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/Ancienne+Mosqu%C3%A9e+Sidi+Ismail/@33.8733967,10.9089885,314m/data=!3m1!1e3!4m6!3m5!1s0x13aaa36b89f08a93:0xce77e4daf59da1c1!8m2!3d33.8735681!4d10.9090493!16s%2Fg%2F11f03nr56t?entry=ttu&g_ep=EgoyMDI2MDcyNy4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -3629,7 +3631,7 @@
         "Nom du site arabe": "جامع الحارة",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": "https://www.google.com/maps/place/Jamaa+al+H%C3%A2ra+%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%AD%D8%A7%D8%B1%D8%A9%E2%80%AD/@33.69646,10.903181,315m/data=!3m1!1e3!4m6!3m5!1s0x13aabf40985ac13f:0xd3ee1e4857ca49fe!8m2!3d33.6962456!4d10.9031594!16s%2Fg%2F11pvg9vgkx?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "Répertoire J. Fathallah, n° 181 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24",
         "accessPoint": [
           10.9034857,
@@ -3639,7 +3641,7 @@
         "État": "Ruine",
         "Accès": "Intérieur visitable",
         "info_gpx": "",
-        "description": "",
+        "description": "181 Mosquée Hara dite Hira. À Houmt Chott, aux limites de Cedouikech [= Sedouikech]. Mosquée forteresse abandonnée et en quasi ruines. 8ᵉ siècle de l'hégire / 14ᵉ siècle ap. J.-C.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/386836031",
@@ -3647,7 +3649,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/Jamaa+al+H%C3%A2ra+%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%AD%D8%A7%D8%B1%D8%A9%E2%80%AD/@33.69646,10.903181,315m/data=!3m1!1e3!4m6!3m5!1s0x13aabf40985ac13f:0xd3ee1e4857ca49fe!8m2!3d33.6962456!4d10.9031594!16s%2Fg%2F11pvg9vgkx?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -3983,7 +3986,7 @@
         "Nom du site arabe": "جامع الكبير",
         "Catégorie": "Mosquée",
         "Zone": "El Hachene",
-        "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/\nhttps://www.google.com/maps/place/Mosqu%C3%A9e+Aboumessouer/@33.8624683,10.8210562,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgICHyuWcXA!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWkPO1oxKD2nKegOXYfRkV9kNty9ZOUDAesJULeVkYX3OiQqKDG5X7wSEzAHO1K6tT4WI7no_795KIlBerBd_ta2L2BidNEREbeyG8Z5FOvmT2vaVPvaSzjLqBwsjG2zb7JBs_Y%3Dw86-h114-k-no!7i3024!8i4032!4m7!3m6!1s0x13aaa548356aaaab:0x9c9d39182d610709!8m2!3d33.8622019!4d10.8212507!10e5!16s%2Fg%2F11txmz4fyb?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/\nRépertoire J. Fathallah, n° 63 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
         "lat": 33.86191783421097,
         "lng": 10.821201358600382,
@@ -4003,7 +4006,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/Mosqu%C3%A9e+Aboumessouer/@33.8624683,10.8210562,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgICHyuWcXA!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWkPO1oxKD2nKegOXYfRkV9kNty9ZOUDAesJULeVkYX3OiQqKDG5X7wSEzAHO1K6tT4WI7no_795KIlBerBd_ta2L2BidNEREbeyG8Z5FOvmT2vaVPvaSzjLqBwsjG2zb7JBs_Y%3Dw86-h114-k-no!7i3024!8i4032!4m7!3m6!1s0x13aaa548356aaaab:0x9c9d39182d610709!8m2!3d33.8622019!4d10.8212507!10e5!16s%2Fg%2F11txmz4fyb?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -4695,7 +4699,7 @@
         "Nom du site arabe": "جامع البرداوي",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
-        "Source": "https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322https://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba",
+        "Source": "https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322https://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba\nRépertoire J. Fathallah, n° 119 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6N6HF86MYJNJWFPNSV",
         "photos": [
           "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463716033.jpg",
@@ -4715,7 +4719,17 @@
         ],
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
-        "Accès": "Intérieur visitable"
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1139764019",
+        "maps_ref": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%A8%D8%B1%D8%AF%D8%A7%D9%88%D9%8A+Mosqu%C3%A9e+souterraine+Berdaoui%E2%80%AD/@33.7879537,10.7706296,187m/data=!3m1!1e3!4m6!3m5!1s0x13aab116a02d16f7:0x810b00e2299c33f7!8m2!3d33.7879891!4d10.7707149!16s%2Fg%2F11j3x3q06k?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5098,9 +5112,9 @@
         "Nom du site arabe": "مسجد أمغار",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": "https://routes.discovertunisia.com/storymap/data/download/Site_08_Mosqu%C3%A9e%20Amghar.pdf\nhttps://www.google.com/maps/place/Amghar+Mosque/@33.7409541,10.7357658,3a,75y,90t/data=!3m8!1e2!3m6!1sCIABIhBKmREtL2Afq3BwJXPiL5nK!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWnhsZqwkMxPPwAeDoi1o0c_HdTGt7qRSzdwxT9f0nRQEFduMIsAzFKRvQL-2Q1Tt5r_4bK33yeDYVPE9VQjO25sJWmCNp55PHnx4LwZPjcK24sMc_NUGhj2qaWiP4UONekqOsjno3PgVgnf%3Dw114-h86-k-no!7i9248!8i6936!4m7!3m6!1s0x13aab70803dfa01f:0x5823bc900440e6c0!8m2!3d33.7408392!4d10.7349705!10e5!16s%2Fg%2F11sh1xkfgn?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "https://routes.discovertunisia.com/storymap/data/download/Site_08_Mosqu%C3%A9e%20Amghar.pdf\nRépertoire J. Fathallah, n° 273 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
-        "description": "La mosquée, qui cotoie la mer, a perdu sa fonctione religieuse et sert maintenant d'abri aux pècheurs. Elle a également servi de décor pour la \"Maison de Ben\" (Obi-Wan Kenobi en 1976. Un de ses murs externes est recouvert d'une fresque Invader représentant Obi-Wan-Kenobi",
+        "description": "La mosquée, qui cotoie la mer, a perdu sa fonctione religieuse et sert maintenant d'abri aux pècheurs. Elle a également servi de décor pour la \"Maison de Ben\" (Obi-Wan Kenobi en 1976. Un de ses murs externes est recouvert d'une fresque Invader représentant Obi-Wan-Kenobi\n273 Mosquée Amghar. Côte ouest, Ajim. Poste de garde et mosquée abandonnée. Ancien.",
         "info_gpx": "Ancienne mosquée servant aujourd'hui d'abri poour les pêcheurs. A servi de décor dans la saga Star Wars. Fresque Invader sur un de ses murs",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
@@ -5112,7 +5126,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/Amghar+Mosque/@33.7409541,10.7357658,3a,75y,90t/data=!3m8!1e2!3m6!1sCIABIhBKmREtL2Afq3BwJXPiL5nK!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWnhsZqwkMxPPwAeDoi1o0c_HdTGt7qRSzdwxT9f0nRQEFduMIsAzFKRvQL-2Q1Tt5r_4bK33yeDYVPE9VQjO25sJWmCNp55PHnx4LwZPjcK24sMc_NUGhj2qaWiP4UONekqOsjno3PgVgnf%3Dw114-h86-k-no!7i9248!8i6936!4m7!3m6!1s0x13aab70803dfa01f:0x5823bc900440e6c0!8m2!3d33.7408392!4d10.7349705!10e5!16s%2Fg%2F11sh1xkfgn?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -5286,7 +5301,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "",
+        "description": "Candidat Jalel :\n66 — Hachane, malékite, début du 21ᵉ siècle (récente)\n150 — Cedghiane, ibadite wahbite, salle de prière ajoutée, ancienne\n251 — Quartier Ouled Saïd, Khanansa, malékite, 2017\n290 — « Kasbeine ou Hidaya », entre Mahboubine et Midoun, malékite rénovée, ancienne",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/990311532",
@@ -5294,7 +5309,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/AlHidaya/@33.803611,10.975806,315m/data=!3m1!1e3!4m6!3m5!1s0x13aabd00d6f92f21:0xb522dcad424fbddd!8m2!3d33.8036507!4d10.9757896!16s%2Fg%2F11sthwq0nd?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -5330,11 +5346,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosque Sidi Sofiane",
+        "Nom du site FR": "Mosquée Sidi Sofiane",
         "Nom du site arabe": "مسجد سيدي سفيان",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "https://www.google.com/maps/place/Mosque+Sidi+Sofiane/@33.8221406,10.9942838,223m/data=!3m1!1e3!4m6!3m5!1s0x13aa97ef2da478d3:0x1d63f8f47c259bf4!8m2!3d33.8220829!4d10.9942359!16s%2Fg%2F11f3zfpd4p?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "",
         "HW_ID": "HW-01K77WPE6Q0QEE8APATRE5K4MS",
         "info_gpx": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles.",
         "accessPoint": [
@@ -5352,7 +5368,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/Mosque+Sidi+Sofiane/@33.8221406,10.9942838,223m/data=!3m1!1e3!4m6!3m5!1s0x13aa97ef2da478d3:0x1d63f8f47c259bf4!8m2!3d33.8220829!4d10.9942359!16s%2Fg%2F11f3zfpd4p?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -7010,15 +7027,15 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CWX2YWAJSWA4NYT64CD4R",
-        "description": "",
-        "Nom du site arabe": "",
+        "description": "Pas trouvé dans la liste\nUn petit bâtiment, معمورة sur Maps se trouve à proximité",
+        "Nom du site arabe": "جامع التقوى",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%AA%D9%82%D9%88%D9%89%E2%80%AD/@33.8343787,10.8268589,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgICJg7DJrwE!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWk2Yt-VXSfpZ4rSbgk5YPtZ8unjgsAWJFfxRue7ZFZauVYHskfAIHBzw5lOxIlHXxSOz5U_VluMn8qXt3h0uZT7jc8TrZPT52K38Ora8-wFLp_phWNHcR_BOmQAWvRedF9HBKgy1A%3Dw114-h86-k-no!7i4624!8i3472!4m7!3m6!1s0x13aabb063373ede1:0x5625d3a51d48a3a7!8m2!3d33.8342511!4d10.8270517!10e5!16s%2Fg%2F11s65j3v1z?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -7026,7 +7043,8 @@
         "introuvableCarte": false,
         "lat": 33.83428778491142,
         "lng": 10.826873181401124,
-        "osm_ref": "node/13516776102"
+        "osm_ref": "node/13516776102",
+        "maps_ref": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%AA%D9%82%D9%88%D9%89%E2%80%AD/@33.8343787,10.8268589,16z/data=!4m15!1m8!3m7!1s0x13aabb063373ede1:0x5625d3a51d48a3a7!2z2KzYp9mF2Lkg2KfZhNiq2YLZiNmJ!8m2!3d33.8342511!4d10.8270517!10e5!16s%2Fg%2F11s65j3v1z!3m5!1s0x13aabb063373ede1:0x5625d3a51d48a3a7!8m2!3d33.8342511!4d10.8270517!16s%2Fg%2F11s65j3v1z?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -7233,11 +7251,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée al-Ahjar",
+        "Nom du site FR": "Mosquée al-Ihsan",
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "Zone": "Mellita",
-        "description": "Mosquée sans infos, trouvée sur la carte.\nNom et existence à vérifier",
+        "description": "Le nom est la traduction du nom sur Google Maps\nAucune trace sur OSM\nA vérifier lors d'un prochain voyage",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "HW_ID": "HW-01KSYPS0Y31P1851B57BEQVP73",
@@ -7249,13 +7267,14 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "Source": "https://www.google.com/maps/place/%D9%85%D8%B3%D8%AC%D8%AF+%D8%A7%D9%84%D8%A5%D8%AD%D8%B3%D8%A7%D9%86%E2%80%AD/@33.8522985,10.7803708,3a,75y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgID99PmqSg!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWnUju2mmcSP1XD7igo4Q46R5Lbb6vm-ViAiy4lYuylw8p2Gw_Ko2wTWuEzrgq-pDzt5dlJU5EKh00hP3TpeqGMq3lk78sK6CRzVBiXARpxQlLqc9f5DlK7qdHs9Nb-qkqq3TqLI%3Dw86-h114-k-no!7i1536!8i2040!4m7!3m6!1s0x13aab1002dba88df:0x47d08e1e879ca798!8m2!3d33.8520528!4d10.7803465!10e5!16s%2Fg%2F11vwd75bvy?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "",
         "osm_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/%D9%85%D8%B3%D8%AC%D8%AF+%D8%A7%D9%84%D8%A5%D8%AD%D8%B3%D8%A7%D9%86%E2%80%AD/@33.8522985,10.7803708,16z/data=!4m15!1m8!3m7!1s0x13aab1002dba88df:0x47d08e1e879ca798!2z2YXYs9is2K8g2KfZhNil2K3Ys9in2YY!8m2!3d33.8520528!4d10.7803465!10e5!16s%2Fg%2F11vwd75bvy!3m5!1s0x13aab1002dba88df:0x47d08e1e879ca798!8m2!3d33.8520528!4d10.7803465!16s%2Fg%2F11vwd75bvy?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
@@ -7272,7 +7291,7 @@
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "Zone": "El Groa",
-        "description": "Mosquée découvert sur carte.\nNom et existence à confirmer",
+        "description": "Mosquée découverte sur carte.\nAbsente du répertoire de Jalel\nNom et existence à confirmer",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "HW_ID": "HW-01KSZ2SGB3GCGB3RG8946MGTZG",
@@ -7284,13 +7303,14 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "Source": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%A8%D8%B1%D9%83%D8%A9%E2%80%AD/@33.8378461,10.764613,315m/data=!3m1!1e3!4m6!3m5!1s0x13aab1be6f4bf7f9:0x278d3004972b4f67!8m2!3d33.8377932!4d10.7646959!16s%2Fg%2F11s5wrc42l?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "",
         "osm_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A7%D9%84%D8%A8%D8%B1%D9%83%D8%A9%E2%80%AD/@33.8378461,10.764613,315m/data=!3m1!1e3!4m6!3m5!1s0x13aab1be6f4bf7f9:0x278d3004972b4f67!8m2!3d33.8377932!4d10.7646959!16s%2Fg%2F11s5wrc42l?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
       }
     },
     {
