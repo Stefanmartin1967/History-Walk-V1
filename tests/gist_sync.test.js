@@ -52,7 +52,11 @@ vi.mock('../src/events.js', () => ({
 
 import { state, setTestedCircuit, setOfficialCircuitStatus } from '../src/state.js';
 import { getStoredToken } from '../src/github-sync.js';
-import { buildPayload, mergeRemoteIntoLocal, schedulePush, pushToGist, initGistReconnectSync } from '../src/gist-sync.js';
+import { showToast } from '../src/toast.js';
+import { batchSavePoiData } from '../src/database.js';
+import {
+    buildPayload, mergeRemoteIntoLocal, schedulePush, pushToGist, pullFromGist, initGistReconnectSync,
+} from '../src/gist-sync.js';
 
 function resetState() {
     state.currentMapId = 'djerba';
@@ -353,6 +357,11 @@ describe('schedulePush', () => {
             json: () => Promise.resolve({ id: 'gist-abc', files: {} })
         }));
         vi.mocked(getStoredToken).mockReturnValue('fake-token');
+        // gistId déjà connu → passe directement par updateGist (1 fetch par push).
+        // Sans ça, l'absence de gistId déclenche désormais une découverte AVANT
+        // création (cf. pushToGist), ce que ce bloc ne teste pas — il teste le
+        // debounce, pas le nombre de fetch d'un push complet.
+        localStorage.setItem('hw_gist_id', 'gist-existing');
     });
 
     afterEach(() => {
@@ -377,6 +386,128 @@ describe('schedulePush', () => {
         expect(global.fetch).not.toHaveBeenCalled();
         await vi.advanceTimersByTimeAsync(1100);
         expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Fix 01/08/2026 : deux Gists Djerba distincts trouvés côté Stefan (un abandonné
+// il y a 2 mois, un actif depuis 3 jours). Cause root-causée dans le code : sans
+// gistId en localStorage (cache vidé, nouveau profil…), pushToGist créait un
+// Gist directement, sans jamais chercher si un Gist existait déjà — fabriquant
+// silencieusement un doublon à chaque perte de localStorage.
+describe('pushToGist — découverte avant création (fix 01/08/2026)', () => {
+    beforeEach(() => {
+        vi.mocked(getStoredToken).mockReturnValue('fake-token');
+        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => true });
+    });
+    afterEach(() => { delete global.fetch; });
+
+    function mockFetchWith({ discovered = [], mergeRemote = { mapId: 'djerba', userData: {} } } = {}) {
+        const calls = [];
+        global.fetch = vi.fn((url, opts = {}) => {
+            const method = opts.method || 'GET';
+            calls.push({ url, method });
+            if (url.includes('/gists?per_page=100')) {
+                return Promise.resolve({ ok: true, json: () => Promise.resolve(discovered) });
+            }
+            if (url === 'https://api.github.com/gists/gist-found' && method === 'GET') {
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve({
+                        files: { 'history_walk_userdata.json': { content: JSON.stringify(mergeRemote) } }
+                    })
+                });
+            }
+            if (url === 'https://api.github.com/gists/gist-found' && method === 'PATCH') {
+                return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+            }
+            if (url === 'https://api.github.com/gists' && method === 'POST') {
+                return Promise.resolve({ ok: true, json: () => Promise.resolve({ id: 'gist-new' }) });
+            }
+            throw new Error('URL/méthode inattendue en test : ' + method + ' ' + url);
+        });
+        return calls;
+    }
+
+    it('gistId absent + un Gist existant est retrouvé → aucune création, juste une mise à jour', async () => {
+        const calls = mockFetchWith({
+            discovered: [{ id: 'gist-found', updated_at: '2026-07-30T00:00:00Z', files: { 'history_walk_userdata.json': {} } }]
+        });
+
+        await pushToGist();
+
+        expect(calls.some(c => c.method === 'POST')).toBe(false);
+        expect(calls.some(c => c.url === 'https://api.github.com/gists/gist-found' && c.method === 'PATCH')).toBe(true);
+        expect(localStorage.getItem('hw_gist_id')).toBe('gist-found');
+    });
+
+    it('gistId absent + rien trouvé côté GitHub → crée un Gist (comportement de repli inchangé)', async () => {
+        const calls = mockFetchWith({ discovered: [] });
+
+        await pushToGist();
+
+        expect(calls.some(c => c.method === 'POST' && c.url === 'https://api.github.com/gists')).toBe(true);
+        expect(localStorage.getItem('hw_gist_id')).toBe('gist-new');
+    });
+
+    it('un Gist retrouvé est FUSIONNÉ avant d\'être écrasé — rien de local-only n\'est perdu', async () => {
+        state.userData = {}; // rien en local
+        mockFetchWith({
+            discovered: [{ id: 'gist-found', updated_at: '2026-07-30T00:00:00Z', files: { 'history_walk_userdata.json': {} } }],
+            mergeRemote: { mapId: 'djerba', userData: { poi1: { notes: 'existe seulement côté Gist' } } }
+        });
+
+        await pushToGist();
+
+        expect(state.userData.poi1.notes).toBe('existe seulement côté Gist');
+        expect(batchSavePoiData).toHaveBeenCalled();
+    });
+
+    it('la fusion échoue (Gist illisible) → le push continue quand même (pousse l\'état local)', async () => {
+        global.fetch = vi.fn((url, opts = {}) => {
+            const method = opts.method || 'GET';
+            if (url.includes('/gists?per_page=100')) {
+                return Promise.resolve({ ok: true, json: () => Promise.resolve([{ id: 'gist-found', updated_at: 'x', files: { 'history_walk_userdata.json': {} } }]) });
+            }
+            if (url === 'https://api.github.com/gists/gist-found' && method === 'GET') {
+                return Promise.resolve({ ok: false, status: 500 }); // fetchGist lève
+            }
+            if (url === 'https://api.github.com/gists/gist-found' && method === 'PATCH') {
+                return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+            }
+            throw new Error('inattendu : ' + method + ' ' + url);
+        });
+
+        await expect(pushToGist()).resolves.toBeUndefined(); // ne jette pas
+        expect(localStorage.getItem('hw_gist_id')).toBe('gist-found'); // gistId quand même retenu
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('pullFromGist — échec signalé (fix 01/08/2026)', () => {
+    beforeEach(() => {
+        vi.mocked(getStoredToken).mockReturnValue('fake-token');
+        localStorage.setItem('hw_gist_id', 'gist-existing');
+        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => true });
+    });
+    afterEach(() => { delete global.fetch; });
+
+    it('en ligne + le pull échoue → toast (avant ce fix : totalement silencieux)', async () => {
+        global.fetch = vi.fn(() => Promise.resolve({ ok: false, status: 500 }));
+
+        await pullFromGist();
+
+        expect(showToast).toHaveBeenCalledWith(expect.stringContaining('Sync Gist indisponible'), 'warning', expect.any(Number));
+    });
+
+    it('hors-ligne → aucun fetch tenté, aucun toast (cas normal, pas une panne)', async () => {
+        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => false });
+        global.fetch = vi.fn();
+
+        await pullFromGist();
+
+        expect(global.fetch).not.toHaveBeenCalled();
+        expect(showToast).not.toHaveBeenCalled();
     });
 });
 
