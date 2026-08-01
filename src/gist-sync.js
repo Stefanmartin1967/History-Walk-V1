@@ -173,6 +173,31 @@ export function mergeRemoteIntoLocal(remote) {
     return { updates, circuitsChanged, hiddenChanged };
 }
 
+/**
+ * Applique un payload distant reçu du Gist : fusion en mémoire (mergeRemoteIntoLocal),
+ * puis persistance IndexedDB + rafraîchissement UI. Factorisé pour être appelé aussi
+ * bien par un pull normal (boot) que par un push qui vient de RETROUVER un Gist
+ * jusque-là inconnu (cf. pushToGist) — dans les deux cas, ce que le Gist distant
+ * porte seul ne doit jamais être perdu avant d'écraser avec l'état local.
+ */
+async function applyRemoteMerge(remote) {
+    const { updates, circuitsChanged, hiddenChanged } = mergeRemoteIntoLocal(remote);
+    if (updates.length > 0) {
+        await batchSavePoiData(state.currentMapId, updates);
+    }
+    if (circuitsChanged) {
+        await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
+    }
+    if (hiddenChanged) {
+        await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+    }
+    if (updates.length > 0 || circuitsChanged || hiddenChanged) {
+        eventBus.emit('data:apply-filters');
+        eventBus.emit('circuit:list-updated');
+    }
+    return { updates, circuitsChanged, hiddenChanged };
+}
+
 // ─── API GIST ─────────────────────────────────────────────────────────────────
 
 async function fetchGist(token, gistId) {
@@ -254,6 +279,11 @@ export async function pullFromGist() {
     let gistId = getGistId();
     if (!token) return; // Pas de token → silencieux
 
+    // Hors-ligne : inutile (et bruyant, cf. plus bas) de tenter un fetch voué à
+    // l'échec au boot. Silencieux — un boot hors-ligne est un cas normal, pas
+    // une panne à signaler.
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+
     // Auto-discovery si gistId absent (cas typique : nouvel appareil avec
     // token configuré mais sans gistId en localStorage). Cf. mémoire
     // project_gist_for_future_users.md (anomalie #8 trou d'onboarding).
@@ -272,22 +302,8 @@ export async function pullFromGist() {
             return;
         }
 
-        const { updates, circuitsChanged, hiddenChanged } = mergeRemoteIntoLocal(remote);
-
-        if (updates.length > 0) {
-            await batchSavePoiData(state.currentMapId, updates);
-        }
-        if (circuitsChanged) {
-            await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
-        }
-        if (hiddenChanged) {
-            // Persistance même clé que data.js et admin-control-center.js
-            await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
-        }
+        const { updates, circuitsChanged, hiddenChanged } = await applyRemoteMerge(remote);
         if (updates.length > 0 || circuitsChanged || hiddenChanged) {
-            // Rafraîchir l'UI : marqueurs + liste circuits
-            eventBus.emit('data:apply-filters');
-            eventBus.emit('circuit:list-updated');
             const parts = [];
             if (updates.length > 0) parts.push(`${updates.length} lieu(x)`);
             if (circuitsChanged) parts.push('circuits');
@@ -296,7 +312,14 @@ export async function pullFromGist() {
         }
 
     } catch (e) {
+        // Avant ce fix (01/08/2026), cet échec était TOTALEMENT silencieux
+        // (console.warn seul) — si une modification suivait avant le prochain
+        // pull réussi, un push pouvait alors créer un Gist fantôme (cf.
+        // pushToGist) sans que rien ne le signale. Le hors-ligne étant déjà
+        // filtré au-dessus, tout ce qui atteint ce catch est une vraie panne
+        // (token expiré, Gist supprimé, 5xx, rate-limit) — elle mérite d'être vue.
         console.warn('[GistSync] Pull failed:', e.message);
+        showToast('Sync Gist indisponible pour l\'instant — vos données restent enregistrées localement.', 'warning', 4000);
     }
 }
 
@@ -317,30 +340,58 @@ export async function pushToGist() {
     }
 
     try {
-        const payload = buildPayload();
         let gistId = getGistId();
 
+        // Gist local inconnu (localStorage vidé, nouveau profil navigateur, PWA
+        // réinstallée…) : AVANT d'en créer un nouveau, on cherche s'il en existe
+        // déjà un côté GitHub. Sans cette étape, chaque perte de localStorage
+        // fabriquait silencieusement un Gist fantôme — cause identifiée des deux
+        // Gists Djerba distincts trouvés le 01/08/2026 (un « créé il y a 2 mois »
+        // abandonné, un « actif il y a 3 jours » devenu le seul à jour). Un Gist
+        // retrouvé est d'abord rapatrié et FUSIONNÉ dans l'état local — jamais
+        // écrasé à l'aveugle — pour ne pas perdre ce qui n'existe que là-bas.
         if (!gistId) {
-            gistId = await createGist(token, payload);
-            setGistId(gistId);
-            showToast('Gist créé ! Sync activée.', 'success', 4000);
-        } else {
-            try {
-                await updateGist(token, gistId, payload);
-            } catch (updateErr) {
-                // Auto-recovery 404 : si le Gist stocké a été supprimé manuellement
-                // sur github.com (ou n'a jamais existé proprement), on reset le local
-                // et on retry en mode création. Sinon `updateGist` échoue silencieusement
-                // sur chaque clic et la sync est cassée jusqu'à intervention manuelle.
-                if (/\b404\b/.test(updateErr.message)) {
-                    console.warn('[GistSync] Gist 404 — recreating with new ID');
-                    localStorage.removeItem(GIST_ID_KEY);
-                    const newId = await createGist(token, payload);
-                    setGistId(newId);
-                    showToast('Gist re-créé après suppression côté GitHub.', 'info', 4000);
-                } else {
-                    throw updateErr;
+            gistId = await discoverGistId(token);
+            if (gistId) {
+                setGistId(gistId);
+                try {
+                    const remote = await fetchGist(token, gistId);
+                    if (!remote.mapId || remote.mapId === state.currentMapId) {
+                        await applyRemoteMerge(remote);
+                    }
+                } catch (mergeErr) {
+                    // La fusion a échoué (Gist illisible, réseau) : on continue quand
+                    // même — pousser l'état local reste préférable à ne rien pousser.
+                    console.warn('[GistSync] Merge before push failed:', mergeErr.message);
                 }
+                showToast('Gist existant retrouvé, sync réactivée.', 'info', 4000);
+            } else {
+                gistId = await createGist(token, buildPayload());
+                setGistId(gistId);
+                showToast('Gist créé ! Sync activée.', 'success', 4000);
+                _pendingPush = false;
+                return;
+            }
+        }
+
+        // Reconstruit APRÈS une éventuelle fusion ci-dessus : le payload doit
+        // refléter l'état local à jour, pas celui d'avant la fusion.
+        const payload = buildPayload();
+        try {
+            await updateGist(token, gistId, payload);
+        } catch (updateErr) {
+            // Auto-recovery 404 : si le Gist stocké a été supprimé manuellement
+            // sur github.com (ou n'a jamais existé proprement), on reset le local
+            // et on retry en mode création. Sinon `updateGist` échoue silencieusement
+            // sur chaque clic et la sync est cassée jusqu'à intervention manuelle.
+            if (/\b404\b/.test(updateErr.message)) {
+                console.warn('[GistSync] Gist 404 — recreating with new ID');
+                localStorage.removeItem(GIST_ID_KEY);
+                const newId = await createGist(token, payload);
+                setGistId(newId);
+                showToast('Gist re-créé après suppression côté GitHub.', 'info', 4000);
+            } else {
+                throw updateErr;
             }
         }
 
