@@ -130,18 +130,36 @@ export function osmObjectUrl(osmRef) {
 }
 
 /**
+ * Valide un lien Google Maps collé par l'admin (`maps_ref`).
+ *
+ * Contrairement à `osm_ref`, il n'existe pas de forme canonique « type/id »
+ * extractible d'une URL Maps : lien court (goo.gl / maps.app.goo.gl), lien
+ * complet avec un CID hexadécimal, parfois juste des coordonnées — le format
+ * varie trop pour être normalisé sans risquer de casser silencieusement au
+ * moindre changement côté Google. On stocke donc l'URL TELLE QUE COLLÉE,
+ * comme le champ Facebook : seule garde, http(s) (jamais javascript:/data:).
+ * @param {string} value
+ * @returns {string|null} l'URL si valide, sinon null
+ */
+export function mapsPlaceUrl(value) {
+    if (typeof value !== 'string') return null;
+    const v = value.trim();
+    return /^https?:\/\//i.test(v) ? v : null;
+}
+
+/**
  * Ouvre la position d'un POI sur Google Maps ou OpenStreetMap.
  *
- * OSM : si le POI porte un `osm_ref` (identité de l'objet), on ouvre la PAGE DE
- * L'OBJET — bien plus utile que l'épingle : tags, historique, contributeur (le
- * geste de vérification du data). Sinon, repli sur les coordonnées : le bouton
- * n'est donc jamais cassé. Lecture via getPoiProp car `osm_ref` est éditable →
- * l'overlay userData doit primer tant que la modif n'est pas publiée.
+ * Même geste des deux côtés : si le POI porte une référence précise
+ * (`osm_ref` pour OSM, `maps_ref` pour Maps), on ouvre CET OBJET — page OSM
+ * avec tags/historique/contributeur, ou fiche Maps avec avis/photos/horaires.
+ * Sinon, repli sur les coordonnées : le bouton n'est donc jamais cassé.
+ * Lecture via getPoiProp car les deux champs sont éditables → l'overlay
+ * userData doit primer tant que la modif n'est pas publiée.
  *
- * Maps et le repli OSM restent PAR COORDONNÉES (jamais par nom : si le nom est
- * erroné, une recherche textuelle renverrait du vide ou un mauvais lieu).
- * Réutilisé par la fiche POI (mini-bar) et l'import photo (vérifier le lieu
- * rattaché à un groupe).
+ * Le repli reste PAR COORDONNÉES (jamais par nom : si le nom est erroné, une
+ * recherche textuelle renverrait du vide ou un mauvais lieu). Réutilisé par la
+ * fiche POI (mini-bar) et l'import photo (vérifier le lieu rattaché à un groupe).
  * @param {object} feature feature GeoJSON (geometry.coordinates = [lng, lat])
  * @param {'gmaps'|'osm'} [provider]
  * @returns {boolean} false si coordonnées indisponibles
@@ -149,6 +167,13 @@ export function osmObjectUrl(osmRef) {
 export function openPoiOnMap(feature, provider = 'gmaps') {
     if (provider === 'osm') {
         const url = osmObjectUrl(getPoiProp(feature, 'osm_ref'));
+        if (url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+            return true;
+        }
+    }
+    if (provider === 'gmaps') {
+        const url = mapsPlaceUrl(getPoiProp(feature, 'maps_ref'));
         if (url) {
             window.open(url, '_blank', 'noopener,noreferrer');
             return true;
