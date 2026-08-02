@@ -186,7 +186,14 @@
         "accessPoint": [
           11.0257881,
           33.8197908
-        ]
+        ],
+        "osm_ref": "way/990400951",
+        "maps_ref": "https://maps.app.goo.gl/4QvhxPguYh138heH6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1367,8 +1374,22 @@
         "Nom du site arabe": "جامع بوليمان",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6BDX79P55JZDF0G5SB"
+        "Source": "Répertoire J. Fathallah, n° 142 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6BDX79P55JZDF0G5SB",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "142 Mosquée Boulimane. Cedghiane. Mosquée ibadite wahbite. 10ᵉ siècle de l'hégire / 16ᵉ siècle ap. J.-C.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/407965802",
+        "maps_ref": "https://maps.app.goo.gl/gdFvuFrKe3q4aEFC6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1902,8 +1923,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.905228,
-          33.85206
+          10.905244947493227,
+          33.851867843494105
         ]
       },
       "properties": {
@@ -1911,12 +1932,28 @@
         "Nom du site arabe": "جامع بن يخلف",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 131 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6CMHE8GHTTW13GZ8M1",
         "accessPoint": [
           10.9049725,
           33.8517692
-        ]
+        ],
+        "lat": 33.851867843494105,
+        "lng": 10.905244947493227,
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "131 Mosquée Ben Yakhlef. Guechaine. Mosquée ibadite wahbite ancienne, abandonnée et en quasi ruines. 1074 de l'hégire / 1663 ap. J.-C.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/AemZYLuJXXwWUx7B8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2464,12 +2501,26 @@
         "Nom du site arabe": "جامع بن يونس",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 36 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6EC6AFJV78TZ4CNG4K",
         "accessPoint": [
           10.8937202,
           33.8692664
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "36 Mosquée Ben Younes. Fatou. Mosquée ibadite wahbite. Récente, adjacente à l'ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/388616358",
+        "maps_ref": "https://maps.app.goo.gl/TMZSNz29LfJuwVAB8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2681,12 +2732,26 @@
         "Nom du site arabe": "جامع بن صالح",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 32 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6ECHRHQW02VE596FZV",
         "accessPoint": [
           10.8831231,
           33.8704775
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "32 Mosquée Ben Salah. Fatou. Mosquée ibadite wahbite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/427983692",
+        "maps_ref": "https://maps.app.goo.gl/4yau5LQVmYtquyz99",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2955,21 +3020,37 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.864361,
-          33.835472
+          10.864357352022925,
+          33.8354060003172
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Bou Kthir",
+        "Nom du site FR": "Mosquée Boukthir",
         "Nom du site arabe": "جامع بو كثير",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 80 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6FVZ53RX9CM5VVC777",
         "accessPoint": [
           10.8644347,
           33.8355902
-        ]
+        ],
+        "lat": 33.8354060003172,
+        "lng": 10.864357352022925,
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "80 Mosquée Boukthir. Taghdimes. Mosquée ibadite wahbite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/428233841",
+        "maps_ref": "https://maps.app.goo.gl/sUmj5orzdwaZuhxH7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3154,16 +3235,26 @@
         "Nom du site arabe": "جامع بن يعلى",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 83 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6GRXRR29KB5N5T582A",
-        "description": "Infos à rechercher",
+        "description": "83 Mosquée Ben yaala. Erriadh. Mosquée ibadite wahbite ayant subie une expansion et une rénovation. Ancienne.",
         "accessPoint": [
           10.8579108,
           33.8164536
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non visitable"
+        "Accès": "Non visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/334825590",
+        "maps_ref": "https://maps.app.goo.gl/nNioj2vEuN7xZ8Cu5",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3586,17 +3677,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquee Ben Yahyaten",
+        "Nom du site FR": "Mosquée Ben Yahyaten",
         "Nom du site arabe": "جامع بن يحياتن",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 190 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6HSHY4FP2SZ4V6M2PN",
-        "description": "Attenante à la huilerie Souterraine Ouressighen",
+        "description": "190 Mosquée Ben Yahyiaten. Ouersighen. Mosquée ibadite wahbite à laquelle fut ajoutée une nouvelle adjacente. 1850 ap. J.-C. La nouvelle est récente.\nAttenante à la huilerie Souterraine Ouressighen",
         "accessPoint": [
           10.8832044,
           33.7288972
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/10848138957",
+        "maps_ref": "https://maps.app.goo.gl/ECh2Gb4UMJTscCih7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4707,14 +4811,24 @@
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463696128.jpg",
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463697853.jpg"
         ],
-        "description": "Mosquée contruite par la famille Boulimen au 17ème siècle, à lépoque Husseinites. Elle est située à l'extrémité de Sedghiane. Son architecture, de forme poligonale, se situe à mi-chemin entre les style djerbien modeste et Ottoman.",
+        "description": "Mosquée construite par la famille Boulimen au 17ème siècle, à l'époque Husseinites. Elle est située à l'extrémité de Sedghiane. Son architecture, de forme polygonale, se situe à mi-chemin entre les style djerbien modeste et Ottoman.",
         "accessPoint": [
           10.7924829,
           33.7944996
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non visitable"
+        "Accès": "Non visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1004062287",
+        "maps_ref": "https://maps.app.goo.gl/D72jh68JgQURebKe6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6083,24 +6197,34 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Boulimen",
-        "Nom du site arabe": "مسجد بُوليمين",
+        "Nom du site FR": "Mosquée Er Rahma",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 118 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6RQNBBQXWYACNJTRAC",
         "photos": [
           "photos/poi_HW-01K77WPE6RQNBBQXWYACNJTRAC_1780463706184.jpg",
           "photos/poi_HW-01K77WPE6RQNBBQXWYACNJTRAC_1780463708451.jpg"
         ],
-        "description": "Infos à rechercher - Correspond à ce qu’OSM/Nominatim associe à Ouled Ali Boulimen – El Groa, et elle apparaît aussi dans certaines cartes locales comme Mosquée Boulimen",
+        "description": "118 Mosquée Rahma. Quartier Bardaoui. Mosquée malékite. Récente.",
         "accessPoint": [
           10.7746607,
           33.7875455
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non visitable"
+        "Accès": "Non visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990369293",
+        "maps_ref": "https://maps.app.goo.gl/gRBiRSG7hj6Bej2N9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
