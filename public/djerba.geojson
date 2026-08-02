@@ -585,12 +585,26 @@
         "Nom du site arabe": "جامع أركو",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 309 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE69627R8AECX3S372Z3",
         "accessPoint": [
           11.0104164,
           33.7821456
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Mosquée Arkou. Arkou. Mosquée malékite à origine nokkarite et à laquelle fut ajouté une nouvelle adjacente. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/374396090",
+        "maps_ref": "https://maps.app.goo.gl/zPVazp6DmnQeNVg26",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1639,13 +1653,26 @@
         "Nom du site arabe": "جامع اروي",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6C4WQ1CR342MVCN64V",
-        "description": "Située à Ghizen, également appelée Mosquée Said Yamoun. Infos à rechercher",
+        "description": "44 Mosquée Arouay. Ghizen. Mosquée wahbite reconstruite dans un style ottoman. 11ᵉ siècle de l'hégire / 17ᵉ siècle ap. J.-C.",
         "accessPoint": [
           10.9170463,
           33.8648617
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436225949",
+        "maps_ref": "https://maps.app.goo.gl/Dm1uijS9UPMmXa3X8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2674,11 +2701,11 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Attention, il semblerait que cette mosquée n'existe plus !",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "",
-        "maps_ref": "",
+        "maps_ref": "https://www.google.com/maps/place/%D8%AC%D8%A7%D9%85%D8%B9+%D8%A2%D9%86%D8%B3+%D8%A8%D9%86+%D9%85%D8%A7%D9%84%D9%83+%D8%AC%D8%B1%D8%A8%D8%A9%E2%80%AD/@33.862722,10.874028,315m/data=!3m1!1e3!4m6!3m5!1s0x13aaa5003116ecb3:0x225350b9a319e697!8m2!3d33.8625345!4d10.8740482!16s%2Fg%2F11y3yf321h?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -5306,7 +5333,7 @@
         "Nom du site arabe": "مسجد الهداية",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "https://www.google.com/maps/place/AlHidaya/@33.803611,10.975806,315m/data=!3m1!1e3!4m6!3m5!1s0x13aabd00d6f92f21:0xb522dcad424fbddd!8m2!3d33.8036507!4d10.9757896!16s%2Fg%2F11sthwq0nd?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "Répertoire J. Fathallah, n° 290 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6QR67710KWTHBD0C6V",
         "accessPoint": [
           10.9756422,
@@ -5316,7 +5343,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "",
+        "description": "290 Mosquée Kasbeine ou Hidaya. Entre Mahboubine et Midoun. Mosquée malékite rénovée. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/990311532",
@@ -5792,17 +5819,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ar-Rahma",
+        "Nom du site FR": "Mosquée Errahma",
         "Nom du site arabe": "جامع الرحمة",
         "Catégorie": "Mosquée",
         "Zone": "Essouani",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 26 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6RK8MBMVETZV9353S6",
-        "description": "Infos à rechercher",
+        "description": "26 Mosquée Errahma. Hara Kebira, Houmt Souk. Mosquée malékite. 1977.",
         "accessPoint": [
           10.8658956,
           33.8652906
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436256918",
+        "maps_ref": "https://maps.app.goo.gl/zTcDtepHZUdtU4Cu9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
