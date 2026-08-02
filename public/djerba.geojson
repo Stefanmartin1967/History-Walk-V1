@@ -4407,7 +4407,7 @@
         "Nom du site arabe": "جامع بومسور",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 207 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6KT8VGFJTHK03SWPZR",
         "accessPoint": [
           10.8639726,
@@ -4427,7 +4427,8 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "osm_ref": "way/386328373"
+        "osm_ref": "way/386328373",
+        "maps_ref": "https://maps.app.goo.gl/smrj1PYuLCW23YtX9"
       }
     },
     {
@@ -4444,7 +4445,7 @@
         "Nom du site arabe": "جامع مزوار",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 207 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6KQ3W8ZNZCKYQ3G9DB",
         "accessPoint": [
           10.8639085,
@@ -4464,7 +4465,8 @@
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "osm_ref": "way/386328366"
+        "osm_ref": "way/386328366",
+        "maps_ref": ""
       }
     },
     {
