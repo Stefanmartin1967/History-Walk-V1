@@ -1187,8 +1187,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.984694,
-          33.766694
+          10.984541764908952,
+          33.766501115888644
         ]
       },
       "properties": {
@@ -1196,12 +1196,28 @@
         "Nom du site arabe": "جامع الشُّبابيّة",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 231 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6A3AYDG7D68R9A0JBT",
         "accessPoint": [
           10.9847207,
           33.7667882
-        ]
+        ],
+        "lat": 33.766501115888644,
+        "lng": 10.984541764908952,
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Jalel n° 231 — « Mosquée Chababia. Bani Maaguel. Mosquée malékite très récente. Récente. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990336016",
+        "maps_ref": "https://maps.app.goo.gl/EEKJFAm55zTMsLzP9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1352,12 +1368,26 @@
         "Nom du site arabe": "جامع برا",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 221 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6BZYXKCYCZXB9RG3RP",
         "accessPoint": [
           10.9514246,
           33.7919722
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 221 : « Mosquée Albaraa. Mahboubine. Mosquée malékite à origine nokkarite. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/408615437",
+        "maps_ref": "https://maps.app.goo.gl/Yv7Q1uo9Vys2QLPX6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1869,13 +1899,26 @@
         "Nom du site arabe": "جامع اليونسيين",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 130 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6CW6FA3ED63PXQ5WHX",
-        "description": "Infos à rechercher. Située à Oualegh",
+        "description": "Jalel n° 130 — « Mosquée Younsi. Guechaine. Mosquée ibadite wahbite ancienne et une autre nouvelle. Ancienne.",
         "accessPoint": [
           10.9057398,
           33.8337328
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/408600247",
+        "maps_ref": "https://maps.app.goo.gl/cvnjnqCtjKPRR18S9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4545,21 +4588,37 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.874383,
-          33.695134
+          10.874508179523637,
+          33.6944287875692
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Cheikh Al Tab",
-        "Nom du site arabe": "جامع الشيخ الطّبّ",
+        "Nom du site FR": "Mosquée Cheikh Khattab",
+        "Nom du site arabe": "الشيخ خطاب",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 216 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T",
         "accessPoint": [
           10.8741957,
           33.6950803
-        ]
+        ],
+        "lat": 33.6944287875692,
+        "lng": 10.874508179523637,
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "216 : « Mosquée Cheikh Khattab. Aux abords de Guellala. Mausolée et lieu de culte abandonné, mais en bon état. Ancien.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1163760969",
+        "maps_ref": "https://maps.app.goo.gl/cF43nqfED5fVEdTWA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7271,20 +7330,22 @@
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
         "HW_ID": "HW-01KJMJATZZZRP02QNDTWS3YVK1",
-        "description": "",
+        "description": "Jalel n° 268 : « Mosquée Briguen. Quartier Guebleine, Ajim. Mosquée ibadite wahbite. Ancienne.",
         "Nom du site arabe": "",
-        "Sous-type": "",
+        "Sous-type": "Générique",
         "État": "",
         "Accès": "",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 268 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/8dbVHj536HEXC6UM7"
       }
     },
     {
