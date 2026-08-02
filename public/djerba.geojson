@@ -743,14 +743,27 @@
         "Nom du site arabe": "جامع أولاد هلال",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 284 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE697JA8WM3N71KEFY6S",
         "photos": [],
-        "info_gpx": "Mosquée illustrant parfaitement le savoir-faire architectural insulaire, capable de conjuguer forme, fonction et spiritualité dans un cadre à la fois humble et monumental.",
+        "info_gpx": "",
         "accessPoint": [
           10.9771006,
           33.8156947
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 284 — « Mosquée Ouled Helal. Khazroun. Mosquée ibadite ancienne abandonnée au profit d'une nouvelle attenante. La nouvelle est récente.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/407955473",
+        "maps_ref": "https://maps.app.goo.gl/N46TjPGtwKJRvrZL9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
