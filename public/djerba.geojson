@@ -322,12 +322,26 @@
         "Nom du site arabe": "جامع بن عاشور",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 333 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68ZXYA0Z9T3QEN0VYW",
         "accessPoint": [
           11.0055406,
           33.8025503
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "333 Sidi Ben Achour. Temlel. Mosquée malékite à origine nokkarite ibadite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13109953366",
+        "maps_ref": "https://maps.app.goo.gl/KmJQoNMEdJUq47Rs6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3375,13 +3389,26 @@
         "Nom du site arabe": "جامع بليعز",
         "Catégorie": "Mosquée",
         "Zone": "Essouani",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 73 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6HCR84JJZ3E1PQRRQ9",
         "info_gpx": "Mosquée située au sud-est de Houmt Souk",
         "accessPoint": [
           10.8517081,
           33.8603782
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "description": "73 Mosquée Belaiz. Hachane. Mosquée malékite à origine wahbite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/385107926",
+        "maps_ref": "https://maps.app.goo.gl/4oysfUcTFhKEcGxh9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5062,8 +5089,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.756444,
-          33.721111
+          10.755966140896282,
+          33.721092902947724
         ]
       },
       "properties": {
@@ -5071,14 +5098,28 @@
         "Nom du site arabe": "مسجد بن عباس",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": "https://arachne.dainst.org/entity/7043417?fl=20&q=connectedEntities:7343375&resultIndex=1",
+        "Source": "Répertoire J. Fathallah, n° 267 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nHouda Ben Younes, « The North-African Ibadite Mosques' Collection », iDAI.objects arachne | https://arachne.dainst.org/entity/7043417?fl=20&q=connectedEntities:7343375&resultIndex=1",
         "HW_ID": "HW-01K77WPE6PKFFHK53AA0880TBZ",
-        "description": "Mosquée urbaine, de forme irrégulière, comprenant une école coranique. Sa superficie est de 2500 M². Plusieurs accès permettent d'accéder à la cour qui comporte deux majel (Puits). La salle de prière est située en son centre.",
+        "description": "267 Mosquée Ben Abbes. Ajim. Mosquée ibadite wahbite. 1046 de l'hégire / 1637 ap. J.-C.\n\nMosquée urbaine, de forme irrégulière, comprenant une école coranique. Sa superficie est de 2500 M². Plusieurs accès permettent d'accéder à la cour qui comporte deux majel (Puits). La salle de prière est située en son centre.",
         "info_gpx": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère",
         "accessPoint": [
           10.7563595,
           33.7211752
-        ]
+        ],
+        "lat": 33.721092902947724,
+        "lng": 10.755966140896282,
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/zqwfzQnEufPLduKU8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
