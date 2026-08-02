@@ -804,7 +804,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée AsSalam",
-        "Nom du site arabe": "مسجد المعمورة",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
         "Source": "",
@@ -816,7 +816,7 @@
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -824,7 +824,9 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/374396092",
+        "maps_ref": ""
       }
     },
     {
