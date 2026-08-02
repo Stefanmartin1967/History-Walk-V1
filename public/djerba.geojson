@@ -2486,12 +2486,26 @@
         "Nom du site arabe": "جامع بن عمران",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 173 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6EWBD679W4C2QRM2FA",
         "accessPoint": [
           10.9200337,
           33.7441043
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "173 Mosquée Ben Omrane dite Abou Bakr. Cedouikech. Mosquée ibadite wahbite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/366307851",
+        "maps_ref": "https://maps.app.goo.gl/UfJ4YHXHDPKKHw349",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2828,7 +2842,7 @@
         "Nom du site arabe": "جامع أنس بن مالك",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": "Répertoire J. Fathallah, n° 120 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 120 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nJalel Fathallah, vérification sur place (commentaire Facebook, 2026)",
         "HW_ID": "HW-01K77WPE6FQSGQH7Q843BCXE8K",
         "Sous-type": "À minaret",
         "État": "En activité",
