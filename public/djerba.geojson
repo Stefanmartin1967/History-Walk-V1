@@ -555,12 +555,26 @@
         "Nom du site arabe": "جامع بن عمارة",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 299 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE682TM0N643W207BGNE",
         "accessPoint": [
           10.9952391,
           33.7943411
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "299 Mosquée Ben Amara. Arkou.Midoun. Mosquée malékite ayant subie une rénovation et extension. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436249607",
+        "maps_ref": "https://maps.app.goo.gl/EmUCA1DdEATtKMWD8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -973,7 +987,7 @@
         "Nom du site arabe": "جامع بن معزوزين",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "https://lapresse.tn/2025/08/26/restauree-apres-des-siecles-la-mosquee-al-maazouzine-retrouve-son-eclat-a-djerba/",
+        "Source": "lapresse.tn, article de restauration (août 2025) | https://lapresse.tn/2025/08/26/restauree-apres-des-siecles-la-mosquee-al-maazouzine-retrouve-son-eclat-a-djerba/\nRépertoire J. Fathallah, n° 58 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
         "photos": [
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563624639.jpg",
@@ -984,11 +998,20 @@
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563634489.jpg",
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563636230.jpg"
         ],
-        "description": "Datant de cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
+        "description": "Datant du cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
-        "Accès": "Intérieur visitable"
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1213172497",
+        "maps_ref": "https://maps.app.goo.gl/tKMcVqEGhX7Ri3848",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1211,12 +1234,26 @@
         "Nom du site arabe": "جامع بن عروس",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6BNSENDPYVFJT2TW7Y",
         "accessPoint": [
           10.9488709,
           33.8112548
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/480855941",
+        "maps_ref": "https://maps.app.goo.gl/AxkGRvGU426itfZi8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1383,7 +1420,7 @@
         "Nom du site arabe": "جامع بن داود",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 54 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6BAJG9QADZMRDXPWTB",
         "info_gpx": "Mosquée se trouvant dans un environnement semi-rural, à proximité de petites voies et de terrains sablonneux.",
         "Sous-type": "À coupoles",
@@ -1397,7 +1434,17 @@
           "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563669095.jpg",
           "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563671128.jpg",
           "photos/poi_HW-01K77WPE6BAJG9QADZMRDXPWTB_1780563673468.jpg"
-        ]
+        ],
+        "description": "54 Mosquée Ben Daoued. Mezraya. Mosquée wahbite restaurée mais quasi abandonnée. 4ᵉ siècle de l'hégire / 10ᵉ siècle ap. J.-C.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12674674366",
+        "maps_ref": "https://maps.app.goo.gl/8uwRkHpURnV3dGsR7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1486,8 +1533,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.955722,
-          33.765472
+          10.955706684923967,
+          33.76527363106212
         ]
       },
       "properties": {
@@ -1495,12 +1542,28 @@
         "Nom du site arabe": "جامع بن جديـدي",
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 229 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6BG5X8YCCG07AEVQY8",
         "accessPoint": [
           10.9557632,
           33.765369
-        ]
+        ],
+        "lat": 33.76527363106212,
+        "lng": 10.955706684923967,
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "229 Mosquée Ben jeddi. Bani Maaguel. Mosquée malékite à origine nokkarite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/x5mAEZa48iM77h7b7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2503,8 +2566,22 @@
         "Nom du site arabe": "جامع بن غازي",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6E249JWGGTZMC3XMHH"
+        "Source": "Répertoire J. Fathallah, n° 33 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6E249JWGGTZMC3XMHH",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "33 Mosquée Ben Ghazi. Fatou. Mosquée ibadite wahbite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/zFUt5QfGg1cNysR68",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4970,14 +5047,26 @@
         "Nom du site arabe": "جامع بن حديد",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 271 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6P1NA9ZF5TF1DK9GD2",
-        "description": "La mosquée Ibn Hadid (ou Ben Hadid) se situe à Ajim, au sud-ouest de Djerba, dans le quartier de Guébeline. Selon le Répertoire des mosquées de Djerba (Palais Ben Ayed, 2021), il s’agit d’une mosquée ibadite wahbite rénovée récemment, anciennement construite. Les images satellite et au sol montrent un édifice rectangulaire enduit de chaux blanche, avec un minaret carré à plusieurs niveaux, restauré dans un état neuf. Le site paraît actif et intégré à la trame urbaine d’Ajim.",
+        "description": "271 Mosquée Ben Hadid. Quartier Guebleine, Ajim. Mosquée ibadite wahbite rénovée récemment. Ancienne.",
         "info_gpx": "Ancienne mosquée ibadite wahbite rénovée récemment.",
         "accessPoint": [
           10.7741466,
           33.7215143
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/PYniXFXq8sRaaj4CA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5685,12 +5774,26 @@
         "Nom du site arabe": "مسجد بن عيسى",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 295 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6QN6S4TSGEZQ6DQGXA",
         "accessPoint": [
           10.9913968,
           33.8081675
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "295 — Centre de Midoun, style ottoman, ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/BBStYytK7Y5MgL9aA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6088,17 +6191,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ben Biène",
+        "Nom du site FR": "Mosquée Ben Bayan",
         "Nom du site arabe": "مسجد بن بيان",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
+        "Source": "Panneau patrimonial sur site, association Jerba Ettawassol (branche Erriadh) et Association Djerbienne en France ; texte : Cheikh Massi Ben Yahyatn ; traduction : Sofiane El Mestaoui",
         "HW_ID": "HW-01K77WPE6SYZ3CNCV0GXBV0MYX",
-        "description": "Site troglodityque, Ghar Mjemmaj à proximité immédiate. Infos à rechercher.",
+        "description": "Fondée par le savant cheikh Abū al-Ḥasan ʿAlī b. Sālim b. Bayān al-Yādisī al-Jarbī à la fin du 11ᵉ siècle de l'hégire, la mosquée porte le nom de ce fondateur. Élève du cheikh Sulaymān b. Aḥmad al-Hilātī à Ja'bīra, il partit en 1062 pour l'Égypte, où il rejoignit la mosquée al-Azhar et l'école ibadite, suivant les cours du cheikh Abū ʿAbd Allāh Muḥammad b. ʿAmr b. Abī Sitta, dit « al-Muḥashī », dont il fut le plus éminent et le plus jeune des disciples.\n\nIl revint avec lui à Djerba en 1068 et resta à ses côtés jusqu'à sa mort, réunissant les commentaires de son maître al-Muḥashī et de son cousin Sulaymān.",
         "accessPoint": [
           10.8164416,
           33.8118132
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1139740036",
+        "maps_ref": "https://maps.app.goo.gl/nTV8BH1yAAVouA3w5",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6703,20 +6819,22 @@
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0W6KJP2MNXC0GWQJN6",
-        "description": "",
+        "description": "4 Ben Mimoun. Bani Bandou. Mosquée Wahbite abandonnée. Très ancienne.",
         "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 4 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/1qQ1eoD9nQzRTXcQ9"
       }
     },
     {
