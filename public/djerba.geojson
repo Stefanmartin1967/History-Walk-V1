@@ -514,7 +514,8 @@
           "photos/poi_HW-01K77WPE68JWCXJ0TCG1EDSB7A_1785044457130.jpg",
           "photos/poi_HW-01K77WPE68JWCXJ0TCG1EDSB7A_1785044458837.jpg",
           "photos/poi_HW-01K77WPE68JWCXJ0TCG1EDSB7A_1785044460174.jpg"
-        ]
+        ],
+        "maps_ref": "https://maps.app.goo.gl/EKRFR2U7SfaDa5Sx9"
       }
     },
     {
@@ -1666,8 +1667,22 @@
         "Nom du site arabe": "جامع بدوين",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6BGKED1DHN669J64P7"
+        "Source": "Répertoire J. Fathallah, n° 161 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6BGKED1DHN669J64P7",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 161 : « Mosquée Bedouine. Bedouine. Mosquée ibadite nokkarite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990341624",
+        "maps_ref": "https://maps.app.goo.gl/Dr8kozuL24do11WM8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2026,12 +2041,26 @@
         "Nom du site arabe": "جامع الجديد",
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 236 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6C4GTHCK9Y64EFE8SP",
         "accessPoint": [
           10.9413313,
           33.7462125
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "n° 236 : « Mosquée Jadid. Bani Maaguel. Mosquée quasi abandonnée ayant subie une récente restauration. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1117476416",
+        "maps_ref": "https://maps.app.goo.gl/nmVUag5pEdhqusoA7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2105,9 +2134,23 @@
         "Nom du site arabe": "جامع ست قباب",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 234 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C",
-        "photos": []
+        "photos": [],
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 234 — « Mosquée Quibab. Bani Maaguel. Mosquée abandonnée en passe de disparition. Ancienne. » « Quibab » = « Qibab/Qabab » (coupoles), zone Bani Maaguel confirmée par l'affiche du chantier-école (« à Bni Maaguel »), et l'état « en passe de disparition » colle avec le besoin de restauration.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1471829569",
+        "maps_ref": "https://maps.app.goo.gl/TTnjUPH2ZdeCgnYr7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3512,7 +3555,7 @@
         "Zone": "Taourit",
         "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_Turcs",
         "HW_ID": "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
-        "description": "Mosquée également appelée Jemaâ Ettrouk, construite au 16ème siècle, sous l'impulsion du caïd Ghazi Mustapha Bey. Son minaret, en forme de chandelle est en forme de chandelle. Elle est la seule de l'île dédiée, à l'origine, au rite Hanédisme",
+        "description": "Mosquée également appelée Jemaâ Ettrouk, construite au 16ème siècle, sous l'impulsion du caïd Ghazi Mustapha Bey. Son minaret est en forme de chandelle. Elle est la seule de l'île dédiée, à l'origine, au rite Hanédisme",
         "info_gpx": "Mosquée hanafite puis malékite construite en 1560 de notre ère",
         "accessPoint": [
           10.8592574,
@@ -3526,7 +3569,16 @@
           "photos/poi_HW-01K77WPE6G6RDSP8C7C5WQVJCN_1780460077892.jpg",
           "photos/poi_HW-01K77WPE6G6RDSP8C7C5WQVJCN_1780460079911.jpg",
           "photos/poi_HW-01K77WPE6G6RDSP8C7C5WQVJCN_1780460081557.jpg"
-        ]
+        ],
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/437944539",
+        "maps_ref": "https://maps.app.goo.gl/xqDHc5GKHB5Tb4eh9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5076,13 +5128,26 @@
         "Nom du site arabe": "جامع التغزويسني",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 106 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6N1D1N6TK82WX52BNM",
-        "description": "Mosquée rurale en ruine, située à Bou Menjel. Infos à rechercher.",
+        "description": "Jalel n° 106 : « Mosquée Taghzouissen. Jaabira. En état de ruines. Ancienne.",
         "accessPoint": [
           10.7813346,
           33.7759207
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1380690653",
+        "maps_ref": "https://maps.app.goo.gl/w9Rdm364nrBkH2YJ6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5663,7 +5728,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée du Caïd",
+        "Nom du site FR": "Mosquée El Gayed",
         "Nom du site arabe": "جامع القايد",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
@@ -5673,7 +5738,20 @@
         "accessPoint": [
           10.9458679,
           33.8203182
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/385994601",
+        "maps_ref": "https://maps.app.goo.gl/pmXzDZfA8CgFMp6x8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5938,24 +6016,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.853667,
-          33.820999
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée El Aakel",
-        "Nom du site arabe": "جامع العاقل",
-        "Catégorie": "Mosquée",
-        "Zone": "Erriadh",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6QQH5FMV0T3V4A7MCD"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.85725,
           33.887889
         ]
@@ -6113,13 +6173,26 @@
         "Nom du site arabe": "جامع بنيان",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6R9A1BAASW9SGFA97P",
-        "description": "Infos à rechercher, nom à confirmer.",
+        "description": "",
         "accessPoint": [
           10.9170677,
           33.7510099
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1130737452",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6221,13 +6294,26 @@
         "Nom du site arabe": "جامع العاقل",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 79 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6RM4YJB23YX7AD522S",
-        "description": "Egalement appelée Mosquée de l’ʿAguel. La zaouïa Jdi Saïd serait attenante. Infos à rechercher.",
+        "description": "Egalement appelée Mosquée de l’ʿAguel. La zaouïa Jdi Saïd serait attenante. Infos à rechercher.\nJalel n° 79 — « Mosquée Aguel. Taghdimes. Mosquée ibadite wahbite ayant subie une récente extension et rénovation",
         "accessPoint": [
           10.8522613,
           33.8280272
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/337593721",
+        "maps_ref": "https://maps.app.goo.gl/DFmTyN5foDd2fidd9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6244,13 +6330,26 @@
         "Nom du site arabe": "مسجد طالبت",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6R1ZH8B0JTAF5HKXPG",
-        "description": "Mosquée (de Talbet ?) située à Sedghiane, nom à vérifier et infos à chercher",
+        "description": "",
         "accessPoint": [
           10.9249925,
           33.7126979
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/386942396",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7533,24 +7632,26 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée de Taghdimus",
+        "Nom du site FR": "Mosquée Taghdimes",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CNPZR005431XS160BZ1C4",
-        "description": "",
-        "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "description": "78 : « Mosquée Taghdimes. Taghdimes. Mosquée ibadite wahbite. Ancienne.",
+        "Nom du site arabe": "جامع تغديمس",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 78 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/990337647",
+        "maps_ref": "https://maps.app.goo.gl/QdMSQruTx5456amE6"
       }
     },
     {
