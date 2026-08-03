@@ -726,8 +726,22 @@
         "Nom du site arabe": "مسجد الزموني",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE69NZS5NFTFBPG6V291"
+        "Source": "Répertoire J. Fathallah, n° 300 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE69NZS5NFTFBPG6V291",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 300 : « Mosquée Azmouni. Azmouni. Midoun. Mosquée malékite à origine nokkrite ibadite. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990393991",
+        "maps_ref": "https://maps.app.goo.gl/PGjcu6i5js8gdqQd7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2390,16 +2404,29 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée El Cheikh",
-        "Nom du site arabe": "جامع الشيخ – قشبعين",
+        "Nom du site arabe": "جامع الشيخ",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6DA1GT81ZQDNQARTBX",
-        "description": "Située à Oualegh. Infos à rechercher.",
+        "description": "",
         "accessPoint": [
           10.8940869,
           33.8464794
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/408299504",
+        "maps_ref": "https://maps.app.goo.gl/k94wubjmrQetSw138",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2582,8 +2609,22 @@
         "Nom du site arabe": "جامع الباسي",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6EGHYR09XESQ3285RK"
+        "Source": "Répertoire J. Fathallah, n° 126 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6EGHYR09XESQ3285RK",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 126 : « Mosquée Bassi. Oualegh. Mosquée ibadite wahbite. 1198 de l'hégire (1784 ap. J.-C.)",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/408307720",
+        "maps_ref": "https://maps.app.goo.gl/ESz9xnxpxJCSw2KTA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4224,8 +4265,22 @@
         "Nom du site arabe": "جامع الأبيض",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ"
+        "Source": "Répertoire J. Fathallah, n° 87 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ",
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Jalel n° 87 : « Mosquée Abiadh. Majine, Erriadh. Mosquée ibadite wahbite complètement reconstruite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/GmdzgLRXiiYy6VCb8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5709,13 +5764,23 @@
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non visitable",
+        "Accès": "Extérieur seulement",
         "photos": [
           "photos/poi_HW-01K77WPE6P5C0194DPJWYMX9C1_1780460097295.jpg",
           "photos/poi_HW-01K77WPE6P5C0194DPJWYMX9C1_1780460099085.jpg",
           "photos/poi_HW-01K77WPE6P5C0194DPJWYMX9C1_1780460100832.jpg",
           "photos/poi_HW-01K77WPE6P5C0194DPJWYMX9C1_1780460102865.jpg"
-        ]
+        ],
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/238862131",
+        "maps_ref": "https://maps.app.goo.gl/RKvH8LqRCj22L44WA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
