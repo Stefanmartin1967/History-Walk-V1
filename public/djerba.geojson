@@ -1082,16 +1082,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Ghazouane",
+        "Nom du site FR": "Mosquée El Ghofrane",
         "Nom du site arabe": "جامع الغزوان",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 224 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6A6PKFYXGMY0Z2B3NC",
         "accessPoint": [
           10.968449,
           33.7853315
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Jalel n° 224 : « Mosquée Ghofrane (absolution). Mahboubine. Mosquée malékite. 2017.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/427609506",
+        "maps_ref": "https://maps.app.goo.gl/tt8Ux6A1wKim4aYE7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2862,13 +2876,26 @@
         "Nom du site arabe": "جامع القلالي",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 127 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6EWVYE0ZBA3R72TVE9",
-        "description": "Située à Oualegh..",
+        "description": "Jalel n° 127 — « Mosquée Kallel. Oualegh. Mosquée ibadite wahbite. 10ᵉ siècle de l'hégire (16ᵉ siècle ap. J.-C.).",
         "accessPoint": [
           10.8775527,
           33.8397283
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/428431873",
+        "maps_ref": "https://maps.app.goo.gl/GfSfMvMhdAwCeSaf6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7384,7 +7411,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Fquira (Mezran)",
+        "Nom du site FR": "Mosquée El Fquira",
         "Nom du site arabe": "جامع الفقيرة",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
@@ -7396,18 +7423,20 @@
           10.7669336,
           33.781026
         ],
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 245 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/1473709025",
+        "maps_ref": "https://maps.app.goo.gl/uePxNNrWeczoffkDA"
       }
     },
     {
