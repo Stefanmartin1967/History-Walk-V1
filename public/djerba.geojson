@@ -5127,21 +5127,37 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.794860611273545,
-          33.777147513068996
+          10.794902295487537,
+          33.776948697531495
         ]
       },
       "properties": {
         "Nom du site FR": "Mosquée El Ghoula",
         "Nom du site arabe": "جامع الغولة",
         "Catégorie": "Mosquée",
-        "Zone": "El Groa",
-        "Source": null,
+        "Zone": "Oued Ezzebib",
+        "Source": "Répertoire J. Fathallah, n° 250 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
         "accessPoint": [
           10.7947227,
           33.7770939
-        ]
+        ],
+        "lat": 33.776948697531495,
+        "lng": 10.794902295487537,
+        "Sous-type": "À minaret",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "Jalel n° 250 — « Mosquée Ghoula (l'ogresse). Khanansa. Mosquée ibadite abandonnée ayant subie une récente restauration. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1286712505",
+        "maps_ref": "https://maps.app.goo.gl/mJZJwqPpsXUkkRx76",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
