@@ -3241,27 +3241,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.867722,
-          33.82775
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée El-Gebliyine",
-        "Nom du site arabe": "جامع القبليين",
-        "Catégorie": "Mosquée",
-        "Zone": "Erriadh",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6FZ42WKWV3QWS376RB",
-        "Prix_TND": 0,
-        "description": "Renseignée sous Google Maps mais apparemment, il ne doit rien y subsister, on ne voir rien sur la carte",
-        "info_gpx": "A vérifier si toujours existante"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.866972,
           33.822528
         ]
@@ -4084,9 +4063,22 @@
         "Nom du site arabe": "جامع الموهيشي",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 194 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6HN8AD9RQQTGD38K99",
-        "description": "Située à Ouirsighen. Infos à rechercher"
+        "description": "Jalel n° 194 : « Mosquée Boucette Elmehachi. Ouersighen. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne.",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/386472645",
+        "maps_ref": "https://maps.app.goo.gl/WQftMTHcWeaMAS6S6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4623,13 +4615,26 @@
         "Nom du site arabe": "جامع القبليين",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 210 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6KJNGWAFK1RVYNKE6D",
-        "description": "Egalement appelée Mosquée Tribale Qibliyine/ Infos à rechercher",
+        "description": "Jalel n° 210 : « Mosquée Gueblaine. Fahmine, Guellala. Mosquée ibadite wahbite à laquelle on a ajouté un nouveau minaret. Ancienne",
         "accessPoint": [
           10.859695,
           33.7220593
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/453543592",
+        "maps_ref": "https://maps.app.goo.gl/YKrAZ9AGPS8QfboJ9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6489,13 +6494,26 @@
         "Nom du site arabe": "الجامع الطويل",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 100 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
-        "description": "Infos à rechercher",
+        "description": "",
         "accessPoint": [
           10.8248572,
           33.7915205
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/452272323",
+        "maps_ref": "https://maps.app.goo.gl/7LHDmv57z2jqfWhKA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
