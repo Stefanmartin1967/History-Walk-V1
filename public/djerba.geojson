@@ -717,13 +717,26 @@
         "Nom du site arabe": "جامع حاضر باش",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
-        "Source": "http://palaisbenayed.com/la-mosquee-hadher-bach-%D8%AC%D8%A7%D9%85%D8%B9-%D8%AD%D8%A7%D8%B6%D8%B1-%D8%A8%D8%A7%D8%B4",
+        "Source": "http://palaisbenayed.com/la-mosquee-hadher-bach-%D8%AC%D8%A7%D9%85%D8%B9-%D8%AD%D8%A7%D8%B6%D8%B1-%D8%A8%D8%A7%D8%B4\nRépertoire J. Fathallah, n° 223 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE699CBRC4PV1ARJPXKM",
-        "description": "Mosquée datant du 18ème siècle qui aurait été édifiée par Ali Ben Ayed dit Ali HadherBach et non pas par Mahmoud Ben Ayed, comme cela est parfois écrit. Salah Ben Youssef y aurait appris à écrire et à lire le Coran.",
+        "description": "Mosquée datant du 18ème siècle qui aurait été édifiée par Ali Ben Ayed dit Ali HadherBach et non pas par Mahmoud Ben Ayed, comme cela est parfois écrit. Salah Ben Youssef y aurait appris à écrire et à lire le Coran.\nJalel n° 223 : « Mosquée Hadherbach. Entre Mahboubine et Midoun. Mosquée malékite à origine nokkarite. Ancienne",
         "accessPoint": [
           10.9845895,
           33.8017228
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1099884190",
+        "maps_ref": "https://maps.app.goo.gl/k2iub1j8EcQdsGAn7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -955,13 +968,26 @@
         "Nom du site arabe": "جامع فضلـون",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Fadhloun",
+        "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Fadhloun\nRépertoire J. Fathallah, n° 285 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6A22WXDRBSQ8AEW7BR",
-        "description": "Mosquée bâtie au 14ème siècle et conçue selon un plan atypique. Outre son rôle religieux, celle-ci servait de seconde ligne de défense après les forts.",
+        "description": "Mosquée bâtie au 14ème siècle et conçue selon un plan atypique. Outre son rôle religieux, celle-ci servait de seconde ligne de défense après les forts.\nJalel n° 285 — « Mosquée Fadhloun. Khazroun. Mosquée et medersa ibadite nokkarite devenue malékite. Ancienne. Elle a subi une restauration récente.",
         "accessPoint": [
           10.9596461,
           33.8247249
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12214849821",
+        "maps_ref": "https://maps.app.goo.gl/syMwzXT9QWHoSD9K8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1648,17 +1674,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ghisen Ommï Omar",
-        "Nom du site arabe": "جامع غيسان أمي عمر",
+        "Nom du site FR": "Mosquée Ami Omar",
+        "Nom du site arabe": "جامع عمي عمور",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 43 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6B87GSD5BT3NXXR5RE",
-        "description": "Située à Ghizen. Egalement appelée El Haj Amor. Infos à rechercher.",
+        "description": "Jalel n° 43 — « Mosquée Ami Omar. Ghizen. Poste de garde et mosquée ibadite wahbite. 1154 (1743 ap. J.-C.). »",
         "accessPoint": [
           10.9397628,
           33.8665012
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/709677951",
+        "maps_ref": "https://maps.app.goo.gl/JGopL4oghHi8PE8u5",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1847,13 +1886,26 @@
         "Nom du site arabe": "مسجد تيانست",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 344 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6CC0RY56ECB2RCTGJP",
-        "description": "Egalement connue sous le nom de Mosquée TiyanestMosquée Tiyanest. Située à Sedghiane. Infos à rechercher",
+        "description": "Jalel n° 344 : « Mosquée Hallem, Abou Baker Seddik. Cedghiane. Mosquée malékite. 2019.",
         "accessPoint": [
           10.9154682,
           33.8141086
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990350935",
+        "maps_ref": "https://maps.app.goo.gl/dwsZ7xsb2DwQHNxS9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2627,8 +2679,22 @@
         "Nom du site arabe": "جامع التقوى",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6EPM3A4QJN2D566KZ5"
+        "Source": "Répertoire J. Fathallah, n° 152 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6EPM3A4QJN2D566KZ5",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel N° 152 : « Mosquée Takwa. May. Mosquée malékite. Début du 21ᵉ siècle.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1117920002",
+        "maps_ref": "https://maps.app.goo.gl/2qetH6C68jbPtedj6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2686,8 +2752,22 @@
         "Nom du site arabe": "جامع الزيات",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
-        "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB"
+        "Source": "Répertoire J. Fathallah, n° 94 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01KJABRN0GH1K6QDXPRRKMDATB",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "Jalel n° 94 : « Mosquée Zayet. Oued Zbib. Mosquée ibadite wahbite abandonnée mais en excellent état. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990380156",
+        "maps_ref": "https://maps.app.goo.gl/ByJr7e28a2Kf8zDY8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5622,12 +5702,26 @@
         "Nom du site arabe": "جامع غندري",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6NZ91JPSJG4M3A7TNR",
         "accessPoint": [
           10.7747087,
           33.7591194
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1382427929",
+        "maps_ref": "https://maps.app.goo.gl/kQzNX4TkwMhpsTkD7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5858,14 +5952,26 @@
         "Nom du site arabe": "جامع بازين",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": "https://fr.wikipedia.org/wiki/Fichier:Mosqu%C3%A9e_Ettouil_01.jpg",
+        "Source": "https://fr.wikipedia.org/wiki/Fichier:Mosqu%C3%A9e_Ettouil_01.jpg\nRépertoire J. Fathallah, n° 260 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6PG0DA193W44FBQAHQ",
-        "description": "Décrite par chatGPT au départ de l'image sur Wikimedia Commons : L’édifice est blanc à dominante sobre, avec un minaret carré visible, dans un angle du bâtiment. Le bâtiment principal est de plan rectangulaire, à toit plat ou très légèrement incliné (les photos ne montrent pas de grandes coupoles). Le portail d’entrée est modeste, intégré dans le mur extérieur — pas de portails monumentaux visibles. L’ensemble est simple, sans décorations ostentatoires, typique d’une architecture utilitaire du culte, avec des lignes épurées. Le minaret a des proportions relativement élancées par rapport au corps de la mosquée, avec des ouvertures ajourées visibles dans les étages supérieurs. Le bâtiment semble bien entretenu, sans ruines visibles depuis la prise de vue.",
-        "info_gpx": "Mosquée ibadite wahbite dont la date de construction estimée se situe aux environs du 17ème siècle, entre 1680 et 1720.\nMonument historique classé (INP, 2022).",
+        "description": "Jalel n° 260 : « Mosquée Salat ou Bazin. Ajim. Mosquée ibadite wahbite à laquelle fut ajoutée une nouvelle attenante. Ancienne.",
+        "info_gpx": "Mosquée ibadite wahbite dont la date de construction estimée se situe aux environs du 17ème siècle, entre 1680 et 1720.Monument historique classé (INP, 2022).",
         "accessPoint": [
           10.7477664,
           33.7358913
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/9785843197",
+        "maps_ref": "https://maps.app.goo.gl/pTRfydKYUoiiSdgg7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6727,14 +6833,26 @@
         "Nom du site arabe": "جامع الهواري",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "https://fr.wikipedia.org/wiki/Mezraya",
+        "Source": "https://fr.wikipedia.org/wiki/Mezraya\nRépertoire J. Fathallah, n° 59 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6RCC0S7XMA08ES9BDD",
-        "description": "La mosquée Haouari, également connue sous le nom de mosquée Sidi Ghrib, se situe à Mezraya, non loin de la route reliant Midoun au littoral. D’après la tradition rapportée par Wikipédia, elle aurait été fondée par le cheikh Ilyes Haouari, un savant ayant passé une partie de sa jeunesse à l’étranger, ce qui expliquerait le surnom de Sidi Ghrib — littéralement “le saint venu de loin”. Vue du ciel, la mosquée forme un vaste complexe à plusieurs cours et annexes, typique des mosquées communautaires ibadites de Djerba. On distingue nettement une grande salle de prière couverte de coupoles hémisphériques alignées en files régulières — douze au total, selon la lecture satellite —, un plan qui évoque la période de transition entre les modèles ruraux à coupoles multiples et les architectures plus organisées des mosquées centrales. Les façades extérieures, entièrement chaulées de blanc, se détachent sous le ciel bleu, tandis que les portes et fenêtres peintes en bleu vif rappellent la palette traditionnelle de Djerba. Le minaret, élancé et carré, domine la cour principale, surmonté d’un petit lanternon pyramidal — une signature visuelle des mosquées djerbiennes restaurées au XXème siècle. À l’intérieur, la forêt d’arcs brisés soutenant les coupoles forme un espace rythmé, à la fois sobre et majestueux. Les revêtements de sol tressés et les boiseries basses renforcent le caractère à la fois ancien et vivant du lieu. Enfin, la présence d’un cimetière attenant, visible à l’est, et d’une zaouïa ou école coranique voisine souligne l’importance du site comme centre spirituel historique de la communauté de Mezraya.",
+        "description": "Jalel n° 59 : « Haouari. Mezraya. Mosquée ibadite wahbite. Ancienne.",
         "info_gpx": "Egalement connue sous le nom de mosquée Sidi Ghrib dont l'architecture évoque la période de transition entre les modèles ruraux à coupoles multiples et cellesplus organisées des mosquées centrales.",
         "accessPoint": [
           10.9674979,
           33.8507302
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/240047122",
+        "maps_ref": "https://maps.app.goo.gl/SPKHbiVnZZSBoRa5A",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -8192,7 +8310,21 @@
         "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
         "created_at": "2026-03-11T14:18:04.014Z",
         "Prix_TND": 0,
-        "description": "Mosquée découverte lors de notre randonnée \nNom à vérifier \nMosquée Errahma  Kahil: la miséricorde"
+        "description": "vJalel n° 291 : « Mosquée Errahma. Entre Mahboubine et Midoun. Mosquée malékite à origine nokkarite ibadite. Ancienne.",
+        "Nom du site arabe": "",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Source": "Répertoire J. Fathallah, n° 291 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "node/13440137280",
+        "maps_ref": "https://maps.app.goo.gl/4hnArGpuAg8vGhgt5",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
