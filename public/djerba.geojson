@@ -119,9 +119,9 @@
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "",
+        "Accès": "Non visitable",
         "Zone": "Arkou",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 321 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
@@ -132,13 +132,16 @@
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1779896245496.jpg",
           "photos/poi_HW-01K77WPE671G6V27VYYNMJV2NC_1779896247537.jpg"
         ],
-        "description": "",
+        "description": "Jalel n° 321 : « Mosquée Ben Abbes ex Boumeliane. Quartier Taguermeset. Mosquée nouvellement construite sur le site d'une ancienne. Récente",
         "Facebook": "",
         "info_gpx": "",
         "accessPoint": [
           11.0358487,
           33.8186371
-        ]
+        ],
+        "osm_ref": "way/990347807",
+        "maps_ref": "https://maps.app.goo.gl/B3LHckZGsH66nymS6",
+        "introuvableCarte": false
       }
     },
     {
@@ -2038,12 +2041,26 @@
         "Nom du site arabe": "جامع إبراهيم الخليل الذّحيرة",
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 230 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6CP8P9RJP202ZRWJQJ",
         "accessPoint": [
           10.9423118,
           33.7516329
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 230 : « Mosquée Dhira. Bani Maaguel. Mosquée malékite très récente. Récente.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1367519202",
+        "maps_ref": "https://maps.app.goo.gl/iLrSVJQAWVMwBTiGA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3437,7 +3454,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Houmet El Krashoua",
+        "Nom du site FR": "Mosquée Sidi Yassine (Houmet El Krachoua)",
         "Nom du site arabe": "مسجد حومة الكراشوة",
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
@@ -8185,28 +8202,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ibadite El Guebli",
+        "Nom du site FR": "Mosquée El Guebli",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
         "HW_ID": "HW-01KJZ4D50T7NQJ187MJ21YDR20",
-        "description": "",
+        "description": "Jalel n° 240 — « Mosquée Guebli. Bani Maaguel. Mosquée tour de guet en ruines. Ancienne.",
         "accessPoint": [
           10.9719775,
           33.7582922
         ],
         "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 240 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/1166002371",
+        "maps_ref": "https://www.openstreetmap.org/way/1166002371"
       }
     },
     {
