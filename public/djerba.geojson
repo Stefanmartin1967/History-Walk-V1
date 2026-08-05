@@ -3441,13 +3441,26 @@
         "Nom du site arabe": "مسجد حومة الكراشوة",
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 171 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6FYGYG0HW2BTHPGFF6",
-        "description": "Située à El Krachoua Infos à rechercher.",
+        "description": "Jalel n° 171 : « Sidi Yassine. Robbana. Mosquée nokkarite ibadite totalement rénovée. Ancienne.",
         "accessPoint": [
           10.8802612,
           33.76517
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/451911425",
+        "maps_ref": "https://maps.app.goo.gl/eyRVMZAfgBKMkqUe7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -8106,28 +8119,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Henchir",
+        "Nom du site FR": "Mosquée Henchir Labbassi",
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
         "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
-        "description": "",
+        "description": "Jalel n° 168 : « Mosquée Aissa Robbani dite Labbassi. Robbana. Mosquée ibadite nokkarite ayant subie une extension. 4ᵉ siècle de l'hégire (10ᵉ siècle ap. J.-C.).",
         "accessPoint": [
           10.8951752,
           33.7703173
         ],
         "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 168 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/990393357",
+        "maps_ref": "https://maps.app.goo.gl/U76UGxfqShEs1ZKw7"
       }
     },
     {
