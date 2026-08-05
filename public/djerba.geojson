@@ -2044,12 +2044,26 @@
         "Nom du site arabe": "جامع الغشّي",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 137 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6CT271602JBDQFH8AM",
         "accessPoint": [
           10.9057886,
           33.8392845
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 137 : « Mosquée Guechai. Guechaine. Mosquée ibadite wahbite. 1230 de l'hégire (1784 ap. J.-C.).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/342760352",
+        "maps_ref": "https://maps.app.goo.gl/QjYTSqTGnUSZEXmm7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3643,7 +3657,7 @@
         "Nom du site arabe": "مسجد الغربة",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_%C3%89trangers",
+        "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_%C3%89trangers\nRépertoire J. Fathallah, n° 17 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6G6C1H17E6WP518B3J",
         "description": "Principale mosquée Malikite, construite au 15ème siècle. Edifiée au début en tant que madrassa ibadite. Egalement connue sous les noms de mosquée Barrazim, mosquées des étrangers ou Jemaâ Ghorba",
         "info_gpx": "Mosquée ibadite devenue malékite construite en 967 de l’hégire, soit en 1560 de notre ère",
@@ -3661,7 +3675,16 @@
           "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460066884.jpg",
           "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460068770.jpg",
           "photos/poi_HW-01K77WPE6G6C1H17E6WP518B3J_1780460070707.jpg"
-        ]
+        ],
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/238861712",
+        "maps_ref": "https://maps.app.goo.gl/4Lv3WdzvcD2xjDcd7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4232,13 +4255,26 @@
         "Nom du site arabe": "جامع الليل",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 95 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6JDNJ7919QCH1HXSXT",
-        "description": "Infos à rechercher",
+        "description": "Jalel n° 95 : « Mosquée Ellil. Oued Zbib. Mosquée ibadite wahbite ayant subie une rénovation. 8ᵉ siècle de l'hégire (14ᵉ siècle ap. J.-C.).",
         "accessPoint": [
           10.8429768,
           33.7843144
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/453673675",
+        "maps_ref": "https://maps.app.goo.gl/VTxhddjm2CxrP4K47",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6119,10 +6155,10 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Ennasr",
-        "Nom du site arabe": "مسجد سيدي سفيان",
+        "Nom du site arabe": "جامع النصر",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 313 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6QJNV1Q83SBNFKC88M",
         "Prix_TND": 0,
         "Sous-type": "À minaret",
@@ -6139,7 +6175,9 @@
         ],
         "info_gpx": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/392724423",
+        "maps_ref": "https://maps.app.goo.gl/dpHoCFF6HgczE1Av8"
       }
     },
     {
@@ -6452,13 +6490,26 @@
         "Nom du site arabe": "مسجد الحسين",
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 226 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6QE5NJP25N8WEWSR03",
-        "description": "Située à Beni Maaguel",
+        "description": "Jalel n° 226 : « Mosquée Sidi Houcine. Bani Maaguel. Mosquée malékite ayant subie une rénovation. Ancienne.",
         "accessPoint": [
           10.9523365,
           33.7594956
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/427588939",
+        "maps_ref": "https://maps.app.goo.gl/JRe2BmLuuW3PikZUA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6471,13 +6522,26 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El-Moustiri",
+        "Nom du site FR": "Mosquée Mestiri",
         "Nom du site arabe": "جامع المستيري",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 42 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6QEKDE45N0B9HGYZ0W",
-        "description": "Sutuées à Ghizen. Infos à rechercher."
+        "description": "Jalel n° 42 : « Mosquée Mestiri. Ghizen. Poste de garde et mosquée ibadite, à laquelle on a ajouté un nouveau minaret. 1000 de l'hégire (1600 ap. J.-C.).",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436546967",
+        "maps_ref": "https://maps.app.goo.gl/DqVpjy8B2Pqf1BTv5",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
