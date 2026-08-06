@@ -581,8 +581,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.984167,
-          33.844083
+          10.984550312786718,
+          33.84414638476136
         ]
       },
       "properties": {
@@ -590,21 +590,24 @@
         "Nom du site arabe": "جامع عثمان بن عفان",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "https://www.google.com/maps/place/Mosque+Othmane+Ibn+affenne/@33.844083,10.984167,315m/data=!3m1!1e3!4m6!3m5!1s0x13aa99e55bb24835:0x7aa8e80fe99ca8b6!8m2!3d33.8441514!4d10.9845428!16s%2Fg%2F11t5b9y2cq?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "",
         "HW_ID": "HW-01K77WPE68HB12PE5Y0ZGTGJ3X",
-        "info_gpx": "Mosquée d'architecture contemporaine soignée, héritière des codes classiques djerbiens mais modernisée dans ses lignes et ses finitions.",
+        "info_gpx": "",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "description": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/990345721",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "lat": 33.84414638476136,
+        "lng": 10.984550312786718,
+        "maps_ref": "https://maps.app.goo.gl/8NDk1mrHwEK35YJh9"
       }
     },
     {
@@ -987,10 +990,10 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Mrabet Messaoud",
-        "Nom du site arabe": "جامع خزرون",
+        "Nom du site arabe": "جامع مرابط مسعود",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 283 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE69CKZWJHD3JAJT874K",
         "photos": [],
         "accessPoint": [
@@ -1001,14 +1004,16 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "",
+        "description": "Jalel n° 283 — « Mosquée Mrabet Messaoued. Khazroun. Mosquée malékite à origine nokkarite ibadite. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/435460180",
+        "maps_ref": "https://maps.app.goo.gl/2XYhaVCvGuUWSCVXA"
       }
     },
     {
@@ -1625,17 +1630,17 @@
         "Nom du site arabe": "جامع ودران",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 227 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ",
         "photos": [],
-        "description": "Située dans le quartier Ouedrane, faisant partie de Beni Maaguel",
+        "description": "Jalel n° 227 — « Mosquée Ouedran. Bani Maaguel. Mosquée malékite totalement reconstruite. Ancienne.",
         "accessPoint": [
           10.9687378,
           33.7628852
         ],
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -1643,7 +1648,9 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/1105824062",
+        "maps_ref": "https://maps.app.goo.gl/9iQpTQWkedZxaEvS8"
       }
     },
     {
@@ -2653,12 +2660,26 @@
         "Nom du site arabe": "جامع الريحية",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 172 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6D5GR4P97YHEN41JNS",
         "accessPoint": [
           10.9236889,
           33.7516386
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 172 : « Mosquée Rihia. Cedouikech. Mosquée nokkarite totalement abandonnée au profit d'une nouvelle mosquée attenante. Ancienne. La nouvelle est récente.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/VRyApzsA3QnW5WjE9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2842,13 +2863,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquee Ouchachna",
+        "Nom du site FR": "Mosquée Ouchachna",
         "Nom du site arabe": "جامع عشاشنة",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 158 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6E2G25V2R888QZDP0X",
-        "photos": []
+        "photos": [],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Mosquée Ouchachna. May. Mosquée malékite. Très récente.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13505451159",
+        "maps_ref": "https://maps.app.goo.gl/oeWTEsa1nMKxm19Q8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3543,13 +3578,26 @@
         "Nom du site arabe": "جامع عمر بن الخطاب",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 155 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6FKPXGG3JYG58QMES3",
-        "description": "Infos à rechercher",
+        "description": "Jalel n° 155 : « Mosquée Omar Ibn Khattab. May. Mosquée malékite. Très récente.",
         "accessPoint": [
           10.871419,
           33.7956853
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/453686215",
+        "maps_ref": "https://maps.app.goo.gl/JGi3eDXnFZvs1Nr56",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5439,7 +5487,7 @@
         "Nom du site arabe": "جامع وليحي",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
-        "Source": "https://www.flickr.com/photos/44928546@N05/8008665414\nhttps://www.facebook.com/Assidje.org/posts/la-l%C3%A9gendaire-mosqu%C3%A9e-ouelhi-retrouve-son-%C3%A9clat-apr%C3%A8s-avoir-%C3%A9t%C3%A9-pilli%C3%A9e-et-sacca/2453064461400785/",
+        "Source": "https://www.flickr.com/photos/44928546@N05/8008665414\nhttps://www.facebook.com/Assidje.org/posts/la-l%C3%A9gendaire-mosqu%C3%A9e-ouelhi-retrouve-son-%C3%A9clat-apr%C3%A8s-avoir-%C3%A9t%C3%A9-pilli%C3%A9e-et-sacca/2453064461400785/\nRépertoire J. Fathallah, n° 99 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
         "photos": [
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463657931.jpg",
@@ -5454,14 +5502,24 @@
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463675621.jpg",
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463677378.jpg"
         ],
-        "description": "Une des plus ancienne mosquée de Djerba datant du 7ème siècle. Elle a retrouvé son éclat après sa restauration par l'ASSIDJE en collaboration avec l'Association des Architectes de Jerba. Son architecture simle est typique de Djerba. A noter qu'étant entourée de vergers, elle est réputée pour sa production de fruits.",
+        "description": "Une des plus ancienne mosquée de Djerba datant du 7ème siècle. Elle a retrouvé son éclat après sa restauration par l'ASSIDJE en collaboration avec l'Association des Architectes de Jerba. Son architecture simle est typique de Djerba. A noter qu'étant entourée de vergers, elle est réputée pour sa production de fruits.\n Jalel n° 99 — « Mosquée Ouelhi. Jaabira. Mosquée et medersa coranique à l'état d'abandon. Elle fut restaurée récemment. 8ᵉ siècle de l'hégire (14ᵉ siècle ap. J.-C.).",
         "accessPoint": [
           10.8055248,
           33.7901335
         ],
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
-        "Accès": "Intérieur visitable"
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/11962264483",
+        "maps_ref": "https://www.openstreetmap.org/node/11962264483",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7063,13 +7121,26 @@
         "Nom du site arabe": "جامع الجديد",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6RHDAFAXAA92EFT8GY",
         "info_gpx": "Mosquée malékite construite au 20ème siècle",
         "accessPoint": [
           10.7477899,
           33.7245839
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 263 — « Mosquée Jadid. Centre Ajim. Mosquée malékite. 20ᵉ siècle.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/5264075922",
+        "maps_ref": "https://maps.app.goo.gl/KSGCwUo8S8zDiqtn8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
