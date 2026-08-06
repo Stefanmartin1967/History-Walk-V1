@@ -7355,29 +7355,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.892889,
-          33.781407
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée Robbana",
-        "Nom du site arabe": "جامع روبانة",
-        "Catégorie": "Mosquée",
-        "Zone": "Robbana",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS",
-        "description": "Nom provisoire. Située à Robbana. Infos à rechercher.",
-        "accessPoint": [
-          10.8931267,
-          33.7813377
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.938527,
           33.857842
         ]
