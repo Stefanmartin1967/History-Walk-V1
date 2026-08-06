@@ -1737,7 +1737,7 @@
         "Nom du site arabe": "جامع المرابط بلقاسم",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 55 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6B49HSRPBACEWDY95T",
         "accessPoint": [
           10.9333783,
@@ -1755,7 +1755,18 @@
           "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563685770.jpg",
           "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563687391.jpg",
           "photos/poi_HW-01K77WPE6B49HSRPBACEWDY95T_1780563689214.jpg"
-        ]
+        ],
+        "info_gpx": "",
+        "description": "Jalel n° 55 : « Mosquée Mrabet Belgacem. Mezraya. Mosquée wahbite en bon état mais abandonnée. 11ᵉ siècle de l'hégire (17ᵉ siècle ap. J.-C.).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12674914676",
+        "maps_ref": "https://maps.app.goo.gl/pFxjLzGxwhZjSAsw6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5662,21 +5673,31 @@
         "Nom du site arabe": "جامع مرّور",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 101 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6N6A0YBFFKMQQNQH0E",
         "photos": [
           "photos/poi_HW-01K77WPE6N6A0YBFFKMQQNQH0E_1780463699852.jpg",
           "photos/poi_HW-01K77WPE6N6A0YBFFKMQQNQH0E_1780463702056.jpg",
           "photos/poi_HW-01K77WPE6N6A0YBFFKMQQNQH0E_1780463703961.jpg"
         ],
-        "description": "Mosquée rurale assez isolée, entourée de terrains agricoles, natammet oliveraies.",
+        "description": "Jalel n° 101 : « Mosquée Hamouda dite Mourou. Jaabira. Mosquée ibadite wahbite en bon état et quasi abandonnée. Ancienne.",
         "accessPoint": [
           10.7858502,
           33.7929511
         ],
         "Sous-type": "À minaret",
         "État": "Désaffecté",
-        "Accès": "Extérieur seulement"
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1004339554",
+        "maps_ref": "https://maps.app.goo.gl/Av3dZ63pDXakUKCp7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6649,12 +6670,26 @@
         "Nom du site arabe": "مسجد مولاي الطيب",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 332 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6QGFPEGPTZ1G59C9FZ",
         "accessPoint": [
           11.0168106,
           33.8026537
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 332 — « Sidi Taieb. Temlel. Mausolée et lieu de culte en excellent état. Ancien.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1088303869",
+        "maps_ref": "https://maps.app.goo.gl/3VffYNuvoFnqtb6f9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
