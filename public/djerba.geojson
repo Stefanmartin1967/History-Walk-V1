@@ -314,14 +314,28 @@
         "Nom du site arabe": "جامع سيدي عبد القادر",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 316 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6805D82JWX44QAVVV9",
         "lat": 33.793757704808506,
         "lng": 11.021607244300704,
         "accessPoint": [
           11.0216903,
           33.7936715
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 316 — « Sidi Abdelkader. Tezdaine, Midoun. Mosquée mausolée malékite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12868365452",
+        "maps_ref": "https://maps.app.goo.gl/jS1bh92hhnPgSyw56",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -937,10 +951,22 @@
         "Nom du site arabe": "جامع السلاوتي",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-beaute-immaculee-de-mosquee-sellaouati/187481/",
+        "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-beaute-immaculee-de-mosquee-sellaouati/187481/\nRépertoire J. Fathallah, n° 60 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE69KD9K0SES4DYYWZQA",
-        "description": "Mosquée massive au minaret carré dont la construction remonterait au 16ème siècle, à l'arrivée du clan des Sellaouates. La légende raconte que ceux-ci ont commencé par creuser un puits avant de décider d'y établir leur culte. Ils virent un signe divin dans la découverte d'une colonne de marbre qui sortaient du sol et décidèrent de l'incorporer à leur mosquée. A leur arrivée le lendemain de sa construction, la porte était close sans être munie de serrure ni de loquet. Une femme vénérable reconnue pour sa sagesse leur conseilla de faire acte de charité. Ce qui fût fait, avant d'émietter un dernier pain devant la mosquée qui leur fût enfin accessible.",
-        "info_gpx": "Mosquée massive au minaret carré qui se cache derrière les oliviers.\nCe sanctuaire immaculé continue de recevoir les fidèles et, parfois, de simples curieux."
+        "description": "Mosquée massive au minaret carré dont la construction remonterait au 16ème siècle, à l'arrivée du clan des Sellaouates. La légende raconte que ceux-ci ont commencé par creuser un puits avant de décider d'y établir leur culte. Ils virent un signe divin dans la découverte d'une colonne de marbre qui sortaient du sol et décidèrent de l'incorporer à leur mosquée. A leur arrivée le lendemain de sa construction, la porte était close sans être munie de serrure ni de loquet. Une femme vénérable reconnue pour sa sagesse leur conseilla de faire acte de charité. Ce qui fût fait, avant d'émietter un dernier pain devant la mosquée qui leur fût enfin accessible.\nJalel n° 60 : « Sellouati. Entre Mezraya et Ouled Omar. Mosquée ibadite devenue malékite. Ancienne",
+        "info_gpx": "Mosquée massive au minaret carré qui se cache derrière les oliviers.Ce sanctuaire immaculé continue de recevoir les fidèles et, parfois, de simples curieux.",
+        "Sous-type": "À minaret",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/385972323",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1918,12 +1944,26 @@
         "Nom du site arabe": "مسجد سعيد بن صالح",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 144 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6C4QCW255MDZKT0RHK",
         "accessPoint": [
           10.9234103,
           33.8142651
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 144 : « Mosquée Said Ben Salah. Cedghiane. Mosquée ibadite wahbite qui a subi une expansion avec un nouveau minaret. 1019 de l'hégire (1622 ap. J.-C.)",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13230749384",
+        "maps_ref": "https://maps.app.goo.gl/uL7QtLr7AHu1KYAH9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4525,13 +4565,26 @@
         "Nom du site arabe": "جامع الصدّيق",
         "Catégorie": "Mosquée",
         "Zone": "El Jouamaa",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6H3TDARVM1G3V5E49B",
         "description": "Infos à rechercher.",
         "accessPoint": [
           10.8451514,
           33.8727573
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/435638104",
+        "maps_ref": "https://maps.app.goo.gl/TxYkQyRKuhfJjxQ48",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5946,8 +5999,22 @@
         "Nom du site arabe": "مسجد سيدي عبد الله",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8"
+        "Source": "Répertoire J. Fathallah, n° 247 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 247 : « Sidi Abdallah. Mazrane. Mausolée, lieu de culte abandonné mais en bon état. Ancien",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1314954029",
+        "maps_ref": "https://maps.app.goo.gl/CRiXthBRoNo8ajYs7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
