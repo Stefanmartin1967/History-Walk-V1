@@ -282,8 +282,22 @@
         "Nom du site arabe": "جامع المغارسة",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE68SSRHFM5TYYA7F5YF"
+        "Source": "Répertoire J. Fathallah, n° 322 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE68SSRHFM5TYYA7F5YF",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 322 — « Mguersa. Quartier Mguersa. Mosquée malékite à origine nokkarite et à laquelle fut ajouté une nouvelle adjacente. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13138153806",
+        "maps_ref": "https://maps.app.goo.gl/DM4UX6fyoKUpPYgU7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -697,17 +711,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Moslah Awlad Amor",
+        "Nom du site FR": "Mosquée Moslah (Ouled Amor)",
         "Nom du site arabe": "جامع مصلح أولاد عمر",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 287 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE698R49VRAQ6C6J1XXF",
-        "info_gpx": "Mosquée qui illustre  le modèle de la mosquée de quartier djerbienne , à la fois ancrée dans la tradition architecturale locale et adaptée à la vie moderne, dans un équilibre entre modestie et élégance.",
+        "info_gpx": "",
         "accessPoint": [
           10.9804333,
           33.8352579
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 287 — « Mosquée Moslah. Trifa, Ouled Omar. Mosquée malékite. Début du 20ᵉ siècle.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/449859837",
+        "maps_ref": "https://maps.app.goo.gl/DXWNh1yPYYMtK9LU8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1278,7 +1305,7 @@
         "Nom du site arabe": "جامع مدراجن",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 50 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6A7EGYFGG7XNYT8AYC",
         "accessPoint": [
           10.9547205,
@@ -1294,7 +1321,18 @@
           "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563709031.jpg",
           "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563710742.jpg",
           "photos/poi_HW-01K77WPE6A7EGYFGG7XNYT8AYC_1780563712485.jpg"
-        ]
+        ],
+        "info_gpx": "",
+        "description": "Jalel n° 50 : « Mosquée de Medrajen. Mezraya. Mosquée forteresse wahbite. Elle a subi des restaurations. 1077 de l'hégire (1666 ap. J.-C.)",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1319949359",
+        "maps_ref": "https://maps.app.goo.gl/zjbN3hLSDphdZKPZ9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4668,9 +4706,22 @@
         "Nom du site arabe": "مسجد مصلح",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 96 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6JZTBRNSSD5YPS2Q2Y",
-        "description": "Infos à rechercher"
+        "description": "Jalel n° 96 : « Mosquée Moslah. Oued Zbib. Mosquée ibadite wahbite. Ancienne.",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/452272440",
+        "maps_ref": "https://maps.app.goo.gl/XJ6gw1M8qv1oe4wS9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7266,13 +7317,26 @@
         "Nom du site arabe": "جامع مزلين",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 38 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6S9HZ3NW8MK3ME35XW",
-        "description": "Située à Mazline. Egalement appelée Jamaa Ben Mazlin. Infos à rechercher",
+        "description": "Jalel n° 38 : « Mosquée Mezline. Fatou. Mosquée ibadite wahbite. Ancienne.",
         "accessPoint": [
           10.902384,
           33.8542592
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13146465401",
+        "maps_ref": "https://maps.app.goo.gl/A5mL8Dufzuv9sTcq9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -8304,8 +8368,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.836577713489534,
-          33.82040278197035
+          10.837669435859802,
+          33.82122850370071
         ]
       },
       "properties": {
@@ -8313,20 +8377,24 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJX5XSG18NC03E6900V170QX",
-        "description": "",
+        "description": "Jalel n° 88 — « Mosquée Majine. Majine, Erriadh. Mosquée ibadite wahbite. Ancienne.",
         "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 88 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "lat": 33.82122850370071,
+        "lng": 10.837669435859802,
+        "osm_ref": "node/13453526848",
+        "maps_ref": "https://maps.app.goo.gl/gDzJfPAEWBhagdnS9"
       }
     },
     {
@@ -8519,8 +8587,8 @@
         ],
         "Nom du site arabe": "",
         "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -8530,7 +8598,8 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "osm_ref": ""
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/244Ah1MaW2uovumh7"
       }
     },
     {
@@ -8582,7 +8651,7 @@
         "HW_ID": "HW-01KM2QY8VXPF72S6D9NAZ0AZ43",
         "created_at": "2026-03-19T09:48:31.484Z",
         "Prix_TND": 0,
-        "description": "",
+        "description": "Lieu dont l'existence doit être confirmée et étudiée sur place",
         "accessPoint": [
           10.9735112,
           33.8137871
@@ -8598,7 +8667,9 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": true,
+        "osm_ref": "",
+        "maps_ref": ""
       }
     },
     {
