@@ -248,10 +248,24 @@
         "Nom du site arabe": "جامع خالد بن الوليد",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 327 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68SW9XWBFFCRBWXZYM",
         "lat": 33.79811118269014,
-        "lng": 11.028802710036706
+        "lng": 11.028802710036706,
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 327 — « Khaled Ibn Walid, ex Sidi Mansour. Tezdaine. Mosquée malékite construite sur le site d'une ancienne. Récente.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1084937239",
+        "maps_ref": "https://maps.app.goo.gl/3HtkHPDBRKXiTUEn8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -404,13 +418,26 @@
         "Nom du site arabe": "جامع الكباس",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 288 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68SW5H9AGP366WDFHH",
-        "info_gpx": "La Mosquée Kbess est un édifice composite mêlant architecture traditionnelle djerbienne et ajouts contemporains.\nSa coupole blanche et son minaret géométrique en font un repère visuel important à l’entrée sud de Mezraya.",
+        "info_gpx": "La Mosquée Kbess est un édifice composite mêlant architecture traditionnelle djerbienne et ajouts contemporains.Sa coupole blanche et son minaret géométrique en font un repère visuel important à l’entrée sud de Mezraya.",
         "accessPoint": [
           10.9907226,
           33.8352705
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 288 — « Mosquée Kbess dite Omar Ibn Khattab. Trifa, Ouled Omar. Mosquée totalement reconstruite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/FrzsGcXfPdSr9T8L6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1395,8 +1422,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.945111,
-          33.846167
+          10.94515085352863,
+          33.84594580893958
         ]
       },
       "properties": {
@@ -1404,7 +1431,7 @@
         "Nom du site arabe": "جامع الخوش",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 53 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6BE6FFWWHJH6DSSZQ6",
         "accessPoint": [
           10.9450346,
@@ -1418,7 +1445,20 @@
           "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563653961.jpg",
           "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563655921.jpg",
           "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563658090.jpg"
-        ]
+        ],
+        "lat": 33.84594580893958,
+        "lng": 10.94515085352863,
+        "info_gpx": "",
+        "description": "Mosquée Khouch. Mezraya. Mosquée wahbite en ruines. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/483447542",
+        "maps_ref": "https://maps.app.goo.gl/tPMU8NjJWEHJKgZn8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1623,13 +1663,26 @@
         "Nom du site arabe": "جامع جابر بن زايد",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 145 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6B757BJRXVWKNC8PBD",
-        "description": "Située à Sedghiane. Infos à rechercher",
+        "description": "Jalel n° 145 : « Mosquée Jabler Ibn Zaied. Cedghiane. Une mosquée nouvelle, somptueuse et luxueuse. Début du 21ᵉ siècle.",
         "accessPoint": [
           10.9364298,
           33.8113486
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/408604427",
+        "maps_ref": "https://maps.app.goo.gl/XTRM6dy9JYkx95Z37",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2367,7 +2420,7 @@
         "Nom du site arabe": "جامع الخروبي",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": "https://www.openstreetmap.org/way/1364140400",
+        "Source": "Répertoire J. Fathallah, n° 149 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
         "photos": [
           "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1784831479801.jpg",
@@ -2384,14 +2437,16 @@
         "État": "Ruine",
         "Accès": "Extérieur seulement",
         "info_gpx": "Ruine de la mosquée Kharroubi",
-        "description": "Ruines d'une petite mosquée en pierre calcaire de l'époque médiévale (Réparations ultérieures évidentes, fragment in situ d'une colonne romaine antique de seconde main)\nPetr Jenč - OpenStreetMap, 2025",
+        "description": "Ruines d'une petite mosquée en pierre calcaire de l'époque médiévale (Réparations ultérieures évidentes, fragment in situ d'une colonne romaine antique de seconde main)\nPetr Jenč - OpenStreetMap, 2025\nJalel n° 149 : « Mosquée Kharroubi. May, Houmt Ouchachna. Mosquée abandonnée et délabrée. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": true,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/1364140400",
+        "maps_ref": "https://maps.app.goo.gl/khsTYLSJW2RBfoCF7"
       }
     },
     {
@@ -2629,12 +2684,26 @@
         "Nom du site arabe": "جامع ماجوجي",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 157 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6D2K1P48SM77XZNYQH",
         "accessPoint": [
           10.8976703,
           33.7924149
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 157 : « Mosquée Majouji. Sakkala, aux environs d'El May. Mosquée ibadite nokkarite en bon état mais abandonnée. Ancienne",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1433213909",
+        "maps_ref": "https://maps.app.goo.gl/R5yuaTTrScgarRYf8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3234,12 +3303,26 @@
         "Nom du site arabe": "مسجد جدي عيسى",
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6FCK1V446SXD2V5NNK",
         "accessPoint": [
           10.8840206,
           33.7721033
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990321879",
+        "maps_ref": "https://maps.app.goo.gl/pzC3tVQbXLiwpH8e9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3256,8 +3339,22 @@
         "Nom du site arabe": "جامع قوجيل",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4"
+        "Source": "Répertoire J. Fathallah, n° 84 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 84 : « Mosquée Goujil. Bani Dight, Erriadh. Mosquée ibadite wahbite. Ancienne",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/408326379",
+        "maps_ref": "https://maps.app.goo.gl/5Lqh8hDRhrQj8oov5",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3517,9 +3614,22 @@
         "Nom du site arabe": "جامع لوتا",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": "https://www.webdo.tn/fr/actualite/chroniques/jemaa-louta-a-djerba-une-mysterieuse-mosquee-souterraine/203375/",
+        "Source": "https://www.webdo.tn/fr/actualite/chroniques/jemaa-louta-a-djerba-une-mysterieuse-mosquee-souterraine/203375/\nRépertoire J. Fathallah, n° 143 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME",
-        "description": "Mosquée souterraine, blanchie à la chaux, comme la majorité des mosquées djerbiennes. Elle est située sur un plateau, point plus élevé de l'île à 52 mètre de hauteur et date du 12ème siècle. Les deux coupoles visibles confirment le caractère défensif de cette mosquée."
+        "description": "Mosquée souterraine, blanchie à la chaux, comme la majorité des mosquées djerbiennes. Elle est située sur un plateau, point plus élevé de l'île à 52 mètre de hauteur et date du 12ème siècle. Les deux coupoles visibles confirment le caractère défensif de cette mosquée.\nJalel n° 143 — « Mosquée Louta. Cedghiane. Mosquée ibadite wahbite, souterraine et ensevelie sous le sable. Ancienne",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1163466389",
+        "maps_ref": "https://maps.app.goo.gl/zzGfDMgcEARsFXKaA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5528,16 +5638,30 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Khnensa",
+        "Nom du site FR": "Mosquée Fkih Belgacem",
         "Nom du site arabe": "مسجد الخنيسة",
         "Catégorie": "Mosquée",
         "Zone": "El Khenensa",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 248 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NGZN849YA6V0EC1R0",
         "accessPoint": [
           10.7908846,
           33.7581386
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 248 : « Fkih Belgacem. Khanansa. Mosquée ibadite wahbite rénovée. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1214933579",
+        "maps_ref": "https://maps.app.goo.gl/uaWAQiAPAgEVyLeaA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5886,13 +6010,26 @@
         "Nom du site arabe": "مسجد ليمس",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 262 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6PP29CK1JR2H25ACNK",
-        "info_gpx": "Mosquée ibadite wahbite rénovée, intialement construite sur le site d'un église byzantine.",
+        "info_gpx": "",
         "accessPoint": [
           10.7591099,
           33.7336023
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 262 : « Mosquée Limes. Quartier Daouey, Ajim. Mosquée ibadite wahbite reconstruite. Ancienne, et fut construite sur le site d'une église byzantine",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13242244017",
+        "maps_ref": "https://maps.app.goo.gl/rJJsfaeZ3iir6z2e7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
