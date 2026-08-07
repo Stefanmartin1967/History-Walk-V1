@@ -356,12 +356,26 @@
         "Nom du site arabe": "جامع سيدي وحلان",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 314 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE682HMFVV693F7BFA2B",
         "accessPoint": [
           11.0336465,
           33.7879604
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 314 — « Sidi Wahlen ou Taouba (« Repentir »). Hadada, Midoun. Mosquée malékite rénovée. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13144970773",
+        "maps_ref": "https://maps.app.goo.gl/ZMTj9GPKVELZDZGXA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -900,14 +914,26 @@
         "Nom du site arabe": "مسجد سيدي زكري",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/",
+        "Source": "Répertoire J. Fathallah, n° 51 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE69Z6P5WA0YY1ETQ5XB",
-        "description": "Mosquée de forme irrégulière, composée d'une salle de prière troglodytique, d'une salle funéraire et d'une citerne. Un petit esaclier étroit nous amène dans la salle de prière. L'intérieur est divisé en deux, la partie ouest couverte par une coupole et son mur sud est orné d'une niche de mihrab. A l'ouest, on découvre la salle funéraire couvert de de coupole à trompes. Elle a été restaurée à deux reprises, en 2005 par les habitants et en 2006 par l'Institut National du Patrmoine et est classé au patrimoine mondial de l'UNESCO.",
-        "info_gpx": "Mosquée unique en son genre, non seulement pour son architecture troglodytique mais aussi pour son rôle historique dans le système de défense de l’île.",
+        "description": "Jalel n° 51 — « Sidi Zekri. Mezraya. Poste de garde et mosquée mausolée semi-souterrain. 663 de l'hégire (1254 ap. J.-C.)",
+        "info_gpx": "",
         "accessPoint": [
           10.9833026,
           33.8556771
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12214745926",
+        "maps_ref": "https://maps.app.goo.gl/q2AVwG2uSmMtrd5t8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2445,9 +2471,9 @@
         "Nom du site arabe": "جامع سمعان",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "https://www.google.com/maps/place/Mosqu%C3%A9e+Sidi+Sma%C3%A2n/@33.872816,10.9092173,3a,96.9y,90t/data=!3m8!1e2!3m6!1sCIHM0ogKEICAgID-xKeeJA!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAHRPTWmfGHnOtjUaRjYXgeZ5xsIeZbGdhurBiOdLGQpMRXwWsOW-mcwjtpeILS4-Zq1FpW1CvOIXCLV4yWF2mD2gBteN-0RzvXcIBbTqMooUOniuMlrNKCaB-LPrAGr9Ei72bV1V9eda%3Dw114-h86-k-no!7i960!8i720!4m16!1m8!3m7!1s0x13aaa36b89f08a93:0xce77e4daf59da1c1!2sAncienne+Mosqu%C3%A9e+Sidi+Ismail!8m2!3d33.8735681!4d10.9090493!10e5!16s%2Fg%2F11f03nr56t!3m6!1s0x13aaa36b91b97f6b:0xb9f1c4d6e41f7c2c!8m2!3d33.872816!4d10.9092172!10e5!16s%2Fg%2F11g9szqyy3?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "Source": "Répertoire J. Fathallah, n° 41 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6D46D9BH4QCBXE331N",
-        "description": "Pas de minaret, 2 mihrabs visibles en façades.\nIbadite wahbite (réseau côtier défensif)\nN°41 — Sidi Ismaël — Ghizen — Poste de garde, mausolée et mosquée — 9è siècle de l'hégire / 15è siècle ap. J.-C. Une nouvelle mosquée fut construite en face de l'ancienne au 21è siècle. La nouvelle est récente.",
+        "description": "Jalel n° 41 : « Sidi Ismaël. Ghizen. Poste de garde, mausolée et mosquée. 9ᵉ siècle de l'hégire (15ᵉ siècle ap. J.-C.). Une nouvelle mosquée fut construite en face de l'ancienne au 21ᵉ siècle.",
         "accessPoint": [
           10.9090045,
           33.8724573
@@ -2463,7 +2489,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://maps.app.goo.gl/NszaUCKGY9aFFPc6A"
       }
     },
     {
@@ -3558,7 +3585,7 @@
         "Nom du site arabe": "جامع سيدي زايد",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 40 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6F9K1DFXDYCR7CPAWN",
         "photos": [
           "photos/poi_HW-01K77WPE6F9K1DFXDYCR7CPAWN_1780460043930.jpg",
@@ -3566,14 +3593,24 @@
           "photos/poi_HW-01K77WPE6F9K1DFXDYCR7CPAWN_1780460047697.jpg",
           "photos/poi_HW-01K77WPE6F9K1DFXDYCR7CPAWN_1780460049813.jpg"
         ],
-        "info_gpx": "Mosquée proche de la mer, à proximité de Goose island djerba où vous pouvez faire diverses activités aquatiques",
+        "info_gpx": "",
         "accessPoint": [
           10.8801516,
           33.8776383
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Extérieur seulement"
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 40 — « Sidi Zaied. Houmt Souk. Poste de garde, mausolée et mosquée. Récemment rénovée et aménagée.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/427983694",
+        "maps_ref": "https://maps.app.goo.gl/REvE8q3BrAfMfc9EA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3752,7 +3789,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Sidi Yassine (Houmet El Krachoua)",
-        "Nom du site arabe": "مسجد حومة الكراشوة",
+        "Nom du site arabe": "سيدي ياسين",
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
         "Source": "Répertoire J. Fathallah, n° 171 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -3950,13 +3987,26 @@
         "Nom du site arabe": "جامع سيدي غمراسن",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 21 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6G4S44DJQ98414C336",
-        "info_gpx": "Masquée et mausolée malékite de construction récente intégrant le mausolée",
+        "info_gpx": "",
         "accessPoint": [
           10.8663127,
           33.8743055
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 21 — « Sidi Ghomrassen. Taourit. Mosquée et mausolée malékite. Récente, intégrant le mausolée.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/334530009",
+        "maps_ref": "https://maps.app.goo.gl/8HQFaqgQHrMRBJyQ9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5601,11 +5651,24 @@
         "Nom du site arabe": "جامع سيدي ياتي",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": "https://www.djerba-insolite.com/blog/sidi-yati",
+        "Source": "https://www.djerba-insolite.com/blog/sidi-yati\nRépertoire J. Fathallah, n° 208 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6M06HKCT56J0P2HVZZ",
         "lat": 33.70679340842852,
         "lng": 10.86177572607994,
-        "description": "Mosquée de type Ibadite, enduite de chaux blanc. Elle a été édifiée au 10ème siècle et rénovée en 1995. Elle surplombe la côte Sud-Ouest dans la localité d'El Fâhmîne. Proche des Mosquése Boumsour et/ou Mosquée Mizwar"
+        "description": "Mosquée de type Ibadite, enduite de chaux blanc. Elle a été édifiée au 10ème siècle et rénovée en 1995. Elle surplombe la côte Sud-Ouest dans la localité d'El Fâhmîne. Proche des Mosquése Boumsour et/ou Mosquée Mizwar\nJalel n° 208 : « Mosquée Sidi Yati. Guellala. Mosquée ibadite wahbite abandonnée. Elle a été restaurée en 2019. Ancienne.",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/5046044722",
+        "maps_ref": "https://maps.app.goo.gl/q2iVJUCKwpNk9TZ76",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5968,12 +6031,26 @@
         "Nom du site arabe": "جامع سلاك الاوحال",
         "Catégorie": "Mosquée",
         "Zone": "El Khenensa",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6NGJQHEKJE3M2T5W5Q",
         "accessPoint": [
           10.7982961,
           33.7681932
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1177397624",
+        "maps_ref": "https://maps.app.goo.gl/hQnCwPRbsiZvFZck9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7016,9 +7093,9 @@
         "Nom du site arabe": "مسجد سيدي سفيان",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 323 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6Q0QEE8APATRE5K4MS",
-        "info_gpx": "Mosquée d’une grande cohérence architecturale, typique des mosquées ibadites de Djerba ayant évolué au fil des siècles.",
+        "info_gpx": "",
         "accessPoint": [
           10.9938779,
           33.8221935
@@ -7026,7 +7103,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "",
+        "description": "Jalel n° 323 — « Sidi Soufien. Quartier Mguersa. Mosquée malékite à origine nokkarite et à laquelle fut ajouté une nouvelle adjacente. Ancienne",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1001070700",
@@ -7035,7 +7112,7 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://www.google.com/maps/place/Mosque+Sidi+Sofiane/@33.8221406,10.9942838,223m/data=!3m1!1e3!4m6!3m5!1s0x13aa97ef2da478d3:0x1d63f8f47c259bf4!8m2!3d33.8220829!4d10.9942359!16s%2Fg%2F11f3zfpd4p?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D"
+        "maps_ref": "https://maps.app.goo.gl/CS43gvLKZjmbg21W6"
       }
     },
     {
