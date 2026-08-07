@@ -19,7 +19,12 @@ export let diffData = {
     stats: { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0 },
     // Snapshot du patrimoine remote (peuplé par prepareDiffData) — utilisé par
     // purgeOrphanPendingPois pour comparer les userData aux valeurs patrimoine.
-    originalFeatures: []
+    originalFeatures: [],
+    // true si le fetch remote (geojson/circuits/tested) a échoué dans prepareDiffData.
+    // purgeOrphanPendingPois s'appuie là-dessus pour ne PAS confondre « échec réseau »
+    // et « confirmé absent du dépôt » — un originalFeatures vide par échec de fetch ne
+    // doit jamais faire passer une suppression légitime pour un fantôme.
+    fetchFailed: false
 };
 
 /**
@@ -124,8 +129,13 @@ export async function prepareDiffData(adminDraft) {
         if (respTested.ok) {
             remoteTested = await respTested.json() || {};
         }
+        diffData.fetchFailed = false;
     } catch (e) {
         console.error("Erreur fetch original data", e);
+        // originalFeatures reste [] : sans cette distinction, purgeOrphanPendingPois
+        // traiterait ce [] comme « le dépôt est vide » et purgerait à tort toute
+        // suppression en attente (cf. commentaire sur diffData.fetchFailed plus haut).
+        diffData.fetchFailed = true;
     }
 
     diffData.pois = [];
@@ -590,6 +600,10 @@ function isNoChangeAgainstOriginal(key, userVal, originalProps) {
 
 export async function purgeOrphanPendingPois(adminDraft) {
     const purged = [];
+    // Échec réseau lors du dernier prepareDiffData : originalFeatures est [] par
+    // défaut, pas par confirmation. On ne purge rien tant qu'on n'a pas pu vérifier
+    // pour de vrai — sinon toute suppression en attente serait prise pour un fantôme.
+    if (diffData.fetchFailed) return purged;
     const originalFeatures = diffData.originalFeatures || [];
     const diffIds = new Set(diffData.pois.map(p => p.id));
 
