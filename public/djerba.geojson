@@ -1441,13 +1441,26 @@
         "Nom du site arabe": "جامع سيدي مهراز",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "https://fr.wikipedia.org/wiki/Mezraya",
+        "Source": "Répertoire J. Fathallah, n° 61 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://fr.wikipedia.org/wiki/Mezraya",
         "HW_ID": "HW-01K77WPE6AJXE1YKC3AA7S78SA",
-        "description": "Mosquée côtière, qui servait de garde-côte",
+        "description": "Jalel n° 61 — « Sidi Mehrez. Mezraya. Mosquée mausolée et poste de garde totalement reconstruite. Ancienne. La nouvelle est récente.",
         "accessPoint": [
           10.9639214,
           33.8679716
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/381504812",
+        "maps_ref": "https://maps.app.goo.gl/3cyFBRmFMCDupiXU6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2123,8 +2136,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.910194,
-          33.839083
+          10.910195511239891,
+          33.83890426734857
         ]
       },
       "properties": {
@@ -2132,12 +2145,28 @@
         "Nom du site arabe": "جامع سيدي حداد",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 134 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6C5GHRJMF8MP5ZQC6D",
         "accessPoint": [
           10.9103468,
           33.8391814
-        ]
+        ],
+        "lat": 33.83890426734857,
+        "lng": 10.910195511239891,
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Jalel n° 134 : « Sidi Hadded. Guechaine. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1339369427",
+        "maps_ref": "https://maps.app.goo.gl/nC1WTJo5WuHWBv5Z8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3799,8 +3828,22 @@
         "Nom du site arabe": "مسجد سيدي غريب",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93"
+        "Source": "",
+        "HW_ID": "HW-01K77WPE6F2WMYE2R022099H93",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1334437214",
+        "maps_ref": "https://maps.app.goo.gl/YPrWMxzoBCmBpaRC8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3817,7 +3860,7 @@
         "Nom du site arabe": "جامع سيدي السوفي",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 22 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6F1C25NNH5RAR2JPF6",
         "photos": [
           "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460051591.jpg",
@@ -3826,14 +3869,24 @@
           "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460057552.jpg",
           "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460059572.jpg"
         ],
-        "info_gpx": "Mosquée et mausolée malékite de construction récente intégrant le mausolée",
+        "info_gpx": "",
         "accessPoint": [
           10.8689335,
           33.8762636
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Extérieur seulement"
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 22 — « Sidi Essougui. Taourit. Mosquée et mausolée malékite. Récente, intégrant le mausolée.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/YpEwGcfa3f7kYp139",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3938,14 +3991,26 @@
         "Nom du site arabe": "جامع سيدي إبراهيم الشارف",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "https://www.facebook.com/Amis.Tunisie/posts/mosqu%C3%A9e-ibrahim-al-charef-taouritla-mosqu%C3%A9e-ibrahim-al-charef-est-consid%C3%A9r%C3%A9e-com/1104312605062607/",
+        "Source": "https://www.facebook.com/Amis.Tunisie/posts/mosqu%C3%A9e-ibrahim-al-charef-taouritla-mosqu%C3%A9e-ibrahim-al-charef-est-consid%C3%A9r%C3%A9e-com/1104312605062607/\nRépertoire J. Fathallah, n° 29 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6GX5J8BG85Y7V1ZXKS",
-        "description": "La mosquée Sidi Ibrahim Al-Charef est considérée comme l’un des monuments historiques majeurs de Houmt Souk. Elle fut à l’origine un établissement d’enseignement religieux complet fondé par le savant Sidi Ibrahim Al-Jamni, avant de se réduire à une simple école coranique (kuttab) consacrée à la mémorisation du Coran. L’édifice a connu de nombreuses transformations et extensions : Une partie de la cour intérieure et des annexes a été agrandie pour répondre aux besoins du quartier, certaines maisons voisines ont été intégrées au complexe, le mausolée de Sidi Ibrahim Al-Charef lui-même est devenu un lieu de prière fréquenté par les habitants du secteur. L’ensemble comporte une salle de prière couverte d’arcs et de voûtes blanches, décorée de carreaux verts vernissés typiques des édifices djerbiens, un minaret blanc élancé à base carrée, un portail monumental en arc outrepassé, surmonté d’une plaque portant le nom de la mosquée.",
+        "description": "Jalel n° 29 : « Sidi Brahim Charef. Taourit. Mosquée mausolée malékite au style ottoman. 19ᵉ siècle.\nLe lien Facebook amène sur la description de la posquée",
         "info_gpx": "Mosquée mausolée malékite au style ottoman construite au 19è siècle de notre ère, restaurée en 1991",
         "accessPoint": [
           10.8630578,
           33.8724627
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/FjCJU2RYq4PQ5jcw7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4444,15 +4509,27 @@
         "Nom du site arabe": "جامع سيدي البحري",
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
-        "Source": "https://www.turess.com/fr/letemps/52984?utm",
+        "Source": "https://www.turess.com/fr/letemps/52984?utm\nRépertoire J. Fathallah, n° 6 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6H365AYB72RWY40WZX",
         "photos": [],
-        "description": "HW sur base de l'article cité en source et analyse des photos et vue satelite actuelle Entre disparition et renaissance d’un lieu sacré Pendant plus de trois siècles, la mosquée Sidi El-Bahri veillait sur la côte de Houmt-Souk, à proximité immédiate de la mer et du vieux cimetière. C’était un petit sanctuaire blanchâtre, au minaret trapu, que les habitants de Djerba considéraient comme un témoin de leur histoire spirituelle et urbaine. Mais le 13 février 2011, en pleine période de transition politique, le site fut frappé par un acte aussi brutal qu’irréparable. Selon les témoins de l’époque, un groupe d’individus s’était présenté sous de fausses identités et avait fait venir deux bulldozers. En quelques heures, la mosquée — qui datait d’au moins trois siècles — fut presque entièrement rasée, ne laissant debout que son minaret, dressé comme le dernier témoin d’une profanation absurde. Deux ans plus tôt, une première tentative de destruction avait déjà été déjouée grâce à l’intervention de l’Institut National du Patrimoine (INP) et de l’Association pour la Sauvegarde de l’île de Djerba. Mais cette fois, aucune autorité n’eut le temps de réagir. L’INP dénonça aussitôt l’événement, rappelant que la mosquée appartenait au patrimoine historique et religieux tunisien, et annonça son intention de poursuivre les responsables pour prévenir toute récidive. Une reconstruction sur les ruines L’histoire aurait pu s’arrêter là, si la communauté locale n’avait pas décidé de rebâtir sur le même lieu. Aujourd’hui, la nouvelle mosquée Sidi El-Bahri, que l’on peut voir sur Google Maps, affiche une silhouette plus récente : une façade lisse, un minaret cylindrique surmonté d’une lanterne verte, et une cour ouverte sur un espace de prière moderne. L’intérieur, lumineux et carrelé, repose sur de solides colonnes blanches et vertes, dans un style typique des mosquées djerbiennes contemporaines. La vue satellite révèle la continuité du cimetière historique autour de l’édifice, comme un fil reliant le passé au présent. Même si la structure ancienne a disparu, le nom et la mémoire de Sidi El-Bahri demeurent, portés par les fidèles qui continuent d’y prier. Mémoire et signification La mosquée actuelle ne remplace pas seulement un bâtiment : elle perpétue un symbole. Ce lieu rappelle à la fois la fragilité du patrimoine et la ténacité d’une communauté qui refuse de voir s’effacer ses repères spirituels. Sidi El-Bahri, figure tutélaire du quartier, reste ainsi honoré à travers une mosquée reconstruite, plus sobre, mais toujours vivante — un rappel discret que la foi, à Djerba, résiste même aux bulldozers. Implantation et contexte La mosquée est située à Houmt-Souk, dans le tissu urbain historique proche de la mer. Son emprise rectangulaire s’inscrit dans une parcelle clairement délimitée par un muret périphérique, bordée à l’est par une voie carrossable et au nord par une zone funéraire. Le cimetière ancien, visible sur les images satellites, témoigne d’une continuité cultuelle très ancienne : il est probable que le site ait conservé la fonction de sanctuaire depuis l’époque médiévale. Organisation générale L’édifice s’articule en deux masses distinctes : – un volume principal, cubique, abritant la salle de prière ; – un avant-corps légèrement surbaissé qui forme la cour d’entrée et relie la salle à la rue. L’ensemble est orienté vers le sud-est, suivant l’axe canonique de la qibla à Djerba (environ 120°). Le minaret Élément le plus remarquable : le minaret cylindrique, à base massive, surmonté d’une lanterne à coupole et d’un éclairage vert nocturne. Sa morphologie rappelle certains minarets tardifs djerbiens reconstruits après 2010 : proportions trapues, assise circulaire plutôt que carrée, et décor sobre. Le fût est enduit d’un crépi fin, sans appareillage apparent — signe d’une maçonnerie récente (béton enduit plutôt que pierre de taille). La coupole principale Sur la toiture, la coupole blanche légèrement ovoïde trahit la volonté de rappeler la typologie des mosquées ibadites anciennes. Elle repose sur un tambour discret, probablement en maçonnerie creuse, et n’affiche pas les fissures ni la patine que l’on trouve sur les coupoles anciennes en chaux-sable. La salle de prière Les photographies intérieures révèlent une structure très régulière : une nef longitudinale à colonnes carrées enduites, plafond plat en dalle, revêtement carrelé bicolore (vert et crème). Ce type d’organisation correspond à une reconstruction post-2000 dans le style fonctionnel moderne, privilégiant la simplicité et la facilité d’entretien. Le mihrab carrelé, encadré d’un bandeau décoratif bleu, évoque une modernisation d’inspiration andalouse plutôt qu’une restitution historique. Environnement immédiat L’aire funéraire alentour est dense et désordonnée : les tombes, visibles depuis le ciel, sont de forme rectangulaire traditionnelle en maçonnerie blanche, disposées sans plan régulier. Cela indique un usage continu du cimetière, probablement antérieur à la reconstruction de la mosquée. À l’ouest et au sud, de petites maisons et bâtiments annexes modernes s’accolent au périmètre, montrant que le quartier a été réinvesti.",
-        "info_gpx": "Dominant la côte nord de Houmt-Souk, la mosquée Sidi El-Bahri se dresse aujourd’hui comme un symbole de résilience. Reconstruite sur les ruines de l’édifice détruit en 2011, elle conserve la mémoire d’un sanctuaire trois fois centenaire dont le minaret seul avait survécu à la démolition. Sa silhouette blanche, son dôme discret et son phare vert rappellent la simplicité des mosquées maritimes djerbiennes. Autour d’elle, les tombes anciennes forment un manteau de silence : le passé veille encore, paisible, au seuil du présent.",
+        "description": "Jalel n° 6 — « Sidi Bahri. Boumellal. Mosquée Mausolée malékite. Très ancienne.",
+        "info_gpx": "",
         "accessPoint": [
           10.8541492,
           33.8808998
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/435648354",
+        "maps_ref": "https://maps.app.goo.gl/MuZJz2vfKg2PMWxw9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4999,13 +5076,26 @@
         "Nom du site arabe": "مسجد سيدي حسن",
         "Catégorie": "Mosquée",
         "Zone": "El Hachene",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 65 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6J53FWBGSMAAVT8PKC",
-        "description": "Située à Hachene. Infos à rechercher",
+        "description": "Jalel n° 65 : « Sidi Hassen. Hachane. Mausolée en face duquel une mosquée fut construite au 21ᵉ siècle.",
         "accessPoint": [
           10.8249716,
           33.8496705
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436388426",
+        "maps_ref": "https://maps.app.goo.gl/a1GSz3tVS6ddTS1a8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6184,13 +6274,26 @@
         "Nom du site arabe": "جامع سيدي جمور",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 71 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
-        "description": "Située près du petit port de pêche",
+        "description": "Jalel n° 71 : « Sidi Djemour. Sidi Djemour. Poste de garde et mausolée, mosquée malékite. Ancienne\nSituée près du petit port de pêche",
         "accessPoint": [
           10.7483738,
           33.8314687
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/180722245",
+        "maps_ref": "https://maps.app.goo.gl/dhAQudqFy52erB7X8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -8453,22 +8556,24 @@
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJABRN0Y687FFD0EF2SYPZ3Q",
-        "description": "",
+        "description": "Jalel n° 74 — « Sidi Mbarek. Entre Hachane et Barkouk. Mosquée malékite à origine wahbite. Ancienne.",
         "lat": 33.84303341184757,
         "lng": 10.84358528258597,
         "Nom du site arabe": "",
-        "Sous-type": "",
+        "Sous-type": "Générique",
         "État": "",
         "Accès": "",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 74 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "node/13204118338",
+        "maps_ref": "https://maps.app.goo.gl/6rb2hgbiy4i2KrN86"
       }
     },
     {
