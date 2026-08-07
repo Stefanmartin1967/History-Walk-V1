@@ -786,13 +786,26 @@
         "Nom du site arabe": "مسجد تغر غار",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 286 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE69R3QRREC9E9W0S5V4",
-        "info_gpx": "Mosquée qui témoigne rare de la continuité du style vernaculaire djerbien, où architecture, spiritualité et paysage forment une unité indissociable.",
+        "info_gpx": "",
         "accessPoint": [
           10.9777822,
           33.8283293
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 286 — « Mosquée Tgharghar. Trifa, Ouled Omar. Mosquée malékite à origine nokkarite ibadite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12060289808",
+        "maps_ref": "https://maps.app.goo.gl/5pyctRPLKHmNoGtu6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1410,13 +1423,26 @@
         "Nom du site arabe": "جامع تلمت",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 241 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6AVNZQPMPCEZ1V17GX",
-        "description": "Egalement appelée Mosquée Telmet ? A vérifier",
+        "description": "Jalel n° 241 — « Mosquée Tboulemt. Bani Maaguel. Mosquée ibadite en cours de restauration. Ancienne.",
         "accessPoint": [
           10.9734601,
           33.7760461
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12730285371",
+        "maps_ref": "https://maps.app.goo.gl/wmtzUadZTqCb9e8s6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2832,12 +2858,26 @@
         "Nom du site arabe": "جامع تجديت",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 39 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DPZ5JB93JZ7BZ9ZJF",
         "accessPoint": [
           10.896678,
           33.8599397
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 39 : « Mosquée Tajdite. Fatou. Mosquée ibadite wahbite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/483463981",
+        "maps_ref": "https://maps.app.goo.gl/k8H5QZS5omEJwxb26",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5708,13 +5748,26 @@
         "Nom du site arabe": "جامع تامازقيدة",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": "https://djerba-insolite.com/blog/jema-tamazgida",
+        "Source": "https://djerba-insolite.com/blog/jema-tamazgida\nRépertoire J. Fathallah, n° 206 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6MV84XQXSZC6FJZ44Y",
-        "description": "Mosquée de type Ibadite, érigée sous l'ordre des Cheikhs de Djerba, agrandie vers le 16ème siècle. Située proche de la côte, elle est également appelée mosquée Guellala El Qasbiyyin",
+        "description": "Mosquée de type Ibadite, érigée sous l'ordre des Cheikhs de Djerba, agrandie vers le 16ème siècle. Située proche de la côte, elle est également appelée mosquée Guellala El Qasbiyyin\nJalel n° 206 : « Mosquée Tamazghida dite Zbib. Guellala. Mosquée tour de guet. Ancienne.",
         "accessPoint": [
           10.844098,
           33.7223341
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12223903971",
+        "maps_ref": "https://maps.app.goo.gl/xt3iTQdBtkcKWrbu5",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6243,7 +6296,7 @@
         "Nom du site arabe": "جامع التقوى",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 117 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NJ1X6TBWGCTV85QMM",
         "photos": [
           "photos/poi_HW-01K77WPE6NJ1X6TBWGCTV85QMM_1780463710154.jpg",
@@ -6256,7 +6309,18 @@
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non visitable"
+        "Accès": "Non visitable",
+        "info_gpx": "",
+        "description": "Jalel n° 117 — « Mosquée Takwa. Quartier Bardaoui, Groa. Mosquée ibadite wahbite. 2018.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990329085",
+        "maps_ref": "https://maps.app.goo.gl/gh9X1eiyen3qNLGW7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
