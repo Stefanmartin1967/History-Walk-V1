@@ -2931,8 +2931,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.830375,
-          33.804962
+          10.83038410453163,
+          33.8047299200158
         ]
       },
       "properties": {
@@ -2940,12 +2940,28 @@
         "Nom du site arabe": "جامع سيدي بشير مقمق",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
         "accessPoint": [
           10.8304717,
           33.8049072
-        ]
+        ],
+        "lat": 33.8047299200158,
+        "lng": 10.83038410453163,
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/aWNcpudP9K96v2987",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3946,13 +3962,26 @@
         "Nom du site arabe": "جامع سيدي داود",
         "Catégorie": "Mosquée",
         "Zone": "Essouani",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 75 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6GMMWPTC6BX2DN2N6C",
-        "description": "Infos à rechercher",
+        "description": "Jalel : n° 75 — « Sidi Daoued. Barkouk. Mosquée Wahbite. L'ancienne est abandonnée mais en bon état, la nouvelle juste en face est récente.",
         "accessPoint": [
           10.8551004,
           33.8489333
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436403413",
+        "maps_ref": "https://maps.app.goo.gl/WzFBNmB2CgngnTab6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4058,10 +4087,10 @@
         "Nom du site arabe": "جامع سيدي إبراهيم الجمني",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "https://djerba-insolite.com/blog/sidi-brahim-eljomni",
+        "Source": "https://djerba-insolite.com/blog/sidi-brahim-eljomni\nRépertoire J. Fathallah, n° 18 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6GQX3PRD8TAKTDRNSZ",
-        "description": "Mosquée de forme trapézoïdale fondée en 1674, édifiée en l’honneur du Cheikh Ibrahim Eljomni qui porte d’ailleurs le nom de la mosquée,é puis agrandie en 1721 par la dtynastie Husseinites , galement appelée mosquée Sidi Brahim Jemnii. La Zaouïya Brahima y est associée.",
-        "info_gpx": "Mosquée, mausolée et medersa (Ecole) coranique constriten en 1076 de l’hégire, soit 1675 de notre ère",
+        "description": "Mosquée de forme trapézoïdale fondée en 1674, édifiée en l’honneur du Cheikh Ibrahim Eljomni qui porte d’ailleurs le nom de la mosquée,é puis agrandie en 1721 par la dtynastie Husseinites , galement appelée mosquée Sidi Brahim Jemnii. La Zaouïya Brahima y est associée.\nJalel n° 18 — « Sidi Brahim. Centre-ville, Houmt Souk. Mosquée, mausolée et medersa coranique. 1076 de l'hégire (1675 ap. J.-C.).",
+        "info_gpx": "",
         "accessPoint": [
           10.8598429,
           33.8774647
@@ -4073,7 +4102,11 @@
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "osm_ref": "relation/6504724",
+        "maps_ref": "https://maps.app.goo.gl/kaXJRMG7466yMVv16",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4090,14 +4123,26 @@
         "Nom du site arabe": "جامع سيدي بن عيسى",
         "Catégorie": "Mosquée",
         "Zone": "El Jouamaa",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6GJ0DN3APAMA1JCFV8",
-        "description": "Mosquée mausolée, infos à rechercher sur place. Aurait apparemment été réaffectée.",
-        "info_gpx": "Mosquée Mausolée construite au 18è siècle de notre ère",
+        "description": "Jalel n° 10 — « Sidi Ben Aissa. Centre-ville, Houmt Souk. Mosquée Mausolée. 18ᵉ siècle.",
+        "info_gpx": "",
         "accessPoint": [
           10.8575526,
           33.8734699
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/45t7Y2QSS7kkCmXR9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4601,14 +4646,27 @@
         "Nom du site arabe": "جامع سيدي بوسعيد",
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
-        "Source": "https://evendo.com/locations/tunisia/djerba/landmark/mosquee-sidi-bou-said",
+        "Source": "https://evendo.com/locations/tunisia/djerba/landmark/mosquee-sidi-bou-said\nRépertoire J. Fathallah, n° 12 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6J23YSBPP5PMBBZ23Y",
         "photos": [],
-        "description": "Mosquée de type islamique traditionnel, avec des murs blances éclatant et des touchent de bleu, munie d'un minaret. A l'intérieur, des mosaïques ajoutent au charme de ce lieu de culte.",
+        "description": "Jalel n° 12 — « Sidi Bousaid. Boumellal. Mosquée malékite. Très ancienne.",
         "accessPoint": [
           10.8474973,
           33.8814155
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436207786",
+        "maps_ref": "https://maps.app.goo.gl/B2PHxPg53Hz7xhuW7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4882,13 +4940,26 @@
         "Nom du site arabe": "جامع سيدي داود تلت",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 200 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6J1QAQ84TRYQFPQ165",
-        "description": "Infos à rechercher",
+        "description": "Jalel n° 200 — « Mosquée Tlet. Tlet. Mosquée ibadite wahbite ayant subie une rénovation. Ancienne.",
         "accessPoint": [
           10.8459748,
           33.7534283
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/461327496",
+        "maps_ref": "https://maps.app.goo.gl/CLqqNjpPprHhrDjY7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5515,15 +5586,28 @@
         "Nom du site arabe": "جامع سيدي الطيب",
         "Catégorie": "Mosquée",
         "Zone": "Mellita",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 67 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6M14K3331NK215THZS",
         "lat": 33.86202557545826,
         "lng": 10.806473154993117,
-        "description": "Située à Mellita. Infos à rechercher",
+        "description": "Jalel n° 67 : « Sidi Taieb. Mellita. Mosquée mausolée malékite. » Zone Mellita exacte (à distinguer de « Moulay Taïeb",
         "accessPoint": [
           10.8063801,
           33.8621606
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/384982731",
+        "maps_ref": "https://maps.app.goo.gl/pK2M23L9wpwZyyAu5",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5625,7 +5709,7 @@
         "Nom du site arabe": "جامع سيدي عائش",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 102 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6N293MG25FFQBH1G10",
         "photos": [
           "photos/poi_HW-01K77WPE6N293MG25FFQBH1G10_1780463679410.jpg",
@@ -5639,7 +5723,18 @@
         ],
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
-        "Accès": "Intérieur visitable"
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "Jalel n° 102 — « Mosquée Sidi Yaaich. Jaabira. Mosquée ibadite wahbite abandonnée malgré sa récente restauration. 8ᵉ siècle de l'hégire (14ᵉ siècle ap. J.-C.).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990402627",
+        "maps_ref": "https://maps.app.goo.gl/npRJ3nKFn7C8g9XV6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7422,6 +7517,29 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.892889,
+          33.781407
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Robbana",
+        "Nom du site arabe": "جامع روبانة",
+        "Catégorie": "Mosquée",
+        "Zone": "Robbana",
+        "Source": null,
+        "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS",
+        "description": "Nom provisoire. Située à Robbana. Infos à rechercher.",
+        "accessPoint": [
+          10.8931267,
+          33.7813377
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.938527,
           33.857842
         ]
@@ -8980,7 +9098,7 @@
         "Catégorie": "Mosquée",
         "Sous-type": "Générique",
         "Zone": "El Hachene",
-        "description": "Mosquée trouvée sur carte.\nVérifier nom et existence sur place",
+        "description": "Jalel N° 111 : « Sidi Bousaid. Bazim. Mosquée mausolée ibadite wahbite. 6ᵉ siècle de l'hégire (10ᵉ siècle ap. J.-C.).",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "HW_ID": "HW-01KSZ6CRQ5J5JJ14EW8X7R8H21",
@@ -8988,14 +9106,18 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 111 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "accessPoint": [
           10.7965901,
           33.8297704
-        ]
+        ],
+        "osm_ref": "way/990374468",
+        "maps_ref": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
