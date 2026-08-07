@@ -213,12 +213,12 @@
         "Nom du site arabe": "جامع سيدي صباح",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 330 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
         "Sous-type": "À minaret",
         "État": "En activité",
-        "Accès": "Non visitable",
-        "description": "",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 330 : « Sidi Sabbah. Tezdaine. Poste de garde devenue une mosquée à laquelle fut ajoutée une nouvelle attenante. Ancienne",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
@@ -231,7 +231,11 @@
         "accessPoint": [
           11.0455855,
           33.796363
-        ]
+        ],
+        "osm_ref": "node/13157219229",
+        "maps_ref": "https://maps.app.goo.gl/1xjvPE8RLke27FZK9",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2859,12 +2863,26 @@
         "Nom du site arabe": "جامع سيدي سطوري",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 225 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6D6A1W50RR0KNXRAGH",
         "accessPoint": [
           10.9369488,
           33.7373274
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 225 — « Mosquée Sidi Satouri. Bani Maaguel. Mausolée mosquée abandonnée, mais en excellent état. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12177944663",
+        "maps_ref": "https://maps.app.goo.gl/swWodRLm5wnJpEbW7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4063,9 +4081,22 @@
         "Nom du site arabe": "سيدي نور",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6GCJG1C7RFFRYEK7B3",
-        "description": "Située à Tarhdimess. Infos à rechercher."
+        "description": "",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/428431849",
+        "maps_ref": "https://maps.app.goo.gl/YGauwX49bQJDiHG49",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5464,13 +5495,26 @@
         "Nom du site arabe": "جامع سيدي سالم",
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 2 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6M5QZM1DZV18R4EDHR",
-        "description": "Proche de la baie des pêcheurs",
+        "description": "Jalel n° 2 — « Sidi Salem. Côte, Bani Bandou. Mosquée Marabout. Très ancienne.\nProche de la baie des pêcheurs",
         "accessPoint": [
           10.8272392,
           33.8958473
-        ]
+        ],
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/10845328897",
+        "maps_ref": "https://maps.app.goo.gl/th6ksgyzTrCHcmVV9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
