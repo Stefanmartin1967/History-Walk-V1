@@ -149,8 +149,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          11.022837,
-          33.809651
+          11.022803811461296,
+          33.809407066170884
         ]
       },
       "properties": {
@@ -158,8 +158,24 @@
         "Nom du site arabe": "جامع تروجيت",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P"
+        "Source": "Répertoire J. Fathallah, n° 326 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P",
+        "lat": 33.809407066170884,
+        "lng": 11.022803811461296,
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 326 — « Trojett. Quartier Mguersa. Mosquée malékite à origine nokkarite ibadite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/392722930",
+        "maps_ref": "https://maps.app.goo.gl/WLrDTgDJ1ea4QQJH9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -500,12 +516,26 @@
         "Nom du site arabe": "جامع الويشنية",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 308 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68FAWKXDY3R89R5KTF",
         "accessPoint": [
           11.02898,
           33.7836535
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Jalel n° 308 : « Mosquée Ouechnia. Arkou. Mosquée malékite à laquelle on a ajouté un nouveau minaret. Ancienne",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436246613",
+        "maps_ref": "https://maps.app.goo.gl/HJg16TvP7WNuBwt79",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -1310,8 +1340,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.95333,
-          33.84361
+          10.953460343293337,
+          33.84365238152852
         ]
       },
       "properties": {
@@ -1319,9 +1349,9 @@
         "Nom du site arabe": "جامع الحاجة لولو",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 57 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6AS77NE3CRGHPYHJSE",
-        "info_gpx": "Mosquée qui se dresse isolée au milieu d’un terrain pierreux planté de quelques oliviers.",
+        "info_gpx": "",
         "accessPoint": [
           10.9531788,
           33.8435566
@@ -1337,7 +1367,19 @@
           "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563646211.jpg",
           "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563648261.jpg",
           "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563650075.jpg"
-        ]
+        ],
+        "lat": 33.84365238152852,
+        "lng": 10.953460343293337,
+        "description": "Jalel n° 57 : « Mrabet Jallouli ou Loulou. Mezraya. Mosquée wahbite abandonnée. Ancienne",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12236519439",
+        "maps_ref": "https://maps.app.goo.gl/L7noNrNez3JDEgKh6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2489,12 +2531,26 @@
         "Nom du site arabe": "جامع سيدي نصير",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 138 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DADD5BVFVTP8P3EXY",
         "accessPoint": [
           10.8994232,
           33.8201064
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 138 — « Sidi Ncir. Guechaine. Mosquée malékite. 1363 de l'hégire (1964 ap. J.-C.).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/341162629",
+        "maps_ref": "https://maps.app.goo.gl/HKwbKf4PDfsPyPRT6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -2659,12 +2715,26 @@
         "Nom du site arabe": "جامع عبد السلام",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 151 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DT0F6KA225EP7PSK9",
         "accessPoint": [
           10.9010878,
           33.8008763
-        ]
+        ],
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Jalel n° 151 : « Sidi Abdessalem. May. Mosquée malékite à origine ibadite nokkarite, à laquelle fut ajouté un minaret. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/434724218",
+        "maps_ref": "https://maps.app.goo.gl/PZ76YWTK6vkexQNe9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3346,13 +3416,26 @@
         "Nom du site arabe": "جامع التركية",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 147 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6ECJK1CMJKYVNTKGGS",
-        "description": "Infos à rechercher.",
+        "description": "Jalel n° 147 — « Mosquée Turquiya. May. Mosquée ibadite nokkarite devenue malékite. 1ᵉʳ siècle de l'hégire (7ᵉ siècle ap. J.-C.)",
         "accessPoint": [
           10.8831518,
           33.8020596
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990412464",
+        "maps_ref": "https://maps.app.goo.gl/1q2UZvVo6fRb1KVAA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4548,8 +4631,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.84575,
-          33.812806
+          10.845753550763336,
+          33.81259762448359
         ]
       },
       "properties": {
@@ -4557,8 +4640,24 @@
         "Nom du site arabe": "جامع سيدي خليفة",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6H6EYA6VQDR7SPKG7T"
+        "Source": "Répertoire J. Fathallah, n° 90 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "HW_ID": "HW-01K77WPE6H6EYA6VQDR7SPKG7T",
+        "lat": 33.81259762448359,
+        "lng": 10.845753550763336,
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Jalel n° 90 — « Sidi Khalifa Zenkri. Houmt Larbah, Erriadh. Mosquée ibadite wahbite. 1038 de l'hégire (1628 ap. J.-C.)",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1473295620",
+        "maps_ref": "https://maps.app.goo.gl/eUvzyneQUxv2DTKx6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5276,8 +5375,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.88469,
-          33.69744
+          10.88460266083396,
+          33.69735113689494
         ]
       },
       "properties": {
@@ -5285,13 +5384,28 @@
         "Nom du site arabe": "جامع ورسيغن",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 188 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6KD37GVA594C0XAQQ0",
-        "info_gpx": "Structure principale encore debout (coupole visible), murs d’enceinte effondrés par endroits.\nLe site est libre d’accès, non restauré, mais clairement identifiable depuis la piste secondaire au nord de Guellala.",
+        "info_gpx": "",
         "accessPoint": [
           10.8847422,
           33.6975387
-        ]
+        ],
+        "lat": 33.69735113689494,
+        "lng": 10.88460266083396,
+        "Sous-type": "Générique",
+        "État": "",
+        "Accès": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1163763376",
+        "maps_ref": "https://maps.app.goo.gl/5QYJ4YEEwvjLhg3VA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -6891,30 +7005,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.744464,
-          33.720513
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Oratoire Al Battah",
-        "Nom du site arabe": "خطبة البطاح",
-        "Catégorie": "Mosquée",
-        "Zone": "Ajim",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6P30E9MGC3BE3KYHP6",
-        "description": "A vérifier sur place",
-        "info_gpx": "A chercher, aucune info sur le net",
-        "accessPoint": [
-          10.7446046,
-          33.7205176
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.735,
           33.74086
         ]
@@ -7846,29 +7936,6 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.911577,
-          33.746334
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée Tmasset",
-        "Nom du site arabe": "جامع تمسّت",
-        "Catégorie": "Mosquée",
-        "Zone": "Sedouikech",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6RN50H0B51NPN1GECK",
-        "description": "Nom à confirmer. Située à Tmasset. Infos à rechercher.",
-        "accessPoint": [
-          10.9114672,
-          33.746505
-        ]
       }
     },
     {
@@ -8853,20 +8920,22 @@
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
         "HW_ID": "HW-01KJB1NZSEHQH5M3JRKS72CKRN",
-        "description": "",
+        "description": "Jalel n° 228 : « Mosquée Taghrouiret. Bani Maaguel. Mosquée malékite à origine nokkarite ayant subie une rénovation. Ancienne.",
         "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 228 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/1106335125",
+        "maps_ref": "https://maps.app.goo.gl/CSsEgKptH77yeTEeA"
       }
     },
     {
