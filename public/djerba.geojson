@@ -26,11 +26,20 @@
         "price": 0,
         "Temps_minutes": 60,
         "Prix_TND": 0,
-        "info_gpx": "Hôtel au trs bon rapport qualité/Prix",
+        "info_gpx": "Hôtel au très bon rapport qualité/Prix",
         "accessPoint": [
           11.0460436,
           33.8265196
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "introuvableCarte": false
       }
     },
     {
@@ -7936,29 +7945,6 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.892889,
-          33.781407
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mosquée Robbana",
-        "Nom du site arabe": "جامع روبانة",
-        "Catégorie": "Mosquée",
-        "Zone": "Robbana",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6RR5DT6GBCGYFDHXJS",
-        "description": "Nom provisoire. Située à Robbana. Infos à rechercher.",
-        "accessPoint": [
-          10.8931267,
-          33.7813377
-        ]
       }
     },
     {
