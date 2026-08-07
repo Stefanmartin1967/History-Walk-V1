@@ -4877,7 +4877,7 @@
         "Nom du site arabe": "جامع سيدي مساهل",
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 3 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6JARCBVAYJCW1B3B14",
         "photos": [
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650020228.jpg",
@@ -4885,7 +4885,7 @@
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650023829.jpg",
           "photos/poi_HW-01K77WPE6JARCBVAYJCW1B3B14_1784650025226.jpg"
         ],
-        "description": "Infos à rechercher.",
+        "description": "Jalel n° 3 — « Sidi Msahel. Bani Bandou. Mosquée malékite, ex ibadite. Très ancienne.",
         "accessPoint": [
           10.8406426,
           33.8794958
@@ -4900,7 +4900,9 @@
         "Horaires": "",
         "Facebook": "",
         "verified": true,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/435642511",
+        "maps_ref": "https://maps.app.goo.gl/e71tN2Xw1hMt64zUA"
       }
     },
     {
@@ -5886,13 +5888,26 @@
         "Nom du site arabe": "جامع سيدي نصر",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 113 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG",
-        "description": "Située à El Groa. Infos à rechercher",
+        "description": "Jalel n° 113 : « Sidi Nasser 1. Groa. Mosquée malékite. Ancienne.",
         "accessPoint": [
           10.7889798,
           33.8121126
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/999580981",
+        "maps_ref": "https://maps.app.goo.gl/G4a5e4tWVfGCpNAZ8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -7025,13 +7040,26 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Mensil",
+        "Nom du site FR": "Mosquée Sidi Mersil",
         "Nom du site arabe": "مسجد سيدي منسيل",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "Répertoire J. Fathallah, n° 311 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6Q8F3RTEJT1892FPNK",
-        "description": "Trace d'un bâtiment sans nom sur OSM. A confirmer."
+        "description": "Jalel n° 311 — « Sidi Marsoul « émissaire ». Côte de Castille. Poste de garde puis mosquée en ruines. Ancienne.",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1315388209",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
