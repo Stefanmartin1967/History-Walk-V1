@@ -10,7 +10,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('../src/state.js', () => ({
     state: {
         currentMapId: 'djerba',
-        loadedFeatures: []
+        loadedFeatures: [],
+        hiddenPoiIds: []
     }
 }));
 
@@ -45,6 +46,7 @@ function buildFeature(id, properties = {}, userData = null, geom = [10, 33]) {
 describe('admin-geojson — generateMasterGeoJSONData', () => {
     beforeEach(() => {
         state.loadedFeatures = [];
+        state.hiddenPoiIds = [];
     });
 
     it('retourne null si aucune feature chargée', () => {
@@ -91,6 +93,20 @@ describe('admin-geojson — generateMasterGeoJSONData', () => {
         const ids = generateMasterGeoJSONData().features.map(f => f.properties.HW_ID);
         expect(ids).toContain('poi_keep');
         expect(ids).not.toContain('poi_drop');
+    });
+
+    it('fix 07/08 : exclut un POI dont l\'id est dans state.hiddenPoiIds (soft-delete)', () => {
+        // hiddenPoiIds est écrit en tout premier par deletePoi, avant toute activité
+        // réseau — garde la plus fiable pour qu'un lieu supprimé ne soit jamais
+        // republié tel quel, même si le brouillon de suppression a été perdu.
+        state.loadedFeatures = [
+            buildFeature('poi_keep', { Nom: 'Garde' }),
+            buildFeature('poi_hidden', { Nom: 'Caché' })
+        ];
+        state.hiddenPoiIds = ['poi_hidden'];
+        const ids = generateMasterGeoJSONData().features.map(f => f.properties.HW_ID);
+        expect(ids).toContain('poi_keep');
+        expect(ids).not.toContain('poi_hidden');
     });
 
     it('exclut les ids passés en excludedIds', () => {

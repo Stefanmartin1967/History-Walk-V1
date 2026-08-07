@@ -25,6 +25,11 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
         .filter(f => {
              const id = getPoiId(f);
              if (excludedIds.includes(id)) return false;
+             // hiddenPoiIds : écrit et persisté en tout premier par deletePoi (data.js),
+             // avant toute activité réseau — garde la plus fiable des trois. Sans elle,
+             // un lieu supprimé peut se retrouver republié tel quel si le brouillon de
+             // suppression (adminDraft.pendingPois) a été perdu/purgé entre-temps.
+             if (state.hiddenPoiIds && state.hiddenPoiIds.includes(id)) return false;
              if (f.properties.userData && f.properties.userData._deleted) return false;
              // isCandidate (overlay) et non properties.candidate brut : un candidat de
              // base CURÉ (userData.candidate=false) n'est PLUS un candidat → il doit
