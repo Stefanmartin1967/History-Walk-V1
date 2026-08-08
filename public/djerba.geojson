@@ -9705,6 +9705,85 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.8628317,
+          33.8781169
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Abbès",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/360884886",
+        "HW_ID": "HW-01KZH0VEPVYZEBP0MTQKJZDC7H",
+        "Nom du site arabe": "جامع سيدي عباس",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "23 Sidi Abbes. Taourit. Masquée et mausolée malékite. Récente intégrant le mausolée.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 23 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/7Mro87kMwUR6yFDq9",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Taourit"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8556751,
+          33.8212705
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Erriadh",
+        "Nom du site arabe": "جامع الرياض",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/408843500",
+        "HW_ID": "HW-01KZH0VER66RCQ28E5Q382T9XT",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "82 Mosquée Erriadh. Au centre du village Erriadh. Mosquée malékite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 82 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/oP87yXw7yHekQUtW6",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Erriadh"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8742416,
+          33.7813183
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Amhammed Ben Aissa",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/460892754",
+        "HW_ID": "HW-01KZH0VES5A9S9SWKTJ9WNJ1XX",
+        "description": "164 Sidi Mohamed Ben Aissa. Oued Mgahar. Mosquée mausolée abandonnée, mais en cours de restauration et rénovation. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 164 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El May"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.7754974,
           33.8243617
         ]
@@ -9720,6 +9799,54 @@
         "verified": false,
         "introuvableCarte": false,
         "Zone": "El Groa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8564946,
+          33.8117846
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Salama El Jenaouni",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/990352764",
+        "HW_ID": "HW-01KZH0VEV5Y6E0MYJR1AHXR0KC",
+        "Sous-type": "Générique",
+        "description": "85 Sidi Slama. Bani Dight, Erriadh. Mosquée mausolée ibadite wahbite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 85 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Erriadh"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8754438,
+          33.8500869
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Saleh",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/990397295",
+        "HW_ID": "HW-01KZH0VEW625A5WY4C196361EY",
+        "Sous-type": "Générique",
+        "description": "124 Sidi Salah. Entre Oualegh l'ancienne et Hara Kébira. Mosquée malékite à origine ibadite wahbite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 124 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Oualeg"
       }
     },
     {
@@ -9797,6 +9924,34 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.7838516,
+          33.7478414
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Hidaya",
+        "Nom du site arabe": "جامع الهداية",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13274683562",
+        "HW_ID": "HW-01KZH0VF5MAETQTJKSJDXAE0FN",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "251 Mosquée Hidaya. Quartier Ouled Saïd, Khanansa. Mosquée malékite. 2017.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 251 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/rHXap9QNSF6LTgfRA",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Khenensa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.7590638,
           33.7288674
         ]
@@ -9818,6 +9973,55 @@
         "verified": false,
         "introuvableCarte": false,
         "Zone": "Ajim"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8617195,
+          33.7143091
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Tadbousit Fadma",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13412315902",
+        "HW_ID": "HW-01KZH0VF7ZH7QHAXKQDJJR96PR",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/7ATd4L2MfvgSwQNDA",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7539185,
+          33.7564995
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ennour",
+        "Nom du site arabe": "جامع النور",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13456285761",
+        "HW_ID": "HW-01KZH0VFBXXX4QAKVHD286Z0ZN",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/hGiTyFVoNc5v4S8U9",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Mezrene"
       }
     },
     {
@@ -9851,6 +10055,79 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.8045437,
+          33.7526343
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Mechmech",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1318531161",
+        "HW_ID": "HW-01KZH0VFGA58QVRNZ9KENC2V82",
+        "Sous-type": "Générique",
+        "description": "n° 252 : Mosquée Mechmech. Khanansa, Quartier Assaida. Mosquée malékite. Récente.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 252 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/2gxvxQ5xiaqDGbid8",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Khenensa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8391095,
+          33.7492424
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Iminej",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1464996657",
+        "HW_ID": "HW-01KZH0VFKFGH4ASEN1YCC00J2Z",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8921738,
+          33.769081
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Touba",
+        "Nom du site arabe": "جامع التوبة",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13511092258",
+        "HW_ID": "HW-01KZH0VFQW2JPT46A4PJ3V6YTV",
+        "Sous-type": "Générique",
+        "description": "167 Mosquée Ettouaba (repentir). Robbana. Mosquée malékite à origine nokkarite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 167 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/EYa5Wdjc5NQj1NfK7",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Robbana"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.9129687,
           33.7425335
         ]
@@ -9876,6 +10153,181 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.9119205,
+          33.7216705
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée souterrain de Sedouikech",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/334505561",
+        "HW_ID": "HW-01KZH0VFVXH6VRPZC0K8VMQB39",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "description": "n° 184 : « Mosquée Okra dite Louta. Cedouikech. Mosquée ibadite wahbite souterraine. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 184 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/x2y6qUudwER8XP6J8",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.902204,
+          33.7419128
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ben Harzallah",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/990359045",
+        "HW_ID": "HW-01KZH0VG2N63HK0ZV66T9JK4Y4",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/DwmDkYApasv6Lee57",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8996331,
+          33.7389724
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi El Adoui",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1464387119",
+        "HW_ID": "HW-01KZH0VG5T7Q09GJWS04CGNY2Q",
+        "Sous-type": "Générique",
+        "description": "179 Sidi Adoui. Tafartaset, Cedouikech. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 179 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9145338,
+          33.747039
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Oueghlani",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1524243991",
+        "HW_ID": "HW-01KZH0VGB51YV36EB6ZYG21J38",
+        "Sous-type": "Générique",
+        "description": "75 Mosquée Ouaghlani. Cedouikech. Mosquée ibadite wahbite en cours de restauration. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 175 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0454849,
+          33.7845247
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Firdaous",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13157220541",
+        "HW_ID": "HW-01KZH0VGHE4608D3RQNDBSR2H8",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/bj72U2jWA42g9pG96",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9194526,
+          33.8488946
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jamaa El Ababssa - El Jedid",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13204556208",
+        "HW_ID": "HW-01KZH0VGKHTQAFAVA6SZN7E5VB",
+        "Nom du site arabe": "جامع الجديد غيزن",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 48 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/73bmL4yA9ATbMuVQ9",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Mazraia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0297835,
+          33.8202469
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Roubil",
+        "Nom du site arabe": "جامع سيدي روبيل",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/384172383",
+        "HW_ID": "HW-01KZH0VGSJV12DKGE1N725T34M",
+        "description": "320 Sidi Roubil ou Almaghfira « Le Pardon ». Quartier Mguersa. Mosquée malékite à origine nokkarite et à laquelle fut ajoutée une nouvelle adjacente. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 320 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/h425eUtF21uabDSF8",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.9950669,
           33.8101759
         ]
@@ -9892,6 +10344,106 @@
         "verified": false,
         "introuvableCarte": false,
         "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0034317,
+          33.8119096
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Mansour",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/990361515",
+        "HW_ID": "HW-01KZH0VH26R74BZZ6K1XQBQP45",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9423185,
+          33.7803647
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Mostafa",
+        "Nom du site arabe": "مسجد سيدي مصطفى",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/990390672",
+        "HW_ID": "HW-01KZH0VH7A5VNKAW0Z3Y1PM9RR",
+        "Sous-type": "Générique",
+        "description": "162 Sidi Mustapha. Entre Bedouine et Mahboubine. Mosquée malékite à origine nokkarite malékite. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 162 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8895126,
+          33.8683274
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Chahbane",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1432567661",
+        "HW_ID": "HW-01KZH0VHHQ783AWY8MD0EESGHG",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/8CLBhs8eVX7k3K1cA",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Fatou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9317208,
+          33.7892758
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ayati",
+        "Nom du site arabe": "جامع العيّاطي",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1442512114",
+        "HW_ID": "HW-01KZH0VHKS8MAAJ41Y9ETEMR6A",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "160 Mosquée Ayati. Hazem. Mosquée ibadite nokkarite à laquelle fut ajouté un minaret en acier. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 160 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/R4HdM76tERmW4dC69",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El May"
       }
     },
     {
