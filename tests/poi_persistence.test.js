@@ -134,6 +134,37 @@ describe('persistPoiEdit — POI CUSTOM (properties + customPois, overlay purgé
         expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', state.customFeatures);
     });
 
+    it('champ PERSO (notes) sur un custom : va dans userData + savePoiData, PAS dans properties', async () => {
+        // Régression 08/08/2026 : les notes d'un POI custom (Scout) n'étaient
+        // écrites QUE dans properties, jamais dans userData → jamais synchronisées
+        // vers le Gist (gist-sync.js ne lit que state.userData), et perdues à la
+        // publication (la « graduation » du POI publié ne rescape que l'overlay).
+        const f = poi('HW-CUST-NOTES', { 'Catégorie': 'Mosquée' });
+        state.loadedFeatures = [f];
+        state.customFeatures = [f];
+
+        await persistPoiEdit('HW-CUST-NOTES', { 'Catégorie': 'Mosquée', notes: 'Pas de trace sur Maps' });
+
+        expect(state.userData['HW-CUST-NOTES']).toEqual({ notes: 'Pas de trace sur Maps' });
+        expect(f.properties.notes).toBeUndefined();
+        expect(savePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-NOTES', { notes: 'Pas de trace sur Maps' });
+        // Le champ patrimonial suit le chemin custom habituel.
+        expect(f.properties['Catégorie']).toBe('Mosquée');
+    });
+
+    it('champ PERSO sur un custom AVEC enrichissement overlay existant (photos) : fusionné, pas écrasé', async () => {
+        const f = poi('HW-CUST-NOTES-2');
+        state.loadedFeatures = [f];
+        state.customFeatures = [f];
+        state.userData['HW-CUST-NOTES-2'] = { photos: ['p1.jpg'] };
+
+        await persistPoiEdit('HW-CUST-NOTES-2', { 'Catégorie': 'Marabout', notes: 'À vérifier' });
+
+        expect(state.userData['HW-CUST-NOTES-2']).toEqual({ photos: ['p1.jpg'], notes: 'À vérifier' });
+        expect(f.properties.notes).toBeUndefined();
+        expect(f.properties['Catégorie']).toBe('Marabout');
+    });
+
     it('overlay MIXTE : retire la clé taxonomie du store (REPLACE, pas merge) → pas de revert au reload', async () => {
         const f = poi('HW-CUST-4');
         state.loadedFeatures = [f];
