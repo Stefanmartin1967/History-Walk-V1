@@ -10832,6 +10832,70 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.8414681,
+          33.8445539
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Sliman",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1436606445",
+        "HW_ID": "HW-01KZH0VEXP89XM09J99252QXTQ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Erriadh"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7893456,
+          33.8188555
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Nom du site arabe": "المعاريس",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1473672757",
+        "HW_ID": "HW-01KZH0VF0HF0RK88QZ0V5G115D",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Groa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7755286,
+          33.7577445
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Amghar",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990378935",
+        "HW_ID": "HW-01KZH0VFE07CPM5QR1EJCXTJH5",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Khenensa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.8573997,
           33.7286805
         ]
@@ -10853,6 +10917,91 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.9128014,
+          33.7472583
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi El Harith",
+        "Nom du site arabe": "سيدي الحارث",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990312451",
+        "HW_ID": "HW-01KZH0VFZF1XK99XT4VKNV3K2A",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9098885,
+          33.7593413
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Slimen El Qmiri",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1472548725",
+        "HW_ID": "HW-01KZH0VG89GSFE6PCTYA9889M4",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9868961,
+          33.7968827
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée maamoura Ouled Hmama",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "node/13153352477",
+        "HW_ID": "HW-01KZH0VGF91KW7BPGH3D8Z5T07",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9434816,
+          33.779212
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Abdalouhab",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/435172481",
+        "HW_ID": "HW-01KZH0VGVYGVE5ADQ8FWAE55A9",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.984059,
           33.8037225
         ]
@@ -10867,6 +11016,27 @@
         "verified": false,
         "introuvableCarte": false,
         "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0319138,
+          33.8021379
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Makhyil",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990330103",
+        "HW_ID": "HW-01KZH0VH19H5T1YZ31JFC7M08J",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Arkou"
       }
     },
     {
@@ -10932,6 +11102,259 @@
         "verified": false,
         "introuvableCarte": false,
         "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9106343,
+          33.7970385
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990389881",
+        "HW_ID": "HW-01KZH0VH6F2Y8Y594CZCPKSGSR",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El May"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8936267,
+          33.8388792
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990419755",
+        "HW_ID": "HW-01KZH0VH8BM77V72RKYN96NF6N",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Oualeg"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9825064,
+          33.8153944
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1378237874",
+        "HW_ID": "HW-01KZH0VHAT2YCDPA6VZHSHFZDJ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0344511,
+          33.777177
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Marabout",
+        "Catégorie": "Marabout",
+        "osm_ref": "way/1389344073",
+        "HW_ID": "HW-01KZH0VHBTC2WDA5D401S7TY5K",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/JobbaSxUyqgbH2oK7",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0335852,
+          33.7886304
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Marabout (Tombe endommagée)",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1409960012",
+        "HW_ID": "HW-01KZH0VHCSMAHR4STDTHKBSHJD",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9620619,
+          33.8333807
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1431190857",
+        "HW_ID": "HW-01KZH0VHESD20ZFM5CQDS6GBWJ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Mazraia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9740476,
+          33.8370394
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1431208662",
+        "HW_ID": "HW-01KZH0VHFXC3ZQ3X20CDR88MRR",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0447052,
+          33.7959198
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1431391384",
+        "HW_ID": "HW-01KZH0VHGTRRTHH95PA0NTVM5N",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9036928,
+          33.7996137
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1433497560",
+        "HW_ID": "HW-01KZH0VHJSKKEM28TEWHAC8K4B",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El May"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9681476,
+          33.7972089
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1465366255",
+        "HW_ID": "HW-01KZH0VHP36Z4PA83TC3W5AW67",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9545388,
+          33.8176394
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1502452346",
+        "HW_ID": "HW-01KZH0VHSZ9GWYZ1PTY42EPKJ9",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9500555,
+          33.8163748
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Ben Ayed",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1523647537",
+        "HW_ID": "HW-01KZH0VHTXM2V4PMVHS00Q0KZN",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Midoun"
       }
     }
   ]
