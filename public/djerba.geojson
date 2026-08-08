@@ -9697,6 +9697,13 @@
         "maps_ref": "https://maps.app.goo.gl/nbvB4GCXRBqqvviNA",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Oued Ezzebib"
       }
     },
@@ -9725,6 +9732,10 @@
         "maps_ref": "https://maps.app.goo.gl/7Mro87kMwUR6yFDq9",
         "verified": false,
         "introuvableCarte": false,
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Taourit"
       }
     },
@@ -9753,6 +9764,10 @@
         "maps_ref": "https://maps.app.goo.gl/oP87yXw7yHekQUtW6",
         "verified": false,
         "introuvableCarte": false,
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Erriadh"
       }
     },
@@ -9766,7 +9781,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Sidi Amhammed Ben Aissa",
+        "Nom du site FR": "Mosquée Sidi Amhammed Ben Aissa",
         "Catégorie": "Mosquée",
         "osm_ref": "way/460892754",
         "HW_ID": "HW-01KZH0VES5A9S9SWKTJ9WNJ1XX",
@@ -9776,6 +9791,15 @@
         "Source": "Répertoire J. Fathallah, n° 164 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "El May"
       }
     },
@@ -9798,6 +9822,16 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "El Groa"
       }
     },
@@ -9822,6 +9856,14 @@
         "Source": "Répertoire J. Fathallah, n° 85 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Erriadh"
       }
     },
@@ -9846,6 +9888,14 @@
         "Source": "Répertoire J. Fathallah, n° 124 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Oualeg"
       }
     },
@@ -9868,6 +9918,16 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Oued Ezzebib"
       }
     },
@@ -9892,7 +9952,14 @@
         "maps_ref": "https://maps.app.goo.gl/KmgnvAYKFCxmgobx5",
         "verified": false,
         "introuvableCarte": false,
-        "Source": "Pas de trace dans le répertoire de Jalel",
+        "Source": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Oued Ezzebib"
       }
     },
@@ -9916,6 +9983,15 @@
         "maps_ref": "https://maps.app.goo.gl/CHyNo18kRLzJnR847",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Ajim"
       }
     },
@@ -9944,6 +10020,10 @@
         "maps_ref": "https://maps.app.goo.gl/rHXap9QNSF6LTgfRA",
         "verified": false,
         "introuvableCarte": false,
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "El Khenensa"
       }
     },
@@ -9972,6 +10052,10 @@
         "maps_ref": "https://maps.app.goo.gl/LdU1jEyTvecwn54j8",
         "verified": false,
         "introuvableCarte": false,
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Ajim"
       }
     },
@@ -9995,6 +10079,15 @@
         "maps_ref": "https://maps.app.goo.gl/7ATd4L2MfvgSwQNDA",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Guellala"
       }
     },
@@ -10016,6 +10109,17 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "El Khenensa"
       }
     },
@@ -10042,6 +10146,12 @@
         "maps_ref": "https://maps.app.goo.gl/hGiTyFVoNc5v4S8U9",
         "verified": false,
         "introuvableCarte": false,
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Mezrene"
       }
     },
@@ -10068,6 +10178,12 @@
         "maps_ref": "https://maps.app.goo.gl/S9gcnPU5tPLZpE9u9",
         "verified": false,
         "introuvableCarte": false,
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Guellala"
       }
     },
@@ -10093,6 +10209,13 @@
         "maps_ref": "https://maps.app.goo.gl/2gxvxQ5xiaqDGbid8",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "El Khenensa"
       }
     },
@@ -10115,6 +10238,16 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Guellala"
       }
     },
@@ -10141,6 +10274,12 @@
         "maps_ref": "https://maps.app.goo.gl/EYa5Wdjc5NQj1NfK7",
         "verified": false,
         "introuvableCarte": false,
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Robbana"
       }
     },
@@ -10166,6 +10305,13 @@
         "maps_ref": "https://maps.app.goo.gl/DgmTjXQ6qE3EcwdAA",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Sedouikech"
       }
     },
@@ -10179,7 +10325,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée souterrain de Sedouikech",
+        "Nom du site FR": "Mosquée souterraine de Sedouikech",
         "Catégorie": "Mosquée",
         "osm_ref": "way/334505561",
         "HW_ID": "HW-01KZH0VFVXH6VRPZC0K8VMQB39",
@@ -10193,6 +10339,11 @@
         "maps_ref": "https://maps.app.goo.gl/x2y6qUudwER8XP6J8",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Sedouikech"
       }
     },
@@ -10214,6 +10365,17 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Sedouikech"
       }
     },
@@ -10239,6 +10401,13 @@
         "maps_ref": "https://maps.app.goo.gl/DwmDkYApasv6Lee57",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Sedouikech"
       }
     },
@@ -10263,6 +10432,14 @@
         "Source": "Répertoire J. Fathallah, n° 179 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Sedouikech"
       }
     },
@@ -10287,6 +10464,14 @@
         "Source": "Répertoire J. Fathallah, n° 175 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Sedouikech"
       }
     },
@@ -10312,6 +10497,13 @@
         "maps_ref": "https://maps.app.goo.gl/bj72U2jWA42g9pG96",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Arkou"
       }
     },
@@ -10325,7 +10517,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Jamaa El Ababssa - El Jedid",
+        "Nom du site FR": "Mosquée El Ababssa - El Jedid",
         "Catégorie": "Mosquée",
         "osm_ref": "node/13204556208",
         "HW_ID": "HW-01KZH0VGKHTQAFAVA6SZN7E5VB",
@@ -10337,6 +10529,13 @@
         "maps_ref": "https://maps.app.goo.gl/73bmL4yA9ATbMuVQ9",
         "verified": false,
         "introuvableCarte": false,
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Mazraia"
       }
     },
@@ -10362,6 +10561,13 @@
         "maps_ref": "https://maps.app.goo.gl/h425eUtF21uabDSF8",
         "verified": false,
         "introuvableCarte": false,
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Midoun"
       }
     },
@@ -10385,6 +10591,15 @@
         "maps_ref": "https://maps.app.goo.gl/kVvYxMB9yd7jWn5NA",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Midoun"
       }
     },
@@ -10407,6 +10622,16 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Arkou"
       }
     },
@@ -10432,6 +10657,13 @@
         "Source": "Répertoire J. Fathallah, n° 162 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
         "introuvableCarte": false,
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "El Mahboubine"
       }
     },
@@ -10453,6 +10685,17 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Midoun"
       }
     },
@@ -10474,6 +10717,17 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Arkou"
       }
     },
@@ -10499,6 +10753,13 @@
         "maps_ref": "https://maps.app.goo.gl/8CLBhs8eVX7k3K1cA",
         "verified": false,
         "introuvableCarte": false,
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Fatou"
       }
     },
@@ -10527,6 +10788,10 @@
         "maps_ref": "https://maps.app.goo.gl/R4HdM76tERmW4dC69",
         "verified": false,
         "introuvableCarte": false,
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "El May"
       }
     },
@@ -10553,6 +10818,12 @@
         "maps_ref": "https://maps.app.goo.gl/gw6gWJa1C2YWShg89",
         "verified": false,
         "introuvableCarte": false,
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Robbana"
       }
     }
