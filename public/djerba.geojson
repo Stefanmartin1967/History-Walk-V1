@@ -10826,6 +10826,113 @@
         "Facebook": "",
         "Zone": "Robbana"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8573997,
+          33.7286805
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1464086423",
+        "HW_ID": "HW-01KZH0VFJFT2P42PRK4XMNVN0B",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.984059,
+          33.8037225
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990318937",
+        "HW_ID": "HW-01KZH0VGXXC7XGPPJ722ESYAZ9",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9047781,
+          33.7995531
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Fakira Salima",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990372682",
+        "HW_ID": "HW-01KZH0VH351NQ2E5JHQWV47AFX",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El May"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9522468,
+          33.7941279
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Jedi Abdalala El Haj Younes El Maagali",
+        "Nom du site arabe": "جددي عبد الأعلى الحاج يونس المعقلي",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990380879",
+        "HW_ID": "HW-01KZH0VH42R5WG7HVQW2MHWCPP",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/BysB8RmLeZExV3L87",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.960631,
+          33.7982008
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990381626",
+        "HW_ID": "HW-01KZH0VH51S4GQWTT98QMKAX7G",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Mahboubine"
+      }
     }
   ]
 }
