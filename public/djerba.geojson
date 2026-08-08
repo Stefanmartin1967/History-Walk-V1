@@ -1043,7 +1043,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/385972323",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/xTyArdBJJhYXxP5U6",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -1084,7 +1084,7 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/374396092",
-        "maps_ref": ""
+        "maps_ref": "https://maps.app.goo.gl/xTGdxBuajp3nkaZf9"
       }
     },
     {
@@ -3059,13 +3059,26 @@
         "Nom du site arabe": "جامع بونخيل",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6DJK9XDN27CANR4VKN",
-        "description": "Située à Oualegh. Infos à rechercher.",
+        "description": "",
         "accessPoint": [
           10.8905029,
           33.8345642
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/408296047",
+        "maps_ref": "https://maps.app.goo.gl/n6iqbGu4fgN2dqN3A",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -3805,13 +3818,26 @@
         "Nom du site arabe": "جامع بوشدّاخ",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6FSBBA3K7NVS4GTVTD",
-        "description": "Située à Fatou. Infos à rechercher.",
+        "description": "",
         "accessPoint": [
           10.8757808,
           33.8695585
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/427988353",
+        "maps_ref": "https://maps.app.goo.gl/8ns4nPEMFa5GJbX58",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -4493,13 +4519,26 @@
         "Nom du site arabe": "جامع بو عكازين",
         "Catégorie": "Mosquée",
         "Zone": "El Jouamaa",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6GJMBZYBJGZZAWQDYZ",
-        "info_gpx": "Mosquée mausolée malékite 1054 de l’hégire, soit 1643 de notre ère",
+        "info_gpx": "",
         "accessPoint": [
           10.8571898,
           33.8724474
-        ]
+        ],
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/436379753",
+        "maps_ref": "https://maps.app.goo.gl/FLRY9U1iXT6cAgqe9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false
       }
     },
     {
@@ -5703,7 +5742,7 @@
         "verified": true,
         "introuvableCarte": false,
         "osm_ref": "way/386328366",
-        "maps_ref": ""
+        "maps_ref": "https://maps.app.goo.gl/sN7xZc5RqePbDnNe8"
       }
     },
     {
@@ -6825,7 +6864,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": true,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://maps.app.goo.gl/rXDk6iMiMjJzjRMZ8"
       }
     },
     {
@@ -7386,7 +7426,7 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": true
       }
     },
     {
@@ -7868,7 +7908,7 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": true
       }
     },
     {
@@ -8069,14 +8109,26 @@
         "Nom du site arabe": "مسجد ريفي",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": null,
+        "Source": "Maps montre un bâtiment non référencé sur la vue satellite, mais rien sur OSM",
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
-        "description": "Mosquée sans nom sur Google Mapa, située à Mezraya.",
-        "info_gpx": "Mosquée ? Marabout ? A voir sur place",
+        "description": "",
+        "info_gpx": "",
         "accessPoint": [
           10.9463809,
           33.8241266
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": true
       }
     },
     {
@@ -8194,7 +8246,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/13143718421",
-        "maps_ref": "https://www.google.com/maps/place/Mausol%C3%A9e+omi+men%C3%A9/@33.791639,10.999861,315m/data=!3m1!1e3!4m6!3m5!1s0x13aa976067237b2b:0xaa47b46a70464be6!8m2!3d33.7917334!4d10.9998954!16s%2Fg%2F11v1bltl1x?entry=ttu&g_ep=EgoyMDI2MDcyOS4wIKXMDSoASAFQAw%3D%3D",
+        "maps_ref": "https://maps.app.goo.gl/ThyZMfhsmvbD9qoQ8",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -8234,7 +8286,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": true,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://maps.app.goo.gl/RMG17UXfbNwakTNr9"
       }
     },
     {
@@ -9540,7 +9593,7 @@
         "osm_ref": "way/990374468",
         "maps_ref": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": true
       }
     },
     {
