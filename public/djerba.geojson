@@ -10003,6 +10003,27 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.7952518,
+          33.7495231
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée El Fakira Salima",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "node/13437089159",
+        "HW_ID": "HW-01KZH0VFAZN27KYN56FFXSRATV",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Khenensa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.7539185,
           33.7564995
         ]
@@ -10170,6 +10191,27 @@
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 184 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "https://maps.app.goo.gl/x2y6qUudwER8XP6J8",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9278278,
+          33.7453829
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Ben Omran",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/990313185",
+        "HW_ID": "HW-01KZH0VG0JFXX61A1M0W4KJDV5",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
         "Zone": "Sedouikech"
@@ -10391,6 +10433,48 @@
         "verified": false,
         "introuvableCarte": false,
         "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9664613,
+          33.8223562
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Balhajjam",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1315226030",
+        "HW_ID": "HW-01KZH0VH9EN0EA28JSJYWFVXR5",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0063951,
+          33.7866528
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée El Ayssia",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "way/1430941285",
+        "HW_ID": "HW-01KZH0VHDQKJWWA1HF0537M2KZ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Arkou"
       }
     },
     {
