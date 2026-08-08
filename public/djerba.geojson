@@ -9674,6 +9674,251 @@
         "Horaires": "",
         "Facebook": ""
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8179202,
+          33.7736292
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ben Moumen",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13437034894",
+        "HW_ID": "HW-01KZH0VEH4B5SYS305V3RAVFJ9",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/nbvB4GCXRBqqvviNA",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Oued Ezzebib"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7754974,
+          33.8243617
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Moquée Alamat",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/990342047",
+        "HW_ID": "HW-01KZH0VET1BHNJ5VK5AY8WE0KZ",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Groa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.823843,
+          33.7839561
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Dahman Ben Ali",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1443723893",
+        "HW_ID": "HW-01KZH0VEYQP0Z34VT0057MDV8W",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Oued Ezzebib"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8151331,
+          33.7779436
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ejjmia",
+        "Nom du site arabe": "مسجد الجميع",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1465011594",
+        "HW_ID": "HW-01KZH0VEZMPR1GTH8TJYZ6PCWM",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/KmgnvAYKFCxmgobx5",
+        "verified": false,
+        "introuvableCarte": false,
+        "Source": "Pas de trace dans le répertoire de Jalel",
+        "Zone": "Oued Ezzebib"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7461277,
+          33.7358968
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Faqia Amor",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13245259303",
+        "HW_ID": "HW-01KZH0VF4N0VWX15MJ05254WNV",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/CHyNo18kRLzJnR847",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Ajim"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7590638,
+          33.7288674
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ben Ouiren",
+        "Nom du site arabe": "مسجد بن ويران",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13274901440",
+        "HW_ID": "HW-01KZH0VF6ZBJVQ3RJV1N68P44D",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "266 Mosquée Ben Ouiran. Ajim. Mosquée ibadite wahbite. 9ᵉ siècle de l'hégire / 15ᵉ siècle ap. J.-C.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 266 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/LdU1jEyTvecwn54j8",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Ajim"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8661926,
+          33.7130468
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Oued (Essouf)",
+        "Nom du site arabe": "مسجد الواد -  السوف",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/990390226",
+        "HW_ID": "HW-01KZH0VFF0SVB8HFGV5290FCAW",
+        "Sous-type": "Générique",
+        "description": "209 Mosquée Eloued. Guellala. Mosquée ibadite wahbite qui a subi une récente rénovation. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 209 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/S9gcnPU5tPLZpE9u9",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9129687,
+          33.7425335
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Boussetta El Chargui",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13892944092",
+        "HW_ID": "HW-01KZH0VFRY0N8JHF2QNZVESNGG",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/DgmTjXQ6qE3EcwdAA",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9950669,
+          33.8101759
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Taieb (El Jeridi)",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/990329223",
+        "HW_ID": "HW-01KZH0VH09MWGKNW9WDKBBP08S",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/kVvYxMB9yd7jWn5NA",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8969043,
+          33.7763726
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Chouaref",
+        "Nom du site arabe": "مسجد الشوارف",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1472548722",
+        "HW_ID": "HW-01KZH0VHQ1730P64YN7PHS3T0Y",
+        "Sous-type": "Générique",
+        "description": "169 Mosquée Chouaref. Robbana. Mosquée nokkarite ibadite abandonnée. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 169 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/gw6gWJa1C2YWShg89",
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "Robbana"
+      }
     }
   ]
 }
