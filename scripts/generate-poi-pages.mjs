@@ -61,8 +61,10 @@ export function slugify(name, fallback = '') {
     return slug || String(fallback).toLowerCase();
 }
 
-/** Éligibilité SEO : une vraie description (pas de thin content). */
+/** Éligibilité SEO : une vraie description (pas de thin content), publiée
+ *  (pas un brouillon — cf. `descriptionDraft`, richEditor.js / templates.js). */
 export function isEligible(feature) {
+    if (feature?.properties?.descriptionDraft) return false;
     const desc = (feature?.properties?.description || '').trim();
     return desc.length >= MIN_DESCRIPTION_CHARS;
 }

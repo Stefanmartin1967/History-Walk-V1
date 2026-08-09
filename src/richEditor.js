@@ -59,7 +59,8 @@ const DOM_IDS = {
     },
     NAV_CONTROLS: 'rich-poi-nav-controls',
     VERIFIED: 'rich-poi-verified',
-    MAP_MISSING: 'rich-poi-mapmissing'
+    MAP_MISSING: 'rich-poi-mapmissing',
+    DESC_DRAFT: 'rich-poi-descdraft'
 };
 
 let currentMode = 'CREATE'; // 'CREATE' | 'EDIT'
@@ -97,6 +98,16 @@ const RICH_POI_BODY_HTML = `
             <span class="lbl"><span class="t">Introuvable sur la carte</span><span class="h">Lieu non situé sur Maps/OSM — publié avec une alerte « Localisation à confirmer »</span></span>
             <span class="ctl">
                 <button class="sw" id="rich-poi-mapmissing" type="button" role="switch" aria-checked="false" aria-label="Introuvable sur la carte"></button>
+            </span>
+        </div>
+        <!-- Description brouillon (08/08/2026) : Description+Source restent modifiables et
+             sourcées librement (citation brute acceptée) mais ne s'affichent pas côté visiteur
+             tant que ce flag est actif — ni ne comptent pour le seuil qui déclenche une page
+             SEO statique (generate-poi-pages.mjs). Basculé par l'admin quand le texte est prêt. -->
+        <div class="fiche-row">
+            <span class="lbl"><span class="t">Description brouillon</span><span class="h">Description et Source non publiées tant que c'est actif — matériau de travail sourcé, pas encore une fiche visiteur</span></span>
+            <span class="ctl">
+                <button class="sw" id="rich-poi-descdraft" type="button" role="switch" aria-checked="false" aria-label="Description brouillon"></button>
             </span>
         </div>
         <!-- Candidat « à curer » (réunif C1b) : visible seulement pour un candidat Scout.
@@ -295,6 +306,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.FACEBOOK, "");
         setVerified(false);
         setMapMissing(false);
+        setDescDraft(false);
         { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = true; }
         updateCandidateFooter(false); // création : footer « Enregistrer » standard
 
@@ -391,6 +403,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
         setVerified(!!merged.verified);
         setMapMissing(!!merged.introuvableCarte);
+        setDescDraft(!!merged.descriptionDraft);
         // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
         // P7 : et le footer bascule en mode candidat (« Valider & enregistrer »).
         { const cand = isCandidate(feature);
@@ -652,6 +665,15 @@ function bindModalEvents() {
         isDirty = true;
     });
 
+    // Toggle « Description brouillon » (même mécanique bouton-switch).
+    document.getElementById(DOM_IDS.DESC_DRAFT)?.addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        const on = !btn.classList.contains('is-on');
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-checked', String(on));
+        isDirty = true;
+    });
+
     // Bloc taxonomie : repeupler les 3 selects quand la catégorie change.
     document.getElementById(DOM_IDS.INPUTS.CATEGORY)?.addEventListener('change', () => {
         populateTaxonomySelects(getValue(DOM_IDS.INPUTS.CATEGORY));
@@ -902,6 +924,20 @@ function getMapMissing() {
     return !!(el && el.classList.contains('is-on'));
 }
 
+// Flag « Description brouillon » (clé interne `descriptionDraft`), même
+// mécanique bouton-switch que Vérifié / Introuvable sur la carte.
+function setDescDraft(val) {
+    const el = document.getElementById(DOM_IDS.DESC_DRAFT);
+    if (!el) return;
+    el.classList.toggle('is-on', !!val);
+    el.setAttribute('aria-checked', String(!!val));
+}
+
+function getDescDraft() {
+    const el = document.getElementById(DOM_IDS.DESC_DRAFT);
+    return !!(el && el.classList.contains('is-on'));
+}
+
 // P7 : `validate=true` (bouton « Valider & enregistrer ») retire le flag candidat
 // dans la même écriture que l'enrichissement. `false` (« Enregistrer ») le conserve.
 async function handleSave(validate = false) {
@@ -937,7 +973,8 @@ async function handleSave(validate = false) {
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
         'verified': getVerified(),
-        'introuvableCarte': getMapMissing()
+        'introuvableCarte': getMapMissing(),
+        'descriptionDraft': getDescDraft()
     };
 
     // P7 — « Valider & enregistrer » : on retire le flag candidat dans la foulée.
@@ -1144,7 +1181,8 @@ function handleEmailSuggestion() {
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
         'verified': getVerified(),
-        'introuvableCarte': getMapMissing()
+        'introuvableCarte': getMapMissing(),
+        'descriptionDraft': getDescDraft()
     };
 
     const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Inconnue';

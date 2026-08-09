@@ -64,6 +64,11 @@ describe('isEligible (pas de thin content)', () => {
         expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS) }))).toBe(true);
         expect(isEligible({ properties: {} })).toBe(false);
     });
+
+    it('refuse une description brouillon même si elle dépasse le seuil (08/08/2026)', () => {
+        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionDraft: true }))).toBe(false);
+        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionDraft: false }))).toBe(true);
+    });
 });
 
 describe('metaDescription', () => {
