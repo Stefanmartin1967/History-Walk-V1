@@ -1090,6 +1090,12 @@ html[data-theme="nuit"] .cc-hero {
     }
     .cc-nav-warn-dot { width: 5px; height: 5px; }
 
+    /* Le chip qui révèle l'onglet Configuration masqué vit dans
+       .cc-sidebar-foot, lui-même caché en mobile (ligne ~1074) : sans lui,
+       un token existant mais invalide/expiré rend l'onglet définitivement
+       inatteignable. On force son affichage en mobile pour garder un accès. */
+    .cc-nav-item.cc-tab-hidden { display: flex; }
+
     /* Topbar : padding mobile + cacher subtitle si serré */
     .cc-topbar { padding: 0 var(--space-md); height: 48px; }
     .cc-topbar-title { font-size: 17px; }

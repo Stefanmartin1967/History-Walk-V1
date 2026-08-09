@@ -41,7 +41,7 @@ import {
     Loader2, LoaderCircle,
 
     // Communication
-    Mail, Github, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
+    Mail, Github, Facebook, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
 
     // Badges & gamification
     Award, Trophy, Star, StarOff, Rocket, Sparkles, Zap, Crown,
@@ -103,7 +103,7 @@ export const appIcons = {
     AlertTriangle, Info, Bug, Key, KeyRound,
     Loader2, LoaderCircle,
 
-    Mail, Github, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
+    Mail, Github, Facebook, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
 
     Award, Trophy, Star, StarOff, Rocket, Sparkles, Zap, Crown,
     Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,

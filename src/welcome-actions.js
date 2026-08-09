@@ -15,7 +15,6 @@
 //   - import   : onglet Mes Circuits (idem ; filtrage fin via le panneau Filtres)
 //   - create   : onglet Circuit + guide « Créer un circuit »
 //   - photos   : guide « Importer des photos », puis import à la fermeture
-//                (carte « photos » présente en mode "revoir" uniquement)
 
 import { eventBus } from './events.js';
 import { openHelpPanel, configureHelp } from './help-popover.js';
@@ -57,8 +56,8 @@ export function setupWelcomeActions() {
                 break;
 
             case 'photos':
-                // Mode "revoir" uniquement. Guide d'import d'abord ; le sélecteur
-                // de photos se lance à la fermeture du guide.
+                // Guide d'import d'abord ; le sélecteur de photos se lance à la
+                // fermeture du guide.
                 openGuideAfterWelcome(GUIDE_IMPORT, () => clickIfPresent('#btn-import-photos'));
                 break;
 

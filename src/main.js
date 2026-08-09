@@ -45,8 +45,8 @@ import { initAdminMode, showAdminLoginModal } from './admin.js';
 import { initTokenCache } from './github-sync.js';
 
 import { loadAndInitializeMap } from './app-startup.js';
-import { showWelcomeIfNeeded } from './welcome.js';
 import { setupWelcomeActions } from './welcome-actions.js';
+import { showVersionNoteIfNeeded } from './version-note.js';
 import { setupEventBusListeners } from './events-bus.js';
 import { setupFilterPanel } from './filter-panel.js';
 import { setupTopbarV2 } from './topbar-v2.js';
@@ -201,9 +201,11 @@ async function initializeApp() {
         // Lancement unique et propre de la carte
         await loadAndInitializeMap();
 
-        // Écran de bienvenue (premier lancement uniquement)
+        // Câblage du choix d'usage (bouton "Visite guidée" de la topbar)
         setupWelcomeActions();
-        showWelcomeIfNeeded();
+
+        // Note de version (1er lancement, puis à chaque changement important)
+        showVersionNoteIfNeeded();
 
     } catch (error) {
         console.error("Échec init global:", error);
