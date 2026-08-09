@@ -232,13 +232,14 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // PR à venir + migration scripts/migrate-description-case.mjs).
     const longDesc = (allProps.description || '').trim();
     const hasLongDesc = longDesc !== '';
-    // Description brouillon (08/08/2026) : matériau de travail sourcé (citation
-    // Jalel brute, transcription vidéo...), pas encore une fiche visiteur. Reste
-    // visible pour l'admin (avec l'étiquette « Brouillon »), masqué pour tout le
-    // monde d'autre. Le générateur de pages SEO applique la même règle
+    // Description publiée (08-09/08/2026) : DÉFAUT OFF — une description est un
+    // matériau de travail sourcé (citation Jalel brute, transcription vidéo...)
+    // tant que l'admin ne l'a pas explicitement publiée. Reste visible pour
+    // l'admin (avec l'étiquette « Brouillon »), masqué pour tout le monde
+    // d'autre. Le générateur de pages SEO applique la même règle
     // (scripts/generate-poi-pages.mjs) pour ne pas indexer du texte de travail.
-    const isDescDraft = !!allProps.descriptionDraft;
-    const descVisible = hasLongDesc && (!isDescDraft || state.isAdmin);
+    const isDescPublic = !!allProps.descriptionPublic;
+    const descVisible = hasLongDesc && (isDescPublic || state.isAdmin);
 
     // Info GPX (texte exporté dans le <desc> des waypoints — visible côté
     // Wikiloc / GPX Studio). Clé canonique `info_gpx` lowercase depuis le
@@ -304,7 +305,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
 
     // Section Description
     const descBlock = descVisible
-        ? `<p class="poi-desc">${escapeXml(longDesc).replace(/\n/g, '<br>')}</p>${renderSource(allProps)}${(isDescDraft && state.isAdmin) ? `<p class="poi-source-link">Brouillon — non publié</p>` : ''}`
+        ? `<p class="poi-desc">${escapeXml(longDesc).replace(/\n/g, '<br>')}</p>${renderSource(allProps)}${(!isDescPublic && state.isAdmin) ? `<p class="poi-source-link">Brouillon — non publié</p>` : ''}`
         : `<p class="poi-desc is-placeholder">Aucune description disponible.</p>`;
 
     // Section GPX (cachée par défaut, ouverte par bouton tiroir)

@@ -484,11 +484,12 @@ function hasPhotos(props) {
 function hasDescription(props) {
     const longDesc = (props.description || '').trim();
     if (longDesc === '') return false;
-    // Cohérence avec le rendu de la fiche (templates.js) : une description
-    // brouillon ne s'affiche pas côté visiteur, donc ne doit pas non plus
-    // faire matcher le filtre « Lieux avec description » pour lui — sinon le
-    // filtre annoncerait un résultat que la fiche dément à l'ouverture.
-    if (props.descriptionDraft && !state.isAdmin) return false;
+    // Cohérence avec le rendu de la fiche (templates.js) : par défaut une
+    // description n'est PAS publiée (descriptionPublic doit être explicitement
+    // vrai) et ne s'affiche donc pas côté visiteur — le filtre « Lieux avec
+    // description » ne doit pas matcher pour lui non plus, sinon il
+    // annoncerait un résultat que la fiche dément à l'ouverture.
+    if (!props.descriptionPublic && !state.isAdmin) return false;
     return true;
 }
 
@@ -577,7 +578,7 @@ const FILTER_AFFECTING_KEYS = new Set([
     // Filtres "État de la fiche" (refonte Claude Design) : photos absentes
     // / description absente. Modif d'une de ces props peut changer la
     // visibilité si filter photo / description est actif.
-    'photos', 'description', 'Description', 'descriptionDraft',
+    'photos', 'description', 'Description', 'descriptionPublic',
     // Note : 'planifieCounter' retiré (03/05/2026) — plus stocké dans userData,
     // calculé à la volée par computePlanifieCounter().
 ]);

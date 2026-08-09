@@ -60,7 +60,7 @@ const DOM_IDS = {
     NAV_CONTROLS: 'rich-poi-nav-controls',
     VERIFIED: 'rich-poi-verified',
     MAP_MISSING: 'rich-poi-mapmissing',
-    DESC_DRAFT: 'rich-poi-descdraft'
+    DESC_PUBLIC: 'rich-poi-descpublic'
 };
 
 let currentMode = 'CREATE'; // 'CREATE' | 'EDIT'
@@ -100,14 +100,16 @@ const RICH_POI_BODY_HTML = `
                 <button class="sw" id="rich-poi-mapmissing" type="button" role="switch" aria-checked="false" aria-label="Introuvable sur la carte"></button>
             </span>
         </div>
-        <!-- Description brouillon (08/08/2026) : Description+Source restent modifiables et
-             sourcées librement (citation brute acceptée) mais ne s'affichent pas côté visiteur
-             tant que ce flag est actif — ni ne comptent pour le seuil qui déclenche une page
-             SEO statique (generate-poi-pages.mjs). Basculé par l'admin quand le texte est prêt. -->
+        <!-- Description publiée (08-09/08/2026) : par défaut, Description+Source restent
+             modifiables et sourcées librement (citation brute acceptée) mais NE S'AFFICHENT
+             PAS côté visiteur — matériau de travail tant que l'admin n'a pas explicitement
+             publié. Ne compte pour le seuil qui déclenche une page SEO statique
+             (generate-poi-pages.mjs) que si publié. Défaut OFF assumé (v3.7.349) : beaucoup
+             de descriptions déjà en ligne étaient des citations brutes, pas du texte relu. -->
         <div class="fiche-row">
-            <span class="lbl"><span class="t">Description brouillon</span><span class="h">Description et Source non publiées tant que c'est actif — matériau de travail sourcé, pas encore une fiche visiteur</span></span>
+            <span class="lbl"><span class="t">Description publiée</span><span class="h">Par défaut, la description n'est pas visible des visiteurs — active pour publier une fois le texte relu</span></span>
             <span class="ctl">
-                <button class="sw" id="rich-poi-descdraft" type="button" role="switch" aria-checked="false" aria-label="Description brouillon"></button>
+                <button class="sw" id="rich-poi-descpublic" type="button" role="switch" aria-checked="false" aria-label="Description publiée"></button>
             </span>
         </div>
         <!-- Candidat « à curer » (réunif C1b) : visible seulement pour un candidat Scout.
@@ -306,7 +308,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.FACEBOOK, "");
         setVerified(false);
         setMapMissing(false);
-        setDescDraft(false);
+        setDescPublic(false);
         { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = true; }
         updateCandidateFooter(false); // création : footer « Enregistrer » standard
 
@@ -403,7 +405,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
         setVerified(!!merged.verified);
         setMapMissing(!!merged.introuvableCarte);
-        setDescDraft(!!merged.descriptionDraft);
+        setDescPublic(!!merged.descriptionPublic);
         // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
         // P7 : et le footer bascule en mode candidat (« Valider & enregistrer »).
         { const cand = isCandidate(feature);
@@ -665,8 +667,8 @@ function bindModalEvents() {
         isDirty = true;
     });
 
-    // Toggle « Description brouillon » (même mécanique bouton-switch).
-    document.getElementById(DOM_IDS.DESC_DRAFT)?.addEventListener('click', (e) => {
+    // Toggle « Description publiée » (même mécanique bouton-switch).
+    document.getElementById(DOM_IDS.DESC_PUBLIC)?.addEventListener('click', (e) => {
         const btn = e.currentTarget;
         const on = !btn.classList.contains('is-on');
         btn.classList.toggle('is-on', on);
@@ -924,17 +926,19 @@ function getMapMissing() {
     return !!(el && el.classList.contains('is-on'));
 }
 
-// Flag « Description brouillon » (clé interne `descriptionDraft`), même
-// mécanique bouton-switch que Vérifié / Introuvable sur la carte.
-function setDescDraft(val) {
-    const el = document.getElementById(DOM_IDS.DESC_DRAFT);
+// Flag « Description publiée » (clé interne `descriptionPublic`), même
+// mécanique bouton-switch que Vérifié / Introuvable sur la carte. Défaut OFF :
+// une fiche sans ce flag (créée ou déjà existante) n'affiche pas sa description
+// aux visiteurs tant que l'admin ne l'a pas explicitement publiée.
+function setDescPublic(val) {
+    const el = document.getElementById(DOM_IDS.DESC_PUBLIC);
     if (!el) return;
     el.classList.toggle('is-on', !!val);
     el.setAttribute('aria-checked', String(!!val));
 }
 
-function getDescDraft() {
-    const el = document.getElementById(DOM_IDS.DESC_DRAFT);
+function getDescPublic() {
+    const el = document.getElementById(DOM_IDS.DESC_PUBLIC);
     return !!(el && el.classList.contains('is-on'));
 }
 
@@ -974,7 +978,7 @@ async function handleSave(validate = false) {
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
         'verified': getVerified(),
         'introuvableCarte': getMapMissing(),
-        'descriptionDraft': getDescDraft()
+        'descriptionPublic': getDescPublic()
     };
 
     // P7 — « Valider & enregistrer » : on retire le flag candidat dans la foulée.
@@ -1182,7 +1186,7 @@ function handleEmailSuggestion() {
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
         'verified': getVerified(),
         'introuvableCarte': getMapMissing(),
-        'descriptionDraft': getDescDraft()
+        'descriptionPublic': getDescPublic()
     };
 
     const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Inconnue';
