@@ -271,12 +271,64 @@ async function updateGist(token, gistId, payload) {
 // ─── API PUBLIQUE ─────────────────────────────────────────────────────────────
 
 /**
+ * Récupère le contenu du Gist en se réparant si l'ID stocké est mort.
+ *
+ * `pushToGist` savait déjà se rattraper d'un 404 (recréation du Gist), mais le
+ * pull, lui, ne retentait JAMAIS une découverte : la redécouverte n'avait lieu
+ * que si `hw_gist_id` était absent. Conséquence observée le 09/08/2026 — après
+ * suppression manuelle de Gists fantômes sur github.com, chaque appareil gardait
+ * l'ID mort et affichait « Sync Gist indisponible » à CHAQUE boot, alors qu'un
+ * Gist valide existait juste à côté. Seul un `localStorage.removeItem` manuel
+ * débloquait la situation.
+ *
+ * @param {string} token
+ * @returns {Promise<object|null>} payload distant, ou null si aucun Gist
+ */
+async function fetchGistWithRecovery(token) {
+    const gistId = getGistId();
+
+    // Aucun ID connu (nouvel appareil, localStorage vidé) : découverte directe.
+    // Cf. mémoire project_gist_for_future_users.md (anomalie #8 onboarding).
+    if (!gistId) {
+        const discovered = await discoverGistId(token);
+        if (!discovered) return null; // Aucun Gist côté GitHub → cas normal
+        setGistId(discovered);
+        showToast('Gist détecté, sync activée.', 'info', 3000);
+        return await fetchGist(token, discovered);
+    }
+
+    try {
+        return await fetchGist(token, gistId);
+    } catch (e) {
+        // Seul le 404 est récupérable : le Gist n'existe plus. Un 401/403
+        // (token) ou un 5xx doivent remonter tels quels — réessayer une
+        // découverte avec le même token échouerait pareil, et masquerait la
+        // vraie cause derrière un « aucun Gist trouvé » trompeur.
+        if (!/\b404\b/.test(e.message)) throw e;
+
+        localStorage.removeItem(GIST_ID_KEY);
+        const rediscovered = await discoverGistId(token);
+        if (!rediscovered) throw e; // Rien à retrouver → on signale l'échec d'origine
+
+        setGistId(rediscovered);
+        const remote = await fetchGist(token, rediscovered);
+        showToast('Gist retrouvé, sync réactivée.', 'info', 4000);
+        return remote;
+    }
+}
+
+/** Extrait le code HTTP d'un message d'erreur `... failed: 404`, sinon null. */
+function httpStatusOf(err) {
+    const m = /\b(\d{3})\b/.exec((err && err.message) || '');
+    return m ? m[1] : null;
+}
+
+/**
  * Pull depuis le Gist → merge dans le state local → sauvegarde IndexedDB.
  * Appelé au démarrage de l'app.
  */
 export async function pullFromGist() {
     const token = getStoredToken();
-    let gistId = getGistId();
     if (!token) return; // Pas de token → silencieux
 
     // Hors-ligne : inutile (et bruyant, cf. plus bas) de tenter un fetch voué à
@@ -284,18 +336,9 @@ export async function pullFromGist() {
     // une panne à signaler.
     if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
 
-    // Auto-discovery si gistId absent (cas typique : nouvel appareil avec
-    // token configuré mais sans gistId en localStorage). Cf. mémoire
-    // project_gist_for_future_users.md (anomalie #8 trou d'onboarding).
-    if (!gistId) {
-        gistId = await discoverGistId(token);
-        if (!gistId) return; // Aucun Gist trouvé → silencieux
-        setGistId(gistId);
-        showToast('Gist détecté, sync activée.', 'info', 3000);
-    }
-
     try {
-        const remote = await fetchGist(token, gistId);
+        const remote = await fetchGistWithRecovery(token);
+        if (!remote) return; // Aucun Gist côté GitHub → silencieux
 
         // Guard : ne pas merger une carte différente
         if (remote.mapId && remote.mapId !== state.currentMapId) {
@@ -318,8 +361,16 @@ export async function pullFromGist() {
         // pushToGist) sans que rien ne le signale. Le hors-ligne étant déjà
         // filtré au-dessus, tout ce qui atteint ce catch est une vraie panne
         // (token expiré, Gist supprimé, 5xx, rate-limit) — elle mérite d'être vue.
+        // Le code HTTP est affiché : sans lui, « indisponible » ne distingue pas
+        // un token refusé (401/403) d'un Gist absent (404) ou d'une panne GitHub
+        // (5xx) — trois causes aux remèdes opposés, indiagnosticables à distance.
         console.warn('[GistSync] Pull failed:', e.message);
-        showToast('Sync Gist indisponible pour l\'instant — vos données restent enregistrées localement.', 'warning', 4000);
+        const status = httpStatusOf(e);
+        showToast(
+            `Sync Gist indisponible${status ? ` (erreur ${status})` : ''} — vos données restent enregistrées localement.`,
+            'warning',
+            5000
+        );
     }
 }
 
