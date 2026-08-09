@@ -1,17 +1,15 @@
 // welcome.js
-// Onboarding par choix d'usage. Affiché au 1er démarrage et à la demande
-// (bouton "Visite guidée" du popover Informations).
+// Onboarding par choix d'usage, accessible à la demande via le bouton
+// "Visite guidée" de la topbar (le déclenchement automatique au 1er
+// lancement a été retiré au profit de version-note.js — cf. main.js).
 //
-// 1er démarrage : 3 cartes (Découvrir / Créer / Importer)
-// Mode "revoir" : 4 cartes (les 3 + Importer photos GPS)
+// 4 cartes : Découvrir / Voir les circuits / Créer / Importer photos GPS.
 //
 // Émet eventBus 'welcome:choice' { choice } à la sélection.
 // Le câblage de chaque choix sur l'état de l'app est géré ailleurs.
 
 import { eventBus } from './events.js';
 import { state, getActiveDestinationName } from './state.js';
-
-const WELCOME_KEY = 'hw_welcome_seen';
 
 // Repli propre à l'UI : une phrase doit rester lisible même destination inconnue.
 const destinationLabel = () => getActiveDestinationName() || 'la destination';
@@ -75,7 +73,7 @@ const SVG_PHONE_PHOTO = `
     <circle cx="158" cy="62" r="6" fill="var(--brand)" opacity="0.5"/>
 </svg>`;
 
-function buildCardsFirstLaunch() {
+function buildCards() {
     return [
         {
             id: 'discover',
@@ -105,21 +103,10 @@ const CARD_PHOTOS = {
     subtitle: 'Je personnalise, j\'ajoute mes photos à mes visites'
 };
 
-export function showWelcomeIfNeeded() {
-    if (localStorage.getItem(WELCOME_KEY)) return;
-    showWelcome({ firstLaunch: true });
-}
-
 export function showWelcomeAgain() {
-    showWelcome({ firstLaunch: false });
-}
-
-function showWelcome({ firstLaunch }) {
     if (document.getElementById('welcome-overlay')) return;
 
-    const cards = firstLaunch
-        ? buildCardsFirstLaunch()
-        : [...buildCardsFirstLaunch(), CARD_PHOTOS];
+    const cards = [...buildCards(), CARD_PHOTOS];
 
     const overlay = document.createElement('div');
     overlay.id = 'welcome-overlay';
@@ -155,7 +142,6 @@ function showWelcome({ firstLaunch }) {
     overlay.querySelector('#welcome-skip').addEventListener('click', () => choose('discover'));
 
     function choose(choiceId) {
-        localStorage.setItem(WELCOME_KEY, '1');
         eventBus.emit('welcome:choice', { choice: choiceId });
         overlay.classList.add('welcome-fadeout');
         setTimeout(() => overlay.remove(), 350);

@@ -151,6 +151,13 @@ export function initializeDomReferences() {
         });
     }
 
+    const btnFacebookPage = document.getElementById('btn-facebook-page');
+    if (btnFacebookPage) {
+        btnFacebookPage.addEventListener('click', () => {
+            window.open('https://www.facebook.com/profile.php?id=61592156811687', '_blank', 'noopener,noreferrer');
+        });
+    }
+
     DOM.tabButtons = document.querySelectorAll('.tab-button');
     DOM.sidebarPanels = document.querySelectorAll('.sidebar-panel');
     

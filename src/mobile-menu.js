@@ -77,6 +77,7 @@ function buildSections(subs) {
             label: 'Soutenir & à propos',
             items: [
                 { id: 'mob-action-bmc', ico: 'coffee', label: 'Offrir un café', sub: subs.bmc, variant: 'love' },
+                { id: 'mob-action-facebook', ico: 'facebook', label: 'Page Facebook' },
                 { id: 'mob-action-legal-notice', ico: 'scale', label: 'Mentions légales' },
             ],
         },
@@ -187,6 +188,9 @@ export function renderMobileMenu() {
     });
     document.getElementById('mob-action-bmc')?.addEventListener('click', () => {
         window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+    });
+    document.getElementById('mob-action-facebook')?.addEventListener('click', () => {
+        window.open('https://www.facebook.com/profile.php?id=61592156811687', '_blank', 'noopener,noreferrer');
     });
     document.getElementById('mob-action-legal-notice')?.addEventListener('click', () => showLegalNoticeModal());
 

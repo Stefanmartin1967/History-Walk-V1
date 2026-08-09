@@ -1,10 +1,8 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { showWelcomeIfNeeded, showWelcomeAgain } from '../src/welcome.js';
+import { showWelcomeAgain } from '../src/welcome.js';
 import { eventBus } from '../src/events.js';
-
-const WELCOME_KEY = 'hw_welcome_seen';
 
 beforeEach(() => {
     document.body.innerHTML = '';
@@ -18,43 +16,45 @@ afterEach(() => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('showWelcomeIfNeeded — gate localStorage', () => {
-    it('no-op si hw_welcome_seen déjà dans localStorage (pas d\'overlay créé)', () => {
-        localStorage.setItem(WELCOME_KEY, '1');
-        showWelcomeIfNeeded();
-        expect(document.getElementById('welcome-overlay')).toBeNull();
-    });
-
-    it('crée #welcome-overlay si localStorage vide', () => {
-        showWelcomeIfNeeded();
+// Le déclenchement automatique au 1er lancement a été retiré : welcome.js ne
+// sert plus que le bouton « Visite guidée » (la note de version prend le relais
+// au boot — cf. version-note.test.js). Il n'y a donc plus qu'un seul mode
+// d'affichage, et plus de gate localStorage dans ce module.
+describe('showWelcomeAgain — affichage', () => {
+    it('crée #welcome-overlay', () => {
+        showWelcomeAgain();
         expect(document.getElementById('welcome-overlay')).not.toBeNull();
     });
 
     it('appel répété ne duplique pas l\'overlay', () => {
-        showWelcomeIfNeeded();
-        // Simuler appel direct interne (showWelcomeAgain force l'affichage même si seen)
+        showWelcomeAgain();
         showWelcomeAgain();
         expect(document.querySelectorAll('#welcome-overlay')).toHaveLength(1);
+    });
+
+    it('s\'affiche sans condition (aucune gate localStorage)', () => {
+        localStorage.setItem('hw_version_note_seen', '1');
+        showWelcomeAgain();
+        expect(document.getElementById('welcome-overlay')).not.toBeNull();
     });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('showWelcomeIfNeeded — 1er démarrage : 3 cartes', () => {
-    it('affiche 3 cartes au 1er démarrage', () => {
-        showWelcomeIfNeeded();
-        const cards = document.querySelectorAll('.welcome-card');
-        expect(cards).toHaveLength(3);
+describe('showWelcomeAgain — les 4 cartes', () => {
+    it('affiche 4 cartes', () => {
+        showWelcomeAgain();
+        expect(document.querySelectorAll('.welcome-card')).toHaveLength(4);
     });
 
-    it('cartes ont les data-choice attendus (discover, import, create) dans cet ordre', () => {
-        showWelcomeIfNeeded();
+    it('cartes ont les data-choice attendus dans cet ordre', () => {
+        showWelcomeAgain();
         const choices = Array.from(document.querySelectorAll('.welcome-card'))
             .map(c => c.dataset.choice);
-        expect(choices).toEqual(['discover', 'import', 'create']);
+        expect(choices).toEqual(['discover', 'import', 'create', 'photos']);
     });
 
     it('chaque carte a un titre et un sous-titre', () => {
-        showWelcomeIfNeeded();
+        showWelcomeAgain();
         const cards = document.querySelectorAll('.welcome-card');
         cards.forEach(card => {
             expect(card.querySelector('.welcome-card-title')).not.toBeNull();
@@ -63,66 +63,46 @@ describe('showWelcomeIfNeeded — 1er démarrage : 3 cartes', () => {
     });
 
     it('le bouton "Passer" est présent', () => {
-        showWelcomeIfNeeded();
+        showWelcomeAgain();
         expect(document.getElementById('welcome-skip')).not.toBeNull();
     });
 
     it('titre et sous-titre de la modal sont présents', () => {
-        showWelcomeIfNeeded();
+        showWelcomeAgain();
         expect(document.querySelector('.welcome-modal-title')).not.toBeNull();
         expect(document.querySelector('.welcome-modal-subtitle')).not.toBeNull();
     });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('showWelcomeAgain — mode "revoir" : 4 cartes', () => {
-    it('affiche 4 cartes (les 3 + photos)', () => {
-        showWelcomeAgain();
-        const cards = document.querySelectorAll('.welcome-card');
-        expect(cards).toHaveLength(4);
-    });
-
-    it('la 4e carte a data-choice="photos"', () => {
-        showWelcomeAgain();
-        const choices = Array.from(document.querySelectorAll('.welcome-card'))
-            .map(c => c.dataset.choice);
-        expect(choices).toEqual(['discover', 'import', 'create', 'photos']);
-    });
-
-    it('s\'affiche même si hw_welcome_seen est déjà à 1 (réaffichage forcé)', () => {
-        localStorage.setItem(WELCOME_KEY, '1');
-        showWelcomeAgain();
-        expect(document.getElementById('welcome-overlay')).not.toBeNull();
-    });
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-describe('choix utilisateur — émission eventBus + persistance + fadeout', () => {
+describe('choix utilisateur — émission eventBus + fadeout', () => {
     it('clic sur une carte émet welcome:choice avec le bon id', () => {
-        showWelcomeIfNeeded();
+        showWelcomeAgain();
         const received = vi.fn();
         eventBus.on('welcome:choice', received);
         document.querySelector('[data-choice="create"]').click();
         expect(received).toHaveBeenCalledWith({ choice: 'create' });
     });
 
-    it('clic sur une carte set hw_welcome_seen=1', () => {
-        showWelcomeIfNeeded();
-        document.querySelector('[data-choice="discover"]').click();
-        expect(localStorage.getItem(WELCOME_KEY)).toBe('1');
-    });
-
     it('clic sur "Passer" émet welcome:choice avec choice=discover (skip = découvrir)', () => {
-        showWelcomeIfNeeded();
+        showWelcomeAgain();
         const received = vi.fn();
         eventBus.on('welcome:choice', received);
         document.getElementById('welcome-skip').click();
         expect(received).toHaveBeenCalledWith({ choice: 'discover' });
     });
 
+    it('clic sur photos émet welcome:choice avec choice=photos', () => {
+        showWelcomeAgain();
+        const received = vi.fn();
+        eventBus.on('welcome:choice', received);
+        document.querySelector('[data-choice="photos"]').click();
+        expect(received).toHaveBeenCalledWith({ choice: 'photos' });
+    });
+
     it('clic déclenche le fadeout puis retire l\'overlay après 350ms', () => {
         vi.useFakeTimers();
-        showWelcomeIfNeeded();
+        showWelcomeAgain();
         document.querySelector('[data-choice="import"]').click();
         const overlay = document.getElementById('welcome-overlay');
         expect(overlay).not.toBeNull();
@@ -130,27 +110,19 @@ describe('choix utilisateur — émission eventBus + persistance + fadeout', () 
         vi.advanceTimersByTime(400);
         expect(document.getElementById('welcome-overlay')).toBeNull();
     });
-
-    it('en mode "revoir", clic sur photos émet welcome:choice avec choice=photos', () => {
-        showWelcomeAgain();
-        const received = vi.fn();
-        eventBus.on('welcome:choice', received);
-        document.querySelector('[data-choice="photos"]').click();
-        expect(received).toHaveBeenCalledWith({ choice: 'photos' });
-    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
 describe('accessibilité — attributs ARIA', () => {
     it('la modal a role=dialog et aria-modal=true', () => {
-        showWelcomeIfNeeded();
+        showWelcomeAgain();
         const modal = document.querySelector('.welcome-modal');
         expect(modal.getAttribute('role')).toBe('dialog');
         expect(modal.getAttribute('aria-modal')).toBe('true');
     });
 
     it('la modal est labellisée par son titre', () => {
-        showWelcomeIfNeeded();
+        showWelcomeAgain();
         const modal = document.querySelector('.welcome-modal');
         const labelledById = modal.getAttribute('aria-labelledby');
         expect(labelledById).toBeTruthy();
