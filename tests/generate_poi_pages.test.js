@@ -56,18 +56,19 @@ describe('assignSlugs', () => {
     });
 });
 
-describe('isEligible (pas de thin content)', () => {
-    it('refuse description vide ou trop courte, accepte au seuil', () => {
-        expect(isEligible(makeFeature({ description: '' }))).toBe(false);
-        expect(isEligible(makeFeature({ description: '   ' }))).toBe(false);
-        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS - 1) }))).toBe(false);
-        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS) }))).toBe(true);
+describe('isEligible (pas de thin content, publication explicite)', () => {
+    it('refuse description vide ou trop courte, accepte au seuil UNE FOIS publiée', () => {
+        expect(isEligible(makeFeature({ description: '', descriptionPublic: true }))).toBe(false);
+        expect(isEligible(makeFeature({ description: '   ', descriptionPublic: true }))).toBe(false);
+        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS - 1), descriptionPublic: true }))).toBe(false);
+        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionPublic: true }))).toBe(true);
         expect(isEligible({ properties: {} })).toBe(false);
     });
 
-    it('refuse une description brouillon même si elle dépasse le seuil (08/08/2026)', () => {
-        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionDraft: true }))).toBe(false);
-        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionDraft: false }))).toBe(true);
+    it('RÉGRESSION 09/08/2026 : défaut OFF — une description au seuil mais non publiée est refusée', () => {
+        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS) }))).toBe(false);
+        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionPublic: false }))).toBe(false);
+        expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionPublic: true }))).toBe(true);
     });
 });
 

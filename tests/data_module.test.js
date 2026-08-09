@@ -435,10 +435,20 @@ describe('passesUserFilters', () => {
         expect(passesUserFilters(poi('p2', {}))).toBe(false);
     });
 
-    it('admin : description=hide exclut les POIs avec description', () => {
+    it('description=hide exclut les POIs avec description PUBLIÉE (défaut OFF, 09/08/2026)', () => {
         state.activeFilters.description = 'hide';
-        expect(passesUserFilters(poi('p1', { description: 'Texte' }))).toBe(false);
+        expect(passesUserFilters(poi('p1', { description: 'Texte', descriptionPublic: true }))).toBe(false);
         expect(passesUserFilters(poi('p2', {}))).toBe(true);
+        // Une description non publiée (defaut) ne compte pas comme "a une description"
+        // pour un non-admin — cohérence avec templates.js (rien à afficher, rien à filtrer).
+        expect(passesUserFilters(poi('p3', { description: 'Texte' }))).toBe(true);
+    });
+
+    it('description=hide : un admin voit un brouillon comme "a une description" (rien à publier depuis l\'éditeur)', () => {
+        state.activeFilters.description = 'hide';
+        state.isAdmin = true;
+        expect(passesUserFilters(poi('p1', { description: 'Texte' }))).toBe(false);
+        state.isAdmin = false;
     });
 
     it('par défaut (aucun filtre actif) : POI passe', () => {

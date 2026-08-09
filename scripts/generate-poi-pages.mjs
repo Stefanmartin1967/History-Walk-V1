@@ -61,10 +61,11 @@ export function slugify(name, fallback = '') {
     return slug || String(fallback).toLowerCase();
 }
 
-/** Éligibilité SEO : une vraie description (pas de thin content), publiée
- *  (pas un brouillon — cf. `descriptionDraft`, richEditor.js / templates.js). */
+/** Éligibilité SEO : une vraie description (pas de thin content), ET
+ *  explicitement publiée (`descriptionPublic`, défaut OFF — cf. richEditor.js
+ *  / templates.js). Sans ce flag, c'est un brouillon de travail, pas indexable. */
 export function isEligible(feature) {
-    if (feature?.properties?.descriptionDraft) return false;
+    if (!feature?.properties?.descriptionPublic) return false;
     const desc = (feature?.properties?.description || '').trim();
     return desc.length >= MIN_DESCRIPTION_CHARS;
 }
