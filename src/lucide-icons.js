@@ -25,6 +25,7 @@ import {
     File, FilePlus, FileDown, FileText, FileEdit, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
+    GitMerge, // fusion d'un candidat Scout dans le lieu qu'il double (poi-duplicate.js)
 
     // Carte & circuit
     Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation,
@@ -93,6 +94,7 @@ export const appIcons = {
     File, FilePlus, FileDown, FileText, FileEdit, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
+    GitMerge, // fusion d'un candidat Scout dans le lieu qu'il double (poi-duplicate.js)
 
     Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation, Waypoints, Layers,
 

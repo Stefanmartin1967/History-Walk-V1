@@ -121,6 +121,12 @@ const RICH_POI_BODY_HTML = `
              reste un indicateur de statut (cohérent avec le toggle « Vérifié »). -->
         <div class="fiche-row" id="rich-poi-candidate-row" hidden>
             <span class="lbl"><span class="t">Candidat à curer</span><span class="h">Trouvé par Scout — « Valider &amp; enregistrer » pour le rendre publiable</span></span>
+            <span class="ctl">
+                <button class="btn btn-ghost btn-sm" id="btn-rich-duplicate" type="button"
+                        title="Ce candidat double un lieu déjà présent">
+                    <i data-lucide="copy"></i><span>Doublon d'un lieu existant…</span>
+                </button>
+            </span>
         </div>
     </div>
 
@@ -666,6 +672,9 @@ function bindModalEvents() {
     document.getElementById('btn-rich-open-gmaps')?.addEventListener('click', () => openEditorCoordsOnMap('gmaps'));
     document.getElementById('btn-rich-open-osm')?.addEventListener('click', () => openEditorCoordsOnMap('osm'));
 
+    // « Doublon d'un lieu existant… » (ligne Candidat à curer, donc candidats seuls).
+    document.getElementById('btn-rich-duplicate')?.addEventListener('click', handleDuplicate);
+
     // Sauvegarde. P7 : « Enregistrer » garde l'éventuel flag candidat ;
     // « Valider & enregistrer » le retire dans la foulée (handleSave(true)).
     document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', () => handleSave(false));
@@ -797,6 +806,26 @@ function mountDrawer(isCreate) {
 function teardownDrawer() {
     if (_drawerEl && _drawerEl.parentNode) _drawerEl.parentNode.removeChild(_drawerEl);
     _drawerEl = null;
+}
+
+// « Doublon d'un lieu existant… » — le candidat ouvert double un POI déjà présent :
+// on reporte son objet OSM sur le lieu gardé puis on retire le candidat (détail du
+// pourquoi : poi-duplicate.js). La surcouche se pose dans l'hôte de l'éditeur — une
+// openHwModal fermerait l'éditeur (stacking interdit).
+async function handleDuplicate() {
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === currentFeatureId);
+    if (!feature) return;
+    const host = _drawerEl || document.querySelector('.hw-modal-overlay.is-active .hw-modal');
+    if (!host) return;
+
+    const { openDuplicatePicker } = await import('./poi-duplicate.js');
+    const merged = await openDuplicatePicker(feature, host);
+    // Fusion faite → le candidat n'existe plus : on ferme SANS le confirm « modifications
+    // non enregistrées » (les champs à l'écran portent sur un lieu qui vient de partir).
+    if (merged) {
+        isDirty = false;
+        await RichEditor.close();
+    }
 }
 
 // Pose les « ? » inline à côté de 4 labels du formulaire (Zone, Catégorie,

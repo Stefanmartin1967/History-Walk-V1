@@ -71,7 +71,20 @@ vi.mock('../src/utils.js', () => ({
     // valeur stockée). Le mock réplique son repli (zones non chargées → valeur stockée
     // overlay-aware), suffisant pour les tests de filtre par zone.
     getDerivedZone: vi.fn(f => (f?.properties?.userData?.Zone ?? f?.properties?.Zone) || ''),
+    // Overlay-aware comme le vrai (userData prime) : deletePoi lit l'osm_ref par ce
+    // canal, un osm_ref reporté pendant la curation vivant dans userData.
+    getPoiProp: vi.fn((f, k) => f?.properties?.userData?.[k] ?? f?.properties?.[k]),
     isCandidate: vi.fn(() => false)
+}));
+
+// Tombstones de curation : on espionne addRejected sans toucher au vrai store, et on
+// neutralise le push GitHub (import dynamique fire-and-forget dans deletePoi).
+vi.mock('../src/rejected.js', () => ({
+    addRejected: vi.fn(),
+    rejectedData: {},
+}));
+vi.mock('../src/publish-destination.js', () => ({
+    pushDestinationRejected: vi.fn(() => Promise.resolve()),
 }));
 
 // Dégel de Zone : le déplacement d'un POI invalide le cache de zone dérivée au lieu
@@ -99,6 +112,7 @@ import { logModification } from '../src/logger.js';
 import { eventBus } from '../src/events.js';
 import { deleteZoneCacheEntry } from '../src/zones.js';
 import { isCandidate } from '../src/utils.js';
+import { addRejected } from '../src/rejected.js';
 import {
     recomputeVu,
     applyFilters,
@@ -871,6 +885,40 @@ describe('deletePoi', () => {
     it('emit data:filtered (via applyFilters) après suppression', async () => {
         await deletePoi('p1');
         expect(eventBus.emit).toHaveBeenCalledWith('data:filtered', expect.anything());
+    });
+
+    it('tombstone un POI porteur d\'osm_ref (re-scan ne le re-propose pas)', async () => {
+        const f = poi('p1', { osm_ref: 'way/386328373' });
+        state.loadedFeatures = [f];
+        state.isAdmin = true;
+
+        await deletePoi('p1');
+
+        expect(addRejected).toHaveBeenCalledWith(expect.objectContaining({ osm_ref: 'way/386328373' }));
+    });
+
+    it('lit l\'osm_ref via l\'overlay userData (report de fusion non encore publié)', async () => {
+        const f = poi('p1');
+        f.properties.userData = { osm_ref: 'node/42' };
+        state.loadedFeatures = [f];
+        state.isAdmin = true;
+
+        await deletePoi('p1');
+
+        expect(addRejected).toHaveBeenCalledWith(expect.objectContaining({ osm_ref: 'node/42' }));
+    });
+
+    it('{ tombstone: false } : aucun rejet posé (fusion de doublon — l\'objet OSM est repris par le lieu gardé)', async () => {
+        const f = poi('cand_1', { osm_ref: 'way/386328373', candidate: true });
+        state.loadedFeatures = [f];
+        state.customFeatures = [f];
+        state.isAdmin = true;
+        isCandidate.mockReturnValueOnce(true);
+
+        await deletePoi('cand_1', { tombstone: false });
+
+        expect(addRejected).not.toHaveBeenCalled();
+        expect(state.hiddenPoiIds).toContain('cand_1');
     });
 });
 
