@@ -1288,7 +1288,7 @@
         "Zone": "Bou Melel",
         "Source": "Répertoire J. Fathallah, n° 48 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6AC5NNAYN5AF2HNACS",
-        "description": "",
+        "description": "Jalel n° 48 : « Mosquée Jadid. Quartier des Ababsa, route de Midoun. Mosquée wahbite récemment rénovée. Ancienne. La nouvelle est récente.",
         "accessPoint": [
           10.8485645,
           33.8758148
@@ -1305,7 +1305,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionDraft": false
       }
     },
     {
@@ -4553,15 +4554,33 @@
       "properties": {
         "Nom du site FR": "Borj El Kebir",
         "Nom du site arabe": "برج الغازي مصطفى",
-        "Catégorie": "Site historique",
+        "Catégorie": "Fortification",
         "Zone": "Taourit",
         "Source": "https://fr.wikipedia.org/wiki/Borj_El_Kebir_(Houmt_Souk)",
         "HW_ID": "HW-01K77WPE6H4XSK53CW38Q81RWP",
-        "description": "Egalement appelé Fort El Ghazi Mustapha, ce fort est le plus grand, le plus visité et le mieux conservé de Djerba. Sa construction, enviagée dès 1392 a été ordonnée en 1432. Le site du fort était, à l'origine, l'ancienne ville romaine de girba. Il fut le témoin de nombreuses batailles, dont une qui vit le corsaire Dragut en prendre le commandement. Il s'ensuivra une période de commandement corsaire de plusieurs siècles. Il mesure 68 mètres de long et 53 mètres de largeur, avec des murailles haute de 10 mètres pour une épaisseur variant de 120 à 150 cmDe formes rectangulaires, munis de tours, il représente l'un des repères de l'architecture défensive de l'île On y entre par une porte comportant un pont-levis donnant accès à une vestibule s'ouvrant sur la cour intérieure.",
+        "description": "Egalement appelé Fort Ghazi Mustapha, ce fort est le plus grand, le plus visité et le mieux conservé de Djerba. Sa construction, enviagée dès 1392 a été ordonnée en 1432. Le site du fort était, à l'origine, l'ancienne ville romaine de girba. Il fut le témoin de nombreuses batailles, dont une qui vit le corsaire Dragut en prendre le commandement. Il s'ensuivra une période de commandement corsaire de plusieurs siècles. Il mesure 68 mètres de long et 53 mètres de largeur, avec des murailles haute de 10 mètres pour une épaisseur variant de 120 à 150 cmDe formes rectangulaires, munis de tours, il représente l'un des repères de l'architecture défensive de l'île On y entre par une porte comportant un pont-levis donnant accès à une vestibule s'ouvrant sur la cour intérieure.",
         "info_gpx": "Un des plus beau monument historique de Djerba, ayant été le siège de nombreuses batailles",
         "accessPoint": [
           10.8606827,
           33.8844047
+        ],
+        "Sous-type": "",
+        "État": "Conservé",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 60,
+        "Prix_TND": 7,
+        "osm_ref": "node/9335010754",
+        "maps_ref": "https://maps.app.goo.gl/nf8PP3c7TtQHUjKG7",
+        "Téléphone": "",
+        "Horaires": "De 8h00 à 19h00 en été - De 9h30 à 16h30 en hiver",
+        "Facebook": "",
+        "verified": true,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6H4XSK53CW38Q81RWP_1786337229563.jpg",
+          "photos/poi_HW-01K77WPE6H4XSK53CW38Q81RWP_1786337231213.jpg",
+          "photos/poi_HW-01K77WPE6H4XSK53CW38Q81RWP_1786337232792.jpg"
         ]
       }
     },
@@ -8763,20 +8782,26 @@
         "Catégorie": "Curiosité",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0WBFCMMFBGZB582PRH",
-        "description": "",
+        "description": "Anciens bâtiments ayant abrité des ateliers de tissage selon une habitante",
         "Nom du site arabe": "",
         "Sous-type": "",
         "État": "",
         "Accès": "",
-        "info_gpx": "",
+        "info_gpx": "Anciens ateliers de tissage",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
-        "introuvableCarte": false
+        "verified": true,
+        "introuvableCarte": false,
+        "osm_ref": "",
+        "maps_ref": "",
+        "descriptionPublic": true,
+        "photos": [
+          "photos/poi_HW-01KJABRN0WBFCMMFBGZB582PRH_1786337227765.jpg"
+        ]
       }
     },
     {
