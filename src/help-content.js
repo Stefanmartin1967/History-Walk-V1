@@ -770,9 +770,10 @@ export const GUIDE_LIRE_LIEU = {
                     <li><strong>Incontournable</strong> : marque un lieu que vous voulez
                         <strong>toujours voir sur la carte</strong>, même quand vous filtrez par
                         lieux visités ou planifiés.</li>
-                    <li><strong>Mes notes</strong> : champ libre pour vos impressions, conseils,
-                        photos manquantes… <strong>Restent sur votre appareil</strong> — pensez à
-                        sauvegarder via <strong>Outils&nbsp;&gt; Sauvegarder</strong>.</li>
+                    <li><strong>Mes notes</strong> : cliquez pour écrire vos impressions, conseils,
+                        photos manquantes… Un lien collé dans le texte devient cliquable.
+                        <strong>Restent sur votre appareil</strong> — pensez à sauvegarder via
+                        <strong>Outils&nbsp;&gt; Sauvegarder</strong>.</li>
                 </ul>
                 <p class="help-muted">Marquer un lieu Incontournable n'ajoute <strong>pas</strong>
                 de pastille spéciale sur la carte <span class="help-muted">(c'était le cas avant,

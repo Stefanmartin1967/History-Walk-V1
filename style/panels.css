@@ -1038,6 +1038,30 @@
 .poi-notes-area:focus { outline: 2px solid var(--brand); border-color: transparent; }
 .poi-notes-area::placeholder { color: var(--ink-soft); font-style: italic; }
 
+/* Note privée (10/08/2026) : rendu en LECTURE par défaut (liens cliquables via
+   linkifyText, utils.js) ; bascule vers .poi-notes-area (textarea, ci-dessus)
+   au clic. Même boîte visuelle que le textarea pour que la bascule ne saute
+   pas aux yeux. */
+.poi-note-view {
+    width: 100%;
+    min-height: 64px;
+    padding: 11px 12px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--ink);
+    box-sizing: border-box;
+    cursor: text;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+.poi-note-view:hover { border-color: var(--ink-soft); }
+.poi-note-view:focus-visible { outline: 2px solid var(--brand); border-color: transparent; }
+.poi-note-view.is-empty { color: var(--ink-soft); font-style: italic; }
+.poi-note-view a { color: var(--brand); text-decoration: underline; }
+
 /* Footer — CTA + tools */
 .poi-footer {
     flex-shrink: 0;

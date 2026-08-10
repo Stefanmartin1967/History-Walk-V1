@@ -20,6 +20,8 @@ import { GUIDE_LIEU, HELP_LIEU_ZONE, HELP_LIEU_CATEGORIE, HELP_LIEU_DESC_COURTE,
 import {
     getWorkPhotosById, uploadWorkPhoto, loadWorkPhotoBlob, MAX_WORK_PHOTOS_PER_POI
 } from './work-photos.js';
+import { savePrivateNote } from './private-notes.js';
+import { getStoredToken } from './github-sync.js';
 
 // Aide « ? » : le patron rend l'icône via createIcons (idempotent).
 configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
@@ -1279,6 +1281,17 @@ async function executeCreate(data) {
 
     showToast("POI créé et enregistré localement.", "success");
 
+    // Note privée (10/08/2026) : troisième point d'écriture de `notes` (avec
+    // executeEdit ci-dessus et le champ rapide de la fiche, ui-details.js).
+    // Fire-and-forget, même motif qu'executeEdit — la copie locale (dans
+    // newFeature.properties, cf. poi-persistence.js pour la bascule vers
+    // l'overlay userData au prochain edit) est déjà sauve.
+    if (state.isAdmin && getStoredToken() && data.notes) {
+        savePrivateNote(state.currentMapId, actualId, data.notes).catch(err => {
+            console.warn('[PrivateNotes] Envoi heripia-travail échoué (création):', err.message);
+        });
+    }
+
     // PR 2/5 chantier point d'accès v2 : pré-pose silencieuse à la création
     // (admin uniquement). Overpass async non bloquant — l'utilisateur a déjà
     // vu son POI créé ; le drapeau (orange/on-track/failed) se matérialise
@@ -1326,13 +1339,27 @@ async function executeEdit(data, validated = false) {
     // la règle (et du revert de curation qu'elle évite) : voir poi-persistence.js.
     await persistPoiEdit(poiId, data);
 
-    // Sync Gist des champs personnels (notes, entre autres) — persistPoiEdit ne fait
-    // QUE la persistance (cf. son en-tête), le push Gist reste la responsabilité de
-    // l'appelant. Avant ce fix (01/08/2026), ce call manquait ici : une note écrite
-    // via le Rich Editor s'enregistrait bien en local mais ne partait JAMAIS vers le
-    // Gist — l'autre éditeur de POI (ui-photo-batch.saveTaxonomyBatch) l'appelle déjà
-    // après son propre persistPoiEdit, ce qui a permis de repérer l'absence ici.
+    // Sync Gist des champs personnels restants (vu, incontournable…) —
+    // persistPoiEdit ne fait QUE la persistance (cf. son en-tête), le push
+    // Gist reste la responsabilité de l'appelant. Avant ce fix (01/08/2026),
+    // ce call manquait ici : une modif écrite via le Rich Editor s'enregistrait
+    // bien en local mais ne partait JAMAIS vers le Gist — l'autre éditeur de
+    // POI (ui-photo-batch.saveTaxonomyBatch) l'appelle déjà après son propre
+    // persistPoiEdit, ce qui a permis de repérer l'absence ici.
     schedulePush();
+
+    // Note privée (10/08/2026) : ne voyage plus par le Gist (cf. gist-sync.js
+    // SYNC_KEYS) — poussée séparément vers heripia-travail. C'est le DEUXIÈME
+    // point d'écriture de `notes` (le premier est le champ rapide de la fiche,
+    // ui-details.js setupNoteEditToggle) : les deux doivent synchroniser vers
+    // le même dépôt, sinon une note modifiée ici resterait locale sans le
+    // savoir. Fire-and-forget : un échec réseau n'est jamais une perte de
+    // donnée, `persistPoiEdit` ci-dessus a déjà sauvé la copie locale.
+    if (getStoredToken()) {
+        savePrivateNote(state.currentMapId, poiId, data.notes).catch(err => {
+            console.warn('[PrivateNotes] Envoi heripia-travail échoué (Rich Editor):', err.message);
+        });
+    }
 
     // Si c'est un POI "pending" (création mobile en attente), on finalise la persistance
     // du GeoJSON maintenant que l'utilisateur a rempli la fiche via le Rich Editor.

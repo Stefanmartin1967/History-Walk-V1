@@ -8,6 +8,7 @@ import { renderMaintenanceTab } from './admin-maintenance.js';
 import { setTopbarSubtabs } from './admin-cc-topbar.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { escapeXml } from './utils.js';
+import { migrateExistingNotes } from './private-notes.js';
 // NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
 // handler de bouton (cf. carte OUTILS plus bas) pour casser le cycle
 // admin-control-center → admin-control-ui → admin → admin-control-center.
@@ -1155,11 +1156,32 @@ export function renderTab(tab, diffData, callbacks) {
             </div>
         `;
 
+        // — Section Migration des notes (10/08/2026) — one-shot, admin uniquement —
+        // Les notes existantes vivent déjà en local (userData, jamais touché par
+        // ce chantier) ; ce bouton les pousse une fois vers heripia-travail pour
+        // qu'elles deviennent visibles sur les autres appareils (remplace le rôle
+        // du Gist pour ce champ, cf. project_gist_to_private_repo_migration).
+        // N'écrit JAMAIS sur le Gist ni ne touche userData — additif seulement.
+        const migrateNotesHtml = tokenOk ? `
+            <h4 class="cc-section-title">Notes privées</h4>
+            <div class="cc-card cc-card--padded cc-card--block">
+                <p class="cc-card-hint">
+                    Envoie tes notes existantes (déjà enregistrées sur cet appareil)
+                    vers heripia-travail, pour qu'elles apparaissent aussi sur tes
+                    autres appareils. Sans effet sur ce qui est déjà en local.
+                </p>
+                <button id="btn-migrate-notes" class="cc-btn-cta cc-btn-cta--full">
+                    <i data-lucide="upload-cloud"></i> Migrer mes notes vers heripia-travail
+                </button>
+            </div>
+        ` : '';
+
         container.innerHTML = `
             <div class="cc-config-layout">
                 ${connectionHtml}
                 ${patHtml}
                 ${repoHtml}
+                ${migrateNotesHtml}
             </div>
         `;
 
@@ -1206,6 +1228,37 @@ export function renderTab(tab, diffData, callbacks) {
                 showToast('Déconnecté de GitHub', 'info');
                 renderTab('settings', diffData, callbacks);
             });
+
+            // — Migration one-shot des notes vers heripia-travail —
+            const btnMigrate = document.getElementById('btn-migrate-notes');
+            if (btnMigrate) btnMigrate.onclick = async () => {
+                btnMigrate.disabled = true;
+                const originalHTML = btnMigrate.innerHTML;
+                try {
+                    const mapId = state.currentMapId;
+                    const result = await migrateExistingNotes(mapId, (done, total) => {
+                        btnMigrate.textContent = `Envoi… ${done}/${total}`;
+                    });
+                    if (result.total === 0) {
+                        showToast('Aucune note locale à migrer.', 'info');
+                    } else if (result.failed.length === 0) {
+                        showToast(`${result.success} note(s) envoyée(s) vers heripia-travail.`, 'success', 4000);
+                    } else {
+                        showToast(
+                            `${result.success}/${result.total} envoyées — ${result.failed.length} échec(s) (réessaie plus tard).`,
+                            'warning',
+                            6000
+                        );
+                        console.warn('[PrivateNotes] Échecs de migration:', result.failed);
+                    }
+                } catch (e) {
+                    showToast('Migration impossible : ' + (e.message || e), 'error', 5000);
+                } finally {
+                    btnMigrate.disabled = false;
+                    btnMigrate.innerHTML = originalHTML;
+                    createIcons({ icons: appIcons, root: btnMigrate });
+                }
+            };
         }, 0);
     } else if (tab === 'maintenance') {
         renderMaintenanceTab(container);

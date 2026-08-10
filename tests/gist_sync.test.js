@@ -99,6 +99,8 @@ describe('buildPayload', () => {
     it('préserve tous les SYNC_KEYS présents', () => {
         // 'planifie' retiré des SYNC_KEYS 14/05/2026 (refonte Mon Espace V2) :
         // valeur calculée à la volée via computePlanifieCounter, plus stockée.
+        // 'notes' retiré 10/08/2026 : synchronisé via heripia-travail désormais
+        // (cf. private-notes.js), plus par ce Gist — cf. filtrage ci-dessous.
         state.userData = {
             poi1: {
                 vu: true, vuManual: true, visitedByCircuits: ['c1'],
@@ -106,12 +108,13 @@ describe('buildPayload', () => {
             }
         };
         const payload = buildPayload();
-        // planifie est désormais filtré (legacy)
+        // planifie (legacy) ET notes (heripia-travail) sont désormais filtrés
         expect(payload.userData.poi1).toEqual({
             vu: true, vuManual: true, visitedByCircuits: ['c1'],
-            notes: 'hi', incontournable: true
+            incontournable: true
         });
         expect(payload.userData.poi1.planifie).toBeUndefined();
+        expect(payload.userData.poi1.notes).toBeUndefined();
     });
 
     it('enveloppe : mapId, circuitsStatus, lastSync (ISO), appVersion — testedCircuits RETIRÉ', () => {
@@ -282,21 +285,19 @@ describe('mergeRemoteIntoLocal — vu rétro-compat & recompute', () => {
     });
 });
 
-describe('mergeRemoteIntoLocal — notes', () => {
-    it('remote présent + local vide → merge', () => {
+// 'notes' NE voyage plus par le Gist depuis le 10/08/2026 — synchronisé via
+// heripia-travail (cf. private-notes.js). Ce test protège explicitement
+// l'absence de merge : un `notes` dans un payload Gist (ancien format, ou
+// Gist d'un appareil pas encore à jour) ne doit JAMAIS écraser/créer de note
+// locale — sinon une note effacée localement pourrait ressusciter depuis un
+// vieux Gist qui traînerait encore la clé.
+describe('mergeRemoteIntoLocal — notes N\'EST PLUS fusionné (migration heripia-travail)', () => {
+    it('un notes distant est ignoré, même si le local est vide', () => {
         state.userData = { poi1: {} };
         const remote = { userData: { poi1: { notes: 'hello' } } };
         const { updates } = mergeRemoteIntoLocal(remote);
-        expect(updates).toHaveLength(1);
-        expect(updates[0].data.notes).toBe('hello');
-    });
-
-    it('local présent → local gagne', () => {
-        state.userData = { poi1: { notes: 'local' } };
-        const remote = { userData: { poi1: { notes: 'remote' } } };
-        const { updates } = mergeRemoteIntoLocal(remote);
         expect(updates).toHaveLength(0);
-        expect(state.userData.poi1.notes).toBe('local');
+        expect(state.userData.poi1.notes).toBeUndefined();
     });
 });
 
@@ -452,14 +453,17 @@ describe('pushToGist — découverte avant création (fix 01/08/2026)', () => {
 
     it('un Gist retrouvé est FUSIONNÉ avant d\'être écrasé — rien de local-only n\'est perdu', async () => {
         state.userData = {}; // rien en local
+        // incontournable (pas notes, qui ne voyage plus par le Gist depuis le
+        // 10/08/2026, cf. private-notes.js) : même sémantique de fusion
+        // (« remote gagne si local absent »).
         mockFetchWith({
             discovered: [{ id: 'gist-found', updated_at: '2026-07-30T00:00:00Z', files: { 'history_walk_userdata.json': {} } }],
-            mergeRemote: { mapId: 'djerba', userData: { poi1: { notes: 'existe seulement côté Gist' } } }
+            mergeRemote: { mapId: 'djerba', userData: { poi1: { incontournable: true } } }
         });
 
         await pushToGist();
 
-        expect(state.userData.poi1.notes).toBe('existe seulement côté Gist');
+        expect(state.userData.poi1.incontournable).toBe(true);
         expect(batchSavePoiData).toHaveBeenCalled();
     });
 
@@ -568,7 +572,9 @@ describe('pullFromGist — auto-réparation d\'un gistId mort (fix 09/08/2026)',
     afterEach(() => { delete global.fetch; });
 
     // deadId répond 404 ; 'gist-alive' contient le payload distant.
-    function mockFetchWith({ discovered = [], remote = { mapId: 'djerba', userData: { poiX: { notes: 'venu du Gist' } } } } = {}) {
+    // incontournable (pas notes, qui ne voyage plus par le Gist depuis le
+    // 10/08/2026, cf. private-notes.js) : même sémantique de fusion.
+    function mockFetchWith({ discovered = [], remote = { mapId: 'djerba', userData: { poiX: { incontournable: true } } } } = {}) {
         const calls = [];
         global.fetch = vi.fn((url, opts = {}) => {
             const method = opts.method || 'GET';
@@ -601,7 +607,7 @@ describe('pullFromGist — auto-réparation d\'un gistId mort (fix 09/08/2026)',
         await pullFromGist();
 
         expect(localStorage.getItem('hw_gist_id')).toBe('gist-alive');
-        expect(state.userData.poiX.notes).toBe('venu du Gist');
+        expect(state.userData.poiX.incontournable).toBe(true);
         // Le boot ne doit PLUS alarmer l'utilisateur : la sync s'est réparée seule.
         expect(showToast).not.toHaveBeenCalledWith(
             expect.stringContaining('indisponible'), 'warning', expect.any(Number)

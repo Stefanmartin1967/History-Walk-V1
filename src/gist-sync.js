@@ -50,7 +50,13 @@ export function buildPayload() {
     // images — les octets vivent dans le dépôt privé. C'est ce qui permet de
     // préparer au bureau et de retrouver ses repères sur le terrain sans alourdir
     // le Gist, dont le contenu est tronqué par l'API GitHub au-delà de 1 Mo.
-    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'incontournable', 'workPhotos'];
+    //
+    // 'notes' RETIRÉ (10/08/2026) : synchronisé désormais via heripia-travail
+    // (cf. private-notes.js), pas le Gist — même motif que workPhotos (chemin
+    // FIXE et connu, pas d'ID opaque à découvrir). `notes` reste dans
+    // PERSONAL_KEYS (config.js) : toujours exclu de la publication, juste plus
+    // de ce Gist. Voir project_gist_to_private_repo_migration.
+    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'incontournable', 'workPhotos'];
     const filtered = {};
     for (const [poiId, data] of Object.entries(state.userData || {})) {
         const slim = {};
@@ -114,11 +120,6 @@ export function mergeRemoteIntoLocal(remote) {
             const manual = merged.vuManual === true;
             const byCircuits = Array.isArray(merged.visitedByCircuits) && merged.visitedByCircuits.length > 0;
             merged.vu = manual || byCircuits;
-        }
-        // notes : le plus récent gagne (on utilise lastSync du payload)
-        if (remoteData.notes && !local.notes) {
-            merged.notes = remoteData.notes;
-            changed = true;
         }
         // incontournable : true gagne
         if (remoteData.incontournable === true && !local.incontournable) {

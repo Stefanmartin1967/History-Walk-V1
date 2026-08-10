@@ -442,6 +442,35 @@ export function escapeXml(unsafe) {
 export const escapeHtml = escapeXml;
 
 /**
+ * Échappe un texte libre et transforme les URL http(s) qu'il contient en
+ * liens cliquables — pour la note privée (10/08/2026), dont l'usage réel est
+ * une prose avec une URL glissée au milieu d'une phrase (ex. « ... dans une
+ * publication Facebook https://... du 28 décembre 2023 »), pas une ligne
+ * dédiée comme le champ Source (cf. source-format.mjs, qui ne convient pas
+ * ici : il n'extrait une URL que si elle occupe la ligne ENTIÈRE).
+ *
+ * Sûr par construction : le texte est échappé D'ABORD (`text.split(...)`
+ * découpe le texte BRUT, chaque morceau — url compris — est ensuite échappé
+ * individuellement) ; seul un préfixe `http://` ou `https://` littéral est
+ * reconnu, donc aucun `javascript:`/`data:` ne peut jamais en sortir.
+ * Retours à la ligne préservés en `<br>`, comme le fait déjà `description`.
+ */
+export function linkifyText(text) {
+    const raw = String(text ?? '');
+    const urlRegex = /(https?:\/\/[^\s<>"]+)/gi;
+    return raw
+        .split(urlRegex)
+        .map((part, i) => {
+            if (i % 2 === 1) {
+                const href = escapeXml(part);
+                return `<a href="${href}" target="_blank" rel="noopener noreferrer">${href}</a>`;
+            }
+            return escapeXml(part).replace(/\n/g, '<br>');
+        })
+        .join('');
+}
+
+/**
  * Une destination est « publiée » (visible par tous) uniquement si son champ
  * `status` vaut explicitement "published". Tout le reste (status "draft",
  * absent, ou valeur inconnue) est traité comme un brouillon : visible admin
