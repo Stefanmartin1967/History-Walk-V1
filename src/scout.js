@@ -38,6 +38,7 @@ import { fetchZonesAuto } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
 import { isRejected } from './rejected.js';
 import { getHwCategory, resolveOsmNames } from './scout-categories.js';
+import { collectKnownOsmRefs, isDuplicateCandidate } from './scout-dedup.js';
 import { getStoredToken } from './github-sync.js';
 import { registerDraftDestinationOnGitHub, pushDestinationZones } from './publish-destination.js';
 
@@ -61,7 +62,6 @@ let _geoCountry = '';           // création : code pays ISO (Nominatim) → niv
 
 const MIN_PX = 46;              // taille mini de la boîte à l'écran (poignées utilisables)
 const MIN_VIEW_KM = 25;         // fenêtre mini après géocodage : de quoi tracer une boîte de 25 km
-const DEDUP_M = 50;             // un candidat à < 50 m d'un POI existant = doublon (règle #472)
 const TILE_KM = 25;             // côté max d'une tuile (km). Djerba (~18 km) tient en 1 passe — comme
                                 // l'ancien Scout (1 bbox). Le découpage ne sert que pour des boîtes
                                 // VRAIMENT vastes (multi-destinations). Réunif B2c, relevé 5→25.
@@ -133,23 +133,9 @@ function defaultBox() {
     return viewportRectToGeo({ left: r.left + (r.width - w) / 2, top: r.top + (r.height - h) / 2, w, h });
 }
 
-// ── Géométrie / dédup ────────────────────────────────────────────────────────
-function haversineM(aLat, aLon, bLat, bLon) {
-    const R = 6371000, toRad = (d) => d * Math.PI / 180;
-    const dLat = toRad(bLat - aLat), dLng = toRad(bLon - aLon);
-    const h = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLng / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(h));
-}
-// Règle #472 (validée Stefan 07/05) : on ne RECRÉE jamais un POI existant —
-// candidat à < 50 m d'un POI du data chargé = doublon, écarté de l'import.
-function isAlreadyInData(lat, lon) {
-    const feats = state.loadedFeatures || [];
-    return feats.some(f => {
-        const c = f.geometry?.coordinates;
-        return Array.isArray(c) && Number.isFinite(c[0]) && Number.isFinite(c[1])
-            && haversineM(lat, lon, c[1], c[0]) < DEDUP_M;
-    });
-}
+// ── Géométrie ────────────────────────────────────────────────────────────────
+// Les règles de dédup (identité OSM puis proximité 50 m) vivent dans le module
+// pur scout-dedup.js — voir son en-tête pour le pourquoi des deux règles.
 function inBox(c) {
     return _box && c.lat <= _box.north && c.lat >= _box.south && c.lon >= _box.west && c.lon <= _box.east;
 }
@@ -553,6 +539,10 @@ async function scan() {
     clearCandidates();
     const seen = new Set();   // dédup inter-tuiles (POI à cheval sur 2 bbox) par id OSM
     const all = [];
+    // Index des objets OSM déjà représentés dans le data chargé, construit UNE fois
+    // pour tout le scan (l'import ne se fait qu'à la capture : le data ne bouge pas
+    // pendant la moisson) et reconstruit à chaque scan pour refléter les curations.
+    const knownOsmRefs = collectKnownOsmRefs(state.loadedFeatures || []);
     let rejectedSkipped = 0;  // objets déjà rejetés (corbeille) ignorés — transparence au récap
     showLoading(true, multi ? `Moisson 1/${tiles.length}…` : 'Interrogation d’Overpass…');
     let pending = tiles.map((t, i) => ({ t, i }));  // tuiles restant à scanner
@@ -592,17 +582,20 @@ async function scan() {
                     if (isRejected(key)) { rejectedSkipped++; continue; }
                     const tags = el.tags || {};
                     const cat = getHwCategory(tags);
-                    // Doublon si < 50 m d'un POI EXISTANT (règle #472) OU d'un candidat
-                    // déjà retenu dans CE scan : OSM a parfois 2 entrées au même lieu
-                    // (ex. mosquée dédoublée). On garde la 1ʳᵉ, on écarte la 2ᵉ.
-                    const dup = isAlreadyInData(lat, lon)
-                        || all.some(c => !c.dup && haversineM(lat, lon, c.lat, c.lon) < DEDUP_M);
+                    // Doublon si l'objet OSM est DÉJÀ porté par un POI chargé (identité
+                    // osm_ref, quelle que soit la distance), sinon < 50 m d'un POI
+                    // existant (règle #472) ou d'un candidat déjà retenu dans CE scan.
+                    const dup = isDuplicateCandidate(
+                        { lat, lon, osmRef: key },
+                        { knownOsmRefs, features: state.loadedFeatures || [], retained: all },
+                    );
                     // P5 — routage FR/AR du nom OSM (évite qu'un nom arabe atterrisse
                     // dans le champ français). Logique pure testée dans scout-categories.
                     const { nameFr, nameAr } = resolveOsmNames(tags);
                     // osmRef = identité OSM stable (« node/123 ») portée jusqu'au POI
-                    // capturé → permet de tombstoner le bon objet à la suppression et
-                    // de le skipper au re-scan (chantier rejets/corbeille).
+                    // capturé → permet de tombstoner le bon objet à la suppression,
+                    // de le skipper au re-scan (chantier rejets/corbeille) et de le
+                    // reconnaître comme déjà représenté (règle 1 de scout-dedup).
                     all.push({ lat, lon, cat, unknown: !cat, dup, nameFr, nameAr, osmRef: key });
                 }
                 _candidates = all;

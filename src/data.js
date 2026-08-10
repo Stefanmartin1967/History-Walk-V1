@@ -820,7 +820,18 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
 
 // --- SUPPRESSION DE LIEU (Soft Delete + Admin Draft) ---
 
-export async function deletePoi(poiId) {
+/**
+ * Retire un POI localement (soft delete) + intention de suppression côté admin.
+ *
+ * @param {string} poiId
+ * @param {Object}  [opts]
+ * @param {boolean} [opts.tombstone=true]  Poser le tombstone de rejet si le POI porte
+ *   un osm_ref. `false` pour la fusion de doublon (poi-duplicate.js) : l'objet OSM
+ *   n'est pas rejeté, il vient d'être reporté sur le POI gardé — le tombstoner
+ *   l'afficherait à tort dans la corbeille des rejets et le ferait ressortir en
+ *   candidat si on la vidait.
+ */
+export async function deletePoi(poiId, { tombstone = true } = {}) {
     // 1. Gestion Liste cachée (pour l'affichage local immédiat)
     if (!state.hiddenPoiIds) setHiddenPoiIds([]);
     if (!state.hiddenPoiIds.includes(poiId)) {
@@ -848,7 +859,11 @@ export async function deletePoi(poiId) {
         // courant = candidats supprimés en curation. Un POI créé à la main (sans
         // osm_ref) n'est pas tombstoné. On garde un instantané (nom/cat/coords) pour
         // afficher et restaurer depuis la corbeille (PR-2) sans re-scanner.
-        const osmRef = feature?.properties?.osm_ref;
+        // getPoiProp (overlay prioritaire) et non properties brut : un osm_ref saisi
+        // dans le RichEditor — ou reporté par la fusion de doublon — vit dans userData
+        // tant que la destination n'est pas republiée ; le lire brut ratait le
+        // tombstone de ces POI-là.
+        const osmRef = tombstone ? getPoiProp(feature, 'osm_ref') : null;
         if (osmRef) {
             const coords = feature.geometry?.coordinates || [];
             addRejected({

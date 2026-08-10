@@ -517,3 +517,38 @@
     white-space: nowrap;
     border: 0;
 }
+
+/* ─── Sélecteur « Doublon d'un lieu existant » (poi-duplicate.js) ──────────────
+   Surcouche posée DANS l'hôte du RichEditor (modale ou tiroir Mode Données) :
+   elle réutilise le shell .me-confirm-* de la corbeille, élargi et scrollable
+   parce qu'elle porte une LISTE de lieux et non un simple oui/non. */
+.me-confirm--picker {
+    max-width: 520px;
+    display: flex; flex-direction: column;
+    max-height: min(560px, 100%);
+}
+/* L'icône de tête n'est pas une alerte ici : le geste destructeur n'arrive qu'au
+   bouton du bas. Teinte de marque plutôt que rouge. */
+.me-confirm--picker .pd-ico {
+    background: var(--brand-soft);
+    color: var(--brand);
+}
+.pd-search { margin-bottom: 10px; }
+.pd-list {
+    flex: 1; min-height: 0; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 6px;
+    margin-bottom: 14px;
+}
+.pd-empty { padding: 22px 10px; text-align: center; font-size: 12.5px; color: var(--ink-soft); }
+/* .me-trash-item porté par un <button> : on neutralise les défauts du bouton. */
+.pd-item {
+    width: 100%; font: inherit; text-align: left; cursor: pointer;
+    grid-template-columns: 36px 1fr 20px;
+}
+.pd-item .me-trash-text { display: flex; flex-direction: column; gap: 2px; }
+.pd-item .pd-check { opacity: 0; color: var(--brand); display: grid; place-items: center; }
+.pd-item .pd-check i[data-lucide] { width: 17px; height: 17px; }
+.pd-item.is-picked { border-color: var(--brand); background: var(--brand-soft); }
+.pd-item.is-picked .pd-check { opacity: 1; }
+.pd-item.is-clash { opacity: 0.55; cursor: not-allowed; }
+.pd-item.is-clash:hover { border-color: var(--line); }
