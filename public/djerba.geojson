@@ -3131,18 +3131,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ouchachna",
+        "Nom du site FR": "Mosquée Ennour",
         "Nom du site arabe": "جامع عشاشنة",
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "Source": "Répertoire J. Fathallah, n° 158 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6E2G25V2R888QZDP0X",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1786362563586.jpg",
+          "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1786362565213.jpg",
+          "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1786362566852.jpg",
+          "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1786362568418.jpg",
+          "photos/poi_HW-01K77WPE6E2G25V2R888QZDP0X_1786362569837.jpg"
+        ],
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mosquée Ouchachna. May. Mosquée malékite. Très récente.",
+        "description": "Mosquée Ouchachna. May. Mosquée malékite. Très récente.\nLe panneau indique :\n\nجامع النور — Jami' an-Nour / Mosquée An-Nour (littéralement \"la Mosquée de la Lumière\" — النور = \"la lumière\")\n\nEn dessous, la plaque donne déjà les deux calendriers :\n\n1405 هـ (hégirien, ه = hijri)\n1984 م (grégorien, م = miladi/\"de notre ère\")\nÇa correspond bien : l'année 1405 du calendrier hégirien s'étend de fin septembre 1984 à mi-septembre 1985 — la plaque a donc retenu 1984 comme année de correspondance, ce qui est cohérent puisque l'année 1405H a commencé cette année-là.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/13505451159",
@@ -3151,7 +3157,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -4610,11 +4617,11 @@
         "Sous-type": "Catholique",
         "État": "En activité",
         "Accès": "Intérieur visitable",
-        "description": "Eglise construite en 1848 et agrandie en 1855 ur un terrain appartenant à la famillle Ben Ayed, sous la direction du père capucin Gaétant de Ferrera.",
+        "description": "Eglise construite en 1848 et agrandie en 1855 ur un terrain appartenant à la famillle Ben Ayed, sous la direction du père capucin Gaétant de Ferrera.\nHoraire des messes :\nMardi et vendredi : 17h30\nMercredi et jeudi : 09h00\nDimanche : 10h30",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Téléphone": "",
-        "Horaires": "",
+        "Téléphone": "+216 27 677 120",
+        "Horaires": "Du mardi au vendredi - 10h00 à 12h00",
         "Facebook": "",
         "info_gpx": "Une des rares églises catholique de Djerba",
         "accessPoint": [
@@ -4625,7 +4632,12 @@
           "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460104623.jpg",
           "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460106288.jpg",
           "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460108153.jpg"
-        ]
+        ],
+        "osm_ref": "",
+        "maps_ref": "",
+        "verified": true,
+        "introuvableCarte": false,
+        "descriptionPublic": true
       }
     },
     {
