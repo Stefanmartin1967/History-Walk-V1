@@ -998,9 +998,9 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Henchir Bourgou",
+        "Nom du site FR": "Mausolée Henchir Bourgou",
         "Nom du site arabe": "هنشير بورقو",
-        "Catégorie": "Site archéologique",
+        "Catégorie": "Site funéraire",
         "Zone": "Midoun",
         "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgouhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
@@ -1016,7 +1016,10 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/436514753",
+        "maps_ref": "https://maps.app.goo.gl/4Qx2F1o65PfFw7LE8",
+        "descriptionPublic": false
       }
     },
     {
@@ -11380,6 +11383,31 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.968894,
+          33.8214523
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Henchir Bourgou",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/436514745",
+        "HW_ID": "HW-01KZH0VGWZ21W3CHE2CSPZYXSK",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "description": "Site archéologique Henchir Bourgou, sur lequel est situé un mausolée du même nom",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
         "Zone": "Midoun"
       }
     }
