@@ -1004,7 +1004,11 @@
         "Zone": "Midoun",
         "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgouhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1786349086606.jpg",
+          "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1786349088242.jpg",
+          "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1786349089805.jpg"
+        ],
         "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge.",
         "Sous-type": "",
         "État": "Conservé",
