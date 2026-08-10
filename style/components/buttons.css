@@ -30,6 +30,16 @@
 }
 .btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
+/* `display: inline-flex` l'emporte sur le `display: none` du user-agent pour
+   l'attribut [hidden] : un .btn masqué en JS par `btn.hidden = true` restait AFFICHÉ.
+   Les conteneurs qui s'en étaient aperçus l'avaient corrigé chacun chez soi
+   (`.hw-modal [hidden]`, `.follow-ui [hidden]`, `.fiche-row[hidden]`…) — mais pas le
+   tiroir du Mode Données : constaté le 10/08/2026, « Valider & enregistrer » (masqué
+   hors candidat par updateCandidateFooter) y apparaissait sur TOUS les lieux et
+   faisait déborder le footer. Corrigé une fois pour toutes au niveau du composant,
+   au lieu d'ajouter une n-ième règle de conteneur. */
+.btn[hidden] { display: none; }
+
 .btn:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);

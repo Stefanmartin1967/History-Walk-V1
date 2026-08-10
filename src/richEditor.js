@@ -54,6 +54,7 @@ const DOM_IDS = {
         SAVE: 'btn-save-rich-poi',
         VALIDATE_SAVE: 'btn-validate-save-rich-poi',
         CANCEL: 'btn-cancel-rich-poi',
+        DELETE: 'btn-delete-rich-poi',
         CLOSE: 'close-rich-poi-modal',
         EMAIL: 'btn-suggest-email',
         PREV: 'btn-rich-prev',
@@ -264,12 +265,22 @@ const RICH_POI_SUBHEADER_HTML = `
     </div>
 `;
 
-// Footer : Annuler (ghost) + Enregistrer (primary, désactivable via updateSaveButtonState).
+// Footer : Supprimer (danger, EDIT seulement) + Annuler (ghost) + Enregistrer (primary,
+// désactivable via updateSaveButtonState).
+//
+// « Supprimer » ferme le trou de curation signalé par Stefan le 10/08/2026 : le Mode
+// Données ne donnait AUCUN accès à la suppression — il fallait quitter le mode, retrouver
+// le lieu sur la carte, ouvrir sa fiche et passer par le kebab. Le bouton délègue à
+// requestSoftDelete (ui-modals.js), le MÊME chemin que ce kebab : un seul confirm, un seul
+// deletePoi, donc pas de second comportement de suppression à maintenir en parallèle.
 // P7 : pour un candidat Scout (EDIT), updateCandidateFooter() révèle « Valider &
 // enregistrer » (primaire, 1 geste = enrichir + publiable) et rétrograde
 // « Enregistrer » en secondaire « (garder à curer) ». Les deux boutons partagent le
 // même garde-fou de validité (nom + catégorie) via updateSaveButtonState.
 const RICH_POI_FOOTER_HTML = `
+    <button id="btn-delete-rich-poi" class="btn btn-danger" type="button" hidden>
+        <i data-lucide="trash-2"></i><span>Supprimer</span>
+    </button>
     <button id="btn-cancel-rich-poi" class="btn btn-ghost" type="button">Annuler</button>
     <button id="btn-save-rich-poi" class="btn btn-primary" type="button">
         <i data-lucide="save"></i><span>Enregistrer</span>
@@ -675,6 +686,10 @@ function bindModalEvents() {
     // « Doublon d'un lieu existant… » (ligne Candidat à curer, donc candidats seuls).
     document.getElementById('btn-rich-duplicate')?.addEventListener('click', handleDuplicate);
 
+    // « Supprimer » (EDIT seulement — currentMode est posé avant showModal, donc lisible ici).
+    document.getElementById(DOM_IDS.BTNS.DELETE)?.addEventListener('click', handleDelete);
+    updateDeleteButton();
+
     // Sauvegarde. P7 : « Enregistrer » garde l'éventuel flag candidat ;
     // « Valider & enregistrer » le retire dans la foulée (handleSave(true)).
     document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', () => handleSave(false));
@@ -806,6 +821,27 @@ function mountDrawer(isCreate) {
 function teardownDrawer() {
     if (_drawerEl && _drawerEl.parentNode) _drawerEl.parentNode.removeChild(_drawerEl);
     _drawerEl = null;
+}
+
+// « Supprimer » — délègue au chemin unique de suppression (ui-modals.requestSoftDelete) :
+// même confirmation et même soft delete que le kebab de la fiche. Import dynamique pour
+// ne pas nouer richEditor à la chaîne ui-modals → ui-details.
+async function handleDelete() {
+    if (currentMode !== 'EDIT' || !currentFeatureId) return;
+    const { requestSoftDelete } = await import('./ui-modals.js');
+    // Le lieu n'existe plus : on ferme SANS le confirm « modifications non enregistrées »,
+    // qui porterait sur des champs devenus sans objet.
+    if (await requestSoftDelete(currentFeatureId)) {
+        isDirty = false;
+        await RichEditor.close();
+    }
+}
+
+// Affichage du bouton « Supprimer » : EDIT seulement (rien à supprimer en CREATE).
+// Rappelé à chaque ouverture — le footer est recréé par showModal.
+function updateDeleteButton() {
+    const btn = document.getElementById(DOM_IDS.BTNS.DELETE);
+    if (btn) btn.hidden = currentMode !== 'EDIT';
 }
 
 // « Doublon d'un lieu existant… » — le candidat ouvert double un POI déjà présent :
