@@ -100,6 +100,13 @@ body {
     padding: 10px;
     border-radius: 8px;
 }
+/* Footer du Rich Editor : « Supprimer » isolé à gauche, actions de sauvegarde à
+   droite — la distance évite le clic destructeur pris pour un « Enregistrer ».
+   Vaut dans la modale (.hw-modal-footer, justify-content: flex-end) comme dans le
+   tiroir Mode Données ; là, c'est « Annuler » qui portait le margin-right auto, on
+   le lui retire tant que « Supprimer » est visible. */
+#btn-delete-rich-poi:not([hidden]) { margin-right: auto; }
+.md-drawer-foot:has(#btn-delete-rich-poi:not([hidden])) .btn-ghost { margin-right: 0; }
 /* Bloc taxonomie (Sous-type / État / Accès) — 3 selects contextuels ajoutés
    au richEditor après Catégorie/Zone. Encadré gris neutre, aligné sur
    .rich-poi-section-muted (Temps/Prix). Masqué entièrement si la catégorie
