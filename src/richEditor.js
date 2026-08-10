@@ -2,7 +2,7 @@
 import L from 'leaflet';
 import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
-import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates } from './data.js';
+import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates, updatePoiData } from './data.js';
 import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl } from './utils.js';
 import { addPoiFeature } from './data.js';
@@ -17,6 +17,9 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { configureHelp, helpButton, helpInline } from './help-popover.js';
 import { GUIDE_LIEU, HELP_LIEU_ZONE, HELP_LIEU_CATEGORIE, HELP_LIEU_DESC_COURTE, HELP_LIEU_SOURCE } from './help-content.js';
+import {
+    getWorkPhotosById, uploadWorkPhoto, loadWorkPhotoBlob, MAX_WORK_PHOTOS_PER_POI
+} from './work-photos.js';
 
 // Aide « ? » : le patron rend l'icône via createIcons (idempotent).
 configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
@@ -219,6 +222,19 @@ const RICH_POI_BODY_HTML = `
         <textarea id="rich-poi-notes" class="editable-input" rows="2"></textarea>
     </div>
 
+    <!-- Photos de travail (10/08/2026) — images dont Stefan n'est PAS l'auteur,
+         pour identifier un lieu pas encore visité. Déposées dans un dépôt PRIVÉ,
+         jamais publiées, sans watermark. Enregistrement IMMÉDIAT (upload réseau),
+         indépendant du bouton Enregistrer du formulaire. -->
+    <div class="input-group rich-work-photos" id="rich-work-photos">
+        <label>Photos de travail <span class="rich-work-hint">jamais publiées — repère de recherche</span></label>
+        <div class="rich-work-list" id="rich-work-list"></div>
+        <button type="button" class="btn btn-ghost rich-work-add" id="btn-rich-work-add">
+            <i data-lucide="image-plus"></i><span>Ajouter une photo de travail</span>
+        </button>
+        <input type="file" id="rich-work-file" class="is-hidden" accept="image/*">
+    </div>
+
     <!-- GPS footer : déplacer + coords + liens carte (réunif A3f) -->
     <div class="rich-poi-gps-footer">
         <button id="btn-rich-move-marker" class="btn btn-ghost" title="Déplacer le marqueur" aria-label="Déplacer le marqueur" type="button">
@@ -295,6 +311,11 @@ export const RichEditor = {
         // Lock Zone Input
         const zoneInput = document.getElementById(DOM_IDS.INPUTS.ZONE);
         if (zoneInput) zoneInput.disabled = true;
+
+        // Photos de travail : masquées en création — il n'y a pas encore
+        // d'identifiant stable auquel rattacher un envoi.
+        const workWrap = document.getElementById('rich-work-photos');
+        if (workWrap) workWrap.hidden = true;
 
         setValue(DOM_IDS.INPUTS.DESC_SHORT, "");
         setValue(DOM_IDS.INPUTS.DESC_LONG, "");
@@ -406,6 +427,7 @@ export const RichEditor = {
         setVerified(!!merged.verified);
         setMapMissing(!!merged.introuvableCarte);
         setDescPublic(!!merged.descriptionPublic);
+        renderWorkPhotos(currentFeatureId);
         // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
         // P7 : et le footer bascule en mode candidat (« Valider & enregistrer »).
         { const cand = isCandidate(feature);
@@ -648,6 +670,10 @@ function bindModalEvents() {
     // « Valider & enregistrer » le retire dans la foulée (handleSave(true)).
     document.getElementById(DOM_IDS.BTNS.SAVE)?.addEventListener('click', () => handleSave(false));
     document.getElementById(DOM_IDS.BTNS.VALIDATE_SAVE)?.addEventListener('click', () => handleSave(true));
+
+    // Photos de travail : câblage à part car elles s'enregistrent immédiatement
+    // (envoi réseau) et ne participent pas au submit du formulaire.
+    setupWorkPhotoControls();
 
     // Toggle « Vérifié » (bouton-switch, hors boucle INPUTS car pas de .value)
     document.getElementById(DOM_IDS.VERIFIED)?.addEventListener('click', (e) => {
@@ -935,6 +961,127 @@ function setDescPublic(val) {
     if (!el) return;
     el.classList.toggle('is-on', !!val);
     el.setAttribute('aria-checked', String(!!val));
+}
+
+// ─── Photos de travail (10/08/2026) ──────────────────────────────────────────
+// Images dont Stefan n'est PAS l'auteur, pour identifier un lieu pas encore
+// visité. Déposées dans un dépôt PRIVÉ (jamais publiées, jamais watermarquées).
+//
+// À la différence des autres champs, elles s'enregistrent IMMÉDIATEMENT et ne
+// passent pas par le bouton « Enregistrer » : l'ajout est un envoi réseau
+// asynchrone, l'accrocher au submit synchrone du formulaire l'aurait rendu
+// silencieusement faillible.
+
+// ObjectURLs des vignettes, révoqués à chaque re-rendu (sinon fuite mémoire).
+let _workThumbUrls = [];
+
+function revokeWorkThumbs() {
+    _workThumbUrls.forEach(u => URL.revokeObjectURL(u));
+    _workThumbUrls = [];
+}
+
+async function renderWorkPhotos(poiId) {
+    const wrap = document.getElementById('rich-work-photos');
+    const list = document.getElementById('rich-work-list');
+    if (!wrap || !list) return;
+
+    // Réservé à l'admin : un visiteur n'a de toute façon jamais ces références
+    // (elles vivent dans le Gist privé), mais on ne montre pas le bloc pour autant.
+    wrap.hidden = !state.isAdmin;
+    if (!state.isAdmin) return;
+
+    revokeWorkThumbs();
+    const paths = getWorkPhotosById(poiId);
+    list.innerHTML = '';
+
+    const addBtn = document.getElementById('btn-rich-work-add');
+    if (addBtn) addBtn.disabled = paths.length >= MAX_WORK_PHOTOS_PER_POI;
+
+    for (const path of paths) {
+        const item = document.createElement('div');
+        item.className = 'rich-work-item';
+
+        const blob = await loadWorkPhotoBlob(path);
+        if (blob) {
+            const url = URL.createObjectURL(blob);
+            _workThumbUrls.push(url);
+            const img = document.createElement('img');
+            img.className = 'rich-work-thumb';
+            img.src = url;
+            img.alt = 'Photo de travail';
+            item.appendChild(img);
+        } else {
+            // Jamais rapatriée sur cet appareil et hors-ligne : on ne masque pas
+            // la référence, on dit pourquoi elle n'est pas visible.
+            const ph = document.createElement('span');
+            ph.className = 'rich-work-thumb rich-work-thumb--missing';
+            ph.textContent = 'hors-ligne';
+            item.appendChild(ph);
+        }
+
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'rich-work-del';
+        del.title = 'Retirer cette photo de travail';
+        del.setAttribute('aria-label', 'Retirer cette photo de travail');
+        del.innerHTML = '<i data-lucide="x"></i>';
+        del.addEventListener('click', () => removeWorkPhoto(poiId, path));
+        item.appendChild(del);
+
+        list.appendChild(item);
+    }
+
+    createIcons({ icons: appIcons, root: list });
+}
+
+async function removeWorkPhoto(poiId, path) {
+    const remaining = getWorkPhotosById(poiId).filter(p => p !== path);
+    // Seule la référence disparaît : les octets restent dans le dépôt privé
+    // (décision 10/08 — un retrait par erreur ne doit pas détruire le travail).
+    await updatePoiData(poiId, 'workPhotos', remaining);
+    await renderWorkPhotos(poiId);
+}
+
+async function addWorkPhoto(poiId, file) {
+    const current = getWorkPhotosById(poiId);
+    if (current.length >= MAX_WORK_PHOTOS_PER_POI) {
+        showToast(`Maximum ${MAX_WORK_PHOTOS_PER_POI} photos de travail par lieu.`, 'warning');
+        return;
+    }
+    const addBtn = document.getElementById('btn-rich-work-add');
+    if (addBtn) addBtn.disabled = true;
+    try {
+        showToast('Envoi de la photo de travail…', 'info', 2000);
+        const path = await uploadWorkPhoto(file, poiId);
+        await updatePoiData(poiId, 'workPhotos', [...current, path]);
+        await renderWorkPhotos(poiId);
+        showToast('Photo de travail ajoutée.', 'success');
+    } catch (e) {
+        console.warn('[WorkPhotos] Ajout échoué:', e.message);
+        showToast(`Ajout impossible : ${e.message}`, 'error', 5000);
+        if (addBtn) addBtn.disabled = false;
+    }
+}
+
+function setupWorkPhotoControls() {
+    const addBtn = document.getElementById('btn-rich-work-add');
+    const fileInput = document.getElementById('rich-work-file');
+    if (!addBtn || !fileInput) return;
+
+    addBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async () => {
+        const file = fileInput.files && fileInput.files[0];
+        fileInput.value = ''; // Permet de re-choisir le même fichier après un échec
+        if (!file) return;
+        // Mode CREATE : le POI n'a pas encore d'identifiant stable, donc rien à
+        // quoi rattacher un envoi. Une photo de travail se pose sur un lieu qui
+        // existe déjà — le cas d'usage est d'ailleurs celui d'un lieu à identifier.
+        if (!currentFeatureId) {
+            showToast("Enregistrez d'abord le lieu, puis ajoutez ses photos de travail.", 'warning', 4000);
+            return;
+        }
+        await addWorkPhoto(currentFeatureId, file);
+    });
 }
 
 function getDescPublic() {

@@ -115,9 +115,15 @@ export function validatePhotoFile(file) {
  * @param {File}   file
  * @param {number} [targetMinSize=1200] Plus petit côté cible en px. 0 = pas de redimensionnement.
  * @param {number} [quality=0.8]        Qualité JPEG (0–1).
+ * @param {object} [opts]
+ * @param {boolean} [opts.skipWatermark=false] N'appose PAS le watermark, même en
+ *        mode admin. Réservé aux images dont Stefan n'est PAS l'auteur (photos de
+ *        travail : Facebook, envois de contacts, extraits de PDF). Sans ce garde-fou,
+ *        `© Stefan Martin — Heripia` se graverait sur le travail d'autrui.
  * @returns {Promise<Blob>}
  */
-export function compressImage(file, targetMinSize = 1200, quality = 0.8) {
+export function compressImage(file, targetMinSize = 1200, quality = 0.8, opts = {}) {
+    const { skipWatermark = false } = opts;
     return new Promise((resolve, reject) => {
         const validation = validatePhotoFile(file);
         if (!validation.valid) {
@@ -157,7 +163,10 @@ export function compressImage(file, targetMinSize = 1200, quality = 0.8) {
                 // Watermark automatique pour les photos importées en mode
                 // admin (cf. ADMIN_WATERMARK_TEXT). Cuit dans le JPEG → permanent.
                 // Photos perso utilisateur : pas de watermark (c'est leur contenu).
-                if (state.isAdmin) {
+                // `skipWatermark` : le test porte sur QUI EST ADMIN, pas sur qui a
+                // pris la photo — sans cette échappatoire, une photo de tiers
+                // importée en admin ressortirait signée au nom de Stefan.
+                if (state.isAdmin && !skipWatermark) {
                     applyWatermark(ctx, width, height, ADMIN_WATERMARK_TEXT);
                 }
 

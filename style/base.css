@@ -161,6 +161,59 @@ body {
     width: 50px;
     text-align: center;
 }
+/* ── Photos de travail (10/08/2026) ──────────────────────────────────────────
+   Images dont Stefan n'est PAS l'auteur, servant à identifier un lieu pas encore
+   visité. Déposées dans un dépôt PRIVÉ, jamais publiées. Le même code ambre que
+   la puce du hero (--warn-fg) les signale ici comme du matériau de travail. */
+.rich-work-hint {
+    font-weight: 400;
+    font-size: 11.5px;
+    color: var(--warn-fg);
+    margin-left: 6px;
+}
+.rich-work-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+.rich-work-list:empty { margin-bottom: 0; }
+.rich-work-item { position: relative; }
+.rich-work-thumb {
+    display: block;
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 2px dashed var(--warn-fg);
+}
+.rich-work-thumb--missing {
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    color: var(--ink-soft);
+    background: var(--paper-2);
+    text-align: center;
+}
+.rich-work-del {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink-soft);
+    cursor: pointer;
+}
+.rich-work-del:hover { color: var(--danger-fg); border-color: var(--danger-fg); }
+.rich-work-del svg { width: 12px; height: 12px; }
+.rich-work-add:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* GPS footer interne au body (bouton "Déplacer" + coords + liens carte) */
 .rich-poi-gps-footer {
     font-size: 12px;
