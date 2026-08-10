@@ -3156,7 +3156,7 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": false
       }
