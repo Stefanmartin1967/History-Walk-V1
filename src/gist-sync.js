@@ -46,7 +46,11 @@ export function buildPayload() {
     // 'planifie' retiré 14/05/2026 (refonte Mon Espace V2) : valeur calculée à
     // la volée via computePlanifieCounter, plus stockée dans userData depuis
     // 03/05/2026 — clé legacy qui n'envoyait que des `undefined` filtrés.
-    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'incontournable'];
+    // workPhotos : ce sont des CHEMINS (quelques dizaines d'octets), jamais les
+    // images — les octets vivent dans le dépôt privé. C'est ce qui permet de
+    // préparer au bureau et de retrouver ses repères sur le terrain sans alourdir
+    // le Gist, dont le contenu est tronqué par l'API GitHub au-delà de 1 Mo.
+    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'notes', 'incontournable', 'workPhotos'];
     const filtered = {};
     for (const [poiId, data] of Object.entries(state.userData || {})) {
         const slim = {};
@@ -120,6 +124,24 @@ export function mergeRemoteIntoLocal(remote) {
         if (remoteData.incontournable === true && !local.incontournable) {
             merged.incontournable = true;
             changed = true;
+        }
+        // workPhotos : le DISTANT gagne, y compris une liste vide.
+        //
+        // Seule clé en « dernier écrivain gagne » plutôt qu'en union, et c'est
+        // délibéré : les photos de travail s'ajoutent au bureau et se consultent
+        // sur le terrain, jamais l'inverse. Une union ferait RESSUSCITER sur le
+        // téléphone des références effacées au bureau par un import de vraies
+        // photos — exactement ce que la règle « le provisoire s'efface » interdit.
+        //
+        // Le garde `!== undefined` est indispensable : un payload ancien (écrit
+        // avant ce chantier) ne porte pas la clé et ne doit rien effacer.
+        if (remoteData.workPhotos !== undefined) {
+            const remoteWork = Array.isArray(remoteData.workPhotos) ? remoteData.workPhotos : [];
+            const localWork = Array.isArray(local.workPhotos) ? local.workPhotos : [];
+            if (remoteWork.join('|') !== localWork.join('|')) {
+                merged.workPhotos = remoteWork;
+                changed = true;
+            }
         }
 
         if (changed) {

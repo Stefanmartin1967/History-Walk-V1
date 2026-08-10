@@ -661,3 +661,46 @@ describe('pullFromGist — auto-réparation d\'un gistId mort (fix 09/08/2026)',
         expect(showToast).toHaveBeenCalledWith('Gist détecté, sync activée.', 'info', expect.any(Number));
     });
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Photos de travail (10/08/2026) — seule clé en « le distant gagne » plutôt
+// qu'en union. Elles s'ajoutent au bureau et se consultent sur le terrain :
+// une union ferait ressusciter sur le téléphone des références effacées au
+// bureau par un import de vraies photos.
+describe('mergeRemoteIntoLocal — workPhotos', () => {
+    it('le distant apporte des références absentes en local', () => {
+        state.userData = {};
+        const { updates } = mergeRemoteIntoLocal({
+            userData: { poi1: { workPhotos: ['djerba/a.jpg'] } }
+        });
+        expect(updates).toHaveLength(1);
+        expect(state.userData.poi1.workPhotos).toEqual(['djerba/a.jpg']);
+    });
+
+    it('une liste distante VIDE efface le local — le provisoire ne ressuscite pas', () => {
+        state.userData = { poi1: { workPhotos: ['djerba/a.jpg'] } };
+        mergeRemoteIntoLocal({ userData: { poi1: { workPhotos: [] } } });
+        expect(state.userData.poi1.workPhotos).toEqual([]);
+    });
+
+    it('un payload SANS la clé ne touche à rien (Gist écrit avant ce chantier)', () => {
+        state.userData = { poi1: { workPhotos: ['djerba/a.jpg'] } };
+        mergeRemoteIntoLocal({ userData: { poi1: { notes: 'coucou' } } });
+        expect(state.userData.poi1.workPhotos).toEqual(['djerba/a.jpg']);
+    });
+
+    it('listes identiques → aucune mise à jour parasite', () => {
+        state.userData = { poi1: { workPhotos: ['djerba/a.jpg'] } };
+        const { updates } = mergeRemoteIntoLocal({
+            userData: { poi1: { workPhotos: ['djerba/a.jpg'] } }
+        });
+        expect(updates).toHaveLength(0);
+    });
+});
+
+describe('buildPayload — workPhotos', () => {
+    it('les CHEMINS partent dans le Gist (jamais les images)', () => {
+        state.userData = { poi1: { workPhotos: ['djerba/a.jpg'] } };
+        expect(buildPayload().userData.poi1.workPhotos).toEqual(['djerba/a.jpg']);
+    });
+});

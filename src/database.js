@@ -2,7 +2,7 @@
 const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
 
-const DB_VERSION = 8;
+const DB_VERSION = 9;
 
 // Helper: convert a base64 data-URL string to a Blob
 export function base64ToBlob(base64) {
@@ -105,6 +105,16 @@ export function initDB() {
             if (!tempDb.objectStoreNames.contains('osmNearestWay')) {
                 tempDb.createObjectStore('osmNearestWay', { keyPath: ['mapId', 'poiId'] })
                       .createIndex('mapId_index', 'mapId', { unique: false });
+            }
+
+            // 7. Cache des photos de travail (chantier 10/08/2026, DB v9).
+            // Les octets vivent dans un dépôt GitHub PRIVÉ : impossible de les
+            // charger via `<img src>` (il faut un en-tête d'autorisation). On les
+            // rapatrie une fois par API authentifiée, puis on les sert depuis ce
+            // cache — c'est ce qui les rend consultables hors-ligne sur le terrain.
+            // Clé = chemin dans le dépôt privé (déjà unique, mapId inclus).
+            if (!tempDb.objectStoreNames.contains('workPhotoCache')) {
+                tempDb.createObjectStore('workPhotoCache', { keyPath: 'path' });
             }
         };
     });
@@ -679,6 +689,31 @@ export async function setPendingAdminPhotos(mapId, poiId, photos) {
         all[poiId] = photos;
     }
     await saveAppState(pendingAdminPhotosKey(mapId), all);
+
+    // Le provisoire s'efface devant le définitif (règle validée 10/08/2026) :
+    // dès que de VRAIES photos sont attachées, les photos de travail du lieu
+    // perdent leur raison d'être et leurs références sont retirées.
+    //
+    // Posé ICI et pas dans les appelants : les quatre chemins d'ajout (import
+    // bureau, modale de tri, grille photo, Centre de Contrôle) convergent tous
+    // vers cette fonction. Un par un, c'eût été un filtre à oublier de plus.
+    //
+    // La garde sur la longueur est essentielle : une liste VIDE signifie qu'on
+    // SUPPRIME les photos du POI — surtout ne pas en profiter pour effacer aussi
+    // le travail, le lieu se retrouverait sans aucune image.
+    //
+    // Import dynamique : work-photos.js lit ce module (cache), l'importer en
+    // statique créerait un cycle.
+    if (photos && photos.length > 0) {
+        try {
+            const { clearWorkPhotos } = await import('./work-photos.js');
+            await clearWorkPhotos(poiId);
+        } catch (e) {
+            // Non bloquant : les vraies photos priment déjà à l'affichage, donc
+            // le travail est de toute façon devenu inaccessible.
+            console.warn('[WorkPhotos] Nettoyage après import échoué:', e.message);
+        }
+    }
 }
 
 /** Supprime toutes les photos pending d'un POI. */
@@ -757,6 +792,46 @@ export async function setCachedNearestWay(mapId, poiId, payload) {
     return withRetry(db => new Promise((resolve, reject) => {
         const tx = db.transaction('osmNearestWay', 'readwrite');
         const req = tx.objectStore('osmNearestWay').put(record);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+    }));
+}
+
+// === Cache des photos de travail (chantier 10/08/2026) ========================
+// Les octets vivent dans un dépôt GitHub PRIVÉ, donc inaccessibles à un
+// `<img src>`. Rapatriés une fois par API authentifiée, ils sont servis ensuite
+// depuis ce cache — d'où la consultation possible hors-ligne sur le terrain.
+// Clé = chemin dans le dépôt privé (contient déjà le mapId, donc unique).
+
+/** Blob d'une photo de travail déjà rapatriée, ou null si jamais téléchargée. */
+export async function getCachedWorkPhoto(path) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('workPhotoCache', 'readonly');
+        const req = tx.objectStore('workPhotoCache').get(path);
+        req.onsuccess = () => resolve(req.result?.blob || null);
+        req.onerror = (e) => reject(e.target.error);
+    }));
+}
+
+/** Met en cache le Blob d'une photo de travail. */
+export async function setCachedWorkPhoto(path, blob) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('workPhotoCache', 'readwrite');
+        const req = tx.objectStore('workPhotoCache').put({ path, blob, cachedAt: Date.now() });
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+    }));
+}
+
+/**
+ * Retire une photo de travail du cache local.
+ * Les octets restent dans le dépôt privé (décision 10/08/2026 : on ne supprime
+ * jamais côté GitHub — un import par erreur ne doit pas détruire le travail).
+ */
+export async function deleteCachedWorkPhoto(path) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('workPhotoCache', 'readwrite');
+        const req = tx.objectStore('workPhotoCache').delete(path);
         req.onsuccess = () => resolve();
         req.onerror = (e) => reject(e.target.error);
     }));

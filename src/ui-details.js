@@ -12,6 +12,7 @@ import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
+import { getWorkPhotosById, loadWorkPhotoBlob } from './work-photos.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
 import { configureHelp, attachHelp } from './help-popover.js';
 import { GUIDE_LIRE_LIEU } from './help-content.js';
@@ -101,7 +102,15 @@ async function hydrateHeroFromBlobs(poiId) {
     const items = state.isAdmin
         ? await getPendingAdminPhotos(mapId, poiId)
         : await getPoiPhotos(mapId, poiId);
-    if (!items || items.length === 0) return;
+
+    // Aucune vraie photo → repli sur les photos de travail (admin seul).
+    // L'ordre importe : une photo de travail n'apparaît QUE si le lieu n'a
+    // strictement rien d'autre. Les deux ne coexistent jamais dans le hero —
+    // c'est la règle « le provisoire s'efface devant le définitif ».
+    if (!items || items.length === 0) {
+        if (state.isAdmin) await hydrateHeroFromWorkPhotos(hero, poiId);
+        return;
+    }
 
     // Le panel a pu être re-rendu pendant l'await (autre POI ouvert).
     // On vérifie que le hero ciblé est toujours dans le DOM courant.
@@ -136,6 +145,54 @@ async function hydrateHeroFromBlobs(poiId) {
     // AU MOMENT du clic. On vient d'ajouter .has-photo → ce clic ouvrira donc le
     // viewer de consultation (et non la grille). Supprime aussi le double-listener
     // qui existait avant (setupHeroClick + ce bloc liaient tous deux le hero).
+}
+
+/**
+ * Repli du hero sur une photo de travail (admin, lieu sans aucune vraie photo).
+ *
+ * Marquage volontairement voyant — cadre en pointillés ambre + puce « Photo de
+ * travail » : ces images ne sont pas de Stefan et ne doivent jamais être prises
+ * pour des photos publiables, même d'un coup d'œil distrait des mois plus tard.
+ *
+ * Le hero reste en `.is-empty` : un clic doit toujours ouvrir l'ajout de vraies
+ * photos, pas le viewer. Une photo de travail se consulte, elle ne se gère pas
+ * depuis le terrain.
+ */
+async function hydrateHeroFromWorkPhotos(hero, poiId) {
+    const paths = getWorkPhotosById(poiId);
+    if (paths.length === 0) return;
+
+    // Premier affichage sur cet appareil = téléchargement réseau (dépôt privé).
+    // Ensuite, cache local → consultable hors-ligne sur le terrain.
+    const blob = await loadWorkPhotoBlob(paths[0]);
+    if (!blob) return; // Hors-ligne et jamais mise en cache : on laisse le hero vide
+
+    // Le panel a pu être re-rendu pendant l'await (autre POI ouvert).
+    if (document.getElementById('poi-hero') !== hero) return;
+
+    revokeHeroObjectUrl();
+    activeHeroObjectUrl = URL.createObjectURL(blob);
+
+    hero.classList.add('has-work-photo');
+    hero.querySelector('.empty-icon')?.remove();
+    hero.querySelector('.empty-label')?.remove();
+
+    // Puce papier du cartel (vocabulaire en vigueur), variante « warn » : la
+    // couleur ne va que sur l'icône, jamais sur le fond — lisible sur photo
+    // claire comme sombre. Positionnée à GAUCHE (.cartel-hero-work), là où le
+    // compteur de photos n'ira jamais : les deux ne coexistent pas, mais leurs
+    // ancrages distincts évitent tout recouvrement si ça changeait un jour.
+    const badge = document.createElement('span');
+    badge.className = 'cartel-hero-work';
+    const n = paths.length;
+    badge.innerHTML = `<span class="cartel-chip cartel-chip--warn"><i data-lucide="search"></i>${n > 1 ? `${n} photos de travail` : 'Photo de travail'}</span>`;
+    hero.appendChild(badge);
+
+    const safe = activeHeroObjectUrl.replace(/['"\\]/g, encodeURIComponent);
+    hero.style.setProperty('--poi-hero-bg', `url("${safe}")`);
+    hero.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
+
+    createIcons({ icons: appIcons, root: hero });
 }
 
 // Kebab + popover : remplace l'ancien drawer (PC) et bottom-sheet (mobile).

@@ -170,6 +170,28 @@
     right: var(--space-md);
     z-index: 2;
 }
+
+/* ─────────────────── PHOTO DE TRAVAIL (admin, 10/08/2026) ───────────────────
+   Image dont Stefan n'est PAS l'auteur (capture Facebook, envoi d'un contact,
+   extrait de PDF), affichée en repli quand un lieu pas encore visité n'a
+   AUCUNE vraie photo. Elle ne sera jamais publiée.
+
+   Le marquage est volontairement voyant : cadre en pointillés ambre + puce.
+   Les pointillés disent « provisoire » sans qu'on ait à lire — la photo ne peut
+   pas être prise pour une publiable, même d'un coup d'œil distrait des mois
+   plus tard. Ancrée à gauche, là où le compteur (à droite) ne va jamais. */
+.cartel-hero-work {
+    position: absolute;
+    top: var(--space-md);
+    left: var(--space-md);
+    z-index: 2;
+}
+.poi-hero.has-work-photo {
+    background-size: cover;
+    background-position: center;
+    outline: 2px dashed var(--warn-fg);
+    outline-offset: -6px;
+}
 .cartel-status {
     display: flex;
     flex-wrap: wrap;
