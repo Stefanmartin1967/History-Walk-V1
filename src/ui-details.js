@@ -13,6 +13,8 @@ import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { getWorkPhotosById, loadWorkPhotoBlob } from './work-photos.js';
+import { loadPrivateNote, savePrivateNote } from './private-notes.js';
+import { getStoredToken } from './github-sync.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
 import { configureHelp, attachHelp } from './help-popover.js';
 import { GUIDE_LIRE_LIEU } from './help-content.js';
@@ -328,19 +330,73 @@ function setupSuiviToggles(poiId) {
     });
 }
 
-function setupNotesAutosave(poiId) {
-    const notesEl = document.getElementById('poi-notes-area');
-    if (!notesEl) return;
-    let debounce = null;
-    notesEl.addEventListener('input', (e) => {
-        clearTimeout(debounce);
+// Note privée (10/08/2026) — lecture (liens cliquables) par défaut, bascule
+// en édition au clic, sauvegarde à la SORTIE du champ seulement. Pas de
+// debounce par frappe comme l'ancien champ (Gist) : l'envoi vers
+// heripia-travail est un commit git, un par lettre tapée serait absurde.
+function setupNoteEditToggle(poiId) {
+    const view = document.getElementById('poi-note-view');
+    const editEl = document.getElementById('poi-note-edit');
+    if (!view || !editEl) return;
+
+    const enterEdit = () => {
+        view.classList.add('is-hidden');
+        editEl.classList.remove('is-hidden');
+        editEl.focus();
+        editEl.setSelectionRange(editEl.value.length, editEl.value.length);
+    };
+    view.addEventListener('click', enterEdit);
+    view.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enterEdit(); }
+    });
+
+    editEl.addEventListener('blur', async (e) => {
         const value = e.target.value;
-        debounce = setTimeout(() => updatePoiData(poiId, 'notes', value), 350);
+        // Sauvegarde locale INCHANGÉE : userData.notes, comme avant ce
+        // chantier. Garantit à tout visiteur (token ou pas) exactement le
+        // même comportement qu'avant (persistée, incluse dans la
+        // sauvegarde Lite/Complète, cf. project_work_photos_feature).
+        await updatePoiData(poiId, 'notes', value);
+
+        // En plus, UNIQUEMENT avec un token : synchronisation inter-appareils
+        // via heripia-travail (remplace le Gist pour ce champ). Un échec ici
+        // n'est JAMAIS une perte de donnée — la copie locale est déjà sauve.
+        if (getStoredToken()) {
+            savePrivateNote(state.currentMapId, poiId, value).catch(err => {
+                console.warn('[PrivateNotes] Envoi heripia-travail échoué:', err.message);
+                showToast('Note enregistrée en local — envoi vers heripia-travail différé (réessayé plus tard).', 'warning', 4500);
+            });
+        }
+
+        // Re-rendu complet le plus simple et le plus sûr : pas de patch DOM
+        // manuel à dupliquer avec la logique de rendu de templates.js.
+        refreshCurrentDetailsPanel();
     });
-    notesEl.addEventListener('blur', (e) => {
-        clearTimeout(debounce);
-        updatePoiData(poiId, 'notes', e.target.value);
-    });
+}
+
+// Note privée : si le local est vide, une note existe peut-être déjà sur
+// heripia-travail (écrite depuis un autre appareil — PC vs téléphone). On ne
+// tente le réseau QUE si le local est vide : sinon on écraserait en vain une
+// saisie déjà là, et le cas courant (note déjà hydratée une fois) reste 100%
+// local, sans req réseau à chaque ouverture de fiche.
+async function hydratePrivateNoteIfNeeded(poiId) {
+    if (!state.isAdmin) return; // Sans token, rien à vérifier à distance.
+    const current = state.userData?.[poiId]?.notes;
+    if (current) return;
+    if (!getStoredToken()) return;
+
+    const remote = await loadPrivateNote(state.currentMapId, poiId);
+    if (!remote) return;
+
+    // Le panel a pu changer entretemps (autre POI ouvert) : ne pas patcher
+    // un panel obsolète (même garde que hydrateHeroFromBlobs).
+    const idx = state.currentFeatureId;
+    if (idx === null || idx === undefined) return;
+    const openFeature = state.loadedFeatures[idx];
+    if (!openFeature || getPoiId(openFeature) !== poiId) return;
+
+    await updatePoiData(poiId, 'notes', remote);
+    refreshCurrentDetailsPanel();
 }
 
 // Rassemble TOUTES les photos consultables d'un POI pour le viewer : URLs
@@ -445,7 +501,7 @@ function setupHelpButton() {
 
 function setupDetailsEventListeners(poiId) {
     setupSuiviToggles(poiId);
-    setupNotesAutosave(poiId);
+    setupNoteEditToggle(poiId);
     setupHeroClick(poiId);
     setupKebab();
     setupEyebrowNav();
@@ -657,6 +713,7 @@ export function openDetailsPanel(featureId, circuitIndex = null, fromSearch = fa
     // Hero "is-empty" malgré la présence de blobs locaux : hydratation async
     // (photo créée mais pas encore publiée GitHub admin, ou photo perso user).
     hydrateHeroFromBlobs(poiId);
+    hydratePrivateNoteIfNeeded(poiId);
 
     if (isMobileView()) {
         targetPanel.style.display = 'block';

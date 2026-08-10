@@ -1,7 +1,7 @@
 // templates.js
 import { getPatrimonialName } from './data.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
-import { escapeXml, getDerivedZone } from './utils.js';
+import { escapeXml, getDerivedZone, linkifyText } from './utils.js';
 import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
@@ -383,7 +383,10 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     <i class="poi-toggle-icon" data-lucide="${isIncontournable ? 'star' : 'star-off'}"></i>
                     <div class="lab-text">Incontournable<span class="lab-hint">Ignore les filtres visités/planifiés</span></div>
                 </div>
-                <textarea class="poi-notes-area" id="poi-notes-area" placeholder="Mes notes : impressions, conseils, photos manquantes…">${escapeXml(notes)}</textarea>
+                <div class="poi-note-block">
+                    <div class="poi-note-view${notes ? '' : ' is-empty'}" id="poi-note-view" role="button" tabindex="0" aria-label="${notes ? 'Modifier la note' : 'Ajouter une note'}">${notes ? linkifyText(notes) : 'Ajouter une note : impressions, conseils, photos manquantes…'}</div>
+                    <textarea class="poi-notes-area is-hidden" id="poi-note-edit" placeholder="Mes notes : impressions, conseils, photos manquantes…">${escapeXml(notes)}</textarea>
+                </div>
             </div>
         </section>`;
 
