@@ -1461,6 +1461,16 @@ async function saveCluster(cluster, mapId) {
     // Flague les photos écrites → le bouton « Enregistrer ce lieu » passe à
     // l'état « Enregistré » et un save global ultérieur ne les re-traite pas.
     cluster.photos.forEach(p => { if (p.file && !p.alreadySaved) p.alreadySaved = true; });
+
+    // La modale de tri opère en toile de fond, indépendamment de toute fiche
+    // déjà ouverte — contrairement au drop direct sur le hero (desktopMode.js)
+    // ou à la grille (ui-photo-grid.js), qui rouvrent/rafraîchissent EUX-MÊMES
+    // la fiche dont ils sont issus. Sans ce signal, une fiche affichée pendant
+    // qu'on lui attache des photos ici reste périmée jusqu'à F5 (constaté
+    // 10/08/2026 sur une photo de travail restée visible après import réel).
+    // Unconditionnel (admin ET user) : le trou touche les deux.
+    eventBus.emit('poi:photos-updated', { id: poiId });
+
     return blobItems.length;
 }
 

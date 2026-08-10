@@ -79,6 +79,22 @@ function refreshCurrentDetailsPanel() {
 // fois). Sans fiche ouverte → refreshCurrentDetailsPanel sort tôt (no-op).
 eventBus.on('patrimony:lang-changed', refreshCurrentDetailsPanel);
 
+// Re-render la fiche ouverte quand SES photos changent par un chemin qui ne
+// sait pas qu'elle est affichée — la modale de tri (ui-photo-batch.js) opère
+// en toile de fond, indépendamment de toute fiche ouverte. Filtré sur l'id :
+// un autre POI modifié pendant que celui-ci est affiché ne doit rien re-render.
+// Trou découvert 10/08/2026 (photo de travail restée visible après un import
+// réel, jusqu'à F5) — cf. mémoire project_work_photos_feature.
+//
+// state.currentFeatureId est un INDEX dans loadedFeatures (pas le HW_ID) —
+// on doit résoudre le POI affiché avant de comparer.
+eventBus.on('poi:photos-updated', ({ id }) => {
+    const idx = state.currentFeatureId;
+    if (idx === null || idx === undefined) return;
+    const openFeature = state.loadedFeatures[idx];
+    if (openFeature && getPoiId(openFeature) === id) refreshCurrentDetailsPanel();
+});
+
 // Tracking de l'objectURL utilisé par le hero pour pouvoir le révoquer au prochain render.
 let activeHeroObjectUrl = null;
 
