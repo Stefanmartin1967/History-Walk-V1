@@ -8715,11 +8715,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Café thé Baklawa",
+        "Nom du site FR": "BH Ba9lawa",
         "Catégorie": "Salon de thé",
         "Zone": "Taourit",
         "HW_ID": "HW-01KJABRN0WMXW7CV3JQJJK9EAV",
-        "description": "",
+        "description": "Un salon de thé qui nous a marqué par le cadre dans lequel il est situé mais aussi par la qualité de sont thé\nLe thé aux fruits secs est à découvrir si vous ne l'avez jamais fait",
         "photos": [
           "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460083574.jpg",
           "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460085717.jpg",
@@ -8737,11 +8737,14 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "",
-        "Téléphone": "",
+        "Téléphone": "+216 26 485 053",
         "Horaires": "",
-        "Facebook": "",
-        "verified": false,
-        "introuvableCarte": false
+        "Facebook": "https://www.facebook.com/profile.php?id=100085722824578",
+        "verified": true,
+        "introuvableCarte": false,
+        "osm_ref": "",
+        "maps_ref": "",
+        "descriptionPublic": true
       }
     },
     {
