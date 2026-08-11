@@ -518,7 +518,10 @@ export const GUIDE_LIEU = {
                         marche</strong> <span class="help-muted">(Wikiloc, Komoot, Visorando…)</span>.
                         <span class="help-muted">Inutile en usage Heripia seul.</span></li>
                     <li><strong>Description complète</strong> — le texte détaillé du lieu,
-                        affiché sur sa fiche.</li>
+                        affiché sur sa fiche. Chaque retour à la ligne devient un nouveau
+                        paragraphe. Entourez un mot de <strong>deux astérisques</strong>
+                        (<code>**ainsi**</code>) pour le mettre en gras ; un lien collé dans
+                        le texte devient cliquable.</li>
                 </ul>`,
         },
         {
