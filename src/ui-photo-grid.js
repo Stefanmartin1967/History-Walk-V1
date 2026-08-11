@@ -319,17 +319,23 @@ function renderGrid() {
         const actions = document.createElement('div');
         actions.className = 'photo-card-actions';
 
-        // Bouton supprimer seulement pour les photos locales (blob) — pas pour les URL serveur admin
+        // Bouton supprimer : toujours pour les photos locales (blob) ; pour les
+        // URL serveur déjà publiées, réservé admin (seul rôle habilité à modifier
+        // le patrimoine publié — un user ne peut retirer que ses propres photos).
         const isServerPhoto = !photo.blob;
+        const canDelete = !isServerPhoto || state.isAdmin;
 
-        if (!isServerPhoto) {
+        if (canDelete) {
             const btnDel = document.createElement('button');
             btnDel.className = 'photo-card-btn delete';
             btnDel.title = "Supprimer";
             btnDel.innerHTML = `<i data-lucide="trash-2"></i>`;
             btnDel.onclick = async (e) => {
                 e.stopPropagation();
-                const ok = await showConfirm("Supprimer la photo", "Supprimer définitivement cette photo ?", "Supprimer", "Annuler", true);
+                const message = isServerPhoto
+                    ? "Cette photo est déjà publiée et visible par tous les utilisateurs. La retirer ne prendra effet qu'à la prochaine publication (CC)."
+                    : "Supprimer définitivement cette photo ?";
+                const ok = await showConfirm("Supprimer la photo", message, "Supprimer", "Annuler", true);
                 if (ok) {
                     currentGridPhotos.splice(index, 1);
                     isDirty = true;

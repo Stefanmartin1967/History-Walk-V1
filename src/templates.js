@@ -189,6 +189,9 @@ function buildPoiKebabMenu({ hasGpxDesc, isMobile }) {
 
     return `
         <div class="poi-kebab-pop is-hidden" id="poi-tools-pop" role="menu" aria-label="Outils du lieu">
+            <button class="poi-pop-item" role="menuitem" id="btn-add-photos" type="button">
+                <i data-lucide="image-up"></i>Ajouter des photos
+            </button>
             <button class="poi-pop-item" role="menuitem" id="${gpxId}" type="button"
                     aria-disabled="${hasGpxDesc ? 'false' : 'true'}">
                 <i data-lucide="file-text"></i>Info GPX

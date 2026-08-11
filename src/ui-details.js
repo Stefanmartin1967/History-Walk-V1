@@ -475,6 +475,18 @@ function setupHeroClick(poiId) {
     }
 }
 
+// Kebab → "Ajouter des photos" : porte d'entrée vers la grille d'édition,
+// indépendante de l'état du hero (qui, lui, reste routé consultation dès
+// qu'une photo existe — cf. setupHeroClick).
+function setupAddPhotosButton(poiId) {
+    const btn = document.getElementById('btn-add-photos');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+        const result = await openPhotoGrid(poiId);
+        if (result?.saved) refreshCurrentDetailsPanel();
+    });
+}
+
 function setupGpxDescToggle() {
     // Bouton "Desc. GPX" du tiroir → toggle visibilité de la section poi-gpx-section
     const toggleBtn = document.getElementById('btn-toggle-gpx-desc') || document.getElementById('mobile-btn-toggle-gpx-desc');
@@ -503,6 +515,7 @@ function setupDetailsEventListeners(poiId) {
     setupSuiviToggles(poiId);
     setupNoteEditToggle(poiId);
     setupHeroClick(poiId);
+    setupAddPhotosButton(poiId);
     setupKebab();
     setupEyebrowNav();
     setupGpxDescToggle();
