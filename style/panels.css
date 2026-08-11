@@ -904,6 +904,15 @@
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+/* Description longue (10/08/2026) : rendue en <div class="poi-desc"> avec un
+   <p> par paragraphe (description-format.mjs) — .poi-desc reste aussi le
+   <p> unique de la description courte GPX et du placeholder, d'où le
+   white-space:pre-wrap conservé ci-dessus pour CES cas-là. Espacement entre
+   paragraphes, même valeur que la page SEO (generate-poi-pages.mjs PAGE_CSS,
+   source unique de contenu, rendu visuel assorti). */
+.poi-desc p { margin: 0 0 1em; }
+.poi-desc p:last-child { margin-bottom: 0; }
+.poi-desc a { color: var(--brand); }
 .poi-desc.is-placeholder {
     color: var(--ink-soft);
     font-style: italic;

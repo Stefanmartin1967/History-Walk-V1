@@ -29,6 +29,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'no
 import { resolve, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseSources } from '../src/source-format.mjs';
+import { renderDescriptionHtml } from '../src/description-format.mjs';
 
 export const PRELAUNCH = true;
 export const SITE_ORIGIN = 'https://heripia.com';
@@ -137,7 +138,7 @@ h1{margin:0;font-size:1.9rem;line-height:1.25}
 .name-ar{color:var(--ink-soft);font-size:1.2rem;margin:4px 0 0}
 .photo{width:100%;border-radius:12px;margin:20px 0 4px;display:block}
 .desc{background:var(--surface);border-radius:12px;padding:20px;margin-top:20px}
-.desc p{margin:0 0 1em}.desc p:last-child{margin-bottom:0}
+.desc p{margin:0 0 1em}.desc p:last-child{margin-bottom:0}.desc a{color:var(--brand)}
 dl{background:var(--surface);border-radius:12px;padding:16px 20px;margin-top:16px;display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
 dt{color:var(--ink-soft);font-weight:600}dd{margin:0}
 .cta{display:block;text-align:center;background:var(--brand);color:#fff;text-decoration:none;font-weight:700;padding:14px 24px;border-radius:12px;margin-top:24px}
@@ -190,11 +191,11 @@ export function renderPoiPage({ feature, slug, mapId, mapName, prelaunch = PRELA
         ['Téléphone', telephone],
     ].filter(([, v]) => v);
 
-    // Description : texte brut, échappé, paragraphes sur les sauts de ligne —
-    // même traitement que templates.js côté app.
-    const descHtml = desc.split(/\n+/)
-        .map(par => `<p>${escapeHtml(par)}</p>`)
-        .join('\n      ');
+    // Description : paragraphes + gras + liens, cf. description-format.mjs —
+    // source UNIQUE partagée avec templates.js (app). rel="nofollow noopener"
+    // (pas juste noopener comme l'app) : un lien cité dans une description ne
+    // doit pas transmettre d'autorité SEO vers un site tiers.
+    const descHtml = renderDescriptionHtml(desc, escapeHtml, 'nofollow noopener');
 
     return `<!doctype html>
 <html lang="fr">

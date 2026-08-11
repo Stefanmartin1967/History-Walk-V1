@@ -6,6 +6,7 @@ import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
 import { parseSources } from './source-format.mjs';
+import { renderDescriptionHtml } from './description-format.mjs';
 
 // Devise de la destination active. Seul consommateur : buildDetailsPanelHtml ci-dessous.
 function getCurrentCurrency() {
@@ -303,9 +304,12 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         ? `<div class="cartel-status">${statusItems.join('<span class="cartel-status-sep"></span>')}</div>`
         : '';
 
-    // Section Description
+    // Section Description — paragraphes + gras (**texte**) + liens cliquables,
+    // cf. description-format.mjs (source unique, partagée avec la page SEO).
+    // Wrapper en <div> (pas <p>) : renderDescriptionHtml produit déjà un <p>
+    // par paragraphe, imbriquer un <p> dans un <p> serait invalide.
     const descBlock = descVisible
-        ? `<p class="poi-desc">${escapeXml(longDesc).replace(/\n/g, '<br>')}</p>${renderSource(allProps)}${(!isDescPublic && state.isAdmin) ? `<p class="poi-source-link">Brouillon — non publié</p>` : ''}`
+        ? `<div class="poi-desc">${renderDescriptionHtml(longDesc, escapeXml, 'noopener noreferrer')}</div>${renderSource(allProps)}${(!isDescPublic && state.isAdmin) ? `<p class="poi-source-link">Brouillon — non publié</p>` : ''}`
         : `<p class="poi-desc is-placeholder">Aucune description disponible.</p>`;
 
     // Section GPX (cachée par défaut, ouverte par bouton tiroir)
