@@ -791,6 +791,13 @@
 }
 .pb-compare-name:hover { background: var(--surface-muted); }
 .pb-compare-name:focus { background: var(--surface-muted); border-color: var(--ink-soft); white-space: normal; text-overflow: clip; }
+/* Photo déjà publiée dans un emplacement : nom = badge statique, pas d'édition. */
+.pb-compare-name.is-existing-badge {
+    cursor: default;
+    font-style: italic;
+    color: var(--ink-soft);
+}
+.pb-compare-name.is-existing-badge:hover { background: transparent; }
 .pb-compare-acts { display: flex; gap: 4px; flex-shrink: 0; }
 .pb-compare-btn {
     width: 30px; height: 30px;
@@ -888,6 +895,21 @@
 .pb-pellicule-thumb.is-hidden:hover { opacity: 0.75; }
 .pb-pellicule-hidden { color: var(--ink-soft); }
 .pb-pellicule-hidden b { color: var(--ink); font-weight: 700; }
+/* Vignette « Déjà en ligne » : pas de drag (cf. Sortable filter), badge dédié. */
+.pb-pellicule-thumb.is-existing { cursor: pointer; }
+.pb-pellicule-existing-badge {
+    position: absolute;
+    top: 4px; left: 4px;
+    z-index: 2;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(20,20,22,0.65);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
 .pb-pellicule-thumb .slot-num {
     position: absolute;
     bottom: 4px; right: 4px;

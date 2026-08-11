@@ -85,6 +85,16 @@ function getPublishedPhotoUrls(feature) {
     });
 }
 
+// Pool unifié pour le mode Comparer (emplacements + pellicule) : photos déjà
+// publiées (id = l'URL elle-même, stable et forcément unique face aux ids
+// générés des imports) suivies des photos neuves du cluster. cluster.photos
+// N'EST PAS modifié — reste la seule source pour compresser/sauver/exporter ;
+// ce pool sert uniquement à choisir quoi PLACER dans un emplacement.
+function getComparePool(cluster) {
+    const existing = (cluster.publishedPhotos || []).map(url => ({ id: url, isExisting: true, url }));
+    return [...existing, ...cluster.photos];
+}
+
 // beforeunload dédié à la modale d'import (≠ flag global state.hasUnexportedChanges :
 // on évite d'écraser un « non publié » applicatif réel). Couvre rafraîchir /
 // fermer l'onglet pendant un tri. Retiré à la fermeture de la modale.
@@ -190,7 +200,13 @@ function deletePhoto(photoId) {
     if (!loc) return;
 
     loc.cluster.photos.splice(loc.idx, 1);
-    modalState.clusters = modalState.clusters.filter(c => c.photos.length > 0);
+    // Un cluster reste affiché tant qu'il a encore des photos neuves OU des
+    // photos déjà publiées à montrer/gérer (cf. getComparePool) — sinon un
+    // cluster rattaché perdrait sa section "Déjà en ligne" simplement parce
+    // que toutes ses nouvelles ont été retirées.
+    modalState.clusters = modalState.clusters.filter(c =>
+        c.photos.length > 0 || (c.publishedPhotos && c.publishedPhotos.length > 0)
+    );
 
     renderBody();
     updateHeaderCounts();
@@ -743,20 +759,24 @@ function gridForSlots(n) {
 // affichées (dans l'ordre de la pellicule). Évite les emplacements vides quand
 // on agrandit le nombre de colonnes (bug : cliquer 3/4 ajoutait des cases vides).
 function fillEmptySlots(cluster, f) {
+    const pool = getComparePool(cluster);
     const shown = new Set(f.slots.filter(Boolean));
     for (let i = 0; i < f.slots.length; i++) {
         if (f.slots[i]) continue;
         // Les masquées de la session ne remplissent pas non plus les cases vides.
-        const next = cluster.photos.find(p => !shown.has(p.id) && !(f.hidden && f.hidden.has(p.id)));
+        const next = pool.find(p => !shown.has(p.id) && !(f.hidden && f.hidden.has(p.id)));
         if (next) { f.slots[i] = next.id; shown.add(next.id); }
     }
 }
 
 // Entre en mode focus pour un cluster : nb d'emplacements adaptatif (rempli).
+// Le pool (déjà publiées + neuves) remplit les emplacements initiaux — les
+// anciennes en tête, comme la grille d'ensemble (getComparePool).
 function enterFocus(cluster) {
-    const slotCount = defaultCompareSlots(cluster.photos.length);
+    const pool = getComparePool(cluster);
+    const slotCount = defaultCompareSlots(pool.length);
     const slots = [];
-    for (let i = 0; i < slotCount; i++) slots.push(cluster.photos[i] ? cluster.photos[i].id : null);
+    for (let i = 0; i < slotCount; i++) slots.push(pool[i] ? pool[i].id : null);
     // `hidden` : photos masquées (œil barré) PENDANT cette session de comparaison.
     // Elles sont exclues de l'auto-avance et du remplissage auto (ne « reviennent »
     // plus toutes seules), mais restent dans le cluster et re-cliquables dans la
@@ -822,8 +842,9 @@ function focusPelliculeTap(pid) {
 // la pellicule. Sert à l'auto-avance : remplir un emplacement libéré.
 function nextPhotoForSlot(cluster, excludePid) {
     const f = modalState.focus;
+    const pool = getComparePool(cluster);
     const shown = new Set(f.slots.filter(Boolean));
-    for (const p of cluster.photos) {
+    for (const p of pool) {
         if (p.id === excludePid) continue;
         if (f.hidden && f.hidden.has(p.id)) continue; // masquée → ne revient pas seule
         if (!shown.has(p.id)) return p.id;
@@ -871,7 +892,22 @@ function removeFromComparison(slotIndex, mode) {
     if (next) f.slots[slotIndex] = next;
     else collapseSlot(slotIndex);
 
-    if (mode === 'delete' && pid) { deletePhoto(pid); return; } // re-render interne
+    if (mode === 'delete' && pid) {
+        // Photo déjà publiée (pid = son URL, cf. getComparePool) : la confirmation
+        // admin a déjà eu lieu dans buildCompareCell avant d'appeler cette
+        // fonction — ici on retire juste de la liste retenue + flague dirty
+        // (persistée par saveCluster). PAS deletePhoto (réservé aux neuves).
+        const existingIdx = (cluster.publishedPhotos || []).indexOf(pid);
+        if (existingIdx !== -1) {
+            cluster.publishedPhotos.splice(existingIdx, 1);
+            cluster.publishedPhotosDirty = true;
+            renderBody();
+            updateHeaderCounts();
+            return;
+        }
+        deletePhoto(pid); // photo neuve : re-render interne
+        return;
+    }
     renderBody(); // 'hide' : la photo reste dans le cluster (masquée)
 }
 
@@ -879,7 +915,9 @@ function removeFromComparison(slotIndex, mode) {
 function buildCompareCell(cluster, i) {
     const f = modalState.focus;
     const pid = f.slots[i];
-    const photo = pid ? cluster.photos.find(p => p.id === pid) : null;
+    const pool = getComparePool(cluster);
+    const photo = pid ? pool.find(p => p.id === pid) : null;
+    const isExisting = !!(photo && photo.isExisting);
 
     const cell = document.createElement('article');
     cell.className = 'pb-compare-cell' + (i === f.activeSlot ? ' is-active' : '') + (photo ? '' : ' is-empty');
@@ -900,8 +938,10 @@ function buildCompareCell(cluster, i) {
     photoZone.className = 'pb-compare-photo';
     if (photo) {
         const img = document.createElement('img');
-        img.alt = photo.customName || resolvePhotoAutoName(cluster, photo);
-        if (photo.file) {
+        img.alt = isExisting ? 'Photo déjà publiée' : (photo.customName || resolvePhotoAutoName(cluster, photo));
+        if (isExisting) {
+            img.src = photo.url;
+        } else if (photo.file) {
             const url = URL.createObjectURL(photo.file);
             focusObjectUrls.push(url);
             img.src = url;
@@ -918,7 +958,10 @@ function buildCompareCell(cluster, i) {
     toolbar.className = 'pb-compare-toolbar';
     const name = document.createElement('span');
     name.className = 'pb-compare-name';
-    if (photo) {
+    if (photo && isExisting) {
+        name.textContent = 'Déjà en ligne';
+        name.classList.add('is-existing-badge');
+    } else if (photo) {
         name.contentEditable = 'true';
         name.spellcheck = false;
         name.textContent = photo.customName || resolvePhotoAutoName(cluster, photo);
@@ -944,6 +987,7 @@ function buildCompareCell(cluster, i) {
     const acts = document.createElement('div');
     acts.className = 'pb-compare-acts';
     // Retirer de l'affichage (non destructif) : libère l'emplacement, garde la photo.
+    // Purement visuel (état f.hidden) → fonctionne pareil pour une ancienne ou une neuve.
     if (photo) {
         const hide = document.createElement('button');
         hide.className = 'pb-compare-btn';
@@ -954,8 +998,10 @@ function buildCompareCell(cluster, i) {
         hide.addEventListener('click', (e) => { e.stopPropagation(); removeFromComparison(i, 'hide'); });
         acts.appendChild(hide);
     }
-    // Rogner : recadrage libre (remplace la copie de travail, original disque intact).
-    if (photo) {
+    // Rogner / Détacher : réservés aux photos NEUVES (une photo déjà publiée
+    // n'a pas de File à recadrer, et « détacher vers Hors POI » n'a pas de sens
+    // pour une photo qui appartient déjà à ce lieu).
+    if (photo && !isExisting) {
         const crop = document.createElement('button');
         crop.className = 'pb-compare-btn';
         crop.type = 'button';
@@ -968,7 +1014,7 @@ function buildCompareCell(cluster, i) {
     // Détacher : vers « Hors POI » depuis un groupe POI ; OU scinder un groupe
     // « Hors POI » en un nouveau groupe Hors POI (≥ 2 photos requises, sinon
     // no-op) → permet d'avoir plusieurs groupes Hors POI consécutifs (#3).
-    if (photo && (cluster.type !== 'OUT_POI' || cluster.photos.length > 1)) {
+    if (photo && !isExisting && (cluster.type !== 'OUT_POI' || cluster.photos.length > 1)) {
         const isOut = cluster.type === 'OUT_POI';
         const ex = document.createElement('button');
         ex.className = 'pb-compare-btn';
@@ -979,15 +1025,40 @@ function buildCompareCell(cluster, i) {
         ex.addEventListener('click', (e) => { e.stopPropagation(); removeFromComparison(i, 'detach'); });
         acts.appendChild(ex);
     }
-    const del = document.createElement('button');
-    del.className = 'pb-compare-btn is-danger';
-    del.type = 'button';
-    del.title = 'Supprimer cette photo';
-    del.setAttribute('aria-label', 'Supprimer');
-    del.innerHTML = '<i data-lucide="trash-2"></i>';
-    del.disabled = !photo;
-    del.addEventListener('click', (e) => { e.stopPropagation(); if (photo) removeFromComparison(i, 'delete'); });
-    acts.appendChild(del);
+    // Supprimer : pour une photo déjà publiée, réservé admin + confirmation
+    // dédiée (même message que la grille/l'aperçu) AVANT de retirer — contrairement
+    // à une photo neuve où la suppression est immédiate (rien n'est encore publié).
+    if (!isExisting || state.isAdmin) {
+        const del = document.createElement('button');
+        del.className = 'pb-compare-btn is-danger';
+        del.type = 'button';
+        del.title = isExisting ? 'Supprimer cette photo déjà publiée' : 'Supprimer cette photo';
+        del.setAttribute('aria-label', 'Supprimer');
+        del.innerHTML = '<i data-lucide="trash-2"></i>';
+        del.disabled = !photo;
+        del.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (!photo) return;
+            if (isExisting) {
+                suspendHwModal();
+                let ok = false;
+                try {
+                    ok = await hwConfirm({
+                        title: 'Supprimer la photo',
+                        body: "Cette photo est déjà publiée et visible par tous les utilisateurs. La retirer ne prendra effet qu'à la prochaine publication (CC).",
+                        confirmLabel: 'Supprimer',
+                        cancelLabel: 'Annuler',
+                        danger: true,
+                    });
+                } finally {
+                    resumeHwModal();
+                }
+                if (!ok) return;
+            }
+            removeFromComparison(i, 'delete');
+        });
+        acts.appendChild(del);
+    }
     toolbar.appendChild(acts);
     cell.appendChild(toolbar);
 
@@ -1001,18 +1072,19 @@ function buildCompareCell(cluster, i) {
     return cell;
 }
 
-// Construit la pellicule (toutes les photos du cluster, claire).
+// Construit la pellicule (photos déjà publiées + neuves, cf. getComparePool).
 function buildPellicule(cluster) {
     const f = modalState.focus;
+    const pool = getComparePool(cluster);
     const wrap = document.createElement('div');
     wrap.className = 'pb-pellicule';
 
     const hiddenCount = f.hidden ? f.hidden.size : 0;
     const head = document.createElement('div');
     head.className = 'pb-pellicule-head';
-    head.innerHTML = `<span>Pellicule</span><span class="sep">·</span><span><b>${cluster.photos.length}</b> photo(s)</span>`
+    head.innerHTML = `<span>Pellicule</span><span class="sep">·</span><span><b>${pool.length}</b> photo(s)</span>`
         + (hiddenCount ? `<span class="sep">·</span><span class="pb-pellicule-hidden"><b>${hiddenCount}</b> masquée(s)</span>` : '')
-        + `<span class="sep">·</span><span class="pb-pellicule-hint">Cliquez une vignette pour la placer dans l'emplacement actif · glissez pour réordonner</span>`;
+        + `<span class="sep">·</span><span class="pb-pellicule-hint">Cliquez une vignette pour la placer dans l'emplacement actif · glissez pour réordonner les nouvelles</span>`;
     wrap.appendChild(head);
 
     const track = document.createElement('div');
@@ -1021,24 +1093,33 @@ function buildPellicule(cluster) {
     const slotByPid = {};
     f.slots.forEach((pid, i) => { if (pid) slotByPid[pid] = i + 1; });
 
-    cluster.photos.forEach(p => {
+    pool.forEach(p => {
         const thumb = document.createElement('button');
         thumb.className = 'pb-pellicule-thumb';
         thumb.type = 'button';
         thumb.dataset.photoId = p.id;
+        if (p.isExisting) thumb.classList.add('is-existing');
         const slot = slotByPid[p.id];
         if (slot) thumb.classList.add('is-in-slot');
         const isHidden = f.hidden && f.hidden.has(p.id);
         if (isHidden) thumb.classList.add('is-hidden');
         thumb.title = isHidden
             ? 'Masquée — cliquer pour la réafficher dans la comparaison'
-            : (p.customName || resolvePhotoAutoName(cluster, p));
+            : (p.isExisting ? 'Déjà en ligne' : (p.customName || resolvePhotoAutoName(cluster, p)));
 
         const img = document.createElement('img');
         img.alt = '';
-        if (p.base64) img.src = p.base64;
+        if (p.isExisting) img.src = p.url;
+        else if (p.base64) img.src = p.base64;
         else if (p.file) resizeImage(p.file, 160).then(d => { img.src = d; }).catch(() => {});
         thumb.appendChild(img);
+
+        if (p.isExisting) {
+            const badge = document.createElement('span');
+            badge.className = 'pb-pellicule-existing-badge';
+            badge.textContent = 'En ligne';
+            thumb.appendChild(badge);
+        }
 
         if (slot) {
             const num = document.createElement('span');
@@ -1055,9 +1136,14 @@ function buildPellicule(cluster) {
 
     // Réordonnancement des vignettes par glisser-déposer (#2). Reordonne
     // cluster.photos → met à jour l'ordre de la pellicule et la numérotation PP.
+    // Les vignettes « Déjà en ligne » sont exclues du drag (filter) — leur ordre
+    // de publication se gère depuis la fiche, pas ici (cf. discussion Stefan
+    // 11/08/2026 : l'entremêlement neuf/publié n'est pas respecté à la publication).
     new Sortable(track, {
         animation: 150,
         draggable: '.pb-pellicule-thumb',
+        filter: '.pb-pellicule-thumb.is-existing',
+        preventOnFilter: false,
         ghostClass: 'is-ghost',
         chosenClass: 'is-chosen',
         delay: 80,
@@ -1092,9 +1178,13 @@ function handlePelliculeReorder(evt) {
 function renderFocus(cluster) {
     releaseFocusUrls();  // révoque les objectURL du rendu focus précédent
     const f = modalState.focus;
+    const pool = getComparePool(cluster);
 
-    // Réconcilie les emplacements avec les photos actuelles du cluster.
-    const byId = new Map(cluster.photos.map(p => [p.id, p]));
+    // Réconcilie les emplacements avec le pool actuel (déjà publiées + neuves) —
+    // sinon une photo déjà publiée placée dans un emplacement serait vidée à
+    // chaque re-render (byId ne la connaissait pas quand il ne couvrait que
+    // cluster.photos).
+    const byId = new Map(pool.map(p => [p.id, p]));
     f.slots = f.slots.slice(0, f.slotCount);
     while (f.slots.length < f.slotCount) f.slots.push(null);
     f.slots = f.slots.map(pid => (pid && byId.has(pid)) ? pid : null);
@@ -1131,7 +1221,7 @@ function renderFocus(cluster) {
     sub.className = 'pb-cluster-sub';
     const filled = f.slots.filter(Boolean).length;
     const dot = document.createElement('span'); dot.className = 'dot'; dot.setAttribute('aria-hidden', 'true');
-    const s1 = document.createElement('span'); s1.textContent = `${cluster.photos.length} photo(s)`;
+    const s1 = document.createElement('span'); s1.textContent = `${pool.length} photo(s)`;
     const sep = document.createElement('span'); sep.className = 'sep'; sep.textContent = '·';
     const s2 = document.createElement('span'); s2.textContent = `${filled} affichée(s)`;
     sub.append(dot, s1, sep, s2);
@@ -1142,8 +1232,8 @@ function renderFocus(cluster) {
     headBlock.append(titleRow, sub);
     head.appendChild(headBlock);
 
-    // Sélecteur 2 → min(6, nb photos). Masqué si ≤ 2 photos (rien à choisir).
-    const maxOpt = Math.min(MAX_COMPARE_SLOTS, cluster.photos.length);
+    // Sélecteur 2 → min(6, nb photos du pool). Masqué si ≤ 2 photos (rien à choisir).
+    const maxOpt = Math.min(MAX_COMPARE_SLOTS, pool.length);
     if (maxOpt >= 3) {
         const slotsCtl = document.createElement('div');
         slotsCtl.className = 'pb-slots';
@@ -2136,11 +2226,12 @@ function buildClusterSection(cluster, index) {
         actions.appendChild(saveOneBtn);
     }
 
-    // Comparer → ouvre le mode focus in-place (toujours actif si ≥ 1 photo)
+    // Comparer → ouvre le mode focus in-place (toujours actif si ≥ 1 photo,
+    // neuve OU déjà publiée — cf. getComparePool).
     const compareBtn = document.createElement('button');
     compareBtn.className = 'pb-act is-primary';
     compareBtn.type = 'button';
-    compareBtn.disabled = cluster.photos.length === 0;
+    compareBtn.disabled = cluster.photos.length === 0 && !(cluster.publishedPhotos && cluster.publishedPhotos.length > 0);
     compareBtn.innerHTML = '<i data-lucide="layout-grid"></i><span>Comparer</span>';
     compareBtn.title = 'Comparer les photos de ce groupe';
     compareBtn.addEventListener('click', (e) => {
@@ -2462,7 +2553,7 @@ function updateHeaderCounts() {
     if (sub) {
         if (modalState.focus) {
             const fc = getFocusedCluster();
-            sub.textContent = `${modalState.focus.slotCount} emplacement(s) · ${fc ? fc.photos.length : 0} photo(s)`;
+            sub.textContent = `${modalState.focus.slotCount} emplacement(s) · ${fc ? getComparePool(fc).length : 0} photo(s)`;
         } else {
             sub.textContent = `${total} photo(s) · ${groups} groupe(s)`;
         }
