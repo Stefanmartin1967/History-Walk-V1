@@ -5,6 +5,8 @@ import { showConfirm, openHwModal, closeHwModal } from './modal.js';
 import { compressImage, generatePhotoId, ADMIN_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
 import { getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos } from './database.js';
 import { createIcons, appIcons } from './lucide-icons.js';
+import { createZipBlob } from './zip-store.js';
+import { downloadFile } from './utils.js';
 
 // --- STATE ---
 let currentGridPoiId = null;
@@ -51,6 +53,10 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
                     <i data-lucide="image-up"></i>
                     <span>Ajouter</span>
                 </button>
+                <button class="photo-grid-toolbar-btn" id="pg-btn-download" type="button" title="Télécharger toutes les photos (ZIP)">
+                    <i data-lucide="download"></i>
+                    <span>Télécharger</span>
+                </button>
                 ${isAdmin ? `
                     <button class="photo-grid-comp-toggle" id="pg-btn-comp" type="button"></button>
                     <div class="photo-grid-subtitle" id="pg-subtitle"></div>
@@ -89,9 +95,11 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
             subtitleEl = document.getElementById('pg-subtitle');
 
             const btnAdd = document.getElementById('pg-btn-add');
+            const btnDownload = document.getElementById('pg-btn-download');
             const btnCancel = document.getElementById('pg-btn-cancel');
 
             if (btnAdd) btnAdd.onclick = () => fileInputEl.click();
+            if (btnDownload) btnDownload.onclick = handleDownloadAll;
             if (btnCancel) btnCancel.onclick = () => closeHwModal({ saved: false });
             if (btnSaveEl) btnSaveEl.onclick = handleSave;
             if (fileInputEl) fileInputEl.onchange = handleFileSelect;
@@ -240,6 +248,62 @@ async function _loadPhotos(poiId, feature, preloadedPhotos) {
 }
 
 // --- LOGIC ---
+
+// Télécharge toutes les photos actuellement listées (publiées + en attente +
+// perso) en un seul ZIP — les blobs déjà en mémoire sont réutilisés tels
+// quels (déjà filigranés côté admin, cf. photo-service.js), les URLs
+// publiées sont récupérées par fetch. Pensé pour partager d'un coup sur un
+// réseau social plutôt qu'un enregistrement par photo.
+async function handleDownloadAll() {
+    if (currentGridPhotos.length === 0) {
+        showToast('Aucune photo à télécharger.', 'info');
+        return;
+    }
+    showToast('Préparation du ZIP…', 'info');
+
+    const entries = [];
+    let failed = 0;
+    let i = 0;
+    for (const photo of currentGridPhotos) {
+        i++;
+        const num = String(i).padStart(2, '0');
+        try {
+            let data;
+            if (photo.blob) {
+                data = photo.blob;
+            } else if (photo.src) {
+                const res = await fetch(photo.src);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                data = await res.blob();
+            } else {
+                continue;
+            }
+            entries.push({ name: `${num} - ${currentGridPoiName}.jpg`, data });
+        } catch (err) {
+            console.error('[photo-grid] téléchargement échoué pour une photo', err);
+            failed++;
+        }
+    }
+
+    if (entries.length === 0) {
+        showToast('Aucune photo n\'a pu être récupérée.', 'error');
+        return;
+    }
+
+    try {
+        const zipBlob = await createZipBlob(entries);
+        downloadFile(`${currentGridPoiName}.zip`, zipBlob, 'application/zip');
+        showToast(
+            failed > 0
+                ? `${entries.length} photo(s) téléchargée(s), ${failed} échec(s).`
+                : `${entries.length} photo(s) téléchargée(s).`,
+            failed > 0 ? 'warning' : 'success'
+        );
+    } catch (err) {
+        console.error('[photo-grid] création du ZIP échouée', err);
+        showToast('Erreur lors de la création du ZIP.', 'error');
+    }
+}
 
 async function handleFileSelect(e) {
     const files = Array.from(e.target.files);
