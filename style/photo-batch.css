@@ -396,6 +396,34 @@
 .pb-cluster.is-out-poi .pb-cluster-head { background: var(--surface-muted); }
 .pb-cluster.is-out-poi .pb-cluster-title { color: var(--ink-soft); }
 
+/* Séparateur "Déjà en ligne (N)" / "Nouvelles (N)" au-dessus des grilles
+   d'un cluster rattaché — cf. buildClusterSection / getPublishedPhotoUrls. */
+.pb-existing-label {
+    padding: var(--space-sm) var(--space-lg) 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Vignette photo déjà publiée (buildExistingPhotoCard) : pas de drag, badge
+   de provenance en haut-gauche (miroir de .pb-thumb-acts en haut-droite). */
+.pb-thumb.is-readonly { cursor: default; }
+.pb-thumb-existing-badge {
+    position: absolute;
+    top: 8px; left: 8px;
+    z-index: 3;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(20,20,22,0.65);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
 /* --- GRILLE de vignettes (220px : ~3.4× plus grandes que l'ancien 120px) --- */
 .pb-grid {
     display: grid;

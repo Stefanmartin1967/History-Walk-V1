@@ -5,7 +5,7 @@
 
 import Sortable from 'sortablejs';
 import { resizeImage, calculateDistance, openPoiOnMap, openCoordsOnMap, getPoiProp, isPoiMalCategorized, sha256OfFile } from './utils.js';
-import { getPoiName, getPoiId } from './data.js';
+import { getPoiName, getPoiId, updatePoiData } from './data.js';
 import { getSearchResults } from './search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { state } from './state.js';
@@ -62,7 +62,27 @@ function closeModal(result = null) {
 // en cours reste transitoire tant qu'on n'a pas « Enregistré » dans l'app.
 function hasUnsavedSession() {
     return !!(modalState && modalState.clusters
-        && modalState.clusters.some(c => c.photos.some(p => !p.alreadySaved)));
+        && modalState.clusters.some(c => c.photos.some(p => !p.alreadySaved) || c.publishedPhotosDirty));
+}
+
+// Photos déjà publiées d'un POI rattaché (properties.photos + brouillon
+// userData.photos), dédupliquées — même logique que ui-photo-grid.js. Permet
+// de les afficher à côté des photos fraîchement importées (comparaison
+// ancien/nouveau ciel, décision de remplacement) sans toucher au pipeline
+// d'import (cluster.photos reste réservé aux File/base64 en cours de tri).
+function getPublishedPhotoUrls(feature) {
+    const pool = [
+        ...(feature?.properties?.photos || []),
+        ...(feature?.properties?.userData?.photos || []),
+    ];
+    const seen = new Set();
+    return pool.filter(p => {
+        if (typeof p !== 'string') return false;
+        if (p.startsWith('data:')) return false;
+        if (seen.has(p)) return false;
+        seen.add(p);
+        return true;
+    });
 }
 
 // beforeunload dédié à la modale d'import (≠ flag global state.hasUnexportedChanges :
@@ -1397,7 +1417,7 @@ function updateFooterButtons() {
         const hasAttached = modalState.clusters.some(c =>
             c.type !== 'OUT_POI' &&
             c.nearbyPois && c.nearbyPois.length > 0 &&
-            c.photos.some(p => !p.alreadySaved)
+            (c.photos.some(p => !p.alreadySaved) || c.publishedPhotosDirty)
         );
         saveLabel.textContent = 'Enregistrer';
         saveBtn.disabled = !hasAttached;
@@ -1408,59 +1428,75 @@ function updateFooterButtons() {
 }
 
 // Sauve UN cluster rattaché : compresse ses photos non encore sauvées, merge en
-// DB (split admin/user), puis les flague `alreadySaved`. Retourne le nombre de
-// photos écrites (0 si rien). Ne touche PAS au DOM ni à la modale — le caller
-// (save global du footer OU save par groupe) décide du feedback. Source unique
-// de la logique d'enregistrement → pas de divergence entre les deux chemins.
+// DB (split admin/user), puis les flague `alreadySaved` ; persiste aussi les
+// suppressions de photos déjà publiées marquées via buildExistingPhotoCard.
+// Retourne { added, removed } (0/0 si rien). Ne touche PAS au DOM ni à la
+// modale — le caller (save global du footer OU save par groupe) décide du
+// feedback. Source unique de la logique d'enregistrement → pas de divergence
+// entre les deux chemins.
 async function saveCluster(cluster, mapId) {
     const poiId = getPoiId(cluster.nearbyPois[0].feature);
-    if (!poiId) return 0;
+    if (!poiId) return { added: 0, removed: 0 };
 
     // On exclut les photos alreadySaved (déjà persistées via "Créer un lieu" →
     // addPhotosToPoi, ou un précédent « Enregistrer ce lieu »). Évite de
     // recompresser ; la dédup par id couvrirait de toute façon.
     const toCompress = cluster.photos.filter(p => p.file && !p.alreadySaved);
-    // P5 (audit) : compresser 20-30 photos de 12 Mpx toutes EN MÊME TEMPS
-    // (Promise.all direct) créait un pic mémoire transitoire de plusieurs
-    // centaines de Mo (un décodage + canvas plein format par photo) — risque
-    // de fermeture d'onglet sur mobile modeste. Plafond : 3 simultanées, via
-    // un mini-pool (3 workers qui piochent dans la file ; l'ordre est préservé
-    // par l'écriture indexée).
-    const MAX_PARALLEL_COMPRESSIONS = 3;
-    const blobItems = new Array(toCompress.length);
-    let nextIdx = 0;
-    await Promise.all(Array.from(
-        { length: Math.min(MAX_PARALLEL_COMPRESSIONS, toCompress.length) },
-        async () => {
-            while (nextIdx < toCompress.length) {
-                const i = nextIdx++;
-                const p = toCompress[i];
-                blobItems[i] = {
-                    id: p.id,
-                    blob: await compressImage(p.file, PUBLISH_COMPRESSION.targetMinSize, PUBLISH_COMPRESSION.quality),
-                    // srcHash = hash du fichier ORIGINAL (posé à l'import) →
-                    // permet la dédup au prochain import (dédup 2-local).
-                    srcHash: p.srcHash || undefined,
-                };
+    let addedCount = 0;
+    if (toCompress.length > 0) {
+        // P5 (audit) : compresser 20-30 photos de 12 Mpx toutes EN MÊME TEMPS
+        // (Promise.all direct) créait un pic mémoire transitoire de plusieurs
+        // centaines de Mo (un décodage + canvas plein format par photo) — risque
+        // de fermeture d'onglet sur mobile modeste. Plafond : 3 simultanées, via
+        // un mini-pool (3 workers qui piochent dans la file ; l'ordre est préservé
+        // par l'écriture indexée).
+        const MAX_PARALLEL_COMPRESSIONS = 3;
+        const blobItems = new Array(toCompress.length);
+        let nextIdx = 0;
+        await Promise.all(Array.from(
+            { length: Math.min(MAX_PARALLEL_COMPRESSIONS, toCompress.length) },
+            async () => {
+                while (nextIdx < toCompress.length) {
+                    const i = nextIdx++;
+                    const p = toCompress[i];
+                    blobItems[i] = {
+                        id: p.id,
+                        blob: await compressImage(p.file, PUBLISH_COMPRESSION.targetMinSize, PUBLISH_COMPRESSION.quality),
+                        // srcHash = hash du fichier ORIGINAL (posé à l'import) →
+                        // permet la dédup au prochain import (dédup 2-local).
+                        srcHash: p.srcHash || undefined,
+                    };
+                }
             }
-        }
-    ));
-    if (blobItems.length === 0) return 0;
+        ));
 
-    // Merge avec l'existant en DB (dédup par id)
-    if (state.isAdmin) {
-        const existing = await getPendingAdminPhotos(mapId, poiId) || [];
-        const merged = dedupById([...existing, ...blobItems]);
-        await setPendingAdminPhotos(mapId, poiId, merged);
-    } else {
-        const existing = await getPoiPhotos(mapId, poiId) || [];
-        const merged = dedupById([...existing, ...blobItems]);
-        await savePoiPhotos(mapId, poiId, merged);
+        // Merge avec l'existant en DB (dédup par id)
+        if (state.isAdmin) {
+            const existing = await getPendingAdminPhotos(mapId, poiId) || [];
+            const merged = dedupById([...existing, ...blobItems]);
+            await setPendingAdminPhotos(mapId, poiId, merged);
+        } else {
+            const existing = await getPoiPhotos(mapId, poiId) || [];
+            const merged = dedupById([...existing, ...blobItems]);
+            await savePoiPhotos(mapId, poiId, merged);
+        }
+
+        // Flague les photos écrites → le bouton « Enregistrer ce lieu » passe à
+        // l'état « Enregistré » et un save global ultérieur ne les re-traite pas.
+        cluster.photos.forEach(p => { if (p.file && !p.alreadySaved) p.alreadySaved = true; });
+        addedCount = blobItems.length;
     }
 
-    // Flague les photos écrites → le bouton « Enregistrer ce lieu » passe à
-    // l'état « Enregistré » et un save global ultérieur ne les re-traite pas.
-    cluster.photos.forEach(p => { if (p.file && !p.alreadySaved) p.alreadySaved = true; });
+    // Suppressions de photos déjà publiées (admin only, cf. buildExistingPhotoCard) :
+    // écrit la liste retenue dans l'overlay `userData.photos`, même chemin que
+    // ui-photo-grid.js — la publication CC republie le tableau réduit.
+    let removedCount = 0;
+    if (state.isAdmin && cluster.publishedPhotosDirty && cluster.publishedPhotos) {
+        await updatePoiData(poiId, 'photos', cluster.publishedPhotos);
+        removedCount = (cluster.publishedPhotosOriginalCount || 0) - cluster.publishedPhotos.length;
+        cluster.publishedPhotosOriginalCount = cluster.publishedPhotos.length;
+        cluster.publishedPhotosDirty = false;
+    }
 
     // La modale de tri opère en toile de fond, indépendamment de toute fiche
     // déjà ouverte — contrairement au drop direct sur le hero (desktopMode.js)
@@ -1469,9 +1505,11 @@ async function saveCluster(cluster, mapId) {
     // qu'on lui attache des photos ici reste périmée jusqu'à F5 (constaté
     // 10/08/2026 sur une photo de travail restée visible après import réel).
     // Unconditionnel (admin ET user) : le trou touche les deux.
-    eventBus.emit('poi:photos-updated', { id: poiId });
+    if (addedCount > 0 || removedCount > 0) {
+        eventBus.emit('poi:photos-updated', { id: poiId });
+    }
 
-    return blobItems.length;
+    return { added: addedCount, removed: removedCount };
 }
 
 // Handler principal (footer) : enregistre TOUS les groupes rattachés puis ferme.
@@ -1495,7 +1533,7 @@ async function handleSave() {
         const poiClusters = modalState.clusters.filter(c =>
             c.type !== 'OUT_POI' &&
             c.nearbyPois && c.nearbyPois.length > 0 &&
-            c.photos.some(p => !p.alreadySaved)
+            (c.photos.some(p => !p.alreadySaved) || c.publishedPhotosDirty)
         );
         const outPoiCount = modalState.clusters.filter(c => c.type === 'OUT_POI').length;
 
@@ -1505,15 +1543,18 @@ async function handleSave() {
         }
 
         let totalPhotos = 0;
+        let totalRemoved = 0;
         for (const cluster of poiClusters) {
-            totalPhotos += await saveCluster(cluster, mapId);
+            const { added, removed } = await saveCluster(cluster, mapId);
+            totalPhotos += added;
+            totalRemoved += removed;
         }
 
         const modeSuffix = state.isAdmin ? ' (en attente CC)' : '';
-        showToast(
-            `${poiClusters.length} POI mis à jour, ${totalPhotos} photo(s) ajoutée(s)${modeSuffix}.`,
-            'success'
-        );
+        const parts = [`${poiClusters.length} POI mis à jour`];
+        if (totalPhotos > 0) parts.push(`${totalPhotos} photo(s) ajoutée(s)`);
+        if (totalRemoved > 0) parts.push(`${totalRemoved} photo(s) retirée(s)`);
+        showToast(`${parts.join(', ')}${modeSuffix}.`, 'success');
         if (outPoiCount > 0) {
             showToast(`${outPoiCount} cluster(s) Hors POI ignoré(s) (pas de POI cible).`, 'warning');
         }
@@ -1537,14 +1578,17 @@ async function handleSaveCluster(cluster) {
     if (!cluster.nearbyPois || cluster.nearbyPois.length === 0) { renderBody(); return; }
 
     try {
-        const n = await saveCluster(cluster, mapId);
-        if (n === 0) {
+        const { added, removed } = await saveCluster(cluster, mapId);
+        if (added === 0 && removed === 0) {
             showToast('Rien à enregistrer pour ce lieu.', 'info');
             return;
         }
         const name = getPoiName(cluster.nearbyPois[0].feature) || 'Lieu';
         const modeSuffix = state.isAdmin ? ' (en attente CC)' : '';
-        showToast(`${name} — ${n} photo(s) enregistrée(s)${modeSuffix}.`, 'success');
+        const parts = [];
+        if (added > 0) parts.push(`${added} photo(s) ajoutée(s)`);
+        if (removed > 0) parts.push(`${removed} photo(s) retirée(s)`);
+        showToast(`${name} — ${parts.join(', ')}${modeSuffix}.`, 'success');
         updateHeaderCounts();
         updateFooterButtons(); // le save global reflète qu'il reste moins à sauver
     } catch (e) {
@@ -2071,7 +2115,7 @@ function buildClusterSection(cluster, index) {
     // a déjà ses photos persistées. Quand tout est sauvé, le bouton passe à un
     // état vert inerte « Enregistré » (grisé, demande Stefan).
     if (hasNearbyPoi && cluster.type !== 'OUT_POI' && !cluster.savedAsNewPoi) {
-        const hasUnsaved = cluster.photos.some(p => p.file && !p.alreadySaved);
+        const hasUnsaved = cluster.photos.some(p => p.file && !p.alreadySaved) || !!cluster.publishedPhotosDirty;
         const saveOneBtn = document.createElement('button');
         saveOneBtn.type = 'button';
         if (hasUnsaved) {
@@ -2122,6 +2166,34 @@ function buildClusterSection(cluster, index) {
     head.appendChild(actions);
     section.appendChild(head);
 
+    // --- Photos DÉJÀ PUBLIÉES du POI rattaché (chargées une fois, en lecture
+    // + suppression admin) : affichées avant les nouvelles pour comparaison
+    // directe (ex. relevé refait par beau temps, à comparer à l'existant). ---
+    if (hasNearbyPoi && cluster.type !== 'OUT_POI' && cluster.publishedPhotos === undefined) {
+        cluster.publishedPhotos = getPublishedPhotoUrls(cluster.nearbyPois[0].feature);
+        cluster.publishedPhotosOriginalCount = cluster.publishedPhotos.length;
+    }
+    if (cluster.publishedPhotos && cluster.publishedPhotos.length > 0) {
+        const existingLabel = document.createElement('div');
+        existingLabel.className = 'pb-existing-label';
+        existingLabel.textContent = `Déjà en ligne (${cluster.publishedPhotos.length})`;
+        section.appendChild(existingLabel);
+
+        const existingGrid = document.createElement('div');
+        existingGrid.className = 'pb-grid';
+        cluster.publishedPhotos.forEach((url, i) => {
+            existingGrid.appendChild(buildExistingPhotoCard(url, cluster, i));
+        });
+        section.appendChild(existingGrid);
+
+        if (cluster.photos.length > 0) {
+            const newLabel = document.createElement('div');
+            newLabel.className = 'pb-existing-label';
+            newLabel.textContent = `Nouvelles (${cluster.photos.length})`;
+            section.appendChild(newLabel);
+        }
+    }
+
     // --- GRID Sortable ---
     const grid = document.createElement('div');
     grid.className = 'pb-grid';
@@ -2152,6 +2224,66 @@ function buildClusterSection(cluster, index) {
 
     section.appendChild(grid);
     return section;
+}
+
+// Vignette d'une photo DÉJÀ PUBLIÉE (URL, pas de File) : consultation +
+// suppression réservée admin (même règle et même message que la grille de
+// fiche, ui-photo-grid.js — retirer une photo déjà publiée est une action
+// sur le patrimoine, pas sur un import en cours).
+function buildExistingPhotoCard(url, cluster, index) {
+    const thumb = document.createElement('article');
+    thumb.className = 'pb-thumb is-readonly';
+
+    const img = document.createElement('img');
+    img.className = 'pb-thumb-img';
+    img.alt = 'Photo déjà publiée';
+    img.loading = 'lazy';
+    img.draggable = false;
+    img.src = url;
+    thumb.appendChild(img);
+
+    const badge = document.createElement('span');
+    badge.className = 'pb-thumb-existing-badge';
+    badge.textContent = 'Déjà en ligne';
+    thumb.appendChild(badge);
+
+    if (state.isAdmin) {
+        const acts = document.createElement('div');
+        acts.className = 'pb-thumb-acts';
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'pb-thumb-btn is-danger';
+        deleteBtn.type = 'button';
+        deleteBtn.title = 'Supprimer cette photo déjà publiée';
+        deleteBtn.setAttribute('aria-label', 'Supprimer');
+        deleteBtn.innerHTML = '<i data-lucide="trash-2"></i>';
+        deleteBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            // suspend/resume : sinon la garde anti-empilement de openHwModal
+            // fermerait la modale d'import elle-même (cf. requestClose plus haut).
+            suspendHwModal();
+            let ok = false;
+            try {
+                ok = await hwConfirm({
+                    title: 'Supprimer la photo',
+                    body: "Cette photo est déjà publiée et visible par tous les utilisateurs. La retirer ne prendra effet qu'à la prochaine publication (CC).",
+                    confirmLabel: 'Supprimer',
+                    cancelLabel: 'Annuler',
+                    danger: true,
+                });
+            } finally {
+                resumeHwModal();
+            }
+            if (!ok) return;
+            cluster.publishedPhotos.splice(index, 1);
+            cluster.publishedPhotosDirty = true;
+            renderBody();
+            updateHeaderCounts();
+        });
+        acts.appendChild(deleteBtn);
+        thumb.appendChild(acts);
+    }
+
+    return thumb;
 }
 
 function buildPhotoCard(item, cluster) {
