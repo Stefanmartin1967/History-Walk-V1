@@ -192,6 +192,9 @@ function buildPoiKebabMenu({ hasGpxDesc, isMobile }) {
             <button class="poi-pop-item" role="menuitem" id="btn-add-photos" type="button">
                 <i data-lucide="image-up"></i>Ajouter des photos
             </button>
+            <button class="poi-pop-item" role="menuitem" id="btn-download-photos" type="button">
+                <i data-lucide="download"></i>Télécharger les photos
+            </button>
             <button class="poi-pop-item" role="menuitem" id="${gpxId}" type="button"
                     aria-disabled="${hasGpxDesc ? 'false' : 'true'}">
                 <i data-lucide="file-text"></i>Info GPX
