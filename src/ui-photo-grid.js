@@ -53,10 +53,6 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
                     <i data-lucide="image-up"></i>
                     <span>Ajouter</span>
                 </button>
-                <button class="photo-grid-toolbar-btn" id="pg-btn-download" type="button" title="Télécharger toutes les photos (ZIP)">
-                    <i data-lucide="download"></i>
-                    <span>Télécharger</span>
-                </button>
                 ${isAdmin ? `
                     <button class="photo-grid-comp-toggle" id="pg-btn-comp" type="button"></button>
                     <div class="photo-grid-subtitle" id="pg-subtitle"></div>
@@ -95,11 +91,9 @@ export function openPhotoGrid(poiId, preloadedPhotos = null) {
             subtitleEl = document.getElementById('pg-subtitle');
 
             const btnAdd = document.getElementById('pg-btn-add');
-            const btnDownload = document.getElementById('pg-btn-download');
             const btnCancel = document.getElementById('pg-btn-cancel');
 
             if (btnAdd) btnAdd.onclick = () => fileInputEl.click();
-            if (btnDownload) btnDownload.onclick = handleDownloadAll;
             if (btnCancel) btnCancel.onclick = () => closeHwModal({ saved: false });
             if (btnSaveEl) btnSaveEl.onclick = handleSave;
             if (fileInputEl) fileInputEl.onchange = handleFileSelect;
@@ -249,13 +243,39 @@ async function _loadPhotos(poiId, feature, preloadedPhotos) {
 
 // --- LOGIC ---
 
-// Télécharge toutes les photos actuellement listées (publiées + en attente +
-// perso) en un seul ZIP — les blobs déjà en mémoire sont réutilisés tels
-// quels (déjà filigranés côté admin, cf. photo-service.js), les URLs
-// publiées sont récupérées par fetch. Pensé pour partager d'un coup sur un
-// réseau social plutôt qu'un enregistrement par photo.
-async function handleDownloadAll() {
-    if (currentGridPhotos.length === 0) {
+// Télécharge toutes les photos d'un lieu (publiées + en attente de publication
+// + perso) en un seul ZIP — geste autonome depuis le kebab de la fiche
+// (templates.js « Télécharger les photos »), sans passer par la grille
+// d'édition. Même pool que _loadPhotos, mais indépendant de son état modal
+// (currentGridPhotos n'existe que si la grille est ouverte). Les blobs déjà
+// en mémoire (admin pending / perso) sont réutilisés tels quels — déjà
+// filigranés côté admin, cf. photo-service.js — les URLs publiées sont
+// récupérées par fetch. Pensé pour partager d'un coup sur un réseau social
+// plutôt qu'un enregistrement par photo.
+export async function downloadAllPhotos(poiId) {
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    if (!feature) { showToast('Lieu introuvable.', 'error'); return; }
+    const poiName = getPatrimonialName(feature);
+
+    const pool = [
+        ...(feature.properties?.photos || []),
+        ...(feature.properties?.userData?.photos || []),
+    ];
+    const seen = new Set();
+    const urls = pool.filter(p => {
+        if (typeof p !== 'string') return false;
+        if (p.startsWith('data:')) return false;
+        if (seen.has(p)) return false;
+        seen.add(p);
+        return true;
+    });
+
+    const mapId = state.currentMapId;
+    const blobItems = state.isAdmin
+        ? await getPendingAdminPhotos(mapId, poiId)
+        : await getPoiPhotos(mapId, poiId);
+
+    if (urls.length === 0 && (!blobItems || blobItems.length === 0)) {
         showToast('Aucune photo à télécharger.', 'info');
         return;
     }
@@ -264,25 +284,20 @@ async function handleDownloadAll() {
     const entries = [];
     let failed = 0;
     let i = 0;
-    for (const photo of currentGridPhotos) {
+    for (const src of urls) {
         i++;
-        const num = String(i).padStart(2, '0');
         try {
-            let data;
-            if (photo.blob) {
-                data = photo.blob;
-            } else if (photo.src) {
-                const res = await fetch(photo.src);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                data = await res.blob();
-            } else {
-                continue;
-            }
-            entries.push({ name: `${num} - ${currentGridPoiName}.jpg`, data });
+            const res = await fetch(src);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            entries.push({ name: `${String(i).padStart(2, '0')} - ${poiName}.jpg`, data: await res.blob() });
         } catch (err) {
             console.error('[photo-grid] téléchargement échoué pour une photo', err);
             failed++;
         }
+    }
+    for (const item of (blobItems || [])) {
+        i++;
+        entries.push({ name: `${String(i).padStart(2, '0')} - ${poiName}.jpg`, data: item.blob });
     }
 
     if (entries.length === 0) {
@@ -292,7 +307,7 @@ async function handleDownloadAll() {
 
     try {
         const zipBlob = await createZipBlob(entries);
-        downloadFile(`${currentGridPoiName}.zip`, zipBlob, 'application/zip');
+        downloadFile(`${poiName}.zip`, zipBlob, 'application/zip');
         showToast(
             failed > 0
                 ? `${entries.length} photo(s) téléchargée(s), ${failed} échec(s).`
