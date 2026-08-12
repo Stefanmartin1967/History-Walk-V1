@@ -7,7 +7,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
 import { sanitizeHTML, openPoiOnMap } from './utils.js';
-import { openPhotoGrid } from './ui-photo-grid.js';
+import { openPhotoGrid, downloadAllPhotos } from './ui-photo-grid.js';
 import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
@@ -487,6 +487,14 @@ function setupAddPhotosButton(poiId) {
     });
 }
 
+// Kebab → "Télécharger les photos" : geste autonome (pas besoin d'ouvrir la
+// grille juste pour extraire ce qui existe déjà), cf. downloadAllPhotos.
+function setupDownloadPhotosButton(poiId) {
+    const btn = document.getElementById('btn-download-photos');
+    if (!btn) return;
+    btn.addEventListener('click', () => downloadAllPhotos(poiId));
+}
+
 function setupGpxDescToggle() {
     // Bouton "Desc. GPX" du tiroir → toggle visibilité de la section poi-gpx-section
     const toggleBtn = document.getElementById('btn-toggle-gpx-desc') || document.getElementById('mobile-btn-toggle-gpx-desc');
@@ -516,6 +524,7 @@ function setupDetailsEventListeners(poiId) {
     setupNoteEditToggle(poiId);
     setupHeroClick(poiId);
     setupAddPhotosButton(poiId);
+    setupDownloadPhotosButton(poiId);
     setupKebab();
     setupEyebrowNav();
     setupGpxDescToggle();
