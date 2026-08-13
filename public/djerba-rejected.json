@@ -62,22 +62,13 @@
     "lat": 33.7038289,
     "rejectedAt": 1786636416385
   },
-  "node/13153414206": {
-    "osm_ref": "node/13153414206",
-    "name": "Cheikh Sidi Slimen (ruines)",
+  "node/13776137055": {
+    "osm_ref": "node/13776137055",
+    "name": "Ettalbi - Ben Salah",
     "nameAr": "",
     "category": "Site archéologique",
-    "lng": 11.0299914,
-    "lat": 33.830837,
-    "rejectedAt": 1786636633349
-  },
-  "way/1430067279": {
-    "osm_ref": "way/1430067279",
-    "name": "El Hajar (ruines de la mosquée)",
-    "nameAr": "جامع الحجر",
-    "category": "Site archéologique",
-    "lng": 11.0069542,
-    "lat": 33.7617378,
-    "rejectedAt": 1786636654007
+    "lng": 10.8724848,
+    "lat": 33.8466515,
+    "rejectedAt": 1786636779154
   }
 }
