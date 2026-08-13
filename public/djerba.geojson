@@ -11479,7 +11479,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Ghwouar Mosquée",
+        "Nom du site FR": "Mosquée Ghaouar",
         "Catégorie": "Mosquée",
         "osm_ref": "way/453769055",
         "HW_ID": "HW-01KZH0VFY1T559HQJRPPHY044Z",
@@ -11493,7 +11493,13 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
