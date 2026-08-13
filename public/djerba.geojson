@@ -11537,6 +11537,30 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.892215,
+          33.7134529
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jamaa El Benna",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/13431575000",
+        "HW_ID": "HW-01KZH0VFNH2G8QF131GMJ7N2SB",
+        "description": "Jalel n° 192 — « Mosquée Elbenna. Ouersighen. Mosquée ibadite wahbite en ruines. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 192 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.9149486,
           33.6992902
         ]
@@ -11554,6 +11578,31 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9000481,
+          33.686566
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Hypogeum El Fahmine",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/1486405350",
+        "HW_ID": "HW-01KZH0VG9HB3PEYZJZ2SVT7X5Z",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/RDYiToUnrDEEx5Ks5",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Guellala"
       }
     }
   ]
