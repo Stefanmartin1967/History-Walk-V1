@@ -566,7 +566,8 @@
         "accessPoint": [
           10.9918059,
           33.8104952
-        ]
+        ],
+        "osm_ref": "node/11691949310"
       }
     },
     {
@@ -11525,6 +11526,30 @@
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 182 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "https://maps.app.goo.gl/NCrAV2WMjnYV9Cdi7",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9149486,
+          33.6992902
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Henchir Tala",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/253063358",
+        "HW_ID": "HW-01KZH0VFTNCH521D19MFV3TDQP",
+        "État": "Vestiges partiels",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
