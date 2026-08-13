@@ -34,5 +34,14 @@
     "lng": 10.7350749,
     "lat": 33.6977659,
     "rejectedAt": 1782110541126
+  },
+  "way/1443132329": {
+    "osm_ref": "way/1443132329",
+    "name": "Beni Limes - ancienne église",
+    "nameAr": "كنيسة سابقة",
+    "category": "Site archéologique",
+    "lng": 10.7589451,
+    "lat": 33.7328733,
+    "rejectedAt": 1786636169673
   }
 }
