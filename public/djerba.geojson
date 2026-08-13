@@ -11441,6 +11441,89 @@
         "descriptionPublic": false,
         "Zone": "Midoun"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7585009,
+          33.7615996
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Faqia Masoud El Mazdari",
+        "Catégorie": "Site funéraire",
+        "osm_ref": "node/13456289128",
+        "HW_ID": "HW-01KZH0VFD1F4XTR0DGTZ99YS0Y",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 257 — « Fakih Messaoud Mezdari. Bousmaiel. Mausolée et lieu de culte en bon état, mais abandonné. Ancien.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 257 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/dw7Q2TRP4jGiXGgj6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Mezrene"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9051089,
+          33.7502956
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ghwouar Mosquée",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/453769055",
+        "HW_ID": "HW-01KZH0VFY1T559HQJRPPHY044Z",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "description": "Jalel n° 180 — « Mosquée Ghaouar. Cedouikech. Mosquée ibadite wahbite relativement en bon état, mais nécessite une rénovation. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 180 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9064489,
+          33.737424
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Fouzria",
+        "Nom du site arabe": "مسجد الفوزرية",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1431331189",
+        "HW_ID": "HW-01KZH0VG4MJW9DVR50QK6TZ5Z3",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Intérieur visitable",
+        "description": "Jalel n° 182 — « Mosquée Fouzria ou Fouzer. Aux limites de Cedouikech. Mosquée forteresse abandonnée et en quasi ruines. Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 182 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/NCrAV2WMjnYV9Cdi7",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Sedouikech"
+      }
     }
   ]
 }
