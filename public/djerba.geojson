@@ -4348,18 +4348,29 @@
       "properties": {
         "Nom du site FR": "Museée du Patrimoine Traditionnel de Djerba",
         "Nom du site arabe": "متحف جربة للتراث التقليدي",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Musée",
         "Zone": "Taourit",
         "Source": "https://www.patrimoinedetunisie.com.tn/musees/musee-du-patrimoine-traditionnel-de-djerba/apercu/",
         "HW_ID": "HW-01K77WPE6G6JHJFHW35MKZBZEW",
         "Temps_minutes": 180,
         "Prix_TND": 8,
-        "description": "Musée du Patrimoine Traditionnel de Djerba inauguré en 2018. La zaouïa qui abritait anciennement le musée a été restaurée et réaffectée en centre d'orientation du patrimoine. Le musée présente le patrimoine Djerbien sous diverses formes telles que architecture, agriculture, pêche, poterie, etc. ... Il offre à la visite une dimension participative et permet de mieux comprendre le riche passé de 'île.",
+        "description": "**Musée du Patrimoine Traditionnel de Djerba** inauguré en 2018. La zaouïa qui abritait anciennement le musée a été restaurée et réaffectée en centre d'orientation du patrimoine. Le musée présente le patrimoine Djerbien sous diverses formes telles que architecture, agriculture, pêche, poterie, etc. ... Il offre à la visite une dimension participative et permet de mieux comprendre le riche passé de 'île.",
         "info_gpx": "Musée du Patrimoine de Djerba, ouvert de 09h30 à 16h30. Prix d'entrée pour les non résidents : 8Dt",
         "accessPoint": [
           10.8626588,
           33.8798619
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -6581,7 +6592,7 @@
         "Nom du site arabe": "جامع البرداوي",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
-        "Source": "https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322https://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba\nRépertoire J. Fathallah, n° 119 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322\nhttps://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba\nRépertoire J. Fathallah, n° 119 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6N6HF86MYJNJWFPNSV",
         "photos": [
           "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463716033.jpg",
@@ -6611,7 +6622,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
