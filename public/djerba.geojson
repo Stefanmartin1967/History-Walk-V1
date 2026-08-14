@@ -8157,9 +8157,9 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée rurale",
-        "Nom du site arabe": "مسجد ريفي",
-        "Catégorie": "Mosquée",
+        "Nom du site FR": "Mausolée",
+        "Nom du site arabe": "",
+        "Catégorie": "Site funéraire",
         "Zone": "Sedghaiane",
         "Source": "Maps montre un bâtiment non référencé sur la vue satellite, mais rien sur OSM",
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
@@ -8170,8 +8170,8 @@
           33.8241266
         ],
         "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "",
@@ -8180,7 +8180,12 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": true
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "photos": [
+          "photos/poi_HW-01K77WPE6SFRMMS2GS11D6JXR5_1786726887779.jpg",
+          "photos/poi_HW-01K77WPE6SFRMMS2GS11D6JXR5_1786726889571.jpg"
+        ]
       }
     },
     {
@@ -9635,7 +9640,7 @@
         "Catégorie": "Mosquée",
         "Sous-type": "Générique",
         "Zone": "El Hachene",
-        "description": "Jalel N° 111 : « Sidi Bousaid. Bazim. Mosquée mausolée ibadite wahbite. 6ᵉ siècle de l'hégire (10ᵉ siècle ap. J.-C.).",
+        "description": "Jalel n° 111 — « Sidi Bousaid. Bazim. Mosquée mausolée ibadite wahbite.\n6ᵉ siècle de l'hégire (10ᵉ siècle ap. J.-C.). » [datation contradictoire dans la source : le 6ᵉ s. de l'hégire correspond au 12ᵉ s. ap. J.-C.]",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "HW_ID": "HW-01KSZ6CRQ5J5JJ14EW8X7R8H21",
@@ -9654,7 +9659,8 @@
         "osm_ref": "way/990374468",
         "maps_ref": "",
         "verified": false,
-        "introuvableCarte": true
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -11603,6 +11609,30 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8971045,
+          33.7231458
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jedi Bou Amor",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/13431619309",
+        "HW_ID": "HW-01KZH0VFPVFEXSGAQDC73MMSV8",
+        "description": "Jedi Bou Amor (Guellala, Jerba Ajim, Médenine) est un site archéologique. Jedi Bou Amor se trouve à proximité du cimetière d'El Mouhechi, ainsi que de la petite ville de Sedouikech.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "https://mapcarta.com/fr/N13431619309",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Sedouikech"
       }
     }
   ]
