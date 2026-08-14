@@ -8180,7 +8180,7 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "descriptionPublic": false,
         "photos": [
           "photos/poi_HW-01K77WPE6SFRMMS2GS11D6JXR5_1786726887779.jpg",
