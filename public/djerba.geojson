@@ -9381,8 +9381,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.972655564546585,
-          33.81398157183997
+          10.97268506884575,
+          33.81391470584298
         ]
       },
       "properties": {
@@ -9409,7 +9409,10 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "",
-        "maps_ref": "https://maps.app.goo.gl/244Ah1MaW2uovumh7"
+        "maps_ref": "https://maps.app.goo.gl/244Ah1MaW2uovumh7",
+        "lat": 33.81391470584298,
+        "lng": 10.97268506884575,
+        "descriptionPublic": false
       }
     },
     {
@@ -9450,8 +9453,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.9731949,
-          33.8137894
+          10.973104834556581,
+          33.81366398849076
         ]
       },
       "properties": {
@@ -9479,7 +9482,9 @@
         "verified": false,
         "introuvableCarte": true,
         "osm_ref": "",
-        "maps_ref": ""
+        "maps_ref": "",
+        "lat": 33.81366398849076,
+        "lng": 10.973104834556581
       }
     },
     {
