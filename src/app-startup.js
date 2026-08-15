@@ -244,8 +244,12 @@ export async function loadPoiCategoriesConfig() {
     const baseUrl = import.meta.env?.BASE_URL || './';
     const configUrl = baseUrl + 'poi-categories.json';
 
+    // SW NetworkFirst 'app-data' + fallback cache (poi-categories.json est exclu
+    // du précache, cf. vite.config.js globIgnores — même piège que
+    // destinations.json, cf. [[reference_pwa_precache_config_freshness]]).
+    // cache:'reload' force la fraîcheur si le SW est contourné.
     try {
-        const response = await fetchWithTimeout(configUrl);
+        const response = await fetchWithTimeout(configUrl, { cache: 'reload' });
         if (response.ok) {
             const data = await response.json();
             setTaxonomy(data);

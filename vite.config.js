@@ -31,14 +31,16 @@ export default defineConfig({
         // og-image.png (720 KB) : utilisée par les scrapers sociaux, inutile hors-ligne.
         // screenshots/ : fiche d'installation PWA uniquement, inutile hors-ligne.
         //
-        // destinations.json + circuits/*.json : EXCLUS du précache. Étant des .json,
-        // ils étaient happés par globPatterns → précachés (CacheFirst figé à la build),
-        // et le précache GAGNE sur le NetworkFirst ci-dessous → la config restait
-        // PÉRIMÉE jusqu'à activation d'un nouveau SW (bug observé : nouvelle vue
-        // d'ouverture/devise non vues après déploiement). En les ignorant, ils tombent
-        // sur le NetworkFirst 'app-data' (même traitement que .geojson) → frais à chaque
-        // boot online, fallback cache hors-ligne.
-        globIgnores: ['**/og-image.png', '**/screenshots/**', '**/destinations.json', '**/circuits/*.json'],
+        // destinations.json + circuits/*.json + poi-categories.json : EXCLUS du
+        // précache. Étant des .json, ils étaient happés par globPatterns →
+        // précachés (CacheFirst figé à la build), et le précache GAGNE sur le
+        // NetworkFirst ci-dessous → la config restait PÉRIMÉE jusqu'à activation
+        // d'un nouveau SW (bug observé : nouvelle vue d'ouverture/devise non vues
+        // après déploiement — poi-categories.json avait le même piège, sans même
+        // ce filet, cf. renommage Marabout→Mausolée du 15/08/2026). En les
+        // ignorant, ils tombent sur le NetworkFirst 'app-data' (même traitement
+        // que .geojson) → frais à chaque boot online, fallback cache hors-ligne.
+        globIgnores: ['**/og-image.png', '**/screenshots/**', '**/destinations.json', '**/circuits/*.json', '**/poi-categories.json'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Les .gpx (partage/téléchargement de circuit) ne doivent PAS être happés
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
@@ -64,9 +66,9 @@ export default defineConfig({
             },
           },
           {
-            // Circuits officiels et config destinations : NetworkFirst
+            // Circuits officiels, config destinations et taxonomie POI : NetworkFirst
             // Remplace le double-fetch manuel avec ?t=Date.now() dans app-startup.js
-            urlPattern: /\/(circuits\/[^?]+\.json|destinations\.json)(\?.*)?$/,
+            urlPattern: /\/(circuits\/[^?]+\.json|destinations\.json|poi-categories\.json)(\?.*)?$/,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'app-data',
