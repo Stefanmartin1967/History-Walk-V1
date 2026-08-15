@@ -95,8 +95,9 @@ const I_MOSQUEE_GENERIQUE = svgFor(G +
     '<rect x="63" y="54" width="4" height="28"/>'
 );
 
-// Marabout (catégorie mono-niveau du groupe Lieux de culte)
-const I_MARABOUT = svgFor(G +
+// Mausolée (catégorie mono-niveau du groupe Lieux de culte — ex-« Marabout »,
+// renommé 15/08/2026 : un marabout est le saint vénéré, pas le bâtiment)
+const I_MAUSOLEE = svgFor(G +
     '<rect x="16" y="52" width="64" height="30"/>' +
     '<path d="M30 52 Q30 32 48 32 Q66 32 66 52 Z"/>' +
     door('M42 82 L42 64 Q42 60 48 60 Q54 60 54 64 L54 82 Z')
@@ -348,7 +349,7 @@ const POI_ICONS = {
         'Générique': I_MOSQUEE_GENERIQUE,
         _default: I_MOSQUEE_GENERIQUE,
     },
-    'Marabout': I_MARABOUT,
+    'Mausolée': I_MAUSOLEE,
     'Église': {
         'Catholique': I_EGLISE_CATHO,
         'Orthodoxe': I_EGLISE_ORTHO,

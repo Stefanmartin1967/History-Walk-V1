@@ -15,7 +15,7 @@ const FALLBACK = {
         { label: "Église", groupe: "Lieux de culte" },
         { label: "Fortification", groupe: "Site historique" },
         { label: "Hôtel", groupe: "Services & commodités" },
-        { label: "Marabout", groupe: "Lieux de culte" },
+        { label: "Mausolée", groupe: "Lieux de culte" },
         { label: "Marché", groupe: "Services & commodités" },
         { label: "Menzel", groupe: "Architecture traditionnelle", libelleDerive: true },
         { label: "Mosquée", groupe: "Lieux de culte" },
