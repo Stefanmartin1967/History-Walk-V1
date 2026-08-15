@@ -2498,13 +2498,14 @@
         "description": "131 Mosquée Ben Yakhlef. Guechaine. Mosquée ibadite wahbite ancienne, abandonnée et en quasi ruines. 1074 de l'hégire / 1663 ap. J.-C.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1549787230",
         "maps_ref": "https://maps.app.goo.gl/AemZYLuJXXwWUx7B8",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -2916,7 +2917,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -3206,7 +3208,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -5368,7 +5371,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
