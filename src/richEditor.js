@@ -4,7 +4,7 @@ import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates, updatePoiData } from './data.js';
 import { eventBus } from './events.js';
-import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl } from './utils.js';
+import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, isOsmChecked, isMapsChecked } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
 import { persistPoiEdit } from './poi-persistence.js';
@@ -1354,7 +1354,8 @@ async function handleSave(validate = false) {
     // du moment du dernier VRAI check, cf. le but « relancer un re-scout »).
     const osmRefVal = normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF));
     const mapsRefVal = getValue(DOM_IDS.INPUTS.MAPS_REF).trim();
-    const osmCheckedNow = getOsmChecked() || !!osmRefVal;
+    // isOsmChecked : même règle que l'affichage et le filtre (utils.js).
+    const osmCheckedNow = isOsmChecked({ osmChecked: getOsmChecked(), osm_ref: osmRefVal });
     const wasOsmCheckedEffective = originalOsmState.checked || !!originalOsmState.ref;
     let osmCheckedDate = originalOsmState.date;
     if (osmCheckedNow && (!wasOsmCheckedEffective || osmRefVal !== originalOsmState.ref)) {
@@ -1393,10 +1394,10 @@ async function handleSave(validate = false) {
         'descriptionPublic': getDescPublic(),
         'osmChecked': osmCheckedNow,
         'osmCheckedDate': osmCheckedDate,
-        // mapsPlaceUrl (et non la valeur brute) : `maps_ref` se stocke tel que
-        // collé — choix documenté — mais l'implication « vérifié » ne doit valoir
-        // que pour un lien réellement exploitable, comme pour OSM.
-        'mapsChecked': getMapsChecked() || !!mapsPlaceUrl(mapsRefVal),
+        // isMapsChecked (utils.js) : `maps_ref` se stocke tel que collé — choix
+        // documenté — mais l'implication « vérifié » ne vaut que pour un lien
+        // réellement exploitable, comme pour OSM.
+        'mapsChecked': isMapsChecked({ mapsChecked: getMapsChecked(), maps_ref: mapsRefVal }),
         'mapsHasPhoto': getMapsHasPhoto(),
         'jalelChecked': getJalelChecked()
     };
@@ -1632,8 +1633,8 @@ function handleEmailSuggestion() {
         'verified': getVerified(),
         'introuvableCarte': getMapMissing(),
         'descriptionPublic': getDescPublic(),
-        'osmChecked': getOsmChecked() || !!normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF)),
-        'mapsChecked': getMapsChecked() || !!mapsPlaceUrl(getValue(DOM_IDS.INPUTS.MAPS_REF)),
+        'osmChecked': isOsmChecked({ osmChecked: getOsmChecked(), osm_ref: getValue(DOM_IDS.INPUTS.OSM_REF) }),
+        'mapsChecked': isMapsChecked({ mapsChecked: getMapsChecked(), maps_ref: getValue(DOM_IDS.INPUTS.MAPS_REF) }),
         'mapsHasPhoto': getMapsHasPhoto(),
         'jalelChecked': getJalelChecked()
     };

@@ -74,7 +74,12 @@ vi.mock('../src/utils.js', () => ({
     // Overlay-aware comme le vrai (userData prime) : deletePoi lit l'osm_ref par ce
     // canal, un osm_ref reporté pendant la curation vivant dans userData.
     getPoiProp: vi.fn((f, k) => f?.properties?.userData?.[k] ?? f?.properties?.[k]),
-    isCandidate: vi.fn(() => false)
+    isCandidate: vi.fn(() => false),
+    // Checklist de vérification : réplique la règle « une référence renseignée
+    // vaut vérifié » (utils.js). Les regex reprennent normalizeOsmRef et
+    // mapsPlaceUrl — une saisie non reconnaissable ne doit PAS valoir vérifié.
+    isOsmChecked: vi.fn(p => !!p?.osmChecked || /(node|way|relation)\/\d+/i.test(p?.osm_ref || '')),
+    isMapsChecked: vi.fn(p => !!p?.mapsChecked || /^https?:\/\//i.test((p?.maps_ref || '').trim()))
 }));
 
 // Tombstones de curation : on espionne addRejected sans toucher au vrai store, et on
