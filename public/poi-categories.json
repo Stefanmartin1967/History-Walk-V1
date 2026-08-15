@@ -23,7 +23,7 @@
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
     },
     {
-      "label": "Marabout",
+      "label": "Mausolée",
       "groupe": "Lieux de culte",
       "libelleDerive": false,
       "sousTypes": [],
