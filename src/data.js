@@ -447,6 +447,16 @@ export function passesUserFilters(feature, plannedSet = null) {
     // file de revue (n'affiche que ces lieux pour les retraiter).
     if (f.introuvableCarte === 'hide' && props.introuvableCarte) return false;
     if (f.introuvableCarte === 'only' && !props.introuvableCarte) return false;
+    // Checklist de vérification (15/08/2026) : 'only' = file de travail par
+    // source (n'affiche que ceux encore à checker, ou déjà checkés, selon le sens).
+    if (f.osmChecked === 'hide' && props.osmChecked) return false;
+    if (f.osmChecked === 'only' && !props.osmChecked) return false;
+    if (f.mapsChecked === 'hide' && props.mapsChecked) return false;
+    if (f.mapsChecked === 'only' && !props.mapsChecked) return false;
+    if (f.mapsHasPhoto === 'hide' && props.mapsHasPhoto) return false;
+    if (f.mapsHasPhoto === 'only' && !props.mapsHasPhoto) return false;
+    if (f.jalelChecked === 'hide' && props.jalelChecked) return false;
+    if (f.jalelChecked === 'only' && !props.jalelChecked) return false;
     // Candidat « à curer » (réunif C1) : 'only' = file de tri (n'affiche que les candidats).
     if (f.candidate === 'hide' && isCandidate(feature)) return false;
     if (f.candidate === 'only' && !isCandidate(feature)) return false;

@@ -319,6 +319,11 @@ body {
 }
 .fiche-status .sw.is-on { background: var(--sw-on); }
 .fiche-status .sw.is-on::after { transform: translateX(16px); }
+/* Checklist de vérification (15/08/2026) : « OSM/Maps vérifié » est IMPLIQUÉ
+   quand la référence correspondante est renseignée — handleSave le force à vrai
+   dans ce cas. On verrouille alors l'interrupteur au lieu de le laisser
+   cliquable et de le voir revenir tout seul au prochain enregistrement. */
+.fiche-status .sw:disabled { cursor: default; opacity: 0.62; }
 /* Ligne « Candidat à curer » (réunif C1b) : cachée sauf pour un candidat Scout.
    [hidden] doit l'emporter sur le display:flex de .fiche-row. */
 .fiche-row[hidden] { display: none !important; }

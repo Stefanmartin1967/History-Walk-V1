@@ -376,6 +376,12 @@ function populateFicheSection() {
         ...(state.isAdmin ? [
             { key: 'candidate', label: 'Lieux à curer' },
             { key: 'introuvableCarte', label: 'Existence à confirmer' },
+            // Checklist de vérification (15/08/2026) : file de travail admin,
+            // même logique que les deux au-dessus.
+            { key: 'osmChecked', label: 'OSM vérifié' },
+            { key: 'mapsChecked', label: 'Maps vérifié' },
+            { key: 'mapsHasPhoto', label: 'Photo Maps disponible' },
+            { key: 'jalelChecked', label: 'Jalel checké' },
         ] : []),
         { key: 'photo',       label: 'Lieux avec photo'       },
         { key: 'description', label: 'Lieux avec description' },
