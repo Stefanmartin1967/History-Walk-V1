@@ -3449,7 +3449,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -9660,7 +9661,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée al-Baraka",
+        "Nom du site FR": "Mosquée al Baraka",
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "Zone": "El Groa",
