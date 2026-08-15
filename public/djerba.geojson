@@ -9310,7 +9310,14 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/ymaHzJZ2C6tpCQtM8",
+        "descriptionPublic": false,
+        "photos": [
+          "photos/poi_HW-01KK1CD2CREMNC3CHCGC44PK80_1786800407188.jpg",
+          "photos/poi_HW-01KK1CD2CREMNC3CHCGC44PK80_1786800409080.jpg"
+        ]
       }
     },
     {
