@@ -400,7 +400,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -10941,16 +10942,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
+        "Nom du site FR": "Mausolée المعاريس",
         "Nom du site arabe": "المعاريس",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1473672757",
         "HW_ID": "HW-01KZH0VF0HF0RK88QZ0V5G115D",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": false,
-        "Zone": "El Groa"
+        "introuvableCarte": true,
+        "Zone": "El Groa",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Le lieu le plus proche est Mosquée Sidi Nasr",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -10984,15 +10996,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée El Karôunia",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1464086423",
         "HW_ID": "HW-01KZH0VFJFT2P42PRK4XMNVN0B",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Guellala"
+        "Zone": "Guellala",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "En activité",
+        "Accès": "Non visitable",
+        "info_gpx": "",
+        "description": "Nom donné sur base de la mosquée en face - A confirmer",
+        "Source": "",
+        "maps_ref": "https://maps.app.goo.gl/UDSx4sPmHWTMwkTU9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11090,15 +11114,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Sidi Miaad",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990318937",
         "HW_ID": "HW-01KZH0VGXXC7XGPPJ722ESYAZ9",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11176,15 +11212,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée El Mahboubine",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990381626",
         "HW_ID": "HW-01KZH0VH51S4GQWTT98QMKAX7G",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite Maps\nToponymie ne renvoie rien, nommé par sa zone",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11293,15 +11341,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Marabout (Tombe endommagée)",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée (El Haddada)",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1409960012",
         "HW_ID": "HW-01KZH0VHCSMAHR4STDTHKBSHJD",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": false,
-        "Zone": "Arkou"
+        "introuvableCarte": true,
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Lieux renseigné par Petr sur OSM comme \"Tombe endommagée\" \nSitué à proximité de la Mosquée Sidi Wahlan",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11763,6 +11823,30 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "Zone": "Essouani"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.960448226796878,
+          33.79964818316147
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée proche",
+        "Catégorie": "Mosquée",
+        "Sous-type": "Générique",
+        "description": "Mosquée trouvée sur Maps\nLe nom est fantaisiste et doit être vérifié",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/ZbBc2EWJ37WqWsr59",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "HW_ID": "HW-01M02F2A2A8RK0TEFBEA87SEBN",
+        "Zone": "El Mahboubine"
       }
     }
   ]
