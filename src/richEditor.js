@@ -800,6 +800,9 @@ function bindModalEvents() {
             const on = !btn.classList.contains('is-on');
             btn.classList.toggle('is-on', on);
             btn.setAttribute('aria-checked', String(on));
+            // Un clic est par définition un choix manuel (les deux interrupteurs
+            // sans implication n'ont pas de dataset.manual, sans conséquence).
+            btn.dataset.manual = String(on);
             isDirty = true;
         });
     }
@@ -1244,6 +1247,8 @@ function setOsmChecked(val) {
     if (!el) return;
     el.classList.toggle('is-on', !!val);
     el.setAttribute('aria-checked', String(!!val));
+    // Mémorise l'état VOULU (hors implication par la ref) — cf. syncCheckedFromRef.
+    el.dataset.manual = String(!!val);
 }
 
 function getOsmChecked() {
@@ -1265,23 +1270,34 @@ function setOsmCheckedDateDisplay(dateStr) {
 // Trojette). Et comme handleSave force la valeur à vrai quand la ref existe,
 // un interrupteur cliquable reviendrait tout seul : on le verrouille et on le
 // dit, plutôt que de laisser un contrôle qui ignore le clic.
-function syncCheckedFromRef(refInputId, switchId, hintText) {
+// L'interrupteur affiche `manuel || impliqué`, mais ne garde que `manuel` en
+// mémoire (dataset.manual) : sinon, remplacer une ref valide par une saisie
+// invalide laisserait l'interrupteur coché par la seule implication qui vient
+// de disparaître — on enregistrerait « vérifié » sans référence, ce que l'admin
+// n'a pas demandé.
+//
+// `isValidRef` DOIT être le même validateur que celui appliqué à
+// l'enregistrement (normalizeOsmRef / mapsPlaceUrl), sinon l'UI et la donnée
+// enregistrée divergent.
+function syncCheckedFromRef(refInputId, switchId, isValidRef, hintText) {
     const input = document.getElementById(refInputId);
     const sw = document.getElementById(switchId);
     if (!input || !sw) return;
-    const implied = !!input.value.trim();
-    if (implied) {
-        sw.classList.add('is-on');
-        sw.setAttribute('aria-checked', 'true');
-    }
+    const implied = isValidRef(input.value);
+    const manual = sw.dataset.manual === 'true';
+    const shown = manual || implied;
+    sw.classList.toggle('is-on', shown);
+    sw.setAttribute('aria-checked', String(shown));
     sw.disabled = implied;
     sw.title = implied ? hintText : '';
 }
 
 function syncAllCheckedFromRefs() {
     syncCheckedFromRef(DOM_IDS.INPUTS.OSM_REF, DOM_IDS.OSM_CHECKED,
+        (v) => !!normalizeOsmRef(v),
         'Impliqué par l’objet OSM renseigné — videz le champ pour reprendre la main');
     syncCheckedFromRef(DOM_IDS.INPUTS.MAPS_REF, DOM_IDS.MAPS_CHECKED,
+        (v) => !!mapsPlaceUrl(v),
         'Impliqué par le lien Maps renseigné — videz le champ pour reprendre la main');
 }
 
@@ -1290,6 +1306,7 @@ function setMapsChecked(val) {
     if (!el) return;
     el.classList.toggle('is-on', !!val);
     el.setAttribute('aria-checked', String(!!val));
+    el.dataset.manual = String(!!val); // cf. setOsmChecked
 }
 
 function getMapsChecked() {
@@ -1376,7 +1393,10 @@ async function handleSave(validate = false) {
         'descriptionPublic': getDescPublic(),
         'osmChecked': osmCheckedNow,
         'osmCheckedDate': osmCheckedDate,
-        'mapsChecked': getMapsChecked() || !!mapsRefVal,
+        // mapsPlaceUrl (et non la valeur brute) : `maps_ref` se stocke tel que
+        // collé — choix documenté — mais l'implication « vérifié » ne doit valoir
+        // que pour un lien réellement exploitable, comme pour OSM.
+        'mapsChecked': getMapsChecked() || !!mapsPlaceUrl(mapsRefVal),
         'mapsHasPhoto': getMapsHasPhoto(),
         'jalelChecked': getJalelChecked()
     };
@@ -1612,8 +1632,8 @@ function handleEmailSuggestion() {
         'verified': getVerified(),
         'introuvableCarte': getMapMissing(),
         'descriptionPublic': getDescPublic(),
-        'osmChecked': getOsmChecked() || !!getValue(DOM_IDS.INPUTS.OSM_REF).trim(),
-        'mapsChecked': getMapsChecked() || !!getValue(DOM_IDS.INPUTS.MAPS_REF).trim(),
+        'osmChecked': getOsmChecked() || !!normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF)),
+        'mapsChecked': getMapsChecked() || !!mapsPlaceUrl(getValue(DOM_IDS.INPUTS.MAPS_REF)),
         'mapsHasPhoto': getMapsHasPhoto(),
         'jalelChecked': getJalelChecked()
     };
