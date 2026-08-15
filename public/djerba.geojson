@@ -1003,7 +1003,7 @@
       "properties": {
         "Nom du site FR": "Mausolée Henchir Bourgou",
         "Nom du site arabe": "هنشير بورقو",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "Zone": "Midoun",
         "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgouhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
@@ -1014,7 +1014,7 @@
         ],
         "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge.",
         "Sous-type": "",
-        "État": "Conservé",
+        "État": "Désaffecté",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
@@ -8187,9 +8187,9 @@
       "properties": {
         "Nom du site FR": "Qubba Dajwi",
         "Nom du site arabe": "",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "Zone": "Sedghaiane",
-        "Source": "Maps montre un bâtiment non référencé sur la vue satellite, mais rien sur OSM",
+        "Source": "Martine Gendron",
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
         "description": "",
         "info_gpx": "",
@@ -8198,11 +8198,11 @@
           33.8241266
         ],
         "Sous-type": "",
-        "État": "Conservé",
+        "État": "Désaffecté",
         "Accès": "Extérieur seulement",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1430127799",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
@@ -10459,7 +10459,7 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Ben Omran",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990313185",
         "HW_ID": "HW-01KZH0VG0JFXX61A1M0W4KJDV5",
         "Temps_minutes": 0,
@@ -10471,13 +10471,14 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Visible sur la vue satellite",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "descriptionPublic": false
       }
     },
     {
@@ -10779,7 +10780,7 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Balhajjam",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1315226030",
         "HW_ID": "HW-01KZH0VH9EN0EA28JSJYWFVXR5",
         "Temps_minutes": 0,
@@ -10791,13 +10792,14 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Visible sur la vue satellite",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "descriptionPublic": false
       }
     },
     {
@@ -10811,7 +10813,7 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée El Ayssia",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1430941285",
         "HW_ID": "HW-01KZH0VHDQKJWWA1HF0537M2KZ",
         "Temps_minutes": 0,
@@ -10823,13 +10825,14 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Visible sur la vue satellite",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "descriptionPublic": false
       }
     },
     {
@@ -10939,14 +10942,26 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Sidi Sliman",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1436606445",
         "HW_ID": "HW-01KZH0VEXP89XM09J99252QXTQ",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Erriadh"
+        "Zone": "Erriadh",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite\nA vérifier à proximité :\n33.844656408287726, 10.841175974443233 = Tagué \"Temple Parsi\" sur Maps mais ça n'a aucune plausibilité historique à Djerba — il n'y a jamais eu de communauté parsie/zoroastrienne en Tunisie. Et vérifié côté OSM : ni « Timinest » ni « Tinaste » n'y existent sous aucun nom — uniquement une entrée Google Maps, sans aucune source indépendante qui la corrobore\n33.844464340417844, 10.841055563192988 = Tagué mosquée mais pas de trace sur la vue satellite",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11060,14 +11075,25 @@
       "properties": {
         "Nom du site FR": "Mausolée Sidi El Harith",
         "Nom du site arabe": "سيدي الحارث",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990312451",
         "HW_ID": "HW-01KZH0VFZF1XK99XT4VKNV3K2A",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Pas de trace visible sur la vue satellite\nSitué dans un cimetière",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11081,14 +11107,26 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Slimen El Qmiri",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1472548725",
         "HW_ID": "HW-01KZH0VG89GSFE6PCTYA9889M4",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Pas visible sur la vue satellite",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11102,14 +11140,26 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée maamoura Ouled Hmama",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "node/13153352477",
         "HW_ID": "HW-01KZH0VGF91KW7BPGH3D8Z5T07",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11123,14 +11173,26 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Sidi Abdalouhab",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/435172481",
         "HW_ID": "HW-01KZH0VGVYGVE5ADQ8FWAE55A9",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Situé dans le Cimetière Bedouine",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11177,14 +11239,26 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Sidi Makhyil",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990330103",
         "HW_ID": "HW-01KZH0VH19H5T1YZ31JFC7M08J",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11232,7 +11306,7 @@
       "properties": {
         "Nom du site FR": "Mausolée Jedi Abdalala El Haj Younes El Maagali",
         "Nom du site arabe": "جددي عبد الأعلى الحاج يونس المعقلي",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990380879",
         "HW_ID": "HW-01KZH0VH42R5WG7HVQW2MHWCPP",
         "Temps_minutes": 0,
@@ -11240,7 +11314,17 @@
         "maps_ref": "https://maps.app.goo.gl/BysB8RmLeZExV3L87",
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11650,14 +11734,26 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Ben Ayed",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1523647537",
         "HW_ID": "HW-01KZH0VHTXM2V4PMVHS00Q0KZN",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite\nSitué dans le cimetière de la famille Ben Ayed",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
