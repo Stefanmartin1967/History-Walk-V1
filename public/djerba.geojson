@@ -4645,8 +4645,8 @@
           "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460106288.jpg",
           "photos/poi_HW-01K77WPE6HV1767JVPMV1000YQ_1780460108153.jpg"
         ],
-        "osm_ref": "",
-        "maps_ref": "",
+        "osm_ref": "way/183799978",
+        "maps_ref": "https://maps.app.goo.gl/uw54PNAsyLDoBcF39",
         "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true
