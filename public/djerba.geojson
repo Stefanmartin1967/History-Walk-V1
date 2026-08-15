@@ -4142,11 +4142,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "La Synagogue de la Ghriba",
+        "Nom du site FR": "Synagogue de la Ghriba",
         "Nom du site arabe": "كنيس الغريبة",
         "Catégorie": "Synagogue",
         "Zone": "Erriadh",
-        "Source": "",
+        "Source": "https://fr.wikipedia.org/wiki/Liste_de_synagogues_de_Tunisie",
         "HW_ID": "HW-01K77WPE6GA20S9G7CF10EAFSW",
         "Sous-type": "",
         "État": "En activité",
@@ -4158,7 +4158,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false
+        "verified": false,
+        "osm_ref": "node/297765095",
+        "maps_ref": "https://maps.app.goo.gl/C4AQayDXL2Xv1ntd9",
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -11645,6 +11649,109 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8684167,
+          33.8658684
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Synagogue Rabbi Pinhas",
+        "Catégorie": "Synagogue",
+        "osm_ref": "node/13161971894",
+        "HW_ID": "HW-01KZH0VEAZYHW78XB98XA92QY3",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Voir la seconde source pour écrire la description",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "https://en.wikipedia.org/wiki/List_of_synagogues_in_Tunisia\nhttps://cja.huji.ac.il/sch/browser.php?mode=set&id=3449",
+        "maps_ref": "https://maps.app.goo.gl/SrfK9iCQsX9XraxdA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Essouani"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8691087,
+          33.8653927
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Slat Hizkiya Perez",
+        "Catégorie": "Synagogue",
+        "osm_ref": "node/13161972803",
+        "HW_ID": "HW-01KZH0VEC9RTBB6QSMNABMKH6D",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/eWFubEbWAL138uQn6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Source": "https://fr.wikipedia.org/wiki/Liste_de_synagogues_de_Tunisie",
+        "Zone": "Essouani"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8685951,
+          33.8647921
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Synagogue Sabban",
+        "Catégorie": "Synagogue",
+        "osm_ref": "node/13161972808",
+        "HW_ID": "HW-01KZH0VEDKKQSM7G0TADG2WVH7",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "https://fr.wikipedia.org/wiki/Liste_de_synagogues_de_Tunisie",
+        "maps_ref": "https://maps.app.goo.gl/Dd9J8YRGp5N7zBoS6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Essouani"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8682852,
+          33.8639645
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Synagogue des Cohanim de Djirt",
+        "Nom du site arabe": "كنيس كوهانيم جيرت",
+        "Catégorie": "Synagogue",
+        "osm_ref": "node/13161972809",
+        "HW_ID": "HW-01KZH0VEEPCWQYFYHV9EQ862K0",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "https://fr.wikipedia.org/wiki/Liste_de_synagogues_de_Tunisie",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "Zone": "Essouani"
       }
     }
   ]
