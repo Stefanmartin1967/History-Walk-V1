@@ -120,6 +120,31 @@ export function normalizeOsmRef(value) {
 }
 
 /**
+ * Checklist de vérification — SOURCE UNIQUE de la règle « une référence
+ * renseignée vaut vérifié » (cf. [[project_checklist_verification_sources]]).
+ *
+ * Cette règle vit à TROIS endroits : l'affichage du Rich Editor, l'écriture
+ * dans handleSave, et le filtrage (passesUserFilters). Les avoir dupliqués a
+ * produit trois bugs successifs le 15/08/2026 — dont un filtre qui ne renvoyait
+ * jamais rien (280 POI avec `osm_ref`, 0 avec `osmChecked` stocké, parce que le
+ * flag n'existe que depuis ce jour-là). Tout nouvel appelant DOIT passer par
+ * ces helpers, jamais relire `props.osmChecked` en direct.
+ *
+ * @param {object} props propriétés du POI, overlay userData déjà fusionné
+ * @returns {boolean}
+ */
+export function isOsmChecked(props) {
+    if (!props) return false;
+    return !!props.osmChecked || !!normalizeOsmRef(props.osm_ref);
+}
+
+/** Pendant Maps de `isOsmChecked` — cf. sa doc. */
+export function isMapsChecked(props) {
+    if (!props) return false;
+    return !!props.mapsChecked || !!mapsPlaceUrl(props.maps_ref);
+}
+
+/**
  * URL de la page d'un objet OSM à partir de sa référence « type/id ».
  * @param {string} osmRef
  * @returns {string|null} null si la référence est absente/invalide

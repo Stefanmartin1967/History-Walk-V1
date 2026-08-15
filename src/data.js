@@ -15,7 +15,7 @@ import {
 import { logModification } from './logger.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
-import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate } from './utils.js';
+import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate, isOsmChecked, isMapsChecked } from './utils.js';
 import { addRejected, rejectedData } from './rejected.js';
 import { deleteZoneCacheEntry } from './zones.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
@@ -449,10 +449,15 @@ export function passesUserFilters(feature, plannedSet = null) {
     if (f.introuvableCarte === 'only' && !props.introuvableCarte) return false;
     // Checklist de vérification (15/08/2026) : 'only' = file de travail par
     // source (n'affiche que ceux encore à checker, ou déjà checkés, selon le sens).
-    if (f.osmChecked === 'hide' && props.osmChecked) return false;
-    if (f.osmChecked === 'only' && !props.osmChecked) return false;
-    if (f.mapsChecked === 'hide' && props.mapsChecked) return false;
-    if (f.mapsChecked === 'only' && !props.mapsChecked) return false;
+    // isOsmChecked/isMapsChecked (utils.js) et NON props.osmChecked en direct :
+    // une référence renseignée vaut vérifié, sinon le filtre ignore les 280 POI
+    // qui ont un osm_ref sans avoir été ré-enregistrés depuis l'ajout du flag.
+    const osmOk = isOsmChecked(props);
+    const mapsOk = isMapsChecked(props);
+    if (f.osmChecked === 'hide' && osmOk) return false;
+    if (f.osmChecked === 'only' && !osmOk) return false;
+    if (f.mapsChecked === 'hide' && mapsOk) return false;
+    if (f.mapsChecked === 'only' && !mapsOk) return false;
     if (f.mapsHasPhoto === 'hide' && props.mapsHasPhoto) return false;
     if (f.mapsHasPhoto === 'only' && !props.mapsHasPhoto) return false;
     if (f.jalelChecked === 'hide' && props.jalelChecked) return false;
