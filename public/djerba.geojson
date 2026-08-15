@@ -243,7 +243,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 330 : « Sidi Sabbah. Tezdaine. Poste de garde devenue une mosquée à laquelle fut ajoutée une nouvelle attenante. Ancienne",
+        "description": "Jalel n° 330 : « Sidi Sabbah. Tezdaine. Poste de garde devenue une mosquée à laquelle fut ajoutée une nouvelle attenante. Ancienne\nVoir le Mausolée Beni Baous situé à côté du cimetière, à l'opposé de l'entrée de la mosquée",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
@@ -260,7 +260,8 @@
         "osm_ref": "node/13157219229",
         "maps_ref": "https://maps.app.goo.gl/1xjvPE8RLke27FZK9",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -2744,7 +2745,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Jalel n° 151 : « Sidi Abdessalem. May. Mosquée malékite à origine ibadite nokkarite, à laquelle fut ajouté un minaret. Ancienne.",
+        "description": "Jalel n° 151 : « Sidi Abdessalem. May. Mosquée malékite à origine ibadite nokkarite, à laquelle fut ajouté un minaret. Ancienne.\nVoir les mausolées à proximité :\nMausolée Touririn\nMausolée Fakira Salima",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/434724218",
@@ -2753,7 +2754,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -4015,7 +4017,7 @@
       "properties": {
         "Nom du site FR": "Borj El Kastil",
         "Nom du site arabe": "حصن برج الكستيل",
-        "Catégorie": "Site historique",
+        "Catégorie": "Fortification",
         "Zone": "Sedouikech",
         "Source": "https://www.djerba-tunisie.com/borj-el-kastil/",
         "HW_ID": "HW-01K77WPE6FHQDWSEQTK48QZ00P",
@@ -4023,7 +4025,21 @@
         "accessPoint": [
           10.9739393,
           33.6837382
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
@@ -10186,7 +10202,7 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée El Fakira Salima",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "node/13437089159",
         "HW_ID": "HW-01KZH0VFAZN27KYN56FFXSRATV",
         "Temps_minutes": 0,
@@ -10198,13 +10214,14 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Visible sur la vue satellite",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "El Khenensa"
+        "Zone": "El Khenensa",
+        "descriptionPublic": false
       }
     },
     {
@@ -10976,14 +10993,26 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Sidi Amghar",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990378935",
         "HW_ID": "HW-01KZH0VFE07CPM5QR1EJCXTJH5",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El Khenensa"
+        "Zone": "El Khenensa",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11169,14 +11198,26 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Fakira Salima",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990372682",
         "HW_ID": "HW-01KZH0VH351NQ2E5JHQWV47AFX",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El May"
+        "Zone": "El May",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite\nNommé d'après le nom renseigné sur la carte OSM",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11226,7 +11267,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite Maps",
+        "description": "Visible sur la vue satellite Maps\nAttention : Deux mausolées à Mahboubine",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
@@ -11410,15 +11451,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Errighayin",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1431190857",
         "HW_ID": "HW-01KZH0VHESD20ZFM5CQDS6GBWJ",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": false,
-        "Zone": "Mazraia"
+        "introuvableCarte": true,
+        "Zone": "Mazraia",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Non visible sur la vue satellite",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11431,15 +11484,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Ouled Amor el Qadima",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1431208662",
         "HW_ID": "HW-01KZH0VHFXC3ZQ3X20CDR88MRR",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": false,
-        "Zone": "Midoun"
+        "introuvableCarte": true,
+        "Zone": "Midoun",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Pas de trace visible sur la vue satellite \nSitué dans un cimetière",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11452,15 +11517,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Beni Baous",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1431391384",
         "HW_ID": "HW-01KZH0VHGTRRTHH95PA0NTVM5N",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite\nSitué à côté du cimetière jouxtant la mosquée Sidi Sabah",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11473,15 +11550,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Touririn",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1433497560",
         "HW_ID": "HW-01KZH0VHJSKKEM28TEWHAC8K4B",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El May"
+        "Zone": "El May",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite\nAttention, deux mausolées proches. Le second est Fakira Salima, situé dans le cimetière\nProche de la Mosquée Abdessalam",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11494,15 +11583,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Mahboubine",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1465366255",
         "HW_ID": "HW-01KZH0VHP36Z4PA83TC3W5AW67",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Ruines visibles sur la vue satellite\nAttention : Deux mausolées à Mahboubine",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11515,15 +11616,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Fadhloun",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1502452346",
         "HW_ID": "HW-01KZH0VHSZ9GWYZ1PTY42EPKJ9",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11583,10 +11696,10 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Faqia Masoud El Mazdari",
-        "Catégorie": "Site funéraire",
+        "Catégorie": "Mausolée",
         "osm_ref": "node/13456289128",
         "HW_ID": "HW-01KZH0VFD1F4XTR0DGTZ99YS0Y",
-        "État": "Conservé",
+        "État": "Désaffecté",
         "Accès": "Extérieur seulement",
         "description": "Jalel n° 257 — « Fakih Messaoud Mezdari. Bousmaiel. Mausolée et lieu de culte en bon état, mais abandonné. Ancien.",
         "Temps_minutes": 0,
@@ -11596,7 +11709,13 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Mezrene"
+        "Zone": "Mezrene",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
