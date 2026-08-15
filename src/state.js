@@ -91,7 +91,11 @@ export const state = {
         planifies: 'all',
         verified: 'all',
         candidate: 'all',
-        introuvableCarte: 'all',
+        // Existence à confirmer (ex-« introuvable sur la carte ») : masqué par
+        // défaut — un visiteur non admin ne doit pas se voir proposer un lieu
+        // dont l'existence n'est pas confirmée. setIsAdmin() resynchronise
+        // cette valeur à chaque connexion/déconnexion admin.
+        introuvableCarte: 'hide',
         photo: 'all',
         description: 'all',
         incontournablesOnly: false,
@@ -268,7 +272,14 @@ export function setFilterCompleted(value) {
 }
 
 export function setIsAdmin(isAdmin) {
+    if (state.isAdmin === isAdmin) return;
     state.isAdmin = isAdmin;
+    // « Existence à confirmer » : visible pour l'admin (doit pouvoir les
+    // retrouver pour aller les vérifier sur le terrain), masqué par défaut
+    // dès qu'on repasse non-admin (logout = aperçu fidèle de ce que voit un
+    // visiteur). Ne touche pas un choix manuel fait PENDANT la session admin
+    // (ex. 'only' = file de revue) : ce n'est resynchronisé qu'à la transition.
+    state.activeFilters.introuvableCarte = isAdmin ? 'all' : 'hide';
 }
 
 export function setDestinations(destinations) {
