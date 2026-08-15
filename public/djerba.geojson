@@ -11212,7 +11212,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée El Mahboubine",
+        "Nom du site FR": "Mausolée Mahboubine",
         "Catégorie": "Mausolée",
         "osm_ref": "way/990381626",
         "HW_ID": "HW-01KZH0VH51S4GQWTT98QMKAX7G",
@@ -11226,7 +11226,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite Maps\nToponymie ne renvoie rien, nommé par sa zone",
+        "description": "Visible sur la vue satellite Maps",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
@@ -11245,15 +11245,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée El Chergeyin",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990389881",
         "HW_ID": "HW-01KZH0VH6F2Y8Y594CZCPKSGSR",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "El May"
+        "Zone": "El May",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11266,15 +11278,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Guechaine",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/990419755",
         "HW_ID": "HW-01KZH0VH8BM77V72RKYN96NF6N",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Oualeg"
+        "Zone": "Oualeg",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Visible sur la vue satellite\nNommé par le village le plus proche, mais à 1400 mètres",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -11287,15 +11311,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée",
-        "Catégorie": "Site funéraire",
+        "Nom du site FR": "Mausolée Cité Ziatine",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1378237874",
         "HW_ID": "HW-01KZH0VHAT2YCDPA6VZHSHFZDJ",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "Mausolée en bord de route, la photo Maps montre un panneau publicitaire appuyé dessus",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
