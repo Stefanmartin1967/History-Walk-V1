@@ -402,6 +402,7 @@ export const RichEditor = {
         setMapsChecked(false);
         setMapsHasPhoto(false);
         setJalelChecked(false);
+        syncAllCheckedFromRefs(); // création : champs vides → interrupteurs déverrouillés
         originalOsmState = { checked: false, ref: '', date: null };
         { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = true; }
         updateCandidateFooter(false); // création : footer « Enregistrer » standard
@@ -505,6 +506,9 @@ export const RichEditor = {
         setMapsChecked(!!merged.mapsChecked);
         setMapsHasPhoto(!!merged.mapsHasPhoto);
         setJalelChecked(!!merged.jalelChecked);
+        // Après les setters : reflète l'implication par la ref (fiches d'avant
+        // l'ajout de la checklist = osmChecked absent alors que osm_ref existe).
+        syncAllCheckedFromRefs();
         originalOsmState = { checked: !!merged.osmChecked, ref: merged.osm_ref || '', date: merged.osmCheckedDate || null };
         renderWorkPhotos(currentFeatureId);
         // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
@@ -792,12 +796,19 @@ function bindModalEvents() {
     for (const id of [DOM_IDS.OSM_CHECKED, DOM_IDS.MAPS_CHECKED, DOM_IDS.MAPS_HAS_PHOTO, DOM_IDS.JALEL_CHECKED]) {
         document.getElementById(id)?.addEventListener('click', (e) => {
             const btn = e.currentTarget;
+            if (btn.disabled) return; // verrouillé car impliqué par la ref
             const on = !btn.classList.contains('is-on');
             btn.classList.toggle('is-on', on);
             btn.setAttribute('aria-checked', String(on));
             isDirty = true;
         });
     }
+
+    // Coller une ref pendant que le formulaire est ouvert doit cocher son
+    // interrupteur immédiatement — sinon l'UI ne tient pas la promesse du
+    // libellé jusqu'au prochain enregistrement.
+    document.getElementById(DOM_IDS.INPUTS.OSM_REF)?.addEventListener('input', syncAllCheckedFromRefs);
+    document.getElementById(DOM_IDS.INPUTS.MAPS_REF)?.addEventListener('input', syncAllCheckedFromRefs);
 
     // Bloc taxonomie : repeupler les 3 selects quand la catégorie change.
     document.getElementById(DOM_IDS.INPUTS.CATEGORY)?.addEventListener('change', () => {
@@ -1246,6 +1257,32 @@ function setOsmCheckedDateDisplay(dateStr) {
     const el = document.getElementById(DOM_IDS.OSM_CHECKED_DATE);
     if (!el) return;
     el.textContent = dateStr ? ` (${dateStr})` : '';
+}
+
+// Reflète l'auto-implication « ref remplie ⇒ vérifié » DANS L'UI, pas seulement
+// au save. Sans ça, ouvrir une fiche qui a déjà un osm_ref affichait un
+// interrupteur OFF que le libellé promettait coché (constaté sur Mosquée
+// Trojette). Et comme handleSave force la valeur à vrai quand la ref existe,
+// un interrupteur cliquable reviendrait tout seul : on le verrouille et on le
+// dit, plutôt que de laisser un contrôle qui ignore le clic.
+function syncCheckedFromRef(refInputId, switchId, hintText) {
+    const input = document.getElementById(refInputId);
+    const sw = document.getElementById(switchId);
+    if (!input || !sw) return;
+    const implied = !!input.value.trim();
+    if (implied) {
+        sw.classList.add('is-on');
+        sw.setAttribute('aria-checked', 'true');
+    }
+    sw.disabled = implied;
+    sw.title = implied ? hintText : '';
+}
+
+function syncAllCheckedFromRefs() {
+    syncCheckedFromRef(DOM_IDS.INPUTS.OSM_REF, DOM_IDS.OSM_CHECKED,
+        'Impliqué par l’objet OSM renseigné — videz le champ pour reprendre la main');
+    syncCheckedFromRef(DOM_IDS.INPUTS.MAPS_REF, DOM_IDS.MAPS_CHECKED,
+        'Impliqué par le lien Maps renseigné — videz le champ pour reprendre la main');
 }
 
 function setMapsChecked(val) {
