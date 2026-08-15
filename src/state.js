@@ -96,6 +96,12 @@ export const state = {
         // dont l'existence n'est pas confirmée. setIsAdmin() resynchronise
         // cette valeur à chaque connexion/déconnexion admin.
         introuvableCarte: 'hide',
+        // Checklist de vérification (15/08/2026), admin-only comme candidate/
+        // introuvableCarte — file de travail, sans sens pour un visiteur.
+        osmChecked: 'all',
+        mapsChecked: 'all',
+        mapsHasPhoto: 'all',
+        jalelChecked: 'all',
         photo: 'all',
         description: 'all',
         incontournablesOnly: false,

@@ -66,7 +66,15 @@ const DOM_IDS = {
     NAV_CONTROLS: 'rich-poi-nav-controls',
     VERIFIED: 'rich-poi-verified',
     MAP_MISSING: 'rich-poi-mapmissing',
-    DESC_PUBLIC: 'rich-poi-descpublic'
+    DESC_PUBLIC: 'rich-poi-descpublic',
+    // Checklist de vérification (15/08/2026) : traçent l'ACTE de vérification,
+    // séparément du résultat (osm_ref/maps_ref) — cf. handleSave pour la
+    // logique d'auto-implication (« trouvé » vaut « vérifié » sans double case).
+    OSM_CHECKED: 'rich-poi-osmchecked',
+    OSM_CHECKED_DATE: 'rich-poi-osmchecked-date',
+    MAPS_CHECKED: 'rich-poi-mapschecked',
+    MAPS_HAS_PHOTO: 'rich-poi-mapsphoto',
+    JALEL_CHECKED: 'rich-poi-jalelchecked'
 };
 
 let currentMode = 'CREATE'; // 'CREATE' | 'EDIT'
@@ -74,6 +82,10 @@ let currentFeatureId = null; // Pour le mode EDIT
 let currentDraftCoords = null; // Pour le mode CREATE
 let currentPhotos = []; // Pour le mode CREATE (import photos)
 let isDirty = false;
+// État OSM tel que CHARGÉ (avant modif de la session en cours) — sert à ne
+// rafraîchir osmCheckedDate que sur une vraie transition (checked/ref changés),
+// pas à chaque enregistrement du formulaire pour une raison sans rapport.
+let originalOsmState = { checked: false, ref: '', date: null };
 // Réunif A3b : hôte de montage du formulaire — 'modal' (openHwModal, fiche
 // classique) ou 'drawer' (tiroir droit ancré dans le Mode Données). Le corps du
 // formulaire (RICH_POI_BODY_HTML) et ses IDs sont identiques dans les deux cas.
@@ -131,6 +143,40 @@ const RICH_POI_BODY_HTML = `
                         title="Ce candidat double un lieu déjà présent">
                     <i data-lucide="copy"></i><span>Doublon d'un lieu existant…</span>
                 </button>
+            </span>
+        </div>
+    </div>
+
+    <!-- Checklist de vérification (15/08/2026) : trace l'acte de vérification
+         par source, séparément du résultat. « OSM vérifié » et « Maps vérifié »
+         passent automatiquement à vrai dès que le champ Objet OSM / Lien Maps
+         plus bas est rempli — la case ne sert qu'au cas négatif (cherché, rien
+         trouvé). Pas de case pour Facebook/livres/etc. : trop varié pour être
+         structuré, ça reste dans Notes. -->
+    <div class="fiche-status">
+        <div class="fiche-status-hd"><i data-lucide="list-checks"></i>Vérifications</div>
+        <div class="fiche-row">
+            <span class="lbl"><span class="t">OSM vérifié</span><span class="h">Coché automatiquement si un objet OSM est renseigné plus bas — sinon, à cocher à la main si la recherche n'a rien donné<span class="rich-check-date" id="rich-poi-osmchecked-date"></span></span></span>
+            <span class="ctl">
+                <button class="sw" id="rich-poi-osmchecked" type="button" role="switch" aria-checked="false" aria-label="OSM vérifié"></button>
+            </span>
+        </div>
+        <div class="fiche-row">
+            <span class="lbl"><span class="t">Maps vérifié</span><span class="h">Coché automatiquement si un lien Maps est renseigné plus bas — sinon, à cocher à la main si la recherche n'a rien donné</span></span>
+            <span class="ctl">
+                <button class="sw" id="rich-poi-mapschecked" type="button" role="switch" aria-checked="false" aria-label="Maps vérifié"></button>
+            </span>
+        </div>
+        <div class="fiche-row">
+            <span class="lbl"><span class="t">Photo Maps disponible</span><span class="h">Des photos existent sur Maps, indépendamment de ce qui a déjà été récupéré en photo de travail</span></span>
+            <span class="ctl">
+                <button class="sw" id="rich-poi-mapsphoto" type="button" role="switch" aria-checked="false" aria-label="Photo Maps disponible"></button>
+            </span>
+        </div>
+        <div class="fiche-row">
+            <span class="lbl"><span class="t">Jalel checké</span><span class="h">Répertoire de Jalel consulté pour ce lieu, qu'il y ait eu match ou non</span></span>
+            <span class="ctl">
+                <button class="sw" id="rich-poi-jalelchecked" type="button" role="switch" aria-checked="false" aria-label="Jalel checké"></button>
             </span>
         </div>
     </div>
@@ -351,6 +397,12 @@ export const RichEditor = {
         setVerified(false);
         setMapMissing(false);
         setDescPublic(false);
+        setOsmChecked(false);
+        setOsmCheckedDateDisplay(null);
+        setMapsChecked(false);
+        setMapsHasPhoto(false);
+        setJalelChecked(false);
+        originalOsmState = { checked: false, ref: '', date: null };
         { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = true; }
         updateCandidateFooter(false); // création : footer « Enregistrer » standard
 
@@ -448,6 +500,12 @@ export const RichEditor = {
         setVerified(!!merged.verified);
         setMapMissing(!!merged.introuvableCarte);
         setDescPublic(!!merged.descriptionPublic);
+        setOsmChecked(!!merged.osmChecked);
+        setOsmCheckedDateDisplay(merged.osmCheckedDate || null);
+        setMapsChecked(!!merged.mapsChecked);
+        setMapsHasPhoto(!!merged.mapsHasPhoto);
+        setJalelChecked(!!merged.jalelChecked);
+        originalOsmState = { checked: !!merged.osmChecked, ref: merged.osm_ref || '', date: merged.osmCheckedDate || null };
         renderWorkPhotos(currentFeatureId);
         // Réunif C1b : ligne « Candidat à curer » visible seulement pour un candidat Scout.
         // P7 : et le footer bascule en mode candidat (« Valider & enregistrer »).
@@ -729,6 +787,17 @@ function bindModalEvents() {
         btn.setAttribute('aria-checked', String(on));
         isDirty = true;
     });
+
+    // Checklist de vérification (15/08/2026) — 4 toggles, même mécanique.
+    for (const id of [DOM_IDS.OSM_CHECKED, DOM_IDS.MAPS_CHECKED, DOM_IDS.MAPS_HAS_PHOTO, DOM_IDS.JALEL_CHECKED]) {
+        document.getElementById(id)?.addEventListener('click', (e) => {
+            const btn = e.currentTarget;
+            const on = !btn.classList.contains('is-on');
+            btn.classList.toggle('is-on', on);
+            btn.setAttribute('aria-checked', String(on));
+            isDirty = true;
+        });
+    }
 
     // Bloc taxonomie : repeupler les 3 selects quand la catégorie change.
     document.getElementById(DOM_IDS.INPUTS.CATEGORY)?.addEventListener('change', () => {
@@ -1158,6 +1227,63 @@ function getDescPublic() {
     return !!(el && el.classList.contains('is-on'));
 }
 
+// Checklist de vérification — même mécanique bouton-switch que Vérifié.
+function setOsmChecked(val) {
+    const el = document.getElementById(DOM_IDS.OSM_CHECKED);
+    if (!el) return;
+    el.classList.toggle('is-on', !!val);
+    el.setAttribute('aria-checked', String(!!val));
+}
+
+function getOsmChecked() {
+    const el = document.getElementById(DOM_IDS.OSM_CHECKED);
+    return !!(el && el.classList.contains('is-on'));
+}
+
+// Affiche la date de dernier check OSM en petit texte à côté du libellé.
+// Purement informatif — le format stocké est ISO (YYYY-MM-DD), affiché tel quel.
+function setOsmCheckedDateDisplay(dateStr) {
+    const el = document.getElementById(DOM_IDS.OSM_CHECKED_DATE);
+    if (!el) return;
+    el.textContent = dateStr ? ` (${dateStr})` : '';
+}
+
+function setMapsChecked(val) {
+    const el = document.getElementById(DOM_IDS.MAPS_CHECKED);
+    if (!el) return;
+    el.classList.toggle('is-on', !!val);
+    el.setAttribute('aria-checked', String(!!val));
+}
+
+function getMapsChecked() {
+    const el = document.getElementById(DOM_IDS.MAPS_CHECKED);
+    return !!(el && el.classList.contains('is-on'));
+}
+
+function setMapsHasPhoto(val) {
+    const el = document.getElementById(DOM_IDS.MAPS_HAS_PHOTO);
+    if (!el) return;
+    el.classList.toggle('is-on', !!val);
+    el.setAttribute('aria-checked', String(!!val));
+}
+
+function getMapsHasPhoto() {
+    const el = document.getElementById(DOM_IDS.MAPS_HAS_PHOTO);
+    return !!(el && el.classList.contains('is-on'));
+}
+
+function setJalelChecked(val) {
+    const el = document.getElementById(DOM_IDS.JALEL_CHECKED);
+    if (!el) return;
+    el.classList.toggle('is-on', !!val);
+    el.setAttribute('aria-checked', String(!!val));
+}
+
+function getJalelChecked() {
+    const el = document.getElementById(DOM_IDS.JALEL_CHECKED);
+    return !!(el && el.classList.contains('is-on'));
+}
+
 // P7 : `validate=true` (bouton « Valider & enregistrer ») retire le flag candidat
 // dans la même écriture que l'enrichissement. `false` (« Enregistrer ») le conserve.
 async function handleSave(validate = false) {
@@ -1165,6 +1291,22 @@ async function handleSave(validate = false) {
     if (!nameFr) {
         showToast("Le nom est obligatoire.", "warning");
         return;
+    }
+
+    // Checklist de vérification : « trouvé » (ref rempli) vaut « vérifié » sans
+    // case séparée à cocher — cf. commentaire HTML. La date ne bouge que sur une
+    // vraie transition (passage à vérifié, ou changement de la ref elle-même),
+    // jamais sur un enregistrement sans rapport (sinon elle ne dirait plus rien
+    // du moment du dernier VRAI check, cf. le but « relancer un re-scout »).
+    const osmRefVal = normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF));
+    const mapsRefVal = getValue(DOM_IDS.INPUTS.MAPS_REF).trim();
+    const osmCheckedNow = getOsmChecked() || !!osmRefVal;
+    const wasOsmCheckedEffective = originalOsmState.checked || !!originalOsmState.ref;
+    let osmCheckedDate = originalOsmState.date;
+    if (osmCheckedNow && (!wasOsmCheckedEffective || osmRefVal !== originalOsmState.ref)) {
+        osmCheckedDate = new Date().toISOString().slice(0, 10);
+    } else if (!osmCheckedNow) {
+        osmCheckedDate = null;
     }
 
     const data = {
@@ -1184,17 +1326,22 @@ async function handleSave(validate = false) {
         'Prix_TND': parseFloat(getValue(DOM_IDS.INPUTS.PRICE)) || 0,
         'Source': getValue(DOM_IDS.INPUTS.SOURCE),
         // Normalisé en « type/id » : l'admin colle l'URL OSM, on stocke l'identité.
-        'osm_ref': normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF)),
+        'osm_ref': osmRefVal,
         // Pas de normalisation possible ici (formats Maps trop variables) : on
         // stocke le lien tel que collé, la garde http(s) s'applique à l'ouverture
         // (mapsPlaceUrl, cf. utils.js).
-        'maps_ref': getValue(DOM_IDS.INPUTS.MAPS_REF).trim(),
+        'maps_ref': mapsRefVal,
         'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
         'verified': getVerified(),
         'introuvableCarte': getMapMissing(),
-        'descriptionPublic': getDescPublic()
+        'descriptionPublic': getDescPublic(),
+        'osmChecked': osmCheckedNow,
+        'osmCheckedDate': osmCheckedDate,
+        'mapsChecked': getMapsChecked() || !!mapsRefVal,
+        'mapsHasPhoto': getMapsHasPhoto(),
+        'jalelChecked': getJalelChecked()
     };
 
     // P7 — « Valider & enregistrer » : on retire le flag candidat dans la foulée.
@@ -1427,7 +1574,11 @@ function handleEmailSuggestion() {
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
         'verified': getVerified(),
         'introuvableCarte': getMapMissing(),
-        'descriptionPublic': getDescPublic()
+        'descriptionPublic': getDescPublic(),
+        'osmChecked': getOsmChecked() || !!getValue(DOM_IDS.INPUTS.OSM_REF).trim(),
+        'mapsChecked': getMapsChecked() || !!getValue(DOM_IDS.INPUTS.MAPS_REF).trim(),
+        'mapsHasPhoto': getMapsHasPhoto(),
+        'jalelChecked': getJalelChecked()
     };
 
     const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Inconnue';
