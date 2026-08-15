@@ -205,6 +205,10 @@ async function checkAndApplyMigrations() {
 // Écouteur pour déclencher la migration dès que le mode Admin est activé
 eventBus.on('admin:mode-toggled', (isAdmin) => {
     if (isAdmin) checkAndApplyMigrations();
+    // setIsAdmin() vient de resynchroniser le défaut « Existence à confirmer »
+    // (state.js) — il faut re-filtrer pour que ça se voie immédiatement,
+    // login ET logout (checkAndApplyMigrations peut sortir tôt sans réafficher).
+    applyFilters();
 });
 
 // --- CŒUR DU SYSTÈME : Chargement de la Carte ---

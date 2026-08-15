@@ -369,11 +369,13 @@ function populateFicheSection() {
     const fiche = [
         { key: 'verified',    label: 'Lieux vérifiés'         },
         // Réunif C1 : « à curer » = candidats Scout, admin uniquement (les users
-        // n'ont pas de candidats ; libellé sans sens pour eux). P8 : « Introuvable
-        // sur la carte » = file de revue admin (lieux non situables sur Maps/OSM).
+        // n'ont pas de candidats ; libellé sans sens pour eux). P8 (renommé
+        // 15/08/2026) : « Existence à confirmer » = file de revue admin (lieux
+        // dont l'existence n'est pas certaine). Masqué par défaut pour un
+        // non-admin (state.js) — pas de raison de lui montrer ce filtre non plus.
         ...(state.isAdmin ? [
             { key: 'candidate', label: 'Lieux à curer' },
-            { key: 'introuvableCarte', label: 'Introuvable sur la carte' },
+            { key: 'introuvableCarte', label: 'Existence à confirmer' },
         ] : []),
         { key: 'photo',       label: 'Lieux avec photo'       },
         { key: 'description', label: 'Lieux avec description' },

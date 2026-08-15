@@ -98,12 +98,14 @@ const RICH_POI_BODY_HTML = `
                 <button class="sw" id="rich-poi-verified" type="button" role="switch" aria-checked="false" aria-label="Vérifié"></button>
             </span>
         </div>
-        <!-- P8 : lieu non situable sur Maps/OSM (donnée OSM périmée, coords douteuses).
-             Publié AVEC une alerte « Localisation à confirmer » dans la fiche (templates.js). -->
+        <!-- P8 (renommé 15/08/2026) : l'existence même du lieu n'est pas confirmée
+             avec certitude — pas juste sa position. Masqué par défaut pour un
+             non-admin (state.js : setIsAdmin), visible et publié avec une alerte
+             « Existence à confirmer » pour l'admin (templates.js). -->
         <div class="fiche-row">
-            <span class="lbl"><span class="t">Introuvable sur la carte</span><span class="h">Lieu non situé sur Maps/OSM — publié avec une alerte « Localisation à confirmer »</span></span>
+            <span class="lbl"><span class="t">Existence à confirmer</span><span class="h">Existence non confirmée avec certitude — masqué par défaut aux visiteurs, publié avec une alerte « Existence à confirmer » pour l'admin</span></span>
             <span class="ctl">
-                <button class="sw" id="rich-poi-mapmissing" type="button" role="switch" aria-checked="false" aria-label="Introuvable sur la carte"></button>
+                <button class="sw" id="rich-poi-mapmissing" type="button" role="switch" aria-checked="false" aria-label="Existence à confirmer"></button>
             </span>
         </div>
         <!-- Description publiée (08-09/08/2026) : par défaut, Description+Source restent
