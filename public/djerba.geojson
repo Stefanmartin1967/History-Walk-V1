@@ -9683,7 +9683,8 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/vFwwUj3KWsVoKTCH6"
+        "maps_ref": "https://maps.app.goo.gl/vFwwUj3KWsVoKTCH6",
+        "descriptionPublic": false
       }
     },
     {
