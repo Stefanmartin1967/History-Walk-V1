@@ -7636,7 +7636,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": true,
+        "descriptionPublic": false
       }
     },
     {
@@ -8938,11 +8939,14 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "",
-        "Téléphone": "",
+        "Téléphone": "+216 21 330 265",
         "Horaires": "",
-        "Facebook": "",
+        "Facebook": "https://www.facebook.com/restaurant.mbarek/",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/HSCmecPjpC34Jh8cA",
+        "descriptionPublic": false
       }
     },
     {
@@ -9530,7 +9534,8 @@
         "osm_ref": "",
         "maps_ref": "",
         "lat": 33.81366398849076,
-        "lng": 10.973104834556581
+        "lng": 10.973104834556581,
+        "descriptionPublic": false
       }
     },
     {
@@ -12115,6 +12120,15 @@
         "introuvableCarte": true,
         "descriptionPublic": false,
         "HW_ID": "HW-01M02F2A2A8RK0TEFBEA87SEBN",
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Source": "",
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "El Mahboubine"
       }
     }
