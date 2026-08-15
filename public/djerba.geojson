@@ -1180,13 +1180,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Marabout Sidi Saïd",
+        "Nom du site FR": "Mausolée Sidi Saïd",
         "Nom du site arabe": "جدي سعيد",
-        "Catégorie": "Marabout",
+        "Catégorie": "Mausolée",
         "Zone": "El Mahboubine",
         "Source": "",
         "HW_ID": "HW-01K77WPE6A27VC54MEK4XHGV9V",
-        "description": "Pas de nom sur Google Maps ni sur Openstreetmap. A vérifier",
+        "description": "",
         "accessPoint": [
           10.9698519,
           33.7918562
@@ -1197,12 +1197,18 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/990372026",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "https://maps.app.goo.gl/QugtHevHpP99yEg39",
+        "descriptionPublic": false,
+        "photos": [
+          "photos/poi_HW-01K77WPE6A27VC54MEK4XHGV9V_1786799984164.jpg",
+          "photos/poi_HW-01K77WPE6A27VC54MEK4XHGV9V_1786799985779.jpg"
+        ]
       }
     },
     {
@@ -8226,13 +8232,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Marabout Cheikh Yahia El Izmartni",
+        "Nom du site FR": "Mausolée Cheikh Yahia El Izmartni",
         "Nom du site arabe": "الشيخ يحيى الإزمرتني",
-        "Catégorie": "Marabout",
+        "Catégorie": "Mausolée",
         "Zone": "Mazraia",
         "Source": "",
         "HW_ID": "HW-01K77WPE6SJ6F4XB4CC3W6YNSG",
-        "description": "Marabout. A vérifier.",
+        "description": "Visible sur la vue satellite",
         "accessPoint": [
           10.9460662,
           33.8555339
@@ -8243,12 +8249,14 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1430140097",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "",
+        "descriptionPublic": false
       }
     },
     {
@@ -9414,19 +9422,19 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Marabout Marmoura",
-        "Catégorie": "Marabout",
+        "Nom du site FR": "Mausolée Marmoura",
+        "Catégorie": "Mausolée",
         "Zone": "Midoun",
         "HW_ID": "HW-01KKS462NFDJ7E80WSWZ9TK9R7",
-        "description": "",
+        "description": "Bâtiment présent sur OSM mais sans nom",
         "accessPoint": [
           10.9727629,
           33.8140752
         ],
         "Nom du site arabe": "",
         "Sous-type": "",
-        "État": "Désaffecté",
-        "Accès": "Extérieur seulement",
+        "État": "",
+        "Accès": "",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -9440,7 +9448,10 @@
         "maps_ref": "https://maps.app.goo.gl/244Ah1MaW2uovumh7",
         "lat": 33.81391470584298,
         "lng": 10.97268506884575,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "photos": [
+          "photos/poi_HW-01KKS462NFDJ7E80WSWZ9TK9R7_1786799982400.jpg"
+        ]
       }
     },
     {
