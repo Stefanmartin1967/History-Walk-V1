@@ -11260,8 +11260,8 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Marabout",
-        "Catégorie": "Marabout",
+        "Nom du site FR": "Qubba Gagui",
+        "Catégorie": "Mausolée",
         "osm_ref": "way/1389344073",
         "HW_ID": "HW-01KZH0VHBTC2WDA5D401S7TY5K",
         "Temps_minutes": 0,
@@ -11269,7 +11269,18 @@
         "maps_ref": "https://maps.app.goo.gl/JobbaSxUyqgbH2oK7",
         "verified": false,
         "introuvableCarte": false,
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "descriptionPublic": false
       }
     },
     {
