@@ -4763,8 +4763,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.856111,
-          33.884944
+          10.856090779389143,
+          33.884576169924706
         ]
       },
       "properties": {
@@ -4788,7 +4788,14 @@
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "lat": 33.884576169924706,
+        "lng": 10.856090779389143,
+        "osm_ref": "way/360980733",
+        "maps_ref": "https://maps.app.goo.gl/cAwL3TBh2ivt2Fwz9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false
       }
     },
     {
