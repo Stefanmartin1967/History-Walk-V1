@@ -1,8 +1,8 @@
 // templates.js
 import { getPatrimonialName } from './data.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
-import { escapeXml, getDerivedZone, linkifyText } from './utils.js';
-import { state } from './state.js';
+import { escapeXml, getDerivedZone, linkifyText, formatPhone, telHref } from './utils.js';
+import { state, getActiveDestinationCountry } from './state.js';
 import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
 import { parseSources } from './source-format.mjs';
@@ -272,7 +272,11 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const currency = getCurrentCurrency();
     const priceText = !hasPrice ? '' : (priceValue === 0 ? 'Gratuit' : `${priceValue}${currency ? ' ' + currency : ''}`);
 
-    const phone = (allProps['Téléphone'] || allProps.telephone || '').trim();
+    // Le numéro est déjà mis en forme à l'enregistrement (richEditor) ; on
+    // repasse par formatPhone à l'affichage pour couvrir aussi ce qui a été
+    // écrit AVANT cette règle ou importé d'ailleurs. La fonction est idempotente :
+    // sur une valeur déjà canonique, elle ne change rien.
+    const phone = formatPhone(allProps['Téléphone'] || allProps.telephone || '', getActiveDestinationCountry());
     const hasPhone = phone !== '';
     const hours = (allProps['Horaires'] || allProps.horaires || '').trim();
     const hasHours = hours !== '';
@@ -362,7 +366,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             <div><span class="lab">Horaires</span><span class="val">${escapeXml(hours)}</span></div>
         </div>`);
     if (hasPhone) {
-        const tel = phone.replace(/\s+/g, '');
+        const tel = telHref(phone);
         facts.push(`
             <div class="poi-fact">
                 <div class="ico"><i data-lucide="phone"></i></div>

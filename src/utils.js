@@ -145,6 +145,90 @@ export function isMapsChecked(props) {
 }
 
 /**
+ * Plans de numérotation connus, par code pays ISO (`country` dans
+ * destinations.json). Une entrée = « je sais reconnaître et regrouper les
+ * numéros de ce pays ».
+ *
+ *  - `dialCode`  : indicatif international, sans le « + »
+ *  - `nsnLength` : longueur du numéro national (hors indicatif)
+ *  - `groups`    : découpage d'affichage, somme = nsnLength
+ *
+ * Tunisie : 8 chiffres groupés 2-3-3 — c'est déjà la forme des numéros saisis
+ * à la main dans les données (« +216 27 677 120 »), donc rien à migrer.
+ *
+ * Pas d'entrée inventée pour les destinations à venir : sans plan, on
+ * n'invente aucun regroupement, on garde la saisie telle quelle (cf.
+ * formatPhone). La ligne se rajoutera le jour où la destination existera.
+ */
+const PHONE_PLANS = {
+    tn: { dialCode: '216', nsnLength: 8, groups: [2, 3, 3] },
+};
+
+/**
+ * Met un numéro de téléphone à la forme canonique du pays de la destination,
+ * quelle que soit la façon dont il a été saisi :
+ *
+ *   27677120 · 27 677 120 · +21627677120 · 00216 27-677-120 · 216.27.677.120
+ *                              → « +216 27 677 120 »
+ *
+ * On garde l'indicatif visible : c'est la forme déjà présente en base, et
+ * c'est elle qui rend le lien `tel:` composable depuis un téléphone étranger
+ * — l'app s'adresse d'abord à des visiteurs de passage.
+ *
+ * ⚠️ Différence VOULUE avec `normalizeOsmRef`, qui renvoie '' sur une saisie
+ * non reconnue : ici on RETOURNE LA SAISIE (espaces normalisés). Un champ
+ * téléphone reçoit légitimement ce qu'aucun plan ne décrit — deux numéros
+ * séparés par un « / », un poste, un numéro étranger. Perdre le contenu
+ * serait pire que ne pas le reformater. On ne devine jamais, on ne jette
+ * jamais non plus.
+ *
+ * @param {string} value  saisie brute
+ * @param {string} country code pays ISO de la destination (ex. 'tn')
+ * @returns {string} forme canonique si reconnue, sinon la saisie nettoyée
+ */
+export function formatPhone(value, country) {
+    if (typeof value !== 'string') return '';
+    const raw = value.trim().replace(/\s+/g, ' ');
+    if (!raw) return '';
+
+    const plan = PHONE_PLANS[String(country || '').toLowerCase()];
+    if (!plan) return raw;
+
+    // Seuls les chiffres et un éventuel « + » de tête portent du sens ; le
+    // reste (espaces, points, tirets, parenthèses) n'est que de la mise en forme.
+    let compact = raw.replace(/[^\d+]/g, '');
+    // Un « + » ailleurs qu'en tête, ou plusieurs : ce n'est pas un numéro simple
+    // (deux numéros collés, par exemple) → on ne touche à rien.
+    if (compact.lastIndexOf('+') > 0) return raw;
+    compact = compact.replace(/^\+/, '');
+    // « 00 » international, seulement s'il précède NOTRE indicatif : sinon
+    // « 0027677120 » (numéro sud-africain) se ferait passer pour un local.
+    if (compact.startsWith('00' + plan.dialCode)) compact = compact.slice(2);
+
+    let nsn = null;
+    if (compact.length === plan.nsnLength) {
+        nsn = compact;                                   // saisi en local
+    } else if (compact.startsWith(plan.dialCode)
+               && compact.length === plan.dialCode.length + plan.nsnLength) {
+        nsn = compact.slice(plan.dialCode.length);       // saisi à l'international
+    }
+    if (nsn === null) return raw;
+
+    const parts = [];
+    let at = 0;
+    for (const size of plan.groups) { parts.push(nsn.slice(at, at + size)); at += size; }
+    return `+${plan.dialCode} ${parts.join(' ')}`;
+}
+
+/**
+ * Version composable d'un numéro, pour l'attribut `href="tel:…"`.
+ * @param {string} formatted numéro déjà passé par formatPhone
+ */
+export function telHref(formatted) {
+    return String(formatted || '').replace(/\s+/g, '');
+}
+
+/**
  * Portée du répertoire de Jalel Fathallah — « Répertoriage et recensement des
  * mosquées de Djerba ». Il recense les MOSQUÉES DE DJERBA, ainsi que les
  * mausolées (et les postes de garde qui leur sont associés). Rien d'autre :
