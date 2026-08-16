@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.366'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.367'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
@@ -151,6 +151,19 @@ export function setCurrentMap(mapId) {
 export function getActiveDestinationName() {
     const id = state.currentMapId || state.destinations?.activeMapId;
     return state.destinations?.maps?.[id]?.name || '';
+}
+
+/**
+ * Code pays ISO de la destination active (`country` dans destinations.json,
+ * ex. 'tn'). Même contrat que getActiveDestinationName : '' si inconnu, jamais
+ * de valeur en dur — c'est ce code qui choisit le plan de numérotation des
+ * téléphones (formatPhone, utils.js), et se tromper de pays formaterait un
+ * numéro marocain aux règles tunisiennes.
+ * @returns {string}
+ */
+export function getActiveDestinationCountry() {
+    const id = state.currentMapId || state.destinations?.activeMapId;
+    return state.destinations?.maps?.[id]?.country || '';
 }
 
 // Gardien pour définir les points d'intérêt chargés (features)

@@ -1,10 +1,10 @@
 
 import L from 'leaflet';
 import { map, startMarkerDrag } from './map.js';
-import { state, POI_CATEGORIES } from './state.js';
+import { state, POI_CATEGORIES, getActiveDestinationCountry } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates, updatePoiData } from './data.js';
 import { eventBus } from './events.js';
-import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, isOsmChecked, isMapsChecked, isInJalelDirectoryScope } from './utils.js';
+import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, isOsmChecked, isMapsChecked, isInJalelDirectoryScope, formatPhone } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
 import { persistPoiEdit } from './poi-persistence.js';
@@ -812,6 +812,18 @@ function bindModalEvents() {
         });
     }
 
+    // Téléphone : mise en forme à la sortie du champ, pas à la frappe (sinon on
+    // réécrit sous les doigts au 3ᵉ chiffre). Ce que montre le champ est alors
+    // exactement ce qui sera enregistré — même appel, même règle.
+    document.getElementById(DOM_IDS.INPUTS.PHONE)?.addEventListener('blur', (e) => {
+        const el = e.currentTarget;
+        const formatted = formatPhone(el.value, getActiveDestinationCountry());
+        if (formatted !== el.value) {
+            el.value = formatted;
+            isDirty = true;
+        }
+    });
+
     // Coller une ref pendant que le formulaire est ouvert doit cocher son
     // interrupteur immédiatement — sinon l'UI ne tient pas la promesse du
     // libellé jusqu'au prochain enregistrement.
@@ -1420,7 +1432,10 @@ async function handleSave(validate = false) {
         // stocke le lien tel que collé, la garde http(s) s'applique à l'ouverture
         // (mapsPlaceUrl, cf. utils.js).
         'maps_ref': mapsRefVal,
-        'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
+        // Mis à la forme du pays de la destination (« +216 27 677 120 »), quelle
+        // que soit la saisie. Non reconnu (deux numéros, un poste, un numéro
+        // étranger) → conservé tel quel, cf. formatPhone.
+        'Téléphone': formatPhone(getValue(DOM_IDS.INPUTS.PHONE), getActiveDestinationCountry()),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
         'verified': getVerified(),
@@ -1661,7 +1676,7 @@ function handleEmailSuggestion() {
         // Normalisé en « type/id » : l'admin colle l'URL OSM, on stocke l'identité.
         'osm_ref': normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF)),
         'maps_ref': getValue(DOM_IDS.INPUTS.MAPS_REF).trim(),
-        'Téléphone': getValue(DOM_IDS.INPUTS.PHONE),
+        'Téléphone': formatPhone(getValue(DOM_IDS.INPUTS.PHONE), getActiveDestinationCountry()),
         'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
         'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
         'verified': getVerified(),
