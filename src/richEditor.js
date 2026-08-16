@@ -4,7 +4,7 @@ import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates, updatePoiData } from './data.js';
 import { eventBus } from './events.js';
-import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, isOsmChecked, isMapsChecked } from './utils.js';
+import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, isOsmChecked, isMapsChecked, isInJalelDirectoryScope } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
 import { persistPoiEdit } from './poi-persistence.js';
@@ -173,7 +173,11 @@ const RICH_POI_BODY_HTML = `
                 <button class="sw" id="rich-poi-mapsphoto" type="button" role="switch" aria-checked="false" aria-label="Photo Maps disponible"></button>
             </span>
         </div>
-        <div class="fiche-row">
+        <!-- « Jalel checké » n'apparaît que sur les lieux que le répertoire
+             couvre (mosquées / mausolées de Djerba) — cf. isInJalelDirectoryScope
+             (utils.js). Masquée, la ligne garde sa valeur : un lieu recatégorisé
+             ne perd pas la trace d'une consultation qui a bien eu lieu. -->
+        <div class="fiche-row" id="rich-poi-jalelchecked-row" hidden>
             <span class="lbl"><span class="t">Jalel checké</span><span class="h">Répertoire de Jalel consulté pour ce lieu, qu'il y ait eu match ou non</span></span>
             <span class="ctl">
                 <button class="sw" id="rich-poi-jalelchecked" type="button" role="switch" aria-checked="false" aria-label="Jalel checké"></button>
@@ -407,8 +411,9 @@ export const RichEditor = {
         { const r = document.getElementById('rich-poi-candidate-row'); if (r) r.hidden = true; }
         updateCandidateFooter(false); // création : footer « Enregistrer » standard
 
-        // Bloc taxonomie : catégorie vide en création → bloc masqué.
-        populateTaxonomySelects("");
+        // Blocs contextuels : catégorie vide en création → taxonomie masquée,
+        // et « Jalel checké » masquée jusqu'à ce qu'une catégorie soit choisie.
+        syncCategoryDependentUi("");
 
         // Affichage coords
         const coordsEl = document.getElementById(DOM_IDS.COORDS);
@@ -463,8 +468,8 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.NAME_AR, merged['Nom du site arabe'] || "");
         setValue(DOM_IDS.INPUTS.CATEGORY, merged['Catégorie'] || "A définir");
 
-        // Bloc taxonomie : peupler selon la catégorie, puis restaurer les valeurs.
-        populateTaxonomySelects(merged['Catégorie'] || "");
+        // Blocs contextuels : peupler selon la catégorie, puis restaurer les valeurs.
+        syncCategoryDependentUi(merged['Catégorie'] || "");
         setValue(DOM_IDS.INPUTS.SUBTYPE, merged['Sous-type'] || "");
         setValue(DOM_IDS.INPUTS.STATE, merged['État'] || "");
         setValue(DOM_IDS.INPUTS.ACCESS, merged['Accès'] || "");
@@ -813,9 +818,10 @@ function bindModalEvents() {
     document.getElementById(DOM_IDS.INPUTS.OSM_REF)?.addEventListener('input', syncAllCheckedFromRefs);
     document.getElementById(DOM_IDS.INPUTS.MAPS_REF)?.addEventListener('input', syncAllCheckedFromRefs);
 
-    // Bloc taxonomie : repeupler les 3 selects quand la catégorie change.
+    // Blocs contextuels : repeupler les 3 selects et réévaluer la ligne
+    // « Jalel checké » quand la catégorie change.
     document.getElementById(DOM_IDS.INPUTS.CATEGORY)?.addEventListener('change', () => {
-        populateTaxonomySelects(getValue(DOM_IDS.INPUTS.CATEGORY));
+        syncCategoryDependentUi(getValue(DOM_IDS.INPUTS.CATEGORY));
     });
 
     // Validation Listeners
@@ -1035,6 +1041,34 @@ function populateCategorySelect() {
 // Peuple les 3 selects taxonomie (Sous-type / État / Accès) selon la catégorie.
 // Un select sans valeurs pour la catégorie est masqué ; si aucun des 3 n'a de
 // valeurs, le bloc entier disparaît (ex : Restaurant n'a aucun des 3 attributs).
+/**
+ * Tout ce qui dépend de la catégorie choisie — POINT D'ENTRÉE UNIQUE.
+ *
+ * Deux blocs en dépendent (taxonomie contextuelle, ligne « Jalel checké ») et
+ * trois moments les déclenchent : ouverture en création, ouverture en édition,
+ * changement de la liste Catégorie. Passer par une seule fonction évite d'avoir
+ * à penser aux trois à chaque nouveau bloc contextuel — l'oubli qui a coûté
+ * trois bugs de suite sur la checklist le 15/08 (cf. #934).
+ */
+function syncCategoryDependentUi(category) {
+    populateTaxonomySelects(category);
+    syncJalelRow(category);
+}
+
+/**
+ * Ligne « Jalel checké » : visible seulement sur les lieux que le répertoire
+ * couvre (cf. isInJalelDirectoryScope, utils.js).
+ *
+ * On MASQUE sans vider : l'interrupteur garde sa valeur dans le DOM, donc
+ * `handleSave` continue de la relire telle quelle. Recatégoriser une mosquée en
+ * commerce n'efface pas la trace d'une consultation qui a réellement eu lieu.
+ */
+function syncJalelRow(category) {
+    const row = document.getElementById('rich-poi-jalelchecked-row');
+    if (!row) return;
+    row.hidden = !isInJalelDirectoryScope(category, state.currentMapId);
+}
+
 function populateTaxonomySelects(category) {
     const block = document.getElementById('rich-poi-taxonomy');
     if (!block) return;
