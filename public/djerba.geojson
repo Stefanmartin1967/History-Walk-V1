@@ -5567,16 +5567,34 @@
       "properties": {
         "Nom du site FR": "Poterie Tamourt",
         "Nom du site arabe": "ورشة الفخار تامورت",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Artisanat",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6KC7BYPZ2982MZ1BQ6",
         "description": "Voir également : Poterie Habib Ben Mahmoud à 150 mètres",
         "info_gpx": "Plusieurs potiers dans la rue, flânerie recommandée",
         "accessPoint": [
           10.8538377,
           33.7295097
-        ]
+        ],
+        "Sous-type": "Poterie",
+        "État": "En activité",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12164879419",
+        "maps_ref": "https://maps.app.goo.gl/r1rV4dTvPNuEL9rA9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -5947,7 +5965,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -8410,7 +8434,7 @@
       "properties": {
         "Nom du site FR": "Mausolée Omi Mené",
         "Nom du site arabe": "قبر أمي منى",
-        "Catégorie": "Marabout",
+        "Catégorie": "Mausolée",
         "Zone": "Arkou",
         "Source": "",
         "HW_ID": "HW-AGVY6BXAX7HLGFO3CKDXA9DCML",
@@ -8431,7 +8455,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -9859,15 +9889,15 @@
       },
       "properties": {
         "Nom du site FR": "Mausolée Fkih Kacem El Bouziri",
-        "Catégorie": "Marabout",
-        "Accès": "Extérieur seulement",
+        "Catégorie": "Mausolée",
+        "Accès": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1088303850",
         "verified": true,
         "introuvableCarte": false,
         "HW_ID": "HW-01KYFCTHGZ0XS4W7SAXKGCMSAV",
-        "État": "En activité",
+        "État": "",
         "description": "Mausolée proche de la mosquée Bouziri",
         "photos": [
           "photos/poi_HW-01KYFCTHGZ0XS4W7SAXKGCMSAV_1785075907721.jpg"
@@ -9879,7 +9909,14 @@
         "Source": "Martine Gendron",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "maps_ref": "",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
