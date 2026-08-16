@@ -145,6 +145,45 @@ export function isMapsChecked(props) {
 }
 
 /**
+ * Portée du répertoire de Jalel Fathallah — « Répertoriage et recensement des
+ * mosquées de Djerba ». Il recense les MOSQUÉES DE DJERBA, ainsi que les
+ * mausolées (et les postes de garde qui leur sont associés). Rien d'autre :
+ * pas de forts, pas d'ateliers de poterie, pas de restaurants.
+ *
+ * Sert à n'afficher la ligne « Jalel checké » que là où elle veut dire quelque
+ * chose — ailleurs, elle demandait de cocher une case qui ne pouvait rien dire
+ * (demande de Stefan, 16/08/2026).
+ *
+ * Le `mapId` en dur est assumé : c'est la SOURCE elle-même qui est propre à
+ * Djerba, pas l'app. Une autre destination aura ses propres sources, sans
+ * rapport avec celle-ci.
+ */
+export const JALEL_DIRECTORY_MAP_ID = 'djerba';
+
+/**
+ * Catégories couvertes. « A définir » y figure volontairement : c'est le
+ * sentinelle posé par Scout quand aucun tag OSM ne mappe une catégorie
+ * (scout-categories.js) — donc exactement le cas où l'on ouvre le répertoire
+ * pour identifier un bâtiment repéré mais pas encore nommé. L'exclure ferait
+ * disparaître la ligne pile là où elle sert.
+ *
+ * « Marabout » (ancien libellé de Mausolée, renommé par #931) n'y est PAS :
+ * les 4 fiches qui le portaient encore sont recatégorisées à la main plutôt
+ * que d'entretenir une valeur périmée dans le code (arbitrage Stefan 16/08).
+ */
+export const JALEL_DIRECTORY_CATEGORIES = ['Mosquée', 'Mausolée', 'A définir'];
+
+/**
+ * True si un lieu relève du répertoire de Jalel — cf. les deux constantes.
+ * @param {string} category catégorie EFFECTIVE (overlay userData déjà fusionné)
+ * @param {string} mapId    destination courante (state.currentMapId)
+ */
+export function isInJalelDirectoryScope(category, mapId) {
+    if (mapId !== JALEL_DIRECTORY_MAP_ID) return false;
+    return JALEL_DIRECTORY_CATEGORIES.includes(category);
+}
+
+/**
  * URL de la page d'un objet OSM à partir de sa référence « type/id ».
  * @param {string} osmRef
  * @returns {string|null} null si la référence est absente/invalide
