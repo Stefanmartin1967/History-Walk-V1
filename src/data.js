@@ -462,6 +462,10 @@ export function passesUserFilters(feature, plannedSet = null) {
     if (f.mapsHasPhoto === 'only' && !props.mapsHasPhoto) return false;
     if (f.jalelChecked === 'hide' && props.jalelChecked) return false;
     if (f.jalelChecked === 'only' && !props.jalelChecked) return false;
+    // Photos de travail : 'only' = la file « j'ai un repère visuel à exploiter »,
+    // 'hide' = « lieux qu'il reste à documenter ». Admin-only comme la checklist.
+    if (f.workPhotos === 'hide' && hasWorkPhotos(props)) return false;
+    if (f.workPhotos === 'only' && !hasWorkPhotos(props)) return false;
     // Candidat « à curer » (réunif C1) : 'only' = file de tri (n'affiche que les candidats).
     if (f.candidate === 'hide' && isCandidate(feature)) return false;
     if (f.candidate === 'only' && !isCandidate(feature)) return false;
@@ -498,6 +502,16 @@ export function passesUserFilters(feature, plannedSet = null) {
 
 function hasPhotos(props) {
     return Array.isArray(props.photos) && props.photos.length > 0;
+}
+
+// Photos de travail — lecture directe du merge `properties + userData` et non
+// via `getWorkPhotosById` : `workPhotos` est une clé PERSONNELLE (cf. config.js
+// PERSONAL_KEYS), elle n'existe jamais dans le geojson patrimonial, donc il n'y
+// a pas d'overlay à arbitrer ici. `feature.properties.userData` pointe sur le
+// même objet que `state.userData[poiId]` (updatePoiData, gist-sync) — les deux
+// sources sont la même.
+function hasWorkPhotos(props) {
+    return Array.isArray(props.workPhotos) && props.workPhotos.length > 0;
 }
 
 function hasDescription(props) {
@@ -598,6 +612,10 @@ const FILTER_AFFECTING_KEYS = new Set([
     // / description absente. Modif d'une de ces props peut changer la
     // visibilité si filter photo / description est actif.
     'photos', 'description', 'Description', 'descriptionPublic',
+    // Photos de travail : ajoutées/retirées depuis le Rich Editor pendant que le
+    // filtre peut être actif — sans cette clé, la carte garderait à l'écran un
+    // lieu qui vient de sortir du filtre (ou l'inverse).
+    'workPhotos',
     // Note : 'planifieCounter' retiré (03/05/2026) — plus stocké dans userData,
     // calculé à la volée par computePlanifieCounter().
 ]);
