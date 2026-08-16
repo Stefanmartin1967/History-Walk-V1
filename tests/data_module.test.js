@@ -161,6 +161,7 @@ function resetState() {
         verified: 'all',
         candidate: 'all',
         introuvableCarte: 'all',
+        workPhotos: 'all',
         photo: 'all',
         description: 'all',
         incontournablesOnly: false
@@ -448,6 +449,23 @@ describe('passesUserFilters', () => {
         expect(passesUserFilters(poi('p2', {}))).toBe(true);
     });
 
+    // Photos de travail (16/08/2026) — références dans userData.workPhotos, clé
+    // personnelle jamais présente dans le geojson : le filtre lit donc le merge
+    // properties+userData, comme le fait la fiche.
+    it('workPhotos=only n\'affiche que les lieux ayant des photos de travail', () => {
+        state.activeFilters.workPhotos = 'only';
+        expect(passesUserFilters(poi('p1', { userData: { workPhotos: ['djerba/work_p1_1.jpg'] } }))).toBe(true);
+        // Liste vide (toutes retirées à l'import des vraies photos) = sans repère
+        expect(passesUserFilters(poi('p2', { userData: { workPhotos: [] } }))).toBe(false);
+        expect(passesUserFilters(poi('p3', {}))).toBe(false);
+    });
+
+    it('workPhotos=hide exclut les lieux ayant des photos de travail', () => {
+        state.activeFilters.workPhotos = 'hide';
+        expect(passesUserFilters(poi('p1', { userData: { workPhotos: ['djerba/work_p1_1.jpg'] } }))).toBe(false);
+        expect(passesUserFilters(poi('p2', {}))).toBe(true);
+    });
+
     it('admin : photo=only n\'affiche que les POIs avec photo', () => {
         state.activeFilters.photo = 'only';
         expect(passesUserFilters(poi('p1', { photos: ['url'] }))).toBe(true);
@@ -678,6 +696,9 @@ describe('updatePoiData', () => {
         // (clé canonique : `description` lowercase, depuis l'unification).
         ['photos', ['url']],
         ['description', 'Long texte'],
+        // Photos de travail : ajout/retrait depuis le Rich Editor pendant que le
+        // filtre « Photos de travail » peut être actif.
+        ['workPhotos', ['djerba/work_p1_1.jpg']],
     ])('emit data:filtered (via applyFilters) si key="%s" affecte les filtres', async (key, value) => {
         await updatePoiData('p1', key, value);
         expect(eventBus.emit).toHaveBeenCalledWith('data:filtered', expect.anything());

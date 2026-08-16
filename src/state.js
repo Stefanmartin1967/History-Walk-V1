@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.364'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.365'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
@@ -102,6 +102,10 @@ export const state = {
         mapsChecked: 'all',
         mapsHasPhoto: 'all',
         jalelChecked: 'all',
+        // Photos de travail (userData.workPhotos) : admin-only comme la
+        // checklist — le bloc lui-même est masqué au visiteur dans le Rich
+        // Editor, un filtre dessus n'aurait rien à montrer.
+        workPhotos: 'all',
         photo: 'all',
         description: 'all',
         incontournablesOnly: false,

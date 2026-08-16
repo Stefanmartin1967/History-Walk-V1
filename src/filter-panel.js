@@ -361,31 +361,60 @@ function populateParcoursSection() {
 
 // ─── Section État de la fiche ─────────────────────────────────────────────
 
+/**
+ * Filtres 3-états de la section « État de la fiche » — SOURCE UNIQUE.
+ *
+ * Trois consommateurs doivent rester d'accord : le rendu des lignes
+ * (populateFicheSection), le calcul « section active » (badge + compteur
+ * d'en-tête + bouton Réinitialiser) et « Tout réinitialiser » (resetAll). Les
+ * quatre filtres de la checklist livrés par #933 n'avaient été ajoutés qu'au
+ * PREMIER : régler « Jalel checké » sur Afficher/Masquer laissait le panneau
+ * annoncer « Aucun filtre actif », sans badge et avec le bouton Réinitialiser
+ * grisé — un filtre qui tourne sans que rien ne le dise ni ne puisse l'annuler.
+ * Toute nouvelle ligne se déclare ICI, pas dans les trois fonctions.
+ *
+ * `adminOnly` : file de travail admin, sans objet pour un visiteur.
+ */
+const FICHE_FILTERS = [
+    { key: 'verified',         label: 'Lieux vérifiés'          },
+    // Réunif C1 : « à curer » = candidats Scout, admin uniquement (les users
+    // n'ont pas de candidats ; libellé sans sens pour eux). P8 (renommé
+    // 15/08/2026) : « Existence à confirmer » = file de revue admin (lieux
+    // dont l'existence n'est pas certaine). Masqué par défaut pour un
+    // non-admin (state.js) — pas de raison de lui montrer ce filtre non plus.
+    { key: 'candidate',        label: 'Lieux à curer',          adminOnly: true },
+    { key: 'introuvableCarte', label: 'Existence à confirmer',  adminOnly: true },
+    // Checklist de vérification (15/08/2026) : file de travail admin,
+    // même logique que les deux au-dessus.
+    { key: 'osmChecked',       label: 'OSM vérifié',            adminOnly: true },
+    { key: 'mapsChecked',      label: 'Maps vérifié',           adminOnly: true },
+    { key: 'mapsHasPhoto',     label: 'Photo Maps disponible',  adminOnly: true },
+    { key: 'jalelChecked',     label: 'Jalel checké',           adminOnly: true },
+    // Photos de travail (16/08/2026) : repères visuels non publiables attachés
+    // au lieu. Le bloc du Rich Editor est déjà admin-only.
+    { key: 'workPhotos',       label: 'Photos de travail',      adminOnly: true },
+    { key: 'photo',            label: 'Lieux avec photo'        },
+    { key: 'description',      label: 'Lieux avec description'  },
+];
+
+/**
+ * Valeur « pas de filtre » d'une ligne — ce que vaut le filtre quand la section
+ * est au repos. 'all' partout SAUF « Existence à confirmer » chez un visiteur :
+ * son défaut est 'hide' (décision #930, un visiteur n'est pas envoyé vers un
+ * lieu qui pourrait ne plus exister), et le réinitialiser à 'all' le lui
+ * montrerait. Même règle que `setIsAdmin` (state.js).
+ */
+function ficheFilterDefault(key) {
+    if (key === 'introuvableCarte') return state.isAdmin ? 'all' : 'hide';
+    return 'all';
+}
+
 function populateFicheSection() {
     const wrap = document.getElementById('hw-fp-fiche-content');
     if (!wrap) return;
     wrap.innerHTML = '';
 
-    const fiche = [
-        { key: 'verified',    label: 'Lieux vérifiés'         },
-        // Réunif C1 : « à curer » = candidats Scout, admin uniquement (les users
-        // n'ont pas de candidats ; libellé sans sens pour eux). P8 (renommé
-        // 15/08/2026) : « Existence à confirmer » = file de revue admin (lieux
-        // dont l'existence n'est pas certaine). Masqué par défaut pour un
-        // non-admin (state.js) — pas de raison de lui montrer ce filtre non plus.
-        ...(state.isAdmin ? [
-            { key: 'candidate', label: 'Lieux à curer' },
-            { key: 'introuvableCarte', label: 'Existence à confirmer' },
-            // Checklist de vérification (15/08/2026) : file de travail admin,
-            // même logique que les deux au-dessus.
-            { key: 'osmChecked', label: 'OSM vérifié' },
-            { key: 'mapsChecked', label: 'Maps vérifié' },
-            { key: 'mapsHasPhoto', label: 'Photo Maps disponible' },
-            { key: 'jalelChecked', label: 'Jalel checké' },
-        ] : []),
-        { key: 'photo',       label: 'Lieux avec photo'       },
-        { key: 'description', label: 'Lieux avec description' },
-    ];
+    const fiche = FICHE_FILTERS.filter(({ adminOnly }) => !adminOnly || state.isAdmin);
 
     fiche.forEach(({ key, label }) => {
         wrap.appendChild(renderRadioGroup({
@@ -496,11 +525,12 @@ function isSectionActive(id) {
         case 'parcours':     return (f.vus && f.vus !== 'all')
                                   || (f.planifies && f.planifies !== 'all')
                                   || !!f.incontournablesOnly;
-        case 'fiche':        return (f.verified && f.verified !== 'all')
-                                  || (f.candidate && f.candidate !== 'all')
-                                  || (f.introuvableCarte && f.introuvableCarte !== 'all')
-                                  || (f.photo && f.photo !== 'all')
-                                  || (f.description && f.description !== 'all');
+        // Comparaison au défaut de CHAQUE ligne, pas à 'all' en dur : chez un
+        // visiteur « Existence à confirmer » vaut 'hide' au repos, et le tester
+        // contre 'all' rendait la section perpétuellement « Active » (compteur
+        // bloqué sur « 1 section active », bouton Réinitialiser jamais grisé).
+        case 'fiche':        return FICHE_FILTERS.some(({ key }) =>
+                                    (f[key] || 'all') !== ficheFilterDefault(key));
         default:             return false;
     }
 }
@@ -546,16 +576,19 @@ function refreshAllMeta() {
 }
 
 function resetAll() {
+    // Toutes les lignes « État de la fiche » repassent à leur défaut, y compris
+    // celles de la checklist et les photos de travail : « Tout réinitialiser »
+    // doit vider ce que la section affiche, pas un sous-ensemble figé.
+    const ficheDefaults = Object.fromEntries(
+        FICHE_FILTERS.map(({ key }) => [key, ficheFilterDefault(key)])
+    );
     setActiveFilters({
         ...state.activeFilters,
         zone: null,
         categories: [],
         vus: 'all',
         planifies: 'all',
-        verified: 'all',
-        candidate: 'all',
-        photo: 'all',
-        description: 'all',
+        ...ficheDefaults,
         incontournablesOnly: false,
     });
     applyFilters();
