@@ -6884,7 +6884,26 @@
         "accessPoint": [
           10.7467654,
           33.8868677
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/10836452910",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -6994,7 +7013,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -9149,7 +9174,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "",
-        "maps_ref": "https://maps.app.goo.gl/8dbVHj536HEXC6UM7"
+        "maps_ref": "https://maps.app.goo.gl/8dbVHj536HEXC6UM7",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -9648,7 +9679,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/En8Vrrs6TkRTYnFZA"
+        "maps_ref": "https://maps.app.goo.gl/En8Vrrs6TkRTYnFZA",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -9685,7 +9722,12 @@
         "verified": false,
         "introuvableCarte": false,
         "maps_ref": "https://maps.app.goo.gl/vFwwUj3KWsVoKTCH6",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
