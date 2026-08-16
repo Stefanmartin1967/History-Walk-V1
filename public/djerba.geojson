@@ -3209,7 +3209,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -5373,7 +5378,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -6076,14 +6086,34 @@
       "properties": {
         "Nom du site FR": "Poterie Fethi Ben Aissi",
         "Nom du site arabe": "ورشة الفخار فتحي بن عيسى",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Artisanat",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6M71Q47QVPFQV4C4H5",
         "accessPoint": [
           10.836803,
           33.7326844
-        ]
+        ],
+        "Sous-type": "Poterie",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1314291125",
+        "maps_ref": "https://maps.app.goo.gl/d1ibkta8hcqo2iv17",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -6825,7 +6855,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9765,26 +9801,6 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.795551099999999,
-          33.7943852
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Vieux bâtiment djerbien",
-        "Catégorie": "Curiosité",
-        "Zone": "El Groa",
-        "info_gpx": "Vieux bâtiment djerbien",
-        "description": "Vieux bâtiment djerbien dont l’usage originel est inconnu",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "HW_ID": "HW-01KT5X81RV34Z59D259TYBBCNT"
       }
     },
     {
