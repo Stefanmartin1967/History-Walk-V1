@@ -5856,10 +5856,30 @@
       "properties": {
         "Nom du site FR": "Poterie Mjahed Faouzi",
         "Nom du site arabe": "فخّار فوزي المجاهد",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Artisanat",
         "Zone": "Guellala",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6KANR1XY901X5NCZAT"
+        "Source": "",
+        "HW_ID": "HW-01K77WPE6KANR1XY901X5NCZAT",
+        "Sous-type": "Poterie",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12164832095",
+        "maps_ref": "https://maps.app.goo.gl/yXdVQY6cMtVfvgrMA",
+        "Téléphone": "+21650057322",
+        "Horaires": "",
+        "Facebook": "https://www.facebook.com/taghouridassah/?locale=fr_FR",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
