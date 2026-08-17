@@ -8959,7 +8959,16 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "",
-        "maps_ref": "https://maps.app.goo.gl/1qQ1eoD9nQzRTXcQ9"
+        "maps_ref": "https://maps.app.goo.gl/1qQ1eoD9nQzRTXcQ9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "photos": [
+          "photos/poi_HW-01KJABRN0W6KJP2MNXC0GWQJN6_1786980519242.jpg"
+        ]
       }
     },
     {
