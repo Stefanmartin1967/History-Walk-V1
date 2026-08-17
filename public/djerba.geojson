@@ -3866,7 +3866,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -4186,13 +4192,19 @@
         "description": "Jalel n° 22 — « Sidi Essougui. Taourit. Mosquée et mausolée malékite. Récente, intégrant le mausolée.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1550394077",
         "maps_ref": "https://maps.app.goo.gl/YpEwGcfa3f7kYp139",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -4333,7 +4345,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -4431,14 +4449,19 @@
         "Sous-type": "",
         "État": "",
         "Accès": "",
-        "osm_ref": "",
-        "maps_ref": "",
-        "Téléphone": "",
+        "osm_ref": "node/3416046215",
+        "maps_ref": "https://maps.app.goo.gl/xrVu4KS5ZQZTRcPW9",
+        "Téléphone": "+216 75 650 540",
         "Horaires": "",
-        "Facebook": "",
+        "Facebook": "https://www.facebook.com/Musee.de.djerba/mentions/",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -4554,7 +4577,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -7741,7 +7770,25 @@
         "accessPoint": [
           10.8571019,
           33.8880073
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/2974174942",
+        "maps_ref": "https://maps.app.goo.gl/m2o45XXSh5Z2wunV7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -8438,8 +8485,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.857515,
-          33.885134
+          10.857553292469067,
+          33.88488004113873
         ]
       },
       "properties": {
@@ -8450,7 +8497,27 @@
         "Source": "https://fr.wikipedia.org/wiki/Bataille_de_Djerba",
         "HW_ID": "HW-4KDVBOTPXFYVRIW9IEE46G09VG",
         "description": "Obélisque édifié en 1906 à l'emplacement de la Tour des crânes, également nommée Borj-Er-Rous Celle-ci avait été érigée par Dragut suite à la bataille entre Ottomans et les forces chrétiennes le 11 mai 1560. Elle fût détruite en 1840 sur ordre de Ahmed Ier, bey de Tunis. Les restes humains fûrent enterrés dans le cimetière catholique de Houmt Souk.",
-        "info_gpx": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits"
+        "info_gpx": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits",
+        "lat": 33.88488004113873,
+        "lng": 10.857553292469067,
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13095379278",
+        "maps_ref": "https://maps.app.goo.gl/of59my4TMo7cF5y19",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -9035,7 +9102,12 @@
         "descriptionPublic": true,
         "photos": [
           "photos/poi_HW-01KJABRN0WBFCMMFBGZB582PRH_1786337227765.jpg"
-        ]
+        ],
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
