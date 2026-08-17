@@ -119,7 +119,17 @@
         "accessPoint": [
           11.04491,
           33.8196337
-        ]
+        ],
+        "osm_ref": "node/352842148",
+        "maps_ref": "https://maps.app.goo.gl/DuN7VyCYHXG1RE6t6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -496,13 +506,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Kbess",
+        "Nom du site FR": "Mosquée Omar Ibn el Khatab",
         "Nom du site arabe": "جامع الكباس",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
         "Source": "Répertoire J. Fathallah, n° 288 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68SW5H9AGP366WDFHH",
-        "info_gpx": "La Mosquée Kbess est un édifice composite mêlant architecture traditionnelle djerbienne et ajouts contemporains.Sa coupole blanche et son minaret géométrique en font un repère visuel important à l’entrée sud de Mezraya.",
+        "info_gpx": "",
         "accessPoint": [
           10.9907226,
           33.8352705
@@ -513,13 +523,19 @@
         "description": "Jalel n° 288 — « Mosquée Kbess dite Omar Ibn Khattab. Trifa, Ouled Omar. Mosquée totalement reconstruite. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/998229935",
         "maps_ref": "https://maps.app.goo.gl/FrzsGcXfPdSr9T8L6",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -9601,14 +9617,19 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "osm_ref": "",
+        "osm_ref": "way/990353527",
         "maps_ref": "https://maps.app.goo.gl/244Ah1MaW2uovumh7",
         "lat": 33.81391470584298,
         "lng": 10.97268506884575,
         "descriptionPublic": false,
         "photos": [
           "photos/poi_HW-01KKS462NFDJ7E80WSWZ9TK9R7_1786799982400.jpg"
-        ]
+        ],
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -9681,7 +9702,12 @@
         "maps_ref": "",
         "lat": 33.81366398849076,
         "lng": 10.973104834556581,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -9721,39 +9747,6 @@
         "photos": [
           "photos/poi_HW-01KMFHDGG11K9M2SEENYB6AM3Q_1785047931511.jpg"
         ]
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.981040899722222,
-          33.804647499999994
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Vieux bâtiment djerbien",
-        "Catégorie": "Curiosité",
-        "Zone": "Midoun",
-        "description": "Vieux bâtiment djerbien à l'usage originel inconnu",
-        "timeH": 0,
-        "timeM": 0,
-        "price": 0,
-        "HW_ID": "HW-01KPMX8RZ41MX6DCFWGA4HZKJA",
-        "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
-        "info_gpx": "",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "Source": "",
-        "Téléphone": "",
-        "Horaires": "",
-        "Facebook": "",
-        "verified": false,
-        "introuvableCarte": false
       }
     },
     {
@@ -9899,7 +9892,24 @@
           11.040977,
           33.7786463
         ],
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "osm_ref": "way/449394447",
+        "maps_ref": "https://maps.app.goo.gl/uwLdeFYyFpvZ2DNr9",
+        "Téléphone": "",
+        "Horaires": "",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
