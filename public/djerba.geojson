@@ -34,12 +34,21 @@
         "Sous-type": "",
         "État": "",
         "Accès": "",
-        "osm_ref": "",
-        "maps_ref": "",
+        "osm_ref": "node/3872971245",
+        "maps_ref": "https://maps.app.goo.gl/2tRxSBAQEvTkTjhy9",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-17",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "photos": [
+          "photos/poi_HW-01K77WPE67RPHVJVH6A0PC0ZWD_1786986004117.jpg"
+        ]
       }
     },
     {
