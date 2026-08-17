@@ -1094,7 +1094,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/374396092",
-        "maps_ref": "https://maps.app.goo.gl/xTGdxBuajp3nkaZf9"
+        "maps_ref": "https://maps.app.goo.gl/xTGdxBuajp3nkaZf9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -8958,7 +8964,7 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "osm_ref": "",
+        "osm_ref": "way/483895911",
         "maps_ref": "https://maps.app.goo.gl/1qQ1eoD9nQzRTXcQ9",
         "descriptionPublic": false,
         "osmChecked": true,
@@ -8967,7 +8973,7 @@
         "mapsHasPhoto": true,
         "jalelChecked": false,
         "photos": [
-          "photos/poi_HW-01KJABRN0W6KJP2MNXC0GWQJN6_1786980519242.jpg"
+          "photos/poi_HW-01KJABRN0W6KJP2MNXC0GWQJN6_1786985435711.jpg"
         ]
       }
     },
