@@ -2016,7 +2016,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ben Jdidi",
+        "Nom du site FR": "Mosquée Ben Jeddi",
         "Nom du site arabe": "جامع بن جديـدي",
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
@@ -2032,7 +2032,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "229 Mosquée Ben jeddi. Bani Maaguel. Mosquée malékite à origine nokkarite. Ancienne.",
+        "description": "229 Mosquée Ben Jeddi. Bani Maaguel. Mosquée malékite à origine nokkarite. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "",
@@ -2041,7 +2041,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -2850,15 +2856,34 @@
       "properties": {
         "Nom du site FR": "Henchir Bettes",
         "Nom du site arabe": "ناطور الغولة",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "El May",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6DFDJEFF1NP5V7YWS5",
-        "description": "Appelé Borj El Ghoula ? Om à véirifier.",
+        "description": "Bâtiment pyramidal reconstruit en calcaire local, d'âge inconnu, possiblement de l'époque moderne. Dans une littérature plus ancienne, le monument est daté de l'Antiquité romaine, avec une fonction interprétée différemment.\n\nLe lieu est entouré de légendes.\n\nPetr Jenč - OpenStreetMap, 2024",
         "accessPoint": [
           10.9144948,
           33.7697583
-        ]
+        ],
+        "Sous-type": "",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1073444344",
+        "maps_ref": "https://maps.app.goo.gl/VLiHvdmRs88r3tJN9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
