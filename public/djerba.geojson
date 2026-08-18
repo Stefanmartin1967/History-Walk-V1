@@ -2252,16 +2252,36 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Site Archéoologique Ghizen",
+        "Nom du site FR": "Site Archéoologique de Ghizen",
         "Nom du site arabe": "الموقع الأثري غيزان",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "Mazraia",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6CZ52F0ERH3WR0ZT77",
         "accessPoint": [
           10.9222509,
           33.8744937
-        ]
+        ],
+        "Sous-type": "",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12214681137",
+        "maps_ref": "https://maps.app.goo.gl/ZnsJZ53LdhBeX54k6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -2487,17 +2507,39 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.913278,
-          33.869722
+          10.913241117082853,
+          33.86929385368915
         ]
       },
       "properties": {
         "Nom du site FR": "Nécropole de Ghizen",
         "Nom du site arabe": "مقبرة غيزان",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site funéraire",
         "Zone": "Mazraia",
-        "Source": null,
-        "HW_ID": "HW-01K77WPE6CT3DF98CMH3E04Y6K"
+        "Source": "",
+        "HW_ID": "HW-01K77WPE6CT3DF98CMH3E04Y6K",
+        "lat": 33.86929385368915,
+        "lng": 10.913241117082853,
+        "Sous-type": "",
+        "État": "Vestiges partiels",
+        "Accès": "Intérieur visitable",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12214681162",
+        "maps_ref": "https://maps.app.goo.gl/yffcS8Wdt7BwnQR8A",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -3486,7 +3528,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -4168,7 +4215,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Essougui",
+        "Nom du site FR": "Mosquée Sidi Ahmed ElJebliani",
         "Nom du site arabe": "جامع سيدي السوفي",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
@@ -4189,7 +4236,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 22 — « Sidi Essougui. Taourit. Mosquée et mausolée malékite. Récente, intégrant le mausolée.",
+        "description": "Jalel n° 22 — « Sidi Essougui. Taourit. Mosquée et mausolée malékite. Récente, intégrant le mausolée.\nTraduction de la plaque à l'entrée :\n\"Mosquée Sidi Ahmed ElJebliani\nConnu Sidi Essougui\"",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1550394077",
