@@ -2032,7 +2032,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "229 Mosquée Ben Jeddi. Bani Maaguel. Mosquée malékite à origine nokkarite. Ancienne.",
+        "description": "229 Mosquée Ben Jeddi. Bani Maaguel. Mosquée malékite à origine nokkarite. Ancienne.\nLa première photo de travail date des années 1990 (Müller), la seconde est récente\nJalel confirme la remis en fonction de la mosquée",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "",
@@ -2046,8 +2046,8 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-08-18",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3016,7 +3016,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -5037,25 +5042,6 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.9238,
-          33.741
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Site archéologique Henchir Tala",
-        "Nom du site arabe": "هنشير طلا",
-        "Catégorie": "Site historique",
-        "Zone": "Beni Maaguel",
-        "Source": "https://fr.wikipedia.org/wiki/Tamazight_de_Djerba",
-        "HW_ID": "HW-01K77WPE6HCCSTW9QXDV73Q1SF",
-        "description": "En théorie Henchir Tala, source d'eau d'où partait l'aqueduc vers Meninx. Abordé dans la source, mais sans grandes indications"
       }
     },
     {
@@ -12243,7 +12229,21 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "Nom du site arabe": "هنشير طلا",
+        "Sous-type": "",
+        "info_gpx": "",
+        "description": "Site archéologique romain (fort en ruines, selon OpenStreetMap). Une source évoque aussi ce lieu comme la source d'eau d'où serait parti l'aqueduc vers Meninx — hypothèse à prendre avec prudence, peu détaillée.\n\nPetr Jenč - OpenStreetMap, 2026",
+        "Source": "",
+        "maps_ref": "https://maps.app.goo.gl/dGuUjGs9ZmkVgBSEA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
