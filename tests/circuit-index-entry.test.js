@@ -7,7 +7,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // est mocké à une valeur connue (le calcul Haversine réel est couvert ailleurs).
 const h = vi.hoisted(() => ({ realDistance: 7200 }));
 
-vi.mock('../src/state.js', () => ({ state: {}, setUserData: vi.fn() }));
+vi.mock('../src/state.js', () => ({ state: {}, setUserData: vi.fn(), setCustomFeatures: vi.fn(), setOfficialCircuits: vi.fn(), setDeletedOfficialCircuitIds: vi.fn() }));
+vi.mock('../src/circuit-deletion-state.js', () => ({ setOfficialCircuitDeleted: vi.fn(), isOfficialCircuitDeleted: vi.fn(() => false) }));
 vi.mock('../src/utils.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID,
     getRealDistance: () => h.realDistance,

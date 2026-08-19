@@ -9,7 +9,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 // mais à l'identique d'une correction voulue). On marque donc ces changements.
 // ============================================================================
 
-vi.mock('../src/state.js', () => ({ state: { currentMapId: 'djerba', loadedFeatures: [], userData: {} } }));
+vi.mock('../src/state.js', () => ({ state: { currentMapId: 'djerba', loadedFeatures: [], userData: {} }, setUserData: vi.fn(), setCustomFeatures: vi.fn(), setOfficialCircuits: vi.fn(), setDeletedOfficialCircuitIds: vi.fn() }));
+vi.mock('../src/circuit-deletion-state.js', () => ({ setOfficialCircuitDeleted: vi.fn(), isOfficialCircuitDeleted: vi.fn(() => false) }));
 vi.mock('../src/net.js', () => ({ fetchWithTimeout: vi.fn() }));
 vi.mock('../src/utils.js', () => ({
     getPoiId: (f) => f.properties.HW_ID,

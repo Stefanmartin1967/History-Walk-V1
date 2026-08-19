@@ -12,6 +12,7 @@ vi.mock('../src/state.js', () => ({
         currentMapId: 'djerba',
         myCircuits: [],
         officialCircuits: [],
+        deletedOfficialCircuitIds: [],
         loadedFeatures: []
     },
     addMyCircuit: vi.fn(),
@@ -23,6 +24,9 @@ vi.mock('../src/state.js', () => ({
         // On réplique la mutation pour que les assertions `state.officialCircuits`
         // puissent vérifier l'état post-appel.
         state.officialCircuits = circuits || [];
+    }),
+    setDeletedOfficialCircuitIds: vi.fn((ids) => {
+        state.deletedOfficialCircuitIds = ids || [];
     })
 }));
 
@@ -62,8 +66,8 @@ vi.mock('../src/utils.js', () => ({ generateHWID: vi.fn() }));
 vi.mock('../src/gpx.js', () => ({ generateAndDownloadGPX: vi.fn() }));
 vi.mock('../src/ui.js', () => ({ DOM: {} }));
 
-import { state, setHasUnexportedChanges, setOfficialCircuits } from '../src/state.js';
-import { softDeleteCircuit } from '../src/database.js';
+import { state, setHasUnexportedChanges, setOfficialCircuits, setDeletedOfficialCircuitIds } from '../src/state.js';
+import { softDeleteCircuit, saveAppState } from '../src/database.js';
 import { clearCircuit } from '../src/circuit.js';
 import { applyFilters } from '../src/data.js';
 import { isMobileView } from '../src/mobile-state.js';
@@ -77,11 +81,15 @@ describe('performCircuitDeletion', () => {
         state.currentMapId = 'djerba';
         state.myCircuits = [];
         state.officialCircuits = [];
+        state.deletedOfficialCircuitIds = [];
         state.loadedFeatures = [];
         isMobileView.mockReturnValue(false);
         // Rétablit le comportement de setOfficialCircuits (vi.clearAllMocks le reset)
         setOfficialCircuits.mockImplementation((circuits) => {
             state.officialCircuits = circuits || [];
+        });
+        setDeletedOfficialCircuitIds.mockImplementation((ids) => {
+            state.deletedOfficialCircuitIds = ids || [];
         });
     });
 
@@ -117,9 +125,38 @@ describe('performCircuitDeletion', () => {
             const remaining = setOfficialCircuits.mock.calls[0][0];
             expect(remaining).toHaveLength(1);
             expect(remaining[0].id).toBe('off2');
-            // Admin ne touche pas à la DB (circuits officiels pas stockés localement)
+            // Admin ne touche pas à softDeleteCircuit (circuits officiels pas
+            // stockés dans la table circuits locale)
             expect(softDeleteCircuit).not.toHaveBeenCalled();
             expect(setHasUnexportedChanges).toHaveBeenCalledWith(true);
+        });
+
+        it('PERSISTE l\'intention de suppression (survit à un F5)', async () => {
+            // Régression : le retrait n'était qu'en mémoire, or officialCircuits
+            // est reconstruit depuis l'index distant à chaque démarrage → un F5
+            // avant publication ressuscitait le circuit et faisait disparaître la
+            // ligne « SUPPRESSION » du Centre de Contrôle, sans rien signaler.
+            state.officialCircuits = [{ id: 'off1', name: 'Off 1' }];
+            state.isAdmin = true;
+
+            await performCircuitDeletion('off1');
+
+            expect(state.deletedOfficialCircuitIds).toEqual(['off1']);
+            expect(saveAppState).toHaveBeenCalledWith('deletedOfficialCircuitIds', ['off1']);
+        });
+
+        it('normalise les ids (number vs string) pour router vers la branche officielle', async () => {
+            // Les ids officiels sont stringifiés au chargement (app-startup.js).
+            // Avec une comparaison stricte, un id numérique retombait dans la
+            // branche « circuit perso » et appelait softDeleteCircuit à tort.
+            state.officialCircuits = [{ id: '1771435443094', name: 'Off num' }];
+            state.isAdmin = true;
+
+            const r = await performCircuitDeletion(1771435443094);
+
+            expect(r.success).toBe(true);
+            expect(softDeleteCircuit).not.toHaveBeenCalled();
+            expect(state.deletedOfficialCircuitIds).toEqual(['1771435443094']);
         });
     });
 

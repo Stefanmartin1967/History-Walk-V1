@@ -1,6 +1,7 @@
 
 // circuit-actions.js
 import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode } from './state.js';
+import { setOfficialCircuitDeleted } from './circuit-deletion-state.js';
 import { fetchWithTimeout } from './net.js';
 import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit, saveAppState } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
@@ -84,15 +85,21 @@ export async function checkCircuitDuplicate(poiIds, excludeId = null) {
 export async function performCircuitDeletion(id) {
     try {
         // 0. Gestion suppression (Officiel vs Local)
-        const isOfficial = state.officialCircuits && state.officialCircuits.some(c => c.id === id);
+        // Comparaison normalisée : les ids officiels sont stringifiés au
+        // chargement (app-startup.js), l'appelant peut passer un number.
+        const isOfficial = state.officialCircuits && state.officialCircuits.some(c => String(c.id) === String(id));
 
         if (isOfficial) {
             if (!state.isAdmin) {
                 return { success: false, message: "Impossible de supprimer un circuit officiel." };
             }
-            // ADMIN : Suppression Mémoire Uniquement (Pour Export)
-            setOfficialCircuits(state.officialCircuits.filter(c => c.id !== id));
+            // ADMIN : retrait mémoire + intention PERSISTÉE (cf.
+            // setOfficialCircuitDeleted). Le CC détecte ensuite l'écart avec
+            // l'index distant et propose la suppression à la publication, qui
+            // efface le GPX ET l'entrée d'index.
             // On ne touche pas à softDeleteCircuit (DB) car ils n'y sont pas.
+            setOfficialCircuits(state.officialCircuits.filter(c => String(c.id) !== String(id)));
+            await setOfficialCircuitDeleted(id, true);
         } else {
             // STANDARD : Suppression logique (Corbeille)
             await softDeleteCircuit(id);
