@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setPoiCategories } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setDeletedOfficialCircuitIds, setPoiCategories } from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
@@ -65,7 +65,20 @@ export async function loadOfficialCircuits() {
             id: String(off.id || `official_${off.name.replace(/\s+/g, '_')}`),
             poiIds: (off.poiIds || []).map(pid => String(pid))
         }));
-        setOfficialCircuits(processedOfficials);
+
+        // [ADMIN] Suppressions officielles en attente de publication : elles
+        // vivent en IndexedDB (pas dans l'index distant, qui liste encore le
+        // circuit). On les retire du state AVANT de le poser, sinon un F5
+        // ressusciterait un circuit que l'admin a supprimé mais pas encore
+        // publié — et le CC perdrait la ligne « SUPPRESSION » correspondante.
+        const savedDeleted = await getAppState('deletedOfficialCircuitIds');
+        const deletedIds = Array.isArray(savedDeleted) ? savedDeleted.map(String) : [];
+        setDeletedOfficialCircuitIds(deletedIds);
+        setOfficialCircuits(
+            deletedIds.length > 0
+                ? processedOfficials.filter(c => !deletedIds.includes(String(c.id)))
+                : processedOfficials
+        );
 
         // Charger la blacklist des circuits cachés depuis IndexedDB.
         // [] par défaut = tous visibles. Persistance écrite par PR2 (bouton "Cacher ce circuit").

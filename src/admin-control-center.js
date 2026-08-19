@@ -1,4 +1,5 @@
-import { state, setUserData, setCustomFeatures } from './state.js';
+import { state, setUserData, setCustomFeatures, setOfficialCircuits } from './state.js';
+import { setOfficialCircuitDeleted, isOfficialCircuitDeleted } from './circuit-deletion-state.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
@@ -424,7 +425,46 @@ export const processDecision = async (id, decision, scope = 'poi') => {
         return;
     }
 
-    // scope === 'poi' (vue Lieux) ou non spécifié (circuits, comportement legacy)
+    if (scope === 'circuit') {
+        // « Restaurer » sur une suppression de circuit OFFICIEL : l'intention est
+        // persistée (deletedOfficialCircuitIds), il ne suffit donc pas de retirer
+        // la carte de l'écran — sans ça la ligne réapparaîtrait au prochain diff.
+        // Le circuit lui-même est rechargé depuis l'index distant, qui le liste
+        // toujours (rien n'a encore été publié).
+        if (isOfficialCircuitDeleted(id)) {
+            try { await setOfficialCircuitDeleted(id, false); }
+            catch (e) { console.warn('[CC] restauration circuit échec:', id, e); }
+
+            try {
+                const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}?t=${Date.now()}`);
+                if (r.ok) {
+                    const remoteIndex = await r.json();
+                    const restored = Array.isArray(remoteIndex)
+                        ? remoteIndex.find(e => String(e.id) === String(id))
+                        : null;
+                    if (restored && !(state.officialCircuits || []).some(c => String(c.id) === String(id))) {
+                        setOfficialCircuits([
+                            ...(state.officialCircuits || []),
+                            { ...restored, isOfficial: true, id: String(restored.id), poiIds: (restored.poiIds || []).map(String) }
+                        ]);
+                    }
+                }
+            } catch (e) { console.warn('[CC] rechargement circuit restauré échec:', id, e); }
+
+            showToast("Circuit restauré", "info");
+            eventBus.emit('circuit:list-updated');
+        }
+
+        try {
+            await prepareDiffAndPurge();
+            renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip });
+        } catch (e) {
+            console.warn('[CC] prepareDiffData/renderTab after circuit refuse failed:', e);
+        }
+        return;
+    }
+
+    // scope === 'poi' (vue Lieux) ou non spécifié
     //
     // Revert en mémoire COMPLET : coordonnées ET userData. Mais (B2) NE TOUCHE
     // PLUS aux photos pending — l'admin doit les supprimer explicitement
@@ -704,6 +744,9 @@ async function publishChanges() {
 
                 const allLocal = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
                 let indexDirty = false;
+                // Ids d'officiels réellement retirés de l'index : leur intention
+                // de suppression persistée n'a plus lieu d'être une fois publiée.
+                const publishedDeletions = [];
 
                 for (const c of circuitChanges) {
                     circuitProgress++;
@@ -718,6 +761,7 @@ async function publishChanges() {
                             catch (e) { console.warn('[CC] suppression GPX échec:', c.name, e); }
                         }
                         index = index.filter(e => String(e.id) !== String(c.id));
+                        publishedDeletions.push(String(c.id));
                         indexDirty = true;
                         continue;
                     }
@@ -757,6 +801,17 @@ async function publishChanges() {
                 if (indexDirty) {
                     const idxFile = new File([JSON.stringify(index, null, 2)], `${mapId}.json`, { type: 'application/json' });
                     await uploadFileToGitHub(idxFile, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.circuits(mapId), `feat(circuit): MAJ index ${mapId}`);
+                }
+
+                // 5. L'index publié ne liste plus ces circuits : l'intention de
+                //    suppression a été honorée, on purge la liste persistée.
+                //    APRÈS le commit de l'index seulement — en cas d'échec plus
+                //    haut, l'intention doit survivre pour être rejouée.
+                if (publishedDeletions.length > 0) {
+                    for (const deletedId of publishedDeletions) {
+                        try { await setOfficialCircuitDeleted(deletedId, false); }
+                        catch (e) { console.warn('[CC] purge intention suppression échec:', deletedId, e); }
+                    }
                 }
             } catch (err) {
                 console.warn('[CC] Publication circuits échouée (POI/photos OK):', err);

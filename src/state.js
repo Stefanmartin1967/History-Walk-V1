@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.367'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.368'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
@@ -81,6 +81,14 @@ export const state = {
     // [] (défaut) = tous visibles. Cohérence : la blacklist filtre la sidebar
     // Mes Circuits, le compteur planifié des POIs et le calcul du Carnet de voyage.
     hiddenCircuitIds: [],
+    // [ADMIN] Intentions de suppression de circuits OFFICIELS, en attente de
+    // publication. Persisté (IndexedDB) car officialCircuits est rechargé depuis
+    // l'index distant à chaque démarrage : sans ça, un F5 avant publication
+    // effacerait silencieusement les suppressions en cours. Vidé des ids
+    // effectivement publiés à la fin de publishChanges.
+    // NON synchronisé par le Gist : c'est une intention de travail admin, pas
+    // une donnée utilisateur (gist-sync.js énumère ses clés explicitement).
+    deletedOfficialCircuitIds: [],
     // selectionModeFilters supprimé (point #5 audit Stefan) : le filtre topbar
     // (activeFilters) gère désormais le filtrage en mode normal ET en mode création.
     activeFilters: {
@@ -247,6 +255,10 @@ export function setHiddenPoiIds(ids) {
 
 export function setHiddenCircuitIds(ids) {
     state.hiddenCircuitIds = Array.isArray(ids) ? ids.map(String) : [];
+}
+
+export function setDeletedOfficialCircuitIds(ids) {
+    state.deletedOfficialCircuitIds = Array.isArray(ids) ? ids.map(String) : [];
 }
 
 export function setCustomDraftName(name) {

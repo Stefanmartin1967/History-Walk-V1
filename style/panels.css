@@ -3199,6 +3199,21 @@
     display: inline-flex !important;
 }
 
+/* « Supprimer » réautorisé sur les officiels/vérifiés, POUR L'ADMIN SEULEMENT
+   (18/08/2026). La garde métier existait déjà en JS — performCircuitDeletion
+   refuse la suppression d'un officiel si !state.isAdmin — mais la règle CSS
+   ci-dessus masquait le bouton pour TOUT LE MONDE, admin compris : le chemin
+   admin était donc du code injoignable, et supprimer un circuit officiel
+   passait par la suppression du fichier GPX (Maintenance), qui laisse une
+   entrée orpheline dans l'index tant que l'Action update-circuits ne l'a pas
+   régénéré. Le garde-fou « patrimoine partagé » reste entier pour les users :
+   c'est `body.admin-mode` (admin.js) qui ouvre le bouton, et le JS refuse de
+   toute façon. */
+body.admin-mode #circuit-panel[data-mode="consult"][data-flag="official"] #btn-delete-active-circuit,
+body.admin-mode #circuit-panel[data-mode="consult"][data-flag="verified"] #btn-delete-active-circuit {
+    display: inline-flex !important;
+}
+
 /* Tag "Brouillon" visible uniquement en création */
 #circuit-panel[data-mode="consult"] .cp-mode-tag { display: none; }
 /* Flag textuel uniquement en consultation officielle/vérifiée (déjà géré par .cp-flag) */
