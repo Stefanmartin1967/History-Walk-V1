@@ -93,26 +93,6 @@
     ]
   },
   {
-    "id": "HW-1771435443094",
-    "name": "Circuit de Mosquée Ejdid à Mosquée Rihia",
-    "file": "djerba/Circuit de Mosquée Ejdid à Mosquée Rihia.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
-    "distance": "7.8 km",
-    "isOfficial": true,
-    "hasRealTrack": true,
-    "zone": "Beni Maaguel",
-    "poiIds": [
-      "HW-01K77WPE6C4GTHCK9Y64EFE8SP",
-      "HW-01K77WPE6D6A1W50RR0KNXRAGH",
-      "HW-01K77WPE6HCCSTW9QXDV73Q1SF",
-      "HW-01K77WPE6EWBD679W4C2QRM2FA",
-      "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B",
-      "HW-01K77WPE6RN50H0B51NPN1GECK",
-      "HW-01K77WPE6R9A1BAASW9SGFA97P",
-      "HW-01K77WPE6D5GR4P97YHEN41JNS"
-    ]
-  },
-  {
     "id": "HW-01KJDS3E0D23NTEB3ATM02S8DZ",
     "name": "Circuit de Mosquée El Abied à Mosquée Sidi Nasr",
     "file": "djerba/Circuit de Mosquée El Abied à Mosquée Sidi Nasr via Mosquée Ben Biène.gpx",
