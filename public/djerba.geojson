@@ -7804,7 +7804,25 @@
         "Source": "https://flamingo-djerba.com/lieux-a-visiter.html",
         "HW_ID": "HW-01K77WPE6Q670Z1X2VY3ZKFP8E",
         "description": "À l’extrémité du port de pêche de Houmt Souk, une statue en béton blanc représente une sirène brandissant une coquille, tournée vers la mer. Connue localement sous le nom de La Sirène de Djerba, l’œuvre est également référencée dans les guides anglophones comme Ulysses’s Mermaid. Installée sur un socle circulaire à proximité du phare, cette sculpture sert de repère maritime et photographique pour les visiteurs du port. Son emplacement n’est pas anodin : il évoque le lien millénaire entre Djerba et la mer, ainsi que la légende d’Ulysse, souvent associée à l’île depuis l’Antiquité. La statue actuelle, de facture contemporaine, est visible sur les images satellites depuis le début des années 2000. Elle a été réalisée en ciment peint et pierre reconstituée, sans signature connue, probablement à l’initiative municipale dans le cadre d’un aménagement touristique du front de mer. Du quai, on aperçoit la sirène se détachant sur le bleu de la Méditerranée, entre les barques de pêche et les goélands : un symbole discret mais bien ancré de la Djerba maritime, oscillant entre mythologie grecque et fierté insulaire.",
-        "info_gpx": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones"
+        "info_gpx": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/3147224562",
+        "maps_ref": "https://maps.app.goo.gl/3SwdENR5ddb83BkCA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-20",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -9602,18 +9620,23 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "",
-        "Téléphone": "",
+        "Téléphone": "+216 51 724 824",
         "Horaires": "",
-        "Facebook": "",
+        "Facebook": "https://www.facebook.com/ArabesquePatisserieTunisienne",
         "verified": false,
         "introuvableCarte": false,
-        "osm_ref": "",
+        "osm_ref": "way/990345033",
         "maps_ref": "https://maps.app.goo.gl/ymaHzJZ2C6tpCQtM8",
         "descriptionPublic": false,
         "photos": [
           "photos/poi_HW-01KK1CD2CREMNC3CHCGC44PK80_1786800407188.jpg",
           "photos/poi_HW-01KK1CD2CREMNC3CHCGC44PK80_1786800409080.jpg"
-        ]
+        ],
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-20",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -12429,6 +12452,33 @@
         "Horaires": "",
         "Facebook": "",
         "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8500785,
+          33.8165987
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Yahya Ben El Yazmerteni",
+        "Nom du site arabe": "سيدي يحيى بن اليزمرتني",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/13516394104",
+        "HW_ID": "HW-01KZH0VEKNPX8V44P41SDK5Q2H",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "Zone": "Erriadh"
       }
     }
   ]
