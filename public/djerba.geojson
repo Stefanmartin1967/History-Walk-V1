@@ -5614,15 +5614,34 @@
       "properties": {
         "Nom du site FR": "Borj El Kantara",
         "Nom du site arabe": "برج القنطرة",
-        "Catégorie": "Site historique",
+        "Catégorie": "Fortification",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6JDTSE0J7BXJFSCPX4",
         "description": "A proximité du port d'El Kantara",
         "accessPoint": [
           10.9159435,
           33.6802306
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12198103834",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-21",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
