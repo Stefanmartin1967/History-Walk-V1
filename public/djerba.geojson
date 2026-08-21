@@ -2159,21 +2159,43 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.935056,
-          33.780194
+          10.935070359649803,
+          33.77996445120918
         ]
       },
       "properties": {
         "Nom du site FR": "Huilerie Souterraine Ben Omrane",
         "Nom du site arabe": "معصرة بن عمران",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Artisanat",
         "Zone": "El Mahboubine",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6CVR05TNW29PD4ZT89",
         "accessPoint": [
           10.9352142,
           33.7802619
-        ]
+        ],
+        "lat": 33.77996445120918,
+        "lng": 10.935070359649803,
+        "Sous-type": "Huilerie",
+        "État": "Désaffecté",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12298995510",
+        "maps_ref": "https://maps.app.goo.gl/oF6BbdqyjsfSj4zW7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-21",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -3715,21 +3737,43 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.925234,
-          33.727194
+          10.925255573269498,
+          33.726968703311286
         ]
       },
       "properties": {
         "Nom du site FR": "Henchir Dar El Ghoula",
         "Nom du site arabe": "هنشير دار الغولة",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6E4HG0PW6ZMZCH8DCJ",
         "accessPoint": [
           10.9250778,
           33.7272571
-        ]
+        ],
+        "lat": 33.726968703311286,
+        "lng": 10.925255573269498,
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1081030896",
+        "maps_ref": "https://maps.app.goo.gl/sv66A1z5oaKTiDsn6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-21",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -7628,15 +7672,34 @@
       "properties": {
         "Nom du site FR": "Mausolée Ghardaïa",
         "Nom du site arabe": "معبد وضريح غرداية",
-        "Catégorie": "Site historique",
+        "Catégorie": "Mausolée",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "https://fr.wikipedia.org/wiki/Sites_arch%C3%A9ologiques_de_Djerba",
         "HW_ID": "HW-01K77WPE6Q4P5NBGTBKW79MMJT",
-        "description": "Temple mausolée",
+        "description": "",
         "accessPoint": [
           10.9384042,
           33.7183089
-        ]
+        ],
+        "Sous-type": "",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/990365193",
+        "maps_ref": "https://maps.app.goo.gl/uDhtwcda9gGEJBrTA",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-21",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -8521,7 +8584,12 @@
         "verified": false,
         "introuvableCarte": false,
         "maps_ref": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
