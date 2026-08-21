@@ -2989,7 +2989,7 @@
       "properties": {
         "Nom du site FR": "Souk El Guebli Nécropole",
         "Nom du site arabe": "مقبرة سوق القبلي",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site funéraire",
         "Zone": "Sedouikech",
         "Source": "https://kapitalis.com/tunisie/2015/07/28/djerba-les-necropoles-puniques-saccagees-pillees-et-profanees/",
         "HW_ID": "HW-01K77WPE6DQEKFWMTWZ1A5XH39",
@@ -3001,7 +3001,25 @@
         "accessPoint": [
           10.9534144,
           33.727391
-        ]
+        ],
+        "Sous-type": "",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/11934196116",
+        "maps_ref": "https://maps.app.goo.gl/zu6A8haVCRWzSjSX8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-21",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
