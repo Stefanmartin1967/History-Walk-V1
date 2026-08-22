@@ -6692,7 +6692,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6937,7 +6943,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7161,7 +7173,7 @@
         "Source": "Répertoire J. Fathallah, n° 247 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NBNNW3DFHDZ0PFMX8",
         "Sous-type": "À minaret",
-        "État": "En activité",
+        "État": "Désaffecté",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "description": "Jalel n° 247 : « Sidi Abdallah. Mazrane. Mausolée, lieu de culte abandonné mais en bon état. Ancien",
@@ -7173,7 +7185,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -8677,7 +8695,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9684,7 +9708,7 @@
         "HW_ID": "HW-01KJABRN0XK418GNG8GH5KPT4A",
         "lat": 33.7812942328873,
         "lng": 10.76678663492203,
-        "description": "",
+        "description": "Jalel n° 245 — « Mosquée Fguira. Mazrane. Mosquée ibadite wahbite abandonnée au profit d'une nouvelle mosquée adjacente. Ancienne.",
         "accessPoint": [
           10.7669336,
           33.781026
@@ -9702,7 +9726,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/1473709025",
-        "maps_ref": "https://maps.app.goo.gl/uePxNNrWeczoffkDA"
+        "maps_ref": "https://maps.app.goo.gl/uePxNNrWeczoffkDA",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
