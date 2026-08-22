@@ -5962,14 +5962,34 @@
       "properties": {
         "Nom du site FR": "Poterie Younes Sagal",
         "Nom du site arabe": "فخار يونس ساغال",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Artisanat",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6KHCJJTJDZF8MXD4EB",
         "accessPoint": [
           10.8594174,
           33.7196624
-        ]
+        ],
+        "Sous-type": "Poterie",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12164726035",
+        "maps_ref": "https://maps.app.goo.gl/2uXdBFGpn1LdzPsy9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -6056,15 +6076,34 @@
       "properties": {
         "Nom du site FR": "Atelier de poterie Fathi",
         "Nom du site arabe": "ورشات الفخّار فتحي",
-        "Catégorie": "Site historique",
+        "Catégorie": "Artisanat",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6KHGCS19HJDB943QAF",
         "description": "D'après les photos sur Google Maps, vieil atelier de poterie qui semble visitable",
         "accessPoint": [
           10.8544958,
           33.7237636
-        ]
+        ],
+        "Sous-type": "Poterie",
+        "État": "En activité",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12164722462",
+        "maps_ref": "https://maps.app.goo.gl/LyWMgvjdJd7Utwx89",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -9806,7 +9845,15 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/YceB4dUU4Fm1JKsp6",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
