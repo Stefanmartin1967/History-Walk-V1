@@ -6010,7 +6010,7 @@
         "HW_ID": "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
         "lat": 33.86191783421097,
         "lng": 10.821201358600382,
-        "description": "Edifiée au 10ème siècle par le Cheick Yesja Bou Messouer El Yahrasni, elle est l'une des plus ancienne madrassa de Djerba. Minaret de 3,3 mètres de côté situé au nord-est de la salle. Incontournable.",
+        "description": "Edifiée au 10ème siècle par le Cheick Yesja Bou Messouer El Yahrasni, elle est l'une des plus ancienne madrassa de Djerba. Minaret de 3,3 mètres de côté situé au nord-est de la salle. Incontournable.\nJalel n° 63 : « Boumessouer Yasja Yahrasni ou la grande mosquée. Hachane. Mosquée et grande medersa ibadite. 4ᵉ siècle de l'hégire (10ᵉ siècle ap. J.-C.) »",
         "accessPoint": [
           10.8210776,
           33.861825
@@ -6027,7 +6027,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/v2uxFF9EbPNobRD47"
+        "maps_ref": "https://maps.app.goo.gl/v2uxFF9EbPNobRD47",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6784,9 +6790,9 @@
         "Nom du site arabe": "جامع سيدي نصر",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "Répertoire J. Fathallah, n° 113 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Source = Répertoire J. Fathallah, n° 113 ou 114 (Sidi Nasser 1/2, à distinguer sur place) | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG",
-        "description": "Jalel n° 113 : « Sidi Nasser 1. Groa. Mosquée malékite. Ancienne.",
+        "description": "Jalel n° 113 ou 114 : « Sidi Nasser 1. Groa. Mosquée malékite. \n113 = Ancienne.\n114 = 2016",
         "accessPoint": [
           10.7889798,
           33.8121126
@@ -6803,7 +6809,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -7118,7 +7130,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
