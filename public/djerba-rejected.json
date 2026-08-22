@@ -79,5 +79,14 @@
     "lng": 10.9225391,
     "lat": 33.6874121,
     "rejectedAt": 1787398218943
+  },
+  "way/1153906033": {
+    "osm_ref": "way/1153906033",
+    "name": "Sidi Mersil",
+    "nameAr": "",
+    "category": "Mausolée",
+    "lng": 10.967040444421277,
+    "lat": 33.6810483602262,
+    "rejectedAt": 1787400942843
   }
 }
