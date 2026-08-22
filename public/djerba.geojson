@@ -5474,7 +5474,7 @@
         "État": "Ruine",
         "Accès": "Intérieur visitable",
         "info_gpx": "",
-        "description": "",
+        "description": "181 Mosquée Hara dite Hira. À Houmt Chott, aux limites de Cedouikech [= Sedouikech]. Mosquée forteresse abandonnée et en quasi ruines. 8ᵉ siècle de l'hégire / 14ᵉ siècle ap. J.-C.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/386836031",
@@ -5483,7 +5483,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/CRtAten64Dux6YEb8"
+        "maps_ref": "https://maps.app.goo.gl/CRtAten64Dux6YEb8",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -6201,7 +6207,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/386328373",
-        "maps_ref": "https://maps.app.goo.gl/smrj1PYuLCW23YtX9"
+        "maps_ref": "https://maps.app.goo.gl/smrj1PYuLCW23YtX9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6239,7 +6251,13 @@
         "verified": true,
         "introuvableCarte": false,
         "osm_ref": "way/386328366",
-        "maps_ref": "https://maps.app.goo.gl/sN7xZc5RqePbDnNe8"
+        "maps_ref": "https://maps.app.goo.gl/sN7xZc5RqePbDnNe8",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7549,7 +7567,7 @@
         "Nom du site arabe": "مسجد بوبارنوس",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": "Répertoire J. Fathallah, n° 270\nhttp://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 270 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6PC9G02W8SX1JZX2HC",
         "info_gpx": "Ancienne mosquée ibadite wahbite reconstruite récemment",
         "accessPoint": [
@@ -7559,7 +7577,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "La mosquée du quartier Guebleine, à Ajim.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 270 et la donne pour ancienne : une mosquée ibadite wahbite, reconstruite récemment.\n\nBlanchie à la chaux, ouverte par une longue galerie d'arcades et flanquée d'un minaret, elle domine un terrain dégagé à l'écart du bourg. Elle est toujours en activité.",
+        "description": "La mosquée du quartier Guebleine, à Ajim.\n\nJalel n° 270 — « Mosquée Boubarnouss. Quartier Guebleine, Ajim. Mosquée ibadite wahbite reconstruite récemment. Ancienne. »\n\nBlanchie à la chaux, ouverte par une longue galerie d'arcades et flanquée d'un minaret, elle domine un terrain dégagé à l'écart du bourg. Elle est toujours en activité.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/13431415774",
@@ -7568,7 +7586,13 @@
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/rXDk6iMiMjJzjRMZ8"
+        "maps_ref": "https://maps.app.goo.gl/rXDk6iMiMjJzjRMZ8",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8980,14 +9004,14 @@
         "Nom du site arabe": "جامع تغليصه",
         "Catégorie": "Mosquée",
         "Zone": "Hors zone",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 280 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
         "verified": false,
         "HW_ID": "HW-01K77WPE6SQ294ZTDM1HZ3ASFR",
-        "description": "Ancienne mosquée Ibadite, en ruine, située sur un ilot accessible à pied.",
+        "description": "Jalel N° 280 — « Mosquée Guetaya. Guebliya. Îlot. Côte est. Ajim. Poste de garde puis mosquée en ruines. Ancienne. »\n\nAncienne mosquée Ibadite, en ruine, située sur un ilot accessible à pied.",
         "info_gpx": "",
         "Sous-type": "Générique",
         "État": "",
@@ -8995,7 +9019,13 @@
         "osm_ref": "node/12917190345",
         "maps_ref": "https://maps.app.goo.gl/oHX3mzo5i27PJ55E6",
         "Facebook": "",
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
