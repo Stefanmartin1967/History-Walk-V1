@@ -6289,7 +6289,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7252,7 +7258,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -10303,14 +10315,14 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false,
+        "introuvableCarte": true,
         "maps_ref": "https://maps.app.goo.gl/En8Vrrs6TkRTYnFZA",
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -10327,7 +10339,7 @@
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "Zone": "El Groa",
-        "description": "",
+        "description": "Source = Répertoire J. Fathallah, n° 70\ndescription = Jalel n° 70 — « Baraka ou Bénédiction. Entre Mellita et Sidi Djemour. Mosquée malékite. Récente. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "HW_ID": "HW-01KSZ2SGB3GCGB3RG8946MGTZG",
@@ -10339,7 +10351,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 70 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "osm_ref": "",
         "Téléphone": "",
         "Horaires": "",
@@ -10352,7 +10364,7 @@
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
