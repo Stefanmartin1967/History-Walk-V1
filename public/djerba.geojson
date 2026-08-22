@@ -82,7 +82,20 @@
         "accessPoint": [
           11.0423462,
           33.822925
-        ]
+        ],
+        "osm_ref": "node/352842146",
+        "maps_ref": "https://maps.app.goo.gl/4jWvwmuB4LsTsMRA6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -5465,14 +5478,34 @@
       "properties": {
         "Nom du site FR": "Musée du Patrimoine de Guellala",
         "Nom du site arabe": "متحف قلالة",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Musée",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6JTGSWHX55Z21ENNDH",
         "accessPoint": [
           10.8654683,
           33.7325359
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/1905357351",
+        "maps_ref": "https://maps.app.goo.gl/Qe5nGk6rQSdADtsi8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -8099,7 +8132,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": true,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
