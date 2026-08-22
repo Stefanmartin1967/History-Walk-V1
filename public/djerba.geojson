@@ -6854,7 +6854,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "",
+        "description": "Jalel n° 249 — « Sallek Wahline. Khanansa. Mosquée ibadite wahbite abandonnée au profit d'une nouvelle attenante. Ancienne. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1177397624",
@@ -6863,7 +6863,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6902,7 +6908,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7049,7 +7060,7 @@
         ],
         "Sous-type": "À coupoles",
         "État": "Ruine",
-        "Accès": "Intérieur visitable",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -7059,7 +7070,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7190,8 +7207,8 @@
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -13014,6 +13031,12 @@
           10.7630272,
           33.7675728
         ],
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Mezrene"
       }
     }
