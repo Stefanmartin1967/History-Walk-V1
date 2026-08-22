@@ -7635,8 +7635,8 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7708,7 +7708,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10976,12 +10982,18 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
-        "Source": "",
+        "description": "A confirmer :n° 261 — « Fakih Omar. Ajim. Mausolée et lieu de culte auquel fut ajouté une nouvelle mosquée adjacente. Ancien. »",
+        "Source": "Répertoire J. Fathallah, n° 261 (à confirmer — « Fakih Omar » chez Jalel, « El Faqia Amor » sur OSM/Maps) | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Ajim"
+        "Zone": "Ajim",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
