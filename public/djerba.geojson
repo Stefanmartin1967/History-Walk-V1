@@ -12773,7 +12773,12 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
