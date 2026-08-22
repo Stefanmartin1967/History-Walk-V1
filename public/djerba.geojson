@@ -5182,14 +5182,34 @@
       "properties": {
         "Nom du site FR": "Basilique de Meninx",
         "Nom du site arabe": "كنيسة مينينكس",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6H7K49FQ4NSR5ASHX8",
         "accessPoint": [
           10.9274093,
           33.6895611
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/q3rBGt3NnFFKa5GD9",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -5349,7 +5369,7 @@
       "properties": {
         "Nom du site FR": "Site archélogique de Meninx",
         "Nom du site arabe": "موقع مننكس الأثري",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "Sedouikech",
         "Source": "https://www.inp2020.tn/2023/03/09/_meninx/",
         "HW_ID": "HW-01K77WPE6JZQWS751K2WV46RB2",
@@ -5357,7 +5377,26 @@
         "accessPoint": [
           10.9246926,
           33.6909912
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/386945965",
+        "maps_ref": "https://maps.app.goo.gl/r7HtFKMfwJVTN49C7",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -5493,7 +5532,15 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "way/1117938029",
+        "maps_ref": "https://maps.app.goo.gl/R6Y2fgUMbfbJ6P6A9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -8827,14 +8874,34 @@
       "properties": {
         "Nom du site FR": "Citernes romaines de Meninx",
         "Nom du site arabe": "الخزانات الرومانية",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01KJABRN0KWM7Z2QZ124W3X09R",
         "accessPoint": [
           10.9242885,
           33.6869877
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/o4KJrUHvsTbD3omB8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -8849,14 +8916,34 @@
       "properties": {
         "Nom du site FR": "Théâtre Romain de Meninx",
         "Nom du site arabe": "المسرح الروماني بالمنينكس",
-        "Catégorie": "Site historique",
+        "Catégorie": "Site archéologique",
         "Zone": "Sedouikech",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01KJABRN0KCKZMYXY1DGZBH05D",
         "accessPoint": [
           10.9255748,
           33.6879057
-        ]
+        ],
+        "Sous-type": "",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1207641331",
+        "maps_ref": "https://maps.app.goo.gl/fsxt6RQwGiALcADb6",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -12584,6 +12671,59 @@
         "mapsHasPhoto": false,
         "jalelChecked": false,
         "Zone": "Erriadh"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9225391,
+          33.6874121
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Meninx",
+        "Nom du site arabe": "منينكس",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/386945965",
+        "HW_ID": "HW-01KZH0VFWWG0K8EWHYNTQQ0551",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9205119,
+          33.6857779
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Meninx - exposition archéologique",
+        "Catégorie": "Musée",
+        "osm_ref": "way/990322704",
+        "HW_ID": "HW-01KZH0VG1HPG2Q472VGZF3RRBC",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "Zone": "Sedouikech"
       }
     }
   ]
