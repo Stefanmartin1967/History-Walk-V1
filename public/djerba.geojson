@@ -6548,7 +6548,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "109 Mosquée Bazim. Bazim. Mosquée ibadite wahbite. Ancienne.",
+        "description": "109 Mosquée Bazim. Bazim. Mosquée ibadite wahbite. Ancienne.\nUne plaque dont la photo se trouve sur Maps dit :\nParmi les savants du 10ᵉ siècle de l'hégire (16ᵉ s. apr. J.-C.). Il reçut les premiers enseignements à Djerba, puis étudia à Tunis à la mosquée Zitouna, puis voyagea en Égypte en l'an 913 de l'hégire pour étudier à l'école ibadite de Wikalat al-Jamous et à l'école kaydanienne de Boulaq. Il fut l'élève du Cheikh Abou al-Hassan Ibrahim al-Kaydani. Il revint à Djerba où il enseigna au Grand Mosquée d'El Hachane. Son ouvrage le plus important est un commentaire de l'Isagoge du Cheikh Athir ad-Din al-Abhari sur la logique, connu comme « le commentaire de Souleyman le Djerbien » — les savants de la Zitouna à Tunis l'utilisaient pour l'enseignement, n'en ayant pas trouvé l'équivalent.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/701348387",
@@ -6557,7 +6557,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8779,7 +8785,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10430,7 +10442,12 @@
         "maps_ref": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
