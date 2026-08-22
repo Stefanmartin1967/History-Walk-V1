@@ -770,14 +770,34 @@
       "properties": {
         "Nom du site FR": "Huilerie Omar Ben Hamza",
         "Nom du site arabe": "معصرة عمر بن حمزة",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Artisanat",
         "Zone": "Arkou",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE69FQZ84EBV7HCETGM2",
         "accessPoint": [
           11.0057377,
           33.7853426
-        ]
+        ],
+        "Sous-type": "Huilerie",
+        "État": "Ruine",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12294172139",
+        "maps_ref": "https://maps.app.goo.gl/Zsx5ZHiJc2ThkodY8",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
