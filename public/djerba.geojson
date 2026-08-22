@@ -9264,7 +9264,28 @@
         "accessPoint": [
           11.0137902,
           33.7569462
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -12747,35 +12768,6 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Sedouikech"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.967040444421277,
-          33.6810483602262
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Sidi Mersil",
-        "Catégorie": "Mausolée",
-        "État": "Ruine",
-        "Accès": "Extérieur seulement",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "osm_ref": "way/1153906033",
-        "verified": false,
-        "introuvableCarte": true,
-        "descriptionPublic": false,
-        "osmChecked": true,
-        "osmCheckedDate": "2026-08-22",
-        "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false,
-        "HW_ID": "HW-01M0MMZ333MP1ZEN6FNAKY8ARS",
         "Zone": "Sedouikech"
       }
     }
