@@ -12980,6 +12980,42 @@
         "jalelChecked": false,
         "Zone": "Sedouikech"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7631449,
+          33.76765
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ghofrane",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel 246 — Mosquée Ghofrane. Mazrane. Mosquée ibadite récente. 2018",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 246 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/E6c6jtGpcJw8TuHL9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M0N2FEDF79NB3Q3W10TB5RZ3",
+        "accessPoint": [
+          10.7630272,
+          33.7675728
+        ],
+        "Zone": "Mezrene"
+      }
     }
   ]
 }
