@@ -7263,8 +7263,8 @@
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10625,7 +10625,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Moquée Alamat",
+        "Nom du site FR": "Mosquée Alamat",
         "Catégorie": "Mosquée",
         "osm_ref": "way/990342047",
         "HW_ID": "HW-01KZH0VET1BHNJ5VK5AY8WE0KZ",
@@ -10633,7 +10633,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": false,
+        "introuvableCarte": true,
         "Nom du site arabe": "",
         "État": "",
         "Accès": "",
@@ -10644,7 +10644,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "El Groa"
+        "Zone": "El Groa",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
