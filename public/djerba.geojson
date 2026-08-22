@@ -5717,7 +5717,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6145,7 +6151,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -6339,7 +6351,7 @@
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -6447,7 +6459,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -6477,13 +6495,19 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "node/12223903971",
+        "osm_ref": "way/183799931",
         "maps_ref": "https://maps.app.goo.gl/xt3iTQdBtkcKWrbu5",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -10941,7 +10965,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "El Khenensa"
+        "Zone": "El Khenensa",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -11038,7 +11068,12 @@
         "Horaires": "",
         "Facebook": "",
         "Zone": "El Khenensa",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -11134,7 +11169,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "El Khenensa"
+        "Zone": "El Khenensa",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -11155,18 +11196,24 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": false,
+        "introuvableCarte": true,
         "Nom du site arabe": "",
         "État": "",
         "Accès": "",
         "info_gpx": "",
         "description": "",
         "Source": "",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/Cs572PngDHCcGneq5",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Guellala"
+        "Zone": "Guellala",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -13002,6 +13049,33 @@
         "mapsHasPhoto": false,
         "jalelChecked": false,
         "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8583885,
+          33.7408236
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Neghzren",
+        "Nom du site arabe": "نغزرن",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/13414307170",
+        "HW_ID": "HW-01KZH0VF8YHPBPY86Y2J4H568B",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "Zone": "Guellala"
       }
     },
     {
