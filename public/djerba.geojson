@@ -5866,7 +5866,7 @@
         "Sous-type": "Générique",
         "État": "",
         "Accès": "",
-        "description": "",
+        "description": "Jalel n° 188 — « Mosquée Ouersighen. Ouersighen. Mosquée ibadite wahbite en ruines. Ancienne.\nBâtiments partiellement effondrés d'une mosquée médiévale\nrjaksic - OpenStreetMap, 2023",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1163763376",
@@ -5875,7 +5875,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6389,7 +6395,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6417,13 +6429,19 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "node/5046044722",
+        "osm_ref": "way/239717102",
         "maps_ref": "https://maps.app.goo.gl/q2iVJUCKwpNk9TZ76",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6506,7 +6524,7 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true
       }
     },
@@ -11035,7 +11053,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Guellala"
+        "Zone": "Guellala",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -11137,7 +11161,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Guellala"
+        "Zone": "Guellala",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
