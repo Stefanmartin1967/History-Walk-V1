@@ -1453,15 +1453,28 @@
         "Nom du site arabe": "منارة أجير",
         "Catégorie": "Curiosité",
         "Zone": "Hors zone",
-        "Source": null,
-        "Temps_minutes": null,
-        "Prix_TND": null,
-        "Téléphone": null,
-        "Horaires": null,
+        "Source": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
         "verified": false,
         "HW_ID": "HW-01K77WPE6AB83SMA3RRSYH0SK9",
         "description": "Fait partie du circuit invaders",
-        "info_gpx": null
+        "info_gpx": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "osm_ref": "node/1396142254",
+        "maps_ref": "",
+        "Facebook": "",
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -4223,14 +4236,19 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/245254039",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -6848,17 +6866,30 @@
       "properties": {
         "Nom du site FR": "Borj el Agreb",
         "Nom du site arabe": "برج العقرب",
-        "Catégorie": "Site historique",
+        "Catégorie": "Fortification",
         "Zone": "Hors zone",
         "Source": "https://www.misk.art/lire/un-monument-en-quelques-mots-2%C2%A0-la-l%C3%A9gende-de-borj-el-agreb",
-        "Temps_minutes": null,
-        "Prix_TND": null,
-        "Téléphone": null,
-        "Horaires": null,
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Téléphone": "",
+        "Horaires": "",
         "verified": false,
         "HW_ID": "HW-01K77WPE6N1VXNG3MVD2QPQFQV",
         "description": "Fort, en ruines, présentant la particularité d'être construit en pleine mer. Pourrait être lié à la construction du Borj Kebir en 1284, il est cité pour la première fois en 1432. Rares sont les infos à son sujet, auxquelles se mélange une légende de scorpion décimant les enfants d'un prince.",
-        "info_gpx": null
+        "info_gpx": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "osm_ref": "way/1152224056",
+        "maps_ref": "",
+        "Facebook": "",
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -7030,14 +7061,34 @@
       "properties": {
         "Nom du site FR": "Borj El Tarbella",
         "Nom du site arabe": "برج الطربلة",
-        "Catégorie": "Site historique",
+        "Catégorie": "Fortification",
         "Zone": "Guellala",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE6N4X1KPEA5FHVM8VXJ",
         "accessPoint": [
           10.8870941,
           33.6329283
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1476694515",
+        "maps_ref": "https://maps.app.goo.gl/ZcfMMKBNxMwQJ6526",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -12696,6 +12747,35 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.967040444421277,
+          33.6810483602262
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Mersil",
+        "Catégorie": "Mausolée",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1153906033",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-22",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M0MMZ333MP1ZEN6FNAKY8ARS",
         "Zone": "Sedouikech"
       }
     }
