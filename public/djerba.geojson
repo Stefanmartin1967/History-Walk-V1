@@ -12678,33 +12678,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.9225391,
-          33.6874121
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Meninx",
-        "Nom du site arabe": "منينكس",
-        "Catégorie": "Site archéologique",
-        "osm_ref": "way/386945965",
-        "HW_ID": "HW-01KZH0VFWWG0K8EWHYNTQQ0551",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "verified": false,
-        "introuvableCarte": false,
-        "descriptionPublic": false,
-        "osmChecked": true,
-        "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false,
-        "Zone": "Sedouikech"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           10.9205119,
           33.6857779
         ]
