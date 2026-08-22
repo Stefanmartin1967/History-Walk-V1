@@ -6572,7 +6572,7 @@
         "HW_ID": "HW-01K77WPE6M14K3331NK215THZS",
         "lat": 33.86202557545826,
         "lng": 10.806473154993117,
-        "description": "Jalel n° 67 : « Sidi Taieb. Mellita. Mosquée mausolée malékite. » Zone Mellita exacte (à distinguer de « Moulay Taïeb",
+        "description": "Jalel n° 67 : « Sidi Taieb. Mellita. Mosquée mausolée malékite. »",
         "accessPoint": [
           10.8063801,
           33.8621606
@@ -6589,7 +6589,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8010,7 +8016,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -11410,17 +11422,23 @@
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/kVvYxMB9yd7jWn5NA",
         "verified": false,
-        "introuvableCarte": false,
+        "introuvableCarte": true,
         "Nom du site arabe": "",
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "A côté du cimetière selon la vue OSM",
         "Source": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
