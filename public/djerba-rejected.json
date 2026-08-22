@@ -70,5 +70,14 @@
     "lng": 10.8724848,
     "lat": 33.8466515,
     "rejectedAt": 1786636779154
+  },
+  "way/386945965": {
+    "osm_ref": "way/386945965",
+    "name": "Meninx",
+    "nameAr": "منينكس",
+    "category": "Site archéologique",
+    "lng": 10.9225391,
+    "lat": 33.6874121,
+    "rejectedAt": 1787398218943
   }
 }
