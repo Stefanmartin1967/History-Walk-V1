@@ -3403,7 +3403,7 @@
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -3435,7 +3435,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3977,7 +3983,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4477,7 +4489,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Ben Yaâla",
-        "Nom du site arabe": "جامع بن يعلى",
+        "Nom du site arabe": "جامع بن يعلا",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "Source": "Répertoire J. Fathallah, n° 83 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -4499,7 +4511,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4990,7 +5008,7 @@
         "Zone": "El Groa",
         "Source": "",
         "HW_ID": "HW-01K77WPE6HCAQTSR2RW7BNKJCN",
-        "description": "A voir en novembre",
+        "description": "",
         "accessPoint": [
           10.8485472,
           33.8063976
@@ -5007,7 +5025,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5035,13 +5059,19 @@
         "description": "Jalel n° 90 — « Sidi Khalifa Zenkri. Houmt Larbah, Erriadh. Mosquée ibadite wahbite. 1038 de l'hégire (1628 ap. J.-C.)",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "way/1473295620",
+        "osm_ref": "node/13516323512",
         "maps_ref": "https://maps.app.goo.gl/eUvzyneQUxv2DTKx6",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-23",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5668,9 +5698,9 @@
         "Zone": "El Groa",
         "Source": "Répertoire J. Fathallah, n° 87 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6JHY0DMFMJKW847EVZ",
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "description": "Jalel n° 87 : « Mosquée Abiadh. Majine, Erriadh. Mosquée ibadite wahbite complètement reconstruite. Ancienne.",
         "Temps_minutes": 0,
@@ -5686,8 +5716,8 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8503,7 +8533,7 @@
         "Zone": "Oued Ezzebib",
         "Source": "Répertoire J. Fathallah, n° 100 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
-        "description": "",
+        "description": "Jalel n° 100 : « Mosquée Jdaria dite Touil. Oued Zbib. Mosquée ibadite wahbite. 1211 de l'hégire (1736 ap. J.-C.). \nPas de phot\nSerait une mosquée récente selon la vidéo sur Maps\nVu la description de Jalel, il s'agit probablement d'une reconstruction :os",
         "accessPoint": [
           10.8248572,
           33.7915205
@@ -8520,7 +8550,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -10173,7 +10209,13 @@
         "lat": 33.82122850370071,
         "lng": 10.837669435859802,
         "osm_ref": "node/13453526848",
-        "maps_ref": "https://maps.app.goo.gl/gDzJfPAEWBhagdnS9"
+        "maps_ref": "https://maps.app.goo.gl/gDzJfPAEWBhagdnS9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10829,7 +10871,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Erriadh"
+        "Zone": "Erriadh",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10931,7 +10979,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Erriadh"
+        "Zone": "Erriadh",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -10989,13 +11043,19 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Visible sur la vue satellite",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Oued Ezzebib"
+        "Zone": "Oued Ezzebib",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
