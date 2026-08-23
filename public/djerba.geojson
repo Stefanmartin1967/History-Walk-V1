@@ -6684,7 +6684,7 @@
         "Nom du site arabe": "جامع وليحي",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
-        "Source": "https://www.flickr.com/photos/44928546@N05/8008665414\nhttps://www.facebook.com/Assidje.org/posts/la-l%C3%A9gendaire-mosqu%C3%A9e-ouelhi-retrouve-son-%C3%A9clat-apr%C3%A8s-avoir-%C3%A9t%C3%A9-pilli%C3%A9e-et-sacca/2453064461400785/",
+        "Source": "Répertoire J. Fathallah, n° 99 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://www.flickr.com/photos/44928546@N05/8008665414\nhttps://www.facebook.com/Assidje.org/posts/la-l%C3%A9gendaire-mosqu%C3%A9e-ouelhi-retrouve-son-%C3%A9clat-apr%C3%A8s-avoir-%C3%A9t%C3%A9-pilli%C3%A9e-et-sacca/2453064461400785/",
         "HW_ID": "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
         "photos": [
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463657931.jpg",
@@ -6699,7 +6699,7 @@
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463675621.jpg",
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463677378.jpg"
         ],
-        "description": "Une des plus ancienne mosquée de Djerba datant du 7ème siècle. Elle a retrouvé son éclat après sa restauration par l'ASSIDJE en collaboration avec l'Association des Architectes de Jerba. Son architecture simle est typique de Djerba. A noter qu'étant entourée de vergers, elle est réputée pour sa production de fruits.",
+        "description": "Jalel n° 99 — « Mosquée Ouelhi. Jaabira. Mosquée et medersa coranique à l'état d'abandon. Elle fut restaurée récemment. 8ᵉ siècle de l'hégire (14ᵉ siècle ap. J.-C.). »\n\nUne des plus ancienne mosquée de Djerba datant du 7ème siècle. Elle a retrouvé son éclat après sa restauration par l'ASSIDJE en collaboration avec l'Association des Architectes de Jerba. Son architecture simle est typique de Djerba. A noter qu'étant entourée de vergers, elle est réputée pour sa production de fruits.",
         "accessPoint": [
           10.8055248,
           33.7901335
@@ -6716,7 +6716,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6800,7 +6806,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -6817,7 +6829,7 @@
         "Nom du site arabe": "جامع بوليمان - جَعبيرة",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "https://djerba-insolite.com/blog/boulimen",
+        "Source": "Répertoire J. Fathallah, n° 98 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://djerba-insolite.com/blog/boulimen",
         "HW_ID": "HW-01K77WPE6N0ZBXJK23NVJ2MQPX",
         "photos": [
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463686754.jpg",
@@ -6828,7 +6840,7 @@
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463696128.jpg",
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463697853.jpg"
         ],
-        "description": "Mosquée construite par la famille Boulimen au 17ème siècle, à l'époque Husseinites. Elle est située à l'extrémité de Sedghiane. Son architecture, de forme polygonale, se situe à mi-chemin entre les style djerbien modeste et Ottoman.",
+        "description": "n° 98 — « Mosquée Boulimane. Jaabira. Mosquée ibadite wahbite. Une nouvelle salle de prière et un nouveau minaret ont été construits récemment. L'ancienne a été abandonnée. La nouvelle est récente. »\n\nMosquée construite par la famille Boulimen au 17ème siècle, à l'époque Husseinites. Elle est située à l'extrémité de Sedghiane. Son architecture, de forme polygonale, se situe à mi-chemin entre les style djerbien modeste et Ottoman.",
         "accessPoint": [
           10.7924829,
           33.7944996
@@ -6845,7 +6857,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7183,7 +7201,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7352,7 +7376,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7455,7 +7485,7 @@
         "Zone": "Ajim",
         "Source": "Répertoire J. Fathallah, n° 269 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6PDSWXWVZZR4ZDNXVX",
-        "info_gpx": "Mosquée ibadite wahbite construite  au 4è siècle de l’hégire, ce qui correspond au 10è siècle de notre ère",
+        "info_gpx": "",
         "accessPoint": [
           10.7664568,
           33.7279203
@@ -7472,7 +7502,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7550,7 +7586,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7672,7 +7714,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7768,7 +7816,7 @@
         "Zone": "Ajim",
         "Source": "Répertoire J. Fathallah, n° 264 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6P7XZY555VW8YDAVA0",
-        "info_gpx": "Ancienne mosquée ibadite wahbite dont la construction remonte à 1040/1050 de l'hégire, soit au 17ème siècle de notre ère (1630/1640) avant d'être agandie au 19ème siècle",
+        "info_gpx": "",
         "accessPoint": [
           10.7486388,
           33.724285
@@ -7785,7 +7833,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -7817,7 +7871,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/svcZkWBeHMgFcoJC7"
+        "maps_ref": "https://maps.app.goo.gl/svcZkWBeHMgFcoJC7",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8606,7 +8666,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10688,12 +10754,18 @@
         "introuvableCarte": false,
         "Nom du site arabe": "",
         "info_gpx": "",
-        "description": "",
-        "Source": "",
+        "description": "Jalel n° 253 — « Mosquée Ben Moomen. Quartier Ourir, Khanansa. Mosquée ibadite wahbite. Une souterraine, une ancienne et une nouvelle adjacente. Ancienne. »",
+        "Source": "Répertoire J. Fathallah, n° 253 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Oued Ezzebib"
+        "Zone": "Oued Ezzebib",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10951,11 +11023,17 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Visible sur vue satellite\nSite historique sur Maps en 33.77750891267401, 10.813790981509246",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Oued Ezzebib"
+        "Zone": "Oued Ezzebib",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -11063,7 +11141,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Ajim"
+        "Zone": "Ajim",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -11171,7 +11255,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Mezrene"
+        "Zone": "Mezrene",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
