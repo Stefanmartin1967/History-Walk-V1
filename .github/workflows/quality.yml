@@ -1,9 +1,7 @@
-name: Qualité (tests + knip)
+name: Qualité (tests + knip + build)
 
 on:
   pull_request:
-  push:
-    branches: ["main"]
 
 permissions:
   contents: read
@@ -17,11 +15,18 @@ jobs:
       - name: Installation de Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
           cache: 'npm'
-      - name: Installation des dépendances
-        run: npm install
+      # npm est épinglé en plus de Node : deux versions de npm différentes ne
+      # résolvent pas les peer-deps à l'identique et invalident le lockfile
+      # (constaté : 11.6.2 résout @emnapi/core en 1.10.0, 11.17.0 en 1.11.3).
+      - name: Version de npm épinglée
+        run: npm i -g npm@11.17.0
+      - name: Installation des dépendances (verrouillée)
+        run: npm ci
       - name: Tests unitaires (vitest)
         run: npx vitest run --exclude '**/.claude/**'
       - name: Détection de code mort (knip)
         run: npm run knip
+      - name: Construction du site (build + pages SEO)
+        run: npm run build
