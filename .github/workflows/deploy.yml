@@ -25,10 +25,16 @@ jobs:
       - name: Installation de Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
           cache: 'npm'
-      - name: Installation des dépendances
-        run: npm install
+      - name: Installation des dépendances (verrouillée)
+        run: npm ci
+      # Garde-fou : un test rouge ou du code mort bloque le déploiement.
+      # Le site en ligne reste alors sur la version précédente.
+      - name: Tests unitaires (vitest)
+        run: npx vitest run --exclude '**/.claude/**'
+      - name: Détection de code mort (knip)
+        run: npm run knip
       - name: Construction du site (Build)
         run: npm run build
       - name: Configuration de GitHub Pages
