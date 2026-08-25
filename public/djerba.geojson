@@ -1890,7 +1890,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/1105824062",
-        "maps_ref": "https://maps.app.goo.gl/9iQpTQWkedZxaEvS8"
+        "maps_ref": "https://maps.app.goo.gl/9iQpTQWkedZxaEvS8",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -2501,7 +2507,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2688,7 +2700,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2793,7 +2811,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -3107,7 +3131,7 @@
         "osmCheckedDate": "2026-08-18",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -3251,7 +3275,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3545,7 +3575,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3581,7 +3617,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3710,7 +3752,7 @@
         "Zone": "El May",
         "Source": "",
         "HW_ID": "HW-01K77WPE6E5GCD9QGR33PMXVRP",
-        "description": "",
+        "description": "Jalel n° 170 : « Mosquée Chouhoud (témoins). Robbana. Mosquée nokkarite totalement abandonnée au profit d'une nouvelle mosquée adjacente. Ancienne. La nouvelle est récente. »",
         "accessPoint": [
           10.8897413,
           33.7813717
@@ -3727,7 +3769,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5513,7 +5561,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5757,7 +5811,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8584,7 +8644,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -8694,7 +8760,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8713,7 +8785,7 @@
         "Zone": "Sedouikech",
         "Source": "",
         "HW_ID": "HW-01K77WPE6R9A1BAASW9SGFA97P",
-        "description": "",
+        "description": "Visible sur la vue satellite",
         "accessPoint": [
           10.9170677,
           33.7510099
@@ -8730,7 +8802,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": true
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -8768,7 +8846,13 @@
         "verified": false,
         "introuvableCarte": false,
         "lat": 33.74640544422446,
-        "lng": 10.920675697047313
+        "lng": 10.920675697047313,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -10145,7 +10229,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/1106335125",
-        "maps_ref": "https://maps.app.goo.gl/CSsEgKptH77yeTEeA"
+        "maps_ref": "https://maps.app.goo.gl/CSsEgKptH77yeTEeA",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10270,7 +10360,7 @@
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
         "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
-        "description": "Jalel n° 168 : « Mosquée Aissa Robbani dite Labbassi. Robbana. Mosquée ibadite nokkarite ayant subie une extension. 4ᵉ siècle de l'hégire (10ᵉ siècle ap. J.-C.).",
+        "description": "",
         "accessPoint": [
           10.8951752,
           33.7703173
@@ -10282,14 +10372,20 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 168 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/990393357",
-        "maps_ref": "https://maps.app.goo.gl/U76UGxfqShEs1ZKw7"
+        "maps_ref": "https://maps.app.goo.gl/U76UGxfqShEs1ZKw7",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10365,7 +10461,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/1166002371",
-        "maps_ref": "https://maps.app.goo.gl/ZJNY1d9HC7qeyuUR9"
+        "maps_ref": "https://maps.app.goo.gl/ZJNY1d9HC7qeyuUR9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -11587,7 +11689,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Robbana"
+        "Zone": "Robbana",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -11790,7 +11898,7 @@
         "osm_ref": "way/1524243991",
         "HW_ID": "HW-01KZH0VGB51YV36EB6ZYG21J38",
         "Sous-type": "Générique",
-        "description": "75 Mosquée Ouaghlani. Cedouikech. Mosquée ibadite wahbite en cours de restauration. Ancienne.",
+        "description": "175 Mosquée Ouaghlani. Cedouikech. Mosquée ibadite wahbite en cours de restauration. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 175 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -11804,7 +11912,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -12164,7 +12278,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Robbana"
+        "Zone": "Robbana",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -13077,10 +13197,15 @@
         "Zone": "Sedouikech",
         "Nom du site arabe": "",
         "info_gpx": "",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/KNmLdAisoSuiqYu89",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
