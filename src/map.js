@@ -81,7 +81,17 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
 
     // 3. Couche "Voyager" (CARTO) — beige clair, lisible pour les marqueurs
     //    ocre du chantier iconification. Devient la couche par défaut (20/05/2026).
-    const voyagerLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    //
+    //    Clé API obligatoire depuis 08/2026 : sans elle, CARTO renvoie bien la
+    //    tuile (HTTP 200) mais y tamponne « API KEY REQUIRED » en diagonale.
+    //    Clé gratuite (pas de compte CARTO, fair use 5 M tuiles/mois). Elle est
+    //    volontairement en clair : l'app est 100 % statique, il n'existe aucun
+    //    endroit côté serveur où la cacher, et c'est l'usage prévu par CARTO
+    //    pour ce cas. Ne pas la réutiliser sur un projet non lié à Heripia.
+    //    L'attribution CARTO + OSM ci-dessous est une CONDITION de la gratuité :
+    //    ne pas la retirer.
+    const CARTO_KEY = 'cb1_27w5_1_b786b64232460ab9f5878690';
+    const voyagerLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`, {
         maxNativeZoom: 19, // tuiles Voyager jusqu'à z19, agrandies au-delà (cf. planLayer : évite le grisé à z20)
         maxZoom: 20,
         subdomains: 'abcd',
