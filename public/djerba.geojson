@@ -5525,7 +5525,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5735,7 +5741,13 @@
         "verified": true,
         "introuvableCarte": false,
         "osm_ref": "way/435642511",
-        "maps_ref": "https://maps.app.goo.gl/e71tN2Xw1hMt64zUA"
+        "maps_ref": "https://maps.app.goo.gl/e71tN2Xw1hMt64zUA",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5975,7 +5987,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -10579,7 +10597,13 @@
         "lat": 33.83428778491142,
         "lng": 10.826873181401124,
         "osm_ref": "node/13516776102",
-        "maps_ref": "https://maps.app.goo.gl/eSMBaYjPGNDrBDi28"
+        "maps_ref": "https://maps.app.goo.gl/eSMBaYjPGNDrBDi28",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -13167,7 +13191,12 @@
         "info_gpx": "",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
