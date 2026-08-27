@@ -1386,7 +1386,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionDraft": false
+        "descriptionDraft": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4507,8 +4513,8 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4577,7 +4583,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4638,7 +4650,7 @@
         "Zone": "Taourit",
         "Source": "https://www.facebook.com/Amis.Tunisie/posts/mosqu%C3%A9e-ibrahim-al-charef-taouritla-mosqu%C3%A9e-ibrahim-al-charef-est-consid%C3%A9r%C3%A9e-com/1104312605062607/\nRépertoire J. Fathallah, n° 29 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6GX5J8BG85Y7V1ZXKS",
-        "description": "Jalel n° 29 : « Sidi Brahim Charef. Taourit. Mosquée mausolée malékite au style ottoman. 19ᵉ siècle.\nLe lien Facebook amène sur la description de la posquée",
+        "description": "Jalel n° 29 : « Sidi Brahim Charef. Taourit. Mosquée mausolée malékite au style ottoman. 19ᵉ siècle.\nLe lien Facebook amène sur la description de la mosquée",
         "info_gpx": "Mosquée mausolée malékite au style ottoman construite au 19è siècle de notre ère, restaurée en 1991",
         "accessPoint": [
           10.8630578,
@@ -4661,7 +4673,7 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -4794,9 +4806,9 @@
         "Nom du site arabe": "مسجد الغربة",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_%C3%89trangers\nRépertoire J. Fathallah, n° 17 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 17 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_%C3%89trangers",
         "HW_ID": "HW-01K77WPE6G6C1H17E6WP518B3J",
-        "description": "Principale mosquée Malikite, construite au 15ème siècle. Edifiée au début en tant que madrassa ibadite. Egalement connue sous les noms de mosquée Barrazim, mosquées des étrangers ou Jemaâ Ghorba",
+        "description": "Jalel n° 17 — « Mosquée des étrangers. Centre-ville, Houmt Souk. Mosquée ibadite devenue malékite. 967 de l'hégire (1560 apr. J.-C.). »\nPrincipale mosquée Malikite, construite au 15ème siècle. Edifiée au début en tant que madrassa ibadite. Egalement connue sous les noms de mosquée Barrazim, mosquées des étrangers ou Jemaâ Ghorba",
         "info_gpx": "Mosquée ibadite devenue malékite construite en 967 de l’hégire, soit en 1560 de notre ère",
         "accessPoint": [
           10.8612059,
@@ -4821,7 +4833,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4857,7 +4875,13 @@
         "osm_ref": "relation/6504724",
         "maps_ref": "https://maps.app.goo.gl/kaXJRMG7466yMVv16",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4874,7 +4898,7 @@
         "Nom du site arabe": "جامع سيدي بن عيسى",
         "Catégorie": "Mosquée",
         "Zone": "El Jouamaa",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 10 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6GJ0DN3APAMA1JCFV8",
         "description": "Jalel n° 10 — « Sidi Ben Aissa. Centre-ville, Houmt Souk. Mosquée Mausolée. 18ᵉ siècle.",
         "info_gpx": "",
@@ -4899,7 +4923,7 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -4916,9 +4940,9 @@
         "Nom du site arabe": "جامع الأتراك",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_Turcs",
+        "Source": "Répertoire J. Fathallah, n° 16 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://fr.wikipedia.org/wiki/Mosqu%C3%A9e_des_Turcs",
         "HW_ID": "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
-        "description": "Mosquée également appelée Jemaâ Ettrouk, construite au 16ème siècle, sous l'impulsion du caïd Ghazi Mustapha Bey. Son minaret est en forme de chandelle. Elle est la seule de l'île dédiée, à l'origine, au rite Hanédisme",
+        "description": "Jalel N° 16 : « Mosquée turque. Centre-ville, Houmt Souk. Mosquée hanafite puis malékite. 1560 apr. J.-C. »\nMosquée également appelée Jemaâ Ettrouk, construite au 16ème siècle, sous l'impulsion du caïd Ghazi Mustapha Bey. Son minaret est en forme de chandelle. Elle est la seule de l'île dédiée, à l'origine, au rite Hanédisme",
         "info_gpx": "Mosquée hanafite puis malékite construite en 1560 de notre ère",
         "accessPoint": [
           10.8592574,
@@ -4941,7 +4965,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4958,7 +4988,7 @@
         "Nom du site arabe": "جامع بو عكازين",
         "Catégorie": "Mosquée",
         "Zone": "El Jouamaa",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 7 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6GJMBZYBJGZZAWQDYZ",
         "info_gpx": "",
         "accessPoint": [
@@ -4968,7 +4998,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "",
+        "description": "Jalel n° 7 — « Sidi Bouakkazine. Centre ville, Houmt Souk. Mosquée mausolée malékite. 1054 de l'hégire (1643 apr. J.-C.). »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/436379753",
@@ -4977,7 +5007,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5097,7 +5133,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -5281,7 +5323,7 @@
         "Source": "https://www.turess.com/fr/letemps/52984?utm\nRépertoire J. Fathallah, n° 6 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6H365AYB72RWY40WZX",
         "photos": [],
-        "description": "Jalel n° 6 — « Sidi Bahri. Boumellal. Mosquée Mausolée malékite. Très ancienne.",
+        "description": "Jalel n° 6 — « Sidi Bahri. Boumellal. Mosquée Mausolée malékite. Très ancienne.\nPhotos d'une nouvelle mosquée sur Maps, voir si l'ancienne subsiste toujours",
         "info_gpx": "",
         "accessPoint": [
           10.8541492,
@@ -5298,7 +5340,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5488,7 +5536,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -8133,9 +8187,9 @@
         "Nom du site arabe": "مسجد الشيخ",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "https://djerba-insolite.com/blog/mosque-el-cheikh",
+        "Source": "Répertoire J. Fathallah, n° 8 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://djerba-insolite.com/blog/mosque-el-cheikh",
         "HW_ID": "HW-01K77WPE6P5C0194DPJWYMX9C1",
-        "description": "Mosquée ibadite construite aux environs de l'année 1548 sous l'ordre du Cheikh Abu Afif Saleh bin Yahya bin Sulaiman Samomani. Un des pricnipaux lieux de culte à Houmt Souk. De forme rectangualire, la salle de prières est couverte par pas moins de 42 coupoles. Un minaret surmonté d'un lanterneau, typique de ce type de mosquée est situé sur la droite.",
+        "description": "Jalel n° 8 — « Cheikh. Centre ville, Houmt Souk. Mosquée ibadite. 1548 ap. J.-C. »\nMosquée ibadite construite aux environs de l'année 1548 sous l'ordre du Cheikh Abu Afif Saleh bin Yahya bin Sulaiman Samomani. Un des pricnipaux lieux de culte à Houmt Souk. De forme rectangualire, la salle de prières est couverte par pas moins de 42 coupoles. Un minaret surmonté d'un lanterneau, typique de ce type de mosquée est situé sur la droite.",
         "accessPoint": [
           10.8566537,
           33.8776151
@@ -8158,7 +8212,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9062,7 +9122,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -9990,7 +10056,7 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false,
+        "jalelChecked": true,
         "photos": [
           "photos/poi_HW-01KJABRN0W6KJP2MNXC0GWQJN6_1786985435711.jpg"
         ]
@@ -11068,7 +11134,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "23 Sidi Abbes. Taourit. Masquée et mausolée malékite. Récente intégrant le mausolée.",
+        "description": "Jalel n° 23 — « Sidi Abbes. Taourit. Mosquée et mausolée malékite. Récente intégrant le mausolée. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 23 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -11079,7 +11145,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Taourit"
+        "Zone": "Taourit",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
