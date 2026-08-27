@@ -169,7 +169,10 @@ export async function loadDestinationsConfig() {
 // toute destination (publiée ou brouillon) a son {dest}-zones.geojson sur GitHub —
 // publiée via Pages, brouillon via RAW frais (admin). Échec/absence → zones vides
 // → getZoneFromCoords renvoie « A définir » (sûr).
-async function loadZonesForActive(mapId, dest) {
+// Exporté pour les tests (knip compte tests/ comme entrée) : ce loader est
+// désormais lancé EN PARALLÈLE du geojson, son contrat « ne rejette jamais »
+// doit donc être verrouillé par des tests. Cf. loadAndInitializeMap.
+export async function loadZonesForActive(mapId, dest) {
     try {
         const baseUrl = import.meta.env?.BASE_URL || './';
         const zonesFile = dest?.zonesFile || `${mapId}-zones.geojson`;
@@ -200,7 +203,13 @@ async function loadZonesForActive(mapId, dest) {
         }
         throw new Error(`zones HTTP ${resp.status}`);
     } catch (e) {
-        const cached = await getAppState(`lastZones_${mapId}`);
+        // Le repli lui-même doit être increvable : getAppState peut lever (mode
+        // privé, quota, base corrompue). Sans cette garde, une panne d'IndexedDB
+        // faisait REJETER le loader — contrat de non-rejet cassé, et rejet non
+        // géré depuis que le lancement est anticipé. Zones vides = sûr
+        // (getZoneFromCoords renvoie « A définir »).
+        let cached = null;
+        try { cached = await getAppState(`lastZones_${mapId}`); } catch (_) {}
         setZonesData(cached || { type: 'FeatureCollection', features: [] });
     }
 }
@@ -209,7 +218,8 @@ async function loadZonesForActive(mapId, dest) {
 // chargement que les zones : {dest}-rejected.json sur GitHub (Pages si publiée, RAW
 // frais si brouillon admin). Absence du fichier (dest jamais curée) → 404 → rejets
 // vides (sûr : rien n'est masqué au scan). Sert au dédup du Scout et à la corbeille.
-async function loadRejectedForActive(mapId, dest) {
+// Exporté pour les tests, même raison que loadZonesForActive ci-dessus.
+export async function loadRejectedForActive(mapId, dest) {
     try {
         const baseUrl = import.meta.env?.BASE_URL || './';
         const adminDraft = !!getStoredToken() && dest && dest.status !== 'published';
@@ -230,7 +240,10 @@ async function loadRejectedForActive(mapId, dest) {
         }
         throw new Error(`rejected HTTP ${resp.status}`);
     } catch (e) {
-        const cached = await getAppState(`lastRejected_${mapId}`);
+        // Même garde que pour les zones : le repli ne doit jamais lever.
+        // Rejets vides = sûr (rien n'est masqué au scan Scout).
+        let cached = null;
+        try { cached = await getAppState(`lastRejected_${mapId}`); } catch (_) {}
         setRejectedData(cached || {});
     }
 }
@@ -359,6 +372,35 @@ export async function loadAndInitializeMap() {
 
     if (DOM.loaderOverlay) DOM.loaderOverlay.classList.remove('is-hidden');
 
+    // PERF (27/08/2026) : geojson, zones et rejets ne dépendent QUE de activeMapId,
+    // connu ici. Ils étaient pourtant fetchés en FILE — trois allers-retours mis
+    // bout à bout. Mesuré sur heripia.com : 765→1192 ms, soit ~430 ms passés à
+    // attendre, pour des charges minuscules (djerba-rejected.json = 1 ko). Le coût
+    // est de la LATENCE, pas du transfert : il vaut 3 × RTT et se dégrade donc
+    // exactement là où sont les visiteurs (mobile, RTT élevé).
+    //
+    // Ces deux loaders sont lancés ICI pour que leurs requêtes partent en même
+    // temps que celle du geojson, et attendus juste après le bloc. La
+    // post-condition est INCHANGÉE — les trois sont résolus avant la suite,
+    // exactement comme avec trois `await` successifs ; seule l'attente est
+    // mutualisée. Le bloc geojson ci-dessous n'est volontairement pas touché.
+    //
+    // Sûr parce que les trois sont indépendants : les loaders reçoivent
+    // (mapId, dest) en paramètres — ils ne lisent rien que le geojson poserait —
+    // et écrivent des états disjoints (setZonesData / setRejectedData / geojsonData).
+    // Chacun encapsule son propre try/catch + repli hors-ligne et NE REJETTE JAMAIS,
+    // donc pas de rejet non géré entre le lancement et l'await (contrat verrouillé
+    // par tests/app_startup_loaders.test.js).
+    //
+    // ⚠️ NE PAS étendre ce Promise à tested_*.json / circuits : ces deux-là ont une
+    // sémantique d'ORDRE (le local est posé depuis IndexedDB puis REMPLACÉ par le
+    // serveur, cf. plus bas) et loadOfficialCircuits lit state.currentMapId, posé
+    // seulement après. Les paralléliser rouvrirait la course qui faisait rester un
+    // « vérifié » retiré collé à vie côté utilisateur.
+    const activeDestEntry = state.destinations?.maps?.[activeMapId];
+    const zonesPromise = loadZonesForActive(activeMapId, activeDestEntry);
+    const rejectedPromise = loadRejectedForActive(activeMapId, activeDestEntry);
+
     // MODÈLE C : toute destination (publiée OU brouillon) vit sur GitHub → on fetch
     // toujours son geojson (plus de branche IndexedDB locale).
     {
@@ -404,11 +446,11 @@ export async function loadAndInitializeMap() {
         }
     }
 
-    // Zones de la destination active : chargement par dest (fetch {dest}-zones.geojson —
-    // Pages si publiée, RAW frais si brouillon admin).
-    await loadZonesForActive(activeMapId, state.destinations?.maps?.[activeMapId]);
-    // Rejets de curation Scout (tombstones OSM) de la dest active → dédup du re-scan.
-    await loadRejectedForActive(activeMapId, state.destinations?.maps?.[activeMapId]);
+    // Zones (quartiers OSM) + rejets de curation Scout de la destination active :
+    // lancés plus haut, en parallèle du geojson. On les attend ici, au même point
+    // du flux qu'avant — rien en aval ne s'exécute avant qu'ils soient résolus.
+    await zonesPromise;
+    await rejectedPromise;
 
     if (!geojsonData) {
         showToast("Impossible de charger la carte.", 'error');
