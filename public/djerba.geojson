@@ -182,7 +182,13 @@
         ],
         "osm_ref": "way/990347807",
         "maps_ref": "https://maps.app.goo.gl/B3LHckZGsH66nymS6",
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -216,7 +222,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -229,17 +241,17 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ben Tanfouss",
+        "Nom du site FR": "Mosquée Ténafsa",
         "Nom du site arabe": "جامع بن تنفوس",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 318 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6770BXCP2SW1Z2DTA2",
         "photos": [],
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
-        "description": "",
+        "description": "Jalel n° 318 : « Mosquée Ténafsa. Quartier Tenafsa. Mosquée malékite à origine nokkarite et à laquelle fut ajouté une nouvelle adjacente. Ancienne. »\nAppelée Ben Tanfouss sur OSM et Maps",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "info_gpx": "",
@@ -253,7 +265,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -293,7 +311,12 @@
         "maps_ref": "https://maps.app.goo.gl/1xjvPE8RLke27FZK9",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -327,7 +350,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -397,7 +426,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -434,7 +469,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -506,7 +546,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -584,7 +630,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -1135,7 +1187,7 @@
         "Zone": "Arkou",
         "Source": "",
         "HW_ID": "HW-01K77WPE697PHS21NP9P0JGJ6F",
-        "description": "",
+        "description": "Jalel n° 307 : « Mosquée Essalem (« paix »). Arkou. Mosquée malékite. 2017. »",
         "accessPoint": [
           11.0174196,
           33.7635807
@@ -1157,8 +1209,8 @@
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1291,7 +1343,7 @@
         "Zone": "El Mahboubine",
         "Source": "Répertoire J. Fathallah, n° 220 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://fr.wikipedia.org/wiki/Mahboubine",
         "HW_ID": "HW-01K77WPE6A1GRGM843BF4KA3RT",
-        "description": "Jalel n° 220 : « Mosquée Kateb. Mahboubine. Mosquée malékite à origine nokkarite. 1210 de l'hégire (1795 ap. J.-C.).",
+        "description": "Jalel n° 220 : « Mosquée Kateb. Mahboubine. Mosquée malékite à origine nokkarite. 1210 de l'hégire (1795 ap. J.-C.).\nMosquée construite au début du XXe siècle par Ali El Kateb située dans le village de Mahboubine , nom d'origine arabe signifiant \"Bien aimés\", à 3 kilomètres de Midoun",
         "accessPoint": [
           10.9644008,
           33.7965158
@@ -1308,7 +1360,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1406,7 +1464,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée El Ghofrane",
-        "Nom du site arabe": "جامع الغزوان",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
         "Source": "Répertoire J. Fathallah, n° 224 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -1415,9 +1473,9 @@
           10.968449,
           33.7853315
         ],
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "description": "Jalel n° 224 : « Mosquée Ghofrane (absolution). Mahboubine. Mosquée malékite. 2017.",
         "Temps_minutes": 0,
@@ -1428,7 +1486,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1593,7 +1657,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1631,7 +1701,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -8277,7 +8353,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
-        "description": "Mosquée Yati dit Nasser selon le répertoire de mosquées de Jalel Fatallah",
+        "description": "313 Yati dit Nasser. Hadada, Midoun. Mosquée malékite rénovée. Ancienne.",
         "Temps_minutes": 0,
         "Téléphone": "",
         "Horaires": "",
@@ -8290,7 +8366,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/392724423",
-        "maps_ref": "https://maps.app.goo.gl/dpHoCFF6HgczE1Av8"
+        "maps_ref": "https://maps.app.goo.gl/dpHoCFF6HgczE1Av8",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -9508,7 +9590,7 @@
         "Nom du site arabe": "جامع الحجر",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "Répertoire J. Fathallah, n° 270 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 301 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
         "Prix_TND": 0,
         "description": "Un poste de garde et sa mosquée, aujourd'hui en ruines, dans l'arrière-pays d'Arkou.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 301 sous le nom de « Mosquée Hajar », sur la côte d'Arkou, et la donne pour ancienne. Son nom arabe, جامع الحجر, signifie « mosquée de la Pierre ». Un relevé archéologique porté sur OpenStreetMap en 2025 la nomme El Haran.\n\nSur place, il ne subsiste qu'une excavation creusée dans la roche calcaire, en contrebas d'un terrain caillouteux planté d'oliviers, à un kilomètre du rivage. Ce que cette cavité abritait — la mosquée elle-même, une citerne, une carrière — ne se lit plus.\n\nLe creux sert aujourd'hui de décharge sauvage.\n\nPetr Jenč - OpenStreetMap, 2025",
@@ -9527,7 +9609,13 @@
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/RMG17UXfbNwakTNr9"
+        "maps_ref": "https://maps.app.goo.gl/RMG17UXfbNwakTNr9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -10688,7 +10776,7 @@
         "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
         "created_at": "2026-03-11T14:18:04.014Z",
         "Prix_TND": 0,
-        "description": "vJalel n° 291 : « Mosquée Errahma. Entre Mahboubine et Midoun. Mosquée malékite à origine nokkarite ibadite. Ancienne.",
+        "description": "Jalel n° 291 : « Mosquée Errahma. Entre Mahboubine et Midoun. Mosquée malékite à origine nokkarite ibadite. Ancienne.",
         "Nom du site arabe": "",
         "Sous-type": "À coupoles",
         "État": "En activité",
@@ -10702,7 +10790,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -12041,12 +12135,18 @@
         "introuvableCarte": false,
         "Nom du site arabe": "",
         "info_gpx": "",
-        "description": "",
-        "Source": "",
+        "description": "Jalel n° 315 : « Firdaoues (Paradis). Hadada, Midoun. Mosquée malékite. Très récente. »",
+        "Source": "Répertoire J. Fathallah, n° 315 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -12091,7 +12191,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Sidi Roubil",
+        "Nom du site FR": "Mosquée Elmaghfira",
         "Nom du site arabe": "جامع سيدي روبيل",
         "Catégorie": "Mosquée",
         "osm_ref": "way/384172383",
@@ -12103,14 +12203,20 @@
         "maps_ref": "https://maps.app.goo.gl/h425eUtF21uabDSF8",
         "verified": false,
         "introuvableCarte": false,
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -12174,13 +12280,19 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
-        "Source": "",
+        "description": "Jalel n° 324 : « Sidi Mansour. Quartier Tezdaine. Mosquée mausolée malékite rénovée. Ancienne. »\nVisible sur la vue satellite",
+        "Source": "Répertoire J. Fathallah, n° 324 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
