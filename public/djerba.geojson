@@ -1104,7 +1104,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1289,7 +1295,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/435460180",
-        "maps_ref": "https://maps.app.goo.gl/2XYhaVCvGuUWSCVXA"
+        "maps_ref": "https://maps.app.goo.gl/2XYhaVCvGuUWSCVXA",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1821,7 +1833,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -2103,7 +2121,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2339,7 +2363,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -2439,7 +2469,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Hallem",
-        "Nom du site arabe": "مسجد تيانست",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
         "Source": "Répertoire J. Fathallah, n° 344 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -2461,7 +2491,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -4554,9 +4590,9 @@
         "Nom du site arabe": "جامع لوتا",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": "https://www.webdo.tn/fr/actualite/chroniques/jemaa-louta-a-djerba-une-mysterieuse-mosquee-souterraine/203375/\nRépertoire J. Fathallah, n° 143 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 143 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6FTSXM87T9YTV7G4ME",
-        "description": "Mosquée souterraine, blanchie à la chaux, comme la majorité des mosquées djerbiennes. Elle est située sur un plateau, point plus élevé de l'île à 52 mètre de hauteur et date du 12ème siècle. Les deux coupoles visibles confirment le caractère défensif de cette mosquée.\nJalel n° 143 — « Mosquée Louta. Cedghiane. Mosquée ibadite wahbite, souterraine et ensevelie sous le sable. Ancienne",
+        "description": "Jalel n° 143 — « Mosquée Louta. Cedghiane. Mosquée ibadite wahbite, souterraine et ensevelie sous le sable. Ancienne",
         "Sous-type": "",
         "État": "",
         "Accès": "",
@@ -4569,7 +4605,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
