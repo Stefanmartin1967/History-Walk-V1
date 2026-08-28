@@ -388,7 +388,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -501,7 +507,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "333 Sidi Ben Achour. Temlel. Mosquée malékite à origine nokkarite ibadite. Ancienne.",
+        "description": "Jalel n° 333 : « Sidi Ben Achour. Temlel. Mosquée malékite à origine nokkarite ibadite. Ancienne. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/13109953366",
@@ -510,7 +516,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -712,9 +724,9 @@
         "Nom du site arabe": "جامع ميدون",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 294 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68JWCXJ0TCG1EDSB7A",
-        "description": "La grande mosquée au centre de Midoun. \nMosquée malékite à origine nokkarite ibadite",
+        "description": "Jalel n° 294 : « La grande mosquée. Centre de Midoun. Mosquée malékite à origine nokkarite ibadite. Ancienne. »",
         "accessPoint": [
           10.9910994,
           33.8064118
@@ -737,7 +749,13 @@
           "photos/poi_HW-01K77WPE68JWCXJ0TCG1EDSB7A_1785044458837.jpg",
           "photos/poi_HW-01K77WPE68JWCXJ0TCG1EDSB7A_1785044460174.jpg"
         ],
-        "maps_ref": "https://maps.app.goo.gl/EKRFR2U7SfaDa5Sx9"
+        "maps_ref": "https://maps.app.goo.gl/EKRFR2U7SfaDa5Sx9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -798,7 +816,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "299 Mosquée Ben Amara. Arkou.Midoun. Mosquée malékite ayant subie une rénovation et extension. Ancienne.",
+        "description": "Jalel n° 299 : « Mosquée Ben Amara. Arkou, Midoun. Mosquée malékite ayant subi une rénovation et extension. Ancienne. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/436249607",
@@ -807,7 +825,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -876,7 +900,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mosquée Arkou. Arkou. Mosquée malékite à origine nokkarite et à laquelle fut ajouté une nouvelle adjacente. Ancienne.",
+        "description": "Jalel n° 309 : « Mosquée Arkou. Arkou. Mosquée malékite à origine nokkarite et à laquelle fut ajouté une nouvelle adjacente. Ancienne. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/374396090",
@@ -885,7 +909,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -993,7 +1023,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1025,7 +1061,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -1903,7 +1945,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2249,7 +2297,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2365,7 +2419,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3321,7 +3381,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8408,7 +8474,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -8435,7 +8507,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "290 Mosquée Kasbeine ou Hidaya. Entre Mahboubine et Midoun. Mosquée malékite rénovée. Ancienne.",
+        "description": "Jalel n° 290 : « Mosquée Kasbeine ou Hidaya. Entre Mahboubine et Midoun. Mosquée malékite rénovée. Ancienne. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/990311532",
@@ -8444,7 +8516,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/ex1yAREU55SarTBX9"
+        "maps_ref": "https://maps.app.goo.gl/ex1yAREU55SarTBX9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8522,7 +8600,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/CS43gvLKZjmbg21W6"
+        "maps_ref": "https://maps.app.goo.gl/CS43gvLKZjmbg21W6",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -8646,7 +8730,13 @@
           "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092210542.jpg",
           "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092211944.jpg"
         ],
-        "maps_ref": "https://maps.app.goo.gl/S7vt7Qv6UDZdeVjf7"
+        "maps_ref": "https://maps.app.goo.gl/S7vt7Qv6UDZdeVjf7",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10439,7 +10529,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/435104563",
-        "maps_ref": "https://maps.app.goo.gl/qbKmWornE1uis4f26"
+        "maps_ref": "https://maps.app.goo.gl/qbKmWornE1uis4f26",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10895,7 +10991,7 @@
         "HW_ID": "HW-01KM2QY8VXPF72S6D9NAZ0AZ43",
         "created_at": "2026-03-19T09:48:31.484Z",
         "Prix_TND": 0,
-        "description": "Lieu dont l'existence doit être confirmée et étudiée sur place",
+        "description": "Lieu dont l'existence doit être confirmée et étudiée sur place\n(Voir photos déjà faites)",
         "accessPoint": [
           10.9735112,
           33.8137871
@@ -10921,7 +11017,7 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -12311,7 +12407,7 @@
         "osm_ref": "way/990390672",
         "HW_ID": "HW-01KZH0VH7A5VNKAW0Z3Y1PM9RR",
         "Sous-type": "Générique",
-        "description": "162 Sidi Mustapha. Entre Bedouine et Mahboubine. Mosquée malékite à origine nokkarite malékite. Ancienne.",
+        "description": "162 Sidi Mustapha. Entre Bedouine et Mahboubine. Mosquée malékite à origine nokkarite malékite. Ancienne.\nVisible sur la vue satellite",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 162 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -12324,7 +12420,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -12454,7 +12556,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "El May"
+        "Zone": "El May",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -13831,6 +13939,35 @@
         "Horaires": "",
         "Facebook": "",
         "Zone": "Mezrene"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.858175754998586,
+          33.877965485309005
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Restaurant El Hanout",
+        "Catégorie": "Restaurant",
+        "info_gpx": "https://maps.app.goo.gl/n5jqP9iTEnq1r7wu9",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/12916757040",
+        "maps_ref": "https://maps.app.goo.gl/U6B65TZSPpcA3ryi9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-28",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M14FT9SQ2E9VBYBEXZ4AH2SR",
+        "Zone": "Taourit"
       }
     }
   ]
