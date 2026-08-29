@@ -2782,7 +2782,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2861,7 +2867,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2981,7 +2992,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/NszaUCKGY9aFFPc6A"
+        "maps_ref": "https://maps.app.goo.gl/NszaUCKGY9aFFPc6A",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3039,7 +3056,7 @@
         "Zone": "Mazraia",
         "Source": "Répertoire J. Fathallah, n° 41 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DRTH3M3NHYQJSR1NE",
-        "description": "Rénovée pour devenir le siège de l'Association Architectes Jerba",
+        "description": "Jalel n° 41 : « Sidi Ismaël. Ghizen. Poste de garde, mausolée et mosquée. 9ᵉ siècle de l'hégire (15ᵉ siècle ap. J.-C.). Une nouvelle mosquée fut construite en face de l'ancienne au 21ᵉ siècle. »\n\nRénovée pour devenir le siège de l'Association Architectes Jerba.",
         "accessPoint": [
           10.9091334,
           33.8733383
@@ -3056,7 +3073,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/7MvtY53RvxJ2wgzy8"
+        "maps_ref": "https://maps.app.goo.gl/7MvtY53RvxJ2wgzy8",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3374,9 +3397,9 @@
         "Nom du site arabe": "جامع الشيخ",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 132 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DA1GT81ZQDNQARTBX",
-        "description": "",
+        "description": "Jalel n° 132 : « Mosquée Cheikh. Guechaine. Mosquée ibadite wahbite. 1034 de l'hégire (1635 ap. J.-C.). »",
         "accessPoint": [
           10.8940869,
           33.8464794
@@ -3393,7 +3416,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3429,7 +3458,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -3752,7 +3787,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3788,7 +3829,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3952,7 +3999,7 @@
         "osmCheckedDate": "2026-08-18",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -4114,7 +4161,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4364,7 +4417,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9561,7 +9620,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -12674,12 +12739,18 @@
         "introuvableCarte": false,
         "Nom du site arabe": "",
         "info_gpx": "",
-        "description": "",
-        "Source": "",
+        "description": "Jalel n° 37 : « Mosquée Chabane. Fatou. Mosquée ibadite wahbite. Ancienne. »",
+        "Source": "Répertoire J. Fathallah, n° 37 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Fatou"
+        "Zone": "Fatou",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
