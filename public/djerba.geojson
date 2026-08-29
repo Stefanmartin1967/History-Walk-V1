@@ -1730,7 +1730,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Chbêbia",
+        "Nom du site FR": "Mosquée Chababia",
         "Nom du site arabe": "جامع الشُّبابيّة",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
@@ -1761,7 +1761,14 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982271746.jpg",
+          "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982273384.jpg",
+          "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982274982.jpg",
+          "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982276487.jpg",
+          "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982278088.jpg"
+        ]
       }
     },
     {
