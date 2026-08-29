@@ -1742,9 +1742,9 @@
         ],
         "lat": 33.766501115888644,
         "lng": 10.984541764908952,
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "description": "Jalel n° 231 — « Mosquée Chababia. Bani Maaguel. Mosquée malékite très récente. Récente. »",
         "Temps_minutes": 0,
@@ -1760,7 +1760,7 @@
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true,
         "photos": [
           "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982271746.jpg",
@@ -2656,7 +2656,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2717,7 +2723,7 @@
         "Zone": "Oualeg",
         "Source": "Répertoire J. Fathallah, n° 130 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6CW6FA3ED63PXQ5WHX",
-        "description": "Jalel n° 130 — « Mosquée Younsi. Guechaine. Mosquée ibadite wahbite ancienne et une autre nouvelle. Ancienne.",
+        "description": "Jalel n° 130 : « Mosquée Younsi. Guechaine. Mosquée ibadite wahbite ancienne et une autre nouvelle. Ancienne. »",
         "accessPoint": [
           10.9057398,
           33.8337328
@@ -2728,13 +2734,19 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "way/408600247",
+        "osm_ref": "way/342760215",
         "maps_ref": "https://maps.app.goo.gl/cvnjnqCtjKPRR18S9",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-29",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2904,7 +2916,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquéee Sidi Ncir",
+        "Nom du site FR": "Mosquée Sidi Ncir",
         "Nom du site arabe": "جامع سيدي نصير",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
@@ -2927,7 +2939,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3081,7 +3099,13 @@
         "verified": true,
         "introuvableCarte": false,
         "osm_ref": "way/1364140400",
-        "maps_ref": "https://maps.app.goo.gl/khsTYLSJW2RBfoCF7"
+        "maps_ref": "https://maps.app.goo.gl/khsTYLSJW2RBfoCF7",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3094,7 +3118,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquéee Abdessalam",
+        "Nom du site FR": "Mosquée Abdessalam",
         "Nom du site arabe": "جامع عبد السلام",
         "Catégorie": "Mosquée",
         "Zone": "El May",
@@ -3104,9 +3128,9 @@
           10.9010878,
           33.8008763
         ],
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "description": "Jalel n° 151 : « Sidi Abdessalem. May. Mosquée malékite à origine ibadite nokkarite, à laquelle fut ajouté un minaret. Ancienne.\nVoir les mausolées à proximité :\nMausolée Touririn\nMausolée Fakira Salima",
         "Temps_minutes": 0,
@@ -3118,7 +3142,12 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -3192,7 +3221,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3216,9 +3251,9 @@
           10.8978775,
           33.811705
         ],
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
         "info_gpx": "",
         "description": "",
         "Temps_minutes": 0,
@@ -3229,7 +3264,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -3489,9 +3530,9 @@
         "Nom du site arabe": "جامع بونخيل",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 128 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DJK9XDN27CANR4VKN",
-        "description": "",
+        "description": "Jalel n° 128 : « Mosquée Boumkhil. Oualegh. Mosquée ibadite wahbite. 1034 de l'hégire (1628 ap. J.-C.). »",
         "accessPoint": [
           10.8905029,
           33.8345642
@@ -3508,7 +3549,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3540,7 +3587,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3570,7 +3623,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mosquée Ouchachna. May. Mosquée malékite. Très récente.\nLe panneau indique :\n\nجامع النور — Jami' an-Nour / Mosquée An-Nour (littéralement \"la Mosquée de la Lumière\" — النور = \"la lumière\")\n\nEn dessous, la plaque donne déjà les deux calendriers :\n\n1405 هـ (hégirien, ه = hijri)\n1984 م (grégorien, م = miladi/\"de notre ère\")\nÇa correspond bien : l'année 1405 du calendrier hégirien s'étend de fin septembre 1984 à mi-septembre 1985 — la plaque a donc retenu 1984 comme année de correspondance, ce qui est cohérent puisque l'année 1405H a commencé cette année-là.",
+        "description": "Jalel n° 158 : « Mosquée Ouchachna. May. Mosquée malékite. Très récente. »\n\nLe panneau indique :\nجامع النور — Jami' an-Nour / Mosquée An-Nour (littéralement « la Mosquée de la Lumière » — النور = « la lumière »)\n\nEn dessous, la plaque donne déjà les deux calendriers :\n1405 هـ (hégirien)\n1984 م (grégorien)\nÇa correspond bien : l'année 1405 du calendrier hégirien s'étend de fin septembre 1984 à mi-septembre 1985 — la plaque a donc retenu 1984 comme année de correspondance, cohérent puisque 1405H a commencé cette année-là.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/13505451159",
@@ -3580,7 +3633,12 @@
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3850,7 +3908,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -3901,7 +3965,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Turkiya",
+        "Nom du site FR": "Mosquée Om Turkiya",
         "Nom du site arabe": "جامع التركية",
         "Catégorie": "Mosquée",
         "Zone": "El May",
@@ -3924,7 +3988,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4332,7 +4402,7 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -4349,9 +4419,9 @@
         "Nom du site arabe": "جامع بوشدّاخ",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 34 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6FSBBA3K7NVS4GTVTD",
-        "description": "",
+        "description": "Jalel n° 34 : « Mosquée Bouchaddakh. Fatou. Mosquée ibadite wahbite. Ancienne, récemment rénovée. »",
         "accessPoint": [
           10.8757808,
           33.8695585
@@ -4368,7 +4438,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -4900,7 +4976,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -5672,9 +5754,9 @@
         "Nom du site arabe": "جامع بوزيد",
         "Catégorie": "Mosquée",
         "Zone": "El Jouamaa",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 62 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6HPEZNHF6GJF6P582Z",
-        "description": "",
+        "description": "Jalel n° 62 : « Bouzid. Hachane. Mosquée malékite à origine ibadite nokkarite. 700 de l'hégire (1300 ap. J.-C.). »",
         "info_gpx": "",
         "accessPoint": [
           10.8448892,
@@ -5691,7 +5773,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9265,7 +9353,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -10862,7 +10956,13 @@
         "verified": false,
         "introuvableCarte": false,
         "osm_ref": "way/990337647",
-        "maps_ref": "https://maps.app.goo.gl/QdMSQruTx5456amE6"
+        "maps_ref": "https://maps.app.goo.gl/QdMSQruTx5456amE6",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -11560,7 +11660,7 @@
         "osm_ref": "way/990397295",
         "HW_ID": "HW-01KZH0VEW625A5WY4C196361EY",
         "Sous-type": "Générique",
-        "description": "124 Sidi Salah. Entre Oualegh l'ancienne et Hara Kébira. Mosquée malékite à origine ibadite wahbite. Ancienne.",
+        "description": "124 Sidi Salah. Entre Oualegh l'ancienne et Hara Kébira. Mosquée malékite à origine ibadite wahbite. Ancienne.\nVisible sur la vue satellite",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 124 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -11574,7 +11674,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Oualeg"
+        "Zone": "Oualeg",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
