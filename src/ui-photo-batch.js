@@ -19,7 +19,8 @@ import { persistPoiEdit } from './poi-persistence.js';
 import { showToast } from './toast.js';
 import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal, hwConfirm } from './modal.js';
 import { createZipBlob } from './zip-store.js';
-import { compressImage, PUBLISH_COMPRESSION } from './photo-service.js';
+import { compressImage, PUBLISH_COMPRESSION, ADMIN_COMPRESSION } from './photo-service.js';
+import { copyExifToBlob } from './exif-transfer.js';
 import { getCategoryLabels, getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { eventBus } from './events.js';
 import { configureHelp, helpButton, helpInline, closeHelp } from './help-popover.js';
@@ -1454,6 +1455,12 @@ function dedupById(items) {
     return [...map.values()];
 }
 
+// Suffixe de tooltip des boutons ZIP : en admin, l'archive sort filigranée
+// (ré-encodage) ; côté user, c'est une copie brute des fichiers d'origine.
+function zipTitleSuffix() {
+    return state.isAdmin ? ' — filigrane appliqué' : '';
+}
+
 // Met à jour l'état disabled du bouton Enregistrer selon la présence de clusters rattachés
 // ayant au moins une photo PAS encore sauvée (un cluster savedAsNewPoi a toutes ses photos
 // déjà persistées via addPhotosToPoi, inutile d'activer Enregistrer pour lui).
@@ -1478,7 +1485,7 @@ function updateFooterButtons() {
         }
         if (zipBtn && zipLabel) {
             zipLabel.textContent = 'Télécharger ce groupe';
-            zipBtn.title = `Télécharger ce groupe en ZIP (${cluster ? cluster.photos.length : 0} photo(s))`;
+            zipBtn.title = `Télécharger ce groupe en ZIP (${cluster ? cluster.photos.length : 0} photo(s))${zipTitleSuffix()}`;
         }
         if (saveBtn && saveLabel) {
             const attached = !!(cluster && cluster.type !== 'OUT_POI'
@@ -1501,7 +1508,7 @@ function updateFooterButtons() {
     }
     if (zipBtn && zipLabel) {
         zipLabel.textContent = 'Télécharger ZIP';
-        zipBtn.title = 'Exporter toutes les photos en archive ZIP sur le disque';
+        zipBtn.title = 'Exporter toutes les photos en archive ZIP sur le disque' + zipTitleSuffix();
     }
     if (saveBtn && saveLabel) {
         const hasAttached = modalState.clusters.some(c =>
@@ -1811,19 +1818,92 @@ function buildDefaultAlbumName(clusters) {
     return `Circuit de ${firstName} à ${lastName}`;
 }
 
+// Profil de ré-encodage du ZIP admin : résolution NATIVE, JPEG 95 %. Le ZIP est
+// l'archive disque, pas un canal de publication — surtout ne pas y appliquer
+// PUBLISH_COMPRESSION (1080 px), qui amputerait la sauvegarde.
+const ZIP_COMPRESSION = ADMIN_COMPRESSION.ORIGINAL;
+
+// Ré-encodages simultanés. Même plafond que saveCluster : 3 décodages + 3 canvas
+// pleine résolution en vol suffisent à saturer un mobile modeste.
+const MAX_PARALLEL_WATERMARKS = 3;
+
+// Une seule génération de ZIP à la fois (le ré-encodage dure ; sans ce verrou,
+// un double-clic ou un second groupe lancerait un deuxième pipeline concurrent).
+let zipInProgress = false;
+
+// Watermarke UNE photo pour le ZIP, puis lui rend son EXIF.
+// compressImage n'appose le filigrane QUE si state.isAdmin — même source de
+// vérité que la publication, donc pas de règle dupliquée ici. Le canvas, lui,
+// jette toutes les métadonnées : copyExifToBlob recolle le bloc EXIF d'origine
+// (GPS, date, appareil), orientation neutralisée et vignette détruite.
+async function buildWatermarkedZipBlob(photo) {
+    const encoded = await compressImage(
+        photo.file, ZIP_COMPRESSION.targetMinSize, ZIP_COMPRESSION.quality
+    );
+    return copyExifToBlob(photo.file, encoded);
+}
+
 // Construit les entrées ZIP pour une liste de clusters (photos pleine qualité).
 // Utilise resolvePhotoAutoName pour respecter le nommage "NN - Nom - PP".
 // Les clusters OUT_POI sont inclus dans le global (entrées "NN - Hors POI - PP").
-function buildZipEntries(clusters) {
-    const entries = [];
+//
+// Admin : chaque photo est ré-encodée pour recevoir le filigrane (décision du
+// 29/08/2026, qui remplace le choix initial « ZIP = originaux bruts » du 24/05).
+// User : copie octet pour octet du fichier d'origine — ce sont ses photos, pas
+// la production patrimoniale ; rien à signer, et l'export reste instantané.
+//
+// @param {(done: number, total: number) => void} [onProgress]
+// @returns {Promise<{ entries: Array, failed: number }>}
+async function buildZipEntries(clusters, onProgress) {
+    const jobs = [];
     for (const cluster of clusters) {
         for (const photo of cluster.photos) {
             if (!photo.file) continue;
-            const name = resolvePhotoAutoName(cluster, photo) + '.jpg';
-            entries.push({ name, data: photo.file, date: photo.date ? new Date(photo.date) : new Date() });
+            jobs.push({
+                name: resolvePhotoAutoName(cluster, photo) + '.jpg',
+                photo,
+                date: photo.date ? new Date(photo.date) : new Date(),
+            });
         }
     }
-    return entries;
+
+    if (!state.isAdmin) {
+        return {
+            entries: jobs.map(j => ({ name: j.name, data: j.photo.file, date: j.date })),
+            failed: 0,
+        };
+    }
+
+    const entries = new Array(jobs.length);
+    let failed = 0;
+    let nextIdx = 0;
+    let done = 0;
+    if (onProgress) onProgress(0, jobs.length);
+
+    await Promise.all(Array.from(
+        { length: Math.min(MAX_PARALLEL_WATERMARKS, jobs.length) },
+        async () => {
+            while (nextIdx < jobs.length) {
+                const i = nextIdx++;
+                const job = jobs[i];
+                let data;
+                try {
+                    data = await buildWatermarkedZipBlob(job.photo);
+                } catch (e) {
+                    // Filet : une photo ré-encodée en échec (timeout, format
+                    // exotique) sort en original plutôt que de trouer l'archive.
+                    console.error('[photo-batch] filigrane ZIP échoué', job.name, e);
+                    data = job.photo.file;
+                    failed++;
+                }
+                entries[i] = { name: job.name, data, date: job.date };
+                done++;
+                if (onProgress) onProgress(done, jobs.length);
+            }
+        }
+    ));
+
+    return { entries, failed };
 }
 
 // Demande le nom d'album via showPrompt SANS fermer la modale photo-batch.
@@ -1844,6 +1924,7 @@ async function promptAlbumName(defaultName) {
 
 // Handler global : ZIP de tous les clusters, nom d'album par défaut = generateCircuitName-like.
 async function handleExportZip() {
+    if (zipInProgress) return;
     if (!modalState || !modalState.clusters || modalState.clusters.length === 0) {
         showToast('Aucune photo à exporter.', 'info');
         return;
@@ -1858,6 +1939,7 @@ async function handleExportZip() {
 
 // Handler par cluster : ZIP d'un seul groupe, nom d'album par défaut = nom du cluster.
 async function handleExportClusterZip(cluster) {
+    if (zipInProgress) return;
     if (!cluster || !cluster.photos || cluster.photos.length === 0) {
         showToast('Ce groupe ne contient aucune photo.', 'info');
         return;
@@ -1870,27 +1952,41 @@ async function handleExportClusterZip(cluster) {
 }
 
 // Commun : construit et télécharge le ZIP, disable les boutons pendant la génération.
+// En admin, le ré-encodage (filigrane + EXIF) n'est plus instantané — d'où le
+// compteur de progression dans le libellé du bouton : griser seul laisserait
+// croire à un blocage sur un gros groupe.
 async function generateAndDownloadZip(clusters, albumName) {
     const zipBtn = document.getElementById('photo-batch-btn-zip');
     const saveBtn = document.getElementById('photo-batch-btn-save');
+    const zipLabel = zipBtn ? zipBtn.querySelector('span') : null;
     const prevZipDisabled = zipBtn?.disabled;
     const prevSaveDisabled = saveBtn?.disabled;
+    const prevZipLabel = zipLabel ? zipLabel.textContent : null;
     if (zipBtn) zipBtn.disabled = true;
     if (saveBtn) saveBtn.disabled = true;
+    zipInProgress = true;
 
     try {
-        const entries = buildZipEntries(clusters);
+        const { entries, failed } = await buildZipEntries(clusters, (done, total) => {
+            if (zipLabel && total > 0) zipLabel.textContent = `Filigrane… ${done}/${total}`;
+        });
         if (entries.length === 0) {
             showToast('Aucune photo valide à zipper.', 'warn');
             return;
         }
+        if (zipLabel) zipLabel.textContent = 'Archivage…';
         const zipBlob = await createZipBlob(entries);
         triggerBlobDownload(zipBlob, `${albumName}.zip`);
         showToast(`ZIP : ${entries.length} photo(s) — ${albumName}.zip`, 'success');
+        if (failed > 0) {
+            showToast(`${failed} photo(s) sans filigrane : original conservé dans le ZIP.`, 'warning');
+        }
     } catch (e) {
         console.error('[photo-batch] handleExportZip error', e);
         showToast('Erreur lors de la génération du ZIP.', 'error');
     } finally {
+        zipInProgress = false;
+        if (zipLabel && prevZipLabel != null) zipLabel.textContent = prevZipLabel;
         if (zipBtn) zipBtn.disabled = !!prevZipDisabled;
         if (saveBtn) saveBtn.disabled = !!prevSaveDisabled;
     }
@@ -2246,7 +2342,7 @@ function buildClusterSection(cluster, index) {
     zipGroupBtn.type = 'button';
     zipGroupBtn.disabled = cluster.photos.length === 0;
     zipGroupBtn.innerHTML = '<i data-lucide="download"></i>';
-    zipGroupBtn.title = `Télécharger ce groupe en ZIP (${cluster.photos.length} photo(s))`;
+    zipGroupBtn.title = `Télécharger ce groupe en ZIP (${cluster.photos.length} photo(s))${zipTitleSuffix()}`;
     zipGroupBtn.setAttribute('aria-label', 'Télécharger ce groupe en ZIP');
     zipGroupBtn.addEventListener('click', (e) => {
         e.stopPropagation();
