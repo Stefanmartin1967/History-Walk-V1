@@ -690,7 +690,7 @@
         "Zone": "Midoun",
         "Source": "Répertoire J. Fathallah, n° 296 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68Q2NTEKRWSPCDZZGE",
-        "description": "",
+        "description": "Jalel n° 296 : « Mosquée Errahmen (« Clément »). Centre de Midoun. Mosquée malékite rénovée. Ancienne. »",
         "accessPoint": [
           10.9906779,
           33.8106229
@@ -707,7 +707,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/y7Z7Z7wBSe1rAcoY9"
+        "maps_ref": "https://maps.app.goo.gl/y7Z7Z7wBSe1rAcoY9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2008,7 +2014,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2620,7 +2632,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -8573,9 +8591,9 @@
         "Nom du site arabe": "جامع القايد",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": "http://palaisbenayed.com/mosquee-du-caid-hmida-ben-ayed-%D8%AC%D8%A7%D9%85%D8%B9-%D8%A7%D9%84%D9%82%D8%A7%D9%8A%D8%AF-%D8%AD%D9%85%D9%8A%D8%AF%D8%A9-%D8%A8%D9%86-%D8%B9%D9%8A%D8%A7%D8%AF",
+        "Source": "Répertoire J. Fathallah, n° 140 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttp://palaisbenayed.com/mosquee-du-caid-hmida-ben-ayed-جامع-القايد-حميدة-بن-عياد",
         "HW_ID": "HW-01K77WPE6P9JFRW9XXGN7P7FPX",
-        "description": "Mosquée, ou plutôt Medersa, édifiée en 1785 par Le caïd et Général Hmida Ben Kassem Ben Ayed. A noter, un jeu de piste à télécharger sur le site source.",
+        "description": "Jalel n° 140 : « Mosquée Gaied. Cedghiane. Mosquée medersa malékite. 1205 de l'hégire (1785 ap. J.-C.). »\n\nMosquée, ou plutôt Medersa, édifiée en 1785 par le caïd et général Hmida Ben Kassem Ben Ayed. À noter, un jeu de piste à télécharger sur le site source.",
         "accessPoint": [
           10.9458679,
           33.8203182
@@ -8592,7 +8610,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9054,7 +9078,7 @@
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
