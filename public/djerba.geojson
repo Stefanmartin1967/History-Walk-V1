@@ -606,7 +606,7 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -795,7 +795,13 @@
         "introuvableCarte": false,
         "lat": 33.84414638476136,
         "lng": 10.984550312786718,
-        "maps_ref": "https://maps.app.goo.gl/8NDk1mrHwEK35YJh9"
+        "maps_ref": "https://maps.app.goo.gl/8NDk1mrHwEK35YJh9",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -957,7 +963,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -993,7 +1005,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1152,7 +1170,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1222,7 +1246,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1343,7 +1373,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1454,7 +1490,7 @@
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563634489.jpg",
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563636230.jpg"
         ],
-        "description": "Datant du cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classées parmi les mosquées \"Ghaba\" qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que rechercher de trésor et fol de pierre, une restauration devenait urgente. Ce projet, mené mar Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
+        "description": "Jalel n° 58 : « Ben Maazouz. Mezraya. Mosquée wahbite abandonnée. 700 de l'hégire (1300 ap. J.-C.). »\n\nDatant du cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classée parmi les mosquées « Ghaba » qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que la recherche de trésor et le vol de pierre, une restauration devenait urgente. Ce projet, mené par Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
@@ -1467,7 +1503,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1599,7 +1641,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1681,7 +1729,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1810,7 +1864,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1887,7 +1947,7 @@
         "lat": 33.84594580893958,
         "lng": 10.94515085352863,
         "info_gpx": "",
-        "description": "Mosquée Khouch. Mezraya. Mosquée wahbite en ruines. Ancienne.",
+        "description": "Jalel n° 53 : « Mosquée Khouch. Mezraya. Mosquée wahbite en ruines. Ancienne. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/483447542",
@@ -1896,7 +1956,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -1913,7 +1979,7 @@
         "Nom du site arabe": "جامع أمي زايد",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 52 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
         "accessPoint": [
           10.9454083,
@@ -1931,7 +1997,7 @@
           "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563701545.jpg"
         ],
         "info_gpx": "",
-        "description": "",
+        "description": "Jalel n° 52 : « Zaied Ellough. Mezraya. Mosquée wahbite en ruines. 1615 ap. J.-C. »\n\nContradiction avec l'état actuel : la mosquée est active et entretenue, pas en ruines. Question posée à Jalel Fathallah en commentaire Facebook le 01/08 — réponse jamais reçue.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/484881572",
@@ -1940,7 +2006,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/1d53EcFF3FTXqJ2XA"
+        "maps_ref": "https://maps.app.goo.gl/1d53EcFF3FTXqJ2XA",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2104,7 +2176,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2192,7 +2270,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2228,7 +2312,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2308,7 +2398,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -2575,7 +2671,7 @@
         "Nom du site arabe": "جامع اروي",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 44 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6C4WQ1CR342MVCN64V",
         "description": "44 Mosquée Arouay. Ghizen. Mosquée wahbite reconstruite dans un style ottoman. 11ᵉ siècle de l'hégire / 17ᵉ siècle ap. J.-C.",
         "accessPoint": [
@@ -2594,7 +2690,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9152,7 +9254,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -9400,7 +9508,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9608,7 +9722,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -9973,7 +10093,13 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -12518,7 +12644,13 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Mazraia"
+        "Zone": "Mazraia",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -14065,8 +14197,8 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
