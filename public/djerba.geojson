@@ -629,9 +629,9 @@
           11.02898,
           33.7836535
         ],
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "description": "Jalel n° 308 : « Mosquée Ouechnia. Arkou. Mosquée malékite à laquelle on a ajouté un nouveau minaret. Ancienne",
         "Temps_minutes": 0,
@@ -7592,13 +7592,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Nasr",
+        "Nom du site FR": "Ancienne Mosquée Sidi Nasr",
         "Nom du site arabe": "جامع سيدي نصر",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "Source = Répertoire J. Fathallah, n° 113 ou 114 (Sidi Nasser 1/2, à distinguer sur place) | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 113 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG",
-        "description": "Jalel n° 113 ou 114 : « Sidi Nasser 1. Groa. Mosquée malékite. \n113 = Ancienne.\n114 = 2016",
+        "description": "Jalel n° 113 : « Sidi Nasser 1. Groa. Mosquée malékite. Ancienne. »",
         "accessPoint": [
           10.7889798,
           33.8121126
@@ -7620,7 +7620,7 @@
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true
       }
     },
@@ -11807,7 +11807,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
+        "description": "Visible sur la vue satellite",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
@@ -14350,6 +14350,38 @@
         "jalelChecked": false,
         "HW_ID": "HW-01M14FT9SQ2E9VBYBEXZ4AH2SR",
         "Zone": "Taourit"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.788225,
+          33.8052
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Nouvelle Mosquée Sidi Nasr",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 114 : « Sidi Nasser 2. Groa. Mosquée malékite. 2016. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 114 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/o4b5p3L7P4hydJhh9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-30",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M19HENN8K1GAZ9RT2NHABR8J",
+        "Zone": "El Groa"
       }
     }
   ]
