@@ -12515,7 +12515,7 @@
         "Catégorie": "Mosquée",
         "osm_ref": "way/1464387119",
         "HW_ID": "HW-01KZH0VG5T7Q09GJWS04CGNY2Q",
-        "Sous-type": "Générique",
+        "Sous-type": "À coupoles",
         "description": "179 Sidi Adoui. Tafartaset, Cedouikech. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne.\nVisible sur la vue satellite",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -12523,10 +12523,10 @@
         "verified": false,
         "introuvableCarte": false,
         "Nom du site arabe": "",
-        "État": "",
-        "Accès": "",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
         "info_gpx": "",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/MfyreN7FjPxpNi5F7",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -14450,6 +14450,12 @@
           10.8882409,
           33.7322213
         ],
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Sedouikech"
       }
     },
@@ -14480,6 +14486,77 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "HW_ID": "HW-01M1CDM90KAKWXZ864H37BN3YZ",
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.893236111111111,
+          33.70385277777778
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ghalfat",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 191 : « Mosquée Gualfat. Ouersighen. Mosquée ibadite wahbite en ruines. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 191 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-31",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1CEN8W8MJ31WMPR91XCF41N",
+        "accessPoint": [
+          10.8929775,
+          33.7036043
+        ],
+        "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.907627777777778,
+          33.72683333333334
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Tafartaset",
+        "Catégorie": "Mosquée",
+        "Sous-type": "Générique",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 195 : « Mosquée Tafartaset. Tafartaset de Cedouikech. Mosquée ibadite wahbite en ruines. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 195 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/KXFRBdv9qFu711618",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-31",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1CF6VTJASTVQ8MVQ0R7SYAS",
+        "accessPoint": [
+          10.9066152,
+          33.7269196
+        ],
         "Zone": "Sedouikech"
       }
     }
