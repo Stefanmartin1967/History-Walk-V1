@@ -14452,6 +14452,36 @@
         ],
         "Zone": "Sedouikech"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.894644444444443,
+          33.7385
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Kritchoun",
+        "Catégorie": "Mausolée",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 178 : « Mosquée Kritchoun. Cedouikech. Mosquée ibadite wahbite en ruines. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 178 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-31",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1CDM90KAKWXZ864H37BN3YZ",
+        "Zone": "Sedouikech"
+      }
     }
   ]
 }
