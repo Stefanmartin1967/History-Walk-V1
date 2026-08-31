@@ -3559,7 +3559,7 @@
         "Nom du site arabe": "جامع تجديت",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": "Répertoire J. Fathallah, n° 39 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 39 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Tajdit",
         "HW_ID": "HW-01K77WPE6DPZ5JB93JZ7BZ9ZJF",
         "accessPoint": [
           10.896678,
@@ -3569,7 +3569,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 39 : « Mosquée Tajdite. Fatou. Mosquée ibadite wahbite. Ancienne.",
+        "description": "Jalel n° 39 : « Mosquée Tajdite. Fatou. Mosquée ibadite wahbite. Ancienne.\nVoir le lien Wikipédia pour écrire la description\nVisible sur la vue satellite",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/483463981",
@@ -3806,7 +3806,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Béchir Megmag",
+        "Nom du site FR": "Mosquée Sidi Béchir Ghandour",
         "Nom du site arabe": "جامع سيدي بشير مقمق",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
@@ -5048,7 +5048,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ben Yaâla",
+        "Nom du site FR": "Mosquée Ben Yaala",
         "Nom du site arabe": "جامع بن يعلا",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
@@ -6354,7 +6354,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Abied",
+        "Nom du site FR": "Mosquée Abiadh",
         "Nom du site arabe": "جامع الأبيض",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
@@ -6734,7 +6734,7 @@
         "Nom du site arabe": "جامع الكبير",
         "Catégorie": "Mosquée",
         "Zone": "El Hachene",
-        "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/\nRépertoire J. Fathallah, n° 63 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "https://djerba.holiday/les-mosquees-et-monuments-historiques-de-djerba-un-voyage-a-travers-le-temps-la-spiritualite-et-le-patrimoine-mondial-de-lunesco/\nRépertoire J. Fathallah, n° 63 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://fr.wikipedia.org/wiki/Grande_mosqu%C3%A9e_des_Ban%C5%AB_Yahr%C4%81san",
         "HW_ID": "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
         "lat": 33.86191783421097,
         "lng": 10.821201358600382,
@@ -9569,20 +9569,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée de Talbet",
+        "Nom du site FR": "Mosquée Wafa",
         "Nom du site arabe": "مسجد طالبت",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 218 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6R1ZH8B0JTAF5HKXPG",
-        "description": "",
+        "description": "Jalel n° 218 : « Mosquée Wafa. Ghardaya. Mosquée malékite. 2017. »\nVisible sur la vue satellite",
         "accessPoint": [
           10.9249925,
           33.7126979
         ],
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -9787,9 +9787,9 @@
         "Nom du site arabe": "مسجد بن بيان",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "Panneau patrimonial sur site, association Jerba Ettawassol (branche Erriadh) et Association Djerbienne en France ; texte : Cheikh Massi Ben Yahyatn ; traduction : Sofiane El Mestaoui",
+        "Source": "Répertoire J. Fathallah, n° 93 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\n\nPanneau patrimonial sur site, association Jerba Ettawassol (branche Erriadh) et Association Djerbienne en France ; texte : Cheikh Massi Ben Yahyatn ; traduction : Sofiane El Mestaoui\nhttps://fr.wikipedia.org/wiki/Mosqu%C3%A9e_El_Ghar",
         "HW_ID": "HW-01K77WPE6SYZ3CNCV0GXBV0MYX",
-        "description": "Fondée par le savant cheikh Abū al-Ḥasan ʿAlī b. Sālim b. Bayān al-Yādisī al-Jarbī à la fin du 11ᵉ siècle de l'hégire, la mosquée porte le nom de ce fondateur. Élève du cheikh Sulaymān b. Aḥmad al-Hilātī à Ja'bīra, il partit en 1062 pour l'Égypte, où il rejoignit la mosquée al-Azhar et l'école ibadite, suivant les cours du cheikh Abū ʿAbd Allāh Muḥammad b. ʿAmr b. Abī Sitta, dit « al-Muḥashī », dont il fut le plus éminent et le plus jeune des disciples.\n\nIl revint avec lui à Djerba en 1068 et resta à ses côtés jusqu'à sa mort, réunissant les commentaires de son maître al-Muḥashī et de son cousin Sulaymān.",
+        "description": "Jalel n° 93 : « Ben Biyen. Houmt Magmag. Mosquée ibadite wahbite abandonnée mais en excellent état. 4ᵉ siècle de l'hégire (10ᵉ siècle ap. J.-C.). »\n\nFondée par le savant cheikh Abū al-Ḥasan ʿAlī b. Sālim b. Bayān al-Yādisī al-Jarbī à la fin du 11ᵉ siècle de l'hégire, la mosquée porte le nom de ce fondateur. Élève du cheikh Sulaymān b. Aḥmad al-Hilātī à Ja'bīra, il partit en 1062 pour l'Égypte, où il rejoignit la mosquée al-Azhar et l'école ibadite, suivant les cours du cheikh Abū ʿAbd Allāh Muḥammad b. ʿAmr b. Abī Sitta, dit « al-Muḥashī », dont il fut le plus éminent et le plus jeune des disciples.\n\nIl revint avec lui à Djerba en 1068 et resta à ses côtés jusqu'à sa mort, réunissant les commentaires de son maître al-Muḥashī et de son cousin Sulaymān.",
         "accessPoint": [
           10.8164416,
           33.8118132
@@ -9800,7 +9800,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "way/1139740036",
+        "osm_ref": "way/1302157635",
         "maps_ref": "https://maps.app.goo.gl/nTV8BH1yAAVouA3w5",
         "Téléphone": "",
         "Horaires": "",
@@ -9809,7 +9809,7 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-08-31",
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": true
@@ -11024,7 +11024,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Medjine",
+        "Nom du site FR": "Mosquée Majine",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJX5XSG18NC03E6900V170QX",
@@ -14173,7 +14173,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée proche",
+        "Nom du site FR": "Mosquée Dhou Ennourine",
         "Catégorie": "Mosquée",
         "Sous-type": "Générique",
         "description": "Mosquée trouvée sur Maps\nLe nom est fantaisiste et doit être vérifié",
@@ -14197,7 +14197,7 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
-        "mapsHasPhoto": true,
+        "mapsHasPhoto": false,
         "jalelChecked": true
       }
     },
