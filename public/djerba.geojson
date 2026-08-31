@@ -14559,6 +14559,41 @@
         ],
         "Zone": "Sedouikech"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.853827777777777,
+          33.73598888888889
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Hajjia",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 202 : « Mosquée Hajjia. Guellala. Mosquée ibadite wahbite ayant subi une rénovation. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 202 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-31",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1CFFX6C2PAFNNGA2417SVE9",
+        "accessPoint": [
+          10.8537143,
+          33.736087
+        ],
+        "Zone": "Guellala"
+      }
     }
   ]
 }
