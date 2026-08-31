@@ -7634,7 +7634,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Slak El Ouhal",
+        "Nom du site FR": "Mosquée El Lahyani",
         "Nom du site arabe": "جامع سلاك الاوحال",
         "Catégorie": "Mosquée",
         "Zone": "El Khenensa",
@@ -7645,7 +7645,7 @@
           33.7681932
         ],
         "Sous-type": "À minaret",
-        "État": "Désaffecté",
+        "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "description": "Jalel n° 249 — « Sallek Wahline. Khanansa. Mosquée ibadite wahbite abandonnée au profit d'une nouvelle attenante. Ancienne. »",
@@ -8069,11 +8069,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ghandri",
+        "Nom du site FR": "Mosquée Sidi Abdelkader",
         "Nom du site arabe": "جامع غندري",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 258 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NZ91JPSJG4M3A7TNR",
         "accessPoint": [
           10.7747087,
@@ -8083,7 +8083,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "",
+        "description": "Jalel n° 258 : « Sidi Abdelkader. Quartier Ghandri. Mosquée ibadite wahbite rénovée. Ancienne. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1382427929",
@@ -12564,7 +12564,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/2J6FVxBr1gU9p7Am6",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -14415,6 +14415,42 @@
           33.7860972
         ],
         "Zone": "Oued Ezzebib"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.887888888888888,
+          33.73218888888889
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Boucetta El Gharbi",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 189 : « Mosquée Boucetta. Ouersighen. Mosquée ibadite wahbite à laquelle fut ajoutée une nouvelle adjacente. Ancienne. La nouvelle est récente. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 189 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/Y14pitKH8EiMtb7o9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-31",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1CDBK5REA3TE96AEE5689P4",
+        "accessPoint": [
+          10.8882409,
+          33.7322213
+        ],
+        "Zone": "Sedouikech"
       }
     }
   ]
