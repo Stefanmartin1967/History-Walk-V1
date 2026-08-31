@@ -3850,7 +3850,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ez-Zayat",
+        "Nom du site FR": "Mosquée Zayet",
         "Nom du site arabe": "جامع الزيات",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
@@ -6056,7 +6056,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Elil",
+        "Nom du site FR": "Mosquée Ellil",
         "Nom du site arabe": "جامع الليل",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
@@ -7545,7 +7545,7 @@
         "Nom du site arabe": "جامع بوليمان - جَعبيرة",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "Répertoire J. Fathallah, n° 98 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://djerba-insolite.com/blog/boulimen",
+        "Source": "Répertoire J. Fathallah, n° 98 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://djerba-insolite.com/blog/boulimen\nhttps://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Bouliman",
         "HW_ID": "HW-01K77WPE6N0ZBXJK23NVJ2MQPX",
         "photos": [
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463686754.jpg",
@@ -9273,13 +9273,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Touil",
+        "Nom du site FR": "Mosquée Jdaria",
         "Nom du site arabe": "الجامع الطويل",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
         "Source": "Répertoire J. Fathallah, n° 100 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
-        "description": "Jalel n° 100 : « Mosquée Jdaria dite Touil. Oued Zbib. Mosquée ibadite wahbite. 1211 de l'hégire (1736 ap. J.-C.). \nPas de phot\nSerait une mosquée récente selon la vidéo sur Maps\nVu la description de Jalel, il s'agit probablement d'une reconstruction :os",
+        "description": "Jalel n° 100 : « Mosquée Jdaria dite Touil. Oued Zbib. Mosquée ibadite wahbite. 1211 de l'hégire (1736 ap. J.-C.). \nSerait une mosquée récente selon la vidéo sur Maps\nVu la description de Jalel, il s'agit probablement d'une reconstruction",
         "accessPoint": [
           10.8248572,
           33.7915205
@@ -14382,6 +14382,39 @@
         "jalelChecked": true,
         "HW_ID": "HW-01M19HENN8K1GAZ9RT2NHABR8J",
         "Zone": "El Groa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.812530555555536,
+          33.78591108333333
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Abrane",
+        "Catégorie": "Mosquée",
+        "description": "Jalel n° 103 : « Mosquée Abrane. Oued Zbib. Mosquée ibadite wahbite abandonnée. Ancienne. »\nVisible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 103 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/990386788",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-08-31",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1C7YJ1C3S02ZRAHX7PDESZS",
+        "accessPoint": [
+          10.8124366,
+          33.7860972
+        ],
+        "Zone": "Oued Ezzebib"
       }
     }
   ]
