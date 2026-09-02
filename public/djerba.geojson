@@ -4470,7 +4470,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Koujil",
+        "Nom du site FR": "Mosquée Goujil",
         "Nom du site arabe": "جامع قوجيل",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
@@ -4495,7 +4495,13 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6FDEFE8CMVWQSV93V4_1788371389061.jpg",
+          "photos/poi_HW-01K77WPE6FDEFE8CMVWQSV93V4_1788371390849.jpg",
+          "photos/poi_HW-01K77WPE6FDEFE8CMVWQSV93V4_1788371392504.jpg",
+          "photos/poi_HW-01K77WPE6FDEFE8CMVWQSV93V4_1788371394161.jpg"
+        ]
       }
     },
     {
@@ -6518,7 +6524,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Karôunia",
+        "Nom du site FR": "Mosquée Guarounia",
         "Nom du site arabe": "جامع القارونية",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
@@ -6646,7 +6652,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Qbaili",
+        "Nom du site FR": "Mosquée Gueblaine",
         "Nom du site arabe": "جامع القبليين",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
@@ -6774,7 +6780,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Terjoun",
+        "Nom du site FR": "Mosquée Targo",
         "Nom du site arabe": "جامع ترجو",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
@@ -6856,7 +6862,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Majlès",
+        "Nom du site FR": "Mosquée Majliss",
         "Nom du site arabe": "مسجد المجلس",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
@@ -12288,7 +12294,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Iminej",
+        "Nom du site FR": "Mosquée Minj",
         "Catégorie": "Mosquée",
         "osm_ref": "way/1464996657",
         "HW_ID": "HW-01KZH0VFKFGH4ASEN1YCC00J2Z",
@@ -12301,8 +12307,8 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "",
-        "Source": "",
+        "description": "Jalel n° 203 : « Mosquée Minj. Guellala. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne. »",
+        "Source": "Répertoire J. Fathallah, n° 203 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "https://maps.app.goo.gl/Cs572PngDHCcGneq5",
         "Téléphone": "",
         "Horaires": "",
@@ -14592,7 +14598,14 @@
           10.8537143,
           33.736087
         ],
-        "Zone": "Guellala"
+        "Zone": "Guellala",
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     }
   ]
