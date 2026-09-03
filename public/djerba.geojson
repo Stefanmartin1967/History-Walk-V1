@@ -14716,6 +14716,72 @@
         ],
         "Zone": "El Jouamaa"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.798814592842618,
+          33.863629878511645
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Tahar",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 68 : « Sidi Tahar. Mellita. Mosquée mausolée malékite. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 68 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-03",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1MASDS6XFVN8DZ6CEGR8Q2B",
+        "Zone": "Mellita"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.947275,
+          33.72641388888889
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Guemir",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 235 : « Mosquée Guemir. Bani Maaguel. Mosquée tour de guet en quasi ruines. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 235 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-03",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1MB4HFVPAY1YAEP3D1CX6V9",
+        "accessPoint": [
+          10.9465517,
+          33.7261382
+        ],
+        "Zone": "Sedouikech"
+      }
     }
   ]
 }
