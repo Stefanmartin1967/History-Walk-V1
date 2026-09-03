@@ -14607,6 +14607,115 @@
         "Horaires": "",
         "Facebook": ""
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.775576814733704,
+          33.730411604818414
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Boumessaoud",
+        "Nom du site arabe": "جامع بو مسعود",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 272 : « Mosquée Boumessaoud. Quartier Laghouan, Ajim. Mosquée ibadite wahbite rénovée et à laquelle fut ajouté un minaret. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 272 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1M84Q36X58HWRKYYQVAKFEN",
+        "maps_ref": "https://maps.app.goo.gl/K44m7zh9NaTTKxZy9",
+        "osmCheckedDate": "2026-09-03",
+        "lat": 33.730411604818414,
+        "lng": 10.775576814733704,
+        "Zone": "Ajim"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.84912399699816,
+          33.88721836724584
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Youssef",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 28 : « Sidi Youssef. Boumellal. Poste de garde et mausolée devenu mosquée. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 28 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/PRBZQBdAYY2CJwSZ6",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-03",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1M9BZD4D51NDNR3MN5BH34M",
+        "accessPoint": [
+          10.8492179,
+          33.8879596
+        ],
+        "lat": 33.88721836724584,
+        "lng": 10.84912399699816,
+        "Zone": "Bou Melel"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.84710893050237,
+          33.870199256315615
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Abdellatif",
+        "Nom du site arabe": "جامع سيدي عبد اللطيف",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 30 : « Sidi Abdellatif. Bani Bandou. Mosquée mausolée malékite. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 30 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-03",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1MA5RFSJ40YMFA50QHQX5MW",
+        "accessPoint": [
+          10.846971,
+          33.8700731
+        ],
+        "Zone": "El Jouamaa"
+      }
     }
   ]
 }
