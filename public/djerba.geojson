@@ -12778,18 +12778,18 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.9423185,
-          33.7803647
+          10.942887238298052,
+          33.781635132640794
         ]
       },
       "properties": {
         "Nom du site FR": "Mosquée Sidi Mostafa",
         "Nom du site arabe": "مسجد سيدي مصطفى",
         "Catégorie": "Mosquée",
-        "osm_ref": "way/990390672",
+        "osm_ref": "",
         "HW_ID": "HW-01KZH0VH7A5VNKAW0Z3Y1PM9RR",
         "Sous-type": "Générique",
-        "description": "162 Sidi Mustapha. Entre Bedouine et Mahboubine. Mosquée malékite à origine nokkarite malékite. Ancienne.\nVisible sur la vue satellite",
+        "description": "162 Sidi Mustapha. Entre Bedouine et Mahboubine. Mosquée malékite à origine nokkarite malékite. Ancienne.\nVisible sur la vue satellite\nAller voir 33.780354865695955, 10.94232568145342 pour voir si une autre mosquée",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 162 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -12798,17 +12798,19 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/6kSYxAuoNWGcmnbD6",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "El Mahboubine",
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-09-03",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "lat": 33.781635132640794,
+        "lng": 10.942887238298052
       }
     },
     {
