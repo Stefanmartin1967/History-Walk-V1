@@ -14478,7 +14478,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Kritchoun",
-        "Catégorie": "Mausolée",
+        "Catégorie": "Mosquée",
         "État": "Ruine",
         "Accès": "Extérieur seulement",
         "description": "Jalel n° 178 : « Mosquée Kritchoun. Cedouikech. Mosquée ibadite wahbite en ruines. Ancienne. »",
@@ -14494,7 +14494,15 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "HW_ID": "HW-01M1CDM90KAKWXZ864H37BN3YZ",
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "Nom du site arabe": "",
+        "Sous-type": "À coupoles",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
