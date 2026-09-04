@@ -14932,6 +14932,76 @@
         ],
         "Zone": "Taourit"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.059521,
+          33.799559
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Lella Hadhria",
+        "Catégorie": "Mausolée",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Jalel n° 336 : « Lella Hadhria. Près de l'ancien hôtel Tanit. Poste de garde et mausolée dont restent les fondations. Ancien. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 336 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-04",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1PGKC4GDW390CEFN4RWMS0V",
+        "accessPoint": [
+          11.0593686,
+          33.7992858
+        ],
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.752058554446307,
+          33.73099196399276
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Saïd Jrab",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 342 : « Sidi Said Jrab. Ajim, quartier Aissi. Mausolée et lieu de culte en bon état. Ancien. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 342 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/8jxfZJXH9JLF63iQA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-04",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1PHEQT65YE118E6KAZKM3NH",
+        "accessPoint": [
+          10.7522389,
+          33.7309572
+        ],
+        "Zone": "Ajim"
+      }
     }
   ]
 }
