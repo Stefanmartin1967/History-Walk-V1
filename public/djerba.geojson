@@ -407,7 +407,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Abdelkader",
+        "Nom du site FR": "Mosquée Sidi Abdelkader (Temlel)",
         "Nom du site arabe": "جامع سيدي عبد القادر",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
@@ -3126,8 +3126,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.970972,
-          33.766528
+          10.971047793701809,
+          33.76632577573908
         ]
       },
       "properties": {
@@ -3157,7 +3157,9 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "lat": 33.76632577573908,
+        "lng": 10.971047793701809
       }
     },
     {
@@ -8077,7 +8079,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Abdelkader",
+        "Nom du site FR": "Mosquée Sidi Abdelkader (Ghandri)",
         "Nom du site arabe": "جامع غندري",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
@@ -9711,7 +9713,7 @@
         "Nom du site arabe": "جامع الحاج عمر",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 47 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6SGS36CX14YZ6N38ZG",
         "info_gpx": "",
         "accessPoint": [
@@ -9721,7 +9723,7 @@
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
-        "description": "",
+        "description": "Jalel n° 47 : « Mosquée Hajj Omar. Ghizen. Retraite et mosquée en bon état mais abandonnée. Ancienne. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/484912517",
@@ -14821,6 +14823,41 @@
         "jalelChecked": true,
         "HW_ID": "HW-01M1NTYYMW3H8C2VZH40E85SC1",
         "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.838884410025315,
+          33.87920299349094
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Abdallah Ben Hassine",
+        "Catégorie": "Mausolée",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 1 : « Abdallah Ben Hassine. Bani Bandou. Marabout malékite. Très ancien. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 1 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/s5EYdVvGUVrM22MQ9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-04",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1NXGVJCTXKXA533Z90VVP2E",
+        "accessPoint": [
+          10.8389823,
+          33.8793411
+        ],
+        "Zone": "Bou Melel"
       }
     }
   ]
