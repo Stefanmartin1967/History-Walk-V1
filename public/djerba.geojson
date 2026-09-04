@@ -6141,8 +6141,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.903181,
-          33.69646
+          10.903175620616295,
+          33.696253255075305
         ]
       },
       "properties": {
@@ -6175,7 +6175,9 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "lat": 33.696253255075305,
+        "lng": 10.903175620616295
       }
     },
     {
@@ -14791,6 +14793,34 @@
           33.7261382
         ],
         "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.031257626707532,
+          33.77600701548574
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Elhamd",
+        "Catégorie": "Mosquée",
+        "description": "Jalel n° 305 : « Mosquée Elhamd (« Louange »). Arkou. Mosquée malékite. Très récente. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 305 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-04",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1NTYYMW3H8C2VZH40E85SC1",
+        "Zone": "Arkou"
       }
     }
   ]
