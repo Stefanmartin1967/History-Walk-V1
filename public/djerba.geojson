@@ -3812,7 +3812,7 @@
         "Nom du site arabe": "جامع سيدي بشير مقمق",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 92 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
         "accessPoint": [
           10.8304717,
@@ -3824,7 +3824,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "",
+        "description": "Jalel n° 92 : « Sidi Béchir Ghandour. Houmt Larbah, Erriadh. Mosquée ibadite wahbite. 11ᵉ siècle de l'hégire (17ᵉ siècle ap. J.-C.). »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "",
@@ -5623,7 +5623,7 @@
         "Zone": "El Groa",
         "Source": "",
         "HW_ID": "HW-01K77WPE6HCAQTSR2RW7BNKJCN",
-        "description": "",
+        "description": "Jalel n° 91 : « Mosquée Guebli. Houmt Larbah, Erriadh. Mosquée ibadite wahbite. 9ᵉ siècle de l'hégire (15ᵉ siècle ap. J.-C.). »",
         "accessPoint": [
           10.8485472,
           33.8063976
@@ -11618,14 +11618,14 @@
       "properties": {
         "Nom du site FR": "Mausolée Fkih Kacem El Bouziri",
         "Catégorie": "Mausolée",
-        "Accès": "",
+        "Accès": "Non visitable",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1088303850",
         "verified": true,
         "introuvableCarte": false,
         "HW_ID": "HW-01KYFCTHGZ0XS4W7SAXKGCMSAV",
-        "État": "",
+        "État": "En activité",
         "description": "Mausolée proche de la mosquée Bouziri",
         "photos": [
           "photos/poi_HW-01KYFCTHGZ0XS4W7SAXKGCMSAV_1785075907721.jpg"
@@ -11642,9 +11642,9 @@
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": null,
-        "mapsChecked": false,
+        "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": true
       }
     },
     {
@@ -12468,14 +12468,19 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
+        "description": "Visible sur la vue satellite\nPas de trace chez Jalel",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Sedouikech",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
