@@ -5490,9 +5490,9 @@
         "Nom du site arabe": "برج الغازي مصطفى",
         "Catégorie": "Fortification",
         "Zone": "Taourit",
-        "Source": "https://fr.wikipedia.org/wiki/Borj_El_Kebir_(Houmt_Souk)",
+        "Source": "https://fr.wikipedia.org/wiki/Borj_El_Kebir_(Houmt_Souk)\nRépertoire J. Fathallah, n° 13 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6H4XSK53CW38Q81RWP",
-        "description": "Egalement appelé Fort Ghazi Mustapha, ce fort est le plus grand, le plus visité et le mieux conservé de Djerba. Sa construction, enviagée dès 1392 a été ordonnée en 1432. Le site du fort était, à l'origine, l'ancienne ville romaine de girba. Il fut le témoin de nombreuses batailles, dont une qui vit le corsaire Dragut en prendre le commandement. Il s'ensuivra une période de commandement corsaire de plusieurs siècles. Il mesure 68 mètres de long et 53 mètres de largeur, avec des murailles haute de 10 mètres pour une épaisseur variant de 120 à 150 cmDe formes rectangulaires, munis de tours, il représente l'un des repères de l'architecture défensive de l'île On y entre par une porte comportant un pont-levis donnant accès à une vestibule s'ouvrant sur la cour intérieure.",
+        "description": "Egalement appelé Fort Ghazi Mustapha, ce fort est le plus grand, le plus visité et le mieux conservé de Djerba. Sa construction, enviagée dès 1392 a été ordonnée en 1432. Le site du fort était, à l'origine, l'ancienne ville romaine de girba. Il fut le témoin de nombreuses batailles, dont une qui vit le corsaire Dragut en prendre le commandement. Il s'ensuivra une période de commandement corsaire de plusieurs siècles. Il mesure 68 mètres de long et 53 mètres de largeur, avec des murailles haute de 10 mètres pour une épaisseur variant de 120 à 150 cmDe formes rectangulaires, munis de tours, il représente l'un des repères de l'architecture défensive de l'île On y entre par une porte comportant un pont-levis donnant accès à une vestibule s'ouvrant sur la cour intérieure.\n\nJalel n° 13 : « Sidi Saad. Fort Ghazi Mustapha. Mausolée et mosquée. 16ᵉ siècle ap. J.-C. »",
         "info_gpx": "Un des plus beau monument historique de Djerba, ayant été le siège de nombreuses batailles",
         "accessPoint": [
           10.8606827,
@@ -5515,7 +5515,12 @@
           "photos/poi_HW-01K77WPE6H4XSK53CW38Q81RWP_1786337229563.jpg",
           "photos/poi_HW-01K77WPE6H4XSK53CW38Q81RWP_1786337231213.jpg",
           "photos/poi_HW-01K77WPE6H4XSK53CW38Q81RWP_1786337232792.jpg"
-        ]
+        ],
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
@@ -7116,7 +7121,7 @@
       "properties": {
         "Nom du site FR": "Mosquée Cheikh Khattab",
         "Nom du site arabe": "الشيخ خطاب",
-        "Catégorie": "Mosquée",
+        "Catégorie": "Mausolée",
         "Zone": "Guellala",
         "Source": "Répertoire J. Fathallah, n° 216 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T",
@@ -7126,9 +7131,9 @@
         ],
         "lat": 33.6944287875692,
         "lng": 10.874508179523637,
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
         "info_gpx": "",
         "description": "216 : « Mosquée Cheikh Khattab. Aux abords de Guellala. Mausolée et lieu de culte abandonné, mais en bon état. Ancien.",
         "Temps_minutes": 0,
@@ -14858,6 +14863,74 @@
           33.8793411
         ],
         "Zone": "Bou Melel"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.857048301325046,
+          33.87694720737208
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Abdelkader",
+        "Catégorie": "Mausolée",
+        "État": "En activité",
+        "Accès": "Non visitable",
+        "description": "Jalel n° 11 : « Sidi Abdelkader. Centre ville, Houmt Souk. Mausolée, medersa coranique et lieu de culte. 1832 ap. J.-C. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 11 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-04",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1PCNX38C3PSSAECCJ9FXZGD",
+        "accessPoint": [
+          10.8568856,
+          33.8769289
+        ],
+        "Zone": "Taourit"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.86255831556276,
+          33.87966154026071
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Zitouni",
+        "Catégorie": "Mausolée",
+        "État": "En activité",
+        "Accès": "Non visitable",
+        "description": "Jalel n° 15 : « Sidi Zitouni. Centre ville, Houmt Souk. Mausolée et lieu de culte. 18ᵉ siècle ap. J.-C. »\n(Apparemment, il fait partie des bâtiments utilisés par le musée)",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 15 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-04",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1PDWW874AQ3VW27PR8VHP9M",
+        "accessPoint": [
+          10.8626588,
+          33.8798619
+        ],
+        "Zone": "Taourit"
       }
     }
   ]
