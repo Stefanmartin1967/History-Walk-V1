@@ -52,22 +52,6 @@
     ]
   },
   {
-    "id": "HW-01KJDS3E0D23NTEB3ATM02S8DZ",
-    "name": "Circuit de Mosquée El Abied à Mosquée Sidi Nasr",
-    "file": "djerba/Circuit de Mosquée El Abied à Mosquée Sidi Nasr via Mosquée Ben Biène.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
-    "distance": "6.1 km",
-    "isOfficial": true,
-    "hasRealTrack": true,
-    "zone": "El Groa",
-    "poiIds": [
-      "HW-01K77WPE6JHY0DMFMJKW847EVZ",
-      "HW-01K77WPE6SYZ3CNCV0GXBV0MYX",
-      "HW-01K77WPE6MK0YGY2RG0RX2XX48",
-      "HW-01K77WPE6NHCHVH0JKDTF607DG"
-    ]
-  },
-  {
     "id": "HW-01KK1E3RZ1G0YKHSQTRXME7WVJ",
     "name": "Circuit de Mosquée El Jadid à Mosquée El Aakel",
     "file": "djerba/Circuit de Mosquée El Jadid à Mosquée El Aakel via Mosquée de Taghdimus.gpx",
