@@ -2354,7 +2354,7 @@
         "description": "229 Mosquée Ben Jeddi. Bani Maaguel. Mosquée malékite à origine nokkarite. Ancienne.\nLa première photo de travail date des années 1990 (Müller), la seconde est récente\nJalel confirme la remis en fonction de la mosquée",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1551508079",
         "maps_ref": "https://maps.app.goo.gl/x5mAEZa48iM77h7b7",
         "Téléphone": "",
         "Horaires": "",
@@ -2363,7 +2363,7 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-18",
+        "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": true
@@ -16229,6 +16229,40 @@
           33.8224501
         ],
         "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.03708,
+          33.77332
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Ali Ben Adel",
+        "Catégorie": "Mausolée",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1431394338",
+        "maps_ref": "https://maps.app.goo.gl/bk3Jv6noREpxqifx5",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-05",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M1S4ZS19S44XV8SY9G273ACW",
+        "accessPoint": [
+          11.0370493,
+          33.773128
+        ],
+        "Zone": "Arkou"
       }
     }
   ]
