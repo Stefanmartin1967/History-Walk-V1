@@ -16013,6 +16013,37 @@
         "Facebook": "",
         "Zone": "Arkou"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.928876,
+          33.839786
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Chandra",
+        "Catégorie": "Mosquée",
+        "Sous-type": "Générique",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/14095881821",
+        "maps_ref": "https://maps.app.goo.gl/sC4z7mp3ECumKkBK8",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-05",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1RZZWS6P3KWET3E89M1AXFK",
+        "Zone": "Sedghaiane"
+      }
     }
   ]
 }
