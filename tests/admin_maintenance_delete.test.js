@@ -24,6 +24,10 @@ const INDEX = [
 // vi.mock est hissé en tête de fichier : tout ce que ses factories référencent
 // doit passer par vi.hoisted(), sinon « Cannot access X before initialization ».
 const H = vi.hoisted(() => {
+    // Miroir du vrai filtre (dont la sémantique est testée dans
+    // circuit_deletion_state.test.js) : permet d'exercer ici le câblage complet,
+    // y compris « relecture en retard » → la ligne disparaît quand même.
+    const serverDeleted = new Set();
     const state = {
         currentMapId: 'djerba',
         myCircuits: [],
@@ -37,7 +41,8 @@ const H = vi.hoisted(() => {
         deleteFileFromGitHub: vi.fn(),
         uploadFileToGitHub: vi.fn(),
         setOfficialCircuitDeleted: vi.fn(async () => []),
-        noteServerDeletedCircuit: vi.fn(),
+        serverDeleted,
+        noteServerDeletedCircuit: vi.fn((id) => { serverDeleted.add(String(id)); }),
         showConfirm: vi.fn(async () => true),
         showToast: vi.fn(),
         emit: vi.fn(),
@@ -63,9 +68,10 @@ vi.mock('../src/github-sync.js', () => ({
 vi.mock('../src/database.js', () => ({ deleteCircuitById: vi.fn(), restoreCircuit: vi.fn() }));
 vi.mock('../src/circuit-deletion-state.js', () => ({
     setOfficialCircuitDeleted: H.setOfficialCircuitDeleted,
-}));
-vi.mock('../src/admin-diff-engine.js', () => ({
     noteServerDeletedCircuit: H.noteServerDeletedCircuit,
+    // Le vrai filtre est testé dans admin_diff_server_deleted ; ici on veut
+    // vérifier le câblage, donc passe-plat.
+    withoutServerDeletedCircuits: (l) => (Array.isArray(l) ? l.filter(c => !H.serverDeleted.has(String(c && c.id))) : []),
 }));
 vi.mock('../src/events.js', () => ({ eventBus: { emit: H.emit, on: vi.fn() } }));
 vi.mock('../src/toast.js', () => ({ showToast: H.showToast }));
@@ -99,6 +105,7 @@ async function renderServerView() {
 
 beforeEach(() => {
     vi.clearAllMocks();
+    H.serverDeleted.clear();
     document.body.innerHTML = '';
     state.officialCircuits = [{ id: 'HW-1', name: 'Circuit A' }, { id: 'HW-2', name: 'Circuit B' }];
     state.activeCircuitId = null;
@@ -211,6 +218,21 @@ describe('Nettoyage — suppression complète', () => {
         ));
         expect(noteServerDeletedCircuit).not.toHaveBeenCalled();
         expect(emit).not.toHaveBeenCalledWith('admin:circuit-server-deleted', 'HW-1');
+    });
+
+    it('retire la ligne même si la relecture de l’index est en retard', async () => {
+        const container = await renderServerView();
+        // Le serveur renverra ENCORE les 2 circuits après la suppression : c'est
+        // le cas signalé par Stefan le 05/09/2026 (liste et compteur figés
+        // jusqu'à un clic sur « Actualiser »).
+        container.querySelector('[data-id="HW-1"]').click();
+        await vi.waitFor(() => expect(uploadFileToGitHub).toHaveBeenCalled());
+
+        await vi.waitFor(() => {
+            const ids = [...container.querySelectorAll('[data-action="delete-server"]')].map(b => b.dataset.id);
+            if (ids.includes('HW-1')) throw new Error('circuit encore listé');
+            expect(ids).toEqual(['HW-2']);
+        });
     });
 
     it('ne touche à rien si l’admin annule la confirmation', async () => {

@@ -1,7 +1,7 @@
 
 // circuit-actions.js
 import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode } from './state.js';
-import { setOfficialCircuitDeleted } from './circuit-deletion-state.js';
+import { setOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { fetchWithTimeout } from './net.js';
 import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit, saveAppState } from './database.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
@@ -67,7 +67,10 @@ export async function checkCircuitDuplicate(poiIds, excludeId = null) {
     try {
         const res = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
         if (!res.ok) return null;
-        const remote = await res.json();
+        // Filtré : sinon, juste après avoir supprimé un circuit, une relecture en
+        // retard le signalerait comme « doublon » et empêcherait d'en recréer un
+        // sur le même parcours. Cf. circuit-deletion-state.
+        const remote = withoutServerDeletedCircuits(await res.json());
         const sig = poiIds.join('|');
         return remote.find(c =>
             String(c.id) !== String(excludeId) &&
