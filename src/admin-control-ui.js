@@ -93,7 +93,16 @@ function updateTopbarTitle(tab, opts = {}) {
         : title;
 }
 
-function syncFooterAndNavCount(diffData) {
+/**
+ * Synchronise le footer (état + compteur de « Tout publier ») et le badge de
+ * l'onglet Modifications avec un `diffData` fraîchement calculé.
+ *
+ * Exporté (05/09/2026) pour le recalcul déclenché par une suppression serveur
+ * depuis l'onglet Nettoyage : ce chemin ne re-rend pas d'onglet (la liste se
+ * rafraîchit toute seule), il n'y a donc pas de passage par renderTab() pour
+ * remettre le footer à jour. No-op tant que la modale n'est pas ouverte.
+ */
+export function syncFooterAndNavCount(diffData) {
     const overlay = _ccModalOverlay;
     if (!overlay) return;
 
