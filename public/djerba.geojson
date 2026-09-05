@@ -10066,7 +10066,7 @@
         "Source": "Répertoire J. Fathallah, n° 301 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
         "Prix_TND": 0,
-        "description": "Un poste de garde et sa mosquée, aujourd'hui en ruines, sur la côte d'Arkou, à moins de six cents mètres du rivage.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 301 sous le nom de « Mosquée Hajar » et la donne pour ancienne. Son nom arabe, جامع الحجر, signifie « mosquée de la Pierre ».\n\nPetr Jenč - OpenStreetMap, 2025",
+        "description": "Un poste de garde et sa mosquée, aujourd'hui en ruines, sur la côte d'Arkou, à moins de six cents mètres du rivage.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 301 sous le nom de « Mosquée Hajar » et la donne pour ancienne. Son nom arabe, جامع الحجر, signifie « mosquée de la Pierre ».",
         "info_gpx": "",
         "accessPoint": [
           10.9902354,
@@ -15948,7 +15948,7 @@
         "Sous-type": "Générique",
         "État": "Ruine",
         "Accès": "Non visitable",
-        "description": "Un poste de garde et sa mosquée, aujourd'hui en ruines, dans l'arrière-pays d'Arkou.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 303 sous le nom de « Sidi Haren » et la donne pour ancienne.\n\nSur place, il ne subsiste qu'une excavation creusée dans la roche calcaire, en contrebas d'un terrain caillouteux planté d'oliviers, à un kilomètre du rivage. Ce que cette cavité abritait — la mosquée elle-même, une citerne, une carrière — ne se lit plus.\n\nLe creux sert aujourd'hui de décharge sauvage.\n\nPetr Jenč - OpenStreetMap, 2025",
+        "description": "Un poste de garde et sa mosquée, aujourd'hui en ruines, dans l'arrière-pays d'Arkou.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 303 sous le nom de « Sidi Haren » et la donne pour ancienne.\n\nSur place, il ne subsiste qu'une excavation creusée dans la roche calcaire, en contrebas d'un terrain caillouteux planté d'oliviers, à un kilomètre du rivage. Ce que cette cavité abritait — la mosquée elle-même, une citerne, une carrière — ne se lit plus.\n\nLe creux sert aujourd'hui de décharge sauvage.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 303 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -15970,6 +15970,12 @@
           "photos/poi_HW-01M1RX6DJC977E62HDYDCS546E_1788616382857.jpg",
           "photos/poi_HW-01M1RX6DJC977E62HDYDCS546E_1788616384660.jpg"
         ],
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Arkou"
       }
     }
