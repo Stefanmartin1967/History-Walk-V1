@@ -228,7 +228,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          11.0229245,
+          33.8092539
+        ]
       }
     },
     {
@@ -801,7 +805,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9845149,
+          33.8443864
+        ]
       }
     },
     {
@@ -1615,8 +1623,8 @@
         "HW_ID": "HW-01K77WPE6AS77NE3CRGHPYHJSE",
         "info_gpx": "",
         "accessPoint": [
-          10.9531788,
-          33.8435566
+          10.9531724,
+          33.8436565
         ],
         "Sous-type": "À coupoles",
         "État": "Ruine",
@@ -1797,8 +1805,8 @@
         "Source": "Répertoire J. Fathallah, n° 231 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6A3AYDG7D68R9A0JBT",
         "accessPoint": [
-          10.9847207,
-          33.7667882
+          10.9844424,
+          33.7664539
         ],
         "lat": 33.766501115888644,
         "lng": 10.984541764908952,
@@ -2337,10 +2345,6 @@
         "Zone": "Beni Maaguel",
         "Source": "Répertoire J. Fathallah, n° 229 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6BG5X8YCCG07AEVQY8",
-        "accessPoint": [
-          10.9557632,
-          33.765369
-        ],
         "lat": 33.76527363106212,
         "lng": 10.955706684923967,
         "Sous-type": "À coupoles",
@@ -2503,10 +2507,6 @@
         "Zone": "El Mahboubine",
         "Source": "",
         "HW_ID": "HW-01K77WPE6CVR05TNW29PD4ZT89",
-        "accessPoint": [
-          10.9352142,
-          33.7802619
-        ],
         "lat": 33.77996445120918,
         "lng": 10.935070359649803,
         "Sous-type": "Huilerie",
@@ -2716,8 +2716,8 @@
         "Source": "Répertoire J. Fathallah, n° 134 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6C5GHRJMF8MP5ZQC6D",
         "accessPoint": [
-          10.9103468,
-          33.8391814
+          10.910154,
+          33.8387667
         ],
         "lat": 33.83890426734857,
         "lng": 10.910195511239891,
@@ -2948,7 +2948,11 @@
         "osmCheckedDate": "2026-08-18",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "accessPoint": [
+          10.91339,
+          33.8693439
+        ]
       }
     },
     {
@@ -2968,8 +2972,8 @@
         "Source": "Répertoire J. Fathallah, n° 131 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6CMHE8GHTTW13GZ8M1",
         "accessPoint": [
-          10.9049725,
-          33.8517692
+          10.9052828,
+          33.8520114
         ],
         "lat": 33.851867843494105,
         "lng": 10.905244947493227,
@@ -3054,8 +3058,8 @@
         "Source": "Répertoire J. Fathallah, n° 138 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6DADD5BVFVTP8P3EXY",
         "accessPoint": [
-          10.8994232,
-          33.8201064
+          10.8994639,
+          33.8202018
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
@@ -3097,7 +3101,7 @@
         "HW_ID": "HW-01K77WPE6D46D9BH4QCBXE331N",
         "description": "Jalel n° 41 : « Sidi Ismaël. Ghizen. Poste de garde, mausolée et mosquée. 9ᵉ siècle de l'hégire (15ᵉ siècle ap. J.-C.). Une nouvelle mosquée fut construite en face de l'ancienne au 21ᵉ siècle.",
         "accessPoint": [
-          10.9090045,
+          10.9089948,
           33.8724573
         ],
         "Sous-type": "À minaret",
@@ -3159,7 +3163,11 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "lat": 33.76632577573908,
-        "lng": 10.971047793701809
+        "lng": 10.971047793701809,
+        "accessPoint": [
+          10.9710165,
+          33.7665497
+        ]
       }
     },
     {
@@ -3815,8 +3823,8 @@
         "Source": "Répertoire J. Fathallah, n° 92 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
         "accessPoint": [
-          10.8304717,
-          33.8049072
+          10.8304784,
+          33.804779
         ],
         "lat": 33.8047299200158,
         "lng": 10.83038410453163,
@@ -4309,8 +4317,8 @@
         "Source": "",
         "HW_ID": "HW-01K77WPE6E4HG0PW6ZMZCH8DCJ",
         "accessPoint": [
-          10.9250778,
-          33.7272571
+          10.9256031,
+          33.7269471
         ],
         "lat": 33.726968703311286,
         "lng": 10.925255573269498,
@@ -4694,8 +4702,8 @@
         "HW_ID": "HW-01K77WPE6FKPXGG3JYG58QMES3",
         "description": "Jalel n° 155 : « Mosquée Omar Ibn Khattab. May. Mosquée malékite. Très récente.",
         "accessPoint": [
-          10.871419,
-          33.7956853
+          10.8713898,
+          33.7955254
         ],
         "Sous-type": "À minaret",
         "État": "En activité",
@@ -4735,8 +4743,8 @@
         "Source": "Répertoire J. Fathallah, n° 80 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6FVZ53RX9CM5VVC777",
         "accessPoint": [
-          10.8644347,
-          33.8355902
+          10.864539,
+          33.8354548
         ],
         "lat": 33.8354060003172,
         "lng": 10.864357352022925,
@@ -5583,7 +5591,7 @@
         "HW_ID": "HW-01K77WPE6HCR84JJZ3E1PQRRQ9",
         "info_gpx": "Mosquée située au sud-est de Houmt Souk",
         "accessPoint": [
-          10.8517081,
+          10.8518162,
           33.8603782
         ],
         "Sous-type": "Générique",
@@ -5686,7 +5694,11 @@
         "osmCheckedDate": "2026-08-23",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8458994,
+          33.812616
+        ]
       }
     },
     {
@@ -5709,8 +5721,8 @@
         "description": "La petite église orthodoxe, fondée par Sakillaris Kandinys rappelle la présence grecque en nombre jusqu'aux années 1950. Ceux-ci étaient les descendants des pêcheurs d'éponge et de poulpes qui s'étaient installés à Djerbin à la fin du 19ème siècle. C'est la seule église orthodoxes de l'île, dont la dernière rénovation date de 2019, sous la supervision de Dimitri Mavrothalassitis. L'ensemble du lieu de culte a ainsi été remise à neuf, ainsi que plusieurs icônes.",
         "info_gpx": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant",
         "accessPoint": [
-          10.8562017,
-          33.8848144
+          10.8559485,
+          33.8845409
         ],
         "Sous-type": "Orthodoxe",
         "État": "En activité",
@@ -6160,7 +6172,7 @@
         "Source": "Répertoire J. Fathallah, n° 181 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6J3TTHTXC560NEDQ24",
         "accessPoint": [
-          10.9034857,
+          10.9035035,
           33.6965003
         ],
         "Sous-type": "À coupoles",
@@ -6294,8 +6306,8 @@
         "Source": "https://fr.wikipedia.org/wiki/Meninx",
         "HW_ID": "HW-01K77WPE6J38KA6V4M0KDZBJ15",
         "accessPoint": [
-          10.9144158,
-          33.6862955
+          10.9145893,
+          33.6859226
         ],
         "lat": 33.68584439152305,
         "lng": 10.913947876157037,
@@ -6583,8 +6595,8 @@
         "HW_ID": "HW-01K77WPE6KD37GVA594C0XAQQ0",
         "info_gpx": "",
         "accessPoint": [
-          10.8847422,
-          33.6975387
+          10.8845951,
+          33.6975569
         ],
         "lat": 33.69735113689494,
         "lng": 10.88460266083396,
@@ -6816,7 +6828,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8682345,
+          33.7224423
+        ]
       }
     },
     {
@@ -6920,8 +6936,8 @@
         "Source": "Répertoire J. Fathallah, n° 207 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6KT8VGFJTHK03SWPZR",
         "accessPoint": [
-          10.8639726,
-          33.7109742
+          10.8639085,
+          33.710186
         ],
         "lat": 33.71050850467812,
         "lng": 10.863619407618103,
@@ -6964,8 +6980,8 @@
         "Source": "Répertoire J. Fathallah, n° 207 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6KQ3W8ZNZCKYQ3G9DB",
         "accessPoint": [
-          10.8639085,
-          33.710186
+          10.8634234,
+          33.7098322
         ],
         "lat": 33.71001473442526,
         "lng": 10.86332666195451,
@@ -7126,8 +7142,8 @@
         "Source": "Répertoire J. Fathallah, n° 216 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T",
         "accessPoint": [
-          10.8741957,
-          33.6950803
+          10.8746784,
+          33.6944665
         ],
         "lat": 33.6944287875692,
         "lng": 10.874508179523637,
@@ -7697,10 +7713,6 @@
         "Zone": "Oued Ezzebib",
         "Source": "Répertoire J. Fathallah, n° 250 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
-        "accessPoint": [
-          10.7947227,
-          33.7770939
-        ],
         "lat": 33.776948697531495,
         "lng": 10.794902295487537,
         "Sous-type": "À minaret",
@@ -8387,8 +8399,8 @@
         "description": "267 Mosquée Ben Abbes. Ajim. Mosquée ibadite wahbite. 1046 de l'hégire / 1637 ap. J.-C.\n\nMosquée urbaine, de forme irrégulière, comprenant une école coranique. Sa superficie est de 2500 M². Plusieurs accès permettent d'accéder à la cour qui comporte deux majel (Puits). La salle de prière est située en son centre.",
         "info_gpx": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère",
         "accessPoint": [
-          10.7563595,
-          33.7211752
+          10.7560444,
+          33.7209509
         ],
         "lat": 33.721092902947724,
         "lng": 10.755966140896282,
@@ -9216,8 +9228,8 @@
         "HW_ID": "HW-01K77WPE6QE5NJP25N8WEWSR03",
         "description": "Jalel n° 226 : « Mosquée Sidi Houcine. Bani Maaguel. Mosquée malékite ayant subie une rénovation. Ancienne.",
         "accessPoint": [
-          10.9523365,
-          33.7594956
+          10.9523373,
+          33.7594242
         ],
         "Sous-type": "Générique",
         "État": "",
@@ -9988,7 +10000,11 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "accessPoint": [
+          10.8578446,
+          33.8849859
+        ]
       }
     },
     {
@@ -10276,8 +10292,8 @@
         "Catégorie": "Restaurant",
         "Zone": "Midoun",
         "accessPoint": [
-          11.0195931,
-          33.8162554
+          11.0199623,
+          33.8163635
         ]
       }
     },
@@ -10832,7 +10848,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8436666,
+          33.8429144
+        ]
       }
     },
     {
@@ -11066,7 +11086,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8373368,
+          33.8214222
+        ]
       }
     },
     {
@@ -11232,7 +11256,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8267165,
+          33.8343526
+        ]
       }
     },
     {
@@ -11682,7 +11710,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8176545,
+          33.7737179
+        ]
       }
     },
     {
@@ -11720,7 +11752,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8629071,
+          33.8779922
+        ]
       }
     },
     {
@@ -11758,7 +11794,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8554735,
+          33.8212424
+        ]
       }
     },
     {
@@ -11796,7 +11836,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8740553,
+          33.7814949
+        ]
       }
     },
     {
@@ -11834,7 +11878,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.775559,
+          33.8242747
+        ]
       }
     },
     {
@@ -11910,7 +11958,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8753308,
+          33.8501492
+        ]
       }
     },
     {
@@ -11948,7 +12000,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8238626,
+          33.7838414
+        ]
       }
     },
     {
@@ -11986,7 +12042,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8151841,
+          33.7778506
+        ]
       }
     },
     {
@@ -12024,7 +12084,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.7460787,
+          33.7357027
+        ]
       }
     },
     {
@@ -12062,7 +12126,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.7839408,
+          33.7481394
+        ]
       }
     },
     {
@@ -12100,7 +12168,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.7589523,
+          33.7292163
+        ]
       }
     },
     {
@@ -12138,7 +12210,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.861344,
+          33.7141308
+        ]
       }
     },
     {
@@ -12176,7 +12252,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.7961421,
+          33.7488152
+        ]
       }
     },
     {
@@ -12214,7 +12294,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.7541695,
+          33.7566395
+        ]
       }
     },
     {
@@ -12252,7 +12336,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8660574,
+          33.7130167
+        ]
       }
     },
     {
@@ -12290,7 +12378,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8047574,
+          33.7527313
+        ]
       }
     },
     {
@@ -12328,7 +12420,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8390727,
+          33.749379
+        ]
       }
     },
     {
@@ -12366,7 +12462,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8919764,
+          33.7691693
+        ]
       }
     },
     {
@@ -12404,7 +12504,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9130636,
+          33.7426747
+        ]
       }
     },
     {
@@ -12442,7 +12546,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9120458,
+          33.7216984
+        ]
       }
     },
     {
@@ -12480,7 +12588,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9277003,
+          33.7454789
+        ]
       }
     },
     {
@@ -12518,7 +12630,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9022037,
+          33.7416357
+        ]
       }
     },
     {
@@ -12556,7 +12672,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8996164,
+          33.7390806
+        ]
       }
     },
     {
@@ -12594,7 +12714,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9144734,
+          33.7467047
+        ]
       }
     },
     {
@@ -12632,7 +12756,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          11.045387,
+          33.7846034
+        ]
       }
     },
     {
@@ -12670,7 +12798,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9195198,
+          33.8489709
+        ]
       }
     },
     {
@@ -12708,7 +12840,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          11.0298305,
+          33.8201522
+        ]
       }
     },
     {
@@ -12746,7 +12882,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9952755,
+          33.8101336
+        ]
       }
     },
     {
@@ -12784,7 +12924,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          11.0031984,
+          33.8117992
+        ]
       }
     },
     {
@@ -12824,7 +12968,11 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "lat": 33.781635132640794,
-        "lng": 10.942887238298052
+        "lng": 10.942887238298052,
+        "accessPoint": [
+          10.9429948,
+          33.7817256
+        ]
       }
     },
     {
@@ -12857,7 +13005,11 @@
         "Horaires": "",
         "Facebook": "",
         "Zone": "Midoun",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9653638,
+          33.8220467
+        ]
       }
     },
     {
@@ -12928,7 +13080,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8894177,
+          33.8683828
+        ]
       }
     },
     {
@@ -12966,7 +13122,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9316155,
+          33.7893161
+        ]
       }
     },
     {
@@ -13037,7 +13197,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.8410431,
+          33.8444094
+        ]
       }
     },
     {
@@ -13070,7 +13234,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.7887517,
+          33.817992
+        ]
       }
     },
     {
@@ -13103,7 +13271,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.7756004,
+          33.7579066
+        ]
       }
     },
     {
@@ -13136,7 +13308,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.8576307,
+          33.728538
+        ]
       }
     },
     {
@@ -13169,7 +13345,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9127823,
+          33.7468579
+        ]
       }
     },
     {
@@ -13202,7 +13382,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9096042,
+          33.7594699
+        ]
       }
     },
     {
@@ -13235,7 +13419,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9874171,
+          33.7969746
+        ]
       }
     },
     {
@@ -13268,7 +13456,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9432227,
+          33.77913
+        ]
       }
     },
     {
@@ -13301,7 +13493,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9839405,
+          33.8037737
+        ]
       }
     },
     {
@@ -13367,7 +13563,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9045768,
+          33.7994794
+        ]
       }
     },
     {
@@ -13433,7 +13633,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9607545,
+          33.7983216
+        ]
       }
     },
     {
@@ -13499,7 +13703,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.8933273,
+          33.838821
+        ]
       }
     },
     {
@@ -13631,7 +13839,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.962628,
+          33.8336208
+        ]
       }
     },
     {
@@ -13664,7 +13876,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9742805,
+          33.8371082
+        ]
       }
     },
     {
@@ -13697,7 +13913,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          11.044668842425413,
+          33.795991138264654
+        ]
       }
     },
     {
@@ -13763,7 +13983,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9680149,
+          33.7972706
+        ]
       }
     },
     {
@@ -13796,7 +14020,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9547786,
+          33.8172541
+        ]
       }
     },
     {
@@ -13829,7 +14057,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "accessPoint": [
+          10.9487136,
+          33.8169678
+        ]
       }
     },
     {
@@ -13854,7 +14086,11 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "accessPoint": [
+          10.9692276,
+          33.8216062
+        ]
       }
     },
     {
@@ -13892,7 +14128,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.7583725,
+          33.7619392
+        ]
       }
     },
     {
@@ -13930,7 +14170,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9052728,
+          33.7504551
+        ]
       }
     },
     {
@@ -13968,7 +14212,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9061766,
+          33.7375998
+        ]
       }
     },
     {
@@ -13992,7 +14240,11 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "accessPoint": [
+          10.8925053,
+          33.7136303
+        ]
       }
     },
     {
@@ -14030,7 +14282,11 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "accessPoint": [
+          10.9152254,
+          33.6990824
+        ]
       }
     },
     {
@@ -14055,7 +14311,11 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Guellala"
+        "Zone": "Guellala",
+        "accessPoint": [
+          10.9001415,
+          33.6864941
+        ]
       }
     },
     {
@@ -14079,7 +14339,11 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "accessPoint": [
+          10.8971011,
+          33.724263
+        ]
       }
     },
     {
@@ -14132,7 +14396,11 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "Source": "https://fr.wikipedia.org/wiki/Liste_de_synagogues_de_Tunisie",
-        "Zone": "Essouani"
+        "Zone": "Essouani",
+        "accessPoint": [
+          10.869018,
+          33.8653238
+        ]
       }
     },
     {
@@ -14158,7 +14426,11 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Essouani"
+        "Zone": "Essouani",
+        "accessPoint": [
+          10.8687426,
+          33.8648261
+        ]
       }
     },
     {
@@ -14182,7 +14454,11 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "Zone": "Essouani"
+        "Zone": "Essouani",
+        "accessPoint": [
+          10.8681467,
+          33.8638885
+        ]
       }
     },
     {
@@ -14247,7 +14523,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Erriadh"
+        "Zone": "Erriadh",
+        "accessPoint": [
+          10.8499619,
+          33.8166336
+        ]
       }
     },
     {
@@ -14273,7 +14553,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "accessPoint": [
+          10.9205926,
+          33.6857115
+        ]
       }
     },
     {
@@ -14300,7 +14584,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Guellala"
+        "Zone": "Guellala",
+        "accessPoint": [
+          10.8583757,
+          33.7412149
+        ]
       }
     },
     {
@@ -15076,6 +15364,496 @@
           33.8795023
         ],
         "Zone": "Taourit"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8703033,
+          33.7294404
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Poterie d'art Guellala",
+        "Catégorie": "Artisanat",
+        "osm_ref": "node/3896346913",
+        "HW_ID": "HW-01KZH0VF3FD5H8KQVMQQD2F0AQ",
+        "Sous-type": "Poterie",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/tvw4QTaSUVTNgZud7",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.8700074,
+          33.7293154
+        ],
+        "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8708036,
+          33.7058435
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Mechouk",
+        "Nom du site arabe": "مشوك",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13431564714",
+        "HW_ID": "HW-01KZH0VF9VAZBE5NJ5FF14Z491",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Jalel n° 197 : « Mosquée Machouk. Aux environs de Fahmine. Mosquée ibadite wahbite complètement disparue. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 197 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://www.openstreetmap.org/node/13431564714",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8705929,
+          33.7058926
+        ],
+        "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9562029,
+          33.7454111
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Zaid",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1471849080",
+        "HW_ID": "HW-01KZH0VG6X030MZBBRD99HDS37",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 243 : « Mosquée Zaid. Bani Maaguel. Mosquée tour de guet en ruines. Ancienne. »\n\nVisible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 243 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "accessPoint": [
+          10.9560657,
+          33.7453627
+        ],
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0191725,
+          33.787813
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Puits",
+        "Catégorie": "Puits",
+        "osm_ref": "node/10982986304",
+        "HW_ID": "HW-01KZH0VGC4HNBW9X1Q86QBM701",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          11.0195478,
+          33.7879015
+        ],
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0006559,
+          33.8117452
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Menzel Mhiri",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/13143676039",
+        "HW_ID": "HW-01KZH0VGE871ZX0XJ2S7S7B1G7",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/C15Jz8A1oQqV47EJA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9819018,
+          33.7736234
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ruines de ferme",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/13161147260",
+        "HW_ID": "HW-01KZH0VGJK4RD1NQ9R2VKAK74T",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Visible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.981917,
+          33.7735274
+        ],
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0294895,
+          33.8019347
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Touiel",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/13298916639",
+        "HW_ID": "HW-01KZH0VGMDGNM6E16X7D6CC5SQ",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          11.0298252,
+          33.8012848
+        ],
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0179576,
+          33.796351
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Musée de l'automobile et de la moto",
+        "Catégorie": "Musée",
+        "osm_ref": "node/13354579859",
+        "HW_ID": "HW-01KZH0VGNBD05YX3SBXDBS5F8F",
+        "description": "Attenant à La Ferme de Lotos",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          11.017813,
+          33.7963546
+        ],
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9655866,
+          33.7731578
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Ammer",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/13505482885",
+        "HW_ID": "HW-01KZH0VGPBY3Z6VSBHVQ2GC11R",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Visible sur la photo satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.9657702,
+          33.7727862
+        ],
+        "Zone": "Beni Maaguel"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9637073,
+          33.8063497
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Puits",
+        "Catégorie": "Puits",
+        "osm_ref": "way/311017566",
+        "HW_ID": "HW-01KZH0VGQPSYNC5BMC32MQ1RTB",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.9640506,
+          33.8063981
+        ],
+        "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9640201,
+          33.807162
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Menzel Djerbien Typique",
+        "Catégorie": "Menzel",
+        "osm_ref": "way/311017561",
+        "HW_ID": "HW-01KZH0VGRHS0N5BECJTXM7C3DG",
+        "État": "Reconverti",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/nbWkftLCbaQrzbfs8",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-05",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.9639093,
+          33.8071308
+        ],
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9420032,
+          33.8220024
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ksar Ben Younes",
+        "Nom du site arabe": "قصر يونس بن يونس",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/427969891",
+        "HW_ID": "HW-01KZH0VGV1V7CM2RRF1P1RD70F",
+        "État": "Vestiges partiels",
+        "Accès": "Non visitable",
+        "info_gpx": "https://maps.app.goo.gl/rBYgVGFmajwYmw857",
+        "description": "Palais de campagne édifié entre 1797 et 1810 environ, à Sedghiane, aujourd'hui en ruines.\n\nIl appartient à l'ensemble des résidences de la notabilité djerbienne bâties dans ce secteur à la fin du XVIIIᵉ siècle, aux côtés du Ksar Hamida Ben Ayed, à un kilomètre, et du Dar Mohamed Ben Ayed.\n\nLe site est géré par l'Association pour la sauvegarde du Palais Ben Ayed\nL'accès au site est interdit !",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.9418624,
+          33.8218206
+        ],
+        "Zone": "Sedghaiane"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9478571,
+          33.8171906
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Palais Hamida Ben Ayed",
+        "Nom du site arabe": "قصر حميدة بن عياد",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/990324829",
+        "HW_ID": "HW-01KZH0VGYZGDT8WS2EBHAK5JS6",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Palais de campagne de la famille Ben Ayed, à Sedghiane — autrefois chef-lieu de l'île.\nBâti au XVIIIᵉ siècle pour Hamida Ben Ayed, caïd de Djerba et personnage influent\nsous le règne de Hammouda Pacha.\n\nIl fit appel à des maîtres maçons italiens et à des décorateurs marocains aux côtés\ndes artisans tunisiens. L'architecture remploie des colonnes romaines associées à\ndes arcades ottomanes ; la décoration recourt aux faïences de Guellala, et une salle\nconserve un plafond de bois sculpté et peint.\n\nEn grande partie en ruines aujourd'hui, le palais fait l'objet d'une association\nqui œuvre à sa restauration. Il est classé monument historique depuis le 4 juillet 2016.\n\nVisible sur la vue satellite\nAttention, l'accès au site est interdit !",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "https://fr.wikipedia.org/wiki/Cedriane#Ksar_Ben_Ayed\nhttp://palaisbenayed.com/",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.9476458,
+          33.8171171
+        ],
+        "Zone": "Sedghaiane"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0236934,
+          33.8093837
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Trojjete - Fours à chaux historiques",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/1454983536",
+        "HW_ID": "HW-01KZH0VHMPH90M84WP3VQJ9QSA",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          11.0235948,
+          33.8091429
+        ],
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.957582,
+          33.8032921
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ksar Soliman Ben Ayed",
+        "Nom du site arabe": "قصر سليمان بن عياد",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/1499816317",
+        "HW_ID": "HW-01KZH0VHS09RCYGHH8W8NWSK2M",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Résidence aristocratique de campagne édifiée vers 1810 par la famille Ben Ayed, à Mahboubine. Les Ben Ayed, originaires de Djerba, appartenaient à la notabilité tunisoise du makhzen beylical et ont donné plusieurs gouverneurs à l'île ; ils y possédaient plusieurs demeures, dont le Ksar Hamida à Sedghiane et le Dar Mohamed à Khazroun.\n\nLe bâtiment est aujourd'hui abandonné et en ruines.\n\nVisible sur la vue satellite\nAttention, il est interdit de pénétrer sur le site !",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.957836,
+          33.8031216
+        ],
+        "Zone": "El Mahboubine"
       }
     }
   ]
