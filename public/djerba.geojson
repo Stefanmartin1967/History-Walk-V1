@@ -16044,6 +16044,35 @@
         "HW_ID": "HW-01M1RZZWS6P3KWET3E89M1AXFK",
         "Zone": "Sedghaiane"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.872485,
+          33.846652
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Telbi",
+        "Catégorie": "Mosquée",
+        "description": "Jalel n° 123 : « Mosquée Telbi dite Touil. Quartier Tahrizit à Oualegh. Mosquée ibadite wahbite totalement disparue. 10è siècle de l'hégire.16 è siècle ap.J.C »\nAppelée Ettalbi - Ben Salah sur OSM, où elle est relevée comme site archéologique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 123 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "node/13776137055",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-05",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1S0GEHT2KB68NGK9HXA6JDY",
+        "Zone": "Oualeg"
+      }
     }
   ]
 }
