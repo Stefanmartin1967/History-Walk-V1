@@ -103,6 +103,32 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
  * et les fichiers sources hébergés sur GitHub (`.geojson` et `circuits.json`).
  * Le résultat met à jour la variable globale `diffData` exportée par ce module.
  */
+// Circuits que l'app a supprimés DU SERVEUR pendant cette session (onglet
+// Nettoyage : GPX + entrée d'index, écritures confirmées par l'API Contents).
+//
+// Pourquoi ce filtre existe (04/09/2026) : la relecture de l'index passe par
+// raw.githubusercontent, qui peut encore servir la version d'AVANT l'écriture
+// pendant quelques secondes. Le diff comparait alors un local à jour à un
+// remote en retard et signalait une « SUPPRESSION » pour un circuit déjà
+// parti ; « Tout publier » poussait ensuite des commits vides. Reproduit en
+// preview : relecture à jour → 0 diff ; relecture périmée → « Tout publier 1 ».
+//
+// On fait donc confiance à notre propre écriture confirmée plutôt qu'à une
+// lecture qui peut retarder — même raisonnement que `deletedOfficialCircuitIds`
+// (circuit-deletion-state.js), avec une durée de vie plus courte : ce Set est
+// vidé au rechargement de la page, quand le CDN a rattrapé depuis longtemps.
+const _serverDeletedCircuitIds = new Set();
+
+/** @param {string|number} id Circuit dont la suppression serveur est confirmée. */
+export function noteServerDeletedCircuit(id) {
+    _serverDeletedCircuitIds.add(String(id));
+}
+
+/** Test-only : remet le filtre à zéro entre deux cas. */
+export function _resetServerDeletedCircuits() {
+    _serverDeletedCircuitIds.clear();
+}
+
 export async function prepareDiffData(adminDraft) {
     let originalFeatures = [];
     let remoteCircuits = [];
@@ -136,6 +162,12 @@ export async function prepareDiffData(adminDraft) {
         // traiterait ce [] comme « le dépôt est vide » et purgerait à tort toute
         // suppression en attente (cf. commentaire sur diffData.fetchFailed plus haut).
         diffData.fetchFailed = true;
+    }
+
+    // Voir _serverDeletedCircuitIds : une relecture en retard listerait encore
+    // un circuit que l'app vient de supprimer du serveur.
+    if (Array.isArray(remoteCircuits) && _serverDeletedCircuitIds.size > 0) {
+        remoteCircuits = remoteCircuits.filter(r => !_serverDeletedCircuitIds.has(String(r.id)));
     }
 
     diffData.pois = [];
@@ -354,7 +386,7 @@ export async function prepareDiffData(adminDraft) {
             if (local.name !== remote.name) changes.push({ key: 'Nom', old: remote.name, new: local.name });
 
             // PAS de comparaison de DESCRIPTION : elle ne fait pas l'aller-retour
-            // via le pipeline GPX → index. generate-circuit-index.js lit le <desc>
+            // via le pipeline GPX → index. Le format d'index lit le <desc>
             // des <metadata> du GPX, hardcodé par generateGPXString à la constante
             // « Circuit généré par History Walk. » → l'index distant porte TOUJOURS
             // cette chaîne. En local, circuit-actions.js appose la signature
@@ -365,8 +397,9 @@ export async function prepareDiffData(adminDraft) {
             // n'étant pas un champ publiable côté circuit, on ne la diff pas.
 
             // Comparaison des étapes (ordre + contenu), sur poiIds DÉDOUBLONNÉS.
-            // L'index distant est régénéré par generate-circuit-index.js qui
-            // dédoublonne les POIs (Set) → un circuit en BOUCLE (étape 1 = étape
+            // L'index distant porte des poiIds dédoublonnés (Set), aussi bien
+            // écrit par l'app que régénéré par generate-circuit-index.js
+            // → un circuit en BOUCLE (étape 1 = étape
             // N, ex. retour au point de départ) a N poiIds en local mais N-1
             // dans l'index. Sans dédoublonnage, le diff signalerait à tort une
             // « modification » permanente sur tout circuit en boucle (bug

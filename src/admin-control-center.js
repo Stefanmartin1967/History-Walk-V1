@@ -15,14 +15,19 @@ import { uploadPhotoForPoi } from './photo-service.js';
 
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, purgeOrphanPendingCircuits, diffData } from './admin-diff-engine.js';
-import { openControlCenterModal, renderTab, closeCCModal } from './admin-control-ui.js';
+import { openControlCenterModal, renderTab, closeCCModal, syncFooterAndNavCount } from './admin-control-ui.js';
 
 /**
  * Construit l'entrée d'index circuit (circuits/<map>.json) à partir d'un circuit
- * local + ses features POI résolues. Doit matcher le format produit par
- * scripts/generate-circuit-index.js (l'Action update-circuits.yml régénère
- * l'index canonique ; cette version client donne une cohérence immédiate, et
- * l'Action reconfirme — idempotent). Champs alignés sur le script :
+ * local + ses features POI résolues.
+ *
+ * **L'app est seule à écrire l'index** (`circuits/<map>.json`) depuis le
+ * 05/09/2026 : l'Action `update-circuits.yml`, qui le régénérait après coup,
+ * était morte depuis le 25/05/2026 et a été retirée. Le format reste aligné sur
+ * `scripts/generate-circuit-index.js` (devenu un outil de réparation MANUEL,
+ * `npm run update-circuits`) pour qu'une régénération complète ne produise
+ * aucun diff — alignement verrouillé par `tests/circuit-index-entry.test.js`.
+ * Champs alignés sur le script :
  *  - distance : Haversine sur realTrack /1000, "X.X km" (getRealDistance = même calcul)
  *  - zone : Zone du 1er POI (le script fait pareil en priorité 1)
  *  - description : constante (le script lit le <desc> de metadata, hardcodé par generateGPXString)
@@ -32,7 +37,7 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
     const distance = (getRealDistance(circuit) / 1000).toFixed(1) + ' km';
     // poiIds dédoublonnés (1re occurrence) pour matcher generate-circuit-index.js
     // (qui dédoublonne via Set). Sinon un circuit en boucle aurait des poiIds
-    // différents entre l'index client et celui régénéré par l'Action.
+    // différents entre l'index écrit par l'app et celui d'une régénération.
     const poiIds = [...new Set(circuit.poiIds || [])];
     const entry = {
         id: circuit.id,
@@ -77,6 +82,20 @@ export async function initAdminControlCenter() {
     // l'information dans adminDraft immédiatement (sans attendre reconcileLocalChanges).
     eventBus.on('admin:poi-edited', ({ id, type }) => {
         addToDraft('poi', id, { type });
+    });
+
+    // L'onglet Nettoyage écrit DIRECTEMENT sur le serveur (GPX + index), sans
+    // passer par le brouillon. Or le diff n'est calculé qu'à l'ouverture du CC :
+    // sans ce recalcul, le Tableau de bord gardait l'état d'avant la
+    // suppression. Le moteur de diff a déjà été prévenu (noteServerDeletedCircuit)
+    // pour qu'une relecture d'index en retard ne ressuscite pas le circuit.
+    eventBus.on('admin:circuit-server-deleted', async () => {
+        try {
+            await prepareDiffAndPurge();
+            syncFooterAndNavCount(diffData);
+        } catch (e) {
+            console.warn('[CC] recalcul du diff après suppression serveur échoué:', e);
+        }
     });
 }
 
@@ -727,9 +746,14 @@ async function publishChanges() {
         // (seulement les suppressions) — le bouton manuel « Upload fichier » était
         // le contournement. Ici on commit le GPX ET on met à jour l'index
         // circuits/<map>.json directement → cohérence immédiate (plus de
-        // transitoire ~40s où le CC re-flague le circuit). L'Action
-        // update-circuits.yml régénère ensuite l'index canonique depuis les GPX
-        // (idempotent) = filet de sécurité + source de vérité finale.
+        // transitoire ~40s où le CC re-flague le circuit).
+        //
+        // ⚠️ Ce bloc est le SEUL écrivain de l'index côté publication : il n'y a
+        // plus de filet automatique derrière. Le commentaire précédent annonçait
+        // que l'Action `update-circuits.yml` reconfirmait l'index — c'était FAUX
+        // depuis le 25/05/2026 (son push sur `main` protégée était rejeté à tous
+        // les coups), et le workflow a été retiré le 05/09/2026. Le seul repli
+        // est manuel : `npm run update-circuits` en local, puis commit.
         const circuitChanges = diffData.circuits || [];
         if (circuitChanges.length > 0) {
             try {
@@ -760,9 +784,16 @@ async function publishChanges() {
                             try { await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, `public/circuits/${entry.file}`, `feat(circuit): Suppression "${c.name}"`); }
                             catch (e) { console.warn('[CC] suppression GPX échec:', c.name, e); }
                         }
+                        // `indexDirty` seulement si l'entrée était VRAIMENT là.
+                        // Sinon (circuit déjà retiré de l'index — suppression faite
+                        // depuis l'onglet Nettoyage, ou diff calculé sur une
+                        // relecture en retard) on réécrivait un index identique :
+                        // commit vide + run CI pour rien, à chaque publication
+                        // (4 observés le 04/09/2026).
+                        const before = index.length;
                         index = index.filter(e => String(e.id) !== String(c.id));
+                        if (index.length !== before) indexDirty = true;
                         publishedDeletions.push(String(c.id));
-                        indexDirty = true;
                         continue;
                     }
 

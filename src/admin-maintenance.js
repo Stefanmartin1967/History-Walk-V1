@@ -4,6 +4,7 @@ import { getStoredToken, deleteFileFromGitHub, uploadFileToGitHub } from './gith
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { deleteCircuitById, restoreCircuit } from './database.js';
 import { setOfficialCircuitDeleted } from './circuit-deletion-state.js';
+import { noteServerDeletedCircuit } from './admin-diff-engine.js';
 import { eventBus } from './events.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -246,8 +247,8 @@ async function handlePurgeLocal(id, container) {
  *
  * Historiquement (jusqu'au 04/09/2026) cet écran ne supprimait que le fichier
  * brut et comptait sur l'Action `update-circuits.yml` pour régénérer l'index.
- * Ce bot est mort depuis le 25/05/2026 (push rejeté sur branche protégée) : le
- * GPX partait, l'entrée d'index restait. Conséquences observées en série :
+ * Ce bot était mort depuis le 25/05/2026 (push rejeté sur branche protégée) et a
+ * été retiré le 05/09/2026 : le GPX partait, l'entrée d'index restait. Conséquences observées en série :
  *   - l'item restait affiché à l'identique dans cette liste (elle est construite
  *     depuis l'index, pas depuis le contenu réel du dossier) → l'admin
  *     recliquait, en boucle, sans jamais voir le circuit disparaître ;
@@ -326,6 +327,17 @@ async function handleDeleteClick(id, path, name, container) {
 
         if (String(state.activeCircuitId) === String(id)) eventBus.emit('circuit:clear', false);
         eventBus.emit('circuit:list-updated');
+
+        // 5. Le diff du CC n'est calculé qu'à l'ouverture de la modale : après
+        //    une écriture serveur directe comme celle-ci, il est périmé par
+        //    construction. On signale la suppression au moteur de diff (pour
+        //    qu'une relecture en retard ne ressuscite pas le circuit) puis on
+        //    demande le recalcul. L'événement évite d'importer
+        //    admin-control-center ici — ce serait un cycle
+        //    (control-center → control-ui → maintenance), même patron que
+        //    `admin:poi-edited`.
+        noteServerDeletedCircuit(id);
+        eventBus.emit('admin:circuit-server-deleted', String(id));
 
         showToast(
             gpxMissing

@@ -37,6 +37,7 @@ const H = vi.hoisted(() => {
         deleteFileFromGitHub: vi.fn(),
         uploadFileToGitHub: vi.fn(),
         setOfficialCircuitDeleted: vi.fn(async () => []),
+        noteServerDeletedCircuit: vi.fn(),
         showConfirm: vi.fn(async () => true),
         showToast: vi.fn(),
         emit: vi.fn(),
@@ -44,7 +45,8 @@ const H = vi.hoisted(() => {
 });
 const {
     state, setOfficialCircuits, fetchWithTimeout, deleteFileFromGitHub,
-    uploadFileToGitHub, setOfficialCircuitDeleted, showConfirm, showToast, emit,
+    uploadFileToGitHub, setOfficialCircuitDeleted, noteServerDeletedCircuit,
+    showConfirm, showToast, emit,
 } = H;
 
 vi.mock('../src/state.js', () => ({
@@ -61,6 +63,9 @@ vi.mock('../src/github-sync.js', () => ({
 vi.mock('../src/database.js', () => ({ deleteCircuitById: vi.fn(), restoreCircuit: vi.fn() }));
 vi.mock('../src/circuit-deletion-state.js', () => ({
     setOfficialCircuitDeleted: H.setOfficialCircuitDeleted,
+}));
+vi.mock('../src/admin-diff-engine.js', () => ({
+    noteServerDeletedCircuit: H.noteServerDeletedCircuit,
 }));
 vi.mock('../src/events.js', () => ({ eventBus: { emit: H.emit, on: vi.fn() } }));
 vi.mock('../src/toast.js', () => ({ showToast: H.showToast }));
@@ -183,6 +188,29 @@ describe('Nettoyage — suppression complète', () => {
         expect(setOfficialCircuits).toHaveBeenCalledWith([{ id: 'HW-2', name: 'Circuit B' }]);
         expect(setOfficialCircuitDeleted).toHaveBeenCalledWith('HW-1', false);
         expect(emit).toHaveBeenCalledWith('circuit:list-updated');
+    });
+
+    it('prévient le moteur de diff et demande son recalcul', async () => {
+        const container = await renderServerView();
+        container.querySelector('[data-id="HW-1"]').click();
+
+        await vi.waitFor(() => expect(uploadFileToGitHub).toHaveBeenCalled());
+        // Sans ce signal, une relecture d'index en retard ferait réapparaître le
+        // circuit en « SUPPRESSION » et « Tout publier » pousserait un commit vide.
+        expect(noteServerDeletedCircuit).toHaveBeenCalledWith('HW-1');
+        expect(emit).toHaveBeenCalledWith('admin:circuit-server-deleted', 'HW-1');
+    });
+
+    it('ne prévient PAS le moteur de diff si l’écriture a échoué', async () => {
+        const container = await renderServerView();
+        fetchWithTimeout.mockResolvedValue({ ok: false, status: 500 });
+        container.querySelector('[data-id="HW-1"]').click();
+
+        await vi.waitFor(() => expect(showToast).toHaveBeenCalledWith(
+            expect.stringContaining('Erreur'), 'error'
+        ));
+        expect(noteServerDeletedCircuit).not.toHaveBeenCalled();
+        expect(emit).not.toHaveBeenCalledWith('admin:circuit-server-deleted', 'HW-1');
     });
 
     it('ne touche à rien si l’admin annule la confirmation', async () => {
