@@ -15519,8 +15519,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          11.0006559,
-          33.8117452
+          11.000708804316444,
+          33.81195357237801
         ]
       },
       "properties": {
@@ -15549,7 +15549,9 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "osmCheckedDate": null
+        "osmCheckedDate": null,
+        "lat": 33.81195357237801,
+        "lng": 11.000708804316444
       }
     },
     {
@@ -15830,7 +15832,7 @@
         "osm_ref": "way/1454983536",
         "HW_ID": "HW-01KZH0VHMPH90M84WP3VQJ9QSA",
         "État": "Ruine",
-        "Accès": "Non visitable",
+        "Accès": "Extérieur seulement",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
@@ -15844,7 +15846,17 @@
           11.0235948,
           33.8091429
         ],
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "description": "Visitable sur demande ?\nA confirmer",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -15879,6 +15891,99 @@
           33.8031216
         ],
         "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8594744,
+          33.7818458
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ruines",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/13437029139",
+        "HW_ID": "HW-01KZH0VEFVAG8X7AX0H7D0Z3XF",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.8587138,
+          33.7811782
+        ],
+        "Zone": "Guellala"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8214816,
+          33.7749813
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Bir Jebya ELMAY",
+        "Catégorie": "Puits",
+        "osm_ref": "node/13437079904",
+        "HW_ID": "HW-01KZH0VEJP087D87WAX2S3JPBS",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "accessPoint": [
+          10.8215855,
+          33.7750131
+        ],
+        "Zone": "Oued Ezzebib"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8811679,
+          33.7816988
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Ameur",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/13730181699",
+        "HW_ID": "HW-01KZH0VEMSN3ZF23432RQRV9K4",
+        "Sous-type": "Générique",
+        "description": "Jalel n° 165 : « Sidi Ameur. Oued Mgahar. Mosquée mausolée malékite à origine nokkarite ibadite en bon état, mais abandonnée. 992 de l'hégire. 1584 ap J.C. »\n\nVisible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "Source": "Répertoire J. Fathallah, n° 165 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "accessPoint": [
+          10.8812969,
+          33.7815535
+        ],
+        "Zone": "Robbana"
       }
     },
     {
