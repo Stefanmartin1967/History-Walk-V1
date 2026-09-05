@@ -172,9 +172,12 @@ async function hydrateHeroFromBlobs(poiId) {
  * travail » : ces images ne sont pas de Stefan et ne doivent jamais être prises
  * pour des photos publiables, même d'un coup d'œil distrait des mois plus tard.
  *
- * Le hero reste en `.is-empty` : un clic doit toujours ouvrir l'ajout de vraies
- * photos, pas le viewer. Une photo de travail se consulte, elle ne se gère pas
- * depuis le terrain.
+ * Le hero reste en `.is-empty` (cadre pointillé), mais le clic ouvre le viewer
+ * sur ces photos-là (05/09/2026). Avant, il ouvrait la grille d'ajout : on
+ * affichait une photo qu'aucun geste ne permettait d'agrandir, alors que
+ * l'agrandir est tout l'intérêt (lire un panneau sur une capture, comparer un
+ * scan d'archive à une vue récente). L'ajout de vraies photos garde sa porte
+ * d'entrée propre — le kebab « Ajouter des photos », indépendant du hero.
  */
 async function hydrateHeroFromWorkPhotos(hero, poiId) {
     const paths = getWorkPhotosById(poiId);
@@ -192,6 +195,11 @@ async function hydrateHeroFromWorkPhotos(hero, poiId) {
     activeHeroObjectUrl = URL.createObjectURL(blob);
 
     hero.classList.add('has-work-photo');
+    // Le template pose aria-label="Ajouter une photo" : faux dès le repli, le
+    // clic ouvre le viewer. Sans ça un lecteur d'écran annonce l'inverse du geste.
+    hero.setAttribute('aria-label', paths.length > 1
+        ? `Voir les ${paths.length} photos de travail`
+        : 'Voir la photo de travail');
     hero.querySelector('.empty-icon')?.remove();
     hero.querySelector('.empty-label')?.remove();
 
@@ -446,18 +454,48 @@ async function openHeroViewer(poiId) {
     openPhotoViewer(urls, 0).finally(revoke);
 }
 
+// Ouvre le viewer sur les photos de travail (admin, lieu sans aucune vraie photo).
+// On charge TOUTES les références, pas seulement celle affichée par le hero : le
+// viewer est le seul endroit où deux clichés d'époques différentes se comparent
+// (scan d'archive vs vue récente), et le badge annonçait déjà « N photos de
+// travail » alors qu'une seule était atteignable.
+//
+// Une référence dont le blob revient `null` (jamais rapatriée sur cet appareil
+// ET hors-ligne) est sautée : on montre ce qu'on a plutôt que rien.
+async function openWorkPhotosViewer(poiId) {
+    const paths = getWorkPhotosById(poiId);
+    if (paths.length === 0) return;
+
+    const objectUrls = [];
+    for (const path of paths) {
+        const blob = await loadWorkPhotoBlob(path);
+        if (blob) objectUrls.push(URL.createObjectURL(blob));
+    }
+    if (objectUrls.length === 0) return;
+
+    const { openPhotoViewer } = await import('./ui-photo-viewer.js');
+    openPhotoViewer(objectUrls, 0)
+        .finally(() => objectUrls.forEach(u => URL.revokeObjectURL(u)));
+}
+
 function setupHeroClick(poiId) {
     const hero = document.getElementById('poi-hero');
     if (!hero) return;
-    // Hero AVEC photo → viewer de CONSULTATION. Hero VIDE (.is-clickable, F1) →
+    // Hero AVEC photo → viewer de CONSULTATION. Hero replié sur une photo de
+    // travail (admin) → viewer de ces photos-là. Hero VIDE (.is-clickable, F1) →
     // grille d'édition pour AJOUTER une photo (on ne consulte pas zéro photo).
-    // On teste .has-photo AU CLIC : hydrateHeroFromBlobs peut faire passer un
-    // hero is-empty → has-photo après le rendu.
+    // On teste les classes AU CLIC : hydrateHeroFromBlobs et
+    // hydrateHeroFromWorkPhotos font passer un hero is-empty → has-photo /
+    // has-work-photo APRÈS le rendu, donc après la pose de ce listener.
     if (!hero.classList.contains('has-photo') && !hero.classList.contains('is-clickable')) return;
     const handleOpen = async (e) => {
         if (e.target.closest('.poi-back-pill')) return;
         if (hero.classList.contains('has-photo')) {
             openHeroViewer(poiId);
+            return;
+        }
+        if (hero.classList.contains('has-work-photo')) {
+            await openWorkPhotosViewer(poiId);
             return;
         }
         const result = await openPhotoGrid(poiId);
