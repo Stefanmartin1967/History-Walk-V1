@@ -9016,14 +9016,14 @@
         "Zone": "Sedouikech",
         "Source": "Répertoire J. Fathallah, n° 311 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6Q8F3RTEJT1892FPNK",
-        "description": "Jalel n° 311 — « Sidi Marsoul « émissaire ». Côte de Castille. Poste de garde puis mosquée en ruines. Ancienne.",
+        "description": "Jalel n° 311 — « Sidi Marsoul « émissaire ». Côte de Castille. Poste de garde puis mosquée en ruines. Ancienne.\nVisible sur la vue satellite",
         "Sous-type": "",
         "État": "",
         "Accès": "",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "way/1315388209",
+        "osm_ref": "way/1153906033",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
@@ -9032,7 +9032,7 @@
         "introuvableCarte": true,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true
@@ -10054,8 +10054,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.990437269210817,
-          33.75993763630792
+          11.006959684785162,
+          33.76172488185075
         ]
       },
       "properties": {
@@ -10076,19 +10076,21 @@
         "État": "Ruine",
         "Accès": "Non visitable",
         "Temps_minutes": 0,
-        "osm_ref": "node/13145539347",
+        "osm_ref": "way/1430067278",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "maps_ref": "https://maps.app.goo.gl/RMG17UXfbNwakTNr9",
+        "maps_ref": "",
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "lat": 33.76172488185075,
+        "lng": 11.006959684785162
       }
     },
     {
@@ -14830,7 +14832,7 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-31",
+        "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
@@ -14839,7 +14841,14 @@
           10.8929775,
           33.7036043
         ],
-        "Zone": "Guellala"
+        "Zone": "Guellala",
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "osm_ref": "node/13431574979",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -15854,6 +15863,74 @@
           33.8031216
         ],
         "Zone": "El Mahboubine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.029991,
+          33.830837
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Cheikh Sidi Slimen",
+        "Catégorie": "Site archéologique",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Rien de visible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/13153414206",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-05",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M1RTWE1A2DVRQ2T0ZPYTFKX3",
+        "accessPoint": [
+          11.0301267,
+          33.830298
+        ],
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.981690417145371,
+          33.77353139137039
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ruines de ferme",
+        "Catégorie": "Menzel",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Visible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1431861078",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-05",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M1RVGY4N1X8ATZFYQP8V5Y29",
+        "accessPoint": [
+          10.981917,
+          33.7735274
+        ],
+        "Zone": "Arkou"
       }
     }
   ]
