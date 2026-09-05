@@ -13011,7 +13011,12 @@
         "accessPoint": [
           10.9653638,
           33.8220467
-        ]
+        ],
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -15520,7 +15525,7 @@
       },
       "properties": {
         "Nom du site FR": "Menzel Mhiri",
-        "Catégorie": "Site archéologique",
+        "Catégorie": "Menzel",
         "osm_ref": "node/13143676039",
         "HW_ID": "HW-01KZH0VGE871ZX0XJ2S7S7B1G7",
         "Temps_minutes": 0,
@@ -15533,7 +15538,18 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -16071,7 +16087,43 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "HW_ID": "HW-01M1S0GEHT2KB68NGK9HXA6JDY",
+        "accessPoint": [
+          10.8723337,
+          33.8466338
+        ],
         "Zone": "Oualeg"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.974045,
+          33.822486
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Belhejjem.",
+        "Catégorie": "Mosquée",
+        "Sous-type": "Générique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "node/14097921544",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-05",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M1S13BK7M3Z8FMY2QQ34D7MT",
+        "accessPoint": [
+          10.9742945,
+          33.8224501
+        ],
+        "Zone": "Midoun"
       }
     }
   ]
