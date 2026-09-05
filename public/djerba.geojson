@@ -16256,12 +16256,20 @@
         "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false,
+        "jalelChecked": true,
         "HW_ID": "HW-01M1S4ZS19S44XV8SY9G273ACW",
         "accessPoint": [
           11.0370493,
           33.773128
         ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "description": "Jalel n° 306 : « Sidi Ali. Côte d'Arkou. Poste de garde, mausolée et lieu de culte en bon état. Ancien. »",
+        "Source": "Répertoire J. Fathallah, n° 306 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Arkou"
       }
     }
