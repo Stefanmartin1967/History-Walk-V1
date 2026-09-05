@@ -15870,6 +15870,41 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.8821892,
+          33.8524231
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Tafroujen",
+        "Nom du site arabe": "جامع تفروجين",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1487046869",
+        "HW_ID": "HW-01KZH0VF1NTB38DY6XPZ1837SQ",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "description": "Une mosquée médiévale abandonnée, dans l'arrière-pays d'Oualeg.\n\nL'édifice tient encore : murs de pierre à pleine hauteur, épaulés de contreforts saillants, et deux coupoles basses conservées. La partie centrale, plus haute, est rompue à son sommet.\n\nLe nom, تفروجين, est d'origine berbère, comme ceux de plusieurs mosquées anciennes de l'île — Tiouajen, Taghdimes, Tafartaset.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah ne la mentionne pas.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "accessPoint": [
+          10.8823161,
+          33.852222
+        ],
+        "Zone": "Oualeg"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           11.029991,
           33.830837
         ]
