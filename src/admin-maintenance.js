@@ -3,8 +3,7 @@ import { fetchWithTimeout } from './net.js';
 import { getStoredToken, deleteFileFromGitHub, uploadFileToGitHub } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { deleteCircuitById, restoreCircuit } from './database.js';
-import { setOfficialCircuitDeleted } from './circuit-deletion-state.js';
-import { noteServerDeletedCircuit } from './admin-diff-engine.js';
+import { setOfficialCircuitDeleted, noteServerDeletedCircuit, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { eventBus } from './events.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -32,7 +31,11 @@ async function fetchServerCircuits() {
     try {
         const response = await fetchWithTimeout(url);
         if (!response.ok) throw new Error("Impossible de charger circuits.json");
-        return await response.json();
+        // Relecture potentiellement en retard juste après une suppression : sans
+        // ce filtre, le circuit qu'on vient d'effacer restait listé et le
+        // compteur ne bougeait pas, jusqu'à un clic sur « Actualiser »
+        // (signalé par Stefan le 05/09/2026). Cf. circuit-deletion-state.
+        return withoutServerDeletedCircuits(await response.json());
     } catch (e) {
         console.error("Erreur fetch circuits:", e);
         showToast("Erreur lors du chargement de la liste serveur.", "error");

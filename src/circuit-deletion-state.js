@@ -49,3 +49,49 @@ export async function setOfficialCircuitDeleted(id, deleted) {
 export function isOfficialCircuitDeleted(id) {
     return (state.deletedOfficialCircuitIds || []).map(String).includes(String(id));
 }
+
+// ============================================================================
+// Suppressions serveur CONFIRMÉES pendant cette session
+// ============================================================================
+//
+// Distinct de `deletedOfficialCircuitIds` ci-dessus : là c'était une INTENTION
+// en attente de publication ; ici l'écriture est FAITE (GPX + entrée d'index
+// retirés via l'API Contents, appels attendus et réussis — onglet Nettoyage).
+//
+// Pourquoi ce filtre existe (05/09/2026) : l'index se relit via
+// raw.githubusercontent, qui peut encore servir la version d'AVANT l'écriture
+// pendant quelques secondes. Tout code qui compare l'index distant à l'état
+// local juste après une suppression voyait donc le circuit ressusciter —
+// symptômes observés : liste Nettoyage inchangée après suppression (04-05/09),
+// « SUPPRESSION » fantôme au Tableau de bord, commits vides à la publication.
+//
+// Règle : on fait confiance à notre propre écriture confirmée plutôt qu'à une
+// lecture qui peut retarder. Session-scopé — vidé au rechargement de la page,
+// quand le CDN a rattrapé depuis longtemps.
+//
+// ⚠️ TOUT nouveau lecteur de `circuits/<map>.json` doit passer par
+// `withoutServerDeletedCircuits()`. Les cinq actuels sont : le moteur de diff,
+// la liste Nettoyage, la publication, la restauration d'une suppression, et la
+// détection de doublon à la création.
+const _serverDeletedCircuitIds = new Set();
+
+/** @param {string|number} id Circuit dont la suppression serveur est confirmée. */
+export function noteServerDeletedCircuit(id) {
+    _serverDeletedCircuitIds.add(String(id));
+}
+
+/**
+ * Retire d'un index relu les circuits que l'app a déjà supprimés du serveur.
+ * @param {Array} list Index tel que relu (peut être périmé).
+ * @returns {Array} Index débarrassé des circuits déjà supprimés.
+ */
+export function withoutServerDeletedCircuits(list) {
+    if (!Array.isArray(list)) return [];
+    if (_serverDeletedCircuitIds.size === 0) return list;
+    return list.filter(c => !_serverDeletedCircuitIds.has(String(c && c.id)));
+}
+
+/** Test-only : remet le filtre à zéro entre deux cas. */
+export function _resetServerDeletedCircuits() {
+    _serverDeletedCircuitIds.clear();
+}

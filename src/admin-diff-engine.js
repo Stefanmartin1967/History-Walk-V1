@@ -3,6 +3,7 @@ import { fetchWithTimeout } from './net.js';
 import { getPoiId, getPoiName, isCandidate } from './utils.js';
 import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, savePoiData, deletePoiData } from './database.js';
+import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
 // Ce fichier concentre exclusivement la logique complexe de comparaison
@@ -103,32 +104,6 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
  * et les fichiers sources hébergés sur GitHub (`.geojson` et `circuits.json`).
  * Le résultat met à jour la variable globale `diffData` exportée par ce module.
  */
-// Circuits que l'app a supprimés DU SERVEUR pendant cette session (onglet
-// Nettoyage : GPX + entrée d'index, écritures confirmées par l'API Contents).
-//
-// Pourquoi ce filtre existe (04/09/2026) : la relecture de l'index passe par
-// raw.githubusercontent, qui peut encore servir la version d'AVANT l'écriture
-// pendant quelques secondes. Le diff comparait alors un local à jour à un
-// remote en retard et signalait une « SUPPRESSION » pour un circuit déjà
-// parti ; « Tout publier » poussait ensuite des commits vides. Reproduit en
-// preview : relecture à jour → 0 diff ; relecture périmée → « Tout publier 1 ».
-//
-// On fait donc confiance à notre propre écriture confirmée plutôt qu'à une
-// lecture qui peut retarder — même raisonnement que `deletedOfficialCircuitIds`
-// (circuit-deletion-state.js), avec une durée de vie plus courte : ce Set est
-// vidé au rechargement de la page, quand le CDN a rattrapé depuis longtemps.
-const _serverDeletedCircuitIds = new Set();
-
-/** @param {string|number} id Circuit dont la suppression serveur est confirmée. */
-export function noteServerDeletedCircuit(id) {
-    _serverDeletedCircuitIds.add(String(id));
-}
-
-/** Test-only : remet le filtre à zéro entre deux cas. */
-export function _resetServerDeletedCircuits() {
-    _serverDeletedCircuitIds.clear();
-}
-
 export async function prepareDiffData(adminDraft) {
     let originalFeatures = [];
     let remoteCircuits = [];
@@ -164,11 +139,9 @@ export async function prepareDiffData(adminDraft) {
         diffData.fetchFailed = true;
     }
 
-    // Voir _serverDeletedCircuitIds : une relecture en retard listerait encore
-    // un circuit que l'app vient de supprimer du serveur.
-    if (Array.isArray(remoteCircuits) && _serverDeletedCircuitIds.size > 0) {
-        remoteCircuits = remoteCircuits.filter(r => !_serverDeletedCircuitIds.has(String(r.id)));
-    }
+    // Une relecture en retard listerait encore un circuit que l'app vient de
+    // supprimer du serveur → « SUPPRESSION » fantôme. Cf. circuit-deletion-state.
+    remoteCircuits = withoutServerDeletedCircuits(remoteCircuits);
 
     diffData.pois = [];
     diffData.circuits = [];

@@ -1,5 +1,5 @@
 import { state, setUserData, setCustomFeatures, setOfficialCircuits } from './state.js';
-import { setOfficialCircuitDeleted, isOfficialCircuitDeleted } from './circuit-deletion-state.js';
+import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
@@ -457,10 +457,11 @@ export const processDecision = async (id, decision, scope = 'poi') => {
             try {
                 const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}?t=${Date.now()}`);
                 if (r.ok) {
-                    const remoteIndex = await r.json();
-                    const restored = Array.isArray(remoteIndex)
-                        ? remoteIndex.find(e => String(e.id) === String(id))
-                        : null;
+                    // Filtré : ne jamais « restaurer » depuis une relecture en retard
+                    // un circuit dont l'app a déjà supprimé le GPX — il reviendrait
+                    // dans la liste avec un fichier en 404.
+                    const remoteIndex = withoutServerDeletedCircuits(await r.json());
+                    const restored = remoteIndex.find(e => String(e.id) === String(id)) || null;
                     if (restored && !(state.officialCircuits || []).some(c => String(c.id) === String(id))) {
                         setOfficialCircuits([
                             ...(state.officialCircuits || []),
@@ -765,6 +766,10 @@ async function publishChanges() {
                     if (r.ok) index = await r.json();
                 } catch (_) { /* index vide si fetch échoue */ }
                 if (!Array.isArray(index)) index = [];
+                // Cet index est RÉÉCRIT plus bas : si la relecture est en retard,
+                // republier tel quel RESSUSCITERAIT un circuit déjà supprimé
+                // (son GPX, lui, est bien parti → entrée orpheline, 404 visiteur).
+                index = withoutServerDeletedCircuits(index);
 
                 const allLocal = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
                 let indexDirty = false;

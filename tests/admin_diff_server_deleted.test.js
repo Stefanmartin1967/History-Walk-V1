@@ -40,12 +40,11 @@ vi.mock('../src/database.js', () => ({
 }));
 
 import { state } from '../src/state.js';
+import { prepareDiffData, diffData } from '../src/admin-diff-engine.js';
 import {
-    prepareDiffData,
-    diffData,
     noteServerDeletedCircuit,
     _resetServerDeletedCircuits,
-} from '../src/admin-diff-engine.js';
+} from '../src/circuit-deletion-state.js';
 
 const REMOTE = [
     { id: 'HW-A', name: 'Circuit A', file: 'djerba/A.gpx', poiIds: ['p1'] },
