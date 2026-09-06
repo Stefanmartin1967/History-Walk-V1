@@ -102,16 +102,24 @@ export const HELP_COMPARE = {
 };
 
 /* === Thème complet « Préparer ses photos » (réutilisable : onboarding, etc.) === */
-// EN RÉSERVE, DÉLIBÉRÉMENT — ne pas le « câbler » en croyant réparer un oubli.
-// Câblage tenté puis retiré le 06/09/2026 (Stefan, PR #948) : il avait été branché
-// sur le parcours d'import, or son contenu utile (BLOC_POSITION) dit « activez la
-// localisation AVANT votre voyage » — au moment d'importer, le voyage est fini et
-// le conseil ne sert plus à rien. Sa conséquence pratique, elle, est déjà expliquée
-// là où elle compte : « À rattacher » dans GUIDE_IMPORT (section 2). BLOC_FORMAT est
-// par ailleurs déjà atteignable via HELP_FORMAT (« ? » de la modale d'import).
-// Ce thème attend donc une VRAIE surface d'avant-voyage (onboarding « avant de
-// partir ») ; tant qu'elle n'existe pas, il reste en réserve — d'où le @public.
-/** @public — réutilisé hors import photo (onboarding « avant de partir »). */
+// REDONDANT — ne pas le « câbler » en croyant réparer un oubli. Rien ici n'est
+// inatteignable pour l'utilisateur : BLOC_FORMAT est déjà servi par HELP_FORMAT
+// (« ? » Format de la modale d'import), et le conseil de BLOC_POSITION est déjà
+// délivré DEUX fois — `GUIDE_IMPORT.footnote` (« Astuce : activez la localisation
+// de votre appareil photo avant de partir ») et `HELP_HORS_POI` (« Sans position :
+// activez la localisation… »).
+//
+// Câblage tenté puis retiré le 06/09/2026 (PR #948) : Stefan l'a constaté dans
+// l'app, capture à l'appui. Leçon de méthode inscrite ici pour la prochaine fois :
+// avoir vérifié que l'identifiant BLOC_POSITION n'était réutilisé nulle part ne
+// prouvait PAS que son contenu était inaccessible — la même information était
+// rédigée deux fois ailleurs, en clair. Le code mort se raisonne sur des symboles ;
+// la couverture d'une information se vérifie en ouvrant l'app.
+//
+// Conservé pour l'instant (aucun coût : quelques lignes de données, pas de bundle
+// supplémentaire côté utilisateur). Suppression pure = option légitime le jour d'un
+// nettoyage — mais alors on le SUPPRIME, on ne le rebranche pas.
+/** @public — thème redondant conservé sciemment (cf. commentaire ci-dessus). */
 export const HELP_PREPARER = {
     title: 'Préparer ses photos',
     sections: [
