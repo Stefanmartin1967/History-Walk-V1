@@ -25,6 +25,7 @@ import {
     File, FilePlus, FileDown, FileText, FileEdit, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
+    Archive, // sauvegarde Complète (save-modal-ui) + carte Maintenance du CC (admin-maintenance)
     GitMerge, // fusion d'un candidat Scout dans le lieu qu'il double (poi-duplicate.js)
 
     // Carte & circuit
@@ -38,7 +39,7 @@ import {
 
     // Sécurité & statut
     ShieldAlert, ShieldCheck, ShieldOff, ShieldX,
-    AlertTriangle, Info, Bug, Key, KeyRound,
+    AlertTriangle, AlertCircle, Info, Bug, Key, KeyRound,
     Loader2, LoaderCircle,
 
     // Communication
@@ -94,6 +95,7 @@ export const appIcons = {
     File, FilePlus, FileDown, FileText, FileEdit, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
+    Archive,
     GitMerge, // fusion d'un candidat Scout dans le lieu qu'il double (poi-duplicate.js)
 
     Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation, Waypoints, Layers,
@@ -102,7 +104,7 @@ export const appIcons = {
     Mic, MicOff, Volume2, Play,
 
     ShieldAlert, ShieldCheck, ShieldOff, ShieldX,
-    AlertTriangle, Info, Bug, Key, KeyRound,
+    AlertTriangle, AlertCircle, Info, Bug, Key, KeyRound,
     Loader2, LoaderCircle,
 
     Mail, Github, Facebook, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,

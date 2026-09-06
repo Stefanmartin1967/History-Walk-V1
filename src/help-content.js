@@ -102,6 +102,15 @@ export const HELP_COMPARE = {
 };
 
 /* === Thème complet « Préparer ses photos » (réutilisable : onboarding, etc.) === */
+// EN RÉSERVE, DÉLIBÉRÉMENT — ne pas le « câbler » en croyant réparer un oubli.
+// Câblage tenté puis retiré le 06/09/2026 (Stefan, PR #948) : il avait été branché
+// sur le parcours d'import, or son contenu utile (BLOC_POSITION) dit « activez la
+// localisation AVANT votre voyage » — au moment d'importer, le voyage est fini et
+// le conseil ne sert plus à rien. Sa conséquence pratique, elle, est déjà expliquée
+// là où elle compte : « À rattacher » dans GUIDE_IMPORT (section 2). BLOC_FORMAT est
+// par ailleurs déjà atteignable via HELP_FORMAT (« ? » de la modale d'import).
+// Ce thème attend donc une VRAIE surface d'avant-voyage (onboarding « avant de
+// partir ») ; tant qu'elle n'existe pas, il reste en réserve — d'où le @public.
 /** @public — réutilisé hors import photo (onboarding « avant de partir »). */
 export const HELP_PREPARER = {
     title: 'Préparer ses photos',
