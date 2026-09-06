@@ -17,7 +17,7 @@ vi.mock('../src/lucide-icons.js', () => ({
 import { setupWelcomeActions } from '../src/welcome-actions.js';
 import { eventBus } from '../src/events.js';
 import { openHelpPanel } from '../src/help-popover.js';
-import { GUIDE_CIRCUIT, GUIDE_IMPORT } from '../src/help-content.js';
+import { GUIDE_CIRCUIT, GUIDE_IMPORT, HELP_PREPARER } from '../src/help-content.js';
 
 beforeEach(() => {
     document.body.innerHTML = '';
@@ -86,7 +86,7 @@ describe('welcome-actions — choix "create"', () => {
 });
 
 describe('welcome-actions — choix "photos"', () => {
-    it('ouvre le guide d\'import, puis lance #btn-import-photos à la FERMETURE', () => {
+    it('enchaîne « Préparer » → « Importer », puis lance #btn-import-photos à la FERMETURE du 2e', () => {
         const btn = document.createElement('button');
         btn.id = 'btn-import-photos';
         const clickSpy = vi.fn();
@@ -97,16 +97,28 @@ describe('welcome-actions — choix "photos"', () => {
         eventBus.emit('welcome:choice', { choice: 'photos' });
         expect(clickSpy).not.toHaveBeenCalled(); // pas avant le guide
 
+        // 1er maillon : « Préparer ses photos » (parcours découverte).
         vi.advanceTimersByTime(400);
         expect(openHelpPanel).toHaveBeenCalledTimes(1);
-        const [opts, trigger] = openHelpPanel.mock.calls[0];
-        expect(opts.title).toBe(GUIDE_IMPORT.title); // le guide d'import
-        expect(trigger).toBeNull();
-        expect(typeof opts.onClose).toBe('function');
-        expect(clickSpy).not.toHaveBeenCalled(); // toujours pas (guide ouvert)
+        const [prepOpts, prepTrigger] = openHelpPanel.mock.calls[0];
+        expect(prepOpts.title).toBe(HELP_PREPARER.title);
+        expect(prepTrigger).toBeNull();
+        expect(typeof prepOpts.onClose).toBe('function');
+        expect(clickSpy).not.toHaveBeenCalled();
 
-        opts.onClose();                  // l'utilisateur ferme le guide
-        expect(clickSpy).toHaveBeenCalled(); // → le sélecteur de photos se lance
+        // 2e maillon : sa fermeture ouvre le guide d'import — et SURTOUT ne
+        // lance pas encore le sélecteur (garantie d'origine de ce test).
+        prepOpts.onClose();
+        expect(openHelpPanel).toHaveBeenCalledTimes(2);
+        const [importOpts, importTrigger] = openHelpPanel.mock.calls[1];
+        expect(importOpts.title).toBe(GUIDE_IMPORT.title);
+        expect(importTrigger).toBeNull();
+        expect(typeof importOpts.onClose).toBe('function');
+        expect(clickSpy).not.toHaveBeenCalled();
+
+        // 3e maillon : la fermeture du guide d'import lance le sélecteur.
+        importOpts.onClose();
+        expect(clickSpy).toHaveBeenCalled();
     });
 
     it('ne plante pas si #btn-import-photos est absent', () => {

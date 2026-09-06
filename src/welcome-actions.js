@@ -14,11 +14,19 @@
 //   - discover : onglet Mes Circuits (état par défaut, l'utilisateur explore)
 //   - import   : onglet Mes Circuits (idem ; filtrage fin via le panneau Filtres)
 //   - create   : onglet Circuit + guide « Créer un circuit »
-//   - photos   : guide « Importer des photos », puis import à la fermeture
+//   - photos   : « Préparer ses photos », puis « Importer des photos », puis import
+//
+// Pourquoi « Préparer ses photos » EN AMONT du guide d'import (et seulement ici) :
+// ce parcours est l'entrée DÉCOUVERTE (la carte de l'écran d'accueil). Celui qui
+// la choisit n'a pas forcément de photos géolocalisées — or sans position, tout
+// l'import est vain : Heripia regroupe par lieu. Le guide d'import lui-même
+// renvoie à « Préparer ses photos » dans sa section 0, mais ce renvoi ne menait
+// nulle part tant que le thème n'était pas ouvrable. L'entrée EXPERT (menu Outils
+// → Importer) reste inchangée : elle ne montre aucun guide, par choix.
 
 import { eventBus } from './events.js';
 import { openHelpPanel, configureHelp } from './help-popover.js';
-import { GUIDE_CIRCUIT, GUIDE_IMPORT } from './help-content.js';
+import { GUIDE_CIRCUIT, GUIDE_IMPORT, HELP_PREPARER } from './help-content.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 // Le patron d'aide rend ses icônes via createIcons. Idempotent (déjà configuré
@@ -56,9 +64,16 @@ export function setupWelcomeActions() {
                 break;
 
             case 'photos':
-                // Guide d'import d'abord ; le sélecteur de photos se lance à la
-                // fermeture du guide.
-                openGuideAfterWelcome(GUIDE_IMPORT, () => clickIfPresent('#btn-import-photos'));
+                // Chaîne « préparer → importer → sélectionner ». Chaque maillon se
+                // déclenche à la FERMETURE du précédent : deux panneaux ne peuvent
+                // pas se superposer, et l'utilisateur qui ferme tout de suite n'est
+                // pas bloqué — il atterrit sur le sélecteur, comme avant.
+                openGuideAfterWelcome(HELP_PREPARER, () => {
+                    openHelpPanel(
+                        { ...GUIDE_IMPORT, onClose: () => clickIfPresent('#btn-import-photos') },
+                        null
+                    );
+                });
                 break;
 
             default:

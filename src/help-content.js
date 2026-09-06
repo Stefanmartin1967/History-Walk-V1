@@ -102,7 +102,11 @@ export const HELP_COMPARE = {
 };
 
 /* === Thème complet « Préparer ses photos » (réutilisable : onboarding, etc.) === */
-/** @public — réutilisé hors import photo (onboarding « avant de partir »). */
+// Consommé par welcome-actions (parcours découverte : ce thème s'ouvre AVANT le
+// guide d'import). BLOC_FORMAT est partagé avec HELP_FORMAT (« ? » de la modale
+// d'import) ; BLOC_POSITION ne sert qu'ici. Le tag @public
+// qui couvrait cet export tant qu'il dormait a été retiré au câblage — s'il redevient
+// orphelin un jour, knip doit le dire.
 export const HELP_PREPARER = {
     title: 'Préparer ses photos',
     sections: [
