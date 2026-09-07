@@ -202,7 +202,11 @@
 
 #btn-contrib-bmc:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(251, 176, 59, 0.4) !important;
+    /* Lueur tirée du MÊME token que le bouton (--hw-amber, cf. sa règle de base et
+       son border en color-mix). Elle était en #FBB03B codé en dur, soit un ambre
+       plus jaune que celui de la palette (--warn-500 #C2861E) : au survol, le halo
+       ne correspondait pas au bouton qu'il entourait. */
+    box-shadow: 0 6px 12px color-mix(in oklab, var(--hw-amber) 40%, transparent) !important;
     filter: brightness(1.05);
 }
 
@@ -216,18 +220,11 @@
     color: var(--brand) !important;
 }
 
-/* --- SIDEBAR BMC BUTTON --- */
-
-#btn-bmc-sidebar:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 10px rgba(251, 176, 59, 0.3) !important;
-    filter: brightness(1.05);
-}
-
-#btn-bmc-sidebar:active {
-    transform: translateY(0) !important;
-}
-/* --- TOPBAR BMC BUTTON (Soutenir le site) --- */
+/* (Règles #btn-bmc-sidebar retirées le 07/09/2026 : ce bouton n'existe nulle part
+   — ni dans index.html ni généré en JS. Même famille de fantôme que #btn-bmc,
+   retiré de ui.js en PR #953. Le CSS mort échappe à knip, qui ne lit pas les
+   sélecteurs.) */
+/* --- TOPBAR BMC BUTTON (Soutenir le projet) --- */
 #btn-bmc-topbar {
     background-color: var(--hw-amber-soft); /* tinte ambre theme-aware (discret) */
     color: var(--hw-amber);
