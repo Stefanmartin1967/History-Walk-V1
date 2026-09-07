@@ -35,6 +35,52 @@ describe('access-point — getAccessPointStatus', () => {
     });
 });
 
+describe('access-point — getAccessPointStatus : dérivation legacy (07/09/2026)', () => {
+    // Un POI qui porte un accessPoint mais AUCUN statut est un drapeau DÉJÀ POSÉ,
+    // pas un POI jamais évalué. Sans cette dérivation, un appareil neuf (statut
+    // = PERSONAL_KEY, jamais publié ; coordonnée = publiée) réinterrogeait
+    // Overpass pour 334 des 409 POI Djerba — mesuré sur le geojson du dépôt.
+    const AP = [10.95, 33.81];
+
+    it('drapeau publié + aucun statut → dérive "moved"', () => {
+        const f = { properties: { accessPoint: AP } };
+        expect(getAccessPointStatus(f)).toBe('moved');
+    });
+
+    it('drapeau dans l\'overlay userData + aucun statut → dérive "moved" aussi', () => {
+        const f = { properties: { userData: { accessPoint: AP } } };
+        expect(getAccessPointStatus(f)).toBe('moved');
+    });
+
+    it('AUCUN drapeau + aucun statut → reste undefined (POI jamais évalué)', () => {
+        expect(getAccessPointStatus({ properties: {} })).toBeUndefined();
+        expect(getAccessPointStatus({ properties: { accessPoint: null } })).toBeUndefined();
+    });
+
+    it('un statut explicite PRIME toujours sur la dérivation', () => {
+        // Le cas qui compte : 'failed' porteur d'un drapeau (possible depuis que
+        // 'failed' ne détruit plus les coordonnées) doit RESTER 'failed', sinon on
+        // perdrait le signal « à reprendre » en le déguisant en drapeau validé.
+        expect(getAccessPointStatus({
+            properties: { accessPoint: AP, userData: { accessPointStatus: 'failed' } },
+        })).toBe('failed');
+        expect(getAccessPointStatus({
+            properties: { accessPoint: AP, accessPointStatus: 'osm' },
+        })).toBe('osm');
+        expect(getAccessPointStatus({
+            properties: { accessPoint: AP, userData: { accessPointStatus: 'on-track' } },
+        })).toBe('on-track');
+    });
+
+    it('un accessPoint malformé ne déclenche pas la dérivation', () => {
+        // getAccessPoint valide [lon, lat] finis ; tout le reste vaut « pas de
+        // drapeau », donc pas de statut inventé.
+        for (const bad of [[], [1], ['a', 'b'], [NaN, 33], 'x', {}]) {
+            expect(getAccessPointStatus({ properties: { accessPoint: bad } })).toBeUndefined();
+        }
+    });
+});
+
 describe('access-point — ACCESS_POINT_THRESHOLD_M', () => {
     it('est une constante exportée à 10 m (cf. brief Design)', () => {
         expect(ACCESS_POINT_THRESHOLD_M).toBe(10);

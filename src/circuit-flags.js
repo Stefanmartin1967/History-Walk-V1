@@ -215,7 +215,11 @@ function ensureFlag(feature) {
     const ap = getAccessPoint(feature);
     if (!ap) return;
 
-    const status = getAccessPointStatus(feature) || 'moved';
+    // Plus de repli `|| 'moved'` ici depuis le 07/09/2026 : getAccessPointStatus
+    // dérive lui-même 'moved' quand un drapeau existe sans statut. Une seule
+    // source de vérité — c'est ce repli local, dupliqué ailleurs, qui avait laissé
+    // la passe conclure l'inverse (orange) sur les mêmes POI.
+    const status = getAccessPointStatus(feature);
     // Règle cadenas : préexistant en édition → rouge non-draggable. EXCEPTION en
     // focus « Éditer l'itinéraire » : on déverrouille pour laisser l'admin ajuster
     // où le circuit raccroche au réseau routable (validé 07/06 — risque de

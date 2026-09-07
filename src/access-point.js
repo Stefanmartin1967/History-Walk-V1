@@ -14,6 +14,7 @@
 // Cf. project_offroad_poi_track_snapping pour le rationale complet.
 import { state } from './state.js';
 import { getPoiId, updatePoiData } from './data.js';
+import { getAccessPoint } from './utils.js';
 import { getCachedNearestWay, setCachedNearestWay, savePoiData } from './database.js';
 import { nearestHighway } from './osm-overpass.js';
 import { schedulePush } from './gist-sync.js';
@@ -27,6 +28,36 @@ export const ACCESS_POINT_THRESHOLD_M = 10;
  * Récupère le status du drapeau pour un POI (lit overlay userData puis
  * properties, comme getPoiProp).
  *
+ * DÉRIVATION legacy — validée par Stefan le 07/09/2026 : un POI qui porte un
+ * `accessPoint` mais AUCUN statut n'est pas « jamais évalué », c'est un **drapeau
+ * déjà posé** → lu comme 'moved'.
+ *
+ * Pourquoi c'est nécessaire : `accessPointStatus` est une PERSONAL_KEY (cf.
+ * config.js) — il n'est JAMAIS publié, il ne vit que dans le userData local +
+ * Gist — alors que `accessPoint`, lui, EST publié. Mesuré le 07/09/2026 sur le
+ * geojson du dépôt : **334 des 409 POI Djerba portent une coordonnée de drapeau
+ * publiée, et 0 portent un statut**. Sur un appareil neuf (ou après un vidage de
+ * stockage), les 409 repassaient donc à `undefined` et la passe les réinterrogeait
+ * TOUS auprès d'Overpass — dont 334 pour redécouvrir ce que le geojson savait
+ * déjà, ~6 min 30 d'attente. Avec la dérivation : 75 requêtes.
+ *
+ * Ce n'est pas une règle nouvelle, c'est la fin d'une divergence : `circuit-flags`
+ * (`|| 'moved'`) et `access-point-editor` (`=== 'osm' ? 'osm' : 'moved'`)
+ * appliquaient DÉJÀ cette lecture ; seule la passe concluait l'inverse ('osm',
+ * orange) — un même drapeau legacy s'affichait vert dans la fiche et orange dans
+ * la passe. La dérivation vit ici, en lecture, pour qu'il n'y ait qu'une source.
+ *
+ * ⚠️ DÉRIVÉ, JAMAIS PERSISTÉ. Aucune écriture ne doit matérialiser ce 'moved' :
+ * ce serait 334 modifications en attente dans le CC, du bruit au diff et du Gist
+ * en plus — le genre d'écriture massive silencieuse qui a causé l'incident du
+ * 29-30/08/2026. La lecture suffit et ne coûte rien.
+ *
+ * ⚠️ LIMITE ASSUMÉE (Stefan, 07/09/2026) : un drapeau posé jadis automatiquement
+ * par Overpass ('osm') dont le statut s'est perdu sera lu 'moved', donc « posé à
+ * la main ». C'est faux pour cette sous-population, et indistinguable — plus aucune
+ * trace ne permet de les séparer. Conséquence mince (couleur du drapeau) et le POI
+ * reste listé dans la passe, donc révisable.
+ *
  * @param {object} feature - feature POI
  * @returns {'osm'|'moved'|'on-track'|'failed'|undefined}
  */
@@ -34,7 +65,10 @@ export function getAccessPointStatus(feature) {
     if (!feature) return undefined;
     const ud = feature.properties?.userData?.accessPointStatus;
     if (ud !== undefined) return ud;
-    return feature.properties?.accessPointStatus;
+    const published = feature.properties?.accessPointStatus;
+    if (published !== undefined) return published;
+    // Aucun statut nulle part : un drapeau présent vaut « déjà posé ».
+    return getAccessPoint(feature) ? 'moved' : undefined;
 }
 
 // Persistance commune aux deux écrivains ci-dessous : reflet mémoire + IDB + push.
