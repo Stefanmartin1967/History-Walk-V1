@@ -55,7 +55,7 @@ export function initializeDomReferences() {
         'btn-clear-circuit', 'close-circuit-panel-btn',
         // 'btn-legend' retiré : la Légende vit maintenant dans les contrôles
         // de carte Leaflet (cf. LegendControl dans map.js, PR harmonisation PC).
-        'btn-bmc', 'btn-tools-menu', 'btn-bmc-topbar'
+        'btn-tools-menu', 'btn-bmc-topbar'
     ];
     
     // Récupération sécurisée des éléments
@@ -122,12 +122,6 @@ export function initializeDomReferences() {
     // le bouton Corbeille n'existe plus dans le menu Outils. Corbeille
     // accessible désormais via le bouton « Corbeille (n) » de « Mes circuits »
     // — cf. PR1 dissolution Mon Espace, src/circuit-trash-ui.js.)
-
-    if (DOM.btnBmc) {
-        DOM.btnBmc.addEventListener('click', () => {
-            window.open('https://www.buymeacoffee.com/history_walk', '_blank');
-        });
-    }
 
     if (DOM.btnBmcTopbar) {
         DOM.btnBmcTopbar.addEventListener('click', () => {

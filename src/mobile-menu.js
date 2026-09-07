@@ -43,7 +43,7 @@ function computeSubtitles() {
         reset: 'Supprime carnet & circuits hors-ligne',
         theme: `Actuel : ${currentThemeLabel}`,
         names: `Actuel : ${currentNamesLabel}`,
-        bmc: 'Soutenir le projet',
+        bmc: 'Offrir un café sur Buy Me a Coffee',
         cc: 'Tableau de bord opérations',
         destSwitch: `Active : ${activeDestName}`,
     };
@@ -76,7 +76,7 @@ function buildSections(subs) {
         {
             label: 'Soutenir & à propos',
             items: [
-                { id: 'mob-action-bmc', ico: 'coffee', label: 'Offrir un café', sub: subs.bmc, variant: 'love' },
+                { id: 'mob-action-bmc', ico: 'coffee', label: 'Soutenir le projet', sub: subs.bmc, variant: 'love' },
                 { id: 'mob-action-facebook', ico: 'facebook', label: 'Page Facebook' },
                 { id: 'mob-action-legal-notice', ico: 'scale', label: 'Mentions légales' },
             ],
@@ -187,7 +187,20 @@ export function renderMobileMenu() {
         renderMobileMenu();
     });
     document.getElementById('mob-action-bmc')?.addEventListener('click', () => {
+        // `recordSupportClick` pose `hw_last_support_click`, que la modale de
+        // contribution consulte pour NE PLUS solliciter pendant 30 jours. Ce
+        // chemin mobile ne l'appelait pas : un utilisateur qui soutenait depuis
+        // le menu mobile continuait donc à se faire redemander.
+        //
+        // ⚠️ ORDRE VOLONTAIRE : `window.open` D'ABORD, de façon SYNCHRONE, dans la
+        // pile d'appel du clic. Le faire après l'import dynamique (comme le chemin
+        // PC de ui.js) le sort du geste utilisateur et l'expose au blocage de
+        // pop-up — risque réel sur mobile. L'enregistrement est secondaire : il
+        // suit, et son échec ne doit rien empêcher.
         window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+        import('./fileManager.js')
+            .then(({ recordSupportClick }) => recordSupportClick())
+            .catch(() => { /* sollicitation à nouveau dans 30 j au pire — sans gravité */ });
     });
     document.getElementById('mob-action-facebook')?.addEventListener('click', () => {
         window.open('https://www.facebook.com/profile.php?id=61592156811687', '_blank', 'noopener,noreferrer');
