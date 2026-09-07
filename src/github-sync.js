@@ -17,6 +17,7 @@
 
 import { getAppState, saveAppState } from './database.js';
 import { fetchWithTimeout } from './net.js';
+import { fileReadError } from './utils.js';
 
 const STORAGE_KEY_TOKEN = 'github_pat';
 const STORAGE_KEY_USERNAME = 'github_username';
@@ -186,7 +187,10 @@ function readFileAsBase64(file) {
             const base64String = reader.result.split(',')[1];
             resolve(base64String);
         };
-        reader.onerror = error => reject(error);
+        // On rejette l'ERREUR (reader.error), pas l'ÉVÉNEMENT — le paramètre du
+        // handler s'appelle « error » mais c'est un ProgressEvent, d'où l'ancien
+        // « [object ProgressEvent] » remonté jusqu'à l'utilisateur.
+        reader.onerror = () => reject(fileReadError(file, reader));
         reader.readAsDataURL(file);
     });
 }

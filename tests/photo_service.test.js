@@ -119,6 +119,56 @@ describe('compressImage — validation en entrée', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Non-régression « [object ProgressEvent] ». reader.onerror reçoit un
+// ProgressEvent, pas une erreur : le rejeter tel quel remontait jusqu'au toast
+// sous la forme « Erreur enregistrement : [object ProgressEvent] », sans dire ni
+// pourquoi ni QUEL fichier. On exerce le vrai chemin de compressImage avec un
+// FileReader qui échoue, pas seulement le helper.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('compressImage — échec de lecture du fichier', () => {
+    function withFailingReader(errName, fn) {
+        const Original = global.FileReader;
+        global.FileReader = class {
+            constructor() { this.error = null; this.onerror = null; this.onload = null; }
+            readAsDataURL() {
+                this.error = errName ? { name: errName } : null;
+                setTimeout(() => this.onerror && this.onerror(new Event('error')), 0);
+            }
+        };
+        return Promise.resolve(fn()).finally(() => { global.FileReader = Original; });
+    }
+
+    const img = () => new File(['x'], 'IMG_20260907_0042.jpg', { type: 'image/jpeg' });
+
+    it('rejette une Error — JAMAIS le ProgressEvent brut', async () => {
+        await withFailingReader('NotFoundError', async () => {
+            await expect(compressImage(img())).rejects.toBeInstanceOf(Error);
+            // Ce que voyait Stefan : `e.message || e` → « [object ProgressEvent] ».
+            await expect(compressImage(img())).rejects.not.toThrow(/\[object/);
+        });
+    });
+
+    it('nomme le fichier fautif et traduit la cause', async () => {
+        await withFailingReader('NotFoundError', async () => {
+            await expect(compressImage(img())).rejects.toThrow(/IMG_20260907_0042\.jpg/);
+            await expect(compressImage(img())).rejects.toThrow(/introuvable/i);
+        });
+    });
+
+    it('NotReadableError → mentionne le verrou / « en ligne uniquement »', async () => {
+        await withFailingReader('NotReadableError', async () => {
+            await expect(compressImage(img())).rejects.toThrow(/OneDrive|en ligne uniquement/i);
+        });
+    });
+
+    it('cause absente : nomme quand même le fichier', async () => {
+        await withFailingReader(null, async () => {
+            await expect(compressImage(img())).rejects.toThrow(/IMG_20260907_0042\.jpg/);
+        });
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Watermark admin — la chaîne complète compressImage→canvas.toBlob ne tourne pas
 // sous jsdom (toBlob non implémenté). Mais applyWatermark, elle, opère sur un ctx :
 // on la teste en isolation avec un ctx mocké. Le rendu visuel réel reste validé

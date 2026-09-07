@@ -10,6 +10,7 @@
 import { state } from './state.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
+import { fileReadError, imageDecodeError } from './utils.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. ÉTAT VIEWER
@@ -133,13 +134,15 @@ export function compressImage(file, targetMinSize = 1200, quality = 0.8, opts = 
         // Filet anti-blocage (hérité de l'ex-compressFileToBlob, fusion 11/06/2026) :
         // un FileReader/Image qui ne rend jamais la main ne doit pas geler
         // l'enregistrement d'un groupe entier de photos.
-        const timer = setTimeout(() => reject(new Error('Timeout compression image')), 15000);
+        const timer = setTimeout(() => reject(new Error(`Timeout compression image (« ${file?.name || 'fichier'} »)`)), 15000);
         const reader = new FileReader();
-        reader.onerror = (e) => { clearTimeout(timer); reject(e); };
+        // On rejette l'ERREUR (reader.error), pas l'ÉVÉNEMENT : rejeter l'event
+        // produisait « Erreur enregistrement : [object ProgressEvent] ».
+        reader.onerror = () => { clearTimeout(timer); reject(fileReadError(file, reader)); };
         reader.readAsDataURL(file);
         reader.onload = (event) => {
             const img = new Image();
-            img.onerror = (e) => { clearTimeout(timer); reject(e); };
+            img.onerror = () => { clearTimeout(timer); reject(imageDecodeError(file)); };
             img.src = event.target.result;
             img.onload = () => {
                 clearTimeout(timer);

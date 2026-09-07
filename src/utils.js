@@ -423,6 +423,65 @@ export async function getExifLocation(file) {
     }
 }
 
+/**
+ * Traduit l'échec d'un `FileReader` en Error exploitable par un toast.
+ *
+ * POURQUOI CE HELPER EXISTE : `reader.onerror` reçoit un **ProgressEvent**, pas une
+ * erreur. Le rejeter tel quel produisait « Erreur enregistrement : [object
+ * ProgressEvent] » — un message que personne ne peut diagnostiquer, et qui est
+ * revenu plusieurs fois chez Stefan sans que la cause soit jamais identifiable.
+ * La vraie erreur est dans `reader.error` (une DOMException qui porte un `.name`).
+ *
+ * Le NOM DU FICHIER compte autant que la cause : sur un import de 400 photos, la
+ * question suivante est toujours « laquelle ? », et le toast ne le disait pas non
+ * plus. Il est donc dans le message.
+ *
+ * Les deux causes observées chez Stefan sont traduites en langage d'action :
+ *  - `NotFoundError`    → le fichier a bougé/été renommé entre la sélection et
+ *                         l'enregistrement (typiquement digiKam qui retague ou
+ *                         réorganise pendant que la modale d'import est ouverte).
+ *  - `NotReadableError` → fichier verrouillé par une autre application, ou stocké
+ *                         « en ligne uniquement » (OneDrive/iCloud) et pas rapatrié.
+ *
+ * @param {File}   file   le fichier fautif (pour le nommer)
+ * @param {FileReader|DOMException|null} source le reader en échec, ou son `.error`
+ * @returns {Error}
+ */
+export function fileReadError(file, source) {
+    const nom = file?.name || 'ce fichier';
+    // Accepte aussi bien le reader que son .error, pour ne pas imposer l'un des deux
+    // aux appelants. Duck-typing volontaire plutôt qu'`instanceof FileReader` : ce
+    // helper est testé en environnement node, où FileReader n'existe pas — un
+    // instanceof y lèverait une ReferenceError. Un FileReader porte `.error` ; une
+    // DOMException, non.
+    const err = (source && typeof source === 'object' && 'error' in source) ? source.error : source;
+    switch (err?.name) {
+        case 'NotFoundError':
+            return new Error(`« ${nom} » est introuvable : il a été déplacé, renommé ou supprimé depuis que vous l'avez sélectionné. Refaites la sélection sans toucher aux fichiers entre-temps.`);
+        case 'NotReadableError':
+            return new Error(`« ${nom} » est illisible : le fichier est verrouillé par une autre application, ou stocké « en ligne uniquement » (OneDrive, iCloud) et pas encore téléchargé sur cet appareil.`);
+        case 'SecurityError':
+            return new Error(`« ${nom} » : accès refusé par le navigateur.`);
+        default:
+            // Cause inconnue : on donne quand même le fichier ET le nom technique,
+            // sans quoi on retomberait dans le message indiagnosticable d'origine.
+            return new Error(`Lecture impossible de « ${nom} »${err?.name ? ` (${err.name})` : ''}.`);
+    }
+}
+
+/**
+ * Jumelle de `fileReadError` pour un `<img>` qui n'arrive pas à décoder.
+ * Ici il n'y a AUCUNE erreur exploitable : `img.onerror` ne reçoit qu'un Event nu
+ * (`[object Event]`), le navigateur ne dit jamais pourquoi le décodage a échoué.
+ * Le fichier a donc été lu correctement — c'est son contenu qui pose problème.
+ * @param {File} file
+ * @returns {Error}
+ */
+export function imageDecodeError(file) {
+    const nom = file?.name || 'ce fichier';
+    return new Error(`« ${nom} » n'a pas pu être décodé comme image : fichier probablement corrompu, ou format non supporté par le navigateur.`);
+}
+
 export function resizeImage(file, maxWidth = 1280, quality = 0.9) {
     return new Promise((resolve, reject) => {
         // Timeout de sécurité (15s) pour éviter le blocage infini sur les grosses images
