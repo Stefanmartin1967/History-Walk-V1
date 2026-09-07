@@ -157,8 +157,9 @@ export function startAccessPointPlacement(feature) {
     _hadAccessPoint = !!existing;
     const start = existing ? [existing[1], existing[0]] : [poiLat, poiLon];
 
-    // Couleur initiale : orange si status='osm', vert sinon (legacy,
-    // 'moved', undefined, ou pas de drapeau). Le drag bascule en 'moved'.
+    // Couleur initiale : orange si status='osm', vert sinon ('moved', pas de
+    // drapeau, ou drapeau legacy — que getAccessPointStatus dérive lui-même en
+    // 'moved' depuis le 07/09/2026). Le drag bascule en 'moved'.
     const initialStatus = getAccessPointStatus(feature);
     _flagState = initialStatus === 'osm' ? 'osm' : 'moved';
 

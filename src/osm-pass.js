@@ -55,15 +55,12 @@ export function shouldIncludeInPass(feature) {
  *  - drapeau   : status osm OU moved
  *  - failed    : seulement les status='failed'
  *
- * ⚠️ Ces filtres raisonnent sur le STATUT, qui n'est qu'un PROXY de « a un
- * drapeau » — pas une garantie. Un POI legacy (status `undefined`) peut porter un
- * accessPoint hérité et apparaître malgré tout sous « sans drapeau » ; c'est vrai
- * depuis toujours, et un peu plus fréquent depuis que 'failed' ne détruit plus les
- * coordonnées existantes (cf. writeAccessPointStatusOnly dans access-point.js).
- * L'AFFICHAGE, lui, est juste : `setupCurrentPoi` lit la vraie coordonnée via
- * getAccessPoint, donc un drapeau conservé se voit bien sur la carte. Si on veut
- * un jour aligner les libellés, tester `getAccessPoint(it.feature)` plutôt que le
- * statut — changement de comportement, donc PR dédiée.
+ * Ces filtres raisonnent sur le STATUT. Ils sont redevenus honnêtes le 07/09/2026 :
+ * `getAccessPointStatus` dérive 'moved' pour un POI qui porte un drapeau sans
+ * statut, donc un legacy n'apparaît plus sous « Sans drapeau ». Reste vrai qu'un
+ * 'failed' peut porter un drapeau (depuis que 'failed' ne détruit plus les
+ * coordonnées, cf. writeAccessPointStatusOnly) — c'est voulu : il est classé par
+ * son échec, qui est l'information utile ici.
  */
 export function filterItems(items, filter, search) {
     const s = (search || '').trim().toLowerCase();
