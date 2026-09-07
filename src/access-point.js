@@ -37,21 +37,10 @@ export function getAccessPointStatus(feature) {
     return feature.properties?.accessPointStatus;
 }
 
-// Écriture atomique (accessPoint + accessPointStatus) dans userData + IDB.
-// Ne passe PAS par updatePoiData (qui showToast à chaque appel et serait
-// appelé 2× ici). Pré-pose = silencieuse par design.
-async function writeAccessPointSilent(poiId, coords, status) {
-    if (!state.userData[poiId]) state.userData[poiId] = {};
-    if (coords === null) {
-        // 'on-track' / 'failed' → on retire un éventuel accessPoint legacy.
-        // null (et pas undefined) pour primer sur le patrimoine publié, cf.
-        // pattern existant dans onErase de access-point-editor.
-        state.userData[poiId].accessPoint = null;
-    } else {
-        state.userData[poiId].accessPoint = coords;
-    }
-    state.userData[poiId].accessPointStatus = status;
-
+// Persistance commune aux deux écrivains ci-dessous : reflet mémoire + IDB + push.
+// Ne passe PAS par updatePoiData (qui showToast à chaque appel et serait appelé
+// 2× ici). Pré-pose = silencieuse par design.
+async function persistAccessPointUserData(poiId) {
     // Reflet dans le feature en mémoire (pour le rendu immédiat).
     const feature = state.loadedFeatures?.find(f => getPoiId(f) === poiId);
     if (feature) feature.properties.userData = state.userData[poiId];
@@ -61,6 +50,44 @@ async function writeAccessPointSilent(poiId, coords, status) {
     schedulePush();
 }
 
+// Écriture atomique (accessPoint + accessPointStatus) dans userData + IDB.
+// Réservée aux CONCLUSIONS : 'osm' (coords) et 'on-track' (null).
+async function writeAccessPointSilent(poiId, coords, status) {
+    if (!state.userData[poiId]) state.userData[poiId] = {};
+    if (coords === null) {
+        // 'on-track' → on retire un éventuel accessPoint legacy : le POI est sur
+        // la voie, un drapeau n'a plus d'objet. null (et pas undefined) pour primer
+        // sur le patrimoine publié, cf. pattern existant dans onErase de
+        // access-point-editor.
+        state.userData[poiId].accessPoint = null;
+    } else {
+        state.userData[poiId].accessPoint = coords;
+    }
+    state.userData[poiId].accessPointStatus = status;
+    await persistAccessPointUserData(poiId);
+}
+
+// Écrit le STATUT SEUL, sans toucher aux coordonnées. Réservé aux cas « on ne sait
+// pas » — c'est-à-dire 'failed'.
+//
+// POURQUOI (incident du 29-30/08/2026, 3 miroirs Overpass instables) : la passe
+// évalue automatiquement tout POI au statut `undefined` (legacy, jamais catégorisé)
+// et écrivait alors `accessPoint = null` sur simple échec réseau. Un POI qui portait
+// un drapeau legacy — une VRAIE coordonnée, souvent posée à la main — le perdait
+// donc parce qu'Overpass était tombé, sans confirmation ni toast (la passe est
+// silencieuse par design). 22 modifications de ce type avaient été repérées dans le
+// panneau Modifications et annulées de justesse avant publication.
+//
+// Le principe : 'failed' signifie « à reprendre », pas « il n'y a rien ». Un statut
+// qui admet son ignorance ne doit JAMAIS détruire l'information existante.
+// ⚠️ Ne pas confondre avec `eraseAccessPoint` (plus bas) : là, l'admin demande
+// explicitement l'effacement, et le null est voulu.
+async function writeAccessPointStatusOnly(poiId, status) {
+    if (!state.userData[poiId]) state.userData[poiId] = {};
+    state.userData[poiId].accessPointStatus = status;
+    await persistAccessPointUserData(poiId);
+}
+
 /**
  * Pré-pose ou évalue le point d'accès d'un POI via Overpass.
  *
@@ -68,8 +95,10 @@ async function writeAccessPointSilent(poiId, coords, status) {
  *  - Cache hit → utilise la donnée stockée, ne re-fetch pas.
  *  - Distance ≤ seuil → status='on-track', accessPoint=null (sur voie).
  *  - Distance > seuil → status='osm', accessPoint=[lon,lat] (pré-posé).
- *  - Échec Overpass → status='failed', accessPoint=null. Le caller décide
- *    s'il toast (création POI = toast 'à poser plus tard', clic bouton = err).
+ *  - Échec Overpass OU aucune voie trouvée → status='failed', **accessPoint
+ *    INCHANGÉ** (un drapeau existant survit — cf. writeAccessPointStatusOnly).
+ *    Le caller décide s'il toast (création POI = toast 'à poser plus tard',
+ *    clic bouton = err).
  *
  * @param {object} feature - feature POI (lit coords + ID)
  * @param {object} [opts]
@@ -113,7 +142,8 @@ export async function prepoSeAccessPoint(feature, opts = {}) {
             });
         } catch (e) {
             // Échec réseau / timeout → status='failed', toast côté caller.
-            await writeAccessPointSilent(poiId, null, 'failed');
+            // On n'a RIEN appris sur ce POI : le drapeau éventuel est conservé.
+            await writeAccessPointStatusOnly(poiId, 'failed');
             return { status: 'failed', coords: null, distance: null, error: e };
         }
     }
@@ -122,7 +152,11 @@ export async function prepoSeAccessPoint(feature, opts = {}) {
     if (response === null) {
         // Aucune voie dans le rayon (cas rare : POI vraiment isolé). Traité
         // comme 'failed' à reprendre (la passe globale pourra élargir).
-        await writeAccessPointSilent(poiId, null, 'failed');
+        // Même raisonnement que l'échec réseau : ce statut dit « à reprendre »,
+        // donc il ne détruit pas un drapeau existant. Qu'Overpass ne trouve aucune
+        // voie n'invalide pas une coordonnée posée à la main — au contraire, un POI
+        // isolé est précisément celui où le drapeau manuel a le plus de valeur.
+        await writeAccessPointStatusOnly(poiId, 'failed');
         return { status: 'failed', coords: null, distance: null };
     }
 

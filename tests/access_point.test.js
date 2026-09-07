@@ -119,6 +119,57 @@ describe('access-point — prepoSeAccessPoint (mocks complets)', () => {
         expect(state.userData.POI4.accessPointStatus).toBe('failed');
     });
 
+    // — Non-régression de l'incident du 29-30/08/2026 (panne Overpass 3 miroirs) —
+    // Un statut 'failed' dit « à reprendre », pas « il n'y a rien » : il ne doit
+    // JAMAIS effacer un drapeau existant. C'est l'angle mort qui avait laissé
+    // passer 22 écrasements silencieux, rattrapés à la main avant publication.
+
+    it("panne réseau : le drapeau legacy est CONSERVÉ (pas écrasé par null)", async () => {
+        state.userData.POI_LEGACY = { accessPoint: [10.9, 33.8] }; // statut undefined = legacy
+        mocks.nearestHighway.mockRejectedValue(new Error('Overpass down'));
+        const { prepoSeAccessPoint } = await import('../src/access-point.js');
+
+        const r = await prepoSeAccessPoint(makeFeature('POI_LEGACY', 10.94, 33.80));
+
+        expect(r.status).toBe('failed');
+        expect(state.userData.POI_LEGACY.accessPointStatus).toBe('failed');
+        expect(state.userData.POI_LEGACY.accessPoint).toEqual([10.9, 33.8]); // intact
+    });
+
+    it("aucune voie trouvée : le drapeau legacy est CONSERVÉ lui aussi", async () => {
+        state.userData.POI_ISOLE = { accessPoint: [11.1, 33.7] };
+        mocks.nearestHighway.mockResolvedValue(null);
+        const { prepoSeAccessPoint } = await import('../src/access-point.js');
+
+        const r = await prepoSeAccessPoint(makeFeature('POI_ISOLE', 11.1, 33.7));
+
+        expect(r.status).toBe('failed');
+        expect(state.userData.POI_ISOLE.accessPointStatus).toBe('failed');
+        expect(state.userData.POI_ISOLE.accessPoint).toEqual([11.1, 33.7]); // intact
+    });
+
+    it("'on-track' EFFACE toujours le drapeau (conclusion positive, comportement inchangé)", async () => {
+        state.userData.POI_SURVOIE = { accessPoint: [10.5, 33.5] };
+        mocks.nearestHighway.mockResolvedValue({ coords: [10.95, 33.81], distance: 4 });
+        const { prepoSeAccessPoint } = await import('../src/access-point.js');
+
+        const r = await prepoSeAccessPoint(makeFeature('POI_SURVOIE', 10.95, 33.81));
+
+        expect(r.status).toBe('on-track');
+        expect(state.userData.POI_SURVOIE.accessPoint).toBeNull(); // le POI est sur la voie
+    });
+
+    it("'osm' remplace bien le drapeau legacy par la coordonnée trouvée", async () => {
+        state.userData.POI_MAJ = { accessPoint: [10.1, 33.1] };
+        mocks.nearestHighway.mockResolvedValue({ coords: [10.95, 33.81], distance: 30 });
+        const { prepoSeAccessPoint } = await import('../src/access-point.js');
+
+        const r = await prepoSeAccessPoint(makeFeature('POI_MAJ', 10.94, 33.80));
+
+        expect(r.status).toBe('osm');
+        expect(state.userData.POI_MAJ.accessPoint).toEqual([10.95, 33.81]);
+    });
+
     it('utilise le cache si présent (pas de fetch Overpass)', async () => {
         mocks.getCachedNearestWay.mockResolvedValue({ coords: [10.95, 33.81], distance: 22, fetchedAt: 1 });
         const { prepoSeAccessPoint } = await import('../src/access-point.js');
