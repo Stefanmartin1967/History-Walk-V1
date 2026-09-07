@@ -527,15 +527,22 @@ function hasDescription(props) {
 }
 
 // Filtres "structurels" (Zone, Catégorie multi) — s'appliquent TOUJOURS, même
-// aux incontournables. L'option `skipZone` permet à getZonesData d'appliquer
-// la catégorie sans appliquer la zone (sinon le menu Zone n'aurait qu'une
-// entrée non-nulle).
-export function passesStructuralFilters(feature, { skipZone = false } = {}) {
+// aux incontournables.
+//
+// RÈGLE DES COMPTEURS DE FACETTE : un menu qui affiche des compteurs doit appliquer
+// tous les filtres SAUF LE SIEN. Sans ça il s'auto-annule — choisir une zone mettrait
+// toutes les AUTRES zones à 0, et on ne pourrait plus en ajouter une au choix.
+//   - `skipZone`       → pour le menu Zone (getZonesData) : applique la catégorie,
+//                        pas la zone.
+//   - `skipCategories` → pour le menu Type de lieu (getCategoryCounts) : applique la
+//                        zone et l'état de la fiche, pas la catégorie. Ajouté le
+//                        07/09/2026, symétrique du précédent.
+export function passesStructuralFilters(feature, { skipZone = false, skipCategories = false } = {}) {
     if (!feature) return false;
     const props = { ...feature.properties, ...feature.properties.userData };
 
     if (!skipZone && state.activeFilters.zone && getDerivedZone(feature) !== state.activeFilters.zone) return false;
-    if (state.activeFilters.categories && state.activeFilters.categories.length > 0) {
+    if (!skipCategories && state.activeFilters.categories && state.activeFilters.categories.length > 0) {
         if (!state.activeFilters.categories.includes(props['Catégorie'])) return false;
     }
     return true;
@@ -543,15 +550,17 @@ export function passesStructuralFilters(feature, { skipZone = false } = {}) {
 
 // Il ne fait que du tri mathématique en mémoire. Il ne touche pas à la carte.
 // `skipZone` (P2) : applique tous les filtres SAUF la zone — sert à la sonde
-// d'auto-reset (« sans la zone, y aurait-il des POI ? »).
-export function getFilteredFeatures({ skipZone = false } = {}) {
+// d'auto-reset (« sans la zone, y aurait-il des POI ? ») et aux compteurs de zone.
+// `skipCategories` : idem pour les compteurs du menu Type de lieu (cf. la règle des
+// compteurs de facette dans passesStructuralFilters).
+export function getFilteredFeatures({ skipZone = false, skipCategories = false } = {}) {
     if (!state.loadedFeatures) return [];
     // Set planifiés construit UNE fois pour toute la passe (P4), uniquement si le
     // filtre Planifiés est actif.
     const pf = state.activeFilters.planifies;
     const plannedSet = (pf === 'hide' || pf === 'only') ? buildPlannedPoiSet() : null;
     return state.loadedFeatures.filter(feature =>
-        passesStructuralFilters(feature, { skipZone }) && passesUserFilters(feature, plannedSet)
+        passesStructuralFilters(feature, { skipZone, skipCategories }) && passesUserFilters(feature, plannedSet)
     );
 }
 

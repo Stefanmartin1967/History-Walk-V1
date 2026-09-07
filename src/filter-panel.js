@@ -9,7 +9,7 @@
 import L from 'leaflet';
 import { state, setActiveFilters, POI_CATEGORIES } from './state.js';
 import { getGroups, getGroupForCategory } from './taxonomy.js';
-import { applyFilters } from './data.js';
+import { applyFilters, getFilteredFeatures } from './data.js';
 import { getZonesData } from './circuit-actions.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
@@ -162,10 +162,27 @@ function getAvailableCategories() {
     return POI_CATEGORIES;
 }
 
+// Compteurs du menu « Type de lieu ». Décision Stefan du 07/09/2026 : ils doivent
+// refléter ce qui est VISIBLE sur la carte, comme le font déjà les compteurs de zone.
+//
+// Avant, ils comptaient `state.loadedFeatures`, c'est-à-dire la totalité des POI
+// chargés, sans appliquer le moindre filtre : ils ne bougeaient donc jamais — ni sous
+// un filtre d'état de la fiche (symptôme signalé le 18/08 avec « OSM vérifié »), ni
+// sous un filtre de zone. Deux compteurs voisins dans le même panneau, deux
+// sémantiques opposées.
+//
+// `skipCategories` : on applique tous les filtres SAUF la catégorie, sinon le menu
+// s'auto-annule — cocher « Mosquée » mettrait « Café » à 0 et on ne pourrait plus
+// l'ajouter à la sélection. Exactement le `skipZone` du menu Zone.
 function getCategoryCounts() {
     const counts = {};
     if (!state.loadedFeatures) return counts;
-    state.loadedFeatures.forEach(f => {
+    // Toutes les catégories affichées démarrent à 0 : depuis que les compteurs sont
+    // filtrés, une catégorie peut n'avoir AUCUN POI visible. Sans cette amorce elle
+    // resterait `undefined`, et `renderCheckbox` (`if (count != null)`) n'afficherait
+    // alors AUCUN badge — ce qui se lit « inconnu » là où la réponse est « zéro ».
+    getAvailableCategories().forEach(cat => { counts[cat] = 0; });
+    getFilteredFeatures({ skipCategories: true }).forEach(f => {
         const cat = effectiveCategory(f);
         if (cat && cat.trim() !== '') {
             counts[cat] = (counts[cat] || 0) + 1;

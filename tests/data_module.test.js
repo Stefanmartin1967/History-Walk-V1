@@ -288,6 +288,33 @@ describe('getFilteredFeatures', () => {
         expect(r[0].properties.HW_ID).toBe('p1');
     });
 
+    // — Le scénario exact signalé par Stefan le 18/08/2026 : les compteurs du menu
+    //   « Type de lieu » ne bougeaient pas quand un filtre État de la fiche était
+    //   actif. Ce qui les alimente désormais, c'est getFilteredFeatures({skipCategories}).
+    it('skipCategories : applique bien les filtres NON-catégorie (état de la fiche)', () => {
+        state.loadedFeatures = [
+            poi('p1', { 'Catégorie': 'Mosquée', userData: { verified: true } }),
+            poi('p2', { 'Catégorie': 'Mosquée' }),
+            poi('p3', { 'Catégorie': 'Café' }),
+        ];
+        state.activeFilters.verified = 'hide';   // masquer les POI vérifiés
+        const r = getFilteredFeatures({ skipCategories: true });
+        // p1 est vérifié → exclu. Le compteur « Mosquée » doit donc tomber à 1.
+        expect(r.map(f => f.properties.HW_ID).sort()).toEqual(['p2', 'p3']);
+    });
+
+    it('skipCategories : les catégories NON sélectionnées restent comptées', () => {
+        state.loadedFeatures = [
+            poi('p1', { 'Catégorie': 'Mosquée' }),
+            poi('p2', { 'Catégorie': 'Café' }),
+        ];
+        state.activeFilters.categories = ['Mosquée'];
+        // Sans skipCategories, « Café » disparaîtrait et son compteur tomberait à 0 :
+        // on ne pourrait plus l'ajouter à la sélection.
+        expect(getFilteredFeatures({ skipCategories: true })).toHaveLength(2);
+        expect(getFilteredFeatures()).toHaveLength(1);
+    });
+
     it('filtre par activeFilters.categories (multi-select array.includes)', () => {
         state.loadedFeatures = [
             poi('p1', { 'Catégorie': 'Hotel' }),
@@ -532,6 +559,30 @@ describe('passesStructuralFilters', () => {
     it('categories=[] équivaut à pas de filtre catégorie', () => {
         state.activeFilters.categories = [];
         expect(passesStructuralFilters(poi('p1', { 'Catégorie': 'Restaurant' }))).toBe(true);
+    });
+
+    // — Compteurs de facette (07/09/2026) : un menu à compteurs applique tous les
+    //   filtres SAUF le sien, sinon il s'auto-annule. skipCategories est le jumeau
+    //   de skipZone, pour le menu « Type de lieu ».
+
+    it('skipCategories:true ignore le filtre catégorie', () => {
+        state.activeFilters.categories = ['Mosquée'];
+        expect(passesStructuralFilters(poi('p1', { 'Catégorie': 'Restaurant' }), { skipCategories: true })).toBe(true);
+    });
+
+    it('skipCategories:true CONSERVE le filtre zone (symétrique de skipZone)', () => {
+        state.activeFilters.zone = 'A';
+        state.activeFilters.categories = ['Mosquée'];
+        const f = poi('p1', { Zone: 'B', 'Catégorie': 'Restaurant' });
+        // La catégorie est ignorée, mais la zone doit toujours exclure ce POI.
+        expect(passesStructuralFilters(f, { skipCategories: true })).toBe(false);
+    });
+
+    it('les deux options ensemble ne laissent plus aucun filtre structurel', () => {
+        state.activeFilters.zone = 'A';
+        state.activeFilters.categories = ['Mosquée'];
+        const f = poi('p1', { Zone: 'B', 'Catégorie': 'Restaurant' });
+        expect(passesStructuralFilters(f, { skipZone: true, skipCategories: true })).toBe(true);
     });
 });
 
