@@ -1,4 +1,4 @@
-import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode } from './state.js';
+import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode, getActiveMapId} from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
@@ -914,7 +914,7 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
     const newCircuitId = `circuit-${Date.now()}`;
     const newCircuit = {
         id: newCircuitId,
-        mapId: state.currentMapId || 'djerba',
+        mapId: getActiveMapId(),
         name: importedName ? decodeURIComponent(importedName) : `Circuit Importé (${new Date().toLocaleDateString()})`,
         description: "Circuit importé via QR Code",
         poiIds: resolvedFeatures.map(getPoiId),

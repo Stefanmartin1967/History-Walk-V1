@@ -7,7 +7,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // est mocké à une valeur connue (le calcul Haversine réel est couvert ailleurs).
 const h = vi.hoisted(() => ({ realDistance: 7200 }));
 
-vi.mock('../src/state.js', () => ({ state: {}, setUserData: vi.fn(), setCustomFeatures: vi.fn(), setOfficialCircuits: vi.fn(), setDeletedOfficialCircuitIds: vi.fn() }));
+vi.mock('../src/state.js', () => {
+    const mod = ({ state: {}, setUserData: vi.fn(), setCustomFeatures: vi.fn(), setOfficialCircuits: vi.fn(), setDeletedOfficialCircuitIds: vi.fn() });
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 vi.mock('../src/circuit-deletion-state.js', () => ({ setOfficialCircuitDeleted: vi.fn(), isOfficialCircuitDeleted: vi.fn(() => false) }));
 vi.mock('../src/utils.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID,

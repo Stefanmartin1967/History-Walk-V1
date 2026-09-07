@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setDeletedOfficialCircuitIds, setPoiCategories } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setDeletedOfficialCircuitIds, setPoiCategories, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
@@ -37,7 +37,7 @@ export function updateAppTitle(mapId) {
 }
 
 export async function loadOfficialCircuits() {
-    const mapId = state.currentMapId || 'djerba';
+    const mapId = getActiveMapId();
     // BASE_URL (chemin FIXE), pas un chemin relatif : si l'app est lancée à une
     // URL profonde (ex. scan d'un QR de partage …/circuits/x.gpx qui ouvre la
     // PWA), un './circuits/...' se résoudrait en …/circuits/circuits/...json →
@@ -301,7 +301,7 @@ export async function loadAndInitializeMap() {
     const baseUrl = import.meta.env?.BASE_URL || './';
 
     // 1. Calcul de la stratégie de vue (Avant d'init la carte)
-    let activeMapId = 'djerba';
+    let activeMapId = DEFAULT_MAP_ID;
     let initialView = { center: [33.77478, 10.94353], zoom: 11.5 }; // Fallback ultime
 
     // A. Détermination Map ID — priorité :

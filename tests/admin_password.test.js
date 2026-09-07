@@ -3,10 +3,17 @@ import { describe, it, expect, vi } from 'vitest';
 // verifyAdminPassword vit dans admin.js qui a beaucoup de co-imports (map, UI,
 // eventBus, admin-control-center, etc.). On mock tout ce qui est hors scope
 // pour isoler la primitive crypto.
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: { isAdmin: false },
     setIsAdmin: vi.fn()
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 vi.mock('../src/events.js', () => ({ eventBus: { on: vi.fn(), emit: vi.fn() } }));
 vi.mock('../src/utils.js', () => ({ downloadFile: vi.fn(), getPoiId: vi.fn() }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));

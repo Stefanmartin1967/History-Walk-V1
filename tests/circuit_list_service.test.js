@@ -5,7 +5,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // (fusion, enrichment, filter, sort). On isole des dépendances externes.
 // ============================================================================
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: {
         officialCircuits: [],
         myCircuits: [],
@@ -13,7 +14,13 @@ vi.mock('../src/state.js', () => ({
         hiddenCircuitIds: [], // [] = tous visibles (refonte Mon Espace V2)
         homeLocation: null
     }
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 vi.mock('../src/data.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID || f?.id || null

@@ -19,7 +19,14 @@ const h = vi.hoisted(() => ({
     showToastSpy: vi.fn(),
 }));
 
-vi.mock('../src/state.js', () => ({ state: h.mockState }));
+vi.mock('../src/state.js', () => {
+    const mod = ({ state: h.mockState });
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 vi.mock('../src/database.js', () => ({
     getAppState: (key) => Promise.resolve(h.appStateStore.get(key) ?? null),

@@ -1,4 +1,4 @@
-import { state, setUserData, setCustomFeatures, setOfficialCircuits } from './state.js';
+import { state, setUserData, setCustomFeatures, setOfficialCircuits, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
@@ -210,7 +210,7 @@ export const toggleDiffDetails = (id) => {
  */
 export const togglePhotoSkip = async (poiId, photoId, skipPublish) => {
     try {
-        const mapId = state.currentMapId || 'djerba';
+        const mapId = getActiveMapId();
         const photos = await getPendingAdminPhotos(mapId, poiId);
         const updated = photos.map(p =>
             p.id === photoId ? { ...p, skipPublish } : p
@@ -250,7 +250,7 @@ export const togglePhotoSkip = async (poiId, photoId, skipPublish) => {
  */
 export const removeAdminPhoto = async (poiId, photoId) => {
     try {
-        const mapId = state.currentMapId || 'djerba';
+        const mapId = getActiveMapId();
         const photos = await getPendingAdminPhotos(mapId, poiId);
         const removedEntry = photos.find(p => p.id === photoId);
         const updated = photos.filter(p => p.id !== photoId);
@@ -297,7 +297,7 @@ export const removeAdminPhoto = async (poiId, photoId) => {
  */
 export const bulkSetPhotoSkip = async (poiId, skipPublish) => {
     try {
-        const mapId = state.currentMapId || 'djerba';
+        const mapId = getActiveMapId();
         const photos = await getPendingAdminPhotos(mapId, poiId);
         if (photos.length === 0) return;
 
@@ -430,7 +430,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
         // B2 — Suppression isolée des photos pending d'un POI : ne touche
         // pas au userData / geometry. L'admin garde la main sur le contenu
         // texte (voir vue Lieux) tout en pouvant nettoyer le contenu visuel.
-        try { await clearPendingAdminPhotos(state.currentMapId || 'djerba', id); }
+        try { await clearPendingAdminPhotos(getActiveMapId(), id); }
         catch (e) { console.warn('[CC] clearPendingAdminPhotos failed:', e); }
 
         showToast("Photos retirées du brouillon", "info");
@@ -455,7 +455,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
             catch (e) { console.warn('[CC] restauration circuit échec:', id, e); }
 
             try {
-                const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(state.currentMapId || 'djerba')}?t=${Date.now()}`);
+                const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(getActiveMapId())}?t=${Date.now()}`);
                 if (r.ok) {
                     // Filtré : ne jamais « restaurer » depuis une relecture en retard
                     // un circuit dont l'app a déjà supprimé le GPX — il reviendrait
@@ -532,7 +532,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
     // au moment du clic (race possible entre init et action).
     try { await saveAppState('userData', state.userData); }
     catch (e) { console.warn('[CC] saveAppState userData failed:', e); }
-    try { await deletePoiData(state.currentMapId || 'djerba', id); }
+    try { await deletePoiData(getActiveMapId(), id); }
     catch (e) { console.warn('[CC] deletePoiData failed:', id, e); }
 
     // 5. Re-calcul du diff + re-render complet (pour retomber sur
@@ -611,7 +611,7 @@ async function publishChanges() {
     }
 
     try {
-        const mapId = state.currentMapId || 'djerba';
+        const mapId = getActiveMapId();
 
         // ─── 1. UPLOAD DES PHOTOS PENDING (blobs locaux → GitHub) ───
         // Doit précéder la génération du geojson pour que les URLs fraîches
@@ -928,7 +928,7 @@ async function publishChanges() {
         // Supprime les entrées du store IDB `poiUserData` : sans ça,
         // getAllPoiDataForMap repeuplerait state.userData au prochain F5
         // et le diff engine signalerait à nouveau les modifications déjà publiées.
-        const cleanupMapId = state.currentMapId || 'djerba';
+        const cleanupMapId = getActiveMapId();
         for (const poiId of poisToDeleteFromIdb) {
             try {
                 await deletePoiData(cleanupMapId, poiId);

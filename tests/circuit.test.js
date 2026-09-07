@@ -38,7 +38,11 @@ vi.mock('../src/state.js', () => {
         setCustomDraftName: vi.fn(name => { state.customDraftName = name; }),
         setCurrentFeatureId: vi.fn(),
         setCurrentCircuitIndex: vi.fn(),
-        setCurrentCircuit: vi.fn()
+        setCurrentCircuit: vi.fn(),
+        DEFAULT_MAP_ID: 'djerba',
+        // Lit le MEME etat mocke que le module : un test qui change
+        // currentMapId change aussi la cle resolue.
+        getActiveMapId: () => state.currentMapId || state.destinations?.activeMapId || 'djerba'
     };
 });
 

@@ -11,10 +11,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // faux doublon à la création, restauration d'un circuit sans GPX).
 // ============================================================================
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: { deletedOfficialCircuitIds: [] },
     setDeletedOfficialCircuitIds: vi.fn(),
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 vi.mock('../src/database.js', () => ({ saveAppState: vi.fn(() => Promise.resolve()) }));
 
 import {

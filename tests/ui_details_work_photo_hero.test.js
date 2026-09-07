@@ -17,7 +17,8 @@ vi.mock('../src/events.js', () => ({
     eventBus: { on: vi.fn(), emit: vi.fn(), off: vi.fn() },
 }));
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: {
         isAdmin: true,
         currentMapId: 'djerba',
@@ -31,7 +32,13 @@ vi.mock('../src/state.js', () => ({
     setCurrentCircuitIndex: vi.fn(),
     setPoiFilterFromSearch: vi.fn(),
     getActiveDestinationName: vi.fn(() => 'Djerba'),
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 vi.mock('../src/data.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID,
