@@ -14,7 +14,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 //   - au close du modal (bouton Fermer + close-modal action)
 // ============================================================================
 
-vi.mock('../src/state.js', () => ({ state: {} }));
+vi.mock('../src/state.js', () => {
+    const mod = ({ state: {} });
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} }));
 vi.mock('../src/github-sync.js', () => ({
     getStoredToken: vi.fn(() => null),

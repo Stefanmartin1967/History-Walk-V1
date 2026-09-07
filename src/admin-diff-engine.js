@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state, getActiveMapId} from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getPoiName, isCandidate } from './utils.js';
 import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
@@ -109,7 +109,7 @@ export async function prepareDiffData(adminDraft) {
     let remoteCircuits = [];
     let remoteTested = {};
     const timestamp = Date.now();
-    const mapId = state.currentMapId || 'djerba';
+    const mapId = getActiveMapId();
 
     // 1. Fetch Remote Data (POIs + Circuits + Tested)
     try {

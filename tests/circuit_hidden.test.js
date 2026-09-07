@@ -5,7 +5,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 // liste (eventBus) et réapplique les filtres. Même surface de mocks que
 // circuit_actions_deletion.test.js + gist-sync + events.
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: {
         isAdmin: false,
         activeCircuitId: null,
@@ -22,7 +23,13 @@ vi.mock('../src/state.js', () => ({
     setUserData: vi.fn(),
     setOfficialCircuits: vi.fn(),
     setHiddenCircuitIds: vi.fn((ids) => { state.hiddenCircuitIds = Array.isArray(ids) ? ids.map(String) : []; })
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 vi.mock('../src/database.js', async () => {
     const { createDatabaseMock } = await import('./helpers/mocks.js');

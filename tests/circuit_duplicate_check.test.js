@@ -11,7 +11,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 global.fetch = vi.fn();
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: { currentMapId: 'djerba' },
     addMyCircuit: vi.fn(),
     updateMyCircuit: vi.fn(),
@@ -19,7 +20,13 @@ vi.mock('../src/state.js', () => ({
     setHasUnexportedChanges: vi.fn(),
     setOfficialCircuits: vi.fn(),
     removeMyCircuit: vi.fn()
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 vi.mock('../src/database.js', () => ({
     deleteCircuitById: vi.fn(),

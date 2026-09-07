@@ -1,6 +1,6 @@
 
 // circuit-actions.js
-import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode } from './state.js';
+import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { fetchWithTimeout } from './net.js';
 import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit, saveAppState } from './database.js';
@@ -63,7 +63,7 @@ export async function checkCircuitDuplicate(poiIds, excludeId = null) {
     const token = getStoredToken();
     if (!token || !poiIds || poiIds.length === 0) return null;
 
-    const mapId = state.currentMapId || 'djerba';
+    const mapId = getActiveMapId();
     try {
         const res = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
         if (!res.ok) return null;

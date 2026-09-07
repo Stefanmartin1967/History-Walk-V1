@@ -7,14 +7,21 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 // des 3 niveaux (POI → fermer fiche, circuit-details → retour circuits,
 // search/actions → retour circuits) ou no-op (non-mobile, racine).
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: {
         currentFeatureId: null,
         activeCircuitId: null,
         isAdmin: false
     },
     setFilterCompleted: vi.fn()
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 vi.mock('../src/mobile-state.js', () => ({
     isMobileView: vi.fn(() => true),

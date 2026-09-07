@@ -1,5 +1,5 @@
 // fileManager.js
-import { state, setCurrentMap, setLoadedFeatures, setUserData, setTestedCircuits } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setUserData, setTestedCircuits, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
 import { getPoiId, displayGeoJSON } from './data.js';
 import { DOM } from './ui-dom.js';
 import { closeDetailsPanel } from './ui-details.js';
@@ -334,7 +334,11 @@ export async function restoreBackup(json) {
     try {
         showToast("Restauration intelligente en cours...", "info");
 
-        const mapId = json.mapId || 'djerba';
+        // Sémantique DIFFÉRENTE de getActiveMapId() : une sauvegarde antérieure au
+        // multi-destination ne porte pas de `mapId`, et elle ne peut venir que de
+        // Djerba (seule destination à l'époque). On restaure donc là, PAS dans la
+        // destination active du moment — qui écraserait les données d'une autre.
+        const mapId = json.mapId || DEFAULT_MAP_ID;
         setCurrentMap(mapId);
         await saveAppState('lastMapId', mapId);
 
@@ -572,7 +576,7 @@ function buildRootUserData(includePhotos, photosByPoi) {
 }
 
 export async function prepareExportData(includePhotos = false) {
-    const mapId = state.currentMapId || 'djerba';
+    const mapId = getActiveMapId();
     const photosByPoi = includePhotos ? await collectPhotosAsBase64(mapId) : {};
 
     const geojson = {

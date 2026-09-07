@@ -10,7 +10,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Mocks pour éviter de charger toute la chaîne data.js → database.js → modal.js
 // (modal.js requiert document au top-level, donc jsdom suffit côté env).
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: {
         officialCircuits: [],
         myCircuits: [],
@@ -20,7 +21,13 @@ vi.mock('../src/state.js', () => ({
         hiddenPoiIds: [],
         activeFilters: {}
     }
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 vi.mock('../src/database.js', () => ({
     getAllPoiDataForMap: vi.fn(),

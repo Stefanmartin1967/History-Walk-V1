@@ -6,9 +6,16 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: { isAdmin: true, currentMapId: 'djerba', userData: {}, loadedFeatures: [] }
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 vi.mock('../src/github-sync.js', () => ({
     getStoredToken: vi.fn(() => 'fake-token'),
     uploadFileToGitHub: vi.fn(() => Promise.resolve()),

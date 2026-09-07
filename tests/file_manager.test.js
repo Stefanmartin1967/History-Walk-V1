@@ -20,7 +20,11 @@ vi.mock('../src/state.js', () => {
         setCurrentMap: vi.fn(id => { state.currentMapId = id; }),
         setLoadedFeatures: vi.fn(arr => { state.loadedFeatures = arr; }),
         setUserData: vi.fn(d => { state.userData = d; }),
-        setTestedCircuits: vi.fn(d => { state.testedCircuits = d; })
+        setTestedCircuits: vi.fn(d => { state.testedCircuits = d; }),
+        DEFAULT_MAP_ID: 'djerba',
+        // Lit le MEME etat mocke que le module : un test qui change
+        // currentMapId change aussi la cle resolue.
+        getActiveMapId: () => state.currentMapId || state.destinations?.activeMapId || 'djerba'
     };
 });
 

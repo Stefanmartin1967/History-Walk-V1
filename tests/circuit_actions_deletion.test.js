@@ -5,7 +5,8 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 // data (applyFilters) et mobile (isMobileView). On vérifie les bons appels
 // avec les bons arguments selon la branche prise.
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: {
         isAdmin: false,
         activeCircuitId: null,
@@ -28,7 +29,13 @@ vi.mock('../src/state.js', () => ({
     setDeletedOfficialCircuitIds: vi.fn((ids) => {
         state.deletedOfficialCircuitIds = ids || [];
     })
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 // Mock database.js via le helper partagé — couvre tous les exports
 // (sinon `recordModification` fire-and-forget de circuit-actions.js déclenche

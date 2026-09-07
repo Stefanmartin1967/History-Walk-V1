@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.380'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.381'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
@@ -15,13 +15,25 @@ export function setPoiCategories(arr) {
     POI_CATEGORIES = [...arr].sort();
 }
 
+/**
+ * Destination de dernier recours, quand ni `currentMapId` ni `destinations.json`
+ * ne répondent (boot interrompu, config illisible hors-ligne à froid).
+ *
+ * ⚠️ C'est le SEUL endroit du code où ce nom peut être écrit en dur. Il l'était
+ * dans 19 expressions avant le 07/09/2026, ce qui rendait le jour du changement de
+ * destination par défaut impossible à faire sans chasse au grep. Ailleurs, passer
+ * par `getActiveMapId()` (clés de données) ou par les sélecteurs de nom/pays
+ * (affichage), jamais par la chaîne littérale.
+ */
+export const DEFAULT_MAP_ID = 'djerba';
+
 // --- 1. LE FRIGO (L'État Global) ---
 export const state = {
     isMobile: false,
     currentMapId: null,
     // Structure par défaut robuste pour éviter les crashs si le JSON manque
     destinations: {
-        activeMapId: 'djerba',
+        activeMapId: DEFAULT_MAP_ID,
         maps: {}
     },
     userData: {},
@@ -144,6 +156,27 @@ export function resetCurrentCircuit() {
 // Gardien pour changer de carte/zone
 export function setCurrentMap(mapId) {
     state.currentMapId = mapId;
+}
+
+/**
+ * Identifiant de la destination active, pour tout ce qui a besoin d'une CLÉ :
+ * lecture/écriture IndexedDB (clés composites `[mapId, poiId]`), chemins GitHub,
+ * URLs de fichiers. Chaîne identique à celle des deux sélecteurs ci-dessous —
+ * `currentMapId` d'abord, puis la destination active de `destinations.json`.
+ *
+ * ⚠️ NE PAS confondre avec `getActiveDestinationName` / `getActiveDestinationCountry`,
+ * juste en dessous : eux s'arrêtent AVANT tout repli en dur et renvoient `''` si
+ * inconnu, parce qu'un « Djerba » affiché ou envoyé dans une recherche web suivrait
+ * silencieusement l'utilisateur à Hammamet. Ici c'est l'inverse : une clé vide
+ * casserait la lecture des données, donc on garantit une valeur.
+ *
+ * Remplace 17 `state.currentMapId || 'djerba'` disséminés (07/09/2026) : le repli
+ * existait partout, mais chaque site le réécrivait — ajouter une destination
+ * obligeait à les retrouver un par un.
+ * @returns {string}
+ */
+export function getActiveMapId() {
+    return state.currentMapId || state.destinations?.activeMapId || DEFAULT_MAP_ID;
 }
 
 /**

@@ -26,7 +26,7 @@
 // pour les pastilles candidates.
 import { map } from './map.js';
 import { fetchWithTimeout } from './net.js';
-import { state } from './state.js';
+import { state, DEFAULT_MAP_ID} from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { fetchOverpassJson } from './osm-overpass.js';
@@ -797,7 +797,7 @@ async function createDestinationDraft() {
     // Reflet mémoire immédiat (avant reload). `&scout=1` → le boot rouvre le Scout
     // DESSUS (main.js, patron ?poi=) ; le boot admin relit l'API GitHub fraîche (A1)
     // → la dest apparaît sans attendre le redéploiement Pages (~1-2 min).
-    if (!state.destinations) state.destinations = { activeMapId: 'djerba', maps: {} };
+    if (!state.destinations) state.destinations = { activeMapId: DEFAULT_MAP_ID, maps: {} };
     if (!state.destinations.maps) state.destinations.maps = {};
     state.destinations.maps[id] = { ...res.entry, custom: false };
 

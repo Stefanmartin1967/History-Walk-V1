@@ -1,4 +1,4 @@
-import { state, removeMyCircuit, setOfficialCircuits } from './state.js';
+import { state, removeMyCircuit, setOfficialCircuits, getActiveMapId} from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { getStoredToken, deleteFileFromGitHub, uploadFileToGitHub } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
@@ -24,7 +24,7 @@ let _maintSubView = 'trash';     // 'trash' (corbeille locale) | 'server'
  * Récupère l'index officiel depuis le serveur (bypass cache)
  */
 async function fetchServerCircuits() {
-    const mapId = state.currentMapId || 'djerba';
+    const mapId = getActiveMapId();
     const timestamp = Date.now();
     const url = `${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`;
 
@@ -274,7 +274,7 @@ async function handleDeleteClick(id, path, name, container) {
     const token = getStoredToken();
     if (!token) return showToast("Token manquant.", "error");
 
-    const mapId = state.currentMapId || 'djerba';
+    const mapId = getActiveMapId();
 
     try {
         showToast("Suppression en cours...", "info");

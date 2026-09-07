@@ -1,4 +1,4 @@
-import { state } from './state.js';
+import { state, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStoredToken, getStoredUsername, saveToken, validateToken, uploadFileToGitHub } from './github-sync.js';
 import { showToast } from './toast.js';
@@ -554,7 +554,7 @@ export function renderTab(tab, diffData, callbacks) {
         // Inclus dans le total ; sub-text affiché dans la carte CIRCUITS (pas Lieux).
         const totalCount = computePublishCount(stats);
         const hasToken = !!getStoredToken();
-        const mapId = state.currentMapId || 'djerba';
+        const mapId = getActiveMapId();
         const mapLabel = mapId.charAt(0).toUpperCase() + mapId.slice(1);
 
         // — Hero variant —
@@ -961,7 +961,10 @@ export function renderTab(tab, diffData, callbacks) {
                     return;
                 }
                 const name = dest.name || mapId;
-                const fallback = state.destinations?.activeMapId || 'djerba';
+                // Volontairement `activeMapId` et NON getActiveMapId() : on cherche la
+                // destination par DÉFAUT vers laquelle retomber, or la destination
+                // COURANTE est potentiellement celle qu'on est en train de supprimer.
+                const fallback = state.destinations?.activeMapId || DEFAULT_MAP_ID;
                 const { hwConfirm, hwAlert } = await import('./modal.js');
                 closeCCModal();
                 const ok = await hwConfirm({
@@ -1537,7 +1540,7 @@ function renderUploadCircuitPanel(diffData, callbacks) {
         const commitMsg = circuitName
             ? `feat(circuit): Ajout "${circuitName}"`
             : `feat(circuit): Ajout "${file.name}"`;
-        const mapId = state.currentMapId || 'djerba';
+        const mapId = getActiveMapId();
         const path = GITHUB_PATHS.circuitFile(mapId, file.name);
 
         submitBtn.disabled = true;

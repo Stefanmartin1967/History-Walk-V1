@@ -42,12 +42,19 @@ const saveAppStateSpy = h.saveAppStateSpy;
 const prepareDiffDataSpy = h.prepareDiffDataSpy;
 const renderTabSpy = h.renderTabSpy;
 
-vi.mock('../src/state.js', () => ({
+vi.mock('../src/state.js', () => {
+    const mod = ({
     state: h.mockState,
     setUserData: (d) => h.setUserDataSpy(d),
     setOfficialCircuitsStatus: (d) => h.setOfficialCircuitsStatusSpy(d),
     setHiddenPoiIds: (d) => h.setHiddenPoiIdsSpy(d),
-}));
+});
+    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
+    // pour qu'un test qui change currentMapId change aussi la cle resolue.
+    mod.DEFAULT_MAP_ID = 'djerba';
+    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    return mod;
+});
 
 vi.mock('../src/utils.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID
