@@ -45,15 +45,22 @@ export function handleExportWithContribution(actionType, proceedCallback) {
     // Note : la croix legacy `<button class="modal-close-x">×</button>` a été
     // retirée — le système V2 hw-modal fournit déjà sa propre croix dans le
     // header + bouton "Fermer" dans le footer (cf. showCustomModal → openHwModal).
+    // VOCABULAIRE DU SOUTIEN (unifié le 07/09/2026) — deux niveaux, une règle :
+    //   « Soutenir le projet » nomme l'INTENTION → titre de cette modale + les 2
+    //     points d'entrée (menu Outils PC, menu mobile).
+    //   « Offrir un café » nomme le GESTE CONCRET → uniquement le bouton qui part
+    //     réellement vers Buy Me a Coffee, ici et en sous-titre du menu mobile.
+    // Avant : cinq formulations pour la même action (« Soutenir le site », « Offrir
+    // un café », « Soutenir le projet », « Aider à améliorer le site », « l'outil »).
     const content = `
         <p>
-            Contribuer à la maintenance et à l'amélioration de l'outil
+            Contribuer à la maintenance et à l'amélioration d'Heripia
         </p>
 
         <!-- Bouton Jaune Pastel (Aligné avec Topbar) -->
         <button id="btn-contrib-bmc" class="action-btn">
             <i data-lucide="heart" class="icon-heart"></i>
-            <span>Aider à améliorer le site</span>
+            <span>Offrir un café</span>
         </button>
 
         <!-- Bouton Export (Simple) -->
