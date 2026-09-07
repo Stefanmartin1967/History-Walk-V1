@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished, isCandidate, getZoneFromCoords, getDerivedZone, deriveZoneSafe } from '../src/utils.js';
+import { getPoiId, generateHWID, calculateDistance, isPointInPolygon, escapeXml, escapeHtml, calculateBarycenter, calculateAdjustedTime, getPoiProp, getAccessPoint, isDestinationPublished, isCandidate, getZoneFromCoords, getDerivedZone, deriveZoneSafe, fileReadError, imageDecodeError } from '../src/utils.js';
 import { setZonesData } from '../src/zones.js';
 
 describe('Utils', () => {
@@ -372,5 +372,58 @@ describe('getDerivedZone & deriveZoneSafe — dégel de Zone', () => {
         expect(deriveZoneSafe(5, 5, 'fallback')).toBe('Quartier A');
         setZonesData({ type: 'FeatureCollection', features: [] });
         expect(deriveZoneSafe(5, 5, 'fallback')).toBe('fallback');
+    });
+});
+
+describe('fileReadError / imageDecodeError — fin du « [object ProgressEvent] »', () => {
+    // Le défaut d'origine : reader.onerror reçoit un ProgressEvent (pas une erreur),
+    // et le rejeter tel quel donnait « Erreur enregistrement : [object
+    // ProgressEvent] » — indiagnosticable, et muet sur le fichier fautif.
+    const file = { name: 'IMG_20260907_0042.jpg' };
+    const fakeReader = (name) => ({ error: name ? { name } : null });
+
+    it('produit toujours une Error avec un .message exploitable par le toast', () => {
+        // Le toast fait `e.message || e` : sans .message, on retombe sur String(e).
+        for (const src of [fakeReader('NotFoundError'), fakeReader(null), undefined, null]) {
+            const e = fileReadError(file, src);
+            expect(e).toBeInstanceOf(Error);
+            expect(typeof e.message).toBe('string');
+            expect(e.message.length).toBeGreaterThan(0);
+            expect(e.message).not.toContain('[object');
+        }
+    });
+
+    it('nomme TOUJOURS le fichier fautif (« laquelle des 400 photos ? »)', () => {
+        for (const src of [fakeReader('NotFoundError'), fakeReader('NotReadableError'), fakeReader('Inconnue'), null]) {
+            expect(fileReadError(file, src).message).toContain('IMG_20260907_0042.jpg');
+        }
+        expect(imageDecodeError(file).message).toContain('IMG_20260907_0042.jpg');
+    });
+
+    it('NotFoundError → fichier déplacé/renommé depuis la sélection', () => {
+        const m = fileReadError(file, fakeReader('NotFoundError')).message;
+        expect(m).toMatch(/introuvable/i);
+        expect(m).toMatch(/déplacé|renommé|supprimé/i);
+    });
+
+    it('NotReadableError → verrou ou stockage « en ligne uniquement »', () => {
+        const m = fileReadError(file, fakeReader('NotReadableError')).message;
+        expect(m).toMatch(/illisible/i);
+        expect(m).toMatch(/OneDrive|en ligne uniquement/i);
+    });
+
+    it('cause inconnue : garde le nom technique plutôt que de le perdre', () => {
+        expect(fileReadError(file, fakeReader('QuotaExceededError')).message).toContain('QuotaExceededError');
+    });
+
+    it('accepte indifféremment le reader OU son .error (les 2 appelants diffèrent)', () => {
+        const viaReader = fileReadError(file, fakeReader('NotFoundError')).message;
+        const viaError = fileReadError(file, { name: 'NotFoundError' }).message;
+        expect(viaReader).toBe(viaError);
+    });
+
+    it('ne casse pas si le fichier est absent', () => {
+        expect(fileReadError(null, fakeReader('NotFoundError')).message).toContain('ce fichier');
+        expect(imageDecodeError(undefined).message).toContain('ce fichier');
     });
 });
