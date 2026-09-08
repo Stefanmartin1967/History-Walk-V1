@@ -95,7 +95,10 @@
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "photos": [
+          "photos/poi_HW-01K77WPE6722XTDVPGCQTPPBXR_1788890568267.jpg"
+        ]
       }
     },
     {
@@ -16285,7 +16288,7 @@
       "properties": {
         "Nom du site FR": "Puits (Taguermess)",
         "Catégorie": "Puits",
-        "description": "Puits rénové par le syndicat d'initiative de Midoun - Juin 2023",
+        "description": "Puits rénové par le syndicat d'initiative de Midoun - Juin 2003",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
@@ -16304,6 +16307,18 @@
           "photos/poi_HW-01M2114FHGXS554X0BESAZGF4D_1788889386658.jpg",
           "photos/poi_HW-01M2114FHGXS554X0BESAZGF4D_1788889388580.jpg"
         ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Source": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null,
         "Zone": "Midoun"
       }
     }
