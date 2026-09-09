@@ -23,6 +23,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId, getPatrimonialName, getSearchableNames } from './data.js';
+import { foldForSearch } from './text-search.js';
 import { openStartPointModal, getStartPointLabel } from './start-point.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { isMobileView } from './mobile-state.js';
@@ -613,16 +614,19 @@ export function renderExplorerList() {
     // avant, taper « Arkou » ne retournait qu'un circuit (par hasard, un POI
     // contenait « Arkou » dans son nom), au lieu des 4 circuits effectivement
     // dans la zone Arkou.
-    if (searchQuery.trim()) {
-        const q = searchQuery.trim().toLowerCase();
+    // Repli accents/casse/séparateurs des deux côtés (foldForSearch), comme la
+    // recherche de lieux : « erriadh » retrouve « Erriadh », « decouverte » retrouve
+    // « Découverte ».
+    const q = foldForSearch(searchQuery);
+    if (q) {
         circuits = circuits.filter(c => {
-            if ((c.name || '').toLowerCase().includes(q)) return true;
-            if ((c._zoneName || '').toLowerCase().includes(q)) return true;
+            if (foldForSearch(c.name).includes(q)) return true;
+            if (foldForSearch(c._zoneName).includes(q)) return true;
             if (Array.isArray(c.poiIds)) {
                 return c.poiIds.some(id => {
                     const f = state.loadedFeatures.find(g => getPoiId(g) === id);
                     if (!f) return false;
-                    return getSearchableNames(f).some(n => n.toLowerCase().includes(q));
+                    return getSearchableNames(f).some(n => foldForSearch(n).includes(q));
                 });
             }
             return false;

@@ -16,6 +16,7 @@
 
 import { state, setActiveFilter, setFilterCompleted } from './state.js';
 import { getPoiId, getPatrimonialName, getSearchableNames } from './data.js';
+import { foldForSearch } from './text-search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { isCircuitTested, loadCircuitById } from './circuit.js';
@@ -130,16 +131,16 @@ export function renderMobileCircuitsList() {
     // « Rechercher dans les circuits… » couvre les 3 cas de façon implicite.
     // PC a un bug pré-existant (ne matche pas par zone) qu'on n'introduit pas
     // côté mobile. Cf. PR ultérieure pour fix côté PC (ui-circuit-list.js).
-    if (searchQuery.trim()) {
-        const q = searchQuery.trim().toLowerCase();
+    const q = foldForSearch(searchQuery);
+    if (q) {
         circuitsToDisplay = circuitsToDisplay.filter(c => {
-            if ((c.name || '').toLowerCase().includes(q)) return true;
-            if ((c._zoneName || '').toLowerCase().includes(q)) return true;
+            if (foldForSearch(c.name).includes(q)) return true;
+            if (foldForSearch(c._zoneName).includes(q)) return true;
             if (Array.isArray(c.poiIds)) {
                 return c.poiIds.some(id => {
                     const f = state.loadedFeatures.find(g => getPoiId(g) === id);
                     if (!f) return false;
-                    return getSearchableNames(f).some(n => n.toLowerCase().includes(q));
+                    return getSearchableNames(f).some(n => foldForSearch(n).includes(q));
                 });
             }
             return false;
