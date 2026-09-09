@@ -584,7 +584,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Omar Ibn el Khatab",
+        "Nom du site FR": "Mosquée Omar Ibn El Khatab",
         "Nom du site arabe": "جامع الكباس",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
@@ -7839,7 +7839,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Borj el Agreb",
+        "Nom du site FR": "Borj El Agreb",
         "Nom du site arabe": "برج العقرب",
         "Catégorie": "Fortification",
         "Zone": "Hors zone",
@@ -13866,7 +13866,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée Ouled Amor el Qadima",
+        "Nom du site FR": "Mausolée Ouled Amor El Qadima",
         "Catégorie": "Mausolée",
         "osm_ref": "way/1431208662",
         "HW_ID": "HW-01KZH0VHFXC3ZQ3X20CDR88MRR",
@@ -13890,7 +13890,12 @@
         "accessPoint": [
           10.9742805,
           33.8371082
-        ]
+        ],
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
