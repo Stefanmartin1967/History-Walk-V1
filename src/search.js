@@ -2,6 +2,7 @@
 import { state } from './state.js';
 import { getPoiId, getPatrimonialName, getSearchableNames } from './data.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
+import { foldForSearch } from './text-search.js';
 
 /**
  * Filtre les POIs chargés en fonction d'une requête textuelle.
@@ -11,14 +12,21 @@ import { getCurrentPatrimonialLang } from './patrimonial-names.js';
  * tapant son nom FR OU arabe quel que soit le réglage d'affichage (chercher ≠
  * afficher). Le tri, lui, suit la langue affichée (collation locale).
  *
- * @param {string} query - Le texte recherché (sera mis en minuscules).
+ * Le matching passe par foldForSearch des DEUX côtés : accents, casse et
+ * séparateurs sont ignorés, donc « tenafsa » retrouve « Mosquée Ténafsa » et
+ * « hadher bach » retrouve « Mosquée Hadherbach ».
+ *
+ * @param {string} query - Le texte recherché (replié par foldForSearch).
  * @param {Array} features - La liste des features à filtrer (par défaut state.loadedFeatures).
  * @returns {Array} - Liste des features correspondantes.
  */
 export function getSearchResults(query, features = state.loadedFeatures) {
     if (!query || query.trim().length === 0) return [];
 
-    const normalizedQuery = query.toLowerCase().trim();
+    // Une requête faite QUE de séparateurs (« - », « ' ») se replie sur la chaîne
+    // vide, que `includes` accepterait toujours → on ne renvoie rien plutôt que tout.
+    const normalizedQuery = foldForSearch(query);
+    if (!normalizedQuery) return [];
 
     const filteredFeatures = features.filter(f => {
         const poiId = getPoiId(f);
@@ -29,7 +37,7 @@ export function getSearchResults(query, features = state.loadedFeatures) {
         }
 
         // Matche n'importe quelle variante de nom (FR, arabe, custom).
-        return getSearchableNames(f).some(n => n.toLowerCase().includes(normalizedQuery));
+        return getSearchableNames(f).some(n => foldForSearch(n).includes(normalizedQuery));
     });
 
     // Tri alphabétique dans la langue AFFICHÉE (collation arabe en AR, française

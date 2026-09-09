@@ -23,6 +23,7 @@ import { getDomainFromUrl } from './url-utils.js';
 import { PERSONAL_KEYS } from './config.js';
 import { recordModification } from './backup-auto-local.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
+import { foldForSearch } from './text-search.js';
 
 // --- UTILITAIRES ---
 
@@ -71,10 +72,9 @@ export function getSearchableNames(feature) {
 // l'afficherait — voulu). Réutilise getSearchableNames → couvre les deux langues.
 export function isCategoryInName(feature, categoryLabel) {
     if (!categoryLabel) return false;
-    const norm = (s) => (s || '').toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '');
-    const cat = norm(categoryLabel);
+    const cat = foldForSearch(categoryLabel);
     if (!cat) return false;
-    return getSearchableNames(feature).some((n) => norm(n).includes(cat));
+    return getSearchableNames(feature).some((n) => foldForSearch(n).includes(cat));
 }
 
 // --- GESTION DES MIGRATIONS D'ID (ADMIN) ---

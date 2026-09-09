@@ -13,6 +13,7 @@ import { map } from './map.js';
 import { state } from './state.js';
 import { getPoiId, getPoiName, getFilteredFeatures } from './data.js';
 import { escapeXml, getPoiProp } from './utils.js';
+import { foldForSearch } from './text-search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { RichEditor } from './richEditor.js';
@@ -36,9 +37,9 @@ function buildItems() {
 }
 
 function visibleItems() {
-    const s = _search.trim().toLowerCase();
+    const s = foldForSearch(_search);
     if (!s) return _items;
-    return _items.filter(f => (getPoiName(f) || '').toLowerCase().includes(s));
+    return _items.filter(f => foldForSearch(getPoiName(f)).includes(s));
 }
 
 function renderShell() {

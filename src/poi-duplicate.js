@@ -25,6 +25,7 @@ import { deletePoi } from './data.js';
 import { persistPoiEdit } from './poi-persistence.js';
 import { getPoiId, getPoiProp, normalizeOsmRef, calculateDistance, isCandidate, escapeHtml } from './utils.js';
 import { getIconForFeature } from './poi-icons.js';
+import { foldForSearch } from './text-search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { logModification } from './logger.js';
@@ -130,8 +131,8 @@ export function openDuplicatePicker(candidate, host) {
         const close = (result) => { overlay.remove(); resolve(result); };
 
         const renderList = () => {
-            const q = search.trim().toLowerCase();
-            const shown = (q ? targets.filter(t => t.name.toLowerCase().includes(q)) : targets).slice(0, MAX_SHOWN);
+            const q = foldForSearch(search);
+            const shown = (q ? targets.filter(t => foldForSearch(t.name).includes(q)) : targets).slice(0, MAX_SHOWN);
             if (!shown.length) {
                 listEl.innerHTML = `<p class="pd-empty">Aucun lieu ne correspond.</p>`;
                 return;

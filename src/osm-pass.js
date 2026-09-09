@@ -17,6 +17,7 @@ import { map } from './map.js';
 import { state } from './state.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { getAccessPoint, escapeXml } from './utils.js';
+import { foldForSearch } from './text-search.js';
 import { getAccessPointStatus, prepoSeAccessPoint, eraseAccessPoint } from './access-point.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
@@ -63,15 +64,12 @@ export function shouldIncludeInPass(feature) {
  * son échec, qui est l'information utile ici.
  */
 export function filterItems(items, filter, search) {
-    const s = (search || '').trim().toLowerCase();
+    const s = foldForSearch(search);
     return items.filter(it => {
         if (filter === 'nodrapeau' && !(it.status === undefined || it.status === 'failed')) return false;
         if (filter === 'drapeau'   && !(it.status === 'osm' || it.status === 'moved'))      return false;
         if (filter === 'failed'    && it.status !== 'failed')                                return false;
-        if (s) {
-            const name = (getPoiName(it.feature) || '').toLowerCase();
-            if (!name.includes(s)) return false;
-        }
+        if (s && !foldForSearch(getPoiName(it.feature)).includes(s)) return false;
         return true;
     });
 }
