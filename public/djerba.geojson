@@ -2628,7 +2628,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Site Archéologique de Ghizen",
+        "Nom du site FR": "Site archéologique de Ghizen",
         "Nom du site arabe": "الموقع الأثري غيزان",
         "Catégorie": "Site archéologique",
         "Zone": "Mazraia",
@@ -16212,7 +16212,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Belhejjem.",
+        "Nom du site FR": "Mosquée Belhejjem",
         "Catégorie": "Mosquée",
         "Sous-type": "Générique",
         "Temps_minutes": 0,
@@ -16231,7 +16231,17 @@
           10.9742945,
           33.8224501
         ],
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "Nom du site arabe": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
