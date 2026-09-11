@@ -296,5 +296,23 @@
       "HW-01K77WPE68MMPS9ZVR6XTV9J61",
       "HW-01K77WPE68JWCXJ0TCG1EDSB7A"
     ]
+  },
+  {
+    "id": "HW-01M28T9V3EP7SNPM7VV38HEXQ7",
+    "name": "Boucle autour de Rym Beach",
+    "file": "djerba/Boucle autour de Rym Beach.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "8.0 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Midoun",
+    "poiIds": [
+      "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
+      "HW-01K77WPE6722XTDVPGCQTPPBXR",
+      "HW-01K77WPE671G6V27VYYNMJV2NC",
+      "HW-01KZH0VGSJV12DKGE1N725T34M",
+      "HW-01K77WPE6770BXCP2SW1Z2DTA2",
+      "HW-01M1RTWE1A2DVRQ2T0ZPYTFKX3"
+    ]
   }
 ]
