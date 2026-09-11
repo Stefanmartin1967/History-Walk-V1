@@ -1,21 +1,5 @@
 [
   {
-    "id": "HW-1771316521571",
-    "name": "Boucle autour du Rym Beach",
-    "file": "djerba/Boucle autour du Rym Beach.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
-    "distance": "7.2 km",
-    "isOfficial": true,
-    "hasRealTrack": true,
-    "zone": "Midoun",
-    "poiIds": [
-      "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
-      "HW-01K77WPE6722XTDVPGCQTPPBXR",
-      "HW-01K77WPE671G6V27VYYNMJV2NC",
-      "HW-01K77WPE6770BXCP2SW1Z2DTA2"
-    ]
-  },
-  {
     "id": "HW-1771320398895",
     "name": "Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen",
     "file": "djerba/Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen via Mosquée Ben Daoued.gpx",
