@@ -254,7 +254,10 @@
         "Zone": "Midoun",
         "Source": "Répertoire J. Fathallah, n° 318 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6770BXCP2SW1Z2DTA2",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1789153457727.jpg",
+          "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1789153459735.jpg"
+        ],
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
