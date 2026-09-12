@@ -16371,6 +16371,74 @@
         "osmCheckedDate": null,
         "Zone": "Midoun"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.959803,
+          33.85012
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Erraji Abbes",
+        "Catégorie": "Mosquée",
+        "description": "Jalel n° 56 : « Erraji Abbes. Mezraya. Mosquée wahbite abandonnée. Ancienne. »\nAppelée Eirji Abbas sur OSM, Irji Abbes sur Wikipédia.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 56 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/1550025741",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-12",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2AKQ5JHBHT60C0Y0RCMV8RY",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "accessPoint": [
+          10.9599213,
+          33.8501081
+        ],
+        "Zone": "Mazraia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.905525,
+          33.844343
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Jalleb",
+        "Catégorie": "Mosquée",
+        "description": "Jalel n° 133 : « Mosquée Jalleb. Guechaine. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 133 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-12",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2AQMD3WWVBE6WAEMHHX124N",
+        "accessPoint": [
+          10.9064646,
+          33.8445249
+        ],
+        "Zone": "Sedghaiane"
+      }
     }
   ]
 }
