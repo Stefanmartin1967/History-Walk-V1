@@ -298,5 +298,22 @@
       "HW-01K77WPE6770BXCP2SW1Z2DTA2",
       "HW-01M1RTWE1A2DVRQ2T0ZPYTFKX3"
     ]
+  },
+  {
+    "id": "HW-01M2A1A3DETTZ20WXYY7EG9DB6",
+    "name": "Circuit de Mosquée Chandra à Mosquée d’‏Elyounsiine",
+    "file": "djerba/Circuit de Mosquée Chandra à Mosquée d’‏Elyounsiine.gpx",
+    "description": "Circuit généré par Heripia — heripia.com",
+    "distance": "5.7 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Sedghaiane",
+    "poiIds": [
+      "HW-01M1RZZWS6P3KWET3E89M1AXFK",
+      "HW-01KZH0VGKHTQAFAVA6SZN7E5VB",
+      "HW-01K77WPE6C5GHRJMF8MP5ZQC6D",
+      "HW-01K77WPE6CT271602JBDQFH8AM",
+      "HW-01K77WPE6CW6FA3ED63PXQ5WHX"
+    ]
   }
 ]
