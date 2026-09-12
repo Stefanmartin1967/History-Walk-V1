@@ -44,14 +44,17 @@ vi.mock('../src/state.js', () => {
 });
 
 const saveCircuit = vi.fn(async () => {});
+const getAppState = vi.fn(async () => null);
+const saveCircuitDraft = vi.fn(async () => {});
 vi.mock('../src/database.js', () => ({
     softDeleteCircuit: vi.fn(),
-    getAppState: vi.fn(async () => null),
+    getAppState: (...a) => getAppState(...a),
     saveAppState: vi.fn(),
     saveCircuit: (...a) => saveCircuit(...a),
 }));
 vi.mock('../src/circuit.js', () => ({
     clearCircuit: vi.fn(),
+    saveCircuitDraft: (...a) => saveCircuitDraft(...a),
     setCircuitVisitedState: vi.fn(),
     generateCircuitName: vi.fn(() => 'Nom auto'),
 }));
@@ -147,5 +150,63 @@ describe("saveAndExportCircuit — édition d'un officiel : un seul objet", () =
 
         expect(sharedState.activeCircuitId).toBe('HW-NOUVEAU');
         expect(sharedState.myCircuits.map(c => c.id)).toEqual(['HW-NOUVEAU']);
+    });
+});
+
+// Régression A3 de l'audit (12/09/2026) : description et transport étaient lus
+// dans le brouillon SEUL. Ouvrir un circuit vide le brouillon → re-tracer sans
+// toucher aux étapes remplaçait la description par la signature, vidait le transport.
+describe('saveAndExportCircuit — description et transport conservés', () => {
+    let saveAndExportCircuit;
+    const DESC = 'Balade entre deux mosquées.\n\nCircuit généré par Heripia — heripia.com';
+    const TRANSPORT = { allerTemps: '15', allerCout: '5', retourTemps: '', retourCout: '' };
+
+    beforeEach(async () => {
+        saveCircuit.mockReset();
+        saveCircuit.mockImplementation(async () => {});
+        getAppState.mockReset();
+        getAppState.mockImplementation(async () => null);
+        saveCircuitDraft.mockClear();
+        sharedState.myCircuits = [];
+        sharedState.officialCircuits = [{
+            id: 'HW-OFF', name: 'Officiel', poiIds: ['P0'], isOfficial: true,
+            description: DESC, transport: TRANSPORT,
+        }];
+        sharedState.activeCircuitId = 'HW-OFF';
+        sharedState.currentCircuit = [poi('P1'), poi('P2')];
+        ({ saveAndExportCircuit } = await import('../src/circuit-actions.js'));
+    });
+
+    it('sans brouillon, garde la description et le transport du circuit', async () => {
+        await saveAndExportCircuit(NEW_TRACK, { stayInCreation: true });
+
+        const saved = saveCircuit.mock.calls[0][0];
+        expect(saved.description).toBe(DESC);
+        expect(saved.transport).toEqual(TRANSPORT);
+    });
+
+    it("ignore le brouillon d'un AUTRE circuit (ou d'une création)", async () => {
+        getAppState.mockImplementation(async () => ({ circuitId: null, description: 'Autre', transport: {} }));
+
+        await saveAndExportCircuit(NEW_TRACK, { stayInCreation: true });
+
+        expect(saveCircuit.mock.calls[0][0].description).toBe(DESC);
+    });
+
+    it('prend le brouillon qui concerne CE circuit (saisie en cours)', async () => {
+        const t = { allerTemps: '20', allerCout: '', retourTemps: '', retourCout: '' };
+        getAppState.mockImplementation(async () => ({ circuitId: 'HW-OFF', description: 'Nouvelle description', transport: t }));
+
+        await saveAndExportCircuit(NEW_TRACK, { stayInCreation: true });
+
+        const saved = saveCircuit.mock.calls[0][0];
+        expect(saved.description).toContain('Nouvelle description');
+        expect(saved.transport).toEqual(t);
+    });
+
+    it("après un tracé (édition continue), réécrit le brouillon — il porte l'id", async () => {
+        await saveAndExportCircuit(NEW_TRACK, { stayInCreation: true });
+
+        expect(saveCircuitDraft).toHaveBeenCalled();
     });
 });

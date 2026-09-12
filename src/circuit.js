@@ -157,8 +157,16 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
 }
 
 
+// Le brouillon porte l'id du circuit qu'il édite (`circuitId`, null pour une
+// création vierge). Avant le 12/09/2026 il n'en portait aucun : l'id ne vivait
+// qu'en mémoire (`activeCircuitId`), les étapes survivaient seules au F5, et le
+// boot restaurait l'édition d'un circuit existant comme un brouillon ANONYME —
+// le tracé suivant créait alors un doublon (Rym Beach, Santorini).
 export async function saveCircuitDraft() {
     if (!state.currentMapId) return;
+    // Consultation d'un circuit chargé : rien à brouillonner. Écrire ici créerait
+    // un brouillon sans id que le boot restaurerait comme une création.
+    if (state.activeCircuitId && !state.editingMode) return;
     try {
         // Petit helper local pour lire une valeur sans crasher si l'élément manque
         const getVal = (id) => {
@@ -167,6 +175,7 @@ export async function saveCircuitDraft() {
         };
 
         const circuitData = {
+            circuitId: state.activeCircuitId ? String(state.activeCircuitId) : null,
             poiIds: state.currentCircuit.map(getPoiId).filter(Boolean),
             customDraftName: state.customDraftName,
             // On vérifie aussi DOM.circuitDescription au cas où
@@ -184,10 +193,64 @@ export async function saveCircuitDraft() {
     }
 }
 
+/**
+ * Reprise, au boot, de l'ÉDITION d'un circuit existant (brouillon avec
+ * `circuitId`) — décision Stefan 12/09/2026 : on rouvre l'édition du circuit,
+ * jamais un brouillon anonyme (qui créerait un doublon au tracé suivant).
+ *
+ * Circuit introuvable (hors-ligne, index non chargé, supprimé ailleurs) : on ne
+ * restaure RIEN et on GARDE le brouillon — le prochain boot en ligne le reprendra.
+ * Brouillon d'un officiel chez un non-admin (seul l'admin édite un officiel sur
+ * place) : incohérent, on le vide.
+ * @param {object} draft Brouillon lu en appState (poiIds non vide, circuitId posé).
+ */
+async function resumeCircuitEdit(draft) {
+    const draftKey = `circuitDraft_${state.currentMapId}`;
+    const target = findCircuitById(draft.circuitId);
+    if (!target) {
+        console.warn(`[Circuit] Brouillon lié à un circuit introuvable (${draft.circuitId}) — conservé, non restauré.`);
+        return;
+    }
+    if (target.isOfficial && !state.isAdmin) {
+        await saveAppState(draftKey, null);
+        return;
+    }
+
+    // Ouverture normale (tracé chargé au besoin, officiel compris) — elle vide
+    // le brouillon au passage (clearCircuit), d'où la réécriture en fin.
+    await loadCircuitById(target.id);
+    if (String(state.activeCircuitId) !== String(target.id)) return; // chargement supplanté
+
+    const saved = findCircuitById(target.id) || target;
+    const toFeatures = (ids) => (ids || [])
+        .map(id => state.loadedFeatures.find(f => getPoiId(f) === id))
+        .filter(Boolean);
+
+    // Même bascule que convertToDraft (admin), avec les étapes du brouillon.
+    markEditingStart(toFeatures(saved.poiIds)); // POI préexistants = étapes enregistrées
+    setCurrentCircuit(toFeatures(draft.poiIds));
+    setCustomDraftName(draft.customDraftName || null);
+    View.updateCircuitForm({ ...saved, description: draft.description, transport: draft.transport });
+    setEditingMode(true);
+    setCircuitCreationMode(true);
+    // Base de péremption = séquence du tracé ENREGISTRÉ : si le brouillon a
+    // changé les étapes sans re-tracer, le badge « à re-tracer » s'affiche.
+    const hasTrack = Array.isArray(saved.realTrack) && saved.realTrack.length >= 2;
+    state.routeBasisKey = hasTrack ? (saved.poiIds || []).join('|') : null;
+
+    renderCircuitPanel();
+    applyFilters();
+    await saveCircuitDraft();
+}
+
 export async function loadCircuitDraft() {
     if (!state.currentMapId || state.loadedFeatures.length === 0) return;
     try {
         const savedData = await getAppState(`circuitDraft_${state.currentMapId}`);
+        if (savedData && Array.isArray(savedData.poiIds) && savedData.poiIds.length > 0 && savedData.circuitId) {
+            await resumeCircuitEdit(savedData);
+            return;
+        }
         if (savedData && Array.isArray(savedData.poiIds) && savedData.poiIds.length > 0) {
             setCurrentCircuit(savedData.poiIds.map(id => state.loadedFeatures.find(feature => getPoiId(feature) === id)).filter(Boolean));
             setCustomDraftName(savedData.customDraftName || null);
@@ -724,6 +787,9 @@ export function convertToDraft({ preserveId = false } = {}) {
 
     renderCircuitPanel();
     notifyCircuitChanged(); // Redessine le tracé (conservé) + rafraîchit le bloc tracé
+    // Brouillon écrit dès l'entrée en édition (avec l'id en mode admin) : un F5
+    // juste après « Modifier » rouvre l'édition au lieu de la perdre.
+    saveCircuitDraft();
 }
 
 // Garde anti-course (bug 03/06/2026) : loadCircuitById fait un fetch GPX lent

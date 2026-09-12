@@ -125,7 +125,7 @@ vi.mock('../src/circuit-flags.js', () => ({
 import { state, setOfficialCircuitStatus, setTestedCircuit, addMyCircuit, setCurrentCircuit, setActiveCircuitId } from '../src/state.js';
 import { DOM } from '../src/ui-dom.js';
 import { showToast } from '../src/toast.js';
-import { saveAppState, saveCircuit, batchSavePoiData } from '../src/database.js';
+import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from '../src/database.js';
 import { recomputeVu, applyFilters } from '../src/data.js';
 import { isMobileView } from '../src/mobile-state.js';
 import { eventBus } from '../src/events.js';
@@ -140,6 +140,8 @@ import {
     setCircuitVisitedState,
     loadCircuitFromIds,
     loadCircuitById,
+    saveCircuitDraft,
+    loadCircuitDraft,
     updateCircuitMetadata
 } from '../src/circuit.js';
 import { fetchWithTimeout } from '../src/net.js';
@@ -661,6 +663,97 @@ describe('loadCircuitById — lazy-load du tracé officiel', () => {
         await loadCircuitById('HW-off');
 
         expect(fetchWithTimeout).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Régression A2 de l'audit (12/09/2026) : le brouillon ne portait pas l'id du
+// circuit édité. Au boot, l'édition d'un circuit existant revenait en brouillon
+// ANONYME et le tracé suivant créait un doublon (Rym Beach, Santorini).
+describe('brouillon lié à son circuit', () => {
+    const DRAFT_KEY = 'circuitDraft_djerba';
+    const draftWrites = () => saveAppState.mock.calls.filter(([k]) => k === DRAFT_KEY);
+
+    beforeEach(() => {
+        resetState();
+        vi.clearAllMocks();
+        isMobileView.mockReturnValue(true);
+    });
+
+    it('saveCircuitDraft : en édition, le brouillon porte circuitId', async () => {
+        state.activeCircuitId = 'HW-off';
+        state.editingMode = true;
+        state.currentCircuit = [poi('p1')];
+
+        await saveCircuitDraft();
+
+        expect(draftWrites()[0][1]).toMatchObject({ circuitId: 'HW-off', poiIds: ['p1'] });
+    });
+
+    it('saveCircuitDraft : en création vierge, circuitId null', async () => {
+        state.currentCircuit = [poi('p1')];
+
+        await saveCircuitDraft();
+
+        expect(draftWrites()[0][1].circuitId).toBeNull();
+    });
+
+    it("saveCircuitDraft : en consultation, n'écrit rien", async () => {
+        state.activeCircuitId = 'HW-off';
+        state.editingMode = false;
+        state.currentCircuit = [poi('p1')];
+
+        await saveCircuitDraft();
+
+        expect(draftWrites()).toHaveLength(0);
+    });
+
+    it("loadCircuitDraft : rouvre l'ÉDITION du circuit, pas un brouillon anonyme", async () => {
+        const p1 = poi('p1'), p2 = poi('p2');
+        state.loadedFeatures = [p1, p2];
+        state.isAdmin = true;
+        state.officialCircuits = [{ id: 'HW-off', name: 'Officiel', poiIds: ['p1'], isOfficial: true, realTrack: [[1, 1], [2, 2]] }];
+        getAppState.mockResolvedValue({ circuitId: 'HW-off', poiIds: ['p1', 'p2'], description: 'D', transport: {} });
+
+        await loadCircuitDraft();
+
+        expect(state.activeCircuitId).toBe('HW-off');
+        expect(state.editingMode).toBe(true);
+        expect(setCurrentCircuit).toHaveBeenLastCalledWith([p1, p2]);
+        expect(state.routeBasisKey).toBe('p1'); // séquence du tracé enregistré
+    });
+
+    it('loadCircuitDraft : circuit introuvable → rien restauré, brouillon conservé', async () => {
+        state.loadedFeatures = [poi('p1')];
+        getAppState.mockResolvedValue({ circuitId: 'HW-absent', poiIds: ['p1'] });
+
+        await loadCircuitDraft();
+
+        expect(state.activeCircuitId).toBeNull();
+        expect(setCurrentCircuit).not.toHaveBeenCalled();
+        expect(draftWrites()).toHaveLength(0);
+    });
+
+    it("loadCircuitDraft : brouillon d'un officiel chez un non-admin → vidé", async () => {
+        state.loadedFeatures = [poi('p1')];
+        state.officialCircuits = [{ id: 'HW-off', name: 'O', poiIds: ['p1'], isOfficial: true }];
+        getAppState.mockResolvedValue({ circuitId: 'HW-off', poiIds: ['p1'] });
+
+        await loadCircuitDraft();
+
+        expect(state.activeCircuitId).toBeNull();
+        expect(draftWrites()).toEqual([[DRAFT_KEY, null]]);
+    });
+
+    it('loadCircuitDraft : brouillon ancien sans circuitId → création restaurée comme avant', async () => {
+        const p1 = poi('p1');
+        state.loadedFeatures = [p1];
+        getAppState.mockResolvedValue({ poiIds: ['p1'] });
+
+        await loadCircuitDraft();
+
+        expect(state.activeCircuitId).toBeNull();
+        expect(setCurrentCircuit).toHaveBeenCalledWith([p1]);
     });
 });
 
