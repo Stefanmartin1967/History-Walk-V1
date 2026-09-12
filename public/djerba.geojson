@@ -16439,6 +16439,76 @@
         ],
         "Zone": "Sedghaiane"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.917299,
+          33.839866
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Youssef",
+        "Catégorie": "Mosquée",
+        "description": "Jalel n° 135 : « Sidi Youssef. Guechaine. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne. »\nAppelée Jeddi Youssef El Barouni sur OSM, Wikipédia et Google Maps.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 135 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/1549783250",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-12",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2AR8XXCMXGCEA1CQ9A9DXHK",
+        "accessPoint": [
+          10.917402,
+          33.8397264
+        ],
+        "Zone": "Sedghaiane"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.91884,
+          33.838239
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ourir (Takarbouine)",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 136 : « Mosquée Ourir (Tkarbouine). Guechaine. Mosquée ibadite wahbite. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 136 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/990332932",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-12",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2ARNRWJ607P8DC5R7GKA7CP",
+        "maps_ref": "https://maps.app.goo.gl/x6UmaSDGnppyvruD7",
+        "accessPoint": [
+          10.9190958,
+          33.838327
+        ],
+        "Zone": "Sedghaiane"
+      }
     }
   ]
 }
