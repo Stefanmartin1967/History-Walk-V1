@@ -327,6 +327,19 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
         }
     }
 
+    // INVARIANT : tout circuit écrit dans `savedCircuits` DOIT porter un `mapId`.
+    // La relecture passe par `index('mapId_index')` (database.js getAllCircuitsForMap)
+    // et un index IndexedDB IGNORE les enregistrements où la clé indexée est absente :
+    // un circuit sans `mapId` est écrit, stocké… et INVISIBLE au rechargement.
+    // Constaté le 12/09/2026 : éditer un circuit OFFICIEL perdait silencieusement
+    // la modification au F5. L'objet vient alors de l'index publié
+    // (public/circuits/<map>.json), dont les entrées ne portent pas de `mapId` —
+    // contrairement à un circuit créé plus haut, qui en reçoit un. Au démarrage,
+    // `loc` restait introuvable et `mergeOfficialWithLocal(off, undefined)` rendait
+    // l'entrée d'index périmée. Posé ici, au point d'écriture unique, plutôt que
+    // dans chaque branche : l'invariant tient aussi pour les branches futures.
+    if (!circuitToSave.mapId) circuitToSave.mapId = state.currentMapId;
+
     try {
         await saveCircuit(circuitToSave);
 
