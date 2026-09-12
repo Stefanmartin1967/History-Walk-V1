@@ -11,18 +11,35 @@
 import { state } from './state.js';
 
 /**
- * Cherche un circuit par son id dans les circuits perso PUIS officiels.
+ * Cherche un circuit par son id dans les circuits officiels PUIS perso.
  * Comparaison en `String()` : les ids sont des chaînes (« HW-… ») mais on reste
  * robuste si un id arrive en nombre. Renvoie null si introuvable ou id nul.
+ *
+ * Officiels d'abord : c'est la même priorité que `getAllCircuits` (diff et
+ * publication). Un id ne devrait exister qu'une fois (cf. circuit-store) ; si un
+ * doublon traîne malgré tout, le panneau montre ce qui sera publié.
  * @param {string|number|null|undefined} id
  * @returns {object|null}
  */
 export function findCircuitById(id) {
     if (id == null) return null;
     const sid = String(id);
-    return (state.myCircuits || []).find(c => String(c.id) === sid)
-        || (state.officialCircuits || []).find(c => String(c.id) === sid)
+    return (state.officialCircuits || []).find(c => String(c.id) === sid)
+        || (state.myCircuits || []).find(c => String(c.id) === sid)
         || null;
+}
+
+/**
+ * Tous les circuits, officiels d'abord, UNE entrée par id. Source commune du
+ * moteur de diff et de la publication : le 12/09/2026, le diff parcourait les
+ * deux listes (et voyait la copie modifiée) tandis que la publication prenait la
+ * première correspondance (l'officiel resté ancien) — d'où des commits vides.
+ * @returns {object[]}
+ */
+export function getAllCircuits() {
+    const officials = state.officialCircuits || [];
+    const officialIds = new Set(officials.map(c => String(c.id)));
+    return [...officials, ...(state.myCircuits || []).filter(c => !officialIds.has(String(c.id)))];
 }
 
 /**

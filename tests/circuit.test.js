@@ -94,7 +94,12 @@ vi.mock('../src/mobile-state.js', () => ({
 vi.mock('../src/circuit-view.js', () => ({
     renderCircuitList: vi.fn(),
     updateControlButtons: vi.fn(),
-    updateCircuitHeader: vi.fn()
+    updateCircuitHeader: vi.fn(),
+    updateCircuitForm: vi.fn()
+}));
+
+vi.mock('../src/net.js', () => ({
+    fetchWithTimeout: vi.fn()
 }));
 
 vi.mock('../src/toast.js', () => ({
@@ -134,8 +139,10 @@ import {
     convertToDraft,
     setCircuitVisitedState,
     loadCircuitFromIds,
+    loadCircuitById,
     updateCircuitMetadata
 } from '../src/circuit.js';
+import { fetchWithTimeout } from '../src/net.js';
 import { updateCircuitHeader } from '../src/circuit-view.js';
 import { getRealDistance, getOrthodromicDistance } from '../src/utils.js';
 
@@ -614,6 +621,46 @@ describe('loadCircuitFromIds', () => {
             'error'
         );
         expect(addMyCircuit).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Régression 12/09/2026 (audit du cycle circuits) : le lazy-load du tracé d'un
+// officiel créait une COPIE dans myCircuits et l'écrivait en IndexedDB. L'édition
+// suivante allait dans la copie, la publication prenait l'officiel resté ancien.
+describe('loadCircuitById — lazy-load du tracé officiel', () => {
+    const GPX = '<gpx><trk><trkseg>'
+        + '<trkpt lat="33.1" lon="10.1"/><trkpt lat="33.2" lon="10.2"/>'
+        + '</trkseg></trk></gpx>';
+
+    beforeEach(() => {
+        resetState();
+        vi.clearAllMocks();
+        fetchWithTimeout.mockResolvedValue({ ok: true, text: async () => GPX });
+        isMobileView.mockReturnValue(true);
+    });
+
+    it("pose le tracé sur l'officiel en mémoire, sans copie ni écriture en base", async () => {
+        const off = { id: 'HW-off', name: 'Officiel', poiIds: [], file: 'djerba/Officiel.gpx', isOfficial: true };
+        state.officialCircuits = [off];
+
+        await loadCircuitById('HW-off');
+
+        expect(fetchWithTimeout).toHaveBeenCalledTimes(1);
+        expect(state.officialCircuits[0].realTrack).toEqual([[33.1, 10.1], [33.2, 10.2]]);
+        expect(addMyCircuit).not.toHaveBeenCalled();
+        expect(state.myCircuits).toHaveLength(0);
+        // Écrire ici figerait la version consultée chez chaque visiteur (la copie
+        // locale prime sur l'index publié au boot).
+        expect(saveCircuit).not.toHaveBeenCalled();
+    });
+
+    it('ne télécharge rien si le tracé est déjà en mémoire', async () => {
+        state.officialCircuits = [{ id: 'HW-off', name: 'O', poiIds: [], file: 'djerba/O.gpx', realTrack: [[1, 1], [2, 2]] }];
+
+        await loadCircuitById('HW-off');
+
+        expect(fetchWithTimeout).not.toHaveBeenCalled();
     });
 });
 

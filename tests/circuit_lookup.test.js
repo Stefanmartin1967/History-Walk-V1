@@ -16,7 +16,7 @@ vi.mock('../src/state.js', () => {
 });
 
 import { state } from '../src/state.js';
-import { findCircuitById, getActiveCircuit, mergeOfficialWithLocal } from '../src/circuit-lookup.js';
+import { findCircuitById, getActiveCircuit, getAllCircuits, mergeOfficialWithLocal } from '../src/circuit-lookup.js';
 
 const PERSO = { id: 'HW-perso', name: 'Mon circuit' };
 const OFFICIEL = { id: 'HW-off', name: 'Circuit officiel', realTrack: [[1, 1], [2, 2]] };
@@ -38,11 +38,13 @@ describe('findCircuitById', () => {
         expect(findCircuitById('HW-off')).toBe(OFFICIEL);
     });
 
-    it('donne la priorité au perso quand le même id existe dans les deux listes', () => {
+    // Priorité inversée le 12/09/2026 : le panneau (ce lookup) montrait la copie
+    // perso quand la publication prenait l'officiel. Même règle partout désormais.
+    it("donne la priorité à l'OFFICIEL quand le même id existe dans les deux listes", () => {
         const shadow = { id: 'HW-off', name: 'Copie locale' };
         state.myCircuits = [shadow];
         state.officialCircuits = [OFFICIEL];
-        expect(findCircuitById('HW-off')).toBe(shadow);
+        expect(findCircuitById('HW-off')).toBe(OFFICIEL);
     });
 
     it('compare en String — un id numérique retrouve un id chaîne', () => {
@@ -77,6 +79,32 @@ describe('getActiveCircuit', () => {
         state.officialCircuits = [OFFICIEL];
         state.activeCircuitId = null;
         expect(getActiveCircuit()).toBeNull();
+    });
+});
+
+// Source commune du diff et de la publication (12/09/2026) : le diff parcourait
+// les deux listes quand l'écrivain prenait la première correspondance.
+describe('getAllCircuits', () => {
+    it('officiels puis perso, une seule entrée par id (officiel gagnant)', () => {
+        const shadow = { id: 'HW-off', name: 'Copie locale' };
+        state.officialCircuits = [OFFICIEL];
+        state.myCircuits = [shadow, PERSO];
+
+        const all = getAllCircuits();
+
+        expect(all).toEqual([OFFICIEL, PERSO]);
+    });
+
+    it('compare les ids en String', () => {
+        state.officialCircuits = [{ id: '42' }];
+        state.myCircuits = [{ id: 42 }, { id: 'HW-x' }];
+        expect(getAllCircuits().map(c => String(c.id))).toEqual(['42', 'HW-x']);
+    });
+
+    it('tolère des listes absentes', () => {
+        state.officialCircuits = undefined;
+        state.myCircuits = undefined;
+        expect(getAllCircuits()).toEqual([]);
     });
 });
 

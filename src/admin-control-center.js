@@ -1,5 +1,6 @@
 import { state, setUserData, setCustomFeatures, setOfficialCircuits, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
+import { getAllCircuits } from './circuit-lookup.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
@@ -771,7 +772,9 @@ async function publishChanges() {
                 // (son GPX, lui, est bien parti → entrée orpheline, 404 visiteur).
                 index = withoutServerDeletedCircuits(index);
 
-                const allLocal = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
+                // Même source que le diff (une entrée par id) : ce qui a été
+                // affiché « MAJ » est exactement ce qui est publié.
+                const allLocal = getAllCircuits();
                 let indexDirty = false;
                 // Ids d'officiels réellement retirés de l'index : leur intention
                 // de suppression persistée n'a plus lieu d'être une fois publiée.

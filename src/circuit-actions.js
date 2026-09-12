@@ -1,9 +1,11 @@
 
 // circuit-actions.js
-import { state, addMyCircuit, updateMyCircuit, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode, getActiveMapId} from './state.js';
+import { state, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { fetchWithTimeout } from './net.js';
-import { deleteCircuitById, softDeleteCircuit, getAppState, saveCircuit, saveAppState } from './database.js';
+import { softDeleteCircuit, getAppState, saveAppState } from './database.js';
+import { findCircuitById } from './circuit-lookup.js';
+import { persistCircuit } from './circuit-store.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
 import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters, buildPlannedPoiSet } from './data.js';
 import { isMobileView } from './mobile-state.js';
@@ -253,48 +255,22 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
 
     const poiIds = state.currentCircuit.map(getPoiId);
 
-    let circuitToSave;
-
-    if (state.activeCircuitId) {
-        const index = state.myCircuits.findIndex(c => c.id === state.activeCircuitId);
-        if (index > -1) {
-            circuitToSave = { ...state.myCircuits[index] };
-            circuitToSave.name = circuitName;
-            circuitToSave.description = description;
-            circuitToSave.poiIds = poiIds;
-            circuitToSave.transport = transportData;
-            updateMyCircuit(circuitToSave);
-        } else {
-             // Recherche dans les circuits officiels (si on est en train d'éditer une version officielle)
-             const offIndex = state.officialCircuits ? state.officialCircuits.findIndex(c => c.id === state.activeCircuitId) : -1;
-             if (offIndex > -1) {
-                 // On met à jour l'objet en mémoire
-                 const offCircuit = state.officialCircuits[offIndex];
-                 offCircuit.name = circuitName;
-                 offCircuit.description = description;
-                 offCircuit.poiIds = poiIds;
-                 offCircuit.transport = transportData;
-                 // On prépare l'objet pour la sauvegarde DB
-                 circuitToSave = offCircuit;
-             }
-        }
-    }
-
-    if (!circuitToSave) {
-        const newId = generateHWID();
-        circuitToSave = {
-            id: newId,
+    // Circuit édité (perso OU officiel) : copie modifiée, posée en mémoire par
+    // persistCircuit seulement une fois écrite. Plus de mutation sur place ni de
+    // recherche à la main dans une seule des deux listes (cf. circuit-store).
+    const existing = state.activeCircuitId ? findCircuitById(state.activeCircuitId) : null;
+    const isNew = !existing;
+    const circuitToSave = isNew
+        ? {
+            id: generateHWID(),
             mapId: state.currentMapId,
             name: circuitName,
             description: description,
             poiIds: poiIds,
             realTrack: null,
             transport: transportData
-        };
-
-        addMyCircuit(circuitToSave);
-        setActiveCircuitId(newId);
-    }
+        }
+        : { ...existing, name: circuitName, description, poiIds, transport: transportData };
 
     // Tracé réel calculé par BRouter (routing in-app) : pose / écrase le
     // realTrack du circuit (création comme édition). Sans argument, on garde
@@ -327,21 +303,11 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
         }
     }
 
-    // INVARIANT : tout circuit écrit dans `savedCircuits` DOIT porter un `mapId`.
-    // La relecture passe par `index('mapId_index')` (database.js getAllCircuitsForMap)
-    // et un index IndexedDB IGNORE les enregistrements où la clé indexée est absente :
-    // un circuit sans `mapId` est écrit, stocké… et INVISIBLE au rechargement.
-    // Constaté le 12/09/2026 : éditer un circuit OFFICIEL perdait silencieusement
-    // la modification au F5. L'objet vient alors de l'index publié
-    // (public/circuits/<map>.json), dont les entrées ne portent pas de `mapId` —
-    // contrairement à un circuit créé plus haut, qui en reçoit un. Au démarrage,
-    // `loc` restait introuvable et `mergeOfficialWithLocal(off, undefined)` rendait
-    // l'entrée d'index périmée. Posé ici, au point d'écriture unique, plutôt que
-    // dans chaque branche : l'invariant tient aussi pour les branches futures.
-    if (!circuitToSave.mapId) circuitToSave.mapId = state.currentMapId;
-
     try {
-        await saveCircuit(circuitToSave);
+        // Écrit (mapId garanti) PUIS pose en mémoire à sa place unique — cf.
+        // circuit-store. L'identité n'est activée qu'une fois le circuit écrit.
+        await persistCircuit(circuitToSave);
+        if (isNew) setActiveCircuitId(circuitToSave.id);
 
         // PR 4/5 chantier drapeaux v2 : persiste les drapeaux d'accès déplacés
         // manuellement pendant la session (drag in-place). Aucun effet si pas
