@@ -66,15 +66,22 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
         // --- DISTANCE CALCULATION (Unified Logic) ---
         let distance = 0;
 
-        // Priority 1: Official Distance String (e.g. "3.8 km")
-        if (c.distance && typeof c.distance === 'string') {
-            const parsed = parseFloat(c.distance.replace(',', '.').replace(/[^\d.]/g, ''));
-            if (!isNaN(parsed) && parsed > 0) distance = parsed * 1000;
+        // Priority 1: Real Track Geometry — la valeur la PLUS à jour, y compris
+        // pour une édition admin pas encore publiée. Cet ordre était inversé :
+        // la chaîne `distance` de l'index passait devant, si bien qu'une carte
+        // pouvait annoncer 5,7 km quand le panneau du même circuit — qui, lui,
+        // recalcule toujours depuis le tracé — affichait 7,7 (mesuré 12/09/2026).
+        if (c.realTrack && c.realTrack.length > 0) {
+            distance = getRealDistance(c);
         }
 
-        // Priority 2: Real Track Geometry
-        if (distance === 0 && c.realTrack && c.realTrack.length > 0) {
-            distance = getRealDistance(c);
+        // Priority 2: Official Distance String (e.g. "3.8 km") — indispensable
+        // pour un officiel jamais ouvert : son realTrack est chargé en LAZY par
+        // loadCircuitById (fetch du GPX), donc absent tant qu'on n'a pas consulté
+        // la fiche. C'est le seul cas où l'index reste la meilleure source.
+        if (distance === 0 && c.distance && typeof c.distance === 'string') {
+            const parsed = parseFloat(c.distance.replace(',', '.').replace(/[^\d.]/g, ''));
+            if (!isNaN(parsed) && parsed > 0) distance = parsed * 1000;
         }
 
         // Priority 3: Orthodromic (As the crow flies)

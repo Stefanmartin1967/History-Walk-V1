@@ -218,7 +218,34 @@ describe('circuit-list-service', () => {
     // 2. Distance — 3 priorités cascadées
     // ========================================================================
     describe('Distance (3 priorités)', () => {
-        it('priorité 1 : parse une chaîne "3.8 km" (point décimal)', () => {
+        // Régression 12/09/2026 : l'ordre était inversé, la chaîne de l'index
+        // passait devant le tracé. Une carte annonçait 5,7 km quand le panneau
+        // du même circuit — qui recalcule depuis le tracé — affichait 7,7.
+        it("priorité 1 : le tracé réel gagne sur la chaîne `distance` de l'index", () => {
+            getRealDistance.mockReturnValue(7700);
+            state.myCircuits = [{
+                id: 'm1', name: 'C',
+                distance: '5.7 km',
+                realTrack: [[33.5, 10], [33.6, 10.1]]
+            }];
+
+            const r = getProcessedCircuits();
+
+            expect(getRealDistance).toHaveBeenCalledWith(state.myCircuits[0]);
+            expect(r[0]._dist).toBe(7700);
+            expect(r[0]._distDisplay).toBe('7.7 km');
+        });
+
+        it("priorité 2 : un realTrack VIDE ne court-circuite pas la chaîne de l'index", () => {
+            state.myCircuits = [{ id: 'm1', name: 'C', distance: '4.2 km', realTrack: [] }];
+
+            const r = getProcessedCircuits();
+
+            expect(getRealDistance).not.toHaveBeenCalled();
+            expect(r[0]._dist).toBe(4200);
+        });
+
+        it('priorité 2 : sans tracé, parse la chaîne "3.8 km" (point décimal)', () => {
             state.myCircuits = [{ id: 'm1', name: 'C', distance: '3.8 km' }];
 
             const r = getProcessedCircuits();
@@ -227,7 +254,7 @@ describe('circuit-list-service', () => {
             expect(r[0]._distDisplay).toBe('3.8 km');
         });
 
-        it('priorité 1 : parse "1,5 km" avec virgule française', () => {
+        it('priorité 2 : parse "1,5 km" avec virgule française', () => {
             state.myCircuits = [{ id: 'm1', name: 'C', distance: '1,5 km' }];
 
             const r = getProcessedCircuits();
@@ -235,7 +262,7 @@ describe('circuit-list-service', () => {
             expect(r[0]._dist).toBe(1500);
         });
 
-        it('priorité 2 : pas de string, appelle getRealDistance sur realTrack', () => {
+        it('priorité 1 : tracé seul, appelle getRealDistance sur realTrack', () => {
             getRealDistance.mockReturnValue(5000);
             state.myCircuits = [{
                 id: 'm1', name: 'C',
