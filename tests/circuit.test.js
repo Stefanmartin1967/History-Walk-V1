@@ -133,8 +133,11 @@ import {
     addPoiToCircuit,
     convertToDraft,
     setCircuitVisitedState,
-    loadCircuitFromIds
+    loadCircuitFromIds,
+    updateCircuitMetadata
 } from '../src/circuit.js';
+import { updateCircuitHeader } from '../src/circuit-view.js';
+import { getRealDistance, getOrthodromicDistance } from '../src/utils.js';
 
 function resetState() {
     state.currentMapId = 'djerba';
@@ -611,5 +614,90 @@ describe('loadCircuitFromIds', () => {
             'error'
         );
         expect(addMyCircuit).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Régression : `updateCircuitMetadata` ne cherchait le circuit actif que dans
+// `state.myCircuits`. Or app-startup retire un OFFICIEL de cette liste au boot
+// (il vit dans `officialCircuits`) → la recherche échouait toujours pour un
+// officiel, et quatre valeurs du bandeau en dépendaient.
+describe('updateCircuitMetadata — circuit OFFICIEL actif', () => {
+    const STORED_NAME = 'Circuit de Mosquée Sidi Youssef à Mosquée Elyounsiine';
+
+    function activerOfficiel() {
+        // Deux POIs distincts → nom auto « Circuit de Alpha à Omega »,
+        // volontairement différent du nom enregistré pour les distinguer.
+        state.currentCircuit = [poi('p1', 'Alpha'), poi('p2', 'Omega')];
+        state.officialCircuits = [{
+            id: 'HW-off1',
+            name: STORED_NAME,
+            description: 'Description enregistrée',
+            realTrack: [[33.1, 10.1], [33.2, 10.2]],
+            ascend: 12
+        }];
+        state.activeCircuitId = 'HW-off1';
+    }
+
+    it('donne la distance du TRACÉ RÉEL, pas le vol d\'oiseau', () => {
+        activerOfficiel();
+        getRealDistance.mockReturnValue(7700);
+        getOrthodromicDistance.mockReturnValue(5668);
+
+        updateCircuitMetadata();
+
+        const arg = updateCircuitHeader.mock.calls[0][0];
+        expect(arg.distanceText).toBe('7.7 km');
+        expect(arg.isRealTrack).toBe(true);
+    });
+
+    it('affiche le nom ENREGISTRÉ et non le nom auto-généré', () => {
+        activerOfficiel();
+
+        updateCircuitMetadata();
+
+        expect(updateCircuitHeader.mock.calls[0][0].title).toBe(STORED_NAME);
+    });
+
+    it('affiche la description enregistrée du circuit', () => {
+        activerOfficiel();
+
+        updateCircuitMetadata();
+
+        expect(updateCircuitHeader.mock.calls[0][0].description).toBe('Description enregistrée');
+    });
+
+    it('en ÉDITION, le nom auto reprend la main (décision 03/05/2026)', () => {
+        activerOfficiel();
+        state.editingMode = true;
+
+        updateCircuitMetadata();
+
+        expect(updateCircuitHeader.mock.calls[0][0].title).toBe('Circuit de Alpha à Omega');
+    });
+
+    // Garde-fou, pas discriminant : le D+ fonctionnait déjà grâce à un
+    // contournement local (`activeCircuitData || getActiveCircuit()`) supprimé
+    // par le correctif. Ce test vérifie que sa suppression n'a rien cassé.
+    it('expose le D+ stocké sur l\'officiel', () => {
+        activerOfficiel();
+
+        updateCircuitMetadata();
+
+        expect(updateCircuitHeader.mock.calls[0][0].ascend).toBe(12);
+    });
+
+    it('un circuit PERSO continue de fonctionner comme avant', () => {
+        state.currentCircuit = [poi('p1', 'Alpha'), poi('p2', 'Omega')];
+        state.myCircuits = [{ id: 'HW-perso', name: 'Mon circuit', realTrack: [[1, 1], [2, 2]] }];
+        state.activeCircuitId = 'HW-perso';
+        getRealDistance.mockReturnValue(4200);
+
+        updateCircuitMetadata();
+
+        const arg = updateCircuitHeader.mock.calls[0][0];
+        expect(arg.distanceText).toBe('4.2 km');
+        expect(arg.title).toBe('Mon circuit');
+        expect(arg.isRealTrack).toBe(true);
     });
 });
