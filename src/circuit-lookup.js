@@ -33,3 +33,35 @@ export function findCircuitById(id) {
 export function getActiveCircuit() {
     return findCircuitById(state.activeCircuitId);
 }
+
+/**
+ * Fusionne l'entrée d'index d'un circuit officiel avec sa copie locale (IDB).
+ *
+ * Le local prime — c'est ainsi qu'une édition admin pas encore publiée reste
+ * visible (nom, poiIds, realTrack, ascend, description). DEUX EXCEPTIONS :
+ * `file` et `distance` sont des **artefacts de publication**, recalculés par
+ * `buildCircuitIndexEntry` à chaque publication. La copie locale n'en détient
+ * qu'un instantané figé — `saveAndExportCircuit` persiste l'objet officiel
+ * ENTIER, ces champs compris, sans jamais les rafraîchir. Les laisser gagner
+ * produit deux dégâts, mesurés le 12/09/2026 :
+ *  - `distance` périmée → la carte du circuit annonce 5,7 km là où l'index
+ *    publié dit 7,7, le panneau affichant 7,7 puisqu'il recalcule depuis le
+ *    tracé : deux chiffres contradictoires au même écran ;
+ *  - `file` périmé après un renommage → le GPX est cherché sous l'ancien nom,
+ *    404, donc aucun tracé chargé et repli silencieux en vol d'oiseau.
+ *
+ * @param {object} off Entrée telle que lue dans l'index publié.
+ * @param {object|null} loc Copie locale (IndexedDB), ou null s'il n'y en a pas.
+ * @returns {object} Le circuit officiel fusionné.
+ */
+export function mergeOfficialWithLocal(off, loc) {
+    if (!loc) return off;
+    return {
+        ...off,
+        ...loc,
+        // L'index est la source de vérité ; repli sur le local s'il ne la porte pas.
+        file: off.file ?? loc.file,
+        distance: off.distance ?? loc.distance,
+        isOfficial: true
+    };
+}

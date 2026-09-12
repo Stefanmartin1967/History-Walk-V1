@@ -3,6 +3,7 @@ import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCirc
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
+import { mergeOfficialWithLocal } from './circuit-lookup.js';
 import { getAppState, saveAppState, deleteAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
@@ -552,7 +553,11 @@ export async function loadAndInitializeMap() {
         if (state.officialCircuits) {
             const mergedOfficials = state.officialCircuits.map(off => {
                 const loc = state.myCircuits.find(l => String(l.id) === String(off.id));
-                return loc ? { ...off, ...loc, isOfficial: true } : off;
+                // Règle de fusion centralisée (circuit-lookup) : le local prime,
+                // SAUF sur `file` et `distance`, artefacts de publication que
+                // l'index seul recalcule. Détail et dégâts constatés : voir la
+                // doc de mergeOfficialWithLocal.
+                return mergeOfficialWithLocal(off, loc);
             });
             setOfficialCircuits(mergedOfficials);
 

@@ -16,7 +16,7 @@ vi.mock('../src/state.js', () => {
 });
 
 import { state } from '../src/state.js';
-import { findCircuitById, getActiveCircuit } from '../src/circuit-lookup.js';
+import { findCircuitById, getActiveCircuit, mergeOfficialWithLocal } from '../src/circuit-lookup.js';
 
 const PERSO = { id: 'HW-perso', name: 'Mon circuit' };
 const OFFICIEL = { id: 'HW-off', name: 'Circuit officiel', realTrack: [[1, 1], [2, 2]] };
@@ -77,5 +77,54 @@ describe('getActiveCircuit', () => {
         state.officialCircuits = [OFFICIEL];
         state.activeCircuitId = null;
         expect(getActiveCircuit()).toBeNull();
+    });
+});
+
+// Régression 12/09/2026 : la fusion du boot était `{ ...off, ...loc }`, donc le
+// local gagnait sur TOUT — y compris sur `distance` et `file`, que seul l'index
+// recalcule à la publication. Une copie locale figée par saveCircuit prenait
+// alors le pas sur sa propre source.
+describe('mergeOfficialWithLocal', () => {
+    const OFF = {
+        id: 'HW-1', name: 'Nom publié', poiIds: ['a', 'b'],
+        file: 'djerba/Nom publié.gpx', distance: '7.7 km', hasRealTrack: true
+    };
+
+    it("sans copie locale, renvoie l'entrée d'index telle quelle", () => {
+        expect(mergeOfficialWithLocal(OFF, null)).toBe(OFF);
+        expect(mergeOfficialWithLocal(OFF, undefined)).toBe(OFF);
+    });
+
+    it('le local prime sur nom, étapes et tracé (édition non publiée visible)', () => {
+        const loc = { id: 'HW-1', name: 'Nom local', poiIds: ['a', 'b', 'c'], realTrack: [[1, 1], [2, 2]] };
+
+        const m = mergeOfficialWithLocal(OFF, loc);
+
+        expect(m.name).toBe('Nom local');
+        expect(m.poiIds).toEqual(['a', 'b', 'c']);
+        expect(m.realTrack).toHaveLength(2);
+        expect(m.isOfficial).toBe(true);
+    });
+
+    it("l'INDEX prime sur `distance` — une copie locale périmée ne gagne plus", () => {
+        const loc = { id: 'HW-1', distance: '5.7 km' };
+
+        expect(mergeOfficialWithLocal(OFF, loc).distance).toBe('7.7 km');
+    });
+
+    it("l'INDEX prime sur `file` — sinon le GPX est cherché sous l'ancien nom (404)", () => {
+        const loc = { id: 'HW-1', file: 'djerba/Ancien nom.gpx' };
+
+        expect(mergeOfficialWithLocal(OFF, loc).file).toBe('djerba/Nom publié.gpx');
+    });
+
+    it("repli sur le local si l'index ne porte pas le champ", () => {
+        const off = { id: 'HW-1', name: 'Nom publié' };
+        const loc = { id: 'HW-1', file: 'djerba/Secours.gpx', distance: '3.3 km' };
+
+        const m = mergeOfficialWithLocal(off, loc);
+
+        expect(m.file).toBe('djerba/Secours.gpx');
+        expect(m.distance).toBe('3.3 km');
     });
 });
