@@ -1401,8 +1401,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.970306,
-          33.792222
+          10.970237553119661,
+          33.79195986809296
         ]
       },
       "properties": {
@@ -1434,7 +1434,9 @@
         "photos": [
           "photos/poi_HW-01K77WPE6A27VC54MEK4XHGV9V_1786799984164.jpg",
           "photos/poi_HW-01K77WPE6A27VC54MEK4XHGV9V_1786799985779.jpg"
-        ]
+        ],
+        "lat": 33.79195986809296,
+        "lng": 10.970237553119661
       }
     },
     {
