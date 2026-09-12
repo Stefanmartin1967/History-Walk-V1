@@ -3245,7 +3245,7 @@
           10.9004411,
           33.8089489
         ],
-        "Sous-type": "Générique",
+        "Sous-type": "À coupoles",
         "État": "Ruine",
         "Accès": "Extérieur seulement",
         "info_gpx": "Ruine de la mosquée Kharroubi",
@@ -12781,7 +12781,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Ababssa - El Jedid",
+        "Nom du site FR": "Mosquée El Jadid (Ababsa)",
         "Catégorie": "Mosquée",
         "osm_ref": "node/13204556208",
         "HW_ID": "HW-01KZH0VGKHTQAFAVA6SZN7E5VB",
