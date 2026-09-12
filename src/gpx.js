@@ -1,8 +1,10 @@
 // gpx.js
-import { state, APP_VERSION, addMyCircuit } from './state.js';
+import { state, APP_VERSION } from './state.js';
 import { getPoiId, getPoiName } from './data.js';
 import { loadCircuitById, generateCircuitName } from './circuit.js';
-import { getAppState, saveCircuit } from './database.js';
+import { getAppState } from './database.js';
+import { findCircuitById } from './circuit-lookup.js';
+import { persistCircuit } from './circuit-store.js';
 import { showToast } from './toast.js';
 import { downloadFile, escapeXml, generateHWID, getAccessPoint } from './utils.js';
 import { updatePolylines } from './map.js';
@@ -261,7 +263,9 @@ export async function processImportedGpx(file, circuitId) {
                     const wpts = xmlDoc.getElementsByTagName("wpt");
                     let matchCount = 0;
 
-                    const targetCircuit = state.myCircuits.find(c => c.id === circuitId);
+                    // Perso OU officiel : chercher dans myCircuits seul ratait
+                    // toujours un officiel (0 étape reconnue → alerte trompeuse).
+                    const targetCircuit = findCircuitById(circuitId);
 
                     if (targetCircuit) {
                         const circuitFeatures = targetCircuit.poiIds
@@ -325,29 +329,10 @@ export async function processImportedGpx(file, circuitId) {
 
                 // 4. SAUVEGARDE ET MISE À JOUR INTELLIGENTE
                 if (circuitId) {
-                    // Mise à jour d'un circuit existant (Local ou Officiel)
-                    // CORRECTION : Priorité à l'Officiel (Visible) pour l'affichage, mais maj du Local (Shadow) si existant
-                    let targetCircuit = null;
-                    let isOfficial = false;
-                    let localCircuit = null;
-
-                    // 1. Recherche Officiel (Prioritaire pour l'affichage UI)
-                    if (state.officialCircuits) {
-                        const officialIndex = state.officialCircuits.findIndex(c => String(c.id) === String(circuitId));
-                        if (officialIndex !== -1) {
-                            targetCircuit = state.officialCircuits[officialIndex];
-                            isOfficial = true;
-                        }
-                    }
-
-                    // 2. Recherche Local (Pour synchro ou si pas d'officiel)
-                    const localIndex = state.myCircuits.findIndex(c => String(c.id) === String(circuitId));
-                    if (localIndex !== -1) {
-                        localCircuit = state.myCircuits[localIndex];
-                        if (!targetCircuit) {
-                            targetCircuit = localCircuit;
-                        }
-                    }
+                    // Mise à jour d'un circuit existant (perso ou officiel) : une
+                    // seule entrée par id, écrite via circuit-store (plus de copie
+                    // « shadow » de l'officiel dans myCircuits).
+                    const targetCircuit = findCircuitById(circuitId);
 
                     if (targetCircuit) {
                         let shouldUpdatePois = false;
@@ -379,25 +364,10 @@ export async function processImportedGpx(file, circuitId) {
                             }
                         }
 
-                        // --- APPLICATION (VISUELLE) ---
-                        targetCircuit.realTrack = coordinates;
-                        if (shouldUpdatePois) targetCircuit.poiIds = detectedFeatures.map(getPoiId);
-
-                        // --- SYNCHRONISATION DU SHADOW (CREATION FORCEE SI OFFICIEL) ---
-                        // Si c'est un circuit officiel, on force la création d'un shadow local pour inclure la trace dans les backups
-                        if (isOfficial && !localCircuit) {
-                            localCircuit = { ...targetCircuit };
-                            // On s'assure qu'il est marqué officiel pour l'UI
-                            if (!localCircuit.isOfficial) localCircuit.isOfficial = true;
-                            addMyCircuit(localCircuit);
-                        }
-
-                        if (localCircuit) {
-                            // On met à jour le shadow (existant ou nouveau)
-                            localCircuit.realTrack = coordinates;
-                            if (shouldUpdatePois) localCircuit.poiIds = detectedFeatures.map(getPoiId);
-                            await saveCircuit(localCircuit);
-                        }
+                        // --- APPLICATION + SAUVEGARDE (point d'écriture unique) ---
+                        const updated = { ...targetCircuit, realTrack: coordinates };
+                        if (shouldUpdatePois) updated.poiIds = detectedFeatures.map(getPoiId);
+                        await persistCircuit(updated);
 
                         // --- FEEDBACK USER ---
                         if (shouldUpdatePois) {
@@ -409,11 +379,6 @@ export async function processImportedGpx(file, circuitId) {
                                 showToast("Trace importée (étapes conservées).", "success");
                             }
                         }
-
-                        // Sauvegarde SYSTEMATIQUE (Locaux et Officiels modifiés)
-                        // On force la sauvegarde DB pour que la modification persiste
-                        // main.js se chargera de fusionner au prochain démarrage
-                        await saveCircuit(targetCircuit);
 
                         // RAFFRAÎCHISSEMENT UI COMPLET (ESSENTIEL)
                         if (state.activeCircuitId === circuitId) {
@@ -447,8 +412,7 @@ export async function processImportedGpx(file, circuitId) {
                         transport: {}
                     };
 
-                    addMyCircuit(newCircuit);
-                    await saveCircuit(newCircuit);
+                    await persistCircuit(newCircuit);
 
                     await loadCircuitById(newId);
                     showToast(`Nouveau circuit créé avec ${detectedFeatures.length} étapes détectées`, "success");

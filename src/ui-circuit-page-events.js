@@ -14,18 +14,18 @@
  * - Édition inline description (placeholder + double-clic)
  */
 
-import { state, setCustomDraftName, updateMyCircuit, setOfficialCircuits } from './state.js';
+import { state, setCustomDraftName } from './state.js';
 import { saveCircuitDraft, isCircuitTested } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
-import { saveCircuit } from './database.js';
+import { persistCircuit } from './circuit-store.js';
 import { getPoiId } from './data.js';
 import { setCircuitHidden } from './circuit-actions.js';
 import { generateAndDownloadGPX } from './gpx.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
-import { getActiveCircuit } from './circuit-lookup.js';
+import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
 
 let inited = false;
 
@@ -277,34 +277,19 @@ function initTransportAccordion() {
    6. ÉDITION INLINE TITRE (double-clic + bouton crayon)
    ============================================================ */
 
-// Renomme un circuit DÉJÀ CHARGÉ (consultation) en préservant son ID. Persiste
-// dans la bonne liste (officiel ou perso) + IDB, puis rafraîchit la liste.
+// Renomme un circuit DÉJÀ CHARGÉ (consultation) en préservant son ID, via le
+// point d'écriture unique (bonne liste + IDB + mapId), puis rafraîchit la liste.
 // La trace réelle reste intacte (on ne passe pas par convertToDraft) → le CC
 // Admin détecte le changement de nom et peut le publier sans re-tracer.
 async function renameLoadedCircuit(id, name) {
     const trimmed = (name || '').trim();
     if (!trimmed) return; // un circuit chargé garde toujours un nom
 
-    const offIdx = (state.officialCircuits || []).findIndex(c => c.id === id);
-    if (offIdx > -1) {
-        const updated = { ...state.officialCircuits[offIdx], name: trimmed };
-        const list = [...state.officialCircuits];
-        list[offIdx] = updated;
-        setOfficialCircuits(list);
-        await saveCircuit(updated);
-        eventBus.emit('circuit:list-updated');
-        showToast('Circuit renommé.', 'success', 1500);
-        return;
-    }
-
-    const myIdx = (state.myCircuits || []).findIndex(c => c.id === id);
-    if (myIdx > -1) {
-        const updated = { ...state.myCircuits[myIdx], name: trimmed };
-        updateMyCircuit(updated);
-        await saveCircuit(updated);
-        eventBus.emit('circuit:list-updated');
-        showToast('Circuit renommé.', 'success', 1500);
-    }
+    const circuit = findCircuitById(id);
+    if (!circuit) return;
+    await persistCircuit({ ...circuit, name: trimmed });
+    eventBus.emit('circuit:list-updated');
+    showToast('Circuit renommé.', 'success', 1500);
 }
 
 function initTitleEdit() {

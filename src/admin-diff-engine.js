@@ -4,6 +4,7 @@ import { getPoiId, getPoiName, isCandidate } from './utils.js';
 import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, savePoiData, deletePoiData } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
+import { getAllCircuits } from './circuit-lookup.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
 // Ce fichier concentre exclusivement la logique complexe de comparaison
@@ -331,8 +332,10 @@ export async function prepareDiffData(adminDraft) {
     });
 
     // --- B. ANALYSE DES CIRCUITS (Comparaison State vs Remote) ---
-    // On combine les Officiels et les Personnels (candidats)
-    const localCircuits = [...(state.officialCircuits || []), ...(state.myCircuits || [])];
+    // On combine les Officiels et les Personnels (candidats), UNE entrée par id :
+    // même source que la publication (getAllCircuits), sinon le diff peut voir
+    // une version que l'écrivain ne publiera pas.
+    const localCircuits = getAllCircuits();
 
     // 1. Nouveaux & Modifiés
     localCircuits.forEach(local => {

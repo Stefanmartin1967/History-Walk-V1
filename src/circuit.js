@@ -1,4 +1,4 @@
-import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, addMyCircuit, updateMyCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode, getActiveMapId} from './state.js';
+import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode, getActiveMapId} from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
@@ -21,7 +21,8 @@ import { schedulePushTestedToGitHub } from './tested-sync.js';
 // microtask, APRÈS notifyCircuitChanged (rendu des drapeaux) → snapshot cadenas
 // trop tard, drapeaux des POI préexistants non verrouillés (fix v3.7.308).
 import { markEditingStart, getDirtyCount } from './circuit-flags.js';
-import { getActiveCircuit } from './circuit-lookup.js';
+import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
+import { persistCircuit } from './circuit-store.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -739,16 +740,10 @@ export async function loadCircuitById(id) {
     // Sanitization: Ensure ID is a string for strict equality checks
     id = String(id);
 
-    let circuitToLoad = state.myCircuits.find(c => c.id === id);
-    if (!circuitToLoad && state.officialCircuits) {
-        circuitToLoad = state.officialCircuits.find(c => c.id === id);
-        // Protection contre la mutation de la liste officielle
-        if (circuitToLoad) {
-            circuitToLoad = { ...circuitToLoad };
-        }
-    }
-
-    if (!circuitToLoad) return;
+    const source = findCircuitById(id);
+    if (!source) return;
+    // Copie de travail pour l'affichage ; la source reste l'objet de l'état.
+    const circuitToLoad = { ...source };
 
     // --- LAZY LOADING DE LA TRACE (OFFICIAL CIRCUITS) ---
     if (circuitToLoad.file && (!circuitToLoad.realTrack || circuitToLoad.realTrack.length === 0)) {
@@ -769,32 +764,18 @@ export async function loadCircuitById(id) {
                 }
 
                 if (coordinates.length > 0) {
+                    // Tracé posé sur l'objet de l'ÉTAT (la carte le relit) et sur la
+                    // copie d'affichage — en MÉMOIRE SEULEMENT. Deux choses retirées
+                    // le 12/09/2026 (audit du cycle circuits) :
+                    //  - la copie « shadow » ajoutée à myCircuits : une édition allait
+                    //    dans la copie, la publication prenait l'officiel resté ancien
+                    //    → commits « MAJ » à +0 −0 ;
+                    //  - l'écriture IndexedDB : avec un mapId, elle figerait chez
+                    //    CHAQUE visiteur la version consultée, qui primerait ensuite
+                    //    sur l'index publié au boot. Seule une vraie modification
+                    //    écrit (circuit-store).
+                    source.realTrack = coordinates;
                     circuitToLoad.realTrack = coordinates;
-
-                    // FIX: On met à jour la source de vérité en mémoire (state.officialCircuits)
-                    // Sinon, la carte (qui relit le state) ne verra pas la trace tout de suite
-                    const originalOfficial = state.officialCircuits.find(c => c.id === id);
-                    if (originalOfficial) {
-                        originalOfficial.realTrack = coordinates;
-                    }
-
-                    // On sauvegarde pour persistance (IndexedDB)
-                    await saveCircuit(circuitToLoad);
-
-                    // FIX: On ajoute le circuit aux "Locaux" (Shadow) pour qu'il soit inclus dans les backups (saveUserData)
-                    // Cela permet de restaurer la trace bleue même si le fichier GPX serveur est inaccessible (Offline/Clear DB)
-                    const shadowIndex = state.myCircuits.findIndex(c => c.id === id);
-                    if (shadowIndex === -1) {
-                        // On s'assure que le flag isOfficial est présent pour que l'UI le masque (évite les doublons visuels)
-                        if (!circuitToLoad.isOfficial) circuitToLoad.isOfficial = true;
-                        addMyCircuit(circuitToLoad);
-                    } else {
-                        // Mise à jour du shadow existant
-                        const updatedShadow = { ...state.myCircuits[shadowIndex] };
-                        updatedShadow.realTrack = coordinates;
-                        updateMyCircuit(updatedShadow);
-                    }
-
                 }
             } else {
                 console.warn(`[Circuit] Fichier GPX introuvable : ${circuitToLoad.file}`);
@@ -930,8 +911,7 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
     };
 
     try {
-        await saveCircuit(newCircuit);
-        addMyCircuit(newCircuit); // Mise à jour mémoire
+        await persistCircuit(newCircuit); // IDB puis mémoire (circuit-store)
         eventBus.emit('circuit:list-updated'); // Mise à jour UI
     } catch (err) {
         console.error("Erreur sauvegarde circuit importé:", err);
