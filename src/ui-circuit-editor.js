@@ -10,6 +10,7 @@ import { showConfirm, openHwModal } from './modal.js';
 import { performCircuitDeletion } from './circuit-actions.js';
 import { eventBus } from './events.js';
 import { escapeHtml } from './utils.js';
+import { getActiveCircuit } from './circuit-lookup.js';
 
 import {
     setCircuitCreationMode,
@@ -175,7 +176,12 @@ export function setupCircuitEventListeners() {
             showToast('Aucun lieu à exporter.', 'warning');
             return;
         }
-        const active = state.myCircuits.find(c => c.id === state.activeCircuitId);
+        // Résolution centralisée : cherche dans myCircuits ET officialCircuits.
+        // Avant, un circuit OFFICIEL n'était jamais trouvé → `realTrack` partait à
+        // null → generateGPXString basculait en « Cas B » et exportait un GPX en
+        // VOL D'OISEAU au lieu de la trace réelle. Invisible juste après une
+        // création (le circuit est encore dans myCircuits), visible après un F5.
+        const active = getActiveCircuit();
         const name = (DOM.circuitTitleText && DOM.circuitTitleText.textContent.trim())
             || generateCircuitName();
         try {

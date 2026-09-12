@@ -451,7 +451,15 @@ export function updateCircuitMetadata(updateTitle = true) {
     let totalDistance = 0;
     let isRealTrack = false;
 
-    const activeCircuitData = state.myCircuits.find(c => c.id === state.activeCircuitId);
+    // Résolution centralisée (circuit-lookup) : cherche dans myCircuits ET
+    // officialCircuits. Avant, la recherche ne portait que sur myCircuits — or un
+    // officiel en est retiré au boot (app-startup le fusionne dans officialCircuits),
+    // donc `activeCircuitData` était TOUJOURS undefined pour un officiel. Quatre
+    // conséquences, toutes corrigées par cette seule ligne : distance retombant en
+    // vol d'oiseau, titre enregistré jamais utilisé (le panneau régénérait le nom
+    // auto), description enregistrée jamais affichée, et D+ qui avait dû être
+    // rustiné plus bas en `activeCircuitData || getActiveCircuit()`.
+    const activeCircuitData = getActiveCircuit();
 
     if (activeCircuitData && activeCircuitData.realTrack) {
         totalDistance = getRealDistance(activeCircuitData);
@@ -494,11 +502,10 @@ export function updateCircuitMetadata(updateTitle = true) {
     }
 
     // D+ (dénivelé positif) BRouter du circuit actif, si stocké (tracé in-app).
-    // Cherché dans myCircuits ET officialCircuits (un officiel tracé par l'admin
-    // le porte aussi). null ou 0 → non affiché.
-    const activeAny = activeCircuitData || getActiveCircuit();
-    const ascend = (activeAny && Number.isFinite(activeAny.ascend) && activeAny.ascend > 0)
-        ? activeAny.ascend : null;
+    // null ou 0 → non affiché. Le contournement `|| getActiveCircuit()` a disparu :
+    // `activeCircuitData` cherche désormais lui-même dans les deux listes.
+    const ascend = (activeCircuitData && Number.isFinite(activeCircuitData.ascend) && activeCircuitData.ascend > 0)
+        ? activeCircuitData.ascend : null;
 
     // 2. ENVOI À LA VUE (On ne touche plus au DOM ici)
     View.updateCircuitHeader({
