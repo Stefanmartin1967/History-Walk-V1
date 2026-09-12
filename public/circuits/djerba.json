@@ -318,10 +318,10 @@
   },
   {
     "id": "HW-01M2A3GG6JWTXVFJQMKQMKSRVH",
-    "name": "Circuit de Mausolée Cheikh Yahia El Izmartni à Mosquée Sidi Mehrez",
-    "file": "djerba/Circuit de Mausolée Cheikh Yahia El Izmartni à Mosquée Sidi Mehrez.gpx",
+    "name": "Circuit de Mausolée Cheikh Yahia El Izmartni à Restaurant Santorini",
+    "file": "djerba/Circuit de Mausolée Cheikh Yahia El Izmartni à Restaurant Santorini.gpx",
     "description": "Circuit généré par Heripia — heripia.com",
-    "distance": "6.1 km",
+    "distance": "6.5 km",
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Mazraia",
@@ -330,7 +330,8 @@
       "HW-01K77WPE6SGS36CX14YZ6N38ZG",
       "HW-01K77WPE6B8K7SZXAC90M70BMM",
       "HW-01K77WPE6B87GSD5BT3NXXR5RE",
-      "HW-01K77WPE6AJXE1YKC3AA7S78SA"
+      "HW-01K77WPE6AJXE1YKC3AA7S78SA",
+      "HW-01KJABRN0SETE15NS313F7DYZQ"
     ]
   }
 ]
