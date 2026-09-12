@@ -16514,44 +16514,6 @@
         ],
         "Zone": "Sedghaiane"
       }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          10.977498292922974,
-          33.79489316058277
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mausolée Sidi Akhil",
-        "Catégorie": "Mausolée",
-        "État": "Désaffecté",
-        "Accès": "Non visitable",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "osm_ref": "way/1465366263",
-        "verified": false,
-        "introuvableCarte": false,
-        "descriptionPublic": false,
-        "osmChecked": true,
-        "osmCheckedDate": "2026-09-12",
-        "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": true,
-        "HW_ID": "HW-01M2B0F9QSYBJ9XTPN90B1B80W",
-        "description": "Jalel n° 292 : « Sidi Kahil. Entre Mahboubine et Midoun. Mausolée et lieu de culte. Ancien. »",
-        "Source": "Répertoire J. Fathallah, n° 292 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
-        "accessPoint": [
-          10.9773684,
-          33.7950784
-        ],
-        "photos": [
-          "photos/poi_HW-01M2B0F9QSYBJ9XTPN90B1B80W_1789233816820.jpg"
-        ],
-        "Zone": "El Mahboubine"
-      }
     }
   ]
 }
