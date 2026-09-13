@@ -144,18 +144,30 @@ describe('circuit-list-service', () => {
             expect(r.map(c => c.id)).toEqual(['m1']);
         });
 
-        it('exclut les locaux fantômes (id ou nom trimé identique à un officiel)', () => {
+        it('exclut un local de même ID qu\'un officiel (fantôme)', () => {
             state.officialCircuits = [{ id: 'o1', name: 'Circuit X' }];
             state.myCircuits = [
-                { id: 'o1', name: 'Autre nom' },       // id collision
-                { id: 'm2', name: 'Circuit X' },       // name collision
-                { id: 'm3', name: '  Circuit X  ' },   // collision après trim
-                { id: 'm4', name: 'Propre' }           // distinct
+                { id: 'o1', name: 'Autre nom' },       // id collision → masqué
+                { id: 'm4', name: 'Propre' }
             ];
 
             const r = getProcessedCircuits();
 
             expect(r.map(c => c.id).sort()).toEqual(['m4', 'o1']);
+        });
+
+        // Décision Stefan (audit du 12/09/2026, C2) : le masquage par NOM cachait
+        // un circuit perso légitime — noms auto « Circuit de A à B » identiques.
+        it('garde un circuit perso qui porte le même NOM qu\'un officiel', () => {
+            state.officialCircuits = [{ id: 'o1', name: 'Circuit de A à B' }];
+            state.myCircuits = [
+                { id: 'm2', name: 'Circuit de A à B' },
+                { id: 'm3', name: '  Circuit de A à B  ' }
+            ];
+
+            const r = getProcessedCircuits();
+
+            expect(r.map(c => c.id).sort()).toEqual(['m2', 'm3', 'o1']);
         });
     });
 
