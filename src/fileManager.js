@@ -4,7 +4,7 @@ import { getPoiId, displayGeoJSON } from './data.js';
 import { DOM } from './ui-dom.js';
 import { closeDetailsPanel } from './ui-details.js';
 import { showToast } from './toast.js';
-import { saveAppState, savePoiData, saveCircuit, clearStore, getAllPoiPhotosForMap, savePoiPhotos, blobToBase64, base64ToBlob } from './database.js';
+import { saveAppState, savePoiData, saveCircuit, deleteCircuitsForMap, getAllPoiPhotosForMap, savePoiPhotos, blobToBase64, base64ToBlob } from './database.js';
 import { processImportedGpx } from './gpx.js';
 // Import pour contrôler la vue mobile
 import { isMobileView } from './mobile-state.js';
@@ -385,16 +385,26 @@ export async function restoreBackup(json) {
             }
         }
 
-        // 3. Restaurer les circuits (on filtre les entrées malformées)
+        // 3. Restaurer les circuits : REMPLACE ceux de CETTE destination seulement.
+        //    - entrées malformées filtrées ;
+        //    - copies d'officiels (`isOfficial`) écartées : une sauvegarde d'avant
+        //      le 12/09/2026 peut contenir les copies que créait l'ouverture d'un
+        //      officiel. Invisibles jusqu'ici (sans mapId), elles deviendraient,
+        //      une fois restaurées avec un mapId, prioritaires sur l'index publié
+        //      au boot — une version figée ;
+        //    - `mapId` posé s'il manque (sinon circuit écrit mais invisible).
         if (json.myCircuits && Array.isArray(json.myCircuits)) {
             const validCircuits = json.myCircuits.filter(c =>
                 c && typeof c.id === 'string' && typeof c.name === 'string' && Array.isArray(c.poiIds)
             );
             const skipped = json.myCircuits.length - validCircuits.length;
             if (skipped > 0) console.warn(`[Restauration] ${skipped} circuit(s) ignoré(s) — données manquantes.`);
-            await clearStore('circuits');
-            for (const circuit of validCircuits) {
-                await saveCircuit(circuit);
+            const persoCircuits = validCircuits.filter(c => !c.isOfficial);
+            const officialCopies = validCircuits.length - persoCircuits.length;
+            if (officialCopies > 0) console.warn(`[Restauration] ${officialCopies} copie(s) de circuit officiel écartée(s).`);
+            await deleteCircuitsForMap(mapId);
+            for (const circuit of persoCircuits) {
+                await saveCircuit({ ...circuit, mapId: circuit.mapId || mapId });
             }
         }
         

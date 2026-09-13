@@ -737,28 +737,49 @@ export async function getAllPoiPhotosForMap(mapId) {
     });
 }
 
-export async function clearStore(storeName) {
-    // Utilisation de initDB pour garantir une connexion valide
-    try {
-        const db = await initDB();
-        
-        // Vérification de sécurité
-        if (!db.objectStoreNames.contains(storeName)) {
-            console.warn(`Le store ${storeName} n'existe pas.`);
-            return Promise.resolve();
-        }
+/**
+ * Supprime les circuits enregistrés d'UNE destination (index `mapId_index`).
+ * Remplace l'ancien `clearStore('circuits')` de la restauration — nom de store
+ * erroné (le store s'appelle `savedCircuits`), donc rien n'était vidé et la
+ * restauration AJOUTAIT les circuits au lieu de les remplacer. Vider tout le store
+ * aurait été pire : une sauvegarde ne porte qu'une destination, les circuits des
+ * autres auraient été effacés (audit du cycle circuits, 12/09/2026).
+ * @param {string} mapId
+ * @returns {Promise<number>} Nombre de circuits supprimés.
+ */
+export async function deleteCircuitsForMap(mapId) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        let count = 0;
+        const tx = db.transaction('savedCircuits', 'readwrite');
+        tx.oncomplete = () => resolve(count);
+        tx.onerror = (e) => reject(e.target.error);
+        const req = tx.objectStore('savedCircuits').index('mapId_index').openCursor(IDBKeyRange.only(mapId));
+        req.onsuccess = (ev) => {
+            const cur = ev.target.result;
+            if (cur) { cur.delete(); count++; cur.continue(); }
+        };
+    }));
+}
 
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([storeName], 'readwrite');
-            const store = transaction.objectStore(storeName);
-            const clearRequest = store.clear();
-
-            clearRequest.onsuccess = () => resolve();
-            clearRequest.onerror = (e) => reject(e.target.error);
-        });
-    } catch (err) {
-        return Promise.reject(err);
-    }
+/**
+ * Compte les circuits enregistrés SANS `mapId`. Un index IndexedDB ignore les
+ * enregistrements où la clé indexée manque : ces circuits sont stockés mais
+ * invisibles à `getAllCircuitsForMap`. Parcours complet du store (petit), sans
+ * rien modifier — sert d'alarme au boot si un nouvel écrivain oublie l'invariant.
+ * @returns {Promise<number>}
+ */
+export async function countCircuitsWithoutMapId() {
+    return withRetry(db => new Promise((resolve, reject) => {
+        let count = 0;
+        const req = db.transaction('savedCircuits', 'readonly').objectStore('savedCircuits').openCursor();
+        req.onsuccess = (ev) => {
+            const cur = ev.target.result;
+            if (!cur) { resolve(count); return; }
+            if (!cur.value?.mapId) count++;
+            cur.continue();
+        };
+        req.onerror = (e) => reject(e.target.error);
+    }));
 }
 
 // === Cache OSM nearest-way (chantier point d'accès v2, PR 2/5) =================

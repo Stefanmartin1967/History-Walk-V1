@@ -4,7 +4,7 @@ import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
 import { mergeOfficialWithLocal } from './circuit-lookup.js';
-import { getAppState, saveAppState, deleteAppState, getAllPoiDataForMap, getAllCircuitsForMap, deleteCircuitById } from './database.js';
+import { getAppState, saveAppState, deleteAppState, getAllPoiDataForMap, getAllCircuitsForMap, countCircuitsWithoutMapId, deleteCircuitById } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
 import { isMobileView } from './mobile-state.js';
@@ -512,6 +512,13 @@ export async function loadAndInitializeMap() {
         setUserData(loadedUserData);
         const loadedCircuits = await getAllCircuitsForMap(activeMapId) || [];
         setMyCircuits(loadedCircuits);
+        // Alarme (lecture seule) : un circuit écrit sans mapId est invisible à la
+        // relecture ci-dessus. Aucun ne devrait apparaître depuis circuit-store ;
+        // un compte > 0 signale d'anciens déchets ou un écrivain qui contourne
+        // l'invariant. Rien n'est supprimé.
+        countCircuitsWithoutMapId()
+            .then(n => { if (n > 0) console.warn(`[Startup] ${n} circuit(s) enregistré(s) sans mapId — invisibles à l'app.`); })
+            .catch(() => {});
         const loadedStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
         setOfficialCircuitsStatus(loadedStatus);
         const loadedTested = await getAppState(`tested_circuits_${activeMapId}`) || {};
