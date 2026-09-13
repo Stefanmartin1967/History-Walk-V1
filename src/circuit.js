@@ -721,29 +721,31 @@ export function currentPoiKey() {
 /**
  * Bascule un circuit chargé en mode édition.
  *
- * Deux comportements selon le contexte :
- *  - User lambda (preserveId=false) : oublie l'ID, ajoute " (modifié)" au titre
- *    → la sauvegarde créera un nouveau circuit (safety, l'original n'est pas touché)
- *  - Admin (preserveId=true) : préserve l'ID et CONSERVE la trace réelle, retire
- *    le statut "Vérifié" si présent → la sauvegarde met à jour le circuit existant.
+ * Deux comportements selon le circuit et l'acteur :
+ *  - ÉDITION EN PLACE — son propre circuit (tout le monde) ou un officiel
+ *    (admin) : préserve l'ID et CONSERVE la trace réelle, retire le statut
+ *    « Vérifié » si présent → la sauvegarde met à jour le circuit existant.
+ *  - COPIE — un officiel édité par un non-admin : oublie l'ID, ajoute
+ *    « (modifié) » au titre → la sauvegarde crée un circuit perso, l'officiel
+ *    (patrimoine partagé) n'est pas touché.
  *
  * Décisions Stefan :
  *  - 03/05/2026 (Q3) : statut "Vérifié" retiré automatiquement à l'édition.
  *  - 05/06/2026 : le tracé réel est CONSERVÉ en édition (avant : realTrack=null,
  *    réflexe hérité de l'ère GPX Studio). Routing in-app oblige : éditer ne jette
  *    plus le tracé ; il devient « à re-tracer » seulement si la séquence change.
- *
- * @param {Object} [opts]
- * @param {boolean} [opts.preserveId=false] - Si true ET state.isAdmin, garde l'ID actif.
+ *  - 12/09/2026 (audit du cycle circuits, C1) : un user modifie SON circuit en
+ *    place. Avant, la copie valait pour tout non-admin, y compris sur ses propres
+ *    circuits — chaque modification en créait un nouveau à côté de l'original.
  */
-export function convertToDraft({ preserveId = false } = {}) {
+export function convertToDraft() {
     if (!state.activeCircuitId) return;
 
-    const adminMode = preserveId && state.isAdmin;
+    const id = state.activeCircuitId;
+    const isOfficial = (state.officialCircuits || []).some(c => String(c.id) === String(id));
+    const editInPlace = !isOfficial || state.isAdmin;
 
-    if (adminMode) {
-        // Mode admin : on garde l'ID pour mettre à jour le circuit existant
-        const id = state.activeCircuitId;
+    if (editInPlace) {
         // Q3 : retirer le statut "Vérifié" (un POI ajouté n'est pas visité par l'admin)
         if (state.testedCircuits && state.testedCircuits[id]) {
             setTestedCircuit(id, false);
@@ -771,7 +773,7 @@ export function convertToDraft({ preserveId = false } = {}) {
         // clic POI ajoute au circuit comme en création vierge.
         setCircuitCreationMode(true);
     } else {
-        // Mode user lambda : oublie ID + ajoute "(modifié)" au nom.
+        // Copie (officiel chez un non-admin) : oublie ID + ajoute "(modifié)" au nom.
         // /!\ Capturer le nom AVANT setActiveCircuitId — et passer par
         // setCustomDraftName plutôt que de muter textContent directement :
         // renderCircuitPanel() ré-écrit le titre depuis state.customDraftName

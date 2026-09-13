@@ -265,9 +265,9 @@ export function setupCircuitEventListeners() {
     const btnModify = document.getElementById('btn-modify-circuit');
     if (btnModify) {
         btnModify.addEventListener('click', () => {
-            // Admin : preserveId=true → met à jour le circuit existant (même HW_ID)
-            // User lambda : preserveId=false → comportement legacy (oublie ID + "(modifié)")
-            convertToDraft({ preserveId: state.isAdmin });
+            // Édition en place (son circuit, ou un officiel pour l'admin) ou copie
+            // « (modifié) » (officiel chez un non-admin) : règle dans convertToDraft.
+            convertToDraft();
         });
     }
 

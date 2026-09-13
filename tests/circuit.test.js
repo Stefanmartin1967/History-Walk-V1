@@ -344,13 +344,14 @@ describe('convertToDraft', () => {
         expect(showToast).not.toHaveBeenCalled();
     });
 
-    it('reset activeCircuitId, pose customDraftName "(modifié)", toast info', () => {
+    it('OFFICIEL chez un non-admin : copie — reset activeCircuitId, customDraftName "(modifié)", toast info', () => {
         // Depuis le fix bug 2 du 07/06/2026 : le nom modifié est persisté via
         // setCustomDraftName (state) plutôt qu'écrit dans textContent
         // directement — sinon renderCircuitPanel l'écrasait avec
         // generateCircuitName. textContent reste donc la valeur d'origine ;
         // c'est customDraftName qui porte le suffixe « (modifié) ».
-        state.activeCircuitId = 'c1';
+        state.activeCircuitId = 'o1';
+        state.officialCircuits = [{ id: 'o1', name: 'Mon Circuit', poiIds: [] }];
         DOM.circuitTitleText = { textContent: 'Mon Circuit' };
 
         convertToDraft();
@@ -363,7 +364,38 @@ describe('convertToDraft', () => {
         );
     });
 
-    it('admin (preserveId) : CONSERVE le tracé réel et mémorise la base de péremption', () => {
+    // Régression C1 de l'audit (12/09/2026) : la copie « (modifié) » valait pour
+    // tout non-admin, y compris sur SES circuits — chaque modification en créait
+    // un nouveau à côté de l'original.
+    it('son PROPRE circuit chez un non-admin : édition EN PLACE (id préservé, pas de copie)', () => {
+        state.isAdmin = false;
+        state.activeCircuitId = 'm1';
+        state.currentCircuit = [poi('A'), poi('B')];
+        state.myCircuits = [{ id: 'm1', name: 'Mon circuit', poiIds: ['A', 'B'], realTrack: [[1, 2], [3, 4]] }];
+        DOM.circuitTitleText = { textContent: 'Mon circuit' };
+
+        convertToDraft();
+
+        expect(state.activeCircuitId).toBe('m1');
+        expect(state.customDraftName).toBeNull();
+        expect(state.editingMode).toBe(true);
+        expect(state.routeBasisKey).toBe('A|B');
+    });
+
+    it('admin sur un OFFICIEL : édition en place', () => {
+        state.isAdmin = true;
+        state.activeCircuitId = 'o1';
+        state.currentCircuit = [poi('A')];
+        state.officialCircuits = [{ id: 'o1', name: 'Off', poiIds: ['A'] }];
+        DOM.circuitTitleText = { textContent: 'Off' };
+
+        convertToDraft();
+
+        expect(state.activeCircuitId).toBe('o1');
+        expect(state.editingMode).toBe(true);
+    });
+
+    it('CONSERVE le tracé réel et mémorise la base de péremption', () => {
         // Routing in-app : éditer ne jette plus le tracé (avant : realTrack=null).
         state.isAdmin = true;
         state.activeCircuitId = 'c1';
@@ -371,7 +403,7 @@ describe('convertToDraft', () => {
         state.myCircuits = [{ id: 'c1', name: 'Mon Circuit', poiIds: ['A', 'B', 'C'], realTrack: [[1, 2], [3, 4], [5, 6]] }];
         DOM.circuitTitleText = { textContent: 'Mon Circuit' };
 
-        convertToDraft({ preserveId: true });
+        convertToDraft();
 
         expect(state.activeCircuitId).toBe('c1');          // ID préservé (mise à jour en place)
         expect(state.myCircuits[0].realTrack).toHaveLength(3); // tracé CONSERVÉ
@@ -379,14 +411,14 @@ describe('convertToDraft', () => {
         expect(state.editingMode).toBe(true);              // reste en mode 'create'
     });
 
-    it('admin (preserveId) sans tracé : pas de base de péremption', () => {
+    it('sans tracé : pas de base de péremption', () => {
         state.isAdmin = true;
         state.activeCircuitId = 'c2';
         state.currentCircuit = [poi('A'), poi('B')];
         state.myCircuits = [{ id: 'c2', name: 'Sans tracé', poiIds: ['A', 'B'], realTrack: null }];
         DOM.circuitTitleText = { textContent: 'Sans tracé' };
 
-        convertToDraft({ preserveId: true });
+        convertToDraft();
 
         expect(state.routeBasisKey).toBeNull();
         expect(state.editingMode).toBe(true);

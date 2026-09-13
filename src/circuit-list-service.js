@@ -46,12 +46,11 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
         // Filtre visibilité (blacklist Mon Espace V2)
         if (!passesVisibility(c)) return false;
 
-        // Vérification si une version officielle existe déjà
-        const existsInOfficial = officialCircuits.some(off =>
-            off.id === c.id ||
-            (off.name && c.name && off.name.trim() === c.name.trim())
-        );
-        return !existsInOfficial;
+        // Version officielle du même id déjà listée → on ne double pas.
+        // Par id SEULEMENT (décision Stefan, audit du 12/09/2026) : la comparaison
+        // par nom masquait un circuit perso légitime dès qu'il portait le nom d'un
+        // officiel — fréquent avec les noms auto « Circuit de A à B ».
+        return !officialCircuits.some(off => String(off.id) === String(c.id));
     });
 
     const allCircuits = [...officialCircuits, ...localCircuits];
@@ -197,11 +196,8 @@ export function getAvailableZonesFromCircuits() {
     const localCircuits = (state.myCircuits || []).filter(c => {
         if (c.isDeleted) return false;
         if (c.isOfficial) return false;
-        const existsInOfficial = officialCircuits.some(off =>
-            off.id === c.id ||
-            (off.name && c.name && off.name.trim() === c.name.trim())
-        );
-        return !existsInOfficial;
+        // Par id seulement, comme getProcessedCircuits (cf. plus haut).
+        return !officialCircuits.some(off => String(off.id) === String(c.id));
     });
 
     const allCircuits = [...officialCircuits, ...localCircuits];
