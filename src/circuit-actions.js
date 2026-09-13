@@ -6,7 +6,7 @@ import { fetchWithTimeout } from './net.js';
 import { softDeleteCircuit, getAppState, saveAppState } from './database.js';
 import { findCircuitById } from './circuit-lookup.js';
 import { persistCircuit } from './circuit-store.js';
-import { clearCircuit, setCircuitVisitedState, generateCircuitName } from './circuit.js';
+import { clearCircuit, setCircuitVisitedState, generateCircuitName, saveCircuitDraft } from './circuit.js';
 import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters, buildPlannedPoiSet } from './data.js';
 import { isMobileView } from './mobile-state.js';
 import { showConfirm } from './modal.js';
@@ -242,9 +242,19 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
         }
     }
 
+    // Circuit édité (perso OU officiel), null pour une création.
+    const existing = state.activeCircuitId ? findCircuitById(state.activeCircuitId) : null;
+
+    // Description et transport viennent du brouillon SEULEMENT s'il concerne ce
+    // circuit ; sinon on garde ceux du circuit. Avant le 12/09/2026, faute de
+    // brouillon (ouvrir un circuit le vide), « Re-tracer » ou « Éditer
+    // l'itinéraire » sans toucher aux étapes remplaçait la description par la
+    // seule signature et vidait le transport — y compris dans le GPX publié.
+    // Un brouillon ancien sans `circuitId` compte comme celui d'une création.
     const draft = await getAppState(`circuitDraft_${state.currentMapId}`);
-    let description = (draft && draft.description) ? draft.description : '';
-    const transportData = (draft && draft.transport) ? draft.transport : {};
+    const draftMatches = !!draft && (draft.circuitId ?? null) === (existing ? String(existing.id) : null);
+    let description = (draftMatches ? draft.description : existing?.description) || '';
+    const transportData = (draftMatches ? draft.transport : existing?.transport) || {};
 
     // --- MODIFICATION V2 : AJOUT SIGNATURE AUTOMATIQUE ---
     const signature = "\n\nCircuit généré par Heripia — heripia.com";
@@ -255,10 +265,9 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
 
     const poiIds = state.currentCircuit.map(getPoiId);
 
-    // Circuit édité (perso OU officiel) : copie modifiée, posée en mémoire par
-    // persistCircuit seulement une fois écrite. Plus de mutation sur place ni de
-    // recherche à la main dans une seule des deux listes (cf. circuit-store).
-    const existing = state.activeCircuitId ? findCircuitById(state.activeCircuitId) : null;
+    // Copie modifiée du circuit édité, posée en mémoire par persistCircuit
+    // seulement une fois écrite. Plus de mutation sur place ni de recherche à la
+    // main dans une seule des deux listes (cf. circuit-store).
     const isNew = !existing;
     const circuitToSave = isNew
         ? {
@@ -329,6 +338,8 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
         if (!stayInCreation) {
             setCircuitCreationMode(false);
             setEditingMode(false);
+            // Retour en consultation : plus rien à reprendre au boot.
+            await saveAppState(`circuitDraft_${state.currentMapId}`, null);
             // Re-render le panneau pour que data-mode passe en 'consult'.
             try {
                 const { applyCircuitMode } = await import('./circuit-view.js');
@@ -345,6 +356,10 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
             // editingMode=true garde le panneau en 'create' (même mécanisme que
             // « Modifier ») ; il est reset au prochain setActiveCircuitId.
             setEditingMode(true);
+            // Brouillon réécrit AVEC l'id du circuit (tout juste créé ou édité) :
+            // un F5 rouvre son édition. Sans ça, un circuit neuf tracé puis
+            // rechargé revenait en brouillon anonyme → doublon au tracé suivant.
+            await saveCircuitDraft();
             try {
                 const { applyCircuitMode } = await import('./circuit-view.js');
                 applyCircuitMode();
