@@ -36,26 +36,6 @@
     ]
   },
   {
-    "id": "HW-1771578509993",
-    "name": "Circuit de Mosquée AsSalam à Mosquée Al-Hajar",
-    "file": "djerba/Circuit de Mosquée AsSalam à Mosquée Al-Hajar.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
-    "distance": "15.4 km",
-    "isOfficial": true,
-    "hasRealTrack": true,
-    "zone": "Arkou",
-    "poiIds": [
-      "HW-01K77WPE697PHS21NP9P0JGJ6F",
-      "HW-01K77WPE69627R8AECX3S372Z3",
-      "HW-01K77WPE69FQZ84EBV7HCETGM2",
-      "HW-01K77WPE69NZS5NFTFBPG6V291",
-      "HW-AGVY6BXAX7HLGFO3CKDXA9DCML",
-      "HW-01K77WPE682TM0N643W207BGNE",
-      "HW-01KJABRN0YD2SFB393HG9SRDGW",
-      "HW-PWQM8ZZC2LR7PF4UTX73MGTM21"
-    ]
-  },
-  {
     "id": "HW-1771742357322",
     "name": "Circuit de Mosquée Ghandri à Mosquée Khnensa",
     "file": "djerba/Circuit de Mosquée Ghandri à Mosquée Khnensa via Mosquée de Taghzouïsni.gpx",
