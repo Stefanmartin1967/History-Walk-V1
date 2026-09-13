@@ -251,6 +251,13 @@ export function initMapListeners() {
     });
 
     window.addEventListener('circuit:updated', (e) => {
+        // Signal SANS données : l'entrée en « Éditer l'itinéraire »
+        // (circuit-focus.js) le lance pour rafraîchir le panneau, et dessine
+        // elle-même le tracé segment par segment après avoir retiré les lignes
+        // globales. Rien à faire ici — et surtout ne pas redessiner la ligne
+        // globale sous les segments. Avant ce garde, la déstructuration de
+        // `e.detail` (null) levait une TypeError à chaque entrée (depuis #785).
+        if (!e.detail) return;
         const { points, activeId } = e.detail;
 
         // 1. On nettoie tout
