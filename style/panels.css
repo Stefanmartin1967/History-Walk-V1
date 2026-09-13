@@ -3184,11 +3184,10 @@
 
 /* « Modifier le circuit » réautorisé sur les officiels/vérifiés, POUR TOUS les users
    (07/06/2026 — bug 2 chantier aide fiche lieu : « Stefan : c'est un trou, on a
-   supprimé ça par erreur »). Le code JS gère le bon comportement par état :
-   - Admin (state.isAdmin) : convertToDraft({preserveId: true}) → modifie l'officiel
-     en place (cf. ui-circuit-editor.js:264, circuit.js:606+).
-   - User lambda : convertToDraft({preserveId: false}) → crée une copie perso
-     « (modifié) » ; l'officiel original reste intact.
+   supprimé ça par erreur »). convertToDraft (circuit.js) gère le bon comportement :
+   - Admin : modifie l'officiel en place.
+   - Non-admin : crée une copie perso « (modifié) » ; l'officiel reste intact.
+     (Son PROPRE circuit, lui, se modifie en place pour tout le monde.)
    On ne réautorise QUE le bouton « Modifier » — la Suppression d'un officiel
    reste impossible (patrimoine partagé, passe par d'autres voies admin). */
 #circuit-panel[data-mode="consult"][data-flag="official"] #btn-modify-circuit,
