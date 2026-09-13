@@ -46,6 +46,7 @@ const H = vi.hoisted(() => {
         showConfirm: vi.fn(async () => true),
         showToast: vi.fn(),
         emit: vi.fn(),
+        forgetDeletedCircuit: vi.fn(async () => {}),
     };
 });
 const {
@@ -73,6 +74,7 @@ vi.mock('../src/github-sync.js', () => ({
     uploadFileToGitHub: H.uploadFileToGitHub,
 }));
 vi.mock('../src/database.js', () => ({ deleteCircuitById: vi.fn(), restoreCircuit: vi.fn() }));
+vi.mock('../src/circuit-store.js', () => ({ forgetDeletedCircuit: H.forgetDeletedCircuit }));
 vi.mock('../src/circuit-deletion-state.js', () => ({
     setOfficialCircuitDeleted: H.setOfficialCircuitDeleted,
     noteServerDeletedCircuit: H.noteServerDeletedCircuit,
@@ -202,6 +204,26 @@ describe('Nettoyage — suppression complète', () => {
         expect(setOfficialCircuits).toHaveBeenCalledWith([{ id: 'HW-2', name: 'Circuit B' }]);
         expect(setOfficialCircuitDeleted).toHaveBeenCalledWith('HW-1', false);
         expect(emit).toHaveBeenCalledWith('circuit:list-updated');
+    });
+
+    // Régression du 13/09/2026 : la copie locale d'un officiel déjà édité restait
+    // en base → au F5, circuit orphelin « NOUVEAU » au diff, republié ensuite.
+    it('oublie la copie locale du circuit supprimé (base + brouillon)', async () => {
+        const container = await renderServerView();
+        container.querySelector('[data-id="HW-1"]').click();
+
+        await vi.waitFor(() => expect(H.forgetDeletedCircuit).toHaveBeenCalledWith('HW-1'));
+    });
+
+    it("n'oublie PAS la copie locale si la suppression serveur a échoué", async () => {
+        const container = await renderServerView();
+        fetchWithTimeout.mockResolvedValue({ ok: false, status: 500 });
+        container.querySelector('[data-id="HW-1"]').click();
+
+        await vi.waitFor(() => expect(showToast).toHaveBeenCalledWith(
+            expect.stringContaining('Erreur'), 'error'
+        ));
+        expect(H.forgetDeletedCircuit).not.toHaveBeenCalled();
     });
 
     it('prévient le moteur de diff et demande son recalcul', async () => {

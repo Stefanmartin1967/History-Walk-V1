@@ -4,6 +4,7 @@ import { getStoredToken, deleteFileFromGitHub, uploadFileToGitHub } from './gith
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { deleteCircuitById, restoreCircuit } from './database.js';
 import { setOfficialCircuitDeleted, noteServerDeletedCircuit, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
+import { forgetDeletedCircuit } from './circuit-store.js';
 import { eventBus } from './events.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -320,6 +321,12 @@ async function handleDeleteClick(id, path, name, container) {
         //    ET ouvert dans la session (donc `realTrack` chargé) rebasculerait
         //    en « NOUVEAU » au prochain diff — et serait republié.
         setOfficialCircuits((state.officialCircuits || []).filter(c => String(c.id) !== String(id)));
+        //    …et sa copie locale (IndexedDB) + un brouillon qui le viserait. Sans
+        //    ça, un officiel déjà édité sur ce poste revenait au F5 comme circuit
+        //    orphelin : masqué de la liste, mais « NOUVEAU » au diff du CC — et
+        //    republié au « Tout publier » suivant (audit du 13/09/2026).
+        try { await forgetDeletedCircuit(id); }
+        catch (e) { console.warn('[Nettoyage] purge copie locale échec:', id, e); }
 
         // 4. Une intention de suppression posée depuis le panneau Circuit (la
         //    poubelle du détail) n'a plus d'objet : elle n'est purgée que par la

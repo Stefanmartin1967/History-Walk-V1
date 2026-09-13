@@ -7,9 +7,12 @@
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-const { state, saveCircuit } = vi.hoisted(() => ({
+const { state, saveCircuit, deleteCircuitById, getAppState, saveAppState } = vi.hoisted(() => ({
     state: { currentMapId: 'djerba', myCircuits: [], officialCircuits: [] },
     saveCircuit: vi.fn(async () => {}),
+    deleteCircuitById: vi.fn(async () => {}),
+    getAppState: vi.fn(async () => null),
+    saveAppState: vi.fn(async () => {}),
 }));
 
 vi.mock('../src/state.js', () => ({
@@ -22,9 +25,14 @@ vi.mock('../src/state.js', () => ({
     },
     removeMyCircuit: (id) => { state.myCircuits = state.myCircuits.filter(c => String(c.id) !== String(id)); },
 }));
-vi.mock('../src/database.js', () => ({ saveCircuit: (...a) => saveCircuit(...a) }));
+vi.mock('../src/database.js', () => ({
+    saveCircuit: (...a) => saveCircuit(...a),
+    deleteCircuitById: (...a) => deleteCircuitById(...a),
+    getAppState: (...a) => getAppState(...a),
+    saveAppState: (...a) => saveAppState(...a),
+}));
 
-import { persistCircuit } from '../src/circuit-store.js';
+import { persistCircuit, forgetDeletedCircuit } from '../src/circuit-store.js';
 
 beforeEach(() => {
     saveCircuit.mockReset();
@@ -86,5 +94,57 @@ describe('persistCircuit', () => {
     it('refuse un circuit sans id', async () => {
         await expect(persistCircuit({ name: 'Sans id' })).rejects.toThrow();
         expect(saveCircuit).not.toHaveBeenCalled();
+    });
+});
+
+// Régression du 13/09/2026 : supprimer du serveur un officiel déjà édité sur ce
+// poste laissait sa copie locale. Au F5, orpheline, elle devenait « NOUVEAU » au
+// diff du CC (masquée de la liste) et aurait été republiée.
+describe('forgetDeletedCircuit', () => {
+    beforeEach(() => {
+        deleteCircuitById.mockClear();
+        getAppState.mockReset();
+        getAppState.mockImplementation(async () => null);
+        saveAppState.mockClear();
+    });
+
+    it('efface la copie locale en base (IndexedDB)', async () => {
+        await forgetDeletedCircuit('HW-off');
+
+        expect(deleteCircuitById).toHaveBeenCalledWith('HW-off');
+    });
+
+    it('retire le circuit de myCircuits s\'il y figure, sans toucher aux autres', async () => {
+        state.myCircuits = [{ id: 'HW-off', isOfficial: true }, { id: 'HW-perso' }];
+
+        await forgetDeletedCircuit('HW-off');
+
+        expect(state.myCircuits.map(c => c.id)).toEqual(['HW-perso']);
+    });
+
+    it('vide le brouillon qui vise ce circuit', async () => {
+        getAppState.mockImplementation(async () => ({ circuitId: 'HW-off', poiIds: ['a'] }));
+
+        await forgetDeletedCircuit('HW-off');
+
+        expect(saveAppState).toHaveBeenCalledWith('circuitDraft_djerba', null);
+    });
+
+    it("garde le brouillon d'un AUTRE circuit ou d'une création", async () => {
+        getAppState.mockImplementation(async () => ({ circuitId: 'HW-autre', poiIds: ['a'] }));
+        await forgetDeletedCircuit('HW-off');
+        getAppState.mockImplementation(async () => ({ circuitId: null, poiIds: ['a'] }));
+        await forgetDeletedCircuit('HW-off');
+
+        expect(saveAppState).not.toHaveBeenCalled();
+    });
+
+    it('compare les ids en String', async () => {
+        getAppState.mockImplementation(async () => ({ circuitId: '1771578509993', poiIds: ['a'] }));
+
+        await forgetDeletedCircuit(1771578509993);
+
+        expect(deleteCircuitById).toHaveBeenCalledWith('1771578509993');
+        expect(saveAppState).toHaveBeenCalledWith('circuitDraft_djerba', null);
     });
 });

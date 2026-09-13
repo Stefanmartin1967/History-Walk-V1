@@ -13,7 +13,7 @@
 //
 // Module FEUILLE (state + database) : importable partout sans cycle.
 import { state, setOfficialCircuits, addMyCircuit, updateMyCircuit, removeMyCircuit } from './state.js';
-import { saveCircuit } from './database.js';
+import { saveCircuit, deleteCircuitById, getAppState, saveAppState } from './database.js';
 
 /**
  * Écrit un circuit en IndexedDB PUIS le pose en mémoire, à sa place unique.
@@ -63,4 +63,32 @@ export function placeCircuitInState(circuit) {
 
     if ((state.myCircuits || []).some(c => String(c.id) === sid)) updateMyCircuit(circuit);
     else addMyCircuit(circuit);
+}
+
+/**
+ * Oublie localement un circuit SUPPRIMÉ DU SERVEUR : sa copie IndexedDB, sa
+ * présence éventuelle dans `myCircuits` et le brouillon qui le viserait.
+ *
+ * Pourquoi (13/09/2026) : éditer un officiel enregistre sa version modifiée en
+ * base locale. Supprimer ensuite le circuit du serveur ne le retirait que de
+ * `officialCircuits` en mémoire ; au F5, la copie locale, rattachée à aucune
+ * entrée d'index, devenait un circuit orphelin — masqué de la liste (marqué
+ * officiel) mais « NOUVEAU » au diff du CC, et republié au « Tout publier »
+ * suivant.
+ *
+ * À n'appeler qu'une fois la suppression effective sur le serveur. Jamais au
+ * boot par déduction : un index illisible (hors-ligne) ferait passer toutes les
+ * copies d'officiels pour orphelines.
+ * @param {string|number} id
+ */
+export async function forgetDeletedCircuit(id) {
+    const sid = String(id);
+    await deleteCircuitById(sid);
+    if ((state.myCircuits || []).some(c => String(c.id) === sid)) removeMyCircuit(sid);
+
+    const draftKey = `circuitDraft_${state.currentMapId}`;
+    const draft = await getAppState(draftKey);
+    if (draft && draft.circuitId != null && String(draft.circuitId) === sid) {
+        await saveAppState(draftKey, null);
+    }
 }
