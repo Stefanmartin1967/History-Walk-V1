@@ -49,7 +49,7 @@ vi.mock('../src/database.js', () => ({
     saveAppState: vi.fn(),
     savePoiData: vi.fn(),
     saveCircuit: vi.fn(),
-    clearStore: vi.fn(),
+    deleteCircuitsForMap: vi.fn(async () => 0),
     getAllPoiPhotosForMap: vi.fn(async () => []),
     savePoiPhotos: vi.fn(async () => {}),
     blobToBase64: vi.fn(async () => 'data:image/jpeg;base64,MOCKDATA'),
@@ -87,7 +87,7 @@ vi.mock('../src/local-destinations.js', () => ({
 
 import { state } from '../src/state.js';
 import { showToast } from '../src/toast.js';
-import { getAllPoiPhotosForMap, savePoiPhotos, savePoiData, base64ToBlob, saveAppState } from '../src/database.js';
+import { getAllPoiPhotosForMap, savePoiPhotos, savePoiData, base64ToBlob, saveAppState, saveCircuit, deleteCircuitsForMap } from '../src/database.js';
 import { getDraftZones, createLocalDraftDestination } from '../src/local-destinations.js';
 import {
     getActionLabel,
@@ -562,5 +562,53 @@ describe('restoreBackup — brouillon local (Option A)', () => {
         expect(createLocalDraftDestination).not.toHaveBeenCalled();
         // un HW-ULID sur une dest publiée n'est pas un custom POI → pas restauré
         expect(saveAppState.mock.calls.find((c) => c[0] === 'customPois_djerba')).toBeUndefined();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Régression B4 de l'audit du cycle circuits (12/09/2026) : la restauration
+// appelait clearStore('circuits') — store inexistant (c'est `savedCircuits`),
+// donc rien n'était vidé et les circuits s'AJOUTAIENT. Vider tout le store aurait
+// effacé les autres destinations : une sauvegarde n'en porte qu'une.
+describe('restoreBackup — circuits', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+    });
+
+    const backup = (myCircuits) => ({ backupVersion: '3.0', mapId: 'hammamet', myCircuits });
+
+    it('vide les circuits de la destination restaurée SEULEMENT, avant d\'écrire', async () => {
+        await restoreBackup(backup([{ id: 'HW-p1', name: 'Perso', poiIds: ['a'], mapId: 'hammamet' }]));
+
+        expect(deleteCircuitsForMap).toHaveBeenCalledTimes(1);
+        expect(deleteCircuitsForMap).toHaveBeenCalledWith('hammamet');
+        expect(deleteCircuitsForMap.mock.invocationCallOrder[0])
+            .toBeLessThan(saveCircuit.mock.invocationCallOrder[0]);
+    });
+
+    it('pose le mapId manquant (sinon invisible), garde un mapId existant', async () => {
+        await restoreBackup(backup([
+            { id: 'HW-a', name: 'Sans mapId', poiIds: ['a'] },
+            { id: 'HW-b', name: 'Avec mapId', poiIds: ['b'], mapId: 'hammamet' },
+        ]));
+
+        const saved = saveCircuit.mock.calls.map(c => c[0]);
+        expect(saved.map(c => c.mapId)).toEqual(['hammamet', 'hammamet']);
+    });
+
+    it("écarte les copies d'officiels (isOfficial) d'une ancienne sauvegarde", async () => {
+        await restoreBackup(backup([
+            { id: 'HW-off', name: 'Copie officiel', poiIds: ['a'], isOfficial: true },
+            { id: 'HW-p1', name: 'Perso', poiIds: ['b'] },
+        ]));
+
+        expect(saveCircuit.mock.calls.map(c => c[0].id)).toEqual(['HW-p1']);
+    });
+
+    it('ne touche pas aux circuits si la sauvegarde n\'en contient pas', async () => {
+        await restoreBackup({ backupVersion: '3.0', mapId: 'hammamet', userData: {} });
+
+        expect(deleteCircuitsForMap).not.toHaveBeenCalled();
+        expect(saveCircuit).not.toHaveBeenCalled();
     });
 });
