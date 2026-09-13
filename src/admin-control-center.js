@@ -1,6 +1,7 @@
 import { state, setUserData, setCustomFeatures, setOfficialCircuits, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
+import { forgetDeletedCircuit } from './circuit-store.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
@@ -850,6 +851,12 @@ async function publishChanges() {
                     for (const deletedId of publishedDeletions) {
                         try { await setOfficialCircuitDeleted(deletedId, false); }
                         catch (e) { console.warn('[CC] purge intention suppression échec:', deletedId, e); }
+                        // Copie locale + brouillon lié : purgés seulement une fois la
+                        // suppression PUBLIÉE (avant, « Restaurer » doit rester
+                        // possible). Sinon la copie d'un officiel déjà édité revient au
+                        // F5 en « NOUVEAU » et serait republiée.
+                        try { await forgetDeletedCircuit(deletedId); }
+                        catch (e) { console.warn('[CC] purge copie locale échec:', deletedId, e); }
                     }
                 }
             } catch (err) {
