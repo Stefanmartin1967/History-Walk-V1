@@ -122,7 +122,7 @@ vi.mock('../src/circuit-flags.js', () => ({
     markEditingStart: vi.fn()
 }));
 
-import { state, setOfficialCircuitStatus, setTestedCircuit, addMyCircuit, setCurrentCircuit, setActiveCircuitId } from '../src/state.js';
+import { state, setOfficialCircuitStatus, setTestedCircuit, addMyCircuit, setCurrentCircuit, setActiveCircuitId, setCircuitCreationMode } from '../src/state.js';
 import { DOM } from '../src/ui-dom.js';
 import { showToast } from '../src/toast.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from '../src/database.js';
@@ -362,6 +362,9 @@ describe('convertToDraft', () => {
             expect.stringContaining('Mode édition'),
             'info'
         );
+        // Régression 13/09/2026 (test U5 de Stefan) : sans mode création, pas de
+        // « Tracer l'itinéraire » ni d'ajout de lieu au clic avant un F5.
+        expect(setCircuitCreationMode).toHaveBeenCalledWith(true);
     });
 
     // Régression C1 de l'audit (12/09/2026) : la copie « (modifié) » valait pour

@@ -783,6 +783,13 @@ export function convertToDraft() {
         const originalName = DOM.circuitTitleText?.textContent || generateCircuitName();
         setActiveCircuitId(null);
         setCustomDraftName(originalName + " (modifié)");
+        // Mode création, comme la branche en place : sans lui, le bloc tracé
+        // (ui-circuit-routing, inCreation) restait vide — pas de « Tracer
+        // l'itinéraire » — et un clic sur un lieu n'ajoutait rien (map.js).
+        // Constaté par Stefan le 13/09/2026 ; seul un F5 (restauration du
+        // brouillon) débloquait. Pas de markEditingStart : la copie est un
+        // circuit NEUF, aucun drapeau n'est verrouillé (cadenas = editingMode).
+        setCircuitCreationMode(true);
     }
 
     showToast("Mode édition activé. Vous pouvez maintenant modifier ce circuit.", "info");
