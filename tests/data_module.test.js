@@ -45,8 +45,10 @@ vi.mock('../src/database.js', () => ({
     getAllPoiDataForMap: vi.fn(),
     getAllCircuitsForMap: vi.fn(),
     savePoiData: vi.fn(),
+    batchSavePoiData: vi.fn(),
     getAppState: vi.fn(),
     saveAppState: vi.fn(),
+    deleteAppState: vi.fn(),
     saveCircuit: vi.fn()
 }));
 
@@ -109,7 +111,7 @@ vi.mock('../src/url-utils.js', () => ({
 }));
 
 import { state } from '../src/state.js';
-import { saveAppState, savePoiData, saveCircuit } from '../src/database.js';
+import { saveAppState, savePoiData, saveCircuit, batchSavePoiData } from '../src/database.js';
 import { addToDraft, getMigrationId, getAdminDraft } from '../src/admin-control-center.js';
 import { schedulePush } from '../src/gist-sync.js';
 import { showToast } from '../src/toast.js';
@@ -1024,8 +1026,11 @@ describe('checkAndApplyMigrations (stage-then-commit)', () => {
         // userData : nouvelle clé pointe vers les mêmes données
         expect(state.userData[newId]).toEqual({ vu: true, notes: 'avant' });
 
-        // Persistance : 3 saveAppState (userData, hiddenPois, customPois)
-        expect(saveAppState).toHaveBeenCalledWith('userData', expect.anything());
+        // Persistance : userData du NOUVEL id dans le store par destination
+        // (plus dans la copie globale appState, abandonnée le 14/09/2026),
+        // + hiddenPois, customPois.
+        expect(batchSavePoiData).toHaveBeenCalledWith('djerba', [{ poiId: newId, data: { vu: true, notes: 'avant' } }]);
+        expect(saveAppState).not.toHaveBeenCalledWith('userData', expect.anything());
         expect(saveAppState).toHaveBeenCalledWith('hiddenPois_djerba', expect.anything());
         expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', expect.anything());
 

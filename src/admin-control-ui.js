@@ -380,14 +380,8 @@ function bindCCEventDelegation(diffData, callbacks) {
         });
 
         container.addEventListener('change', (e) => {
-            // Update Draft Value
-            if (e.target.matches('[data-action="update-draft"]')) {
-                const id = e.target.dataset.id;
-                const key = e.target.dataset.key;
-                const value = e.target.value;
-                if (callbacks.updateDraftValue) callbacks.updateDraftValue(id, key, value);
-                return;
-            }
+            // (« update-draft » retiré le 14/09/2026 : écouteur sans émetteur — aucun
+            // rendu ne produisait data-action="update-draft".)
             // Toggle skipPublish sur une photo pending. La fonction côté admin
             // déclenche un re-render complet (B3) pour déplacer la photo entre
             // les sections "À publier" et "Gardées en local". Pas de manipulation

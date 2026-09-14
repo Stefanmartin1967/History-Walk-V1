@@ -85,10 +85,11 @@ describe('persistPoiEdit — POI CUSTOM (properties + customPois, overlay purgé
         expect(state.userData['HW-CUST-1']).toBeUndefined();
         expect(f.properties.userData).toBeUndefined();
         expect(deletePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-1');
-        // Persistance custom : customPois + lastGeoJSON + userData purgé.
+        // Persistance custom : customPois + lastGeoJSON. Plus d'écriture dans la
+        // copie globale appState `userData` (abandonnée le 14/09/2026).
         expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', state.customFeatures);
         expect(saveAppState).toHaveBeenCalledWith('lastGeoJSON_djerba', expect.objectContaining({ type: 'FeatureCollection' }));
-        expect(saveAppState).toHaveBeenCalledWith('userData', state.userData);
+        expect(saveAppState).not.toHaveBeenCalledWith('userData', expect.anything());
         // PAS de savePoiData en branche custom (ce serait re-créer l'overlay).
         expect(savePoiData).not.toHaveBeenCalled();
     });

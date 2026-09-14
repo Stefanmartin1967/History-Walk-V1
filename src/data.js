@@ -6,6 +6,7 @@ import {
     getAllPoiDataForMap,
     getAllCircuitsForMap,
     savePoiData,
+    batchSavePoiData,
     getAppState,
     saveAppState,
     saveCircuit,
@@ -13,6 +14,7 @@ import {
     renameDescriptionCourteToInfoGpxInPoiData
 } from './database.js';
 import { logModification } from './logger.js';
+import { migrateLegacyUserData } from './legacy-user-data.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate, isOsmChecked, isMapsChecked } from './utils.js';
@@ -164,10 +166,17 @@ async function checkAndApplyMigrations() {
         }
     }
 
+    // Données utilisateur des nouveaux ids → store par destination (seul domicile
+    // depuis le 14/09/2026 ; avant, elles n'étaient écrites que dans la copie
+    // globale appState `userData`, désormais abandonnée).
+    const migratedUserData = featuresToMigrate
+        .filter(({ newId }) => nextUserData[newId])
+        .map(({ newId }) => ({ poiId: newId, data: nextUserData[newId] }));
+
     // ─── 3. PHASE PERSIST — try/catch unique, abort sur la moindre erreur ───
     try {
         await Promise.all([
-            saveAppState('userData', nextUserData),
+            ...(migratedUserData.length > 0 ? [batchSavePoiData(state.currentMapId, migratedUserData)] : []),
             saveAppState(`hiddenPois_${state.currentMapId}`, nextHiddenPoiIds),
             saveAppState(`customPois_${state.currentMapId}`, nextCustomFeatures),
             ...circuitsToUpdate
@@ -238,54 +247,6 @@ export async function displayGeoJSON(geoJSON, mapId) {
     try { await renameDescriptionCourteToInfoGpxInPoiData(mapId); }
     catch (e) { console.warn('[data] renameDescriptionCourteToInfoGpxInPoiData failed:', e); }
 
-    // Récupération globale (legacy/backup) et spécifique à la carte
-    const appStateUserData = await getAppState('userData') || {};
-    const mapUserData = await getAllPoiDataForMap(mapId) || {};
-
-    // SÉCURITÉ DES DONNÉES (Phase 1) :
-    // Au lieu d'un écrasement brutal (...appStateUserData, ...mapUserData) qui remplace
-    // tout l'objet d'un POI, on fait une fusion profonde (deep merge) pour chaque POI.
-    // Cela garantit qu'une note enregistrée dans 'appState' n'est pas effacée par un
-    // statut 'vu' enregistré dans 'mapUserData'.
-    const storedUserData = { ...appStateUserData };
-    for (const [poiId, data] of Object.entries(mapUserData)) {
-        if (storedUserData[poiId]) {
-            // Si le POI existe déjà, on fusionne les attributs
-            storedUserData[poiId] = { ...storedUserData[poiId], ...data };
-        } else {
-            // Sinon on l'ajoute
-            storedUserData[poiId] = data;
-        }
-    }
-
-    // Migration : normalise `Description` (capital) → `description` (lowercase)
-    // ET renomme `Description_courte` → `info_gpx` sur les entrées issues
-    // d'appState/backup (le store poiUserData a déjà été normalisé en amont).
-    // Si quelque chose change, on persiste appState pour ne pas avoir à le
-    // refaire au prochain boot.
-    let appStateDirty = false;
-    for (const data of Object.values(storedUserData)) {
-        if (!data || typeof data !== 'object') continue;
-        if ('Description' in data) {
-            if (!('description' in data) || data.description == null) {
-                data.description = data.Description;
-            }
-            delete data.Description;
-            appStateDirty = true;
-        }
-        if ('Description_courte' in data) {
-            if (!('info_gpx' in data) || data.info_gpx == null) {
-                data.info_gpx = data.Description_courte;
-            }
-            delete data.Description_courte;
-            appStateDirty = true;
-        }
-    }
-    if (appStateDirty) {
-        try { await saveAppState('userData', storedUserData); }
-        catch (e) { console.warn('[data] saveAppState userData (post-normalize) failed:', e); }
-    }
-
     const storedCustomFeatures = (await getAppState(`customPois_${mapId}`)) || [];
 
     // Migration : `customFeatures[i].properties.Description` → `.description`
@@ -319,7 +280,34 @@ export async function displayGeoJSON(geoJSON, mapId) {
     
     setCustomFeatures(storedCustomFeatures || []);
 
-    // 1.5 Pré-chargement des données utilisateur pour la migration
+    // 1.5 Données utilisateur : UN seul domicile, le store par destination
+    // `poiUserData` (14/09/2026). L'ancienne copie globale appState `userData`,
+    // fusionnée ici jusque-là, faisait revenir des lieux effacés du store et
+    // mêlait les destinations en mémoire. Ses entrées concernant cette
+    // destination sont d'abord rapatriées dans le store (sans rien écraser).
+    const mapPoiIds = new Set(
+        [...(geoJSON.features || []), ...storedCustomFeatures].map(getPoiId).filter(Boolean)
+    );
+    let legacyFallback = null;
+    try {
+        const r = await migrateLegacyUserData(mapId, mapPoiIds);
+        if (r.rapatries > 0 || r.retires > 0) {
+            console.info(`[data] Copie globale userData : ${r.rapatries} lieu(x) rapatrié(s), ${r.retires} entrée(s) retirée(s), ${r.restants} conservée(s).`);
+        }
+    } catch (e) {
+        // Échec du rapatriement : la copie est intacte (rejouable au boot suivant).
+        // Pour cette session seulement, on complète la mémoire depuis la copie,
+        // pour les lieux de CETTE destination, sans jamais écraser le store.
+        console.warn('[data] Rapatriement de la copie globale userData échoué (non bloquant) :', e);
+        legacyFallback = (await getAppState('userData').catch(() => null)) || null;
+    }
+    const storedUserData = (await getAllPoiDataForMap(mapId)) || {};
+    if (legacyFallback && typeof legacyFallback === 'object') {
+        for (const [poiId, data] of Object.entries(legacyFallback)) {
+            if (!mapPoiIds.has(poiId) || !data || typeof data !== 'object') continue;
+            storedUserData[poiId] = { ...data, ...(storedUserData[poiId] || {}) };
+        }
+    }
     setUserData(Object.assign({}, storedUserData));
 
     // 2. FUSION : Carte Officielle + Lieux Ajoutés (Post-its)

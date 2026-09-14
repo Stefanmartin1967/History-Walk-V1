@@ -206,7 +206,9 @@ describe('processDecision — scope handling (PR B2)', () => {
 
         // Revert
         expect(setUserDataSpy).toHaveBeenCalled();
-        expect(saveAppStateSpy).toHaveBeenCalledWith('userData', expect.anything());
+        // Plus d'écriture dans la copie globale appState `userData` (14/09/2026) :
+        // le store par destination est le seul domicile.
+        expect(saveAppStateSpy).not.toHaveBeenCalledWith('userData', expect.anything());
         expect(deletePoiDataSpy).toHaveBeenCalledWith('djerba', 'poi_1');
         // PAS de purge des photos pending (B2)
         expect(clearPendingAdminPhotosSpy).not.toHaveBeenCalled();
