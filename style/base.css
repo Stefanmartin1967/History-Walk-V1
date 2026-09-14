@@ -60,6 +60,16 @@ body {
 .tools-menu-section-title:first-child {
     margin-top: 0;
 }
+/* Version de l'app, dernière ligne du menu Outils — même rendu que .menu-version
+   (bas du menu mobile, mobile.css). */
+.tools-menu-version {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    padding: 8px 14px 10px;
+    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.04em;
+}
 /* GOD MODE button (visuel danger pour distinguer admin) */
 #btn-admin-menu {
     background-color: var(--danger);
@@ -582,18 +592,6 @@ body {
     #map {
         right: var(--sidebar-width);
     }
-}
-
-#app-version {
-    position: absolute;
-    bottom: 30px;
-    left: 10px;
-    z-index: 1003;
-    color: var(--ink-soft);
-    font-size: 12px;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 2px 5px;
-    border-radius: 4px;
 }
 
 
@@ -2479,8 +2477,7 @@ input[type=range] {
     /* 1. Reset Global Layout for Mobile */
     .topbar,
     #map,
-    .right-sidebar,
-    #app-version {
+    .right-sidebar {
         display: none !important;
     }
 
