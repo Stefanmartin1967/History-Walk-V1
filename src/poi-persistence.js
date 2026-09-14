@@ -94,7 +94,6 @@ export async function persistPoiEdit(poiId, data) {
                 try { await deletePoiData(state.currentMapId, poiId); } catch (e) { console.warn('[persistPoiEdit] purge du store poiUserData échouée (une clé obsolète pourrait réapparaître au reload) :', e); }
                 await savePoiData(state.currentMapId, poiId, overlay);
             }
-            await saveAppState('userData', state.userData);
         } else {
             delete feature.properties.userData;
         }

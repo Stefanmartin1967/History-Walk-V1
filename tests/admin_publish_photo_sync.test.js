@@ -80,6 +80,9 @@ vi.mock('../src/database.js', () => ({
     setPendingAdminPhotos: vi.fn(() => Promise.resolve()),
     clearPendingAdminPhotos: vi.fn(() => Promise.resolve()),
     deletePoiData: vi.fn(() => Promise.resolve()),
+    // Store par destination, seul domicile des données de lieux (14/09/2026).
+    savePoiData: vi.fn(() => Promise.resolve()),
+    removePoiDataKeys: vi.fn(() => Promise.resolve(0)),
 }));
 
 vi.mock('../src/photo-service.js', () => ({

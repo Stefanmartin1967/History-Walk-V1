@@ -12,7 +12,7 @@ import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './gith
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
-import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData } from './database.js';
+import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData, savePoiData, removePoiDataKeys } from './database.js';
 import { uploadPhotoForPoi } from './photo-service.js';
 
 // Nouveaux imports suite au découpage
@@ -171,7 +171,6 @@ export async function openControlCenter(initialTab = 'dashboard') {
     const callbacks = {
         publishChanges: publishChanges,
         toggleDiffDetails: toggleDiffDetails,
-        updateDraftValue: updateDraftValue,
         processDecision: processDecision,
         openEditorForPoi: openEditorForPoi,
         togglePhotoSkip: togglePhotoSkip,
@@ -329,55 +328,6 @@ export const bulkSetPhotoSkip = async (poiId, skipPublish) => {
     }
 };
 
-// Regex strict : "lat, lng" avec décimales optionnelles, signe optionnel
-const POSITION_RE = /^-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?$/;
-
-/**
- * Valide une chaîne "lat, lng". Retourne { ok: true, lat, lng } en cas de
- * succès, ou { ok: false, reason } en cas d'échec (format, bornes, inversion).
- */
-function validatePositionInput(value) {
-    const trimmed = String(value || '').trim();
-    if (!POSITION_RE.test(trimmed)) {
-        return { ok: false, reason: 'Format attendu : "lat, lng" (ex : 33.77, 10.94)' };
-    }
-    const [lat, lng] = trimmed.split(',').map(s => parseFloat(s.trim()));
-    if (lat < -90 || lat > 90) {
-        // Heuristique : si lat hors bornes mais lng dans [-90, 90], probable inversion
-        if (Math.abs(lng) <= 90) {
-            return { ok: false, reason: `Latitude ${lat} hors bornes (-90..90). Lat et lng inversés ?` };
-        }
-        return { ok: false, reason: `Latitude ${lat} hors bornes (-90..90).` };
-    }
-    if (lng < -180 || lng > 180) {
-        return { ok: false, reason: `Longitude ${lng} hors bornes (-180..180).` };
-    }
-    return { ok: true, lat, lng };
-}
-
-export const updateDraftValue = async (id, key, value) => {
-    // Met à jour directement userData (la source de vérité locale)
-
-    const newUserData = { ...state.userData };
-    if (!newUserData[id]) newUserData[id] = {};
-
-    if (key === 'Position') {
-        const result = validatePositionInput(value);
-        if (!result.ok) {
-            showToast(result.reason, 'error', 5000);
-            return; // Pas d'écriture si invalide
-        }
-        newUserData[id].lat = result.lat;
-        newUserData[id].lng = result.lng;
-    } else {
-        newUserData[id][key] = value;
-    }
-
-    setUserData(newUserData);
-    await saveAppState('userData', state.userData); // Uses state.userData which is updated via reactivity, but just to be safe:
-    showToast("Correction enregistrée localement", "info");
-};
-
 export function openEditorForPoi(id) {
     // On n'ouvre PAS le RichEditor sur la map — on le laisse s'ouvrir par-dessus le CC
     // Le CC reste ouvert en dessous (z-index CC=3000, RichEditor=4000)
@@ -389,7 +339,6 @@ export function openEditorForPoi(id) {
         const callbacks = {
             publishChanges,
             toggleDiffDetails,
-            updateDraftValue,
             processDecision,
             openEditorForPoi,
             togglePhotoSkip,
@@ -558,8 +507,6 @@ export const processDecision = async (id, decision, scope = 'poi') => {
     // est idempotent (no-op si absent) donc ça coûte rien de le tenter
     // toujours, et ça ferme un trou si state.userData[id] était undefined
     // au moment du clic (race possible entre init et action).
-    try { await saveAppState('userData', state.userData); }
-    catch (e) { console.warn('[CC] saveAppState userData failed:', e); }
     try { await deletePoiData(getActiveMapId(), id); }
     catch (e) { console.warn('[CC] deletePoiData failed:', id, e); }
 
@@ -709,6 +656,9 @@ async function publishChanges() {
                     // publié bien que uploadées avec succès sur GitHub.
                     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
                     if (feature) feature.properties.userData = newUserData[poiId];
+                    // Persistance dans le store par destination (seul domicile depuis
+                    // le 14/09/2026 ; avant : la copie globale appState `userData`).
+                    await savePoiData(mapId, poiId, { photos: mergedUrls });
                 }
 
                 // Photos restantes dans pendingAdminPhotos :
@@ -719,8 +669,6 @@ async function publishChanges() {
                 const remaining = [...toKeep, ...failedPublish];
                 await setPendingAdminPhotos(mapId, poiId, remaining);
             }
-
-            await saveAppState('userData', state.userData);
         }
 
         // ─── 2. GÉNÉRATION + UPLOAD DU GEOJSON ───
@@ -928,6 +876,7 @@ async function publishChanges() {
         //     réapparaître à la publication suivante.
         const newUserData = { ...state.userData };
         const poisToDeleteFromIdb = [];
+        const poisToTrimInIdb = []; // { id, keys } : clés publiées, retirées du store
         diffData.pois.forEach(p => {
             const overlay = newUserData[p.id];
             if (!overlay) return;
@@ -947,6 +896,8 @@ async function publishChanges() {
 
             if (Object.keys(personal).length > 0) {
                 newUserData[p.id] = personal;
+                const published = Object.keys(overlay).filter(k => !PERSONAL_KEYS.includes(k));
+                if (published.length > 0) poisToTrimInIdb.push({ id: p.id, keys: published });
             } else {
                 delete newUserData[p.id];
                 poisToDeleteFromIdb.push(p.id);
@@ -959,12 +910,23 @@ async function publishChanges() {
             }
         });
         setUserData(newUserData);
-        await saveAppState('userData', state.userData);
 
         // Supprime les entrées du store IDB `poiUserData` : sans ça,
         // getAllPoiDataForMap repeuplerait state.userData au prochain F5
         // et le diff engine signalerait à nouveau les modifications déjà publiées.
         const cleanupMapId = getActiveMapId();
+        // Lieux qui gardent des clés PERSO : on retire du store les seules clés
+        // publiées (savePoiData fusionnerait et les laisserait en base — c'est ce
+        // qui remettait des centaines de lieux « en attente », cf. v3.7.396).
+        // Avant le 14/09/2026, l'overlay réduit n'était écrit que dans la copie
+        // globale appState `userData`, désormais abandonnée.
+        for (const { id: poiId, keys } of poisToTrimInIdb) {
+            try {
+                await removePoiDataKeys(cleanupMapId, poiId, keys);
+            } catch (e) {
+                console.warn('[CC] removePoiDataKeys failed:', poiId, e);
+            }
+        }
         for (const poiId of poisToDeleteFromIdb) {
             try {
                 await deletePoiData(cleanupMapId, poiId);
