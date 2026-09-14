@@ -1,5 +1,5 @@
 // ui.js
-import { state, POI_CATEGORIES } from './state.js';
+import { state, POI_CATEGORIES, APP_VERSION } from './state.js';
 import { getPoiId, applyFilters, updatePoiData, updatePoiCoordinates, deletePoi } from './data.js';
 import { restoreCircuit, saveAppState } from './database.js';
 import { escapeXml } from './utils.js';
@@ -140,7 +140,8 @@ export function initializeDomReferences() {
     if (btnContact) {
         btnContact.addEventListener('click', () => {
             const subject = encodeURIComponent("Heripia - Signalement / Contact");
-            const body = encodeURIComponent("Bonjour,\n\nJe souhaite signaler un problème ou faire une suggestion :\n\n");
+            // Version en fin de message : dit d'emblée sur quelle livraison porte le signalement.
+            const body = encodeURIComponent(`Bonjour,\n\nJe souhaite signaler un problème ou faire une suggestion :\n\n\n\n—\nVersion : ${APP_VERSION}`);
             window.location.href = `mailto:history.walk.007@gmail.com?subject=${subject}&body=${body}`;
         });
     }

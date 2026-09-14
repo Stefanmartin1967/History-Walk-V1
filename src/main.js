@@ -87,11 +87,12 @@ async function initializeApp() {
 
     // 0. Admin
     // 1. Initialisation de base
-    // Affichage version (aucun raccourci admin associé : desktop = séquence G-O-D,
-    // mobile = appui long sur le bouton ⚙ Menu du dock, cf. mobile-nav.js)
+    // Affichage version, en bas du menu Outils sur PC (même libellé que le bas du
+    // menu mobile). Aucun raccourci admin associé : desktop = séquence G-O-D,
+    // mobile = appui long sur le bouton ⚙ Menu du dock, cf. mobile-nav.js.
     const versionEl = document.getElementById('app-version');
     if (versionEl) {
-        versionEl.textContent = APP_VERSION;
+        versionEl.textContent = `Heripia v${APP_VERSION}`;
     }
 
     // Raccourci clavier G→O→D (hors champs de saisie) → ouvre le login admin

@@ -45,7 +45,7 @@
          dès le 1er paint du #hw-boot-splash. -->
     <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css?v=8.29">
+    <link rel="stylesheet" href="style.css?v=8.30">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
          Lien direct car les @imports CSS dans style.css sont cachés par Vite en
          dev — voir note historique sur le boot splash en bas de style.css. -->
@@ -242,6 +242,8 @@
                     <button class="tools-menu-item" id="btn-legal-notice">
                         <i data-lucide="scale"></i> Mentions légales
                     </button>
+                    <!-- Version de l'app (renseignée par main.js) — même rendu que le bas du menu mobile -->
+                    <div class="tools-menu-version" id="app-version"></div>
 
                 </div>
             </div>
@@ -258,7 +260,6 @@
         <!-- Panneau de filtres unifié (refonte Claude Design) — rendu via filter-panel.js -->
         <div id="hw-filter-panel" class="hw-filter-panel"></div>
     </div>
-    <div id="app-version" class="is-hidden"></div>
 
     <div class="right-sidebar" id="right-sidebar">
         <div class="sidebar-tabs" id="sidebar-tabs">
