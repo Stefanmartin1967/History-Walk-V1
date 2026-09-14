@@ -1,7 +1,7 @@
 import { state, setUserData, setCustomFeatures, setOfficialCircuits, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
-import { forgetDeletedCircuit } from './circuit-store.js';
+import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
@@ -475,6 +475,32 @@ export const processDecision = async (id, decision, scope = 'poi') => {
 
             showToast("Circuit restauré", "info");
             eventBus.emit('circuit:list-updated');
+        } else {
+            // « Annuler » sur une MODIFICATION non publiée d'un officiel : revenir à
+            // la version publiée. Avant le 13/09/2026, cette branche n'existait pas :
+            // le diff était recalculé, l'édition locale restait, la carte revenait.
+            // Un circuit absent de l'index (création non publiée) n'est pas touché —
+            // l'effacer ferait perdre un travail qui n'existe nulle part ailleurs.
+            try {
+                const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(getActiveMapId())}?t=${Date.now()}`);
+                const remoteIndex = r.ok ? withoutServerDeletedCircuits(await r.json()) : [];
+                const published = remoteIndex.find(e => String(e.id) === String(id)) || null;
+                if (published) {
+                    const ok = await showConfirm(
+                        "Annuler la modification",
+                        `« ${published.name} » reprendra sa version publiée. Les modifications faites sur ce poste (étapes, tracé, nom) seront perdues.`,
+                        "Annuler la modification",
+                        "Garder",
+                        true
+                    );
+                    if (ok) {
+                        await revertCircuitToPublished(published);
+                        if (String(state.activeCircuitId) === String(id)) eventBus.emit('circuit:clear', false);
+                        eventBus.emit('circuit:list-updated');
+                        showToast("Modification annulée — version publiée rétablie", "info");
+                    }
+                }
+            } catch (e) { console.warn('[CC] annulation modification circuit échec:', id, e); }
         }
 
         try {

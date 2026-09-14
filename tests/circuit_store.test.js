@@ -32,7 +32,7 @@ vi.mock('../src/database.js', () => ({
     saveAppState: (...a) => saveAppState(...a),
 }));
 
-import { persistCircuit, forgetDeletedCircuit } from '../src/circuit-store.js';
+import { persistCircuit, forgetDeletedCircuit, revertCircuitToPublished } from '../src/circuit-store.js';
 
 beforeEach(() => {
     saveCircuit.mockReset();
@@ -146,5 +146,53 @@ describe('forgetDeletedCircuit', () => {
 
         expect(deleteCircuitById).toHaveBeenCalledWith('1771578509993');
         expect(saveAppState).toHaveBeenCalledWith('circuitDraft_djerba', null);
+    });
+});
+
+// « Annuler » une modification non publiée d'un officiel (13/09/2026) : avant, le
+// bouton ne défaisait qu'une SUPPRESSION ; l'édition locale restait.
+describe('revertCircuitToPublished', () => {
+    const PUBLISHED = { id: 'HW-off', name: 'Nom publié', poiIds: ['a', 'b'], file: 'djerba/Nom publié.gpx', distance: '4 km' };
+
+    beforeEach(() => {
+        deleteCircuitById.mockClear();
+        getAppState.mockReset();
+        getAppState.mockImplementation(async () => null);
+        saveAppState.mockClear();
+    });
+
+    it("remplace l'officiel édité par l'entrée publiée (sans tracé local)", async () => {
+        state.officialCircuits = [{ id: 'HW-off', name: 'Nom local', poiIds: ['a', 'b', 'c'], realTrack: [[1, 1], [2, 2]], isOfficial: true }];
+
+        await revertCircuitToPublished(PUBLISHED);
+
+        expect(state.officialCircuits).toHaveLength(1);
+        expect(state.officialCircuits[0].name).toBe('Nom publié');
+        expect(state.officialCircuits[0].poiIds).toEqual(['a', 'b']);
+        expect(state.officialCircuits[0].realTrack).toBeUndefined(); // rechargé depuis le GPX à l'ouverture
+        expect(state.officialCircuits[0].isOfficial).toBe(true);
+    });
+
+    it('efface la copie locale en base et vide le brouillon qui vise ce circuit', async () => {
+        state.officialCircuits = [{ id: 'HW-off', name: 'Nom local', isOfficial: true }];
+        getAppState.mockImplementation(async () => ({ circuitId: 'HW-off', poiIds: ['a'] }));
+
+        await revertCircuitToPublished(PUBLISHED);
+
+        expect(deleteCircuitById).toHaveBeenCalledWith('HW-off');
+        expect(saveAppState).toHaveBeenCalledWith('circuitDraft_djerba', null);
+    });
+
+    it("rajoute l'officiel s'il n'est plus en mémoire", async () => {
+        state.officialCircuits = [{ id: 'HW-autre', name: 'Autre' }];
+
+        await revertCircuitToPublished(PUBLISHED);
+
+        expect(state.officialCircuits.map(c => c.id)).toEqual(['HW-autre', 'HW-off']);
+    });
+
+    it('refuse une entrée sans id', async () => {
+        await expect(revertCircuitToPublished({ name: 'Sans id' })).rejects.toThrow();
+        expect(deleteCircuitById).not.toHaveBeenCalled();
     });
 });
