@@ -13,7 +13,7 @@ import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { getWorkPhotosById, loadWorkPhotoBlob } from './work-photos.js';
-import { loadPrivateNote, savePrivateNote } from './private-notes.js';
+import { loadPrivateNote, savePrivateNote, shouldSyncPrivateNote } from './private-notes.js';
 import { getStoredToken } from './github-sync.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
 import { configureHelp, attachHelp } from './help-popover.js';
@@ -346,6 +346,9 @@ function setupNoteEditToggle(poiId) {
     const view = document.getElementById('poi-note-view');
     const editEl = document.getElementById('poi-note-edit');
     if (!view || !editEl) return;
+    // Note telle qu'affichée à l'ouverture de la fiche (le panneau est re-rendu
+    // après chaque enregistrement et après une hydratation depuis le dépôt).
+    const initialNote = editEl.value;
 
     const enterEdit = () => {
         view.classList.add('is-hidden');
@@ -369,7 +372,9 @@ function setupNoteEditToggle(poiId) {
         // En plus, UNIQUEMENT avec un token : synchronisation inter-appareils
         // via heripia-travail (remplace le Gist pour ce champ). Un échec ici
         // n'est JAMAIS une perte de donnée — la copie locale est déjà sauve.
-        if (getStoredToken()) {
+        // Un champ vide qui l'était déjà n'efface rien à distance
+        // (shouldSyncPrivateNote) : c'est la seule copie si la note locale manque.
+        if (getStoredToken() && shouldSyncPrivateNote(initialNote, value)) {
             savePrivateNote(state.currentMapId, poiId, value).catch(err => {
                 console.warn('[PrivateNotes] Envoi heripia-travail échoué:', err.message);
                 showToast('Note enregistrée en local — envoi vers heripia-travail différé (réessayé plus tard).', 'warning', 4500);

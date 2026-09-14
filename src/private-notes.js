@@ -116,6 +116,27 @@ export async function savePrivateNote(mapId, poiId, text) {
 }
 
 /**
+ * Faut-il envoyer la note vers heripia-travail à l'enregistrement ?
+ *
+ * Oui pour toute note non vide (même inchangée : c'est aussi le geste qui
+ * renvoie une note manquante sur le dépôt). Un EFFACEMENT distant, lui, ne part
+ * que si la note existait à l'ouverture du champ et a été vidée.
+ *
+ * Pourquoi (14/09/2026) : envoyer une note vide efface le fichier distant. Un
+ * champ resté vide parce que la note locale manquait (perdue, ou pas encore
+ * rapatriée depuis le dépôt) effaçait donc la seule copie existante — 3 notes
+ * trouvées dans ce cas chez Stefan.
+ * @param {string|null|undefined} initialText Note à l'ouverture du champ.
+ * @param {string|null|undefined} nextText Note enregistrée.
+ * @returns {boolean}
+ */
+export function shouldSyncPrivateNote(initialText, nextText) {
+    const before = String(initialText ?? '').trim();
+    const after = String(nextText ?? '').trim();
+    return after !== '' || before !== '';
+}
+
+/**
  * Migration one-shot : pousse vers heripia-travail toutes les notes déjà
  * présentes en LOCAL (userData), pour qu'elles deviennent visibles sur les
  * autres appareils — remplace le rôle que jouait le Gist pour ce champ.

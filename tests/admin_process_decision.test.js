@@ -27,6 +27,7 @@ const h = vi.hoisted(() => {
         setHiddenPoiIdsSpy: vi.fn(),
         clearPendingAdminPhotosSpy: vi.fn(() => Promise.resolve()),
         deletePoiDataSpy: vi.fn(() => Promise.resolve()),
+        savePoiDataSpy: vi.fn(() => Promise.resolve()),
         saveAppStateSpy: vi.fn(() => Promise.resolve()),
         prepareDiffDataSpy: vi.fn(() => Promise.resolve()),
         renderTabSpy: vi.fn(),
@@ -93,7 +94,8 @@ vi.mock('../src/config.js', () => ({
         photo: () => 'photo',
         tested: () => 'tested',
     },
-    PERSONAL_KEYS: ['vu', 'notes']
+    // Sous-ensemble fidèle du vrai config.js (workPhotos compris : c'est une clé perso).
+    PERSONAL_KEYS: ['vu', 'notes', 'workPhotos']
 }));
 
 vi.mock('../src/toast.js', () => ({
@@ -128,6 +130,7 @@ vi.mock('../src/database.js', () => ({
     setPendingAdminPhotos: vi.fn(() => Promise.resolve()),
     clearPendingAdminPhotos: (m, id) => h.clearPendingAdminPhotosSpy(m, id),
     deletePoiData: (m, id) => h.deletePoiDataSpy(m, id),
+    savePoiData: (m, id, d) => h.savePoiDataSpy(m, id, d),
 }));
 
 vi.mock('../src/photo-service.js', () => ({
@@ -219,6 +222,37 @@ describe('processDecision — scope handling (PR B2)', () => {
         await processDecision('poi_1', 'refuse'); // pas de scope explicite
         expect(setUserDataSpy).toHaveBeenCalled();
         expect(clearPendingAdminPhotosSpy).not.toHaveBeenCalled();
+    });
+
+    // Régression du 14/09/2026 : « Annuler » effaçait tout l'overlay, notes
+    // comprises (9 notes retrouvées sur le dépôt privé, absentes du poste).
+    it('scope="poi" : GARDE les clés personnelles (note, vu, photos de travail)', async () => {
+        const f = setupPoi('poi_1', {}, {
+            Description: 'modif à annuler',
+            notes: 'ma note',
+            vu: true,
+            workPhotos: ['djerba/work_poi_1_1.jpg'],
+        });
+
+        await processDecision('poi_1', 'refuse', 'poi');
+
+        const kept = { notes: 'ma note', vu: true, workPhotos: ['djerba/work_poi_1_1.jpg'] };
+        expect(mockState.userData['poi_1']).toEqual(kept);
+        expect(f.properties.userData).toEqual(kept);
+        // Entrée REMPLACÉE en base : suppression puis réécriture des seules clés perso
+        expect(deletePoiDataSpy).toHaveBeenCalledWith('djerba', 'poi_1');
+        expect(h.savePoiDataSpy).toHaveBeenCalledWith('djerba', 'poi_1', kept);
+        expect(deletePoiDataSpy.mock.invocationCallOrder[0]).toBeLessThan(h.savePoiDataSpy.mock.invocationCallOrder[0]);
+    });
+
+    it('scope="poi" sans clé personnelle : entrée supprimée, rien de réécrit', async () => {
+        setupPoi('poi_1', {}, { Description: 'modif à annuler' });
+
+        await processDecision('poi_1', 'refuse', 'poi');
+
+        expect(mockState.userData['poi_1']).toBeUndefined();
+        expect(deletePoiDataSpy).toHaveBeenCalledWith('djerba', 'poi_1');
+        expect(h.savePoiDataSpy).not.toHaveBeenCalled();
     });
 
     it('scope="poi" : feature.properties.userData rebind après revert', async () => {

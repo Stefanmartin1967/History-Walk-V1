@@ -480,11 +480,22 @@ export const processDecision = async (id, decision, scope = 'poi') => {
         feature.geometry.coordinates = [draftEntry.originalLng, draftEntry.originalLat];
     }
 
-    // 2. Nettoyage de userData en mémoire
+    // 2. Nettoyage de userData en mémoire — SAUF les clés personnelles (note,
+    //    vu, incontournable, photos de travail, statut du drapeau…), qui ne sont
+    //    jamais des modifications publiables : « Annuler » n'a pas à les
+    //    toucher. Avant le 14/09/2026, tout l'overlay était effacé, notes
+    //    comprises, sans rien envoyer au dépôt privé (9 notes trouvées
+    //    présentes sur heripia-travail et absentes du poste).
     if (adminDraft.pendingPois[id]) delete adminDraft.pendingPois[id];
 
+    const personal = {};
+    Object.entries(state.userData[id] || {}).forEach(([key, value]) => {
+        if (PERSONAL_KEYS.includes(key)) personal[key] = value;
+    });
+    const keepsPersonal = Object.keys(personal).length > 0;
     const newUserData = { ...state.userData };
-    delete newUserData[id];
+    if (keepsPersonal) newUserData[id] = personal;
+    else delete newUserData[id];
     setUserData(newUserData);
 
     // 3. Rebind feature.properties.userData → {} pour couper le lien avec
@@ -507,8 +518,13 @@ export const processDecision = async (id, decision, scope = 'poi') => {
     // est idempotent (no-op si absent) donc ça coûte rien de le tenter
     // toujours, et ça ferme un trou si state.userData[id] était undefined
     // au moment du clic (race possible entre init et action).
-    try { await deletePoiData(getActiveMapId(), id); }
-    catch (e) { console.warn('[CC] deletePoiData failed:', id, e); }
+    // Remplacement de l'entrée par les seules clés personnelles : suppression
+    // puis réécriture (savePoiData fusionne, il ne retirerait pas les clés annulées).
+    try {
+        await deletePoiData(getActiveMapId(), id);
+        if (keepsPersonal) await savePoiData(getActiveMapId(), id, personal);
+    }
+    catch (e) { console.warn('[CC] réécriture poiUserData après annulation échouée:', id, e); }
 
     // 5. Re-calcul du diff + re-render complet (pour retomber sur
     //    l'empty state s'il ne reste rien). Isolé pour que l'UI déjà

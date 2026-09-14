@@ -20,7 +20,7 @@ import { GUIDE_LIEU, HELP_LIEU_ZONE, HELP_LIEU_CATEGORIE, HELP_LIEU_DESC_COURTE,
 import {
     getWorkPhotosById, uploadWorkPhoto, loadWorkPhotoBlob, MAX_WORK_PHOTOS_PER_POI
 } from './work-photos.js';
-import { savePrivateNote } from './private-notes.js';
+import { savePrivateNote, shouldSyncPrivateNote } from './private-notes.js';
 import { getStoredToken } from './github-sync.js';
 
 // Aide « ? » : le patron rend l'icône via createIcons (idempotent).
@@ -81,6 +81,9 @@ let currentMode = 'CREATE'; // 'CREATE' | 'EDIT'
 let currentFeatureId = null; // Pour le mode EDIT
 let currentDraftCoords = null; // Pour le mode CREATE
 let currentPhotos = []; // Pour le mode CREATE (import photos)
+// Note privée affichée à l'ouverture (mode EDIT) : un champ vide qui l'était déjà
+// n'efface rien sur heripia-travail (cf. shouldSyncPrivateNote).
+let initialNotesValue = '';
 let isDirty = false;
 // État OSM tel que CHARGÉ (avant modif de la session en cours) — sert à ne
 // rafraîchir osmCheckedDate que sur une vraie transition (checked/ref changés),
@@ -487,6 +490,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.DESC_SHORT, merged['info_gpx'] || "");
         setValue(DOM_IDS.INPUTS.DESC_LONG, merged['description'] || "");
         setValue(DOM_IDS.INPUTS.NOTES, merged['notes'] || "");
+        initialNotesValue = merged['notes'] || '';
 
         // Temps : Temps_minutes (number) → décomposé en h + m
         const totalMin = Number.isFinite(merged['Temps_minutes']) ? merged['Temps_minutes'] : null;
@@ -1611,7 +1615,9 @@ async function executeEdit(data, validated = false) {
     // le même dépôt, sinon une note modifiée ici resterait locale sans le
     // savoir. Fire-and-forget : un échec réseau n'est jamais une perte de
     // donnée, `persistPoiEdit` ci-dessus a déjà sauvé la copie locale.
-    if (getStoredToken()) {
+    // Le formulaire envoie TOUJOURS le champ note : sans garde, enregistrer une
+    // fiche dont la note locale manquait effaçait la note du dépôt (14/09/2026).
+    if (getStoredToken() && shouldSyncPrivateNote(initialNotesValue, data.notes)) {
         savePrivateNote(state.currentMapId, poiId, data.notes).catch(err => {
             console.warn('[PrivateNotes] Envoi heripia-travail échoué (Rich Editor):', err.message);
         });
