@@ -184,12 +184,17 @@ export function setupCircuitEventListeners() {
         const active = getActiveCircuit();
         const name = (DOM.circuitTitleText && DOM.circuitTitleText.textContent.trim())
             || generateCircuitName();
+        // Description de l'auteur (la signature est ajoutée par generateGPXString).
+        // Avant le 14/09/2026, l'export passait une description VIDE : le GPX
+        // envoyé sur Wikiloc ne contenait jamais le texte du circuit.
+        const description = (active && active.description)
+            || (DOM.circuitDescription ? DOM.circuitDescription.value : '');
         try {
             await generateAndDownloadGPX(
                 state.currentCircuit,
                 state.activeCircuitId || name,
                 name,
-                '',
+                description,
                 active ? active.realTrack : null
             );
         } catch (e) {

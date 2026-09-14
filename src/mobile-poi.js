@@ -20,6 +20,7 @@ import { switchMobileView } from './mobile-nav.js';
 import { eventBus } from './events.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { getActiveCircuit } from './circuit-lookup.js';
+import { stripCircuitSignature } from './circuit-description.js';
 import { showConfirm } from './modal.js';
 import { setAccessPointAt } from './access-point.js';
 
@@ -204,7 +205,9 @@ function renderCircuitView(container, listToDisplay) {
 
     const title = (circuit.name || '').replace(/^(Circuit de |Boucle de )/i, '');
     const fullName = circuit.name || 'Circuit';
-    const description = circuit.description || 'Circuit généré par Heripia — heripia.com';
+    // Texte de l'auteur seul ; sans description, le bloc n'est pas rendu (décision
+    // Stefan 14/09/2026 — plus de phrase par défaut).
+    const description = stripCircuitSignature(circuit.description);
     const isCompleted = isCircuitCompleted(circuit);
     const isTested = circuit.isOfficial && isCircuitTested(circuit.id);
     const flag = circuit.isOfficial
@@ -305,9 +308,9 @@ function renderCircuitView(container, listToDisplay) {
             <h1 class="cc-title">${escapeHtml(fullName)}</h1>
             ${flagText ? `<span class="cc-flag" data-flag="${flag}"><span class="dot"></span>${flagText}</span>` : ''}
         </div>
-        <div class="cc-desc">
+        ${description ? `<div class="cc-desc">
             <p class="cc-desc-text">${escapeHtml(description)}</p>
-        </div>
+        </div>` : ''}
         ${circuitHasTrace(circuit) ? `
         <div class="suivre-wrap">
             <button class="btn-suivre" id="btn-suivre-circuit" type="button">

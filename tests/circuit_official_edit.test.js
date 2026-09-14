@@ -159,6 +159,8 @@ describe("saveAndExportCircuit — édition d'un officiel : un seul objet", () =
 describe('saveAndExportCircuit — description et transport conservés', () => {
     let saveAndExportCircuit;
     const DESC = 'Balade entre deux mosquées.\n\nCircuit généré par Heripia — heripia.com';
+    // Depuis le 14/09/2026, la description enregistrée est le texte SANS signature.
+    const DESC_TEXT = 'Balade entre deux mosquées.';
     const TRANSPORT = { allerTemps: '15', allerCout: '5', retourTemps: '', retourCout: '' };
 
     beforeEach(async () => {
@@ -181,7 +183,7 @@ describe('saveAndExportCircuit — description et transport conservés', () => {
         await saveAndExportCircuit(NEW_TRACK, { stayInCreation: true });
 
         const saved = saveCircuit.mock.calls[0][0];
-        expect(saved.description).toBe(DESC);
+        expect(saved.description).toBe(DESC_TEXT);
         expect(saved.transport).toEqual(TRANSPORT);
     });
 
@@ -190,7 +192,7 @@ describe('saveAndExportCircuit — description et transport conservés', () => {
 
         await saveAndExportCircuit(NEW_TRACK, { stayInCreation: true });
 
-        expect(saveCircuit.mock.calls[0][0].description).toBe(DESC);
+        expect(saveCircuit.mock.calls[0][0].description).toBe(DESC_TEXT);
     });
 
     it('prend le brouillon qui concerne CE circuit (saisie en cours)', async () => {

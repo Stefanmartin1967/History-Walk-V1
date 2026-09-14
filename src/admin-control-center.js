@@ -2,6 +2,7 @@ import { state, setUserData, setCustomFeatures, setOfficialCircuits, getActiveMa
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
 import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
+import { stripCircuitSignature } from './circuit-description.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
@@ -45,7 +46,9 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
         id: circuit.id,
         name: circuit.name,
         file: `${mapId}/${circuit.name}.gpx`,
-        description: 'Circuit généré par Heripia — heripia.com',
+        // Texte de l'auteur, sans signature ('' si aucun) — plus la constante qui
+        // masquait toute vraie description dans l'app (14/09/2026).
+        description: stripCircuitSignature(circuit.description),
         distance,
         isOfficial: true,
         hasRealTrack: true,

@@ -23,6 +23,7 @@ import { schedulePushTestedToGitHub } from './tested-sync.js';
 import { markEditingStart, getDirtyCount } from './circuit-flags.js';
 import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
 import { persistCircuit } from './circuit-store.js';
+import { stripCircuitSignature } from './circuit-description.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -558,11 +559,13 @@ export function updateCircuitMetadata(updateTitle = true) {
     }
 
     // V2 : description du circuit actif (consultation) ou du brouillon (création)
+    // Texte de l'auteur seul : une signature (ancienne copie locale, index ancien)
+    // ne compte pas comme une description — sans texte, rien ne s'affiche.
     let description = '';
-    if (activeCircuitData && activeCircuitData.description) {
-        description = activeCircuitData.description;
+    if (activeCircuitData && stripCircuitSignature(activeCircuitData.description)) {
+        description = stripCircuitSignature(activeCircuitData.description);
     } else if (DOM.circuitDescription && DOM.circuitDescription.value) {
-        description = DOM.circuitDescription.value;
+        description = stripCircuitSignature(DOM.circuitDescription.value);
     }
 
     // D+ (dénivelé positif) BRouter du circuit actif, si stocké (tracé in-app).
@@ -852,6 +855,19 @@ export async function loadCircuitById(id) {
                     source.realTrack = coordinates;
                     circuitToLoad.realTrack = coordinates;
                 }
+
+                // Description : un index ancien ne portait qu'une constante, le texte
+                // de l'auteur ne vivait que dans le <trk><desc> du GPX (14/09/2026).
+                // On le reprend, signatures retirées, SEULEMENT si l'objet n'a pas
+                // de vraie description — en mémoire, jamais écrit : le CC le voit
+                // alors en « MODIFIÉ », et sa publication met l'index à jour.
+                if (!stripCircuitSignature(source.description)) {
+                    const trkDesc = stripCircuitSignature(xmlDoc.querySelector('trk > desc')?.textContent);
+                    if (trkDesc) {
+                        source.description = trkDesc;
+                        circuitToLoad.description = trkDesc;
+                    }
+                }
             } else {
                 console.warn(`[Circuit] Fichier GPX introuvable : ${circuitToLoad.file}`);
                 showToast("Tracé GPX indisponible — circuit affiché sans trace.", "warning");
@@ -979,7 +995,7 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
         id: newCircuitId,
         mapId: getActiveMapId(),
         name: importedName ? decodeURIComponent(importedName) : `Circuit Importé (${new Date().toLocaleDateString()})`,
-        description: "Circuit importé via QR Code",
+        description: '', // pas de texte factice : sans description, rien ne s'affiche
         poiIds: resolvedFeatures.map(getPoiId),
         realTrack: null,
         transport: { allerTemps: '', allerCout: '', retourTemps: '', retourCout: '' }

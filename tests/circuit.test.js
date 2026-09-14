@@ -699,6 +699,34 @@ describe('loadCircuitById — lazy-load du tracé officiel', () => {
 
         expect(fetchWithTimeout).not.toHaveBeenCalled();
     });
+
+    // 14/09/2026 : le texte de l'auteur ne vivait que dans le <trk><desc> du GPX,
+    // l'index ne portant qu'une constante. On le reprend (mémoire seule).
+    const GPX_WITH_DESC = '<gpx><metadata><desc>Circuit généré par Heripia — heripia.com</desc></metadata>'
+        + '<trk><name>O</name><desc><![CDATA[Les courageux peuvent aller à pied (Créé par Heripia)]]></desc><trkseg>'
+        + '<trkpt lat="33.1" lon="10.1"/><trkpt lat="33.2" lon="10.2"/>'
+        + '</trkseg></trk></gpx>';
+
+    it("reprend la description du GPX quand l'index ne porte que la constante", async () => {
+        fetchWithTimeout.mockResolvedValue({ ok: true, text: async () => GPX_WITH_DESC });
+        state.officialCircuits = [{ id: 'HW-off', name: 'O', poiIds: [], file: 'djerba/O.gpx', isOfficial: true,
+            description: 'Circuit généré par Heripia — heripia.com' }];
+
+        await loadCircuitById('HW-off');
+
+        expect(state.officialCircuits[0].description).toBe('Les courageux peuvent aller à pied');
+        expect(saveCircuit).not.toHaveBeenCalled(); // mémoire seule : le CC le verra en « MODIFIÉ »
+    });
+
+    it("n'écrase JAMAIS une vraie description par celle du GPX", async () => {
+        fetchWithTimeout.mockResolvedValue({ ok: true, text: async () => GPX_WITH_DESC });
+        state.officialCircuits = [{ id: 'HW-off', name: 'O', poiIds: [], file: 'djerba/O.gpx', isOfficial: true,
+            description: 'Texte déjà publié' }];
+
+        await loadCircuitById('HW-off');
+
+        expect(state.officialCircuits[0].description).toBe('Texte déjà publié');
+    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

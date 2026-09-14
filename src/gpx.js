@@ -5,6 +5,7 @@ import { loadCircuitById, generateCircuitName } from './circuit.js';
 import { getAppState } from './database.js';
 import { findCircuitById } from './circuit-lookup.js';
 import { persistCircuit } from './circuit-store.js';
+import { withCircuitSignature } from './circuit-description.js';
 import { showToast } from './toast.js';
 import { downloadFile, escapeXml, generateHWID, getAccessPoint } from './utils.js';
 import { updatePolylines } from './map.js';
@@ -140,7 +141,7 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
         </link>
     </metadata>`;
 
-    return `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Heripia ${APP_VERSION}" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">${metadataXML}${waypointsXML}<trk><name>${escapeXml(name)}</name><desc><![CDATA[${description}]]></desc><trkseg>${trackpointsXML}</trkseg></trk></gpx>`;
+    return `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Heripia ${APP_VERSION}" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">${metadataXML}${waypointsXML}<trk><name>${escapeXml(name)}</name><desc><![CDATA[${withCircuitSignature(description)}]]></desc><trkseg>${trackpointsXML}</trkseg></trk></gpx>`;
 }
 
 export async function generateAndDownloadGPX(circuit, id, name, description, realTrack = null) {
@@ -406,7 +407,8 @@ export async function processImportedGpx(file, circuitId) {
                         id: newId,
                         mapId: state.currentMapId,
                         name: "Trace Importée",
-                        description: "Circuit créé à partir d'un import GPX.",
+                        // Pas de texte factice : sans description, rien ne s'affiche.
+                        description: '',
                         poiIds: detectedFeatures.map(getPoiId), // On remplit auto !
                         realTrack: coordinates,
                         transport: {}

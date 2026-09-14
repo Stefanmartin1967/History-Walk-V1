@@ -5,6 +5,7 @@ import { setOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circu
 import { fetchWithTimeout } from './net.js';
 import { softDeleteCircuit, getAppState, saveAppState } from './database.js';
 import { findCircuitById } from './circuit-lookup.js';
+import { stripCircuitSignature } from './circuit-description.js';
 import { persistCircuit } from './circuit-store.js';
 import { clearCircuit, setCircuitVisitedState, generateCircuitName, saveCircuitDraft } from './circuit.js';
 import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters, buildPlannedPoiSet } from './data.js';
@@ -256,12 +257,10 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
     let description = (draftMatches ? draft.description : existing?.description) || '';
     const transportData = (draftMatches ? draft.transport : existing?.transport) || {};
 
-    // --- MODIFICATION V2 : AJOUT SIGNATURE AUTOMATIQUE ---
-    const signature = "\n\nCircuit généré par Heripia — heripia.com";
-    if (!description.includes("History Walk") && !description.includes("Heripia")) {
-        description += signature;
-    }
-    // ----------------------------------------------------
+    // Le circuit ne porte QUE le texte de l'auteur : la signature n'est ajoutée
+    // qu'au GPX (circuit-description.js). Avant le 14/09/2026, elle était collée
+    // ici dans la description, qui ne pouvait donc ni être publiée ni comparée.
+    description = stripCircuitSignature(description);
 
     const poiIds = state.currentCircuit.map(getPoiId);
 

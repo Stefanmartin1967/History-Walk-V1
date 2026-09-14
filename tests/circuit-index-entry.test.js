@@ -68,9 +68,18 @@ describe('buildCircuitIndexEntry — format index circuit', () => {
         expect(e.hasRealTrack).toBe(true);
         expect(e.zone).toBe('Taguermess');                         // Zone du 1er POI
         expect(e.poiIds).toEqual(['p1', 'p2']);
-        // Le script lit le <desc> de metadata (hardcodé par generateGPXString),
-        // donc l'index porte toujours cette constante (pas la desc perso).
-        expect(e.description).toBe('Circuit généré par Heripia — heripia.com');
+        // Depuis le 14/09/2026 : la description de l'auteur (plus la constante).
+        expect(e.description).toBe('desc perso');
+    });
+
+    it("publie la description SANS signature, et '' s'il n'y a pas de texte", () => {
+        const signed = buildCircuitIndexEntry(
+            { id: 'a', name: 'n', poiIds: [], description: 'Belle balade.\n\nCircuit généré par Heripia — heripia.com' }, [], 'djerba');
+        const empty = buildCircuitIndexEntry(
+            { id: 'b', name: 'n', poiIds: [], description: '(Créé par Heripia)' }, [], 'djerba');
+
+        expect(signed.description).toBe('Belle balade.');
+        expect(empty.description).toBe('');
     });
 
     it('formate la distance en km à 1 décimale', () => {

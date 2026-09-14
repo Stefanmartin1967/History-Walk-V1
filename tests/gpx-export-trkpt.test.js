@@ -31,6 +31,27 @@ vi.mock('../src/map.js', () => ({ updatePolylines: vi.fn() }));
 
 import { generateGPXString } from '../src/gpx.js';
 
+// Signature Heripia : ajoutée au <trk><desc> (lu par Wikiloc), jamais stockée
+// dans la description du circuit (14/09/2026).
+describe('generateGPXString — <trk><desc> : texte de l\'auteur + signature', () => {
+    const trkDesc = (gpx) => gpx.match(/<trk><name>[^<]*<\/name><desc><!\[CDATA\[([\s\S]*?)\]\]><\/desc>/)[1];
+
+    it('ajoute la signature après la description', () => {
+        const gpx = generateGPXString([], 'HW-1', 'Circuit', 'Belle balade.');
+        expect(trkDesc(gpx)).toBe('Belle balade.\n\nCircuit généré par Heripia — heripia.com');
+    });
+
+    it('ne double pas une signature déjà présente (ancienne copie locale)', () => {
+        const gpx = generateGPXString([], 'HW-1', 'Circuit', 'Belle balade.\n\n(Créé par Heripia)');
+        expect(trkDesc(gpx)).toBe('Belle balade.\n\nCircuit généré par Heripia — heripia.com');
+    });
+
+    it('signature seule sans description', () => {
+        const gpx = generateGPXString([], 'HW-1', 'Circuit', '');
+        expect(trkDesc(gpx)).toBe('Circuit généré par Heripia — heripia.com');
+    });
+});
+
 const poi = (id, lon, lat, nom, accessPoint) => ({
     properties: { HW_ID: id, Nom: nom, ...(accessPoint !== undefined ? { accessPoint } : {}) },
     geometry: { coordinates: [lon, lat] },
