@@ -482,6 +482,26 @@ export async function deleteAllMapData(mapId) {
     }));
 }
 
+/**
+ * Vide le store `modifications` — ancien journal des modifications de lieux.
+ *
+ * Retiré le 14/09/2026 : il était écrit à chaque enregistrement mais plus lu
+ * par rien depuis au moins le 17/02/2026 (son export CSV n'avait aucun appelant,
+ * supprimé comme code mort le 25/05). Le store reste déclaré dans le schéma (le
+ * supprimer imposerait un changement de version de la base, pour rien) ; on le
+ * vide au démarrage — sans effet une fois vide, puisque plus rien n'y écrit.
+ * @returns {Promise<void>}
+ */
+export async function clearModificationLog() {
+    return withRetry(db => new Promise((resolve, reject) => {
+        if (!db.objectStoreNames.contains('modifications')) { resolve(); return; }
+        const tx = db.transaction('modifications', 'readwrite');
+        tx.objectStore('modifications').clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e.target.error);
+    }));
+}
+
 /** @public API de reset complet — conservée délibérément (pas d'appelant actuel). */
 export async function clearAllUserData() {
     try {

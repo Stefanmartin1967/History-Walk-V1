@@ -7,7 +7,6 @@ import { addPoiFeature, getPoiId, updatePoiData } from './data.js';
 import { state } from './state.js';
 import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdminPhotos, setPendingAdminPhotos, getAllPoiPhotoHashes, getAllPendingAdminPhotoHashes } from './database.js';
 import { compressImage, generatePhotoId, PUBLISH_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
-import { logModification } from './logger.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
 import { getExifLocation, resizeImage, sha256OfFile, openCoordsOnMap } from './utils.js';

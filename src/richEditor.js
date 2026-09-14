@@ -9,7 +9,6 @@ import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
 import { persistPoiEdit } from './poi-persistence.js';
 import { schedulePush } from './gist-sync.js';
-import { logModification } from './logger.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
 import { showConfirm, openHwModal, closeHwModal, suspendHwModal, resumeHwModal } from './modal.js';
@@ -1533,8 +1532,6 @@ async function executeCreate(data) {
          });
     }
 
-    await logModification(actualId, 'Création (Admin)', 'All', null, `Nouveau lieu : ${data['Nom du site FR']}`);
-
     // Marque la création réussie : les listeners de `richEditor:closed` (ex: ui-photo-batch
     // qui attend le retour pour retirer le cluster) lisent `currentFeatureId` via le detail.
     currentFeatureId = actualId;
@@ -1626,10 +1623,6 @@ async function executeEdit(data, validated = false) {
     // Si c'est un POI "pending" (création mobile en attente), on finalise la persistance
     // du GeoJSON maintenant que l'utilisateur a rempli la fiche via le Rich Editor.
     await commitPendingPoiIfNeeded(poiId);
-
-    // Log adapté selon admin ou non
-    const logType = state.isAdmin ? 'Edition (Admin)' : 'Edition (User)';
-    await logModification(poiId, logType, 'All', null, `Mise à jour via Rich Editor`);
 
     if (state.isAdmin) {
         // [ADMIN] Tracking : signale au CC que ce POI a été modifié.

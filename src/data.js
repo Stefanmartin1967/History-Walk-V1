@@ -13,7 +13,6 @@ import {
     normalizeDescriptionCaseInPoiData,
     renameDescriptionCourteToInfoGpxInPoiData
 } from './database.js';
-import { logModification } from './logger.js';
 import { migrateLegacyUserData } from './legacy-user-data.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
@@ -839,9 +838,6 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
 
     // Dans tous les cas, on sauvegarde userData (pour les officiels, c'est la seule trace)
     await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
-
-    // Log
-    await logModification(poiId, 'Deplacement', 'All', null, `Nouvelle position : ${lat.toFixed(5)}, ${lng.toFixed(5)}`);
 
     // [ADMIN] Tracking — on stocke aussi les coords d'origine pour le revert Ignorer.
     if (state.isAdmin) {

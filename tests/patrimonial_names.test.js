@@ -18,7 +18,6 @@ vi.mock('../src/database.js', () => ({
     getAllPoiDataForMap: vi.fn(), getAllCircuitsForMap: vi.fn(), savePoiData: vi.fn(),
     getAppState: vi.fn(), saveAppState: vi.fn(), saveCircuit: vi.fn()
 }));
-vi.mock('../src/logger.js', () => ({ logModification: vi.fn() }));
 vi.mock('../src/gist-sync.js', () => ({ schedulePush: vi.fn() }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/admin-control-center.js', () => ({

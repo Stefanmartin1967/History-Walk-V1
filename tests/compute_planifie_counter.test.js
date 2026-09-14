@@ -42,10 +42,6 @@ vi.mock('../src/events.js', () => ({
     eventBus: { emit: vi.fn(), on: vi.fn(), off: vi.fn() }
 }));
 
-vi.mock('../src/logger.js', () => ({
-    logModification: vi.fn()
-}));
-
 vi.mock('../src/gist-sync.js', () => ({
     schedulePush: vi.fn()
 }));

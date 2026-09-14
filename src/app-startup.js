@@ -4,7 +4,7 @@ import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
 import { mergeOfficialWithLocal } from './circuit-lookup.js';
-import { getAppState, saveAppState, deleteAppState, getAllPoiDataForMap, getAllCircuitsForMap, countCircuitsWithoutMapId, deleteCircuitById } from './database.js';
+import { getAppState, saveAppState, deleteAppState, getAllPoiDataForMap, getAllCircuitsForMap, countCircuitsWithoutMapId, deleteCircuitById, clearModificationLog } from './database.js';
 import { initMap } from './map.js';
 import { displayGeoJSON, applyFilters, getPoiId, checkAndApplyMigrations } from './data.js';
 import { isMobileView } from './mobile-state.js';
@@ -519,6 +519,9 @@ export async function loadAndInitializeMap() {
         countCircuitsWithoutMapId()
             .then(n => { if (n > 0) console.warn(`[Startup] ${n} circuit(s) enregistré(s) sans mapId — invisibles à l'app.`); })
             .catch(() => {});
+        // Ancien journal des modifications, plus lu par rien (retiré le 14/09/2026) :
+        // on vide le store. Non bloquant, sans effet une fois vide.
+        clearModificationLog().catch(() => {});
         const loadedStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
         setOfficialCircuitsStatus(loadedStatus);
         const loadedTested = await getAppState(`tested_circuits_${activeMapId}`) || {};
