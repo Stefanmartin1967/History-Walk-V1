@@ -84,6 +84,33 @@ export async function checkCircuitDuplicate(poiIds, excludeId = null) {
     }
 }
 
+// Comparaison normalisée : les ids officiels sont stringifiés au chargement
+// (app-startup.js), l'appelant peut passer un number.
+function isOfficialCircuitId(id) {
+    return !!state.officialCircuits && state.officialCircuits.some(c => String(c.id) === String(id));
+}
+
+/**
+ * Textes de la confirmation « Supprimer » (validés par Stefan le 14/09/2026).
+ * Son propre circuit part dans la Corbeille (restaurable) ; un officiel (admin)
+ * reste en ligne jusqu'à la publication, restaurable depuis le CC.
+ * Texte brut : l'appelant l'échappe avant showConfirm, qui injecte du HTML.
+ */
+export function getCircuitDeletionPrompt(id) {
+    const name = findCircuitById(id)?.name;
+    const subject = name ? `« ${name} »` : 'Ce circuit';
+    if (isOfficialCircuitId(id)) {
+        return {
+            title: 'Supprimer le circuit officiel',
+            message: `${subject} disparaît de votre liste, mais reste en ligne jusqu'à la prochaine publication. D'ici là, vous pouvez le restaurer depuis le Centre de contrôle.`
+        };
+    }
+    return {
+        title: 'Supprimer le circuit',
+        message: `${subject} ira dans la Corbeille de Mes circuits. Vous pourrez le restaurer.`
+    };
+}
+
 /**
  * Logique métier pour supprimer un circuit
  * Gère la base de données, l'état mémoire et les calculs GPX
@@ -91,9 +118,7 @@ export async function checkCircuitDuplicate(poiIds, excludeId = null) {
 export async function performCircuitDeletion(id) {
     try {
         // 0. Gestion suppression (Officiel vs Local)
-        // Comparaison normalisée : les ids officiels sont stringifiés au
-        // chargement (app-startup.js), l'appelant peut passer un number.
-        const isOfficial = state.officialCircuits && state.officialCircuits.some(c => String(c.id) === String(id));
+        const isOfficial = isOfficialCircuitId(id);
 
         if (isOfficial) {
             if (!state.isAdmin) {
@@ -132,10 +157,11 @@ export async function performCircuitDeletion(id) {
             applyFilters();
         }
         
-        // 6. Succès : On renvoie l'info ET le texte à afficher
-        return { 
-            success: true, 
-            message: "Le circuit a été déplacé dans la corbeille."
+        // 6. Succès : On renvoie l'info ET le texte à afficher. Un officiel ne va
+        // pas dans la Corbeille : sa suppression n'a lieu qu'à la publication.
+        return {
+            success: true,
+            message: isOfficial ? 'Suppression en attente de publication.' : 'Circuit placé dans la Corbeille.'
         };
 
     } catch (error) {

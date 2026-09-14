@@ -7,7 +7,7 @@ import { generateAndDownloadGPX } from './gpx.js';
 import { isMobileView } from './mobile-state.js';
 import { showToast } from './toast.js';
 import { showConfirm, openHwModal } from './modal.js';
-import { performCircuitDeletion } from './circuit-actions.js';
+import { performCircuitDeletion, getCircuitDeletionPrompt } from './circuit-actions.js';
 import { eventBus } from './events.js';
 import { escapeHtml } from './utils.js';
 import { getActiveCircuit } from './circuit-lookup.js';
@@ -252,17 +252,20 @@ export function setupCircuitEventListeners() {
     const btnDelete = document.getElementById('btn-delete-active-circuit');
     if (btnDelete) {
         btnDelete.addEventListener('click', async () => {
-             if (await showConfirm("Suppression", "Voulez-vous vraiment supprimer ce circuit ?", "Supprimer", "Annuler", true)) {
-                 if (state.activeCircuitId) {
-                     const result = await performCircuitDeletion(state.activeCircuitId);
-                     if (result.success) {
-                         await clearCircuit(false);
-                         eventBus.emit('circuit:list-updated');
-                     } else {
-                         showToast(result.message, 'error');
-                     }
-                 }
-             }
+            const id = state.activeCircuitId;
+            if (!id) return;
+            // Textes selon le cas (son circuit → Corbeille ; officiel admin →
+            // en attente de publication) : cf. getCircuitDeletionPrompt.
+            const prompt = getCircuitDeletionPrompt(id);
+            if (!await showConfirm(prompt.title, escapeHtml(prompt.message), "Supprimer", "Annuler", true)) return;
+            const result = await performCircuitDeletion(id);
+            if (result.success) {
+                await clearCircuit(false);
+                eventBus.emit('circuit:list-updated');
+                showToast(result.message, 'success');
+            } else {
+                showToast(result.message, 'error');
+            }
         });
     }
 
