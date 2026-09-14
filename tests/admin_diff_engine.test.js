@@ -239,6 +239,33 @@ describe('Admin Diff Engine', () => {
             expect(result.circuits[0].isCreation).toBe(true);
         });
 
+        // Régression du 13/09/2026 : la copie locale d'un officiel supprimé du
+        // serveur réapparaissait en « NOUVEAU » (et aurait été republiée).
+        it('NE propose PAS en « NOUVEAU » une copie officielle absente de l\'index (orpheline)', async () => {
+            state.officialCircuits = [];
+            state.myCircuits = [{
+                id: 'HW-SUPPRIME', name: 'Officiel supprimé du serveur',
+                poiIds: ['poi1', 'poi2'], realTrack: [[10.1, 11.2], [10.2, 11.3]],
+                isOfficial: true, mapId: 'djerba',
+            }];
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(result.circuits.some(c => c.id === 'HW-SUPPRIME')).toBe(false);
+        });
+
+        it('propose toujours en « NOUVEAU » un vrai circuit neuf à côté d\'une copie orpheline', async () => {
+            state.myCircuits = [
+                { id: 'HW-SUPPRIME', name: 'Orphelin', poiIds: ['a', 'b'], realTrack: [[1, 1], [2, 2]], isOfficial: true },
+                { id: 'HW-NEUF', name: 'Neuf', poiIds: ['a', 'b'], realTrack: [[1, 1], [2, 2]] },
+            ];
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(result.circuits.map(c => c.id)).toEqual(['HW-NEUF']);
+            expect(result.circuits[0].isCreation).toBe(true);
+        });
+
         it('NE signale PAS un circuit en boucle comme modifié (poiIds dédoublonnés)', async () => {
             // Bug 21/05/2026 : l'index distant (régénéré par l'Action) dédoublonne
             // les POIs → une boucle [A,B,C,A] devient [A,B,C]. Sans dédoublonnage

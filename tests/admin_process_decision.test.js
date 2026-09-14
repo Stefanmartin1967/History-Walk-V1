@@ -31,6 +31,9 @@ const h = vi.hoisted(() => {
         prepareDiffDataSpy: vi.fn(() => Promise.resolve()),
         renderTabSpy: vi.fn(),
         closeModalSpy: vi.fn(),
+        showConfirmSpy: vi.fn(() => Promise.resolve(true)),
+        fetchWithTimeoutSpy: vi.fn(),
+        revertCircuitToPublishedSpy: vi.fn(() => Promise.resolve()),
     };
 });
 
@@ -98,8 +101,24 @@ vi.mock('../src/toast.js', () => ({
 }));
 
 vi.mock('../src/modal.js', () => ({
-    showConfirm: vi.fn(),
+    showConfirm: (...a) => h.showConfirmSpy(...a),
     closeModal: () => h.closeModalSpy()
+}));
+
+// Scope 'circuit' : relecture de l'index publié + point d'écriture circuit-store.
+vi.mock('../src/net.js', () => ({
+    fetchWithTimeout: (...a) => h.fetchWithTimeoutSpy(...a)
+}));
+
+vi.mock('../src/circuit-store.js', () => ({
+    forgetDeletedCircuit: vi.fn(() => Promise.resolve()),
+    revertCircuitToPublished: (...a) => h.revertCircuitToPublishedSpy(...a)
+}));
+
+vi.mock('../src/circuit-deletion-state.js', () => ({
+    setOfficialCircuitDeleted: vi.fn(() => Promise.resolve()),
+    isOfficialCircuitDeleted: () => false,
+    withoutServerDeletedCircuits: (l) => l
 }));
 
 vi.mock('../src/database.js', () => ({
@@ -217,5 +236,58 @@ describe('processDecision — scope handling (PR B2)', () => {
         expect(setUserDataSpy).not.toHaveBeenCalled();
         expect(clearPendingAdminPhotosSpy).not.toHaveBeenCalled();
         expect(deletePoiDataSpy).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// scope='circuit' — « Annuler » une MODIFICATION non publiée (13/09/2026).
+// Avant, seule une suppression en attente était défaite : sur une carte
+// « MODIFIÉ », le diff était recalculé et la carte revenait, édition intacte.
+describe("processDecision — scope='circuit' : annuler une modification", () => {
+    const PUBLISHED = { id: 'HW-off', name: 'Nom publié', poiIds: ['a', 'b'] };
+    const okIndex = (list) => ({ ok: true, json: async () => JSON.parse(JSON.stringify(list)) });
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+        h.showConfirmSpy.mockImplementation(() => Promise.resolve(true));
+        h.revertCircuitToPublishedSpy.mockImplementation(() => Promise.resolve());
+        document.body.innerHTML = '<div id="cc-diff-item-HW-off"></div>';
+    });
+
+    it("après confirmation, rétablit la version publiée", async () => {
+        h.fetchWithTimeoutSpy.mockResolvedValue(okIndex([PUBLISHED, { id: 'HW-autre', name: 'Autre' }]));
+
+        await processDecision('HW-off', 'refuse', 'circuit');
+
+        expect(h.showConfirmSpy).toHaveBeenCalledTimes(1);
+        expect(h.revertCircuitToPublishedSpy).toHaveBeenCalledWith(PUBLISHED);
+        expect(prepareDiffDataSpy).toHaveBeenCalled(); // re-diff + re-render ensuite
+    });
+
+    it("ne touche à rien si l'admin garde sa modification", async () => {
+        h.fetchWithTimeoutSpy.mockResolvedValue(okIndex([PUBLISHED]));
+        h.showConfirmSpy.mockImplementation(() => Promise.resolve(false));
+
+        await processDecision('HW-off', 'refuse', 'circuit');
+
+        expect(h.revertCircuitToPublishedSpy).not.toHaveBeenCalled();
+    });
+
+    it("n'efface JAMAIS une création non publiée (absente de l'index)", async () => {
+        h.fetchWithTimeoutSpy.mockResolvedValue(okIndex([{ id: 'HW-autre', name: 'Autre' }]));
+
+        await processDecision('HW-neuf', 'refuse', 'circuit');
+
+        expect(h.showConfirmSpy).not.toHaveBeenCalled();
+        expect(h.revertCircuitToPublishedSpy).not.toHaveBeenCalled();
+    });
+
+    it("ne touche à rien si l'index publié est illisible", async () => {
+        h.fetchWithTimeoutSpy.mockResolvedValue({ ok: false, status: 500 });
+
+        await processDecision('HW-off', 'refuse', 'circuit');
+
+        expect(h.showConfirmSpy).not.toHaveBeenCalled();
+        expect(h.revertCircuitToPublishedSpy).not.toHaveBeenCalled();
     });
 });

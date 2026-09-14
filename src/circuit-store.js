@@ -82,6 +82,40 @@ export function placeCircuitInState(circuit) {
  * @param {string|number} id
  */
 export async function forgetDeletedCircuit(id) {
+    await forgetLocalCopy(id);
+}
+
+/**
+ * Annule une modification NON PUBLIÉE d'un officiel : oublie sa copie locale
+ * (base, `myCircuits`, brouillon lié) et remet en mémoire l'entrée telle que
+ * publiée dans l'index. Le tracé n'étant pas dans l'index, il sera rechargé
+ * depuis le GPX publié à la prochaine ouverture (lazy-load).
+ *
+ * Pourquoi (13/09/2026) : « Annuler » sur une carte « MODIFIÉ » du CC ne savait
+ * défaire qu'une SUPPRESSION de circuit. Sur une modification, il recalculait le
+ * diff et la carte revenait à l'identique — l'édition locale restait.
+ * @param {object} publishedEntry Entrée lue dans l'index publié (id requis).
+ */
+export async function revertCircuitToPublished(publishedEntry) {
+    if (!publishedEntry || publishedEntry.id == null) throw new Error('revertCircuitToPublished : entrée sans id');
+    const sid = String(publishedEntry.id);
+    await forgetLocalCopy(sid);
+
+    const restored = {
+        ...publishedEntry,
+        id: sid,
+        isOfficial: true,
+        poiIds: (publishedEntry.poiIds || []).map(String),
+    };
+    const officials = state.officialCircuits || [];
+    const idx = officials.findIndex(c => String(c.id) === sid);
+    const next = [...officials];
+    if (idx > -1) next[idx] = restored; else next.push(restored);
+    setOfficialCircuits(next);
+}
+
+// Copie IndexedDB + présence dans myCircuits + brouillon qui vise ce circuit.
+async function forgetLocalCopy(id) {
     const sid = String(id);
     await deleteCircuitById(sid);
     if ((state.myCircuits || []).some(c => String(c.id) === sid)) removeMyCircuit(sid);

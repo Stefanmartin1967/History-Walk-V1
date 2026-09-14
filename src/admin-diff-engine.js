@@ -347,6 +347,16 @@ export async function prepareDiffData(adminDraft) {
         const remote = remoteCircuits.find(r => String(r.id) === String(local.id));
 
         if (!remote) {
+            // Copie locale d'un OFFICIEL absente de l'index : ce n'est jamais un
+            // nouveau circuit. Soit il a été supprimé du serveur (copie orpheline
+            // restée en base — fantôme « NOUVEAU » vu le 13/09/2026, republié au
+            // « Tout publier » suivant), soit l'index n'a pas pu être lu. Un circuit
+            // réellement neuf ne porte pas `isOfficial` : circuit-store ne le pose
+            // que sur un id déjà présent parmi les officiels.
+            if (local.isOfficial) {
+                console.info('[Diff] copie officielle absente de l\'index ignorée (pas « NOUVEAU ») :', local.id);
+                return;
+            }
             // Cas : Nouveau Circuit (Validé avec trace réelle)
             diffData.circuits.push({
                 id: local.id,
