@@ -340,6 +340,41 @@ export async function deletePoiData(mapId, poiId) {
     }));
 }
 
+/**
+ * Retire des CLÉS précises de l'entrée d'un POI (store `poiUserData`), en
+ * relisant l'enregistrement en base — tout le reste est conservé tel qu'il est
+ * en base, y compris ce que la mémoire ignorerait. Si plus aucune clé ne reste,
+ * l'entrée est supprimée.
+ *
+ * Pourquoi (14/09/2026) : le nettoyage des orphelins du CC écrivait via
+ * `savePoiData`, qui FUSIONNE — une clé retirée en mémoire restait en base,
+ * revenait au boot, et remettait le lieu « en attente » à chaque ouverture du CC
+ * (416 lieux mesurés chez Stefan).
+ * @param {string} mapId
+ * @param {string} poiId
+ * @param {string[]} keys
+ * @returns {Promise<number>} Nombre de clés restantes.
+ */
+export async function removePoiDataKeys(mapId, poiId, keys) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('poiUserData', 'readwrite');
+        const store = tx.objectStore('poiUserData');
+        let remaining = 0;
+        tx.oncomplete = () => resolve(remaining);
+        tx.onerror = (e) => reject(e.target.error);
+        const getReq = store.get([mapId, poiId]);
+        getReq.onsuccess = () => {
+            const existing = getReq.result;
+            if (!existing) return;
+            const next = { ...existing };
+            (keys || []).forEach(k => { delete next[k]; });
+            remaining = Object.keys(next).filter(k => k !== 'mapId' && k !== 'poiId').length;
+            if (remaining === 0) store.delete([mapId, poiId]);
+            else store.put({ ...next, mapId, poiId });
+        };
+    }));
+}
+
 export async function batchSavePoiData(mapId, dataArray) {
     if (!dataArray || dataArray.length === 0) return;
 

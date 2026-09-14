@@ -2,7 +2,7 @@ import { state, getActiveMapId} from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getPoiName, isCandidate } from './utils.js';
 import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
-import { getAllPendingAdminPhotos, savePoiData, deletePoiData } from './database.js';
+import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
 
@@ -594,23 +594,31 @@ export function annotateLosses(changes) {
 }
 
 /**
- * Vrai si la valeur userData ne représente PAS un changement par rapport à
- * la valeur patrimoine. Aligné EXACTEMENT sur la logique de prepareDiffData
- * (lignes 235-251) — gère `photos` séparément (longueur), et tolère le cas
- * « patrimoine absent + userData vide » (champ saisi puis effacé dans
- * richEditor, qui sauvegarde même les chaînes vides).
+ * Vrai si la valeur userData est STRICTEMENT identique à la version publiée —
+ * seule condition pour la retirer de la base locale. Au moindre doute : false
+ * (la valeur est gardée).
+ *
+ * Plus strict que prepareDiffData, volontairement (14/09/2026) : ce test
+ * décide d'une SUPPRESSION réelle en base. Le diff compare les photos à leur
+ * seul nombre et les objets en texte ; ici, photos, listes et objets doivent
+ * être identiques élément par élément. `lat`/`lng` sont comparés à la géométrie
+ * publiée, à 5 décimales comme le diff. Tolère « patrimoine absent + valeur
+ * vide » (richEditor sauvegarde les chaînes vides).
  */
-function isNoChangeAgainstOriginal(key, userVal, originalProps) {
-    const origVal = originalProps[key];
-    if (key === 'photos') {
-        const oldLen = (origVal || []).length;
-        const newLen = (userVal || []).length;
-        return oldLen === newLen;
+function isNoChangeAgainstOriginal(key, userVal, original) {
+    if (key === 'lat' || key === 'lng') {
+        const coords = original.geometry && original.geometry.coordinates;
+        if (!Array.isArray(coords) || !Number.isFinite(parseFloat(userVal))) return false;
+        const pub = key === 'lat' ? coords[1] : coords[0];
+        return Number.isFinite(pub) && parseFloat(userVal).toFixed(5) === pub.toFixed(5);
     }
-    // Cas « default empty » : patrimoine absent + user a '' / 0 / "0" / null.
-    // richEditor sauvegarde les champs vides → sans ce check, ces champs
-    // restent considérés comme diff par mon purge alors que prepareDiffData
-    // les filtre (cf. isDefaultEmpty ligne 250).
+    const origVal = original.properties[key];
+    if (Array.isArray(userVal) || Array.isArray(origVal) ||
+        (userVal !== null && typeof userVal === 'object') ||
+        (origVal !== null && typeof origVal === 'object')) {
+        if (origVal === undefined) return Array.isArray(userVal) && userVal.length === 0;
+        return JSON.stringify(userVal) === JSON.stringify(origVal);
+    }
     const isDefaultEmpty = origVal === undefined &&
         (userVal === '' || userVal === 0 || userVal === '0' || userVal === null);
     if (isDefaultEmpty) return true;
@@ -651,23 +659,21 @@ export async function purgeOrphanPendingPois(adminDraft) {
         const userData = state.userData && state.userData[id];
 
         if (userData && original) {
-            const cleaned = { ...userData };
-            for (const key of Object.keys(cleaned)) {
-                if (PERSONAL_KEYS.includes(key)) continue;
-                // Aligné sur prepareDiffData : si la valeur userData ne
-                // représente pas un vrai changement, on retire la clé.
-                if (isNoChangeAgainstOriginal(key, cleaned[key], original.properties)) {
-                    delete cleaned[key];
-                }
-            }
-            // Persister la userData nettoyée
-            const remainingKeys = Object.keys(cleaned);
-            if (remainingKeys.length === 0) {
-                await deletePoiData(state.currentMapId, id);
-                delete state.userData[id];
-            } else {
-                state.userData[id] = cleaned;
-                await savePoiData(state.currentMapId, id, cleaned);
+            // Clés à retirer : non personnelles ET strictement identiques au publié.
+            const toRemove = Object.keys(userData).filter(key =>
+                !PERSONAL_KEYS.includes(key) &&
+                isNoChangeAgainstOriginal(key, userData[key], original));
+            if (toRemove.length > 0) {
+                // Retrait CIBLÉ en base (relecture + suppression des seules clés
+                // identifiées). Avant le 14/09/2026, l'écriture passait par
+                // savePoiData, qui fusionne : rien n'était retiré en base, les clés
+                // revenaient au boot et le lieu repassait « en attente » à chaque
+                // ouverture du CC.
+                await removePoiDataKeys(state.currentMapId, id, toRemove);
+                // Mémoire alignée EN PLACE (feature.properties.userData pointe sur
+                // le même objet).
+                toRemove.forEach(key => { delete userData[key]; });
+                if (Object.keys(userData).length === 0) delete state.userData[id];
             }
         }
 

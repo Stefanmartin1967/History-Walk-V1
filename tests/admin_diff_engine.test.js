@@ -39,12 +39,11 @@ vi.mock('../src/data.js', () => ({
 
 vi.mock('../src/database.js', () => ({
     getAllPendingAdminPhotos: vi.fn(() => Promise.resolve({})),
-    savePoiData: vi.fn(() => Promise.resolve()),
-    deletePoiData: vi.fn(() => Promise.resolve())
+    removePoiDataKeys: vi.fn(() => Promise.resolve(0))
 }));
 
 import { state } from '../src/state.js';
-import { getAllPendingAdminPhotos, savePoiData, deletePoiData } from '../src/database.js';
+import { getAllPendingAdminPhotos, removePoiDataKeys } from '../src/database.js';
 import {
     prepareDiffData,
     reconcileLocalChanges,
@@ -940,9 +939,77 @@ describe('Admin Diff Engine', () => {
     // ========================================================================
     describe('purgeOrphanPendingPois', () => {
         beforeEach(() => {
-            // Le purge nettoie via savePoiData/deletePoiData — on les surveille.
-            savePoiData.mockClear();
-            deletePoiData.mockClear();
+            // Le purge nettoie via removePoiDataKeys (retrait ciblé en base).
+            removePoiDataKeys.mockClear();
+        });
+
+        /** Pose un original publié + une feature locale portant `userData`, puis diff + purge. */
+        async function runPurge(originalProps, userData, geometry = [10, 33]) {
+            const original = { properties: { HW_ID: 'poi_1', ...originalProps }, geometry: { coordinates: geometry } };
+            state.userData = { 'poi_1': userData };
+            state.loadedFeatures = [{ properties: { ...original.properties, userData }, geometry: { coordinates: geometry } }];
+            const draft = { pendingPois: { 'poi_1': { type: 'update', timestamp: 1 } }, pendingCircuits: {} };
+            global.fetch.mockImplementation((url) => url.includes('.geojson')
+                ? Promise.resolve({ ok: true, json: async () => ({ features: [original] }) })
+                : defaultFetchImpl(url));
+            await prepareDiffData(draft);
+            const purged = await purgeOrphanPendingPois(draft);
+            return { purged, draft };
+        }
+
+        // Régression du 14/09/2026 : 416 lieux remis « en attente » à chaque
+        // ouverture du CC. Le retrait passait par savePoiData (fusion) → rien
+        // n'était retiré en base. accessPoint identique + accessPointStatus perso.
+        it("retire en base les clés identiques au publié (drapeau), garde la clé perso", async () => {
+            const { purged } = await runPurge(
+                { accessPoint: [10.1, 33.1] },
+                { accessPoint: [10.1, 33.1], accessPointStatus: 'osm' }
+            );
+
+            expect(purged).toEqual(['poi_1']);
+            expect(removePoiDataKeys).toHaveBeenCalledWith('djerba', 'poi_1', ['accessPoint']);
+            expect(state.userData['poi_1']).toEqual({ accessPointStatus: 'osm' });
+        });
+
+        it('GARDE une liste de photos différente mais de même longueur', async () => {
+            await runPurge(
+                { photos: ['publiee_a.jpg', 'publiee_b.jpg'] },
+                { photos: ['locale_x.jpg', 'locale_y.jpg'], vu: true }
+            );
+
+            expect(removePoiDataKeys).not.toHaveBeenCalled();
+            expect(state.userData['poi_1'].photos).toEqual(['locale_x.jpg', 'locale_y.jpg']);
+        });
+
+        it('ne touche JAMAIS aux photos de travail (workPhotos)', async () => {
+            await runPurge(
+                { 'Catégorie': 'Mosquée' },
+                { 'Catégorie': 'Mosquée', workPhotos: ['djerba/work_poi_1_1.jpg'] }
+            );
+
+            expect(removePoiDataKeys).toHaveBeenCalledWith('djerba', 'poi_1', ['Catégorie']);
+            expect(state.userData['poi_1']).toEqual({ workPhotos: ['djerba/work_poi_1_1.jpg'] });
+        });
+
+        it('garde un drapeau qui diffère du publié (comparaison stricte des listes)', async () => {
+            await runPurge(
+                { accessPoint: [10.1, 33.1], 'Catégorie': 'Mosquée' },
+                { accessPoint: [10.2, 33.1], accessPointStatus: 'moved' }
+            );
+
+            // Le diff voit la différence → pas un orphelin, rien n'est retiré.
+            expect(removePoiDataKeys).not.toHaveBeenCalled();
+        });
+
+        it('retire lat/lng identiques à la géométrie publiée (5 décimales)', async () => {
+            await runPurge(
+                { 'Catégorie': 'Mosquée' },
+                { lat: 33.000001, lng: 10.000001, vu: true },
+                [10, 33]
+            );
+
+            expect(removePoiDataKeys).toHaveBeenCalledWith('djerba', 'poi_1', ['lat', 'lng']);
+            expect(state.userData['poi_1']).toEqual({ vu: true });
         });
 
         it('purge une entry pendingPois sans diff réel + nettoie userData (match patrimoine)', async () => {
@@ -968,8 +1035,8 @@ describe('Admin Diff Engine', () => {
 
             expect(purged).toEqual(['poi_1']);
             expect(draft.pendingPois).toEqual({});
-            // userData devient {} → deletePoiData appelée
-            expect(deletePoiData).toHaveBeenCalledWith('djerba', 'poi_1');
+            // Retrait ciblé en base ; plus rien en mémoire → entrée retirée
+            expect(removePoiDataKeys).toHaveBeenCalledWith('djerba', 'poi_1', ['Catégorie']);
             expect(state.userData['poi_1']).toBeUndefined();
         });
 
@@ -1064,7 +1131,7 @@ describe('Admin Diff Engine', () => {
             expect(purged).toEqual(['poi_1']);
             expect(draft.pendingPois).toEqual({});
             expect(state.userData['poi_1']).toBeUndefined();
-            expect(deletePoiData).toHaveBeenCalledWith('djerba', 'poi_1');
+            expect(removePoiDataKeys).toHaveBeenCalledWith('djerba', 'poi_1', ['Téléphone', 'Horaires', 'photos']);
         });
 
         it('préserve les clés personnelles de userData après purge', async () => {
@@ -1090,8 +1157,8 @@ describe('Admin Diff Engine', () => {
             expect(purged).toEqual(['poi_1']);
             // userData ne contient plus que la clé personnelle
             expect(state.userData['poi_1']).toEqual({ vu: true });
-            expect(savePoiData).toHaveBeenCalledWith('djerba', 'poi_1', { vu: true });
-            expect(deletePoiData).not.toHaveBeenCalled();
+            // Retrait CIBLÉ : seule la clé identifiée, jamais une réécriture complète
+            expect(removePoiDataKeys).toHaveBeenCalledWith('djerba', 'poi_1', ['Catégorie']);
         });
     });
 
