@@ -46,8 +46,7 @@ vi.mock('../src/config.js', () => ({
 
 vi.mock('../src/database.js', () => ({
     getAllPendingAdminPhotos: vi.fn(async () => ({})),
-    savePoiData: vi.fn(async () => {}),
-    deletePoiData: vi.fn(async () => {})
+    removePoiDataKeys: vi.fn(async () => 0)
 }));
 
 import { diffData, purgeOrphanPendingPois } from '../src/admin-diff-engine.js';

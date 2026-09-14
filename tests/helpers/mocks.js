@@ -41,6 +41,7 @@ export function createDatabaseMock(overrides = {}) {
         getAllPoiDataForMap: vi.fn(() => Promise.resolve({})),
         savePoiData: vi.fn(() => Promise.resolve()),
         deletePoiData: vi.fn(() => Promise.resolve()),
+        removePoiDataKeys: vi.fn(() => Promise.resolve(0)),
         batchSavePoiData: vi.fn(() => Promise.resolve()),
         getAllCircuitsForMap: vi.fn(() => Promise.resolve([])),
         saveCircuit: vi.fn(() => Promise.resolve()),
