@@ -658,8 +658,8 @@ export const GUIDE_MES_CIRCUITS = {
                         &gt; Cachés</strong>. Ils réapparaissent dans la liste avec leur œil
                         barré actif <span class="help-muted">(infobulle « Réafficher ce
                         circuit »)</span> — un clic les remet en visible.</li>
-                    <li><strong>Supprimer</strong> <span class="help-muted">(poubelle)</span> —
-                        pour <strong>vos circuits</strong>. Le circuit part en
+                    <li><strong>Supprimer</strong> <span class="help-muted">(poubelle, sur la
+                        fiche du circuit)</span> — pour <strong>vos circuits</strong>. Le circuit part en
                         <strong>Corbeille</strong> <span class="help-muted">(vous pouvez encore
                         le récupérer ou le purger définitivement)</span>.<br>
                         → Bouton <strong>Corbeille (n)</strong> dans la toolbar de Mes Circuits
@@ -679,17 +679,19 @@ export const GUIDE_MES_CIRCUITS = {
                         votre appareil — utile pour le rouvrir dans une autre application de
                         marche.</li>
                 </ul>
-                <p><strong>Sur PC</strong>, pour <strong>vos propres circuits</strong>, vous
-                avez en plus :</p>
+                <p><strong>Sur PC</strong>, vous avez en plus :</p>
                 <ul class="help-list">
                     <li><strong>Modifier</strong> : ré-éditer la liste des lieux, le titre
                         <span class="help-muted">(double-clic ou crayon)</span>, la
-                        description.</li>
+                        description. Sur un <strong>officiel</strong>, Heripia crée une
+                        copie « (modifié) » dans vos circuits <span class="help-muted">(l'officiel
+                        reste intact)</span>.</li>
                     <li><strong>Supprimer</strong> <span class="help-muted">(poubelle)</span> :
-                        envoie le circuit en Corbeille.</li>
+                        pour <strong>vos propres circuits</strong>, envoie le circuit en
+                        Corbeille.</li>
                 </ul>
-                <p class="help-muted">Les officiels ne sont pas modifiables. La modification du
-                titre et de la description n'est pas encore disponible sur mobile.</p>`,
+                <p class="help-muted">La modification du titre et de la description n'est pas
+                encore disponible sur mobile.</p>`,
         },
         {
             heading: `6 · Sur mobile — suivre votre circuit en marchant`,

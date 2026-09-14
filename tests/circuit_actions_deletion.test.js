@@ -78,7 +78,35 @@ import { softDeleteCircuit, saveAppState } from '../src/database.js';
 import { clearCircuit } from '../src/circuit.js';
 import { applyFilters } from '../src/data.js';
 import { isMobileView } from '../src/mobile-state.js';
-import { performCircuitDeletion } from '../src/circuit-actions.js';
+import { performCircuitDeletion, getCircuitDeletionPrompt } from '../src/circuit-actions.js';
+
+describe('getCircuitDeletionPrompt — textes de confirmation (validés 14/09/2026)', () => {
+    beforeEach(() => {
+        state.myCircuits = [];
+        state.officialCircuits = [];
+    });
+
+    it('son propre circuit : Corbeille de Mes circuits, restaurable', () => {
+        state.myCircuits = [{ id: 'my1', name: 'Boucle du port' }];
+        expect(getCircuitDeletionPrompt('my1')).toEqual({
+            title: 'Supprimer le circuit',
+            message: '« Boucle du port » ira dans la Corbeille de Mes circuits. Vous pourrez le restaurer.'
+        });
+    });
+
+    it('officiel : reste en ligne jusqu\'à la publication, restaurable au CC (id numérique accepté)', () => {
+        state.officialCircuits = [{ id: '1771435443094', name: 'Circuit de Mosquée Ejdid' }];
+        expect(getCircuitDeletionPrompt(1771435443094)).toEqual({
+            title: 'Supprimer le circuit officiel',
+            message: '« Circuit de Mosquée Ejdid » disparaît de votre liste, mais reste en ligne jusqu\'à la prochaine publication. D\'ici là, vous pouvez le restaurer depuis le Centre de contrôle.'
+        });
+    });
+
+    it('circuit introuvable : phrase sans nom, jamais « undefined »', () => {
+        expect(getCircuitDeletionPrompt('absent').message)
+            .toBe('Ce circuit ira dans la Corbeille de Mes circuits. Vous pourrez le restaurer.');
+    });
+});
 
 describe('performCircuitDeletion', () => {
     beforeEach(() => {
@@ -127,6 +155,9 @@ describe('performCircuitDeletion', () => {
             const r = await performCircuitDeletion('off1');
 
             expect(r.success).toBe(true);
+            // Un officiel ne va pas dans la Corbeille : rien n'est supprimé en
+            // ligne avant la publication (ancien message « corbeille » = faux).
+            expect(r.message).toBe('Suppression en attente de publication.');
             // setOfficialCircuits appelé avec la liste filtrée (off2 seulement)
             expect(setOfficialCircuits).toHaveBeenCalledTimes(1);
             const remaining = setOfficialCircuits.mock.calls[0][0];
@@ -176,7 +207,7 @@ describe('performCircuitDeletion', () => {
             const r = await performCircuitDeletion('my1');
 
             expect(r.success).toBe(true);
-            expect(r.message).toBe('Le circuit a été déplacé dans la corbeille.');
+            expect(r.message).toBe('Circuit placé dans la Corbeille.');
             expect(softDeleteCircuit).toHaveBeenCalledWith('my1');
             expect(state.myCircuits[0].isDeleted).toBe(true);
             expect(setHasUnexportedChanges).toHaveBeenCalledWith(true);

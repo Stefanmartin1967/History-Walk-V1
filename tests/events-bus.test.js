@@ -10,10 +10,8 @@ const h = vi.hoisted(() => ({
     loadCircuitById: vi.fn(() => Promise.resolve()),
     clearCircuit: vi.fn(),
     navigatePoiDetails: vi.fn(),
-    performCircuitDeletion: vi.fn(() => Promise.resolve({ success: true, message: 'ok' })),
     setCircuitIdToImportFor: vi.fn(),
     gpxImporterClick: vi.fn(),
-    showToast: vi.fn(),
     applyFilters: vi.fn(),
 }));
 
@@ -26,10 +24,8 @@ vi.mock('../src/circuit.js', () => ({
     clearCircuit: (...a) => h.clearCircuit(...a),
     navigatePoiDetails: (...a) => h.navigatePoiDetails(...a),
 }));
-vi.mock('../src/circuit-actions.js', () => ({ performCircuitDeletion: (...a) => h.performCircuitDeletion(...a) }));
 vi.mock('../src/state.js', () => ({ setCircuitIdToImportFor: (...a) => h.setCircuitIdToImportFor(...a) }));
 vi.mock('../src/ui-dom.js', () => ({ DOM: { gpxImporter: { click: (...a) => h.gpxImporterClick(...a) } } }));
-vi.mock('../src/toast.js', () => ({ showToast: (...a) => h.showToast(...a) }));
 vi.mock('../src/data.js', () => ({ applyFilters: (...a) => h.applyFilters(...a) }));
 
 import { eventBus } from '../src/events.js';
@@ -85,28 +81,6 @@ describe('events-bus — circuits', () => {
         eventBus.emit('circuit:request-import', 'circ-7');
         expect(h.setCircuitIdToImportFor).toHaveBeenCalledWith('circ-7');
         expect(h.gpxImporterClick).toHaveBeenCalledTimes(1);
-    });
-});
-
-describe('events-bus — circuit:request-delete', () => {
-    it('succès → toast success + émet circuit:list-updated (→ populateCircuitsMenu)', async () => {
-        h.performCircuitDeletion.mockResolvedValue({ success: true, message: 'Circuit supprimé' });
-        eventBus.emit('circuit:request-delete', 'circ-9');
-        await Promise.resolve(); await Promise.resolve(); // laisse l'async + le re-emit se dérouler
-
-        expect(h.performCircuitDeletion).toHaveBeenCalledWith('circ-9');
-        expect(h.showToast).toHaveBeenCalledWith('Circuit supprimé', 'success');
-        // L'émission interne de circuit:list-updated déclenche populateCircuitsMenu.
-        expect(h.populateCircuitsMenu).toHaveBeenCalledTimes(1);
-    });
-
-    it('échec → toast error, PAS de circuit:list-updated', async () => {
-        h.performCircuitDeletion.mockResolvedValue({ success: false, message: 'Impossible' });
-        eventBus.emit('circuit:request-delete', 'circ-10');
-        await Promise.resolve(); await Promise.resolve();
-
-        expect(h.showToast).toHaveBeenCalledWith('Impossible', 'error');
-        expect(h.populateCircuitsMenu).not.toHaveBeenCalled();
     });
 });
 
