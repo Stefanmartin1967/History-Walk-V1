@@ -28,7 +28,6 @@ import { getIconForFeature } from './poi-icons.js';
 import { foldForSearch } from './text-search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
-import { logModification } from './logger.js';
 import { schedulePush } from './gist-sync.js';
 import { eventBus } from './events.js';
 
@@ -205,7 +204,6 @@ async function mergeCandidateInto(candidate, targetId) {
         if (candRef && candRef !== targetRef) {
             await persistPoiEdit(targetId, { osm_ref: candRef });
             schedulePush(); // persistPoiEdit ne fait QUE la persistance (cf. son en-tête)
-            await logModification(targetId, 'Edition (Admin)', 'osm_ref', targetRef || '', candRef);
             // Le Centre de Contrôle doit voir la cible comme modifiée : sans ça, l'osm_ref
             // reporté ne partirait qu'au prochain reconcileLocalChanges.
             eventBus.emit('admin:poi-edited', { id: targetId, type: 'update' });

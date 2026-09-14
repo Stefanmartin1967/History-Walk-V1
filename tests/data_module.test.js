@@ -52,10 +52,6 @@ vi.mock('../src/database.js', () => ({
     saveCircuit: vi.fn()
 }));
 
-vi.mock('../src/logger.js', () => ({
-    logModification: vi.fn()
-}));
-
 vi.mock('../src/gist-sync.js', () => ({
     schedulePush: vi.fn()
 }));
@@ -115,7 +111,6 @@ import { saveAppState, savePoiData, saveCircuit, batchSavePoiData } from '../src
 import { addToDraft, getMigrationId, getAdminDraft } from '../src/admin-control-center.js';
 import { schedulePush } from '../src/gist-sync.js';
 import { showToast } from '../src/toast.js';
-import { logModification } from '../src/logger.js';
 import { eventBus } from '../src/events.js';
 import { deleteZoneCacheEntry } from '../src/zones.js';
 import { isCandidate } from '../src/utils.js';
@@ -873,16 +868,9 @@ describe('updatePoiCoordinates', () => {
         expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', state.customFeatures);
     });
 
-    it('savePoiData + logModification appelés systématiquement', async () => {
+    it('savePoiData appelé systématiquement', async () => {
         await updatePoiCoordinates('p1', 36.5, 10.7);
         expect(savePoiData).toHaveBeenCalledWith('djerba', 'p1', state.userData['p1']);
-        expect(logModification).toHaveBeenCalledWith(
-            'p1',
-            'Deplacement',
-            'All',
-            null,
-            expect.stringContaining('36.50000')
-        );
     });
 
     it('admin : addToDraft coords avec originalLat/Lng capturés AVANT mutation', async () => {

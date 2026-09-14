@@ -56,7 +56,7 @@ Deux subtilités à connaître :
 
 | Domaine | Modules clés |
 |---|---|
-| **Boot & état** | `main.js` (entrée), `app-startup.js` (chargement data + replis hors-ligne), `state.js` (état global + setters), `config.js`, `logger.js` |
+| **Boot & état** | `main.js` (entrée), `app-startup.js` (chargement data + replis hors-ligne), `state.js` (état global + setters), `config.js` |
 | **Événements** | `events-bus.js` (bus), `events.js`, `events-global.js`, `events-desktop.js` (câblage DOM) |
 | **Carte** | `map.js` (Leaflet + clustering), `poi-icons.js` (pack d'icônes POI + légende), `lucide-icons.js` (pack Lucide `appIcons`), `zones.js`, `osm-zones.js` |
 | **Données & persistance** | `data.js` (lecture/écriture userData), `database.js` (wrapper IndexedDB), `taxonomy.js` (référentiel catégories), `local-destinations.js`, `zip-store.js` |
