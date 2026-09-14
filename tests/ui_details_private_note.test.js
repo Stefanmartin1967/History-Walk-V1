@@ -91,7 +91,9 @@ vi.mock('../src/database.js', () => ({
     getPendingAdminPhotos: vi.fn(() => Promise.resolve([])),
 }));
 vi.mock('../src/work-photos.js', () => ({ getWorkPhotosById: vi.fn(() => []), loadWorkPhotoBlob: vi.fn() }));
-vi.mock('../src/private-notes.js', () => ({
+// shouldSyncPrivateNote reste la VRAIE règle (c'est elle qu'on veut câbler).
+vi.mock('../src/private-notes.js', async (importOriginal) => ({
+    ...(await importOriginal()),
     loadPrivateNote: vi.fn(() => Promise.resolve(null)),
     savePrivateNote: vi.fn(() => Promise.resolve()),
 }));
@@ -172,6 +174,34 @@ describe('sauvegarde au blur — locale TOUJOURS, distante SI token', () => {
 
         expect(updatePoiData).toHaveBeenCalledWith('HW-1', 'notes', 'note admin');
         expect(savePrivateNote).toHaveBeenCalledWith('djerba', 'HW-1', 'note admin');
+    });
+
+    // Régression du 14/09/2026 : envoyer une note vide efface le fichier distant.
+    // Un champ resté vide parce que la note locale manquait effaçait la seule copie.
+    it("champ vide qui l'était déjà : AUCUN envoi (n'efface pas la note du dépôt)", async () => {
+        vi.mocked(getStoredToken).mockReturnValue('fake-token');
+        state.loadedFeatures = [feature('HW-1', '')];
+        openDetailsPanel(0);
+
+        const edit = document.getElementById('poi-note-edit');
+        edit.value = '';
+        edit.dispatchEvent(new Event('blur'));
+        await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+
+        expect(savePrivateNote).not.toHaveBeenCalled();
+    });
+
+    it("note existante vidée volontairement : l'effacement part vers le dépôt", async () => {
+        vi.mocked(getStoredToken).mockReturnValue('fake-token');
+        state.loadedFeatures = [feature('HW-1', 'ancienne note')];
+        openDetailsPanel(0);
+
+        const edit = document.getElementById('poi-note-edit');
+        edit.value = '';
+        edit.dispatchEvent(new Event('blur'));
+        await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
+
+        expect(savePrivateNote).toHaveBeenCalledWith('djerba', 'HW-1', '');
     });
 
     it('un échec d\'envoi distant ne fait pas planter la sauvegarde locale', async () => {

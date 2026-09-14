@@ -27,7 +27,28 @@ import { state } from '../src/state.js';
 import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub } from '../src/github-sync.js';
 import { fetchWithTimeout } from '../src/net.js';
 import { GITHUB_REPO, GITHUB_WORK_REPO } from '../src/config.js';
-import { loadPrivateNote, savePrivateNote, migrateExistingNotes } from '../src/private-notes.js';
+import { loadPrivateNote, savePrivateNote, migrateExistingNotes, shouldSyncPrivateNote } from '../src/private-notes.js';
+
+// Règle d'envoi (14/09/2026) : envoyer une note vide EFFACE le fichier distant.
+// Un champ resté vide parce que la note locale manquait effaçait la seule copie.
+describe('shouldSyncPrivateNote', () => {
+    it('envoie une note non vide, modifiée ou non', () => {
+        expect(shouldSyncPrivateNote('', 'nouvelle')).toBe(true);
+        expect(shouldSyncPrivateNote('même', 'même')).toBe(true);
+        expect(shouldSyncPrivateNote('avant', 'après')).toBe(true);
+    });
+
+    it("envoie l'effacement d'une note qui existait et a été vidée", () => {
+        expect(shouldSyncPrivateNote('ma note', '')).toBe(true);
+        expect(shouldSyncPrivateNote('ma note', '   ')).toBe(true);
+    });
+
+    it("n'envoie RIEN pour un champ vide qui l'était déjà (note locale manquante)", () => {
+        expect(shouldSyncPrivateNote('', '')).toBe(false);
+        expect(shouldSyncPrivateNote(undefined, undefined)).toBe(false);
+        expect(shouldSyncPrivateNote(null, '  ')).toBe(false);
+    });
+});
 
 beforeEach(() => {
     vi.clearAllMocks();
