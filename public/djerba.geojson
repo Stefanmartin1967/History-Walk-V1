@@ -11318,7 +11318,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Source": "Répertoire J. Fathallah, n° 291 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
-        "osm_ref": "node/13440137280",
+        "osm_ref": "way/436256918",
         "maps_ref": "https://maps.app.goo.gl/4hnArGpuAg8vGhgt5",
         "Téléphone": "",
         "Horaires": "",
@@ -11327,7 +11327,7 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-09-14",
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true
@@ -16515,6 +16515,43 @@
           33.838327
         ],
         "Zone": "Sedghaiane"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.97754,
+          33.794892
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Akhil",
+        "Catégorie": "Mausolée",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 292 : « Sidi Kahil. Entre Mahboubine et Midoun. Mausolée et lieu de culte. Ancien. »\nRamzi Raïs n° 176 : « سيدي اكحيل », parmi les mosquées existantes (Inventaire du 29/09/2021).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 292 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), n° 176 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl",
+        "osm_ref": "way/1465366263",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-14",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2GKMCAPE285HWX35ZKT5G7M",
+        "accessPoint": [
+          10.9775743,
+          33.7949887
+        ],
+        "photos": [
+          "photos/poi_HW-01M2GKMCAPE285HWX35ZKT5G7M_1789412394908.jpg"
+        ],
+        "Zone": "El Mahboubine"
       }
     }
   ]
