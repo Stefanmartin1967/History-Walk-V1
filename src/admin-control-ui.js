@@ -1387,8 +1387,9 @@ function renderItemGroup(title, items, kind, opts) {
         </h4>`;
 
     html += items.map(item => {
+        const isCircuit = opts.scope === 'circuit';
         const refuseTitle = item.isDeletion
-            ? 'Restaurer ce lieu'
+            ? (isCircuit ? 'Restaurer ce circuit' : 'Restaurer ce lieu')
             : (opts.scope === 'photos' ? 'Retirer les photos pending de ce lieu' : 'Effacer cette modification locale');
         const refuseLabel = item.isDeletion ? 'Restaurer' : 'Annuler';
         const refuseIcon  = item.isDeletion ? 'rotate-ccw' : 'x';
@@ -1415,7 +1416,7 @@ function renderItemGroup(title, items, kind, opts) {
         if (item.isDeletion) {
             bodyHtml = `<div class="cc-diff-body">
                 <div class="cc-diff-note cc-diff-note--del">
-                    <i data-lucide="alert-triangle"></i> Sera supprimé de la carte officielle
+                    <i data-lucide="alert-triangle"></i> ${isCircuit ? 'Sera retiré des circuits officiels' : 'Sera supprimé de la carte officielle'}
                 </div>
             </div>`;
         } else if (item.isCreation && (!item.changes || item.changes.length === 0)) {

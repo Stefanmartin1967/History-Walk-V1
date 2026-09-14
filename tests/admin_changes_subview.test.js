@@ -215,6 +215,29 @@ describe('renderTab — pas d\'auto-redirect quand sous-vue vide', () => {
         expect(activeSubtab?.dataset.sub).toBe('lieux');
     });
 
+    it('suppression : textes propres au circuit (Stefan 14/09/2026), lieux inchangés', async () => {
+        // Régression : un circuit supprimé affichait « Restaurer ce lieu » et
+        // « Sera supprimé de la carte officielle », textes écrits pour les lieux.
+        const { renderTab, setChangesSubView } = await renderTabModule();
+        const diffData = {
+            pois: [{ id: 'p1', name: 'Lieu X', changes: [], isDeletion: true }],
+            circuits: [{ id: 'c1', name: 'Circuit Y', changes: [], isDeletion: true }],
+            stats: {}
+        };
+
+        setChangesSubView('circuits');
+        renderTab('changes', diffData, {});
+        const circuitBtn = document.querySelector('[data-action="refuse"][data-scope="circuit"]');
+        expect(circuitBtn?.getAttribute('title')).toBe('Restaurer ce circuit');
+        expect(document.querySelector('.cc-diff-note--del')?.textContent.trim()).toBe('Sera retiré des circuits officiels');
+
+        setChangesSubView('lieux');
+        renderTab('changes', diffData, {});
+        const poiBtn = document.querySelector('[data-action="refuse"][data-scope="poi"]');
+        expect(poiBtn?.getAttribute('title')).toBe('Restaurer ce lieu');
+        expect(document.querySelector('.cc-diff-note--del')?.textContent.trim()).toBe('Sera supprimé de la carte officielle');
+    });
+
     it('totalCount === 0 : empty state global, pas de sub-tabs', async () => {
         const { renderTab, setChangesSubView } = await renderTabModule();
         setChangesSubView('lieux');
