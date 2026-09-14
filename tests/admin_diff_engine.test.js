@@ -305,30 +305,55 @@ describe('Admin Diff Engine', () => {
             expect(result.circuits[0].changes.some(ch => ch.key === 'Étapes')).toBe(true);
         });
 
-        it('NE signale PAS un circuit comme modifié sur une simple différence de description', async () => {
-            // Bug 21/05/2026 (jumeau du bug poiIds en boucle) : la description ne
-            // fait pas l'aller-retour via le pipeline GPX → index. L'index distant
-            // porte TOUJOURS la constante hardcodée « Circuit généré par History
-            // Walk. » (lue dans le <desc> des metadata GPX), tandis qu'en local
-            // circuit-actions.js appose la signature « (Créé par History Walk) ».
-            // Les deux ne coïncident jamais → differ la description signalait à tort
-            // une « modification » permanente. La description n'est plus diffée.
-            global.fetch.mockImplementation((url) => {
-                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
-                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
-                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([
-                    { id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'], description: 'Circuit généré par History Walk.' }
-                ]) });
-            });
+        // Description (réactivée le 14/09/2026) : comparée signatures retirées des
+        // deux côtés. Désactivée du 21/05 au 14/09 car l'index portait une constante
+        // et la copie locale une signature collée → faux « modifié » permanent.
+        const withRemoteCircuit = (remote) => global.fetch.mockImplementation((url) => {
+            if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+            if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+            if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([remote]) });
+        });
+
+        it('NE signale PAS de modification quand les deux côtés ne portent qu\'une signature', async () => {
+            withRemoteCircuit({ id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'], description: 'Circuit généré par Heripia — heripia.com' });
             state.officialCircuits = [{
-                id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'], // name + poiIds identiques
-                description: 'Une jolie balade le long de la côte.\n\n(Créé par History Walk)', // desc locale différente
+                id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'],
+                description: '(Créé par History Walk)', // ancienne signature seule
                 realTrack: [[10.1, 11.2], [10.2, 11.3]]
             }];
 
             const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
 
-            expect(result.circuits.length).toBe(0); // description ignorée → aucun diff
+            expect(result.circuits.length).toBe(0);
+        });
+
+        it('NE signale PAS de modification pour un même texte, signature en plus ou en moins', async () => {
+            withRemoteCircuit({ id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'], description: 'Une jolie balade le long de la côte.' });
+            state.officialCircuits = [{
+                id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'],
+                description: 'Une jolie balade le long de la côte.\n\nCircuit généré par Heripia — heripia.com',
+                realTrack: [[10.1, 11.2], [10.2, 11.3]]
+            }];
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(result.circuits.length).toBe(0);
+        });
+
+        it('signale une vraie description face à un index qui ne porte que la constante', async () => {
+            withRemoteCircuit({ id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'], description: 'Circuit généré par Heripia — heripia.com' });
+            state.officialCircuits = [{
+                id: 'desc1', name: 'Circuit Desc', poiIds: ['A', 'B'],
+                description: 'Une jolie balade le long de la côte.',
+                realTrack: [[10.1, 11.2], [10.2, 11.3]]
+            }];
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(result.circuits).toHaveLength(1);
+            expect(result.circuits[0].changes).toEqual([
+                { key: 'Description', old: '—', new: 'Une jolie balade le long de la côte.' }
+            ]);
         });
 
         it('DOIT proposer la suppression d\'un circuit effacé localement (Ghost Prevention)', async () => {

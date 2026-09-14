@@ -4,6 +4,7 @@ import { openDetailsPanel } from './ui-details.js';
 import { getPatrimonialName, getPoiId, isCategoryInName } from './data.js';
 import { state, setCurrentCircuit } from './state.js';
 import { sanitizeHTML, escapeXml, getPoiProp } from './utils.js';
+import { stripCircuitSignature } from './circuit-description.js';
 import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStepCategoryDisplay } from './poi-icons.js';
@@ -297,7 +298,8 @@ export function updateCircuitHeader(data) {
     const descPlaceholder = document.getElementById('circuit-desc-placeholder');
     const descTextarea = document.getElementById('circuit-description');
     if (descDisplay && descPlaceholder && descTextarea) {
-        const description = (data.description || '').trim();
+        // Texte de l'auteur seul : une signature ne s'affiche jamais comme description.
+        const description = stripCircuitSignature(data.description);
         if (isConsult) {
             // Consultation : affiche le <p>, masque placeholder + textarea
             descDisplay.textContent = description;
@@ -353,7 +355,7 @@ export function updateControlButtons(uiState) {
  */
 export function updateCircuitForm(data) {
     if (DOM.circuitTitleText) DOM.circuitTitleText.textContent = data.name || 'Sans titre';
-    if (DOM.circuitDescription) DOM.circuitDescription.value = data.description || '';
+    if (DOM.circuitDescription) DOM.circuitDescription.value = stripCircuitSignature(data.description);
 
     const fields = {
         'transport-aller-temps': data.transport?.allerTemps,
