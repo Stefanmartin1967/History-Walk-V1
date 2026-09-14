@@ -3,6 +3,11 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: ["main"]
+  # Relance MANUELLE (Actions → Deploy to GitHub Pages → « Run workflow ») : crée
+  # un run NEUF. Ne jamais « Re-run » un déploiement échoué : l'unique job
+  # ré-uploade l'artefact dans le même run et deploy-pages refuse les doublons
+  # (« Multiple artifacts named github-pages », constaté le 14/09/2026).
+  workflow_dispatch:
 
 permissions:
   contents: read
