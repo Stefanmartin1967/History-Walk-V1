@@ -16593,6 +16593,40 @@
         ],
         "Zone": "Arkou"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.02859,
+          33.798859
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ghoul",
+        "Catégorie": "Mosquée",
+        "État": "Ruine",
+        "Accès": "Non visitable",
+        "description": "Jalel n° 328 : « Mosquée Ghool « Ogre ». Tezdain. Poste de garde puis mosquée disparue. Ancienne. »\nSitué par la liste Wikipédia des mosquées de Djerba (« Ghoul », Tezdaine, disparue), à 85 m au nord-nord-ouest de la mosquée Khaled Ibn Elwalid. Présence de vestiges à vérifier sur place (novembre 2026).\nRamzi Raïs n° 168 donne à la mosquée voisine le nom « خالد بن الوليد - سيدي الغول » (Sidi el-Ghoul).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 328 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nListe de mosquées de Djerba, Wikipédia (ligne « Ghoul ») | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-15",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2HVE1Q55MW42ZEWQRX6HJZ3",
+        "accessPoint": [
+          11.0283376,
+          33.7986557
+        ],
+        "Zone": "Arkou"
+      }
     }
   ]
 }
