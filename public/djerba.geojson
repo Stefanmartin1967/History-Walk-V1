@@ -16561,6 +16561,38 @@
         "Facebook": "",
         "Zone": "El Mahboubine"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.029557,
+          33.798361
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Sidi Mansour Ouelghmane",
+        "Catégorie": "Mausolée",
+        "description": "Existence à vérifier sur place (novembre 2026). Mausolée situé par la liste Wikipédia des mosquées de Djerba (« Sidi Mansour Ouelghmane », Temlel), à 73 m à l'est de la mosquée Khaled Ibn Elwalid. OpenStreetMap n'y montre qu'un petit bâtiment sans nom de 7,7 × 4,4 m (way/990341204), sans coupole visible sur la vue satellite.\nJalel n° 327 (mosquée voisine) : « Khaled Ibn Walid, ex Sidi Mansour. Tezdain. Mosquée malékite construite sur le site d'une ancienne. Récente. »\nRamzi Raïs n° 168 (mosquée voisine) : « خالد بن الوليد - سيدي الغول », soit un autre nom traditionnel, Sidi el-Ghoul.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Liste de mosquées de Djerba, Wikipédia (ligne « Sidi Mansour Ouelghmane ») | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nRépertoire J. Fathallah, n° 327 (mosquée voisine) | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-15",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2HT4TAVETP8EWKYN0BYY6DZ",
+        "accessPoint": [
+          11.0294635,
+          33.798417
+        ],
+        "Zone": "Arkou"
+      }
     }
   ]
 }
