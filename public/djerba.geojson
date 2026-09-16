@@ -16858,6 +16858,34 @@
         "osmCheckedDate": null,
         "Zone": "Guellala"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9659991,
+          33.7933219
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée (Bou Chwouat)",
+        "Catégorie": "Mausolée",
+        "osm_ref": "way/1559267299",
+        "HW_ID": "HW-01M2NBWCT90JGZPY88WY2X3KXP",
+        "description": "Petite tombe sans nom signalée sur OpenStreetMap. Aucune autre source trouvée.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1559267299",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "Zone": "El Mahboubine"
+      }
     }
   ]
 }
