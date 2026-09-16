@@ -115,5 +115,14 @@
     "lng": 10.7027689,
     "lat": 33.6872069,
     "rejectedAt": 1789452595559
+  },
+  "way/990390672": {
+    "osm_ref": "way/990390672",
+    "name": "Sidi Mostafa Mosquée",
+    "nameAr": "مسجد سيدي مصطفى",
+    "category": "Mosquée",
+    "lng": 10.9423185,
+    "lat": 33.7803647,
+    "rejectedAt": 1789565113229
   }
 }
