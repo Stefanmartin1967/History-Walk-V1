@@ -16777,13 +16777,20 @@
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 46 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), mosquée menacée ou disparue n° 57 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nOpenStreetMap | https://www.openstreetmap.org/node/14095949798",
         "verified": false,
-        "introuvableCarte": false,
+        "introuvableCarte": true,
         "descriptionPublic": false,
         "osmChecked": true,
-        "mapsChecked": false,
+        "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false,
-        "Zone": "Mazraia"
+        "jalelChecked": true,
+        "Zone": "Mazraia",
+        "Sous-type": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
