@@ -46,6 +46,7 @@ vi.mock('../src/state.js', () => {
 const saveCircuit = vi.fn(async () => {});
 const getAppState = vi.fn(async () => null);
 const saveCircuitDraft = vi.fn(async () => {});
+const getCircuitTitle = vi.fn(() => 'Nom auto');
 vi.mock('../src/database.js', () => ({
     softDeleteCircuit: vi.fn(),
     getAppState: (...a) => getAppState(...a),
@@ -56,7 +57,7 @@ vi.mock('../src/circuit.js', () => ({
     clearCircuit: vi.fn(),
     saveCircuitDraft: (...a) => saveCircuitDraft(...a),
     setCircuitVisitedState: vi.fn(),
-    generateCircuitName: vi.fn(() => 'Nom auto'),
+    getCircuitTitle: (...a) => getCircuitTitle(...a),
 }));
 vi.mock('../src/data.js', () => ({
     applyFilters: vi.fn(),
@@ -130,6 +131,21 @@ describe("saveAndExportCircuit — édition d'un officiel : un seul objet", () =
 
         expect(sharedState.myCircuits).toHaveLength(0);
         expect(sharedState.officialCircuits[0].name).toBe('Nom auto');
+    });
+
+    // Régression du 16/09/2026 : le nom était relu dans le DOM, dont la
+    // référence gardée devenait un nœud détaché après un renommage inline →
+    // l'ancien nom partait à la publication. Le nom vient désormais de
+    // getCircuitTitle, la même source que l'en-tête.
+    it('enregistre le nom donné par getCircuitTitle (renommage inline)', async () => {
+        sharedState.officialCircuits = [official()];
+        getCircuitTitle.mockReturnValueOnce('Nom saisi par Stefan');
+
+        await saveAndExportCircuit(NEW_TRACK);
+
+        expect(getCircuitTitle).toHaveBeenCalled();
+        expect(sharedState.officialCircuits[0].name).toBe('Nom saisi par Stefan');
+        expect(sharedState.officialCircuits[0].id).toBe('HW-OFF');
     });
 
     it("un échec d'écriture laisse l'officiel intact en mémoire", async () => {

@@ -55,7 +55,7 @@ vi.mock('../src/circuit.js', () => ({
     clearCircuit: vi.fn(),
     saveCircuitDraft: vi.fn(),
     setCircuitVisitedState: vi.fn(),
-    generateCircuitName: vi.fn(() => 'Nom auto'),
+    getCircuitTitle: vi.fn(() => 'Nom auto'),
 }));
 vi.mock('../src/data.js', () => ({
     applyFilters: vi.fn(),

@@ -511,6 +511,28 @@ export function renderCircuitPanel() {
     applyCircuitHero();
 }
 
+/**
+ * Titre du circuit courant — SOURCE UNIQUE pour l'en-tête, l'enregistrement
+ * et l'export GPX.
+ *
+ * Priorité : titre enregistré (consultation) > titre saisi dans le brouillon >
+ * nom auto. En édition (state.editingMode), le titre enregistré est ignoré :
+ * nom auto sauf renommage explicite — Q2, décision Stefan 03/05/2026, maintenue
+ * le 12/09/2026.
+ *
+ * Ne jamais relire le titre dans le DOM : l'édition inline remplace l'élément
+ * affiché, et une référence gardée pointe alors sur un nœud détaché. C'est ainsi
+ * qu'un renommage a été perdu à la sauvegarde (16/09/2026, l'ancien nom est
+ * parti à la publication).
+ * @param {object|null} [activeCircuitData] Circuit actif (défaut : résolu).
+ * @returns {string}
+ */
+export function getCircuitTitle(activeCircuitData = getActiveCircuit()) {
+    const saved = activeCircuitData?.name;
+    if (saved && !saved.startsWith('Nouveau Circuit') && !state.editingMode) return saved;
+    return state.customDraftName || generateCircuitName();
+}
+
 export function updateCircuitMetadata(updateTitle = true) {
     // 1. LOGIQUE DE CALCUL (On récupère ce qui était dans ton ancienne fonction)
     let totalDistance = 0;
@@ -533,13 +555,7 @@ export function updateCircuitMetadata(updateTitle = true) {
         totalDistance = getOrthodromicDistance(state.currentCircuit);
     }
 
-    // Priorité : Titre sauvegardé > Titre personnalisé brouillon > Génération auto.
-    // En mode édition admin (state.editingMode), on regénère le titre dynamiquement
-    // à partir des POIs courants — Q2 décision Stefan 03/05/2026 : "On reset au nom auto".
-    let title = state.customDraftName || generateCircuitName();
-    if (activeCircuitData && activeCircuitData.name && !activeCircuitData.name.startsWith("Nouveau Circuit") && !state.editingMode) {
-        title = activeCircuitData.name;
-    }
+    const title = getCircuitTitle(activeCircuitData);
 
     // Détermine si le circuit actif est officiel et testé (pour le badge desktop)
     const isOfficialActive = state.officialCircuits && state.activeCircuitId
@@ -783,7 +799,7 @@ export function convertToDraft() {
         // || generateCircuitName() (cf. ligne 414), donc l'ancien append à
         // textContent était immédiatement écrasé (= le "(modifié)" disparaissait).
         // Bug 2 chantier aide fiche lieu, fixé le 07/06/2026.
-        const originalName = DOM.circuitTitleText?.textContent || generateCircuitName();
+        const originalName = getCircuitTitle();
         setActiveCircuitId(null);
         setCustomDraftName(originalName + " (modifié)");
         // Mode création, comme la branche en place : sans lui, le bloc tracé

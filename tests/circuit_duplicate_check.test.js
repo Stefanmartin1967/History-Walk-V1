@@ -38,7 +38,7 @@ vi.mock('../src/database.js', () => ({
 vi.mock('../src/circuit.js', () => ({
     clearCircuit: vi.fn(),
     setCircuitVisitedState: vi.fn(),
-    generateCircuitName: vi.fn()
+    getCircuitTitle: vi.fn()
 }));
 
 vi.mock('../src/data.js', () => ({

@@ -58,7 +58,7 @@ vi.mock('../src/backup-auto-local.js', async () => {
 vi.mock('../src/circuit.js', () => ({
     clearCircuit: vi.fn(() => Promise.resolve()),
     setCircuitVisitedState: vi.fn(),
-    generateCircuitName: vi.fn()
+    getCircuitTitle: vi.fn()
 }));
 
 vi.mock('../src/data.js', () => ({
