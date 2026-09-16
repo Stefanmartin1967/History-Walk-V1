@@ -16850,6 +16850,12 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null,
         "Zone": "Guellala"
       }
     }
