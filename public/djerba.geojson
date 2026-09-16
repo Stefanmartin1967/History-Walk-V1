@@ -16886,6 +16886,69 @@
         "jalelChecked": true,
         "Zone": "El Mahboubine"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.005532,
+          33.813056
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Mrabet Amor",
+        "Catégorie": "Mausolée",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 325 : « Mrabet Amor. Quartier Mguersa. Mausolée et lieu de culte abandonné. Ancien. »\nVisible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 325 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/1433481213",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2NFB9X3021NCH130TPJEE36",
+        "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.02411,
+          33.822634
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Gharbi",
+        "Nom du site arabe": "سيدي غربي",
+        "Catégorie": "Mosquée",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 319 : « Sidi Gharbi. Quartier Tenafsa. Mosquée abandonnée, mais en excellent état. Ancienne. »\nBâtiment visible sur la vue satellite, sans coupole ni minaret apparents ; état à vérifier sur place (novembre 2026).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 319 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/990314922",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-16",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2NK4XWK0W7V5TTHXA1K9BN0",
+        "Zone": "Midoun"
+      }
     }
   ]
 }
