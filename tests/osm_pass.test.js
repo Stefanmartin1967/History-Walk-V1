@@ -5,6 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { shouldIncludeInPass, filterItems } from '../src/osm-pass.js';
 import { getAccessPointStatus } from '../src/access-point.js';
+import { state } from '../src/state.js';
 
 function feat(id, status, name = 'Test') {
     return {
@@ -27,6 +28,30 @@ describe('osm-pass — shouldIncludeInPass', () => {
     });
     it("EXCLUT les status 'on-track' (déjà confirmés sur voie)", () => {
         expect(shouldIncludeInPass(feat('E', 'on-track'))).toBe(false);
+    });
+
+    // Régression du 16/09/2026 : trois captures Scout supprimées (masquées via
+    // hiddenPoiIds, toujours dans loadedFeatures) apparaissaient en « Lieu inconnu ».
+    it('EXCLUT un POI supprimé (masqué), quel que soit son statut', () => {
+        const before = state.hiddenPoiIds;
+        try {
+            state.hiddenPoiIds = ['HW-SUPPRIME'];
+            expect(shouldIncludeInPass(feat('HW-SUPPRIME', undefined))).toBe(false);
+            expect(shouldIncludeInPass(feat('HW-SUPPRIME', 'osm'))).toBe(false);
+            expect(shouldIncludeInPass(feat('HW-GARDE', undefined))).toBe(true);
+        } finally {
+            state.hiddenPoiIds = before;
+        }
+    });
+
+    it('sans liste de masqués (undefined) : aucun POI écarté pour ce motif', () => {
+        const before = state.hiddenPoiIds;
+        try {
+            state.hiddenPoiIds = undefined;
+            expect(shouldIncludeInPass(feat('F', 'moved'))).toBe(true);
+        } finally {
+            state.hiddenPoiIds = before;
+        }
     });
 });
 

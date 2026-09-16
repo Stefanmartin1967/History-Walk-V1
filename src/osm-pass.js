@@ -42,9 +42,17 @@ let _isOpen = false;
 /**
  * Décide si un POI doit apparaître dans la passe globale.
  * Inclus : drapeaux pré-posés (osm/moved), échecs (failed) et POI jamais
- * évalués (undefined). Exclus : POI confirmés sur voie (on-track).
+ * évalués (undefined). Exclus : POI confirmés sur voie (on-track), et POI
+ * supprimés.
+ *
+ * Supprimé = masqué : `deletePoi` (data.js) inscrit l'id dans `hiddenPoiIds`
+ * sans retirer le lieu de `loadedFeatures`. La carte et le CC l'écartent
+ * (data.js `passesUserFilters`, admin-control-ui) ; la passe ne le faisait pas.
+ * Constaté le 16/09/2026 : trois captures Scout supprimées, sans nom, listées
+ * « Lieu inconnu » — et Stefan leur a posé des drapeaux.
  */
 export function shouldIncludeInPass(feature) {
+    if ((state.hiddenPoiIds || []).includes(getPoiId(feature))) return false;
     const status = getAccessPointStatus(feature);
     return status === 'osm' || status === 'moved' || status === 'failed' || status === undefined;
 }
