@@ -124,5 +124,14 @@
     "lng": 10.9423185,
     "lat": 33.7803647,
     "rejectedAt": 1789565113229
+  },
+  "node/4586102689": {
+    "osm_ref": "node/4586102689",
+    "name": "Lieu inconnu",
+    "nameAr": "",
+    "category": "Puits",
+    "lng": 10.8774902,
+    "lat": 33.8127358,
+    "rejectedAt": 1789567615806
   }
 }
