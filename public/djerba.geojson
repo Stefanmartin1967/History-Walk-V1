@@ -16731,6 +16731,35 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.9089368,
+          33.857643
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée Bel Asfar",
+        "Nom du site arabe": "روضة بالأصفر",
+        "Catégorie": "Mausolée",
+        "osm_ref": "node/14095949747",
+        "HW_ID": "HW-01M2HTYF5PMQYX0JNJGQYBFYCC",
+        "description": "Signalé sur OpenStreetMap comme tombe (« روضة بالأصفر »). Aucune autre source trouvée.\nEnclos rectangulaire à murs bas visible sur la vue satellite, sans toiture apparente.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/14095949747",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "Zone": "Mazraia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.9767192,
           33.7961055
         ]
