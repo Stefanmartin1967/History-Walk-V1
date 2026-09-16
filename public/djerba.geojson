@@ -16671,6 +16671,34 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.9582745,
+          33.7638828
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée (Toghrouit)",
+        "Catégorie": "Mausolée",
+        "osm_ref": "way/990416470",
+        "HW_ID": "HW-01M2HTYF30DPMXAHRSWDWF1S4G",
+        "description": "Nom à trouver sur place (novembre 2026). Petit tombeau de 5,5 × 5,6 m relevé sur le terrain par Petr Jenč (OpenStreetMap, way/990416470, historic=tomb), au centre d'un cimetière musulman, à 146 m à l'ouest de la mosquée Toghrouit. Vue satellite : petite construction carrée entourée de tombes.\nAucune entrée du répertoire de Jalel Fathallah à Bani Maaguel ne correspond : ses deux mausolées (Sidi Satouri, n° 225, et Sidi Kilani, n° 242) sont déjà identifiés ailleurs.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "OpenStreetMap, way/990416470 | https://www.openstreetmap.org/way/990416470",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "Zone": "Beni Maaguel"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.9767192,
           33.7961055
         ]
