@@ -16820,6 +16820,38 @@
         "jalelChecked": true,
         "Zone": "El Mahboubine"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8574668,
+          33.7248174
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Tawhid",
+        "Nom du site arabe": "مسجد التوحيد",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1556758227",
+        "HW_ID": "HW-01M2NBMYAEHZV9AW459HKTQ8K3",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 215 : « Mosquée Tawhid. Guellala. Mosquée malékite somptueuse. 2019. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 215 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, Liste de mosquées de Djerba | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/1556758227",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "Zone": "Guellala"
+      }
     }
   ]
 }
