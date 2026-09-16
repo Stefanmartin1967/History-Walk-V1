@@ -13250,9 +13250,9 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée المعاريس",
+        "Nom du site FR": "Mosquée Maariss",
         "Nom du site arabe": "المعاريس",
-        "Catégorie": "Mausolée",
+        "Catégorie": "Mosquée",
         "osm_ref": "way/1473672757",
         "HW_ID": "HW-01KZH0VF0HF0RK88QZ0V5G115D",
         "Temps_minutes": 0,
@@ -13264,8 +13264,8 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Le lieu le plus proche est Mosquée Sidi Nasr",
-        "Source": "",
+        "description": "Jalel n° 112 : « Maariss dite Ben Arouss. Groa. Mosquée ibadite wahbite en quasi ruines. Ancienne. »\nUn mausolée jouxte la mosquée à l'est.\nVisible sur la vue satellite",
+        "Source": "Répertoire J. Fathallah, n° 112 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
@@ -13274,7 +13274,12 @@
         "accessPoint": [
           10.7887517,
           33.817992
-        ]
+        ],
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
