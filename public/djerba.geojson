@@ -16657,7 +16657,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "accessPoint": [
+          10.9081533,
+          33.7358227
+        ]
       }
     },
     {
@@ -16723,7 +16727,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Beni Maaguel"
+        "Zone": "Beni Maaguel",
+        "accessPoint": [
+          10.9576889,
+          33.7641777
+        ]
       }
     },
     {
@@ -16752,7 +16760,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
-        "Zone": "Mazraia"
+        "Zone": "Mazraia",
+        "accessPoint": [
+          10.9090944,
+          33.8577009
+        ]
       }
     },
     {
@@ -16790,7 +16802,11 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "osmCheckedDate": null
+        "osmCheckedDate": null,
+        "accessPoint": [
+          10.9088982,
+          33.8594089
+        ]
       }
     },
     {
@@ -16818,7 +16834,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "accessPoint": [
+          10.9767848,
+          33.795412
+        ]
       }
     },
     {
@@ -16856,6 +16876,10 @@
         "Horaires": "",
         "Facebook": "",
         "osmCheckedDate": null,
+        "accessPoint": [
+          10.8574165,
+          33.7245921
+        ],
         "Zone": "Guellala"
       }
     },
@@ -16884,6 +16908,10 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
+        "accessPoint": [
+          10.9660093,
+          33.7934298
+        ],
         "Zone": "El Mahboubine"
       }
     },
