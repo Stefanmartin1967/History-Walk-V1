@@ -16760,6 +16760,37 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.9080886,
+          33.8594291
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Mahrab Ghrib",
+        "Nom du site arabe": "مسجد محراب غريب",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/14095949798",
+        "HW_ID": "HW-01M2HTYF7GZ1D4N5Y3GP1M4ZGZ",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 46 : « Mosquée mihrab Abou Ghrib. Ghizen. Mosquée wahbite en ruines. Ancienne. »\nRamzi Raïs la compte parmi les mosquées menacées ou disparues (n° 57 : « محراب غريب - الهواري »).\nAucune structure nette sur la vue satellite ; un amas clair à proximité pourrait correspondre à des vestiges.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 46 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), mosquée menacée ou disparue n° 57 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nOpenStreetMap | https://www.openstreetmap.org/node/14095949798",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "Zone": "Mazraia"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.9767192,
           33.7961055
         ]
