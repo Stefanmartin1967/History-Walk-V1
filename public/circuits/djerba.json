@@ -281,5 +281,19 @@
       "HW-01K77WPE6AJXE1YKC3AA7S78SA",
       "HW-01KJABRN0SETE15NS313F7DYZQ"
     ]
+  },
+  {
+    "id": "HW-01M2NNDA0Y21T4ANXGTSZ4X1QM",
+    "name": "Boucle autour de Rym Beach",
+    "file": "djerba/Boucle autour de Rym Beach.gpx",
+    "description": "Boucle du Rym Beach au mausolée Lella Hadhria dont il ne reste que des vestiges. La balade longe la côté, sur un sentier praticable",
+    "distance": "7.7 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Midoun",
+    "poiIds": [
+      "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
+      "HW-01M1PGKC4GDW390CEFN4RWMS0V"
+    ]
   }
 ]
