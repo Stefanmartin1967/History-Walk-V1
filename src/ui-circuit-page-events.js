@@ -15,6 +15,7 @@
  */
 
 import { state, setCustomDraftName } from './state.js';
+import { DOM } from './ui-dom.js';
 import { saveCircuitDraft, isCircuitTested } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
@@ -293,12 +294,16 @@ async function renameLoadedCircuit(id, name) {
 }
 
 function initTitleEdit() {
-    const titleEl = document.getElementById('circuit-title-text');
     const editBtn = document.getElementById('cp-title-edit-btn');
-    if (!titleEl) return;
+    if (!document.getElementById('circuit-title-text')) return;
 
     const enterEdit = (e) => {
         if (e) e.preventDefault();
+        // Élément COURANT, relu à chaque ouverture : l'édition remplace le titre
+        // par un <input> puis par un nouveau <h2>. Une référence prise à l'init
+        // désignait ensuite un nœud détaché — le 2ᵉ renommage ne s'ouvrait plus.
+        const titleEl = document.getElementById('circuit-title-text');
+        if (!titleEl) return;
         const panel = document.getElementById('circuit-panel');
         const mode = panel?.getAttribute('data-mode');
         // Édition autorisée : en création (brouillon), OU en consultation pour
@@ -319,7 +324,13 @@ function initTitleEdit() {
         input.focus();
         input.select();
 
+        // Une seule sortie par ouverture : retirer l'<input> du DOM déclenche son
+        // `blur`, qui rappelait finish après Entrée ou Échap. Le second appel
+        // appliquait la saisie malgré Échap et créait un <h2> jamais affiché.
+        let finished = false;
         const finish = (cancel = false) => {
+            if (finished) return;
+            finished = true;
             let newValue = cancel ? currentText : input.value.trim();
             // En consultation, un nom vide n'est pas autorisé (le circuit chargé
             // garde son nom) → on retombe sur l'ancien.
@@ -331,6 +342,11 @@ function initTitleEdit() {
             h2.textContent = newValue || 'Sans titre';
             h2.title = newValue || 'Sans titre';
             input.replaceWith(h2);
+            // Le cache DOM (renderCircuitPanel écrit le titre par lui) et le
+            // double-clic suivent le nouvel élément ; sinon l'en-tête cesse
+            // d'être mis à jour après un premier renommage.
+            DOM.circuitTitleText = h2;
+            h2.addEventListener('dblclick', enterEdit);
 
             if (!cancel && newValue !== currentText) {
                 if (isCreate) {
@@ -350,7 +366,7 @@ function initTitleEdit() {
         input.addEventListener('blur', () => finish(false));
     };
 
-    titleEl.addEventListener('dblclick', enterEdit);
+    document.getElementById('circuit-title-text').addEventListener('dblclick', enterEdit);
     if (editBtn) editBtn.addEventListener('click', enterEdit);
 }
 

@@ -44,7 +44,7 @@ vi.mock('../src/database.js', () => ({
 vi.mock('../src/circuit.js', () => ({
     clearCircuit: vi.fn(),
     setCircuitVisitedState: vi.fn(),
-    generateCircuitName: vi.fn()
+    getCircuitTitle: vi.fn()
 }));
 // passesUserFilters mocké : réimplémente la logique de data.js, lit sharedState.
 // Le test reste centré sur getZonesData (comptage par zone) sans dépendre de

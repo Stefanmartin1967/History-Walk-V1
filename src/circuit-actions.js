@@ -7,13 +7,12 @@ import { softDeleteCircuit, getAppState, saveAppState } from './database.js';
 import { findCircuitById } from './circuit-lookup.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { persistCircuit } from './circuit-store.js';
-import { clearCircuit, setCircuitVisitedState, generateCircuitName, saveCircuitDraft } from './circuit.js';
+import { clearCircuit, setCircuitVisitedState, getCircuitTitle, saveCircuitDraft } from './circuit.js';
 import { applyFilters, getPoiId, passesUserFilters, passesStructuralFilters, buildPlannedPoiSet } from './data.js';
 import { isMobileView } from './mobile-state.js';
 import { showConfirm } from './modal.js';
 import { showToast } from './toast.js';
 import { generateHWID, getDerivedZone } from './utils.js';
-import { DOM } from './ui-dom.js';
 import { getStoredToken } from './github-sync.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
 import { recordModification } from './backup-auto-local.js';
@@ -259,15 +258,11 @@ export function getZonesData() {
 export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false, ascend = null } = {}) {
     if (state.currentCircuit.length === 0) return;
 
-    // 1. Détermination du nom : Priorité à l'interface (User) sur la génération auto
-    let circuitName = generateCircuitName();
-    if (DOM.circuitTitleText && DOM.circuitTitleText.textContent) {
-        const uiTitle = DOM.circuitTitleText.textContent.trim();
-        // Si le titre de l'UI n'est pas le placeholder par défaut, on le garde
-        if (uiTitle && uiTitle !== "Nouveau Circuit") {
-            circuitName = uiTitle;
-        }
-    }
+    // 1. Nom : même source que l'en-tête (getCircuitTitle), jamais le texte du
+    // DOM — l'édition inline remplace l'élément et la référence gardée devenait
+    // un nœud détaché : un renommage partait à la publication sous l'ancien nom
+    // (16/09/2026).
+    const circuitName = getCircuitTitle();
 
     // Circuit édité (perso OU officiel), null pour une création.
     const existing = state.activeCircuitId ? findCircuitById(state.activeCircuitId) : null;

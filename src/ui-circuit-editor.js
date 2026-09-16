@@ -23,6 +23,7 @@ import {
     clearCircuit,
     convertToDraft,
     generateCircuitName,
+    getCircuitTitle,
     updateCircuitMetadata,
     renderCircuitPanel
 } from './circuit.js';
@@ -182,8 +183,9 @@ export function setupCircuitEventListeners() {
         // VOL D'OISEAU au lieu de la trace réelle. Invisible juste après une
         // création (le circuit est encore dans myCircuits), visible après un F5.
         const active = getActiveCircuit();
-        const name = (DOM.circuitTitleText && DOM.circuitTitleText.textContent.trim())
-            || generateCircuitName();
+        // Même source que l'en-tête et l'enregistrement — pas le texte du DOM
+        // (nœud détaché après un renommage inline, cf. getCircuitTitle).
+        const name = getCircuitTitle(active);
         // Description de l'auteur (la signature est ajoutée par generateGPXString).
         // Avant le 14/09/2026, l'export passait une description VIDE : le GPX
         // envoyé sur Wikiloc ne contenait jamais le texte du circuit.

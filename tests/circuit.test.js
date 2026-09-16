@@ -135,6 +135,7 @@ import {
     isCircuitCompleted,
     notifyCircuitChanged,
     generateCircuitName,
+    getCircuitTitle,
     addPoiToCircuit,
     convertToDraft,
     setCircuitVisitedState,
@@ -239,6 +240,54 @@ describe('notifyCircuitChanged', () => {
         expect(evt.type).toBe('circuit:updated');
         expect(evt.detail.points).toEqual([poi('p1')]);
         expect(evt.detail.activeId).toBe('c-active');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Source unique du titre (en-tête, enregistrement, export GPX). Régression du
+// 16/09/2026 : l'enregistrement relisait le titre dans le DOM, dont la référence
+// devenait un nœud détaché après un renommage inline — l'ancien nom est parti à
+// la publication.
+describe('getCircuitTitle', () => {
+    const saved = { id: 'c1', name: 'Nom enregistré', poiIds: ['p1', 'p2'] };
+
+    it('consultation : le nom enregistré prime', () => {
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'B')];
+        state.customDraftName = 'Brouillon';
+        expect(getCircuitTitle(saved)).toBe('Nom enregistré');
+    });
+
+    it('édition : le nom saisi (renommage inline) prime sur le nom enregistré', () => {
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'B')];
+        state.editingMode = true;
+        state.customDraftName = 'Boucle via le mausolée';
+        DOM.circuitTitleText = { textContent: 'Ancien nom (nœud détaché)' };
+        expect(getCircuitTitle(saved)).toBe('Boucle via le mausolée');
+    });
+
+    it('édition sans renommage : nom auto (Q2)', () => {
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'B')];
+        state.editingMode = true;
+        expect(getCircuitTitle(saved)).toBe('Circuit de A à B');
+    });
+
+    it('création : nom saisi, sinon nom auto', () => {
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'B')];
+        expect(getCircuitTitle(null)).toBe('Circuit de A à B');
+        state.customDraftName = 'Mon titre';
+        expect(getCircuitTitle(null)).toBe('Mon titre');
+    });
+
+    it('un nom enregistré « Nouveau Circuit… » ne compte pas', () => {
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'B')];
+        expect(getCircuitTitle({ ...saved, name: 'Nouveau Circuit 3' })).toBe('Circuit de A à B');
+    });
+
+    it('sans argument : résout le circuit actif', () => {
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'B')];
+        state.myCircuits = [saved];
+        state.activeCircuitId = 'c1';
+        expect(getCircuitTitle()).toBe('Nom enregistré');
     });
 });
 
@@ -352,7 +401,9 @@ describe('convertToDraft', () => {
         // c'est customDraftName qui porte le suffixe « (modifié) ».
         state.activeCircuitId = 'o1';
         state.officialCircuits = [{ id: 'o1', name: 'Mon Circuit', poiIds: [] }];
-        DOM.circuitTitleText = { textContent: 'Mon Circuit' };
+        // Texte périmé : le nom de la copie vient du circuit, pas du DOM
+        // (référence détachée après un renommage inline, 16/09/2026).
+        DOM.circuitTitleText = { textContent: 'Titre périmé du DOM' };
 
         convertToDraft();
 
