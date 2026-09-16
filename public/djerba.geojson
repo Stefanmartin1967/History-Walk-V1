@@ -16633,6 +16633,38 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
+          10.9084194,
+          33.735632
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ammi Aïssa",
+        "Nom du site arabe": "عمي عيسى",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/427586711",
+        "HW_ID": "HW-01M2HTYEZ1BMA2XT2V4VKQX2PP",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 187 : « Sidi Aissa. Ouersighen. Mosquée mausolée en bon état, mais abandonnée. Ancienne. »\nRamzi Raïs la compte parmi les mosquées encore en activité (n° 213 : « سيدي عيسى »).\nNommée localement « Ammi Aïssa » (عمي عيسى).\nVisible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 187 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), mosquée n° 213 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nWikipédia, Liste de mosquées de Djerba | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/427586711",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "Zone": "Sedouikech"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
           10.953893,
           33.7639222
         ]
