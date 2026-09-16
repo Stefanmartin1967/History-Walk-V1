@@ -142,5 +142,14 @@
     "lng": 10.8574668,
     "lat": 33.7248174,
     "rejectedAt": 1789571394810
+  },
+  "way/1559267299": {
+    "osm_ref": "way/1559267299",
+    "name": "Lieu inconnu",
+    "nameAr": "",
+    "category": "Site funéraire",
+    "lng": 10.9659991,
+    "lat": 33.7933219,
+    "rejectedAt": 1789571691519
   }
 }
