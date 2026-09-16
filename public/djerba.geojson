@@ -16627,6 +16627,63 @@
         ],
         "Zone": "Arkou"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.953893,
+          33.7639222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Kilani",
+        "Nom du site arabe": "سيدي كيلاني",
+        "Catégorie": "Mausolée",
+        "osm_ref": "way/990323254",
+        "HW_ID": "HW-01M2HTYF12ZQX1GCP6TS1DNNBN",
+        "description": "Jalel n° 242 : « Sidi Kilani. Bani Maaguel. Mausolée et retraite d'un saint. Ancien. »\nRamzi Raïs le compte parmi les zaouïas de Djerba (n° 24 : « سيدي كيلاني »).\nVisible sur la vue satellite",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Jalel n° 242 : « Sidi Kilani. Bani Maaguel. Mausolée et retraite d'un saint. Ancien. »\nRamzi Raïs le compte parmi les zaouïas de Djerba (n° 24 : « سيدي كيلاني »).",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "Zone": "Beni Maaguel"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.9767192,
+          33.7961055
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée (Errhama)",
+        "Catégorie": "Mausolée",
+        "osm_ref": "way/1558413245",
+        "HW_ID": "HW-01M2HTYFAG61DMYQY86QPKJ4C1",
+        "description": "Existence et nature à vérifier sur place (novembre 2026). Petite construction de 3,4 × 3,6 m cartographiée par Petr Jenč dans OpenStreetMap comme tombeau (way/1558413245, historic=tomb, accès privé), à 106 m au nord-ouest de la mosquée Errhama et 155 m de Sidi Kahil. Vue satellite : petit carré de murs à l'intérieur sombre, sans coupole visible — tombeau, puits ou ruine ?\nPiste non vérifiée : Jalel n° 293, « Sidi Tellili. Entre Mahboubine et Midoun. Mausolée et lieu de culte. Ancien. », numéroté juste après Sidi Kahil (n° 292) et non localisé.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "OpenStreetMap, way/1558413245 | https://www.openstreetmap.org/way/1558413245",
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "Zone": "El Mahboubine"
+      }
     }
   ]
 }
