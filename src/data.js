@@ -25,6 +25,7 @@ import { PERSONAL_KEYS } from './config.js';
 import { recordModification } from './backup-auto-local.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 import { foldForSearch } from './text-search.js';
+import { computeVu, stampVisited } from './visited-state.js';
 
 // --- UTILITAIRES ---
 
@@ -590,11 +591,10 @@ export function applyFilters() {
 
 // Recalcule le flag `vu` (dérivé) à partir de vuManual + visitedByCircuits.
 // Utilisé par les call-sites qui modifient vuManual ou visitedByCircuits.
+// Seuls les circuits qui existent encore comptent (cf. visited-state.js).
 export function recomputeVu(userData) {
     if (!userData) return;
-    const manual = userData.vuManual === true;
-    const byCircuits = Array.isArray(userData.visitedByCircuits) && userData.visitedByCircuits.length > 0;
-    userData.vu = manual || byCircuits;
+    userData.vu = computeVu(userData);
 }
 
 // Clés dont la modification peut changer la visibilité d'un POI sur la carte
@@ -624,6 +624,7 @@ export async function updatePoiData(poiId, key, value) {
     // On stocke donc dans vuManual ; `vu` reste dérivé (vuManual || visitedByCircuits > 0).
     if (key === 'vu') {
         state.userData[poiId].vuManual = value === true;
+        stampVisited(state.userData[poiId]);
         recomputeVu(state.userData[poiId]);
     } else {
         state.userData[poiId][key] = value;

@@ -1,4 +1,4 @@
-import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode, getActiveMapId} from './state.js';
+import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setOfficialCircuitsStatusUpdatedAt, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode, getActiveMapId} from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
@@ -24,6 +24,7 @@ import { markEditingStart, getDirtyCount } from './circuit-flags.js';
 import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
 import { persistCircuit } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
+import { stampVisited } from './visited-state.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -74,6 +75,10 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
             setOfficialCircuitStatus(circuitId, isVisited);
             officialCircuit.isCompleted = isVisited; // Maj en mémoire pour UI immédiate
             await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
+            // Date du changement : la synchro Gist fait gagner le plus récent,
+            // sinon un « pas fait » serait ré-écrasé par un autre appareil.
+            setOfficialCircuitsStatusUpdatedAt({ ...(state.officialCircuitsStatusUpdatedAt || {}), [circuitId]: Date.now() });
+            await saveAppState(`official_circuits_status_updated_${state.currentMapId}`, state.officialCircuitsStatusUpdatedAt);
 
             // Admin : "coché fait" = circuit vérifié.
             // Règle métier : si l'admin l'a fait, il est testé → rassure l'utilisateur lambda.
@@ -104,7 +109,7 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
 
     // 3. Mise à jour des POIs (contribution du circuit à l'état visité)
     // Modèle : chaque POI garde `visitedByCircuits` (liste des circuits qui le marquent).
-    // `vu` est dérivé = vuManual || visitedByCircuits.length > 0.
+    // `vu` est dérivé = vuManual || un circuit de visitedByCircuits existe encore (visited-state.js).
     // Cocher "Fait"   → ajoute circuitId à visitedByCircuits
     // Décocher "Fait" → retire circuitId ; si plus aucun circuit et pas de vuManual, le POI redevient non-visité.
     const circuit = officialCircuit || localCircuit;
@@ -124,6 +129,7 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
                 } else {
                     ud.visitedByCircuits = ud.visitedByCircuits.filter(cid => cid !== circuitId);
                 }
+                stampVisited(ud);
                 recomputeVu(ud);
 
                 // Mémoire state.userData (source de vérité pour updatePoiData et Gist)

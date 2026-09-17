@@ -10,6 +10,7 @@ import { isMobileView } from './mobile-state.js';
 import { renderMobilePoiList } from './mobile-poi.js';
 import { refreshMapMarkers } from './map.js';
 import { populateCircuitsMenu } from './ui-filters.js';
+import { refreshVisitedFromCircuits } from './visited-state.js';
 import { loadCircuitById, clearCircuit, navigatePoiDetails, renderCircuitPanel } from './circuit.js';
 import { setCircuitIdToImportFor, state } from './state.js';
 import { DOM } from './ui-dom.js';
@@ -53,5 +54,11 @@ export function setupEventBusListeners() {
         if (DOM.gpxImporter) DOM.gpxImporter.click();
     });
     eventBus.on('circuit:list-updated', () => populateCircuitsMenu());
+    // Un circuit supprimé (ou restauré) cesse (ou recommence) de rendre ses lieux
+    // « visités » : on recalcule, et on rafraîchit la carte seulement si un lieu
+    // a changé (le filtre « visités » en dépend). Cf. visited-state.js.
+    eventBus.on('circuit:list-updated', () => {
+        if (refreshVisitedFromCircuits()) applyFilters();
+    });
     eventBus.on('data:apply-filters', () => applyFilters());
 }

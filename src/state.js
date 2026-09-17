@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.406'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.407'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
@@ -40,6 +40,7 @@ export const state = {
     myCircuits: [],
     officialCircuits: [],
     officialCircuitsStatus: {}, // Statut (Completed) des circuits officiels
+    officialCircuitsStatusUpdatedAt: {}, // Date (ms) du dernier changement de ce statut, par circuit — synchro Gist (cf. visited-state.js)
     testedCircuits: {},         // Circuits testés sur le terrain par l'admin (badge 🛡️)
     geojsonLayer: null,
     loadedFeatures: [],
@@ -256,6 +257,10 @@ export function setOfficialCircuits(circuits) {
 
 export function setOfficialCircuitsStatus(status) {
     state.officialCircuitsStatus = status || {};
+}
+
+export function setOfficialCircuitsStatusUpdatedAt(stamps) {
+    state.officialCircuitsStatusUpdatedAt = stamps || {};
 }
 
 export function setTestedCircuits(tested) {

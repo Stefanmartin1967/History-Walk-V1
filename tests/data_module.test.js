@@ -710,6 +710,19 @@ describe('updatePoiData', () => {
         expect(state.userData['p1'].vu).toBe(false);
     });
 
+    // Fix 17/09/2026 : la synchro Gist fait gagner la modification la plus
+    // récente — un (dé)cochage doit donc être daté.
+    it('cas key="vu" : date le changement (vuUpdatedAt) pour la synchro', async () => {
+        const before = Date.now();
+        await updatePoiData('p1', 'vu', false);
+        expect(state.userData['p1'].vuUpdatedAt).toBeGreaterThanOrEqual(before);
+    });
+
+    it('cas key autre : ne date pas le statut visité', async () => {
+        await updatePoiData('p1', 'notes', 'x');
+        expect(state.userData['p1'].vuUpdatedAt).toBeUndefined();
+    });
+
     it('cas key autre : écrit la valeur directement', async () => {
         await updatePoiData('p1', 'planifie', true);
         expect(state.userData['p1'].planifie).toBe(true);
