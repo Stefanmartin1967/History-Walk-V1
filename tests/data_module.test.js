@@ -710,6 +710,22 @@ describe('updatePoiData', () => {
         expect(state.userData['p1'].vu).toBe(false);
     });
 
+    // Fix 18/09/2026 : cocher « fait » un circuit puis décocher un lieu sauté —
+    // la case revenait cochée car la contribution du circuit restait.
+    it('cas key="vu" : décocher retire aussi les contributions de circuits', async () => {
+        state.userData['p1'] = { vuManual: false, vu: true, visitedByCircuits: ['c1'] };
+        await updatePoiData('p1', 'vu', false);
+        expect(state.userData['p1'].visitedByCircuits).toEqual([]);
+        expect(state.userData['p1'].vu).toBe(false);
+    });
+
+    it('cas key="vu" : cocher garde les contributions de circuits', async () => {
+        state.userData['p1'] = { vuManual: false, vu: true, visitedByCircuits: ['c1'] };
+        await updatePoiData('p1', 'vu', true);
+        expect(state.userData['p1'].visitedByCircuits).toEqual(['c1']);
+        expect(state.userData['p1'].vu).toBe(true);
+    });
+
     // Fix 17/09/2026 : la synchro Gist fait gagner la modification la plus
     // récente — un (dé)cochage doit donc être daté.
     it('cas key="vu" : date le changement (vuUpdatedAt) pour la synchro', async () => {

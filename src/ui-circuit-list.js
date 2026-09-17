@@ -20,7 +20,7 @@ import { isCircuitTested } from './circuit.js';
 import { escapeXml } from './utils.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { getProcessedCircuits } from './circuit-list-service.js';
+import { getProcessedCircuits, formatUnseenLabel } from './circuit-list-service.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId, getPatrimonialName, getSearchableNames } from './data.js';
 import { foldForSearch } from './text-search.js';
@@ -812,6 +812,11 @@ function createCircuitCard(c) {
     }
     if (c._hasRestaurant) {
         metaPieces.push(`<span class="va-resto"><i data-lucide="utensils"></i>Resto</span>`);
+    }
+    // Circuit « fait » qui garde des lieux jamais vus (cf. formatUnseenLabel).
+    const unseenLabel = formatUnseenLabel(c);
+    if (unseenLabel) {
+        metaPieces.push(`<span class="va-unseen">${unseenLabel}</span>`);
     }
     const line2 = document.createElement('div');
     line2.className = 'va-meta';

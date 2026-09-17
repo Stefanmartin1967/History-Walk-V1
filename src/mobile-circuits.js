@@ -21,7 +21,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { isCircuitTested, loadCircuitById } from './circuit.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
-import { getProcessedCircuits } from './circuit-list-service.js';
+import { getProcessedCircuits, formatUnseenLabel } from './circuit-list-service.js';
 import { openStartPointModal } from './start-point.js';
 import {
     getMobileSort, setMobileSort,
@@ -262,6 +262,7 @@ export function renderMobileCircuitsList() {
                         <span class="mc-stat"><b>${kmNum}</b> km</span>
                         ${circuit._zoneName ? `<span class="mc-zone">${escapeHtml(circuit._zoneName)}</span>` : ''}
                         ${circuit._hasRestaurant ? `<span class="mc-resto"><i data-lucide="utensils"></i>Resto</span>` : ''}
+                        ${formatUnseenLabel(circuit) ? `<span class="mc-unseen">${formatUnseenLabel(circuit)}</span>` : ''}
                     </div>
                     ${flagText ? `<div class="mc-flag"><span class="dot"></span>${flagText}</div>` : ''}
                 </article>

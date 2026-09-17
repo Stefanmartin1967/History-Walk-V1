@@ -5,6 +5,33 @@ import { getZoneFromCoords, getRealDistance, getOrthodromicDistance, getPoiProp 
 import L from 'leaflet';
 
 /**
+ * Nombre de lieux DISTINCTS non visités d'un circuit.
+ * @param {object[]} pois Features du circuit (un lieu peut revenir, ex. boucle).
+ * @returns {number}
+ */
+export function countUnseenPois(pois) {
+    const unseen = new Set();
+    for (const f of pois || []) {
+        if (!f?.properties?.userData?.vu) unseen.add(getPoiId(f));
+    }
+    return unseen.size;
+}
+
+/**
+ * Libellé « N lieux non vus » des cartes de circuit. Ne s'affiche que sur un
+ * circuit marqué « fait » qui garde des lieux jamais vus (étape sautée, lieu
+ * ajouté après la marche, lieu décoché) : sur un circuit à faire, presque tout
+ * est non vu, le compteur ne serait que du bruit. Rien pour 0.
+ * @param {object} circuit Circuit enrichi (getProcessedCircuits).
+ * @returns {string} '' si rien à afficher.
+ */
+export function formatUnseenLabel(circuit) {
+    const n = circuit?._unseenCount || 0;
+    if (!circuit?._isCompleted || n <= 0) return '';
+    return n === 1 ? '1 lieu non vu' : `${n} lieux non vus`;
+}
+
+/**
  * Returns a processed list of circuits ready for display (Merged, Filtered, Sorted, Enriched).
  * Used by both PC (Sidebar) and Mobile (Full View) to ensure consistency.
  *
@@ -146,6 +173,9 @@ export function getProcessedCircuits(sortMode = 'date_desc', filterTodo = false,
             _poiCount: validPois.length,
             // Visited Count
             _visitedCount: validPois.filter(f => f.properties.userData?.vu).length,
+            // Lieux distincts non vus (une boucle repasse par son départ) —
+            // affiché sur les cartes des circuits « fait » (cf. formatUnseenLabel).
+            _unseenCount: countUnseenPois(validPois),
             _proximityFromHome: proximity
         };
     });

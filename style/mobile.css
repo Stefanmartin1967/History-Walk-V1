@@ -157,7 +157,8 @@
    .mc-resto = pill ambre si le circuit contient un resto. */
 .mc-stat,
 .mc-zone,
-.mc-resto {
+.mc-resto,
+.mc-unseen {
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -193,6 +194,12 @@
     font-weight: 600;
 }
 .mc-resto svg { width: 11px; height: 11px; }
+/* « N lieux non vus » — circuit fait qui garde des lieux jamais vus (cf. .va-unseen). */
+.mc-unseen {
+    background: var(--surface-muted);
+    color: var(--brand-2, var(--brand));
+    font-weight: 600;
+}
 .mc-flag {
     display: flex;
     align-items: center;
