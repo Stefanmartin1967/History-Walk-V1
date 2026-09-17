@@ -14,6 +14,14 @@
       <name>Mosquée d&apos;Ouled Hlel</name>
       <desc></desc>
     </wpt>
+    <wpt lat="33.81391470584298" lon="10.97268506884575">
+      <name>Mausolée Marmoura</name>
+      <desc></desc>
+    </wpt>
+    <wpt lat="33.81366398849076" lon="10.973104834556581">
+      <name>Mosquée Marmoura</name>
+      <desc></desc>
+    </wpt>
     <wpt lat="33.814972" lon="10.96475">
       <name>Mosquée Mrabet Messaoud</name>
       <desc></desc>
@@ -89,18 +97,28 @@ Répertoire J. Fathallah, n° 285 | http://palaisbenayed.com/wp-content/uploads/
       <trkpt lat="33.814818" lon="10.973476"><ele>0</ele></trkpt>
       <trkpt lat="33.814807" lon="10.973417"><ele>0</ele></trkpt>
       <trkpt lat="33.814799" lon="10.973242"><ele>0</ele></trkpt>
-      <trkpt lat="33.814819" lon="10.97311"><ele>0</ele></trkpt>
-      <trkpt lat="33.81476" lon="10.973041"><ele>0</ele></trkpt>
-      <trkpt lat="33.81474" lon="10.973008"><ele>0</ele></trkpt>
-      <trkpt lat="33.814647" lon="10.972829"><ele>0</ele></trkpt>
-      <trkpt lat="33.814491" lon="10.972491"><ele>0</ele></trkpt>
-      <trkpt lat="33.814442" lon="10.972273"><ele>0</ele></trkpt>
-      <trkpt lat="33.814388" lon="10.972145"><ele>0</ele></trkpt>
-      <trkpt lat="33.814333" lon="10.972083"><ele>0</ele></trkpt>
-      <trkpt lat="33.814272" lon="10.972037"><ele>0</ele></trkpt>
-      <trkpt lat="33.81421" lon="10.972008"><ele>0</ele></trkpt>
-      <trkpt lat="33.813655" lon="10.971619"><ele>0</ele></trkpt>
-      <trkpt lat="33.813582" lon="10.971549"><ele>0</ele></trkpt>
+      <trkpt lat="33.814677" lon="10.973302"><ele>0</ele></trkpt>
+      <trkpt lat="33.814452" lon="10.973458"><ele>0</ele></trkpt>
+      <trkpt lat="33.814389" lon="10.973356"><ele>0</ele></trkpt>
+      <trkpt lat="33.814075" lon="10.972763"><ele>0</ele></trkpt>
+      <trkpt lat="33.814389" lon="10.973356"><ele>0</ele></trkpt>
+      <trkpt lat="33.814452" lon="10.973458"><ele>0</ele></trkpt>
+      <trkpt lat="33.81416" lon="10.973688"><ele>0</ele></trkpt>
+      <trkpt lat="33.814096" lon="10.97362"><ele>0</ele></trkpt>
+      <trkpt lat="33.81404" lon="10.973547"><ele>0</ele></trkpt>
+      <trkpt lat="33.814007" lon="10.973529"><ele>0</ele></trkpt>
+      <trkpt lat="33.813787" lon="10.973511"><ele>0</ele></trkpt>
+      <trkpt lat="33.814007" lon="10.973529"><ele>0</ele></trkpt>
+      <trkpt lat="33.81404" lon="10.973547"><ele>0</ele></trkpt>
+      <trkpt lat="33.814096" lon="10.97362"><ele>0</ele></trkpt>
+      <trkpt lat="33.81416" lon="10.973688"><ele>0</ele></trkpt>
+      <trkpt lat="33.814452" lon="10.973458"><ele>0</ele></trkpt>
+      <trkpt lat="33.814389" lon="10.973356"><ele>0</ele></trkpt>
+      <trkpt lat="33.814075" lon="10.972763"><ele>0</ele></trkpt>
+      <trkpt lat="33.813903" lon="10.972465"><ele>0</ele></trkpt>
+      <trkpt lat="33.813799" lon="10.972257"><ele>0</ele></trkpt>
+      <trkpt lat="33.81368" lon="10.971943"><ele>0</ele></trkpt>
+      <trkpt lat="33.813578" lon="10.971695"><ele>0</ele></trkpt>
       <trkpt lat="33.81348" lon="10.971489"><ele>0</ele></trkpt>
       <trkpt lat="33.813202" lon="10.970829"><ele>0</ele></trkpt>
       <trkpt lat="33.813177" lon="10.970765"><ele>0</ele></trkpt>
