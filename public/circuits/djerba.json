@@ -175,10 +175,10 @@
   },
   {
     "id": "HW-01KJB21G695QTYPJYJ4XYW7QHE",
-    "name": "Circuit de Mosquée Wadran à Restaurant Port D'Aghir",
-    "file": "djerba/Circuit de Mosquée Wadran à Restaurant Port D'Aghir via Mosquée Chbêbia.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
-    "distance": "8.1 km",
+    "name": "Circuit de Mosquée Ouedrane à Restaurant Port D'Aghir",
+    "file": "djerba/Circuit de Mosquée Ouedrane à Restaurant Port D'Aghir.gpx",
+    "description": "",
+    "distance": "6.7 km",
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Arkou",
@@ -186,7 +186,7 @@
       "HW-01K77WPE6B2CT1A4B58N917MXQ",
       "HW-01KJABRN0DWM059C795C8SSD8C",
       "HW-01K77WPE6A3AYDG7D68R9A0JBT",
-      "HW-PWQM8ZZC2LR7PF4UTX73MGTM21",
+      "HW-01M1RX6DJC977E62HDYDCS546E",
       "HW-01KJABRN0VFPFW41YCMJ2CX585"
     ]
   },
@@ -294,6 +294,25 @@
     "poiIds": [
       "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
       "HW-01M1PGKC4GDW390CEFN4RWMS0V"
+    ]
+  },
+  {
+    "id": "HW-01M2NSAMPXGM9C950KMRVXBK3V",
+    "name": "Circuit de Trojette - Fours à chaux historiques à Mosquée Ben Aissa",
+    "file": "djerba/Circuit de Trojette - Fours à chaux historiques à Mosquée Ben Aissa.gpx",
+    "description": "",
+    "distance": "5.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Arkou",
+    "poiIds": [
+      "HW-01KZH0VHMPH90M84WP3VQJ9QSA",
+      "HW-01K77WPE67YEYJ337ADV7QBX5P",
+      "HW-01K77WPE6QS9TJZYHXPSJKW47P",
+      "HW-01KYFCTHGZ0XS4W7SAXKGCMSAV",
+      "HW-01K77WPE6QGFPEGPTZ1G59C9FZ",
+      "HW-01K77WPE68ZXYA0Z9T3QEN0VYW",
+      "HW-01K77WPE6QN6S4TSGEZQ6DQGXA"
     ]
   }
 ]
