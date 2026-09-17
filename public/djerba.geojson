@@ -11347,15 +11347,15 @@
         "Catégorie": "Mausolée",
         "Zone": "Midoun",
         "HW_ID": "HW-01KKS462NFDJ7E80WSWZ9TK9R7",
-        "description": "Bâtiment présent sur OSM mais sans nom",
+        "description": "Mausolée à coupole (qubba) à Khazroun, nom non confirmé : « Marmoura » est le libellé d'une fiche Google Maps.",
         "accessPoint": [
           10.9727629,
           33.8140752
         ],
         "Nom du site arabe": "",
         "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
