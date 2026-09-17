@@ -63,7 +63,7 @@ vi.mock('leaflet', () => ({
 import { state } from '../src/state.js';
 import { isCircuitCompleted } from '../src/circuit.js';
 import { getZoneFromCoords, getRealDistance, getOrthodromicDistance } from '../src/utils.js';
-import { getProcessedCircuits, getAvailableZonesFromCircuits } from '../src/circuit-list-service.js';
+import { getProcessedCircuits, getAvailableZonesFromCircuits, formatUnseenLabel, countUnseenPois } from '../src/circuit-list-service.js';
 
 // ----------------------------------------------------------------------------
 // Helpers
@@ -328,6 +328,20 @@ describe('circuit-list-service', () => {
             expect(r[0]._poiCount).toBe(3);
             expect(r[0]._visitedCount).toBe(2);
         });
+
+        // 18/09/2026 : « N lieux non vus » sur les circuits faits.
+        it('unseenCount compte les lieux DISTINCTS non vus (une boucle repasse par son départ)', () => {
+            state.myCircuits = [{ id: 'm1', name: 'Boucle', poiIds: ['p1', 'p2', 'p3', 'p1'] }];
+            state.loadedFeatures = [
+                makePoi('p1', [10, 33.5], { userData: {} }),
+                makePoi('p2', [10, 33.5], { userData: { vu: true } }),
+                makePoi('p3', [10, 33.5]),
+            ];
+
+            const r = getProcessedCircuits();
+
+            expect(r[0]._unseenCount).toBe(2);
+        });
     });
 
     // ========================================================================
@@ -502,5 +516,33 @@ describe('circuit-list-service', () => {
             expect(r.zoneCounts).toEqual({ Nord: 1 });
             expect(r.sortedZones).toEqual(['Nord']);
         });
+    });
+});
+
+
+// ============================================================================
+// « N lieux non vus » (18/09/2026)
+// ============================================================================
+describe('formatUnseenLabel / countUnseenPois', () => {
+    it('circuit fait avec des lieux non vus → libellé accordé', () => {
+        expect(formatUnseenLabel({ _isCompleted: true, _unseenCount: 2 })).toBe('2 lieux non vus');
+        expect(formatUnseenLabel({ _isCompleted: true, _unseenCount: 1 })).toBe('1 lieu non vu');
+    });
+
+    it('jamais « 0 lieux non vus »', () => {
+        expect(formatUnseenLabel({ _isCompleted: true, _unseenCount: 0 })).toBe('');
+    });
+
+    it('circuit à faire → rien (tout y est non vu, ce serait du bruit)', () => {
+        expect(formatUnseenLabel({ _isCompleted: false, _unseenCount: 5 })).toBe('');
+    });
+
+    it('entrée absente → rien', () => {
+        expect(formatUnseenLabel(null)).toBe('');
+    });
+
+    it('countUnseenPois : liste vide ou absente → 0', () => {
+        expect(countUnseenPois([])).toBe(0);
+        expect(countUnseenPois(undefined)).toBe(0);
     });
 });

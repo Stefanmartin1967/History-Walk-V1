@@ -2004,6 +2004,19 @@
     font-weight: 600;
 }
 .va-resto svg { width: 11px; height: 11px; }
+/* « N lieux non vus » — circuit fait qui garde des lieux jamais vus.
+   Même gabarit que la zone ; texte en ton « à faire » (brand) pour signaler
+   ce qui reste, sans alarme. */
+.va-unseen {
+    display: inline-flex;
+    align-items: center;
+    background: var(--surface-muted);
+    color: var(--brand-2, var(--brand));
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+}
 
 /* Ligne 3 — flag textuel typographique */
 .va-flag {

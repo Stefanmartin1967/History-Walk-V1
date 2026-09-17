@@ -624,6 +624,11 @@ export async function updatePoiData(poiId, key, value) {
     // On stocke donc dans vuManual ; `vu` reste dérivé (vuManual || visitedByCircuits > 0).
     if (key === 'vu') {
         state.userData[poiId].vuManual = value === true;
+        // Décocher = « je n'ai pas vu ce lieu » : le geste l'emporte aussi sur les
+        // circuits marqués « fait » qui le contiennent. Sans ça, la case revenait
+        // cochée à la réouverture (fix 18/09/2026 : cocher « fait » un circuit puis
+        // décocher les lieux sautés). Recocher le circuit les remarquera.
+        if (value !== true) state.userData[poiId].visitedByCircuits = [];
         stampVisited(state.userData[poiId]);
         recomputeVu(state.userData[poiId]);
     } else {
