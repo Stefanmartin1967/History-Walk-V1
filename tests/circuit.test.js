@@ -35,6 +35,7 @@ vi.mock('../src/state.js', () => {
         setActiveCircuitId: vi.fn(id => { state.activeCircuitId = id; }),
         setTestedCircuit: vi.fn(),
         setOfficialCircuitStatus: vi.fn(),
+        setOfficialCircuitsStatusUpdatedAt: vi.fn(v => { state.officialCircuitsStatusUpdatedAt = v; }),
         setCustomDraftName: vi.fn(name => { state.customDraftName = name; }),
         setCurrentFeatureId: vi.fn(),
         setCurrentCircuitIndex: vi.fn(),
@@ -512,6 +513,20 @@ describe('setCircuitVisitedState', () => {
         expect(setTestedCircuit).toHaveBeenCalledWith('off1', true);
         expect(saveAppState).toHaveBeenCalledWith('official_circuits_status_djerba', expect.anything());
         expect(saveAppState).toHaveBeenCalledWith('tested_circuits_djerba', expect.anything());
+    });
+
+    // Fix 17/09/2026 : statut et contributions datés, pour que la synchro Gist
+    // propage aussi un « pas fait ».
+    it('officiel : date le changement de statut et la persiste', async () => {
+        state.officialCircuits = [{ id: 'off1', name: 'Off', poiIds: ['p1'] }];
+        state.loadedFeatures = [poi('p1')];
+        const before = Date.now();
+
+        await setCircuitVisitedState('off1', false);
+
+        expect(state.officialCircuitsStatusUpdatedAt.off1).toBeGreaterThanOrEqual(before);
+        expect(saveAppState).toHaveBeenCalledWith('official_circuits_status_updated_djerba', state.officialCircuitsStatusUpdatedAt);
+        expect(state.userData.p1.vuUpdatedAt).toBeGreaterThanOrEqual(before);
     });
 
     it('local : saveCircuit avec isCompleted MAJ', async () => {

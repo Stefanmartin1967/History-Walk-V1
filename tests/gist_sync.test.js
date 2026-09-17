@@ -9,6 +9,7 @@ vi.mock('../src/state.js', () => {
         userData: {},
         loadedFeatures: [],
         officialCircuitsStatus: {},
+        officialCircuitsStatusUpdatedAt: {},
         testedCircuits: {},
         hiddenPoiIds: [],
         hiddenCircuitIds: []
@@ -23,6 +24,7 @@ vi.mock('../src/state.js', () => {
             if (val) state.officialCircuitsStatus[cId] = true;
             else delete state.officialCircuitsStatus[cId];
         }),
+        setOfficialCircuitsStatusUpdatedAt: vi.fn((stamps) => { state.officialCircuitsStatusUpdatedAt = stamps || {}; }),
         setHiddenPoiIds: vi.fn((ids) => { state.hiddenPoiIds = Array.isArray(ids) ? ids : []; }),
         setHiddenCircuitIds: vi.fn((ids) => { state.hiddenCircuitIds = Array.isArray(ids) ? ids : []; })
     };
@@ -63,6 +65,9 @@ function resetState() {
     state.userData = {};
     state.loadedFeatures = [];
     state.officialCircuitsStatus = {};
+    state.officialCircuitsStatusUpdatedAt = {};
+    state.officialCircuits = [];
+    state.myCircuits = [];
     state.testedCircuits = {};
     state.hiddenPoiIds = [];
     state.hiddenCircuitIds = [];
@@ -261,6 +266,40 @@ describe('mergeRemoteIntoLocal — visitedByCircuits', () => {
     });
 });
 
+describe('mergeRemoteIntoLocal — statut visité daté (fix 17/09/2026)', () => {
+    it('décoché sur le PC, encore coché (plus ancien) sur le téléphone → reste décoché', () => {
+        state.userData = { poi1: { vuManual: false, visitedByCircuits: [], vu: false, vuUpdatedAt: 200 } };
+        const remote = { userData: { poi1: { vuManual: true, visitedByCircuits: ['c1'], vu: true, vuUpdatedAt: 100 } } };
+        const { updates } = mergeRemoteIntoLocal(remote);
+        expect(updates).toHaveLength(0);
+        expect(state.userData.poi1.vu).toBe(false);
+    });
+
+    it('décoché ailleurs plus récemment → décoché ici aussi, date reprise', () => {
+        state.userData = { poi1: { vuManual: true, vu: true } };
+        const remote = { userData: { poi1: { vuManual: false, visitedByCircuits: [], vu: false, vuUpdatedAt: 500 } } };
+        const { updates } = mergeRemoteIntoLocal(remote);
+        expect(updates).toHaveLength(1);
+        expect(state.userData.poi1).toMatchObject({ vuManual: false, vu: false, vuUpdatedAt: 500 });
+    });
+
+    it('le visité fusionné ne compte que les circuits qui existent encore', () => {
+        state.officialCircuits = [{ id: 'c-existe' }];
+        state.userData = { poi1: {} };
+        const remote = { userData: { poi1: { visitedByCircuits: ['c-supprime'], vuUpdatedAt: 5 } } };
+        mergeRemoteIntoLocal(remote);
+        expect(state.userData.poi1.vu).toBe(false);
+    });
+
+    it('buildPayload transporte les dates (lieu et circuit)', () => {
+        state.userData = { poi1: { vuManual: false, vuUpdatedAt: 42 } };
+        state.officialCircuitsStatusUpdatedAt = { c1: 43 };
+        const payload = buildPayload();
+        expect(payload.userData.poi1.vuUpdatedAt).toBe(42);
+        expect(payload.circuitsStatusUpdatedAt).toEqual({ c1: 43 });
+    });
+});
+
 describe('mergeRemoteIntoLocal — vu rétro-compat & recompute', () => {
     it('remote vu=true sans migration → local vuManual=true', () => {
         state.userData = { poi1: {} };
@@ -307,6 +346,25 @@ describe('mergeRemoteIntoLocal — incontournable & circuits', () => {
         const remote = { userData: { poi1: { incontournable: true } } };
         const { updates } = mergeRemoteIntoLocal(remote);
         expect(updates[0].data.incontournable).toBe(true);
+    });
+
+    it('circuitsStatus : un « pas fait » plus récent ailleurs se propage (fix 17/09)', () => {
+        state.officialCircuitsStatus = { c1: true };
+        state.officialCircuitsStatusUpdatedAt = { c1: 100 };
+        const remote = { userData: {}, circuitsStatus: { c1: false }, circuitsStatusUpdatedAt: { c1: 200 } };
+        const { circuitsChanged } = mergeRemoteIntoLocal(remote);
+        expect(circuitsChanged).toBe(true);
+        expect(setOfficialCircuitStatus).toHaveBeenCalledWith('c1', false);
+        expect(state.officialCircuitsStatusUpdatedAt.c1).toBe(200);
+    });
+
+    it('circuitsStatus : un « fait » plus ancien ailleurs ne ressuscite pas (fix 17/09)', () => {
+        state.officialCircuitsStatus = { c1: false };
+        state.officialCircuitsStatusUpdatedAt = { c1: 300 };
+        const remote = { userData: {}, circuitsStatus: { c1: true }, circuitsStatusUpdatedAt: { c1: 100 } };
+        const { circuitsChanged } = mergeRemoteIntoLocal(remote);
+        expect(circuitsChanged).toBe(false);
+        expect(setOfficialCircuitStatus).not.toHaveBeenCalled();
     });
 
     it('circuitsStatus : remote true → setter appelé + circuitsChanged=true', () => {

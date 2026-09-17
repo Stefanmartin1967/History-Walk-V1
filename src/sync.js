@@ -4,6 +4,7 @@ import { getPoiId, applyFilters, recomputeVu } from './data.js';
 import { batchSavePoiData } from './database.js';
 import { showToast } from './toast.js';
 import { loadCircuitFromIds } from './circuit.js';
+import { stampVisited } from './visited-state.js';
 
 // --- SCANNER GENÉRIQUE ---
 
@@ -150,6 +151,7 @@ async function handleSyncPayload(payload) {
 
             // Import de visites depuis QR : action manuelle explicite → vuManual.
             feature.properties.userData.vuManual = true;
+            stampVisited(feature.properties.userData);
             recomputeVu(feature.properties.userData);
             state.userData[poiId] = feature.properties.userData;
 

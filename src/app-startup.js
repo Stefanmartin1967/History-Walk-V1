@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setDeletedOfficialCircuitIds, setPoiCategories, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setOfficialCircuitsStatusUpdatedAt, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setDeletedOfficialCircuitIds, setPoiCategories, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
@@ -524,6 +524,8 @@ export async function loadAndInitializeMap() {
         clearModificationLog().catch(() => {});
         const loadedStatus = await getAppState(`official_circuits_status_${activeMapId}`) || {};
         setOfficialCircuitsStatus(loadedStatus);
+        // Dates des changements de ce statut (synchro Gist : le plus récent gagne).
+        setOfficialCircuitsStatusUpdatedAt(await getAppState(`official_circuits_status_updated_${activeMapId}`) || {});
         const loadedTested = await getAppState(`tested_circuits_${activeMapId}`) || {};
         setTestedCircuits(loadedTested);
 

@@ -56,6 +56,7 @@ export const PERSONAL_KEYS = [
     'vu',                  // dérivé : visité (manuel ou via circuits)
     'vuManual',            // user a explicitement coché "vu"
     'visitedByCircuits',   // liste des circuits qui marquent ce POI comme fait
+    'vuUpdatedAt',         // date (ms) du dernier changement du statut visité — synchro Gist (visited-state.js)
     'visited',             // legacy — garde pour rétro-compat
     'notes',               // notes personnelles user
     'incontournable',      // favori user (court-circuite filtres planifiés/visités)

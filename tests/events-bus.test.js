@@ -13,6 +13,7 @@ const h = vi.hoisted(() => ({
     setCircuitIdToImportFor: vi.fn(),
     gpxImporterClick: vi.fn(),
     applyFilters: vi.fn(),
+    refreshVisitedFromCircuits: vi.fn(() => false),
 }));
 
 vi.mock('../src/mobile-state.js', () => ({ isMobileView: (...a) => h.isMobileView(...a) }));
@@ -27,6 +28,7 @@ vi.mock('../src/circuit.js', () => ({
 vi.mock('../src/state.js', () => ({ setCircuitIdToImportFor: (...a) => h.setCircuitIdToImportFor(...a) }));
 vi.mock('../src/ui-dom.js', () => ({ DOM: { gpxImporter: { click: (...a) => h.gpxImporterClick(...a) } } }));
 vi.mock('../src/data.js', () => ({ applyFilters: (...a) => h.applyFilters(...a) }));
+vi.mock('../src/visited-state.js', () => ({ refreshVisitedFromCircuits: (...a) => h.refreshVisitedFromCircuits(...a) }));
 
 import { eventBus } from '../src/events.js';
 import { setupEventBusListeners } from '../src/events-bus.js';
@@ -75,6 +77,21 @@ describe('events-bus — circuits', () => {
     it('circuit:list-updated → populateCircuitsMenu', () => {
         eventBus.emit('circuit:list-updated');
         expect(h.populateCircuitsMenu).toHaveBeenCalledTimes(1);
+    });
+
+    // Fix 17/09/2026 : un circuit supprimé ou restauré change le statut visité
+    // de ses lieux — la carte n'est rafraîchie que si un lieu a changé.
+    it('circuit:list-updated → recalcul du statut visité ; carte rafraîchie si un lieu change', () => {
+        h.refreshVisitedFromCircuits.mockReturnValueOnce(true);
+        eventBus.emit('circuit:list-updated');
+        expect(h.refreshVisitedFromCircuits).toHaveBeenCalledTimes(1);
+        expect(h.applyFilters).toHaveBeenCalledTimes(1);
+    });
+
+    it('circuit:list-updated sans changement de statut → pas de rafraîchissement de carte', () => {
+        h.refreshVisitedFromCircuits.mockReturnValueOnce(false);
+        eventBus.emit('circuit:list-updated');
+        expect(h.applyFilters).not.toHaveBeenCalled();
     });
 
     it('circuit:request-import → setCircuitIdToImportFor + clic sur l\'importeur GPX', () => {

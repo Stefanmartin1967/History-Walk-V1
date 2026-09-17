@@ -3,13 +3,14 @@
 // Chaque utilisateur stocke son propre Gist ID dans localStorage.
 // Le token PAT (scope "gist") est partagé avec github-sync.js.
 
-import { state, setOfficialCircuitStatus, setHiddenPoiIds, setHiddenCircuitIds } from './state.js';
+import { state, setOfficialCircuitStatus, setOfficialCircuitsStatusUpdatedAt, setHiddenPoiIds, setHiddenCircuitIds } from './state.js';
 import { getStoredToken } from './github-sync.js';
 import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
 import { savePoiData, batchSavePoiData, saveAppState } from './database.js';
 import { eventBus } from './events.js';
 import { fetchWithTimeout } from './net.js';
+import { mergeVisited, mergeCircuitDone, computeVu } from './visited-state.js';
 
 const GIST_ID_KEY    = 'hw_gist_id';
 const GIST_FILE_NAME = 'history_walk_userdata.json';
@@ -56,7 +57,9 @@ export function buildPayload() {
     // FIXE et connu, pas d'ID opaque à découvrir). `notes` reste dans
     // PERSONAL_KEYS (config.js) : toujours exclu de la publication, juste plus
     // de ce Gist. Voir project_gist_to_private_repo_migration.
-    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'incontournable', 'workPhotos'];
+    // vuUpdatedAt : date du dernier changement du statut visité — la fusion fait
+    // gagner le plus récent (visited-state.js, fix 17/09/2026).
+    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'vuUpdatedAt', 'incontournable', 'workPhotos'];
     const filtered = {};
     for (const [poiId, data] of Object.entries(state.userData || {})) {
         const slim = {};
@@ -67,6 +70,8 @@ export function buildPayload() {
         mapId: state.currentMapId,
         userData: filtered,
         circuitsStatus: state.officialCircuitsStatus || {},
+        // Dates des changements de statut « fait », par circuit (même règle).
+        circuitsStatusUpdatedAt: state.officialCircuitsStatusUpdatedAt || {},
         // testedCircuits (« vérifié ») RETIRÉ du Gist (07/06/2026) : statut
         // AUTORITAIRE publié par l'admin sur GitHub (tested_<map>.json), pas une
         // préférence par-appareil. Le Gist (par-user, à la traîne) ne doit pas en
@@ -95,31 +100,15 @@ export function mergeRemoteIntoLocal(remote) {
         let changed = false;
         const merged = { ...local };
 
-        // vuManual : true gagne toujours (action explicite de l'utilisateur)
-        if (remoteData.vuManual === true && local.vuManual !== true) {
-            merged.vuManual = true;
+        // Statut visité : la modification la plus récente gagne ; sans date des
+        // deux côtés (données antérieures au 17/09/2026), « visité » gagne comme
+        // avant. Cf. visited-state.js — l'ancienne règle ré-écrasait un « non
+        // visité » posé sur un autre appareil.
+        const visitedPatch = mergeVisited(local, remoteData);
+        if (visitedPatch) {
+            Object.assign(merged, visitedPatch);
+            merged.vu = computeVu(merged);
             changed = true;
-        }
-        // visitedByCircuits : union (chaque appareil peut avoir coché "Fait" des circuits différents)
-        if (Array.isArray(remoteData.visitedByCircuits) && remoteData.visitedByCircuits.length > 0) {
-            const localList = Array.isArray(local.visitedByCircuits) ? local.visitedByCircuits : [];
-            const union = Array.from(new Set([...localList, ...remoteData.visitedByCircuits]));
-            if (union.length !== localList.length) {
-                merged.visitedByCircuits = union;
-                changed = true;
-            }
-        }
-        // vu : rétro-compat — si le remote n'a pas encore migré, on traite son `vu=true`
-        // comme un vuManual=true (meilleur fallback possible côté lecture).
-        if (remoteData.vu === true && local.vu !== true && remoteData.vuManual === undefined && !Array.isArray(remoteData.visitedByCircuits)) {
-            merged.vuManual = true;
-            changed = true;
-        }
-        // Recompute vu après tout merge lié au visité
-        if (changed) {
-            const manual = merged.vuManual === true;
-            const byCircuits = Array.isArray(merged.visitedByCircuits) && merged.visitedByCircuits.length > 0;
-            merged.vu = manual || byCircuits;
         }
         // incontournable : true gagne
         if (remoteData.incontournable === true && !local.incontournable) {
@@ -154,15 +143,21 @@ export function mergeRemoteIntoLocal(remote) {
         }
     }
 
-    // circuitsStatus : true gagne
+    // circuitsStatus : le changement le plus récent gagne (sinon true gagne,
+    // pour des données sans date). Un « pas fait » doit pouvoir se propager.
     let circuitsChanged = false;
     const remoteStatus = remote.circuitsStatus || {};
+    const remoteStamps = remote.circuitsStatusUpdatedAt || {};
+    const localStatus = state.officialCircuitsStatus || {};
+    let stamps = state.officialCircuitsStatusUpdatedAt || {};
     for (const [cId, val] of Object.entries(remoteStatus)) {
-        if (val === true && !state.officialCircuitsStatus[cId]) {
-            setOfficialCircuitStatus(cId, true);
-            circuitsChanged = true;
-        }
+        const res = mergeCircuitDone(localStatus[cId], stamps[cId], val, remoteStamps[cId]);
+        if (!res) continue;
+        if (res.value !== (localStatus[cId] === true)) setOfficialCircuitStatus(cId, res.value);
+        if (res.stamp !== null) stamps = { ...stamps, [cId]: res.stamp };
+        circuitsChanged = true;
     }
+    if (stamps !== state.officialCircuitsStatusUpdatedAt) setOfficialCircuitsStatusUpdatedAt(stamps);
 
     // testedCircuits (« vérifié ») n'est PLUS synchronisé via le Gist : autorité
     // serveur (tested_<map>.json), appliquée au boot (app-startup.js). Le retirer
@@ -210,6 +205,7 @@ async function applyRemoteMerge(remote) {
     }
     if (circuitsChanged) {
         await saveAppState(`official_circuits_status_${state.currentMapId}`, state.officialCircuitsStatus);
+        await saveAppState(`official_circuits_status_updated_${state.currentMapId}`, state.officialCircuitsStatusUpdatedAt || {});
     }
     if (hiddenChanged) {
         await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
