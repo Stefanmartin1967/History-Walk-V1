@@ -9209,7 +9209,7 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-22",
@@ -15882,7 +15882,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Trojjete - Fours à chaux historiques",
+        "Nom du site FR": "Trojette - Fours à chaux historiques",
         "Catégorie": "Site archéologique",
         "osm_ref": "way/1454983536",
         "HW_ID": "HW-01KZH0VHMPH90M84WP3VQJ9QSA",
