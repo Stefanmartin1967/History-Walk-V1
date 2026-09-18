@@ -5839,8 +5839,13 @@
         "Zone": "Bou Melel",
         "Source": "https://www.turess.com/fr/letemps/52984?utm\nRépertoire J. Fathallah, n° 6 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6H365AYB72RWY40WZX",
-        "photos": [],
-        "description": "Jalel n° 6 — « Sidi Bahri. Boumellal. Mosquée Mausolée malékite. Très ancienne.\nPhotos d'une nouvelle mosquée sur Maps, voir si l'ancienne subsiste toujours",
+        "photos": [
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1789724044296.jpg",
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1789724045878.jpg",
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1789724047611.jpg",
+          "photos/poi_HW-01K77WPE6H365AYB72RWY40WZX_1789724049127.jpg"
+        ],
+        "description": "Jalel n° 6 — « Sidi Bahri. Boumellal. Mosquée Mausolée malékite. Très ancienne.",
         "info_gpx": "",
         "accessPoint": [
           10.8541492,
@@ -6084,7 +6089,13 @@
         "Zone": "Bou Melel",
         "Source": "https://evendo.com/locations/tunisia/djerba/landmark/mosquee-sidi-bou-said\nRépertoire J. Fathallah, n° 12 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6J23YSBPP5PMBBZ23Y",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1789724036180.jpg",
+          "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1789724037823.jpg",
+          "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1789724039375.jpg",
+          "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1789724040938.jpg",
+          "photos/poi_HW-01K77WPE6J23YSBPP5PMBBZ23Y_1789724042637.jpg"
+        ],
         "description": "Jalel n° 12 — « Sidi Bousaid. Boumellal. Mosquée malékite. Très ancienne.",
         "accessPoint": [
           10.8474973,
@@ -7124,7 +7135,12 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6M5QZM1DZV18R4EDHR_1789724031075.jpg",
+          "photos/poi_HW-01K77WPE6M5QZM1DZV18R4EDHR_1789724032944.jpg",
+          "photos/poi_HW-01K77WPE6M5QZM1DZV18R4EDHR_1789724034538.jpg"
+        ]
       }
     },
     {
