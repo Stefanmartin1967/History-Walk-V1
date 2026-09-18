@@ -673,15 +673,34 @@
       "properties": {
         "Nom du site FR": "Huilerie Traditionnelle Souterraine Fessili",
         "Nom du site arabe": "معصرة الفصيلي",
-        "Catégorie": "Culture et tradition",
+        "Catégorie": "Artisanat",
         "Zone": "Midoun",
-        "Source": null,
+        "Source": "",
         "HW_ID": "HW-01K77WPE68MMPS9ZVR6XTV9J61",
         "accessPoint": [
           10.9918059,
           33.8104952
         ],
-        "osm_ref": "node/11691949310"
+        "osm_ref": "node/11691949310",
+        "Sous-type": "Huilerie",
+        "État": "Désaffecté",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "Huilerie visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
