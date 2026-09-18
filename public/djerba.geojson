@@ -5757,7 +5757,13 @@
         "Zone": "Taourit",
         "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-vingt-deux-mosquees-une-eglise-et-une-synagogue/208839/",
         "HW_ID": "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1789740337832.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1789740339613.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1789740341429.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1789740344540.jpg",
+          "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1789740346250.jpg"
+        ],
         "description": "La petite église orthodoxe, fondée par Sakillaris Kandinys rappelle la présence grecque en nombre jusqu'aux années 1950. Ceux-ci étaient les descendants des pêcheurs d'éponge et de poulpes qui s'étaient installés à Djerbin à la fin du 19ème siècle. C'est la seule église orthodoxes de l'île, dont la dernière rénovation date de 2019, sous la supervision de Dimitri Mavrothalassitis. L'ensemble du lieu de culte a ainsi été remise à neuf, ainsi que plusieurs icônes.",
         "info_gpx": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant",
         "accessPoint": [
