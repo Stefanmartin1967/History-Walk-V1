@@ -10536,17 +10536,23 @@
         "Source": "",
         "osm_ref": "",
         "maps_ref": "",
-        "Téléphone": "",
+        "Téléphone": "+216 20 302 040",
         "Horaires": "",
-        "Facebook": "",
+        "Facebook": "https://www.facebook.com/p/Restaurant-port-aghir-100057559835894/?locale=fr_FR",
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-22",
-        "mapsChecked": false,
+        "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "photos": [
+          "photos/poi_HW-01KJABRN0VFPFW41YCMJ2CX585_1789709078990.jpg",
+          "photos/poi_HW-01KJABRN0VFPFW41YCMJ2CX585_1789709080961.jpg",
+          "photos/poi_HW-01KJABRN0VFPFW41YCMJ2CX585_1789709082606.jpg",
+          "photos/poi_HW-01KJABRN0VFPFW41YCMJ2CX585_1789709084315.jpg"
+        ]
       }
     },
     {
