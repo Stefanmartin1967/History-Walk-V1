@@ -1358,7 +1358,11 @@
         "Zone": "Midoun",
         "Source": "Répertoire J. Fathallah, n° 283 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE69CKZWJHD3JAJT874K",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE69CKZWJHD3JAJT874K_1789745774186.jpg",
+          "photos/poi_HW-01K77WPE69CKZWJHD3JAJT874K_1789745776145.jpg",
+          "photos/poi_HW-01K77WPE69CKZWJHD3JAJT874K_1789745778161.jpg"
+        ],
         "accessPoint": [
           10.9646197,
           33.8148676
