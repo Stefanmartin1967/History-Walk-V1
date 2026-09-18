@@ -466,6 +466,22 @@ describe('convertToDraft', () => {
         expect(state.editingMode).toBe(true);              // reste en mode 'create'
     });
 
+    // 18/09/2026 : le badge « Vérifié » ne se décide plus à l'ouverture de
+    // l'édition (retrait en mémoire seule, qui revenait au rechargement) mais à
+    // la publication, selon les étapes (tested-sync.js).
+    it('admin sur un officiel VÉRIFIÉ : ouvrir « Modifier » ne retire pas le badge', () => {
+        state.isAdmin = true;
+        state.activeCircuitId = 'o1';
+        state.currentCircuit = [poi('A')];
+        state.officialCircuits = [{ id: 'o1', name: 'Off', poiIds: ['A'] }];
+        state.testedCircuits = { o1: true };
+        DOM.circuitTitleText = { textContent: 'Off' };
+
+        convertToDraft();
+
+        expect(setTestedCircuit).not.toHaveBeenCalled();
+    });
+
     it('sans tracé : pas de base de péremption', () => {
         state.isAdmin = true;
         state.activeCircuitId = 'c2';
@@ -513,6 +529,31 @@ describe('setCircuitVisitedState', () => {
         expect(setTestedCircuit).toHaveBeenCalledWith('off1', true);
         expect(saveAppState).toHaveBeenCalledWith('official_circuits_status_djerba', expect.anything());
         expect(saveAppState).toHaveBeenCalledWith('tested_circuits_djerba', expect.anything());
+    });
+
+    // 18/09/2026 : les étapes marchées sont mémorisées au moment de cocher —
+    // référence pour décider, à la publication, si le badge tient.
+    it('officiel admin coché « fait » : mémorise les étapes marchées', async () => {
+        state.officialCircuits = [{ id: 'off1', name: 'Off', poiIds: ['p1', 'p2'] }];
+        state.isAdmin = true;
+
+        await setCircuitVisitedState('off1', true);
+
+        expect(saveAppState).toHaveBeenCalledWith('tested_steps_djerba', { off1: ['p1', 'p2'] });
+    });
+
+    it('officiel admin décoché : oublie les étapes', async () => {
+        state.officialCircuits = [{ id: 'off1', name: 'Off', poiIds: ['p1'] }];
+        state.isAdmin = true;
+        // Implémentation ciblée (pas de « Once » : non consommée, elle fuirait
+        // dans le test suivant).
+        getAppState.mockImplementation(async k => (k === 'tested_steps_djerba' ? { off1: ['p1'], other: ['x'] } : undefined));
+        try {
+            await setCircuitVisitedState('off1', false);
+            expect(saveAppState).toHaveBeenCalledWith('tested_steps_djerba', { other: ['x'] });
+        } finally {
+            getAppState.mockReset();
+        }
     });
 
     // Fix 17/09/2026 : statut et contributions datés, pour que la synchro Gist

@@ -6,6 +6,7 @@ const h = vi.hoisted(() => ({
     mockState: { isAdmin: true, currentMapId: 'djerba', testedCircuits: {} },
     getStoredTokenSpy: vi.fn(() => 'ghp_faketoken'),
     uploadSpy: vi.fn(() => Promise.resolve()),
+    store: {},
 }));
 
 vi.mock('../src/state.js', () => ({ state: h.mockState }));
@@ -13,13 +14,17 @@ vi.mock('../src/github-sync.js', () => ({
     getStoredToken: (...a) => h.getStoredTokenSpy(...a),
     uploadFileToGitHub: (...a) => h.uploadSpy(...a),
 }));
+vi.mock('../src/database.js', () => ({
+    getAppState: vi.fn(async (k) => h.store[k]),
+    saveAppState: vi.fn(async (k, v) => { h.store[k] = JSON.parse(JSON.stringify(v)); }),
+}));
 vi.mock('../src/config.js', () => ({
     GITHUB_OWNER: 'Stefanmartin1967',
     GITHUB_REPO: 'History-Walk-V1',
     GITHUB_PATHS: { tested: (mapId) => `public/circuits/tested_${mapId}.json` },
 }));
 
-import { pushTestedToGitHub, schedulePushTestedToGitHub } from '../src/tested-sync.js';
+import { pushTestedToGitHub, schedulePushTestedToGitHub, stepsInvalidateVerified, rememberTestedSteps, getTestedSteps } from '../src/tested-sync.js';
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -28,6 +33,7 @@ beforeEach(() => {
     h.mockState.testedCircuits = {};
     h.getStoredTokenSpy.mockReturnValue('ghp_faketoken');
     h.uploadSpy.mockResolvedValue(undefined);
+    h.store = {};
 });
 
 describe('pushTestedToGitHub — gardes', () => {
@@ -115,5 +121,50 @@ describe('schedulePushTestedToGitHub — debounce', () => {
         schedulePushTestedToGitHub();
         await vi.advanceTimersByTimeAsync(1999);
         expect(h.uploadSpy).not.toHaveBeenCalled();
+    });
+});
+
+// Règle du 18/09/2026 : le badge « Vérifié » tombe si des étapes sont AJOUTÉES
+// ou RÉORDONNÉES par rapport au circuit marché ; un simple retrait le garde.
+describe('stepsInvalidateVerified', () => {
+    it('étapes identiques : le badge tient', () => {
+        expect(stepsInvalidateVerified(['A', 'B', 'C'], ['A', 'B', 'C'])).toBe(false);
+    });
+
+    it('un lieu ajouté : le badge tombe', () => {
+        expect(stepsInvalidateVerified(['A', 'B', 'C'], ['A', 'B', 'X', 'C'])).toBe(true);
+    });
+
+    it('un lieu retiré : le badge tient (tout ce qui reste a été vu)', () => {
+        expect(stepsInvalidateVerified(['A', 'B', 'C'], ['A', 'C'])).toBe(false);
+    });
+
+    it('ordre changé : le badge tombe', () => {
+        expect(stepsInvalidateVerified(['A', 'B', 'C'], ['A', 'C', 'B'])).toBe(true);
+    });
+
+    it('retrait ET réordonnancement : le badge tombe', () => {
+        expect(stepsInvalidateVerified(['A', 'B', 'C', 'D'], ['A', 'D', 'C'])).toBe(true);
+    });
+
+    it('boucle qui revient à son départ, étape retirée : le badge tient', () => {
+        expect(stepsInvalidateVerified(['A', 'B', 'C', 'A'], ['A', 'C', 'A'])).toBe(false);
+    });
+
+    it('référence inconnue (vide) : on ne retire rien', () => {
+        expect(stepsInvalidateVerified([], ['A'])).toBe(false);
+        expect(stepsInvalidateVerified(undefined, ['A'])).toBe(false);
+    });
+});
+
+describe('rememberTestedSteps / getTestedSteps', () => {
+    it('mémorise les étapes par circuit et par destination, puis les oublie', async () => {
+        await rememberTestedSteps('djerba', 'c1', ['A', 'B']);
+        await rememberTestedSteps('djerba', 'c2', ['C']);
+        expect(await getTestedSteps('djerba')).toEqual({ c1: ['A', 'B'], c2: ['C'] });
+        expect(await getTestedSteps('hammamet')).toEqual({});
+
+        await rememberTestedSteps('djerba', 'c1', null);
+        expect(await getTestedSteps('djerba')).toEqual({ c2: ['C'] });
     });
 });

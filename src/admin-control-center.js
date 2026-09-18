@@ -1,4 +1,4 @@
-import { state, setUserData, setCustomFeatures, setOfficialCircuits, getActiveMapId} from './state.js';
+import { state, setUserData, setCustomFeatures, setOfficialCircuits, setTestedCircuit, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
 import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
@@ -12,6 +12,7 @@ import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { showToast } from './toast.js';
+import { getTestedSteps, rememberTestedSteps, stepsInvalidateVerified, pushTestedToGitHub } from './tested-sync.js';
 import { showConfirm } from './modal.js';
 import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData, savePoiData, removePoiDataKeys } from './database.js';
 import { uploadPhotoForPoi } from './photo-service.js';
@@ -773,6 +774,10 @@ async function publishChanges() {
                 // Ids d'officiels réellement retirés de l'index : leur intention
                 // de suppression persistée n'a plus lieu d'être une fois publiée.
                 const publishedDeletions = [];
+                // Badges « Vérifié » que la modification publiée rend caducs
+                // (étapes ajoutées ou réordonnées — règle dans tested-sync.js).
+                const testedSteps = await getTestedSteps(mapId);
+                const unverified = [];
 
                 for (const c of circuitChanges) {
                     circuitProgress++;
@@ -809,6 +814,11 @@ async function publishChanges() {
 
                     const oldEntry = index.find(e => String(e.id) === String(local.id));
                     const isNew = !oldEntry;
+                    const cid = String(local.id);
+                    if (!isNew && state.testedCircuits?.[cid] === true) {
+                        const walked = testedSteps[cid] || oldEntry.poiIds;
+                        if (stepsInvalidateVerified(walked, local.poiIds)) unverified.push(cid);
+                    }
 
                     // 1. Commit du GPX (nom de fichier = nom du circuit).
                     const gpxStr = generateGPXString(features, local.id, local.name, local.description || '', local.realTrack);
@@ -834,6 +844,19 @@ async function publishChanges() {
                 if (indexDirty) {
                     const idxFile = new File([JSON.stringify(index, null, 2)], `${mapId}.json`, { type: 'application/json' });
                     await uploadFileToGitHub(idxFile, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.circuits(mapId), `feat(circuit): MAJ index ${mapId}`);
+                }
+
+                // 4 bis. Circuit publié ≠ circuit marché : le badge « Vérifié » tombe,
+                //    et le retrait part en ligne tout de suite, comme un ajout.
+                //    APRÈS le commit de l'index : si la publication échoue, le
+                //    badge reste (le circuit en ligne est toujours celui marché).
+                if (unverified.length > 0) {
+                    for (const cid of unverified) {
+                        setTestedCircuit(cid, false);
+                        await rememberTestedSteps(mapId, cid, null);
+                    }
+                    await saveAppState(`tested_circuits_${mapId}`, state.testedCircuits);
+                    await pushTestedToGitHub();
                 }
 
                 // 5. L'index publié ne liste plus ces circuits : l'intention de

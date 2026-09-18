@@ -13,7 +13,7 @@ import { showToast } from './toast.js';
 import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
 import { pushToGist } from './gist-sync.js';
-import { schedulePushTestedToGitHub } from './tested-sync.js';
+import { schedulePushTestedToGitHub, rememberTestedSteps } from './tested-sync.js';
 // Import statique : pose le listener window 'circuit:updated' dès le boot pour
 // synchroniser les drapeaux d'accès en mode création/édition (PR 4/5 chantier
 // drapeaux v2), ET expose markEditingStart pour l'appeler SYNCHRONIQUEMENT à
@@ -89,6 +89,10 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
             if (state.isAdmin) {
                 setTestedCircuit(circuitId, isVisited);
                 await saveAppState(`tested_circuits_${state.currentMapId}`, state.testedCircuits);
+                // Étapes marchées : référence pour décider, à la publication d'une
+                // modification, si le badge tient encore (cf. tested-sync.js).
+                const walkedIds = (localCircuit || officialCircuit).poiIds;
+                await rememberTestedSteps(state.currentMapId, circuitId, isVisited ? (walkedIds || []) : null);
                 schedulePushTestedToGitHub();
             }
         }
@@ -756,6 +760,9 @@ export function currentPoiKey() {
  *
  * Décisions Stefan :
  *  - 03/05/2026 (Q3) : statut "Vérifié" retiré automatiquement à l'édition.
+ *    Remplacé le 18/09/2026 : le retrait se décide à la PUBLICATION, selon les
+ *    étapes (tested-sync.js). Ici, il ne se faisait qu'en mémoire — le badge
+ *    revenait au rechargement, ou partait en ligne via « Tout publier ».
  *  - 05/06/2026 : le tracé réel est CONSERVÉ en édition (avant : realTrack=null,
  *    réflexe hérité de l'ère GPX Studio). Routing in-app oblige : éditer ne jette
  *    plus le tracé ; il devient « à re-tracer » seulement si la séquence change.
@@ -771,10 +778,6 @@ export function convertToDraft() {
     const editInPlace = !isOfficial || state.isAdmin;
 
     if (editInPlace) {
-        // Q3 : retirer le statut "Vérifié" (un POI ajouté n'est pas visité par l'admin)
-        if (state.testedCircuits && state.testedCircuits[id]) {
-            setTestedCircuit(id, false);
-        }
         // Routing in-app : on CONSERVE le tracé réel à l'édition (avant on le
         // forçait à null → vol d'oiseau, réflexe GPX Studio). On mémorise la
         // séquence de POIs actuelle comme « base » : si elle change ensuite,
