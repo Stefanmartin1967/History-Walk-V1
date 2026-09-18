@@ -1578,13 +1578,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Jadid",
+        "Nom du site FR": "Mosquée El Jadid (Boumellal)",
         "Nom du site arabe": "جامع الجديد",
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
-        "Source": "Répertoire J. Fathallah, n° 48 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 5 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6AC5NNAYN5AF2HNACS",
-        "description": "Jalel n° 48 : « Mosquée Jadid. Quartier des Ababsa, route de Midoun. Mosquée wahbite récemment rénovée. Ancienne. La nouvelle est récente.",
+        "description": "Mosquée de Boumellal, près de Houmt Souk.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 5 sous le nom de « Jamaa Jedid » : mosquée malékite, très ancienne.",
         "accessPoint": [
           10.8485645,
           33.8758148
@@ -4464,7 +4464,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Jadid",
+        "Nom du site FR": "Mosquée El Jadid (Oualeg)",
         "Nom du site arabe": "جامع الجديد",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
@@ -8835,7 +8835,15 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6P9JFRW9XXGN7P7FPX_1789746836753.jpg",
+          "photos/poi_HW-01K77WPE6P9JFRW9XXGN7P7FPX_1789746838645.jpg",
+          "photos/poi_HW-01K77WPE6P9JFRW9XXGN7P7FPX_1789746840891.jpg",
+          "photos/poi_HW-01K77WPE6P9JFRW9XXGN7P7FPX_1789746842867.jpg",
+          "photos/poi_HW-01K77WPE6P9JFRW9XXGN7P7FPX_1789746844542.jpg",
+          "photos/poi_HW-01K77WPE6P9JFRW9XXGN7P7FPX_1789746846069.jpg"
+        ]
       }
     },
     {
@@ -10193,7 +10201,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Jadid",
+        "Nom du site FR": "Mosquée El Jadid (Sedghaiane)",
         "Nom du site arabe": "جامع الجديد",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
@@ -10221,8 +10229,14 @@
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": true
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01KJABRN0J9FDDEKWKYWHQWE3P_1789746825984.jpg",
+          "photos/poi_HW-01KJABRN0J9FDDEKWKYWHQWE3P_1789746828431.jpg",
+          "photos/poi_HW-01KJABRN0J9FDDEKWKYWHQWE3P_1789746831400.jpg",
+          "photos/poi_HW-01KJABRN0J9FDDEKWKYWHQWE3P_1789746833936.jpg"
+        ]
       }
     },
     {
