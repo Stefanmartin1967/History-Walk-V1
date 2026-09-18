@@ -3731,7 +3731,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Bou Nkhil",
+        "Nom du site FR": "Mosquée Bounkhil",
         "Nom du site arabe": "جامع بونخيل",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
@@ -6083,7 +6083,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Bou Saïd",
+        "Nom du site FR": "Mosquée Sidi Bousaïd (Boumellal)",
         "Nom du site arabe": "جامع سيدي بوسعيد",
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
@@ -11649,7 +11649,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Bou Saïd",
+        "Nom du site FR": "Mosquée Sidi Bousaïd (Bazim)",
         "Catégorie": "Mosquée",
         "Sous-type": "Générique",
         "Zone": "El Hachene",
@@ -11657,7 +11657,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "HW_ID": "HW-01KSZ6CRQ5J5JJ14EW8X7R8H21",
-        "Nom du site arabe": "",
+        "Nom du site arabe": "جامع سيدي بوسعيد",
         "État": "",
         "Accès": "",
         "info_gpx": "",
