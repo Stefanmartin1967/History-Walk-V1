@@ -1701,7 +1701,10 @@
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "photos": [
+          "photos/poi_HW-01K77WPE6AB83SMA3RRSYH0SK9_1789709164155.jpg"
+        ]
       }
     },
     {
