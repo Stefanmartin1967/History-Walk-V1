@@ -1067,7 +1067,14 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE699CBRC4PV1ARJPXKM_1789714640711.jpg",
+          "photos/poi_HW-01K77WPE699CBRC4PV1ARJPXKM_1789714642298.jpg",
+          "photos/poi_HW-01K77WPE699CBRC4PV1ARJPXKM_1789714643906.jpg",
+          "photos/poi_HW-01K77WPE699CBRC4PV1ARJPXKM_1789714645335.jpg",
+          "photos/poi_HW-01K77WPE699CBRC4PV1ARJPXKM_1789714647022.jpg"
+        ]
       }
     },
     {
@@ -1478,7 +1485,12 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6A1GRGM843BF4KA3RT_1789714633189.jpg",
+          "photos/poi_HW-01K77WPE6A1GRGM843BF4KA3RT_1789714634631.jpg",
+          "photos/poi_HW-01K77WPE6A1GRGM843BF4KA3RT_1789714636135.jpg"
+        ]
       }
     },
     {
@@ -2073,7 +2085,14 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6BZYXKCYCZXB9RG3RP_1789714624998.jpg",
+          "photos/poi_HW-01K77WPE6BZYXKCYCZXB9RG3RP_1789714626765.jpg",
+          "photos/poi_HW-01K77WPE6BZYXKCYCZXB9RG3RP_1789714628294.jpg",
+          "photos/poi_HW-01K77WPE6BZYXKCYCZXB9RG3RP_1789714629873.jpg",
+          "photos/poi_HW-01K77WPE6BZYXKCYCZXB9RG3RP_1789714631492.jpg"
+        ]
       }
     },
     {
@@ -11349,7 +11368,11 @@
         "osmCheckedDate": "2026-09-14",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01KKEM62BHCM4RDBWTZR0QZR78_1789714637848.jpg",
+          "photos/poi_HW-01KKEM62BHCM4RDBWTZR0QZR78_1789714639295.jpg"
+        ]
       }
     },
     {
