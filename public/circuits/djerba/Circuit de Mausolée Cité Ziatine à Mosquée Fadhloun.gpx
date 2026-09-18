@@ -22,6 +22,14 @@
       <name>Mosquée Mrabet Messaoud</name>
       <desc></desc>
     </wpt>
+    <wpt lat="33.81490529972222" lon="10.964457899722222">
+      <name>Huilerie traditionnelle (Khazroun)</name>
+      <desc></desc>
+    </wpt>
+    <wpt lat="33.815109099999994" lon="10.964283099722222">
+      <name>Qubba Fguira Massouda</name>
+      <desc></desc>
+    </wpt>
     <wpt lat="33.8176394" lon="10.9545388">
       <name>Mausolée Fadhloun</name>
       <desc></desc>
@@ -137,7 +145,13 @@ Répertoire J. Fathallah, n° 285 | http://palaisbenayed.com/wp-content/uploads/
       <trkpt lat="33.814702" lon="10.96473"><ele>0</ele></trkpt>
       <trkpt lat="33.814751" lon="10.964697"><ele>0</ele></trkpt>
       <trkpt lat="33.814868" lon="10.96462"><ele>0</ele></trkpt>
+      <trkpt lat="33.814889" lon="10.964549"><ele>0</ele></trkpt>
+      <trkpt lat="33.81489" lon="10.964515"><ele>0</ele></trkpt>
+      <trkpt lat="33.81488" lon="10.96446"><ele>0</ele></trkpt>
+      <trkpt lat="33.814893" lon="10.964473"><ele>0</ele></trkpt>
+      <trkpt lat="33.814927" lon="10.964504"><ele>0</ele></trkpt>
       <trkpt lat="33.815001" lon="10.964523"><ele>0</ele></trkpt>
+      <trkpt lat="33.815134" lon="10.964421"><ele>0</ele></trkpt>
       <trkpt lat="33.815283" lon="10.964309"><ele>0</ele></trkpt>
       <trkpt lat="33.815406" lon="10.964224"><ele>0</ele></trkpt>
       <trkpt lat="33.815544" lon="10.964114"><ele>0</ele></trkpt>
