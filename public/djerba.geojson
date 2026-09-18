@@ -1125,7 +1125,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée d'Ouled Hlel",
+        "Nom du site FR": "Mosquée d'Ouled Hlel (Nouvelle)",
         "Nom du site arabe": "جامع أولاد هلال",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
@@ -1140,7 +1140,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 284 — « Mosquée Ouled Helal. Khazroun. Mosquée ibadite ancienne abandonnée au profit d'une nouvelle attenante. La nouvelle est récente.",
+        "description": "Mosquée récente à coupoles et haut minaret carré, à Khazroun, bâtie à côté de l'ancienne mosquée ibadite qu'elle remplace.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 284, avec l'ancienne : mosquée ibadite ancienne, abandonnée au profit d'une nouvelle attenante, elle-même récente.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/407955473",
@@ -17044,6 +17044,42 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "HW_ID": "HW-01M2NK4XWK0W7V5TTHXA1K9BN0",
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.976534,
+          33.815395
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ouled Helal (Ancienne)",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Ancienne mosquée ibadite de Khazroun, voisine de la mosquée Ouled Helal qui l'a remplacée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 284 : mosquée ibadite ancienne, abandonnée au profit d'une nouvelle mosquée attenante.\nL'inventaire de Ramzi Raïs range Ouled Hilal parmi les mosquées menacées de disparition ou disparues.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Ancienne mosquée ibadite de Khazroun, voisine de la mosquée Ouled Helal qui l'a remplacée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 284 : mosquée ibadite ancienne, abandonnée au profit d'une nouvelle mosquée attenante.\nL'inventaire de Ramzi Raïs range Ouled Hilal parmi les mosquées menacées de disparition ou disparues.",
+        "osm_ref": "way/1466800203",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2TES28FTTXCYQS4E9DA26XB",
+        "accessPoint": [
+          10.976646,
+          33.8152802
+        ],
         "Zone": "Midoun"
       }
     }
