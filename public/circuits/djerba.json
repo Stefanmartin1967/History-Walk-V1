@@ -101,23 +101,6 @@
     ]
   },
   {
-    "id": "HW-1771481510099",
-    "name": "Circuit de Mosquée Sidi Sabah à Chez Adel",
-    "file": "djerba/Circuit de Mosquée Sidi Sabah à Chez Adel via Mosquée Wichniya.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
-    "distance": "6.6 km",
-    "isOfficial": true,
-    "hasRealTrack": true,
-    "zone": "Arkou",
-    "poiIds": [
-      "HW-01K77WPE67MSESGPPZ5CAD0XTZ",
-      "HW-01K77WPE682HMFVV693F7BFA2B",
-      "HW-01K77WPE68FAWKXDY3R89R5KTF",
-      "HW-01K77WPE686WHQD4VDZT4Y6VK5",
-      "HW-01KJABRN0N92W2MJEHBB2FZRBD"
-    ]
-  },
-  {
     "id": "HW-1771324790804",
     "name": "Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk",
     "file": "djerba/Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk via Ancien atelier de tissage.gpx",
