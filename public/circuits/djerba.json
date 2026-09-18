@@ -88,14 +88,15 @@
   {
     "id": "HW-1771324790804",
     "name": "Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk",
-    "file": "djerba/Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk via Ancien atelier de tissage.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
-    "distance": "7.2 km",
+    "file": "djerba/Circuit de Mosquée Sidi Salem à Marché aux poissons de Houmt Souk.gpx",
+    "description": "",
+    "distance": "6.9 km",
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Bou Melel",
     "poiIds": [
       "HW-01K77WPE6M5QZM1DZV18R4EDHR",
+      "HW-01M1NXGVJCTXKXA533Z90VVP2E",
       "HW-01K77WPE6JARCBVAYJCW1B3B14",
       "HW-01KJABRN0W6KJP2MNXC0GWQJN6",
       "HW-01KJABRN0WBFCMMFBGZB582PRH",
