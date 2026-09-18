@@ -2127,7 +2127,14 @@
         "Zone": "Arkou",
         "Source": "Répertoire J. Fathallah, n° 227 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6B2CT1A4B58N917MXQ",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6B2CT1A4B58N917MXQ_1789707762504.jpg",
+          "photos/poi_HW-01K77WPE6B2CT1A4B58N917MXQ_1789707764182.jpg",
+          "photos/poi_HW-01K77WPE6B2CT1A4B58N917MXQ_1789707765733.jpg",
+          "photos/poi_HW-01K77WPE6B2CT1A4B58N917MXQ_1789707767469.jpg",
+          "photos/poi_HW-01K77WPE6B2CT1A4B58N917MXQ_1789707769129.jpg",
+          "photos/poi_HW-01K77WPE6B2CT1A4B58N917MXQ_1789707770549.jpg"
+        ],
         "description": "Jalel n° 227 — « Mosquée Ouedran. Bani Maaguel. Mosquée malékite totalement reconstruite. Ancienne.",
         "accessPoint": [
           10.9687378,
@@ -3149,7 +3156,10 @@
         "Zone": "Arkou",
         "Source": "Répertoire J. Fathallah, n° 234 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01KJABRN0DWM059C795C8SSD8C",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01KJABRN0DWM059C795C8SSD8C_1789707771975.jpg",
+          "photos/poi_HW-01KJABRN0DWM059C795C8SSD8C_1789707773772.jpg"
+        ],
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
