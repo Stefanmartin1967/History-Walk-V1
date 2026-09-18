@@ -1131,7 +1131,12 @@
         "Zone": "Midoun",
         "Source": "Répertoire J. Fathallah, n° 284 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE697JA8WM3N71KEFY6S",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1789744516882.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1789744518717.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1789744520700.jpg",
+          "photos/poi_HW-01K77WPE697JA8WM3N71KEFY6S_1789744522749.jpg"
+        ],
         "info_gpx": "",
         "accessPoint": [
           10.9771006,
@@ -17065,7 +17070,7 @@
         "description": "Ancienne mosquée ibadite de Khazroun, voisine de la mosquée Ouled Helal qui l'a remplacée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 284 : mosquée ibadite ancienne, abandonnée au profit d'une nouvelle mosquée attenante.\nL'inventaire de Ramzi Raïs range Ouled Hilal parmi les mosquées menacées de disparition ou disparues.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Ancienne mosquée ibadite de Khazroun, voisine de la mosquée Ouled Helal qui l'a remplacée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 284 : mosquée ibadite ancienne, abandonnée au profit d'une nouvelle mosquée attenante.\nL'inventaire de Ramzi Raïs range Ouled Hilal parmi les mosquées menacées de disparition ou disparues.",
+        "Source": "Répertoire J. Fathallah, n° 284 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), n° 14 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl",
         "osm_ref": "way/1466800203",
         "verified": false,
         "introuvableCarte": false,
@@ -17079,6 +17084,77 @@
         "accessPoint": [
           10.976646,
           33.8152802
+        ],
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.964283099722222,
+          33.815109099999994
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Qubba Fguira Massouda",
+        "Catégorie": "Mausolée",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/435460102",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2TGJY25ZSXFWXWRZQ35Y2T3",
+        "accessPoint": [
+          10.964421,
+          33.8151344
+        ],
+        "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.964457899722222,
+          33.81490529972222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Huilerie traditionnelle (Khazroun)",
+        "Catégorie": "Artisanat",
+        "Sous-type": "Huilerie",
+        "État": "Désaffecté",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1523764323",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-18",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M2THA0PFASK2JR2QYWQT4BDS",
+        "photos": [
+          "photos/poi_HW-01M2THA0PFASK2JR2QYWQT4BDS_1789744524482.jpg"
         ],
         "Zone": "Midoun"
       }
