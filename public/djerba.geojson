@@ -3467,7 +3467,11 @@
         "Zone": "El May",
         "Source": "",
         "HW_ID": "HW-01K77WPE6DWEFD7GCZ7SCRFQA9",
-        "photos": [],
+        "photos": [
+          "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1789795510849.jpg",
+          "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1789795512890.jpg",
+          "photos/poi_HW-01K77WPE6DWEFD7GCZ7SCRFQA9_1789795514622.jpg"
+        ],
         "accessPoint": [
           10.8978775,
           33.811705
@@ -4239,7 +4243,14 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6ECJK1CMJKYVNTKGGS_1789795516691.jpg",
+          "photos/poi_HW-01K77WPE6ECJK1CMJKYVNTKGGS_1789795518265.jpg",
+          "photos/poi_HW-01K77WPE6ECJK1CMJKYVNTKGGS_1789795519869.jpg",
+          "photos/poi_HW-01K77WPE6ECJK1CMJKYVNTKGGS_1789795521593.jpg",
+          "photos/poi_HW-01K77WPE6ECJK1CMJKYVNTKGGS_1789795523225.jpg"
+        ]
       }
     },
     {
