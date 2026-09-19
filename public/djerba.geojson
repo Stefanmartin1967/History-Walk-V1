@@ -8900,7 +8900,12 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6QJNV1Q83SBNFKC88M_1789796190367.jpg",
+          "photos/poi_HW-01K77WPE6QJNV1Q83SBNFKC88M_1789796192197.jpg",
+          "photos/poi_HW-01K77WPE6QJNV1Q83SBNFKC88M_1789796193921.jpg"
+        ]
       }
     },
     {
