@@ -13394,15 +13394,15 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.7893456,
-          33.8188555
+          10.789266228675842,
+          33.818889734342896
         ]
       },
       "properties": {
         "Nom du site FR": "Mosquée Maariss",
         "Nom du site arabe": "المعاريس",
         "Catégorie": "Mosquée",
-        "osm_ref": "way/1473672757",
+        "osm_ref": "way/1473672756",
         "HW_ID": "HW-01KZH0VF0HF0RK88QZ0V5G115D",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -13413,7 +13413,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Jalel n° 112 : « Maariss dite Ben Arouss. Groa. Mosquée ibadite wahbite en quasi ruines. Ancienne. »\nUn mausolée jouxte la mosquée à l'est.\nVisible sur la vue satellite",
+        "description": "Jalel n° 112 : « Maariss dite Ben Arouss. Groa. Mosquée ibadite wahbite en quasi ruines. Ancienne. »\nUn mausolée jouxte la mosquée à l'est.",
         "Source": "Répertoire J. Fathallah, n° 112 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "",
         "Téléphone": "",
@@ -13425,10 +13425,12 @@
           33.817992
         ],
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-09-20",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "lat": 33.818889734342896,
+        "lng": 10.789266228675842
       }
     },
     {
