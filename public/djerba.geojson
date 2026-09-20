@@ -12583,7 +12583,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "Nom du site arabe": "",
         "État": "",
         "Accès": "",
@@ -15483,7 +15483,7 @@
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 336 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-04",
@@ -15495,7 +15495,15 @@
           11.0593686,
           33.7992858
         ],
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
