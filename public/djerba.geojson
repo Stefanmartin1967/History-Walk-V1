@@ -5188,7 +5188,12 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "photos": [
+          "photos/poi_HW-01K77WPE6GRXRR29KB5N5T582A_1789885806545.jpg",
+          "photos/poi_HW-01K77WPE6GRXRR29KB5N5T582A_1789885808321.jpg",
+          "photos/poi_HW-01K77WPE6GRXRR29KB5N5T582A_1789885809764.jpg"
+        ]
       }
     },
     {
