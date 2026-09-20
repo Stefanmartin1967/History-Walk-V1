@@ -1637,7 +1637,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Ghofrane",
+        "Nom du site FR": "Mosquée El Ghofrane (El Mahboubine)",
         "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
@@ -14826,7 +14826,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ghofrane",
+        "Nom du site FR": "Mosquée Ghofrane (Mezrene)",
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "État": "En activité",
@@ -17487,6 +17487,39 @@
           33.8613032
         ],
         "Zone": "El Hachene"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7926082611084,
+          33.78470995166932
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Houch Tghazouisni",
+        "Catégorie": "Menzel",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/JY7YUEoHubXsYAaGA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-20",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M2ZJCQJ4BH9SZ6VWSBF9CV72",
+        "accessPoint": [
+          10.7924768,
+          33.7845381
+        ],
+        "Zone": "El Groa"
       }
     }
   ]
