@@ -338,8 +338,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          11.028802710036706,
-          33.79811118269014
+          11.028761487657116,
+          33.79830473262425
         ]
       },
       "properties": {
@@ -349,8 +349,8 @@
         "Zone": "Arkou",
         "Source": "Répertoire J. Fathallah, n° 327 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68SW9XWBFFCRBWXZYM",
-        "lat": 33.79811118269014,
-        "lng": 11.028802710036706,
+        "lat": 33.79830473262425,
+        "lng": 11.028761487657116,
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
