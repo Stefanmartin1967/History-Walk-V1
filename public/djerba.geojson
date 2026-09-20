@@ -17315,6 +17315,41 @@
         ],
         "Zone": "El Groa"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.831060409545898,
+          33.88055614231976
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Mansour",
+        "Nom du site arabe": "جامع سيدي منصور",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Le répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 27 : mosquée ibadite, ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 27 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": false,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M2ZDPWWNDQXM9Z79VFZ8KE1M",
+        "accessPoint": [
+          10.830988,
+          33.8803932
+        ],
+        "Zone": "Bou Melel"
+      }
     }
   ]
 }
