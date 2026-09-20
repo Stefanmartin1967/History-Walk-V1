@@ -337,19 +337,19 @@
   },
   {
     "id": "HW-01M2ZC26CA20KVH2443RJTTB2C",
-    "name": "Circuit de Mosquée Sidi Tahar à Mosquée El Jadid (Boumellal)",
-    "file": "djerba/Circuit de Mosquée Sidi Tahar à Mosquée El Jadid (Boumellal).gpx",
+    "name": "Circuit de Mosquée Ghofrane (Mellita) à Menzel Lellamina",
+    "file": "djerba/Circuit de Mosquée Ghofrane (Mellita) à Menzel Lellamina.gpx",
     "description": "",
-    "distance": "7.6 km",
+    "distance": "4.5 km",
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Mellita",
     "poiIds": [
+      "HW-01M2ZEQFF4AEMGATN8SKCR4W15",
       "HW-01M1MASDS6XFVN8DZ6CEGR8Q2B",
       "HW-01K77WPE6M14K3331NK215THZS",
       "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
-      "HW-01K77WPE6H3TDARVM1G3V5E49B",
-      "HW-01K77WPE6AC5NNAYN5AF2HNACS"
+      "HW-01M2ZF8PZN7VQVBZRPBX12H8VR"
     ]
   }
 ]
