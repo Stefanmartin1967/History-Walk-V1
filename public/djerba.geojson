@@ -17521,6 +17521,40 @@
         ],
         "Zone": "El Groa"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.823941826820374,
+          33.774928675883324
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Vieux bâtiments Djerbiens",
+        "Catégorie": "Menzel",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Vieux bâtiments Djerbiens - Voir si ce sont ceux du projet de Mouldi",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/V6seyrLYj4M9YMt67",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-20",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M2ZKXPVVTHW5JZFT0H4F7EQS",
+        "accessPoint": [
+          10.8241544,
+          33.7750641
+        ],
+        "Zone": "Oued Ezzebib"
+      }
     }
   ]
 }
