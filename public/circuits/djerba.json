@@ -316,5 +316,23 @@
       "HW-01KJABRN0XJDFFSBSRFDN4PGQ4",
       "HW-01K77WPE6PGWRVHZ8H8CTQJ06X"
     ]
+  },
+  {
+    "id": "HW-01M2Z725C8KGR3E0N6VEPKZ9B9",
+    "name": "Circuit de Mosquée Maariss à Mosquée Sidi Jmour",
+    "file": "djerba/Circuit de Mosquée Maariss à Mosquée Sidi Jmour.gpx",
+    "description": "Circuit allant de la mosquée Maariss en ruines à la mosquée Sidi Jmour.\nN'hésitez pas à manger dans un des restaurants en bord de mer tout proche",
+    "distance": "6.5 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El Groa",
+    "poiIds": [
+      "HW-01KZH0VF0HF0RK88QZ0V5G115D",
+      "HW-01KZH0VET1BHNJ5VK5AY8WE0KZ",
+      "HW-01M2Z8RQQRNEN95KK6D7R8NNBQ",
+      "HW-01M2Z8E6VK56GR0AC0MV3FZVXQ",
+      "HW-01KSZ2SGB3GCGB3RG8946MGTZG",
+      "HW-01K77WPE6ND38ZJ2GFV2K4NRTK"
+    ]
   }
 ]
