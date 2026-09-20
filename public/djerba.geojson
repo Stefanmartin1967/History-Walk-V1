@@ -9760,7 +9760,7 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": null,
@@ -13037,7 +13037,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Taieb (El Jeridi)",
+        "Nom du site FR": "Mosquée Djeridi",
         "Catégorie": "Mosquée",
         "osm_ref": "way/990329223",
         "HW_ID": "HW-01KZH0VH09MWGKNW9WDKBBP08S",
@@ -13051,7 +13051,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "A côté du cimetière selon la vue OSM",
+        "description": "A côté du cimetière selon la vue OSM\nAppelée Mosquée El Taieb (El Jeridi) sur OSM",
         "Source": "",
         "Téléphone": "",
         "Horaires": "",
