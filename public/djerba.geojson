@@ -3611,7 +3611,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Cheikh",
+        "Nom du site FR": "Mosquée El Cheikh (Guechaine)",
         "Nom du site arabe": "جامع الشيخ",
         "Catégorie": "Mosquée",
         "Zone": "Oualeg",
@@ -3859,7 +3859,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ennour",
+        "Nom du site FR": "Mosquée Ennour (May)",
         "Nom du site arabe": "جامع عشاشنة",
         "Catégorie": "Mosquée",
         "Zone": "El May",
@@ -8790,7 +8790,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Cheikh",
+        "Nom du site FR": "Mosquée El Cheikh (Houmt Souk)",
         "Nom du site arabe": "مسجد الشيخ",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
@@ -12449,7 +12449,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ennour",
+        "Nom du site FR": "Mosquée Ennour (Bousmail)",
         "Nom du site arabe": "جامع النور",
         "Catégorie": "Mosquée",
         "osm_ref": "node/13456285761",
@@ -12463,7 +12463,7 @@
         "verified": false,
         "introuvableCarte": false,
         "info_gpx": "",
-        "description": "",
+        "description": "Nom de quartier à confirmer",
         "Source": "",
         "Téléphone": "",
         "Horaires": "",
@@ -13079,7 +13079,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Mansour",
+        "Nom du site FR": "Mosquée Sidi Mansour (Tezdaine)",
         "Catégorie": "Mosquée",
         "osm_ref": "way/990361515",
         "HW_ID": "HW-01KZH0VH26R74BZZ6K1XQBQP45",
@@ -13805,12 +13805,12 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.960631,
-          33.7982008
+          10.960601708386777,
+          33.79818109535056
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée Mahboubine",
+        "Nom du site FR": "Mausolée (Mahboubine)",
         "Catégorie": "Mausolée",
         "osm_ref": "way/990381626",
         "HW_ID": "HW-01KZH0VH51S4GQWTT98QMKAX7G",
@@ -13834,7 +13834,14 @@
         "accessPoint": [
           10.9607545,
           33.7983216
-        ]
+        ],
+        "lat": 33.79818109535056,
+        "lng": 10.960601708386777,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -14165,7 +14172,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée Mahboubine",
+        "Nom du site FR": "Mausolée (Mahboubine - Ruines)",
         "Catégorie": "Mausolée",
         "osm_ref": "way/1465366255",
         "HW_ID": "HW-01KZH0VHP36Z4PA83TC3W5AW67",
@@ -14176,7 +14183,7 @@
         "Zone": "El Mahboubine",
         "Nom du site arabe": "",
         "Sous-type": "",
-        "État": "",
+        "État": "Ruine",
         "Accès": "",
         "info_gpx": "",
         "description": "Ruines visibles sur la vue satellite\nAttention : Deux mausolées à Mahboubine",
@@ -14189,7 +14196,12 @@
         "accessPoint": [
           10.9680149,
           33.7972706
-        ]
+        ],
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -15185,7 +15197,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Youssef",
+        "Nom du site FR": "Mosquée Sidi Youssef (Boumellal)",
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "État": "En activité",
@@ -15210,7 +15222,13 @@
         ],
         "lat": 33.88721836724584,
         "lng": 10.84912399699816,
-        "Zone": "Bou Melel"
+        "Zone": "Bou Melel",
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -15700,7 +15718,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Puits",
+        "Nom du site FR": "Puits (Arkou)",
         "Catégorie": "Puits",
         "osm_ref": "node/10982986304",
         "HW_ID": "HW-01KZH0VGC4HNBW9X1Q86QBM701",
@@ -15717,7 +15735,19 @@
           11.0195478,
           33.7879015
         ],
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -15899,7 +15929,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Puits",
+        "Nom du site FR": "Puits (El Mahboubine)",
         "Catégorie": "Puits",
         "osm_ref": "way/311017566",
         "HW_ID": "HW-01KZH0VGQPSYNC5BMC32MQ1RTB",
@@ -15916,7 +15946,19 @@
           10.9640506,
           33.8063981
         ],
-        "Zone": "El Mahboubine"
+        "Zone": "El Mahboubine",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "description": "",
+        "Source": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -16613,7 +16655,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Youssef",
+        "Nom du site FR": "Mosquée Sidi Youssef (Guechaine)",
         "Catégorie": "Mosquée",
         "description": "Jalel n° 135 : « Sidi Youssef. Guechaine. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne. »\nAppelée Jeddi Youssef El Barouni sur OSM, Wikipédia et Google Maps.",
         "Temps_minutes": 0,
@@ -16633,7 +16675,16 @@
           10.917402,
           33.8397264
         ],
-        "Zone": "Sedghaiane"
+        "Zone": "Sedghaiane",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -16728,7 +16779,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée Sidi Mansour Ouelghmane",
+        "Nom du site FR": "Mausolée Sidi Mansour (Ouelghmane)",
         "Catégorie": "Mausolée",
         "description": "Existence à vérifier sur place (novembre 2026). Mausolée situé par la liste Wikipédia des mosquées de Djerba (« Sidi Mansour Ouelghmane », Temlel), à 73 m à l'est de la mosquée Khaled Ibn Elwalid. OpenStreetMap n'y montre qu'un petit bâtiment sans nom de 7,7 × 4,4 m (way/990341204), sans coupole visible sur la vue satellite.\nJalel n° 327 (mosquée voisine) : « Khaled Ibn Walid, ex Sidi Mansour. Tezdain. Mosquée malékite construite sur le site d'une ancienne. Récente. »\nRamzi Raïs n° 168 (mosquée voisine) : « خالد بن الوليد - سيدي الغول », soit un autre nom traditionnel, Sidi el-Ghoul.",
         "Temps_minutes": 0,
@@ -16747,7 +16798,17 @@
           11.0294635,
           33.798417
         ],
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -17326,7 +17387,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Mansour",
+        "Nom du site FR": "Mosquée Sidi Mansour (Bani Bandou)",
         "Nom du site arabe": "جامع سيدي منصور",
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
@@ -17348,6 +17409,13 @@
           10.830988,
           33.8803932
         ],
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null,
         "Zone": "Bou Melel"
       }
     },
