@@ -351,5 +351,25 @@
       "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
       "HW-01M2ZF8PZN7VQVBZRPBX12H8VR"
     ]
+  },
+  {
+    "id": "HW-01M2ZK38D1N3BD6JSKM0VT1D9S",
+    "name": "Circuit de Mosquée Ghoula à Vieux bâtiments Djerbiens",
+    "file": "djerba/Circuit de Mosquée Ghoula à Vieux bâtiments Djerbiens.gpx",
+    "description": "",
+    "distance": "7.1 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Oued Ezzebib",
+    "poiIds": [
+      "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
+      "HW-01M2ZJCQJ4BH9SZ6VWSBF9CV72",
+      "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
+      "HW-01M1C7YJ1C3S02ZRAHX7PDESZS",
+      "HW-01KZH0VEZMPR1GTH8TJYZ6PCWM",
+      "HW-01KZH0VEH4B5SYS305V3RAVFJ9",
+      "HW-01KZH0VEJP087D87WAX2S3JPBS",
+      "HW-01M2ZKXPVVTHW5JZFT0H4F7EQS"
+    ]
   }
 ]
