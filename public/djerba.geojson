@@ -13407,7 +13407,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "Zone": "El Groa",
         "Sous-type": "",
         "État": "",
@@ -17251,6 +17251,69 @@
           "photos/poi_HW-01M2THA0PFASK2JR2QYWQT4BDS_1789744524482.jpg"
         ],
         "Zone": "Midoun"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.768149111717975,
+          33.83390258834589
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jardin Magid",
+        "Catégorie": "Curiosité",
+        "description": "Jardin le long du circuit menant à Sidi Jmour",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-20",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M2Z8E6VK56GR0AC0MV3FZVXQ",
+        "accessPoint": [
+          10.7682095,
+          33.8348446
+        ],
+        "Zone": "El Groa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7724729180336,
+          33.82744960392072
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Omma",
+        "Catégorie": "Mosquée",
+        "description": "Mosquée du quartier Chabbar, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 116 : mosquée malékite, construite en 2017.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 116 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-20",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2Z8RQQRNEN95KK6D7R8NNBQ",
+        "accessPoint": [
+          10.7725849,
+          33.8273287
+        ],
+        "Zone": "El Groa"
       }
     }
   ]
