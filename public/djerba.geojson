@@ -17350,6 +17350,76 @@
         ],
         "Zone": "Bou Melel"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.800722,
+          33.869916
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ghofrane (Mellita)",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Le répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 69 sous le nom de Ghofrane, « l'absolution » : mosquée malékite du début du 21ᵉ siècle.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 69 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/9g7BviDNBLgaQRYt9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-20",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M2ZEQFF4AEMGATN8SKCR4W15",
+        "Nom du site arabe": "جامع الغفران",
+        "accessPoint": [
+          10.8008024,
+          33.8700169
+        ],
+        "Zone": "Mellita"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.821913959785203,
+          33.86118531763249
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Menzel Lellamina",
+        "Catégorie": "Menzel",
+        "État": "Reconverti",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/8DRzFpM2ass1QhtJA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M2ZF8PZN7VQVBZRPBX12H8VR",
+        "osmCheckedDate": "2026-09-20",
+        "accessPoint": [
+          10.8218972,
+          33.8613032
+        ],
+        "Zone": "El Hachene"
+      }
     }
   ]
 }
