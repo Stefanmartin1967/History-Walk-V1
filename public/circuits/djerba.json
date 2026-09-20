@@ -272,5 +272,49 @@
       "HW-01K77WPE68ZXYA0Z9T3QEN0VYW",
       "HW-01K77WPE6QN6S4TSGEZQ6DQGXA"
     ]
+  },
+  {
+    "id": "HW-01M2YV0QAWW2B0A6WHWE2EYB6F",
+    "name": "Circuit de Mausolée Beni Baous à Mosquée Ben Achour",
+    "file": "djerba/Circuit de Mausolée Beni Baous à Mosquée Ben Achour.gpx",
+    "description": "",
+    "distance": "6.6 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Arkou",
+    "poiIds": [
+      "HW-01KZH0VHGTRRTHH95PA0NTVM5N",
+      "HW-01KZH0VH19H5T1YZ31JFC7M08J",
+      "HW-01KZH0VGMDGNM6E16X7D6CC5SQ",
+      "HW-01M2HVE1Q55MW42ZEWQRX6HJZ3",
+      "HW-01M2HT4TAVETP8EWKYN0BYY6DZ",
+      "HW-01K77WPE68SW9XWBFFCRBWXZYM",
+      "HW-01K77WPE6QGFPEGPTZ1G59C9FZ",
+      "HW-01K77WPE68ZXYA0Z9T3QEN0VYW"
+    ]
+  },
+  {
+    "id": "HW-01M2YVCXXE40XMVFH74MSCWDEF",
+    "name": "Circuit de Mosquée Amghar à Borj Ajim",
+    "file": "djerba/Circuit de Mosquée Amghar à Borj Ajim.gpx",
+    "description": "",
+    "distance": "7.0 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Ajim",
+    "poiIds": [
+      "HW-01K77WPE6PN0QBJJWTRH1X9CJH",
+      "HW-01KZH0VF4N0VWX15MJ05254WNV",
+      "HW-01K77WPE6PG0DA193W44FBQAHQ",
+      "HW-01M1PHEQT65YE118E6KAZKM3NH",
+      "HW-01K77WPE6PP29CK1JR2H25ACNK",
+      "HW-01KZH0VF6ZBJVQ3RJV1N68P44D",
+      "HW-01K77WPE6PGSGH7AWKFRACMNSJ",
+      "HW-01K77WPE6PRETC07TQDNMAG54C",
+      "HW-01K77WPE6P7XZY555VW8YDAVA0",
+      "HW-01K77WPE6RHDAFAXAA92EFT8GY",
+      "HW-01KJABRN0XJDFFSBSRFDN4PGQ4",
+      "HW-01K77WPE6PGWRVHZ8H8CTQJ06X"
+    ]
   }
 ]
