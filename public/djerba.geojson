@@ -5248,7 +5248,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Daoud",
+        "Nom du site FR": "Mosquée Sidi Daoud (Essouani)",
         "Nom du site arabe": "جامع سيدي داود",
         "Catégorie": "Mosquée",
         "Zone": "Essouani",
@@ -5683,7 +5683,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Bel Aïz",
+        "Nom du site FR": "Mosquée El Bechir (Belaiz)",
         "Nom du site arabe": "جامع بليعز",
         "Catégorie": "Mosquée",
         "Zone": "Essouani",
@@ -5694,9 +5694,9 @@
           10.8518162,
           33.8603782
         ],
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "description": "73 Mosquée Belaiz. Hachane. Mosquée malékite à origine wahbite. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -6536,7 +6536,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Daoud Tlet",
+        "Nom du site FR": "Mosquée Sidi Daoud (Tlet)",
         "Nom du site arabe": "جامع سيدي داود تلت",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
@@ -9193,7 +9193,7 @@
         "Nom du site arabe": "جامع بوزيري",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "Répertoire J. Fathallah, n° 331 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://www.youtube.com/watch?v=QIpMeR9OnDQ",
+        "Source": "Répertoire J. Fathallah, n° 331 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://www.youtube.com/watch?v=QIpMeR9OnDQ\nPlaque de la mosquée, relevée sur place le 14/11/2025",
         "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P",
         "accessPoint": [
           11.0134285,
@@ -9779,7 +9779,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Errahma",
+        "Nom du site FR": "Mosquée Errahma (Essouani)",
         "Nom du site arabe": "جامع الرحمة",
         "Catégorie": "Mosquée",
         "Zone": "Essouani",
@@ -10997,7 +10997,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Mbarak",
+        "Nom du site FR": "Mosquée Sidi Mbarek",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJABRN0Y687FFD0EF2SYPZ3Q",
@@ -12079,7 +12079,7 @@
         "Catégorie": "Mosquée",
         "osm_ref": "way/990352764",
         "HW_ID": "HW-01KZH0VEV5Y6E0MYJR1AHXR0KC",
-        "Sous-type": "Générique",
+        "Sous-type": "À coupoles",
         "description": "85 Sidi Slama. Bani Dight, Erriadh. Mosquée mausolée ibadite wahbite. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -12087,8 +12087,8 @@
         "verified": false,
         "introuvableCarte": false,
         "Nom du site arabe": "",
-        "État": "",
-        "Accès": "",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "maps_ref": "",
         "Téléphone": "",
