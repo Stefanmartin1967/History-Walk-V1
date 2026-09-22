@@ -78,7 +78,7 @@ function buildTargets(candidate) {
 /**
  * Ouvre le sélecteur de doublon.
  * @param {Object} candidate  feature du candidat Scout en cours de curation
- * @param {HTMLElement} host  conteneur du RichEditor (.hw-modal ou .md-drawer)
+ * @param {HTMLElement} host  conteneur du RichEditor (.hw-modal)
  * @returns {Promise<boolean>} true si la fusion a été faite (l'appelant ferme l'éditeur)
  */
 export function openDuplicatePicker(candidate, host) {

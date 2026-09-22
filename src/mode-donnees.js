@@ -1,10 +1,19 @@
-// mode-donnees.js — Mode « Données » (admin). Réunif A3a/b/c → coquille v2 (A3d).
+// mode-donnees.js — Mode « Données » (admin). Réunif A3a/b/c → coquille v2 (A3d)
+// → clic = fiche de consultation (22/09/2026).
 //
 // Successeur in-app du Data Manager. La TOPBAR Heripia est CONSERVÉE (sélecteur
 // de destination + bouton Filtres + thème) — on ne réinvente pas ces contrôles
 // (réunif A3d). L'overlay n'ajoute qu'un RAIL gauche : en-tête « Mode Données »
-// + Quitter + recherche + liste. La VRAIE carte reste interactive dessous ; le
-// RichEditor s'ouvre en tiroir droit (A3b). Gated state.isAdmin.
+// + Quitter + recherche + liste. La VRAIE carte reste interactive dessous.
+// Cliquer un lieu du rail = EXACTEMENT le même résultat qu'un clic carte ou une
+// recherche topbar (vol + surlignage + vraie fiche de consultation dans la
+// sidebar droite, via openDetailsPanel — aucune réimplémentation). La sidebar,
+// masquée par défaut pour laisser le rail + la carte respirer, réapparaît
+// seulement le temps qu'une fiche est ouverte (classe body .md-poi-open, cf.
+// mode-donnees.css). Éditer reste un clic sur « Modifier » dans cette fiche,
+// comme partout ailleurs dans l'app (modale RichEditor standard — plus de
+// tiroir dédié, cf. mémoire feedback_two_poi_editors : un seul éditeur, pas de
+// 2e surface qui drifte). Gated state.isAdmin.
 //
 // Filtres UNIFIÉS (A3d) : la liste suit les filtres de la topbar (panneau
 // Filtres → eventBus 'data:filtered') ; pas de filtres propres au rail.
@@ -16,7 +25,7 @@ import { escapeXml, getPoiProp } from './utils.js';
 import { foldForSearch } from './text-search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
-import { RichEditor } from './richEditor.js';
+import { openDetailsPanel } from './ui-details.js';
 import { eventBus } from './events.js';
 import { getIconForFeature } from './poi-icons.js';
 
@@ -26,7 +35,8 @@ let _search = '';
 let _currentId = null;  // POI sélectionné
 let _highlight = null;  // cercle de surlignage temporaire sur la carte
 let _isOpen = false;
-let _onEditorClosed = null; // handler window 'richEditor:closed' → rafraîchit la liste
+let _onEditorClosed = null; // handler window 'richEditor:closed' → rafraîchit la liste (méta à jour après édition)
+let _onDetailsClosed = null; // handler eventBus 'details-panel:closed' → referme la fiche, revient au rail plein écran
 let _onDataFiltered = null; // handler eventBus 'data:filtered' → resync sur filtres topbar
 
 function buildItems() {
@@ -68,9 +78,20 @@ function renderShell() {
         _search = e.target.value;
         renderList();
     });
-    // A3b : à la fermeture du tiroir d'édition, rafraîchir la liste (méta à jour).
+    // Après une édition (modale RichEditor standard, cf. bouton « Modifier » de
+    // la fiche), rafraîchir la liste (méta à jour : catégorie, badge Vérifié…).
     _onEditorClosed = () => renderList();
     window.addEventListener('richEditor:closed', _onEditorClosed);
+    // La fiche a été refermée (bouton fermer de la sidebar) → revient au rail
+    // plein écran, comme avant toute sélection.
+    _onDetailsClosed = () => {
+        document.body.classList.remove('md-poi-open');
+        if (_highlight) { _highlight.remove(); _highlight = null; }
+        _currentId = null;
+        renderList();
+        setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 60);
+    };
+    eventBus.on('details-panel:closed', _onDetailsClosed);
     // A3d : filtres unifiés — la liste suit les filtres de la topbar.
     _onDataFiltered = () => { _items = buildItems(); renderList(); };
     eventBus.on('data:filtered', _onDataFiltered);
@@ -129,14 +150,11 @@ function buildHighlightIcon() {
     });
 }
 
-async function selectPoi(id) {
+function selectPoi(id) {
     const f = _items.find(x => getPoiId(x) === id);
     if (!f || !f.geometry) return;
-    // A3b : édition EN PLACE dans le tiroir droit. openForEdit confirme si des
-    // modifs non enregistrées existent sur un autre lieu → false si annulé : on
-    // ne bascule alors ni la sélection ni la carte.
-    const ok = await RichEditor.openForEdit(id, { host: 'drawer' });
-    if (ok === false) return;
+    const globalIndex = state.loadedFeatures.findIndex(x => getPoiId(x) === id);
+    if (globalIndex === -1) return;
     _currentId = id;
     const [lon, lat] = f.geometry.coordinates;
     if (_highlight) { _highlight.remove(); _highlight = null; }
@@ -145,19 +163,34 @@ async function selectPoi(id) {
     _highlight = L.marker([lat, lon], {
         icon: buildHighlightIcon(), interactive: false, keyboard: false, zIndexOffset: 1000,
     }).addTo(map);
-    map.flyTo([lat, lon], Math.max(map.getZoom(), 16), { duration: 0.5 });
+    // Même résultat qu'un clic carte (map.js handleMarkerClick) : la vraie
+    // fiche de consultation, dans la vraie sidebar. .md-poi-open (CSS) la
+    // laisse réapparaître le temps de la consultation — cf. tête de fichier.
+    document.body.classList.add('md-poi-open');
+    openDetailsPanel(globalIndex, null);
+    // La sidebar vient d'apparaître (transition CSS #map) → resynchroniser
+    // Leaflet AVANT le vol, sinon flyTo vise l'ancien centre (carte pleine largeur).
+    setTimeout(() => {
+        try { map.invalidateSize(); } catch (e) {}
+        map.flyTo([lat, lon], Math.max(map.getZoom(), 16), { duration: 0.5 });
+    }, 60);
     renderList(); // re-marque .is-current
 }
 
 function stopModeDonnees() {
     if (!_isOpen) return;
-    RichEditor.discardDrawer(); // ferme un éventuel tiroir d'édition ouvert
     if (_onEditorClosed) { window.removeEventListener('richEditor:closed', _onEditorClosed); _onEditorClosed = null; }
+    if (_onDetailsClosed) { eventBus.off('details-panel:closed', _onDetailsClosed); _onDetailsClosed = null; }
     if (_onDataFiltered) { eventBus.off('data:filtered', _onDataFiltered); _onDataFiltered = null; }
     if (_highlight) { _highlight.remove(); _highlight = null; }
     if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
     _overlay = null;
-    document.body.classList.remove('mode-donnees-active');
+    // La fiche éventuellement ouverte reste affichée normalement dans la
+    // sidebar après la sortie (comportement identique à une consultation en
+    // navigation courante) : on ne la ferme pas, on retire juste le marqueur
+    // .md-poi-open devenu inutile (mode-donnees-active seul suffit à ne plus
+    // masquer la sidebar une fois la classe ci-dessous retirée).
+    document.body.classList.remove('md-poi-open', 'mode-donnees-active');
     setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 60);
     _items = []; _search = ''; _currentId = null; _isOpen = false;
 }

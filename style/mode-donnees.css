@@ -1,24 +1,36 @@
-/* style/mode-donnees.css — Mode « Données » (admin). Réunif A3 (coquille v2, A3d).
-   La TOPBAR Heripia est CONSERVÉE (sélecteur destination + Filtres + thème) ; on
-   ne masque QUE la sidebar droite. L'overlay ajoute un rail gauche (en-tête Mode
-   Données/Quitter + recherche + liste) + un tiroir droit (RichEditor, A3b). La
-   vraie carte reste interactive dessous. Styles .md-* portés de la maquette,
-   tokens app uniquement. Pattern overlay : pointer-events:none → carte
-   interactive ; rail + tiroir interceptent les events (pointer-events:auto). */
+/* style/mode-donnees.css — Mode « Données » (admin). Réunif A3 (coquille v2, A3d)
+   → clic = fiche de consultation (22/09/2026).
+   La TOPBAR Heripia est CONSERVÉE (sélecteur destination + Filtres + thème).
+   L'overlay ajoute un rail gauche (en-tête Mode Données/Quitter + recherche +
+   liste). La vraie carte reste interactive dessous. Styles .md-* portés de la
+   maquette, tokens app uniquement. Pattern overlay : pointer-events:none →
+   carte interactive ; le rail intercepte les events (pointer-events:auto). */
 
 /* ============================================================
-   1. Sidebar masquée (la TOPBAR reste), carte étendue à droite
+   1. Sidebar masquée PAR DÉFAUT (la TOPBAR reste), carte étendue à droite.
+   Elle réapparaît (règle suivante) le temps qu'une fiche de consultation est
+   ouverte — .md-poi-open posé par mode-donnees.js:selectPoi, retiré à la
+   fermeture de la fiche ou à la sortie du Mode Données. C'est la VRAIE sidebar
+   (mêmes composants qu'un clic carte / une recherche topbar) : aucune
+   réimplémentation, cf. mémoire feedback_two_poi_editors.
    ============================================================ */
 body.mode-donnees-active .right-sidebar,
 body.mode-donnees-active .hw-sidebar,
 body.mode-donnees-active #right-sidebar { display: none !important; }
 
-/* Sidebar masquée → la carte prend toute la largeur (sous la topbar, top:72px). */
+body.mode-donnees-active.md-poi-open .right-sidebar,
+body.mode-donnees-active.md-poi-open .hw-sidebar,
+body.mode-donnees-active.md-poi-open #right-sidebar { display: flex !important; }
+
+/* Sidebar masquée → la carte prend toute la largeur (sous la topbar, top:72px).
+   Fiche ouverte → la carte laisse la place normale à la sidebar (même valeur
+   qu'en navigation courante, cf. base.css @media(min-width:768px) #map). */
 body.mode-donnees-active #map { right: 0 !important; }
+body.mode-donnees-active.md-poi-open #map { right: var(--sidebar-width) !important; }
 
 .mode-donnees-overlay {
     position: fixed; inset: 0; z-index: 1500; /* > sidebar (1002), < modales (2000) */
-    pointer-events: none; /* carte interactive dessous ; rail + tiroir en auto */
+    pointer-events: none; /* carte interactive dessous ; le rail en auto */
 }
 
 /* ============================================================
@@ -84,56 +96,14 @@ body.mode-donnees-active #map { right: 0 !important; }
 .md-rail-foot b { color: var(--ink); }
 
 /* ============================================================
-   3. TIROIR DROIT = RichEditor en place (A3b) — sous la topbar
-   Le RichEditor monte son formulaire (mêmes IDs) ici au lieu de openHwModal.
-   ============================================================ */
-.mode-donnees-overlay .md-drawer {
-    position: absolute; right: 12px; top: 78px; bottom: 12px; width: 430px;
-    display: flex; flex-direction: column; pointer-events: auto;
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius-lg); box-shadow: var(--shadow-modal); overflow: hidden;
-}
-.md-drawer-head {
-    display: flex; align-items: center; gap: 10px; padding: 12px 14px;
-    border-bottom: 1px solid var(--line);
-}
-.md-drawer-head .ic {
-    width: 30px; height: 30px; border-radius: var(--radius-md);
-    background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; flex-shrink: 0;
-}
-.md-drawer-head .ic svg { width: 17px; height: 17px; }
-.md-drawer-head h4 { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); }
-.md-drawer-head .sub { font-size: 11.5px; color: var(--ink-soft); margin-top: 1px; }
-.md-drawer-head .nav { margin-left: auto; display: flex; gap: 4px; }
-.md-iconbtn {
-    width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line);
-    background: var(--surface); color: var(--ink-soft); cursor: pointer;
-    display: grid; place-items: center;
-}
-.md-iconbtn:hover { background: var(--surface-muted); color: var(--ink); }
-.md-iconbtn svg { width: 15px; height: 15px; }
-.md-drawer-body { flex: 1; overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 13px; }
-.md-drawer-body > * { flex-shrink: 0; }
-.md-drawer-foot {
-    padding: 11px 14px; border-top: 1px solid var(--line); background: var(--surface-muted);
-    display: flex; align-items: center; gap: 10px;
-    /* Le tiroir fait 430 px : sur un CANDIDAT, les 4 actions légitimes (Supprimer,
-       Annuler, Enregistrer (garder à curer), Valider & enregistrer) ne tiennent pas
-       sur une ligne. On enroule au lieu de laisser le bouton primaire sortir du
-       tiroir, hors d'atteinte. */
-    flex-wrap: wrap; row-gap: 8px;
-}
-.md-drawer-foot .btn-ghost { margin-right: auto; } /* Annuler à gauche, Enregistrer à droite */
-
-/* ============================================================
-   4. Panneau Filtres de la topbar — VISIBLE en Mode Données (réunif A3e, #6)
+   3. Panneau Filtres de la topbar — VISIBLE en Mode Données (réunif A3e, #6)
    Sinon caché derrière l'overlay (z-1500) + le rail. On le pose juste à droite
    du rail (left 354 = 12 + 330 + 12), au-dessus de l'overlay.
    ============================================================ */
 body.mode-donnees-active .hw-filter-panel { left: 354px !important; z-index: 1600 !important; }
 
 /* ============================================================
-   5. Contrôles carte Leaflet — décalés à droite du rail (réunif A3f)
+   4. Contrôles carte Leaflet — décalés à droite du rail (réunif A3f)
    Zoom (map.js:54), sélecteur de couches (map.js:103), Recentrer et Légende
    sont TOUS en position 'topleft' → le rail (330px) les masquait. On décale
    toute la pile top-left juste à droite du rail (354 = 12 + 330 + 12). Donne
@@ -146,7 +116,7 @@ body.mode-donnees-active .leaflet-top.leaflet-left { left: 354px; }
 body.mode-donnees-active.hw-filter-open .leaflet-top.leaflet-left { left: auto; right: 12px; }
 
 /* ============================================================
-   6. Surlignage du POI sélectionné = épingle « qui tombe » (réunif A3f, n°3)
+   5. Surlignage du POI sélectionné = épingle « qui tombe » (réunif A3f, n°3)
    divIcon ancré (0,0) sur le point GPS ; le CSS remonte l'épingle AU-DESSUS de
    l'icône du POI (ancrée bas-centre) → pas de décalage. Couleur = marque de l'app.
    ============================================================ */
