@@ -12002,11 +12002,11 @@
         "verified": false,
         "introuvableCarte": false,
         "Nom du site arabe": "",
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/B4aizEhWkmkntUFi8",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -17200,7 +17200,13 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "HW_ID": "HW-01M2NK4XWK0W7V5TTHXA1K9BN0",
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "Sous-type": "À coupoles",
+        "info_gpx": "",
+        "maps_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
