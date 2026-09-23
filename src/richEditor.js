@@ -17,7 +17,7 @@ import { getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { configureHelp, helpButton, helpInline } from './help-popover.js';
 import { GUIDE_LIEU, HELP_LIEU_ZONE, HELP_LIEU_CATEGORIE, HELP_LIEU_DESC_COURTE, HELP_LIEU_SOURCE } from './help-content.js';
 import {
-    getWorkPhotosById, uploadWorkPhoto, loadWorkPhotoBlob, MAX_WORK_PHOTOS_PER_POI
+    getWorkPhotosById, uploadWorkPhoto, loadWorkPhotoBlob
 } from './work-photos.js';
 import { savePrivateNote, shouldSyncPrivateNote } from './private-notes.js';
 import { getStoredToken } from './github-sync.js';
@@ -1127,7 +1127,7 @@ async function renderWorkPhotos(poiId) {
     list.innerHTML = '';
 
     const addBtn = document.getElementById('btn-rich-work-add');
-    if (addBtn) addBtn.disabled = paths.length >= MAX_WORK_PHOTOS_PER_POI;
+    if (addBtn) addBtn.disabled = false;
 
     for (const path of paths) {
         const item = document.createElement('div');
@@ -1179,21 +1179,13 @@ async function removeWorkPhoto(poiId, path) {
 // effacerait le premier. La référence est enregistrée dès que son envoi réussit :
 // un échec en cours de lot ne fait pas perdre les photos déjà envoyées.
 async function addWorkPhotos(poiId, files) {
-    const free = MAX_WORK_PHOTOS_PER_POI - getWorkPhotosById(poiId).length;
-    if (free <= 0) {
-        showToast(`Maximum ${MAX_WORK_PHOTOS_PER_POI} photos de travail par lieu.`, 'warning');
-        return;
-    }
-    const batch = files.slice(0, free);
-    const skipped = files.length - batch.length;
-
     const addBtn = document.getElementById('btn-rich-work-add');
     if (addBtn) addBtn.disabled = true;
 
     let added = 0;
     const errors = [];
-    for (const [i, file] of batch.entries()) {
-        const progress = batch.length > 1 ? ` ${i + 1}/${batch.length}` : '';
+    for (const [i, file] of files.entries()) {
+        const progress = files.length > 1 ? ` ${i + 1}/${files.length}` : '';
         showToast(`Envoi de la photo de travail${progress}…`, 'info', 2000);
         try {
             const path = await uploadWorkPhoto(file, poiId);
@@ -1205,17 +1197,16 @@ async function addWorkPhotos(poiId, files) {
         }
     }
 
-    await renderWorkPhotos(poiId); // réactive le bouton selon les places restantes
+    await renderWorkPhotos(poiId); // réactive le bouton
 
     const plural = (n) => (n > 1 ? 's' : '');
-    const notes = [];
-    if (errors.length) notes.push(`${errors.length} échec${plural(errors.length)} : ${errors[0]}`);
-    if (skipped) notes.push(`${skipped} ignorée${plural(skipped)} (maximum ${MAX_WORK_PHOTOS_PER_POI} par lieu)`);
+    const failure = errors.length ? `${errors.length} échec${plural(errors.length)} : ${errors[0]}` : '';
     if (!added) {
-        showToast(`Ajout impossible — ${notes.join(' · ')}`, 'error', 5000);
+        showToast(`Ajout impossible — ${failure}`, 'error', 5000);
+    } else if (failure) {
+        showToast(`${added} photo${plural(added)} de travail ajoutée${plural(added)}. ${failure}`, 'warning', 5000);
     } else {
-        const msg = `${added} photo${plural(added)} de travail ajoutée${plural(added)}.`;
-        showToast(notes.length ? `${msg} ${notes.join(' · ')}` : msg, notes.length ? 'warning' : 'success', notes.length ? 5000 : undefined);
+        showToast(`${added} photo${plural(added)} de travail ajoutée${plural(added)}.`, 'success');
     }
 }
 
