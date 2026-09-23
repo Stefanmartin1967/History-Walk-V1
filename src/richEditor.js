@@ -4,7 +4,7 @@ import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES, getActiveDestinationCountry } from './state.js';
 import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates, updatePoiData } from './data.js';
 import { eventBus } from './events.js';
-import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, isOsmChecked, isMapsChecked, isInJalelDirectoryScope, formatPhone } from './utils.js';
+import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, normalizeCommonsCategory, isOsmChecked, isMapsChecked, isInJalelDirectoryScope, formatPhone } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
 import { persistPoiEdit } from './poi-persistence.js';
@@ -44,6 +44,7 @@ const DOM_IDS = {
         SOURCE: 'rich-poi-source',
         OSM_REF: 'rich-poi-osm-ref',
         MAPS_REF: 'rich-poi-maps-ref',
+        COMMONS_REF: 'rich-poi-commons-ref',
         SUBTYPE: 'rich-poi-subtype',
         STATE: 'rich-poi-state',
         ACCESS: 'rich-poi-access',
@@ -275,6 +276,11 @@ const RICH_POI_BODY_HTML = `
         <label for="rich-poi-maps-ref">Lien Google Maps</label>
         <input type="url" id="rich-poi-maps-ref" class="editable-input" placeholder="Collez le lien du lieu (bouton Partager sur Maps)">
     </div>
+    <!-- Réservé à l'admin (masqué dans showModal), mais publié avec le lieu comme osm_ref. -->
+    <div class="input-group" id="rich-poi-commons-group">
+        <label for="rich-poi-commons-ref">Catégorie Commons</label>
+        <input type="text" id="rich-poi-commons-ref" class="editable-input" placeholder="Coller l'URL de la catégorie Commons (ou Category:…)">
+    </div>
     <div class="input-group">
         <label for="rich-poi-notes">Notes</label>
         <textarea id="rich-poi-notes" class="editable-input" rows="2"></textarea>
@@ -489,6 +495,7 @@ export const RichEditor = {
         setValue(DOM_IDS.INPUTS.SOURCE, merged.Source || "");
         setValue(DOM_IDS.INPUTS.OSM_REF, merged.osm_ref || "");
         setValue(DOM_IDS.INPUTS.MAPS_REF, merged.maps_ref || "");
+        setValue(DOM_IDS.INPUTS.COMMONS_REF, merged.commons_ref || "");
         setValue(DOM_IDS.INPUTS.PHONE, merged['Téléphone'] || merged.telephone || "");
         setValue(DOM_IDS.INPUTS.HOURS, merged['Horaires'] || merged.horaires || "");
         setValue(DOM_IDS.INPUTS.FACEBOOK, merged['Facebook'] || "");
@@ -853,6 +860,9 @@ function showModal() {
     bindModalEvents();
     populateCategorySelect();
     createIcons({ icons: appIcons });
+
+    const commonsGroup = document.getElementById('rich-poi-commons-group');
+    if (commonsGroup) commonsGroup.hidden = !state.isAdmin;
 
     const headerEl = document.querySelector('.hw-modal-overlay.is-active .hw-modal-header');
     const closeBtn = headerEl?.querySelector('.hw-modal-close');
@@ -1349,6 +1359,11 @@ async function handleSave(validate = false) {
     // du moment du dernier VRAI check, cf. le but « relancer un re-scout »).
     const osmRefVal = normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF));
     const mapsRefVal = getValue(DOM_IDS.INPUTS.MAPS_REF).trim();
+    const commonsRaw = getValue(DOM_IDS.INPUTS.COMMONS_REF).trim();
+    const commonsRefVal = normalizeCommonsCategory(commonsRaw);
+    if (commonsRaw && !commonsRefVal) {
+        showToast("Catégorie Commons non reconnue (attendu : l'URL de la catégorie ou Category:…) — champ ignoré.", 'warning', 6000);
+    }
     // isOsmChecked : même règle que l'affichage et le filtre (utils.js).
     const osmCheckedNow = isOsmChecked({ osmChecked: getOsmChecked(), osm_ref: osmRefVal });
     const wasOsmCheckedEffective = originalOsmState.checked || !!originalOsmState.ref;
@@ -1381,6 +1396,7 @@ async function handleSave(validate = false) {
         // stocke le lien tel que collé, la garde http(s) s'applique à l'ouverture
         // (mapsPlaceUrl, cf. utils.js).
         'maps_ref': mapsRefVal,
+        'commons_ref': commonsRefVal,
         // Mis à la forme du pays de la destination (« +216 27 677 120 »), quelle
         // que soit la saisie. Non reconnu (deux numéros, un poste, un numéro
         // étranger) → conservé tel quel, cf. formatPhone.

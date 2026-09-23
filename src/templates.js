@@ -1,7 +1,7 @@
 // templates.js
 import { getPatrimonialName } from './data.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
-import { escapeXml, getDerivedZone, linkifyText, formatPhone, telHref } from './utils.js';
+import { escapeXml, getDerivedZone, linkifyText, formatPhone, telHref, commonsCategoryUrl } from './utils.js';
 import { state, getActiveDestinationCountry } from './state.js';
 import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
@@ -166,7 +166,7 @@ function buildPoiQuickBar() {
 
 // Popover du kebab — items secondaires : Arabe · Desc. GPX · Position · Supprimer.
 // IDs identiques à l'ancien menu pour réutiliser tous les handlers existants.
-function buildPoiKebabMenu({ hasGpxDesc, isMobile }) {
+function buildPoiKebabMenu({ hasGpxDesc, hasCommons, isMobile }) {
     const gpxId  = isMobile ? 'mobile-btn-toggle-gpx-desc' : 'btn-toggle-gpx-desc';
     const positionItem = isMobile
         ? `<button class="poi-pop-item" role="menuitem" id="mobile-move-poi-btn" type="button">
@@ -188,6 +188,13 @@ function buildPoiKebabMenu({ hasGpxDesc, isMobile }) {
                <i data-lucide="flag"></i>Point d'accès au tracé
            </button>`;
 
+    // Admin seul (choix de Stefan, 23/09/2026) — la catégorie est pourtant publiée.
+    const commonsItem = !state.isAdmin ? ''
+        : `<button class="poi-pop-item" role="menuitem" id="btn-open-commons" type="button"
+                   aria-disabled="${hasCommons ? 'false' : 'true'}">
+               <i data-lucide="image"></i>Photos Commons
+           </button>`;
+
     return `
         <div class="poi-kebab-pop is-hidden" id="poi-tools-pop" role="menu" aria-label="Outils du lieu">
             <button class="poi-pop-item" role="menuitem" id="btn-add-photos" type="button">
@@ -196,6 +203,7 @@ function buildPoiKebabMenu({ hasGpxDesc, isMobile }) {
             <button class="poi-pop-item" role="menuitem" id="btn-download-photos" type="button">
                 <i data-lucide="download"></i>Télécharger les photos
             </button>
+            ${commonsItem}
             <button class="poi-pop-item" role="menuitem" id="${gpxId}" type="button"
                     aria-disabled="${hasGpxDesc ? 'false' : 'true'}">
                 <i data-lucide="file-text"></i>Info GPX
@@ -439,7 +447,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // Mini-barre + popover kebab — communs PC + mobile.
     // Le kebab vit dans la mini-barre sur les deux (cohérence PC/mobile).
     const quickBarHtml = buildPoiQuickBar({ withKebab: true });
-    const kebabPopover = buildPoiKebabMenu({ hasGpxDesc, isMobile: mobile });
+    const kebabPopover = buildPoiKebabMenu({ hasGpxDesc, hasCommons: !!commonsCategoryUrl(allProps.commons_ref), isMobile: mobile });
 
     // Eyebrow contextuel partagé PC/mobile.
     // zone et category sont escapés ; positionText est du HTML safe (chevrons + index).
