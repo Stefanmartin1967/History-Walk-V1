@@ -269,6 +269,7 @@ export async function prepareDiffData(adminDraft) {
             if (key === 'description') displayKey = 'Description';
             if (key === 'info_gpx') displayKey = 'Info GPX';
             if (key === 'osm_ref') displayKey = 'Objet OSM';
+            if (key === 'commons_ref') displayKey = 'Catégorie Commons';
 
             if (key === 'photos') {
                 const oldLen = (oldVal || []).length;

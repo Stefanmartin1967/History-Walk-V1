@@ -6,7 +6,7 @@ import { isMobileView, pushMobileLevel, animateContainer, setMobileHeaderSlot, s
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
-import { sanitizeHTML, openPoiOnMap } from './utils.js';
+import { sanitizeHTML, openPoiOnMap, commonsCategoryUrl, getPoiProp } from './utils.js';
 import { openPhotoGrid, downloadAllPhotos } from './ui-photo-grid.js';
 import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -619,6 +619,17 @@ function setupDetailsEventListeners(poiId) {
                      }
                  }
              });
+        });
+    }
+
+    // --- « Photos Commons » (admin, menu ⋮) — grisé sans catégorie (aria-disabled,
+    // intercepté par setupKebab avant d'arriver ici). ---
+    const commonsBtn = document.getElementById('btn-open-commons');
+    if (commonsBtn) {
+        commonsBtn.addEventListener('click', () => {
+            const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+            const url = commonsCategoryUrl(getPoiProp(feature, 'commons_ref'));
+            if (url) window.open(url, '_blank', 'noopener,noreferrer');
         });
     }
 

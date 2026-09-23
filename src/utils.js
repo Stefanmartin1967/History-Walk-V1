@@ -277,6 +277,45 @@ export function osmObjectUrl(osmRef) {
     return ref ? `https://www.openstreetmap.org/${ref}` : null;
 }
 
+const COMMONS_HOST = /^(?:commons\.(?:m\.)?wikimedia\.org)$/i;
+
+/**
+ * Normalise une catégorie Wikimedia Commons collée par l'admin (`commons_ref`)
+ * vers « Category:Nom_du_lieu » (forme du chemin de l'URL Commons).
+ * Accepte l'URL de la catégorie (y compris version mobile, avec ou sans
+ * schéma, query ou ancre) ou « Category:… ». Comme normalizeOsmRef, ne devine
+ * JAMAIS à partir d'un texte libre : un nom nu, une autre page Commons (File:…)
+ * ou un autre site → ''.
+ * @param {string} value
+ * @returns {string} « Category:Sidi_Roubil_Mosque » ou ''
+ */
+export function normalizeCommonsCategory(value) {
+    if (typeof value !== 'string') return '';
+    let v = value.trim();
+    if (!v) return '';
+    if (/^(?:commons\.(?:m\.)?wikimedia\.org)\//i.test(v)) v = `https://${v}`;
+    if (/^https?:\/\//i.test(v)) {
+        let url;
+        try { url = new URL(v); } catch { return ''; }
+        if (!COMMONS_HOST.test(url.hostname)) return '';
+        const m = url.pathname.match(/^\/wiki\/(.+)$/);
+        if (!m) return '';
+        try { v = decodeURIComponent(m[1]); } catch { return ''; }
+    }
+    const cat = v.match(/^category:(.+)$/i);
+    if (!cat) return '';
+    const name = cat[1].trim().replace(/\s+/g, '_');
+    return name ? `Category:${name}` : '';
+}
+
+/** « Category:X » (ou URL collée) → page de la catégorie sur Commons, sinon null. */
+export function commonsCategoryUrl(commonsRef) {
+    const ref = normalizeCommonsCategory(commonsRef);
+    if (!ref) return null;
+    const name = ref.slice('Category:'.length);
+    return `https://commons.wikimedia.org/wiki/Category:${encodeURIComponent(name)}`;
+}
+
 /**
  * Valide un lien Google Maps collé par l'admin (`maps_ref`).
  *
