@@ -288,9 +288,9 @@ const RICH_POI_BODY_HTML = `
         <label>Photos de travail <span class="rich-work-hint">jamais publiées — repère de recherche</span></label>
         <div class="rich-work-list" id="rich-work-list"></div>
         <button type="button" class="btn btn-ghost rich-work-add" id="btn-rich-work-add">
-            <i data-lucide="image-plus"></i><span>Ajouter une photo de travail</span>
+            <i data-lucide="image-plus"></i><span>Ajouter des photos de travail</span>
         </button>
-        <input type="file" id="rich-work-file" class="is-hidden" accept="image/*">
+        <input type="file" id="rich-work-file" class="is-hidden" accept="image/*" multiple>
     </div>
 
     <!-- GPS footer : déplacer + coords + liens carte (réunif A3f) -->
@@ -1174,24 +1174,48 @@ async function removeWorkPhoto(poiId, path) {
     await renderWorkPhotos(poiId);
 }
 
-async function addWorkPhoto(poiId, file) {
-    const current = getWorkPhotosById(poiId);
-    if (current.length >= MAX_WORK_PHOTOS_PER_POI) {
+// Envois UN PAR UN, pas en parallèle : chaque ajout relit la liste du lieu puis
+// la réécrit — deux envois simultanés partiraient de la même liste et le second
+// effacerait le premier. La référence est enregistrée dès que son envoi réussit :
+// un échec en cours de lot ne fait pas perdre les photos déjà envoyées.
+async function addWorkPhotos(poiId, files) {
+    const free = MAX_WORK_PHOTOS_PER_POI - getWorkPhotosById(poiId).length;
+    if (free <= 0) {
         showToast(`Maximum ${MAX_WORK_PHOTOS_PER_POI} photos de travail par lieu.`, 'warning');
         return;
     }
+    const batch = files.slice(0, free);
+    const skipped = files.length - batch.length;
+
     const addBtn = document.getElementById('btn-rich-work-add');
     if (addBtn) addBtn.disabled = true;
-    try {
-        showToast('Envoi de la photo de travail…', 'info', 2000);
-        const path = await uploadWorkPhoto(file, poiId);
-        await updatePoiData(poiId, 'workPhotos', [...current, path]);
-        await renderWorkPhotos(poiId);
-        showToast('Photo de travail ajoutée.', 'success');
-    } catch (e) {
-        console.warn('[WorkPhotos] Ajout échoué:', e.message);
-        showToast(`Ajout impossible : ${e.message}`, 'error', 5000);
-        if (addBtn) addBtn.disabled = false;
+
+    let added = 0;
+    const errors = [];
+    for (const [i, file] of batch.entries()) {
+        const progress = batch.length > 1 ? ` ${i + 1}/${batch.length}` : '';
+        showToast(`Envoi de la photo de travail${progress}…`, 'info', 2000);
+        try {
+            const path = await uploadWorkPhoto(file, poiId);
+            await updatePoiData(poiId, 'workPhotos', [...getWorkPhotosById(poiId), path]);
+            added++;
+        } catch (e) {
+            console.warn('[WorkPhotos] Ajout échoué:', e.message);
+            errors.push(e.message);
+        }
+    }
+
+    await renderWorkPhotos(poiId); // réactive le bouton selon les places restantes
+
+    const plural = (n) => (n > 1 ? 's' : '');
+    const notes = [];
+    if (errors.length) notes.push(`${errors.length} échec${plural(errors.length)} : ${errors[0]}`);
+    if (skipped) notes.push(`${skipped} ignorée${plural(skipped)} (maximum ${MAX_WORK_PHOTOS_PER_POI} par lieu)`);
+    if (!added) {
+        showToast(`Ajout impossible — ${notes.join(' · ')}`, 'error', 5000);
+    } else {
+        const msg = `${added} photo${plural(added)} de travail ajoutée${plural(added)}.`;
+        showToast(notes.length ? `${msg} ${notes.join(' · ')}` : msg, notes.length ? 'warning' : 'success', notes.length ? 5000 : undefined);
     }
 }
 
@@ -1202,9 +1226,9 @@ function setupWorkPhotoControls() {
 
     addBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', async () => {
-        const file = fileInput.files && fileInput.files[0];
-        fileInput.value = ''; // Permet de re-choisir le même fichier après un échec
-        if (!file) return;
+        const files = Array.from(fileInput.files || []);
+        fileInput.value = ''; // Permet de re-choisir les mêmes fichiers après un échec
+        if (!files.length) return;
         // Mode CREATE : le POI n'a pas encore d'identifiant stable, donc rien à
         // quoi rattacher un envoi. Une photo de travail se pose sur un lieu qui
         // existe déjà — le cas d'usage est d'ailleurs celui d'un lieu à identifier.
@@ -1212,7 +1236,7 @@ function setupWorkPhotoControls() {
             showToast("Enregistrez d'abord le lieu, puis ajoutez ses photos de travail.", 'warning', 4000);
             return;
         }
-        await addWorkPhoto(currentFeatureId, file);
+        await addWorkPhotos(currentFeatureId, files);
     });
 }
 
