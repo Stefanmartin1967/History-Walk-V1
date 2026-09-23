@@ -38,9 +38,6 @@ import { compressImage, PUBLISH_COMPRESSION, validatePhotoFile } from './photo-s
 import { getCachedWorkPhoto, setCachedWorkPhoto, deleteCachedWorkPhoto } from './database.js';
 import { fetchWithTimeout } from './net.js';
 
-/** Plafond volontaire : trois par lieu suffisent à identifier (validé 10/08). */
-export const MAX_WORK_PHOTOS_PER_POI = 3;
-
 /**
  * Chemins des photos de travail d'un POI.
  *
