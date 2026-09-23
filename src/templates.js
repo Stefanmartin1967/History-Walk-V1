@@ -78,9 +78,10 @@ function formatTimeText(h, m) {
     return `${h}h${String(m).padStart(2, '0')}`;
 }
 
-// Classe sémantique d'un état de lieu (pastille du hero). « Ruine » est
-// volontairement neutre (muted), pas « danger » : dans une app de patrimoine,
-// une ruine est un lieu à voir, pas un statut à éviter.
+// Classe sémantique d'un état de lieu (pastille du hero). « Ruine » et
+// « Disparu » sont volontairement neutres (muted), pas « danger » : dans une app
+// de patrimoine, une ruine est un lieu à voir, et un lieu disparu garde sa
+// mémoire (fiche conservée, carte et circuits inchangés — décision 23/09/2026).
 function stateTagClass(etat) {
     switch (etat) {
         case 'En activité':
@@ -89,7 +90,7 @@ function stateTagClass(etat) {
             return 'ok';
         case 'Vestiges partiels':
             return 'warn';
-        default: // Désaffecté, Ruine
+        default: // Désaffecté, Ruine, Disparu
             return 'muted';
     }
 }

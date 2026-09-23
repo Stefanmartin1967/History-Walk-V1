@@ -19,7 +19,7 @@
         { "label": "Fortifiée", "portee": "générique" },
         { "label": "Générique", "portee": "générique" }
       ],
-      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "etats": ["En activité", "Désaffecté", "Ruine", "Disparu"],
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
     },
     {
@@ -27,7 +27,7 @@
       "groupe": "Lieux de culte",
       "libelleDerive": false,
       "sousTypes": [],
-      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "etats": ["En activité", "Désaffecté", "Ruine", "Disparu"],
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
     },
     {
