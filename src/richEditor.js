@@ -17,7 +17,7 @@ import { getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { configureHelp, helpButton, helpInline } from './help-popover.js';
 import { GUIDE_LIEU, HELP_LIEU_ZONE, HELP_LIEU_CATEGORIE, HELP_LIEU_DESC_COURTE, HELP_LIEU_SOURCE } from './help-content.js';
 import {
-    getWorkPhotosById, uploadWorkPhoto, loadWorkPhotoBlob
+    getWorkPhotosById, getKeptWorkPhotosById, setWorkPhotoKept, uploadWorkPhoto, loadWorkPhotoBlob
 } from './work-photos.js';
 import { savePrivateNote, shouldSyncPrivateNote } from './private-notes.js';
 import { getStoredToken } from './github-sync.js';
@@ -291,7 +291,7 @@ const RICH_POI_BODY_HTML = `
          jamais publiées, sans watermark. Enregistrement IMMÉDIAT (upload réseau),
          indépendant du bouton Enregistrer du formulaire. -->
     <div class="input-group rich-work-photos" id="rich-work-photos">
-        <label>Photos de travail <span class="rich-work-hint">jamais publiées — repère de recherche</span></label>
+        <label>Photos de travail <span class="rich-work-hint">jamais publiées — épinglée = gardée après l'import de tes photos</span></label>
         <div class="rich-work-list" id="rich-work-list"></div>
         <button type="button" class="btn btn-ghost rich-work-add" id="btn-rich-work-add">
             <i data-lucide="image-plus"></i><span>Ajouter des photos de travail</span>
@@ -1134,6 +1134,7 @@ async function renderWorkPhotos(poiId) {
 
     revokeWorkThumbs();
     const paths = getWorkPhotosById(poiId);
+    const kept = new Set(getKeptWorkPhotosById(poiId));
     list.innerHTML = '';
 
     const addBtn = document.getElementById('btn-rich-work-add');
@@ -1170,6 +1171,25 @@ async function renderWorkPhotos(poiId) {
         del.addEventListener('click', () => removeWorkPhoto(poiId, path));
         item.appendChild(del);
 
+        const isKept = kept.has(path);
+        item.classList.toggle('is-kept', isKept);
+        const keep = document.createElement('button');
+        keep.type = 'button';
+        keep.className = 'rich-work-keep';
+        keep.setAttribute('aria-pressed', String(isKept));
+        keep.title = isKept
+            ? 'Gardée après l\'import de tes photos — cliquer pour ne plus la garder'
+            : 'Garder cette photo après l\'import de tes photos';
+        keep.setAttribute('aria-label', keep.title);
+        keep.innerHTML = `<i data-lucide="${isKept ? 'pin' : 'pin-off'}"></i>`;
+        keep.addEventListener('click', async () => {
+            await setWorkPhotoKept(poiId, path, !isKept);
+            await renderWorkPhotos(poiId);
+            // La fiche ouverte derrière l'éditeur met à jour sa puce « photos gardées ».
+            eventBus.emit('poi:photos-updated', { id: poiId });
+        });
+        item.appendChild(keep);
+
         list.appendChild(item);
     }
 
@@ -1181,6 +1201,10 @@ async function removeWorkPhoto(poiId, path) {
     // Seule la référence disparaît : les octets restent dans le dépôt privé
     // (décision 10/08 — un retrait par erreur ne doit pas détruire le travail).
     await updatePoiData(poiId, 'workPhotos', remaining);
+    if ((state.userData[poiId]?.keptWorkPhotos || []).includes(path)) {
+        await setWorkPhotoKept(poiId, path, false);
+        eventBus.emit('poi:photos-updated', { id: poiId });
+    }
     await renderWorkPhotos(poiId);
 }
 

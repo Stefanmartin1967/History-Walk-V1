@@ -867,4 +867,33 @@ describe('buildPayload — workPhotos', () => {
         state.userData = { poi1: { workPhotos: ['djerba/a.jpg'] } };
         expect(buildPayload().userData.poi1.workPhotos).toEqual(['djerba/a.jpg']);
     });
+
+    it('la marque « gardée » voyage avec la liste', () => {
+        state.userData = { poi1: { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: ['djerba/a.jpg'] } };
+        expect(buildPayload().userData.poi1.keptWorkPhotos).toEqual(['djerba/a.jpg']);
+    });
+});
+
+// Photos gardées (25/09/2026) — marque sur workPhotos, même règle « le distant
+// gagne » : les deux doivent venir du même écrivain pour rester cohérents.
+describe('mergeRemoteIntoLocal — keptWorkPhotos', () => {
+    it('le distant apporte la marque', () => {
+        state.userData = { poi1: { workPhotos: ['djerba/a.jpg'] } };
+        mergeRemoteIntoLocal({
+            userData: { poi1: { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: ['djerba/a.jpg'] } }
+        });
+        expect(state.userData.poi1.keptWorkPhotos).toEqual(['djerba/a.jpg']);
+    });
+
+    it('une marque retirée ailleurs est retirée ici', () => {
+        state.userData = { poi1: { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: ['djerba/a.jpg'] } };
+        mergeRemoteIntoLocal({ userData: { poi1: { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: [] } } });
+        expect(state.userData.poi1.keptWorkPhotos).toEqual([]);
+    });
+
+    it('un payload SANS la clé ne touche pas à la marque locale (Gist antérieur)', () => {
+        state.userData = { poi1: { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: ['djerba/a.jpg'] } };
+        mergeRemoteIntoLocal({ userData: { poi1: { workPhotos: ['djerba/a.jpg'] } } });
+        expect(state.userData.poi1.keptWorkPhotos).toEqual(['djerba/a.jpg']);
+    });
 });

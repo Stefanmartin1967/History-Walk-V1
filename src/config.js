@@ -65,4 +65,5 @@ export const PERSONAL_KEYS = [
     'hidden',              // POI masqué côté user
     'accessPointStatus',   // état de travail du drapeau (osm/moved/locked/on-track/failed) — admin only, dérivé de accessPoint ; ne pas publier ni diffuser (seul lecteur map.js est gardé isAdmin + userData-first)
     'workPhotos',          // photos de travail : chemins dans le dépôt PRIVÉ (cf. GITHUB_WORK_REPO). Photos de tiers, jamais publiables — leur place ici est la garantie structurelle qu'elles ne fuient pas dans le geojson public.
+    'keptWorkPhotos',      // sous-ensemble de workPhotos marqué « gardé » (survit à l'import des photos de Stefan) — mêmes chemins privés, même garantie.
 ];

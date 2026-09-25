@@ -41,7 +41,7 @@ import { updatePoiData } from '../src/data.js';
 import { fetchWithTimeout } from '../src/net.js';
 import { PERSONAL_KEYS, GITHUB_REPO, GITHUB_WORK_REPO } from '../src/config.js';
 import {
-    getWorkPhotosById, uploadWorkPhoto, loadWorkPhotoBlob, clearWorkPhotos,
+    getWorkPhotosById, getKeptWorkPhotosById, setWorkPhotoKept, uploadWorkPhoto, loadWorkPhotoBlob, clearWorkPhotos,
 } from '../src/work-photos.js';
 
 beforeEach(() => {
@@ -59,6 +59,10 @@ describe('garanties de non-publication', () => {
         // data.js partagent cette liste. Retirer la clé d'ici ferait fuiter des
         // photos de tiers dans la source publique.
         expect(PERSONAL_KEYS).toContain('workPhotos');
+    });
+
+    it('la marque « gardée » est personnelle elle aussi', () => {
+        expect(PERSONAL_KEYS).toContain('keptWorkPhotos');
     });
 
     it('le dépôt de travail est distinct du dépôt public', () => {
@@ -166,6 +170,46 @@ describe('clearWorkPhotos — le provisoire s\'efface devant le définitif', () 
         state.userData['HW-1'] = {};
         expect(await clearWorkPhotos('HW-1')).toBe(0);
         expect(updatePoiData).not.toHaveBeenCalled();
+    });
+
+    it('les photos GARDÉES survivent à l\'import (et gardent leur cache)', async () => {
+        state.userData['HW-1'] = {
+            workPhotos: ['djerba/a.jpg', 'djerba/b.jpg', 'djerba/c.jpg'],
+            keptWorkPhotos: ['djerba/b.jpg'],
+        };
+        expect(await clearWorkPhotos('HW-1')).toBe(2);
+        expect(updatePoiData).toHaveBeenCalledWith('HW-1', 'workPhotos', ['djerba/b.jpg']);
+        expect(deleteCachedWorkPhoto).not.toHaveBeenCalledWith('djerba/b.jpg');
+    });
+
+    it('toutes gardées → aucune écriture', async () => {
+        state.userData['HW-1'] = { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: ['djerba/a.jpg'] };
+        expect(await clearWorkPhotos('HW-1')).toBe(0);
+        expect(updatePoiData).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+describe('photos gardées — marque sur workPhotos', () => {
+    it('suit l\'ordre de workPhotos', () => {
+        state.userData['HW-1'] = {
+            workPhotos: ['djerba/a.jpg', 'djerba/b.jpg', 'djerba/c.jpg'],
+            keptWorkPhotos: ['djerba/c.jpg', 'djerba/a.jpg'],
+        };
+        expect(getKeptWorkPhotosById('HW-1')).toEqual(['djerba/a.jpg', 'djerba/c.jpg']);
+    });
+
+    it('une marque orpheline ne fait jamais réapparaître une photo retirée', () => {
+        state.userData['HW-1'] = { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: ['djerba/zombie.jpg'] };
+        expect(getKeptWorkPhotosById('HW-1')).toEqual([]);
+    });
+
+    it('marquer puis démarquer', async () => {
+        state.userData['HW-1'] = { workPhotos: ['djerba/a.jpg', 'djerba/b.jpg'], keptWorkPhotos: ['djerba/a.jpg'] };
+        await setWorkPhotoKept('HW-1', 'djerba/b.jpg', true);
+        expect(updatePoiData).toHaveBeenLastCalledWith('HW-1', 'keptWorkPhotos', ['djerba/a.jpg', 'djerba/b.jpg']);
+        await setWorkPhotoKept('HW-1', 'djerba/a.jpg', false);
+        expect(updatePoiData).toHaveBeenLastCalledWith('HW-1', 'keptWorkPhotos', []);
     });
 });
 

@@ -209,7 +209,8 @@ body {
     background: var(--paper-2);
     text-align: center;
 }
-.rich-work-del {
+.rich-work-del,
+.rich-work-keep {
     position: absolute;
     top: -6px;
     right: -6px;
@@ -225,7 +226,14 @@ body {
     cursor: pointer;
 }
 .rich-work-del:hover { color: var(--danger-fg); border-color: var(--danger-fg); }
-.rich-work-del svg { width: 12px; height: 12px; }
+.rich-work-del svg,
+.rich-work-keep svg { width: 12px; height: 12px; }
+/* Épingle « gardée après import » (25/09/2026) : coin opposé à la croix. Gardée =
+   épingle ambre + cadre plein (le pointillé reste la marque du provisoire). */
+.rich-work-keep { right: auto; left: -6px; }
+.rich-work-keep:hover,
+.rich-work-keep[aria-pressed="true"] { color: var(--warn-fg); border-color: var(--warn-fg); }
+.rich-work-item.is-kept .rich-work-thumb { border-style: solid; }
 .rich-work-add:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* GPS footer interne au body (bouton "Déplacer" + coords + liens carte) */

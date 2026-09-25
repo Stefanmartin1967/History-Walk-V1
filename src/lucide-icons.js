@@ -77,6 +77,9 @@ import {
     // Rognage photo (modale import, 03/06/2026)
     Crop,
 
+    // Photos de travail gardées après import (25/09/2026)
+    Pin, PinOff,
+
 } from 'lucide';
 
 export { createIcons };
@@ -131,4 +134,6 @@ export const appIcons = {
     Tags,
 
     Crop,
+
+    Pin, PinOff,
 };

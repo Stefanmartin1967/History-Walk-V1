@@ -22,6 +22,14 @@
 // clearWorkPhotos, appelé à l'import). Les octets, eux, restent dans le dépôt
 // privé — décision 10/08 : un import par erreur ne doit pas détruire le travail.
 //
+// Exception — photos GARDÉES (25/09/2026) : certaines photos d'autrui ne seront
+// jamais remplacées (intérieurs photographiés par Rais67, où Stefan n'entrera
+// pas). Marquées « gardées », elles survivent à l'import et restent consultables
+// par l'admin via leur propre porte sur la fiche — jamais mêlées aux photos de
+// Stefan dans un même défilement. C'est une MARQUE sur un sous-ensemble de
+// `workPhotos` (clé `keptWorkPhotos`), pas une seconde liste : tout ce qui lit
+// `workPhotos` (repli du hero, filtre, synchro) reste inchangé.
+//
 // Lecture : un dépôt privé n'est pas servible à un `<img src>` (il faut un
 // en-tête d'autorisation). On rapatrie donc chaque photo une fois via l'API
 // Contents authentifiée, puis on la sert depuis le cache IndexedDB — c'est ce
@@ -50,6 +58,27 @@ import { fetchWithTimeout } from './net.js';
 export function getWorkPhotosById(poiId) {
     const raw = state.userData?.[poiId]?.workPhotos;
     return Array.isArray(raw) ? raw.filter(p => typeof p === 'string' && p) : [];
+}
+
+/**
+ * Photos de travail GARDÉES d'un POI, dans l'ordre de `workPhotos`.
+ * Filtrées sur `workPhotos` : une marque restée orpheline (photo retirée entre-
+ * temps, synchro en décalage) ne fait jamais réapparaître une photo.
+ * @returns {string[]} toujours un tableau
+ */
+export function getKeptWorkPhotosById(poiId) {
+    const raw = state.userData?.[poiId]?.keptWorkPhotos;
+    if (!Array.isArray(raw) || raw.length === 0) return [];
+    const kept = new Set(raw);
+    return getWorkPhotosById(poiId).filter(p => kept.has(p));
+}
+
+/** Marque (ou démarque) une photo de travail comme gardée. */
+export async function setWorkPhotoKept(poiId, path, keep) {
+    const others = getKeptWorkPhotosById(poiId).filter(p => p !== path);
+    const next = keep ? [...others, path] : others;
+    const { updatePoiData } = await import('./data.js');
+    await updatePoiData(poiId, 'keptWorkPhotos', next);
 }
 
 /**
@@ -149,7 +178,7 @@ export async function loadWorkPhotoBlob(path) {
 }
 
 /**
- * Retire TOUTES les références de photos de travail d'un POI.
+ * Retire les références de photos de travail d'un POI, SAUF les gardées.
  *
  * Appelé quand Stefan importe ses propres photos : le provisoire s'efface devant
  * le définitif. Les octets restent dans le dépôt privé (décision 10/08) — seul
@@ -160,14 +189,16 @@ export async function loadWorkPhotoBlob(path) {
  */
 export async function clearWorkPhotos(poiId) {
     const paths = getWorkPhotosById(poiId);
-    if (paths.length === 0) return 0;
+    const kept = new Set(getKeptWorkPhotosById(poiId));
+    const removed = paths.filter(p => !kept.has(p));
+    if (removed.length === 0) return 0;
 
     // Le cache local n'a plus lieu d'être : il ne sert qu'à l'affichage.
-    for (const p of paths) {
+    for (const p of removed) {
         try { await deleteCachedWorkPhoto(p); } catch { /* cache : non critique */ }
     }
 
     const { updatePoiData } = await import('./data.js');
-    await updatePoiData(poiId, 'workPhotos', []);
-    return paths.length;
+    await updatePoiData(poiId, 'workPhotos', paths.filter(p => kept.has(p)));
+    return removed.length;
 }

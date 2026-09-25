@@ -12,7 +12,7 @@ import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
-import { getWorkPhotosById, loadWorkPhotoBlob } from './work-photos.js';
+import { getWorkPhotosById, getKeptWorkPhotosById, loadWorkPhotoBlob } from './work-photos.js';
 import { loadPrivateNote, savePrivateNote, shouldSyncPrivateNote } from './private-notes.js';
 import { getStoredToken } from './github-sync.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
@@ -163,6 +163,36 @@ async function hydrateHeroFromBlobs(poiId) {
     // AU MOMENT du clic. On vient d'ajouter .has-photo → ce clic ouvrira donc le
     // viewer de consultation (et non la grille). Supprime aussi le double-listener
     // qui existait avant (setupHeroClick + ce bloc liaient tous deux le hero).
+}
+
+/**
+ * Porte des photos GARDÉES (admin, 25/09/2026) : sur un lieu qui a SES photos,
+ * les photos d'autrui marquées « gardées » (intérieurs de Rais67…) ont leur
+ * propre puce, qui ouvre le viewer sur elles SEULES. Jamais dans le même
+ * défilement que les photos de Stefan : le viewer (figé) n'a pas de légende, une
+ * photo de tiers y serait indiscernable. Sans photo de Stefan, rien ici : le
+ * repli du hero montre déjà toutes les photos de travail, gardées comprises.
+ *
+ * `hero` est capturé AVANT l'hydratation async : si une autre fiche s'est
+ * ouverte entre-temps, on ne pose pas la puce sur le mauvais lieu.
+ */
+function addKeptPhotosChip(hero, poiId) {
+    if (!state.isAdmin || !hero || document.getElementById('poi-hero') !== hero) return;
+    if (!hero.classList.contains('has-photo') || hero.querySelector('.cartel-hero-work')) return;
+    const kept = getKeptWorkPhotosById(poiId);
+    if (kept.length === 0) return;
+
+    const n = kept.length;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cartel-hero-work cartel-hero-kept';
+    btn.title = n > 1 ? `Voir les ${n} photos gardées (pas de toi)` : 'Voir la photo gardée (pas de toi)';
+    btn.setAttribute('aria-label', btn.title);
+    btn.innerHTML = `<span class="cartel-chip cartel-chip--warn"><i data-lucide="pin"></i>${n > 1 ? `${n} photos gardées` : 'Photo gardée'}</span>`;
+    // stopPropagation : sinon le clic remonte au hero, qui ouvrirait TES photos.
+    btn.addEventListener('click', (e) => { e.stopPropagation(); openWorkPhotosViewer(poiId, kept); });
+    hero.appendChild(btn);
+    createIcons({ icons: appIcons, root: btn });
 }
 
 /**
@@ -467,8 +497,7 @@ async function openHeroViewer(poiId) {
 //
 // Une référence dont le blob revient `null` (jamais rapatriée sur cet appareil
 // ET hors-ligne) est sautée : on montre ce qu'on a plutôt que rien.
-async function openWorkPhotosViewer(poiId) {
-    const paths = getWorkPhotosById(poiId);
+async function openWorkPhotosViewer(poiId, paths = getWorkPhotosById(poiId)) {
     if (paths.length === 0) return;
 
     const objectUrls = [];
@@ -788,7 +817,8 @@ export function openDetailsPanel(featureId, circuitIndex = null, fromSearch = fa
 
     // Hero "is-empty" malgré la présence de blobs locaux : hydratation async
     // (photo créée mais pas encore publiée GitHub admin, ou photo perso user).
-    hydrateHeroFromBlobs(poiId);
+    const heroEl = document.getElementById('poi-hero');
+    hydrateHeroFromBlobs(poiId).then(() => addKeptPhotosChip(heroEl, poiId));
     hydratePrivateNoteIfNeeded(poiId);
 
     if (isMobileView()) {

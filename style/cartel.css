@@ -186,6 +186,16 @@
     left: var(--space-md);
     z-index: 2;
 }
+/* Photos gardées (25/09/2026) : même puce ambre, mais cliquable sur un hero qui
+   porte les photos de Stefan — bouton sans habillage propre. */
+.cartel-hero-kept {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+.cartel-hero-kept:focus-visible { outline: 2px solid var(--warn-fg); outline-offset: 2px; border-radius: var(--radius-pill); }
 .poi-hero.has-work-photo {
     background-size: cover;
     background-position: center;
