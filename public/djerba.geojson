@@ -5683,7 +5683,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Bechir (Belaiz)",
+        "Nom du site FR": "Mosquée Belaiz",
         "Nom du site arabe": "جامع بليعز",
         "Catégorie": "Mosquée",
         "Zone": "Essouani",
@@ -5712,7 +5712,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -17578,6 +17579,74 @@
           33.7750641
         ],
         "Zone": "Oued Ezzebib"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.831949999999999,
+          33.86483888888889
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Amor Kamouss",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "description": "340 · Mohamed Kamouss · Hachan · Mosquée malékite en bon état, mais abandonnée · Ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 340 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-25",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3CJP3ZRW5C0X39P9T2NCSKN",
+        "accessPoint": [
+          10.8324015,
+          33.8648689
+        ],
+        "Zone": "El Hachene"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.835411111111112,
+          33.831138888888894
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Massouer",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 86\tSidi Msouer · Majine, Erriadh\t« Mosquée mausolée quasi abandonnée · Ancienne »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 86 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/1473356908",
+        "commons_ref": "Category:Massouer_Mosque",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-25",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3CKY0PXTZR30QZ763S9PCBE",
+        "Zone": "Erriadh"
       }
     }
   ]
