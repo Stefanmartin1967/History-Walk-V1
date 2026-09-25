@@ -525,23 +525,98 @@ describe('pushToGist — découverte avant création (fix 01/08/2026)', () => {
         expect(batchSavePoiData).toHaveBeenCalled();
     });
 
-    it('la fusion échoue (Gist illisible) → le push continue quand même (pousse l\'état local)', async () => {
+    // Fix 25/09/2026 — inverse la règle du 01/08 : pousser l'état local d'un
+    // appareil neuf (presque vide) sans l'avoir fusionné ÉCRASERAIT le vrai Gist.
+    // Et l'id ne doit pas être retenu : au push suivant, la lecture serait sautée.
+    it('le Gist retrouvé est illisible → AUCUN envoi, id NON retenu, push en attente', async () => {
+        const calls = [];
         global.fetch = vi.fn((url, opts = {}) => {
             const method = opts.method || 'GET';
+            calls.push({ url, method });
             if (url.includes('/gists?per_page=100')) {
                 return Promise.resolve({ ok: true, json: () => Promise.resolve([{ id: 'gist-found', updated_at: 'x', files: { 'history_walk_userdata.json': {} } }]) });
             }
             if (url === 'https://api.github.com/gists/gist-found' && method === 'GET') {
                 return Promise.resolve({ ok: false, status: 500 }); // fetchGist lève
             }
-            if (url === 'https://api.github.com/gists/gist-found' && method === 'PATCH') {
-                return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
-            }
             throw new Error('inattendu : ' + method + ' ' + url);
         });
 
         await expect(pushToGist()).resolves.toBeUndefined(); // ne jette pas
-        expect(localStorage.getItem('hw_gist_id')).toBe('gist-found'); // gistId quand même retenu
+        expect(calls.some(c => c.method === 'PATCH' || c.method === 'POST')).toBe(false);
+        expect(localStorage.getItem('hw_gist_id')).toBeNull();
+    });
+
+    // Fix 25/09/2026 — cause d'un Gist vide créé le jour même : une recherche
+    // qui ÉCHOUE était lue comme « aucun Gist » → création.
+    it('la recherche échoue (5xx) → AUCUNE création, aucun envoi', async () => {
+        const calls = [];
+        global.fetch = vi.fn((url, opts = {}) => {
+            calls.push({ url, method: opts.method || 'GET' });
+            if (url.includes('/gists?per_page=100')) return Promise.resolve({ ok: false, status: 502 });
+            throw new Error('inattendu : ' + url);
+        });
+
+        await pushToGist();
+
+        expect(calls.some(c => c.method === 'POST' || c.method === 'PATCH')).toBe(false);
+        expect(localStorage.getItem('hw_gist_id')).toBeNull();
+    });
+
+    it('la recherche échoue (réseau coupé) → AUCUNE création', async () => {
+        const calls = [];
+        global.fetch = vi.fn((url, opts = {}) => {
+            calls.push({ url, method: opts.method || 'GET' });
+            if (url.includes('/gists?per_page=100')) return Promise.reject(new TypeError('Failed to fetch'));
+            throw new Error('inattendu : ' + url);
+        });
+
+        await pushToGist();
+
+        expect(calls.some(c => c.method === 'POST')).toBe(false);
+    });
+
+    // Fix 25/09/2026 — autre cause possible : un vieil id (Gist fantôme supprimé
+    // en août) resté dans un navigateur. Le 404 créait directement.
+    function mockDeadIdWith({ discovered, remote = { mapId: 'djerba', userData: { poiZ: { incontournable: true } } } }) {
+        const calls = [];
+        global.fetch = vi.fn((url, opts = {}) => {
+            const method = opts.method || 'GET';
+            calls.push({ url, method });
+            if (url === 'https://api.github.com/gists/gist-dead') return Promise.resolve({ ok: false, status: 404 });
+            if (url.includes('/gists?per_page=100')) return Promise.resolve({ ok: true, json: () => Promise.resolve(discovered) });
+            if (url === 'https://api.github.com/gists/gist-alive' && method === 'GET') {
+                return Promise.resolve({ ok: true, json: () => Promise.resolve({ files: { 'history_walk_userdata.json': { content: JSON.stringify(remote) } } }) });
+            }
+            if (url === 'https://api.github.com/gists/gist-alive' && method === 'PATCH') return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+            if (url === 'https://api.github.com/gists' && method === 'POST') return Promise.resolve({ ok: true, json: () => Promise.resolve({ id: 'gist-new' }) });
+            throw new Error('inattendu : ' + method + ' ' + url);
+        });
+        return calls;
+    }
+
+    it('id mort (404) + le vrai Gist existe → retrouvé et FUSIONNÉ, aucune création', async () => {
+        localStorage.setItem('hw_gist_id', 'gist-dead');
+        const calls = mockDeadIdWith({
+            discovered: [{ id: 'gist-alive', updated_at: '2026-09-25T14:23:28Z', files: { 'history_walk_userdata.json': {} } }]
+        });
+
+        await pushToGist();
+
+        expect(calls.some(c => c.method === 'POST')).toBe(false);
+        expect(state.userData.poiZ.incontournable).toBe(true); // fusionné avant l'envoi
+        expect(calls.some(c => c.url === 'https://api.github.com/gists/gist-alive' && c.method === 'PATCH')).toBe(true);
+        expect(localStorage.getItem('hw_gist_id')).toBe('gist-alive');
+    });
+
+    it('id mort (404) + GitHub confirme qu\'il n\'y a aucun Gist → création légitime', async () => {
+        localStorage.setItem('hw_gist_id', 'gist-dead');
+        const calls = mockDeadIdWith({ discovered: [] });
+
+        await pushToGist();
+
+        expect(calls.some(c => c.method === 'POST' && c.url === 'https://api.github.com/gists')).toBe(true);
+        expect(localStorage.getItem('hw_gist_id')).toBe('gist-new');
     });
 });
 
@@ -723,6 +798,31 @@ describe('pullFromGist — auto-réparation d\'un gistId mort (fix 09/08/2026)',
 
         expect(localStorage.getItem('hw_gist_id')).toBe('gist-alive');
         expect(showToast).toHaveBeenCalledWith('Gist détecté, sync activée.', 'info', expect.any(Number));
+    });
+
+    // Fix 25/09/2026 — un id retenu sans fusion ferait sauter la lecture au push
+    // suivant : l'état local (presque vide sur un appareil neuf) écraserait le Gist.
+    it('gistId absent + Gist découvert mais illisible → id NON retenu, échec signalé', async () => {
+        global.fetch = vi.fn((url) => {
+            if (url.includes('/gists?per_page=100')) {
+                return Promise.resolve({ ok: true, json: () => Promise.resolve([{ id: 'gist-alive', updated_at: 'x', files: { 'history_walk_userdata.json': {} } }]) });
+            }
+            return Promise.resolve({ ok: false, status: 500 });
+        });
+
+        await pullFromGist();
+
+        expect(localStorage.getItem('hw_gist_id')).toBeNull();
+        expect(showToast).toHaveBeenCalledWith(expect.stringContaining('erreur 500'), 'warning', expect.any(Number));
+    });
+
+    it('gistId absent + la recherche échoue → échec signalé (plus confondu avec « aucun Gist »)', async () => {
+        global.fetch = vi.fn(() => Promise.resolve({ ok: false, status: 403 }));
+
+        await pullFromGist();
+
+        expect(showToast).toHaveBeenCalledWith(expect.stringContaining('erreur 403'), 'warning', expect.any(Number));
+        expect(localStorage.getItem('hw_gist_id')).toBeNull();
     });
 });
 
