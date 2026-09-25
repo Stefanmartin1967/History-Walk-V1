@@ -11410,11 +11410,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Al-Taqwa",
+        "Nom du site FR": "Mosquée Takwa",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
         "HW_ID": "HW-01KK1CWX2YWAJSWA4NYT64CD4R",
-        "description": "",
+        "description": "110 · Mosquée Takwa (piété) · Bazim Est · Mosquée malékite · 2018.",
         "Nom du site arabe": "جامع التقوى",
         "Sous-type": "À minaret",
         "État": "En activité",
@@ -11422,7 +11422,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 110 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -11441,7 +11441,8 @@
         "accessPoint": [
           10.8267165,
           33.8343526
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
