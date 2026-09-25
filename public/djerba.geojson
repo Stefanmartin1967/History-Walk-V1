@@ -5768,7 +5768,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Khlifa",
+        "Nom du site FR": "Mosquée Sidi Khalifa Zenkri",
         "Nom du site arabe": "جامع سيدي خليفة",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
@@ -5799,7 +5799,8 @@
         "accessPoint": [
           10.8458994,
           33.812616
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -11457,7 +11458,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Errhama",
+        "Nom du site FR": "Errahma (Mahboubine)",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
         "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
@@ -11487,7 +11488,8 @@
         "photos": [
           "photos/poi_HW-01KKEM62BHCM4RDBWTZR0QZR78_1789714637848.jpg",
           "photos/poi_HW-01KKEM62BHCM4RDBWTZR0QZR78_1789714639295.jpg"
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -12121,11 +12123,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Saleh",
+        "Nom du site FR": "Mosquée Sidi Salah",
         "Catégorie": "Mosquée",
         "osm_ref": "way/990397295",
         "HW_ID": "HW-01KZH0VEW625A5WY4C196361EY",
-        "Sous-type": "Générique",
+        "Sous-type": "À minaret",
         "description": "124 Sidi Salah. Entre Oualegh l'ancienne et Hara Kébira. Mosquée malékite à origine ibadite wahbite. Ancienne.\nVisible sur la vue satellite",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -12133,8 +12135,8 @@
         "verified": false,
         "introuvableCarte": false,
         "Nom du site arabe": "",
-        "État": "",
-        "Accès": "",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "maps_ref": "",
         "Téléphone": "",
@@ -12150,7 +12152,8 @@
         "accessPoint": [
           10.8753308,
           33.8501492
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -13573,10 +13576,10 @@
         "Zone": "Sedouikech",
         "Nom du site arabe": "",
         "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Pas visible sur la vue satellite",
+        "description": "",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
@@ -13586,7 +13589,13 @@
         "accessPoint": [
           10.9096042,
           33.7594699
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -16260,7 +16269,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Tafroujen",
+        "Nom du site FR": "Mosquée Tferrougine",
         "Nom du site arabe": "جامع تفروجين",
         "Catégorie": "Mosquée",
         "osm_ref": "way/1487046869",
@@ -16268,7 +16277,7 @@
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Intérieur visitable",
-        "description": "Une mosquée médiévale abandonnée, dans l'arrière-pays d'Oualeg.\n\nL'édifice tient encore : murs de pierre à pleine hauteur, épaulés de contreforts saillants, et deux coupoles basses conservées. La partie centrale, plus haute, est rompue à son sommet.\n\nLe nom, تفروجين, est d'origine berbère, comme ceux de plusieurs mosquées anciennes de l'île — Tiouajen, Taghdimes, Tafartaset.\n\nLe répertoire des mosquées de Djerba de Jalel Fathallah ne la mentionne pas.",
+        "description": "Jalel n° 121.\n\n« Mosquée Tferrougine · Entre Oualegh l'ancienne et Hara Kébira · Mosquée ibadite wahbite quasi en ruines · 8ᵉ siècle de l'hégire, 14ᵉ siècle ap. J.-C. »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
@@ -16282,7 +16291,15 @@
           10.8823161,
           33.852222
         ],
-        "Zone": "Oualeg"
+        "Zone": "Oualeg",
+        "info_gpx": "",
+        "Source": "Répertoire J. Fathallah, n° 121 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "maps_ref": "https://maps.app.goo.gl/54DpgPRTDxEjuESU6",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -17716,6 +17733,10 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "HW_ID": "HW-01M3CQFARZJ1P070GFCVDEE7FN",
+        "accessPoint": [
+          10.8602335,
+          33.8656173
+        ],
         "Zone": "El Jouamaa"
       }
     }
