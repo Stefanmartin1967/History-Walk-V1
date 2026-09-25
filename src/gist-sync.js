@@ -59,7 +59,7 @@ export function buildPayload() {
     // de ce Gist. Voir project_gist_to_private_repo_migration.
     // vuUpdatedAt : date du dernier changement du statut visité — la fusion fait
     // gagner le plus récent (visited-state.js, fix 17/09/2026).
-    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'vuUpdatedAt', 'incontournable', 'workPhotos'];
+    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'vuUpdatedAt', 'incontournable', 'workPhotos', 'keptWorkPhotos'];
     const filtered = {};
     for (const [poiId, data] of Object.entries(state.userData || {})) {
         const slim = {};
@@ -125,11 +125,15 @@ export function mergeRemoteIntoLocal(remote) {
         //
         // Le garde `!== undefined` est indispensable : un payload ancien (écrit
         // avant ce chantier) ne porte pas la clé et ne doit rien effacer.
-        if (remoteData.workPhotos !== undefined) {
-            const remoteWork = Array.isArray(remoteData.workPhotos) ? remoteData.workPhotos : [];
-            const localWork = Array.isArray(local.workPhotos) ? local.workPhotos : [];
-            if (remoteWork.join('|') !== localWork.join('|')) {
-                merged.workPhotos = remoteWork;
+        //
+        // keptWorkPhotos (25/09/2026) suit la MÊME règle : c'est une marque sur
+        // workPhotos, les deux doivent venir du même écrivain pour rester cohérents.
+        for (const key of ['workPhotos', 'keptWorkPhotos']) {
+            if (remoteData[key] === undefined) continue;
+            const remoteList = Array.isArray(remoteData[key]) ? remoteData[key] : [];
+            const localList = Array.isArray(local[key]) ? local[key] : [];
+            if (remoteList.join('|') !== localList.join('|')) {
+                merged[key] = remoteList;
                 changed = true;
             }
         }

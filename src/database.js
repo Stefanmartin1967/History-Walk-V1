@@ -747,7 +747,8 @@ export async function setPendingAdminPhotos(mapId, poiId, photos) {
 
     // Le provisoire s'efface devant le définitif (règle validée 10/08/2026) :
     // dès que de VRAIES photos sont attachées, les photos de travail du lieu
-    // perdent leur raison d'être et leurs références sont retirées.
+    // perdent leur raison d'être et leurs références sont retirées — sauf
+    // celles marquées « gardées » (25/09/2026, cf. work-photos.js).
     //
     // Posé ICI et pas dans les appelants : les quatre chemins d'ajout (import
     // bureau, modale de tri, grille photo, Centre de Contrôle) convergent tous
