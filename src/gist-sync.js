@@ -235,34 +235,49 @@ async function fetchGist(token, gistId) {
 }
 
 /**
- * Découverte automatique du gistId au boot.
- * Si gistId absent en localStorage mais token présent (cas nouvel appareil),
- * parcourt les Gists du user via API GitHub pour trouver celui qui contient
- * GIST_FILE_NAME. Prend le plus récemment modifié (utile si plusieurs Gists
- * fantômes ont été créés sur différents appareils).
+ * Cherche le Gist de synchro de l'utilisateur (nouvel appareil, ID mort…).
+ * Prend le plus récemment modifié s'il en existe plusieurs.
+ *
+ * TROIS issues, à ne JAMAIS confondre (fix 25/09/2026) :
+ *  - trouvé → son id ;
+ *  - GitHub CONFIRME qu'il n'y en a aucun → null : seul cas où créer est légitime ;
+ *  - la recherche a échoué (réseau, délai, 401/403/5xx) → exception : on ne
+ *    sait pas, donc on ne crée rien. Avant, cet échec renvoyait null comme
+ *    « aucun Gist » et l'appelant en créait un — un Gist vide de plus.
  *
  * @param {string} token - PAT GitHub avec scope gist
- * @returns {Promise<string|null>} - gistId trouvé, ou null si rien
+ * @returns {Promise<string|null>} - gistId trouvé, ou null si GitHub confirme qu'il n'y en a aucun
  */
 async function discoverGistId(token) {
-    try {
-        const res = await fetchWithTimeout('https://api.github.com/gists?per_page=100', {
-            headers: getHeaders(token)
-        });
-        if (!res.ok) {
-            console.warn('[GistSync] Discovery failed:', res.status);
-            return null;
-        }
-        const gists = await res.json();
-        const matching = gists.filter(g => g.files && g.files[GIST_FILE_NAME]);
-        if (matching.length === 0) return null;
-        // Plus récemment modifié en premier (utile en cas de Gists fantômes)
-        matching.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-        return matching[0].id;
-    } catch (e) {
-        console.warn('[GistSync] Discovery exception:', e.message);
-        return null;
+    const res = await fetchWithTimeout('https://api.github.com/gists?per_page=100', {
+        headers: getHeaders(token)
+    });
+    if (!res.ok) throw new Error(`Gist discovery failed: ${res.status}`);
+    const gists = await res.json();
+    const matching = gists.filter(g => g.files && g.files[GIST_FILE_NAME]);
+    if (matching.length === 0) return null;
+    matching.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    return matching[0].id;
+}
+
+/**
+ * Retrouve le Gist existant et FUSIONNE son contenu dans l'état local, puis
+ * seulement le mémorise. Renvoie son id, ou null si GitHub confirme qu'il n'y en
+ * a aucun. Jette si la recherche ou la lecture échoue : l'id n'est alors PAS
+ * mémorisé et l'appelant ne pousse rien. Pousser un état local non fusionné
+ * (appareil neuf, presque vide) écraserait le vrai Gist ; et un id mémorisé sans
+ * fusion ferait sauter la lecture au push suivant, avec le même résultat.
+ */
+async function adoptExistingGist(token) {
+    const found = await discoverGistId(token);
+    if (!found) return null;
+    const remote = await fetchGist(token, found);
+    if (!remote.mapId || remote.mapId === state.currentMapId) {
+        await applyRemoteMerge(remote);
     }
+    setGistId(found);
+    showToast('Gist existant retrouvé, sync réactivée.', 'info', 4000);
+    return found;
 }
 
 async function createGist(token, payload) {
@@ -278,6 +293,14 @@ async function createGist(token, payload) {
     if (!res.ok) throw new Error(`Gist create failed: ${res.status}`);
     const data = await res.json();
     return data.id;
+}
+
+/** Création — appelée SEULEMENT quand GitHub a confirmé qu'aucun Gist n'existe. */
+async function createFreshGist(token, message) {
+    const id = await createGist(token, buildPayload());
+    setGistId(id);
+    showToast(message, 'success', 4000);
+    _pendingPush = false;
 }
 
 async function updateGist(token, gistId, payload) {
@@ -304,8 +327,11 @@ async function updateGist(token, gistId, payload) {
  * Gist valide existait juste à côté. Seul un `localStorage.removeItem` manuel
  * débloquait la situation.
  *
+ * Un Gist DÉCOUVERT est renvoyé dans `adoptId` sans être mémorisé : l'appelant
+ * ne le mémorise qu'une fois le contenu fusionné (cf. adoptExistingGist).
+ *
  * @param {string} token
- * @returns {Promise<object|null>} payload distant, ou null si aucun Gist
+ * @returns {Promise<{remote: object|null, adoptId?: string, adoptToast?: string}>}
  */
 async function fetchGistWithRecovery(token) {
     const gistId = getGistId();
@@ -314,14 +340,13 @@ async function fetchGistWithRecovery(token) {
     // Cf. mémoire project_gist_for_future_users.md (anomalie #8 onboarding).
     if (!gistId) {
         const discovered = await discoverGistId(token);
-        if (!discovered) return null; // Aucun Gist côté GitHub → cas normal
-        setGistId(discovered);
-        showToast('Gist détecté, sync activée.', 'info', 3000);
-        return await fetchGist(token, discovered);
+        if (!discovered) return { remote: null }; // Aucun Gist côté GitHub → cas normal
+        const remote = await fetchGist(token, discovered);
+        return { remote, adoptId: discovered, adoptToast: 'Gist détecté, sync activée.' };
     }
 
     try {
-        return await fetchGist(token, gistId);
+        return { remote: await fetchGist(token, gistId) };
     } catch (e) {
         // Seul le 404 est récupérable : le Gist n'existe plus. Un 401/403
         // (token) ou un 5xx doivent remonter tels quels — réessayer une
@@ -333,10 +358,8 @@ async function fetchGistWithRecovery(token) {
         const rediscovered = await discoverGistId(token);
         if (!rediscovered) throw e; // Rien à retrouver → on signale l'échec d'origine
 
-        setGistId(rediscovered);
         const remote = await fetchGist(token, rediscovered);
-        showToast('Gist retrouvé, sync réactivée.', 'info', 4000);
-        return remote;
+        return { remote, adoptId: rediscovered, adoptToast: 'Gist retrouvé, sync réactivée.' };
     }
 }
 
@@ -360,15 +383,24 @@ export async function pullFromGist() {
     if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
 
     try {
-        const remote = await fetchGistWithRecovery(token);
+        const { remote, adoptId, adoptToast } = await fetchGistWithRecovery(token);
         if (!remote) return; // Aucun Gist côté GitHub → silencieux
 
-        // Guard : ne pas merger une carte différente
+        const adopt = () => {
+            if (!adoptId) return;
+            setGistId(adoptId);
+            showToast(adoptToast, 'info', 3000);
+        };
+
+        // Guard : ne pas merger une carte différente (rien à fusionner pour
+        // celle-ci : le Gist est lisible, on peut le retenir).
         if (remote.mapId && remote.mapId !== state.currentMapId) {
+            adopt();
             return;
         }
 
         const { updates, circuitsChanged, hiddenChanged } = await applyRemoteMerge(remote);
+        adopt();
         if (updates.length > 0 || circuitsChanged || hiddenChanged) {
             const parts = [];
             if (updates.length > 0) parts.push(`${updates.length} lieu(x)`);
@@ -424,48 +456,34 @@ export async function pushToGist() {
         // abandonné, un « actif il y a 3 jours » devenu le seul à jour). Un Gist
         // retrouvé est d'abord rapatrié et FUSIONNÉ dans l'état local — jamais
         // écrasé à l'aveugle — pour ne pas perdre ce qui n'existe que là-bas.
+        // Si la recherche ou la lecture échoue, adoptExistingGist jette : on ne
+        // pousse RIEN (fix 25/09/2026 — avant, on poussait quand même l'état
+        // local, qui sur un appareil neuf est presque vide).
         if (!gistId) {
-            gistId = await discoverGistId(token);
-            if (gistId) {
-                setGistId(gistId);
-                try {
-                    const remote = await fetchGist(token, gistId);
-                    if (!remote.mapId || remote.mapId === state.currentMapId) {
-                        await applyRemoteMerge(remote);
-                    }
-                } catch (mergeErr) {
-                    // La fusion a échoué (Gist illisible, réseau) : on continue quand
-                    // même — pousser l'état local reste préférable à ne rien pousser.
-                    console.warn('[GistSync] Merge before push failed:', mergeErr.message);
-                }
-                showToast('Gist existant retrouvé, sync réactivée.', 'info', 4000);
-            } else {
-                gistId = await createGist(token, buildPayload());
-                setGistId(gistId);
-                showToast('Gist créé ! Sync activée.', 'success', 4000);
-                _pendingPush = false;
+            gistId = await adoptExistingGist(token);
+            if (!gistId) {
+                await createFreshGist(token, 'Gist créé ! Sync activée.');
                 return;
             }
         }
 
         // Reconstruit APRÈS une éventuelle fusion ci-dessus : le payload doit
         // refléter l'état local à jour, pas celui d'avant la fusion.
-        const payload = buildPayload();
         try {
-            await updateGist(token, gistId, payload);
+            await updateGist(token, gistId, buildPayload());
         } catch (updateErr) {
-            // Auto-recovery 404 : si le Gist stocké a été supprimé manuellement
-            // sur github.com (ou n'a jamais existé proprement), on reset le local
-            // et on retry en mode création. Sinon `updateGist` échoue silencieusement
-            // sur chaque clic et la sync est cassée jusqu'à intervention manuelle.
-            if (/\b404\b/.test(updateErr.message)) {
-                console.warn('[GistSync] Gist 404 — recreating with new ID');
-                localStorage.removeItem(GIST_ID_KEY);
-                const newId = await createGist(token, payload);
-                setGistId(newId);
-                showToast('Gist re-créé après suppression côté GitHub.', 'info', 4000);
+            if (!/\b404\b/.test(updateErr.message)) throw updateErr;
+            // Gist mémorisé supprimé sur github.com : même démarche qu'un appareil
+            // neuf — chercher (et fusionner) AVANT de créer. Avant le 25/09/2026,
+            // ce chemin créait directement : un vieil ID resté dans un navigateur
+            // suffisait à fabriquer un Gist vide à côté du vrai.
+            localStorage.removeItem(GIST_ID_KEY);
+            const adopted = await adoptExistingGist(token);
+            if (adopted) {
+                await updateGist(token, adopted, buildPayload());
             } else {
-                throw updateErr;
+                await createFreshGist(token, 'Gist re-créé après suppression côté GitHub.');
+                return;
             }
         }
 
