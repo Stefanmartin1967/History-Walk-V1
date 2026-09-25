@@ -252,7 +252,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ténafsa",
+        "Nom du site FR": "Mosquée Ben Tanfouss",
         "Nom du site arabe": "جامع بن تنفوس",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
@@ -285,7 +285,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -5725,7 +5726,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Kebli",
+        "Nom du site FR": "Mosquée Guebli (Arbah)",
         "Nom du site arabe": "جامع القبلي",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
@@ -5754,7 +5755,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -5767,7 +5769,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Khlifa",
+        "Nom du site FR": "Mosquée Sidi Khalifa Zenkri",
         "Nom du site arabe": "جامع سيدي خليفة",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
@@ -5798,7 +5800,8 @@
         "accessPoint": [
           10.8458994,
           33.812616
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -9109,7 +9112,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Moulay Taïeb",
+        "Nom du site FR": "Mosquée Moulay Taieb",
         "Nom du site arabe": "مسجد مولاي الطيب",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
@@ -9138,7 +9141,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -10034,13 +10038,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée Cheikh Yahia El Izmartni",
+        "Nom du site FR": "Mosquée Cheikh Yahia El Yezmertni",
         "Nom du site arabe": "الشيخ يحيى الإزمرتني",
-        "Catégorie": "Mausolée",
+        "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 89 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6SJ6F4XB4CC3W6YNSG",
-        "description": "Visible sur la vue satellite",
+        "description": "Jalel 89 · Yahya Zmertni · Houmt Larbah, Erriadh · Mosquée ibadite wahbite et retraite, en bon état, mais abandonnée · Ancienne.",
         "accessPoint": [
           10.9460662,
           33.8555339
@@ -10063,7 +10067,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -11449,7 +11454,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Errhama",
+        "Nom du site FR": "Mosquée Errhama (Mahboubine)",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
         "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
@@ -11479,7 +11484,8 @@
         "photos": [
           "photos/poi_HW-01KKEM62BHCM4RDBWTZR0QZR78_1789714637848.jpg",
           "photos/poi_HW-01KKEM62BHCM4RDBWTZR0QZR78_1789714639295.jpg"
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -12075,7 +12081,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Salama El Jenaouni",
+        "Nom du site FR": "Mosquée Sidi Slama El Jnaouni",
         "Catégorie": "Mosquée",
         "osm_ref": "way/990352764",
         "HW_ID": "HW-01KZH0VEV5Y6E0MYJR1AHXR0KC",
@@ -12100,7 +12106,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -12168,7 +12175,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
+        "description": "",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
@@ -12184,7 +12191,8 @@
         "accessPoint": [
           10.8238626,
           33.7838414
-        ]
+        ],
+        "commons_ref": "Category:Dahman_Ben_Ali_Mosque"
       }
     },
     {
@@ -12756,7 +12764,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite\nPas de trace chez Jalel",
+        "description": "Pas de trace chez Jalel",
         "Source": "",
         "maps_ref": "",
         "Téléphone": "",
@@ -12772,7 +12780,8 @@
         "accessPoint": [
           10.9277003,
           33.7454789
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -13024,7 +13033,8 @@
         "accessPoint": [
           11.0298305,
           33.8201522
-        ]
+        ],
+        "commons_ref": "Category:Sidi_Roubil_Mosque"
       }
     },
     {
@@ -17575,6 +17585,43 @@
           33.7750641
         ],
         "Zone": "Oued Ezzebib"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.84627,
+          33.832801
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Groussi",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "description": "Jalel n° 77 : « Sidi Groussi. Barkouk. Mosquée mausolée wahbite en bon état, mais abandonnée. Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 77 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/990345514",
+        "commons_ref": "Category:Groussi_Mosque",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-23",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M37V7NQFFK4J5DVP9QQ8E9JJ",
+        "accessPoint": [
+          10.8460144,
+          33.8328664
+        ],
+        "Zone": "Erriadh"
       }
     }
   ]
