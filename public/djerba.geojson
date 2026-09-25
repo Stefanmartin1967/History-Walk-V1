@@ -6621,7 +6621,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Hassan",
+        "Nom du site FR": "Mosquée Sidi Hassen",
         "Nom du site arabe": "مسجد سيدي حسن",
         "Catégorie": "Mosquée",
         "Zone": "El Hachene",
@@ -6650,7 +6650,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
