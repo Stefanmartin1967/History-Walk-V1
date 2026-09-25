@@ -8979,7 +8979,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Al Hidaya",
+        "Nom du site FR": "Mosquée Al Hidaya (Midoun)",
         "Nom du site arabe": "مسجد الهداية",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
@@ -9011,7 +9011,8 @@
         "jalelChecked": true,
         "photos": [
           "photos/poi_HW-01K77WPE6QR67710KWTHBD0C6V_1790348483420.jpg"
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -11028,12 +11029,13 @@
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true,
         "accessPoint": [
           10.8436666,
           33.8429144
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -17649,6 +17651,72 @@
         "jalelChecked": true,
         "HW_ID": "HW-01M3CKY0PXTZR30QZ763S9PCBE",
         "Zone": "Erriadh"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.83285332606388,
+          33.84943710423939
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al Hidaya (El Hachene)",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-25",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3CP3QHJVRGC4F7GSK58FKC5",
+        "description": "Jalel n° 66 : « Mosquée Hidaya ou guidance · Hachane · Mosquée malékite · Début du 21ᵉ siècle. »",
+        "Source": "Répertoire J. Fathallah, n° 66 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "accessPoint": [
+          10.8326067,
+          33.8493819
+        ],
+        "Zone": "El Hachene"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.860351788765321,
+          33.86553832250394
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Bouker",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel n° 25\t« Sidi Bouker · Taourit · Mosquée et mausolée malékite · Récente jouxtant le mausolée. La nouvelle est récente. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 25 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-25",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3CQFARZJ1P070GFCVDEE7FN",
+        "Zone": "El Jouamaa"
       }
     }
   ]
