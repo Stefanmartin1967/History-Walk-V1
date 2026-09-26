@@ -5220,9 +5220,9 @@
           10.8630578,
           33.8724627
         ],
-        "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "",
@@ -5237,7 +5237,8 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -11133,9 +11134,9 @@
         "HW_ID": "HW-01KJMJATZZZRP02QNDTWS3YVK1",
         "description": "Jalel n° 268 : « Mosquée Briguen. Quartier Guebleine, Ajim. Mosquée ibadite wahbite. Ancienne.",
         "Nom du site arabe": "",
-        "Sous-type": "Générique",
-        "État": "",
-        "Accès": "",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -11152,7 +11153,8 @@
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -11691,14 +11693,15 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "maps_ref": "https://maps.app.goo.gl/En8Vrrs6TkRTYnFZA",
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -12054,7 +12057,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "Nom du site arabe": "",
         "État": "",
         "Accès": "",
@@ -12075,7 +12078,8 @@
         "accessPoint": [
           10.775559,
           33.8242747
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -15228,7 +15232,7 @@
         "Source": "Répertoire J. Fathallah, n° 28 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "https://maps.app.goo.gl/PRBZQBdAYY2CJwSZ6",
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-03",
@@ -15248,7 +15252,8 @@
         "osm_ref": "",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "commons_ref": ""
       }
     },
     {
@@ -15284,7 +15289,14 @@
           10.846971,
           33.8700731
         ],
-        "Zone": "El Jouamaa"
+        "Zone": "El Jouamaa",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/VCcS1ahoVcDLpsZu9",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -15315,7 +15327,15 @@
         "mapsHasPhoto": true,
         "jalelChecked": true,
         "HW_ID": "HW-01M1MASDS6XFVN8DZ6CEGR8Q2B",
-        "Zone": "Mellita"
+        "Zone": "Mellita",
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/ZFX4d6w1oTMQ4Ngq7",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -15378,7 +15398,18 @@
         "mapsHasPhoto": true,
         "jalelChecked": true,
         "HW_ID": "HW-01M1NTYYMW3H8C2VZH40E85SC1",
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "مسجد الحمد",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/askej8XEEi9f3aFu5",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -16881,7 +16912,7 @@
       "properties": {
         "Nom du site FR": "Mosquée Ghoul",
         "Catégorie": "Mosquée",
-        "État": "Ruine",
+        "État": "Disparu",
         "Accès": "Non visitable",
         "description": "Jalel n° 328 : « Mosquée Ghool « Ogre ». Tezdain. Poste de garde puis mosquée disparue. Ancienne. »\nSitué par la liste Wikipédia des mosquées de Djerba (« Ghoul », Tezdaine, disparue), à 85 m au nord-nord-ouest de la mosquée Khaled Ibn Elwalid. Présence de vestiges à vérifier sur place (novembre 2026).\nRamzi Raïs n° 168 donne à la mosquée voisine le nom « خالد بن الوليد - سيدي الغول » (Sidi el-Ghoul).",
         "Temps_minutes": 0,
@@ -16900,7 +16931,16 @@
           11.0283376,
           33.7986557
         ],
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -17445,7 +17485,18 @@
           10.7725849,
           33.8273287
         ],
-        "Zone": "El Groa"
+        "Zone": "El Groa",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/LU6gcLCgQThKoqCZA",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -17471,10 +17522,10 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "osmChecked": false,
-        "mapsChecked": false,
-        "mapsHasPhoto": false,
-        "jalelChecked": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
         "HW_ID": "HW-01M2ZDPWWNDQXM9Z79VFZ8KE1M",
         "accessPoint": [
           10.830988,
@@ -17482,12 +17533,13 @@
         ],
         "info_gpx": "",
         "osm_ref": "",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/rRYoZ9bNDQxDysZR9",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "osmCheckedDate": null,
-        "Zone": "Bou Melel"
+        "osmCheckedDate": "2026-09-26",
+        "Zone": "Bou Melel",
+        "commons_ref": ""
       }
     },
     {
@@ -17516,7 +17568,7 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-09-20",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true,
         "HW_ID": "HW-01M2ZEQFF4AEMGATN8SKCR4W15",
         "Nom du site arabe": "جامع الغفران",
@@ -17524,7 +17576,13 @@
           10.8008024,
           33.8700169
         ],
-        "Zone": "Mellita"
+        "Zone": "Mellita",
+        "info_gpx": "",
+        "osm_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
