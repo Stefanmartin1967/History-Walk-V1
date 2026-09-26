@@ -4283,7 +4283,7 @@
         "Nom du site arabe": "جامع الشهود",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 170 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6E5GCD9QGR33PMXVRP",
         "description": "Jalel n° 170 : « Mosquée Chouhoud (témoins). Robbana. Mosquée nokkarite totalement abandonnée au profit d'une nouvelle mosquée adjacente. Ancienne. La nouvelle est récente. »",
         "accessPoint": [
@@ -4308,7 +4308,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -11201,7 +11202,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Henchir Labbassi",
+        "Nom du site FR": "Mosquée Henchir (Robbana)",
         "Catégorie": "Mosquée",
         "Zone": "Robbana",
         "HW_ID": "HW-01KJN81XT3Q98DN3NRHHD38D2Q",
@@ -11230,7 +11231,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -11458,7 +11460,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Errahma (Mahboubine)",
+        "Nom du site FR": "Mosquée Errahma (Mahboubine)",
         "Catégorie": "Mosquée",
         "Zone": "El Mahboubine",
         "HW_ID": "HW-01KKEM62BHCM4RDBWTZR0QZR78",
@@ -11483,7 +11485,7 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-09-14",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true,
         "photos": [
           "photos/poi_HW-01KKEM62BHCM4RDBWTZR0QZR78_1789714637848.jpg",
@@ -17738,6 +17740,43 @@
           33.8656173
         ],
         "Zone": "El Jouamaa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.846748648867612,
+          33.83311341719359
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Groussi",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Intérieur visitable",
+        "description": "Jalel N° 77 : « Sidi Groussi · Barkouk · Mosquée mausolée wahbite en bon état, mais abandonnée · Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 77 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nCommons — Groussi Mosque | https://commons.wikimedia.org/wiki/Category:Groussi_Mosque",
+        "osm_ref": "way/990345514",
+        "maps_ref": "https://maps.app.goo.gl/xbnaeuR3UnJiVsA98",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-26",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M3E3JMS4D1WC6EXDN9GTH494",
+        "accessPoint": [
+          10.8472567,
+          33.833234
+        ],
+        "Zone": "Erriadh"
       }
     }
   ]
