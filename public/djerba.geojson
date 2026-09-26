@@ -4066,7 +4066,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ben Omran (Sedouikech)",
+        "Nom du site FR": "Mosquée Ben Omrane (Sedouikech)",
         "Nom du site arabe": "جامع بن عمران",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
@@ -16684,8 +16684,8 @@
         "jalelChecked": true,
         "HW_ID": "HW-01M2AQMD3WWVBE6WAEMHHX124N",
         "accessPoint": [
-          10.9064646,
-          33.8445249
+          10.9090646,
+          33.8436478
         ],
         "Zone": "Sedghaiane",
         "lat": 33.84344644441643,
