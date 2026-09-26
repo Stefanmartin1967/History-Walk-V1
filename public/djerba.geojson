@@ -4666,15 +4666,15 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.874028,
-          33.862722
+          10.873938202857971,
+          33.862436726885974
         ]
       },
       "properties": {
         "Nom du site FR": "Mosquée Anas Ibn Malik",
         "Nom du site arabe": "جامع أنس بن مالك",
         "Catégorie": "Mosquée",
-        "Zone": "Fatou",
+        "Zone": "Essouani",
         "Source": "Répertoire J. Fathallah, n° 120 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nJalel Fathallah, vérification sur place (commentaire Facebook, 2026)",
         "HW_ID": "HW-01K77WPE6FQSGQH7Q843BCXE8K",
         "Sous-type": "À minaret",
@@ -4696,7 +4696,9 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "lat": 33.862436726885974,
+        "lng": 10.873938202857971
       }
     },
     {
