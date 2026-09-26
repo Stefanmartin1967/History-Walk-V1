@@ -4066,7 +4066,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ben Omran",
+        "Nom du site FR": "Mosquée Ben Omran (Sedouikech)",
         "Nom du site arabe": "جامع بن عمران",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
@@ -4095,7 +4095,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -17799,6 +17800,42 @@
           33.833234
         ],
         "Zone": "Erriadh"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.94974334034115,
+          33.75336492279169
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ben Omrane (Beni Maaguel)",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Jalel N° 244 : « Mosquée Ben Omrane · Bani Maaguel · Petite mosquée récemment reconstruite · Ancienne. »",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 244 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "osm_ref": "way/990384158",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-26",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3E9C6CB7MNFD057PKTHZ7PV",
+        "accessPoint": [
+          10.9498065,
+          33.7534611
+        ],
+        "Zone": "Beni Maaguel"
       }
     }
   ]
