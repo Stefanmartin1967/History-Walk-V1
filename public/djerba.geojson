@@ -4279,7 +4279,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Chouhoud",
+        "Nom du site FR": "Mosquée Chouhoud",
         "Nom du site arabe": "جامع الشهود",
         "Catégorie": "Mosquée",
         "Zone": "El May",
@@ -15611,24 +15611,33 @@
         "Catégorie": "Mausolée",
         "État": "En activité",
         "Accès": "Non visitable",
-        "description": "Jalel n° 348 : « Mausolée Sidi Haloulou. Houmt Souk. »",
+        "description": "Jalel n° 348 : « Mausolée Sidi Haloulou. Houmt Souk. »\n\nMausolée édifié en mémoire des martyres du siège établi entre Mai et Juillet 1560 pour la reprise de la forteresse du Borj Elkébir occupée Février 1560 par les Espagnols.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 348 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 348 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nTexte de la plaque sur le mausolée",
         "verified": false,
         "introuvableCarte": true,
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-04",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true,
         "HW_ID": "HW-01M1PJ3BCDTF09YTRYG5ND3XT5",
         "accessPoint": [
           10.8589462,
           33.8795023
         ],
-        "Zone": "Taourit"
+        "Zone": "Taourit",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -16653,8 +16662,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.905525,
-          33.844343
+          10.909172794271978,
+          33.84344644441643
         ]
       },
       "properties": {
@@ -16665,7 +16674,7 @@
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 133 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-12",
@@ -16677,7 +16686,20 @@
           10.9064646,
           33.8445249
         ],
-        "Zone": "Sedghaiane"
+        "Zone": "Sedghaiane",
+        "lat": 33.84344644441643,
+        "lng": 10.909172794271978,
+        "Nom du site arabe": "",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
