@@ -3586,7 +3586,7 @@
         "description": "Jalel n° 172 : « Mosquée Rihia. Cedouikech. Mosquée nokkarite totalement abandonnée au profit d'une nouvelle mosquée attenante. Ancienne. La nouvelle est récente.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1132040431",
         "maps_ref": "https://maps.app.goo.gl/VRyApzsA3QnW5WjE9",
         "Téléphone": "",
         "Horaires": "",
@@ -3595,10 +3595,11 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-18",
+        "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -3923,7 +3924,7 @@
         "description": "Jalel n° 92 : « Sidi Béchir Ghandour. Houmt Larbah, Erriadh. Mosquée ibadite wahbite. 11ᵉ siècle de l'hégire (17ᵉ siècle ap. J.-C.). »",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1556754715",
         "maps_ref": "https://maps.app.goo.gl/aWNcpudP9K96v2987",
         "Téléphone": "",
         "Horaires": "",
@@ -3932,10 +3933,11 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-16",
+        "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -6516,7 +6518,7 @@
         "description": "Jalel n° 87 : « Mosquée Abiadh. Majine, Erriadh. Mosquée ibadite wahbite complètement reconstruite. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1556752931",
         "maps_ref": "https://maps.app.goo.gl/GmdzgLRXiiYy6VCb8",
         "Téléphone": "",
         "Horaires": "",
@@ -6525,10 +6527,11 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-16",
+        "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -7238,7 +7241,7 @@
         "description": "Jalel n° 211 : « Mosquée Khawai. Guellala. Mosquée et tour de guet. Ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "",
+        "osm_ref": "way/1556760188",
         "maps_ref": "https://maps.app.goo.gl/2agjvC8XTjhXS4F9A",
         "Téléphone": "",
         "Horaires": "",
@@ -7247,10 +7250,11 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-16",
+        "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -11610,16 +11614,17 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "osm_ref": "",
+        "osm_ref": "way/1560008114",
         "maps_ref": "",
         "lat": 33.81366398849076,
         "lng": 10.973104834556581,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-17",
+        "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -14725,16 +14730,17 @@
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Source": "Répertoire J. Fathallah, n° 222 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
-        "osm_ref": "",
+        "osm_ref": "way/990321479",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "El Mahboubine",
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-22",
+        "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -15000,7 +15006,7 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-31",
+        "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": true,
@@ -15011,11 +15017,12 @@
         ],
         "Nom du site arabe": "",
         "info_gpx": "",
-        "osm_ref": "",
+        "osm_ref": "way/1152266533",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "commons_ref": ""
       }
     },
     {
@@ -15040,7 +15047,7 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-08-31",
+        "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
@@ -15049,11 +15056,12 @@
         "Nom du site arabe": "",
         "Sous-type": "À coupoles",
         "info_gpx": "",
-        "osm_ref": "",
+        "osm_ref": "way/1558217949",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "commons_ref": ""
       }
     },
     {
@@ -16625,7 +16633,7 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "osmChecked": false,
+        "osmChecked": true,
         "mapsChecked": false,
         "mapsHasPhoto": false,
         "jalelChecked": false,
@@ -16644,13 +16652,14 @@
         "Accès": "",
         "info_gpx": "",
         "Source": "",
-        "osm_ref": "",
+        "osm_ref": "way/1557409640",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "osmCheckedDate": null,
-        "Zone": "Midoun"
+        "osmCheckedDate": "2026-09-26",
+        "Zone": "Midoun",
+        "commons_ref": ""
       }
     },
     {
