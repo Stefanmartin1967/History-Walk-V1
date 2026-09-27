@@ -1679,7 +1679,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquées Haja Loulou",
+        "Nom du site FR": "Mosquée Haja Loulou",
         "Nom du site arabe": "جامع الحاجة لولو",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
@@ -1719,7 +1719,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
