@@ -371,5 +371,25 @@
       "HW-01KZH0VEJP087D87WAX2S3JPBS",
       "HW-01M2ZKXPVVTHW5JZFT0H4F7EQS"
     ]
+  },
+  {
+    "id": "HW-01M3MKTVA1A2FHVF6MVBSFCNZN",
+    "name": "Circuit de Mosquée Abdessalam à Mosquée Al Hidaya (Nakhla)",
+    "file": "djerba/Circuit de Mosquée Abdessalam à Mosquée Al Hidaya (Nakhla).gpx",
+    "description": "",
+    "distance": "7.2 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "El May",
+    "poiIds": [
+      "HW-01K77WPE6DT0F6KA225EP7PSK9",
+      "HW-01KZH0VHJSKKEM28TEWHAC8K4B",
+      "HW-01KZH0VH351NQ2E5JHQWV47AFX",
+      "HW-01KJM8X5EEAHXPBF1YNSEA19F1",
+      "HW-01K77WPE6FTSXM87T9YTV7G4ME",
+      "HW-01K77WPE6C4QCW255MDZKT0RHK",
+      "HW-01K77WPE6CC0RY56ECB2RCTGJP",
+      "HW-01M3MKCX8QFEERFG0EPSC71FMS"
+    ]
   }
 ]
