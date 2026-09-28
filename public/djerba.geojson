@@ -3861,7 +3861,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Ennour (May)",
+        "Nom du site FR": "Mosquée Ennour (El May)",
         "Nom du site arabe": "جامع عشاشنة",
         "Catégorie": "Mosquée",
         "Zone": "El May",
@@ -3881,7 +3881,7 @@
         "description": "Jalel n° 158 : « Mosquée Ouchachna. May. Mosquée malékite. Très récente. »\n\nLe panneau indique :\nجامع النور — Jami' an-Nour / Mosquée An-Nour (littéralement « la Mosquée de la Lumière » — النور = « la lumière »)\n\nEn dessous, la plaque donne déjà les deux calendriers :\n1405 هـ (hégirien)\n1984 م (grégorien)\nÇa correspond bien : l'année 1405 du calendrier hégirien s'étend de fin septembre 1984 à mi-septembre 1985 — la plaque a donc retenu 1984 comme année de correspondance, cohérent puisque 1405H a commencé cette année-là.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "node/13505451159",
+        "osm_ref": "way/1093560745",
         "maps_ref": "https://maps.app.goo.gl/oeWTEsa1nMKxm19Q8",
         "Téléphone": "",
         "Horaires": "",
@@ -3890,10 +3890,11 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-09-28",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -5043,7 +5044,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Sidi Ahmed ElJebliani",
-        "Nom du site arabe": "جامع سيدي السوفي",
+        "Nom du site arabe": "جامع سيدي السوڨي",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
         "Source": "Répertoire J. Fathallah, n° 22 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -5078,7 +5079,8 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -10038,7 +10040,13 @@
         "photos": [
           "photos/poi_HW-01K77WPE6SFRMMS2GS11D6JXR5_1786726887779.jpg",
           "photos/poi_HW-01K77WPE6SFRMMS2GS11D6JXR5_1786726889571.jpg"
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
