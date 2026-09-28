@@ -17945,6 +17945,10 @@
         "mapsHasPhoto": true,
         "jalelChecked": true,
         "HW_ID": "HW-01M3MKCX8QFEERFG0EPSC71FMS",
+        "accessPoint": [
+          10.9140025,
+          33.8239634
+        ],
         "Zone": "Sedghaiane"
       }
     }
