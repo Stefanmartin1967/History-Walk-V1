@@ -5044,7 +5044,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Sidi Ahmed ElJebliani",
-        "Nom du site arabe": "جامع سيدي السوڨي",
+        "Nom du site arabe": "امع سيدي السوقي",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
         "Source": "Répertoire J. Fathallah, n° 22 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -18176,11 +18176,55 @@
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
-        "osmChecked": false,
+        "osmChecked": true,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
         "HW_ID": "HW-01M3SD797HRPZKZF9GCS371DQV",
+        "accessPoint": [
+          10.8625649,
+          33.8757908
+        ],
+        "info_gpx": "",
+        "osm_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": "2026-09-30",
+        "Zone": "Taourit"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.868231,
+          33.872182
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Sibai",
+        "Nom du site arabe": "جامع سيدي السيبعي",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "Désaffecté",
+        "Accès": "Non visitable",
+        "description": "Mosquée du quartier de Taourit, à Houmt Souk.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 24 : mosquée et mausolée malékite, récente, intégrant le mausolée.\nL'inventaire de Ramzi Raïs (2021) la compte parmi les mosquées en activité, sous le nom de Sidi Essibaï.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 24 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), n° 180 (mosquées en activité) | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nMawaqit, « مسجد سيدي السيبعي » | https://mawaqit.net/fr/msjd-sydy-sb-y-hwm-swq-4180-tunisia",
+        "maps_ref": "https://maps.app.goo.gl/6LdwikwvL7oSqinm9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-30",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3SDZ1JGPSR8CX8CS70213BM",
         "Zone": "Taourit"
       }
     }
