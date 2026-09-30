@@ -4755,7 +4755,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El Madina",
+        "Nom du site FR": "Mosquée El Madina (Erriadh)",
         "Nom du site arabe": "جامع المدينة",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
@@ -4784,7 +4784,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -18025,6 +18026,10 @@
         "mapsHasPhoto": true,
         "jalelChecked": true,
         "HW_ID": "HW-01M3S8D8FKMM0TW5AS64M3VKZD",
+        "accessPoint": [
+          10.8289017,
+          33.7771012
+        ],
         "Zone": "Oued Ezzebib"
       }
     },
@@ -18209,7 +18214,7 @@
         "Nom du site arabe": "جامع سيدي السيبعي",
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
-        "État": "Désaffecté",
+        "État": "En activité",
         "Accès": "Non visitable",
         "description": "Mosquée du quartier de Taourit, à Houmt Souk.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 24 : mosquée et mausolée malékite, récente, intégrant le mausolée.\nL'inventaire de Ramzi Raïs (2021) la compte parmi les mosquées en activité, sous le nom de Sidi Essibaï.",
         "Temps_minutes": 0,
@@ -18225,7 +18230,49 @@
         "mapsHasPhoto": true,
         "jalelChecked": true,
         "HW_ID": "HW-01M3SDZ1JGPSR8CX8CS70213BM",
+        "accessPoint": [
+          10.8683854,
+          33.8721567
+        ],
+        "info_gpx": "",
+        "osm_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Taourit"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          11.0235,
+          33.781787
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée El Madina (Arkou)",
+        "Nom du site arabe": "مسجد المدينة",
+        "Catégorie": "Mosquée",
+        "Sous-type": "Générique",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Mosquée d'Arkou.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 310 : mosquée malékite, 2019.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 310 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nMawaqit, « مسجد المدينة » | https://mawaqit.net/fr/masjid-lmadina-midoun-4176-tunisia",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-30",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3SET4DBPN868ARRKQ4PDXDR",
+        "Zone": "Arkou"
       }
     }
   ]
