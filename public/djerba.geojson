@@ -17951,6 +17951,72 @@
         ],
         "Zone": "Sedghaiane"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.831727,
+          33.787816
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Huilerie souterraine d'Oued Zbib",
+        "Catégorie": "Artisanat",
+        "Sous-type": "Huilerie",
+        "État": "Désaffecté",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/711hoSM393RnEggv7",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M3S83CW4WFRJEWJSDPP52F7T",
+        "osmCheckedDate": "2026-09-30",
+        "accessPoint": [
+          10.8318166,
+          33.7878932
+        ],
+        "Zone": "Oued Ezzebib"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.828867715338015,
+          33.777315280841506
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ennour (Srandi)",
+        "Nom du site arabe": "جامع النور",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
+        "description": "Mosquée du quartier de Srandi, à Oued Zbib.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 254 : mosquée malékite, récente.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 254 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "maps_ref": "https://maps.app.goo.gl/1WxVTRqLenWXrXhW7",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-30",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3S8D8FKMM0TW5AS64M3VKZD",
+        "Zone": "Oued Ezzebib"
+      }
     }
   ]
 }
