@@ -6381,7 +6381,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Msahel",
+        "Nom du site FR": "Mosquée Sidi Msahel (Bou Melel)",
         "Nom du site arabe": "جامع سيدي مساهل",
         "Catégorie": "Mosquée",
         "Zone": "Bou Melel",
@@ -6416,7 +6416,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -18273,6 +18274,43 @@
         "jalelChecked": true,
         "HW_ID": "HW-01M3SET4DBPN868ARRKQ4PDXDR",
         "Zone": "Arkou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.879006,
+          33.873116
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Msahel (Fatou)",
+        "Nom du site arabe": "جامع سيدي مساهل",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Mausolée et mosquée de Fatou, à ne pas confondre avec la mosquée Sidi Msahel de Beni Bendou.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 35 : mausolée et mosquée ibadite wahbite, abandonnée mais en bon état.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 35 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "maps_ref": "https://maps.app.goo.gl/85PcA14nE6hu25Xy8",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-30",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3SGC2GM87VKH264PW7JRKFJ",
+        "accessPoint": [
+          10.8794774,
+          33.8733873
+        ],
+        "Zone": "Fatou"
       }
     }
   ]
