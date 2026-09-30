@@ -18139,7 +18139,49 @@
           10.9474798,
           33.772233
         ],
+        "Nom du site arabe": "",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Beni Maaguel"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.862628,
+          33.876219
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Sidi Bouhajer",
+        "Nom du site arabe": "سيدي بوحجر",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Désaffecté",
+        "Accès": "Non visitable",
+        "description": "Ensemble religieux du quartier de Taourit, à Houmt Souk.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 20 : mausolée, mosquée et médersa du 18ᵉ siècle.\nL'inventaire de Ramzi Raïs (2021) la compte parmi les mosquées en activité, sous le nom de Sidi Bou Hajar.\nSes bâtiments abritent aujourd'hui des associations, dont le groupe des Scouts tunisiens de Houmt Souk.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 20 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), n° 188 (mosquées en activité) | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "maps_ref": "https://maps.app.goo.gl/sZao4cBSkQ6zS27S9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": false,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M3SD797HRPZKZF9GCS371DQV",
+        "Zone": "Taourit"
       }
     }
   ]
