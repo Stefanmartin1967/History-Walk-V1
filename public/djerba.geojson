@@ -18079,7 +18079,7 @@
         "Nom du site FR": "Mosquée Gharib",
         "Catégorie": "Mosquée",
         "Sous-type": "À coupoles",
-        "État": "Désaffecté",
+        "État": "En activité",
         "Accès": "Extérieur seulement",
         "description": "Mosquée du quartier de Taziri, à Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 337 : mosquée ibadite devenue malékite, ancienne.",
         "Temps_minutes": 0,
@@ -18100,7 +18100,46 @@
           10.8863664,
           33.7530249
         ],
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
         "Zone": "Robbana"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.947305,
+          33.772222
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Ghorfane (Beni Maaguel)",
+        "Catégorie": "Mosquée",
+        "description": "Mosquée de Beni Maaguel.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 233 : mosquée abandonnée, mais en bon état, ancienne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 233 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "osm_ref": "way/427607423",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-09-30",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3SBVFJ48RBZWA1AJP006G89",
+        "accessPoint": [
+          10.9474798,
+          33.772233
+        ],
+        "Zone": "Beni Maaguel"
       }
     }
   ]
