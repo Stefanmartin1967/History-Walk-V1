@@ -6935,7 +6935,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Targo",
-        "Nom du site arabe": "جامع ترجو",
+        "Nom du site arabe": "جامع تارقو",
         "Catégorie": "Mosquée",
         "Zone": "Guellala",
         "Source": "Répertoire J. Fathallah, n° 213 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -6965,7 +6965,8 @@
         "accessPoint": [
           10.8682345,
           33.7224423
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -18311,6 +18312,38 @@
           33.8733873
         ],
         "Zone": "Fatou"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.793752,
+          33.785403
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Barrady",
+        "Nom du site arabe": "جامع البرادي",
+        "Catégorie": "Mosquée",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "description": "Mosquée du hameau de Taghzouissen, à Oued Zbib, connue aussi sous le nom de Toyours Bidh, « les oiseaux blancs ».\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 104 : mosquée ibadite wahbite abandonnée, presque en ruines, ancienne.\nL'inventaire de Ramzi Raïs (2021) la compte pourtant parmi les mosquées encore en activité, sous le nom d'El Barradi - Ettouyour El Bidh, un décompte qui, selon lui, inclut les mosquées en mauvais état. La liste Wikipédia des mosquées de Djerba la donne pour ruinée.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Répertoire J. Fathallah, n° 104 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), n° 20 (mosquées en activité) | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-10-01",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true,
+        "HW_ID": "HW-01M3W8AZZ1XWED5GJYSSG4N963",
+        "Zone": "El Groa"
       }
     }
   ]
