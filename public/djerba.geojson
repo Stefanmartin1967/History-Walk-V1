@@ -9005,7 +9005,7 @@
           10.9756422,
           33.8037744
         ],
-        "Sous-type": "À minaret",
+        "Sous-type": "À coupoles",
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
@@ -18343,7 +18343,18 @@
         "mapsHasPhoto": false,
         "jalelChecked": true,
         "HW_ID": "HW-01M3W8AZZ1XWED5GJYSSG4N963",
-        "Zone": "El Groa"
+        "Zone": "El Groa",
+        "accessPoint": [
+          10.7938776,
+          33.7852669
+        ],
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     }
   ]
