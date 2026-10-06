@@ -265,7 +265,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Non visitable",
-        "description": "Jalel n° 318 : « Mosquée Ténafsa. Quartier Tenafsa. Mosquée malékite à origine nokkarite et à laquelle fut ajouté une nouvelle adjacente. Ancienne. »\nAppelée Ben Tanfouss sur OSM et Maps",
+        "description": "Mosquée du quartier Ténafsa, à Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 318 : mosquée malékite à origine nokkarite, de datation « ancienne ».\nSur place, deux mosquées sont accolées : l'une plus ancienne, l'autre plus récente (constat du 3 novembre 2025).\nAppelée Ben Tanfouss sur OSM et Maps.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "info_gpx": "",
@@ -285,7 +285,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
