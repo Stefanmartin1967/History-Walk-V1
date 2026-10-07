@@ -5628,9 +5628,9 @@
         "Téléphone": "",
         "Horaires": "De 8h00 à 19h00 en été - De 9h30 à 16h30 en hiver",
         "Facebook": "",
-        "verified": true,
+        "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": true,
+        "descriptionPublic": false,
         "photos": [
           "photos/poi_HW-01K77WPE6H4XSK53CW38Q81RWP_1786337229563.jpg",
           "photos/poi_HW-01K77WPE6H4XSK53CW38Q81RWP_1786337231213.jpg",
@@ -5640,7 +5640,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -5680,9 +5681,15 @@
         ],
         "osm_ref": "way/183799978",
         "maps_ref": "https://maps.app.goo.gl/uw54PNAsyLDoBcF39",
-        "verified": true,
+        "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": true
+        "descriptionPublic": false,
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
