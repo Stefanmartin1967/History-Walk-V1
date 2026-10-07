@@ -9519,15 +9519,15 @@
         "Nom du site arabe": "جامع مغزل",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": "https://www.facebook.com/reel/1357121528501043\nRépertoire J. Fathallah, n° 232 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 232 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "HW_ID": "HW-01K77WPE6R3GZWK8NSTPF441RW",
-        "description": "Mosquée ibadite située à Houmt Beni Maaguel, près du littoral est de l’île de Djerba. Construite probablement avant le XVIIe siècle, elle a joué un rôle crucial dans le système défensif de l’île. Longtemps abandonnée,\nJalel n° 232 — « Mosquée Moghzel. Bani Maaguel. Mosquée malékite à origine nokkarite, bien restaurée. Ancienne.",
+        "description": "Mosquée de Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 232 sous le nom de Moghzel, à Bani Maaguel : mosquée malékite à origine nokkarite, bien restaurée, de datation « ancienne ».\nLa liste Wikipédia des mosquées de Djerba la donne pour abandonnée.",
         "accessPoint": [
           10.9613696,
           33.7477279
         ],
         "Sous-type": "À minaret",
-        "État": "En activité",
+        "État": "Désaffecté",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
@@ -9539,12 +9539,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
