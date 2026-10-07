@@ -17141,13 +17141,13 @@
         "HW_ID": "HW-01M2HTYF7GZ1D4N5Y3GP1M4ZGZ",
         "État": "Ruine",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 46 : « Mosquée mihrab Abou Ghrib. Ghizen. Mosquée wahbite en ruines. Ancienne. »\nRamzi Raïs la compte parmi les mosquées menacées ou disparues (n° 57 : « محراب غريب - الهواري »).\nAucune structure nette sur la vue satellite ; un amas clair à proximité pourrait correspondre à des vestiges.",
+        "description": "Mosquée de Mazraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah inscrit au n° 46 une mosquée mihrab Abou Ghrib, à Ghizen : mosquée wahbite en ruines, de datation « ancienne ».\nOpenStreetMap indique à cet endroit un site archéologique nommé Mahrab Grib.\nL'emplacement exact reste à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 46 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), mosquée menacée ou disparue n° 57 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nOpenStreetMap | https://www.openstreetmap.org/node/14095949798",
+        "Source": "Répertoire J. Fathallah, n° 46 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nOpenStreetMap | https://www.openstreetmap.org/node/14095949798",
         "verified": false,
         "introuvableCarte": true,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -17163,7 +17163,8 @@
         "accessPoint": [
           10.9088982,
           33.8594089
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
