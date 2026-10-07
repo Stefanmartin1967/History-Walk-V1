@@ -2053,10 +2053,10 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Ami Zayed Ellough",
-        "Nom du site arabe": "جامع أمي زايد",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "Répertoire J. Fathallah, n° 52 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 52 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nPlaque de la mosquée, relevée sur place le [DATE DE LA PHOTO]\nObservation sur place, le 13 novembre 2025",
         "HW_ID": "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
         "accessPoint": [
           10.9454083,
@@ -2074,7 +2074,7 @@
           "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563701545.jpg"
         ],
         "info_gpx": "",
-        "description": "Jalel n° 52 : « Zaied Ellough. Mezraya. Mosquée wahbite en ruines. 1615 ap. J.-C. »\n\nContradiction avec l'état actuel : la mosquée est active et entretenue, pas en ruines. Question posée à Jalel Fathallah en commentaire Facebook le 01/08 — réponse jamais reçue.",
+        "description": "Mosquée de Mazraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 52 sous le nom de Zaied Ellough : mosquée wahbite en ruines, datée de 1615.\nLa plaque de la mosquée porte le nom Ammi Zayed Ellough.\nSur place, la mosquée est en activité et entretenue.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/484881572",
@@ -2082,14 +2082,15 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false,
+        "introuvableCarte": true,
         "maps_ref": "https://maps.app.goo.gl/1d53EcFF3FTXqJ2XA",
         "descriptionPublic": false,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
