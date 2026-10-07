@@ -4679,13 +4679,13 @@
         "Nom du site arabe": "جامع أنس بن مالك",
         "Catégorie": "Mosquée",
         "Zone": "Essouani",
-        "Source": "Répertoire J. Fathallah, n° 120 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nJalel Fathallah, vérification sur place (commentaire Facebook, 2026)",
+        "Source": "Jalel Fathallah (auteur du répertoire), communication personnelle, 2026",
         "HW_ID": "HW-01K77WPE6FQSGQH7Q843BCXE8K",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "120 Mosquée Anas Ibn Malik. Entre Oualegh l'ancienne et Hara Kébira. Mosquée malékite construite sur le site de l'ancienne ibadite disparue. 2018.",
+        "description": "Mosquée d'Essouani.\nSelon Jalel Fathallah, elle a été construite sur l'emplacement de l'ancienne mosquée de Tagoumine ; son ouverture date de 2023 ou 2024.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "",
@@ -4702,7 +4702,8 @@
         "mapsHasPhoto": true,
         "jalelChecked": true,
         "lat": 33.862436726885974,
-        "lng": 10.873938202857971
+        "lng": 10.873938202857971,
+        "commons_ref": ""
       }
     },
     {
