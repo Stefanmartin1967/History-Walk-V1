@@ -18080,15 +18080,15 @@
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
-        "description": "Mosquée de la côte est d'Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 277 : ancien poste de garde devenu mosquée, reconstruite récemment, ancienne.\nL'inventaire de Ramzi Raïs (2021) la compte parmi les mosquées en activité, sous le nom de Bou Arous ; la liste Wikipédia des mosquées de Djerba la dit malikite.",
+        "description": "Mosquée de la côte est d'Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 277 sous le nom de Sidi Bouarouss : poste de garde puis mosquée reconstruite récemment, de datation « ancienne ».",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 277 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), n° 136 (mosquées en activité) | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "Source": "Répertoire J. Fathallah, n° 277 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "osm_ref": "way/990383665",
         "maps_ref": "https://maps.app.goo.gl/Z8C34pGfucudeJN77",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-30",
         "mapsChecked": true,
@@ -18099,7 +18099,12 @@
           10.7495134,
           33.7171906
         ],
-        "Zone": "Ajim"
+        "Zone": "Ajim",
+        "info_gpx": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
