@@ -17037,13 +17037,13 @@
         "Catégorie": "Mausolée",
         "osm_ref": "way/990323254",
         "HW_ID": "HW-01M2HTYF12ZQX1GCP6TS1DNNBN",
-        "description": "Jalel n° 242 : « Sidi Kilani. Bani Maaguel. Mausolée et retraite d'un saint. Ancien. »\nRamzi Raïs le compte parmi les zaouïas de Djerba (n° 24 : « سيدي كيلاني »).",
+        "description": "Mausolée de Beni Maaguel.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 242 sous le nom de Sidi Kilani, à Bani Maaguel : mausolée et retraite d'un saint, de datation « ancien ».\nLa liste Wikipédia des mosquées de Djerba la donne pour abandonnée.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 242 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), zaouïa n° 24 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nhttps://commons.wikimedia.org/wiki/Category:Sidi_Kilani_Mausoleum",
+        "Source": "Répertoire J. Fathallah, n° 242 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -17057,7 +17057,8 @@
         "Horaires": "",
         "Facebook": "",
         "osmCheckedDate": null,
-        "Zone": "Beni Maaguel"
+        "Zone": "Beni Maaguel",
+        "commons_ref": ""
       }
     },
     {
