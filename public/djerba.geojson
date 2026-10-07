@@ -17365,14 +17365,14 @@
         "Sous-type": "À minaret",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
-        "description": "Ancienne mosquée ibadite de Khazroun, voisine de la mosquée Ouled Helal qui l'a remplacée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 284 : mosquée ibadite ancienne, abandonnée au profit d'une nouvelle mosquée attenante.\nL'inventaire de Ramzi Raïs range Ouled Hilal parmi les mosquées menacées de disparition ou disparues.",
+        "description": "Mosquée de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 284 sous le nom d'Ouled Helal, à Khazroun : mosquée ibadite ancienne, abandonnée au profit d'une nouvelle mosquée attenante.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 284 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), n° 14 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl",
+        "Source": "Répertoire J. Fathallah, n° 284 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "osm_ref": "way/1466800203",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-18",
         "mapsChecked": true,
@@ -17389,7 +17389,8 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "commons_ref": ""
       }
     },
     {
