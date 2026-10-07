@@ -17938,19 +17938,19 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Al Hidaya (Nakhla)",
+        "Nom du site FR": "Mosquée Al Hidaya (Sedghaiane)",
         "Nom du site arabe": "جامع الهداية",
         "Catégorie": "Mosquée",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Mosquée du quartier de Nakhla, à Sedghiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 150 : mosquée ibadite wahbite à laquelle fut ajoutée une salle de prière, ancienne.\nL'inventaire de Ramzi Raïs (2021) la compte parmi les mosquées en activité, sous le nom d'Ennakhla - Hidaya.",
+        "description": "Mosquée de Sedghaiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 150 : mosquée ibadite wahbite à laquelle fut ajoutée une salle de prière, de datation « ancienne ».\nLa liste Wikipédia des mosquées de Djerba la nomme Al Hidaia / Al Nakhla.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 150 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), n° 101 (mosquées en activité) | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "Source": "Répertoire J. Fathallah, n° 150 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-28",
         "mapsChecked": true,
@@ -17961,7 +17961,14 @@
           10.9140025,
           33.8239634
         ],
-        "Zone": "Sedghaiane"
+        "Zone": "Sedghaiane",
+        "info_gpx": "",
+        "osm_ref": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
