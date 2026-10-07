@@ -16906,13 +16906,13 @@
       "properties": {
         "Nom du site FR": "Mausolée Sidi Mansour (Ouelghmane)",
         "Catégorie": "Mausolée",
-        "description": "Existence à vérifier sur place (novembre 2026). Mausolée situé par la liste Wikipédia des mosquées de Djerba (« Sidi Mansour Ouelghmane », Temlel), à 73 m à l'est de la mosquée Khaled Ibn Elwalid. OpenStreetMap n'y montre qu'un petit bâtiment sans nom de 7,7 × 4,4 m (way/990341204), sans coupole visible sur la vue satellite.\nJalel n° 327 (mosquée voisine) : « Khaled Ibn Walid, ex Sidi Mansour. Tezdain. Mosquée malékite construite sur le site d'une ancienne. Récente. »\nRamzi Raïs n° 168 (mosquée voisine) : « خالد بن الوليد - سيدي الغول », soit un autre nom traditionnel, Sidi el-Ghoul.",
+        "description": "Mausolée d'Arkou.\nLa liste Wikipédia des mosquées de Djerba mentionne un mausolée « Sidi Mansour Ouelghmane », à Temlel, sans autre précision.\nLe répertoire des mosquées de Djerba de Jalel Fathallah inscrit au n° 327 la mosquée voisine Khaled Ibn Walid, « ex Sidi Mansour » : mosquée malékite récente, construite sur le site d'une ancienne.\nL'existence du mausolée reste à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Liste de mosquées de Djerba, Wikipédia (ligne « Sidi Mansour Ouelghmane ») | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nRépertoire J. Fathallah, n° 327 (mosquée voisine) | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Wikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nRépertoire J. Fathallah, n° 327 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
         "introuvableCarte": true,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-15",
         "mapsChecked": true,
@@ -16933,7 +16933,8 @@
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "commons_ref": ""
       }
     },
     {
