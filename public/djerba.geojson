@@ -7581,7 +7581,7 @@
         "Nom du site arabe": "جامع وليحي",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
-        "Source": "Répertoire J. Fathallah, n° 99 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://www.flickr.com/photos/44928546@N05/8008665414\nhttps://www.facebook.com/Assidje.org/posts/la-l%C3%A9gendaire-mosqu%C3%A9e-ouelhi-retrouve-son-%C3%A9clat-apr%C3%A8s-avoir-%C3%A9t%C3%A9-pilli%C3%A9e-et-sacca/2453064461400785/",
+        "Source": "Répertoire J. Fathallah, n° 99 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Mosquée Ouelhi » | https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Ouelhi",
         "HW_ID": "HW-01K77WPE6MXA1DKNG7R2XWZQGJ",
         "photos": [
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463657931.jpg",
@@ -7596,7 +7596,7 @@
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463675621.jpg",
           "photos/poi_HW-01K77WPE6MXA1DKNG7R2XWZQGJ_1780463677378.jpg"
         ],
-        "description": "Jalel n° 99 — « Mosquée Ouelhi. Jaabira. Mosquée et medersa coranique à l'état d'abandon. Elle fut restaurée récemment. 8ᵉ siècle de l'hégire (14ᵉ siècle ap. J.-C.). »\n\nUne des plus ancienne mosquée de Djerba datant du 7ème siècle. Elle a retrouvé son éclat après sa restauration par l'ASSIDJE en collaboration avec l'Association des Architectes de Jerba. Son architecture simle est typique de Djerba. A noter qu'étant entourée de vergers, elle est réputée pour sa production de fruits.",
+        "description": "Mosquée d'Oued Ezzebib.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 99 sous le nom de Ouelhi, à Jaabira : mosquée et médersa coranique à l'état d'abandon, restaurée récemment, du 8ᵉ siècle de l'hégire, soit le 14ᵉ siècle.\nSelon l'article Wikipédia qui lui est consacré, elle a connu une transformation majeure en 1661 et une première restauration en 1998, conduite par l'Institut national du patrimoine et l'Assidje.",
         "accessPoint": [
           10.8055248,
           33.7901335
@@ -7614,12 +7614,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
