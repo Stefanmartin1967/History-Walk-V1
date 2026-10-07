@@ -16992,15 +16992,15 @@
         "osm_ref": "way/427586711",
         "HW_ID": "HW-01M2HTYEZ1BMA2XT2V4VKQX2PP",
         "Sous-type": "À coupoles",
-        "État": "En activité",
+        "État": "Désaffecté",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 187 : « Sidi Aissa. Ouersighen. Mosquée mausolée en bon état, mais abandonnée. Ancienne. »\nRamzi Raïs la compte parmi les mosquées encore en activité (n° 213 : « سيدي عيسى »).\nNommée localement « Ammi Aïssa » (عمي عيسى).\nVisible sur la vue satellite",
+        "description": "Mosquée de Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 187 sous le nom de Sidi Aissa, à Ouersighen : mosquée mausolée en bon état mais abandonnée, de datation « ancienne ».\nOpenStreetMap la nomme Ammi Aissa.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 187 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInventaire R. Raïs, Jerba 7adhara (29/09/2021), mosquée n° 213 | https://www.facebook.com/jerba7adhara/posts/pfbid02f3fKMRN4ubsB3cZ5XQabmFs5LKiUUjfTN72Y8x2zwnYkPAQBLnJ8vjNEGV8aBfwnl\nWikipédia, Liste de mosquées de Djerba | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/427586711",
+        "Source": "Répertoire J. Fathallah, n° 187 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nOpenStreetMap | https://www.openstreetmap.org/way/427586711",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -17009,7 +17009,14 @@
         "accessPoint": [
           10.9081533,
           33.7358227
-        ]
+        ],
+        "info_gpx": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
