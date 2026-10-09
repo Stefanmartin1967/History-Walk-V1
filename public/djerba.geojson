@@ -12211,23 +12211,23 @@
         "Catégorie": "Mosquée",
         "osm_ref": "way/1443723893",
         "HW_ID": "HW-01KZH0VEYQP0Z34VT0057MDV8W",
-        "Sous-type": "Générique",
+        "Sous-type": "À coupoles",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
         "Nom du site arabe": "",
-        "État": "",
-        "Accès": "",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mosquée d'Oued Ezzebib.\nOpenStreetMap y indique une mosquée nommée Dahman Ben Ali mosquée, à Oued Zbib.\nLa liste Wikipédia des mosquées de Djerba la donne pour wahbite, abandonnée et ancienne.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1443723893\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Oued Ezzebib",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12236,7 +12236,8 @@
         "accessPoint": [
           10.8238626,
           33.7838414
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -12260,16 +12261,16 @@
         "maps_ref": "https://maps.app.goo.gl/KmgnvAYKFCxmgobx5",
         "verified": false,
         "introuvableCarte": false,
-        "Source": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1465011594\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nRépertoire J. Fathallah, n° 255 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur vue satellite\nSite historique sur Maps en 33.77750891267401, 10.813790981509246",
+        "description": "Mosquée d'Oued Ezzebib.\nOpenStreetMap y indique une mosquée nommée Ejjmia mosquée, à Aourir. La liste Wikipédia des mosquées de Djerba la nomme Aljamii et la donne pour malikite, de 2018.\nLe répertoire des mosquées de Djerba de Jalel Fathallah inscrit au n° 255 une mosquée Aljamii à Srandi : mosquée malékite de 2018. Le rapprochement entre les deux n'est pas établi.",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Oued Ezzebib",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12278,7 +12279,8 @@
         "accessPoint": [
           10.8151841,
           33.7778506
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -12805,17 +12807,17 @@
         "introuvableCarte": false,
         "Nom du site arabe": "",
         "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite\nPas de trace chez Jalel",
-        "Source": "",
+        "description": "Mausolée de Sedouikech.\nOpenStreetMap y indique un mausolée nommé Ben Omran. Des photographies du mausolée sont publiées sur Wikimedia Commons.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/990313185\nWikimedia Commons, catégorie « Ben Omrane Mausoleum » | https://commons.wikimedia.org/wiki/Category:Ben_Omrane_Mausoleum",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Sedouikech",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12824,7 +12826,8 @@
         "accessPoint": [
           10.9277003,
           33.7454789
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -13582,20 +13585,26 @@
         "introuvableCarte": false,
         "Zone": "Sedouikech",
         "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Pas de trace visible sur la vue satellite\nSitué dans un cimetière",
-        "Source": "",
-        "maps_ref": "",
+        "description": "Mausolée de Sedouikech.\nOpenStreetMap y indique un mausolée nommé Sidi El Harith. La liste Wikipédia des mosquées de Djerba le nomme Sidi Belhareth et le donne pour abandonné, de datation ancienne.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/990312451\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "maps_ref": "https://maps.app.goo.gl/couSAKPGKg6FVJdk9",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.9127823,
           33.7468579
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -16422,28 +16431,37 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Cheikh Sidi Slimen",
-        "Catégorie": "Site archéologique",
-        "État": "Ruine",
-        "Accès": "Non visitable",
-        "description": "Rien de visible sur la vue satellite",
+        "Nom du site FR": "Mausolée  Cheikh Sidi Slimen",
+        "Catégorie": "Mausolée",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "description": "Mausolée de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah inscrit au n° 334 un Sidi Slimane à la plage de Dar Djerba : mausolée et poste de garde, de datation « ancien ». OpenStreetMap le nomme Cheikh Sidi Slimen.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/13153414206",
         "verified": false,
-        "introuvableCarte": true,
-        "descriptionPublic": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false,
+        "jalelChecked": true,
         "HW_ID": "HW-01M1RTWE1A2DVRQ2T0ZPYTFKX3",
         "accessPoint": [
           11.0301267,
           33.830298
         ],
-        "Zone": "Midoun"
+        "Zone": "Midoun",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "Source": "Répertoire J. Fathallah, n° 334 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nOpenStreetMap | https://www.openstreetmap.org/node/13153414206",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
