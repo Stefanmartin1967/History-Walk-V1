@@ -3661,7 +3661,7 @@
         "Nom du site arabe": "جامع تجديت",
         "Catégorie": "Mosquée",
         "Zone": "Fatou",
-        "Source": "Répertoire J. Fathallah, n° 39 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Tajdit",
+        "Source": "Répertoire J. Fathallah, n° 39 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Mosquée Tajdit » | https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Tajdit",
         "HW_ID": "HW-01K77WPE6DPZ5JB93JZ7BZ9ZJF",
         "accessPoint": [
           10.896678,
@@ -3671,7 +3671,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 39 : « Mosquée Tajdite. Fatou. Mosquée ibadite wahbite. Ancienne.\nVoir le lien Wikipédia pour écrire la description\nVisible sur la vue satellite",
+        "description": "Mosquée de Fatou.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 39 sous le nom de Tajdite, à Fatou : mosquée ibadite wahbite, de datation « ancienne ».\nSelon l'article Wikipédia qui lui est consacré, elle est généralement présentée comme remontant à la fin du règne du deuxième imam rostémide, vers l'an 800, sans qu'aucune source ne permette de le confirmer avec certitude.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/483463981",
@@ -3681,12 +3681,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -9185,15 +9186,15 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Sidi Mersil",
-        "Nom du site arabe": "مسجد سيدي منسيل",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": "Répertoire J. Fathallah, n° 311 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 311 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nOpenStreetMap | https://www.openstreetmap.org/way/1153906033",
         "HW_ID": "HW-01K77WPE6Q8F3RTEJT1892FPNK",
-        "description": "Jalel n° 311 — « Sidi Marsoul « émissaire ». Côte de Castille. Poste de garde puis mosquée en ruines. Ancienne.\nVisible sur la vue satellite",
+        "description": "Mosquée de Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 311 sous le nom de Sidi Marsoul (« émissaire »), sur la côte de Castille : poste de garde puis mosquée en ruines, de datation « ancienne ».\nOpenStreetMap indique à cet endroit les ruines d'une mosquée nommée Sidi Mersil.",
         "Sous-type": "",
-        "État": "",
-        "Accès": "",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -9203,13 +9204,14 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": true,
-        "descriptionPublic": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -9777,7 +9779,7 @@
         "Zone": "Sedouikech",
         "Source": "Répertoire J. Fathallah, n° 218 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6R1ZH8B0JTAF5HKXPG",
-        "description": "Jalel n° 218 : « Mosquée Wafa. Ghardaya. Mosquée malékite. 2017. »\nVisible sur la vue satellite",
+        "description": "Mosquée de Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 218 sous le nom de Wafa, à Ghardaya : mosquée malékite, datée de 2017.",
         "accessPoint": [
           10.9249925,
           33.7126979
@@ -9795,12 +9797,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -12166,22 +12169,22 @@
         "osm_ref": "way/990397295",
         "HW_ID": "HW-01KZH0VEW625A5WY4C196361EY",
         "Sous-type": "À minaret",
-        "description": "124 Sidi Salah. Entre Oualegh l'ancienne et Hara Kébira. Mosquée malékite à origine ibadite wahbite. Ancienne.\nVisible sur la vue satellite",
+        "description": "Mosquée d'Oualeg.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 124 sous le nom de Sidi Salah, entre Oualegh l'ancienne et Hara Kébira : mosquée malékite à origine ibadite wahbite, de datation « ancienne ».\nLa liste Wikipédia des mosquées de Djerba la nomme aussi Ben Yedder.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 124 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 124 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "verified": false,
         "introuvableCarte": false,
         "Nom du site arabe": "",
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/CBtH69z1fqVXFtrJ6",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Oualeg",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12881,7 +12884,7 @@
         "osm_ref": "way/1464387119",
         "HW_ID": "HW-01KZH0VG5T7Q09GJWS04CGNY2Q",
         "Sous-type": "À coupoles",
-        "description": "179 Sidi Adoui. Tafartaset, Cedouikech. Mosquée ibadite wahbite en bon état, mais abandonnée. Ancienne.\nVisible sur la vue satellite",
+        "description": "Mosquée de Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 179 sous le nom de Sidi Adoui, à Tafartaset : mosquée ibadite wahbite en bon état mais abandonnée, de datation « ancienne ».",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 179 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
@@ -12896,7 +12899,7 @@
         "Horaires": "",
         "Facebook": "",
         "Zone": "Sedouikech",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12905,7 +12908,8 @@
         "accessPoint": [
           10.8996164,
           33.7390806
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -13128,27 +13132,27 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Mansour (Tezdaine)",
+        "Nom du site FR": "Mosquée Sidi Mansour (Mguersa)",
         "Catégorie": "Mosquée",
         "osm_ref": "way/990361515",
         "HW_ID": "HW-01KZH0VH26R74BZZ6K1XQBQP45",
-        "Sous-type": "Générique",
+        "Sous-type": "À coupoles",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
         "Nom du site arabe": "",
-        "État": "",
-        "Accès": "",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 324 : « Sidi Mansour. Quartier Tezdaine. Mosquée mausolée malékite rénovée. Ancienne. »\nVisible sur la vue satellite",
-        "Source": "Répertoire J. Fathallah, n° 324 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://commons.wikimedia.org/wiki/Category:Sidi_Mansour_(Midoun)_Mosque",
+        "description": "Mosquée d'Arkou.\nLa liste Wikipédia des mosquées de Djerba situe à Mhiri, à Midoun, une mosquée et mausolée Sidi Mansour, de datation ancienne.\nLe répertoire des mosquées de Djerba de Jalel Fathallah inscrit au n° 324 un Sidi Mansour au quartier Tezdaine : mosquée mausolée malékite rénovée, de datation « ancienne ». Le rapprochement entre les deux n'est pas établi.",
+        "Source": "Wikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nRépertoire J. Fathallah, n° 324 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Arkou",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -13157,7 +13161,8 @@
         "accessPoint": [
           11.0031984,
           33.8117992
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
