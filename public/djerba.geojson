@@ -14992,14 +14992,14 @@
       "properties": {
         "Nom du site FR": "Mosquée Abrane",
         "Catégorie": "Mosquée",
-        "description": "Jalel n° 103 : « Mosquée Abrane. Oued Zbib. Mosquée ibadite wahbite abandonnée. Ancienne. »\nVisible sur la vue satellite",
+        "description": "Mosquée d'Oued Ezzebib.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 103 sous le nom d'Abrane, à Oued Zbib : mosquée ibadite wahbite abandonnée, de datation « ancienne ».\nLa liste Wikipédia des mosquées de Djerba la donne pour dégradée, et OpenStreetMap y indique un bâtiment en ruines.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 103 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 103 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/990386788",
         "osm_ref": "way/990386788",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-31",
         "mapsChecked": true,
@@ -15010,7 +15010,17 @@
           10.8124366,
           33.7860972
         ],
-        "Zone": "Oued Ezzebib"
+        "Zone": "Oued Ezzebib",
+        "Nom du site arabe": "",
+        "Sous-type": "À coupoles",
+        "État": "Ruine",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
@@ -15790,20 +15800,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Zaid",
+        "Nom du site FR": "Mosquée Zaid (Bani Maague)",
         "Catégorie": "Mosquée",
         "osm_ref": "way/1471849080",
         "HW_ID": "HW-01KZH0VG6X030MZBBRD99HDS37",
         "Sous-type": "À coupoles",
         "État": "Ruine",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 243 : « Mosquée Zaid. Bani Maaguel. Mosquée tour de guet en ruines. Ancienne. »\n\nVisible sur la vue satellite",
+        "description": "Mosquée de Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 243 sous le nom de Zaid, à Bani Maaguel : mosquée tour de guet en ruines, de datation « ancienne ».\nLa liste Wikipédia des mosquées de Djerba la nomme Zid et la donne pour ruinée.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 243 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 243 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -15812,7 +15822,15 @@
           10.9560657,
           33.7453627
         ],
-        "Zone": "Sedouikech"
+        "Zone": "Sedouikech",
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -16320,15 +16338,15 @@
       "properties": {
         "Nom du site FR": "Mosquée Sidi Ameur",
         "Catégorie": "Mosquée",
-        "osm_ref": "node/13730181699",
+        "osm_ref": "way/1499348580",
         "HW_ID": "HW-01KZH0VEMSN3ZF23432RQRV9K4",
-        "Sous-type": "Générique",
-        "description": "Jalel n° 165 : « Sidi Ameur. Oued Mgahar. Mosquée mausolée malékite à origine nokkarite ibadite en bon état, mais abandonnée. 992 de l'hégire. 1584 ap J.C. »\n\nVisible sur la vue satellite",
+        "Sous-type": "À coupoles",
+        "description": "Mosquée de Robbana.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 165 sous le nom de Sidi Ameur, à Oued Mgahar : mosquée mausolée malékite à origine nokkarite ibadite en bon état mais abandonnée, datée de 992 de l'hégire, soit 1584.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -16338,7 +16356,17 @@
           10.8812969,
           33.7815535
         ],
-        "Zone": "Robbana"
+        "Zone": "Robbana",
+        "Nom du site arabe": "",
+        "État": "Désaffecté",
+        "Accès": "Extérieur seulement",
+        "info_gpx": "",
+        "maps_ref": "https://maps.app.goo.gl/WqUU4y1SMXoPYVcTA",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": "2026-10-09"
       }
     },
     {
@@ -17295,14 +17323,14 @@
         "Catégorie": "Mausolée",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 325 : « Mrabet Amor. Quartier Mguersa. Mausolée et lieu de culte abandonné. Ancien. »\nVisible sur la vue satellite",
+        "description": "Mausolée d'Arkou.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 325 sous le nom de Mrabet Amor, au quartier Mguersa : mausolée et lieu de culte abandonné, de datation « ancien ».",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 325 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://commons.wikimedia.org/wiki/Category:Mrabet_Amor_Mausoleum",
+        "Source": "Répertoire J. Fathallah, n° 325 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "osm_ref": "way/1433481213",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-16",
         "mapsChecked": true,
@@ -17316,7 +17344,8 @@
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "commons_ref": ""
       }
     },
     {
@@ -17334,14 +17363,14 @@
         "Catégorie": "Mosquée",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 319 : « Sidi Gharbi. Quartier Tenafsa. Mosquée abandonnée, mais en excellent état. Ancienne. »\nBâtiment visible sur la vue satellite, sans coupole ni minaret apparents ; état à vérifier sur place (novembre 2026).",
+        "description": "Mosquée de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 319 sous le nom de Sidi Gharbi, au quartier Tenafsa : mosquée abandonnée mais en excellent état, de datation « ancienne ».",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 319 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "osm_ref": "way/990314922",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-16",
         "mapsChecked": true,
@@ -17354,7 +17383,8 @@
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "commons_ref": ""
       }
     },
     {
