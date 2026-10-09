@@ -15800,7 +15800,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Zaid (Bani Maague)",
+        "Nom du site FR": "Mosquée Zaid (Bani Maaguel)",
         "Catégorie": "Mosquée",
         "osm_ref": "way/1471849080",
         "HW_ID": "HW-01KZH0VG6X030MZBBRD99HDS37",
@@ -17109,13 +17109,13 @@
         "Catégorie": "Mausolée",
         "osm_ref": "way/990416470",
         "HW_ID": "HW-01M2HTYF30DPMXAHRSWDWF1S4G",
-        "description": "Nom à trouver sur place (novembre 2026). Petit tombeau de 5,5 × 5,6 m relevé sur le terrain par Petr Jenč (OpenStreetMap, way/990416470, historic=tomb), au centre d'un cimetière musulman, à 146 m à l'ouest de la mosquée Toghrouit. Vue satellite : petite construction carrée entourée de tombes.\nAucune entrée du répertoire de Jalel Fathallah à Bani Maaguel ne correspond : ses deux mausolées (Sidi Satouri, n° 225, et Sidi Kilani, n° 242) sont déjà identifiés ailleurs.",
+        "description": "Mausolée de Beni Maaguel.\nOpenStreetMap y indique un mausolée, sans nom.\nSon nom et son existence restent à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "OpenStreetMap, way/990416470 | https://www.openstreetmap.org/way/990416470",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/990416470",
         "verified": false,
         "introuvableCarte": true,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -17124,7 +17124,18 @@
         "accessPoint": [
           10.9576889,
           33.7641777
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -17142,13 +17153,13 @@
         "Catégorie": "Mausolée",
         "osm_ref": "node/14095949747",
         "HW_ID": "HW-01M2HTYF5PMQYX0JNJGQYBFYCC",
-        "description": "Signalé sur OpenStreetMap comme tombe (« روضة بالأصفر »). Aucune autre source trouvée.\nEnclos rectangulaire à murs bas visible sur la vue satellite, sans toiture apparente.",
+        "description": "Mausolée de Mazraia.\nOpenStreetMap y indique un mausolée nommé Raoudha bel Asfar.\nSa nature reste à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "OpenStreetMap | https://www.openstreetmap.org/node/14095949747",
         "verified": false,
         "introuvableCarte": true,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -17157,7 +17168,17 @@
         "accessPoint": [
           10.9090944,
           33.8577009
-        ]
+        ],
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -17217,13 +17238,13 @@
         "Catégorie": "Mausolée",
         "osm_ref": "way/1558413245",
         "HW_ID": "HW-01M2HTYFAG61DMYQY86QPKJ4C1",
-        "description": "Existence et nature à vérifier sur place (novembre 2026). Petite construction de 3,4 × 3,6 m cartographiée par Petr Jenč dans OpenStreetMap comme tombeau (way/1558413245, historic=tomb, accès privé), à 106 m au nord-ouest de la mosquée Errhama et 155 m de Sidi Kahil. Vue satellite : petit carré de murs à l'intérieur sombre, sans coupole visible — tombeau, puits ou ruine ?\nPiste non vérifiée : Jalel n° 293, « Sidi Tellili. Entre Mahboubine et Midoun. Mausolée et lieu de culte. Ancien. », numéroté juste après Sidi Kahil (n° 292) et non localisé.",
+        "description": "Mausolée de Mahboubine.\nOpenStreetMap y indique un mausolée, sans nom, d'accès privé.\nSa nature et son nom restent à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "OpenStreetMap, way/1558413245 | https://www.openstreetmap.org/way/1558413245",
         "verified": false,
         "introuvableCarte": true,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -17232,7 +17253,18 @@
         "accessPoint": [
           10.9767848,
           33.795412
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
