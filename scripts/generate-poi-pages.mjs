@@ -64,8 +64,12 @@ export function slugify(name, fallback = '') {
 
 /** Éligibilité SEO : une vraie description (pas de thin content), ET
  *  explicitement publiée (`descriptionPublic`, défaut OFF — cf. richEditor.js
- *  / templates.js). Sans ce flag, c'est un brouillon de travail, pas indexable. */
+ *  / templates.js). Sans ce flag, c'est un brouillon de travail, pas indexable.
+ *  Jamais pour un lieu « Existence à confirmer » (`introuvableCarte`) : l'app
+ *  le masque au visiteur (carte et recherche, cf. isHiddenUnconfirmed dans
+ *  src/data.js), une page publique le lui montrerait quand même. */
 export function isEligible(feature) {
+    if (feature?.properties?.introuvableCarte) return false;
     if (!feature?.properties?.descriptionPublic) return false;
     const desc = (feature?.properties?.description || '').trim();
     return desc.length >= MIN_DESCRIPTION_CHARS;
