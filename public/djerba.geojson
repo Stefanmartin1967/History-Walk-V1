@@ -13978,13 +13978,19 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée d'El May.\nOpenStreetMap y indique un mausolée, sans nom.\nSa nature et son nom restent à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/990389881",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": true,
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -13997,7 +14003,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée Guechaine",
+        "Nom du site FR": "Mausolée (Oualeg)",
         "Catégorie": "Mausolée",
         "osm_ref": "way/990419755",
         "HW_ID": "HW-01KZH0VH8BM77V72RKYN96NF6N",
@@ -14011,17 +14017,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite\nNommé par le village le plus proche, mais à 1400 mètres",
-        "Source": "",
+        "description": "Mausolée d'Oualeg.\nOpenStreetMap y indique un mausolée, sans nom, près d'un cimetière musulman.\nSa nature et son nom restent à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/990419755",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.8933273,
           33.838821
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -14147,17 +14159,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Non visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée de Mazraia.\nOpenStreetMap y indique un mausolée, sans nom, près d'un cimetière.\nSa nature et son nom restent à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1431190857",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.962628,
           33.8336208
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -14184,8 +14202,8 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Pas de trace visible sur la vue satellite \nSitué dans un cimetière",
-        "Source": "",
+        "description": "Mausolée du quartier Ouled Amor, à Midoun.\nOpenStreetMap y indique un mausolée, sans nom, dans un cimetière.\nSa nature et son nom restent à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1431208662",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
@@ -14199,7 +14217,8 @@
         "osmCheckedDate": null,
         "mapsChecked": false,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -14226,17 +14245,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite\nSitué à côté du cimetière jouxtant la mosquée Sidi Sabah",
-        "Source": "",
+        "description": "Mausolée du quartier de Tezdaine, à Arkou.\nOpenStreetMap y indique un mausolée, sans nom, à côté d'un cimetière musulman jouxtant la mosquée Sidi Sabah.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1431391384",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           11.044668842425413,
           33.795991138264654
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
