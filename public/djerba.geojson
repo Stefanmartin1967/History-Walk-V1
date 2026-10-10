@@ -9565,9 +9565,9 @@
         "Nom du site arabe": "جامع بنيان",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
-        "Source": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1130737452",
         "HW_ID": "HW-01K77WPE6R9A1BAASW9SGFA97P",
-        "description": "Visible sur la vue satellite",
+        "description": "Lieu de culte musulman de Sedouikech.\nOpenStreetMap y indique un lieu de culte musulman, sans nom.",
         "accessPoint": [
           10.9170677,
           33.7510099
@@ -9584,13 +9584,14 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": true,
-        "descriptionPublic": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -12464,7 +12465,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée El Fakira Salima",
+        "Nom du site FR": "Mausolée El Fakira Salima (El Khenensa)",
         "Catégorie": "Mausolée",
         "osm_ref": "node/13437089159",
         "HW_ID": "HW-01KZH0VFAZN27KYN56FFXSRATV",
@@ -12477,14 +12478,14 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée d'El Khenensa.\nOpenStreetMap y indique un mausolée nommé El Fakira Salima.\nUn autre mausolée du même nom est indiqué à El May.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/13437089159",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "El Khenensa",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12493,7 +12494,8 @@
         "accessPoint": [
           10.7961421,
           33.7488152
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -14152,7 +14154,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "Zone": "Mazraia",
         "Nom du site arabe": "",
         "Sous-type": "",
@@ -14288,13 +14290,19 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite\nAttention, deux mausolées proches. Le second est Fakira Salima, situé dans le cimetière\nProche de la Mosquée Abdessalam",
-        "Source": "",
+        "description": "Mausolée d'El May, à environ 280 m de la mosquée Sidi Abdessalam.\nOpenStreetMap y indique un mausolée, sans nom, près d'un cimetière musulman.\nUn second mausolée, Fakira Salima, se trouve à une centaine de mètres, dans le cimetière.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1433497560",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": true,
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -14364,17 +14372,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée de Midoun.\nOpenStreetMap y indique un mausolée, sans nom, d'accès privé.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1502452346",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.954299188251316,
           33.818517191013605
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -15996,39 +16010,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.9819018,
-          33.7736234
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Ruines de ferme",
-        "Catégorie": "Site archéologique",
-        "osm_ref": "node/13161147260",
-        "HW_ID": "HW-01KZH0VGJK4RD1NQ9R2VKAK74T",
-        "État": "Ruine",
-        "Accès": "Non visitable",
-        "description": "Visible sur la vue satellite",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "verified": false,
-        "introuvableCarte": false,
-        "descriptionPublic": false,
-        "osmChecked": true,
-        "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false,
-        "accessPoint": [
-          10.981917,
-          33.7735274
-        ],
-        "Zone": "Arkou"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           11.0294895,
           33.8019347
         ]
@@ -16545,13 +16526,13 @@
         "Catégorie": "Menzel",
         "État": "Ruine",
         "Accès": "Non visitable",
-        "description": "Visible sur la vue satellite",
+        "description": "Ruines d'une ferme, à Arkou.\nOpenStreetMap y indique des ruines de ferme.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1431861078",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
@@ -16562,7 +16543,16 @@
           10.981917,
           33.7735274
         ],
-        "Zone": "Arkou"
+        "Zone": "Arkou",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1431861078",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
