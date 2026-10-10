@@ -4,7 +4,8 @@
 // pour la carte (markers). Variante outline = PR3 (panneau filtres, fiche).
 //
 // Lookup hiérarchique : Catégorie → Sous-type (si applicable) → SVG.
-// - Mosquée : 4 sous-types (À minaret / À coupoles / Fortifiée / Générique).
+// - Mosquée : 3 sous-types (À minaret / À coupoles / Fortifiée) + icône
+//   « Mosquée » sans sous-type (forme indéterminée ou pas encore classée).
 // - Église : 2 sous-types (Catholique / Orthodoxe).
 // - Artisanat : 3 sous-types (Poterie / Huilerie / Tissage) + icône
 //   « Atelier » comme générique de la catégorie (sans sous-type).
@@ -346,7 +347,8 @@ const POI_ICONS = {
         'À minaret': I_MOSQUEE_MINARET,
         'À coupoles': I_MOSQUEE_COUPOLES,
         'Fortifiée': I_MOSQUEE_FORTIFIEE,
-        'Générique': I_MOSQUEE_GENERIQUE,
+        // Sans sous-type : l'ex-« Générique » (retiré le 10/10/2026, Stefan :
+        // on laisse vide) avait déjà cette icône.
         _default: I_MOSQUEE_GENERIQUE,
     },
     'Mausolée': I_MAUSOLEE,
@@ -452,11 +454,12 @@ export function getStepCategoryDisplay(feature) {
 }
 
 // Libellés explicites pour le générique (_default) d'une catégorie à sous-types
-// quand il N'EST PAS déjà couvert par un sous-type nommé. Seul Artisanat est
-// concerné aujourd'hui (son _default = l'icône « Atelier », distincte des
-// métiers Poterie/Huilerie/Tissage). Mosquée/Église : leur _default duplique
-// un sous-type nommé (Générique / Catholique) → pas d'entrée générique ajoutée.
-const GENERIC_LABELS = { 'Artisanat': 'Atelier' };
+// quand il N'EST PAS déjà couvert par un sous-type nommé. Artisanat : son
+// _default = l'icône « Atelier », distincte des métiers Poterie/Huilerie/
+// Tissage. Mosquée : l'icône sans sous-type porte le nom de la catégorie
+// (validé par Stefan le 10/10/2026, plus de sous-type « Générique »). Église :
+// son _default duplique un sous-type nommé (Catholique) → pas d'entrée ajoutée.
+const GENERIC_LABELS = { 'Artisanat': 'Atelier', 'Mosquée': 'Mosquée' };
 
 /**
  * Structure ordonnée pour la légende exhaustive (info-popover) — chaque
