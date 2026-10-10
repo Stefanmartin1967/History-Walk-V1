@@ -325,13 +325,6 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         ? `<div class="cartel-status">${statusItems.join('<span class="cartel-status-sep"></span>')}</div>`
         : '';
 
-    // Section Description — paragraphes + gras (**texte**) + liens cliquables,
-    // cf. description-format.mjs (source unique, partagée avec la page SEO).
-    // Wrapper en <div> (pas <p>) : renderDescriptionHtml produit déjà un <p>
-    // par paragraphe, imbriquer un <p> dans un <p> serait invalide.
-    const descBlock = descVisible
-        ? `<div class="poi-desc">${renderDescriptionHtml(longDesc, escapeXml, 'noopener noreferrer')}</div>${renderSource(allProps)}${(!isDescPublic && state.isAdmin) ? `<p class="poi-source-link">Brouillon — non publié</p>` : ''}`
-        : `<p class="poi-desc is-placeholder">Aucune description disponible.</p>`;
 
     // Section GPX (cachée par défaut, ouverte par bouton tiroir)
     const gpxSection = hasGpxDesc
@@ -415,15 +408,23 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             </div>
         </section>`;
 
-    // Description block (TTS button uniquement si description présente — rien à lire sinon)
-    const descSection = `
+    // Section Description — paragraphes + gras (**texte**) + liens cliquables,
+    // cf. description-format.mjs (source unique, partagée avec la page SEO).
+    // Wrapper en <div> (pas <p>) : renderDescriptionHtml produit déjà un <p>
+    // par paragraphe, imbriquer un <p> dans un <p> serait invalide.
+    // Rien à afficher (pas de description, ou description non publiée vue par
+    // un non-admin) → PAS de section, titre compris : l'absence se voit, une
+    // phrase « Aucune description » laissait entendre un manque (décision de
+    // Stefan, note de test 18, 03/10/2026). On écrit une description par
+    // « Modifier », pas depuis cette section.
+    const descSection = descVisible ? `
         <section class="poi-section description-section">
             <h3 class="poi-section-title">
                 <span class="ttl-text">Description</span>
-                ${descVisible ? `<button class="ttl-action speak-btn" title="Lire à voix haute" aria-label="Lire à voix haute"><i data-lucide="volume-2"></i></button>` : ''}
+                <button class="ttl-action speak-btn" title="Lire à voix haute" aria-label="Lire à voix haute"><i data-lucide="volume-2"></i></button>
             </h3>
-            ${descBlock}
-        </section>`;
+            <div class="poi-desc">${renderDescriptionHtml(longDesc, escapeXml, 'noopener noreferrer')}</div>${renderSource(allProps)}${(!isDescPublic && state.isAdmin) ? `<p class="poi-source-link">Brouillon — non publié</p>` : ''}
+        </section>` : '';
 
     // Compteur position dans le circuit (3 / 12) — affiché en eyebrow si in circuit.
     // Si in circuit, deux chevrons cliquables encadrent le compteur pour naviguer
