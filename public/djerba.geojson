@@ -7502,13 +7502,13 @@
         "Nom du site arabe": "جامع بازيم",
         "Catégorie": "Mosquée",
         "Zone": "El Hachene",
-        "Source": "Répertoire J. Fathallah, n° 109 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 109 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/701348387",
         "HW_ID": "HW-01K77WPE6MTFTPQQCESF5JYJSJ",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "109 Mosquée Bazim. Bazim. Mosquée ibadite wahbite. Ancienne.\nUne plaque dont la photo se trouve sur Maps dit :\nParmi les savants du 10ᵉ siècle de l'hégire (16ᵉ s. apr. J.-C.). Il reçut les premiers enseignements à Djerba, puis étudia à Tunis à la mosquée Zitouna, puis voyagea en Égypte en l'an 913 de l'hégire pour étudier à l'école ibadite de Wikalat al-Jamous et à l'école kaydanienne de Boulaq. Il fut l'élève du Cheikh Abou al-Hassan Ibrahim al-Kaydani. Il revint à Djerba où il enseigna au Grand Mosquée d'El Hachane. Son ouvrage le plus important est un commentaire de l'Isagoge du Cheikh Athir ad-Din al-Abhari sur la logique, connu comme « le commentaire de Souleyman le Djerbien » — les savants de la Zitouna à Tunis l'utilisaient pour l'enseignement, n'en ayant pas trouvé l'équivalent.",
+        "description": "Mosquée du quartier de Bazim, à El Hachene.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 109 : mosquée ibadite wahbite, de datation « ancienne ».\nLa liste Wikipédia des mosquées de Djerba l'indique à cet endroit sous le nom de Sidi Salah, en activité.\nAppelée Jamaa Bazim sur OSM, avec Sidi Salah comme autre nom.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/701348387",
@@ -7523,7 +7523,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -9482,9 +9483,9 @@
         "Nom du site arabe": "الجامع الطويل",
         "Catégorie": "Mosquée",
         "Zone": "Oued Ezzebib",
-        "Source": "Répertoire J. Fathallah, n° 100 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 100 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/452272323",
         "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
-        "description": "Jalel n° 100 : « Mosquée Jdaria dite Touil. Oued Zbib. Mosquée ibadite wahbite. 1211 de l'hégire (1736 ap. J.-C.). \nSerait une mosquée récente selon la vidéo sur Maps\nVu la description de Jalel, il s'agit probablement d'une reconstruction",
+        "description": "Mosquée d'Oued Zbib.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 100 sous le nom de Jdaria, dite Touil : mosquée ibadite wahbite, datée de 1211 de l'hégire, soit 1796-1797.\nLa liste Wikipédia des mosquées de Djerba la donne en activité et la date du XVIᵉ siècle (1537).\nAppelée Jamaa Touil sur OSM.",
         "accessPoint": [
           10.8248572,
           33.7915205
@@ -9502,12 +9503,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
