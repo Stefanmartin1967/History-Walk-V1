@@ -70,6 +70,12 @@ describe('isEligible (pas de thin content, publication explicite)', () => {
         expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionPublic: false }))).toBe(false);
         expect(isEligible(makeFeature({ description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionPublic: true }))).toBe(true);
     });
+
+    it('lieu « Existence à confirmer » : jamais de page, même publiée (masqué au visiteur dans l\'app)', () => {
+        const props = { description: 'x'.repeat(MIN_DESCRIPTION_CHARS), descriptionPublic: true };
+        expect(isEligible(makeFeature({ ...props, introuvableCarte: true }))).toBe(false);
+        expect(isEligible(makeFeature({ ...props, introuvableCarte: false }))).toBe(true);
+    });
 });
 
 describe('metaDescription', () => {
