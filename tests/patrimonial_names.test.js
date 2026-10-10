@@ -4,13 +4,14 @@
 //  - getPatrimonialName : nom AFFICHÉ selon la langue (FR ⇄ AR), repli FR, custom prime
 //  - getSearchableNames : toutes les variantes de nom (pour la recherche agnostique)
 //  - getSearchResults   : recherche AGNOSTIQUE (on trouve en FR OU en arabe quel
-//                         que soit le réglage) + exclusion des POIs cachés
+//                         que soit le réglage) + exclusion des POIs cachés et
+//                         des lieux « Existence à confirmer » masqués par le filtre
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // --- Mocks des dépendances lourdes de data.js (on garde la VRAIE logique de nom) ---
 vi.mock('../src/state.js', () => {
-    const state = { loadedFeatures: [], hiddenPoiIds: [] };
+    const state = { loadedFeatures: [], hiddenPoiIds: [], activeFilters: { introuvableCarte: 'all' } };
     return { state, setCurrentMap: vi.fn(), setLoadedFeatures: vi.fn(), setCustomFeatures: vi.fn(), setHiddenPoiIds: vi.fn(), setUserData: vi.fn() };
 });
 vi.mock('../src/events.js', () => ({ eventBus: { emit: vi.fn(), on: vi.fn(), off: vi.fn() } }));
@@ -35,6 +36,13 @@ vi.mock('../src/utils.js', () => ({
         const ud = props.userData || {};
         return ud.custom_title || ud['Nom du site FR'] || props['Nom du site FR']
             || ud['Nom du site arabe'] || props['Nom du site arabe'] || props['Nom du site AR'] || props.name || 'Lieu inconnu';
+    },
+    // VRAI getPoiProp (copié de utils.js) : l'overlay userData prime.
+    getPoiProp: (feature, key) => {
+        const p = feature?.properties;
+        if (!p) return undefined;
+        const userVal = p.userData?.[key];
+        return userVal !== undefined ? userVal : p[key];
     },
     generateHWID: vi.fn(() => 'HW-' + '0'.repeat(26)),
     getZoneFromCoords: vi.fn(() => 'Zone'),
@@ -61,6 +69,7 @@ function feat(id, props = {}) {
 beforeEach(() => {
     state.loadedFeatures = [];
     state.hiddenPoiIds = [];
+    state.activeFilters = { introuvableCarte: 'all' };
     langMock.lang = 'fr';
 });
 
@@ -155,5 +164,36 @@ describe('getSearchResults — recherche agnostique à la langue', () => {
 
     it('requête vide → []', () => {
         expect(getSearchResults('  ', [f1, f2])).toEqual([]);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Note de test 19 (03/10/2026) : « Mahrab » proposait au visiteur « Mosquée
+// Mahrab Ghrib », lieu que la carte lui masque (introuvableCarte: true).
+describe('getSearchResults — lieux « Existence à confirmer »', () => {
+    const doute = feat('d', { 'Nom du site FR': 'Mosquée Mahrab Ghrib', introuvableCarte: true });
+    const sur = feat('e', { 'Nom du site FR': 'Mosquée Mahrab' });
+    const ids = (r) => r.map(f => f.properties.HW_ID);
+
+    it('visiteur (filtre « Masquer », son défaut) : le lieu ne ressort pas', () => {
+        state.activeFilters = { introuvableCarte: 'hide' };
+        expect(ids(getSearchResults('mahrab', [doute, sur]))).toEqual(['e']);
+    });
+
+    it('admin (filtre « Tous », son défaut) : le lieu ressort', () => {
+        state.activeFilters = { introuvableCarte: 'all' };
+        expect(ids(getSearchResults('mahrab', [doute, sur]))).toEqual(['e', 'd']);
+    });
+
+    it('« Afficher » (only) ne restreint que la carte : la recherche trouve tout', () => {
+        state.activeFilters = { introuvableCarte: 'only' };
+        expect(ids(getSearchResults('mahrab', [doute, sur]))).toEqual(['e', 'd']);
+    });
+
+    it('le flag posé dans userData compte (overlay), et son retrait aussi', () => {
+        state.activeFilters = { introuvableCarte: 'hide' };
+        const pose = feat('f', { 'Nom du site FR': 'Mosquée Mahrab Est', userData: { introuvableCarte: true } });
+        const retire = feat('g', { 'Nom du site FR': 'Mosquée Mahrab Ouest', introuvableCarte: true, userData: { introuvableCarte: false } });
+        expect(ids(getSearchResults('mahrab', [pose, retire]))).toEqual(['g']);
     });
 });

@@ -409,6 +409,22 @@ export function buildPlannedPoiSet() {
     return set;
 }
 
+/**
+ * Lieu « Existence à confirmer » masqué par le filtre du même nom : toujours
+ * pour un visiteur (défaut 'hide', resynchronisé par setIsAdmin — state.js),
+ * pour l'admin seulement s'il choisit « Masquer ».
+ *
+ * SOURCE UNIQUE pour la carte (passesUserFilters) et les recherches (search.js,
+ * catégories de la recherche mobile) : un lieu que la carte cache ne doit pas
+ * ressortir par la recherche (note de test 19, 03/10/2026). 'only' (« Afficher »)
+ * ne concerne que la carte — la recherche continue de tout trouver.
+ * @param {object} feature
+ * @returns {boolean}
+ */
+export function isHiddenUnconfirmed(feature) {
+    return state.activeFilters.introuvableCarte === 'hide' && !!getPoiProp(feature, 'introuvableCarte');
+}
+
 // --- 1. LE TAMIS PUR (Le Cerveau) ---
 // Règles "personnelles" (état utilisateur) avec leurs exceptions :
 //   - hidden → out
@@ -431,9 +447,9 @@ export function passesUserFilters(feature, plannedSet = null) {
     // 3-states : 'all' (pas de filtre) | 'hide' (cache ceux qui ont la prop) | 'only' (n'affiche que ceux qui ont la prop).
     if (f.verified === 'hide' && props.verified) return false;
     if (f.verified === 'only' && !props.verified) return false;
-    // P8 — « Introuvable sur la carte » (lieu non situable sur Maps/OSM). 'only' =
+    // P8 — « Existence à confirmer » (ex-« Introuvable sur la carte »). 'only' =
     // file de revue (n'affiche que ces lieux pour les retraiter).
-    if (f.introuvableCarte === 'hide' && props.introuvableCarte) return false;
+    if (isHiddenUnconfirmed(feature)) return false;
     if (f.introuvableCarte === 'only' && !props.introuvableCarte) return false;
     // Checklist de vérification (15/08/2026) : 'only' = file de travail par
     // source (n'affiche que ceux encore à checker, ou déjà checkés, selon le sens).
