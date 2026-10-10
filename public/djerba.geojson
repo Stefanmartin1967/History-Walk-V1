@@ -7995,14 +7995,14 @@
         "Nom du site arabe": "برج العقرب",
         "Catégorie": "Fortification",
         "Zone": "Hors zone",
-        "Source": "https://www.misk.art/lire/un-monument-en-quelques-mots-2%C2%A0-la-l%C3%A9gende-de-borj-el-agreb",
+        "Source": "Misk.art, « Un monument en quelques mots #2 : La légende de Borj el Agreb », 22 juin 2017 | https://www.misk.art/lire/un-monument-en-quelques-mots-2%C2%A0-la-l%C3%A9gende-de-borj-el-agreb\nOpenStreetMap | https://www.openstreetmap.org/way/1152224056",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
         "Horaires": "",
         "verified": false,
         "HW_ID": "HW-01K77WPE6N1VXNG3MVD2QPQFQV",
-        "description": "Fort, en ruines, présentant la particularité d'être construit en pleine mer. Pourrait être lié à la construction du Borj Kebir en 1284, il est cité pour la première fois en 1432. Rares sont les infos à son sujet, auxquelles se mélange une légende de scorpion décimant les enfants d'un prince.",
+        "description": "Ruines d'un petit fortin entouré d'eau, à l'est de la chaussée romaine, en allant vers le sud.\nUn article de Misk.art (2017) indique que le sultan hafside Abou Fares Abdelaziz le cite en 1432 et que sa construction pourrait remonter à celle du Borj Kebir, bâti en 1284 sur ordre de l'amiral Roger de Lauria. Les informations à son sujet sont rares et imprécises.\nUne légende rapporte qu'un prince, ayant perdu plusieurs enfants à la piqûre d'un scorpion, fit construire une tour en pleine mer pour protéger le dernier ; un scorpion se glissa dans ses vivres.\nOpenStreetMap y indique les ruines d'une tour de guet médiévale.",
         "info_gpx": "",
         "Sous-type": "",
         "État": "",
@@ -8011,12 +8011,13 @@
         "maps_ref": "",
         "Facebook": "",
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -9281,9 +9282,9 @@
         "Nom du site arabe": "تمثال حورية البحر في جربة",
         "Catégorie": "Curiosité",
         "Zone": "Taourit",
-        "Source": "https://flamingo-djerba.com/lieux-a-visiter.html",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/3147224562\nHôtel Flamingo, « Lieux à visiter à Djerba » | https://flamingo-djerba.com/lieux-a-visiter.html",
         "HW_ID": "HW-01K77WPE6Q670Z1X2VY3ZKFP8E",
-        "description": "À l’extrémité du port de pêche de Houmt Souk, une statue en béton blanc représente une sirène brandissant une coquille, tournée vers la mer. Connue localement sous le nom de La Sirène de Djerba, l’œuvre est également référencée dans les guides anglophones comme Ulysses’s Mermaid. Installée sur un socle circulaire à proximité du phare, cette sculpture sert de repère maritime et photographique pour les visiteurs du port. Son emplacement n’est pas anodin : il évoque le lien millénaire entre Djerba et la mer, ainsi que la légende d’Ulysse, souvent associée à l’île depuis l’Antiquité. La statue actuelle, de facture contemporaine, est visible sur les images satellites depuis le début des années 2000. Elle a été réalisée en ciment peint et pierre reconstituée, sans signature connue, probablement à l’initiative municipale dans le cadre d’un aménagement touristique du front de mer. Du quai, on aperçoit la sirène se détachant sur le bleu de la Méditerranée, entre les barques de pêche et les goélands : un symbole discret mais bien ancré de la Djerba maritime, oscillant entre mythologie grecque et fierté insulaire.",
+        "description": "Statue de la Sirène, à côté du port d'Houmt Souk.\nOpenStreetMap y indique une statue nommée La Sirène. Le site de l'hôtel Flamingo la présente comme « la sirène d'Ulysse ».",
         "info_gpx": "Sculpture de la sirène de Djerba, également appelée \"Ulysses’s Mermaid\" dans les guides anglophones",
         "Sous-type": "",
         "État": "",
@@ -9302,7 +9303,8 @@
         "osmCheckedDate": "2026-08-20",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -10781,11 +10783,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "BH Ba9lawa",
+        "Nom du site FR": "Salon de thé Ba9lawa",
         "Catégorie": "Salon de thé",
         "Zone": "Taourit",
         "HW_ID": "HW-01KJABRN0WMXW7CV3JQJJK9EAV",
-        "description": "Un salon de thé qui nous a marqué par le cadre dans lequel il est situé mais aussi par la qualité de sont thé\nLe thé aux fruits secs est à découvrir si vous ne l'avez jamais fait",
+        "description": "Salon de thé de Taourit, à Houmt Souk.\nOpenStreetMap y indique un café nommé « Thé Baklawa » (شاي بقلاوة).\nOn y sert un thé aux fruits secs, recommandé par Heripia.\nLe salon est installé dans une ruelle typique de Houmt Souk",
         "photos": [
           "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460083574.jpg",
           "photos/poi_HW-01KJABRN0WMXW7CV3JQJJK9EAV_1780460085717.jpg",
@@ -10802,7 +10804,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/12917470174\nObservation sur place, le 04 novembre 2025",
         "Téléphone": "+216 26 485 053",
         "Horaires": "",
         "Facebook": "https://www.facebook.com/profile.php?id=100085722824578",
@@ -10810,7 +10812,13 @@
         "introuvableCarte": false,
         "osm_ref": "",
         "maps_ref": "",
-        "descriptionPublic": true
+        "descriptionPublic": true,
+        "commons_ref": "",
+        "osmChecked": false,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
