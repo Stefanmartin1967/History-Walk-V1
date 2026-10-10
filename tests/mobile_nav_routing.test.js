@@ -35,7 +35,8 @@ vi.mock('../src/data.js', () => ({
     getPoiName: vi.fn(f => f?.properties?.name || 'Unknown'),
     getPatrimonialName: vi.fn(f => f?.properties?.name || 'Unknown'),
     addPoiFeature: vi.fn(),
-    addPendingPoiFeature: vi.fn()
+    addPendingPoiFeature: vi.fn(),
+    isHiddenUnconfirmed: vi.fn(() => false)
 }));
 
 vi.mock('../src/lucide-icons.js', () => ({

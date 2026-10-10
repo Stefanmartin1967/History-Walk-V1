@@ -15,6 +15,9 @@ vi.mock('../src/data.js', () => ({
         f.properties['Nom du site FR'],
         f.properties['Nom du site arabe'],
     ].filter(Boolean),
+    // Règle « Existence à confirmer » testée sur le vrai data.js
+    // (patrimonial_names.test.js) ; ici, aucun lieu n'est concerné.
+    isHiddenUnconfirmed: () => false,
 }));
 
 import { getSearchResults } from '../src/search.js';
