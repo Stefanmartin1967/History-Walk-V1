@@ -10081,9 +10081,9 @@
         "Nom du site arabe": "الشيخ يحيى الإزمرتني",
         "Catégorie": "Mausolée",
         "Zone": "Mazraia",
-        "Source": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1430140097\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "HW_ID": "HW-01K77WPE6SJ6F4XB4CC3W6YNSG",
-        "description": "Visible sur la vue satellite",
+        "description": "Mausolée de Mazraia.\nOpenStreetMap y indique un mausolée nommé Cheikh Yahia El Izmerteni. La liste Wikipédia des mosquées de Djerba mentionne à Mezraya un Sidi Yahia El Yezmertni, sans précision de nature.\nSa nature reste à confirmer sur place.",
         "accessPoint": [
           10.9460662,
           33.8555339
@@ -10101,12 +10101,13 @@
         "verified": false,
         "introuvableCarte": false,
         "maps_ref": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -13237,14 +13238,14 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée de Midoun.\nOpenStreetMap y indique un mausolée nommé Balhajjam. La liste Wikipédia des mosquées de Djerba mentionne à Ouled Amor, à environ 120 m de ce point, une mosquée nommée Belhajam, sans autre précision.\nSa nature reste à confirmer sur place.",
+        "Source": "Mausolée de Midoun.\nOpenStreetMap y indique un mausolée nommé Balhajjam. La liste Wikipédia des mosquées de Djerba mentionne à Ouled Amor, à environ 120 m de ce point, une mosquée nommée Belhajam, sans autre précision.\nSa nature reste à confirmer sur place.",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Midoun",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.9653638,
           33.8220467
@@ -13253,7 +13254,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -13931,13 +13933,13 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite Maps\nAttention : Deux mausolées à Mahboubine",
-        "Source": "",
+        "description": "Mausolée de Mahboubine.\nOpenStreetMap y indique un mausolée, sans nom.\nSa nature et son nom restent à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/990381626",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.9607545,
           33.7983216
@@ -13948,7 +13950,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -14293,13 +14296,13 @@
         "État": "Ruine",
         "Accès": "",
         "info_gpx": "",
-        "description": "Ruines visibles sur la vue satellite\nAttention : Deux mausolées à Mahboubine",
-        "Source": "",
+        "description": "Mausolée de Mahboubine.\nOpenStreetMap y indique un mausolée, sans nom.\nSa nature, son état et son nom restent à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1465366255",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.9680149,
           33.7972706
@@ -14308,7 +14311,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
