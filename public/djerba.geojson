@@ -1553,7 +1553,7 @@
         "Nom du site arabe": "جامع بن معزوزين",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "lapresse.tn, article de restauration (août 2025) | https://lapresse.tn/2025/08/26/restauree-apres-des-siecles-la-mosquee-al-maazouzine-retrouve-son-eclat-a-djerba/\nRépertoire J. Fathallah, n° 58 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 58 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nLa Presse, « Restaurée après des siècles, la mosquée Al Maazouzine retrouve son éclat à Djerba », 26 août 2025 | https://lapresse.tn/2025/08/26/restauree-apres-des-siecles-la-mosquee-al-maazouzine-retrouve-son-eclat-a-djerba/\nTunisie.fr, « Restauration réussie de la mosquée Maazouzine à Djerba », 27 août 2025 | https://www.tunisie.fr/restauration-reussie-de-la-mosquee-maazouzine-a-djerba/",
         "HW_ID": "HW-01K77WPE6AFSTY1DA2XVPB3MVC",
         "photos": [
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563624639.jpg",
@@ -1564,7 +1564,7 @@
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563634489.jpg",
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563636230.jpg"
         ],
-        "description": "Jalel n° 58 : « Ben Maazouz. Mezraya. Mosquée wahbite abandonnée. 700 de l'hégire (1300 ap. J.-C.). »\n\nDatant du cinquième siècle de l'Hégire, ce qui correspond à la période comprise entre 1009 et 1106 de notre ère, cette mosquée ibadite est classée parmi les mosquées « Ghaba » qui avaient un rôle éducatif, religieux et juridique. Elle est composée d'une petite salle de prière, d'un logement pour les étudiants, une cuisine et un puits. Le monument ayant souffert du temps qui passe et de dégradations humaines, telles que la recherche de trésor et le vol de pierre, une restauration devenait urgente. Ce projet, mené par Mouldi Chaabani, a été réalisé collectivement par une cinquantaine d'étudiants, d'ingénieurs et de mécènes locaux. Un bel exemple de durabilité et de préservation du patrimoine.",
+        "description": "Mosquée de Mezraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 58 sous le nom de Ben Maazouz : mosquée wahbite abandonnée, datée de 700 de l'hégire, soit 1300. La liste Wikipédia des mosquées de Djerba la donne également pour abandonnée, du XIIIᵉ siècle.\nUn article de La Presse (26 août 2025) la rattache au Ve siècle de l'hégire (1009-1106) et la range parmi les mosquées ibadites dites « Ghaba », à rôle éducatif, religieux et juridique. Elle comprendrait une petite salle de prière, un logement pour étudiants, une cuisine et un puits.\nUn chantier-école de restauration s'est tenu du 10 au 25 août 2025, avec une cinquantaine d'étudiants en architecture de l'ESAD et de l'ENAU, sous la direction de Mouldi Chaabani, directeur de l'ESAD (Tunisie.fr). La Presse mentionne aussi des ingénieurs et des mécènes locaux, et des dégradations antérieures (fouilles à la recherche de trésors, vol de pierres).\nLes datations varient selon les sources.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
@@ -1583,7 +1583,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -11037,7 +11038,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Observation sur place, mars et novembre 2025 ; mars 2026",
+        "Source": "Observation sur place, lors de trois visites : mars 2025, novembre 2025, mars 2026",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
