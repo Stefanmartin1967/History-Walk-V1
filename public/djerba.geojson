@@ -2427,7 +2427,7 @@
         "Nom du site arabe": "جامع بن جديـدي",
         "Catégorie": "Mosquée",
         "Zone": "Beni Maaguel",
-        "Source": "Répertoire J. Fathallah, n° 229 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 229 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/1551508079",
         "HW_ID": "HW-01K77WPE6BG5X8YCCG07AEVQY8",
         "lat": 33.76527363106212,
         "lng": 10.955706684923967,
@@ -2435,7 +2435,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "229 Mosquée Ben Jeddi. Bani Maaguel. Mosquée malékite à origine nokkarite. Ancienne.\nLa première photo de travail date des années 1990 (Müller), la seconde est récente\nJalel confirme la remis en fonction de la mosquée",
+        "description": "Mosquée de Beni Maaguel.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 229 sous le nom de Ben Jeddi : mosquée malékite à origine nokkarite, de datation « ancienne ».\nLa liste Wikipédia des mosquées de Djerba la donne en activité.\nAppelée Ben Heddi sur OSM.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1551508079",
@@ -2445,12 +2445,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -6994,9 +6995,9 @@
         "Nom du site arabe": "ورشات الفخّار فتحي",
         "Catégorie": "Artisanat",
         "Zone": "Guellala",
-        "Source": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/12164722462",
         "HW_ID": "HW-01K77WPE6KHGCS19HJDB943QAF",
-        "description": "D'après les photos sur Google Maps, vieil atelier de poterie qui semble visitable",
+        "description": "Atelier de poterie à Guellala.\nOpenStreetMap y indique une attraction touristique nommée Poterie Fethi Sakal (ou Fethi Sagal).",
         "accessPoint": [
           10.8544958,
           33.7237636
@@ -7014,12 +7015,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -12522,13 +12524,13 @@
         "verified": false,
         "introuvableCarte": false,
         "info_gpx": "",
-        "description": "Nom de quartier à confirmer",
-        "Source": "",
+        "description": "Mosquée du quartier de Bousmail, à Mezrene.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 256 : mosquée ibadite wahbite, de datation « ancienne », à laquelle une salle de prière a été ajoutée en 2020.\nAppelée Jamaa Ennour sur OSM.",
+        "Source": "Répertoire J. Fathallah, n° 256 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nOpenStreetMap | https://www.openstreetmap.org/node/13456285761",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Mezrene",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12537,7 +12539,8 @@
         "accessPoint": [
           10.7541695,
           33.7566395
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -14062,13 +14065,19 @@
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mausolée en bord de route, la photo Maps montre un panneau publicitaire appuyé dessus",
-        "Source": "",
+        "description": "Tombeau de Midoun, en bordure de l'avenue de la Liberté.\nOpenStreetMap y indique un tombeau, sans nom.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1378237874",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": true,
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -16078,18 +16087,18 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Sidi Ammer",
+        "Nom du site FR": "Sidi Maammer",
         "Catégorie": "Site archéologique",
         "osm_ref": "node/13505482885",
         "HW_ID": "HW-01KZH0VGPBY3Z6VSBHVQ2GC11R",
         "État": "Ruine",
         "Accès": "Non visitable",
-        "description": "Visible sur la photo satellite",
+        "description": "Lieu-dit de Beni Maaguel.\nOpenStreetMap y indique un lieu-dit nommé Sidi Maammer ; l'objet y figurait auparavant comme site archéologique nommé Sidi Ammer.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -16098,7 +16107,17 @@
           10.9657702,
           33.7727862
         ],
-        "Zone": "Beni Maaguel"
+        "Zone": "Beni Maaguel",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/13505482885",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -16267,7 +16286,7 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -16280,13 +16299,14 @@
         "Nom du site arabe": "",
         "Sous-type": "",
         "info_gpx": "",
-        "description": "Visitable sur demande ?\nA confirmer",
-        "Source": "",
+        "description": "Fours à chaux anciens, à Trojette.\nOpenStreetMap y indique un site archéologique nommé « fours à chaux historiques ».",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1454983536",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "osmCheckedDate": null
+        "osmCheckedDate": null,
+        "commons_ref": ""
       }
     },
     {
