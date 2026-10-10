@@ -16,8 +16,7 @@
       "sousTypes": [
         { "label": "À minaret", "portee": "générique" },
         { "label": "À coupoles", "portee": "générique" },
-        { "label": "Fortifiée", "portee": "générique" },
-        { "label": "Générique", "portee": "générique" }
+        { "label": "Fortifiée", "portee": "générique" }
       ],
       "etats": ["En activité", "Désaffecté", "Ruine", "Disparu"],
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }

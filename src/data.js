@@ -11,7 +11,8 @@ import {
     saveAppState,
     saveCircuit,
     normalizeDescriptionCaseInPoiData,
-    renameDescriptionCourteToInfoGpxInPoiData
+    renameDescriptionCourteToInfoGpxInPoiData,
+    clearGenericSubtypeInPoiData
 } from './database.js';
 import { migrateLegacyUserData } from './legacy-user-data.js';
 import { schedulePush } from './gist-sync.js';
@@ -247,12 +248,19 @@ export async function displayGeoJSON(geoJSON, mapId) {
     try { await renameDescriptionCourteToInfoGpxInPoiData(mapId); }
     catch (e) { console.warn('[data] renameDescriptionCourteToInfoGpxInPoiData failed:', e); }
 
+    // Migration one-shot : sous-type « Générique » → vide (10/10/2026, retiré
+    // de la taxonomie). Sans elle, une surcharge locale ou une sauvegarde
+    // restaurée ferait revenir le mot à la prochaine publication.
+    try { await clearGenericSubtypeInPoiData(mapId); }
+    catch (e) { console.warn('[data] clearGenericSubtypeInPoiData failed:', e); }
+
     const storedCustomFeatures = (await getAppState(`customPois_${mapId}`)) || [];
 
     // Migration : `customFeatures[i].properties.Description` → `.description`
     // ET `.Description_courte` → `.info_gpx` (POIs créés via richEditor
     // stockent déjà en lowercase, mais un backup restauré ou un POI venant
-    // du DM/scout peut porter les anciennes clés). Persiste si touché — même
+    // du DM/scout peut porter les anciennes clés), et sous-type « Générique »
+    // → vide (cf. clearGenericSubtypeInPoiData). Persiste si touché — même
     // règle d'idempotence.
     let customDirty = false;
     for (const f of storedCustomFeatures) {
@@ -270,6 +278,10 @@ export async function displayGeoJSON(geoJSON, mapId) {
                 p.info_gpx = p.Description_courte;
             }
             delete p.Description_courte;
+            customDirty = true;
+        }
+        if (p['Sous-type'] === 'Générique') {
+            p['Sous-type'] = '';
             customDirty = true;
         }
     }

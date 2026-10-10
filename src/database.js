@@ -304,6 +304,39 @@ export async function renameDescriptionCourteToInfoGpxInPoiData(mapId) {
     }));
 }
 
+/**
+ * Migration one-shot : sous-type « Générique » → vide dans le store
+ * `poiUserData` d'une carte (10/10/2026 : la valeur sort de la taxonomie,
+ * Stefan préfère laisser vide). Même pattern que normalizeDescriptionCase :
+ * curseur transactionnel, write-back via cursor.update, idempotente.
+ *
+ * Une surcharge locale « Générique » devient "" et non une clé supprimée : elle
+ * disait « forme inconnue », le retrait ferait réapparaître la valeur publiée.
+ * Le fichier publié est migré à part (scripts/migrate-sous-type-generique.mjs).
+ */
+export async function clearGenericSubtypeInPoiData(mapId) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('poiUserData', 'readwrite');
+        const store = tx.objectStore('poiUserData');
+        const req = store.index('mapId_index').openCursor(mapId);
+        let migrated = 0;
+        req.onsuccess = (e) => {
+            const cursor = e.target.result;
+            if (!cursor) return;
+            const v = cursor.value;
+            if (v && typeof v === 'object' && v['Sous-type'] === 'Générique') {
+                v['Sous-type'] = '';
+                cursor.update(v);
+                migrated++;
+            }
+            cursor.continue();
+        };
+        req.onerror = (e) => reject(e.target.error);
+        tx.oncomplete = () => resolve(migrated);
+        tx.onerror = (e) => reject(e.target.error);
+    }));
+}
+
 export async function savePoiData(mapId, poiId, data) {
     return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('poiUserData', 'readwrite');
