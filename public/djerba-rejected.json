@@ -151,5 +151,14 @@
     "lng": 10.9659991,
     "lat": 33.7933219,
     "rejectedAt": 1789571704341
+  },
+  "node/13161147260": {
+    "osm_ref": "node/13161147260",
+    "name": "Ruines de ferme",
+    "nameAr": "",
+    "category": "Site archéologique",
+    "lng": 10.9819018,
+    "lat": 33.7736234,
+    "rejectedAt": 1791627730070
   }
 }
