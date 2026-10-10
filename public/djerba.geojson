@@ -13279,14 +13279,20 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée d'Arkou.\nOpenStreetMap y indique un mausolée nommé El Ayssia, dans un terrain à usage religieux musulman du même nom.\nSa nature reste à confirmer sur place.",
+        "Source": "OpenStreetMap, mausolée | https://www.openstreetmap.org/way/1430941285\nOpenStreetMap, terrain religieux | https://www.openstreetmap.org/way/1429862377",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Arkou",
-        "descriptionPublic": false
+        "descriptionPublic": true,
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -13435,17 +13441,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite\nA vérifier à proximité :\n33.844656408287726, 10.841175974443233 = Tagué \"Temple Parsi\" sur Maps mais ça n'a aucune plausibilité historique à Djerba — il n'y a jamais eu de communauté parsie/zoroastrienne en Tunisie. Et vérifié côté OSM : ni « Timinest » ni « Tinaste » n'y existent sous aucun nom — uniquement une entrée Google Maps, sans aucune source indépendante qui la corrobore\n33.844464340417844, 10.841055563192988 = Tagué mosquée mais pas de trace sur la vue satellite",
-        "Source": "",
-        "maps_ref": "",
+        "description": "Mausolée d'Erriadh.\nOpenStreetMap y indique un mausolée nommé Sidi Sliman. La liste Wikipédia des mosquées de Djerba mentionne à Erriadh (Aourassen) un mausolée Sidi Slimane, donné pour disparu, à environ 900 m de ce point : le rapprochement n'est pas établi.\nSa nature reste à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1436606445\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "maps_ref": "https://maps.app.goo.gl/n4VuhBHVB7jnuCA98",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.8410431,
           33.8444094
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -13516,17 +13528,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée d'El Khenensa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 259 sous le nom de Sidi Amghar, au quartier Ghandri : mausolée en bon état, de datation « ancien ». OpenStreetMap y indique un mausolée du même nom.",
+        "Source": "Répertoire J. Fathallah, n° 259 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nOpenStreetMap | https://www.openstreetmap.org/way/990378935",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.7756004,
           33.7579066
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -13664,7 +13682,7 @@
       "properties": {
         "Nom du site FR": "Mausolée maamoura Ouled Hmama",
         "Catégorie": "Mausolée",
-        "osm_ref": "node/13153352477",
+        "osm_ref": "way/1558418435",
         "HW_ID": "HW-01KZH0VGF91KW7BPGH3D8Z5T07",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -13676,17 +13694,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée de Mahboubine.\nOpenStreetMap y indique un mausolée nommé maamoura Ouled Hmama.\nSa nature reste à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1558418435",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.9874171,
           33.7969746
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": "2026-10-10",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -13792,13 +13816,19 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mausolée d'Arkou.\nOpenStreetMap y indique un mausolée nommé Sidi Makhyil.\nSa nature reste à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/990330103",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": true,
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -13811,7 +13841,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée Fakira Salima",
+        "Nom du site FR": "Mausolée Fakira Salima (El May)",
         "Catégorie": "Mausolée",
         "osm_ref": "way/990372682",
         "HW_ID": "HW-01KZH0VH351NQ2E5JHQWV47AFX",
@@ -13825,17 +13855,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite\nNommé d'après le nom renseigné sur la carte OSM",
-        "Source": "",
+        "description": "Mausolée d'El May.\nOpenStreetMap y indique un mausolée nommé Fakira Salima.\nSa nature reste à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/990372682",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.9045768,
           33.7994794
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
