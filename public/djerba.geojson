@@ -12078,8 +12078,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.7754974,
-          33.8243617
+          10.77527060715605,
+          33.82433430901992
         ]
       },
       "properties": {
@@ -12096,14 +12096,14 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Visible sur la vue satellite",
-        "Source": "",
+        "description": "Mosquée d'El Groa.\nLa liste Wikipédia des mosquées de Djerba y situe une mosquée malikite nommée El Omma, de 2017. OpenStreetMap y indique une mosquée nommée الأمة.\nLe répertoire des mosquées de Djerba de Jalel Fathallah inscrit au n° 116 une mosquée El Omma au quartier Chabbar : mosquée malékite, de 2017. Le rapprochement avec ce lieu n'est pas établi.",
+        "Source": "Wikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/990342047\nRépertoire J. Fathallah, n° 116 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "El Groa",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12113,7 +12113,9 @@
           10.775559,
           33.8242747
         ],
-        "commons_ref": ""
+        "commons_ref": "",
+        "lat": 33.82433430901992,
+        "lng": 10.77527060715605
       }
     },
     {
@@ -16431,7 +16433,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mausolée  Cheikh Sidi Slimen",
+        "Nom du site FR": "Mausolée Cheikh Sidi Slimen",
         "Catégorie": "Mausolée",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
@@ -17593,20 +17595,20 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.7724729180336,
-          33.82744960392072
+          10.772427306807923,
+          33.827427336611805
         ]
       },
       "properties": {
         "Nom du site FR": "Mosquée El Omma",
         "Catégorie": "Mosquée",
-        "description": "Mosquée du quartier Chabbar, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 116 : mosquée malékite, construite en 2017.",
+        "description": "Mosquée d'El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah inscrit au n° 116 une mosquée El Omma au quartier Chabbar : mosquée malékite, de 2017. Le rapprochement avec ce lieu n'est pas établi.\nSon nom et son identité restent à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 116 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-20",
         "mapsChecked": true,
@@ -17628,7 +17630,9 @@
         "commons_ref": "",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": ""
+        "Facebook": "",
+        "lat": 33.827427336611805,
+        "lng": 10.772427306807923
       }
     },
     {
