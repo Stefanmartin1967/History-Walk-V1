@@ -15,18 +15,18 @@
         "Nom du site arabe": "فندق سيبل ريم بيتش جربة",
         "Catégorie": "Hôtel",
         "Zone": "Midoun",
-        "Source": "https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/",
+        "Source": "Seabel Rym Beach Djerba, accueil | https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/\nSeabel Rym Beach Djerba, FAQ | https://www.seabelhotels.com/fr/seabel-rym-beach/faq-seabel-rym-beach/\nSéjours à l'hôtel : du 1ᵉʳ au 11 mars 2025, du 2 au 22 novembre 2025, du 7 au 28 mars 2026",
         "verified": false,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
         "lat": 33.826540531288295,
         "lng": 11.046173596441804,
-        "description": "Très bel hôtel 4 *, si vous voulez manger local, des spécialités tunisiennes sont à votre disposition à chaque repas. \nSoirée Djerbienne le dimanche, journée tunisienne le jeudi, avec entre autre un marché tunisien en journée\nC'est notre \"Camp de base\", on y retourne en novembre",
+        "description": "Hôtel-club 4 étoiles de la côte nord, au pied du phare de Taguermess.\nLe site de l'hôtel indique 352 chambres réparties dans sept petits bâtiments de style djerbien, au bord d'une plage de sable fin, dans une palmeraie de 11 hectares.\nIl annonce une cuisine internationale et des spécialités locales, trois buffets à thème par semaine (italien, tunisien, pêcheur) et une journée tunisienne hebdomadaire.\nLors de séjours en 2025 et 2026, la journée tunisienne avait lieu le jeudi et une soirée djerbienne le dimanche.",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
-        "Temps_minutes": 60,
+        "Temps_minutes": 0,
         "Prix_TND": 0,
-        "info_gpx": "Hôtel au très bon rapport qualité/Prix",
+        "info_gpx": "",
         "accessPoint": [
           11.0460436,
           33.8265196
@@ -40,7 +40,7 @@
         "Horaires": "",
         "Facebook": "",
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
@@ -48,7 +48,8 @@
         "jalelChecked": false,
         "photos": [
           "photos/poi_HW-01K77WPE67RPHVJVH6A0PC0ZWD_1786986004117.jpg"
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -10804,7 +10805,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/12917470174\nObservation sur place, le 04 novembre 2025",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/12917470174\nObservation sur place, le 4 novembre 2025",
         "Téléphone": "+216 26 485 053",
         "Horaires": "",
         "Facebook": "https://www.facebook.com/profile.php?id=100085722824578",
@@ -11028,7 +11029,7 @@
         "Catégorie": "Taxi",
         "Zone": "Arkou",
         "HW_ID": "HW-01KJABRN0YD2SFB393HG9SRDGW",
-        "description": "Vous trouverez facilement un taxi devant la poste de Midoun",
+        "description": "Taxis stationnés devant la poste de Midoun.",
         "Nom du site arabe": "",
         "Sous-type": "",
         "État": "",
@@ -11036,12 +11037,21 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Observation sur place, mars et novembre 2025 ; mars 2026",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/sMpZyiH9h9njnm8K7",
+        "commons_ref": "",
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-10-10",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
