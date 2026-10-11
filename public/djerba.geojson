@@ -10581,11 +10581,33 @@
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
         "Zone": "Midoun",
-        "description": "Entre autre plat, on y trouve la souris d'agneau",
+        "description": "Restaurant à Midoun, répertorié sous le nom « Les Palmiers - Chez Neji et Catherine ».",
         "accessPoint": [
           10.9913599,
           33.8352935
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Tripadvisor, « Les Palmiers - Chez Neji et Catherine » | https://www.tripadvisor.fr/Restaurant_Review-g297948-d3248521-Reviews-Les_Palmiers_Chez_Neji_et_Catherine-Midoun_Djerba_Island_Medenine_Governorate.html",
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/uqowv4s6bFonSgJm7",
+        "commons_ref": "",
+        "Téléphone": "+216 97 906 529",
+        "Horaires": "",
+        "Facebook": "https://www.facebook.com/groups/114512808662049/",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": false,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
