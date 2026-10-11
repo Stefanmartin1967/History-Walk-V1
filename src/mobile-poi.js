@@ -426,7 +426,7 @@ export function updatePoiPosition(poiId) {
     if (!navigator.geolocation) return showToast("GPS non supporté", "error");
 
     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-    if (!feature) return showToast("POI introuvable", "error");
+    if (!feature) return showToast("Lieu introuvable", "error");
     const [prevLng, prevLat] = feature.geometry.coordinates;
 
     navigator.geolocation.getCurrentPosition(
@@ -460,7 +460,7 @@ export function updatePoiPosition(poiId) {
 export function setAccessPointToCurrentPosition(poiId) {
     if (!navigator.geolocation) return showToast("GPS non supporté", "error");
     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-    if (!feature) return showToast("POI introuvable", "error");
+    if (!feature) return showToast("Lieu introuvable", "error");
 
     navigator.geolocation.getCurrentPosition(
         async (pos) => {

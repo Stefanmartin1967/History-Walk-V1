@@ -243,7 +243,7 @@ function ensureFlag(feature) {
         // pas d'API directe). Lazy-poké après le prochain tick.
         setTimeout(() => {
             const el = marker.getElement();
-            if (el) el.setAttribute('title', 'Verrouillé — modifie depuis la fiche POI');
+            if (el) el.setAttribute('title', 'Verrouillé — modifie depuis la fiche du lieu');
         }, 0);
     }
 

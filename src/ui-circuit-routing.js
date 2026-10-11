@@ -223,7 +223,7 @@ function traceStatusHtml() {
                     <i data-lucide="move"></i> Éditer l'itinéraire
                 </button>
                 ${morePopHtml([
-                    { act: 'retrace', icon: 'repeat', t: "Re-tracer l'itinéraire", d: 'Recalcule depuis la séquence de POIs' },
+                    { act: 'retrace', icon: 'repeat', t: "Re-tracer l'itinéraire", d: 'Recalcule depuis la séquence des lieux' },
                     { sep: true }, MP_GPX, MP_EXPORT,
                 ])}
             </div>

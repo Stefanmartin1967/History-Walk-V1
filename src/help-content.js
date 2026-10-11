@@ -39,15 +39,15 @@ export const HELP_DISTANCE = {
         <p>En dessous de <strong>120&nbsp;m</strong>, Heripia <strong>regroupe
         automatiquement</strong> les photos sur ce lieu et vous les propose
         <span class="help-muted">(à vous de valider)</span>.</p>
-        <p class="help-muted">Au-delà, les photos restent « Hors POI » (prises en
+        <p class="help-muted">Au-delà, les photos restent « Sans lieu » (prises en
         chemin) — vous pouvez toujours les rattacher à la main.</p>`,
 };
 
-/* === ANCRE — « ? » sur le badge « À rattacher » / « Hors POI » === */
+/* === ANCRE — « ? » sur le badge « À rattacher » / « Sans lieu » === */
 export const HELP_HORS_POI = {
-    title: '« Hors POI » et « À rattacher »',
+    title: '« Sans lieu » et « À rattacher »',
     html: `
-        <p><strong>Hors POI</strong> : photos prises en chemin, sans lieu connu à
+        <p><strong>Sans lieu</strong> : photos prises en chemin, sans lieu connu à
         proximité.</p>
         <p><strong>À rattacher</strong> <span class="help-muted">(ambre)</span> : soit
         un lieu connu est à portée (≤ 300 m), soit la photo n'a pas de position — à
@@ -82,7 +82,7 @@ export const HELP_NAMING = {
         d'un envoi qui trie par nom <span class="help-muted">(par exemple sur
         Facebook)</span>.</p>
         <p class="help-muted">Renommer un groupe est surtout utile pour un
-        « Hors POI » : lui donner un nom parlant.</p>`,
+        « Sans lieu » : lui donner un nom parlant.</p>`,
 };
 
 /* === ANCRE — « ? » de la fenêtre Comparer === */
@@ -163,11 +163,11 @@ export const GUIDE_IMPORT = {
                     <li><strong>Rattaché à un lieu</strong> : un lieu connu est à
                         <strong>moins de 120&nbsp;m</strong> → les photos prises à proximité
                         lui sont rattachées <span class="help-muted">(à vous de valider ; la
-                        distance s'affiche : « POI rattaché · 45&nbsp;m »)</span>.</li>
+                        distance s'affiche : « Lieu rattaché · 45&nbsp;m »)</span>.</li>
                     <li><strong>« À rattacher »</strong> <span class="help-muted">(ambre)</span> :
                         un lieu connu est à portée, ou la photo n'a pas de position → à vous
                         de choisir le lieu.</li>
-                    <li><strong>« Hors POI »</strong> : photos prises en chemin, sans lieu
+                    <li><strong>« Sans lieu »</strong> : photos prises en chemin, sans lieu
                         connu à proximité.</li>
                     <li>Les <strong>doublons</strong> (déjà importés) sont écartés
                         automatiquement.</li>
@@ -183,8 +183,8 @@ export const GUIDE_IMPORT = {
                 Facebook…) — cf. « Nommer pour ordonner ».</p>
                 <p class="help-muted">Selon le cas : Rattacher à un lieu · Créer un lieu ·
                 Catégoriser · Éditer la fiche.</p>
-                <p>Pour une photo : <strong>Extraire vers Hors POI</strong>
-                <span class="help-muted">(icône route)</span> — ou, dans un groupe Hors POI,
+                <p>Pour une photo : <strong>Extraire vers « Sans lieu »</strong>
+                <span class="help-muted">(icône route)</span> — ou, dans un groupe « Sans lieu »,
                 <strong>Séparer</strong> <span class="help-muted">(icône split)</span> ·
                 <strong>Supprimer</strong>.</p>
                 <p><strong>Rogner</strong> <span class="help-muted">(icône recadrage)</span> :
@@ -216,8 +216,7 @@ export const GUIDE_IMPORT = {
             tone: 'warn',
             html: `<ul class="help-list">
                     <li><strong>Enregistrer</strong> = range les photos <strong>dans
-                        Heripia</strong>, rattachées à leurs lieux, dans votre version.
-                        <span class="help-muted">(Admin : en attente de publication GitHub.)</span></li>
+                        Heripia</strong>, rattachées à leurs lieux, dans votre version.</li>
                     <li><strong>Télécharger le ZIP</strong> = crée un <strong>fichier sur
                         votre disque</strong> (sauvegarde / partage), en dehors de Heripia.</li>
                 </ul>
@@ -753,7 +752,7 @@ export const GUIDE_LIRE_LIEU = {
                         avez ouvert le lieu <strong>depuis la liste des étapes d'un circuit</strong>,
                         deux <strong>chevrons</strong> <span class="help-muted">(◀ ▶)</span>
                         encadrent un compteur d'étape <span class="help-muted">(« 3 / 12 »)</span>
-                        pour naviguer d'un POI à l'autre.</li>
+                        pour naviguer d'un lieu à l'autre.</li>
                 </ul>`,
         },
         {

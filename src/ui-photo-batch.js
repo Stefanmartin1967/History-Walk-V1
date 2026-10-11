@@ -165,11 +165,11 @@ function findPhotoLocation(photoId) {
 // Nom auto d'un cluster selon son type et ses POI proches
 function resolveAutoName(cluster) {
     if (cluster.noGps) return 'Sans position';
-    if (cluster.type === 'OUT_POI') return 'Hors POI';
+    if (cluster.type === 'OUT_POI') return 'Sans lieu';
     if (cluster.nearbyPois && cluster.nearbyPois.length > 0) {
         return getPoiName(cluster.nearbyPois[0].feature) || 'Lieu sans nom';
     }
-    return 'Aucun POI à proximité';
+    return 'Aucun lieu à proximité';
 }
 
 // Nom auto d'une photo : "NN - base - PP" (identique à Photo-Manager)
@@ -248,7 +248,7 @@ async function handleCreatePoi(cluster) {
         .map(p => ({ file: p.file, date: p.date }));
 
     if (photos.length === 0) {
-        showToast("Aucune photo valide pour créer un POI.", 'error');
+        showToast("Aucune photo valide pour créer un lieu.", 'error');
         return;
     }
 
@@ -538,7 +538,7 @@ function openCategorizationPopover(feature, anchorEl, onSaved) {
 async function handleEditPoi(feature) {
     const poiId = getPoiId(feature);
     if (!poiId) {
-        showToast('POI introuvable', 'error');
+        showToast('Lieu introuvable', 'error');
         return;
     }
     suspendHwModal();
@@ -726,7 +726,7 @@ function setHeaderMode(mode, cluster) {
         if (titleEl) titleEl.textContent = 'Organiser les photos';
         if (hintEl) hintEl.textContent = state.isAdmin
             ? 'Mode admin — enregistrement en attente de publication CC'
-            : 'Enregistrer rattache les photos aux POI ; le ZIP inclut tout';
+            : 'Enregistrer rattache les photos à leurs lieux ; le ZIP inclut tout';
     }
     if (iconEl) createIcons({ icons: appIcons, root: iconEl });
     updateHeaderCounts();
@@ -1020,7 +1020,7 @@ function buildCompareCell(cluster, i) {
         const ex = document.createElement('button');
         ex.className = 'pb-compare-btn';
         ex.type = 'button';
-        ex.title = isOut ? 'Séparer dans un nouveau groupe « Hors POI »' : 'Détacher cette photo vers « Hors POI »';
+        ex.title = isOut ? 'Séparer dans un nouveau groupe « Sans lieu »' : 'Détacher cette photo vers « Sans lieu »';
         ex.setAttribute('aria-label', isOut ? 'Séparer' : 'Détacher');
         ex.innerHTML = isOut ? '<i data-lucide="split"></i>' : '<i data-lucide="route"></i>';
         ex.addEventListener('click', (e) => { e.stopPropagation(); removeFromComparison(i, 'detach'); });
@@ -1496,7 +1496,7 @@ function updateFooterButtons() {
             saveBtn.title = hasUnsaved
                 ? 'Enregistrer les photos de ce lieu (sans fermer la fenêtre)'
                 : (attached ? 'Photos de ce lieu déjà enregistrées'
-                            : 'Rattache ce groupe à un POI pour activer');
+                            : 'Rattache ce groupe à un lieu pour activer');
         }
         return;
     }
@@ -1519,8 +1519,8 @@ function updateFooterButtons() {
         saveLabel.textContent = 'Enregistrer';
         saveBtn.disabled = !hasAttached;
         saveBtn.title = hasAttached
-            ? 'Enregistrer les photos rattachées à un POI'
-            : 'Rattache au moins un cluster à un POI pour activer';
+            ? 'Enregistrer les photos rattachées à un lieu'
+            : 'Rattache au moins un groupe à un lieu pour activer';
     }
 }
 
@@ -1635,7 +1635,7 @@ async function handleSave() {
         const outPoiCount = modalState.clusters.filter(c => c.type === 'OUT_POI').length;
 
         if (poiClusters.length === 0) {
-            showToast("Aucun cluster rattaché à un POI. Rattache au moins un lieu avant d'enregistrer.", 'warning');
+            showToast("Aucun groupe rattaché à un lieu. Rattache au moins un groupe à un lieu avant d'enregistrer.", 'warning');
             return;
         }
 
@@ -1648,12 +1648,12 @@ async function handleSave() {
         }
 
         const modeSuffix = state.isAdmin ? ' (en attente CC)' : '';
-        const parts = [`${poiClusters.length} POI mis à jour`];
+        const parts = [`${poiClusters.length} lieu(x) mis à jour`];
         if (totalPhotos > 0) parts.push(`${totalPhotos} photo(s) ajoutée(s)`);
         if (totalRemoved > 0) parts.push(`${totalRemoved} photo(s) retirée(s)`);
         showToast(`${parts.join(', ')}${modeSuffix}.`, 'success');
         if (outPoiCount > 0) {
-            showToast(`${outPoiCount} cluster(s) Hors POI ignoré(s) (pas de POI cible).`, 'warning');
+            showToast(`${outPoiCount} groupe(s) « Sans lieu » ignoré(s) (aucun lieu où les ranger).`, 'warning');
         }
 
         closeModal({ saved: true, poiCount: poiClusters.length, photoCount: totalPhotos });
@@ -2053,14 +2053,14 @@ function buildClusterSection(cluster, index) {
         section.dataset.suggestedPoiId = getPoiId(cluster.nearbyPois[0].feature) || '';
     } else if (hasNearbyPoi) {
         const best = cluster.nearbyPois[0];
-        segs.push(`POI rattaché · ${Math.round(best.dist)} m`, photoWord);
+        segs.push(`Lieu rattaché · ${Math.round(best.dist)} m`, photoWord);
         section.dataset.suggestedPoiId = getPoiId(best.feature) || '';
     } else if (hasAbsoluteNearest) {
         const n = cluster.absoluteNearest;
         segs.push(`Plus proche : ${getPoiName(n.feature) || '(sans nom)'} · ${Math.round(n.dist)} m`, photoWord);
         section.dataset.suggestedPoiId = '';
     } else {
-        segs.push(cluster.noGps ? 'À rattacher à un lieu' : 'Sans POI cible', photoWord);
+        segs.push(cluster.noGps ? 'À rattacher à un lieu' : 'Aucun lieu à proximité', photoWord);
         section.dataset.suggestedPoiId = '';
     }
     // Aide « ? » 120 m : seulement sur le segment « POI rattaché · X m »
@@ -2114,7 +2114,7 @@ function buildClusterSection(cluster, index) {
     if (needsAttach || isPlainOut) {
         const badge = document.createElement('span');
         badge.className = 'pb-cluster-badge';
-        badge.textContent = needsAttach ? 'À rattacher' : 'Hors POI';
+        badge.textContent = needsAttach ? 'À rattacher' : 'Sans lieu';
         // Aide « ? » : « Hors POI » / « À rattacher » (+ avertissement « non enregistré »).
         badge.append(' ', helpInline(HELP_HORS_POI, { size: 'sm' }));
         head.appendChild(badge);
@@ -2180,7 +2180,7 @@ function buildClusterSection(cluster, index) {
         createBtn.className = 'pb-act';
         createBtn.type = 'button';
         createBtn.innerHTML = '<i data-lucide="map-pin-plus"></i><span>Créer un lieu</span>';
-        createBtn.title = 'Créer un nouveau POI avec ces photos';
+        createBtn.title = 'Créer un nouveau lieu avec ces photos';
         createBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             handleCreatePoi(cluster);
@@ -2502,7 +2502,7 @@ function buildPhotoCard(item, cluster) {
         const extractBtn = document.createElement('button');
         extractBtn.className = 'pb-thumb-btn';
         extractBtn.type = 'button';
-        extractBtn.title = isOut ? 'Séparer dans un nouveau groupe Hors POI' : 'Extraire vers Hors POI';
+        extractBtn.title = isOut ? 'Séparer dans un nouveau groupe « Sans lieu »' : 'Extraire vers « Sans lieu »';
         extractBtn.setAttribute('aria-label', extractBtn.title);
         extractBtn.innerHTML = isOut ? '<i data-lucide="split"></i>' : '<i data-lucide="route"></i>';
         extractBtn.addEventListener('click', (e) => {
@@ -2659,7 +2659,7 @@ function updateHeaderCounts() {
     const info = document.getElementById('photo-batch-footer-info');
     if (info) {
         info.innerHTML = `<b>${total}</b> photos · <b>${groups}</b> groupes`
-            + (outPoi > 0 ? ` · <b>${outPoi}</b> hors POI` : '');
+            + (outPoi > 0 ? ` · <b>${outPoi}</b> sans lieu` : '');
     }
 
     // Le bouton "Enregistrer" dépend de la présence de clusters rattachés à un POI.
@@ -2686,7 +2686,7 @@ export function openPhotoBatchModal(enrichedClusters) {
         const isAdmin = state.isAdmin;
         const hintText = isAdmin
             ? 'Mode admin — enregistrement en attente de publication CC'
-            : 'Enregistrer rattache les photos aux POI ; le ZIP inclut tout';
+            : 'Enregistrer rattache les photos à leurs lieux ; le ZIP inclut tout';
 
         // Pas de subheader : les compteurs / hint / pill sont injectés dans le
         // header plein écran après ouverture (cf. bind ci-dessous).
