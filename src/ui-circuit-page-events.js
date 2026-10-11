@@ -184,7 +184,7 @@ function initDownloadGpx() {
             .filter(Boolean);
 
         if (features.length === 0) {
-            showToast('Aucun POI trouvé pour ce circuit.', 'error');
+            showToast('Aucun lieu trouvé pour ce circuit.', 'error');
             return;
         }
 

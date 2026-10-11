@@ -434,12 +434,12 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const positionText = inCircuit && state.currentCircuit
         ? `<span class="cartel-nav">
               <button class="cartel-nav-chev" id="poi-eyebrow-prev" type="button"
-                      title="POI précédent" aria-label="POI précédent" ${isFirst ? 'disabled' : ''}>
+                      title="Lieu précédent" aria-label="Lieu précédent" ${isFirst ? 'disabled' : ''}>
                   <i data-lucide="chevron-left"></i>
               </button>
               <span class="cartel-nav-pos">${circuitIndex + 1} / ${state.currentCircuit.length}</span>
               <button class="cartel-nav-chev" id="poi-eyebrow-next" type="button"
-                      title="POI suivant" aria-label="POI suivant" ${isLast ? 'disabled' : ''}>
+                      title="Lieu suivant" aria-label="Lieu suivant" ${isLast ? 'disabled' : ''}>
                   <i data-lucide="chevron-right"></i>
               </button>
            </span>`

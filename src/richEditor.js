@@ -440,7 +440,7 @@ export const RichEditor = {
         // Recherche du feature
         const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
         if (!feature) {
-            showToast("Erreur : POI introuvable.", "error");
+            showToast("Erreur : lieu introuvable.", "error");
             return false;
         }
 
@@ -1522,7 +1522,7 @@ async function executeCreate(data) {
     // qui attend le retour pour retirer le cluster) lisent `currentFeatureId` via le detail.
     currentFeatureId = actualId;
 
-    showToast("POI créé et enregistré localement.", "success");
+    showToast("Lieu créé et enregistré localement.", "success");
 
     // Note privée (10/08/2026) : troisième point d'écriture de `notes` (avec
     // executeEdit ci-dessus et le champ rapide de la fiche, ui-details.js).
