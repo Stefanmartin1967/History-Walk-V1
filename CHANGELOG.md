@@ -6,6 +6,14 @@
 
 ---
 
+- SUGGESTION D'UN LIEU PAR E-MAIL — SEULEMENT À LA CRÉATION, ET UN MESSAGE LISIBLE (v3.7.425) — **Note de test 15** (03/10/2026), **décisions de Stefan du 11/10/2026** : garder l'adresse Gmail, ne proposer la suggestion qu'à la création d'un lieu.
+  - **Fréquence** : la question « suggérer par e-mail à l'administrateur ? » s'affichait à chaque enregistrement d'un non-admin, même quand il ne modifiait que sa propre copie. Elle n'apparaît plus qu'à la **création** d'un lieu, et dit « lieu » au lieu de « POI ».
+  - **Message** : l'e-mail contenait la fiche en JSON brut, y compris les **notes personnelles** et les champs de curation. Il donne désormais un texte lisible : nom, catégorie et sous-type, état, accès, position avec un lien vers la carte, source, liens Maps et OSM, contact, description. Pas de notes ni de champs de curation. Une description très longue est coupée, car un lien `mailto` trop long peut ne rien ouvrir selon le logiciel de messagerie. Nouveau module `src/suggestion-email.js`.
+  - **Défaut trouvé en testant** : l'e-mail partait **vide** (« Lieu sans nom », sans catégorie). Les champs étaient relus après la fenêtre de confirmation, qui remplace le formulaire. L'ancien e-mail JSON avait le même défaut ; l'enregistrement du lieu, lui, était correct. Il est désormais construit à partir des données enregistrées.
+  - **Adresse** : une seule constante, `CONTACT_EMAIL` (`src/config.js`), au lieu de 3 copies (mentions légales, bouton Contact, suggestion).
+
+  **Vérifié en local** : en visiteur, création d'un lieu de test avec une note privée → question « suggérer ce nouveau lieu », e-mail intercepté (la messagerie ne s'ouvre pas) complet et sans la note ; lieu et traces supprimés ensuite. Modification de Teghlissa → plus de question. Mentions légales → bonne adresse. 6 nouveaux tests.
+
 - ÉDITEUR — UN VISITEUR NE LIT PLUS LES DESCRIPTIONS NON PUBLIÉES (v3.7.424) — **Constaté le 11/10/2026** en vérifiant la v3.7.423, **accord de Stefan le même jour**. En visiteur, « Modifier » pré-remplissait le champ Description avec le texte officiel **même non publié**. Sur Teghlissa, c'était une transcription de Jalel (n° 280). Le texte n'était donc pas seulement dans le fichier public : il s'affichait dans l'app, alors que l'accord de Jalel portait sur des descriptions « non visibles par les utilisateurs ». **Correctif** : pour un non-admin, le champ s'ouvre **vide** quand la description officielle ne lui est pas visible (règle `isDescriptionVisible`). Il peut y écrire la sienne. **À l'enregistrement**, un non-admin qui modifie une fiche n'écrit plus ce qu'il ne voit pas (`stripUnseenFieldsForUser`, `poi-persistence.js`) :
   - la description masquée et laissée vide ;
   - les champs réservés à l'admin (cases « Statut de la fiche » et « Vérifications », catégorie Commons).

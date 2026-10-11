@@ -7,8 +7,8 @@
 // fermeture via croix uniquement — info-only, pas d'action explicite).
 
 import { openHwModal } from './modal.js';
+import { CONTACT_EMAIL } from './config.js';
 
-const CONTACT_EMAIL = 'history.walk.007@gmail.com';
 const COPYRIGHT_YEAR = 2026;
 const COPYRIGHT_HOLDER = 'Stefan Martin';
 
