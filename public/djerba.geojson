@@ -10751,7 +10751,7 @@
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
         "Zone": "Arkou",
-        "description": "Restaurant de bord de plage, face à la mer",
+        "description": "Restaurant de bord de plage au port d'Aghir, à Arkou, face à la mer.\nSa carte, relevée sur place, propose surtout des poissons et fruits de mer (daurade, loup, crevettes, seiche, poulpe), mais aussi du poulet, de l'escalope et de la côte de bœuf, des salades, des couscous sur commande 24 heures à l'avance, des petits déjeuners et un menu enfant. Les plats principaux y sont affichés de 20 à 70 TND ; la seule bière affichée est sans alcool.",
         "accessPoint": [
           11.0137902,
           33.7569462
@@ -10763,7 +10763,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Observation sur place et carte du restaurant, le 16 mars 2026",
         "osm_ref": "",
         "maps_ref": "",
         "Téléphone": "+216 20 302 040",
@@ -10771,7 +10771,7 @@
         "Facebook": "https://www.facebook.com/p/Restaurant-port-aghir-100057559835894/?locale=fr_FR",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
@@ -10782,7 +10782,8 @@
           "photos/poi_HW-01KJABRN0VFPFW41YCMJ2CX585_1789709080961.jpg",
           "photos/poi_HW-01KJABRN0VFPFW41YCMJ2CX585_1789709082606.jpg",
           "photos/poi_HW-01KJABRN0VFPFW41YCMJ2CX585_1789709084315.jpg"
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
