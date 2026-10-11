@@ -10602,7 +10602,7 @@
         "Facebook": "https://www.facebook.com/groups/114512808662049/",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-10-11",
         "mapsChecked": true,
