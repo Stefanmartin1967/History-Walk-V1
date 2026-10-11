@@ -1257,14 +1257,14 @@
         "Nom du site arabe": "هنشير بورقو",
         "Catégorie": "Mausolée",
         "Zone": "Midoun",
-        "Source": "https://fr.wikipedia.org/wiki/Henchir_Bourgouhttps://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/",
+        "Source": "Wikipédia, « Henchir Bourgou » | https://fr.wikipedia.org/wiki/Henchir_Bourgou\nNaceur Bouabid, « Djerba : le site archéologique de Henchir Bougou réduit en décharge », Kapitalis, 7 juillet 2021 | https://kapitalis.com/tunisie/2021/07/07/djerba-le-site-archeologique-de-henchir-bougou-reduit-en-decharge/\nObservation sur place, le 13 mars 2026",
         "HW_ID": "HW-01K77WPE69RBE6FB0RR05GEJM3",
         "photos": [
           "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1786349086606.jpg",
           "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1786349088242.jpg",
           "photos/poi_HW-01K77WPE69RBE6FB0RR05GEJM3_1786349089805.jpg"
         ],
-        "description": "Site mesurant environ 700 mètres de rayon, comportant un mausolée, monument funéraire pré-islamique, situé au sud du site. Celui-ci mesure 4,5 mètres de haut et près de neuf mètres de large. Il pose sur un soubassement ressemblant à un triange équilatéral tronqué. Malgré son classement en 2022, celui-ci serait utilisé comme décharge.",
+        "description": "Mausolée de l'ancienne ville punique de Henchir Bourgou, au sud du site.\nSelon Wikipédia, il repose sur un soubassement hexagonal en grands blocs taillés et sa superstructure atteint 4,52 m de haut ; il date de la fin du 3ᵉ siècle av. J.-C. Une tribune de Naceur Bouabid publiée dans Kapitalis (juillet 2021) le dit construit au 2ᵉ siècle av. J.-C. par un prince indigène, et dénonçait alors des gravats et des déchets de chantier autour du monument.\nSur place, le soubassement porte des graffitis et des traces de peinture rouge ; aucun amas de déchets n'est visible aux abords.",
         "Sous-type": "",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
@@ -1278,7 +1278,13 @@
         "introuvableCarte": false,
         "osm_ref": "way/436514753",
         "maps_ref": "https://maps.app.goo.gl/4Qx2F1o65PfFw7LE8",
-        "descriptionPublic": false
+        "descriptionPublic": true,
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -13798,17 +13804,23 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Situé dans le Cimetière Bedouine",
-        "Source": "",
+        "description": "Mausolée du quartier de Bedouine, à El Mahboubine, dans le cimetière du quartier.\nOpenStreetMap le nomme Sidi Abdalouhab ; la liste Wikipédia des mosquées de Djerba mentionne à cet endroit un mausolée Sidi Abdelwahab, sans autre précision.",
+        "Source": "Wikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.9432227,
           33.77913
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": true
       }
     },
     {
@@ -14513,17 +14525,31 @@
         "HW_ID": "HW-01KZH0VGWZ21W3CHE2CSPZYXSK",
         "État": "Ruine",
         "Accès": "Intérieur visitable",
-        "description": "Site archéologique Henchir Bourgou, sur lequel est situé un mausolée du même nom",
+        "description": "Site archéologique au nord de la route de Houmt Souk à Midoun, en bordure sud d'un vaste ensemble d'environ 700 m de rayon.\nSelon Wikipédia, l'occupation remonte au 8ᵉ siècle av. J.-C. et se poursuit à l'époque punique puis romaine ; des fouilles et prospections tuniso-allemandes ont eu lieu de 2017 à 2019. Le site est classé monument depuis le 15 mars 2022.\nLe mausolée, au sud du site, fait l'objet d'une fiche à part.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "Zone": "Midoun",
         "accessPoint": [
           10.9692276,
           33.8216062
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "Source": "Wikipédia, « Henchir Bourgou » | https://fr.wikipedia.org/wiki/Henchir_Bourgou",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
