@@ -27,6 +27,7 @@ import { recordModification } from './backup-auto-local.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 import { foldForSearch } from './text-search.js';
 import { computeVu, stampVisited } from './visited-state.js';
+import { isDescriptionVisible } from './description-visibility.js';
 
 // --- UTILITAIRES ---
 
@@ -488,8 +489,10 @@ export function passesUserFilters(feature, plannedSet = null) {
     if (f.incontournablesOnly && !props.incontournable) return false;
     if (f.photo === 'hide' && hasPhotos(props)) return false;
     if (f.photo === 'only' && !hasPhotos(props)) return false;
-    if (f.description === 'hide' && hasDescription(props)) return false;
-    if (f.description === 'only' && !hasDescription(props)) return false;
+    // Même règle que la fiche (isDescriptionVisible) : le filtre « Lieux avec
+    // description » ne doit pas annoncer un résultat que la fiche dément.
+    if (f.description === 'hide' && isDescriptionVisible(feature)) return false;
+    if (f.description === 'only' && !isDescriptionVisible(feature)) return false;
 
     // Court-circuits (priment sur Visités/Planifiés)
     if (state.activeCircuitId && state.currentCircuit && state.currentCircuit.some(g => getPoiId(g) === poiId)) {
@@ -530,17 +533,6 @@ function hasWorkPhotos(props) {
     return Array.isArray(props.workPhotos) && props.workPhotos.length > 0;
 }
 
-function hasDescription(props) {
-    const longDesc = (props.description || '').trim();
-    if (longDesc === '') return false;
-    // Cohérence avec le rendu de la fiche (templates.js) : par défaut une
-    // description n'est PAS publiée (descriptionPublic doit être explicitement
-    // vrai) et ne s'affiche donc pas côté visiteur — le filtre « Lieux avec
-    // description » ne doit pas matcher pour lui non plus, sinon il
-    // annoncerait un résultat que la fiche dément à l'ouverture.
-    if (!props.descriptionPublic && !state.isAdmin) return false;
-    return true;
-}
 
 // Filtres "structurels" (Zone, Catégorie multi) — s'appliquent TOUJOURS, même
 // aux incontournables.

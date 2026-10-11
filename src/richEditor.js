@@ -99,8 +99,9 @@ const RICH_POI_BODY_HTML = `
 <div class="rich-poi-form">
     <!-- Bandeau « Statut de la fiche » (réunification, Lot A) : porte le toggle
          Vérifié, en tête du formulaire. Méta-FICHE (≠ taxonomie État/Accès qui
-         décrit le LIEU). Le cycle de vie Candidat/Curé viendra ici au Lot C. -->
-    <div class="fiche-status">
+         décrit le LIEU). Le cycle de vie Candidat/Curé viendra ici au Lot C.
+         Réservé à l'admin, comme « Vérifications » (cf. showModal). -->
+    <div class="fiche-status" id="rich-fiche-statut">
         <div class="fiche-status-hd"><i data-lucide="badge-check"></i>Statut de la fiche</div>
         <div class="fiche-row">
             <span class="lbl"><span class="t">Vérifié</span><span class="h">La fiche a été relue et validée</span></span>
@@ -151,7 +152,7 @@ const RICH_POI_BODY_HTML = `
          plus bas est rempli — la case ne sert qu'au cas négatif (cherché, rien
          trouvé). Pas de case pour Facebook/livres/etc. : trop varié pour être
          structuré, ça reste dans Notes. -->
-    <div class="fiche-status">
+    <div class="fiche-status" id="rich-fiche-verifs">
         <div class="fiche-status-hd"><i data-lucide="list-checks"></i>Vérifications</div>
         <div class="fiche-row">
             <span class="lbl"><span class="t">OSM vérifié</span><span class="h">Coché automatiquement si un objet OSM est renseigné plus bas — sinon, à cocher à la main si la recherche n'a rien donné<span class="rich-check-date" id="rich-poi-osmchecked-date"></span></span></span>
@@ -863,6 +864,18 @@ function showModal() {
 
     const commonsGroup = document.getElementById('rich-poi-commons-group');
     if (commonsGroup) commonsGroup.hidden = !state.isAdmin;
+
+    // « Statut de la fiche » et « Vérifications » : vocabulaire de curation de
+    // l'admin (Vérifié, Existence à confirmer, Jalel checké…), sans usage pour
+    // un utilisateur qui édite sa propre copie (note de test 14). Masquer ne
+    // change aucune donnée : les interrupteurs gardent les valeurs chargées à
+    // l'ouverture et sont réenregistrés tels quels. La description qu'un
+    // utilisateur écrit lui reste visible sans la case « Description publiée »
+    // (cf. isDescriptionVisible).
+    for (const id of ['rich-fiche-statut', 'rich-fiche-verifs']) {
+        const block = document.getElementById(id);
+        if (block) block.hidden = !state.isAdmin;
+    }
 
     const headerEl = document.querySelector('.hw-modal-overlay.is-active .hw-modal-header');
     const closeBtn = headerEl?.querySelector('.hw-modal-close');

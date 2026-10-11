@@ -53,6 +53,13 @@ describe('fiche — section Description', () => {
         expect(html).toContain('Brouillon — non publié');
     });
 
+    it('visiteur, texte réécrit par lui sur une fiche officielle : section avec SON texte', () => {
+        const html = fiche({ description: 'Texte officiel', userData: { description: 'Mon texte à moi' } });
+        expect(html).toContain('description-section');
+        expect(html).toContain('Mon texte à moi');
+        expect(html).not.toContain('Brouillon — non publié');
+    });
+
     it('admin, sans description : aucune section non plus', () => {
         state.isAdmin = true;
         expect(fiche()).not.toContain('description-section');
