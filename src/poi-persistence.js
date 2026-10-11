@@ -113,3 +113,30 @@ export async function persistPoiEdit(poiId, data) {
         await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
     }
 }
+
+// Champs de l'éditeur masqués au non-admin : blocs « Statut de la fiche » et
+// « Vérifications » (11/10/2026, note de test 14), catégorie Commons (v3.7.414).
+const ADMIN_ONLY_KEYS = [
+    'verified', 'introuvableCarte', 'descriptionPublic',
+    'osmChecked', 'osmCheckedDate', 'mapsChecked', 'mapsHasPhoto', 'jalelChecked',
+    'commons_ref',
+];
+
+/**
+ * Ce qu'un NON-admin ne doit pas enregistrer en modifiant une fiche existante :
+ * ce qu'il ne voit pas. L'éditeur recopie tous ses champs dans l'overlay
+ * `userData`, qui prime sur le fichier publié ; recopiés, ces champs figeraient
+ * pour lui l'état du jour et masqueraient ce que l'admin publiera ensuite :
+ *  - les champs réservés à l'admin (ex. `descriptionPublic: false` : la
+ *    description, une fois publiée, lui resterait cachée) ;
+ *  - la description officielle masquée à l'ouverture (`descriptionMasked`) et
+ *    laissée vide : un "" local masquerait le texte officiel publié plus tard.
+ * Mute `data` et le renvoie.
+ * @param {Object} data
+ * @param {{descriptionMasked: boolean}} opts
+ */
+export function stripUnseenFieldsForUser(data, { descriptionMasked }) {
+    for (const k of ADMIN_ONLY_KEYS) delete data[k];
+    if (descriptionMasked && !(data.description || '').trim()) delete data.description;
+    return data;
+}

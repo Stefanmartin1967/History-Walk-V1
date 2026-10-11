@@ -7,7 +7,8 @@ import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, normalizeCommonsCategory, isOsmChecked, isMapsChecked, isInJalelDirectoryScope, formatPhone } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
-import { persistPoiEdit } from './poi-persistence.js';
+import { persistPoiEdit, stripUnseenFieldsForUser } from './poi-persistence.js';
+import { isDescriptionVisible } from './description-visibility.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
@@ -89,6 +90,10 @@ let isDirty = false;
 // rafraîchir osmCheckedDate que sur une vraie transition (checked/ref changés),
 // pas à chaque enregistrement du formulaire pour une raison sans rapport.
 let originalOsmState = { checked: false, ref: '', date: null };
+// Mode EDIT, non-admin : la description officielle ne lui est pas visible (non
+// publiée, cf. isDescriptionVisible) → champ ouvert VIDE. Laissé vide, il
+// n'enregistre rien (cf. stripUnseenFieldsForUser).
+let descriptionMasked = false;
 
 // HTML du formulaire (body de la modale V2). IDs préservés à l'identique
 // pour que toute la logique métier (setValue/getValue/handleSave/executeCreate
@@ -393,6 +398,7 @@ export const RichEditor = {
 
         setValue(DOM_IDS.INPUTS.DESC_SHORT, "");
         setValue(DOM_IDS.INPUTS.DESC_LONG, "");
+        descriptionMasked = false;
         setValue(DOM_IDS.INPUTS.NOTES, "");
         setValue(DOM_IDS.INPUTS.TIME_H, "");
         setValue(DOM_IDS.INPUTS.TIME_M, "");
@@ -480,7 +486,13 @@ export const RichEditor = {
         if (zoneInput) zoneInput.disabled = true;
 
         setValue(DOM_IDS.INPUTS.DESC_SHORT, merged['info_gpx'] || "");
-        setValue(DOM_IDS.INPUTS.DESC_LONG, merged['description'] || "");
+        // Description officielle non publiée : le visiteur ne la voit pas sur la
+        // fiche, il ne doit pas la lire ici non plus (constat du 11/10/2026 : des
+        // transcriptions de Jalel s'affichaient au clic sur « Modifier », alors que
+        // son accord portait sur des textes « non visibles par les utilisateurs »).
+        // Champ vide : il peut écrire SA description.
+        descriptionMasked = !!(merged['description'] || '').trim() && !isDescriptionVisible(feature);
+        setValue(DOM_IDS.INPUTS.DESC_LONG, descriptionMasked ? "" : (merged['description'] || ""));
         setValue(DOM_IDS.INPUTS.NOTES, merged['notes'] || "");
         initialNotesValue = merged['notes'] || '';
 
@@ -1461,6 +1473,12 @@ async function handleSave(validate = false) {
     if (validate && currentMode === 'EDIT' && currentFeatureId) {
         const feature = state.loadedFeatures.find(f => getPoiId(f) === currentFeatureId);
         if (feature && isCandidate(feature)) data.candidate = false;
+    }
+
+    // Non-admin en mode EDIT : il n'écrit pas ce qu'il ne voit pas (champs
+    // réservés à l'admin, description officielle masquée et laissée vide).
+    if (!state.isAdmin && currentMode === 'EDIT') {
+        stripUnseenFieldsForUser(data, { descriptionMasked });
     }
 
     // Prompt for suggestion (Workflow update)
