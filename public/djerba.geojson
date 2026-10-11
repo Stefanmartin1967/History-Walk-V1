@@ -3417,13 +3417,13 @@
         "Zone": "El May",
         "Source": "",
         "HW_ID": "HW-01K77WPE6DFDJEFF1NP5V7YWS5",
-        "description": "Bâtiment pyramidal reconstruit en calcaire local, d'âge inconnu, possiblement de l'époque moderne. Dans une littérature plus ancienne, le monument est daté de l'Antiquité romaine, avec une fonction interprétée différemment.\n\nLe lieu est entouré de légendes.\n\nPetr Jenč - OpenStreetMap, 2024",
+        "description": "Monument pyramidal en calcaire local, à El May.\nSelon la description d'OpenStreetMap, c'est un bâtiment reconstruit, d'âge inconnu, possiblement de l'époque moderne ; une littérature plus ancienne le date de l'Antiquité romaine et en interprète la fonction différemment. Le lieu est entouré de légendes.\nPetr Jenč - OpenStreetMap, 2024",
         "accessPoint": [
           10.9144948,
           33.7697583
         ],
         "Sous-type": "",
-        "État": "Conservé",
+        "État": "Vestiges partiels",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
@@ -3435,12 +3435,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-18",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -14726,13 +14727,13 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "Zone": "Sedouikech",
         "Nom du site arabe": "هنشير طلا",
         "Sous-type": "",
         "info_gpx": "",
-        "description": "Site archéologique romain (fort en ruines, selon OpenStreetMap). Une source évoque aussi ce lieu comme la source d'eau d'où serait parti l'aqueduc vers Meninx — hypothèse à prendre avec prudence, peu détaillée.\n\nPetr Jenč - OpenStreetMap, 2026",
-        "Source": "",
+        "description": "Poste de surveillance romain, à Sedouikech, sur la route d'El Kantara, à un peu plus d'un kilomètre du site de Meninx.\nSelon l'article de Wikipédia sur les sites archéologiques de Djerba, l'édifice, d'environ 14 m sur 9, comprend deux salles souterraines voûtées et un puits central ; il aurait été modifié, probablement à l'époque vandale. Des voyageurs du 19ᵉ siècle y signalent des restes de canalisations et un marabout honoré par les habitants.\nOpenStreetMap y indique un fort romain en ruines, nommé Henchir Tala (autre nom : Henchir Lalla Thala).",
+        "Source": "Wikipédia, « Sites archéologiques de Djerba » | https://fr.wikipedia.org/wiki/Sites_arch%C3%A9ologiques_de_Djerba",
         "maps_ref": "https://maps.app.goo.gl/dGuUjGs9ZmkVgBSEA",
         "Téléphone": "",
         "Horaires": "",
@@ -14745,7 +14746,8 @@
         "accessPoint": [
           10.9152254,
           33.6990824
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
