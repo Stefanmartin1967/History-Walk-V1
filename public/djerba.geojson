@@ -687,7 +687,7 @@
         "Nom du site arabe": "معصرة الفصيلي",
         "Catégorie": "Artisanat",
         "Zone": "Midoun",
-        "Source": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/node/11691949310",
         "HW_ID": "HW-01K77WPE68MMPS9ZVR6XTV9J61",
         "accessPoint": [
           10.9918059,
@@ -698,21 +698,22 @@
         "État": "Désaffecté",
         "Accès": "",
         "info_gpx": "",
-        "description": "Huilerie visitable",
+        "description": "Huilerie traditionnelle souterraine, à Midoun.\nOpenStreetMap y indique un musée, ouvert du mardi au dimanche de 9 h à 17 h (de 10 h à 16 h pendant le ramadan).",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "maps_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/ZRTHkNZzqzZbQTE87",
         "Téléphone": "",
-        "Horaires": "",
+        "Horaires": "De 09 h à 17 h - 10 h - 16 h pendant le ramadan",
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
-        "mapsChecked": false,
-        "mapsHasPhoto": false,
-        "jalelChecked": false
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -6140,7 +6141,7 @@
         "Zone": "El Jouamaa",
         "Source": "",
         "HW_ID": "HW-01K77WPE6H3TDARVM1G3V5E49B",
-        "description": "Infos à rechercher.",
+        "description": "Mosquée d'El Jouamaa.\nOpenStreetMap y indique un lieu de culte musulman nommé Sidi Abdellatif (سيدي عبد اللطيف). Google Maps y indique une « Mosquée de Sediq ».\nLe nom reste à confirmer sur place.",
         "accessPoint": [
           10.8451514,
           33.8727573
@@ -6158,12 +6159,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -10878,7 +10880,7 @@
         "Catégorie": "Curiosité",
         "Zone": "Bou Melel",
         "HW_ID": "HW-01KJABRN0WBFCMMFBGZB582PRH",
-        "description": "Anciens bâtiments ayant abrité des ateliers de tissage selon une habitante",
+        "description": "Anciens bâtiments ayant abrité des ateliers de tissage, selon une habitante du quartier.",
         "Nom du site arabe": "",
         "Sous-type": "",
         "État": "",
@@ -10886,7 +10888,7 @@
         "info_gpx": "Anciens ateliers de tissage",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Témoignage d'une habitante, recueilli sur place le 20 novembre 2025",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -10902,7 +10904,8 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -13134,32 +13137,33 @@
         "Catégorie": "Mosquée",
         "osm_ref": "way/990329223",
         "HW_ID": "HW-01KZH0VH09MWGKNW9WDKBBP08S",
-        "Sous-type": "",
+        "Sous-type": "À coupoles",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/kVvYxMB9yd7jWn5NA",
         "verified": false,
-        "introuvableCarte": true,
+        "introuvableCarte": false,
         "Nom du site arabe": "",
-        "État": "",
-        "Accès": "",
+        "État": "En activité",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "A côté du cimetière selon la vue OSM\nAppelée Mosquée El Taieb (El Jeridi) sur OSM",
-        "Source": "",
+        "description": "Mosquée du centre de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 297 sous le nom de Djéridi : mosquée malékite, récente. La liste Wikipédia des mosquées de Djerba la donne en activité.\nAppelée El Taieb (El Jeridi) sur OSM.",
+        "Source": "Répertoire J. Fathallah, n° 297 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/990329223",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Midoun",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true,
         "accessPoint": [
           10.9952755,
           33.8101336
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -13607,17 +13611,23 @@
         "État": "En activité",
         "Accès": "Non visitable",
         "info_gpx": "",
-        "description": "Nom donné sur base de la mosquée en face - A confirmer",
-        "Source": "",
+        "description": "Mausolée de Guellala, à une cinquantaine de mètres de la mosquée Guarounia.\nOpenStreetMap y indique un mausolée, sans nom. Le nom de cette fiche est repris de la mosquée voisine, et reste à confirmer sur place.",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1464086423",
         "maps_ref": "https://maps.app.goo.gl/UDSx4sPmHWTMwkTU9",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "accessPoint": [
           10.8576307,
           33.728538
-        ]
+        ],
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": true
       }
     },
     {
@@ -17905,13 +17915,13 @@
         "Catégorie": "Menzel",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
-        "description": "Vieux bâtiments Djerbiens - Voir si ce sont ceux du projet de Mouldi",
+        "description": "Groupe de vieux bâtiments djerbiens, à Oued Zbib.\nAucun objet n'y est enregistré dans OpenStreetMap. La nature et l'état des lieux restent à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/V6seyrLYj4M9YMt67",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-20",
         "mapsChecked": true,
@@ -17922,7 +17932,16 @@
           10.8241544,
           33.7750641
         ],
-        "Zone": "Oued Ezzebib"
+        "Zone": "Oued Ezzebib",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "info_gpx": "",
+        "Source": "",
+        "osm_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
