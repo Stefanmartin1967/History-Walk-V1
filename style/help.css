@@ -46,7 +46,7 @@
 .help-dot--sm svg { width: 12px; height: 12px; }
 .help-dot:hover,
 .help-dot[aria-expanded="true"] {
-    color: var(--brand-2);
+    color: var(--brand-ink);
     border-color: color-mix(in oklab, var(--brand) 55%, var(--line));
     background: color-mix(in oklab, var(--brand) 12%, var(--surface));
 }
@@ -72,7 +72,7 @@
 .help-trigger svg { width: 18px; height: 18px; stroke-width: 2; }
 .help-trigger:hover,
 .help-trigger[aria-expanded="true"] {
-    color: var(--brand-2);
+    color: var(--brand-ink);
     border-color: color-mix(in oklab, var(--brand) 50%, var(--line));
     background: color-mix(in oklab, var(--brand) 8%, var(--surface));
 }
@@ -188,7 +188,7 @@
 }
 .help-drawer-eyebrow {
     display: inline-flex; align-items: center; gap: 6px;
-    color: var(--brand-2);
+    color: var(--brand-ink);
     font-size: 11px; font-weight: var(--font-weight-bold);
     text-transform: uppercase; letter-spacing: .08em;
     margin-bottom: 4px;
@@ -256,7 +256,7 @@
     font-size: 12.5px; font-weight: var(--font-weight-medium);
     color: var(--ink);
 }
-.help-flow-arrow { color: var(--brand-2); font-weight: 700; }
+.help-flow-arrow { color: var(--brand-ink); font-weight: 700; }
 
 /* Sections du guide. */
 .help-section { padding: var(--space-md) 0; border-top: 1px solid var(--line); }
@@ -265,9 +265,14 @@
     margin: 0 0 8px;
     font-size: 12px; font-weight: var(--font-weight-bold);
     text-transform: uppercase; letter-spacing: .05em;
-    color: var(--brand-2);
+    color: var(--brand-ink);
 }
-.help-section[data-tone="warn"] .help-section-title { color: var(--hw-amber); }
+/* Section « avertissement » : le ton est porté par l'icône alert-triangle
+   (ajoutée au rendu, help-popover.js decorateWarnings), plus par l'ambre. */
+.help-section[data-tone="warn"] .help-section-title {
+    display: flex; align-items: center; gap: var(--space-xs);
+}
+.help-section[data-tone="warn"] .help-section-title svg { width: 14px; height: 14px; flex: none; }
 .help-section-body > :first-child { margin-top: 0; }
 .help-section-body > :last-child { margin-bottom: 0; }
 
@@ -275,16 +280,22 @@
 .help-list li { margin: 0 0 .45em; }
 .help-list li::marker { color: var(--ink-soft); }
 
-/* Encadré d'avertissement / mise en garde. */
+/* Encadré d'avertissement / mise en garde (handoff « retouches testeurs »,
+   sujet 4, 11/10/2026). Avant : fond ambre crème FIXE (--hw-amber-soft) +
+   texte --ink → clair sur clair en Nuit. Fond et filet suivent maintenant le
+   moment ; l'icône (alert-triangle, ajoutée au rendu) porte l'avertissement. */
 .help-callout {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-sm);
+    align-items: start;
     margin: 10px 0 0;
-    padding: 10px 12px;
-    border-radius: var(--radius-md);
-    border: 1px solid color-mix(in oklab, var(--hw-amber) 35%, var(--line));
-    background: var(--hw-amber-soft);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    border: var(--filet-width) solid var(--brand);
+    background: var(--brand-soft);
     color: var(--ink);
-    font-size: 13.5px; line-height: var(--line-height-base);
+    font-size: var(--font-size-sm); line-height: var(--leading-base);
 }
+.help-callout > svg { width: 18px; height: 18px; color: var(--brand-ink); margin-top: var(--space-2xs); }
 .help-callout strong { color: var(--ink); }
 
 .help-footnote {
@@ -304,7 +315,7 @@
     background: color-mix(in oklab, var(--brand) 10%, var(--surface));
     border-bottom-color: color-mix(in oklab, var(--brand) 30%, var(--line));
 }
-.help-pop[data-help-variant="accentue"] .help-pop-title { color: var(--brand-2); }
+.help-pop[data-help-variant="accentue"] .help-pop-title { color: var(--brand-ink); }
 .help-pop[data-help-variant="accentue"],
 .help-drawer[data-help-variant="accentue"] {
     border-color: color-mix(in oklab, var(--brand) 28%, var(--line));

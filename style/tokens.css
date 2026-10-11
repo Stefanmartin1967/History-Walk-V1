@@ -357,6 +357,10 @@ html[data-theme="nuit"] {
   --brand-ink:  var(--terracotta-300);
   --brand-soft: rgba(199, 91, 57, 0.18);
   --on-brand-fg: #FFFFFF;
+  /* Petites capitales (eyebrows du cartel, titres de section) : sépia-600 est
+     illisible sur le papier Nuit (~2.6:1) → sépia-400 (handoff « retouches
+     testeurs », 11/10/2026). */
+  --smallcaps-color: var(--sepia-400);
   --link:      #6CB8D6;
   --link-fill: var(--azur-400);
   --verified:  #A6BA6F;
