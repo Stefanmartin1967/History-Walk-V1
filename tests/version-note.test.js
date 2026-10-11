@@ -7,16 +7,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // inspecter le contenu passé à la modale.
 const hwAlert = vi.fn(() => Promise.resolve());
 vi.mock('../src/modal.js', () => ({ hwAlert: (...args) => hwAlert(...args) }));
-// PC ou téléphone : la phrase sur la boussole n'est montrée que sur PC.
-const viewMock = { mobile: false };
-vi.mock('../src/mobile-state.js', () => ({ isMobileView: () => viewMock.mobile }));
 
 const NOTE_KEY = 'hw_version_note_seen';
 
 let showVersionNoteIfNeeded;
 
 beforeEach(async () => {
-    viewMock.mobile = false;
     localStorage.clear();
     hwAlert.mockClear();
     hwAlert.mockImplementation(() => Promise.resolve());
@@ -95,19 +91,18 @@ describe('showVersionNoteIfNeeded — contenu', () => {
         expect(body).toContain('Wikipédia');
     });
 
-    it('PC : « Pour commencer » + la boussole (note de test 13, texte validé le 11/10/2026)', () => {
+    it('« Pour commencer » (note de test 13, texte validé le 11/10/2026)', () => {
         showVersionNoteIfNeeded();
         const { body } = hwAlert.mock.calls[0][0];
-        expect(body).toMatch(/<strong>Pour commencer :<\/strong> ouvrez un circuit, ou\s+cherchez un lieu par son nom\./);
-        expect(body).toContain("La boussole, en haut, propose d'autres façons de commencer.");
+        expect(body).toMatch(/<strong>Pour commencer :<\/strong> ouvrez un circuit, ou cherchez un lieu\s+par son nom\./);
     });
 
-    it('téléphone : « Pour commencer » sans la boussole, qui n\'existe que sur PC', () => {
-        viewMock.mobile = true;
+    it('ne cite pas la boussole (remarque de Stefan, 11/10/2026)', () => {
+        // Icône sans libellé, invisible derrière la note, PC seulement : la citer
+        // envoyait le visiteur chercher quelque chose qu'il ne voit pas.
         showVersionNoteIfNeeded();
         const { body } = hwAlert.mock.calls[0][0];
-        expect(body).toContain('Pour commencer :');
-        expect(body).not.toContain('boussole');
+        expect(body).not.toMatch(/boussole/i);
     });
 
     it('nomme les deux services qu\'on peut ouvrir depuis la fiche — pas Wikipédia (remarque de Stefan, 11/10/2026)', () => {

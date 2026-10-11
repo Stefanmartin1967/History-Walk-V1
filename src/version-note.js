@@ -11,7 +11,6 @@
 // notable...).
 
 import { hwAlert } from './modal.js';
-import { isMobileView } from './mobile-state.js';
 
 const NOTE_KEY = 'hw_version_note_seen';
 
@@ -30,21 +29,14 @@ const NOTE_BODY = `
     <p><strong>Le nom affiché peut être imprécis.</strong> Google Maps et
     OpenStreetMap se contredisent parfois, et la transcription d'un nom arabe
     en français varie selon les sources.</p>
+    <p><strong>Pour commencer :</strong> ouvrez un circuit, ou cherchez un lieu
+    par son nom.</p>
 `;
-
-// Orientation (note de test 13, texte validé par Stefan le 11/10/2026) : le
-// visiteur arrivait sans savoir par où commencer. Une phrase dans cette note
-// plutôt qu'un 2e écran au démarrage (décision du 09/08/2026). La boussole
-// (écran « Que voulez-vous faire ? ») n'existe que sur PC : la phrase qui la
-// cite n'est pas montrée sur téléphone.
-const START_HINT = `<strong>Pour commencer :</strong> ouvrez un circuit, ou
-    cherchez un lieu par son nom.`;
-const START_HINT_DESKTOP = "La boussole, en haut, propose d'autres façons de commencer.";
-
-function buildBody() {
-    const hint = isMobileView() ? START_HINT : `${START_HINT} ${START_HINT_DESKTOP}`;
-    return `${NOTE_BODY}    <p>${hint}</p>`;
-}
+// « Pour commencer » (note de test 13, textes validés par Stefan le
+// 11/10/2026) : une phrase dans cette note plutôt qu'un 2e écran au démarrage
+// (décision du 09/08/2026). Elle ne cite PAS la boussole (écran « Que
+// voulez-vous faire ? ») : icône sans libellé, invisible derrière la note, PC
+// seulement, et écran encore à revoir. À citer par son libellé quand il en aura un.
 
 function getSeenVersion() {
     return parseInt(localStorage.getItem(NOTE_KEY) || '0', 10);
@@ -55,7 +47,7 @@ export function showVersionNoteIfNeeded() {
 
     hwAlert({
         title: NOTE_TITLE,
-        body: buildBody(),
+        body: NOTE_BODY,
         label: "J'ai compris",
     }).then(() => {
         localStorage.setItem(NOTE_KEY, String(NOTE_VERSION));
