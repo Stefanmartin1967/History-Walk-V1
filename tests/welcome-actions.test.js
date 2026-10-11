@@ -9,6 +9,7 @@ vi.mock('../src/help-popover.js', () => ({
     openHelpPanel: vi.fn(),
     configureHelp: vi.fn(),
 }));
+vi.mock('../src/info-popover.js', () => ({ showInfoPopover: vi.fn() }));
 vi.mock('../src/lucide-icons.js', () => ({
     createIcons: vi.fn(),
     appIcons: {},
@@ -17,7 +18,8 @@ vi.mock('../src/lucide-icons.js', () => ({
 import { setupWelcomeActions } from '../src/welcome-actions.js';
 import { eventBus } from '../src/events.js';
 import { openHelpPanel } from '../src/help-popover.js';
-import { GUIDE_CIRCUIT, GUIDE_IMPORT } from '../src/help-content.js';
+import { GUIDE_CIRCUIT, GUIDE_IMPORT, GUIDE_LIEU } from '../src/help-content.js';
+import { showInfoPopover } from '../src/info-popover.js';
 
 beforeEach(() => {
     document.body.innerHTML = '';
@@ -32,38 +34,25 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
-describe('welcome-actions — choix "discover" / "import"', () => {
-    it('clique sur l\'onglet [data-tab="explorer"] (Mes Circuits)', () => {
-        const tab = document.createElement('button');
-        tab.dataset.tab = 'explorer';
-        const clickSpy = vi.fn();
-        tab.addEventListener('click', clickSpy);
-        document.body.appendChild(tab);
-
+describe('welcome-actions — choix "legend"', () => {
+    it('ouvre la légende APRÈS le fondu (accrochée à son bouton de carte)', () => {
         setupWelcomeActions();
-        eventBus.emit('welcome:choice', { choice: 'discover' });
-        expect(clickSpy).toHaveBeenCalled();
+        eventBus.emit('welcome:choice', { choice: 'legend' });
+        expect(showInfoPopover).not.toHaveBeenCalled();
         vi.advanceTimersByTime(400);
-        expect(openHelpPanel).not.toHaveBeenCalled(); // pas de guide pour "discover"
+        expect(showInfoPopover).toHaveBeenCalledTimes(1);
+        expect(openHelpPanel).not.toHaveBeenCalled();
     });
+});
 
-    it('"import" cible aussi l\'onglet Mes Circuits', () => {
-        const tab = document.createElement('button');
-        tab.dataset.tab = 'explorer';
-        const clickSpy = vi.fn();
-        tab.addEventListener('click', clickSpy);
-        document.body.appendChild(tab);
-
+describe('welcome-actions — choix "new-place"', () => {
+    it('ouvre le guide « Créer ou éditer un lieu » après le fondu (pas de bouton de création sur PC)', () => {
         setupWelcomeActions();
-        eventBus.emit('welcome:choice', { choice: 'import' });
-        expect(clickSpy).toHaveBeenCalled();
-    });
-
-    it('ne plante pas si l\'onglet est absent', () => {
-        setupWelcomeActions();
-        expect(() => {
-            eventBus.emit('welcome:choice', { choice: 'discover' });
-        }).not.toThrow();
+        eventBus.emit('welcome:choice', { choice: 'new-place' });
+        expect(openHelpPanel).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(400);
+        expect(openHelpPanel).toHaveBeenCalledTimes(1);
+        expect(openHelpPanel.mock.calls[0][0]).toBe(GUIDE_LIEU);
     });
 });
 

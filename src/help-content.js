@@ -488,9 +488,9 @@ export const GUIDE_LIEU = {
                     <li>cliquez <strong>« Valider cette position »</strong> → la fiche
                         <strong>« Nouveau Lieu »</strong> s'ouvre.</li>
                 </ul>
-                <p class="help-muted">Deux autres entrées mènent à la même fiche : la
-                <strong>recherche</strong> d'un lieu encore absent, et « Créer un lieu » à
-                l'import photo.</p>`,
+                <p class="help-muted">Deux autres entrées mènent à la même fiche : des
+                <strong>coordonnées GPS</strong> collées dans la recherche (puis Entrée), et
+                « Créer un lieu » à l'import photo.</p>`,
         },
         {
             heading: `2 · Éditer un lieu`,

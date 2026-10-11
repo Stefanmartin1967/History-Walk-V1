@@ -1128,12 +1128,8 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
 
 .welcome-modal-title {
     font-size: 1.4rem; font-weight: 700;
-    color: var(--ink); margin: 0 0 4px;
+    color: var(--ink); margin: 0 0 16px;
     text-align: center;
-}
-.welcome-modal-subtitle {
-    font-size: 0.9rem; color: var(--ink-soft);
-    margin: 0 0 16px; text-align: center;
 }
 
 .welcome-cards {

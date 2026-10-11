@@ -50,7 +50,19 @@ describe('showWelcomeAgain — les 4 cartes', () => {
         showWelcomeAgain();
         const choices = Array.from(document.querySelectorAll('.welcome-card'))
             .map(c => c.dataset.choice);
-        expect(choices).toEqual(['discover', 'import', 'create', 'photos']);
+        expect(choices).toEqual(['legend', 'new-place', 'create', 'photos']);
+    });
+
+    it('textes validés par Stefan le 11/10/2026 (titres + sous-titres)', () => {
+        showWelcomeAgain();
+        const texts = Array.from(document.querySelectorAll('.welcome-card'))
+            .map(c => `${c.querySelector('.welcome-card-title').textContent} — ${c.querySelector('.welcome-card-subtitle').textContent}`);
+        expect(texts).toEqual([
+            "Voir la légende des icônes — Je comprends ce que signifie chaque symbole",
+            "Créer un nouveau lieu — J'ajoute un lieu qui manque, je peux le signaler",
+            "Créer mon propre circuit — Je m'aventure, je trace mon parcours",
+            "Associer mes photos aux lieux — Je personnalise, j'ajoute mes photos à mes visites",
+        ]);
     });
 
     it('chaque carte a un titre et un sous-titre', () => {
@@ -62,15 +74,15 @@ describe('showWelcomeAgain — les 4 cartes', () => {
         });
     });
 
-    it('le bouton "Passer" est présent', () => {
+    it('le bouton "Fermer" est présent', () => {
         showWelcomeAgain();
-        expect(document.getElementById('welcome-skip')).not.toBeNull();
+        expect(document.getElementById('welcome-skip').textContent).toBe('Fermer');
     });
 
-    it('titre et sous-titre de la modal sont présents', () => {
+    it('titre présent, plus de sous-titre « Bienvenue » (écran ouvert à la demande, pas un accueil)', () => {
         showWelcomeAgain();
-        expect(document.querySelector('.welcome-modal-title')).not.toBeNull();
-        expect(document.querySelector('.welcome-modal-subtitle')).not.toBeNull();
+        expect(document.querySelector('.welcome-modal-title').textContent).toBe('Que voulez-vous faire ?');
+        expect(document.querySelector('.welcome-modal-subtitle')).toBeNull();
     });
 });
 
@@ -84,12 +96,15 @@ describe('choix utilisateur — émission eventBus + fadeout', () => {
         expect(received).toHaveBeenCalledWith({ choice: 'create' });
     });
 
-    it('clic sur "Passer" émet welcome:choice avec choice=discover (skip = découvrir)', () => {
+    it('clic sur "Fermer" ferme sans émettre de choix', () => {
+        vi.useFakeTimers();
         showWelcomeAgain();
         const received = vi.fn();
         eventBus.on('welcome:choice', received);
         document.getElementById('welcome-skip').click();
-        expect(received).toHaveBeenCalledWith({ choice: 'discover' });
+        expect(received).not.toHaveBeenCalled();
+        vi.advanceTimersByTime(400);
+        expect(document.getElementById('welcome-overlay')).toBeNull();
     });
 
     it('clic sur photos émet welcome:choice avec choice=photos', () => {
@@ -103,7 +118,7 @@ describe('choix utilisateur — émission eventBus + fadeout', () => {
     it('clic déclenche le fadeout puis retire l\'overlay après 350ms', () => {
         vi.useFakeTimers();
         showWelcomeAgain();
-        document.querySelector('[data-choice="import"]').click();
+        document.querySelector('[data-choice="legend"]').click();
         const overlay = document.getElementById('welcome-overlay');
         expect(overlay).not.toBeNull();
         expect(overlay.classList.contains('welcome-fadeout')).toBe(true);
