@@ -150,8 +150,8 @@ export const GUIDE_IMPORT = {
         },
         {
             heading: '1 · Ouvrir l\'import',
-            html: `<p>Menu <strong>Outils → « import photos »</strong> (ou la carte
-                « Importer photos GPS » de la visite guidée). Choisissez un lot de photos
+            html: `<p>Menu <strong>Outils → « Importer des photos »</strong> (ou la carte
+                « Associer mes photos aux lieux » de « Que faire ? »). Choisissez un lot de photos
                 <strong>.jpg</strong> ou <strong>.heic</strong> : Heripia lit leur position et
                 ouvre la <strong>fenêtre d'organisation</strong>.</p>`,
         },

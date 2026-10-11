@@ -34,9 +34,10 @@ const NOTE_BODY = `
 `;
 // « Pour commencer » (note de test 13, textes validés par Stefan le
 // 11/10/2026) : une phrase dans cette note plutôt qu'un 2e écran au démarrage
-// (décision du 09/08/2026). Elle ne cite PAS la boussole (écran « Que
-// voulez-vous faire ? ») : icône sans libellé, invisible derrière la note, PC
-// seulement, et écran encore à revoir. À citer par son libellé quand il en aura un.
+// (décision du 09/08/2026). Elle ne cite pas le bouton de l'écran « Que
+// voulez-vous faire ? » : invisible derrière la note, et PC seulement. Depuis
+// le 11/10/2026 il a un libellé, « Que faire ? » : le citer serait un texte à
+// faire valider par Stefan.
 
 function getSeenVersion() {
     return parseInt(localStorage.getItem(NOTE_KEY) || '0', 10);

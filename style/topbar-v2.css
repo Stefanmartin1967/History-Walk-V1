@@ -94,6 +94,44 @@
     color: var(--cta-fg);
 }
 
+/* ─── « Que faire ? » (#btn-tour) : bouton libellé, cadré ───
+   Handoff Claude Design « retouches testeurs », sujet 1 (11/10/2026). Cadré
+   (papier + filet), à la différence des .btn nus de la barre : c'est une
+   porte d'entrée, pas un réglage. États : survol, focus clavier, écran
+   ouvert (aria-expanded, posé par welcome.js). PWA installée : base.css. */
+.hw-topbar-action {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    height: var(--control-h-sm);
+    padding: 0 var(--space-sm);
+    border: var(--border-filet);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.hw-topbar-action svg { width: 18px; height: 18px; flex: none; color: var(--brand-ink); }
+.hw-topbar-action:hover { background: var(--surface-muted); border-color: var(--filet-strong); }
+.hw-topbar-action:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.hw-topbar-action[aria-expanded="true"] {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    color: var(--brand-ink);
+}
+/* Place insuffisante (barre plus étroite que son contenu, mesuré par
+   topbar-v2.js fitTourLabel) : le libellé se replie, l'icône encadrée reste,
+   le nom passe par title / aria-label. Évite que la barre déborde sous le
+   panneau latéral sur les petits portables. */
+.hw-topbar-action.is-compact { padding: 0 var(--space-sm); }
+.hw-topbar-action.is-compact span { display: none; }
+
 /* ─── Séparateurs verticaux entre clusters ─── */
 .hw-topbar-separator {
     width: 1px;

@@ -1,7 +1,8 @@
 // welcome.js
 // Écran « Que voulez-vous faire ? », accessible à la demande via le bouton
-// boussole de la topbar (PC seulement ; le déclenchement automatique au 1er
-// lancement a été retiré au profit de version-note.js — cf. main.js).
+// « Que faire ? » de la topbar (#btn-tour, PC seulement ; le déclenchement
+// automatique au 1er lancement a été retiré au profit de version-note.js).
+// Le bouton suit l'écran : aria-expanded vrai tant qu'il est ouvert.
 //
 // 4 cartes (texte et ordre validés par Stefan le 11/10/2026) : Légende des
 // icônes / Créer un lieu / Créer un circuit / Associer mes photos. Les cartes
@@ -13,17 +14,19 @@
 
 import { eventBus } from './events.js';
 
-// Épingle + « + » : même style que les autres illustrations (à reprendre avec
-// Claude Design, comme le libellé du bouton boussole).
+// « Créer un nouveau lieu » : carte pliée avec itinéraire en pointillé, épingle
+// posée, pastille « + » (handoff Claude Design « retouches testeurs », sujet 2).
 const SVG_PIN_PLUS = `
 <svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="110" cy="80" r="72" fill="var(--brand)" opacity="0.08"/>
-    <ellipse cx="104" cy="126" rx="22" ry="5" fill="var(--ink-soft)" opacity="0.2"/>
-    <path d="M 104 124 C 104 124 74 92 74 68 A 30 30 0 0 1 134 68 C 134 92 104 124 104 124 Z" fill="var(--brand)" opacity="0.85"/>
-    <circle cx="104" cy="68" r="11" fill="var(--surface)"/>
-    <circle cx="150" cy="52" r="16" fill="var(--surface)" stroke="var(--brand)" stroke-width="2"/>
-    <line x1="150" y1="44" x2="150" y2="60" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"/>
-    <line x1="142" y1="52" x2="158" y2="52" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="110" cy="80" r="66" fill="var(--brand)" opacity="0.1"/>
+    <polygon points="48,54 88,44 132,54 172,44 172,118 132,128 88,118 48,128" fill="var(--surface)" stroke="var(--ink-soft)" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M88 44 V118 M132 54 V128" stroke="var(--ink-soft)" stroke-width="1" opacity="0.5"/>
+    <path d="M58 112 C72 98 80 104 92 94 S118 96 126 86" fill="none" stroke="var(--ink-soft)" stroke-width="1.5" stroke-dasharray="3 4" stroke-linecap="round"/>
+    <ellipse cx="110" cy="106" rx="12" ry="3" fill="var(--ink-soft)" opacity="0.25"/>
+    <path d="M110 104 C110 104 88 82 88 66 a22 22 0 0 1 44 0 C132 82 110 104 110 104 Z" fill="var(--surface)" stroke="var(--brand)" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="110" cy="66" r="7" fill="none" stroke="var(--brand)" stroke-width="2.5"/>
+    <circle cx="150" cy="44" r="14" fill="var(--surface)" stroke="var(--brand)" stroke-width="2"/>
+    <path d="M150 37 V51 M143 44 H157" stroke="var(--brand)" stroke-width="2.5" stroke-linecap="round"/>
 </svg>`;
 
 const SVG_MAP_CIRCUIT = `
@@ -103,6 +106,8 @@ export function showWelcomeAgain() {
     if (document.getElementById('welcome-overlay')) return;
 
     const cards = CARDS;
+    const opener = document.getElementById('btn-tour');
+    opener?.setAttribute('aria-expanded', 'true');
 
     const overlay = document.createElement('div');
     overlay.id = 'welcome-overlay';
@@ -143,6 +148,7 @@ export function showWelcomeAgain() {
     }
 
     function close() {
+        opener?.setAttribute('aria-expanded', 'false');
         overlay.classList.add('welcome-fadeout');
         setTimeout(() => overlay.remove(), 350);
     }

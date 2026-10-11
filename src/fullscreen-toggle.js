@@ -1,11 +1,12 @@
 // fullscreen-toggle.js
-// Bouton plein écran via Fullscreen API. Bascule l'icône maximize↔minimize
-// et l'aria-pressed selon l'état réel (resynchronisé via fullscreenchange,
-// donc cohérent même si l'utilisateur sort via Échap ou F11).
+// Entrée « Plein écran » du menu Outils, via Fullscreen API. Bascule l'icône
+// maximize↔minimize, le libellé et l'aria-pressed selon l'état réel
+// (resynchronisé via fullscreenchange, donc cohérent même si l'utilisateur
+// sort via Échap ou F11). Bouton de la barre du haut jusqu'au 11/10/2026,
+// déplacé dans le menu pour faire place à « Que faire ? ».
 //
 // PC-only : la PWA mobile est déjà plein écran (display: standalone), donc
-// le bouton n'a pas de sens là-bas. Le HTML est dans la topbar PC qui n'est
-// pas rendue sur mobile.
+// l'entrée n'a pas de sens là-bas. Le menu Outils n'est pas rendu sur mobile.
 
 import { createIcons, appIcons } from './lucide-icons.js';
 
@@ -18,11 +19,10 @@ function isFullscreen() {
 function updateButtonState(btn) {
     const on = isFullscreen();
     const icon = on ? 'minimize' : 'maximize';
-    btn.innerHTML = `<i data-lucide="${icon}"></i>`;
+    // Libellé visible (entrée de menu) : il porte aussi le nom accessible.
+    btn.innerHTML = `<i data-lucide="${icon}"></i> ${on ? 'Quitter le plein écran' : 'Plein écran'}`;
     btn.setAttribute('aria-pressed', String(on));
-    btn.title = on ? 'Quitter le plein écran' : 'Plein écran';
-    btn.setAttribute('aria-label', on ? 'Quitter le plein écran' : 'Passer en plein écran');
-    createIcons({ icons: appIcons });
+    createIcons({ icons: appIcons, root: btn });
 }
 
 async function toggle() {

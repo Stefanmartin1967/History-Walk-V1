@@ -396,7 +396,9 @@ body {
 .topbar-left {
     display: flex;
     align-items: center;
-    gap: 16px;
+    /* 8px (et non 16) : place pour « Que faire ? » sur un portable à 1366 px
+       (11/10/2026, mesuré : la barre n'y dispose que de 956 px). */
+    gap: var(--space-sm);
     flex-shrink: 0;
 }
 
@@ -422,7 +424,9 @@ body {
     width: 100%;
     max-width: 450px;
     flex-shrink: 1;
-    min-width: 200px;
+    /* 170px (et non 200) : même raison que .topbar-left — la recherche cède
+       un peu de place sur les écrans étroits (11/10/2026). */
+    min-width: 170px;
 }
 
 .search-icon {
@@ -3115,6 +3119,10 @@ input[type=range] {
     .topbar .btn,
     .topbar .header-btn {
         height: 32px;
+    }
+    /* « Que faire ? » : 36px → 32px (handoff Claude Design, 11/10/2026). */
+    .topbar .hw-topbar-action {
+        height: calc(var(--control-h-sm) - var(--space-xs));
     }
 
     /* Recherche + bascule de moment : compactées pour tenir dans la topbar 40px
