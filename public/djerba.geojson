@@ -10625,7 +10625,7 @@
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
         "Zone": "Mazraia",
-        "description": "Restaurant situé face à la mer",
+        "description": "Café-Restaurant face à la plage de Sidi Mahrez, à proximité de l'hôtel Flamingo.\nSa page le présente sous le nom « Santorini Sidi Mahrez Djerba Coffee Restaurant ».",
         "Nom du site arabe": "",
         "Sous-type": "",
         "État": "",
@@ -10633,7 +10633,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Nom annoncé par le lieu (page du lieu, consultée le 11 octobre 2026)",
         "osm_ref": "",
         "maps_ref": "https://maps.app.goo.gl/wCX8ZUd8Vdiu9tiz7",
         "Téléphone": "+216 29 612 746",
@@ -10641,12 +10641,13 @@
         "Facebook": "https://www.facebook.com/p/Santorini-Sidi-Mahrez-Djerba-Coffee-Restaurant-100063891224519/?locale=fr_FR",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-12",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -10706,11 +10707,33 @@
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
         "Zone": "Arkou",
-        "description": "Restaurant situé en bord de mer, sur la plage",
+        "description": "Restaurant en bord de mer à Arkou, sur la plage, près de la base nautique.\nOpenStreetMap l'indique sous le nom La Lagune (en arabe : السقية), avec une cuisine de fruits de mer, de fish and chips et de plats régionaux, et un coin café ; le paiement y est accepté en espèces et par carte.\nGoogle Maps indique un budget de 40 à 50 TND par personne (estimation d'utilisateurs, 2026).",
         "accessPoint": [
           11.0583524,
           33.7886538
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Budget par personne : estimation affichée par Google Maps, consultée le 11 octobre 2026",
+        "osm_ref": "node/9579298515",
+        "maps_ref": "https://maps.app.goo.gl/uzPV8GkC1LFuuHDr9",
+        "commons_ref": "",
+        "Téléphone": "+216 54 440 422",
+        "Horaires": "",
+        "Facebook": "https://www.facebook.com/profile.php?id=100063471673975",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-10-11",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
