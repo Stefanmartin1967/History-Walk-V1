@@ -11,6 +11,7 @@
 // notable...).
 
 import { hwAlert } from './modal.js';
+import { isMobileView } from './mobile-state.js';
 
 const NOTE_KEY = 'hw_version_note_seen';
 
@@ -31,6 +32,20 @@ const NOTE_BODY = `
     en français varie selon les sources.</p>
 `;
 
+// Orientation (note de test 13, texte validé par Stefan le 11/10/2026) : le
+// visiteur arrivait sans savoir par où commencer. Une phrase dans cette note
+// plutôt qu'un 2e écran au démarrage (décision du 09/08/2026). La boussole
+// (écran « Que voulez-vous faire ? ») n'existe que sur PC : la phrase qui la
+// cite n'est pas montrée sur téléphone.
+const START_HINT = `<strong>Pour commencer :</strong> ouvrez un circuit, ou
+    cherchez un lieu par son nom.`;
+const START_HINT_DESKTOP = "La boussole, en haut, propose d'autres façons de commencer.";
+
+function buildBody() {
+    const hint = isMobileView() ? START_HINT : `${START_HINT} ${START_HINT_DESKTOP}`;
+    return `${NOTE_BODY}    <p>${hint}</p>`;
+}
+
 function getSeenVersion() {
     return parseInt(localStorage.getItem(NOTE_KEY) || '0', 10);
 }
@@ -40,7 +55,7 @@ export function showVersionNoteIfNeeded() {
 
     hwAlert({
         title: NOTE_TITLE,
-        body: NOTE_BODY,
+        body: buildBody(),
         label: "J'ai compris",
     }).then(() => {
         localStorage.setItem(NOTE_KEY, String(NOTE_VERSION));
