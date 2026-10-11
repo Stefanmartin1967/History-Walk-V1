@@ -6795,9 +6795,9 @@
         "Nom du site arabe": "ورشة الفخار تامورت",
         "Catégorie": "Artisanat",
         "Zone": "Guellala",
-        "Source": "",
+        "Source": "Enseigne de l'atelier, d'après une photographie publiée sur Google Maps (mai 2026)\nNom et coordonnées annoncés par le lieu le 5 octobre 2026",
         "HW_ID": "HW-01K77WPE6KC7BYPZ2982MZ1BQ6",
-        "description": "Voir également : Poterie Habib Ben Mahmoud à 150 mètres",
+        "description": "Atelier de poterie à Guellala, que son enseigne nomme Poterie Tamourt et que sa page présente sous le nom stylisé T'amour'T.\nOpenStreetMap y indique une attraction touristique nommée Poterie Zaitouna. À une centaine de mètres, OpenStreetMap indique aussi la Poterie Habib Ben Mahmoud.",
         "info_gpx": "Plusieurs potiers dans la rue, flânerie recommandée",
         "accessPoint": [
           10.8538377,
@@ -6810,17 +6810,18 @@
         "Prix_TND": 0,
         "osm_ref": "node/12164879419",
         "maps_ref": "https://maps.app.goo.gl/r1rV4dTvPNuEL9rA9",
-        "Téléphone": "",
+        "Téléphone": "+216 97 290 211",
         "Horaires": "",
-        "Facebook": "",
+        "Facebook": "https://www.facebook.com/profile.php?id=100087997754433",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -17763,12 +17764,12 @@
       "properties": {
         "Nom du site FR": "Jardin Magid",
         "Catégorie": "Curiosité",
-        "description": "Jardin le long du circuit menant à Sidi Jmour",
+        "description": "Jardin indiqué sous le nom de Magid sur Google Maps, à El Groa, dans une zone de cultures.\nSa nature, son statut et son accès restent à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-20",
         "mapsChecked": true,
@@ -17779,7 +17780,19 @@
           10.7682095,
           33.8348446
         ],
-        "Zone": "El Groa"
+        "Zone": "El Groa",
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Source": "",
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/cPV8G1pgVEyc7vkc7",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": ""
       }
     },
     {
