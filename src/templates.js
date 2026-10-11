@@ -7,6 +7,7 @@ import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
 import { parseSources } from './source-format.mjs';
 import { renderDescriptionHtml } from './description-format.mjs';
+import { isDescriptionVisible } from './description-visibility.js';
 
 // Devise de la destination active. Seul consommateur : buildDetailsPanelHtml ci-dessous.
 function getCurrentCurrency() {
@@ -252,10 +253,11 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // matériau de travail sourcé (citation Jalel brute, transcription vidéo...)
     // tant que l'admin ne l'a pas explicitement publiée. Reste visible pour
     // l'admin (avec l'étiquette « Brouillon »), masqué pour tout le monde
-    // d'autre. Le générateur de pages SEO applique la même règle
-    // (scripts/generate-poi-pages.mjs) pour ne pas indexer du texte de travail.
+    // d'autre — sauf pour l'utilisateur qui l'a écrite lui-même (règle complète :
+    // isDescriptionVisible). Le générateur de pages SEO publie les seules
+    // descriptions publiées (scripts/generate-poi-pages.mjs).
     const isDescPublic = !!allProps.descriptionPublic;
-    const descVisible = hasLongDesc && (isDescPublic || state.isAdmin);
+    const descVisible = hasLongDesc && isDescriptionVisible(feature);
 
     // Info GPX (texte exporté dans le <desc> des waypoints — visible côté
     // Wikiloc / GPX Studio). Clé canonique `info_gpx` lowercase depuis le
