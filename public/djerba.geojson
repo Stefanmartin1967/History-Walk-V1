@@ -1566,7 +1566,7 @@
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563634489.jpg",
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563636230.jpg"
         ],
-        "description": "Mosquée de Mezraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 58 sous le nom de Ben Maazouz : mosquée wahbite abandonnée, datée de 700 de l'hégire, soit 1300. La liste Wikipédia des mosquées de Djerba la donne également pour abandonnée, du 13ᵉ siècle.\nUn article de La Presse (26 août 2025) la rattache au 5e siècle de l'hégire (1009-1106) et la range parmi les mosquées ibadites dites « Ghaba », à rôle éducatif, religieux et juridique. Elle comprendrait une petite salle de prière, un logement pour étudiants, une cuisine et un puits.\nUn chantier-école de restauration s'est tenu du 10 au 25 août 2025, avec une cinquantaine d'étudiants en architecture de l'ESAD et de l'ENAU, sous la direction de Mouldi Chaabani, directeur de l'ESAD (Tunisie.fr). La Presse mentionne aussi des ingénieurs et des mécènes locaux, et des dégradations antérieures (fouilles à la recherche de trésors, vol de pierres).\nLes datations varient selon les sources.",
+        "description": "Mosquée de Mezraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 58 sous le nom de Ben Maazouz : mosquée wahbite abandonnée, datée de 700 de l'hégire, soit 1300. La liste Wikipédia des mosquées de Djerba la donne également pour abandonnée, du 13ᵉ siècle.\nUn article de La Presse (26 août 2025) la rattache au 5ᵉ siècle de l'hégire (1009-1106) et la range parmi les mosquées ibadites dites « Ghaba », à rôle éducatif, religieux et juridique. Elle comprendrait une petite salle de prière, un logement pour étudiants, une cuisine et un puits.\nUn chantier-école de restauration s'est tenu du 10 au 25 août 2025, avec une cinquantaine d'étudiants en architecture de l'ESAD et de l'ENAU, sous la direction de Mouldi Chaabani, directeur de l'ESAD (Tunisie.fr). La Presse mentionne aussi des ingénieurs et des mécènes locaux, et des dégradations antérieures (fouilles à la recherche de trésors, vol de pierres).\nLes datations varient selon les sources.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
@@ -11586,7 +11586,7 @@
         "Catégorie": "Mausolée",
         "Zone": "Midoun",
         "HW_ID": "HW-01KKS462NFDJ7E80WSWZ9TK9R7",
-        "description": "Qubba située dans un cimetière familial à Khazroun ; sa porte a été murée récemment à la suite d'une dégradation.",
+        "description": "Qubba (mausolée à coupole) dans un cimetière familial de Khazroun, près de Midoun.\nSelon une spécialiste des mosquées de Djerba, elle se nomme Mrabet Slimane ; sa porte a été murée à la suite d'une dégradation.",
         "accessPoint": [
           10.9727629,
           33.8140752
@@ -11598,7 +11598,7 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Observation sur place, le 19 mars 2026\nTémoignage écrit d'une spécialiste des mosquées de Djerba (message privé), 17 septembre 2026",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -11608,7 +11608,7 @@
         "maps_ref": "https://maps.app.goo.gl/244Ah1MaW2uovumh7",
         "lat": 33.81391470584298,
         "lng": 10.97268506884575,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "photos": [
           "photos/poi_HW-01KKS462NFDJ7E80WSWZ9TK9R7_1786799982400.jpg"
         ],
@@ -11616,7 +11616,8 @@
         "osmCheckedDate": "2026-08-17",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": false
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -14190,13 +14191,19 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "description": "Lieux renseigné par Petr sur OSM comme \"Tombe endommagée\" \nSitué à proximité de la Mosquée Sidi Wahlan",
-        "Source": "",
+        "description": "Mausolée d'Arkou, à une centaine de mètres de la mosquée Sidi Wahlan.\nOpenStreetMap y indique un mausolée, décrit comme « marabout (tombe endommagée) ».\nSa nature et son nom restent à confirmer sur place.\nPetr Jenč - OpenStreetMap, 2025",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/1409960012",
         "maps_ref": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "descriptionPublic": false
+        "descriptionPublic": false,
+        "commons_ref": "",
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
