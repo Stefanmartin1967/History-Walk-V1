@@ -3,6 +3,7 @@ import { state, POI_CATEGORIES, APP_VERSION } from './state.js';
 import { getPoiId, applyFilters, updatePoiData, updatePoiCoordinates, deletePoi } from './data.js';
 import { restoreCircuit, saveAppState } from './database.js';
 import { escapeXml } from './utils.js';
+import { CONTACT_EMAIL } from './config.js';
 import { eventBus } from './events.js';
 import { clearCircuit, navigatePoiDetails, loadCircuitById } from './circuit.js';
 import { toggleCircuitCreationMode } from './ui-circuit-editor.js';
@@ -142,7 +143,7 @@ export function initializeDomReferences() {
             const subject = encodeURIComponent("Heripia - Signalement / Contact");
             // Version en fin de message : dit d'emblée sur quelle livraison porte le signalement.
             const body = encodeURIComponent(`Bonjour,\n\nJe souhaite signaler un problème ou faire une suggestion :\n\n\n\n—\nVersion : ${APP_VERSION}`);
-            window.location.href = `mailto:history.walk.007@gmail.com?subject=${subject}&body=${body}`;
+            window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
         });
     }
 

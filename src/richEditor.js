@@ -1,7 +1,8 @@
 
 import L from 'leaflet';
 import { map, startMarkerDrag } from './map.js';
-import { state, POI_CATEGORIES, getActiveDestinationCountry } from './state.js';
+import { state, POI_CATEGORIES, APP_VERSION, getActiveDestinationCountry, getActiveDestinationName } from './state.js';
+import { buildNewPlaceSuggestion } from './suggestion-email.js';
 import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates, updatePoiData } from './data.js';
 import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, normalizeCommonsCategory, isOsmChecked, isMapsChecked, isInJalelDirectoryScope, formatPhone } from './utils.js';
@@ -1481,15 +1482,12 @@ async function handleSave(validate = false) {
         stripUnseenFieldsForUser(data, { descriptionMasked });
     }
 
-    // Prompt for suggestion (Workflow update)
-    const isNew = currentMode === 'CREATE';
-    const msg = isNew
-        ? "Voulez-vous suggérer ce nouveau POI par email à l'administrateur ?"
-        : "Voulez-vous suggérer cette modification par email à l'administrateur ?";
-
-    // Dialog "suggérer par email" — ignoré en mode admin (évite aussi le conflit avec le modal CC)
-    if (!state.isAdmin && await showConfirm("Suggestion", msg, "Oui, suggérer", "Non, enregistrer seul", false)) {
-        handleEmailSuggestion();
+    // Suggestion à l'admin par e-mail — seulement à la CRÉATION d'un lieu
+    // (Stefan, 11/10/2026 : la poser à chaque modification de SA copie était du
+    // bruit). Jamais en mode admin (évite aussi le conflit avec le modal CC).
+    if (!state.isAdmin && currentMode === 'CREATE'
+        && await showConfirm("Suggestion", "Voulez-vous suggérer ce nouveau lieu à l'administrateur par e-mail ?", "Oui, suggérer", "Non, enregistrer seul", false)) {
+        handleEmailSuggestion(data);
     }
 
     // try/finally : on garantit la fermeture de la modale même si executeEdit
@@ -1674,45 +1672,32 @@ async function executeEdit(data, validated = false) {
     }
 }
 
-function handleEmailSuggestion() {
-    const data = {
-        'Nom du site FR': getValue(DOM_IDS.INPUTS.NAME_FR),
-        'Nom du site arabe': getValue(DOM_IDS.INPUTS.NAME_AR),
-        'Catégorie': getValue(DOM_IDS.INPUTS.CATEGORY),
-        'Sous-type': getValue(DOM_IDS.INPUTS.SUBTYPE),
-        'État': getValue(DOM_IDS.INPUTS.STATE),
-        'Accès': getValue(DOM_IDS.INPUTS.ACCESS),
-        'Zone': getValue(DOM_IDS.INPUTS.ZONE),
-        'info_gpx': getValue(DOM_IDS.INPUTS.DESC_SHORT),
-        'description': getValue(DOM_IDS.INPUTS.DESC_LONG),
-        'notes': getValue(DOM_IDS.INPUTS.NOTES),
-        'Temps_minutes': (parseInt(getValue(DOM_IDS.INPUTS.TIME_H)) || 0) * 60 + (parseInt(getValue(DOM_IDS.INPUTS.TIME_M)) || 0),
-        'Prix_TND': parseFloat(getValue(DOM_IDS.INPUTS.PRICE)) || 0,
-        'Source': getValue(DOM_IDS.INPUTS.SOURCE),
-        // Normalisé en « type/id » : l'admin colle l'URL OSM, on stocke l'identité.
-        'osm_ref': normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF)),
-        'maps_ref': getValue(DOM_IDS.INPUTS.MAPS_REF).trim(),
-        'Téléphone': formatPhone(getValue(DOM_IDS.INPUTS.PHONE), getActiveDestinationCountry()),
-        'Horaires': getValue(DOM_IDS.INPUTS.HOURS),
-        'Facebook': getValue(DOM_IDS.INPUTS.FACEBOOK),
-        'verified': getVerified(),
-        'introuvableCarte': getMapMissing(),
-        'descriptionPublic': getDescPublic(),
-        'osmChecked': isOsmChecked({ osmChecked: getOsmChecked(), osm_ref: getValue(DOM_IDS.INPUTS.OSM_REF) }),
-        'mapsChecked': isMapsChecked({ mapsChecked: getMapsChecked(), maps_ref: getValue(DOM_IDS.INPUTS.MAPS_REF) }),
-        'mapsHasPhoto': getMapsHasPhoto(),
-        'jalelChecked': getJalelChecked()
-    };
-
-    const mapName = state.currentMapId ? (state.currentMapId.charAt(0).toUpperCase() + state.currentMapId.slice(1)) : 'Inconnue';
-    const poiName = data['Nom du site FR'] || 'Lieu';
-
-    const subject = encodeURIComponent(`Heripia - Modification [${mapName}] : ${poiName}`);
-
-    const bodyText = `Bonjour,\n\nVoici une suggestion de modification pour le lieu "${poiName}" sur la carte ${mapName}.\n\nDonnées JSON :\n${JSON.stringify(data, null, 2)}\n\nCordialement,`;
-    const body = encodeURIComponent(bodyText);
-
-    const mailtoLink = `mailto:history.walk.007@gmail.com?subject=${subject}&body=${body}`;
-
-    window.open(mailtoLink, '_blank');
+// E-mail lisible (nom, catégorie, position, source…) — cf. suggestion-email.js.
+// Pas de notes personnelles, pas de champs de curation, plus de JSON brut.
+// Construit depuis `data` (lu AVANT la question) et non en relisant le
+// formulaire : la fenêtre de confirmation remplace la modale de l'éditeur,
+// les champs relus après étaient vides — l'e-mail partait sans nom ni
+// catégorie (constaté le 11/10/2026, défaut antérieur à ce changement).
+function handleEmailSuggestion(data) {
+    const { url } = buildNewPlaceSuggestion({
+        fields: {
+            name: data['Nom du site FR'],
+            nameAr: data['Nom du site arabe'],
+            category: data['Catégorie'],
+            subtype: data['Sous-type'],
+            etat: data['État'],
+            acces: data['Accès'],
+            source: data['Source'],
+            mapsUrl: mapsPlaceUrl(data['maps_ref']) || '',
+            osmUrl: osmObjectUrl(data['osm_ref']) || '',
+            phone: data['Téléphone'],
+            hours: data['Horaires'],
+            facebook: data['Facebook'],
+            description: data['description'],
+        },
+        destination: getActiveDestinationName() || state.currentMapId || '',
+        coords: currentDraftCoords,
+        version: APP_VERSION,
+    });
+    window.open(url, '_blank');
 }
