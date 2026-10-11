@@ -26,7 +26,7 @@ vi.mock('../src/utils.js', () => ({
 
 import { state } from '../src/state.js';
 import { saveAppState, savePoiData, deletePoiData } from '../src/database.js';
-import { persistPoiEdit } from '../src/poi-persistence.js';
+import { persistPoiEdit, stripUnseenFieldsForUser } from '../src/poi-persistence.js';
 
 function poi(id, props = {}) {
     return { type: 'Feature', properties: { HW_ID: id, ...props }, geometry: { type: 'Point', coordinates: [10, 33] } };
@@ -192,5 +192,38 @@ describe('persistPoiEdit — POI CUSTOM (properties + customPois, overlay purgé
         expect(savePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-4', { photos: ['a.jpg'] });
         // L'ordre garantit le replace : delete AVANT save.
         expect(deletePoiData.mock.invocationCallOrder[0]).toBeLessThan(savePoiData.mock.invocationCallOrder[0]);
+    });
+});
+
+// Non-admin qui modifie une fiche existante (11/10/2026) : il n'enregistre pas
+// ce qu'il ne voit pas — sinon l'état du jour se fige dans son overlay et masque
+// ce que l'admin publiera ensuite (description publiée plus tard, existence
+// confirmée…).
+describe('stripUnseenFieldsForUser', () => {
+    const form = () => ({
+        'Nom du site FR': 'Mosquée Test', 'Catégorie': 'Mosquée', description: '',
+        verified: false, introuvableCarte: false, descriptionPublic: false,
+        osmChecked: true, osmCheckedDate: '2026-10-11', mapsChecked: false, mapsHasPhoto: false, jalelChecked: true,
+        commons_ref: 'Category:Test',
+    });
+
+    it('retire les champs réservés à l\'admin (curation, Commons), garde les champs visibles', () => {
+        const data = stripUnseenFieldsForUser(form(), { descriptionMasked: false });
+        expect(Object.keys(data).sort()).toEqual(['Catégorie', 'Nom du site FR', 'description']);
+    });
+
+    it('description officielle masquée et laissée vide : rien d\'enregistré', () => {
+        const data = stripUnseenFieldsForUser(form(), { descriptionMasked: true });
+        expect('description' in data).toBe(false);
+    });
+
+    it('description masquée mais il a écrit la sienne : enregistrée', () => {
+        const data = stripUnseenFieldsForUser({ ...form(), description: 'Mon texte' }, { descriptionMasked: true });
+        expect(data.description).toBe('Mon texte');
+    });
+
+    it('description non masquée vidée par lui : le vide est enregistré (il efface son texte)', () => {
+        const data = stripUnseenFieldsForUser(form(), { descriptionMasked: false });
+        expect(data.description).toBe('');
     });
 });
