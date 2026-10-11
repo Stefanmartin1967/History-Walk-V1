@@ -24,8 +24,8 @@ const NOTE_BODY = `
     <p>Heripia est encore en phase d'amélioration.</p>
     <p><strong>Chaque site patrimonial a été vérifié sur Google Maps ou
     OpenStreetMap</strong> ; pour les mosquées, la liste des mosquées de Djerba
-    sur Wikipédia a aussi servi. Vous pouvez ouvrir un lieu sur ces services
-    directement depuis sa fiche.</p>
+    sur Wikipédia a aussi servi. Depuis la fiche d'un lieu, vous pouvez l'ouvrir
+    directement sur Google Maps ou OpenStreetMap.</p>
     <p><strong>Le nom affiché peut être imprécis.</strong> Google Maps et
     OpenStreetMap se contredisent parfois, et la transcription d'un nom arabe
     en français varie selon les sources.</p>

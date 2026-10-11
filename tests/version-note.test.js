@@ -90,4 +90,13 @@ describe('showVersionNoteIfNeeded — contenu', () => {
         expect(body).not.toContain('Chaque lieu a été vérifié');
         expect(body).toContain('Wikipédia');
     });
+
+    it('nomme les deux services qu\'on peut ouvrir depuis la fiche — pas Wikipédia (remarque de Stefan, 11/10/2026)', () => {
+        showVersionNoteIfNeeded();
+        const { body } = hwAlert.mock.calls[0][0];
+        // « sur ces services », placé juste après Wikipédia, laissait croire
+        // qu'on pouvait aussi y ouvrir le lieu : la fiche n'a que Maps et OSM.
+        expect(body).not.toContain('ces services');
+        expect(body).toMatch(/l'ouvrir\s+directement sur Google Maps ou OpenStreetMap/);
+    });
 });
