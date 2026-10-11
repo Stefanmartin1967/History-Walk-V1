@@ -26,4 +26,10 @@ describe('aides — vocabulaire', () => {
         expect(text).not.toMatch(/\bPOIs?\b/);
         expect(text).not.toMatch(/\(Admin\b/);
     });
+
+    it.each(entries)('%s : plus de « visite guidée » (bouton « Que faire ? », 11/10/2026)', (_, value) => {
+        const text = textOf(value);
+        expect(text).not.toMatch(/visite guidée/i);
+        expect(text).not.toMatch(/Importer photos GPS/);
+    });
 });

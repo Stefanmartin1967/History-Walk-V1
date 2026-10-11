@@ -38,8 +38,8 @@ Format : **JPEG**. Vérifiez que vos photos contiennent bien leur **position** �
 « Préparer ses photos ».
 
 ### 1 · Ouvrir l'import
-Menu **Outils → « import photos »** (ou la carte « Importer photos GPS » de la visite
-guidée). Choisissez un lot de photos **.jpg** : Heripia lit leur position et ouvre la
+Menu **Outils → « Importer des photos »** (ou la carte « Associer mes photos aux lieux »
+de « Que faire ? »). Choisissez un lot de photos **.jpg** : Heripia lit leur position et ouvre la
 **fenêtre d'organisation**.
 
 ### 2 · Comprendre les groupes

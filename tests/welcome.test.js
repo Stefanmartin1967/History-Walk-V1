@@ -17,7 +17,7 @@ afterEach(() => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Le déclenchement automatique au 1er lancement a été retiré : welcome.js ne
-// sert plus que le bouton « Visite guidée » (la note de version prend le relais
+// sert plus que le bouton « Que faire ? » (la note de version prend le relais
 // au boot — cf. version-note.test.js). Il n'y a donc plus qu'un seul mode
 // d'affichage, et plus de gate localStorage dans ce module.
 describe('showWelcomeAgain — affichage', () => {
@@ -128,6 +128,36 @@ describe('choix utilisateur — émission eventBus + fadeout', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+describe("bouton « Que faire ? » (#btn-tour) — suit l'écran", () => {
+    const addOpener = () => {
+        const btn = document.createElement('button');
+        btn.id = 'btn-tour';
+        btn.setAttribute('aria-expanded', 'false');
+        document.body.appendChild(btn);
+        return btn;
+    };
+
+    it("aria-expanded passe à true à l'ouverture, à false sur « Fermer »", () => {
+        const btn = addOpener();
+        showWelcomeAgain();
+        expect(btn.getAttribute('aria-expanded')).toBe('true');
+        document.getElementById('welcome-skip').click();
+        expect(btn.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('aria-expanded repasse à false quand on choisit une carte', () => {
+        const btn = addOpener();
+        showWelcomeAgain();
+        document.querySelector('[data-choice="legend"]').click();
+        expect(btn.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it("sans bouton dans la page (téléphone), l'écran s'ouvre quand même", () => {
+        expect(() => showWelcomeAgain()).not.toThrow();
+        expect(document.getElementById('welcome-overlay')).not.toBeNull();
+    });
+});
+
 describe('accessibilité — attributs ARIA', () => {
     it('la modal a role=dialog et aria-modal=true', () => {
         showWelcomeAgain();

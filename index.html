@@ -45,7 +45,7 @@
          dès le 1er paint du #hw-boot-splash. -->
     <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css?v=8.36">
+    <link rel="stylesheet" href="style.css?v=8.38">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
          Lien direct car les @imports CSS dans style.css sont cachés par Vite en
          dev — voir note historique sur le boot splash en bas de style.css. -->
@@ -115,6 +115,17 @@
                  après loadDestinationsConfig(). Plus de section "Bientôt" :
                  toute destination présente dans destinations.json est cliquable. -->
             <div class="hw-dest-menu" id="hw-dest-menu" role="menu" hidden></div>
+
+            <div class="hw-topbar-separator" aria-hidden="true"></div>
+
+            <!-- « Que faire ? » (handoff Claude Design, 11/10/2026) : ouvre l'écran
+                 « Que voulez-vous faire ? » (welcome.js). Libellé visible : l'ancienne
+                 boussole seule, info-bulle « Visite guidée », ne disait ni quoi ni où. -->
+            <button id="btn-tour" class="hw-topbar-action" type="button"
+                    title="Que faire ?" aria-label="Que faire ?"
+                    aria-haspopup="dialog" aria-expanded="false">
+                <i data-lucide="layout-grid"></i><span>Que faire ?</span>
+            </button>
         </div>
 
         <div class="topbar-center">
@@ -135,10 +146,9 @@
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
 
-            <!-- Cluster "découverte/préférences" : Visite guidée, Thème
-                 (Légende déplacée dans les contrôles de carte — PR harmonisation PC) -->
-            <button class="btn" id="btn-tour" title="Visite guidée"
-                    aria-label="Visite guidée"><i data-lucide="compass"></i></button>
+            <!-- Cluster « préférences » : moment, langue des noms, plein écran
+                 (« Que faire ? » est passé à gauche ; la Légende vit dans les
+                 contrôles de carte). -->
 
             <!-- Bascule de moment (segmenté persistant) : 4 moments en émojis,
                  toujours visibles dans la lisière (affordance persistante, pas un
@@ -165,11 +175,8 @@
                         title="الأسماء بالعربية" aria-label="Noms en arabe" aria-pressed="false"><span class="scr">ع</span></button>
             </div>
 
-            <!-- Bouton plein écran (Fullscreen API). État/icône pilotés par
-                 src/fullscreen-toggle.js — bascule maximize ↔ minimize. -->
-            <button class="btn" id="btn-fullscreen-toggle" type="button"
-                    title="Plein écran" aria-label="Passer en plein écran"
-                    aria-pressed="false"><i data-lucide="maximize"></i></button>
+            <!-- (Bouton plein écran déplacé dans le menu Outils, section
+                 « Affichage », le 11/10/2026 : place pour « Que faire ? ».) -->
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
 
@@ -213,6 +220,16 @@
                     </button>
                     <button class="tools-menu-item" id="btn-sync-share">
                         <i data-lucide="qr-code"></i> Partager Progression
+                    </button>
+
+                    <!-- Plein écran (Fullscreen API) : était dans la barre du haut
+                         jusqu'au 11/10/2026, déplacé ici pour faire place à
+                         « Que faire ? ». Libellé et icône pilotés par
+                         src/fullscreen-toggle.js (maximize ↔ minimize). -->
+                    <div class="tools-menu-section-title">Affichage</div>
+                    <button class="tools-menu-item" id="btn-fullscreen-toggle" type="button"
+                            aria-pressed="false">
+                        <i data-lucide="maximize"></i> Plein écran
                     </button>
 
                     <!-- (Réintroduction du bouton « Sauvegarder » en PR2,

@@ -51,6 +51,7 @@ export function refreshFiltersButton() {
 
     const n = countActiveSections();
     label.textContent = n > 0 ? `Filtres (${n})` : 'Filtres';
+    fitTourLabel(); // « Filtres (n) » change de largeur → la place disponible aussi
     btn.classList.toggle('is-active', n > 0);
     // a11y : aria-pressed reflète l'état "filtres appliqués" (au moins 1 section
     // active). aria-expanded reflète l'ouverture du panneau (mis à jour ailleurs
@@ -175,6 +176,7 @@ export function renderDestinationMenu(destinations, activeMapId) {
         const { code } = inferCountryAndFlag(activeDest);
         if (selectorName) selectorName.textContent = activeDest.name || activeMapId;
         if (selectorFlagEl) selectorFlagEl.textContent = code;
+        fitTourLabel(); // le nom de la destination change la place disponible
     }
 
     // Génère le HTML du menu : entrée active en premier, puis les autres.
@@ -302,13 +304,38 @@ function setupNamesToggle() {
     updateNamesToggleActive();
 }
 
-// ─── Boutons directs topbar (Visite guidée) ─────────────────────────────────
+// ─── Boutons directs topbar (« Que faire ? ») ───────────────────────────────
 // Le bouton « Mon Espace » topbar a été retiré en PR2 dissolution (06/06/2026) —
 // la Sauvegarde a migré dans le menu Outils, cf. ui.js btn-tools-backup.
 
 function setupTourButton() {
     const btn = document.getElementById('btn-tour');
     if (btn) btn.addEventListener('click', () => showWelcomeAgain());
+
+    // Repli du libellé quand la barre manque de place (cf. fitTourLabel) :
+    // à chaque changement de taille de la barre, et une fois les polices
+    // chargées (elles changent la largeur des libellés).
+    const bar = document.querySelector('.topbar');
+    if (btn && bar && typeof ResizeObserver === 'function') {
+        new ResizeObserver(fitTourLabel).observe(bar);
+    }
+    document.fonts?.ready?.then(fitTourLabel);
+    fitTourLabel();
+}
+
+// « Que faire ? » : la barre du haut n'a que la largeur de la carte (fenêtre
+// moins le panneau latéral). Mesuré le 11/10/2026 : à 1366 px elle tient de
+// justesse avec le libellé, à 1280 px non. Plutôt qu'un seuil en px, fragile
+// (nom de la destination, « Filtres (n) »…), on MESURE : libellé déplié, la
+// barre déborde-t-elle ? Si oui, il se replie (icône encadrée + info-bulle).
+// Observer la barre seule ne boucle pas : sa largeur ne dépend pas de son
+// contenu, seul son débordement en dépend.
+function fitTourLabel() {
+    const bar = document.querySelector('.topbar');
+    const btn = document.getElementById('btn-tour');
+    if (!bar || !btn) return;
+    btn.classList.remove('is-compact');
+    if (bar.scrollWidth > bar.clientWidth) btn.classList.add('is-compact');
 }
 
 // ─── Coordination des popups topbar (1 seul ouvert à la fois) ─────────────

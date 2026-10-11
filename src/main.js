@@ -202,7 +202,7 @@ async function initializeApp() {
         // Lancement unique et propre de la carte
         await loadAndInitializeMap();
 
-        // Câblage du choix d'usage (bouton "Visite guidée" de la topbar)
+        // Câblage du choix d'usage (bouton « Que faire ? » de la topbar)
         setupWelcomeActions();
 
         // Note de version (1er lancement, puis à chaque changement important)

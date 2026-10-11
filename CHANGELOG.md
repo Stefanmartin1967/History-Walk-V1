@@ -6,6 +6,24 @@
 
 ---
 
+- BOUTON « QUE FAIRE ? » DANS LA BARRE DU HAUT, PLEIN ÉCRAN DANS LE MENU OUTILS (v3.7.432) — **Handoff Claude Design « retouches testeurs », sujets 1 et 2**. Libellé, option A et correction du guide validés par Stefan le 11/10/2026. PC seulement.
+  - **Bouton** : l'écran « Que voulez-vous faire ? » s'ouvrait par une boussole **sans texte**, avec l'info-bulle « Visite guidée ». Il s'ouvre désormais par un bouton **« Que faire ? »**, avec un libellé visible et une icône `layout-grid`, encadré (papier et filet), **à gauche** juste après le sélecteur de destination. États : survol, focus clavier, écran ouvert (`aria-expanded`, posé par `welcome.js`, fond terracotta léger). En PWA installée, il fait 32 px de haut.
+  - **Problème de place, mesuré** : la barre du haut n'a que la largeur de la carte (fenêtre moins le panneau latéral). Avec le bouton tel que dessiné, elle débordait de **105 px à 1366 px** (portable courant) et de 165 px à 1280 px : le bouton Outils passait par-dessus l'onglet « Mes Circuits ». Elle débordait **déjà de 29 px à 1280 px** avant ce changement.
+  - **Correctif (option A, choix de Stefan)** :
+    - le bouton **plein écran passe dans le menu Outils**, nouvelle section « Affichage ». Son libellé suit l'état (« Plein écran » / « Quitter le plein écran »). Chrome ou Google Docs rangent aussi le plein écran dans un menu ; le prix est une découverte moins immédiate pour qui ne connaît pas F11 ;
+    - l'espacement de la zone gauche passe de 16 à 8 px ;
+    - la recherche peut descendre à 170 px au lieu de 200 ;
+    - le libellé **se replie tout seul** (icône encadrée, info-bulle « Que faire ? ») quand la barre déborde. On mesure le débordement réel plutôt qu'un seuil en pixels, qui casserait dès que « Filtres (n) » ou le nom de la destination change de longueur (`topbar-v2.js`, `fitTourLabel`).
+  - **Mesuré après correctif** :
+    - 1536 px : libellé visible, aucun débordement ;
+    - 1366 px : libellé visible, aucun débordement ;
+    - 1280 px : icône seule, aucun débordement (le débordement préexistant disparaît) ;
+    - 1024 px : la barre déborde encore de 244 px, contre environ 280 avant. C'est un problème de la barre elle-même, à traiter avec Claude Design.
+  - **Illustration « Créer un nouveau lieu »** (sujet 2) : carte pliée avec itinéraire en pointillé, épingle posée et pastille « + ».
+  - **Guide « Importer des photos » corrigé**, ainsi que sa source `docs/aide-import-photos.md`. Il renvoyait à « Outils → « import photos » » et à « la carte « Importer photos GPS » de la visite guidée ». Les vrais noms sont « Importer des photos » et « Associer mes photos aux lieux » de « Que faire ? ».
+
+  **Vérifié en local** : mesures ci-dessus ; l'écran s'ouvre et l'état du bouton suit ; menu Outils : Voyage / Affichage / Support, avec l'entrée « Plein écran ». Le vrai passage en plein écran n'a pas pu être testé, car le navigateur le refuse quand c'est un script qui clique : un test couvre le libellé. Cache CSS : `style.css?v=8.38`. Nouveaux tests : repli du libellé, état du bouton, entrée plein écran ; aucune aide ne cite plus la « visite guidée ».
+
 - AIDES LISIBLES EN THÈME NUIT, PETITES CAPITALES AUSSI (v3.7.431) — **Note de test 3** (03/10/2026), **handoff Claude Design « retouches testeurs », sujet 4**, accepté par Stefan le 11/10/2026.
   - **Encadré d'avertissement des aides** (`.help-callout`) : son fond était un ambre crème **fixe** (`--hw-amber-soft` = `#F7ECD2`), qui ne suivait pas le thème, sous un texte qui le suit (`--ink`, presque blanc en Nuit). Contraste **mesuré à 1,08:1** en Nuit, texte quasi invisible (étape 6 de « Associer mes photos »). Le fond et le filet suivent désormais le moment (`--brand-soft`, `--brand`), et l'avertissement est porté par une **icône** `alert-triangle` plutôt que par une couleur. Contraste mesuré en Nuit : **11,5:1**.
   - **Titres de section « avertissement »** : même icône, couleur `--brand-ink`. Contraste mesuré en Nuit : 6,9:1.
