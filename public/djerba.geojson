@@ -1329,13 +1329,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée AsSalam",
+        "Nom du site FR": "Mosquée Essalam",
         "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 307 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/374396092",
         "HW_ID": "HW-01K77WPE697PHS21NP9P0JGJ6F",
-        "description": "Jalel n° 307 : « Mosquée Essalem (« paix »). Arkou. Mosquée malékite. 2017. »",
+        "description": "Mosquée du quartier d'Aghir, à Arkou.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 307 sous le nom d'Essalem (« paix ») : mosquée malékite, de 2017. La liste Wikipédia des mosquées de Djerba la situe à Aghir et la date également de 2017.\nAppelée Mosquée Essalam sur OSM.",
         "accessPoint": [
           11.0174196,
           33.7635807
@@ -1353,12 +1353,13 @@
         "introuvableCarte": false,
         "osm_ref": "way/374396092",
         "maps_ref": "https://maps.app.goo.gl/xTGdxBuajp3nkaZf9",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -5756,9 +5757,9 @@
         "Nom du site arabe": "جامع القبلي",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 91 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/452275674",
         "HW_ID": "HW-01K77WPE6HCAQTSR2RW7BNKJCN",
-        "description": "Jalel n° 91 : « Mosquée Guebli. Houmt Larbah, Erriadh. Mosquée ibadite wahbite. 9ᵉ siècle de l'hégire (15ᵉ siècle ap. J.-C.). »",
+        "description": "Mosquée du quartier de Houmt Larbah, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 91 sous le nom de Guebli : mosquée ibadite wahbite, du IXᵉ siècle de l'hégire (XVᵉ siècle). La liste Wikipédia des mosquées de Djerba la donne en activité.\nAppelée El Guebli sur OSM.",
         "accessPoint": [
           10.8485472,
           33.8063976
@@ -5776,12 +5777,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -6139,7 +6141,7 @@
         "Nom du site arabe": "جامع الصدّيق",
         "Catégorie": "Mosquée",
         "Zone": "El Jouamaa",
-        "Source": "",
+        "Source": "OpenStreetMap | https://www.openstreetmap.org/way/435638104\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "HW_ID": "HW-01K77WPE6H3TDARVM1G3V5E49B",
         "description": "Mosquée d'El Jouamaa.\nOpenStreetMap y indique un lieu de culte musulman nommé Sidi Abdellatif (سيدي عبد اللطيف). Google Maps y indique une « Mosquée de Sediq ».\nLe nom reste à confirmer sur place.",
         "accessPoint": [
@@ -7825,10 +7827,10 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée El Lahyani",
-        "Nom du site arabe": "جامع سلاك الاوحال",
+        "Nom du site arabe": "مسجد اللحياني",
         "Catégorie": "Mosquée",
         "Zone": "El Khenensa",
-        "Source": "",
+        "Source": "Plaque à l'entrée de la mosquée, photographie de Rais67, 18 août 2026 (Wikimedia Commons, CC BY 4.0) | https://commons.wikimedia.org/wiki/Category:Sallek_El_Wahline_Mosque\nRépertoire J. Fathallah, n° 249 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/1177397624",
         "HW_ID": "HW-01K77WPE6NGJQHEKJE3M2T5W5Q",
         "accessPoint": [
           10.7982961,
@@ -7838,7 +7840,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 249 — « Sallek Wahline. Khanansa. Mosquée ibadite wahbite abandonnée au profit d'une nouvelle attenante. Ancienne. »",
+        "description": "Mosquée du quartier d'Adeloun, à El Khenensa.\nLa plaque à l'entrée, d'après une photographie publiée sur Commons, indique « مسجد اللحياني » (Mosquée El Lahyani) et le quartier d'Adeloun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 249 sous le nom de Sallek Wahline : mosquée ibadite wahbite, de datation « ancienne », abandonnée au profit d'une nouvelle mosquée attenante. La liste Wikipédia des mosquées de Djerba la donne en activité, sous le nom de Sallek El Wahline / Lahiani.\nAppelée Ellhiani mosquée sur OSM.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1177397624",
@@ -7848,12 +7850,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -9658,11 +9661,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Neuve",
+        "Nom du site FR": "Mosquée El Jadid (Ajim)",
         "Nom du site arabe": "جامع الجديد",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": "",
+        "Source": "Répertoire J. Fathallah, n° 263 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/node/5264075922",
         "HW_ID": "HW-01K77WPE6RHDAFAXAA92EFT8GY",
         "info_gpx": "Mosquée malékite construite au 20ème siècle",
         "accessPoint": [
@@ -9672,7 +9675,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 263 — « Mosquée Jadid. Centre Ajim. Mosquée malékite. 20ᵉ siècle.",
+        "description": "Mosquée du centre d'Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 263 sous le nom de Jadid (« la neuve ») : mosquée malékite, du XXᵉ siècle. La liste Wikipédia des mosquées de Djerba la donne également du XXᵉ siècle, sous le nom d'Ejdid.\nAppelée Mosquée Neuve sur OSM.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/5264075922",
@@ -9682,12 +9685,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -9746,9 +9750,9 @@
         "Nom du site arabe": "جامع العاقل",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": "Répertoire J. Fathallah, n° 79 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 79 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/337593721",
         "HW_ID": "HW-01K77WPE6RM4YJB23YX7AD522S",
-        "description": "Egalement appelée Mosquée de l’ʿAguel. La zaouïa Jdi Saïd serait attenante. Infos à rechercher.\nJalel n° 79 — « Mosquée Aguel. Taghdimes. Mosquée ibadite wahbite ayant subie une récente extension et rénovation",
+        "description": "Mosquée du quartier de Taghdimes, à Erriadh.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 79 sous le nom d'Aguel : mosquée ibadite wahbite, de datation « ancienne », ayant subi une récente extension et rénovation. La liste Wikipédia des mosquées de Djerba la donne en activité.\nAppelée El Aagel sur OSM.",
         "accessPoint": [
           10.8522613,
           33.8280272
@@ -9766,12 +9770,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
