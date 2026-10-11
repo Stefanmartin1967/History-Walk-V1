@@ -1566,7 +1566,7 @@
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563634489.jpg",
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563636230.jpg"
         ],
-        "description": "Mosquée de Mezraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 58 sous le nom de Ben Maazouz : mosquée wahbite abandonnée, datée de 700 de l'hégire, soit 1300. La liste Wikipédia des mosquées de Djerba la donne également pour abandonnée, du XIIIᵉ siècle.\nUn article de La Presse (26 août 2025) la rattache au Ve siècle de l'hégire (1009-1106) et la range parmi les mosquées ibadites dites « Ghaba », à rôle éducatif, religieux et juridique. Elle comprendrait une petite salle de prière, un logement pour étudiants, une cuisine et un puits.\nUn chantier-école de restauration s'est tenu du 10 au 25 août 2025, avec une cinquantaine d'étudiants en architecture de l'ESAD et de l'ENAU, sous la direction de Mouldi Chaabani, directeur de l'ESAD (Tunisie.fr). La Presse mentionne aussi des ingénieurs et des mécènes locaux, et des dégradations antérieures (fouilles à la recherche de trésors, vol de pierres).\nLes datations varient selon les sources.",
+        "description": "Mosquée de Mezraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 58 sous le nom de Ben Maazouz : mosquée wahbite abandonnée, datée de 700 de l'hégire, soit 1300. La liste Wikipédia des mosquées de Djerba la donne également pour abandonnée, du 13ᵉ siècle.\nUn article de La Presse (26 août 2025) la rattache au Ve siècle de l'hégire (1009-1106) et la range parmi les mosquées ibadites dites « Ghaba », à rôle éducatif, religieux et juridique. Elle comprendrait une petite salle de prière, un logement pour étudiants, une cuisine et un puits.\nUn chantier-école de restauration s'est tenu du 10 au 25 août 2025, avec une cinquantaine d'étudiants en architecture de l'ESAD et de l'ENAU, sous la direction de Mouldi Chaabani, directeur de l'ESAD (Tunisie.fr). La Presse mentionne aussi des ingénieurs et des mécènes locaux, et des dégradations antérieures (fouilles à la recherche de trésors, vol de pierres).\nLes datations varient selon les sources.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
@@ -3538,7 +3538,7 @@
         "Zone": "Sedouikech",
         "Source": "https://kapitalis.com/tunisie/2015/07/28/djerba-les-necropoles-puniques-saccagees-pillees-et-profanees/",
         "HW_ID": "HW-01K77WPE6DQEKFWMTWZ1A5XH39",
-        "description": "Les nécropoles puniques de Souk El Guebli au sud-est de l’île de Djerba renferment une douzaine de tombes les mieux conservées de toutes les autres tombes antiques dans l’île, découvertes en partie par le Français Ratel Gontrain suite aux premières fouilles effectuées depuis les années 1950, et les autres par Sami Ben Tahar, archéologue chargé de recherche auprès de l’Institut national du patrimoine (INP), grâce aux multiples fouilles entreprises par lui-même depuis 2004.\n\nS’étendant sur une superficie de 5000 m2, ce site archéologique exceptionnel, constitué de caveaux rupestres remontant au IIIe siècle Av. J.-C., est doté d’un plan original dont les parallèles se trouvent en Orient hellénistique et apporte un témoignage spectaculaire sur l’architecture libyco-punique, fruit d’un brassage culturel édifiant entre le substrat autochtone et l’apport phénicien.\n\nLes nombreuses fouilles effectuées sur ce site ont livré un riche mobilier funéraire constitué de poteries et d’artefacts en d’autres matériaux.",
+        "description": "Les nécropoles puniques de Souk El Guebli au sud-est de l’île de Djerba renferment une douzaine de tombes les mieux conservées de toutes les autres tombes antiques dans l’île, découvertes en partie par le Français Ratel Gontrain suite aux premières fouilles effectuées depuis les années 1950, et les autres par Sami Ben Tahar, archéologue chargé de recherche auprès de l’Institut national du patrimoine (INP), grâce aux multiples fouilles entreprises par lui-même depuis 2004.\n\nS’étendant sur une superficie de 5000 m2, ce site archéologique exceptionnel, constitué de caveaux rupestres remontant au 3ᵉ siècle Av. J.-C., est doté d’un plan original dont les parallèles se trouvent en Orient hellénistique et apporte un témoignage spectaculaire sur l’architecture libyco-punique, fruit d’un brassage culturel édifiant entre le substrat autochtone et l’apport phénicien.\n\nLes nombreuses fouilles effectuées sur ce site ont livré un riche mobilier funéraire constitué de poteries et d’artefacts en d’autres matériaux.",
         "timeH": 0,
         "timeM": 0,
         "price": 0,
@@ -3564,7 +3564,8 @@
         "osmCheckedDate": "2026-08-21",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "commons_ref": ""
       }
     },
     {
@@ -5759,7 +5760,7 @@
         "Zone": "El Groa",
         "Source": "Répertoire J. Fathallah, n° 91 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/452275674",
         "HW_ID": "HW-01K77WPE6HCAQTSR2RW7BNKJCN",
-        "description": "Mosquée du quartier de Houmt Larbah, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 91 sous le nom de Guebli : mosquée ibadite wahbite, du IXᵉ siècle de l'hégire (XVᵉ siècle). La liste Wikipédia des mosquées de Djerba la donne en activité.\nAppelée El Guebli sur OSM.",
+        "description": "Mosquée du quartier de Houmt Larbah, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 91 sous le nom de Guebli : mosquée ibadite wahbite, du 9ᵉ siècle de l’hégire (15ᵉ siècle). La liste Wikipédia des mosquées de Djerba la donne en activité.\nAppelée El Guebli sur OSM.",
         "accessPoint": [
           10.8485472,
           33.8063976
@@ -8802,7 +8803,7 @@
         "Zone": "Ajim",
         "Source": "https://www.uib.com.tn/accueil/pages-intermediaires/les-forts-de-djerba-un-patrimoine-fragile",
         "HW_ID": "HW-01K77WPE6PGWRVHZ8H8CTQJ06X",
-        "description": "Borj Ajim garde le mouillage le plus profond du sud de l'île, face au Djorf — le seul passage praticable pour les bateaux de fort tonnage. \nIl aurait été édifié au milieu du XVIe siècle par Dragut, avec deux bastions et une tobjia, sa plateforme d'artillerie.\nCette attribution ne repose que sur une source à ce jour et reste à confirmer. Une photographie de 1873 atteste en revanche son existence à cette date.\n\nLes lettres du Cheikh Mohamed al Mosaabi rapportent un épisode survenu dans ces eaux. \nUn navire du caïd, amarré à Houmt Souk, devait être déplacé vers la Marsa d'Ajim de crainte qu'il ne soit pris. En route, des Vénitiens le prennent en chasse jusqu'aux abords de Borj Jlij ; les marins d'Ajim le coulent et rejoignent la côte à la nage. \nLes assaillants pillent l'épave, la canonnent, puis y mettent le feu avant de repartir.\nRécit rapporté par Kais Ben Ayed.",
+        "description": "Borj Ajim garde le mouillage le plus profond du sud de l'île, face au Djorf — le seul passage praticable pour les bateaux de fort tonnage. \nIl aurait été édifié au milieu du 16ᵉ siècle par Dragut, avec deux bastions et une tobjia, sa plateforme d'artillerie.\nCette attribution ne repose que sur une source à ce jour et reste à confirmer. Une photographie de 1873 atteste en revanche son existence à cette date.\n\nLes lettres du Cheikh Mohamed al Mosaabi rapportent un épisode survenu dans ces eaux. \nUn navire du caïd, amarré à Houmt Souk, devait être déplacé vers la Marsa d'Ajim de crainte qu'il ne soit pris. En route, des Vénitiens le prennent en chasse jusqu'aux abords de Borj Jlij ; les marins d'Ajim le coulent et rejoignent la côte à la nage. \nLes assaillants pillent l'épave, la canonnent, puis y mettent le feu avant de repartir.\nRécit rapporté par Kais Ben Ayed.",
         "info_gpx": "L'accès est restreint et demande des autorisations",
         "accessPoint": [
           10.7443497,
@@ -8818,7 +8819,15 @@
         "Horaires": "",
         "Facebook": "",
         "verified": false,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "maps_ref": "",
+        "commons_ref": "",
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": null,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false
       }
     },
     {
@@ -9494,7 +9503,7 @@
         "Zone": "Oued Ezzebib",
         "Source": "Répertoire J. Fathallah, n° 100 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/452272323",
         "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
-        "description": "Mosquée d'Oued Zbib.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 100 sous le nom de Jdaria, dite Touil : mosquée ibadite wahbite, datée de 1211 de l'hégire, soit 1796-1797.\nLa liste Wikipédia des mosquées de Djerba la donne en activité et la date du XVIᵉ siècle (1537).\nAppelée Jamaa Touil sur OSM.",
+        "description": "Mosquée d'Oued Zbib.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 100 sous le nom de Jdaria, dite Touil : mosquée ibadite wahbite, datée de 1211 de l'hégire, soit 1796-1797.\nLa liste Wikipédia des mosquées de Djerba la donne en activité et la date du 6ᵉ siècle (1537).\nAppelée Jamaa Touil sur OSM.",
         "accessPoint": [
           10.8248572,
           33.7915205
@@ -9675,7 +9684,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Mosquée du centre d'Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 263 sous le nom de Jadid (« la neuve ») : mosquée malékite, du XXᵉ siècle. La liste Wikipédia des mosquées de Djerba la donne également du XXᵉ siècle, sous le nom d'Ejdid.\nAppelée Mosquée Neuve sur OSM.",
+        "description": "Mosquée du centre d'Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 263 sous le nom de Jadid (« la neuve ») : mosquée malékite, du 20ᵉ siècle. La liste Wikipédia des mosquées de Djerba la donne également du XXᵉ siècle, sous le nom d'Ejdid.\nAppelée Mosquée Neuve sur OSM.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/5264075922",
@@ -16258,7 +16267,7 @@
         "État": "Vestiges partiels",
         "Accès": "Non visitable",
         "info_gpx": "https://maps.app.goo.gl/rBYgVGFmajwYmw857",
-        "description": "Palais de campagne édifié entre 1797 et 1810 environ, à Sedghiane, aujourd'hui en ruines.\n\nIl appartient à l'ensemble des résidences de la notabilité djerbienne bâties dans ce secteur à la fin du XVIIIᵉ siècle, aux côtés du Ksar Hamida Ben Ayed, à un kilomètre, et du Dar Mohamed Ben Ayed.\n\nLe site est géré par l'Association pour la sauvegarde du Palais Ben Ayed\nL'accès au site est interdit !",
+        "description": "Palais de campagne édifié entre 1797 et 1810 environ, à Sedghiane, aujourd'hui en ruines.\n\nIl appartient à l'ensemble des résidences de la notabilité djerbienne bâties dans ce secteur à la fin du 18ᵉ siècle, aux côtés du Ksar Hamida Ben Ayed, à un kilomètre, et du Dar Mohamed Ben Ayed.\n\nLe site est géré par l'Association pour la sauvegarde du Palais Ben Ayed\nL'accès au site est interdit !",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
@@ -16272,7 +16281,15 @@
           10.9418624,
           33.8218206
         ],
-        "Zone": "Sedghaiane"
+        "Zone": "Sedghaiane",
+        "Sous-type": "",
+        "Source": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
@@ -16292,7 +16309,7 @@
         "HW_ID": "HW-01KZH0VGYZGDT8WS2EBHAK5JS6",
         "État": "Ruine",
         "Accès": "Non visitable",
-        "description": "Palais de campagne de la famille Ben Ayed, à Sedghiane — autrefois chef-lieu de l'île.\nBâti au XVIIIᵉ siècle pour Hamida Ben Ayed, caïd de Djerba et personnage influent\nsous le règne de Hammouda Pacha.\n\nIl fit appel à des maîtres maçons italiens et à des décorateurs marocains aux côtés\ndes artisans tunisiens. L'architecture remploie des colonnes romaines associées à\ndes arcades ottomanes ; la décoration recourt aux faïences de Guellala, et une salle\nconserve un plafond de bois sculpté et peint.\n\nEn grande partie en ruines aujourd'hui, le palais fait l'objet d'une association\nqui œuvre à sa restauration. Il est classé monument historique depuis le 4 juillet 2016.\n\nVisible sur la vue satellite\nAttention, l'accès au site est interdit !",
+        "description": "Palais de campagne de la famille Ben Ayed, à Sedghiane — autrefois chef-lieu de l'île.\nBâti au 18ᵉ siècle pour Hamida Ben Ayed, caïd de Djerba et personnage influent\nsous le règne de Hammouda Pacha.\n\nIl fit appel à des maîtres maçons italiens et à des décorateurs marocains aux côtés\ndes artisans tunisiens. L'architecture remploie des colonnes romaines associées à\ndes arcades ottomanes ; la décoration recourt aux faïences de Guellala, et une salle\nconserve un plafond de bois sculpté et peint.\n\nEn grande partie en ruines aujourd'hui, le palais fait l'objet d'une association\nqui œuvre à sa restauration. Il est classé monument historique depuis le 4 juillet 2016.\n\nVisible sur la vue satellite\nAttention, l'accès au site est interdit !",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "https://fr.wikipedia.org/wiki/Cedriane#Ksar_Ben_Ayed\nhttp://palaisbenayed.com/",
@@ -16307,7 +16324,15 @@
           10.9476458,
           33.8171171
         ],
-        "Zone": "Sedghaiane"
+        "Zone": "Sedghaiane",
+        "Sous-type": "",
+        "info_gpx": "",
+        "maps_ref": "",
+        "commons_ref": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "osmCheckedDate": null
       }
     },
     {
