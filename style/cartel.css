@@ -103,7 +103,9 @@
     font-weight: var(--smallcaps-weight);
     letter-spacing: var(--smallcaps-tracking);
     text-transform: uppercase;
-    color: var(--sepia-600);
+    /* Token (sépia-600, sépia-400 en Nuit) et non sépia-600 en dur : illisible
+       sur le papier Nuit (11/10/2026). */
+    color: var(--smallcaps-color);
     margin: 0;
     min-width: 0;
     display: flex;
@@ -300,7 +302,7 @@
     font-weight: var(--smallcaps-weight);
     letter-spacing: var(--smallcaps-tracking);
     text-transform: uppercase;
-    color: var(--sepia-600);
+    color: var(--smallcaps-color);
 }
 /* Étape EN COURS : liseré terracotta + fond brand-soft + anneau de pastille
    (CSS prêt — réservé au suivi GPS, pas câblé en consultation). */

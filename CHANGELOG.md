@@ -6,6 +6,17 @@
 
 ---
 
+- AIDES LISIBLES EN THÈME NUIT, PETITES CAPITALES AUSSI (v3.7.431) — **Note de test 3** (03/10/2026), **handoff Claude Design « retouches testeurs », sujet 4**, accepté par Stefan le 11/10/2026.
+  - **Encadré d'avertissement des aides** (`.help-callout`) : son fond était un ambre crème **fixe** (`--hw-amber-soft` = `#F7ECD2`), qui ne suivait pas le thème, sous un texte qui le suit (`--ink`, presque blanc en Nuit). Contraste **mesuré à 1,08:1** en Nuit, texte quasi invisible (étape 6 de « Associer mes photos »). Le fond et le filet suivent désormais le moment (`--brand-soft`, `--brand`), et l'avertissement est porté par une **icône** `alert-triangle` plutôt que par une couleur. Contraste mesuré en Nuit : **11,5:1**.
+  - **Titres de section « avertissement »** : même icône, couleur `--brand-ink`. Contraste mesuré en Nuit : 6,9:1.
+  - **Icône ajoutée au rendu** (`help-popover.js`, `decorateWarnings`) : le contenu des aides, aux textes validés, ne change pas.
+  - **Même défaut ailleurs dans les aides** : `--brand-2`, une terracotta fixe autour de 3:1 en Nuit, est remplacé par `--brand-ink`, qui suit le moment. Cela concerne le titre de section, le sur-titre « Aide » du panneau, les flèches du schéma, le survol des boutons « ? » et le titre de la variante accentuée.
+  - **Petites capitales en Nuit** (accord de Stefan pour l'effet sur toute l'app) : les sur-titres du cartel (fiche, étapes de circuit) étaient en sépia-600 **en dur**, à 2,44:1 sur le papier Nuit. Ils passent par le token `--smallcaps-color`, qui vaut sépia-400 en Nuit (**4,52:1**) et reste sépia-600 dans les moments clairs. Corriger le token seul, comme le proposait le handoff, n'aurait rien changé : aucune règle ne l'utilisait.
+
+  **Vérifié en local** : en Nuit, étape 6 lisible et sur-titre de la fiche Ben Maazouzine en sépia-400. En Plein soleil, sur-titre inchangé et encadré terracotta clair à texte foncé. Plus d'ambre dans `help.css`. Cache CSS : `style.css?v=8.36`. 3 nouveaux tests, qui échouent tous sur l'ancien code.
+
+  **Non fait** (« à nettoyer » dans le handoff, sans effet de lisibilité) : l'ombre `rgba` du bouton « ? » et les tailles de police 11 / 12,5 / 13,5 px des aides, sans token équivalent.
+
 - ÉCRAN « QUE VOULEZ-VOUS FAIRE ? » — LÉGENDE ET NOUVEAU LIEU À LA PLACE DE DEUX CARTES INUTILES (v3.7.430) — **Notes de test 2 et 11** (03/10/2026). **Décisions de Stefan le 11/10/2026** : texte et ordre validés. Écran de la boussole, PC seulement.
   - **Retirées** : « Découvrir Djerba » et « Voir les circuits existants ». Les deux ouvraient l'onglet Explorer, c'est-à-dire ce qui est déjà affiché au lancement (la carte et la liste des circuits).
   - **Ajoutée en premier** : « Voir la légende des icônes — Je comprends ce que signifie chaque symbole ». L'écran se ferme et la légende s'ouvre accrochée à son bouton de carte (le livre, en haut à gauche) : le visiteur voit où la retrouver. Son dessin reprend le livre ouvert, même symbole que ce bouton.

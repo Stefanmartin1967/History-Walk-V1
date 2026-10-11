@@ -61,6 +61,7 @@ function renderIconsIn(root) {
 
 const ICON_HELP = '<i data-lucide="circle-help"></i>';
 const ICON_X = '<i data-lucide="x"></i>';
+const ICON_WARN = '<i data-lucide="alert-triangle" aria-hidden="true"></i>';
 
 /* --------------------------------------------------------------------------
    Singleton : un seul popover/drawer ouvert à la fois
@@ -90,6 +91,31 @@ export function closeHelp() { closeOpen(false); }
    Rendu du contenu (partagé inline ↔ panneau)
    -------------------------------------------------------------------------- */
 function appendBody(container, opts) {
+    buildBody(container, opts);
+    decorateWarnings(container);
+}
+
+// Avertissements (11/10/2026, handoff « retouches testeurs », sujet 4) : le ton
+// est porté par une ICÔNE, plus par une couleur fixe — l'ambre d'avant, un fond
+// crème qui ne suivait pas le thème, rendait le texte illisible en Nuit. Ajoutée
+// au rendu : le contenu des aides (textes validés) ne change pas. Le contenu de
+// l'encadré est regroupé dans un bloc pour la grille icône + texte. Idempotent.
+function decorateWarnings(root) {
+    root.querySelectorAll('.help-callout:not([data-decorated])').forEach(callout => {
+        const body = document.createElement('div');
+        body.className = 'help-callout-body';
+        while (callout.firstChild) body.appendChild(callout.firstChild);
+        callout.insertAdjacentHTML('afterbegin', ICON_WARN);
+        callout.appendChild(body);
+        callout.dataset.decorated = '';
+    });
+    root.querySelectorAll('.help-section[data-tone="warn"] > .help-section-title:not([data-decorated])').forEach(title => {
+        title.insertAdjacentHTML('afterbegin', ICON_WARN);
+        title.dataset.decorated = '';
+    });
+}
+
+function buildBody(container, opts) {
     if (opts.html != null) {
         if (opts.html instanceof HTMLElement) container.appendChild(opts.html);
         else container.insertAdjacentHTML('beforeend', String(opts.html));
