@@ -36,8 +36,8 @@ Un lieu se décrit par une fiche. Deux façons d'y arriver : **créer** un nouve
 - *Maps* et *OSM* ouvrent l'endroit sur Google Maps et/ou OpenStreetMap pour **vérifier** ;
 - cliquez **« Valider cette position »** → la fiche **« Nouveau Lieu »** s'ouvre.
 
-*Deux autres entrées mènent à la même fiche : la **recherche** d'un lieu encore absent, et
-le bouton **« Créer un lieu »** de l'import photo.*
+*Deux autres entrées mènent à la même fiche : des **coordonnées GPS** collées dans la recherche
+(puis Entrée), et le bouton **« Créer un lieu »** de l'import photo.*
 
 ### 2 · Éditer un lieu
 Sur la fiche d'un lieu, le bouton **« Éditer »** ouvre le formulaire **« Éditer le Lieu »**
@@ -124,7 +124,8 @@ c'est le **secteur** où il se trouve. **Non modifiable.** *Découpage d'après 
 focus mode circuit, `state.circuitFocusActive`) → `createDraftMarker` : popup « Nouveau
 Lieu ? » + « Glissez pour ajuster » + liens Maps/OSM + bouton « Valider cette position »
 (`#btn-validate-desktop-poi`) → `RichEditor.openForCreate`. Autres entrées :
-`searchManager.js` (lieu cherché absent), `ui-photo-batch.js` (« Créer un lieu »).
+`searchManager.js` (coordonnées GPS collées + Entrée — taper le NOM d'un lieu absent ne
+propose rien), `ui-photo-batch.js` (« Créer un lieu »).
 
 **Modale** (`richEditor.js`) : `openHwModal` — icône `map-pin-plus` (création) /
 `edit-3` (édition), titre **« Nouveau Lieu »** / **« Éditer le Lieu »**, `size: 'lg'`,

@@ -1,32 +1,29 @@
 // welcome.js
-// Onboarding par choix d'usage, accessible à la demande via le bouton
-// "Visite guidée" de la topbar (le déclenchement automatique au 1er
+// Écran « Que voulez-vous faire ? », accessible à la demande via le bouton
+// boussole de la topbar (PC seulement ; le déclenchement automatique au 1er
 // lancement a été retiré au profit de version-note.js — cf. main.js).
 //
-// 4 cartes : Découvrir / Voir les circuits / Créer / Importer photos GPS.
+// 4 cartes (texte et ordre validés par Stefan le 11/10/2026) : Légende des
+// icônes / Créer un lieu / Créer un circuit / Associer mes photos. Les cartes
+// « Découvrir » et « Voir les circuits » ont été retirées : elles ouvraient ce
+// qui est déjà affiché au lancement (la carte et la liste des circuits).
 //
 // Émet eventBus 'welcome:choice' { choice } à la sélection.
 // Le câblage de chaque choix sur l'état de l'app est géré ailleurs.
 
 import { eventBus } from './events.js';
-import { state, getActiveDestinationName } from './state.js';
 
-// Repli propre à l'UI : une phrase doit rester lisible même destination inconnue.
-const destinationLabel = () => getActiveDestinationName() || 'la destination';
-
-const SVG_COMPASS = `
+// Épingle + « + » : même style que les autres illustrations (à reprendre avec
+// Claude Design, comme le libellé du bouton boussole).
+const SVG_PIN_PLUS = `
 <svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg">
     <circle cx="110" cy="80" r="72" fill="var(--brand)" opacity="0.08"/>
-    <circle cx="110" cy="78" r="45" fill="none" stroke="var(--brand)" stroke-width="2" opacity="0.3"/>
-    <circle cx="110" cy="78" r="38" fill="none" stroke="var(--brand)" stroke-width="1" opacity="0.2"/>
-    <text x="110" y="36" font-size="11" fill="var(--brand)" text-anchor="middle" font-weight="bold" opacity="0.7">N</text>
-    <text x="110" y="128" font-size="11" fill="var(--ink-soft)" text-anchor="middle" opacity="0.5">S</text>
-    <text x="64" y="82" font-size="11" fill="var(--ink-soft)" text-anchor="middle" opacity="0.5">O</text>
-    <text x="156" y="82" font-size="11" fill="var(--ink-soft)" text-anchor="middle" opacity="0.5">E</text>
-    <polygon points="110,42 106,78 110,72 114,78" fill="var(--brand)" opacity="0.9"/>
-    <polygon points="110,114 106,78 110,84 114,78" fill="var(--ink-soft)" opacity="0.4"/>
-    <circle cx="110" cy="78" r="5" fill="var(--brand)" opacity="0.8"/>
-    <circle cx="110" cy="78" r="2.5" fill="var(--surface)"/>
+    <ellipse cx="104" cy="126" rx="22" ry="5" fill="var(--ink-soft)" opacity="0.2"/>
+    <path d="M 104 124 C 104 124 74 92 74 68 A 30 30 0 0 1 134 68 C 134 92 104 124 104 124 Z" fill="var(--brand)" opacity="0.85"/>
+    <circle cx="104" cy="68" r="11" fill="var(--surface)"/>
+    <circle cx="150" cy="52" r="16" fill="var(--surface)" stroke="var(--brand)" stroke-width="2"/>
+    <line x1="150" y1="44" x2="150" y2="60" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"/>
+    <line x1="142" y1="52" x2="158" y2="52" stroke="var(--brand)" stroke-width="3" stroke-linecap="round"/>
 </svg>`;
 
 const SVG_MAP_CIRCUIT = `
@@ -73,51 +70,49 @@ const SVG_PHONE_PHOTO = `
     <circle cx="158" cy="62" r="6" fill="var(--brand)" opacity="0.5"/>
 </svg>`;
 
-function buildCards() {
-    return [
-        {
-            id: 'discover',
-            svg: SVG_COMPASS,
-            title: `Découvrir ${destinationLabel()}`,
-            subtitle: 'Je flâne, je regarde ce qui existe'
-        },
-        {
-            id: 'import',
-            svg: SVG_BOOK,
-            title: 'Voir les circuits existants',
-            subtitle: 'Je m\'inspire des circuits, je filtre selon mes envies'
-        },
-        {
-            id: 'create',
-            svg: SVG_MAP_CIRCUIT,
-            title: 'Créer mon propre circuit',
-            subtitle: 'Je m\'aventure, je trace mon parcours'
-        }
-    ];
-}
-
-const CARD_PHOTOS = {
-    id: 'photos',
-    svg: SVG_PHONE_PHOTO,
-    title: 'Associer mes photos aux lieux',
-    subtitle: 'Je personnalise, j\'ajoute mes photos à mes visites'
-};
+// Le livre ouvert (ex-carte « Voir les circuits ») reprend l'icône du bouton
+// Légende de la carte : le visiteur retrouve le même symbole.
+const CARDS = [
+    {
+        id: 'legend',
+        svg: SVG_BOOK,
+        title: 'Voir la légende des icônes',
+        subtitle: 'Je comprends ce que signifie chaque symbole'
+    },
+    {
+        id: 'new-place',
+        svg: SVG_PIN_PLUS,
+        title: 'Créer un nouveau lieu',
+        subtitle: 'J\'ajoute un lieu qui manque, je peux le signaler'
+    },
+    {
+        id: 'create',
+        svg: SVG_MAP_CIRCUIT,
+        title: 'Créer mon propre circuit',
+        subtitle: 'Je m\'aventure, je trace mon parcours'
+    },
+    {
+        id: 'photos',
+        svg: SVG_PHONE_PHOTO,
+        title: 'Associer mes photos aux lieux',
+        subtitle: 'Je personnalise, j\'ajoute mes photos à mes visites'
+    }
+];
 
 export function showWelcomeAgain() {
     if (document.getElementById('welcome-overlay')) return;
 
-    const cards = [...buildCards(), CARD_PHOTOS];
+    const cards = CARDS;
 
     const overlay = document.createElement('div');
     overlay.id = 'welcome-overlay';
     overlay.innerHTML = `
         <div class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title">
             <h2 class="welcome-modal-title" id="welcome-modal-title">Que voulez-vous faire ?</h2>
-            <p class="welcome-modal-subtitle">Bienvenue sur Heripia</p>
 
             <div class="welcome-cards" id="welcome-cards"></div>
 
-            <button class="welcome-btn-skip" id="welcome-skip" type="button">Passer →</button>
+            <button class="welcome-btn-skip" id="welcome-skip" type="button">Fermer</button>
         </div>
     `;
     document.body.appendChild(overlay);
@@ -139,10 +134,15 @@ export function showWelcomeAgain() {
         cardsEl.appendChild(btn);
     });
 
-    overlay.querySelector('#welcome-skip').addEventListener('click', () => choose('discover'));
+    // « Fermer » : ferme seulement (l'ancien « Passer » émettait 'discover').
+    overlay.querySelector('#welcome-skip').addEventListener('click', close);
 
     function choose(choiceId) {
         eventBus.emit('welcome:choice', { choice: choiceId });
+        close();
+    }
+
+    function close() {
         overlay.classList.add('welcome-fadeout');
         setTimeout(() => overlay.remove(), 350);
     }

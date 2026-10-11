@@ -2,23 +2,22 @@
 // Cable l'événement 'welcome:choice' (émis par welcome.js) sur l'état initial
 // de l'app, selon le choix d'usage de l'utilisateur.
 //
-// La sidebar droite est toujours visible sur desktop (PR 6 a supprimé le
-// toggle), donc tous les choix se ramènent à activer le bon onglet.
+// Onboarding des aides (chantier doc) : les guides « ? » s'ouvrent APRÈS le
+// fondu de l'écran. Pour les photos, le sélecteur de fichiers se lance à la
+// FERMETURE du guide (sinon il s'ouvrirait par-dessus le guide et le masquerait).
 //
-// Onboarding des aides (chantier doc) : pour « create » et « photos », on ouvre
-// le guide « ? » correspondant APRÈS le fondu de l'écran d'accueil. Pour les
-// photos, le sélecteur de fichiers se lance à la FERMETURE du guide (sinon il
-// s'ouvrirait par-dessus le guide et le masquerait).
-//
-// Choix possibles :
-//   - discover : onglet Mes Circuits (état par défaut, l'utilisateur explore)
-//   - import   : onglet Mes Circuits (idem ; filtrage fin via le panneau Filtres)
-//   - create   : onglet Circuit + guide « Créer un circuit »
-//   - photos   : guide « Importer des photos », puis import à la fermeture
+// Choix possibles (11/10/2026) :
+//   - legend    : légende des icônes, accrochée à son bouton de carte → le
+//                 visiteur voit où la retrouver
+//   - new-place : guide « Créer ou éditer un lieu » (un lieu se crée par clic
+//                 droit sur la carte : aucun bouton de création sur PC)
+//   - create    : onglet Circuit + guide « Créer un circuit »
+//   - photos    : guide « Importer des photos », puis import à la fermeture
 
 import { eventBus } from './events.js';
 import { openHelpPanel, configureHelp } from './help-popover.js';
-import { GUIDE_CIRCUIT, GUIDE_IMPORT } from './help-content.js';
+import { GUIDE_CIRCUIT, GUIDE_IMPORT, GUIDE_LIEU } from './help-content.js';
+import { showInfoPopover } from './info-popover.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 // Le patron d'aide rend ses icônes via createIcons. Idempotent (déjà configuré
@@ -45,9 +44,12 @@ function openGuideAfterWelcome(guide, onClose) {
 export function setupWelcomeActions() {
     eventBus.on('welcome:choice', ({ choice }) => {
         switch (choice) {
-            case 'discover':
-            case 'import':
-                clickIfPresent('[data-tab="explorer"]');
+            case 'legend':
+                setTimeout(showInfoPopover, WELCOME_FADEOUT_MS);
+                break;
+
+            case 'new-place':
+                openGuideAfterWelcome(GUIDE_LIEU);
                 break;
 
             case 'create':
