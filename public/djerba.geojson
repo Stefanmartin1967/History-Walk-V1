@@ -1566,7 +1566,7 @@
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563634489.jpg",
           "photos/poi_HW-01K77WPE6AFSTY1DA2XVPB3MVC_1780563636230.jpg"
         ],
-        "description": "Mosquée de Mezraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 58 sous le nom de Ben Maazouz : mosquée wahbite abandonnée, datée de 700 de l'hégire, soit 1300. La liste Wikipédia des mosquées de Djerba la donne également pour abandonnée, du 13ᵉ siècle.\nUn article de La Presse (26 août 2025) la rattache au Ve siècle de l'hégire (1009-1106) et la range parmi les mosquées ibadites dites « Ghaba », à rôle éducatif, religieux et juridique. Elle comprendrait une petite salle de prière, un logement pour étudiants, une cuisine et un puits.\nUn chantier-école de restauration s'est tenu du 10 au 25 août 2025, avec une cinquantaine d'étudiants en architecture de l'ESAD et de l'ENAU, sous la direction de Mouldi Chaabani, directeur de l'ESAD (Tunisie.fr). La Presse mentionne aussi des ingénieurs et des mécènes locaux, et des dégradations antérieures (fouilles à la recherche de trésors, vol de pierres).\nLes datations varient selon les sources.",
+        "description": "Mosquée de Mezraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 58 sous le nom de Ben Maazouz : mosquée wahbite abandonnée, datée de 700 de l'hégire, soit 1300. La liste Wikipédia des mosquées de Djerba la donne également pour abandonnée, du 13ᵉ siècle.\nUn article de La Presse (26 août 2025) la rattache au 5e siècle de l'hégire (1009-1106) et la range parmi les mosquées ibadites dites « Ghaba », à rôle éducatif, religieux et juridique. Elle comprendrait une petite salle de prière, un logement pour étudiants, une cuisine et un puits.\nUn chantier-école de restauration s'est tenu du 10 au 25 août 2025, avec une cinquantaine d'étudiants en architecture de l'ESAD et de l'ENAU, sous la direction de Mouldi Chaabani, directeur de l'ESAD (Tunisie.fr). La Presse mentionne aussi des ingénieurs et des mécènes locaux, et des dégradations antérieures (fouilles à la recherche de trésors, vol de pierres).\nLes datations varient selon les sources.",
         "info_gpx": "Mosquée Ibadite restaurée en août 2025",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
@@ -9503,7 +9503,7 @@
         "Zone": "Oued Ezzebib",
         "Source": "Répertoire J. Fathallah, n° 100 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap | https://www.openstreetmap.org/way/452272323",
         "HW_ID": "HW-01K77WPE6Q8D5BKFN1PMA6APBZ",
-        "description": "Mosquée d'Oued Zbib.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 100 sous le nom de Jdaria, dite Touil : mosquée ibadite wahbite, datée de 1211 de l'hégire, soit 1796-1797.\nLa liste Wikipédia des mosquées de Djerba la donne en activité et la date du 6ᵉ siècle (1537).\nAppelée Jamaa Touil sur OSM.",
+        "description": "Mosquée d'Oued Zbib.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 100 sous le nom de Jdaria, dite Touil : mosquée ibadite wahbite, datée de 1211 de l'hégire, soit 1796-1797.\nLa liste Wikipédia des mosquées de Djerba la donne en activité et la date du 16ᵉ siècle (1537).\nAppelée Jamaa Touil sur OSM.",
         "accessPoint": [
           10.8248572,
           33.7915205
@@ -9684,7 +9684,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Mosquée du centre d'Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 263 sous le nom de Jadid (« la neuve ») : mosquée malékite, du 20ᵉ siècle. La liste Wikipédia des mosquées de Djerba la donne également du XXᵉ siècle, sous le nom d'Ejdid.\nAppelée Mosquée Neuve sur OSM.",
+        "description": "Mosquée du centre d'Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 263 sous le nom de Jadid (« la neuve ») : mosquée malékite, du 20ᵉ siècle. La liste Wikipédia des mosquées de Djerba la donne également du 20ᵉ siècle, sous le nom d'Ejdid.\nAppelée Mosquée Neuve sur OSM.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/5264075922",
