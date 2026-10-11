@@ -80,4 +80,14 @@ describe('showVersionNoteIfNeeded — contenu', () => {
         expect(body).toContain('OpenStreetMap');
         expect(body).toContain('imprécis');
     });
+
+    it('dit la vérité sur les sources (note de test 1, texte validé par Stefan le 11/10/2026)', () => {
+        showVersionNoteIfNeeded();
+        const { body } = hwAlert.mock.calls[0][0];
+        // Mesuré le 11/10 : 17 lieux visibles sur 433 (tous des commerces) n'ont
+        // ni OSM ni Maps — « chaque LIEU » était faux, « chaque SITE PATRIMONIAL » est vrai.
+        expect(body).toContain('Chaque site patrimonial');
+        expect(body).not.toContain('Chaque lieu a été vérifié');
+        expect(body).toContain('Wikipédia');
+    });
 });
