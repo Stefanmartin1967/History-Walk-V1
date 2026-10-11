@@ -10625,11 +10625,33 @@
         "Nom du site AR": "",
         "Catégorie": "Restaurant",
         "Zone": "Arkou",
-        "description": "Véritable cuisine Djerbienne",
+        "description": "Restaurant au centre de Midoun, qui se présente comme proposant des plats tunisiens et djerbiens.\nSa page le nomme « La Clémence Resto ».",
         "accessPoint": [
           10.9900547,
           33.8072706
-        ]
+        ],
+        "Nom du site arabe": "",
+        "Sous-type": "",
+        "État": "",
+        "Accès": "",
+        "info_gpx": "",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Présentation, nom et téléphone annoncés par le lieu, relevés le 11 octobre 2026\nTripadvisor, « Restaurant Le Clemence » | https://fr.tripadvisor.be/Restaurant_Review-g297948-d15279482-Reviews-Restaurant_Le_Clemence-Midoun_Djerba_Island_Medenine_Governorate.html\nHoraires : Tripadvisor, consultés le 11 octobre 2026",
+        "osm_ref": "",
+        "maps_ref": "https://maps.app.goo.gl/wyrdc8bqzwDFg2QL9",
+        "commons_ref": "",
+        "Téléphone": "+216 28 515 252",
+        "Horaires": "Du lundi au samedi : 12 h – 16 h. Fermé le dimanche.",
+        "Facebook": "https://www.facebook.com/profile.php?id=100054299300182&locale=fr_FR",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-10-11",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false
       }
     },
     {
