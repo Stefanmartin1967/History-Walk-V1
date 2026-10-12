@@ -11,7 +11,7 @@
 import { state } from './state.js';
 import { eventBus } from './events.js';
 import { switchActiveDestination } from './destination-switch.js';
-import { toggleFilterPanel } from './filter-panel.js';
+import { toggleFilterPanel, getActiveFilters } from './filter-panel.js';
 import { showWelcomeAgain } from './welcome.js';
 import { setTheme, getCurrentTheme } from './theme.js';
 import { getCurrentPatrimonialLang, setPatrimonialLang } from './patrimonial-names.js';
@@ -19,44 +19,31 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { isDestinationPublished } from './utils.js';
 
 const FILTERS_BTN_ID = 'hw-topbar-filters-btn';
-const FILTERS_LABEL_ID = 'hw-topbar-filters-label';
+const FILTERS_COUNT_ID = 'hw-topbar-filters-count';
 const DEST_SELECTOR_ID = 'hw-dest-selector';
 const DEST_MENU_ID = 'hw-dest-menu';
 // Bascule de moment : segmenté persistant `.hw-moment-toggle` (plus de dropdown thème).
 
-function isSectionActive(id) {
-    const f = state.activeFilters || {};
-    switch (id) {
-        case 'localisation': return f.zone !== null && f.zone !== undefined;
-        case 'categories':   return Array.isArray(f.categories) && f.categories.length > 0;
-        case 'parcours':     return (f.vus && f.vus !== 'all')
-                                  || (f.planifies && f.planifies !== 'all')
-                                  || !!f.incontournablesOnly;
-        case 'fiche':        return (f.verified && f.verified !== 'all')
-                                  || (f.photo && f.photo !== 'all')
-                                  || (f.description && f.description !== 'all');
-        default:             return false;
-    }
-}
-
-function countActiveSections() {
-    return ['localisation', 'categories', 'parcours', 'fiche']
-        .reduce((n, id) => n + (isSectionActive(id) ? 1 : 0), 0);
-}
-
+// n = nombre de FILTRES actifs (une puce de la bande = un filtre), lu dans la
+// source unique getActiveFilters (filter-panel.js). Cette barre avait sa propre
+// définition de « actif », qui comptait des sections et ignorait les filtres
+// admin — remplacée le 11/10/2026.
 export function refreshFiltersButton() {
-    const label = document.getElementById(FILTERS_LABEL_ID);
+    const count = document.getElementById(FILTERS_COUNT_ID);
     const btn = document.getElementById(FILTERS_BTN_ID);
-    if (!label || !btn) return;
+    if (!btn) return;
 
-    const n = countActiveSections();
-    label.textContent = n > 0 ? `Filtres (${n})` : 'Filtres';
-    fitTourLabel(); // « Filtres (n) » change de largeur → la place disponible aussi
-    btn.classList.toggle('is-active', n > 0);
-    // a11y : aria-pressed reflète l'état "filtres appliqués" (au moins 1 section
-    // active). aria-expanded reflète l'ouverture du panneau (mis à jour ailleurs
-    // — voir setupFiltersA11y).
+    const n = getActiveFilters().length;
+    if (count) {
+        count.textContent = String(n);
+        count.hidden = n === 0;
+    }
+    btn.classList.toggle('has-active', n > 0);
+    btn.setAttribute('aria-label', n > 0 ? `Filtres, ${n} actif${n > 1 ? 's' : ''}` : 'Filtres');
+    // a11y : aria-pressed reflète l'état "filtres appliqués". aria-expanded
+    // reflète l'ouverture du panneau (mis à jour ailleurs).
     btn.setAttribute('aria-pressed', n > 0 ? 'true' : 'false');
+    fitTourLabel(); // la pastille change la largeur du bouton → la place disponible aussi
 }
 
 // ─── Dropdown destination ──────────────────────────────────────────────────

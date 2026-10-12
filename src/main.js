@@ -49,6 +49,7 @@ import { setupWelcomeActions } from './welcome-actions.js';
 import { showVersionNoteIfNeeded } from './version-note.js';
 import { setupEventBusListeners } from './events-bus.js';
 import { setupFilterPanel } from './filter-panel.js';
+import { setupActiveFiltersBand } from './active-filters-band.js';
 import { setupTopbarV2 } from './topbar-v2.js';
 import { showLegalNoticeModal } from './legal-modal.js';
 import { setupDesktopUIListeners } from './events-desktop.js';
@@ -137,6 +138,7 @@ async function initializeApp() {
     setupCircuitEventListeners();
     initCircuitRoutingUI();
     setupFilterPanel();
+    setupActiveFiltersBand();
     setupTopbarV2();
     document.getElementById('btn-legal-notice')?.addEventListener('click', () => {
         document.getElementById('tools-menu-content')?.classList.remove('active');

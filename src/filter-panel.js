@@ -532,38 +532,81 @@ function renderIncontournableToggle({ checked, onChange }) {
     return row;
 }
 
+// ─── Filtres actifs : SOURCE UNIQUE ───────────────────────────────────────
+
+// État d'une ligne 3 états, tel qu'il s'écrit sur une puce.
+const STATE_WORD = { all: 'tous', hide: 'masqués', only: 'seulement' };
+
+/**
+ * Filtres actifs, un par entrée `{ id, section, label }` — SOURCE UNIQUE de
+ * « actif » (11/10/2026, handoff Claude Design « retouches testeurs », sujet 5) :
+ * puces de la bande « Filtres actifs » (active-filters-band.js), compteur
+ * « Filtres (n) » de la barre du haut (topbar-v2.js), badges et sous-titre de
+ * ce panneau. Avant, trois définitions de « actif » coexistaient et
+ * divergeaient : celle de la barre du haut ignorait les filtres admin (OSM,
+ * Jalel…), et toutes comptaient des SECTIONS, pas des filtres.
+ *
+ * « Actif » = différent du défaut de CHAQUE ligne, pas de 'all' en dur : chez
+ * un visiteur, « Existence à confirmer » vaut 'hide' au repos (ficheFilterDefault)
+ * — ce n'est pas un choix, donc pas une puce.
+ */
+export function getActiveFilters() {
+    const f = state.activeFilters || {};
+    const out = [];
+    if (f.zone) out.push({ id: 'zone', section: 'localisation', label: `Zone : ${f.zone}` });
+    (Array.isArray(f.categories) ? f.categories : []).forEach(cat =>
+        out.push({ id: `categorie:${cat}`, section: 'categories', label: cat }));
+    [['vus', 'Lieux visités'], ['planifies', 'Lieux planifiés']].forEach(([key, label]) => {
+        const v = f[key] || 'all';
+        if (v !== 'all') out.push({ id: key, section: 'parcours', label: `${label} : ${STATE_WORD[v] || v}` });
+    });
+    if (f.incontournablesOnly) {
+        out.push({ id: 'incontournablesOnly', section: 'parcours', label: 'Incontournables seulement' });
+    }
+    FICHE_FILTERS.forEach(({ key, label }) => {
+        const v = f[key] || 'all';
+        if (v !== ficheFilterDefault(key)) {
+            out.push({ id: key, section: 'fiche', label: `${label} : ${STATE_WORD[v] || v}` });
+        }
+    });
+    return out;
+}
+
+/**
+ * Retire UN filtre actif (id d'une entrée de getActiveFilters) : la ligne
+ * repasse à SON défaut. Puis applyFilters → data:filtered, qui rafraîchit la
+ * carte, la bande, le compteur de la barre du haut et ce panneau s'il est ouvert.
+ */
+export function removeActiveFilter(id) {
+    const f = state.activeFilters || {};
+    let patch = null;
+    if (id === 'zone') patch = { zone: null };
+    else if (id.startsWith('categorie:')) {
+        const cat = id.slice('categorie:'.length);
+        patch = { categories: (f.categories || []).filter(c => c !== cat) };
+    }
+    else if (id === 'vus' || id === 'planifies') patch = { [id]: 'all' };
+    else if (id === 'incontournablesOnly') patch = { incontournablesOnly: false };
+    else if (FICHE_FILTERS.some(({ key }) => key === id)) patch = { [id]: ficheFilterDefault(id) };
+    if (!patch) return;
+    setActiveFilters({ ...f, ...patch });
+    applyFilters();
+}
+
 // ─── Méta : sous-titre + badges sections + reset ──────────────────────────
 
 function isSectionActive(id) {
-    const f = state.activeFilters;
-    switch (id) {
-        case 'localisation': return f.zone !== null;
-        case 'categories':   return Array.isArray(f.categories) && f.categories.length > 0;
-        case 'parcours':     return (f.vus && f.vus !== 'all')
-                                  || (f.planifies && f.planifies !== 'all')
-                                  || !!f.incontournablesOnly;
-        // Comparaison au défaut de CHAQUE ligne, pas à 'all' en dur : chez un
-        // visiteur « Existence à confirmer » vaut 'hide' au repos, et le tester
-        // contre 'all' rendait la section perpétuellement « Active » (compteur
-        // bloqué sur « 1 section active », bouton Réinitialiser jamais grisé).
-        case 'fiche':        return FICHE_FILTERS.some(({ key }) =>
-                                    (f[key] || 'all') !== ficheFilterDefault(key));
-        default:             return false;
-    }
-}
-
-function countActiveSections() {
-    return ['localisation', 'categories', 'parcours', 'fiche']
-        .reduce((n, id) => n + (isSectionActive(id) ? 1 : 0), 0);
+    return getActiveFilters().some(entry => entry.section === id);
 }
 
 function refreshHeaderSubtitle() {
     const sub = document.getElementById('hw-fp-subtitle');
     if (!sub) return;
-    const n = countActiveSections();
+    // Même compte que le bouton « Filtres (n) » et la bande : des filtres, pas des sections.
+    const n = getActiveFilters().length;
     sub.textContent = n === 0
         ? 'Aucun filtre actif'
-        : `${n} section${n > 1 ? 's' : ''} active${n > 1 ? 's' : ''}`;
+        : `${n} filtre${n > 1 ? 's' : ''} actif${n > 1 ? 's' : ''}`;
 }
 
 function refreshSectionStates() {
@@ -583,7 +626,7 @@ function refreshSectionStates() {
 
 function refreshResetButton() {
     const btn = document.getElementById('hw-fp-reset');
-    if (btn) btn.disabled = countActiveSections() === 0;
+    if (btn) btn.disabled = getActiveFilters().length === 0;
 }
 
 function refreshAllMeta() {
@@ -592,7 +635,8 @@ function refreshAllMeta() {
     refreshResetButton();
 }
 
-function resetAll() {
+// « Tout réinitialiser » du panneau et « Tout effacer » de la bande (même geste).
+export function resetAll() {
     // Toutes les lignes « État de la fiche » repassent à leur défaut, y compris
     // celles de la checklist et les photos de travail : « Tout réinitialiser »
     // doit vider ce que la section affiche, pas un sous-ensemble figé.

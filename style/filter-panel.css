@@ -635,3 +635,86 @@
     color: var(--ink-soft);
     cursor: not-allowed;
 }
+
+/* ===== Bande « Filtres actifs » (PC) =====
+   Handoff Claude Design « retouches testeurs », sujet 5 (11/10/2026). En tête
+   de carte, à droite des contrôles Leaflet (même repère que le panneau :
+   absolute dans #map). Une puce par filtre actif, retirable, + « Tout
+   effacer ». Masquée sans filtre ([hidden]), quand le panneau Filtres est
+   ouvert (il montre déjà tout), et sur téléphone (bande dédiée, PR suivante). */
+.hw-active-filters {
+    position: absolute;
+    top: 12px;
+    left: 72px; /* dégage la pile de contrôles Leaflet */
+    z-index: 1000;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+    max-width: calc(100% - 88px);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--surface);
+    border: var(--border-filet);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    color: var(--ink);
+}
+.hw-active-filters[hidden],
+body.hw-filter-open .hw-active-filters,
+body.mobile-mode .hw-active-filters { display: none; }
+
+.hw-active-filters__label {
+    margin-right: var(--space-xs);
+    white-space: nowrap;
+    font-size: var(--smallcaps-size);
+    font-weight: var(--smallcaps-weight);
+    letter-spacing: var(--smallcaps-tracking);
+    text-transform: uppercase;
+    color: var(--smallcaps-color);
+}
+
+.hw-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    height: calc(var(--control-h-sm) - var(--space-xs));
+    padding: 0 var(--space-2xs) 0 var(--space-sm);
+    border: var(--border-filet);
+    border-radius: var(--radius-pill);
+    background: var(--surface-muted);
+    color: var(--ink);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+}
+.hw-filter-chip__remove {
+    display: inline-grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+}
+.hw-filter-chip__remove svg { width: 14px; height: 14px; }
+.hw-filter-chip__remove:hover { background: var(--brand-soft); color: var(--brand-ink); }
+.hw-filter-chip__remove:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.hw-filter-chip__remove:active { background: var(--brand); color: var(--on-brand-fg); }
+
+.hw-active-filters__clear {
+    padding: var(--space-xs);
+    border: 0;
+    border-radius: var(--radius-xs);
+    background: transparent;
+    color: var(--link);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+.hw-active-filters__clear:hover { color: var(--ink); }
+.hw-active-filters__clear:focus-visible { outline: none; box-shadow: var(--focus-ring); }

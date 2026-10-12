@@ -43,12 +43,13 @@ test.describe('Desktop — Topbar v2 (refonte)', () => {
     test('2 — bouton Filtres affiche "Filtres" sans compteur quand aucun filtre actif', async ({ page }) => {
         const label = page.locator('#hw-topbar-filters-label');
         await expect(label).toHaveText('Filtres');
-        await expect(page.locator('#hw-topbar-filters-btn')).not.toHaveClass(/is-active/);
+        await expect(page.locator('#hw-topbar-filters-count')).toBeHidden();
+        await expect(page.locator('#hw-topbar-filters-btn')).not.toHaveClass(/has-active/);
     });
 
     // ─── Test 3 : Compteur dynamique ──────────────────────────────────────────
 
-    test('3 — compteur passe à "Filtres (1)" après sélection d\'une zone', async ({ page }) => {
+    test('3 — pastille compteur à 1 après sélection d\'une zone (un filtre = une puce)', async ({ page }) => {
         // Ouvrir le panneau
         await page.locator('#hw-topbar-filters-btn').click();
         await page.waitForSelector('#hw-filter-panel.is-open', { timeout: 3000 });
@@ -58,14 +59,14 @@ test.describe('Desktop — Topbar v2 (refonte)', () => {
         await page.locator('.hw-fp-zone-btn').nth(1).click();
         await page.waitForTimeout(300);
 
-        await expect(page.locator('#hw-topbar-filters-label')).toHaveText('Filtres (1)');
-        await expect(page.locator('#hw-topbar-filters-btn')).toHaveClass(/is-active/);
+        await expect(page.locator('#hw-topbar-filters-count')).toHaveText('1');
+        await expect(page.locator('#hw-topbar-filters-btn')).toHaveClass(/has-active/);
 
-        // Reset → revient à "Filtres" sans compteur
+        // Reset → plus de pastille
         await page.locator('#hw-fp-reset').click();
         await page.waitForTimeout(300);
-        await expect(page.locator('#hw-topbar-filters-label')).toHaveText('Filtres');
-        await expect(page.locator('#hw-topbar-filters-btn')).not.toHaveClass(/is-active/);
+        await expect(page.locator('#hw-topbar-filters-count')).toBeHidden();
+        await expect(page.locator('#hw-topbar-filters-btn')).not.toHaveClass(/has-active/);
     });
 
     // ─── Test 4 : Toggle ouvre/ferme le panneau ───────────────────────────────
