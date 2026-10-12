@@ -7,7 +7,8 @@
      1. Zoom + / Zoom −     (.leaflet-control-zoom)
      2. Sélecteur de couches (.leaflet-control-layers)
      3. Recentrer la vue    (ResetViewControl, custom)
-     4. Légende             (LegendControl, custom — déplacée depuis la topbar)
+     4. Légende             (LegendControl : bouton LIBELLÉ, hors pile — voir
+                             « Bouton Légende » en bas de fichier)
 
    Importé par HW (style/base.css).
    Les !important restent nécessaires pour overrider les styles par défaut
@@ -138,4 +139,35 @@
     width: 22px;
     height: 22px;
     stroke-width: 2;
+}
+
+/* ===== Bouton Légende : libellé, détaché de la pile =====
+   Handoff Claude Design « retouches testeurs », sujet 3 (11/10/2026). Hors de
+   .leaflet-bar (pas de carré 44 px), filet renforcé, icône et texte en encre
+   de marque : repérable sans encombrer la carte. Préfixe .leaflet-container :
+   Leaflet colore et souligne `.leaflet-container a`, qui l'emporterait sur une
+   classe seule. États : survol, focus clavier, légende ouverte (aria-expanded,
+   posé par info-popover.js). */
+.leaflet-container a.hw-legend-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    height: var(--control-h-sm);
+    padding: 0 var(--space-sm);
+    margin-top: var(--space-sm);
+    border: var(--border-filet-strong);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--brand-ink);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+.leaflet-container a.hw-legend-btn svg { width: 18px; height: 18px; flex: none; }
+.leaflet-container a.hw-legend-btn:hover { background: var(--surface-muted); color: var(--brand-ink); }
+.leaflet-container a.hw-legend-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.leaflet-container a.hw-legend-btn[aria-expanded="true"] {
+    background: var(--brand-soft);
+    border-color: var(--brand);
 }

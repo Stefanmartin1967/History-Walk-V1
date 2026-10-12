@@ -6,6 +6,13 @@
 
 ---
 
+- BOUTON « LÉGENDE » REPÉRABLE SUR LA CARTE (v3.7.433) — **Handoff Claude Design « retouches testeurs », sujet 3**, accepté par Stefan le 11/10/2026. PC seulement : sur téléphone, le mode suivi masque tous les contrôles de carte.
+  - **Avant** : la légende des icônes, indispensable (27 icônes faites maison, dont trois formes de mosquée), s'ouvrait par un livre **sans texte**, cinquième d'une pile de carrés de 44 px en haut à gauche. Rien ne le distinguait du zoom ou des calques.
+  - **Après** : bouton **libellé « Légende »**, détaché sous la pile, avec un filet renforcé et l'icône et le texte en encre de marque (36 px de haut). Son conteneur n'a plus la classe `.leaflet-bar`, pour ne pas hériter du carré de la pile. Les règles sont préfixées par `.leaflet-container`, sinon Leaflet colorait et soulignait le lien.
+  - **États** : survol ; focus clavier ; légende ouverte en terracotta léger, avec `aria-expanded`, posé à l'ouverture et retiré à chaque fermeture (croix, 2ᵉ clic, Échap, clic sur la carte) par `info-popover.js`.
+
+  **Vérifié en local** (1366 px) : le bouton s'affiche sous la pile en Plein soleil et en Nuit. La légende s'ouvre juste en dessous (bouton en bas à 342 px, légende qui commence à 348 px), depuis le bouton comme depuis la carte « Voir la légende des icônes » de « Que faire ? ». Un 2ᵉ clic ou un clic sur la carte la referme, et l'état du bouton suit. Cache CSS : `style.css?v=8.39`. 3 nouveaux tests, en échec sur l'ancien code.
+
 - BOUTON « QUE FAIRE ? » DANS LA BARRE DU HAUT, PLEIN ÉCRAN DANS LE MENU OUTILS (v3.7.432) — **Handoff Claude Design « retouches testeurs », sujets 1 et 2**. Libellé, option A et correction du guide validés par Stefan le 11/10/2026. PC seulement.
   - **Bouton** : l'écran « Que voulez-vous faire ? » s'ouvrait par une boussole **sans texte**, avec l'info-bulle « Visite guidée ». Il s'ouvre désormais par un bouton **« Que faire ? »**, avec un libellé visible et une icône `layout-grid`, encadré (papier et filet), **à gauche** juste après le sélecteur de destination. États : survol, focus clavier, écran ouvert (`aria-expanded`, posé par `welcome.js`, fond terracotta léger). En PWA installée, il fait 32 px de haut.
   - **Problème de place, mesuré** : la barre du haut n'a que la largeur de la carte (fenêtre moins le panneau latéral). Avec le bouton tel que dessiné, elle débordait de **105 px à 1366 px** (portable courant) et de 165 px à 1280 px : le bouton Outils passait par-dessus l'onglet « Mes Circuits ». Elle débordait **déjà de 29 px à 1280 px** avant ce changement.
