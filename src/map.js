@@ -156,17 +156,23 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     map.addControl(new ResetViewControl());
 
     // --- BOUTON LÉGENDE (déplacé depuis la topbar — PR harmonisation PC) ---
+    // Bouton LIBELLÉ « Légende », détaché de la pile de carrés (handoff Claude
+    // Design « retouches testeurs », sujet 3, 11/10/2026) : la légende est
+    // indispensable (27 icônes faites maison), mais un livre sans texte au
+    // milieu de quatre carrés ne se repérait pas. Conteneur sans .leaflet-bar,
+    // pour ne pas hériter du carré 44 px de la pile. aria-expanded suit la
+    // légende (info-popover.js).
     const LegendControl = L.Control.extend({
         options: { position: 'topleft' },
         onAdd: function() {
-            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-            const link = L.DomUtil.create('a', 'leaflet-control-custom', container);
+            const container = L.DomUtil.create('div', 'leaflet-control hw-legend-control');
+            const link = L.DomUtil.create('a', 'hw-legend-btn', container);
             link.href = '#';
             link.id = 'leaflet-btn-legend';
-            link.title = 'Légende';
             link.role = 'button';
-            link.setAttribute('aria-label', 'Légende');
-            link.innerHTML = '<i data-lucide="book-open"></i>';
+            link.setAttribute('aria-haspopup', 'dialog');
+            link.setAttribute('aria-expanded', 'false');
+            link.innerHTML = '<i data-lucide="book-open"></i><span>Légende</span>';
             L.DomEvent.disableClickPropagation(container);
             link.onclick = function(e) {
                 e.preventDefault();

@@ -129,6 +129,27 @@ describe('showInfoPopover — Visite guidée extraite (PR PC-2, 10/05/2026)', ()
     });
 });
 
+describe('bouton Légende — aria-expanded suit la légende (11/10/2026)', () => {
+    const anchor = () => document.getElementById('btn-legend');
+
+    it('ouverture : aria-expanded="true" (état « ouvert » du bouton)', () => {
+        showInfoPopover();
+        expect(anchor().getAttribute('aria-expanded')).toBe('true');
+    });
+
+    it('fermeture par la croix : aria-expanded="false"', () => {
+        showInfoPopover();
+        document.querySelector('.info-popover-close').click();
+        expect(anchor().getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('fermeture par un 2e clic sur le bouton : aria-expanded="false"', () => {
+        showInfoPopover();
+        showInfoPopover();
+        expect(anchor().getAttribute('aria-expanded')).toBe('false');
+    });
+});
+
 describe('showInfoPopover — toggle et fermeture', () => {
     it('appel répété ferme le popover (toggle)', () => {
         showInfoPopover();

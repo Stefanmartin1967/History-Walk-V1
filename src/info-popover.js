@@ -143,6 +143,9 @@ function openPopover() {
     document.body.appendChild(popover);
 
     positionPopover(popover, anchor);
+    // Le bouton Légende de la carte suit l'ouverture (état « ouvert » visible,
+    // et annoncé aux lecteurs d'écran).
+    anchor.setAttribute('aria-expanded', 'true');
 
     popover.querySelector('.info-popover-close').addEventListener('click', closePopover);
 
@@ -156,6 +159,8 @@ function openPopover() {
 function closePopover() {
     const popover = document.getElementById(POPOVER_ID);
     if (popover) popover.remove();
+    (document.getElementById('leaflet-btn-legend') || document.getElementById('btn-legend'))
+        ?.setAttribute('aria-expanded', 'false');
     document.removeEventListener('click', onOutsideClick, true);
     document.removeEventListener('keydown', onEscapeKey);
     if (_onOtherPopupOpening) {
