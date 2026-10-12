@@ -88,11 +88,28 @@
     position: relative;
 }
 
-.hw-topbar-filters-btn.is-active {
-    background: var(--brand);
-    border-color: transparent;
-    color: var(--cta-fg);
+/* Filtres actifs (handoff Claude Design « retouches testeurs », sujet 5) :
+   teinte de marque légère + pastille du NOMBRE DE FILTRES (une puce de la
+   bande = un filtre), à la place de l'ancien « Filtres (n) » plein. */
+.hw-topbar-filters-btn.has-active {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+    color: var(--brand-ink);
 }
+.hw-filter-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 var(--space-xs);
+    border-radius: var(--radius-pill);
+    background: var(--cta-bg);
+    color: var(--cta-fg);
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    line-height: 1;
+}
+.hw-filter-count[hidden] { display: none; }
 
 /* ─── « Que faire ? » (#btn-tour) : bouton libellé, cadré ───
    Handoff Claude Design « retouches testeurs », sujet 1 (11/10/2026). Cadré

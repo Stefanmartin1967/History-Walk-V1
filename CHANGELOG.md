@@ -6,6 +6,19 @@
 
 ---
 
+- FILTRES ACTIFS VISIBLES SUR PC — BANDE DE PUCES ET COMPTEUR UNIQUE (v3.7.434) — **Note de test 9** (03/10/2026), **handoff Claude Design « retouches testeurs », sujet 5**, accepté par Stefan le 11/10/2026 (compteur = nombre de filtres). PC ; la version téléphone fait l'objet de la PR suivante.
+  - **Problème** : un visiteur devant une carte à moitié vide ne savait pas *quel* filtre la vidait. « Filtres (n) » ne disait que combien, et une info-bulle n'existe pas au toucher.
+  - **Bande « Filtres actifs »** en tête de carte, à droite des contrôles. Elle porte une **puce par filtre**, chacune avec sa croix (« Retirer le filtre … »), plus **« Tout effacer »**. Elle est cachée sans filtre, et tant que le panneau Filtres est ouvert (il montre déjà tout). Les libellés reprennent ceux du panneau : « Zone : Midoun », « Mosquée », « Lieux visités : masqués », « Lieux planifiés : seulement », « Incontournables seulement », « OSM vérifié : seulement »… Après un retrait au clavier, le focus passe à la croix suivante, ou au bouton « Filtres » si la bande se vide.
+  - **Bouton « Filtres »** : teinte de marque légère, et une **pastille** donne le nombre de filtres. Il remplace « Filtres (n) » sur fond terracotta plein. Nom accessible : « Filtres, 3 actifs ».
+  - **Une seule définition de « actif »** : `getActiveFilters` (`filter-panel.js`). Les puces, la pastille et le sous-titre du panneau (« 3 filtres actifs », au lieu de « N sections actives ») la lisent tous. Avant, trois définitions coexistaient et divergeaient : celle de la barre du haut **ignorait les filtres admin** (OSM, Maps, Jalel, Existence à confirmer…), qui laissaient le bouton muet, et toutes comptaient des **sections** (« Filtres (1) » au-dessus de trois catégories). « Actif » = différent du défaut de chaque ligne : chez un visiteur, « Existence à confirmer » masqué est le défaut, pas une puce.
+
+  **Vérifié en local** (visiteur, 1366 px, Nuit et Plein soleil) :
+  - zone + catégorie + « Lieux visités : masqués » → 3 puces, pastille « 3 », panneau « 3 filtres actifs » ;
+  - la croix de « Mosquée » → 2 puces et la carte se met à jour ;
+  - « Tout effacer » → bande cachée, plus de pastille, tous les lieux de retour.
+
+  Aucune erreur au chargement. Cache CSS : `style.css?v=8.40`. Nouveaux tests : `active_filters` (8), `active_filters_band` (5), pastille du bouton (2). Le test visuel Playwright de la barre est mis à jour pour la pastille ; il était déjà périmé sur d'autres points.
+
 - BOUTON « LÉGENDE » REPÉRABLE SUR LA CARTE (v3.7.433) — **Handoff Claude Design « retouches testeurs », sujet 3**, accepté par Stefan le 11/10/2026. PC seulement : sur téléphone, le mode suivi masque tous les contrôles de carte.
   - **Avant** : la légende des icônes, indispensable (27 icônes faites maison, dont trois formes de mosquée), s'ouvrait par un livre **sans texte**, cinquième d'une pile de carrés de 44 px en haut à gauche. Rien ne le distinguait du zoom ou des calques.
   - **Après** : bouton **libellé « Légende »**, détaché sous la pile, avec un filet renforcé et l'icône et le texte en encre de marque (36 px de haut). Son conteneur n'a plus la classe `.leaflet-bar`, pour ne pas hériter du carré de la pile. Les règles sont préfixées par `.leaflet-container`, sinon Leaflet colorait et soulignait le lien.
