@@ -7748,7 +7748,7 @@
         "Nom du site arabe": "جامع بوليمان - جَعبيرة",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "Répertoire J. Fathallah, n° 98 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://djerba-insolite.com/blog/boulimen\nhttps://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Bouliman",
+        "Source": "Répertoire J. Fathallah, n° 98 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nWikipédia, « Mosquée Bouliman » | https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Bouliman",
         "HW_ID": "HW-01K77WPE6N0ZBXJK23NVJ2MQPX",
         "photos": [
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463686754.jpg",
@@ -7759,7 +7759,7 @@
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463696128.jpg",
           "photos/poi_HW-01K77WPE6N0ZBXJK23NVJ2MQPX_1780463697853.jpg"
         ],
-        "description": "n° 98 — « Mosquée Boulimane. Jaabira. Mosquée ibadite wahbite. Une nouvelle salle de prière et un nouveau minaret ont été construits récemment. L'ancienne a été abandonnée. La nouvelle est récente. »\n\nMosquée construite par la famille Boulimen au 17ème siècle, à l'époque Husseinites. Elle est située à l'extrémité de Sedghiane. Son architecture, de forme polygonale, se situe à mi-chemin entre les style djerbien modeste et Ottoman.",
+        "description": "Mosquée du quartier de Jaabira, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 98 sous le nom de Boulimane : mosquée ibadite wahbite, dont une nouvelle salle de prière et un nouveau minaret ont été construits récemment, l'ancienne étant abandonnée. La liste Wikipédia des mosquées de Djerba la donne en activité.\nSelon l'article Wikipédia qui lui est consacré, la tradition en attribue la fondation, au début du 10ᵉ siècle, à la famille Būlīmāniyyūn ; elle abrite ensuite une médersa du 12ᵉ au 17ᵉ siècle. La cour compte deux citernes, la salle de prière est couverte de trois voûtes et le minaret ancien est un minaret-escalier.\nEn 2009, des travaux d'extension menés malgré l'opposition de l'Institut national du patrimoine détruisent l'ancien pinacle et élèvent un haut minaret ; une campagne de l'Assidje arrête les travaux et le pinacle est reconstruit.",
         "accessPoint": [
           10.7924829,
           33.7944996
@@ -7777,12 +7777,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
