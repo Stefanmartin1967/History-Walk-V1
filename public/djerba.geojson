@@ -2162,17 +2162,17 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Boulimen",
+        "Nom du site FR": "Mosquée Boulimen (Sedghaiane)",
         "Nom du site arabe": "جامع بوليمان",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": "Répertoire J. Fathallah, n° 142 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 142 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nDjerba Insolite, « Boulimen » | https://djerba-insolite.com/blog/boulimen",
         "HW_ID": "HW-01K77WPE6BDX79P55JZDF0G5SB",
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "142 Mosquée Boulimane. Cedghiane. Mosquée ibadite wahbite. 10ᵉ siècle de l'hégire / 16ᵉ siècle ap. J.-C.",
+        "description": "Mosquée ibadite de l'extrémité du village de Sedghaiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 142 sous le nom de Boulimane : mosquée ibadite wahbite, du 10ᵉ siècle de l'hégire, soit le 16ᵉ siècle. La liste Wikipédia des mosquées de Djerba la rattache elle aussi au 16ᵉ siècle.\nSelon l'association Djerba Insolite, elle aurait été construite vers le 17ᵉ siècle par la famille Boulimen, puis restaurée à la fin du 18ᵉ siècle par Mohsen Ben Youness, l'un des hommes les plus riches de Djerba à cette époque. Elle aurait servi de mosquée et de madrassa : les savants y enseignaient les règles du rite ibadite. L'enceinte, devenue haute après des travaux d'extension, s'ouvre au nord sur une cour avec des citernes, la salle de prière se trouvant à l'ouest.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/407965802",
@@ -2182,12 +2182,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
@@ -7744,7 +7745,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Boulimen – Jaabira",
+        "Nom du site FR": "Mosquée Boulimen (Jaabira)",
         "Nom du site arabe": "جامع بوليمان - جَعبيرة",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
