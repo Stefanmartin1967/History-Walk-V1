@@ -7699,7 +7699,7 @@
         "Nom du site arabe": "جامع سيدي عائش",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "Répertoire J. Fathallah, n° 102 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 102 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nWikipédia, « Mosquée Ouelhi » | https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Ouelhi",
         "HW_ID": "HW-01K77WPE6N293MG25FFQBH1G10",
         "photos": [
           "photos/poi_HW-01K77WPE6N293MG25FFQBH1G10_1780463679410.jpg",
@@ -7715,7 +7715,7 @@
         "État": "Désaffecté",
         "Accès": "Intérieur visitable",
         "info_gpx": "",
-        "description": "Jalel n° 102 — « Mosquée Sidi Yaaich. Jaabira. Mosquée ibadite wahbite abandonnée malgré sa récente restauration. 8ᵉ siècle de l'hégire (14ᵉ siècle ap. J.-C.).",
+        "description": "Mosquée du quartier de Jaabira, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 102 sous le nom de Sidi Yaaich : mosquée ibadite wahbite, du 8ᵉ siècle de l'hégire, soit le 14ᵉ siècle, abandonnée malgré sa récente restauration. La liste Wikipédia des mosquées de Djerba la donne pour dégradée.\nL'article Wikipédia consacré à la mosquée Ouelhi la situe à environ 710 m à l'ouest de celle-ci, dans un ensemble de sanctuaires ruraux rapprochés.\nAppelée Sidi Aïch mosquée sur OSM.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/990402627",
@@ -7725,12 +7725,13 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
