@@ -8144,7 +8144,7 @@
         "Nom du site arabe": "جامع البرداوي",
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
-        "Source": "https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322\nhttps://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba\nRépertoire J. Fathallah, n° 119 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 119 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\n« Sidi Yati, Berdaoui et Louta, les 3 mosquées restaurées à Djerba » (tunisie.co, 15 décembre 2019 ; reproduit le panneau d'information de la mosquée) | https://tunisie.co/article/12865/culture/musees-et-monuments/sidi-yati-541322\nHouda Ben Younes (ASSIDJE), « La restauration des mosquées ibadites : Louta, Bardaoui et Ammi Yathi à l'île de Djerba » (Panorama Solutions, 8 mai 2025) | https://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba\nConstat de l'auteur, 7 novembre 2025",
         "HW_ID": "HW-01K77WPE6N6HF86MYJNJWFPNSV",
         "photos": [
           "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463716033.jpg",
@@ -8175,7 +8175,7 @@
         "Facebook": "",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
