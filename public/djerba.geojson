@@ -8869,9 +8869,9 @@
         "Nom du site arabe": "مسجد الشيخ",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "Répertoire J. Fathallah, n° 8 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nhttps://djerba-insolite.com/blog/mosque-el-cheikh",
+        "Source": "Répertoire J. Fathallah, n° 8 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Mosquée El Cheikh » | https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_El_Cheikh\nPlaque et panneau d'information relevés sur place le 4 novembre 2025",
         "HW_ID": "HW-01K77WPE6P5C0194DPJWYMX9C1",
-        "description": "Jalel n° 8 — « Cheikh. Centre ville, Houmt Souk. Mosquée ibadite. 1548 ap. J.-C. »\nMosquée ibadite construite aux environs de l'année 1548 sous l'ordre du Cheikh Abu Afif Saleh bin Yahya bin Sulaiman Samomani. Un des pricnipaux lieux de culte à Houmt Souk. De forme rectangualire, la salle de prières est couverte par pas moins de 42 coupoles. Un minaret surmonté d'un lanterneau, typique de ce type de mosquée est situé sur la droite.",
+        "description": "Mosquée du centre de Houmt Souk.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 8 sous le nom de Cheikh : mosquée ibadite de 1548. Sur place, une plaque donne comme date de fondation le 10ᵉ siècle de l'hégire, soit le 16ᵉ siècle, et un panneau d'information indique qu'elle a été fondée sur les ordres du cheikh Salah Ben Abi Zakaria Smoumni, qu'elle représentait la mosquée la plus active de la communauté ibadite et qu'elle est devenue un pôle important de la vie religieuse et économique de Houmt Souk et de Djerba ; ses versions anglaise et arabe mentionnent des changements importants au 17ᵉ siècle.\nSelon l'article Wikipédia qui lui est consacré, un premier agrandissement a lieu en 1618 ou 1620, et la première prière du vendredi de Djerba y est célébrée en 1668. La salle de prière est couverte par 42 coupoles et précédée d'un porche de quatre arcs ; un minaret carré à lanterneau s'élève sur son côté droit ; la cour renferme un puits et trois citernes. La mosquée reste le lieu de conclusion des contrats de mariage des ibadites du nord de l'île.",
         "accessPoint": [
           10.8566537,
           33.8776151
@@ -8893,14 +8893,15 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
