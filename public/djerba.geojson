@@ -3066,7 +3066,7 @@
         "Nom du site arabe": "جامع بن يخلف",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": "Répertoire J. Fathallah, n° 131 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 131 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nHouda Ben Younes, « Bin Yakhlif », The North-African Ibadite Mosques' Collection (iDAI.objects) | https://arachne.dainst.org/entity/7043423",
         "HW_ID": "HW-01K77WPE6CMHE8GHTTW13GZ8M1",
         "accessPoint": [
           10.9052828,
@@ -3076,9 +3076,9 @@
         "lng": 10.905244947493227,
         "Sous-type": "À coupoles",
         "État": "Ruine",
-        "Accès": "Intérieur visitable",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "131 Mosquée Ben Yakhlef. Guechaine. Mosquée ibadite wahbite ancienne, abandonnée et en quasi ruines. 1074 de l'hégire / 1663 ap. J.-C.",
+        "description": "Mosquée de Guechaine, à Sedghaiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 131 sous le nom de Ben Yakhlef : mosquée ibadite wahbite ancienne, abandonnée et en quasi-ruines, de 1074 de l'hégire, soit 1663-1664. La liste Wikipédia des mosquées de Djerba la nomme « Amor Ben Yakhlef », la donne ruinée et la date du 17ᵉ siècle (1663). Houda Ben Younes, dans la collection « The North-African Ibadite Mosques' Collection » (iDAI.objects), la date au plus tard de 1663 et la décrit comme délabrée et abandonnée.\nAppelée Mosquée Amor Ben Yekhlef sur OSM.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1549787230",
@@ -3086,14 +3086,15 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
