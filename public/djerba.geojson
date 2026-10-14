@@ -12530,19 +12530,19 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "266 Mosquée Ben Ouiran. Ajim. Mosquée ibadite wahbite. 9ᵉ siècle de l'hégire / 15ᵉ siècle ap. J.-C.",
+        "description": "Mosquée du quartier de Touiren, à Houmet Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 266 sous le nom de Ben Ouiran : mosquée ibadite wahbite, du 9ᵉ siècle de l'hégire, soit le 15ᵉ siècle. La liste Wikipédia des mosquées de Djerba la situe à Touiren et la date elle aussi du 15ᵉ siècle.\nSelon la fiche de Houda Ben Younes dans la collection « The North-African Ibadite Mosques' Collection » (iDAI.objects), c'est une mosquée urbaine voisine d'un cimetière, en bordure de Houmet Ajim sur la route de Houmet El May. Elle occupe environ 2 000 m², entourée d'un muret ; plusieurs entrées donnent sur une esplanade à trois niveaux, avec neuf puits (majel) et une citerne ; la salle de prière occupe le centre, légèrement décalée vers l'ouest, avec un portique à l'angle sud-est. L'auteure la date d'après le 16ᵉ siècle et note qu'elle est défigurée par de nouvelles extensions.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 266 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 266 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nHouda Ben Younes, « Bin Wiran », The North-African Ibadite Mosques' Collection (iDAI.objects) | https://arachne.dainst.org/entity/7043422",
         "maps_ref": "https://maps.app.goo.gl/LdU1jEyTvecwn54j8",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "info_gpx": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "Ajim",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -12551,7 +12551,8 @@
         "accessPoint": [
           10.7589523,
           33.7292163
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
