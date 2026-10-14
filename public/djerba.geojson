@@ -4605,13 +4605,13 @@
         "Nom du site arabe": "جامع قوجيل",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": "Répertoire J. Fathallah, n° 84 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 84 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nInscription relevée sur place le 9 mars 2026",
         "HW_ID": "HW-01K77WPE6FDEFE8CMVWQSV93V4",
         "Sous-type": "À minaret",
-        "État": "En activité",
+        "État": "",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 84 : « Mosquée Goujil. Bani Dight, Erriadh. Mosquée ibadite wahbite. Ancienne",
+        "description": "Mosquée du quartier de Bani Dight, à Erriadh.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 84 sous le nom de Goujil : mosquée ibadite wahbite, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la nomme également Goujil et la dit ancienne.\nSur place, une plaque au-dessus de la porte porte l'inscription « جامع قوجيل ».",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/408326379",
@@ -4619,9 +4619,9 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -4632,7 +4632,8 @@
           "photos/poi_HW-01K77WPE6FDEFE8CMVWQSV93V4_1788371390849.jpg",
           "photos/poi_HW-01K77WPE6FDEFE8CMVWQSV93V4_1788371392504.jpg",
           "photos/poi_HW-01K77WPE6FDEFE8CMVWQSV93V4_1788371394161.jpg"
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
