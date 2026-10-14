@@ -2480,7 +2480,7 @@
         "Nom du site arabe": "جامع تلاكين",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "Répertoire J. Fathallah, n° 45 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 45 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Mosquée Tlakin » | https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Tlakin\nHouda Ben Younes, « T'lakin », The North-African Ibadite Mosques' Collection (iDAI.objects) | https://arachne.dainst.org/entity/7043470",
         "HW_ID": "HW-01K77WPE6B8K7SZXAC90M70BMM",
         "accessPoint": [
           10.9324732,
@@ -2490,7 +2490,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 45 — « Mosquée Tlakine. Ghizen. Mosquée forteresse, en face de laquelle fut construite une nouvelle au 21ᵉ siècle. 601 de l'hégire (1205 ap. J.-C.). La nouvelle est récente.",
+        "description": "Mosquée fortifiée de Ghizen, à Mezraya.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 45 sous le nom de Tlakine : mosquée forteresse de 601 de l'hégire, soit 1204-1205, face à laquelle une mosquée nouvelle a été construite au 21ᵉ siècle. Selon l'article Wikipédia qui lui est consacré, la fondation est généralement datée de 1204-1205 ; une autre tradition place l'origine du sanctuaire au milieu du 9ᵉ siècle, avec un agrandissement en 1204-1205. L'ensemble comporte des dispositifs défensifs (mâchicoulis, meurtrières, minaret-escalier) et a abrité, après 1560, le conseil des azzaba, qui y jugeait de nombreuses affaires.\nSelon Houda Ben Younes, dans la collection « The North-African Ibadite Mosques' Collection » (iDAI.objects), l'ensemble occupe environ 1 575 m², entouré d'un muret, avec deux entrées au nord ouvrant sur une esplanade où se trouvent des puits, une citerne et la salle de prière ; l'ancienne salle de prière est devenue une école coranique et une extension récente a partiellement modifié la cour.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/382871444",
@@ -2498,14 +2498,15 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
