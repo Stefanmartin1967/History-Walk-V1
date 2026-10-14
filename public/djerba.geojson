@@ -6324,7 +6324,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Al-Hara",
+        "Nom du site FR": "Mosquée El Hara",
         "Nom du site arabe": "جامع الحارة",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
@@ -8576,10 +8576,10 @@
         "Nom du site arabe": "مسجد بن عباس",
         "Catégorie": "Mosquée",
         "Zone": "Ajim",
-        "Source": "Répertoire J. Fathallah, n° 267 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nHouda Ben Younes, « The North-African Ibadite Mosques' Collection », iDAI.objects arachne | https://arachne.dainst.org/entity/7043417?fl=20&q=connectedEntities:7343375&resultIndex=1",
+        "Source": "Répertoire J. Fathallah, n° 267 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nHouda Ben Younes, « Bin ʿAbbās », The North-African Ibadite Mosques' Collection (iDAI.objects) | https://arachne.dainst.org/entity/7043417",
         "HW_ID": "HW-01K77WPE6PKFFHK53AA0880TBZ",
-        "description": "267 Mosquée Ben Abbes. Ajim. Mosquée ibadite wahbite. 1046 de l'hégire / 1637 ap. J.-C.\n\nMosquée urbaine, de forme irrégulière, comprenant une école coranique. Sa superficie est de 2500 M². Plusieurs accès permettent d'accéder à la cour qui comporte deux majel (Puits). La salle de prière est située en son centre.",
-        "info_gpx": "Mosquée ibadite wahbite construite en 1046 de l’hégire, soit en 1637 de notre ère",
+        "description": "Mosquée du quartier d'El Trifa, au sud de Houmet Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 267 sous le nom de Ben Abbes : mosquée ibadite wahbite de 1046 de l'hégire, soit 1636-1637. La liste Wikipédia des mosquées de Djerba la situe à El Trifa.\nSelon la fiche de Houda Ben Younes dans la collection « The North-African Ibadite Mosques' Collection » (iDAI.objects), c'est une mosquée urbaine du 17ᵉ siècle, sur un terrain irrégulier de 2 500 m² entouré d'un muret. On accède à la cour par plusieurs entrées ; elle compte deux puits (majel) et une citerne, la salle de prière occupe le centre de l'esplanade, le portique se trouve au sud-est avec une salle d'ablutions voisine, et l'école coranique est à l'est. L'auteure note que l'ensemble est déformé par de nouvelles extensions.",
+        "info_gpx": "",
         "accessPoint": [
           10.7560444,
           33.7209509
@@ -8603,7 +8603,8 @@
         "osmCheckedDate": "2026-08-16",
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
