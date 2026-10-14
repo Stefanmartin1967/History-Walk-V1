@@ -4860,10 +4860,10 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Boukthir",
-        "Nom du site arabe": "جامع بو كثير",
+        "Nom du site arabe": "جامع بوكثير",
         "Catégorie": "Mosquée",
         "Zone": "Erriadh",
-        "Source": "Répertoire J. Fathallah, n° 80 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 80 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nHouda Ben Younes, « Bukthir », The North-African Ibadite Mosques' Collection (iDAI.objects) | https://arachne.dainst.org/entity/7043425",
         "HW_ID": "HW-01K77WPE6FVZ53RX9CM5VVC777",
         "accessPoint": [
           10.864539,
@@ -4872,10 +4872,10 @@
         "lat": 33.8354060003172,
         "lng": 10.864357352022925,
         "Sous-type": "À minaret",
-        "État": "En activité",
+        "État": "",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "80 Mosquée Boukthir. Taghdimes. Mosquée ibadite wahbite. Ancienne.",
+        "description": "Mosquée du quartier de Taghdimes, à Erriadh.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 80 sous le nom de Boukthir : mosquée ibadite wahbite, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la donne en activité. Houda Ben Younes, dans la collection « The North-African Ibadite Mosques' Collection » (iDAI.objects), la date du 17ᵉ siècle et la décrit comme occupée et déformée.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/428233841",
@@ -4883,14 +4883,15 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
