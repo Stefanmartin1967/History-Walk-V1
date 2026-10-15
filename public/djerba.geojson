@@ -1082,14 +1082,14 @@
         "Zone": "El Mahboubine",
         "Source": "Palais Ben Ayed, « La mosquée Hadher Bach » | http://palaisbenayed.com/la-mosquee-hadher-bach-%D8%AC%D8%A7%D9%85%D8%B9-%D8%AD%D8%A7%D8%B6%D8%B1-%D8%A8%D8%A7%D8%B4\nRépertoire J. Fathallah, n° 223 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nPlaque de la mosquée, relevée sur place le 11/03/2026",
         "HW_ID": "HW-01K77WPE699CBRC4PV1ARJPXKM",
-        "description": "Mosquée à haut minaret sur la route de Mahboubine, à un kilomètre de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 223 : mosquée malékite à origine nokkarite, ancienne.\nSa date reste incertaine. La plaque de la mosquée indique une fondation au 10ᵉ siècle de l'hégire, soit le 16ᵉ siècle. Le site du palais Ben Ayed l'attribue à Ali Ben Ayed, dit Ali Hadherbach, oncle du caïd Hmida Ben Ayed, et en déduit qu'elle daterait du 18ᵉ siècle, ce qui en ferait l'aînée de la mosquée El Gayed (1785). Cette même source réfute l'attribution, parfois avancée, à Mahmoud Ben Ayed.\nSelon elle encore, Salah Ben Youssef y aurait appris à lire et à écrire le Coran.\nLe 11 mars 2026, des fidèles arrivaient à la mosquée, observés de l'extérieur.",
+        "description": "Mosquée à haut minaret sur la route de Mahboubine, à un kilomètre de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 223 : mosquée malékite à origine nokkarite, ancienne.\nSa date reste incertaine. La plaque de la mosquée indique une fondation au 10ᵉ siècle de l'hégire, soit le 16ᵉ siècle. Le site du palais Ben Ayed l'attribue à Ali Ben Ayed, dit Ali Hadherbach, oncle du caïd Hmida Ben Ayed, et en déduit qu'elle daterait du 18ᵉ siècle, ce qui en ferait l'aînée de la mosquée El Gayed (1785). Cette même source réfute l'attribution, parfois avancée, à Mahmoud Ben Ayed.\nSelon elle encore, Salah Ben Youssef y aurait appris à lire et à écrire le Coran.",
         "accessPoint": [
           10.9845895,
           33.8017228
         ],
         "Sous-type": "À minaret",
-        "État": "En activité",
-        "Accès": "Intérieur visitable",
+        "État": "",
+        "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
