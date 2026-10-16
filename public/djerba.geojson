@@ -10090,9 +10090,9 @@
         "Nom du site arabe": "",
         "Catégorie": "Mausolée",
         "Zone": "Sedghaiane",
-        "Source": "Martine Gendron",
+        "Source": "Martine Gendron, spécialiste des mosquées de Djerba (commentaire du 14 août 2026)\nOpenStreetMap, tombeau « Eddjoui » (Petr Jenč, 2026) | https://www.openstreetmap.org/way/1430127799\nObservation sur place, le 13 mars 2026",
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
-        "description": "",
+        "description": "Petit mausolée à coupole (qubba) de Sedghaiane.\nSelon Martine Gendron, spécialiste des mosquées de Djerba, il s'appelle « Qubba Dajwi ». OpenStreetMap le classe parmi les tombeaux et le nomme « Eddjoui » (« الدجوي »).\nSur place, le 13 mars 2026, c'est un petit bâtiment à coupole dont l'entrée est sans porte, bordé d'un muret de pierres.",
         "info_gpx": "",
         "accessPoint": [
           10.9463809,
@@ -10108,9 +10108,9 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "photos": [
           "photos/poi_HW-01K77WPE6SFRMMS2GS11D6JXR5_1786726887779.jpg",
           "photos/poi_HW-01K77WPE6SFRMMS2GS11D6JXR5_1786726889571.jpg"
