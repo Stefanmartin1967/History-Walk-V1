@@ -3329,7 +3329,7 @@
         "Nom du site arabe": "جامع الخروبي",
         "Catégorie": "Mosquée",
         "Zone": "El May",
-        "Source": "Répertoire J. Fathallah, n° 149 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 149 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nOpenStreetMap, ruines de la mosquée Kharroubi | https://www.openstreetmap.org/way/1364140400\nObservation sur place, le 9 mars 2026",
         "HW_ID": "HW-01K77WPE6DN850VCNS22C48QFT",
         "photos": [
           "photos/poi_HW-01K77WPE6DN850VCNS22C48QFT_1784831479801.jpg",
@@ -3346,7 +3346,7 @@
         "État": "Ruine",
         "Accès": "Extérieur seulement",
         "info_gpx": "Ruine de la mosquée Kharroubi",
-        "description": "Ruines d'une petite mosquée en pierre calcaire de l'époque médiévale (Réparations ultérieures évidentes, fragment in situ d'une colonne romaine antique de seconde main)\nPetr Jenč - OpenStreetMap, 2025\nJalel n° 149 : « Mosquée Kharroubi. May, Houmt Ouchachna. Mosquée abandonnée et délabrée. Ancienne.",
+        "description": "Ruines de la mosquée Kharroubi, à Houmt Ouchachna (El May).\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 149 : mosquée abandonnée et délabrée, de datation « ancienne ».\nSur place, le 9 mars 2026, seuls des pans de murs en pierre subsistent.\nRuines d'une petite mosquée en pierre calcaire de l'époque médiévale (réparations ultérieures évidentes, fragment in situ d'une colonne romaine antique de seconde main).\nPetr Jenč - OpenStreetMap, 2026",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
@@ -3356,12 +3356,13 @@
         "introuvableCarte": false,
         "osm_ref": "way/1364140400",
         "maps_ref": "https://maps.app.goo.gl/khsTYLSJW2RBfoCF7",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
