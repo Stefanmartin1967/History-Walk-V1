@@ -12036,7 +12036,7 @@
         "introuvableCarte": false,
         "HW_ID": "HW-01KYFCTHGZ0XS4W7SAXKGCMSAV",
         "État": "En activité",
-        "description": "Mausolée proche de la mosquée Bouziri",
+        "description": "Mausolée voisin de la mosquée Bouziri, à Temlel.\nSelon Martine Gendron, spécialiste des mosquées de Djerba, il s'agit du mausolée du Fkih Kacem El Bouziri.\nOpenStreetMap le désigne sous le nom « Bouziri ».",
         "photos": [
           "photos/poi_HW-01KYFCTHGZ0XS4W7SAXKGCMSAV_1785075907721.jpg"
         ],
@@ -12044,7 +12044,7 @@
         "Nom du site arabe": "",
         "Sous-type": "",
         "info_gpx": "",
-        "Source": "Martine Gendron",
+        "Source": "Martine Gendron, spécialiste des mosquées de Djerba",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
@@ -12054,7 +12054,8 @@
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
