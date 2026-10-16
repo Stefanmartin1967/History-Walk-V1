@@ -9277,7 +9277,7 @@
         "Nom du site arabe": "جامع بوزيري",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "Répertoire J. Fathallah, n° 331 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nhttps://www.youtube.com/watch?v=QIpMeR9OnDQ\nPlaque de la mosquée, relevée sur place le 14/11/2025",
+        "Source": "Répertoire J. Fathallah, n° 331 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nJalel Fathallah, « Mosquée Bouziri à Midoun à Djerba » (vidéo YouTube) | https://www.youtube.com/watch?v=QIpMeR9OnDQ\nInscriptions et observations relevées sur place le 14 novembre 2025",
         "HW_ID": "HW-01K77WPE6QS9TJZYHXPSJKW47P",
         "accessPoint": [
           11.0134285,
@@ -9286,8 +9286,8 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "info_gpx": "Ancienne mosquée malékite, fondée par la communauté ibadite nokkarite",
-        "description": "Ancienne mosquée, en pleine campagne de Temlel, aux environs de Midoun. Fondée par la communauté ibadite nokkarite, elle relève aujourd'hui du rite malékite. Elle est entièrement blanchie à la chaux vive, rehaussée de quelques touches de vert — la couleur de l'islam, rappelle Jalel Fathallah, une religion née en milieu semi-désertique où le paradis promis est verdoyant. Autour, des levées de terre plantées d'aloès et de cactus délimitent les propriétés.\n\nSon minaret est sans décor. Un escalier subsiste, par lequel l'appel à la prière se lançait autrefois à la voix, avant la sonorisation. Sur la façade, un mur bombé signale de l'extérieur le mihrab — la niche qui indique la direction de La Mecque. Près du portique, un second mihrab, plus petit et en contrebas, permettait de tenir dehors les prières du crépuscule et de la nuit, à la fraîcheur de l'été.\n\nComme toute mosquée djerbienne, elle a sa citerne — ici de grande taille, au centre du site. Elle recueillait l'eau de pluie, et les familles sans citerne venaient y puiser. Des bâtiments annexes l'entourent ; ils ont pu abriter une école coranique, mais rien sur place ne le confirme. La salle d'ablutions, elle, est moderne et entretenue.\n\nÀ l'intérieur, la salle de prière est coiffée d'une coupole et rythmée par des arcades à arcs brisés. Le minbar, la chaire d'où se donne le prêche du vendredi, est en bois travaillé.\n\nUne plaque atteste des travaux de restauration et d'agrandissement menés en 2012. La mosquée a conservé son style et son architecture d'origine.",
+        "info_gpx": "",
+        "description": "Ancienne mosquée de la campagne de Temlel, aux environs de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 331 : mosquée malékite à origine nokkarite ibadite, ancienne.\nDans sa vidéo, Jalel Fathallah la décrit entièrement blanchie à la chaux vive, avec quelques touches de vert, qu'il présente comme la couleur de l'islam, religion née en milieu semi-désertique où le paradis promis est verdoyant ; des levées de terre plantées d'aloès et de cactus délimitent les propriétés alentour. Il relève un minaret sans décor, dont un escalier subsiste, par lequel l'appel à la prière se lançait autrefois à la voix ; un mur bombé sur la façade, qui signale le mihrab de l'extérieur ; et, près du portique, un second mihrab plus petit et en contrebas, qui permettait de prier dehors à la fraîcheur de l'été. La grande citerne du centre du site recueillait l'eau de pluie, et les familles sans citerne venaient y puiser. Il évoque des bâtiments annexes qui ont pu abriter une école coranique. À l'intérieur, la salle de prière est coiffée d'une coupole et rythmée par des arcades à arcs brisés ; le minbar est en bois travaillé. Il mentionne aussi des travaux de restauration et d'agrandissement menés en 2012, attestés par une plaque.\nSur place, le 14 novembre 2025, une plaque porte le nom « جامع بوزيري », une plaque verte signale la salle d'ablutions des femmes, et la salle d'ablutions est moderne et bien entretenue.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1426153008",
@@ -9305,12 +9305,13 @@
           "photos/poi_HW-01K77WPE6QS9TJZYHXPSJKW47P_1785092211944.jpg"
         ],
         "maps_ref": "https://maps.app.goo.gl/S7vt7Qv6UDZdeVjf7",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
         "mapsHasPhoto": true,
-        "jalelChecked": true
+        "jalelChecked": true,
+        "commons_ref": ""
       }
     },
     {
