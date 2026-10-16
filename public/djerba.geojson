@@ -5069,11 +5069,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Ahmed ElJebliani",
+        "Nom du site FR": "Mosquée Sidi Ahmed El Jebliani",
         "Nom du site arabe": "امع سيدي السوقي",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "Répertoire J. Fathallah, n° 22 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 22 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInscription relevée sur place le 4 novembre 2025",
         "HW_ID": "HW-01K77WPE6F1C25NNH5RAR2JPF6",
         "photos": [
           "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460051591.jpg",
@@ -5090,7 +5090,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 22 — « Sidi Essougui. Taourit. Mosquée et mausolée malékite. Récente, intégrant le mausolée.\nTraduction de la plaque à l'entrée :\n\"Mosquée Sidi Ahmed ElJebliani\nConnu Sidi Essougui\"",
+        "description": "Mosquée de Taourit, qui intègre un mausolée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 22 sous le nom de Sidi Essougui : mosquée et mausolée malékite, récente, intégrant le mausolée.\nSur place, le 4 novembre 2025, le panneau de l'entrée porte l'inscription « جامع سيدي أحمد الجيلاني، شهر سيدي السوقي، بتاوريت » : mosquée Sidi Ahmed ElJebliani, connue sous le nom de Sidi Essougui, à Taourit.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1550394077",
