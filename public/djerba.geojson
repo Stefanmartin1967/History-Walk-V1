@@ -1882,7 +1882,7 @@
         "Nom du site arabe": "جامع الشُّبابيّة",
         "Catégorie": "Mosquée",
         "Zone": "Arkou",
-        "Source": "Répertoire J. Fathallah, n° 231 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 231 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nObservation sur place, le 16 mars 2026",
         "HW_ID": "HW-01K77WPE6A3AYDG7D68R9A0JBT",
         "accessPoint": [
           10.9844424,
@@ -1894,7 +1894,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 231 — « Mosquée Chababia. Bani Maaguel. Mosquée malékite très récente. Récente. »",
+        "description": "Mosquée de Chebabia, à Arkou.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 231 sous le nom de Chababia : mosquée malékite, très récente. La liste Wikipédia des mosquées de Djerba la situe à Chebabia sous le nom d'Abdessalam, la donne active et récente.\nSur place, le 16 mars 2026, un vieux bâtiment voûté en terre se dresse à quelques mètres de la mosquée.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/990336016",
@@ -1902,9 +1902,9 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -1916,7 +1916,8 @@
           "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982274982.jpg",
           "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982276487.jpg",
           "photos/poi_HW-01K77WPE6A3AYDG7D68R9A0JBT_1787982278088.jpg"
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
