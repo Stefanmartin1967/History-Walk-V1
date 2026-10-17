@@ -17215,7 +17215,7 @@
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 292 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nOpenStreetMap, way/1465366263 | https://www.openstreetmap.org/way/1465366263",
         "osm_ref": "way/1465366263",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
