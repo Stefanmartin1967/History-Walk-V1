@@ -2065,10 +2065,10 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Ami Zayed Ellough",
-        "Nom du site arabe": "",
+        "Nom du site arabe": "مسجد أمي زايد اللوغ",
         "Catégorie": "Mosquée",
         "Zone": "Mazraia",
-        "Source": "Répertoire J. Fathallah, n° 52 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInscription et observations relevées sur place le 13 novembre 2025",
+        "Source": "Répertoire J. Fathallah, n° 52 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInscription en carreaux de céramique et observation sur place, le 13 novembre 2025",
         "HW_ID": "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
         "accessPoint": [
           10.9454083,
@@ -2086,7 +2086,7 @@
           "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563701545.jpg"
         ],
         "info_gpx": "",
-        "description": "Mosquée de Mezraya.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 52 sous le nom de Zaied Ellough : mosquée wahbite, de 1615.\nSur place, le 13 novembre 2025, la mosquée est en bon état, et une plaque en carreaux de céramique porte l'inscription « مسجد أمي زايد اللوغ » (mosquée Ami Zayed Ellough).",
+        "description": "Mosquée de Mezraya.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 52 sous le nom de Zaied Ellough : mosquée wahbite, de 1615.\nSur place, le 13 novembre 2025, la mosquée est en bon état, et un panneau de carreaux de céramique porte l'inscription « مسجد أمي زايد اللوغ » (mosquée Ami Zayed Ellough).",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/484881572",
@@ -10350,17 +10350,17 @@
         "Nom du site arabe": "جامع الجديد",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
-        "Source": "Répertoire J. Fathallah, n° 146 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Observation sur place, le 13 mars 2026\nRépertoire J. Fathallah, n° 146 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nOpenStreetMap, way/408236306 | https://www.openstreetmap.org/way/408236306",
         "HW_ID": "HW-01KJABRN0J9FDDEKWKYWHQWE3P",
         "accessPoint": [
           10.9537821,
           33.8209444
         ],
         "Sous-type": "À minaret",
-        "État": "En activité",
+        "État": "",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 146 : « Mosquée Jadid. Cedghiane. Mosquée ibadite wahbite. Ancienne.",
+        "description": "Mosquée de Sedghaiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 146 sous le nom de Mosquée Jadid : mosquée ibadite wahbite, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la reprend sous le nom d'Ejdid, également wahbite et ancienne.\nSur place, le 13 mars 2026, la mosquée est blanche, avec un minaret carré et des portes vertes.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/408236306",
@@ -10381,7 +10381,8 @@
           "photos/poi_HW-01KJABRN0J9FDDEKWKYWHQWE3P_1789746828431.jpg",
           "photos/poi_HW-01KJABRN0J9FDDEKWKYWHQWE3P_1789746831400.jpg",
           "photos/poi_HW-01KJABRN0J9FDDEKWKYWHQWE3P_1789746833936.jpg"
-        ]
+        ],
+        "commons_ref": ""
       }
     },
     {
@@ -18533,17 +18534,17 @@
         "Nom du site FR": "Mosquée Gharib",
         "Catégorie": "Mosquée",
         "Sous-type": "À coupoles",
-        "État": "En activité",
+        "État": "",
         "Accès": "Extérieur seulement",
-        "description": "Mosquée du quartier de Taziri, à Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 337 : mosquée ibadite devenue malékite, ancienne.",
+        "description": "Mosquée du quartier de Taziri, à Sedouikech.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 337 : mosquée ibadite devenue malékite, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la donne sous le nom de Ghrib, également ibadite puis malikite et ancienne.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Répertoire J. Fathallah, n° 337 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
+        "Source": "Répertoire J. Fathallah, n° 337 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nWikimedia Commons, « Category:Gharib Mosque » (photos de Rais67, 23 août 2026) | https://commons.wikimedia.org/wiki/Category:Gharib_Mosque",
         "osm_ref": "",
         "maps_ref": "https://maps.app.goo.gl/hB3k4MyHEsNJtdnw9",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-30",
         "mapsChecked": true,
