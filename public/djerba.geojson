@@ -11696,7 +11696,7 @@
         ],
         "Nom du site arabe": "",
         "Sous-type": "",
-        "État": "Désaffecté",
+        "État": "",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
@@ -11705,7 +11705,7 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "osm_ref": "way/990353527",
         "maps_ref": "https://maps.app.goo.gl/244Ah1MaW2uovumh7",
@@ -11772,7 +11772,7 @@
         "HW_ID": "HW-01KM2QY8VXPF72S6D9NAZ0AZ43",
         "created_at": "2026-03-19T09:48:31.484Z",
         "Prix_TND": 0,
-        "description": "",
+        "description": "Maison traditionnelle en ruine (houch) à Khazroun, près de Midoun, à une cinquantaine de mètres d'une qubba (Qubba Mrabet Slimane).\nDans OpenStreetMap, le bâtiment est cartographié comme ruine sous le nom de « houch ».\nSur place, le 19 mars 2026, les murs en ruine laissent voir, au milieu des gravats, une petite coupole et une cheminée.",
         "accessPoint": [
           10.9735112,
           33.8137871
@@ -11783,23 +11783,28 @@
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
-        "Source": "",
+        "Source": "Observation sur place, le 19 mars 2026\nOpenStreetMap, way/1560008114 | https://www.openstreetmap.org/way/1560008114",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "osm_ref": "way/1560008114",
         "maps_ref": "",
         "lat": 33.81366398849076,
         "lng": 10.973104834556581,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-26",
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
-        "commons_ref": ""
+        "commons_ref": "",
+        "photos": [
+          "photos/poi_HW-01KM2QY8VXPF72S6D9NAZ0AZ43_1792227753343.jpg",
+          "photos/poi_HW-01KM2QY8VXPF72S6D9NAZ0AZ43_1792227755031.jpg",
+          "photos/poi_HW-01KM2QY8VXPF72S6D9NAZ0AZ43_1792227756871.jpg"
+        ]
       }
     },
     {
