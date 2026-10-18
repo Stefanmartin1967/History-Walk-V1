@@ -51,6 +51,13 @@ export default defineConfig({
         // réseau — sinon un utilisateur avec l'app installée qui clique un
         // lien Google recevrait index.html au lieu de la page du lieu.
         navigateFallbackDenylist: [/\.gpx(\?.*)?$/i, /^\/lieux\//],
+        // Script chargé par le service worker avant Workbox : supprime, à
+        // l'activation, les caches que plus aucune route n'utilise (ex. l'ancien
+        // `map-tiles`, cf. tuiles plus bas). Fichier de public/ → copié à la
+        // racine de dist/, à côté de sw.js. ⚠ S'il manquait au déploiement, le
+        // nouveau SW échouerait à s'installer et plus aucune mise à jour
+        // n'arriverait : tests/sw_cleanup.test.js le garde.
+        importScripts: ['sw-cleanup.js'],
         runtimeCaching: [
           {
             // GeoJSON : NetworkFirst — données éditoriales qui évoluent
@@ -80,24 +87,35 @@ export default defineConfig({
             },
           },
           {
-            // Tuiles de carte (OSM « Plan », CARTO « Voyager » par défaut, Google
-            // « Satellite ») : CacheFirst — une tuile vue une fois reste dispo hors
-            // ligne. C'est ce qui permet le « pack terrain » PASSIF : on prépare un
-            // circuit chez soi (les tuiles de la zone se chargent) → sur le terrain
-            // elles sont déjà là, carte lisible même sans réseau. Cf. map.js.
+            // Tuiles de carte (CARTO « Voyager » par défaut, OSM « Plan », OSM
+            // France « Plan (FR) », Google « Satellite ») : CacheFirst — une tuile
+            // vue une fois reste dispo hors ligne. C'est ce qui permet le « pack
+            // terrain » PASSIF : on prépare un circuit chez soi (les tuiles de la
+            // zone se chargent) → sur le terrain elles sont déjà là, carte lisible
+            // même sans réseau. Cf. map.js.
             //
-            // ⚠ Les tuiles sont chargées par Leaflet via <img> SANS crossorigin →
-            // requêtes no-cors → réponses OPAQUES (status 0). Workbox ne met en
-            // cache que les 200 par défaut : sans `statuses: [0, 200]` le cache
-            // resterait VIDE en silence. Revers : une réponse opaque est « paddée »
-            // à ~7 Mo dans la comptabilité du quota (taille réelle stockée = petite)
-            // → maxEntries volontairement modéré + purgeOnQuotaError pour que ce
-            // cache s'auto-purge sous pression plutôt que d'évincer les autres.
+            // Tuiles chargées en CORS (`crossOrigin: true` dans map.js) depuis le
+            // 18/10/2026 → réponses 200 lisibles, comptées par Chrome à leur poids
+            // réel (quelques Ko par tuile, mesuré). Avant, Leaflet les chargeait SANS
+            // crossorigin → réponses OPAQUES (status 0, d'où l'ancien
+            // `statuses: [0, 200]`), que Chrome compte ~7,8 Mo chacune dans le
+            // quota : 2,2 Go affichés pour heripia.com. `statuses: [200]` : une
+            // tuile en erreur (404, panne) n'est plus gardée 30 jours, son vrai
+            // code étant maintenant visible (une réponse opaque le masquait).
+            //
+            // Nom changé (`map-tiles` → `map-tiles-cors`) : une tuile opaque déjà
+            // en cache, resservie à une <img crossorigin>, ne s'affiche PAS (mesuré
+            // sur les 4 serveurs). L'ancien cache est supprimé à l'activation du SW
+            // par public/sw-cleanup.js (cf. importScripts plus haut).
+            //
+            // maxEntries 256 : n'est plus imposé par le gonflement du quota ; le
+            // relever est une décision à part. purgeOnQuotaError : ce cache, le plus
+            // facile à reconstituer, part en premier si le quota sature.
             urlPattern: /^https:\/\/(?:[a-c]\.tile\.openstreetmap\.org|[a-c]\.tile\.openstreetmap\.fr|[a-d]\.basemaps\.cartocdn\.com|mt[0-3]\.google\.com)\//,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'map-tiles',
-              cacheableResponse: { statuses: [0, 200] },
+              cacheName: 'map-tiles-cors',
+              cacheableResponse: { statuses: [200] },
               expiration: {
                 maxEntries: 256,
                 maxAgeSeconds: 30 * 24 * 60 * 60, // 30 jours

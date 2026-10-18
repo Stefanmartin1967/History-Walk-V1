@@ -57,9 +57,20 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
         position: 'topleft'
     }).addTo(map);
 
+    // Les quatre couches sont chargées en CORS (`crossOrigin: true`) : leurs
+    // serveurs renvoient tous `Access-Control-Allow-Origin: *` (vérifié le
+    // 18/10/2026). Sans cette option, Leaflet crée des <img> sans crossorigin,
+    // les tuiles arrivent en réponses « opaques » et Chrome compte chacune
+    // ~7,8 Mo dans le stockage du site (mesuré), au lieu de quelques Ko : 2,2 Go
+    // affichés pour heripia.com. Mise en cache : `map-tiles-cors` (vite.config.js).
+    // Si un serveur retirait un jour cet en-tête, ses tuiles ne s'afficheraient
+    // plus : retirer l'option de SA couche (tuiles de nouveau affichées, mais
+    // plus gardées hors-ligne, le cache n'acceptant que les réponses CORS).
+
     // 1. Couche "Plan" (OpenStreetMap) - Très léger
     const planLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        crossOrigin: true,
         // Google Satellite monte à z20, pas OSM/Voyager (tuiles jusqu'à z19). Sans
         // alignement, ces couches se GRISAIENT dans le contrôle de calques dès qu'on
         // zoomait à z20 (impossible de revenir en OSM/Voyager au zoom de pose d'un
@@ -76,7 +87,8 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     const googleHybridLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
-        attribution: '&copy; Google Maps'
+        attribution: '&copy; Google Maps',
+        crossOrigin: true
     });
 
     // 3. Couche "Voyager" (CARTO) — beige clair, lisible pour les marqueurs
@@ -95,7 +107,8 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
         maxNativeZoom: 19, // tuiles Voyager jusqu'à z19, agrandies au-delà (cf. planLayer : évite le grisé à z20)
         maxZoom: 20,
         subdomains: 'abcd',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>'
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+        crossOrigin: true
     });
 
     // 4. Couche "Plan (FR)" (OSM France) — même rendu que Plan, mais le style
@@ -108,7 +121,8 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
         maxNativeZoom: 19,
         maxZoom: 20,
         subdomains: 'abc',
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors — rendu <a href="https://www.openstreetmap.fr/">OSM France</a>'
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors — rendu <a href="https://www.openstreetmap.fr/">OSM France</a>',
+        crossOrigin: true
     });
 
     // Ajout de la couche par défaut (Voyager — base claire, friendly pour les icônes ocre)

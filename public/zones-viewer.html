@@ -31,8 +31,10 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const map = L.map('map').setView([33.78, 10.94], 11);
+    // crossOrigin : tuiles en CORS, seules gardées par le cache du service
+    // worker (`map-tiles-cors`), comme celles de l'app (cf. src/map.js).
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap', maxZoom: 19
+      attribution: '© OpenStreetMap', maxZoom: 19, crossOrigin: true
     }).addTo(map);
 
     let currentLayers = [];

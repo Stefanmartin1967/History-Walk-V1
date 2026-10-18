@@ -6,6 +6,27 @@
 
 ---
 
+- TUILES DE CARTE EN CORS : STOCKAGE COMPTÉ À SA TAILLE RÉELLE (v3.7.440) — Constaté le 18/10/2026 : Chrome affichait 2,2 Go pour heripia.com alors que le disque n'en portait qu'environ 180 Mo. Plan validé par Stefan le 18/10.
+  - **Problème (mesuré sur une version construite, `vite preview`)** : Leaflet chargeait les tuiles par des `<img>` sans `crossorigin`. Les réponses arrivaient « opaques », et Chrome compte chacune ~7,8 Mo dans le stockage du site, quel que soit son poids réel.
+    - 96 tuiles (24 par fond de carte) : **752,6 Mo** au compteur. À 256 tuiles, la limite du cache, cela fait environ 2 Go.
+    - Seul le compteur était gonflé, pas le disque. Mais ce chiffre s'affiche dans les réglages de Chrome, et « Effacer les données » efface aussi les circuits, les notes et les photos de travail.
+    - Une réponse opaque masque aussi son code : une tuile en erreur (404, panne) était gardée 30 jours comme une bonne.
+  - **CORS des serveurs** (vérifié) : OSM, OSM France, CARTO et Google renvoient tous `Access-Control-Allow-Origin: *`.
+  - **Correctif** :
+    - **`map.js`** : `crossOrigin: true` sur les quatre fonds de carte (Voyager, Plan, Plan FR, Satellite). Même chose pour l'outil `zones-viewer.html`, dont les tuiles OSM passent par le même cache.
+    - **Cache renommé, `map-tiles` → `map-tiles-cors`, qui ne garde que les réponses 200.** Il fallait changer le nom : une tuile opaque déjà en cache, resservie à une `<img crossorigin>`, ne s'affiche pas (mesuré sur les 4 serveurs). Garder l'ancien nom aurait donné des tuiles cassées pendant 30 jours.
+    - **Nouveau `public/sw-cleanup.js`**, chargé par le service worker (`workbox.importScripts`) : supprime l'ancien cache `map-tiles` quand la nouvelle version prend la main. Les métadonnées d'expiration de l'ancien cache (quelques Ko dans `workbox-expiration`) restent, exprès.
+    - Limite de 256 tuiles inchangée : elle n'est plus imposée par le gonflement, la relever est une décision à part.
+  - **À savoir** : après la mise à jour, le cache de tuiles repart à vide. Avant de partir sans réseau, rouvrir ses circuits en wifi.
+
+  **Vérifié en local** (version construite, même origine qu'avant, donc une vraie mise à jour) :
+  - l'ancien cache (120 tuiles opaques) a été supprimé à l'activation, les autres caches sont restés. Contre-épreuve : un `map-tiles` recréé à la main disparaît à l'activation suivante ;
+  - les quatre fonds s'affichent (24 tuiles chacun, aucune cassée), toutes en `cors`, code 200 ;
+  - même parcours de 96 tuiles : **10,7 Mo** au compteur pour tous les caches, contre 752,6 Mo avant (781 Ko réels pour les tuiles) ;
+  - hors-ligne (Playwright, page hors-ligne et serveurs de tuiles injoignables) : les quatre fonds s'affichent depuis le cache, et une tuile jamais vue échoue bien.
+
+  Tests : `sw_cleanup` (nouveau : suppression, échec sans conséquence, script présent dans `public/`, aucun cache encore utilisé supprimé) et `map_tiles_cors` (nouveau : les quatre fonds en CORS). 5 cas échouent sur l'ancien code.
+
 - DONNÉES MAL FORMÉES : ÉCARTÉES UNE À UNE AU DÉMARRAGE (v3.7.439) — Reste de l'audit pré-lancement (« boot fragile sur data malformée »), revérifié et mesuré le 18/10/2026. Plan et toast admin validés par Stefan le 18/10.
   - **Problème (mesuré dans l'aperçu, sans écriture en base)** : une seule donnée mal formée faisait tomber tout un pan de l'app, pour tous les visiteurs à la fois.
     - **Index des circuits** : une entrée sans identifiant ni nom, des `poiIds` en texte ou une entrée `null` faisaient lever `loadOfficialCircuits` (3 cas sur 3). L'appel étant dans un `try`, le démarrage continuait, mais **sans aucun circuit officiel**, alors que c'est l'écran d'accueil sur téléphone.
