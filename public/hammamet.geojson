@@ -1447,13 +1447,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Church of Hammamet",
+        "Nom du site FR": "Église de Hammamet",
         "Catégorie": "Église",
         "HW_ID": "HW-01KVGFQ46BBNBGGANVFVM9J1F9",
         "Sous-type": "Catholique",
         "État": "En activité",
         "Accès": "Intérieur visitable",
-        "description": "Église catholique d'Hammamet, placée sous le patronage du Bienheureux Antoine Neyrot, dominicain lapidé à Tunis en 1460 et dont les reliques furent transférées de Turin à Hammamet.\nLe bâtiment actuel a été inauguré le 27 octobre 1968. Il succède à une première église, bénie en 1909 et inspirée de la primatiale de Carthage, qui fut cédée au gouvernement tunisien après l'indépendance puis démolie pour laisser place à la poste. La paroisse d'Hammamet, elle, remonte à 1884.\nLa communauté chrétienne d'Hammamet est restée modeste — environ 195 personnes recensées en 1925 — mais l'église demeure vivante aujourd'hui, avec des messes célébrées en plusieurs langues.",
+        "description": "Église catholique de Hammamet, placée sous le patronage du Bienheureux Antoine Neyrot, dominicain lapidé à Tunis en 1460 et dont les reliques furent transférées de Turin à Hammamet.\nLe bâtiment actuel a été inauguré le 27 octobre 1968. Il succède à une première église, bénie en 1909 et inspirée de la primatiale de Carthage, qui fut cédée au gouvernement tunisien après l'indépendance puis démolie pour laisser place à la poste. La paroisse d'Hammamet, elle, remonte à 1884.\nLa communauté chrétienne d'Hammamet est restée modeste — environ 195 personnes recensées en 1925 — mais l'église demeure vivante aujourd'hui, avec des messes célébrées en plusieurs langues.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
@@ -1461,7 +1461,14 @@
         "accessPoint": [
           10.6173702,
           36.3948182
-        ]
+        ],
+        "Nom du site arabe": "",
+        "info_gpx": "",
+        "Source": "",
+        "Téléphone": "",
+        "Horaires": "",
+        "Facebook": "",
+        "introuvableCarte": false
       }
     },
     {
@@ -2346,6 +2353,1136 @@
         "verified": false,
         "introuvableCarte": false,
         "Zone": "Bir Challouf"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4727971,
+          36.5098955
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/1209975068",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM36SGTDJ1Z3HA1Z112S3",
+        "Zone": "Latrach"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4219181,
+          36.4648472
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/2778246267",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM383RZ7TMKHWDHNN2BAB",
+        "Zone": "Sidi Ejdidi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3029293,
+          36.4548731
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Haounet Zit",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/5364588017",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM38V64678GBWK55SA26M",
+        "Zone": "Oued Ezzit"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4500925,
+          36.338507
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Errahma",
+        "Nom du site arabe": "جامع الرحمة بسيدي سعيد",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/8213826384",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM39KDPNH79EC1NHXARW5",
+        "Zone": "Sidi Said"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.2493299,
+          36.340203
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Moequée Essalem",
+        "Nom du site arabe": "جامع السلام",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/192333480",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3B4N9WWXZPYC34TY652",
+        "Zone": "Ezzriba"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.2515583,
+          36.3386821
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "مسجد السلام",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/192333484",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3BR845WYERGEDVF9DTW",
+        "Zone": "Ezzriba"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4594599,
+          36.4191388
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Site Archéologique de Sidi Jedidi",
+        "Catégorie": "A définir",
+        "osm_ref": "way/1232745096",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3D5JC2NCKGXG97JW4QP",
+        "Zone": "Sidi Ejdidi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5280938,
+          36.3533286
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Parc Bouficha",
+        "Catégorie": "A définir",
+        "osm_ref": "relation/14966198",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3DR79DF3KD9344NHBWM",
+        "Zone": "Yasmine Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6193816,
+          36.42147
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/1364994661",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3EHW2Y736PDGMR0CNWH",
+        "Zone": "Hammamet Nord"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6197599,
+          36.4220631
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/1364994844",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3FBMZ3C55RGY2TQQS0X",
+        "Zone": "Hammamet Nord"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.756559,
+          36.4526875
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Al Qods",
+        "Nom du site arabe": "جامع القدس",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/1889929325",
+        "HW_ID": "HW-01KW2QM3GH38QMKGEVT0YP42CK",
+        "Sous-type": "À minaret",
+        "État": "En activité",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "Zone": "El Fehri"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6146842,
+          36.3936926
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/2526104215",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3H6NMGEJQZX5G1YX1XW",
+        "Zone": "Hammamet Est"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5335239,
+          36.3658548
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "New Medina",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/4326588593",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3HW77EGZ365JYG2JWXM",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7257644,
+          36.4428925
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Funny Land",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/4937650037",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3JMP59B5TH8G0MDGPMM",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6103233,
+          36.400475
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "منازل للكراء",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/5259660422",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3KC0Y338ZRGXR8WR9PJ",
+        "Zone": "Hammamet Ouest"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5331076,
+          36.3690902
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Aqua Land",
+        "Catégorie": "A définir",
+        "osm_ref": "node/5758812507",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3KY7K91Z4K6MS2WRS4T",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7468523,
+          36.4419132
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Corniche de Nabeul",
+        "Nom du site arabe": "الكورنيش",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6164648875",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3N2ESV7MHMN9JV0QT9N",
+        "Zone": "Hors zone"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7003016,
+          36.4312849
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "FunWater Hammamet",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6164648878",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3NPMWDEX2ZPXGP0G5YB",
+        "Zone": "Hors zone"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6990534,
+          36.4314469
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Mahrsi",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6169398424",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3P8R7298GQRV3606TVW",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7261269,
+          36.4402698
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Plage Loued",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6204352758",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3QJFDYMYGN4B3CPDS64",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7171798,
+          36.43814
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Plage Jasmin",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6204352760",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3R7E3P3KTKA0F6E0D94",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7245001,
+          36.4402076
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jet-Ski - Parachute",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6233081183",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3RW5J7BNGHSR2WYCWP2",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5345396,
+          36.3680714
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "King Kong",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6234568213",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3SPMDD9B26WD6M54E7M",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7230096,
+          36.4626918
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Poterie Artistique LAMINE",
+        "Catégorie": "Artisanat",
+        "osm_ref": "node/6245407098",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3V2QZB3KE9BW0FHW8ED",
+        "Zone": "Ennour"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6113687,
+          36.3974809
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Club nautique hammamet C.N.H",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6256539413",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3VTGHD17VBDESPS8ER8",
+        "Zone": "Hammamet Est"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5343572,
+          36.3697637
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Zoo - Carthage Land Hammamet",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6306915901",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3WEMPV902KNVK0A80T9",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6142829,
+          36.3941172
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Barberous",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6657286088",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3X94Z28WH51KFVN1BEF",
+        "Zone": "Hammamet Est"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6495988,
+          36.4035184
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Private Beach - La Badira",
+        "Catégorie": "Curiosité",
+        "osm_ref": "node/6743810665",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM3YP7ZRRCQGDPCF2G0Z0",
+        "Zone": "Hammamet Nord"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.782328,
+          36.5417709
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/7875668081",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM41ZFD42TQ57SBP3ATFS",
+        "Zone": "Somaa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7863999,
+          36.5194839
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/7875711079",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM42KARJ5BKRQ0HAM3YEM",
+        "Zone": "Somaa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7118262,
+          36.4705573
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "OPadel",
+        "Catégorie": "A définir",
+        "osm_ref": "node/11741137115",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM44R7K9GF024386WSB5Z",
+        "Zone": "Ennour"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6448187,
+          36.4060841
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/128935691",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM472NR8NWM8RWKY1GC96",
+        "Zone": "Hammamet Nord"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5297813,
+          36.3590406
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/173537629",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM47NGTECV6Z5Z1TEQS3G",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7821262,
+          36.5392979
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/208560192",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM49GVFV1802GS8XVZCJX",
+        "Zone": "Somaa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.781689,
+          36.5373433
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/208560545",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4ANB2F1FD0YPNQYZKWR",
+        "Zone": "Somaa"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6766083,
+          36.504936
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Nom du site arabe": "مسجد عين كميشة",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/244615551",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4BRBGN51DR20W3V0EX1",
+        "Zone": "Hedi Chaker"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7182003,
+          36.4403641
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Site Archéologique de Néapolis",
+        "Nom du site arabe": "الموقع الاثري نيابوليس",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/244714904",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4CV593FPKQPE39HHE9D",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7169025,
+          36.4396639
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Néapolis",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/244714906",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4DT291QDFFXCK0XQ31Y",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7175027,
+          36.438867
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Néapolis",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/244714932",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4F1C0YK8D1Q82PVQFF1",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7193784,
+          36.440632
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Néapolis",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/244714934",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4H28KXJZSZYRCJWSM41",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5616218,
+          36.3933267
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Pupput",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/286026106",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4JQVSQ96B92BSHDEAWW",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8067422,
+          36.4650076
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Gofrane",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/401503621",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4KZ13CNB7M6DKZFDT2D",
+        "Zone": "El Maamoura"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.8031085,
+          36.4646214
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/401503623",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4N4G7PHDTKXWHQ2QAQS",
+        "Zone": "El Maamoura"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6740901,
+          36.4219938
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Aqua Park Flipper",
+        "Catégorie": "A définir",
+        "osm_ref": "way/441945561",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4P52GDZYE0W0AFXCC5G",
+        "Zone": "El Mrezga"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7229124,
+          36.449137
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Bir El Ghoul",
+        "Nom du site arabe": "بئر الغول",
+        "Catégorie": "A définir",
+        "osm_ref": "way/661590452",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4PY1VDATQE41EA3Z732",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7293872,
+          36.4403382
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Sliman",
+        "Catégorie": "Curiosité",
+        "osm_ref": "way/663521870",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4RS7MN2X4XQ7W7GB6JN",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7162516,
+          36.4448814
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/664720369",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4X8H5EXD1V2SQ28KR5R",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.7295769,
+          36.4517521
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Square de la Gare",
+        "Catégorie": "A définir",
+        "osm_ref": "way/664865387",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4YWVYWAYSY0Y38WSKB7",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.720248,
+          36.442976
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/665859970",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM4ZN5W3WMTAGXWH59N0Y",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6983535,
+          36.4326211
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/665859977",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM50HYZZ9B0QE9FAEFB4M",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6140034,
+          36.3950631
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Place des Martyres",
+        "Catégorie": "A définir",
+        "osm_ref": "way/668092244",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM52DEAV87XQ1GBXE5QJV",
+        "Zone": "Hammamet Est"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.701161,
+          36.4332229
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sidi Mahrsi",
+        "Catégorie": "A définir",
+        "osm_ref": "way/668685245",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM534ZBTCFXMY98BPEQ5M",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6787075,
+          36.4359524
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jardin Campus Mrezga",
+        "Catégorie": "A définir",
+        "osm_ref": "way/668685249",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM53TWT7ETYAEKDC44G1N",
+        "Zone": "Neapolis"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.675714,
+          36.4230844
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Parc de Mrezga",
+        "Catégorie": "A définir",
+        "osm_ref": "way/668776854",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM54JSDD0P6F3HMQ9M7DG",
+        "Zone": "El Mrezga"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6311443,
+          36.4073918
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/668776865",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM567TK5TRQD2HSVZZQWD",
+        "Zone": "Hammamet Nord"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6121738,
+          36.3971918
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/670006811",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM57J4WC2QN7VQ5C1V5GH",
+        "Zone": "Hammamet Est"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.6366069,
+          36.4069047
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/670006818",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM58MVGHM7CKXW20R6ZGD",
+        "Zone": "Hammamet Nord"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.534422,
+          36.3661745
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mickey & Mike Park",
+        "Catégorie": "Curiosité",
+        "osm_ref": "way/673479931",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM59ZZZE5GKKAJXNT93SJ",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5412172,
+          36.3752272
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/700935791",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM5AYTK9GGM6Q4PJ8DP7Z",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5569479,
+          36.3888243
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "SplashWorld AQI Venus Beach",
+        "Catégorie": "A définir",
+        "osm_ref": "way/1518009746",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM5BW182XQRAZ6WEGCSR5",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5560217,
+          36.3892052
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "SplashWorld AQI Venus Beach",
+        "Catégorie": "A définir",
+        "osm_ref": "way/1518009747",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM5D58TRC763R4F5BH6Y4",
+        "Zone": "Manaret El Hammamet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.5887757,
+          36.4038348
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Dar Sébastien, Centre culturel international de Hammamet",
+        "Catégorie": "A définir",
+        "osm_ref": "relation/3152096",
+        "candidate": true,
+        "HW_ID": "HW-01KW2QM5F2626VMWPYYA1QKJGP",
+        "Zone": "Hammamet Ouest"
       }
     }
   ]
