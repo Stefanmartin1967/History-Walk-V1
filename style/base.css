@@ -386,8 +386,10 @@ body {
    propre header aligné en hauteur. Pattern Linear / Notion. La séparation
    visuelle entre topbar et sidebar est fournie par le contraste de couleur
    et le box-shadow de la sidebar — pas de border-right qui ressortirait
-   trop nettement sur fond sombre. */
-@media (min-width: 768px) {
+   trop nettement sur fond sombre.
+   Requête = DESKTOP_LAYOUT_QUERY (mobile-state.js), comme tout bloc qui choisit
+   entre affichage bureau et mobile. */
+@media (min-width: 769px) and (pointer: fine), (min-width: 769px) and (pointer: none), (min-width: 769px) and (min-height: 501px) {
     .topbar {
         right: var(--sidebar-width);
     }
@@ -596,8 +598,9 @@ body {
 
 /* La sidebar droite est toujours visible sur desktop (PR 6 a supprimé le
    toggle). Le map laisse de la place à droite via right: var(--sidebar-width).
-   Sur mobile la sidebar a sa propre logique (pleine page). */
-@media (min-width: 768px) {
+   Sur mobile la sidebar a sa propre logique (pleine page).
+   Requête = DESKTOP_LAYOUT_QUERY (mobile-state.js). */
+@media (min-width: 769px) and (pointer: fine), (min-width: 769px) and (pointer: none), (min-width: 769px) and (min-height: 501px) {
     #map {
         right: var(--sidebar-width);
     }
@@ -1902,10 +1905,53 @@ textarea.editable-input {
 }
 
 
-@media (min-width: 769px) {
+/* Affichage bureau : pas d'interface mobile. Requête = DESKTOP_LAYOUT_QUERY
+   (mobile-state.js), complément exact de la requête mobile ci-dessous. */
+@media (min-width: 769px) and (pointer: fine), (min-width: 769px) and (pointer: none), (min-width: 769px) and (min-height: 501px) {
     #mobile-container {
         display: none !important;
     }
+}
+
+/* « Affichage à adapter » (layout-reload-prompt.js) : la fenêtre a franchi la
+   frontière mobile/bureau après le démarrage. Recouvre l'interface (devenue
+   vide) ; reste SOUS les modales, pour qu'une saisie en cours puisse se finir. */
+.layout-reload-prompt {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+    background: var(--surface-muted);
+}
+.layout-reload-prompt[hidden] {
+    display: none;
+}
+/* L'interface recouverte peut déborder (bureau dans une fenêtre étroite) :
+   pas de défilement derrière le message. */
+body:has(.layout-reload-prompt:not([hidden])) {
+    overflow: hidden;
+}
+.layout-reload-card {
+    max-width: 420px;
+    padding: var(--space-lg);
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-modal);
+    text-align: center;
+}
+.layout-reload-title {
+    margin: 0 0 var(--space-sm);
+    font-size: var(--font-size-xl);
+    color: var(--ink);
+}
+.layout-reload-text {
+    margin: 0 0 var(--space-md);
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    color: var(--ink-soft);
 }
 
 /* ========================================================= */
@@ -2476,8 +2522,10 @@ input[type=range] {
 
 
 
-/* --- CONSOLIDATED MOBILE STYLES (16px Harmonization) --- */
-@media (max-width: 768px) {
+/* --- CONSOLIDATED MOBILE STYLES (16px Harmonization) ---
+   Requête = MOBILE_LAYOUT_QUERY (mobile-state.js) : fenêtre étroite, ou
+   téléphone tourné en paysage (tactile, faible hauteur). */
+@media (max-width: 768px), (pointer: coarse) and (max-height: 500px) {
     :root,
     html[data-theme="plein-soleil"] {
         --space-md: 8px; /* Force maritime au même spacing que les autres thèmes sur mobile */
@@ -2754,8 +2802,9 @@ input[type=range] {
    historique réservait l'espace du dock fixed (avant refonte 3 slots).
    Maintenant le dock est en flex-shrink:0 donc son espace est déjà réservé
    par le layout — on n'a plus à compenser dans le contenu. Cause du bug
-   "cards qui glissent" sur Mes Circuits (PR #549/#550). */
-@media (max-width: 768px) {
+   "cards qui glissent" sur Mes Circuits (PR #549/#550).
+   Requête = MOBILE_LAYOUT_QUERY (mobile-state.js). */
+@media (max-width: 768px), (pointer: coarse) and (max-height: 500px) {
     /* Cards & inputs */
     .mobile-list-item {
         padding: 12px;
