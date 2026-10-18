@@ -1,6 +1,7 @@
 // search.js
 import { state } from './state.js';
-import { getPoiId, getPatrimonialName, getSearchableNames, isHiddenUnconfirmed } from './data.js';
+import { getPatrimonialName, getSearchableNames } from './data.js';
+import { isShownToUser } from './poi-visibility.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 import { foldForSearch } from './text-search.js';
 
@@ -29,16 +30,9 @@ export function getSearchResults(query, features = state.loadedFeatures) {
     if (!normalizedQuery) return [];
 
     const filteredFeatures = features.filter(f => {
-        const poiId = getPoiId(f);
-
-        // On ne montre pas les lieux cachés/supprimés
-        if (state.hiddenPoiIds && state.hiddenPoiIds.includes(poiId)) {
-            return false;
-        }
-
-        // Ni ceux que la carte masque comme « Existence à confirmer » (toujours
-        // pour un visiteur) : même règle que la carte, cf. isHiddenUnconfirmed.
-        if (isHiddenUnconfirmed(f)) return false;
+        // Ni lieu supprimé, ni « Existence à confirmer » que la carte masque
+        // (toujours pour un visiteur) : même règle que la carte.
+        if (!isShownToUser(f)) return false;
 
         // Matche n'importe quelle variante de nom (FR, arabe, custom).
         return getSearchableNames(f).some(n => foldForSearch(n).includes(normalizedQuery));

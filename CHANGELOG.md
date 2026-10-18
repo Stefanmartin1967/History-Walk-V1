@@ -6,6 +6,24 @@
 
 ---
 
+- LIEUX SUPPRIMÉS : PLUS COMPTÉS NI LISTÉS, CARNET SUR LES LIEUX MONTRÉS (v3.7.437) — Reste « avant partage » du mémo pivot technique (« catégories mobiles qui comptent les lieux supprimés »), mesuré le 18/10/2026. Choix de Stefan le 18/10 : le Carnet compris, lieux supprimés et « Existence à confirmer » masqués exclus du total, et remplacement du test de février.
+  - **Problème (mesuré)** : une suppression masque le lieu (`hiddenPoiIds`) sans le retirer des lieux chargés. La carte, la recherche par nom et les filtres en tenaient compte, mais pas trois endroits :
+    - **recherche mobile, « Parcourir par catégorie »** : après suppression de « Taxi de Midoun » et « Mosquée Ibn Abbas », « Mosquée » restait à 296 et « Taxi » à 1 lieu ; un clic sur « Taxi » **affichait le lieu supprimé**, que la recherche par nom ignorait ;
+    - **Carnet** : 453 lieux au total pour un visiteur, dont les supprimés et **16 « Existence à confirmer »** qu'il ne voit nulle part. Il ne pouvait jamais atteindre 100 % ;
+    - **menu mobile, « N lieux visités »** : comptait un lieu visité puis supprimé.
+  - **Une seule règle** (`poi-visibility.js`, nouveau module autonome) : un lieu est montré à l'utilisateur s'il n'est ni supprimé (`isDeletedPoi`), ni masqué comme « Existence à confirmer » (`isHiddenUnconfirmed`, déplacé depuis `data.js`). Elle sert à la carte (`passesUserFilters`), à la recherche par nom (les deux vérifications écrites à la main disparaissent), aux catégories mobiles, au menu mobile et au Carnet.
+  - **Carnet** : total et lieux visités pris dans les lieux montrés, y compris les visités via un circuit terminé (jamais plus que le total). Le test de février « should include all POIs in total count (reverted hidden filter) » est remplacé. L'exclusion des lieux supprimés, posée le 23/02/2026 (c9b311b) puis annulée une heure plus tard sans explication (9f74d7c), est rétablie.
+  - **Inchangé** : les outils admin et l'import photo gardent leurs propres vérifications. Les compteurs du panneau Filtres sur PC étaient déjà justes.
+
+  **Vérifié en local** (visiteur) :
+  - Carnet : 437 lieux au lieu de 453, et 435 après deux suppressions faites en mémoire seulement, sans écriture en base ;
+  - catégories mobiles : « Mosquée » à 295, « Taxi » disparu (17 catégories au lieu de 18) ;
+  - recherche par nom : ignore les lieux supprimés, les retrouve après restauration ;
+  - carte sur PC : 437 lieux, comme le Carnet, et 94 marqueurs comme avant ;
+  - aucune erreur en console.
+
+  Tests : `poi_visibility` (8), `statistics` (4 cas, dont un qui remplace le test de février), `mobile_menu` (+1), `mobile_nav_routing` (+3, catégories). Les simulations de `text_search` et `mobile_nav_routing` sont mises à jour.
+
 - AFFICHAGE MOBILE/BUREAU FIXÉ AU CHARGEMENT, TÉLÉPHONE EN PAYSAGE COMPRIS (v3.7.436) — Constat C2 du 03/10/2026, mesuré le 18/10. Choix de Stefan le 18/10 : téléphone en paysage = affichage mobile ; bouton « Recharger », pas de rechargement automatique.
   - **Problème (mesuré)** : l'interface mobile ou bureau était choisie une fois au démarrage, mais le CSS basculait en direct à 768 px. Le constat du 03/10 (« reste en mode bureau ») était faux : franchir le seuil donnait un **écran mort** dans trois cas.
     - Fenêtre de PC en demi-écran (683 px sur un portable de 1366) : page vide, icônes du bas inertes.

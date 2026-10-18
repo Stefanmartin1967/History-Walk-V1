@@ -28,6 +28,7 @@ import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 import { foldForSearch } from './text-search.js';
 import { computeVu, stampVisited } from './visited-state.js';
 import { isDescriptionVisible } from './description-visibility.js';
+import { isDeletedPoi, isHiddenUnconfirmed } from './poi-visibility.js';
 
 // --- UTILITAIRES ---
 
@@ -422,22 +423,6 @@ export function buildPlannedPoiSet() {
     return set;
 }
 
-/**
- * Lieu « Existence à confirmer » masqué par le filtre du même nom : toujours
- * pour un visiteur (défaut 'hide', resynchronisé par setIsAdmin — state.js),
- * pour l'admin seulement s'il choisit « Masquer ».
- *
- * SOURCE UNIQUE pour la carte (passesUserFilters) et les recherches (search.js,
- * catégories de la recherche mobile) : un lieu que la carte cache ne doit pas
- * ressortir par la recherche (note de test 19, 03/10/2026). 'only' (« Afficher »)
- * ne concerne que la carte — la recherche continue de tout trouver.
- * @param {object} feature
- * @returns {boolean}
- */
-export function isHiddenUnconfirmed(feature) {
-    return state.activeFilters.introuvableCarte === 'hide' && !!getPoiProp(feature, 'introuvableCarte');
-}
-
 // --- 1. LE TAMIS PUR (Le Cerveau) ---
 // Règles "personnelles" (état utilisateur) avec leurs exceptions :
 //   - hidden → out
@@ -453,7 +438,8 @@ export function passesUserFilters(feature, plannedSet = null) {
     const poiId = getPoiId(feature);
     const f = state.activeFilters;
 
-    if (state.hiddenPoiIds && state.hiddenPoiIds.includes(poiId)) return false;
+    // Supprimé : même règle que la recherche et les compteurs (poi-visibility.js).
+    if (isDeletedPoi(feature)) return false;
 
     // État de la fiche (s'applique avant le court-circuit incontournable :
     // un POI incontournable peut être "non vérifié" et l'admin veut le voir).

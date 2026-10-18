@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import { getRealDistance, getOrthodromicDistance } from './utils.js';
 import { getPoiId } from './data.js';
+import { isShownToUser } from './poi-visibility.js';
 import { openHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import explorerCardCssUrl from '../style/explorer-card.css?url';
@@ -53,7 +54,12 @@ export const MATERIAL_RANKS = [
 
 export function calculateStats() {
     // 1. POIs Visités (Base de référence pour la Gamification)
-    const totalPois = state.loadedFeatures.length;
+    // Sur les lieux MONTRÉS à l'utilisateur (isShownToUser) : ni supprimés, ni
+    // « Existence à confirmer » masqués — avant le 18/10/2026, un visiteur avait
+    // 16 lieux invisibles dans son total et ne pouvait jamais atteindre 100 %.
+    // Les visités sont pris dans le même ensemble (jamais plus que le total).
+    const shownFeatures = state.loadedFeatures.filter(isShownToUser);
+    const totalPois = shownFeatures.length;
     let visitedPois = 0;
 
     // Récupération de tous les IDs de POIs appartenant à des circuits terminés.
@@ -72,7 +78,7 @@ export function calculateStats() {
         }
     });
 
-    state.loadedFeatures.forEach(feature => {
+    shownFeatures.forEach(feature => {
         const id = getPoiId(feature);
         const isVisitedDirectly = state.userData[id] && state.userData[id].vu;
         const isVisitedViaCircuit = completedCircuitPoiIds.has(id);
