@@ -6,6 +6,26 @@
 
 ---
 
+- DONNÉES MAL FORMÉES : ÉCARTÉES UNE À UNE AU DÉMARRAGE (v3.7.439) — Reste de l'audit pré-lancement (« boot fragile sur data malformée »), revérifié et mesuré le 18/10/2026. Plan et toast admin validés par Stefan le 18/10.
+  - **Problème (mesuré dans l'aperçu, sans écriture en base)** : une seule donnée mal formée faisait tomber tout un pan de l'app, pour tous les visiteurs à la fois.
+    - **Index des circuits** : une entrée sans identifiant ni nom, des `poiIds` en texte ou une entrée `null` faisaient lever `loadOfficialCircuits` (3 cas sur 3). L'appel étant dans un `try`, le démarrage continuait, mais **sans aucun circuit officiel**, alors que c'est l'écran d'accueil sur téléphone.
+    - **Lieux** : un seul lieu aux coordonnées invalides, ou un `Point` sans coordonnées, et la carte affichait **0 marqueur sur 437**. Un lieu sans `properties` faisait lever `displayGeoJSON` : carte vide et toast d'erreur sur PC.
+  - **Correctif** : nouveau module autonome `data-guard.js`.
+    - **Lieu valide** : des `properties` et un `Point` dont les deux coordonnées sont des nombres.
+    - **Entrée de circuit valide** : un objet avec un identifiant ou un nom, et une liste `poiIds` (absente = vide, comme avant).
+    - **Tri à l'entrée** : le fichier des lieux juste après sa lecture (réseau ou cache hors-ligne), avant les branches PC et téléphone ; les lieux créés en local aux deux endroits où ils sont fusionnés ; l'index des circuits dans `loadOfficialCircuits`. Un lieu local invalide n'est pas affiché mais **reste dans `customFeatures`** : rien n'est effacé chez l'utilisateur.
+    - **Position locale** (`lat`/`lng` de userData) : appliquée seulement si ce sont des nombres.
+  - **Signalement** : chaque entrée écartée est notée dans la console (identifiant et raison). **Pour l'admin seulement**, un toast unique en fin de démarrage : « *2 lieux et 3 circuits ignorés : données invalides, à corriger avant de publier (détail dans la console).* ». « Avant de publier », parce que « Tout publier » régénère le fichier à partir des lieux chargés.
+  - **Données actuelles** : 453 + 93 lieux et 21 + 7 circuits, tous valides. Aucun n'est écarté.
+
+  **Vérifié en local** :
+  - démarrage normal inchangé : 453 lieux, 21 circuits officiels, 437 marqueurs, aucun signalement ;
+  - index avec les trois entrées mal formées → 21 circuits gardés, sans erreur (avant : erreur, aucun circuit) ;
+  - deux lieux mal formés passés par le tri → 437 marqueurs (avant : 0) ;
+  - toast lisible à 1366 px.
+
+  Tests : `data_guard` (nouveau), `data_module` (+3, `displayGeoJSON`) et `app_startup_loaders` (+4, `loadOfficialCircuits`). 7 cas échouent sur l'ancien code.
+
 - ERREURS GITHUB LISIBLES, AVEC LEUR CODE HTTP (v3.7.438) — **Note de test 20** (07/10/2026), reste « avant partage » du mémo pivot technique. Messages validés par Stefan le 18/10/2026.
   - **Problème (mesuré, avec un faux serveur GitHub qui répond 500, sans jeton ni requête réelle)** :
     - **envoi** (`uploadFileToGitHub`) : une réponse en erreur était lue comme du JSON. Un 500 ou un 502 arrive avec un corps vide, d'où « *Failed to execute 'json' on 'Response': Unexpected end of JSON input* » au lieu du code. C'est le cas du 07/10, où GitHub répondait 500 ;
