@@ -24,7 +24,8 @@ import { populateAddPoiModalCategories } from './ui-filters.js';
 import { showToast } from './toast.js';
 import { setupCircuitEventListeners } from './ui-circuit-editor.js';
 import { getPoiId } from './data.js';
-import { isMobileView } from './mobile-state.js';
+import { isMobileView, lockLayoutMode } from './mobile-state.js';
+import { startLayoutReloadPrompt } from './layout-reload-prompt.js';
 import { initMobileMode, initMobileNavListeners } from './mobile-nav.js';
 import { initMobilePoiListeners } from './mobile-poi.js';
 import { initMobileCircuitsListeners } from './mobile-circuits.js';
@@ -124,14 +125,17 @@ async function initializeApp() {
 
     if (typeof populateAddPoiModalCategories === 'function') populateAddPoiModalCategories();
 
-    // 2. Mode Mobile ou Desktop (UI SETUP ONLY)
-    if (isMobileView()) {
+    // 2. Mode Mobile ou Desktop (UI SETUP ONLY) — choisi ICI, une fois pour toute
+    // la page (lockLayoutMode) : isMobileView() renverra ensuite ce choix. Si la
+    // fenêtre change d'affichage plus tard, un message propose de recharger.
+    if (lockLayoutMode()) {
         initMobileMode();
     } else {
         // UI Setup only (Map init is deferred to loadAndInitializeMap)
         setupDesktopTools();
         setupSmartSearch();
     }
+    startLayoutReloadPrompt();
 
     // 3. Tour de contrôle et événements (AVANT le chargement de la carte pour s'assurer que data:filtered est capté)
     setupEventBusListeners();

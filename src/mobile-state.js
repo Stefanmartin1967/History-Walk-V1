@@ -25,9 +25,47 @@ export function setAllCircuitsOrdered(arr) { _allCircuitsOrdered = arr; }
 
 // ─── Utilitaires purs (aucune dépendance externe) ────────────────────────────
 
-/** Détecte si on est en vue mobile (largeur ≤ 768 px). */
+// ─── Affichage mobile ou bureau ──────────────────────────────────────────────
+// Deux interfaces distinctes, construites UNE fois au démarrage (main.js) : la
+// carte n'existe pas en mobile, la liste mobile n'existe pas en bureau. Le CSS
+// qui choisit l'une ou l'autre (base.css, mobile-follow.css) emploie EXACTEMENT
+// ces deux requêtes — garde : tests/layout_mode_css.test.js.
+// Mobile = fenêtre étroite, OU écran tactile de faible hauteur : un téléphone
+// tourné en paysage (390 à 430 px de haut pour 844 à 932 de large) garde
+// l'affichage mobile ; une tablette en paysage (600 px de haut et plus) passe
+// en bureau.
+export const MOBILE_LAYOUT_QUERY = '(max-width: 768px), (pointer: coarse) and (max-height: 500px)';
+// Complément exact de MOBILE_LAYOUT_QUERY (« pas tactile » = pointer fine ou none).
+export const DESKTOP_LAYOUT_QUERY = '(min-width: 769px) and (pointer: fine), (min-width: 769px) and (pointer: none), (min-width: 769px) and (min-height: 501px)';
+
+/** La fenêtre, telle qu'elle est maintenant, appelle-t-elle l'affichage mobile ? */
+export function matchesMobileLayout() {
+    if (typeof window.matchMedia === 'function') {
+        return window.matchMedia(MOBILE_LAYOUT_QUERY).matches;
+    }
+    return window.innerWidth <= 768; // jsdom (tests) : pas de matchMedia
+}
+
+// Décision prise au démarrage (lockLayoutMode), null avant.
+let lockedMobileLayout = null;
+
+/**
+ * Fixe l'affichage pour toute la durée de la page (appelé une fois par main.js)
+ * et le renvoie : true = mobile.
+ */
+export function lockLayoutMode() {
+    lockedMobileLayout = matchesMobileLayout();
+    return lockedMobileLayout;
+}
+
+/**
+ * Vue mobile ? Après le démarrage : l'affichage CONSTRUIT, même si la fenêtre a
+ * changé de taille depuis — relire la largeur ferait rendre une fiche dans un
+ * conteneur que l'interface en place n'a pas (cf. layout-reload-prompt.js).
+ * Avant (ou sans) lockLayoutMode : l'état courant de la fenêtre.
+ */
 export function isMobileView() {
-    return window.innerWidth <= 768;
+    return lockedMobileLayout ?? matchesMobileLayout();
 }
 
 /** Animation de transition d'entrée sur un conteneur.

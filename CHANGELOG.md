@@ -6,6 +6,22 @@
 
 ---
 
+- AFFICHAGE MOBILE/BUREAU FIXÉ AU CHARGEMENT, TÉLÉPHONE EN PAYSAGE COMPRIS (v3.7.436) — Constat C2 du 03/10/2026, mesuré le 18/10. Choix de Stefan le 18/10 : téléphone en paysage = affichage mobile ; bouton « Recharger », pas de rechargement automatique.
+  - **Problème (mesuré)** : l'interface mobile ou bureau était choisie une fois au démarrage, mais le CSS basculait en direct à 768 px. Le constat du 03/10 (« reste en mode bureau ») était faux : franchir le seuil donnait un **écran mort** dans trois cas.
+    - Fenêtre de PC en demi-écran (683 px sur un portable de 1366) : page vide, icônes du bas inertes.
+    - Fenêtre ouverte étroite puis agrandie : barre du haut et panneau vides, carte jamais créée.
+    - **Téléphone tourné en paysage** (390 → 844 px) : même coquille bureau vide.
+  - **Un seul critère** (`MOBILE_LAYOUT_QUERY`, `mobile-state.js`) : largeur ≤ 768 px, ou écran tactile de hauteur ≤ 500 px. Un téléphone en paysage (390 à 430 px de haut) garde l'affichage mobile ; une tablette en paysage (600 px et plus) passe en bureau. Les 6 blocs CSS qui choisissent l'interface reprennent exactement ce critère : 3 mobiles (`base.css` ×2, `mobile-follow.css`) et 3 bureau (`DESKTOP_LAYOUT_QUERY`, son complément exact). Les adaptations de contenu à une petite largeur (modales de contribution, import photo, Mon Espace) restent sur la largeur seule.
+  - **Mode fixé au chargement** (`lockLayoutMode`, `main.js`) : les appels à `isMobileView()` renvoient ensuite l'affichage construit, plus la largeur du moment. `fileManager.js` passe aussi par `isMobileView()` au lieu d'un `innerWidth > 768` en dur.
+  - **Message « Affichage à adapter »** (`layout-reload-prompt.js`) quand la fenêtre franchit quand même la frontière (PC redimensionné, tablette tournée). Il recouvre l'écran mort et propose « Recharger ». Il disparaît si la fenêtre reprend sa taille. Il reste sous les modales, pour qu'une saisie en cours puisse se terminer, et ne leur prend pas le focus. La page ne défile pas derrière lui.
+
+  **Vérifié en local** (aperçu, émulation de taille) :
+  - bureau à 1366 px, rétréci à 683 px → message (thèmes Nuit et Plein soleil) ;
+  - retour à 1366 px → message masqué, carte et panneau intacts ;
+  - « Recharger » à 683 px → affichage mobile, liste des circuits.
+
+  **Non vérifiable dans l'aperçu** : l'émulateur retire le tactile au-dessus de 768 px, donc pas de vrai téléphone en paysage. Ce cas est couvert par les tests ; il reste à essayer sur un vrai téléphone après déploiement. Les requêtes sortent intactes du build. Cache CSS : `style.css?v=8.41`. Tests : `layout_mode` (10) et `layout_mode_css` (10, dont une grille qui prouve que les deux requêtes sont complémentaires).
+
 - L'ÉDITEUR N'ENREGISTRE QUE LES CHAMPS MODIFIÉS (v3.7.435) — Reste « avant partage » du mémo pivot technique (11/10/2026 : « recopie de tous les champs dans l'overlay d'un user »). Ordre et règle validés par Stefan le 18/10/2026 : même règle pour l'admin et les visiteurs.
   - **Problème** : sur une fiche publiée, « Enregistrer » recopiait tout le formulaire (environ 25 champs) dans l'overlay `userData`, qui prime sur le fichier publié. Corriger les horaires d'un café figeait donc aussi son nom, sa catégorie, sa source, etc. Ensuite, aucune correction publiée par l'admin sur ces champs n'atteignait plus cet utilisateur, sans que rien ne le signale. Même cause côté admin : un appareil resté sur un état ancien pouvait republier des champs périmés (perte du 26/07 sur « Mosquée de Midoun »).
   - **Correctif** : à l'ouverture, l'éditeur garde une copie du formulaire (`readEditorForm`, une seule lecture pour l'ouverture et l'enregistrement). À l'enregistrement d'une fiche publiée, seuls les champs différents de cette copie partent dans l'overlay (`keepChangedFields`). Rien de modifié : rien n'est écrit, pas d'overlay vide. Pour l'admin, le fichier publié reste le même, et le Control Center ne liste plus que les vrais changements.

@@ -669,7 +669,7 @@ export function setupFileListeners() {
     const btnSaveMobile = document.getElementById('btn-save-mobile');
     if (btnSaveMobile) {
         btnSaveMobile.addEventListener('click', () => {
-            if (window.innerWidth > 768) {
+            if (!isMobileView()) {
                 exportDataForMobilePC();
             } else {
                 saveUserData(false);

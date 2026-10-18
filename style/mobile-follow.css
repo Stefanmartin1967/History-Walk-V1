@@ -11,8 +11,9 @@
    Sur mobile, base.css force #map { display:none !important } et affiche
    #mobile-container. Quand le suivi est actif, on inverse : #map en fixed
    plein écran, #mobile-container masqué. La spécificité (1,1,1) + !important
-   bat la règle (#map) de base.css. */
-@media (max-width: 768px) {
+   bat la règle (#map) de base.css.
+   Requête = MOBILE_LAYOUT_QUERY (mobile-state.js). */
+@media (max-width: 768px), (pointer: coarse) and (max-height: 500px) {
     body.follow-active #map {
         display: block !important;
         position: fixed !important;

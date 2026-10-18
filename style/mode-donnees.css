@@ -24,7 +24,7 @@ body.mode-donnees-active.md-poi-open #right-sidebar { display: flex !important; 
 
 /* Sidebar masquée → la carte prend toute la largeur (sous la topbar, top:72px).
    Fiche ouverte → la carte laisse la place normale à la sidebar (même valeur
-   qu'en navigation courante, cf. base.css @media(min-width:768px) #map). */
+   qu'en navigation courante, cf. base.css, bloc #map de l'affichage bureau). */
 body.mode-donnees-active #map { right: 0 !important; }
 body.mode-donnees-active.md-poi-open #map { right: var(--sidebar-width) !important; }
 
