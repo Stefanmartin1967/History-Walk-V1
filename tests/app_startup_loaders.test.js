@@ -116,6 +116,29 @@ describe('loadOfficialCircuits — résilience (échec/vide)', () => {
         expect(state.officialCircuits).toEqual([]);
     });
 
+    // 18/10/2026 : une seule entrée mal formée faisait lever le .map() → AUCUN
+    // circuit officiel au démarrage. Elle est désormais écartée seule.
+    it.each([
+        ['sans id ni nom', { poiIds: ['x'] }],
+        ['poiIds en texte', { id: 'bad', name: 'Mauvais', poiIds: 'abc' }],
+        ['entrée null', null],
+    ])('entrée mal formée (%s) → écartée, les autres circuits sont chargés', async (_label, bad) => {
+        global.fetch = vi.fn(async () => okJson([
+            { id: 'c1', name: 'Un', poiIds: ['p1'] },
+            bad,
+            { name: 'Deux sans id', poiIds: [] },
+        ]));
+        await expect(loadOfficialCircuits()).resolves.toBeUndefined();
+        expect(state.officialCircuits.map(c => c.id)).toEqual(['c1', 'official_Deux_sans_id']);
+        expect(state.officialCircuits.every(c => c.isOfficial)).toBe(true);
+    });
+
+    it('index qui n\'est pas une liste → officialCircuits = [], pas de crash', async () => {
+        global.fetch = vi.fn(async () => okJson('pas une liste'));
+        await expect(loadOfficialCircuits()).resolves.toBeUndefined();
+        expect(state.officialCircuits).toEqual([]);
+    });
+
     it('utilise la destination active dans l\'URL (multi-destinations)', async () => {
         setCurrentMap('hammamet');
         global.fetch = vi.fn(async () => notOk(404));

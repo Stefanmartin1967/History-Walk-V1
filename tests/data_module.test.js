@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // --- Mocks (hoisted par vitest) ---
 vi.mock('../src/state.js', () => {
@@ -107,7 +107,7 @@ vi.mock('../src/url-utils.js', () => ({
 }));
 
 import { state } from '../src/state.js';
-import { saveAppState, savePoiData, saveCircuit, batchSavePoiData } from '../src/database.js';
+import { saveAppState, savePoiData, saveCircuit, batchSavePoiData, getAppState, getAllPoiDataForMap } from '../src/database.js';
 import { addToDraft, getMigrationId, getAdminDraft } from '../src/admin-control-center.js';
 import { schedulePush } from '../src/gist-sync.js';
 import { showToast } from '../src/toast.js';
@@ -129,7 +129,8 @@ import {
     addPoiFeature,
     updatePoiCoordinates,
     deletePoi,
-    checkAndApplyMigrations
+    checkAndApplyMigrations,
+    displayGeoJSON
 } from '../src/data.js';
 
 function poi(id, props = {}) {
@@ -169,6 +170,56 @@ function resetState() {
 beforeEach(() => {
     resetState();
     vi.clearAllMocks();
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 18/10/2026 : un seul lieu mal formé faisait lever displayGeoJSON (lieu sans
+// properties) ou tomber tous les marqueurs (position invalide). On l'écarte seul.
+describe('displayGeoJSON — données mal formées', () => {
+    const ids = () => state.loadedFeatures.map(f => f.properties.HW_ID);
+    let warn;
+    beforeEach(() => {
+        warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    });
+    afterEach(() => {
+        warn.mockRestore();
+        getAppState.mockReset();
+        getAllPoiDataForMap.mockReset();
+    });
+
+    it('lieu sans properties ou à la position invalide : écarté, les autres sont chargés', async () => {
+        const geo = {
+            type: 'FeatureCollection',
+            features: [
+                poi('HW-OK1'),
+                { type: 'Feature', geometry: { type: 'Point', coordinates: [10, 35] } },
+                { ...poi('HW-BAD'), geometry: { type: 'Point', coordinates: ['a', 'b'] } },
+                poi('HW-OK2'),
+            ],
+        };
+        await expect(displayGeoJSON(geo, 'djerba')).resolves.toBeUndefined();
+        expect(ids()).toEqual(['HW-OK1', 'HW-OK2']);
+    });
+
+    it('lieu local invalide : pas affiché, mais conservé dans customFeatures (jamais effacé)', async () => {
+        const localOk = poi('HW-LOC');
+        const localBad = { ...poi('HW-LOCBAD'), geometry: null };
+        getAppState.mockImplementation(async (k) => (k === 'customPois_djerba' ? [localOk, localBad] : undefined));
+
+        await displayGeoJSON({ type: 'FeatureCollection', features: [poi('HW-OK')] }, 'djerba');
+
+        expect(ids()).toEqual(['HW-OK', 'HW-LOC']);
+        expect(state.customFeatures.map(f => f.properties.HW_ID)).toEqual(['HW-LOC', 'HW-LOCBAD']);
+    });
+
+    it('position locale illisible (lat/lng de userData) : ignorée, la position publiée reste', async () => {
+        getAllPoiDataForMap.mockResolvedValue({ 'HW-OK': { lat: 'abc', lng: 'def' }, 'HW-MOVED': { lat: 33.9, lng: 10.9 } });
+
+        await displayGeoJSON({ type: 'FeatureCollection', features: [poi('HW-OK'), poi('HW-MOVED')] }, 'djerba');
+
+        expect(state.loadedFeatures[0].geometry.coordinates).toEqual([10, 35]);
+        expect(state.loadedFeatures[1].geometry.coordinates).toEqual([10.9, 33.9]);
+    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

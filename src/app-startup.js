@@ -21,6 +21,7 @@ import { RAW_BASE, GITHUB_PATHS } from './config.js';
 import { getStoredToken } from './github-sync.js';
 import { fetchDestinationsJson } from './publish-destination.js';
 import { isDestinationPublished } from './utils.js';
+import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, invalidDataMessage } from './data-guard.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
 // btn-open-backup-modal et btn-restore-data n'existent plus dans le DOM
@@ -58,6 +59,9 @@ export async function loadOfficialCircuits() {
     } catch (e) {
         console.error(`[Startup] Erreur chargement circuits:`, e);
     }
+    // Une entrée mal formée est écartée seule (data-guard.js) : avant, elle
+    // faisait lever le .map() ci-dessous et AUCUN circuit officiel ne s'affichait.
+    officials = keepValidCircuitEntries(officials, `circuits/${mapId}.json`);
 
     if (officials.length > 0) {
         const processedOfficials = officials.map(off => ({
@@ -458,6 +462,10 @@ export async function loadAndInitializeMap() {
         if (DOM.loaderOverlay) DOM.loaderOverlay.classList.add('is-hidden');
         return;
     }
+    // Lieux mal formés écartés un à un, AVANT les deux branches (PC, téléphone) et
+    // la copie hors-ligne : un seul lieu sans position valide faisait tomber tous
+    // les marqueurs (data-guard.js).
+    geojsonData.features = keepValidFeatures(geojsonData.features, `${activeMapId}.geojson`);
 
     // 3. Mise à jour État
     setCurrentMap(activeMapId);
@@ -591,8 +599,11 @@ export async function loadAndInitializeMap() {
             // des POIs custom (les chemins d'édition y persistent loadedFeatures entier),
             // donc on ne ré-ajoute que les customs absents — sinon doublons de marqueurs
             // au boot hors-ligne. (Le boot desktop déduplique déjà via Map, cf. data.js.)
+            // Un lieu local mal formé n'est pas affiché, mais reste dans
+            // customFeatures (la donnée de l'utilisateur n'est jamais effacée).
             const existingIds = new Set(state.loadedFeatures.map(getPoiId));
-            const freshCustoms = customPois.filter(f => !existingIds.has(getPoiId(f)));
+            const freshCustoms = keepValidFeatures(customPois, 'lieux créés sur cet appareil')
+                .filter(f => !existingIds.has(getPoiId(f)));
             setLoadedFeatures([...state.loadedFeatures, ...freshCustoms]);
             setCustomFeatures(customPois);
         }
@@ -658,6 +669,11 @@ export async function loadAndInitializeMap() {
     }
 
     if (DOM.loaderOverlay) DOM.loaderOverlay.classList.add('is-hidden');
+
+    // Données écartées au chargement : un seul toast, pour l'admin seulement (le
+    // visiteur voit simplement ce qui est valide ; le détail est dans la console).
+    const invalidData = invalidDataMessage(takeInvalidDataReport());
+    if (invalidData && state.isAdmin) showToast(invalidData, 'warning', 8000);
 
     // Splash de boot retiré : tout est chargé (POIs, circuits, layout stabilisé,
     // 1er render circuit-list-updated émis). Double rAF pour s'assurer que les

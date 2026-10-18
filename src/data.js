@@ -29,6 +29,7 @@ import { foldForSearch } from './text-search.js';
 import { computeVu, stampVisited } from './visited-state.js';
 import { isDescriptionVisible } from './description-visibility.js';
 import { isDeletedPoi, isHiddenUnconfirmed } from './poi-visibility.js';
+import { keepValidFeatures } from './data-guard.js';
 
 // --- UTILITAIRES ---
 
@@ -294,13 +295,20 @@ export async function displayGeoJSON(geoJSON, mapId) {
     
     setCustomFeatures(storedCustomFeatures || []);
 
+    // Lieux mal formés écartés un à un (data-guard.js) : un seul lieu sans
+    // properties faisait lever la boucle plus bas → carte vide. Les lieux locaux
+    // invalides restent dans customFeatures (jamais effacés), ils ne sont
+    // simplement pas affichés.
+    const officialFeatures = keepValidFeatures(geoJSON.features, `${mapId}.geojson`);
+    const customFeaturesToShow = keepValidFeatures(storedCustomFeatures, 'lieux créés sur cet appareil');
+
     // 1.5 Données utilisateur : UN seul domicile, le store par destination
     // `poiUserData` (14/09/2026). L'ancienne copie globale appState `userData`,
     // fusionnée ici jusque-là, faisait revenir des lieux effacés du store et
     // mêlait les destinations en mémoire. Ses entrées concernant cette
     // destination sont d'abord rapatriées dans le store (sans rien écraser).
     const mapPoiIds = new Set(
-        [...(geoJSON.features || []), ...storedCustomFeatures].map(getPoiId).filter(Boolean)
+        [...officialFeatures, ...storedCustomFeatures].map(getPoiId).filter(Boolean)
     );
     let legacyFallback = null;
     try {
@@ -329,14 +337,14 @@ export async function displayGeoJSON(geoJSON, mapId) {
     const uniqueFeaturesMap = new Map();
 
     // A. On charge le GeoJSON (même s'il est "pollué" par le cache, on récupère tout)
-    geoJSON.features.forEach(feature => {
+    officialFeatures.forEach(feature => {
         const id = getPoiId(feature);
         uniqueFeaturesMap.set(id, feature);
     });
 
     // B. On fusionne les lieux personnalisés
-    if (state.customFeatures.length > 0) {
-        state.customFeatures.forEach(feature => {
+    if (customFeaturesToShow.length > 0) {
+        customFeaturesToShow.forEach(feature => {
             const id = getPoiId(feature);
             // .set() va écraser l'ancien POI s'il existe déjà, empêchant tout doublon !
             uniqueFeaturesMap.set(id, feature); 
@@ -363,8 +371,11 @@ export async function displayGeoJSON(geoJSON, mapId) {
         feature.properties.userData = state.userData[pId];
 
         // --- GESTION OVERRIDE GEOMETRY (DÉPLACEMENT DE POINT) ---
-        if (state.userData[pId].lat && state.userData[pId].lng) {
-            feature.geometry.coordinates = [state.userData[pId].lng, state.userData[pId].lat];
+        // Seulement des nombres : une position locale illisible rendrait le lieu
+        // invalide après le tri, et ferait tomber tous les marqueurs.
+        const { lat, lng } = state.userData[pId];
+        if (lat && lng && Number.isFinite(+lat) && Number.isFinite(+lng)) {
+            feature.geometry.coordinates = [+lng, +lat];
         }
 
         return feature;
