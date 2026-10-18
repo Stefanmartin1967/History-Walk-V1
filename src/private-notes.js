@@ -99,7 +99,9 @@ export async function savePrivateNote(mapId, poiId, text) {
             await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_WORK_REPO, path, `travail: note supprimée pour ${poiId}`);
         } catch (e) {
             // Rien à supprimer (note jamais créée sur ce dépôt) : pas une erreur.
-            if (!/introuvable/i.test(e.message)) throw e;
+            // Sur le CODE 404 seulement — tout autre échec (GitHub indisponible…)
+            // remonte, sinon la note resterait sur le dépôt sans aucun signal.
+            if (e.status !== 404) throw e;
         }
         return;
     }

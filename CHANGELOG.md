@@ -6,6 +6,24 @@
 
 ---
 
+- ERREURS GITHUB LISIBLES, AVEC LEUR CODE HTTP (v3.7.438) — **Note de test 20** (07/10/2026), reste « avant partage » du mémo pivot technique. Messages validés par Stefan le 18/10/2026.
+  - **Problème (mesuré, avec un faux serveur GitHub qui répond 500, sans jeton ni requête réelle)** :
+    - **envoi** (`uploadFileToGitHub`) : une réponse en erreur était lue comme du JSON. Un 500 ou un 502 arrive avec un corps vide, d'où « *Failed to execute 'json' on 'Response': Unexpected end of JSON input* » au lieu du code. C'est le cas du 07/10, où GitHub répondait 500 ;
+    - **vérification préalable** de l'envoi : un échec (500, 401…) était ignoré, et un envoi partait quand même comme une création, que GitHub aurait refusée avec un message trompeur (« sha wasn't supplied ») ;
+    - **suppression** (`deleteFileFromGitHub`) : tout échec devenait « Fichier introuvable sur le serveur ». La note privée vidée prenait ce texte pour « rien à supprimer » : sur un 500, **la note restait sur le dépôt sans aucun signal**.
+  - **Correctif** : `githubHttpError` (`github-sync.js`) construit le message à partir de ce qui était tenté, du code HTTP et du message de GitHub s'il y en a un. Le corps est lu comme du texte, vide accepté, et le code est gardé dans `err.status`.
+    - 5xx : « *Envoi de djerba.geojson : GitHub indisponible (HTTP 500) — réessayez dans quelques minutes.* »
+    - 401 : « *… : jeton GitHub refusé (HTTP 401) — vérifiez-le dans le Centre de Contrôle.* »
+    - autres codes : « *… : HTTP 422 — message de GitHub* ».
+  - **Envoi** : vérification préalable avec 404 = création ; tout autre échec arrête l'envoi avec son code, sans PUT. **Suppression** : « introuvable » seulement pour un vrai 404. **Notes privées** : le test repose sur le code 404 (`e.status`), plus sur le mot « introuvable ». **Lecture de `destinations.json`** : le message donne le code.
+  - Le message arrive tel quel dans « Tout publier » (« Erreur : … »), et dans tous les autres envois (photos, photos de travail, notes, statut vérifié, destinations). Le brouillon local reste conservé après un échec, comme avant.
+
+  **Vérifié en local** (aperçu, faux serveur GitHub, sans jeton ni requête réelle) :
+  - tout en 500 → « Envoi de djerba.geojson : GitHub indisponible (HTTP 500)… » sans PUT envoyé ; suppression → même message, plus « introuvable » ;
+  - vérification OK puis écriture en 502 → « … (HTTP 502)… ».
+
+  Tests : `github_sync` (+8, dont `githubHttpError`), `private_notes` (+2). Les réponses simulées portent maintenant leur code et un corps texte. 12 cas échouent sur l'ancien code.
+
 - LIEUX SUPPRIMÉS : PLUS COMPTÉS NI LISTÉS, CARNET SUR LES LIEUX MONTRÉS (v3.7.437) — Reste « avant partage » du mémo pivot technique (« catégories mobiles qui comptent les lieux supprimés »), mesuré le 18/10/2026. Choix de Stefan le 18/10 : le Carnet compris, lieux supprimés et « Existence à confirmer » masqués exclus du total, et remplacement du test de février.
   - **Problème (mesuré)** : une suppression masque le lieu (`hiddenPoiIds`) sans le retirer des lieux chargés. La carte, la recherche par nom et les filtres en tenaient compte, mais pas trois endroits :
     - **recherche mobile, « Parcourir par catégorie »** : après suppression de « Taxi de Midoun » et « Mosquée Ibn Abbas », « Mosquée » restait à 296 et « Taxi » à 1 lieu ; un clic sur « Taxi » **affichait le lieu supprimé**, que la recherche par nom ignorait ;
