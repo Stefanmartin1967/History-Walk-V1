@@ -24,7 +24,7 @@
 import { state, setCustomFeatures } from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { generateMasterGeoJSONData } from './admin-geojson.js';
-import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub } from './github-sync.js';
+import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub, githubHttpError } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { isCandidate, getPoiId } from './utils.js';
 import { saveAppState } from './database.js';
@@ -44,7 +44,7 @@ export async function fetchDestinationsJson(token) {
         headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' },
         cache: 'no-store',
     });
-    if (!res.ok) throw new Error('Lecture de destinations.json impossible sur GitHub.');
+    if (!res.ok) throw await githubHttpError(res, 'Lecture de destinations.json');
     const data = await res.json();
     const bin = atob((data.content || '').replace(/\s/g, ''));
     const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));

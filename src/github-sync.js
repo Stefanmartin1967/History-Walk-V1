@@ -173,6 +173,40 @@ export async function validateToken(token) {
     };
 }
 
+// ─── Erreurs de l'API GitHub ─────────────────────────────────────────────────
+// Une réponse en erreur peut arriver avec un corps VIDE (500, 502, 504) : la lire
+// en JSON levait « Unexpected end of JSON input », qui masquait le vrai code —
+// note de test 20 (07/10/2026), où un HTTP 500 de GitHub passait pour un bug de
+// l'app.
+
+const fileLabel = (path) => String(path).split('/').pop();
+
+/**
+ * Erreur lisible pour une réponse GitHub en échec : ce qui était tenté, le code
+ * HTTP, et le message de GitHub s'il y en a un. Le code est gardé dans
+ * `err.status` pour les appelants qui doivent distinguer un cas (404).
+ * @param {Response} response
+ * @param {string} action  ce qui était tenté, ex. « Envoi de djerba.geojson »
+ * @returns {Promise<Error>}
+ */
+export async function githubHttpError(response, action) {
+    const status = response.status;
+    let detail = '';
+    try {
+        const body = await response.text();
+        if (body) detail = JSON.parse(body).message || '';
+    } catch { /* corps vide ou pas en JSON : le code suffit */ }
+
+    let reason;
+    if (status >= 500) reason = `GitHub indisponible (HTTP ${status}) — réessayez dans quelques minutes.`;
+    else if (status === 401) reason = 'jeton GitHub refusé (HTTP 401) — vérifiez-le dans le Centre de Contrôle.';
+    else reason = `HTTP ${status}${detail ? ` — ${detail}` : ''}`;
+
+    const err = new Error(`${action} : ${reason}`);
+    err.status = status;
+    return err;
+}
+
 /**
  * Lit un fichier comme une chaîne Base64 (nécessaire pour l'API GitHub)
  * @param {File} file
@@ -206,25 +240,27 @@ function readFileAsBase64(file) {
  */
 export async function uploadFileToGitHub(file, token, owner, repo, path, message) {
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const action = `Envoi de ${fileLabel(path)}`;
 
     // 1. Lire le fichier en base64
     const content = await readFileAsBase64(file);
 
-    // 2. Vérifier si le fichier existe déjà pour récupérer son SHA (nécessaire pour update)
+    // 2. SHA du fichier s'il existe déjà (obligatoire pour le remplacer). 404 =
+    //    fichier nouveau. Tout autre échec arrête l'envoi avec son vrai code :
+    //    l'ignorer faisait partir une « création » que GitHub refusait avec un
+    //    message trompeur (« sha wasn't supplied »).
     let sha = null;
-    try {
-        const checkResponse = await fetchWithTimeout(apiUrl, {
-            headers: {
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
-        if (checkResponse.ok) {
-            const data = await checkResponse.json();
-            sha = data.sha;
+    const checkResponse = await fetchWithTimeout(apiUrl, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
         }
-    } catch (e) {
-        // Ignorer si le fichier n'existe pas, c'est une création
+    });
+    if (checkResponse.ok) {
+        const data = await checkResponse.json();
+        sha = data.sha;
+    } else if (checkResponse.status !== 404) {
+        throw await githubHttpError(checkResponse, action);
     }
 
     // 3. Préparer le payload
@@ -250,8 +286,7 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Erreur lors de l'upload GitHub");
+        throw await githubHttpError(response, action);
     }
 
     return await response.json();
@@ -267,25 +302,26 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
  */
 export async function deleteFileFromGitHub(token, owner, repo, path, message) {
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+    const action = `Suppression de ${fileLabel(path)}`;
 
-    // 1. Récupérer le SHA du fichier (obligatoire pour DELETE)
-    let sha = null;
-    try {
-        const checkResponse = await fetchWithTimeout(apiUrl, {
-            headers: {
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
-        if (checkResponse.ok) {
-            const data = await checkResponse.json();
-            sha = data.sha;
-        } else {
-            throw new Error(`Fichier introuvable sur le serveur: ${path}`);
+    // 1. Récupérer le SHA du fichier (obligatoire pour DELETE). « Introuvable »
+    //    pour un vrai 404 seulement : un 500 annoncé « introuvable » passait pour
+    //    « rien à supprimer » (note privée laissée sur le dépôt sans signal).
+    const checkResponse = await fetchWithTimeout(apiUrl, {
+        headers: {
+            'Authorization': `token ${token}`,
+            'Accept': 'application/vnd.github.v3+json'
         }
-    } catch (e) {
-        throw new Error(`Erreur lors de la récupération du fichier à supprimer: ${e.message}`);
+    });
+    if (checkResponse.status === 404) {
+        const err = new Error(`${action} : fichier introuvable sur le serveur.`);
+        err.status = 404;
+        throw err;
     }
+    if (!checkResponse.ok) {
+        throw await githubHttpError(checkResponse, action);
+    }
+    const sha = (await checkResponse.json()).sha;
 
     // 2. Envoyer la requête DELETE
     const payload = {
@@ -304,8 +340,7 @@ export async function deleteFileFromGitHub(token, owner, repo, path, message) {
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Erreur lors de la suppression GitHub");
+        throw await githubHttpError(response, action);
     }
 
     return await response.json();

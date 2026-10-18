@@ -26,7 +26,8 @@ import {
     saveToken,
     validateToken,
     uploadFileToGitHub,
-    deleteFileFromGitHub
+    deleteFileFromGitHub,
+    githubHttpError
 } from '../src/github-sync.js';
 
 const STORAGE_KEY_TOKEN = 'github_pat';
@@ -281,6 +282,44 @@ describe('validateToken', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Réponse de l'API GitHub : code HTTP + corps TEXTE (vide possible, comme un
+// 500/502/504 réel — c'est ce corps vide qui produisait « Unexpected end of
+// JSON input » à la place du code, note de test 20 du 07/10/2026).
+function gh(status, body = '') {
+    const text = typeof body === 'string' ? body : JSON.stringify(body);
+    return {
+        ok: status >= 200 && status < 300,
+        status,
+        text: async () => text,
+        json: async () => JSON.parse(text),
+    };
+}
+
+describe('githubHttpError', () => {
+    it('5xx à corps vide : « GitHub indisponible » avec le code, err.status renseigné', async () => {
+        const err = await githubHttpError(gh(500), 'Envoi de djerba.geojson');
+        expect(err.message).toBe('Envoi de djerba.geojson : GitHub indisponible (HTTP 500) — réessayez dans quelques minutes.');
+        expect(err.status).toBe(500);
+    });
+
+    it('401 : jeton refusé', async () => {
+        const err = await githubHttpError(gh(401, { message: 'Bad credentials' }), 'Envoi de x.json');
+        expect(err.message).toBe('Envoi de x.json : jeton GitHub refusé (HTTP 401) — vérifiez-le dans le Centre de Contrôle.');
+    });
+
+    it('autre code : le code et le message de GitHub', async () => {
+        const err = await githubHttpError(gh(422, { message: 'Validation failed' }), 'Envoi de x.json');
+        expect(err.message).toBe('Envoi de x.json : HTTP 422 — Validation failed');
+        expect(err.status).toBe(422);
+    });
+
+    it('corps qui n\'est pas du JSON (page HTML) : le code seul', async () => {
+        const err = await githubHttpError(gh(403, '<html>rate limited</html>'), 'Envoi de x.json');
+        expect(err.message).toBe('Envoi de x.json : HTTP 403');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 describe('uploadFileToGitHub', () => {
     function makeFile(name = 'test.json', content = '{"a":1}') {
         return new File([content], name, { type: 'application/json' });
@@ -288,8 +327,8 @@ describe('uploadFileToGitHub', () => {
 
     it('upload un fichier nouveau (sha absent → PUT sans champ sha)', async () => {
         const fetchSpy = vi.fn()
-            .mockResolvedValueOnce({ ok: false, json: async () => ({}) }) // GET check 404 (file new)
-            .mockResolvedValueOnce({ ok: true, json: async () => ({ content: { name: 'test.json' } }) });
+            .mockResolvedValueOnce(gh(404, { message: 'Not Found' })) // GET check 404 (file new)
+            .mockResolvedValueOnce(gh(201, { content: { name: 'test.json' } }));
         vi.stubGlobal('fetch', fetchSpy);
 
         const result = await uploadFileToGitHub(makeFile(), 'tk', 'owner', 'repo', 'path/test.json', 'msg');
@@ -306,8 +345,8 @@ describe('uploadFileToGitHub', () => {
 
     it('upload un fichier existant (sha présent → PUT avec champ sha)', async () => {
         const fetchSpy = vi.fn()
-            .mockResolvedValueOnce({ ok: true, json: async () => ({ sha: 'abc123' }) }) // GET check
-            .mockResolvedValueOnce({ ok: true, json: async () => ({ content: { sha: 'def456' } }) });
+            .mockResolvedValueOnce(gh(200, { sha: 'abc123' })) // GET check
+            .mockResolvedValueOnce(gh(200, { content: { sha: 'def456' } }));
         vi.stubGlobal('fetch', fetchSpy);
 
         await uploadFileToGitHub(makeFile(), 'tk', 'owner', 'repo', 'path/test.json', 'update');
@@ -318,8 +357,8 @@ describe('uploadFileToGitHub', () => {
 
     it('utilise un message par défaut si absent', async () => {
         const fetchSpy = vi.fn()
-            .mockResolvedValueOnce({ ok: false, json: async () => ({}) })
-            .mockResolvedValueOnce({ ok: true, json: async () => ({}) });
+            .mockResolvedValueOnce(gh(404))
+            .mockResolvedValueOnce(gh(201, {}));
         vi.stubGlobal('fetch', fetchSpy);
 
         await uploadFileToGitHub(makeFile('foo.json'), 'tk', 'o', 'r', 'p/foo.json');
@@ -329,14 +368,45 @@ describe('uploadFileToGitHub', () => {
         expect(body.message).toContain('App Admin');
     });
 
-    it('throw avec le message d\'erreur GitHub si le PUT échoue', async () => {
+    it('throw avec le code et le message de GitHub si le PUT échoue', async () => {
         const fetchSpy = vi.fn()
-            .mockResolvedValueOnce({ ok: false, json: async () => ({}) })
-            .mockResolvedValueOnce({ ok: false, json: async () => ({ message: 'Validation failed' }) });
+            .mockResolvedValueOnce(gh(404))
+            .mockResolvedValueOnce(gh(422, { message: 'Validation failed' }));
         vi.stubGlobal('fetch', fetchSpy);
 
-        await expect(uploadFileToGitHub(makeFile(), 'tk', 'o', 'r', 'p', 'm'))
-            .rejects.toThrow('Validation failed');
+        await expect(uploadFileToGitHub(makeFile(), 'tk', 'o', 'r', 'public/test.json', 'm'))
+            .rejects.toThrow('Envoi de test.json : HTTP 422 — Validation failed');
+    });
+
+    it('PUT en 500 à corps vide : le code HTTP, plus « Unexpected end of JSON input »', async () => {
+        const fetchSpy = vi.fn()
+            .mockResolvedValueOnce(gh(200, { sha: 'abc' }))
+            .mockResolvedValueOnce(gh(500));
+        vi.stubGlobal('fetch', fetchSpy);
+
+        const err = await uploadFileToGitHub(makeFile(), 'tk', 'o', 'r', 'public/djerba.geojson', 'm').catch(e => e);
+        expect(err.message).toBe('Envoi de djerba.geojson : GitHub indisponible (HTTP 500) — réessayez dans quelques minutes.');
+        expect(err.status).toBe(500);
+    });
+
+    it('vérification préalable en 500 : arrêt avec le code, aucun PUT envoyé', async () => {
+        // Avant : l'échec était ignoré et un PUT sans sha partait, refusé par
+        // GitHub avec un message trompeur (« sha wasn't supplied »).
+        const fetchSpy = vi.fn().mockResolvedValueOnce(gh(500));
+        vi.stubGlobal('fetch', fetchSpy);
+
+        await expect(uploadFileToGitHub(makeFile(), 'tk', 'o', 'r', 'public/djerba.geojson', 'm'))
+            .rejects.toThrow('GitHub indisponible (HTTP 500)');
+        expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('jeton refusé (401) dès la vérification préalable : message dédié, aucun PUT', async () => {
+        const fetchSpy = vi.fn().mockResolvedValueOnce(gh(401, { message: 'Bad credentials' }));
+        vi.stubGlobal('fetch', fetchSpy);
+
+        await expect(uploadFileToGitHub(makeFile(), 'tk', 'o', 'r', 'public/x.json', 'm'))
+            .rejects.toThrow('jeton GitHub refusé (HTTP 401)');
+        expect(fetchSpy).toHaveBeenCalledTimes(1);
     });
 });
 
@@ -344,8 +414,8 @@ describe('uploadFileToGitHub', () => {
 describe('deleteFileFromGitHub', () => {
     it('supprime un fichier existant (sha récupéré → DELETE avec sha)', async () => {
         const fetchSpy = vi.fn()
-            .mockResolvedValueOnce({ ok: true, json: async () => ({ sha: 'sha123' }) }) // GET sha
-            .mockResolvedValueOnce({ ok: true, json: async () => ({ commit: { sha: 'rm1' } }) });
+            .mockResolvedValueOnce(gh(200, { sha: 'sha123' })) // GET sha
+            .mockResolvedValueOnce(gh(200, { commit: { sha: 'rm1' } }));
         vi.stubGlobal('fetch', fetchSpy);
 
         const result = await deleteFileFromGitHub('tk', 'owner', 'repo', 'path/file.json', 'rm-msg');
@@ -361,8 +431,8 @@ describe('deleteFileFromGitHub', () => {
 
     it('utilise un message par défaut si absent', async () => {
         const fetchSpy = vi.fn()
-            .mockResolvedValueOnce({ ok: true, json: async () => ({ sha: 'sha-x' }) })
-            .mockResolvedValueOnce({ ok: true, json: async () => ({}) });
+            .mockResolvedValueOnce(gh(200, { sha: 'sha-x' }))
+            .mockResolvedValueOnce(gh(200, {}));
         vi.stubGlobal('fetch', fetchSpy);
 
         await deleteFileFromGitHub('tk', 'o', 'r', 'foo/bar.json');
@@ -372,22 +442,33 @@ describe('deleteFileFromGitHub', () => {
         expect(body.message).toContain('Admin');
     });
 
-    it('throw si le fichier est introuvable (GET sha 404)', async () => {
-        const fetchSpy = vi.fn()
-            .mockResolvedValueOnce({ ok: false, json: async () => ({}) }); // GET 404
+    it('fichier introuvable (GET 404) : « introuvable », err.status = 404', async () => {
+        const fetchSpy = vi.fn().mockResolvedValueOnce(gh(404, { message: 'Not Found' }));
         vi.stubGlobal('fetch', fetchSpy);
 
-        await expect(deleteFileFromGitHub('tk', 'o', 'r', 'missing.json', 'm'))
-            .rejects.toThrow(/Fichier introuvable|récupération du fichier/);
+        const err = await deleteFileFromGitHub('tk', 'o', 'r', 'notes/missing.txt', 'm').catch(e => e);
+        expect(err.message).toBe('Suppression de missing.txt : fichier introuvable sur le serveur.');
+        expect(err.status).toBe(404);
     });
 
-    it('throw avec le message d\'erreur GitHub si le DELETE échoue', async () => {
+    it('GET en 500 : le code, PAS « introuvable » (pris avant pour « rien à supprimer »)', async () => {
+        const fetchSpy = vi.fn().mockResolvedValueOnce(gh(500));
+        vi.stubGlobal('fetch', fetchSpy);
+
+        const err = await deleteFileFromGitHub('tk', 'o', 'r', 'notes/note.txt', 'm').catch(e => e);
+        expect(err.message).toBe('Suppression de note.txt : GitHub indisponible (HTTP 500) — réessayez dans quelques minutes.');
+        expect(err.message).not.toMatch(/introuvable/i);
+        expect(err.status).toBe(500);
+        expect(fetchSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('throw avec le code et le message de GitHub si le DELETE échoue', async () => {
         const fetchSpy = vi.fn()
-            .mockResolvedValueOnce({ ok: true, json: async () => ({ sha: 'sha-y' }) })
-            .mockResolvedValueOnce({ ok: false, json: async () => ({ message: 'Conflict' }) });
+            .mockResolvedValueOnce(gh(200, { sha: 'sha-y' }))
+            .mockResolvedValueOnce(gh(409, { message: 'Conflict' }));
         vi.stubGlobal('fetch', fetchSpy);
 
         await expect(deleteFileFromGitHub('tk', 'o', 'r', 'p', 'm'))
-            .rejects.toThrow('Conflict');
+            .rejects.toThrow('Suppression de p : HTTP 409 — Conflict');
     });
 });

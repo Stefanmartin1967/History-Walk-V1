@@ -95,14 +95,29 @@ describe('savePrivateNote', () => {
         expect(uploadFileToGitHub).not.toHaveBeenCalled();
     });
 
-    it('suppression d\'une note qui n\'a jamais existé sur le dépôt → pas une erreur', async () => {
-        vi.mocked(deleteFileFromGitHub).mockRejectedValue(new Error('Fichier introuvable sur le serveur: x'));
+    // Erreur telle que deleteFileFromGitHub la lève : message + code (err.status).
+    const ghError = (message, status) => Object.assign(new Error(message), { status });
+
+    it('suppression d\'une note qui n\'a jamais existé sur le dépôt (404) → pas une erreur', async () => {
+        vi.mocked(deleteFileFromGitHub).mockRejectedValue(
+            ghError('Suppression de note_HW-1.txt : fichier introuvable sur le serveur.', 404));
         await expect(savePrivateNote('djerba', 'HW-1', '')).resolves.toBeUndefined();
     });
 
     it('une vraie erreur de suppression remonte quand même', async () => {
-        vi.mocked(deleteFileFromGitHub).mockRejectedValue(new Error('500'));
-        await expect(savePrivateNote('djerba', 'HW-1', '')).rejects.toThrow('500');
+        vi.mocked(deleteFileFromGitHub).mockRejectedValue(ghError('Suppression de note_HW-1.txt : HTTP 409 — Conflict', 409));
+        await expect(savePrivateNote('djerba', 'HW-1', '')).rejects.toThrow('HTTP 409');
+    });
+
+    it('GitHub indisponible (500) pendant la suppression → remonte (avant : pris pour « introuvable » et avalé)', async () => {
+        vi.mocked(deleteFileFromGitHub).mockRejectedValue(
+            ghError('Suppression de note_HW-1.txt : GitHub indisponible (HTTP 500) — réessayez dans quelques minutes.', 500));
+        await expect(savePrivateNote('djerba', 'HW-1', '')).rejects.toThrow('GitHub indisponible (HTTP 500)');
+    });
+
+    it('message contenant « introuvable » mais sans code 404 → remonte (on se fie au code, pas au texte)', async () => {
+        vi.mocked(deleteFileFromGitHub).mockRejectedValue(new Error('Fichier introuvable sur le serveur: x'));
+        await expect(savePrivateNote('djerba', 'HW-1', '')).rejects.toThrow(/introuvable/);
     });
 });
 
