@@ -37,9 +37,8 @@ import { PERSONAL_KEYS } from './config.js';
  */
 export async function persistPoiEdit(poiId, data) {
     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-    const isCustom = (state.customFeatures || []).some(f => getPoiId(f) === poiId);
 
-    if (isCustom && feature) {
+    if (isCustomPoi(poiId) && feature) {
         // Champs perso (notes, vu, vuManual, visitedByCircuits, incontournable…) :
         // TOUJOURS dans l'overlay userData, custom ou pas — c'est le seul canal
         // synchronisé vers le Gist (gist-sync.js ne lit que state.userData) et
@@ -114,6 +113,33 @@ export async function persistPoiEdit(poiId, data) {
     }
 }
 
+/**
+ * Lieu LOCAL (créé par l'utilisateur, capture Scout, création en attente) :
+ * l'édition s'écrit dans le lieu lui-même, pas dans l'overlay.
+ * @param {string} poiId
+ */
+export function isCustomPoi(poiId) {
+    return (state.customFeatures || []).some(f => getPoiId(f) === poiId);
+}
+
+/**
+ * Les seuls champs de `current` dont la valeur diffère de `initial` (formulaire
+ * de l'éditeur à l'ouverture). Sur une fiche publiée, l'overlay `userData` prime
+ * sur le fichier publié : un champ recopié sans avoir été touché y figerait
+ * l'état du jour et masquerait toute correction publiée ensuite.
+ * Valeurs simples (texte, nombre, booléen, null) → comparaison stricte.
+ * @param {Object} current
+ * @param {Object} initial
+ * @returns {Object} nouvel objet
+ */
+export function keepChangedFields(current, initial) {
+    const changed = {};
+    for (const [k, v] of Object.entries(current)) {
+        if (!Object.is(v, initial[k])) changed[k] = v;
+    }
+    return changed;
+}
+
 // Champs de l'éditeur masqués au non-admin : blocs « Statut de la fiche » et
 // « Vérifications » (11/10/2026, note de test 14), catégorie Commons (v3.7.414).
 const ADMIN_ONLY_KEYS = [
@@ -123,20 +149,15 @@ const ADMIN_ONLY_KEYS = [
 ];
 
 /**
- * Ce qu'un NON-admin ne doit pas enregistrer en modifiant une fiche existante :
- * ce qu'il ne voit pas. L'éditeur recopie tous ses champs dans l'overlay
- * `userData`, qui prime sur le fichier publié ; recopiés, ces champs figeraient
- * pour lui l'état du jour et masqueraient ce que l'admin publiera ensuite :
- *  - les champs réservés à l'admin (ex. `descriptionPublic: false` : la
- *    description, une fois publiée, lui resterait cachée) ;
- *  - la description officielle masquée à l'ouverture (`descriptionMasked`) et
- *    laissée vide : un "" local masquerait le texte officiel publié plus tard.
- * Mute `data` et le renvoie.
+ * Un NON-admin qui modifie une fiche existante n'enregistre pas les champs
+ * réservés à l'admin, qu'il ne voit pas. Sans ce retrait, ils entreraient dans
+ * son overlay quand ils changent par ricochet d'un champ visible (coller une
+ * référence OSM recalcule `osmChecked` et sa date), et y figeraient l'état du
+ * jour (ex. `descriptionPublic: false` : la description, une fois publiée, lui
+ * resterait cachée). Mute `data` et le renvoie.
  * @param {Object} data
- * @param {{descriptionMasked: boolean}} opts
  */
-export function stripUnseenFieldsForUser(data, { descriptionMasked }) {
+export function stripAdminOnlyFields(data) {
     for (const k of ADMIN_ONLY_KEYS) delete data[k];
-    if (descriptionMasked && !(data.description || '').trim()) delete data.description;
     return data;
 }

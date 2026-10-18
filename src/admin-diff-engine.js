@@ -541,8 +541,9 @@ export async function prepareDiffData(adminDraft) {
  * Purge les entries orphelines de `adminDraft.pendingPois` — i.e. les POIs
  * pistés comme « modifiés » mais dont le diff réel est vide (changes.length===0).
  *
- * Cause typique : richEditor sauvegarde tous les champs dans userData, même
- * ceux qui matchent le patrimoine. `reconcileLocalChanges` voit alors une
+ * Cause typique : jusqu'au 18/10/2026, richEditor sauvegardait tous les champs
+ * dans userData, même ceux qui matchent le patrimoine (il n'écrit plus que les
+ * champs modifiés ; les overlays déjà remplis restent). `reconcileLocalChanges` voit alors une
  * userData « non vide » et crée une entry pendingPois. Mais `prepareDiffData`
  * compare valeur par valeur et n'incrémente pas stats → le badge dit 1 et le
  * dashboard dit « Tout est synchronisé ». Bug observé 20/05/2026 par Stefan,

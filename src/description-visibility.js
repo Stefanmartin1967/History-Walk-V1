@@ -14,9 +14,10 @@ import { getPoiId, getPoiProp } from './utils.js';
  *   de curation de l'éditeur : un utilisateur n'a plus la case « Description
  *   publiée ») :
  *     · un lieu qu'il a créé (lieu local, `state.customFeatures`) ;
- *     · une fiche officielle dont il a RÉÉCRIT le texte. L'éditeur recopie TOUS
- *       les champs dans l'overlay `userData` à chaque enregistrement, description
- *       comprise : « présente dans userData » ne prouve donc pas qu'il l'a
+ *     · une fiche officielle dont il a RÉÉCRIT le texte. Jusqu'au 18/10/2026,
+ *       l'éditeur recopiait TOUS les champs dans l'overlay `userData`,
+ *       description comprise, et ces copies restent dans les bases déjà
+ *       remplies : « présente dans userData » ne prouve donc pas qu'il l'a
  *       écrite. Seul un texte différent du texte officiel est le sien.
  * @param {object} feature
  * @returns {boolean}

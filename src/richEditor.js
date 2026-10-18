@@ -8,7 +8,7 @@ import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, normalizeCommonsCategory, isOsmChecked, isMapsChecked, isInJalelDirectoryScope, formatPhone } from './utils.js';
 import { addPoiFeature } from './data.js';
 import { saveAppState } from './database.js';
-import { persistPoiEdit, stripUnseenFieldsForUser } from './poi-persistence.js';
+import { persistPoiEdit, isCustomPoi, keepChangedFields, stripAdminOnlyFields } from './poi-persistence.js';
 import { isDescriptionVisible } from './description-visibility.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
@@ -91,10 +91,9 @@ let isDirty = false;
 // rafraîchir osmCheckedDate que sur une vraie transition (checked/ref changés),
 // pas à chaque enregistrement du formulaire pour une raison sans rapport.
 let originalOsmState = { checked: false, ref: '', date: null };
-// Mode EDIT, non-admin : la description officielle ne lui est pas visible (non
-// publiée, cf. isDescriptionVisible) → champ ouvert VIDE. Laissé vide, il
-// n'enregistre rien (cf. stripUnseenFieldsForUser).
-let descriptionMasked = false;
+// Mode EDIT : le formulaire tel qu'ouvert (readEditorForm), pour n'enregistrer
+// que les champs modifiés sur une fiche publiée (cf. handleSave). null en création.
+let initialFormData = null;
 
 // HTML du formulaire (body de la modale V2). IDs préservés à l'identique
 // pour que toute la logique métier (setValue/getValue/handleSave/executeCreate
@@ -375,6 +374,7 @@ export const RichEditor = {
         currentDraftCoords = { lat, lng };
         currentPhotos = photos;
         currentFeatureId = null;
+        initialFormData = null;
 
         // V2 : showModal crée la modale via openHwModal (DOM dispo après).
         showModal();
@@ -399,7 +399,6 @@ export const RichEditor = {
 
         setValue(DOM_IDS.INPUTS.DESC_SHORT, "");
         setValue(DOM_IDS.INPUTS.DESC_LONG, "");
-        descriptionMasked = false;
         setValue(DOM_IDS.INPUTS.NOTES, "");
         setValue(DOM_IDS.INPUTS.TIME_H, "");
         setValue(DOM_IDS.INPUTS.TIME_M, "");
@@ -456,6 +455,7 @@ export const RichEditor = {
         currentFeatureId = poiId;
         currentDraftCoords = null;
         currentPhotos = [];
+        initialFormData = null; // posé en fin d'ouverture, une fois le formulaire rempli
 
         // V2 : showModal crée la modale via openHwModal (DOM dispo après).
         showModal();
@@ -491,8 +491,9 @@ export const RichEditor = {
         // fiche, il ne doit pas la lire ici non plus (constat du 11/10/2026 : des
         // transcriptions de Jalel s'affichaient au clic sur « Modifier », alors que
         // son accord portait sur des textes « non visibles par les utilisateurs »).
-        // Champ vide : il peut écrire SA description.
-        descriptionMasked = !!(merged['description'] || '').trim() && !isDescriptionVisible(feature);
+        // Champ vide : il peut écrire SA description. Laissé vide, il n'enregistre
+        // rien (champ inchangé depuis l'ouverture, cf. handleSave).
+        const descriptionMasked = !!(merged['description'] || '').trim() && !isDescriptionVisible(feature);
         setValue(DOM_IDS.INPUTS.DESC_LONG, descriptionMasked ? "" : (merged['description'] || ""));
         setValue(DOM_IDS.INPUTS.NOTES, merged['notes'] || "");
         initialNotesValue = merged['notes'] || '';
@@ -540,6 +541,9 @@ export const RichEditor = {
         }
 
         updateNavigationControls(poiId);
+        // APRÈS tous les setters (y compris syncAllCheckedFromRefs et originalOsmState,
+        // que readEditorForm lit) : c'est l'état de référence de handleSave.
+        initialFormData = readEditorForm();
         isDirty = false;
         updateSaveButtonState();
         document.getElementById(DOM_IDS.INPUTS.NAME_FR)?.focus();
@@ -1393,15 +1397,12 @@ function getJalelChecked() {
     return !!(el && el.classList.contains('is-on'));
 }
 
-// P7 : `validate=true` (bouton « Valider & enregistrer ») retire le flag candidat
-// dans la même écriture que l'enrichissement. `false` (« Enregistrer ») le conserve.
-async function handleSave(validate = false) {
-    const nameFr = getValue(DOM_IDS.INPUTS.NAME_FR);
-    if (!nameFr) {
-        showToast("Le nom est obligatoire.", "warning");
-        return;
-    }
-
+// Lecture du formulaire en paires champ→valeur, telles qu'enregistrées. Sert
+// deux fois en mode EDIT : à l'ouverture (initialFormData) et à l'enregistrement,
+// pour ne garder que ce qui a changé entre les deux (cf. keepChangedFields).
+// Doit donc rester SANS effet de bord et rendre la même chose sur un formulaire
+// inchangé (normalisations comprises).
+function readEditorForm() {
     // Checklist de vérification : « trouvé » (ref rempli) vaut « vérifié » sans
     // case séparée à cocher — cf. commentaire HTML. La date ne bouge que sur une
     // vraie transition (passage à vérifié, ou changement de la ref elle-même),
@@ -1409,11 +1410,7 @@ async function handleSave(validate = false) {
     // du moment du dernier VRAI check, cf. le but « relancer un re-scout »).
     const osmRefVal = normalizeOsmRef(getValue(DOM_IDS.INPUTS.OSM_REF));
     const mapsRefVal = getValue(DOM_IDS.INPUTS.MAPS_REF).trim();
-    const commonsRaw = getValue(DOM_IDS.INPUTS.COMMONS_REF).trim();
-    const commonsRefVal = normalizeCommonsCategory(commonsRaw);
-    if (commonsRaw && !commonsRefVal) {
-        showToast("Catégorie Commons non reconnue (attendu : l'URL de la catégorie ou Category:…) — champ ignoré.", 'warning', 6000);
-    }
+    const commonsRefVal = normalizeCommonsCategory(getValue(DOM_IDS.INPUTS.COMMONS_REF).trim());
     // isOsmChecked : même règle que l'affichage et le filtre (utils.js).
     const osmCheckedNow = isOsmChecked({ osmChecked: getOsmChecked(), osm_ref: osmRefVal });
     const wasOsmCheckedEffective = originalOsmState.checked || !!originalOsmState.ref;
@@ -1424,8 +1421,8 @@ async function handleSave(validate = false) {
         osmCheckedDate = null;
     }
 
-    const data = {
-        'Nom du site FR': nameFr,
+    return {
+        'Nom du site FR': getValue(DOM_IDS.INPUTS.NAME_FR),
         'Nom du site arabe': getValue(DOM_IDS.INPUTS.NAME_AR),
         'Catégorie': getValue(DOM_IDS.INPUTS.CATEGORY),
         'Sous-type': getValue(DOM_IDS.INPUTS.SUBTYPE),
@@ -1465,6 +1462,35 @@ async function handleSave(validate = false) {
         'mapsHasPhoto': getMapsHasPhoto(),
         'jalelChecked': getJalelChecked()
     };
+}
+
+// P7 : `validate=true` (bouton « Valider & enregistrer ») retire le flag candidat
+// dans la même écriture que l'enrichissement. `false` (« Enregistrer ») le conserve.
+async function handleSave(validate = false) {
+    if (!getValue(DOM_IDS.INPUTS.NAME_FR)) {
+        showToast("Le nom est obligatoire.", "warning");
+        return;
+    }
+
+    const commonsRaw = getValue(DOM_IDS.INPUTS.COMMONS_REF).trim();
+    if (commonsRaw && !normalizeCommonsCategory(commonsRaw)) {
+        showToast("Catégorie Commons non reconnue (attendu : l'URL de la catégorie ou Category:…) — champ ignoré.", 'warning', 6000);
+    }
+
+    let data = readEditorForm();
+
+    // Fiche publiée (POI de base) : l'édition va dans l'overlay `userData`, qui
+    // prime sur le fichier publié. On n'y écrit que les champs modifiés depuis
+    // l'ouverture : recopié tel quel, un champ non touché y figerait l'état du
+    // jour et masquerait toute correction publiée ensuite par l'admin (avant le
+    // 18/10/2026, corriger les horaires figeait aussi nom, catégorie, source…).
+    // Admin compris : son overlay est aplati à la publication, le résultat publié
+    // ne change pas, et le Control Center ne liste plus que les vrais changements.
+    // Lieu local (créé par l'utilisateur, capture Scout, en attente) : écrit dans
+    // le lieu lui-même, sans fichier publié à masquer → enregistrement complet.
+    if (currentMode === 'EDIT' && initialFormData && !isCustomPoi(currentFeatureId)) {
+        data = keepChangedFields(data, initialFormData);
+    }
 
     // P7 — « Valider & enregistrer » : on retire le flag candidat dans la foulée.
     // Folder `candidate:false` dans `data` → persistPoiEdit le route correctement
@@ -1476,10 +1502,11 @@ async function handleSave(validate = false) {
         if (feature && isCandidate(feature)) data.candidate = false;
     }
 
-    // Non-admin en mode EDIT : il n'écrit pas ce qu'il ne voit pas (champs
-    // réservés à l'admin, description officielle masquée et laissée vide).
+    // Non-admin en mode EDIT : il n'écrit pas les champs réservés à l'admin, qu'il
+    // ne voit pas — même quand ils changent par ricochet (coller une référence OSM
+    // recalcule « OSM vérifié » et sa date).
     if (!state.isAdmin && currentMode === 'EDIT') {
-        stripUnseenFieldsForUser(data, { descriptionMasked });
+        stripAdminOnlyFields(data);
     }
 
     // Suggestion à l'admin par e-mail — seulement à la CRÉATION d'un lieu
@@ -1593,6 +1620,10 @@ async function schedulePrepoSe(feature) {
 async function executeEdit(data, validated = false) {
     const poiId = currentFeatureId;
 
+    // Fiche publiée enregistrée sans aucun changement (cf. handleSave) : rien à
+    // écrire — sinon persistPoiEdit créerait un overlay vide.
+    if (Object.keys(data).length === 0 && !currentDraftCoords) return;
+
     // Position déplacée pendant l'édition (« Déplacer » → currentDraftCoords) : on la
     // persiste AVANT les champs, via le MÊME helper canonique que le drag carte
     // (updatePoiCoordinates : userData.lat/lng pour un POI de base — rejoué au boot —,
@@ -1609,7 +1640,7 @@ async function executeEdit(data, validated = false) {
     // customPois_{id} pour un POI custom) déléguée au helper feuille partagé avec
     // ui-photo-batch.saveTaxonomyBatch — anti-dérive entre les 2 éditeurs. Détail de
     // la règle (et du revert de curation qu'elle évite) : voir poi-persistence.js.
-    await persistPoiEdit(poiId, data);
+    if (Object.keys(data).length > 0) await persistPoiEdit(poiId, data);
 
     // Sync Gist des champs personnels restants (vu, incontournable…) —
     // persistPoiEdit ne fait QUE la persistance (cf. son en-tête), le push
@@ -1627,9 +1658,12 @@ async function executeEdit(data, validated = false) {
     // le même dépôt, sinon une note modifiée ici resterait locale sans le
     // savoir. Fire-and-forget : un échec réseau n'est jamais une perte de
     // donnée, `persistPoiEdit` ci-dessus a déjà sauvé la copie locale.
-    // Le formulaire envoie TOUJOURS le champ note : sans garde, enregistrer une
-    // fiche dont la note locale manquait effaçait la note du dépôt (14/09/2026).
-    if (getStoredToken() && shouldSyncPrivateNote(initialNotesValue, data.notes)) {
+    // Sur une fiche publiée, `notes` n'est dans `data` que si la note a changé
+    // (cf. handleSave) : absente, il n'y a rien à envoyer — et l'envoyer
+    // `undefined` effacerait la note du dépôt. Lieu local : le champ est toujours
+    // envoyé, d'où la seconde garde (une note locale manquante effaçait celle du
+    // dépôt, 14/09/2026).
+    if (getStoredToken() && 'notes' in data && shouldSyncPrivateNote(initialNotesValue, data.notes)) {
         savePrivateNote(state.currentMapId, poiId, data.notes).catch(err => {
             console.warn('[PrivateNotes] Envoi heripia-travail échoué (Rich Editor):', err.message);
         });

@@ -26,7 +26,7 @@ vi.mock('../src/utils.js', () => ({
 
 import { state } from '../src/state.js';
 import { saveAppState, savePoiData, deletePoiData } from '../src/database.js';
-import { persistPoiEdit, stripUnseenFieldsForUser } from '../src/poi-persistence.js';
+import { persistPoiEdit, isCustomPoi, keepChangedFields, stripAdminOnlyFields } from '../src/poi-persistence.js';
 
 function poi(id, props = {}) {
     return { type: 'Feature', properties: { HW_ID: id, ...props }, geometry: { type: 'Point', coordinates: [10, 33] } };
@@ -195,35 +195,54 @@ describe('persistPoiEdit — POI CUSTOM (properties + customPois, overlay purgé
     });
 });
 
+describe('isCustomPoi', () => {
+    it('vrai pour un lieu local (state.customFeatures), faux pour une fiche publiée', () => {
+        state.customFeatures = [poi('HW-CUST-X')];
+        expect(isCustomPoi('HW-CUST-X')).toBe(true);
+        expect(isCustomPoi('base_1')).toBe(false);
+    });
+});
+
+// 18/10/2026 : sur une fiche publiée, l'éditeur n'écrit dans l'overlay que les
+// champs modifiés depuis l'ouverture (parcours complet : rich_editor_changed_fields).
+describe('keepChangedFields', () => {
+    const initial = { Horaires: '7h-20h', Source: 'Relevé', Prix_TND: 0, verified: false, osmCheckedDate: null };
+
+    it('ne garde que les champs dont la valeur a changé', () => {
+        expect(keepChangedFields({ ...initial, Horaires: '8h-12h' }, initial)).toEqual({ Horaires: '8h-12h' });
+    });
+
+    it('formulaire inchangé → objet vide', () => {
+        expect(keepChangedFields({ ...initial }, initial)).toEqual({});
+    });
+
+    it('compare strictement : vidé, false → true, 0 → 5, null → date sont des changements', () => {
+        const current = { Horaires: '', Source: 'Relevé', Prix_TND: 5, verified: true, osmCheckedDate: '2026-10-18' };
+        expect(keepChangedFields(current, initial)).toEqual({
+            Horaires: '', Prix_TND: 5, verified: true, osmCheckedDate: '2026-10-18',
+        });
+    });
+
+    it('ne mute pas ses arguments', () => {
+        const current = { ...initial, Horaires: '8h-12h' };
+        keepChangedFields(current, initial);
+        expect(current.Source).toBe('Relevé');
+        expect(initial.Horaires).toBe('7h-20h');
+    });
+});
+
 // Non-admin qui modifie une fiche existante (11/10/2026) : il n'enregistre pas
-// ce qu'il ne voit pas — sinon l'état du jour se fige dans son overlay et masque
-// ce que l'admin publiera ensuite (description publiée plus tard, existence
-// confirmée…).
-describe('stripUnseenFieldsForUser', () => {
-    const form = () => ({
-        'Nom du site FR': 'Mosquée Test', 'Catégorie': 'Mosquée', description: '',
-        verified: false, introuvableCarte: false, descriptionPublic: false,
-        osmChecked: true, osmCheckedDate: '2026-10-11', mapsChecked: false, mapsHasPhoto: false, jalelChecked: true,
-        commons_ref: 'Category:Test',
-    });
-
+// les champs réservés à l'admin, qu'il ne voit pas — sinon l'état du jour se fige
+// dans son overlay et masque ce que l'admin publiera ensuite (description
+// publiée plus tard, existence confirmée…).
+describe('stripAdminOnlyFields', () => {
     it('retire les champs réservés à l\'admin (curation, Commons), garde les champs visibles', () => {
-        const data = stripUnseenFieldsForUser(form(), { descriptionMasked: false });
-        expect(Object.keys(data).sort()).toEqual(['Catégorie', 'Nom du site FR', 'description']);
-    });
-
-    it('description officielle masquée et laissée vide : rien d\'enregistré', () => {
-        const data = stripUnseenFieldsForUser(form(), { descriptionMasked: true });
-        expect('description' in data).toBe(false);
-    });
-
-    it('description masquée mais il a écrit la sienne : enregistrée', () => {
-        const data = stripUnseenFieldsForUser({ ...form(), description: 'Mon texte' }, { descriptionMasked: true });
-        expect(data.description).toBe('Mon texte');
-    });
-
-    it('description non masquée vidée par lui : le vide est enregistré (il efface son texte)', () => {
-        const data = stripUnseenFieldsForUser(form(), { descriptionMasked: false });
-        expect(data.description).toBe('');
+        const data = stripAdminOnlyFields({
+            'Nom du site FR': 'Mosquée Test', 'Catégorie': 'Mosquée', description: '', osm_ref: 'node/1',
+            verified: false, introuvableCarte: false, descriptionPublic: false,
+            osmChecked: true, osmCheckedDate: '2026-10-11', mapsChecked: false, mapsHasPhoto: false, jalelChecked: true,
+            commons_ref: 'Category:Test',
+        });
+        expect(Object.keys(data).sort()).toEqual(['Catégorie', 'Nom du site FR', 'description', 'osm_ref']);
     });
 });
