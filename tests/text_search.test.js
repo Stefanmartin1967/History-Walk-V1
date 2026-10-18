@@ -9,16 +9,14 @@ import { foldForSearch } from '../src/text-search.js';
 vi.mock('../src/state.js', () => ({ state: { loadedFeatures: [], hiddenPoiIds: [] } }));
 vi.mock('../src/patrimonial-names.js', () => ({ getCurrentPatrimonialLang: () => 'fr' }));
 vi.mock('../src/data.js', () => ({
-    getPoiId: (f) => f.properties.HW_ID,
     getPatrimonialName: (f) => f.properties['Nom du site FR'] || '',
     getSearchableNames: (f) => [
         f.properties['Nom du site FR'],
         f.properties['Nom du site arabe'],
     ].filter(Boolean),
-    // Règle « Existence à confirmer » testée sur le vrai data.js
-    // (patrimonial_names.test.js) ; ici, aucun lieu n'est concerné.
-    isHiddenUnconfirmed: () => false,
 }));
+// Règle « lieu montré » (poi-visibility.js) : la vraie, sur un état sans lieu
+// supprimé ni filtre « Existence à confirmer » ; testée à part (poi_visibility).
 
 import { getSearchResults } from '../src/search.js';
 import { state } from '../src/state.js';

@@ -22,11 +22,13 @@ import { cycleTheme, getCurrentTheme, THEME_LABELS } from './theme.js';
 import { getCurrentPatrimonialLang, setPatrimonialLang } from './patrimonial-names.js';
 import { eventBus } from './events.js';
 import { getCurrentView, isMobileView, setMobileHeaderSlot, clearMobileViewFooter } from './mobile-state.js';
+import { isShownToUser } from './poi-visibility.js';
 
 // ─── Sous-titres dynamiques ──────────────────────────────────────────────────
 // Compteurs réels lus de state pour donner du contexte à chaque action.
 function computeSubtitles() {
-    const visitedPois = (state.loadedFeatures || []).filter(f => f?.properties?.userData?.vu).length;
+    // Lieux montrés seulement (isShownToUser) : un lieu supprimé ne compte plus.
+    const visitedPois = (state.loadedFeatures || []).filter(f => f?.properties?.userData?.vu && isShownToUser(f)).length;
     const officialCompleted = (state.officialCircuits || []).filter(c => state.officialCircuitsStatus?.[c.id] === true).length;
     const myCompleted = (state.myCircuits || []).filter(c => c.isCompleted === true).length;
     const completedCircuits = officialCompleted + myCompleted;

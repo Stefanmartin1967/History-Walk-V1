@@ -5,7 +5,10 @@ import { state } from '../src/state.js';
 // Mock dependencies
 vi.mock('../src/utils.js', () => ({
     getRealDistance: vi.fn(),
-    getOrthodromicDistance: vi.fn()
+    getOrthodromicDistance: vi.fn(),
+    // Lus par la vraie règle « lieu montré » (poi-visibility.js).
+    getPoiId: (f) => f.properties.HW_ID,
+    getPoiProp: (f, k) => f.properties.userData?.[k] ?? f.properties[k],
 }));
 
 // We need to mock state in a way we can manipulate it
@@ -42,6 +45,7 @@ describe('Statistics System', () => {
         state.officialCircuitsStatus = {};
         state.myCircuits = [];
         state.hiddenPoiIds = []; // Important: Reset hidden POIs
+        state.activeFilters = {}; // aucun filtre « Existence à confirmer »
         state.hiddenCircuitIds = []; // Refonte V2 : Reset blacklist
         vi.resetAllMocks();
     });
@@ -164,30 +168,63 @@ describe('Statistics System', () => {
         expect(stats.materialRank.title).toBe("Pierre");
     });
 
-    it('should include all POIs in total count (reverted hidden filter)', () => {
-        // Setup 10 POIs
+    // Remplace le test de février 2026 « should include all POIs in total count
+    // (reverted hidden filter) » : l'exclusion des lieux supprimés, posée par
+    // c9b311b puis annulée sans explication par 9f74d7c (23/02/2026), est
+    // rétablie à la demande de Stefan (18/10/2026) — un lieu supprimé n'apparaît
+    // plus nulle part, il ne doit pas rester « à découvrir ».
+    it('exclut les lieux supprimés du total et des visités', () => {
         state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
             properties: { HW_ID: `p${i}` }
         }));
-
-        // Hide 2 POIs
         state.hiddenPoiIds = ['p8', 'p9'];
-
-        // Visit 1 visible POI
         state.userData['p0'] = { vu: true };
-        // Visit 1 hidden POI (should count as visited if filtering is disabled)
-        state.userData['p8'] = { vu: true };
+        state.userData['p8'] = { vu: true }; // visité puis supprimé : ne compte plus
 
         const stats = calculateStats();
 
-        // Total should be 10 (hidden are NOT excluded anymore)
-        expect(stats.totalPois).toBe(10);
+        expect(stats.totalPois).toBe(8);
+        expect(stats.visitedPois).toBe(1);
+        expect(stats.poiPercent).toBe(13); // 1/8 = 12,5 %
+    });
 
-        // Visited should be 2 (p0 and p8)
-        expect(stats.visitedPois).toBe(2);
+    it('un lieu supprimé d\'un circuit terminé ne compte pas comme visité', () => {
+        state.loadedFeatures = Array.from({ length: 4 }, (_, i) => ({
+            properties: { HW_ID: `p${i}` }
+        }));
+        state.officialCircuits = [{ id: 'c1', poiIds: ['p0', 'p1', 'p3'] }];
+        state.officialCircuitsStatus = { c1: true };
+        state.hiddenPoiIds = ['p3'];
 
-        // Percent: 2/10 = 20%
-        expect(stats.poiPercent).toBe(20);
+        const stats = calculateStats();
+
+        expect(stats.totalPois).toBe(3);
+        expect(stats.visitedPois).toBe(2); // p0, p1 — jamais plus que le total
+    });
+
+    it('visiteur : les « Existence à confirmer » masqués sortent du total', () => {
+        state.activeFilters = { introuvableCarte: 'hide' };
+        state.loadedFeatures = [
+            { properties: { HW_ID: 'p0' } },
+            { properties: { HW_ID: 'p1' } },
+            { properties: { HW_ID: 'p2', introuvableCarte: true } },
+        ];
+        state.userData['p0'] = { vu: true };
+
+        const stats = calculateStats();
+
+        expect(stats.totalPois).toBe(2);
+        expect(stats.poiPercent).toBe(50);
+    });
+
+    it('admin qui affiche les « Existence à confirmer » : ils restent dans le total', () => {
+        state.activeFilters = { introuvableCarte: 'all' };
+        state.loadedFeatures = [
+            { properties: { HW_ID: 'p0' } },
+            { properties: { HW_ID: 'p1', introuvableCarte: true } },
+        ];
+
+        expect(calculateStats().totalPois).toBe(2);
     });
 
     it('should count POIs from completed circuits as visited even if not marked vu', () => {

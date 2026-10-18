@@ -129,6 +129,27 @@ afterEach(() => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 18/10/2026 : « N lieux visités » ne compte que les lieux montrés à
+// l'utilisateur (poi-visibility.js) — un lieu visité puis supprimé en sort.
+describe('renderMobileMenu — sous-titre du Carnet', () => {
+    afterEach(() => {
+        state.loadedFeatures = [];
+        state.hiddenPoiIds = [];
+    });
+
+    it('un lieu visité puis supprimé ne compte plus', () => {
+        state.loadedFeatures = [
+            { properties: { HW_ID: 'p1', userData: { vu: true } } },
+            { properties: { HW_ID: 'p2', userData: { vu: true } } },
+            { properties: { HW_ID: 'p3' } },
+        ];
+        state.hiddenPoiIds = ['p2'];
+        renderMobileMenu();
+        expect(document.getElementById('mob-action-stats').textContent).toContain('1 lieu visité');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 describe('renderMobileMenu — render structure', () => {
     it('rend les 6 boutons standards (non-admin) — Sauvegarder dans Outils (PR2 dissolution Mon Espace), GeoJSON déplacé en GOD MODE', () => {
         renderMobileMenu();

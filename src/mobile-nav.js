@@ -4,7 +4,8 @@
 import { state, setFilterCompleted } from './state.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel, closeDetailsPanel } from './ui-details.js';
-import { getPoiId, getPatrimonialName, addPoiFeature, addPendingPoiFeature, isHiddenUnconfirmed } from './data.js';
+import { getPoiId, getPatrimonialName, addPoiFeature, addPendingPoiFeature } from './data.js';
+import { isShownToUser } from './poi-visibility.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getIconForFeature, getIconHtml } from './poi-icons.js';
 import { escapeHtml, sanitizeHTML, getZoneFromCoords, getPoiProp } from './utils.js';
@@ -423,12 +424,14 @@ async function handleAddPoiClick() {
 // (count > 0), triées par count décroissant. Pas de regroupement artificiel —
 // chaque catégorie du iconMap reste séparée (Stefan : « idée du rassemblement
 // pas totalement mauvaise mais à faire par l'admin, pas hardcoded »).
-// Les lieux « Existence à confirmer » que la carte masque (visiteur) ne sont ni
-// comptés ni listés — même règle que la barre de recherche (isHiddenUnconfirmed).
+// Les lieux supprimés et les « Existence à confirmer » que la carte masque
+// (visiteur) ne sont ni comptés ni listés — même règle que la barre de recherche
+// (isShownToUser). Avant le 18/10/2026, un lieu supprimé y restait compté, et
+// listé au clic sur sa catégorie.
 function getAllCategoriesWithCount() {
     const counts = new Map();
     for (const f of state.loadedFeatures || []) {
-        if (isHiddenUnconfirmed(f)) continue;
+        if (!isShownToUser(f)) continue;
         const cat = f?.properties?.userData?.['Catégorie']
                  || f?.properties?.['Catégorie']
                  || null;
@@ -442,7 +445,7 @@ function getAllCategoriesWithCount() {
 
 function getCategoryMatches(category) {
     return (state.loadedFeatures || []).filter(f => {
-        if (isHiddenUnconfirmed(f)) return false;
+        if (!isShownToUser(f)) return false;
         const cat = f?.properties?.userData?.['Catégorie']
                  || f?.properties?.['Catégorie']
                  || null;

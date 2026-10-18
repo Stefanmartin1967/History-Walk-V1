@@ -35,8 +35,7 @@ vi.mock('../src/data.js', () => ({
     getPoiName: vi.fn(f => f?.properties?.name || 'Unknown'),
     getPatrimonialName: vi.fn(f => f?.properties?.name || 'Unknown'),
     addPoiFeature: vi.fn(),
-    addPendingPoiFeature: vi.fn(),
-    isHiddenUnconfirmed: vi.fn(() => false)
+    addPendingPoiFeature: vi.fn()
 }));
 
 vi.mock('../src/lucide-icons.js', () => ({
@@ -50,6 +49,8 @@ vi.mock('../src/poi-icons.js', () => ({
 }));
 
 vi.mock('../src/utils.js', () => ({
+    // getPoiId : lu par la vraie règle « lieu montré » (poi-visibility.js).
+    getPoiId: vi.fn(f => f?.properties?.HW_ID || f?.id),
     escapeHtml: vi.fn(s => String(s ?? '')),
     sanitizeHTML: vi.fn(s => String(s ?? '')),
     isPointInPolygon: vi.fn(() => false),
@@ -151,6 +152,8 @@ beforeEach(() => {
     state.currentCircuit = [];
     state.activeCircuitId = null;
     state.loadedFeatures = [];
+    state.hiddenPoiIds = [];
+    state.activeFilters = { introuvableCarte: 'hide' };
     state.isAdmin = false;
     state.filterCompleted = false;
     getCurrentView.mockReturnValue('circuits');
@@ -283,5 +286,48 @@ describe('renderMobileSearch', () => {
 
         item.click();
         expect(openDetailsPanel).toHaveBeenCalledWith(0);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 18/10/2026 : un lieu supprimé (hiddenPoiIds — deletePoi le masque sans le
+// retirer de loadedFeatures) restait compté dans « Parcourir par catégorie », et
+// listé au clic sur sa catégorie, alors que la recherche par nom l'ignorait.
+describe('renderMobileSearch — Parcourir par catégorie', () => {
+    const place = (id, cat, extra = {}) => ({
+        type: 'Feature', geometry: { coordinates: [10.9, 33.8] },
+        properties: { HW_ID: id, name: id, 'Catégorie': cat, ...extra },
+    });
+    const categories = () => [...document.querySelectorAll('.search-cat')]
+        .map(b => `${b.dataset.cat} ${b.querySelector('.search-cat-count').textContent}`);
+
+    beforeEach(() => {
+        state.loadedFeatures = [
+            place('taxi-1', 'Taxi'),
+            place('taxi-2', 'Taxi'),
+            place('mosquee-1', 'Mosquée'),
+            place('mosquee-2', 'Mosquée', { introuvableCarte: true }),
+        ];
+    });
+
+    it('un lieu supprimé n\'est plus compté ; une catégorie sans lieu restant disparaît', () => {
+        state.hiddenPoiIds = ['taxi-2', 'mosquee-1'];
+        renderMobileSearch();
+        // mosquee-2 « Existence à confirmer » (masqué au visiteur) ne compte pas
+        // non plus : il ne reste aucune mosquée montrée.
+        expect(categories()).toEqual(['Taxi 1 lieu']);
+    });
+
+    it('le clic sur la catégorie ne liste pas le lieu supprimé', () => {
+        state.hiddenPoiIds = ['taxi-2'];
+        renderMobileSearch();
+        document.querySelector('.search-cat[data-cat="Taxi"]').click();
+        const ids = [...document.querySelectorAll('.search-result')].map(b => b.dataset.id);
+        expect(ids).toEqual(['taxi-1']);
+    });
+
+    it('sans suppression, tout est compté (hors « Existence à confirmer » masqué)', () => {
+        renderMobileSearch();
+        expect(categories()).toEqual(['Taxi 2 lieux', 'Mosquée 1 lieu']);
     });
 });
