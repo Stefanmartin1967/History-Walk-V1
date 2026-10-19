@@ -88,11 +88,31 @@ export default defineConfig({
           },
           {
             // Tuiles de carte (CARTO « Voyager » par défaut, OSM « Plan », OSM
-            // France « Plan (FR) », Google « Satellite ») : CacheFirst — une tuile
-            // vue une fois reste dispo hors ligne. C'est ce qui permet le « pack
-            // terrain » PASSIF : on prépare un circuit chez soi (les tuiles de la
-            // zone se chargent) → sur le terrain elles sont déjà là, carte lisible
-            // même sans réseau. Cf. map.js.
+            // France « Plan (FR) », Google « Satellite ») : StaleWhileRevalidate —
+            // la tuile en cache s'affiche tout de suite, et le service worker la
+            // redemande en arrière-plan pour l'affichage suivant. Une tuile vue une
+            // fois reste dispo hors ligne : c'est ce qui permet le « pack terrain »
+            // PASSIF. On prépare un circuit chez soi (les tuiles de la zone se
+            // chargent) → sur le terrain elles sont déjà là, carte lisible même
+            // sans réseau (la redemande échoue sans conséquence). Cf. map.js. Sur
+            // mobile, seul Voyager s'affiche (contrôles Leaflet masqués en suivi).
+            //
+            // Jusqu'à v3.7.440, CacheFirst : une tuile vue au moins une fois tous
+            // les 30 jours n'était JAMAIS redemandée. L'expiration de Workbox remet
+            // l'horodatage d'une tuile à zéro à chaque affichage, et tient pour
+            // fraîche une réponse sans en-tête `Date`, illisible en CORS. Données
+            // OSM, style, tuile tamponnée : tout restait figé.
+            //
+            // La redemande passe par le cache HTTP du navigateur, qui suit les
+            // en-têtes de chaque serveur (relevés le 19/10/2026 : CARTO 30 jours,
+            // Google 1 h, OSM et OSM France de quelques minutes à un jour). Tant
+            // qu'une tuile y est fraîche, rien ne part sur le réseau ; ensuite,
+            // requête conditionnelle (ETag), réponse 304 sans image si la tuile n'a
+            // pas changé. La charge des serveurs est donc celle d'un navigateur sans
+            // service worker, ce que demande la politique d'usage des tuiles OSM.
+            // Une redemande en erreur (404, panne) ne remplace pas la tuile en
+            // cache ; une tuile 200 fautive (ex. tamponnée par CARTO) la
+            // remplacerait, et serait corrigée de la même façon ensuite.
             //
             // Tuiles chargées en CORS (`crossOrigin: true` dans map.js) depuis le
             // 18/10/2026 → réponses 200 lisibles, comptées par Chrome à leur poids
@@ -109,10 +129,12 @@ export default defineConfig({
             // par public/sw-cleanup.js (cf. importScripts plus haut).
             //
             // maxEntries 256 : n'est plus imposé par le gonflement du quota ; le
-            // relever est une décision à part. purgeOnQuotaError : ce cache, le plus
-            // facile à reconstituer, part en premier si le quota sature.
+            // relever est une décision à part. maxAgeSeconds : supprime une tuile
+            // restée 30 jours SANS être affichée (pas une tuile vieille de 30
+            // jours, cf. plus haut). purgeOnQuotaError : ce cache, le plus facile
+            // à reconstituer, part en premier si le quota sature.
             urlPattern: /^https:\/\/(?:[a-c]\.tile\.openstreetmap\.org|[a-c]\.tile\.openstreetmap\.fr|[a-d]\.basemaps\.cartocdn\.com|mt[0-3]\.google\.com)\//,
-            handler: 'CacheFirst',
+            handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'map-tiles-cors',
               cacheableResponse: { statuses: [200] },

@@ -6,6 +6,28 @@
 
 ---
 
+- TUILES DE CARTE RAFRAÎCHIES PAR LE SERVICE WORKER (v3.7.441) — Constaté le 19/10/2026 : quand la v3.7.440 a vidé l'ancien cache, Plan et Plan (FR) ont changé d'aspect. Les tuiles en cache n'étaient jamais redemandées. Plan validé par Stefan le 19/10.
+  - **Problème** : le cache `map-tiles-cors` était en CacheFirst. Une tuile vue au moins une fois tous les 30 jours n'était jamais redemandée au serveur. Deux raisons, vérifiées dans Workbox 7.4 :
+    - l'expiration remet l'horodatage d'une tuile à zéro à chaque affichage. Les « 30 jours » voulaient donc dire « 30 jours sans être affichée » ;
+    - elle tient pour fraîche une réponse sans en-tête `Date`, et cet en-tête n'est pas lisible en CORS.
+    - Effets : les modifications OSM (celles de Petr par exemple), un nouveau style ou une tuile tamponnée restaient figés.
+  - **Correctif (`vite.config.js`)** : la route des tuiles passe en **StaleWhileRevalidate**. La tuile en cache s'affiche tout de suite. Le service worker la redemande ensuite en arrière-plan, et la nouvelle version sert à l'affichage suivant. Le nom du cache, le filtre « réponses 200 » et la limite de 256 tuiles ne changent pas.
+    - La redemande passe par le cache HTTP du navigateur, qui suit les en-têtes de chaque serveur (relevés le 19/10) : CARTO 30 jours, Google 1 h, OSM et OSM France de quelques minutes à un jour. Tant qu'une tuile est fraîche, rien ne part sur le réseau. Ensuite part une requête conditionnelle : les quatre serveurs répondent « 304 », sans image, si la tuile n'a pas changé. C'est ce que demande la politique d'usage des tuiles OSM.
+    - Sur mobile, seul Voyager s'affiche (contrôles masqués en suivi de circuit). Sur le terrain, la redemande ne coûte donc presque rien : une tuile chargée en wifi depuis moins de 30 jours ne repart pas sur le réseau.
+    - Contrepartie : une tuile 200 fautive (ex. tamponnée par CARTO si la clé tombait) remplacerait la bonne en cache. Elle serait corrigée de la même façon une fois le problème réglé, ce que CacheFirst ne faisait jamais.
+  - **À savoir** : le cache n'est pas vidé. Les tuiles déjà gardées restent, et elles se rafraîchiront au fil des affichages.
+
+  **Vérifié en local** (versions construites, `vite preview`, même origine, profil Chrome jetable). Une tuile visible par fond a été **faussée** dans le cache, en lui donnant le contenu d'une autre tuile :
+  - **main (CacheFirst)** : deux rechargements, la tuile faussée reste affichée et en cache sur les 4 fonds. Aucune requête de tuile ne part (journal réseau de Chrome) ;
+  - **mise à jour vers v3.7.441** : les 96 tuiles en cache restent ;
+  - **1er affichage** : la tuile faussée sort du cache, puis elle est remplacée en arrière-plan par la vraie, octet pour octet identique à l'originale ;
+  - **2e affichage** : la vraie tuile, sur les 4 fonds ;
+  - **réseau, pour un passage de 96 tuiles** : Voyager, Plan (FR) et Satellite, 24 sur 24 servies par le cache HTTP. Plan : 24 servies par le cache HTTP, plus 19 vérifications en arrière-plan (en-tête `stale-while-revalidate` d'OSM), toutes « 304 » sans image ;
+  - **hors-ligne sur PC** (page hors-ligne et serveurs de tuiles injoignables, SW compris) : 4 fonds de 24 tuiles depuis le cache, aucune cassée. Une tuile jamais vue échoue bien ;
+  - **hors-ligne sur mobile**, en suivi du circuit « Sidi Yati de Midoun » : seul Voyager, 18 tuiles depuis le cache, aucune cassée. La tuile témoin échoue.
+
+  Test : `map_tiles_cache` (nouveau) : la route des tuiles est en StaleWhileRevalidate et garde le filtre 200 et l'expiration. Le 1er cas échoue sur l'ancien code.
+
 - TUILES DE CARTE EN CORS : STOCKAGE COMPTÉ À SA TAILLE RÉELLE (v3.7.440) — Constaté le 18/10/2026 : Chrome affichait 2,2 Go pour heripia.com alors que le disque n'en portait qu'environ 180 Mo. Plan validé par Stefan le 18/10.
   - **Problème (mesuré sur une version construite, `vite preview`)** : Leaflet chargeait les tuiles par des `<img>` sans `crossorigin`. Les réponses arrivaient « opaques », et Chrome compte chacune ~7,8 Mo dans le stockage du site, quel que soit son poids réel.
     - 96 tuiles (24 par fond de carte) : **752,6 Mo** au compteur. À 256 tuiles, la limite du cache, cela fait environ 2 Go.
