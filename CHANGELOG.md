@@ -6,6 +6,30 @@
 
 ---
 
+- TRACÉ DES CIRCUITS OFFICIELS GARDÉ HORS-LIGNE (v3.7.442) — Constaté le 19/10/2026 pendant les preuves de la v3.7.441 : hors-ligne, en suivi mobile, le circuit « Sidi Yati de Midoun » s'affichait en pointillés rouges au lieu de son tracé bleu. Plan validé par Stefan le 19/10.
+  - **Problème** : le tracé d'un circuit officiel (`circuits/<map>/<nom>.gpx`) est téléchargé à l'ouverture du circuit, puis gardé en mémoire seulement (`loadCircuitById`, `src/circuit.js`). Aucune route du service worker ne le gardait. Hors-ligne, le téléchargement échouait et la carte retombait sur le vol d'oiseau. Les tuiles, elles, étaient bien en cache.
+  - **Correctif (`vite.config.js`)** : nouvelle route `circuit-traces` pour les `.gpx`, en **NetworkFirst**. Rien ne change dans le code de l'app.
+    - En ligne, le tracé vient toujours du serveur. Un circuit republié sous le même nom arrive dès l'ouverture suivante (au cache de GitHub Pages près, 10 minutes, comme avant). Hors-ligne, c'est la copie gardée.
+    - C'est la stratégie de l'index `circuits/<map>.json`, qui donne le nom et les étapes : tracé et étapes restent du même âge.
+    - Sur un réseau qui ne répond plus, la copie sort après 8 s, avant l'abandon à 12 s de l'app.
+    - **Pas d'âge maximal**, exprès. Workbox refuse, même hors-ligne, une copie plus ancienne que cet âge (mesuré : index des circuits daté de 8 jours → hors-ligne, plus aucun circuit officiel). Avec 7 jours, un circuit préparé plus d'une semaine avant le terrain serait retombé en vol d'oiseau.
+    - La réserve est bornée à 60 tracés (28 publiés aujourd'hui, 37 Ko au plus chacun). Au-delà, le tracé ouvert il y a le plus longtemps en sort ; il revient à sa prochaine ouverture en ligne. Le nombre de circuits publiés n'est pas limité.
+    - Écartés : StaleWhileRevalidate (après une republication, l'ancien tracé une fois, avec les nouvelles étapes) ; CacheFirst (tracé jamais redemandé) ; précache (figé à la build, et les 28 GPX téléchargés à l'installation) ; IndexedDB (choix du 12/09 : la route garde le fichier, sans toucher à l'objet circuit).
+  - **À savoir** :
+    - Seuls les circuits officiels sont concernés. Les circuits perso, et les officiels modifiés sur l'appareil, gardent leur tracé en base locale.
+    - Chez qui a Heripia installée, le QR de partage d'un circuit passe par la même route : en ligne le fichier du serveur, hors-ligne la copie. Le `.gpx` reste exclu du repli vers l'app (`navigateFallbackDenylist`).
+    - Le bouton « Télécharger GPX » de la fiche mobile ne passe pas par le service worker : c'est Chrome qui gère le téléchargement (mesuré). Hors-ligne, il échoue toujours, comme avant.
+    - Un circuit ouvert lors de la toute première visite n'est pas gardé : le service worker ne prend la main qu'au rechargement suivant. C'est déjà le cas pour les tuiles.
+
+  **Vérifié en local** (versions construites, `vite preview`, vue mobile 390×844, profil Chrome jetable, circuit « Sidi Yati de Midoun » puis « Suivre ») :
+  - **main (v3.7.441)** : en ligne, tracé bleu, mais le `.gpx` vient du réseau sans passer par le service worker et aucun cache ne le garde. Hors-ligne (serveur arrêté, page hors-ligne, serveurs de tuiles injoignables) : `.gpx` en échec, vol d'oiseau en pointillés rouges ;
+  - **branche, en ligne** : le `.gpx` passe par le service worker et entre dans `circuit-traces` (357 points) ;
+  - **branche, hors-ligne** : tracé réel en bleu, identique à celui affiché en ligne, servi depuis `circuit-traces`. Une requête témoin vers le serveur échoue bien ;
+  - **republication sous le même nom** (même adresse, fichier servi avec un point sur deux) : en ligne, la nouvelle version (179 points) s'affiche et remplace la copie ; hors-ligne ensuite, c'est elle qui s'affiche ;
+  - **ouverture directe de l'adresse du `.gpx`** (QR) : le fichier GPX est téléchargé, en ligne comme hors-ligne. Bouton « Télécharger GPX » : réussi en ligne, échec hors-ligne.
+
+  Test : `circuit_traces_cache` (nouveau). La route est en NetworkFirst, garde les réponses 200, a une limite de nombre et pas d'âge maximal. Les GPX publiés (et deux noms difficiles) sont pris par cette route et par aucune autre. Le `.gpx` reste exclu du repli vers l'app. 4 cas sur 5 échouent sur l'ancienne config.
+
 - TUILES DE CARTE RAFRAÎCHIES PAR LE SERVICE WORKER (v3.7.441) — Constaté le 19/10/2026 : quand la v3.7.440 a vidé l'ancien cache, Plan et Plan (FR) ont changé d'aspect. Les tuiles en cache n'étaient jamais redemandées. Plan validé par Stefan le 19/10.
   - **Problème** : le cache `map-tiles-cors` était en CacheFirst. Une tuile vue au moins une fois tous les 30 jours n'était jamais redemandée au serveur. Deux raisons, vérifiées dans Workbox 7.4 :
     - l'expiration remet l'horodatage d'une tuile à zéro à chaque affichage. Les « 30 jours » voulaient donc dire « 30 jours sans être affichée » ;
