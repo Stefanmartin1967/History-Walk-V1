@@ -45,7 +45,8 @@ export default defineConfig({
         // Les .gpx (partage/téléchargement de circuit) ne doivent PAS être happés
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
         // vers …/circuits/x.gpx) sert l'app (index.html) au lieu du fichier, et HW
-        // s'ouvre sur « Mes Circuits » vide. On les laisse passer au réseau.
+        // s'ouvre sur « Mes Circuits » vide. Ils passent par leur propre route
+        // (`circuit-traces`, runtimeCaching plus bas) : le fichier, pas l'app.
         // Idem pour /lieux/ : pages SEO statiques générées post-build (hook
         // npm postbuild → scripts/generate-poi-pages.mjs), servies par le
         // réseau — sinon un utilisateur avec l'app installée qui clique un
@@ -83,6 +84,47 @@ export default defineConfig({
               expiration: {
                 maxEntries: 20,
                 maxAgeSeconds: 7 * 24 * 60 * 60, // 7 jours
+              },
+            },
+          },
+          {
+            // Tracés des circuits officiels (circuits/<map>/<nom>.gpx), chargés à
+            // l'ouverture d'un circuit (loadCircuitById, circuit.js) et gardés en
+            // mémoire seulement. Sans cette route (jusqu'à v3.7.441), aucun cache ne
+            // les gardait : hors-ligne, un circuit ouvert en wifi s'affichait en vol
+            // d'oiseau (pointillés rouges), constaté en suivi mobile le 19/10/2026.
+            // C'est l'autre moitié du « pack terrain » passif, avec les tuiles.
+            //
+            // NetworkFirst, comme l'index circuits/<map>.json qui donne le nom et les
+            // étapes : en ligne, le tracé vient toujours du serveur, donc un circuit
+            // republié sous le même nom arrive dès l'ouverture suivante, et tracé et
+            // étapes restent du même âge. Hors-ligne, la copie gardée. 8 s : sur un
+            // réseau qui ne répond plus, la copie sort avant l'abandon à 12 s de
+            // fetchWithTimeout (net.js).
+            //
+            // PAS de maxAgeSeconds, exprès : Workbox refuse, même hors-ligne, une
+            // copie dont l'en-tête `Date` (lisible ici, même origine) dépasse cet
+            // âge. Mesuré le 19/10/2026 sur `app-data` : copie datée de 8 jours →
+            // hors-ligne, plus aucun circuit officiel. En NetworkFirst la copie ne
+            // sert que si le réseau échoue : un âge maximal ne rafraîchit rien, il
+            // retire le secours (un circuit préparé plus d'une semaine avant le
+            // terrain retomberait en vol d'oiseau). maxEntries borne la taille :
+            // 28 GPX publiés au 19/10/2026, 37 Ko au plus chacun.
+            //
+            // Prend aussi l'ouverture directe d'un .gpx (QR de partage) chez qui a
+            // Heripia installée : en ligne le fichier du serveur, hors-ligne la copie.
+            // Le navigateFallbackDenylist plus haut reste nécessaire : sans lui, ce
+            // serait index.html. Le bouton « Télécharger GPX » de la fiche mobile
+            // (<a download>), lui, ne passe pas par le service worker (mesuré dans
+            // Chrome le 19/10/2026) : hors-ligne, il échoue toujours.
+            urlPattern: /\/circuits\/[^?]+\.gpx(\?.*)?$/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'circuit-traces',
+              networkTimeoutSeconds: 8,
+              cacheableResponse: { statuses: [200] },
+              expiration: {
+                maxEntries: 60,
               },
             },
           },
