@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "update-circuits": "node scripts/generate-circuit-index.js",
     "screenshots": "node scripts/capture-screenshots.mjs",
+    "gabarit": "node scripts/check-gabarit.mjs",
     "test": "vitest",
     "knip": "knip"
   },
