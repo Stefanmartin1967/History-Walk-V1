@@ -59,6 +59,22 @@ export default defineConfig({
         // nouveau SW échouerait à s'installer et plus aucune mise à jour
         // n'arriverait : tests/sw_cleanup.test.js le garde.
         importScripts: ['sw-cleanup.js'],
+        // Durée de conservation (20/10/2026) : AUCUNE route n'a d'âge maximal
+        // (option maxAgeSeconds de Workbox). Workbox 7.4 s'en sert de deux façons,
+        // mesurées hors-ligne avec des copies vieillies de 31 jours (v3.7.442) :
+        //  - une copie dont l'en-tête `Date` dépasse l'âge (lisible pour nos
+        //    fichiers, même origine) est refusée puis supprimée, réseau ou pas :
+        //    plus aucun circuit officiel listé, photo de fiche absente ;
+        //  - les entrées pas utilisées depuis cet âge sont supprimées dès qu'une
+        //    autre est lue : 10 tuiles sur 28, préparées pour un autre circuit,
+        //    effacées au premier affichage de la carte.
+        // Or ces caches sont le secours hors-ligne du « pack terrain » passif,
+        // préparé parfois des mois avant le terrain. Un âge maximal n'y rafraîchit
+        // rien : en ligne, les routes NetworkFirst redemandent toujours le
+        // serveur, les tuiles sont redemandées en arrière-plan, et une photo
+        // publiée ne change jamais sous le même nom. Seul maxEntries borne chaque
+        // cache : au-delà, l'entrée utilisée il y a le plus longtemps sort.
+        // tests/cache_retention.test.js le garde.
         runtimeCaching: [
           {
             // GeoJSON : NetworkFirst — données éditoriales qui évoluent
@@ -69,7 +85,6 @@ export default defineConfig({
               networkTimeoutSeconds: 8,
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 jours
               },
             },
           },
@@ -83,7 +98,6 @@ export default defineConfig({
               networkTimeoutSeconds: 8,
               expiration: {
                 maxEntries: 20,
-                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 jours
               },
             },
           },
@@ -102,14 +116,10 @@ export default defineConfig({
             // réseau qui ne répond plus, la copie sort avant l'abandon à 12 s de
             // fetchWithTimeout (net.js).
             //
-            // PAS de maxAgeSeconds, exprès : Workbox refuse, même hors-ligne, une
-            // copie dont l'en-tête `Date` (lisible ici, même origine) dépasse cet
-            // âge. Mesuré le 19/10/2026 sur `app-data` : copie datée de 8 jours →
-            // hors-ligne, plus aucun circuit officiel. En NetworkFirst la copie ne
-            // sert que si le réseau échoue : un âge maximal ne rafraîchit rien, il
-            // retire le secours (un circuit préparé plus d'une semaine avant le
-            // terrain retomberait en vol d'oiseau). maxEntries borne la taille :
-            // 28 GPX publiés au 19/10/2026, 37 Ko au plus chacun.
+            // Pas d'âge maximal (cf. « Durée de conservation » plus haut) : un
+            // circuit préparé longtemps avant le terrain retomberait en vol
+            // d'oiseau. maxEntries borne la taille : 28 GPX publiés au 19/10/2026,
+            // 37 Ko au plus chacun.
             //
             // Prend aussi l'ouverture directe d'un .gpx (QR de partage) chez qui a
             // Heripia installée : en ligne le fichier du serveur, hors-ligne la copie.
@@ -162,27 +172,30 @@ export default defineConfig({
             // crossorigin → réponses OPAQUES (status 0, d'où l'ancien
             // `statuses: [0, 200]`), que Chrome compte ~7,8 Mo chacune dans le
             // quota : 2,2 Go affichés pour heripia.com. `statuses: [200]` : une
-            // tuile en erreur (404, panne) n'est plus gardée 30 jours, son vrai
-            // code étant maintenant visible (une réponse opaque le masquait).
+            // tuile en erreur (404, panne) n'est plus gardée, son vrai code étant
+            // maintenant visible (une réponse opaque le masquait).
             //
             // Nom changé (`map-tiles` → `map-tiles-cors`) : une tuile opaque déjà
             // en cache, resservie à une <img crossorigin>, ne s'affiche PAS (mesuré
             // sur les 4 serveurs). L'ancien cache est supprimé à l'activation du SW
             // par public/sw-cleanup.js (cf. importScripts plus haut).
             //
-            // maxEntries 256 : n'est plus imposé par le gonflement du quota ; le
-            // relever est une décision à part. maxAgeSeconds : supprime une tuile
-            // restée 30 jours SANS être affichée (pas une tuile vieille de 30
-            // jours, cf. plus haut). purgeOnQuotaError : ce cache, le plus facile
-            // à reconstituer, part en premier si le quota sature.
+            // Pas d'âge maximal (cf. « Durée de conservation » plus haut) : jusqu'à
+            // v3.7.442, une tuile restée 30 jours sans être affichée était
+            // supprimée, donc un pack préparé en octobre aurait disparu en mars.
+            // maxEntries 1000 (256 jusqu'à v3.7.442) : un circuit préparé, c'est
+            // environ 28 tuiles (suivi mobile, mesuré le 20/10/2026), soit ~600
+            // pour les 21 circuits de Djerba. 1000 tuiles Voyager ≈ 5 Mo ; au pire
+            // ~30 Mo sur PC en Satellite (31 Ko la tuile). purgeOnQuotaError : ce
+            // cache, le plus facile à reconstituer, part en premier si le quota
+            // sature.
             urlPattern: /^https:\/\/(?:[a-c]\.tile\.openstreetmap\.org|[a-c]\.tile\.openstreetmap\.fr|[a-d]\.basemaps\.cartocdn\.com|mt[0-3]\.google\.com)\//,
             handler: 'StaleWhileRevalidate',
             options: {
               cacheName: 'map-tiles-cors',
               cacheableResponse: { statuses: [200] },
               expiration: {
-                maxEntries: 256,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 jours
+                maxEntries: 1000,
                 purgeOnQuotaError: true,
               },
             },
@@ -190,7 +203,10 @@ export default defineConfig({
           {
             // Photos de POI (same-origin /photos/*.jpg, servies par GitHub Pages) :
             // CacheFirst. Réponses 200 classiques (pas opaques) → pas de padding
-            // quota. Une fois une fiche consultée, ses photos restent hors ligne.
+            // quota. Une photo affichée une fois reste dispo hors ligne. Pas d'âge
+            // maximal (cf. « Durée de conservation » plus haut) : chaque photo a un
+            // nom unique (lieu + horodatage) et une photo publiée est définitive,
+            // il n'y a donc rien à rafraîchir.
             urlPattern: /\/photos\/[^?]+\.jpg(\?.*)?$/i,
             handler: 'CacheFirst',
             options: {
@@ -198,7 +214,6 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
               expiration: {
                 maxEntries: 200,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 jours
                 purgeOnQuotaError: true,
               },
             },
