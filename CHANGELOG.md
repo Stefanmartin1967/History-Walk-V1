@@ -6,6 +6,24 @@
 
 ---
 
+- RETOUR DU RÉSEAU VÉRIFIÉ, MÊME APRÈS L'ARRIÈRE-PLAN (v3.7.445) — Constaté par Stefan sur son S25 le 20/10/2026, juste après la v3.7.444 : réseau rétabli pendant que Heripia était en arrière-plan, puis retour dans l'appli. Le bandeau « Hors-ligne » est resté plus de 3 minutes, le tracé en vol d'oiseau et la carte grise. Passer sur une autre appli puis revenir n'y changeait rien. Plan validé par Stefan le 20/10.
+  - **Problème** : le bandeau, la recharge du tracé et de la carte (v3.7.444) et la synchronisation Gist attendaient tous le signal « online » du navigateur. Sur Android, ce signal est **perdu** quand le réseau revient pendant que la page est en pause (arrière-plan, téléphone en poche). Rien ne revérifiait ensuite. Le premier essai de Stefan avait marché parce que Heripia était à l'écran.
+    - Côté Gist, c'est la promesse du bandeau (« vos modifications restent enregistrées ») qui était en jeu : un envoi en attente n'était rejoué qu'à ce signal.
+  - **Correctif** : nouveau module `src/network-status.js`, source unique de « réseau revenu ».
+    - Il passe « hors-ligne » quand le navigateur l'annonce, ou si Heripia démarre sans réseau. Le bandeau s'affiche.
+    - Tant qu'il est hors-ligne, il **vérifie vraiment** la connexion en demandant `robots.txt` au serveur (sans cache, jamais servi par le service worker) : au signal « online », au retour de Heripia au premier plan, et toutes les 15 s. Sans réseau, la demande échoue tout de suite, sans données consommées. En ligne, aucune vérification.
+    - Dès qu'une vérification aboutit : bandeau retiré, et les abonnés sont prévenus une fois : tracé (`circuit.js`), carte (`map.js`) et envoi Gist en attente (`gist-sync.js`).
+    - Un signal « online » trop tôt (réseau pas encore utilisable) ne déclenche plus rien pour rien.
+    - Le bandeau sort de `main.js`. `gist-sync.js` lit l'état du module au lieu de `navigator.onLine`.
+
+  **Vérifié en local** (version construite, vue mobile 390×844, profil Chrome jetable). Réseau vraiment coupé puis rétabli ; signal « online » du navigateur **supprimé**, comme sur le S25 :
+  - **v3.7.444, Heripia en arrière-plan au retour du réseau** : au retour dans l'appli, bandeau toujours là après 20 s, vol d'oiseau, 8 tuiles grises (cas de Stefan reproduit) ;
+  - **branche, même scénario** : bandeau parti **0,3 s** après le retour dans l'appli, tracé réel (52 points), 18 tuiles, 0 en erreur ;
+  - **branche, Heripia resté à l'écran, signal perdu** : tout rétabli en 11 s (vérification des 15 s) ;
+  - **branche, signal normal** : comme en v3.7.444. Tracé réel, carte complète, distance du détail 3,7 → 5,6 km.
+
+  Tests : `network_status` (nouveau, 12) — démarrage en ligne ou hors-ligne, signal « offline », retour vérifié au signal « online », signal trop tôt, retour au premier plan, vérification des 15 s puis arrêt une fois en ligne, une vérification à la fois, abonné en échec isolé ; le fichier vérifié existe, n'est pas précaché et n'est pris par aucune route du service worker. `gist_sync`, `circuit`, `map_reconnect_tiles` passent par le module.
+
 - AU RETOUR DU RÉSEAU, HERIPIA COMPLÈTE SEUL LE TRACÉ ET LA CARTE (v3.7.444) — 2ᵉ des trois PR « hors-ligne » validées par Stefan le 20/10 (plan de cette PR validé le 20/10). Préalable vérifié par Stefan sur son S25 : le signal « réseau revenu » arrive (le bandeau « Hors-ligne » disparaît quelques secondes après la fin du mode avion).
   - **Problème** (mesuré le 19/10/2026, coupure réelle du réseau en cours de session) :
     - **tracé** : un circuit officiel ouvert sans réseau, et jamais ouvert en ligne sur l'appareil, s'affiche en vol d'oiseau. Au retour du réseau, le vol d'oiseau restait, suivi compris, même en quittant puis relançant le suivi. Il fallait fermer le circuit puis le rouvrir ;
