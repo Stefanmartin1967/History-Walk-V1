@@ -5,7 +5,11 @@
 // ─── État partagé ─────────────────────────────────────────────────────────────
 
 let currentView = 'circuits';
-let mobileSort = 'proximity_asc'; // proximity_asc | dist_asc | dist_desc (legacy: date_desc | date_asc)
+// Tri choisi : proximity_asc | dist_asc | dist_desc | verified_first (legacy :
+// date_desc | date_asc). Par défaut « Proximité », qui s'applique comme « Court »
+// tant qu'il n'y a pas de point de départ (getEffectiveSort, mobile-circuits.js).
+export const DEFAULT_MOBILE_SORT = 'proximity_asc';
+let mobileSort = DEFAULT_MOBILE_SORT;
 let mobileCurrentPage = 1;
 let _allCircuitsOrdered = []; // Liste ordonnée pour le swipe entre circuits
 

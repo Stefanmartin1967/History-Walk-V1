@@ -6,6 +6,17 @@
 
 ---
 
+- PASTILLE DES FILTRES DE MES CIRCUITS FAUSSE AU DÉMARRAGE (v3.7.447) — Signalé par Stefan le 20/10/2026 sur son S25 (Heripia installée, v3.7.446) : sur mobile, l'icône des filtres de Mes Circuits portait toujours une pastille « 1 », sans aucun filtre. « Tout réinitialiser » l'effaçait ; elle revenait à chaque ouverture de Heripia. Plan validé par Stefan le 20/10.
+  - **Cause** : la pastille compte le tri quand il diffère du tri par défaut (« Proximité » si un point de départ est enregistré, sinon « Court »). Au démarrage, la liste s'affiche une première fois **avant** que `main.js` relise le point de départ (IndexedDB). Le rendu écrivait alors le repli « Court » dans le tri choisi. Au rendu suivant, point de départ connu, le défaut redevenait « Proximité » : le tri « Court » comptait comme un filtre. Seuls les utilisateurs avec un point de départ étaient touchés.
+  - **Effet caché** : chez eux, la liste démarrait triée par « Court » au lieu de « Proximité ».
+  - **Correctif** (`src/mobile-circuits.js`, `src/mobile-state.js`) : le tri choisi garde le choix de l'utilisateur, « Proximité » par défaut (`DEFAULT_MOBILE_SORT`). Le repli « Proximité sans point de départ = Court » est résolu à la lecture (`getEffectiveSort`) : pour trier la liste, cocher le tri dans la feuille de filtres et compter la pastille. Il n'est plus jamais écrit. « Tout réinitialiser » remet le tri par défaut. Sans point de départ, rien ne change à l'écran : « Court » reste coché et ne compte pas. PC non concerné (aucun repli écrit, défaut fixe).
+
+  **Vérifié en local** (versions construites, `vite preview`, vue mobile 390×844, profil Chrome neuf, point de départ enregistré dans la base comme le fait Heripia). Séquence de Stefan : démarrage → feuille de filtres → « Tout réinitialiser » → rechargement.
+  - **v3.7.446** : pastille **1** au démarrage, « Court » coché ; absente après « Tout réinitialiser » ; **1** de nouveau au rechargement (bug reproduit). L'ordre de la liste change au reset, preuve que le tri n'était pas « Proximité ».
+  - **branche** : **aucune pastille** au démarrage, après le reset et au rechargement ; « Proximité » coché ; même ordre de liste aux trois étapes. Sans point de départ : aucune pastille.
+
+  Tests : `mobile_circuits_filter_badge` (nouveau, 3) — démarrage dans l'ordre réel (rendu sans point de départ, puis point de départ relu, puis rendu) : pas de pastille, tri Proximité appliqué et coché ; sans point de départ, tri Court appliqué et coché, repli non écrit, choisir « Court » n'allume pas la pastille ; un autre tri l'allume et « Tout réinitialiser » l'éteint. Les deux premiers échouent sur la v3.7.446.
+
 - PHOTOS DES ÉTAPES GARDÉES À L'OUVERTURE D'UN CIRCUIT (v3.7.446) — 3ᵉ et dernière PR du chantier « hors-ligne » validé par Stefan le 20/10 (plan de cette PR validé le 20/10). Sur le terrain, c'est la photo qui permet de reconnaître le bon bâtiment : pour Stefan, ses photos de travail ; pour un utilisateur, les photos publiées.
   - **Problème** : une photo n'était gardée hors-ligne que si l'on avait ouvert la fiche de son lieu en ligne. Mesuré sur la v3.7.445 : circuit « Mosquée Braa à Mosquée Hadherbach » ouvert en ligne sans ouvrir ses fiches, puis hors-ligne. Une seule photo sur 5 était disponible, celle de l'en-tête du circuit.
   - **Correctif** : nouveau module `src/circuit-photos-offline.js`, appelé à la fin de l'ouverture d'un circuit (PC, mobile, flèches « circuit suivant » ; circuits officiels et perso). En arrière-plan, sans message :
