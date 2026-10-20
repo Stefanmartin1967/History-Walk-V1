@@ -24,7 +24,7 @@ import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { getProcessedCircuits, formatUnseenLabel } from './circuit-list-service.js';
 import { openStartPointModal } from './start-point.js';
 import {
-    getMobileSort, setMobileSort,
+    getMobileSort, setMobileSort, DEFAULT_MOBILE_SORT,
     setCurrentView, setAllCircuitsOrdered, getAllCircuitsOrdered,
     pushMobileLevel,
     setMobileHeaderSlot,
@@ -84,15 +84,6 @@ export function renderMobileCircuitsList() {
         lastSeenStateFilterCompleted = state.filterCompleted;
     }
 
-    // Normalisation du tri par défaut : mobile-state.js initialise mobileSort
-    // à 'proximity_asc' (cohérent avec PC), mais ce tri exige homeLocation. Sans
-    // homeLocation, on retombe sur 'dist_asc' (default de resetAllMobileFilters).
-    // Sans cette normalisation, le badge n se met à 1 au boot pour les users
-    // sans homeLocation — confusion garantie.
-    if (getMobileSort() === 'proximity_asc' && !state.homeLocation) {
-        setMobileSort('dist_asc');
-    }
-
     // Filtre POI courant (si on revient d'une fiche POI avec un POI sélectionné)
     let filterPoiId = null;
     let currentPoiFeature = null;
@@ -110,7 +101,7 @@ export function renderMobileCircuitsList() {
     }
 
     // Sort : 'verified_first' → délégué au service en 'proximity_asc' puis reorder.
-    const sortMode = getMobileSort();
+    const sortMode = getEffectiveSort();
     const baseSortMode = sortMode === 'verified_first' ? 'proximity_asc' : sortMode;
     const legacyFilterTodo = filterCompletion === 'todo';
 
@@ -383,13 +374,19 @@ function countActiveFilters() {
     if (filterVisibility !== 'visible') n++;
     if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) n++;
     if (state.activeFilters?.zone) n++;
-    // Le tri par défaut dépend de homeLocation : 'proximity_asc' si défini, sinon
-    // 'dist_asc' (cf. resetAllMobileFilters). On ne badge le tri que s'il diverge
-    // de ce default — sinon le badge resterait à 1 après reset pour les users sans
-    // homeLocation, ce qui serait trompeur.
-    const defaultSort = state.homeLocation ? 'proximity_asc' : 'dist_asc';
-    if (getMobileSort() !== defaultSort) n++;
+    // Le tri ne compte que s'il diverge du tri par défaut, comparés tous deux
+    // tels qu'appliqués : sans point de départ, choisir « Court » revient au défaut.
+    if (getEffectiveSort() !== getEffectiveSort(DEFAULT_MOBILE_SORT)) n++;
     return n;
+}
+
+// Tri réellement appliqué. « Proximité » sans point de départ se lit « Court »
+// (dist_asc). Résolu à la lecture, jamais écrit dans le tri choisi : au
+// démarrage, la liste s'affiche avant que main.js relise le point de départ
+// (IndexedDB). L'écrire à ce moment figeait « Court » et allumait la pastille
+// des filtres une fois le point de départ relu (constaté le 20/10/2026).
+function getEffectiveSort(sort = getMobileSort()) {
+    return sort === 'proximity_asc' && !state.homeLocation ? 'dist_asc' : sort;
 }
 
 function pickEmptyHint() {
@@ -416,7 +413,7 @@ function resetAllMobileFilters() {
     filterVisibility   = 'visible';
     setFilterCompleted(false);
     lastSeenStateFilterCompleted = false;
-    setMobileSort(state.homeLocation ? 'proximity_asc' : 'dist_asc');
+    setMobileSort(DEFAULT_MOBILE_SORT);
     setActiveFilter('zone', null);
     renderMobileCircuitsList();
     if (sheetOpen) renderFilterSheetBody();
@@ -546,7 +543,7 @@ function renderFilterSheetBody() {
     });
     const sortedZones = Object.keys(zonesMap).sort();
     const currentZone = state.activeFilters?.zone || null;
-    const currentSort = getMobileSort();
+    const currentSort = getEffectiveSort();
 
     body.innerHTML = `
         <!-- Type de circuit -->
