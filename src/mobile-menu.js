@@ -23,6 +23,7 @@ import { getCurrentPatrimonialLang, setPatrimonialLang } from './patrimonial-nam
 import { eventBus } from './events.js';
 import { getCurrentView, isMobileView, setMobileHeaderSlot, clearMobileViewFooter } from './mobile-state.js';
 import { isShownToUser } from './poi-visibility.js';
+import { getDockDiagBlocks } from './dock-diag.js';
 
 // ─── Sous-titres dynamiques ──────────────────────────────────────────────────
 // Compteurs réels lus de state pour donner du contexte à chaque action.
@@ -154,6 +155,16 @@ export function renderMobileMenu() {
         html += '</div></section>';
     });
     html += `<div class="menu-version">Heripia Mobile v${APP_VERSION}</div>`;
+    // Mesure provisoire du dock après mise à jour (cf. dock-diag.js) : lue ici à
+    // l'ouverture suivante, même si le dock manquait pendant la session mesurée.
+    const diagBlocks = getDockDiagBlocks();
+    if (diagBlocks.length) {
+        html += '<div class="menu-diag">';
+        diagBlocks.forEach(lines => {
+            html += `<div class="menu-diag-boot">${lines.map(l => `<div>${escapeHtml(l)}</div>`).join('')}</div>`;
+        });
+        html += '</div>';
+    }
     html += '</div>';
 
     container.innerHTML = html;
