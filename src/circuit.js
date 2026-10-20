@@ -1,6 +1,7 @@
 import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setOfficialCircuitsStatusUpdatedAt, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode, getActiveMapId} from './state.js';
 import { fetchWithTimeout } from './net.js';
 import { onNetworkBack } from './network-status.js';
+import { keepCircuitPhotosOffline } from './circuit-photos-offline.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -1002,6 +1003,9 @@ export async function loadCircuitById(id) {
     // Bug pré-existant découvert pendant le chantier Mon Espace V2 (audit
     // Niveau 2 sur circuit:list-updated, 15/05/2026).
     eventBus.emit('circuit:list-updated');
+
+    // Photos des étapes gardées pour le hors-ligne (arrière-plan, sans message).
+    keepCircuitPhotosOffline(state.currentCircuit);
 }
 
 export async function loadCircuitFromIds(inputString, importedName = null) {
