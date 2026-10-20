@@ -198,27 +198,6 @@ describe('renderMobileMenu — render structure', () => {
         const footer = document.querySelector('.menu-version');
         expect(footer.textContent).toContain('4.2.0');
     });
-
-    // Mesure provisoire du dock (dock-diag.js) : relevés lus sous la version.
-    it('affiche les relevés du dock sous la version, échappés', () => {
-        localStorage.setItem('hw_dock_diag', JSON.stringify([{
-            at: new Date(2026, 9, 20, 14, 32).toISOString(), version: '<b>9</b>', nav: 'reload', appli: true,
-            mesure: { fenetre: 805, ecran: 915, dispo: 869, svh: 805, dvh: 805, lvh: 805, marge: 0, dock: '743→805' },
-            changements: [],
-        }]));
-        renderMobileMenu();
-        const diag = document.querySelector('.menu-version + .menu-diag');
-        expect(diag.textContent).toContain('rechargement');
-        expect(diag.textContent).toContain('dock 743→805');
-        expect(diag.querySelector('b')).toBeNull();
-        localStorage.removeItem('hw_dock_diag');
-    });
-
-    it("n'affiche aucun relevé du dock sans mesure", () => {
-        localStorage.removeItem('hw_dock_diag');
-        renderMobileMenu();
-        expect(document.querySelector('.menu-diag')).toBeNull();
-    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
