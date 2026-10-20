@@ -8,6 +8,12 @@
 // mai (#571) : le dock était là, mais 56 px trop bas, derrière la barre Android.
 // La fenêtre était donc mesurée trop haute.
 //
+// Relevé du 20/10 (v3.7.448, démarrage après mise à jour) : fenêtre 750, dock
+// 744→805. Le conteneur gardait un 100dvh converti quand la fenêtre faisait
+// 805 ; corrigé en v3.7.449 (hauteur en %, cf. base.css). Mesure gardée un tour
+// de plus pour le constater sur le téléphone, avec la hauteur de la page (html,
+// sur laquelle s'appuie le pourcentage).
+//
 // À chaque démarrage mobile, on note ce qui décide de la place du dock, puis
 // chaque changement de hauteur pendant la session (rotation comprise). Les trois
 // derniers démarrages s'affichent en bas du Menu : on les lit à l'ouverture
@@ -66,6 +72,7 @@ export function measureLayout() {
     }
     return {
         fenetre: window.innerHeight,
+        page: document.documentElement.clientHeight,
         ecran: window.screen?.height ?? null,
         dispo: window.screen?.availHeight ?? null,
         svh, dvh, lvh, marge,
@@ -133,7 +140,7 @@ export function formatBoot(boot) {
     ];
     const m = boot.mesure;
     if (m) {
-        lines.push(`fenêtre ${m.fenetre} (écran ${m.ecran}, dispo ${m.dispo}) · svh ${m.svh} dvh ${m.dvh} lvh ${m.lvh} · marge bas ${m.marge}`);
+        lines.push(`fenêtre ${m.fenetre} · page ${m.page ?? '?'} (écran ${m.ecran}, dispo ${m.dispo}) · svh ${m.svh} dvh ${m.dvh} lvh ${m.lvh} · marge bas ${m.marge}`);
         lines.push(`dock ${m.dock}`);
     } else {
         lines.push('pas encore mesuré');

@@ -35,7 +35,11 @@ describe('startDockDiag', () => {
         expect(stored()[0]).toMatchObject({ version: '3.7.448', mesure: null, changements: [] });
 
         vi.advanceTimersByTime(3000);
-        expect(stored()[0].mesure).toMatchObject({ fenetre: window.innerHeight, dock: '0→0' });
+        expect(stored()[0].mesure).toMatchObject({
+            fenetre: window.innerHeight,
+            page: document.documentElement.clientHeight,
+            dock: '0→0',
+        });
     });
 
     it('ne garde que les trois derniers démarrages', () => {
@@ -97,15 +101,24 @@ describe('formatBoot', () => {
     it('met un démarrage mesuré en lignes lisibles', () => {
         const boot = {
             at, version: '3.7.448', nav: 'reload', appli: true,
-            mesure: { fenetre: 805, ecran: 915, dispo: 869, svh: 805, dvh: 805, lvh: 805, marge: 0, dock: '743→805' },
+            mesure: { fenetre: 805, page: 805, ecran: 915, dispo: 869, svh: 805, dvh: 805, lvh: 805, marge: 0, dock: '743→805' },
             changements: [{ s: 12, fenetre: 749, dock: '687→749' }],
         };
         expect(formatBoot(boot)).toEqual([
             '20/10 14:32 · v3.7.448 · rechargement · appli',
-            'fenêtre 805 (écran 915, dispo 869) · svh 805 dvh 805 lvh 805 · marge bas 0',
+            'fenêtre 805 · page 805 (écran 915, dispo 869) · svh 805 dvh 805 lvh 805 · marge bas 0',
             'dock 743→805',
             'après 12 s : fenêtre 749, dock 687→749',
         ]);
+    });
+
+    it("lit un relevé de la v3.7.448, d'avant la hauteur de la page", () => {
+        const boot = {
+            at, version: '3.7.448', nav: 'reload', appli: true,
+            mesure: { fenetre: 750, ecran: 832, dispo: 750, svh: 750, dvh: 750, lvh: 750, marge: 0, dock: '744→805' },
+            changements: [],
+        };
+        expect(formatBoot(boot)[1]).toBe('fenêtre 750 · page ? (écran 832, dispo 750) · svh 750 dvh 750 lvh 750 · marge bas 0');
     });
 
     it('signale un démarrage pas encore mesuré', () => {
