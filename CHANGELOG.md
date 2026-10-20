@@ -6,6 +6,21 @@
 
 ---
 
+- PHOTOS DES ÉTAPES GARDÉES À L'OUVERTURE D'UN CIRCUIT (v3.7.446) — 3ᵉ et dernière PR du chantier « hors-ligne » validé par Stefan le 20/10 (plan de cette PR validé le 20/10). Sur le terrain, c'est la photo qui permet de reconnaître le bon bâtiment : pour Stefan, ses photos de travail ; pour un utilisateur, les photos publiées.
+  - **Problème** : une photo n'était gardée hors-ligne que si l'on avait ouvert la fiche de son lieu en ligne. Mesuré sur la v3.7.445 : circuit « Mosquée Braa à Mosquée Hadherbach » ouvert en ligne sans ouvrir ses fiches, puis hors-ligne. Une seule photo sur 5 était disponible, celle de l'en-tête du circuit.
+  - **Correctif** : nouveau module `src/circuit-photos-offline.js`, appelé à la fin de l'ouverture d'un circuit (PC, mobile, flèches « circuit suivant » ; circuits officiels et perso). En arrière-plan, sans message :
+    - **photos publiées** : la **première de chaque étape**, celle du haut de la fiche. Elles sont demandées une à une, en basse priorité, et le service worker les garde (route `poi-photos`). Une photo déjà gardée ne repart pas sur le réseau. Poids : 0,6 Mo par circuit en général, 3,3 Mo au plus ; 63 photos et 17 Mo pour les 21 circuits, sous la limite de 200. Toutes les photos auraient fait jusqu'à 23,5 Mo pour un circuit, écarté ;
+    - **photos de travail** (admin seulement) : **toutes** celles des étapes, « gardées » comprises, dans la base de l'appareil via `loadWorkPhotoBlob`, sans limite, comme à l'ouverture d'une fiche.
+    - Rien hors-ligne : le module reprend au retour du réseau (`network-status.js`) si un circuit est ouvert. Rien non plus en mode « économie de données » de Chrome, ni pour une photo qui n'est pas sur heripia.com (le service worker ne la garderait pas). Ouvrir un autre circuit arrête le précédent.
+  - **À savoir** : ouvrir une fiche ne garde toujours que sa première photo ; la visionneuse charge toutes les photos du lieu. Les circuits ouverts avant cette version ne gardent leurs photos qu'à leur prochaine ouverture.
+
+  **Vérifié en local** (versions construites, `vite preview`, vue mobile 390×844, profil Chrome neuf). En ligne : circuit « Mosquée Braa à Mosquée Hadherbach » ouvert, **aucune fiche ouverte**, 12 s d'attente. Puis hors-ligne (serveur arrêté, page hors-ligne, tuiles injoignables) : fiche de chaque étape, photo du haut de fiche demandée.
+  - **v3.7.445** : 1 photo gardée, **1 fiche sur 5** avec sa photo (Mosquée Braa, l'en-tête du circuit) ;
+  - **branche** : 5 photos gardées, **5 fiches sur 5** avec leur photo, servies par le cache.
+  - Photos de travail : non testables ainsi, faute du jeton admin dans le navigateur de test. Elles sont couvertes par les tests ; essai réel de Stefan sur son téléphone.
+
+  Tests : `circuit_photos_offline` (nouveau, 11) — 1re photo de chaque étape, une à une, en basse priorité ; photos hors heripia.com ignorées ; arrêt si un autre circuit s'ouvre ; rien hors-ligne ni en économie de données ; arrêt si le réseau tombe en route ; photos de travail toutes prises pour l'admin, aucune sinon ; reprise au retour du réseau. `circuit` : appelé à l'ouverture d'un circuit.
+
 - RETOUR DU RÉSEAU VÉRIFIÉ, MÊME APRÈS L'ARRIÈRE-PLAN (v3.7.445) — Constaté par Stefan sur son S25 le 20/10/2026, juste après la v3.7.444 : réseau rétabli pendant que Heripia était en arrière-plan, puis retour dans l'appli. Le bandeau « Hors-ligne » est resté plus de 3 minutes, le tracé en vol d'oiseau et la carte grise. Passer sur une autre appli puis revenir n'y changeait rien. Plan validé par Stefan le 20/10.
   - **Problème** : le bandeau, la recharge du tracé et de la carte (v3.7.444) et la synchronisation Gist attendaient tous le signal « online » du navigateur. Sur Android, ce signal est **perdu** quand le réseau revient pendant que la page est en pause (arrière-plan, téléphone en poche). Rien ne revérifiait ensuite. Le premier essai de Stefan avait marché parce que Heripia était à l'écran.
     - Côté Gist, c'est la promesse du bandeau (« vos modifications restent enregistrées ») qui était en jeu : un envoi en attente n'était rejoué qu'à ce signal.

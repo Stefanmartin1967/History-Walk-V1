@@ -115,6 +115,7 @@ vi.mock('../src/modal.js', () => ({
 // Retour du réseau vérifié (network-status.js) : abonnés notés pour les tests.
 const net = vi.hoisted(() => ({ back: [] }));
 vi.mock('../src/network-status.js', () => ({ onNetworkBack: (fn) => { net.back.push(fn); } }));
+vi.mock('../src/circuit-photos-offline.js', () => ({ keepCircuitPhotosOffline: vi.fn() }));
 
 vi.mock('../src/events.js', () => ({
     eventBus: { emit: vi.fn(), on: vi.fn(), off: vi.fn() }
@@ -153,6 +154,7 @@ import {
     updateCircuitMetadata
 } from '../src/circuit.js';
 import { fetchWithTimeout } from '../src/net.js';
+import { keepCircuitPhotosOffline } from '../src/circuit-photos-offline.js';
 import { updateCircuitHeader } from '../src/circuit-view.js';
 import { getRealDistance, getOrthodromicDistance } from '../src/utils.js';
 
@@ -803,6 +805,16 @@ describe('loadCircuitById — lazy-load du tracé officiel', () => {
         // Écrire ici figerait la version consultée chez chaque visiteur (la copie
         // locale prime sur l'index publié au boot).
         expect(saveCircuit).not.toHaveBeenCalled();
+    });
+
+    // 20/10/2026 : photos des étapes gardées pour le hors-ligne (PR 3/3).
+    it('garde les photos des étapes du circuit ouvert', async () => {
+        state.officialCircuits = [{ id: 'HW-off', name: 'O', poiIds: [], file: 'djerba/O.gpx', isOfficial: true }];
+
+        await loadCircuitById('HW-off');
+
+        expect(keepCircuitPhotosOffline).toHaveBeenCalledTimes(1);
+        expect(keepCircuitPhotosOffline).toHaveBeenCalledWith(state.currentCircuit);
     });
 
     it('ne télécharge rien si le tracé est déjà en mémoire', async () => {
