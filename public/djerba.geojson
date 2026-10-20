@@ -7809,13 +7809,13 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Ancienne Mosquée Sidi Nasr",
-        "Nom du site arabe": "جامع سيدي نصر",
+        "Nom du site FR": "Mosquée Sidi Nasser (Ancienne)",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
         "Source": "Répertoire J. Fathallah, n° 113 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "HW_ID": "HW-01K77WPE6NHCHVH0JKDTF607DG",
-        "description": "Mosquée ancienne de Groa, voisine de la mosquée Sidi Nasser (Nouvelle).\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 113 sous le nom de Sidi Nasser 1 : mosquée malékite, ancienne. La liste Wikipédia des mosquées de Djerba la donne active.",
+        "description": "Mosquée de Groa, voisine de la mosquée Sidi Nasser (Nouvelle).\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 113 sous le nom de Sidi Nasser 1 : mosquée malékite, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la donne active.",
         "accessPoint": [
           10.7889798,
           33.8121126
