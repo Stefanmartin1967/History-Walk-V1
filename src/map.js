@@ -14,6 +14,7 @@ import { saveAppState } from './database.js';
 import { iconMap, getIconHtml, getIconForFeature } from './poi-icons.js';
 import { showInfoPopover } from './info-popover.js';
 import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
+import { onNetworkBack } from './network-status.js';
 
 export { iconMap, getIconHtml, getIconForFeature };
 
@@ -150,19 +151,20 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     L.control.layers(baseMaps, null, { position: 'topleft' }).addTo(map);
     L.control.attribution({ position: 'bottomleft' }).addTo(map);
 
-    // Retour du réseau : une tuile demandée hors-ligne (zone jamais vue) reste
-    // grise, Leaflet 1.9 ne redemandant une tuile en erreur qu'au changement de
-    // zoom (mesuré le 19/10/2026 : 16 tuiles grises, toujours là au retour du
-    // réseau, revenues après un zoom). On recrée les tuiles du fond affiché,
-    // seulement s'il en a en erreur : une carte complète n'est pas touchée. Les
-    // tuiles gardées reviennent du cache du service worker.
+    // Retour du réseau (network-status.js) : une tuile demandée hors-ligne (zone
+    // jamais vue) reste grise, Leaflet 1.9 ne redemandant une tuile en erreur
+    // qu'au changement de zoom (mesuré le 19/10/2026 : 16 tuiles grises,
+    // toujours là au retour du réseau, revenues après un zoom). On recrée les
+    // tuiles du fond affiché, seulement s'il en a en erreur : une carte complète
+    // n'est pas touchée. Les tuiles gardées reviennent du cache du service
+    // worker.
     //
     // Retirer puis remettre le fond, comme le sélecteur de fonds : ses tuiles
     // sont recréées au zoom arrondi. PAS layer.redraw() : Leaflet 1.9.4 y
     // reprend le zoom de la carte sans l'arrondir, et Heripia zoome par pas de
     // 0,1 (zoomSnap) → adresses de tuiles invalides, « …/13.600000000000001/… »
     // (mesuré le 20/10/2026).
-    window.addEventListener('online', () => {
+    onNetworkBack(() => {
         Object.values(baseMaps).forEach((layer) => {
             if (!map.hasLayer(layer) || !hasBrokenTiles(layer)) return;
             map.removeLayer(layer);

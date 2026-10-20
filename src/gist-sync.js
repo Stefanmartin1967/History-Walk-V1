@@ -10,6 +10,7 @@ import { showToast } from './toast.js';
 import { savePoiData, batchSavePoiData, saveAppState } from './database.js';
 import { eventBus } from './events.js';
 import { fetchWithTimeout } from './net.js';
+import { isOffline, onNetworkBack } from './network-status.js';
 import { mergeVisited, mergeCircuitDone, computeVu } from './visited-state.js';
 
 const GIST_ID_KEY    = 'hw_gist_id';
@@ -21,7 +22,7 @@ const PUSH_DEBOUNCE_MS = 3000;
 let _pushTimer = null;
 
 // Sync « en attente » : passe à true quand un push n'a pas pu être confirmé
-// (hors-ligne, ou échec réseau en cours de route). L'event 'online' le rejoue
+// (hors-ligne, ou échec réseau en cours de route). Le retour du réseau le rejoue
 // alors (cf. initGistReconnectSync). C'est ce qui rend VRAIE la réassurance
 // « vos modifications restent enregistrées et repartiront au retour du réseau ».
 let _pendingPush = false;
@@ -380,7 +381,7 @@ export async function pullFromGist() {
     // Hors-ligne : inutile (et bruyant, cf. plus bas) de tenter un fetch voué à
     // l'échec au boot. Silencieux — un boot hors-ligne est un cas normal, pas
     // une panne à signaler.
-    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    if (isOffline()) return;
 
     try {
         const { remote, adoptId, adoptToast } = await fetchGistWithRecovery(token);
@@ -438,9 +439,8 @@ export async function pushToGist() {
     if (!token) return;
 
     // Hors-ligne : inutile de lancer un fetch voué à l'échec. On mémorise que la
-    // sync est en attente — l'event 'online' la rejouera (initGistReconnectSync).
-    // (navigator.onLine peut être absent sous certains environnements de test.)
-    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    // sync est en attente — le retour du réseau la rejouera (initGistReconnectSync).
+    if (isOffline()) {
         _pendingPush = true;
         return;
     }
@@ -510,13 +510,15 @@ export function schedulePush() {
 
 /**
  * Rejoue le push Gist au retour de la connectivité s'il en restait un en attente.
- * Idempotent : on n'attache l'écouteur 'online' qu'une seule fois. À appeler une
- * fois au boot (cf. app-startup.js, après pullFromGist).
+ * Retour du réseau VÉRIFIÉ (network-status.js) : le seul signal « online » du
+ * navigateur se perd sur Android quand Heripia est en arrière-plan.
+ * Idempotent : on ne s'abonne qu'une seule fois. À appeler une fois au boot
+ * (cf. app-startup.js, après pullFromGist).
  */
 export function initGistReconnectSync() {
     if (_reconnectBound) return;
     _reconnectBound = true;
-    window.addEventListener('online', () => {
+    onNetworkBack(() => {
         if (_pendingPush) pushToGist();
     });
 }

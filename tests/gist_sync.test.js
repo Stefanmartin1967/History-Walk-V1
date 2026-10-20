@@ -48,6 +48,15 @@ vi.mock('../src/database.js', () => ({
     saveAppState: vi.fn()
 }));
 
+// État du réseau piloté par les tests (network-status.js : retour du réseau
+// vérifié, cf. v3.7.445).
+const net = vi.hoisted(() => ({ offline: false, back: [] }));
+vi.mock('../src/network-status.js', () => ({
+    isOffline: () => net.offline,
+    onNetworkBack: (fn) => { net.back.push(fn); },
+}));
+beforeEach(() => { net.offline = false; }); // en ligne par défaut, test par test
+
 vi.mock('../src/events.js', () => ({
     eventBus: { emit: vi.fn(), on: vi.fn(), off: vi.fn() }
 }));
@@ -457,7 +466,7 @@ describe('schedulePush', () => {
 describe('pushToGist — découverte avant création (fix 01/08/2026)', () => {
     beforeEach(() => {
         vi.mocked(getStoredToken).mockReturnValue('fake-token');
-        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => true });
+        net.offline = false;
     });
     afterEach(() => { delete global.fetch; });
 
@@ -625,7 +634,7 @@ describe('pullFromGist — échec signalé (fix 01/08/2026)', () => {
     beforeEach(() => {
         vi.mocked(getStoredToken).mockReturnValue('fake-token');
         localStorage.setItem('hw_gist_id', 'gist-existing');
-        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => true });
+        net.offline = false;
     });
     afterEach(() => { delete global.fetch; });
 
@@ -638,7 +647,7 @@ describe('pullFromGist — échec signalé (fix 01/08/2026)', () => {
     });
 
     it('hors-ligne → aucun fetch tenté, aucun toast (cas normal, pas une panne)', async () => {
-        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => false });
+        net.offline = true;
         global.fetch = vi.fn();
 
         await pullFromGist();
@@ -651,11 +660,10 @@ describe('pullFromGist — échec signalé (fix 01/08/2026)', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // Audit R2 (11/06/2026) : la promesse du bandeau hors-ligne (« vos modifications
 // repartent au retour du réseau ») doit être VRAIE. Un push tenté hors-ligne ne
-// gaspille pas un fetch voué à l'échec ; il est marqué en attente et rejoué à
-// l'event 'online'.
+// gaspille pas un fetch voué à l'échec ; il est marqué en attente et rejoué au
+// retour du réseau (vérifié par network-status.js depuis v3.7.445 : le signal
+// « online » du navigateur se perd sur Android en arrière-plan).
 describe('retry au retour du réseau (offline → online)', () => {
-    let onLineValue;
-
     beforeEach(() => {
         global.fetch = vi.fn(() => Promise.resolve({
             ok: true,
@@ -663,8 +671,7 @@ describe('retry au retour du réseau (offline → online)', () => {
         }));
         vi.mocked(getStoredToken).mockReturnValue('fake-token');
         localStorage.setItem('hw_gist_id', 'gist-existing'); // → branche updateGist (PATCH)
-        onLineValue = true;
-        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => onLineValue });
+        net.offline = false;
     });
 
     afterEach(() => {
@@ -672,19 +679,19 @@ describe('retry au retour du réseau (offline → online)', () => {
     });
 
     it('hors-ligne : aucun fetch tenté (push voué à l\'échec évité)', async () => {
-        onLineValue = false;
+        net.offline = true;
         await pushToGist();
         expect(global.fetch).not.toHaveBeenCalled();
     });
 
     it('au retour online, le push en attente est rejoué (1 PATCH)', async () => {
         initGistReconnectSync();
-        onLineValue = false;
+        net.offline = true;
         await pushToGist();                       // marque pending, n'appelle pas fetch
         expect(global.fetch).not.toHaveBeenCalled();
 
-        onLineValue = true;
-        window.dispatchEvent(new Event('online')); // rejoue pushToGist
+        net.offline = false;
+        net.back.forEach((fn) => fn());           // retour du réseau → rejoue pushToGist
         await Promise.resolve();
         await Promise.resolve();
         expect(global.fetch).toHaveBeenCalledTimes(1);
@@ -700,7 +707,7 @@ describe('retry au retour du réseau (offline → online)', () => {
 describe('pullFromGist — auto-réparation d\'un gistId mort (fix 09/08/2026)', () => {
     beforeEach(() => {
         vi.mocked(getStoredToken).mockReturnValue('fake-token');
-        Object.defineProperty(navigator, 'onLine', { configurable: true, get: () => true });
+        net.offline = false;
     });
     afterEach(() => { delete global.fetch; });
 

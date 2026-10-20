@@ -1,5 +1,6 @@
 import { state, MAX_CIRCUIT_POINTS, addPoiToCurrentCircuit, resetCurrentCircuit, setTestedCircuits, setActiveCircuitId, setTestedCircuit, setOfficialCircuitStatus, setOfficialCircuitsStatusUpdatedAt, setCustomDraftName, setCurrentFeatureId, setCurrentCircuitIndex, setCurrentCircuit, setEditingMode, setCircuitCreationMode, getActiveMapId} from './state.js';
 import { fetchWithTimeout } from './net.js';
+import { onNetworkBack } from './network-status.js';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel, collectPoiPhotoUrls } from './ui-details.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -890,7 +891,7 @@ async function loadOfficialTrace(source) {
     return true;
 }
 
-// Retour du réseau (événement 'online') : le circuit affiché est un officiel
+// Retour du réseau (network-status.js) : le circuit affiché est un officiel
 // dont le tracé n'a pas pu être chargé — ouvert hors-ligne, jamais ouvert en
 // ligne sur cet appareil. On télécharge son tracé et on le dessine, sans geste
 // ni message. Avant (mesuré le 19/10/2026), le vol d'oiseau restait, suivi
@@ -921,7 +922,7 @@ export async function reloadMissingTraceOnReconnect() {
         eventBus.emit('mobile:render-poi-list', state.currentCircuit);
     }
 }
-if (typeof window !== 'undefined') window.addEventListener('online', reloadMissingTraceOnReconnect);
+onNetworkBack(reloadMissingTraceOnReconnect);
 
 export async function loadCircuitById(id) {
     const loadToken = ++pendingCircuitLoadSeq;

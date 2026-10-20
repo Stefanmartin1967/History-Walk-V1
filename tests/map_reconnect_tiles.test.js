@@ -8,13 +8,13 @@ import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
 // Une tuile demandée hors-ligne (zone jamais vue) reste grise : Leaflet 1.9 ne
 // redemande une tuile en erreur qu'au changement de zoom. Mesuré le 19/10/2026 :
 // 16 tuiles grises, toujours là au retour du réseau, revenues après un zoom.
-// À l'événement 'online', le fond affiché est retiré puis remis (tuiles recréées)
+// Au retour du réseau (vérifié par network-status.js), le fond affiché est retiré puis remis (tuiles recréées)
 // s'il a des tuiles en erreur ; une carte complète n'est pas touchée. Jamais
 // layer.redraw() : Leaflet 1.9.4 y garde le zoom fractionnaire de la carte
 // (zoomSnap 0,1) → adresses de tuiles invalides (mesuré le 20/10/2026).
 // ============================================================================
 
-const h = vi.hoisted(() => ({ layers: [], onMap: new Set(), removed: [] }));
+const h = vi.hoisted(() => ({ layers: [], onMap: new Set(), removed: [], networkBack: [] }));
 
 // Faux Leaflet : tout accès renvoie un objet chaînable, sauf les fonds de carte
 // (objets distincts, avec un vrai conteneur DOM), `map.hasLayer` et
@@ -62,6 +62,7 @@ vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} })
 vi.mock('../src/database.js', () => ({ saveAppState: vi.fn() }));
 vi.mock('../src/poi-icons.js', () => ({ iconMap: {}, getIconHtml: vi.fn(), getIconForFeature: vi.fn() }));
 vi.mock('../src/info-popover.js', () => ({ showInfoPopover: vi.fn() }));
+vi.mock('../src/network-status.js', () => ({ onNetworkBack: (fn) => { h.networkBack.push(fn); } }));
 vi.mock('../src/circuit-lookup.js', () => ({ getActiveCircuit: vi.fn(() => null), findCircuitById: vi.fn(() => null) }));
 
 import { initMap } from '../src/map.js';
@@ -75,6 +76,7 @@ function addTile(layer, { loaded }) {
     layer.container.appendChild(img);
 }
 
+const networkBack = () => h.networkBack.forEach((fn) => fn());
 const voyager = () => h.layers.find((l) => l.url.includes('cartocdn'));
 const plan = () => h.layers.find((l) => l.url.includes('tile.openstreetmap.org'));
 
@@ -103,7 +105,7 @@ describe('map.js — tuiles grises au retour du réseau', () => {
         addTile(voyager(), { loaded: true });
         addTile(voyager(), { loaded: false });
 
-        window.dispatchEvent(new Event('online'));
+        networkBack();
 
         expect(h.removed).toEqual([voyager()]);
         expect(h.onMap.has(voyager())).toBe(true);
@@ -114,7 +116,7 @@ describe('map.js — tuiles grises au retour du réseau', () => {
         addTile(voyager(), { loaded: true });
         addTile(voyager(), { loaded: true });
 
-        window.dispatchEvent(new Event('online'));
+        networkBack();
 
         expect(h.removed).toEqual([]);
     });
@@ -123,7 +125,7 @@ describe('map.js — tuiles grises au retour du réseau', () => {
         addTile(voyager(), { loaded: true });
         addTile(plan(), { loaded: false });
 
-        window.dispatchEvent(new Event('online'));
+        networkBack();
 
         expect(h.removed).toEqual([]);
         expect(h.onMap.has(voyager())).toBe(true);

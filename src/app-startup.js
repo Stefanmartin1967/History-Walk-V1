@@ -686,7 +686,7 @@ export async function loadAndInitializeMap() {
     });
 
     // Gist sync : pull après chargement complet, puis armer le retry au retour
-    // du réseau (un push tenté hors-ligne sera rejoué à l'event 'online').
+    // du réseau (un push tenté hors-ligne sera rejoué, cf. network-status.js).
     pullFromGist();
     initGistReconnectSync();
 }

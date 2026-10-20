@@ -112,6 +112,10 @@ vi.mock('../src/modal.js', () => ({
     showConfirm: vi.fn()
 }));
 
+// Retour du réseau vérifié (network-status.js) : abonnés notés pour les tests.
+const net = vi.hoisted(() => ({ back: [] }));
+vi.mock('../src/network-status.js', () => ({ onNetworkBack: (fn) => { net.back.push(fn); } }));
+
 vi.mock('../src/events.js', () => ({
     eventBus: { emit: vi.fn(), on: vi.fn(), off: vi.fn() }
 }));
@@ -881,10 +885,11 @@ describe('reloadMissingTraceOnReconnect — tracé rechargé au retour du résea
         expect(saveCircuit).not.toHaveBeenCalled(); // mémoire seule, comme à l'ouverture
     });
 
-    it("se déclenche à l'événement 'online' du navigateur", async () => {
+    it('est abonné au retour du réseau vérifié (network-status.js)', async () => {
         const off = showOfficial();
+        expect(net.back).toContain(reloadMissingTraceOnReconnect);
 
-        window.dispatchEvent(new Event('online'));
+        net.back.forEach((fn) => fn());
 
         await vi.waitFor(() => expect(off.realTrack).toHaveLength(2));
     });

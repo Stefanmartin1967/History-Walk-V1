@@ -22,6 +22,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { initializeDomReferences, DOM } from './ui.js';
 import { populateAddPoiModalCategories } from './ui-filters.js';
 import { showToast } from './toast.js';
+import { initNetworkStatus } from './network-status.js';
 import { setupCircuitEventListeners } from './ui-circuit-editor.js';
 import { getPoiId } from './data.js';
 import { isMobileView, lockLayoutMode } from './mobile-state.js';
@@ -281,15 +282,9 @@ async function initializeApp() {
 document.addEventListener('DOMContentLoaded', initializeApp);
 
 // ── INDICATEUR OFFLINE ────────────────────────────────────────────────────
-function setupOfflineBanner() {
-    const banner = document.getElementById('offline-banner');
-    if (!banner) return;
-    const update = () => banner.classList.toggle('visible', !navigator.onLine);
-    window.addEventListener('online', update);
-    window.addEventListener('offline', update);
-    update();
-}
-setupOfflineBanner();
+// Bandeau « Hors-ligne » et retour du réseau VÉRIFIÉ : cf. network-status.js
+// (le seul signal « online » du navigateur se perd sur Android).
+initNetworkStatus();
 
 import { registerSW } from 'virtual:pwa-register';
 
