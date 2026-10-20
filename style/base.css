@@ -1596,22 +1596,6 @@ textarea.editable-input {
 
 /* =================== STYLES MOBILES V1 (C'est ce qui marche !) ================== */
 
-#mobile-container {
-    display: flex !important;
-    flex-direction: column !important;
-    /* `100svh` (small viewport height) au lieu de `100dvh` (dynamic) : garantit
-       que le viewport est TOUJOURS la plus petite hauteur possible, donc exclut
-       systématiquement la system bar Android et la barre URL browser. Sans ça,
-       au cold-start après un reload SW, Brave/Samsung renvoyait une hauteur
-       dynamique trop grande (incluant la system bar) → dock placé en bas du
-       viewport mais caché derrière la barre de navigation. Bug observé après
-       update PWA (cf. followup #3 + diag PR #571). Avec 100svh, le dock est
-       toujours dans la zone réellement visible, peu importe l'état du browser. */
-    height: 100svh;
-    width: 100%;
-    background-color: var(--surface-muted);
-}
-
 #mobile-main-container {
     flex-grow: 1;
     overflow-y: auto;
@@ -2538,10 +2522,22 @@ input[type=range] {
         display: none !important;
     }
 
+    /* Hauteur en POURCENTAGE (html et body à 100 %), jamais en unité de fenêtre
+       (vh, dvh, svh, lvh). Une unité de fenêtre est convertie en pixels au calcul
+       du style ; un pourcentage est recalculé à chaque mise en page, d'après la
+       taille actuelle de la fenêtre.
+       Mesuré le 20/10/2026 sur le S25 de Stefan (Chrome, barre Android à trois
+       boutons), au démarrage qui suit une mise à jour : fenêtre de 750 px, un
+       élément neuf en 100dvh mesurait 750, mais ce conteneur en 100dvh était resté
+       à 805 px (la fenêtre sans la barre Android). Dock poussé 55 px sous l'écran,
+       jusqu'à une rotation du téléphone. Même chose en mai (#571, 56 px).
+       En temps normal, 100 % = 100dvh : la page ne défile pas (seul
+       #mobile-main-container défile), les barres du navigateur ne bougent pas.
+       tests/mobile_container_height.test.js le garde. */
     #mobile-container {
         display: flex !important;
         flex-direction: column !important;
-        height: 100dvh;
+        height: 100%;
         width: 100%;
         background-color: var(--surface-muted);
     }
@@ -2618,7 +2614,7 @@ input[type=range] {
        Pas de `position: fixed` : le dock vit dans le flex column de #mobile-container
        (flex-shrink: 0), donc reste naturellement en bas du viewport et son espace est
        réservé. Avec fixed, il sortait du flow → #mobile-main-container prenait toute
-       la hauteur (100dvh) et son contenu était masqué par les ~54px du dock par-dessus.
+       la hauteur et son contenu était masqué par les ~54px du dock par-dessus.
        Le bug se manifestait sur toutes les vues mobiles (Mes Circuits, Recherche, etc.). */
     #mobile-dock {
         display: flex;
