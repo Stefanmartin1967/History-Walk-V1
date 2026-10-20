@@ -6,6 +6,23 @@
 
 ---
 
+- AU RETOUR DU RÉSEAU, HERIPIA COMPLÈTE SEUL LE TRACÉ ET LA CARTE (v3.7.444) — 2ᵉ des trois PR « hors-ligne » validées par Stefan le 20/10 (plan de cette PR validé le 20/10). Préalable vérifié par Stefan sur son S25 : le signal « réseau revenu » arrive (le bandeau « Hors-ligne » disparaît quelques secondes après la fin du mode avion).
+  - **Problème** (mesuré le 19/10/2026, coupure réelle du réseau en cours de session) :
+    - **tracé** : un circuit officiel ouvert sans réseau, et jamais ouvert en ligne sur l'appareil, s'affiche en vol d'oiseau. Au retour du réseau, le vol d'oiseau restait, suivi compris, même en quittant puis relançant le suivi. Il fallait fermer le circuit puis le rouvrir ;
+    - **carte** : une zone jamais vue, affichée pendant une coupure, restait grise au retour du réseau. Leaflet 1.9 ne redemande une tuile en erreur qu'au changement de zoom : il fallait zoomer à deux doigts.
+    - Un utilisateur ne peut pas le deviner, et on ne veut pas d'aide pour l'expliquer.
+  - **Correctif** : au retour du réseau (événement `online`), sans geste ni message :
+    - **tracé** (`src/circuit.js`) : si le circuit affiché est un officiel sans tracé, Heripia le télécharge et le dessine. Le suivi est redessiné, et le panneau du circuit aussi, avec la distance réelle. Sur mobile, le détail du circuit n'est rafraîchi que s'il est la vue affichée : une fiche ouverte occupe le même conteneur et serait remplacée. Si un autre circuit a été ouvert entre-temps, rien n'est redessiné. Si le réseau n'est pas encore utilisable, rien ne change. Le téléchargement du tracé est sorti de `loadCircuitById` dans une petite fonction, partagée par l'ouverture du circuit et le retour du réseau ;
+    - **carte** (`src/map.js`) : si le fond affiché a des tuiles en erreur, il est retiré puis remis, comme avec le sélecteur de fonds. Ses tuiles sont recréées : celles déjà gardées viennent du cache, les autres du réseau. Une carte complète n'est pas touchée.
+    - Pas `layer.redraw()` de Leaflet : en 1.9.4, il reprend le zoom de la carte sans l'arrondir. Heripia zoome par pas de 0,1, ce qui donnait des adresses de tuiles invalides (« …/13.600000000000001/… »), trouvé pendant la preuve.
+  - **À savoir** : les photos d'une fiche ouverte sans réseau ne se rechargent pas d'elles-mêmes ; rouvrir la fiche suffit. La PR 3 gardera à l'avance les photos des étapes.
+
+  **Vérifié en local** (version construite, `vite preview`, vue mobile 390×844, profil Chrome jetable). Coupure réelle en cours de session : proxy local coupé pour les tuiles, serveur de l'app arrêté, page hors-ligne.
+  - **Départ sans réseau**, circuit « Mosquée Braa à Mosquée Hadherbach » jamais ouvert, suivi : vol d'oiseau, 8 tuiles grises, détail à 3,7 km. Réseau revenu, sans rien toucher : **tracé réel (52 points), 18 tuiles affichées, 0 en erreur**, détail du circuit à **5,6 km** ;
+  - **Réseau perdu en cours de suivi**, zone jamais vue : 16 tuiles grises. Réseau revenu, sans rien toucher : **0 tuile en erreur**.
+
+  Tests : `circuit` (+7) — tracé rechargé et redessiné sans message, déclenché par l'événement `online`, rien si le tracé est là ou pour un circuit perso, échec silencieux, fiche ouverte pas remplacée sur mobile, autre circuit ouvert entre-temps, panneau PC rafraîchi. `map_reconnect_tiles` (nouveau) : fond affiché avec tuiles en erreur retiré puis remis, carte complète et fond non affiché pas touchés ; le 1er cas échoue sur l'ancien code.
+
 - DONNÉES HORS-LIGNE GARDÉES SANS LIMITE DE DURÉE (v3.7.443) — Constaté le 19/10/2026 en préparant la v3.7.442 : un téléphone qui n'avait pas ouvert Heripia en ligne depuis plus de 7 jours n'avait plus aucun circuit officiel hors-ligne. 1ʳᵉ des trois PR « hors-ligne » validées par Stefan le 20/10 (suivront : recharge au retour du réseau, photos des étapes gardées).
   - **Problème** : les caches du service worker avaient un âge maximal : 7 jours pour les données (index des circuits, catégories, destinations, fichier des lieux), 30 jours pour les photos et les tuiles. Workbox s'en sert de deux façons :
     - une copie plus ancienne que cet âge (selon son en-tête `Date`) est refusée puis supprimée, même hors-ligne ;

@@ -6,7 +6,7 @@ import { switchSidebarTab } from './ui-sidebar.js';
 import { getPoiId, getPoiName, applyFilters, recomputeVu } from './data.js';
 import { getRealDistance, getOrthodromicDistance, getZoneFromCoords, getPoiProp } from './utils.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData, getPoiPhotos, getPendingAdminPhotos } from './database.js';
-import { isMobileView } from './mobile-state.js';
+import { isMobileView, getCurrentView } from './mobile-state.js';
 import * as View from './circuit-view.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
@@ -838,6 +838,91 @@ export function convertToDraft() {
 let pendingCircuitLoadSeq = 0;
 export function cancelPendingCircuitLoad() { pendingCircuitLoadSeq++; }
 
+// Un circuit officiel a un fichier .gpx ; son tracé réel n'est chargé qu'à la
+// demande (lazy-load), puis gardé en mémoire.
+function needsOfficialTrace(circuit) {
+    return !!circuit?.file && !(circuit.realTrack?.length > 0);
+}
+
+// Télécharge le .gpx d'un circuit officiel et pose son tracé sur l'objet de
+// l'ÉTAT (la carte le relit). Renvoie false si le serveur n'a pas le fichier ;
+// lève une erreur si le réseau échoue (hors-ligne sans copie gardée par le
+// service worker, route `circuit-traces`).
+async function loadOfficialTrace(source) {
+    // Correction URL : encodage pour gérer les espaces et apostrophes
+    const safeUrl = `./circuits/${source.file.split('/').map(encodeURIComponent).join('/')}`;
+    const response = await fetchWithTimeout(safeUrl);
+    if (!response.ok) return false;
+
+    const text = await response.text();
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(text, "text/xml");
+    const trkpts = xmlDoc.getElementsByTagName("trkpt");
+    const coordinates = [];
+    for (let i = 0; i < trkpts.length; i++) {
+        const lat = parseFloat(trkpts[i].getAttribute("lat"));
+        const lon = parseFloat(trkpts[i].getAttribute("lon"));
+        coordinates.push([lat, lon]);
+    }
+
+    if (coordinates.length > 0) {
+        // Tracé en MÉMOIRE SEULEMENT. Deux choses retirées le 12/09/2026 (audit
+        // du cycle circuits) :
+        //  - la copie « shadow » ajoutée à myCircuits : une édition allait
+        //    dans la copie, la publication prenait l'officiel resté ancien
+        //    → commits « MAJ » à +0 −0 ;
+        //  - l'écriture IndexedDB : avec un mapId, elle figerait chez
+        //    CHAQUE visiteur la version consultée, qui primerait ensuite
+        //    sur l'index publié au boot. Seule une vraie modification
+        //    écrit (circuit-store).
+        source.realTrack = coordinates;
+    }
+
+    // Description : un index ancien ne portait qu'une constante, le texte
+    // de l'auteur ne vivait que dans le <trk><desc> du GPX (14/09/2026).
+    // On le reprend, signatures retirées, SEULEMENT si l'objet n'a pas
+    // de vraie description — en mémoire, jamais écrit : le CC le voit
+    // alors en « MODIFIÉ », et sa publication met l'index à jour.
+    if (!stripCircuitSignature(source.description)) {
+        const trkDesc = stripCircuitSignature(xmlDoc.querySelector('trk > desc')?.textContent);
+        if (trkDesc) source.description = trkDesc;
+    }
+    return true;
+}
+
+// Retour du réseau (événement 'online') : le circuit affiché est un officiel
+// dont le tracé n'a pas pu être chargé — ouvert hors-ligne, jamais ouvert en
+// ligne sur cet appareil. On télécharge son tracé et on le dessine, sans geste
+// ni message. Avant (mesuré le 19/10/2026), le vol d'oiseau restait, suivi
+// compris, tant qu'on ne fermait pas puis rouvrait le circuit. Échec (réseau
+// pas encore utilisable) : rien ne change, rouvrir le circuit reste possible.
+export async function reloadMissingTraceOnReconnect() {
+    const circuit = getActiveCircuit();
+    if (!needsOfficialTrace(circuit)) return;
+    const id = state.activeCircuitId;
+    try {
+        if (!(await loadOfficialTrace(circuit))) return;
+    } catch (e) {
+        console.warn('[Circuit] Tracé toujours indisponible au retour du réseau :', e.message);
+        return;
+    }
+    // Un autre circuit a pu être ouvert pendant le téléchargement : le tracé est
+    // posé sur SON circuit, mais on ne redessine pas celui affiché.
+    if (state.activeCircuitId !== id || !circuit.realTrack?.length) return;
+
+    if (!isMobileView()) {
+        renderCircuitPanel(); // panneau (distance réelle) + carte
+        return;
+    }
+    notifyCircuitChanged(); // carte, suivi compris (listener 'circuit:updated' de map.js)
+    // Détail du circuit (distance réelle), seulement s'il est la vue affichée :
+    // une fiche ouverte occupe le même conteneur et serait remplacée.
+    if (getCurrentView() === 'circuit-details' && state.currentFeatureId == null) {
+        eventBus.emit('mobile:render-poi-list', state.currentCircuit);
+    }
+}
+if (typeof window !== 'undefined') window.addEventListener('online', reloadMissingTraceOnReconnect);
+
 export async function loadCircuitById(id) {
     const loadToken = ++pendingCircuitLoadSeq;
     // Sanitization: Ensure ID is a string for strict equality checks
@@ -845,56 +930,12 @@ export async function loadCircuitById(id) {
 
     const source = findCircuitById(id);
     if (!source) return;
-    // Copie de travail pour l'affichage ; la source reste l'objet de l'état.
-    const circuitToLoad = { ...source };
 
     // --- LAZY LOADING DE LA TRACE (OFFICIAL CIRCUITS) ---
-    if (circuitToLoad.file && (!circuitToLoad.realTrack || circuitToLoad.realTrack.length === 0)) {
+    if (needsOfficialTrace(source)) {
         try {
-            // Correction URL : encodage pour gérer les espaces et apostrophes
-            const safeUrl = `./circuits/${circuitToLoad.file.split('/').map(encodeURIComponent).join('/')}`;
-            const response = await fetchWithTimeout(safeUrl);
-            if (response.ok) {
-                const text = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(text, "text/xml");
-                const trkpts = xmlDoc.getElementsByTagName("trkpt");
-                const coordinates = [];
-                for (let i = 0; i < trkpts.length; i++) {
-                    const lat = parseFloat(trkpts[i].getAttribute("lat"));
-                    const lon = parseFloat(trkpts[i].getAttribute("lon"));
-                    coordinates.push([lat, lon]);
-                }
-
-                if (coordinates.length > 0) {
-                    // Tracé posé sur l'objet de l'ÉTAT (la carte le relit) et sur la
-                    // copie d'affichage — en MÉMOIRE SEULEMENT. Deux choses retirées
-                    // le 12/09/2026 (audit du cycle circuits) :
-                    //  - la copie « shadow » ajoutée à myCircuits : une édition allait
-                    //    dans la copie, la publication prenait l'officiel resté ancien
-                    //    → commits « MAJ » à +0 −0 ;
-                    //  - l'écriture IndexedDB : avec un mapId, elle figerait chez
-                    //    CHAQUE visiteur la version consultée, qui primerait ensuite
-                    //    sur l'index publié au boot. Seule une vraie modification
-                    //    écrit (circuit-store).
-                    source.realTrack = coordinates;
-                    circuitToLoad.realTrack = coordinates;
-                }
-
-                // Description : un index ancien ne portait qu'une constante, le texte
-                // de l'auteur ne vivait que dans le <trk><desc> du GPX (14/09/2026).
-                // On le reprend, signatures retirées, SEULEMENT si l'objet n'a pas
-                // de vraie description — en mémoire, jamais écrit : le CC le voit
-                // alors en « MODIFIÉ », et sa publication met l'index à jour.
-                if (!stripCircuitSignature(source.description)) {
-                    const trkDesc = stripCircuitSignature(xmlDoc.querySelector('trk > desc')?.textContent);
-                    if (trkDesc) {
-                        source.description = trkDesc;
-                        circuitToLoad.description = trkDesc;
-                    }
-                }
-            } else {
-                console.warn(`[Circuit] Fichier GPX introuvable : ${circuitToLoad.file}`);
+            if (!(await loadOfficialTrace(source))) {
+                console.warn(`[Circuit] Fichier GPX introuvable : ${source.file}`);
                 showToast("Tracé GPX indisponible — circuit affiché sans trace.", "warning");
             }
         } catch (e) {
@@ -902,6 +943,9 @@ export async function loadCircuitById(id) {
             showToast("Erreur de chargement du tracé GPX (hors-ligne ?).", "error");
         }
     }
+    // Copie de travail pour l'affichage (tracé compris) ; la source reste l'objet
+    // de l'état.
+    const circuitToLoad = { ...source };
 
     // Garde anti-course : si une création (ou un autre chargement) est survenue
     // pendant le fetch GPX ci-dessus, on abandonne — sinon on écraserait l'état

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // --- Mocks (hoisted par vitest) ---
 vi.mock('../src/state.js', () => {
@@ -89,7 +89,8 @@ vi.mock('../src/database.js', () => ({
 }));
 
 vi.mock('../src/mobile-state.js', () => ({
-    isMobileView: vi.fn(() => false)
+    isMobileView: vi.fn(() => false),
+    getCurrentView: vi.fn(() => 'circuit-details')
 }));
 
 vi.mock('../src/circuit-view.js', () => ({
@@ -128,7 +129,7 @@ import { DOM } from '../src/ui-dom.js';
 import { showToast } from '../src/toast.js';
 import { getAppState, saveAppState, saveCircuit, batchSavePoiData } from '../src/database.js';
 import { recomputeVu, applyFilters } from '../src/data.js';
-import { isMobileView } from '../src/mobile-state.js';
+import { isMobileView, getCurrentView } from '../src/mobile-state.js';
 import { eventBus } from '../src/events.js';
 import { pushToGist } from '../src/gist-sync.js';
 import {
@@ -142,6 +143,7 @@ import {
     setCircuitVisitedState,
     loadCircuitFromIds,
     loadCircuitById,
+    reloadMissingTraceOnReconnect,
     saveCircuitDraft,
     loadCircuitDraft,
     updateCircuitMetadata
@@ -833,6 +835,121 @@ describe('loadCircuitById — lazy-load du tracé officiel', () => {
         await loadCircuitById('HW-off');
 
         expect(state.officialCircuits[0].description).toBe('Texte déjà publié');
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 20/10/2026 : un officiel ouvert sans réseau (jamais ouvert en ligne sur
+// l'appareil) restait en vol d'oiseau au retour du réseau, suivi compris, tant
+// qu'on ne fermait pas puis rouvrait le circuit (mesuré le 19/10/2026).
+describe('reloadMissingTraceOnReconnect — tracé rechargé au retour du réseau', () => {
+    const GPX = '<gpx><trk><trkseg>'
+        + '<trkpt lat="33.1" lon="10.1"/><trkpt lat="33.2" lon="10.2"/>'
+        + '</trkseg></trk></gpx>';
+    const redrawn = [];
+    const onUpdate = (e) => redrawn.push(e.detail.activeId);
+
+    beforeEach(() => {
+        resetState();
+        vi.clearAllMocks();
+        fetchWithTimeout.mockResolvedValue({ ok: true, text: async () => GPX });
+        isMobileView.mockReturnValue(true);
+        getCurrentView.mockReturnValue('circuit-details');
+        redrawn.length = 0;
+        window.addEventListener('circuit:updated', onUpdate);
+    });
+    afterEach(() => window.removeEventListener('circuit:updated', onUpdate));
+
+    // Circuit officiel affiché, sans tracé (ouvert hors-ligne).
+    const showOfficial = (extra = {}) => {
+        const off = { id: 'HW-off', name: 'O', poiIds: [], file: 'djerba/O.gpx', isOfficial: true, ...extra };
+        state.officialCircuits = [off];
+        state.activeCircuitId = 'HW-off';
+        return off;
+    };
+
+    it('télécharge le tracé manquant du circuit affiché et le redessine, sans message', async () => {
+        const off = showOfficial();
+
+        await reloadMissingTraceOnReconnect();
+
+        expect(fetchWithTimeout).toHaveBeenCalledTimes(1);
+        expect(off.realTrack).toEqual([[33.1, 10.1], [33.2, 10.2]]);
+        expect(redrawn).toEqual(['HW-off']); // carte, suivi compris
+        expect(eventBus.emit).toHaveBeenCalledWith('mobile:render-poi-list', state.currentCircuit);
+        expect(showToast).not.toHaveBeenCalled();
+        expect(saveCircuit).not.toHaveBeenCalled(); // mémoire seule, comme à l'ouverture
+    });
+
+    it("se déclenche à l'événement 'online' du navigateur", async () => {
+        const off = showOfficial();
+
+        window.dispatchEvent(new Event('online'));
+
+        await vi.waitFor(() => expect(off.realTrack).toHaveLength(2));
+    });
+
+    it('ne télécharge rien si le tracé est déjà là, ni pour un circuit perso', async () => {
+        showOfficial({ realTrack: [[1, 1], [2, 2]] });
+        await reloadMissingTraceOnReconnect();
+
+        state.officialCircuits = [];
+        state.myCircuits = [{ id: 'perso', name: 'P', poiIds: [] }];
+        state.activeCircuitId = 'perso';
+        await reloadMissingTraceOnReconnect();
+
+        state.activeCircuitId = null;
+        await reloadMissingTraceOnReconnect();
+
+        expect(fetchWithTimeout).not.toHaveBeenCalled();
+        expect(redrawn).toEqual([]);
+    });
+
+    it('réseau pas encore utilisable : rien ne change, sans message', async () => {
+        fetchWithTimeout.mockRejectedValue(new TypeError('Failed to fetch'));
+        const off = showOfficial();
+
+        await reloadMissingTraceOnReconnect();
+
+        expect(off.realTrack).toBeUndefined();
+        expect(redrawn).toEqual([]);
+        expect(showToast).not.toHaveBeenCalled();
+    });
+
+    // Sur mobile, la fiche occupe le même conteneur que le détail du circuit.
+    it('ne remplace pas une fiche ouverte par le détail du circuit (mobile)', async () => {
+        showOfficial();
+        state.currentFeatureId = 3;
+
+        await reloadMissingTraceOnReconnect();
+
+        expect(redrawn).toEqual(['HW-off']);
+        expect(eventBus.emit).not.toHaveBeenCalledWith('mobile:render-poi-list', expect.anything());
+    });
+
+    it('autre circuit ouvert pendant le téléchargement : tracé posé sur le sien, rien redessiné', async () => {
+        const off = showOfficial();
+        fetchWithTimeout.mockImplementation(async () => {
+            state.activeCircuitId = 'HW-autre';
+            return { ok: true, text: async () => GPX };
+        });
+
+        await reloadMissingTraceOnReconnect();
+
+        expect(off.realTrack).toHaveLength(2);
+        expect(redrawn).toEqual([]);
+        expect(eventBus.emit).not.toHaveBeenCalledWith('mobile:render-poi-list', expect.anything());
+    });
+
+    it('PC : panneau du circuit (distance réelle) et carte rafraîchis', async () => {
+        isMobileView.mockReturnValue(false);
+        showOfficial();
+
+        await reloadMissingTraceOnReconnect();
+
+        expect(updateCircuitHeader).toHaveBeenCalled();
+        expect(redrawn).toEqual(['HW-off']);
+        expect(eventBus.emit).not.toHaveBeenCalledWith('mobile:render-poi-list', expect.anything());
     });
 });
 
