@@ -257,7 +257,7 @@
         "Nom du site arabe": "جامع بن تنفوس",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
-        "Source": "Répertoire J. Fathallah, n° 318 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf\nObservation sur place, le 3 novembre 2025\nSur place, le nom « جامع التنافسة » est peint sur le mur de la mosquée.",
+        "Source": "Répertoire J. Fathallah, n° 318 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInscription peinte sur le mur de la mosquée et observation sur place, le 3 novembre 2025",
         "HW_ID": "HW-01K77WPE6770BXCP2SW1Z2DTA2",
         "photos": [
           "photos/poi_HW-01K77WPE6770BXCP2SW1Z2DTA2_1789153457727.jpg",
@@ -1894,7 +1894,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mosquée de Chebabia, à Arkou.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 231 sous le nom de Chababia : mosquée malékite, très récente. La liste Wikipédia des mosquées de Djerba la situe à Chebabia sous le nom d'Abdessalam, la donne active et récente.\nSur place, le 16 mars 2026, un vieux bâtiment voûté en terre se dresse à quelques mètres de la mosquée.",
+        "description": "Mosquée de Chebabia, à Arkou.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 231 sous le nom de Chababia : mosquée malékite, très récente. La liste Wikipédia des mosquées de Djerba la situe à Chebabia sous le nom d'Abdessalam, la donne active et récente.\nSur place, un vieux bâtiment voûté en terre se dresse à quelques mètres de la mosquée.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/990336016",
@@ -2086,7 +2086,7 @@
           "photos/poi_HW-01K77WPE6BE2HDNBY0FSWSNRTH_1780563701545.jpg"
         ],
         "info_gpx": "",
-        "description": "Mosquée de Mezraya.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 52 sous le nom de Zaied Ellough : mosquée wahbite, de 1615.\nSur place, le 13 novembre 2025, la mosquée est en bon état, et un panneau de carreaux de céramique porte l'inscription « مسجد أمي زايد اللوغ » (mosquée Ami Zayed Ellough).",
+        "description": "Mosquée de Mezraya.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 52 sous le nom de Zaied Ellough : mosquée wahbite, de 1615.\nSur place, la mosquée est en bon état, et un panneau de carreaux de céramique porte l'inscription « مسجد أمي زايد اللوغ » (mosquée Ami Zayed Ellough).",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/484881572",
@@ -3347,7 +3347,7 @@
         "État": "Ruine",
         "Accès": "Extérieur seulement",
         "info_gpx": "Ruine de la mosquée Kharroubi",
-        "description": "Ruines de la mosquée Kharroubi, à Houmt Ouchachna (El May).\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 149 : mosquée abandonnée et délabrée, de datation « ancienne ».\nSur place, le 9 mars 2026, seuls des pans de murs en pierre subsistent.\nRuines d'une petite mosquée en pierre calcaire de l'époque médiévale (réparations ultérieures évidentes, fragment in situ d'une colonne romaine antique de seconde main).\nPetr Jenč - OpenStreetMap, 2026",
+        "description": "Ruines de la mosquée Kharroubi, à Houmt Ouchachna (El May).\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 149 : mosquée abandonnée et délabrée, de datation « ancienne ».\nSur place, seuls des pans de murs en pierre subsistent.\nRuines d'une petite mosquée en pierre calcaire de l'époque médiévale (réparations ultérieures évidentes, fragment in situ d'une colonne romaine antique de seconde main).\nPetr Jenč - OpenStreetMap, 2026",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Téléphone": "",
@@ -3901,7 +3901,7 @@
         "État": "",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mosquée du quartier d'Ouchachna, à El May.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 158 sous le nom de Mosquée Ouchachna : mosquée malékite, de datation « très récente ». La liste Wikipédia des mosquées de Djerba la reprend sous le même nom.\nSur place, le 9 mars 2026, une plaque porte l'inscription « جامع النور » (Mosquée Ennour), avec les dates 1405 de l'hégire et 1984. OpenStreetMap porte ce nom, avec Ouchachna comme autre nom.",
+        "description": "Mosquée du quartier d'Ouchachna, à El May.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 158 sous le nom de Mosquée Ouchachna : mosquée malékite, de datation « très récente ». La liste Wikipédia des mosquées de Djerba la reprend sous le même nom.\nSur place, une plaque porte l'inscription « جامع النور » (Mosquée Ennour), avec les dates 1405 de l'hégire et 1984. OpenStreetMap porte ce nom, avec Ouchachna comme autre nom.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1093560745",
@@ -5091,7 +5091,7 @@
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
-        "description": "Mosquée de Taourit, qui intègre un mausolée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 22 sous le nom de Sidi Essougui : mosquée et mausolée malékite, récente, intégrant le mausolée.\nSur place, le 4 novembre 2025, le panneau de l'entrée porte l'inscription « جامع سيدي أحمد الجيلاني، شهر سيدي السوقي، بتاوريت » : mosquée Sidi Ahmed ElJebliani, connue sous le nom de Sidi Essougui, à Taourit.",
+        "description": "Mosquée de Taourit, qui intègre un mausolée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 22 sous le nom de Sidi Essougui : mosquée et mausolée malékite, récente, intégrant le mausolée.\nSur place, le panneau de l'entrée porte l'inscription « جامع سيدي أحمد الجيلاني، شهر سيدي السوقي، بتاوريت » : mosquée Sidi Ahmed ElJebliani, connue sous le nom de Sidi Essougui, à Taourit.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1550394077",
@@ -7946,7 +7946,7 @@
           "photos/poi_HW-01K77WPE6N6A0YBFFKMQQNQH0E_1780463702056.jpg",
           "photos/poi_HW-01K77WPE6N6A0YBFFKMQQNQH0E_1780463703961.jpg"
         ],
-        "description": "Mosquée du quartier de Jaabira, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 101 sous le nom de Hamouda, dite Mourou : mosquée ibadite wahbite en bon état mais quasi abandonnée, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la donne en activité.\nAppelée Mourou mosquée sur OSM.\nSur place, la mosquée est en bon état, isolée en pleine campagne ; sa petite porte bleue est fermée.",
+        "description": "Mosquée du quartier de Jaabira, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 101 sous le nom de Hamouda, dite Mourou : mosquée ibadite wahbite en bon état mais quasi abandonnée, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la donne en activité.\nAppelée Mourou mosquée sur OSM.\nSur place, la mosquée est en bon état, isolée en pleine campagne ; sa petite porte bleue était fermée.",
         "accessPoint": [
           10.7858502,
           33.7929511
@@ -8171,7 +8171,7 @@
           "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463728168.jpg",
           "photos/poi_HW-01K77WPE6N6HF86MYJNJWFPNSV_1780463729983.jpg"
         ],
-        "description": "Mosquée souterraine ibadite du quartier de Bardaoui, à Mezrane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 119 sous le nom de Mosquée Abarda : mosquée ibadite souterraine récemment rénovée, du 11ᵉ siècle de l'hégire, soit le 17ᵉ siècle.\nSelon le panneau d'information installé lors de la restauration (reproduit par tunisie.co), la mosquée tire son nom de la famille responsable de son entretien ; sa construction daterait du 4ᵉ siècle de l'hégire (10ᵉ siècle de notre ère). Signalée sous le nom d'« Abardâ » par Al-Hilâti à la fin du 17ᵉ siècle, elle constituait une halte importante pour les savants qui faisaient régulièrement le tour de l'île afin de vérifier que le système défensif était opérationnel.\nElle fait partie des trois mosquées ibadites (avec Louta à Sedouikech et Ammi Yathi à Guellala) restaurées par l'Association pour la sauvegarde de l'île de Djerba (ASSIDJE), avec la fondation Swiss Contact et sous la supervision de l'Institut national du patrimoine. Selon l'ASSIDJE, le projet a été lancé en 2018 ; une visite des monuments restaurés a eu lieu le 14 décembre 2019.\nSur place, le 7 novembre 2025, la mosquée est désaffectée et son intérieur est accessible.",
+        "description": "Mosquée souterraine ibadite du quartier de Bardaoui, à Mezrane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 119 sous le nom de Mosquée Abarda : mosquée ibadite souterraine récemment rénovée, du 11ᵉ siècle de l'hégire, soit le 17ᵉ siècle.\nSelon le panneau d'information installé lors de la restauration (reproduit par tunisie.co), la mosquée tire son nom de la famille responsable de son entretien ; sa construction daterait du 4ᵉ siècle de l'hégire (10ᵉ siècle de notre ère). Signalée sous le nom d'« Abardâ » par Al-Hilâti à la fin du 17ᵉ siècle, elle constituait une halte importante pour les savants qui faisaient régulièrement le tour de l'île afin de vérifier que le système défensif était opérationnel.\nElle fait partie des trois mosquées ibadites (avec Louta à Sedouikech et Ammi Yathi à Guellala) restaurées par l'Association pour la sauvegarde de l'île de Djerba (ASSIDJE), avec la fondation Swiss Contact et sous la supervision de l'Institut national du patrimoine. Selon l'ASSIDJE, le projet a été lancé en 2018 ; une visite des monuments restaurés a eu lieu le 14 décembre 2019.\nSur place, la mosquée est désaffectée et son intérieur est accessible.",
         "accessPoint": [
           10.770476,
           33.7881479
@@ -9289,7 +9289,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mosquée de la campagne de Temlel, aux environs de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 331 : mosquée malékite à origine nokkarite ibadite, de datation « ancienne ».\nDans sa vidéo, Jalel Fathallah la décrit entièrement blanchie à la chaux vive, avec quelques touches de vert, qu'il présente comme la couleur de l'islam, religion née en milieu semi-désertique où le paradis promis est verdoyant ; des levées de terre plantées d'aloès et de cactus délimitent les propriétés alentour. Il relève un minaret sans décor, dont un escalier subsiste, par lequel l'appel à la prière se lançait autrefois à la voix ; un mur bombé sur la façade, qui signale le mihrab de l'extérieur ; et, près du portique, un second mihrab plus petit et en contrebas, qui permettait de prier dehors à la fraîcheur de l'été. La grande citerne du centre du site recueillait l'eau de pluie, et les familles sans citerne venaient y puiser. Il évoque des bâtiments annexes qui ont pu abriter une école coranique. À l'intérieur, la salle de prière est coiffée d'une coupole et rythmée par des arcades à arcs brisés ; le minbar est en bois travaillé. Il mentionne aussi des travaux de restauration et d'agrandissement menés en 2012, attestés par une plaque.\nSur place, le 14 novembre 2025, une plaque porte le nom « جامع بوزيري », une plaque verte signale la salle d'ablutions des femmes, et la salle d'ablutions est moderne et bien entretenue.",
+        "description": "Mosquée de la campagne de Temlel, aux environs de Midoun.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 331 : mosquée malékite à origine nokkarite ibadite, de datation « ancienne ».\nDans sa vidéo, Jalel Fathallah la décrit entièrement blanchie à la chaux vive, avec quelques touches de vert, qu'il présente comme la couleur de l'islam, religion née en milieu semi-désertique où le paradis promis est verdoyant ; des levées de terre plantées d'aloès et de cactus délimitent les propriétés alentour. Il relève un minaret sans décor, dont un escalier subsiste, par lequel l'appel à la prière se lançait autrefois à la voix ; un mur bombé sur la façade, qui signale le mihrab de l'extérieur ; et, près du portique, un second mihrab plus petit et en contrebas, qui permettait de prier dehors à la fraîcheur de l'été. La grande citerne du centre du site recueillait l'eau de pluie, et les familles sans citerne venaient y puiser. Il évoque des bâtiments annexes qui ont pu abriter une école coranique. À l'intérieur, la salle de prière est coiffée d'une coupole et rythmée par des arcades à arcs brisés ; le minbar est en bois travaillé. Il mentionne aussi des travaux de restauration et d'agrandissement menés en 2012, attestés par une plaque.\nSur place, une plaque porte le nom « جامع بوزيري », une plaque verte signale la salle d'ablutions des femmes, et la salle d'ablutions est moderne et bien entretenue.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1426153008",
@@ -10094,7 +10094,7 @@
         "Zone": "Sedghaiane",
         "Source": "Martine Gendron, spécialiste des mosquées de Djerba (commentaire du 14 août 2026)\nOpenStreetMap, tombeau « Eddjoui » (Petr Jenč, 2026) | https://www.openstreetmap.org/way/1430127799\nObservation sur place, le 13 mars 2026",
         "HW_ID": "HW-01K77WPE6SFRMMS2GS11D6JXR5",
-        "description": "Petit mausolée à coupole (qubba) de Sedghaiane.\nSelon Martine Gendron, spécialiste des mosquées de Djerba, il s'appelle « Qubba Dajwi ». OpenStreetMap le classe parmi les tombeaux et le nomme « Eddjoui » (« الدجوي »).\nSur place, le 13 mars 2026, c'est un petit bâtiment à coupole dont l'entrée est sans porte, bordé d'un muret de pierres.",
+        "description": "Petit mausolée à coupole (qubba) de Sedghaiane.\nSelon Martine Gendron, spécialiste des mosquées de Djerba, il s'appelle « Qubba Dajwi ». OpenStreetMap le classe parmi les tombeaux et le nomme « Eddjoui » (« الدجوي »).\nSur place, c'est un petit bâtiment à coupole dont l'entrée est sans porte, bordé d'un muret de pierres.",
         "info_gpx": "",
         "accessPoint": [
           10.9463809,
@@ -10360,7 +10360,7 @@
         "État": "",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mosquée de Sedghaiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 146 sous le nom de Mosquée Jadid : mosquée ibadite wahbite, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la reprend sous le nom d'Ejdid, également wahbite et ancienne.\nSur place, le 13 mars 2026, la mosquée est blanche, avec un minaret carré et des portes vertes.",
+        "description": "Mosquée de Sedghaiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 146 sous le nom de Mosquée Jadid : mosquée ibadite wahbite, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la reprend sous le nom d'Ejdid, également wahbite et ancienne.\nSur place, la mosquée est blanche, avec un minaret carré et des portes vertes.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/408236306",
@@ -11773,7 +11773,7 @@
         "HW_ID": "HW-01KM2QY8VXPF72S6D9NAZ0AZ43",
         "created_at": "2026-03-19T09:48:31.484Z",
         "Prix_TND": 0,
-        "description": "Maison traditionnelle en ruine (houch) à Khazroun, près de Midoun, à une cinquantaine de mètres d'une qubba (Qubba Mrabet Slimane).\nDans OpenStreetMap, le bâtiment est cartographié comme ruine sous le nom de « houch ».\nSur place, le 19 mars 2026, les murs en ruine laissent voir, au milieu des gravats, une petite coupole et une cheminée.",
+        "description": "Maison traditionnelle en ruine (houch) à Khazroun, près de Midoun, à une cinquantaine de mètres d'une qubba (Qubba Mrabet Slimane).\nDans OpenStreetMap, le bâtiment est cartographié comme ruine sous le nom de « houch ».\nSur place, les murs en ruine laissent voir, au milieu des gravats, une petite coupole et une cheminée.",
         "accessPoint": [
           10.9735112,
           33.8137871
@@ -17032,7 +17032,7 @@
         "État": "",
         "Accès": "",
         "info_gpx": "",
-        "Source": "Plaque du puits, relevée sur place le 10 mars 2025\nPlaque du puits, relevée sur place le 3 novembre 2025",
+        "Source": "Plaque du puits, relevée sur place lors de deux visites : 10 mars 2025 et 3 novembre 2025",
         "osm_ref": "way/1557409640",
         "maps_ref": "",
         "Téléphone": "",
