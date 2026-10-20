@@ -30,7 +30,6 @@ import { startLayoutReloadPrompt } from './layout-reload-prompt.js';
 import { initMobileMode, initMobileNavListeners } from './mobile-nav.js';
 import { initMobilePoiListeners } from './mobile-poi.js';
 import { initMobileCircuitsListeners } from './mobile-circuits.js';
-import { startDockDiag } from './dock-diag.js';
 // Import statique (pas dynamique) pour que le listener `beforeinstallprompt`
 // attaché au top-level du module soit en place avant que Chrome/Edge émette
 // l'event (sinon event perdu, banner jamais affiché).
@@ -120,8 +119,6 @@ async function initializeApp() {
     // fenêtre change d'affichage plus tard, un message propose de recharger.
     if (lockLayoutMode()) {
         initMobileMode();
-        // Mesure provisoire du dock après une mise à jour (cf. dock-diag.js).
-        startDockDiag(APP_VERSION);
     } else {
         // UI Setup only (Map init is deferred to loadAndInitializeMap)
         setupDesktopTools();
@@ -297,7 +294,8 @@ import { registerSW } from 'virtual:pwa-register';
 // interrompait le démarrage de la nouvelle version et rechargeait une seconde
 // fois 100 ms plus tard, sans rien apporter : le code qui faisait ce contrôle
 // était déjà la nouvelle version. Retiré en v3.7.448 (dock absent après mise à
-// jour sur téléphone, cf. dock-diag.js).
+// jour sur téléphone ; cause trouvée ailleurs, cf. #mobile-container dans
+// style/base.css). tests/pwa_update_reload.test.js le garde.
 const PWA_BOOT_GRACE_MS = 5000;
 const _pwaBootTime = Date.now();
 

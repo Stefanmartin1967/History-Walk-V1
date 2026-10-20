@@ -1083,21 +1083,6 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
     letter-spacing: 0.04em;
 }
 
-/* Mesure provisoire du dock (dock-diag.js), sous la version : à retirer avec elle. */
-.menu-diag {
-    padding: 8px 4px 0;
-    font-size: 10px;
-    line-height: 1.45;
-    color: var(--ink-soft);
-    font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    overflow-wrap: anywhere;
-}
-.menu-diag-boot + .menu-diag-boot {
-    margin-top: 6px;
-    padding-top: 6px;
-    border-top: 1px solid var(--line);
-}
-
 /* App share QR modal */
 .app-share-qr-container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
 .app-share-qr-text { text-align: center; color: var(--ink); }

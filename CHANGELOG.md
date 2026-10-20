@@ -6,6 +6,13 @@
 
 ---
 
+- DOCK APRÈS MISE À JOUR : MESURE PROVISOIRE RETIRÉE (v3.7.450) — Clôture du chantier « dock absent après mise à jour » (v3.7.448 → v3.7.450). Plan validé par Stefan le 20/10/2026.
+  - **Correctif confirmé sur le S25** (20/10, 14:46) : au premier démarrage de la v3.7.449 après la mise à jour (« rechargement · appli »), fenêtre 750, page 750, dock de 688 à 750, sans rotation du téléphone. Avant le correctif, dans la même situation (14:24, v3.7.448) : dock de 744 à 805, poussé sous l'écran.
+  - **Retiré** : `src/dock-diag.js` et son appel au démarrage mobile (`main.js`), l'affichage des relevés sous la version du Menu (`mobile-menu.js`), ses styles `.menu-diag` (`style/mobile.css`), ses tests. Cache-bust `style.css` 8.43 → 8.44.
+  - **Gardé** : le correctif (`#mobile-container { height: 100% }`) et sa garde `mobile_container_height` ; la garde « un seul rechargement par mise à jour », déplacée de `dock_diag` vers `pwa_update_reload` (nouveau, 1).
+  - **Choix de Stefan** : les relevés déjà enregistrés (clé `hw_dock_diag`, quelques centaines d'octets, seulement sur les appareils passés par la v3.7.448 ou la v3.7.449) restent dans le stockage local. Plus rien ne les lit, et aucun code n'est ajouté pour les effacer.
+  - **Au déploiement** (lui-même une mise à jour) : second essai sur le S25, à l'œil. Le dock doit être là dès l'ouverture, sans rotation.
+
 - DOCK ABSENT APRÈS UNE MISE À JOUR : HAUTEUR DE L'ÉCRAN MOBILE EN POURCENTAGE (v3.7.449) — Suite de la v3.7.448, d'après la mesure relevée par Stefan sur son S25 le 20/10/2026. Plan validé par Stefan le 20/10.
   - **Relevé** (premier démarrage de la v3.7.448 dans l'appli, un seul rechargement) : fenêtre 750 px, et un élément neuf en 100svh, 100dvh et 100lvh mesurait aussi 750. Mais le dock allait de 744 à 805 : 55 px sous le bas de l'écran, seuls 6 px visibles. Aucun changement de taille jusqu'à la rotation du téléphone ; revenu en portrait, dock de 688 à 750, à sa place. 805 = écran 832 − barre d'état 27, soit la fenêtre sans la barre Android à trois boutons (55 px). Même écart qu'en mai (#571, 56 px). Retirer le second rechargement (v3.7.448) n'a donc pas suffi.
   - **Cause** : `#mobile-container` avait `height: 100dvh`. Une unité de fenêtre est convertie en pixels au calcul du style. Ici, la conversion a eu lieu quand la fenêtre faisait 805 px, et Chrome ne l'a pas refaite quand la fenêtre est passée à 750 : au même moment, un élément neuf avec la même unité mesurait 750. La rotation force le recalcul. Pourquoi la fenêtre change pendant ce démarrage n'est pas prouvé (hypothèse : après le rechargement, Heripia démarre depuis le cache pendant que Chrome finit d'ouvrir la fenêtre).
