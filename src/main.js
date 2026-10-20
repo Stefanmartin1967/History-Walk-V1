@@ -30,6 +30,7 @@ import { startLayoutReloadPrompt } from './layout-reload-prompt.js';
 import { initMobileMode, initMobileNavListeners } from './mobile-nav.js';
 import { initMobilePoiListeners } from './mobile-poi.js';
 import { initMobileCircuitsListeners } from './mobile-circuits.js';
+import { startDockDiag } from './dock-diag.js';
 // Import statique (pas dynamique) pour que le listener `beforeinstallprompt`
 // attaché au top-level du module soit en place avant que Chrome/Edge émette
 // l'event (sinon event perdu, banner jamais affiché).
@@ -76,18 +77,6 @@ async function initializeApp() {
         document.documentElement.setAttribute('hw-ready', '');
     }, 5000);
 
-    // 0. Vérification Version
-    const storedVersion = localStorage.getItem('hw_app_version');
-    if (storedVersion !== APP_VERSION) {
-        localStorage.setItem('hw_app_version', APP_VERSION);
-        if (storedVersion) {
-            setTimeout(() => { window.location.reload(true); }, 100);
-            return;
-        }
-    } else if (!storedVersion) {
-        localStorage.setItem('hw_app_version', APP_VERSION);
-    }
-
     // 0. Admin
     // 1. Initialisation de base
     // Affichage version, en bas du menu Outils sur PC (même libellé que le bas du
@@ -131,6 +120,8 @@ async function initializeApp() {
     // fenêtre change d'affichage plus tard, un message propose de recharger.
     if (lockLayoutMode()) {
         initMobileMode();
+        // Mesure provisoire du dock après une mise à jour (cf. dock-diag.js).
+        startDockDiag(APP_VERSION);
     } else {
         // UI Setup only (Map init is deferred to loadAndInitializeMap)
         setupDesktopTools();
@@ -294,15 +285,19 @@ import { registerSW } from 'virtual:pwa-register';
 // 1. `onRegistered` détecte un SW déjà en `waiting` à l'enregistrement → ça
 //    veut dire qu'il a été installé pendant une session précédente et attend
 //    qu'on l'active. On force `updateSW(true)` (skipWaiting + reload) →
-//    reload PROPRE qui sert toutes les ressources via le nouveau SW. Évite
-//    le bug « dock absent » observé en v1 : sans ce reload, la page tournait
-//    avec un mix old/new SW pendant la transition, et le CSS du dock était
-//    half-state.
+//    reload PROPRE qui sert toutes les ressources via le nouveau SW.
 // 2. `onNeedRefresh` fire quand un nouveau SW arrive PENDANT la session (le
 //    plus souvent : install fini en background mid-session). Garde-fou
 //    `PWA_BOOT_GRACE_MS` au cas où onNeedRefresh fire pendant le boot
 //    (install rapide à l'enregistrement initial) : <5s = silencieux, >5s =
 //    prompt classique (laisse le contrôle au user mid-session).
+//
+// Ce rechargement est le SEUL d'une mise à jour. Jusqu'à v3.7.447, un contrôle
+// de version au démarrage (clé `hw_app_version`, présent depuis février)
+// interrompait le démarrage de la nouvelle version et rechargeait une seconde
+// fois 100 ms plus tard, sans rien apporter : le code qui faisait ce contrôle
+// était déjà la nouvelle version. Retiré en v3.7.448 (dock absent après mise à
+// jour sur téléphone, cf. dock-diag.js).
 const PWA_BOOT_GRACE_MS = 5000;
 const _pwaBootTime = Date.now();
 
