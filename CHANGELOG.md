@@ -6,6 +6,24 @@
 
 ---
 
+- DONNÉES HORS-LIGNE GARDÉES SANS LIMITE DE DURÉE (v3.7.443) — Constaté le 19/10/2026 en préparant la v3.7.442 : un téléphone qui n'avait pas ouvert Heripia en ligne depuis plus de 7 jours n'avait plus aucun circuit officiel hors-ligne. 1ʳᵉ des trois PR « hors-ligne » validées par Stefan le 20/10 (suivront : recharge au retour du réseau, photos des étapes gardées).
+  - **Problème** : les caches du service worker avaient un âge maximal : 7 jours pour les données (index des circuits, catégories, destinations, fichier des lieux), 30 jours pour les photos et les tuiles. Workbox s'en sert de deux façons :
+    - une copie plus ancienne que cet âge (selon son en-tête `Date`) est refusée puis supprimée, même hors-ligne ;
+    - une copie pas utilisée depuis cet âge est supprimée dès qu'une autre est lue. Pour les tuiles, cela voulait dire : une tuile pas affichée depuis 30 jours disparaissait au premier affichage de la carte.
+    - Effet : un « pack terrain » préparé en octobre aurait été vide en mars.
+  - **Correctif (`vite.config.js`)** : plus aucun âge maximal, sur aucune route. Seul le nombre d'entrées borne chaque cache : au-delà, celle utilisée il y a le plus longtemps sort.
+    - En ligne, rien ne change : l'index des circuits et les autres données sont toujours redemandés au serveur à chaque démarrage, et les tuiles en arrière-plan. Une photo publiée ne change jamais sous le même nom.
+    - Tuiles : la limite passe de 256 à **1000** (décision de Stefan). Un circuit préparé, c'est environ 28 tuiles, soit environ 600 pour les 21 circuits. 1000 tuiles Voyager font environ 5 Mo sur le téléphone, 30 Mo au pire sur PC en Satellite.
+    - L'explication est écrite une seule fois, en tête des routes, et un test la garde.
+  - **À savoir** : rien n'est vidé ni renommé. Ce qui est déjà en cache reste, et n'a plus de date limite.
+
+  **Vérifié en local** (versions construites, `vite preview`, vue mobile 390×844, profil Chrome jetable). Profil rempli en ligne : index, fichier des lieux, tracé et photo de « Sidi Yati de Midoun », 28 tuiles. Puis toutes les copies sont vieillies (en-tête `Date` et dernier usage noté par Workbox), et Heripia démarre hors-ligne :
+  - **main (v3.7.442), 31 jours** : aucun circuit listé, caches de l'index et du fichier des lieux **vidés** (« Erreur chargement circuits ») ;
+  - **main, photos et tuiles seules vieillies de 31 jours** : photo de la fiche en échec et supprimée du cache ; 10 tuiles sur 28 (celles pas affichées) supprimées dès l'affichage de la carte ;
+  - **branche, 31 jours puis 150 jours** (d'octobre à mars) : circuit listé, tracé réel, photo de la fiche servie par le service worker, 18 tuiles affichées sans erreur, et les 28 tuiles toujours en cache.
+
+  Test : `cache_retention` (nouveau). Aucune route du service worker n'a d'âge maximal, et chacune garde une limite de nombre. Échoue sur l'ancienne config. `map_tiles_cache` n'exige plus d'âge maximal.
+
 - TRACÉ DES CIRCUITS OFFICIELS GARDÉ HORS-LIGNE (v3.7.442) — Constaté le 19/10/2026 pendant les preuves de la v3.7.441 : hors-ligne, en suivi mobile, le circuit « Sidi Yati de Midoun » s'affichait en pointillés rouges au lieu de son tracé bleu. Plan validé par Stefan le 19/10.
   - **Problème** : le tracé d'un circuit officiel (`circuits/<map>/<nom>.gpx`) est téléchargé à l'ouverture du circuit, puis gardé en mémoire seulement (`loadCircuitById`, `src/circuit.js`). Aucune route du service worker ne le gardait. Hors-ligne, le téléchargement échouait et la carte retombait sur le vol d'oiseau. Les tuiles, elles, étaient bien en cache.
   - **Correctif (`vite.config.js`)** : nouvelle route `circuit-traces` pour les `.gpx`, en **NetworkFirst**. Rien ne change dans le code de l'app.

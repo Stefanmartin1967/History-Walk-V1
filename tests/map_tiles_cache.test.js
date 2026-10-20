@@ -34,11 +34,12 @@ describe('vite.config.js — cache des tuiles de carte', () => {
     });
 
     // Sans filtre explicite, StaleWhileRevalidate garde aussi les réponses
-    // opaques (status 0), que Chrome compte ~7,8 Mo chacune.
-    it('ne garde que les réponses 200, avec une limite de nombre et de durée', () => {
+    // opaques (status 0), que Chrome compte ~7,8 Mo chacune. Pas d'âge maximal
+    // depuis v3.7.443 : il effaçait une tuile restée 30 jours sans être affichée
+    // (cf. cache_retention.test.js).
+    it('ne garde que les réponses 200, avec une limite de nombre', () => {
         const route = tileRoute();
         expect(route).toMatch(/statuses:\s*\[200\]/);
         expect(route).toMatch(/maxEntries:\s*\d+/);
-        expect(route).toMatch(/maxAgeSeconds:/);
     });
 });
