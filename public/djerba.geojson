@@ -8336,7 +8336,7 @@
         "Zone": "El Groa",
         "Source": "Répertoire J. Fathallah, n° 71 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6ND38ZJ2GFV2K4NRTK",
-        "description": "Jalel n° 71 : « Sidi Djemour. Sidi Djemour. Poste de garde et mausolée, mosquée malékite. Ancienne\nSituée près du petit port de pêche",
+        "description": "Mosquée de Sidi Jmour, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 71 sous le nom de Sidi Djemour : poste de garde et mausolée-mosquée malékite, de datation « ancienne ».",
         "accessPoint": [
           10.7483738,
           33.8314687
@@ -8352,9 +8352,9 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
