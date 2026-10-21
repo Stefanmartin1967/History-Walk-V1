@@ -15928,7 +15928,7 @@
         "introuvableCarte": false,
         "descriptionPublic": false,
         "osmChecked": true,
-        "osmCheckedDate": "2026-09-04",
+        "osmCheckedDate": "2026-10-21",
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
@@ -15937,7 +15937,8 @@
           10.7522389,
           33.7309572
         ],
-        "Zone": "Ajim"
+        "Zone": "Ajim",
+        "osm_ref": "way/1443415428"
       }
     },
     {
