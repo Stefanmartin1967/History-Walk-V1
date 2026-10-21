@@ -25,6 +25,8 @@
 //
 // Une règle nouvelle du Gabarit qui se vérifie mécaniquement s'ajoute ici,
 // avec son test (tests/check_gabarit.test.js) et son paragraphe du Gabarit.
+// Caractères spéciaux visés par une règle : toujours en séquence \uXXXX dans
+// ce fichier, jamais en clair (un caractère invisible ne se relit pas).
 // ============================================================
 
 import { readFileSync } from 'node:fs';
@@ -47,6 +49,14 @@ const phrases = (ligne) => ligne.split(/(?<=[.!?])\s+(?=\p{Lu})/u);
 const estPhrase = (l) => !l.includes(' | ') && !estUrl(l) && (/^sur place\b/i.test(l) || /\.$/.test(l));
 const estUrl = (s) => /^(https?:\/\/|www\.)\S+$/i.test(s);
 const extrait = (s, max = 110) => (s.length > max ? s.slice(0, max - 1) + '…' : s);
+
+// Marques de sens (U+200E/F, U+202A-E, U+2066-9), espaces et jointures sans
+// largeur (U+200B-D, U+2060-4), BOM. Les espaces insécables (U+00A0, U+202F)
+// sont de la typographie normale et ne sont PAS visés.
+const INVISIBLE = /[\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/;
+/** Champs en français où l'on colle du texte : titre, description, Source, Description GPX. */
+const champsColles = (p) => [p['Nom du site FR'] || '', ...lignes(p.description), ...lignes(p.Source), ...lignes(p.info_gpx)]
+    .filter(Boolean);
 
 /** Chaque règle : un identifiant stable, le paragraphe du Gabarit, un titre,
  *  et `trouver(props)` qui rend la liste des extraits fautifs (vide = conforme). */
@@ -126,11 +136,28 @@ export const REGLES = [
             || /"/.test(l)
             || /«(?![\s\u00A0\u202F])/.test(l) || /(?<![\s\u00A0\u202F])»/.test(l)),
     },
+    // Les deux règles suivantes portent aussi sur le titre et la Description GPX :
+    // ce qu'on y colle vient des mêmes sources (21/10/2026 : 14 apostrophes
+    // courbes, dont certaines venues des textes de Claude, et un caractère
+    // invisible dans le titre « Mosquée d'Elyounsiine »).
+    {
+        id: 'apostrophe-courbe', gabarit: '§2',
+        titre: 'Apostrophe courbe (\u2019) : l\'apostrophe droite du clavier (\') partout',
+        trouver: (p) => champsColles(p).filter(l => /[\u2018\u2019]/.test(l)),
+    },
+    {
+        id: 'caractere-invisible', gabarit: '§2',
+        titre: 'Caractère invisible collé (marque de sens, espace sans largeur…)',
+        trouver: (p) => [...champsColles(p), ...lignes(p['Nom du site arabe'])]
+            .filter(l => INVISIBLE.test(l))
+            .map(l => l.replace(new RegExp(INVISIBLE.source, 'g'),
+                c => `⟨U+${c.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}⟩`)),
+    },
     {
         id: 'premiere-personne', gabarit: '§2, §3 ter',
         titre: 'Forme impersonnelle : pas de « nous », « vous », « je »',
         trouver: (p) => lignes(p.description).filter(l =>
-            /\b(?:nous|notre|nos|vous|votre|vos|je|mon|mes)\b|\bj['’]/i.test(horsGuillemets(l).replace(/\bnotre ère\b/gi, ''))),
+            /\b(?:nous|notre|nos|vous|votre|vos|je|mon|mes)\b|\bj['\u2019]/i.test(horsGuillemets(l).replace(/\bnotre ère\b/gi, ''))),
     },
     {
         id: 'intensif', gabarit: '§2',

@@ -148,6 +148,37 @@ describe('check-gabarit — description', () => {
     });
 });
 
+describe('check-gabarit — caractères collés (21/10/2026)', () => {
+    const COURBE = String.fromCharCode(0x2019);   // apostrophe typographique (courbe)
+    const RLM = String.fromCharCode(0x200F);      // marque droite-à-gauche, invisible
+    const INSECABLE = String.fromCharCode(0x00A0); // espace insécable : typographie normale
+
+    it('apostrophe courbe dans le titre, la description, la Source et la Description GPX', () => {
+        expect(regles({ 'Nom du site FR': `Mosquée d${COURBE}Elyounsiine` })).toEqual(['apostrophe-courbe']);
+        expect(regles({ description: `Du 9ᵉ siècle de l${COURBE}hégire, soit le 15ᵉ siècle.` })).toEqual(['apostrophe-courbe']);
+        expect(regles({ Source: `Panneau de l${COURBE}entrée, relevé sur place le 4 novembre 2025` })).toEqual(['apostrophe-courbe']);
+        expect(regles({ info_gpx: `Vue sur l${COURBE}île` })).toEqual(['apostrophe-courbe']);
+    });
+
+    it('l\'apostrophe droite passe', () => {
+        expect(regles({ 'Nom du site FR': 'Mosquée d\'Elyounsiine', Source: 'Panneau de l\'entrée, relevé sur place le 4 novembre 2025' })).toEqual([]);
+    });
+
+    it('caractère invisible, montré par son code dans l\'extrait', () => {
+        const ecarts = controlerFiche({ 'Nom du site FR': `Mosquée d'${RLM}Elyounsiine` });
+        expect(ecarts.map(e => e.regle)).toEqual(['caractere-invisible']);
+        expect(ecarts[0].extrait).toContain('U+200F');
+    });
+
+    it('caractère invisible dans le nom arabe aussi', () => {
+        expect(regles({ 'Nom du site arabe': `جامع${RLM} النور` })).toEqual(['caractere-invisible']);
+    });
+
+    it('l\'espace insécable n\'est pas un caractère invisible visé', () => {
+        expect(regles({ description: `Appelée «${INSECABLE}Ben Tanfouss${INSECABLE}» sur OSM.` })).toEqual([]);
+    });
+});
+
 describe('check-gabarit — Source', () => {
     it('URL nue', () => {
         expect(regles({ Source: 'https://fr.wikipedia.org/wiki/Djerba' })).toEqual(['url-nue']);
