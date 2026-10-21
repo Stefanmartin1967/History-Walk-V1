@@ -6,6 +6,13 @@
 
 ---
 
+- CONTRÔLE DU GABARIT : LIGNE OSM EN DOUBLE ET LIBELLÉ SANS ADRESSE (v3.7.454) — Demandé par Stefan le 21/10/2026, à la fin du retrait des lignes OSM en double (61 lignes retirées à la main en 6 lots publiés de 8 h 55 à 9 h 29, chaque lot vérifié). La règle est écrite au Gabarit (§3 ter) : le lien vers l'objet OSM de la fiche vient de `osm_ref` (bouton de l'app, lien des pages publiques depuis la v3.7.453), jamais d'une ligne de Source vers le même objet.
+  - **`osm-en-double`** : signale une ligne de Source qui vise le même objet OSM que la fiche, avec la même règle que le bouton (`src/osm-ref.mjs`, URL collée dans `osm_ref` comprise). Une ligne vers un autre objet (mausolée voisin de Ben Daoued, terrain religieux d'El Ayssia) ou sur une fiche sans `osm_ref` (Salon de thé Ba9lawa) reste admise.
+  - **`libelle-sans-adresse`** : signale une ligne « Libellé | … » dont la partie après la dernière barre n'est pas une adresse ; l'app l'affiche alors en simple texte. Cas réel : Ben Omran au lot 2, où l'adresse de la ligne Commons avait été coupée à la place de la ligne OSM.
+  - **Rejoué sur les données** : aucun écart aujourd'hui (391 fiches, brouillons compris) ; sur les données d'avant le retrait, `osm-en-double` retrouve les 61 lignes ; sur Ben Omran tel que publié à 9 h 01, les deux règles relèvent les deux erreurs. 28 règles en tout.
+
+  Tests : `check_gabarit` (+3, 42) — libellé sans adresse (cas Ben Omran et texte après la barre), ligne OSM vers l'objet de la fiche (y compris `osm_ref` sous forme d'URL), lignes OSM admises (autre objet, fiche sans `osm_ref`).
+
 - PAGES PUBLIQUES : LIEN « VOIR SUR OPENSTREETMAP » (v3.7.453) — Demandé par Stefan le 21/10/2026, variante choisie sur maquettes. Les pages statiques des lieux (`scripts/generate-poi-pages.mjs`) n'avaient aucun lien vers OpenStreetMap, alors que la fiche de l'app a son bouton OSM : le crédit « Petr Jenč - OpenStreetMap, 2024 » de Henchir Bettes s'y affichait sans lien. C'est aussi le préalable au retrait des 54 lignes OSM du champ Source qui doublent le bouton.
   - **Le lien** : « Voir sur OpenStreetMap », sous le bouton « Voir sur la carte Heripia », sur toute page dont la fiche a un `osm_ref` (107 pages sur 126). C'est un lien de navigation, comme le bouton de l'app, pas une source : 42 de ces pages ont un objet OSM qui sert seulement à situer le lieu. Écarté : l'ajout de « OpenStreetMap » dans le bloc Source, qui leur aurait attribué une source qu'elles ne citent pas.
   - **Une seule règle** : `normalizeOsmRef` et `osmObjectUrl` passent de `utils.js` à `src/osm-ref.mjs`, importé par l'app et par le script de build (même raison d'être que `source-format.mjs`) ; `utils.js` les réexporte, rien ne change pour ses appelants.

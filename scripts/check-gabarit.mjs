@@ -32,6 +32,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { normalizeOsmRef } from '../src/osm-ref.mjs';
 
 const MOIS = '(?:janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)';
 const DATE_EN_LETTRES = new RegExp(`\\b\\d{1,2}(?:er)? ${MOIS} \\d{4}\\b`, 'i');
@@ -202,6 +203,30 @@ export const REGLES = [
         id: 'url-nue', gabarit: '§3',
         titre: 'URL nue en Source (s\'affiche comme un nom de domaine) : la libeller',
         trouver: (p) => lignes(p.Source).filter(l => !l.includes(' | ') && estUrl(l)),
+    },
+    {
+        // Ben Omran, 21/10/2026 : en retirant la ligne OSM, c'est l'adresse de la
+        // ligne Commons qui a été coupée. La partie droite du dernier « | » doit
+        // être une adresse, sinon l'app affiche toute la ligne en simple texte.
+        id: 'libelle-sans-adresse', gabarit: '§3',
+        titre: 'Ligne « Libellé | … » sans adresse après la barre (s\'affiche en simple texte)',
+        trouver: (p) => lignes(p.Source).filter(l => l.includes('|')
+            && !estUrl(l.slice(l.lastIndexOf('|') + 1).trim())),
+    },
+    {
+        // Règle du 21/10/2026 : le lien vers l'objet OSM de la fiche vient de
+        // osm_ref (bouton de l'app, lien des pages publiques) ; une ligne de Source
+        // vers le MÊME objet fait doublon. Un autre objet reste admis.
+        id: 'osm-en-double', gabarit: '§3 ter',
+        titre: 'Ligne OSM vers l\'objet de la fiche : doublon du bouton OSM (le lien vient de osm_ref)',
+        trouver: (p) => {
+            const ref = normalizeOsmRef(p.osm_ref);
+            if (!ref) return [];
+            return lignes(p.Source).filter(l => {
+                const m = l.match(/openstreetmap\.org\/((?:node|way|relation)\/\d+)/i);
+                return m && normalizeOsmRef(m[1]) === ref;
+            });
+        },
     },
     {
         id: 'source-sur-deux-lignes', gabarit: '§3',

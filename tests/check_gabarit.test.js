@@ -205,6 +205,25 @@ describe('check-gabarit — Source', () => {
         expect(regles({ Source: 'Observation sur place et carte du restaurant, le 16 mars 2026' })).toEqual([]);
     });
 
+    it('libellé sans adresse après la barre (Ben Omran, lot 2 du 21/10/2026)', () => {
+        expect(regles({ Source: 'Wikimedia Commons, catégorie « Ben Omrane Mausoleum » |' })).toEqual(['libelle-sans-adresse']);
+        expect(regles({ Source: 'Relevé sur place | mai 2026' })).toEqual(['libelle-sans-adresse']);
+        expect(regles({ Source: 'Wikimedia Commons, catégorie « Ben Omrane Mausoleum » | https://commons.wikimedia.org/wiki/Category:Ben_Omrane_Mausoleum' })).toEqual([]);
+    });
+
+    it('ligne OSM vers l\'objet de la fiche : doublon du bouton OSM', () => {
+        const ligne = 'OpenStreetMap | https://www.openstreetmap.org/way/990313185';
+        expect(regles({ osm_ref: 'way/990313185', Source: ligne })).toEqual(['osm-en-double']);
+        // osm_ref collé sous forme d'URL : même règle que le bouton (src/osm-ref.mjs).
+        expect(regles({ osm_ref: 'https://www.openstreetmap.org/way/990313185', Source: ligne })).toEqual(['osm-en-double']);
+    });
+
+    it('ligne OSM admise : autre objet, ou fiche sans osm_ref', () => {
+        // Ben Daoued : le mausolée voisin ; Salon de thé Ba9lawa : pas d'osm_ref.
+        expect(regles({ osm_ref: 'node/12674674366', Source: 'OpenStreetMap, mausolée voisin (way 1368534117, Petr Jenč, 18 mars 2025) | https://www.openstreetmap.org/way/1368534117' })).toEqual([]);
+        expect(regles({ osm_ref: '', Source: 'OpenStreetMap | https://www.openstreetmap.org/node/12917470174' })).toEqual([]);
+    });
+
     it('forme du répertoire de Jalel', () => {
         expect(regles({ Source: 'Répertoire J. Fathallah, n° 318 | http://palaisbenayed.com/wp-content/uploads/2021/03/répertoire-des-mosquées-de-Djerba.pdf' })).toEqual(['forme-jalel']);
         expect(regles({ Source: JALEL })).toEqual([]);
