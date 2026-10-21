@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { normalizeOsmRef, osmObjectUrl, openPoiOnMap } from '../src/utils.js';
+import * as osmRefModule from '../src/osm-ref.mjs';
 
 // ============================================================================
 // osm_ref — identité de l'objet OpenStreetMap portée par un POI.
@@ -8,6 +9,16 @@ import { normalizeOsmRef, osmObjectUrl, openPoiOnMap } from '../src/utils.js';
 //   - openPoiOnMap('osm') : page de l'objet si osm_ref, sinon repli coordonnées
 //     (le bouton ne doit JAMAIS être cassé) + lecture via l'overlay userData.
 // ============================================================================
+
+describe('osm-ref.mjs — une seule règle pour l\'app et les pages SEO', () => {
+    it('utils.js réexporte les fonctions du module partagé, sans copie', () => {
+        // Les pages SEO (scripts/generate-poi-pages.mjs) importent osm-ref.mjs
+        // directement : si utils.js redéfinissait sa propre version, le bouton
+        // de l'app et le lien des pages pourraient diverger.
+        expect(normalizeOsmRef).toBe(osmRefModule.normalizeOsmRef);
+        expect(osmObjectUrl).toBe(osmRefModule.osmObjectUrl);
+    });
+});
 
 describe('normalizeOsmRef', () => {
     it('accepte la forme canonique « type/id »', () => {

@@ -30,6 +30,7 @@ import { resolve, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { parseSources } from '../src/source-format.mjs';
 import { renderDescriptionHtml } from '../src/description-format.mjs';
+import { osmObjectUrl } from '../src/osm-ref.mjs';
 
 export const PRELAUNCH = true;
 export const SITE_ORIGIN = 'https://heripia.com';
@@ -146,7 +147,8 @@ h1{margin:0;font-size:1.9rem;line-height:1.25}
 dl{background:var(--surface);border-radius:12px;padding:16px 20px;margin-top:16px;display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
 dt{color:var(--ink-soft);font-weight:600}dd{margin:0}
 .cta{display:block;text-align:center;background:var(--brand);color:#fff;text-decoration:none;font-weight:700;padding:14px 24px;border-radius:12px;margin-top:24px}
-.source{color:var(--ink-soft);font-size:.85rem;margin-top:16px}
+.osm-link{display:block;text-align:center;font-size:.9rem;color:var(--brand);margin-top:12px}
+.source{color:var(--ink-soft);font-size:.85rem;margin-top:16px}.source a{color:var(--brand)}
 footer{text-align:center;color:var(--ink-soft);font-size:.85rem;padding:24px 20px}
 `.trim();
 
@@ -164,6 +166,12 @@ export function renderPoiPage({ feature, slug, mapId, mapName, prelaunch = PRELA
     const telephone = (p['Téléphone'] || '').trim();
     const latLng = getLatLng(feature);
     const sourceBlock = sourcesHtml(p.Source);
+    // Équivalent du bouton OSM de la fiche dans l'app (variante choisie par
+    // Stefan le 21/10/2026) : un lien de navigation vers l'objet, pas une source
+    // — 42 pages ont un objet OSM qui sert seulement à situer le lieu. Il garde
+    // aussi un lien au crédit « Prénom Nom - OpenStreetMap, année » quand les
+    // lignes OSM en double seront retirées du champ Source.
+    const osmUrl = osmObjectUrl(p.osm_ref);
 
     const pageUrl = `${SITE_ORIGIN}/lieux/${mapId}/${slug}/`;
     const photoRel = (p.photos || []).find(ph => photoExists(ph));
@@ -229,7 +237,7 @@ ${nameAr ? `    <p class="name-ar" dir="rtl" lang="ar">${escapeHtml(nameAr)}</p>
       ${descHtml}
     </div>
 ${infos.length ? `    <dl>\n${infos.map(([k, v]) => `      <dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('\n')}\n    </dl>\n` : ''}    <a class="cta" href="/?poi=${encodeURIComponent(p.HW_ID)}">Voir sur la carte Heripia</a>
-${sourceBlock}  </main>
+${osmUrl ? `    <a class="osm-link" href="${escapeHtml(osmUrl)}" rel="nofollow noopener" target="_blank">Voir sur OpenStreetMap</a>\n` : ''}${sourceBlock}  </main>
   <footer>© Heripia — découverte du patrimoine à pied</footer>
 </body>
 </html>

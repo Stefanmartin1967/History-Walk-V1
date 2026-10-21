@@ -1,6 +1,7 @@
 // utils.js
 import { zonesData, zoneCacheGet, zoneCacheSet } from './zones.js';
 import { getSubtypes } from './taxonomy.js';
+import { normalizeOsmRef, osmObjectUrl } from './osm-ref.mjs';
 
 /**
  * Génère un identifiant unique au format HW-ULID
@@ -105,19 +106,10 @@ export function openCoordsOnMap(lat, lng, provider = 'gmaps') {
     return true;
 }
 
-/**
- * Normalise une référence d'objet OSM vers la forme canonique « type/id ».
- * Accepte ce que l'admin colle naturellement : l'URL complète de la page OSM
- * (avec ou sans query/hash) ou déjà « way/123 ». Retourne '' si non
- * reconnaissable — on ne devine JAMAIS un id à partir d'un texte libre.
- * @param {string} value
- * @returns {string} « way/386328373 » ou ''
- */
-export function normalizeOsmRef(value) {
-    if (typeof value !== 'string') return '';
-    const m = value.trim().match(/(node|way|relation)\/(\d+)/i);
-    return m ? `${m[1].toLowerCase()}/${m[2]}` : '';
-}
+// normalizeOsmRef et osmObjectUrl vivent dans osm-ref.mjs, partagé avec les
+// pages SEO (scripts/generate-poi-pages.mjs) ; réexportés ici pour tous les
+// appelants de l'app.
+export { normalizeOsmRef, osmObjectUrl };
 
 /**
  * Checklist de vérification — SOURCE UNIQUE de la règle « une référence
@@ -267,15 +259,6 @@ export function isInJalelDirectoryScope(category, mapId) {
     return JALEL_DIRECTORY_CATEGORIES.includes(category);
 }
 
-/**
- * URL de la page d'un objet OSM à partir de sa référence « type/id ».
- * @param {string} osmRef
- * @returns {string|null} null si la référence est absente/invalide
- */
-export function osmObjectUrl(osmRef) {
-    const ref = normalizeOsmRef(osmRef);
-    return ref ? `https://www.openstreetmap.org/${ref}` : null;
-}
 
 const COMMONS_HOST = /^(?:commons\.(?:m\.)?wikimedia\.org)$/i;
 
