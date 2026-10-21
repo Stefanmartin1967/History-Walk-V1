@@ -6,6 +6,16 @@
 
 ---
 
+- PAGES PUBLIQUES : LIEN « VOIR SUR OPENSTREETMAP » (v3.7.453) — Demandé par Stefan le 21/10/2026, variante choisie sur maquettes. Les pages statiques des lieux (`scripts/generate-poi-pages.mjs`) n'avaient aucun lien vers OpenStreetMap, alors que la fiche de l'app a son bouton OSM : le crédit « Petr Jenč - OpenStreetMap, 2024 » de Henchir Bettes s'y affichait sans lien. C'est aussi le préalable au retrait des 54 lignes OSM du champ Source qui doublent le bouton.
+  - **Le lien** : « Voir sur OpenStreetMap », sous le bouton « Voir sur la carte Heripia », sur toute page dont la fiche a un `osm_ref` (107 pages sur 126). C'est un lien de navigation, comme le bouton de l'app, pas une source : 42 de ces pages ont un objet OSM qui sert seulement à situer le lieu. Écarté : l'ajout de « OpenStreetMap » dans le bloc Source, qui leur aurait attribué une source qu'elles ne citent pas.
+  - **Une seule règle** : `normalizeOsmRef` et `osmObjectUrl` passent de `utils.js` à `src/osm-ref.mjs`, importé par l'app et par le script de build (même raison d'être que `source-format.mjs`) ; `utils.js` les réexporte, rien ne change pour ses appelants.
+  - **Liens du bloc Source** en bleu Heripia (`.source a`), comme ceux de la description, au lieu du bleu par défaut du navigateur.
+  - **Transition** : tant que les lignes OSM en double ne sont pas retirées des données, les 50 pages concernées affichent OSM deux fois (lien + ligne de Source), comme la fiche de l'app aujourd'hui.
+
+  **Vérifié en local** : build complet puis génération des pages (126 pages, 107 avec le lien, exactement les fiches qui ont un `osm_ref`) ; rendu à l'écran de Henchir Bettes, Djeridi (lien + ligne de Source) et de l'Ancien atelier de tissage (sans `osm_ref`, sans lien), en bureau et en largeur téléphone ; la version construite démarre sans erreur et le bouton OSM de la fiche Henchir Bettes ouvre la même adresse que le lien de la page.
+
+  Tests : `generate_poi_pages` (+5) — lien présent et placé après le bouton carte, même règle pour une URL collée, absent sans `osm_ref` exploitable, coexistence avec une ligne OSM du champ Source, couleur des liens de Source. `osm_ref` (+1) — `utils.js` réexporte les fonctions du module partagé, sans copie.
+
 - CONTRÔLE DU GABARIT : APOSTROPHE COURBE ET CARACTÈRES INVISIBLES (v3.7.452) — Demandé par Stefan le 21/10/2026. Les données comptaient 14 apostrophes courbes (contre 529 droites) et un caractère invisible (marque droite-à-gauche, U+200F) dans le titre « Mosquée d'Elyounsiine », tous arrivés par copier-coller, dont certains depuis les textes de Claude. Stefan les a corrigés le 21/10 (publications de 8 h 09 et 8 h 15) ; la règle « apostrophe droite partout » est écrite au Gabarit (§2).
   - **Deux règles de plus** dans `scripts/check-gabarit.mjs` (26 au total) : `apostrophe-courbe` et `caractere-invisible` (marques de sens, espaces et jointures sans largeur, BOM ; l'espace insécable n'est pas visé). Elles portent sur le titre, la description, la Source et la Description GPX (`info_gpx`), et le nom arabe pour les caractères invisibles. L'extrait montre le caractère invisible par son code (« ⟨U+200F⟩ »).
   - **Garde-fou pour Claude** : chaque proposition de texte passe par `controlerFiche` avant d'être envoyée à Stefan ; une apostrophe courbe venue de Claude est désormais arrêtée là.

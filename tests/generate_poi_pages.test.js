@@ -200,6 +200,35 @@ describe('renderPoiPage', () => {
         expect(html).not.toContain('>https://www.djerba.holiday/page-longue/x</a>');
     });
 
+    it('lien « Voir sur OpenStreetMap » sous le bouton carte quand la fiche a un osm_ref', () => {
+        // Équivalent du bouton OSM de l'app (variante choisie le 21/10/2026).
+        const html = render({ osm_ref: 'way/1073444344' });
+        expect(html).toContain('<a class="osm-link" href="https://www.openstreetmap.org/way/1073444344" rel="nofollow noopener" target="_blank">Voir sur OpenStreetMap</a>');
+        expect(html.indexOf('class="osm-link"')).toBeGreaterThan(html.indexOf('class="cta"'));
+    });
+
+    it('lien OSM : même règle que l\'app pour une URL collée dans osm_ref', () => {
+        const html = render({ osm_ref: '  https://www.openstreetmap.org/node/11691949310/history ' });
+        expect(html).toContain('href="https://www.openstreetmap.org/node/11691949310"');
+    });
+
+    it('pas de lien OSM sans osm_ref exploitable', () => {
+        expect(render()).not.toContain('osm-link"');
+        expect(render({ osm_ref: '' })).not.toContain('osm-link"');
+        expect(render({ osm_ref: 'Mosquée Kharroubi' })).not.toContain('osm-link"');
+    });
+
+    it('le lien OSM ne remplace pas une ligne OSM du champ Source', () => {
+        // Les deux coexistent tant que les lignes en double ne sont pas retirées des données.
+        const html = render({ osm_ref: 'way/990329223', Source: 'OpenStreetMap | https://www.openstreetmap.org/way/990329223' });
+        expect(html).toContain('class="osm-link"');
+        expect(html).toContain('<p class="source">Source : <a href="https://www.openstreetmap.org/way/990329223"');
+    });
+
+    it('les liens du bloc Source sont en bleu Heripia, comme ceux de la description', () => {
+        expect(render()).toContain('.source a{color:var(--brand)}');
+    });
+
     it('description multi-lignes → paragraphes', () => {
         const html = render({ description: ('para 1.' + 'x'.repeat(80)) + '\n\npara 2.' });
         expect(html).toContain('<p>para 1.');
