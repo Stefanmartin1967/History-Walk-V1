@@ -8644,7 +8644,7 @@
         "Accès": "Extérieur seulement",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "osm_ref": "node/9785843197",
+        "osm_ref": "way/1443415428",
         "maps_ref": "https://maps.app.goo.gl/pTRfydKYUoiiSdgg7",
         "Téléphone": "",
         "Horaires": "",
@@ -8653,7 +8653,7 @@
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-10-21",
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": true
@@ -15917,16 +15917,16 @@
         "Nom du site FR": "Mosquée Saïd Jrab",
         "Catégorie": "Mosquée",
         "Sous-type": "À coupoles",
-        "État": "En activité",
+        "État": "",
         "Accès": "Extérieur seulement",
-        "description": "Jalel n° 342 : « Sidi Said Jrab. Ajim, quartier Aissi. Mausolée et lieu de culte en bon état. Ancien. »",
+        "description": "Mosquée du quartier Aissi, à Ajim.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 342 sous le nom de Sidi Said Jrab : mausolée et lieu de culte en bon état, de datation « ancien ».",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 342 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "maps_ref": "https://maps.app.goo.gl/8jxfZJXH9JLF63iQA",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-10-21",
         "mapsChecked": true,
@@ -15938,7 +15938,7 @@
           33.7309572
         ],
         "Zone": "Ajim",
-        "osm_ref": "way/1443415428"
+        "osm_ref": ""
       }
     },
     {
