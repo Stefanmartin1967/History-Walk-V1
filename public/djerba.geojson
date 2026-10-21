@@ -8711,11 +8711,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Lieu de Tournage Star Wars – Cantina Extérieure",
+        "Nom du site FR": "Lieu de tournage Star Wars – Cantina extérieure",
         "Nom du site arabe": "بقايا مخبز – موقع كانتينا موس آيسلي الخارجي",
         "Catégorie": "Curiosité",
         "Zone": "Ajim",
-        "Source": "https://galaxytours.com/starwars-tunisia-film-sites/ajim/",
+        "Source": "Galaxy Tours, « Ajim » (lieux de tournage de Star Wars en Tunisie) | https://galaxytours.com/starwars-tunisia-film-sites/ajim/",
         "HW_ID": "HW-01K77WPE6PRETC07TQDNMAG54C",
         "info_gpx": "Un des lieux de tournage de Star Wars",
         "accessPoint": [
@@ -8725,7 +8725,7 @@
         "Sous-type": "",
         "État": "",
         "Accès": "",
-        "description": "Ancienne boulangerie berbère, reconnaissable à sa coupole, dont la façade a servi de décor extérieur à la cantina de Mos Eisley dans Star Wars, épisode IV — Un nouvel espoir (1977). \nLa production avait également habillé la place attenante et deux ruelles pour composer le spaceport.\nL'intérieur de la cantina, lui, a été tourné en studio à Londres.\nLe bâtiment n'est plus entretenu et les aménagements du tournage ont en grande partie disparu.",
+        "description": "Lieu de tournage de Star Wars, au centre d'Ajim.\nLe site de l'agence Galaxy Tours, qui organise des circuits sur les lieux de tournage, indique qu'il s'agit d'une ancienne boulangerie dont la façade a servi de décor extérieur à la cantina de Mos Eisley dans Star Wars, épisode IV : Un nouvel espoir (1977), tourné ici début avril 1976. Une fausse entrée avait été ajoutée, et la place voisine ainsi que deux ruelles faisaient partie du décor.\nSelon la même source, le bâtiment est abandonné et la plupart des repères du tournage ont disparu ; une mosaïque de l'artiste Invader représentant un stormtrooper a été posée sur la façade nord en novembre 2019.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/1109117368",
@@ -8733,7 +8733,8 @@
         "Horaires": "",
         "Facebook": "",
         "verified": true,
-        "introuvableCarte": false
+        "introuvableCarte": false,
+        "descriptionPublic": true
       }
     },
     {
