@@ -5860,11 +5860,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Grecque Orthodoxe Saint-Nicolas",
-        "Nom du site arabe": "كنيسة القديس نيقولاوس الأرثوذكسية اليونانية",
+        "Nom du site FR": "Église grecque orthodoxe Saint-Nicolas",
+        "Nom du site arabe": "",
         "Catégorie": "Église",
         "Zone": "Taourit",
-        "Source": "https://www.webdo.tn/fr/actualite/chroniques/djerba-vingt-deux-mosquees-une-eglise-et-une-synagogue/208839/",
+        "Source": "UNESCO, « Djerba : témoignage d'un mode d'occupation d'un territoire insulaire », composante 1640-030 | https://whc.unesco.org/fr/list/1640/cartes/\nPlaque de l'église et panneau d'exposition du Centre culturel grec de Tunis, « Les communautés grecques du Maghreb du XVIIe siècle à nos jours », relevés sur place le 20 novembre 2025\nWebdo, « Djerba: En neuf photos, l'église grecque orthodoxe Saint-Nicolas », 13 janvier 2020 | https://www.webdo.tn/fr/actualite/chroniques/djerba-en-neuf-photos-leglise-grecque-orthodoxe-saint-nicolas/188485/\nNaceur Bouabid, « Djerba : Non, l'église orthodoxe Saint-Nicolas ne sera pas lâchée ! », Kapitalis, 31 mai 2021 | https://kapitalis.com/tunisie/2021/05/31/djerba-non-leglise-orthodoxe-saint-nicolas-ne-sera-pas-lachee/",
         "HW_ID": "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
         "photos": [
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1789740337832.jpg",
@@ -5873,8 +5873,8 @@
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1789740344540.jpg",
           "photos/poi_HW-01K77WPE6H0HDCNZVRSJGSX5TF_1789740346250.jpg"
         ],
-        "description": "La petite église orthodoxe, fondée par Sakillaris Kandinys rappelle la présence grecque en nombre jusqu'aux années 1950. Ceux-ci étaient les descendants des pêcheurs d'éponge et de poulpes qui s'étaient installés à Djerbin à la fin du 19ème siècle. C'est la seule église orthodoxes de l'île, dont la dernière rénovation date de 2019, sous la supervision de Dimitri Mavrothalassitis. L'ensemble du lieu de culte a ainsi été remise à neuf, ainsi que plusieurs icônes.",
-        "info_gpx": "Eglise grecque orthodoxe dédiée à Saint-Nicolas, patrons des enfants, mais aussi des marins, pêcheurs et commercçant",
+        "description": "Église grecque orthodoxe de Houmt Souk, dédiée à saint Nicolas.\nElle est l'une des composantes du bien « Djerba : témoignage d'un mode d'occupation d'un territoire insulaire », inscrit en 2023 sur la Liste du patrimoine mondial de l'UNESCO.\nSelon le panneau du Centre culturel grec de Tunis exposé dans l'église, les Grecs de Djerba, venus surtout de Kalymnos, de Symi et de Kastellorizo, s'installent sur l'île à la fin du 19ᵉ siècle et y prospèrent jusqu'aux premières décennies du 20ᵉ siècle, grâce à la pêche aux éponges. La plaque commémorant la construction de l'église porte la date de 1903, mais de nombreux témoignages en font remonter l'existence à 1890 ; l'armateur Sakellaris Kindynis, qui avait acquis le terrain, en donne une partie en 1906 à la communauté orthodoxe et participe à la construction.\nSelon Webdo (2020), une restauration, dont celle de plusieurs icônes, est menée en février 2019 sous la supervision de Dimitri Mavrothalassitis, qui veillait sur l'église. Selon Kapitalis (2021), la liturgie orthodoxe y est de nouveau célébrée le 23 mai 2021, après 60 ans d'interruption.\nSur place, la plaque de l'église, en grec et en français, porte l'emblème du patrimoine mondial.",
+        "info_gpx": "Église grecque orthodoxe dédiée à saint Nicolas, patron des marins, des pêcheurs, des enfants et des commerçants.",
         "accessPoint": [
           10.8559485,
           33.8845409
@@ -5891,9 +5891,10 @@
         "lng": 10.856090779389143,
         "osm_ref": "way/360980733",
         "maps_ref": "https://maps.app.goo.gl/cAwL3TBh2ivt2Fwz9",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false
+        "descriptionPublic": true,
+        "mapsHasPhoto": true
       }
     },
     {
