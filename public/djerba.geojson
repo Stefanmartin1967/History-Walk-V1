@@ -16235,7 +16235,7 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": true,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
