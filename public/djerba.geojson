@@ -8841,7 +8841,7 @@
         ],
         "Sous-type": "",
         "État": "",
-        "Accès": "",
+        "Accès": "Non visitable",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "node/10713396283",
