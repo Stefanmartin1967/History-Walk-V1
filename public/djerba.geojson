@@ -2689,7 +2689,7 @@
         "Zone": "Sedghaiane",
         "Source": "Répertoire J. Fathallah, n° 344 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6CC0RY56ECB2RCTGJP",
-        "description": "Jalel n° 344 : « Mosquée Hallem, Abou Baker Seddik. Cedghiane. Mosquée malékite. 2019.",
+        "description": "Mosquée de Sedghaiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 344 sous les noms de Hallem et d'Abou Baker Seddik : mosquée malékite, datée de 2019.",
         "accessPoint": [
           10.9154682,
           33.8141086
@@ -2705,9 +2705,9 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
