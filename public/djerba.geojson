@@ -254,7 +254,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Ténafsa",
-        "Nom du site arabe": "جامع بن تنفوس",
+        "Nom du site arabe": "جامع التنافسة",
         "Catégorie": "Mosquée",
         "Zone": "Midoun",
         "Source": "Répertoire J. Fathallah, n° 318 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInscription peinte sur le mur de la mosquée et observation sur place, le 3 novembre 2025",
@@ -5073,10 +5073,10 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Sidi Ahmed El Jebliani",
-        "Nom du site arabe": "جامع سيدي أحمد الجيلاني",
+        "Nom du site arabe": "جامع سيدي احمد الجبلياني",
         "Catégorie": "Mosquée",
         "Zone": "Taourit",
-        "Source": "Répertoire J. Fathallah, n° 22 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nPanneau de l'entrée, relevé sur place le 4 novembre 2025",
+        "Source": "Répertoire J. Fathallah, n° 22 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nInscription sur le mur de la mosquée, relevée sur place le 4 novembre 2025",
         "HW_ID": "HW-01K77WPE6F1C25NNH5RAR2JPF6",
         "photos": [
           "photos/poi_HW-01K77WPE6F1C25NNH5RAR2JPF6_1780460051591.jpg",
@@ -5093,7 +5093,7 @@
         "Sous-type": "À minaret",
         "État": "",
         "Accès": "Extérieur seulement",
-        "description": "Mosquée de Taourit, qui intègre un mausolée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 22 sous le nom de Sidi Essougui : mosquée et mausolée malékite, de datation « récente », intégrant le mausolée.\nSur place, le panneau de l'entrée porte l'inscription « جامع سيدي أحمد الجيلاني، شهر سيدي السوقي، بتاوريت » : mosquée Sidi Ahmed ElJebliani, connue sous le nom de Sidi Essougui, à Taourit.",
+        "description": "Mosquée de Taourit, qui intègre un mausolée.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 22 sous le nom de Sidi Essougui : mosquée et mausolée malékite, de datation « récente ».\nSur place, une inscription au mur porte « جامع سيدي احمد الجبلياني شُهر سيدي السوقي بتاوريت » : mosquée Sidi Ahmed El Jebliani, connue sous le nom de Sidi Essougui, à Taourit.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1550394077",
