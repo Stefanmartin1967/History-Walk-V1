@@ -16875,16 +16875,18 @@
         "Prix_TND": 0,
         "osm_ref": "node/14095881821",
         "maps_ref": "https://maps.app.goo.gl/sC4z7mp3ECumKkBK8",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": true,
         "HW_ID": "HW-01M1RZZWS6P3KWET3E89M1AXFK",
-        "Zone": "Sedghaiane"
+        "Zone": "Sedghaiane",
+        "description": "Mosquée en ruine de Sedghaiane.\nOpenStreetMap y indique les ruines d'une mosquée, sous le nom de Chandra El Borji Ettayebi (شندرة البرجي الطيبي) ; la liste Wikipédia des mosquées de Djerba la nomme Chandra Al Borji Al Taibi.",
+        "Source": "Wikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba"
       }
     },
     {
