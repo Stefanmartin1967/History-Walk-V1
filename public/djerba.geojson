@@ -6932,7 +6932,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée Aboumessouer",
-        "Nom du site arabe": "جامع الكبير",
+        "Nom du site arabe": "جامع بومسور",
         "Catégorie": "Mosquée",
         "Zone": "El Hachene",
         "Source": "UNESCO, « Djerba : témoignage d'un mode d'occupation d'un territoire insulaire », composante 1640-009 | https://whc.unesco.org/fr/list/1640/cartes/\nJournal officiel de la République tunisienne, n° 45 du 22 avril 2022, arrêté du 15 mars 2022 relatif à la protection des monuments historiques et archéologiques, n° 48 | https://lake.jort.tn/journal-officiel/fr/2022/045.pdf\nRépertoire J. Fathallah, n° 63 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Grande mosquée des Banū Yahrāsan » | https://fr.wikipedia.org/wiki/Grande_mosqu%C3%A9e_des_Ban%C5%AB_Yahr%C4%81san",
@@ -18057,15 +18057,15 @@
       },
       "properties": {
         "Nom du site FR": "Menzel Lellamina",
-        "Catégorie": "Menzel",
-        "État": "Reconverti",
-        "Accès": "Extérieur seulement",
+        "Catégorie": "Hôtel",
+        "État": "",
+        "Accès": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/8DRzFpM2ass1QhtJA",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
@@ -18076,7 +18076,11 @@
           10.8218972,
           33.8613032
         ],
-        "Zone": "El Hachene"
+        "Zone": "El Hachene",
+        "description": "Location de vacances de Hachene, près de la grande mosquée Aboumessouer.\nSelon sa fiche Booking, c'est un appartement d'une chambre, avec piscine privée, jardin et parking, géré par un particulier, à 3 km de l'aéroport de Djerba-Zarzis.",
+        "Source": "Booking.com, « Menzel LellaMina », consulté le 23 octobre 2026 | https://www.booking.com/hotel/tn/typique-appartement.fr.html",
+        "Téléphone": "+216 20 771 885",
+        "Facebook": "https://www.facebook.com/profile.php?id=61561890353720"
       }
     },
     {
