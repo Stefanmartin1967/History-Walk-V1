@@ -11042,7 +11042,7 @@
         "Catégorie": "Commerce",
         "Zone": "Taourit",
         "HW_ID": "HW-01KJABRN0XCGBFRH389WG2S71J",
-        "description": "",
+        "description": "Marché aux poissons de Houmt Souk.\nSur place, le poisson est vendu sur des étals ; à côté, plusieurs grills proposent de faire cuire le poisson qu'on leur apporte.",
         "Nom du site arabe": "",
         "Sous-type": "",
         "État": "",
@@ -11050,12 +11050,16 @@
         "info_gpx": "",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "",
+        "Source": "Observation sur place, le 20 novembre 2025",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
-        "introuvableCarte": false
+        "verified": true,
+        "introuvableCarte": false,
+        "maps_ref": "https://maps.app.goo.gl/UjxLbLyfBG1vKSTr5",
+        "descriptionPublic": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true
       }
     },
     {
