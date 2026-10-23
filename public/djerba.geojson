@@ -13183,7 +13183,7 @@
       "properties": {
         "Nom du site FR": "Mosquée El Jadid (Ababsa)",
         "Catégorie": "Mosquée",
-        "osm_ref": "node/13204556208",
+        "osm_ref": "way/1436646769",
         "HW_ID": "HW-01KZH0VGKHTQAFAVA6SZN7E5VB",
         "Nom du site arabe": "جامع العبابسة - جديد",
         "Sous-type": "À minaret",
@@ -13203,7 +13203,7 @@
         "Zone": "Mazraia",
         "descriptionPublic": true,
         "osmChecked": true,
-        "osmCheckedDate": null,
+        "osmCheckedDate": "2026-10-23",
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
