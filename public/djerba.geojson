@@ -2979,7 +2979,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée El-Guechaï",
+        "Nom du site FR": "Mosquée El Guechai",
         "Nom du site arabe": "جامع الغشّي",
         "Catégorie": "Mosquée",
         "Zone": "Sedghaiane",
@@ -2990,10 +2990,10 @@
           33.8392845
         ],
         "Sous-type": "À coupoles",
-        "État": "En activité",
+        "État": "",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Jalel n° 137 : « Mosquée Guechai. Guechaine. Mosquée ibadite wahbite. 1230 de l'hégire (1784 ap. J.-C.).",
+        "description": "Mosquée de Guechaine, à Sedghaiane.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 137 sous le nom de Mosquée Guechai : mosquée ibadite wahbite, datée de 1230 de l'hégire, qu'il convertit en 1784 ; or 1230 de l'hégire correspond à 1814-1815.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/342760352",
