@@ -7567,7 +7567,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi El Tayeib",
+        "Nom du site FR": "Mosquée Sidi Taieb",
         "Nom du site arabe": "جامع سيدي الطيب",
         "Catégorie": "Mosquée",
         "Zone": "Mellita",
@@ -7575,13 +7575,13 @@
         "HW_ID": "HW-01K77WPE6M14K3331NK215THZS",
         "lat": 33.86202557545826,
         "lng": 10.806473154993117,
-        "description": "Jalel n° 67 : « Sidi Taieb. Mellita. Mosquée mausolée malékite. »",
+        "description": "Mosquée de Mellita.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 67 sous le nom de Sidi Taieb : mosquée mausolée malékite.",
         "accessPoint": [
           10.8063801,
           33.8621606
         ],
         "Sous-type": "À minaret",
-        "État": "En activité",
+        "État": "",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
@@ -7591,9 +7591,9 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
