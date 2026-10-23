@@ -391,5 +391,23 @@
       "HW-01K77WPE6CC0RY56ECB2RCTGJP",
       "HW-01M3MKCX8QFEERFG0EPSC71FMS"
     ]
+  },
+  {
+    "id": "HW-01M5MG5WVAPHFFR2DWQG7HH7JK",
+    "name": "Circuit de Mosquée Mechouk à Henchir Tala",
+    "file": "djerba/Circuit de Mosquée Mechouk à Henchir Tala.gpx",
+    "description": "",
+    "distance": "7.6 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Guellala",
+    "poiIds": [
+      "HW-01KZH0VF9VAZBE5NJ5FF14Z491",
+      "HW-01K77WPE6M7NF1ZA4QJ5APVJ7T",
+      "HW-01K77WPE6KD37GVA594C0XAQQ0",
+      "HW-01M1CEN8W8MJ31WMPR91XCF41N",
+      "HW-01K77WPE6J3TTHTXC560NEDQ24",
+      "HW-01KZH0VFTNCH521D19MFV3TDQP"
+    ]
   }
 ]
