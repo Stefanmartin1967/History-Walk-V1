@@ -705,7 +705,7 @@
         "Téléphone": "",
         "Horaires": "De 09 h à 17 h - 10 h - 16 h pendant le ramadan",
         "Facebook": "",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
