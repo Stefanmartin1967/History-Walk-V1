@@ -1348,7 +1348,7 @@
           33.7635807
         ],
         "Sous-type": "À minaret",
-        "État": "",
+        "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
@@ -5786,7 +5786,7 @@
           33.8063976
         ],
         "Sous-type": "À minaret",
-        "État": "",
+        "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "Temps_minutes": 0,
@@ -9620,7 +9620,7 @@
       },
       "properties": {
         "Nom du site FR": "Mosquée de Benian",
-        "Nom du site arabe": "جامع بنيان",
+        "Nom du site arabe": "",
         "Catégorie": "Mosquée",
         "Zone": "Sedouikech",
         "Source": "",
