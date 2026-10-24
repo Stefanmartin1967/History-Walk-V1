@@ -17,18 +17,18 @@ describe('sous-type « Générique » retiré', () => {
         const labels = taxonomy.categories.flatMap(c => (c.sousTypes || []).map(st => st.label));
         expect(labels).not.toContain('Générique');
         const mosquee = taxonomy.categories.find(c => c.label === 'Mosquée');
-        expect(mosquee.sousTypes.map(st => st.label)).toEqual(['À minaret', 'À coupoles', 'Fortifiée']);
+        expect(mosquee.sousTypes.map(st => st.label)).toEqual(['À minaret', 'À coupoles', 'À voûtes en berceau', 'Fortifiée']);
     });
 
     it('légende : l\'icône sans sous-type s\'appelle « Mosquée », plus « Générique »', () => {
         const mosquee = getLegendGroups().find(g => g.category === 'Mosquée');
-        expect(mosquee.variants.map(v => v.label)).toEqual(['À minaret', 'À coupoles', 'Fortifiée', 'Mosquée']);
+        expect(mosquee.variants.map(v => v.label)).toEqual(['À minaret', 'À coupoles', 'À voûtes en berceau', 'Fortifiée', 'Mosquée']);
         const all = getLegendGroups().flatMap(g => g.variants.map(v => v.label));
         expect(all).not.toContain('Générique');
     });
 
-    it('légende : toujours 27 icônes distinctes (handoff #22)', () => {
+    it('légende : 28 icônes distinctes (handoff #22 + voûtes en berceau)', () => {
         const total = getLegendGroups().reduce((n, g) => n + g.variants.length, 0);
-        expect(total).toBe(27);
+        expect(total).toBe(28);
     });
 });

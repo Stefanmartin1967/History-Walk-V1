@@ -6,6 +6,14 @@
 
 ---
 
+- MOSQUÉE : SOUS-TYPE « À VOÛTES EN BERCEAU » (v3.7.455) — Demandé par Stefan le 24/10/2026. Des mosquées classées « À coupoles » par défaut sont en fait couvertes de voûtes en berceau (Amghar : « deux voûtes en berceau » selon l'ONTT) ; la taxonomie n'avait rien pour elles.
+  - **Taxonomie** : « À voûtes en berceau » entre « À coupoles » et « Fortifiée » (`public/poi-categories.json`). L'éditeur de fiche et la catégorisation de l'import photo le proposent d'eux-mêmes (ils lisent cette liste via `getSubtypes`).
+  - **Icône** (`src/poi-icons.js`) : deux voûtes vues en légère perspective (variante A, choisie par Stefan sur brouillons) ; vue de face, une voûte se confondrait avec une coupole. La légende passe de 27 à 28 icônes.
+  - **Aide** : l'exemple « à minaret, à coupoles ou fortifiée » cite le nouveau sous-type (`help-content.js`, `docs/aide-creation-edition-lieu.md`) ; la note technique de la doc retire « Générique » (supprimé le 10/10) et ajoute l'état « Disparu ».
+  - **Données** : aucune fiche reclassée. Les 82 « À coupoles » de Djerba se revoient au cas par cas, sur source ou constat de Stefan.
+
+  Tests : `taxonomie_icones_sync` (nouveau, 2) — chaque sous-type de la taxonomie a son icône dans la légende ; les icônes de mosquée sont toutes distinctes. `sous_type_generique` et `info-popover` mis à jour (4 sous-types, 28 icônes).
+
 - CONTRÔLE DU GABARIT : LIGNE OSM EN DOUBLE ET LIBELLÉ SANS ADRESSE (v3.7.454) — Demandé par Stefan le 21/10/2026, à la fin du retrait des lignes OSM en double (61 lignes retirées à la main en 6 lots publiés de 8 h 55 à 9 h 29, chaque lot vérifié). La règle est écrite au Gabarit (§3 ter) : le lien vers l'objet OSM de la fiche vient de `osm_ref` (bouton de l'app, lien des pages publiques depuis la v3.7.453), jamais d'une ligne de Source vers le même objet.
   - **`osm-en-double`** : signale une ligne de Source qui vise le même objet OSM que la fiche, avec la même règle que le bouton (`src/osm-ref.mjs`, URL collée dans `osm_ref` comprise). Une ligne vers un autre objet (mausolée voisin de Ben Daoued, terrain religieux d'El Ayssia) ou sur une fiche sans `osm_ref` (Salon de thé Ba9lawa) reste admise.
   - **`libelle-sans-adresse`** : signale une ligne « Libellé | … » dont la partie après la dernière barre n'est pas une adresse ; l'app l'affiche alors en simple texte. Cas réel : Ben Omran au lot 2, où l'adresse de la ligne Commons avait été coupée à la place de la ligne OSM.

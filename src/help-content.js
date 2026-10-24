@@ -516,8 +516,8 @@ export const GUIDE_LIEU = {
                 <ul class="help-list">
                     <li><strong>Sous-type</strong> — la variante du lieu. <span class="help-muted">Quand
                         la catégorie en propose (Mosquée, Église, Artisanat), il choisit aussi
-                        l'icône sur la carte : une mosquée à minaret, à coupoles ou fortifiée
-                        n'a pas le même pictogramme.</span></li>
+                        l'icône sur la carte : une mosquée à minaret, à coupoles, à voûtes en
+                        berceau ou fortifiée n'a pas le même pictogramme.</span></li>
                     <li><strong>État</strong> — par exemple <em>En activité</em>,
                         <em>Désaffecté</em>, <em>Ruine</em>.</li>
                     <li><strong>Accès</strong> — <em>Intérieur visitable</em>, <em>Extérieur
