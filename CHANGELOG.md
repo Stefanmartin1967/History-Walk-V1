@@ -6,6 +6,15 @@
 
 ---
 
+- CONTRÔLE DU GABARIT : FRONTIÈRES DE MOT UNICODE, PHRASE COLLÉE, LIGNE EN DOUBLE, PSEUDONYME OSM (v3.7.456) — Demandé par Stefan le 24/10/2026, après trois défauts passés inaperçus pendant la passe UNESCO et arrêtés de protection du 23/10.
+  - **Frontières de mot Unicode** : `\b` ne connaît que les lettres ASCII, si bien qu'une lettre accentuée créait une fausse frontière (« les mêmes » déclenchait « mes », règle première personne, vu sur un brouillon d'El Gayed). Les règles qui cherchent des mots français passent désormais par `mots()`, qui remplace `\b` par une frontière Unicode (titre, date dans la phrase, datation de Jalel, « Ancienne mosquée », siècle, première personne, intensif, phrase en Source, forme de l'observation).
+  - **`phrase-collee`** : un point collé à une majuscule (« mosquée ibadite de 1548.Sur place… », El Cheikh (Houmt Souk), retour à la ligne perdu au collage). « av. J.-C. » n'est pas visé.
+  - **`ligne-en-double`** : une ligne de description répétée (Amghar : la phrase UNESCO collée deux fois).
+  - **`credit-osm`** : le crédit admet un pseudonyme tel qu'il est écrit sur OSM, minuscules comprises (« rjaksic - OpenStreetMap, 2023 », Wersighen), et plus seulement « Prénom Nom ». Décision de Stefan du 24/10/2026.
+  - **Rejoué sur les données** : aucun écart sur les fiches publiques ; dans les brouillons, `phrase-collee` relève une seule ligne (transcription de Jalel « ap.J.C », Telbi). 30 règles en tout.
+
+  Tests : `check_gabarit` (+3, 45) — « mêmes » ne déclenche plus la première personne (« mes soins » si) ; phrase collée (et « av. J.-C. » admis) ; ligne en double ; crédit OSM sous pseudonyme.
+
 - MOSQUÉE : SOUS-TYPE « À VOÛTES EN BERCEAU » (v3.7.455) — Demandé par Stefan le 24/10/2026. Des mosquées classées « À coupoles » par défaut sont en fait couvertes de voûtes en berceau (Amghar : « deux voûtes en berceau » selon l'ONTT) ; la taxonomie n'avait rien pour elles.
   - **Taxonomie** : « À voûtes en berceau » entre « À coupoles » et « Fortifiée » (`public/poi-categories.json`). L'éditeur de fiche et la catégorisation de l'import photo le proposent d'eux-mêmes (ils lisent cette liste via `getSubtypes`).
   - **Icône** (`src/poi-icons.js`) : deux voûtes vues en légère perspective (variante A, choisie par Stefan sur brouillons) ; vue de face, une voûte se confondrait avec une coupole. La légende passe de 27 à 28 icônes.
