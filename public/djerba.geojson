@@ -3548,7 +3548,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Souk El Guebli Nécropole",
+        "Nom du site FR": "Nécropole de Souk El Guebli",
         "Nom du site arabe": "مقبرة سوق القبلي",
         "Catégorie": "Site funéraire",
         "Zone": "Sedouikech",
@@ -3579,7 +3579,7 @@
         "osmChecked": true,
         "osmCheckedDate": "2026-08-21",
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": false,
         "commons_ref": ""
       }
