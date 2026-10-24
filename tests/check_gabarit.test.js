@@ -119,6 +119,11 @@ describe('check-gabarit — description', () => {
         expect(regles({ description: 'La plaque indique « Nous rendons hommage ».' })).toEqual([]);
     });
 
+    it('frontières de mot Unicode : « mêmes » ne contient pas « mes » (faux positif du 23/10/2026)', () => {
+        expect(regles({ description: 'La plaque donne les mêmes dates.' })).toEqual([]);
+        expect(regles({ description: 'Elle est décrite par mes soins.' })).toEqual(['premiere-personne']);
+    });
+
     it('intensifs, sauf la datation de Jalel citée', () => {
         expect(regles({ description: 'Une mosquée magnifique.' })).toEqual(['intensif']);
         expect(regles({ description: 'Mosquée malékite, de datation « très récente ».' })).toEqual([]);
@@ -141,8 +146,21 @@ describe('check-gabarit — description', () => {
         expect(regles({ description: 'Mosquée de Midoun.\n\nSur place, deux mosquées sont accolées.' })).toEqual(['ligne-vide']);
     });
 
+    it('deux phrases collées (El Cheikh, 23/10/2026)', () => {
+        expect(regles({ description: 'Mosquée ibadite de 1548.Sur place, une plaque porte son nom.' })).toEqual(['phrase-collee']);
+        expect(regles({ description: 'Mosquée ibadite de 1548. Sur place, une plaque porte son nom.' })).toEqual([]);
+        expect(regles({ description: 'Il date de la fin du 3ᵉ siècle av. J.-C. selon Wikipédia.' })).toEqual([]);
+    });
+
+    it('ligne en double (Amghar, 23/10/2026)', () => {
+        expect(regles({ description: 'Mosquée d\'Ajim.\nElle est protégée.\nElle est protégée.' })).toEqual(['ligne-en-double']);
+        expect(regles({ description: 'Mosquée d\'Ajim.\nElle est protégée.' })).toEqual([]);
+    });
+
     it('crédit OSM : forme et dernière ligne', () => {
         expect(regles({ description: 'Monument pyramidal.\nPetr Jenč - OpenStreetMap, 2024' })).toEqual([]);
+        // Pseudonyme tel qu'écrit sur OSM, minuscules comprises (décision du 24/10/2026).
+        expect(regles({ description: 'Bâtiments effondrés.\nrjaksic - OpenStreetMap, 2023' })).toEqual([]);
         expect(regles({ description: 'Petr Jenč - OpenStreetMap, 2024\nMonument pyramidal.' })).toEqual(['credit-osm']);
         expect(regles({ description: 'Monument pyramidal.\nPetr Jenč – OpenStreetMap, 2024' })).toEqual(['credit-osm']);
     });

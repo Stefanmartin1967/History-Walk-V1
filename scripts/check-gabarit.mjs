@@ -47,9 +47,18 @@ export function horsGuillemets(texte) {
 
 const lignes = (texte) => String(texte ?? '').split('\n').map(l => l.trim()).filter(Boolean);
 const phrases = (ligne) => ligne.split(/(?<=[.!?])\s+(?=\p{Lu})/u);
-const estPhrase = (l) => !l.includes(' | ') && !estUrl(l) && (/^sur place\b/i.test(l) || /\.$/.test(l));
+const estPhrase = (l) => !l.includes(' | ') && !estUrl(l) && (mots(/^sur place\b/i).test(l) || /\.$/.test(l));
 const estUrl = (s) => /^(https?:\/\/|www\.)\S+$/i.test(s);
 const extrait = (s, max = 110) => (s.length > max ? s.slice(0, max - 1) + '…' : s);
+
+// `\b` ne connaît que les lettres ASCII : une lettre accentuée devant ou
+// derrière crée une fausse frontière de mot (« mêmes » contenait « mes »,
+// faux positif du 23/10/2026). Les règles qui cherchent des mots français
+// passent par `mots()`, qui remplace `\b` par une frontière Unicode.
+const LETTRE = '[\\p{L}\\p{N}_]';
+const BORNE = `(?:(?<=${LETTRE})(?!${LETTRE})|(?<!${LETTRE})(?=${LETTRE}))`;
+/** La même expression, avec des frontières de mot Unicode (drapeau u). */
+export const mots = (re) => new RegExp(re.source.replace(/\\b/g, BORNE), re.flags.includes('u') ? re.flags : re.flags + 'u');
 
 // Marques de sens (U+200E/F, U+202A-E, U+2066-9), espaces et jointures sans
 // largeur (U+200B-D, U+2060-4), BOM. Les espaces insécables (U+00A0, U+202F)
@@ -67,15 +76,15 @@ export const REGLES = [
         id: 'titre', gabarit: '§3 bis',
         titre: 'Titre : une qualité qui vieillit ou un numéro n\'est pas un nom (« Mosquée X (Ancienne) »)',
         trouver: (p) => [p['Nom du site FR'] || ''].filter(n =>
-            /^(?:Ancienne?|Nouvelle?|Neuve?|Vieille?)\b/i.test(n) || /\s(?:\d|I{1,3})$/.test(n)),
+            mots(/^(?:Ancienne?|Nouvelle?|Neuve?|Vieille?)\b/i).test(n) || /\s(?:\d|I{1,3})$/.test(n)),
     },
     // ─── Description ─────────────────────────────────────────────────────────
     {
         id: 'date-dans-la-phrase', gabarit: '§1, §3 quater',
         titre: 'Date de visite dans la phrase (elle va dans la Source)',
         trouver: (p) => lignes(p.description).filter(l =>
-            new RegExp(`\\bsur place,? (?:le|du) \\d{1,2}(?:er)? ${MOIS}`, 'i').test(l)
-            || /\b(?:lors de|pendant) (?:ma|notre|la) visite (?:du|le) \d/i.test(l)),
+            mots(new RegExp(`\\bsur place,? (?:le|du) \\d{1,2}(?:er)? ${MOIS}`, 'i')).test(l)
+            || mots(/\b(?:lors de|pendant) (?:ma|notre|la) visite (?:du|le) \d/i).test(l)),
     },
     {
         id: 'date-en-chiffres', gabarit: '§2, §3',
@@ -89,19 +98,19 @@ export const REGLES = [
         // Seule la phrase du répertoire compte : la phrase suivante peut citer
         // Wikipédia (« la donne également abandonnée et très ancienne »).
         trouver: (p) => lignes(p.description).filter(l => phrases(l).some(ph => /l'inscrit au n°/i.test(ph)
-            && /(?:[,:]|\bet)\s+(?:de datation\s+)?(?:très\s+)?(?:ancienne?s?|récente?s?)\s*(?=[.,;)]|$)/i.test(horsGuillemets(ph)))),
+            && mots(/(?:[,:]|\bet)\s+(?:de datation\s+)?(?:très\s+)?(?:ancienne?s?|récente?s?)\s*(?=[.,;)]|$)/i).test(horsGuillemets(ph)))),
     },
     {
         id: 'ancienne-mosquee-en-tete', gabarit: '§2',
         titre: '« Ancienne mosquée » en tête se lit « ex-mosquée »',
-        trouver: (p) => lignes(p.description).slice(0, 1).filter(l => /^Ancienne mosquée\b/i.test(l)),
+        trouver: (p) => lignes(p.description).slice(0, 1).filter(l => mots(/^Ancienne mosquée\b/i).test(l)),
     },
     {
         id: 'siecle', gabarit: '§2',
         titre: 'Siècle : chiffres arabes et ᵉ en exposant (16ᵉ siècle)',
         trouver: (p) => lignes(p.description).filter(l =>
-            /\b[IVXL]{1,6}(?:e|è|ème|ᵉ|-ème)?\s+siècle/.test(l)
-            || /\b\d{1,2}(?:e|è|ème|eme|-ème|-e)\s+siècle/i.test(l)),
+            mots(/\b[IVXL]{1,6}(?:e|è|ème|ᵉ|-ème)?\s+siècle/).test(l)
+            || mots(/\b\d{1,2}(?:e|è|ème|eme|-ème|-e)\s+siècle/i).test(l)),
     },
     {
         id: 'hegire-sans-conversion', gabarit: '§2',
@@ -158,14 +167,14 @@ export const REGLES = [
         id: 'premiere-personne', gabarit: '§2, §3 ter',
         titre: 'Forme impersonnelle : pas de « nous », « vous », « je »',
         trouver: (p) => lignes(p.description).filter(l =>
-            /\b(?:nous|notre|nos|vous|votre|vos|je|mon|mes)\b|\bj['\u2019]/i.test(horsGuillemets(l).replace(/\bnotre ère\b/gi, ''))),
+            mots(/\b(?:nous|notre|nos|vous|votre|vos|je|mon|mes)\b|\bj['\u2019]/i).test(horsGuillemets(l).replace(mots(/\bnotre ère\b/gi), ''))),
     },
     {
         id: 'intensif', gabarit: '§2',
         titre: 'Intensif ou adjectif de remplissage',
         trouver: (p) => lignes(p.description).filter(l =>
-            /\b(?:très|clairement|vraiment|absolument|magnifiques?|superbes?|splendides?|sublimes?|incroyables?|extraordinaires?|exceptionnel(?:le)?s?)\b/i
-                .test(horsGuillemets(l).replace(/\btrès (?:ancienne?s?|récente?s?)\b/gi, ''))),
+            mots(/\b(?:très|clairement|vraiment|absolument|magnifiques?|superbes?|splendides?|sublimes?|incroyables?|extraordinaires?|exceptionnel(?:le)?s?)\b/i)
+                .test(horsGuillemets(l).replace(mots(/\btrès (?:ancienne?s?|récente?s?)\b/gi), ''))),
     },
     {
         id: 'remplissage', gabarit: '§2, §3 ter',
@@ -190,12 +199,29 @@ export const REGLES = [
         trouver: (p) => (/\n[ \t]*\n/.test(String(p.description ?? '').trim()) ? ['(ligne vide)'] : []),
     },
     {
+        // El Cheikh (Houmt Souk), 23/10/2026 : « mosquée ibadite de 1548.Sur place, … »,
+        // un retour à la ligne perdu au collage. Minuscule, chiffre ou guillemet
+        // fermant, puis un point collé à une majuscule.
+        id: 'phrase-collee', gabarit: '§1',
+        titre: 'Deux phrases collées (point suivi d\'une majuscule sans espace)',
+        trouver: (p) => lignes(p.description).filter(l => /[\p{Ll}\d»)]\.\p{Lu}/u.test(l)),
+    },
+    {
+        // Amghar, 23/10/2026 : la phrase UNESCO collée deux fois, l'ancienne
+        // ligne restée au-dessus de la nouvelle.
+        id: 'ligne-en-double', gabarit: '§1',
+        titre: 'Ligne en double dans la description',
+        trouver: (p) => lignes(p.description).filter((l, i, ls) => ls.indexOf(l) !== i),
+    },
+    {
         id: 'credit-osm', gabarit: '§3 ter',
-        titre: 'Crédit OSM : « Prénom Nom - OpenStreetMap, année » en dernière ligne',
+        titre: 'Crédit OSM : « Prénom Nom - OpenStreetMap, année » (ou pseudonyme) en dernière ligne',
+        // Pseudonyme admis tel qu'il est écrit sur OSM, minuscules comprises
+        // (« rjaksic - OpenStreetMap, 2023 », Wersighen) : décision du 24/10/2026.
         trouver: (p) => {
             const ls = lignes(p.description);
             return ls.filter((l, i) => /OpenStreetMap, \d{4}\s*$/.test(l)
-                && (i !== ls.length - 1 || !/^\p{Lu}[\p{L}'.-]*(?: \p{L}[\p{L}'.-]*)* - OpenStreetMap, \d{4}$/u.test(l)));
+                && (i !== ls.length - 1 || !/^(?:\p{Lu}[\p{L}'.-]*(?: \p{L}[\p{L}'.-]*)*|[\p{L}\p{N}_.-]+) - OpenStreetMap, \d{4}$/u.test(l)));
         },
     },
     // ─── Source ──────────────────────────────────────────────────────────────
@@ -252,7 +278,7 @@ export const REGLES = [
         id: 'forme-observation', gabarit: '§3',
         titre: 'Forme de l\'observation : « Observation sur place, le … » ou « … et observation sur place, le … »',
         // Sans date, la ligne relève déjà de sur-place-sans-date : un seul signalement.
-        trouver: (p) => lignes(p.Source).filter(l => /observations?\b/i.test(l) && !l.includes(' | ') && !estPhrase(l)
+        trouver: (p) => lignes(p.Source).filter(l => mots(/observations?\b/i).test(l) && !l.includes(' | ') && !estPhrase(l)
             && (DATE_EN_LETTRES.test(l) || MOIS_ANNEE.test(l) || /\d{1,2}\/\d{1,2}/.test(l))
             && !/^Observation sur place(?: et [^,]+)?, (?:le |lors de )/.test(l) && !/ et observation sur place, le /.test(l)),
     },
