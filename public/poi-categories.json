@@ -16,6 +16,7 @@
       "sousTypes": [
         { "label": "À minaret", "portee": "générique" },
         { "label": "À coupoles", "portee": "générique" },
+        { "label": "À voûtes en berceau", "portee": "générique" },
         { "label": "Fortifiée", "portee": "générique" }
       ],
       "etats": ["En activité", "Désaffecté", "Ruine", "Disparu"],

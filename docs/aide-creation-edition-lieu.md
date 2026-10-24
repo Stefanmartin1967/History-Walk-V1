@@ -56,7 +56,8 @@ position — non modifiable.
 Choisir la **Catégorie** fait apparaître, selon le type de lieu, jusqu'à trois précisions :
 - **Sous-type** — la variante du lieu. **Quand la catégorie en propose** *(Mosquée,
   Église, Artisanat)*, le sous-type **choisit aussi l'icône** sur la carte : une mosquée
-  *à minaret*, *à coupoles* ou *fortifiée* n'a pas le même pictogramme.
+  *à minaret*, *à coupoles*, *à voûtes en berceau* ou *fortifiée* n'a pas le même
+  pictogramme.
 - **État** — par exemple *En activité*, *Désaffecté*, *Ruine*.
 - **Accès** — *Intérieur visitable*, *Extérieur seulement* ou *Non visitable*.
 
@@ -140,8 +141,9 @@ Téléphone · Horaires · Facebook · Source (URL ou Texte) · Notes · footer 
 (`btn-rich-move-marker`) + coords.
 
 **Taxonomie & icônes** (`taxonomy.js` → `public/poi-categories.json` ; `poi-icons.js`) :
-valeurs PAR catégorie. Ex. **Mosquée** → sous-types « À minaret / À coupoles / Fortifiée /
-Générique », états « En activité / Désaffecté / Ruine », accès « Intérieur visitable /
+valeurs PAR catégorie. Ex. **Mosquée** → sous-types « À minaret / À coupoles / À voûtes en
+berceau / Fortifiée » (vide = icône « Mosquée »), états « En activité / Désaffecté / Ruine /
+Disparu », accès « Intérieur visitable /
 Extérieur seulement / Non visitable ». Le **sous-type pilote l'icône** pour les catégories
 multi-icônes (Mosquée, Église, Artisanat) : `getIconForFeature` → `getIconHtml(catégorie,
 sous-type)` (lookup hiérarchique). Catégories sans sous-type → 1 icône.

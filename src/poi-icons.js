@@ -1,10 +1,12 @@
-// poi-icons.js — référentiel des icônes POI v2 (handoff #22, 27 icônes ocre).
+// poi-icons.js — référentiel des icônes POI v2 (handoff #22, 27 icônes ocre,
+// + « À voûtes en berceau » le 24/10/2026 = 28).
 // Refonte 20/05/2026 (PR2 chantier iconification) : remplace les icônes MDI
 // legacy par les SVGs custom validés. viewBox 0 0 96 96. Variante OCRE PLEINE
 // pour la carte (markers). Variante outline = PR3 (panneau filtres, fiche).
 //
 // Lookup hiérarchique : Catégorie → Sous-type (si applicable) → SVG.
-// - Mosquée : 3 sous-types (À minaret / À coupoles / Fortifiée) + icône
+// - Mosquée : 4 sous-types (À minaret / À coupoles / À voûtes en berceau /
+//   Fortifiée) + icône
 //   « Mosquée » sans sous-type (forme indéterminée ou pas encore classée).
 // - Église : 2 sous-types (Catholique / Orthodoxe).
 // - Artisanat : 3 sous-types (Poterie / Huilerie / Tissage) + icône
@@ -33,9 +35,9 @@ function svgFor(paths, raw) {
         paths + '</g></svg>';
 }
 
-// ───── Les 27 icônes (paths inline, wrapper appliqué dynamiquement) ─────
+// ───── Les 28 icônes (paths inline, wrapper appliqué dynamiquement) ─────
 
-// Lieux de culte — Mosquée (4 sous-types)
+// Lieux de culte — Mosquée (4 sous-types + icône sans sous-type)
 const I_MOSQUEE_MINARET = svgFor(G +
     '<path d="M6 82 L6 58 L58 58 L58 28 L76 28 L76 82 Z"/>' +
     '<path d="M8 58 Q8 50 16 50 Q24 50 24 58 Z"/>' +
@@ -65,6 +67,20 @@ const I_MOSQUEE_COUPOLES = svgFor(G +
     door('M42 82 L42 68 Q42 64 48 64 Q54 64 54 68 L54 82 Z') +
     '<rect x="20" y="66" width="6" height="6" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
     '<rect x="70" y="66" width="6" height="6" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>'
+);
+
+// Ajoutée le 24/10/2026 (Stefan, variante A « deux voûtes » choisie sur
+// brouillons) : vue de face, une voûte ressemble à une coupole — d'où la
+// légère perspective (comme le Puits) qui montre le berceau en profondeur.
+const I_MOSQUEE_VOUTES = svgFor(G +
+    '<path d="M15.6 48.8 A14 14 0 0 1 38 60 L50 51 A14 14 0 0 0 27.6 39.8 Z"/>' +
+    '<path d="M43.6 48.8 A14 14 0 0 1 66 60 L78 51 A14 14 0 0 0 55.6 39.8 Z"/>' +
+    '<path d="M66 60 L78 51 L78 73 L66 82 Z"/>' +
+    '<path d="M10 82 L10 60 A14 14 0 0 1 38 60 A14 14 0 0 1 66 60 L66 82 Z"/>' +
+    '<line x1="24" y1="46" x2="36" y2="37" stroke-width="1.4"/>' +
+    '<line x1="52" y1="46" x2="64" y2="37" stroke-width="1.4"/>' +
+    '<rect x="21" y="67" width="6" height="6" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M46 82 L46 70 Q46 66 52 66 Q58 66 58 70 L58 82 Z')
 );
 
 const I_MOSQUEE_FORTIFIEE = svgFor(G +
@@ -346,6 +362,7 @@ const POI_ICONS = {
     'Mosquée': {
         'À minaret': I_MOSQUEE_MINARET,
         'À coupoles': I_MOSQUEE_COUPOLES,
+        'À voûtes en berceau': I_MOSQUEE_VOUTES,
         'Fortifiée': I_MOSQUEE_FORTIFIEE,
         // Sans sous-type : l'ex-« Générique » (retiré le 10/10/2026, Stefan :
         // on laisse vide) avait déjà cette icône.
@@ -468,7 +485,7 @@ const GENERIC_LABELS = { 'Artisanat': 'Atelier', 'Mosquée': 'Mosquée' };
  *  - `isMulti=false` : catégorie mono-icône (variants = 1 entrée = la catégorie).
  *  - `isMulti=true`  : catégorie à sous-types ; variants = chaque sous-type
  *    nommé + une entrée générique si le `_default` n'est pas déjà l'un d'eux.
- * Total des variants sur l'ensemble = 27 (cf. handoff #22).
+ * Total des variants sur l'ensemble = 28 (27 du handoff #22 + voûtes en berceau).
  */
 export function getLegendGroups() {
     return Object.entries(POI_ICONS).map(([category, entry]) => {
