@@ -5034,8 +5034,8 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Ghribe",
-        "Nom du site arabe": "مسجد سيدي غريب",
+        "Nom du site FR": "Mosquée Sidi Ghrib",
+        "Nom du site arabe": "جامع سيدي غريب",
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "Source": "Répertoire J. Fathallah, n° 163 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nPlaque à l'entrée de la mosquée, photographie de Rais67, 23 août 2026 (Wikimedia Commons, CC BY 4.0) | https://commons.wikimedia.org/wiki/File:Sidi_Ghrib_Mosque_01.jpg",
@@ -9020,8 +9020,8 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Mihrab",
-        "Nom du site arabe": "مسجد المحراب",
+        "Nom du site FR": "Mosquée El Mihrab",
+        "Nom du site arabe": "جامع المحراب",
         "Catégorie": "Mosquée",
         "Zone": "El May",
         "Source": "Répertoire J. Fathallah, n° 154 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba\nPlaque à l'entrée de la mosquée, photographie de TOUMOU, 23 mars 2026 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Mosqu%C3%A9e_al_mihrab_01.jpg",
@@ -12210,7 +12210,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Mosquée Sidi Amhammed Ben Aissa",
+        "Nom du site FR": "Mosquée Sidi Mohamed Ben Aissa",
         "Catégorie": "Mosquée",
         "osm_ref": "way/460892754",
         "HW_ID": "HW-01KZH0VES5A9S9SWKTJ9WNJ1XX",
@@ -12222,7 +12222,7 @@
         "introuvableCarte": false,
         "Nom du site arabe": "",
         "Sous-type": "À coupoles",
-        "État": "",
+        "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
         "maps_ref": "https://maps.app.goo.gl/B4aizEhWkmkntUFi8",
@@ -13540,18 +13540,18 @@
         "Prix_TND": 0,
         "Source": "Répertoire J. Fathallah, n° 160 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "maps_ref": "https://maps.app.goo.gl/R4HdM76tERmW4dC69",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "info_gpx": "",
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
         "Zone": "El May",
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": true,
         "accessPoint": [
           10.9316155,
