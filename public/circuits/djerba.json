@@ -429,5 +429,25 @@
       "HW-01K77WPE6EWBD679W4C2QRM2FA",
       "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B"
     ]
+  },
+  {
+    "id": "HW-01M61Y679QJ7DYG0HY8EJR77GC",
+    "name": "Circuit de Mausolée Sidi Sliman à Djerbahood",
+    "file": "djerba/Circuit de Mausolée Sidi Sliman à Djerbahood.gpx",
+    "description": "",
+    "distance": "7.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Erriadh",
+    "poiIds": [
+      "HW-01KZH0VEXP89XM09J99252QXTQ",
+      "HW-01KJABRN0Y687FFD0EF2SYPZ3Q",
+      "HW-01M3E3JMS4D1WC6EXDN9GTH494",
+      "HW-01K77WPE6GCJG1C7RFFRYEK7B3",
+      "HW-01KK1CNPZR005431XS160BZ1C4",
+      "HW-01K77WPE6RM4YJB23YX7AD522S",
+      "HW-01KZH0VEKNPX8V44P41SDK5Q2H",
+      "HW-01KJN6EEH9Z49AMGYJT621WG9N"
+    ]
   }
 ]
