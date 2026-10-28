@@ -52,6 +52,32 @@
         ],
         "zoom": 13
       }
+    },
+    "charleroi": {
+      "name": "Charleroi",
+      "status": "draft",
+      "file": "charleroi.geojson",
+      "circuitsFile": "circuits/charleroi.json",
+      "zonesFile": "charleroi-zones.geojson",
+      "bounds": [
+        [
+          50.30997323738739,
+          4.251055313235969
+        ],
+        [
+          50.53519846261261,
+          4.604560386764032
+        ]
+      ],
+      "currency": "",
+      "country": "be",
+      "startView": {
+        "center": [
+          50.42271973226534,
+          4.4278078500000015
+        ],
+        "zoom": 12.700000000000001
+      }
     }
   }
 }
