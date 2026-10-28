@@ -6,6 +6,16 @@
 
 ---
 
+- OVERPASS : CLÉ OVERPASS.CH, SERVEUR MORT RETIRÉ, PAUSES ET CONTRÔLE DE FRAÎCHEUR (v3.7.457) — Demandé par Stefan le 28/10/2026 : le Scout et la récupération des zones d'une nouvelle destination ne passaient plus. Mesuré depuis heripia.com le même jour : overpass-api.de saturé (502 « at capacity » immédiat, ou 33 s pour une mini-requête, au-delà des 25 s du Scout) ; kumi.systems et private.coffee muets (aucune réponse en 35 s). D'après le wiki OSM, c'est un seul et même serveur sous deux noms.
+  - **Chaîne de serveurs** (`src/osm-overpass.js`) : api.overpass.ch en premier si une clé est enregistrée sur l'appareil, puis overpass-api.de. Les deux miroirs morts sont retirés (ils coûtaient un timeout entier à chaque échec), ainsi que l'alternance entre serveurs.
+  - **Clé par appareil** (`src/overpass-key.js`, Configuration > « Serveur Overpass ») : stockée dans IndexedDB comme le jeton GitHub, jamais dans le code (dépôt public). Vérifiée par une requête minuscule avant d'être retenue ; un champ vide la supprime.
+  - **Pauses** : après un refus 406/429/502/503/504, le serveur n'est plus sollicité pendant 30 s (politique d'overpass-api.de) ; si tous sont en pause, l'échec est immédiat au lieu d'enchaîner les attentes. overpass.ch est limité à une requête toutes les 2,1 s (offre gratuite : 30/min), ce qui ralentit d'autant la pré-pose des drapeaux en lot.
+  - **Fraîcheur** : une réponse dont la base OSM a plus de 7 jours est écartée (le puits supprimé proposé par le Scout le 16/09 venait d'un miroir en retard de 7 semaines).
+  - **Délais** : 40 s par serveur pour une partie du Scout (25 s avant) et pour les zones (30 s avant). Sans clé, le message d'échec du Scout signale le réglage.
+  - **CSP** (`index.html`) : `connect-src` gagne api.overpass.ch et perd les deux miroirs.
+
+  Tests : `osm_overpass` (+8, 21) — ordre des serveurs avec et sans clé, bascule, pause après 502 sans backoff à vide, erreur réseau sans pause, base périmée écartée, vérification de la clé (200 / 401 / vide).
+
 - CONTRÔLE DU GABARIT : FRONTIÈRES DE MOT UNICODE, PHRASE COLLÉE, LIGNE EN DOUBLE, PSEUDONYME OSM (v3.7.456) — Demandé par Stefan le 24/10/2026, après trois défauts passés inaperçus pendant la passe UNESCO et arrêtés de protection du 23/10.
   - **Frontières de mot Unicode** : `\b` ne connaît que les lettres ASCII, si bien qu'une lettre accentuée créait une fausse frontière (« les mêmes » déclenchait « mes », règle première personne, vu sur un brouillon d'El Gayed). Les règles qui cherchent des mots français passent désormais par `mots()`, qui remplace `\b` par une frontière Unicode (titre, date dans la phrase, datation de Jalel, « Ancienne mosquée », siècle, première personne, intensif, phrase en Source, forme de l'observation).
   - **`phrase-collee`** : un point collé à une majuscule (« mosquée ibadite de 1548.Sur place… », El Cheikh (Houmt Souk), retour à la ligne perdu au collage). « av. J.-C. » n'est pas visé.

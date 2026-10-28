@@ -56,7 +56,7 @@ async function fetchZonesForBBox(bbox, adminLevel) {
     const query = `[out:json][timeout:60];(relation["boundary"="administrative"]["admin_level"="${adminLevel}"](${south},${west},${north},${east}););out geom;`;
     let data;
     try {
-        data = await fetchOverpassJson(query, { timeoutMs: 30000, retries: 1 });
+        data = await fetchOverpassJson(query, { timeoutMs: 40000, retries: 1 });
     } catch (e) {
         return { type: 'FeatureCollection', features: [] };
     }

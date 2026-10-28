@@ -1,6 +1,8 @@
 import { state, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStoredToken, getStoredUsername, saveToken, validateToken, uploadFileToGitHub } from './github-sync.js';
+import { hasOverpassKey, testOverpassKey } from './osm-overpass.js';
+import { saveOverpassKey } from './overpass-key.js';
 import { showToast } from './toast.js';
 // PR 3 — shell custom (admin-cc-overlay), plus de dépendance à openHwModal/closeHwModal.
 // Les imports legacy sont retirés volontairement ; tout passe par openControlCenterModal/closeCCModal.
@@ -1145,6 +1147,27 @@ export function renderTab(tab, diffData, callbacks) {
             </div>
         `;
 
+        // — Section Serveur Overpass (28/10/2026) — clé overpass.ch par appareil,
+        //   pour Scout, zones d'une nouvelle destination et drapeaux. Sans clé :
+        //   overpass-api.de seul, serveur public souvent saturé. —
+        const overpassKeyOk = hasOverpassKey();
+        const overpassHtml = `
+            <h4 class="cc-section-title">Serveur Overpass</h4>
+            <div class="cc-card cc-card--padded cc-card--block">
+                <div class="cc-config-pat-header">
+                    <p class="cc-card-hint">
+                        ${overpassKeyOk
+                            ? 'Clé overpass.ch enregistrée sur cet appareil. Secours : overpass-api.de.'
+                            : 'Aucune clé : Scout, quartiers et drapeaux passent par overpass-api.de, serveur public souvent saturé.'}
+                    </p>
+                </div>
+                <input type="password" id="cc-overpass-key-input" class="cc-config-input" placeholder="${overpassKeyOk ? 'Nouvelle clé (laisser vide pour supprimer)' : 'Clé overpass.ch'}" autocomplete="off" spellcheck="false">
+                <button id="btn-save-overpass-key" class="cc-btn-cta cc-btn-cta--full">
+                    <i data-lucide="save"></i> ${overpassKeyOk ? 'Remplacer ou supprimer la clé' : 'Sauvegarder'}
+                </button>
+            </div>
+        `;
+
         // — Section Dépôt GitHub —
         const repoHtml = `
             <h4 class="cc-section-title">Dépôt GitHub</h4>
@@ -1186,6 +1209,7 @@ export function renderTab(tab, diffData, callbacks) {
             <div class="cc-config-layout">
                 ${connectionHtml}
                 ${patHtml}
+                ${overpassHtml}
                 ${repoHtml}
                 ${migrateNotesHtml}
             </div>
@@ -1225,6 +1249,37 @@ export function renderTab(tab, diffData, callbacks) {
                     btnSave.disabled = false;
                     btnSave.innerHTML = originalHTML;
                     createIcons({ icons: appIcons, root: btnSave });
+                }
+            };
+
+            // — Clé overpass.ch : vérifiée avant d'être retenue ; vide = suppression —
+            const btnOverpass = document.getElementById('btn-save-overpass-key');
+            if (btnOverpass) btnOverpass.onclick = async () => {
+                const val = document.getElementById('cc-overpass-key-input').value.trim();
+                if (!val) {
+                    if (hasOverpassKey()) {
+                        saveOverpassKey('');
+                        showToast('Clé overpass.ch supprimée', 'info');
+                        renderTab('settings', diffData, callbacks);
+                    }
+                    return;
+                }
+                btnOverpass.disabled = true;
+                const originalHTML = btnOverpass.innerHTML;
+                btnOverpass.textContent = 'Vérification…';
+                try {
+                    const result = await testOverpassKey(val);
+                    if (!result.ok) {
+                        showToast(`Clé non retenue : ${result.error}`, 'error', 5000);
+                        return;
+                    }
+                    saveOverpassKey(val);
+                    showToast('Clé overpass.ch enregistrée sur cet appareil', 'success');
+                    renderTab('settings', diffData, callbacks);
+                } finally {
+                    btnOverpass.disabled = false;
+                    btnOverpass.innerHTML = originalHTML;
+                    createIcons({ icons: appIcons, root: btnOverpass });
                 }
             };
 
