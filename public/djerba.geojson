@@ -11223,8 +11223,8 @@
         "mapsHasPhoto": true,
         "jalelChecked": true,
         "accessPoint": [
-          10.8436666,
-          33.8429144
+          10.843439961189974,
+          33.84279533765465
         ],
         "commons_ref": ""
       }
@@ -11349,8 +11349,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          10.854438543319702,
-          33.82125957539374
+          10.853577554225923,
+          33.82111692001716
         ]
       },
       "properties": {
@@ -11379,7 +11379,9 @@
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false
+        "jalelChecked": false,
+        "lat": 33.82111692001716,
+        "lng": 10.853577554225923
       }
     },
     {
@@ -18340,8 +18342,8 @@
         "jalelChecked": true,
         "HW_ID": "HW-01M3E3JMS4D1WC6EXDN9GTH494",
         "accessPoint": [
-          10.8472567,
-          33.833234
+          10.8459893,
+          33.8328115
         ],
         "Zone": "Erriadh",
         "lat": 33.8327115597041,
