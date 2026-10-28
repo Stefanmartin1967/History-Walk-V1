@@ -409,5 +409,25 @@
       "HW-01K77WPE6J3TTHTXC560NEDQ24",
       "HW-01KZH0VFTNCH521D19MFV3TDQP"
     ]
+  },
+  {
+    "id": "HW-01M61WRV1Y03AK0PY2KFDPW2K2",
+    "name": "Circuit de Mosquée Ouaghlani à Mosquée Bouregba",
+    "file": "djerba/Circuit de Mosquée Ouaghlani à Mosquée Bouregba.gpx",
+    "description": "",
+    "distance": "7.1 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Sedouikech",
+    "poiIds": [
+      "HW-01KZH0VGB51YV36EB6ZYG21J38",
+      "HW-01KZH0VFZF1XK99XT4VKNV3K2A",
+      "HW-01KZH0VFY1T559HQJRPPHY044Z",
+      "HW-01K77WPE6R9A1BAASW9SGFA97P",
+      "HW-01K77WPE6D5GR4P97YHEN41JNS",
+      "HW-01KZH0VG0JFXX61A1M0W4KJDV5",
+      "HW-01K77WPE6EWBD679W4C2QRM2FA",
+      "HW-01K77WPE6RX8ZV4MNNEZ6QAR1B"
+    ]
   }
 ]
