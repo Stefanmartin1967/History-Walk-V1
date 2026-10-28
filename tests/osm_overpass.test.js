@@ -2,7 +2,7 @@
 // On teste l'utility pure (nearestPointFromWays, distanceMeters, buildQuery)
 // + le flow nearestHighway() avec un fetch mocké.
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { nearestHighway, _internals } from '../src/osm-overpass.js';
+import { nearestHighway, fetchOverpassJson, setOverpassKey, hasOverpassKey, testOverpassKey, _internals } from '../src/osm-overpass.js';
 
 const { distanceMeters, nearestPointFromWays, buildQuery, SEARCH_RADIUS_M } = _internals;
 
@@ -118,26 +118,96 @@ describe('osm-overpass — nearestHighway (fetch mocké)', () => {
         expect(r).toBeNull();
     });
 
-    it('bascule sur le 2e endpoint si le 1er échoue', async () => {
-        const fail = { ok: false, status: 503, json: async () => ({}) };
-        const success = {
-            ok: true,
-            json: async () => ({
-                elements: [{ type: 'way', geometry: [{ lat: 1, lon: 2 }] }],
-            }),
-        };
-        global.fetch = vi.fn()
-            .mockResolvedValueOnce(fail)
-            .mockResolvedValueOnce(success);
-        const r = await nearestHighway(0, 0);
-        expect(global.fetch).toHaveBeenCalledTimes(2);
-        expect(r).not.toBeNull();
-    });
-
-    it('throws si TOUS les endpoints échouent (après retries)', async () => {
+    it('throws si le serveur échoue à chaque tentative (après retries)', async () => {
         global.fetch = vi.fn().mockRejectedValue(new Error('Network down'));
         await expect(nearestHighway(0, 0)).rejects.toThrow();
-        // 4 tentatives (1 initiale + 3 retries) × 3 endpoints = 12 appels.
-        expect(global.fetch).toHaveBeenCalledTimes(12);
+        // Sans clé, un seul serveur : 4 tentatives (1 initiale + 3 retries) = 4 appels.
+        expect(global.fetch).toHaveBeenCalledTimes(4);
     }, 20000); // Timeout 20s : couvre les 3 backoffs cumulés (1+3+8=12s).
+});
+
+describe('osm-overpass — chaîne de serveurs (fetch mocké)', () => {
+    const { PUBLIC_ENDPOINT, KEYED_ENDPOINT_BASE, MAX_DATA_AGE_MS, dataAgeMs, reset } = _internals;
+    const ok = (json) => ({ ok: true, status: 200, json: async () => json });
+    const fail = (status) => ({ ok: false, status, json: async () => ({}) });
+    let originalFetch;
+    beforeEach(() => { originalFetch = global.fetch; reset(); });
+    afterEach(() => { global.fetch = originalFetch; reset(); vi.restoreAllMocks(); });
+
+    it('sans clé : seul overpass-api.de est interrogé', async () => {
+        global.fetch = vi.fn().mockResolvedValue(ok({ elements: [] }));
+        expect(hasOverpassKey()).toBe(false);
+        await fetchOverpassJson('q', { retries: 0 });
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch.mock.calls[0][0]).toBe(PUBLIC_ENDPOINT);
+    });
+
+    it('avec clé : overpass.ch d\'abord, clé dans le chemin', async () => {
+        setOverpassKey('  abc123  ');
+        global.fetch = vi.fn().mockResolvedValue(ok({ elements: [] }));
+        await fetchOverpassJson('q', { retries: 0 });
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(global.fetch.mock.calls[0][0]).toBe(`${KEYED_ENDPOINT_BASE}/abc123/interpreter`);
+    });
+
+    it('avec clé : bascule sur overpass-api.de si overpass.ch échoue', async () => {
+        setOverpassKey('abc123');
+        global.fetch = vi.fn()
+            .mockResolvedValueOnce(fail(500))
+            .mockResolvedValueOnce(ok({ elements: [{ id: 1 }] }));
+        const json = await fetchOverpassJson('q', { retries: 0 });
+        expect(json.elements).toHaveLength(1);
+        expect(global.fetch.mock.calls[1][0]).toBe(PUBLIC_ENDPOINT);
+    });
+
+    it('un serveur saturé (502) est mis en pause : la requête suivante ne le sollicite plus', async () => {
+        global.fetch = vi.fn().mockResolvedValue(fail(502));
+        await expect(fetchOverpassJson('q', { retries: 3 })).rejects.toThrow();
+        // Pause posée dès le 1er refus → les retries s'arrêtent net (pas de backoff à vide).
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+        const err = await fetchOverpassJson('q', { retries: 0 }).catch(e => e);
+        expect(err.cooling).toBe(true);
+        expect(global.fetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('une erreur réseau ne met PAS le serveur en pause', async () => {
+        global.fetch = vi.fn()
+            .mockRejectedValueOnce(new Error('Network down'))
+            .mockResolvedValueOnce(ok({ elements: [] }));
+        await expect(fetchOverpassJson('q', { retries: 0 })).rejects.toThrow('Network down');
+        await expect(fetchOverpassJson('q', { retries: 0 })).resolves.toEqual({ elements: [] });
+    });
+
+    it('écarte une réponse dont la base OSM est périmée et passe au serveur suivant', async () => {
+        setOverpassKey('abc123');
+        const old = new Date(Date.now() - MAX_DATA_AGE_MS - 86400000).toISOString();
+        const fresh = new Date().toISOString();
+        global.fetch = vi.fn()
+            .mockResolvedValueOnce(ok({ osm3s: { timestamp_osm_base: old }, elements: [{ id: 'vieux' }] }))
+            .mockResolvedValueOnce(ok({ osm3s: { timestamp_osm_base: fresh }, elements: [{ id: 'frais' }] }));
+        const json = await fetchOverpassJson('q', { retries: 0 });
+        expect(json.elements[0].id).toBe('frais');
+    });
+
+    it('dataAgeMs : null si le serveur ne donne pas de date', () => {
+        expect(dataAgeMs({})).toBeNull();
+        expect(dataAgeMs({ osm3s: { timestamp_osm_base: '2026-10-28T10:00:00Z' } }, Date.parse('2026-10-28T11:00:00Z'))).toBe(3600000);
+    });
+
+    it('setOverpassKey vide retire la clé', () => {
+        setOverpassKey('abc');
+        expect(hasOverpassKey()).toBe(true);
+        setOverpassKey('   ');
+        expect(hasOverpassKey()).toBe(false);
+    });
+
+    it('testOverpassKey : ok sur 200, refus explicite sur 401', async () => {
+        global.fetch = vi.fn().mockResolvedValueOnce(ok({ elements: [] }));
+        await expect(testOverpassKey('abc')).resolves.toEqual({ ok: true });
+        global.fetch = vi.fn().mockResolvedValueOnce(fail(401));
+        const r = await testOverpassKey('abc');
+        expect(r.ok).toBe(false);
+        expect(r.error).toContain('401');
+        await expect(testOverpassKey('  ')).resolves.toEqual({ ok: false, error: 'clé vide' });
+    });
 });

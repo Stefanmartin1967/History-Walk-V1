@@ -29,7 +29,7 @@ import { fetchWithTimeout } from './net.js';
 import { state, DEFAULT_MAP_ID} from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
-import { fetchOverpassJson } from './osm-overpass.js';
+import { fetchOverpassJson, hasOverpassKey } from './osm-overpass.js';
 import { addPoiFeature } from './data.js';
 import { isDestinationPublished } from './utils.js';
 import { hwPrompt } from './modal.js';
@@ -549,7 +549,7 @@ async function scan() {
     let attempt = 0;
     const MAX_ATTEMPTS = 3;                          // re-tente AUTO les parties en échec (3 essais)
     try {
-        // Séquentiel (une tuile à la fois) : poli pour Overpass (round-robin 3 mirrors).
+        // Séquentiel (une tuile à la fois) : poli pour Overpass (overpass.ch puis overpass-api.de).
         // Les tuiles en échec sont re-tentées automatiquement (jusqu'à 3 passes), avec
         // une pause entre chaque ; les tuiles réussies sont conservées (all/seen persistent).
         while (pending.length && attempt < MAX_ATTEMPTS) {
@@ -565,7 +565,9 @@ async function scan() {
                 if (multi) showLoading(true, `Moisson ${i + 1}/${tiles.length}… (${all.length} trouvés)`);
                 let json = null;
                 // Échec rapide par tuile (retries:0) ; on la retentera à la passe suivante.
-                try { json = await fetchOverpassJson(buildQuery(t, _categories), { timeoutMs: 25000, retries: 0 }); }
+                // 40 s par serveur : le 28/10/2026, overpass-api.de saturé mettait 33 s
+                // pour une mini-requête (l'ancien délai de 25 s le coupait à tous les coups).
+                try { json = await fetchOverpassJson(buildQuery(t, _categories), { timeoutMs: 40000, retries: 0 }); }
                 catch (e) { stillFailed.push({ t, i }); continue; }
                 if (!_isOpen) return; // quitté pendant la requête
                 for (const el of (json.elements || [])) {
@@ -615,7 +617,9 @@ async function scan() {
             ? ` · ${rejectedSkipped} déjà rejeté${rejectedSkipped > 1 ? 's' : ''} ignoré${rejectedSkipped > 1 ? 's' : ''}`
             : '';
         if (failed === tiles.length) {
-            showToast(multi ? 'Overpass indisponible sur toutes les parties. Réessaie.' : 'Overpass indisponible (timeout/erreur). Réessaie ou réduis la boîte.', 'error', 4500);
+            // Sans clé, seul le serveur public (souvent saturé) est interrogé : on le dit.
+            const keyHint = hasOverpassKey() ? '' : ' Une clé overpass.ch (Configuration) évite le serveur public saturé.';
+            showToast((multi ? 'Overpass indisponible sur toutes les parties. Réessaie.' : 'Overpass indisponible (timeout/erreur). Réessaie ou réduis la boîte.') + keyHint, 'error', 6000);
         } else if (failed) {
             showToast(`${all.length} objets · ${net} nouveaux${rej}. ⚠ ${failed}/${tiles.length} partie(s) toujours en échec après ${MAX_ATTEMPTS} essais — réduis la boîte ou réessaie.`, 'warning', 5500);
         } else {

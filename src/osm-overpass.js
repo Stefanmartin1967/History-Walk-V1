@@ -6,28 +6,61 @@
 // any way[highway=*] dans un rayon de 150 m, candidate la plus proche
 // retenue (distance Haversine, pas projection sur segment — approximation
 // acceptable au rayon visé, plus simple, suffisant pour le pré-pose).
+// Mutualisé avec le Scout (moisson bbox) et la création de destination (zones).
 //
-// Sans clé. Endpoint principal overpass-api.de avec fallback kumi.systems.
-// Timeout 8 s par endpoint et par tentative. Non bloquant (la pré-pose est silencieuse).
+// Serveurs, dans l'ordre (28/10/2026) :
+//   1. api.overpass.ch, si une clé est enregistrée sur l'appareil (réglage admin,
+//      cf. overpass-key.js). Offre gratuite : 10 000 requêtes/mois, 30/min.
+//   2. overpass-api.de, serveur public sans clé, souvent saturé.
+// Les anciens miroirs kumi.systems et private.coffee sont retirés : c'est un
+// seul et même serveur (kumi = ancien nom), muet depuis septembre — chaque
+// échec y coûtait un timeout entier.
 
-// 3 endpoints publics (alignés sur tools/scout.html). Alternance round-robin
-// au démarrage de chaque requête → la charge se répartit sur les 3 serveurs
-// et le rate limit individuel n'est pas saturé sur un batch massif.
-const ENDPOINTS = [
-    'https://overpass-api.de/api/interpreter',
-    'https://overpass.kumi.systems/api/interpreter',
-    'https://overpass.private.coffee/api/interpreter',
-];
+const PUBLIC_ENDPOINT = 'https://overpass-api.de/api/interpreter';
+const KEYED_ENDPOINT_BASE = 'https://api.overpass.ch/v1';
 const TIMEOUT_MS = 8000;
 const SEARCH_RADIUS_M = 150;
 // Retry avec backoff sur erreur réseau / 429 (rate limit). Délais en ms.
 // Calibré sur l'incident Stefan 31/05 PR #710 : 275/297 échecs en batch
 // massif sans retry — ces délais ramènent le taux d'échec à ~0%.
 const RETRY_DELAYS = [1000, 3000, 8000];
+// Politique d'overpass-api.de (wiki OSM) : après un 429 ou un 406, attendre 30 s
+// avant toute nouvelle requête. Même pause sur 502/503/504 (« at capacity, request
+// queue is full ») : le serveur saturé n'est plus sollicité, on passe au suivant.
+const COOLDOWN_MS = 30000;
+const COOLDOWN_STATUSES = new Set([406, 429, 502, 503, 504]);
+// overpass.ch : 30 requêtes/min sur l'offre gratuite → au plus une toutes les 2,1 s
+// (la pré-pose des drapeaux en batch enchaîne sinon ~1 requête/s).
+const KEYED_MIN_INTERVAL_MS = 2100;
+// Une réponse dont la base OSM a plus de 7 jours est écartée : un serveur en
+// retard ressort des objets supprimés et rate les ajouts récents (puits proposé
+// par le Scout le 16/09/2026, miroir en retard de 7 semaines).
+const MAX_DATA_AGE_MS = 7 * 24 * 3600 * 1000;
 
-// Compteur round-robin (module-scope). À chaque appel de nearestHighway,
-// on commence par ENDPOINTS[_rrIdx] et on rotate.
-let _rrIdx = 0;
+let _key = null;
+const _coolUntil = new Map();   // id serveur → fin de la pause (ms epoch)
+let _lastKeyedStart = 0;
+
+/** Enregistre (ou retire, si vide) la clé overpass.ch utilisée par les requêtes. */
+export function setOverpassKey(key) {
+    _key = (typeof key === 'string' && key.trim()) ? key.trim() : null;
+}
+
+/** @returns {boolean} true si une clé overpass.ch est active. */
+export function hasOverpassKey() {
+    return !!_key;
+}
+
+function keyedUrl(key) {
+    return `${KEYED_ENDPOINT_BASE}/${encodeURIComponent(key)}/interpreter`;
+}
+
+function serverList() {
+    const list = [];
+    if (_key) list.push({ id: 'overpass.ch', url: keyedUrl(_key), keyed: true });
+    list.push({ id: 'overpass-api.de', url: PUBLIC_ENDPOINT, keyed: false });
+    return list;
+}
 
 // Distance Haversine en mètres entre [lat, lon] (idem access-point-editor).
 function distanceMeters(a, b) {
@@ -46,51 +79,83 @@ function buildQuery(lat, lon) {
     return `[out:json][timeout:10];way["highway"](around:${SEARCH_RADIUS_M},${lat},${lon});out geom;`;
 }
 
-async function fetchOnce(endpoint, query, timeoutMs) {
+// Âge (ms) de la base OSM d'une réponse, null si le serveur ne le donne pas.
+function dataAgeMs(json, now = Date.now()) {
+    const t = Date.parse(json?.osm3s?.timestamp_osm_base || '');
+    return Number.isFinite(t) ? now - t : null;
+}
+
+async function fetchOnce(url, query, timeoutMs) {
     const controller = new AbortController();
     const tid = setTimeout(() => controller.abort(), timeoutMs);
     try {
-        const res = await fetch(endpoint, {
+        const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: 'data=' + encodeURIComponent(query),
             signal: controller.signal,
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return await res.json();
+        if (!res.ok) {
+            const err = new Error(`HTTP ${res.status}`);
+            err.status = res.status;
+            throw err;
+        }
+        const json = await res.json();
+        const age = dataAgeMs(json);
+        if (age !== null && age > MAX_DATA_AGE_MS) {
+            throw new Error(`Base OSM périmée (${Math.round(age / 86400000)} j)`);
+        }
+        return json;
     } finally {
         clearTimeout(tid);
     }
 }
 
+async function queryServer(server, query, timeoutMs) {
+    if (server.keyed) {
+        const wait = _lastKeyedStart + KEYED_MIN_INTERVAL_MS - Date.now();
+        if (wait > 0) await new Promise(r => setTimeout(r, wait));
+        _lastKeyedStart = Date.now();
+    }
+    try {
+        return await fetchOnce(server.url, query, timeoutMs);
+    } catch (e) {
+        if (COOLDOWN_STATUSES.has(e.status)) _coolUntil.set(server.id, Date.now() + COOLDOWN_MS);
+        throw e;
+    }
+}
+
 /**
- * Exécute une requête Overpass arbitraire et renvoie le JSON parsé. Round-robin
- * sur les 3 mirrors + retry/backoff (mutualisé avec nearestHighway — leçon #711
- * anti-504). Réutilisé par le Scout in-app (réunif B2) pour la moisson bbox.
+ * Exécute une requête Overpass arbitraire et renvoie le JSON parsé. Essaie les
+ * serveurs dans l'ordre (overpass.ch si clé, puis overpass-api.de) en sautant
+ * ceux qui sont en pause après un refus, + retry/backoff (leçon #711 anti-504).
+ * Réutilisé par le Scout in-app (réunif B2) et la création de destination.
  *
  * @param {string} query - corps Overpass QL (ex. `[out:json];(...);out center;`)
- * @param {{timeoutMs?: number}} [opts] - timeout par endpoint (défaut TIMEOUT_MS).
- *        Le Scout passe un timeout généreux (~30 s) : une bbox large est lente,
- *        et l'abort court du Scout standalone causait des « serveurs expirés ».
+ * @param {{timeoutMs?: number, retries?: number}} [opts] - timeout par serveur
+ *        (défaut TIMEOUT_MS) et nombre de passes supplémentaires. Le Scout passe
+ *        un timeout généreux : une bbox large est lente.
  * @returns {Promise<object>} le JSON Overpass (`{elements: [...]}`)
- * @throws {Error} si tous les endpoints échouent sur toutes les tentatives.
+ * @throws {Error} si tous les serveurs échouent sur toutes les tentatives, ou
+ *         d'emblée si tous sont en pause (`err.cooling = true`).
  */
 export async function fetchOverpassJson(query, { timeoutMs = TIMEOUT_MS, retries = RETRY_DELAYS.length } = {}) {
     let lastError = null;
-    // Round-robin : commence à un endpoint différent de la requête précédente,
-    // puis rotate pour les fallbacks (répartit la charge sur les 3 serveurs).
-    const startIdx = _rrIdx;
-    _rrIdx = (_rrIdx + 1) % ENDPOINTS.length;
-    const orderedEndpoints = Array.from({ length: ENDPOINTS.length },
-        (_, i) => ENDPOINTS[(startIdx + i) % ENDPOINTS.length]);
-
     // nearestHighway (batch silencieux) garde le retry agressif par défaut ; le
-    // Scout (interactif) passe retries:0 → un seul passage sur les 3 mirrors,
-    // échec rapide → l'admin re-scanne lui-même plutôt que d'attendre des minutes.
+    // Scout (interactif) passe retries:0 → un seul passage, échec rapide →
+    // l'admin re-scanne lui-même plutôt que d'attendre des minutes.
     for (let attempt = 0; attempt <= retries; attempt++) {
-        for (const endpoint of orderedEndpoints) {
+        const now = Date.now();
+        const available = serverList().filter(s => (_coolUntil.get(s.id) || 0) <= now);
+        if (!available.length) {
+            // Tous en pause : inutile d'attendre les backoffs, on le dit tout de suite.
+            const err = new Error('Serveurs Overpass saturés — réessaie dans 30 s');
+            err.cooling = true;
+            throw err;
+        }
+        for (const server of available) {
             try {
-                return await fetchOnce(endpoint, query, timeoutMs);
+                return await queryServer(server, query, timeoutMs);
             } catch (e) {
                 lastError = e;
             }
@@ -99,7 +164,25 @@ export async function fetchOverpassJson(query, { timeoutMs = TIMEOUT_MS, retries
             await new Promise(r => setTimeout(r, RETRY_DELAYS[attempt]));
         }
     }
-    throw lastError || new Error('Tous les endpoints Overpass ont échoué');
+    throw lastError || new Error('Tous les serveurs Overpass ont échoué');
+}
+
+/**
+ * Vérifie une clé overpass.ch par une requête minuscule (bbox vide).
+ * @param {string} key
+ * @returns {Promise<{ok: boolean, error?: string}>}
+ */
+export async function testOverpassKey(key) {
+    const clean = (key || '').trim();
+    if (!clean) return { ok: false, error: 'clé vide' };
+    try {
+        await fetchOnce(keyedUrl(clean), '[out:json][timeout:5];node(0,0,0,0);out;', 15000);
+        return { ok: true };
+    } catch (e) {
+        if (e.status === 401 || e.status === 403) return { ok: false, error: `refusée par overpass.ch (${e.status})` };
+        if (e.name === 'AbortError') return { ok: false, error: 'overpass.ch ne répond pas' };
+        return { ok: false, error: e.message || String(e) };
+    }
 }
 
 // Parcourt les `way.geometry` (liste de {lat, lon}), retourne le noeud le
@@ -143,4 +226,8 @@ export async function nearestHighway(lat, lon) {
 }
 
 // Exporté pour tests.
-export const _internals = { distanceMeters, nearestPointFromWays, buildQuery, ENDPOINTS, TIMEOUT_MS, SEARCH_RADIUS_M };
+export const _internals = {
+    distanceMeters, nearestPointFromWays, buildQuery, dataAgeMs, TIMEOUT_MS, SEARCH_RADIUS_M,
+    PUBLIC_ENDPOINT, KEYED_ENDPOINT_BASE, COOLDOWN_MS, MAX_DATA_AGE_MS,
+    reset() { _key = null; _coolUntil.clear(); _lastKeyedStart = 0; },
+};

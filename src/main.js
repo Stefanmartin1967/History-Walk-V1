@@ -45,6 +45,7 @@ import { setupSmartSearch } from './searchManager.js';
 import { setupDesktopTools } from './desktopMode.js';
 import { initAdminMode, showAdminLoginModal } from './admin.js';
 import { initTokenCache } from './github-sync.js';
+import { initOverpassKey } from './overpass-key.js';
 
 import { loadAndInitializeMap } from './app-startup.js';
 import { setupWelcomeActions } from './welcome-actions.js';
@@ -169,6 +170,8 @@ async function initializeApp() {
         // automatique depuis l'ancien localStorage['github_pat']). Doit
         // s'exécuter avant toute opération admin/sync qui lit le token.
         await initTokenCache();
+        // Clé overpass.ch (Scout, zones, drapeaux) : même stockage par appareil.
+        await initOverpassKey();
 
         const savedTheme = await getAppState('currentTheme');
         if (savedTheme) {
