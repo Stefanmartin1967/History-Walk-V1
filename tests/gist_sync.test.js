@@ -66,7 +66,7 @@ import { getStoredToken } from '../src/github-sync.js';
 import { showToast } from '../src/toast.js';
 import { batchSavePoiData } from '../src/database.js';
 import {
-    buildPayload, mergeRemoteIntoLocal, schedulePush, pushToGist, pullFromGist, initGistReconnectSync,
+    buildPayload, buildSection, sectionFor, mergeRemoteIntoLocal, schedulePush, pushToGist, pullFromGist, initGistReconnectSync,
 } from '../src/gist-sync.js';
 
 function resetState() {
@@ -89,12 +89,12 @@ beforeEach(() => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('buildPayload', () => {
+describe('buildSection', () => {
     it('filtre les clés hors SYNC_KEYS (photos/modifHistory absents)', () => {
         state.userData = {
             poi1: { vu: true, vuManual: true, photos: ['x'], modifHistory: [{}] }
         };
-        const payload = buildPayload();
+        const payload = buildSection();
         expect(payload.userData.poi1).toEqual({ vu: true, vuManual: true });
         expect(payload.userData.poi1.photos).toBeUndefined();
         expect(payload.userData.poi1.modifHistory).toBeUndefined();
@@ -105,7 +105,7 @@ describe('buildPayload', () => {
             poi1: { photos: ['x'] },
             poi2: { vuManual: true }
         };
-        const payload = buildPayload();
+        const payload = buildSection();
         expect(payload.userData.poi1).toBeUndefined();
         expect(payload.userData.poi2).toEqual({ vuManual: true });
     });
@@ -121,7 +121,7 @@ describe('buildPayload', () => {
                 notes: 'hi', incontournable: true, planifie: true
             }
         };
-        const payload = buildPayload();
+        const payload = buildSection();
         // planifie (legacy) ET notes (heripia-travail) sont désormais filtrés
         expect(payload.userData.poi1).toEqual({
             vu: true, vuManual: true, visitedByCircuits: ['c1'],
@@ -131,15 +131,14 @@ describe('buildPayload', () => {
         expect(payload.userData.poi1.notes).toBeUndefined();
     });
 
-    it('enveloppe : mapId, circuitsStatus, lastSync (ISO), appVersion — testedCircuits RETIRÉ', () => {
+    it('section : circuitsStatus, lastSync (ISO) — testedCircuits RETIRÉ, plus de mapId', () => {
         state.currentMapId = 'djerba';
         state.officialCircuitsStatus = { c1: true };
         state.testedCircuits = { c2: true };
-        const payload = buildPayload();
-        expect(payload.mapId).toBe('djerba');
+        const payload = buildSection();
+        expect(payload.mapId).toBeUndefined(); // porté par la clé de la section (format 2)
         expect(payload.circuitsStatus).toEqual({ c1: true });
         expect(payload.testedCircuits).toBeUndefined(); // retiré du Gist (autorité serveur, 07/06)
-        expect(payload.appVersion).toBe('1.0');
         expect(payload.lastSync).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
     });
 
@@ -147,7 +146,7 @@ describe('buildPayload', () => {
         state.userData = null;
         state.officialCircuitsStatus = null;
         state.testedCircuits = null;
-        const payload = buildPayload();
+        const payload = buildSection();
         expect(payload.userData).toEqual({});
         expect(payload.circuitsStatus).toEqual({});
     });
@@ -155,13 +154,13 @@ describe('buildPayload', () => {
     // PR4 refonte Mon Espace V2 — sync hiddenCircuitIds
     it('inclut hiddenCircuitIds dans le payload (refonte V2 PR4)', () => {
         state.hiddenCircuitIds = ['c1', 'c2'];
-        const payload = buildPayload();
+        const payload = buildSection();
         expect(payload.hiddenCircuitIds).toEqual(['c1', 'c2']);
     });
 
     it('hiddenCircuitIds défaut [] si state vide', () => {
         state.hiddenCircuitIds = null;
-        const payload = buildPayload();
+        const payload = buildSection();
         expect(payload.hiddenCircuitIds).toEqual([]);
     });
 });
@@ -300,10 +299,10 @@ describe('mergeRemoteIntoLocal — statut visité daté (fix 17/09/2026)', () =>
         expect(state.userData.poi1.vu).toBe(false);
     });
 
-    it('buildPayload transporte les dates (lieu et circuit)', () => {
+    it('buildSection transporte les dates (lieu et circuit)', () => {
         state.userData = { poi1: { vuManual: false, vuUpdatedAt: 42 } };
         state.officialCircuitsStatusUpdatedAt = { c1: 43 };
-        const payload = buildPayload();
+        const payload = buildSection();
         expect(payload.userData.poi1.vuUpdatedAt).toBe(42);
         expect(payload.circuitsStatusUpdatedAt).toEqual({ c1: 43 });
     });
@@ -437,13 +436,16 @@ describe('schedulePush', () => {
         delete global.fetch;
     });
 
+    // Un push = une lecture (format 2 : préserver les autres destinations) + un PATCH.
+    const patches = () => global.fetch.mock.calls.filter(([, o]) => o?.method === 'PATCH').length;
+
     it('debounce : N appels rapides → 1 seul push après 3s', async () => {
         schedulePush();
         schedulePush();
         schedulePush();
         expect(global.fetch).not.toHaveBeenCalled();
         await vi.advanceTimersByTimeAsync(3000);
-        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(patches()).toBe(1);
     });
 
     it('re-scheduling annule le timer précédent (total 4s mais 2s après reset → 0 push)', async () => {
@@ -453,7 +455,7 @@ describe('schedulePush', () => {
         await vi.advanceTimersByTimeAsync(2000);
         expect(global.fetch).not.toHaveBeenCalled();
         await vi.advanceTimersByTimeAsync(1100);
-        expect(global.fetch).toHaveBeenCalledTimes(1);
+        expect(patches()).toBe(1);
     });
 });
 
@@ -692,9 +694,10 @@ describe('retry au retour du réseau (offline → online)', () => {
 
         net.offline = false;
         net.back.forEach((fn) => fn());           // retour du réseau → rejoue pushToGist
-        await Promise.resolve();
-        await Promise.resolve();
-        expect(global.fetch).toHaveBeenCalledTimes(1);
+        // Lecture (format 2) puis PATCH : on laisse la chaîne de promesses se dérouler.
+        await vi.waitFor(() => {
+            expect(global.fetch.mock.calls.filter(([, o]) => o?.method === 'PATCH')).toHaveLength(1);
+        });
     });
 });
 
@@ -869,15 +872,15 @@ describe('mergeRemoteIntoLocal — workPhotos', () => {
     });
 });
 
-describe('buildPayload — workPhotos', () => {
+describe('buildSection — workPhotos', () => {
     it('les CHEMINS partent dans le Gist (jamais les images)', () => {
         state.userData = { poi1: { workPhotos: ['djerba/a.jpg'] } };
-        expect(buildPayload().userData.poi1.workPhotos).toEqual(['djerba/a.jpg']);
+        expect(buildSection().userData.poi1.workPhotos).toEqual(['djerba/a.jpg']);
     });
 
     it('la marque « gardée » voyage avec la liste', () => {
         state.userData = { poi1: { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: ['djerba/a.jpg'] } };
-        expect(buildPayload().userData.poi1.keptWorkPhotos).toEqual(['djerba/a.jpg']);
+        expect(buildSection().userData.poi1.keptWorkPhotos).toEqual(['djerba/a.jpg']);
     });
 });
 
@@ -902,5 +905,150 @@ describe('mergeRemoteIntoLocal — keptWorkPhotos', () => {
         state.userData = { poi1: { workPhotos: ['djerba/a.jpg'], keptWorkPhotos: ['djerba/a.jpg'] } };
         mergeRemoteIntoLocal({ userData: { poi1: { workPhotos: ['djerba/a.jpg'] } } });
         expect(state.userData.poi1.keptWorkPhotos).toEqual(['djerba/a.jpg']);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Format 2 (29/10/2026) — une section par destination. Avant, le Gist ne portait
+// qu'une destination : un envoi depuis Charleroi remplaçait tout le contenu, et
+// les changements Djerba pas encore récupérés ailleurs pouvaient se perdre.
+describe('Gist multi-destination (format 2)', () => {
+    const charleroi = { userData: { poiC: { vuManual: true } }, circuitsStatus: { cC: true }, hiddenPoiIds: ['h1'] };
+
+    describe('sectionFor', () => {
+        it('format 2 : la section de la destination demandée, null si absente', () => {
+            const doc = { format: 2, maps: { charleroi } };
+            expect(sectionFor(doc, 'charleroi')).toBe(charleroi);
+            expect(sectionFor(doc, 'djerba')).toBeNull();
+        });
+
+        it('format 1 : le document si son mapId correspond ou manque, sinon null', () => {
+            const v1 = { mapId: 'djerba', userData: {} };
+            expect(sectionFor(v1, 'djerba')).toBe(v1);
+            expect(sectionFor(v1, 'charleroi')).toBeNull();
+            const ancien = { userData: {} };
+            expect(sectionFor(ancien, 'djerba')).toBe(ancien);
+        });
+
+        it('document absent ou invalide → null', () => {
+            expect(sectionFor(null, 'djerba')).toBeNull();
+            expect(sectionFor('x', 'djerba')).toBeNull();
+        });
+    });
+
+    describe('buildPayload', () => {
+        it('recopie telles quelles les sections des autres destinations', () => {
+            state.userData = { poiD: { incontournable: true } };
+            const payload = buildPayload({ format: 2, maps: { charleroi, djerba: { userData: { vieux: { vu: true } } } } });
+            expect(payload.format).toBe(2);
+            expect(payload.maps.charleroi).toEqual(charleroi);
+            expect(payload.maps.djerba.userData).toEqual({ poiD: { incontournable: true } });
+        });
+
+        it('un Gist au format 1 d\'une autre destination devient sa section, sans perte', () => {
+            const payload = buildPayload({ mapId: 'charleroi', appVersion: '1.0', ...charleroi });
+            expect(payload.maps.charleroi).toEqual(charleroi);
+            expect(payload.maps.djerba).toBeDefined();
+        });
+
+        it('un Gist au format 1 de la même destination est remplacé par la section locale', () => {
+            state.userData = { poiD: { incontournable: true } };
+            const payload = buildPayload({ mapId: 'djerba', userData: { vieux: { vu: true } } });
+            expect(Object.keys(payload.maps)).toEqual(['djerba']);
+            expect(payload.maps.djerba.userData).toEqual({ poiD: { incontournable: true } });
+        });
+
+        it('Gist neuf : seulement la destination active', () => {
+            expect(Object.keys(buildPayload().maps)).toEqual(['djerba']);
+        });
+    });
+
+    describe('pushToGist / pullFromGist', () => {
+        beforeEach(() => {
+            vi.mocked(getStoredToken).mockReturnValue('fake-token');
+            localStorage.setItem('hw_gist_id', 'gist-existing');
+            net.offline = false;
+        });
+        afterEach(() => { delete global.fetch; });
+
+        function mockGist(getResponse) {
+            const calls = [];
+            global.fetch = vi.fn((url, opts = {}) => {
+                const method = opts.method || 'GET';
+                calls.push({ url, method, body: opts.body });
+                if (method === 'GET') return Promise.resolve(getResponse);
+                if (method === 'PATCH') return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+                throw new Error('inattendu : ' + method + ' ' + url);
+            });
+            return calls;
+        }
+        const gistOk = (doc) => ({
+            ok: true,
+            json: () => Promise.resolve({ files: { 'history_walk_userdata.json': { content: JSON.stringify(doc) } } })
+        });
+        const patchedDoc = (calls) => {
+            const patch = calls.find(c => c.method === 'PATCH');
+            return JSON.parse(JSON.parse(patch.body).files['history_walk_userdata.json'].content);
+        };
+
+        it('un envoi depuis Djerba relit le Gist et laisse la section Charleroi intacte', async () => {
+            state.userData = { poiD: { incontournable: true } };
+            const calls = mockGist(gistOk({ format: 2, maps: { charleroi } }));
+
+            await pushToGist();
+
+            expect(calls.map(c => c.method)).toEqual(['GET', 'PATCH']);
+            const doc = patchedDoc(calls);
+            expect(doc.maps.charleroi).toEqual(charleroi);
+            expect(doc.maps.djerba.userData).toEqual({ poiD: { incontournable: true } });
+        });
+
+        it('un Gist encore au format 1 (Djerba) garde Djerba quand on envoie depuis Charleroi', async () => {
+            state.currentMapId = 'charleroi';
+            state.userData = { poiC: { vuManual: true } };
+            const djerbaV1 = { mapId: 'djerba', appVersion: '1.0', userData: { poiD: { incontournable: true } }, circuitsStatus: {} };
+            const calls = mockGist(gistOk(djerbaV1));
+
+            await pushToGist();
+
+            const doc = patchedDoc(calls);
+            expect(doc.maps.djerba.userData).toEqual({ poiD: { incontournable: true } });
+            expect(doc.maps.charleroi.userData).toEqual({ poiC: { vuManual: true } });
+        });
+
+        it('la lecture avant envoi échoue (5xx) → AUCUN envoi, push en attente', async () => {
+            const calls = mockGist({ ok: false, status: 502 });
+
+            await pushToGist();
+
+            expect(calls.some(c => c.method === 'PATCH')).toBe(false);
+        });
+
+        it('Gist sans fichier → rien à préserver, envoi de la seule destination active', async () => {
+            const calls = mockGist({ ok: true, json: () => Promise.resolve({ files: {} }) });
+
+            await pushToGist();
+
+            expect(Object.keys(patchedDoc(calls).maps)).toEqual(['djerba']);
+        });
+
+        it('pull : seule la section de la destination active est fusionnée', async () => {
+            mockGist(gistOk({ format: 2, maps: { charleroi, djerba: { userData: { poiD: { incontournable: true } } } } }));
+
+            await pullFromGist();
+
+            expect(state.userData.poiD.incontournable).toBe(true);
+            expect(state.userData.poiC).toBeUndefined();
+            expect(state.hiddenPoiIds).toEqual([]);
+        });
+
+        it('pull : aucune section pour cette destination → rien fusionné, aucune alerte', async () => {
+            mockGist(gistOk({ format: 2, maps: { charleroi } }));
+
+            await pullFromGist();
+
+            expect(state.userData).toEqual({});
+            expect(showToast).not.toHaveBeenCalled();
+        });
     });
 });
