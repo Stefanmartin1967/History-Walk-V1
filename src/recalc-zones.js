@@ -15,9 +15,10 @@
 // Héritage PR C (#856/#857) : la moitié « ré-affecter la Zone de chaque POI +
 // overlay + Tout publier » a été RETIRÉE par le dégel — elle est devenue inutile.
 import { state } from './state.js';
-import { fetchZonesAuto } from './osm-zones.js';
+import { fetchZonesAuto, fetchSubZones, replaceZoneWithSubZones, coveredZoneIds } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
 import { applyFilters } from './data.js';
+import { getDerivedZone } from './utils.js';
 import { saveDraftZones } from './local-destinations.js';
 
 // Marge (deg, ~1 km) ajoutée à la bbox des POIs avant le fetch OSM. Overpass renvoie
@@ -72,7 +73,9 @@ export async function completeDestinationZones() {
 
     // MERGE dédupliqué par osm_id dans le binding live zonesData — on ne PERD jamais
     // un quartier déjà connu, on COMPLÈTE ceux qui manquaient (miroir du Scout).
-    const seen = new Set((zonesData.features || []).map(f => f.properties?.osm_id).filter(v => v != null));
+    // Une zone subdivisée (« Subdiviser un quartier ») compte comme connue : elle ne
+    // revient pas recouvrir ses sous-zones.
+    const seen = coveredZoneIds(zonesData);
     const added = (fc.features || []).filter(f => f.properties?.osm_id == null || !seen.has(f.properties.osm_id));
     const merged = { type: 'FeatureCollection', features: [...(zonesData.features || []), ...added] };
     setZonesData(merged); // vide le cache de zones dérivées → les POIs se re-dérivent
@@ -94,4 +97,67 @@ export async function completeDestinationZones() {
         isLocalDraft,
         zones: merged,
     };
+}
+
+/**
+ * Nombre de lieux par zone de la destination active (zone dérivée), trié du plus
+ * peuplé au moins peuplé. Alimente le choix de « Subdiviser un quartier ».
+ * @returns {Array<{osmId:number, name:string, count:number}>}
+ */
+export function zonesWithCounts() {
+    const counts = new Map();
+    for (const f of state.loadedFeatures || []) {
+        const z = getDerivedZone(f);
+        counts.set(z, (counts.get(z) || 0) + 1);
+    }
+    return (zonesData.features || [])
+        .filter(f => f.properties?.osm_id != null)
+        .map(f => ({ osmId: f.properties.osm_id, name: f.properties.name, count: counts.get(f.properties.name) || 0 }))
+        .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'fr'));
+}
+
+/**
+ * « Subdiviser un quartier » (29/10/2026, Charleroi : 124 lieux dans une seule
+ * zone) : remplace une zone par ses subdivisions OSM (anciennes communes). Comme
+ * completeDestinationZones, ne pousse RIEN et ne mute aucun POI : la zone des
+ * lieux se re-dérive toute seule ; l'appelant pousse {dest}-zones.geojson.
+ *
+ * @param {number} osmId - osm_id de la zone à subdiviser
+ * @returns {Promise<{mapId:string, parentName:string, subNames:string[],
+ *   isLocalDraft:boolean, zones:{type:string, features:Array}}>}
+ */
+export async function subdivideZone(osmId) {
+    const mapId = state.currentMapId;
+    const dest = state.destinations?.maps?.[mapId];
+    if (!mapId || !dest) throw new Error('Aucune destination active.');
+
+    const parent = (zonesData.features || []).find(f => f.properties?.osm_id === osmId);
+    if (!parent) throw new Error('Quartier introuvable dans le jeu de zones.');
+    const parentName = parent.properties.name;
+
+    const subs = await fetchSubZones(parent);
+    if (subs.length < 2) throw new Error(`OpenStreetMap ne connaît pas de subdivision pour « ${parentName} ».`);
+
+    const previous = zonesData;
+    const next = replaceZoneWithSubZones(zonesData, osmId, subs);
+    setZonesData(next);
+
+    const isLocalDraft = dest.custom === true;
+    if (isLocalDraft) await saveDraftZones(mapId, next);
+    applyFilters();
+
+    return {
+        mapId,
+        parentName,
+        subNames: subs.map(f => f.properties.name),
+        isLocalDraft,
+        zones: next,
+        previous,
+    };
+}
+
+/** Remet un jeu de zones (subdivision dont l'envoi sur GitHub a échoué). */
+export function restoreZones(previous) {
+    setZonesData(previous);
+    applyFilters();
 }

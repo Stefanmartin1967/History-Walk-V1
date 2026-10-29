@@ -34,7 +34,7 @@ import { addPoiFeature } from './data.js';
 import { isDestinationPublished } from './utils.js';
 import { hwPrompt } from './modal.js';
 import { makeUniqueDestId, saveDraftZones } from './local-destinations.js';
-import { fetchZonesAuto } from './osm-zones.js';
+import { fetchZonesAuto, coveredZoneIds } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
 import { isRejected } from './rejected.js';
 import { getHwCategory, resolveOsmNames } from './scout-categories.js';
@@ -653,7 +653,7 @@ async function capture() {
             const bbox = [[_box.south, _box.west], [_box.north, _box.east]];
             const country = _geoCountry || state.destinations?.maps?.[state.currentMapId]?.country || '';
             const fc = await fetchZonesAuto(bbox, country);
-            const seen = new Set((zonesData.features || []).map(f => f.properties?.osm_id).filter(v => v != null));
+            const seen = coveredZoneIds(zonesData); // une zone subdivisée ne revient pas par-dessus ses sous-zones
             const added = (fc.features || []).filter(f => f.properties?.osm_id == null || !seen.has(f.properties.osm_id));
             if (added.length) {
                 const merged = { type: 'FeatureCollection', features: [...(zonesData.features || []), ...added] };
