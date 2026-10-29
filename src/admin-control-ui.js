@@ -697,6 +697,14 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-subdivide-zone" aria-label="Subdiviser un quartier en ses anciennes communes">
+                <div class="cc-card-ico"><i data-lucide="layout-grid"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Subdiviser un quartier</div>
+                    <div class="cc-card-sub">Découper un quartier trop peuplé en ses subdivisions OSM (anciennes communes)</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-rejected-trash" aria-label="Corbeille des rejets de curation Scout de cette destination">
                 <div class="cc-card-ico"><i data-lucide="trash-2"></i></div>
                 <div class="cc-card-text">
@@ -863,6 +871,80 @@ export function renderTab(tab, diffData, callbacks) {
                     await hwAlert({
                         title: 'Échec',
                         body: `<p>La récupération des quartiers n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
+                            + '<p>Rien n\'a été publié — tu peux réessayer.</p>',
+                    });
+                }
+            });
+
+            // Outils — Subdiviser un quartier (29/10/2026, Charleroi : 124 lieux dans une
+            // seule commune). Remplace une zone par ses subdivisions OSM (anciennes
+            // communes, admin_level juste en dessous) puis pousse {id}-zones.geojson.
+            // Comme « Compléter les quartiers », ne touche aucun POI : la zone se dérive.
+            bindCardAction('btn-cc-tool-subdivide-zone', async () => {
+                const mapId = state.currentMapId;
+                const dest = state.destinations?.maps?.[mapId];
+                if (!dest) {
+                    showToast('Aucune destination active.', 'warning', 3500);
+                    return;
+                }
+                const isLocalDraft = dest.custom === true;
+                if (!isLocalDraft && !getStoredToken()) {
+                    showToast('Connecte ton token GitHub (onglet Connexion) pour pousser les quartiers.', 'warning', 4500);
+                    return;
+                }
+                const { zonesWithCounts, subdivideZone, restoreZones } = await import('./recalc-zones.js');
+                const zones = zonesWithCounts();
+                if (!zones.length) {
+                    showToast('Aucun quartier OSM chargé pour cette destination.', 'warning', 4000);
+                    return;
+                }
+                const { hwSelect, hwConfirm, hwAlert } = await import('./modal.js');
+                closeCCModal();
+                const choice = await hwSelect({
+                    title: 'Subdiviser un quartier',
+                    body: `<p>Quel quartier de <strong>${escapeXml(dest.name || mapId)}</strong> découper ? Les plus peuplés sont en tête.</p>`,
+                    options: zones.map(z => ({ value: String(z.osmId), label: `${z.name} — ${z.count} lieu${z.count > 1 ? 'x' : ''}` })),
+                    confirmLabel: 'Choisir',
+                });
+                if (choice === null) return;
+                const zone = zones.find(z => String(z.osmId) === choice);
+                const ok = await hwConfirm({
+                    title: 'Subdiviser un quartier',
+                    body: `<p>Remplacer <strong>${escapeXml(zone.name)}</strong> par ses subdivisions OpenStreetMap (anciennes communes) ?</p>`
+                        + '<p>La zone de chaque lieu se recalcule alors toute seule. « Compléter les quartiers » ne remettra pas le quartier d\'origine par-dessus.</p>'
+                        + (isLocalDraft
+                            ? '<p>Les quartiers seront enregistrés sur cet appareil (brouillon local).</p>'
+                            : '<p>Le fichier des quartiers sera poussé sur GitHub.</p>'),
+                    confirmLabel: 'Subdiviser',
+                    cancelLabel: 'Annuler',
+                });
+                if (!ok) return;
+                let res = null;
+                try {
+                    showToast('Récupération des subdivisions OpenStreetMap…', 'info', 4000);
+                    res = await subdivideZone(zone.osmId);
+                    let pushedNote = '<p>Quartiers enregistrés sur cet appareil ✓</p>';
+                    if (!res.isLocalDraft) {
+                        const { pushDestinationZones } = await import('./publish-destination.js');
+                        await pushDestinationZones(res.mapId, res.zones, (msg) => showToast(msg, 'info', 2500),
+                            `chore(zones): subdivise « ${res.parentName} » (${res.mapId})`);
+                        pushedNote = '<p>Fichier des quartiers poussé sur GitHub ✓</p>'
+                            + '<p>Recharge l\'app après le déploiement GitHub Pages (~1-2 min) sur tes autres appareils.</p>';
+                    }
+                    await hwAlert({
+                        title: 'Quartier subdivisé ✓',
+                        body: `<p><strong>${escapeXml(res.parentName)}</strong> est remplacé par <strong>${res.subNames.length}</strong> quartiers :</p>`
+                            + `<p>${res.subNames.map(n => escapeXml(n)).sort((a, b) => a.localeCompare(b, 'fr')).join(', ')}.</p>`
+                            + '<p>La zone des lieux est recalculée — carte et filtre sont déjà à jour ici.</p>'
+                            + pushedNote,
+                    });
+                } catch (e) {
+                    // Subdivision faite ici mais pas poussée : on remet les quartiers
+                    // d'avant, pour que cet appareil ne diverge pas de GitHub.
+                    if (res && !res.isLocalDraft) restoreZones(res.previous);
+                    await hwAlert({
+                        title: 'Échec',
+                        body: `<p>La subdivision n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
                             + '<p>Rien n\'a été publié — tu peux réessayer.</p>',
                     });
                 }

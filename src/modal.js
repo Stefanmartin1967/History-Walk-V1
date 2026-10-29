@@ -737,3 +737,63 @@ export function hwPrompt({
 
     return promise;
 }
+
+/**
+ * Boîte de dialogue de choix dans une liste (menu déroulant).
+ * @param {Object} opts
+ * @param {string} opts.title
+ * @param {string} [opts.body=''] - Message HTML au-dessus de la liste.
+ * @param {Array<{value: string, label: string}>} opts.options
+ * @param {string} [opts.confirmLabel='Valider']
+ * @param {string} [opts.cancelLabel='Annuler']
+ * @returns {Promise<string|null>} la valeur choisie, ou null si annulé.
+ */
+export function hwSelect({
+    title,
+    body = '',
+    options = [],
+    confirmLabel = 'Valider',
+    cancelLabel = 'Annuler',
+} = {}) {
+    const bodyEl = document.createElement('div');
+    if (body) {
+        const msg = document.createElement('p');
+        msg.style.marginTop = '0';
+        msg.innerHTML = body;
+        bodyEl.appendChild(msg);
+    }
+    const select = document.createElement('select');
+    select.className = 'hw-modal-input';
+    for (const { value, label } of options) {
+        const opt = document.createElement('option');
+        opt.value = value;
+        opt.textContent = label;
+        select.appendChild(opt);
+    }
+    select.style.cssText = 'width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font:inherit; box-sizing:border-box;';
+    bodyEl.appendChild(select);
+
+    const footer = makeFooterButtons([
+        {
+            className: 'btn btn-ghost',
+            label: cancelLabel,
+            onClick: () => closeHwModal(null),
+        },
+        {
+            className: 'btn btn-primary',
+            label: confirmLabel,
+            onClick: () => closeHwModal(select.value),
+        },
+    ]);
+
+    const promise = openHwModal({
+        size: 'sm',
+        title,
+        body: bodyEl,
+        footer,
+    }).then((v) => (typeof v === 'string' ? v : null));
+
+    setTimeout(() => select.focus(), 50);
+
+    return promise;
+}

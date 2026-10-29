@@ -5,6 +5,7 @@
 // admin) ; même forme de sortie que public/{dest}-zones.geojson (name/osm_id/
 // admin_level), donc consommable tel quel par getZoneFromCoords/loadZonesForActive.
 import { fetchOverpassJson } from './osm-overpass.js';
+import { isPointInPolygon } from './utils.js';
 
 // admin_level par défaut selon le pays (code ISO Nominatim). La Tunisie utilise 6
 // (délégations/communes) ; la plupart des autres pays = 8. On tente d'abord ce
@@ -60,6 +61,11 @@ async function fetchZonesForBBox(bbox, adminLevel) {
     } catch (e) {
         return { type: 'FeatureCollection', features: [] };
     }
+    return { type: 'FeatureCollection', features: relationsToFeatures(data) };
+}
+
+// Relations admin OSM (`out geom`) → features zones (même forme que {dest}-zones.geojson).
+function relationsToFeatures(data) {
     const features = [];
     for (const rel of (data.elements || [])) {
         if (!rel.members) continue;
@@ -90,7 +96,84 @@ async function fetchZonesForBBox(bbox, adminLevel) {
             geometry,
         });
     }
-    return { type: 'FeatureCollection', features };
+    return features;
+}
+
+// Anneaux extérieurs d'une géométrie zone (Polygon ou MultiPolygon).
+function outerRings(geometry) {
+    if (!geometry || !Array.isArray(geometry.coordinates)) return [];
+    if (geometry.type === 'MultiPolygon') return geometry.coordinates.map(p => p && p[0]).filter(Boolean);
+    return geometry.coordinates[0] ? [geometry.coordinates[0]] : [];
+}
+
+// Une sous-zone est retenue si son centre (moyenne des sommets) tombe dans la zone
+// parente. Overpass `(area.p)` ramène aussi les voisines qui ne font que toucher la
+// limite : leur centre est dehors. Les sommets eux-mêmes ne conviennent pas : ceux
+// d'une limite partagée sont sur le bord, ni dedans ni dehors de façon fiable.
+function isMostlyInside(feature, parent) {
+    const parentRings = outerRings(parent.geometry);
+    const points = outerRings(feature.geometry).flatMap(r => r.slice(0, -1)); // sans le point de fermeture
+    if (!points.length || !parentRings.length) return false;
+    const center = [
+        points.reduce((s, p) => s + p[0], 0) / points.length,
+        points.reduce((s, p) => s + p[1], 0) / points.length,
+    ];
+    return parentRings.some(r => isPointInPolygon(center, r));
+}
+
+/**
+ * Subdivisions administratives d'une zone (ex. les 15 anciennes communes de
+ * Charleroi : admin_level 9 sous la commune de niveau 8). Tente le niveau juste
+ * en dessous, puis le suivant (certains pays sautent un niveau). Chaque sous-zone
+ * porte `parent_osm_id` : « Compléter les quartiers » et le Scout savent ainsi que
+ * la zone d'origine est déjà couverte et ne la rajoutent pas par-dessus.
+ * Contrairement à la récupération par bbox, une erreur réseau REMONTE : l'admin a
+ * demandé cette action, il doit savoir qu'elle a échoué.
+ *
+ * @param {object} parent - feature de {dest}-zones.geojson (properties.osm_id, admin_level)
+ * @returns {Promise<Array>} les sous-zones (vide si OSM n'en connaît pas au moins deux)
+ */
+export async function fetchSubZones(parent) {
+    const id = parent?.properties?.osm_id;
+    const level = Number(parent?.properties?.admin_level);
+    if (!id || !Number.isFinite(level)) throw new Error('Zone sans identifiant OSM ou sans niveau administratif.');
+    for (const subLevel of [level + 1, level + 2]) {
+        const query = `[out:json][timeout:60];rel(${id});map_to_area->.p;relation["boundary"="administrative"]["admin_level"="${subLevel}"](area.p);out geom;`;
+        const data = await fetchOverpassJson(query, { timeoutMs: 40000, retries: 1 });
+        const subs = relationsToFeatures(data)
+            .filter(f => f.properties.osm_id !== id && isMostlyInside(f, parent))
+            .map(f => ({ ...f, properties: { ...f.properties, parent_osm_id: id } }));
+        if (subs.length >= 2) return subs;
+    }
+    return [];
+}
+
+/**
+ * Remplace, À SA PLACE dans la liste, la zone `parentOsmId` par ses sous-zones.
+ * Les sous-zones déjà présentes (même osm_id) ne sont pas dupliquées.
+ */
+export function replaceZoneWithSubZones(fc, parentOsmId, subZones) {
+    const features = (fc && fc.features) || [];
+    const idx = features.findIndex(f => f.properties?.osm_id === parentOsmId);
+    if (idx < 0) return { type: 'FeatureCollection', features: [...features] };
+    const rest = features.filter((_, i) => i !== idx);
+    const present = new Set(rest.map(f => f.properties?.osm_id).filter(v => v != null));
+    const fresh = subZones.filter(f => !present.has(f.properties?.osm_id));
+    return { type: 'FeatureCollection', features: [...rest.slice(0, idx), ...fresh, ...rest.slice(idx)] };
+}
+
+/**
+ * Identifiants OSM déjà couverts par un jeu de zones : ses zones ET les zones
+ * d'origine qu'elles subdivisent (`parent_osm_id`). Sert à la déduplication quand
+ * on complète le jeu : une commune subdivisée ne doit pas revenir par-dessus.
+ */
+export function coveredZoneIds(fc) {
+    const ids = new Set();
+    for (const f of (fc && fc.features) || []) {
+        if (f.properties?.osm_id != null) ids.add(f.properties.osm_id);
+        if (f.properties?.parent_osm_id != null) ids.add(f.properties.parent_osm_id);
+    }
+    return ids;
 }
 
 // Récupère les zones admin d'une bbox en choisissant le niveau selon le pays

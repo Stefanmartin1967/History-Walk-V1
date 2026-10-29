@@ -60,9 +60,10 @@ export async function fetchDestinationsJson(token) {
  * @param {string} id  id de la destination (publiée)
  * @param {{type:string, features:Array}} zones  FeatureCollection des zones à pousser
  * @param {(msg:string)=>void} [onProgress]
+ * @param {string} [message]  message du commit (défaut : « complète les quartiers »)
  * @returns {Promise<{id:string, zones:number}>}
  */
-export async function pushDestinationZones(id, zones, onProgress = () => {}) {
+export async function pushDestinationZones(id, zones, onProgress = () => {}, message = `chore(zones): complète les quartiers « ${id} »`) {
     const token = getStoredToken();
     if (!token) throw new Error('Aucun token GitHub connecté (onglet Connexion du Centre de Contrôle).');
 
@@ -70,7 +71,7 @@ export async function pushDestinationZones(id, zones, onProgress = () => {}) {
 
     onProgress('Publication des zones…');
     await uploadFileToGitHub(jsonFile(cleanZones, `${id}-zones.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
-        GITHUB_PATHS.zones(id), `chore(zones): complète les quartiers « ${id} »`);
+        GITHUB_PATHS.zones(id), message);
 
     return { id, zones: cleanZones.features.length };
 }
